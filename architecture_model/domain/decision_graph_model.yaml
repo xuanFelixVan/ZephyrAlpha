@@ -97,7 +97,7 @@ layers:
     decision_frequency: tick
     design_maturity: production
     build_status: stable
-    module_id: ""
+    module_id: "MOD-MKT_DATA"
     source_code_ref: ""
 
   - layer_id: L1
@@ -110,7 +110,7 @@ layers:
     decision_frequency: daily
     design_maturity: production
     build_status: stable
-    module_id: ""
+    module_id: "MOD-L02-001"
     source_code_ref: ""
 
   - layer_id: L2A
@@ -173,9 +173,9 @@ layers:
       多策略信号合成 → 资本分配 → 元策略路由 → 组合构建
       产出：portfolio_target（PortfolioTarget: 目标仓位）
     decision_frequency: daily
-    design_maturity: design
-    build_status: planned
-    module_id: ""
+    design_maturity: production
+    build_status: generated
+    module_id: "MOD-L05-001"
     source_code_ref: ""
 
   - layer_id: L4
@@ -188,7 +188,7 @@ layers:
     decision_frequency: realtime
     design_maturity: production
     build_status: stable
-    module_id: ""
+    module_id: "MOD-L04-001"
     source_code_ref: ""
 
   - layer_id: L5

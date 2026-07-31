@@ -27,6 +27,7 @@ tags:
 summary: 定义 `session_carryover.json` 的完整 schema——前序 Session 未完成任务、失败原因、上下文状态、Token 预算、幻觉事件的结构化归档。Session 结束前由 Context Engine 写入，下一 Session 启动后由 Context Engine 读取以恢复工作状态。是跨 Session 连续性的核心锚点。
 date: '2026-04-24'
 ttl: permanent
+design_maturity: design
 ---
 
 # Session Carryover Schema

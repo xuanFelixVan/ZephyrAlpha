@@ -7,6 +7,7 @@ version: 1.0.0
 created: '2026-07-06'
 last_updated: '2026-07-06'
 ttl: permanent
+design_maturity: design
 description: |
   架构图生成器与检测器施工蓝图。统一登记 d5_architecture/generators/ 下所有生成器
   与检测器的施工计划、章节划分、依赖关系。

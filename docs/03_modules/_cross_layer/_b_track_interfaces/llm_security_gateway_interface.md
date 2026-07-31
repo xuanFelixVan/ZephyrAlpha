@@ -12,6 +12,7 @@ created_by: Claude-Opus-4.7
 created_date: "2026-04-24"
 last_updated: "2026-05-06"
 ttl: permanent
+design_maturity: design
 template_source: "vector_memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
   - "03_modules/_cross_layer/large_language_model_security/blueprint.md（MOD-LLM_SECURITY — L1–L4 纵深防御与 fail-closed；Phase 5 真源）"

@@ -15,6 +15,7 @@ last_updated: "2026-07-28"
 summary: "完整记录备份内容/位置/方法/频率的清单——代码/PG/SQLite/CH数据/CH配置/CH虚拟机全覆盖，AI无需猜测即可理解备份布局"
 tags: [backup, inventory, register, MOD-INF-043]
 responsibility_domain: 
+design_maturity: production
 ---
 
 # backup_inventory — 备份内容与方法清单

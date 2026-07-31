@@ -56,6 +56,11 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+# 治本：_shared 在 scripts/governance/_shared，须将其父目录加入 sys.path
+# （原代码只加项目根，_shared 不在项目根下导致 ModuleNotFoundError——与同级生成器对齐）
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 try:

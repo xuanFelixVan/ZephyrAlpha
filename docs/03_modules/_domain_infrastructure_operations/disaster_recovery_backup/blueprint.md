@@ -13,6 +13,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-07-09"
 ttl: permanent
+design_maturity: production
 actual_disk_path: "scripts/backup/"
 last_updated: "2026-07-28"
 last_verified: "2026-07-28"

@@ -15,6 +15,7 @@ last_updated: "2026-07-28"
 summary: "从 F 盘备份逐步重建完整 ZephyrAlpha 环境的 AI 可执行灾难恢复操作清单，覆盖虚拟机/CH/PG/SQLite/代码全链路恢复步骤与验证命令"
 tags: [disaster-recovery, runbook, backup, restore, MOD-INF-043]
 responsibility_domain: 
+design_maturity: production
 ---
 
 # dr_runbook — 灾难恢复操作手册（AI 可执行）
