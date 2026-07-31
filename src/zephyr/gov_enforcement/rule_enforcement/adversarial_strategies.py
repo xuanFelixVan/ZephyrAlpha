@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-GOV-adversarial_strategies | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Adversarial sample generator and 5 attack strategies for gate validation."""
+"""对抗样本生成器——5 种攻击策略用于门禁验证（Adversarial sample generator with 5 attack strategies for gate validation）"""
 
 from __future__ import annotations
 

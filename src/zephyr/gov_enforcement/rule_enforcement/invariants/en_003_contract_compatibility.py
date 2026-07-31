@@ -17,7 +17,7 @@
 
 # ==== BEGIN CODEGEN:EN-003 ====
 """
-EN-003 — Contract Compatibility Checker
+EN-003 契约兼容性检查器——字段/类型/必填对齐差异比对（Contract Compatibility Checker）
 
 Reads cross_layer_contracts.yaml field definitions, imports the corresponding
 Python dataclass, and diffs: field presence, type, required/optional alignment.

@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-ContractTemplateManager: manage MCP tool contract templates
+契约模板管理器——管理 MCP 工具契约模板（Contract template manager for MCP tool contracts）
 ============================================================
 Task ID : T-2-31 (C55)
 safety_level : L

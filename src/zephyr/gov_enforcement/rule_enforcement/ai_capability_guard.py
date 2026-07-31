@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-ZephyrAlpha — gates/ai_capability_guard.py
+AI 能力边界守卫——@require_capability 装饰器运行时检查（AI capability boundary guard with @require_capability decorator）
 
 @require_capability 装饰器 + AI 能力边界运行时检查。
 

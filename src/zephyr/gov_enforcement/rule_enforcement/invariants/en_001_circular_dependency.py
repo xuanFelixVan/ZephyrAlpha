@@ -17,7 +17,7 @@
 
 # ==== BEGIN CODEGEN:EN-001 ====
 """
-EN-001 — Circular Dependency Scanner
+EN-001 循环依赖扫描器——Kahn 拓扑排序检测模块导入环（Circular Dependency Scanner）
 
 Kahn's algorithm topological sort over the module import DAG.
 Detects cycles across all module directories + shared/contracts.

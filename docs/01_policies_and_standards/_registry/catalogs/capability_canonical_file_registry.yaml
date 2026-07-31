@@ -5188,6 +5188,55 @@ capabilities:
       terminology_loader → 命中本条目 → canonical 路径找源码 → glossary YAML 改条目。
 
   # --------------------------------------------------------------------------
+  - capability_id: module_translation_loader
+    aliases:
+      - module_translation
+      - get_module_translation
+      - get_module_name_bilingual
+      - get_module_desc_bilingual
+      - module_translation_registry
+      - module_name_bilingual
+      - module_desc_bilingual
+    description: >-
+      架构文档生成器共享的模块级双语翻译加载器（SSoT 真源入口）。canonical =
+      scripts/governance/_shared/module_translation_loader.py。真源：
+      module_translation_registry.yaml（REG-MODULE-TRANSLATION-001，35 条目 D_GOV_RULE
+      域 .py 文件中英文名+功能简介）。对标 terminology_loader.py（术语级）和
+      domain_name_mapping.py（域级）组成翻译真源三层体系（AGENTS.md RULE-SSOT）。
+      三级降级：module_translation_registry.yaml（主真源）→ 返回 None（未登记模块）。
+      提供 get_module_translation / get_module_name_bilingual /
+      get_module_desc_bilingual / preload 四个 API。消费者：generate_domain_doc.py
+      （Mermaid 标签/模块清单/跨域依赖表三处接入）。新增模块翻译：往
+      module_translation_registry.yaml 加条目（module_path/name_zh/name_en/desc_zh/
+      desc_en），零代码改动。AI 发现路径：搜索 get_module_name_bilingual /
+      module_translation_loader → 命中本条目 → canonical 路径找源码 → registry YAML
+      改条目。
+
+  # --------------------------------------------------------------------------
+  - capability_id: domain_name_mapping
+    aliases:
+      - get_domain_name_zh
+      - get_domain_name_zh_strict
+      - get_domain_name_en
+      - get_domain_name_bilingual
+      - get_domain_desc_zh
+      - DOMAIN_NAME_ZH
+      - domain_name_zh
+      - layer_name_bilingual
+    description: >-
+      功能域中英文名称翻译加载器（SSoT 真源入口，翻译真源三层体系之域级）。canonical =
+      scripts/governance/d5_architecture/generators/domain_name_mapping.py。真源：
+      functional_domain_registry.yaml（domain_name_zh 字段，77 条目）。三级降级：
+      functional_domain_registry.yaml（主真源）→ DB depgraph.nodes（缓存）→
+      DOMAIN_NAME_ZH 硬编码 fallback（6 条核心域，YAML 缺失时降级保证不崩溃）。提供
+      get_domain_name_zh / get_domain_name_zh_strict / get_domain_name_en /
+      get_domain_name_bilingual / get_domain_desc_zh / get_layer_name_bilingual API。
+      消费者：generate_domain_doc.py / generate_decision_graph.py / 多个 d5 生成器。与
+      terminology_loader（术语级）和 module_translation_loader（模块级）分工：本模块管
+      D_XXX 域名翻译。AI 发现路径：搜索 get_domain_name_zh / domain_name_mapping →
+      命中本条目 → canonical 路径找源码 → functional_domain_registry.yaml 改条目。
+
+  # --------------------------------------------------------------------------
   - capability_id: b_track_consistency_check
     canonical_override: scripts/governance/d5_architecture/validators/validate_b_track_packages.py
     aliases:
@@ -5243,6 +5292,16 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+
+  # --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
+  - file: "scripts/governance/_shared/module_translation_loader.py"
+    token: "auto-module-translation-loader-20260801"
+    created_by: "session-sess-module-translation-001"
+    capability: "module_translation_loader"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"
+    token: "auto-module-translation-registry-20260801"
+    created_by: "session-sess-module-translation-001"
+    capability: "module_translation_loader"
 
   # --- 术语词汇表真源（2026-07-30，terminology_loader SSoT 重构，文件此前未入库补登记）---
   - file: "docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml"
