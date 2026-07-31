@@ -636,3 +636,92 @@ entries:
     next_review_date: '2027-07-31'
     review_frequency: yearly
     last_review_outcome: "rejected,q4 AI替代。除非 TRAE AI 翻译能力显著退化,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-DR-001: Offsite Backup / 异地备份（rejected，用户推翻 overruled_by_user）
+  # 来源: #ARCH-CH-032 (2026-07-24 用户裁定推翻)
+  # ----------------------------------------------------------
+  - id: CAND-DR-001
+    name: "Offsite Backup / 异地备份"
+    aliases: ["异地备份", "OffsiteBackup", "离线备份", "云备份", "3-2-1备份", "异地副本"]
+    domain: D_INFRA_RECOVERY
+    domain_status: active
+    domain_node_count: 55
+    sub_layer: "L2 备份策略"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: "MOD-IR-OFFSITE (勿实现——用户推翻)"
+        target_build_status: deprecated
+        target_neighbors:
+          upstream: ["MOD-IR-001"]
+          downstream: []
+        insertion_description: "拟插入 D_INFRA_RECOVERY L2 备份策略区,作为本地 restic 备份的异地副本,但用户已裁定推翻勿实现"
+        target_edges: []
+        note: "用户推翻(overruled_by_user #ARCH-CH-032)。位置仅作'若实现会插哪'的参考,实际勿实现"
+      dataflowgraph:
+        has_position: true
+        target_node_type: sink
+        data_flow_path: "本地备份 → [异地副本同步] → 云存储/异地介质"
+        upstream_data: ["LocalBackupSnapshot", "BackupConfig"]
+        downstream_data: ["OffsiteBackupReplica"]
+        insertion_description: "在 D_INFRA_RECOVERY 备份数据流末端,本地备份之后(拟定,用户推翻)"
+      decisiongraph:
+        has_position: true
+        target_layer: "L1"
+        target_track: "disaster_recovery"
+        decision_frequency: daily
+        decision_path: "备份调度 → [异地副本决策] → 同步/跳过"
+        insertion_description: "L1 灾备决策层,用户已推翻此决策路径"
+      blueprint:
+        has_position: true
+        target_ref: "05-D-INFRA-RECOVERY-恢复域.md §2 备份策略"
+        design_maturity: deprecated
+    description: "异地/离线备份:在本地外接盘备份之外,增加异地副本(云存储/异地介质),满足 3-2-1 备份原则"
+    capability: ""
+    problem_it_solves: "audit 7.7 发现本地 restic 备份与主库同物理站点,不满足 3-2-1 备份原则的异地要求"
+    trigger_signals:
+      - "系统升级为多用户/多站点场景(当前单用户)"
+      - "用户主动要求异地备份(当前已明确否决)"
+      - "本地外接盘备份出现可靠性问题"
+    keywords: ["异地备份", "offsite", "3-2-1", "云备份", "灾备", "overruled"]
+    upstream_deps:
+      - {contract: "CTR-IR-01", from_domain: D_INFRA_RECOVERY, dep_type: H, availability: available, note: "本地备份快照"}
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume:
+      - {id: "CTR-IR-01", note: "本地备份快照"}
+    prerequisites:
+      - {condition: "多用户/多站点场景出现", check: "用户场景确认", met: false, note: "当前单用户回测期,用户已明确不预埋异地"}
+      - {condition: "云存储凭证/账号配置", check: "offsite_repository 配置", met: false, note: "backup_config.yaml offsite_repository 段已删除(#ARCH-CH-032)"}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: [], evidence: "backup.ps1 从未实现 offsite/restic copy 逻辑,grep 零引用;offsite_repository 配置段已删除"}
+      q2_demand_driven: {result: false, trigger_pain_point: "无——用户裁定单用户场景仅需本地外接盘备份", evidence: "#ARCH-CH-032 overruled_by_user: 单用户单人系统,唯一现实风险是电脑硬件损坏,本地外接盘 F:\\ 即足以应对(主库+外接盘=2份)"}
+      q3_domain_alive: {result: true, evidence: "D_INFRA_RECOVERY 55节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,用户直接推翻非AI替代"}
+      blocking_question: q2
+      result: rejected
+      overrule_ref: "#ARCH-CH-032"
+      overrule_by: user
+      overrule_date: '2026-07-24'
+    status: rejected
+    priority: P2
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "architecture_issue_registry.yaml #ARCH-CH-032"
+    source_section: "异地/离线备份推翻"
+    original_id: "ARCH-CH-032"
+    estimated_complexity: M
+    estimated_effort: ""
+    tech_notes: "overruled_by_user 案例。用户裁定:单用户回测期仅本地外接盘备份足够,不引入异地/云存储/3-2-1备份铁律。实盘/异地等未来需求由用户自行规划,当前不预埋。已执行:backup_config.yaml 删除 offsite_repository 配置段"
+    risks: ["重新提议异地备份会违背用户已裁定决策;云存储凭证/账号属于过度工程"]
+    alternatives: "本地外接盘备份(F:\\restic-zephyr,主库+外接盘=2份)。代价:无,用户已确认足够"
+    tags: ["overruled_by_user", "rejected", "防重新提议", "灾备", "用户裁定"]
+    search_terms: ["offsite backup", "异地备份", "3-2-1 备份", "云备份", "离线副本"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "rejected,overruled_by_user #ARCH-CH-032。除非场景升级为多用户/多站点,否则不再评估"
