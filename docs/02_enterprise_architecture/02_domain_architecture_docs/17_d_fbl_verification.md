@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 反馈验证，负责反馈循环门禁拦截、结果验证器执行和反馈质量检查
 
-> **文档作用 / Purpose**: 展示 反馈验证（D_FBL_VERIFICATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 反馈验证（D_FBL_VERIFICATION）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,86 +35,6 @@ ttl: permanent
 | 生产态模块 | 71 | Production Modules | 71 |
 | 容量 | 71/150 (正常) | Capacity | 71/150 (正常) |
 | 描述 | 反馈循环门禁(feedback_loop/gates) | Description | 反馈循环门禁(feedback_loop/gates) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 71 个模块 / 71 modules）。
-
-### L1 基础层 / Foundation Layer (71 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/feedback_loop/gates/_governance_gates.py | gates/_governance_gates.py | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 2 | src/zephyr/feedback_loop/gates/_operational_gates.py | gates/_operational_gates.py | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 3 | src/zephyr/feedback_loop/gates/_safety_gates.py | gates/_safety_gates.py | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 4 | src/zephyr/feedback_loop/gates/_security_gates.py | gates/_security_gates.py | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 5 | src/zephyr/feedback_loop/gates/action_reversibility.py | Action Reversibility — v0.15.0 R208 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 6 | src/zephyr/feedback_loop/gates/adversarial_validation.py | Adversarial Validation Gate — FLE-ADVERSARIAL-VALIDATION + RED-BLUE-GATE bridge. | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 7 | src/zephyr/feedback_loop/gates/autonomy_credit.py | Autonomy Credit System — v0.7.0 R87 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 8 | src/zephyr/feedback_loop/gates/autonomy_maturity.py | Autonomy Maturity Ladder — v0.7.0 R86 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 9 | src/zephyr/feedback_loop/gates/blueprint_code_reconciler.py | Blueprint-Code Reconciler — v0.14.0 R195 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 10 | src/zephyr/feedback_loop/gates/blueprint_validator.py | Blueprint Validator — v0.8.0 R108 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 11 | src/zephyr/feedback_loop/gates/checkpoint_manager.py | Checkpoint Manager — v0.3.0 R18 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 12 | src/zephyr/feedback_loop/gates/ci_cd_pre_scanner.py | CI/CD Pre-Scanner — v0.8.0 R107 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 13 | src/zephyr/feedback_loop/gates/concurrent_change_deconfli... | Concurrent Change Deconfliction — v0.16.0 R230 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 14 | src/zephyr/feedback_loop/gates/config_complexity_budget.py | Config Complexity Budget — v0.16.0 R227 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 15 | src/zephyr/feedback_loop/gates/config_governance.py | Config Governance — v0.3.0 R8 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 16 | src/zephyr/feedback_loop/gates/conflict_arbitration.py | Conflict Arbitration — v0.10.0 R130 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 17 | src/zephyr/feedback_loop/gates/cve_scanner.py | CVE Scanner — v0.8.0 R106 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 18 | src/zephyr/feedback_loop/gates/data_quality_gate.py | Data Quality Gate — v0.11.0 R143 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 19 | src/zephyr/feedback_loop/gates/db_integrity.py | DB Integrity Gate — v0.3.0 R17 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 20 | src/zephyr/feedback_loop/gates/deployment_suppression.py | Deployment Suppression — v0.37.0 R464 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 21 | src/zephyr/feedback_loop/gates/dynamic_llm_cost_router.py | Dynamic LLM Cost Router — v0.8.0 R109 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 22 | src/zephyr/feedback_loop/gates/emergency_takeover.py | Emergency Takeover — v0.7.0 R88 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 23 | src/zephyr/feedback_loop/gates/federated_security.py | Federated Security — v0.10.0 R131 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 24 | src/zephyr/feedback_loop/gates/flag_lifecycle_manager.py | Flag Lifecycle Manager — v0.3.0 R11 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 25 | src/zephyr/feedback_loop/gates/license_compliance.py | License Compliance — v0.14.0 R198 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 26 | src/zephyr/feedback_loop/gates/llm_cost_router.py | LLM Cost Router — v0.3.0 R20 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 27 | src/zephyr/feedback_loop/gates/merkle_audit_root.py | Merkle Audit Root — v0.8.0 R104 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 28 | src/zephyr/feedback_loop/gates/meta_performance_gate.py | Meta Performance Gate — v0.11.0 R158 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 29 | src/zephyr/feedback_loop/gates/parameterized_safety_gate.py | GateVerdict — GateVerdict | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 30 | src/zephyr/feedback_loop/gates/safety_gate_l1_l27.py | Safety Gates L1-L27 — Unified Pipeline (MOD-FEEDBACK_LOOP §3) | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 31 | src/zephyr/feedback_loop/gates/safety_gate_l28_l29.py | Safety Gates L28-L29 — DR Readiness + Supply Chain (MOD-FEEDBACK_LOOP §3 L2... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 32 | src/zephyr/feedback_loop/gates/safety_gate_l36_l37.py | Safety Gates L36-L37 — AI Code Integrity + Vibe Maintainability | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 33 | src/zephyr/feedback_loop/gates/safety_gate_l38_l39.py | Safety Gates L38-L39 — Deterministic Safety + Architectural Integrity | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 34 | src/zephyr/feedback_loop/gates/safety_gate_l40_l41.py | Safety Gates L40-L41 — Self-Integrity + Container Immutability | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 35 | src/zephyr/feedback_loop/gates/safety_gate_l42_l43.py | Safety Gates L42-L43 — Causal Integrity + Survivability | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 36 | src/zephyr/feedback_loop/gates/safety_gate_l44_l45.py | Safety Gates L44-L45 — Operational Excellence + Causal Interrogability | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 37 | src/zephyr/feedback_loop/gates/safety_gate_l46_l47.py | Safety Gates L46-L47 — Systemic Emergence + Ontological Consistency | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 38 | src/zephyr/feedback_loop/gates/safety_gate_l48_l49.py | Safety Gates L48-L49 — Supply Chain Integrity + Cognitive Safety | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 39 | src/zephyr/feedback_loop/gates/safety_gate_l50_l51.py | Safety Gates L50-L55 — Coherence + Integrity Ladder (double-pair pattern) | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 40 | src/zephyr/feedback_loop/gates/safety_gate_l52_l53.py | Safety Gates L52-L53 — Boot Integrity + OSS License | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 41 | src/zephyr/feedback_loop/gates/safety_gate_l54_l55.py | Safety Gates L54-L55 — Final Gate + Full Integration | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 42 | src/zephyr/feedback_loop/gates/safety_gate_l56_l57.py | Safety Gates L56-L57 — Evolutionary Integrity + Cross-Generational Coherence | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 43 | src/zephyr/feedback_loop/gates/safety_gate_l58_l59.py | Safety Gates L58-L59 — Over-the-Horizon + Temporal Integrity | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 44 | src/zephyr/feedback_loop/gates/safety_gate_l60_l61.py | Safety Gates L60-L61 — Environmental Grounding + Meta-System Integrity | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 45 | src/zephyr/feedback_loop/gates/safety_gate_l62_l63.py | Safety Gates L62-L63 — Infrastructure Reality + Market Reality | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 46 | src/zephyr/feedback_loop/gates/safety_gate_l64_l65.py | Safety Gates L64-L65 — Financial Integrity + VibeOps:Solo | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 47 | src/zephyr/feedback_loop/gates/safety_gate_l66_l67.py | Safety Gates L66-L67 — Financial Prudence + Full Integration Audit | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 48 | src/zephyr/feedback_loop/gates/scope_creep_monitor.py | Scope Creep Monitor — v0.15.0 R220 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 49 | src/zephyr/feedback_loop/verifiers/ab_test.py | A/B Test Verifier — v0.9.0 R117 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 50 | src/zephyr/feedback_loop/verifiers/action_explainability.py | Action Explainability — v0.3.0 R15 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 51 | src/zephyr/feedback_loop/verifiers/ai_comment_veracity.py | AI Comment Veracity — v0.37.0 R459 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 52 | src/zephyr/feedback_loop/verifiers/attack_simulator.py | Attack Simulator — v0.6.0 R57 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 53 | src/zephyr/feedback_loop/verifiers/auto_rollback.py | Auto Rollback — v0.8.0 R93 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 54 | src/zephyr/feedback_loop/verifiers/build_reproducibility_... | Build Reproducibility Verifier — v0.38.0 R484 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 55 | src/zephyr/feedback_loop/verifiers/canary_repair.py | Canary Repair — v0.8.0 R104b | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 56 | src/zephyr/feedback_loop/verifiers/cascading_rollback_ana... | Cascading Rollback Analyzer — v0.38.0 R482 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 57 | src/zephyr/feedback_loop/verifiers/cross_blueprint_contra... | Cross-Blueprint Contract Drift Monitor — v0.39.0 R490 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 58 | src/zephyr/feedback_loop/verifiers/cross_module_integrati... | Cross-Module Integration Verifier — v0.5.0 R39 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 59 | src/zephyr/feedback_loop/verifiers/cross_session_knowledg... | Cross-Session Knowledge Integrity — v0.16.0 R225 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 60 | src/zephyr/feedback_loop/verifiers/digital_twin_sandbox.py | Digital Twin Sandbox — v0.6.0 R55 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 61 | src/zephyr/feedback_loop/verifiers/dry_run_sandbox.py | Dry Run Sandbox — v0.3.0 R19 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 62 | src/zephyr/feedback_loop/verifiers/federated_protocol.py | Federated Protocol — v0.10.0 R129 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 63 | src/zephyr/feedback_loop/verifiers/golden_test_external.py | Golden Test External — v0.15.0 R214 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 64 | src/zephyr/feedback_loop/verifiers/no_llm_degradation.py | No-LLM Degradation Mode — v0.8.0 R94 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 65 | src/zephyr/feedback_loop/verifiers/pre_flight_simulator.py | Pre-Flight Simulator — v0.12.0 R169b | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 66 | src/zephyr/feedback_loop/verifiers/preventive_repair.py | Preventive Repair — v0.6.0 R69 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 67 | src/zephyr/feedback_loop/verifiers/rollback_integrity.py | Rollback Integrity — v0.3.0 R18b | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 68 | src/zephyr/feedback_loop/verifiers/sim2real_calibration.py | Sim2Real Calibration — v0.6.0 R56 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 69 | src/zephyr/feedback_loop/verifiers/stochastic_diagnosis_v... | Stochastic Diagnosis Verifier — v0.38.0 R483 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 70 | src/zephyr/feedback_loop/verifiers/toctou_revalidation.py | TOCTOU Revalidation — v0.37.0 R458 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 71 | src/zephyr/feedback_loop/verifiers/verification_engine.py | verifiers/verification_engine.py | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

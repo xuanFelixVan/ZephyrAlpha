@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 脚本治理，负责脚本生命周期管理和脚本质量门禁
 
-> **文档作用 / Purpose**: 展示 脚本治理（D_GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 脚本治理（D_GOV_SCRIPTS）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,331 +35,6 @@ ttl: permanent
 | 生产态模块 | 383 | Production Modules | 383 |
 | 容量 | 383/150 (超容) | Capacity | 383/150 (超容) |
 | 描述 | Phase Manager阶段管理 | Description | Phase Manager阶段管理 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 384 个模块 / 384 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (2 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | scripts/governance/d5_architecture/generators/generate_da... | G-acqflow: 从 tasks.yaml 生成业务数据采集流图 MD（人类可读版，内嵌 Mermaid） | 生产态 / production |  |
-| 2 | scripts/governance/d5_architecture/generators/generate_da... | G-inventory: 扫描 ClickHouse 生成业务数据清单 MD | 生产态 / production | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-
-### L1 基础层 / Foundation Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/01_policies_and_standards/_registry/catalogs/scripts... | [聚合节点 / Aggregated] 脚本集 / Script Collection (428 items) | 生产态 / production |  |
-| ↳1 |   ↳ scripts/governance/__init__.py |  | - | - |
-| ↳2 |   ↳ scripts/governance/_archive/one_off/analyze_orphan_c... |  | - | - |
-| ↳3 |   ↳ scripts/governance/_archive/one_off/audit_post_sync_... |  | - | - |
-| ↳4 |   ↳ scripts/governance/_archive/one_off/check_exam_case_... |  | - | - |
-| ↳5 |   ↳ scripts/governance/_archive/one_off/check_rule_cover... |  | - | - |
-| ↳6 |   ↳ scripts/governance/_archive/one_off/create_alignment... |  | - | - |
-| ↳7 |   ↳ scripts/governance/_archive/one_off/dm105_depgraph_t... |  | - | - |
-| ↳8 |   ↳ scripts/governance/_archive/one_off/fix_broken_post_... |  | - | - |
-| ↳9 |   ↳ scripts/governance/_archive/one_off/group_orphan_mod... |  | - | - |
-| ↳10 |   ↳ scripts/governance/_archive/one_off/list_phase0_tasks.py |  | - | - |
-| ↳11 |   ↳ scripts/governance/_archive/one_off/migrate_clean_bu... |  | - | - |
-| ↳12 |   ↳ scripts/governance/_archive/one_off/migrate_domain_i... |  | - | - |
-| ↳13 |   ↳ scripts/governance/_archive/one_off/perf_depgraph_ba... |  | - | - |
-| ↳14 |   ↳ scripts/governance/_archive/one_off/phase_a_backup.py |  | - | - |
-| ↳15 |   ↳ scripts/governance/_archive/one_off/rename_kebab_to_... |  | - | - |
-| ↳16 |   ↳ scripts/governance/_archive/one_off/rename_whitelist... |  | - | - |
-| ↳17 |   ↳ scripts/governance/_archive/one_off/test_lock_scenar... |  | - | - |
-| ↳18 |   ↳ scripts/governance/_archive/one_off/verify_final_del... |  | - | - |
-| ↳19 |   ↳ scripts/governance/_archive/one_off/verify_rule_yaml... |  | - | - |
-| ↳20 |   ↳ scripts/governance/_archive/prototype/adversarial_log.py |  | - | - |
-| ↳21 |   ↳ scripts/governance/_archive/prototype/adversarial_sy... |  | - | - |
-| ↳22 |   ↳ scripts/governance/_archive/prototype/audit_domain_n... |  | - | - |
-| ↳23 |   ↳ scripts/governance/_archive/prototype/changelog.py |  | - | - |
-| ↳24 |   ↳ scripts/governance/_archive/prototype/check_audit_rb... |  | - | - |
-| ↳25 |   ↳ scripts/governance/_archive/prototype/construction_g... |  | - | - |
-| ↳26 |   ↳ scripts/governance/_archive/prototype/generate_asset... |  | - | - |
-| ↳27 |   ↳ scripts/governance/_archive/prototype/generate_nav_t... |  | - | - |
-| ↳28 |   ↳ scripts/governance/_archive/prototype/rebuild_audit_... |  | - | - |
-| ↳29 |   ↳ scripts/governance/_archive/prototype/scan_ground_tr... |  | - | - |
-| ↳30 |   ↳ scripts/governance/_archive/prototype/session_simula... |  | - | - |
-| ↳31 |   ↳ scripts/governance/_archive/prototype/sync_blueprint... |  | - | - |
-| ↳32 |   ↳ scripts/governance/_archive/vms_ri/ri_boundary_check.py |  | - | - |
-| ↳33 |   ↳ scripts/governance/_archive/vms_ri/ri_build_completi... |  | - | - |
-| ↳34 |   ↳ scripts/governance/_archive/vms_ri/vms_blindspot_che... |  | - | - |
-| ↳35 |   ↳ scripts/governance/_archive/vms_ri/vms_build_complet... |  | - | - |
-| ↳36 |   ↳ scripts/governance/_archive/vms_ri/vms_cron_monitor.py |  | - | - |
-| ↳37 |   ↳ scripts/governance/_archive/vms_ri/vms_cross_file_ch... |  | - | - |
-| ↳38 |   ↳ scripts/governance/_archive/vms_ri/vms_health_check.py |  | - | - |
-| ↳39 |   ↳ scripts/governance/_archive/vms_ri/vms_migrate.py |  | - | - |
-| ↳40 |   ↳ scripts/governance/_archive/vms_ri/vms_migration_dry... |  | - | - |
-| ↳41 |   ↳ scripts/governance/_archive/vms_ri/vms_phase_rollback.py |  | - | - |
-| ↳42 |   ↳ scripts/governance/_archive/vms_ri/vms_version_sync_... |  | - | - |
-| ↳43 |   ↳ scripts/governance/_shared/__init__.py |  | - | - |
-| ↳44 |   ↳ scripts/governance/_shared/base.py |  | - | - |
-| ↳45 |   ↳ scripts/governance/_shared/constants.py |  | - | - |
-| ↳46 |   ↳ scripts/governance/_shared/deprecated_paths.yaml |  | - | - |
-| ↳47 |   ↳ scripts/governance/_shared/encoding.py |  | - | - |
-| ↳48 |   ↳ scripts/governance/_shared/file_utils.py |  | - | - |
-| ↳49 |   ↳ scripts/governance/_shared/frontmatter.py |  | - | - |
-| ↳50 |   ↳ scripts/governance/_shared/libcst_docstring_adder.py |  | - | - |
-| ↳51 |   ↳ scripts/governance/_shared/plugin_contract_schema.yaml |  | - | - |
-| ↳52 |   ↳ scripts/governance/_shared/registry_entry_count.py |  | - | - |
-| ↳53 |   ↳ scripts/governance/_shared/thresholds.py |  | - | - |
-| ↳54 |   ↳ scripts/governance/_shared/thresholds.yaml |  | - | - |
-| ↳55 |   ↳ scripts/governance/_shared/walk.py |  | - | - |
-| ↳56 |   ↳ scripts/governance/_shared/yaml_utils.py |  | - | - |
-| ↳57 |   ↳ scripts/governance/_sync/check_p0_status.py |  | - | - |
-| ↳58 |   ↳ scripts/governance/_sync/cleanup_p0_auto_bridged.py |  | - | - |
-| ↳59 |   ↳ scripts/governance/_sync/cleanup_p0_ops_pending.py |  | - | - |
-| ↳60 |   ↳ scripts/governance/_sync/fix_orphan_deps.py |  | - | - |
-| ↳61 |   ↳ scripts/governance/_tasks/__init__.py |  | - | - |
-| ↳62 |   ↳ scripts/governance/_tasks/list_phase0_tasks.py |  | - | - |
-| ↳63 |   ↳ scripts/governance/_tasks/task_show.py |  | - | - |
-| ↳64 |   ↳ scripts/governance/_tasks/task_summary.py |  | - | - |
-| ↳65 |   ↳ scripts/governance/apply_dataflowgraph.py |  | - | - |
-| ↳66 |   ↳ scripts/governance/apply_decisiongraph.py |  | - | - |
-| ↳67 |   ↳ scripts/governance/apply_depgraph.py |  | - | - |
-| ↳68 |   ↳ scripts/governance/architecture_health_dashboard.py |  | - | - |
-| ↳69 |   ↳ scripts/governance/ast_import_rewriter.py |  | - | - |
-| ↳70 |   ↳ scripts/governance/d10_performance/__init__.py |  | - | - |
-| ↳71 |   ↳ scripts/governance/d10_performance/collect_system_th... |  | - | - |
-| ↳72 |   ↳ scripts/governance/d11_compliance/__init__.py |  | - | - |
-| ↳73 |   ↳ scripts/governance/d11_compliance/audit_registration.py |  | - | - |
-| ↳74 |   ↳ scripts/governance/check_ssot_gate.py |  | - | - |
-| ↳75 |   ↳ scripts/governance/d11_compliance/check_test_structu... |  | - | - |
-| ↳76 |   ↳ scripts/governance/d11_compliance/ci_self_check.py |  | - | - |
-| ↳77 |   ↳ scripts/governance/d11_compliance/fix_shared_bypass.py |  | - | - |
-| ↳78 |   ↳ scripts/governance/d11_compliance/g9_compliance_check.py |  | - | - |
-| ↳79 |   ↳ scripts/governance/d11_compliance/task_self_check.py |  | - | - |
-| ↳80 |   ↳ scripts/governance/d11_compliance/validate_blueprint... |  | - | - |
-| ↳81 |   ↳ scripts/governance/d11_compliance/validate_commit_ga... |  | - | - |
-| ↳82 |   ↳ scripts/governance/d11_compliance/validate_commit_me... |  | - | - |
-| ↳83 |   ↳ scripts/governance/d11_compliance/validate_exit_codes.py |  | - | - |
-| ↳84 |   ↳ scripts/governance/d11_compliance/validate_frozen_re... |  | - | - |
-| ↳85 |   ↳ scripts/governance/d11_compliance/validate_manifest_... |  | - | - |
-| ↳86 |   ↳ scripts/governance/d11_compliance/validate_no_utf8_b... |  | - | - |
-| ↳87 |   ↳ scripts/governance/d11_compliance/validate_script_na... |  | - | - |
-| ↳88 |   ↳ scripts/governance/d11_compliance/validate_script_qu... |  | - | - |
-| ↳89 |   ↳ scripts/governance/d11_compliance/validate_task_deco... |  | - | - |
-| ↳90 |   ↳ scripts/governance/d11_compliance/validate_truth_sou... |  | - | - |
-| ↳91 |   ↳ scripts/governance/d11_compliance/validate_vocabular... |  | - | - |
-| ↳92 |   ↳ scripts/governance/d11_compliance/verify_audit_integ... |  | - | - |
-| ↳93 |   ↳ scripts/governance/d11_compliance/verify_key_imports.py |  | - | - |
-| ↳94 |   ↳ scripts/governance/d11_compliance/verify_schema_heal... |  | - | - |
-| ↳95 |   ↳ scripts/governance/d12_ai_hallucination/__init__.py |  | - | - |
-| ↳96 |   ↳ scripts/governance/d12_ai_hallucination/check_logger... |  | - | - |
-| ↳97 |   ↳ scripts/governance/d12_ai_hallucination/validate_gat... |  | - | - |
-| ↳98 |   ↳ scripts/governance/d12_ai_hallucination/validate_ses... |  | - | - |
-| ↳99 |   ↳ scripts/governance/d12_ai_hallucination/validate_ses... |  | - | - |
-| ↳100 |   ↳ scripts/governance/d1_structure/__init__.py |  | - | - |
-| | | > (仅显示前 100 个 items，共 428 个) | | |
-
-### L2 领域层 / Domain Layer (381 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | scripts/_archive/governance/dm106_p2b_verification.py | DM-106: P2-B 迁移全量验证脚本 | 生产态 / production |  |
-| 2 | scripts/governance/_archive/one_off/audit_post_sync_comma... | audit_post_sync_commands.py — post_sync_standard 命令可执行性巡检（防幻觉/CL... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 3 | scripts/governance/_archive/one_off/check_exam_case_consi... | 考试题库一致性检查——根因治本，防止"定义-注册脱钩"复发。 | 生产态 / production | [MOD-INF-036](../../03_modules/_cross_layer/model_capability_exam/blueprint.md) |
-| 4 | scripts/governance/_archive/one_off/create_alignment_task... | # [BLUEPRINT] MOD-INF-005 | scripts/governance/create_alignment_tasks.py | §7 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 5 | scripts/governance/_archive/one_off/dm105_depgraph_triage.py | DM-105: depgraph 未分配节点三策略处理脚本 | 生产态 / production |  |
-| 6 | scripts/governance/_archive/one_off/fix_broken_post_sync.py | fix_broken_post_sync.py — 批量修复历史 broken post_sync_standard 命令 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 7 | scripts/governance/_archive/one_off/list_phase0_tasks.py | [INVARIANTS] 仅查询不修改; 连接失败→exit 1 | 生产态 / production |  |
-| 8 | scripts/governance/_archive/one_off/phase_a_backup.py | phase_a_backup.py — 阶段A安全网 Tier0/Tier1 关键文件备份 | 生产态 / production |  |
-| 9 | scripts/governance/_archive/one_off/rename_kebab_to_snake.py | rename_kebab_to_snake.py — 全项目文件名/目录名 kebab-case → snake_case 批量... | 生产态 / production |  |
-| 10 | scripts/governance/_archive/one_off/rename_whitelist_clea... | 命名规范白名单清理 - 全文替换脚本。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 11 | scripts/governance/_archive/one_off/test_lock_scenarios.py | test_lock_scenarios.py — RULE-ZERO 锁协议场景 B/C 验证 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 12 | scripts/governance/_archive/one_off/verify_final_delivery.py | [INVARIANTS] 设计态节点数>=1128; 规则表各表>0 | 生产态 / production |  |
-| 13 | scripts/governance/_archive/one_off/verify_rule_yaml_migr... | verify_rule_yaml_migration.py - 6-dimensional verification of rule YAML migra... | 生产态 / production |  |
-| 14 | scripts/governance/_archive/prototype/adversarial_log.py | 红白对抗闭环记录——攻击→根源分析→修复→回归验证→知识注入全链路追踪 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 15 | scripts/governance/_archive/prototype/adversarial_sys_mas... | Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-MASTER_BLUEPRINT Inte... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 16 | scripts/governance/_archive/prototype/audit_domain_nodes.py | SRC-100200: Audit 13 over-capacity domains granularity distribution. | 生产态 / production |  |
-| 17 | scripts/governance/_archive/prototype/changelog.py | changelog.py — 治理域变更日志生成/追加工具. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 18 | scripts/governance/_archive/prototype/check_audit_rbac_is... | check_audit_rbac_isolation.py — 静态分析 audit-trail 是否直接 import agent-rbac. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 19 | scripts/governance/_archive/prototype/construction_gate.py | Construction Gate — 施工前路径校验门禁 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 20 | scripts/governance/_archive/prototype/generate_asset_inde... | 全项目资产索引生成器 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 21 | scripts/governance/_archive/prototype/generate_nav_table.py | generate_nav_table.py — 全流程导航表自动生成器 v1.0.0 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 22 | scripts/governance/_archive/prototype/rebuild_audit_index.py | scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生索引 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 23 | scripts/governance/_archive/prototype/scan_ground_truth_d... | # [BLUEPRINT] MOD-INF-005 | scripts/governance/scan_ground_truth_deps.py | §7 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 24 | scripts/governance/_archive/prototype/session_simulator.py | session_simulator — 30 个模拟开发 session 的蓝图读取事件生成器 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 25 | scripts/governance/_archive/prototype/sync_blueprint_stat... | 机械强制：construction_plan=phase_2_complete → blueprint.status=Active. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 26 | scripts/governance/_archive/vms_ri/ri_boundary_check.py | Runtime Integration 边界验证脚本 — MOD-INF-002 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 27 | scripts/governance/_archive/vms_ri/ri_build_completion_ch... | Runtime Integration Phase 2 完工验证 — MOD-INF-002 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 28 | scripts/governance/_archive/vms_ri/vms_blindspot_check.py | VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R2(22) + R4(6) | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 29 | scripts/governance/_archive/vms_ri/vms_build_completion_c... | VMS Build Completion Check — MOD-INF-011 · TASK-INF-0217 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 30 | scripts/governance/_archive/vms_ri/vms_cron_monitor.py | VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 31 | scripts/governance/_archive/vms_ri/vms_cross_file_check.py | VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 32 | scripts/governance/_archive/vms_ri/vms_health_check.py | VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 33 | scripts/governance/_archive/vms_ri/vms_migrate.py | VMS Phase 2 数据迁移脚本 — MOD-INF-011 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 34 | scripts/governance/_archive/vms_ri/vms_migration_dry_run.py | VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 35 | scripts/governance/_archive/vms_ri/vms_phase_rollback.py | VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 36 | scripts/governance/_archive/vms_ri/vms_version_sync_check.py | VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0222 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 37 | scripts/governance/_shared/base.py | base.py — 审计脚本基类 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 38 | scripts/governance/_shared/constants.py | constants.py — 审计脚本共享常量 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 39 | scripts/governance/_shared/encoding.py | encoding.py — UTF-8 编码安全工具 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 40 | scripts/governance/_shared/file_utils.py | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 41 | scripts/governance/_shared/frontmatter.py | 文件头部格式解析 SSoT（Single Source of Truth） | 生产态 / production |  |
-| 42 | scripts/governance/_shared/libcst_docstring_adder.py | libcst_docstring_adder.py — Lossless docstring addition using LibCST. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 43 | scripts/governance/_shared/module_translation_loader.py | module_translation_loader.py — 模块级翻译共享加载器（SSoT 真源） | 生产态 / production |  |
-| 44 | scripts/governance/_shared/registry_entry_count.py | 登记表主条目计数——与 generate_registry_master_index 单一真源对齐。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 45 | scripts/governance/_shared/terminology_loader.py | terminology_loader.py — 架构文档术语词汇表共享加载器（SSoT 真源） | 生产态 / production |  |
-| 46 | scripts/governance/_shared/thresholds.py | thresholds.py — 阈值集中配置加载器 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 47 | scripts/governance/_shared/walk.py | walk.py — 目录遍历共享工具 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 48 | scripts/governance/_shared/yaml_utils.py | _shared/yaml_utils.py — YAML 文件加载共享工具 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 49 | scripts/governance/_sync/check_p0_status.py | Module docstring — see module-level docstring for details. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 50 | scripts/governance/_sync/cleanup_p0_auto_bridged.py | 清理历史 P0 自动桥接任务 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 51 | scripts/governance/_sync/cleanup_p0_ops_pending.py | cleanup_p0_ops_pending.py - 一次性：将所有 OPS-* P0+PENDING 任务降级+完成 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 52 | scripts/governance/_sync/fix_orphan_deps.py | fix_orphan_deps.py — 一次性修复孤儿依赖引用 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 53 | scripts/governance/_tasks/list_phase0_tasks.py | [INVARIANTS] 仅查询不修改; 连接失败→exit 1 | 生产态 / production |  |
-| 54 | scripts/governance/_tasks/task_show.py | governance/task_show 脚本 — 任务卡详情查询 CLI。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 55 | scripts/governance/_tasks/task_summary.py | task_summary.py — 任务系统全局摘要 CLI | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 56 | scripts/governance/add_deferred_design_edges.py | 为暂缓模块添加设计态依赖边（dep_maturity='design'）。 | 生产态 / production |  |
-| 57 | scripts/governance/apply_dataflowgraph.py | apply_dataflowgraph.py — dataflowgraph 变更写入工具（CLI） | 生产态 / production |  |
-| 58 | scripts/governance/apply_decisiongraph.py | [INVARIANTS] pg_advisory_lock 写锁; build_status 单调推进; DEC-INV-001~005 校... | 生产态 / production |  |
-| 59 | scripts/governance/apply_depgraph.py | [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆盖 | 生产态 / production |  |
-| 60 | scripts/governance/architecture_health_dashboard.py | architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 61 | scripts/governance/ast_import_rewriter.py | AST-based import rewriter for governance directory migration. | 生产态 / production |  |
-| 62 | scripts/governance/audit_return_contract_usage.py | audit_return_contract_usage.py — 返回契约 ok 键调用方审计（P2-5，2026-07-19） | 生产态 / production |  |
-| 63 | scripts/governance/audit_worktree_ops_telemetry.py | audit_worktree_ops_telemetry.py — 主工作区文件级擦除操作遥测完整性审计（P2-6） | 生产态 / production |  |
-| 64 | scripts/governance/check_commit_message.py | check_commit_message.py — GitHub Actions PR commit message guard (P4-3). | 生产态 / production |  |
-| 65 | scripts/governance/check_ssot_gate.py | GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。 | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 66 | scripts/governance/d10_performance/collect_system_threads.py | collect_system_threads.py — 全系统线程数快照采集器 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 67 | scripts/governance/d11_compliance/audit_registration.py | audit_registration.py — 孤儿注册检测（RULE-TWO 防线 2） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 68 | scripts/governance/d11_compliance/ci_self_check.py | CI Entry: Self-Check — Drift Detector 自身完整性验证 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 69 | scripts/governance/d11_compliance/fix_shared_bypass.py | fix_shared_bypass.py - D-D-07 auto-fix tool (validate_script_quality.py --fix... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 70 | scripts/governance/d11_compliance/g9_compliance_check.py | G9 四蓝图跨模块集成合规门禁执行器. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 71 | scripts/governance/d11_compliance/task_self_check.py | task_self_check.py — 任务系统自身健康检查 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 72 | scripts/governance/d11_compliance/validate_commit_gateway.py | validate_commit_gateway.py — GATE-COMMIT-GW 门禁（OPS-2026062513） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 73 | scripts/governance/d11_compliance/validate_commit_message.py | validate_commit_message.py — Conventional Commits 校验（commit-msg hook）+ A... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 74 | scripts/governance/d11_compliance/validate_exit_codes.py | validate_exit_codes.py — 审计脚本退出码规范门禁 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 75 | scripts/governance/d11_compliance/validate_frozen_require... | validate_frozen_requirements.py — 依赖版本锁定与验证（蓝图 §34.2） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 76 | scripts/governance/d11_compliance/validate_manifest_admis... | Module docstring — see module-level docstring for details. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 77 | scripts/governance/d11_compliance/validate_no_utf8_bom.py | validate_no_utf8_bom.py — UTF-8 BOM 检测门禁 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 78 | scripts/governance/d11_compliance/validate_script_naming.py | validate_script_naming.py — 审计脚本命名规范门禁 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 79 | scripts/governance/d11_compliance/validate_script_quality.py | validate_script_quality.py — 治理脚本质量合规检查 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 80 | scripts/governance/d11_compliance/validate_task_decomposi... | validate_task_decomposition_bypass.py — Task Decomposition Bypass 检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 81 | scripts/governance/d11_compliance/validate_vocabulary_cov... | Module docstring — see module-level docstring for details. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 82 | scripts/governance/d11_compliance/verify_audit_integrity.py | verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 83 | scripts/governance/d11_compliance/verify_schema_health.py | verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁（#ARCH... | 生产态 / production |  |
-| 84 | scripts/governance/d12_ai_hallucination/check_logger_kwar... | ======================================================== | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 85 | scripts/governance/d12_ai_hallucination/validate_gate_pro... | validate_gate_prompt_conflict.py — Gate-Prompt 冲突检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 86 | scripts/governance/d12_ai_hallucination/validate_session_... | validate_session_budget.py — Session 操作预算校验（已废弃） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 87 | scripts/governance/d12_ai_hallucination/validate_session_... | validate_session_gate_check.py — Session 门禁检查完整性校验 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 88 | scripts/governance/d1_structure/archive_drafts_zone.py | 草稿区生命周期归档器——扫描 arbitrated 草稿，按 age 判定 warn/archive/skip。 | 生产态 / production |  |
-| 89 | scripts/governance/d1_structure/audit_config_format.py | audit_config_format.py — config/ 目录格式/注释/边界快速扫描 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 90 | scripts/governance/d1_structure/audit_directory_integrity.py | audit_directory_integrity.py — 01_policies_and_standards/ 目录结构完整性审计 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 91 | scripts/governance/d1_structure/audit_directory_scalabili... | audit_directory_scalability.py -- 物理结构可扩展性审计 [1500模块支撑能力检查] | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 92 | scripts/governance/d1_structure/audit_findings_by_scope.py | audit_findings_by_scope.py — 按目录范围筛选 Finding 报告 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 93 | scripts/governance/d1_structure/batch_create_index_md.py | Batch create index.md for all directories under docs/ that lack one. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 94 | scripts/governance/d1_structure/cbg_reset.py | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 95 | scripts/governance/d1_structure/check_directory_contract.py | GATE-DIRECTORY-CONTRACT: Directory Contract validation gate. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 96 | scripts/governance/d1_structure/check_handoff_manifests.py | check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 97 | scripts/governance/d1_structure/check_index_integrity.py | check_index_integrity.py — 索引完整性校验 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 98 | scripts/governance/d1_structure/cleanup_stash.py | cleanup_stash.py — git stash 堆积治理（OPS-2026062501 治本） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 99 | scripts/governance/d1_structure/detect_orphan_py.py | detect_orphan_py.py — 全库孤儿 .py 文件检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 100 | scripts/governance/d1_structure/detect_residual_files.py | detect_residual_files.py — 残留物检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 101 | scripts/governance/d1_structure/detect_temp_files.py | Module docstring — see module-level docstring for details. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 102 | scripts/governance/d1_structure/drafts_zone_archiver.py | 草稿区生命周期归档器 (Drafts Zone Lifecycle Archiver · V-16) | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 103 | scripts/governance/d1_structure/generate_missing_index_md.py | generate_missing_index_md.py — 扫描目录树，为缺失 index.md 的目录自动生成索... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 104 | scripts/governance/d1_structure/reset_cbg.py | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 105 | scripts/governance/d1_structure/run_script_smoke_test.py | run_script_smoke_test.py — 治理脚本冒烟测试运行器 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 106 | scripts/governance/d1_structure/sync_index_from_manifest.py | sync_index_from_manifest.py — 从 script_manifest.yaml (SSoT) 自动同步 index.... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 107 | scripts/governance/d1_structure/sync_policies_index.py | sync_policies_index.py — 从磁盘实际扫描，自动同步 PS-IDX-001 §二 文件数量表格。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 108 | scripts/governance/d1_structure/validate_config_integrity.py | validate_config_integrity.py — 运行时配置完整性十一层纵深审计 + 自动同步检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 109 | scripts/governance/d1_structure/validate_d1_output_sanity.py | validate_d1_output_sanity.py — D1 产出物合理性校验（蓝图 §31 B93） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 110 | scripts/governance/d1_structure/validate_immutable_core.py | validate_immutable_core.py — immutable_core 文件修改检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 111 | scripts/governance/d1_structure/validate_index_reality.py | Module docstring — see module-level docstring for details. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 112 | scripts/governance/d1_structure/validate_read_before_writ... | validate_read_before_write.py — 先读后写校验（IRN-008） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 113 | scripts/governance/d2_links/audit_broken_links.py | 检测文档/数据文件中的断链与幽灵引用。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 114 | scripts/governance/d2_links/detect_relative_references.py | detect_relative_references.py — 相对路径引用检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 115 | scripts/governance/d3_metadata/auto_generate_index.py | GATE-INDEX: Validate and auto-fix index.md factual accuracy. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 116 | scripts/governance/d3_metadata/backfill_doctype_metadata.py | 批量回填 frontmatter doc_type 字段（doc_type 存量治理 Stage 2.1） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 117 | scripts/governance/d3_metadata/backfill_ttl_metadata.py | 批量回填/重判 ttl 字段（6 格式统一入口，GATE-15 存量治理 + GATE-VOCAB-CHANGE ... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 118 | scripts/governance/d3_metadata/check_blueprint_compliance.py | [INVARIANTS] REQUIRED_SECTIONS 必须与蓝图+施工图模板 v2.1.0 COMPLIANCE_CHECKL... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 119 | scripts/governance/d3_metadata/check_frontmatter_metadata.py | GATE-15: Frontmatter metadata validation（ttl + doc_type 字段校验） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 120 | scripts/governance/d3_metadata/check_module_singlesource.py | GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防复发）。 | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 121 | scripts/governance/d3_metadata/check_naming_convention.py | GATE-11 命名规范门禁 — 全类型命名检测。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 122 | scripts/governance/d3_metadata/check_registry_consistency.py | check_registry_consistency — 跨登记表一致性校验。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 123 | scripts/governance/d3_metadata/check_schema_version_write... | G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。 | 生产态 / production |  |
-| 124 | scripts/governance/d3_metadata/check_vocab_hardcode.py | GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 125 | scripts/governance/d3_metadata/classify_ttl_by_content.py | 基于内容关键词的 ttl 精细分类审查脚本。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 126 | scripts/governance/d3_metadata/deep_content_scanner.py | deep_content_scanner.py — 深度内容扫描器 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 127 | scripts/governance/d3_metadata/generate_derived_files.py | generate_derived_files.py — 枚举自动派生生成器（Level 3 终极防御） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 128 | scripts/governance/d3_metadata/generate_rule_catalog.py | Scan docs/01_policies_and_standards and emit _registry/catalogs/rule_catalog_... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 129 | scripts/governance/d3_metadata/migrate_illegal_doctype.py | 批量迁移非法 doc_type 值（doc_type 存量治理 Stage 2.2） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 130 | scripts/governance/d3_metadata/validate_architecture.py | validate_architecture.py - Validate rule files against architecture_contract.... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 131 | scripts/governance/d3_metadata/validate_blueprint_provena... | Blueprint Provenance Gate - V-12: validate provenance triples in blueprint fr... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 132 | scripts/governance/d3_metadata/validate_module_id.py | GATE-MODULEID: Validate module_id uniqueness and index/file consistency. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 133 | scripts/governance/d3_metadata/validate_module_id_naming.py | module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 + R2 治本... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 134 | scripts/governance/d3_metadata/validate_registry_master_i... | 登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18). | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 135 | scripts/governance/d3_metadata/validate_tool_contracts_co... | Tool Contract 一致性校验脚本（MOD-INF-013 §9 R3）。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 136 | scripts/governance/d4_paths/detect_deprecated_path_writes.py | detect_deprecated_path_writes.py — 废弃路径写入检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 137 | scripts/governance/d4_paths/detect_excessive_file_moves.py | detect_excessive_file_moves.py — 文件过度搬迁检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 138 | scripts/governance/d4_paths/detect_ruins_references.py | detect_ruins_references.py — 残骸/废弃路径引用检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 139 | scripts/governance/d4_paths/detect_split_delete_ref_commi... | detect_split_delete_ref_commit.py — 删除引用分离提交检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 140 | scripts/governance/d5_architecture/analyze_change_impact.py | Module docstring — see module-level docstring for details. | 生产态 / production |  |
-| 141 | scripts/governance/d5_architecture/analyzers/analyze_cont... | analyze_contract_impact.py — 契约变更影响分析器 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 142 | scripts/governance/d5_architecture/analyzers/audit_depend... | audit_depends_on_chain_depth.py — depends_on 依赖链路深度审计 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 143 | scripts/governance/d5_architecture/analyzers/measure_depr... | measure_deprecation_cascade.py — 废弃级联影响度量 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 144 | scripts/governance/d5_architecture/audit_agent_spec.py | [INVARIANTS] agent-spec 审计完整性 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 145 | scripts/governance/d5_architecture/check_budget_health.py | [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 146 | scripts/governance/d5_architecture/check_drift_e2e.py | CI Entry: Drift Detector E2E Pipeline Check | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 147 | scripts/governance/d5_architecture/checkers/check_archite... | v2.4.0 — 2026-05-03 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 148 | scripts/governance/d5_architecture/checkers/check_bluepri... | [INVARIANTS] 蓝图§5.5自动化触发机制状态列必须与代码实际实现一致; ⚠️待实现... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 149 | scripts/governance/d5_architecture/checkers/check_bluepri... | [INVARIANTS] 代码[BLUEPRINT]头部module_id必须与蓝图注册表一致; 蓝图§4已实现... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 150 | scripts/governance/d5_architecture/checkers/check_bluepri... | [INVARIANTS] 蓝图模板合规检查不可绕过;52项检查全覆盖 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 151 | scripts/governance/d5_architecture/checkers/check_canonic... | check_canonical_yaml_drift.py — GATE-CANONICAL-YAML-DRIFT | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 152 | scripts/governance/d5_architecture/checkers/check_code_du... | [INVARIANTS] 扫描 src/zephyr/ 下所有包; 检测跨包同名文件代码重复 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 153 | scripts/governance/d5_architecture/checkers/check_contrac... | check_contract_code_drift.py —— 契约-代码双写漂移阻断（盲点 C2 修复） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 154 | scripts/governance/d5_architecture/checkers/check_contrac... | check_contract_physical_path.py — GATE-CONTRACT-PHYSICAL-PATH | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 155 | scripts/governance/d5_architecture/checkers/check_depende... | check_dependency_direction.py — 依赖方向校验（INJ-002/008） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 156 | scripts/governance/d5_architecture/checkers/check_g6_ctr_... | check_g6_ctr_compliance.py - G6 CTR Contract Compliance Gate Engine | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 157 | scripts/governance/d5_architecture/checkers/check_orphan_... | [INVARIANTS] 扫描蓝图 §11 产出物 consumer_min; 检测零消费者孤儿产出物 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 158 | scripts/governance/d5_architecture/checkers/check_precomm... | check_precommit_id_uniqueness.py — GATE-ID-UNIQ | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 159 | scripts/governance/d5_architecture/checkers/check_rule_fo... | check_rule_four_way_alignment.py —— 规则四方对齐门禁（ARCH-020 补建） | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 160 | scripts/governance/d5_architecture/checkers/check_ssot_un... | [INVARIANTS] 扫描所有蓝图 ssot_claims 字段; 检测跨蓝图 SSoT 冲突 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 161 | scripts/governance/d5_architecture/checkers/check_trace_c... | check_trace_context_propagation.py — TraceContext 传播强制执行 CI 检查 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 162 | scripts/governance/d5_architecture/checkers/check_vms_sso... | GATE-VMS-SSOT: VMS 单一真源门禁——三重检测。 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 163 | scripts/governance/d5_architecture/dependency_graph.py | 治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 164 | scripts/governance/d5_architecture/detect_causal_conflict... | Module docstring — see module-level docstring for details. | 生产态 / production |  |
-| 165 | scripts/governance/d5_architecture/detect_constraint_viol... | G9-Detect: 架构约束违规检测器（对照 depgraph 实际数据检测 6 类违规） | 生产态 / production |  |
-| 166 | scripts/governance/d5_architecture/detectors/analyze_same... | analyze_same_name_module_relations.py --- 同名模块语义关系分析 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 167 | scripts/governance/d5_architecture/detectors/detect_depen... | detect_depends_on_cycles.py - depends_on 环检测. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 168 | scripts/governance/d5_architecture/detectors/detect_depre... | detect_deprecated_adr_references.py — 废弃 ADR 引用检测 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 169 | scripts/governance/d5_architecture/detectors/detect_dupli... | detect_duplicate_module_names.py --- 同名模块语义关系分析 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 170 | scripts/governance/d5_architecture/diagnose_depgraph.py | # [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_depgraph.py | §7 | 生产态 / production |  |
-| 171 | scripts/governance/d5_architecture/generators/_common.py | 生成器公共工具（向内收：消除重复）。 | 生产态 / production |  |
-| 172 | scripts/governance/d5_architecture/generators/align_panor... | G-panorama-align: 四图对齐检测器（ARCH-053 + ARCH-056 四图升级） | 生产态 / production |  |
-| 173 | scripts/governance/d5_architecture/generators/generate_as... | G13: 从 depgraph (PostgreSQL) 生成资产清单全景图 | 生产态 / production |  |
-| 174 | scripts/governance/d5_architecture/generators/generate_bl... | G-panorama-gen: 蓝图 §0.6 四图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.... | 生产态 / production |  |
-| 175 | scripts/governance/d5_architecture/generators/generate_co... | Code Wiki 统计数据生成器（半自动维护机制）。 | 生产态 / production |  |
-| 176 | scripts/governance/d5_architecture/generators/generate_co... | G12: 从 depgraph (PostgreSQL) 生成契约目录全景图 | 生产态 / production |  |
-| 177 | scripts/governance/d5_architecture/generators/generate_co... | generate_contracts.py -- SSoT to Codegen pipeline | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 178 | scripts/governance/d5_architecture/generators/generate_da... | G-dataflow: 从 dataflowgraph (PostgreSQL) 生成数据流图 Markdown 文档（内嵌 Me... | 生产态 / production |  |
-| 179 | scripts/governance/d5_architecture/generators/generate_de... | G-decision: 从 decisiongraph (PostgreSQL) 生成决策流图(.md 文档，Mermaid 内嵌) | 生产态 / production |  |
-| 180 | scripts/governance/d5_architecture/generators/generate_pa... | G-panorama-registry: 自动生成全景图清单总表 | 生产态 / production |  |
-| 181 | scripts/governance/d5_architecture/generators/generate_po... | #183: 从 data_sources_registry.yaml 派生 policies.yaml | 生产态 / production |  |
-| 182 | scripts/governance/d5_architecture/generators/generate_tr... | G-trading-flow: 从 decisiongraph + 叙事YAML + 候选库 生成交易决策架构视图(.md) | 生产态 / production |  |
-| 183 | scripts/governance/d5_architecture/panorama_common.py | panorama_common.py — 四图投票共享工具（ARCH-056 引擎加固） | 生产态 / production |  |
-| 184 | scripts/governance/d5_architecture/pre_delete_safety_chec... | 安全删除门禁脚本——RULE-THREE 强制执行器。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 185 | scripts/governance/d5_architecture/pre_write_gate.py | AI写入前强制门禁钩子: lock协议检查+GateEngine Phase评估+注册完整性验证 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 186 | scripts/governance/d5_architecture/syncers/archive_ration... | 对标 HDEBT-01：rationale-log.md 体积 >150KB / 行数 >300 时， | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 187 | scripts/governance/d5_architecture/syncers/blueprint_fron... | blueprint_frontmatter_reconciler.py — 蓝图 frontmatter 核心字段对齐（ARCH-05... | 生产态 / production |  |
-| 188 | scripts/governance/d5_architecture/syncers/merge_readme_t... | Strategy: | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 189 | scripts/governance/d5_architecture/syncers/sync_blueprint... | 对标：AGENTS.md §6.1 蓝图-代码同步强制约定 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 190 | scripts/governance/d5_architecture/syncers/sync_registry_... | sync_registry_from_blueprints.py -- 从 blueprint.md frontmatter 同步 blueprin... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 191 | scripts/governance/d5_architecture/validators/blueprint/v... | AGENTS.md §6.1 蓝图-代码同步强制约定的 CI 门禁脚本。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 192 | scripts/governance/d5_architecture/validators/blueprint/v... | AGENTS.md 6.4 铁律五 + 铁律六：蓝图中声称的文件路径必须在磁盘上真实存在。 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 193 | scripts/governance/d5_architecture/validators/blueprint/v... | Module docstring — see module-level docstring for details. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 194 | scripts/governance/d5_architecture/validators/blueprint/v... | 蓝图物理位置与归属链完整性校验器 (Blueprint Placement & BelongsTo Validator) | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 195 | scripts/governance/d5_architecture/validators/blueprint/v... | GATE-TAG-UNIQUE - Blueprint tag uniqueness validation gate. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 196 | scripts/governance/d5_architecture/validators/lifecycle/v... | validate_lifecycle_refs.py — 生命周期引用约束合规检查 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 197 | scripts/governance/d5_architecture/validators/lifecycle/v... | validate_module_lifecycle.py — 模块生命周期校验 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 198 | scripts/governance/d5_architecture/validators/session/val... | Module docstring — see module-level docstring for details. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 199 | scripts/governance/d5_architecture/validators/session/val... | validate_session_log_updated.py — Session Log 更新状态校验 | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 200 | scripts/governance/d5_architecture/validators/validate_ad... | validate_adr_frontmatter_consistency.py — ADR frontmatter 一致性闸门（GATE-A... | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-
-> (仅显示前 200 个模块，共 381 个)
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -3152,12 +2827,12 @@ flowchart TD
 | 61 | Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | 导入依赖 / import_depends |
 | 62 | Session 冷启动自检 — 运行 Phase 0 全部 14 个检查并输出状... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Phase Manager — ZephyrAlpha 施工阶段门控引擎. (ops_gover... | 导入依赖 / import_depends |
 | 63 | [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析 ... | → | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
-| 64 | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) ... | → | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
-| 65 | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) ... | → | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
-| 66 | create_task_from_finding.py — Finding → 任务卡自动创建... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 67 | Gate Engine Bootstrap Self-Check — Quis custodiet ipsos ... | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 68 | validate_gate_engine_external.py — Gate Engine 外部完整... | → | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
-| 69 | validate_gate_engine_external.py — Gate Engine 外部完整... | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 64 | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) ... | → | D_GOV_RULE 规则治理: CircuitBreakerGateway (CBG) — 模块间调用单向熔断器 (rule... | 导入依赖 / import_depends |
+| 65 | CBG 熔断器重置 CLI (CircuitBreakerGateway Reset Command) ... | → | D_GOV_RULE 规则治理: CircuitBreakerGateway (CBG) — 模块间调用单向熔断器 (rule... | 导入依赖 / import_depends |
+| 66 | create_task_from_finding.py — Finding → 任务卡自动创建... | → | D_GOV_RULE 规则治理: 任务类型定义——Task model 是任务卡字段的 SSoT（SQLite ta... | 导入依赖 / import_depends |
+| 67 | Gate Engine Bootstrap Self-Check — Quis custodiet ipsos ... | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | 导入依赖 / import_depends |
+| 68 | validate_gate_engine_external.py — Gate Engine 外部完整... | → | D_GOV_RULE 规则治理: CircuitBreakerGateway (CBG) — 模块间调用单向熔断器 (rule... | 导入依赖 / import_depends |
+| 69 | validate_gate_engine_external.py — Gate Engine 外部完整... | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | 导入依赖 / import_depends |
 | 70 | session_simulator — 30 个模拟开发 session 的蓝图读取事件... | → | D_INFRA_RUNTIME 运行时集成: blueprint_metrics — 蓝图使用追踪 instrumentation (metric... | 导入依赖 / import_depends |
 | 71 | base.py — 审计脚本基类 (_shared/base.py) | → | D_INFRA_RUNTIME 运行时集成: Finding Schema — 审计发现标准化数据模型 (script_system/f... | 导入依赖 / import_depends |
 | 72 | check_registry_consistency — 跨登记表一致性校验。 (d3_me... | → | D_INFRA_RUNTIME 运行时集成: Finding Schema — 审计发现标准化数据模型 (script_system/f... | 导入依赖 / import_depends |
@@ -3287,10 +2962,10 @@ flowchart TD
 | 64 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
 | 65 | D_GOV_ENFORCEMENT 规则执行: metric_count_drift_reconciler.py — dashboard 指标数描述... | → | architecture_health_dashboard.py — 架构健康度仪表盘（自... | 导入依赖 / import_depends |
 | 66 | D_GOV_ENFORCEMENT 规则执行: session_worktree_cli.py — session worktree 管理 CLI（治... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 67 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 68 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
-| 69 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
-| 70 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
+| 67 | D_GOV_RULE 规则治理: generate_script_manifest.py — 脚本清单自动生成器 (genera... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 68 | D_GOV_RULE 规则治理: generate_script_manifest.py — 脚本清单自动生成器 (genera... | → | encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
+| 69 | D_GOV_RULE 规则治理: generate_script_manifest.py — 脚本清单自动生成器 (genera... | → | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
+| 70 | D_GOV_RULE 规则治理: generate_script_manifest.py — 脚本清单自动生成器 (genera... | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
 | 71 | D_OPS 反馈循环: Module docstring — see module-level docstring for detail... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 72 | D_OPS 反馈循环: Module docstring — see module-level docstring for detail... | → | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
 

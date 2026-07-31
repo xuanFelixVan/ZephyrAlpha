@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 运维弹性治理，负责运维治理、安全治理、弹性治理和升级协议
 
-> **文档作用 / Purpose**: 展示 运维弹性治理（D_GOV_OPS_RESILIENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 运维弹性治理（D_GOV_OPS_RESILIENCE）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,106 +35,6 @@ ttl: permanent
 | 生产态模块 | 91 | Production Modules | 91 |
 | 容量 | 91/150 (正常) | Capacity | 91/150 (正常) |
 | 描述 | 运维治理(ops_governance) | Description | 运维治理(ops_governance) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 91 个模块 / 91 modules）。
-
-### L1 基础层 / Foundation Layer (91 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/governance/budget-enforcer/__init__.py | budget-enforcer/__init__.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 2 | src/zephyr/governance/escalation/alternative_path_blocker.py | Alternative Path Blocker — v0.13.0 替代工具路径拦截器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 3 | src/zephyr/governance/escalation/consequence_manager.py | escalation/consequence_manager.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 4 | src/zephyr/governance/escalation/contracts.py | G-CT-003 消费端 — Escalation.on_rollback_failure() + G-CT-004/G-CT-006/G-CT-... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 5 | src/zephyr/governance/escalation/escalation_api.py | Escalation API — v0.7.0 Service Account API: 外部系统安全触发升级，不绕过引擎。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 6 | src/zephyr/governance/escalation/escalation_engine.py | Escalation Engine — MOD-INF-022 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 7 | src/zephyr/governance/escalation/escalation_fatigue_manag... | Escalation Fatigue Manager — v0.11.0 升级疲劳管理器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 8 | src/zephyr/governance/escalation/escalation_loop_detector.py | Escalation Loop Detector — v0.10.0 跨模块升级循环: escalate->block->auto_gua... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 9 | src/zephyr/governance/escalation/escalation_metrics.py | Escalation Metrics — D-022-07 指标收集器: 升级率/误升级率/响应延迟。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 10 | src/zephyr/governance/escalation/escalation_models.py | Escalation Protocol data models — MOD-INF-022 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 11 | src/zephyr/governance/escalation/escalation_smoke_tests.py | Escalation Smoke Tests — v0.11.0 升级协议烟雾测试。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 12 | src/zephyr/governance/escalation/git_hook_pre_scanner.py | Git Hook Pre-Scanner — v0.14.0 Git操作Hook预扫描器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 13 | src/zephyr/governance/escalation/human_factors.py | Human Factors — v0.7.0 人因工程: 通知疲劳管理+上下文简洁性+多通道notifications。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 14 | src/zephyr/governance/escalation/identity_verifier.py | Identity Verifier — D-022-12 Agent身份验证器: session_id+role+capability三元... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 15 | src/zephyr/governance/escalation/incident_response.py | escalation/incident_response.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 16 | src/zephyr/governance/escalation/owner_absent.py | Owner Absent — 人力缺席分级处置。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 17 | src/zephyr/governance/escalation/result_types.py | G-CT-003 — RollbackResult backward-compat re-export facade. | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 18 | src/zephyr/governance/escalation/spof_checker.py | escalation/spof_checker.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 19 | src/zephyr/governance/escalation/triage.py | G2 Triage 门禁 — 知识分类评分（T-2-13-B） | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 20 | src/zephyr/governance/ops_governance/agent_dispatch.py | ops_governance/agent_dispatch.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 21 | src/zephyr/governance/ops_governance/auto_runner.py | GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器. | 生产态 / production | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 22 | src/zephyr/governance/ops_governance/bandwidth_optimizer.py | ops_governance/bandwidth_optimizer.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 23 | src/zephyr/governance/ops_governance/burn_rate_monitor.py | Burn Rate Monitor — MOD-INF-024 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 24 | src/zephyr/governance/ops_governance/clock_guard.py | Clock Guard — v0.8.0 时钟完整性防御: NTP漂移检测+wall clock monotonic验证。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 25 | src/zephyr/governance/ops_governance/coldstart_manager.py | Coldstart Manager — v0.7.0 冷启动管理器: escalation rules加载+引擎初始化+健... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 26 | src/zephyr/governance/ops_governance/cost_attributor.py | ops_governance/cost_attributor.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 27 | src/zephyr/governance/ops_governance/cost_router.py | ops_governance/cost_router.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 28 | src/zephyr/governance/ops_governance/daily_ops.py | ops_governance/daily_ops.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 29 | src/zephyr/governance/ops_governance/decision_fatigue.py | ops_governance/decision_fatigue.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 30 | src/zephyr/governance/ops_governance/degradation_manager.py | ops_governance/degradation_manager.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 31 | src/zephyr/governance/ops_governance/environment_manager.py | ops_governance/environment_manager.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 32 | src/zephyr/governance/ops_governance/error_budget_burst_l... | Error Budget Burst Limiter — v0.11.0 错误预算Burst限流器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 33 | src/zephyr/governance/ops_governance/event_hook.py | EventHook — 声明式任务系统事件订阅 | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 34 | src/zephyr/governance/ops_governance/interrupt_handler.py | Interrupt Handler — D-022-06 硬中断处理器: Owner紧急中断+优雅停止+状态保存。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 35 | src/zephyr/governance/ops_governance/maintenance_window_a... | Maintenance Window Adapter — v0.10.0 计划维护窗口适配器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 36 | src/zephyr/governance/ops_governance/ops_foundation.py | ops_governance/ops_foundation.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 37 | src/zephyr/governance/ops_governance/parent_child_attribu... | ops_governance/parent_child_attributor.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 38 | src/zephyr/governance/ops_governance/phase_check_registry.py | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射. | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 39 | src/zephyr/governance/ops_governance/phase_manager.py | Phase Manager — ZephyrAlpha 施工阶段门控引擎. | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 40 | src/zephyr/governance/ops_governance/roi_calculator.py | ops_governance/roi_calculator.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 41 | src/zephyr/governance/ops_governance/self_budget_tracker.py | ops_governance/self_budget_tracker.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 42 | src/zephyr/governance/ops_governance/service_registration.py | D-DATA -> ServiceRegistry 注册模块 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 43 | src/zephyr/governance/ops_governance/startup_shutdown.py | ops_governance/startup_shutdown.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 44 | src/zephyr/governance/ops_governance/startup_shutdown_cli.py | ops_governance/startup_shutdown_cli.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 45 | src/zephyr/governance/ops_governance/stream_abort_guard.py | StreamAbortGuard — 流式中断守卫 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 46 | src/zephyr/governance/ops_governance/tco_model.py | ops_governance/tco_model.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 47 | src/zephyr/governance/ops_governance/time_sync.py | ops_governance/time_sync.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 48 | src/zephyr/governance/ops_governance/timeout_guard.py | ops_governance/timeout_guard.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 49 | src/zephyr/governance/resilience_governance/__init__.py | resilience_governance/__init__.py | 生产态 / production |  |
-| 50 | src/zephyr/governance/resilience_governance/account_isola... | Account Isolator — v0.10.0 多账户升级隔离器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 51 | src/zephyr/governance/resilience_governance/blast_radius.py | blast_radius — MOD-INF-028 §3.1 Stage 9 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 52 | src/zephyr/governance/resilience_governance/broker_resili... | resilience_governance/broker_resilience.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 53 | src/zephyr/governance/resilience_governance/bus_factor_de... | resilience_governance/bus_factor_defense.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 54 | src/zephyr/governance/resilience_governance/circuit_break... | Circuit Breaker — MOD-INF-022 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 55 | src/zephyr/governance/resilience_governance/deadlock_dete... | Deadlock Detector — D-022-04 多Agent死锁+循环依赖检测+超时破解。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 56 | src/zephyr/governance/resilience_governance/decision_fati... | resilience_governance/decision_fatigue.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 57 | src/zephyr/governance/resilience_governance/decision_fati... | resilience_governance/decision_fatigue_cli.py | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 58 | src/zephyr/governance/resilience_governance/engine_sandbo... | EngineSandbox — D-022-08 OS-level sandboxing for the escalation engine. | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 59 | src/zephyr/governance/resilience_governance/f5_boot_integ... | F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §2). | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 60 | src/zephyr/governance/resilience_governance/f5_event_subs... | F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3). | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 61 | src/zephyr/governance/resilience_governance/f5_shutdown_m... | F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD-INF-022 §2). | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 62 | src/zephyr/governance/resilience_governance/fail_mode_man... | resilience_governance/fail_mode_manager.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 63 | src/zephyr/governance/resilience_governance/fault_toleran... | resilience_governance/fault_tolerance.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 64 | src/zephyr/governance/resilience_governance/last_resort_w... | Last Resort Watchdog — v0.8.0 终极逃生舱: 所有escalation失败后的final fallba... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 65 | src/zephyr/governance/resilience_governance/offline_auton... | resilience_governance/offline_autonomy.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 66 | src/zephyr/governance/resilience_governance/offline_resil... | resilience_governance/offline_resilience.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 67 | src/zephyr/governance/resilience_governance/policy_sandbo... | resilience_governance/policy_sandbox.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 68 | src/zephyr/governance/resilience_governance/process_isola... | Process Isolator — v0.6.0 进程隔离器: engine运行在独立进程+资源限制+crash恢复。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 69 | src/zephyr/governance/resilience_governance/witness_isola... | Witness Isolation — v0.8.0 Witness隔离: N版本decision验证+投票机制+majority... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 70 | src/zephyr/governance/security_governance/__init__.py | security_governance/__init__.py | 生产态 / production |  |
-| 71 | src/zephyr/governance/security_governance/adversarial_tes... | security_governance/adversarial_tester.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 72 | src/zephyr/governance/security_governance/anti_automation... | Anti-Automation Bias — D-022-09 mandatory human oversight enforcement. | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 73 | src/zephyr/governance/security_governance/api_response_sa... | API Response Sanitizer — v0.9.0 API响应清洗器: 外部API返回内容清洗+injection... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 74 | src/zephyr/governance/security_governance/bare_repo_scann... | Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 75 | src/zephyr/governance/security_governance/compositional_s... | Compositional Safety Tester — v0.14.0 组合性不安全测试器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 76 | src/zephyr/governance/security_governance/config_scanner.py | Config Scanner — v0.9.0 AI配置文件注入扫描器: 检测AI修改的配置+注入攻击。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 77 | src/zephyr/governance/security_governance/credential_guar... | Credential Guard — v0.7.0 密钥泄露防护: env检测+git log扫描+运行时脱敏。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 78 | src/zephyr/governance/security_governance/default_securit... | DefaultSecurityGateway — SecurityGateway 三层防御 OCP-004 实现 | 生产态 / production | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 79 | src/zephyr/governance/security_governance/ghost_scan.py | Ghost Scan — v0.8.0 幽灵进程检测: lingering process扫描+资源泄漏检测。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 80 | src/zephyr/governance/security_governance/github_api_guar... | GitHub API Guard — v0.9.0 Comment and Control防御: PR评论命令注入检测+限制。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 81 | src/zephyr/governance/security_governance/hooks_integrity... | Hooks Integrity Guard — v0.11.0 Hooks自编辑防护器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 82 | src/zephyr/governance/security_governance/ipi_defense.py | security_governance/ipi_defense.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 83 | src/zephyr/governance/security_governance/memory_poison_g... | Memory Poison Guard — v0.9.0 记忆投毒防护: Memory写入内容审计+恶意注入检测。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 84 | src/zephyr/governance/security_governance/persuasion_dete... | Persuasion Detector — D-022-09 心理说服检测: 对抗语气+恳求+绕过指令。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 85 | src/zephyr/governance/security_governance/poison_cascade_... | security_governance/poison_cascade_detector.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 86 | src/zephyr/governance/security_governance/sbom_guard.py | SBOM Guard — v0.8.0 SBOM供应链防护: 依赖版本锁定+脆弱性扫描+cve告警。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 87 | src/zephyr/governance/security_governance/security_config... | Security Config Scanner — v0.13.0 缺失安全配置扫描器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 88 | src/zephyr/governance/security_governance/security_gatewa... | D_COMPLIANCE — Governance & Compliance Layer | 生产态 / production | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-| 89 | src/zephyr/governance/security_governance/tamper_evident_... | security_governance/tamper_evident_log.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 90 | src/zephyr/governance/security_governance/vibe_security_v... | Vibe Security Verifier — v0.9.0 Vibe Coding安全验证器: AI生成代码安全基线检查。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 91 | src/zephyr/governance/security_governance/vibe_verify_int... | VibeVerify Integration — v0.9.0 VibeVerify集成器: auto_guard级别+增量修复+co... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -772,8 +672,8 @@ flowchart TD
 | 14 | blast_radius — MOD-INF-028 §3.1 Stage 9 (resilience_gov... | → | D_GOV_AUDIT 审计追踪: 语义审计管线数据模型 — MOD-INF-028 §4.2 (semantic_audit... | 导入依赖 / import_depends |
 | 15 | security_governance/tamper_evident_log.py | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
 | 16 | D_COMPLIANCE — Governance & Compliance Layer (security_g... | → | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 zephyr.shar... | 导入依赖 / import_depends |
-| 17 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (escalation/tr... | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 18 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (escalation/tr... | → | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 17 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (escalation/tr... | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | 导入依赖 / import_depends |
+| 18 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (escalation/tr... | → | D_GOV_RULE 规则治理: 门禁类型定义——GateType 枚举与 gate 相关 dataclass（Gate... | 导入依赖 / import_depends |
 | 19 | F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §... | → | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | 导入依赖 / import_depends |
 | 20 | F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3). (... | → | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | 导入依赖 / import_depends |
 | 21 | resilience_governance/offline_autonomy.py | → | D_INFRA_A2A A2A通信: a2a_protocol/offline_autonomy.py | 导入依赖 / import_depends |

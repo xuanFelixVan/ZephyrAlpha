@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 架构文档治理，负责架构文档生成、一致性和版本管理
 
-> **文档作用 / Purpose**: 展示 架构文档治理（D_GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 架构文档治理（D_GOV_DOCS）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,44 +35,6 @@ ttl: permanent
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | 架构模型文档(architecture_model) | Description | 架构模型文档(architecture_model) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 24 个模块 / 24 modules）。
-
-### L1 基础层 / Foundation Layer (22 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | auto_fix_engine/blueprint.md | 设计态 / design | [MOD-INF-031](../../03_modules/_cross_layer/auto_fix_engine/blueprint.md) |
-| 2 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | auto_runtime_core/blueprint.md | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 3 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | behavioral_auditor/blueprint.md | 设计态 / design | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 4 | docs/03_modules/_cross_layer/context_engine/blueprint.md | context_engine/blueprint.md | 设计态 / design | [MOD-CONTEXT_ENGINE](../../03_modules/_cross_layer/context_engine/blueprint.md) |
-| 5 | docs/03_modules/_cross_layer/database/blueprint.md | database/blueprint.md | 设计态 / design | [SH-DB-001](../../03_modules/_cross_layer/database/blueprint.md) |
-| 6 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | feedback_loop/blueprint.md | 设计态 / design | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 7 | docs/03_modules/_cross_layer/gate_engine/blueprint.md | gate_engine/blueprint.md | 设计态 / design | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 8 | docs/03_modules/_cross_layer/model_capability_exam/bluepr... | model_capability_exam/blueprint.md | 设计态 / design | [MOD-INF-036](../../03_modules/_cross_layer/model_capability_exam/blueprint.md) |
-| 9 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | orphan_judge/blueprint.md | 设计态 / design | [MOD-INF-029](../../03_modules/_cross_layer/orphan_judge/blueprint.md) |
-| 10 | docs/03_modules/_cross_layer/pipeline/blueprint.md | pipeline/blueprint.md | 设计态 / design | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 11 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | red_blue_validator/blueprint.md | 设计态 / design | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
-| 12 | docs/03_modules/_cross_layer/resource_optimization_engine... | resource_optimization_engine/blueprint.md | 设计态 / design | [MOD-RESOURCE_OPTIMIZATION_ENGINE](../../03_modules/_cross_layer/resource_optimization_engine/blueprint.md) |
-| 13 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | semantic_auditor/blueprint.md | 设计态 / design | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 14 | docs/03_modules/_cross_layer/shared_core/blueprint.md | shared_core/blueprint.md | 设计态 / design | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 15 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprin... | agent_spec/blueprint.md | 设计态 / design | [MOD-INF-019](../../03_modules/_domain_autonomy_core/agent_spec/blueprint.md) |
-| 16 | docs/03_modules/_domain_autonomy_core/rollback_system/blu... | rollback_system/blueprint.md | 设计态 / design | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 17 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blu... | budget_enforcer/blueprint.md | 设计态 / design | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 18 | docs/03_modules/_domain_autonomy_perm/escalation_protocol... | escalation_protocol/blueprint.md | 设计态 / design | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 19 | docs/03_modules/_domain_governance/blueprint.md | _domain_governance/blueprint.md | 设计态 / design | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 20 | docs/03_modules/_domain_governance/code_dedup_engine/blue... | code_dedup_engine/blueprint.md | 设计态 / design | [MOD-INF-017](../../03_modules/_domain_governance/code_dedup_engine/blueprint.md) |
-| 21 | docs/03_modules/_domain_governance/governance_automation/... | governance_automation/blueprint.md | 设计态 / design | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 22 | docs/03_modules/_domain_governance/registry_governance/bl... | registry_governance/blueprint.md | 设计态 / design | [MOD-INF-037](../../03_modules/_domain_governance/registry_governance/blueprint.md) |
-
-### L2 领域层 / Domain Layer (2 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | tests/governance/d8_doc_sync/test_guc_trigger_fix.py | test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smoke test（... | 生产态 / production |  |
-| 2 | tests/governance/d8_doc_sync/test_sync_savepoint_isolatio... | test_sync_savepoint_isolation.py — sync_all() 级联失败隔离验证（... | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

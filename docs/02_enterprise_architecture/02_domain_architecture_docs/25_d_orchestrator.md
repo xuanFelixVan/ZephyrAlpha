@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 代理编排器，负责 Agent 任务全生命周期：任务入队、调度、沙箱执行、幻觉检测和收尾归档
 
-> **文档作用 / Purpose**: 展示 代理编排器（D_ORCHESTRATOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 代理编排器（D_ORCHESTRATOR）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,85 +35,6 @@ ttl: permanent
 | 生产态模块 | 70 | Production Modules | 70 |
 | 容量 | 70/150 (正常) | Capacity | 70/150 (正常) |
 | 描述 | Agent全生命周期编排 | Description | Agent全生命周期编排 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 70 个模块 / 70 modules）。
-
-### L1 基础层 / Foundation Layer (70 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/orchestrator/__init__.py | orchestrator/__init__.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 2 | src/zephyr/orchestrator/agent_health_monitor.py | AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 3 | src/zephyr/orchestrator/agent_orchestrator.py | AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康监控 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 4 | src/zephyr/orchestrator/contracts/__init__.py | contracts — orchestrator contracts subpackage. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 5 | src/zephyr/orchestrator/contracts/alert_handler.py | Orc 告警接收器 — handle_alert() 消费者 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 6 | src/zephyr/orchestrator/contracts/construction_guide.py | 施工指南引擎（Construction Guide） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 7 | src/zephyr/orchestrator/contracts/contract_registry.py | 集成契约注册表（Contract Registry） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 8 | src/zephyr/orchestrator/contracts/contract_router.py | 契约路由（Contract Router） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 9 | src/zephyr/orchestrator/contracts/design_decisions.py | contracts/design_decisions.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 10 | src/zephyr/orchestrator/contracts/finding_bridge.py | CT-ORC-SCRIPT-001 运行时桥接 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 11 | src/zephyr/orchestrator/contracts/prompt_version.py | AI Prompt 版本控制（CT-PROMPT-VERSION）——prompt template版本化+部署前diff。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 12 | src/zephyr/orchestrator/core/__init__.py | orchestrator.core — auto-generated package init. | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 13 | src/zephyr/orchestrator/core/task_queue.py | ActiveTaskQueue — 后台任务轮询与自动分发 | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 14 | src/zephyr/orchestrator/deferred_queue.py | DeferredQueue: WAITING -> READY task scheduler. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 15 | src/zephyr/orchestrator/execution/__init__.py | execution — orchestrator execution subpackage. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 16 | src/zephyr/orchestrator/execution/batch_orchestrator.py | BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 17 | src/zephyr/orchestrator/execution/context_bridge.py | Orc->CE 上下文桥接 — request_context() 生产者 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 18 | src/zephyr/orchestrator/execution/data_lifecycle.py | execution/data_lifecycle.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 19 | src/zephyr/orchestrator/execution/dispatch_table.py | AI Agent 冷启动分派表（Dispatch Table） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 20 | src/zephyr/orchestrator/execution/dlq_manager.py | DLQ 管理器（Dead Letter Queue Manager — CT-DLQ-001） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 21 | src/zephyr/orchestrator/execution/memory_writer.py | Orc->VMS 记忆写入器 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 22 | src/zephyr/orchestrator/execution/phase_executor.py | Phase 执行引擎（Phase Executor） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 23 | src/zephyr/orchestrator/execution/reconciliation_loop.py | execution/reconciliation_loop.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 24 | src/zephyr/orchestrator/execution/script_runner.py | Orc->Script 脚本执行器 — run_audit() 生产者 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 25 | src/zephyr/orchestrator/execution/task_context_builder.py | CE 任务上下文构建器 — build_from_task() 消费者 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 26 | src/zephyr/orchestrator/execution/trigger_router.py | TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 27 | src/zephyr/orchestrator/execution/wave_generator.py | WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 28 | src/zephyr/orchestrator/fault_tolerance/__init__.py | fault_tolerance — orchestrator fault_tolerance subpackage. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 29 | src/zephyr/orchestrator/fault_tolerance/bulkhead_manager.py | fault_tolerance/bulkhead_manager.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 30 | src/zephyr/orchestrator/fault_tolerance/canary_manager.py | 金丝雀发布管理器（CT-CANARY）——权重分流+指标对比+自动回滚。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 31 | src/zephyr/orchestrator/fault_tolerance/chaos_engine.py | Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×月度执行。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 32 | src/zephyr/orchestrator/fault_tolerance/chaos_hooks.py | ChaosHook — integrates ChaosEngine with the orchestrator execution loop. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 33 | src/zephyr/orchestrator/fault_tolerance/degrade_cascade.py | fault_tolerance/degrade_cascade.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 34 | src/zephyr/orchestrator/fault_tolerance/disk_guard.py | fault_tolerance/disk_guard.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 35 | src/zephyr/orchestrator/fault_tolerance/fault_types.py | Fault type registry and preset templates for chaos engineering. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 36 | src/zephyr/orchestrator/fault_tolerance/network_partition.py | 网络分区容忍（CT-NETWORK-PARTITION）——CAP定理CP优先+脑裂检测+quorum write。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 37 | src/zephyr/orchestrator/file_task_mapper.py | FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重写） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 38 | src/zephyr/orchestrator/governance/__init__.py | governance — orchestrator governance subpackage. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 39 | src/zephyr/orchestrator/governance/autonomy_guard.py | Owner 缺位分级自治（CT-AUTONOMY）——Owner离线->自动降级->最小安全运行。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 40 | src/zephyr/orchestrator/governance/capacity_budget.py | 全局容量预算控制器（Capacity Budget Controller） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 41 | src/zephyr/orchestrator/governance/dependency_lock.py | 外部依赖版本锁（CT-DEPS）——Python包版本锁定+hash验证+安全审计。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 42 | src/zephyr/orchestrator/governance/model_registry.py | governance/model_registry.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 43 | src/zephyr/orchestrator/governance/path_index.py | governance/path_index.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 44 | src/zephyr/orchestrator/governance/risk_registry.py | governance/risk_registry.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 45 | src/zephyr/orchestrator/governance/schema_migration.py | 数据库 Schema 演化契约（CT-SCHEMA-MIGRATE）——向后兼容迁移+回滚脚本。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 46 | src/zephyr/orchestrator/governance/version_manifest.py | governance/version_manifest.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 47 | src/zephyr/orchestrator/hallucination_detector.py | HallucinationDetector · Chain-of-Verification（CoVe）幻觉检测器 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 48 | src/zephyr/orchestrator/lifecycle/__init__.py | lifecycle — orchestrator lifecycle subpackage. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 49 | src/zephyr/orchestrator/lifecycle/housekeeping.py | 文件卫生保洁管理器（CT-HOUSEKEEPING）——临时文件扫描+日志轮转+废弃目录清理。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 50 | src/zephyr/orchestrator/lifecycle/incident_postmortem.py | 事件复盘管理器（CT-INCIDENT）——incident记录+timeline+action_items+postmortem。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 51 | src/zephyr/orchestrator/lifecycle/rolling_upgrade.py | 零停机滚动升级（CT-DEPLOY）——graceful shutdown+流量摘除+health check wait。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 52 | src/zephyr/orchestrator/lifecycle/session_conflict.py | Session 冲突预防契约（CT-SESSION-CONFLICT）——文件锁+并发session检测+冲突res... | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 53 | src/zephyr/orchestrator/lifecycle/startup_sequencer.py | lifecycle/startup_sequencer.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 54 | src/zephyr/orchestrator/lifecycle/state_propagation.py | 全局状态传播链（State Propagation Chain） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 55 | src/zephyr/orchestrator/lifecycle/state_synchronizer.py | StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（T-2-04） | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 56 | src/zephyr/orchestrator/lifecycle/system_transfer.py | 系统移交恢复（CT-TRANSFER）——系统Owner变更+配置迁移+密钥轮转+健康验证。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 57 | src/zephyr/orchestrator/lifecycle/teardown_manager.py | lifecycle/teardown_manager.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 58 | src/zephyr/orchestrator/quality/__init__.py | quality — orchestrator quality subpackage. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 59 | src/zephyr/orchestrator/quality/agent_quality.py | AI Agent 质量反馈闭环（CT-AGENT-QUALITY）——task完成质量评分+agent绩效追踪。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 60 | src/zephyr/orchestrator/quality/benchmark_runner.py | quality/benchmark_runner.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 61 | src/zephyr/orchestrator/quality/blind_spot_closure.py | quality/blind_spot_closure.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 62 | src/zephyr/orchestrator/quality/blueprint_scorer.py | BlueprintScorer — 蓝图路由统一打分逻辑 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 63 | src/zephyr/orchestrator/quality/ke_quality.py | 知识质量评分契约（CT-KE-QUALITY）——KE完整性+准确性+时效性三维评分。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 64 | src/zephyr/orchestrator/quality/knowledge_freshness.py | 知识新鲜度废止管理器（CT-KNOWLEDGE-FRESHNESS）——KE过期标记+自动失效。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 65 | src/zephyr/orchestrator/quality/lean_scanner.py | 死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三款扫描器+自动化清理建议。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 66 | src/zephyr/orchestrator/quality/stability_guard.py | API 稳定性守护（CT-STABILITY）——public API签名锁+breaking change检测。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 67 | src/zephyr/orchestrator/resilience/__init__.py | orchestrator.resilience — auto-generated package init. | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 68 | src/zephyr/orchestrator/resilience/failure_matcher.py | FailurePatternMatcher — 任务失败模式识别与纠正建议 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 69 | src/zephyr/orchestrator/rollback_manager.py | RollbackManager — 仅调试用途的 DB-state 快照，不用于自动回滚。 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 70 | src/zephyr/orchestrator/task_queue.py | ActiveTaskQueue — 后台任务轮询与自动分发 | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

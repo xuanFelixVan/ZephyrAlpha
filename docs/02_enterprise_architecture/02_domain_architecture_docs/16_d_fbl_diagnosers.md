@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 反馈诊断器，负责异常根因诊断、模型健康监控、可靠性诊断和上下文窗口压力管理
 
-> **文档作用 / Purpose**: 展示 反馈诊断器（D_FBL_DIAGNOSERS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 反馈诊断器（D_FBL_DIAGNOSERS）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,91 +35,6 @@ ttl: permanent
 | 生产态模块 | 76 | Production Modules | 76 |
 | 容量 | 76/150 (正常) | Capacity | 76/150 (正常) |
 | 描述 | 反馈诊断器，负责异常根因诊断、模型健康监控、可靠性诊断和上下文窗口压力管理 | Description | 反馈诊断器，负责异常根因诊断、模型健康监控、可靠性诊断和上下文窗口压力管理 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 76 个模块 / 76 modules）。
-
-### L1 基础层 / Foundation Layer (76 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/feedback_loop/diagnosers/__init__.py | feedback-loop.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognit... | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 2 | src/zephyr/feedback_loop/diagnosers/cognitive/__init__.py | cognitive/__init__.py | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 3 | src/zephyr/feedback_loop/diagnosers/cognitive/adaptive_pa... | Adaptive Parameter Tuning — v0.37.0 R452 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 4 | src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_l... | Cognitive Load Estimator — v0.6.0 R68 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 5 | src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_l... | Cognitive Load Budget — v0.16.0 R223 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 6 | src/zephyr/feedback_loop/diagnosers/cognitive/collaborati... | Collaborative Learning — v0.7.0 R82 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 7 | src/zephyr/feedback_loop/diagnosers/cognitive/confidence_... | Confidence Decomposer — v0.7.0 R83 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 8 | src/zephyr/feedback_loop/diagnosers/cognitive/gamificatio... | Gamification — v0.8.0 R101 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 9 | src/zephyr/feedback_loop/diagnosers/cognitive/meta_guard_... | R516: MetaGuardLatencyBudget | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 10 | src/zephyr/feedback_loop/diagnosers/cognitive/socratic_qu... | Socratic Questions — v0.7.0 R81 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 11 | src/zephyr/feedback_loop/diagnosers/cognitive/tone_adapte... | Tone Adapter — v0.9.0 R127 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 12 | src/zephyr/feedback_loop/diagnosers/cognitive/tone_adapte... | Tone Adapter v2 — v0.10.0 R141 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 13 | src/zephyr/feedback_loop/diagnosers/diagnosis/__init__.py | diagnosis/__init__.py | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 14 | src/zephyr/feedback_loop/diagnosers/diagnosis/auto_diagno... | Auto Diagnosis — v0.3.0 R16 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 15 | src/zephyr/feedback_loop/diagnosers/diagnosis/causal_infe... | Causal Inference Engine — v0.3.0 R5-R7 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 16 | src/zephyr/feedback_loop/diagnosers/diagnosis/counterfact... | Counterfactual Engine — v0.6.0 R60 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 17 | src/zephyr/feedback_loop/diagnosers/diagnosis/diagnosis_e... | diagnosis/diagnosis_engine.py | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 18 | src/zephyr/feedback_loop/diagnosers/diagnosis/diagnosis_k... | Diagnosis KPI — v0.9.0 R116 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 19 | src/zephyr/feedback_loop/diagnosers/diagnosis/impact_pred... | Impact Predictor — v0.9.0 R121 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 20 | src/zephyr/feedback_loop/diagnosers/diagnosis/incident_kn... | R504: IncidentKnowledgeInjector | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 21 | src/zephyr/feedback_loop/diagnosers/diagnosis/interactive... | Interactive Diagnosis — v0.7.0 R80 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 22 | src/zephyr/feedback_loop/diagnosers/diagnosis/knowledge_b... | Knowledge Bus Factor Monitor — v0.38.0 R481 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 23 | src/zephyr/feedback_loop/diagnosers/diagnosis/knowledge_m... | Knowledge Market — v0.9.0 R126 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 24 | src/zephyr/feedback_loop/diagnosers/diagnosis/mtti_tracke... | MTTI Tracker — v0.16.0 R221 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 25 | src/zephyr/feedback_loop/diagnosers/diagnosis/nonstationa... | Nonstationary Effectiveness — v0.37.0 R455 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 26 | src/zephyr/feedback_loop/diagnosers/diagnosis/statistical... | Statistical Hygiene Auditor — v0.38.0 R476 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 27 | src/zephyr/feedback_loop/diagnosers/diagnosis/vertical_se... | Vertical Self Assessment — v0.10.0 R137 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 28 | src/zephyr/feedback_loop/diagnosers/health/__init__.py | health/__init__.py | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 29 | src/zephyr/feedback_loop/diagnosers/health/action_composi... | R511: ActionCompositionHealthMonitor | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 30 | src/zephyr/feedback_loop/diagnosers/health/dr_resilience_... | DR Resilience Metrics — v0.17.0+ R231-R236 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 31 | src/zephyr/feedback_loop/diagnosers/health/e2e_integratio... | E2E Integration Health Monitor — v0.39.0 R489 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 32 | src/zephyr/feedback_loop/diagnosers/health/fle_dogfood_mo... | FLE Dogfood Monitor — v0.38.0 R480 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 33 | src/zephyr/feedback_loop/diagnosers/health/fle_self_slo_m... | FLE Self SLO Metrics — v0.17.0+ R249-R254 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 34 | src/zephyr/feedback_loop/diagnosers/health/global_health_... | Global Health Map — v0.8.0 R103 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 35 | src/zephyr/feedback_loop/diagnosers/health/memory_self_ch... | Memory Self Check — v0.8.0 R105 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 36 | src/zephyr/feedback_loop/diagnosers/health/model_health.py | Model Health Monitor — v0.5.0 R40 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 37 | src/zephyr/feedback_loop/diagnosers/health/self_benchmark.py | Self Benchmark — v0.9.0 R115 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 38 | src/zephyr/feedback_loop/diagnosers/health/self_bottlenec... | Self-Bottleneck Detector — v0.38.0 R479 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 39 | src/zephyr/feedback_loop/diagnosers/health/self_health_mo... | Self Health Monitor — v0.4.0 R29 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 40 | src/zephyr/feedback_loop/diagnosers/health/self_llm_obser... | Self LLM Observability — v0.12.0 R160 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 41 | src/zephyr/feedback_loop/diagnosers/reliability/__init__.py | reliability/__init__.py | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 42 | src/zephyr/feedback_loop/diagnosers/reliability/amplifica... | Amplification Guard — v0.10.0 R134 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 43 | src/zephyr/feedback_loop/diagnosers/reliability/api_depen... | API Dependency Metrics — v0.17.0+ R237-R242 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 44 | src/zephyr/feedback_loop/diagnosers/reliability/burn_rate... | Burn Rate Alerter — v0.14.0 R200 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 45 | src/zephyr/feedback_loop/diagnosers/reliability/burnout_a... | Burnout Alarm — v0.8.0 R100 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 46 | src/zephyr/feedback_loop/diagnosers/reliability/capacity_... | Capacity Aware Repair — v0.9.0 R120 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 47 | src/zephyr/feedback_loop/diagnosers/reliability/cold_star... | R509: ColdStartConservativeMode | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 48 | src/zephyr/feedback_loop/diagnosers/reliability/context_t... | Context Truncation Detector — v0.9.0 R122 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 49 | src/zephyr/feedback_loop/diagnosers/reliability/context_w... | R506: ContextWindowPressureManager | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 50 | src/zephyr/feedback_loop/diagnosers/reliability/cross_gua... | R513: CrossGuardConflictDetector | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 51 | src/zephyr/feedback_loop/diagnosers/reliability/cross_ses... | R510: CrossSessionConsistencyValidator | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 52 | src/zephyr/feedback_loop/diagnosers/reliability/data_volu... | Data Volume Growth Monitor — v0.39.0 R492 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 53 | src/zephyr/feedback_loop/diagnosers/reliability/feedback_... | Feedback Delay Compensator — v0.38.0 R477 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 54 | src/zephyr/feedback_loop/diagnosers/reliability/guard_int... | R518: GuardInteractionTopologyMapper | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 55 | src/zephyr/feedback_loop/diagnosers/reliability/guard_sel... | R512: GuardSelfConsistencyAuditor | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 56 | src/zephyr/feedback_loop/diagnosers/reliability/human_ano... | Human Anomaly Flood Detector — v0.40.0 R500 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 57 | src/zephyr/feedback_loop/diagnosers/reliability/latency_s... | Latency SLO Monitor — v0.14.0 R192 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 58 | src/zephyr/feedback_loop/diagnosers/reliability/llm_provi... | LLM Provider Integrity — v0.15.0 R217 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 59 | src/zephyr/feedback_loop/diagnosers/reliability/llm_quali... | LLM Quality Regression — v0.12.0 R161 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 60 | src/zephyr/feedback_loop/diagnosers/reliability/model_rot... | Model Rotation — v0.9.0 R125 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 61 | src/zephyr/feedback_loop/diagnosers/reliability/model_rot... | Model Rotation v2 — v0.10.0 R140 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 62 | src/zephyr/feedback_loop/diagnosers/reliability/model_ver... | Model Version Semantic Drift Monitor — v0.39.0 R493 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 63 | src/zephyr/feedback_loop/diagnosers/reliability/numerical... | Numerical Stability Guard — v0.38.0 R475 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 64 | src/zephyr/feedback_loop/diagnosers/reliability/operation... | Operational Seasonality — v0.16.0 R228 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 65 | src/zephyr/feedback_loop/diagnosers/reliability/prompt_fi... | Prompt Fingerprint — v0.3.0 R14 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 66 | src/zephyr/feedback_loop/diagnosers/reliability/prompt_sa... | Prompt Sanitizer — v0.10.0 R133 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 67 | src/zephyr/feedback_loop/diagnosers/reliability/recovery_... | Recovery Time Statistics — v0.37.0 R454 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 68 | src/zephyr/feedback_loop/diagnosers/reliability/regime_ga... | Regime Gain Scheduling — v0.37.0 R453 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 69 | src/zephyr/feedback_loop/diagnosers/reliability/retiremen... | Retirement Planner — v0.10.0 R139 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 70 | src/zephyr/feedback_loop/diagnosers/reliability/slo_capac... | SLO Capacity Metrics — v0.17.0+ R243-R248 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 71 | src/zephyr/feedback_loop/diagnosers/reliability/system_en... | R527: SystemEntropyMonitor | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 72 | src/zephyr/feedback_loop/diagnosers/reliability/temporal_... | Temporal Integrity Guard — v0.38.0 R478 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 73 | src/zephyr/feedback_loop/diagnosers/reliability/timezone_... | Timezone Semantic Reasoner — v0.37.0 R456 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 74 | src/zephyr/feedback_loop/diagnosers/reliability/toil_quan... | Toil Quantification — v0.37.0 R457 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 75 | src/zephyr/feedback_loop/diagnosers/reliability/value_add... | Value Added Baseline — v0.10.0 R138 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
-| 76 | src/zephyr/feedback_loop/diagnosers/reliability/zombie_fl... | Zombie FLE Detector — v0.16.0 R222 | 生产态 / production | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

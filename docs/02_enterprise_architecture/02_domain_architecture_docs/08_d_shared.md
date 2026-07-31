@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 共享服务，负责跨域共享的工具、协议和基础服务
 
-> **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,199 +35,6 @@ ttl: permanent
 | 生产态模块 | 184 | Production Modules | 184 |
 | 容量 | 184/150 (超容) | Capacity | 184/150 (超容) |
 | 描述 | 事件总线(event_bus) | Description | 事件总线(event_bus) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 184 个模块 / 184 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (184 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/shared/__version__.py | __version__.py —— ZephyrAlpha Shared 模块版本常量 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 2 | src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py | MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 3 | src/zephyr/shared/adaptation/execution_tuner.py | Execution Tuner — 执行调谐器（token/timeout 自适应）。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 4 | src/zephyr/shared/adaptation/prompt_version_manager.py | Prompt Version Manager — 版本化 Prompt 治理。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 5 | src/zephyr/shared/ai_guards/ai_audit_guard.py | ai_guards/ai_audit_guard.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 6 | src/zephyr/shared/ai_guards/combinatorial_gate.py | ai_guards/combinatorial_gate.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 7 | src/zephyr/shared/ai_guards/core_integrity_guard.py | ai_guards/core_integrity_guard.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 8 | src/zephyr/shared/alerts/alert_escalation.py | AlertEscalation — re-homed to eliminate shared->infrastructure circular import. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 9 | src/zephyr/shared/alerts/alert_manager.py | alerts/alert_manager.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 10 | src/zephyr/shared/alerts/alert_precision_tracker.py | alerts/alert_precision_tracker.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 11 | src/zephyr/shared/alerts/dual_channel_alert.py | alerts/dual_channel_alert.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 12 | src/zephyr/shared/alerts/heartbeat_server.py | alerts/heartbeat_server.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 13 | src/zephyr/shared/api/api_client.py | api_client.py —— 统一 API Client 基类（Phase 7 新增 | 盲点 B11 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 14 | src/zephyr/shared/api/api_index.py | shared/ API 索引 — AI session 冷启动时的"员工通讯录" | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 15 | src/zephyr/shared/api/dos_launcher.py | api/dos_launcher.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 16 | src/zephyr/shared/blueprint_tools/ai_understandability_co... | blueprint_tools/ai_understandability_constraint.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 17 | src/zephyr/shared/blueprint_tools/blueprint_code_auditor.py | blueprint_tools/blueprint_code_auditor.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 18 | src/zephyr/shared/blueprint_tools/blueprint_decomposer.py | ZephyrAlpha 蓝图拆解器 | 生产态 / production |  |
-| 19 | src/zephyr/shared/blueprint_tools/blueprint_scorer.py | blueprint_scorer.py — Re-export wrapper -> canonical: zephyr.orchestrator.qu... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 20 | src/zephyr/shared/capacity_governance/adaptive_sampler.py | capacity_governance/adaptive_sampler.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 21 | src/zephyr/shared/capacity_governance/budget_aware_prompt.py | capacity_governance/budget_aware_prompt.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 22 | src/zephyr/shared/capacity_governance/capacity_calibrator.py | capacity_governance/capacity_calibrator.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 23 | src/zephyr/shared/capacity_governance/capacity_digital_tw... | capacity_governance/capacity_digital_twin.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 24 | src/zephyr/shared/capacity_governance/capacity_fingerprin... | capacity_governance/capacity_fingerprint.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 25 | src/zephyr/shared/capacity_governance/capacity_runbook_ge... | capacity_governance/capacity_runbook_generator.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 26 | src/zephyr/shared/capacity_governance/cost_estimator.py | capacity_governance/cost_estimator.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 27 | src/zephyr/shared/capacity_governance/dependency_capacity... | capacity_governance/dependency_capacity_guard.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 28 | src/zephyr/shared/capacity_governance/model_capacity_prob... | capacity_governance/model_capacity_probe.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 29 | src/zephyr/shared/compensation/saga_compensator.py | Saga Compensator — 补偿事务：多步操作任一失败 -> 反向补偿。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 30 | src/zephyr/shared/context/context_engine.py | Context Engine — AI 上下文组装与 Token 预算管理。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 31 | src/zephyr/shared/contracts/backpressure/_types.py | Shared internal backpressure type definitions. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 32 | src/zephyr/shared/contracts/backpressure/pause.py | backpressure/pause.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 33 | src/zephyr/shared/contracts/backpressure/resume.py | backpressure/resume.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 34 | src/zephyr/shared/contracts/backpressure/throttle.py | backpressure/throttle.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 35 | src/zephyr/shared/contracts/contract_bus.py | ContractBus — 跨层通信抽象 + Pydantic v2 Schema Enforcement (M-09) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 36 | src/zephyr/shared/contracts/core/base_event.py | BaseEvent — 跨层事件基类 | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 37 | src/zephyr/shared/contracts/core/enforcer.py | ZephyrAlpha — shared/contracts/enforcer.py | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 38 | src/zephyr/shared/contracts/core/factories.py | shared/contracts/factories.py — 跨层数据契约工厂方法 | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 39 | src/zephyr/shared/contracts/core/gate_types.py | core/gate_types.py | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 40 | src/zephyr/shared/contracts/core/registry.py | ZephyrAlpha — shared/contracts/registry.py | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 41 | src/zephyr/shared/contracts/core/runtime_plane_tag.py | ZephyrAlpha — shared/contracts/runtime_plane_tag.py | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 42 | src/zephyr/shared/contracts/core/system_configuration.py | core/system_configuration.py | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 43 | src/zephyr/shared/contracts/core/timestamp.py | ZephyrAlpha — shared/contracts/timestamp.py | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 44 | src/zephyr/shared/contracts/core/trace_context.py | core/trace_context.py | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 45 | src/zephyr/shared/contracts/enums/__init__.py | shared/contracts/enums — 跨切面交易枚举真源 (5.152 #1 修复) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 46 | src/zephyr/shared/contracts/enums/order_enums.py | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1 修复) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 47 | src/zephyr/shared/contracts/errors/contract_violation_err... | errors/contract_violation_error.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 48 | src/zephyr/shared/contracts/errors/data_quality_error.py | CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 49 | src/zephyr/shared/contracts/errors/execution_rejection_er... | errors/execution_rejection_error.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 50 | src/zephyr/shared/contracts/errors/factor_computation_err... | CTR-ERR-002: FactorComputationError / 因子计算失败错误 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 51 | src/zephyr/shared/contracts/errors/risk_limit_violation_e... | errors/risk_limit_violation_error.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 52 | src/zephyr/shared/contracts/errors/signal_degradation_war... | errors/signal_degradation_warning.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 53 | src/zephyr/shared/contracts/escalation/budget_alert.py | escalation/budget_alert.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 54 | src/zephyr/shared/contracts/execution/capital_allocation_... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 55 | src/zephyr/shared/contracts/execution/execution_report.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 56 | src/zephyr/shared/contracts/execution/fill.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 57 | src/zephyr/shared/contracts/execution/model_serving_reque... | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 58 | src/zephyr/shared/contracts/execution/order.py | Backward-compat shim — canonical location is zephyr.shared.contracts.order (... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 59 | src/zephyr/shared/contracts/experiment/experiment_result.py | experiment/experiment_result.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 60 | src/zephyr/shared/contracts/experiment/model_serving_resp... | experiment/model_serving_response.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 61 | src/zephyr/shared/contracts/external/ext_001.py | external/ext_001.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 62 | src/zephyr/shared/contracts/external/ext_002.py | external/ext_002.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 63 | src/zephyr/shared/contracts/external/ext_003.py | external/ext_003.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 64 | src/zephyr/shared/contracts/external/ext_004.py | external/ext_004.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 65 | src/zephyr/shared/contracts/identity/agent_identity.py | identity/agent_identity.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 66 | src/zephyr/shared/contracts/identity/permission.py | identity/permission.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 67 | src/zephyr/shared/contracts/llm_gateway_protocol.py | LLMGatewayProtocol — LLM 网关抽象接口 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 68 | src/zephyr/shared/contracts/market/instrument.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 69 | src/zephyr/shared/contracts/orchestration_protocol.py | contracts/orchestration_protocol.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 70 | src/zephyr/shared/contracts/portfolio/money.py | portfolio/money.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 71 | src/zephyr/shared/contracts/portfolio/performance_attribu... | Re-export shim — 真源已收敛至 zephyr.shared.contracts.performance_attributio... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 72 | src/zephyr/shared/contracts/portfolio/position.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 73 | src/zephyr/shared/contracts/risk/compliance_rule.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 74 | src/zephyr/shared/contracts/risk/risk_dashboard_snapshot.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 75 | src/zephyr/shared/contracts/risk/risk_limits.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 76 | src/zephyr/shared/contracts/risk/risk_metrics.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 77 | src/zephyr/shared/contracts/risk/risk_validator_protocol.py | Backward-compat shim — canonical location is zephyr.trading.trading_contract... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 78 | src/zephyr/shared/contracts/security/security_decision.py | security/security_decision.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 79 | src/zephyr/shared/contracts/skill_protocol.py | contracts/skill_protocol.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 80 | src/zephyr/shared/contracts/task_repository_protocol.py | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 81 | src/zephyr/shared/database/__init__.py | 共享数据库工具包：提供 DatabaseService 共用的 CRUD mixin。 | 生产态 / production | [SH-DB-001](../../03_modules/_cross_layer/database/blueprint.md) |
-| 82 | src/zephyr/shared/database/database_crud_mixin.py | DatabaseCRUDMixin: 共享的 governance.db + depgraph CRUD 方法 | 生产态 / production | [SH-DB-001](../../03_modules/_cross_layer/database/blueprint.md) |
-| 83 | src/zephyr/shared/dependency/dependency_graph.py | Dependency Graph — 任务卡依赖关系管理。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 84 | src/zephyr/shared/draft/draft_assistant.py | Draft Assistant — 想法 -> MTH-012 蓝图骨架生成。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 85 | src/zephyr/shared/event_bus.py | EventBus — 事件总线（带背压控制）(M-07) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 86 | src/zephyr/shared/events/dlq.py | dlq.py —— ZephyrAlpha 死信队列（Dead Letter Queue） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 87 | src/zephyr/shared/events/dlq_bridge.py | CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 88 | src/zephyr/shared/events/event_bus_upgrade.py | EventBus Upgrade — 事件总线升级 (M-16) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 89 | src/zephyr/shared/events/event_reactor.py | Event Reactor — 事件反应器（自动响应事件）。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 90 | src/zephyr/shared/events/event_schemas.py | event_schemas.py —— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 91 | src/zephyr/shared/events/hook_dispatcher.py | Hook Dispatcher — 任务状态变更 -> 外部回调触发。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 92 | src/zephyr/shared/events/observer.py | observer.py —— Re-export wrapper -> canonical: zephyr.shared.infra.observer | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 93 | src/zephyr/shared/events/upgrade_strategy.py | EventBus 升级策略引擎 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 94 | src/zephyr/shared/foundation/constants.py | constants.py —— 共享枚举 & 常量集中 re-export（Single Source of Truth） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 95 | src/zephyr/shared/foundation/deprecation.py | deprecation.py —— ZephyrAlpha API 废弃策略 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 96 | src/zephyr/shared/foundation/env.py | foundation/env.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 97 | src/zephyr/shared/foundation/errors.py | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exception Hierarchy） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 98 | src/zephyr/shared/foundation/flags.py | foundation/flags.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 99 | src/zephyr/shared/foundation/migration.py | migration.py —— Re-export wrapper -> canonical: zephyr.shared.utils.migration | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 100 | src/zephyr/shared/foundation/models.py | ZephyrAlpha 任务系统核心数据模型 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 101 | src/zephyr/shared/foundation/types.py | types.py —— 共享类型别名 & 语义化 NewType（Phase 3 新增 | 盲点 #5 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 102 | src/zephyr/shared/infra/cache.py | cache.py —— 统一缓存抽象（Phase 8 新增 | 盲点 B13 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 103 | src/zephyr/shared/infra/idempotency.py | idempotency.py —— 幂等性基础设施（Phase 8 新增 | 盲点 B15 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 104 | src/zephyr/shared/infra/limiter.py | infra/limiter.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 105 | src/zephyr/shared/infra/lock.py | lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点 B23 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 106 | src/zephyr/shared/infra/observer.py | Zero-dependency Observer pattern (subscribe/emit/unsubscribe). | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 107 | src/zephyr/shared/infra/outbox.py | outbox.py —— 事务性 Outbox 模式（Phase 10 新增 | 盲点 B24 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 108 | src/zephyr/shared/infra/process_lifecycle_gateway.py | ProcessLifecycleGateway — 进程生命周期统一入口 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 109 | src/zephyr/shared/infra/process_pool.py | process_pool.py - Shared process pool for MCP servers and subprocess tasks | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 110 | src/zephyr/shared/io/content_fingerprint.py | SHA-256 content fingerprint computation and verification. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 111 | src/zephyr/shared/io/file_utils.py | file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 #15 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 112 | src/zephyr/shared/io/frontmatter_utils.py | frontmatter_utils.py — Markdown/YAML frontmatter 解析 SSoT | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 113 | src/zephyr/shared/io/io_cache.py | io_cache.py - File-level I/O cache with LRU eviction | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 114 | src/zephyr/shared/io/paths.py | paths.py — 项目路径常量 SSoT（Single Source of Truth） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 115 | src/zephyr/shared/io/serialization.py | serialization.py —— 统一序列化/反序列化基础设施（Phase 7 新增 | 盲点 B10 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 116 | src/zephyr/shared/io/sqlite_factory.py | SQLite 连接工厂真源（SSoT） | 生产态 / production |  |
-| 117 | src/zephyr/shared/io/streaming_reader.py | streaming_reader.py - Memory-efficient streaming file readers | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 118 | src/zephyr/shared/io/workspace_telemetry.py | workspace_telemetry.py — 主工作区文件操作遥测公共 API（... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 119 | src/zephyr/shared/io/yaml_utils.py | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源） | 生产态 / production |  |
-| 120 | src/zephyr/shared/lifecycle/health.py | health.py —— ZephyrAlpha 聚合健康检查 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 121 | src/zephyr/shared/lifecycle/health_discovery.py | CT-HEALTH-001: System-wide Health Discovery Registration. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 122 | src/zephyr/shared/lifecycle/healthcheck_service.py | lifecycle/healthcheck_service.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 123 | src/zephyr/shared/lifecycle/longevity_monitor.py | lifecycle/longevity_monitor.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 124 | src/zephyr/shared/lifecycle/state_machine.py | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) | 生产态 / production | [MOD-INF-038](../../03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md) |
-| 125 | src/zephyr/shared/lifecycle/task_heartbeat.py | lifecycle/task_heartbeat.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 126 | src/zephyr/shared/lifecycle/ttl_cleanup_engine.py | lifecycle/ttl_cleanup_engine.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 127 | src/zephyr/shared/maintenance/autonomy_monitor.py | Autonomy Monitor — AI 自主等级监控与降级。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 128 | src/zephyr/shared/maintenance/code_economy_analyzer.py | maintenance/code_economy_analyzer.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 129 | src/zephyr/shared/maintenance/dogfooding.py | Dogfooding — 自举测试：用 TaskCard 管理 TaskCard 建设。 | 生产态 / production |  |
-| 130 | src/zephyr/shared/maintenance/handbook.py | Onboarding Handbook — AI Agent 施工手册生成。 | 生产态 / production |  |
-| 131 | src/zephyr/shared/maintenance/owner_trust_gauge.py | maintenance/owner_trust_gauge.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 132 | src/zephyr/shared/maintenance/slo_review_assistant.py | maintenance/slo_review_assistant.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 133 | src/zephyr/shared/maintenance/zero_config.py | maintenance/zero_config.py | 生产态 / production |  |
-| 134 | src/zephyr/shared/observability/dashboard/__init__.py | Grafana 双数据源仪表盘模块（MOD-INF-044）。 | 生产态 / production |  |
-| 135 | src/zephyr/shared/observability/metrics.py | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增 | 盲点 B17 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 136 | src/zephyr/shared/observability/metrics_server.py | Prometheus /metrics HTTP 端点（P1-5 可观测性改造）。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 137 | src/zephyr/shared/observability/reasoning_spans.py | observability/reasoning_spans.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 138 | src/zephyr/shared/observability/tracing.py | tracing.py —— OpenTelemetry 分布式追踪（Phase B 补充 | 盲点 B1 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 139 | src/zephyr/shared/protocols/a2a/a2a_coordination.py | A2A Coordination — shared interface definitions for multi-agent coordination. | 生产态 / production |  |
-| 140 | src/zephyr/shared/protocols/a2a/a2a_protocol.py | Core A2A Protocol interface and governance data contracts. | 生产态 / production |  |
-| 141 | src/zephyr/shared/protocols/a2a/a2a_registry.py | A2A Registry and Agent Card contracts — discovery and identity interfaces. | 生产态 / production |  |
-| 142 | src/zephyr/shared/protocols/a2a/a2a_schemas.py | A2A data structure contracts — Message, Task, and StateMachine schemas. | 生产态 / production |  |
-| 143 | src/zephyr/shared/protocols/capability.py | capability.py —— Re-export wrapper -> canonical: zephyr.shared.security.cap... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 144 | src/zephyr/shared/protocols/module_birth_registry.py | protocols/module_birth_registry.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 145 | src/zephyr/shared/protocols/ports.py | ports — D-DATA 服务的 Protocol 定义 | 生产态 / production |  |
-| 146 | src/zephyr/shared/protocols/registry.py | registry — 运行时 DI 容器 | 生产态 / production |  |
-| 147 | src/zephyr/shared/reliability/diff_planner.py | Diff Planner — 最小增量变更规划器。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 148 | src/zephyr/shared/reliability/retry_handler.py | Retry Handler — 指数退避重试 + 可恢复/不可恢复错误分类。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 149 | src/zephyr/shared/resilience/circuit_breaker.py | circuit_breaker.py —— 轻量熔断器状态机（Phase 2 新增 | 零依赖） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 150 | src/zephyr/shared/resilience/degradation_chain.py | resilience/degradation_chain.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 151 | src/zephyr/shared/resilience/error_budget_tracker.py | resilience/error_budget_tracker.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 152 | src/zephyr/shared/resilience/fallback.py | fallback.py —— 降级策略模式（Phase 2 新增 | 零依赖） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 153 | src/zephyr/shared/resilience/fault_isolator.py | resilience/fault_isolator.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 154 | src/zephyr/shared/resilience/limiter.py | limiter.py —— Re-export wrapper -> canonical: zephyr.shared.infra.limiter | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 155 | src/zephyr/shared/resilience/retry.py | retry.py —— 统一重试策略（Phase 2 新增 | 零依赖） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 156 | src/zephyr/shared/schema/base_config.py | schema/base_config.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 157 | src/zephyr/shared/schema/execution_model.py | schema/execution_model.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 158 | src/zephyr/shared/schema/schema_registry.py | schema/schema_registry.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 159 | src/zephyr/shared/schema/schemas.py | schema/schemas.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 160 | src/zephyr/shared/schema/severity_types.py | schema/severity_types.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 161 | src/zephyr/shared/schema/task_types.py | task_types — 任务系统核心类型 re-export 层 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 162 | src/zephyr/shared/security/capability.py | CBAC 能力检查器 (Capability-Based Access Control) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 163 | src/zephyr/shared/security/idempotency.py | idempotency.py —— Re-export wrapper -> canonical: zephyr.shared.infra.idemp... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 164 | src/zephyr/shared/security/lock.py | lock.py —— Re-export wrapper -> canonical: zephyr.shared.infra.lock | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 165 | src/zephyr/shared/security/sandbox_executor.py | SandboxExecutor — re-homed to eliminate shared->infrastructure circular import. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 166 | src/zephyr/shared/security/secrets.py | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 167 | src/zephyr/shared/security/ssot_guard.py | security/ssot_guard.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 168 | src/zephyr/shared/session/session_audit.py | session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B32） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 169 | src/zephyr/shared/session/session_boundary.py | Session Boundary — 会话边界管理。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 170 | src/zephyr/shared/session/session_continuity.py | SessionContinuity — Session 交接包自动生成与恢复 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 171 | src/zephyr/shared/utils/async_utils.py | async_utils.py — async/sync 边界桥接（5.12.8 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 172 | src/zephyr/shared/utils/cli_summary.py | CLI Summary — CLI 友好施工汇总。 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 173 | src/zephyr/shared/utils/context.py | context.py —— 结构化上下文传播（Phase 8 新增 | 盲点 B16 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 174 | src/zephyr/shared/utils/converters.py | converters.py — 类型转换工具（消除 '' vs None 语义鸿沟） | 生产态 / production |  |
-| 175 | src/zephyr/shared/utils/db_utils.py | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governance.persistence.sqlit... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 176 | src/zephyr/shared/utils/diff_utils.py | diff_utils.py —— 统一 Diff/Patch 工具（Phase 3 新增 | 盲点 #14 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 177 | src/zephyr/shared/utils/logging.py | logging.py —— ZephyrAlpha 结构化日志系统（Structured JSON Logger） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 178 | src/zephyr/shared/utils/migration.py | migration.py —— ZephyrAlpha Schema 版本化迁移系统 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 179 | src/zephyr/shared/utils/pagination.py | pagination.py —— 通用分页工具（Phase 9 新增 | 盲点 B18 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 180 | src/zephyr/shared/utils/testing.py | testing.py —— ZephyrAlpha 共享测试夹具/工厂 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 181 | src/zephyr/shared/utils/time_utils.py | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 182 | src/zephyr/shared/utils/zephyr_logger.py | utils/zephyr_logger.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 183 | src/zephyr/shared/versioning/vibe_experiment_tracker.py | versioning/vibe_experiment_tracker.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 184 | tests/zephyr/shared/observability/test_metrics_server.py | metrics_server 单元测试（P1-5 Prometheus /metrics 端点）。 | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -1407,7 +1214,7 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | → | D_FEEDBACK_LOOP 反馈循环引擎: Secret Rotation — v0.14.0 R189 (security/secret_rotation.py) | 导入依赖 / import_depends |
-| 2 | A2A Coordination — shared interface definitions for mult... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 2 | A2A Coordination — shared interface definitions for mult... | → | D_GOV_RULE 规则治理: 任务类型定义——Task model 是任务卡字段的 SSoT（SQLite ta... | 导入依赖 / import_depends |
 | 3 | Re-export shim — 真源已收敛至 zephyr.shared.contracts.pe... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
 | 4 | ProcessLifecycleGateway — 进程生命周期统一入口 (infra/pr... | → | D_INFRA_RUNTIME 运行时集成: daemon_registry.py - unified daemon thread registry + res... | 导入依赖 / import_depends |
 | 5 | process_pool.py - Shared process pool for MCP servers and... | → | D_INFRA_RUNTIME 运行时集成: models.py - Pydantic data models for resource optimizatio... | 导入依赖 / import_depends |
@@ -1714,28 +1521,28 @@ flowchart TD
 | 293 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 294 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | security/security_decision.py | 导入依赖 / import_depends |
 | 295 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 296 | D_GOV_RULE 规则治理: AI 能力边界守卫 / AI Capability Guard (rule_enforcement/a... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 297 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 298 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
-| 299 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 300 | D_GOV_RULE 规则治理: 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 301 | D_GOV_RULE 规则治理: 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 302 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | io_cache.py - File-level I/O cache with LRU eviction (io/... | 导入依赖 / import_depends |
-| 303 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 304 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 305 | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 306 | D_GOV_RULE 规则治理: 集成测试运行器 / Integration Test Runner (rule_enforcemen... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 307 | D_GOV_RULE 规则治理: 循环依赖扫描器 / Circular Dependency Scanner (invariants/... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 308 | D_GOV_RULE 规则治理: 契约兼容性检查器 / Contract Compatibility Checker (invari... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 309 | D_GOV_RULE 规则治理: 进程生命周期网关 / Process Lifecycle Gateway (invariants/... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 310 | D_GOV_RULE 规则治理: 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 311 | D_GOV_RULE 规则治理: 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 312 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | schema/base_config.py | 导入依赖 / import_depends |
-| 313 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | schema/execution_model.py | 导入依赖 / import_depends |
-| 314 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | schema/severity_types.py | 导入依赖 / import_depends |
-| 315 | D_GOV_RULE 规则治理: 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 316 | D_GOV_RULE 规则治理: 宪法自愈 / Constitutional Update (constitutional_update/c... | → | file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
-| 317 | D_GOV_RULE 规则治理: 宪法自愈 / Constitutional Update (constitutional_update/c... | → | session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B... | 导入依赖 / import_depends |
+| 296 | D_GOV_RULE 规则治理: AI 能力边界守卫——@require_capability 装饰器运行时检查（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 297 | D_GOV_RULE 规则治理: CircuitBreakerGateway (CBG) — 模块间调用单向熔断器 (rule... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 298 | D_GOV_RULE 规则治理: CircuitBreakerGateway (CBG) — 模块间调用单向熔断器 (rule... | → | CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
+| 299 | D_GOV_RULE 规则治理: CircuitBreakerGateway (CBG) — 模块间调用单向熔断器 (rule... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
+| 300 | D_GOV_RULE 规则治理: 契约模板管理器——管理 MCP 工具契约模板（Contract templat... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 301 | D_GOV_RULE 规则治理: 契约模板管理器——管理 MCP 工具契约模板（Contract templat... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 302 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | → | io_cache.py - File-level I/O cache with LRU eviction (io/... | 导入依赖 / import_depends |
+| 303 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 304 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
+| 305 | D_GOV_RULE 规则治理: 门禁类型定义——GateType 枚举与 gate 相关 dataclass（Gate... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 306 | D_GOV_RULE 规则治理: 集成测试运行器（Integration Test Runner） (rule_enforceme... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 307 | D_GOV_RULE 规则治理: EN-001 循环依赖扫描器——Kahn 拓扑排序检测模块导入环（Cir... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 308 | D_GOV_RULE 规则治理: EN-003 契约兼容性检查器——字段/类型/必填对齐差异比对（Co... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 309 | D_GOV_RULE 规则治理: EN-process-lifecycle-gateway — 进程创建入口校验门禁 (inv... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 310 | D_GOV_RULE 规则治理: 零残留检查器——验证治理操作后无残留文件/目录/引用。 (inv... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 311 | D_GOV_RULE 规则治理: 零残留检查器——验证治理操作后无残留文件/目录/引用。 (inv... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 312 | D_GOV_RULE 规则治理: 任务类型定义——Task model 是任务卡字段的 SSoT（SQLite ta... | → | schema/base_config.py | 导入依赖 / import_depends |
+| 313 | D_GOV_RULE 规则治理: 任务类型定义——Task model 是任务卡字段的 SSoT（SQLite ta... | → | schema/execution_model.py | 导入依赖 / import_depends |
+| 314 | D_GOV_RULE 规则治理: 任务类型定义——Task model 是任务卡字段的 SSoT（SQLite ta... | → | schema/severity_types.py | 导入依赖 / import_depends |
+| 315 | D_GOV_RULE 规则治理: G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁 (rule_enfo... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 316 | D_GOV_RULE 规则治理: constitutional_update.py —— 宪法自愈（Phase 14 | 盲点 B... | → | file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
+| 317 | D_GOV_RULE 规则治理: constitutional_update.py —— 宪法自愈（Phase 14 | 盲点 B... | → | session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B... | 导入依赖 / import_depends |
 | 318 | D_GOV_SCRIPTS 脚本治理: DM-106: P2-B 迁移全量验证脚本 (governance/dm106_p2b_verif... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 319 | D_GOV_SCRIPTS 脚本治理: audit_post_sync_commands.py — post_sync_standard 命令可... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
 | 320 | D_GOV_SCRIPTS 脚本治理: DM-105: depgraph 未分配节点三策略处理脚本 (one_off/dm105_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |

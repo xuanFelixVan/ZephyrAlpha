@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 资产清单与运维扫描，负责运行时资产盘点、基础设施配置管理和运维自动化
 
-> **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 基础设施运维（D_INFRA_OPS）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,12 +35,6 @@ ttl: permanent
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 资产扫描器(scanner) | Description | 资产扫描器(scanner) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
-
-（无模块 / No modules）
 
 ## 域内依赖图 / Internal Dependency Diagram
 

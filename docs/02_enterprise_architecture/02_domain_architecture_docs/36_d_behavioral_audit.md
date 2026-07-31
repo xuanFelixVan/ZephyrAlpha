@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 行为审计，负责 AI 决策行为的可追溯审计和合规检查
 
-> **文档作用 / Purpose**: 展示 行为审计（D_BEHAVIORAL_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 行为审计（D_BEHAVIORAL_AUDIT）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,12 +35,6 @@ ttl: permanent
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | AI决策行为可追溯审计 | Description | AI决策行为可追溯审计 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 0 个模块 / 0 modules）。
-
-（无模块 / No modules）
 
 ## 域内依赖图 / Internal Dependency Diagram
 

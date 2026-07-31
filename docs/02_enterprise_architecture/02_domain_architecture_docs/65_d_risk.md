@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 风控，负责风险指标计算、风险限额管理和风险预警
 
-> **文档作用 / Purpose**: 展示 风控（D_RISK）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 风控（D_RISK）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,31 +35,6 @@ ttl: permanent
 | 生产态模块 | 11 | Production Modules | 11 |
 | 容量 | 11/150 (正常) | Capacity | 11/150 (正常) |
 | 描述 | 风控，负责风险指标计算、风险限额管理和风险预警 | Description | 风控，负责风险指标计算、风险限额管理和风险预警 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (10 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/risk/implementations/default_position_limit_ch... | D_RISK — Default Position Limit Checker | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 2 | src/zephyr/risk/implementations/default_risk_limits_calcu... | D_RISK — Default Risk Limits Calculator | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 3 | src/zephyr/risk/implementations/default_risk_manager_orch... | D_RISK — Default Risk Manager Orchestrator | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 4 | src/zephyr/risk/implementations/default_risk_validator.py | D_RISK — Default Risk Validator | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 5 | src/zephyr/risk/implementations/default_stop_loss_engine.py | D_RISK — Default Stop-Loss Engine | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 6 | src/zephyr/risk/risk_limits.py | D_RISK — Risk Limits Calculator | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 7 | src/zephyr/risk/risk_manager.py | ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器接口 | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 8 | src/zephyr/risk/risk_manager_base.py | D_RISK — Risk Management Layer Skeleton | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 9 | src/zephyr/risk/risk_validator.py | D_RISK — Risk Validator | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-| 10 | src/zephyr/risk/stop_loss.py | D_RISK — Stop-Loss & Kill Switch 兼容层 | 生产态 / production | [MOD-L04-001](../../03_modules/_domain_risk/blueprint.md) |
-
-### L2 领域层 / Domain Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_... | cross_market_data_adapter/ml_experiment_pipeline.py | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

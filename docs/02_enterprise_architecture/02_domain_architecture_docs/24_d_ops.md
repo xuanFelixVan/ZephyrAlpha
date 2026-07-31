@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 反馈循环，负责系统运行反馈、性能监控和自动调优闭环
 
-> **文档作用 / Purpose**: 展示 反馈循环（D_OPS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 反馈循环（D_OPS）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,26 +35,6 @@ ttl: permanent
 | 生产态模块 | 11 | Production Modules | 11 |
 | 容量 | 11/150 (正常) | Capacity | 11/150 (正常) |
 | 描述 | 自动引导(auto_bootstrap) | Description | 自动引导(auto_bootstrap) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
-
-### L1 基础层 / Foundation Layer (11 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | scripts/governance/observability/gate_cache.py | Module docstring — see module-level docstring for details. | 生产态 / production |  |
-| 2 | scripts/setup_dev_env.py | 开发环境一次性初始化（裁定 #ARCH-PYTHON-SITECUSTOMIZE）。 | 生产态 / production |  |
-| 3 | src/zephyr/governance/observability_governance/observabil... | observability_governance/observability_dashboard.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 4 | src/zephyr/governance/ops_governance/budget_engine.py | Budget Enforcer core engine — MOD-INF-024 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 5 | src/zephyr/governance/ops_governance/budget_handler.py | G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急升级处理. | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 6 | src/zephyr/governance/ops_governance/budget_models.py | Budget Enforcer data models — MOD-INF-024 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 7 | src/zephyr/governance/ops_governance/budget_profile_manag... | ops_governance/budget_profile_manager.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 8 | src/zephyr/governance/ops_governance/budget_tracker.py | ops_governance/budget_tracker.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 9 | src/zephyr/governance/ops_governance/cost_budget.py | cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲点 B26） | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 10 | src/zephyr/governance/ops_governance/meta_observability.py | Meta Observability — v0.10.0 协议自身可观测性: self loop latency+p99+edge ca... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 11 | src/zephyr/governance/ops_governance/token_budget.py | ops_governance/token_budget.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 交易运营，负责交易生命周期管理、订单状态和成交处理
 
-> **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,57 +35,6 @@ ttl: permanent
 | 生产态模块 | 37 | Production Modules | 37 |
 | 容量 | 37/150 (正常) | Capacity | 37/150 (正常) |
 | 描述 | 交易运营，负责交易生命周期管理、订单状态和成交处理 | Description | 交易运营，负责交易生命周期管理、订单状态和成交处理 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 37 个模块 / 37 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (4 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/trading/trading_contracts/broker_interface.py | D_EXECUTION_CORE — BrokerInterface | 生产态 / production | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 2 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真源已收敛至 shared 侧。 | 生产态 / production | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-| 3 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | Re-export shim — 真源已收敛至 zephyr.shared.contracts.performance_attributio... | 生产态 / production | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-| 4 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | contracts/strategy_lifecycle_event.py | 生产态 / production | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-
-### L2 领域层 / Domain Layer (33 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/trading/action_dispatcher/__init__.py | action_dispatcher/__init__.py | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 2 | src/zephyr/trading/action_dispatcher/_annotation_writer.py | 注释注解写入器（从 ActionDispatcher._annotate_py_file/_tag_module/_annotate_b... | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 3 | src/zephyr/trading/action_dispatcher/_audit_log_writer.py | 审计日志写入器（从 ActionDispatcher._write_triage_log 提取）。 | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 4 | src/zephyr/trading/action_dispatcher/_file_lifecycle_mana... | 文件生命周期管理器（从 ActionDispatcher._create_file / _delete_file / _versio... | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 5 | src/zephyr/trading/action_dispatcher/_search_replace_engi... | 搜索替换引擎（从 ActionDispatcher._search_replace_file 及两个底层方法提取）。 | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 6 | src/zephyr/trading/admission_controller.py | trading/admission_controller.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 7 | src/zephyr/trading/auto_dispatcher.py | AutoDispatcher — 守护进程内的轻量 PipelineDispatcher | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 8 | src/zephyr/trading/autopilot.py | AutoPilot — AI session 自动找活干、认领任务。 | 生产态 / production | [SH-DB-001](../../03_modules/_cross_layer/database/blueprint.md) |
-| 9 | src/zephyr/trading/conductor.py | Conductor — AI session 全自动指挥官。 | 生产态 / production | [SH-DB-001](../../03_modules/_cross_layer/database/blueprint.md) |
-| 10 | src/zephyr/trading/gpu_consensus_scheduler.py | trading/gpu_consensus_scheduler.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 11 | src/zephyr/trading/gpu_monitor.py | gpu_monitor.py — NVIDIA GPU 状态采集器 | 生产态 / production | [MOD-RESOURCE_OPTIMIZATION_ENGINE](../../03_modules/_cross_layer/resource_optimization_engine/blueprint.md) |
-| 12 | src/zephyr/trading/ide_health_daemon.py | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 | 生产态 / production | [MOD-RESOURCE_OPTIMIZATION_ENGINE](../../03_modules/_cross_layer/resource_optimization_engine/blueprint.md) |
-| 13 | src/zephyr/trading/protection_index.py | trading/protection_index.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 14 | src/zephyr/trading/runtime/async_runtime.py | runtime/async_runtime.py | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 15 | src/zephyr/trading/speed_baseline_checker.py | trading/speed_baseline_checker.py | 生产态 / production | [MOD-RESOURCE_OPTIMIZATION_ENGINE](../../03_modules/_cross_layer/resource_optimization_engine/blueprint.md) |
-| 16 | src/zephyr/trading/trading_contracts/execution/capital_al... | execution/capital_allocation_result.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 17 | src/zephyr/trading/trading_contracts/execution/execution_... | execution/execution_rejection_error.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 18 | src/zephyr/trading/trading_contracts/execution/execution_... | Re-export wrapper: ExecutionReport 真源在 zephyr.shared.contracts.execution_r... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 19 | src/zephyr/trading/trading_contracts/execution/fill.py | Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fill（CTR-005 codegen） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 20 | src/zephyr/trading/trading_contracts/execution/model_serv... | execution/model_serving_request.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 21 | src/zephyr/trading/trading_contracts/execution/order.py | Re-export wrapper: Order 真源在 zephyr.shared.contracts.order（CTR-004 codegen） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 22 | src/zephyr/trading/trading_contracts/execution/position.py | Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.contracts.position（... | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 23 | src/zephyr/trading/trading_contracts/factories.py | trading-contracts/factories.py — 交易域数据契约工厂方法 | 生产态 / production |  |
-| 24 | src/zephyr/trading/trading_contracts/market/instrument.py | market/instrument.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 25 | src/zephyr/trading/trading_contracts/market/signal_degrad... | market/signal_degradation_warning.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 26 | src/zephyr/trading/trading_contracts/risk/compliance_rule.py | risk/compliance_rule.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 27 | src/zephyr/trading/trading_contracts/risk/risk_dashboard_... | risk/risk_dashboard_snapshot.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 28 | src/zephyr/trading/trading_contracts/risk/risk_limit_viol... | risk/risk_limit_violation_error.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 29 | src/zephyr/trading/trading_contracts/risk/risk_limits.py | risk/risk_limits.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 30 | src/zephyr/trading/trading_contracts/risk/risk_metrics.py | risk/risk_metrics.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 31 | src/zephyr/trading/trading_contracts/risk/risk_validator_... | risk/risk_validator_protocol.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 32 | src/zephyr/trading/trading_contracts/risk/trading_kill_sw... | risk/trading_kill_switch.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 33 | src/zephyr/trading/verdict_engine.py | trading/verdict_engine.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

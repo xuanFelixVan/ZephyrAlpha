@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 基本面信号，负责基于财务数据的基本面信号生成
 
-> **文档作用 / Purpose**: 展示 基本面信号（D_FUNDAMENTAL_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 基本面信号（D_FUNDAMENTAL_SIGNAL）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,25 +35,6 @@ ttl: permanent
 | 生产态模块 | 10 | Production Modules | 10 |
 | 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 财务指标信号 | Description | 财务指标信号 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 10 个模块 / 10 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (10 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/signal_fundamental/__init__.py | D_SIGNAL Signal Domain | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 2 | src/zephyr/signal_fundamental/capital/capital_allocation_... | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 3 | src/zephyr/signal_fundamental/capital/capital_allocator.py | D_SIGNAL — Capital Allocator（兼容 re-export shim） | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 4 | src/zephyr/signal_fundamental/capital/default_capital_all... | D_SIGNAL — Default Capital Allocator（兼容 re-export shim） | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 5 | src/zephyr/signal_fundamental/gen/aggregator_base.py | D_SIGNAL — Signal Generation Layer | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 6 | src/zephyr/signal_fundamental/gen/implementations/default... | D_SIGNAL — Default Signal Aggregator | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 7 | src/zephyr/signal_fundamental/pipeline.py | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 8 | src/zephyr/signal_fundamental/strategy/capital_allocator.py | D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出） | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 9 | src/zephyr/signal_fundamental/strategy/implementations/de... | D_SIGNAL — Default Capital Allocator | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 10 | src/zephyr/signal_fundamental/synth/signal_synthesizer.py | D_SIGNAL — Signal Synthesizer | 生产态 / production | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

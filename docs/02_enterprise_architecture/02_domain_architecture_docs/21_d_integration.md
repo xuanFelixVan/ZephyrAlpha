@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 管线路由，负责跨域数据流路由、管道编排和集成适配
 
-> **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 管线路由（D_INTEGRATION）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,86 +35,6 @@ ttl: permanent
 | 生产态模块 | 71 | Production Modules | 71 |
 | 容量 | 71/150 (正常) | Capacity | 71/150 (正常) |
 | 描述 | M1-M11双管线路由 | Description | M1-M11双管线路由 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 71 个模块 / 71 modules）。
-
-### L1 基础层 / Foundation Layer (71 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/integration/behavioral_admission/admission_res... | behavioral_admission/admission_response.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 2 | src/zephyr/integration/budget_enforcer/degradation_spiral... | Degradation Spiral Detector — 模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29) | 生产态 / production | [MOD-INF-001](../../03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md) |
-| 3 | src/zephyr/integration/llm_bridge.py | 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 4 | src/zephyr/integration/local_model/cache_layer.py | CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU | 生产态 / production | [MOD-INF-042](../../03_modules/_domain_integration/blueprint.md) |
-| 5 | src/zephyr/integration/local_model/embedding_router.py | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 | 生产态 / production | [MOD-INF-042](../../03_modules/_domain_integration/blueprint.md) |
-| 6 | src/zephyr/integration/local_model/local_model_scheduler.py | LocalModelScheduler — L2 本地模型 24/7 调度循环 | 生产态 / production | [MOD-INF-042](../../03_modules/_domain_integration/blueprint.md) |
-| 7 | src/zephyr/integration/local_model/ollama_chat.py | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理 | 生产态 / production | [MOD-INF-042](../../03_modules/_domain_integration/blueprint.md) |
-| 8 | src/zephyr/integration/local_model/ollama_embedding.py | OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入 | 生产态 / production | [MOD-INF-042](../../03_modules/_domain_integration/blueprint.md) |
-| 9 | src/zephyr/integration/mcp/_base_server.py | BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 10 | src/zephyr/integration/mcp/audit_logger.py | MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 11 | src/zephyr/integration/mcp/blueprint_search_server.py | BlueprintSearchServer — MCP Server for blueprint discovery | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 12 | src/zephyr/integration/mcp/doc_guard_server.py | DocGuardServer: 跨会话交接协议服务 MCP Server | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 13 | src/zephyr/integration/mcp/error_codes.py | MCP 错误码集中注册（MOD-INF-013 §3.4）。 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 14 | src/zephyr/integration/mcp/gate_engine_server.py | GateEngineServer: 门禁裁决服务 MCP Server | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 15 | src/zephyr/integration/mcp/gateway_server.py | MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 16 | src/zephyr/integration/mcp/handoff_auto_loader.py | Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 17 | src/zephyr/integration/mcp/prompt_provider.py | MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 18 | src/zephyr/integration/mcp/rate_limiter.py | MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 19 | src/zephyr/integration/mcp/resource_provider.py | MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 20 | src/zephyr/integration/mcp/rule_discovery_server.py | RuleDiscoveryServer — MCP Server for rule discovery（... | 生产态 / production |  |
-| 21 | src/zephyr/integration/mcp/sandbox_server.py | MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 22 | src/zephyr/integration/mcp/sentinel_server.py | SentinelServer: 意图路由哨兵 MCP Server | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 23 | src/zephyr/integration/mcp/task_manager_server.py | ZephyrAlpha MCP Task Manager Server | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 24 | src/zephyr/integration/mcp/telemetry_server.py | ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口 | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 25 | src/zephyr/integration/mcp/vector_memory_server.py | VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 v0.7.0) | 生产态 / production | [MOD-INF-013](../../03_modules/_cross_layer/model_context_protocol_servers/blueprint.md) |
-| 26 | src/zephyr/integration/mcp_server.py | AssetInventory MCP Server — MOD-INF-026 蓝图 §21 | 生产态 / production | [MOD-INF-026](../../03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md) |
-| 27 | src/zephyr/integration/pipeline_orchestrator.py | PipelineOrchestrator — M1-M11 管线协调器 | 生产态 / production | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 28 | src/zephyr/integration/ports.py | Protocol-based interface layer for pipeline->mcp dependency abstraction. | 生产态 / production | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 29 | src/zephyr/integration/shared/contracts/errors/contract_v... | errors/contract_violation_error.py | 生产态 / production |  |
-| 30 | src/zephyr/integration/shared/contracts/errors/data_quali... | CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误 | 生产态 / production |  |
-| 31 | src/zephyr/integration/shared/contracts/errors/execution_... | errors/execution_rejection_error.py | 生产态 / production | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 32 | src/zephyr/integration/shared/contracts/errors/factor_com... | CTR-ERR-002: FactorComputationError / 因子计算失败错误 | 生产态 / production |  |
-| 33 | src/zephyr/integration/shared/contracts/errors/risk_limit... | errors/risk_limit_violation_error.py | 生产态 / production | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 34 | src/zephyr/integration/shared/contracts/errors/signal_deg... | errors/signal_degradation_warning.py | 生产态 / production | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 35 | src/zephyr/integration/shared/events/dlq_bridge.py | CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 36 | src/zephyr/integration/shared/events/event_bus_upgrade.py | EventBus Upgrade — 事件总线升级 (M-16) | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 37 | src/zephyr/integration/shared/events/event_schemas.py | event_schemas.py —— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复） | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 38 | src/zephyr/integration/shared/events/upgrade_strategy.py | EventBus 升级策略引擎 | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 39 | src/zephyr/integration/vector_memory/bm25_index.py | BM25Index — MOD-INF-011 稀疏检索组件 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 40 | src/zephyr/integration/vector_memory/bridge_layer.py | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 41 | src/zephyr/integration/vector_memory/cache_layer.py | vector_memory/cache_layer.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 42 | src/zephyr/integration/vector_memory/chunk_strategy_route... | ChunkStrategyRouter — MOD-INF-011 分块策略调度 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 43 | src/zephyr/integration/vector_memory/collection_manager.py | CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 44 | src/zephyr/integration/vector_memory/collection_schemas.py | vector_memory/collection_schemas.py | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 45 | src/zephyr/integration/vector_memory/context_ingest.py | VMS 上下文注入器 — ingest_context() 消费者 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 46 | src/zephyr/integration/vector_memory/cross_collection_ret... | CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 47 | src/zephyr/integration/vector_memory/delegated_vector_mem... | DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 48 | src/zephyr/integration/vector_memory/design_principles.py | vector_memory/design_principles.py | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 49 | src/zephyr/integration/vector_memory/faiss_collection_man... | FAISSCollectionManager — FAISS HNSW/IVF+PQ 8 Collection 全生命周期管理 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 50 | src/zephyr/integration/vector_memory/hybrid_retriever.py | HybridRetriever — MOD-INF-011 混合检索架构 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 51 | src/zephyr/integration/vector_memory/in_memory_fake_vms.py | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 52 | src/zephyr/integration/vector_memory/in_memory_memory_bac... | DegradedVMSBackend — MOD-INF-011 降级兜底 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 53 | src/zephyr/integration/vector_memory/in_process_vector_me... | InProcessVectorMemory — MOD-INF-011 VMS 统一入口 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 54 | src/zephyr/integration/vector_memory/index_health_monitor.py | IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 55 | src/zephyr/integration/vector_memory/interface.py | VMS — Vector Memory Service 接口基类 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 56 | src/zephyr/integration/vector_memory/migrate_chroma_to_fa... | ChromDB -> FAISS + SQLite WAL 数据迁移脚本 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 57 | src/zephyr/integration/vector_memory/ollama_embedding.py | vector_memory/ollama_embedding.py | 生产态 / production | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 58 | src/zephyr/integration/vector_memory/provenance_enforcer.py | ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 59 | src/zephyr/integration/vector_memory/retrieval_feedback.py | RetrievalFeedback — MOD-INF-011 FLE 检索质量消费 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 60 | src/zephyr/integration/vector_memory/sqlite_metadata_stor... | SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 BM25) | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 61 | src/zephyr/integration/vector_memory/vector_bridge.py | VectorBridge — MOD-INF-011 CE/KB 外部集成适配器 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 62 | src/zephyr/integration/vector_memory/vms_errors.py | vector_memory/vms_errors.py | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 63 | src/zephyr/integration/vector_memory/vms_memory_backend.py | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 64 | src/zephyr/integration/vector_memory/vms_schemas.py | VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 | 生产态 / production | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
-| 65 | src/zephyr/shared/contracts/approval_types.py | G-CT-004 — ApprovalRequest Pydantic V2 BaseModel 审批请求数据结构. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 66 | src/zephyr/shared/contracts/protocols.py | Structural Protocol interfaces for cross-module contracts. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 67 | src/zephyr/shared/contracts/rollback_types.py | G-CT-003 — RollbackResult Pydantic V2 BaseModel 回滚结果数据结构. | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 68 | src/zephyr/shared/contracts/runtime_types.py | contracts/runtime_types.py | 生产态 / production | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 69 | src/zephyr/shared/evaluation/evals.py | evaluation/evals.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 70 | src/zephyr/shared/resilience/durable_execution.py | resilience/durable_execution.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 71 | src/zephyr/shared/versioning/version_negotiation.py | versioning/version_negotiation.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -732,8 +652,8 @@ flowchart TD
 | 8 | 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时... | → | D_GOV_AUDIT 审计追踪: 语义审计管线数据模型 — MOD-INF-028 §4.2 (semantic_audit... | 导入依赖 / import_depends |
 | 9 | MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 (mc... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
 | 10 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_GOV_AUDIT 审计追踪: gov_audit/writer.py | 导入依赖 / import_depends |
-| 11 | ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 12 | Structural Protocol interfaces for cross-module contracts... | → | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 11 | ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | D_GOV_RULE 规则治理: 任务类型定义——Task model 是任务卡字段的 SSoT（SQLite ta... | 导入依赖 / import_depends |
+| 12 | Structural Protocol interfaces for cross-module contracts... | → | D_GOV_RULE 规则治理: 门禁类型定义——GateType 枚举与 gate 相关 dataclass（Gate... | 导入依赖 / import_depends |
 | 13 | PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | D_INFRA_RECOVERY 回滚恢复: CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code... | 导入依赖 / import_depends |
 | 14 | LocalModelScheduler — L2 本地模型 24/7 调度循环 (local_m... | → | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | 导入依赖 / import_depends |
 | 15 | ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口... | → | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0） (system... | 导入依赖 / import_depends |

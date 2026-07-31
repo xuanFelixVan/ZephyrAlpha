@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 行情数据，负责市场行情数据的采集、分发和订阅管理
 
-> **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 行情数据（D_MKT_DATA）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,24 +35,6 @@ ttl: permanent
 | 生产态模块 | 9 | Production Modules | 9 |
 | 容量 | 9/150 (正常) | Capacity | 9/150 (正常) |
 | 描述 | 行情数据，负责市场行情数据的采集、分发和订阅管理 | Description | 行情数据，负责市场行情数据的采集、分发和订阅管理 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
-
-### L1 基础层 / Foundation Layer (9 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/market_data/__init__.py | market_data/__init__.py | 生产态 / production |  |
-| 2 | src/zephyr/market_data/_extensions/__init__.py | _extensions/__init__.py | 生产态 / production |  |
-| 3 | src/zephyr/market_data/api/__init__.py | api/__init__.py | 生产态 / production |  |
-| 4 | src/zephyr/market_data/core/__init__.py | core/__init__.py | 生产态 / production |  |
-| 5 | src/zephyr/market_data/infrastructure/__init__.py | infrastructure/__init__.py | 生产态 / production |  |
-| 6 | src/zephyr/market_data/models/__init__.py | models/__init__.py | 生产态 / production |  |
-| 7 | src/zephyr/market_data/normalized_market_data_producer/__... | NormalizedMarketData 生产者包——D_MKT_DATA→D_FACTOR 数据供给。 | 生产态 / production |  |
-| 8 | src/zephyr/market_data/normalized_market_data_producer/pr... | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据供给。 | 生产态 / production |  |
-| 9 | src/zephyr/market_data/services/__init__.py | services/__init__.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

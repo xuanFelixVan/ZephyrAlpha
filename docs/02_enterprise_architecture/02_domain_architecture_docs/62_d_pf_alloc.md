@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 组合分配，负责资产配置、权重分配和再平衡
 
-> **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,22 +35,6 @@ ttl: permanent
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | 组合分配，负责资产配置、权重分配和再平衡 | Description | 组合分配，负责资产配置、权重分配和再平衡 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 2 个模块 / 2 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_core/default_equity_strategy.py | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-
-### L2 领域层 / Domain Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_alloc/strategy_lifecycle_event.py | pf_alloc/strategy_lifecycle_event.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

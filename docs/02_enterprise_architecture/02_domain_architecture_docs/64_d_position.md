@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 仓位管理，负责持仓跟踪、仓位计算和盈亏分析
 
-> **文档作用 / Purpose**: 展示 仓位管理（D_POSITION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 仓位管理（D_POSITION）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,16 +35,6 @@ ttl: permanent
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 仓位管理，负责持仓跟踪、仓位计算和盈亏分析 | Description | 仓位管理，负责持仓跟踪、仓位计算和盈亏分析 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
-
-### L2 领域层 / Domain Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/position/position_reconciler.py | Position Reconciler — v0.10.1 持仓对账: execution report+book record+counter... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

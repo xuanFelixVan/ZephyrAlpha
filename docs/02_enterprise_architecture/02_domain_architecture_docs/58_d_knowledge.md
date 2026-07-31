@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 知识管理，负责知识库构建、向量索引和知识检索
 
-> **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,16 +35,6 @@ ttl: permanent
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 八大Collection管理(decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces) | Description | 八大Collection管理(decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
-
-### L1 基础层 / Foundation Layer (1 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | vector_memory/blueprint.md | 设计态 / design | [MOD-INF-011](../../03_modules/_domain_knowledge/vector_memory/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

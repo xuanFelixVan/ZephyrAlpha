@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 另类数据，负责非传统金融数据的采集、清洗和标准化
 
-> **文档作用 / Purpose**: 展示 另类数据（D_ALT_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 另类数据（D_ALT_DATA）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,22 +35,6 @@ ttl: permanent
 | 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | 另类数据，负责非传统金融数据的采集、清洗和标准化 | Description | 另类数据，负责非传统金融数据的采集、清洗和标准化 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
-
-### L1 基础层 / Foundation Layer (7 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/alt_data/__init__.py | alt_data/__init__.py | 生产态 / production |  |
-| 2 | src/zephyr/alt_data/_extensions/__init__.py | _extensions/__init__.py | 生产态 / production |  |
-| 3 | src/zephyr/alt_data/api/__init__.py | api/__init__.py | 生产态 / production |  |
-| 4 | src/zephyr/alt_data/core/__init__.py | core/__init__.py | 生产态 / production |  |
-| 5 | src/zephyr/alt_data/infrastructure/__init__.py | infrastructure/__init__.py | 生产态 / production |  |
-| 6 | src/zephyr/alt_data/models/__init__.py | models/__init__.py | 生产态 / production |  |
-| 7 | src/zephyr/alt_data/services/__init__.py | services/__init__.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

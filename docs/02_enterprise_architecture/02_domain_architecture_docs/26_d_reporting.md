@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 报告，负责投资报告、风险报告和合规报告的生成与分发
 
-> **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 报告（D_REPORTING）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,18 +35,6 @@ ttl: permanent
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
 | 描述 | 报告，负责投资报告、风险报告和合规报告的生成与分发 | Description | 报告，负责投资报告、风险报告和合规报告的生成与分发 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 3 个模块 / 3 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (3 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/reporting/analytics_base.py | D_REPORTING — Post-Trade Analytics Layer | 生产态 / production | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
-| 2 | src/zephyr/reporting/default_attribution_engine.py | D_REPORTING — Default Attribution Engine | 生产态 / production | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
-| 3 | src/zephyr/reporting/default_tca_engine.py | D_REPORTING — Default TCA Engine | 生产态 / production | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

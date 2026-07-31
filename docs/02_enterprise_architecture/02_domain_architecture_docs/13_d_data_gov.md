@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 数据治理，负责数据标准、元数据管理和数据生命周期治理
 
-> **文档作用 / Purpose**: 展示 数据治理（D_DATA_GOV）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 数据治理（D_DATA_GOV）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,25 +35,6 @@ ttl: permanent
 | 生产态模块 | 10 | Production Modules | 10 |
 | 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 数据治理，负责数据标准、元数据管理和数据生命周期治理 | Description | 数据治理，负责数据标准、元数据管理和数据生命周期治理 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 10 个模块 / 10 modules）。
-
-### L1 基础层 / Foundation Layer (10 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/data_governance/__init__.py | data_governance/__init__.py | 生产态 / production |  |
-| 2 | src/zephyr/data_governance/_extensions/__init__.py | _extensions/__init__.py | 生产态 / production |  |
-| 3 | src/zephyr/data_governance/api/__init__.py | api/__init__.py | 生产态 / production |  |
-| 4 | src/zephyr/data_governance/core/__init__.py | core/__init__.py | 生产态 / production |  |
-| 5 | src/zephyr/data_governance/core/lineage_tracker.py | D-DATA-GOV Lineage Tracker——数据血缘追踪。 | 生产态 / production |  |
-| 6 | src/zephyr/data_governance/core/metadata_registry.py | D-DATA-GOV Metadata Registry——元数据管理。 | 生产态 / production |  |
-| 7 | src/zephyr/data_governance/core/schema_registry.py | D-DATA-GOV Schema Registry——表结构注册与查询。 | 生产态 / production |  |
-| 8 | src/zephyr/data_governance/infrastructure/__init__.py | infrastructure/__init__.py | 生产态 / production |  |
-| 9 | src/zephyr/data_governance/models/__init__.py | models/__init__.py | 生产态 / production |  |
-| 10 | src/zephyr/data_governance/services/__init__.py | services/__init__.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

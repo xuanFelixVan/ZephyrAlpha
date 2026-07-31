@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 审计追踪，负责变更审计追踪和操作日志管理
 
-> **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 审计追踪（D_GOV_AUDIT）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,148 +35,6 @@ ttl: permanent
 | 生产态模块 | 121 | Production Modules | 121 |
 | 容量 | 121/150 (正常) | Capacity | 121/150 (正常) |
 | 描述 | 审计管线编排 | Description | 审计管线编排 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 123 个模块 / 123 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (2 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/governance/audit/default_attribution_engine.py | Re-export wrapper: default_attribution_engine canonical at zephyr.reporting.d... | 生产态 / production | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
-| 2 | src/zephyr/governance/audit/default_tca_engine.py | Re-export wrapper: default_tca_engine canonical at zephyr.reporting.default_t... | 生产态 / production | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
-
-### L1 基础层 / Foundation Layer (2 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | audit_orchestrator/blueprint.md | 设计态 / design | [MOD-INF-027](../../03_modules/_cross_layer/audit_orchestrator/blueprint.md) |
-| 2 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | audit_trail/blueprint.md | 设计态 / design | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-
-### L2 领域层 / Domain Layer (119 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | scripts/governance/repair/audit_design_completeness.py | [INVARIANTS] 按path精确匹配+按功能名模糊匹配; 输出差距报告; 提取所有ID格式 | 生产态 / production |  |
-| 2 | scripts/governance/repair/red_blue_test.py | [INVARIANTS] 20项红蓝对抗测试 | 生产态 / production |  |
-| 3 | scripts/governance/repair/rollback_depgraph.py | [INVARIANTS] 仅接受depgraph.backup.*路径; 回滚前自动备份当前depgraph | 生产态 / production |  |
-| 4 | scripts/governance/test_remediation_progress_smoke.py | test_remediation_progress_smoke.py — Phase 3.1 治本进度 reconciler end-to-en... | 生产态 / production |  |
-| 5 | src/zephyr/gov_audit/_orchestrator_compat.py | audit-orchestrator 兼容重导出层（ARCH-042 阶段4 修复双 MODULE，ARCH-043 Risk3... | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 6 | src/zephyr/gov_audit/action_history.py | ActionHistory — 操作历史持久化审计 + 去重 + 循环检测 | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 7 | src/zephyr/gov_audit/agent_signer.py | audit-trail.agent_signer — MOD-INF-020 · Agent Ed25519 签名器 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 8 | src/zephyr/gov_audit/anomaly.py | gov_audit/anomaly.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 9 | src/zephyr/gov_audit/api_lifecycle.py | gov_audit/api_lifecycle.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 10 | src/zephyr/gov_audit/audit_admission_controller.py | gov_audit/audit_admission_controller.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 11 | src/zephyr/gov_audit/audit_schema.py | audit_schema — 审计视图与查询入口（SH-DB-001 v2.0） | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 12 | src/zephyr/gov_audit/audit_write_failure_protector.py | Audit Write Failure Protector — v0.13.0 审计写入失败保护器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 13 | src/zephyr/gov_audit/bridge.py | gov_audit/bridge.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 14 | src/zephyr/gov_audit/bridges/audit_anomaly.py | G-CT-002 Audit 异常检测器 — AnomalyEvent Pydantic V2 BaseModel. | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 15 | src/zephyr/gov_audit/bridges/audit_contracts.py | G-CT-001 契约消费端 — Audit.write() 公共接口. | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 16 | src/zephyr/gov_audit/bridges/audit_delegation_bridge.py | Audit ↔ DelegationManager 委托链审计桥接. | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 17 | src/zephyr/gov_audit/bridges/audit_drift_bridge.py | G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020 ↔ MOD-INF-023 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 18 | src/zephyr/gov_audit/bridges/audit_feedback_bridge.py | Audit ↔ Feedback Loop 三角闭环桥接. | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 19 | src/zephyr/gov_audit/bridges/audit_tiered_storage_bridge.py | Audit ↔ WarmHotGate 三层存储桥接. | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 20 | src/zephyr/gov_audit/bridges/audit_trust_bridge.py | Audit ↔ ContinuousTrust 信任分数桥接. | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 21 | src/zephyr/gov_audit/changelog_manager.py | gov_audit/changelog_manager.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 22 | src/zephyr/gov_audit/cli.py | gov_audit/cli.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 23 | src/zephyr/gov_audit/code_archaeology.py | gov_audit/code_archaeology.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 24 | src/zephyr/gov_audit/cold_start.py | BootstrapCache — 审计冷启动共享单例缓存。 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 25 | src/zephyr/gov_audit/compliance_map.py | audit-trail.compliance_map — MOD-INF-020 · 合规框架映射 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 26 | src/zephyr/gov_audit/contracts.py | gov_audit/contracts.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 27 | src/zephyr/gov_audit/corporate_actions.py | gov_audit/corporate_actions.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 28 | src/zephyr/gov_audit/delegation_auditor.py | gov_audit/delegation_auditor.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 29 | src/zephyr/gov_audit/delegation_bridge.py | gov_audit/delegation_bridge.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 30 | src/zephyr/gov_audit/dora_metrics.py | gov_audit/dora_metrics.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 31 | src/zephyr/gov_audit/event_store.py | EventStore — Event Sourcing 事件追加与回放（DW-0002） | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 32 | src/zephyr/gov_audit/evidence_pack.py | audit-trail.evidence_pack — MOD-INF-020 · 证据包导出器 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 33 | src/zephyr/gov_audit/external_tool_audit.py | gov_audit/external_tool_audit.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 34 | src/zephyr/gov_audit/feedback_bridge.py | gov_audit/feedback_bridge.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 35 | src/zephyr/gov_audit/feedback_policy.py | feedback_policy.py — Audit-findings → policy recommendation bridge. | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 36 | src/zephyr/gov_audit/feedback_self_audit.py | audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 37 | src/zephyr/gov_audit/finding_ingest.py | gov_audit/finding_ingest.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 38 | src/zephyr/gov_audit/finding_model.py | gov_audit/finding_model.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 39 | src/zephyr/gov_audit/forensic_package.py | Forensic Package — v0.8.0 取证就绪: escalation event bundle+hash chain+times... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 40 | src/zephyr/gov_audit/genesis.py | audit-trail.genesis — MOD-INF-020 · 创世块管理 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 41 | src/zephyr/gov_audit/glossary_matrix.py | gov_audit/glossary_matrix.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 42 | src/zephyr/gov_audit/incremental_review.py | gov_audit/incremental_review.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 43 | src/zephyr/gov_audit/indexer.py | gov_audit/indexer.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 44 | src/zephyr/gov_audit/integrity.py | audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 45 | src/zephyr/gov_audit/integrity_verifier.py | Integrity Verifier — v0.8.0 代码完整性验证器: hash校验+diff detection+rollback。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 46 | src/zephyr/gov_audit/kb_gate.py | audit-trail.kb_gate — MOD-INF-020 · KB 审计门控 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 47 | src/zephyr/gov_audit/log_rotation.py | gov_audit/log_rotation.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 48 | src/zephyr/gov_audit/merkle_audit.py | Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.gov_audit (MOD-INF-020). | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 49 | src/zephyr/gov_audit/merkle_hourly.py | audit-trail.merkle_hourly — MOD-INF-020 · 每小时 Merkle 聚合 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 50 | src/zephyr/gov_audit/models.py | gov_audit/models.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 51 | src/zephyr/gov_audit/observability_dashboard.py | gov_audit/observability_dashboard.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 52 | src/zephyr/gov_audit/pipeline_runner.py | gov_audit/pipeline_runner.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 53 | src/zephyr/gov_audit/privacy.py | audit-trail.privacy — MOD-INF-020 · PII 检测与脱敏 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 54 | src/zephyr/gov_audit/provenance_tracker.py | gov_audit/provenance_tracker.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 55 | src/zephyr/gov_audit/query.py | gov_audit/query.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 56 | src/zephyr/gov_audit/replay_engine.py | gov_audit/replay_engine.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 57 | src/zephyr/gov_audit/resource_aware_pool.py | gov_audit/resource_aware_pool.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 58 | src/zephyr/gov_audit/retention.py | gov_audit/retention.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 59 | src/zephyr/gov_audit/sbom_generator.py | LicenseType 枚举——许可证类型定义（P3 价值审判退役残留）。 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 60 | src/zephyr/gov_audit/spec_auditor.py | gov_audit/spec_auditor.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 61 | src/zephyr/gov_audit/supply_chain.py | audit-trail.supply_chain — MOD-INF-020 · 供应链审计 | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 62 | src/zephyr/gov_audit/supply_chain_security.py | gov_audit/supply_chain_security.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 63 | src/zephyr/gov_audit/text_to_finding_adapter.py | gov_audit/text_to_finding_adapter.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 64 | src/zephyr/gov_audit/tiered_storage.py | gov_audit/tiered_storage.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 65 | src/zephyr/gov_audit/tiered_storage_bridge.py | gov_audit/tiered_storage_bridge.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 66 | src/zephyr/gov_audit/trust_bridge.py | gov_audit/trust_bridge.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 67 | src/zephyr/gov_audit/trust_engine.py | gov_audit/trust_engine.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 68 | src/zephyr/gov_audit/trust_ring_manager.py | gov_audit/trust_ring_manager.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 69 | src/zephyr/gov_audit/wqa_scorer.py | gov_audit/wqa_scorer.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 70 | src/zephyr/gov_audit/writer.py | gov_audit/writer.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 71 | src/zephyr/gov_enforcement/behavioral_admission/ai_code_s... | behavioral_admission/ai_code_standards.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 72 | src/zephyr/gov_enforcement/behavioral_admission/mcp_resul... | behavioral_admission/mcp_result_push.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 73 | src/zephyr/gov_enforcement/behavioral_admission/post_proc... | post_process.py —— AI 生成代码后处理管道（Phase 13 | 盲点 B31） | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 74 | src/zephyr/gov_enforcement/behavioral_admission/vibe_codi... | behavioral_admission/vibe_coding_enforcer.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 75 | src/zephyr/gov_enforcement/rule_enforcement/audit_chain_v... | 审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta） | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 76 | src/zephyr/gov_enforcement/rule_enforcement/sys_master_co... | SYS-MASTER-001 Compliance Checker | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 77 | src/zephyr/governance/audit-trail/contracts.py | audit-trail/contracts.py — G-CT-002 Audit 契约（re-export）。 | 生产态 / production |  |
-| 78 | src/zephyr/governance/audit/_git_helpers.py | _git_helpers.py — audit reconciler 共享 git 工具模块 | 生产态 / production |  |
-| 79 | src/zephyr/governance/audit/ai_error_pattern_library.py | ai_error_pattern_library.py — AI 错误模式库（只读查询接口）。 | 生产态 / production |  |
-| 80 | src/zephyr/governance/audit/blueprint_status_transition_r... | blueprint_status_transition_reconciler.py — 蓝图状态单调推进 reconciler（P1-... | 生产态 / production |  |
-| 81 | src/zephyr/governance/audit/commit_gateway_abuse_monitor_... | commit_gateway_abuse_monitor_reconciler.py — commit gateway 持续滥用监控（AR... | 生产态 / production |  |
-| 82 | src/zephyr/governance/audit/cross_layer_contract_signatur... | cross_layer_contract_signature_reconciler.py — 跨层契约签名漂移检测 reconcil... | 生产态 / production |  |
-| 83 | src/zephyr/governance/audit/error_pattern_consumer_reconc... | error_pattern_consumer_reconciler.py — AI 行为遥测 JSONL 错误事件聚合 consumer。 | 生产态 / production |  |
-| 84 | src/zephyr/governance/audit/git_performance_monitor_recon... | git_performance_monitor_reconciler.py — git 性能持续监控 + 早期预警（ARCH-GI... | 生产态 / production |  |
-| 85 | src/zephyr/governance/audit/health_score_calculator.py | health_score_calculator.py — commit gateway 滥用 6 维加权健康度评分（P3-2，#... | 生产态 / production |  |
-| 86 | src/zephyr/governance/audit/reconcile_runner.py | reconcile_runner.py — Reconciler 链路异步化（Ruling:100PCT-AI-GOVERNANCE P2-... | 生产态 / production |  |
-| 87 | src/zephyr/governance/audit/reconcile_worker.py | reconcile_worker.py — 异步 reconciler worker（Ruling:100PCT-AI-GOVERNANCE P2... | 生产态 / production |  |
-| 88 | src/zephyr/governance/audit/reconciliation_registry.py | reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2... | 生产态 / production |  |
-| 89 | src/zephyr/governance/audit/remediation_progress_reconcil... | remediation_progress_reconciler.py — 治本进度持久化 + 新鲜度对账（... | 生产态 / production |  |
-| 90 | src/zephyr/governance/audit/runtime_violation_snapshot.py | runtime_violation_snapshot.py — trae_060 §5 evidence 运行时快照（... | 生产态 / production |  |
-| 91 | src/zephyr/governance/audit/runtime_violation_snapshot_re... | runtime_violation_snapshot_reconciler.py — trae_060 §5 evidence 运行时快照 ... | 生产态 / production |  |
-| 92 | src/zephyr/governance/audit/snapshot_manager.py | SnapshotManager — Event Sourcing 快照管理（DW-0005） | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 93 | src/zephyr/governance/audit/workspace_hygiene_reconciler.py | workspace_hygiene_reconciler.py — 工作区卫生自动清理 reconciler（DEBT-WORKSP... | 生产态 / production |  |
-| 94 | src/zephyr/governance/financial_governance/financial_comp... | financial_governance/financial_compliance.py | 生产态 / production | [MOD-GOVERNANCE](../../03_modules/_domain_governance/blueprint.md) |
-| 95 | src/zephyr/governance/semantic_audit/alignment_engine.py | 三元对齐检测：蓝图声明清单 vs 磁盘实际文件 vs import 引用链。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 96 | src/zephyr/governance/semantic_audit/compliance_map.py | audit-trail.compliance_map — MOD-INF-020 · 合规框架映射 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 97 | src/zephyr/governance/semantic_audit/feedback_self_audit.py | audit-trail.feedback_self_audit — MOD-INF-020 · 反馈自审计 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 98 | src/zephyr/governance/semantic_audit/fix_prioritizer.py | 按 severity -> certainty -> blast_radius 三级排序,分组输出批次。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 99 | src/zephyr/governance/semantic_audit/fix_result_prioritiz... | fix_prioritizer — MOD-INF-028 §3.1 Stage 8 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 100 | src/zephyr/governance/semantic_audit/issue_aggregator.py | 收集各阶段审计结果，去重合并排序输出。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 101 | src/zephyr/governance/semantic_audit/kb_gate.py | audit-trail.kb_gate — MOD-INF-020 · KB 审计门控 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 102 | src/zephyr/governance/semantic_audit/llm_bridge.py | 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 103 | src/zephyr/governance/semantic_audit/models.py | 语义审计管线数据模型 — MOD-INF-028 §4.2 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 104 | src/zephyr/governance/semantic_audit/orchestrator.py | SemanticAuditor 编排器——9阶段管道统一调度. | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 105 | src/zephyr/governance/semantic_audit/privacy.py | audit-trail.privacy — MOD-INF-020 · PII 检测与脱敏 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 106 | src/zephyr/governance/semantic_audit/reference_extractor.py | AST 解析文件，提取 9 个维度的引用信息。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 107 | src/zephyr/governance/semantic_audit/safety_boundary.py | 禁碰规则过滤 + 置信度阈值。输入 TriggerResult 列表,输出 SafetyDecision 分类。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 108 | src/zephyr/governance/semantic_audit/self_healer.py | Stage 7 自愈闭环 — 修复->自测->回滚. | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 109 | src/zephyr/governance/semantic_audit/self_health.py | 7 SLI + 5 容量 SLI + 退化检测。定时自检,输出 HEALTHY/DEGRADED/CRITICAL。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 110 | src/zephyr/governance/semantic_audit/semantic_cache.py | semantic_audit/semantic_cache.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 111 | src/zephyr/governance/semantic_audit/spec_auditor.py | G-CT-007 — Audit.record_agent_spec() 记录 Agent Spec 注册与变更. | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 112 | src/zephyr/governance/semantic_audit/trigger_engine.py | 监听文件变更，判定是否触发语义审计。 | 生产态 / production | [MOD-INF-028](../../03_modules/_cross_layer/semantic_auditor/blueprint.md) |
-| 113 | tests/governance/audit/test_error_pattern_id_column.py | test_error_pattern_id_column.py — reconcile_execution_log.error_pattern_id ... | 生产态 / production |  |
-| 114 | tests/governance/audit/test_p3_integration_smoke.py | test_p3_integration_smoke.py — Phase 3 全链路集成 smoke test（P3-5） | 生产态 / production |  |
-| 115 | tests/governance/audit/test_reconcile_async.py | test_reconcile_async.py — P2-3 reconciler 链路异步化测试 | 生产态 / production |  |
-| 116 | tests/governance/audit/test_reconcile_worker_selfheal.py | test_reconcile_worker_selfheal.py — #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phas... | 生产态 / production |  |
-| 117 | tests/governance/audit/test_trae_069_threshold_sync_smoke.py | test_trae_069_threshold_sync_smoke.py — trae_069 YAML 真源→代码常量同步 smo... | 生产态 / production |  |
-| 118 | tests/governance/rule_bridge/test_session_worktree_async_... | test_session_worktree_async_reconcile.py — _run_reconcilers_after_merge 异步... | 生产态 / production |  |
-| 119 | tests/governance/test_workspace_telemetry_shared.py | test_workspace_telemetry_shared.py — shared workspace_telemetry 公共 API 单测 | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -1157,9 +1015,9 @@ flowchart TD
 | 30 | test_session_worktree_async_reconcile.py — _run_reconcil... | → | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | 测试依赖 / test_depends |
 | 31 | gov_audit/delegation_bridge.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
 | 32 | gov_audit/pipeline_runner.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | 导入依赖 / import_depends |
-| 33 | 审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta... | → | D_GOV_RULE 规则治理: 门禁上下文传播 / Gate Context (gate_engine/gate_context.py) | 导入依赖 / import_depends |
-| 34 | commit_gateway_abuse_monitor_reconciler.py — commit gate... | → | D_GOV_RULE 规则治理: 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 导入依赖 / import_depends |
-| 35 | test_p3_integration_smoke.py — Phase 3 全链路集成 smoke ... | → | D_GOV_RULE 规则治理: 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 测试依赖 / test_depends |
+| 33 | 审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta... | → | D_GOV_RULE 规则治理: 门禁上下文传播——GateContext 构建/序列化/跨模块注入（bet... | 导入依赖 / import_depends |
+| 34 | commit_gateway_abuse_monitor_reconciler.py — commit gate... | → | D_GOV_RULE 规则治理: 自适应阈值——双模式：概率型（PASS/FAIL outcome 调节）+ ... | 导入依赖 / import_depends |
+| 35 | test_p3_integration_smoke.py — Phase 3 全链路集成 smoke ... | → | D_GOV_RULE 规则治理: 自适应阈值——双模式：概率型（PASS/FAIL outcome 调节）+ ... | 测试依赖 / test_depends |
 | 36 | [INVARIANTS] 按path精确匹配+按功能名模糊匹配; 输出差距报... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 37 | [INVARIANTS] 20项红蓝对抗测试 (repair/red_blue_test.py) | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 38 | [INVARIANTS] 仅接受depgraph.backup.*路径; 回滚前自动备份... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
@@ -1282,8 +1140,8 @@ flowchart TD
 | 43 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | SYS-MASTER-001 Compliance Checker (rule_enforcement/sys_m... | 导入依赖 / import_depends |
 | 44 | D_GOV_OPS_RESILIENCE 运维弹性治理: blast_radius — MOD-INF-028 §3.1 Stage 9 (resilience_gov... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 (semantic_audit... | 导入依赖 / import_depends |
 | 45 | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/tamper_evident_log.py | → | gov_audit/writer.py | 导入依赖 / import_depends |
-| 46 | D_GOV_RULE 规则治理: 能力检查器 / Capability Checker (rule_enforcement/capabil... | → | gov_audit/bridge.py | 导入依赖 / import_depends |
-| 47 | D_GOV_RULE 规则治理: 门禁紧急旁路 / Gate Override (gate_engine/gate_override.py) | → | gov_audit/bridge.py | 导入依赖 / import_depends |
+| 46 | D_GOV_RULE 规则治理: 能力检查器（Capability Checker） (rule_enforcement/capabi... | → | gov_audit/bridge.py | 导入依赖 / import_depends |
+| 47 | D_GOV_RULE 规则治理: Owner 紧急旁路——时间限定的门禁临时绕过 + 审计追踪（beta... | → | gov_audit/bridge.py | 导入依赖 / import_depends |
 | 48 | D_GOV_SCRIPTS 脚本治理: Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-M... | → | SYS-MASTER-001 Compliance Checker (rule_enforcement/sys_m... | 导入依赖 / import_depends |
 | 49 | D_GOV_SCRIPTS 脚本治理: scripts/governance/rebuild_audit_index.py — 重建 audit-t... | → | gov_audit/indexer.py | 导入依赖 / import_depends |
 | 50 | D_GOV_SCRIPTS 脚本治理: architecture_health_dashboard.py — 架构健康度仪表盘（自... | → | runtime_violation_snapshot.py — trae_060 §5 evidence 运... | 导入依赖 / import_depends |

@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 信号质量控制，负责信号质量评估、异常检测和质量门禁
 
-> **文档作用 / Purpose**: 展示 信号质量控制（D_SIGQC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 信号质量控制（D_SIGQC）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,17 +35,6 @@ ttl: permanent
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | 信号质量评估 | Description | 信号质量评估 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 2 个模块 / 2 modules）。
-
-### L2 领域层 / Domain Layer (2 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/signal_quality/__init__.py | D_SIGQC — Signal Quality Domain | 生产态 / production |  |
-| 2 | src/zephyr/signal_quality/degradation_monitor_base.py | D_SIGQC — Signal Quality Degradation Monitor Base | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

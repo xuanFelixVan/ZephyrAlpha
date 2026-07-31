@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 漂移检测，负责架构漂移检测和漂移告警
 
-> **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 漂移检测（D_GOV_DRIFT）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,95 +35,6 @@ ttl: permanent
 | 生产态模块 | 74 | Production Modules | 74 |
 | 容量 | 74/150 (正常) | Capacity | 74/150 (正常) |
 | 描述 | 39个漂移检测器注册与调度 | Description | 39个漂移检测器注册与调度 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 75 个模块 / 75 modules）。
-
-### L1 基础层 / Foundation Layer (2 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_domain_governance/drift_detector/bluepri... | drift_detector/blueprint.md | 设计态 / design | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 2 | src/zephyr/gov_drift/artifact_scanner.py | ArtifactScanner — SSRF / Path Traversal / Credential / Token 防御扫描器 | 生产态 / production | [MOD-L10-001](../../03_modules/_domain_compliance/blueprint.md) |
-
-### L2 领域层 / Domain Layer (73 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | scripts/governance/d11_compliance/validate_blueprint_over... | Module docstring — see module-level docstring for details. | 生产态 / production |  |
-| 2 | scripts/governance/d11_compliance/validate_truth_source_c... | validate_truth_source_cascade.py — 真源级联一致性校验 | 生产态 / production |  |
-| 3 | scripts/governance/d5_architecture/validators/validate_au... | Module docstring — see module-level docstring for details. | 生产态 / production |  |
-| 4 | scripts/governance/d5_architecture/validators/validate_ss... | SSoT 文件头一致性校验器. | 生产态 / production |  |
-| 5 | src/zephyr/gov_audit/drift_bridge.py | gov_audit/drift_bridge.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 6 | src/zephyr/gov_audit/self_monitor.py | gov_audit/self_monitor.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
-| 7 | src/zephyr/gov_drift/absence_manager.py | Owner Absence Manager — Owner缺席模式 §6.32。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 8 | src/zephyr/gov_drift/ai_construction_detectors.py | Drift Detector AI 施工检测器 — ai_construction_detectors.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 9 | src/zephyr/gov_drift/ai_context_injector.py | AI Context Injector — 施工前预检D-023-16 · §6.8。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 10 | src/zephyr/gov_drift/autonomy_regressor.py | Autonomy Regressor — v0.10.0 渐进自治可逆性管理器: confidence<阈值->自动regr... | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 11 | src/zephyr/gov_drift/backcompat_checker.py | Backward Compatibility Checker — 向后兼容策略漂移检测 D-023-31 · §6.23。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 12 | src/zephyr/gov_drift/baseline_manager.py | Baseline Manager — baseline_manager.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 13 | src/zephyr/gov_drift/baseline_poisoning_guard.py | Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.25。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 14 | src/zephyr/gov_drift/bootstrapping_calibrator.py | gov_drift/bootstrapping_calibrator.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 15 | src/zephyr/gov_drift/brain_integration.py | ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 16 | src/zephyr/gov_drift/canary_controller.py | Detector Canary Controller — 检测器金丝雀部署 §6.11。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 17 | src/zephyr/gov_drift/cascade_detector.py | Cascade Failure Detector — 级联故障检测 D-023-22 · §6.15。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 18 | src/zephyr/gov_drift/chaos_injector.py | Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 19 | src/zephyr/gov_drift/config_consistency.py | Config Consistency Checker — 配置多源一致性 D-023-29 · §6.21。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 20 | src/zephyr/gov_drift/contract_drift_detector.py | contract_drift_detector — 契约漂移检测器。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 21 | src/zephyr/gov_drift/correlation_engine.py | Correlation Engine — correlation_engine.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 22 | src/zephyr/gov_drift/credibility_engine.py | Credibility Engine — credibility_engine.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 23 | src/zephyr/gov_drift/cross_module_score.py | Cross Module Score — cross_module_score.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 24 | src/zephyr/gov_drift/dashboard.py | Coverage Dashboard — dashboard.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 25 | src/zephyr/gov_drift/detector_core/__init__.py | MOD-INF-023 drift_detector core module. | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 26 | src/zephyr/gov_drift/detector_core/benchmark_integrity.py | detector_core/benchmark_integrity.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 27 | src/zephyr/gov_drift/detector_core/bridges/drift_bridge.py | DriftBridge — 漂移检测器事件桥接 (MOD-INF-023). | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 28 | src/zephyr/gov_drift/detector_core/ml_engineering.py | detector_core/ml_engineering.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 29 | src/zephyr/gov_drift/detector_core/model_drift_monitor.py | detector_core/model_drift_monitor.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 30 | src/zephyr/gov_drift/detector_core/performance_baseline.py | detector_core/performance_baseline.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 31 | src/zephyr/gov_drift/detector_core/regime_detector.py | detector_core/regime_detector.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 32 | src/zephyr/gov_drift/detector_dispatcher.py | Detector Dispatcher — detector_dispatcher.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 33 | src/zephyr/gov_drift/drift_detector.py | Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift (MOD-INF-023). | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 34 | src/zephyr/gov_drift/drift_engine.py | Drift Engine — 编排器核心 (SRC-0030 精简后) | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 35 | src/zephyr/gov_drift/drift_hotfix_bypass.py | Drift Hotfix Bypass — drift_hotfix_bypass.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 36 | src/zephyr/gov_drift/drift_infrastructure.py | Drift Detector 基础设施 — drift_infrastructure.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 37 | src/zephyr/gov_drift/drift_models.py | Drift Detector 数据模型 — drift_models.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 38 | src/zephyr/gov_drift/drift_result_types.py | Drift Detector 结果类型 + 专项检测函数 — drift_result_types.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 39 | src/zephyr/gov_drift/drift_training.py | Drift Detector AI 训练闭环 + 跨语言检测 — drift_training.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 40 | src/zephyr/gov_drift/file_attr_checker.py | File Attribute Integrity — 文件底层属性完整性 §6.30。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 41 | src/zephyr/gov_drift/forensics_engine.py | Drift Forensics Engine — 漂移取证引擎 §6.17。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 42 | src/zephyr/gov_drift/gate_persistence.py | Gate Persistence — gate_persistence.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 43 | src/zephyr/gov_drift/git_bisector.py | Git Bisector — git_bisector.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 44 | src/zephyr/gov_drift/gitignore_auditor.py | .gitignore Integrity Auditor — gitignore完整性审计 D-023-32 · §6.24。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 45 | src/zephyr/gov_drift/handoff_manager.py | Cross-Session Handoff Manager — 跨Session修复上下文交接 §6.14。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 46 | src/zephyr/gov_drift/headless_scanner.py | Headless Scanner — headless_scanner.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 47 | src/zephyr/gov_drift/incremental_scanner.py | Incremental Scanner — incremental_scanner.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 48 | src/zephyr/gov_drift/naming_magic_checker.py | Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 49 | src/zephyr/gov_drift/orphan_scanner.py | Orphan Resource Scanner — 孤儿资源检测 §6.28。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 50 | src/zephyr/gov_drift/python_compat.py | Python Compatibility Checker — Python版本兼容性漂移 D-023-30 · §6.22。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 51 | src/zephyr/gov_drift/resource_guard.py | Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 52 | src/zephyr/gov_drift/reward_hacking_rebound_detector.py | Reward Hacking Rebound Detector — v0.14.0 §2.37-D. | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 53 | src/zephyr/gov_drift/roi_engine.py | ROI Engine — roi_engine.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 54 | src/zephyr/gov_drift/rollback_bridge.py | G-CT-006 契约：Drift -> Rollback 漂移触发回滚. | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 55 | src/zephyr/gov_drift/scan_mutex.py | Scan Mutex — scan_mutex.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 56 | src/zephyr/gov_drift/self_check.py | Self-Drift Check — self_check.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 57 | src/zephyr/gov_drift/self_test_verifier.py | Self Test Verifier — self_test_verifier.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 58 | src/zephyr/gov_drift/silence_detector.py | Silence Detector — v0.8.0 静默窗口检测器: agent无响应超时+heartbeat缺失检测。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 59 | src/zephyr/gov_drift/spiral_ews.py | gov_drift/spiral_ews.py | 生产态 / production | [MOD-INF-024](../../03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) |
-| 60 | src/zephyr/gov_drift/suppression_learner.py | Suppression Learner — suppression_learner.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 61 | src/zephyr/gov_drift/symlink_checker.py | Symlink Integrity Checker — 软链接完整性检测 §6.29。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 62 | src/zephyr/gov_drift/tamper_proof_audit.py | Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 63 | src/zephyr/gov_drift/test_fixture_checker.py | Test Fixture Checker — 测试夹具漂移检测 D-023-28 · §6.20。 | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 64 | src/zephyr/gov_drift/trend_analyzer.py | Trend Analyzer — trend_analyzer.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 65 | src/zephyr/gov_drift/vigil_runtime.py | Vigil Runtime — v0.6.0 VIGIL维护运行时: 运维token预算+手动override窗口。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
-| 66 | src/zephyr/gov_enforcement/rule_enforcement/breaking_chan... | Breaking Change 检测器（GATE-CDC-2）——字段删除/类型变更->CI FAIL。 | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 67 | src/zephyr/gov_enforcement/rule_enforcement/drift_detecto... | Gate-side Drift Detector Recovery — zephyr.gov_enforcement.rule_enforcement.... | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 68 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁健康仪表板——per-gate SLI 报告、误报率、延迟分布、1人+AI运维视图（beta） | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 69 | src/zephyr/gov_enforcement/rule_enforcement/gate_engine/g... | 门禁引擎完整性守卫——自检SHA-256校验+trust root自验证（beta） | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 70 | src/zephyr/gov_enforcement/rule_enforcement/invariants/en... | EN-002 — Enforcement Mode Validator | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 71 | src/zephyr/gov_enforcement/rule_enforcement/truth_source_... | 真源优先级裁决器（Truth Source Validator） | 生产态 / production | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
-| 72 | src/zephyr/governance/drift-detector/__init__.py | drift-detector/__init__.py | 生产态 / production | [MOD-INF-023](../../03_modules/_domain_governance/drift_detector/blueprint.md) |
-| 73 | src/zephyr/governance/integrity.py | governance/integrity.py | 生产态 / production | [MOD-INF-020](../../03_modules/_domain_governance/audit_trail/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -810,8 +721,8 @@ flowchart TD
 | 52 | D_GOV_AUDIT 审计追踪: G-CT-007 Audit ↔ Drift 双向桥接 — MOD-INF-020 ↔ MOD-IN... | → | Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
 | 53 | D_GOV_AUDIT 审计追踪: gov_audit/cli.py | → | Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
 | 54 | D_GOV_AUDIT 审计追踪: gov_audit/cli.py | → | governance/integrity.py | 导入依赖 / import_depends |
-| 55 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | 导入依赖 / import_depends |
-| 56 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | EN-002 — Enforcement Mode Validator (invariants/en_002_e... | 导入依赖 / import_depends |
+| 55 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | → | Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | 导入依赖 / import_depends |
+| 56 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | → | EN-002 — Enforcement Mode Validator (invariants/en_002_e... | 导入依赖 / import_depends |
 | 57 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/state_machine.py | → | Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
 | 58 | D_INFRA_RUNTIME 运行时集成: ZephyrAlpha — system-telemetry/contract_metrics.py (syst... | → | contract_drift_detector — 契约漂移检测器。 (gov_drift/co... | 导入依赖 / import_depends |
 | 59 | D_INFRA_RUNTIME 运行时集成: trading/lifecycle_manager.py | → | gov_audit/self_monitor.py | 导入依赖 / import_depends |

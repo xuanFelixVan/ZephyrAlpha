@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 训练，负责模型训练、特征工程和模型评估
 
-> **文档作用 / Purpose**: 展示 训练（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 训练（D_ML_TRAIN）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,19 +35,6 @@ ttl: permanent
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
 | 描述 | 模型能力考试 | Description | 模型能力考试 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 4 个模块 / 4 modules）。
-
-### L1 基础层 / Foundation Layer (4 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | model_profiler/blueprint.md | 设计态 / design | [MOD-INF-034](../../03_modules/_cross_layer/model_profiler/blueprint.md) |
-| 2 | src/zephyr/ml_train/implementations/default_inference_eng... | D_ML_TRAIN — Default Inference Engine | 生产态 / production | [MOD-L11-001](../../03_modules/_domain_machine_learning_train/blueprint.md) |
-| 3 | src/zephyr/ml_train/inference_base.py | D_ML_TRAIN — ML Inference Base | 生产态 / production | [MOD-L11-001](../../03_modules/_domain_machine_learning_train/blueprint.md) |
-| 4 | src/zephyr/ml_train/trainer_base.py | D_ML_TRAIN — ML Training Base | 生产态 / production | [MOD-L11-001](../../03_modules/_domain_machine_learning_train/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 回滚恢复，负责系统故障时的状态回滚、事务补偿和恢复编排
 
-> **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,70 +35,6 @@ ttl: permanent
 | 生产态模块 | 55 | Production Modules | 55 |
 | 容量 | 55/150 (正常) | Capacity | 55/150 (正常) |
 | 描述 | 双轨Checkpoint(git commit + SQLite JSONL dump) | Description | 双轨Checkpoint(git commit + SQLite JSONL dump) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 55 个模块 / 55 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (55 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/governance/rollback/contracts.py | rollback/contracts.py — G-CT-002 Rollback 契约（re-export）。 | 生产态 / production |  |
-| 2 | src/zephyr/infrastructure/rollback/_manifest.py | MOD-INF-021 Rollback System — 模块文件清单 (_manifest_)。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 3 | src/zephyr/infrastructure/rollback/agent_cooldown.py | AgentCooldown — Agent 冷却隔离器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 4 | src/zephyr/infrastructure/rollback/auditor.py | G-CT-004 契约：Rollback -> Audit 记录回滚操作. | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 5 | src/zephyr/infrastructure/rollback/auto_rollback_trigger.py | AutoRollbackTrigger — 自动回滚触发器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 6 | src/zephyr/infrastructure/rollback/budget_tracker.py | G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 7 | src/zephyr/infrastructure/rollback/checkpoint_gc.py | CheckpointGC — Checkpoint 垃圾回收。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 8 | src/zephyr/infrastructure/rollback/commit_quality_gate.py | CommitQualityGate — Commit 质量基础设施。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 9 | src/zephyr/infrastructure/rollback/complexity_budget.py | ComplexityBudget — 回滚复杂度元 Budget 监控。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 10 | src/zephyr/infrastructure/rollback/contract.py | CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code 完整定义。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 11 | src/zephyr/infrastructure/rollback/contracts.py | G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口. | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 12 | src/zephyr/infrastructure/rollback/credential_rotation_tr... | CredentialRotationDetector — 回滚后凭据泄露检测（仅检测，不轮换）。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 13 | src/zephyr/infrastructure/rollback/cross_platform_shell.py | CrossPlatformShell — 跨平台 Shell 脚本双输出。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 14 | src/zephyr/infrastructure/rollback/drift_fix.py | rollback/drift_fix.py | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 15 | src/zephyr/infrastructure/rollback/env_watcher.py | EnvWatcher — 环境变量热重载监控器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 16 | src/zephyr/infrastructure/rollback/external_merkle_proof.py | External Merkle Proof — 外部可验证回滚完整性证明。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 17 | src/zephyr/infrastructure/rollback/forensic.py | Forensic Engine — 取证基础设施（Phase 8 完整实现）。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 18 | src/zephyr/infrastructure/rollback/forward_fix_runner.py | ForwardFixRunner — Forward-Fix 执行器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 19 | src/zephyr/infrastructure/rollback/git_infra_snapshot.py | GitInfraSnapshot — Git 基础设施快照与污染防护。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 20 | src/zephyr/infrastructure/rollback/hallucination_guard.py | HallucinationGuard — AI 幻觉防护：回滚后强制状态验证。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 21 | src/zephyr/infrastructure/rollback/intent_archiver.py | IntentArchiver — 意图存档保护。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 22 | src/zephyr/infrastructure/rollback/kill_switch.py | KillSwitchManager — 三级 Kill Switch 管理器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 23 | src/zephyr/infrastructure/rollback/knowngoodstate_ledger.py | KnowngoodstateLedger — 已验证正确状态收据。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 24 | src/zephyr/infrastructure/rollback/right_to_be_forgotten.py | Right to be Forgotten — GDPR 遗忘权合规检查器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 25 | src/zephyr/infrastructure/rollback/rollback_abuse_detecto... | RollbackAbuseDetector — 回滚滥用检测。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 26 | src/zephyr/infrastructure/rollback/rollback_audit_nexus.py | RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog. | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 27 | src/zephyr/infrastructure/rollback/rollback_boot_integrat... | RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 §1.2). | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 28 | src/zephyr/infrastructure/rollback/rollback_bootstrap.py | RollbackBootstrap — 零依赖自举回滚器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 29 | src/zephyr/infrastructure/rollback/rollback_budget.py | RollbackBudget — 回滚预算管理器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 30 | src/zephyr/infrastructure/rollback/rollback_context_resto... | RollbackContextRestorer — 上下文恢复器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 31 | src/zephyr/infrastructure/rollback/rollback_dashboard.py | RollbackDashboard — 回滚仪表盘（零依赖 Markdown）。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 32 | src/zephyr/infrastructure/rollback/rollback_drill.py | RollbackDrill — 定期回滚演练调度器 (DiRT-style)。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 33 | src/zephyr/infrastructure/rollback/rollback_executor.py | RollbackExecutor — 回滚执行器核心封装。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 34 | src/zephyr/infrastructure/rollback/rollback_integration.py | Rollback Integration — executor 集成增强层。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 35 | src/zephyr/infrastructure/rollback/rollback_lock.py | RollbackLock — 全局回滚锁管理。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 36 | src/zephyr/infrastructure/rollback/rollback_loop_detector.py | RollbackLoopDetector — 回滚循环检测器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 37 | src/zephyr/infrastructure/rollback/rollback_scheduler.py | RollbackScheduler — 回滚系统事件驱动调度器 (MOD-INF-021 §7 Phase 5.3). | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 38 | src/zephyr/infrastructure/rollback/rollback_simulator.py | RollbackSimulator — 回滚模拟器（CI 集成）。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 39 | src/zephyr/infrastructure/rollback/rollback_state_machine.py | RollbackStateMachine — 回滚步骤级状态机。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 40 | src/zephyr/infrastructure/rollback/rollback_target_stalen... | RollbackTargetStaleness — 回滚目标陈旧度检测。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 41 | src/zephyr/infrastructure/rollback/rollback_verifier.py | RollbackVerifier — 回滚后验证器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 42 | src/zephyr/infrastructure/rollback/rollback_wal.py | RollbackWAL — 回滚预写日志。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 43 | src/zephyr/infrastructure/rollback/runbook_generator.py | RunbookGenerator — 回滚操作 Runbook 自动生成。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 44 | src/zephyr/infrastructure/rollback/s3_snapshot_lifecycle.py | S3 Snapshot Lifecycle Manager — 快照防生命周期过期。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 45 | src/zephyr/infrastructure/rollback/secret_rotation_aware.py | SecretRotationAware — 密钥轮替感知器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 46 | src/zephyr/infrastructure/rollback/semantic_rollback_tag.py | SemanticRollbackTag — 语义化 Rollback Tag 管理器。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 47 | src/zephyr/infrastructure/rollback/semantic_similar_detec... | SemanticSimilarDetector — 语义变形攻击检测。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 48 | src/zephyr/infrastructure/rollback/sqlite_dumper.py | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / restore / verify。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 49 | src/zephyr/infrastructure/rollback/submodule_sync.py | Submodule Sync — Submodule/Monorepo 多仓库同步回滚。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 50 | src/zephyr/infrastructure/rollback/temporal_context_adapt... | TemporalContextAdapter — AI 时间上下文断裂修复。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 51 | src/zephyr/infrastructure/rollback/topology_change_log.py | TopologyChangeLog — 分支拓扑变更日志。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 52 | src/zephyr/infrastructure/rollback/venv_sync.py | VenvSync — venv/conda 版本同步保障。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 53 | src/zephyr/infrastructure/rollback/vulnerability_rescanne... | VulnerabilityRescanner — 依赖漏洞复扫。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 54 | src/zephyr/infrastructure/rollback/warm_standby.py | WarmStandby — 温备热切（git worktree 副本维护）。 | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 55 | tests/rollback/test_rollback_scheduler.py | DM-201911 红蓝对抗极端测试: RollbackScheduler 事件驱动调度. | 生产态 / production | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -548,7 +484,7 @@ flowchart TD
 | 6 | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | → | G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口. (rol... | 导入依赖 / import_depends |
 | 7 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | KillSwitchManager — 三级 Kill Switch 管理器。 (rollback/... | 导入依赖 / import_depends |
 | 8 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | 导入依赖 / import_depends |
-| 9 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code... | 导入依赖 / import_depends |
+| 9 | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-G12 门禁裁... | → | CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code... | 导入依赖 / import_depends |
 | 10 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD... | 导入依赖 / import_depends |
 | 11 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | CT-RBK-GATE-001 集成契约落地——Rollback System Exit Code... | 导入依赖 / import_depends |
 | 12 | D_OPS 反馈循环: ops_governance/budget_tracker.py | → | G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. (roll... | 导入依赖 / import_depends |

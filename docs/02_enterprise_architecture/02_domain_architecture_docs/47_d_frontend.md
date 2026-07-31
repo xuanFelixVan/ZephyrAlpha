@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 前端，负责用户界面展示、交互可视化和前端状态管理
 
-> **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 前端（D_FRONTEND）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,27 +35,6 @@ ttl: permanent
 | 生产态模块 | 12 | Production Modules | 12 |
 | 容量 | 12/150 (正常) | Capacity | 12/150 (正常) |
 | 描述 | 前端，负责用户界面展示、交互可视化和前端状态管理 | Description | 前端，负责用户界面展示、交互可视化和前端状态管理 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 12 个模块 / 12 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (12 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | scripts/tests/test_frontend_components.py | 5个前端组件综合验证脚本（TTL=task_bound，施工完成后退役） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 2 | src/zephyr/frontend/dashboard/app.py | ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃用 v3.1.0） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 3 | src/zephyr/frontend/dashboard/app_panel.py | app_panel · Panel 仪表盘主应用入口（v3.1.0, #ARCH-047） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 4 | src/zephyr/frontend/dashboard/components/backtest_perform... | backtest_performance · 掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 5 | src/zephyr/frontend/dashboard/components/backtest_results.py | backtest_results · 回测结果可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 6 | src/zephyr/frontend/dashboard/components/chart_factory.py | chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 7 | src/zephyr/frontend/dashboard/components/fitness_function... | fitness_functions · Fitness Functions 仪表盘组件（v3.1.0 Panel 迁移, #ARCH-047） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 8 | src/zephyr/frontend/dashboard/components/order_book.py | order_book · 5档盘口实时展示组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 9 | src/zephyr/frontend/dashboard/components/position_monitor.py | position_monitor · 实盘持仓监控组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 10 | src/zephyr/frontend/dashboard/components/tick_replay.py | tick_replay · Tick 回放可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047） | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 11 | src/zephyr/frontend/dashboard/components/trade_panel.py | trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047, human_... | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
-| 12 | src/zephyr/frontend/interface_base.py | D_FRONTEND — Human-AI Interface Layer Skeleton | 生产态 / production | [MOD-L08-001](../../03_modules/_domain_frontend/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 执行路由，负责订单路由、智能拆单和执行场所选择
 
-> **文档作用 / Purpose**: 展示 执行路由（D_EX_SOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 执行路由（D_EX_SOR）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,22 +35,6 @@ ttl: permanent
 | 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | 执行路由，负责订单路由、智能拆单和执行场所选择 | Description | 执行路由，负责订单路由、智能拆单和执行场所选择 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 7 个模块 / 7 modules）。
-
-### L2 领域层 / Domain Layer (7 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/ex_sor/__init__.py | ex_sor/__init__.py | 生产态 / production |  |
-| 2 | src/zephyr/ex_sor/_extensions/__init__.py | _extensions/__init__.py | 生产态 / production |  |
-| 3 | src/zephyr/ex_sor/api/__init__.py | api/__init__.py | 生产态 / production |  |
-| 4 | src/zephyr/ex_sor/core/__init__.py | core/__init__.py | 生产态 / production |  |
-| 5 | src/zephyr/ex_sor/infrastructure/__init__.py | infrastructure/__init__.py | 生产态 / production |  |
-| 6 | src/zephyr/ex_sor/models/__init__.py | models/__init__.py | 生产态 / production |  |
-| 7 | src/zephyr/ex_sor/services/__init__.py | services/__init__.py | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 组合核心，负责投资组合构建、持仓管理和组合优化
 
-> **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,31 +35,6 @@ ttl: permanent
 | 生产态模块 | 10 | Production Modules | 10 |
 | 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 组合核心，负责投资组合构建、持仓管理和组合优化 | Description | 组合核心，负责投资组合构建、持仓管理和组合优化 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (8 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_core/intraday_surge_fall_strategy.py | D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B 示例策略） | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 2 | src/zephyr/pf_core/orderbook_imbalance_strategy.py | D_PORTFOLIO_CORE — 盘口失衡反转做T策略（路径 B 策略） | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 3 | src/zephyr/pf_core/strategy_engine/__init__.py | D_PORTFOLIO_CORE — Portfolio Construction Strategies | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 4 | src/zephyr/pf_core/strategy_engine/strategy_runner.py | D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 5 | src/zephyr/pf_core/strategy_engine/tick_strategy_base.py | D_PORTFOLIO_CORE — TickStrategyBase + TickStrategyRegistry（路径 B：tick 级... | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 6 | src/zephyr/pf_core/vwap_reversion_strategy.py | D_PORTFOLIO_CORE — VWAP 回归做T策略（路径 B 策略） | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 7 | tests/pf_core/test_orderbook_imbalance_strategy.py | OrderBookImbalanceStrategy 单元测试（路径 B 盘口失衡反转策略）。 | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 8 | tests/pf_core/test_vwap_reversion_strategy.py | VWAPReversionStrategy 单元测试（路径 B 均值回归策略）。 | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-
-### L2 领域层 / Domain Layer (3 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/pf_core/topn_momentum_strategy.py | D_PORTFOLIO_CORE — TopN 动量等权策略 | 设计态 / design | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 2 | tests/pf_core/test_intraday_surge_fall_strategy.py | IntradaySurgeFallStrategy 单元测试（路径 B 示例策略）。 | 生产态 / production |  |
-| 3 | tests/pf_core/test_strategy_runner_tick.py | StrategyRunner.run_tick_backtest 单元测试（路径 A：日频信号 × tick 撮合）。 | 生产态 / production |  |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

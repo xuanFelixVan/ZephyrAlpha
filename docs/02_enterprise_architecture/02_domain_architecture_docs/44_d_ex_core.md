@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 执行核心，负责订单执行引擎、执行策略和执行管理
 
-> **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 执行核心（D_EX_CORE）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,29 +35,6 @@ ttl: permanent
 | 生产态模块 | 8 | Production Modules | 8 |
 | 容量 | 8/150 (正常) | Capacity | 8/150 (正常) |
 | 描述 | 执行核心，负责订单执行引擎、执行策略和执行管理 | Description | 执行核心，负责订单执行引擎、执行策略和执行管理 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 9 个模块 / 9 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (7 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/ex_core/adapters/__init__.py | D_EX_CORE adapters — 券商/风控适配器 re-export wrapper | 生产态 / production | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 2 | src/zephyr/ex_core/adapters/miniqmt_broker.py | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） | 生产态 / production | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 3 | src/zephyr/ex_core/adapters/risk_validation_bridge.py | Re-export wrapper: risk_validation_bridge 真源在 zephyr.governance.adapters.r... | 生产态 / production | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 4 | src/zephyr/ex_core/adapters/simulation_broker.py | Re-export wrapper: simulation_broker 真源在 zephyr.governance.adapters.simula... | 生产态 / production | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 5 | src/zephyr/ex_core/execution_engine.py | D_EXECUTION_CORE — Execution Engine | 生产态 / production | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 6 | src/zephyr/ex_core/order_manager.py | D_EXECUTION_CORE — Order Manager | 生产态 / production | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 7 | src/zephyr/ex_core/signal_providers.py | D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂 | 生产态 / production | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-
-### L2 领域层 / Domain Layer (2 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/ex_core/trading_session.py | D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器 | 设计态 / design | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 2 | src/zephyr/governance/escalation/order_state_escalator.py | Order State Escalator — v0.10.0 订单状态机升级器。 | 生产态 / production | [MOD-INF-022](../../03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

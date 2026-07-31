@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 因子，负责因子计算、因子库管理和因子评价
 
-> **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,52 +35,6 @@ ttl: permanent
 | 生产态模块 | 37 | Production Modules | 37 |
 | 容量 | 37/150 (正常) | Capacity | 37/150 (正常) |
 | 描述 | 因子，负责因子计算、因子库管理和因子评价 | Description | 因子，负责因子计算、因子库管理和因子评价 |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 37 个模块 / 37 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (37 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/factor/alpha_signal_pipeline.py | factor/alpha_signal_pipeline.py | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 2 | src/zephyr/factor/analysis/__init__.py | D_FACTOR analysis 子包——因子分析与评估工具链。 | 生产态 / production |  |
-| 3 | src/zephyr/factor/analysis/correlation_analyzer.py | D-FACTOR-ANA-04 因子相关性分析——计算因子间相关性矩阵。 | 生产态 / production |  |
-| 4 | src/zephyr/factor/analysis/correlation_dedup.py | D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。 | 生产态 / production |  |
-| 5 | src/zephyr/factor/analysis/decay_monitor.py | D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于阈值告警。 | 生产态 / production |  |
-| 6 | src/zephyr/factor/analysis/factor_attribution.py | D-FACTOR-ANA-09 因子归因——按时间和行业维度分解因子表现。 | 生产态 / production |  |
-| 7 | src/zephyr/factor/analysis/factor_optimization.py | D-FACTOR-ANA-11 因子优化——优化多因子合成权重以最大化目标函数。 | 生产态 / production |  |
-| 8 | src/zephyr/factor/analysis/ic_decay.py | D-FACTOR-ANA-03 IC 衰减分析——不同 lag 的 IC 衰减曲线与半衰期。 | 生产态 / production |  |
-| 9 | src/zephyr/factor/analysis/ic_ir_calc.py | D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/IR 指标汇总表。 | 生产态 / production |  |
-| 10 | src/zephyr/factor/analysis/ic_ir_evaluator.py | D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。 | 生产态 / production |  |
-| 11 | src/zephyr/factor/analysis/layered_backtest.py | D-FACTOR-ANA-06 分层回测——按因子值分组计算各层收益与多空收益差。 | 生产态 / production |  |
-| 12 | src/zephyr/factor/analysis/multifactor_synthesis.py | D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号。 | 生产态 / production |  |
-| 13 | src/zephyr/factor/analysis/three_level_judgment.py | D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分为优秀/合格/淘汰。 | 生产态 / production |  |
-| 14 | src/zephyr/factor/bus_factor_defense.py | factor/bus_factor_defense.py | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 15 | src/zephyr/factor/core/backpressure/__init__.py | D_FACTOR core backpressure 子包——进程内在途并发限流器。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 16 | src/zephyr/factor/core/batch_output/__init__.py | D_FACTOR core batch_output 子包——FactorSignal 批量缓冲写入器。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 17 | src/zephyr/factor/core/config_manager/__init__.py | D_FACTOR core config_manager 子包——core 基础设施模块策略参数加载器。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 18 | src/zephyr/factor/core/ctr001_consumer/__init__.py | CTR-001 NormalizedMarketData 消费者包入口。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 19 | src/zephyr/factor/core/ctr001_consumer/converter.py | CTR-001 NormalizedMarketData 消费者——数据适配层。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 20 | src/zephyr/factor/core/ctr002_producer/__init__.py | CTR-002 FactorSignal 生产者包入口。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 21 | src/zephyr/factor/core/ctr002_producer/converter.py | CTR-002 FactorSignal 生产者——信号适配层。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 22 | src/zephyr/factor/core/dag_manager/__init__.py | D_FACTOR core dag_manager 子包——DAG 调度执行器。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 23 | src/zephyr/factor/core/dist_feature_eng/__init__.py | D_FACTOR core dist_feature_eng 子包——分布式特征工程引擎。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 24 | src/zephyr/factor/core/evaluation/__init__.py | D-FACTOR-03 因子评估包——IC/IR/OOS 正率/过拟合检测。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 25 | src/zephyr/factor/core/evaluation/backtest.py | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 26 | src/zephyr/factor/core/evaluation/metrics.py | D-FACTOR-03 因子评估指标——纯函数模块（无 IO 依赖）。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 27 | src/zephyr/factor/core/factor_dag/__init__.py | D_FACTOR core factor_dag 子包——因子 DAG 数据结构 + Kahn 拓扑分层。 | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 28 | src/zephyr/factor/factor_base.py | ZephyrAlpha — D_FACTOR Alpha Factor Layer | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 29 | src/zephyr/factor/governance/__init__.py | D_FACTOR governance 子包——因子生命周期治理工具链。 | 生产态 / production |  |
-| 30 | src/zephyr/factor/governance/abs001_gate.py | D-FACTOR-GOV-02 ABS001 上线门禁——因子进入灰度前的质量检查。 | 生产态 / production |  |
-| 31 | src/zephyr/factor/governance/engine.py | D-FACTOR-GOV-05 因子治理引擎——顶层编排六步流程+灰度发布。 | 生产态 / production |  |
-| 32 | src/zephyr/factor/governance/factor_pool_manager.py | D-FACTOR-08 因子池容量管理——活跃池/休眠池 + IC末位淘汰 + 批量裁剪。 | 生产态 / production |  |
-| 33 | src/zephyr/factor/governance/grayscale_rollout.py | D-FACTOR-GOV-03 灰度发布——管理因子从 10% → 30% → 100% 的放量阶梯。 | 生产态 / production |  |
-| 34 | src/zephyr/factor/governance/lifecycle_state_machine.py | D-FACTOR-GOV-01 因子生命周期状态机——复用项目级 StateMachine 泛型基类。 | 生产态 / production |  |
-| 35 | src/zephyr/factor/governance/six_step_flow.py | D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流程。 | 生产态 / production |  |
-| 36 | src/zephyr/factor/momentum_factor.py | D_FACTOR — Momentum Factor | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 37 | src/zephyr/factor/value_factor.py | D_FACTOR — Value Factor | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 

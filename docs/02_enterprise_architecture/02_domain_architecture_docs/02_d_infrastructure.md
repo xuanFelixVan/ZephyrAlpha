@@ -12,7 +12,7 @@ ttl: permanent
 
 > **功能简介 / Overview**: 跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验
 
-> **文档作用 / Purpose**: 展示 跨层契约基础设施（D_INFRASTRUCTURE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 跨层契约基础设施（D_INFRASTRUCTURE）功能域的域内依赖关系、跨域依赖关系，模块信息（成熟度/中英文名/大白话/文件路径）内嵌于 Mermaid 节点，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -35,40 +35,6 @@ ttl: permanent
 | 生产态模块 | 25 | Production Modules | 25 |
 | 容量 | 25/150 (正常) | Capacity | 25/150 (正常) |
 | 描述 | 跨层契约数据类(CTR-001 NormalizedMarketData 等) | Description | 跨层契约数据类(CTR-001 NormalizedMarketData 等) |
-
-## 模块分层清单 / Module Layered List
-
-> 按 architecture_layer 分组的模块清单（共 25 个模块 / 25 modules）。
-
-### L0 基础设施层 / Infrastructure Layer (25 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | scripts/backup/backup_reconciler.py | backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler） | 生产态 / production | [MOD-INF-043](../../03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md) |
-| 2 | src/zephyr/infrastructure/config/__init__.py | ZephyrAlpha — 基础设施 Infrastructure Layer — Configuration Management | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 3 | src/zephyr/infrastructure/config/app_config.py | app_config.py — 应用配置数据类与加载/热重载逻辑 | 生产态 / production | [MOD-INF-002](../../03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md) |
-| 4 | src/zephyr/shared/contracts/capital_allocation_result.py | contracts/capital_allocation_result.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 5 | src/zephyr/shared/contracts/compliance_rule.py | contracts/compliance_rule.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 6 | src/zephyr/shared/contracts/execution_report.py | contracts/execution_report.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 7 | src/zephyr/shared/contracts/experiment_result.py | contracts/experiment_result.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 8 | src/zephyr/shared/contracts/factor_monitor_report.py | contracts/factor_monitor_report.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 9 | src/zephyr/shared/contracts/factor_signal.py | contracts/factor_signal.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 10 | src/zephyr/shared/contracts/fill.py | contracts/fill.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 11 | src/zephyr/shared/contracts/macro_factor_signal.py | contracts/macro_factor_signal.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 12 | src/zephyr/shared/contracts/market_data.py | contracts/market_data.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 13 | src/zephyr/shared/contracts/model_serving_request.py | contracts/model_serving_request.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 14 | src/zephyr/shared/contracts/model_serving_response.py | contracts/model_serving_response.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 15 | src/zephyr/shared/contracts/order.py | contracts/order.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 16 | src/zephyr/shared/contracts/performance_attribution_repor... | contracts/performance_attribution_report.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 17 | src/zephyr/shared/contracts/position.py | contracts/position.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 18 | src/zephyr/shared/contracts/risk_dashboard_snapshot.py | contracts/risk_dashboard_snapshot.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 19 | src/zephyr/shared/contracts/risk_limits.py | contracts/risk_limits.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 20 | src/zephyr/shared/contracts/risk_metrics.py | contracts/risk_metrics.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 21 | src/zephyr/shared/contracts/strategy_lifecycle_event.py | contracts/strategy_lifecycle_event.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 22 | src/zephyr/shared/contracts/synthesized_signal.py | contracts/synthesized_signal.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 23 | src/zephyr/shared/contracts/system_configuration.py | contracts/system_configuration.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 24 | src/zephyr/shared/contracts/telemetry_emitter.py | contracts/telemetry_emitter.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 25 | src/zephyr/shared/contracts/trace_context.py | contracts/trace_context.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
