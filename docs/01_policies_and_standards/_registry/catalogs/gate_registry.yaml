@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-31T11:43:21Z'
+generated_at: '2026-07-31T19:12:45Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -122,7 +122,8 @@ gates:
 - gate_id: GATE-17
   name: 'GATE-17: 孤儿.py文件检测（§9 根目录零.py）'
   entry: python scripts/governance/d1_structure/detect_orphan_py.py
-  description: 项目根目录孤儿.py检测+自动清理（AGENTS.md §9 — .py只允许在合法三目录中）
+  description: 项目根目录孤儿.py检测+自动清理（AGENTS.md §9 — .py只允许在合法三目录中；豁免 Python 平台约定根级文件，豁免清单真源见
+    detect_orphan_py.py 的 EXCLUDE_NAMES 常量）
   files_trigger: ^.*\.py$
   always_run: false
   category: orphan_detection
