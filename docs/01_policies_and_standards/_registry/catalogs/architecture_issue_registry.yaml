@@ -10061,3 +10061,31 @@ entries:
   status: proposed
   created: '2026-07-31'
   last_updated: '2026-07-31'
+
+# --- #ARCH-QMT-ENV-DISAMBIG-001: QMT 终端环境辨识缺位（2026-07-31）---
+- issue_id: '#ARCH-QMT-ENV-DISAMBIG-001'
+  title: 'QMT 终端环境辨识缺位——模拟盘与真实资金盘无显化真源，AI 需考古区分'
+  category: governance_gap
+  severity: P1中
+  adjudication: |-
+    病根（2026-07-31 smoke test 事故）：.env.qmt 虽记录两个终端路径，但 ① .gitignore 的（AI 不一定读）
+    ② 扁平 env 格式（无结构化辨识指引）③ 无"怎么判断哪个在跑"的操作指引。两个终端 exe 同名
+    （XtMiniQmt.exe），仅安装目录名微差（"模拟"后缀 vs "证券"中缀），AI 不得不查进程→比对目录→
+    翻 userdata 考古——4 步逆向工程，高信息成本。用户启动了真实终端但 AI 按 .env.qmt 连模拟终端，
+    连接失败需排查才定位。
+
+    治本方案：新建 config/qmt_environments.yaml 显化真源——结构化登记两个终端（install_dir/exe_path/
+    userdata_mini/account/safety_level/blocks_live_trading）+ 运行时辨识指南（quick_check_command +
+    common_mistake + smoke_test_guard）。AI 任何 QMT 操作前 MUST 读此文件，按 exe_path 比对运行进程
+    判断环境，不再考古。smoke test 启动时 MUST 跑进程校验防止在真实资金盘上测试下单。
+
+    纯 factual 记录（带 commit 的已完成变更），标 resolved。
+  impact:
+    - 'config/qmt_environments.yaml（新建显化真源）'
+    - 'config/.env.qmt（加指引注释指向显化真源）'
+    - 'scripts/tests/smoke_test_qmt_broker.py（增环境辨识+进程校验+prev_close 价格修复）'
+  fix_phase: |-
+    已执行（2026-07-31）：显化真源建立 + .env.qmt 指引 + smoke test 进程校验/价格修复。
+  status: resolved
+  created: '2026-07-31'
+  last_updated: '2026-07-31'

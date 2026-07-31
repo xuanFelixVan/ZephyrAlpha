@@ -42,10 +42,17 @@ entries:
     requires_live_terminal: true
     arch_ref: '#ARCH-XTQUANT-API-COMPAT-001'
     open_points:
-      - order_stock 失败返回值语义
-      - price_type 取值映射
-      - subscribe 必要性
+      - order_stock 失败返回值语义（部分实证：午休 11:30-13:00 返回 -1，订单不进系统/错误队列空）
+      - price_type 取值映射（实证：LIMIT=0, MARKET=5 正确）
+      - subscribe 必要性（实证：connect()+subscribe() 均返回 0=成功，已确认必须 subscribe）
       - session int 参数要求
+    partial_findings_20260731:
+      - 'connect()=0 / subscribe()=0 均成功（模拟账号 8886156677）'
+      - 'get_positions() 返回 cash=10000000, holdings=空 —— 持仓查询契约验证通过'
+      - 'order_stock(600000.SH, BUY, 100, LIMIT, 8.84) 返回 -1 —— 午休时段(12:51)模拟盘拒单'
+      - 'queuing_order_errors_byid/byseq 为空 dict，query_stock_orders=0 条 —— 订单本地即拒，未入系统'
+      - '错误队列是属性(dict)非方法 —— 不可 () 调用'
+      - '待盘中(13:00后)重试验证下单→查询→撤单全链路'
     last_verified_at: null
     last_verified_by: null
     last_result: pending
@@ -65,6 +72,11 @@ entries:
       - 5 档盘口 18 字段结构（ask/bid_price_1..5 / ask/bid_vol_1..5）
       - download_history_data 行为（部分券商权限限制历史 tick）
       - get_market_data_ex 返回结构与 _normalize_tick_data 假设匹配
+    partial_findings_20260731:
+      - 'get_full_tick 返回 dict，key 为 camelCase（非 snake_case）：lastClose/lastPrice/askPrice/bidPrice/askVol/bidVol'
+      - 'lastClose=9.71（昨收），lastPrice=9.39（最新价），askPrice=[9.39,9.4,9.41,9.42,9.43]（5档卖）'
+      - 'timetag=20260731 11:30:00（北京时间字符串，非 UTC ms）—— 时区转换逻辑需核对此格式'
+      - '注意：miniqmt_provider._normalize_tick_data 若按 last_close 取 key 会 KeyError，应取 lastClose'
     last_verified_at: null
     last_verified_by: null
     last_result: pending

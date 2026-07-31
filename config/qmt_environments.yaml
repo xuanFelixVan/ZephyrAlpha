@@ -1,0 +1,81 @@
+# [A_config] module_id=CFG-qmt-environments | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# ============================================================================
+# QMT 终端环境显化真源 — 模拟盘 vs 真实资金盘的唯一辨识源
+# ============================================================================
+# 治本 #ARCH-QMT-ENV-DISAMBIG-001：AI 无需排查即可一眼区分两个终端。
+#
+# 病根（2026-07-31 smoke test 事故）：
+#   .env.qmt 虽记录了两个终端，但它是 ① .gitignore 的（AI 不一定读）
+#   ② 扁平 env 格式（无结构化辨识指引）③ 无"怎么判断哪个在跑"的操作指引。
+#   两个终端 exe 同名（XtMiniQmt.exe），仅安装目录名微差（"模拟"后缀 vs "证券"中缀），
+#   AI 不得不查进程→比对目录→翻 userdata 考古——高信息成本。
+#
+# 本文件是 AI 可读的结构化真源：任何 QMT 操作前 MUST 先读本文件辨识环境。
+# 关联：.env.qmt（连接参数）、#ARCH-EXT-CONTRACT-VERIFY-001（外部契约验证）
+# ============================================================================
+module_id: CFG-qmt-environments
+ttl: permanent
+doc_type: config
+title: QMT 终端环境显化登记表
+version: "1.0.0"
+created: "2026-07-31"
+last_updated: "2026-07-31"
+
+environments:
+  - env: sim
+    label: 模拟盘（国金QMT交易端模拟）
+    safety_level: L            # 安全：模拟资金，可测试下单/撤单
+    install_dir: 'E:\国金QMT交易端模拟'
+    exe_path: 'E:\国金QMT交易端模拟\bin.x64\XtMiniQmt.exe'
+    userdata_mini: 'E:\国金QMT交易端模拟\userdata_mini'
+    account: '8886156677'
+    env_var_path: QMT_SIM_PATH
+    env_var_account: QMT_SIM_ACCOUNT
+    # 辨识特征——AI 用这些特征一眼判断"这是模拟盘"
+    identification_hints:
+      - 目录名含"模拟"后缀
+      - 账号 8886156677（模拟资金 1000 万）
+      - userdata_mini 内有 down_queue_win_8886156677 痕迹
+    blocks_live_trading: false
+
+  - env: live
+    label: 真实资金盘（国金证券QMT交易端）
+    safety_level: H            # 高危：真实资金，禁止测试性下单
+    install_dir: 'E:\国金证券QMT交易端'
+    exe_path: 'E:\国金证券QMT交易端\bin.x64\XtMiniQmt.exe'
+    userdata_mini: 'E:\国金证券QMT交易端\userdata_mini'
+    account: ''                # 实盘立项时填入
+    env_var_path: QMT_REAL_PATH
+    env_var_account: QMT_REAL_ACCOUNT
+    # 辨识特征——AI 用这些特征一眼判断"这是真实资金盘"
+    identification_hints:
+      - 目录名含"证券"中缀、无"模拟"后缀
+      - userdata_mini 缓存活跃但无 8886156677 痕迹
+      - 真实资金，任何下单操作需 ZEPHYR_ENV=live + 外部契约验证通过
+    blocks_live_trading: true  # 实盘门禁：未验证前阻断
+
+# ============================================================================
+# 运行时辨识指南——AI 判断"当前哪个终端在跑"的标准操作
+# ============================================================================
+disambiguation:
+  rule: |
+    两个终端 exe 同名（XtMiniQmt.exe），进程名无法区分。
+    AI MUST 比对运行进程的 Path（即 exe_path）来判断环境：
+      含"模拟" → sim（安全）
+      含"证券"且无"模拟" → live（高危，禁止测试下单）
+
+  quick_check_command: |
+    # PowerShell：查运行中 QMT 终端的安装目录
+    Get-Process XtMiniQmt -ErrorAction SilentlyContinue | Select-Object Id, Path
+
+  common_mistake: |
+    用户说"打开了模拟盘"但实际运行的是真实终端——
+    两个终端 GUI 几乎相同，用户易点错。
+    AI 收到"已启动终端"后 MUST 先跑 quick_check_command 确认是 sim 再继续，
+    不可直接连接下单。
+
+  smoke_test_guard: |
+    smoke_test_qmt_broker.py / smoke_test_tick_data.py 启动时 MUST：
+      1. 读本文件辨识目标环境（sim）
+      2. 跑 quick_check_command 确认运行进程是 sim 的 exe_path
+      3. 不匹配则拒绝继续（防止在真实资金盘上跑测试下单）

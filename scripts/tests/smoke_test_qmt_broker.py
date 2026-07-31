@@ -63,6 +63,77 @@ def _load_env_qmt() -> tuple[str, str]:
     return qmt_path, qmt_account
 
 
+def _verify_sim_terminal_running() -> int:
+    """环境辨识守卫：确认运行中的是模拟终端，非真实资金盘。
+
+    治本 #ARCH-QMT-ENV-DISAMBIG-001：两个终端 exe 同名（XtMiniQmt.exe），
+    仅安装目录不同（"模拟"后缀 vs "证券"中缀）。本函数比对运行进程路径，
+    防止在真实资金盘上跑测试下单。显化真源：config/qmt_environments.yaml。
+    """
+    try:
+        import psutil
+    except ImportError:
+        print("[WARN] psutil 不可用，跳过进程校验——请手动确认运行的是【模拟终端】而非真实资金盘")
+        return 0
+
+    running_exes: list[str] = []
+    for proc in psutil.process_iter(["name", "exe"]):
+        name = proc.info.get("name") or ""
+        if "XtMiniQmt" in name:
+            running_exes.append(proc.info.get("exe") or "(unknown)")
+
+    if not running_exes:
+        print("[FAIL] 没有 XtMiniQmt 进程在运行——请先启动模拟终端")
+        print("       模拟终端：E:\\国金QMT交易端模拟\\bin.x64\\XtMiniQmt.exe")
+        return 1
+
+    print(f"[INFO] 运行中的 QMT 终端：{running_exes}")
+    # 辨识规则（来自 qmt_environments.yaml）：exe_path 含"模拟"→sim，含"证券"无"模拟"→live
+    if any("模拟" in p for p in running_exes):
+        print('[OK] 环境辨识通过：模拟盘（含"模拟"目录）')
+        return 0
+    print('[FAIL] 运行中的是【真实资金盘】（路径含"证券"无"模拟"），禁止在其上跑测试下单！')
+    print("       请关闭真实终端，启动模拟终端：E:\\国金QMT交易端模拟\\bin.x64\\XtMiniQmt.exe")
+    return 1
+
+
+def _fetch_prev_close(symbol: str) -> "Decimal | None":
+    """用 xtdata 获取昨收价（prev_close）。
+
+    优先 get_full_tick（实时，含 last_close 字段），
+    失败回退 get_market_data_ex（日K，取昨日 close）。
+    broker.connect() 后 xtdata 已加载，可直接调用。
+    """
+    try:
+        from xtquant import xtdata
+    except ImportError:
+        print("[FAIL] xtquant 不可用")
+        return None
+
+    # 优先：实时 tick 的 lastClose（注意 camelCase，非 last_close）
+    try:
+        tick = xtdata.get_full_tick([symbol])
+        if tick and symbol in tick:
+            lc = tick[symbol].get("lastClose")
+            if lc and float(lc) > 0:
+                return Decimal(str(lc))
+    except Exception as e:  # noqa: BLE001
+        print(f"[WARN] get_full_tick 失败: {e}")
+
+    # 回退：日K昨日 close
+    try:
+        data = xtdata.get_market_data_ex([], [symbol], period="1d", count=2)
+        if data and symbol in data and len(data[symbol]) >= 2:
+            return Decimal(str(data[symbol]["close"].iloc[-2]))
+        if data and symbol in data and len(data[symbol]) >= 1:
+            print("[WARN] 仅 1 根日K，用当日 close 作 prev_close 近似")
+            return Decimal(str(data[symbol]["close"].iloc[-1]))
+    except Exception as e:  # noqa: BLE001
+        print(f"[WARN] get_market_data_ex 失败: {e}")
+
+    return None
+
+
 def main() -> int:
     from zephyr.ex_core.adapters.miniqmt_broker import MiniQmtBroker, MiniQmtBrokerError
     from zephyr.trading.trading_contracts.execution.order import (
@@ -74,6 +145,11 @@ def main() -> int:
     qmt_path, qmt_account = _load_env_qmt()
     print(f"[INFO] QMT path={qmt_path}")
     print(f"[INFO] QMT account={qmt_account}")
+
+    # 0. 环境辨识守卫（#ARCH-QMT-ENV-DISAMBIG-001）：确认运行的是模拟终端
+    print("\n=== STEP 0: 环境辨识（模拟盘 vs 真实资金盘）===")
+    if _verify_sim_terminal_running() != 0:
+        return 1
 
     broker = MiniQmtBroker(
         path=qmt_path,
@@ -103,8 +179,17 @@ def main() -> int:
             return 1
 
         # 3. 挂远期限价单（不成交）
-        #    600000.SH 浦发银行，限价 1.00 元（远低于现价 ~10 元），不会成交
+        #    600000.SH 浦发银行。限价需在跌停板内（QMT 服务端校验 ±10%），
+        #    原硬编码 1.00 元被 QMT 拒（order_id=-1，低于跌停板）。
+        #    治本：用 xtdata 取 prev_close，限价 = 跌停价 * 1.01（valid + 不成交）。
         print("\n=== STEP 3: submit_order() 远期限价单 ===")
+        prev_close = _fetch_prev_close("600000.SH")
+        if prev_close is None:
+            print("[FAIL] 无法获取 prev_close，跳过下单（市场可能未开盘/数据未下载）")
+            return 1
+        # 跌停价 = prev_close * 0.9；取跌停价上方 1% 确保 valid 且不成交
+        limit_price = (prev_close * Decimal("0.91")).quantize(Decimal("0.01"))
+        print(f"[INFO] prev_close={prev_close}  limit_price={limit_price}（跌停板内，不成交）")
         order = Order(
             idempotency_key=f"smoke-{int(__import__('time').time())}",
             order_id=f"smoke-{int(__import__('time').time())}",
@@ -113,7 +198,7 @@ def main() -> int:
             side=OrderSide.BUY,
             strategy_id="smoke_test",
             symbol="600000.SH",
-            limit_price=Decimal("1.00"),  # 远低于现价，不成交
+            limit_price=limit_price,
         )
         try:
             broker_order_id = broker.submit_order(order)
