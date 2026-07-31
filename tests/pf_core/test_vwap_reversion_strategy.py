@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.pf_core.test_vwap_reversion_strategy
 # [DOMAIN] D_PF_CORE
 # [STABILITY] stable

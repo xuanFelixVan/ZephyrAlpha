@@ -445,10 +445,10 @@ flowchart TD
     scripts_arch_guard_run_all_py ~~~ scripts_check_naming_convention_py
     scripts_check_naming_convention_py ~~~ scripts_construction_e2e_check_py
     scripts_construction_e2e_check_py ~~~ scripts_construction_e2e_deep_py
-    scripts_arch_guard_tools_inject_idempotency_py["(生产态 / production) 为所有 P0/P1 契约添加 idempotency_key 字段——...<br/>文件: inject_idempotency.py"]
     scripts_arch_guard_tools_build_ocp_manifest_py["(生产态 / production) 从 cross_layer_contracts.yaml 生成 OCP 冻结契约...<br/>文件: build_ocp_manifest.py"]
-    scripts_arch_guard_tools_inject_idempotency_py -->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
-    scripts_arch_guard_tools_patch_p1_paths_py -->|config_depends / config_depends| scripts_arch_guard_tools_inject_idempotency_py
+    scripts_arch_guard_tools_inject_idempotency_py["(生产态 / production) 为所有 P0/P1 契约添加 idempotency_key 字段——...<br/>文件: inject_idempotency.py"]
+    scripts_arch_guard_tools_build_ocp_manifest_py -->|config_depends / config_depends| scripts_arch_guard_tools_inject_idempotency_py
+    scripts_arch_guard_tools_patch_p1_paths_py -->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
     D_SHARED["(生产态 / production) D_SHARED"]
     scripts_construction_e2e_deep_py -->|导入依赖 / import_depends| D_SHARED
     scripts_construction_e2e_check_py -->|导入依赖 / import_depends| D_SHARED
@@ -490,7 +490,7 @@ flowchart TD
     scripts_governance_generators_generate_rule_ai_perception_index_py["(生产态 / production) generate_rule_ai_perception_index.py — 规则AI...<br/>文件: generate_rule_ai_perception_index.py"]
     scripts_hooks_auto_handoff_log_py["(生产态 / production) auto_handoff_log.py"]
     scripts_lock_files_py["(生产态 / production) lock_files.py —— AI 对话文件锁协议（硬规则执...<br/>文件: lock_files.py"]
-    scripts_mcp_start_all_py["(生产态 / production) MCP 全 Server 启动脚本 — DEPRECATED.<br/>文件: start_all.py"]
+    scripts_mcp_generate_ide_config_py["(生产态 / production) 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD...<br/>文件: generate_ide_config.py"]
     scripts_mcp_status_all_py["(生产态 / production) MCP 全 Server 状态检查脚本（MOD-INF-013 §14）。<br/>文件: status_all.py"]
     scripts_mcp_stop_all_py["(生产态 / production) MCP 全 Server 停止脚本（MOD-INF-013 §14）。<br/>文件: stop_all.py"]
     scripts_migration_dm311_autonomy_core_split_py["(生产态 / production) DM-311: autonomy_core/ 拆分迁移执行脚本。<br/>文件: dm311_autonomy_core_split.py"]
@@ -516,19 +516,19 @@ flowchart TD
     scripts_governance_d7_code_check_pure_shim_py ~~~ scripts_governance_generators_generate_rule_ai_perception_index_py
     scripts_governance_generators_generate_rule_ai_perception_index_py ~~~ scripts_hooks_auto_handoff_log_py
     scripts_hooks_auto_handoff_log_py ~~~ scripts_lock_files_py
-    scripts_lock_files_py ~~~ scripts_mcp_start_all_py
-    scripts_mcp_start_all_py ~~~ scripts_mcp_status_all_py
+    scripts_lock_files_py ~~~ scripts_mcp_generate_ide_config_py
+    scripts_mcp_generate_ide_config_py ~~~ scripts_mcp_status_all_py
     scripts_mcp_status_all_py ~~~ scripts_mcp_stop_all_py
     scripts_mcp_stop_all_py ~~~ scripts_migration_dm311_autonomy_core_split_py
     scripts_construction_check_transition_code_py["(生产态 / production) check_transition_code.py"]
-    scripts_mcp_generate_ide_config_py["(生产态 / production) 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD...<br/>文件: generate_ide_config.py"]
-    scripts_construction_check_transition_code_py ~~~ scripts_mcp_generate_ide_config_py
+    scripts_mcp_start_all_py["(生产态 / production) MCP 全 Server 启动脚本 — DEPRECATED.<br/>文件: start_all.py"]
+    scripts_construction_check_transition_code_py ~~~ scripts_mcp_start_all_py
     scripts_mcp_launcher_py["(生产态 / production) MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 +...<br/>文件: launcher.py"]
     scripts_construction_demo_a2a_chat_py -->|config_depends / config_depends| scripts_construction_check_transition_code_py
-    scripts_mcp_generate_ide_config_py -->|config_depends / config_depends| scripts_mcp_launcher_py
-    scripts_mcp_status_all_py -->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_start_all_py -->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_stop_all_py -->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_mcp_start_all_py -->|config_depends / config_depends| scripts_mcp_launcher_py
+    scripts_mcp_generate_ide_config_py -->|config_depends / config_depends| scripts_mcp_start_all_py
+    scripts_mcp_stop_all_py -->|config_depends / config_depends| scripts_mcp_start_all_py
+    scripts_mcp_status_all_py -->|config_depends / config_depends| scripts_mcp_start_all_py
     D_SHARED["(生产态 / production) D_SHARED"]
     scripts_lock_files_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
@@ -544,22 +544,22 @@ flowchart TD
     scripts_diagnose_breadth_failed_py -->|导入依赖 / import_depends| D_INTELLIGENCE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     scripts_git_commit_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    scripts_git_commit_py -->|导入依赖 / import_depends| D_SECURITY
     scripts_construction_start_brain_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     scripts_mcp_launcher_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     scripts_construction_local_layer_daemon_py -->|导入依赖 / import_depends| D_INTEGRATION
     scripts_diagnose_breadth_failed_py -->|导入依赖 / import_depends| D_SHARED
+    scripts_git_guard_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     scripts_construction_demo_e2e_pipeline_py -->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    scripts_construction_start_brain_py -->|导入依赖 / import_depends| D_INTEGRATION
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    scripts_git_commit_py -->|导入依赖 / import_depends| D_SECURITY
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class scripts_construction_check_statuses_py,scripts_construction_check_transition_code_py,scripts_construction_d_init_task_system_py,scripts_construction_demo_a2a_chat_py,scripts_construction_demo_a2a_coordination_py,scripts_construction_demo_e2e_pipeline_py,scripts_construction_finalize_tasks_py,scripts_construction_local_layer_daemon_py,scripts_construction_reset_test_task_py,scripts_construction_start_brain_py,scripts_construction_test_event_hook_py,scripts_context_generate_architecture_context_py,scripts_diagnose_breadth_failed_py,scripts_dm90971_add_test_headers_py,scripts_fix_freeze_manifest_py,scripts_fix_orphan_all_py,scripts_generate_manifest_py,scripts_generate_pathway_registry_py,scripts_git_commit_py,scripts_git_guard_py,scripts_governance_d7_code_check_pure_shim_py,scripts_governance_generators_generate_rule_ai_perception_index_py,scripts_hooks_auto_handoff_log_py,scripts_lock_files_py,scripts_mcp_generate_ide_config_py,scripts_mcp_launcher_py,scripts_mcp_start_all_py,scripts_mcp_status_all_py,scripts_mcp_stop_all_py,scripts_migration_dm311_autonomy_core_split_py production
-    class D_SHARED,D_GOV_ENFORCEMENT,D_RISK,D_INFRASTRUCTURE,D_INFRA_RUNTIME,D_INTELLIGENCE,D_GOV_AUDIT,D_INTEGRATION,D_FUNDAMENTAL_SIGNAL,D_SECURITY external_prod
+    class D_SHARED,D_GOV_ENFORCEMENT,D_RISK,D_INFRASTRUCTURE,D_INFRA_RUNTIME,D_INTELLIGENCE,D_GOV_AUDIT,D_SECURITY,D_INTEGRATION,D_FUNDAMENTAL_SIGNAL external_prod
 ```
 
 #### 第 3 页 / 共 8 页
@@ -568,6 +568,7 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_migration_dm314_infra_ops_split_py["(生产态 / production) DM-314: infra_ops/ 拆分迁移执行脚本。<br/>文件: dm314_infra_ops_split.py"]
+    scripts_migration_governance_root_split_py["(生产态 / production) ARCH-031: governance/ root flat-files split mig...<br/>文件: governance_root_split.py"]
     scripts_ops_verify_header_completeness_py["(生产态 / production) 文件头部完整性校验（6 格式统一入口）<br/>文件: verify_header_completeness.py"]
     scripts_post_checkout_guard_py["(生产态 / production) Post-checkout Guard — 事后检测 checkout 是否覆...<br/>文件: post_checkout_guard.py"]
     scripts_pre_commit_verify_dedup_py["(生产态 / production) pre_commit 验证脚本 — 委托给 code-dedup-engine...<br/>文件: verify_dedup.py"]
@@ -596,7 +597,8 @@ flowchart TD
     src_zephyr_governance_architecture_governance_gap_analyzer_py["(生产态 / production) Gap Analyzer — v0.8.0 间隙分析器: escalation覆...<br/>文件: gap_analyzer.py"]
     src_zephyr_governance_architecture_governance_llm_impact_analyzer_py["(生产态 / production) LLMImpactAnalyzer — LLM-based commit 语义影响...<br/>文件: llm_impact_analyzer.py"]
     src_zephyr_governance_architecture_governance_local_first_arch_py["(生产态 / production) local_first_arch.py"]
-    scripts_migration_dm314_infra_ops_split_py ~~~ scripts_ops_verify_header_completeness_py
+    scripts_migration_dm314_infra_ops_split_py ~~~ scripts_migration_governance_root_split_py
+    scripts_migration_governance_root_split_py ~~~ scripts_ops_verify_header_completeness_py
     scripts_ops_verify_header_completeness_py ~~~ scripts_post_checkout_guard_py
     scripts_post_checkout_guard_py ~~~ scripts_pre_commit_verify_dedup_py
     scripts_pre_commit_verify_dedup_py ~~~ scripts_rollback_py
@@ -624,8 +626,6 @@ flowchart TD
     src_zephyr_governance_architecture_governance_formal_verifier_py ~~~ src_zephyr_governance_architecture_governance_gap_analyzer_py
     src_zephyr_governance_architecture_governance_gap_analyzer_py ~~~ src_zephyr_governance_architecture_governance_llm_impact_analyzer_py
     src_zephyr_governance_architecture_governance_llm_impact_analyzer_py ~~~ src_zephyr_governance_architecture_governance_local_first_arch_py
-    scripts_migration_governance_root_split_py["(生产态 / production) ARCH-031: governance/ root flat-files split mig...<br/>文件: governance_root_split.py"]
-    scripts_migration_dm314_infra_ops_split_py -->|config_depends / config_depends| scripts_migration_governance_root_split_py
     D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
     scripts_rollback_py -->|导入依赖 / import_depends| D_INFRA_RECOVERY
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -868,11 +868,11 @@ flowchart TD
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
@@ -948,17 +948,17 @@ flowchart TD
     src_zephyr_governance_lifecycle_governance_transition_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_base_repo_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_observability_governance_query_metrics_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_persistence_depgraph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
     src_zephyr_governance_persistence_decision_graph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     src_zephyr_governance_persistence_decision_graph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
-    src_zephyr_governance_persistence_depgraph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| src_zephyr_governance_observability_governance_projection_engine_py
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_persistence_sqlite_schema_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_persistence_base_repo_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_persistence_base_repo_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_persistence_sqlite_schema_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
@@ -972,7 +972,7 @@ flowchart TD
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_governance_persistence_database_service_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_governance_persistence_decisiongraph_schema_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_intelligence_governance_self_test_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
@@ -980,24 +980,24 @@ flowchart TD
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    D_TRADING["(生产态 / production) D_TRADING"]
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
     D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_intelligence_governance_model_router_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_TRADING["(生产态 / production) D_TRADING"]
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
     classDef design fill:#f0ebe3,stroke:#bf360c,stroke-width:2px,color:#1a1a1a,stroke-dasharray: 5 5
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_governance_intelligence_governance_model_router_py,src_zephyr_governance_intelligence_governance_model_version_detector_py,src_zephyr_governance_intelligence_governance_multi_model_consensus_py,src_zephyr_governance_intelligence_governance_mvep_orchestrator_py,src_zephyr_governance_intelligence_governance_provider_base_py,src_zephyr_governance_intelligence_governance_provider_failover_py,src_zephyr_governance_intelligence_governance_self_benchmark_py,src_zephyr_governance_intelligence_governance_self_test_py,src_zephyr_governance_intelligence_governance_self_validator_py,src_zephyr_governance_intelligence_governance_subagent_hook_propagator_py,src_zephyr_governance_lifecycle_governance_api_lifecycle_py,src_zephyr_governance_lifecycle_governance_migration_strategy_py,src_zephyr_governance_lifecycle_governance_paper_live_transition_py,src_zephyr_governance_lifecycle_governance_post_live_verification_py,src_zephyr_governance_lifecycle_governance_transition_py,src_zephyr_governance_observability_governance_analytics_base_py,src_zephyr_governance_observability_governance_objective_tracker_py,src_zephyr_governance_observability_governance_projection_engine_py,src_zephyr_governance_observability_governance_query_metrics_py,src_zephyr_governance_persistence_base_repo_py,src_zephyr_governance_persistence_database_manager_py,src_zephyr_governance_persistence_database_service_py,src_zephyr_governance_persistence_dataflowgraph_schema_py,src_zephyr_governance_persistence_decision_graph_reader_py,src_zephyr_governance_persistence_decisiongraph_schema_py,src_zephyr_governance_persistence_depgraph_reader_py,src_zephyr_governance_persistence_pg_wrapper_py,src_zephyr_governance_persistence_protocol_state_store_py,src_zephyr_governance_persistence_sqlite_schema_py,src_zephyr_governance_persistence_task_repo_py production
-    class D_SHARED,D_GOV_RULE,D_GOV_OPS_RESILIENCE,D_GOV_ENFORCEMENT,D_INFRA_RUNTIME,D_GOV_SCRIPTS,D_ORCHESTRATOR,D_GOV_REPAIR,D_TRADING external_prod
+    class D_SHARED,D_GOV_RULE,D_GOV_OPS_RESILIENCE,D_GOV_ENFORCEMENT,D_INFRA_RUNTIME,D_GOV_SCRIPTS,D_ORCHESTRATOR,D_TRADING,D_GOV_REPAIR external_prod
 ```
 
 #### 第 7 页 / 共 8 页
@@ -1067,26 +1067,26 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py
     D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     tests_git_test_git_commit_concurrent_py -->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_OPS["(生产态 / production) D_OPS"]
     src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_OPS
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_agent_rbac_test_session_aware_stash_red_blue_py -->|测试依赖 / test_depends| D_SECURITY
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    tests_agent_rbac_test_session_aware_stash_red_blue_py -->|测试依赖 / test_depends| D_SECURITY
     src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_governance_services_adapter_py -->|导入依赖 / import_depends| D_SHARED
     D_EX_CORE["(设计态 / design) D_EX_CORE"]
@@ -1099,9 +1099,9 @@ flowchart TD
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_governance_rule_patterns_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_capacity_governance_capacity_governance_loop_py
+    D_OPS -->|导入依赖 / import_depends| src_zephyr_governance_services_adapter_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_integration_mcp_governance_server_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py
-    D_OPS -->|导入依赖 / import_depends| src_zephyr_governance_services_adapter_py
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_governance_rule_patterns_py
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_governance_rule_patterns_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_governance_services_adapter_py
@@ -1115,7 +1115,7 @@ flowchart TD
     classDef external_prod fill:#e8efe9,stroke:#1b5e20,stroke-width:1px,color:#1a1a1a
     classDef external_design fill:#efe5ea,stroke:#880e4f,stroke-width:1px,color:#1a1a1a,stroke-dasharray: 5 5
     class src_zephyr_governance_rule_patterns_py,src_zephyr_governance_services_adapter_py,src_zephyr_governance_services_cross_session_correlator_py,src_zephyr_governance_services_memory_provenance_py,src_zephyr_governance_strategies_strategy_base_py,src_zephyr_governance_strategies_strategy_registry_py,src_zephyr_infrastructure_a2a_protocol_governance_base_server_py,src_zephyr_infrastructure_a2a_protocol_governance_audit_logger_py,src_zephyr_infrastructure_a2a_protocol_governance_auditor_py,src_zephyr_infrastructure_a2a_protocol_governance_error_codes_py,src_zephyr_infrastructure_a2a_protocol_governance_governance_adapter_py,src_zephyr_infrastructure_a2a_protocol_governance_phase_hold_py,src_zephyr_infrastructure_a2a_protocol_governance_policy_engine_py,src_zephyr_infrastructure_a2a_protocol_governance_protocol_py,src_zephyr_infrastructure_a2a_protocol_governance_rate_limiter_py,src_zephyr_infrastructure_a2a_protocol_governance_session_manager_py,src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py,src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py,src_zephyr_infrastructure_capacity_assurance_contracts_batch2_governance_py,src_zephyr_infrastructure_registry_governance_py,src_zephyr_integration_mcp_governance_server_py,src_zephyr_shared_capacity_governance_capacity_governance_loop_py,src_zephyr_shared_protocols_a2a_a2a_governance_py,tests_agent_rbac_test_session_aware_stash_red_blue_py,tests_git_test_git_commit_concurrent_py,tests_git_test_git_commit_extreme_py,tests_git_test_git_commit_gateway_py,tests_git_test_reconciler_verify_autosync_py,tests_governance_generators_test_check_gate_inventory_drift_py,tests_governance_generators_test_generate_gate_registry_py production
-    class D_INFRA_A2A,D_SHARED,D_GOV_ENFORCEMENT,D_OPS,D_INTEGRATION,D_GOV_DRIFT,D_GOV_AUDIT,D_GOV_OPS_RESILIENCE,D_SECURITY,D_PF_CORE,D_GOV_SCRIPTS,D_GOV_CODE_QUALITY,D_INFRA_RUNTIME,D_PF_ALLOC external_prod
+    class D_INFRA_A2A,D_SHARED,D_GOV_ENFORCEMENT,D_OPS,D_GOV_DRIFT,D_INTEGRATION,D_GOV_AUDIT,D_SECURITY,D_GOV_OPS_RESILIENCE,D_PF_CORE,D_GOV_SCRIPTS,D_GOV_CODE_QUALITY,D_INFRA_RUNTIME,D_PF_ALLOC external_prod
     class D_EX_CORE external_design
 ```
 
@@ -1216,10 +1216,10 @@ flowchart TD
     scripts_governance_generators_generate_rule_ai_perception_index_py["(生产态 / production) generate_rule_ai_perception_index.py — 规则AI...<br/>文件: generate_rule_ai_perception_index.py"]
     scripts_hooks_auto_handoff_log_py["(生产态 / production) auto_handoff_log.py"]
     scripts_lock_files_py["(生产态 / production) lock_files.py —— AI 对话文件锁协议（硬规则执...<br/>文件: lock_files.py"]
-    scripts_mcp_start_all_py["(生产态 / production) MCP 全 Server 启动脚本 — DEPRECATED.<br/>文件: start_all.py"]
+    scripts_mcp_generate_ide_config_py["(生产态 / production) 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD...<br/>文件: generate_ide_config.py"]
     scripts_mcp_status_all_py["(生产态 / production) MCP 全 Server 状态检查脚本（MOD-INF-013 §14）。<br/>文件: status_all.py"]
     scripts_mcp_stop_all_py["(生产态 / production) MCP 全 Server 停止脚本（MOD-INF-013 §14）。<br/>文件: stop_all.py"]
-    scripts_migration_dm311_autonomy_core_split_py["(生产态 / production) DM-311: autonomy_core/ 拆分迁移执行脚本。<br/>文件: dm311_autonomy_core_split.py"]
+    scripts_migration_governance_root_split_py["(生产态 / production) ARCH-031: governance/ root flat-files split mig...<br/>文件: governance_root_split.py"]
     scripts_ops_verify_header_completeness_py["(生产态 / production) 文件头部完整性校验（6 格式统一入口）<br/>文件: verify_header_completeness.py"]
     scripts_post_checkout_guard_py["(生产态 / production) Post-checkout Guard — 事后检测 checkout 是否覆...<br/>文件: post_checkout_guard.py"]
     scripts_pre_commit_verify_dedup_py["(生产态 / production) pre_commit 验证脚本 — 委托给 code-dedup-engine...<br/>文件: verify_dedup.py"]
@@ -1408,11 +1408,11 @@ flowchart TD
     scripts_governance_d7_code_check_pure_shim_py ~~~ scripts_governance_generators_generate_rule_ai_perception_index_py
     scripts_governance_generators_generate_rule_ai_perception_index_py ~~~ scripts_hooks_auto_handoff_log_py
     scripts_hooks_auto_handoff_log_py ~~~ scripts_lock_files_py
-    scripts_lock_files_py ~~~ scripts_mcp_start_all_py
-    scripts_mcp_start_all_py ~~~ scripts_mcp_status_all_py
+    scripts_lock_files_py ~~~ scripts_mcp_generate_ide_config_py
+    scripts_mcp_generate_ide_config_py ~~~ scripts_mcp_status_all_py
     scripts_mcp_status_all_py ~~~ scripts_mcp_stop_all_py
-    scripts_mcp_stop_all_py ~~~ scripts_migration_dm311_autonomy_core_split_py
-    scripts_migration_dm311_autonomy_core_split_py ~~~ scripts_ops_verify_header_completeness_py
+    scripts_mcp_stop_all_py ~~~ scripts_migration_governance_root_split_py
+    scripts_migration_governance_root_split_py ~~~ scripts_ops_verify_header_completeness_py
     scripts_ops_verify_header_completeness_py ~~~ scripts_post_checkout_guard_py
     scripts_post_checkout_guard_py ~~~ scripts_pre_commit_verify_dedup_py
     scripts_pre_commit_verify_dedup_py ~~~ scripts_rollback_py
@@ -1552,12 +1552,12 @@ flowchart TD
     tests_test_align_panoramas_py ~~~ tests_test_dataflow_design_layout_py
     tests_test_dataflow_design_layout_py ~~~ tests_test_generate_dataflow_diagram_py
     tests_test_generate_dataflow_diagram_py ~~~ tests_test_generate_decision_diagram_py
-    scripts_arch_guard_tools_inject_idempotency_py["(生产态 / production) 为所有 P0/P1 契约添加 idempotency_key 字段——...<br/>文件: inject_idempotency.py"]
+    scripts_arch_guard_tools_build_ocp_manifest_py["(生产态 / production) 从 cross_layer_contracts.yaml 生成 OCP 冻结契约...<br/>文件: build_ocp_manifest.py"]
     scripts_construction_check_transition_code_py["(生产态 / production) check_transition_code.py"]
     scripts_git_commit_py["(生产态 / production) git_commit.py — GitCommitGateway CLI 封装（OPS...<br/>文件: git_commit.py"]
     scripts_git_guard_py["(生产态 / production) Git Guard — 拦截危险 git 命令，防止破坏其他 se...<br/>文件: git_guard.py"]
-    scripts_mcp_generate_ide_config_py["(生产态 / production) 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD...<br/>文件: generate_ide_config.py"]
-    scripts_migration_dm314_infra_ops_split_py["(生产态 / production) DM-314: infra_ops/ 拆分迁移执行脚本。<br/>文件: dm314_infra_ops_split.py"]
+    scripts_mcp_start_all_py["(生产态 / production) MCP 全 Server 启动脚本 — DEPRECATED.<br/>文件: start_all.py"]
+    scripts_migration_dm311_autonomy_core_split_py["(生产态 / production) DM-311: autonomy_core/ 拆分迁移执行脚本。<br/>文件: dm311_autonomy_core_split.py"]
     src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py["(生产态 / production) WorktreeLifecycle — worktree 生命周期状态机（5...<br/>文件: worktree_lifecycle.py"]
     src_zephyr_governance_capability_lookup_py["(生产态 / production) CapabilityLookup — 能力->真源文件反查注册表的...<br/>文件: capability_lookup.py"]
     src_zephyr_governance_data_governance_akshare_provider_py["(生产态 / production) D_DATA — Akshare Data Provider<br/>文件: akshare_provider.py"]
@@ -1571,12 +1571,12 @@ flowchart TD
     src_zephyr_governance_strategies_strategy_base_py["(生产态 / production) D_PORTFOLIO_CORE — StrategyBase + StrategyMeta...<br/>文件: strategy_base.py"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py["(生产态 / production) A2A 治理适配器 — 连接 A2A 协议与 Governance 层<br/>文件: a2a_governance_adapter.py"]
     src_zephyr_infrastructure_registry_governance_py["(生产态 / production) Registry Governance — MOD-INF-037<br/>文件: registry_governance.py"]
-    scripts_arch_guard_tools_inject_idempotency_py ~~~ scripts_construction_check_transition_code_py
+    scripts_arch_guard_tools_build_ocp_manifest_py ~~~ scripts_construction_check_transition_code_py
     scripts_construction_check_transition_code_py ~~~ scripts_git_commit_py
     scripts_git_commit_py ~~~ scripts_git_guard_py
-    scripts_git_guard_py ~~~ scripts_mcp_generate_ide_config_py
-    scripts_mcp_generate_ide_config_py ~~~ scripts_migration_dm314_infra_ops_split_py
-    scripts_migration_dm314_infra_ops_split_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
+    scripts_git_guard_py ~~~ scripts_mcp_start_all_py
+    scripts_mcp_start_all_py ~~~ scripts_migration_dm311_autonomy_core_split_py
+    scripts_migration_dm311_autonomy_core_split_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
     src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py ~~~ src_zephyr_governance_capability_lookup_py
     src_zephyr_governance_capability_lookup_py ~~~ src_zephyr_governance_data_governance_akshare_provider_py
     src_zephyr_governance_data_governance_akshare_provider_py ~~~ src_zephyr_governance_engine_pipeline_base_py
@@ -1589,15 +1589,15 @@ flowchart TD
     src_zephyr_governance_rule_patterns_py ~~~ src_zephyr_governance_strategies_strategy_base_py
     src_zephyr_governance_strategies_strategy_base_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py ~~~ src_zephyr_infrastructure_registry_governance_py
-    scripts_arch_guard_tools_build_ocp_manifest_py["(生产态 / production) 从 cross_layer_contracts.yaml 生成 OCP 冻结契约...<br/>文件: build_ocp_manifest.py"]
+    scripts_arch_guard_tools_inject_idempotency_py["(生产态 / production) 为所有 P0/P1 契约添加 idempotency_key 字段——...<br/>文件: inject_idempotency.py"]
     scripts_mcp_launcher_py["(生产态 / production) MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 +...<br/>文件: launcher.py"]
-    scripts_migration_governance_root_split_py["(生产态 / production) ARCH-031: governance/ root flat-files split mig...<br/>文件: governance_root_split.py"]
+    scripts_migration_dm314_infra_ops_split_py["(生产态 / production) DM-314: infra_ops/ 拆分迁移执行脚本。<br/>文件: dm314_infra_ops_split.py"]
     src_zephyr_governance_depgraph_schema_py["(生产态 / production) depgraph Schema DDL + 版本化迁移框架<br/>文件: depgraph_schema.py"]
     src_zephyr_governance_intelligence_governance_provider_base_py["(生产态 / production) D_DATA — Data Source Layer<br/>文件: provider_base.py"]
     src_zephyr_governance_persistence_task_repo_py["(生产态 / production) TaskRepository — 任务登记表 CRUD + 状态机（T-1...<br/>文件: task_repo.py"]
-    scripts_arch_guard_tools_build_ocp_manifest_py ~~~ scripts_mcp_launcher_py
-    scripts_mcp_launcher_py ~~~ scripts_migration_governance_root_split_py
-    scripts_migration_governance_root_split_py ~~~ src_zephyr_governance_depgraph_schema_py
+    scripts_arch_guard_tools_inject_idempotency_py ~~~ scripts_mcp_launcher_py
+    scripts_mcp_launcher_py ~~~ scripts_migration_dm314_infra_ops_split_py
+    scripts_migration_dm314_infra_ops_split_py ~~~ src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_depgraph_schema_py ~~~ src_zephyr_governance_intelligence_governance_provider_base_py
     src_zephyr_governance_intelligence_governance_provider_base_py ~~~ src_zephyr_governance_persistence_task_repo_py
     src_zephyr_governance_architecture_governance_post_sync_validator_py["(生产态 / production) post_sync_validator — post_sync_standard 命令...<br/>文件: post_sync_validator.py"]
@@ -1611,13 +1611,13 @@ flowchart TD
     src_zephyr_governance_intelligence_governance_self_test_py -->|导入依赖 / import_depends| src_zephyr_governance_intelligence_governance_delegation_engine_py
     src_zephyr_governance_lifecycle_governance_transition_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_base_repo_py
     src_zephyr_governance_persistence_decisiongraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
+    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_observability_governance_query_metrics_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    src_zephyr_governance_persistence_decision_graph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    src_zephyr_governance_persistence_decision_graph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
-    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_depgraph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_depgraph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
+    src_zephyr_governance_persistence_decision_graph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    src_zephyr_governance_persistence_decision_graph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| src_zephyr_governance_architecture_governance_post_sync_validator_py
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| src_zephyr_governance_observability_governance_projection_engine_py
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
@@ -1626,37 +1626,38 @@ flowchart TD
     scripts_generate_pathway_registry_py -->|导入依赖 / import_depends| src_zephyr_governance_rule_patterns_py
     scripts_scaffold_py -->|导入依赖 / import_depends| src_zephyr_governance_capability_lookup_py
     scripts_scaffold_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_registry_governance_py
-    scripts_arch_guard_tools_inject_idempotency_py -->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
-    scripts_arch_guard_tools_patch_p1_paths_py -->|config_depends / config_depends| scripts_arch_guard_tools_inject_idempotency_py
-    scripts_construction_demo_a2a_chat_py -->|config_depends / config_depends| scripts_construction_check_transition_code_py
+    scripts_arch_guard_tools_build_ocp_manifest_py -->|config_depends / config_depends| scripts_arch_guard_tools_inject_idempotency_py
+    scripts_arch_guard_tools_patch_p1_paths_py -->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
     scripts_construction_check_transition_code_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_check_statuses_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_check_statuses_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
-    scripts_construction_finalize_tasks_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    scripts_construction_finalize_tasks_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
+    scripts_construction_demo_a2a_chat_py -->|config_depends / config_depends| scripts_construction_check_transition_code_py
     scripts_construction_demo_e2e_pipeline_py -->|导入依赖 / import_depends| src_zephyr_governance_data_governance_akshare_provider_py
+    scripts_construction_finalize_tasks_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    scripts_construction_finalize_tasks_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_test_event_hook_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_test_event_hook_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
-    scripts_mcp_generate_ide_config_py -->|config_depends / config_depends| scripts_mcp_launcher_py
-    scripts_migration_dm314_infra_ops_split_py -->|config_depends / config_depends| scripts_migration_governance_root_split_py
-    scripts_mcp_status_all_py -->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_start_all_py -->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_stop_all_py -->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_mcp_start_all_py -->|config_depends / config_depends| scripts_mcp_launcher_py
+    scripts_mcp_generate_ide_config_py -->|config_depends / config_depends| scripts_mcp_start_all_py
+    scripts_mcp_stop_all_py -->|config_depends / config_depends| scripts_mcp_start_all_py
+    scripts_mcp_status_all_py -->|config_depends / config_depends| scripts_mcp_start_all_py
     scripts_migration_dm311_autonomy_core_split_py -->|config_depends / config_depends| scripts_migration_dm314_infra_ops_split_py
+    scripts_migration_governance_root_split_py -->|config_depends / config_depends| scripts_migration_dm311_autonomy_core_split_py
     tests_git_test_reconciler_verify_autosync_py -->|测试依赖 / test_depends| scripts_git_commit_py
     tests_governance_rule_bridge_test_worktree_lifecycle_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
     tests_io_test_verify_schema_health_py -->|测试依赖 / test_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    tests_rollback_test_concurrency_guard_red_blue_py -->|测试依赖 / test_depends| scripts_git_guard_py
     tests_rollback_test_concurrent_mv_guard_py -->|测试依赖 / test_depends| scripts_git_guard_py
+    tests_rollback_test_concurrency_guard_red_blue_py -->|测试依赖 / test_depends| scripts_git_guard_py
     tests_task_test_task_repo_gateway_e2e_py -->|测试依赖 / test_depends| src_zephyr_governance_persistence_task_repo_py
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_governance_depgraph_schema_py -->|导入依赖 / import_depends| D_SHARED
     scripts_lock_files_py -->|导入依赖 / import_depends| D_SHARED
     scripts_construction_e2e_deep_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_depgraph_schema_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_intelligence_governance_cross_agent_conflict_detector_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
     D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
     scripts_rollback_py -->|导入依赖 / import_depends| D_INFRA_RECOVERY
@@ -1670,25 +1671,24 @@ flowchart TD
     src_zephyr_integration_mcp_governance_server_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_capability_lookup_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| D_SHARED
-    scripts_lock_files_py -->|导入依赖 / import_depends| D_SHARED
     D_EX_CORE["(设计态 / design) D_EX_CORE"]
     D_EX_CORE -.->|contract / contract| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE -.->|contract / contract| src_zephyr_governance_strategies_strategy_base_py
     D_GOV_SCRIPTS["(生产态 / production) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     D_PF_CORE["(生产态 / production) D_PF_CORE"]
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_governance_strategies_strategy_base_py
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     D_GOV_RULE -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_architecture_governance_post_sync_validator_py
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_intelligence_governance_aisg_sandbox_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
+    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     classDef production fill:#e8edf2,stroke:#0277bd,stroke-width:2px,color:#1a1a1a
