@@ -3783,15 +3783,17 @@ capabilities:
     description: >-
       dataflowgraph 文档生成器（Mermaid + Markdown，ARCH-051，2026-07-06）。
       canonical = scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py。
-      从 dataflow_* 表读取数据，生成 Mermaid flowchart LR 图表（全景/生产/回测三视图）。
-      输出到 docs/02_enterprise_architecture/generated/dataflows/：
-      dataflow_overview.mmd / dataflow_production.mmd / dataflow_backtest.mmd / dataflow_index.md。
-      区分 scope（production=蓝色 / backtest_internal=橙色），Dataset 矩形 Job 圆角。
+      从 dataflow_* 表读取数据，生成 Mermaid flowchart TD 图表（运营态全景 + 设计态按域拆分）。
+      输出到 docs/02_enterprise_architecture/05_dataflow_architecture/：
+      dataflow_index.md（索引）+ dataflow_production.md（运营态）+ d_*.md（8个设计态域文件）。
+      灰色主题对齐决策流程图视觉风格，[design]/[production] 标签区分设计态/运营态，Dataset 矩形 Job 圆角。
       解决发现性：新 AI 搜 "数据流图生成/dataflow diagram/mermaid dataflowgraph" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重建同类生成器。
     integrity_anchors:
       - _gen_mermaid      # Mermaid 图表生成函数(篡改即图表错乱)
       - _gen_index_md     # 索引文档生成函数
+      - _gen_domain_md    # 设计态域文件生成函数
+      - _gen_overview_index  # 索引文件生成函数
       - _fetch_dataflow_data  # PG 数据读取函数
 
   # --------------------------------------------------------------------------
