@@ -60,5 +60,9 @@ forbidden_modules =
     zephyr.signal_quality
     zephyr.simulation
     zephyr.trading
+# 豁免理由：zephyr.shared.contract_bus 是契约总线模块（src/zephyr/shared/contracts/contract_bus.py），
+#   仅 import 标准库（asyncio/dataclasses/typing），无业务层依赖。
+#   此 ignore 防止 import-linter 对 shared 内部契约模块的误报；
+#   若 import-linter 升级后误报消除，可移除此豁免。
 ignore_imports =
     zephyr.shared.contract_bus
