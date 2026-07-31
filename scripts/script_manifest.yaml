@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-01'
-total_scripts: 615
+total_scripts: 617
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -2134,6 +2134,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/generators/zoomable_html.py
+  path: governance/d5_architecture/generators/zoomable_html.py
+  description: 从 .md 文件的 mermaid 代码块生成自包含 HTML（浏览器打开可 Ctrl+滚轮无限缩放 +
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/syncers/__init__.py
   path: governance/d5_architecture/syncers/__init__.py
   description: __all__ = [
@@ -3024,6 +3032,14 @@ scripts:
   dimensions: []
 - name: governance/d8_doc_sync/readme_version_sync_reconciler.py
   path: governance/d8_doc_sync/readme_version_sync_reconciler.py
+  description: 职责：注册为 ReconciliationRegistry 的 reconciler，post-commit 自动触发。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d8_doc_sync/requirements_version_sync_reconciler.py
+  path: governance/d8_doc_sync/requirements_version_sync_reconciler.py
   description: 职责：注册为 ReconciliationRegistry 的 reconciler，post-commit 自动触发。
   domain: governance
   execution_plane: warm-path

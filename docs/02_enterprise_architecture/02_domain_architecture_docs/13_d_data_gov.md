@@ -57,21 +57,21 @@ flowchart TD
     src_zephyr_data_governance_extensions_init_py["(生产态 / production) 数据治理扩展包 / Data Governance Extensions Package<br/>数据治理域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
     src_zephyr_data_governance_api_init_py["(生产态 / production) 数据治理API包 / Data Governance API Package<br/>数据治理域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
     src_zephyr_data_governance_core_init_py["(生产态 / production) 数据治理核心包 / Data Governance Core Package<br/>数据治理域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
-    src_zephyr_data_governance_core_lineage_tracker_py["(生产态 / production) D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>文件: core/lineage_tracker.py"]
     src_zephyr_data_governance_core_metadata_registry_py["(生产态 / production) D-DATA-GOV Metadata Registry——元数据管理。<br/>D-DATA-GOV Metadata Registry——元数据管理。<br/>文件: core/metadata_registry.py"]
+    src_zephyr_data_governance_core_schema_registry_py["(生产态 / production) D-DATA-GOV Schema Registry——表结构注册与查询。<br/>D-DATA-GOV Schema Registry——表结构注册与查询。<br/>文件: core/schema_registry.py"]
     src_zephyr_data_governance_infrastructure_init_py["(生产态 / production) 数据治理基础设施包 / Data Governance Infrastructure Package<br/>数据治理域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
     src_zephyr_data_governance_models_init_py["(生产态 / production) 数据治理模型包 / Data Governance Models Package<br/>数据治理域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
     src_zephyr_data_governance_services_init_py["(生产态 / production) 数据治理服务包 / Data Governance Services Package<br/>数据治理域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
     src_zephyr_data_governance_init_py ~~~ src_zephyr_data_governance_extensions_init_py
     src_zephyr_data_governance_extensions_init_py ~~~ src_zephyr_data_governance_api_init_py
     src_zephyr_data_governance_api_init_py ~~~ src_zephyr_data_governance_core_init_py
-    src_zephyr_data_governance_core_init_py ~~~ src_zephyr_data_governance_core_lineage_tracker_py
-    src_zephyr_data_governance_core_lineage_tracker_py ~~~ src_zephyr_data_governance_core_metadata_registry_py
-    src_zephyr_data_governance_core_metadata_registry_py ~~~ src_zephyr_data_governance_infrastructure_init_py
+    src_zephyr_data_governance_core_init_py ~~~ src_zephyr_data_governance_core_metadata_registry_py
+    src_zephyr_data_governance_core_metadata_registry_py ~~~ src_zephyr_data_governance_core_schema_registry_py
+    src_zephyr_data_governance_core_schema_registry_py ~~~ src_zephyr_data_governance_infrastructure_init_py
     src_zephyr_data_governance_infrastructure_init_py ~~~ src_zephyr_data_governance_models_init_py
     src_zephyr_data_governance_models_init_py ~~~ src_zephyr_data_governance_services_init_py
-    src_zephyr_data_governance_core_schema_registry_py["(生产态 / production) D-DATA-GOV Schema Registry——表结构注册与查询。<br/>D-DATA-GOV Schema Registry——表结构注册与查询。<br/>文件: core/schema_registry.py"]
-    src_zephyr_data_governance_core_init_py -->|config_depends / config_depends| src_zephyr_data_governance_core_schema_registry_py
+    src_zephyr_data_governance_core_lineage_tracker_py["(生产态 / production) D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>文件: core/lineage_tracker.py"]
+    src_zephyr_data_governance_core_init_py -->|config_depends / config_depends| src_zephyr_data_governance_core_lineage_tracker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

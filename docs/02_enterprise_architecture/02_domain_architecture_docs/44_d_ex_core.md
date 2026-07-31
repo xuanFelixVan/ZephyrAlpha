@@ -85,14 +85,14 @@ flowchart TD
     src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ex_core_adapters_risk_validation_bridge_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_ex_core_adapters_simulation_broker_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_FACTOR["(生产态 / production) 因子 / Factor<br/>因子，负责因子计算、因子库管理和因子评价<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_ex_core_signal_providers_py -->|导入依赖 / import_depends| D_FACTOR
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_adapters_risk_validation_bridge_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_BACKTEST["(生产态 / production) 回测 / Backtest<br/>回测，负责历史数据回测、回测引擎和回测报告<br/>跨域节点 / cross-domain"]
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
