@@ -70,10 +70,50 @@ _（暂无已标定节点，待 Phase B 全量标定）_
 
 ## 附录1·待施工（设计态节点）
 
-_（暂无已标定节点，待 Phase B 全量标定）_
+| node_id | 决策名称 | 节点类型 | layer | module_id | path |
+|---|---|---|---|---|---|
+| 20 | 组合核心引擎 Portfolio Core Engine | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_01` |
+| 21 | 半Kelly硬上限 Half-Kelly Hard Cap | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_02` |
+| 22 | 风险预算 Risk Budget | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_03` |
+| 23 | 再平衡决策 Rebalance Decision | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_04` |
+| 24 | 仲裁优先级体系 Arbitration Priority | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_05` |
+| 25 | 多策略共振融合 Strategy Convergence Fusion | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_06` |
+| 26 | 因子直通裁决 Factor Bypass Arbitration | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_07` |
+| 27 | 元策略路由 Meta-Strategy Router | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_08` |
+| 28 | 组合优化 Portfolio Optimization | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_09` |
+| 29 | 资本分配 Capital Allocation | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_10` |
+| 30 | 决策编排器 Decision Orchestrator | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_11` |
+| 31 | 四轨融合器 Multi-Track Fusion | portfolio_target | L3 | MOD-L05-001 | `decision/pf_core/pc_12` |
+| 32 | 策略分配 Strategy Allocation | portfolio_target | L3 | MOD-L05-001 | `decision/pf_alloc/pa_01` |
+| 33 | 风险平价 Risk Parity | portfolio_target | L3 | MOD-L05-001 | `decision/pf_alloc/pa_02` |
+| 34 | 动态权重 Dynamic Weighting | portfolio_target | L3 | MOD-L05-001 | `decision/pf_alloc/pa_03` |
+| 35 | 策略权重再平衡 Strategy Weight Rebalance | portfolio_target | L3 | MOD-L05-001 | `decision/pf_alloc/pa_04` |
+| 36 | 多策略共识 Multi-Strategy Consensus | portfolio_target | L3 | MOD-L05-001 | `decision/pf_alloc/pa_05` |
+| 37 | 元策略选择 Meta-Strategy Selection | portfolio_target | L3 | MOD-L05-001 | `decision/pf_alloc/pa_06` |
+| 38 | 仓位唯一裁决中心 C-047 Position Sole Arbiter | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_01` |
+| 39 | 持仓状态机 Position State Machine | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_02` |
+| 40 | 仓位漂移监控 Position Drift Monitor | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_03` |
+| 41 | Kelly仓位决策 Kelly Position Decision | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_04` |
+| 42 | 风险配额 Risk Quota | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_05` |
+| 43 | 11种市场状态→仓位上限 Market State Position Cap | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_06` |
+| 44 | 组合层决策 Portfolio Layer Decision | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_07` |
+| 45 | 策略层决策 Strategy Layer Decision | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_08` |
+| 46 | 标层决策 Instrument Layer Decision | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_09` |
+| 47 | 动态层决策 Dynamic Layer Decision | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_10` |
+| 48 | 再平衡触发 Rebalance Trigger | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_11` |
+| 49 | 仓位上限硬约束 Position Cap Hard Constraint | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_12` |
+| 50 | REDUCING→EXITING状态转换 REDUCING to EXITING | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_13` |
+| 51 | 风险预算→Kelly决策 Risk Budget to Kelly | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_14` |
+| 52 | 半Kelly硬上限 Half-Kelly Hard Cap | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_15` |
+| 53 | 仓位降级 Position Degradation | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_16` |
+| 54 | 持仓状态→卖出阈值 Position State to Sell Threshold | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_17` |
+| 55 | 仓位四轨决策 Position Four-Track Decision | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_18` |
+| 56 | 仓位裁决→执行 Position Arbitration to Execution | portfolio_target | L3 | MOD-L05-001 | `decision/position/pos_19` |
 
 
 ## 附录2·未来增强（候选库）
 
-_（Phase C：从 candidate_module_registry.yaml 提取 deferred/rejected 条目，按 panorama_position.decisiongraph.target_layer 归类）_
+_从 candidate_module_registry.yaml 按 target_track 归类到本阶段；基础设施类候选（回测/仿真/灾备/死域）见 [总览](trading_flow_index.md) 跨阶段附录_
+
+_（本阶段暂无候选模块）_
 

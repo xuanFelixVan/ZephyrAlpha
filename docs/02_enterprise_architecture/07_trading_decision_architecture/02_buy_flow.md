@@ -79,10 +79,26 @@ _（暂无已标定节点，待 Phase B 全量标定）_
 
 ## 附录1·待施工（设计态节点）
 
-_（暂无已标定节点，待 Phase B 全量标定）_
+| node_id | 决策名称 | 节点类型 | layer | module_id | path |
+|---|---|---|---|---|---|
+| 177 | Synthesizer 信号合成+权重分配 | signal | L2A | - | `decision/signal/sg_01` |
+| 178 | Signal Priority Router 信号优先级路由 | signal | L2A | - | `decision/signal/sg_02` |
+| 179 | LLM Strategy Agent LLM策略Agent | signal | L2A | - | `decision/signal/sg_03` |
+| 180 | Signal Tail Risk Protector 信号尾部风险保护 | signal | L2A | - | `decision/signal/sg_04` |
+| 181 | A-Share Plan Conformity Evaluator A股计划吻合度评估 | signal | L2A | - | `decision/signal/sg_05` |
+| 182 | A-Share Emergency Opportunity Evaluator A股应急机会评估 | signal | L2A | - | `decision/signal/sg_06` |
+| 183 | A-Share Capital-Force Conflict Arbiter 主力游资冲突仲裁 | signal | L2A | - | `decision/signal/sg_07` |
+| 184 | Regime Special Override Priority Manager Regime特殊覆盖优先级 | signal | L2A | - | `decision/signal/sg_08` |
+| 185 | Risk-Signal Interaction Sequencer 风控-信号交互时序 | signal | L2A | - | `decision/signal/sg_09` |
+| 186 | 36环节决策框架实现器 36-Step Decision Framework | signal | L2A | - | `decision/signal/sg_10` |
+| 187 | 策略替换与淘汰决策器 Strategy Replacement Decision | signal | L2A | - | `decision/signal/sg_11` |
+| 188 | 信号冲突解决 Signal Conflict Resolution | signal | L2A | - | `decision/signal/sg_12` |
+| 189 | 信号融合模块 Signal Fusion Module | signal | L2A | - | `decision/signal/sg_13` |
 
 
 ## 附录2·未来增强（候选库）
 
-_（Phase C：从 candidate_module_registry.yaml 提取 deferred/rejected 条目，按 panorama_position.decisiongraph.target_layer 归类）_
+_从 candidate_module_registry.yaml 按 target_track 归类到本阶段；基础设施类候选（回测/仿真/灾备/死域）见 [总览](trading_flow_index.md) 跨阶段附录_
+
+_（本阶段暂无候选模块）_
 

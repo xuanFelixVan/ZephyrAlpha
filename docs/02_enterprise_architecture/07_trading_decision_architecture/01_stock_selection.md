@@ -85,10 +85,22 @@ _（暂无已标定节点，待 Phase B 全量标定）_
 
 ## 附录1·待施工（设计态节点）
 
-_（暂无已标定节点，待 Phase B 全量标定）_
+| node_id | 决策名称 | 节点类型 | layer | module_id | path |
+|---|---|---|---|---|---|
+| 190 | 末位淘汰 IC-Based Factor Replacement | signal | L2A | - | `decision/factor/fc_01` |
+| 191 | 批量裁剪 Batch Factor Pruning | signal | L2A | - | `decision/factor/fc_02` |
+| 192 | Multi-Source Priority Router 多源优先级路由 | signal | L2A | - | `decision/data/dt_01` |
+| 193 | Cross-Source Reconciler 多源对账 | signal | L2A | - | `decision/data/dt_02` |
+| 194 | Multi-Timeframe Fusion 跨频率融合 | signal | L2A | - | `decision/data/dt_03` |
 
 
 ## 附录2·未来增强（候选库）
 
-_（Phase C：从 candidate_module_registry.yaml 提取 deferred/rejected 条目，按 panorama_position.decisiongraph.target_layer 归类）_
+_从 candidate_module_registry.yaml 按 target_track 归类到本阶段；基础设施类候选（回测/仿真/灾备/死域）见 [总览](trading_flow_index.md) 跨阶段附录_
+
+| 候选ID | 名称 | 状态 | 优先级 | 卡在哪问 | 解决什么痛点 |
+|---|---|---|---|---|---|
+| CAND-AISA-001 | AI Sentiment Analyzer / AI 舆情分析器 | candidate | P1 | pending | A 股受政策与舆情驱动性强,缺乏结构化舆情信号导致政策行情响应滞后 |
+| CAND-SIG-002 | ML-driven Signal Synthesizer / ML驱动信号合成 | deferred | P2 | q2 | 因子数增多后,等权/固定IC加权无法捕捉因子间非线性关系 |
+| CAND-FAC-001 | Factor Cache / 因子缓存 | deferred | P2 | q2 | 因子数量增长后,每日全量重算导致计算延迟>50ms |
 

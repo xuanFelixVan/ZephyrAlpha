@@ -81,10 +81,32 @@ _（暂无已标定节点，待 Phase B 全量标定）_
 
 ## 附录1·待施工（设计态节点）
 
-_（暂无已标定节点，待 Phase B 全量标定）_
+| node_id | 决策名称 | 节点类型 | layer | module_id | path |
+|---|---|---|---|---|---|
+| 1 | 卖出决策域入口 Sell Decision Entry | sell_decision | L2A | - | `decision/sell/sell_00` |
+| 2 | 止盈信号 Take-Profit Signal | sell_decision | L2A | - | `decision/sell/sell_01` |
+| 3 | 止损信号 Stop-Loss Signal | sell_decision | L2A | - | `decision/sell/sell_02` |
+| 4 | 移动止损 Trailing Stop | sell_decision | L2A | - | `decision/sell/sell_03` |
+| 5 | 主力出货信号 Main Force Distribution Signal | sell_decision | L2A | - | `decision/sell/sell_04` |
+| 6 | 量价背离卖出 Volume-Price Divergence Sell | sell_decision | L2A | - | `decision/sell/sell_05` |
+| 7 | 突破关键位卖出 Key-Level Breakdown Sell | sell_decision | L2A | - | `decision/sell/sell_06` |
+| 8 | Watch List 实时卖出 Watch List Realtime Sell | sell_decision | L2A | - | `decision/sell/sell_07` |
+| 9 | Monitor List 定期扫描 Monitor List Periodic Scan | sell_decision | L2A | - | `decision/sell/sell_08` |
+| 10 | 卖出信号融合仲裁 Sell Signal Fusion Arbiter | sell_decision | L2A | - | `decision/sell/sell_09` |
+| 11 | 买卖冲突仲裁 Buy-Sell Conflict Arbiter | sell_decision | L2A | - | `decision/sell/sell_10` |
+| 12 | 部分卖出vs全部清仓决策 Partial vs Full Sell Decision | sell_decision | L2A | - | `decision/sell/sell_11` |
+| 13 | D-S证据理论融合 D-S Evidence Theory Fusion | sell_decision | L2A | - | `decision/sell/sell_12` |
+| 14 | 做T决策协调 T-Trade Coordinator | sell_decision | L2A | - | `decision/sell/sell_13` |
+| 15 | 黑天鹅强制卖出 Black Swan Forced Sell | sell_decision | L2A | - | `decision/sell/sell_14` |
+| 16 | Gap开盘决策框架 Gap Opening Decision Framework | sell_decision | L2A | - | `decision/sell/sell_15` |
+| 17 | 强制清仓信号 Forced Liquidation Signal | sell_decision | L2A | - | `decision/sell/sell_16` |
+| 18 | 卖出降级模式 Sell Degradation Mode | sell_decision | L2A | - | `decision/sell/sell_17` |
+| 19 | 卖出决策闭环优化 Sell Decision Closed-Loop | sell_decision | L2A | - | `decision/sell/sell_18` |
 
 
 ## 附录2·未来增强（候选库）
 
-_（Phase C：从 candidate_module_registry.yaml 提取 deferred/rejected 条目，按 panorama_position.decisiongraph.target_layer 归类）_
+_从 candidate_module_registry.yaml 按 target_track 归类到本阶段；基础设施类候选（回测/仿真/灾备/死域）见 [总览](trading_flow_index.md) 跨阶段附录_
+
+_（本阶段暂无候选模块）_
 

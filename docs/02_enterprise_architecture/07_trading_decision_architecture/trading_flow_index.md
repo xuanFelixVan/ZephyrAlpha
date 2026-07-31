@@ -51,12 +51,12 @@ generator: generate_trading_flow_diagram.py
 
 | 阶段 | 文档 | 运营态节点 | 设计态节点 | 产出 |
 |---|---|---|---|---|
-| [选股决策流](01_stock_selection.md) | 01_stock_selection.md | 0 | 0 | `candidate_pool` |
-| [买入决策流](02_buy_flow.md) | 02_buy_flow.md | 0 | 0 | `buy_signal` |
-| [卖出决策流](03_sell_flow.md) | 03_sell_flow.md | 0 | 0 | `sell_signal` |
-| [仓位裁决](04_position_flow.md) | 04_position_flow.md | 0 | 0 | `target_position` |
-| [执行](05_execution_flow.md) | 05_execution_flow.md | 0 | 0 | `executed_order` |
-| [对账](?) | ? | 0 | 0 | `reconciliation_report` |
+| [选股决策流](01_stock_selection.md) | 01_stock_selection.md | 0 | 5 | `candidate_pool` |
+| [买入决策流](02_buy_flow.md) | 02_buy_flow.md | 0 | 13 | `buy_signal` |
+| [卖出决策流](03_sell_flow.md) | 03_sell_flow.md | 0 | 19 | `sell_signal` |
+| [仓位裁决](04_position_flow.md) | 04_position_flow.md | 0 | 37 | `target_position` |
+| [执行](05_execution_flow.md) | 05_execution_flow.md | 0 | 56 | `executed_order` |
+| [对账](06_reconciliation.md) | 06_reconciliation.md | 0 | 11 | `reconciliation_report` |
 
 ## 应急保命降级路径
 
@@ -72,10 +72,24 @@ generator: generate_trading_flow_diagram.py
 
 - **运营态（production）**：实盘主链路节点，主图展示
 - **设计态（design, approved）**：通过四问过滤、待施工，附录1展示
-- **候选库（deferred/rejected）**：过度工程/超前设计，附录2展示（Phase C 从 candidate_module_registry 提取）
+- **候选库（candidate/deferred/rejected）**：过度工程/超前设计，附录2展示（从 candidate_module_registry.yaml 提取）
 
 ## 四模式开关
 
-详见 [06_modes.md](06_modes.md)（回测/Paper/Shadow/实盘）
+详见 [07_modes.md](07_modes.md)（回测/Paper/Shadow/实盘）
 
-> 数据源：depgraph (PostgreSQL) + trading_flow_narrative.yaml
+## 附录·跨阶段候选（基础设施类）
+
+以下候选不归属任何交易流阶段（回测/仿真/灾备/死域等），统一在此展示：
+
+| 候选ID | 名称 | 状态 | 优先级 | 卡在哪问 | 解决什么痛点 |
+|---|---|---|---|---|---|
+| CAND-SIGLEGACY-001 | D_SIGLEGACY 多策略引擎 | rejected | P2 | q3 | (已解决)多策略编排已由 D_PF_CORE PC-01 承担 |
+| CAND-WFO-001 | Walk-Forward Optimizer / 滚动前进优化器 | deferred | P2 | q2 | 回测参数过拟合风险——单一全样本优化容易拟合历史噪声,实盘表现衰退 |
+| CAND-PC-001 | Policy Compiler / 策略编译器 | rejected | P2 | q4 | 策略规则到检查器代码的翻译需自动化,避免手工编写检查器 |
+| CAND-DR-001 | Offsite Backup / 异地备份 | rejected | P2 | q2 | audit 7.7 发现本地 restic 备份与主库同物理站点,不满足 3-2-1 备份原则的异地要求 |
+| CAND-SIM-002 | Experiment Queue Scheduler / 实验队列调度 | deferred | P2 | q2 | 并发实验>10时,顺序执行导致等待时间长 |
+| CAND-BT-001 | Backtest v2.0 Auxiliary Modules / 回测v2.0辅助模块 | deferred | P2 | q2 | 回测需批量调度/衰减监控/自动报告/结果缓存时,无对应辅助模块 |
+| CAND-DAT-001 | DataFrame to Pydantic Migration / DataFrame迁移Pydantic | deferred | P2 | q2 | DataFrame无运行时类型校验,下游D_FACTOR消费端要求Pydantic强类型契约 |
+
+> 数据源：depgraph (PostgreSQL) + trading_flow_narrative.yaml + candidate_module_registry.yaml
