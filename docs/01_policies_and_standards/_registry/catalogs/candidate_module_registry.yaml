@@ -1,0 +1,220 @@
+# [A_config] module_id=CFG-candidate-module-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
+module_id: REG-CAND-001
+ttl: permanent
+title: 候选模块登记表
+doc_type: register
+registry_id: REG-CAND-001
+name: 候选模块登记表
+description: >-
+  候选模块（点子库）唯一真源（SSoT）。结构化存储"待开发/过度工程"候选模块，
+  使其可检索/可定位/可追溯/可晋升。治本"草稿散乱+设计态污染"痛点——
+  候选不进 depgraph 设计态（违反四问铁律+稀释信号），而是登记在此候选库，
+  真实需求出现时通过四问过滤后晋升到 depgraph 设计态。
+  对标敏捷 Product Backlog vs Sprint Backlog / 量化 Alpha Idea Pipeline vs Production Strategy Library。
+owner: MOD-GOV-029
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-07-31'
+last_updated: '2026-07-31'
+
+# ============================================================
+# 设计原则
+# ============================================================
+# 1. 候选库是"点子池"，不是"项目库"——depgraph 设计态是"将要开发的模块"，
+#    候选库是"可能开发也可能不开发的想法"。两者严格分开。
+# 2. 四图定位：每个候选在 depgraph/dataflowgraph/decisiongraph/blueprint 四图
+#    都写清位置（或明确标 has_position: false）。晋升时直接用。
+# 3. 四问过滤：记录 q1已实现/q2需求驱动/q3域活着/q4 AI替代，blocking_question 标明卡在哪问。
+# 4. 晋升流程：deferred → trigger_signals 命中 → 重新过四问 → apply_depgraph
+#    --add-design-node + --add-edge → sync_panorama_module → align_panoramas → promoted。
+# 5. SSoT 分类：候选库是治理注册表（规则数据），真源是本 YAML，不进 PostgreSQL。
+
+unique_key:
+- id
+
+entry_schema:
+  id: str                         # CAND-{DOMAIN}-{SEQ}
+  name: str                        # 模块名（中英）
+  aliases: list[str]               # 别名，防重复登记
+  domain: str                      # 所属域
+  domain_status: enum              # active/skeleton/dead
+  domain_node_count: int           # 登记时该域 depgraph 节点数
+  sub_layer: str                  # 子层定位
+  panorama_position: obj          # 四图定位(depgraph/dataflowgraph/decisiongraph/blueprint)
+  description: str
+  capability: str                 # 对标能力 C-XXX
+  problem_it_solves: str          # 解决什么痛点
+  trigger_signals: list[str]      # 什么情况下会需要它
+  keywords: list[str]
+  upstream_deps: list[obj]
+  downstream_consumers: list[obj]
+  contracts_to_produce: list[obj]
+  contracts_to_consume: list[obj]
+  prerequisites: list[obj]
+  four_question: obj
+  status: enum                    # candidate/deferred/rejected/approved/promoted
+  priority: enum                  # P0/P1/P2
+  created_at: date
+  last_reviewed_at: date
+  promoted_to: str
+  source_draft: str
+  source_section: str
+  original_id: str
+  estimated_complexity: enum      # S/M/L/XL
+  estimated_effort: str
+  tech_notes: str
+  risks: list[str]
+  alternatives: str               # 替代方案：不做这个怎么办
+  tags: list[str]
+  search_terms: list[str]
+  related_candidates: list[str]
+  enables: list[str]              # 做了这个，哪些候选可行
+  blocked_by: list[str]
+  next_review_date: date
+  review_frequency: enum          # quarterly/half_yearly/yearly
+  last_review_outcome: str
+
+# ============================================================
+# 候选条目
+# ============================================================
+entries:
+  # ----------------------------------------------------------
+  # CAND-RSK-014: 黑天鹅模式库（deferred，四问②挂）
+  # ----------------------------------------------------------
+  - id: CAND-RSK-014
+    name: "Black Swan Pattern Library / 黑天鹅模式库"
+    aliases: ["黑天鹅库", "BlackSwanLibrary", "极端事件模式识别"]
+    domain: D_RISK
+    domain_status: active
+    domain_node_count: 12
+    sub_layer: "分析引擎"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: MOD-RSK-014
+        target_build_status: planned
+        target_neighbors:
+          upstream: ["MOD-RSK-005"]
+          downstream: ["MOD-RSK-017"]
+        insertion_description: "插入 D_RISK §2 分析引擎区,在 RK-05 VaR 之后、RK-17 KillSwitch 之前"
+        target_edges:
+          - {from: "MOD-RSK-005", to: "MOD-RSK-014", type: runtime, reason: "VaR极值→黑天鹅匹配"}
+          - {from: "MOD-RSK-014", to: "MOD-RSK-017", type: runtime, reason: "命中→KillSwitch触发"}
+      dataflowgraph:
+        has_position: true
+        target_node_type: transform
+        data_flow_path: "行情数据 → VaR计算 → [黑天鹅模式匹配] → KillSwitch触发"
+        upstream_data: ["NormalizedMarketData", "VaR极值序列"]
+        downstream_data: ["BlackSwanAlert事件"]
+        insertion_description: "在 D_RISK 数据流中段,VaR输出之后"
+      decisiongraph:
+        has_position: true
+        target_layer: "L4"
+        target_track: "risk"
+        decision_frequency: event_driven
+        decision_path: "RiskMonitor → VaR → [黑天鹅模式匹配] → KillSwitch决策"
+        insertion_description: "在 L4 风控决策层,VaR决策之后、KillSwitch决策之前"
+      blueprint:
+        has_position: true
+        target_ref: "11-D-RISK-风控域.md §2 分析引擎 RK-14"
+        design_maturity: design
+    description: "极端事件模式识别+历史重放+预案匹配+黑天鹅事件分类+自动根因分析"
+    capability: C-038
+    problem_it_solves: "实盘遭遇极端行情(如2015股灾/2020疫情底)时,现有VaR/止损无法应对尾部风险"
+    trigger_signals:
+      - "实盘出现单日跌幅>5%的极端行情"
+      - "VaR Calculator 进入 Phase3 Basel III 验证阶段"
+      - "用户主动要求黑天鹅预案功能"
+    keywords: ["黑天鹅", "tail_risk", "极端事件", "模式匹配", "历史重放"]
+    upstream_deps:
+      - {contract: CTR-001, from_domain: D_DATA, dep_type: H, availability: available, note: "行情数据喂入历史重放"}
+      - {contract: "E-RK-01", from_domain: D_RISK, dep_type: E, availability: available, note: "RiskLimitBreached触发匹配"}
+    downstream_consumers:
+      - {consumer: "MOD-RSK-017", contract: "触发信号", note: "命中→KillSwitch清仓"}
+    contracts_to_produce:
+      - {id: "E-RK-05(拟定)", name: "BlackSwanPatternMatched"}
+    contracts_to_consume:
+      - {id: CTR-001, note: "行情数据"}
+    prerequisites:
+      - {condition: "D_DATA历史数据完整(2008/2015/2020)", check: "c1_market有2008-至今日线", met: true}
+      - {condition: "RK-05 VaR Calculator Phase2+", check: "MOD-RSK-005=production", met: false, note: "当前仅Phase1"}
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: ["MOD-RSK-005", "MOD-RSK-015"], evidence: "grep无现成实现"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "无实盘黑天鹅触发,纯P1规划"}
+      q3_domain_alive: {result: true, evidence: "D_RISK 12节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "需实时模式匹配+硬触发,非AI语义理解可替代"}
+      blocking_question: q2
+      result: deferred
+    status: deferred
+    priority: P1
+    created_at: '2026-07-31'
+    last_reviewed_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md"
+    source_section: "§1.2 分析引擎 RK-14"
+    original_id: "RK-14"
+    estimated_complexity: L
+    estimated_effort: "15人天"
+    tech_notes: "历史事件模式库+模式匹配引擎+预案触发器"
+    risks: ["历史模式可能无法覆盖未来新型黑天鹅(过拟合)", "预案触发需人工确认防误杀"]
+    alternatives: "靠 RK-05 VaR 压力测试 + 人工判断。代价:极端行情响应慢"
+    tags: ["过度工程", "P1规划", "A股特色", "尾部风险", "待需求驱动"]
+    search_terms: ["black swan", "黑天鹅", "extreme event", "tail risk pattern"]
+    related_candidates: ["CAND-RSK-012", "CAND-RSK-015"]
+    enables: ["CAND-RSK-020"]
+    blocked_by: []
+    next_review_date: '2027-01-31'
+    review_frequency: half_yearly
+    last_review_outcome: "首次登记,待VaR Phase2就绪或实盘极端行情时重新评估"
+
+  # ----------------------------------------------------------
+  # CAND-SIGLEGACY-001: D_SIGLEGACY 死域（rejected，四问③挂）
+  # ----------------------------------------------------------
+  - id: CAND-SIGLEGACY-001
+    name: "D_SIGLEGACY 多策略引擎"
+    aliases: ["多策略编排", "MultiStrategyEngine"]
+    domain: D_SIGLEGACY
+    domain_status: dead
+    domain_node_count: 0
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "死域,0节点,无位置"}
+      dataflowgraph: {has_position: false, note: "死域,无数据流位置"}
+      decisiongraph: {has_position: false, note: "死域,无决策位置"}
+      blueprint: {has_position: false, note: "死域,无蓝图"}
+    description: "原设计的多策略编排引擎"
+    capability: ""
+    problem_it_solves: "(已解决)多策略编排已由 D_PF_CORE PC-01 承担"
+    trigger_signals: []
+    keywords: ["多策略", "策略编排", "死域"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-L05-001"], evidence: "D_PF_CORE已实现多策略"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "功能已被承接,无需求"}
+      q3_domain_alive: {result: false, evidence: "D_SIGLEGACY 0节点,死域"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q3
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-07-31'
+    promoted_to: ""
+    source_draft: "D:\\临时工作区\\依赖图\\(已删除)D_SIGLEGACY域.md"
+    source_section: "全文档"
+    original_id: "D-SIGLEGACY-*"
+    estimated_complexity: ""
+    tech_notes: "死域,保留登记仅为防误重新设计"
+    alternatives: "已由 D_PF_CORE MOD-L05-001 承担"
+    tags: ["死域", "重复功能", "rejected", "防误重新设计"]
+    search_terms: ["multi strategy", "多策略", "策略编排", "siglegacy"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-07-31'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认死域。除非D_PF_CORE多策略出现重大缺口,否则不再评估"
