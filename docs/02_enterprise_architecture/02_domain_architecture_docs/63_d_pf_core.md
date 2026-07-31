@@ -86,9 +86,10 @@ graph TD
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     tests_pf_core_test_strategy_runner_tick_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
-    D_BACKTEST["(生产态 / production) D_BACKTEST"]
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     D_FACTOR["(生产态 / production) D_FACTOR"]
@@ -98,7 +99,6 @@ graph TD
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
-    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| D_BACKTEST
     D_EX_CORE["(设计态 / design) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
@@ -108,7 +108,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_strategy_runner_tick_py production
     class src_zephyr_pf_core_topn_momentum_strategy_py design
-    class D_PF_ALLOC,D_BACKTEST,D_FACTOR,D_GOVERNANCE external_prod
+    class D_BACKTEST,D_PF_ALLOC,D_FACTOR,D_GOVERNANCE external_prod
     class D_EX_CORE external_design
 ```
 
@@ -132,9 +132,10 @@ graph TD
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     tests_pf_core_test_strategy_runner_tick_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
-    D_BACKTEST["(生产态 / production) D_BACKTEST"]
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     D_FACTOR["(生产态 / production) D_FACTOR"]
@@ -144,7 +145,6 @@ graph TD
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
-    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| D_BACKTEST
     D_EX_CORE["(设计态 / design) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
@@ -153,7 +153,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_strategy_runner_tick_py production
-    class D_PF_ALLOC,D_BACKTEST,D_FACTOR,D_GOVERNANCE external_prod
+    class D_BACKTEST,D_PF_ALLOC,D_FACTOR,D_GOVERNANCE external_prod
     class D_EX_CORE external_design
 ```
 
