@@ -10539,3 +10539,38 @@ entries:
   status: resolved
   created: '2026-08-01'
   last_updated: '2026-08-01'
+- issue_id: '#ARCH-DESIGN-DELETE-GATE-001'
+  title: design 节点删除双源门禁（apply_depgraph 代码层治本 RSK/RPT 误删）
+  severity: P1高
+  adjudication: |
+    问题：RSK/RPT 误删事故（#ARCH-RSK-ROLLBACK-001 + D_REPORTING 7模块误删 commit 67c84e43）同根因——
+      用 depgraph 结构状态单源（孤儿/孤立信号）做弃用决策，未查设计文档。误删通过 CLI
+      --deprecate-node 后门执行（人工操作，非自动清理）。
+
+    ghost_autoclean 误述修正：#ARCH-RSK-ROLLBACK-001 adjudication 曾述"ghost_autoclean 误判为幽灵节点
+      软删除"，经核查代码库不存在 ghost_autoclean 函数——误删是人工使用 --deprecate-node 后门导致，
+      非自动清理。本议题修正此误述。
+
+    治本方案（代码层，apply_depgraph.py，commit 5ebfaf94）：
+      1. remove_design_node 新增 design_evidence 必填门禁（RULE-DESIGN-EVIDENCE）——
+         无设计文档证据引用（如 "11-D-RISK §1.4 RK-09 P0核心"）则硬阻断，堵住"忘了查文档就 CLI 删"的后门
+      2. deprecate_node 对 design_maturity=design 节点默认拒绝（RULE-DESIGN-GATE）——
+         design 节点必须走正门 remove_design_node；--force 逃生通道用于合法 design 垃圾节点（如 MOD-TEST
+         类测试残留），落审计日志
+      3. 新增 _audit_design_node_delete 审计函数——所有 design 节点删除/逃生操作落
+         .runtime/gate_audit/design_node_delete.jsonl，便于事后追溯
+      4. SQL 常量追加 blueprint_id 列供审计追溯；CLI 新增 --design-evidence 参数
+
+    测试：TestDesignNodeDeleteDualSourceGate 6用例全绿（deprecate 阻断/force逃生/production放行 +
+      remove 阻断无证据/放行有证据/阻断非design），smoke 回归 31 passed。
+
+    与既有治本的关系（三层互补防误删闭环）：
+      - #ARCH-RSK-ROLLBACK-001：数据层回滚（恢复3节点+登记边）——治"已发生的误删"
+      - TRAE-083 v1.1.0：规则层铁律（设计意图查询真源+孤儿信号禁单源弃用）——治"判定流程"
+      - 本议题 #ARCH-DESIGN-DELETE-GATE-001：代码层门禁（CLI 强制 design_evidence）——治"执行入口"
+      规则定流程→代码卡入口→数据可回滚，形成防误删闭环。
+  fix_phase: '已执行（2026-08-01，commit 5ebfaf94）：apply_depgraph.py 双源门禁 + 审计 + 6测试用例全绿'
+  status: decided
+  related_adjudication: 'TRAE-083（设计意图查询真源铁律）, TRAE-062（SSoT真源分类）, #ARCH-RSK-ROLLBACK-001（数据层回滚，同根因）, #ARCH-ORPHAN-REAUDIT-004（孤儿重审流程）'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'
