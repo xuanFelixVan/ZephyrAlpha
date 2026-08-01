@@ -1140,6 +1140,18 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 | `generate_panorama_registry.py` | `00_overview_entry/` | 全景图清单总表 |
 | `generate_contracts.py` | `05_contracts/` | 契约文档 |
 
+**候选模块治理工具**（候选池=储备未开发/过度工程模块的"点子池"，与depgraph设计态严格分离）：
+
+| 工具 | 路径 | 用途 |
+|------|------|------|
+| `harvest_candidates_from_drafts.py` | `scripts/governance/` | 从场外草稿CSV抓取候选模块入候选库（`--all`全量44域/`--domain D_XXX`单域/`--dry-run`预览）|
+| `generate_candidate_module_report.py` | `scripts/governance/d5_architecture/generators/` | 生成候选模块报告（按域分片：`candidate_modules/index.md`+37域文件）|
+
+- **候选库真源**：[`candidate_module_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml)（5301条=18原始+5283harvest）
+- **翻译真源**：[`module_translation_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml)（候选以`CAND-HARVEST-xxxx`为key，`plain_zh`字段存大白话解释）
+- **幂等保证**：harvest脚本双注册表去重（`existing_harvest_keys`候选库+`existing_translation_keys`翻译真源+`max_harvest_seq`扫描双注册表防seq碰撞），重跑不会产生重复
+- **四问过滤**：每条候选含`four_question`字段（q1已实现/q2需求驱动/q3域活着/q4 AI替代），任一问"否"即不登记depgraph
+
 **P0 防再生门禁**（2026-07-01 生成器治理治本）：
 - P0-1：N-16 src/ basename 唯一门禁——同 basename 跨域 commit 阻断
 - P0-2：GATE-SSOT 硬层3——同 module_id 多文件 commit 阻断

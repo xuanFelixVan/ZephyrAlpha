@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-01T11:22:36Z
+# 自动生成于 2026-08-01T11:50:36Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-01T11:22:36Z'
+generated_at: '2026-08-01T11:50:36Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 373
-with_manifest: 315
-missing_manifest: 58
+with_manifest: 316
+missing_manifest: 57
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -3639,14 +3639,18 @@ scripts:
   _manifest_missing: true
 - name: harvest_candidates_from_drafts.py
   owner: governance
-  dimensions: []
+  dimensions:
+  - D5
   priority: P2
-  timeout_seconds: 60
-  args: []
+  timeout_seconds: 300
+  args:
+  - --domain
+  - --all
+  - --dry-run
   warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
+  description: 从场外草稿CSV抓取候选模块入候选库+翻译真源（双注册表幂等去重）
+  tags:
+  - Critical
 - name: meta/_concurrency.py
   owner: governance:meta
   dimensions: []

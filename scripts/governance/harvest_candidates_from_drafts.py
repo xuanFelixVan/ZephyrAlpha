@@ -2,11 +2,17 @@
 # [BLUEPRINT] MOD-GOV_SCRIPTS
 # [MODULE] scripts.governance.harvest_candidates_from_drafts
 # [DOMAIN] D_GOV_SCRIPTS
+# [DEPENDENCIES] zephyr.shared.infra.process_pool; scripts.governance.extract_depgraph
+# [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
+# [INVARIANTS] 双注册表幂等（existing_harvest_keys候选库+existing_translation_keys翻译真源+max_harvest_seq扫描双注册表防seq碰撞）
+# [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] exit 0=成功; exit 1=参数错误/无新候选
+# [TESTS]
 # [TTL] permanent
 """
 从场外草稿 CSV 抓取候选模块入候选库（一次性 harvest 脚本，不进 generators/）。
@@ -34,6 +40,16 @@
 """
 
 from __future__ import annotations
+
+__manifest__ = """
+args: [--domain, --all, --dry-run]
+description: '从场外草稿CSV抓取候选模块入候选库+翻译真源（双注册表幂等去重）'
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 300
+warn_only: false
+"""
 
 import argparse
 import csv
