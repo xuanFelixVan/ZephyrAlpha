@@ -45,7 +45,7 @@ L4 层。C-004 自适应风控，作为订单拦截器：C-005 生成预案→MT
 |---|---|
 | ① 触发条件 | 仓位指令就绪 阈值: 订单拦截器（审批后才执行） |
 | ② 消费数据/因子 | 仓位指令（来自 BM-POS-01）<br>C-001/C-002/C-009/C-021/C-047 状态（来自 多环节） |
-| ③ 参数 | risk_threshold=自适应（范围 -，代码当前: 待实现，状态: proposed） |
+| ③ 参数 | risk_threshold=自适应（范围 -，代码当前: max_single_position=0.10 (单标的权重上限) + HALT级违例阻断下单，状态: implemented） |
 | ④ 数据流 | 输入: 仓位指令 → 处理: C-004 风控审批（订单拦截） → 输出: 审批后订单 → 下游: BM-EXE-02 交易执行 |
 | ⑤ 代码映射 | C-004 / 草图§9 L4 层 |
 | ⑥ 降级/中止 | C-004 不可用 → 降级硬编码仓位上限10%（应急保命轨） |
@@ -124,7 +124,7 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 |---|---|
 | ① 触发条件 | 成交回报到达 阈值: — |
 | ② 消费数据/因子 | 成交回报（来自 BM-EXE-02）<br>决策时刻价格（来自 BM-BUY-04/BM-SELL-02）<br>VWAP/TWAP/开盘价/收盘价（来自 L0）<br>C-042策略容量（来自 L3）<br>C-046历史TCA数据（来自 本环节） |
-| ③ 参数 | IS成本分解=时机成本+市场冲击+滑点+佣金（范围 -，代码当前: 待实现，状态: proposed）<br>TCA阶段=Pre-trade/At-trade/Post-trade（范围 -，代码当前: 待实现，状态: proposed）<br>执行基准=VWAP/TWAP/开盘价/收盘价（范围 -，代码当前: 待实现，状态: proposed）<br>参与率控制=<15%分钟成交量（范围 -，代码当前: 待实现，状态: proposed）<br>执行进度偏差阈值=—（范围 -，代码当前: 待实现，状态: proposed） |
+| ③ 参数 | IS成本分解=时机成本+市场冲击+滑点+佣金（范围 -，代码当前: 滑点slippage_bps + 佣金commission + IS shortfall(_calc_shortfall)，状态: implemented）<br>TCA阶段=Pre-trade/At-trade/Post-trade（范围 -，代码当前: Post-trade(analyze/analyze_batch方法); Pre-trade/At-trade未实现，状态: implemented）<br>执行基准=VWAP/TWAP/开盘价/收盘价（范围 -，代码当前: arrival(到达价)——benchmark_price_source默认值，状态: implemented）<br>参与率控制=<15%分钟成交量（范围 -，代码当前: participation_rate=0.10 (10%分钟成交量)，状态: implemented）<br>执行进度偏差阈值=—（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 成交回报+决策时刻价格 → 处理: IS成本分解+三阶段TCA+基准对比 → 输出: 执行质量评分+成本归因 → 下游: 反馈到BM-EXE-02执行算法(Almgren-Chriss) + BM-REC-02复盘 |
 | ⑤ 代码映射 | MOD-L07-001 / 草图§9.2 C-046（MOD-L07-001 default_tca_engine） |
 | ⑥ 降级/中止 | TCA引擎未就绪 → 仅记录成交不分析(复盘缺执行质量维度) |

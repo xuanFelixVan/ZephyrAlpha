@@ -13,7 +13,7 @@ date: 2026-08-02
 
 **环节总数**：44 ｜ **流转边**：48 ｜ **无锚点环节**（BM-INV-001）: 0
 
-**状态分布**：🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=15 ｜ 🟦 运营态（已建）=12 ｜ 🟥 弃用态=1
+**状态分布**：🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=15 ｜ 🟦 运营态（已建）=13
 
 ## 颜色标注说明（panorama §九 五态）
 
@@ -53,7 +53,7 @@ flowchart LR
     BM_SELL_05["BM-SELL-05\n置换再平衡卖出 / Replacement & Rebalance Sell\n机会成本驱动+权重偏离驱动的被动卖出——候选池有更优标的就卖…"]:::production
     BM_SELL_06["BM-SELL-06\n买卖冲突仲裁 / Buy-Sell Conflict Arbitration\n同一只票同时有买入和卖出信号时怎么办——卖出优先(保守原则)…"]:::production
     BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，… 🟡候选"]:::design
-    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、… 🟡候选"]:::deprecated
+    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、… 🟡候选"]:::production
     BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… 🟡候选"]:::design
     BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… 🟡候选"]:::design
     BM_SEL_05["BM-SEL-05\n主力行为感知 / Main-Force Behavior Sensing\n识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是出货弃庄，… 🟡候选"]:::candidate
@@ -381,7 +381,7 @@ L4 层。C-004 自适应风控，作为订单拦截器：C-005 生成预案→MT
 |---|---|
 | ① 触发条件 | 仓位指令就绪 阈值: 订单拦截器（审批后才执行） |
 | ② 消费数据/因子 | 仓位指令（来自 BM-POS-01）<br>C-001/C-002/C-009/C-021/C-047 状态（来自 多环节） |
-| ③ 参数 | risk_threshold=自适应（范围 -，代码当前: 待实现，状态: proposed） |
+| ③ 参数 | risk_threshold=自适应（范围 -，代码当前: max_single_position=0.10 (单标的权重上限) + HALT级违例阻断下单，状态: implemented） |
 | ④ 数据流 | 输入: 仓位指令 → 处理: C-004 风控审批（订单拦截） → 输出: 审批后订单 → 下游: BM-EXE-02 交易执行 |
 | ⑤ 代码映射 | C-004 / 草图§9 L4 层 |
 | ⑥ 降级/中止 | C-004 不可用 → 降级硬编码仓位上限10%（应急保命轨） |
@@ -460,7 +460,7 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 |---|---|
 | ① 触发条件 | 成交回报到达 阈值: — |
 | ② 消费数据/因子 | 成交回报（来自 BM-EXE-02）<br>决策时刻价格（来自 BM-BUY-04/BM-SELL-02）<br>VWAP/TWAP/开盘价/收盘价（来自 L0）<br>C-042策略容量（来自 L3）<br>C-046历史TCA数据（来自 本环节） |
-| ③ 参数 | IS成本分解=时机成本+市场冲击+滑点+佣金（范围 -，代码当前: 待实现，状态: proposed）<br>TCA阶段=Pre-trade/At-trade/Post-trade（范围 -，代码当前: 待实现，状态: proposed）<br>执行基准=VWAP/TWAP/开盘价/收盘价（范围 -，代码当前: 待实现，状态: proposed）<br>参与率控制=<15%分钟成交量（范围 -，代码当前: 待实现，状态: proposed）<br>执行进度偏差阈值=—（范围 -，代码当前: 待实现，状态: proposed） |
+| ③ 参数 | IS成本分解=时机成本+市场冲击+滑点+佣金（范围 -，代码当前: 滑点slippage_bps + 佣金commission + IS shortfall(_calc_shortfall)，状态: implemented）<br>TCA阶段=Pre-trade/At-trade/Post-trade（范围 -，代码当前: Post-trade(analyze/analyze_batch方法); Pre-trade/At-trade未实现，状态: implemented）<br>执行基准=VWAP/TWAP/开盘价/收盘价（范围 -，代码当前: arrival(到达价)——benchmark_price_source默认值，状态: implemented）<br>参与率控制=<15%分钟成交量（范围 -，代码当前: participation_rate=0.10 (10%分钟成交量)，状态: implemented）<br>执行进度偏差阈值=—（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 成交回报+决策时刻价格 → 处理: IS成本分解+三阶段TCA+基准对比 → 输出: 执行质量评分+成本归因 → 下游: 反馈到BM-EXE-02执行算法(Almgren-Chriss) + BM-REC-02复盘 |
 | ⑤ 代码映射 | MOD-L07-001 / 草图§9.2 C-046（MOD-L07-001 default_tca_engine） |
 | ⑥ 降级/中止 | TCA引擎未就绪 → 仅记录成交不分析(复盘缺执行质量维度) |
@@ -756,7 +756,7 @@ L5 层。C-007 闭环优化：反馈到 L1~L4+L3.5 每层（IC衰减→因子替
 |---|---|
 | ① 触发条件 | 复盘报告就绪 阈值: 反馈到 L1~L4+L3.5 每层 |
 | ② 消费数据/因子 | 复盘报告（来自 BM-REC-02） |
-| ③ 参数 | feedback_layers=L1~L4+L3.5（范围 -，代码当前: 待实现，状态: proposed） |
+| ③ 参数 | feedback_layers=L1~L4+L3.5（范围 -，代码当前: IC衰减1~20期(max_lag=20)+半衰期(compute_half_life)——单层因子质量反馈; L1~L4+L3.5多层架构未完整实现，状态: implemented） |
 | ④ 数据流 | 输入: 复盘报告 → 处理: C-007 闭环优化（IC衰减/准确率/漂移检测→重训练） → 输出: 因子/信号/策略/风控迭代信号 → 下游: BM-SEL-02 因子计算（反向闭环） |
 | ⑤ 代码映射 | C-007 / 草图§1.8 闭环反馈 |
 | ⑥ 降级/中止 | C-007 不可用 → 降级人工复盘 |
@@ -1076,13 +1076,13 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-001 | primary | production | stable |
 | candidate | CAND-SIG-002 | supplement | deferred | — |
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-03 市场状态感知 / Market State Sensing
 
