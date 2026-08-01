@@ -2397,7 +2397,9 @@ class AkshareIngestProvider(IngestProviderBase):
     # ---- 22. 期货主力合约K线（kline_futures） ----
 
     @staticmethod
-    def _parse_kline_futures_row(row, contract_sym: str, start_str: str, end_str: str) -> tuple | None:
+    def _parse_kline_futures_row(
+        row, contract_sym: str, start_str: str, end_str: str, exchange: str = "",
+    ) -> tuple | None:
         """解析单行期货K线数据，不在日期范围内返回 None。"""
         trade_date = AkshareIngestProvider._norm_date_str(row.get("日期"))
         if not trade_date or trade_date < start_str or trade_date > end_str:
@@ -2416,6 +2418,7 @@ class AkshareIngestProvider(IngestProviderBase):
             None,  # amount 接口未提供
             int(oi) if oi is not None else 0,
             "1d",
+            exchange,  # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: CZCE/DCE/SHFE/CFFEX
             "akshare",
         )
 
@@ -2433,7 +2436,7 @@ class AkshareIngestProvider(IngestProviderBase):
         columns = [
             "trade_date", "timestamp", "symbol", "open", "high", "low",
             "close", "volume", "amount", "open_interest", "period",
-            "data_source",
+            "exchange", "data_source",
         ]
         start_str = payload.start.isoformat()
         end_str = payload.end.isoformat()
@@ -2465,6 +2468,15 @@ class AkshareIngestProvider(IngestProviderBase):
         sym_col = "symbol" if "symbol" in contracts_df.columns else contracts_df.columns[0]
         contract_list = [str(s) for s in contracts_df[sym_col].tolist() if s]
         self._log.info(f"期货主力合约: {len(contract_list)} 个")
+        # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 从 contracts_df 提取交易所映射
+        # futures_display_main_sina 返回 symbol + exchange 两列
+        contract_exchange_map: dict[str, str] = {}
+        if "exchange" in contracts_df.columns:
+            for _, _r in contracts_df.iterrows():
+                _sym = str(_r[sym_col]) if _r[sym_col] else ""
+                _ex = str(_r["exchange"]).strip() if _r["exchange"] else ""
+                if _sym and _ex:
+                    contract_exchange_map[_sym] = _ex
 
         # 步骤2：逐合约获取K线
         for idx, contract_sym in enumerate(contract_list):
@@ -2479,8 +2491,11 @@ class AkshareIngestProvider(IngestProviderBase):
                 continue
             if df is None or len(df) == 0:
                 continue
+            _ex = contract_exchange_map.get(contract_sym, "")
             for _, row in df.iterrows():
-                parsed = self._parse_kline_futures_row(row, contract_sym, start_str, end_str)
+                parsed = self._parse_kline_futures_row(
+                    row, contract_sym, start_str, end_str, exchange=_ex,
+                )
                 if parsed:
                     batch_rows.append(parsed)
 

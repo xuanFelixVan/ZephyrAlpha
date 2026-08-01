@@ -1157,3 +1157,166 @@ class TestMiniQMTBatch2Capabilities:
         td, ts = MiniQmtIngestProvider.format_tick_timestamp("20240103093015", datetime.date(2024, 1, 3))
         assert td == "2024-01-03"
         assert ts == "2024-01-03 09:30:15"
+
+
+# ============== MiniQMT 高复杂度函数 smoke test（P3 防回归）==============
+# 覆盖5个零测试覆盖的高复杂度函数（QMT 是 memory 反复踩坑源头）：
+#   _load_cb_details_map(22) / fetch_financial_statement(18) / _fetch_shareholder(18)
+#   / _fetch_financial_by_table(18) / _fetch_futures_term_structure(16)
+# 用 MagicMock 模拟 xtquant.xtdata，验证空数据不崩溃 + 有效数据返回正确格式。
+
+class TestMiniQMTSmoke:
+    """miniqmt_provider 5个高复杂度函数 smoke test（P3 防回归）。"""
+
+    def _make_provider(self, monkeypatch):
+        """构造带 xtquant mock 的 provider，返回 (provider, mock_xtdata)。"""
+        mock_xtquant = MagicMock()
+        mock_xtdata = mock_xtquant.xtdata
+        # 设置 __name__ 供 fake_call 按 fn 名派发（MagicMock 默认 __name__ 是子 mock）
+        for fn_name in (
+            "get_market_data_ex", "download_history_data",
+            "get_stock_list_in_sector", "get_financial_data",
+            "download_financial_data2", "get_instrument_detail",
+        ):
+            getattr(mock_xtdata, fn_name).__name__ = fn_name
+        monkeypatch.setitem(sys.modules, "xtquant", mock_xtquant)
+        monkeypatch.setitem(sys.modules, "xtquant.xtdata", mock_xtdata)
+        p = MiniQmtIngestProvider()
+        return p, mock_xtdata
+
+    # ---- 1. _load_cb_details_map（复杂度22）----
+
+    def test_load_cb_details_map_empty(self, monkeypatch):
+        """akshare + QMT 均失败 → 返回 {} 不崩溃。"""
+        p, _ = self._make_provider(monkeypatch)
+
+        def fake_call(fn, policy, *a, **kw):
+            raise RuntimeError("mock empty")
+
+        monkeypatch.setattr(p, "_call_with_policy", fake_call)
+        result = p._load_cb_details_map(SourcePolicy())
+        assert result == {}
+
+    def test_load_cb_details_map_valid(self, monkeypatch):
+        """akshare bond_zh_cov 返回1条 → 解析出 cb_key + underlying + convert_price。"""
+        pd = pytest.importorskip("pandas")
+        p, _ = self._make_provider(monkeypatch)
+        # mock akshare 模块（真实 akshare 的 bond_zh_cov 访问触发 pkg_resources
+        # 弃用警告，被 pytest filterwarnings=error 当异常，绕过用 mock）
+        mock_ak = MagicMock()
+        mock_ak.bond_zh_cov.__name__ = "bond_zh_cov"
+        monkeypatch.setitem(sys.modules, "akshare", mock_ak)
+        bond_df = pd.DataFrame([{
+            "债券代码": "113001", "正股代码": "600000", "转股价": 10.5,
+        }])
+
+        def fake_call(fn, policy, *a, **kw):
+            if getattr(fn, "__name__", "") == "bond_zh_cov":
+                return bond_df
+            return []
+
+        monkeypatch.setattr(p, "_call_with_policy", fake_call)
+        result = p._load_cb_details_map(SourcePolicy())
+        assert "113001.SH" in result
+        assert result["113001.SH"]["underlying"] == "600000.SH"
+        assert result["113001.SH"]["convert_price"] == 10.5
+
+    # ---- 2. fetch_financial_statement（复杂度18）----
+
+    def test_fetch_financial_statement_empty(self, monkeypatch):
+        """空数据 → FetchResult rows=[] 不崩溃。"""
+        p, _ = self._make_provider(monkeypatch)
+        monkeypatch.setattr(p, "_call_with_policy", lambda fn, pol, *a, **kw: {})
+        payload = FetchPayload(
+            table="c3_fundamental.balance", symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 3, 31),
+            extra={},
+        )
+        results = list(p.fetch_financial_statement(payload, SourcePolicy(), "Balance"))
+        assert len(results) == 1
+        assert results[0].rows == []
+
+    def test_fetch_financial_statement_valid(self, monkeypatch):
+        """有效财务数据（m_anntime 在窗口内）→ rows 非空，首列为 symbol。"""
+        pd = pytest.importorskip("pandas")
+        p, _ = self._make_provider(monkeypatch)
+        df = pd.DataFrame([{
+            "m_anntime": "20240115", "m_timetag": "20231231", "total_assets": 1e9,
+        }])
+
+        def fake_call(fn, policy, *a, **kw):
+            if getattr(fn, "__name__", "") == "get_financial_data":
+                return {"000001.SZ": {"Balance": df}}
+            return None
+
+        monkeypatch.setattr(p, "_call_with_policy", fake_call)
+        payload = FetchPayload(
+            table="c3_fundamental.balance", symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 3, 31),
+            extra={},
+        )
+        results = list(p.fetch_financial_statement(payload, SourcePolicy(), "Balance"))
+        assert len(results) == 1
+        assert len(results[0].rows) == 1
+        assert results[0].rows[0][0] == "000001"  # _stock_to_symbol 去后缀
+
+    # ---- 3. _fetch_shareholder（复杂度18）----
+
+    def test_fetch_shareholder_empty(self, monkeypatch):
+        """空数据 → FetchResult rows=[] 不崩溃，columns 含 symbol。"""
+        p, _ = self._make_provider(monkeypatch)
+        monkeypatch.setattr(p, "_call_with_policy", lambda fn, pol, *a, **kw: {})
+        payload = FetchPayload(
+            table="c3_fundamental.shareholder_count", symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 3, 31),
+            extra={},
+        )
+        results = list(p._fetch_shareholder(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].rows == []
+        assert "symbol" in results[0].columns
+
+    # ---- 4. _fetch_financial_by_table（复杂度18）----
+
+    def test_fetch_financial_by_table_empty(self, monkeypatch):
+        """空数据 → FetchResult rows=[] 不崩溃。"""
+        p, _ = self._make_provider(monkeypatch)
+        monkeypatch.setattr(p, "_call_with_policy", lambda fn, pol, *a, **kw: {})
+        payload = FetchPayload(
+            table="c3_fundamental.performance", symbols=["000001.SZ"],
+            start=datetime.date(2024, 1, 1), end=datetime.date(2024, 3, 31),
+            extra={},
+        )
+        results = list(p._fetch_financial_by_table(payload, SourcePolicy(), "Performance"))
+        assert len(results) == 1
+        assert results[0].rows == []
+
+    # ---- 5. _fetch_futures_term_structure（复杂度16，含 #ARCH-FUTURES-OPTION-EXCHANGE-FILL）----
+
+    def test_fetch_futures_term_structure_valid(self, monkeypatch):
+        """有效期货K线 → rows 含 exchange 列（从合约代码后缀提取）。"""
+        pd = pytest.importorskip("pandas")
+        p, _ = self._make_provider(monkeypatch)
+        idx = pd.DatetimeIndex(pd.date_range("2024-07-01", periods=3))
+        mock_df = pd.DataFrame({"close": [4000.0, 4050.0, 4100.0]}, index=idx)
+
+        def fake_call(fn, policy, *args, **kwargs):
+            if getattr(fn, "__name__", "") == "get_market_data_ex":
+                # args = ([], [stock_code], "1d", start_str, end_str)
+                code = args[1][0]
+                return {code: mock_df}
+            return None  # download_history_data
+
+        monkeypatch.setattr(p, "_call_with_policy", fake_call)
+        payload = FetchPayload(
+            table="c1_market.futures_term_structure",
+            symbols=["IF2409.CFFEX", "IF2410.CFFEX"],
+            start=datetime.date(2024, 7, 1), end=datetime.date(2024, 7, 3),
+            extra={},
+        )
+        results = list(p._fetch_futures_term_structure(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert "exchange" in results[0].columns
+        assert len(results[0].rows) == 3
+        ex_idx = results[0].columns.index("exchange")
+        assert all(row[ex_idx] == "CFFEX" for row in results[0].rows)

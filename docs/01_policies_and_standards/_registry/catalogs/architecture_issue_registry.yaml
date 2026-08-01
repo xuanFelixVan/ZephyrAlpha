@@ -10692,8 +10692,8 @@ entries:
     决策（2026-08-01）：本次"全部修复"评估后确认6表 provider 填 exchange 是大型重构，
       涉及5表共用通用方法，强行重构可能引入 insert 列数不匹配 bug（破坏生产数据流，
       比 deferred 债务危害更大）。故登记议题，建议专项治理分表实施。
-  fix_phase: 未执行（大型重构，建议专项治理，分表逐步实施；futures_position 已治本）
-  status: proposed
+  fix_phase: 已执行（2026-08-01，6表 provider 填 exchange：miniqmt 5表 _OptionCtx+exchange 字段/_fetch_simple_kline include_exchange 参数；akshare kline_futures contract_exchange_map；futures_position 此前已治本）
+  status: resolved
   related_adjudication: 'TRAE-082（MATERIALIZED exchange + symbol_canonical）, futures_position 已治本（模式参考 L1578）, #ARCH-WORKTREE-DOCS-DRIFT'
   created: '2026-08-01'
   last_updated: '2026-08-01'

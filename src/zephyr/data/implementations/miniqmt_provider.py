@@ -354,6 +354,7 @@ class _OptionCtx:
     opt_type: str
     exp_date: "object | None"
     r: float
+    exchange: str = ""  # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 交易所代码（SHO/SZO/CFFEX/SHFE/DCE/CZCE）
 
 
 def _resolve_kline_aggregated_table(freq, payload, dividend_type):
@@ -1976,6 +1977,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
             "ExercisePrice": strike,
             "EndDelivDate": str(expire_date) if expire_date else "",
             "OptType": opt_type,
+            "ExchangeID": exchange,  # #ARCH-FUTURES-OPTION-EXCHANGE-FILL
         }
 
     def _load_option_symbols_from_kline(
@@ -2071,7 +2073,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         table = payload.table or _TBL_OPTION_IV_SURFACE
         columns = [
             "trade_date", "symbol", "underlying", "strike", "expiry",
-            "option_type", "iv", "data_source",
+            "option_type", "iv", "exchange", "data_source",
         ]
         last_key = self._date_to_str(payload.end)
 
@@ -2125,6 +2127,10 @@ class MiniQmtIngestProvider(IngestProviderBase):
         opt_type = "call" if detail.get("OptType", 0) == 1 else "put"
         r = 0.03
         exp_date = _parse_option_expiry(expiry)
+        # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 优先用 ExchangeID，fallback 到 opt_code 后缀
+        exchange = detail.get("ExchangeID", "")
+        if not exchange and "." in opt_code:
+            exchange = opt_code.split(".")[-1]
 
         opt_df = self._download_option_price_df(opt_code, start_str, end_str, policy)
         if opt_df is None or len(opt_df) == 0:
@@ -2135,7 +2141,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
             return []
 
         ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike,
-                        expiry, opt_type, exp_date, r)
+                        expiry, opt_type, exp_date, r, exchange)
         return MiniQmtIngestProvider._compute_iv_rows(ctx)
 
     @staticmethod
@@ -2160,7 +2166,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 pd.Timestamp(dt).strftime("%Y-%m-%d"),
                 ctx.symbol, ctx.underlying, ctx.strike,
                 str(ctx.expiry)[:10] if ctx.expiry else None,
-                ctx.opt_type, iv, "miniqmt",
+                ctx.opt_type, iv, ctx.exchange, "miniqmt",
             ))
         return rows
 
@@ -2474,7 +2480,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         table = payload.table or _TBL_FUTURES_TERM_STRUCTURE
         columns = [
             "trade_date", "symbol", "front_contract", "next_contract",
-            "front_price", "next_price", "basis", "data_source",
+            "front_price", "next_price", "basis", "exchange", "data_source",
         ]
 
         try:
@@ -2539,6 +2545,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 symbol = self._stock_to_symbol(front_code)
                 front_sym = self._stock_to_symbol(front_code)
                 next_sym = self._stock_to_symbol(next_code)
+                # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 从 front_code 后缀提取交易所
+                exchange = front_code.split(".")[-1] if "." in front_code else ""
                 for dt in common_dates:
                     front_close = self.safe_float(front_df.loc[dt, "close"])
                     next_close = self.safe_float(next_df.loc[dt, "close"])
@@ -2549,7 +2557,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         pd.Timestamp(dt).strftime("%Y-%m-%d"),
                         symbol, front_sym, next_sym,
                         front_close, next_close, basis,
-                        "miniqmt",
+                        exchange, "miniqmt",
                     ))
                 yield FetchResult(
                     table=table, columns=columns, rows=rows,
@@ -2943,6 +2951,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         payload: FetchPayload,
         policy: SourcePolicy,
         default_table: str,
+        include_exchange: bool = False,
     ) -> Iterator[FetchResult]:
         """通用简版K线抓取（OHLCV 标准列，适用于可转债/期权/期货/港股/美股K线）。
 
@@ -2954,6 +2963,8 @@ class MiniQmtIngestProvider(IngestProviderBase):
             payload: 下载请求（symbols 必须指定标的列表）
             policy: 调用策略
             default_table: 默认目标表（payload.table 为空时使用）
+            include_exchange: 是否写入 exchange 列（#ARCH-FUTURES-OPTION-EXCHANGE-FILL）。
+                期货QMT/期权K线需交易所消歧时传 True；可转债/港股/美股默认 False。
 
         Yields:
             FetchResult: 每个标的一批
@@ -2965,6 +2976,12 @@ class MiniQmtIngestProvider(IngestProviderBase):
             "trade_date", "symbol", "open", "high", "low", "close",
             "volume", "amount", "data_source",
         ]
+        # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 期货/期权K线需交易所列消歧
+        if include_exchange:
+            columns = [
+                "trade_date", "symbol", "open", "high", "low", "close",
+                "volume", "amount", "exchange", "data_source",
+            ]
 
         try:
             start_str = self._date_to_str(payload.start)
@@ -2995,6 +3012,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 df = data.get(stock_code) if data else None
                 if df is not None and len(df) > 0:
                     symbol = self._stock_to_symbol(stock_code)
+                    # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 从 stock_code 后缀提取交易所
+                    # （如 "IF2409.CFFEX" → "CFFEX", "10010972.SHF" → "SHF"）
+                    exchange = stock_code.split(".")[-1] if "." in stock_code else ""
                     times = [int(ts) for ts in df.index]
                     opens = df["open"].tolist()
                     highs = df["high"].tolist()
@@ -3007,16 +3027,29 @@ class MiniQmtIngestProvider(IngestProviderBase):
                         trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
                         vol = self.safe_float(volumes[i])
                         vol = int(vol) if vol is not None else None
-                        rows.append((
-                            trade_date, symbol,
-                            self.safe_float(opens[i]),
-                            self.safe_float(highs[i]),
-                            self.safe_float(lows[i]),
-                            self.safe_float(closes[i]),
-                            vol,
-                            self.safe_float(amounts[i]),
-                            "miniqmt",
-                        ))
+                        if include_exchange:
+                            rows.append((
+                                trade_date, symbol,
+                                self.safe_float(opens[i]),
+                                self.safe_float(highs[i]),
+                                self.safe_float(lows[i]),
+                                self.safe_float(closes[i]),
+                                vol,
+                                self.safe_float(amounts[i]),
+                                exchange,
+                                "miniqmt",
+                            ))
+                        else:
+                            rows.append((
+                                trade_date, symbol,
+                                self.safe_float(opens[i]),
+                                self.safe_float(highs[i]),
+                                self.safe_float(lows[i]),
+                                self.safe_float(closes[i]),
+                                vol,
+                                self.safe_float(amounts[i]),
+                                "miniqmt",
+                            ))
                 yield FetchResult(
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -3111,7 +3144,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期权列表失败: {e}")
 
-        yield from self._fetch_simple_kline(payload, policy, _TBL_OPTION_KLINE)
+        yield from self._fetch_simple_kline(
+            payload, policy, _TBL_OPTION_KLINE, include_exchange=True,
+        )
 
     # ============== 期权Greeks ==============
 
@@ -3141,7 +3176,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         table = payload.table or _TBL_OPTION_GREEKS
         columns = [
             "trade_date", "symbol", "underlying", "strike", "expiry",
-            "opt_type", "delta", "gamma", "theta", "vega", "data_source",
+            "opt_type", "delta", "gamma", "theta", "vega", "exchange", "data_source",
         ]
         # 治本修复#ARCH-OPTION-GREEKS-001（2026-07-23）：symbols=null 时自动加载
         # 与 _fetch_option_iv_surface 一致，避免 for 循环空转返回 rows=0 导致数据停滞
@@ -3202,6 +3237,10 @@ class MiniQmtIngestProvider(IngestProviderBase):
         opt_type = "call" if detail.get("OptType", 0) == 1 else "put"
         r = 0.03
         exp_date = _parse_option_expiry(expiry)
+        # #ARCH-FUTURES-OPTION-EXCHANGE-FILL: 优先用 ExchangeID，fallback 到 opt_code 后缀
+        exchange = detail.get("ExchangeID", "")
+        if not exchange and "." in opt_code:
+            exchange = opt_code.split(".")[-1]
 
         opt_df = self._download_option_price_df(opt_code, start_str, end_str, policy)
         if opt_df is None or len(opt_df) == 0:
@@ -3212,7 +3251,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
             return []
 
         ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike,
-                        expiry, opt_type, exp_date, r)
+                        expiry, opt_type, exp_date, r, exchange)
         return MiniQmtIngestProvider._compute_greeks_rows(ctx)
 
     @staticmethod
@@ -3243,7 +3282,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     ctx.opt_type,
                     greeks["delta"], greeks["gamma"],
                     greeks["theta"], greeks["vega"],
-                    "miniqmt",
+                    ctx.exchange, "miniqmt",
                 ))
         return rows
 
@@ -3856,7 +3895,9 @@ class MiniQmtIngestProvider(IngestProviderBase):
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期货合约列表失败: {e}")
 
-        yield from self._fetch_simple_kline(payload, policy, _TBL_KLINE_FUTURES_QMT)
+        yield from self._fetch_simple_kline(
+            payload, policy, _TBL_KLINE_FUTURES_QMT, include_exchange=True,
+        )
 
     # ============== 港股K线 ==============
 
