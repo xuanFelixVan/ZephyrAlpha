@@ -34,9 +34,11 @@ from __future__ import annotations
 
 import logging
 import time
-from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Callable
 
 import pandas as pd
 
@@ -156,6 +158,7 @@ class DagExecutor:
         extra_kwargs: dict[str, dict] | None = None,
         mode: str = BATCH,
         cached_results: dict[str, pd.Series] | None = None,
+        on_results_callback: Callable[[dict[str, FactorExecutionResult]], None] | None = None,
     ) -> DagExecutionReport:
         """执行 DAG：分层并行计算因子。
 
@@ -165,6 +168,10 @@ class DagExecutor:
             extra_kwargs: factor_id -> kwargs 映射，传给 compute 的额外参数
             mode: 执行模式 "batch"（全量）或 "incremental"（增量）
             cached_results: 增量模式下的缓存结果 (factor_id -> pd.Series)
+            on_results_callback: 因子计算完成后的回调（可选）。
+                接收 results 字典（factor_id → FactorExecutionResult），
+                用于 H1 Redis 热缓存写入等后处理（蓝图 §9 D-FACTOR → H1 集成点）。
+                回调异常不阻断返回 report（log error 后继续）。
 
         Returns:
             DagExecutionReport，含每个因子的执行结果。
@@ -215,6 +222,15 @@ class DagExecutor:
                         failed_set.add(fid)
 
         duration = time.monotonic() - start_ts
+
+        # H1 集成回调（蓝图 §9 D-FACTOR → H1）：因子计算完成后调用 on_results_callback
+        # 回调异常不阻断返回 report（降级——因子管道继续，H1 写入失败由回调内部处理）
+        if on_results_callback is not None:
+            try:
+                on_results_callback(results)
+            except Exception as exc:  # noqa: BLE001 — 回调异常不阻断因子管道
+                log.error("dag_manager: on_results_callback 执行失败（降级）: %s", exc)
+
         return DagExecutionReport(
             dag_id=dag.dag_id,
             layer_count=len(layers),
