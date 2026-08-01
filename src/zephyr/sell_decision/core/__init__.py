@@ -20,6 +20,13 @@ from zephyr.sell_decision.core.sell_signal_collector import (
     SellSignalType,
     SignalTimeFrame,
 )
+from zephyr.sell_decision.core.sell_urgency_scorer import (
+    ExecutionStrategy,
+    InvalidUrgencyInputError,
+    SellUrgencyScore,
+    SellUrgencyScorer,
+    UrgencyLevel,
+)
 
 __all__ = [
     "DuplicateProviderError",
@@ -38,4 +45,9 @@ __all__ = [
     "SellArbitratedEvent",
     "SellConflictArbitrator",
     "Side",
+    "ExecutionStrategy",
+    "InvalidUrgencyInputError",
+    "SellUrgencyScore",
+    "SellUrgencyScorer",
+    "UrgencyLevel",
 ]
