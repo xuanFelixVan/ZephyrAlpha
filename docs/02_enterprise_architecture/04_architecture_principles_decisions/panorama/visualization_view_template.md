@@ -1,7 +1,7 @@
 ---
 doc_type: architecture_view
 title: 可视化视图模板规范（三视图 + 可缩放 HTML）
-version: "1.0"
+version: "1.1"
 status: active
 date: 2026-08-01
 owner: MOD-INF-037
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 可视化视图模板规范（三视图 + 可缩放 HTML）
 
-> **版本**：V1.0 | 2026-08-01
+> **版本**：V1.1 | 2026-08-01
 > **读者**：项目 Owner + AI 开发 Agent + 架构治理人员
 > **写法**：大白话为主，配完整代码模板和验收清单。变更历史见 git log。
 
@@ -190,16 +190,23 @@ flowchart TD
 
 ### 4.3 节点定义格式
 
-#### 域内节点（四要素，`<br/>` 分隔三行）
+#### 域内节点（四要素 + 设计态第五行 ⛔ 受限原因，`<br/>` 分隔）
 
 ```
     <节点ID>["(成熟度) 中文名 / English<br/>大白话简介<br/>文件: 父目录/文件名"]
+```
+
+**设计态节点**（`design_maturity=design` 且 DB `gate_reason` 非空）追加第五行：
+
+```
+    <节点ID>["(设计态 / design) 中文名 / English<br/>大白话简介<br/>文件: 父目录/文件名<br/>⛔ 受限原因"]
 ```
 
 **完整示例**：
 
 ```
     src_zephyr_signal_fundamental_pipeline_py["(生产态 / production) 管线 / Alpha Signal Pipeline<br/>从因子域到信号域的跨层集成管道。把因子信号一路加工成可交易信号，是整个信号生成流程的总调度。<br/>文件: signal_fundamental/pipeline.py"]
+    src_zephyr_pf_alloc_signal_synthesis_combiner_py["(设计态 / design) 信号合成合并器 / signal_synthesis_combiner<br/>信号合成合并器（signal_synthesis_combiner.py）<br/>文件: pf_alloc/signal_synthesis_combiner.py<br/>⛔ 组合分配域，设计已就绪，等待开发排期"]
 ```
 
 **四要素说明**：
@@ -210,8 +217,14 @@ flowchart TD
 | ② 双语名称 | `中文名 / English` | 翻译真源 `name_zh` + `name_en` | `管线 / Alpha Signal Pipeline` |
 | ③ 大白话 | 日常语言说"做什么/解决什么" | 翻译真源 `plain_zh` | `从因子域到信号域的跨层集成管道...` |
 | ④ 文件路径 | `文件: 父目录/文件名` | 节点 `path` 取最后两段 | `文件: signal_fundamental/pipeline.py` |
+| ⑤ ⛔ 受限原因 | `⛔ <gate_reason>`（仅设计态+非空） | DB `nodes.gate_reason` 字段 | `⛔ 受限：需Level-2逐笔成交数据(GATE-27-01)` |
 
 > **四要素铁律**：每个节点必须有中文名 + 大白话简介。禁止只有英文名无中文，禁止只有名字无简介。
+
+> **⛔ 受限原因铁律**：设计态节点的 `gate_reason` 非空时**必须**显示 ⛔ 行。
+> 这是"为什么这个设计没施工"的唯一可见出口——不显示的话，未来看到设计态模块就会反复问
+> "这东西为什么没做"，造成误判（以为是漏了，实际是受限暂缓）。受限原因消失（条件满足）时
+> 由数据侧清空 `gate_reason`，⛔ 行自动消失，生成器无需改动。
 
 #### 跨域外部节点（代表"另一个域"）
 
@@ -330,6 +343,81 @@ Mermaid 标签中的特殊字符必须替换（`_sanitize_mermaid_label`）：
 | `"` | `'` | 双引号会闭合节点标签 |
 | `\|` | `/` | 管道符会破坏边标签语法 |
 
+### 4.10 标签预折行铁律（防文字被节点框裁剪，2026-08-01 治本）
+
+> **这是历史上反复踩坑、多个 AI 都做错的一条，务必逐字理解。**
+
+**症状**：HTML 里节点文字被框**上下裁掉**（最后一行只显示一半），或英文词被拦腰截断错位
+（如 `multi_strategy_capital_allocato r`）。
+
+**根因（第一性原理）**：Mermaid 渲染节点时，先**测量标签文本的行数**算出节点框的宽高，
+再画框、再填文字。如果生成端把整段长文本塞进一行，指望 HTML 渲染层的 CSS `max-width`
+去折行——那么 Mermaid 测量时数到 1 行、最终渲染时 CSS 折成 3 行，**渲染行数 > 测量行数，
+框高不够，文字就被裁掉**。CSS 折行发生在 Mermaid 量完框之后，永远无法影响框的大小。
+
+**治本铁律**：**所有节点标签的每一行，在生成端就必须用 `_wrap_label_text()` 预折行**
+（`<br/>` 显式断行），禁止把"超过约 24 个汉字宽度"的文本整段放进一行。
+预折行后，Mermaid 测量到的行数 = 最终渲染行数，框高永远算得准。
+
+```python
+# generate_domain_doc.py 真源实现（完整可复制，其他生成器直接复用）
+def _wrap_label_text(text: str, max_units: int = 48) -> str:
+    """将长节点标签文本按显示宽度预折行（Mermaid 节点内显示用）。
+
+    折行规则：显示宽度（CJK=2/ASCII=1）超 max_units 断行（48 ≈ 24 个汉字）；
+    优先在空格/下划线之后、左括号/斜杠之前软断（保持英文词完整），否则硬断。
+    """
+    if not text:
+        return ""
+    lines: list[str] = []
+    remaining = text.strip()
+    while remaining:
+        width = 0
+        cut = 0
+        soft = -1  # 软断点（断在空格/_之后，或（(/之前）
+        for i, ch in enumerate(remaining):
+            u = 2 if ord(ch) > 0x2E7F else 1
+            if width + u > max_units:
+                break
+            width += u
+            cut = i + 1
+            if ch in " _":
+                soft = i + 1
+            elif ch in "（(/":
+                soft = i if i > 0 else -1
+        if cut >= len(remaining):
+            lines.append(remaining)
+            break
+        if soft >= 8:  # 软断点至少留 8 单位，避免碎片行
+            cut = soft
+        line = remaining[:cut].rstrip()
+        if line:
+            lines.append(line)
+        remaining = remaining[cut:].lstrip(" ")
+    return "<br/>".join(lines)
+
+# 用法：节点标签的每一行都过一遍，再用 <br/> 拼接
+label = "<br/>".join(_wrap_label_text(p) for p in parts)
+```
+
+> **其他生成器注意**（如 `generate_trading_flow_diagram.py` 等）：把上面函数**原样复制**到自己的
+> 生成器里，节点标签每一行都过 `_wrap_label_text()`。不要自己发明折行逻辑，也不要省略
+> 软断点规则——`multi_strategy_capital_allocato r` 这种英文词拦腰截断就是硬断造成的。
+
+**配套 CSS 纪律**（zoomable_html.py）：
+
+| 配置 | 值 | 纪律 |
+|------|-----|------|
+| 主题 `fontSize`（init 主题头） | `14px` | 这是**测量字号**——Mermaid 按它量框 |
+| CSS `font-size`（渲染字号） | `11px` | 必须**小于**测量字号 → 渲染比测量更窄更矮，只可能宽松、不可能溢出 |
+| CSS `max-width` | `560px` | 仅异常兜底。预折行正常约 ≤260px，**远低于 560px 不触发二次折行**；若调小到会触发二次折行的值，裁剪问题立刻复发 |
+
+> **铁律一句话**：折行只能发生在**生成端**（`<br/>`），CSS 只负责"不溢出"，
+> 绝不能让 CSS 决定折行位置。渲染字号必须 ≤ 测量字号。
+
+**自查方法**：生成的 HTML 里任意节点，数它的 `<br/>` 段数，应等于浏览器里实际显示的行数。
+若实际行数更多 → 说明有长行漏了预折行，或 CSS max-width 被调太小。
+
 ---
 
 ## 五、完整 Mermaid 代码示例
@@ -443,13 +531,18 @@ body {
   background: #fff; border-radius: 4px;
 }
 .mermaid svg { max-width: none !important; display: block; margin: 0 auto; }
-/* 节点标签自动换行：长大白话在节点内折行，避免节点过宽被裁剪 */
+/* 节点标签换行：生成端已用 _wrap_label_text 预折行（<br/>），测量行数=渲染行数，
+   节点框高度算得准、文字不被裁剪。max-width 仅作异常兜底（预折行正常约≤260px，
+   远低于 560px，不会触发二次折行）；font-size 11px 小于主题测量字号 14px，
+   渲染比测量更窄更矮，只可能更宽松、不可能溢出（框大字小，正是目标效果）。
+   纪律详见 §4.10 预折行铁律。 */
 .mermaid .nodeLabel, .mermaid .edgeLabel, .mermaid foreignObject div, .mermaid foreignObject span {
   white-space: normal !important;
   overflow-wrap: anywhere;
   word-break: break-word;
-  max-width: 340px;
-  line-height: 1.35;
+  max-width: 560px;
+  font-size: 11px;
+  line-height: 1.3;
 }
 ```
 
@@ -631,6 +724,21 @@ window.addEventListener('resize', function() {
 | `design` | `设计态 / design` | 蓝图阶段，代码未写 |
 | `unknown` / 空 | `未知 / unknown` | 未标记 |
 
+### 7.4 设计态受限原因真源（gate_reason）
+
+⛔ 行的文本**必须来自 depgraph (PostgreSQL) `nodes.gate_reason` 字段**，禁止在生成器里硬编码原因：
+
+| 项 | 内容 |
+|----|------|
+| 存储 | `nodes.gate_reason`（TEXT，空串=无受限） |
+| 查询 | `get_domain_nodes()` SELECT 时带上 `n.gate_reason` |
+| 写入方 | `register_deferred_modules.py`（暂缓模块登记）、`apply_depgraph.py`（蓝图失效标记）、backfill 脚本 |
+| 显示规则 | 仅 `design_maturity=design` 且 `gate_reason` 非空时追加 `⛔ <gate_reason>` 行 |
+| 消失规则 | 受限条件满足 → 数据侧把 `gate_reason` 清空 → ⛔ 行自动消失，生成器零改动 |
+
+> **为什么放 DB 不放 YAML**：`gate_reason` 是架构数据（随节点状态变化），按 SSoT 真源分类铁律，
+> 架构数据真源在 depgraph (PostgreSQL)，由 `apply_depgraph.py` 等写入，禁止写 YAML。
+
 ---
 
 ## 八、生成器调用方式
@@ -675,11 +783,14 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 2. **MD 顶部放 HTML 链接**：`> **[可缩放 HTML 版](#)**`
 3. **Mermaid 灰色主题头** + `flowchart TD`
 4. **节点四要素**：成熟度 + 双语名称 + 大白话 + 文件路径/标识
-5. **颜色规范**：production 蓝、design 橙虚线、external 区分
-6. **箭头规范**：production→production 实线，其他虚线
-7. **HTML 交互**：Ctrl+滚轮缩放、拖动平移、双击重置、Ctrl+Shift+D 切换模式
-8. **mermaid 配置**：`maxTextSize: 100000000, maxEdges: 10000`
-9. **渲染逻辑**：小图优先逐个渲染
+5. **设计态 ⛔ 受限原因**：`gate_reason` 非空的设计态节点必须追加 `⛔` 行（§4.3 要素⑤）
+6. **标签预折行**：所有标签行经 `_wrap_label_text()` 预折行（§4.10 铁律），禁止依赖 CSS max-width 折行
+7. **颜色规范**：production 蓝、design 橙虚线、external 区分
+8. **箭头规范**：production→production 实线，其他虚线
+9. **HTML 交互**：Ctrl+滚轮缩放、拖动平移、双击重置、Ctrl+Shift+D 切换模式
+10. **mermaid 配置**：`maxTextSize: 100000000, maxEdges: 10000`
+11. **渲染逻辑**：小图优先逐个渲染
+12. **CSS 纪律**：渲染字号（11px）≤ 测量字号（主题 14px）；max-width 560px 仅兜底
 
 ### 9.2 可调整的部分
 
@@ -717,6 +828,8 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 - [ ] 每个 Mermaid 块第一行是灰色主题头
 - [ ] 每个 Mermaid 块第二行是 `flowchart TD`
 - [ ] 节点标签四要素齐全（成熟度 + 双语名称 + 大白话 + 文件路径）
+- [ ] 设计态节点（`gate_reason` 非空）有 `⛔ 受限原因` 行
+- [ ] 标签长行已预折行（单行显示宽度 ≤48，约 24 汉字；`<br/>` 显式断行）
 - [ ] 节点标签无 `[` `]` `"` `|` 特殊字符（已转义）
 - [ ] 边用 `-->`（production 间）或 `-.->`（其他）
 - [ ] 末尾有四类 classDef + class 应用
@@ -737,7 +850,8 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 - [ ] 鼠标拖动平移可用
 - [ ] 双击重置可用
 - [ ] Ctrl+Shift+D 切换模式可用
-- [ ] 节点标签自动换行（`max-width: 340px`）
+- [ ] 节点标签 CSS：`max-width: 560px`（仅兜底）+ `font-size: 11px`（< 主题测量字号 14px）
+- [ ] **节点文字无裁剪**：任意节点 `<br/>` 段数 = 浏览器实际显示行数（§4.10 自查法）
 - [ ] `.mermaid` 固定高度 + `overflow: auto`
 - [ ] **大图渲染成功**（无 "Edge limit exceeded"）
 
@@ -761,7 +875,8 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 | 节点无大白话简介 | 翻译真源 `plain_zh` 为空 | 补齐 `plain_zh` 字段 |
 | 设计态模块消失 | `_is_ghost` 误过滤 | `design_maturity=design` 时跳过幽灵检查 |
 | 图横向铺开太宽 | dagre 默认横向 | 拓扑分层 + `~~~` 不可见边强制同 rank 竖排 |
-| 节点标签被裁剪 | SVG 视口太小 | CSS `max-width: 340px` + `word-break: break-word` |
+| 节点标签被裁剪（上下裁掉/英文拦腰截断） | CSS max-width 二次折行：渲染行数 > Mermaid 测量行数，框高不够 | **生成端 `_wrap_label_text()` 预折行**（§4.10），CSS max-width 保持 560px 仅兜底、渲染字号 11px < 测量字号 14px。**禁止**靠调小 CSS max-width 解决 |
+| 设计态节点 ⛔ 受限原因不显示 | `get_domain_nodes` 没 SELECT `gate_reason`，或 DB 字段为空 | 查询带 `n.gate_reason`；数据侧用 `register_deferred_modules.py`/`apply_depgraph.py` 写入 |
 | 三视图变成一个图 | 生成器重构时合并了视图 | 恢复 `_emit_internal_view` 三次调用 |
 | HTML 里图空白 | mermaid.js 未加载 | 检查内嵌/CDN 策略，看控制台报错 |
 
@@ -772,6 +887,7 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 | 版本 | 日期 | 变更 |
 |------|------|------|
 | V1.0 | 2026-08-01 | 初版：从 generate_domain_doc.py + zoomable_html.py 提取为统一模板规范 |
+| V1.1 | 2026-08-01 | ①新增 §4.10 标签预折行铁律（治本节点文字裁剪：生成端 `_wrap_label_text` 预折行，禁止 CSS max-width 二次折行）；②§4.3 节点新增要素⑤ ⛔ 受限原因行（设计态+`gate_reason` 非空）；③§7.4 gate_reason 数据真源（DB `nodes.gate_reason`）；④§6.3 CSS 更新：max-width 340→560px 仅兜底 + font-size 11px < 测量字号 14px；⑤§9.1/§10 验收清单同步 |
 
 ---
 

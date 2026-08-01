@@ -238,18 +238,21 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
   .mermaid {{ display: block; height: calc(100vh - 170px); min-height: 220px; overflow: auto;
               background: #fff; border-radius: 4px; }}
   .mermaid svg {{ max-width: none !important; display: block; margin: 0 auto; }}
-  /* subgraph/cluster 背景着色：Mermaid 默认 clusterBkg=白色，style 命令在部分版本不生效。
-     用 CSS !important 强制灰色，与主题 primaryColor=#eaeaea 一致。
+  /* subgraph/cluster 背景透明：Mermaid 默认浅蓝白，强制透明与分图白色背景保持一致。
      无 subgraph 的图（域文档等）无 .cluster 元素，此规则零影响。 */
-  .mermaid .cluster rect {{ fill: #eaeaea !important; stroke: #888 !important; }}
-  /* 节点标签自动换行：让长大白话/中英文名在节点内折行，避免节点过宽被 SVG 视口裁剪。
-     CJK 字符天然可在任意两字间断行；English 在空格处断行，超长词 overflow-wrap 兜底。 */
+  .mermaid .cluster rect {{ fill: transparent !important; stroke: #ccc !important; }}
+  /* 节点标签换行：生成端已用 _wrap_label_text 预折行（<br/>），测量行数=渲染行数，
+     节点框高度算得准、文字不被上下裁剪。max-width 560px 仅作异常兜底（预折行正常
+     约 ≤260px，远低于 560px 不触发二次折行——若调小到会触发二次折行的值，裁剪
+     问题立刻复发）；font-size 11px 必须小于 Mermaid 主题测量字号 14px，渲染比测量
+     更窄更矮，只可能宽松、不可能溢出。纪律详见 visualization_view_template.md §4.10。 */
   .mermaid .nodeLabel, .mermaid .edgeLabel, .mermaid foreignObject div, .mermaid foreignObject span {{
       white-space: normal !important;
       overflow-wrap: anywhere;
       word-break: break-word;
-      max-width: 340px;
-      line-height: 1.35;
+      max-width: 560px;
+      font-size: 11px;
+      line-height: 1.3;
   }}
   .mermaid:empty::after {{ content: "（渲染中…若长期空白请检查 mermaid.js 是否加载成功）";
                            color: #999; font-size: 13px; }}
@@ -296,10 +299,10 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
       try {{
         var res = await mermaid.render('mmd-svg-' + it.idx, it.code);
         it.pre.innerHTML = res.svg;
-        // 强制 subgraph/cluster 背景为灰色（Mermaid 默认白色，CSS/themeVariables 在部分版本不生效）
+        // 强制 subgraph/cluster 背景为透明（Mermaid 默认浅蓝白，与分图白色背景保持一致）
         it.pre.querySelectorAll('.cluster rect').forEach(function(r) {{
-            r.setAttribute('fill', '#eaeaea');
-            r.setAttribute('stroke', '#888');
+            r.style.fill = 'transparent';
+            r.style.stroke = '#cccccc';
         }});
         if (res.bindFunctions) {{ try {{ res.bindFunctions(it.pre); }} catch (e) {{}} }}
       }} catch (err) {{

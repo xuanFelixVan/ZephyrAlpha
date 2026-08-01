@@ -279,8 +279,48 @@ def _node_bilingual_desc(n: dict) -> str:
     return _node_desc_zh(n)
 
 
+def _wrap_label_text(text: str, max_units: int = 48) -> str:
+    """将长节点标签文本按显示宽度预折行（Mermaid 节点内显示用）。
+
+    治本（2026-08-01）：Mermaid 先按标签行数测量节点框宽高，若依赖 HTML 渲染层
+    CSS max-width 二次折行，渲染行数 > 测量行数 → 框高不够、文字被上下裁剪。
+    必须在生成端用 <br/> 显式预折行，使测量行数 = 渲染行数。
+
+    折行规则：显示宽度（CJK=2/ASCII=1）超 max_units 断行（48 ≈ 24 个汉字）；
+    优先在空格/下划线之后、左括号/斜杠之前软断（保持英文词完整），否则硬断。
+    """
+    if not text:
+        return ""
+    lines: list[str] = []
+    remaining = text.strip()
+    while remaining:
+        width = 0
+        cut = 0
+        soft = -1  # 软断点（断在空格/_之后，或（(/之前）
+        for i, ch in enumerate(remaining):
+            u = 2 if ord(ch) > 0x2E7F else 1
+            if width + u > max_units:
+                break
+            width += u
+            cut = i + 1
+            if ch in " _":
+                soft = i + 1
+            elif ch in "（(/":
+                soft = i if i > 0 else -1
+        if cut >= len(remaining):
+            lines.append(remaining)
+            break
+        if soft >= 8:  # 软断点至少留 8 单位，避免碎片行
+            cut = soft
+        line = remaining[:cut].rstrip()
+        if line:
+            lines.append(line)
+        remaining = remaining[cut:].lstrip(" ")
+    return "<br/>".join(lines)
+
+
 def _node_mermaid_label(n: dict) -> str:
-    """生成 Mermaid 节点标签：成熟度全称 + 名称 + 大白话/简介 + 文件路径。
+    """生成 Mermaid 节点标签：成熟度全称 + 名称 + 大白话/简介 + 文件路径(+⛔受限原因)。
 
     显示策略（治本：消除残缺显示，如 "capitalallocator / Capital Allocator" 伪双语 +
     重复 docstring 当简介）：
@@ -290,7 +330,10 @@ def _node_mermaid_label(n: dict) -> str:
       （技术简介也比空着好），若名称来自 docstring（真源无 name）则不再重复 docstring、
       留空待逐域补齐（避免 name 与 plain 同源重复）。
     - 文件路径行：始终显示（定位用）。
-    长文本换行由 HTML 渲染层 CSS 处理，配合 Ctrl+滚轮缩放查看完整内容。
+    - ⛔ 受限原因行：设计态节点（design_maturity=design）且 DB gate_reason 非空时追加，
+      说明"为什么这个设计没施工"，避免误判为遗漏。
+    - 所有行经 _wrap_label_text 预折行（<br/> 显式断行），禁止依赖 HTML CSS 二次折行
+      （否则 Mermaid 测量行数 < 渲染行数，文字被节点框裁剪）。
     """
     maturity = _maturity_display(n.get("design_maturity") or "unknown")
     short_name = _node_short_name(n)
@@ -309,7 +352,11 @@ def _node_mermaid_label(n: dict) -> str:
     if plain:
         parts.append(plain)
     parts.append(f"文件: {short_name}")
-    return "<br/>".join(parts)
+    # 设计态节点显示受限原因（⛔ 行）：gate_reason 非空时追加
+    gate_reason = (n.get("gate_reason") or "").strip()
+    if gate_reason and (n.get("design_maturity") or "") == "design":
+        parts.append(f"⛔ {gate_reason}")
+    return "<br/>".join(_wrap_label_text(p) for p in parts)
 
 
 def _bilingual_label_from_path(path: str, max_len: int = 60) -> str:
@@ -366,7 +413,7 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     """查询指定域的所有节点（排除 deprecated 已废弃节点）。"""
     cur = conn.execute(
         "SELECT n.node_id, n.path, n.blueprint_id, n.design_maturity, n.build_status, n.node_name, "
-        "n.node_type, "
+        "n.node_type, n.gate_reason, "
         "(SELECT COUNT(*) FROM edges WHERE to_node_id=n.node_id) AS in_degree, "
         "(SELECT COUNT(*) FROM edges WHERE from_node_id=n.node_id) AS out_degree, "
         "n.architecture_layer, n.file_path "
@@ -394,6 +441,7 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
                 "architecture_layer": r["architecture_layer"] or "",
                 "node_type": r["node_type"] or "",
                 "file_path": r["file_path"] or "",
+                "gate_reason": r["gate_reason"] or "",
             }
         )
     return rows
@@ -886,7 +934,8 @@ def generate_internal_mermaid(
             parts.append(ext_desc)
         # 第 3 行：跨域节点标识（域无单一文件，用此标识代替文件路径行）
         parts.append("跨域节点 / cross-domain")
-        ext_label = _sanitize_mermaid_label("<br/>".join(parts))
+        # 与域内节点一致：所有行预折行（<br/> 显式断行），防 CSS 二次折行导致框高不足
+        ext_label = _sanitize_mermaid_label("<br/>".join(_wrap_label_text(p) for p in parts))
         lines.append(f'    {ext_id}["{ext_label}"]')
         return ext_id
 

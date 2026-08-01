@@ -229,7 +229,7 @@ _MERMAID_THEME = (
     "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', "
     "'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', "
     "'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
-    "'clusterBkg': '#eaeaea', 'clusterBorder': '#888888', "
+    "'clusterBkg': 'transparent', 'clusterBorder': '#cccccc', "
     "'fontSize': '14px'}}}%%"
 )
 
@@ -339,9 +339,6 @@ def _build_mermaid_total(
         if e["from_node_id"] in all_ids and e["to_node_id"] in all_ids:
             lines.append(_mermaid_edge_def(e, maturity_map))
     lines.append(_CLASSDEF_LINES)
-    # 显式 subgraph 着色（themeVariables.clusterBkg 在部分 Mermaid 版本不生效）
-    for sg_id in subgraph_ids:
-        lines.append(f"    style {sg_id} fill:#eaeaea,stroke:#888888,stroke-width:1px,color:#333")
     prod_ids = [nid for nid in all_ids if maturity_map.get(nid) == "production"]
     design_ids = [nid for nid in all_ids if maturity_map.get(nid) != "production"]
     if prod_ids:
