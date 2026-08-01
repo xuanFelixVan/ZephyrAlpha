@@ -10697,3 +10697,26 @@ entries:
   related_adjudication: 'TRAE-082（MATERIALIZED exchange + symbol_canonical）, futures_position 已治本（模式参考 L1578）, #ARCH-WORKTREE-DOCS-DRIFT'
   created: '2026-08-01'
   last_updated: '2026-08-01'
+- issue_id: '#ARCH-TRANSLATION-DUP-001'
+  title: harvest脚本翻译真源脏重复（seq碰撞导致同key不同内容）
+  severity: P2中
+  adjudication: |
+    问题：module_translation_registry.yaml 存在52条脏重复——CAND-HARVEST-0001~0052
+      各出现2次，同key不同内容（第一次指向D_CROSS_ASSET等旧模块，第二次指向
+      D_MKT_DATA等当前正确模块）。
+    根因：harvest脚本首运行写入52条翻译后数据因stash/restore丢失，二次运行全量
+      重跑——候选库干净→max_harvest_seq()返回0→seq从0001重新分配→与翻译真源
+      残留条目碰撞，产生"同CAND-HARVEST-xxxx key不同模块"的脏重复。原脚本只对
+      候选库做幂等检查（existing_harvest_keys），翻译真源无去重。
+    治本（已执行2026-08-01）：
+      1. 数据修复：手术式删除52条stale块（行21258-21621），保留5283条正确条目
+      2. 脚本幂等治本：新增existing_translation_keys()翻译真源去重；
+         max_harvest_seq()扫描候选库+翻译真源两个YAML取最大值防seq碰撞；
+         主循环翻译key已存在则跳过追加
+      3. 报告重生：37域文件+1索引，CAND-HARVEST-0001正确归属D_MKT_DATA
+    验证：8314 total / 5283 harvest / 0 dups / 0 domain mismatches / dry-run 0新增
+  fix_phase: 已执行（数据去重+脚本幂等治本+报告重生，全部验证通过）
+  status: resolved
+  related_adjudication: 'harvest_candidates_from_drafts.py existing_translation_keys(), #ARCH-WORKTREE-DOCS-DRIFT（同根因：stash/restore数据丢失）'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'

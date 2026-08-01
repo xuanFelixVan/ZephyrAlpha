@@ -517,7 +517,7 @@ events:
     domain: execution
     frequency: L3
     publisher: l06
-    publisher_module: "broker_adapter / OMS 定时扫描"
+    publisher_module: "broker_adapter / OMS 订单状态事件订阅（exchange push 优先 + CI 批量兜底，符合 RULE-FIFTEEN 禁止定时轮询）"
     subscribers: [l06, l04, l12]
     subscriber_details:
       - {layer: l06, action: "OMS 状态机 → EXPIRED"}

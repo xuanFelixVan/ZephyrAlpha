@@ -247,7 +247,7 @@ aggregate_roots:
     behaviors:
       - {name: consume, description: "标记被消费", events: []}
       - {name: revoke, description: "显式撤销", events: [E-SG-02]}
-      - {name: check_expiry, description: "定时检查 TTL", events: [E-SG-03]}
+      - {name: check_expiry, description: "TTL 到期检查（lazy/on-access 触发，非定时轮询；符合 RULE-FIFTEEN 事件驱动）", events: [E-SG-03]}
     events_published: [E-SG-01, E-SG-02, E-SG-03]
     da_entity_mapping: "E11 Signal"
 

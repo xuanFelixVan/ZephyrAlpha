@@ -21,6 +21,10 @@ partition:
     活文档，每 3 个月刷新一次。
     来源：technology-landscape.md v1.0.0 迁移。
     2026-07-24 Phase B：新增 G0.5 Python 过渡层 5 条（T-A13~T-A17，ARCH-047 裁定），总数 43→48。
+    与 config/tech_stack_manifest.yaml 的分工（audit-02 复审治本 2026-08-01 补齐交叉引用）：
+    本文件=技术采纳雷达（adoption 生命周期状态 Adopt/Trial/Assess/Hold/Build，module_id=MOD-GOVERNANCE）；
+    config/tech_stack_manifest.yaml=容量保障体系技术决策 DD-1~DD-16 + Python 解释器 canonical（module_id=mod_inf_001）。
+    两者互补不重复——本文件答"某技术在雷达哪个象限"，tech_stack_manifest 答"容量决策选定哪项+解释器版本"。
   source_views:
     - 04-technology_architecture.md
   related_kb_refs:

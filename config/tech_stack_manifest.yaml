@@ -10,6 +10,10 @@
 # 真源：蓝图 mod_inf_001 §5.1 终选技术栈
 # 版本：v2.6.0 | 创建：2026-05-07 | 最后更新：2026-05-07
 # 本文件是架构决策 DD-1 至 DD-16 的唯一结构化真源
+# 交叉引用（audit-02 复审治本 2026-08-01 补齐）：技术采纳雷达（adoption 生命周期 Adopt/Trial/Assess/Hold/Build）
+# 见 architecture_model/technology/technology_landscape.yaml（module_id=MOD-GOVERNANCE）。
+# 两者分工——本文件=容量决策选定哪项技术+Python 解释器 canonical 版本；technology_landscape=某技术在雷达哪个象限。
+# 互补不重复，禁止单凭任一文件判定"技术栈真源"。
 
 manifest_version: "2.7.0"
 module_id: mod_inf_001

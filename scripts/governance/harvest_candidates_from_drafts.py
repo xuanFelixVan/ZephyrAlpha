@@ -230,22 +230,51 @@ def existing_harvest_keys() -> set[str]:
 
 
 def max_harvest_seq() -> int:
-    """已存在的 CAND-HARVEST-XXXX 最大序号（YAML 解析，避免正则误匹配注释）。"""
+    """已存在的 CAND-HARVEST-XXXX 最大序号（YAML 解析，避免正则误匹配注释）。
+
+    治本(2026-08-01 seq 碰撞): 同时扫描候选库 + 翻译真源两个 YAML，取两者最大值。
+    原实现只扫候选库——若候选库因 stash/restore 丢失但翻译真源残留，seq 从 0
+    重新分配会导致 CAND-HARVEST-0001 等序号与翻译真源残留条目碰撞，产生
+    "同 key 不同内容"的脏重复（见 #ARCH-TRANSLATION-DUP-001）。
+    """
     import yaml
 
-    if not CANDIDATE_YAML.exists():
-        return 0
-    with open(CANDIDATE_YAML, encoding="utf-8") as f:
-        data = yaml.safe_load(f) or {}
-    seqs = []
-    for e in data.get("entries", []) or []:
-        cid = str(e.get("id", ""))
-        if cid.startswith("CAND-HARVEST-"):
-            try:
-                seqs.append(int(cid.split("-")[-1]))
-            except ValueError:
-                pass
+    seqs: list[int] = []
+    for ypath in (CANDIDATE_YAML, TRANSLATION_YAML):
+        if not ypath.exists():
+            continue
+        with open(ypath, encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        key = "id" if ypath == CANDIDATE_YAML else "module_path"
+        for e in data.get("entries", []) or []:
+            cid = str(e.get(key, ""))
+            if cid.startswith("CAND-HARVEST-"):
+                try:
+                    seqs.append(int(cid.split("-")[-1]))
+                except ValueError:
+                    pass
     return max(seqs) if seqs else 0
+
+
+def existing_translation_keys() -> set[str]:
+    """翻译真源中已存在的 CAND-HARVEST module_path 集合（幂等去重）。
+
+    治本(2026-08-01): 原脚本只对候选库做幂等检查（existing_harvest_keys），
+    翻译真源无去重——重跑时若候选库丢失但翻译真源残留，会追加重复翻译条目。
+    新增此函数使翻译真源也具备幂等能力：已存在的 CAND-HARVEST-xxxx 跳过追加。
+    """
+    import yaml
+
+    if not TRANSLATION_YAML.exists():
+        return set()
+    with open(TRANSLATION_YAML, encoding="utf-8") as f:
+        data = yaml.safe_load(f) or {}
+    keys: set[str] = set()
+    for e in data.get("entries", []) or []:
+        mp = str(e.get("module_path", ""))
+        if mp.startswith("CAND-HARVEST-"):
+            keys.add(mp)
+    return keys
 
 
 def yaml_str(s: str) -> str:
@@ -388,6 +417,7 @@ def main() -> int:
 
     print("[3/4] 去重 + 域校准（区分运营态/设计态）...")
     existing = existing_harvest_keys()
+    existing_trans = existing_translation_keys()  # 治本: 翻译真源幂等
     seq = max_harvest_seq()
     stats = {
         "likely_new": 0,
@@ -396,6 +426,7 @@ def main() -> int:
         "likely_misplaced": 0,
         "uncertain": 0,
         "skipped": 0,
+        "trans_skipped": 0,
     }
     cand_blocks = []
     trans_blocks = []
@@ -412,11 +443,17 @@ def main() -> int:
         seq += 1
         cb, tb = build_candidate_entry(item, seq, likely, rec_dom, domain_paths, matched_detail)
         cand_blocks.append(cb)
-        trans_blocks.append(tb)
+        # 翻译幂等：若 CAND-HARVEST-xxxx 已存在于翻译真源，跳过追加（防脏重复）
+        cid = f"CAND-HARVEST-{seq:04d}"
+        if cid in existing_trans:
+            stats["trans_skipped"] += 1
+        else:
+            trans_blocks.append(tb)
+            existing_trans.add(cid)
         existing.add(dedup_key)
 
     print(f"      去重统计: {stats}")
-    print(f"      新增候选: {len(cand_blocks)} 条")
+    print(f"      新增候选: {len(cand_blocks)} 条，新增翻译: {len(trans_blocks)} 条")
 
     if args.dry_run:
         print("[DRY-RUN] 不写文件。前3条候选预览:")
@@ -430,7 +467,8 @@ def main() -> int:
 
     print(f"[4/4] 追加 {len(cand_blocks)} 条到候选库 + 翻译真源...")
     append_to_file(CANDIDATE_YAML, "\n".join(cand_blocks))
-    append_to_file(TRANSLATION_YAML, "\n".join(trans_blocks))
+    if trans_blocks:
+        append_to_file(TRANSLATION_YAML, "\n".join(trans_blocks))
     print(f"[OK] 完成。候选库+{len(cand_blocks)}，翻译真源+{len(trans_blocks)}")
     return 0
 
