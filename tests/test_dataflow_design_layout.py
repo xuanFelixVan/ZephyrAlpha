@@ -11,15 +11,15 @@
 # [TESTS] test_dataflow_design_layout.py
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051
-"""test_dataflow_design_layout.py — 设计态数据流文档视觉风格测试
+"""test_dataflow_design_layout.py — 设计态数据流文档视觉风格测试（V1.2 模板对齐）
 
 覆盖 generate_dataflow_diagram.py 的设计态域文档增强功能：
-  - _extract_zh_label：从 format_summary/description 提取简短中文标签（glossary 回退）
-  - force_vertical：~~~ 不可见链接强制竖向布局（设计态单向 push 边场景）
+  - _extract_zh_label：从 format_summary/description 提取中文标签（V1.2：<br/> 分隔+全角括号）
+  - 拓扑分层：Kahn 算法自动计算层级，同层 ~~~ 不可见边串联（V1.2 替代旧 force_vertical 参数）
   - _gen_domain_md：域职责（Responsibility）段落渲染
 
-依据：用户需求（2026-07-31）——设计态 d_*.md 视觉风格对齐 dataflow_production.md
-（中英文标签 + 竖向高列布局）+ 06_decision_l2a_data.md（域职责说明）。
+依据：用户需求（2026-07-31）——设计态 d_*.md 视觉风格对齐 dataflow_panorama.md
+（四要素标签 + 竖向高列布局）+ 06_decision_l2a_data.md（域职责说明）。
 """
 
 from __future__ import annotations
@@ -152,12 +152,12 @@ class TestExtractZhLabel:
     """_extract_zh_label 从 format_summary/description 提取简短中文标签。"""
 
     def test_extract_before_paren(self):
-        """取"（"前的部分作为中文标签。"""
-        assert _extract_zh_label("A股Alpha#87因子信号（多因子截面排名）") == "A股Alpha#87因子信号"
+        """V1.2：在"（"前插入 <br/> 分隔，保留括号内容（四要素标签多行显示）。"""
+        assert _extract_zh_label("A股Alpha#87因子信号（多因子截面排名）") == "A股Alpha#87因子信号<br/>（多因子截面排名）"
 
     def test_extract_before_ascii_paren(self):
-        """支持半角"("分隔。"""
-        assert _extract_zh_label("因子信号(multifactor)") == "因子信号"
+        """V1.2：半角"("也插入 <br/> 并归一化为全角括号。"""
+        assert _extract_zh_label("因子信号(multifactor)") == "因子信号<br/>（multifactor）"
 
     def test_truncate_overlong(self):
         """超长（>max_len）截断并加省略号。"""
@@ -177,62 +177,60 @@ class TestExtractZhLabel:
         assert _extract_zh_label("因子信号") == "因子信号"
 
 
-# ---------- force_vertical 竖向布局测试 ----------
+# ---------- 拓扑分层竖向布局测试（V1.2：自动 Kahn 分层，无需 force_vertical 参数）----------
 
-class TestForceVertical:
-    """force_vertical 参数：设计态单向 push 边场景下用 ~~~ 不可见链接强制竖向。"""
+class TestTopologicalLayering:
+    """V1.2 拓扑分层：Kahn 算法自动计算节点层级，同层节点用 ~~~ 不可见边串联强制竖排。"""
 
-    def test_force_vertical_adds_invisible_chain(
+    def test_auto_layering_adds_invisible_chain(
         self, design_only_datasets, design_only_jobs, design_only_edges
     ):
-        """force_vertical=True 时添加 ~~~ 不可见链接串联相邻 JOB→DS 对。"""
+        """多节点同层时自动添加 ~~~ 不可见边串联（无需 force_vertical 参数）。"""
         mmd, _, job_count, edge_count = _gen_mermaid(
             design_only_datasets, design_only_jobs, design_only_edges,
-            maturity_filter="design", force_vertical=True,
+            maturity_filter="design",
         )
-        # 3 个 job → 2 条不可见链（DS_of_job[0]~~~JOB[1], DS_of_job[1]~~~JOB[2]）
+        # 3 个 job 在同层（layer 0）→ ~~~ 串联；3 个 DS 在同层（layer 1）→ ~~~ 串联
         assert "~~~" in mmd
-        # 不可见链不计入 edge_count（仍为 3 条 produces 边）
+        # 不可见边不计入 edge_count（仍为 3 条 produces 边）
         assert edge_count == 3
         assert job_count == 3
-        # 链方向：DS21~~~JOB32, DS22~~~JOB33（前一个 DS → 下一个 JOB）
-        assert "DS21 ~~~ JOB32" in mmd
-        assert "DS22 ~~~ JOB33" in mmd
 
-    def test_no_force_vertical_no_chain(
+    def test_layering_always_on_for_multi_node(
         self, design_only_datasets, design_only_jobs, design_only_edges
     ):
-        """默认（force_vertical=False）不添加 ~~~ 不可见链接。"""
+        """V1.2 拓扑分层始终启用——多节点同层即有 ~~~，无开关可关。"""
         mmd, _, _, _ = _gen_mermaid(
             design_only_datasets, design_only_jobs, design_only_edges,
             maturity_filter="design",
         )
-        assert "~~~" not in mmd
+        assert "~~~" in mmd  # 同层 JOB 间 + 同层 DS 间均有 ~~~
 
-    def test_force_vertical_single_job_no_chain(
+    def test_single_node_no_layering(
         self, design_only_datasets, design_only_jobs, design_only_edges
     ):
-        """仅 1 个 job 时无需串联（不添加 ~~~）。"""
+        """仅 1 job + 1 DS（不同层）时无需 ~~~ 串联。"""
         single_ds = [design_only_datasets[0]]
         single_job = [design_only_jobs[0]]
         single_edge = [design_only_edges[0]]
         mmd, _, _, _ = _gen_mermaid(
             single_ds, single_job, single_edge,
-            maturity_filter="design", force_vertical=True,
+            maturity_filter="design",
         )
         assert "~~~" not in mmd
 
-    def test_production_not_affected_by_vertical_flag(
+    def test_production_has_solid_arrows(
         self, sample_datasets, sample_jobs, sample_edges
     ):
-        """运营态文档（有交叉边）传 force_vertical=True 也不破坏已有边。"""
+        """运营态节点间用实线箭头 -->（模板 §4.5），produces/consumed 边不受分层影响。"""
         mmd, _, _, edge_count = _gen_mermaid(
-            sample_datasets, sample_jobs, sample_edges, force_vertical=True,
+            sample_datasets, sample_jobs, sample_edges,
         )
-        # 运营态有交叉边，force_vertical 会额外加 ~~~ 链，但 produces/consumed 边不变
         assert edge_count == 5
         assert "|produces / 产出|" in mmd
         assert "|consumed by / 被消费于|" in mmd
+        # production→production 实线
+        assert "JOB10 -->|produces" in mmd
 
 
 # ---------- 中文标签回退测试 ----------
@@ -243,40 +241,40 @@ class TestZhLabelFallback:
     def test_design_dataset_label_has_zh_from_summary(
         self, design_only_datasets, design_only_jobs, design_only_edges
     ):
-        """设计态 Dataset 节点标签含从 format_summary 提取的中文（<br/> 分隔）。"""
+        """V1.2 四要素：设计态 Dataset 标签含"name / zh_short"格式（ / 分隔+预折行）。"""
         mmd, _, _, _ = _gen_mermaid(
             design_only_datasets, design_only_jobs, design_only_edges,
             maturity_filter="design",
         )
-        # DS21: factor.ashare_alpha87 → "A股Alpha#87因子信号"
-        assert "factor.ashare_alpha87<br/>A股Alpha#87因子信号" in mmd
-        # DS22: factor.ashare_capital_flow → "A股资金流向因子"
-        assert "factor.ashare_capital_flow<br/>A股资金流向因子" in mmd
+        # DS21: factor.ashare_alpha87 / A股Alpha#87因子信号（ / 分隔，预折行后 <br/> 换行）
+        assert "factor.ashare_alpha87 /<br/>A股Alpha#87因子信号" in mmd
+        # DS22: factor.ashare_capital_flow / A股资金流向因子
+        assert "factor.ashare_capital_flow /<br/>A股资金流向因子" in mmd
 
     def test_design_job_label_has_zh_from_description(
         self, design_only_datasets, design_only_jobs, design_only_edges
     ):
-        """设计态 Job 节点标签含从 description 提取的中文（<br/> 分隔）。"""
+        """V1.2 四要素：设计态 Job 标签含"name / zh_short"格式（ / 分隔+预折行）。"""
         mmd, _, _, _ = _gen_mermaid(
             design_only_datasets, design_only_jobs, design_only_edges,
             maturity_filter="design",
         )
-        # JOB31: compute.ashare_alpha87 → "计算Alpha#87因子"
-        assert "compute.ashare_alpha87<br/>计算Alpha#87因子" in mmd
+        # JOB31: compute.ashare_alpha87 / 计算Alpha#87因子
+        assert "compute.ashare_alpha87 /<br/>计算Alpha#87因子" in mmd
 
     def test_production_dataset_uses_glossary_not_summary(
         self, sample_datasets, sample_jobs, sample_edges
     ):
-        """运营态 Dataset 优先用 glossary 短名（如"回测.模拟成交"），不走回退。"""
+        """V1.2 四要素：运营态 Dataset 优先用 glossary 短名（ / 分隔+预折行）。"""
         mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
-        # backtest.fills 在 glossary 中有映射 → 用短名，不用 format_summary
-        assert "backtest.fills<br/>回测.模拟成交" in mmd
+        # backtest.fills 在 glossary 中有映射 → 用短名"回测.模拟成交"
+        assert "backtest.fills /<br/>回测.模拟成交" in mmd
 
 
 # ---------- _gen_domain_md 域职责测试 ----------
 
 class TestGenDomainMd:
-    """_gen_domain_md 域职责段落 + force_vertical 传递。"""
+    """_gen_domain_md 域职责段落 + 拓扑分层自动传递。"""
 
     def test_domain_md_contains_responsibility(
         self, design_only_datasets, design_only_jobs, design_only_edges
@@ -300,7 +298,7 @@ class TestGenDomainMd:
     def test_domain_md_mermaid_has_vertical_chain(
         self, design_only_datasets, design_only_jobs, design_only_edges
     ):
-        """域文档内嵌 Mermaid 图含 ~~~ 竖向链（force_vertical=True 传递）。"""
+        """域文档内嵌 Mermaid 图含 ~~~ 竖向链（V1.2 拓扑分层自动传递）。"""
         grp = {
             "key": "d_test", "title": "测试域（设计态）",
             "responsibility": "测试职责",

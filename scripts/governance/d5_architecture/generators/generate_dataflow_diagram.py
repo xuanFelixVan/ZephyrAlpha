@@ -1200,9 +1200,9 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code.
 
     生成多文件：
-    - dataflow_index.md     — 索引+统计+链接
-    - dataflow_production.md — 运营态全景图+清单
-    - d_factor_ashare.md 等  — 设计态按域拆分（8 个域文件）
+    - dataflow_index.md    — 索引+统计+链接
+    - dataflow_panorama.md — 全项目数据流全景图（运营态+设计态）+清单
+    - d_factor_ashare.md 等 — 按域拆分（8 个域文件，各含三视图）
     """
     parser = argparse.ArgumentParser(
         description="从 dataflowgraph (PostgreSQL) 生成数据流图 Markdown 文档（内嵌 Mermaid）",
