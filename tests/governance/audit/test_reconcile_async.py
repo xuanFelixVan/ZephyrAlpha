@@ -705,6 +705,59 @@ class TestSweepStaleWorkers:
         assert data["status"] == STATUS_STALE
         assert any("orphaned_worker_dead" in e for e in data["errors"])
 
+    def test_dead_orphan_logs_clean_not_critical_warn(self, tmp_repo):
+        """#ARCH-RECONCILE-WORKER-STALE-SEVERITY-001：死孤儿收割记 clean（自愈成功），
+        不记 critical_warn——收割即自愈，记 critical_warn 是语义倒置 + 无配对 clean 自愈。
+        """
+        import sqlite3
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            sweep_stale_workers,
+            write_status_file,
+        )
+        from zephyr.governance.audit.reconciliation_registry import (
+            _check_recent_critical_warns,
+            _governance_db_path,
+        )
+
+        # _log_reconcile_results 不 mkdir 父目录，预先创建以保证 DB 写入成功
+        (tmp_repo / "data" / "databases").mkdir(parents=True, exist_ok=True)
+        # 死孤儿：31min 前 started + 绝对不存在的 pid
+        old = int(time.time()) - 1860
+        write_status_file(
+            tmp_repo, "orphan_clean_sha", STATUS_RUNNING,
+            session_id="sess-clean-test", started_at=old, worker_pid=99999999,
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 1
+
+        # DB 行应为 clean（自愈成功），非 critical_warn
+        db_path = _governance_db_path(tmp_repo)
+        conn = sqlite3.connect(db_path, timeout=10.0)
+        try:
+            cur = conn.execute(
+                "SELECT action, gate_id, detail FROM reconcile_execution_log "
+                "WHERE gate_id='RECONCILE-WORKER-STALE' ORDER BY logged_at DESC LIMIT 1"
+            )
+            row = cur.fetchone()
+        finally:
+            conn.close()
+        assert row is not None, "sweep 应写一条 RECONCILE-WORKER-STALE DB 记录"
+        action, gate_id, detail = row
+        assert action == "clean", (
+            f"死孤儿应记 clean（自愈成功），实际 action={action}——"
+            f"#ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 严重度对齐未生效"
+        )
+        assert gate_id == "RECONCILE-WORKER-STALE"
+        assert "self-heal" in detail or "no active threat" in detail
+
+        # clean 不应进 critical_warn banner 查询（自愈闭环验证）
+        warns = _check_recent_critical_warns(tmp_repo)
+        stale_warns = [w for w in warns if w["gate_id"] == "RECONCILE-WORKER-STALE"]
+        assert not stale_warns, (
+            f"clean 记录不应出现在 critical_warn 查询中，实际={stale_warns}"
+        )
+
     def test_does_not_sweep_live_worker(self, tmp_repo, monkeypatch):
         """running + 超阈值但 pid 仍存活 → 不改写（避免误杀慢 worker）。"""
         from zephyr.governance.audit.reconcile_runner import (

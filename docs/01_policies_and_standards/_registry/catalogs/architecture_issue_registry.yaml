@@ -8417,6 +8417,67 @@ entries:
   related_rules: 'trae_079 (commit 串行化), AGENTS.md §Ruling-100PCT-AI-GOVERNANCE-P2-3 (reconciler 异步化)'
   created: '2026-08-01'
   last_updated: '2026-08-01'
+# --- #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001: 死孤儿 stale 告警严重度错配（critical_warn→clean 自愈） ---
+- issue_id: '#ARCH-RECONCILE-WORKER-STALE-SEVERITY-001'
+  title: 'RECONCILE-WORKER-STALE 死孤儿告警严重度错配——收割即自愈却记 critical_warn（无配对 clean 自愈）'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    根因（第一性原理分析）：
+    _log_stale_to_db 对死孤儿 worker（pid 已死，status file 已改写 stale）记
+    ReconcileResult(action="critical_warn", gate_id="RECONCILE-WORKER-STALE")。
+    但死孤儿的"检测"与"解决"是同一事件——sweep_stale_workers 收割即自愈完成，
+    detail 字面写着"no active threat, status file cleaned"。当前两调用方
+    （read_status_file / sweep_stale_workers）均仅在 PID 已死时才调 _log_stale_to_db，
+    活进程超时分支是防御性死代码，生产永不触达。结论：生产中该 gate 发射的每一条
+    critical_warn 都是"问题已自愈那一刻当严重失败上报"——语义倒置。
+
+    三重铁律冲突：
+    1. 违反"永久系统必须全自动"——critical_warn 留下需手动 ack 才能消音的告警，
+       而 acknowledge_critical_warns 无 CLI、无生产调用方，实际只能 AI 写一次性
+       脚本（#ARCH-RECONCILER-ALERT-SELFHEAL-001 明确定性为反模式）。
+    2. 违反"告警 MUST 精确"（trae_077）——detail 自承"no active threat"的
+       critical_warn 是误报，制造"狼来了效应"。
+    3. 违反告警生命周期对称性——RECONCILE-WORKER-STALE 无配对 clean 写入器（对比
+       RECONCILE-WORKER-BOOT 有 _write_boot_success_clean），自愈机制
+       （SQL_AUTO_ACK_HEALED_BY_GATE / 查询态 NOT EXISTS clean）对此 gate 永不触发。
+       #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1 只落地 BOOT，遗漏本 gate。
+
+    元层洞察：RECONCILE-WORKER-STALE 是元门禁（worker 存活度），其"检测"与"解决"
+    是同一时刻——内容 reconciler 的"先 critical_warn 后 clean 自愈"模型从原理上
+    不适用。死孤儿收割即自愈，记 critical_warn 既语义错配又无配对 clean 可自愈。
+
+    裁定（3 条）：
+    1. 严重度对齐：_log_stale_to_db 死孤儿分支 action 从 critical_warn 降为 clean
+       （自愈成功语义，对齐 RECONCILE-WORKER-BOOT 先例）。不进 critical_warn banner，
+       且 _log_reconcile_results 的 SQL_AUTO_ACK_HEALED_BY_GATE 会自然 ack 该 gate
+       历史 critical_warn——补全自愈闭环。
+    2. 活进程超时分支保留 critical_warn（防御性，语义正确——真 active threat）；
+       本次不动该分支，仅补注释说明触达条件。活进程超时上报补齐见战略项
+       （待立项，未编号——避免 grep-and-claim 占位，待决定后补登 #ARCH-NNN）。
+    3. 一次性历史回填：对 DB 中既存（修前代码写入、无配对 clean）的
+       RECONCILE-WORKER-STALE critical_warn 做一次性 ack 迁移。
+
+    不实施项：
+    - 不引入新 action 级别（如 info/self_healed）——clean 已有 BOOT 先例，过度工程
+    - 不加 ack CLI——应通过自愈闭环消除 ack 需求而非制度化手动操作
+    - 不重构 _log_stale_to_db 函数名——语义仍成立
+    - 不补活进程超时上报——单独裁定（战略项）
+  impact:
+    - 'src/zephyr/governance/audit/reconcile_runner.py（_log_stale_to_db 死孤儿分支 action critical_warn→clean + docstring）'
+    - 'tests/governance/audit/test_reconcile_async.py（新增死孤儿→clean 断言测试）'
+    - '一次性回填：acknowledge_critical_warns(gate_id=RECONCILE-WORKER-STALE) 清理历史残留'
+  fix_phase: |
+    治本（一次性完成）：
+      1. _log_stale_to_db 死孤儿分支 action→clean，detail 改述自愈完成
+      2. docstring 引用本裁定 + 说明严重度分裂原理
+      3. 一次性 ack 历史 RECONCILE-WORKER-STALE critical_warn
+      4. 新增测试：死孤儿 sweep → DB action=clean，不进 _check_recent_critical_warns
+  status: proposed
+  related_adjudication: '#ARCH-RECONCILE-WORKER-HEARTBEAT-001 (观测+清扫基础，本裁定修正其"落 DB"的严重度选择), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (告警自愈对称，本裁定补全其 Phase 1 对 STALE 的遗漏), #ARCH-PRE-EXISTING-DEBT-001 (stale 持久化到 DB 的 mandate), #ARCH-DEPGRAPH-RECONCILER-FAILSILENT (critical_warn 梯队定义)'
+  related_rules: '铁律: 永久系统必须全自动, trae_077 (告警 MUST 精确——只在真正违规时触发), AGENTS.md 第 6 层可预防性'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'
 - issue_id: '#ARCH-TSV-SOT-001'
   title: TSV 转义逻辑单一真源——wal_codec 委托 ch_writer.tsv_escape（消除双真源数据腐化）
   category: data_integrity

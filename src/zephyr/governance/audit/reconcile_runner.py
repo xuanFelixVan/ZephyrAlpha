@@ -254,6 +254,15 @@ def _log_stale_to_db(
     #ARCH-PRE-EXISTING-DEBT-001 治本（2026-07-20）：
     之前 stale 状态只在 read_status_file 返回值中标记，不写 DB，AI 查询
     reconcile_execution_log 表看不到 stale 事件，违反持久化铁律。
+
+    #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 治本（2026-08-01）：
+    严重度按 PID 存活分裂——死孤儿（生产唯一触达路径）记 ``clean``（自愈成功，
+    不进 critical_warn banner），活进程超时（防御性，当前不触达）记
+    ``critical_warn``（真 active threat）。原理：RECONCILE-WORKER-STALE 是元门禁
+    （worker 存活度），其"检测"与"解决"是同一事件——内容 reconciler 的"先
+    critical_warn 后 clean 自愈"模型不适用。死孤儿收割即自愈完成，记 critical_warn
+    是语义倒置且无配对 clean 自愈（违反 #ARCH-RECONCILER-ALERT-SELFHEAL-001 对称性，
+    该裁定 Phase 1 只落地 RECONCILE-WORKER-BOOT，遗漏本 gate）。
     """
     if commit_sha in _stale_logged:
         return
@@ -270,22 +279,39 @@ def _log_stale_to_db(
         # 死进程不可能"running"，实际是"died {elapsed}s ago"。
         # 两处调用方（read_status_file L236 / sweep_stale_workers L353）均已在
         # 进程死亡后才调本函数，但防御性二次探测避免未来调用方变更引入误判。
+        # #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 治本（2026-08-01）：
+        # 严重度按 PID 存活分裂（详见函数 docstring）。
         if worker_pid and _is_pid_alive(worker_pid):
+            # 活进程超时：真正的 active threat（慢/卡死 reconciler）。
+            # 此分支防御性不触达（两调用方仅 PID 已死才调本函数）；若未来补齐
+            # 活进程超时上报（见战略项，待立项未编号），
+            # critical_warn 是正确严重度——配对 clean 在 worker 最终完成时写。
             detail = (
                 f"live worker timeout (pid={worker_pid}, running {elapsed}s, "
                 f"threshold={_STALE_THRESHOLD_SECONDS}s, commit_sha={commit_sha}) — "
                 f"investigate slow reconciler"
             )
+            stale_action = "critical_warn"
         else:
+            # 死进程孤儿：收割即自愈完成——status file 已改写为 stale，瞬时陈旧
+            # 由下轮 reconcile 覆盖（reconciler 幂等，按当前态重算）。此分支是
+            # 生产唯一触达路径，记 critical_warn 是语义倒置（"问题已自愈那一刻当
+            # 严重失败上报"），违反"告警 MUST 精确"与"永久系统必须全自动"。
+            # 降为 clean（自愈成功，对齐 RECONCILE-WORKER-BOOT 先例）：不进 banner，
+            # 且 _log_reconcile_results 的 SQL_AUTO_ACK_HEALED_BY_GATE 会自然 ack
+            # 该 gate 历史 critical_warn——补全 #ARCH-RECONCILER-ALERT-SELFHEAL-001
+            # Phase 1 遗漏的自愈闭环。
             detail = (
-                f"orphaned worker detected (dead pid={worker_pid}, died {elapsed}s ago, "
-                f"threshold={_STALE_THRESHOLD_SECONDS}s, commit_sha={commit_sha}) — "
-                f"no active threat, status file cleaned"
+                f"self-heal: orphaned worker reaped (dead pid={worker_pid}, "
+                f"died {elapsed}s ago, threshold={_STALE_THRESHOLD_SECONDS}s, "
+                f"commit_sha={commit_sha}) — status file cleaned, no active threat; "
+                f"transient artifact staleness covered by next reconcile cycle"
             )
+            stale_action = "clean"
         _log_reconcile_results(
             project_root,
             [ReconcileResult(
-                action="critical_warn",
+                action=stale_action,
                 detail=detail,
                 gate_id="RECONCILE-WORKER-STALE",
             )],
