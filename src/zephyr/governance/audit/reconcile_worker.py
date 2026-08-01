@@ -165,6 +165,52 @@ def _write_boot_success_clean(
     except Exception:  # noqa: BLE001 — 自愈写入失败不阻断 worker 主流程
         pass
 
+def _write_stale_healed_clean(
+    project_root: str,
+    commit_sha: str,
+    session_id: str,
+    started_at: int,
+) -> None:
+    """worker 到达终态（done/failed）且运行超阈值 → 写 RECONCILE-WORKER-STALE clean（自愈）。
+
+    #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001 治本（2026-08-01）：
+    补全 RECONCILE-WORKER-STALE gate 的配对 clean 写入器（对齐 _write_boot_success_clean
+    先例）。sweep 在 worker 超阈值运行时记 live-timeout critical_warn（真 active threat）；
+    worker 到达终态后 stuck 条件结束——写 clean 使 SQL_AUTO_ACK_HEALED_BY_GATE 自然 ack
+    历史 critical_warn，补全告警生命周期对称性（死孤儿 clean 由 sweep 收割时写，本函数
+    补 worker 自然终态的 clean——两条 clean 路径覆盖 worker 生命周期的两种结束方式）。
+
+    仅当 worker 实际运行超阈值时写——快 worker 不触发 live-timeout，无需 clean
+    （避免每 commit 写一条噪音 clean）。幂等：多次写多条 clean 无副作用。
+    """
+    try:
+        # 复用 reconcile_runner 阈值真源（同包私有常量，对齐 reconciler_health_gate
+        # 跨模块复用 _check_recent_blocks 的先例，不复制阈值避免双真源漂移）。
+        from zephyr.governance.audit.reconcile_runner import _STALE_THRESHOLD_SECONDS
+        elapsed = int(time.time()) - started_at
+        if elapsed <= _STALE_THRESHOLD_SECONDS:
+            return  # 未超阈值，sweep 不会写 live-timeout critical_warn，无需自愈
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconcileResult,
+            _log_reconcile_results,
+        )
+        _log_reconcile_results(
+            project_root,
+            [ReconcileResult(
+                action="clean",
+                detail=(
+                    f"reconcile_worker reached terminal state after {elapsed}s "
+                    f"(>threshold {_STALE_THRESHOLD_SECONDS}s, commit={commit_sha}) "
+                    f"— auto-selfheal of prior RECONCILE-WORKER-STALE live-timeout critical_warn"
+                ),
+                gate_id="RECONCILE-WORKER-STALE",
+            )],
+            session_id or "unknown",
+            trigger_source="post_commit_async_stale_healed",
+        )
+    except Exception:  # noqa: BLE001 — 自愈写入失败不阻断 worker 主流程
+        pass
+
 def _register_worker_session(project_root: str, commit_sha: str) -> str:
     """Register worker as a logical session in SessionRegistry.
 

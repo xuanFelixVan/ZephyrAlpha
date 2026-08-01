@@ -8452,9 +8452,9 @@ entries:
        （自愈成功语义，对齐 RECONCILE-WORKER-BOOT 先例）。不进 critical_warn banner，
        且 _log_reconcile_results 的 SQL_AUTO_ACK_HEALED_BY_GATE 会自然 ack 该 gate
        历史 critical_warn——补全自愈闭环。
-    2. 活进程超时分支保留 critical_warn（防御性，语义正确——真 active threat）；
-       本次不动该分支，仅补注释说明触达条件。活进程超时上报补齐见战略项
-       （待立项，未编号——避免 grep-and-claim 占位，待决定后补登 #ARCH-NNN）。
+    2. 活进程超时分支保留 critical_warn（语义正确——真 active threat）；本次不动该分支
+       逻辑，仅补注释说明触达条件。活进程超时上报补齐已立项为
+       #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001（激活检测路径 + 配对 clean 自愈闭环）。
     3. 一次性历史回填：对 DB 中既存（修前代码写入、无配对 clean）的
        RECONCILE-WORKER-STALE critical_warn 做一次性 ack 迁移。
 
@@ -8462,7 +8462,7 @@ entries:
     - 不引入新 action 级别（如 info/self_healed）——clean 已有 BOOT 先例，过度工程
     - 不加 ack CLI——应通过自愈闭环消除 ack 需求而非制度化手动操作
     - 不重构 _log_stale_to_db 函数名——语义仍成立
-    - 不补活进程超时上报——单独裁定（战略项）
+    - 不补活进程超时上报——已单独裁定 #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001
   impact:
     - 'src/zephyr/governance/audit/reconcile_runner.py（_log_stale_to_db 死孤儿分支 action critical_warn→clean + docstring）'
     - 'tests/governance/audit/test_reconcile_async.py（新增死孤儿→clean 断言测试）'
@@ -8474,8 +8474,80 @@ entries:
       3. 一次性 ack 历史 RECONCILE-WORKER-STALE critical_warn
       4. 新增测试：死孤儿 sweep → DB action=clean，不进 _check_recent_critical_warns
   status: proposed
-  related_adjudication: '#ARCH-RECONCILE-WORKER-HEARTBEAT-001 (观测+清扫基础，本裁定修正其"落 DB"的严重度选择), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (告警自愈对称，本裁定补全其 Phase 1 对 STALE 的遗漏), #ARCH-PRE-EXISTING-DEBT-001 (stale 持久化到 DB 的 mandate), #ARCH-DEPGRAPH-RECONCILER-FAILSILENT (critical_warn 梯队定义)'
+  related_adjudication: '#ARCH-RECONCILE-WORKER-HEARTBEAT-001 (观测+清扫基础，本裁定修正其"落 DB"的严重度选择), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (告警自愈对称，本裁定补全其 Phase 1 对 STALE 的遗漏), #ARCH-PRE-EXISTING-DEBT-001 (stale 持久化到 DB 的 mandate), #ARCH-DEPGRAPH-RECONCILER-FAILSILENT (critical_warn 梯队定义), #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001 (活进程超时上报补齐——本裁定 #2 战略项的正式立项)'
   related_rules: '铁律: 永久系统必须全自动, trae_077 (告警 MUST 精确——只在真正违规时触发), AGENTS.md 第 6 层可预防性'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'
+# --- #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001: 活进程超时上报补齐（激活检测路径 + 配对 clean 自愈闭环） ---
+- issue_id: '#ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001'
+  title: 'RECONCILE-WORKER-STALE 活进程超时上报补齐——活进程超时分支防御性死代码永不触达（真 active threat 从不告警，fail-silent）'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    根因（第一性原理分析）：
+    _log_stale_to_db 活进程超时分支（worker_pid 存活 + 超阈值 → critical_warn）是
+    防御性死代码——两调用方（read_status_file L236 / sweep_stale_workers L396）均
+    gate on `not _is_pid_alive(worker_pid)` 才调本函数，活进程分支永不触达。后果：
+    真正卡死/慢的 worker（live active threat——如死循环 reconciler、IO 阻塞、死锁）
+    从不告警，违反"fail-silent 是最危险失败模式——失败不可见，下次 commit 照常开工"
+    （#ARCH-DEPGRAPH-RECONCILER-FAILSILENT 同源铁理）。#ARCH-RECONCILE-WORKER-STALE-
+    SEVERITY-001 裁定 #2 明确将此列为战略项待立项，本裁定即该战略项的正式落地。
+
+    与 STALE-SEVERITY-001 的边界：
+    STALE-SEVERITY-001 治"死孤儿误记 critical_warn"（语义倒置，降为 clean）；
+    本裁定治"活进程超时不告警"（fail-silent，激活 critical_warn）。两者互补——
+    死孤儿=已自愈（clean），活进程=真威胁（critical_warn），严重度按 PID 存活
+    分裂，由 _log_stale_to_db 内 if _is_pid_alive 分支实现。
+
+    裁定（3 条）：
+    1. 激活检测路径（打通调用，不改分支逻辑）：
+       - sweep_stale_workers：对 live-over-threshold worker 调 _log_stale_to_db
+         （命中活进程分支→critical_warn）后 continue，不改写 status file
+         （不破坏运行中 worker——原 continue 的"误判会破坏"顾虑仅针对改写文件，
+         纯落 DB 读取不影响 worker）。
+       - read_status_file：对 live-over-threshold 同样调 _log_stale_to_db，不标记
+         stale（worker 仍在运行）。defense in depth——sweep 在 commit 时检测，
+         read_status_file 在 AI 查询时检测。
+    2. dedup 分裂（治本自愈闭环断裂）：
+       _stale_logged 单 set → _stale_live_logged + _stale_dead_logged 双 set。
+       原因：同一 sha 生命周期可先 live-timeout（critical_warn）后 dead-orphan
+       （clean）或 worker 终态 completion（clean）。单 set 会使后者被前者去重
+       跳过，断裂自愈闭环（critical_warn 永无配对 clean）。双 set 允许同一 sha
+       各记一次 critical_warn + clean，配对自愈。dedup 仍防"同一 stuck worker
+       每 commit 重复 critical_warn"（告警疲劳）。
+    3. 配对 clean 写入器（对齐 BOOT 先例 _write_boot_success_clean）：
+       reconcile_worker 到达终态（done/failed）且运行时长超阈值时，写
+       RECONCILE-WORKER-STALE clean（_write_stale_healed_clean）。仅超阈值时
+       写——快 worker 不触发 live-timeout，无需 clean（避免每 commit 噪音）。
+       SQL_AUTO_ACK_HEALED_BY_GATE 自然 ack 该 gate 历史 live-timeout critical_warn，
+       补全告警生命周期对称性（STALE-SEVERITY-001 补的是死孤儿 clean，本裁定补的是
+       终态 clean——两条 clean 路径覆盖 worker 生命周期的两种结束方式）。
+
+    不实施项：
+    - 不改活进程分支严重度（critical_warn 正确——真 active threat，与死孤儿 clean 区分）
+    - 不引入 per-sha ack（SQL_AUTO_ACK_HEALED_BY_GATE 是 gate_id 级，对齐 BOOT 先例）
+    - 不改 sweep 返回值 swept 语义（仍只计 dead-orphan reaped，live 检测是 side-effect）
+    - 不引入时间窗口去重/重报（per-sha 一次性 dedup 已够；24h 查询窗口自然老化）
+
+    已知限制（君子协定，不阻断）：
+    - gate_id 级 ack 跨 sha：若 worker A live-timeout（critical_warn）后 worker B
+      （不同 sha）写 clean（dead-orphan 或终态），会 ack A 的 critical_warn（B 的 clean
+      不改变 A 仍卡死的事实）。但 MAX_CONCURRENT_WORKERS=2 且 live-timeout 罕见
+      （需 >30min），两 worker 同时超阈值概率极低；A 仍卡死的状态可经 query_reconcile_status
+      （status=running, elapsed 大）观测。对齐 BOOT 同样 gate_id 级 ack 语义，不过度工程。
+  impact:
+    - 'src/zephyr/governance/audit/reconcile_runner.py（_stale_logged 拆双 set + read_status_file/sweep_stale_workers 激活 live 检测 + 注释更新）'
+    - 'src/zephyr/governance/audit/reconcile_worker.py（新增 _write_stale_healed_clean + 终态调用点）'
+    - 'tests/governance/audit/test_reconcile_async.py（新增 live-timeout→critical_warn + 终态自愈 ack 测试）'
+  fix_phase: |
+    治本（一次性完成）：
+      1. _log_stale_to_db dedup 拆 _stale_live_logged + _stale_dead_logged
+      2. read_status_file / sweep_stale_workers 激活 live-over-threshold 检测
+      3. reconcile_worker 新增 _write_stale_healed_clean（终态 + 超阈值时写 clean）
+      4. 新增测试：live worker 超阈值→critical_warn；worker 终态 clean→ack 自愈
+  status: proposed
+  related_adjudication: '#ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 (死孤儿严重度治本，本裁定是其 #2 战略项的正式立项), #ARCH-RECONCILE-WORKER-HEARTBEAT-001 (心跳+PID 存活探测基础，本裁定复用其 _is_pid_alive + sweep 框架), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (告警自愈对称，本裁定补全 STALE gate 的配对 clean 写入器), #ARCH-DEPGRAPH-RECONCILER-FAILSILENT (fail-silent 铁理，本裁定消除活进程超时的 fail-silent)'
+  related_rules: '铁律: 永久系统必须全自动, fail-silent 最危险失败模式, trae_077 (告警 MUST 精确——真 active threat 才 critical_warn), 告警生命周期对称性'
   created: '2026-08-01'
   last_updated: '2026-08-01'
 - issue_id: '#ARCH-TSV-SOT-001'

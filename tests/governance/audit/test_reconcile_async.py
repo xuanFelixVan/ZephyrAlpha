@@ -779,6 +779,139 @@ class TestSweepStaleWorkers:
         assert data is not None
         assert data["status"] == STATUS_RUNNING  # 未改写
 
+    def test_live_timeout_logs_critical_warn(self, tmp_repo):
+        """#ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001：活进程超时记 critical_warn（真 active threat），
+        不记 clean，不标记 stale（worker 仍在运行）——激活原防御性死代码分支。
+        """
+        import sqlite3
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            read_status_file,
+            sweep_stale_workers,
+            write_status_file,
+        )
+        from zephyr.governance.audit.reconciliation_registry import (
+            _check_recent_critical_warns,
+            _governance_db_path,
+        )
+
+        (tmp_repo / "data" / "databases").mkdir(parents=True, exist_ok=True)
+        # 活进程超时：31min 前 started + 当前进程 PID（必存活）
+        old = int(time.time()) - 1860
+        write_status_file(
+            tmp_repo, "live_timeout_sha", STATUS_RUNNING,
+            session_id="sess-live-timeout", started_at=old, worker_pid=os.getpid(),
+        )
+        n = sweep_stale_workers(tmp_repo)
+        # live worker 不改写 status file → swept=0（swept 只计 dead-orphan reaped）
+        assert n == 0
+
+        # DB 行应为 critical_warn（真 active threat），非 clean
+        db_path = _governance_db_path(tmp_repo)
+        conn = sqlite3.connect(db_path, timeout=10.0)
+        try:
+            cur = conn.execute(
+                "SELECT action, gate_id, detail FROM reconcile_execution_log "
+                "WHERE gate_id='RECONCILE-WORKER-STALE' ORDER BY logged_at DESC LIMIT 1"
+            )
+            row = cur.fetchone()
+        finally:
+            conn.close()
+        assert row is not None, "sweep 应写一条 RECONCILE-WORKER-STALE DB 记录"
+        action, gate_id, detail = row
+        assert action == "critical_warn", (
+            f"活进程超时应记 critical_warn（真 active threat），实际 action={action}——"
+            f"#ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001 检测路径未激活"
+        )
+        assert gate_id == "RECONCILE-WORKER-STALE"
+        assert "live worker timeout" in detail
+
+        # 活进程不标记 stale（worker 仍在运行）——status file 仍 running
+        # （read_status_file 会再触发 _log_stale_to_db live 分支，但 dedup 跳过）
+        data = read_status_file(tmp_repo, "live_timeout_sha")
+        assert data is not None
+        assert data["status"] == STATUS_RUNNING, "活进程不应标记 stale"
+
+        # critical_warn 应进活跃告警查询（真活跃告警，无配对 clean）
+        warns = _check_recent_critical_warns(tmp_repo)
+        stale_warns = [w for w in warns if w["gate_id"] == "RECONCILE-WORKER-STALE"]
+        assert len(stale_warns) == 1, (
+            f"活进程超时 critical_warn 应为活跃告警，实际={stale_warns}"
+        )
+
+    def test_live_timeout_self_heals_on_completion(self, tmp_repo):
+        """#ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001：活进程超时 critical_warn + worker 终态 clean → 自愈 ack。
+
+        场景：worker 超阈值运行（sweep 记 critical_warn）→ worker 最终到达终态
+        （_write_stale_healed_clean 记 clean）→ SQL_AUTO_ACK_HEALED_BY_GATE ack 历史
+        critical_warn → 不再进活跃告警查询。补全告警生命周期对称性（对齐 BOOT 先例）。
+        """
+        import sqlite3
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            sweep_stale_workers,
+            write_status_file,
+        )
+        from zephyr.governance.audit.reconcile_worker import _write_stale_healed_clean
+        from zephyr.governance.audit.reconciliation_registry import (
+            _check_recent_critical_warns,
+            _governance_db_path,
+        )
+
+        (tmp_repo / "data" / "databases").mkdir(parents=True, exist_ok=True)
+        old = int(time.time()) - 1860
+        write_status_file(
+            tmp_repo, "live_heal_sha", STATUS_RUNNING,
+            session_id="sess-heal", started_at=old, worker_pid=os.getpid(),
+        )
+        # 1. sweep 记 live-timeout critical_warn
+        sweep_stale_workers(tmp_repo)
+
+        db_path = _governance_db_path(tmp_repo)
+        conn = sqlite3.connect(db_path, timeout=10.0)
+        try:
+            cur = conn.execute(
+                "SELECT COUNT(*) FROM reconcile_execution_log "
+                "WHERE gate_id='RECONCILE-WORKER-STALE' AND action='critical_warn' "
+                "AND acknowledged_at IS NULL"
+            )
+            unacked_before = cur.fetchone()[0]
+        finally:
+            conn.close()
+        assert unacked_before == 1, (
+            f"应有 1 条未 ack 的 live-timeout critical_warn，实际={unacked_before}"
+        )
+
+        # 2. worker 到达终态（超阈值）→ _write_stale_healed_clean 写 clean + auto-ack
+        _write_stale_healed_clean(tmp_repo, "live_heal_sha", "sess-heal", old)
+
+        conn = sqlite3.connect(db_path, timeout=10.0)
+        try:
+            cur = conn.execute(
+                "SELECT COUNT(*) FROM reconcile_execution_log "
+                "WHERE gate_id='RECONCILE-WORKER-STALE' AND action='clean'"
+            )
+            clean_count = cur.fetchone()[0]
+            cur = conn.execute(
+                "SELECT COUNT(*) FROM reconcile_execution_log "
+                "WHERE gate_id='RECONCILE-WORKER-STALE' AND action='critical_warn' "
+                "AND acknowledged_at IS NULL"
+            )
+            unacked_after = cur.fetchone()[0]
+        finally:
+            conn.close()
+        assert clean_count >= 1, "终态 clean 应已写入"
+        assert unacked_after == 0, (
+            f"critical_warn 应被 SQL_AUTO_ACK_HEALED_BY_GATE auto-ack，仍剩 {unacked_after} 条未 ack"
+        )
+
+        # 3. 活跃告警查询应不含 STALE（自愈完成）
+        warns = _check_recent_critical_warns(tmp_repo)
+        stale_warns = [w for w in warns if w["gate_id"] == "RECONCILE-WORKER-STALE"]
+        assert not stale_warns, (
+            f"终态 clean 后 STALE 不应进活跃告警，实际={stale_warns}"
+        )
+
     def test_does_not_sweep_fresh_running(self, tmp_repo):
         """running 未超阈值 → 不 sweep。"""
         from zephyr.governance.audit.reconcile_runner import (

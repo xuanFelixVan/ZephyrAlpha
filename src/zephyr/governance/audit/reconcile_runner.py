@@ -225,22 +225,34 @@ def read_status_file(project_root: Path | str, commit_sha: str) -> ReconcileStat
     # 僵尸判定
     if data.get("status") == STATUS_RUNNING:
         # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
-        # 优先看心跳（更精确），无心跳回退看 started_at；超阈值时先探测进程存活——
+        # 优先看心跳（更精确），无心跳回退看 started_at；超阈值时探测进程存活——
         # live worker（如慢 reconciler 重建 72 域文档需 9 分钟）不算 stale，
         # 与 sweep_stale_workers 判定逻辑一致。无 worker_pid 或进程已死才标 stale。
+        # #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001 治本（2026-08-01）：
+        # live-over-threshold（PID 存活）虽不标 stale（worker 仍在运行），但落 DB
+        # 记 critical_warn（真 active threat）——原此处静默放行是 fail-silent。
         heartbeat_at = data.get("last_heartbeat_at", 0)
         started = data.get("started_at", 0)
         reference_time = heartbeat_at or started
         if reference_time and (int(time.time()) - reference_time > _STALE_THRESHOLD_SECONDS):
             worker_pid = data.get("worker_pid", 0)
-            if not (worker_pid and _is_pid_alive(worker_pid)):
+            if worker_pid and _is_pid_alive(worker_pid):
+                # 活进程超时：不标记 stale（worker 仍在运行），落 DB 记 critical_warn
+                _log_stale_to_db(project_root, commit_sha, started, data)
+            else:
+                # 死孤儿：标记 stale + 落 DB（clean 自愈）
                 data["status"] = STATUS_STALE
                 _log_stale_to_db(project_root, commit_sha, started, data)
     return data  # type: ignore[return-value]
 
 
 # 已记录到 DB 的 stale commit_sha 集合（内存去重，进程级）
-_stale_logged: set[str] = set()
+# #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001 治本（2026-08-01）：
+# dedup 按 action 分裂——同一 sha 生命周期可先 live-timeout（critical_warn）后
+# dead-orphan/终态（clean），单 set 会使 clean 被 critical_warn 去重跳过，断裂
+# 自愈闭环。双 set 允许同一 sha 各记一次 critical_warn + clean，配对自愈。
+_stale_live_logged: set[str] = set()   # 活进程超时 critical_warn 去重
+_stale_dead_logged: set[str] = set()   # 死孤儿 clean 去重
 
 
 def _log_stale_to_db(
@@ -249,23 +261,23 @@ def _log_stale_to_db(
     started_at: int,
     status_data: dict,
 ) -> None:
-    """持久化 stale 状态到 reconcile_execution_log 表（幂等，每个 commit_sha 只记录一次）。
+    """持久化 stale 状态到 reconcile_execution_log 表（幂等，按 action 各记一次）。
 
     #ARCH-PRE-EXISTING-DEBT-001 治本（2026-07-20）：
     之前 stale 状态只在 read_status_file 返回值中标记，不写 DB，AI 查询
     reconcile_execution_log 表看不到 stale 事件，违反持久化铁律。
 
     #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 治本（2026-08-01）：
-    严重度按 PID 存活分裂——死孤儿（生产唯一触达路径）记 ``clean``（自愈成功，
-    不进 critical_warn banner），活进程超时（防御性，当前不触达）记
-    ``critical_warn``（真 active threat）。原理：RECONCILE-WORKER-STALE 是元门禁
-    （worker 存活度），其"检测"与"解决"是同一事件——内容 reconciler 的"先
-    critical_warn 后 clean 自愈"模型不适用。死孤儿收割即自愈完成，记 critical_warn
-    是语义倒置且无配对 clean 自愈（违反 #ARCH-RECONCILER-ALERT-SELFHEAL-001 对称性，
-    该裁定 Phase 1 只落地 RECONCILE-WORKER-BOOT，遗漏本 gate）。
+    严重度按 PID 存活分裂——死孤儿记 ``clean``（自愈成功，不进 critical_warn
+    banner），活进程超时记 ``critical_warn``（真 active threat）。
+
+    #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001 治本（2026-08-01）：
+    激活活进程超时检测路径——read_status_file / sweep_stale_workers 对 live-over-
+    threshold worker 调本函数（命中活进程分支→critical_warn），打通原防御性死代码。
+    dedup 拆双 set（_stale_live_logged / _stale_dead_logged）：同一 sha 可先
+    critical_warn（live）后 clean（dead-orphan 收割 / worker 终态 _write_stale_healed_clean），
+    单 set 会断自愈闭环。配对 clean 由 reconcile_worker 终态写入器补全（对齐 BOOT 先例）。
     """
-    if commit_sha in _stale_logged:
-        return
     try:
         from zephyr.governance.audit.reconciliation_registry import (
             ReconcileResult,
@@ -277,30 +289,36 @@ def _log_stale_to_db(
         # R1 治本（#ARCH-RECONCILE-WORKER-HEARTBEAT-001，2026-08-01）：
         # 区分死进程孤儿 vs 活进程超时，消除"running for {elapsed}s"误导——
         # 死进程不可能"running"，实际是"died {elapsed}s ago"。
-        # 两处调用方（read_status_file L236 / sweep_stale_workers L353）均已在
-        # 进程死亡后才调本函数，但防御性二次探测避免未来调用方变更引入误判。
-        # #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 治本（2026-08-01）：
-        # 严重度按 PID 存活分裂（详见函数 docstring）。
+        # #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 / -LIVE-TIMEOUT-001 治本：
+        # 严重度按 PID 存活分裂——活进程=真 active threat（critical_warn），
+        # 死孤儿=已自愈（clean）。两调用方（read_status_file / sweep_stale_workers）
+        # 均对 live-over-threshold + dead-orphan 两类调本函数（LIVE-TIMEOUT-001 激活）。
         if worker_pid and _is_pid_alive(worker_pid):
             # 活进程超时：真正的 active threat（慢/卡死 reconciler）。
-            # 此分支防御性不触达（两调用方仅 PID 已死才调本函数）；若未来补齐
-            # 活进程超时上报（见战略项，待立项未编号），
-            # critical_warn 是正确严重度——配对 clean 在 worker 最终完成时写。
+            # #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001 治本（2026-08-01）：
+            # 此分支原为防御性死代码（调用方仅 PID 已死才调），现激活——sweep/
+            # read_status_file 对 live-over-threshold worker 调本函数命中此分支。
+            # critical_warn 是正确严重度（真威胁）；配对 clean 在 worker 到达终态
+            # （done/failed）且超阈值时由 _write_stale_healed_clean 写入，自愈闭环。
+            if commit_sha in _stale_live_logged:
+                return
             detail = (
                 f"live worker timeout (pid={worker_pid}, running {elapsed}s, "
                 f"threshold={_STALE_THRESHOLD_SECONDS}s, commit_sha={commit_sha}) — "
                 f"investigate slow reconciler"
             )
             stale_action = "critical_warn"
+            dedup_set = _stale_live_logged
         else:
             # 死进程孤儿：收割即自愈完成——status file 已改写为 stale，瞬时陈旧
-            # 由下轮 reconcile 覆盖（reconciler 幂等，按当前态重算）。此分支是
-            # 生产唯一触达路径，记 critical_warn 是语义倒置（"问题已自愈那一刻当
-            # 严重失败上报"），违反"告警 MUST 精确"与"永久系统必须全自动"。
-            # 降为 clean（自愈成功，对齐 RECONCILE-WORKER-BOOT 先例）：不进 banner，
-            # 且 _log_reconcile_results 的 SQL_AUTO_ACK_HEALED_BY_GATE 会自然 ack
-            # 该 gate 历史 critical_warn——补全 #ARCH-RECONCILER-ALERT-SELFHEAL-001
-            # Phase 1 遗漏的自愈闭环。
+            # 由下轮 reconcile 覆盖（reconciler 幂等，按当前态重算）。
+            # #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 治本（2026-08-01）：
+            # 记 critical_warn 是语义倒置（"问题已自愈那一刻当严重失败上报"），
+            # 违反"告警 MUST 精确"与"永久系统必须全自动"。降为 clean（自愈成功，
+            # 对齐 RECONCILE-WORKER-BOOT 先例）：不进 banner，且 SQL_AUTO_ACK_HEALED_BY_GATE
+            # 会自然 ack 该 gate 历史 critical_warn——补全自愈闭环。
+            if commit_sha in _stale_dead_logged:
+                return
             detail = (
                 f"self-heal: orphaned worker reaped (dead pid={worker_pid}, "
                 f"died {elapsed}s ago, threshold={_STALE_THRESHOLD_SECONDS}s, "
@@ -308,6 +326,7 @@ def _log_stale_to_db(
                 f"transient artifact staleness covered by next reconcile cycle"
             )
             stale_action = "clean"
+            dedup_set = _stale_dead_logged
         _log_reconcile_results(
             project_root,
             [ReconcileResult(
@@ -318,7 +337,7 @@ def _log_stale_to_db(
             session_id,
             trigger_source="post_commit_async_stale",
         )
-        _stale_logged.add(commit_sha)
+        dedup_set.add(commit_sha)
     except Exception:  # noqa: BLE001 — DB 写入失败不影响 stale 判定
         pass
 
@@ -393,10 +412,16 @@ def sweep_stale_workers(project_root: Path | str) -> int:
             continue  # 未超阈值，跳过
         # 超阈值：探测进程是否存活
         worker_pid = data.get("worker_pid", 0)
-        if not worker_pid or _is_pid_alive(worker_pid):
-            continue  # 进程仍存活（慢 worker），不改写
-        # 进程已死 → 改写为 stale
         commit_sha = data.get("commit_sha", "")
+        if not worker_pid:
+            continue  # 无 PID，无法判定存活，跳过
+        if _is_pid_alive(worker_pid):
+            # #ARCH-RECONCILE-WORKER-LIVE-TIMEOUT-001 治本（2026-08-01）：
+            # 活进程超时：不改写 status file（不破坏运行中 worker），仅落 DB 记
+            # critical_warn（真 active threat）。原此处 continue 静默放行是 fail-silent。
+            _log_stale_to_db(project_root, commit_sha, started_at, data)
+            continue
+        # 进程已死 → 改写为 stale
         session_id = data.get("session_id", "")
         existing_errors = list(data.get("errors", []))
         existing_errors.append(
