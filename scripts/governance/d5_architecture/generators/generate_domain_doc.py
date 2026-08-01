@@ -356,22 +356,50 @@ def _node_mermaid_label(n: dict) -> str:
         if candidate and candidate != name_zh and candidate != cn_name:
             cn_intro = candidate
             break
+    # __init__.py 特殊兜底：翻译注册表中 90 个 __init__.py 填了同样的通用描述
+    # （"数据的包入口，把这一层的子模块归到一起..."），用完整包路径区分各包
+    if path.endswith("__init__.py") and cn_intro and "包入口" in cn_intro and "统一管理" in cn_intro:
+        pkg_parent = Path(path).parent
+        pkg_parts = pkg_parent.parts
+        pkg_short = "/".join(pkg_parts[-2:]) if len(pkg_parts) >= 2 else pkg_parent.name
+        cn_intro = f"{pkg_short} 包入口，管理该层子模块的统一加载和懒导入"
 
     gate_reason = (n.get("gate_reason") or "").strip()
     is_design = (n.get("design_maturity") or "") == "design"
 
+    # 去重辅助：候选与已显示内容完全相同，或候选是已显示内容的子串（候选更短/相等）
+    # 则跳过。候选更长（含额外信息）时不跳过——如 plain_zh="名字。功能描述" 比 name_zh 长。
+    # （翻译注册表 8314 条中大量 name_en/desc_zh/desc_en 填了同样的 docstring，
+    #  不去重会导致节点标签同一行内容重复 2-3 遍）
+    def _is_dup(candidate: str, shown: list[str]) -> bool:
+        c = candidate.lower().strip()
+        if not c:
+            return True
+        for s in shown:
+            sl = s.lower().strip()
+            if not sl:
+                continue
+            if c == sl or c in sl:
+                return True
+        return False
+
     parts: list[str] = []
+    shown: list[str] = []  # 已显示的文本（用于去重判断）
     # ── 中文部分（前面）──
     parts.append(cn_name)
-    if cn_intro:
+    shown.append(cn_name)
+    if cn_intro and not _is_dup(cn_intro, shown):
         parts.append(cn_intro)
+        shown.append(cn_intro)
     if gate_reason and is_design:
         parts.append(f"⛔ {gate_reason}")
-    # ── 英文部分（后面）──
-    if name_en:
+    # ── 英文部分（后面）——与已显示内容重复则跳过 ──
+    if name_en and not _is_dup(name_en, shown):
         parts.append(name_en)
-    if desc_en:
+        shown.append(name_en)
+    if desc_en and not _is_dup(desc_en, shown):
         parts.append(desc_en)
+        shown.append(desc_en)
     # ── 末尾：文件路径 + 成熟度（颜色已区分，放最后）──
     parts.append(f"文件: {short_name}")
     parts.append(f"({maturity})")
