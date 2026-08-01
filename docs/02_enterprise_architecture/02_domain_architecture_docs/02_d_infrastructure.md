@@ -56,27 +56,27 @@ flowchart TD
     scripts_backup_backup_reconciler_py["备份协调器<br/>灾备备份系统事件触发器（post-commit reconciler）<br/>backup_reconciler<br/>文件: backup/backup_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_config_init_py["infrastructure/config 包入口<br/>ZephyrAlpha — 基础设施 Infrastructure Layer —<br/>Configuration Management<br/>文件: config/__init__.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_capital_allocation_result_py["资本分配结果<br/>资本allocation结果，contracts的结果，封装操作结<br/>果的数据结构<br/>capital_allocation_result<br/>文件: contracts/capital_allocation_result.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_compliance_rule_py["合规规则<br/>contracts的核心类，封装ComplianceRule相关逻辑<br/>compliance_rule<br/>文件: contracts/compliance_rule.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_report_py["执行报告<br/>contracts的报告器，汇总数据生成报告<br/>execution_report<br/>文件: contracts/execution_report.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_experiment_result_py["实验结果<br/>contracts的结果，封装操作结果的数据结构<br/>experiment_result<br/>文件: contracts/experiment_result.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_factor_monitor_report_py["因子监控报告<br/>contracts的监控器，持续监视某项指标，异常时上报<br/>factor_monitor_report<br/>文件: contracts/factor_monitor_report.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_factor_signal_py["因子信号<br/>contracts的核心类，封装FactorSignal相关逻辑<br/>factor_signal<br/>文件: contracts/factor_signal.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_fill_py["成交<br/>contracts的核心类，封装成交相关逻辑<br/>fill<br/>文件: contracts/fill.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_macro_factor_signal_py["macro因子信号<br/>contracts的核心类，封装MacroFactorSignal相关逻辑<br/>macro_factor_signal<br/>文件: contracts/macro_factor_signal.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_market_data_py["市场数据<br/>contracts的核心类，封装NormalizedMarketData相关<br/>逻辑<br/>market_data<br/>文件: contracts/market_data.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_model_serving_request_py["模型服务请求<br/>contracts的模型，定义数据结构和字段<br/>model_serving_request<br/>文件: contracts/model_serving_request.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_model_serving_response_py["模型服务响应<br/>contracts的模型，定义数据结构和字段<br/>model_serving_response<br/>文件: contracts/model_serving_response.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_order_py["订单<br/>contracts的核心类，封装订单相关逻辑<br/>order<br/>文件: contracts/order.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_performance_attribution_report_py["绩效attribution报告<br/>contracts的报告器，汇总数据生成报告<br/>performance_attribution_report<br/>文件: contracts/performance_attribution_<br/>report.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_position_py["持仓<br/>contracts的核心类，封装PositionSnapshot相关逻辑<br/>文件: contracts/position.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_dashboard_snapshot_py["风险仪表盘快照<br/>contracts的核心类，封装RiskDashboardSnapshot相关<br/>逻辑<br/>risk_dashboard_snapshot<br/>文件: contracts/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_limits_py["风险limits<br/>contracts的核心类，封装RiskLimits相关逻辑<br/>risk_limits<br/>文件: contracts/risk_limits.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_metrics_py["风险指标<br/>contracts的报告器，汇总数据生成报告<br/>risk_metrics<br/>文件: contracts/risk_metrics.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_strategy_lifecycle_event_py["策略生命周期事件<br/>contracts的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: contracts/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_synthesized_signal_py["synthesized信号<br/>contracts的核心类，封装SynthesizedSignal相关逻辑<br/>synthesized_signal<br/>文件: contracts/synthesized_signal.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_system_configuration_py["系统配置<br/>contracts的配置，管理配置项的读取和校验<br/>system_configuration<br/>文件: contracts/system_configuration.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_compliance_rule_py["合规规则<br/>合规规则，contracts的核心类，封装ComplianceRule<br/>相关逻辑<br/>compliance_rule<br/>文件: contracts/compliance_rule.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_report_py["执行报告<br/>执行报告，contracts的报告器，汇总数据生成报告<br/>execution_report<br/>文件: contracts/execution_report.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_experiment_result_py["实验结果<br/>实验结果，contracts的结果，封装操作结果的数据结<br/>构<br/>experiment_result<br/>文件: contracts/experiment_result.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_factor_monitor_report_py["因子监控报告<br/>因子监控报告，contracts的监控器，持续监视某项指<br/>标，异常时上报<br/>factor_monitor_report<br/>文件: contracts/factor_monitor_report.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_factor_signal_py["因子信号<br/>因子信号，contracts的核心类，封装FactorSignal相<br/>关逻辑<br/>factor_signal<br/>文件: contracts/factor_signal.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_fill_py["成交<br/>成交，contracts的核心类，封装成交相关逻辑<br/>fill<br/>文件: contracts/fill.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_macro_factor_signal_py["macro因子信号<br/>macro因子信号，contracts的核心类，封装MacroFacto<br/>rSignal相关逻辑<br/>macro_factor_signal<br/>文件: contracts/macro_factor_signal.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_market_data_py["市场数据<br/>市场数据，contracts的核心类，封装NormalizedMarke<br/>tData相关逻辑<br/>market_data<br/>文件: contracts/market_data.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_model_serving_request_py["模型服务请求<br/>模型服务请求，contracts的模型，定义数据结构和字<br/>段<br/>model_serving_request<br/>文件: contracts/model_serving_request.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_model_serving_response_py["模型服务响应<br/>模型服务响应，contracts的模型，定义数据结构和字<br/>段<br/>model_serving_response<br/>文件: contracts/model_serving_response.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_order_py["订单<br/>订单，contracts的核心类，封装订单相关逻辑<br/>order<br/>文件: contracts/order.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_performance_attribution_report_py["绩效attribution报告<br/>绩效attribution报告，contracts的报告器，汇总数据<br/>生成报告<br/>performance_attribution_report<br/>文件: contracts/performance_attribution_<br/>report.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_position_py["持仓<br/>持仓，contracts的核心类，封装PositionSnapshot相<br/>关逻辑<br/>文件: contracts/position.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_dashboard_snapshot_py["风险仪表盘快照<br/>风险仪表盘快照，contracts的核心类，封装RiskDashb<br/>oardSnapshot相关逻辑<br/>risk_dashboard_snapshot<br/>文件: contracts/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_limits_py["风险limits<br/>风险limits，contracts的核心类，封装RiskLimits相<br/>关逻辑<br/>risk_limits<br/>文件: contracts/risk_limits.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_metrics_py["风险指标<br/>风险指标，contracts的报告器，汇总数据生成报告<br/>risk_metrics<br/>文件: contracts/risk_metrics.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_strategy_lifecycle_event_py["策略生命周期事件<br/>策略生命周期事件，contracts的事件，定义和分发事<br/>件<br/>strategy_lifecycle_event<br/>文件: contracts/strategy_lifecycle_event.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_synthesized_signal_py["synthesized信号<br/>synthesized信号，contracts的核心类，封装Synthesi<br/>zedSignal相关逻辑<br/>synthesized_signal<br/>文件: contracts/synthesized_signal.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_system_configuration_py["系统配置<br/>系统配置，contracts的配置，管理配置项的读取和校<br/>验<br/>system_configuration<br/>文件: contracts/system_configuration.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_telemetry_emitter_py["遥测发射器<br/>遥测emitter，contracts的核心类，封装TelemetryEmi<br/>tter相关逻辑<br/>telemetry_emitter<br/>文件: contracts/telemetry_emitter.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_trace_context_py["追踪上下文<br/>contracts的核心类，封装TraceContext相关逻辑<br/>trace_context<br/>文件: contracts/trace_context.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_trace_context_py["追踪上下文<br/>追踪上下文，contracts的核心类，封装TraceContext<br/>相关逻辑<br/>trace_context<br/>文件: contracts/trace_context.py<br/>(生产态 / production)"]
     scripts_backup_backup_reconciler_py ~~~ src_zephyr_infrastructure_config_init_py
     src_zephyr_infrastructure_config_init_py ~~~ src_zephyr_shared_contracts_capital_allocation_result_py
     src_zephyr_shared_contracts_capital_allocation_result_py ~~~ src_zephyr_shared_contracts_compliance_rule_py
@@ -100,7 +100,7 @@ flowchart TD
     src_zephyr_shared_contracts_synthesized_signal_py ~~~ src_zephyr_shared_contracts_system_configuration_py
     src_zephyr_shared_contracts_system_configuration_py ~~~ src_zephyr_shared_contracts_telemetry_emitter_py
     src_zephyr_shared_contracts_telemetry_emitter_py ~~~ src_zephyr_shared_contracts_trace_context_py
-    src_zephyr_infrastructure_config_app_config_py["应用配置<br/>数据类与加载/热重载逻辑<br/>app_config<br/>文件: config/app_config.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_config_app_config_py["应用配置<br/>应用配置数据类与加载/热重载逻辑<br/>app_config<br/>文件: config/app_config.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
@@ -156,27 +156,27 @@ flowchart TD
     scripts_backup_backup_reconciler_py["备份协调器<br/>灾备备份系统事件触发器（post-commit reconciler）<br/>backup_reconciler<br/>文件: backup/backup_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_config_init_py["infrastructure/config 包入口<br/>ZephyrAlpha — 基础设施 Infrastructure Layer —<br/>Configuration Management<br/>文件: config/__init__.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_capital_allocation_result_py["资本分配结果<br/>资本allocation结果，contracts的结果，封装操作结<br/>果的数据结构<br/>capital_allocation_result<br/>文件: contracts/capital_allocation_result.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_compliance_rule_py["合规规则<br/>contracts的核心类，封装ComplianceRule相关逻辑<br/>compliance_rule<br/>文件: contracts/compliance_rule.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_report_py["执行报告<br/>contracts的报告器，汇总数据生成报告<br/>execution_report<br/>文件: contracts/execution_report.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_experiment_result_py["实验结果<br/>contracts的结果，封装操作结果的数据结构<br/>experiment_result<br/>文件: contracts/experiment_result.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_factor_monitor_report_py["因子监控报告<br/>contracts的监控器，持续监视某项指标，异常时上报<br/>factor_monitor_report<br/>文件: contracts/factor_monitor_report.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_factor_signal_py["因子信号<br/>contracts的核心类，封装FactorSignal相关逻辑<br/>factor_signal<br/>文件: contracts/factor_signal.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_fill_py["成交<br/>contracts的核心类，封装成交相关逻辑<br/>fill<br/>文件: contracts/fill.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_macro_factor_signal_py["macro因子信号<br/>contracts的核心类，封装MacroFactorSignal相关逻辑<br/>macro_factor_signal<br/>文件: contracts/macro_factor_signal.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_market_data_py["市场数据<br/>contracts的核心类，封装NormalizedMarketData相关<br/>逻辑<br/>market_data<br/>文件: contracts/market_data.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_model_serving_request_py["模型服务请求<br/>contracts的模型，定义数据结构和字段<br/>model_serving_request<br/>文件: contracts/model_serving_request.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_model_serving_response_py["模型服务响应<br/>contracts的模型，定义数据结构和字段<br/>model_serving_response<br/>文件: contracts/model_serving_response.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_order_py["订单<br/>contracts的核心类，封装订单相关逻辑<br/>order<br/>文件: contracts/order.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_performance_attribution_report_py["绩效attribution报告<br/>contracts的报告器，汇总数据生成报告<br/>performance_attribution_report<br/>文件: contracts/performance_attribution_<br/>report.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_position_py["持仓<br/>contracts的核心类，封装PositionSnapshot相关逻辑<br/>文件: contracts/position.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_dashboard_snapshot_py["风险仪表盘快照<br/>contracts的核心类，封装RiskDashboardSnapshot相关<br/>逻辑<br/>risk_dashboard_snapshot<br/>文件: contracts/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_limits_py["风险limits<br/>contracts的核心类，封装RiskLimits相关逻辑<br/>risk_limits<br/>文件: contracts/risk_limits.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_metrics_py["风险指标<br/>contracts的报告器，汇总数据生成报告<br/>risk_metrics<br/>文件: contracts/risk_metrics.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_strategy_lifecycle_event_py["策略生命周期事件<br/>contracts的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: contracts/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_synthesized_signal_py["synthesized信号<br/>contracts的核心类，封装SynthesizedSignal相关逻辑<br/>synthesized_signal<br/>文件: contracts/synthesized_signal.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_system_configuration_py["系统配置<br/>contracts的配置，管理配置项的读取和校验<br/>system_configuration<br/>文件: contracts/system_configuration.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_compliance_rule_py["合规规则<br/>合规规则，contracts的核心类，封装ComplianceRule<br/>相关逻辑<br/>compliance_rule<br/>文件: contracts/compliance_rule.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_report_py["执行报告<br/>执行报告，contracts的报告器，汇总数据生成报告<br/>execution_report<br/>文件: contracts/execution_report.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_experiment_result_py["实验结果<br/>实验结果，contracts的结果，封装操作结果的数据结<br/>构<br/>experiment_result<br/>文件: contracts/experiment_result.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_factor_monitor_report_py["因子监控报告<br/>因子监控报告，contracts的监控器，持续监视某项指<br/>标，异常时上报<br/>factor_monitor_report<br/>文件: contracts/factor_monitor_report.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_factor_signal_py["因子信号<br/>因子信号，contracts的核心类，封装FactorSignal相<br/>关逻辑<br/>factor_signal<br/>文件: contracts/factor_signal.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_fill_py["成交<br/>成交，contracts的核心类，封装成交相关逻辑<br/>fill<br/>文件: contracts/fill.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_macro_factor_signal_py["macro因子信号<br/>macro因子信号，contracts的核心类，封装MacroFacto<br/>rSignal相关逻辑<br/>macro_factor_signal<br/>文件: contracts/macro_factor_signal.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_market_data_py["市场数据<br/>市场数据，contracts的核心类，封装NormalizedMarke<br/>tData相关逻辑<br/>market_data<br/>文件: contracts/market_data.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_model_serving_request_py["模型服务请求<br/>模型服务请求，contracts的模型，定义数据结构和字<br/>段<br/>model_serving_request<br/>文件: contracts/model_serving_request.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_model_serving_response_py["模型服务响应<br/>模型服务响应，contracts的模型，定义数据结构和字<br/>段<br/>model_serving_response<br/>文件: contracts/model_serving_response.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_order_py["订单<br/>订单，contracts的核心类，封装订单相关逻辑<br/>order<br/>文件: contracts/order.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_performance_attribution_report_py["绩效attribution报告<br/>绩效attribution报告，contracts的报告器，汇总数据<br/>生成报告<br/>performance_attribution_report<br/>文件: contracts/performance_attribution_<br/>report.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_position_py["持仓<br/>持仓，contracts的核心类，封装PositionSnapshot相<br/>关逻辑<br/>文件: contracts/position.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_dashboard_snapshot_py["风险仪表盘快照<br/>风险仪表盘快照，contracts的核心类，封装RiskDashb<br/>oardSnapshot相关逻辑<br/>risk_dashboard_snapshot<br/>文件: contracts/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_limits_py["风险limits<br/>风险limits，contracts的核心类，封装RiskLimits相<br/>关逻辑<br/>risk_limits<br/>文件: contracts/risk_limits.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_metrics_py["风险指标<br/>风险指标，contracts的报告器，汇总数据生成报告<br/>risk_metrics<br/>文件: contracts/risk_metrics.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_strategy_lifecycle_event_py["策略生命周期事件<br/>策略生命周期事件，contracts的事件，定义和分发事<br/>件<br/>strategy_lifecycle_event<br/>文件: contracts/strategy_lifecycle_event.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_synthesized_signal_py["synthesized信号<br/>synthesized信号，contracts的核心类，封装Synthesi<br/>zedSignal相关逻辑<br/>synthesized_signal<br/>文件: contracts/synthesized_signal.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_system_configuration_py["系统配置<br/>系统配置，contracts的配置，管理配置项的读取和校<br/>验<br/>system_configuration<br/>文件: contracts/system_configuration.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_telemetry_emitter_py["遥测发射器<br/>遥测emitter，contracts的核心类，封装TelemetryEmi<br/>tter相关逻辑<br/>telemetry_emitter<br/>文件: contracts/telemetry_emitter.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_trace_context_py["追踪上下文<br/>contracts的核心类，封装TraceContext相关逻辑<br/>trace_context<br/>文件: contracts/trace_context.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_trace_context_py["追踪上下文<br/>追踪上下文，contracts的核心类，封装TraceContext<br/>相关逻辑<br/>trace_context<br/>文件: contracts/trace_context.py<br/>(生产态 / production)"]
     scripts_backup_backup_reconciler_py ~~~ src_zephyr_infrastructure_config_init_py
     src_zephyr_infrastructure_config_init_py ~~~ src_zephyr_shared_contracts_capital_allocation_result_py
     src_zephyr_shared_contracts_capital_allocation_result_py ~~~ src_zephyr_shared_contracts_compliance_rule_py
@@ -200,7 +200,7 @@ flowchart TD
     src_zephyr_shared_contracts_synthesized_signal_py ~~~ src_zephyr_shared_contracts_system_configuration_py
     src_zephyr_shared_contracts_system_configuration_py ~~~ src_zephyr_shared_contracts_telemetry_emitter_py
     src_zephyr_shared_contracts_telemetry_emitter_py ~~~ src_zephyr_shared_contracts_trace_context_py
-    src_zephyr_infrastructure_config_app_config_py["应用配置<br/>数据类与加载/热重载逻辑<br/>app_config<br/>文件: config/app_config.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_config_app_config_py["应用配置<br/>应用配置数据类与加载/热重载逻辑<br/>app_config<br/>文件: config/app_config.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -274,7 +274,7 @@ flowchart TD
 | 36 | D_REPORTING 报告: 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
 | 37 | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 38 | D_RISK 风控: 风控管理器 / risk_manager (risk/risk_manager.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 39 | D_SHARED 共享服务: 金额精度异常 / performance_attribution_report (portfolio/... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
+| 39 | D_SHARED 共享服务: 绩效attribution报告 / performance_attribution_report (por... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
 | 40 | D_SIGQC 信号质量控制: 退化监控基类 / D_SIGQC — Signal Quality Degradation Moni... | → | synthesized信号 / synthesized_signal (contracts/synthesiz... | 导入依赖 / import_depends |
 | 41 | D_SIMULATION 仿真: 管线基类 / pipeline_base (simulation/pipeline_base.py) | → | 实验结果 / experiment_result (contracts/experiment_result... | 导入依赖 / import_depends |
 | 42 | D_TRADING 交易运营: 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |

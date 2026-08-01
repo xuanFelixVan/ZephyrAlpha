@@ -55,23 +55,23 @@ ttl: permanent
 flowchart TD
     src_zephyr_position_core_cash_manager_py["core/cash_manager<br/>Cash Manager — 资金管理器 (MOD-POS-006)<br/>文件: core/cash_manager.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_limit_enforcer_py["core/position_limit_enforcer<br/>Position Limit Enforcer — 限仓执行器<br/>(MOD-POS-010)<br/>文件: core/position_limit_enforcer.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>（sell_position_link.py）<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>文件: core/sell_position_link.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>卖出持仓链接（sell_position_link.py）<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>文件: core/sell_position_link.py<br/>(设计态 / design)"]
     src_zephyr_position_position_reconciler_py["持仓协调器<br/>Position Reconciler — v0.10.1 持仓对账:<br/>execution report+book<br/>record+counterparty三方对账<br/>position_reconciler<br/>文件: position/position_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_position_services_position_audit_logger_py["持仓审计日志器<br/>持仓的日志器，记录运行日志<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_audit_logger<br/>文件: services/position_audit_logger.py<br/>(设计态 / design)"]
+    src_zephyr_position_services_position_audit_logger_py["持仓审计日志器<br/>持仓审计日志器，持仓的日志器，记录运行日志<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_audit_logger<br/>文件: services/position_audit_logger.py<br/>(设计态 / design)"]
     src_zephyr_position_core_cash_manager_py ~~~ src_zephyr_position_core_position_limit_enforcer_py
     src_zephyr_position_core_position_limit_enforcer_py ~~~ src_zephyr_position_core_sell_position_link_py
     src_zephyr_position_core_sell_position_link_py ~~~ src_zephyr_position_position_reconciler_py
     src_zephyr_position_position_reconciler_py ~~~ src_zephyr_position_services_position_audit_logger_py
-    src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>持仓的引擎，执行核心逻辑的处理引擎<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>rebalance_engine<br/>文件: core/rebalance_engine.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_drift_monitor_py["持仓漂移监控<br/>持仓的监控器，持续监视某项指标，异常时上报<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_drift_monitor<br/>文件: core/position_drift_monitor.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_state_machine_py["持仓状态machine<br/>持仓的状态机，管理状态流转<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_state_machine<br/>文件: core/position_state_machine.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_sizing_engine_py["持仓sizing引擎<br/>持仓的引擎，执行核心逻辑的处理引擎<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_sizing_engine<br/>文件: core/position_sizing_engine.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>rebalance引擎，持仓的引擎，执行核心逻辑的处理引<br/>擎<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>rebalance_engine<br/>文件: core/rebalance_engine.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_drift_monitor_py["持仓漂移监控<br/>持仓漂移监控，持仓的监控器，持续监视某项指标，异<br/>常时上报<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_drift_monitor<br/>文件: core/position_drift_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_state_machine_py["持仓状态machine<br/>持仓状态machine，持仓的状态机，管理状态流转<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_state_machine<br/>文件: core/position_state_machine.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_sizing_engine_py["持仓sizing引擎<br/>持仓sizing引擎，持仓的引擎，执行核心逻辑的处理引<br/>擎<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_sizing_engine<br/>文件: core/position_sizing_engine.py<br/>(设计态 / design)"]
     src_zephyr_position_core_calendar_position_constraint_py["日历持仓约束<br/>calendar持仓constraint，持仓的常量，定义模块级常<br/>量<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>calendar_position_constraint<br/>文件: core/calendar_position_constraint.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_capital_curve_manager_py["资本curve管理器<br/>持仓的管理器，统一管理一类资源的生命周期<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>capital_curve_manager<br/>文件: core/capital_curve_manager.py<br/>(设计态 / design)"]
-    src_zephyr_position_services_cash_manager_py["cash管理器<br/>持仓的管理器，统一管理一类资源的生命周期<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>cash_manager<br/>文件: services/cash_manager.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_capital_curve_manager_py["资本curve管理器<br/>资本curve管理器，持仓的管理器，统一管理一类资源<br/>的生命周期<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>capital_curve_manager<br/>文件: core/capital_curve_manager.py<br/>(设计态 / design)"]
+    src_zephyr_position_services_cash_manager_py["cash管理器<br/>cash管理器，持仓的管理器，统一管理一类资源的生命<br/>周期<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>cash_manager<br/>文件: services/cash_manager.py<br/>(设计态 / design)"]
     src_zephyr_position_core_calendar_position_constraint_py ~~~ src_zephyr_position_core_capital_curve_manager_py
     src_zephyr_position_core_capital_curve_manager_py ~~~ src_zephyr_position_services_cash_manager_py
-    src_zephyr_position_core_drawdown_controller_py["回撤控制器<br/>持仓的控制器，协调各组件按流程执行<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>drawdown_controller<br/>文件: core/drawdown_controller.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_drawdown_controller_py["回撤控制器<br/>回撤控制器，持仓的控制器，协调各组件按流程执行<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>drawdown_controller<br/>文件: core/drawdown_controller.py<br/>(设计态 / design)"]
     src_zephyr_position_core_position_sizing_engine_py -.->|runtime / runtime| src_zephyr_position_services_cash_manager_py
     src_zephyr_position_core_position_sizing_engine_py -.->|runtime / runtime| src_zephyr_position_core_capital_curve_manager_py
     src_zephyr_position_core_position_sizing_engine_py -.->|runtime / runtime| src_zephyr_position_core_calendar_position_constraint_py
@@ -126,20 +126,20 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_position_core_position_limit_enforcer_py["core/position_limit_enforcer<br/>Position Limit Enforcer — 限仓执行器<br/>(MOD-POS-010)<br/>文件: core/position_limit_enforcer.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>（sell_position_link.py）<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>文件: core/sell_position_link.py<br/>(设计态 / design)"]
-    src_zephyr_position_services_position_audit_logger_py["持仓审计日志器<br/>持仓的日志器，记录运行日志<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_audit_logger<br/>文件: services/position_audit_logger.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>卖出持仓链接（sell_position_link.py）<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>文件: core/sell_position_link.py<br/>(设计态 / design)"]
+    src_zephyr_position_services_position_audit_logger_py["持仓审计日志器<br/>持仓审计日志器，持仓的日志器，记录运行日志<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_audit_logger<br/>文件: services/position_audit_logger.py<br/>(设计态 / design)"]
     src_zephyr_position_core_position_limit_enforcer_py ~~~ src_zephyr_position_core_sell_position_link_py
     src_zephyr_position_core_sell_position_link_py ~~~ src_zephyr_position_services_position_audit_logger_py
-    src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>持仓的引擎，执行核心逻辑的处理引擎<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>rebalance_engine<br/>文件: core/rebalance_engine.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_drift_monitor_py["持仓漂移监控<br/>持仓的监控器，持续监视某项指标，异常时上报<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_drift_monitor<br/>文件: core/position_drift_monitor.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_state_machine_py["持仓状态machine<br/>持仓的状态机，管理状态流转<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_state_machine<br/>文件: core/position_state_machine.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_sizing_engine_py["持仓sizing引擎<br/>持仓的引擎，执行核心逻辑的处理引擎<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_sizing_engine<br/>文件: core/position_sizing_engine.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>rebalance引擎，持仓的引擎，执行核心逻辑的处理引<br/>擎<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>rebalance_engine<br/>文件: core/rebalance_engine.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_drift_monitor_py["持仓漂移监控<br/>持仓漂移监控，持仓的监控器，持续监视某项指标，异<br/>常时上报<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_drift_monitor<br/>文件: core/position_drift_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_state_machine_py["持仓状态machine<br/>持仓状态machine，持仓的状态机，管理状态流转<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_state_machine<br/>文件: core/position_state_machine.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_sizing_engine_py["持仓sizing引擎<br/>持仓sizing引擎，持仓的引擎，执行核心逻辑的处理引<br/>擎<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_sizing_engine<br/>文件: core/position_sizing_engine.py<br/>(设计态 / design)"]
     src_zephyr_position_core_calendar_position_constraint_py["日历持仓约束<br/>calendar持仓constraint，持仓的常量，定义模块级常<br/>量<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>calendar_position_constraint<br/>文件: core/calendar_position_constraint.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_capital_curve_manager_py["资本curve管理器<br/>持仓的管理器，统一管理一类资源的生命周期<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>capital_curve_manager<br/>文件: core/capital_curve_manager.py<br/>(设计态 / design)"]
-    src_zephyr_position_services_cash_manager_py["cash管理器<br/>持仓的管理器，统一管理一类资源的生命周期<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>cash_manager<br/>文件: services/cash_manager.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_capital_curve_manager_py["资本curve管理器<br/>资本curve管理器，持仓的管理器，统一管理一类资源<br/>的生命周期<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>capital_curve_manager<br/>文件: core/capital_curve_manager.py<br/>(设计态 / design)"]
+    src_zephyr_position_services_cash_manager_py["cash管理器<br/>cash管理器，持仓的管理器，统一管理一类资源的生命<br/>周期<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>cash_manager<br/>文件: services/cash_manager.py<br/>(设计态 / design)"]
     src_zephyr_position_core_calendar_position_constraint_py ~~~ src_zephyr_position_core_capital_curve_manager_py
     src_zephyr_position_core_capital_curve_manager_py ~~~ src_zephyr_position_services_cash_manager_py
-    src_zephyr_position_core_drawdown_controller_py["回撤控制器<br/>持仓的控制器，协调各组件按流程执行<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>drawdown_controller<br/>文件: core/drawdown_controller.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_drawdown_controller_py["回撤控制器<br/>回撤控制器，持仓的控制器，协调各组件按流程执行<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>drawdown_controller<br/>文件: core/drawdown_controller.py<br/>(设计态 / design)"]
     src_zephyr_position_core_position_sizing_engine_py -.->|runtime / runtime| src_zephyr_position_services_cash_manager_py
     src_zephyr_position_core_position_sizing_engine_py -.->|runtime / runtime| src_zephyr_position_core_capital_curve_manager_py
     src_zephyr_position_core_position_sizing_engine_py -.->|runtime / runtime| src_zephyr_position_core_calendar_position_constraint_py

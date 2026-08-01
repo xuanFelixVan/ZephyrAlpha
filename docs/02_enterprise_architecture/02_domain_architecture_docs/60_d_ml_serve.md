@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ml_serve_init_py["zephyr/ml_serve 包入口<br/>机器学习的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: ml_serve/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_extensions_init_py["ml_serve/_extensions 包入口<br/>机器学习的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_api_init_py["ml_serve/api 包入口<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_core_init_py["ml_serve/core 包入口<br/>机器学习的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_infrastructure_init_py["ml_serve/infrastructure 包入口<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_models_init_py["ml_serve/models 包入口<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_services_init_py["ml_serve/services 包入口<br/>机器学习的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_init_py["zephyr/ml_serve 包入口<br/>机器学习服务域包入口，归集子模块按需懒加载<br/>文件: ml_serve/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_extensions_init_py["ml_serve/_extensions 包入口<br/>机器学习服务域扩展层包入口，归集该层子模块按需懒<br/>加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_api_init_py["ml_serve/api 包入口<br/>机器学习服务域API接口层包入口，归集该层子模块按<br/>需懒加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_core_init_py["ml_serve/core 包入口<br/>机器学习服务域核心层包入口，归集该层子模块按需懒<br/>加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_infrastructure_init_py["ml_serve/infrastructure 包入口<br/>机器学习服务域基础设施层包入口，归集该层子模块按<br/>需懒加载<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_models_init_py["ml_serve/models 包入口<br/>机器学习服务域模型层包入口，归集该层子模块按需懒<br/>加载<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_services_init_py["ml_serve/services 包入口<br/>机器学习服务域服务层包入口，归集该层子模块按需懒<br/>加载<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ml_serve_init_py ~~~ src_zephyr_ml_serve_extensions_init_py
     src_zephyr_ml_serve_extensions_init_py ~~~ src_zephyr_ml_serve_api_init_py
     src_zephyr_ml_serve_api_init_py ~~~ src_zephyr_ml_serve_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ml_serve_init_py["zephyr/ml_serve 包入口<br/>机器学习的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: ml_serve/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_extensions_init_py["ml_serve/_extensions 包入口<br/>机器学习的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_api_init_py["ml_serve/api 包入口<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_core_init_py["ml_serve/core 包入口<br/>机器学习的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_infrastructure_init_py["ml_serve/infrastructure 包入口<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_models_init_py["ml_serve/models 包入口<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_services_init_py["ml_serve/services 包入口<br/>机器学习的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_init_py["zephyr/ml_serve 包入口<br/>机器学习服务域包入口，归集子模块按需懒加载<br/>文件: ml_serve/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_extensions_init_py["ml_serve/_extensions 包入口<br/>机器学习服务域扩展层包入口，归集该层子模块按需懒<br/>加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_api_init_py["ml_serve/api 包入口<br/>机器学习服务域API接口层包入口，归集该层子模块按<br/>需懒加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_core_init_py["ml_serve/core 包入口<br/>机器学习服务域核心层包入口，归集该层子模块按需懒<br/>加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_infrastructure_init_py["ml_serve/infrastructure 包入口<br/>机器学习服务域基础设施层包入口，归集该层子模块按<br/>需懒加载<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_models_init_py["ml_serve/models 包入口<br/>机器学习服务域模型层包入口，归集该层子模块按需懒<br/>加载<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_services_init_py["ml_serve/services 包入口<br/>机器学习服务域服务层包入口，归集该层子模块按需懒<br/>加载<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ml_serve_init_py ~~~ src_zephyr_ml_serve_extensions_init_py
     src_zephyr_ml_serve_extensions_init_py ~~~ src_zephyr_ml_serve_api_init_py
     src_zephyr_ml_serve_api_init_py ~~~ src_zephyr_ml_serve_core_init_py

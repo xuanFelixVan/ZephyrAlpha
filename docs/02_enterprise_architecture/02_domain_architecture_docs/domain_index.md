@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3120 |
-| 生产态模块 | 2878 |
+| 模块总数 | 3125 |
+| 生产态模块 | 2883 |
 | 设计态模块 | 242 |
 
 ## 域清单（按架构层分组）
@@ -81,7 +81,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 / A2A Communication | 72 | 72 | 0 | 72/150 (OK) | [📄 03_d_infra_a2a.md](03_d_infra_a2a.md) |
 | D_INFRA_OPS | 基础设施运维 / Asset Inventory | 0 | 0 | 0 | 0/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 55 | 55 | 0 | 55/150 (OK) | [📄 05_d_infra_recovery.md](05_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 164 | 162 | 2 | 164/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 168 | 166 | 2 | 168/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | 可观测性 / Observability | 0 | 0 | 0 | 0/150 (OK) | [📄 07_d_infra_telemetry.md](07_d_infra_telemetry.md) |
 | D_SHARED | 共享服务 / Shared Services | 184 | 184 | 0 | 184/150 (超容) | [📄 08_d_shared.md](08_d_shared.md) |
 
@@ -152,7 +152,7 @@ ttl: permanent
 | D_POSITION | 仓位管理 / Position Management | 13 | 2 | 11 | 13/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 16 | 11 | 5 | 16/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
-| D_SELL_DECISION | 卖出决策 / Sell Decision | 22 | 7 | 15 | 22/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
+| D_SELL_DECISION | 卖出决策 / Sell Decision | 23 | 8 | 15 | 23/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
 | D_SIGLEGACY | 信号遗留设计态 / Signal Legacy (Design) | 0 | 0 | 0 | 0/150 (OK) | [📄 68_d_siglegacy.md](68_d_siglegacy.md) |
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 10 | 2 | 8 | 10/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |

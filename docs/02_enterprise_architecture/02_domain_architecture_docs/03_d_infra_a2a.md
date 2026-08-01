@@ -60,10 +60,10 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_push_notifier_py["push通知器<br/>Push Notifier — A2A 推送通知<br/>push_notifier<br/>文件: layer2_communication/push_notifier.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_streaming_py["流式<br/>Streaming — A2A 流式传输<br/>文件: layer2_communication/streaming.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_trigger_monitor_py["触发监控器<br/>trigger_monitor<br/>文件: layer2_communication/trigger_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py["共识<br/>Re-export bridge for layer3_coordination<br/>consensus symbols<br/>文件: layer3_coordination/_consensus.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py["核心coordination<br/>Re-export bridge for layer3_coordination core<br/>coordination symbols<br/>文件: layer3_coordination/_core_coordination.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py["智能<br/>Re-export bridge for layer3_coordination<br/>intelligence symbols<br/>文件: layer3_coordination/_intelligence.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py["安全andeconomics<br/>Re-export bridge for layer3_coordination<br/>security and economics symbols<br/>文件: layer3_coordination/_security_and_<br/>economics.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py["共识<br/>共识。Re-export bridge for layer3_coordination<br/>consensus symbols<br/>Re-export bridge for layer3_coordination<br/>consensus symbols.<br/>文件: layer3_coordination/_consensus.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py["核心coordination<br/>核心coordination。Re-export bridge for layer3_<br/>coordination core coordination symbols<br/>Re-export bridge for layer3_coordination core<br/>coordination symbols.<br/>文件: layer3_coordination/_core_coordination.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py["智能<br/>智能。Re-export bridge for layer3_coordination<br/>intelligence symbols<br/>Re-export bridge for layer3_coordination<br/>intelligence symbols.<br/>文件: layer3_coordination/_intelligence.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py["安全andeconomics<br/>安全andeconomics。Re-export bridge for layer3_<br/>coordination security and economics symbols<br/>Re-export bridge for layer3_coordination<br/>security and economics symbols.<br/>文件: layer3_coordination/_security_and_<br/>economics.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_agent_blocklist_py["A2A代理blocklist<br/>A2A Agent 黑名单管理（重命名自 a2a_protocol_<br/>security.py，AI-14 审计 P5 修复）<br/>a2a_agent_blocklist<br/>文件: layer3_coordination/a2a_agent_blocklist.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_carbon_py["A2A 碳足迹追踪<br/>a2a_carbon<br/>文件: layer3_coordination/a2a_carbon.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_checkpoint_py["A2A 检查点管理器<br/>a2a_checkpoint<br/>文件: layer3_coordination/a2a_checkpoint.py<br/>(生产态 / production)"]
@@ -84,7 +84,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_local_first_arch_py["本地首架构<br/>local_first_arch<br/>文件: a2a_protocol/local_first_arch.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["迁移策略<br/>migration_strategy<br/>文件: a2a_protocol/migration_strategy.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py["多代理<br/>— Multi-Agent 编排基座（Phase 14 / 盲点 B33）<br/>multi_agent<br/>文件: a2a_protocol/multi_agent.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["多模型共识<br/>基础设施的模型，定义数据结构和字段<br/>multi_model_consensus<br/>文件: a2a_protocol/multi_model_consensus.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["多模型共识<br/>多模型共识，基础设施的模型，定义数据结构和字段<br/>multi_model_consensus<br/>文件: a2a_protocol/multi_model_consensus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_autonomy_py["离线autonomy<br/>offline_autonomy<br/>文件: a2a_protocol/offline_autonomy.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["离线韧性<br/>offline_resilience<br/>文件: a2a_protocol/offline_resilience.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_phase_hold_py["阶段hold<br/>Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他<br/>Phase 3 模块不可并发施工<br/>phase_hold<br/>文件: a2a_protocol/phase_hold.py<br/>(生产态 / production)"]
@@ -147,9 +147,9 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_voting_py["A2A 加权投票协议 — 多 Agent 共识达成机制<br/>a2a_voting<br/>文件: layer3_coordination/a2a_voting.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_work_steal_py["A2A 工作窃取调度器 — 跨 Agent 负载均衡<br/>a2a_work_steal<br/>文件: layer3_coordination/a2a_work_steal.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py["仲裁器<br/>A2A 三级仲裁引擎 — priority -> rule -><br/>escalation<br/>arbitrator<br/>文件: layer3_coordination/arbitrator.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py["级联守卫<br/>防止失败在Agent间级联<br/>cascade_guard<br/>文件: layer3_coordination/cascade_guard.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py["级联守卫<br/>级联守卫——防止失败在Agent间级联<br/>cascade_guard<br/>文件: layer3_coordination/cascade_guard.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_conflict_detector_py["A2A 冲突检测引擎 — 语义+文本+资源三维冲突检测<br/>conflict_detector<br/>文件: layer3_coordination/conflict_detector.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py["施工后验证器 —<br/>自指悖论防御：不橡胶图章，真正验证 A2A<br/>协议模块的施工完整<br/>性<br/>construction_verifier<br/>文件: layer3_coordination/construction_<br/>verifier.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py["施工后验证器 —<br/>自指悖论防御：不橡胶图章，真正验证 A2A<br/>协议模块的施工完整<br/>construction_verifier<br/>文件: layer3_coordination/construction_<br/>verifier.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py["P2: 死锁守卫<br/>deadlock_guard<br/>文件: layer3_coordination/deadlock_guard.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py["P2: 活锁检测器<br/>livelock_detector<br/>文件: layer3_coordination/livelock_detector.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_semantic_diff_py["semantic差异<br/>A2A 语义差异引擎 — 结构感知的 Agent 间差异检测<br/>semantic_diff<br/>文件: layer3_coordination/semantic_diff.py<br/>(生产态 / production)"]
@@ -196,45 +196,45 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_schemas_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_debate_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_saga_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_negotiation_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_saga_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_voting_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_work_steal_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_conflict_detector_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_semantic_diff_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_anomaly_detector_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_economics_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_forgetting_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_idempotency_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_idle_guard_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_temporal_admission_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_behavior_fingerprint_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_blame_attribution_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_conflict_detector_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_semantic_diff_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_collusion_detector_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_behavior_fingerprint_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_causal_trace_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_cross_agent_semantic_flow_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_latent_comm_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_blame_attribution_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_knowledge_distill_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_latent_comm_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py -->|导入依赖 / import_depends| D_SHARED
@@ -284,10 +284,10 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_push_notifier_py["push通知器<br/>Push Notifier — A2A 推送通知<br/>push_notifier<br/>文件: layer2_communication/push_notifier.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_streaming_py["流式<br/>Streaming — A2A 流式传输<br/>文件: layer2_communication/streaming.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_trigger_monitor_py["触发监控器<br/>trigger_monitor<br/>文件: layer2_communication/trigger_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py["共识<br/>Re-export bridge for layer3_coordination<br/>consensus symbols<br/>文件: layer3_coordination/_consensus.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py["核心coordination<br/>Re-export bridge for layer3_coordination core<br/>coordination symbols<br/>文件: layer3_coordination/_core_coordination.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py["智能<br/>Re-export bridge for layer3_coordination<br/>intelligence symbols<br/>文件: layer3_coordination/_intelligence.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py["安全andeconomics<br/>Re-export bridge for layer3_coordination<br/>security and economics symbols<br/>文件: layer3_coordination/_security_and_<br/>economics.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py["共识<br/>共识。Re-export bridge for layer3_coordination<br/>consensus symbols<br/>Re-export bridge for layer3_coordination<br/>consensus symbols.<br/>文件: layer3_coordination/_consensus.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py["核心coordination<br/>核心coordination。Re-export bridge for layer3_<br/>coordination core coordination symbols<br/>Re-export bridge for layer3_coordination core<br/>coordination symbols.<br/>文件: layer3_coordination/_core_coordination.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py["智能<br/>智能。Re-export bridge for layer3_coordination<br/>intelligence symbols<br/>Re-export bridge for layer3_coordination<br/>intelligence symbols.<br/>文件: layer3_coordination/_intelligence.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py["安全andeconomics<br/>安全andeconomics。Re-export bridge for layer3_<br/>coordination security and economics symbols<br/>Re-export bridge for layer3_coordination<br/>security and economics symbols.<br/>文件: layer3_coordination/_security_and_<br/>economics.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_agent_blocklist_py["A2A代理blocklist<br/>A2A Agent 黑名单管理（重命名自 a2a_protocol_<br/>security.py，AI-14 审计 P5 修复）<br/>a2a_agent_blocklist<br/>文件: layer3_coordination/a2a_agent_blocklist.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_carbon_py["A2A 碳足迹追踪<br/>a2a_carbon<br/>文件: layer3_coordination/a2a_carbon.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_checkpoint_py["A2A 检查点管理器<br/>a2a_checkpoint<br/>文件: layer3_coordination/a2a_checkpoint.py<br/>(生产态 / production)"]
@@ -308,7 +308,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_local_first_arch_py["本地首架构<br/>local_first_arch<br/>文件: a2a_protocol/local_first_arch.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["迁移策略<br/>migration_strategy<br/>文件: a2a_protocol/migration_strategy.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py["多代理<br/>— Multi-Agent 编排基座（Phase 14 / 盲点 B33）<br/>multi_agent<br/>文件: a2a_protocol/multi_agent.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["多模型共识<br/>基础设施的模型，定义数据结构和字段<br/>multi_model_consensus<br/>文件: a2a_protocol/multi_model_consensus.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["多模型共识<br/>多模型共识，基础设施的模型，定义数据结构和字段<br/>multi_model_consensus<br/>文件: a2a_protocol/multi_model_consensus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_autonomy_py["离线autonomy<br/>offline_autonomy<br/>文件: a2a_protocol/offline_autonomy.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["离线韧性<br/>offline_resilience<br/>文件: a2a_protocol/offline_resilience.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_phase_hold_py["阶段hold<br/>Phase 4 Hold — A2A Phase 4 锁定标记模块 与其他<br/>Phase 3 模块不可并发施工<br/>phase_hold<br/>文件: a2a_protocol/phase_hold.py<br/>(生产态 / production)"]
@@ -371,9 +371,9 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_voting_py["A2A 加权投票协议 — 多 Agent 共识达成机制<br/>a2a_voting<br/>文件: layer3_coordination/a2a_voting.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_work_steal_py["A2A 工作窃取调度器 — 跨 Agent 负载均衡<br/>a2a_work_steal<br/>文件: layer3_coordination/a2a_work_steal.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py["仲裁器<br/>A2A 三级仲裁引擎 — priority -> rule -><br/>escalation<br/>arbitrator<br/>文件: layer3_coordination/arbitrator.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py["级联守卫<br/>防止失败在Agent间级联<br/>cascade_guard<br/>文件: layer3_coordination/cascade_guard.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py["级联守卫<br/>级联守卫——防止失败在Agent间级联<br/>cascade_guard<br/>文件: layer3_coordination/cascade_guard.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_conflict_detector_py["A2A 冲突检测引擎 — 语义+文本+资源三维冲突检测<br/>conflict_detector<br/>文件: layer3_coordination/conflict_detector.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py["施工后验证器 —<br/>自指悖论防御：不橡胶图章，真正验证 A2A<br/>协议模块的施工完整<br/>性<br/>construction_verifier<br/>文件: layer3_coordination/construction_<br/>verifier.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py["施工后验证器 —<br/>自指悖论防御：不橡胶图章，真正验证 A2A<br/>协议模块的施工完整<br/>construction_verifier<br/>文件: layer3_coordination/construction_<br/>verifier.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py["P2: 死锁守卫<br/>deadlock_guard<br/>文件: layer3_coordination/deadlock_guard.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py["P2: 活锁检测器<br/>livelock_detector<br/>文件: layer3_coordination/livelock_detector.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_semantic_diff_py["semantic差异<br/>A2A 语义差异引擎 — 结构感知的 Agent 间差异检测<br/>semantic_diff<br/>文件: layer3_coordination/semantic_diff.py<br/>(生产态 / production)"]
@@ -420,45 +420,45 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_schemas_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_debate_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_saga_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_negotiation_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_saga_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_voting_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_work_steal_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_conflict_detector_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_semantic_diff_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_anomaly_detector_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_economics_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_forgetting_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_idempotency_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_idle_guard_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_temporal_admission_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_red_team_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_security_and_economics_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_behavior_fingerprint_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_blame_attribution_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_cascade_guard_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_arbitrator_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_conflict_detector_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_semantic_diff_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_collusion_detector_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_behavior_fingerprint_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_causal_trace_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_cross_agent_semantic_flow_py
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_latent_comm_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_blame_attribution_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_knowledge_distill_py
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_intelligence_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_latent_comm_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

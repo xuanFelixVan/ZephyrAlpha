@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_execution_simulation_init_py["zephyr/execution_simulation 包入口<br/>执行的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: execution_simulation/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_extensions_init_py["execution_simulation/_extensions 包入口<br/>执行的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_api_init_py["execution_simulation/api 包入口<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_core_init_py["execution_simulation/core 包入口<br/>执行的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_infrastructure_init_py["execution_simulation/infrastructure 包入口<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_models_init_py["execution_simulation/models 包入口<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_services_init_py["execution_simulation/services 包入口<br/>执行的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_init_py["zephyr/execution_simulation 包入口<br/>执行仿真域包入口，归集子模块按需懒加载<br/>文件: execution_simulation/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_extensions_init_py["execution_simulation/_extensions 包入口<br/>执行仿真域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_api_init_py["execution_simulation/api 包入口<br/>执行仿真域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_core_init_py["execution_simulation/core 包入口<br/>执行仿真域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_infrastructure_init_py["execution_simulation/infrastructure 包入口<br/>执行仿真域基础设施层包入口，归集该层子模块按需懒<br/>加载<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_models_init_py["execution_simulation/models 包入口<br/>执行仿真域模型层包入口，归集该层子模块按需懒加载<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_services_init_py["execution_simulation/services 包入口<br/>执行仿真域服务层包入口，归集该层子模块按需懒加载<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_execution_simulation_init_py ~~~ src_zephyr_execution_simulation_extensions_init_py
     src_zephyr_execution_simulation_extensions_init_py ~~~ src_zephyr_execution_simulation_api_init_py
     src_zephyr_execution_simulation_api_init_py ~~~ src_zephyr_execution_simulation_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_execution_simulation_init_py["zephyr/execution_simulation 包入口<br/>执行的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: execution_simulation/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_extensions_init_py["execution_simulation/_extensions 包入口<br/>执行的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_api_init_py["execution_simulation/api 包入口<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_core_init_py["execution_simulation/core 包入口<br/>执行的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_infrastructure_init_py["execution_simulation/infrastructure 包入口<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_models_init_py["execution_simulation/models 包入口<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_services_init_py["execution_simulation/services 包入口<br/>执行的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_init_py["zephyr/execution_simulation 包入口<br/>执行仿真域包入口，归集子模块按需懒加载<br/>文件: execution_simulation/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_extensions_init_py["execution_simulation/_extensions 包入口<br/>执行仿真域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_api_init_py["execution_simulation/api 包入口<br/>执行仿真域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_core_init_py["execution_simulation/core 包入口<br/>执行仿真域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_infrastructure_init_py["execution_simulation/infrastructure 包入口<br/>执行仿真域基础设施层包入口，归集该层子模块按需懒<br/>加载<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_models_init_py["execution_simulation/models 包入口<br/>执行仿真域模型层包入口，归集该层子模块按需懒加载<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_services_init_py["execution_simulation/services 包入口<br/>执行仿真域服务层包入口，归集该层子模块按需懒加载<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_execution_simulation_init_py ~~~ src_zephyr_execution_simulation_extensions_init_py
     src_zephyr_execution_simulation_extensions_init_py ~~~ src_zephyr_execution_simulation_api_init_py
     src_zephyr_execution_simulation_api_init_py ~~~ src_zephyr_execution_simulation_core_init_py

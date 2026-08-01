@@ -58,12 +58,12 @@ flowchart TD
     src_zephyr_intelligence_model_drift_detector_py["模型漂移检测器<br/>ModelDriftDetector — LLM 模型行为漂移检测<br/>model_drift_detector<br/>文件: intelligence/model_drift_detector.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_evaluation_activate_py["激活<br/>G4 Activate 门禁 — 人工激活（T-2-13-D）<br/>文件: model_evaluation/activate.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py["默认推理引擎<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations/default_inference_<br/>engine.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_evaluation_inference_base_py["推理基类<br/>模型的基类，定义抽象接口供子类实现<br/>inference_base<br/>文件: model_evaluation/inference_base.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_evaluation_inference_base_py["推理基类<br/>推理基类，模型的基类，定义抽象接口供子类实现<br/>inference_base<br/>文件: model_evaluation/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_evaluation_reranker_py["Cross-Encoder 重排序层 — BGE-reranker-v2-m3<br/>文件: model_evaluation/reranker.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py["unified记忆API<br/>UnifiedMemoryAPI — RI-02 统一记忆 API（M2<br/>跨模块封装）<br/>unified_memory_api<br/>文件: model_evaluation/unified_memory_api.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_cli_py["命令行<br/>cli — 模型性能检测命令行入口<br/>文件: model_profiling/cli.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py["DeepSeekV4Chat --- DeepSeek V4 系列模型 API<br/>客户端<br/>deepseek_v4_chat<br/>文件: model_profiling/deepseek_v4_chat.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["命令行<br/>cli — 模型性能检测命令行入口<br/>文件: pipeline_routing/cli.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_cli_py["命令行<br/>model-profiler.cli — 模型性能检测命令行入口<br/>文件: model_profiling/cli.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py["DeepSeekV4Chat --- DeepSeek V4 系列模型 API<br/>deepseek_v4_chat<br/>文件: model_profiling/deepseek_v4_chat.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["命令行<br/>model-profiler.cli — 模型性能检测命令行入口<br/>文件: pipeline_routing/cli.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py["任务模型学习器<br/>ModelTaskMatrix — 任务×模型性能学习引擎<br/>task_model_learner<br/>文件: pipeline_routing/task_model_learner.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_task_model_learner_py["任务模型学习器<br/>ModelTaskMatrix — 任务×模型性能学习引擎<br/>task_model_learner<br/>文件: model_profiling/task_model_learner.py<br/>(生产态 / production)"]
     scripts_calibrate_model_diff_py ~~~ scripts_quick_profile_py
@@ -78,7 +78,7 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py ~~~ src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py ~~~ src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py ~~~ src_zephyr_intelligence_model_profiling_task_model_learner_py
-    src_zephyr_intelligence_model_evaluation_memory_backend_py["记忆后端<br/>Backend protocol & shared data classes for the<br/>unified memory layer<br/>文件: model_evaluation/_memory_backend.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_evaluation_memory_backend_py["记忆后端<br/>记忆后端。Backend protocol & shared data<br/>classes for the unified memory layer<br/>Backend protocol & shared data classes for the<br/>unified memory layer.<br/>文件: model_evaluation/_memory_backend.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py["exam编排器<br/>ExamOrchestrator --- 五轴入职考试主控<br/>exam_orchestrator<br/>文件: model_profiling/exam_orchestrator.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py["results写入器<br/>Results Writer — 持久化 benchmark<br/>结果，支持历史对比（漂移检测）<br/>results_writer<br/>文件: pipeline_routing/results_writer.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_results_writer_py["results写入器<br/>Results Writer — 持久化 benchmark<br/>结果，支持历史对比（漂移检测）<br/>results_writer<br/>文件: model_profiling/results_writer.py<br/>(生产态 / production)"]
@@ -100,7 +100,7 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py ~~~ src_zephyr_intelligence_model_profiling_profiler_py
     src_zephyr_intelligence_model_profiling_benchmark_suite_py["基准suite<br/>BenchmarkSuite — 多维度模型性能测试用例集<br/>benchmark_suite<br/>文件: model_profiling/benchmark_suite.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_capability_passport_py["能力passport<br/>CapabilityPassport --- AI 模型能力护照<br/>capability_passport<br/>文件: model_profiling/capability_passport.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_exam_test_cases_py["exam测试cases<br/>0.5 扩展考试题库（96 题 / 29 能力 / 5 难度）<br/>exam_test_cases<br/>文件: model_profiling/exam_test_cases.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_exam_test_cases_py["exam测试cases<br/>exam测试cases.0.5 扩展考试题库（96 题 / 29 能力<br/>/ 5 难度）<br/>exam_test_cases<br/>文件: model_profiling/exam_test_cases.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_model_discovery_py["模型discovery<br/>ModelDiscovery — 枚举所有本地 Ollama 模型 +<br/>远程 API 模型<br/>model_discovery<br/>文件: model_profiling/model_discovery.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py["基准suite<br/>BenchmarkSuite — 多维度模型性能测试用例集<br/>benchmark_suite<br/>文件: pipeline_routing/benchmark_suite.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_benchmark_suite_py ~~~ src_zephyr_intelligence_model_profiling_capability_passport_py
@@ -108,24 +108,24 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_exam_test_cases_py ~~~ src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model_profiling_model_discovery_py ~~~ src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_case_assembler_py["真实多文件注入装配器（Phase 3 极限深度）。<br/>case_assembler<br/>文件: model_profiling/case_assembler.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_provider_data_py["提供器数据<br/>供src.zephyr.infrastructure.budg使用<br/>provider_data<br/>文件: model_profiling/provider_data.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_provider_data_py["提供器数据<br/>提供器数据，供src.zephyr.infrastructure.budg使用<br/>provider_data<br/>文件: model_profiling/provider_data.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_case_assembler_py ~~~ src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_memory_backend_py
     src_zephyr_intelligence_model_profiling_cli_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    src_zephyr_intelligence_model_profiling_exam_test_cases_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
+    src_zephyr_intelligence_model_profiling_job_matcher_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_executor_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_checks_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_checks_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_profiling_exam_checks_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    src_zephyr_intelligence_model_profiling_model_discovery_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
-    src_zephyr_intelligence_model_profiling_job_matcher_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    src_zephyr_intelligence_model_profiling_exam_test_cases_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
     src_zephyr_intelligence_model_profiling_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
+    src_zephyr_intelligence_model_profiling_model_discovery_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_profiling_results_writer_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_profiler_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
@@ -135,8 +135,8 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     scripts_calibrate_model_diff_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     scripts_quick_profile_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    scripts_quick_profile_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     scripts_quick_profile_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
+    scripts_quick_profile_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_results_writer_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -195,12 +195,12 @@ flowchart TD
     src_zephyr_intelligence_model_drift_detector_py["模型漂移检测器<br/>ModelDriftDetector — LLM 模型行为漂移检测<br/>model_drift_detector<br/>文件: intelligence/model_drift_detector.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_evaluation_activate_py["激活<br/>G4 Activate 门禁 — 人工激活（T-2-13-D）<br/>文件: model_evaluation/activate.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py["默认推理引擎<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations/default_inference_<br/>engine.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_evaluation_inference_base_py["推理基类<br/>模型的基类，定义抽象接口供子类实现<br/>inference_base<br/>文件: model_evaluation/inference_base.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_evaluation_inference_base_py["推理基类<br/>推理基类，模型的基类，定义抽象接口供子类实现<br/>inference_base<br/>文件: model_evaluation/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_evaluation_reranker_py["Cross-Encoder 重排序层 — BGE-reranker-v2-m3<br/>文件: model_evaluation/reranker.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py["unified记忆API<br/>UnifiedMemoryAPI — RI-02 统一记忆 API（M2<br/>跨模块封装）<br/>unified_memory_api<br/>文件: model_evaluation/unified_memory_api.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_cli_py["命令行<br/>cli — 模型性能检测命令行入口<br/>文件: model_profiling/cli.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py["DeepSeekV4Chat --- DeepSeek V4 系列模型 API<br/>客户端<br/>deepseek_v4_chat<br/>文件: model_profiling/deepseek_v4_chat.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["命令行<br/>cli — 模型性能检测命令行入口<br/>文件: pipeline_routing/cli.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_cli_py["命令行<br/>model-profiler.cli — 模型性能检测命令行入口<br/>文件: model_profiling/cli.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py["DeepSeekV4Chat --- DeepSeek V4 系列模型 API<br/>deepseek_v4_chat<br/>文件: model_profiling/deepseek_v4_chat.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["命令行<br/>model-profiler.cli — 模型性能检测命令行入口<br/>文件: pipeline_routing/cli.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py["任务模型学习器<br/>ModelTaskMatrix — 任务×模型性能学习引擎<br/>task_model_learner<br/>文件: pipeline_routing/task_model_learner.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_task_model_learner_py["任务模型学习器<br/>ModelTaskMatrix — 任务×模型性能学习引擎<br/>task_model_learner<br/>文件: model_profiling/task_model_learner.py<br/>(生产态 / production)"]
     scripts_calibrate_model_diff_py ~~~ scripts_quick_profile_py
@@ -215,7 +215,7 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py ~~~ src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py ~~~ src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py ~~~ src_zephyr_intelligence_model_profiling_task_model_learner_py
-    src_zephyr_intelligence_model_evaluation_memory_backend_py["记忆后端<br/>Backend protocol & shared data classes for the<br/>unified memory layer<br/>文件: model_evaluation/_memory_backend.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_evaluation_memory_backend_py["记忆后端<br/>记忆后端。Backend protocol & shared data<br/>classes for the unified memory layer<br/>Backend protocol & shared data classes for the<br/>unified memory layer.<br/>文件: model_evaluation/_memory_backend.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py["exam编排器<br/>ExamOrchestrator --- 五轴入职考试主控<br/>exam_orchestrator<br/>文件: model_profiling/exam_orchestrator.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py["results写入器<br/>Results Writer — 持久化 benchmark<br/>结果，支持历史对比（漂移检测）<br/>results_writer<br/>文件: pipeline_routing/results_writer.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_results_writer_py["results写入器<br/>Results Writer — 持久化 benchmark<br/>结果，支持历史对比（漂移检测）<br/>results_writer<br/>文件: model_profiling/results_writer.py<br/>(生产态 / production)"]
@@ -237,7 +237,7 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py ~~~ src_zephyr_intelligence_model_profiling_profiler_py
     src_zephyr_intelligence_model_profiling_benchmark_suite_py["基准suite<br/>BenchmarkSuite — 多维度模型性能测试用例集<br/>benchmark_suite<br/>文件: model_profiling/benchmark_suite.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_capability_passport_py["能力passport<br/>CapabilityPassport --- AI 模型能力护照<br/>capability_passport<br/>文件: model_profiling/capability_passport.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_exam_test_cases_py["exam测试cases<br/>0.5 扩展考试题库（96 题 / 29 能力 / 5 难度）<br/>exam_test_cases<br/>文件: model_profiling/exam_test_cases.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_exam_test_cases_py["exam测试cases<br/>exam测试cases.0.5 扩展考试题库（96 题 / 29 能力<br/>/ 5 难度）<br/>exam_test_cases<br/>文件: model_profiling/exam_test_cases.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_model_discovery_py["模型discovery<br/>ModelDiscovery — 枚举所有本地 Ollama 模型 +<br/>远程 API 模型<br/>model_discovery<br/>文件: model_profiling/model_discovery.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py["基准suite<br/>BenchmarkSuite — 多维度模型性能测试用例集<br/>benchmark_suite<br/>文件: pipeline_routing/benchmark_suite.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_benchmark_suite_py ~~~ src_zephyr_intelligence_model_profiling_capability_passport_py
@@ -245,24 +245,24 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_exam_test_cases_py ~~~ src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model_profiling_model_discovery_py ~~~ src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_case_assembler_py["真实多文件注入装配器（Phase 3 极限深度）。<br/>case_assembler<br/>文件: model_profiling/case_assembler.py<br/>(生产态 / production)"]
-    src_zephyr_intelligence_model_profiling_provider_data_py["提供器数据<br/>供src.zephyr.infrastructure.budg使用<br/>provider_data<br/>文件: model_profiling/provider_data.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_model_profiling_provider_data_py["提供器数据<br/>提供器数据，供src.zephyr.infrastructure.budg使用<br/>provider_data<br/>文件: model_profiling/provider_data.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_case_assembler_py ~~~ src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_memory_backend_py
     src_zephyr_intelligence_model_profiling_cli_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    src_zephyr_intelligence_model_profiling_exam_test_cases_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
+    src_zephyr_intelligence_model_profiling_job_matcher_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_executor_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_checks_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_checks_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_profiling_exam_checks_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    src_zephyr_intelligence_model_profiling_model_discovery_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
-    src_zephyr_intelligence_model_profiling_job_matcher_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    src_zephyr_intelligence_model_profiling_exam_test_cases_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_case_assembler_py
     src_zephyr_intelligence_model_profiling_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
+    src_zephyr_intelligence_model_profiling_model_discovery_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_profiling_results_writer_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_profiler_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
@@ -272,8 +272,8 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     scripts_calibrate_model_diff_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     scripts_quick_profile_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    scripts_quick_profile_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     scripts_quick_profile_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
+    scripts_quick_profile_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
