@@ -84,7 +84,7 @@ generator: generate_trading_flow_diagram.py
 
 ## 附录·跨阶段候选（基础设施类）
 
-以下候选不归属任何交易流阶段（回测/仿真/灾备/死域等），共 **5291 条**（candidate×5283、deferred×5、rejected×3）。
+以下候选不归属任何交易流阶段（回测/仿真/灾备/死域等），共 **8 条**（deferred×5、rejected×3）。
 
 > 完整清单见 `docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml`。
 
@@ -100,7 +100,5 @@ generator: generate_trading_flow_diagram.py
 | CAND-BT-001 | Backtest v2.0 Auxiliary Modules / 回测v2.0辅助模块 | deferred | P2 | q2 | 回测需批量调度/衰减监控/自动报告/结果缓存时,无对应辅助模块 |
 | CAND-DAT-001 | DataFrame to Pydantic Migration / DataFrame迁移Pydantic | deferred | P2 | q2 | DataFrame无运行时类型校验,下游D_FACTOR消费端要求Pydantic强类型契约 |
 | CAND-PFALLOC-001 | Min-Variance & Risk-Parity Rebalance Modes / 最小方差与风险平价再平衡模式 | deferred | P1 | none | 实盘组合分配只能用 equal_weight/signal_weight,无法执行最小方差/风险平价这两种基础量化... |
-| CAND-HARVEST-0001 | Multi-Market Data Router 多市场数据路由 | candidate | P2 | pending | 硬边界不能建多市场数据源+AUM>1000万+团队≥3人 |
-| CAND-HARVEST-0002 | CurrencyHedger 货币对冲器 | candidate | P2 | pending | 外币敞口对冲多币种P&L敞口计算对冲比率远期期货对冲汇率影响分解 |
 
 > 数据源：depgraph (PostgreSQL) + trading_flow_narrative.yaml + candidate_module_registry.yaml
