@@ -1,12 +1,12 @@
-# 自动生成于 2026-08-01T11:50:36Z
+# 自动生成于 2026-08-01T12:10:24Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-01T11:50:36Z'
+generated_at: '2026-08-01T12:10:24Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 373
-with_manifest: 316
+total_scripts: 374
+with_manifest: 317
 missing_manifest: 57
 categories:
   governance:_sync: 4
@@ -25,7 +25,7 @@ categories:
   governance:d8_doc_sync: 12
   governance:d9_knowledge: 2
   governance:data_quality: 1
-  governance:generators: 10
+  governance:generators: 11
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 2
   governance:observability: 1
@@ -3500,6 +3500,26 @@ scripts:
     description: 输出路径
   warn_only: false
   description: '从 .pre-commit-config.yaml 自动派生 gate_registry.yaml。 对标 §6.3 静态清单自动生成铁律。
+
+    '
+  tags:
+  - Critical
+  - Disruptive
+  - Quick
+- name: generators/generate_importlinter.py
+  owner: governance:generators
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 10
+  args:
+  - flag: --check
+    type: bool
+    description: 仅检测漂移，不写文件
+  warn_only: false
+  description: '从 src/zephyr/ 顶层包扫描派生 .importlinter 的 forbidden_modules 块。 对标 §6.3
+    静态清单自动生成铁律——消除手工维护 forbidden_modules 的漂移风险。
 
     '
   tags:
