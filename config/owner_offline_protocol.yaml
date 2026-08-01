@@ -1,15 +1,16 @@
 # --- 治理锚定 ---
-# blueprint: mod_inf_001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md | §
-# module_id: mod_inf_001
+# blueprint: MOD-INF-001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md | §
+# module_id: MOD-INF-001
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ZephyrAlpha — Owner 离线协议 (盲点 #42)
 # 当 Owner 连续 7 天以上不活跃时自动激活
 
 protocol_version: "2.6.0"
-module_id: mod_inf_001
+module_id: MOD-INF-001
 
 vacation_mode:
   enabled: false
@@ -22,6 +23,10 @@ vacation_mode:
     - "OWNER_RETURN: 恢复所有操作权限"
 
 offline_detection:
+  # RULE-FIFTEEN 合规声明（audit-02 第3轮复审 2026-08-02）：
+  # check_interval_hours 是 CI 批量兜底 job 的检测周期参数，非进程内 Timer/cron。
+  # Owner 活动由事件驱动记录（commit/login event → 更新 last_active），
+  # 离线检测由 CI 定期 job 兜底（主触发=事件，兜底=CI），禁止实现为进程内定时器。
   check_interval_hours: 24
   consecutive_missed: 0
   max_missed_before_activation: 7

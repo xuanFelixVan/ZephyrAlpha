@@ -16,7 +16,7 @@
 # version: 1.0.0
 # references:
 #   - mod_inf_009 (Pipeline) §0.6
-#   - mod_inf_001 (Capacity Assurance) §13
+#   - MOD-INF-001 (Capacity Assurance) §13
 #   - MOD-INF-005 (Script System) §36
 #   - mod_inf_032 (Resource Optimization) §0.3
 #   - mod_inf_014 (LLM Security) §0.3

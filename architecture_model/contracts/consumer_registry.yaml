@@ -22,7 +22,7 @@ module_id: MOD-GOVERNANCE
 schema_version: "1.0"
 doc_type: register
 ttl: permanent
-last_updated: "2026-05-06"
+last_updated: "2026-08-02"
 
 consumers:
   # ─── P0 数据契约消费者 ───
@@ -179,11 +179,11 @@ consumers:
       - {domain: D_FRONTEND, module: "backtest_visualization", tier: 2, pinned_version: "1.0.0", registered_at: "2026-07-04", consumption_channel: "result_repository.py (D_BACKTEST io/)", rendering_stack: "Panel+HoloViz"}
 
 summary:
-  total_contracts_registered: 20
-  total_consumer_entries: 97
+  total_contracts_registered: 21
+  total_consumer_entries: 63
   tier_distribution:
-    tier_1_critical: 37
-    tier_2_secondary: 13
+    tier_1_critical: 43
+    tier_2_secondary: 20
   note: >
     消费者注册表是 CTR-VER-001 版本协商的前置基础设施。
     任何 P0/P1 契约的 MAJOR 版本变更前，必须通过本表查询所有注册消费者并提前 30 天通知。
@@ -192,3 +192,5 @@ summary:
     EXT/OCP 契约由外部系统版本控制 / _b_track_interfaces/ 管理，不在此注册表中。
     2026-07-04 新增 CTR-P1-016 BacktestResult 与 CTR-P1-017 BacktestRunArtifact 的 D_FRONTEND 消费关系,
     支撑前端 Panel+HoloViz 可视化消费 D_BACKTEST 时序明细产物。
+    2026-08-02 audit-02 第3轮复审修正 summary 计数漂移：total_contracts_registered 20→21、
+    total_consumer_entries 97→63、tier_1_critical 37→43、tier_2_secondary 13→20（原值未随 2026-07-04 新增同步）。

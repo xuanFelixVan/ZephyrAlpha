@@ -83,7 +83,7 @@ routes:
 
   # -- INF-001 容量保障体系 --
   - route_id: "R002"
-    blueprint_id: "mod_inf_001"
+    blueprint_id: "MOD-INF-001"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/orchestration/runtime_core/orchestrator/capacity_budget.py"

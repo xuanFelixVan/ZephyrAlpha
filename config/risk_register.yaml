@@ -1,16 +1,17 @@
 # --- 治理锚定 ---
-# blueprint: mod_inf_001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md | §
-# module_id: mod_inf_001
+# blueprint: MOD-INF-001 | docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md | §
+# module_id: MOD-INF-001
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # risk_register.yaml — 容量保障体系风险注册表（R1~R16）
 # 对标蓝图 §14 风险与缓解 + 多轮盲点审计扩展
-# 版本: 2.7.0 | 模块: mod_inf_001
+# 版本: 2.7.0 | 模块: MOD-INF-001
 
 version: "2.7.0"
-module_id: mod_inf_001
+module_id: MOD-INF-001
 last_review: "2026-05-07"
 
 risks:

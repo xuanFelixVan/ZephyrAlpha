@@ -6,13 +6,13 @@
 # ai_autonomy: ai_modifiable
 # ttl: permanent
 # --- 治理锚定结束 ---
-# mod_inf_001 M-18 — 容量 SLI/SLO 注册表（机读 SSoT）
+# MOD-INF-001 M-18 — 容量 SLI/SLO 注册表（机读 SSoT）
 # 对齐: docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md §13 示例
 # arch_guard 脚本从此文件读取阈值，与 invariants.yaml 交叉校验见 check_capacity_slo_ssot.py
-module_id: mod_inf_001
+module_id: MOD-INF-001
 schema_version: "1.0"
 doc_type: register
-module_ref: mod_inf_001
+module_ref: MOD-INF-001
 last_updated: "2026-05-05"
 
 slo_registry:

@@ -225,6 +225,59 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                     errors.append(
                         f"module_id_registry.yaml: total_registered={declared}，实际 registered_ids 条目数={actual}"
                     )
+    # contracts/consumer_registry.yaml —— 嵌套结构（contracts → registered_consumers），
+    # 不适用通用扁平 list 校验，需专用块校验 total_contracts_registered /
+    # total_consumer_entries / tier_distribution 三类聚合计数。
+    # 治本（audit-02 第3轮复审 2026-08-02）：原 GATE-SUM 覆盖仅 data/events/domain 等
+    # 扁平 list 目录，漏 contracts/，导致 consumer_registry summary 漂移无人拦截。
+    consumer_registry_path = ARCH_MODEL / "contracts" / "consumer_registry.yaml"
+    if consumer_registry_path.exists():
+        data = load_yaml(consumer_registry_path)
+        if data:
+            contracts = data.get("consumers", [])
+            if isinstance(contracts, list):
+                summary = data.get("summary", {})
+                if isinstance(summary, dict) and summary:
+                    actual_contracts = len(contracts)
+                    declared_contracts = summary.get("total_contracts_registered")
+                    if declared_contracts is not None and declared_contracts != actual_contracts:
+                        errors.append(
+                            f"contracts/consumer_registry.yaml: summary.total_contracts_registered={declared_contracts}，实际契约数={actual_contracts}"
+                        )
+                    registered_lists = [
+                        c.get("registered_consumers", []) for c in contracts if isinstance(c, dict)
+                    ]
+                    actual_entries = sum(len(r) for r in registered_lists if isinstance(r, list))
+                    declared_entries = summary.get("total_consumer_entries")
+                    if declared_entries is not None and declared_entries != actual_entries:
+                        errors.append(
+                            f"contracts/consumer_registry.yaml: summary.total_consumer_entries={declared_entries}，实际消费者条目数={actual_entries}"
+                        )
+                    tier_dist = summary.get("tier_distribution", {})
+                    if isinstance(tier_dist, dict) and tier_dist:
+                        actual_tier: dict[str, int] = {}
+                        for r_list in registered_lists:
+                            if not isinstance(r_list, list):
+                                continue
+                            for r in r_list:
+                                if not isinstance(r, dict):
+                                    continue
+                                tval = str(r.get("tier", "")).strip()
+                                if not tval:
+                                    tval = "(empty)"
+                                actual_tier[tval] = actual_tier.get(tval, 0) + 1
+                        for skey, declared_count in tier_dist.items():
+                            if not isinstance(skey, str) or not skey.startswith("tier_"):
+                                continue
+                            parts = skey.split("_")
+                            if len(parts) < 2 or not parts[1].isdigit():
+                                continue
+                            tval = parts[1]
+                            actual_count = actual_tier.get(tval, 0)
+                            if declared_count != actual_count:
+                                errors.append(
+                                    f"contracts/consumer_registry.yaml: summary.tier_distribution.{skey}={declared_count}，实际 tier={tval} 共 {actual_count} 个"
+                                )
     index_path = ARCH_MODEL / "index.yaml"
     if index_path.exists():
         data = load_yaml(index_path)
