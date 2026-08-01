@@ -9,6 +9,9 @@ flow_stage: buy_flow
 
 > flow_stage: `buy_flow` | 映射层: ['L2A', 'L2B', 'L2C', 'L2D', 'L3'] | 产出契约: `buy_signal`
 
+> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/02_buy_flow.html)**
+> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+
 ## 大白话讲这个流程
 
 买入流把候选池里的标的变成"买什么、买多少"的目标仓位。
@@ -37,6 +40,45 @@ portfolio_target 是买入流的终点，下一步进仓位裁决或直接进风
                                                                         ▼
                                                               portfolio_target
 
+```
+
+## 决策流可视化（Mermaid）
+
+> 本阶段决策节点 + 同阶段内依赖边。运营态蓝色实线，设计态橙色虚线。
+> 网页版可 Ctrl+滚轮缩放查看细节。
+> 图例：🟦 蓝色=运营态(production) ｜ 🟧 橙色虚线=设计态(design) ｜ 实线=运营态依赖 ｜ 虚线=非运营态依赖
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    n177["(设计态 / design) Synthesizer 信号合成+权重分配<br/>signal | L2A | decision/signal/sg_01"]
+    n178["(设计态 / design) Signal Priority Router 信号优先级路由<br/>signal | L2A | decision/signal/sg_02"]
+    n179["(设计态 / design) LLM Strategy Agent LLM策略Agent<br/>signal | L2A | decision/signal/sg_03"]
+    n180["(设计态 / design) Signal Tail Risk Protector 信号尾部风险保护<br/>signal | L2A | decision/signal/sg_04"]
+    n181["(设计态 / design) A-Share Plan Conformity Evaluator A股计划吻合度评估<br/>signal | L2A | decision/signal/sg_05"]
+    n182["(设计态 / design) A-Share Emergency Opportunity Evaluator A股应急机会评估<br/>signal | L2A | decision/signal/sg_06"]
+    n183["(设计态 / design) A-Share Capital-Force Conflict Arbiter 主力游资冲突仲裁<br/>signal | L2A | decision/signal/sg_07"]
+    n184["(设计态 / design) Regime Special Override Priority Manager Regime特殊覆盖优先级<br/>signal | L2A | decision/signal/sg_08"]
+    n185["(设计态 / design) Risk-Signal Interaction Sequencer 风控-信号交互时序<br/>signal | L2A | decision/signal/sg_09"]
+    n186["(设计态 / design) 36环节决策框架实现器 36-Step Decision Framework<br/>signal | L2A | decision/signal/sg_10"]
+    n187["(设计态 / design) 策略替换与淘汰决策器 Strategy Replacement Decision<br/>signal | L2A | decision/signal/sg_11"]
+    n188["(设计态 / design) 信号冲突解决 Signal Conflict Resolution<br/>signal | L2A | decision/signal/sg_12"]
+    n189["(设计态 / design) 信号融合模块 Signal Fusion Module<br/>signal | L2A | decision/signal/sg_13"]
+    n177 -.-> n178
+    n178 -.-> n179
+    n179 -.-> n180
+    n180 -.-> n181
+    n181 -.-> n182
+    n182 -.-> n183
+    n183 -.-> n184
+    n184 -.-> n185
+    n185 -.-> n186
+    n186 -.-> n187
+    n187 -.-> n188
+    n188 -.-> n189
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class n177,n178,n179,n180,n181,n182,n183,n184,n185,n186,n187,n188,n189 design
 ```
 
 ## 运营态节点（实盘主链路）

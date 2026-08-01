@@ -26,6 +26,10 @@ generator: generate_trading_flow_diagram.py
 3. 用 module_id 锚点让 AI 定位到具体代码文件（链回 depgraph）
 4. AI 改之前必须先查 decisiongraph 确认节点存在（防幻觉）
 
+## 总指挥图（一张图看全流程）
+
+> 详见 [00_panorama.md](00_panorama.md)——全部决策节点按6阶段分层，单张 Mermaid 大图 + 可缩放 HTML。
+
 ## 四轨并行架构
 
 交易决策不是单条流水线，而是四条轨道同时跑，按优先级接管：
@@ -91,5 +95,6 @@ generator: generate_trading_flow_diagram.py
 | CAND-SIM-002 | Experiment Queue Scheduler / 实验队列调度 | deferred | P2 | q2 | 并发实验>10时,顺序执行导致等待时间长 |
 | CAND-BT-001 | Backtest v2.0 Auxiliary Modules / 回测v2.0辅助模块 | deferred | P2 | q2 | 回测需批量调度/衰减监控/自动报告/结果缓存时,无对应辅助模块 |
 | CAND-DAT-001 | DataFrame to Pydantic Migration / DataFrame迁移Pydantic | deferred | P2 | q2 | DataFrame无运行时类型校验,下游D_FACTOR消费端要求Pydantic强类型契约 |
+| CAND-PFALLOC-001 | Min-Variance & Risk-Parity Rebalance Modes / 最小方差与风险平价再平衡模式 | deferred | P1 | none | 实盘组合分配只能用 equal_weight/signal_weight,无法执行最小方差/风险平价这两种基础量化... |
 
 > 数据源：depgraph (PostgreSQL) + trading_flow_narrative.yaml + candidate_module_registry.yaml

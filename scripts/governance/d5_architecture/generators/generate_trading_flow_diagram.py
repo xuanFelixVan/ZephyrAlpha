@@ -13,24 +13,26 @@
 # [ERROR_CONTRACT] decisiongraph不存在→exit 1;narrative.yaml不存在→exit 2
 # [TESTS] (待补)
 # [TTL] permanent
-"""G-trading-flow: 从 decisiongraph + 叙事YAML + 候选库 生成交易决策架构视图(.md)
+"""G-trading-flow: 从 decisiongraph + 叙事YAML + 候选库 生成交易决策架构视图(.md + .html)
 
 功能：
   - 从 decision_graph_model.yaml 读 flow_stages 定义（6阶段）
   - 从 trading_flow_narrative.yaml 读叙事（大白话/ASCII框图/ai_directive/sub_flows）
-  - 从 decisiongraph (PostgreSQL) 按 flow_stage 读节点（含 design_maturity 区分主图/附录）
+  - 从 decisiongraph (PostgreSQL) 按 flow_stage 读节点 + 边（含 design_maturity 区分主图/附录）
   - 从 candidate_module_registry.yaml 读候选模块（附录2，按 target_track 归类到阶段）
-  - 生成 8 个 MD 到 07_trading_decision_architecture/
+  - 生成 Mermaid 可视化（总指挥图 + 6 分阶段图），联动可缩放 HTML
+  - 生成 9 个 MD + 7 个 HTML 到 07_trading_decision_architecture/
 
-输出文件（8个）：
-  - trading_flow_index.md   总览（四轨+6阶段+三态图例+指挥AI用法+共享信号注入+跨阶段候选附录）
-  - 01_stock_selection.md   选股6层漏斗
-  - 02_buy_flow.md          买入决策流+四轨融合
-  - 03_sell_flow.md         卖出八层架构
-  - 04_position_flow.md     仓位裁决
-  - 05_execution_flow.md    订单生命周期状态机
-  - 06_reconciliation.md    对账（成交回报→合规核对→日终对账）
-  - 07_modes.md             回测/Paper/Shadow/实盘 四模式开关 + 应急保命降级
+输出文件（9 MD + 7 HTML）：
+  - 00_panorama.md + .html     总指挥图（全部141节点按6阶段 subgraph 分层，单张 Mermaid 大图）
+  - trading_flow_index.md       总览（四轨+6阶段+三态图例+指挥AI用法+共享信号注入+跨阶段候选附录）
+  - 01_stock_selection.md + .html   选股（Mermaid 分图 + 叙事）
+  - 02_buy_flow.md + .html          买入（Mermaid 分图 + 叙事）
+  - 03_sell_flow.md + .html         卖出（Mermaid 分图 + 叙事）
+  - 04_position_flow.md + .html     仓位（Mermaid 分图 + 叙事）
+  - 05_execution_flow.md + .html    执行（Mermaid 分图 + 叙事）
+  - 06_reconciliation.md + .html    对账（Mermaid 分图 + 叙事）
+  - 07_modes.md                 回测/Paper/Shadow/实盘 四模式开关 + 应急保命降级（无 Mermaid）
 
 真源分工（SSoT）：
   - 结构化数据（节点/边/flow_stage）真源 = decisiongraph (PostgreSQL)
@@ -73,7 +75,18 @@ from zephyr.governance.persistence.decision_graph_reader import (  # noqa: E402
     DecisionGraphReader,
 )
 
+# 治本：zoomable_html 在同目录（generators/），须将其加入 sys.path
+_GENERATORS_DIR = str(Path(__file__).resolve().parent)
+if _GENERATORS_DIR not in sys.path:
+    sys.path.insert(0, _GENERATORS_DIR)
+
+try:
+    from zoomable_html import emit_zoomable_html  # noqa: E402
+except ImportError:
+    emit_zoomable_html = None  # type: ignore[assignment]
+
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture"
+_ZOOMABLE_HTML_DIR = OUTPUT_DIR / "_zoomable_html"
 _DECISION_MODEL_YAML = _REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model.yaml"
 _NARRATIVE_YAML = _REPO_ROOT / "architecture_model" / "domain" / "trading_flow_narrative.yaml"
 _CANDIDATE_REGISTRY_YAML = (
@@ -92,8 +105,10 @@ _FLOW_STAGE_FILES: dict[str, str] = {
 
 # 06_modes.md → 07_modes.md（让出 06 给 reconciliation）
 _MODES_FILE = "07_modes.md"
+# 总指挥图：全部节点按 6 阶段 subgraph 分层的单张 Mermaid 大图
+_PANORAMA_FILE = "00_panorama.md"
 _INDEX_FILE = "trading_flow_index.md"
-_ALL_OUTPUT_FILES = set(_FLOW_STAGE_FILES.values()) | {_MODES_FILE, _INDEX_FILE}
+_ALL_OUTPUT_FILES = set(_FLOW_STAGE_FILES.values()) | {_MODES_FILE, _INDEX_FILE, _PANORAMA_FILE}
 
 # 候选模块 target_track → flow_stage 映射（交易流相关 track）
 # 映射依据：target_track 语义对应交易流阶段（比 target_layer 粗粒度更准）。
@@ -185,6 +200,156 @@ def _load_candidates_by_stage() -> tuple[dict[str, list[dict]], list[dict]]:
 
 
 # ============================================================
+# DB 边查询（总图/分图 Mermaid 用）
+# ============================================================
+
+def _load_all_edges(reader: DecisionGraphReader, calibrated_node_ids: set[int]) -> list[dict]:
+    """加载 decisiongraph 全部边，过滤为只连接已标定节点的边。"""
+    try:
+        all_edges = reader.get_all_edges()
+    except Exception as exc:  # noqa: BLE001
+        print(f"WARN: 查询 decision_edges 失败: {exc}", file=sys.stderr)
+        return []
+    return [
+        e for e in all_edges
+        if e.get("from_node_id") in calibrated_node_ids
+        and e.get("to_node_id") in calibrated_node_ids
+    ]
+
+
+# ============================================================
+# Mermaid 可视化生成（遵循 visualization_view_template.md 规范）
+# ============================================================
+
+_MERMAID_THEME = (
+    "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', "
+    "'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', "
+    "'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
+    "'fontSize': '14px'}}}%%"
+)
+
+_CLASSDEF_LINES = (
+    "    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000\n"
+    "    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5"
+)
+
+
+def _sanitize_mermaid_label(text: str) -> str:
+    """转义 Mermaid 标签特殊字符（对标 §4.9）。"""
+    return (
+        str(text)
+        .replace("[", "(")
+        .replace("]", ")")
+        .replace('"', "'")
+        .replace("|", "/")
+        .replace("\n", " ")
+    )
+
+
+def _maturity_label(maturity: str | None) -> str:
+    if maturity == "production":
+        return "(生产态 / production)"
+    return "(设计态 / design)"
+
+
+def _mermaid_node_id(node_id: int) -> str:
+    return f"n{node_id}"
+
+
+def _mermaid_node_def(node: dict) -> str:
+    """生成 Mermaid 节点定义行（成熟度+决策名+类型/层+路径）。"""
+    nid = _mermaid_node_id(node["node_id"])
+    mat = _maturity_label(node.get("design_maturity"))
+    name = _sanitize_mermaid_label(node.get("decision_name", "?"))
+    ntype = node.get("node_type", "?")
+    layer = node.get("layer_id", "?")
+    path = _sanitize_mermaid_label(node.get("path", "?"))
+    label = f"{mat} {name}<br/>{ntype} | {layer} | {path}"
+    return f'    {nid}["{label}"]'
+
+
+def _mermaid_edge_def(edge: dict, maturity_map: dict[int, str]) -> str:
+    """production→production 实线, 其他虚线。"""
+    from_id = _mermaid_node_id(edge["from_node_id"])
+    to_id = _mermaid_node_id(edge["to_node_id"])
+    from_mat = maturity_map.get(edge["from_node_id"], "design")
+    to_mat = maturity_map.get(edge["to_node_id"], "design")
+    if from_mat == "production" and to_mat == "production":
+        return f"    {from_id} --> {to_id}"
+    return f"    {from_id} -.-> {to_id}"
+
+
+def _mermaid_class_assign(node_ids: list[int], maturity: str = "design") -> str:
+    if not node_ids:
+        return ""
+    cls = "production" if maturity == "production" else "design"
+    ids = ",".join(_mermaid_node_id(nid) for nid in node_ids)
+    return f"    class {ids} {cls}"
+
+
+def _build_mermaid_stage(nodes: list[dict], edges: list[dict],
+                         maturity_map: dict[int, str]) -> str:
+    """构建单阶段 Mermaid 图代码（分图用）。"""
+    if not nodes:
+        return ""
+    node_ids = {n["node_id"] for n in nodes}
+    lines = [_MERMAID_THEME, "flowchart TD"]
+    for n in nodes:
+        lines.append(_mermaid_node_def(n))
+    for e in edges:
+        if e["from_node_id"] in node_ids and e["to_node_id"] in node_ids:
+            lines.append(_mermaid_edge_def(e, maturity_map))
+    lines.append(_CLASSDEF_LINES)
+    prod_ids = [n["node_id"] for n in nodes if n.get("design_maturity") == "production"]
+    design_ids = [n["node_id"] for n in nodes if n.get("design_maturity") != "production"]
+    if prod_ids:
+        lines.append(_mermaid_class_assign(prod_ids, "production"))
+    if design_ids:
+        lines.append(_mermaid_class_assign(design_ids, "design"))
+    return "\n".join(lines)
+
+
+def _build_mermaid_total(
+    stage_nodes: dict[str, list[dict]],
+    stage_names: dict[str, str],
+    edges: list[dict],
+    maturity_map: dict[int, str],
+) -> str:
+    """构建总图 Mermaid 代码（全部节点按6阶段 subgraph 分层）。"""
+    all_ids: set[int] = set()
+    lines = [_MERMAID_THEME, "flowchart TD"]
+    for sid, nodes in stage_nodes.items():
+        if not nodes:
+            continue
+        sname = stage_names.get(sid, sid)
+        lines.append(f'    subgraph S_{sid}["{sname}（{len(nodes)}节点）"]')
+        for n in nodes:
+            lines.append(_mermaid_node_def(n))
+            all_ids.add(n["node_id"])
+        lines.append("    end")
+    for e in edges:
+        if e["from_node_id"] in all_ids and e["to_node_id"] in all_ids:
+            lines.append(_mermaid_edge_def(e, maturity_map))
+    lines.append(_CLASSDEF_LINES)
+    prod_ids = [nid for nid in all_ids if maturity_map.get(nid) == "production"]
+    design_ids = [nid for nid in all_ids if maturity_map.get(nid) != "production"]
+    if prod_ids:
+        lines.append(_mermaid_class_assign(prod_ids, "production"))
+    if design_ids:
+        lines.append(_mermaid_class_assign(design_ids, "design"))
+    return "\n".join(lines)
+
+
+def _html_link_line(md_filename: str) -> str:
+    """生成 MD 顶部的 HTML 跳转链接行。"""
+    stem = Path(md_filename).stem
+    return (
+        f"> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/{stem}.html)**\n"
+        f"> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
+    )
+
+
+# ============================================================
 # MD 生成
 # ============================================================
 
@@ -258,6 +423,10 @@ def _generate_index(flow_stages_def: list[dict], narrative: dict, stage_node_cou
         "3. 用 module_id 锚点让 AI 定位到具体代码文件（链回 depgraph）",
         "4. AI 改之前必须先查 decisiongraph 确认节点存在（防幻觉）",
         "",
+        "## 总指挥图（一张图看全流程）",
+        "",
+        f"> 详见 [{_PANORAMA_FILE}]({_PANORAMA_FILE})——全部决策节点按6阶段分层，单张 Mermaid 大图 + 可缩放 HTML。",
+        "",
         "## 四轨并行架构",
         "",
         cc.get("four_tracks", {}).get("narrative", "_（待补充）_"),
@@ -311,11 +480,15 @@ def _generate_index(flow_stages_def: list[dict], narrative: dict, stage_node_cou
 
 def _generate_stage_doc(stage_def: dict, stage_narrative: dict | None,
                         prod_nodes: list[dict], design_nodes: list[dict],
+                        edges: list[dict], maturity_map: dict[int, str],
+                        md_filename: str,
                         candidates: list[dict] | None = None) -> str:
-    """生成单个 flow_stage 的 MD。"""
+    """生成单个 flow_stage 的 MD（分阶段图，含 Mermaid + HTML 联动）。"""
     sid = stage_def["stage_id"]
     name = stage_def["stage_name"]
     narr = stage_narrative or {}
+    all_nodes = prod_nodes + design_nodes
+    mermaid_code = _build_mermaid_stage(all_nodes, edges, maturity_map)
     lines = [
         "---",
         "ttl: permanent",
@@ -329,6 +502,8 @@ def _generate_stage_doc(stage_def: dict, stage_narrative: dict | None,
         f"> flow_stage: `{sid}` | 映射层: {stage_def.get('mapped_layers', [])} | "
         f"产出契约: `{stage_def.get('output_contract', '-')}`",
         "",
+        _html_link_line(md_filename),
+        "",
         "## 大白话讲这个流程",
         "",
         narr.get("narrative", "_（待补充叙事）_"),
@@ -339,6 +514,21 @@ def _generate_stage_doc(stage_def: dict, stage_narrative: dict | None,
         narr.get("ascii_diagram", "_（待补充框图）_"),
         "```",
         "",
+        "## 决策流可视化（Mermaid）",
+        "",
+        "> 本阶段决策节点 + 同阶段内依赖边。运营态蓝色实线，设计态橙色虚线。",
+        "> 网页版可 Ctrl+滚轮缩放查看细节。",
+        "> 图例：🟦 蓝色=运营态(production) ｜ 🟧 橙色虚线=设计态(design) ｜ 实线=运营态依赖 ｜ 虚线=非运营态依赖",
+        "",
+    ]
+    if mermaid_code:
+        lines.append("```mermaid")
+        lines.append(mermaid_code)
+        lines.append("```")
+    else:
+        lines.append("_（暂无已标定节点，待 Phase B 全量标定）_")
+    lines.extend([
+        "",
         "## 运营态节点（实盘主链路）",
         "",
         _format_node_table(prod_nodes),
@@ -347,7 +537,7 @@ def _generate_stage_doc(stage_def: dict, stage_narrative: dict | None,
         "",
         narr.get("ai_directive", "_（待补充）_"),
         "",
-    ]
+    ])
     # 子流程
     sub_flows = narr.get("sub_flows", [])
     if sub_flows:
@@ -415,14 +605,65 @@ def _generate_modes_doc(narrative: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _generate_panorama_doc(stage_nodes_all: dict[str, list[dict]],
+                           stage_names: dict[str, str],
+                           edges: list[dict], maturity_map: dict[int, str],
+                           total_nodes: int, total_edges: int) -> str:
+    """生成总指挥图 00_panorama.md（全部节点按6阶段 subgraph 分层的单张 Mermaid 大图）。"""
+    mermaid_code = _build_mermaid_total(stage_nodes_all, stage_names, edges, maturity_map)
+    lines = [
+        "---",
+        "ttl: permanent",
+        "doc_type: architecture_view",
+        "generator: generate_trading_flow_diagram.py",
+        "---",
+        "",
+        "# 交易决策总指挥图（全流程全景）",
+        "",
+        f"> 本图包含全部 {total_nodes} 个决策节点（按6阶段 subgraph 分层）+ {total_edges} 条决策边（含跨阶段）。",
+        "> 一张图看懂「钱怎么赚」的完整交易决策流程。",
+        "",
+        _html_link_line(_PANORAMA_FILE),
+        "",
+        "## 怎么看这张图",
+        "",
+        "1. **6 个 subgraph** = 6 个业务阶段（选股→买入→卖出→仓位→执行→对账），从上到下是钱的流向",
+        "2. **节点颜色**：🟦 蓝色=运营态(production, 已上线) ｜ 🟧 橙色虚线=设计态(design, 待施工)",
+        "3. **边样式**：实线=运营态依赖 ｜ 虚线=非运营态依赖（含设计态/混合）",
+        "4. **跨阶段边**：连接不同 subgraph 的边，体现阶段间数据/触发流转",
+        "5. 网页版可 Ctrl+滚轮无限缩放，拖动平移查看每个节点细节",
+        "",
+        "## 各阶段分图",
+        "",
+    ]
+    for sid, fname in _FLOW_STAGE_FILES.items():
+        sname = stage_names.get(sid, sid)
+        cnt = len(stage_nodes_all.get(sid, []))
+        lines.append(f"- [{sname}]({fname})（{cnt} 节点）")
+    lines.extend([
+        "",
+        "## 总指挥图（Mermaid）",
+        "",
+        "> 全部决策节点 + 决策边。大图请在 HTML 网页版查看（Ctrl+滚轮缩放）。",
+        "",
+        "```mermaid",
+        mermaid_code,
+        "```",
+        "",
+        f"> 数据源：{DB_DISPLAY_NAME} decision_nodes + decision_edges（flow_stage 已标定节点）",
+    ])
+    return "\n".join(lines) + "\n"
+
+
 # ============================================================
 # 主入口
 # ============================================================
 
 def main() -> None:
-    """主入口：加载 YAML + 读 DB + 读候选库 → 生成 8 个 MD。"""
+    """主入口：加载 YAML + 读 DB + 读候选库 → 生成 9 个 MD + 7 个 HTML。"""
     parser = argparse.ArgumentParser(description="G-trading-flow: 生成交易决策架构视图")
     parser.add_argument("--dry-run", action="store_true", help="预演：不写文件，只打印")
+    parser.add_argument("--no-html", action="store_true", help="跳过 HTML 联动生成")
     args = parser.parse_args()
 
     # 1. 加载 YAML 真源
@@ -433,17 +674,27 @@ def main() -> None:
         print("ERROR: decision_graph_model.yaml 无 flow_stages 段", file=sys.stderr)
         sys.exit(1)
 
-    # 2. 读 DB 节点（按 flow_stage）
+    # 2. 读 DB 节点（按 flow_stage）+ 边
     reader = DecisionGraphReader()
     stage_node_counts: dict[str, tuple[int, int]] = {}
     stage_nodes: dict[str, tuple[list[dict], list[dict]]] = {}
+    stage_nodes_all: dict[str, list[dict]] = {}
+    stage_names: dict[str, str] = {}
+    maturity_map: dict[int, str] = {}
     for stage in flow_stages_def:
         sid = stage["stage_id"]
+        stage_names[sid] = stage.get("stage_name", sid)
         if sid not in _FLOW_STAGE_FILES:
             continue
         prod, design = _load_nodes_by_stage(reader, sid)
         stage_nodes[sid] = (prod, design)
         stage_node_counts[sid] = (len(prod), len(design))
+        all_n = prod + design
+        stage_nodes_all[sid] = all_n
+        for n in all_n:
+            maturity_map[n["node_id"]] = n.get("design_maturity", "design")
+    calibrated_ids = set(maturity_map.keys())
+    edges = _load_all_edges(reader, calibrated_ids)
     reader.close()
 
     # 3. 读候选库（附录2 数据源）
@@ -452,11 +703,16 @@ def main() -> None:
     # 4. 生成 MD
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     outputs: list[tuple[str, str]] = []
+    total_nodes = len(calibrated_ids)
+    total_edges = len(edges)
 
-    # 总览（含跨阶段基础设施候选附录）
+    # 总指挥图
+    outputs.append((_PANORAMA_FILE, _generate_panorama_doc(
+        stage_nodes_all, stage_names, edges, maturity_map, total_nodes, total_edges)))
+    # 总览
     outputs.append((_INDEX_FILE, _generate_index(
         flow_stages_def, narrative, stage_node_counts, cross_cutting)))
-    # 6 阶段（含附录2 候选模块）
+    # 6 阶段分图
     for stage in flow_stages_def:
         sid = stage["stage_id"]
         if sid not in _FLOW_STAGE_FILES:
@@ -465,23 +721,30 @@ def main() -> None:
         stage_narr = _find_stage_narrative(narrative, sid)
         prod, design = stage_nodes.get(sid, ([], []))
         outputs.append((fname, _generate_stage_doc(
-            stage, stage_narr, prod, design, cand_by_stage.get(sid, []))))
+            stage, stage_narr, prod, design, edges, maturity_map, fname,
+            cand_by_stage.get(sid, []))))
     # 模式
     outputs.append((_MODES_FILE, _generate_modes_doc(narrative)))
 
-    # 5. 写文件
+    # 5. 写 MD + 联动生成 HTML
     cleanup_stale_files(OUTPUT_DIR, _ALL_OUTPUT_FILES, r"^[a-z0-9_]+\.md$")
     written = 0
+    html_count = 0
     for fname, content in outputs:
         out_path = OUTPUT_DIR / fname
         if args.dry_run:
             print(f"[DRY-RUN] would write {out_path} ({len(content)} bytes)")
-        else:
-            out_path.write_text(content, encoding="utf-8")
-            print(f"[OK] {out_path} ({len(content)} bytes)")
-            written += 1
+            continue
+        out_path.write_text(content, encoding="utf-8")
+        print(f"[OK] {out_path} ({len(content)} bytes)")
+        written += 1
+        if not args.no_html and emit_zoomable_html is not None:
+            html_path = emit_zoomable_html(out_path, content, output_dir=_ZOOMABLE_HTML_DIR)
+            if html_path:
+                print(f"[OK] {html_path}")
+                html_count += 1
 
-    print(f"\n生成完成：{written} 个文件 → {OUTPUT_DIR}")
+    print(f"\n生成完成：{written} 个 MD + {html_count} 个 HTML → {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":

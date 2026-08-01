@@ -9,6 +9,9 @@ flow_stage: stock_selection
 
 > flow_stage: `stock_selection` | 映射层: ['L0', 'L1', 'L2A'] | 产出契约: `candidate_pool`
 
+> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/01_stock_selection.html)**
+> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+
 ## 大白话讲这个流程
 
 选股是"从全市场 5000+ 标的里筛出今天值得关注的 10 只"。
@@ -42,6 +45,29 @@ flow_stage: stock_selection
     ▼
   ~10 → 候选池 candidate_pool
 
+```
+
+## 决策流可视化（Mermaid）
+
+> 本阶段决策节点 + 同阶段内依赖边。运营态蓝色实线，设计态橙色虚线。
+> 网页版可 Ctrl+滚轮缩放查看细节。
+> 图例：🟦 蓝色=运营态(production) ｜ 🟧 橙色虚线=设计态(design) ｜ 实线=运营态依赖 ｜ 虚线=非运营态依赖
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    n190["(设计态 / design) 末位淘汰 IC-Based Factor Replacement<br/>signal | L2A | decision/factor/fc_01"]
+    n191["(设计态 / design) 批量裁剪 Batch Factor Pruning<br/>signal | L2A | decision/factor/fc_02"]
+    n192["(设计态 / design) Multi-Source Priority Router 多源优先级路由<br/>signal | L2A | decision/data/dt_01"]
+    n193["(设计态 / design) Cross-Source Reconciler 多源对账<br/>signal | L2A | decision/data/dt_02"]
+    n194["(设计态 / design) Multi-Timeframe Fusion 跨频率融合<br/>signal | L2A | decision/data/dt_03"]
+    n192 -.-> n193
+    n193 -.-> n194
+    n194 -.-> n190
+    n190 -.-> n191
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class n190,n191,n192,n193,n194 design
 ```
 
 ## 运营态节点（实盘主链路）
@@ -103,4 +129,5 @@ _从 candidate_module_registry.yaml 按 target_track 归类到本阶段；基础
 | CAND-AISA-001 | AI Sentiment Analyzer / AI 舆情分析器 | candidate | P1 | pending | A 股受政策与舆情驱动性强,缺乏结构化舆情信号导致政策行情响应滞后 |
 | CAND-SIG-002 | ML-driven Signal Synthesizer / ML驱动信号合成 | deferred | P2 | q2 | 因子数增多后,等权/固定IC加权无法捕捉因子间非线性关系 |
 | CAND-FAC-001 | Factor Cache / 因子缓存 | deferred | P2 | q2 | 因子数量增长后,每日全量重算导致计算延迟>50ms |
+| CAND-FAC-002 | FactorMeta Pydantic Migration / FactorMeta Pydantic迁移 | deferred | P1 | q2 | FactorMeta 使用 @dataclass 违反 KBG-0040 全局 Pydantic 强制约束,与系统... |
 

@@ -9,6 +9,9 @@ flow_stage: position_management
 
 > flow_stage: `position_management` | 映射层: ['L3'] | 产出契约: `target_position`
 
+> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/04_position_flow.html)**
+> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+
 ## 大白话讲这个流程
 
 仓位裁决把"想买多少"变成"实际能买多少"。
@@ -34,6 +37,93 @@ portfolio_target（想买多少）
     ├─ 资金可用性检查  ──┤
     └─ 持仓冲突检查    ──┘
 
+```
+
+## 决策流可视化（Mermaid）
+
+> 本阶段决策节点 + 同阶段内依赖边。运营态蓝色实线，设计态橙色虚线。
+> 网页版可 Ctrl+滚轮缩放查看细节。
+> 图例：🟦 蓝色=运营态(production) ｜ 🟧 橙色虚线=设计态(design) ｜ 实线=运营态依赖 ｜ 虚线=非运营态依赖
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    n20["(设计态 / design) 组合核心引擎 Portfolio Core Engine<br/>portfolio_target | L3 | decision/pf_core/pc_01"]
+    n21["(设计态 / design) 半Kelly硬上限 Half-Kelly Hard Cap<br/>portfolio_target | L3 | decision/pf_core/pc_02"]
+    n22["(设计态 / design) 风险预算 Risk Budget<br/>portfolio_target | L3 | decision/pf_core/pc_03"]
+    n23["(设计态 / design) 再平衡决策 Rebalance Decision<br/>portfolio_target | L3 | decision/pf_core/pc_04"]
+    n24["(设计态 / design) 仲裁优先级体系 Arbitration Priority<br/>portfolio_target | L3 | decision/pf_core/pc_05"]
+    n25["(设计态 / design) 多策略共振融合 Strategy Convergence Fusion<br/>portfolio_target | L3 | decision/pf_core/pc_06"]
+    n26["(设计态 / design) 因子直通裁决 Factor Bypass Arbitration<br/>portfolio_target | L3 | decision/pf_core/pc_07"]
+    n27["(设计态 / design) 元策略路由 Meta-Strategy Router<br/>portfolio_target | L3 | decision/pf_core/pc_08"]
+    n28["(设计态 / design) 组合优化 Portfolio Optimization<br/>portfolio_target | L3 | decision/pf_core/pc_09"]
+    n29["(设计态 / design) 资本分配 Capital Allocation<br/>portfolio_target | L3 | decision/pf_core/pc_10"]
+    n30["(设计态 / design) 决策编排器 Decision Orchestrator<br/>portfolio_target | L3 | decision/pf_core/pc_11"]
+    n31["(设计态 / design) 四轨融合器 Multi-Track Fusion<br/>portfolio_target | L3 | decision/pf_core/pc_12"]
+    n32["(设计态 / design) 策略分配 Strategy Allocation<br/>portfolio_target | L3 | decision/pf_alloc/pa_01"]
+    n33["(设计态 / design) 风险平价 Risk Parity<br/>portfolio_target | L3 | decision/pf_alloc/pa_02"]
+    n34["(设计态 / design) 动态权重 Dynamic Weighting<br/>portfolio_target | L3 | decision/pf_alloc/pa_03"]
+    n35["(设计态 / design) 策略权重再平衡 Strategy Weight Rebalance<br/>portfolio_target | L3 | decision/pf_alloc/pa_04"]
+    n36["(设计态 / design) 多策略共识 Multi-Strategy Consensus<br/>portfolio_target | L3 | decision/pf_alloc/pa_05"]
+    n37["(设计态 / design) 元策略选择 Meta-Strategy Selection<br/>portfolio_target | L3 | decision/pf_alloc/pa_06"]
+    n38["(设计态 / design) 仓位唯一裁决中心 C-047 Position Sole Arbiter<br/>portfolio_target | L3 | decision/position/pos_01"]
+    n39["(设计态 / design) 持仓状态机 Position State Machine<br/>portfolio_target | L3 | decision/position/pos_02"]
+    n40["(设计态 / design) 仓位漂移监控 Position Drift Monitor<br/>portfolio_target | L3 | decision/position/pos_03"]
+    n41["(设计态 / design) Kelly仓位决策 Kelly Position Decision<br/>portfolio_target | L3 | decision/position/pos_04"]
+    n42["(设计态 / design) 风险配额 Risk Quota<br/>portfolio_target | L3 | decision/position/pos_05"]
+    n43["(设计态 / design) 11种市场状态→仓位上限 Market State Position Cap<br/>portfolio_target | L3 | decision/position/pos_06"]
+    n44["(设计态 / design) 组合层决策 Portfolio Layer Decision<br/>portfolio_target | L3 | decision/position/pos_07"]
+    n45["(设计态 / design) 策略层决策 Strategy Layer Decision<br/>portfolio_target | L3 | decision/position/pos_08"]
+    n46["(设计态 / design) 标层决策 Instrument Layer Decision<br/>portfolio_target | L3 | decision/position/pos_09"]
+    n47["(设计态 / design) 动态层决策 Dynamic Layer Decision<br/>portfolio_target | L3 | decision/position/pos_10"]
+    n48["(设计态 / design) 再平衡触发 Rebalance Trigger<br/>portfolio_target | L3 | decision/position/pos_11"]
+    n49["(设计态 / design) 仓位上限硬约束 Position Cap Hard Constraint<br/>portfolio_target | L3 | decision/position/pos_12"]
+    n50["(设计态 / design) REDUCING→EXITING状态转换 REDUCING to EXITING<br/>portfolio_target | L3 | decision/position/pos_13"]
+    n51["(设计态 / design) 风险预算→Kelly决策 Risk Budget to Kelly<br/>portfolio_target | L3 | decision/position/pos_14"]
+    n52["(设计态 / design) 半Kelly硬上限 Half-Kelly Hard Cap<br/>portfolio_target | L3 | decision/position/pos_15"]
+    n53["(设计态 / design) 仓位降级 Position Degradation<br/>portfolio_target | L3 | decision/position/pos_16"]
+    n54["(设计态 / design) 持仓状态→卖出阈值 Position State to Sell Threshold<br/>portfolio_target | L3 | decision/position/pos_17"]
+    n55["(设计态 / design) 仓位四轨决策 Position Four-Track Decision<br/>portfolio_target | L3 | decision/position/pos_18"]
+    n56["(设计态 / design) 仓位裁决→执行 Position Arbitration to Execution<br/>portfolio_target | L3 | decision/position/pos_19"]
+    n32 -.-> n33
+    n33 -.-> n34
+    n34 -.-> n35
+    n35 -.-> n36
+    n36 -.-> n37
+    n37 -.-> n20
+    n20 -.-> n21
+    n21 -.-> n22
+    n22 -.-> n23
+    n23 -.-> n24
+    n24 -.-> n25
+    n25 -.-> n26
+    n26 -.-> n27
+    n27 -.-> n28
+    n28 -.-> n29
+    n29 -.-> n30
+    n30 -.-> n31
+    n31 -.-> n38
+    n38 -.-> n39
+    n39 -.-> n40
+    n40 -.-> n41
+    n41 -.-> n42
+    n42 -.-> n43
+    n43 -.-> n44
+    n44 -.-> n45
+    n45 -.-> n46
+    n46 -.-> n47
+    n47 -.-> n48
+    n48 -.-> n49
+    n49 -.-> n50
+    n50 -.-> n51
+    n51 -.-> n52
+    n52 -.-> n53
+    n53 -.-> n54
+    n54 -.-> n55
+    n55 -.-> n56
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class n20,n21,n22,n23,n24,n25,n26,n27,n28,n29,n30,n31,n32,n33,n34,n35,n36,n37,n38,n39,n40,n41,n42,n43,n44,n45,n46,n47,n48,n49,n50,n51,n52,n53,n54,n55,n56 design
 ```
 
 ## 运营态节点（实盘主链路）

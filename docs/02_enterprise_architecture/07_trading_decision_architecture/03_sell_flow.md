@@ -9,6 +9,9 @@ flow_stage: sell_flow
 
 > flow_stage: `sell_flow` | 映射层: ['L2A', 'L3'] | 产出契约: `sell_signal`
 
+> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/03_sell_flow.html)**
+> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+
 ## 大白话讲这个流程
 
 卖出流决定"持仓里的哪只该卖、为什么卖、什么时候卖"。
@@ -39,6 +42,57 @@ flow_stage: sell_flow
     ├─→ 时间到期     ──┤
     └─→ 人工卖出     ──┘
 
+```
+
+## 决策流可视化（Mermaid）
+
+> 本阶段决策节点 + 同阶段内依赖边。运营态蓝色实线，设计态橙色虚线。
+> 网页版可 Ctrl+滚轮缩放查看细节。
+> 图例：🟦 蓝色=运营态(production) ｜ 🟧 橙色虚线=设计态(design) ｜ 实线=运营态依赖 ｜ 虚线=非运营态依赖
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    n1["(设计态 / design) 卖出决策域入口 Sell Decision Entry<br/>sell_decision | L2A | decision/sell/sell_00"]
+    n2["(设计态 / design) 止盈信号 Take-Profit Signal<br/>sell_decision | L2A | decision/sell/sell_01"]
+    n3["(设计态 / design) 止损信号 Stop-Loss Signal<br/>sell_decision | L2A | decision/sell/sell_02"]
+    n4["(设计态 / design) 移动止损 Trailing Stop<br/>sell_decision | L2A | decision/sell/sell_03"]
+    n5["(设计态 / design) 主力出货信号 Main Force Distribution Signal<br/>sell_decision | L2A | decision/sell/sell_04"]
+    n6["(设计态 / design) 量价背离卖出 Volume-Price Divergence Sell<br/>sell_decision | L2A | decision/sell/sell_05"]
+    n7["(设计态 / design) 突破关键位卖出 Key-Level Breakdown Sell<br/>sell_decision | L2A | decision/sell/sell_06"]
+    n8["(设计态 / design) Watch List 实时卖出 Watch List Realtime Sell<br/>sell_decision | L2A | decision/sell/sell_07"]
+    n9["(设计态 / design) Monitor List 定期扫描 Monitor List Periodic Scan<br/>sell_decision | L2A | decision/sell/sell_08"]
+    n10["(设计态 / design) 卖出信号融合仲裁 Sell Signal Fusion Arbiter<br/>sell_decision | L2A | decision/sell/sell_09"]
+    n11["(设计态 / design) 买卖冲突仲裁 Buy-Sell Conflict Arbiter<br/>sell_decision | L2A | decision/sell/sell_10"]
+    n12["(设计态 / design) 部分卖出vs全部清仓决策 Partial vs Full Sell Decision<br/>sell_decision | L2A | decision/sell/sell_11"]
+    n13["(设计态 / design) D-S证据理论融合 D-S Evidence Theory Fusion<br/>sell_decision | L2A | decision/sell/sell_12"]
+    n14["(设计态 / design) 做T决策协调 T-Trade Coordinator<br/>sell_decision | L2A | decision/sell/sell_13"]
+    n15["(设计态 / design) 黑天鹅强制卖出 Black Swan Forced Sell<br/>sell_decision | L2A | decision/sell/sell_14"]
+    n16["(设计态 / design) Gap开盘决策框架 Gap Opening Decision Framework<br/>sell_decision | L2A | decision/sell/sell_15"]
+    n17["(设计态 / design) 强制清仓信号 Forced Liquidation Signal<br/>sell_decision | L2A | decision/sell/sell_16"]
+    n18["(设计态 / design) 卖出降级模式 Sell Degradation Mode<br/>sell_decision | L2A | decision/sell/sell_17"]
+    n19["(设计态 / design) 卖出决策闭环优化 Sell Decision Closed-Loop<br/>sell_decision | L2A | decision/sell/sell_18"]
+    n1 -.-> n2
+    n2 -.-> n3
+    n3 -.-> n4
+    n4 -.-> n5
+    n5 -.-> n6
+    n6 -.-> n7
+    n7 -.-> n8
+    n8 -.-> n9
+    n9 -.-> n10
+    n10 -.-> n11
+    n11 -.-> n12
+    n12 -.-> n13
+    n13 -.-> n14
+    n14 -.-> n15
+    n15 -.-> n16
+    n16 -.-> n17
+    n17 -.-> n18
+    n18 -.-> n19
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19 design
 ```
 
 ## 运营态节点（实盘主链路）
