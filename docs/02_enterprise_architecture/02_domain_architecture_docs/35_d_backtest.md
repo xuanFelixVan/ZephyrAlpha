@@ -87,9 +87,9 @@ flowchart TD
     src_zephyr_backtest_io_decisiongraph_adapter_py ~~~ src_zephyr_backtest_io_result_repository_py
     src_zephyr_backtest_io_result_repository_py ~~~ src_zephyr_backtest_services_cache_manager_py
     src_zephyr_backtest_services_cache_manager_py ~~~ src_zephyr_backtest_services_data_quality_checker_py
-    src_zephyr_backtest_core_decision_gate_py["3阶段决策门控模块(IS->WFA->OOS)<br/>decision_gate<br/>文件: core/decision_gate.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_decision_gate_py["3阶段决策门控模块(IS->WFA->OOS)<br/>3阶段决策门控模块(IS->WFA->OOS)<br/>decision_gate<br/>文件: core/decision_gate.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_matching_engine_py["matching引擎<br/>回测撮合引擎模块（v1.1.0 重构：委托<br/>MatchingLogic 保证回测=实盘一致性）<br/>matching_engine<br/>文件: core/matching_engine.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_metrics_py["回测绩效指标计算模块<br/>metrics<br/>文件: core/metrics.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_metrics_py["回测绩效指标计算模块<br/>回测绩效指标计算模块<br/>metrics<br/>文件: core/metrics.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_walk_forward_py["walk前<br/>Walk-Forward分析与多重比较偏差校正模块<br/>walk_forward<br/>文件: core/walk_forward.py<br/>(生产态 / production)"]
     src_zephyr_backtest_io_backtest_result_sink_py["回测结果sink<br/>回测结果汇 · 回测结果数据落地模块（v1.3.0<br/>新增，#ARCH-047）<br/>backtest_result_sink<br/>文件: io/backtest_result_sink.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_decision_gate_py ~~~ src_zephyr_backtest_core_matching_engine_py
@@ -97,9 +97,9 @@ flowchart TD
     src_zephyr_backtest_core_metrics_py ~~~ src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_core_walk_forward_py ~~~ src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_core_engine_base_py["引擎基类<br/>引擎基类。L_BACKTEST — Backtest Engine Layer<br/>L_BACKTEST — Backtest Engine Layer<br/>L_BACKTEST — Backtest Engine Layer<br/>文件: core/engine_base.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_matching_logic_py["共享撮合逻辑模块（回测=实盘一致性核心）<br/>matching_logic<br/>文件: core/matching_logic.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_overfitting_detector_py["过拟合检测模块(三维度 + 三层)<br/>overfitting_detector<br/>文件: core/overfitting_detector.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_portfolio_py["回测持仓管理模块<br/>portfolio<br/>文件: core/portfolio.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_matching_logic_py["共享撮合逻辑模块（回测=实盘一致性核心）<br/>共享撮合逻辑模块（回测=实盘一致性核心）<br/>matching_logic<br/>文件: core/matching_logic.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_overfitting_detector_py["过拟合检测模块(三维度 + 三层)<br/>过拟合检测模块(三维度 + 三层)<br/>overfitting_detector<br/>文件: core/overfitting_detector.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_portfolio_py["回测持仓管理模块<br/>回测持仓管理模块<br/>portfolio<br/>文件: core/portfolio.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_engine_base_py ~~~ src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_core_matching_logic_py ~~~ src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_overfitting_detector_py ~~~ src_zephyr_backtest_core_portfolio_py
@@ -204,9 +204,9 @@ flowchart TD
     src_zephyr_backtest_core_tick_replay_py ~~~ src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py ~~~ src_zephyr_backtest_io_decisiongraph_adapter_py
     src_zephyr_backtest_io_decisiongraph_adapter_py ~~~ src_zephyr_backtest_io_result_repository_py
-    src_zephyr_backtest_core_decision_gate_py["3阶段决策门控模块(IS->WFA->OOS)<br/>decision_gate<br/>文件: core/decision_gate.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_decision_gate_py["3阶段决策门控模块(IS->WFA->OOS)<br/>3阶段决策门控模块(IS->WFA->OOS)<br/>decision_gate<br/>文件: core/decision_gate.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_matching_engine_py["matching引擎<br/>回测撮合引擎模块（v1.1.0 重构：委托<br/>MatchingLogic 保证回测=实盘一致性）<br/>matching_engine<br/>文件: core/matching_engine.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_metrics_py["回测绩效指标计算模块<br/>metrics<br/>文件: core/metrics.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_metrics_py["回测绩效指标计算模块<br/>回测绩效指标计算模块<br/>metrics<br/>文件: core/metrics.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_walk_forward_py["walk前<br/>Walk-Forward分析与多重比较偏差校正模块<br/>walk_forward<br/>文件: core/walk_forward.py<br/>(生产态 / production)"]
     src_zephyr_backtest_io_backtest_result_sink_py["回测结果sink<br/>回测结果汇 · 回测结果数据落地模块（v1.3.0<br/>新增，#ARCH-047）<br/>backtest_result_sink<br/>文件: io/backtest_result_sink.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_decision_gate_py ~~~ src_zephyr_backtest_core_matching_engine_py
@@ -214,9 +214,9 @@ flowchart TD
     src_zephyr_backtest_core_metrics_py ~~~ src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_core_walk_forward_py ~~~ src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_core_engine_base_py["引擎基类<br/>引擎基类。L_BACKTEST — Backtest Engine Layer<br/>L_BACKTEST — Backtest Engine Layer<br/>L_BACKTEST — Backtest Engine Layer<br/>文件: core/engine_base.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_matching_logic_py["共享撮合逻辑模块（回测=实盘一致性核心）<br/>matching_logic<br/>文件: core/matching_logic.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_overfitting_detector_py["过拟合检测模块(三维度 + 三层)<br/>overfitting_detector<br/>文件: core/overfitting_detector.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_portfolio_py["回测持仓管理模块<br/>portfolio<br/>文件: core/portfolio.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_matching_logic_py["共享撮合逻辑模块（回测=实盘一致性核心）<br/>共享撮合逻辑模块（回测=实盘一致性核心）<br/>matching_logic<br/>文件: core/matching_logic.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_overfitting_detector_py["过拟合检测模块(三维度 + 三层)<br/>过拟合检测模块(三维度 + 三层)<br/>overfitting_detector<br/>文件: core/overfitting_detector.py<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_portfolio_py["回测持仓管理模块<br/>回测持仓管理模块<br/>portfolio<br/>文件: core/portfolio.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_engine_base_py ~~~ src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_core_matching_logic_py ~~~ src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_overfitting_detector_py ~~~ src_zephyr_backtest_core_portfolio_py

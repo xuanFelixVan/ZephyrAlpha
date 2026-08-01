@@ -163,9 +163,9 @@ flowchart TD
     src_zephyr_shared_io_cache_invalidation_py["缓存invalidation<br/>缓存一致性<br/>cache_invalidation<br/>文件: io/cache_invalidation.py<br/>(生产态 / production)"]
     src_zephyr_shared_utils_verify_paths_py["校验paths<br/>代码路径索引验证<br/>verify_paths<br/>文件: utils/verify_paths.py<br/>(生产态 / production)"]
     tests_automation_test_auto_runtime_e2e_py["测试自动运行时端到端<br/>F1 AutoRuntimeCore 非mock端到端集成测试<br/>test_auto_runtime_e2e<br/>文件: automation/test_auto_runtime_e2e.py<br/>(生产态 / production)"]
-    tests_f_lifecycle_test_f1_event_trigger_py["F1 事件触发启动测试<br/>test_f1_event_trigger<br/>文件: f_lifecycle/test_f1_event_trigger.py<br/>(生产态 / production)"]
-    tests_trading_extreme_test_f14_pipeline_extreme_py["F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>test_f14_pipeline_extreme<br/>文件: extreme/test_f14_pipeline_extreme.py<br/>(生产态 / production)"]
-    tests_trading_extreme_test_f1_extreme_py["F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>test_f1_extreme<br/>文件: extreme/test_f1_extreme.py<br/>(生产态 / production)"]
+    tests_f_lifecycle_test_f1_event_trigger_py["F1 事件触发启动测试<br/>F1 事件触发启动测试<br/>test_f1_event_trigger<br/>文件: f_lifecycle/test_f1_event_trigger.py<br/>(生产态 / production)"]
+    tests_trading_extreme_test_f14_pipeline_extreme_py["F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>test_f14_pipeline_extreme<br/>文件: extreme/test_f14_pipeline_extreme.py<br/>(生产态 / production)"]
+    tests_trading_extreme_test_f1_extreme_py["F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>test_f1_extreme<br/>文件: extreme/test_f1_extreme.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_main_py ~~~ src_zephyr_autonomy_core_agent_observability_py
     src_zephyr_autonomy_core_agent_observability_py ~~~ src_zephyr_autonomy_core_all_skill_modules_py
     src_zephyr_autonomy_core_all_skill_modules_py ~~~ src_zephyr_autonomy_core_context_atomic_injector_py
@@ -512,9 +512,9 @@ flowchart TD
     src_zephyr_shared_io_cache_invalidation_py["缓存invalidation<br/>缓存一致性<br/>cache_invalidation<br/>文件: io/cache_invalidation.py<br/>(生产态 / production)"]
     src_zephyr_shared_utils_verify_paths_py["校验paths<br/>代码路径索引验证<br/>verify_paths<br/>文件: utils/verify_paths.py<br/>(生产态 / production)"]
     tests_automation_test_auto_runtime_e2e_py["测试自动运行时端到端<br/>F1 AutoRuntimeCore 非mock端到端集成测试<br/>test_auto_runtime_e2e<br/>文件: automation/test_auto_runtime_e2e.py<br/>(生产态 / production)"]
-    tests_f_lifecycle_test_f1_event_trigger_py["F1 事件触发启动测试<br/>test_f1_event_trigger<br/>文件: f_lifecycle/test_f1_event_trigger.py<br/>(生产态 / production)"]
-    tests_trading_extreme_test_f14_pipeline_extreme_py["F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>test_f14_pipeline_extreme<br/>文件: extreme/test_f14_pipeline_extreme.py<br/>(生产态 / production)"]
-    tests_trading_extreme_test_f1_extreme_py["F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>test_f1_extreme<br/>文件: extreme/test_f1_extreme.py<br/>(生产态 / production)"]
+    tests_f_lifecycle_test_f1_event_trigger_py["F1 事件触发启动测试<br/>F1 事件触发启动测试<br/>test_f1_event_trigger<br/>文件: f_lifecycle/test_f1_event_trigger.py<br/>(生产态 / production)"]
+    tests_trading_extreme_test_f14_pipeline_extreme_py["F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>test_f14_pipeline_extreme<br/>文件: extreme/test_f14_pipeline_extreme.py<br/>(生产态 / production)"]
+    tests_trading_extreme_test_f1_extreme_py["F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>test_f1_extreme<br/>文件: extreme/test_f1_extreme.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_main_py ~~~ src_zephyr_autonomy_core_agent_observability_py
     src_zephyr_autonomy_core_agent_observability_py ~~~ src_zephyr_autonomy_core_all_skill_modules_py
     src_zephyr_autonomy_core_all_skill_modules_py ~~~ src_zephyr_autonomy_core_context_atomic_injector_py

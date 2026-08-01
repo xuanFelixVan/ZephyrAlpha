@@ -54,8 +54,8 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_pf_alloc_batched_position_builder_py["pf_alloc/batched_position_builder.py<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_multi_strategy_capital_allocator_py["多策略资本分配器<br/>多策略资本分配器（multi_strategy_capital_<br/>allocator.py）<br/>⛔ 组合分配域，设计已就绪，等待开发排期<br/>multi_strategy_capital_allocator<br/>文件: pf_alloc/multi_strategy_capital_<br/>allocator.py<br/>(设计态 / design)"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>策略生命周期事件，pf_<br/>alloc的事件，定义和分发事件。<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>默认权益策略。D_PORTFOLIO_CORE — Default Equity<br/>Long-Only Strategy<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
@@ -96,8 +96,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>策略生命周期事件，pf_<br/>alloc的事件，定义和分发事件。<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>默认权益策略。D_PORTFOLIO_CORE — Default Equity<br/>Long-Only Strategy<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_core_strategy_correlation_gate_py

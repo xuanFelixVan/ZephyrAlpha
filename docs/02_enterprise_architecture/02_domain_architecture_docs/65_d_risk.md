@@ -55,7 +55,7 @@ ttl: permanent
 flowchart TD
     src_zephyr_risk_ashare_stop_loss_rule_engine_py["A股停止亏损规则引擎<br/>A股停止亏损规则引擎，风控的引擎，执行核心逻辑的<br/>处理引擎。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>ashare_stop_loss_rule_engine<br/>文件: risk/ashare_stop_loss_rule_engine.py<br/>(设计态 / design)"]
     src_zephyr_risk_ashare_systemic_risk_detector_py["A股系统性风险检测器<br/>A股systemic风险检测器，风控的检测器，检测特定模<br/>式或异常情况。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>ashare_systemic_risk_detector<br/>文件: risk/ashare_systemic_risk_detector.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_drawdown_tracker_py["Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>文件: core/drawdown_tracker.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_drawdown_tracker_py["Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>文件: core/drawdown_tracker.py<br/>(设计态 / design)"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py["机器学习实验管线<br/>机器学习实验管线，依赖机器学习实验管线工作<br/>ml_experiment_pipeline<br/>文件: cross_market_data_adapter/ml_experiment_<br/>pipeline.py<br/>(生产态 / production)"]
     src_zephyr_risk_drawdown_realtime_tracker_py["回撤实时追踪器<br/>回撤实时追踪器，风控的追踪器，持续跟踪某项指标或<br/>状态的变化。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>drawdown_realtime_tracker<br/>文件: risk/drawdown_realtime_tracker.py<br/>(设计态 / design)"]
     src_zephyr_risk_drawdown_tracker["回撤追踪器<br/>回撤追踪器，风控的子目录，归集相关子模块。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>文件: drawdown_tracker/<br/>(设计态 / design)"]
@@ -185,7 +185,7 @@ flowchart TD
 flowchart TD
     src_zephyr_risk_ashare_stop_loss_rule_engine_py["A股停止亏损规则引擎<br/>A股停止亏损规则引擎，风控的引擎，执行核心逻辑的<br/>处理引擎。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>ashare_stop_loss_rule_engine<br/>文件: risk/ashare_stop_loss_rule_engine.py<br/>(设计态 / design)"]
     src_zephyr_risk_ashare_systemic_risk_detector_py["A股系统性风险检测器<br/>A股systemic风险检测器，风控的检测器，检测特定模<br/>式或异常情况。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>ashare_systemic_risk_detector<br/>文件: risk/ashare_systemic_risk_detector.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_drawdown_tracker_py["Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>文件: core/drawdown_tracker.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_drawdown_tracker_py["Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>文件: core/drawdown_tracker.py<br/>(设计态 / design)"]
     src_zephyr_risk_drawdown_realtime_tracker_py["回撤实时追踪器<br/>回撤实时追踪器，风控的追踪器，持续跟踪某项指标或<br/>状态的变化。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>drawdown_realtime_tracker<br/>文件: risk/drawdown_realtime_tracker.py<br/>(设计态 / design)"]
     src_zephyr_risk_drawdown_tracker["回撤追踪器<br/>回撤追踪器，风控的子目录，归集相关子模块。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>文件: drawdown_tracker/<br/>(设计态 / design)"]
     src_zephyr_risk_ashare_stop_loss_rule_engine_py ~~~ src_zephyr_risk_ashare_systemic_risk_detector_py
