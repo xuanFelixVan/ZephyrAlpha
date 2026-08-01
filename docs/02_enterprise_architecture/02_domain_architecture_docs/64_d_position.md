@@ -54,7 +54,7 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_position_core_position_limit_enforcer_py["core/position_limit_enforcer<br/>Position Limit Enforcer — 限仓执行器<br/>(MOD-POS-010)<br/>文件: core/position_limit_enforcer.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>（sell_position_link.py）<br/>文件: core/sell_position_link.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>Sell-Position Bidirectional Link —<br/>卖出-仓位双向链接 (MOD-POS-016)<br/>sell_position_link<br/>文件: core/sell_position_link.py<br/>(生产态 / production)"]
     src_zephyr_position_position_reconciler_py["持仓协调器<br/>Position Reconciler — v0.10.1 持仓对账:<br/>execution report+book<br/>record+counterparty三方对账<br/>position_reconciler<br/>文件: position/position_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_position_services_position_audit_logger_py["持仓审计日志器<br/>持仓的日志器，记录运行日志<br/>⛔ 持仓管理域，设计已就绪，等待开发排期<br/>position_audit_logger<br/>文件: services/position_audit_logger.py<br/>(设计态 / design)"]
     src_zephyr_position_core_position_limit_enforcer_py ~~~ src_zephyr_position_core_sell_position_link_py
@@ -110,7 +110,7 @@ flowchart TD
     src_zephyr_position_core_cash_manager_py["core/cash_manager<br/>Cash Manager — 资金管理器 (MOD-POS-006)<br/>文件: core/cash_manager.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_limit_enforcer_py["core/position_limit_enforcer<br/>Position Limit Enforcer — 限仓执行器<br/>(MOD-POS-010)<br/>文件: core/position_limit_enforcer.py<br/>(生产态 / production)"]
     src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>仓位/核心包的rebalance_engine模块<br/>文件: core/rebalance_engine.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>（sell_position_link.py）<br/>文件: core/sell_position_link.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>Sell-Position Bidirectional Link —<br/>卖出-仓位双向链接 (MOD-POS-016)<br/>sell_position_link<br/>文件: core/sell_position_link.py<br/>(生产态 / production)"]
     src_zephyr_position_position_reconciler_py["持仓协调器<br/>Position Reconciler — v0.10.1 持仓对账:<br/>execution report+book<br/>record+counterparty三方对账<br/>position_reconciler<br/>文件: position/position_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_position_core_cash_manager_py ~~~ src_zephyr_position_core_position_limit_enforcer_py
     src_zephyr_position_core_position_limit_enforcer_py ~~~ src_zephyr_position_core_rebalance_engine_py
