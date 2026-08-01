@@ -63,7 +63,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 try:
-    from _common import DB_DISPLAY_NAME, cleanup_stale_files  # noqa: E402
+    from _common import DB_DISPLAY_NAME, cleanup_stale_files  # noqa: E402  # noqa: import-integrity  same-dir module via sys.path insert
 except ImportError:
     DB_DISPLAY_NAME = "PostgreSQL depgraph"
 
@@ -81,7 +81,7 @@ if _GENERATORS_DIR not in sys.path:
     sys.path.insert(0, _GENERATORS_DIR)
 
 try:
-    from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402
+    from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402  # noqa: import-integrity  same-dir module via sys.path insert
 except ImportError:
     emit_zoomable_html = None  # type: ignore[assignment]
     HTML_SUBDIR = "_zoomable_html"
@@ -229,7 +229,7 @@ _MERMAID_THEME = (
     "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', "
     "'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', "
     "'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
-    "'clusterBkg': 'transparent', 'clusterBorder': '#cccccc', "
+    "'clusterBkg': 'transparent', 'clusterBorder': 'transparent', "
     "'fontSize': '14px'}}}%%"
 )
 

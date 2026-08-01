@@ -240,7 +240,7 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
   .mermaid svg {{ max-width: none !important; display: block; margin: 0 auto; }}
   /* subgraph/cluster 背景透明：Mermaid 默认浅蓝白，强制透明与分图白色背景保持一致。
      无 subgraph 的图（域文档等）无 .cluster 元素，此规则零影响。 */
-  .mermaid .cluster rect {{ fill: transparent !important; stroke: #ccc !important; }}
+  .mermaid .cluster rect {{ fill: transparent !important; stroke: transparent !important; }}
   /* 节点标签防裁剪（2026-08-01 两轮治本）：
      ① 生成端 _wrap_label_text 预折行（<br/> 显式断行），测量行数=渲染行数；
      ② 字号行高必须带 !important——Mermaid v11 为每张图注入 ID 作用域样式
@@ -306,7 +306,7 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
         // 强制 subgraph/cluster 背景为透明（Mermaid 默认浅蓝白，与分图白色背景保持一致）
         it.pre.querySelectorAll('.cluster rect').forEach(function(r) {{
             r.style.fill = 'transparent';
-            r.style.stroke = '#cccccc';
+            r.style.stroke = 'transparent';
         }});
         if (res.bindFunctions) {{ try {{ res.bindFunctions(it.pre); }} catch (e) {{}} }}
       }} catch (err) {{
