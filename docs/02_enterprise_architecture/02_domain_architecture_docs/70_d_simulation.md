@@ -59,8 +59,8 @@ flowchart TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ src_zephyr_simulation_result_analyzer_py
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
     src_zephyr_simulation_pipeline_base_py["管线基类<br/>实验 — Experimentation Pipeline Layer<br/>pipeline_base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>风险模拟器（risk_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>risk_simulator<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>策略模拟器（strategy_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>strategy_simulator<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>风险模拟器（risk_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>策略模拟器（strategy_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>lookaheadbias检测器，模拟的检测器，检测特定模式<br/>或异常情况。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
@@ -115,8 +115,8 @@ flowchart TD
     src_zephyr_simulation_result_analyzer_py["结果分析器<br/>结果分析器，模拟的分析器，分析数据找出问题或规律<br/>。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>result_analyzer<br/>文件: simulation/result_analyzer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_scenario_generator_py["场景生成器<br/>场景生成器，模拟的生成器，按规则生成所需的数据或<br/>报告。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>scenario_generator<br/>文件: simulation/scenario_generator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
-    src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>风险模拟器（risk_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>risk_simulator<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>策略模拟器（strategy_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>strategy_simulator<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>风险模拟器（risk_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>策略模拟器（strategy_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>lookaheadbias检测器，模拟的检测器，检测特定模式<br/>或异常情况。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
     src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>参数鲁棒性测试器，模拟的测试器，测试验证功能。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
