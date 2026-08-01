@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3123 |
-| 生产态模块 | 2889 |
+| 模块总数 | 3127 |
+| 生产态模块 | 2893 |
 | 设计态模块 | 234 |
 
 ## 域清单（按架构层分组）
@@ -150,7 +150,7 @@ ttl: permanent
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 9 | 5 | 4 | 9/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
 | D_PF_CORE | 组合核心 / Portfolio Core | 18 | 10 | 8 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 12 | 5 | 7 | 12/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
-| D_RISK | 风控 / Risk Control | 16 | 11 | 5 | 16/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
+| D_RISK | 风控 / Risk Control | 20 | 15 | 5 | 20/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 23 | 8 | 15 | 23/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
 | D_SIGLEGACY | 信号遗留设计态 / Signal Legacy (Design) | 0 | 0 | 0 | 0/150 (OK) | [📄 68_d_siglegacy.md](68_d_siglegacy.md) |

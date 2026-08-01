@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_PF_ALLOC | Domain ID | D_PF_ALLOC |
 | 域名称 | 组合分配 | Domain Name | Portfolio Allocation |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 9 | Module Count | 9 |
+| 模块数 | 6 | Module Count | 6 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 7 | Cross-domain Outgoing | 7 |
-| 设计态模块 | 4 | Design Modules | 4 |
+| 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 5 | Production Modules | 5 |
 | 容量 | 5/150 (正常) | Capacity | 5/150 (正常) |
 | 描述 | 组合分配，负责资产配置、权重分配和再平衡 | Description | 组合分配，负责资产配置、权重分配和再平衡 |
@@ -48,27 +48,21 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 9 个模块（生产态 5 + 设计态 4），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 6 个模块（生产态 5 + 设计态 1），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_alloc_batched_position_builder_py["批量持仓构建器<br/>一次性为多个策略批量生成目标持仓，避免逐个构建的<br/>延迟，提升组合分配效率<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
+    src_zephyr_pf_alloc_batched_position_builder_py["批量持仓构建器<br/>一次性为多个策略批量生成目标持仓，避免逐个构建的<br/>延迟，提升组合分配效率。<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["core/multi_strategy_capital_allocator<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["core/signal_synthesis_combiner<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py["core/strategy_correlation_gate<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_multi_strategy_capital_allocator_py["多策略资本分配器<br/>组合配置包的multi_strategy_capital_allocator模块<br/>⛔ 组合分配域，设计已就绪，等待开发排期<br/>文件: pf_alloc/multi_strategy_capital_<br/>allocator.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_signal_synthesis_combiner_py["信号合成合并器<br/>组合配置包的signal_synthesis_combiner模块<br/>⛔ 组合分配域，设计已就绪，等待开发排期<br/>文件: pf_alloc/signal_synthesis_combiner.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_strategy_correlation_gate_py["策略相关性门禁<br/>pf_alloc的门禁，在关键节点检查是否放行<br/>⛔ 组合分配域，设计已就绪，等待开发排期<br/>strategy_correlation_gate<br/>文件: pf_alloc/strategy_correlation_gate.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>pf_alloc的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>组合核心包的default_equity_strategy模块<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>策略生命周期事件，pf_<br/>alloc的事件，定义和分发事件。<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>默认权益策略。D_PORTFOLIO_CORE — Default Equity<br/>Long-Only Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_batched_position_builder_py ~~~ src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_core_signal_synthesis_combiner_py
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_core_strategy_correlation_gate_py
-    src_zephyr_pf_alloc_core_strategy_correlation_gate_py ~~~ src_zephyr_pf_alloc_multi_strategy_capital_allocator_py
-    src_zephyr_pf_alloc_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_signal_synthesis_combiner_py
-    src_zephyr_pf_alloc_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_strategy_correlation_gate_py
-    src_zephyr_pf_alloc_strategy_correlation_gate_py ~~~ src_zephyr_pf_alloc_strategy_lifecycle_event_py
+    src_zephyr_pf_alloc_core_strategy_correlation_gate_py ~~~ src_zephyr_pf_alloc_strategy_lifecycle_event_py
     src_zephyr_pf_alloc_strategy_lifecycle_event_py ~~~ src_zephyr_pf_core_default_equity_strategy_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py -->|导入依赖 / import_depends| D_SHARED
@@ -87,7 +81,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py,src_zephyr_pf_alloc_core_signal_synthesis_combiner_py,src_zephyr_pf_alloc_core_strategy_correlation_gate_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py,src_zephyr_pf_core_default_equity_strategy_py production
-    class src_zephyr_pf_alloc_batched_position_builder_py,src_zephyr_pf_alloc_multi_strategy_capital_allocator_py,src_zephyr_pf_alloc_signal_synthesis_combiner_py,src_zephyr_pf_alloc_strategy_correlation_gate_py design
+    class src_zephyr_pf_alloc_batched_position_builder_py design
     class D_SHARED,D_INFRASTRUCTURE,D_GOVERNANCE,D_PF_CORE external_prod
 ```
 
@@ -101,8 +95,8 @@ flowchart TD
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["core/multi_strategy_capital_allocator<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["core/signal_synthesis_combiner<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py["core/strategy_correlation_gate<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>pf_alloc的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>组合核心包的default_equity_strategy模块<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>策略生命周期事件，pf_<br/>alloc的事件，定义和分发事件。<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>默认权益策略。D_PORTFOLIO_CORE — Default Equity<br/>Long-Only Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_core_signal_synthesis_combiner_py
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py ~~~ src_zephyr_pf_alloc_strategy_lifecycle_event_py
@@ -116,23 +110,17 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 4 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 1 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_alloc_batched_position_builder_py["批量持仓构建器<br/>一次性为多个策略批量生成目标持仓，避免逐个构建的<br/>延迟，提升组合分配效率<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_multi_strategy_capital_allocator_py["多策略资本分配器<br/>组合配置包的multi_strategy_capital_allocator模块<br/>⛔ 组合分配域，设计已就绪，等待开发排期<br/>文件: pf_alloc/multi_strategy_capital_<br/>allocator.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_signal_synthesis_combiner_py["信号合成合并器<br/>组合配置包的signal_synthesis_combiner模块<br/>⛔ 组合分配域，设计已就绪，等待开发排期<br/>文件: pf_alloc/signal_synthesis_combiner.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_strategy_correlation_gate_py["策略相关性门禁<br/>pf_alloc的门禁，在关键节点检查是否放行<br/>⛔ 组合分配域，设计已就绪，等待开发排期<br/>strategy_correlation_gate<br/>文件: pf_alloc/strategy_correlation_gate.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_batched_position_builder_py ~~~ src_zephyr_pf_alloc_multi_strategy_capital_allocator_py
-    src_zephyr_pf_alloc_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_signal_synthesis_combiner_py
-    src_zephyr_pf_alloc_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_strategy_correlation_gate_py
+    src_zephyr_pf_alloc_batched_position_builder_py["批量持仓构建器<br/>一次性为多个策略批量生成目标持仓，避免逐个构建的<br/>延迟，提升组合分配效率。<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_alloc_batched_position_builder_py,src_zephyr_pf_alloc_multi_strategy_capital_allocator_py,src_zephyr_pf_alloc_signal_synthesis_combiner_py,src_zephyr_pf_alloc_strategy_correlation_gate_py design
+    class src_zephyr_pf_alloc_batched_position_builder_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

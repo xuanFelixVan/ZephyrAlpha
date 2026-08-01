@@ -53,16 +53,16 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_governance_observability_gate_cache_py["门禁缓存<br/>gate_cache模块<br/>Module docstring — see module-level docstring<br/>for details.<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
-    scripts_setup_dev_env_py["开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE<br/>setup_dev_env模块<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
-    src_zephyr_governance_observability_governance_observability_dashboard_py["可观测性仪表盘<br/>observability仪表盘，治理的核心类，封装Dashboard<br/>Panel相关逻辑<br/>observability_dashboard<br/>文件: observability_governance/observability_<br/>dashboard.py<br/>(生产态 / production)"]
+    scripts_governance_observability_gate_cache_py["门禁缓存<br/>observability包的gate_cache模块<br/>Module docstring — see module-level docstring<br/>for details.<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
+    scripts_setup_dev_env_py["开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE<br/>脚本包的setup_dev_env模块<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
+    src_zephyr_governance_observability_governance_observability_dashboard_py["可观测性仪表盘<br/>observability仪表盘，治理的核心类，封装Dashboard<br/>Panel相关逻辑。<br/>observability_dashboard<br/>文件: observability_governance/observability_<br/>dashboard.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_engine_py["预算引擎<br/>预算引擎。Budget Enforcer core engine —<br/>MOD-INF-024<br/>文件: ops_governance/budget_engine.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_handler_py["预算处理器<br/>G-CT-006 消费端 — Escalation.on_budget_alert()<br/>预算告急升级处理<br/>budget_handler<br/>文件: ops_governance/budget_handler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_handler_py["预算处理器<br/>G-CT-006 消费端 — Escalation.on_budget_alert()<br/>预算告急升级处理.<br/>budget_handler<br/>文件: ops_governance/budget_handler.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_profile_manager_py["预算档案管理器<br/>治理/ops governance包的budget_profile_<br/>manager模块<br/>文件: ops_governance/budget_profile_manager.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_tracker_py["预算追踪器<br/>预算追踪器，治理的追踪器，持续跟踪某项指标或状态<br/>的变化<br/>budget_tracker<br/>文件: ops_governance/budget_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_tracker_py["预算追踪器<br/>预算追踪器，治理的追踪器，持续跟踪某项指标或状态<br/>的变化。<br/>budget_tracker<br/>文件: ops_governance/budget_tracker.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_cost_budget_py["成本预算<br/>— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>cost_budget<br/>文件: ops_governance/cost_budget.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_meta_observability_py["元可观测性<br/>Meta Observability — v0.10.0 协议自身可观测性:<br/>self loop latency+p99+edge case rate<br/>meta_observability<br/>文件: ops_governance/meta_observability.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_token_budget_py["令牌预算<br/>三级 Token Budget 管理器<br/>token_budget<br/>文件: ops_governance/token_budget.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_meta_observability_py["元可观测性<br/>Meta Observability — v0.10.0 协议自身可观测性:<br/>self loop latency+p99+edge case rate。<br/>meta_observability<br/>文件: ops_governance/meta_observability.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_token_budget_py["令牌预算<br/>三级 Token Budget 管理器。<br/>token_budget<br/>文件: ops_governance/token_budget.py<br/>(生产态 / production)"]
     scripts_governance_observability_gate_cache_py ~~~ scripts_setup_dev_env_py
     scripts_setup_dev_env_py ~~~ src_zephyr_governance_observability_governance_observability_dashboard_py
     src_zephyr_governance_observability_governance_observability_dashboard_py ~~~ src_zephyr_governance_ops_governance_budget_engine_py
@@ -73,8 +73,8 @@ flowchart TD
     src_zephyr_governance_ops_governance_cost_budget_py ~~~ src_zephyr_governance_ops_governance_meta_observability_py
     src_zephyr_governance_ops_governance_meta_observability_py ~~~ src_zephyr_governance_ops_governance_token_budget_py
     src_zephyr_governance_ops_governance_budget_models_py["预算模型<br/>预算模型。Budget Enforcer data models —<br/>MOD-INF-024<br/>文件: ops_governance/budget_models.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -93,6 +93,9 @@ flowchart TD
     src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_ops_governance_budget_handler_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_ops_governance_cost_budget_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOV_REPAIR["治理修复<br/>治理修复，负责治理问题自动修复和修复策略管理<br/>Governance Repair<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_INTEGRATION["管线路由<br/>管线路由，负责跨域数据流路由、管道编排和集成适配<br/>Pipeline Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -108,14 +111,12 @@ flowchart TD
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_observability_gate_cache_py,scripts_setup_dev_env_py,src_zephyr_governance_observability_governance_observability_dashboard_py,src_zephyr_governance_ops_governance_budget_engine_py,src_zephyr_governance_ops_governance_budget_handler_py,src_zephyr_governance_ops_governance_budget_models_py,src_zephyr_governance_ops_governance_budget_profile_manager_py,src_zephyr_governance_ops_governance_budget_tracker_py,src_zephyr_governance_ops_governance_cost_budget_py,src_zephyr_governance_ops_governance_meta_observability_py,src_zephyr_governance_ops_governance_token_budget_py production
-    class D_GOV_OPS_RESILIENCE,D_GOV_SCRIPTS,D_GOV_DRIFT,D_INFRA_RECOVERY,D_SHARED,D_GOVERNANCE,D_INTEGRATION,D_GOV_ENFORCEMENT external_prod
+    class D_GOV_OPS_RESILIENCE,D_GOV_SCRIPTS,D_GOV_DRIFT,D_INFRA_RECOVERY,D_SHARED,D_GOVERNANCE,D_GOV_REPAIR,D_INTEGRATION,D_GOV_ENFORCEMENT external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -125,16 +126,16 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_governance_observability_gate_cache_py["门禁缓存<br/>gate_cache模块<br/>Module docstring — see module-level docstring<br/>for details.<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
-    scripts_setup_dev_env_py["开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE<br/>setup_dev_env模块<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
-    src_zephyr_governance_observability_governance_observability_dashboard_py["可观测性仪表盘<br/>observability仪表盘，治理的核心类，封装Dashboard<br/>Panel相关逻辑<br/>observability_dashboard<br/>文件: observability_governance/observability_<br/>dashboard.py<br/>(生产态 / production)"]
+    scripts_governance_observability_gate_cache_py["门禁缓存<br/>observability包的gate_cache模块<br/>Module docstring — see module-level docstring<br/>for details.<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
+    scripts_setup_dev_env_py["开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE<br/>脚本包的setup_dev_env模块<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
+    src_zephyr_governance_observability_governance_observability_dashboard_py["可观测性仪表盘<br/>observability仪表盘，治理的核心类，封装Dashboard<br/>Panel相关逻辑。<br/>observability_dashboard<br/>文件: observability_governance/observability_<br/>dashboard.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_engine_py["预算引擎<br/>预算引擎。Budget Enforcer core engine —<br/>MOD-INF-024<br/>文件: ops_governance/budget_engine.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_handler_py["预算处理器<br/>G-CT-006 消费端 — Escalation.on_budget_alert()<br/>预算告急升级处理<br/>budget_handler<br/>文件: ops_governance/budget_handler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_handler_py["预算处理器<br/>G-CT-006 消费端 — Escalation.on_budget_alert()<br/>预算告急升级处理.<br/>budget_handler<br/>文件: ops_governance/budget_handler.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_profile_manager_py["预算档案管理器<br/>治理/ops governance包的budget_profile_<br/>manager模块<br/>文件: ops_governance/budget_profile_manager.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_tracker_py["预算追踪器<br/>预算追踪器，治理的追踪器，持续跟踪某项指标或状态<br/>的变化<br/>budget_tracker<br/>文件: ops_governance/budget_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_tracker_py["预算追踪器<br/>预算追踪器，治理的追踪器，持续跟踪某项指标或状态<br/>的变化。<br/>budget_tracker<br/>文件: ops_governance/budget_tracker.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_cost_budget_py["成本预算<br/>— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>cost_budget<br/>文件: ops_governance/cost_budget.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_meta_observability_py["元可观测性<br/>Meta Observability — v0.10.0 协议自身可观测性:<br/>self loop latency+p99+edge case rate<br/>meta_observability<br/>文件: ops_governance/meta_observability.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_token_budget_py["令牌预算<br/>三级 Token Budget 管理器<br/>token_budget<br/>文件: ops_governance/token_budget.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_meta_observability_py["元可观测性<br/>Meta Observability — v0.10.0 协议自身可观测性:<br/>self loop latency+p99+edge case rate。<br/>meta_observability<br/>文件: ops_governance/meta_observability.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_token_budget_py["令牌预算<br/>三级 Token Budget 管理器。<br/>token_budget<br/>文件: ops_governance/token_budget.py<br/>(生产态 / production)"]
     scripts_governance_observability_gate_cache_py ~~~ scripts_setup_dev_env_py
     scripts_setup_dev_env_py ~~~ src_zephyr_governance_observability_governance_observability_dashboard_py
     src_zephyr_governance_observability_governance_observability_dashboard_py ~~~ src_zephyr_governance_ops_governance_budget_engine_py
@@ -145,8 +146,8 @@ flowchart TD
     src_zephyr_governance_ops_governance_cost_budget_py ~~~ src_zephyr_governance_ops_governance_meta_observability_py
     src_zephyr_governance_ops_governance_meta_observability_py ~~~ src_zephyr_governance_ops_governance_token_budget_py
     src_zephyr_governance_ops_governance_budget_models_py["预算模型<br/>预算模型。Budget Enforcer data models —<br/>MOD-INF-024<br/>文件: ops_governance/budget_models.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
