@@ -58408,3 +58408,336 @@ battle_map_steps:
       L5 层。C-007 闭环优化：反馈到 L1~L4+L3.5 每层（IC衰减→因子替代、准确率监控→信号退役、漂移检测→模型重训练、A/B 淘汰、阈值校准）。每轮迭代改动必须经过 C-003 回测门禁。
     indicators_zh: |
       ①触发：复盘报告就绪；②消费：BM-REC-02 复盘报告；③参数：feedback_layers=L1~L4+L3.5；④数据流：复盘报告→C-007 闭环优化→迭代信号→BM-SEL-02（反向闭环）；⑤代码：C-007 §1.8 闭环；⑥降级：C-007 不可用→人工复盘。
+
+# ============================================================================
+# battle_map_cross_cutting 段——作战地图横切视图真源（Gap3，2026-08-01）
+# ============================================================================
+# 与 battle_map_steps（环节级，按流程阶段线性串联）并列的第三个真源段：
+# 横切级叙事——贯穿所有阶段的全局机制（漏斗/盘中事件/冲突仲裁）。
+#
+# 来源：草图 v9.0 §13筛选漏斗 / §14盘中实时事件处理 / §16能力冲突矩阵。
+# 这些内容不属任何单一阶段，而是横跨选股→买入→卖出→仓位→执行→对账全流程，
+# 故单列横切视图，由 generate_battle_map_diagram.py 渲染为 battle_map_07_cross_cutting.md。
+#
+# 与 DB 的分工：横切内容目前是纯规则/叙事数据（TRAE-062 规则数据分类），
+# 真源在 YAML；未来若需结构化查询可再建 DB 表，当前 YAML 足够。
+# ============================================================================
+battle_map_cross_cutting:
+  # §13 筛选漏斗模型——6层过滤漏斗，全市场~7000只→N≤10只下单标的
+  - category: funnel
+    name_zh: 筛选漏斗模型
+    name_en: Screening Funnel Model
+    sketch_ref: "§13"
+    related_steps: [BM-SEL-01, BM-SEL-02, BM-SEL-03, BM-SEL-04]
+    plain_zh: |
+      从全市场~7000只股票开始，经过6层过滤漏斗逐层筛选，最终选出≤10只下单标的。
+      每层注入不同信号（技术面/基本面/主力行为/市场状态/事件驱动/多策略交叉）。
+    mechanism_zh: |
+      v0.1的5层筛选漏斗仅基于技术面/基本面，v2.0在每层注入主力行为/市场状态/庄家识别/拥挤度等多维信号。
+      漏斗按算力约束分级：3秒级（>80%淘汰）→60秒级（初筛/精筛/事件/多策略）→组合优化。
+      AUM分级动态调整成交额门槛；市场状态（⑧加速下跌/⑨恐慌崩盘）会收紧入选条件。
+    levels:
+      - level: 1
+        name_zh: 分级指标过滤
+        latency: 3秒级
+        throughput: 全市场~7000 → ~1200只
+        filters:
+          - "绝对排除：涨停封板/跌停/停牌（物理约束，不可协商）"
+          - "门禁排除：ST/*ST（需专用策略开通，条件：Sharpe>1.0+Purged K-Fold+仿真5天）"
+          - "分级门槛·成交额：AUM≤100万→日成交额≥500万；100-500万→≥1000万；500-2000万→≥3000万；>2000万→≥5000万"
+          - "分级门槛·次新股：上市<30天排除；30-90天需评分>85分位+仓位减半；≥90天正常"
+          - "概率门槛：C-035弃庄概率>95%排除；70-95%降权（评分扣20%）"
+      - level: 2
+        name_zh: 初筛漏斗
+        latency: 60秒级
+        throughput: ~1200 → ~300只
+        filters:
+          - "技术形态：均线多头/KDJ金叉/MACD底背离"
+          - "量价配合：量比>1.5/换手率>1%"
+          - "板块强度：所在板块排名前30%"
+          - "C-011主力行为六阶段标注（吸筹/洗盘阶段加分）"
+          - "C-021市场状态适配（⑧加速下跌/⑨恐慌崩盘→仅保留防御型标的）"
+      - level: 3
+        name_zh: 精筛评分
+        latency: 60秒级
+        throughput: ~300 → ~50只
+        filters:
+          - "多维因子综合评分（基础权重：价值40%+动量30%+质量20%+情绪10%）"
+          - "市场状态动态偏移：①②趋势向上→动量+10%/价值-10%；⑦⑧⑨→价值+10%/动量-10%；⑩事件驱动→情绪+10%/价值-10%"
+          - "跨截面排名（Z-score标准化）+ 技术时点信号（KDJ金叉/RSI底背离/BOLL下轨突破）"
+          - "C-034主力推演评分 + C-035庄家信号评分 + C-014大盘预测修正（次日上涨概率>60%加分）"
+          - "C-045拥挤度扣分（因子拥挤度超限→降权）"
+          - "C-014 T+1次日8态预测约束（5条规则：上涨型加分/冲高回落止盈/下跌型降权/剧烈震荡减半/低置信度保守仓位）"
+          - "收益率条件密度预测增强（偏度>0加分5%；偏度<0扣分5%；峰度>3扣分10%+仓位下调；95%VaR超阈值扣分15%；双峰标记高不确定性）"
+      - level: 4
+        name_zh: 事件驱动分布筛选
+        latency: 60秒级
+        throughput: ~50 → ~30只
+        status: v3.4新增
+        filters:
+          - "事件影响评分（消费L2-D知识图谱事件影响链：负面→淘汰/正面→加分/无→不调整）"
+          - "事件驱动条件分布修正（事件修正PDF偏移>阈值→标记事件敏感；上涨概率下降>15%→淘汰；上升>15%→加分；双峰→高不确定性）"
+          - "事件传导链风险（负面传导链下游→降权；正面传导链下游→加分）"
+          - "开通条件：结构化A股事件数据源+L2-D知识图谱+NLP情感分析；未开通时跳过本层"
+      - level: 5
+        name_zh: 多策略交叉
+        latency: 60秒级
+        throughput: ~30 → ~30只
+        filters:
+          - "策略A价值反转 YES/NO（权重30%）"
+          - "策略B动量趋势 YES/NO（权重25%）"
+          - "策略C事件驱动 YES/NO（权重20%）"
+          - "C-034主力行为信号投票 + C-036群体博弈合力投票"
+          - "C-021市场状态约束（状态不允许→否决买入）"
+      - level: 6
+        name_zh: 组合优化
+        latency: 60秒级
+        throughput: ~30 → N只（N≤10）
+        filters:
+          - "行业分散（日常≤±10%；叠加态⑪≤±15%；绝对上限30%）"
+          - "市值分散（大盘/中盘/小盘均衡）+ 风险预算（波动率/最大回撤约束）"
+          - "风格暴露约束（≤±0.3标准差）+ 相关性约束（corr<0.7）"
+          - "C-042策略容量约束 + C-045拥挤度约束 + C-036群体博弈合力（偏空→整体降仓）"
+
+  # §14 盘中实时事件处理——7类事件+5分钟持仓对账
+  - category: intraday_events
+    name_zh: 盘中实时事件处理
+    name_en: Intraday Real-time Event Processing
+    sketch_ref: "§14"
+    related_steps: [BM-SEL-02, BM-EXE-01, BM-EXE-02, BM-REC-01]
+    plain_zh: |
+      盘中7类事件到达后立即触发增量信号修正。事件类型决定处理流水线，影响范围决定重算粒度。
+      叠加5分钟持仓对账机制，防止系统持仓视图与券商实际不一致。
+    mechanism_zh: |
+      7类事件按级别（公司/行业/区域/全球/货币商品/情绪资金/政治地缘）到达事件总线，
+      经C-016知识图谱+C-039跨市场传导+C-038黑天鹅模式分析后，触发L1因子增量重算→
+      L2信号修正→L3组合优化调仓→L4风控执行。所有事件延迟要求<5秒。
+      持仓对账每5分钟与miniQMT自动对账，差异>0立即告警+冻结+修正（这不是灾备，是日常运行）。
+    event_types:
+      - level: 公司级
+        types: 突发公告/停牌复牌/问询函/大股东增减持/涨跌停/可转债异动
+        source: iFind+miniQMT
+        scope: 个股→板块
+        recompute: 个股+高相关标的
+        latency: <5秒
+      - level: 行业级
+        types: 产业政策突变/行业突发事件/行业数据发布
+        source: iFind+新闻
+        scope: 板块
+        recompute: 板块内全部标的
+        latency: <5秒
+      - level: 区域传导
+        types: 日韩股市异动/港股异动/台海事件
+        source: iFind
+        scope: 全市场/板块
+        recompute: C-039传导路径
+        latency: <5秒
+      - level: 全球宏观
+        types: 美股期货异动/VIX异动/欧洲股市开盘
+        source: iFind
+        scope: 全市场
+        recompute: 全量重算
+        latency: <5秒
+      - level: 货币商品
+        types: 人民币汇率异动/大宗商品异动/国债收益率/央行操作
+        source: iFind
+        scope: 全市场/板块
+        recompute: C-039传导路径
+        latency: <5秒
+      - level: 情绪资金
+        types: 北向异动/分析师评级/社交媒体/ETF申赎/融资融券
+        source: iFind+miniQMT
+        scope: 全市场/个股
+        recompute: 视影响范围
+        latency: <5秒
+      - level: 政治地缘
+        types: 地缘冲突/制裁关税/高层人事政策
+        source: 新闻
+        scope: 全市场
+        recompute: 全量重算
+        latency: <5秒
+    pipeline:
+      - 事件总线(Event Bus)接收
+      - C-016知识图谱匹配受影响节点→传导路径分析
+      - C-039跨市场传导计算传导系数→预测A股影响幅度
+      - C-038黑天鹅模式匹配历史极端事件模式
+      - L1因子层受影响标的增量因子重算
+      - L2-A信号修正 / L2-B主力行为推演更新 / L2-C市场状态可能切换
+      - L3组合优化调仓指令修正
+      - L4风控检查→执行
+    position_reconciliation:
+      frequency: 每5分钟与miniQMT持仓查询自动对账一次
+      diff_handling: 差异>0→立即告警(C-015)+冻结差异标的交易+自动修正持仓视图
+      audit: 对账结果写入审计链(C-043)，含差异详情+修正动作
+      degradation: miniQMT持仓查询不可用→暂停对账+告警+基于本地持仓继续运行（风控参数自动收紧10%）
+
+  # §16 能力冲突矩阵与仲裁规则——28冲突场景+优先级总原则
+  - category: conflict_matrix
+    name_zh: 能力冲突矩阵与仲裁规则
+    name_en: Capability Conflict Matrix & Arbitration
+    sketch_ref: "§16"
+    related_steps: [BM-EXE-01, BM-POS-01, BM-SELL-02, BM-BUY-02]
+    plain_zh: |
+      31个能力冲突场景的仲裁规则。核心原则：防御永远优先于进攻，风控(C-004)高于一切，
+      仓位上限(C-047)硬约束仅次于风控，卖出决策排在买入之前（卖比买紧急）。
+    mechanism_zh: |
+      冲突分三类：决策冲突（两能力给相反指令→按优先级仲裁）、循环依赖（两能力互依→
+      架构解耦/时序分离）、数据反馈（非决策冲突→正常闭环不仲裁）。
+      优先级总原则：风控(C-004)>C-047仓位上限>市场状态(C-021)>卖出决策引擎>
+      T+1次日预测(C-014)>安全防护(C-033/C-031)>交易策略(C-005/C-012)>
+      买入决策(C-006)>研究探索(C-006/C-007/C-027)。
+      市场状态排在次日预测之前，因为市场状态决定仓位硬上限（⑨恐慌崩盘仓位上限10%），
+      而次日预测仅修正信号权重——仓位硬约束优先于信号权重调整。
+    priority_hierarchy:
+      - rank: 1
+        holder: 风控(C-004)
+        note: 高于一切，人类也不可撤销已执行风控动作
+      - rank: 2
+        holder: C-047仓位上限
+        note: 硬约束，仅次于风控
+      - rank: 3
+        holder: 市场状态(C-021)
+        note: 决定仓位硬上限（⑨恐慌崩盘仓位上限10%）
+      - rank: 4
+        holder: 卖出决策引擎
+        note: 卖比买紧急
+      - rank: 5
+        holder: T+1次日预测(C-014)
+        note: 仅修正信号权重
+      - rank: 6
+        holder: 安全防护(C-033/C-031)
+        note: ""
+      - rank: 7
+        holder: 交易策略(C-005/C-012)
+        note: ""
+      - rank: 8
+        holder: 买入决策(C-006)
+        note: ""
+      - rank: 9
+        holder: 研究探索(C-006/C-007/C-027)
+        note: ""
+    conflicts:
+      - parties: "C-004风控 vs C-031置信度"
+        scenario: 风控触发清仓 vs AI置信度高认为不该清
+        arbitration: 风控>一切，人类也不可撤销已执行风控动作
+        winner: C-004
+      - parties: "C-004风控 vs C-013外部指令"
+        scenario: 用户指令建仓 vs 标的在风控减仓名单
+        arbitration: 风控拦截建仓→通知用户
+        winner: C-004
+      - parties: "C-004风控 vs C-012做T"
+        scenario: 做T信号触发 vs 标的在风控减仓名单
+        arbitration: 做T信号直接丢弃
+        winner: C-004
+      - parties: "C-004风控 vs C-005多情景对策"
+        scenario: 预案说跌5%加仓但风控说跌5%减仓
+        arbitration: 风控veto优先；风控触发熔断时预案自动失效
+        winner: C-004
+      - parties: "C-035庄家 vs C-012做T"
+        scenario: 庄家出货/弃庄阶段 vs 做T信号触发
+        arbitration: 做T信号自动丢弃（出货/弃庄均丢弃）；仅吸筹/洗盘允许做T
+        winner: C-035
+      - parties: "C-007自治进化 vs C-033过拟合防护"
+        scenario: 进化要调参，防护要锁参
+        arbitration: C-033设边界（B-008≤3参数/p-hacking锁定），C-007在边界内自由优化
+        winner: C-033设边界
+      - parties: "C-007自治进化 vs C-031人机信任"
+        scenario: AI置信度95%自主执行但人类连续否决
+        arbitration: 人类否决不可被AI覆盖；否决学习调整AI置信度评分
+        winner: C-031
+      - parties: "C-006策略工厂 vs C-010报告复盘"
+        scenario: 新策略上线后旧策略复盘数据被稀释
+        arbitration: A/B并行期间分别统计独立PnL；A退役后历史数据保留在策略墓地
+        winner: 各自独立统计
+      - parties: "C-027因子工厂 vs C-033过拟合防护"
+        scenario: 新因子IC显著但多重检验校正后不显著
+        arbitration: 验证为准；未通过Bonferroni/BH校正→进入观察池非正式因子池
+        winner: C-033
+      - parties: "C-014大盘预测 vs C-021市场状态"
+        scenario: 循环依赖
+        arbitration: C-021用C-014的T-1日预测，C-014用C-021的T日实时状态
+        winner: 时序分离
+      - parties: "C-009信号管线 vs C-004风控"
+        scenario: 循环依赖
+        arbitration: 共享存储+事件总线解耦
+        winner: 架构解耦
+      - parties: "C-004风控 vs C-002交易执行"
+        scenario: 循环依赖(C-002订单须经C-004审批; C-004读取C-002持仓/订单状态)
+        arbitration: 共享存储+事件总线解耦
+        winner: 架构解耦
+      - parties: "C-047仓位管理 vs C-004风控"
+        scenario: 循环依赖(C-047依赖C-004仓位硬约束; C-004依赖C-047实际仓位数据)
+        arbitration: C-047将仓位快照写入共享存储→C-004从存储读取→C-004风控结果通过事件总线异步推送C-047
+        winner: 架构解耦
+      - parties: "C-009信号管线 vs C-006策略工厂"
+        scenario: 循环依赖
+        arbitration: C-009启动用默认策略列表，C-006异步注册新策略
+        winner: 时序分离
+      - parties: "C-009信号管线 vs C-027因子工厂"
+        scenario: 循环依赖
+        arbitration: C-009启动用默认因子列表（上次快照），C-027异步注册新因子
+        winner: 时序分离
+      - parties: "C-042策略容量 vs C-046 TCA"
+        scenario: 循环依赖
+        arbitration: C-046先用简化模型运行1个月→C-042校准→C-046切换
+        winner: 时序分离
+      - parties: "C-026执行运营 vs C-046 TCA"
+        scenario: 数据反馈（非决策冲突）
+        arbitration: C-046消费C-026成交回报做TCA，C-026消费C-046的TCA结果优化下单算法——正常数据反馈闭环，不属决策冲突，无需仲裁
+        winner: 不适用
+      - parties: "C-027末位淘汰 vs C-007⑬批量裁剪"
+        scenario: 因子池管理
+        arbitration: 末位淘汰优先(日常维护活跃池至N_max)；批量裁剪兜底(全池≤N_max，当前≈64，设计容量≥150)
+        winner: C-027>C-007⑬
+      - parties: "C-031置信度 vs C-013外部指令"
+        scenario: 人类指令 vs AI置信度低
+        arbitration: 人类显式指令优先，但置信度<80%推送风险提示
+        winner: C-013优先
+      - parties: "C-004流动性监控 vs C-012做T"
+        scenario: 标的流动性不足 vs 做T信号触发
+        arbitration: 流动性评分低于阈值→做T信号丢弃（流动性不足时做T可能无法及时平仓）
+        winner: C-004优先
+      - parties: "C-004相关性体制 vs C-004 VaR"
+        scenario: 相关性趋同 vs VaR计算基于历史相关性
+        arbitration: 相关性体制切换→VaR置信度自动上调（如95%→99%）+仓位上限降低
+        winner: 相关性体制优先
+      - parties: "C-006冷启动 vs C-005风险预算"
+        scenario: 冷启动观察期仓位限制 vs 风险预算分配仓位
+        arbitration: 冷启动期内冷启动仓位上限优先（min(风险预算仓位×冷启动系数, 正常仓位50%)）
+        winner: 冷启动优先
+      - parties: "C-014次日8态预测 vs C-005多情景对策"
+        scenario: 次日8态预测偏空 vs 预案建议加仓
+        arbitration: 下跌型(P4+P6)>60%→加仓信号降权/推迟；冲高回落型(P2)>40%→设止盈；置信度<50%→保守仓位
+        winner: C-014优先
+      - parties: "卖出信号融合 vs C-004风控"
+        scenario: 多卖出信号综合意愿中等(50-70%) vs 风控未触发
+        arbitration: 卖出信号融合结果优先，但风控有最终否决权（风控触发时无条件覆盖）
+        winner: C-004优先
+      - parties: "卖出信号 vs C-006买入信号"
+        scenario: 同标的同时有买入信号+卖出信号
+        arbitration: 卖出优先（保守原则）：卖出信号触发→买入信号自动丢弃；买入先于卖出触发时需重新评估
+        winner: 卖出优先
+      - parties: "部分减仓 vs 全仓清仓"
+        scenario: 卖出信号强烈(>80%)但风控仅要求减仓
+        arbitration: 取更激进一方：风控说减仓30%+卖出信号>80%→升级为清仓；风控说减仓70%+卖出信号50%→按风控比例执行
+        winner: max(卖出信号, 风控)
+      - parties: "C-047仓位裁决 vs C-004风控上限"
+        scenario: 仓位引擎输出仓位 vs 风控仓位上限
+        arbitration: C-047裁决结果不得突破风控上限（风控硬上限不可绕过）
+        winner: C-004优先
+      - parties: "C-047仓位裁决 vs C-021市场状态仓位"
+        scenario: 仓位引擎输出仓位 vs 市场状态仓位上限
+        arbitration: 市场状态仓位上限为硬约束，C-047仓位不得超过此上限
+        winner: C-021硬约束
+      - parties: "跨策略仓位合并 vs 单票仓位上限"
+        scenario: 多策略同标的→合并仓位超单票上限
+        arbitration: 按策略优先级截断：高优先级策略优先分配仓位，合并后不得超过硬上限
+        winner: 硬上限优先
+      - parties: "仓位再平衡 vs C-004风控"
+        scenario: 再平衡要加仓 vs 风控限制加仓
+        arbitration: 风控禁止时跳过该标的加仓；风控仅限制时缩量执行（风控始终优先）
+        winner: C-004优先
+      - parties: "资金曲线缩放 vs 策略仓位"
+        scenario: 回撤>10%需降仓位 vs 策略信号强烈要求满仓
+        arbitration: 资金曲线缩放优先：回撤期仓位上限不受策略信号影响（系统性保护优先）
+        winner: 资金曲线优先

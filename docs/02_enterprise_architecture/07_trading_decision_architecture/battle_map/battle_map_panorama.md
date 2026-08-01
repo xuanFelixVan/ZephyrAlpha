@@ -79,6 +79,7 @@ classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
 - [仓位阶段（1 环节）](battle_map_04_position_management.md)
 - [执行阶段（2 环节）](battle_map_05_execution.md)
 - [对账阶段（3 环节）](battle_map_06_reconciliation.md)
+- [横切视图（§13漏斗 / §14盘中事件 / §16冲突矩阵）](battle_map_07_cross_cutting.md)
 
 ## 全环节详情（6 件套）
 

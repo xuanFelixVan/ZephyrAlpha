@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV_SCRIPTS | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_panorama.md | §battlemap
 # [MODULE] scripts.governance.d5_architecture.generators.generate_battle_map_diagram
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.battle_map_reader (BattleMapReader); scripts.governance._shared.module_translation_loader (get_step_*); scripts.governance.d5_architecture.generators.zoomable_html (emit_zoomable_html)
+# [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.battle_map_reader (BattleMapReader); scripts.governance._shared.module_translation_loader (get_step_*; get_cross_cutting_*); scripts.governance.d5_architecture.generators.zoomable_html (emit_zoomable_html)
 # [CONSUMERS] AI/人生成交易决策作战地图可视化（Mermaid + 可缩放 HTML）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读 battle_map三表 + 翻译真源 battle_map_steps段（BM-INV-003）；颜色按锚点模块 depgraph build_status 推导五态（panorama §九）；Mermaid 分页防 >100 节点渲染失败
+# [INVARIANTS] 只读 battle_map三表 + 翻译真源 battle_map_steps段（BM-INV-003）+ battle_map_cross_cutting段（Gap3）；颜色按锚点模块 depgraph build_status 推导五态（panorama §九）；Mermaid 分页防 >100 节点渲染失败
 # [MODIFY-GUARD] 对标 generate_trading_flow_diagram.py + zoomable_html.py
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,16 +18,17 @@ generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
 
 [BLUEPRINT] | battle_map_panorama.md | §battlemap
 [MODULE] scripts.governance.d5_architecture.generators.generate_battle_map_diagram
-[INVARIANTS] 只读 battle_map三表 + 翻译真源；颜色按锚点模块 depgraph build_status 推导五态；Mermaid 分页
+[INVARIANTS] 只读 battle_map三表 + 翻译真源(battle_map_steps + battle_map_cross_cutting)；颜色按锚点模块 depgraph build_status 推导五态；Mermaid 分页
 [CONSUMERS] AI/人生成作战地图可视化
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] DB 不可用→exit 4; YAML 缺失→降级到 DB step_name
 
-从 battle_map 三表（steps/anchors/edges）+ 翻译真源 battle_map_steps 段生成作战地图：
+从 battle_map 三表（steps/anchors/edges）+ 翻译真源（battle_map_steps + battle_map_cross_cutting 段）生成作战地图：
   - 总指挥图（全部环节 + 流转边，Mermaid 分页）
   - 6 分阶段图（选股/买入/卖出/仓位/执行/对账）
+  - 横切视图（Gap3：§13漏斗 / §14盘中事件 / §16冲突矩阵，来自 battle_map_cross_cutting 段）
   - 每环节 6 件套详情表（trigger/consumes/params/data_flow/code_mapping/degradation）
   - 可缩放 HTML（复用 zoomable_html.emit_zoomable_html）
 
@@ -71,6 +72,8 @@ from _shared.module_translation_loader import (  # noqa: E402
     get_step_mechanism,
     get_step_indicators_zh,
     preload_battle_map_steps,
+    get_cross_cutting_all,
+    preload_battle_map_cross_cutting,
 )
 from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # noqa: E402
 from zephyr.governance.persistence.depgraph_reader import DepgraphReader  # noqa: E402
@@ -183,6 +186,7 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
         (steps, edges, anchors_by_step) — steps/edges 全量，anchors_by_step 按 step_id 分组
     """
     preload_battle_map_steps()  # 预加载 YAML 叙事缓存
+    preload_battle_map_cross_cutting()  # 预加载 YAML 横切视图缓存（Gap3）
     reader = BattleMapReader()
     try:
         steps = reader.get_all_steps()
@@ -501,6 +505,7 @@ def _generate_panorama_md(
     for stage_id, stage_name, num in FLOW_STAGES:
         stage_steps = [s for s in steps if s["flow_stage"] == stage_id]
         parts.append(f"- [{stage_name}阶段（{len(stage_steps)} 环节）](battle_map_{num}_{stage_id}.md)")
+    parts.append("- [横切视图（§13漏斗 / §14盘中事件 / §16冲突矩阵）](battle_map_07_cross_cutting.md)")
     parts.append("")
     parts.append("## 全环节详情（6 件套）")
     parts.append("")
@@ -544,6 +549,228 @@ def _generate_stage_md(
 
 
 # ---------------------------------------------------------------------------
+# 横切视图生成（Gap3，2026-08-01）
+# ---------------------------------------------------------------------------
+
+
+def _related_steps_links(related_steps: list[str]) -> str:
+    """把 related_steps 列表渲染为指向分阶段文档的链接串（找不到则纯文本）。"""
+    if not related_steps:
+        return "—"
+    # step_id → 所在分阶段文档（BM-SEL-* → 01_stock_selection，依此类推）
+    stage_prefix = {
+        "BM-SEL": "01_stock_selection",
+        "BM-BUY": "02_buy_flow",
+        "BM-SELL": "03_sell_flow",
+        "BM-POS": "04_position_management",
+        "BM-EXE": "05_execution",
+        "BM-REC": "06_reconciliation",
+    }
+    links: list[str] = []
+    for sid in related_steps:
+        prefix = "-".join(sid.split("-")[:2])
+        doc = stage_prefix.get(prefix)
+        if doc:
+            links.append(f"[{sid}](battle_map_{doc}.md)")
+        else:
+            links.append(sid)
+    return "、".join(links)
+
+
+def _format_funnel_md(item: dict) -> str:
+    """渲染 §13 筛选漏斗模型为 Markdown（6层漏斗表 + 机制说明）。"""
+    name_bi = item.get("name_zh", "") + (
+        f" / {item['name_en']}" if item.get("name_en") else ""
+    )
+    parts = [
+        f"## {name_bi}（{item.get('sketch_ref', '')}）",
+        "",
+        f"> **大白话**：{item.get('plain_zh', '').strip()}",
+        "",
+    ]
+    mech = item.get("mechanism_zh", "").strip()
+    if mech:
+        parts += ["**机制说明**：", "", mech, ""]
+    related = item.get("related_steps") or []
+    if related:
+        parts.append(f"**关联环节**：{_related_steps_links(related)}")
+        parts.append("")
+    levels = item.get("levels") or []
+    if levels:
+        parts += [
+            "### 漏斗层级（6层过滤）",
+            "",
+            "| 层 | 名称 | 延迟 | 吞吐 | 筛选条件 |",
+            "|---|---|---|---|---|",
+        ]
+        for lv in levels:
+            filters = lv.get("filters") or []
+            filt_text = "<br>".join(f"- {f}" for f in filters) if filters else "—"
+            status = lv.get("status")
+            name = lv.get("name_zh", "—")
+            if status:
+                name = f"{name}（{status}）"
+            parts.append(
+                f"| L{lv.get('level', '?')} | {name} | {lv.get('latency', '—')} "
+                f"| {lv.get('throughput', '—')} | {filt_text} |"
+            )
+        parts.append("")
+    return "\n".join(parts)
+
+
+def _format_intraday_events_md(item: dict) -> str:
+    """渲染 §14 盘中实时事件处理为 Markdown（事件类型表 + 流水线 + 对账）。"""
+    name_bi = item.get("name_zh", "") + (
+        f" / {item['name_en']}" if item.get("name_en") else ""
+    )
+    parts = [
+        f"## {name_bi}（{item.get('sketch_ref', '')}）",
+        "",
+        f"> **大白话**：{item.get('plain_zh', '').strip()}",
+        "",
+    ]
+    mech = item.get("mechanism_zh", "").strip()
+    if mech:
+        parts += ["**机制说明**：", "", mech, ""]
+    related = item.get("related_steps") or []
+    if related:
+        parts.append(f"**关联环节**：{_related_steps_links(related)}")
+        parts.append("")
+    # 事件类型表
+    event_types = item.get("event_types") or []
+    if event_types:
+        parts += [
+            "### 事件类型清单（7类）",
+            "",
+            "| 级别 | 事件类型 | 触发源 | 影响范围 | 重算粒度 | 延迟 |",
+            "|---|---|---|---|---|---|",
+        ]
+        for et in event_types:
+            parts.append(
+                f"| **{et.get('level', '—')}** | {et.get('types', '—')} "
+                f"| {et.get('source', '—')} | {et.get('scope', '—')} "
+                f"| {et.get('recompute', '—')} | {et.get('latency', '—')} |"
+            )
+        parts.append("")
+    # 处理流水线
+    pipeline = item.get("pipeline") or []
+    if pipeline:
+        parts += ["### 事件处理流水线", ""]
+        for i, step in enumerate(pipeline, 1):
+            parts.append(f"{i}. {step}")
+        parts.append("")
+    # 持仓对账
+    recon = item.get("position_reconciliation") or {}
+    if recon:
+        parts += [
+            "### 盘中持仓对账机制",
+            "",
+            "| 维度 | 规则 |",
+            "|---|---|",
+            f"| 对账频率 | {recon.get('frequency', '—')} |",
+            f"| 差异处理 | {recon.get('diff_handling', '—')} |",
+            f"| 审计记录 | {recon.get('audit', '—')} |",
+            f"| 降级模式 | {recon.get('degradation', '—')} |",
+            "",
+        ]
+    return "\n".join(parts)
+
+
+def _format_conflict_matrix_md(item: dict) -> str:
+    """渲染 §16 能力冲突矩阵为 Markdown（优先级表 + 31冲突场景表）。"""
+    name_bi = item.get("name_zh", "") + (
+        f" / {item['name_en']}" if item.get("name_en") else ""
+    )
+    parts = [
+        f"## {name_bi}（{item.get('sketch_ref', '')}）",
+        "",
+        f"> **大白话**：{item.get('plain_zh', '').strip()}",
+        "",
+    ]
+    mech = item.get("mechanism_zh", "").strip()
+    if mech:
+        parts += ["**机制说明**：", "", mech, ""]
+    related = item.get("related_steps") or []
+    if related:
+        parts.append(f"**关联环节**：{_related_steps_links(related)}")
+        parts.append("")
+    # 优先级层次
+    hierarchy = item.get("priority_hierarchy") or []
+    if hierarchy:
+        parts += [
+            "### 仲裁优先级总原则（防御永远优先于进攻）",
+            "",
+            "| 排名 | 优先级持有者 | 说明 |",
+            "|---|---|---|",
+        ]
+        for h in hierarchy:
+            note = h.get("note") or "—"
+            parts.append(
+                f"| {h.get('rank', '?')} | {h.get('holder', '—')} | {note} |"
+            )
+        parts.append("")
+    # 冲突场景表
+    conflicts = item.get("conflicts") or []
+    if conflicts:
+        parts += [
+            f"### 冲突场景清单（{len(conflicts)} 条）",
+            "",
+            "| # | 冲突方 | 冲突场景 | 仲裁规则 | 胜出 |",
+            "|---|---|---|---|---|",
+        ]
+        for i, cf in enumerate(conflicts, 1):
+            parts.append(
+                f"| {i} | {cf.get('parties', '—')} | {cf.get('scenario', '—')} "
+                f"| {cf.get('arbitration', '—')} | {cf.get('winner', '—')} |"
+            )
+        parts.append("")
+    return "\n".join(parts)
+
+
+# 横切类别 → 渲染函数分派（ Gap3 ）
+_CROSS_CUTTING_RENDERERS = {
+    "funnel": _format_funnel_md,
+    "intraday_events": _format_intraday_events_md,
+    "conflict_matrix": _format_conflict_matrix_md,
+}
+
+
+def _generate_cross_cutting_md() -> str:
+    """横切视图 MD（§13漏斗 + §14盘中事件 + §16冲突矩阵，Gap3）。
+
+    横切内容来自翻译真源 battle_map_cross_cutting 段（规则数据，TRAE-062），
+    不属任何单一阶段，贯穿选股→买入→卖出→仓位→执行→对账全流程。
+    """
+    items = get_cross_cutting_all()
+    parts = [
+        "# 交易决策作战地图（横切视图）",
+        "",
+        "> 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则。",
+        "> 真源：`module_translation_registry.yaml` §battle_map_cross_cutting 段（规则数据，TRAE-062）。",
+        "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。",
+        "",
+    ]
+    if not items:
+        parts.append("⚠ 未加载到横切视图数据（YAML battle_map_cross_cutting 段缺失或解析失败）。")
+        return "\n".join(parts)
+    parts.append(f"**横切类别数**：{len(items)}（funnel / intraday_events / conflict_matrix）")
+    parts.append("")
+    for item in items:
+        cat = item.get("category", "")
+        renderer = _CROSS_CUTTING_RENDERERS.get(cat)
+        if renderer:
+            parts.append(renderer(item))
+        else:
+            # 未知类别兜底：渲染基础字段
+            parts.append(f"## {item.get('name_zh', cat)}（{item.get('sketch_ref', '')}）")
+            parts.append("")
+            parts.append(f"> {item.get('plain_zh', '').strip()}")
+            parts.append("")
+    parts.append("[← 返回总指挥图](battle_map_panorama.md)")
+    return "\n".join(parts)
+
+
+# ---------------------------------------------------------------------------
 # 主入口
 # ---------------------------------------------------------------------------
 
@@ -580,6 +807,14 @@ def main() -> int:
         stage_path.write_text(stage_md, encoding="utf-8")
         html = emit_zoomable_html(panorama_path, stage_md)
         print(f"  {stage_name}阶段: {stage_path}" + (f" + HTML" if html else ""))
+
+    # 横切视图（Gap3：§13漏斗 / §14盘中事件 / §16冲突矩阵）
+    cross_md = _generate_cross_cutting_md()
+    cross_md = f"{_make_frontmatter()}\n{cross_md}"
+    cross_path = out_dir / "battle_map_07_cross_cutting.md"
+    cross_path.write_text(cross_md, encoding="utf-8")
+    html = emit_zoomable_html(panorama_path, cross_md)
+    print(f"  横切视图: {cross_path}" + (f" + HTML" if html else ""))
 
     print(f"\n完成。输出目录: {out_dir}")
     return 0

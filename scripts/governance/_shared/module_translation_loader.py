@@ -409,3 +409,120 @@ def all_battle_map_step_ids() -> list[str]:
         step_id 字符串列表（已登记顺序），YAML 不可用时返回空列表
     """
     return list(_ensure_steps_loaded().keys())
+
+
+# ============================================================================
+# battle_map_cross_cutting 段——作战地图横切视图真源（Gap3，2026-08-01）
+# ============================================================================
+# 与 battle_map_steps（环节级，按流程阶段线性串联）并列的第三个真源段：
+# 横切级叙事——贯穿所有阶段的全局机制（§13漏斗/§14盘中事件/§16冲突矩阵）。
+# 这些内容不属任何单一阶段，由生成器渲染为 battle_map_07_cross_cutting.md。
+#
+# 与 battle_map_steps 的区别：steps 是流程环节（线性串联），cross_cutting 是
+# 横切机制（全局适用）。两者均属规则数据（TRAE-062），真源在 YAML。
+# ============================================================================
+
+# 横切视图缓存：None=未加载，dict=已加载（category → 横切 dict）
+_CROSS_CUTTING_CACHE: dict[str, dict] | None = None
+
+
+def _load_battle_map_cross_cutting_from_yaml() -> dict[str, dict]:
+    """从 module_translation_registry.yaml 的 battle_map_cross_cutting 段加载横切视图。
+
+    YAML 是横切视图主真源（SSoT，规则数据分类 TRAE-062）。失败/缺失返回空 dict
+    （调用方回退到空横切视图，生成器跳过横切章节）。
+
+    保留嵌套结构（levels/event_types/pipeline/conflicts/priority_hierarchy 等），
+    调用方（生成器）按 category 自行渲染为 Markdown 表。
+
+    Returns:
+        ``{category: {category, name_zh, name_en, sketch_ref, related_steps,
+                      plain_zh, mechanism_zh, ...嵌套结构}}``；
+        文件缺失/解析失败/无 battle_map_cross_cutting 段时返回空 dict。
+    """
+    try:
+        import yaml  # type: ignore[import-untyped]
+        if not _REGISTRY_YAML.exists():
+            return {}
+        data = yaml.safe_load(_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
+        items = data.get("battle_map_cross_cutting") or []
+        result: dict[str, dict] = {}
+        for entry in items:
+            if not isinstance(entry, dict):
+                continue
+            cat = entry.get("category")
+            if not cat:
+                continue
+            # 整段保留（含嵌套 levels/event_types/conflicts 等），生成器按 category 渲染
+            result[str(cat)] = entry
+        return result
+    except Exception:  # noqa: BLE001 — YAML 不可用时静默降级
+        return {}
+
+
+def _ensure_cross_cutting_loaded() -> dict[str, dict]:
+    """加载并缓存横切视图映射：YAML 优先，失败返回空 dict。
+
+    模块级缓存避免重复 IO。与 _ensure_steps_loaded()（环节叙事）独立缓存，
+    互不干扰。
+
+    Returns:
+        ``{category: 横切 dict}``（可能为空 dict）
+    """
+    global _CROSS_CUTTING_CACHE
+    if _CROSS_CUTTING_CACHE is not None:
+        return _CROSS_CUTTING_CACHE
+    _CROSS_CUTTING_CACHE = _load_battle_map_cross_cutting_from_yaml()
+    return _CROSS_CUTTING_CACHE
+
+
+def get_cross_cutting(category: str) -> dict | None:
+    """查询指定横切类别的完整数据（Gap3 真源）。
+
+    Args:
+        category: 横切类别 ID，目前支持：
+            ``"funnel"``（§13 筛选漏斗）、
+            ``"intraday_events"``（§14 盘中事件）、
+            ``"conflict_matrix"``（§16 冲突矩阵）
+
+    Returns:
+        横切 dict（含 name_zh/plain_zh/mechanism_zh + 嵌套结构 levels/event_types/
+        conflicts 等）；未登记或 YAML 不可用返回 ``None``（生成器跳过该横切章节）
+    """
+    if not category:
+        return None
+    return _ensure_cross_cutting_loaded().get(str(category))
+
+
+def get_cross_cutting_all() -> list[dict]:
+    """返回所有横切类别数据列表（按 YAML 登记顺序，用于生成器遍历）。
+
+    Returns:
+        横切 dict 列表（每项含 category/name_zh/嵌套结构），YAML 不可用返回空列表
+    """
+    cache = _ensure_cross_cutting_loaded()
+    # 按 funnel → intraday_events → conflict_matrix 的逻辑顺序返回
+    order = ["funnel", "intraday_events", "conflict_matrix"]
+    ordered = [cache[c] for c in order if c in cache]
+    # 追加未在 order 中的类别（向前兼容未来新增横切类别）
+    for cat, item in cache.items():
+        if cat not in order:
+            ordered.append(item)
+    return ordered
+
+
+def preload_battle_map_cross_cutting() -> dict[str, dict]:
+    """预加载横切视图缓存到内存（批量场景调用一次，避免首次调用延迟）。
+
+    安全调用：YAML 不可用时静默返回空 dict。
+    """
+    return _ensure_cross_cutting_loaded()
+
+
+def all_cross_cutting_categories() -> list[str]:
+    """返回所有已登记横切类别的 category 列表（用于对齐校验/生成器遍历）。
+
+    Returns:
+        category 字符串列表（已登记顺序），YAML 不可用时返回空列表
+    """
+    return list(_ensure_cross_cutting_loaded().keys())
