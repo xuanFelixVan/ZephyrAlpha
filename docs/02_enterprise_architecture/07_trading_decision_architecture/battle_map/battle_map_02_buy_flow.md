@@ -63,7 +63,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | planned |
-| depgraph | MOD-L05-001 | supplement | stable | generated |
+| depgraph | MOD-L05-001 | supplement | stable | stable |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
