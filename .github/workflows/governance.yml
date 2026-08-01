@@ -199,17 +199,22 @@ jobs:
           reg = yaml.safe_load(reg_path.read_text(encoding='utf-8'))
           registered = _extract_registered_nums(reg)
           violations = []
-          for dirpath, dirs, files in os.walk('src/zephyr'):
-              dirs[:] = [d for d in dirs if d != '__pycache__']
-              for f in files:
-                  if not f.endswith('.py'):
-                      continue
-                  path = os.path.join(dirpath, f)
-                  content = open(path, encoding='utf-8', errors='replace').read()
-                  refs = _extract_refs(content)
-                  unregistered = refs - registered
-                  if unregistered:
-                      violations.append(path + ': unregistered #ARCH-{' + ','.join(sorted(unregistered)) + '}')
+          # 治本(audit-02 P2, 2026-08-02): 原仅 os.walk('src/zephyr') + .py，漏检
+          # config/ 与 architecture_model/ 中的 #ARCH- 引用（commit-time
+          # arch_reference_gate 已扫 .py/.yaml/.yml/.md 覆盖提交文件，本 CI 全量
+          # 回归扫描对齐同一文件类型集，补齐裸 commit 绕过 gateway 的兜底盲区）。
+          for scan_root in ['src/zephyr', 'config', 'architecture_model']:
+              for dirpath, dirs, files in os.walk(scan_root):
+                  dirs[:] = [d for d in dirs if d != '__pycache__']
+                  for f in files:
+                      if not f.endswith(('.py', '.yaml', '.yml', '.md')):
+                          continue
+                      path = os.path.join(dirpath, f)
+                      content = open(path, encoding='utf-8', errors='replace').read()
+                      refs = _extract_refs(content)
+                      unregistered = refs - registered
+                      if unregistered:
+                          violations.append(path + ': unregistered #ARCH-{' + ','.join(sorted(unregistered)) + '}')
           if violations:
               print('ARCH-REFERENCE CI violations (full-repo scan):')
               for v in violations:
