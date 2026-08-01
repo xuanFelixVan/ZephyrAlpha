@@ -53,12 +53,12 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_quality_init_py["(生产态 / production) 包入口 / D_SIGQC — Signal Quality Domain<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py"]
-    src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) 退化监控基类 / D_SIGQC — Signal Quality Degradation Monitor Base<br/>退化监控基类。D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py"]
+    src_zephyr_signal_quality_init_py["(生产态 / production) 包入口 / D_SIGQC<br/>— Signal Quality Domain<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py"]
+    src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) 退化监控基类 / D_<br/>SIGQC — Signal Quality Degradation<br/>Monitor Base<br/>退化监控基类。D_SIGQC — Signal Quality<br/>Degradation Monitor Base<br/>文件: signal_quality/degradation_<br/>monitor_base.py"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
+    D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施<br/>/ Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享<br/>契约管理和契约校验<br/>跨域节点 / cross-domain"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_TRADING["(生产态 / production) 交易运营 / Trading Operations<br/>交易运营，负责交易生命周期管理、订单状态和成交处理<br/>跨域节点 / cross-domain"]
+    D_TRADING["(生产态 / production) 交易运营 /<br/>Trading Operations<br/>交易运营，负责交易生命周期管理、订单状态<br/>和成交处理<br/>跨域节点 / cross-domain"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -75,8 +75,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_quality_init_py["(生产态 / production) 包入口 / D_SIGQC — Signal Quality Domain<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py"]
-    src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) 退化监控基类 / D_SIGQC — Signal Quality Degradation Monitor Base<br/>退化监控基类。D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py"]
+    src_zephyr_signal_quality_init_py["(生产态 / production) 包入口 / D_SIGQC<br/>— Signal Quality Domain<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py"]
+    src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) 退化监控基类 / D_<br/>SIGQC — Signal Quality Degradation<br/>Monitor Base<br/>退化监控基类。D_SIGQC — Signal Quality<br/>Degradation Monitor Base<br/>文件: signal_quality/degradation_<br/>monitor_base.py"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

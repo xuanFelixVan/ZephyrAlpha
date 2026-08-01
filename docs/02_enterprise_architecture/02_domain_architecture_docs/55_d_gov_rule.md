@@ -53,30 +53,30 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_governance_generators_generate_script_manifest_py["(生产态 / production) 脚本清单自动生成器 / Script Manifest Generator<br/>把每个脚本自己填的信息卡片收集起来，做成一张总清单。老方法太死板，遇到特殊格式就漏抓导致清单不准，现在多种方式兜底确保不漏。<br/>文件: generators/generate_script_manifest.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py["(生产态 / production) 自适应阈值 / Adaptive Threshold<br/>给告警算什么程度该报警的红线。两种算法：一种看成功率自动调，一种看最近一周的平均值定线。设了最低底线，防止红线越降越低、把问题掩盖掉。<br/>文件: rule_enforcement/adaptive_threshold.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py["(生产态 / production) 对抗样本生成器 / Adversarial Strategies<br/>生成 5 种假想敌攻击套路，专门用来刁难系统，测门禁挡不挡得住。上线前自己先攻击一遍，比等真出事再发现强。<br/>文件: rule_enforcement/adversarial_strategies.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py["(生产态 / production) AI 能力边界守卫 / AI Capability Guard<br/>给函数贴需要什么权限的标签，检查 AI 有没有越权干没授权的事。只负责标记不拦，让后续检查环节去抓违规。<br/>文件: rule_enforcement/ai_capability_guard.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_anti_pattern_guard_py["(生产态 / production) 反模式防护引擎 / Anti-Pattern Guard<br/>把蓝图里列的 8 条 AI 集成禁止行为做成自动检查，挂进门禁流程。防止 AI 集成时踩常见的坑，比如绕过门禁、擅自越权。<br/>文件: rule_enforcement/anti_pattern_guard.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_can_i_deploy_py["(生产态 / production) 预部署门禁 / Can-I-Deploy<br/>部署前问一句现在能部署吗。检查四样：别人对我的期望满足没、版本兼容不、契约一致不、服务健康不。避免一部署就出事。<br/>文件: rule_enforcement/can_i_deploy.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py["(生产态 / production) 能力检查器 / Capability Checker<br/>运行时核对模块有没有真的声明所需权限，再校验权限表没被偷偷改过。确保声明的能力和实际用的对得上，防止钻空子。<br/>文件: rule_enforcement/capability_checker.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_cdc_broker_py["(生产态 / production) CDC 契约经纪人 / CDC Broker<br/>管消费者驱动契约的本地中介：消费方声明期望提供方给什么，提供方改了代码就自动验证有没有破坏消费方。不依赖外部服务，本地就能跑。<br/>文件: rule_enforcement/cdc_broker.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_contract_template_manager_py["(生产态 / production) 契约模板管理器 / Contract Template Manager<br/>管理工具契约模板：注册新模板、按名字查模板、校验调用对不对、存成文件。让每个工具有统一的接口说明书，调用前能核对参数。<br/>文件: rule_enforcement/contract_template_manager.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_end_to_end_walkthrough_py["(生产态 / production) 端到端走查验证器 / End-to-End Walkthrough<br/>按预设场景把系统从头到尾走一遍，验证关键链路通不通、各环节衔接对不对。专门找单个测试发现不了的衔接问题。<br/>文件: rule_enforcement/end_to_end_walkthrough.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py["(生产态 / production) 门禁引擎模块集 / Gate Engine Package<br/>门禁引擎的文件夹入口，把门禁相关的几个模块归到一起。本身不含逻辑，只是给它们一个稳定归属。<br/>文件: gate_engine/__init__.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py["(生产态 / production) 门禁裁决引擎 / Gate Engine<br/>门禁系统的裁判。从配置加载门禁规则，执行检查，判通过还是失败，结果记进库。覆盖知识库、任务编排、交易三类门禁。<br/>文件: gate_engine/gate_engine.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py["(生产态 / production) 门禁紧急旁路 / Gate Override<br/>给负责人的紧急通道：特殊情况可临时绕过某道门禁，但严格限时、全程留痕。既允许紧急放行，又保证每次绕过可追溯、不能乱用。<br/>文件: gate_engine/gate_override.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py["(生产态 / production) 门禁模拟器 / Gate Simulator<br/>门禁的演习工具。把全链路门禁空跑一遍，但不改任何状态不写库。让开发者提前看门禁会怎么判，避免真跑时才出问题。<br/>文件: gate_engine/gate_simulator.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_integration_test_runner_py["(生产态 / production) 集成测试运行器 / Integration Test Runner<br/>跑跨模块集成测试的引擎，加载契约、执行断言、对接门禁。分四级：最关键的冒烟、全量核心、契约校验、健康探针，不同场景跑不同级别。<br/>文件: rule_enforcement/integration_test_runner.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_process_lifecycle_gateway_py["(生产态 / production) 进程生命周期网关 / Process Lifecycle Gateway<br/>扫描代码里直接起进程的地方——这些绕过了统一管理入口，有失控风险。强制所有起进程都走同一个网关，便于治理。<br/>文件: invariants/en_process_lifecycle_gateway.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py["(生产态 / production) KISS 约束执行器 / KISS Enforcer<br/>守保持简单原则的检查器。检测 AI 写的代码有没有过度复杂、堆冗余。防止 AI 为了看起来完整而过度设计。<br/>文件: rule_enforcement/kiss_enforcer.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_init_py["(生产态 / production) 规则引擎模块集 / Rule Engine Package<br/>规则引擎的文件夹入口，把规则相关的模块归到一起。本身不含逻辑，只是给它们一个稳定归属。<br/>文件: rule_engine/__init__.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py["(生产态 / production) 规则加载器 / Rule Loader<br/>按需加载规则的核心接口。先查索引找规则文件，读出来用；找不到再扫目录。让规则按需加载、有索引可循，不每次全量扫。<br/>文件: rule_engine/rule_engine.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py["(生产态 / production) 密钥守卫 / Secrets Guard<br/>守护密钥安全的三件套：检查配置合不合规、扫历史提交有没有漏密钥、给日志脱敏。防当下写错、历史遗留、日志泄密三类风险。<br/>文件: rule_enforcement/secrets_guard.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py["(生产态 / production) 任务完成门禁 / Task Completion Gate<br/>任务收尾门禁。扫任务范围之外有没有残留的临时文件、备份、缓存，验证任务真做干净了。防止做一半留堆垃圾就算交付。<br/>文件: rule_enforcement/task_completion_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py["(生产态 / production) 三方对齐门禁 / Triple Alignment<br/>守三方对齐的门禁：检查蓝图、代码、依赖图三样对不对得上。防止蓝图写了没做、依赖图登记了但代码没有这类脱节。<br/>文件: rule_enforcement/triple_alignment.py"]
-    src_zephyr_gov_rule_init_py["(生产态 / production) 规则治理域包 / Gov Rule Package<br/>规则治理域的文件夹入口，标记这个域的边界。本身不含逻辑，给域内模块一个归属。<br/>文件: gov_rule/__init__.py"]
-    src_zephyr_gov_rule_constitutional_update_constitutional_update_py["(生产态 / production) 宪法自愈 / Constitutional Update<br/>让项目宪法自我进化。从历史错误里提取经验，提议更新，经人审查后再安全写入。解决宪法是静态的、AI 犯错学不到的问题。<br/>文件: constitutional_update/constitutional_update.py"]
+    scripts_governance_generators_generate_script_manifest_py["(生产态 / production)<br/>脚本清单自动生成器 / Script Manifest<br/>Generator<br/>把每个脚本自己填的信息卡片收集起来，做成<br/>一张总清单。老方法太死板，遇到特殊格式就<br/>漏抓导致清单不准，现在多种方式兜底确保不<br/>漏。<br/>文件: generators/generate_script_<br/>manifest.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py["(生产态 / production) 自适应阈值 /<br/>Adaptive Threshold<br/>给告警算什么程度该报警的红线。两种算法：<br/>一种看成功率自动调，一种看最近一周的平均<br/>值定线。设了最低底线，防止红线越降越低、<br/>把问题掩盖掉。<br/>文件: rule_enforcement/adaptive_<br/>threshold.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py["(生产态 / production) 对抗样本生成器 /<br/>Adversarial Strategies<br/>生成 5 种假想敌攻击套路，专门用来刁难系<br/>统，测门禁挡不挡得住。上线前自己先攻击一<br/>遍，比等真出事再发现强。<br/>文件: rule_enforcement/adversarial_<br/>strategies.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py["(生产态 / production) AI 能力边界守卫 /<br/>AI Capability Guard<br/>给函数贴需要什么权限的标签，检查 AI<br/>有没有越权干没授权的事。只负责标记不拦，<br/>让后续检查环节去抓违规。<br/>文件: rule_enforcement/ai_capability_<br/>guard.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_anti_pattern_guard_py["(生产态 / production) 反模式防护引擎 /<br/>Anti-Pattern Guard<br/>把蓝图里列的 8 条 AI<br/>集成禁止行为做成自动检查，挂进门禁流程。<br/>防止 AI 集成时踩常见的坑，比如绕过门禁、<br/>擅自越权。<br/>文件: rule_enforcement/anti_pattern_<br/>guard.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_can_i_deploy_py["(生产态 / production) 预部署门禁 /<br/>Can-I-Deploy<br/>部署前问一句现在能部署吗。检查四样：别人<br/>对我的期望满足没、版本兼容不、契约一致不<br/>、服务健康不。避免一部署就出事。<br/>文件: rule_enforcement/can_i_deploy.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py["(生产态 / production) 能力检查器 /<br/>Capability Checker<br/>运行时核对模块有没有真的声明所需权限，再<br/>校验权限表没被偷偷改过。确保声明的能力和<br/>实际用的对得上，防止钻空子。<br/>文件: rule_enforcement/capability_<br/>checker.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_cdc_broker_py["(生产态 / production) CDC 契约经纪人 /<br/>CDC Broker<br/>管消费者驱动契约的本地中介：消费方声明期<br/>望提供方给什么，提供方改了代码就自动验证<br/>有没有破坏消费方。不依赖外部服务，本地就<br/>能跑。<br/>文件: rule_enforcement/cdc_broker.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_contract_template_manager_py["(生产态 / production) 契约模板管理器 /<br/>Contract Template Manager<br/>管理工具契约模板：注册新模板、按名字查模<br/>板、校验调用对不对、存成文件。让每个工具<br/>有统一的接口说明书，调用前能核对参数。<br/>文件: rule_enforcement/contract_<br/>template_manager.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_end_to_end_walkthrough_py["(生产态 / production) 端到端走查验证器<br/>/ End-to-End Walkthrough<br/>按预设场景把系统从头到尾走一遍，验证关键<br/>链路通不通、各环节衔接对不对。专门找单个<br/>测试发现不了的衔接问题。<br/>文件: rule_enforcement/end_to_end_<br/>walkthrough.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py["(生产态 / production) 门禁引擎模块集 /<br/>Gate Engine Package<br/>门禁引擎的文件夹入口，把门禁相关的几个模<br/>块归到一起。本身不含逻辑，只是给它们一个<br/>稳定归属。<br/>文件: gate_engine/__init__.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py["(生产态 / production) 门禁裁决引擎 /<br/>Gate Engine<br/>门禁系统的裁判。从配置加载门禁规则，执行<br/>检查，判通过还是失败，结果记进库。覆盖知<br/>识库、任务编排、交易三类门禁。<br/>文件: gate_engine/gate_engine.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py["(生产态 / production) 门禁紧急旁路 /<br/>Gate Override<br/>给负责人的紧急通道：特殊情况可临时绕过某<br/>道门禁，但严格限时、全程留痕。既允许紧急<br/>放行，又保证每次绕过可追溯、不能乱用。<br/>文件: gate_engine/gate_override.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py["(生产态 / production) 门禁模拟器 / Gate<br/>Simulator<br/>门禁的演习工具。把全链路门禁空跑一遍，但<br/>不改任何状态不写库。让开发者提前看门禁会<br/>怎么判，避免真跑时才出问题。<br/>文件: gate_engine/gate_simulator.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_integration_test_runner_py["(生产态 / production) 集成测试运行器 /<br/>Integration Test Runner<br/>跑跨模块集成测试的引擎，加载契约、执行断<br/>言、对接门禁。分四级：最关键的冒烟、全量<br/>核心、契约校验、健康探针，不同场景跑不同<br/>级别。<br/>文件: rule_enforcement/integration_test_<br/>runner.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_process_lifecycle_gateway_py["(生产态 / production) 进程生命周期网关<br/>/ Process Lifecycle Gateway<br/>扫描代码里直接起进程的地方——这些绕过了统<br/>一管理入口，有失控风险。强制所有起进程都<br/>走同一个网关，便于治理。<br/>文件: invariants/en_process_lifecycle_<br/>gateway.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py["(生产态 / production) KISS 约束执行器 /<br/>KISS Enforcer<br/>守保持简单原则的检查器。检测 AI<br/>写的代码有没有过度复杂、堆冗余。防止 AI<br/>为了看起来完整而过度设计。<br/>文件: rule_enforcement/kiss_enforcer.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_init_py["(生产态 / production) 规则引擎模块集 /<br/>Rule Engine Package<br/>规则引擎的文件夹入口，把规则相关的模块归<br/>到一起。本身不含逻辑，只是给它们一个稳定<br/>归属。<br/>文件: rule_engine/__init__.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py["(生产态 / production) 规则加载器 / Rule<br/>Loader<br/>按需加载规则的核心接口。先查索引找规则文<br/>件，读出来用；找不到再扫目录。让规则按需<br/>加载、有索引可循，不每次全量扫。<br/>文件: rule_engine/rule_engine.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py["(生产态 / production) 密钥守卫 /<br/>Secrets Guard<br/>守护密钥安全的三件套：检查配置合不合规、<br/>扫历史提交有没有漏密钥、给日志脱敏。防当<br/>下写错、历史遗留、日志泄密三类风险。<br/>文件: rule_enforcement/secrets_guard.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py["(生产态 / production) 任务完成门禁 /<br/>Task Completion Gate<br/>任务收尾门禁。扫任务范围之外有没有残留的<br/>临时文件、备份、缓存，验证任务真做干净了<br/>。防止做一半留堆垃圾就算交付。<br/>文件: rule_enforcement/task_completion_<br/>gate.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py["(生产态 / production) 三方对齐门禁 /<br/>Triple Alignment<br/>守三方对齐的门禁：检查蓝图、代码、依赖图<br/>三样对不对得上。防止蓝图写了没做、依赖图<br/>登记了但代码没有这类脱节。<br/>文件: rule_enforcement/triple_<br/>alignment.py"]
+    src_zephyr_gov_rule_init_py["(生产态 / production) 规则治理域包 /<br/>Gov Rule Package<br/>规则治理域的文件夹入口，标记这个域的边界<br/>。本身不含逻辑，给域内模块一个归属。<br/>文件: gov_rule/__init__.py"]
+    src_zephyr_gov_rule_constitutional_update_constitutional_update_py["(生产态 / production) 宪法自愈 /<br/>Constitutional Update<br/>让项目宪法自我进化。从历史错误里提取经验<br/>，提议更新，经人审查后再安全写入。解决宪<br/>法是静态的、AI 犯错学不到的问题。<br/>文件: constitutional_update<br/>/constitutional_update.py"]
     scripts_governance_generators_generate_script_manifest_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py
     src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py
     src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py
@@ -100,16 +100,16 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py
     src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py ~~~ src_zephyr_gov_rule_init_py
     src_zephyr_gov_rule_init_py ~~~ src_zephyr_gov_rule_constitutional_update_constitutional_update_py
-    src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py["(生产态 / production) CBAC 能力矩阵 / CBAC Matrix<br/>一张谁能干什么的授权表，按能力而非角色控权——有什么能力才能干什么。是权限判断的统一依据，别的模块都查它。<br/>文件: rule_enforcement/cbac_matrix.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py["(生产态 / production) 单向熔断器 / Circuit Breaker<br/>模块间调用的保险丝。被调模块连续失败就跳闸，后续调用直接拒绝不再打它，防止故障扩散。跳闸后要人工手动恢复。<br/>文件: rule_enforcement/circuit_breaker.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py["(生产态 / production) 对抗验证门禁 / Adversarial Validation<br/>专门验证输出抗攻击的门禁。拿假想敌样本去冲击系统输出，看结果有没有被恶意输入带偏。不仅查输入合规，也查输出没被污染。<br/>文件: gate_engine/adversarial_validation.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py["(生产态 / production) 门禁评估管线 / Gate Pipeline<br/>把多道门禁编排成一条流水线：定先后顺序、支持与或非组合、可并行跑。让跑哪些门禁怎么组合可配置，不写死在代码里。<br/>文件: gate_engine/gate_pipeline.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_types_py["(生产态 / production) 门禁类型定义 / Gate Types<br/>定义门禁系统的数据格式标准（类型、上下文、结果结构），供引擎、流水线、模拟器共用。相当于门禁模块的数据字典，避免各处格式不统一。<br/>文件: rule_enforcement/gate_types.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_py["(生产态 / production) 循环依赖扫描器 / Circular Dependency Scanner<br/>扫描所有模块的依赖关系，揪出我依赖你、你又依赖我的死循环。这种循环会导致加载失败或卡死，越早发现越好。<br/>文件: invariants/en_001_circular_dependency.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py["(生产态 / production) 契约兼容性检查器 / Contract Compatibility Checker<br/>逐字段比对契约文档写的和代码实际写的：字段有没有、类型对不对、必填一致不。专查文档和代码对不上的漂移。<br/>文件: invariants/en_003_contract_compatibility.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py["(生产态 / production) 零残留检查器 / Zero Residue Check<br/>清理操作做完后扫一遍，确认没留下临时文件、空目录、悬空引用。保证清理干净，不留垃圾。<br/>文件: invariants/zero_residue_check.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py["(生产态 / production) 风险真源加载器 / Risk SSoT<br/>从配置文件加载风险参数（如各种限额），供交易门禁校验参数对不对。把风险红线收口到一个地方，避免各处自己写、互相打架。<br/>文件: rule_enforcement/risk_ssot.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_task_types_py["(生产态 / production) 任务类型定义 / Task Types<br/>定义任务卡的数据结构（状态、优先级等），是任务字段的统一标准，和数据库表对齐。避免各处对任务字段理解不一致。<br/>文件: rule_enforcement/task_types.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py["(生产态 / production) CBAC 能力矩阵 /<br/>CBAC Matrix<br/>一张谁能干什么的授权表，按能力而非角色控<br/>权——有什么能力才能干什么。是权限判断的统<br/>一依据，别的模块都查它。<br/>文件: rule_enforcement/cbac_matrix.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py["(生产态 / production) 单向熔断器 /<br/>Circuit Breaker<br/>模块间调用的保险丝。被调模块连续失败就跳<br/>闸，后续调用直接拒绝不再打它，防止故障扩<br/>散。跳闸后要人工手动恢复。<br/>文件: rule_enforcement/circuit_<br/>breaker.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py["(生产态 / production) 对抗验证门禁 /<br/>Adversarial Validation<br/>专门验证输出抗攻击的门禁。拿假想敌样本去<br/>冲击系统输出，看结果有没有被恶意输入带偏<br/>。不仅查输入合规，也查输出没被污染。<br/>文件: gate_engine/adversarial_<br/>validation.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py["(生产态 / production) 门禁评估管线 /<br/>Gate Pipeline<br/>把多道门禁编排成一条流水线：定先后顺序、<br/>支持与或非组合、可并行跑。让跑哪些门禁怎<br/>么组合可配置，不写死在代码里。<br/>文件: gate_engine/gate_pipeline.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_types_py["(生产态 / production) 门禁类型定义 /<br/>Gate Types<br/>定义门禁系统的数据格式标准<br/>（类型、上下文、结果结构），供引擎、流水<br/>线、模拟器共用。相当于门禁模块的数据字典<br/>，避免各处格式不统一。<br/>文件: rule_enforcement/gate_types.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_py["(生产态 / production) 循环依赖扫描器 /<br/>Circular Dependency Scanner<br/>扫描所有模块的依赖关系，揪出我依赖你、你<br/>又依赖我的死循环。这种循环会导致加载失败<br/>或卡死，越早发现越好。<br/>文件: invariants/en_001_circular_<br/>dependency.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py["(生产态 / production) 契约兼容性检查器<br/>/ Contract Compatibility Checker<br/>逐字段比对契约文档写的和代码实际写的：字<br/>段有没有、类型对不对、必填一致不。专查文<br/>档和代码对不上的漂移。<br/>文件: invariants/en_003_contract_<br/>compatibility.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py["(生产态 / production) 零残留检查器 /<br/>Zero Residue Check<br/>清理操作做完后扫一遍，确认没留下临时文件<br/>、空目录、悬空引用。保证清理干净，不留垃<br/>圾。<br/>文件: invariants/zero_residue_check.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py["(生产态 / production) 风险真源加载器 /<br/>Risk SSoT<br/>从配置文件加载风险参数<br/>（如各种限额），供交易门禁校验参数对不对<br/>。把风险红线收口到一个地方，避免各处自己<br/>写、互相打架。<br/>文件: rule_enforcement/risk_ssot.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_task_types_py["(生产态 / production) 任务类型定义 /<br/>Task Types<br/>定义任务卡的数据结构<br/>（状态、优先级等），是任务字段的统一标准<br/>，和数据库表对齐。避免各处对任务字段理解<br/>不一致。<br/>文件: rule_enforcement/task_types.py"]
     src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py
     src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py
@@ -119,7 +119,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py
     src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py
     src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py["(生产态 / production) 门禁上下文传播 / Gate Context<br/>把门禁运行需要的上下文打包好，跨模块传递，让不同环节的门禁检查共享同一份信息。顺带统一了结果格式，避免各写各的对不上。<br/>文件: gate_engine/gate_context.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py["(生产态 / production) 门禁上下文传播 /<br/>Gate Context<br/>把门禁运行需要的上下文打包好，跨模块传递<br/>，让不同环节的门禁检查共享同一份信息。顺<br/>带统一了结果格式，避免各写各的对不上。<br/>文件: gate_engine/gate_context.py"]
     src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py
@@ -132,23 +132,23 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py -->|config_depends / config_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py
-    D_SHARED["(生产态 / production) 共享服务 / Shared Services<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>跨域节点 / cross-domain"]
+    D_SHARED["(生产态 / production) 共享服务 / Shared<br/>Services<br/>共享服务，负责跨域共享的工具、协议和基础<br/>服务<br/>跨域节点 / cross-domain"]
     src_zephyr_gov_enforcement_rule_enforcement_gate_types_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RECOVERY["(生产态 / production) 回滚恢复 / Rollback Recovery<br/>回滚恢复，负责系统故障时的状态回滚、事务补偿和恢复编排<br/>跨域节点 / cross-domain"]
+    D_INFRA_RECOVERY["(生产态 / production) 回滚恢复 /<br/>Rollback Recovery<br/>回滚恢复，负责系统故障时的状态回滚、事务<br/>补偿和恢复编排<br/>跨域节点 / cross-domain"]
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py -->|导入依赖 / import_depends| D_INFRA_RECOVERY
     src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(生产态 / production) 生命周期管理 / Lifecycle Management<br/>生命周期管理，负责蓝图/模块/任务的声明周期管理和元数据治理<br/>跨域节点 / cross-domain"]
+    D_GOVERNANCE["(生产态 / production) 生命周期管理 /<br/>Lifecycle Management<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>跨域节点 / cross-domain"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOV_SCRIPTS["(生产态 / production) 脚本治理 / Script Governance<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>跨域节点 / cross-domain"]
+    D_GOV_SCRIPTS["(生产态 / production) 脚本治理 / Script<br/>Governance<br/>脚本治理，负责脚本生命周期管理和脚本质量<br/>门禁<br/>跨域节点 / cross-domain"]
     scripts_governance_generators_generate_script_manifest_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_governance_generators_generate_script_manifest_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_governance_generators_generate_script_manifest_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_governance_generators_generate_script_manifest_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
-    D_GOV_AUDIT["(生产态 / production) 审计追踪 / Audit Trail<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>跨域节点 / cross-domain"]
+    D_GOV_AUDIT["(生产态 / production) 审计追踪 / Audit<br/>Trail<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>跨域节点 / cross-domain"]
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RUNTIME["(生产态 / production) 运行时集成 / Runtime Integration<br/>运行时集成，负责组件生命周期编排、启动钩子和运行时上下文管理<br/>跨域节点 / cross-domain"]
+    D_INFRA_RUNTIME["(生产态 / production) 运行时集成 /<br/>Runtime Integration<br/>运行时集成，负责组件生命周期编排、启动钩<br/>子和运行时上下文管理<br/>跨域节点 / cross-domain"]
     src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_gov_enforcement_rule_enforcement_integration_test_runner_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py -->|导入依赖 / import_depends| D_SHARED
@@ -157,18 +157,18 @@ flowchart TD
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
-    D_GOV_OPS_RESILIENCE["(生产态 / production) 运维弹性治理 / Ops Resilience Governance<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和升级协议<br/>跨域节点 / cross-domain"]
+    D_GOV_OPS_RESILIENCE["(生产态 / production) 运维弹性治理 /<br/>Ops Resilience Governance<br/>运维弹性治理，负责运维治理、安全治理、弹<br/>性治理和升级协议<br/>跨域节点 / cross-domain"]
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py
-    D_INTEGRATION["(生产态 / production) 管线路由 / Pipeline Routing<br/>管线路由，负责跨域数据流路由、管道编排和集成适配<br/>跨域节点 / cross-domain"]
+    D_INTEGRATION["(生产态 / production) 管线路由 /<br/>Pipeline Routing<br/>管线路由，负责跨域数据流路由、管道编排和<br/>集成适配<br/>跨域节点 / cross-domain"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    D_INTELLIGENCE["(生产态 / production) 上下文管理 / Context Management<br/>上下文管理，负责 AI 上下文窗口管理、记忆检索和上下文压缩<br/>跨域节点 / cross-domain"]
+    D_INTELLIGENCE["(生产态 / production) 上下文管理 /<br/>Context Management<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>跨域节点 / cross-domain"]
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_types_py
     D_GOV_AUDIT -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py
-    D_SECURITY["(生产态 / production) 对抗验证 / Adversarial Validation<br/>对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验证<br/>跨域节点 / cross-domain"]
+    D_SECURITY["(生产态 / production) 对抗验证 /<br/>Adversarial Validation<br/>对抗验证，负责系统安全对抗测试、漏洞扫描<br/>和攻防验证<br/>跨域节点 / cross-domain"]
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_task_types_py
@@ -187,30 +187,30 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_governance_generators_generate_script_manifest_py["(生产态 / production) 脚本清单自动生成器 / Script Manifest Generator<br/>把每个脚本自己填的信息卡片收集起来，做成一张总清单。老方法太死板，遇到特殊格式就漏抓导致清单不准，现在多种方式兜底确保不漏。<br/>文件: generators/generate_script_manifest.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py["(生产态 / production) 自适应阈值 / Adaptive Threshold<br/>给告警算什么程度该报警的红线。两种算法：一种看成功率自动调，一种看最近一周的平均值定线。设了最低底线，防止红线越降越低、把问题掩盖掉。<br/>文件: rule_enforcement/adaptive_threshold.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py["(生产态 / production) 对抗样本生成器 / Adversarial Strategies<br/>生成 5 种假想敌攻击套路，专门用来刁难系统，测门禁挡不挡得住。上线前自己先攻击一遍，比等真出事再发现强。<br/>文件: rule_enforcement/adversarial_strategies.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py["(生产态 / production) AI 能力边界守卫 / AI Capability Guard<br/>给函数贴需要什么权限的标签，检查 AI 有没有越权干没授权的事。只负责标记不拦，让后续检查环节去抓违规。<br/>文件: rule_enforcement/ai_capability_guard.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_anti_pattern_guard_py["(生产态 / production) 反模式防护引擎 / Anti-Pattern Guard<br/>把蓝图里列的 8 条 AI 集成禁止行为做成自动检查，挂进门禁流程。防止 AI 集成时踩常见的坑，比如绕过门禁、擅自越权。<br/>文件: rule_enforcement/anti_pattern_guard.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_can_i_deploy_py["(生产态 / production) 预部署门禁 / Can-I-Deploy<br/>部署前问一句现在能部署吗。检查四样：别人对我的期望满足没、版本兼容不、契约一致不、服务健康不。避免一部署就出事。<br/>文件: rule_enforcement/can_i_deploy.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py["(生产态 / production) 能力检查器 / Capability Checker<br/>运行时核对模块有没有真的声明所需权限，再校验权限表没被偷偷改过。确保声明的能力和实际用的对得上，防止钻空子。<br/>文件: rule_enforcement/capability_checker.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_cdc_broker_py["(生产态 / production) CDC 契约经纪人 / CDC Broker<br/>管消费者驱动契约的本地中介：消费方声明期望提供方给什么，提供方改了代码就自动验证有没有破坏消费方。不依赖外部服务，本地就能跑。<br/>文件: rule_enforcement/cdc_broker.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_contract_template_manager_py["(生产态 / production) 契约模板管理器 / Contract Template Manager<br/>管理工具契约模板：注册新模板、按名字查模板、校验调用对不对、存成文件。让每个工具有统一的接口说明书，调用前能核对参数。<br/>文件: rule_enforcement/contract_template_manager.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_end_to_end_walkthrough_py["(生产态 / production) 端到端走查验证器 / End-to-End Walkthrough<br/>按预设场景把系统从头到尾走一遍，验证关键链路通不通、各环节衔接对不对。专门找单个测试发现不了的衔接问题。<br/>文件: rule_enforcement/end_to_end_walkthrough.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py["(生产态 / production) 门禁引擎模块集 / Gate Engine Package<br/>门禁引擎的文件夹入口，把门禁相关的几个模块归到一起。本身不含逻辑，只是给它们一个稳定归属。<br/>文件: gate_engine/__init__.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py["(生产态 / production) 门禁裁决引擎 / Gate Engine<br/>门禁系统的裁判。从配置加载门禁规则，执行检查，判通过还是失败，结果记进库。覆盖知识库、任务编排、交易三类门禁。<br/>文件: gate_engine/gate_engine.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py["(生产态 / production) 门禁紧急旁路 / Gate Override<br/>给负责人的紧急通道：特殊情况可临时绕过某道门禁，但严格限时、全程留痕。既允许紧急放行，又保证每次绕过可追溯、不能乱用。<br/>文件: gate_engine/gate_override.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py["(生产态 / production) 门禁模拟器 / Gate Simulator<br/>门禁的演习工具。把全链路门禁空跑一遍，但不改任何状态不写库。让开发者提前看门禁会怎么判，避免真跑时才出问题。<br/>文件: gate_engine/gate_simulator.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_integration_test_runner_py["(生产态 / production) 集成测试运行器 / Integration Test Runner<br/>跑跨模块集成测试的引擎，加载契约、执行断言、对接门禁。分四级：最关键的冒烟、全量核心、契约校验、健康探针，不同场景跑不同级别。<br/>文件: rule_enforcement/integration_test_runner.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_process_lifecycle_gateway_py["(生产态 / production) 进程生命周期网关 / Process Lifecycle Gateway<br/>扫描代码里直接起进程的地方——这些绕过了统一管理入口，有失控风险。强制所有起进程都走同一个网关，便于治理。<br/>文件: invariants/en_process_lifecycle_gateway.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py["(生产态 / production) KISS 约束执行器 / KISS Enforcer<br/>守保持简单原则的检查器。检测 AI 写的代码有没有过度复杂、堆冗余。防止 AI 为了看起来完整而过度设计。<br/>文件: rule_enforcement/kiss_enforcer.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_init_py["(生产态 / production) 规则引擎模块集 / Rule Engine Package<br/>规则引擎的文件夹入口，把规则相关的模块归到一起。本身不含逻辑，只是给它们一个稳定归属。<br/>文件: rule_engine/__init__.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py["(生产态 / production) 规则加载器 / Rule Loader<br/>按需加载规则的核心接口。先查索引找规则文件，读出来用；找不到再扫目录。让规则按需加载、有索引可循，不每次全量扫。<br/>文件: rule_engine/rule_engine.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py["(生产态 / production) 密钥守卫 / Secrets Guard<br/>守护密钥安全的三件套：检查配置合不合规、扫历史提交有没有漏密钥、给日志脱敏。防当下写错、历史遗留、日志泄密三类风险。<br/>文件: rule_enforcement/secrets_guard.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py["(生产态 / production) 任务完成门禁 / Task Completion Gate<br/>任务收尾门禁。扫任务范围之外有没有残留的临时文件、备份、缓存，验证任务真做干净了。防止做一半留堆垃圾就算交付。<br/>文件: rule_enforcement/task_completion_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py["(生产态 / production) 三方对齐门禁 / Triple Alignment<br/>守三方对齐的门禁：检查蓝图、代码、依赖图三样对不对得上。防止蓝图写了没做、依赖图登记了但代码没有这类脱节。<br/>文件: rule_enforcement/triple_alignment.py"]
-    src_zephyr_gov_rule_init_py["(生产态 / production) 规则治理域包 / Gov Rule Package<br/>规则治理域的文件夹入口，标记这个域的边界。本身不含逻辑，给域内模块一个归属。<br/>文件: gov_rule/__init__.py"]
-    src_zephyr_gov_rule_constitutional_update_constitutional_update_py["(生产态 / production) 宪法自愈 / Constitutional Update<br/>让项目宪法自我进化。从历史错误里提取经验，提议更新，经人审查后再安全写入。解决宪法是静态的、AI 犯错学不到的问题。<br/>文件: constitutional_update/constitutional_update.py"]
+    scripts_governance_generators_generate_script_manifest_py["(生产态 / production)<br/>脚本清单自动生成器 / Script Manifest<br/>Generator<br/>把每个脚本自己填的信息卡片收集起来，做成<br/>一张总清单。老方法太死板，遇到特殊格式就<br/>漏抓导致清单不准，现在多种方式兜底确保不<br/>漏。<br/>文件: generators/generate_script_<br/>manifest.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py["(生产态 / production) 自适应阈值 /<br/>Adaptive Threshold<br/>给告警算什么程度该报警的红线。两种算法：<br/>一种看成功率自动调，一种看最近一周的平均<br/>值定线。设了最低底线，防止红线越降越低、<br/>把问题掩盖掉。<br/>文件: rule_enforcement/adaptive_<br/>threshold.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py["(生产态 / production) 对抗样本生成器 /<br/>Adversarial Strategies<br/>生成 5 种假想敌攻击套路，专门用来刁难系<br/>统，测门禁挡不挡得住。上线前自己先攻击一<br/>遍，比等真出事再发现强。<br/>文件: rule_enforcement/adversarial_<br/>strategies.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py["(生产态 / production) AI 能力边界守卫 /<br/>AI Capability Guard<br/>给函数贴需要什么权限的标签，检查 AI<br/>有没有越权干没授权的事。只负责标记不拦，<br/>让后续检查环节去抓违规。<br/>文件: rule_enforcement/ai_capability_<br/>guard.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_anti_pattern_guard_py["(生产态 / production) 反模式防护引擎 /<br/>Anti-Pattern Guard<br/>把蓝图里列的 8 条 AI<br/>集成禁止行为做成自动检查，挂进门禁流程。<br/>防止 AI 集成时踩常见的坑，比如绕过门禁、<br/>擅自越权。<br/>文件: rule_enforcement/anti_pattern_<br/>guard.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_can_i_deploy_py["(生产态 / production) 预部署门禁 /<br/>Can-I-Deploy<br/>部署前问一句现在能部署吗。检查四样：别人<br/>对我的期望满足没、版本兼容不、契约一致不<br/>、服务健康不。避免一部署就出事。<br/>文件: rule_enforcement/can_i_deploy.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py["(生产态 / production) 能力检查器 /<br/>Capability Checker<br/>运行时核对模块有没有真的声明所需权限，再<br/>校验权限表没被偷偷改过。确保声明的能力和<br/>实际用的对得上，防止钻空子。<br/>文件: rule_enforcement/capability_<br/>checker.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_cdc_broker_py["(生产态 / production) CDC 契约经纪人 /<br/>CDC Broker<br/>管消费者驱动契约的本地中介：消费方声明期<br/>望提供方给什么，提供方改了代码就自动验证<br/>有没有破坏消费方。不依赖外部服务，本地就<br/>能跑。<br/>文件: rule_enforcement/cdc_broker.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_contract_template_manager_py["(生产态 / production) 契约模板管理器 /<br/>Contract Template Manager<br/>管理工具契约模板：注册新模板、按名字查模<br/>板、校验调用对不对、存成文件。让每个工具<br/>有统一的接口说明书，调用前能核对参数。<br/>文件: rule_enforcement/contract_<br/>template_manager.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_end_to_end_walkthrough_py["(生产态 / production) 端到端走查验证器<br/>/ End-to-End Walkthrough<br/>按预设场景把系统从头到尾走一遍，验证关键<br/>链路通不通、各环节衔接对不对。专门找单个<br/>测试发现不了的衔接问题。<br/>文件: rule_enforcement/end_to_end_<br/>walkthrough.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_init_py["(生产态 / production) 门禁引擎模块集 /<br/>Gate Engine Package<br/>门禁引擎的文件夹入口，把门禁相关的几个模<br/>块归到一起。本身不含逻辑，只是给它们一个<br/>稳定归属。<br/>文件: gate_engine/__init__.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_engine_py["(生产态 / production) 门禁裁决引擎 /<br/>Gate Engine<br/>门禁系统的裁判。从配置加载门禁规则，执行<br/>检查，判通过还是失败，结果记进库。覆盖知<br/>识库、任务编排、交易三类门禁。<br/>文件: gate_engine/gate_engine.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_override_py["(生产态 / production) 门禁紧急旁路 /<br/>Gate Override<br/>给负责人的紧急通道：特殊情况可临时绕过某<br/>道门禁，但严格限时、全程留痕。既允许紧急<br/>放行，又保证每次绕过可追溯、不能乱用。<br/>文件: gate_engine/gate_override.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py["(生产态 / production) 门禁模拟器 / Gate<br/>Simulator<br/>门禁的演习工具。把全链路门禁空跑一遍，但<br/>不改任何状态不写库。让开发者提前看门禁会<br/>怎么判，避免真跑时才出问题。<br/>文件: gate_engine/gate_simulator.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_integration_test_runner_py["(生产态 / production) 集成测试运行器 /<br/>Integration Test Runner<br/>跑跨模块集成测试的引擎，加载契约、执行断<br/>言、对接门禁。分四级：最关键的冒烟、全量<br/>核心、契约校验、健康探针，不同场景跑不同<br/>级别。<br/>文件: rule_enforcement/integration_test_<br/>runner.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_process_lifecycle_gateway_py["(生产态 / production) 进程生命周期网关<br/>/ Process Lifecycle Gateway<br/>扫描代码里直接起进程的地方——这些绕过了统<br/>一管理入口，有失控风险。强制所有起进程都<br/>走同一个网关，便于治理。<br/>文件: invariants/en_process_lifecycle_<br/>gateway.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py["(生产态 / production) KISS 约束执行器 /<br/>KISS Enforcer<br/>守保持简单原则的检查器。检测 AI<br/>写的代码有没有过度复杂、堆冗余。防止 AI<br/>为了看起来完整而过度设计。<br/>文件: rule_enforcement/kiss_enforcer.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_init_py["(生产态 / production) 规则引擎模块集 /<br/>Rule Engine Package<br/>规则引擎的文件夹入口，把规则相关的模块归<br/>到一起。本身不含逻辑，只是给它们一个稳定<br/>归属。<br/>文件: rule_engine/__init__.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py["(生产态 / production) 规则加载器 / Rule<br/>Loader<br/>按需加载规则的核心接口。先查索引找规则文<br/>件，读出来用；找不到再扫目录。让规则按需<br/>加载、有索引可循，不每次全量扫。<br/>文件: rule_engine/rule_engine.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py["(生产态 / production) 密钥守卫 /<br/>Secrets Guard<br/>守护密钥安全的三件套：检查配置合不合规、<br/>扫历史提交有没有漏密钥、给日志脱敏。防当<br/>下写错、历史遗留、日志泄密三类风险。<br/>文件: rule_enforcement/secrets_guard.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py["(生产态 / production) 任务完成门禁 /<br/>Task Completion Gate<br/>任务收尾门禁。扫任务范围之外有没有残留的<br/>临时文件、备份、缓存，验证任务真做干净了<br/>。防止做一半留堆垃圾就算交付。<br/>文件: rule_enforcement/task_completion_<br/>gate.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py["(生产态 / production) 三方对齐门禁 /<br/>Triple Alignment<br/>守三方对齐的门禁：检查蓝图、代码、依赖图<br/>三样对不对得上。防止蓝图写了没做、依赖图<br/>登记了但代码没有这类脱节。<br/>文件: rule_enforcement/triple_<br/>alignment.py"]
+    src_zephyr_gov_rule_init_py["(生产态 / production) 规则治理域包 /<br/>Gov Rule Package<br/>规则治理域的文件夹入口，标记这个域的边界<br/>。本身不含逻辑，给域内模块一个归属。<br/>文件: gov_rule/__init__.py"]
+    src_zephyr_gov_rule_constitutional_update_constitutional_update_py["(生产态 / production) 宪法自愈 /<br/>Constitutional Update<br/>让项目宪法自我进化。从历史错误里提取经验<br/>，提议更新，经人审查后再安全写入。解决宪<br/>法是静态的、AI 犯错学不到的问题。<br/>文件: constitutional_update<br/>/constitutional_update.py"]
     scripts_governance_generators_generate_script_manifest_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py
     src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py
     src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py
@@ -234,16 +234,16 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py
     src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py ~~~ src_zephyr_gov_rule_init_py
     src_zephyr_gov_rule_init_py ~~~ src_zephyr_gov_rule_constitutional_update_constitutional_update_py
-    src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py["(生产态 / production) CBAC 能力矩阵 / CBAC Matrix<br/>一张谁能干什么的授权表，按能力而非角色控权——有什么能力才能干什么。是权限判断的统一依据，别的模块都查它。<br/>文件: rule_enforcement/cbac_matrix.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py["(生产态 / production) 单向熔断器 / Circuit Breaker<br/>模块间调用的保险丝。被调模块连续失败就跳闸，后续调用直接拒绝不再打它，防止故障扩散。跳闸后要人工手动恢复。<br/>文件: rule_enforcement/circuit_breaker.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py["(生产态 / production) 对抗验证门禁 / Adversarial Validation<br/>专门验证输出抗攻击的门禁。拿假想敌样本去冲击系统输出，看结果有没有被恶意输入带偏。不仅查输入合规，也查输出没被污染。<br/>文件: gate_engine/adversarial_validation.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py["(生产态 / production) 门禁评估管线 / Gate Pipeline<br/>把多道门禁编排成一条流水线：定先后顺序、支持与或非组合、可并行跑。让跑哪些门禁怎么组合可配置，不写死在代码里。<br/>文件: gate_engine/gate_pipeline.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_gate_types_py["(生产态 / production) 门禁类型定义 / Gate Types<br/>定义门禁系统的数据格式标准（类型、上下文、结果结构），供引擎、流水线、模拟器共用。相当于门禁模块的数据字典，避免各处格式不统一。<br/>文件: rule_enforcement/gate_types.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_py["(生产态 / production) 循环依赖扫描器 / Circular Dependency Scanner<br/>扫描所有模块的依赖关系，揪出我依赖你、你又依赖我的死循环。这种循环会导致加载失败或卡死，越早发现越好。<br/>文件: invariants/en_001_circular_dependency.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py["(生产态 / production) 契约兼容性检查器 / Contract Compatibility Checker<br/>逐字段比对契约文档写的和代码实际写的：字段有没有、类型对不对、必填一致不。专查文档和代码对不上的漂移。<br/>文件: invariants/en_003_contract_compatibility.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py["(生产态 / production) 零残留检查器 / Zero Residue Check<br/>清理操作做完后扫一遍，确认没留下临时文件、空目录、悬空引用。保证清理干净，不留垃圾。<br/>文件: invariants/zero_residue_check.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py["(生产态 / production) 风险真源加载器 / Risk SSoT<br/>从配置文件加载风险参数（如各种限额），供交易门禁校验参数对不对。把风险红线收口到一个地方，避免各处自己写、互相打架。<br/>文件: rule_enforcement/risk_ssot.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_task_types_py["(生产态 / production) 任务类型定义 / Task Types<br/>定义任务卡的数据结构（状态、优先级等），是任务字段的统一标准，和数据库表对齐。避免各处对任务字段理解不一致。<br/>文件: rule_enforcement/task_types.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py["(生产态 / production) CBAC 能力矩阵 /<br/>CBAC Matrix<br/>一张谁能干什么的授权表，按能力而非角色控<br/>权——有什么能力才能干什么。是权限判断的统<br/>一依据，别的模块都查它。<br/>文件: rule_enforcement/cbac_matrix.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py["(生产态 / production) 单向熔断器 /<br/>Circuit Breaker<br/>模块间调用的保险丝。被调模块连续失败就跳<br/>闸，后续调用直接拒绝不再打它，防止故障扩<br/>散。跳闸后要人工手动恢复。<br/>文件: rule_enforcement/circuit_<br/>breaker.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py["(生产态 / production) 对抗验证门禁 /<br/>Adversarial Validation<br/>专门验证输出抗攻击的门禁。拿假想敌样本去<br/>冲击系统输出，看结果有没有被恶意输入带偏<br/>。不仅查输入合规，也查输出没被污染。<br/>文件: gate_engine/adversarial_<br/>validation.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py["(生产态 / production) 门禁评估管线 /<br/>Gate Pipeline<br/>把多道门禁编排成一条流水线：定先后顺序、<br/>支持与或非组合、可并行跑。让跑哪些门禁怎<br/>么组合可配置，不写死在代码里。<br/>文件: gate_engine/gate_pipeline.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_types_py["(生产态 / production) 门禁类型定义 /<br/>Gate Types<br/>定义门禁系统的数据格式标准<br/>（类型、上下文、结果结构），供引擎、流水<br/>线、模拟器共用。相当于门禁模块的数据字典<br/>，避免各处格式不统一。<br/>文件: rule_enforcement/gate_types.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_001_circular_dependency_py["(生产态 / production) 循环依赖扫描器 /<br/>Circular Dependency Scanner<br/>扫描所有模块的依赖关系，揪出我依赖你、你<br/>又依赖我的死循环。这种循环会导致加载失败<br/>或卡死，越早发现越好。<br/>文件: invariants/en_001_circular_<br/>dependency.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py["(生产态 / production) 契约兼容性检查器<br/>/ Contract Compatibility Checker<br/>逐字段比对契约文档写的和代码实际写的：字<br/>段有没有、类型对不对、必填一致不。专查文<br/>档和代码对不上的漂移。<br/>文件: invariants/en_003_contract_<br/>compatibility.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py["(生产态 / production) 零残留检查器 /<br/>Zero Residue Check<br/>清理操作做完后扫一遍，确认没留下临时文件<br/>、空目录、悬空引用。保证清理干净，不留垃<br/>圾。<br/>文件: invariants/zero_residue_check.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py["(生产态 / production) 风险真源加载器 /<br/>Risk SSoT<br/>从配置文件加载风险参数<br/>（如各种限额），供交易门禁校验参数对不对<br/>。把风险红线收口到一个地方，避免各处自己<br/>写、互相打架。<br/>文件: rule_enforcement/risk_ssot.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_task_types_py["(生产态 / production) 任务类型定义 /<br/>Task Types<br/>定义任务卡的数据结构<br/>（状态、优先级等），是任务字段的统一标准<br/>，和数据库表对齐。避免各处对任务字段理解<br/>不一致。<br/>文件: rule_enforcement/task_types.py"]
     src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py
     src_zephyr_gov_enforcement_rule_enforcement_circuit_breaker_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_adversarial_validation_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py
@@ -253,7 +253,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_invariants_en_003_contract_compatibility_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py
     src_zephyr_gov_enforcement_rule_enforcement_invariants_zero_residue_check_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py
     src_zephyr_gov_enforcement_rule_enforcement_risk_ssot_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_task_types_py
-    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py["(生产态 / production) 门禁上下文传播 / Gate Context<br/>把门禁运行需要的上下文打包好，跨模块传递，让不同环节的门禁检查共享同一份信息。顺带统一了结果格式，避免各写各的对不上。<br/>文件: gate_engine/gate_context.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py["(生产态 / production) 门禁上下文传播 /<br/>Gate Context<br/>把门禁运行需要的上下文打包好，跨模块传递<br/>，让不同环节的门禁检查共享同一份信息。顺<br/>带统一了结果格式，避免各写各的对不上。<br/>文件: gate_engine/gate_context.py"]
     src_zephyr_gov_enforcement_rule_enforcement_capability_checker_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_cbac_matrix_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_context_py
     src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_simulator_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_gate_engine_gate_pipeline_py
