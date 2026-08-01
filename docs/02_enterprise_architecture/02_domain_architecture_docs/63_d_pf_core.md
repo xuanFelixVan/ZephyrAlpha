@@ -30,7 +30,7 @@ ttl: permanent
 | 模块数 | 16 | Module Count | 16 |
 | 域内依赖 | 18 | Internal Dependencies | 18 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 14 | Cross-domain Outgoing | 14 |
+| 跨域出边 | 17 | Cross-domain Outgoing | 17 |
 | 设计态模块 | 6 | Design Modules | 6 |
 | 生产态模块 | 10 | Production Modules | 10 |
 | 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
@@ -70,7 +70,7 @@ flowchart TD
     tests_pf_core_test_strategy_runner_tick_py ~~~ tests_pf_core_test_vwap_reversion_strategy_py
     src_zephyr_pf_core_optimizer["优化器<br/>优化器，优化器的子目录，归集相关子模块。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: optimizer/<br/>(设计态 / design)"]
     src_zephyr_pf_core_meta_router["元路由器<br/>元路由器，元路由的子目录，归集相关子模块。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: meta_router/<br/>(设计态 / design)"]
-    src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>包入口。D_PORTFOLIO_CORE — Portfolio<br/>Construction Strategies<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>D_PORTFOLIO_CORE — Portfolio Construction<br/>Strategies<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_strategy_engine_strategy_runner_py["策略运行器<br/>D_PORTFOLIO_CORE — StrategyRunner 策略运行器<br/>（胶水层）<br/>strategy_runner<br/>文件: strategy_engine/strategy_runner.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_intraday_surge_fall_strategy_py["DCORE — 30秒冲高回落做T策略（路径 B 示例策略<br/>D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B<br/>示例策略）<br/>intraday_surge_fall_strategy<br/>文件: pf_core/intraday_surge_fall_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_orderbook_imbalance_strategy_py["DCORE — 盘口失衡反转做T策略（路径 B 策略）<br/>D_PORTFOLIO_CORE — 盘口失衡反转做T策略（路径 B<br/>策略）<br/>orderbook_imbalance_strategy<br/>文件: pf_core/orderbook_imbalance_strategy.py<br/>(生产态 / production)"]
@@ -81,41 +81,42 @@ flowchart TD
     src_zephyr_pf_core_optimizer -.->|import / import| src_zephyr_pf_core_meta_router
     src_zephyr_pf_core_meta_router -.->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_init_py
     src_zephyr_pf_core_portfolio_aggregate -.->|import / import| src_zephyr_pf_core_optimizer
-    src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    src_zephyr_pf_core_vwap_reversion_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_orderbook_imbalance_strategy_py
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_vwap_reversion_strategy_py
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    tests_pf_core_test_orderbook_imbalance_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_orderbook_imbalance_strategy_py
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_vwap_reversion_strategy_py
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_orderbook_imbalance_strategy_py
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
+    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    src_zephyr_pf_core_vwap_reversion_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     tests_pf_core_test_orderbook_imbalance_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    tests_pf_core_test_orderbook_imbalance_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_orderbook_imbalance_strategy_py
     tests_pf_core_test_strategy_runner_tick_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
-    tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    tests_pf_core_test_vwap_reversion_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_vwap_reversion_strategy_py
+    tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
     tests_pf_core_test_vwap_reversion_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    tests_pf_core_test_vwap_reversion_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_vwap_reversion_strategy_py
     D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_portfolio_aggregate -.->|导入依赖 / import_depends| D_POSITION
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_optimizer -.->|导入依赖 / import_depends| D_RISK
     D_BACKTEST["回测<br/>回测，负责历史数据回测、回测引擎和回测报告<br/>Backtest<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    tests_pf_core_test_orderbook_imbalance_strategy_py -->|测试依赖 / test_depends| D_BACKTEST
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_pf_core_vwap_reversion_strategy_py -->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| D_BACKTEST
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    tests_pf_core_test_orderbook_imbalance_strategy_py -->|测试依赖 / test_depends| D_BACKTEST
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     src_zephyr_pf_core_strategy_engine_tick_strategy_base_py -->|导入依赖 / import_depends| D_BACKTEST
     D_FACTOR["因子<br/>因子，负责因子计算、因子库管理和因子评价<br/>Factor<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| D_BACKTEST
-    tests_pf_core_test_vwap_reversion_strategy_py -->|测试依赖 / test_depends| D_BACKTEST
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     D_PF_ALLOC["组合分配<br/>组合分配，负责资产配置、权重分配和再平衡<br/>Portfolio Allocation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| D_PF_ALLOC
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_BACKTEST
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -135,7 +136,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>包入口。D_PORTFOLIO_CORE — Portfolio<br/>Construction Strategies<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>D_PORTFOLIO_CORE — Portfolio Construction<br/>Strategies<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
     tests_pf_core_test_intraday_surge_fall_strategy_py["测试intradaysurgefall策略<br/>IntradaySurgeFallStrategy 单元测试（路径 B<br/>示例策略）。<br/>test_intraday_surge_fall_strategy<br/>文件: pf_core/test_intraday_surge_fall_<br/>strategy.py<br/>(生产态 / production)"]
     tests_pf_core_test_orderbook_imbalance_strategy_py["测试orderbookimbalance策略<br/>OrderBookImbalanceStrategy 单元测试（路径 B<br/>盘口失衡反转策略）。<br/>test_orderbook_imbalance_strategy<br/>文件: pf_core/test_orderbook_imbalance_<br/>strategy.py<br/>(生产态 / production)"]
     tests_pf_core_test_strategy_runner_tick_py["测试策略运行器逐笔<br/>测试策略运行器逐笔.run_tick_backtest 单元测试<br/>（路径 A：日频信号 × tick 撮合）。<br/>test_strategy_runner_tick<br/>文件: pf_core/test_strategy_runner_tick.py<br/>(生产态 / production)"]
@@ -151,21 +152,21 @@ flowchart TD
     src_zephyr_pf_core_intraday_surge_fall_strategy_py ~~~ src_zephyr_pf_core_orderbook_imbalance_strategy_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py ~~~ src_zephyr_pf_core_vwap_reversion_strategy_py
     src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["逐笔策略基类<br/>D_PORTFOLIO_CORE — TickStrategyBase +<br/>TickStrategyRegistry（路径 B：tick 级策略/做T）<br/>tick_strategy_base<br/>文件: strategy_engine/tick_strategy_base.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    src_zephyr_pf_core_vwap_reversion_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_orderbook_imbalance_strategy_py
-    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_vwap_reversion_strategy_py
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    tests_pf_core_test_orderbook_imbalance_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_orderbook_imbalance_strategy_py
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_vwap_reversion_strategy_py
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_orderbook_imbalance_strategy_py
+    src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
+    src_zephyr_pf_core_strategy_engine_init_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    src_zephyr_pf_core_vwap_reversion_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     tests_pf_core_test_orderbook_imbalance_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    tests_pf_core_test_orderbook_imbalance_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_orderbook_imbalance_strategy_py
     tests_pf_core_test_strategy_runner_tick_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
-    tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
-    tests_pf_core_test_vwap_reversion_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_vwap_reversion_strategy_py
+    tests_pf_core_test_intraday_surge_fall_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_intraday_surge_fall_strategy_py
     tests_pf_core_test_vwap_reversion_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
+    tests_pf_core_test_vwap_reversion_strategy_py -->|测试依赖 / test_depends| src_zephyr_pf_core_vwap_reversion_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -204,20 +205,23 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_BACKTEST 回测: 引擎基类 / L_BACKTEST — Backtest Engine Layer (core/engi... | 导入依赖 / import_depends |
-| 2 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_BACKTEST 回测: 事件driven引擎 / event_driven_engine (implementations/eve... | 导入依赖 / import_depends |
-| 3 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_BACKTEST 回测: vectorized引擎 / L_BACKTEST — Vectorized Backtest Engine... | 导入依赖 / import_depends |
-| 4 | 逐笔策略基类 / tick_strategy_base (strategy_engine/tick_s... | → | D_BACKTEST 回测: 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
-| 5 | 测试intradaysurgefall策略 / test_intraday_surge_fall_stra... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
-| 6 | 测试orderbookimbalance策略 / test_orderbook_imbalance_str... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
-| 7 | 测试vwapreversion策略 / test_vwap_reversion_strategy (pf_... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
-| 8 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_FACTOR 因子: D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
-| 9 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | 导入依赖 / import_depends |
-| 10 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_FACTOR 因子: 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
-| 11 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 12 | 包入口 / D_PORTFOLIO_CORE — Portfolio Construction Strat... | → | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | 导入依赖 / import_depends |
-| 13 | 组合聚合 (portfolio_aggregate/) | → | D_POSITION 仓位管理: 持仓协调器 / position_reconciler (position/position_recon... | 导入依赖 / import_depends |
-| 14 | 优化器 (optimizer/) | → | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | 导入依赖 / import_depends |
+| 1 | DCORE — 30秒冲高回落做T策略（路径 B 示例策略 / intraday_... | → | D_BACKTEST 回测: 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
+| 2 | DCORE — 盘口失衡反转做T策略（路径 B 策略） / orderbook_i... | → | D_BACKTEST 回测: 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
+| 3 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_BACKTEST 回测: 引擎基类 / L_BACKTEST — Backtest Engine Layer (core/engi... | 导入依赖 / import_depends |
+| 4 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_BACKTEST 回测: 事件driven引擎 / event_driven_engine (implementations/eve... | 导入依赖 / import_depends |
+| 5 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_BACKTEST 回测: vectorized引擎 / L_BACKTEST — Vectorized Backtest Engine... | 导入依赖 / import_depends |
+| 6 | 逐笔策略基类 / tick_strategy_base (strategy_engine/tick_s... | → | D_BACKTEST 回测: 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
+| 7 | DCORE — VWAP 回归做T策略（路径 B 策略） / vwap_reversion... | → | D_BACKTEST 回测: 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
+| 8 | 测试intradaysurgefall策略 / test_intraday_surge_fall_stra... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
+| 9 | 测试orderbookimbalance策略 / test_orderbook_imbalance_str... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
+| 10 | 测试vwapreversion策略 / test_vwap_reversion_strategy (pf_... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
+| 11 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_FACTOR 因子: D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
+| 12 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | 导入依赖 / import_depends |
+| 13 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_FACTOR 因子: 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
+| 14 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
+| 15 | 包入口 / D_PORTFOLIO_CORE — Portfolio Construction Strat... | → | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | 导入依赖 / import_depends |
+| 16 | 组合聚合 (portfolio_aggregate/) | → | D_POSITION 仓位管理: 持仓协调器 / position_reconciler (position/position_recon... | 导入依赖 / import_depends |
+| 17 | 优化器 (optimizer/) | → | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -227,7 +231,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 7 个外部域直接连接（出边 14 条 + 入边 1 条 = 15 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 7 个外部域直接连接（出边 17 条 + 入边 1 条 = 18 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -240,7 +244,7 @@ graph LR
     D_POSITION["D_POSITION<br/>仓位管理"]
     D_RISK["D_RISK<br/>风控"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
-    D_PF_CORE -->|7条 导入依赖 / import_depends, 测试依赖 / test_depends| D_BACKTEST
+    D_PF_CORE -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_BACKTEST
     D_PF_CORE -->|3条 导入依赖 / import_depends| D_FACTOR
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_PF_ALLOC

@@ -28,7 +28,7 @@ ttl: permanent
 | 域名称 | 运行时集成 | Domain Name | Runtime Integration |
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 168 | Module Count | 168 |
-| 域内依赖 | 152 | Internal Dependencies | 152 |
+| 域内依赖 | 151 | Internal Dependencies | 151 |
 | 跨域入边 | 78 | Cross-domain Incoming | 78 |
 | 跨域出边 | 225 | Cross-domain Outgoing | 225 |
 | 设计态模块 | 2 | Design Modules | 2 |
@@ -53,24 +53,24 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001["基础设施注册表<br/>基础设施注册表，基础设施的注册表，登记和查询已注<br/>册的条目。<br/>infrastructure_registry<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-001<br/>(生产态 / production)"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002["基础设施注册表<br/>基础设施注册表，基础设施的注册表，登记和查询已注<br/>册的条目。<br/>infrastructure_registry<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-002<br/>(生产态 / production)"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003["基础设施注册表<br/>基础设施注册表，基础设施的注册表，登记和查询已注<br/>册的条目。<br/>infrastructure_registry<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-003<br/>(生产态 / production)"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006["基础设施注册表<br/>基础设施注册表，基础设施的注册表，登记和查询已注<br/>册的条目。<br/>infrastructure_registry<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-006<br/>(生产态 / production)"]
-    docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["蓝图<br/>蓝图（blueprint.md）<br/>⛔ 基础设施运行时域，设计已就绪，等待开发排期<br/>文件: agent_orchestrator/blueprint.md<br/>(设计态 / design)"]
-    src_zephyr_infrastructure_asset_inventory_main_py["主入口<br/>Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>__main__<br/>文件: asset_inventory/__main__.py<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001["基础设施注册表<br/>infrastructure_registry的INFRA-DB-001条目模块<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-001<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002["基础设施注册表<br/>infrastructure_registry的INFRA-DB-002条目模块<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-002<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003["基础设施注册表<br/>infrastructure_registry的INFRA-DB-003条目模块<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-003<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006["基础设施注册表<br/>infrastructure_registry的INFRA-DB-006条目模块<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-006<br/>(生产态 / production)"]
+    docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["蓝图<br/>agent orchestrator包的蓝图模块<br/>⛔ 基础设施运行时域，设计已就绪，等待开发排期<br/>blueprint<br/>文件: agent_orchestrator/blueprint.md<br/>(设计态 / design)"]
+    src_zephyr_infrastructure_asset_inventory_main_py["主入口<br/>Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>文件: asset_inventory/__main__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_lifecycle_py["生命周期<br/>AssetLifecycle — MOD-INF-026 L5<br/>ITIL生命周期自动化管理器<br/>文件: asset_inventory/lifecycle.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_asset_inventory_mcp_server_py["MCP服务端<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>mcp_server<br/>文件: asset_inventory/mcp_server.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_asset_inventory_mcp_server_py["MCP服务端<br/>基础设施/asset_inventory包的MCP服务端模块<br/>mcp_server<br/>文件: asset_inventory/mcp_server.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_metadata_py["元数据<br/>多 IDE 规则文件生成器——从 asset-inventory<br/>配置生成。<br/>metadata<br/>文件: asset_inventory/metadata.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_trust_anchor_py["信任anchor<br/>旁路状态——对标 K8s Admission Webhook 的<br/>emergency bypass。<br/>trust_anchor<br/>文件: asset_inventory/trust_anchor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_diagnostics_py["自动diagnostics<br/>RI-12 AutoDiagnostics — 自动诊断引擎<br/>auto_diagnostics<br/>文件: infrastructure/auto_diagnostics.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_main_py["主入口<br/>引擎的命令行入口，可以直接 python -m<br/>跑起来执行主流程。<br/>__main__<br/>文件: auto_fix_engine/__main__.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["对齐同步器<br/>对齐同步器，提供scan、fix、校验等方法，供engine.<br/>py;MOD-INF-023(dri使用<br/>alignment_syncer<br/>文件: auto_fix_engine/alignment_syncer.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_main_py["主入口<br/>引擎的命令行入口，可以直接 python -m<br/>跑起来执行主流程。<br/>文件: auto_fix_engine/__main__.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["对齐同步器<br/>基础设施/auto_fix_engine包的对齐同步器模块<br/>alignment_syncer<br/>文件: auto_fix_engine/alignment_syncer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_all_completer_py["all补全器<br/>all补全器，提供解析all、extractpublicsymbols、sc<br/>an等方法，供engine.py;MOD-INF-026(ass使用<br/>all_completer<br/>文件: auto_fix_engine/all_completer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["配置修复器<br/>配置修复器，提供fixtrailingwhitespace、fixtabs、<br/>fixmergeconflicts等方法，供engine.py;MOD-INF-023<br/>(dri使用<br/>config_fixer<br/>文件: auto_fix_engine/config_fixer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["去重提取器<br/>去重提取器，提供normalizecode、minoccurrences、m<br/>inoccurrences等方法，供engine.py;MOD-INF-017<br/>(cod使用<br/>dedup_extractor<br/>文件: auto_fix_engine/dedup_extractor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["dep版本修复器<br/>dep版本修复器，主要提供ishigher、扫描、修复等功<br/>能，供engine.py使用<br/>dep_version_fixer<br/>文件: auto_fix_engine/dep_version_fixer.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["漂移修复器<br/>漂移修复器，提供scan、fix、校验等方法，供engine.<br/>py;MOD-INF-023(dri使用<br/>drift_fixer<br/>文件: auto_fix_engine/drift_fixer.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["漂移修复器<br/>基础设施/auto_fix_engine包的漂移修复器模块<br/>drift_fixer<br/>文件: auto_fix_engine/drift_fixer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["事件钩子<br/>订阅 EventBusBackpressure 的 drift_detected /<br/>validation_result 事件。<br/>event_hooks<br/>文件: auto_fix_engine/event_hooks.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["修复差异<br/>修复差异，提供计算、计算text、reverse等方法，供e<br/>ngine.py;fix_report.py;c使用<br/>fix_diff<br/>文件: auto_fix_engine/fix_diff.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["修复调度器<br/>修复调度器，引擎的调度器，按时间或优先级安排任务<br/>执行。<br/>fix_scheduler<br/>文件: auto_fix_engine/fix_scheduler.py<br/>(生产态 / production)"]
@@ -82,7 +82,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_state_machine_py["状态machine<br/>漂移事件记录——对齐 test_state_<br/>machine.，引擎的状态机，管理状态流转。<br/>文件: auto_fix_engine/state_machine.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py["zombie清理器<br/>移除 content<br/>中指向不存在文件的僵尸引用，返回清理后的内容。<br/>zombie_cleaner<br/>文件: auto_fix_engine/zombie_cleaner.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_blueprint_code_sync_py["蓝图代码同步<br/>Blueprint-Code Sync — 蓝图-代码索引同步验证。<br/>blueprint_code_sync<br/>文件: infrastructure/blueprint_code_sync.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_budget_enforcement_init_py["infrastructure/budget_enforcement 包入口<br/>budget_enforcement 包聚合层。<br/>__init__<br/>文件: budget_enforcement/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_budget_enforcement_init_py["infrastructure/budget_enforcement 包入口<br/>文件: budget_enforcement/__init__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_capacity_assurance_budget_forecaster_py["预算预测器<br/>Token 预算预测 (DD120-extra, TASK-020)<br/>budget_forecaster<br/>文件: capacity_assurance/budget_forecaster.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py["契约总线<br/>ContractBus loader —<br/>加载全部44条容量保障契约的Pydantic v2 Schema<br/>（DD-9三批迁移）.<br/>contract_bus<br/>文件: contracts/contract_bus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py["跨模块集成<br/>Cross-module integration — CT-1~CT-4<br/>跨模块集成契约实现（对标蓝图 §17）.<br/>cross_module_integration<br/>文件: capacity_assurance/cross_module_<br/>integration.py<br/>(生产态 / production)"]
@@ -107,7 +107,7 @@ flowchart TD
     src_zephyr_infrastructure_h1_redis_hot_h1_redis_reader_py["h1_redis_hot/h1_redis_reader<br/>H1RedisReader — 决策引擎 <5ms 在线特征查询。<br/>文件: h1_redis_hot/h1_redis_reader.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_h1_redis_hot_h1_redis_writer_py["h1_redis_hot/h1_redis_writer<br/>H1RedisWriter — D-FACTOR Engine 每 3 秒截面写入<br/>Redis（PIPELINE 模式）。<br/>文件: h1_redis_hot/h1_redis_writer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_health_monitor_health_aggregator_py["健康聚合器<br/>全系统健康聚合 — check_all_systems()<br/>health_aggregator<br/>文件: health_monitor/health_aggregator.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_hooks_event_hook_py["事件钩子<br/>EventHook — 声明式任务系统事件订阅<br/>event_hook<br/>文件: hooks/event_hook.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_hooks_event_hook_py["事件钩子<br/>基础设施/钩子包的事件钩子模块<br/>event_hook<br/>文件: hooks/event_hook.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_impact_impact_propagator_py["冲击propagator<br/>Impact Propagator — 变更影响传播分析。<br/>impact_propagator<br/>文件: impact/impact_propagator.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_impact_llm_impact_analyzer_py["LLM冲击分析器<br/>LLM Impact Analyzer — 语义影响分析器。<br/>llm_impact_analyzer<br/>文件: impact/llm_impact_analyzer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_infrastructure_base_py["基础设施基类<br/>基础设施 — Infrastructure Layer Skeleton<br/>infrastructure_base<br/>文件: infrastructure/infrastructure_base.py<br/>(生产态 / production)"]
@@ -127,15 +127,16 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_routing_plugins_py["管线<br/>管线eduling Framework 对标<br/>routing_plugins<br/>文件: pipeline/routing_plugins.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_pydantic_v2_migrator_py["M-15 PydanticV2Migrator — Pydantic V2 迁移<br/>pydantic_v2_migrator<br/>文件: infrastructure/pydantic_v2_migrator.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_quality_quality_monitor_py["质量监控<br/>Quality Monitor — 生成代码质量门禁。<br/>quality_monitor<br/>文件: quality/quality_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_redis_config_py["infrastructure/redis_config<br/>Redis 连接配置单真源加载器（H1 业务热缓存<br/>INFRA-DB-007）。<br/>文件: infrastructure/redis_config.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_reliability_circuit_breaker_py["熔断断路器<br/>Circuit Breaker — 熔断器：连续失败 -> OPEN -><br/>暂停执行。<br/>circuit_breaker<br/>文件: reliability/circuit_breaker.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_reliability_context_guard_py["上下文守卫<br/>Context Guard — 上下文契约守卫。<br/>context_guard<br/>文件: reliability/context_guard.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_runtime_concurrency_guard_py["并发守卫<br/>concurrency_guard — 回滚操作并发安全守卫。<br/>文件: runtime/concurrency_guard.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_runtime_sandbox_enforcer_py["沙箱执行器<br/>SandboxEnforcer — Agent 沙盒隔离。<br/>sandbox_enforcer<br/>文件: runtime/sandbox_enforcer.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_runtime_startup_shutdown_py["启动关机<br/>启动关机，提供包入口和模块加载功能<br/>startup_shutdown<br/>文件: runtime/startup_shutdown.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_runtime_startup_shutdown_py["启动关机<br/>基础设施/运行时包的启动关机模块<br/>startup_shutdown<br/>文件: runtime/startup_shutdown.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_script_system_finding_py["发现<br/>Finding Schema — 审计发现标准化数据模型<br/>文件: script_system/finding.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_script_system_gate_bridge_py["门禁桥接<br/>Script->Gate 门禁桥接器 — submit_findings()<br/>生产者<br/>gate_bridge<br/>文件: script_system/gate_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py["自动自举<br/>auto_bootstrap — 全自动遥测注入钩子<br/>（MOD-INF-015 v2.1.0）<br/>文件: system_telemetry/auto_bootstrap.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_system_telemetry_logs_init_py["system_telemetry/logs 包入口<br/>logs — 结构化日志流（structlog + JSONL +<br/>trace注入）（D_SYSTEM_TELEMETRY）<br/>__init__<br/>文件: logs/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py["system_telemetry/logs 包入口<br/>文件: logs/__init__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py["指标桥接<br/>TELE->FLE 指标桥接 — emit_metrics() 生产者<br/>metrics_bridge<br/>文件: system_telemetry/metrics_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_warm_hot_gate_py["warmhot门禁<br/>M-14 WarmHotGate — Warm->Hot 阻断门<br/>warm_hot_gate<br/>文件: infrastructure/warm_hot_gate.py<br/>(生产态 / production)"]
     src_zephyr_shared_lifecycle_hooks_py["钩子<br/>— 模块生命周期钩子（Phase 2 新增 / 盲点 B8<br/>修复）<br/>hooks<br/>文件: lifecycle/hooks.py<br/>(生产态 / production)"]
@@ -219,7 +220,8 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_preemption_manager_py ~~~ src_zephyr_infrastructure_pipeline_routing_plugins_py
     src_zephyr_infrastructure_pipeline_routing_plugins_py ~~~ src_zephyr_infrastructure_pydantic_v2_migrator_py
     src_zephyr_infrastructure_pydantic_v2_migrator_py ~~~ src_zephyr_infrastructure_quality_quality_monitor_py
-    src_zephyr_infrastructure_quality_quality_monitor_py ~~~ src_zephyr_infrastructure_reliability_circuit_breaker_py
+    src_zephyr_infrastructure_quality_quality_monitor_py ~~~ src_zephyr_infrastructure_redis_config_py
+    src_zephyr_infrastructure_redis_config_py ~~~ src_zephyr_infrastructure_reliability_circuit_breaker_py
     src_zephyr_infrastructure_reliability_circuit_breaker_py ~~~ src_zephyr_infrastructure_reliability_context_guard_py
     src_zephyr_infrastructure_reliability_context_guard_py ~~~ src_zephyr_infrastructure_runtime_concurrency_guard_py
     src_zephyr_infrastructure_runtime_concurrency_guard_py ~~~ src_zephyr_infrastructure_runtime_sandbox_enforcer_py
@@ -257,11 +259,10 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_ct_pipe_routing_py["CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由<br/>ct_pipe_routing<br/>文件: pipeline/ct_pipe_routing.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_pipeline_model_router_py["模型路由器<br/>ModelRouter — 模型路由与降级链管理<br/>model_router<br/>文件: pipeline/model_router.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_queue_task_scheduler_py["任务调度器<br/>Task Scheduler — 任务调度器。<br/>task_scheduler<br/>文件: queue/task_scheduler.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_redis_config_py["infrastructure/redis_config<br/>Redis 连接配置单真源加载器（H1 业务热缓存<br/>INFRA-DB-007）。<br/>文件: infrastructure/redis_config.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["预算遥测桥接<br/>预算遥测桥接，基础设施的桥接，连接两个子系统，做<br/>数据和调用的转换中转。<br/>_budget_telemetry_bridge<br/>文件: system_telemetry/_budget_telemetry_<br/>bridge.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["预算遥测桥接<br/>预算遥测桥接，供预算enforcement使用<br/>_budget_telemetry_bridge<br/>文件: system_telemetry/_budget_telemetry_<br/>bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py["契约指标<br/>契约指标，基础设施的记录器，把发生的事件<br/>/结果记下来留档。<br/>ZephyrAlpha — system-telemetry/contract_<br/>metrics.py<br/>文件: system_telemetry/contract_metrics.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["蓝图指标<br/>blueprint_metrics — 蓝图使用追踪 instrumentation<br/>文件: metrics/blueprint_metrics.py<br/>(生产态 / production)"]
-    src_zephyr_trading_main_py["主入口<br/>主入口.trading — AutoRuntime Core 入口<br/>__main__<br/>文件: trading/__main__.py<br/>(生产态 / production)"]
+    src_zephyr_trading_main_py["主入口<br/>主入口.trading — AutoRuntime Core 入口<br/>文件: trading/__main__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_classifier_py ~~~ src_zephyr_infrastructure_asset_inventory_dashboard_py
     src_zephyr_infrastructure_asset_inventory_dashboard_py ~~~ src_zephyr_infrastructure_asset_inventory_dependency_py
     src_zephyr_infrastructure_asset_inventory_dependency_py ~~~ src_zephyr_infrastructure_asset_inventory_index_generator_py
@@ -280,8 +281,7 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_backpressure_types_py ~~~ src_zephyr_infrastructure_pipeline_ct_pipe_routing_py
     src_zephyr_infrastructure_pipeline_ct_pipe_routing_py ~~~ src_zephyr_infrastructure_pipeline_model_router_py
     src_zephyr_infrastructure_pipeline_model_router_py ~~~ src_zephyr_infrastructure_queue_task_scheduler_py
-    src_zephyr_infrastructure_queue_task_scheduler_py ~~~ src_zephyr_infrastructure_redis_config_py
-    src_zephyr_infrastructure_redis_config_py ~~~ src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
+    src_zephyr_infrastructure_queue_task_scheduler_py ~~~ src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
     src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py ~~~ src_zephyr_infrastructure_system_telemetry_contract_metrics_py
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py ~~~ src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
     src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py ~~~ src_zephyr_trading_main_py
@@ -290,7 +290,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py["合规审计器<br/>合规审计器，提供retentiondays、retentiondays、au<br/>ditfix等方法，供engine.py;MOD-INF-020(aud使用<br/>compliance_auditor<br/>文件: auto_fix_engine/compliance_auditor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py["升级桥接<br/>升级桥接，提供escalate、escalatedeadletter、获取<br/>escalationhistory等方法，供engine.py;fix_<br/>reliability使用<br/>escalation_bridge<br/>文件: auto_fix_engine/escalation_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py["修复健康检查<br/>修复健康检查，提供检查config、dbpath、dbpath等方<br/>法，供engine.py;__main__.py使用<br/>fix_health_check<br/>文件: auto_fix_engine/fix_health_check.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["修复patternminer<br/>fix_pattern_miner<br/>文件: auto_fix_engine/fix_pattern_miner.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["修复patternminer<br/>修复patternminer，提供dbpath、dbpath、patterncac<br/>he等方法，供engine.py;MOD-FEEDBACK_LO使用<br/>fix_pattern_miner<br/>文件: auto_fix_engine/fix_pattern_miner.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_report_py["修复报告<br/>修复报告，提供history、history、生成等方法，供en<br/>gine.py;__main__.py;MOD使用<br/>fix_report<br/>文件: auto_fix_engine/fix_report.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_safety_py["修复安全<br/>修复安全，提供enabled、enabled、检查等方法，供en<br/>gine.py;llm_fix_adapter使用<br/>fix_safety<br/>文件: auto_fix_engine/fix_safety.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py["影子工作区<br/>影子工作区，主要提供运行type检查、运行测试、运行<br/>ruff等功能，供engine.py使用<br/>shadow_workspace<br/>文件: auto_fix_engine/shadow_workspace.py<br/>(生产态 / production)"]
@@ -364,7 +364,7 @@ flowchart TD
     src_zephyr_trading_orphan_detector_py ~~~ src_zephyr_trading_runtime_config_py
     src_zephyr_trading_runtime_config_py ~~~ src_zephyr_trading_stop_gate_py
     src_zephyr_trading_stop_gate_py ~~~ src_zephyr_trading_work_orchestrator_py
-    src_zephyr_infrastructure_system_telemetry_trace_bridge_py["追踪桥接<br/>追踪桥接，基础设施的桥接，连接两个子系统，做数据<br/>和调用的转换中转。<br/>_trace_bridge<br/>文件: system_telemetry/_trace_bridge.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_system_telemetry_trace_bridge_py["追踪桥接<br/>追踪桥接模块<br/>_trace_bridge<br/>文件: system_telemetry/_trace_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_health_probes_py["健康probes<br/>三态健康探针协议（Health Probes —<br/>CT-HEALTH-001）<br/>health_probes<br/>文件: system_telemetry/health_probes.py<br/>(生产态 / production)"]
     src_zephyr_trading_module_onboarding_scanner_py["moduleonboarding扫描器<br/>ModuleOnboardingScanner — 模块接入扫描器<br/>module_onboarding_scanner<br/>文件: trading/module_onboarding_scanner.py<br/>(生产态 / production)"]
     src_zephyr_trading_resource_optimization_py["资源优化<br/>配置加载/热重载协作者（职责簇：YAML 配置发现<br/>/解析/应用 + mtime 热重载）。<br/>resource_optimization.py - MAPE-K autonomic<br/>resource optimiz<br/>文件: trading/resource_optimization.py<br/>(生产态 / production)"]
@@ -381,150 +381,149 @@ flowchart TD
     src_zephyr_shared_lifecycle_lazy_loader_py ~~~ src_zephyr_shared_lifecycle_resource_optimization_models_py
     src_zephyr_shared_lifecycle_resource_optimization_models_py ~~~ src_zephyr_trading_capability_registry_py
     src_zephyr_trading_capability_card_py["能力card<br/>CapabilityCard — 能力卡片数据模型<br/>capability_card<br/>文件: trading/capability_card.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_warm_hot_gate_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_contract_tester_py
     src_zephyr_infrastructure_warm_hot_gate_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_validator_py
-    src_zephyr_infrastructure_database_service_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_redis_config_py
+    src_zephyr_infrastructure_warm_hot_gate_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_contract_tester_py
+    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_classifier_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_dashboard_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_registry_adapter_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_scanner_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_index_generator_py
+    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_dependency_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_classifier_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_dashboard_py
-    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_index_generator_py
-    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_reconciler_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_dependency_py
-    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_registry_adapter_py
+    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
+    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_reconciler_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_telemetry_py
-    src_zephyr_infrastructure_asset_inventory_registry_adapter_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_telemetry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_config_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_report_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_report_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
     src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_budget_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_budget_enforcement_rbac_bridge_py
     src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
-    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py
     src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py
+    src_zephyr_infrastructure_h1_redis_hot_h1_redis_reader_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
+    src_zephyr_infrastructure_h1_redis_hot_h1_redis_writer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
+    src_zephyr_infrastructure_h1_redis_hot_h1_cqrs_projectors_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
     src_zephyr_infrastructure_pipeline_backpressure_manager_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_backpressure_types_py
     src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_cost_tracker_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_cost_tracker_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_model_router_py
-    src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_h1_redis_hot_h1_redis_writer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
     src_zephyr_infrastructure_pipeline_dead_letter_queue_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_preemption_manager_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_ct_pipe_routing_py
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_pipeline_preemption_manager_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_h1_redis_hot_h1_redis_reader_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
-    src_zephyr_infrastructure_h1_redis_hot_h1_cqrs_projectors_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_contract_metrics_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
     src_zephyr_infrastructure_system_telemetry_health_aggregator_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_aggregator_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_watchdog_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_traces_span_stub_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_contract_metrics_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
+    src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
     src_zephyr_infrastructure_system_telemetry_logs_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py
     src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py
-    src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
     src_zephyr_infrastructure_system_telemetry_traces_span_stub_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
+    src_zephyr_trading_action_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_queue_task_scheduler_py
     src_zephyr_trading_auto_integrator_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
     src_zephyr_trading_auto_integrator_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_auto_integrator_py -->|导入依赖 / import_depends| src_zephyr_trading_module_onboarding_scanner_py
-    src_zephyr_trading_action_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_queue_task_scheduler_py
-    src_zephyr_trading_capability_sync_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
-    src_zephyr_trading_capability_sync_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_observability_notifier_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_runtime_gate_coordinator_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_sla_sla_monitor_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_aggregator_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_trading_finalizer_py
-    src_zephyr_trading_capability_registry_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
+    src_zephyr_trading_capability_sync_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
+    src_zephyr_trading_capability_sync_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_file_watcher_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_queue_task_queue_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_auto_integrator_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_ai_audit_logger_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_sync_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_boot_hooks_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_sync_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_dream_cycle_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_finalizer_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_integration_registry_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_health_monitor_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_module_onboarding_scanner_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_lifecycle_manager_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_orphan_detector_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_integration_registry_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_resource_optimization_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_stop_gate_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_status_dashboard_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_runtime_config_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_status_dashboard_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_stop_gate_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_work_dag_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_work_orchestrator_py
     src_zephyr_trading_health_monitor_py -->|导入依赖 / import_depends| src_zephyr_trading_resource_optimization_py
+    src_zephyr_trading_capability_registry_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
     src_zephyr_trading_module_onboarding_scanner_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_ai_audit_logger_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_dream_cycle_py
-    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_finalizer_py
-    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_integration_registry_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_health_monitor_py
+    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
+    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_integration_registry_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
-    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_stop_gate_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_runtime_config_py
+    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_stop_gate_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_work_orchestrator_py
     src_zephyr_trading_orphan_detector_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_orphan_detector_py -->|导入依赖 / import_depends| src_zephyr_trading_module_onboarding_scanner_py
     src_zephyr_trading_resource_optimization_py -->|导入依赖 / import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     src_zephyr_trading_resource_optimization_py -->|导入依赖 / import_depends| src_zephyr_shared_lifecycle_lazy_loader_py
     src_zephyr_trading_resource_optimization_py -->|导入依赖 / import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
-    src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_health_monitor_py
-    src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
+    src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_orphan_detector_py
+    src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
     src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_work_orchestrator_py
     src_zephyr_trading_windows_service_py -->|导入依赖 / import_depends| src_zephyr_trading_auto_runtime_core_py
     src_zephyr_trading_windows_service_py -->|导入依赖 / import_depends| src_zephyr_trading_runtime_config_py
@@ -544,37 +543,37 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
+    src_zephyr_infrastructure_queue_task_scheduler_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_ai_audit_logger_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_finalizer_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["规则治理<br/>规则治理，负责规则注册、规则版本和规则依赖管理<br/>Rule Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_task_gate_py -->|导入依赖 / import_depends| D_INTELLIGENCE
-    src_zephyr_infrastructure_queue_task_scheduler_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_ai_audit_logger_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_health_monitor_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| D_SHARED
     D_AUTONOMY_CORE["自治核心<br/>自治核心，负责 AI 自治决策、目标分解和执行编排<br/>Autonomy Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_token_budget_py
     D_AUTONOMY_CORE -->|测试依赖 / test_depends| src_zephyr_trading_dream_cycle_py
-    D_AUTONOMY_CORE -->|测试依赖 / test_depends| src_zephyr_trading_health_monitor_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
+    D_AUTONOMY_CORE -->|测试依赖 / test_depends| src_zephyr_trading_health_monitor_py
+    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_infrastructure_script_system_finding_py
     D_AUTONOMY_CORE -->|测试依赖 / test_depends| src_zephyr_trading_capability_registry_py
-    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
     D_BACKTEST["回测<br/>回测，负责历史数据回测、回测引擎和回测报告<br/>Backtest<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_infrastructure_database_service_py
     D_INTEGRATION["管线路由<br/>管线路由，负责跨域数据流路由、管道编排和集成适配<br/>Pipeline Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_infrastructure_script_system_finding_py
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_infrastructure_script_system_finding_py
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_infrastructure_script_system_finding_py
-    D_AUTONOMY_CORE -->|测试依赖 / test_depends| src_zephyr_infrastructure_pipeline_backpressure_manager_py
+    D_AUTONOMY_CORE -->|测试依赖 / test_depends| src_zephyr_trading_auto_runtime_core_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -592,23 +591,23 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001["基础设施注册表<br/>基础设施注册表，基础设施的注册表，登记和查询已注<br/>册的条目。<br/>infrastructure_registry<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-001<br/>(生产态 / production)"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002["基础设施注册表<br/>基础设施注册表，基础设施的注册表，登记和查询已注<br/>册的条目。<br/>infrastructure_registry<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-002<br/>(生产态 / production)"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003["基础设施注册表<br/>基础设施注册表，基础设施的注册表，登记和查询已注<br/>册的条目。<br/>infrastructure_registry<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-003<br/>(生产态 / production)"]
-    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006["基础设施注册表<br/>基础设施注册表，基础设施的注册表，登记和查询已注<br/>册的条目。<br/>infrastructure_registry<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-006<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_asset_inventory_main_py["主入口<br/>Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>__main__<br/>文件: asset_inventory/__main__.py<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_001["基础设施注册表<br/>infrastructure_registry的INFRA-DB-001条目模块<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-001<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_002["基础设施注册表<br/>infrastructure_registry的INFRA-DB-002条目模块<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-002<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_003["基础设施注册表<br/>infrastructure_registry的INFRA-DB-003条目模块<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-003<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_infrastructure_registry_yaml_INFRA_DB_006["基础设施注册表<br/>infrastructure_registry的INFRA-DB-006条目模块<br/>文件: catalogs/infrastructure_<br/>registry.yaml#INFRA-DB-006<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_asset_inventory_main_py["主入口<br/>Asset Inventory CLI — MOD-INF-026 蓝图 §31<br/>文件: asset_inventory/__main__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_lifecycle_py["生命周期<br/>AssetLifecycle — MOD-INF-026 L5<br/>ITIL生命周期自动化管理器<br/>文件: asset_inventory/lifecycle.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_asset_inventory_mcp_server_py["MCP服务端<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>mcp_server<br/>文件: asset_inventory/mcp_server.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_asset_inventory_mcp_server_py["MCP服务端<br/>基础设施/asset_inventory包的MCP服务端模块<br/>mcp_server<br/>文件: asset_inventory/mcp_server.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_metadata_py["元数据<br/>多 IDE 规则文件生成器——从 asset-inventory<br/>配置生成。<br/>metadata<br/>文件: asset_inventory/metadata.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_trust_anchor_py["信任anchor<br/>旁路状态——对标 K8s Admission Webhook 的<br/>emergency bypass。<br/>trust_anchor<br/>文件: asset_inventory/trust_anchor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_diagnostics_py["自动diagnostics<br/>RI-12 AutoDiagnostics — 自动诊断引擎<br/>auto_diagnostics<br/>文件: infrastructure/auto_diagnostics.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_main_py["主入口<br/>引擎的命令行入口，可以直接 python -m<br/>跑起来执行主流程。<br/>__main__<br/>文件: auto_fix_engine/__main__.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["对齐同步器<br/>对齐同步器，提供scan、fix、校验等方法，供engine.<br/>py;MOD-INF-023(dri使用<br/>alignment_syncer<br/>文件: auto_fix_engine/alignment_syncer.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_main_py["主入口<br/>引擎的命令行入口，可以直接 python -m<br/>跑起来执行主流程。<br/>文件: auto_fix_engine/__main__.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["对齐同步器<br/>基础设施/auto_fix_engine包的对齐同步器模块<br/>alignment_syncer<br/>文件: auto_fix_engine/alignment_syncer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_all_completer_py["all补全器<br/>all补全器，提供解析all、extractpublicsymbols、sc<br/>an等方法，供engine.py;MOD-INF-026(ass使用<br/>all_completer<br/>文件: auto_fix_engine/all_completer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["配置修复器<br/>配置修复器，提供fixtrailingwhitespace、fixtabs、<br/>fixmergeconflicts等方法，供engine.py;MOD-INF-023<br/>(dri使用<br/>config_fixer<br/>文件: auto_fix_engine/config_fixer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["去重提取器<br/>去重提取器，提供normalizecode、minoccurrences、m<br/>inoccurrences等方法，供engine.py;MOD-INF-017<br/>(cod使用<br/>dedup_extractor<br/>文件: auto_fix_engine/dedup_extractor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["dep版本修复器<br/>dep版本修复器，主要提供ishigher、扫描、修复等功<br/>能，供engine.py使用<br/>dep_version_fixer<br/>文件: auto_fix_engine/dep_version_fixer.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["漂移修复器<br/>漂移修复器，提供scan、fix、校验等方法，供engine.<br/>py;MOD-INF-023(dri使用<br/>drift_fixer<br/>文件: auto_fix_engine/drift_fixer.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["漂移修复器<br/>基础设施/auto_fix_engine包的漂移修复器模块<br/>drift_fixer<br/>文件: auto_fix_engine/drift_fixer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["事件钩子<br/>订阅 EventBusBackpressure 的 drift_detected /<br/>validation_result 事件。<br/>event_hooks<br/>文件: auto_fix_engine/event_hooks.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["修复差异<br/>修复差异，提供计算、计算text、reverse等方法，供e<br/>ngine.py;fix_report.py;c使用<br/>fix_diff<br/>文件: auto_fix_engine/fix_diff.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["修复调度器<br/>修复调度器，引擎的调度器，按时间或优先级安排任务<br/>执行。<br/>fix_scheduler<br/>文件: auto_fix_engine/fix_scheduler.py<br/>(生产态 / production)"]
@@ -620,7 +619,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_state_machine_py["状态machine<br/>漂移事件记录——对齐 test_state_<br/>machine.，引擎的状态机，管理状态流转。<br/>文件: auto_fix_engine/state_machine.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py["zombie清理器<br/>移除 content<br/>中指向不存在文件的僵尸引用，返回清理后的内容。<br/>zombie_cleaner<br/>文件: auto_fix_engine/zombie_cleaner.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_blueprint_code_sync_py["蓝图代码同步<br/>Blueprint-Code Sync — 蓝图-代码索引同步验证。<br/>blueprint_code_sync<br/>文件: infrastructure/blueprint_code_sync.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_budget_enforcement_init_py["infrastructure/budget_enforcement 包入口<br/>budget_enforcement 包聚合层。<br/>__init__<br/>文件: budget_enforcement/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_budget_enforcement_init_py["infrastructure/budget_enforcement 包入口<br/>文件: budget_enforcement/__init__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_capacity_assurance_budget_forecaster_py["预算预测器<br/>Token 预算预测 (DD120-extra, TASK-020)<br/>budget_forecaster<br/>文件: capacity_assurance/budget_forecaster.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py["契约总线<br/>ContractBus loader —<br/>加载全部44条容量保障契约的Pydantic v2 Schema<br/>（DD-9三批迁移）.<br/>contract_bus<br/>文件: contracts/contract_bus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_capacity_assurance_cross_module_integration_py["跨模块集成<br/>Cross-module integration — CT-1~CT-4<br/>跨模块集成契约实现（对标蓝图 §17）.<br/>cross_module_integration<br/>文件: capacity_assurance/cross_module_<br/>integration.py<br/>(生产态 / production)"]
@@ -644,7 +643,7 @@ flowchart TD
     src_zephyr_infrastructure_h1_redis_hot_h1_redis_reader_py["h1_redis_hot/h1_redis_reader<br/>H1RedisReader — 决策引擎 <5ms 在线特征查询。<br/>文件: h1_redis_hot/h1_redis_reader.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_h1_redis_hot_h1_redis_writer_py["h1_redis_hot/h1_redis_writer<br/>H1RedisWriter — D-FACTOR Engine 每 3 秒截面写入<br/>Redis（PIPELINE 模式）。<br/>文件: h1_redis_hot/h1_redis_writer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_health_monitor_health_aggregator_py["健康聚合器<br/>全系统健康聚合 — check_all_systems()<br/>health_aggregator<br/>文件: health_monitor/health_aggregator.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_hooks_event_hook_py["事件钩子<br/>EventHook — 声明式任务系统事件订阅<br/>event_hook<br/>文件: hooks/event_hook.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_hooks_event_hook_py["事件钩子<br/>基础设施/钩子包的事件钩子模块<br/>event_hook<br/>文件: hooks/event_hook.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_impact_impact_propagator_py["冲击propagator<br/>Impact Propagator — 变更影响传播分析。<br/>impact_propagator<br/>文件: impact/impact_propagator.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_impact_llm_impact_analyzer_py["LLM冲击分析器<br/>LLM Impact Analyzer — 语义影响分析器。<br/>llm_impact_analyzer<br/>文件: impact/llm_impact_analyzer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_infrastructure_base_py["基础设施基类<br/>基础设施 — Infrastructure Layer Skeleton<br/>infrastructure_base<br/>文件: infrastructure/infrastructure_base.py<br/>(生产态 / production)"]
@@ -664,15 +663,16 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_routing_plugins_py["管线<br/>管线eduling Framework 对标<br/>routing_plugins<br/>文件: pipeline/routing_plugins.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_pydantic_v2_migrator_py["M-15 PydanticV2Migrator — Pydantic V2 迁移<br/>pydantic_v2_migrator<br/>文件: infrastructure/pydantic_v2_migrator.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_quality_quality_monitor_py["质量监控<br/>Quality Monitor — 生成代码质量门禁。<br/>quality_monitor<br/>文件: quality/quality_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_redis_config_py["infrastructure/redis_config<br/>Redis 连接配置单真源加载器（H1 业务热缓存<br/>INFRA-DB-007）。<br/>文件: infrastructure/redis_config.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_reliability_circuit_breaker_py["熔断断路器<br/>Circuit Breaker — 熔断器：连续失败 -> OPEN -><br/>暂停执行。<br/>circuit_breaker<br/>文件: reliability/circuit_breaker.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_reliability_context_guard_py["上下文守卫<br/>Context Guard — 上下文契约守卫。<br/>context_guard<br/>文件: reliability/context_guard.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_runtime_concurrency_guard_py["并发守卫<br/>concurrency_guard — 回滚操作并发安全守卫。<br/>文件: runtime/concurrency_guard.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_runtime_sandbox_enforcer_py["沙箱执行器<br/>SandboxEnforcer — Agent 沙盒隔离。<br/>sandbox_enforcer<br/>文件: runtime/sandbox_enforcer.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_runtime_startup_shutdown_py["启动关机<br/>启动关机，提供包入口和模块加载功能<br/>startup_shutdown<br/>文件: runtime/startup_shutdown.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_runtime_startup_shutdown_py["启动关机<br/>基础设施/运行时包的启动关机模块<br/>startup_shutdown<br/>文件: runtime/startup_shutdown.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_script_system_finding_py["发现<br/>Finding Schema — 审计发现标准化数据模型<br/>文件: script_system/finding.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_script_system_gate_bridge_py["门禁桥接<br/>Script->Gate 门禁桥接器 — submit_findings()<br/>生产者<br/>gate_bridge<br/>文件: script_system/gate_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py["自动自举<br/>auto_bootstrap — 全自动遥测注入钩子<br/>（MOD-INF-015 v2.1.0）<br/>文件: system_telemetry/auto_bootstrap.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_system_telemetry_logs_init_py["system_telemetry/logs 包入口<br/>logs — 结构化日志流（structlog + JSONL +<br/>trace注入）（D_SYSTEM_TELEMETRY）<br/>__init__<br/>文件: logs/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_system_telemetry_logs_init_py["system_telemetry/logs 包入口<br/>文件: logs/__init__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_metrics_bridge_py["指标桥接<br/>TELE->FLE 指标桥接 — emit_metrics() 生产者<br/>metrics_bridge<br/>文件: system_telemetry/metrics_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_warm_hot_gate_py["warmhot门禁<br/>M-14 WarmHotGate — Warm->Hot 阻断门<br/>warm_hot_gate<br/>文件: infrastructure/warm_hot_gate.py<br/>(生产态 / production)"]
     src_zephyr_shared_lifecycle_hooks_py["钩子<br/>— 模块生命周期钩子（Phase 2 新增 / 盲点 B8<br/>修复）<br/>hooks<br/>文件: lifecycle/hooks.py<br/>(生产态 / production)"]
@@ -754,7 +754,8 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_preemption_manager_py ~~~ src_zephyr_infrastructure_pipeline_routing_plugins_py
     src_zephyr_infrastructure_pipeline_routing_plugins_py ~~~ src_zephyr_infrastructure_pydantic_v2_migrator_py
     src_zephyr_infrastructure_pydantic_v2_migrator_py ~~~ src_zephyr_infrastructure_quality_quality_monitor_py
-    src_zephyr_infrastructure_quality_quality_monitor_py ~~~ src_zephyr_infrastructure_reliability_circuit_breaker_py
+    src_zephyr_infrastructure_quality_quality_monitor_py ~~~ src_zephyr_infrastructure_redis_config_py
+    src_zephyr_infrastructure_redis_config_py ~~~ src_zephyr_infrastructure_reliability_circuit_breaker_py
     src_zephyr_infrastructure_reliability_circuit_breaker_py ~~~ src_zephyr_infrastructure_reliability_context_guard_py
     src_zephyr_infrastructure_reliability_context_guard_py ~~~ src_zephyr_infrastructure_runtime_concurrency_guard_py
     src_zephyr_infrastructure_runtime_concurrency_guard_py ~~~ src_zephyr_infrastructure_runtime_sandbox_enforcer_py
@@ -792,11 +793,10 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_ct_pipe_routing_py["CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由<br/>ct_pipe_routing<br/>文件: pipeline/ct_pipe_routing.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_pipeline_model_router_py["模型路由器<br/>ModelRouter — 模型路由与降级链管理<br/>model_router<br/>文件: pipeline/model_router.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_queue_task_scheduler_py["任务调度器<br/>Task Scheduler — 任务调度器。<br/>task_scheduler<br/>文件: queue/task_scheduler.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_redis_config_py["infrastructure/redis_config<br/>Redis 连接配置单真源加载器（H1 业务热缓存<br/>INFRA-DB-007）。<br/>文件: infrastructure/redis_config.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["预算遥测桥接<br/>预算遥测桥接，基础设施的桥接，连接两个子系统，做<br/>数据和调用的转换中转。<br/>_budget_telemetry_bridge<br/>文件: system_telemetry/_budget_telemetry_<br/>bridge.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["预算遥测桥接<br/>预算遥测桥接，供预算enforcement使用<br/>_budget_telemetry_bridge<br/>文件: system_telemetry/_budget_telemetry_<br/>bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py["契约指标<br/>契约指标，基础设施的记录器，把发生的事件<br/>/结果记下来留档。<br/>ZephyrAlpha — system-telemetry/contract_<br/>metrics.py<br/>文件: system_telemetry/contract_metrics.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["蓝图指标<br/>blueprint_metrics — 蓝图使用追踪 instrumentation<br/>文件: metrics/blueprint_metrics.py<br/>(生产态 / production)"]
-    src_zephyr_trading_main_py["主入口<br/>主入口.trading — AutoRuntime Core 入口<br/>__main__<br/>文件: trading/__main__.py<br/>(生产态 / production)"]
+    src_zephyr_trading_main_py["主入口<br/>主入口.trading — AutoRuntime Core 入口<br/>文件: trading/__main__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_classifier_py ~~~ src_zephyr_infrastructure_asset_inventory_dashboard_py
     src_zephyr_infrastructure_asset_inventory_dashboard_py ~~~ src_zephyr_infrastructure_asset_inventory_dependency_py
     src_zephyr_infrastructure_asset_inventory_dependency_py ~~~ src_zephyr_infrastructure_asset_inventory_index_generator_py
@@ -815,8 +815,7 @@ flowchart TD
     src_zephyr_infrastructure_pipeline_backpressure_types_py ~~~ src_zephyr_infrastructure_pipeline_ct_pipe_routing_py
     src_zephyr_infrastructure_pipeline_ct_pipe_routing_py ~~~ src_zephyr_infrastructure_pipeline_model_router_py
     src_zephyr_infrastructure_pipeline_model_router_py ~~~ src_zephyr_infrastructure_queue_task_scheduler_py
-    src_zephyr_infrastructure_queue_task_scheduler_py ~~~ src_zephyr_infrastructure_redis_config_py
-    src_zephyr_infrastructure_redis_config_py ~~~ src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
+    src_zephyr_infrastructure_queue_task_scheduler_py ~~~ src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
     src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py ~~~ src_zephyr_infrastructure_system_telemetry_contract_metrics_py
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py ~~~ src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
     src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py ~~~ src_zephyr_trading_main_py
@@ -825,7 +824,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py["合规审计器<br/>合规审计器，提供retentiondays、retentiondays、au<br/>ditfix等方法，供engine.py;MOD-INF-020(aud使用<br/>compliance_auditor<br/>文件: auto_fix_engine/compliance_auditor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py["升级桥接<br/>升级桥接，提供escalate、escalatedeadletter、获取<br/>escalationhistory等方法，供engine.py;fix_<br/>reliability使用<br/>escalation_bridge<br/>文件: auto_fix_engine/escalation_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py["修复健康检查<br/>修复健康检查，提供检查config、dbpath、dbpath等方<br/>法，供engine.py;__main__.py使用<br/>fix_health_check<br/>文件: auto_fix_engine/fix_health_check.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["修复patternminer<br/>fix_pattern_miner<br/>文件: auto_fix_engine/fix_pattern_miner.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py["修复patternminer<br/>修复patternminer，提供dbpath、dbpath、patterncac<br/>he等方法，供engine.py;MOD-FEEDBACK_LO使用<br/>fix_pattern_miner<br/>文件: auto_fix_engine/fix_pattern_miner.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_report_py["修复报告<br/>修复报告，提供history、history、生成等方法，供en<br/>gine.py;__main__.py;MOD使用<br/>fix_report<br/>文件: auto_fix_engine/fix_report.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_safety_py["修复安全<br/>修复安全，提供enabled、enabled、检查等方法，供en<br/>gine.py;llm_fix_adapter使用<br/>fix_safety<br/>文件: auto_fix_engine/fix_safety.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py["影子工作区<br/>影子工作区，主要提供运行type检查、运行测试、运行<br/>ruff等功能，供engine.py使用<br/>shadow_workspace<br/>文件: auto_fix_engine/shadow_workspace.py<br/>(生产态 / production)"]
@@ -899,7 +898,7 @@ flowchart TD
     src_zephyr_trading_orphan_detector_py ~~~ src_zephyr_trading_runtime_config_py
     src_zephyr_trading_runtime_config_py ~~~ src_zephyr_trading_stop_gate_py
     src_zephyr_trading_stop_gate_py ~~~ src_zephyr_trading_work_orchestrator_py
-    src_zephyr_infrastructure_system_telemetry_trace_bridge_py["追踪桥接<br/>追踪桥接，基础设施的桥接，连接两个子系统，做数据<br/>和调用的转换中转。<br/>_trace_bridge<br/>文件: system_telemetry/_trace_bridge.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_system_telemetry_trace_bridge_py["追踪桥接<br/>追踪桥接模块<br/>_trace_bridge<br/>文件: system_telemetry/_trace_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_health_probes_py["健康probes<br/>三态健康探针协议（Health Probes —<br/>CT-HEALTH-001）<br/>health_probes<br/>文件: system_telemetry/health_probes.py<br/>(生产态 / production)"]
     src_zephyr_trading_module_onboarding_scanner_py["moduleonboarding扫描器<br/>ModuleOnboardingScanner — 模块接入扫描器<br/>module_onboarding_scanner<br/>文件: trading/module_onboarding_scanner.py<br/>(生产态 / production)"]
     src_zephyr_trading_resource_optimization_py["资源优化<br/>配置加载/热重载协作者（职责簇：YAML 配置发现<br/>/解析/应用 + mtime 热重载）。<br/>resource_optimization.py - MAPE-K autonomic<br/>resource optimiz<br/>文件: trading/resource_optimization.py<br/>(生产态 / production)"]
@@ -916,150 +915,149 @@ flowchart TD
     src_zephyr_shared_lifecycle_lazy_loader_py ~~~ src_zephyr_shared_lifecycle_resource_optimization_models_py
     src_zephyr_shared_lifecycle_resource_optimization_models_py ~~~ src_zephyr_trading_capability_registry_py
     src_zephyr_trading_capability_card_py["能力card<br/>CapabilityCard — 能力卡片数据模型<br/>capability_card<br/>文件: trading/capability_card.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_warm_hot_gate_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_contract_tester_py
     src_zephyr_infrastructure_warm_hot_gate_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_validator_py
-    src_zephyr_infrastructure_database_service_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_redis_config_py
+    src_zephyr_infrastructure_warm_hot_gate_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_contract_tester_py
+    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_classifier_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_dashboard_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_index_generator_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_lifecycle_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_registry_adapter_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_scanner_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_reconciler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
+    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_index_generator_py
+    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_dependency_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_classifier_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_dashboard_py
-    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_index_generator_py
-    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_reconciler_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
-    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_dependency_py
-    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_registry_adapter_py
+    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
+    src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_reconciler_py
     src_zephyr_infrastructure_asset_inventory_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_telemetry_py
-    src_zephyr_infrastructure_asset_inventory_registry_adapter_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_models_py
     src_zephyr_infrastructure_asset_inventory_telemetry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
-    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
+    src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_all_completer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_config_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_report_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py
-    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_compliance_auditor_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_batch_fixer_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_escalation_bridge_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_budget_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_report_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py
+    src_zephyr_infrastructure_auto_fix_engine_engine_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_fix_reliability_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_diff_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_budget_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_safety_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_fix_health_check_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_import_fixer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
+    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_fix_safety_py
     src_zephyr_infrastructure_auto_fix_engine_llm_fix_adapter_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_report_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_scaffold_registrar_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_self_heal_agent_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
-    src_zephyr_infrastructure_auto_fix_engine_fix_pattern_miner_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_budget_enforcement_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_budget_enforcement_rbac_bridge_py
     src_zephyr_infrastructure_auto_fix_engine_zombie_cleaner_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_auto_fix_engine_main_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_engine_py
-    src_zephyr_infrastructure_auto_fix_engine_shadow_workspace_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_auto_fix_engine_models_py
     src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_contracts_batch1_infra_py
     src_zephyr_infrastructure_capacity_assurance_contracts_contract_bus_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_capacity_assurance_contracts_batch3_integration_py
+    src_zephyr_infrastructure_h1_redis_hot_h1_redis_reader_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
+    src_zephyr_infrastructure_h1_redis_hot_h1_redis_writer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
+    src_zephyr_infrastructure_h1_redis_hot_h1_cqrs_projectors_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
     src_zephyr_infrastructure_pipeline_backpressure_manager_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_backpressure_types_py
     src_zephyr_infrastructure_pipeline_circuit_breaker_manager_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_cost_tracker_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_cost_tracker_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_model_router_py
-    src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_h1_redis_hot_h1_redis_writer_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
     src_zephyr_infrastructure_pipeline_dead_letter_queue_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_ct_pipe_routing_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
+    src_zephyr_infrastructure_pipeline_preemption_manager_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_ct_pipe_routing_py
     src_zephyr_infrastructure_pipeline_routing_plugins_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_pipeline_preemption_manager_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_pipeline_pipeline_agent_bridge_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_pipeline_models_py
-    src_zephyr_infrastructure_h1_redis_hot_h1_redis_reader_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
-    src_zephyr_infrastructure_h1_redis_hot_h1_cqrs_projectors_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_h1_redis_hot_h1_redis_schema_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_contract_metrics_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
-    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
     src_zephyr_infrastructure_system_telemetry_health_aggregator_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_probes_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_aggregator_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_watchdog_py
-    src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_archive_cold_stub_py
+    src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py
     src_zephyr_infrastructure_system_telemetry_facade_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_traces_span_stub_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_contract_metrics_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_facade_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py
+    src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py
+    src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
     src_zephyr_infrastructure_system_telemetry_logs_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py
     src_zephyr_infrastructure_system_telemetry_ai_behavior_event_sink_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py
-    src_zephyr_infrastructure_system_telemetry_logs_structured_sink_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
     src_zephyr_infrastructure_system_telemetry_traces_span_stub_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_trace_bridge_py
+    src_zephyr_trading_action_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_queue_task_scheduler_py
     src_zephyr_trading_auto_integrator_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
     src_zephyr_trading_auto_integrator_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_auto_integrator_py -->|导入依赖 / import_depends| src_zephyr_trading_module_onboarding_scanner_py
-    src_zephyr_trading_action_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_queue_task_scheduler_py
-    src_zephyr_trading_capability_sync_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
-    src_zephyr_trading_capability_sync_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_observability_notifier_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_runtime_gate_coordinator_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_sla_sla_monitor_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_system_telemetry_health_aggregator_py
     src_zephyr_trading_boot_hooks_py -->|导入依赖 / import_depends| src_zephyr_trading_finalizer_py
-    src_zephyr_trading_capability_registry_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
+    src_zephyr_trading_capability_sync_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
+    src_zephyr_trading_capability_sync_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_file_watcher_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_queue_task_queue_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_auto_integrator_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_ai_audit_logger_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_sync_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_boot_hooks_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_sync_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_dream_cycle_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_finalizer_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_integration_registry_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_health_monitor_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_module_onboarding_scanner_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_lifecycle_manager_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_orphan_detector_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_integration_registry_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_resource_optimization_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_stop_gate_py
-    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_status_dashboard_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_runtime_config_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_status_dashboard_py
+    src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_stop_gate_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_work_dag_py
     src_zephyr_trading_auto_runtime_core_py -->|导入依赖 / import_depends| src_zephyr_trading_work_orchestrator_py
     src_zephyr_trading_health_monitor_py -->|导入依赖 / import_depends| src_zephyr_trading_resource_optimization_py
+    src_zephyr_trading_capability_registry_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_card_py
     src_zephyr_trading_module_onboarding_scanner_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_ai_audit_logger_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_dream_cycle_py
-    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_finalizer_py
-    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_integration_registry_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_health_monitor_py
+    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
+    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_integration_registry_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
-    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_stop_gate_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_runtime_config_py
+    src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_stop_gate_py
     src_zephyr_trading_lifecycle_manager_py -->|导入依赖 / import_depends| src_zephyr_trading_work_orchestrator_py
     src_zephyr_trading_orphan_detector_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_orphan_detector_py -->|导入依赖 / import_depends| src_zephyr_trading_module_onboarding_scanner_py
     src_zephyr_trading_resource_optimization_py -->|导入依赖 / import_depends| src_zephyr_shared_lifecycle_daemon_registry_py
     src_zephyr_trading_resource_optimization_py -->|导入依赖 / import_depends| src_zephyr_shared_lifecycle_lazy_loader_py
     src_zephyr_trading_resource_optimization_py -->|导入依赖 / import_depends| src_zephyr_shared_lifecycle_resource_optimization_models_py
-    src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_health_monitor_py
-    src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
+    src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_capability_registry_py
     src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_orphan_detector_py
+    src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_night_shift_queue_py
     src_zephyr_trading_status_dashboard_py -->|导入依赖 / import_depends| src_zephyr_trading_work_orchestrator_py
     src_zephyr_trading_windows_service_py -->|导入依赖 / import_depends| src_zephyr_trading_auto_runtime_core_py
     src_zephyr_trading_windows_service_py -->|导入依赖 / import_depends| src_zephyr_trading_runtime_config_py
@@ -1082,7 +1080,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["蓝图<br/>蓝图（blueprint.md）<br/>⛔ 基础设施运行时域，设计已就绪，等待开发排期<br/>文件: agent_orchestrator/blueprint.md<br/>(设计态 / design)"]
+    docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["蓝图<br/>agent orchestrator包的蓝图模块<br/>⛔ 基础设施运行时域，设计已就绪，等待开发排期<br/>blueprint<br/>文件: agent_orchestrator/blueprint.md<br/>(设计态 / design)"]
     src_zephyr_infrastructure_h1_redis_hot["Redis热数据缓存<br/>把高频访问的Level-1行情数据缓存在Redis中，降低读<br/>取延迟，支撑实时决策。<br/>文件: infrastructure/h1_redis_hot<br/>(设计态 / design)"]
     docs_03_modules_cross_layer_agent_orchestrator_blueprint_md ~~~ src_zephyr_infrastructure_h1_redis_hot
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
