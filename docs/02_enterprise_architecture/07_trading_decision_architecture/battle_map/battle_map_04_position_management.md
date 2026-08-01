@@ -17,9 +17,10 @@ date: 2026-08-01
 flowchart LR
     BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决…"]:::design
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px;
-classDef deprecated fill:#999999,stroke:#666666,color:#fff,stroke-width:2px;
-classDef missing fill:#fff,stroke:#D93636,color:#D93636,stroke-width:3px;
+classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
+classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
+classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
+classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
 ```
 
 ## 环节详情
@@ -51,11 +52,11 @@ L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-POS-001 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
 
 [← 返回总指挥图](battle_map_panorama.md)

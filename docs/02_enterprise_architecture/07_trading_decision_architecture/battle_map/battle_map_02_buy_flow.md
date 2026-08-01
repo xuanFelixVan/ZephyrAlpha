@@ -22,9 +22,10 @@ flowchart LR
     BM_BUY_01 --- |买入预案| BM_BUY_02
     BM_BUY_02 --- |统一决策流| BM_BUY_03
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px;
-classDef deprecated fill:#999999,stroke:#666666,color:#fff,stroke-width:2px;
-classDef missing fill:#fff,stroke:#D93636,color:#D93636,stroke-width:3px;
+classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
+classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
+classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
+classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
 ```
 
 ## 环节详情
@@ -56,12 +57,12 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | planned |
-| depgraph | MOD-L05-001 | supplement | stable |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-002 | primary | planned | planned |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02 四轨融合 / Four-Track Fusion (MTF)
 
@@ -90,11 +91,11 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-006 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-03 决策编排 / Decision Orchestration (DO)
 
@@ -123,11 +124,11 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-PF-007 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-007 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-04 分批建仓 / Batched Position Building
 
@@ -163,11 +164,11 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-PA-006 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PA-006 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 
 [← 返回总指挥图](battle_map_panorama.md)

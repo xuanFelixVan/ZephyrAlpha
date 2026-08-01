@@ -16,7 +16,7 @@ date: 2026-08-01
 %% 选股阶段图
 flowchart LR
     BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，…"]:::design
-    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、…"]:::design
+    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、…"]:::production
     BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体…"]:::design
     BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——…"]:::design
     BM_SEL_01 --- |标准化行情| BM_SEL_02
@@ -24,9 +24,10 @@ flowchart LR
     BM_SEL_03 --- |市场状态| BM_SEL_04
     BM_SEL_03 -.- |C-021未就绪→跳过降级| BM_SEL_04
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px;
-classDef deprecated fill:#999999,stroke:#666666,color:#fff,stroke-width:2px;
-classDef missing fill:#fff,stroke:#D93636,color:#D93636,stroke-width:3px;
+classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
+classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
+classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
+classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
 ```
 
 ## 环节详情
@@ -58,12 +59,12 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-MKT-003 | primary | planned |
-| depgraph | MOD-INF-002 | supplement | production |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-MKT-003 | primary | planned | planned |
+| depgraph | MOD-INF-002 | supplement | production | generated |
 
-**状态**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
 ### BM-SEL-02 因子计算与信号生成 / Factor Compute & Signal Gen
 
@@ -92,11 +93,11 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-001 | primary | production | stable |
 
-**状态**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-03 市场状态感知 / Market State Sensing
 
@@ -125,11 +126,11 @@ L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-SIG-036 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-036 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-04 次日8态走势预测 / Next-Day 8-State Forecast
 
@@ -158,11 +159,11 @@ L2-C 层。T+1 次日 8 态走势预测（大盘+个股双预测体系）。Phas
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-SIG-037 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-037 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 
 [← 返回总指挥图](battle_map_panorama.md)

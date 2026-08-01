@@ -19,9 +19,10 @@ flowchart LR
     BM_SELL_02["BM-SELL-02\n卖出信号融合仲裁 / Sell Signal Fusion Arbitration\n把所有卖出信号（含突破成败）汇总仲裁，强制清仓永远最高优先级…"]:::design
     BM_SELL_01 --- |突破成败信号| BM_SELL_02
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px;
-classDef deprecated fill:#999999,stroke:#666666,color:#fff,stroke-width:2px;
-classDef missing fill:#fff,stroke:#D93636,color:#D93636,stroke-width:3px;
+classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
+classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
+classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
+classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
 ```
 
 ## 环节详情
@@ -53,11 +54,11 @@ L2-A 层 v4.1。突破成败信号模型：压力位来自 L1 因子层，突破
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-SELL-003 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-003 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L2A ｜ **阶段**：sell_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：sell_flow
 
 ### BM-SELL-02 卖出信号融合仲裁 / Sell Signal Fusion Arbitration
 
@@ -86,13 +87,13 @@ L3 层。卖出信号融合仲裁：7 类卖出信号+突破成败信号汇总�
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-SELL-007 | primary | planned |
-| depgraph | MOD-SELL-001 | supplement | planned |
-| depgraph | MOD-SELL-002 | supplement | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-007 | primary | planned | planned |
+| depgraph | MOD-SELL-001 | supplement | planned | planned |
+| depgraph | MOD-SELL-002 | supplement | planned | planned |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
 
 
 [← 返回总指挥图](battle_map_panorama.md)

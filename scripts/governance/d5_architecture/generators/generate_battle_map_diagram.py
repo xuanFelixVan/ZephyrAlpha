@@ -5,7 +5,7 @@
 # [CONSUMERS] AI/人生成交易决策作战地图可视化（Mermaid + 可缩放 HTML）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读 battle_map三表 + 翻译真源 battle_map_steps段（BM-INV-003）；颜色按 design_maturity 标注；Mermaid 分页防 >100 节点渲染失败
+# [INVARIANTS] 只读 battle_map三表 + 翻译真源 battle_map_steps段（BM-INV-003）；颜色按锚点模块 depgraph build_status 推导五态（panorama §九）；Mermaid 分页防 >100 节点渲染失败
 # [MODIFY-GUARD] 对标 generate_trading_flow_diagram.py + zoomable_html.py
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,7 +18,7 @@ generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
 
 [BLUEPRINT] | battle_map_panorama.md | §battlemap
 [MODULE] scripts.governance.d5_architecture.generators.generate_battle_map_diagram
-[INVARIANTS] 只读 battle_map三表 + 翻译真源；颜色按 design_maturity；Mermaid 分页
+[INVARIANTS] 只读 battle_map三表 + 翻译真源；颜色按锚点模块 depgraph build_status 推导五态；Mermaid 分页
 [CONSUMERS] AI/人生成作战地图可视化
 [STABILITY] evolving
 [SAFETY] L
@@ -31,11 +31,12 @@ generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
   - 每环节 6 件套详情表（trigger/consumes/params/data_flow/code_mapping/degradation）
   - 可缩放 HTML（复用 zoomable_html.emit_zoomable_html）
 
-颜色标注（design_maturity）：
-  - production（运营态）→ 蓝色 #4A90D9
-  - design（设计态）   → 橙色 #E8A33D
-  - deprecated         → 灰色 #999999
-  - 无锚点环节（BM-INV-001 君子协定违例）→ 红色边框 ⚠
+颜色标注（panorama §九 五态，由锚点模块 depgraph build_status 推导）：
+  - production（运营态，stable/generated/testing）→ 🟦 蓝色实线
+  - design（设计态，planned）                    → 🟧 橙色虚线
+  - deprecated（弃用态）                          → 🟥 红色
+  - missing（缺失态，无锚点 BM-INV-001）          → ⬜ 灰色 ⚠
+  - candidate（候选态，target_graph=candidate）   → 🟨 黄色
 
 与 generate_trading_flow_diagram.py 的关系：
   旧生成器读 decisiongraph + narrative.yaml；本生成器读 battle_map三表 + 翻译真源
@@ -72,6 +73,7 @@ from _shared.module_translation_loader import (  # noqa: E402
     preload_battle_map_steps,
 )
 from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # noqa: E402
+from zephyr.governance.persistence.depgraph_reader import DepgraphReader  # noqa: E402
 from d5_architecture.generators.zoomable_html import emit_zoomable_html  # noqa: E402
 
 # ---------------------------------------------------------------------------
@@ -91,11 +93,14 @@ FLOW_STAGES = [
 # Mermaid 分页大小（防 >100 节点渲染失败，memory lesson）
 PAGE_SIZE = 30
 
-# 颜色 classDef（design_maturity → 样式）
+# 颜色 classDef（panorama §九 五态：运营/设计/弃用/缺失/候选）
+# 治本（2026-08-01，Gap1）：颜色改由锚点模块的 depgraph build_status 推导（真实状态），
+# 不再用 step.design_maturity 自报。design 用虚线（§九"橙色虚线"）。
 _CLASSDEFS = """classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px;
-classDef deprecated fill:#999999,stroke:#666666,color:#fff,stroke-width:2px;
-classDef missing fill:#fff,stroke:#D93636,color:#D93636,stroke-width:3px;"""
+classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
+classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
+classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
+classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;"""
 
 # edge_type → Mermaid 线型
 _EDGE_STYLE = {
@@ -104,14 +109,75 @@ _EDGE_STYLE = {
     "degradation": "-.-",
 }
 
+# depgraph build_status（5态生命周期）→ 作战地图展示态（panorama §九 五态）
+# 治本（2026-08-01，Gap1）：generated/testing/stable 均"已建"→production(蓝)；
+# planned→design(橙)；deprecated→弃用(红)。未命中保守视为 planned（设计态）。
+_BUILD_STATUS_TO_STATE: dict[str, str] = {
+    "stable": "production",
+    "generated": "production",
+    "testing": "production",
+    "planned": "design",
+    "deprecated": "deprecated",
+}
+
+# 五态 → 显示标签（图例/详情表用）
+_STATE_LABEL: dict[str, str] = {
+    "production": "🟦 运营态（已建）",
+    "design": "🟧 设计态（待施工）",
+    "deprecated": "🟥 弃用态",
+    "missing": "⬜ 缺失态（无锚点）",
+    "candidate": "🟨 候选态（候选池）",
+}
+
 
 # ---------------------------------------------------------------------------
 # 数据加载
 # ---------------------------------------------------------------------------
 
 
+def _compute_step_status(
+    anchors: list[dict],
+    status_map: dict[str, str],
+) -> str:
+    """根据锚点的 depgraph build_status 计算环节有效展示态（panorama §九 五态）。
+
+    优先级：primary depgraph 锚点 > 其他 depgraph 锚点 > candidate 锚点 > missing。
+    depgraph build_status 未命中时保守视为 planned（设计态）。
+
+    治本（2026-08-01，Gap1）：替代旧的 step.design_maturity 自报——
+    环节颜色反映其承载模块的真实落地状态，而非环节自我声明。
+    """
+    if not anchors:
+        return "missing"
+    # 1. primary depgraph 锚点（主承载模块决定环节状态）
+    for a in anchors:
+        if a.get("target_role") == "primary" and a.get("target_graph") == "depgraph":
+            bs = status_map.get(a["target_id"], "planned")
+            return _BUILD_STATUS_TO_STATE.get(bs, "design")
+    # 2. 任意 depgraph 锚点（无 primary 时取首个）
+    for a in anchors:
+        if a.get("target_graph") == "depgraph":
+            bs = status_map.get(a["target_id"], "planned")
+            return _BUILD_STATUS_TO_STATE.get(bs, "design")
+    # 3. candidate 锚点（候选池承载，未进全景图）
+    for a in anchors:
+        if a.get("target_graph") == "candidate":
+            return "candidate"
+    # 4. 仅 blueprint/decisiongraph/dataflowgraph 锚点——有设计依据但无 depgraph 模块
+    return "design"
+
+
+def _has_candidate_anchor(anchors: list[dict]) -> bool:
+    """环节是否有候选池锚点（用于 🟡 候选标记，panorama §九 候选态）。"""
+    return any(a.get("target_graph") == "candidate" for a in anchors)
+
+
 def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
-    """加载 battle_map 三表数据 + 预加载翻译真源。
+    """加载 battle_map 三表 + 翻译真源 + depgraph build_status，并 enrich 到 step/anchor。
+
+    Enrichment（Gap1，治本 2026-08-01）：
+      - 每个 step 附加 `_effective_status`（五态）和 `_has_candidate`（bool）
+      - 每个 depgraph anchor 附加 `_live_build_status`（depgraph 真实 build_status）
 
     Returns:
         (steps, edges, anchors_by_step) — steps/edges 全量，anchors_by_step 按 step_id 分组
@@ -127,6 +193,29 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
     anchors_by_step: dict[str, list[dict]] = {}
     for a in anchors:
         anchors_by_step.setdefault(a["step_id"], []).append(a)
+
+    # Gap1：查 depgraph 真实 build_status（替代 step.design_maturity 自报着色）
+    dg_ids = [a["target_id"] for a in anchors if a.get("target_graph") == "depgraph"]
+    status_map: dict[str, str] = {}
+    if dg_ids:
+        dr = DepgraphReader()
+        try:
+            status_map = dr.get_build_status_map(dg_ids)
+        finally:
+            dr.close()
+
+    # enrich anchors：附加 live build_status
+    for a in anchors:
+        if a.get("target_graph") == "depgraph":
+            a["_live_build_status"] = status_map.get(a["target_id"], "<未命中>")
+
+    # enrich steps：附加有效状态 + 候选标记
+    for s in steps:
+        sid = s["step_id"]
+        al = anchors_by_step.get(sid, [])
+        s["_effective_status"] = _compute_step_status(al, status_map)
+        s["_has_candidate"] = _has_candidate_anchor(al)
+
     return steps, edges, anchors_by_step
 
 
@@ -149,30 +238,41 @@ def _sanitize(text: str) -> str:
     )
 
 
-def _node_class(step: dict, has_anchor: bool) -> str:
-    """根据 design_maturity + 锚点情况返回 classDef 类名。"""
-    maturity = step.get("design_maturity") or "design"
-    if maturity == "production":
-        return "production"
-    if maturity == "deprecated":
-        return "deprecated"
-    if not has_anchor:
-        return "design"  # 设计态无锚点仍用橙色，⚠ 标记在标签里（BM-INV-001 君子协定）
+def _node_class(step: dict) -> str:
+    """根据环节有效展示态（_effective_status）返回 classDef 类名（panorama §九 五态）。
+
+    治本（2026-08-01，Gap1）：改用锚点模块真实 build_status 推导的状态，
+    不再用 step.design_maturity 自报。
+    """
+    status = step.get("_effective_status") or "design"
+    if status in ("production", "design", "deprecated", "missing", "candidate"):
+        return status
     return "design"
 
 
-def _node_label(step: dict, has_anchor: bool) -> str:
-    """构建节点标签：step_id + 双语名 + 大白话（截断）+ 无锚点⚠。"""
+def _node_label(step: dict) -> str:
+    """构建节点标签：step_id + 双语名 + 大白话（截断）+ 状态标记。
+
+    标记（panorama §九）：
+      - ⚠无锚点 = 缺失态（BM-INV-001 君子协定违例）
+      - 🟡候选 = 环节有候选池锚点（候选承载，未进全景图）
+    """
     sid = step["step_id"]
     name_bi = get_step_name_bilingual(sid) or step.get("step_name", sid)
     plain = get_step_plain(sid)
     plain_short = plain[:30] + "…" if len(plain) > 30 else plain
-    warn = " ⚠无锚点" if not has_anchor else ""
+    status = step.get("_effective_status") or "design"
+    marks: list[str] = []
+    if status == "missing":
+        marks.append("⚠无锚点")
+    if step.get("_has_candidate"):
+        marks.append("🟡候选")
+    mark = (" " + " ".join(marks)) if marks else ""
     label = f"{sid}\\n{name_bi}"
     if plain_short:
         label += f"\\n{plain_short}"
-    if warn:
-        label += warn
+    if mark:
+        label += mark
     return _sanitize(label)
 
 
@@ -190,12 +290,11 @@ def _build_mermaid(
     """构建一个 Mermaid 流程图块。"""
     lines = [f"```mermaid", f"%% {title}", "flowchart LR"]
     step_ids = {s["step_id"] for s in steps}
-    # 节点定义
+    # 节点定义（颜色/标记由 step._effective_status 推导，Gap1）
     for s in steps:
         nid = _mermaid_node_id(s["step_id"])
-        has_anchor = bool(anchors_by_step.get(s["step_id"]))
-        cls = _node_class(s, has_anchor)
-        label = _node_label(s, has_anchor)
+        cls = _node_class(s)
+        label = _node_label(s)
         lines.append(f'    {nid}["{label}"]:::{cls}')
     # 边定义（只画两端都在本图 step 集内的边）
     for e in edges:
@@ -313,16 +412,24 @@ def _format_step_detail(step: dict, anchors: list[dict]) -> str:
     # 锚点（双向查找）
     if anchors:
         parts += ["**锚点（环节↔模块双向关联）**：", ""]
-        parts.append("| 目标图 | 目标ID | 角色 | 状态快照 |")
-        parts.append("|---|---|---|---|")
+        parts.append("| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |")
+        parts.append("|---|---|---|---|---|")
         for a in anchors:
+            live = a.get("_live_build_status")
+            live_text = live if live else "—"
             parts.append(
-                f"| {a['target_graph']} | {a['target_id']} | {a['target_role']} | {a.get('status_snapshot') or '—'} |"
+                f"| {a['target_graph']} | {a['target_id']} | {a['target_role']} | "
+                f"{a.get('status_snapshot') or '—'} | {live_text} |"
             )
         parts.append("")
     else:
         parts += ["**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）", ""]
-    parts.append(f"**状态**：{step.get('design_maturity', '—')} ｜ **层**：{step.get('layer', '—')} ｜ **阶段**：{step.get('flow_stage', '—')}")
+    eff = step.get("_effective_status", "—")
+    eff_label = _STATE_LABEL.get(eff, eff)
+    parts.append(
+        f"**有效状态**：{eff_label} ｜ **环节自报**：{step.get('design_maturity', '—')} "
+        f"｜ **层**：{step.get('layer', '—')} ｜ **阶段**：{step.get('flow_stage', '—')}"
+    )
     parts.append("")
     return "\n".join(parts)
 
@@ -355,7 +462,16 @@ def _generate_panorama_md(
     anchors_by_step: dict[str, list[dict]],
 ) -> str:
     """总指挥图 MD（全部环节 + 流转边 + 每环节详情）。"""
-    no_anchor_count = sum(1 for s in steps if not anchors_by_step.get(s["step_id"]))
+    no_anchor_count = sum(1 for s in steps if s.get("_effective_status") == "missing")
+    # 五态分布统计（Gap1）
+    state_counts: dict[str, int] = {}
+    for s in steps:
+        st = s.get("_effective_status", "design")
+        state_counts[st] = state_counts.get(st, 0) + 1
+    dist = " ｜ ".join(
+        f"{_STATE_LABEL.get(st, st)}={cnt}"
+        for st, cnt in sorted(state_counts.items(), key=lambda x: -x[1])
+    )
     parts = [
         "# 交易决策作战地图（总指挥图）",
         "",
@@ -364,12 +480,16 @@ def _generate_panorama_md(
         "",
         f"**环节总数**：{len(steps)} ｜ **流转边**：{len(edges)} ｜ **无锚点环节**（BM-INV-001）: {no_anchor_count}",
         "",
-        "## 颜色标注说明",
+        f"**状态分布**：{dist}",
         "",
-        "- 🟦 蓝色 = production（运营态，已落地）",
-        "- 🟧 橙色 = design（设计态，规划中）",
-        "- ⬜ 灰色 = deprecated（已弃用）",
-        "- ⚠ 标记 = 无锚点环节（BM-INV-001 君子协定违例，悬空决策风险）",
+        "## 颜色标注说明（panorama §九 五态）",
+        "",
+        "- 🟦 蓝色实线 = 运营态（锚点模块 build_status=stable/generated/testing，已建）",
+        "- 🟧 橙色虚线 = 设计态（锚点模块 build_status=planned，待施工）",
+        "- 🟥 红色 = 弃用态（锚点模块 build_status=deprecated）",
+        "- ⬜ 灰色 = 缺失态（环节无锚点，BM-INV-001 君子协定违例，悬空决策风险）",
+        "- 🟨 黄色 = 候选态（承载模块在候选池，未进全景图）",
+        "- 🟡 标记 = 环节有候选池锚点（候选承载备选）",
         "",
         "## 总指挥图（全流程）",
         "",

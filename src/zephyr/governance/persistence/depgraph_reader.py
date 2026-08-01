@@ -120,6 +120,34 @@ class DepgraphReader:
         row = cursor.fetchone()
         return dict(row) if row else None
 
+    def get_build_status_map(self, target_ids: list[str]) -> dict[str, str]:
+        """批量查询节点的 build_status。
+
+        battle_map_anchors.target_id 可能是 blueprint_id 或 path（见
+        align_battle_map._valid_ids_depgraph），故两列都匹配。
+
+        :param target_ids: 锚点 target_id 列表
+        :return: ``{target_id: build_status}``，未命中的 target_id 不在返回 dict 中
+                 （调用方按 '未命中' 处理，保守视为 planned）。
+        """
+        ids = [t for t in target_ids if t]
+        if not ids:
+            return {}
+        conn = self._get_conn()
+        cursor = conn.execute(
+            "SELECT path, blueprint_id, build_status FROM nodes "
+            "WHERE path = ANY(%s) OR blueprint_id = ANY(%s)",
+            (ids, ids),
+        )
+        result: dict[str, str] = {}
+        for row in cursor.fetchall():
+            r = dict(row)
+            for k in ("path", "blueprint_id"):
+                v = r.get(k)
+                if v:
+                    result[str(v)] = r.get("build_status") or "planned"
+        return result
+
     def get_all_nodes(self) -> list[dict[str, Any]]:
         """获取所有节点"""
         conn = self._get_conn()

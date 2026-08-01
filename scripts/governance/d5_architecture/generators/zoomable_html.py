@@ -98,12 +98,12 @@ _ZOOM_JS = """
     function fitToViewport() {
       var s = diagram.querySelector('svg');
       if (!s) return;
-      if (!natW || !natH) {
-        try { var bb = s.getBBox(); natW = bb.width; natH = bb.height; } catch (e) {}
-        if (!natW || !natH) { try { natW = s.width.baseVal.value; natH = s.height.baseVal.value; } catch (e) {} }
-        if (!natW || !natH) return;
-        if (!s.getAttribute('viewBox')) s.setAttribute('viewBox', '0 0 ' + natW + ' ' + natH);
-      }
+      // 每次都重新量内容尺寸（不缓存）：lateRepair 修框/字体后到会改变 bbox，
+      // 用旧缓存会让 fit 失真、修大的框显示不全
+      try { var bb = s.getBBox(); if (bb.width > 0 && bb.height > 0) { natW = bb.width; natH = bb.height; } } catch (e) {}
+      if (!natW || !natH) { try { natW = s.width.baseVal.value; natH = s.height.baseVal.value; } catch (e) {} }
+      if (!natW || !natH) return;
+      if (!s.getAttribute('viewBox')) s.setAttribute('viewBox', '0 0 ' + natW + ' ' + natH);
       if (!vp) return;
       var fit = Math.min((vp.clientWidth - 24) / natW, (vp.clientHeight - 24) / natH, 1);
       if (fit > 0 && isFinite(fit)) { fitScale = fit; zoomLevel = 1; vp.scrollLeft = 0; vp.scrollTop = 0; applyZoom(); }
@@ -299,15 +299,23 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
   // 大图（如全景图385节点）dagre 布局慢但不阻塞已渲染的小图。每渲染完一个立即绑定缩放。
   var DEBUG = /[?&]debug=1/.test(location.search);
   var repairStats = {{ nodes: 0, repaired: 0, worst: [] }};
-  // 节点框渲染后实测修复（治本兜底，2026-08-01 第三轮）：
-  // 节点框高度由 mermaid 在测量阶段算死；某些浏览器因最小字号限制/文字缩放/字体回退
-  // 差异，实际渲染出的文字比测量时大 → 文字被框底截断（用户实测 Chrome 系浏览器
-  // 同样文件同样字体仍溢出）。测量阶段无法干预，改为渲染后实测：div.offsetHeight
-  // （svg 用户单位，不受页面缩放影响）> rect 高度 → rect 与 foreignObject 同步加高
-  // 并保持垂直居中。一切"文字比框大"的场景（无论根因）全部兜住。
-  function repairNodeBoxes(pre) {{
-    var svg = pre.querySelector('svg');
+  var dbgEl = null;
+  // 节点框渲染后实测修复（治本兜底，2026-08-01 第三/四轮）：
+  // 节点框由 mermaid 测量阶段算死。若浏览器测量后才完成字体替换（扩展注入 webfont、
+  // 系统字体回退慢、页面翻译改文案），文字会重新排版变高/偏移，超出框底被截——用户
+  // 实测 Edge（扩展环境）溢出而 Chrome/干净 Edge 正常，且一次性修复抓到 0 个（修复
+  // 跑完字体才到）。对策：①用 getBoundingClientRect 实测文字相对框的四向溢出
+  // （位置+尺寸并集，偏移也能抓）；②fonts.ready / window load / 2s / 5s 多时点重跑，
+  // 字体后到也能二次修复。显示像素差值 ÷ scale 换算回 svg 用户单位（页面缩放免疫）。
+  function repairDiagram(svg) {{
     if (!svg) return;
+    var scale = 1;
+    try {{
+      var dispW = svg.getBoundingClientRect().width;
+      var vbw = (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width) || svg.width.baseVal.value;
+      if (dispW > 0 && vbw > 0) scale = dispW / vbw;
+    }} catch (e) {{}}
+    if (!isFinite(scale) || scale <= 0) scale = 1;
     svg.querySelectorAll('g.node').forEach(function(g) {{
       var fo = g.querySelector('foreignObject');
       var rect = g.querySelector('rect');
@@ -315,22 +323,48 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
       var div = fo.querySelector('div');
       if (!div) return;
       repairStats.nodes++;
-      var needH = Math.max(div.offsetHeight, div.scrollHeight);
-      var haveH = rect.height.baseVal.value;
-      if (needH > haveH - 2) {{
-        var newH = needH + 12;  // 上下各留 6px 内边距
-        var dy = (newH - haveH) / 2;
-        rect.setAttribute('height', newH);
-        rect.setAttribute('y', rect.y.baseVal.value - dy);
-        fo.setAttribute('height', fo.height.baseVal.value + (newH - haveH));
-        fo.setAttribute('y', fo.y.baseVal.value - dy);
-        repairStats.repaired++;
-        if (DEBUG && repairStats.worst.length < 5) {{
-          var cs = window.getComputedStyle(div);
-          repairStats.worst.push({{ id: (g.id || '?').slice(-30), need: needH, had: Math.round(haveH), font: cs.fontSize }});
-        }}
+      var rR = rect.getBoundingClientRect();
+      var dR = div.getBoundingClientRect();
+      var up = (rR.top - dR.top) / scale, down = (dR.bottom - rR.bottom) / scale;
+      var left = (rR.left - dR.left) / scale, right = (dR.right - rR.right) / scale;
+      if (up <= 1 && down <= 1 && left <= 1 && right <= 1) return;
+      var pad = 4;
+      if (up > 1 || down > 1) {{
+        var u = Math.max(up, 0), d = Math.max(down, 0);
+        rect.setAttribute('y', rect.y.baseVal.value - u - pad);
+        rect.setAttribute('height', rect.height.baseVal.value + u + d + pad * 2);
+        fo.setAttribute('y', fo.y.baseVal.value - u - pad);
+        fo.setAttribute('height', fo.height.baseVal.value + u + d + pad * 2);
+      }}
+      if (left > 1 || right > 1) {{
+        var l = Math.max(left, 0), rr = Math.max(right, 0);
+        rect.setAttribute('x', rect.x.baseVal.value - l - pad);
+        rect.setAttribute('width', rect.width.baseVal.value + l + rr + pad * 2);
+        fo.setAttribute('x', fo.x.baseVal.value - l - pad);
+        fo.setAttribute('width', fo.width.baseVal.value + l + rr + pad * 2);
+      }}
+      repairStats.repaired++;
+      if (DEBUG && repairStats.worst.length < 5) {{
+        var cs = window.getComputedStyle(div);
+        repairStats.worst.push({{ id: (g.id || '?').slice(-28), up: Math.round(up), down: Math.round(down), font: cs.fontSize, family: cs.fontFamily.slice(0, 42) }});
       }}
     }});
+  }}
+  function updateDbg() {{
+    if (!DEBUG) return;
+    if (!dbgEl) {{
+      dbgEl = document.createElement('div');
+      dbgEl.style.cssText = 'margin-top:6px;padding:8px 12px;background:#fff8e1;border:1px solid #f0c36d;border-radius:4px;font-size:12px;color:#5d4037;white-space:pre-wrap;';
+      var hint = document.querySelector('.hint');
+      if (hint) hint.appendChild(dbgEl);
+    }}
+    dbgEl.textContent = '诊断(debug=1)：节点 ' + repairStats.nodes + ' 个，修复 ' + repairStats.repaired + ' 个'
+      + (repairStats.worst.length ? ' ｜ 样例: ' + JSON.stringify(repairStats.worst) : '')
+      + ' ｜ UA: ' + navigator.userAgent;
+  }}
+  function repairAllDiagrams() {{
+    document.querySelectorAll('.diagram pre.mermaid svg').forEach(function(s) {{ repairDiagram(s); }});
+    updateDbg();
   }}
   async function renderAll() {{
     var pres = Array.prototype.slice.call(document.querySelectorAll('.diagram pre.mermaid'));
@@ -351,7 +385,7 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
             r.style.fill = 'transparent';
             r.style.stroke = 'transparent';
         }});
-        repairNodeBoxes(it.pre);  // 渲染后实测：框装不下文字的节点加高（在 bindZoom 前，fit 才能算进新高度）
+        repairDiagram(it.pre.querySelector('svg')); updateDbg();  // 渲染后实测修复（在 bindZoom 前，fit 才能算进新尺寸）
         if (res.bindFunctions) {{ try {{ res.bindFunctions(it.pre); }} catch (e) {{}} }}
       }} catch (err) {{
         it.pre.innerHTML = '<div style="color:#c00;padding:12px;font-size:13px">⚠ 渲染失败: ' + String(err && err.message || err).replace(/</g,'&lt;') + '</div>';
@@ -361,14 +395,19 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
       updateModeUI();
       await new Promise(function(r) {{ setTimeout(r, 30); }});  // 让浏览器喘息：刷新已渲染的图
     }}
-    if (DEBUG) {{
-      var dbg = document.createElement('div');
-      dbg.style.cssText = 'margin-top:6px;padding:8px 12px;background:#fff8e1;border:1px solid #f0c36d;border-radius:4px;font-size:12px;color:#5d4037;white-space:pre-wrap;';
-      dbg.textContent = '诊断(debug=1)：节点 ' + repairStats.nodes + ' 个，加高修复 ' + repairStats.repaired + ' 个'
-        + (repairStats.worst.length ? ' ｜ 样例: ' + JSON.stringify(repairStats.worst) : '')
-        + ' ｜ UA: ' + navigator.userAgent;
-      document.querySelector('.hint').appendChild(dbg);
+    updateDbg();
+    // 字体/文案后到（扩展注入 webfont、系统字体回退慢、页面翻译）→ 多时点二次修复 + 重新自适应
+    function lateRepair() {{
+      repairAllDiagrams();
+      if (typeof diagramFitters !== 'undefined') diagramFitters.forEach(function(f) {{ f(); }});
     }}
+    if (document.fonts && document.fonts.ready) {{
+      document.fonts.ready.then(lateRepair);
+      if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', lateRepair);
+    }}
+    window.addEventListener('load', lateRepair);
+    setTimeout(lateRepair, 2000);
+    setTimeout(lateRepair, 5000);
   }}
   renderAll();
 {_ZOOM_JS}

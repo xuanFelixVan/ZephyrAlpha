@@ -15,13 +15,14 @@ date: 2026-08-01
 ```mermaid
 %% 执行阶段图
 flowchart LR
-    BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单…"]:::design
+    BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单…"]:::production
     BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。"]:::design
     BM_EXE_01 --- |审批后订单| BM_EXE_02
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px;
-classDef deprecated fill:#999999,stroke:#666666,color:#fff,stroke-width:2px;
-classDef missing fill:#fff,stroke:#D93636,color:#D93636,stroke-width:3px;
+classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
+classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
+classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
+classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
 ```
 
 ## 环节详情
@@ -53,11 +54,11 @@ L4 层。C-004 自适应风控，作为订单拦截器：C-005 生成预案→MT
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-L06-001 | primary | production |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L06-001 | primary | production | generated |
 
-**状态**：design ｜ **层**：L4 ｜ **阶段**：execution
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
 ### BM-EXE-02 交易执行 / Trade Execution
 
@@ -86,12 +87,12 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-XS-002 | primary | planned |
-| depgraph | MOD-EX-030 | supplement | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-XS-002 | primary | planned | planned |
+| depgraph | MOD-EX-030 | supplement | planned | planned |
 
-**状态**：design ｜ **层**：L4 ｜ **阶段**：execution
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
 
 [← 返回总指挥图](battle_map_panorama.md)

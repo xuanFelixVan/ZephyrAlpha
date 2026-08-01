@@ -13,12 +13,16 @@ date: 2026-08-01
 
 **环节总数**：16 ｜ **流转边**：19 ｜ **无锚点环节**（BM-INV-001）: 0
 
-## 颜色标注说明
+**状态分布**：🟧 设计态（待施工）=13 ｜ 🟦 运营态（已建）=3
 
-- 🟦 蓝色 = production（运营态，已落地）
-- 🟧 橙色 = design（设计态，规划中）
-- ⬜ 灰色 = deprecated（已弃用）
-- ⚠ 标记 = 无锚点环节（BM-INV-001 君子协定违例，悬空决策风险）
+## 颜色标注说明（panorama §九 五态）
+
+- 🟦 蓝色实线 = 运营态（锚点模块 build_status=stable/generated/testing，已建）
+- 🟧 橙色虚线 = 设计态（锚点模块 build_status=planned，待施工）
+- 🟥 红色 = 弃用态（锚点模块 build_status=deprecated）
+- ⬜ 灰色 = 缺失态（环节无锚点，BM-INV-001 君子协定违例，悬空决策风险）
+- 🟨 黄色 = 候选态（承载模块在候选池，未进全景图）
+- 🟡 标记 = 环节有候选池锚点（候选承载备选）
 
 ## 总指挥图（全流程）
 
@@ -29,16 +33,16 @@ flowchart LR
     BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::design
     BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::design
     BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破…"]:::design
-    BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单…"]:::design
+    BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单…"]:::production
     BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。"]:::design
     BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决…"]:::design
     BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::design
     BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::design
-    BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型…"]:::design
+    BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型…"]:::production
     BM_SELL_01["BM-SELL-01\n突破成败信号 / Breakout Success/Failure Signal\n判断股价冲压力位是冲上去了还是冲不动——冲上去留着，冲不动止…"]:::design
     BM_SELL_02["BM-SELL-02\n卖出信号融合仲裁 / Sell Signal Fusion Arbitration\n把所有卖出信号（含突破成败）汇总仲裁，强制清仓永远最高优先级…"]:::design
     BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，…"]:::design
-    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、…"]:::design
+    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、…"]:::production
     BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体…"]:::design
     BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——…"]:::design
     BM_SEL_01 --- |标准化行情| BM_SEL_02
@@ -61,9 +65,10 @@ flowchart LR
     BM_REC_03 ->> |迭代反馈（IC衰减/重训练）| BM_SEL_02
     BM_SEL_03 -.- |C-021未就绪→跳过降级| BM_SEL_04
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px;
-classDef deprecated fill:#999999,stroke:#666666,color:#fff,stroke-width:2px;
-classDef missing fill:#fff,stroke:#D93636,color:#D93636,stroke-width:3px;
+classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
+classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
+classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
+classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
 ```
 
 ## 分阶段导航
@@ -104,12 +109,12 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | planned |
-| depgraph | MOD-L05-001 | supplement | stable |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-002 | primary | planned | planned |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02 四轨融合 / Four-Track Fusion (MTF)
 
@@ -138,11 +143,11 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-006 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-03 决策编排 / Decision Orchestration (DO)
 
@@ -171,11 +176,11 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-PF-007 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-007 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-04 分批建仓 / Batched Position Building
 
@@ -211,11 +216,11 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-PA-006 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PA-006 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-EXE-01 自适应风控审批 / Adaptive Risk Approval
 
@@ -244,11 +249,11 @@ L4 层。C-004 自适应风控，作为订单拦截器：C-005 生成预案→MT
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-L06-001 | primary | production |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L06-001 | primary | production | generated |
 
-**状态**：design ｜ **层**：L4 ｜ **阶段**：execution
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
 ### BM-EXE-02 交易执行 / Trade Execution
 
@@ -277,12 +282,12 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-XS-002 | primary | planned |
-| depgraph | MOD-EX-030 | supplement | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-XS-002 | primary | planned | planned |
+| depgraph | MOD-EX-030 | supplement | planned | planned |
 
-**状态**：design ｜ **层**：L4 ｜ **阶段**：execution
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
 ### BM-POS-01 仓位管理裁决 / Position Adjudication
 
@@ -311,11 +316,11 @@ L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-POS-001 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
 ### BM-REC-01 交易运营清算 / Trade Ops & Settlement
 
@@ -344,12 +349,12 @@ L5/运营层。C-017 交易运营：清算/费率/公司行为。是闭环反馈
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-TRADING-003 | primary | planned |
-| depgraph | MOD-RPT-027 | supplement | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-TRADING-003 | primary | planned | planned |
+| depgraph | MOD-RPT-027 | supplement | planned | planned |
 
-**状态**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-02 报告复盘 / Reporting & Review
 
@@ -378,12 +383,12 @@ L5 层。C-010 报告复盘：把运营数据加工成复盘报告，作为闭�
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-RPT-026 | primary | planned |
-| depgraph | MOD-RPT-015 | supplement | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-026 | primary | planned | planned |
+| depgraph | MOD-RPT-015 | supplement | planned | planned |
 
-**状态**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-03 闭环优化反馈 / Closed-Loop Optimization Feedback
 
@@ -412,11 +417,11 @@ L5 层。C-007 闭环优化：反馈到 L1~L4+L3.5 每层（IC衰减→因子替
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-L02-004 | primary | production |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-004 | primary | production | stable |
 
-**状态**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-SELL-01 突破成败信号 / Breakout Success/Failure Signal
 
@@ -445,11 +450,11 @@ L2-A 层 v4.1。突破成败信号模型：压力位来自 L1 因子层，突破
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-SELL-003 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-003 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L2A ｜ **阶段**：sell_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：sell_flow
 
 ### BM-SELL-02 卖出信号融合仲裁 / Sell Signal Fusion Arbitration
 
@@ -478,13 +483,13 @@ L3 层。卖出信号融合仲裁：7 类卖出信号+突破成败信号汇总�
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-SELL-007 | primary | planned |
-| depgraph | MOD-SELL-001 | supplement | planned |
-| depgraph | MOD-SELL-002 | supplement | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-007 | primary | planned | planned |
+| depgraph | MOD-SELL-001 | supplement | planned | planned |
+| depgraph | MOD-SELL-002 | supplement | planned | planned |
 
-**状态**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
 
 ### BM-SEL-01 数据接入与预处理 / Data Ingestion & Preprocessing
 
@@ -513,12 +518,12 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-MKT-003 | primary | planned |
-| depgraph | MOD-INF-002 | supplement | production |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-MKT-003 | primary | planned | planned |
+| depgraph | MOD-INF-002 | supplement | production | generated |
 
-**状态**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
 ### BM-SEL-02 因子计算与信号生成 / Factor Compute & Signal Gen
 
@@ -547,11 +552,11 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-001 | primary | production | stable |
 
-**状态**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-03 市场状态感知 / Market State Sensing
 
@@ -580,11 +585,11 @@ L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-SIG-036 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-036 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-04 次日8态走势预测 / Next-Day 8-State Forecast
 
@@ -613,8 +618,8 @@ L2-C 层。T+1 次日 8 态走势预测（大盘+个股双预测体系）。Phas
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-SIG-037 | primary | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-037 | primary | planned | planned |
 
-**状态**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection

@@ -17,13 +17,14 @@ date: 2026-08-01
 flowchart LR
     BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::design
     BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::design
-    BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型…"]:::design
+    BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型…"]:::production
     BM_REC_01 --- |运营数据| BM_REC_02
     BM_REC_02 --- |复盘报告| BM_REC_03
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px;
-classDef deprecated fill:#999999,stroke:#666666,color:#fff,stroke-width:2px;
-classDef missing fill:#fff,stroke:#D93636,color:#D93636,stroke-width:3px;
+classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
+classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
+classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
+classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
 ```
 
 ## 环节详情
@@ -55,12 +56,12 @@ L5/运营层。C-017 交易运营：清算/费率/公司行为。是闭环反馈
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-TRADING-003 | primary | planned |
-| depgraph | MOD-RPT-027 | supplement | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-TRADING-003 | primary | planned | planned |
+| depgraph | MOD-RPT-027 | supplement | planned | planned |
 
-**状态**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-02 报告复盘 / Reporting & Review
 
@@ -89,12 +90,12 @@ L5 层。C-010 报告复盘：把运营数据加工成复盘报告，作为闭�
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-RPT-026 | primary | planned |
-| depgraph | MOD-RPT-015 | supplement | planned |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-026 | primary | planned | planned |
+| depgraph | MOD-RPT-015 | supplement | planned | planned |
 
-**状态**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-03 闭环优化反馈 / Closed-Loop Optimization Feedback
 
@@ -123,11 +124,11 @@ L5 层。C-007 闭环优化：反馈到 L1~L4+L3.5 每层（IC衰减→因子替
 
 **锚点（环节↔模块双向关联）**：
 
-| 目标图 | 目标ID | 角色 | 状态快照 |
-|---|---|---|---|
-| depgraph | MOD-L02-004 | primary | production |
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-004 | primary | production | stable |
 
-**状态**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 
 [← 返回总指挥图](battle_map_panorama.md)
