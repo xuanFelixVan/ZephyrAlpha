@@ -561,6 +561,8 @@ AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml
 
 **裁定要点**：驳回"新建 `.runtime/gw_tmp/`"方案——gw_* 是进程内 IPC token（git `-F`/`--pathspec-from-file` 传递介质，零持久价值），新建目录=在项目内建平行真源违反真源唯一/责任唯一，正确修复=去掉 `dir=` 让 tempfile 用 OS 默认。不新建任何目录（trae_070/071 + directory_contract 已穷尽定义所有临时文件类型合法归宿）。
 
+> **根目录辅助配置文件（合法白名单成员）**：`.traeignore`（Trae IDE 索引排除模式）/ `py.ini`（py launcher 启用 `pythonutf8=1` UTF-8 模式，呼应 §7 GATE-ENCODING 编码铁律）/ `MANIFEST.in`（setuptools sdist 打包清单）为自解释标准配置文件，纳入 [.gitignore](file:///d:/ZephyrAlpha/.gitignore) 根目录白名单（#ARCH-ROOT-TEMP-WHITELIST-001，22 项之一）。根目录合法文件完整清单真源为 .gitignore `!` 列表，AGENTS.md 仅引用真源以保持唯一。
+
 ## 7. 代码规范
 
 - Python >=3.12, ruff lint, pydantic v2
@@ -1134,6 +1136,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 | `generate_constraint_violations.py` | `03_governance_reports/` | 约束违规（读 PG 展示） |
 | `detect_constraint_violations.py` | `03_governance_reports/` | 约束违规检测（写 PG，GATE-CONSTRAINT-DETECT） |
 | `generate_capacity_report.py` | `03_governance_reports/` | 容量报告 |
+| `generate_candidate_module_report.py` | `03_governance_reports/candidate_modules/` | 候选模块清单报告（分片：索引+按域） |
 | `generate_panorama_registry.py` | `00_overview_entry/` | 全景图清单总表 |
 | `generate_contracts.py` | `05_contracts/` | 契约文档 |
 
