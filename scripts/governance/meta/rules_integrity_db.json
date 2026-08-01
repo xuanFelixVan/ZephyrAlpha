@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "ddad17a0e332f4f8",
+      "hash": "031cea6a4e154a3b",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "71686f092e107ba5",
+      "hash": "2718c950075e4f1f",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -71,6 +71,6 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-08-01T11:51:06.932106+00:00",
-  "last_check_at": "2026-08-01T11:51:13.893667+00:00"
+  "registered_at": "2026-08-01T12:07:32.863379+00:00",
+  "last_check_at": "2026-08-01T12:07:39.724862+00:00"
 }
