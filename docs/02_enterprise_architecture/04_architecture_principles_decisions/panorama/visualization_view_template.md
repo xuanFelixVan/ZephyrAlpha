@@ -1,7 +1,7 @@
 ---
 doc_type: architecture_view
 title: 可视化视图模板规范（三视图 + 可缩放 HTML）
-version: "1.1"
+version: "1.2"
 status: active
 date: 2026-08-01
 owner: MOD-INF-037
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 可视化视图模板规范（三视图 + 可缩放 HTML）
 
-> **版本**：V1.1 | 2026-08-01
+> **版本**：V1.2 | 2026-08-01
 > **读者**：项目 Owner + AI 开发 Agent + 架构治理人员
 > **写法**：大白话为主，配完整代码模板和验收清单。变更历史见 git log。
 
@@ -888,6 +888,157 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 |------|------|------|
 | V1.0 | 2026-08-01 | 初版：从 generate_domain_doc.py + zoomable_html.py 提取为统一模板规范 |
 | V1.1 | 2026-08-01 | ①新增 §4.10 标签预折行铁律（治本节点文字裁剪：生成端 `_wrap_label_text` 预折行，禁止 CSS max-width 二次折行）；②§4.3 节点新增要素⑤ ⛔ 受限原因行（设计态+`gate_reason` 非空）；③§7.4 gate_reason 数据真源（DB `nodes.gate_reason`）；④§6.3 CSS 更新：max-width 340→560px 仅兜底 + font-size 11px < 测量字号 14px；⑤§9.1/§10 验收清单同步 |
+
+---
+
+## 十三、Subgraph/Cluster 背景与边框陷阱（2026-08-01 治本）
+
+> **这是交易流全景图（00_panorama.md）踩过的连环坑，其他图没有 subgraph 所以从未暴露。**
+
+### 13.1 问题现象
+
+| 症状 | 场景 |
+|------|------|
+| subgraph 背景是白色/浅蓝白色，不是灰色 | 用 `subgraph` 分组的大图（如交易流全景图 141 节点按 6 阶段分组） |
+| subgraph 有黑色/灰色边框，其他分图没有 | 同上 |
+| 改了 `clusterBkg` 颜色没变化 | 所有 Mermaid 版本 |
+| 改了 `style` 命令颜色还是没变化 | 部分 Mermaid 版本 |
+| `setAttribute('fill', ...)` 设置后颜色不变 | 所有 Mermaid 版本 |
+
+### 13.2 根因（第一性原理）
+
+Mermaid 渲染 subgraph 时，**背景色不在 `fill` attribute 里，而在 CSS `computed fill` 里**（`rgb(247, 249, 255)`）。三层防线可能全部失效：
+
+| 方法 | 原理 | 为什么失效 |
+|------|------|-----------|
+| `themeVariables.clusterBkg` | Mermaid 官方主题参数 | 部分版本/渲染器不生效（IDE 预览、旧版 mermaid.js） |
+| `style S_xxx fill:...` | Mermaid 显式样式命令 | 部分版本不生效，且只在 `data-look="neo"` 时有效 |
+| `setAttribute('fill', ...)` | JS 修改 SVG attribute | Mermaid 把 fill 写在 CSS 里不在 attribute 里，设置 attribute 无效 |
+
+### 13.3 唯一可靠的解决方案：JS `style.fill` 后处理
+
+**必须在 HTML 的 JS 渲染逻辑里，Mermaid 渲染完成后，用 `element.style.fill = ...` 直接修改 DOM：**
+
+```javascript
+// zoomable_html.py 真源实现（renderAll 函数内，Mermaid 渲染完成后）
+it.pre.innerHTML = res.svg;
+// 强制 subgraph/cluster 背景透明（Mermaid 默认浅蓝白，与无 subgraph 的分图白色背景保持一致）
+it.pre.querySelectorAll('.cluster rect').forEach(function(r) {
+    r.style.fill = 'transparent';      // 必须用 style.fill，setAttribute('fill') 无效
+    r.style.stroke = 'transparent';    // 边框也透明，与分图完全一致
+});
+```
+
+**配套 CSS**（`zoomable_html.py`）：
+
+```css
+/* subgraph/cluster 背景和边框透明：Mermaid 默认浅蓝白+边框，强制透明与分图白色背景保持一致。
+   无 subgraph 的图（域文档等）无 .cluster 元素，此规则零影响。 */
+.mermaid .cluster rect { fill: transparent !important; stroke: transparent !important; }
+```
+
+**配套 themeVariables**（生成器）：
+
+```python
+_MERMAID_THEME = (
+    "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', "
+    "'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', "
+    "'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
+    "'clusterBkg': 'transparent', 'clusterBorder': 'transparent', "  # 透明，与分图一致
+    "'fontSize': '14px'}}}%%"
+)
+```
+
+### 13.4 关键认知
+
+| 认知 | 说明 |
+|------|------|
+| **CSS 优先级 < JS 后处理** | Mermaid 内部 CSS 优先级很高，`!important` 可能不够，必须用 JS 直接改 DOM |
+| **`style.fill` ≠ `setAttribute('fill')`** | Mermaid 的 fill 在 CSS 里，不在 SVG attribute 里 |
+| **透明 > 灰色** | 有 subgraph 的大图（总指挥图）和无 subgraph 的小图（分阶段图）背景必须一致，透明最保险 |
+| **IDE 预览 ≠ 浏览器渲染** | IDE 的 Mermaid 渲染器可能不支持 JS 后处理，IDE 里显示的颜色可能和浏览器不同 |
+
+---
+
+## 十四、HTML 链接格式陷阱（2026-08-01 治本）
+
+> **交易流全景图 MD 点击无法跳转到 HTML 的坑。**
+
+### 14.1 问题现象
+
+MD 文件顶部有 HTML 跳转链接，但点击后：
+- **相对路径**（`_zoomable_html/xxx.html`）：IDE 在编辑器内打开 HTML 源码，无法渲染
+- **`file:///` 协议**：部分浏览器拦截，无法打开
+
+### 14.2 根因
+
+Trae/VSCode 的预览面板对 `file:///` 和相对路径链接会在编辑器内打开源码，**只有 `http://` 链接会交给外部浏览器渲染**。
+
+### 14.3 正确格式
+
+```markdown
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/_zoomable_html/00_panorama.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+```
+
+**必须满足**：
+- `http://localhost:8765/` 前缀（本地 doc HTTP server）
+- 绝对路径（从仓库根开始）
+- 链接和说明**合并为一行**（域文档标准格式）
+
+---
+
+## 十五、候选库污染防护（2026-08-01 治本）
+
+> **交易流索引附录被 5283 条未审核候选污染的坑。**
+
+### 15.1 问题现象
+
+`trading_flow_index.md` 从 72 行暴涨到 5383 行（614KB），因为候选模块注册表被批量塞入 5283 条 `CAND-HARVEST-*` 条目（无 candidate_id、无 target_track、未经审核）。
+
+### 15.2 防护措施
+
+索引附录**禁止铺开全部候选**，改为：
+- 显示**汇总计数**（如"共 5291 条"）
+- 显示**前 10 条样例**（供快速浏览）
+- 指向**注册表文件**查看完整清单
+
+```python
+# 生成器防护逻辑
+if len(cross_cutting) > 20:
+    lines.append(f"> 共 {len(cross_cutting)} 条跨阶段候选，前 10 条样例：")
+    lines.append(_format_candidate_table(cross_cutting[:10]))
+    lines.append(f"> 完整清单见 `candidate_module_registry.yaml`")
+else:
+    lines.append(_format_candidate_table(cross_cutting))
+```
+
+---
+
+## 十六、Reconciler 回退应对策略（2026-08-01 治本）
+
+> **后台 reconciler 自动回退 AI 修改的坑。**
+
+### 16.1 问题现象
+
+修改生成器文件后，后台 reconciler 检测到未提交变更，自动 commit 回退到已提交版本，导致修改丢失。
+
+### 16.2 应对策略
+
+| 策略 | 操作 |
+|------|------|
+| **立即运行生成器** | 修改生成器后**立即运行**，在 reconciler 回退前完成生成 |
+| **立即提交** | 生成器修改 + 生成结果**一起提交**，不要分开 |
+| **检查回退** | 如果生成结果不对，先检查生成器文件是否被回退（`git diff`） |
+
+---
+
+## 十七、版本历史（更新）
+
+| 版本 | 日期 | 变更 |
+|------|------|------|
+| V1.0 | 2026-08-01 | 初版：从 generate_domain_doc.py + zoomable_html.py 提取为统一模板规范 |
+| V1.1 | 2026-08-01 | ①新增 §4.10 标签预折行铁律；②§4.3 节点新增要素⑤ ⛔ 受限原因行；③§7.4 gate_reason 数据真源；④§6.3 CSS 更新；⑤§9.1/§10 验收清单同步 |
+| V1.2 | 2026-08-01 | ①新增 §13 subgraph/cluster 背景与边框陷阱（clusterBkg 不生效、style 命令失效、JS setAttribute 无效 → 必须用 `style.fill` 后处理）；②新增 §14 HTML 链接格式陷阱（http:// 绝对链接 vs 相对路径）；③新增 §15 候选库污染防护（索引附录汇总计数）；④新增 §16 Reconciler 回退应对策略 |
 
 ---
 
