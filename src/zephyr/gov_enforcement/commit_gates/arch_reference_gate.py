@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md；正则支持纯数字/两段式/多段式域前缀（#ARCH-008 / #ARCH-CH-007 / #ARCH-GOV-SHIM-001，2026-07-17 多段式支持治本 ARCH-GOV-SHIM-001 漏检）；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断
+# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md/.json/.txt（REFERENCE_TEXT_EXTS 单一真源，audit-02 2026-08-02 含 .json/.txt 治本）；正则支持纯数字/两段式/多段式域前缀/末段 S 阶段标记（#ARCH-008 / #ARCH-CH-007 / #ARCH-GOV-SHIM-001 / #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2；2026-07-17 多段式治本 ARCH-GOV-SHIM-001 漏检，audit-02 2026-08-02 S 变体治本 ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2 漏检）；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断
 # [MODIFY-GUARD] gate_id="ARCH-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -80,10 +80,15 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_arch_reference_gate"]
 
 # #ARCH-NNN / #ARCH-DOMAIN-NNN 引用检测正则：匹配 "#ARCH-008" / "#ARCH-CH-007" /
-# "#ARCH-GOV-SHIM-001" 等（支持纯数字、两段式域前缀和多段式域前缀）
-# 捕获组为编号后缀（纯数字 "008"、域前缀-数字 "CH-007"、或多段式 "GOV-SHIM-001"）
-# 多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）
-_ARCH_REF_RE = re.compile(r"#ARCH-([A-Z]+(?:-[A-Z]+)*-\d+|\d+)")
+# "#ARCH-GOV-SHIM-001" / "#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2" 等（支持纯数字、两段式
+# 域前缀、多段式域前缀、以及末段 S<数字> 阶段标记如 S1/S2/S3）
+# 捕获组为编号后缀（纯数字 "008"、域前缀-数字 "CH-007"、多段式 "GOV-SHIM-001"、
+# 或多段式+阶段标记 "CAPABILITY-LOOKUP-BYPASS-DEAD-S2"）
+# 多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）；
+# S 变体支持治本 ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2 漏检（audit-02，2026-08-02）——
+# 原正则末段 [A-Z]+-\d+ 不匹配 -S2（字母紧贴数字无连字符），导致全家 5 个已登记 S 变体
+# 引用逃逸检测；扩展为 -[A-Z]?\d+（末段可选单字母前缀）后 S 变体可被检出并强制登记。
+_ARCH_REF_RE = re.compile(r"#ARCH-([A-Z]+(?:-[A-Z]+)*-[A-Z]?\d+|\d+)")
 
 # registry 相对路径（对标 dangling_reference_gate.py 用 gateway.project_root 的稳健设计）
 # 治本（M03，2026-07-18）：_SCANNABLE_EXTS / _GIT_SHOW_TIMEOUT 已下沉到 _reference_helpers，

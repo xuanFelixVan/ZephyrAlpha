@@ -51,11 +51,14 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exem
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 _GIT_SHOW_TIMEOUT = 10
-_SCANNABLE_EXTS = (".py", ".yaml", ".yml", ".md")
-
-# 治本（audit-02, 2026-08-02）：reconciliation_registry 复用此常量检测含 #ARCH- 引用的文本文件
-# 含 .json（原 _SCANNABLE_EXTS 缺 .json 导致 .json 文件中 #ARCH- 引用逃逸 warn 层）
-REFERENCE_TEXT_EXTS = (".py", ".yaml", ".yml", ".md", ".json")
+# 治本（audit-02，2026-08-02）：原"可含 #ARCH-/#裁定# 引用的文本文件扩展名"散布三处且不一致——
+# _reference_helpers._SCANNABLE_EXTS=(.py,.yaml,.yml,.md)、dangling_reference_gate._SCANNABLE_EXTS
+# （同上独立副本）、reconciliation_registry._ARCH_TEXT_EXTS=(.md,.yaml,.yml,.py,.txt)。三者均缺
+# .json，导致 config/mcp.json 中 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2 引用逃逸 commit-time
+# 阻断门（ARCH-REFERENCE）+ post-commit warn reconciler（GATE-ARCH-REFS）双层防线。收敛为单一共享
+# 常量 REFERENCE_TEXT_EXTS，arch/ruling/dangling gate + reconciler 共用，含 .json/.txt。
+# 安全性：各 gate 仅检测 NEW 引用（current - HEAD diff），历史引用不阻断；扩展集为并集仅增强覆盖。
+REFERENCE_TEXT_EXTS = (".py", ".yaml", ".yml", ".md", ".json", ".txt")
 
 
 def get_head_content(project_root: Path, rel_path: str) -> str | None:
@@ -101,7 +104,7 @@ def scan_file_violations(
         rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
         if is_test_exempt(rel):
             continue
-        if not rel.endswith(_SCANNABLE_EXTS):
+        if not rel.endswith(REFERENCE_TEXT_EXTS):
             continue
         try:
             current_content = Path(f).read_text(encoding="utf-8", errors="replace")
@@ -189,7 +192,7 @@ def collect_new_refs_by_file(
         if not os.path.isfile(f):
             continue
         rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-        if is_test_exempt(rel) or not rel.endswith(_SCANNABLE_EXTS):
+        if is_test_exempt(rel) or not rel.endswith(REFERENCE_TEXT_EXTS):
             continue
         if rel == registry_rel:
             continue

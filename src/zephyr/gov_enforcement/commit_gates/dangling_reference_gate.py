@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.dangling_reference_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._reference_helpers (get_head_content); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._reference_helpers (get_head_content, REFERENCE_TEXT_EXTS); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只检测 staged 文件中**新增的** AGENTS.md §X.Y 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——AGENTS.md 缺失或 git 异常时阻断；跳过 tests/ 豁免区；不检测 blueprint.md §X.Y 或"蓝图 MOD-XXX §X.Y"（蓝图内部引用非 AGENTS.md）；扫描文件类型 .py/.yaml/.yml/.md；章节号从工作区 AGENTS.md 提取（commit 后的新真源）
+# [INVARIANTS] 只检测 staged 文件中**新增的** AGENTS.md §X.Y 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——AGENTS.md 缺失或 git 异常时阻断；跳过 tests/ 豁免区；不检测 blueprint.md §X.Y 或"蓝图 MOD-XXX §X.Y"（蓝图内部引用非 AGENTS.md）；扫描文件类型 .py/.yaml/.yml/.md/.json/.txt（REFERENCE_TEXT_EXTS 单一真源，audit-02 2026-08-02）；章节号从工作区 AGENTS.md 提取（commit 后的新真源）
 # [MODIFY-GUARD] gate_id="DANGLING-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -71,7 +71,10 @@ import os
 import re
 from pathlib import Path
 
-from zephyr.gov_enforcement.commit_gates._reference_helpers import get_head_content
+from zephyr.gov_enforcement.commit_gates._reference_helpers import (
+    REFERENCE_TEXT_EXTS,
+    get_head_content,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
@@ -89,8 +92,8 @@ _SECTION_HEADING_RE = re.compile(r"^#{2,4}\s+(\d+(?:\.\d+)*)", re.MULTILINE)
 # 捕获组为被引用的章节号字符串
 _AGENTS_REF_RE = re.compile(r"AGENTS\.md\s*§(\d+(?:\.\d+)*)")
 
-# 扫描的文件扩展名（可能含 AGENTS.md §X.Y 引用的文件类型）
-_SCANNABLE_EXTS = (".py", ".yaml", ".yml", ".md")
+# 扫描的文件扩展名：复用 _reference_helpers.REFERENCE_TEXT_EXTS
+# （治本 audit-02 2026-08-02：消除散布三处的 _SCANNABLE_EXTS 副本，单一真源含 .json/.txt）
 
 
 def _extract_valid_sections(agents_md_content: str) -> set[str]:
@@ -164,7 +167,7 @@ def make_dangling_reference_gate() -> GateSpec:
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
             if is_test_exempt(rel):
                 continue  # tests/ 豁免区
-            if not rel.endswith(_SCANNABLE_EXTS):
+            if not rel.endswith(REFERENCE_TEXT_EXTS):
                 continue  # 非可扫描文件类型
 
             # 读取当前工作区版本
