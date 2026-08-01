@@ -22,6 +22,16 @@ from zephyr.sell_decision.core.sell_signal_collector import (
     SellSignalType,
     SignalTimeFrame,
 )
+from zephyr.sell_decision.core.sell_signal_fusion_engine import (
+    ConsistencyLevel,
+    FusedSellDecision,
+    FusionMethod,
+    FusionStrategy,
+    InvalidFusionInputError,
+    SellSignalFusedEvent,
+    SellSignalFusionEngine,
+    WeightedAverageFusion,
+)
 from zephyr.sell_decision.core.sell_urgency_scorer import (
     ExecutionStrategy,
     InvalidUrgencyInputError,
@@ -39,6 +49,14 @@ __all__ = [
     "SellSignalProvider",
     "SellSignalType",
     "SignalTimeFrame",
+    "FusionMethod",
+    "ConsistencyLevel",
+    "FusedSellDecision",
+    "SellSignalFusedEvent",
+    "FusionStrategy",
+    "WeightedAverageFusion",
+    "SellSignalFusionEngine",
+    "InvalidFusionInputError",
     "ArbitrationResult",
     "ArbitrationVerdict",
     "BuySignal",
