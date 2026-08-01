@@ -728,11 +728,114 @@ def _format_conflict_matrix_md(item: dict) -> str:
     return "\n".join(parts)
 
 
+def _format_timeline_md(item: dict) -> str:
+    """渲染 §15 计算节奏与时序为 Markdown（三段式时序阶段 + 计算频率表）。"""
+    name_bi = item.get("name_zh", "") + (
+        f" / {item['name_en']}" if item.get("name_en") else ""
+    )
+    parts = [
+        f"## {name_bi}（{item.get('sketch_ref', '')}）",
+        "",
+        f"> **大白话**：{item.get('plain_zh', '').strip()}",
+        "",
+    ]
+    mech = item.get("mechanism_zh", "").strip()
+    if mech:
+        parts += ["**机制说明**：", "", mech, ""]
+    related = item.get("related_steps") or []
+    if related:
+        parts.append(f"**关联环节**：{_related_steps_links(related)}")
+        parts.append("")
+    # 三段式时序阶段
+    phases = item.get("phases") or []
+    if phases:
+        parts += [
+            "### 时序阶段（盘前→盘中→盘后）",
+            "",
+            "| 阶段 | 时间 | 关键动作 |",
+            "|---|---|---|",
+        ]
+        for ph in phases:
+            actions = ph.get("actions") or []
+            act_text = "<br>".join(actions) if actions else "—"
+            parts.append(
+                f"| {ph.get('name_zh', '—')} | {ph.get('time_range', '—')} | {act_text} |"
+            )
+        parts.append("")
+    # 计算频率汇总
+    freqs = item.get("compute_frequencies") or []
+    if freqs:
+        parts += [
+            "### 计算频率汇总",
+            "",
+            "| 频率 | 计算内容 | 标的数 | CPU负载 | 数据源 |",
+            "|---|---|---|---|---|",
+        ]
+        for fr in freqs:
+            parts.append(
+                f"| {fr.get('frequency', '—')} | {fr.get('content', '—')} "
+                f"| {fr.get('scope', '—')} | {fr.get('cpu_load', '—')} "
+                f"| {fr.get('data_source', '—')} |"
+            )
+        parts.append("")
+    return "\n".join(parts)
+
+
+def _format_distribution_awareness_md(item: dict) -> str:
+    """渲染 §1.7 分布感知增强体系为 Markdown（四方法论表 + 叠加态模式）。"""
+    name_bi = item.get("name_zh", "") + (
+        f" / {item['name_en']}" if item.get("name_en") else ""
+    )
+    parts = [
+        f"## {name_bi}（{item.get('sketch_ref', '')}）",
+        "",
+        f"> **大白话**：{item.get('plain_zh', '').strip()}",
+        "",
+    ]
+    mech = item.get("mechanism_zh", "").strip()
+    if mech:
+        parts += ["**机制说明**：", "", mech, ""]
+    related = item.get("related_steps") or []
+    if related:
+        parts.append(f"**关联环节**：{_related_steps_links(related)}")
+        parts.append("")
+    # 四方法论分工表
+    methods = item.get("four_methods") or []
+    if methods:
+        parts += [
+            "### 四方法论分工（从点估计升级为完整分布描述）",
+            "",
+            "| 方法论 | 回答的问题 | 输出 | 下游消费 | 实现阶段 | 关联环节 |",
+            "|---|---|---|---|---|---|",
+        ]
+        for m in methods:
+            m_related = m.get("related_steps") or []
+            m_rel_text = ", ".join(m_related) if m_related else "—"
+            parts.append(
+                f"| {m.get('name_zh', '—')} | {m.get('question', '—')} "
+                f"| {m.get('output', '—')} | {m.get('downstream', '—')} "
+                f"| {m.get('stage', '—')} | {m_rel_text} |"
+            )
+        parts.append("")
+    # 叠加态模式
+    overlay = item.get("overlay_mode")
+    if overlay:
+        parts += [
+            f"### {overlay.get('name_zh', '叠加态模式')}",
+            "",
+            overlay.get("description", "").strip(),
+            "",
+        ]
+    return "\n".join(parts)
+
+
 # 横切类别 → 渲染函数分派（ Gap3 ）
 _CROSS_CUTTING_RENDERERS = {
     "funnel": _format_funnel_md,
     "intraday_events": _format_intraday_events_md,
+    "timeline": _format_timeline_md,
     "conflict_matrix": _format_conflict_matrix_md,
+    "distribution_awareness": _format_distribution_awareness_md,
 }
 
 

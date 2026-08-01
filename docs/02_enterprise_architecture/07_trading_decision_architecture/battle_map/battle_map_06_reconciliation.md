@@ -17,7 +17,7 @@ date: 2026-08-02
 flowchart LR
     BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::design
     BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::design
-    BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型…"]:::production
+    BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型… 🟡候选"]:::production
     BM_REC_01 --- |运营数据| BM_REC_02
     BM_REC_02 --- |复盘报告| BM_REC_03
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
@@ -127,6 +127,9 @@ L5 层。C-007 闭环优化：反馈到 L1~L4+L3.5 每层（IC衰减→因子替
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L02-004 | primary | production | stable |
+| candidate | CAND-WFO-001 | supplement | deferred | — |
+| candidate | CAND-SIM-002 | supplement | deferred | — |
+| candidate | CAND-BT-001 | supplement | deferred | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 

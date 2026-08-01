@@ -59139,3 +59139,117 @@ battle_map_cross_cutting:
         scenario: 回撤>10%需降仓位 vs 策略信号强烈要求满仓
         arbitration: 资金曲线缩放优先：回撤期仓位上限不受策略信号影响（系统性保护优先）
         winner: 资金曲线优先
+
+  # §15 计算节奏与时序——盘前/盘中/盘后三段式时序框架（Gap2，2026-08-02）
+  # 来源：草图 v9.0 §15 计算节奏与时序。横切级叙事，贯穿全流程6阶段。
+  - category: timeline
+    name_zh: 计算节奏与时序
+    name_en: Compute Cadence & Timeline
+    sketch_ref: "§15"
+    related_steps: [BM-SEL-01, BM-SEL-02, BM-BUY-01, BM-SELL-01, BM-POS-01, BM-EXE-01, BM-EXE-02, BM-REC-01]
+    plain_zh: |
+      全流程24小时时序框架，把盘前数据拉取、盘中实时决策、盘后研究迭代串成一条标准作业流水线。
+    mechanism_zh: |
+      三段式时序：盘前（03:00-09:15）→盘中（09:15-15:00）→盘后（15:00-23:59）。
+      盘前做全量因子计算和策略预案；盘中做增量信号和实时决策（3秒tick驱动）；盘后做复盘和模型迭代。
+      每个阶段有明确的计算频率和CPU负载特征，确保资源分配合理。
+    phases:
+      - phase: pre_market
+        name_zh: 盘前
+        time_range: "03:00-09:15"
+        actions:
+          - "03:00 全市场历史数据补全（昨日收盘后增量）"
+          - "04:00 因子工厂全量计算（~150因子，全市场~7000只）"
+          - "06:00 信号工厂批量产出（基于昨日因子+今日预案）"
+          - "08:00 策略工厂多情景对策生成（L3层）"
+          - "08:30 市场状态预判（C-021）+ T+1次日预测（C-014）"
+          - "09:00 仓位预分配 + 风控预检"
+          - "09:15 集合竞价准备就绪"
+      - phase: intraday
+        name_zh: 盘中
+        time_range: "09:15-15:00"
+        actions:
+          - "09:15-09:30 集合竞价阶段，接收集合竞价数据"
+          - "09:30-11:30 上午连续竞价，3秒tick驱动决策流"
+          - "11:30-13:00 午间休市，策略微调+风控复盘"
+          - "13:00-15:00 下午连续竞价，尾盘特殊处理（14:57收盘集合竞价）"
+      - phase: post_market
+        name_zh: 盘后
+        time_range: "15:00-23:59"
+        actions:
+          - "15:00-16:00 交易运营清算（C-017）+ 成交回报核对"
+          - "16:00-18:00 报告复盘（C-010）+ TCA分析（C-046）"
+          - "18:00-20:00 闭环优化（C-007）→反馈L1-L4各层"
+          - "20:00-23:59 模型重训练（C-029）+ 因子迭代（C-027）"
+    compute_frequencies:
+      - frequency: tick级(3s)
+        content: tick数据写入+实时风控监控
+        scope: 全市场持仓标的
+        cpu_load: 中
+        data_source: miniQMT实时推送
+      - frequency: 分钟级
+        content: 增量因子计算+信号更新
+        scope: 候选池~500只
+        cpu_load: 高
+        data_source: tick聚合
+      - frequency: 5分钟级
+        content: 策略对策更新+仓位再平衡评估
+        scope: 持仓~10只
+        cpu_load: 中
+        data_source: 分钟信号
+      - frequency: 日级(盘后)
+        content: 全量因子重算+模型重训练+复盘
+        scope: 全市场~7000只
+        cpu_load: 极高(GPU)
+        data_source: 全天数据
+
+  # §1.7 分布感知增强体系——从点估计升级为完整分布描述（Gap2，2026-08-02）
+  # 来源：草图 v9.0 §1.7 分布感知增强体系。横切级叙事，贯穿选股/信号/风控/仓位。
+  - category: distribution_awareness
+    name_zh: 分布感知增强体系
+    name_en: Distribution-Aware Enhancement System
+    sketch_ref: "§1.7"
+    related_steps: [BM-SEL-12, BM-SEL-13, BM-SEL-14, BM-SEL-15, BM-SEL-11]
+    plain_zh: |
+      把"预测一个数"升级为"预测一个分布"的完整方法论体系，让系统知道不确定性有多大，
+      而不是只给一个点估计。包含4个方法论，从不同角度刻画分布。
+    mechanism_zh: |
+      传统量化只预测点估计（如"明天涨2%"），分布感知预测完整概率分布（如"明天收益率
+      有70%概率在0-3%区间，10%概率跌超2%"）。4方法论分工：密度预测画分布形状、
+      共形预测给覆盖率保证区间、Survival预测事件发生时间、Causal ML找因果效应。
+      叠加态模式：4方法论可叠加使用，互相校验，取最保守结果。
+    four_methods:
+      - method: density_prediction
+        name_zh: 收益率条件密度预测
+        question: "分布长什么样？"
+        output: 条件PDF f(r|X_t)
+        downstream: 仓位Kelly公式+信号分布感知融合
+        stage: design
+        related_steps: [BM-SEL-12]
+      - method: conformal_prediction
+        name_zh: 共形预测
+        question: "区间有多可靠？"
+        output: 覆盖率保证的预测区间
+        downstream: 风控共形VaR+信号置信区间
+        stage: design
+        related_steps: [BM-SEL-13]
+      - method: survival_analysis
+        name_zh: Survival止盈止损时间预测
+        question: "什么时候该止盈/止损？"
+        output: 事件发生时间分布（止盈/止损触发时间）
+        downstream: 卖出决策引擎+仓位时间衰减
+        stage: design
+        related_steps: [BM-SEL-15]
+      - method: causal_ml
+        name_zh: Causal ML因果推断
+        question: "因果效应有多大？"
+        output: 因果效应估计（ATE/CATE）
+        downstream: 因子因果筛选+策略效应归因
+        stage: design
+        related_steps: [BM-SEL-14]
+    overlay_mode:
+      name_zh: 叠加态模式
+      description: |
+        4方法论可叠加使用，互相校验：
+        密度预测画分布→共形预测在分布上切区间→Survival预测分布上事件时间→
+        Causal ML验证分布背后的因果机制。叠加使用时取最保守结果。

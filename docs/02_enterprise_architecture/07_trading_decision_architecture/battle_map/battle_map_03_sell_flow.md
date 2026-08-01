@@ -15,11 +15,11 @@ date: 2026-08-02
 ```mermaid
 %% 卖出阶段图
 flowchart LR
-    BM_SELL_01["BM-SELL-01\n突破成败信号 / Breakout Success/Failure Signal\n判断股价冲压力位是冲上去了还是冲不动——冲上去留着，冲不动止…"]:::design
+    BM_SELL_01["BM-SELL-01\n突破成败信号 / Breakout Success/Failure Signal\n判断股价冲压力位是冲上去了还是冲不动——冲上去留着，冲不动止…"]:::production
     BM_SELL_02["BM-SELL-02\n卖出信号融合仲裁 / Sell Signal Fusion Arbitration\n把所有卖出信号（含突破成败）汇总仲裁，强制清仓永远最高优先级…"]:::production
     BM_SELL_03["BM-SELL-03\n卖出信号收集评分 / Sell Signal Collection & Scoring\n卖出端的'信号层'——先把持仓分级(Watch/Monito…"]:::production
     BM_SELL_04["BM-SELL-04\n止盈止损族 / Take-Profit & Stop-Loss Strategy Family\n卖出端的'策略工厂'——根据策略类型用不同的止盈止损范式(趋…"]:::design
-    BM_SELL_05["BM-SELL-05\n置换再平衡卖出 / Replacement & Rebalance Sell\n机会成本驱动+权重偏离驱动的被动卖出——候选池有更优标的就卖…"]:::design
+    BM_SELL_05["BM-SELL-05\n置换再平衡卖出 / Replacement & Rebalance Sell\n机会成本驱动+权重偏离驱动的被动卖出——候选池有更优标的就卖…"]:::production
     BM_SELL_06["BM-SELL-06\n买卖冲突仲裁 / Buy-Sell Conflict Arbitration\n同一只票同时有买入和卖出信号时怎么办——卖出优先(保守原则)…"]:::production
     BM_SELL_01 --- |突破成败信号| BM_SELL_02
     BM_SELL_01 --- |突破成败信号→收集评分| BM_SELL_03
@@ -66,9 +66,9 @@ L2-A 层 v4.1。突破成败信号模型：压力位来自 L1 因子层，突破
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-SELL-003 | primary | planned | planned |
+| depgraph | MOD-SELL-003 | primary | planned | stable |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：sell_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：sell_flow
 
 ### BM-SELL-02 卖出信号融合仲裁 / Sell Signal Fusion Arbitration
 
@@ -218,10 +218,10 @@ v6.0分批退出模式(Scaling Out Architecture)：等分退出(1/3-1/3-1/3)/倒
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-SELL-006 | primary | planned | planned |
+| depgraph | MOD-SELL-006 | primary | planned | stable |
 | depgraph | MOD-POS-004 | supplement | planned | planned |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
 
 ### BM-SELL-06 买卖冲突仲裁 / Buy-Sell Conflict Arbitration
 

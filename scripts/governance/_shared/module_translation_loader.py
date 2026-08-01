@@ -75,8 +75,7 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 
 # 模块翻译 YAML 真源路径（SSoT：规则数据真源是 YAML 文件）
 _REGISTRY_YAML = (
-    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-    / "catalogs" / "module_translation_registry.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "module_translation_registry.yaml"
 )
 
 # 模块级缓存：None=未加载，dict=已加载（module_path → {name_zh, name_en, desc_zh, desc_en}）
@@ -95,6 +94,7 @@ def _load_from_yaml() -> dict[str, dict[str, str]]:
     """
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _REGISTRY_YAML.exists():
             return {}
         data = yaml.safe_load(_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
@@ -234,6 +234,71 @@ def get_module_plain(module_path: str) -> str:
 
 
 # ============================================================================
+# 通用简介检测——识别被多个模块共用的模板化简介（治本跨节点重复，2026-08-02）
+# ============================================================================
+_GENERIC_PLAIN_CACHE: set[str] | None = None
+_GENERIC_DESC_CACHE: set[str] | None = None
+
+
+def _compute_generic_sets() -> tuple[set[str], set[str]]:
+    """预计算通用简介集合：被 >1 个模块共用的模板化 plain_zh / desc_zh 文本。
+
+    模块翻译注册表中部分条目填了相同的模板化简介（如"提供包入口和模块加载功能"），
+    导致多个不同模块节点显示相同简介——跨节点重复。本函数预计算这些通用文本，
+    供生成器调用 is_generic_plain_zh / is_generic_desc_zh 检测后回退到包感知描述。
+
+    Returns:
+        ``(generic_plain_set, generic_desc_set)``；YAML 不可用时返回两个空 set
+    """
+    global _GENERIC_PLAIN_CACHE, _GENERIC_DESC_CACHE
+    if _GENERIC_PLAIN_CACHE is not None and _GENERIC_DESC_CACHE is not None:
+        return _GENERIC_PLAIN_CACHE, _GENERIC_DESC_CACHE
+    cache = _ensure_loaded()
+    plain_counter: dict[str, set[str]] = {}
+    desc_counter: dict[str, set[str]] = {}
+    for mp, trans in cache.items():
+        p = (trans.get("plain_zh") or "").strip()
+        if p:
+            plain_counter.setdefault(p, set()).add(mp)
+        d = (trans.get("desc_zh") or "").strip()
+        if d:
+            desc_counter.setdefault(d, set()).add(mp)
+    _GENERIC_PLAIN_CACHE = {t for t, paths in plain_counter.items() if len(paths) > 1}
+    _GENERIC_DESC_CACHE = {t for t, paths in desc_counter.items() if len(paths) > 1}
+    return _GENERIC_PLAIN_CACHE, _GENERIC_DESC_CACHE
+
+
+def is_generic_plain_zh(plain: str) -> bool:
+    """检测 plain_zh 是否为被多个模块共用的通用模板简介。
+
+    Args:
+        plain: 待检测的 plain_zh 文本
+
+    Returns:
+        True 表示该文本被 >1 个模块共用（应回退到包感知描述）；False 表示唯一
+    """
+    if not plain:
+        return False
+    generic_plain, _ = _compute_generic_sets()
+    return plain.strip() in generic_plain
+
+
+def is_generic_desc_zh(desc: str) -> bool:
+    """检测 desc_zh 是否为被多个模块共用的通用模板简介。
+
+    Args:
+        desc: 待检测的 desc_zh 文本
+
+    Returns:
+        True 表示该文本被 >1 个模块共用；False 表示唯一
+    """
+    if not desc:
+        return False
+    _, generic_desc = _compute_generic_sets()
+    return desc.strip() in generic_desc
+
+
+# ============================================================================
 # battle_map_steps 段——作战地图环节叙事真源（BM-INV-003）
 # ============================================================================
 # 与 module_path 翻译并列的第二个真源段：环节级叙事。生成器
@@ -262,6 +327,7 @@ def _load_battle_map_steps_from_yaml() -> dict[str, dict[str, str]]:
     """
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _REGISTRY_YAML.exists():
             return {}
         data = yaml.safe_load(_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
@@ -442,6 +508,7 @@ def _load_battle_map_cross_cutting_from_yaml() -> dict[str, dict]:
     """
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _REGISTRY_YAML.exists():
             return {}
         data = yaml.safe_load(_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
@@ -483,7 +550,9 @@ def get_cross_cutting(category: str) -> dict | None:
         category: 横切类别 ID，目前支持：
             ``"funnel"``（§13 筛选漏斗）、
             ``"intraday_events"``（§14 盘中事件）、
-            ``"conflict_matrix"``（§16 冲突矩阵）
+            ``"timeline"``（§15 计算节奏与时序）、
+            ``"conflict_matrix"``（§16 冲突矩阵）、
+            ``"distribution_awareness"``（§1.7 分布感知增强体系）
 
     Returns:
         横切 dict（含 name_zh/plain_zh/mechanism_zh + 嵌套结构 levels/event_types/
@@ -501,8 +570,8 @@ def get_cross_cutting_all() -> list[dict]:
         横切 dict 列表（每项含 category/name_zh/嵌套结构），YAML 不可用返回空列表
     """
     cache = _ensure_cross_cutting_loaded()
-    # 按 funnel → intraday_events → conflict_matrix 的逻辑顺序返回
-    order = ["funnel", "intraday_events", "conflict_matrix"]
+    # 按 funnel → intraday_events → timeline → conflict_matrix → distribution_awareness 的逻辑顺序返回
+    order = ["funnel", "intraday_events", "timeline", "conflict_matrix", "distribution_awareness"]
     ordered = [cache[c] for c in order if c in cache]
     # 追加未在 order 中的类别（向前兼容未来新增横切类别）
     for cat, item in cache.items():

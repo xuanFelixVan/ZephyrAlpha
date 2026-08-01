@@ -15,27 +15,27 @@ date: 2026-08-02
 ```mermaid
 %% 选股阶段图
 flowchart LR
-    BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，…"]:::design
-    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、…"]:::deprecated
+    BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，… 🟡候选"]:::design
+    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、… 🟡候选"]:::deprecated
     BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… 🟡候选"]:::design
     BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… 🟡候选"]:::design
-    BM_SEL_05["BM-SEL-05\n主力行为感知 / Main-Force Behavior Sensing\n识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是出货弃庄，… ⚠无锚点"]:::missing
-    BM_SEL_06["BM-SEL-06\n跨市场传导感知 / Cross-Market Conduction Sensing\n美股、港股、汇率、商品一异动，立刻算出对A股的传导系数和影响… ⚠无锚点"]:::missing
-    BM_SEL_07["BM-SEL-07\n体制转换检测 / Regime Change Detection\n盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点提前预警。 ⚠无锚点"]:::missing
-    BM_SEL_08["BM-SEL-08\n板块轮动序列追踪 / Sector Rotation Sequence Tracking\n追踪板块强弱的轮动顺序，给回踩质量打A/B/C级，决定买入优… ⚠无锚点"]:::missing
-    BM_SEL_09["BM-SEL-09\n调整周期追踪 / Adjustment Cycle Tracking\n追踪板块调整走到哪了——进度≥80%才允许分批低吸，初期〈4… ⚠无锚点"]:::missing
-    BM_SEL_10["BM-SEL-10\n行情生命周期阶段 / Market Lifecycle Phase\n判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破失败更倾向… ⚠无锚点"]:::missing
-    BM_SEL_11["BM-SEL-11\n知识图谱与因果推演 / Knowledge Graph & Causal Inference\n把事件、公司、行业的关联织成图谱，事件一来就推演传导路径，并… ⚠无锚点"]:::missing
-    BM_SEL_12["BM-SEL-12\n分布特征工程 / Distribution Feature Engineering\n给因子加料——滞后项、交互项、滚动统计量、签名方法，专门喂给… ⚠无锚点"]:::missing
-    BM_SEL_13["BM-SEL-13\n收益率条件密度预测 / Conditional Density Prediction\n不只预测明天涨多少，而是预测明天收益率的完整概率分布——偏多… ⚠无锚点"]:::missing
-    BM_SEL_14["BM-SEL-14\n共形预测 / Conformal Prediction\n给预测区间加数学保证——不管分布长什么样，区间覆盖率有数学证… ⚠无锚点"]:::missing
-    BM_SEL_15["BM-SEL-15\nSurvival止盈止损时间预测 / Survival Stop-Time Prediction\n预测止盈止损还有多久发生——不是固定N天，而是时间概率分布。 ⚠无锚点"]:::missing
-    BM_SEL_16["BM-SEL-16\n分级指标过滤 / Tiered Screening Filter\n选股漏斗第一层——3秒级把全市场7000只砍到1200只，涨… ⚠无锚点"]:::missing
-    BM_SEL_17["BM-SEL-17\n初筛漏斗 / Coarse Screening Funnel\n漏斗第二层——60秒级从1200只筛到300只，看技术形态、… ⚠无锚点"]:::missing
-    BM_SEL_18["BM-SEL-18\n精筛评分 / Fine Scoring\n漏斗第三层——60秒级从300只评到50只，多维因子打分+市… ⚠无锚点"]:::missing
-    BM_SEL_19["BM-SEL-19\n事件驱动分布筛选 / Event-Driven Distribution Screening\n漏斗第四层——从50只筛到30只，看事件影响、事件修正后的概… ⚠无锚点"]:::missing
-    BM_SEL_20["BM-SEL-20\n多策略交叉投票 / Multi-Strategy Cross Voting\n漏斗第五层——多策略对每只票投YES/NO，加上主力合力和市… ⚠无锚点"]:::missing
-    BM_SEL_21["BM-SEL-21\n组合优化 / Portfolio Optimization\n漏斗第六层——从30只里算出最终N≤10只下单清单和每只权重…"]:::design
+    BM_SEL_05["BM-SEL-05\n主力行为感知 / Main-Force Behavior Sensing\n识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是出货弃庄，… 🟡候选"]:::candidate
+    BM_SEL_06["BM-SEL-06\n跨市场传导感知 / Cross-Market Conduction Sensing\n美股、港股、汇率、商品一异动，立刻算出对A股的传导系数和影响… 🟡候选"]:::candidate
+    BM_SEL_07["BM-SEL-07\n体制转换检测 / Regime Change Detection\n盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点提前预警。 🟡候选"]:::candidate
+    BM_SEL_08["BM-SEL-08\n板块轮动序列追踪 / Sector Rotation Sequence Tracking\n追踪板块强弱的轮动顺序，给回踩质量打A/B/C级，决定买入优… 🟡候选"]:::candidate
+    BM_SEL_09["BM-SEL-09\n调整周期追踪 / Adjustment Cycle Tracking\n追踪板块调整走到哪了——进度≥80%才允许分批低吸，初期〈4… 🟡候选"]:::candidate
+    BM_SEL_10["BM-SEL-10\n行情生命周期阶段 / Market Lifecycle Phase\n判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破失败更倾向… 🟡候选"]:::candidate
+    BM_SEL_11["BM-SEL-11\n知识图谱与因果推演 / Knowledge Graph & Causal Inference\n把事件、公司、行业的关联织成图谱，事件一来就推演传导路径，并… 🟡候选"]:::candidate
+    BM_SEL_12["BM-SEL-12\n分布特征工程 / Distribution Feature Engineering\n给因子加料——滞后项、交互项、滚动统计量、签名方法，专门喂给… 🟡候选"]:::candidate
+    BM_SEL_13["BM-SEL-13\n收益率条件密度预测 / Conditional Density Prediction\n不只预测明天涨多少，而是预测明天收益率的完整概率分布——偏多… 🟡候选"]:::candidate
+    BM_SEL_14["BM-SEL-14\n共形预测 / Conformal Prediction\n给预测区间加数学保证——不管分布长什么样，区间覆盖率有数学证… 🟡候选"]:::candidate
+    BM_SEL_15["BM-SEL-15\nSurvival止盈止损时间预测 / Survival Stop-Time Prediction\n预测止盈止损还有多久发生——不是固定N天，而是时间概率分布。 🟡候选"]:::candidate
+    BM_SEL_16["BM-SEL-16\n分级指标过滤 / Tiered Screening Filter\n选股漏斗第一层——3秒级把全市场7000只砍到1200只，涨… 🟡候选"]:::candidate
+    BM_SEL_17["BM-SEL-17\n初筛漏斗 / Coarse Screening Funnel\n漏斗第二层——60秒级从1200只筛到300只，看技术形态、… 🟡候选"]:::candidate
+    BM_SEL_18["BM-SEL-18\n精筛评分 / Fine Scoring\n漏斗第三层——60秒级从300只评到50只，多维因子打分+市… 🟡候选"]:::candidate
+    BM_SEL_19["BM-SEL-19\n事件驱动分布筛选 / Event-Driven Distribution Screening\n漏斗第四层——从50只筛到30只，看事件影响、事件修正后的概… 🟡候选"]:::candidate
+    BM_SEL_20["BM-SEL-20\n多策略交叉投票 / Multi-Strategy Cross Voting\n漏斗第五层——多策略对每只票投YES/NO，加上主力合力和市… 🟡候选"]:::candidate
+    BM_SEL_21["BM-SEL-21\n组合优化 / Portfolio Optimization\n漏斗第六层——从30只里算出最终N≤10只下单清单和每只权重… 🟡候选"]:::design
     BM_SEL_01 --- |标准化行情| BM_SEL_02
     BM_SEL_02 --- |因子池| BM_SEL_03
     BM_SEL_03 --- |市场状态| BM_SEL_04
@@ -85,6 +85,8 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 |---|---|---|---|---|
 | depgraph | MOD-MKT-003 | primary | planned | planned |
 | depgraph | MOD-INF-002 | supplement | production | generated |
+| candidate | CAND-AISA-001 | supplement | candidate | — |
+| candidate | CAND-DAT-001 | supplement | deferred | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -118,6 +120,10 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L02-001 | primary | production | deprecated |
+| candidate | CAND-SIG-002 | supplement | deferred | — |
+| candidate | CAND-FAC-001 | supplement | deferred | — |
+| candidate | CAND-FAC-002 | supplement | deferred | — |
+| candidate | CAND-INT-001 | supplement | deferred | — |
 
 **有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -215,9 +221,13 @@ L2-B 层。C-011 六阶段识别（吸筹/洗盘/拉升/出货）+ C-034 主力�
 ①触发：盘前全量+盘中增量；②消费：龙虎榜/资金流/大宗交易+因子池；③参数：识别阶段数=6、弃庄概率门槛95%；④数据流：L0资金流→C-011/034/035/036→注入信号层/漏斗；⑤代码：缺失态-未实现（草图§5）；⑥降级：主力层未就绪→漏斗不加分（仅技术+基本面）。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2B ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0005 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2B ｜ **阶段**：stock_selection
 
 ### BM-SEL-06 跨市场传导感知 / Cross-Market Conduction Sensing
 
@@ -244,9 +254,13 @@ L2-C 层。C-039 跨市场传导量化模型，消费全球市场异动事件，
 ①触发：美股/港股/汇率/商品异动到达；②消费：全球市场数据+传导路径图(L2-D)；③参数：传导系数模型(proposed)；④数据流：全球异动→C-039传导系数→A股影响幅度→重算；⑤代码：缺失态-未实现（草图§6.3）；⑥降级：C-039未就绪→异动仅告警不量化传导。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0009 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-07 体制转换检测 / Regime Change Detection
 
@@ -273,9 +287,13 @@ L2-C 层。市场状态连续评分偏离 + HMM/变点检测，识别体制切�
 ①触发：状态评分偏离+HMM/变点；②消费：市场状态评分(L2C)；③参数：检测方法=HMM+变点(proposed)；④数据流：评分→体制检测→切换预警；⑤代码：缺失态-未实现（草图§6.4）；⑥降级：未就绪→仅用当前状态不预警切换。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0368 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-08 板块轮动序列追踪 / Sector Rotation Sequence Tracking
 
@@ -302,9 +320,13 @@ L2-C 层 v4.1。板块轮动序列追踪，输出回踩质量等级（A/B/C）�
 ①触发：盘后板块强度更新；②消费：板块排名/资金流(L0/L1)；③参数：回踩质量等级=A/B/C(proposed)；④数据流：板块强度→轮动序列→回踩质量→买入优先级；⑤代码：缺失态-未实现（草图§6.1.3）；⑥降级：未就绪→不按回踩质量排序。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1649 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-09 调整周期追踪 / Adjustment Cycle Tracking
 
@@ -331,9 +353,13 @@ L2-C 层 v4.1。调整周期进度追踪，进度≥80%激活分批建仓条件�
 ①触发：盘中周期更新，进度≥80%激活分批；②消费：板块新高占比(L0)；③参数：进度阈值80%、初期拦截线40%(proposed)；④数据流：新高占比→调整进度→分批条件①/初期拦截；⑤代码：缺失态-未实现（草图§6.6）；⑥降级：未就绪→分批条件①缺位（2/3→1/2）。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1651 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-10 行情生命周期阶段 / Market Lifecycle Phase
 
@@ -360,9 +386,13 @@ L2-C 层 v4.1。行情生命周期阶段（春夏秋冬），驱动季节性硬�
 ①触发：盘后阶段判定；②消费：板块新高占比趋势(L0)；③参数：阶段数=4(proposed)；④数据流：新高占比趋势→生命周期阶段→冬季禁抄底/秋季强制离场；⑤代码：缺失态-未实现（草图§6.7）；⑥降级：未就绪→不加季节性约束。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1642 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-11 知识图谱与因果推演 / Knowledge Graph & Causal Inference
 
@@ -389,9 +419,13 @@ L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML
 ①触发：事件到达→匹配受影响节点+传导路径；②消费：事件流+因子池；③参数：图谱类型数=6、因果方法=DML/CausalForest/DoWhy(proposed)；④数据流：事件→图谱匹配→传导链+Causal ML筛选→漏斗第四层；⑤代码：缺失态-未实现（草图§7）；⑥降级：未就绪→漏斗第四层跳过。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0462 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
 
 ### BM-SEL-12 分布特征工程 / Distribution Feature Engineering
 
@@ -418,9 +452,13 @@ L1 层。分布特征工程（§3.5），产出滞后项/交互项/滚动统计�
 ①触发：盘前因子计算同步产出；②消费：基础因子(L1)；③参数：特征族=滞后/交互/滚动统计/签名(proposed)；④数据流：基础因子→分布特征→密度预测输入；⑤代码：缺失态-未实现（草图§3.5）；⑥降级：未就绪→密度预测退化为点估计。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1371 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-13 收益率条件密度预测 / Conditional Density Prediction
 
@@ -447,9 +485,13 @@ L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数
 ①触发：信号层产出条件PDF；②消费：分布特征+因子池(L1)；③参数：Phase=参数化→混合→非参数化，派生偏度/峰度/前瞻VaR/CVaR/P1~P8(proposed)；④数据流：分布特征→PDF→派生量→8态/组合优化/风控；⑤代码：缺失态-未实现（草图§4.5）；⑥降级：未就绪→8态用离散估计无分布增强。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-4924 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
 ### BM-SEL-14 共形预测 / Conformal Prediction
 
@@ -476,9 +518,13 @@ L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率
 ①触发：密度预测输出后叠加共形区间；②消费：密度预测PDF(L2A)；③参数：覆盖率=95%(proposed)；④数据流：PDF→共形→覆盖率保证区间→风控共形VaR/信号置信区间；⑤代码：缺失态-未实现（草图§1.7）；⑥降级：未就绪→区间无数学覆盖率保证。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1428 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
 ### BM-SEL-15 Survival止盈止损时间预测 / Survival Stop-Time Prediction
 
@@ -505,9 +551,13 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 ①触发：市场状态层产出时间分布；②消费：市场状态(L2C)；③参数：预测目标=止盈/止损发生时间(proposed)；④数据流：市场状态→Survival时间分布→止盈止损时点+状态持续；⑤代码：缺失态-未实现（草图§1.7）；⑥降级：未就绪→止盈止损用固定规则。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1429 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-16 分级指标过滤 / Tiered Screening Filter
 
@@ -534,9 +584,13 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 ①触发：3秒级Tick，7000→1200只；②消费：涨跌停/停牌/ST标记+AUM分级+上市天数+弃庄概率(L2B)；③参数：成交额门槛(AUM≤100万)≥500万、次新<30天排除、弃庄>95%排除(proposed)；④数据流：全市场→物理/门禁/分级/概率排除→1200只→初筛；⑤代码：缺失态-未实现（草图§13 L1）；⑥降级：未就绪→仅排除涨跌停/停牌。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-4377 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
 ### BM-SEL-17 初筛漏斗 / Coarse Screening Funnel
 
@@ -563,9 +617,13 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 ①触发：60秒级，1200→300只；②消费：技术形态(L1)+量价(L0)+板块强度(L0)+C-011主力(L2B)+C-021状态(L2C)；③参数：量比>1.5、板块排名前30%(proposed)；④数据流：分级过滤→技术+量价+板块+主力+状态→300只→精筛；⑤代码：缺失态-未实现（草图§13 L2）；⑥降级：未就绪→全量进精筛（算力风险）。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1648 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
 ### BM-SEL-18 精筛评分 / Fine Scoring
 
@@ -592,9 +650,13 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 ①触发：60秒级，300→50只；②消费：多维因子(L1)+C-021偏移(L2C)+C-034/035主力(L2B)+C-014 8态(L2C)+C-045拥挤(L4)+密度偏度/峰度/VaR(L2A)；③参数：基础权重价值40%/动量30%/质量20%/情绪10%、状态偏移±10%、前瞻VaR扣分15%(proposed)；④数据流：初筛→综合评分(基础+偏移+主力+8态+拥挤+密度)→Z-score→50只；⑤代码：缺失态-未实现（草图§13 L3）；⑥降级：未就绪→等权综合评分。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0375 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
 ### BM-SEL-19 事件驱动分布筛选 / Event-Driven Distribution Screening
 
@@ -621,9 +683,13 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 ①触发：60秒级，50→30只，需事件数据源+知识图谱+NLP；②消费：L2-D事件影响链+事件驱动密度修正(L2A)+传导链(L2D)；③参数：上涨概率下降>15%淘汰、开通条件=事件数据源+知识图谱+NLP(proposed)；④数据流：精筛→事件影响+条件PDF修正+传导链→30只；⑤代码：缺失态-未实现（草图§13 L4 v3.4）；⑥降级：未开通→跳过本层，第三层直接进第五层。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-4937 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
 
 ### BM-SEL-20 多策略交叉投票 / Multi-Strategy Cross Voting
 
@@ -650,9 +716,13 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 ①触发：60秒级，30→30只；②消费：策略A/B/C(L3)+C-034/036主力合力(L2B)+C-021状态否决(L2C)；③参数：策略权重A30%/B25%/C20%(proposed)；④数据流：事件筛选→多策略YES/NO+主力+合力+状态否决→30只；⑤代码：缺失态-未实现（草图§13 L5）；⑥降级：未就绪→单策略决定。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-3225 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection
 
 ### BM-SEL-21 组合优化 / Portfolio Optimization
 
@@ -684,6 +754,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | planned |
+| candidate | CAND-PFALLOC-001 | supplement | deferred | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection
 

@@ -15,7 +15,7 @@ date: 2026-08-02
 ```mermaid
 %% 执行阶段图
 flowchart LR
-    BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单…"]:::production
+    BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单… 🟡候选"]:::production
     BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。 🟡候选"]:::design
     BM_EXE_03["BM-EXE-03\n执行质量TCA / Execution Quality TCA\n每笔成交后做'成本尸检'——把决策时刻到最终成交的总成本拆成…"]:::production
     BM_EXE_01 --- |审批后订单| BM_EXE_02
@@ -60,6 +60,7 @@ L4 层。C-004 自适应风控，作为订单拦截器：C-005 生成预案→MT
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L06-001 | primary | production | generated |
+| candidate | CAND-RSK-014 | supplement | deferred | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
@@ -95,6 +96,8 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 | depgraph | MOD-XS-002 | primary | planned | planned |
 | depgraph | MOD-EX-030 | supplement | planned | planned |
 | candidate | CAND-HARVEST-0021 | supplement | candidate | — |
+| candidate | CAND-EX-001 | supplement | deferred | — |
+| candidate | CAND-EX-002 | supplement | deferred | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 

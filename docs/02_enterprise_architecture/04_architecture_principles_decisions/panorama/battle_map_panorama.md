@@ -2,13 +2,13 @@
 ttl: permanent
 doc_type: architecture_view
 status: draft
-version: "0.2.0"
-date: 2026-08-01
+version: "0.3.0"
+date: 2026-08-02
 ---
 
 # 交易决策作战地图能力定位书（第四全景图 / battle_map）
 
-> 版本：V0.2.0（草案，待 Owner 评审）| 2026-08-01
+> 版本：V0.3.0（草案，待 Owner 评审）| 2026-08-02
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
 > 写法：大白话为主，配表格和 ASCII 图。变更历史见文末。
 > **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目第四全景图——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
@@ -55,7 +55,134 @@ date: 2026-08-01
 
 ---
 
-## 三、它不是什么？（边界要画清楚）
+
+## 三、系统架构上下文（草图 §1.1 / §1.8 摘要）
+
+> 本节摘录草图 [交易决策架构.md](file:///d:/临时工作区/架构图/交易决策架构.md) §1.1（交易决策架构唯一真源）和 §1.8（数据流主动脉与正向闭环）的关键内容，作为作战地图定位的系统背景。作战地图的每个环节都落在下列架构层和数据流上——看环节时能对到"它在第几层、在数据流哪一跳"。
+>
+> **v9.0 统一架构**：系统架构图 + 决策流全景图合并为唯一真源。上半部分为系统架构（L0-L6 + 横切层），下半部分为决策流全景图（选股→买入→卖出→仓位→支撑）。作战地图（第四全景图）是决策流全景图的索引层真源——它把决策流的每个环节挂载到具体模块/候选/蓝图章节。
+
+### 3.1 L0-L6 分层架构（草图 §1.1）
+
+交易决策系统采用 **7 层并行 + 闭环** 架构（v9.0 唯一真源），数据从接入到决策闭环的完整路径如下：
+
+| 层 | 名称 | 核心职责 | 关键能力/模块 |
+|---|---|---|---|
+| **L0** | 数据接入与预处理 | 多源数据接入 + 分层时序存储 | miniQMT + iFind + 另类数据源 → 事件总线 → Redis 热/ClickHouse 温/Parquet 冷；FWT 检索增强扩散 + GBM-Diffusion 数据增强 |
+| **L1** | 因子计算 | 因子工厂全生命周期 + 分布特征工程 | 盘前全量/盘中增量双模；因子池（设计≥150，运行≤N_max≈64）；UFL 确定性事实层；KAN 可解释函数逼近；因果因子验证（DoWhy/DML）；FactorMAD 投票因子挖掘 |
+| **L2-A** | 信号层 | 信号工厂 + 多策略投票 + 分布感知 | 收益率条件密度预测；Transformer/Mamba/xLSTM/Kronos 时序增强；共形预测；不确定性分解 |
+| **L2-B** | 主力行为层 | 主力六阶段识别 + 庄家专项 + 群体博弈 | 自迭代推演；庄家行为识别；群体博弈模拟 |
+| **L2-C** | 市场状态与大盘预测 | 3×3×3 立方体 + 2 叠加态 + T+1 次日 8 态预测 | 体制转换检测（HMM/变点）；量能第 3 维度；日历修饰器；跨市场传导；Survival 止盈止损时间预测 |
+| **L2-D** | 知识图谱与因果推演 | 六类知识图谱 + 事件影响链 + 因果传导 | GNN 股票关系建模；Causal ML（DML+Causal Forest+DoWhy）；供应链传导 GNN；🔒Causal RL（门禁项） |
+| **L3** | 策略决策与组合优化 | 策略工厂 + 多情景对策 + 做T + 外部指令 + 组合优化 | 自动发现（GP/SR/LLM 进化搜索/FactorMAD/R&D-Agent）；多策略共振融合；因子直通层；筛选漏斗 6 层；Copula-GARCH；RL 增强 |
+| **L3.5** | 仓位管理 | 仓位唯一裁决中心 | 持仓状态机 + 仓位漂移监控 + 再平衡；资金曲线驱动缩放；分布感知仓位调整（半 Kelly） |
+| **L4** | 风控与执行 | 三层风控 + 交易执行 | 预判层（前瞻性 VaR/CVaR + 共形 VaR）+ 监控层（流动性/相关性/C-045 拥挤度）+ 熔断层（B-001~B-006）；执行策略选择器（TWAP/VWAP/IS/POV）；微观结构建模；RL 最优执行 |
+| **L5** | 闭环优化与自迭代 | 消费复盘数据 → 反馈全链路 | 15 优化维度 + 5 自迭代增强 + 元级迭代；密度预测偏差反馈；漂移检测三闭环；持续学习抗遗忘（EWC）；Alpha 衰减监控；R&D-Agent-Quant 联合优化 |
+| **L6** | 决策可解释性与人机协作 | 决策溯源 + 置信度分层 + 信任度模型 | 密度感知溯源；VeNRA Double-Lock 零幻觉锚定；LLM 自评估；🔒多模态金融推理（门禁）；Sentinel 幻觉检测；Spectral Guardrails |
+
+**四轨融合器（MTF）+ 决策编排器（DO）**（v8.0 新增，位于 L3 和 L3.5 之间）：
+- **四轨融合器**：逻辑驱动轨 + 数据驱动轨 + 人工指令轨 + 应急保命轨 → 按优先级融合（应急 > 人工 > 自动）
+- **决策编排器**：5 条决策路径（买入/卖出/做T/人工/应急）的统一出口，执行优先级仲裁 + 冲突消解 + 去重 + 时序编排
+
+### 3.2 横切层（草图 §1.1 横切层）
+
+贯穿 L0-L6 的全局机制，非数据流节点，而是横切服务：
+
+| 横切层 | 职责 |
+|---|---|
+| 自动回测与仿真（C-003） | 策略/因子/信号验证的算力管道；样本外门禁 + 过拟合检验 |
+| 运行时架构（S-001） | 多进程隔离 + 共享内存 + GPU 分时调度；Supervisor 监控 |
+| AI 自治运维（C-008） | 自监控→自诊断→自修复；交易时段 99% AI 维护 |
+| ML 模型工厂（C-029） | GPU 调度 + 模型全生命周期；密度预测/主力识别/大盘预测等模型产出 |
+| 过拟合系统性防护（C-033） | 覆盖因子/策略/信号/ML 模型全生命周期 |
+| 通知告警（C-015）+ 审计合规（C-043）+ 成本治理（C-044） | 运营支撑三件套 |
+| 分布式可观测性 | 三支柱：追踪（OpenTelemetry）+ 指标（Prometheus）+ 日志（ClickHouse） |
+| 事件溯源 | 状态变更事件持久化→可回放→可重建任意时刻状态 |
+| 配置中心 | 策略参数/风控阈值集中管理 + 版本控制 + 热更新 |
+| 数据质量 SLA | 端到端数据质量保障，每跳质量检查 |
+| 合规自动检查引擎 🔒 | EU AI Act 合规清单自动判定 + AI 决策合规审查 |
+| 全局状态聚合器 | 跨域统一状态视图（持仓/市场/风控/策略/资金/系统） |
+| MCP 协议 | LLM Agent 工具调用标准化 |
+| 模型量化与推理加速 | QNN/GNN→ONNX INT8；LLM→INT4 |
+
+### 3.3 数据流主动脉（草图 §1.8）
+
+**数据流主动脉 P0 串**（每 3 秒 miniQMT Tick 触发一轮）：
+
+```
+外部数据源 → C-001 → C-009 → C-005 → MTF → DO → C-047 → C-004 → C-002 → 成交回报
+            数据    因子+   多情景  四轨   决策   仓位    自适应  交易
+            接入    信号    对策    融合   编排   管理    风控    执行
+```
+
+- **8 节点 7 跳**构成主动脉，一旦断开当天无法产生任何交易决策
+- C-021（市场状态，P1）激活时嵌入 C-009 和 C-005 之间
+- C-014（T+1 次日预测，P1）激活时嵌入 C-021 和 C-005 之间
+- 两者均激活时为 10 跳；均未就绪时降级为 8 节点 7 跳
+
+**侧支信号注入**（并行注入决策流）：
+- L2-B 主力行为 → 信号注入
+- L2-C 大盘预测 → T+1 次日预测约束
+- L2-C 体制转换 → 前瞻性预警
+- L2-C Survival → 止盈/止损时间预测
+- L2-D 知识图谱 → 事件传导
+- L2-D Causal ML → 因子因果筛选
+- 密度预测 → 条件 PDF + 分布参数
+- 共形预测 → 覆盖率保证区间
+- 盘中即时反应引擎 → 异常检测→快速执行
+
+### 3.4 闭环反馈路径（草图 §1.8 反向）
+
+```
+C-002 交易执行 → C-017 交易运营（清算/费率/公司行为）→ C-010 报告复盘 → C-007 闭环优化
+                                                                        │
+                                                                        ▼
+                                          反馈到 L1~L4 + L3.5 每层（15 优化维度）
+```
+
+| 反馈目标 | 优化内容 |
+|---|---|
+| L1 因子层 | IC 衰减→替代/退役 |
+| L2-A 信号层 | 准确率监控→退役/替换 |
+| L2-A 共形 | 覆盖率偏差→区间调整 |
+| L2-B 主力层 | 推演偏差→画像修正 |
+| L2-C 市场状态 | 判定准确率→模型重训练 |
+| L2-C Survival | 时间预测偏差→模型重训练 |
+| L2-D Causal ML | 因果效应稳定性→因子重筛选 |
+| L3 策略层 | A/B 淘汰；参数微调 |
+| L4 风控层 | 阈值校准；共形 VaR 覆盖率检验 |
+| L4 执行层 | 下单算法优化 |
+
+**回测门禁铁律**：C-007 每轮迭代改动必须经过 C-003 回测门禁（§20.7）。
+
+### 3.5 工厂三兄弟（草图 §1.8）
+
+```
+C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
+   原材料           零件            产品
+```
+
+- **C-027 因子工厂**：产出因子（验证标准看 IC）
+- **C-028 信号工厂**：消费因子产出信号（验证标准看方向准确率）
+- **C-006 策略工厂**：消费信号产出策略（验证标准看 PnL）
+- 每层独立退役互不影响；C-029 ML 模型工厂是"AI 岗位工厂"，不在三兄弟之列
+
+### 3.6 作战地图与架构层的对应关系
+
+作战地图的 6 个阶段对应架构层如下（环节→架构层映射）：
+
+| 作战阶段 | 主要落点架构层 | 数据流主动脉位置 |
+|---|---|---|
+| 选股（stock_selection） | L1 因子 + L2 信号 + L3 策略工厂 + 筛选漏斗 | C-009 → C-005 前段 |
+| 买入（buy_flow） | L3 策略决策 + MTF 四轨融合 + DO 决策编排 | C-005 → MTF → DO |
+| 卖出（sell_flow） | L3 卖出决策引擎 + DO 决策编排 | C-005（卖出路径）→ DO |
+| 仓位（position_management） | L3.5 仓位管理 | DO → C-047 |
+| 执行（execution） | L4 风控 + 交易执行 | C-047 → C-004 → C-002 |
+| 对账（reconciliation） | L5 闭环优化 + C-017 交易运营 | C-002 → C-017 → C-010 → C-007 |
+
+---
+
+## 四、它不是什么？（边界要画清楚）
 
 | 不是这个 | 为什么不是 |
 |---|---|
@@ -67,7 +194,7 @@ date: 2026-08-01
 
 ---
 
-## 四、和旧定位书的关系（取代声明）
+## 五、和旧定位书的关系（取代声明）
 
 [trading_flow_panorama.md](trading_flow_panorama.md) V1.0.0 的核心裁定"**07_ 不是新图、全景图只有三个、07_ 不进四图对齐**"在 V0.1 升级中**作废**。新裁定：
 
@@ -76,8 +203,8 @@ date: 2026-08-01
 - 07_ 通过 battle_map 间接进对齐体系（battle_map 进，07_ 作为派生视图跟随）
 
 **旧文档有价值内容提取**（已融合到本文档）：
-- 三态展示机制（production/design/候选）→ 本文 §九
-- SSoT 铁律（改真源不改派生物）→ 本文 §六
+- 三态展示机制（production/design/候选）→ 本文 §十
+- SSoT 铁律（改真源不改派生物）→ 本文 §七
 - 06_/07_ 区别（零件 vs 装配）→ 本文 §一、§二
 - 四模式开关 + 应急保命降级 → 仍由翻译真源横切层承载，battle_map 环节引用
 
@@ -87,11 +214,11 @@ date: 2026-08-01
 
 ---
 
-## 五、数据模型（三张表）
+## 六、数据模型（三张表）
 
 对标 `apply_depgraph.py` / `apply_decisiongraph.py` 模式，新建 `apply_battle_map.py` 写入 PostgreSQL。三张表：
 
-### 5.1 battle_map_steps（作战环节表）—— 真源核心
+### 6.1 battle_map_steps（作战环节表）—— 真源核心
 
 每个环节一行。环节是"钱怎么赚"流程上的一个业务步骤（如"流动性过滤""四轨融合""风控审批"）。
 
@@ -103,14 +230,14 @@ date: 2026-08-01
 | `layer` | TEXT | 映射层（L0/L1/L2A/.../横切），与 decisiongraph layer 对齐 |
 | `sort_order` | INT | 环节在流程中的顺序（同 flow_stage 内排序） |
 | `narrative_ref` | TEXT | 指向翻译真源 `battle_map_steps` 段的 step_id（叙事真源在外部 YAML） |
-| `indicators` | JSONB | 结构化指标（trigger/threshold/source_modules/source_ref），见 §十二 |
+| `indicators` | JSONB | 结构化指标（trigger/threshold/source_modules/source_ref），见 §十三 |
 | `source_ref` | TEXT | 出处（草图 §1.4 / 现有模块代码），可追溯 |
 | `design_maturity` | TEXT | production / design（环节本身是否已在实盘主链路） |
 | `created_at` / `updated_at` | TIMESTAMP | 审计 |
 
-### 5.2 battle_map_anchors（双向对齐关系表）—— 双向查找的核心
+### 6.2 battle_map_anchors（双向对齐关系表）—— 双向查找的核心
 
-每个"环节 ↔ 模块/候选/蓝图/数据流/决策节点"的关联一行。**这是双向查找的真源**（见 §七）。
+每个"环节 ↔ 模块/候选/蓝图/数据流/决策节点"的关联一行。**这是双向查找的真源**（见 §八）。
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
@@ -122,7 +249,7 @@ date: 2026-08-01
 | `status_snapshot` | TEXT | 快照 depgraph.build_status（production/planned/deprecated），给生成器上色用 |
 | `created_at` | TIMESTAMP | 审计 |
 
-### 5.3 battle_map_edges（环节流转表）
+### 6.3 battle_map_edges（环节流转表）
 
 环节之间的流转关系（数据流/触发/降级）。
 
@@ -135,7 +262,7 @@ date: 2026-08-01
 | `label` | TEXT | 边标签（如"候选池""portfolio_target"） |
 | `created_at` | TIMESTAMP | 审计 |
 
-### 5.4 环节粒度标准（6 件套）—— 作战地图的灵魂
+### 6.4 环节粒度标准（6 件套）—— 作战地图的灵魂
 
 每个 `battle_map_steps` 环节**必须带 6 件套**，写到"能和代码交互"的细度（比草图 §1.2-§1.6 注解更细）。这是防幻觉的核心——不写清楚，AI 没法和代码交互，人也看不出参数对不对。
 
@@ -160,7 +287,7 @@ date: 2026-08-01
 
 ---
 
-## 六、真源分工（SSoT）
+## 七、真源分工（SSoT）
 
 按项目 SSoT 分类铁律（TRAE-062），battle_map 的数据分两类真源：
 
@@ -202,11 +329,11 @@ date: 2026-08-01
 
 ---
 
-## 七、双向查找机制（核心，本文档的灵魂）
+## 八、双向查找机制（核心，本文档的灵魂）
 
 这是作战地图区别于其他三图的核心能力。所有模块最终都是为了实现作战地图上的某个功能——所以必须能双向查找。
 
-### 7.1 两个方向
+### 8.1 两个方向
 
 **方向 A：环节 → 组成模块**（写决策时用）
 > "这个买入环节由哪些模块组成？这些模块在全景图还是候选池？是 production 还是 planned？"
@@ -237,7 +364,7 @@ step_id → battle_map_steps.flow_stage + step_name
 "这个模块是【买入阶段·四轨融合环节】的主承载模块"
 ```
 
-### 7.2 为什么用 anchors 表做单一真源，而不在全景图模块上加独立字段
+### 8.2 为什么用 anchors 表做单一真源，而不在全景图模块上加独立字段
 
 Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_position 字段"。这个直觉是对的（看模块时一眼看到作战位置），但直接加独立写入字段有**漂移风险**：anchors 表和模块字段两处要同步，一旦不一致就不知道哪个对（违反项目防漂移铁律）。
 
@@ -250,13 +377,13 @@ Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_positi
 
 这样既满足"看模块时一眼看到作战位置"，又保证单一真源不漂移。
 
-### 7.3 查询工具
+### 8.3 查询工具
 
 新建 `battle_map_reader.py`（对标 `DecisionGraphReader`），提供两个方向查询接口：
 - `get_modules_by_step(step_id) -> list[anchor]`（方向 A）
 - `get_steps_by_module(target_graph, target_id) -> list[step]`（方向 B）
 
-### 7.4 不变量
+### 8.4 不变量
 
 - **BM-INV-001**：每个 `battle_map_steps` 必须至少有一个 `battle_map_anchors`（环节无锚点 = 悬空决策 = 幻觉风险，君子协定告警，跑顺后升级硬阻断）
 - **BM-INV-002**：`battle_map_anchors.target_id` 必须能在 `target_graph` 对应的图/仓库里找到（防幽灵锚点）
@@ -265,13 +392,13 @@ Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_positi
 
 ---
 
-## 八、与全景图对齐体系的关系
+## 九、与全景图对齐体系的关系
 
-### 8.1 第四全景图
+### 9.1 第四全景图
 
 battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全景图。**图名 `battlemap`**（对标 depgraph/dataflowgraph/decisiongraph 的 Xgraph 复合形式），**表前缀 `battle_map_*`**（对标 `decision_*` 的"全词_功能"形式）。在 `panorama_registry` 登记为 `PAN-BATTLE-MAP-01`。
 
-### 8.2 两套对齐，正交不冲突
+### 9.2 两套对齐，正交不冲突
 
 | 对齐 | 轴 | 回答 | 用途 | 工具 |
 |---|---|---|---|---|
@@ -280,20 +407,20 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 两套对齐正交：module_id 轴管"模块一致性"，step_id 轴管"环节落地性"。互不干扰。
 
-### 8.3 align_battle_map.py（新建）
+### 9.3 align_battle_map.py（新建）
 
 检查项（先君子协定，跑顺后升级硬阻断）：
 - 环节无锚点（孤儿环节）→ 悬空决策告警
 - 锚点 target_id 在目标图找不到（幽灵锚点）→ 告警
 - 环节 flow_stage 与 anchors 目标模块的 domain 不匹配（域漂移）→ 告警
 
-### 8.4 候选池挂载
+### 9.4 候选池挂载
 
 候选池模块（`candidate_module_registry.yaml`）通过 `battle_map_anchors`（target_graph=candidate）挂到具体环节。不再只躺在附录2表格里，而是有明确的作战位置。候选 entry 可选加 `panorama_position.battle_map.step_id` 字段（派生展示，由 anchors sync）。
 
 ---
 
-## 九、三态展示机制（沿用旧定位书，扩展为四态）
+## 十、三态展示机制（沿用旧定位书，扩展为四态）
 
 07_ MD 按模块状态颜色标注（生成器 join depgraph.build_status 产出）：
 
@@ -309,13 +436,13 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ---
 
-## 十、可视化规范
+## 十一、可视化规范
 
 遵循 [visualization_view_template.md](visualization_view_template.md)（三视图 + 可缩放 HTML + 节点四要素 + 预折行铁律）。battle_map 生成器（`generate_trading_flow_diagram.py` 改造版）必须复用：
 - 灰色主题头 + `flowchart TD`
 - 节点四要素（成熟度 + 双语名称 + 大白话 + 路径/标识），叙事来自翻译真源 `battle_map_steps` 段
 - `_wrap_label_text()` 预折行（禁止 CSS max-width 二次折行）
-- 四类 classDef + 颜色（§九 的五态映射到 classDef）
+- 四类 classDef + 颜色（§十 的五态映射到 classDef）
 - HTML 联动生成到 `_zoomable_html/`
 
 **作战地图特有的可视化**：
@@ -325,7 +452,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ---
 
-## 十一、生成器改造
+## 十二、生成器改造
 
 `generate_trading_flow_diagram.py` 改造：
 
@@ -336,7 +463,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 | 候选挂载 | 只进附录2 | join 候选池，通过 anchors 挂到环节 |
 | 节点细节 | decisiongraph 节点 | join decisiongraph（环节聚合的决策节点） |
 | 叙事 | narrative.yaml | 翻译真源 `battle_map_steps` 段 |
-| 颜色标注 | 仅 production/design | 五态（§九） |
+| 颜色标注 | 仅 production/design | 五态（§十） |
 
 **narrative.yaml 退场计划**（Owner 已定：并行观察一段再删）：
 - `trading_flow_narrative.yaml` 现在是 07_ MD 的"故事底稿"（每阶段大白话/ASCII框图/指挥AI提示/横切层四轨共享信号应急降级四模式）。battle_map 上线后这些叙事移交给翻译真源 `battle_map_steps` 段
@@ -345,7 +472,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ---
 
-## 十二、迁移策略（草图 v9.0 → 真源）
+## 十三、迁移策略（草图 v9.0 → 真源）
 
 草图 [交易决策架构.md](file:///d:/临时工作区/架构图/交易决策架构.md)（v9.0，1.4MB，30章）是作战地图的内容来源。分三批迁移：
 
@@ -362,9 +489,9 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ---
 
-## 十三、字段详细定义（附录，施工依据）
+## 十四、字段详细定义（附录，施工依据）
 
-### 13.1 翻译真源 battle_map_steps 段 schema
+### 14.1 翻译真源 battle_map_steps 段 schema
 
 在 `module_translation_registry.yaml` 顶层（与 `entries:` 平级）新增 `battle_map_steps:` 段：
 
@@ -387,9 +514,9 @@ battle_map_steps:
 
 > **说明**：这就是"顶层段"——YAML 文件顶层除了已有的 `entries:`（模块条目），新增一个平级的 `battle_map_steps:`（环节条目）。复用同一个翻译真源文件和加载器（`_shared/module_translation_loader.py` 扩展），但不和模块条目混。环节级叙事和大白话可被作战地图视图、未来其他视图复用。
 
-### 13.2 indicators JSONB 结构（DB battle_map_steps.indicators）—— 6 件套 + 双向参数
+### 14.2 indicators JSONB 结构（DB battle_map_steps.indicators）—— 6 件套 + 双向参数
 
-对齐 §5.4 的 6 件套标准。`indicators` 用灵活 JSONB（不同环节结构不同），定义推荐 schema 但允许扩展。结构化部分进 DB，大段解释文案（`indicators_zh`）进翻译真源。
+对齐 §6.4 的 6 件套标准。`indicators` 用灵活 JSONB（不同环节结构不同），定义推荐 schema 但允许扩展。结构化部分进 DB，大段解释文案（`indicators_zh`）进翻译真源。
 
 ```json
 {
@@ -446,7 +573,7 @@ battle_map_steps:
 - `code_mapping`：主实现模块 + 代码文件 + 函数，AI 能直接定位到代码。
 - `indicators_zh_ref`：指向翻译真源的大段解释文案（机制说明、参数讨论、业务逻辑叙述）。
 
-### 13.3 battle_map_anchors.target_graph 值域
+### 14.3 battle_map_anchors.target_graph 值域
 
 | target_graph | target_id 含义 | 来源 |
 |---|---|---|
@@ -458,20 +585,20 @@ battle_map_steps:
 
 ---
 
-## 十四、已定决策汇总 + 剩余开放问题
+## 十五、已定决策汇总 + 剩余开放问题
 
-### 14.1 已定决策（V0.2 拍板）
+### 15.1 已定决策（V0.2 拍板）
 
 | # | 问题 | 决策 |
 |---|---|---|
-| Q1 | 环节粒度 | 6 件套标准（§5.4），50-100 个环节，比草图 §1.2-1.6 更细 |
-| Q2 | 双向查找实现 | anchors 单一真源 + 全景图模块加派生只读字段（§7.2） |
+| Q1 | 环节粒度 | 6 件套标准（§6.4），50-100 个环节，比草图 §1.2-1.6 更细 |
+| Q2 | 双向查找实现 | anchors 单一真源 + 全景图模块加派生只读字段（§8.2） |
 | Q3 | 旧 trading_flow_panorama.md 处置 | 删除重建，battle_map_panorama.md 替代 |
 | Q4 | align_battle_map 门禁强度 | 先君子协定，跑顺再升级硬阻断 |
 | Q5 | 表前缀 / 图名 | 图名 `battlemap`（对标 depgraph/dataflowgraph/decisiongraph），表前缀 `battle_map_*`（对标 `decision_*`），不用 `bm_*` 缩写 |
 | Q6 | narrative.yaml 退场时机 | 并行观察一段，翻译真源完整覆盖后删除 |
 
-### 14.2 剩余开放问题（待 Owner 拍板或施工时定）
+### 15.2 剩余开放问题（待 Owner 拍板或施工时定）
 
 1. **第一批环节清单**：50-100 个环节具体是哪些？需从草图 v9.0 逐章挖掘（§1.1主流程 + §1.2-1.6注解 + §2-12层详解），按 6 件套标准登记。这是施工第一步，建议蓝图定稿后专门做一次"草图→环节清单"的挖掘评审。
 2. **panorama_registry 登记**：battle_map 登记为 `PAN-BATTLE-MAP-01`，确认登记号。
@@ -480,9 +607,10 @@ battle_map_steps:
 
 ---
 
-## 十五、变更历史
+## 十六、变更历史
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
 | V0.1.0 | 2026-08-01 | 草案：第四全景图 battle_map 设计。三表数据模型 + 翻译真源 battle_map_steps 段 + 双向查找机制 + 取代 trading_flow_panorama.md V1.0.0。 |
-| V0.2.0 | 2026-08-01 | Owner 评审反馈落地：① 环节粒度升级为 6 件套标准（§5.4），50-100 个环节，indicators JSONB 扩展为 6 件套 + 双向参数（implemented/proposed/testing）；② 图名定为 battlemap，表前缀 battle_map_*（对标 decision_*）；③ 旧文档处置定为删除重建；④ narrative.yaml 退场定为并行观察；⑤ 双向查找确认 anchors 单真源 + 派生只读字段方案；⑥ 门禁君子协定。 |
+| V0.3.0 | 2026-08-02 | 缺口2补完：①新增§三系统架构上下文（草图§1.1/§1.8摘要，L0-L6分层+数据流主动脉+闭环反馈+工厂三兄弟+作战地图对应关系）；②横切视图扩展§15计算节奏与时序+§1.7分布感知增强体系（翻译真源+生成器渲染函数）；③16个选股孤儿环节挂载candidate锚点；④13个非HARVEST候选池模块挂载到对应环节；⑤BM-SEL-01参数code_location反向回填。对齐报告0问题。 |
+| V0.2.0 | 2026-08-01 | Owner 评审反馈落地：① 环节粒度升级为 6 件套标准（§6.4），50-100 个环节，indicators JSONB 扩展为 6 件套 + 双向参数（implemented/proposed/testing）；② 图名定为 battlemap，表前缀 battle_map_*（对标 decision_*）；③ 旧文档处置定为删除重建；④ narrative.yaml 退场定为并行观察；⑤ 双向查找确认 anchors 单真源 + 派生只读字段方案；⑥ 门禁君子协定。 |
