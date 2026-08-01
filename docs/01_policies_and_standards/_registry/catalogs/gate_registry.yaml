@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-31T19:12:45Z'
+generated_at: '2026-08-01T14:14:53Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -341,7 +341,8 @@ gates:
     scripts/governance/d5_architecture/checkers/check_contract_physical_path.py,--ci
     scripts/governance/d11_compliance/verify_schema_health.py,--ci
   description: 契约+Schema 合并门禁——GATE-C2(契约-代码双写漂移) + CONTRACT-PHYSICAL-PATH(连字符目录)
-    + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，commit 阶段自动触发（ARCH-017 升级）
+    + SCHEMA-HEALTH(depgraph schema)，run_gate_chain 顺序执行，pre-commit 阶段自动触发（ARCH-017
+    升级）
   files_trigger: ^(architecture_model/contracts/|src/zephyr/shared/contracts/|src/zephyr/governance/depgraph_schema\.py|scripts/governance/(d8_doc_sync/sync_yaml_to_depgraph|d11_compliance/verify_schema_health)\.py)$
   always_run: false
   category: contract_drift

@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-01'
-total_scripts: 621
+total_scripts: 623
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -673,6 +673,14 @@ scripts:
 - name: governance/add_deferred_design_edges.py
   path: governance/add_deferred_design_edges.py
   description: 为暂缓模块添加设计态依赖边（dep_maturity='design'）。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/align_battle_map.py
+  path: governance/align_battle_map.py
+  description: 依据：battle_map_panorama.md V0.2.0 §八（与全景图对齐体系的关系）+ §七（双向查找机制）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1977,6 +1985,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_asset_catalog.py
   path: governance/d5_architecture/generators/generate_asset_catalog.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.1'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_battle_map_diagram.py
+  path: governance/d5_architecture/generators/generate_battle_map_diagram.py
+  description: generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
   domain: governance
   execution_plane: warm-path
   status: registered
