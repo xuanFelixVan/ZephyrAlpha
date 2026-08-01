@@ -53,20 +53,20 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_ashare_init_py["(生产态 / production) signal_ashare/__init__.py<br/>文件: signal_ashare/__init__.py"]
-    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) _extensions/__init__.py<br/>文件: _extensions/__init__.py"]
-    src_zephyr_signal_ashare_api_init_py["(生产态 / production) api/__init__.py<br/>文件: api/__init__.py"]
-    src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py["(设计态 / design) signal_ashare/capital_flow_pattern_analyzer.py<br/>文件: signal_ashare/capital_flow_pattern_analyzer.py"]
-    src_zephyr_signal_ashare_core_init_py["(生产态 / production) core/__init__.py<br/>文件: core/__init__.py"]
-    src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py["(设计态 / design) signal_ashare/dual_engine_fusion_decision_engine.py<br/>文件: signal_ashare/dual_engine_fusion_decision_engine.py"]
-    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) infrastructure/__init__.py<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_signal_ashare_institutional_behavior_analyzer_py["(设计态 / design) signal_ashare/institutional_behavior_analyzer.py<br/>文件: signal_ashare/institutional_behavior_analyzer.py"]
-    src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py["(设计态 / design) signal_ashare/intraday_buy_sell_point_analyzer.py<br/>文件: signal_ashare/intraday_buy_sell_point_analyzer.py"]
-    src_zephyr_signal_ashare_market_sentiment_analyzer_py["(设计态 / design) signal_ashare/market_sentiment_analyzer.py<br/>文件: signal_ashare/market_sentiment_analyzer.py"]
-    src_zephyr_signal_ashare_models_init_py["(生产态 / production) models/__init__.py<br/>文件: models/__init__.py"]
-    src_zephyr_signal_ashare_sector_analyzer_py["(设计态 / design) signal_ashare/sector_analyzer.py<br/>文件: signal_ashare/sector_analyzer.py"]
-    src_zephyr_signal_ashare_services_init_py["(生产态 / production) services/__init__.py<br/>文件: services/__init__.py"]
-    src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) signal_ashare/short_term_stock_selector.py<br/>文件: signal_ashare/short_term_stock_selector.py"]
+    src_zephyr_signal_ashare_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: signal_ashare/__init__.py"]
+    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_signal_ashare_api_init_py["(生产态 / production) 包入口 / __init__<br/>接口的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: api/__init__.py"]
+    src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py["(设计态 / design) 资本流模式分析器 / capital_flow_pattern_analyzer<br/>资本流模式分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/capital_flow_pattern_analyzer.py"]
+    src_zephyr_signal_ashare_core_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: core/__init__.py"]
+    src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py["(设计态 / design) 双引擎融合决策引擎 / dual_engine_fusion_decision_engine<br/>双引擎融合决策引擎，信号的引擎，执行核心逻辑的处理引擎。<br/>文件: signal_ashare/dual_engine_fusion_decision_engine.py"]
+    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) 包入口 / __init__<br/>基础设施的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_signal_ashare_institutional_behavior_analyzer_py["(设计态 / design) 机构行为分析器 / institutional_behavior_analyzer<br/>机构行为分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/institutional_behavior_analyzer.py"]
+    src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py["(设计态 / design) 日内买卖点分析器 / intraday_buy_sell_point_analyzer<br/>日内买卖点分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/intraday_buy_sell_point_analyzer.py"]
+    src_zephyr_signal_ashare_market_sentiment_analyzer_py["(设计态 / design) 市场情绪分析器 / market_sentiment_analyzer<br/>市场情绪分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/market_sentiment_analyzer.py"]
+    src_zephyr_signal_ashare_models_init_py["(生产态 / production) 包入口 / __init__<br/>模型的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: models/__init__.py"]
+    src_zephyr_signal_ashare_sector_analyzer_py["(设计态 / design) 板块分析器 / sector_analyzer<br/>板块分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/sector_analyzer.py"]
+    src_zephyr_signal_ashare_services_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: services/__init__.py"]
+    src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) 短期股票选择器 / short_term_stock_selector<br/>短期股票选择器，信号的功能模块。<br/>文件: signal_ashare/short_term_stock_selector.py"]
     src_zephyr_signal_ashare_init_py ~~~ src_zephyr_signal_ashare_extensions_init_py
     src_zephyr_signal_ashare_extensions_init_py ~~~ src_zephyr_signal_ashare_api_init_py
     src_zephyr_signal_ashare_api_init_py ~~~ src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py
@@ -80,8 +80,8 @@ flowchart TD
     src_zephyr_signal_ashare_models_init_py ~~~ src_zephyr_signal_ashare_sector_analyzer_py
     src_zephyr_signal_ashare_sector_analyzer_py ~~~ src_zephyr_signal_ashare_services_init_py
     src_zephyr_signal_ashare_services_init_py ~~~ src_zephyr_signal_ashare_short_term_stock_selector_py
-    src_zephyr_signal_ashare_quant_short_term_strength_engine_py["(设计态 / design) signal_ashare/quant_short_term_strength_engine.py<br/>文件: signal_ashare/quant_short_term_strength_engine.py"]
-    src_zephyr_signal_ashare_youzi_relay_emotion_engine_py["(设计态 / design) signal_ashare/youzi_relay_emotion_engine.py<br/>文件: signal_ashare/youzi_relay_emotion_engine.py"]
+    src_zephyr_signal_ashare_quant_short_term_strength_engine_py["(设计态 / design) 量化短期强度引擎 / quant_short_term_strength_engine<br/>量化短期强度引擎，信号的引擎，执行核心逻辑的处理引擎。<br/>文件: signal_ashare/quant_short_term_strength_engine.py"]
+    src_zephyr_signal_ashare_youzi_relay_emotion_engine_py["(设计态 / design) 游资中继情绪引擎 / youzi_relay_emotion_engine<br/>游资中继情绪引擎，信号的引擎，执行核心逻辑的处理引擎。<br/>文件: signal_ashare/youzi_relay_emotion_engine.py"]
     src_zephyr_signal_ashare_quant_short_term_strength_engine_py ~~~ src_zephyr_signal_ashare_youzi_relay_emotion_engine_py
     src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py -.->|runtime / runtime| src_zephyr_signal_ashare_youzi_relay_emotion_engine_py
     src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py -.->|runtime / runtime| src_zephyr_signal_ashare_quant_short_term_strength_engine_py
@@ -103,13 +103,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_ashare_init_py["(生产态 / production) signal_ashare/__init__.py<br/>文件: signal_ashare/__init__.py"]
-    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) _extensions/__init__.py<br/>文件: _extensions/__init__.py"]
-    src_zephyr_signal_ashare_api_init_py["(生产态 / production) api/__init__.py<br/>文件: api/__init__.py"]
-    src_zephyr_signal_ashare_core_init_py["(生产态 / production) core/__init__.py<br/>文件: core/__init__.py"]
-    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) infrastructure/__init__.py<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_signal_ashare_models_init_py["(生产态 / production) models/__init__.py<br/>文件: models/__init__.py"]
-    src_zephyr_signal_ashare_services_init_py["(生产态 / production) services/__init__.py<br/>文件: services/__init__.py"]
+    src_zephyr_signal_ashare_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: signal_ashare/__init__.py"]
+    src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: _extensions/__init__.py"]
+    src_zephyr_signal_ashare_api_init_py["(生产态 / production) 包入口 / __init__<br/>接口的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: api/__init__.py"]
+    src_zephyr_signal_ashare_core_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: core/__init__.py"]
+    src_zephyr_signal_ashare_infrastructure_init_py["(生产态 / production) 包入口 / __init__<br/>基础设施的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_signal_ashare_models_init_py["(生产态 / production) 包入口 / __init__<br/>模型的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: models/__init__.py"]
+    src_zephyr_signal_ashare_services_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: services/__init__.py"]
     src_zephyr_signal_ashare_init_py ~~~ src_zephyr_signal_ashare_extensions_init_py
     src_zephyr_signal_ashare_extensions_init_py ~~~ src_zephyr_signal_ashare_api_init_py
     src_zephyr_signal_ashare_api_init_py ~~~ src_zephyr_signal_ashare_core_init_py
@@ -130,21 +130,21 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py["(设计态 / design) signal_ashare/capital_flow_pattern_analyzer.py<br/>文件: signal_ashare/capital_flow_pattern_analyzer.py"]
-    src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py["(设计态 / design) signal_ashare/dual_engine_fusion_decision_engine.py<br/>文件: signal_ashare/dual_engine_fusion_decision_engine.py"]
-    src_zephyr_signal_ashare_institutional_behavior_analyzer_py["(设计态 / design) signal_ashare/institutional_behavior_analyzer.py<br/>文件: signal_ashare/institutional_behavior_analyzer.py"]
-    src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py["(设计态 / design) signal_ashare/intraday_buy_sell_point_analyzer.py<br/>文件: signal_ashare/intraday_buy_sell_point_analyzer.py"]
-    src_zephyr_signal_ashare_market_sentiment_analyzer_py["(设计态 / design) signal_ashare/market_sentiment_analyzer.py<br/>文件: signal_ashare/market_sentiment_analyzer.py"]
-    src_zephyr_signal_ashare_sector_analyzer_py["(设计态 / design) signal_ashare/sector_analyzer.py<br/>文件: signal_ashare/sector_analyzer.py"]
-    src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) signal_ashare/short_term_stock_selector.py<br/>文件: signal_ashare/short_term_stock_selector.py"]
+    src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py["(设计态 / design) 资本流模式分析器 / capital_flow_pattern_analyzer<br/>资本流模式分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/capital_flow_pattern_analyzer.py"]
+    src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py["(设计态 / design) 双引擎融合决策引擎 / dual_engine_fusion_decision_engine<br/>双引擎融合决策引擎，信号的引擎，执行核心逻辑的处理引擎。<br/>文件: signal_ashare/dual_engine_fusion_decision_engine.py"]
+    src_zephyr_signal_ashare_institutional_behavior_analyzer_py["(设计态 / design) 机构行为分析器 / institutional_behavior_analyzer<br/>机构行为分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/institutional_behavior_analyzer.py"]
+    src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py["(设计态 / design) 日内买卖点分析器 / intraday_buy_sell_point_analyzer<br/>日内买卖点分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/intraday_buy_sell_point_analyzer.py"]
+    src_zephyr_signal_ashare_market_sentiment_analyzer_py["(设计态 / design) 市场情绪分析器 / market_sentiment_analyzer<br/>市场情绪分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/market_sentiment_analyzer.py"]
+    src_zephyr_signal_ashare_sector_analyzer_py["(设计态 / design) 板块分析器 / sector_analyzer<br/>板块分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/sector_analyzer.py"]
+    src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) 短期股票选择器 / short_term_stock_selector<br/>短期股票选择器，信号的功能模块。<br/>文件: signal_ashare/short_term_stock_selector.py"]
     src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py ~~~ src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py
     src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py ~~~ src_zephyr_signal_ashare_institutional_behavior_analyzer_py
     src_zephyr_signal_ashare_institutional_behavior_analyzer_py ~~~ src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py
     src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py ~~~ src_zephyr_signal_ashare_market_sentiment_analyzer_py
     src_zephyr_signal_ashare_market_sentiment_analyzer_py ~~~ src_zephyr_signal_ashare_sector_analyzer_py
     src_zephyr_signal_ashare_sector_analyzer_py ~~~ src_zephyr_signal_ashare_short_term_stock_selector_py
-    src_zephyr_signal_ashare_quant_short_term_strength_engine_py["(设计态 / design) signal_ashare/quant_short_term_strength_engine.py<br/>文件: signal_ashare/quant_short_term_strength_engine.py"]
-    src_zephyr_signal_ashare_youzi_relay_emotion_engine_py["(设计态 / design) signal_ashare/youzi_relay_emotion_engine.py<br/>文件: signal_ashare/youzi_relay_emotion_engine.py"]
+    src_zephyr_signal_ashare_quant_short_term_strength_engine_py["(设计态 / design) 量化短期强度引擎 / quant_short_term_strength_engine<br/>量化短期强度引擎，信号的引擎，执行核心逻辑的处理引擎。<br/>文件: signal_ashare/quant_short_term_strength_engine.py"]
+    src_zephyr_signal_ashare_youzi_relay_emotion_engine_py["(设计态 / design) 游资中继情绪引擎 / youzi_relay_emotion_engine<br/>游资中继情绪引擎，信号的引擎，执行核心逻辑的处理引擎。<br/>文件: signal_ashare/youzi_relay_emotion_engine.py"]
     src_zephyr_signal_ashare_quant_short_term_strength_engine_py ~~~ src_zephyr_signal_ashare_youzi_relay_emotion_engine_py
     src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py -.->|runtime / runtime| src_zephyr_signal_ashare_youzi_relay_emotion_engine_py
     src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py -.->|runtime / runtime| src_zephyr_signal_ashare_quant_short_term_strength_engine_py
@@ -165,7 +165,7 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号冲突解决器 / Signal Conflict Resolver (router/signal_... | → | signal_ashare/institutional_behavior_analyzer.py | event / event |
+| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号冲突解决器 / Signal Conflict Resolver (router/signal_... | → | 机构行为分析器 / institutional_behavior_analyzer (signal_... | event / event |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

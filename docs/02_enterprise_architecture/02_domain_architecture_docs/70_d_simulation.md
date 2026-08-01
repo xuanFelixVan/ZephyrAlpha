@@ -53,22 +53,22 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
-    src_zephyr_simulation_result_analyzer_py["(设计态 / design) simulation/result_analyzer.py<br/>文件: simulation/result_analyzer.py"]
-    src_zephyr_simulation_scenario_generator_py["(设计态 / design) simulation/scenario_generator.py<br/>文件: simulation/scenario_generator.py"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline / default_experiment_pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
+    src_zephyr_simulation_result_analyzer_py["(设计态 / design) 结果分析器 / result_analyzer<br/>结果分析器，模拟的分析器，分析数据找出问题或规律。<br/>文件: simulation/result_analyzer.py"]
+    src_zephyr_simulation_scenario_generator_py["(设计态 / design) 场景生成器 / scenario_generator<br/>场景生成器，模拟的生成器，按规则生成所需的数据或报告。<br/>文件: simulation/scenario_generator.py"]
     src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ src_zephyr_simulation_result_analyzer_py
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
-    src_zephyr_simulation_pipeline_base_py["(生产态 / production) 实验 — Experimentation Pipeline Layer<br/>文件: simulation/pipeline_base.py"]
-    src_zephyr_simulation_risk_simulator_py["(设计态 / design) simulation/risk_simulator.py<br/>文件: simulation/risk_simulator.py"]
-    src_zephyr_simulation_strategy_simulator_py["(设计态 / design) simulation/strategy_simulator.py<br/>文件: simulation/strategy_simulator.py"]
+    src_zephyr_simulation_pipeline_base_py["(生产态 / production) 实验 — Experimentation Pipeline Layer / pipeline_base<br/>实验 — Experimentation Pipeline Layer<br/>文件: simulation/pipeline_base.py"]
+    src_zephyr_simulation_risk_simulator_py["(设计态 / design) 风险simulator / risk_simulator<br/>风险simulator，模拟的功能模块。<br/>文件: simulation/risk_simulator.py"]
+    src_zephyr_simulation_strategy_simulator_py["(设计态 / design) 策略simulator / strategy_simulator<br/>策略simulator，模拟的功能模块。<br/>文件: simulation/strategy_simulator.py"]
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_look_ahead_bias_detector_py["(设计态 / design) simulation/look_ahead_bias_detector.py<br/>文件: simulation/look_ahead_bias_detector.py"]
-    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design) simulation/parameter_robustness_tester.py<br/>文件: simulation/parameter_robustness_tester.py"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["(设计态 / design) simulation/sharpe_calculator_fixer.py<br/>文件: simulation/sharpe_calculator_fixer.py"]
+    src_zephyr_simulation_look_ahead_bias_detector_py["(设计态 / design) lookaheadbias检测器 / look_ahead_bias_detector<br/>lookaheadbias检测器，模拟的检测器，检测特定模式或异常情况。<br/>文件: simulation/look_ahead_bias_detector.py"]
+    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design) parameterrobustnesstester / parameter_robustness_tester<br/>parameterrobustnesstester，模拟的功能模块。<br/>文件: simulation/parameter_robustness_tester.py"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["(设计态 / design) 夏普计算器修复器 / sharpe_calculator_fixer<br/>夏普计算器修复器，模拟的功能模块。<br/>文件: simulation/sharpe_calculator_fixer.py"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_deflated_sharpe_calculator_py["(设计态 / design) simulation/deflated_sharpe_calculator.py<br/>文件: simulation/deflated_sharpe_calculator.py"]
+    src_zephyr_simulation_deflated_sharpe_calculator_py["(设计态 / design) deflated夏普计算器 / deflated_sharpe_calculator<br/>deflated夏普计算器，模拟的功能模块。<br/>文件: simulation/deflated_sharpe_calculator.py"]
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
@@ -95,8 +95,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
-    src_zephyr_simulation_pipeline_base_py["(生产态 / production) 实验 — Experimentation Pipeline Layer<br/>文件: simulation/pipeline_base.py"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline / default_experiment_pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
+    src_zephyr_simulation_pipeline_base_py["(生产态 / production) 实验 — Experimentation Pipeline Layer / pipeline_base<br/>实验 — Experimentation Pipeline Layer<br/>文件: simulation/pipeline_base.py"]
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -112,18 +112,18 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_result_analyzer_py["(设计态 / design) simulation/result_analyzer.py<br/>文件: simulation/result_analyzer.py"]
-    src_zephyr_simulation_scenario_generator_py["(设计态 / design) simulation/scenario_generator.py<br/>文件: simulation/scenario_generator.py"]
+    src_zephyr_simulation_result_analyzer_py["(设计态 / design) 结果分析器 / result_analyzer<br/>结果分析器，模拟的分析器，分析数据找出问题或规律。<br/>文件: simulation/result_analyzer.py"]
+    src_zephyr_simulation_scenario_generator_py["(设计态 / design) 场景生成器 / scenario_generator<br/>场景生成器，模拟的生成器，按规则生成所需的数据或报告。<br/>文件: simulation/scenario_generator.py"]
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
-    src_zephyr_simulation_risk_simulator_py["(设计态 / design) simulation/risk_simulator.py<br/>文件: simulation/risk_simulator.py"]
-    src_zephyr_simulation_strategy_simulator_py["(设计态 / design) simulation/strategy_simulator.py<br/>文件: simulation/strategy_simulator.py"]
+    src_zephyr_simulation_risk_simulator_py["(设计态 / design) 风险simulator / risk_simulator<br/>风险simulator，模拟的功能模块。<br/>文件: simulation/risk_simulator.py"]
+    src_zephyr_simulation_strategy_simulator_py["(设计态 / design) 策略simulator / strategy_simulator<br/>策略simulator，模拟的功能模块。<br/>文件: simulation/strategy_simulator.py"]
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_look_ahead_bias_detector_py["(设计态 / design) simulation/look_ahead_bias_detector.py<br/>文件: simulation/look_ahead_bias_detector.py"]
-    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design) simulation/parameter_robustness_tester.py<br/>文件: simulation/parameter_robustness_tester.py"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["(设计态 / design) simulation/sharpe_calculator_fixer.py<br/>文件: simulation/sharpe_calculator_fixer.py"]
+    src_zephyr_simulation_look_ahead_bias_detector_py["(设计态 / design) lookaheadbias检测器 / look_ahead_bias_detector<br/>lookaheadbias检测器，模拟的检测器，检测特定模式或异常情况。<br/>文件: simulation/look_ahead_bias_detector.py"]
+    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design) parameterrobustnesstester / parameter_robustness_tester<br/>parameterrobustnesstester，模拟的功能模块。<br/>文件: simulation/parameter_robustness_tester.py"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["(设计态 / design) 夏普计算器修复器 / sharpe_calculator_fixer<br/>夏普计算器修复器，模拟的功能模块。<br/>文件: simulation/sharpe_calculator_fixer.py"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_deflated_sharpe_calculator_py["(设计态 / design) simulation/deflated_sharpe_calculator.py<br/>文件: simulation/deflated_sharpe_calculator.py"]
+    src_zephyr_simulation_deflated_sharpe_calculator_py["(设计态 / design) deflated夏普计算器 / deflated_sharpe_calculator<br/>deflated夏普计算器，模拟的功能模块。<br/>文件: simulation/deflated_sharpe_calculator.py"]
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
@@ -144,7 +144,7 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 实验 — Experimentation Pipeline Layer (simulation/pipeli... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/experiment_result.py | 导入依赖 / import_depends |
+| 1 | 实验 — Experimentation Pipeline Layer / pipeline_base (s... | → | D_INFRASTRUCTURE 跨层契约基础设施: 实验结果 / experiment_result (contracts/experiment_result... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
