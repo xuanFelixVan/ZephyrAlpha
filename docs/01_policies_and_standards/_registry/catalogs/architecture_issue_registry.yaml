@@ -10637,3 +10637,63 @@ entries:
   related_adjudication: 'TRAE-083（设计意图查询真源铁律）, TRAE-062（SSoT真源分类）, #ARCH-RSK-ROLLBACK-001（数据层回滚，同根因）, #ARCH-ORPHAN-REAUDIT-004（孤儿重审流程）'
   created: '2026-08-01'
   last_updated: '2026-08-01'
+- issue_id: '#ARCH-WORKTREE-DOCS-DRIFT'
+  title: worktree 在主工作区文档残留环境下的脆弱性
+  severity: P2中
+  adjudication: |
+    问题：当主工作区存在未提交的文档残留时，session_worktree 流程几乎不可用，频繁触发
+      WORKSPACE_DRIFT_BLOCKED / SCHRODINGER_ROLLBACK_DETECTED / merge 覆盖冲突三类失败。
+    根因：worktree 设计假设主工作区是"干净 baseline"，但实际项目长期处于文档残留常态，
+      物理隔离与主工作区持续变更产生竞态，claim/commit/merge 跨进程 baseline 失效。
+    治本路径（已验证）：文档残留环境下放弃 session_worktree，改用 GitCommitGateway
+      （主工作区直接提交，文件锁串行，--adopt-prior-work 单进程 claim+commit+release）。
+    定位：worktree 是君子协定（FP-ISO.4C）非强制门禁。影响范围仅限文档残留环境提交，
+      有 GitCommitGateway 兜底不阻断交付。严重度 P2。
+  fix_phase: 未执行（治本路径已明确：文档残留环境走 GitCommitGateway，无需改 worktree 代码）
+  status: proposed
+  related_adjudication: 'GitCommitGateway（主工作区提交入口）, FP-ISO.4C（worktree 君子协定）'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'
+- issue_id: '#ARCH-FUTURES-OPTION-EXCHANGE-FILL'
+  title: 期货期权6表 exchange 列 provider 填充（大型重构，专项治理）
+  severity: P2中
+  adjudication: |
+    问题：7个期货期权表中，仅 futures_position 的 INSERT_COLUMNS 含 exchange 且 provider
+      已填（治本完成，row 含 exchange 见 _build_futures_kline_rows L1578）。其余6表
+      （futures_kline_qmt/option_kline/futures_term/option_iv/option_greeks/kline_futures）
+      的 exchange 列 DEFAULT ''，provider 未填，导致 symbol_canonical MATERIALIZED
+      派生为 "symbol."（尾点bug，exchange 为空时 concat(symbol,'.',exchange) 产生尾点）。
+
+    根因：6表 INSERT_COLUMNS 不含 exchange，provider row tuple 不含 exchange 值。
+
+    治本方案（评估后确认是大型重构，不建议一次性完成）：
+      exchange 来源分3类（复杂度递增）：
+      - option iv/greeks：_get_option_detail_safe 已获取 ExchangeID（L1950），需加入返回 dict
+        + _OptionCtx 数据结构加 exchange 字段 + _compute_iv_rows/_compute_greeks_rows row 加 exchange
+        （约10处，不涉及通用方法，风险中）
+      - futures_term/kline_futures：各自方法，需逐一确认 exchange 来源（get_instrument_detail）
+      - option_kline + futures_kline_qmt：用 _fetch_simple_kline（5表共用通用方法，含可转债/
+        港股/美股），不能统一加 exchange（其他3表 INSERT_COLUMNS 不含 exchange，会列数不匹配
+        导致 insert 失败）。需按表类型区分或单独 row 构建（高风险）
+
+    复杂度评估（P2，专项治理）：
+      - 涉及通用方法 _fetch_simple_kline（5表共用）—— 改错影响可转债/港股/美股数据流
+      - 涉及 _OptionCtx 数据结构变更 —— 影响 iv/greeks BS 计算
+      - 6表 row tuple 列数必须精确匹配 INSERT_COLUMNS —— 易错，错则 insert 失败中断数据流
+
+    建议：分表逐步实施，每表独立测试（row 列数匹配 + smoke test）。
+      优先级：option iv/greeks（共用 _OptionCtx，改法统一）→ futures_term/kline_futures
+      （各自方法）→ option_kline/futures_kline_qmt（涉及通用方法，最后做）。
+      futures_position 已治本（L1578），可作模式参考。
+
+    防御性兜底（可选）：7表 MATERIALIZED symbol_canonical 表达式加 if(exchange='',symbol,...)
+      兜底，但需 ALTER TABLE MODIFY COLUMN（schema 变更，走 schema-change 门禁）。
+
+    决策（2026-08-01）：本次"全部修复"评估后确认6表 provider 填 exchange 是大型重构，
+      涉及5表共用通用方法，强行重构可能引入 insert 列数不匹配 bug（破坏生产数据流，
+      比 deferred 债务危害更大）。故登记议题，建议专项治理分表实施。
+  fix_phase: 未执行（大型重构，建议专项治理，分表逐步实施；futures_position 已治本）
+  status: proposed
+  related_adjudication: 'TRAE-082（MATERIALIZED exchange + symbol_canonical）, futures_position 已治本（模式参考 L1578）, #ARCH-WORKTREE-DOCS-DRIFT'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'

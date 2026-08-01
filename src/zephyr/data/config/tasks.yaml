@@ -1100,19 +1100,19 @@ tasks:
     capability: money_flow
 - task_id: daily_valuation_full_refresh
   table: c1_market.daily_valuation
-  source: akshare
+  source: ifind
   schedule: weekend_calibration
   incremental: false
   dependencies: []
   capability: daily_valuation
   symbols:
   extra:
-    description: "估值数据全量刷新（AKShare stock_zh_valuation_baidu）"
+    description: "估值数据全量刷新（iFind 批量主源 THS_BasicData 200只/次；akshare 并行 fallback）"
 
   fallback_sources:
-  - source: miniqmt
+  - source: akshare
     capability: daily_valuation
-  - source: ifind
+  - source: miniqmt
     capability: daily_valuation
   - source: local_valuation
     capability: daily_valuation

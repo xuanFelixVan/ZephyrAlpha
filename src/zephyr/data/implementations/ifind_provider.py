@@ -461,6 +461,15 @@ class IFindProvider(IngestProviderBase):
         symbols = payload.symbols or []
         snapshot_dates = self._build_snapshot_dates(payload)
 
+        # symbols=null 契约兜底（capability 声明 supports_symbols_null=True）：
+        # 从 ClickHouse stock_list 获取在册 A 股 ts_code，与 akshare _get_all_a_symbols 行为对齐。
+        # 治本 #ARCH-VALUATION-IFIND-PRIMARY：full_refresh 切 ifind 主源后，symbols=null 必须由
+        # provider 自行兜底（scheduler 仅透传 task.symbols，见 _build_fetch_payload）。
+        if not symbols:
+            symbols = self._get_a_share_codes_from_ch()
+            if symbols:
+                self._log.info("daily_valuation symbols=null，从 stock_list 获取 %d 只 A 股", len(symbols))
+
         if not symbols or not snapshot_dates:
             yield FetchResult(
                 table=self._VALUATION_TABLE,
@@ -468,7 +477,7 @@ class IFindProvider(IngestProviderBase):
                 rows=[],
                 last_key="",
                 elapsed_sec=0.0,
-                error="symbols 或 snapshot_dates 为空",
+                error="symbols 或 snapshot_dates 为空（stock_list 获取也失败）",
             )
             return
 

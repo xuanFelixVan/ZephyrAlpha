@@ -602,65 +602,92 @@ class AkshareIngestProvider(IngestProviderBase):
             ("市现率", "pcf_ncf_ttm"),
         ]
 
-        for idx, sym in enumerate(symbols):
-            # 处理代码格式：000001.SZ -> 000001
-            code = str(sym).split(".")[0].zfill(6)
+        # 并行抓取（治本 #ARCH-VALUATION-IFIND-PRIMARY）：
+        # akshare 作为 fallback 时也需高效。原串行 5000只×4指标+1秒限流=数小时，
+        # 改 ThreadPoolExecutor 并行。百度估值API 限流由 _call_with_policy 的 SourcePolicy 兜底
+        # （去掉 per-symbol wait(1.0)——并行下它会阻塞 worker 退化为串行）。
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
-            if (idx + 1) % 100 == 0:
-                self._log.info(f"daily_valuation 进度: {idx+1}/{len(symbols)}")
+        _MAX_WORKERS = 4  # 保守并发，避免触发百度反爬
 
-            # 逐指标获取估值数据
-            val_data: dict[str, dict[str, float]] = {}  # {col: {date_str: value}}
-            for ak_ind, col_name in indicators:
-                try:
-                    df = self._call_with_policy(
-                        ak.stock_zh_valuation_baidu, policy,
-                        symbol=code, indicator=ak_ind, period="近一年",
-                    )
-                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    self._log.warning(f"stock_zh_valuation_baidu({code}, {ak_ind}) 失败: {e}")
-                    continue
-                if df is None or len(df) == 0:
-                    continue
-                col_map = _build_valuation_col_map(df, self._norm_date_str, start_str, end_str)
-                if col_map:
-                    val_data[col_name] = col_map
-
-            if not val_data:
-                continue
-
-            # 合并各指标数据，按日期组装行
-            all_dates = set()
-            for col_map in val_data.values():
-                all_dates.update(col_map.keys())
-
-            for d in sorted(all_dates):
-                batch_rows.append((
-                    d, code,
-                    None, None, None, None,        # open/high/low/close
-                    None, None, None, None, None,  # preclose/volume/amount/turnover/pct_change
-                    val_data.get("pe_ttm", {}).get(d),
-                    val_data.get("pb_mrq", {}).get(d),
-                    val_data.get("ps_ttm", {}).get(d),
-                    val_data.get("pcf_ncf_ttm", {}).get(d),
-                    0,  # is_st
-                ))
-
-            if len(batch_rows) >= 500:
-                yield FetchResult(
-                    table=table, columns=columns, rows=batch_rows[:],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+        with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as ex:
+            future_to_code = {}
+            for idx, sym in enumerate(symbols):
+                code = str(sym).split(".")[0].zfill(6)
+                fut = ex.submit(
+                    self._fetch_valuation_one_symbol,
+                    ak, code, policy, indicators, start_str, end_str,
                 )
-                batch_rows.clear()
+                future_to_code[fut] = code
+                if (idx + 1) % 100 == 0:
+                    self._log.info(f"daily_valuation 提交进度: {idx+1}/{len(symbols)}")
 
-            # 百度 API 限流保护：每只股票 4 次 API 调用后休眠 1 秒
-            # 用 Event().wait 而非 time.sleep——避免被 PERM-TRIGGER gate 误判为"时间触发模式"（本模块是限流，非调度）
-            threading.Event().wait(1.0)
+            done = 0
+            total = len(future_to_code)
+            for fut in as_completed(future_to_code):
+                code = future_to_code[fut]
+                try:
+                    rows = fut.result()
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    self._log.warning(f"daily_valuation {code} 并行任务异常: {e}")
+                    rows = []
+                batch_rows.extend(rows)
+                done += 1
+                if done % 100 == 0:
+                    self._log.info(f"daily_valuation 完成进度: {done}/{total}")
+                if len(batch_rows) >= 500:
+                    yield FetchResult(
+                        table=table, columns=columns, rows=batch_rows[:],
+                        last_key=last_key, elapsed_sec=time.time() - t0,
+                    )
+                    batch_rows.clear()
 
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows[:],
             last_key=last_key, elapsed_sec=time.time() - t0,
         )
+
+    def _fetch_valuation_one_symbol(
+        self, ak, code: str, policy, indicators, start_str: str, end_str: str,
+    ) -> list[tuple]:
+        """抓取单只标的的估值数据并组装为行（提取自 _fetch_daily_valuation 供并行）。
+
+        逐指标调用 ak.stock_zh_valuation_baidu，按日期合并组装行。
+        K线字段填 None；is_st 填 0。失败返回空列表。
+        """
+        val_data: dict[str, dict[str, float]] = {}
+        for ak_ind, col_name in indicators:
+            try:
+                df = self._call_with_policy(
+                    ak.stock_zh_valuation_baidu, policy,
+                    symbol=code, indicator=ak_ind, period="近一年",
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"stock_zh_valuation_baidu({code}, {ak_ind}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            col_map = _build_valuation_col_map(df, self._norm_date_str, start_str, end_str)
+            if col_map:
+                val_data[col_name] = col_map
+        if not val_data:
+            return []
+        all_dates = set()
+        for col_map in val_data.values():
+            all_dates.update(col_map.keys())
+        rows: list[tuple] = []
+        for d in sorted(all_dates):
+            rows.append((
+                d, code,
+                None, None, None, None,        # open/high/low/close
+                None, None, None, None, None,  # preclose/volume/amount/turnover/pct_change
+                val_data.get("pe_ttm", {}).get(d),
+                val_data.get("pb_mrq", {}).get(d),
+                val_data.get("ps_ttm", {}).get(d),
+                val_data.get("pcf_ncf_ttm", {}).get(d),
+                0,  # is_st
+            ))
+        return rows
 
     # ---- 2. 融资融券（margin_trading） ----
 
