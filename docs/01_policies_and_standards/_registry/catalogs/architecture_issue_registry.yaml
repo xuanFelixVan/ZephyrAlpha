@@ -10418,7 +10418,67 @@ entries:
       （48有gate_reason暂缓/6有明确处置重登候选库路径迁移/~20 D_FACTOR目录占位符P1P2因子族/schema测试文档节点）；
       快照path对比检测硬删除：0个planned/design被硬删除。
   fix_phase: '已执行回滚（2026-08-01）：delete 3 deprecated + re-add planned/design(7741058/459/460) + 登记3条design依赖边(9939159/160/161) + align_panoramas 0问题'
+  # 复验快照（2026-08-01 re-verify）：reconciler 重建 depgraph 导致数字 ID 漂移，但路径/语义完整保住。
+  # 数字 node_id/edge_id 是 reconciler 管理的易变量；路径(src/.../*.py)+blueprint_id 是抗漂移真源。
+  # 复验用 check_edge_targets.py 跑出当前 DB 真相：
+  reversification_2026_08_01: |
+    复验时点：2026-08-01（reconciler 已重建 depgraph，原记录的数字 ID 全部漂移）。
+    三模块节点 ID 稳定未漂：MOD-RSK-009=7741058 / MOD-RSK-010=7741059 / MOD-RSK-011=7741060（planned/design，path 不变）。
+    依赖边数字 ID 漂移（原 9939159/160/161 → 现 9939164/165/166），目标节点数字 ID 漂移
+      （原 stop_loss=7737310→7743008，原 risk_validator=7737308→7743003，旧 ID 已不存在）。
+    但语义完整保住（按路径+blueprint_id 抗漂移验证，非按数字 ID）：
+      edge[9939164] RSK-009(ashare_stop_loss_rule_engine.py) -> stop_loss.py           [RK-09→RK-04 ✅]
+      edge[9939165] RSK-010(ashare_systemic_risk_detector.py) -> risk_validator.py     [RK-10→kill_switch触发 ✅]
+      edge[9939166] RSK-011(drawdown_realtime_tracker.py) -> risk_validator.py         [RK-11→kill_switch触发 ✅]
+    结论：回滚语义正确，三模块均非孤儿（各 1 出边），与设计文档§2 mermaid 一致。
+      数字 ID 漂移是 reconciler 已知行为（见 project_memory「depgraph node_id 漂移问题」），
+      不影响回滚正确性；未来核查应按路径而非数字 ID。
   status: decided
   related_adjudication: 'TRAE-083（设计意图查询真源铁律，D_REPORTING误删同根因治本）, TRAE-062（SSoT真源分类）'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'
+# --- #ARCH-ORPHAN-REAUDIT-004: 系统性重审剩余40个planned孤儿（四问②+双源对比，禁凭孤立删）---
+- issue_id: '#ARCH-ORPHAN-REAUDIT-004'
+  title: 第4步系统性重审：batch1(12边)+batch3(11边)修复后剩余40个planned孤儿双源重判
+  severity: P2中
+  adjudication: |
+    背景：RSK/RPT 误删事故后，用户要求系统性重审"104+26批孤儿"，用"四问②需求驱动+双源对比"重判，
+      禁止再凭"孤立"信号直接删（TRAE-083 v1.1.0 铁律6 已扩写覆盖孤儿/孤立信号）。
+      前序批次1(D_REPORTING 8+D_EX_SOR 4 共12边)+批次3(SELL 6+SIM 5 共11边)已补边修复，
+      planned孤儿从63→51→40。本条目重判这剩余40个。
+
+    方法：list_planned_orphans_v2.py 列出当前DB真相(防reconciler漂移，用path而非数字ID) →
+      逐类读设计文档双源验证 → 四问②过滤 → 决策(keep/补边/弃用)。
+
+    40个孤儿分类结论（全部双源验证，无新误删）：
+      A. D_BACKTEST 4个(BT-018/019/025/026)：全部带gate_reason(暂缓P2/受限实盘安全) → 合法暂缓，保留。
+         证据：gate_reason字段非空 + 设计文档32-D-BACKTEST §1 标注P2优先级。
+      B. D_ASHARE_SIGNAL 5个(SIG-022~026)：合法设计暂态，下游S01合成器未登记，暂无依赖可连 → 保留。
+         证据：04-D-SIGNAL §1 + 前序批次3已确认(check_sig_targets.py)。
+      C. 蓝图锚点节点 28个(D_GOV_DOCS 22 + 散落INF 6：MOD-INF-020/027/023/039/011/034, SH-DB-001)：
+         path=docs/03_modules/.../blueprint.md，design_maturity=design，0有gate_reason。
+         抽查3个blueprint.md文件均存在。这些是"设计文档锚点"非代码模块，不参与数据流，无需连边。
+         受保护：ghost_autoclean显式跳过design_maturity=design节点 + TRAE-083 v1.1.0覆盖孤立信号。
+         注意：依赖图目录无D_GOV_DOCS域文档(仅27/29-D-GOVERNANCE)，但这些节点本身即蓝图文档，
+         设计意图自载于各blueprint.md，双源=节点path(蓝图)+文件存在性。 → 保留。
+      D. SH-GOV-001(scripts/governance/oneoff/data_domain_design_state_complete.py)：oneoff脚本，文件存在 → 保留。
+      E. MOD-SIG-006(src/zephyr/signal_fundamental/audit/signal_audit_logger.py)：planned代码文件尚未生成，
+         合法planned设计态(待开发)，无依赖可连(单一audit logger)。 → 保留。
+      F. MOD-TEST(node 5315774, path=test_dry_run)：垃圾节点，弃用。
+         三重证据(非凭孤立)：①path=test_dry_run非真实路径，Test-Path=False；
+         ②无node_name、无gate_reason、无设计文档引用；③全库引用仅在.aidrafts草稿+.runtime/tmp pytest临时产物，
+         真实代码/文档零引用。四问②(需求驱动)否决。 → --deprecate-node 软废弃(planned→deprecated)。
+
+    执行(2026-08-01)：
+      1. --deprecate-node 5315774：MOD-TEST planned→deprecated（备份tmp/pg_backups/depgraph_20260801_012105.json）
+      2. align_panoramas 验证：问题总数2(孤儿=2/状态漂移=0/域不一致=0/设计态孤立=0)
+         设计态孤立=0 是关键——这正是曾导致RSK/RPT误删的信号，现已清零，无新误删风险。
+
+    结论：剩余40个planned孤儿经四问②+双源重判，39个合法保留(暂缓/暂态/蓝图锚点/待开发)，
+      1个垃圾节点(MOD-TEST)弃用。无新误删。孤儿数40→39。
+      重申铁律：弃用决策MUST双源(设计文档定义 vs 结构状态)，禁止单凭孤立信号删除——TRAE-083 v1.1.0已落地。
+  fix_phase: '已执行(2026-08-01)：MOD-TEST软废弃 + align_panoramas设计态孤立=0验证 + 39孤儿分类保留'
+  status: decided
+  related_adjudication: 'TRAE-083 v1.1.0(铁律6孤儿/孤立信号禁单源弃用), TRAE-062(SSoT分类), #ARCH-RSK-ROLLBACK-001(同根因治本)'
   created: '2026-08-01'
   last_updated: '2026-08-01'
