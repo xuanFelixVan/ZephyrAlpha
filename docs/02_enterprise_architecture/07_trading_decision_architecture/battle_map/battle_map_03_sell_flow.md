@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: draft
 version: "0.2.0"
-date: 2026-08-01
+date: 2026-08-02
 ---
 
 # 作战地图·卖出阶段

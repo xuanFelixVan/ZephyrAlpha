@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: draft
 version: "0.2.0"
-date: 2026-08-01
+date: 2026-08-02
 ---
 
 # 作战地图·选股阶段
@@ -17,8 +17,8 @@ date: 2026-08-01
 flowchart LR
     BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，…"]:::design
     BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、…"]:::production
-    BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体…"]:::design
-    BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——…"]:::design
+    BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… 🟡候选"]:::design
+    BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… 🟡候选"]:::design
     BM_SEL_01 --- |标准化行情| BM_SEL_02
     BM_SEL_02 --- |因子池| BM_SEL_03
     BM_SEL_03 --- |市场状态| BM_SEL_04
@@ -129,6 +129,7 @@ L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-SIG-036 | primary | planned | planned |
+| candidate | CAND-HARVEST-0007 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
@@ -162,6 +163,7 @@ L2-C 层。T+1 次日 8 态走势预测（大盘+个股双预测体系）。Phas
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-SIG-037 | primary | planned | planned |
+| candidate | CAND-HARVEST-0008 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 

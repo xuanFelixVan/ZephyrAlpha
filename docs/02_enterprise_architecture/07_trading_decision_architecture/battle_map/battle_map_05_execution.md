@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: draft
 version: "0.2.0"
-date: 2026-08-01
+date: 2026-08-02
 ---
 
 # 作战地图·执行阶段
@@ -16,7 +16,7 @@ date: 2026-08-01
 %% 执行阶段图
 flowchart LR
     BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单…"]:::production
-    BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。"]:::design
+    BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。 🟡候选"]:::design
     BM_EXE_01 --- |审批后订单| BM_EXE_02
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
 classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
@@ -91,6 +91,7 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 |---|---|---|---|---|
 | depgraph | MOD-XS-002 | primary | planned | planned |
 | depgraph | MOD-EX-030 | supplement | planned | planned |
+| candidate | CAND-HARVEST-0021 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 

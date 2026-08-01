@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: draft
 version: "0.2.0"
-date: 2026-08-01
+date: 2026-08-02
 ---
 
 # 交易决策作战地图（总指挥图）
@@ -29,13 +29,13 @@ date: 2026-08-01
 ```mermaid
 %% 作战地图总指挥图
 flowchart LR
-    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。"]:::design
+    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 🟡候选"]:::design
     BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::design
     BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::design
     BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破…"]:::design
     BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单…"]:::production
-    BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。"]:::design
-    BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决…"]:::design
+    BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。 🟡候选"]:::design
+    BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决… 🟡候选"]:::design
     BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::design
     BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::design
     BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型…"]:::production
@@ -43,8 +43,8 @@ flowchart LR
     BM_SELL_02["BM-SELL-02\n卖出信号融合仲裁 / Sell Signal Fusion Arbitration\n把所有卖出信号（含突破成败）汇总仲裁，强制清仓永远最高优先级…"]:::design
     BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，…"]:::design
     BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、…"]:::production
-    BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体…"]:::design
-    BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——…"]:::design
+    BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… 🟡候选"]:::design
+    BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… 🟡候选"]:::design
     BM_SEL_01 --- |标准化行情| BM_SEL_02
     BM_SEL_02 --- |因子池| BM_SEL_03
     BM_SEL_03 --- |市场状态| BM_SEL_04
@@ -113,6 +113,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | planned |
 | depgraph | MOD-L05-001 | supplement | stable | generated |
+| candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -286,6 +287,7 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 |---|---|---|---|---|
 | depgraph | MOD-XS-002 | primary | planned | planned |
 | depgraph | MOD-EX-030 | supplement | planned | planned |
+| candidate | CAND-HARVEST-0021 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
@@ -319,6 +321,7 @@ L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-POS-001 | primary | planned | planned |
+| candidate | CAND-HARVEST-0019 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -588,6 +591,7 @@ L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-SIG-036 | primary | planned | planned |
+| candidate | CAND-HARVEST-0007 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
@@ -621,5 +625,6 @@ L2-C 层。T+1 次日 8 态走势预测（大盘+个股双预测体系）。Phas
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-SIG-037 | primary | planned | planned |
+| candidate | CAND-HARVEST-0008 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection

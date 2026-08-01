@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: draft
 version: "0.2.0"
-date: 2026-08-01
+date: 2026-08-02
 ---
 
 # 作战地图·买入阶段
@@ -15,7 +15,7 @@ date: 2026-08-01
 ```mermaid
 %% 买入阶段图
 flowchart LR
-    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。"]:::design
+    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 🟡候选"]:::design
     BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::design
     BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::design
     BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破…"]:::design
@@ -61,6 +61,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | planned |
 | depgraph | MOD-L05-001 | supplement | stable | generated |
+| candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
