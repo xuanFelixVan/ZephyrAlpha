@@ -255,7 +255,52 @@ directory_extensions:
     forbidden: [".py", ".md"]
     zone: neutral
     allowed_doc_types: []
-    note: "ARCH-038: 根目录平铺所有配置文件，禁止建模块归属子目录（如 capacity/、compression/）。仅允许语义子目录 runtime/（运行时状态）和 infra/（基础设施配置）。命名规则：小写+下划线，名字即责任。豁免：.env.postgres（PG连接配置真源，被 depgraph_schema.py 引用，已被 .gitignore 保护，非 YAML/JSON 格式但属必要的敏感配置例外）"
+    note: "ARCH-038: 根目录平铺所有配置文件，禁止建模块归属子目录（按模块名建子目录如 capacity/、compression/ 仍禁止）。仅允许 5 个语义子目录（见下方各自声明）：runtime/（运行时状态）、infra/（部署编排配置）、data/（数据治理策略）、governance/（治理工具配置）、system_configs/（基础设施原生系统配置，gitignored）。命名规则：小写+下划线，名字即责任。豁免：.env.postgres（PG连接配置真源，被 depgraph_schema.py 引用，已被 .gitignore 保护，非 YAML/JSON 格式但属必要的敏感配置例外）。audit-02 复审治本（2026-08-01）：原 note 仅列 runtime/+infra/ 两个子目录，与实际 5 个语义子目录漂移，DCR 仅校验扩展名不校验子目录声明故漂移未检测——现显式声明全部 5 个，契约与实现一致"
+  - path: "config/data/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".md", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: data_policy_config
+    purpose_allowed_extensions: [".yaml"]
+    note: "数据治理策略配置子目录（如 survivorship_policy.yaml 幸存者偏差策略）。ARCH-038 语义子目录（按配置类别聚合，非按模块归属）。git 跟踪，DCR-005/006 强制生效"
+  - path: "config/governance/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".md", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: governance_tooling_config
+    purpose_allowed_extensions: [".yaml"]
+    note: "治理工具配置子目录（如 noqa_exempt_registry.yaml noqa 豁免注册表）。ARCH-038 语义子目录（按配置类别聚合，非按模块归属）。git 跟踪，DCR-005/006 强制生效"
+  - path: "config/infra/"
+    allowed: [".yml", ".yaml", ".json"]
+    forbidden: [".py", ".md", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: deployment_orchestration_config
+    purpose_allowed_extensions: [".yml", ".yaml", ".json"]
+    note: "部署编排配置子目录——docker-compose.override.example.yml + grafana/(dashboards .json / datasources .yml) + prometheus/(.yml)。longest-prefix 覆盖 grafana/、prometheus/ 嵌套子目录。git 跟踪，DCR-005/006 强制生效"
+  - path: "config/runtime/"
+    allowed: [".yaml"]
+    forbidden: [".py", ".md", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: runtime_state_file
+    purpose_allowed_extensions: [".yaml"]
+    note: "运行时状态文件子目录——kill_switch_state/error_budget_state/burn_rate_acceleration/script_retirement_state/shadow_mode_state 等。ARCH-038 语义子目录。git 跟踪，DCR-005/006 强制生效"
+  - path: "config/system_configs/"
+    allowed: [".xml", ".conf", ""]
+    forbidden: [".py", ".md", ".yaml", ".json", ".sh", ".ps1", ".bak", ".baseline"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: system_native_config
+    purpose_allowed_extensions: [".xml", ".conf", ""]
+    note: "基础设施原生系统配置子目录——ch/(ClickHouse config.xml/users.xml/fstab)+pg/(postgresql.conf/pg_hba.conf 等)。系统级原生配置文件非项目业务配置。⚠️ gitignored（.gitignore:401 config/system_configs/，含 DB 凭据等敏感配置，从不入库）——同 .env.postgres 例外模式，DCR 用 git ls-files 尊重 .gitignore 故此目录永不被扫描，本声明用于 AI 可发现性/契约显式化（记录该本地目录存在性与用途），无 DCR 强制效果。allowed 字段记录意图（若未来解除 gitignore 则生效）。audit-02 复审治本（2026-08-01）"
 
   - path: "tests/"
     allowed: [".py", ".yaml", ".json", ".txt"]

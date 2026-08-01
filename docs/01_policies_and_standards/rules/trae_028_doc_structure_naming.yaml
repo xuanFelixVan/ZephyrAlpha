@@ -46,6 +46,11 @@ sections:
       pass: 文件系统路径使用小写snake_case;禁止大写L前缀;禁止kebab-case
       fail: 路径中使用大写L前缀或kebab-case
     - type: constraint
+      check: GitHub 平台约定目录命名豁免
+      pass: .github/ 树（含 workflows/*.yml GitHub Actions 流水线定义、CODEOWNERS 等）遵循 GitHub 平台 kebab-case 命名约定（如 commit_message_guard.yml/dedup-test.yml/red-blue-validator.yml）+ 大写平台文件（CODEOWNERS），豁免项目 snake_case 约束
+      fail: 误判 .github/workflows/*.yml kebab-case 为违规而重命名（会破坏 GitHub Actions 平台识别）
+      rationale: "audit-02 复审治本（2026-08-01）：snake_case 豁免清单原仅列大写平台文件（AGENTS.md/Dockerfile/README.md 等），遗漏 .github/ 目录树的 kebab-case 平台约定。现补齐文档对齐代码行为——.github/ 是 GitHub 平台功能目录，其内部命名由 GitHub 约定主导，非项目 snake_case 约束范围"
+    - type: constraint
       check: YAML文件命名
       pass: snake_case格式(l00_data_source.yaml)
       fail: kebab-case或其他格式

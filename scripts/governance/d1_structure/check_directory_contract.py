@@ -118,6 +118,10 @@ _DCR_EXTENSION_EXEMPT_PREFIXES = (
 )
 
 # 扫描的扩展名集合（覆盖所有 zone 可能出现的文件类型）
+# audit-02 复审（2026-08-01）：曾尝试新增 .xml/.conf 以让 config/system_configs/ 声明生效，
+# 但复查发现 config/system_configs/ 已被 .gitignore:401 排除（gitignored 本地敏感配置，含 DB 凭据，
+# 从不入库），DCR 用 git ls-files 尊重 .gitignore 故该目录永不被扫描——扩展扫描集无效，已回退。
+# config/system_configs/ 在 directory_contract.yaml 的声明仅为 AI 可发现性/契约显式化（同 .env 例外）。
 _SCAN_EXTENSIONS: frozenset[str] = frozenset({
     ".md", ".yaml", ".yml", ".py", ".sh", ".ps1", ".mmd",
     ".csv", ".json", ".jsonl", ".txt", ".bak", ".baseline",
