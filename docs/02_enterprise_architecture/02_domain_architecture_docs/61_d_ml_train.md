@@ -53,19 +53,19 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_model_profiler_blueprint_md["蓝图<br/>model_profiler 模块蓝图（_cross_<br/>layer），描述该模块的设计意图与架构决策<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>blueprint<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
-    src_zephyr_ml_train_ai_operator["ai操作器<br/>ai操作器，AI操作器的子目录，归集相关子模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
+    docs_03_modules_cross_layer_model_profiler_blueprint_md["蓝图<br/>model_profiler/blueprint 模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
+    src_zephyr_ml_train_ai_operator["ai操作器<br/>AI操作器的子目录，归集相关子模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
     src_zephyr_ml_train_implementations_default_inference_engine_py["默认推理引擎<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations/default_inference_<br/>engine.py<br/>(生产态 / production)"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_ai_operator
     src_zephyr_ml_train_ai_operator ~~~ src_zephyr_ml_train_implementations_default_inference_engine_py
-    src_zephyr_ml_train_inference_base_py["推理基类<br/>推理基类。D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_inference_base_py["推理基类<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_pipeline["训练管线<br/>ML模型训练管线，串联数据准备→特征工程→模型训练→<br/>评估→保存的全流程<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: training_pipeline/<br/>(设计态 / design)"]
     src_zephyr_ml_train_inference_base_py ~~~ src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_trainer_base_py["训练器基类<br/>trainer基类。D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_pipeline -.->|data / data| D_DATA
     D_ORCHESTRATOR["代理编排器<br/>代理编排器，负责 Agent<br/>任务全生命周期：任务入队、调度、沙箱执行、幻觉检<br/>测和收尾归档<br/>Agent Orchestrator<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -100,11 +100,11 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_ml_train_implementations_default_inference_engine_py["默认推理引擎<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations/default_inference_<br/>engine.py<br/>(生产态 / production)"]
-    src_zephyr_ml_train_inference_base_py["推理基类<br/>推理基类。D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_inference_base_py["推理基类<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_trainer_base_py["训练器基类<br/>trainer基类。D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -119,8 +119,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_model_profiler_blueprint_md["蓝图<br/>model_profiler 模块蓝图（_cross_<br/>layer），描述该模块的设计意图与架构决策<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>blueprint<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
-    src_zephyr_ml_train_ai_operator["ai操作器<br/>ai操作器，AI操作器的子目录，归集相关子模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
+    docs_03_modules_cross_layer_model_profiler_blueprint_md["蓝图<br/>model_profiler/blueprint 模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
+    src_zephyr_ml_train_ai_operator["ai操作器<br/>AI操作器的子目录，归集相关子模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_ai_operator
     src_zephyr_ml_train_training_pipeline["训练管线<br/>ML模型训练管线，串联数据准备→特征工程→模型训练→<br/>评估→保存的全流程<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: training_pipeline/<br/>(设计态 / design)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline

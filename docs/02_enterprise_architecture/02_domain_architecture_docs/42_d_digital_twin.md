@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_digital_twin_init_py["zephyr/digital_twin 包入口<br/>数字孪生域包入口，归集子模块按需懒加载<br/>文件: digital_twin/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_init_py["zephyr/digital_twin 包入口<br/>数字孪生域digital_<br/>twin包入口，归集子模块按需懒加载<br/>文件: digital_twin/__init__.py<br/>(生产态 / production)"]
     src_zephyr_digital_twin_extensions_init_py["digital_twin/_extensions 包入口<br/>数字孪生域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_digital_twin_api_init_py["digital_twin/api 包入口<br/>数字孪生域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_digital_twin_core_init_py["digital_twin/core 包入口<br/>数字孪生域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
@@ -80,7 +80,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_digital_twin_init_py["zephyr/digital_twin 包入口<br/>数字孪生域包入口，归集子模块按需懒加载<br/>文件: digital_twin/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_init_py["zephyr/digital_twin 包入口<br/>数字孪生域digital_<br/>twin包入口，归集子模块按需懒加载<br/>文件: digital_twin/__init__.py<br/>(生产态 / production)"]
     src_zephyr_digital_twin_extensions_init_py["digital_twin/_extensions 包入口<br/>数字孪生域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_digital_twin_api_init_py["digital_twin/api 包入口<br/>数字孪生域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_digital_twin_core_init_py["digital_twin/core 包入口<br/>数字孪生域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]

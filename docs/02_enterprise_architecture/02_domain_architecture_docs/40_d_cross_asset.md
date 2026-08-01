@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_cross_asset_init_py["zephyr/cross_asset 包入口<br/>cross_asset的包入口，把这一层的子模块归到一起统<br/>一管理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: cross_asset/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_init_py["zephyr/cross_asset 包入口<br/>跨资产域cross_asset包入口，归集子模块按需懒加载<br/>文件: cross_asset/__init__.py<br/>(生产态 / production)"]
     src_zephyr_cross_asset_extensions_init_py["cross_asset/_extensions 包入口<br/>跨资产域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_cross_asset_api_init_py["cross_asset/api 包入口<br/>跨资产域API接口层包入口，归集该层子模块按需懒加<br/>载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_cross_asset_core_init_py["cross_asset/core 包入口<br/>跨资产域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
@@ -80,7 +80,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_cross_asset_init_py["zephyr/cross_asset 包入口<br/>cross_asset的包入口，把这一层的子模块归到一起统<br/>一管理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>文件: cross_asset/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_init_py["zephyr/cross_asset 包入口<br/>跨资产域cross_asset包入口，归集子模块按需懒加载<br/>文件: cross_asset/__init__.py<br/>(生产态 / production)"]
     src_zephyr_cross_asset_extensions_init_py["cross_asset/_extensions 包入口<br/>跨资产域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_cross_asset_api_init_py["cross_asset/api 包入口<br/>跨资产域API接口层包入口，归集该层子模块按需懒加<br/>载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_cross_asset_core_init_py["cross_asset/core 包入口<br/>跨资产域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]

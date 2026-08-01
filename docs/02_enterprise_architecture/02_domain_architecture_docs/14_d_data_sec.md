@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_security_init_py["zephyr/data_security 包入口<br/>数据安全域包入口，归集子模块按需懒加载<br/>文件: data_security/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_init_py["zephyr/data_security 包入口<br/>数据安全域data_<br/>security包入口，归集子模块按需懒加载<br/>文件: data_security/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_security_extensions_init_py["data_security/_extensions 包入口<br/>数据安全域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_security_api_init_py["data_security/api 包入口<br/>数据安全域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_security_core_init_py["data_security/core 包入口<br/>数据安全域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
@@ -80,7 +80,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_security_init_py["zephyr/data_security 包入口<br/>数据安全域包入口，归集子模块按需懒加载<br/>文件: data_security/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_init_py["zephyr/data_security 包入口<br/>数据安全域data_<br/>security包入口，归集子模块按需懒加载<br/>文件: data_security/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_security_extensions_init_py["data_security/_extensions 包入口<br/>数据安全域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_security_api_init_py["data_security/api 包入口<br/>数据安全域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_security_core_init_py["data_security/core 包入口<br/>数据安全域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]

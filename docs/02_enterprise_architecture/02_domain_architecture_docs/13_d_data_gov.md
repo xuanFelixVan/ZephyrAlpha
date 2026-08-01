@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_governance_init_py["zephyr/data_governance 包入口<br/>数据治理域包入口，归集子模块按需懒加载<br/>文件: data_governance/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_init_py["zephyr/data_governance 包入口<br/>数据治理域data_<br/>governance包入口，归集子模块按需懒加载<br/>文件: data_governance/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_extensions_init_py["data_governance/_extensions 包入口<br/>数据治理域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_api_init_py["data_governance/api 包入口<br/>数据治理域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_core_init_py["data_governance/core 包入口<br/>数据治理域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
@@ -86,7 +86,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_governance_init_py["zephyr/data_governance 包入口<br/>数据治理域包入口，归集子模块按需懒加载<br/>文件: data_governance/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_init_py["zephyr/data_governance 包入口<br/>数据治理域data_<br/>governance包入口，归集子模块按需懒加载<br/>文件: data_governance/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_extensions_init_py["data_governance/_extensions 包入口<br/>数据治理域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_api_init_py["data_governance/api 包入口<br/>数据治理域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_core_init_py["data_governance/core 包入口<br/>数据治理域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]

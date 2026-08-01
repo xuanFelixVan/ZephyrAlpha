@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>另类数据域包入口，归集子模块按需懒加载<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>另类数据域alt_data包入口，归集子模块按需懒加载<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>另类数据域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>另类数据域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>另类数据域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
@@ -80,7 +80,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>另类数据域包入口，归集子模块按需懒加载<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>另类数据域alt_data包入口，归集子模块按需懒加载<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>另类数据域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>另类数据域API接口层包入口，归集该层子模块按需懒<br/>加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>另类数据域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
