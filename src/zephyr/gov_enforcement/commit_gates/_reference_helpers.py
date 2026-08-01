@@ -53,6 +53,10 @@ from zephyr.shared.infra.process_pool import run_subprocess_hidden
 _GIT_SHOW_TIMEOUT = 10
 _SCANNABLE_EXTS = (".py", ".yaml", ".yml", ".md")
 
+# 治本（audit-02, 2026-08-02）：reconciliation_registry 复用此常量检测含 #ARCH- 引用的文本文件
+# 含 .json（原 _SCANNABLE_EXTS 缺 .json 导致 .json 文件中 #ARCH- 引用逃逸 warn 层）
+REFERENCE_TEXT_EXTS = (".py", ".yaml", ".yml", ".md", ".json")
+
 
 def get_head_content(project_root: Path, rel_path: str) -> str | None:
     """获取文件在 HEAD 版本的内容。
