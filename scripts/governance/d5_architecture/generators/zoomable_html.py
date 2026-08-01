@@ -238,6 +238,10 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
   .mermaid {{ display: block; height: calc(100vh - 170px); min-height: 220px; overflow: auto;
               background: #fff; border-radius: 4px; }}
   .mermaid svg {{ max-width: none !important; display: block; margin: 0 auto; }}
+  /* subgraph/cluster 背景着色：Mermaid 默认 clusterBkg=白色，style 命令在部分版本不生效。
+     用 CSS !important 强制灰色，与主题 primaryColor=#eaeaea 一致。
+     无 subgraph 的图（域文档等）无 .cluster 元素，此规则零影响。 */
+  .mermaid .cluster rect {{ fill: #eaeaea !important; stroke: #888 !important; }}
   /* 节点标签自动换行：让长大白话/中英文名在节点内折行，避免节点过宽被 SVG 视口裁剪。
      CJK 字符天然可在任意两字间断行；English 在空格处断行，超长词 overflow-wrap 兜底。 */
   .mermaid .nodeLabel, .mermaid .edgeLabel, .mermaid foreignObject div, .mermaid foreignObject span {{
@@ -292,6 +296,11 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
       try {{
         var res = await mermaid.render('mmd-svg-' + it.idx, it.code);
         it.pre.innerHTML = res.svg;
+        // 强制 subgraph/cluster 背景为灰色（Mermaid 默认白色，CSS/themeVariables 在部分版本不生效）
+        it.pre.querySelectorAll('.cluster rect').forEach(function(r) {{
+            r.setAttribute('fill', '#eaeaea');
+            r.setAttribute('stroke', '#888');
+        }});
         if (res.bindFunctions) {{ try {{ res.bindFunctions(it.pre); }} catch (e) {{}} }}
       }} catch (err) {{
         it.pre.innerHTML = '<div style="color:#c00;padding:12px;font-size:13px">⚠ 渲染失败: ' + String(err && err.message || err).replace(/</g,'&lt;') + '</div>';
