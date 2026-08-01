@@ -1,12 +1,12 @@
-# 自动生成于 2026-08-01T07:07:35Z
+# 自动生成于 2026-08-01T07:22:58Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-01T07:07:35Z'
+generated_at: '2026-08-01T07:22:58Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 371
-with_manifest: 314
+total_scripts: 372
+with_manifest: 315
 missing_manifest: 57
 categories:
   governance:_sync: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 23
   governance:d4_paths: 4
-  governance:d5_architecture: 105
+  governance:d5_architecture: 106
   governance:d6_security: 15
   governance:d7_code: 40
   governance:d8_doc_sync: 12
@@ -1742,6 +1742,18 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: d5_architecture/generators/generate_candidate_module_report.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: 从 candidate_module_registry.yaml 生成候选模块清单报告MD文档
+  tags:
+  - Critical
+  - Disruptive
 - name: d5_architecture/generators/generate_capability_heatmap.py
   owner: governance:d5_architecture
   dimensions: []
