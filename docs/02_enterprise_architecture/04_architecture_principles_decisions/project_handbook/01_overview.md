@@ -130,16 +130,16 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | 指标 | 值 |
 |------|----|
 | 域总数 / Total domains | 72 |
-| 节点总数 / Total nodes | 5929 |
-| 依赖边总数 / Total edges | 8734 |
+| 节点总数 / Total nodes | 6000 |
+| 依赖边总数 / Total edges | 8824 |
 | 孤儿节点数 / Orphan nodes | 0 |
 
 | build_status | 节点数 |
 |--------------|--------|
-| `deprecated` | 83 |
-| `generated` | 4037 |
-| `planned` | 150 |
-| `stable` | 1659 |
+| `deprecated` | 87 |
+| `generated` | 4090 |
+| `planned` | 131 |
+| `stable` | 1692 |
 <!-- AUTO-END:dependency_stats -->
 
 <!-- AUTO-START:external_deps -->
@@ -157,6 +157,7 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | `pyarrow>=15.0.0,<20.0.0` | Parquet I/O / Parquet I/O |
 | `psycopg2-binary>=2.9.0,<3.0.0` | PostgreSQL 驱动 / PostgreSQL driver |
 | `clickhouse-driver>=0.2.6,<1.0.0` | — / — |
+| `redis>=5.0.0,<6.0.0` | — / — |
 | `plotly>=6.0.0,<7.0.0` | 可视化 / Visualization |
 | `streamlit>=1.50.0,<2.0.0` | 早期仪表盘 / Legacy dashboard |
 | `panel>=1.5.0,<2.0.0` | 仪表盘 / Dashboard |
