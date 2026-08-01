@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_INFRA_TELEMETRY 可观测性架构文档
 version: "1.0"
 status: active
-date: 2026-08-01
+date: 2026-08-02
 owner: auto-generator
 ttl: permanent
 ---
