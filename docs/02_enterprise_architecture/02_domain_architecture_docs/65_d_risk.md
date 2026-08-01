@@ -87,8 +87,8 @@ flowchart TD
     src_zephyr_risk_risk_limits_py ~~~ src_zephyr_risk_risk_manager_py
     src_zephyr_risk_risk_manager_py ~~~ src_zephyr_risk_risk_validator_py
     src_zephyr_risk_core_daily_auditor_py["core/daily_auditor<br/>风险/核心包的daily_auditor模块<br/>文件: core/daily_auditor.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_stress_test_engine_py["core/stress_test_engine<br/>风险/核心包的stress_test_engine模块<br/>文件: core/stress_test_engine.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_tail_risk_monitor_py["core/tail_risk_monitor<br/>风险/核心包的tail_risk_monitor模块<br/>文件: core/tail_risk_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_stress_test_engine_py["core/stress_test_engine<br/>Stress Test Engine — 压力测试引擎 (MOD-RK-12)<br/>文件: core/stress_test_engine.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_tail_risk_monitor_py["core/tail_risk_monitor<br/>Tail Risk Monitor — 尾部风险监控器 (MOD-RK-15)<br/>文件: core/tail_risk_monitor.py<br/>(设计态 / design)"]
     src_zephyr_risk_risk_manager_base_py["风险管理器基类<br/>D_RISK — Risk Management Layer Skeleton<br/>文件: risk/risk_manager_base.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_daily_auditor_py ~~~ src_zephyr_risk_core_stress_test_engine_py
     src_zephyr_risk_core_stress_test_engine_py ~~~ src_zephyr_risk_core_tail_risk_monitor_py
@@ -223,8 +223,8 @@ flowchart TD
 flowchart TD
     src_zephyr_risk_core_daily_auditor_py["core/daily_auditor<br/>风险/核心包的daily_auditor模块<br/>文件: core/daily_auditor.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_drawdown_tracker_py["core/drawdown_tracker<br/>Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>文件: core/drawdown_tracker.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_stress_test_engine_py["core/stress_test_engine<br/>风险/核心包的stress_test_engine模块<br/>文件: core/stress_test_engine.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_tail_risk_monitor_py["core/tail_risk_monitor<br/>风险/核心包的tail_risk_monitor模块<br/>文件: core/tail_risk_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_stress_test_engine_py["core/stress_test_engine<br/>Stress Test Engine — 压力测试引擎 (MOD-RK-12)<br/>文件: core/stress_test_engine.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_tail_risk_monitor_py["core/tail_risk_monitor<br/>Tail Risk Monitor — 尾部风险监控器 (MOD-RK-15)<br/>文件: core/tail_risk_monitor.py<br/>(设计态 / design)"]
     src_zephyr_risk_drawdown_realtime_tracker_py["回撤实时追踪器<br/>风控的追踪器，持续跟踪某项指标或状态的变化<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>drawdown_realtime_tracker<br/>文件: risk/drawdown_realtime_tracker.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_daily_auditor_py ~~~ src_zephyr_risk_core_drawdown_tracker_py
     src_zephyr_risk_core_drawdown_tracker_py ~~~ src_zephyr_risk_core_stress_test_engine_py
