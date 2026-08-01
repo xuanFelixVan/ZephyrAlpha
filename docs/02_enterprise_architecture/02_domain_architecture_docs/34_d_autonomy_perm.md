@@ -99,7 +99,7 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | 检查终止开关latency / check_kill_switch_latency (fitness_... | → | D_GOV_SCRIPTS 脚本治理: 常量 / constants (_shared/constants.py) | 导入依赖 / import_depends |
 | 2 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: 常量 / constants (_shared/constants.py) | 导入依赖 / import_depends |
-| 3 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: 文件工具 / file_utils (_shared/file_utils.py) | 导入依赖 / import_depends |
+| 3 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: 编码安全工具 / file_utils (_shared/file_utils.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
