@@ -5371,6 +5371,14 @@ creation_tokens:
     token: "auto-sell-006-rebalance-bp-20260802"
     created_by: "session-sell006-continuation"
     capability: "replacement_rebalance_seller"
+  - file: "src/zephyr/sell_decision/core/stop_hunting_protector.py"
+    token: "auto-sell-015-stop-hunting-protector-20260802"
+    created_by: "session-sell015-continuation"
+    capability: "stop_hunting_protector"
+  - file: "docs/03_modules/_domain_sell_decision/stop_hunting_protector/blueprint.md"
+    token: "auto-sell-015-stop-hunting-bp-20260802"
+    created_by: "session-sell015-continuation"
+    capability: "stop_hunting_protector"
 
   # --- 术语词汇表真源（2026-07-30，terminology_loader SSoT 重构，文件此前未入库补登记）---
   - file: "docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml"

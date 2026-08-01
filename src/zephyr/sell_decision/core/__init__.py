@@ -51,6 +51,13 @@ from zephyr.sell_decision.core.sell_urgency_scorer import (
     SellUrgencyScorer,
     UrgencyLevel,
 )
+from zephyr.sell_decision.core.stop_hunting_protector import (
+    AdjustedStopLevel,
+    InvalidStopHuntInputError,
+    SoftStopState,
+    StopHuntingProtector,
+    StopHuntOffsetDirection,
+)
 
 __all__ = [
     "BreakoutFailureDetector",
@@ -90,4 +97,9 @@ __all__ = [
     "SellUrgencyScore",
     "SellUrgencyScorer",
     "UrgencyLevel",
+    "AdjustedStopLevel",
+    "InvalidStopHuntInputError",
+    "SoftStopState",
+    "StopHuntOffsetDirection",
+    "StopHuntingProtector",
 ]

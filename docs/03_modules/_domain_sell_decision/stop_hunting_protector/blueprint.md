@@ -1,0 +1,139 @@
+---
+module_id: MOD-SELL-015
+title: "止损猎杀防护器蓝图 — 止损位偏移+软止损OBSERVING观察期"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+ttl: permanent
+design_maturity: design
+layer: L03_sell_decision
+layer_name: sell_decision
+functional_domain: sell_decision
+responsibility_domain: 
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-02"
+last_updated: "2026-08-02"
+priority: P1
+blueprint_level: module
+---
+
+# MOD-SELL-015 | Stop-Hunting Protector 止损猎杀防护器
+
+> **域**: D_SELL_DECISION | **层**: L03 卖出决策 | **优先级**: P1 | **safety**: M | **ai_autonomy**: ai_modifiable
+> **状态**: stable | **版本**: 0.1.0 | **SSoT**: depgraph MOD-SELL-015 (node 7878036)
+
+## 1. 模块定位
+
+止损猎杀防护器——防护做市商/HFT 主动猎杀止损位: ① 止损位偏移(不精确设在技术位, 偏移1-2%) ② 软止损模式(触及→OBSERVING观察期→确认跌破→CONFIRMED执行/收回→CLEARED解除)。产出 AdjustedStopLevel。
+
+依据: `D:\临时工作区\依赖图\31-D-SELL-DECISION-卖出决策域.md` §1.2 SELL-15
+
+## 2. 不变量 (INVARIANTS)
+
+- **止损位偏移**: BELOW→original×(1-pct), ABOVE→original×(1+pct)
+- **软止损状态机**: NORMAL→OBSERVING→CONFIRMED/CLEARED
+- **OBSERVING触发**: 价格 ≤ 止损位(含等于, 保守)
+- **CONFIRMED触发**: 观察期内收盘价 < 止损位
+- **CLEARED触发**: 观察期内价格回升 > 止损位
+- **CONFIRMED是终态**: 由调用方重置(不自动回退)
+- **confidence**: NORMAL/CLEARED=0.0, OBSERVING=0.5, CONFIRMED=1.0
+- **无状态设计**: 软止损状态作为输入参数, 检测器不持久化
+
+## 3. 错误契约 (ERROR_CONTRACT)
+
+| 错误类 | error_code | 触发条件 |
+|--------|-----------|---------|
+| InvalidStopHuntInputError | ZA-SELL-0015 | symbol空 / 止损位≤0 / 价格≤0 / 偏移比例越界 / 默认偏移>10% |
+
+## 4. 依赖关系
+
+| 方向 | 模块 | 契约/事件 | 说明 |
+|------|------|---------|------|
+| 依赖 | zephyr.shared.foundation.errors | ZephyrBaseError | 错误基类 |
+| 依赖 | MOD-SELL-001 SellSignalCollector | SellDirection | 复用卖出方向枚举 |
+| 消费 | MOD-SELL-005 止损策略族 | 原始止损位 | SELL-05 计算的止损位(输入) |
+| 产出 | MOD-SELL-005 止损策略族 | AdjustedStopLevel | 偏移后止损位(SELL-05 消费) |
+| 产出 | MOD-SELL-007 融合引擎 | AdjustedStopLevel | 软止损状态反馈 |
+
+## 5. 防护逻辑
+
+### ① 止损位偏移
+```
+BELOW: adjusted = original × (1 - offset_pct)   # 下移防向上猎杀
+ABOVE: adjusted = original × (1 + offset_pct)   # 上移
+默认 offset_pct = 0.02 (2%)
+```
+
+### ② 软止损状态机
+```
+NORMAL + price ≤ stop → OBSERVING
+OBSERVING + close < stop → CONFIRMED (执行清仓)
+OBSERVING + price > stop → CLEARED (解除)
+CONFIRMED → CONFIRMED (终态, 调用方重置)
+CLEARED + price ≤ stop → OBSERVING (重新触发)
+```
+
+### confidence 映射
+| 状态 | confidence | direction | 说明 |
+|------|:----------:|-----------|------|
+| NORMAL | 0.0 | REPLACE(占位) | 正常持有 |
+| OBSERVING | 0.5 | REDUCE | 观察期减仓 |
+| CONFIRMED | 1.0 | CLEAR | 确认跌破清仓 |
+| CLEARED | 0.0 | REPLACE(占位) | 解除 |
+
+## 6. 接口
+
+### 输入
+```python
+# 止损位偏移
+protector.adjust_stop_level(symbol, original_stop, offset_pct=None, direction=BELOW) -> AdjustedStopLevel
+# 软止损评估
+protector.evaluate_soft_stop(symbol, stop_level, current_price, close_price, current_state=NORMAL) -> AdjustedStopLevel
+```
+
+### 输出数据模型
+```python
+@dataclass(frozen=True)
+class AdjustedStopLevel:
+    symbol: str
+    original_stop: float
+    adjusted_stop: float
+    offset_pct: float           # [0,1]
+    offset_direction: StopHuntOffsetDirection
+    soft_stop_state: SoftStopState  # NORMAL/OBSERVING/CONFIRMED/CLEARED
+    confirmed: bool             # CONFIRMED=True
+    confidence: float           # [0,1]
+    direction: SellDirection    # CLEAR/REDUCE/REPLACE
+    reason: str
+    metadata: dict              # prev_state/new_state
+    timestamp: datetime
+```
+
+## 7. 设计决策
+
+| 决策 | 理由 |
+|------|------|
+| A类基础设施(纯防护逻辑) | 不涉及"止损位怎么算"(SELL-05职责), 只定义偏移+软止损契约 |
+| 无状态设计(状态作输入参数) | 检测器可并发, 状态持久化由上层(持仓状态机)负责 |
+| 偏移默认2% | 设计文档 §1.2 SELL-15 "偏移1-2%", 取上限防猎杀 |
+| 软止损OBSERVING观察期 | 防做市商假跌破猎杀, 收盘价确认才执行 |
+| CONFIRMED终态 | 确认跌破后不自动回退, 由调用方重置(避免反复触发) |
+| 价格≤止损位触发(含等于) | 保守原则, 等于也视为触及 |
+| confidence=1.0(CONFIRMED) | 最高优先级, 喂给融合引擎主导决策 |
+
+## 8. 测试计划
+
+- 止损位偏移 BELOW/ABOVE/自定义比例
+- 软止损 NORMAL→OBSERVING(触及)
+- 软止损 OBSERVING→CONFIRMED(收盘跌破)
+- 软止损 OBSERVING→CLEARED(回升)
+- 软止损 CONFIRMED 终态保持
+- 软止损 CLEARED→OBSERVING(重新触发)
+- 价格==止损位触发 OBSERVING
+- 输入校验(symbol空/止损位≤0/价格≤0/偏移越界)
+- 构造器校验(默认偏移≤0/>10%)
+- AdjustedStopLevel 校验
+- 事件回调触发+故障隔离
+- 时钟注入
+- 端到端生命周期(NORMAL→OBSERVING→CONFIRMED)
