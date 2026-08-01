@@ -25,7 +25,7 @@ language: zh
 `gov_enforcement/commit_gates/` 下 ~80 个 gate（AST/diff/路径/命名/依赖/blueprint 格式/depgraph 预登记/能力反查等维度），按 priority 升序执行。
 
 <!-- AUTO-START:gate_counts -->
-<!-- 数据源：commit_gates 目录扫描 | 最后同步：2026-07-30 -->
+<!-- 数据源：commit_gates 目录扫描 | 最后同步：2026-08-01 -->
 
 | 指标 | 值 |
 |------|----|
@@ -73,12 +73,12 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py  # 四�
 | d3_metadata | frontmatter 校验 / Frontmatter validation | 23 |
 | d4_paths | 路径守卫 / Path guard | 4 |
 | d5_architecture | 架构合规（最大） / Architecture compliance (largest) | 13 |
-| d6_security | 安全扫描 / Security scan | 14 |
+| d6_security | 安全扫描 / Security scan | 15 |
 | d7_code | d7_code / d7_code | 40 |
-| d8_doc_sync | 文档一致性 / Doc consistency | 11 |
+| d8_doc_sync | 文档一致性 / Doc consistency | 12 |
 | d9_knowledge | 知识库 / Knowledge base | 2 |
 | data_quality | data_quality / data_quality | 1 |
-| **合计** | **Total** | **161** |
+| **合计** | **Total** | **163** |
 <!-- AUTO-END:governance_script_counts -->
 
 ## 7. 基础设施件（永久系统）

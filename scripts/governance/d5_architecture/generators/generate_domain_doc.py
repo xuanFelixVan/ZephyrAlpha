@@ -92,12 +92,17 @@ _DOC_HTTP_BASE = "http://localhost:8765"
 LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]  # noqa: gate-vocab  显示排序用，含历史遗留 L1_platform（layer_vocabulary v2.0.0 已移除，保留仅为兼容旧域文档分组）
 
 
-def _is_ghost(path: str) -> bool:
+def _is_ghost(path: str, design_maturity: str = "") -> bool:
     """检查节点路径是否为 ghost（path 非空但磁盘上不存在）。
 
     第一性原理治本：即使不手动 deprecate，生成器也自动过滤幽灵文件，
     防止架构文档引用已删除的文件。铁律保障：新 AI 不需要知道要跑 deprecate。
+
+    重要例外：设计态节点（design_maturity='design'）代码未写、文件不存在是正常的
+    （build_status=planned），不应视为 ghost——否则设计态模块全部被过滤，设计态图永远为空。
     """
+    if design_maturity == "design":
+        return False
     return bool(path) and not (REPO_ROOT / path).exists()
 
 
@@ -275,34 +280,34 @@ def _node_bilingual_desc(n: dict) -> str:
 
 
 def _node_mermaid_label(n: dict) -> str:
-    """生成 Mermaid 节点标签：成熟度全称 + 中英文名 + 大白话 + 文件路径。
+    """生成 Mermaid 节点标签：成熟度全称 + 名称 + 大白话/简介 + 文件路径。
 
-    用户要求节点塞入全部必要信息（不放模块清单表格）：
-        (生产态 / production) 中文名 / English
-        大白话解释（做什么/目的/解决什么/如何实现）
-        文件: 父目录/文件名
-
-    只展示必须存在的字段——空字段跳过，避免空行。
-    大白话(plain_zh)优先；未登记时回退到中文简介(desc_zh)。
-    长文本换行由 HTML 渲染层 CSS 处理（nodeLabel word-break + max-width），
-    配合 Ctrl+滚轮缩放 + 拖动平移查看完整内容。
+    显示策略（治本：消除残缺显示，如 "capitalallocator / Capital Allocator" 伪双语 +
+    重复 docstring 当简介）：
+    - 名称行：真源双语名称(get_module_name_bilingual)优先；未登记则用 docstring 首行
+      （常为中文功能名）；都无则文件名(short_name)。
+    - 大白话行：真源 plain_zh 优先；未登记时，若名称已来自真源双语则用 docstring 兜底
+      （技术简介也比空着好），若名称来自 docstring（真源无 name）则不再重复 docstring、
+      留空待逐域补齐（避免 name 与 plain 同源重复）。
+    - 文件路径行：始终显示（定位用）。
+    长文本换行由 HTML 渲染层 CSS 处理，配合 Ctrl+滚轮缩放查看完整内容。
     """
     maturity = _maturity_display(n.get("design_maturity") or "unknown")
     short_name = _node_short_name(n)
     path = n.get("path") or ""
-    name_bi = _node_bilingual_name(n)
-    # 大白话优先；无则回退中文简介（_node_desc_zh 内部已封装 docstring 降级）
+    # 真源双语名称（未登记返回 None）；docstring 首行（功能简介，可能中文）
+    real_name_bi = get_module_name_bilingual(path) if path else None
+    desc = _node_desc_zh(n)
+    # 名称行：真源双语 > docstring 首行 > 文件名（保证始终有可辨识名称，不残缺）
+    name_bi = real_name_bi or desc or short_name
+    # 大白话行：真源 plain_zh 优先
     plain = get_module_plain(path) if path else ""
     if not plain:
-        plain = _node_desc_zh(n)
-
-    # 第 1 行：成熟度（+中英文名，若有）
-    line1 = f"({maturity})" if not name_bi else f"({maturity}) {name_bi}"
-    parts = [line1]
-    # 第 2 行：大白话/简介（若有）
+        # 名称若已来自真源双语，plain 用 docstring 兜底；名称若来自 docstring，plain 不重复、留空
+        plain = desc if real_name_bi else ""
+    parts = [f"({maturity}) {name_bi}"]
     if plain:
         parts.append(plain)
-    # 第 3 行：文件路径（始终存在）
     parts.append(f"文件: {short_name}")
     return "<br/>".join(parts)
 
@@ -374,7 +379,7 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
         # path 是 SSoT 指针（→ infrastructure_registry.yaml INFRA-DB-xxx），不是 ghost
         if r.get("node_type") == "database":
             pass
-        elif _is_ghost(r["path"] or ""):
+        elif _is_ghost(r["path"] or "", r["design_maturity"] or ""):
             continue
         rows.append(
             {
@@ -414,7 +419,7 @@ def get_domain_edges(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     )
     edges = []
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
             continue
         edges.append(
             {
@@ -487,7 +492,8 @@ def get_cross_domain_deps_detail(conn: PgConnExecuteWrapper, domain_id: str) -> 
     # 出边明细：from_node 在本域，to_node 在外部域
     cur = conn.execute(
         """SELECT e.dep_type, n1.path AS from_path, n2.path AS to_path,
-                  n1.domain_id AS from_domain, n2.domain_id AS to_domain
+                  n1.domain_id AS from_domain, n2.domain_id AS to_domain,
+                  n1.design_maturity AS from_maturity, n2.design_maturity AS to_maturity
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
@@ -498,7 +504,7 @@ def get_cross_domain_deps_detail(conn: PgConnExecuteWrapper, domain_id: str) -> 
     )
     outgoing_detail = []
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
             continue
         outgoing_detail.append({
             "from_path": r["from_path"] or "",
@@ -511,7 +517,8 @@ def get_cross_domain_deps_detail(conn: PgConnExecuteWrapper, domain_id: str) -> 
     # 入边明细：from_node 在外部域，to_node 在本域
     cur = conn.execute(
         """SELECT e.dep_type, n1.path AS from_path, n2.path AS to_path,
-                  n1.domain_id AS from_domain, n2.domain_id AS to_domain
+                  n1.domain_id AS from_domain, n2.domain_id AS to_domain,
+                  n1.design_maturity AS from_maturity, n2.design_maturity AS to_maturity
            FROM edges e
            JOIN nodes n1 ON e.from_node_id = n1.node_id
            JOIN nodes n2 ON e.to_node_id = n2.node_id
@@ -522,7 +529,7 @@ def get_cross_domain_deps_detail(conn: PgConnExecuteWrapper, domain_id: str) -> 
     )
     incoming_detail = []
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
             continue
         incoming_detail.append({
             "from_path": r["from_path"] or "",
@@ -623,7 +630,7 @@ def get_cross_domain_edges_detail(
         params_out,
     )
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
             continue
         outgoing_edges.append(
             {
@@ -654,7 +661,7 @@ def get_cross_domain_edges_detail(
         params_out,
     )
     for r in cur.fetchall():
-        if _is_ghost(r["from_path"] or "") or _is_ghost(r["to_path"] or ""):
+        if _is_ghost(r["from_path"] or "", r["from_maturity"] or "") or _is_ghost(r["to_path"] or "", r["to_maturity"] or ""):
             continue
         incoming_edges.append(
             {
@@ -1116,12 +1123,14 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append(f"| 描述 | {info['description']} | Description | {info['description']} |")
     lines.append("")
 
-    # 域内依赖图（内嵌 Mermaid，三视图：合并+运营态+设计态）
-    # 模块信息（成熟度全称+中英文名+大白话+文件路径）已内嵌于 Mermaid 节点标签，
-    # 不再单独输出模块清单表格——避免信息重复，单图即全景。
+    # 域内依赖图（内嵌 Mermaid，三视图：全景图 + 运营态图 + 设计态图）
+    # 模块信息（成熟度全称+名称+大白话/简介+文件路径）已内嵌于 Mermaid 节点标签。
+    # 三视图分区（对齐 HTML 渲染铁律：全景图→运营态的图→设计态的图，每图带小标题，
+    # 标注视图类型，禁止分页标注页数）：
+    #   全景图（全部模块 + 跨域外部节点）→ 运营态图（仅 production）→ 设计态图（仅 design）
     lines.append("## 域内依赖图 / Internal Dependency Diagram")
     lines.append("")
-    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。")
+    lines.append("> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。")
     lines.append(">")
     lines.append("> **图例说明 / Legend**：")
     lines.append("> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）")
@@ -1130,21 +1139,54 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("> - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）")
     lines.append("")
 
-    # 全景依赖图（全部模块，颜色区分运营态/设计态；不分页、不拆子图）
-    # 网页版支持 Ctrl+滚轮缩放 + 拖动平移，无需分页；颜色已区分运营态/设计态，无需重复拆子图。
-    lines.append("### 全景依赖图（全部模块，颜色区分运营态/设计态）")
-    lines.append("")
-    lines.append(f"> 展示全部 {len(nodes)} 个模块（生产态 {production_count} + 设计态 {design_count}），节点含成熟度+中英文名+大白话+文件路径。")
-    lines.append("")
-
+    # 跨域边明细（仅全景图用；运营态/设计态图不显示跨域外部节点，聚焦域内结构）
     all_outgoing, all_incoming = get_cross_domain_edges_detail(conn, domain_id, [n["node_id"] for n in nodes])
-    mermaid_code = generate_internal_mermaid(
-        domain_id, domain_name_zh, nodes, edges, all_outgoing, all_incoming
+
+    def _emit_internal_view(title: str, hint: str, view_nodes: list[dict], view_outgoing: list[dict], view_incoming: list[dict]) -> None:
+        """输出单个域内依赖视图（带小标题；空节点集用占位说明，避免空 mermaid 块）。
+
+        edges 传全集，generate_internal_mermaid 内部按 view_nodes 的 node_id 集自动过滤
+        （只画两端都在 view_nodes 内的边），故运营态/设计态图各自只显示同态域内依赖；
+        跨 production↔design 的混合边仅在全景图展示。
+        """
+        lines.append(f"### {title}")
+        lines.append("")
+        lines.append(f"> {hint}")
+        lines.append("")
+        if not view_nodes:
+            lines.append("> （无模块 / No modules）")
+            lines.append("")
+            return
+        mermaid_code = generate_internal_mermaid(
+            domain_id, domain_name_zh, view_nodes, edges, view_outgoing, view_incoming
+        )
+        lines.append("```mermaid")
+        lines.append(mermaid_code)
+        lines.append("```")
+        lines.append("")
+
+    # 图1：全景图（全部模块 + 跨域外部节点，颜色区分运营态/设计态）
+    _emit_internal_view(
+        "全景图（全部模块，颜色区分运营态/设计态）",
+        f"展示全部 {len(nodes)} 个模块（生产态 {production_count} + 设计态 {design_count}），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。",
+        nodes, all_outgoing, all_incoming,
     )
-    lines.append("```mermaid")
-    lines.append(mermaid_code)
-    lines.append("```")
-    lines.append("")
+
+    # 图2：运营态的图（仅 design_maturity=production 的模块和域内依赖）
+    prod_nodes = [n for n in nodes if n["design_maturity"] == "production"]
+    _emit_internal_view(
+        "运营态的图（仅 design_maturity=production 的模块和域内依赖）",
+        f"仅展示已上线运行的模块（共 {len(prod_nodes)} 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。",
+        prod_nodes, [], [],
+    )
+
+    # 图3：设计态的图（仅 design_maturity=design 的模块和域内依赖）
+    design_nodes = [n for n in nodes if n["design_maturity"] == "design"]
+    _emit_internal_view(
+        "设计态的图（仅 design_maturity=design 的模块和域内依赖）",
+        f"仅展示蓝图阶段、代码未写的设计态模块（共 {len(design_nodes)} 个），不含跨域外部节点。",
+        design_nodes, [], [],
+    )
 
     # 跨域依赖（中英文对照）
     lines.append("## 跨域依赖 / Cross-domain Dependencies")

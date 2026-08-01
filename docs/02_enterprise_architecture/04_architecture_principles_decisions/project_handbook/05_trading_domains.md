@@ -61,14 +61,14 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 ## 3. 域清单（AUTO）
 
 <!-- AUTO-START:domain_list -->
-<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-07-30 -->
+<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-08-01 -->
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 381 |
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 220 |
+| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 385 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 222 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 184 |
-| `D_DATA` | 数据接入层 | L1_foundation | 175 |
+| `D_DATA` | 数据接入层 | L1_foundation | 179 |
 | `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 169 |
 | `D_SECURITY` | 对抗验证 | L1_foundation | 166 |
 | `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 161 |
@@ -85,42 +85,42 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_ORCHESTRATOR` | 代理编排器 | L1_foundation | 70 |
 | `D_FBL_DETECTORS` | 反馈检测器 | L1_foundation | 65 |
 | `D_INFRA_RECOVERY` | 回滚恢复 | L0_infrastructure | 55 |
-| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 41 |
-| `D_TRADING` | 交易运营 | L2_domain | 38 |
+| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 42 |
+| `D_TRADING` | 交易运营 | L2_domain | 40 |
 | `D_GOV_RULE` | 规则治理 | L2_domain | 35 |
 | `D_INTELLIGENCE` | 上下文管理 | L2_domain | 31 |
 | `D_BACKTEST` | 回测 | L2_domain | 27 |
 | `D_GOV_DOCS` | 架构文档治理 | L2_domain | 26 |
+| `D_EX_CORE` | 执行核心 | L2_domain | 25 |
 | `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 25 |
+| `D_SELL_DECISION` | 卖出决策 | L2_domain | 21 |
 | `D_DATA_ENG` | 数据工程 | L1_foundation | 20 |
+| `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 17 |
+| `D_EX_SOR` | 执行路由 | L2_domain | 17 |
+| `D_FRONTEND` | 前端 | L2_domain | 16 |
+| `D_PF_CORE` | 组合核心 | L2_domain | 16 |
 | `D_MKT_DATA` | 行情数据 | L1_foundation | 15 |
-| `D_EX_CORE` | 执行核心 | L2_domain | 12 |
-| `D_FRONTEND` | 前端 | L2_domain | 12 |
-| `D_RISK` | 风控 | L2_domain | 12 |
+| `D_RISK` | 风控 | L2_domain | 15 |
+| `D_FUNDAMENTAL_SIGNAL` | 基本面信号 | L2_domain | 13 |
+| `D_REPORTING` | 报告 | L1_foundation | 12 |
 | `D_OPS` | 反馈循环 | L1_foundation | 11 |
+| `D_POSITION` | 仓位管理 | L2_domain | 11 |
 | `D_DATA_GOV` | 数据治理 | L1_foundation | 10 |
-| `D_FUNDAMENTAL_SIGNAL` | 基本面信号 | L2_domain | 10 |
+| `D_SIMULATION` | 仿真 | L2_domain | 10 |
 | `D_ALT_DATA` | 另类数据 | L1_foundation | 8 |
-| `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 8 |
 | `D_CROSS_ASSET` | 跨资产 | L2_domain | 7 |
 | `D_DATA_SEC` | 数据安全与契约 | L1_foundation | 7 |
 | `D_DIGITAL_TWIN` | 数字孪生 | L2_domain | 7 |
 | `D_EXEC_SIM` | 执行仿真 | L2_domain | 7 |
-| `D_EX_SOR` | 执行路由 | L2_domain | 7 |
 | `D_ML_SERVE` | 推理 | L2_domain | 7 |
-| `D_SELL_DECISION` | 卖出决策 | L2_domain | 7 |
 | `D_ML_TRAIN` | 训练 | L2_domain | 6 |
-| `D_PF_CORE` | 组合核心 | L2_domain | 6 |
-| `D_REPORTING` | 报告 | L1_foundation | 3 |
+| `D_PF_ALLOC` | 组合分配 | L2_domain | 5 |
+| `D_COMPLIANCE` | 合规 | L2_domain | 3 |
 | `D_AUTONOMY_PERM` | 自治保护 | L2_domain | 2 |
-| `D_COMPLIANCE` | 合规 | L2_domain | 2 |
-| `D_PF_ALLOC` | 组合分配 | L2_domain | 2 |
 | `D_SIGQC` | 信号质量控制 | L2_domain | 2 |
-| `D_SIMULATION` | 仿真 | L2_domain | 2 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 1 |
 | `D_GOV_REPAIR` | 治理修复 | L2_domain | 1 |
 | `D_KNOWLEDGE` | 知识管理 | L2_domain | 1 |
-| `D_POSITION` | 仓位管理 | L2_domain | 1 |
 | `D_ARCHIVE_SCRIPTS` | Archived Scripts | L2_domain | 0 |
 | `D_ARCH_GUARD` | 架构守护脚本 | L2_domain | 0 |
 | `D_ARCH_SCRIPTS` | 架构治理脚本 | L2_domain | 0 |

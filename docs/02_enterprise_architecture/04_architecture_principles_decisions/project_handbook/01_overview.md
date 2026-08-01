@@ -125,21 +125,21 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 ## 5. 依赖统计
 
 <!-- AUTO-START:dependency_stats -->
-<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-07-30 -->
+<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-08-01 -->
 
 | 指标 | 值 |
 |------|----|
 | 域总数 / Total domains | 72 |
-| 节点总数 / Total nodes | 5798 |
-| 依赖边总数 / Total edges | 7954 |
+| 节点总数 / Total nodes | 5920 |
+| 依赖边总数 / Total edges | 8707 |
 | 孤儿节点数 / Orphan nodes | 0 |
 
 | build_status | 节点数 |
 |--------------|--------|
-| `deprecated` | 4 |
-| `generated` | 4020 |
-| `planned` | 129 |
-| `stable` | 1645 |
+| `deprecated` | 83 |
+| `generated` | 4029 |
+| `planned` | 145 |
+| `stable` | 1663 |
 <!-- AUTO-END:dependency_stats -->
 
 <!-- AUTO-START:external_deps -->

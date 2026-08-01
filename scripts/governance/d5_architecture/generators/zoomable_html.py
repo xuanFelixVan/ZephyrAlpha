@@ -76,71 +76,69 @@ _ZOOM_JS = """
     }
   });
   var diagramFitters = [];
-  setTimeout(function() {
-    document.querySelectorAll('.diagram').forEach(function(diagram) {
-      var zoomLevel = 1, fitScale = 0, natW = 0, natH = 0;
-      var badge = diagram.querySelector('.zoom-badge');
-      var vp = diagram.querySelector('.mermaid');  // 固定高度可滚动视口
-      function applyZoom() {
-        var s = diagram.querySelector('svg');
-        if (s && fitScale > 0 && natW > 0) {
-          var eff = fitScale * zoomLevel;  // 相对原始尺寸的有效缩放
-          s.setAttribute('width', natW * eff);
-          s.setAttribute('height', natH * eff);
-          s.style.width = (natW * eff) + 'px';
-          s.style.height = (natH * eff) + 'px';
-        }
-        if (badge) badge.textContent = Math.round(fitScale * zoomLevel * 100) + '%';
+  // 绑定缩放/拖动到一个已渲染的 diagram（renderAll 每渲染完一个图即调用，无需等 setTimeout）
+  function bindZoomToDiagram(diagram) {
+    var zoomLevel = 1, fitScale = 0, natW = 0, natH = 0;
+    var badge = diagram.querySelector('.zoom-badge');
+    var vp = diagram.querySelector('.mermaid');  // 固定高度可滚动视口
+    function applyZoom() {
+      var s = diagram.querySelector('svg');
+      if (s && fitScale > 0 && natW > 0) {
+        var eff = fitScale * zoomLevel;  // 相对原始尺寸的有效缩放
+        s.setAttribute('width', natW * eff);
+        s.setAttribute('height', natH * eff);
+        s.style.width = (natW * eff) + 'px';
+        s.style.height = (natH * eff) + 'px';
       }
-      // 自适应：图渲染后按视口算出"刚好塞进"的缩放，直接写到 SVG 宽高——布局也跟着缩小，
-      // 页面不再超高；zoomLevel 是在此基础上放大的倍数（1=一屏，2=放大两倍），双击回到 1。
-      function fitToViewport() {
-        var s = diagram.querySelector('svg');
-        if (!s) return;
-        if (!natW || !natH) {
-          try { var bb = s.getBBox(); natW = bb.width; natH = bb.height; } catch (e) {}
-          if (!natW || !natH) { try { natW = s.width.baseVal.value; natH = s.height.baseVal.value; } catch (e) {} }
-          if (!natW || !natH) return;
-          if (!s.getAttribute('viewBox')) s.setAttribute('viewBox', '0 0 ' + natW + ' ' + natH);
-        }
-        if (!vp) return;
-        var fit = Math.min((vp.clientWidth - 24) / natW, (vp.clientHeight - 24) / natH, 1);
-        if (fit > 0 && isFinite(fit)) { fitScale = fit; zoomLevel = 1; vp.scrollLeft = 0; vp.scrollTop = 0; applyZoom(); }
+      if (badge) badge.textContent = Math.round(fitScale * zoomLevel * 100) + '%';
+    }
+    // 自适应：图渲染后按视口算出"刚好塞进"的缩放，直接写到 SVG 宽高——布局也跟着缩小，
+    // 页面不再超高；zoomLevel 是在此基础上放大的倍数（1=一屏，2=放大两倍），双击回到 1。
+    function fitToViewport() {
+      var s = diagram.querySelector('svg');
+      if (!s) return;
+      if (!natW || !natH) {
+        try { var bb = s.getBBox(); natW = bb.width; natH = bb.height; } catch (e) {}
+        if (!natW || !natH) { try { natW = s.width.baseVal.value; natH = s.height.baseVal.value; } catch (e) {} }
+        if (!natW || !natH) return;
+        if (!s.getAttribute('viewBox')) s.setAttribute('viewBox', '0 0 ' + natW + ' ' + natH);
       }
-      fitToViewport();
-      diagramFitters.push(fitToViewport);
-      // Ctrl+滚轮缩放（改 SVG 宽高；放大后视口内滚动查看）
-      diagram.addEventListener('wheel', function(e) {
-        if (!e.ctrlKey) return;
-        e.preventDefault();
-        zoomLevel = Math.max(0.2, Math.min(30, zoomLevel * (e.deltaY < 0 ? 1.15 : 1/1.15)));
-        applyZoom();
-      }, { passive: false });
-      // 鼠标拖动平移 = 滚动视口（仅拖动模式拦截；选择模式放行让浏览器选中文本）
-      var dragging = false, startX = 0, startY = 0, startSL = 0, startST = 0;
-      diagram.addEventListener('mousedown', function(e) {
-        if (!dragEnabled || !vp) return;
-        dragging = true;
-        startX = e.clientX; startY = e.clientY;
-        startSL = vp.scrollLeft; startST = vp.scrollTop;
-        diagram.style.cursor = 'grabbing';
-        e.preventDefault();
-      });
-      document.addEventListener('mousemove', function(e) {
-        if (!dragging) return;
-        vp.scrollLeft = startSL - (e.clientX - startX);
-        vp.scrollTop = startST - (e.clientY - startY);
-      });
-      document.addEventListener('mouseup', function() {
-        if (dragging) { dragging = false; diagram.style.cursor = dragEnabled ? 'grab' : 'text'; }
-      });
-      // 双击重置：回到一屏自适应
-      diagram.addEventListener('dblclick', function() { zoomLevel = 1; if (vp) { vp.scrollLeft = 0; vp.scrollTop = 0; } applyZoom(); });
+      if (!vp) return;
+      var fit = Math.min((vp.clientWidth - 24) / natW, (vp.clientHeight - 24) / natH, 1);
+      if (fit > 0 && isFinite(fit)) { fitScale = fit; zoomLevel = 1; vp.scrollLeft = 0; vp.scrollTop = 0; applyZoom(); }
+    }
+    fitToViewport();
+    diagramFitters.push(fitToViewport);
+    // Ctrl+滚轮缩放（改 SVG 宽高；放大后视口内滚动查看）
+    diagram.addEventListener('wheel', function(e) {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      zoomLevel = Math.max(0.2, Math.min(30, zoomLevel * (e.deltaY < 0 ? 1.15 : 1/1.15)));
+      applyZoom();
+    }, { passive: false });
+    // 鼠标拖动平移 = 滚动视口（仅拖动模式拦截；选择模式放行让浏览器选中文本）
+    var dragging = false, startX = 0, startY = 0, startSL = 0, startST = 0;
+    diagram.addEventListener('mousedown', function(e) {
+      if (!dragEnabled || !vp) return;
+      dragging = true;
+      startX = e.clientX; startY = e.clientY;
+      startSL = vp.scrollLeft; startST = vp.scrollTop;
+      diagram.style.cursor = 'grabbing';
+      e.preventDefault();
     });
-    updateModeUI();
-    // 窗口尺寸变化时重新自适应（如调整浏览器窗口）
-    window.addEventListener('resize', function() { diagramFitters.forEach(function(f) { f(); }); });
-  }, 1500);
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      vp.scrollLeft = startSL - (e.clientX - startX);
+      vp.scrollTop = startST - (e.clientY - startY);
+    });
+    document.addEventListener('mouseup', function() {
+      if (dragging) { dragging = false; diagram.style.cursor = dragEnabled ? 'grab' : 'text'; }
+    });
+    // 双击重置：回到一屏自适应
+    diagram.addEventListener('dblclick', function() { zoomLevel = 1; if (vp) { vp.scrollLeft = 0; vp.scrollTop = 0; } applyZoom(); });
+  }
+  // 窗口尺寸变化时重新自适应（如调整浏览器窗口）
+  window.addEventListener('resize', function() { diagramFitters.forEach(function(f) { f(); }); });
 """
 
 
@@ -268,11 +266,43 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
 {script_tag}
 <script>
   mermaid.initialize({{
-    startOnLoad: true,
+    startOnLoad: false,  // 关闭自动加载，改为 renderAll() 手动逐个渲染（小图优先，避免大图阻塞）
     securityLevel: 'loose',
     suppressErrors: false,
+    // 放开 mermaid 渲染上限：默认 maxTextSize=50000 + maxEdges=500，大域（如 D_GOV_SCRIPTS
+    // 385 节点 ~11万字符、744+ 边）会触发"Edge limit exceeded"/"Syntax error"拒绝渲染。
+    // maxTextSize 提到 1亿、maxEdges 提到 1万，让浏览器能渲染任意大图（dagre 布局稍慢但可完成）。
+    maxTextSize: 100000000,
+    maxEdges: 10000,
     flowchart: {{ useMaxWidth: false, htmlLabels: true, nodeSpacing: 30, rankSpacing: 35 }}
   }});
+  // 手动逐个渲染 mermaid 图（startOnLoad=false）。按代码长度升序：小图先渲染立即可见，
+  // 大图（如全景图385节点）dagre 布局慢但不阻塞已渲染的小图。每渲染完一个立即绑定缩放。
+  async function renderAll() {{
+    var pres = Array.prototype.slice.call(document.querySelectorAll('.diagram pre.mermaid'));
+    var items = pres.map(function(p, i) {{ return {{ pre: p, idx: i, code: p.textContent, size: p.textContent.length }}; }});
+    // 先把所有 pre 替换为"渲染中"占位，避免显示原始 mermaid 代码
+    items.forEach(function(it) {{
+      it.pre.textContent = '';
+      it.pre.innerHTML = '<div style="color:#999;padding:12px;font-size:13px">⏳ 渲染中…（大图可能需要数十秒，请稍候）</div>';
+    }});
+    items.sort(function(a, b) {{ return a.size - b.size; }});
+    for (var k = 0; k < items.length; k++) {{
+      var it = items[k];
+      try {{
+        var res = await mermaid.render('mmd-svg-' + it.idx, it.code);
+        it.pre.innerHTML = res.svg;
+        if (res.bindFunctions) {{ try {{ res.bindFunctions(it.pre); }} catch (e) {{}} }}
+      }} catch (err) {{
+        it.pre.innerHTML = '<div style="color:#c00;padding:12px;font-size:13px">⚠ 渲染失败: ' + String(err && err.message || err).replace(/</g,'&lt;') + '</div>';
+      }}
+      var diagram = it.pre.closest('.diagram');
+      if (diagram) bindZoomToDiagram(diagram);
+      updateModeUI();
+      await new Promise(function(r) {{ setTimeout(r, 30); }});  // 让浏览器喘息：刷新已渲染的图
+    }}
+  }}
+  renderAll();
 {_ZOOM_JS}
 </script>
 </body>
