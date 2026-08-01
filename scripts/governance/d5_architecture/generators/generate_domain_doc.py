@@ -344,6 +344,24 @@ def _node_mermaid_label(n: dict) -> str:
     desc_en = (trans.get("desc_en", "") if trans else "").strip()
     plain = get_module_plain(path) if path else ""
 
+    # __init__.py 特殊处理：翻译注册表中 90+ 个 __init__.py 填了通用的"包入口"名和描述，
+    # 用完整包路径区分各包，避免全部一样
+    _GENERIC_NAMES = {"包入口", "__init__", "模块", "工具", "配置", ""}
+    is_init = path.endswith("__init__.py")
+    if is_init:
+        pkg_parent = Path(path).parent
+        pkg_parts = pkg_parent.parts
+        pkg_short = "/".join(pkg_parts[-2:]) if len(pkg_parts) >= 2 else pkg_parent.name
+        if name_zh in _GENERIC_NAMES:
+            name_zh = f"{pkg_short} 包入口"
+        if not plain or ("包入口" in plain and "统一管理" in plain):
+            plain = f"{pkg_short} 包入口，管理该层子模块的统一加载和懒导入"
+    elif name_zh in _GENERIC_NAMES:
+        # 非 __init__.py 但 name_zh 是通用词（如"配置"、"工具"）→ 用文件名兜底
+        file_stem = Path(path).stem
+        parent_name = Path(path).parent.name
+        name_zh = f"{parent_name}/{file_stem}" if parent_name else file_stem
+
     # 中文名称：name_zh > docstring > 文件名
     cn_name = name_zh or desc or short_name
     # 中文简介（多级回退，确保每个节点都有大白话）：
@@ -356,19 +374,12 @@ def _node_mermaid_label(n: dict) -> str:
         if candidate and candidate != name_zh and candidate != cn_name:
             cn_intro = candidate
             break
-    # __init__.py 特殊兜底：翻译注册表中 90 个 __init__.py 填了同样的通用描述
-    # （"数据的包入口，把这一层的子模块归到一起..."），用完整包路径区分各包
-    if path.endswith("__init__.py") and cn_intro and "包入口" in cn_intro and "统一管理" in cn_intro:
-        pkg_parent = Path(path).parent
-        pkg_parts = pkg_parent.parts
-        pkg_short = "/".join(pkg_parts[-2:]) if len(pkg_parts) >= 2 else pkg_parent.name
-        cn_intro = f"{pkg_short} 包入口，管理该层子模块的统一加载和懒导入"
 
     gate_reason = (n.get("gate_reason") or "").strip()
     is_design = (n.get("design_maturity") or "") == "design"
 
-    # 去重辅助：候选与已显示内容完全相同，或候选是已显示内容的子串（候选更短/相等）
-    # 则跳过。候选更长（含额外信息）时不跳过——如 plain_zh="名字。功能描述" 比 name_zh 长。
+    # 去重辅助：候选与已显示内容完全相同、候选是已显示内容的子串、或前20字符前缀匹配
+    # 则跳过。前缀匹配解决翻译注册表中 desc_zh 与 desc 末尾微差（如多一个"性"字）的重复。
     # （翻译注册表 8314 条中大量 name_en/desc_zh/desc_en 填了同样的 docstring，
     #  不去重会导致节点标签同一行内容重复 2-3 遍）
     def _is_dup(candidate: str, shown: list[str]) -> bool:
@@ -380,6 +391,10 @@ def _node_mermaid_label(n: dict) -> str:
             if not sl:
                 continue
             if c == sl or c in sl:
+                return True
+            # 前缀匹配：前20个字符相同则视为重复（解决末尾微差）
+            prefix_len = min(20, len(c), len(sl))
+            if prefix_len >= 10 and c[:prefix_len] == sl[:prefix_len]:
                 return True
         return False
 
