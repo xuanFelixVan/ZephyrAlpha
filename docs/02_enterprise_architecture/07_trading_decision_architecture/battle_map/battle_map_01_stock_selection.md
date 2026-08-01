@@ -17,8 +17,8 @@ date: 2026-08-01
 flowchart LR
     BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，…"]:::design
     BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、…"]:::design
-    BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… ⚠无锚点"]:::design
-    BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… ⚠无锚点"]:::design
+    BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体…"]:::design
+    BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——…"]:::design
     BM_SEL_01 --- |标准化行情| BM_SEL_02
     BM_SEL_02 --- |因子池| BM_SEL_03
     BM_SEL_03 --- |市场状态| BM_SEL_04
@@ -123,7 +123,11 @@ L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日
 ①触发：盘前+盘中周期；②消费：BM-SEL-02 因子池 + 量能/日历；③参数：matrix_dims=3×3×3（Phase1-2 跑 3×3）、regime=HMM；④数据流：因子池→3×3矩阵+体制检测→市场状态+Survival→BM-SEL-04/BM-BUY-02；⑤代码：C-021 L2-C；⑥降级：C-021 未就绪→主动脉跳过（8节点7跳降级）。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 |
+|---|---|---|---|
+| depgraph | MOD-SIG-036 | primary | planned |
 
 **状态**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
@@ -152,7 +156,11 @@ L2-C 层。T+1 次日 8 态走势预测（大盘+个股双预测体系）。Phas
 ①触发：盘前 T+1 预测；②消费：BM-SEL-03 市场状态 + 密度预测条件PDF；③参数：state_count=8（分阶段 3→5→8）、PDF 积分派生；④数据流：市场状态+PDF→8态预测→T+1概率分布→BM-BUY-01；⑤代码：C-014 §6.2；⑥降级：C-014 未就绪→二值涨/跌预测。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 |
+|---|---|---|---|
+| depgraph | MOD-SIG-037 | primary | planned |
 
 **状态**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 

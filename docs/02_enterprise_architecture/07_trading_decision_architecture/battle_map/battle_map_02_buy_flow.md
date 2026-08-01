@@ -15,10 +15,10 @@ date: 2026-08-01
 ```mermaid
 %% 买入阶段图
 flowchart LR
-    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 ⚠无锚点"]:::design
-    BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成… ⚠无锚点"]:::design
-    BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口… ⚠无锚点"]:::design
-    BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破… ⚠无锚点"]:::design
+    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。"]:::design
+    BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::design
+    BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::design
+    BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破…"]:::design
     BM_BUY_01 --- |买入预案| BM_BUY_02
     BM_BUY_02 --- |统一决策流| BM_BUY_03
 classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
@@ -54,7 +54,12 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 ①触发：8态预测就绪；②消费：BM-SEL-04 8态 + C-006 策略库；③参数：scenario_count=7；④数据流：8态+策略库→多情景对策→买入预案→BM-BUY-02；⑤代码：C-005 L3 层；⑥降级：C-005 失效→固定策略查表。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 |
+|---|---|---|---|
+| depgraph | MOD-PF-002 | primary | planned |
+| depgraph | MOD-L05-001 | supplement | stable |
 
 **状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -83,7 +88,11 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 ①触发：四路信号就绪；②消费：BM-BUY-01 逻辑轨 + 轨道2/3/4；③参数：priority_order=应急>人工>自动；④数据流：四路信号→MTF优先级仲裁→统一决策流→BM-BUY-03；⑤代码：MTF(v8.0) §1.8；⑥降级：MTF 不可用→逻辑轨单线决策。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 |
+|---|---|---|---|
+| depgraph | MOD-PF-006 | primary | planned |
 
 **状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -112,7 +121,11 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 ①触发：统一决策流就绪；②消费：BM-BUY-02 统一决策流；③参数：path_count=5；④数据流：统一决策流→DO 仲裁/消解/去重/时序→编排后决策→BM-POS-01；⑤代码：DO(v8.0) §1.8；⑥降级：DO 不可用→直通仓位裁决。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 |
+|---|---|---|---|
+| depgraph | MOD-PF-007 | primary | planned |
 
 **状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -148,7 +161,11 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 ⑥降级：跌破前低→暂停后续批次→止损评估。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 |
+|---|---|---|---|
+| depgraph | MOD-PA-006 | primary | planned |
 
 **状态**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
