@@ -7317,9 +7317,17 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
     _ARCH_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"
 
-    _ARCH_PATTERN = re.compile(r'#ARCH-\d{3}\b')
-
-    _ARCH_TEXT_EXTS = (".md", ".yaml", ".yml", ".py", ".txt")
+    # 治本（audit-02，2026-08-02）：原 _ARCH_TEXT_EXTS 与 _reference_helpers.REFERENCE_TEXT_EXTS
+    # 不一致（缺 .json），导致 .json 文件中 #ARCH- 引用逃逸 warn 层；且 _ARCH_PATTERN 仅匹配
+    # #ARCH-\d{3}（漏检 ARCH-GOV-SHIM-001 等多段式编号与 ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2
+    # 等 S 阶段标记，与 commit-time 阻断门正则不一致）。收敛为复用 _reference_helpers
+    # .REFERENCE_TEXT_EXTS（含 .json，单一真源）+ 扩展 _ARCH_PATTERN 为与 arch_reference_gate
+    # ._ARCH_REF_RE 同源匹配范围（多段式 + 末段 S 阶段标记），消除正则第二真源。
+    from zephyr.gov_enforcement.commit_gates._reference_helpers import REFERENCE_TEXT_EXTS
+    # 非捕获正则：findall 返回完整 #ARCH-XXX 串，与 registered_ids（完整 issue_id）按全串比较。
+    # 匹配范围与 arch_reference_gate._ARCH_REF_RE 对齐（audit-02 2026-08-02）：
+    # 纯数字 #ARCH-008 / 两段式 #ARCH-CH-007 / 多段式 #ARCH-GOV-SHIM-001 / S 变体 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2
+    _ARCH_PATTERN = re.compile(r'#ARCH-(?:[A-Z]+(?:-[A-Z]+)*-[A-Z]?\d+|\d+)')
 
     def _trigger_arch_refs(committed_files: list[str]) -> bool:
 
@@ -7327,7 +7335,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
         for f in committed_files:
 
-            if f.replace("\\", "/").lower().endswith(_ARCH_TEXT_EXTS):
+            if f.replace("\\", "/").lower().endswith(REFERENCE_TEXT_EXTS):
 
                 return True
 
@@ -7375,7 +7383,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
         for f in committed_files:
 
-            if not f.replace("\\", "/").lower().endswith(_ARCH_TEXT_EXTS):
+            if not f.replace("\\", "/").lower().endswith(REFERENCE_TEXT_EXTS):
 
                 continue
 

@@ -9757,6 +9757,15 @@ entries:
   related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型)'
   created: '2026-07-24'
   last_updated: '2026-07-29'
+- issue_id: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2'
+  title: rule_discovery MCP Server 注册 mcp.json（可达性断裂治本 G2）
+  severity: P2中
+  adjudication: 'rule_discovery_server.py 存在 write_lookup_audit_log() 但未注册到 config/mcp.json servers 段，AI 无法经 MCP 调用 discover_applicable_rules——CAPABILITY-LOOKUP-REQUIRED gate 无 audit log 可放行，RULE-CAPABILITY-LOOKUP 6 层闭环模型 G2（可达性）断裂。治本：注册 rule_discovery server 到 config/mcp.json，tool=discover_applicable_rules，按 operation/scope/domain/tags 查询适用 trae 规则，调用自动写 audit log 到 .runtime/lookup_audit/<session_id>.jsonl。真源 rule_ai_perception_index.yaml（#ARCH-GOV-CONVERGENCE-META Phase 3.2b）。'
+  fix_phase: '已落地（config/mcp.json rule_discovery server 段，commit a0129ef679）'
+  status: decided
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型，G2 可达性断裂)'
+  created: '2026-07-19'
+  last_updated: '2026-08-02'
 - issue_id: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3'
   title: capability_lookup 审计日志目录与 rule_discovery_server 对称
   severity: P2中
