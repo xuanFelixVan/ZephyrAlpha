@@ -8,7 +8,7 @@ Usage from PowerShell / Python:
     python ch_vm_ssh.py --delete-backup market.zip
     python ch_vm_ssh.py --stat-backup market.zip --json
 
-Credentials read from config/.env.ch_backup (CH_VM_HOST, CH_VM_USER, CH_VM_PASSWORD).
+Credentials read from config/.env.ch_backup (CH_VM_HOST, CH_VM_USER, CH_VM_PASSWORD, CH_VM_KEY_PATH).
 Exit code 0 = success, 1 = failure. Output to stdout.
 """
 import argparse
@@ -26,8 +26,13 @@ ENV_FILE = PROJECT_ROOT / "config" / ".env.ch_backup"
 
 
 def load_env() -> dict:
-    """Load VM credentials from .env.ch_backup."""
-    creds = {"host": "172.24.30.100", "user": "ubuntu", "password": ""}
+    """Load VM credentials from .env.ch_backup.
+
+    Auth precedence: CH_VM_KEY_PATH (SSH key, recommended) > CH_VM_PASSWORD (legacy).
+    At least one must be set. When key auth is used, password is optional and
+    only needed for sudo fallback (or configure NOPASSWD sudo on the VM).
+    """
+    creds = {"host": "172.24.30.100", "user": "ubuntu", "password": "", "key_path": ""}
     if ENV_FILE.exists():
         for line in ENV_FILE.read_text(encoding="utf-8").splitlines():
             line = line.strip()
@@ -41,8 +46,10 @@ def load_env() -> dict:
                 creds["user"] = val
             elif key == "CH_VM_PASSWORD":
                 creds["password"] = val
-    if not creds["password"]:
-        print("ERROR: CH_VM_PASSWORD not set in config/.env.ch_backup", file=sys.stderr)
+            elif key == "CH_VM_KEY_PATH":
+                creds["key_path"] = val
+    if not creds["password"] and not creds["key_path"]:
+        print("ERROR: set CH_VM_KEY_PATH (recommended) or CH_VM_PASSWORD in config/.env.ch_backup", file=sys.stderr)
         sys.exit(1)
     return creds
 
@@ -52,16 +59,22 @@ def ssh_run(cmd: str, timeout: int = 120, use_sudo: bool = False) -> dict:
     creds = load_env()
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(
-        creds["host"],
+    connect_kwargs = dict(
+        hostname=creds["host"],
         username=creds["user"],
-        password=creds["password"],
         timeout=15,
         allow_agent=False,
         look_for_keys=False,
     )
+    if creds["key_path"]:
+        connect_kwargs["key_filename"] = creds["key_path"]
+    else:
+        connect_kwargs["password"] = creds["password"]
+    client.connect(**connect_kwargs)
     try:
         if use_sudo:
+            if not creds["password"]:
+                return {"exit_code": 1, "stdout": "", "stderr": "sudo requires CH_VM_PASSWORD (or configure NOPASSWD sudo on VM for key-only auth)"}
             stdin, stdout, stderr = client.exec_command(cmd, timeout=timeout, get_pty=True)
             stdin.write(creds["password"] + "\n")
             stdin.flush()

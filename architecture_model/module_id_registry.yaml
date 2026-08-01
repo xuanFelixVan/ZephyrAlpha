@@ -34,7 +34,7 @@
 
 module_id: MOD-GOVERNANCE
 registry_version: "2.4.0"
-last_updated: "2026-06-30"
+last_updated: "2026-08-01"
 total_registered: 73  # Phase 3 reconciler→gate 收敛（2026-07-03）：实际条目数 73（74→73 修正，原值含 1 个已删除条目未同步）。MODULE-ID-CONSISTENCY gate 现强制 count 与实际一致。
 
 # ID 分配规则
@@ -418,9 +418,10 @@ registered_ids:
     status: production
 
 # 代码模块 ID 注册表
-# population_status: deferred_until_phase1 — 当前不阻塞施工，experimental 模块边界确定后从各 layers/*.yaml 的 modules[].id 字段批量提取填充
+# population_status: deferred_until_phase1 — 当前不阻塞施工，experimental 模块边界确定后从各 layers/*.yaml 的 modules[].module_id 字段批量提取填充
 # planned_count: ~110（估算：域 ~90 + shared ~5 + frontend ~7 + scripts ~8）
-registered_modules: []  # 代码模块在各分区 YAML 中定义——P8-FIX-S0（2026-06-30）：registered_modules 仍为空，total_registered=74 仅含 registered_ids 条目数。代码模块 ID 应从 layers/*.yaml 自动派生（S0-4 reconciler 将实现）。
+# partial_state（2026-08-01 审计提取）：当前仅 15/~110 模块在 layers/b_*.yaml 分配了 module_id（b_core 等仍无 ID）。完整填充需 S0-4 reconciler 实现——注意 MODULE-ID-CONSISTENCY gate 将 total_registered 与全文件 `  - module_id:` 条目数绑定，故填充 registered_modules 必须同步 bump total_registered 并与 registered_ids 去重。
+registered_modules: []  # 代码模块在各分区 YAML 中定义——P8-FIX-S0（2026-06-30）：registered_modules 仍为空，total_registered=73 仅含 registered_ids 条目数（74→73 修正，2026-08-01 审计复核）。代码模块 ID 应从 layers/*.yaml 自动派生（S0-4 reconciler 将实现）。
 # TODO: 执行 python scripts/governance/.../populate_module_registry.py 从 layers/*.yaml 自动提取模块 ID 填充此列表
 
 # 保留 ID 段（预留给特殊用途）

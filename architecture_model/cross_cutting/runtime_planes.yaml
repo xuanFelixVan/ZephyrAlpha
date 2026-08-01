@@ -369,11 +369,11 @@ planes:
       - id: gov-factory
         domain: D_GOVERNANCE
         submodule: scripts/governance/（Factory 层所有脚本）
-        note: 治理 Factory 层（构建期 / 定时批调度）
+        note: 治理 Factory 层（构建期 / CI 批量兜底）
       - id: gov-scout-d02
         domain: D_GOVERNANCE
-        submodule: src/zephyr/ml_train/scout/ + cron
-        note: D-02 Scout Agent（每日抓取批任务）
+        submodule: src/zephyr/ml_train/scout/ + CI 批量兜底
+        note: D-02 Scout Agent（CI 批量兜底抓取）
       - id: fe-ssr-reports
         domain: D_FRONTEND
         submodule: apps/reports-center/（SSR 报表）
@@ -395,7 +395,7 @@ planes:
       storage: Parquet columnar / DuckDB / S3 object storage
       concurrency: Spark DataFrame / Dask delayed / Ray
       gc: 无所谓
-      scheduling: Airflow DAG / Prefect Flow / cron
+      scheduling: Airflow DAG / Prefect Flow / CI 批量兜底
 
 cross_plane_rules:
   - rule: HOT_WARM_IPC_ONLY

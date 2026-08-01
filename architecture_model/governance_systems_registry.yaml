@@ -331,7 +331,7 @@ systems:
     family: D
     main_layer: Runtime
     secondary_layer: "Policy 白名单 / Factory scraper"
-    runtime_plane: "Cold（每日 cron）"
+    runtime_plane: "Cold（事件驱动 + CI 批量兜底）"
     activation: "Sprint 9 简易→11+ 完整"
     source_oq: OQ-079
     code_location: "ml_train/scout/"
