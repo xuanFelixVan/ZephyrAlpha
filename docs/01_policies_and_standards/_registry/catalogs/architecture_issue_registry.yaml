@@ -10482,3 +10482,52 @@ entries:
   related_adjudication: 'TRAE-083 v1.1.0(铁律6孤儿/孤立信号禁单源弃用), TRAE-062(SSoT分类), #ARCH-RSK-ROLLBACK-001(同根因治本)'
   created: '2026-08-01'
   last_updated: '2026-08-01'
+# --- #ARCH-BPID-STALE-039: blueprint_id 重命名传播遗漏（auto_runtime_core MOD-INF-030→MOD-INF-035）---
+- issue_id: '#ARCH-BPID-STALE-039'
+  title: MOD-INF-030 blueprint_id 碰撞调查：auto_runtime_core 蓝图锚点[39]残留旧bp_id（2.7.0重命名未传播）
+  severity: P2中
+  adjudication: |
+    发现：第4步孤儿重审时，MOD-INF-030 blueprint_id 被 34 个节点共用。深入调查发现根因是
+      blueprint_registry v2.7.0(2026-06-10)"重复 module_id 修复"重命名传播遗漏。
+
+    根因（双源证据）：
+      设计文档真源：blueprint_registry.yaml L1099 记录"auto-runtime-core MOD-INF-030→MOD-INF-035"；
+        auto_runtime_core/blueprint.md frontmatter 声明 module_id: MOD-INF-035（submodule_path=src/zephyr/trading/autopilot）；
+        red_blue_validator/blueprint.md frontmatter 声明 module_id: MOD-INF-030。
+      depgraph 真源：node[39](auto_runtime_core/blueprint.md) 仍持有 stale blueprint_id=MOD-INF-030
+        （且 type_specific_data.module_id="MOD-INF-030"、blueprint_path=docs/03_modules/MOD-INF-030/ 全 stale，
+        doc_references 自相矛盾地同时含 MOD-INF-035 正确自指 + MOD-INF-030 错误自指）。
+      即：registry + frontmatter 都已改为 MOD-INF-035，但 depgraph 节点[39]未跟随传播。
+
+    范围（系统性排查，非系统性问题）：2.7.0 同批 3 个重命名逐一核验 stale 残留：
+      mcp_servers MOD-INF-015→MOD-INF-013：旧bp 015 现存41节点，path含'model_context_protocol'(stale)=0 → 015已
+        被 observability 模块接管，无残留。
+      capacity_assurance MOD-INF-024→MOD-INF-001：旧bp 024 现存98节点，path含'capacity'(stale)=0 → 024已被
+        budget_enforcer 接管，无残留。
+      auto_runtime_core MOD-INF-030→MOD-INF-035：旧bp 030 现存34节点，path含'auto_runtime'(stale)=1 → 仅 node[39]残留。
+      结论：单点问题，非系统性。仅[39]未传播。
+
+    治本修复（2026-08-01，用户拍板 delete+re-add 合规方案）：
+      1. --delete-nodes [39]：DELETE 1节点 + 0关联边（[39]是孤儿，删除无副作用，备份tmp/pg_backups/depgraph_20260801_042352.json）
+      2. --add-design-node docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md MOD-INF-035 D_GOV_DOCS planned --granularity file
+         → 新增 node_id=7746760（bp=MOD-INF-035, dom=D_GOV_DOCS, planned, design）
+         WARNING: blueprint_path 约定(docs/03_modules/MOD-INF-035/)与实际(_cross_layer/auto_runtime_core/)不符——
+         这是预存约定不一致(同[52]red_blue_validator锚点)，非本次引入，节点仍创建成功。
+      3. 已知元数据损失(用户已知悉接受)：belongs_to/architecture_layer=None（原[39]为D-GOVERNANCE/L1_foundation），
+         type_specific_data.doc_references 丢失；可由 reconciler 后续 sync 补回。
+
+    验证（全绿）：
+      MOD-INF-030 簇：34→33，stale auto_runtime=0，33 全为合法 red_blue_validator（蓝图[52]+代码+adversarial_validation+tests）。
+      MOD-INF-035 簇：68→69，含 1 个文档锚点(7746760)，补齐了原缺失的蓝图锚点。
+      node_id=39：已不存在(0)。
+      align_panoramas：问题总数2(孤儿=2/状态漂移=0/域不一致=0/设计态孤立=0)，与修复前一致，无新问题。
+
+    教训：blueprint_id 重命名(blueprint_registry 迁移)是规则数据真源变更，但 depgraph 节点是架构数据真源(DB)，
+      两类真源(见TRAE-062)同步需显式触发——registry 改了不等于 depgraph 跟了。
+      当前 apply_depgraph 无"单节点 bp_id 修正"命令(--rename-blueprint-id 是全局的，会把33个合法rbv节点也错移)，
+      故采用 delete+re-add。建议未来增强 apply_depgraph 支持单节点 bp_id 修正(裁定待立)。
+  fix_phase: '已执行(2026-08-01)：delete[39] + re-add MOD-INF-035(7746760) + 030簇34→33全rbv + 035簇68→69含锚点 + align设计态孤立=0'
+  status: decided
+  related_adjudication: 'TRAE-062(SSoT真源分类:规则数据YAML vs 架构数据DB同步), #ARCH-ORPHAN-REAUDIT-004(发现入口)'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'
