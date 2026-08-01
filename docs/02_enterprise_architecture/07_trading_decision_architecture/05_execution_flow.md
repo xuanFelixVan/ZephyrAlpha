@@ -52,7 +52,7 @@ submit → ack → partial_fill → fill → complete
 > 图例：🟦 蓝色=运营态(production) ｜ 🟧 橙色虚线=设计态(design) ｜ 实线=运营态依赖 ｜ 虚线=非运营态依赖
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': '#eaeaea', 'clusterBorder': '#888888', 'fontSize': '14px'}}}%%
 flowchart TD
     n57["(设计态 / design) Pre-Trade主链6项检查 Pre-Trade Main Chain 6 Checks<br/>compliance_check | L4 | decision/ex_core/ex_01"]
     n58["(设计态 / design) Kill Switch 5层防御 Kill Switch 5-Layer Defense<br/>risk_check | L4 | decision/ex_core/ex_02"]

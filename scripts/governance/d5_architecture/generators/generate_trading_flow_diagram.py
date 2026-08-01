@@ -229,6 +229,7 @@ _MERMAID_THEME = (
     "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', "
     "'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', "
     "'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
+    "'clusterBkg': '#eaeaea', 'clusterBorder': '#888888', "
     "'fontSize': '14px'}}}%%"
 )
 

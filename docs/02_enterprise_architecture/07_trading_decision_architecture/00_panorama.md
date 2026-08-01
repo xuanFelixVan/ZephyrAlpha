@@ -33,7 +33,7 @@ generator: generate_trading_flow_diagram.py
 > 全部决策节点 + 决策边。大图请在 HTML 网页版查看（Ctrl+滚轮缩放）。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': '#eaeaea', 'clusterBorder': '#888888', 'fontSize': '14px'}}}%%
 flowchart TD
     subgraph S_stock_selection["选股决策流（5节点）"]
     n190["(设计态 / design) 末位淘汰 IC-Based Factor Replacement<br/>signal | L2A | decision/factor/fc_01"]
