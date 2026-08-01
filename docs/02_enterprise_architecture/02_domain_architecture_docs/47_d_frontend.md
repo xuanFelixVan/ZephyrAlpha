@@ -57,7 +57,7 @@ flowchart TD
     src_zephyr_frontend_dashboard_app_py["应用<br/>ZephyrAlpha Dashboard · Streamlit 仪表盘<br/>（已弃用 v3.1.0）<br/>app<br/>文件: dashboard/app.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_app_panel_py["应用面板<br/>app_panel · Panel 仪表盘主应用入口（v3.1.0,<br/>#ARCH-047）<br/>文件: dashboard/app_panel.py<br/>(生产态 / production)"]
     src_zephyr_frontend_implementations_default_approval_gateway_py["默认审批网关<br/>默认approval网关，前端的门禁，在关键节点检查是否<br/>放行。<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_approval_gateway<br/>文件: implementations/default_approval_<br/>gateway.py<br/>(设计态 / design)"]
-    src_zephyr_frontend_implementations_default_notification_manager_py["默认通知管理器<br/>默认通知管理器，前端的通知器，把消息推送给接收方<br/>。<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_notification_manager<br/>文件: implementations/default_notification_<br/>manager.py<br/>(设计态 / design)"]
+    src_zephyr_frontend_implementations_default_notification_manager_py["默认通知管理器<br/>前端的通知器，把消息推送给接收方。<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_notification_manager<br/>文件: implementations/default_notification_<br/>manager.py<br/>(设计态 / design)"]
     scripts_tests_test_frontend_components_py ~~~ src_zephyr_frontend_dashboard_app_py
     src_zephyr_frontend_dashboard_app_py ~~~ src_zephyr_frontend_dashboard_app_panel_py
     src_zephyr_frontend_dashboard_app_panel_py ~~~ src_zephyr_frontend_implementations_default_approval_gateway_py
@@ -69,7 +69,7 @@ flowchart TD
     src_zephyr_frontend_dashboard_components_position_monitor_py["持仓监控<br/>position_monitor · 实盘持仓监控组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_tick_replay_py["逐笔replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_trade_panel_py["交易面板<br/>trade_panel · 实盘交易面板组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047, human_gated）<br/>文件: components/trade_panel.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_interface_base_py["接口基类<br/>接口基类。D_FRONTEND — Human-AI Interface Layer<br/>Skeleton<br/>文件: frontend/interface_base.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_interface_base_py["接口基类<br/>D_FRONTEND — Human-AI Interface Layer Skeleton<br/>文件: frontend/interface_base.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_backtest_performance_py ~~~ src_zephyr_frontend_dashboard_components_backtest_results_py
     src_zephyr_frontend_dashboard_components_backtest_results_py ~~~ src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_components_fitness_functions_py ~~~ src_zephyr_frontend_dashboard_components_order_book_py
@@ -82,22 +82,24 @@ flowchart TD
     src_zephyr_frontend_implementations_default_approval_gateway_py -.->|导入依赖 / import_depends| src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     src_zephyr_frontend_dashboard_components_backtest_results_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_order_book_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_position_monitor_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_order_book_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
-    scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
+    scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
+    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| D_TRADING
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -106,15 +108,13 @@ flowchart TD
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_frontend_dashboard_components_chart_factory_py -->|导入依赖 / import_depends| D_SHARED
-    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_tests_test_frontend_components_py,src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_app_panel_py,src_zephyr_frontend_dashboard_components_backtest_performance_py,src_zephyr_frontend_dashboard_components_backtest_results_py,src_zephyr_frontend_dashboard_components_chart_factory_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_order_book_py,src_zephyr_frontend_dashboard_components_position_monitor_py,src_zephyr_frontend_dashboard_components_tick_replay_py,src_zephyr_frontend_dashboard_components_trade_panel_py,src_zephyr_frontend_interface_base_py production
     class src_zephyr_frontend_implementations_default_approval_gateway_py,src_zephyr_frontend_implementations_default_notification_manager_py design
-    class D_SHARED,D_FEEDBACK_LOOP,D_GOVERNANCE,D_TRADING external_prod
+    class D_TRADING,D_SHARED,D_FEEDBACK_LOOP,D_GOVERNANCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -127,7 +127,7 @@ flowchart TD
     scripts_tests_test_frontend_components_py["测试前端components<br/>5个前端组件综合验证脚本（TTL=task_<br/>bound，施工完成后退役）<br/>test_frontend_components<br/>文件: tests/test_frontend_components.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_app_py["应用<br/>ZephyrAlpha Dashboard · Streamlit 仪表盘<br/>（已弃用 v3.1.0）<br/>app<br/>文件: dashboard/app.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_app_panel_py["应用面板<br/>app_panel · Panel 仪表盘主应用入口（v3.1.0,<br/>#ARCH-047）<br/>文件: dashboard/app_panel.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_interface_base_py["接口基类<br/>接口基类。D_FRONTEND — Human-AI Interface Layer<br/>Skeleton<br/>文件: frontend/interface_base.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_interface_base_py["接口基类<br/>D_FRONTEND — Human-AI Interface Layer Skeleton<br/>文件: frontend/interface_base.py<br/>(生产态 / production)"]
     scripts_tests_test_frontend_components_py ~~~ src_zephyr_frontend_dashboard_app_py
     src_zephyr_frontend_dashboard_app_py ~~~ src_zephyr_frontend_dashboard_app_panel_py
     src_zephyr_frontend_dashboard_app_panel_py ~~~ src_zephyr_frontend_interface_base_py
@@ -147,22 +147,22 @@ flowchart TD
     src_zephyr_frontend_dashboard_components_chart_factory_py["chart工厂<br/>chart_factory · 图表统一工厂（v3.0.0新增,<br/>#ARCH-047）<br/>文件: components/chart_factory.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     src_zephyr_frontend_dashboard_components_backtest_results_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_order_book_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_position_monitor_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_order_book_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
-    scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
+    scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -178,7 +178,7 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_frontend_implementations_default_approval_gateway_py["默认审批网关<br/>默认approval网关，前端的门禁，在关键节点检查是否<br/>放行。<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_approval_gateway<br/>文件: implementations/default_approval_<br/>gateway.py<br/>(设计态 / design)"]
-    src_zephyr_frontend_implementations_default_notification_manager_py["默认通知管理器<br/>默认通知管理器，前端的通知器，把消息推送给接收方<br/>。<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_notification_manager<br/>文件: implementations/default_notification_<br/>manager.py<br/>(设计态 / design)"]
+    src_zephyr_frontend_implementations_default_notification_manager_py["默认通知管理器<br/>前端的通知器，把消息推送给接收方。<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_notification_manager<br/>文件: implementations/default_notification_<br/>manager.py<br/>(设计态 / design)"]
     src_zephyr_frontend_implementations_default_approval_gateway_py ~~~ src_zephyr_frontend_implementations_default_notification_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
