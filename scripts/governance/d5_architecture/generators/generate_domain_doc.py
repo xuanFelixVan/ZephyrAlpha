@@ -320,42 +320,55 @@ def _wrap_label_text(text: str, max_units: int = 48) -> str:
 
 
 def _node_mermaid_label(n: dict) -> str:
-    """生成 Mermaid 节点标签：成熟度全称 + 名称 + 大白话/简介 + 文件路径(+⛔受限原因)。
+    """生成 Mermaid 节点标签：中文在前（名+简介+受限），英文在后（名+简介），状态最后。
 
-    显示策略（治本：消除残缺显示，如 "capitalallocator / Capital Allocator" 伪双语 +
-    重复 docstring 当简介）：
-    - 名称行：真源双语名称(get_module_name_bilingual)优先；未登记则用 docstring 首行
-      （常为中文功能名）；都无则文件名(short_name)。
-    - 大白话行：真源 plain_zh 优先；未登记时，若名称已来自真源双语则用 docstring 兜底
-      （技术简介也比空着好），若名称来自 docstring（真源无 name）则不再重复 docstring、
-      留空待逐域补齐（避免 name 与 plain 同源重复）。
-    - 文件路径行：始终显示（定位用）。
-    - ⛔ 受限原因行：设计态节点（design_maturity=design）且 DB gate_reason 非空时追加，
-      说明"为什么这个设计没施工"，避免误判为遗漏。
-    - 所有行经 _wrap_label_text 预折行（<br/> 显式断行），禁止依赖 HTML CSS 二次折行
-      （否则 Mermaid 测量行数 < 渲染行数，文字被节点框裁剪）。
+    显示策略（2026-08-01 第四轮治本：中英分排，解决末行裁剪问题）：
+    - **中文部分（前面）**：中文名 → 中文简介(大白话) → ⛔受限原因(设计态)
+    - **英文部分（后面）**：英文名 → 英文简介
+    - **末尾**：文件路径 → 成熟度状态（颜色已区分运营态/设计态，放最后不碍阅读）
+    - 中文名称：真源 name_zh 优先 → docstring 首行兜底 → 文件名兜底
+    - 中文简介：真源 plain_zh 优先 → desc_zh 兜底 → 名称来自真源时用 docstring 兜底
+    - 英文名称/简介：真源 name_en/desc_en（可能为空，为空则整段不输出）
+    - ⛔ 受限原因：设计态节点 gate_reason 非空时追加（紧跟中文简介，说明"为什么没施工"）
+    - 所有行经 _wrap_label_text 预折行（<br/> 显式断行），防 CSS 二次折行致框高不足
     """
     maturity = _maturity_display(n.get("design_maturity") or "unknown")
     short_name = _node_short_name(n)
     path = n.get("path") or ""
-    # 真源双语名称（未登记返回 None）；docstring 首行（功能简介，可能中文）
-    real_name_bi = get_module_name_bilingual(path) if path else None
     desc = _node_desc_zh(n)
-    # 名称行：真源双语 > docstring 首行 > 文件名（保证始终有可辨识名称，不残缺）
-    name_bi = real_name_bi or desc or short_name
-    # 大白话行：真源 plain_zh 优先
+    # 拆分取中英文名和简介（翻译真源独立字段）
+    trans = get_module_translation(path) if path else None
+    name_zh = (trans.get("name_zh", "") if trans else "").strip()
+    name_en = (trans.get("name_en", "") if trans else "").strip()
+    desc_zh = (trans.get("desc_zh", "") if trans else "").strip()
+    desc_en = (trans.get("desc_en", "") if trans else "").strip()
     plain = get_module_plain(path) if path else ""
-    if not plain:
-        # 名称若已来自真源双语，plain 用 docstring 兜底；名称若来自 docstring，plain 不重复、留空
-        plain = desc if real_name_bi else ""
-    parts = [f"({maturity}) {name_bi}"]
-    if plain:
-        parts.append(plain)
-    parts.append(f"文件: {short_name}")
-    # 设计态节点显示受限原因（⛔ 行）：gate_reason 非空时追加
+
+    # 中文名称：name_zh > docstring > 文件名
+    cn_name = name_zh or desc or short_name
+    # 中文简介：plain_zh > desc_zh > (名称来自真源时用 docstring 兜底，否则留空避免重复)
+    cn_intro = plain or desc_zh
+    if not cn_intro and name_zh:
+        cn_intro = desc
+
     gate_reason = (n.get("gate_reason") or "").strip()
-    if gate_reason and (n.get("design_maturity") or "") == "design":
+    is_design = (n.get("design_maturity") or "") == "design"
+
+    parts: list[str] = []
+    # ── 中文部分（前面）──
+    parts.append(cn_name)
+    if cn_intro:
+        parts.append(cn_intro)
+    if gate_reason and is_design:
         parts.append(f"⛔ {gate_reason}")
+    # ── 英文部分（后面）──
+    if name_en:
+        parts.append(name_en)
+    if desc_en:
+        parts.append(desc_en)
+    # ── 末尾：文件路径 + 成熟度（颜色已区分，放最后）──
+    parts.append(f"文件: {short_name}")
+    parts.append(f"({maturity})")
     return "<br/>".join(_wrap_label_text(p) for p in parts)
 
 
@@ -903,8 +916,8 @@ def generate_internal_mermaid(
     def _get_or_create_external(ext_domain: str, maturity: str) -> str:
         """跨域节点代表"另一个域"（非单个模块），标签同样塞入完整信息。
 
-        与域内节点 _node_mermaid_label 对齐：成熟度全称 + 域中英文名(中文在前)
-        + 域功能简介(大白话) + 跨域节点标识。域无单一文件，用"跨域节点"代替文件路径行。
+        与域内节点 _node_mermaid_label 对齐（2026-08-01 第四轮：中英分排）：
+        中文在前（域中文名+简介）→ 英文在后（域英文名）→ 跨域节点标识 → 成熟度最后。
         域信息取自 domain_name_mapping（中文名 DB 优先 / 英文名+简介硬编码真源）。
         """
         if ext_domain in external_nodes:
@@ -921,20 +934,16 @@ def generate_internal_mermaid(
         ext_name_zh = get_domain_name_zh_strict(ext_domain)
         ext_name_en = get_domain_name_en(ext_domain)
         ext_desc = get_domain_desc_zh(ext_domain)
-        # 第 1 行：成熟度 + 域中英文名（中文在前，与域内节点格式一致）
-        if ext_name_zh and ext_name_en and ext_name_en != ext_domain:
-            name_bi = f"{ext_name_zh} / {ext_name_en}"
-        elif ext_name_zh:
-            name_bi = f"{ext_domain} {ext_name_zh}"
-        else:
-            name_bi = ext_domain
-        parts = [f"({ext_maturity}) {name_bi}"]
-        # 第 2 行：域功能简介（大白话，若有）
+        # ── 中文部分（前面）──
+        parts = [ext_name_zh or ext_domain]
         if ext_desc:
             parts.append(ext_desc)
-        # 第 3 行：跨域节点标识（域无单一文件，用此标识代替文件路径行）
+        # ── 英文部分（后面）──
+        if ext_name_en and ext_name_en != ext_domain:
+            parts.append(ext_name_en)
+        # ── 末尾：跨域节点标识 + 成熟度（颜色已区分，放最后）──
         parts.append("跨域节点 / cross-domain")
-        # 与域内节点一致：所有行预折行（<br/> 显式断行），防 CSS 二次折行导致框高不足
+        parts.append(f"({ext_maturity})")
         ext_label = _sanitize_mermaid_label("<br/>".join(_wrap_label_text(p) for p in parts))
         lines.append(f'    {ext_id}["{ext_label}"]')
         return ext_id
