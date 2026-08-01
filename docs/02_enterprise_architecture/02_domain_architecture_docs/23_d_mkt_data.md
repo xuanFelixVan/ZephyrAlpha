@@ -53,17 +53,17 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_market_data_init_py["(生产态 / production) 包入口 / __init__<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: market_data/__init__.py"]
-    src_zephyr_market_data_extensions_init_py["(生产态 / production) 包入口 / __init__<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: _extensions/__init__.py"]
-    src_zephyr_market_data_api_init_py["(生产态 / production) 包入口 / __init__<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: api/__init__.py"]
-    src_zephyr_market_data_autoload_py["(设计态 / design) 自动加载 / autoload<br/>自动加载，数据的加载器，读取并加载配置<br/>/数据到内存。<br/>文件: market_data/autoload.py<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
-    src_zephyr_market_data_connectors["(设计态 / design) 连接器<br/>连接器，连接器的子目录，归集相关子模块。<br/>文件: connectors/<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
-    src_zephyr_market_data_core_init_py["(生产态 / production) 包入口 / __init__<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: core/__init__.py"]
-    src_zephyr_market_data_failover["(设计态 / design) 故障切换<br/>故障切换，故障切换的子目录，归集相关子模块。<br/>文件: failover/<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
-    src_zephyr_market_data_infrastructure_init_py["(生产态 / production) 包入口 / __init__<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_market_data_models_init_py["(生产态 / production) 包入口 / __init__<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: models/__init__.py"]
-    src_zephyr_market_data_normalized_market_data_producer_init_py["(生产态 / production) 包入口 / __init__<br/>NormalizedMarketData 生产者包——D_MKT_DATA→D_<br/>FACTOR 数据供给。<br/>文件: normalized_market_data_producer/__init__<br/>.py"]
-    src_zephyr_market_data_services_init_py["(生产态 / production) 包入口 / __init__<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: services/__init__.py"]
+    src_zephyr_market_data_init_py["包入口<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: market_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_extensions_init_py["包入口<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_api_init_py["包入口<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_autoload_py["自动加载<br/>自动加载，数据的加载器，读取并加载配置<br/>/数据到内存。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>autoload<br/>文件: market_data/autoload.py<br/>(设计态 / design)"]
+    src_zephyr_market_data_connectors["连接器<br/>连接器，连接器的子目录，归集相关子模块。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
+    src_zephyr_market_data_core_init_py["包入口<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_failover["故障切换<br/>故障切换，故障切换的子目录，归集相关子模块。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: failover/<br/>(设计态 / design)"]
+    src_zephyr_market_data_infrastructure_init_py["包入口<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_models_init_py["包入口<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_normalized_market_data_producer_init_py["包入口<br/>NormalizedMarketData 生产者包——D_MKT_DATA→D_<br/>FACTOR 数据供给。<br/>__init__<br/>文件: normalized_market_data_producer/__init__<br/>.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_services_init_py["包入口<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_init_py ~~~ src_zephyr_market_data_extensions_init_py
     src_zephyr_market_data_extensions_init_py ~~~ src_zephyr_market_data_api_init_py
     src_zephyr_market_data_api_init_py ~~~ src_zephyr_market_data_autoload_py
@@ -74,27 +74,27 @@ flowchart TD
     src_zephyr_market_data_infrastructure_init_py ~~~ src_zephyr_market_data_models_init_py
     src_zephyr_market_data_models_init_py ~~~ src_zephyr_market_data_normalized_market_data_producer_init_py
     src_zephyr_market_data_normalized_market_data_producer_init_py ~~~ src_zephyr_market_data_services_init_py
-    src_zephyr_market_data_normalized_market_data_producer_producer_py["(生产态 / production) 生产者 / producer<br/>NormalizedMarketData 生产者——D_MKT_DATA→D_<br/>FACTOR 数据供给。<br/>文件: normalized_market_data_producer<br/>/producer.py"]
-    src_zephyr_market_data_vendor_registry_py["(设计态 / design) vendor注册表 / vendor_registry<br/>vendor注册表，数据的注册表，登记和查询已注册的条<br/>目。<br/>文件: market_data/vendor_registry.py<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>NormalizedMarketData 生产者——D_MKT_DATA→D_<br/>FACTOR 数据供给。<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_vendor_registry_py["vendor注册表<br/>vendor注册表，数据的注册表，登记和查询已注册的条<br/>目。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_registry<br/>文件: market_data/vendor_registry.py<br/>(设计态 / design)"]
     src_zephyr_market_data_normalized_market_data_producer_producer_py ~~~ src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_raw_data_cache["(设计态 / design) raw数据缓存<br/>raw数据缓存，数据的子目录，归集相关子模块。<br/>文件: raw_data_cache/<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
-    src_zephyr_market_data_vendor_base_py["(设计态 / design) vendor基类 / vendor_base<br/>vendor基类，数据的基类，定义抽象接口供子类实现。<br/>文件: market_data/vendor_base.py<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
+    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>raw数据缓存，数据的子目录，归集相关子模块。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
+    src_zephyr_market_data_vendor_base_py["vendor基类<br/>vendor基类，数据的基类，定义抽象接口供子类实现。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_base<br/>文件: market_data/vendor_base.py<br/>(设计态 / design)"]
     src_zephyr_market_data_raw_data_cache ~~~ src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_vendor_registry_py -.->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_connectors -.->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_autoload_py -.->|runtime / runtime| src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_normalized_market_data_producer_producer_py -.->|data / data| src_zephyr_market_data_raw_data_cache
     src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
-    D_DATA["(生产态 / production) 数据接入层 / Data Access<br/>Layer<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>跨域节点 / cross-domain"]
+    src_zephyr_market_data_normalized_market_data_producer_producer_py -.->|data / data| src_zephyr_market_data_raw_data_cache
+    D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_market_data_raw_data_cache -.->|data / data| D_DATA
     src_zephyr_market_data_autoload_py -.->|runtime / runtime| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
-    D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 /<br/>Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>跨域节点 / cross-domain"]
+    D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_EX_SOR["(生产态 / production) 执行路由 / Execution<br/>Routing<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>跨域节点 / cross-domain"]
+    D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_SOR -.->|runtime / runtime| src_zephyr_market_data_failover
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -112,14 +112,14 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_market_data_init_py["(生产态 / production) 包入口 / __init__<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: market_data/__init__.py"]
-    src_zephyr_market_data_extensions_init_py["(生产态 / production) 包入口 / __init__<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: _extensions/__init__.py"]
-    src_zephyr_market_data_api_init_py["(生产态 / production) 包入口 / __init__<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: api/__init__.py"]
-    src_zephyr_market_data_core_init_py["(生产态 / production) 包入口 / __init__<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: core/__init__.py"]
-    src_zephyr_market_data_infrastructure_init_py["(生产态 / production) 包入口 / __init__<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_market_data_models_init_py["(生产态 / production) 包入口 / __init__<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: models/__init__.py"]
-    src_zephyr_market_data_normalized_market_data_producer_init_py["(生产态 / production) 包入口 / __init__<br/>NormalizedMarketData 生产者包——D_MKT_DATA→D_<br/>FACTOR 数据供给。<br/>文件: normalized_market_data_producer/__init__<br/>.py"]
-    src_zephyr_market_data_services_init_py["(生产态 / production) 包入口 / __init__<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: services/__init__.py"]
+    src_zephyr_market_data_init_py["包入口<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: market_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_extensions_init_py["包入口<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_api_init_py["包入口<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_core_init_py["包入口<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_infrastructure_init_py["包入口<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_models_init_py["包入口<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_normalized_market_data_producer_init_py["包入口<br/>NormalizedMarketData 生产者包——D_MKT_DATA→D_<br/>FACTOR 数据供给。<br/>__init__<br/>文件: normalized_market_data_producer/__init__<br/>.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_services_init_py["包入口<br/>数据的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_init_py ~~~ src_zephyr_market_data_extensions_init_py
     src_zephyr_market_data_extensions_init_py ~~~ src_zephyr_market_data_api_init_py
     src_zephyr_market_data_api_init_py ~~~ src_zephyr_market_data_core_init_py
@@ -127,7 +127,7 @@ flowchart TD
     src_zephyr_market_data_infrastructure_init_py ~~~ src_zephyr_market_data_models_init_py
     src_zephyr_market_data_models_init_py ~~~ src_zephyr_market_data_normalized_market_data_producer_init_py
     src_zephyr_market_data_normalized_market_data_producer_init_py ~~~ src_zephyr_market_data_services_init_py
-    src_zephyr_market_data_normalized_market_data_producer_producer_py["(生产态 / production) 生产者 / producer<br/>NormalizedMarketData 生产者——D_MKT_DATA→D_<br/>FACTOR 数据供给。<br/>文件: normalized_market_data_producer<br/>/producer.py"]
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>NormalizedMarketData 生产者——D_MKT_DATA→D_<br/>FACTOR 数据供给。<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
     src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -143,15 +143,15 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_market_data_autoload_py["(设计态 / design) 自动加载 / autoload<br/>自动加载，数据的加载器，读取并加载配置<br/>/数据到内存。<br/>文件: market_data/autoload.py<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
-    src_zephyr_market_data_connectors["(设计态 / design) 连接器<br/>连接器，连接器的子目录，归集相关子模块。<br/>文件: connectors/<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
-    src_zephyr_market_data_failover["(设计态 / design) 故障切换<br/>故障切换，故障切换的子目录，归集相关子模块。<br/>文件: failover/<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
-    src_zephyr_market_data_raw_data_cache["(设计态 / design) raw数据缓存<br/>raw数据缓存，数据的子目录，归集相关子模块。<br/>文件: raw_data_cache/<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
+    src_zephyr_market_data_autoload_py["自动加载<br/>自动加载，数据的加载器，读取并加载配置<br/>/数据到内存。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>autoload<br/>文件: market_data/autoload.py<br/>(设计态 / design)"]
+    src_zephyr_market_data_connectors["连接器<br/>连接器，连接器的子目录，归集相关子模块。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
+    src_zephyr_market_data_failover["故障切换<br/>故障切换，故障切换的子目录，归集相关子模块。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: failover/<br/>(设计态 / design)"]
+    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>raw数据缓存，数据的子目录，归集相关子模块。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
     src_zephyr_market_data_autoload_py ~~~ src_zephyr_market_data_connectors
     src_zephyr_market_data_connectors ~~~ src_zephyr_market_data_failover
     src_zephyr_market_data_failover ~~~ src_zephyr_market_data_raw_data_cache
-    src_zephyr_market_data_vendor_registry_py["(设计态 / design) vendor注册表 / vendor_registry<br/>vendor注册表，数据的注册表，登记和查询已注册的条<br/>目。<br/>文件: market_data/vendor_registry.py<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
-    src_zephyr_market_data_vendor_base_py["(设计态 / design) vendor基类 / vendor_base<br/>vendor基类，数据的基类，定义抽象接口供子类实现。<br/>文件: market_data/vendor_base.py<br/>⛔ 行情数据域，设计已就绪，等待开发排期"]
+    src_zephyr_market_data_vendor_registry_py["vendor注册表<br/>vendor注册表，数据的注册表，登记和查询已注册的条<br/>目。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_registry<br/>文件: market_data/vendor_registry.py<br/>(设计态 / design)"]
+    src_zephyr_market_data_vendor_base_py["vendor基类<br/>vendor基类，数据的基类，定义抽象接口供子类实现。<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_base<br/>文件: market_data/vendor_base.py<br/>(设计态 / design)"]
     src_zephyr_market_data_vendor_registry_py -.->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_connectors -.->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_autoload_py -.->|runtime / runtime| src_zephyr_market_data_vendor_registry_py

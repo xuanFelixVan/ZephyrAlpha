@@ -365,7 +365,7 @@ def get_redis_conn(self):
 |---|---|
 | infra_id | INFRA-DB-007（待登记，见步骤 5） |
 | 引擎 | Redis 7.x（AOF+RDB 双开） |
-| 部署位置 | 待施工确认（候选：Windows 原生 / Hyper-V Ubuntu VM，参照 ClickHouse 模式） |
+| 部署位置 | Hyper-V Ubuntu VM（zephyr-ch, 172.24.30.100，与 ClickHouse 同 VM，D1 决策 2026-08-02） |
 | 端口 | 6379（默认） |
 | maxmemory | 2gb（远超~200MB 实际用量，留余量） |
 | maxmemory-policy | allkeys-lru（兜底淘汰，正常不应触发） |
@@ -381,7 +381,37 @@ def get_redis_conn(self):
 | 依赖模块 | MOD-INF-001/MOD-TASK_SYSTEM | D-FACTOR/D-SIGNAL/D-RISK/D-POSITION |
 | 故障影响 | 治理流程降级 | 实盘推理命脉 |
 
-> **部署建议**：H1 与 INFRA-CACHE-001 **分离实例**（隔离故障域，避免治理缓存操作影响实盘热缓存）。若资源紧张可共用实例但用不同 DB 号隔离。最终方案待施工确认。
+> **D3 决策（2026-08-02 用户确认）**：当前阶段采用**单实例 + DB 号隔离**——Redis 7.x 实例（172.24.30.100:6379）承载 H1 业务缓存，DB 号分配：db0=模拟盘（sim）、db1=实盘（live）、db2=治理缓存（INFRA-CACHE-001 预留）。INFRA-CACHE-001 立项前不拆独立实例（避免过度工程，违反四问过滤铁律）。未来升级触发条件见 §8.3。
+
+### §8.3 演进路径与升级触发条件（D3 决策记录）
+
+> **时态属性**：永久保留——未来 AI 查"INFRA-CACHE-001 何时立项 / Redis 是否需要拆分"时，查本节 T1–T4，任一命中即启动升级评估。
+
+**当前架构**：单实例 + DB 号隔离——Redis 7.x 实例（172.24.30.100:6379）承载 H1 业务缓存，DB 号分配：db0=模拟盘（sim）、db1=实盘（live）、db2=治理缓存（INFRA-CACHE-001 预留）。
+
+**演进目标**：当触发条件命中时，升级为"业务缓存 / 治理缓存独立实例"（隔离故障域）。
+
+**升级触发条件（任一命中即启动拆分评估）：**
+
+| # | 触发条件 | 判定方式 | 当前状态 |
+|---|---------|---------|:-------:|
+| T1 | INFRA-CACHE-001 正式立项 | `candidate_module_registry` 中 INFRA-CACHE-001 → approved，或 depgraph 治理缓存模块 `build_status: planned → active` | ❌ 未立项 |
+| T2 | 淘汰策略冲突 | 业务需 `allkeys-lru`、治理需 `volatile-ttl`，DB 号隔离无法满足（maxmemory-policy 为实例级） | ❌ 未冲突 |
+| T3 | 治理缓存容量压力 | 治理缓存预估内存 > 200MB | ❌ 未达（<50MB） |
+| T4 | 故障隔离刚需 | 实盘要求"业务 Redis 故障不影响治理流程"（或反之） | ❌ 未达 |
+
+**升级路径（预评估，调整代价低）：**
+
+| 步骤 | 变更 | 影响文件 |
+|------|------|---------|
+| 1 | `.env.redis` 新增 `REDIS_GOVERNANCE_HOST/PORT/PASSWORD` | [config/.env.redis](file:///d:/ZephyrAlpha/config/.env.redis) |
+| 2 | `get_redis_conn(purpose)` 参数化 | [database_service.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/database_service.py)、[redis_config.py](file:///d:/ZephyrAlpha/src/zephyr/infrastructure/redis_config.py) |
+| 3 | 无数据迁移（DB 号隔离下数据本就分离，只切换连接指向） | — |
+
+- **预估工时**：< 0.5 天
+- **升级后状态**：H1 独占 172.24.30.100:6379，INFRA-CACHE-001 起独立实例（端口 6380 或新 VM）
+
+> **检索约定**：未来 AI 查"INFRA-CACHE-001 何时立项 / Redis 是否需要拆分"时，查本节 T1–T4，任一命中即启动升级评估。真源在本节，注册表 `INFRA-DB-007.note` 仅放指针。
 
 ---
 
