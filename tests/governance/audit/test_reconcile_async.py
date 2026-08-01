@@ -553,3 +553,303 @@ class TestAsyncFallback:
             fake_gw, ["d:/fake.py"], "sess-launch-exc", "sha_exc", "msg",
         )
         assert call_log == ["sync"], "launch 异常应回退 sync"
+
+
+# ---------------------------------------------------------------------------
+# #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）
+# 心跳信号 + 主动孤儿扫描 + 跨平台进程探活
+# ---------------------------------------------------------------------------
+class TestHeartbeat:
+    """write_heartbeat 刷新 last_heartbeat_at + current_reconciler。"""
+
+    def test_heartbeat_updates_running_file(self, tmp_repo):
+        """running 状态文件被心跳刷新。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            write_status_file,
+            write_heartbeat,
+            read_status_file,
+        )
+
+        write_status_file(
+            tmp_repo, "hb_sha", STATUS_RUNNING,
+            session_id="sess-hb", started_at=int(time.time()),
+        )
+        write_heartbeat(tmp_repo, "hb_sha", "MANIFEST-RECONCILER")
+        data = read_status_file(tmp_repo, "hb_sha")
+        assert data is not None
+        assert data["status"] == STATUS_RUNNING
+        assert data["current_reconciler"] == "MANIFEST-RECONCILER"
+        assert data["last_heartbeat_at"] > 0
+
+    def test_heartbeat_skips_nonexistent_file(self, tmp_repo):
+        """文件不存在时心跳静默跳过不抛异常。"""
+        from zephyr.governance.audit.reconcile_runner import write_heartbeat
+
+        # 不抛异常即通过
+        write_heartbeat(tmp_repo, "no_such_sha", "X")
+
+    def test_heartbeat_skips_done_file(self, tmp_repo):
+        """非 running 状态（done）心跳不写入。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_DONE,
+            write_status_file,
+            write_heartbeat,
+            read_status_file,
+        )
+
+        write_status_file(
+            tmp_repo, "done_sha", STATUS_DONE,
+            session_id="sess", started_at=int(time.time()),
+            finished_at=int(time.time()),
+        )
+        before = read_status_file(tmp_repo, "done_sha")
+        write_heartbeat(tmp_repo, "done_sha", "X")
+        after = read_status_file(tmp_repo, "done_sha")
+        # 心跳未写入（last_heartbeat_at 仍为缺省 0）
+        assert after.get("last_heartbeat_at", 0) == before.get("last_heartbeat_at", 0) == 0
+
+    def test_reconcile_for_heartbeat_callback_invoked(self, tmp_repo):
+        """reconcile_for 接收 heartbeat 回调，每个 trigger 命中的 reconciler 调用一次。"""
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconcilerSpec,
+            ReconciliationRegistry,
+            ReconcileResult,
+        )
+
+        calls: list[str] = []
+        reg = ReconciliationRegistry()
+        reg.register(ReconcilerSpec(
+            gate_id="A", priority=10,
+            trigger=lambda files: True,
+            reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+        ))
+        reg.register(ReconcilerSpec(
+            gate_id="B", priority=20,
+            trigger=lambda files: True,
+            reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+        ))
+        reg.register(ReconcilerSpec(
+            gate_id="C-skip", priority=30,
+            trigger=lambda files: False,  # trigger 不命中
+            reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+        ))
+        reg.reconcile_for(["x.py"], "sess", heartbeat=lambda g: calls.append(g))
+        # A、B 命中并触发心跳，C-skip trigger 不命中不触发
+        assert calls == ["A", "B"]
+
+    def test_reconcile_for_heartbeat_none_no_effect(self, tmp_repo):
+        """heartbeat=None 时行为与原有一致（无心跳）。"""
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconcilerSpec,
+            ReconciliationRegistry,
+            ReconcileResult,
+        )
+
+        reg = ReconciliationRegistry()
+        reg.register(ReconcilerSpec(
+            gate_id="X", priority=10,
+            trigger=lambda files: True,
+            reconcile=lambda files, sid: ReconcileResult(action="clean", detail="ok"),
+        ))
+        results = reg.reconcile_for(["x.py"], "sess", heartbeat=None)
+        assert len(results) == 1
+        assert results[0].action == "clean"
+
+    def test_heartbeat_callback_exception_does_not_block(self, tmp_repo):
+        """心跳回调抛异常时 reconciler 仍正常执行。"""
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconcilerSpec,
+            ReconciliationRegistry,
+            ReconcileResult,
+        )
+
+        def bad_hb(gate_id: str) -> None:
+            raise RuntimeError("heartbeat boom")
+
+        reg = ReconciliationRegistry()
+        reg.register(ReconcilerSpec(
+            gate_id="Y", priority=10,
+            trigger=lambda files: True,
+            reconcile=lambda files, sid: ReconcileResult(action="clean", detail="ran"),
+        ))
+        results = reg.reconcile_for(["x.py"], "sess", heartbeat=bad_hb)
+        assert len(results) == 1
+        assert results[0].detail == "ran"  # reconciler 仍执行成功
+
+
+class TestSweepStaleWorkers:
+    """sweep_stale_workers 主动改写孤儿 status file。"""
+
+    def test_sweeps_dead_orphan_running_file(self, tmp_repo, monkeypatch):
+        """running + 超阈值 + pid 已死 → 改写为 stale。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            STATUS_STALE,
+            sweep_stale_workers,
+            read_status_file,
+            write_status_file,
+        )
+
+        # 模拟 31 分钟前 started + 一个绝对不存在的 pid
+        old = int(time.time()) - 1860
+        write_status_file(
+            tmp_repo, "orphan_sha", STATUS_RUNNING,
+            session_id="sess-orphan", started_at=old, worker_pid=99999999,
+        )
+        # pid 99999999 不存在
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 1
+        data = read_status_file(tmp_repo, "orphan_sha")
+        assert data is not None
+        assert data["status"] == STATUS_STALE
+        assert any("orphaned_worker_dead" in e for e in data["errors"])
+
+    def test_does_not_sweep_live_worker(self, tmp_repo, monkeypatch):
+        """running + 超阈值但 pid 仍存活 → 不改写（避免误杀慢 worker）。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            sweep_stale_workers,
+            read_status_file,
+            write_status_file,
+        )
+
+        # 当前进程的 pid 必然存活
+        old = int(time.time()) - 1860
+        write_status_file(
+            tmp_repo, "live_sha", STATUS_RUNNING,
+            session_id="sess-live", started_at=old, worker_pid=os.getpid(),
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 0
+        data = read_status_file(tmp_repo, "live_sha")
+        assert data is not None
+        assert data["status"] == STATUS_RUNNING  # 未改写
+
+    def test_does_not_sweep_fresh_running(self, tmp_repo):
+        """running 未超阈值 → 不 sweep。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            sweep_stale_workers,
+            read_status_file,
+            write_status_file,
+        )
+
+        write_status_file(
+            tmp_repo, "fresh_sha", STATUS_RUNNING,
+            session_id="sess", started_at=int(time.time()) - 60,
+            worker_pid=99999999,
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 0
+        data = read_status_file(tmp_repo, "fresh_sha")
+        assert data is not None
+        assert data["status"] == STATUS_RUNNING
+
+    def test_does_not_sweep_done_files(self, tmp_repo):
+        """done 状态文件不参与 sweep（即使很旧）。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_DONE,
+            sweep_stale_workers,
+            read_status_file,
+            write_status_file,
+        )
+
+        old = int(time.time()) - 100000
+        write_status_file(
+            tmp_repo, "old_done", STATUS_DONE,
+            session_id="sess", started_at=old, finished_at=old + 10,
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 0
+        assert read_status_file(tmp_repo, "old_done")["status"] == STATUS_DONE
+
+    def test_heartbeat_takes_priority_over_started_at(self, tmp_repo, monkeypatch):
+        """有新鲜心跳的 running 文件即使 started_at 很旧也不 sweep。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            sweep_stale_workers,
+            read_status_file,
+            write_status_file,
+            write_heartbeat,
+        )
+
+        old = int(time.time()) - 100000  # started 很久以前
+        write_status_file(
+            tmp_repo, "hb_sha", STATUS_RUNNING,
+            session_id="sess", started_at=old, worker_pid=99999999,
+        )
+        # 写一个新鲜心跳（刚刚）
+        write_heartbeat(tmp_repo, "hb_sha", "SOME-RECONCILER")
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 0, "心跳新鲜（< 阈值）即使 started_at 很旧也不应 sweep"
+        data = read_status_file(tmp_repo, "hb_sha")
+        assert data["status"] == STATUS_RUNNING
+
+    def test_stale_heartbeat_triggers_sweep(self, tmp_repo):
+        """心跳本身超阈值 + pid 已死 → sweep。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_RUNNING,
+            STATUS_STALE,
+            sweep_stale_workers,
+            read_status_file,
+        )
+        from pathlib import Path
+        import json
+
+        # 直接构造一个心跳超阈值的 running 文件（write_heartbeat 写当前时间，
+        # 这里手写文件以注入过期心跳）
+        now = int(time.time())
+        data = {
+            "commit_sha": "stale_hb_sha",
+            "session_id": "sess",
+            "status": STATUS_RUNNING,
+            "started_at": now - 200000,
+            "finished_at": 0,
+            "reconcilers_total": 0,
+            "reconcilers_warn": 0,
+            "reconcilers_auto_committed": 0,
+            "errors": [],
+            "trigger_source": "post_commit_async",
+            "worker_pid": 99999999,
+            "last_heartbeat_at": now - 1860,  # 心跳 31 分钟前（超阈值）
+            "current_reconciler": "OLD",
+        }
+        p = Path(tmp_repo) / ".runtime" / "reconcile_reports" / "reconcile_status_stale_hb_sha.json"
+        p.write_text(json.dumps(data), encoding="utf-8")
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 1
+        result = read_status_file(tmp_repo, "stale_hb_sha")
+        assert result["status"] == STATUS_STALE
+
+    def test_empty_reports_dir_returns_zero(self, tmp_repo):
+        """无 status 文件时返回 0 不抛异常。"""
+        from zephyr.governance.audit.reconcile_runner import sweep_stale_workers
+
+        assert sweep_stale_workers(tmp_repo) == 0
+
+    def test_no_reports_dir_returns_zero(self, tmp_path):
+        """reports 目录不存在时返回 0 不抛异常。"""
+        from zephyr.governance.audit.reconcile_runner import sweep_stale_workers
+
+        empty_repo = tmp_path / "empty"
+        empty_repo.mkdir()
+        assert sweep_stale_workers(empty_repo) == 0
+
+
+class TestIsPidAlive:
+    """_is_pid_alive 跨平台进程探活（真源：process_pool.is_pid_alive 别名）。"""
+
+    def test_current_pid_alive(self):
+        from zephyr.governance.audit.reconcile_runner import _is_pid_alive
+        assert _is_pid_alive(os.getpid()) is True
+
+    def test_nonexistent_pid_dead(self):
+        from zephyr.governance.audit.reconcile_runner import _is_pid_alive
+        # 99999999 几乎不可能存在
+        assert _is_pid_alive(99999999) is False
+
+    def test_zero_pid_dead(self):
+        from zephyr.governance.audit.reconcile_runner import _is_pid_alive
+        assert _is_pid_alive(0) is False
+        assert _is_pid_alive(-1) is False

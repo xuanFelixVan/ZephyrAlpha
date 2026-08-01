@@ -994,6 +994,7 @@ class GitCommitGateway:
 
     def _run_post_commit_reconcile_sync_worker(
         self, existing: list[str], session_id: str, commit_message: str = "",
+        heartbeat: "Callable[[str], None] | None" = None,
     ) -> list[ReconcileResult]:
         """worker-only 入口：同步执行 reconciler 链路并返回 results。
 
@@ -1009,6 +1010,7 @@ class GitCommitGateway:
             _batcher_ctx.enable(session_id)
             reconcile_results = self._reconciliation_registry.reconcile_for(
                 existing, session_id, commit_message=commit_message,
+                heartbeat=heartbeat,
             )
         # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级
         # auto_committed → warn，防止日志误报"已自动提交"但文件未真正提交。

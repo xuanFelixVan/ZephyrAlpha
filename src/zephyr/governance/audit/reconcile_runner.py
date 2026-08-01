@@ -72,6 +72,8 @@ __all__ = [
     "query_reconcile_status",
     "read_status_file",
     "write_status_file",
+    "write_heartbeat",  # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）
+    "sweep_stale_workers",  # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）
 ]
 
 import json
@@ -82,8 +84,13 @@ import time
 from pathlib import Path
 from typing import Any, TypedDict
 
-from zephyr.shared.infra.process_pool import spawn_python_hidden
+from zephyr.shared.infra.process_pool import is_pid_alive, spawn_python_hidden
 from zephyr.shared.io.paths import REPO_ROOT
+
+# #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
+# 跨平台进程探活真源唯一（process_pool.is_pid_alive），此处仅做私有别名供
+# sweep_stale_workers 使用 + 测试通过 _is_pid_alive 导入验证语义。禁止重复造轮子。
+_is_pid_alive = is_pid_alive
 
 # Status 枚举（字符串常量，避免 enum 序列化复杂度）
 STATUS_PENDING: str = "pending"      # 已 spawn subprocess，worker 尚未启动
@@ -217,10 +224,18 @@ def read_status_file(project_root: Path | str, commit_sha: str) -> ReconcileStat
         return None
     # 僵尸判定
     if data.get("status") == STATUS_RUNNING:
+        # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
+        # 优先看心跳（更精确），无心跳回退看 started_at；超阈值时先探测进程存活——
+        # live worker（如慢 reconciler 重建 72 域文档需 9 分钟）不算 stale，
+        # 与 sweep_stale_workers 判定逻辑一致。无 worker_pid 或进程已死才标 stale。
+        heartbeat_at = data.get("last_heartbeat_at", 0)
         started = data.get("started_at", 0)
-        if started and (int(time.time()) - started > _STALE_THRESHOLD_SECONDS):
-            data["status"] = STATUS_STALE
-            _log_stale_to_db(project_root, commit_sha, started, data)
+        reference_time = heartbeat_at or started
+        if reference_time and (int(time.time()) - reference_time > _STALE_THRESHOLD_SECONDS):
+            worker_pid = data.get("worker_pid", 0)
+            if not (worker_pid and _is_pid_alive(worker_pid)):
+                data["status"] = STATUS_STALE
+                _log_stale_to_db(project_root, commit_sha, started, data)
     return data  # type: ignore[return-value]
 
 
@@ -264,6 +279,105 @@ def _log_stale_to_db(
         _stale_logged.add(commit_sha)
     except Exception:  # noqa: BLE001 — DB 写入失败不影响 stale 判定
         pass
+
+
+def write_heartbeat(
+    project_root: Path | str,
+    commit_sha: str,
+    current_reconciler: str,
+) -> None:
+    """#ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）。
+
+    刷新 status file 的心跳字段（``last_heartbeat_at`` + ``current_reconciler``），
+    其余字段从现有文件读取保持不变（避免覆盖 worker 期间由其他路径写入的字段）。
+    心跳只在 ``status=running`` 期间写入；文件不存在 / 非 running / 解析失败时静默跳过
+    （心跳是 best-effort liveness 信号，不能阻断 reconciler 主流程）。
+    """
+    try:
+        path = _status_file_path(project_root, commit_sha)
+        if not path.exists():
+            return
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if data.get("status") != STATUS_RUNNING:
+            return  # 仅 running 期间刷新心跳
+        data["last_heartbeat_at"] = int(time.time())
+        data["current_reconciler"] = current_reconciler
+        tmp = path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        os.replace(tmp, path)
+    except Exception:  # noqa: BLE001 — 心跳是 best-effort，不阻断主流程
+        pass
+
+
+def sweep_stale_workers(project_root: Path | str) -> int:
+    """主动扫描 + 改写孤儿 worker status file。
+
+    #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
+    之前的僵尸检测是惰性的（仅 ``read_status_file`` 被调用时触发，且不改文件），
+    且 ``launch_reconcile_async`` 不遍历已有 running 文件——导致一个 worker 死亡后
+    它的 status file 永久停留 running，无人 query 即永不标 stale（孤儿累积）。
+
+    本函数遍历所有 ``reconcile_status_*.json``，对 running 且超阈值的 worker：
+    1. 探测 ``worker_pid`` 是否存活（``_is_pid_alive``）
+    2. 进程已死 → 改写 status file 为 ``stale``（errors 含 ``orphaned_worker_dead``）+ 落 DB
+    3. 进程存活但心跳超时 → 不改写（live worker 正在执行慢 reconciler，误判会破坏正在运行的 worker）
+
+    在 ``launch_reconcile_async`` 入口调用（每次新 commit 顺带清扫，O(n) n 小）。
+
+    Returns:
+        本次 sweep 标记为 stale 的文件数。
+    """
+    try:
+        reports_dir = _reports_dir(project_root)
+    except Exception:  # noqa: BLE001 — 目录不可创建等
+        return 0
+
+    swept = 0
+    now = int(time.time())
+    for status_path in reports_dir.glob("reconcile_status_*.json"):
+        try:
+            data = json.loads(status_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if data.get("status") != STATUS_RUNNING:
+            continue
+        # 判定是否超阈值：优先看心跳（更精确），无心跳回退看 started_at
+        heartbeat_at = data.get("last_heartbeat_at", 0)
+        started_at = data.get("started_at", 0)
+        reference_time = heartbeat_at or started_at
+        if not reference_time:
+            continue  # 无时间基准，跳过
+        if now - reference_time <= _STALE_THRESHOLD_SECONDS:
+            continue  # 未超阈值，跳过
+        # 超阈值：探测进程是否存活
+        worker_pid = data.get("worker_pid", 0)
+        if not worker_pid or _is_pid_alive(worker_pid):
+            continue  # 进程仍存活（慢 worker），不改写
+        # 进程已死 → 改写为 stale
+        commit_sha = data.get("commit_sha", "")
+        session_id = data.get("session_id", "")
+        existing_errors = list(data.get("errors", []))
+        existing_errors.append(
+            f"orphaned_worker_dead: pid={worker_pid} dead, "
+            f"last_heartbeat={heartbeat_at}, started={started_at}, "
+            f"stale_threshold={_STALE_THRESHOLD_SECONDS}s"
+        )
+        write_status_file(
+            project_root, commit_sha, STATUS_STALE,
+            session_id=session_id,
+            started_at=started_at,
+            finished_at=now,
+            reconcilers_total=data.get("reconcilers_total", 0),
+            reconcilers_warn=data.get("reconcilers_warn", 0),
+            reconcilers_auto_committed=data.get("reconcilers_auto_committed", 0),
+            errors=existing_errors,
+            trigger_source=data.get("trigger_source", "post_commit_async"),
+            worker_pid=worker_pid,
+        )
+        swept += 1
+        # 落 DB（与 read_status_file 的 _log_stale_to_db 一致，幂等去重）
+        _log_stale_to_db(project_root, commit_sha, started_at, data)
+    return swept
 
 
 def _count_active_workers(project_root: str) -> int:
@@ -316,6 +430,14 @@ def launch_reconcile_async(
     root = Path(project_root) if not isinstance(project_root, Path) else project_root
     root = root.resolve()
     started_at = int(time.time())
+
+    # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
+    # 每次新 commit 顺带清扫已死的 running status file，防止孤儿累积。
+    # best-effort：清扫失败不阻断 launch（fail-open）。
+    try:
+        sweep_stale_workers(root)
+    except Exception:  # noqa: BLE001 — 清扫失败不阻断 launch
+        pass
 
     # 0. 并发控制（#ARCH-RECONCILER-WORKER-SESSION-001 Phase C, 2026-07-22）
     #    超过 MAX_CONCURRENT_WORKERS 时跳过 spawn——fail-open 不阻断 commit，

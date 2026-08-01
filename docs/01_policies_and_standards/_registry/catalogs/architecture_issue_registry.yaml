@@ -8346,6 +8346,63 @@ entries:
   related_rules: 'trae_079 (commit 串行化), AGENTS.md §FP-ISO.4C (session 管理)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
+# --- #ARCH-RECONCILE-WORKER-HEARTBEAT-001: reconcile worker 心跳保活 + 孤儿主动清扫 ---
+- issue_id: '#ARCH-RECONCILE-WORKER-HEARTBEAT-001'
+  title: reconcile worker 心跳保活 + 孤儿主动清扫（消除 running 永驻 + 低 CPU 卡死不可观测）
+  category: architecture_governance
+  severity: P1高
+  adjudication: |
+    根因（第一性原理分析）：
+    async reconcile_worker 在 reconcilers_total=0 + 低 CPU 退出后，status file 永久停留
+    running——僵尸判定是惰性的（仅 read_status_file 被 query 时触发，且不改文件），
+    launch_reconcile_async 不遍历已有 running 文件——无人 query 即永不标 stale。
+    一个 worker 死亡后其 status file 永驻 running，AI 误判为"仍在运行"导致：
+    1. AI 反复查询同一 commit_sha 的 status，看到 running 永不结束 → 困惑
+    2. launch_reconcile_async 的并发计数（MAX_CONCURRENT_WORKERS=2）将死 worker 算作活跃
+       → 新 commit 的 worker 被 skip → reconciler 结果持续缺失
+    3. 实测 commit 8af8f5b worker_pid=21524 死亡后 running 持续 398132s（~4.6 天）
+
+    治本方案（三处对齐，观测+清扫+判定一致）：
+    1. 心跳信号 write_heartbeat()：每个 reconciler 执行前刷新 status file 的
+       last_heartbeat_at + current_reconciler 字段，使 live worker 可被外部观测。
+       注入路径：reconcile_worker._run_worker → _run_post_commit_reconcile_sync_worker
+       → reconcile_for(heartbeat=...) → 回调 write_heartbeat。
+       心跳是 best-effort（失败不阻断主流程），只在 status=running 期间写入。
+    2. 主动孤儿扫描 sweep_stale_workers()：遍历 reconcile_status_*.json，对 running
+       超阈值 + worker_pid 已死的 worker 改写为 stale（errors 含 orphaned_worker_dead）
+       + 落 DB。在 launch_reconcile_async 入口调用（每次新 commit 顺带清扫，O(n)）。
+       live worker（pid 存活）不改写——避免误杀慢 reconciler（重建 72 域文档需 9min）。
+    3. read_status_file 僵尸判定对齐：优先看心跳（无心跳回退 started_at），超阈值时
+       探测 pid 存活——live worker 不标 stale。与 sweep_stale_workers 判定逻辑一致。
+
+    跨平台进程探活复用 process_pool.is_pid_alive（真源唯一），reconcile_runner
+    内 _is_pid_alive 为其别名。禁止重复造轮子。
+
+    不实施项：
+    - 不改为同步执行（异步是正确设计，问题在不可观测+不清扫）
+    - 不引入外部进程监控（如 supervisor）——纯标准库，遵循项目原则
+    - 不在 sweep 中 kill live worker（误判会破坏正在运行的 worker）
+
+  impact:
+    - 'src/zephyr/governance/audit/reconcile_runner.py（write_heartbeat + sweep_stale_workers + read_status_file 僵尸判定 + launch 入口清扫）'
+    - 'src/zephyr/governance/audit/reconcile_worker.py（heartbeat 闭包注入 _run_post_commit_reconcile_sync_worker）'
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（reconcile_for 新增 heartbeat 回调参数）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（_run_post_commit_reconcile_sync_worker 透传 heartbeat）'
+    - 'tests/governance/audit/test_reconcile_async.py（TestHeartbeat 6 + TestSweepStaleWorkers 8 + TestIsPidAlive 3）'
+  fix_phase: |
+    治本（一次性完成）：
+      1. write_heartbeat() 刷新 last_heartbeat_at + current_reconciler
+      2. sweep_stale_workers() 主动扫描 + 改写孤儿 status file
+      3. read_status_file 僵尸判定对齐（心跳优先 + pid 探活）
+      4. launch_reconcile_async 入口调用 sweep
+      5. reconcile_for / _run_post_commit_reconcile_sync_worker 透传 heartbeat
+      6. reconcile_worker 注入 heartbeat 闭包
+      7. 36 测试通过（含 17 新测试 + 19 回归）
+  status: decided
+  related_adjudication: '#ARCH-RECONCILER-WORKER-SESSION-001 (worker 注册与并发控制，互补), #ARCH-PRE-EXISTING-DEBT-001 (stale 持久化到 DB)'
+  related_rules: 'trae_079 (commit 串行化), AGENTS.md §Ruling-100PCT-AI-GOVERNANCE-P2-3 (reconciler 异步化)'
+  created: '2026-08-01'
+  last_updated: '2026-08-01'
 - issue_id: '#ARCH-TSV-SOT-001'
   title: TSV 转义逻辑单一真源——wal_codec 委托 ch_writer.tsv_escape（消除双真源数据腐化）
   category: data_integrity
@@ -10386,8 +10443,11 @@ entries:
   adjudication: |
     问题：2026-07-31 17:21，D_RISK 域3个P0核心设计态模块被误标 deprecated（build_status planned→deprecated）：
       MOD-RSK-009 (7621471 ashare_stop_loss_rule_engine.py)、MOD-RSK-010 (7621472 ashare_systemic_risk_detector.py)、
-      MOD-RSK-011 (7621473 drawdown_realtime_tracker.py)。3节点均孤立（0入边0出边），被 align_panoramas
-      design_isolation 信号+ghost_autoclean 误判为"幽灵节点"软删除。
+      MOD-RSK-011 (7621473 drawdown_realtime_tracker.py)。3节点均孤立（0入边0出边），align_panoramas
+      design_isolation 信号触发后，经人工 CLI --deprecate-node 软删除（误判为"幽灵节点"）。
+      【修正 2026-08-01】原叙述"ghost_autoclean 误判为幽灵节点软删除"系误述——代码库不存在 ghost_autoclean
+      函数，误删非自动清理，而是人工凭结构信号单源决策后用 --deprecate-node 后门执行。准确根因与治本见
+      #ARCH-DESIGN-DELETE-GATE-001（代码层双源门禁，commit 5ebfaf94）。
 
     设计文档双源证据（D:\临时工作区\依赖图\11-D-RISK-风控域.md §1.2）：
       RK-09 A-Share Stop-Loss Rule Engine（P0，6种A股止损+日2%/周5%/月10%亏损限额，对齐 INV-003 日损失限额触发自动暂停）
@@ -10458,7 +10518,10 @@ entries:
       C. 蓝图锚点节点 28个(D_GOV_DOCS 22 + 散落INF 6：MOD-INF-020/027/023/039/011/034, SH-DB-001)：
          path=docs/03_modules/.../blueprint.md，design_maturity=design，0有gate_reason。
          抽查3个blueprint.md文件均存在。这些是"设计文档锚点"非代码模块，不参与数据流，无需连边。
-         受保护：ghost_autoclean显式跳过design_maturity=design节点 + TRAE-083 v1.1.0覆盖孤立信号。
+         受保护：#ARCH-DESIGN-DELETE-GATE-001 代码层门禁（design 节点删除强制 design_evidence 双源证据，
+         --deprecate-node 后门对 design 节点默认拒绝，commit 5ebfaf94）+ TRAE-083 v1.1.0覆盖孤立信号。
+      【修正 2026-08-01】原叙述"ghost_autoclean显式跳过design_maturity=design节点"系误述——代码库不存在
+      ghost_autoclean 函数，无此自动保护逻辑；现保护靠代码层双源门禁（apply_depgraph.py）。
          注意：依赖图目录无D_GOV_DOCS域文档(仅27/29-D-GOVERNANCE)，但这些节点本身即蓝图文档，
          设计意图自载于各blueprint.md，双源=节点path(蓝图)+文件存在性。 → 保留。
       D. SH-GOV-001(scripts/governance/oneoff/data_domain_design_state_complete.py)：oneoff脚本，文件存在 → 保留。

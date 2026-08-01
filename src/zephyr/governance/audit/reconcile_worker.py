@@ -259,8 +259,17 @@ def _run_worker(payload: dict) -> int:
         #    _run_post_commit_reconcile_sync_worker 是 P2-3 新增的 worker-only 入口，
         #    跳过 async dispatch（避免 worker 自己又 spawn 一个 worker）。
         try:
+            # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
+            # 注入 heartbeat 闭包——每个 reconciler 执行前刷新 status file 心跳字段，
+            # 使外部观测者可区分 live worker（心跳新鲜）与 死亡 worker（心跳陈旧）。
+            from zephyr.governance.audit.reconcile_runner import write_heartbeat
+
+            def _hb(gate_id: str, _root=project_root, _sha=commit_sha) -> None:
+                write_heartbeat(_root, _sha, gate_id)
+
             reconcile_results = gateway._run_post_commit_reconcile_sync_worker(
                 committed_files, session_id, commit_message,
+                heartbeat=_hb,
             )
         except Exception as e:  # noqa: BLE001 — 兜底
             _write_failed_status(

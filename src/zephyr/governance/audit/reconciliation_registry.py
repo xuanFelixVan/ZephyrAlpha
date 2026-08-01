@@ -718,6 +718,8 @@ class ReconciliationRegistry:
 
         commit_message: str = "",
 
+        heartbeat: "Callable[[str], None] | None" = None,
+
     ) -> list[ReconcileResult]:
 
         """遍历注册的 reconciler，trigger 命中即执行，返回结果列表。
@@ -747,6 +749,18 @@ class ReconciliationRegistry:
                 if not spec.trigger(committed_files):
 
                     continue
+
+                # #ARCH-RECONCILE-WORKER-HEARTBEAT-001 治本（2026-08-01）：
+                # 执行前刷新心跳（best-effort，失败不阻断）。
+                if heartbeat is not None:
+
+                    try:
+
+                        heartbeat(spec.gate_id)
+
+                    except Exception:  # noqa: BLE001 — 心跳失败不影响 reconciler 主流程
+
+                        pass
 
                 # Phase 3.4 断点6 治本：检测 reconciler arity，3-arg 传 commit_message
 
