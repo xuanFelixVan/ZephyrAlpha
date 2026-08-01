@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_rule_registry_collection_yaml["规则注册表收集<br/>规则注册表收集模块<br/>rule_registry_collection<br/>文件: catalogs/rule_registry_collection.yaml<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_rule_registry_collection_yaml["规则注册表收集<br/>catalogs包的规则注册表收集模块<br/>rule_registry_collection<br/>文件: catalogs/rule_registry_collection.yaml<br/>(生产态 / production)"]
     scripts_a2a_full_verification_py["A2Afull验证<br/>A2A Protocol 全链路满分验证脚本<br/>a2a_full_verification<br/>文件: scripts/a2a_full_verification.py<br/>(生产态 / production)"]
     scripts_arch_guard_tools_build_ocp_manifest_py["buildocp清单<br/>从 cross_layer_contracts.yaml 生成 OCP<br/>冻结契约指纹（INV-009）。<br/>build_ocp_manifest<br/>文件: _tools/build_ocp_manifest.py<br/>(生产态 / production)"]
     scripts_arch_guard_tools_inject_idempotency_py["inject幂等性<br/>为所有 P0/P1 契约添加 idempotency_key<br/>字段——状态感知版本。<br/>inject_idempotency<br/>文件: _tools/inject_idempotency.py<br/>(生产态 / production)"]
@@ -79,9 +79,9 @@ flowchart TD
     scripts_arch_guard_fitness_functions_check_survivorship_bias_py["检查survivorshipbias<br/>Survivorship 策略门禁<br/>check_survivorship_bias<br/>文件: fitness_functions/check_survivorship_<br/>bias.py<br/>(生产态 / production)"]
     scripts_arch_guard_fitness_functions_check_warm_cold_async_py["checkwarm冷异步<br/>INV-019 Warm→Cold 异步通信检查<br/>check_warm_cold_async<br/>文件: fitness_functions/check_warm_cold_async.py<br/>(生产态 / production)"]
     scripts_arch_guard_run_all_py["运行all<br/>Architecture Guard 编排器<br/>run_all<br/>文件: arch_guard/run_all.py<br/>(生产态 / production)"]
-    scripts_construction_e2e_check_py["端到端检查<br/>端到端检查模块<br/>_e2e_check<br/>文件: construction/_e2e_check.py<br/>(生产态 / production)"]
+    scripts_construction_e2e_check_py["端到端检查<br/>construction包的端到端检查模块<br/>_e2e_check<br/>文件: construction/_e2e_check.py<br/>(生产态 / production)"]
     scripts_construction_e2e_deep_py["端到端deep<br/>端到端deep，依赖检查statuses工作<br/>_e2e_deep<br/>文件: construction/_e2e_deep.py<br/>(生产态 / production)"]
-    scripts_construction_check_transition_code_py["检查转换代码<br/>检查转换代码模块<br/>check_transition_code<br/>文件: construction/check_transition_code.py<br/>(生产态 / production)"]
+    scripts_construction_check_transition_code_py["检查转换代码<br/>construction包的检查转换代码模块<br/>check_transition_code<br/>文件: construction/check_transition_code.py<br/>(生产态 / production)"]
     scripts_construction_d_init_task_system_py["初始化任务系统数据库 +<br/>创建任务系统自身的施工任务卡（吃狗粮）<br/>d_init_task_system<br/>文件: construction/d_init_task_system.py<br/>(生产态 / production)"]
     scripts_construction_demo_a2a_chat_py["A2A 多 Agent 聊天演示 - Alpha 和 Beta<br/>讨论项目评估<br/>demo_a2a_chat<br/>文件: construction/demo_a2a_chat.py<br/>(生产态 / production)"]
     scripts_construction_demo_a2a_coordination_py["A2A 协议协调任务演示<br/>construction包的A2A 协议协调任务演示模块<br/>demo_a2a_coordination<br/>文件: construction/demo_a2a_coordination.py<br/>(生产态 / production)"]
@@ -103,7 +103,7 @@ flowchart TD
     scripts_governance_generators_generate_rule_ai_perception_index_py["generate规则aiperception索引<br/>规则AI感知索引生成器<br/>（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）<br/>generate_rule_ai_perception_index<br/>文件: generators/generate_rule_ai_perception_<br/>index.py<br/>(生产态 / production)"]
     scripts_hooks_auto_handoff_log_py["自动handoff日志<br/>执行 git 命令并返回 stdout（UTF-8 解码）。<br/>auto_handoff_log<br/>文件: hooks/auto_handoff_log.py<br/>(生产态 / production)"]
     scripts_lock_files_py["锁files<br/>— AI 对话文件锁协议（硬规则执行工具）<br/>lock_files<br/>文件: scripts/lock_files.py<br/>(生产态 / production)"]
-    scripts_mcp_generate_ide_config_py["生成ide配置<br/>从 config/mcp.json 生成各 IDE MCP 配置文件<br/>（MOD-INF-013 §5.3 Step 2）。<br/>generate_ide_config<br/>文件: mcp/generate_ide_config.py<br/>(生产态 / production)"]
+    scripts_mcp_launcher_py["MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 +<br/>Pro<br/>launcher<br/>文件: mcp/launcher.py<br/>(生产态 / production)"]
     scripts_mcp_start_all_py["启动all<br/>MCP 全 Server 启动脚本 — DEPRECATED.<br/>start_all<br/>文件: mcp/start_all.py<br/>(生产态 / production)"]
     scripts_mcp_status_all_py["状态all<br/>MCP 全 Server 状态检查脚本（MOD-INF-013 §14）。<br/>status_all<br/>文件: mcp/status_all.py<br/>(生产态 / production)"]
     scripts_mcp_stop_all_py["停止all<br/>MCP 全 Server 停止脚本（MOD-INF-013 §14）。<br/>stop_all<br/>文件: mcp/stop_all.py<br/>(生产态 / production)"]
@@ -124,7 +124,7 @@ flowchart TD
     src_zephyr_governance_agent_spec_a2a_failure_py["A2A故障<br/>G-CT-008 消费端 — Escalation.on_a2a_failure()<br/>跨 agent 通信失败升级.<br/>文件: agent_spec/a2a_failure.py<br/>(生产态 / production)"]
     src_zephyr_governance_agent_spec_rbac_bridge_py["RBAC桥接<br/>G-CT-007 契约：Budget -> RBAC 配额限制.<br/>rbac_bridge<br/>文件: agent_spec/rbac_bridge.py<br/>(生产态 / production)"]
     src_zephyr_governance_agent_spec_registry_py["注册表<br/>G-CT-003 契约：Agent Spec -> RBAC 能力检查.<br/>registry<br/>文件: agent_spec/registry.py<br/>(生产态 / production)"]
-    src_zephyr_governance_architecture_governance_architecture_contracts_py["架构契约<br/>架构契约模块<br/>architecture_contracts<br/>文件: architecture_governance/architecture_<br/>contracts.py<br/>(生产态 / production)"]
+    src_zephyr_governance_architecture_governance_architecture_contracts_py["架构契约<br/>治理/architecture_governance包的架构契约模块<br/>architecture_contracts<br/>文件: architecture_governance/architecture_<br/>contracts.py<br/>(生产态 / production)"]
     src_zephyr_governance_architecture_governance_architecture_principles_py["装饰器：为函数标记适用的架构原则。<br/>architecture_principles<br/>文件: architecture_governance/architecture_<br/>principles.py<br/>(生产态 / production)"]
     src_zephyr_governance_architecture_governance_blueprint_bloat_monitor_py["蓝图bloat监控器<br/>Blueprint Bloat Monitor — v0.11.0<br/>蓝图膨胀监控器。<br/>blueprint_bloat_monitor<br/>文件: architecture_governance/blueprint_bloat_<br/>monitor.py<br/>(生产态 / production)"]
     src_zephyr_governance_architecture_governance_blueprint_code_consistency_py["蓝图代码一致性<br/>蓝图代码一致性。Blueprint-Code Consistency Gate<br/>— MOD-INF-022.<br/>文件: architecture_governance/blueprint_code_<br/>consistency.py<br/>(生产态 / production)"]
@@ -168,7 +168,7 @@ flowchart TD
     src_zephyr_governance_financial_governance_arbitrage_asymmetry_detector_py["arbitrageasymmetry检测器<br/>Arbitrage Asymmetry Detector — v0.11.0<br/>跨交易所套利不对称检测器。<br/>arbitrage_asymmetry_detector<br/>文件: financial_governance/arbitrage_asymmetry_<br/>detector.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_atomic_transaction_manager_py["atomic交易管理器<br/>AtomicTransactionManager — SQLite +<br/>文件系统的跨介质原子事务管理器 v2.0（ATM）。<br/>atomic_transaction_manager<br/>文件: financial_governance/atomic_transaction_<br/>manager.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_flash_crash_guard_py["flashcrash守卫<br/>Flash Crash Guard — v0.12.0 闪崩双轨熔断器。<br/>flash_crash_guard<br/>文件: financial_governance/flash_crash_guard.py<br/>(生产态 / production)"]
-    src_zephyr_governance_financial_governance_fsm_verifier_py["fsm验证器<br/>fsm验证器模块<br/>fsm_verifier<br/>文件: financial_governance/fsm_verifier.py<br/>(生产态 / production)"]
+    src_zephyr_governance_financial_governance_fsm_verifier_py["fsm验证器<br/>治理/financial_governance包的fsm验证器模块<br/>fsm_verifier<br/>文件: financial_governance/fsm_verifier.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_instrument_py["标的合约<br/>治理/financial_governance包的标的合约模块<br/>instrument<br/>文件: financial_governance/instrument.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_microstructure_defense_py["microstructure防御<br/>microstructure_defense<br/>文件: financial_governance/microstructure_<br/>defense.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_oms_risk_engine_py["oms风险引擎<br/>治理/financial_governance包的oms风险引擎模块<br/>oms_risk_engine<br/>文件: financial_governance/oms_risk_engine.py<br/>(生产态 / production)"]
@@ -199,10 +199,10 @@ flowchart TD
     src_zephyr_governance_intelligence_governance_self_test_py["自测试<br/>自测试。Escalation Protocol Self-Test —<br/>MOD-INF-022.<br/>文件: intelligence_governance/self_test.py<br/>(生产态 / production)"]
     src_zephyr_governance_intelligence_governance_self_validator_py["自校验器<br/>Self Validator — v0.10.0 升级协议自验证器:<br/>protocol自身规则+代码一致性自检。<br/>self_validator<br/>文件: intelligence_governance/self_validator.py<br/>(生产态 / production)"]
     src_zephyr_governance_intelligence_governance_subagent_hook_propagator_py["subagent钩子propagator<br/>Subagent Hook Propagator — v0.13.0 子Agent<br/>Hook旁路防护器。<br/>subagent_hook_propagator<br/>文件: intelligence_governance/subagent_hook_<br/>propagator.py<br/>(生产态 / production)"]
-    src_zephyr_governance_lifecycle_governance_api_lifecycle_py["API生命周期<br/>API生命周期模块<br/>api_lifecycle<br/>文件: lifecycle_governance/api_lifecycle.py<br/>(生产态 / production)"]
+    src_zephyr_governance_lifecycle_governance_api_lifecycle_py["API生命周期<br/>治理/lifecycle_governance包的API生命周期模块<br/>api_lifecycle<br/>文件: lifecycle_governance/api_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_governance_lifecycle_governance_migration_strategy_py["迁移策略<br/>治理/lifecycle_governance包的迁移策略模块<br/>migration_strategy<br/>文件: lifecycle_governance/migration_strategy.py<br/>(生产态 / production)"]
     src_zephyr_governance_lifecycle_governance_paper_live_transition_py["paper实盘转换<br/>检查是否可跳Phase——不可跳, 只允许顺序next。<br/>paper_live_transition<br/>文件: lifecycle_governance/paper_live_<br/>transition.py<br/>(生产态 / production)"]
-    src_zephyr_governance_lifecycle_governance_post_live_verification_py["提交实时验证<br/>提交实时验证模块<br/>post_live_verification<br/>文件: lifecycle_governance/post_live_<br/>verification.py<br/>(生产态 / production)"]
+    src_zephyr_governance_lifecycle_governance_post_live_verification_py["提交实时验证<br/>治理/lifecycle_governance包的提交实时验证模块<br/>post_live_verification<br/>文件: lifecycle_governance/post_live_<br/>verification.py<br/>(生产态 / production)"]
     src_zephyr_governance_lifecycle_governance_transition_py["转换<br/>transition — 状态机转换 Mixin（从 task_repo.py<br/>拆分，SRC-0066）<br/>文件: lifecycle_governance/transition.py<br/>(生产态 / production)"]
     src_zephyr_governance_observability_governance_analytics_base_py["analytics基类<br/>analytics基类。Re-export wrapper: analytics_<br/>base canonical at zephyr.reporting.analytics_<br/>base.<br/>文件: observability_governance/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_governance_observability_governance_objective_tracker_py["objective追踪器<br/>Objective Tracker — v0.9.0 目标漂移检测器:<br/>agent目标函数稳定性+变更检测+rollback。<br/>objective_tracker<br/>文件: observability_governance/objective_<br/>tracker.py<br/>(生产态 / production)"]
@@ -299,8 +299,8 @@ flowchart TD
     scripts_governance_d7_code_check_pure_shim_py ~~~ scripts_governance_generators_generate_rule_ai_perception_index_py
     scripts_governance_generators_generate_rule_ai_perception_index_py ~~~ scripts_hooks_auto_handoff_log_py
     scripts_hooks_auto_handoff_log_py ~~~ scripts_lock_files_py
-    scripts_lock_files_py ~~~ scripts_mcp_generate_ide_config_py
-    scripts_mcp_generate_ide_config_py ~~~ scripts_mcp_start_all_py
+    scripts_lock_files_py ~~~ scripts_mcp_launcher_py
+    scripts_mcp_launcher_py ~~~ scripts_mcp_start_all_py
     scripts_mcp_start_all_py ~~~ scripts_mcp_status_all_py
     scripts_mcp_status_all_py ~~~ scripts_mcp_stop_all_py
     scripts_mcp_stop_all_py ~~~ scripts_migration_dm314_infra_ops_split_py
@@ -448,10 +448,10 @@ flowchart TD
     tests_test_generate_dataflow_diagram_py ~~~ tests_test_generate_decision_diagram_py
     scripts_arch_guard_arch_ssot_py["架构ssot<br/>arch_guard 共享：仓库根路径、capacity_slo /<br/>invariants / contracts 装载。<br/>_arch_ssot<br/>文件: arch_guard/_arch_ssot.py<br/>(生产态 / production)"]
     scripts_check_naming_convention_py["检查namingconvention<br/>check_naming_convention<br/>文件: scripts/check_naming_convention.py<br/>(生产态 / production)"]
-    scripts_construction_check_statuses_py["检查statuses<br/>检查statuses模块<br/>check_statuses<br/>文件: construction/check_statuses.py<br/>(生产态 / production)"]
+    scripts_construction_check_statuses_py["检查statuses<br/>construction包的检查statuses模块<br/>check_statuses<br/>文件: construction/check_statuses.py<br/>(生产态 / production)"]
     scripts_git_commit_py["Git提交<br/>GitCommitGateway CLI 封装<br/>git_commit<br/>文件: scripts/git_commit.py<br/>(生产态 / production)"]
     scripts_git_guard_py["Git守卫<br/>Git Guard — 拦截危险 git 命令，防止破坏其他<br/>session 的文件锁。<br/>git_guard<br/>文件: scripts/git_guard.py<br/>(生产态 / production)"]
-    scripts_mcp_launcher_py["MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 +<br/>Pro<br/>launcher<br/>文件: mcp/launcher.py<br/>(生产态 / production)"]
+    scripts_mcp_generate_ide_config_py["生成ide配置<br/>从 config/mcp.json 生成各 IDE MCP 配置文件<br/>（MOD-INF-013 §5.3 Step 2）。<br/>generate_ide_config<br/>文件: mcp/generate_ide_config.py<br/>(生产态 / production)"]
     scripts_migration_dm311_autonomy_core_split_py["dm311autonomy核心split<br/>DM-311: autonomy_core/ 拆分迁移执行脚本。<br/>dm311_autonomy_core_split<br/>文件: migration/dm311_autonomy_core_split.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py["worktree生命周期<br/>WorktreeLifecycle — worktree 生命周期状态机<br/>（5态 + 8转换）<br/>worktree_lifecycle<br/>文件: rule_bridge/worktree_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_governance_capability_lookup_py["能力lookup<br/>CapabilityLookup —<br/>能力->真源文件反查注册表的查询 API + 扫描<br/>/派生逻辑（合一）<br/>capability_lookup<br/>文件: governance/capability_lookup.py<br/>(生产态 / production)"]
@@ -471,8 +471,8 @@ flowchart TD
     scripts_check_naming_convention_py ~~~ scripts_construction_check_statuses_py
     scripts_construction_check_statuses_py ~~~ scripts_git_commit_py
     scripts_git_commit_py ~~~ scripts_git_guard_py
-    scripts_git_guard_py ~~~ scripts_mcp_launcher_py
-    scripts_mcp_launcher_py ~~~ scripts_migration_dm311_autonomy_core_split_py
+    scripts_git_guard_py ~~~ scripts_mcp_generate_ide_config_py
+    scripts_mcp_generate_ide_config_py ~~~ scripts_migration_dm311_autonomy_core_split_py
     scripts_migration_dm311_autonomy_core_split_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
     src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py ~~~ src_zephyr_governance_capability_lookup_py
     src_zephyr_governance_capability_lookup_py ~~~ src_zephyr_governance_data_governance_akshare_provider_py
@@ -502,12 +502,12 @@ flowchart TD
     src_zephyr_governance_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_governance_engine_pipeline_base_py
     src_zephyr_governance_intelligence_governance_self_test_py -->|导入依赖 / import_depends| src_zephyr_governance_intelligence_governance_delegation_engine_py
     src_zephyr_governance_lifecycle_governance_transition_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_base_repo_py
+    src_zephyr_governance_persistence_battlemap_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_observability_governance_query_metrics_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_battle_map_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_battlemap_schema_py
     src_zephyr_governance_persistence_battle_map_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
-    src_zephyr_governance_persistence_battlemap_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
-    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_decisiongraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_depgraph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_depgraph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
@@ -527,22 +527,22 @@ flowchart TD
     scripts_arch_guard_check_schema_consistency_py -->|导入依赖 / import_depends| scripts_arch_guard_arch_ssot_py
     scripts_construction_check_statuses_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_check_statuses_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
-    scripts_construction_demo_a2a_chat_py -->|config_depends / config_depends| scripts_construction_check_statuses_py
     scripts_construction_check_transition_code_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
+    scripts_construction_demo_a2a_chat_py -->|config_depends / config_depends| scripts_construction_check_statuses_py
+    scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_finalize_tasks_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_finalize_tasks_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_demo_e2e_pipeline_py -->|导入依赖 / import_depends| src_zephyr_governance_data_governance_akshare_provider_py
-    scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_test_event_hook_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_test_event_hook_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
+    scripts_mcp_status_all_py -->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
     scripts_migration_governance_root_split_py -->|config_depends / config_depends| scripts_migration_dm311_autonomy_core_split_py
-    scripts_mcp_status_all_py -->|config_depends / config_depends| scripts_mcp_launcher_py
     tests_git_test_reconciler_verify_autosync_py -->|测试依赖 / test_depends| scripts_git_commit_py
     tests_governance_rule_bridge_test_worktree_lifecycle_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
     tests_io_test_verify_schema_health_py -->|测试依赖 / test_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    tests_rollback_test_concurrent_mv_guard_py -->|测试依赖 / test_depends| scripts_git_guard_py
     tests_rollback_test_concurrency_guard_red_blue_py -->|测试依赖 / test_depends| scripts_git_guard_py
+    tests_rollback_test_concurrent_mv_guard_py -->|测试依赖 / test_depends| scripts_git_guard_py
     tests_task_test_task_repo_gateway_e2e_py -->|测试依赖 / test_depends| src_zephyr_governance_persistence_task_repo_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_governance_data_governance_miniqmt_provider_py -->|导入依赖 / import_depends| D_SHARED
@@ -598,7 +598,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_rule_registry_collection_yaml["规则注册表收集<br/>规则注册表收集模块<br/>rule_registry_collection<br/>文件: catalogs/rule_registry_collection.yaml<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_rule_registry_collection_yaml["规则注册表收集<br/>catalogs包的规则注册表收集模块<br/>rule_registry_collection<br/>文件: catalogs/rule_registry_collection.yaml<br/>(生产态 / production)"]
     scripts_a2a_full_verification_py["A2Afull验证<br/>A2A Protocol 全链路满分验证脚本<br/>a2a_full_verification<br/>文件: scripts/a2a_full_verification.py<br/>(生产态 / production)"]
     scripts_arch_guard_tools_build_ocp_manifest_py["buildocp清单<br/>从 cross_layer_contracts.yaml 生成 OCP<br/>冻结契约指纹（INV-009）。<br/>build_ocp_manifest<br/>文件: _tools/build_ocp_manifest.py<br/>(生产态 / production)"]
     scripts_arch_guard_tools_inject_idempotency_py["inject幂等性<br/>为所有 P0/P1 契约添加 idempotency_key<br/>字段——状态感知版本。<br/>inject_idempotency<br/>文件: _tools/inject_idempotency.py<br/>(生产态 / production)"]
@@ -624,9 +624,9 @@ flowchart TD
     scripts_arch_guard_fitness_functions_check_survivorship_bias_py["检查survivorshipbias<br/>Survivorship 策略门禁<br/>check_survivorship_bias<br/>文件: fitness_functions/check_survivorship_<br/>bias.py<br/>(生产态 / production)"]
     scripts_arch_guard_fitness_functions_check_warm_cold_async_py["checkwarm冷异步<br/>INV-019 Warm→Cold 异步通信检查<br/>check_warm_cold_async<br/>文件: fitness_functions/check_warm_cold_async.py<br/>(生产态 / production)"]
     scripts_arch_guard_run_all_py["运行all<br/>Architecture Guard 编排器<br/>run_all<br/>文件: arch_guard/run_all.py<br/>(生产态 / production)"]
-    scripts_construction_e2e_check_py["端到端检查<br/>端到端检查模块<br/>_e2e_check<br/>文件: construction/_e2e_check.py<br/>(生产态 / production)"]
+    scripts_construction_e2e_check_py["端到端检查<br/>construction包的端到端检查模块<br/>_e2e_check<br/>文件: construction/_e2e_check.py<br/>(生产态 / production)"]
     scripts_construction_e2e_deep_py["端到端deep<br/>端到端deep，依赖检查statuses工作<br/>_e2e_deep<br/>文件: construction/_e2e_deep.py<br/>(生产态 / production)"]
-    scripts_construction_check_transition_code_py["检查转换代码<br/>检查转换代码模块<br/>check_transition_code<br/>文件: construction/check_transition_code.py<br/>(生产态 / production)"]
+    scripts_construction_check_transition_code_py["检查转换代码<br/>construction包的检查转换代码模块<br/>check_transition_code<br/>文件: construction/check_transition_code.py<br/>(生产态 / production)"]
     scripts_construction_d_init_task_system_py["初始化任务系统数据库 +<br/>创建任务系统自身的施工任务卡（吃狗粮）<br/>d_init_task_system<br/>文件: construction/d_init_task_system.py<br/>(生产态 / production)"]
     scripts_construction_demo_a2a_chat_py["A2A 多 Agent 聊天演示 - Alpha 和 Beta<br/>讨论项目评估<br/>demo_a2a_chat<br/>文件: construction/demo_a2a_chat.py<br/>(生产态 / production)"]
     scripts_construction_demo_a2a_coordination_py["A2A 协议协调任务演示<br/>construction包的A2A 协议协调任务演示模块<br/>demo_a2a_coordination<br/>文件: construction/demo_a2a_coordination.py<br/>(生产态 / production)"]
@@ -648,7 +648,7 @@ flowchart TD
     scripts_governance_generators_generate_rule_ai_perception_index_py["generate规则aiperception索引<br/>规则AI感知索引生成器<br/>（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）<br/>generate_rule_ai_perception_index<br/>文件: generators/generate_rule_ai_perception_<br/>index.py<br/>(生产态 / production)"]
     scripts_hooks_auto_handoff_log_py["自动handoff日志<br/>执行 git 命令并返回 stdout（UTF-8 解码）。<br/>auto_handoff_log<br/>文件: hooks/auto_handoff_log.py<br/>(生产态 / production)"]
     scripts_lock_files_py["锁files<br/>— AI 对话文件锁协议（硬规则执行工具）<br/>lock_files<br/>文件: scripts/lock_files.py<br/>(生产态 / production)"]
-    scripts_mcp_generate_ide_config_py["生成ide配置<br/>从 config/mcp.json 生成各 IDE MCP 配置文件<br/>（MOD-INF-013 §5.3 Step 2）。<br/>generate_ide_config<br/>文件: mcp/generate_ide_config.py<br/>(生产态 / production)"]
+    scripts_mcp_launcher_py["MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 +<br/>Pro<br/>launcher<br/>文件: mcp/launcher.py<br/>(生产态 / production)"]
     scripts_mcp_start_all_py["启动all<br/>MCP 全 Server 启动脚本 — DEPRECATED.<br/>start_all<br/>文件: mcp/start_all.py<br/>(生产态 / production)"]
     scripts_mcp_status_all_py["状态all<br/>MCP 全 Server 状态检查脚本（MOD-INF-013 §14）。<br/>status_all<br/>文件: mcp/status_all.py<br/>(生产态 / production)"]
     scripts_mcp_stop_all_py["停止all<br/>MCP 全 Server 停止脚本（MOD-INF-013 §14）。<br/>stop_all<br/>文件: mcp/stop_all.py<br/>(生产态 / production)"]
@@ -669,7 +669,7 @@ flowchart TD
     src_zephyr_governance_agent_spec_a2a_failure_py["A2A故障<br/>G-CT-008 消费端 — Escalation.on_a2a_failure()<br/>跨 agent 通信失败升级.<br/>文件: agent_spec/a2a_failure.py<br/>(生产态 / production)"]
     src_zephyr_governance_agent_spec_rbac_bridge_py["RBAC桥接<br/>G-CT-007 契约：Budget -> RBAC 配额限制.<br/>rbac_bridge<br/>文件: agent_spec/rbac_bridge.py<br/>(生产态 / production)"]
     src_zephyr_governance_agent_spec_registry_py["注册表<br/>G-CT-003 契约：Agent Spec -> RBAC 能力检查.<br/>registry<br/>文件: agent_spec/registry.py<br/>(生产态 / production)"]
-    src_zephyr_governance_architecture_governance_architecture_contracts_py["架构契约<br/>架构契约模块<br/>architecture_contracts<br/>文件: architecture_governance/architecture_<br/>contracts.py<br/>(生产态 / production)"]
+    src_zephyr_governance_architecture_governance_architecture_contracts_py["架构契约<br/>治理/architecture_governance包的架构契约模块<br/>architecture_contracts<br/>文件: architecture_governance/architecture_<br/>contracts.py<br/>(生产态 / production)"]
     src_zephyr_governance_architecture_governance_architecture_principles_py["装饰器：为函数标记适用的架构原则。<br/>architecture_principles<br/>文件: architecture_governance/architecture_<br/>principles.py<br/>(生产态 / production)"]
     src_zephyr_governance_architecture_governance_blueprint_bloat_monitor_py["蓝图bloat监控器<br/>Blueprint Bloat Monitor — v0.11.0<br/>蓝图膨胀监控器。<br/>blueprint_bloat_monitor<br/>文件: architecture_governance/blueprint_bloat_<br/>monitor.py<br/>(生产态 / production)"]
     src_zephyr_governance_architecture_governance_blueprint_code_consistency_py["蓝图代码一致性<br/>蓝图代码一致性。Blueprint-Code Consistency Gate<br/>— MOD-INF-022.<br/>文件: architecture_governance/blueprint_code_<br/>consistency.py<br/>(生产态 / production)"]
@@ -713,7 +713,7 @@ flowchart TD
     src_zephyr_governance_financial_governance_arbitrage_asymmetry_detector_py["arbitrageasymmetry检测器<br/>Arbitrage Asymmetry Detector — v0.11.0<br/>跨交易所套利不对称检测器。<br/>arbitrage_asymmetry_detector<br/>文件: financial_governance/arbitrage_asymmetry_<br/>detector.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_atomic_transaction_manager_py["atomic交易管理器<br/>AtomicTransactionManager — SQLite +<br/>文件系统的跨介质原子事务管理器 v2.0（ATM）。<br/>atomic_transaction_manager<br/>文件: financial_governance/atomic_transaction_<br/>manager.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_flash_crash_guard_py["flashcrash守卫<br/>Flash Crash Guard — v0.12.0 闪崩双轨熔断器。<br/>flash_crash_guard<br/>文件: financial_governance/flash_crash_guard.py<br/>(生产态 / production)"]
-    src_zephyr_governance_financial_governance_fsm_verifier_py["fsm验证器<br/>fsm验证器模块<br/>fsm_verifier<br/>文件: financial_governance/fsm_verifier.py<br/>(生产态 / production)"]
+    src_zephyr_governance_financial_governance_fsm_verifier_py["fsm验证器<br/>治理/financial_governance包的fsm验证器模块<br/>fsm_verifier<br/>文件: financial_governance/fsm_verifier.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_instrument_py["标的合约<br/>治理/financial_governance包的标的合约模块<br/>instrument<br/>文件: financial_governance/instrument.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_microstructure_defense_py["microstructure防御<br/>microstructure_defense<br/>文件: financial_governance/microstructure_<br/>defense.py<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_oms_risk_engine_py["oms风险引擎<br/>治理/financial_governance包的oms风险引擎模块<br/>oms_risk_engine<br/>文件: financial_governance/oms_risk_engine.py<br/>(生产态 / production)"]
@@ -744,10 +744,10 @@ flowchart TD
     src_zephyr_governance_intelligence_governance_self_test_py["自测试<br/>自测试。Escalation Protocol Self-Test —<br/>MOD-INF-022.<br/>文件: intelligence_governance/self_test.py<br/>(生产态 / production)"]
     src_zephyr_governance_intelligence_governance_self_validator_py["自校验器<br/>Self Validator — v0.10.0 升级协议自验证器:<br/>protocol自身规则+代码一致性自检。<br/>self_validator<br/>文件: intelligence_governance/self_validator.py<br/>(生产态 / production)"]
     src_zephyr_governance_intelligence_governance_subagent_hook_propagator_py["subagent钩子propagator<br/>Subagent Hook Propagator — v0.13.0 子Agent<br/>Hook旁路防护器。<br/>subagent_hook_propagator<br/>文件: intelligence_governance/subagent_hook_<br/>propagator.py<br/>(生产态 / production)"]
-    src_zephyr_governance_lifecycle_governance_api_lifecycle_py["API生命周期<br/>API生命周期模块<br/>api_lifecycle<br/>文件: lifecycle_governance/api_lifecycle.py<br/>(生产态 / production)"]
+    src_zephyr_governance_lifecycle_governance_api_lifecycle_py["API生命周期<br/>治理/lifecycle_governance包的API生命周期模块<br/>api_lifecycle<br/>文件: lifecycle_governance/api_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_governance_lifecycle_governance_migration_strategy_py["迁移策略<br/>治理/lifecycle_governance包的迁移策略模块<br/>migration_strategy<br/>文件: lifecycle_governance/migration_strategy.py<br/>(生产态 / production)"]
     src_zephyr_governance_lifecycle_governance_paper_live_transition_py["paper实盘转换<br/>检查是否可跳Phase——不可跳, 只允许顺序next。<br/>paper_live_transition<br/>文件: lifecycle_governance/paper_live_<br/>transition.py<br/>(生产态 / production)"]
-    src_zephyr_governance_lifecycle_governance_post_live_verification_py["提交实时验证<br/>提交实时验证模块<br/>post_live_verification<br/>文件: lifecycle_governance/post_live_<br/>verification.py<br/>(生产态 / production)"]
+    src_zephyr_governance_lifecycle_governance_post_live_verification_py["提交实时验证<br/>治理/lifecycle_governance包的提交实时验证模块<br/>post_live_verification<br/>文件: lifecycle_governance/post_live_<br/>verification.py<br/>(生产态 / production)"]
     src_zephyr_governance_lifecycle_governance_transition_py["转换<br/>transition — 状态机转换 Mixin（从 task_repo.py<br/>拆分，SRC-0066）<br/>文件: lifecycle_governance/transition.py<br/>(生产态 / production)"]
     src_zephyr_governance_observability_governance_analytics_base_py["analytics基类<br/>analytics基类。Re-export wrapper: analytics_<br/>base canonical at zephyr.reporting.analytics_<br/>base.<br/>文件: observability_governance/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_governance_observability_governance_objective_tracker_py["objective追踪器<br/>Objective Tracker — v0.9.0 目标漂移检测器:<br/>agent目标函数稳定性+变更检测+rollback。<br/>objective_tracker<br/>文件: observability_governance/objective_<br/>tracker.py<br/>(生产态 / production)"]
@@ -844,8 +844,8 @@ flowchart TD
     scripts_governance_d7_code_check_pure_shim_py ~~~ scripts_governance_generators_generate_rule_ai_perception_index_py
     scripts_governance_generators_generate_rule_ai_perception_index_py ~~~ scripts_hooks_auto_handoff_log_py
     scripts_hooks_auto_handoff_log_py ~~~ scripts_lock_files_py
-    scripts_lock_files_py ~~~ scripts_mcp_generate_ide_config_py
-    scripts_mcp_generate_ide_config_py ~~~ scripts_mcp_start_all_py
+    scripts_lock_files_py ~~~ scripts_mcp_launcher_py
+    scripts_mcp_launcher_py ~~~ scripts_mcp_start_all_py
     scripts_mcp_start_all_py ~~~ scripts_mcp_status_all_py
     scripts_mcp_status_all_py ~~~ scripts_mcp_stop_all_py
     scripts_mcp_stop_all_py ~~~ scripts_migration_dm314_infra_ops_split_py
@@ -993,10 +993,10 @@ flowchart TD
     tests_test_generate_dataflow_diagram_py ~~~ tests_test_generate_decision_diagram_py
     scripts_arch_guard_arch_ssot_py["架构ssot<br/>arch_guard 共享：仓库根路径、capacity_slo /<br/>invariants / contracts 装载。<br/>_arch_ssot<br/>文件: arch_guard/_arch_ssot.py<br/>(生产态 / production)"]
     scripts_check_naming_convention_py["检查namingconvention<br/>check_naming_convention<br/>文件: scripts/check_naming_convention.py<br/>(生产态 / production)"]
-    scripts_construction_check_statuses_py["检查statuses<br/>检查statuses模块<br/>check_statuses<br/>文件: construction/check_statuses.py<br/>(生产态 / production)"]
+    scripts_construction_check_statuses_py["检查statuses<br/>construction包的检查statuses模块<br/>check_statuses<br/>文件: construction/check_statuses.py<br/>(生产态 / production)"]
     scripts_git_commit_py["Git提交<br/>GitCommitGateway CLI 封装<br/>git_commit<br/>文件: scripts/git_commit.py<br/>(生产态 / production)"]
     scripts_git_guard_py["Git守卫<br/>Git Guard — 拦截危险 git 命令，防止破坏其他<br/>session 的文件锁。<br/>git_guard<br/>文件: scripts/git_guard.py<br/>(生产态 / production)"]
-    scripts_mcp_launcher_py["MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 +<br/>Pro<br/>launcher<br/>文件: mcp/launcher.py<br/>(生产态 / production)"]
+    scripts_mcp_generate_ide_config_py["生成ide配置<br/>从 config/mcp.json 生成各 IDE MCP 配置文件<br/>（MOD-INF-013 §5.3 Step 2）。<br/>generate_ide_config<br/>文件: mcp/generate_ide_config.py<br/>(生产态 / production)"]
     scripts_migration_dm311_autonomy_core_split_py["dm311autonomy核心split<br/>DM-311: autonomy_core/ 拆分迁移执行脚本。<br/>dm311_autonomy_core_split<br/>文件: migration/dm311_autonomy_core_split.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py["worktree生命周期<br/>WorktreeLifecycle — worktree 生命周期状态机<br/>（5态 + 8转换）<br/>worktree_lifecycle<br/>文件: rule_bridge/worktree_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_governance_capability_lookup_py["能力lookup<br/>CapabilityLookup —<br/>能力->真源文件反查注册表的查询 API + 扫描<br/>/派生逻辑（合一）<br/>capability_lookup<br/>文件: governance/capability_lookup.py<br/>(生产态 / production)"]
@@ -1016,8 +1016,8 @@ flowchart TD
     scripts_check_naming_convention_py ~~~ scripts_construction_check_statuses_py
     scripts_construction_check_statuses_py ~~~ scripts_git_commit_py
     scripts_git_commit_py ~~~ scripts_git_guard_py
-    scripts_git_guard_py ~~~ scripts_mcp_launcher_py
-    scripts_mcp_launcher_py ~~~ scripts_migration_dm311_autonomy_core_split_py
+    scripts_git_guard_py ~~~ scripts_mcp_generate_ide_config_py
+    scripts_mcp_generate_ide_config_py ~~~ scripts_migration_dm311_autonomy_core_split_py
     scripts_migration_dm311_autonomy_core_split_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
     src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py ~~~ src_zephyr_governance_capability_lookup_py
     src_zephyr_governance_capability_lookup_py ~~~ src_zephyr_governance_data_governance_akshare_provider_py
@@ -1047,12 +1047,12 @@ flowchart TD
     src_zephyr_governance_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_governance_engine_pipeline_base_py
     src_zephyr_governance_intelligence_governance_self_test_py -->|导入依赖 / import_depends| src_zephyr_governance_intelligence_governance_delegation_engine_py
     src_zephyr_governance_lifecycle_governance_transition_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_base_repo_py
+    src_zephyr_governance_persistence_battlemap_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_observability_governance_query_metrics_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_battle_map_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_battlemap_schema_py
     src_zephyr_governance_persistence_battle_map_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
-    src_zephyr_governance_persistence_battlemap_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
-    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_decisiongraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_depgraph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_depgraph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_pg_wrapper_py
@@ -1072,22 +1072,22 @@ flowchart TD
     scripts_arch_guard_check_schema_consistency_py -->|导入依赖 / import_depends| scripts_arch_guard_arch_ssot_py
     scripts_construction_check_statuses_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_check_statuses_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
-    scripts_construction_demo_a2a_chat_py -->|config_depends / config_depends| scripts_construction_check_statuses_py
     scripts_construction_check_transition_code_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
+    scripts_construction_demo_a2a_chat_py -->|config_depends / config_depends| scripts_construction_check_statuses_py
+    scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_finalize_tasks_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_finalize_tasks_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_demo_e2e_pipeline_py -->|导入依赖 / import_depends| src_zephyr_governance_data_governance_akshare_provider_py
-    scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    scripts_construction_d_init_task_system_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_test_event_hook_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_test_event_hook_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_task_repo_py
+    scripts_mcp_status_all_py -->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
     scripts_migration_governance_root_split_py -->|config_depends / config_depends| scripts_migration_dm311_autonomy_core_split_py
-    scripts_mcp_status_all_py -->|config_depends / config_depends| scripts_mcp_launcher_py
     tests_git_test_reconciler_verify_autosync_py -->|测试依赖 / test_depends| scripts_git_commit_py
     tests_governance_rule_bridge_test_worktree_lifecycle_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_lifecycle_py
     tests_io_test_verify_schema_health_py -->|测试依赖 / test_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    tests_rollback_test_concurrent_mv_guard_py -->|测试依赖 / test_depends| scripts_git_guard_py
     tests_rollback_test_concurrency_guard_red_blue_py -->|测试依赖 / test_depends| scripts_git_guard_py
+    tests_rollback_test_concurrent_mv_guard_py -->|测试依赖 / test_depends| scripts_git_guard_py
     tests_task_test_task_repo_gateway_e2e_py -->|测试依赖 / test_depends| src_zephyr_governance_persistence_task_repo_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

@@ -65,7 +65,7 @@ flowchart TD
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
     src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>参数鲁棒性测试器，模拟的测试器，测试验证功能。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>夏普计算器修复器模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>simulation包的夏普计算器修复器模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>deflated夏普计算器模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(设计态 / design)"]
@@ -120,7 +120,7 @@ flowchart TD
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
     src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>参数鲁棒性测试器，模拟的测试器，测试验证功能。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>夏普计算器修复器模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>simulation包的夏普计算器修复器模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>deflated夏普计算器模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(设计态 / design)"]

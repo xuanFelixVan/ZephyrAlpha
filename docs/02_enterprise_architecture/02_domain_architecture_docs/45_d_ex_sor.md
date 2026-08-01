@@ -79,7 +79,7 @@ flowchart TD
     src_zephyr_ex_sor_services_execution_quality_scorer_py ~~~ src_zephyr_ex_sor_services_slippage_analyzer_py
     src_zephyr_ex_sor_services_slippage_analyzer_py ~~~ src_zephyr_ex_sor_services_transaction_cost_optimizer_py
     src_zephyr_ex_sor_core_execution_scheduler_py["执行调度器<br/>执行调度器，core的调度器，按时间或优先级安排任务<br/>执行。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>execution_scheduler<br/>文件: core/execution_scheduler.py<br/>(设计态 / design)"]
-    src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>算法交易引擎模块<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>algo_trading_engine<br/>文件: core/algo_trading_engine.py<br/>(设计态 / design)"]
+    src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>执行智能编排/核心包的算法交易引擎模块<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>algo_trading_engine<br/>文件: core/algo_trading_engine.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_core_broker_api_connector_py["券商api连接器<br/>券商api连接器（broker_api_connector.py）<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>文件: core/broker_api_connector.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_core_api_rate_limiter_py["API率限制器<br/>API率限制器，SOR执行的限制器，限制流量或频率。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>api_rate_limiter<br/>文件: core/api_rate_limiter.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_core_optimal_order_router_py -.->|runtime / runtime| src_zephyr_ex_sor_core_execution_scheduler_py
@@ -150,7 +150,7 @@ flowchart TD
     src_zephyr_ex_sor_services_execution_quality_scorer_py ~~~ src_zephyr_ex_sor_services_slippage_analyzer_py
     src_zephyr_ex_sor_services_slippage_analyzer_py ~~~ src_zephyr_ex_sor_services_transaction_cost_optimizer_py
     src_zephyr_ex_sor_core_execution_scheduler_py["执行调度器<br/>执行调度器，core的调度器，按时间或优先级安排任务<br/>执行。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>execution_scheduler<br/>文件: core/execution_scheduler.py<br/>(设计态 / design)"]
-    src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>算法交易引擎模块<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>algo_trading_engine<br/>文件: core/algo_trading_engine.py<br/>(设计态 / design)"]
+    src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>执行智能编排/核心包的算法交易引擎模块<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>algo_trading_engine<br/>文件: core/algo_trading_engine.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_core_broker_api_connector_py["券商api连接器<br/>券商api连接器（broker_api_connector.py）<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>文件: core/broker_api_connector.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_core_api_rate_limiter_py["API率限制器<br/>API率限制器，SOR执行的限制器，限制流量或频率。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>api_rate_limiter<br/>文件: core/api_rate_limiter.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_core_optimal_order_router_py -.->|runtime / runtime| src_zephyr_ex_sor_core_execution_scheduler_py

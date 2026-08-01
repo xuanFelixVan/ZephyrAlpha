@@ -89,7 +89,7 @@ flowchart TD
     src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py ~~~ src_zephyr_sell_decision_core_exit_scenario_planner_py
     src_zephyr_sell_decision_core_exit_scenario_planner_py ~~~ src_zephyr_sell_decision_core_scaling_out_architect_py
     src_zephyr_sell_decision_core_scaling_out_architect_py ~~~ src_zephyr_sell_decision_core_stop_loss_strategy_py
-    src_zephyr_sell_decision_core_sell_signal_fusion_engine_py["卖信号融合引擎<br/>卖信号融合引擎模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>sell_signal_fusion_engine<br/>文件: core/sell_signal_fusion_engine.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_signal_fusion_engine_py["卖信号融合引擎<br/>Sell Signal Fusion Engine — 卖出信号融合引擎<br/>(MOD-SELL-007)<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>sell_signal_fusion_engine<br/>文件: core/sell_signal_fusion_engine.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_sell_signal_scorer_py["卖信号评分器<br/>卖信号评分器（sell_signal_scorer.py）<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_signal_scorer.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py["t交易协调器<br/>t交易协调器（t_trade_coordinator.py）<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/t_trade_coordinator.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_sell_signal_scorer_py ~~~ src_zephyr_sell_decision_core_t_trade_coordinator_py
@@ -183,7 +183,7 @@ flowchart TD
     src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py ~~~ src_zephyr_sell_decision_core_exit_scenario_planner_py
     src_zephyr_sell_decision_core_exit_scenario_planner_py ~~~ src_zephyr_sell_decision_core_scaling_out_architect_py
     src_zephyr_sell_decision_core_scaling_out_architect_py ~~~ src_zephyr_sell_decision_core_stop_loss_strategy_py
-    src_zephyr_sell_decision_core_sell_signal_fusion_engine_py["卖信号融合引擎<br/>卖信号融合引擎模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>sell_signal_fusion_engine<br/>文件: core/sell_signal_fusion_engine.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_signal_fusion_engine_py["卖信号融合引擎<br/>Sell Signal Fusion Engine — 卖出信号融合引擎<br/>(MOD-SELL-007)<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>sell_signal_fusion_engine<br/>文件: core/sell_signal_fusion_engine.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_sell_signal_scorer_py["卖信号评分器<br/>卖信号评分器（sell_signal_scorer.py）<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_signal_scorer.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py["t交易协调器<br/>t交易协调器（t_trade_coordinator.py）<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/t_trade_coordinator.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_sell_signal_scorer_py ~~~ src_zephyr_sell_decision_core_t_trade_coordinator_py

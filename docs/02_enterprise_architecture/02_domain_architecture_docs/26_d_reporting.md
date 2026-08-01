@@ -59,9 +59,9 @@ flowchart TD
     src_zephyr_reporting_performance_attribution_report_py["绩效attribution报告<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>performance_attribution_report<br/>文件: reporting/performance_attribution_<br/>report.py<br/>(设计态 / design)"]
     src_zephyr_reporting_realtime_pnl_dashboard_py["实时盈亏仪表盘<br/>实时盈亏仪表盘（realtime_pnl_dashboard.py）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(设计态 / design)"]
     src_zephyr_reporting_regulatory_report_generator_py["regulatory报告generator<br/>regulatory报告生成器，报告的生成器，按规则生成所<br/>需的数据或报告。<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>regulatory_report_generator<br/>文件: reporting/regulatory_report_generator.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告版本管理器模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_version_manager<br/>文件: reporting/report_version_manager.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告包的报告版本管理器模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_version_manager<br/>文件: reporting/report_version_manager.py<br/>(设计态 / design)"]
     src_zephyr_reporting_report_watermark_tracker_py["报告watermark追踪器<br/>报告watermark追踪器，报告的追踪器，持续跟踪某项<br/>指标或状态的变化。<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_watermark_tracker<br/>文件: reporting/report_watermark_tracker.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>风险报告引擎模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>risk_report_engine<br/>文件: reporting/risk_report_engine.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>报告包的风险报告引擎模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>risk_report_engine<br/>文件: reporting/risk_report_engine.py<br/>(设计态 / design)"]
     src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
     src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_default_tca_engine_py
     src_zephyr_reporting_default_tca_engine_py ~~~ src_zephyr_reporting_performance_attribution_report_py
@@ -71,7 +71,7 @@ flowchart TD
     src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
     src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
     src_zephyr_reporting_default_attribution_engine_py["默认attribution引擎<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告发布器模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_publisher<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告包的报告发布器模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_publisher<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_analytics_base_py["analytics基类<br/>analytics基类。D_REPORTING — Post-Trade<br/>Analytics Layer<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_performance_audit_py -.->|data / data| src_zephyr_reporting_default_attribution_engine_py
@@ -142,9 +142,9 @@ flowchart TD
     src_zephyr_reporting_performance_attribution_report_py["绩效attribution报告<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>performance_attribution_report<br/>文件: reporting/performance_attribution_<br/>report.py<br/>(设计态 / design)"]
     src_zephyr_reporting_realtime_pnl_dashboard_py["实时盈亏仪表盘<br/>实时盈亏仪表盘（realtime_pnl_dashboard.py）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(设计态 / design)"]
     src_zephyr_reporting_regulatory_report_generator_py["regulatory报告generator<br/>regulatory报告生成器，报告的生成器，按规则生成所<br/>需的数据或报告。<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>regulatory_report_generator<br/>文件: reporting/regulatory_report_generator.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告版本管理器模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_version_manager<br/>文件: reporting/report_version_manager.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告包的报告版本管理器模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_version_manager<br/>文件: reporting/report_version_manager.py<br/>(设计态 / design)"]
     src_zephyr_reporting_report_watermark_tracker_py["报告watermark追踪器<br/>报告watermark追踪器，报告的追踪器，持续跟踪某项<br/>指标或状态的变化。<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_watermark_tracker<br/>文件: reporting/report_watermark_tracker.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>风险报告引擎模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>risk_report_engine<br/>文件: reporting/risk_report_engine.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>报告包的风险报告引擎模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>risk_report_engine<br/>文件: reporting/risk_report_engine.py<br/>(设计态 / design)"]
     src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
     src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_performance_attribution_report_py
     src_zephyr_reporting_performance_attribution_report_py ~~~ src_zephyr_reporting_realtime_pnl_dashboard_py
@@ -152,7 +152,7 @@ flowchart TD
     src_zephyr_reporting_regulatory_report_generator_py ~~~ src_zephyr_reporting_report_version_manager_py
     src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
     src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
-    src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告发布器模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_publisher<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告包的报告发布器模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_publisher<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
     src_zephyr_reporting_ashare_trade_record_template_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_realtime_pnl_dashboard_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_regulatory_report_generator_py -.->|data / data| src_zephyr_reporting_report_publisher_py

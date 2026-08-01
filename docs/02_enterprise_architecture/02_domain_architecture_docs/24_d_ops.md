@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_governance_observability_gate_cache_py["门禁缓存<br/>门禁缓存模块<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
+    scripts_governance_observability_gate_cache_py["门禁缓存<br/>治理/observability包的门禁缓存模块<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
     scripts_setup_dev_env_py["开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE<br/>setup_dev_env<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
     src_zephyr_governance_observability_governance_observability_dashboard_py["可观测性仪表盘<br/>observability仪表盘，治理的核心类，封装Dashboard<br/>Panel相关逻辑。<br/>observability_dashboard<br/>文件: observability_governance/observability_<br/>dashboard.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_engine_py["预算引擎<br/>预算引擎。Budget Enforcer core engine —<br/>MOD-INF-024<br/>文件: ops_governance/budget_engine.py<br/>(生产态 / production)"]
@@ -125,7 +125,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_governance_observability_gate_cache_py["门禁缓存<br/>门禁缓存模块<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
+    scripts_governance_observability_gate_cache_py["门禁缓存<br/>治理/observability包的门禁缓存模块<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
     scripts_setup_dev_env_py["开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE<br/>setup_dev_env<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
     src_zephyr_governance_observability_governance_observability_dashboard_py["可观测性仪表盘<br/>observability仪表盘，治理的核心类，封装Dashboard<br/>Panel相关逻辑。<br/>observability_dashboard<br/>文件: observability_governance/observability_<br/>dashboard.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_engine_py["预算引擎<br/>预算引擎。Budget Enforcer core engine —<br/>MOD-INF-024<br/>文件: ops_governance/budget_engine.py<br/>(生产态 / production)"]
