@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-08-01T19:02:28
+> 生成时间: 2026-08-01T22:11:49
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -70,21 +70,22 @@ ttl: permanent
 > 13 个作业 / 14 个数据集 / 28 条边
 
 - [dataflow_production.md](dataflow_production.md) — 运营态全景图 + Dataset/Job 清单
+- [可缩放 HTML 版](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/dataflow_production.html) — 浏览器打开可 Ctrl+滚轮缩放
 
-## 数据流（按域拆分，含设计态+运营态双图）
+## 数据流（按域拆分，含三视图）
 
-> 75 个作业 / 76 个数据集 / 90 条边，按功能域拆分（每个域文档含设计态+运营态双图）：
+> 75 个作业 / 76 个数据集 / 90 条边，按功能域拆分（每个域文档含三视图：全景图 → 运营态的图 → 设计态的图）：
 
-| 文件 | 功能域 | Job 数 | Dataset 数 |
-|------|--------|:---:|:---:|
-| [d_factor_ashare.md](d_factor_ashare.md) | 因子域-A股因子计算 | 14 | 14 |
-| [d_factor_analysis.md](d_factor_analysis.md) | 因子域-因子分析 | 12 | 12 |
-| [d_factor_barra_mine.md](d_factor_barra_mine.md) | 因子域-Barra风险模型与因子挖掘 | 6 | 6 |
-| [d_backtest.md](d_backtest.md) | 回测域-回测服务 | 13 | 13 |
-| [d_data.md](d_data.md) | 数据域-数据采集管理 | 5 | 5 |
-| [d_data_eng.md](d_data_eng.md) | 数据工程域-数据工程服务 | 5 | 5 |
-| [d_ex_pf_core.md](d_ex_pf_core.md) | 执行核心+组合核心域 | 10 | 11 |
-| [d_others.md](d_others.md) | 其他域-ML训练+风控+交易 | 5 | 5 |
+| 文件 | 功能域 | Job 数 | Dataset 数 | 可缩放 HTML |
+|------|--------|:---:|:---:|:---:|
+| [d_factor_ashare.md](d_factor_ashare.md) | 因子域-A股因子计算 | 14 | 14 | [HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/d_factor_ashare.html) |
+| [d_factor_analysis.md](d_factor_analysis.md) | 因子域-因子分析 | 12 | 12 | [HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/d_factor_analysis.html) |
+| [d_factor_barra_mine.md](d_factor_barra_mine.md) | 因子域-Barra风险模型与因子挖掘 | 6 | 6 | [HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/d_factor_barra_mine.html) |
+| [d_backtest.md](d_backtest.md) | 回测域-回测服务 | 13 | 13 | [HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/d_backtest.html) |
+| [d_data.md](d_data.md) | 数据域-数据采集管理 | 5 | 5 | [HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/d_data.html) |
+| [d_data_eng.md](d_data_eng.md) | 数据工程域-数据工程服务 | 5 | 5 | [HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/d_data_eng.html) |
+| [d_ex_pf_core.md](d_ex_pf_core.md) | 执行核心+组合核心域 | 10 | 11 | [HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/d_ex_pf_core.html) |
+| [d_others.md](d_others.md) | 其他域-ML训练+风控+交易 | 5 | 5 | [HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/d_others.html) |
 
 ## 概述
 

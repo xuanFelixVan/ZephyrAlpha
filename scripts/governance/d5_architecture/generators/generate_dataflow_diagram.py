@@ -51,6 +51,12 @@ if str(_REPO_ROOT) not in sys.path:
 _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
+# 治本（2026-08-01 模板 V1.2 升级）：脚本自身目录加入 sys.path，使 `from zoomable_html import`
+# 在 importlib 加载（tests/test_generate_dataflow_diagram.py）下也能解析——
+# 仅作为 script 运行时 sys.path[0] 自动是脚本目录，但 importlib 不会加。
+_THIS_DIR = str(Path(__file__).resolve().parent)
+if _THIS_DIR not in sys.path:
+    sys.path.insert(0, _THIS_DIR)
 
 try:
     from _common import DB_DISPLAY_NAME  # noqa: E402
@@ -66,13 +72,260 @@ from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_flat_map
 # 域中文名真源（#ARCH-SSOT-GLOSSARY-MERGE-001）：functional_domain_registry.yaml 经 domain_name_mapping 加载
-from domain_name_mapping import get_domain_name_zh_strict  # noqa: E402
+from domain_name_mapping import get_domain_name_zh_strict, get_domain_name_zh, get_domain_name_en, get_domain_desc_zh  # noqa: E402
+# 可缩放 HTML 联动生成（模板 V1.2 §9.1 #1：MD+HTML 双产物，md 刷新即 HTML 刷新）
+from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402
 
 # maturity 合法值真源是 maturity_vocabulary.yaml，禁止代码硬编码字面量集合。
 # strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
 _MATURITY_VALUES: set[str] = load_vocabulary_values("maturity_vocabulary.yaml", strict=False)
 
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture"
+
+
+# ============================================================
+# 模板 V1.2 对齐：Mermaid 主题/样式/折行/转义/拓扑分层/HTML 链接
+# （真源：visualization_view_template.md V1.2；函数复制自 generate_domain_doc.py）
+# ============================================================
+
+# 本地 HTTP 文档服务器基址（模板 §14：HTML 跳转链接必须 http:// 绝对路径）
+# 启动：python -m http.server 8765 --bind 127.0.0.1 （仓库根目录执行）
+_DOC_HTTP_BASE = "http://localhost:8765"
+# HTML 集中子文件夹相对于仓库根的 posix 路径（用于拼 http 链接）
+_HTML_REL_POSIX = (
+    OUTPUT_DIR.relative_to(_REPO_ROOT) / HTML_SUBDIR
+).as_posix()
+
+# Mermaid 灰色主题头（模板 §4.1，含 clusterBkg transparent §13 前向兼容）
+_MERMAID_THEME = (
+    "%%{init: {'theme': 'base', 'themeVariables': {"
+    "'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', "
+    "'primaryBorderColor': '#666666', 'lineColor': '#666666', "
+    "'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
+    "'clusterBkg': 'transparent', 'clusterBorder': 'transparent', "
+    "'fontSize': '14px'}}}%%"
+)
+
+# 4 类 classDef（模板 §4.7：production/design/external_prod/external_design）
+_CLASSDEF_PRODUCTION = "classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000"
+_CLASSDEF_DESIGN = "classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5"
+_CLASSDEF_EXTERNAL_PROD = "classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000"
+_CLASSDEF_EXTERNAL_DESIGN = "classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
+
+# 成熟度中英文双显（模板 §7.3：design_maturity 值 → 全称）
+_MATURITY_DISPLAY = {
+    "production": "生产态 / production",
+    "design": "设计态 / design",
+    "unknown": "未知 / unknown",
+    "": "未知 / unknown",
+}
+
+
+def _maturity_display(maturity: str | None) -> str:
+    """成熟度值转中英文全称（如 'production' → '生产态 / production'）。"""
+    return _MATURITY_DISPLAY.get(maturity or "", f"{maturity} / {maturity}")
+
+
+def _wrap_label_text(text: str, max_units: int = 48) -> str:
+    """将长节点标签文本按显示宽度预折行（Mermaid 节点内显示用）。
+
+    治本（模板 §4.10 铁律）：Mermaid 先按标签行数测量节点框宽高，若依赖 HTML 渲染层
+    CSS max-width 二次折行，渲染行数 > 测量行数 → 框高不够、文字被上下裁剪。
+    必须在生成端用 <br/> 显式预折行，使测量行数 = 渲染行数。
+    原样复制自 generate_domain_doc.py:282（模板 §4.10 指示原样复制，不跨模块 import）。
+    """
+    if not text:
+        return ""
+    lines: list[str] = []
+    remaining = text.strip()
+    while remaining:
+        width = 0
+        cut = 0
+        soft = -1
+        for i, ch in enumerate(remaining):
+            u = 2 if ord(ch) > 0x2E7F else 1
+            if width + u > max_units:
+                break
+            width += u
+            cut = i + 1
+            if ch in " _":
+                soft = i + 1
+            elif ch in "（(/":
+                soft = i if i > 0 else -1
+        if cut >= len(remaining):
+            lines.append(remaining)
+            break
+        if soft >= 8:
+            cut = soft
+        line = remaining[:cut].rstrip()
+        if line:
+            lines.append(line)
+        remaining = remaining[cut:].lstrip(" ")
+    return "<br/>".join(lines)
+
+
+def _sanitize_mermaid_label(text: str) -> str:
+    r"""清理 Mermaid 标签特殊字符（模板 §4.9：[\]"｜）。原样复制自 generate_domain_doc.py:763。"""
+    if not text:
+        return ""
+    return text.replace("[", "(").replace("]", ")").replace('"', "'").replace("|", "/")
+
+
+def _html_link_for(md_stem: str) -> str:
+    """生成 _zoomable_html/{md_stem}.html 的 http 绝对跳转链接（模板 §14）。
+
+    md_stem 为不含扩展名的 md 文件名（如 'd_factor_ashare'）。
+    """
+    return f"{_DOC_HTTP_BASE}/{_HTML_REL_POSIX}/{md_stem}.html"
+
+
+def _short_path(source_ref: str) -> str:
+    """源码引用路径取最后两段（父目录/文件名），如 src/zephyr/data/ingest.py → data/ingest.py。"""
+    if not source_ref:
+        return "-"
+    parts = source_ref.rsplit("/", 2)
+    if len(parts) >= 2:
+        return f"{parts[-2]}/{parts[-1]}"
+    return parts[-1]
+
+
+def _split_summary(summary: str | None) -> tuple[str, str]:
+    """拆分 format_summary/description 为 (head, detail)。
+
+    head = 第一个全/半角括号前的文本（中文短名/功能名）；
+    detail = 括号内说明（去掉括号）。无括号时 head=全文、detail=''。
+    用于节点四要素：head 进"双语名称"行，detail 进"大白话"行（避免重复）。
+    """
+    if not summary:
+        return ("", "")
+    s = summary.strip()
+    for sep in ("（", "("):
+        if sep in s:
+            head = s.split(sep, 1)[0].strip()
+            rest = s[s.index(sep) + 1:]
+            for close in ("）", ")"):
+                if close in rest:
+                    rest = rest.split(close, 1)[0].strip()
+                    break
+            return (head, rest)
+    return (s, "")
+
+
+def _ds_node_label(d: dict) -> str:
+    """Dataset 节点四要素标签：成熟度全称 + 双语名称 + 大白话 + 契约/域。
+
+    模板 §4.3 四要素适配 dataflow Dataset：①成熟度 ②entity_name/中文短名 ③大白话(字段说明)
+    ④契约引用·域。dataflow 表无 gate_reason，故无 ⛔ 行（模板 §7.4：gate_reason 真源在
+    depgraph nodes 表，dataflow N/A）。每行过 _wrap_label_text 预折行（§4.10）。
+    """
+    maturity = _maturity_display(d.get("maturity"))
+    name = d.get("name", "")
+    summary = d.get("format_summary") or ""
+    head, detail = _split_summary(summary)
+    zh_short = _zh(name) or head or name  # 中文短名：glossary 优先，回退 summary head
+    # 大白话：若 zh_short 来自 head，则大白话用 detail（避免重复）；否则用完整 summary
+    if zh_short == head and detail:
+        plain = f"（{detail}）"
+    elif zh_short == head and not detail:
+        plain = ""  # summary 无括号且 head 已用作名称，无额外大白话
+    else:
+        plain = summary
+    parts = [f"({maturity}) {name} / {zh_short}"]
+    if plain:
+        parts.append(plain)
+    contract = d.get("contract") or "-"
+    domain_zh = get_domain_name_zh_strict(d.get("domain") or "") or d.get("domain") or "-"
+    parts.append(f"契约: {contract} · 域: {domain_zh}")
+    return _sanitize_mermaid_label("<br/>".join(_wrap_label_text(p) for p in parts))
+
+
+def _job_node_label(j: dict) -> str:
+    """Job 节点四要素标签：成熟度全称 + 双语名称 + 大白话 + 文件路径。
+
+    模板 §4.3 四要素适配 dataflow Job：①成熟度 ②job_name/中文短名 ③大白话(作业描述)
+    ④文件: source_code_ref 父目录/文件名。每行过 _wrap_label_text 预折行（§4.10）。
+    """
+    maturity = _maturity_display(j.get("maturity"))
+    name = j.get("name", "")
+    desc = j.get("description") or ""
+    head, detail = _split_summary(desc)
+    zh_short = _zh(name) or head or name
+    if zh_short == head and detail:
+        plain = f"（{detail}）"
+    elif zh_short == head and not detail:
+        plain = ""
+    else:
+        plain = desc
+    parts = [f"({maturity}) {name} / {zh_short}"]
+    if plain:
+        parts.append(plain)
+    parts.append(f"文件: {_short_path(j.get('source') or '')}")
+    return _sanitize_mermaid_label("<br/>".join(_wrap_label_text(p) for p in parts))
+
+
+def _ext_domain_node_label(ext_domain: str, maturity: str) -> str:
+    """跨域外部节点标签：成熟度 + 域中英文名 + 域功能简介 + 跨域标识（模板 §4.3 跨域节点）。"""
+    maturity_full = _maturity_display(maturity or "unknown")
+    name_zh = get_domain_name_zh_strict(ext_domain) or ext_domain
+    name_en = get_domain_name_en(ext_domain) or ext_domain
+    desc = get_domain_desc_zh(ext_domain) or ""
+    if name_en and name_en != ext_domain:
+        name_bi = f"{name_zh} / {name_en}"
+    else:
+        name_bi = f"{ext_domain} {name_zh}" if name_zh != ext_domain else ext_domain
+    parts = [f"({maturity_full}) {name_bi}"]
+    if desc:
+        parts.append(desc)
+    parts.append("跨域节点 / cross-domain")
+    return _sanitize_mermaid_label("<br/>".join(_wrap_label_text(p) for p in parts))
+
+
+def _compute_dataflow_topo_layers(
+    ds_list: list[dict], job_list: list[dict], edges: list[dict]
+) -> dict[str, int]:
+    """计算 DS/JOB 节点拓扑层级（Kahn 算法，模板 §4.6 强制竖排分层）。
+
+    返回 {node_id_str: layer}，node_id_str = 'DS{id}' / 'JOB{id}'。
+    layer 0 = 入度为 0 的节点；layer(node)=max(layer(前驱))+1；环内节点归 max+1 层。
+    仅考虑两端都在当前 ds_list/job_list 内的边。
+    """
+    node_ids: set[str] = set()
+    for d in ds_list:
+        node_ids.add(f"DS{d['id']}")
+    for j in job_list:
+        node_ids.add(f"JOB{j['id']}")
+
+    out_edges: dict[str, list[str]] = {nid: [] for nid in node_ids}
+    in_degree: dict[str, int] = {nid: 0 for nid in node_ids}
+    for e in edges:
+        f, t = "", ""
+        if e["from_type"] == "job" and e["to_type"] == "dataset":
+            f, t = f"JOB{e['from_id']}", f"DS{e['to_id']}"
+        elif e["from_type"] == "dataset" and e["to_type"] == "job":
+            f, t = f"DS{e['from_id']}", f"JOB{e['to_id']}"
+        if f in node_ids and t in node_ids:
+            out_edges[f].append(t)
+            in_degree[t] += 1
+
+    layer: dict[str, int] = {}
+    queue = [nid for nid in node_ids if in_degree[nid] == 0]
+    for nid in queue:
+        layer[nid] = 0
+    while queue:
+        cur = queue.pop(0)
+        for nxt in out_edges[cur]:
+            in_degree[nxt] -= 1
+            layer[nxt] = max(layer.get(nxt, 0), layer[cur] + 1)
+            if in_degree[nxt] == 0:
+                queue.append(nxt)
+
+    remaining = [nid for nid in node_ids if nid not in layer]
+    if remaining:
+        max_layer = max(layer.values()) if layer else 0
+        for nid in remaining:
+            layer[nid] = max_layer + 1
+    return layer
+
 
 
 # 治本（2026-07-31）：在数据流图索引头部加大白话解释，让入口索引对非架构读者也友好。
@@ -264,44 +517,65 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
     return datasets, jobs, edges
 
 
-def _maturity_tag(maturity: str | None) -> str:
-    """design_maturity 标签前缀，如 [design]/[production]。未设置返回空串。"""
-    if maturity in _MATURITY_VALUES:
-        return f"[{maturity}]"
-    return ""
+def _edge_arrow(from_maturity: str | None, to_maturity: str | None) -> str:
+    """边箭头类型（模板 §4.5）：两端均 production → 实线 ``-->``，其余 → 虚线 ``-.->``。"""
+    if from_maturity == "production" and to_maturity == "production":
+        return "-->"
+    return "-.->"
+
+
+def _ext_ds_node_label(d: dict) -> str:
+    """跨域外部 Dataset 节点标签：四要素 + 跨域标识（模板 §4.3 跨域节点适配 dataflow）。
+
+    在 _ds_node_label 四要素基础上追加「跨域节点 / cross-domain」行，用 external_* 类着色。
+    """
+    base = _ds_node_label(d)
+    cross = _sanitize_mermaid_label(_wrap_label_text("跨域节点 / cross-domain"))
+    return f"{base}<br/>{cross}"
+
+
+def _collect_external_datasets(
+    domain_jobs: list[dict], domain_datasets: list[dict],
+    all_datasets: list[dict], edges: list[dict],
+) -> list[dict]:
+    """找出被本域 Job 消费但不属于本域的 Dataset（全景图跨域外部节点）。
+
+    模板 §3.2 全景图含跨域外部节点；运营态/设计态分图不含。本函数扫描 consumed_by
+    边（dataset→job），若 job 在本域、dataset 不在本域 → 该 dataset 为跨域外部节点。
+    去重保序返回。
+    """
+    job_ids = {j["id"] for j in domain_jobs}
+    local_ds_ids = {d["id"] for d in domain_datasets}
+    ext_ds_ids: list[int] = []
+    seen: set[int] = set()
+    for e in edges:
+        if e["from_type"] == "dataset" and e["to_type"] == "job" and e["to_id"] in job_ids:
+            if e["from_id"] not in local_ds_ids and e["from_id"] not in seen:
+                ext_ds_ids.append(e["from_id"])
+                seen.add(e["from_id"])
+    ext_map = {d["id"]: d for d in all_datasets}
+    return [ext_map[i] for i in ext_ds_ids if i in ext_map]
 
 
 def _gen_mermaid(
     datasets: list[dict], jobs: list[dict], edges: list[dict],
     scope_filter: str | None = None, maturity_filter: str | None = None,
-    force_vertical: bool = False, color_by_maturity: bool = False,
-    direction: str = "TD",
+    external_ds: list[dict] | None = None,
 ) -> tuple[str, int, int, int]:
-    """生成 Mermaid flowchart 图表（对齐 06_decision_architecture 视觉风格）。
+    """生成 Mermaid flowchart（模板 V1.2 全面对齐）。
 
-    视觉对齐决策流程图：%%{init}%% 配置 base 主题 + primaryColor/secondaryColor/tertiaryColor
-    全设 #eaeaea 确保 subgraph 内外节点一致灰色；Dataset 矩形 / Job 圆角矩形靠节点
-    语法区分形状。design/production 默认用 [标签] 前缀区分；``color_by_maturity=True``
-    时额外用 classDef 着色（合并图一眼区分已造/未造）。
+    模板 V1.2 强制项：①灰色主题头（含 clusterBkg transparent）②flowchart TD 竖排
+    ③节点四要素标签（成熟度全称+双语名称+大白话+契约/文件路径）④标签预折行 _wrap_label_text
+    ⑤4-class classDef（production/design/external_prod/external_design）始终启用
+    ⑥拓扑分层 Kahn + 同层 ~~~ 串联强制竖排 ⑦实虚线箭头（production 间实线，其余虚线）
+    ⑧跨域外部节点（external_ds，仅全景图传入，渲染为 external_* 类）。
 
     :param scope_filter: None=全部, 'production'=仅生产, 'backtest_internal'=仅回测
     :param maturity_filter: None=全部, 'production'=仅运营态, 'design'=仅设计态
-    :param force_vertical: 设计态域文档仅有 JOB→DS 单向 push 边，mermaid 默认横向铺开；
-        为 True 时用 ~~~ 不可见链接将相邻 JOB→DS 对纵向串联，强制竖向高列布局
-    :param color_by_maturity: True 时添加 classDef（design=橙虚线 / production=蓝实线），
-        用于全景合并图直观区分已造/未造；默认 False 保持纯灰色主题
-    :param direction: "TD"=竖向（默认，对齐决策流程图）, "LR"=横向（合并图降高度）
-    :return: (mmd_text, ds_count, job_count, edge_count) —— 计数均为过滤后实数
+    :param external_ds: 跨域外部 Dataset 列表（全景图用，渲染为 external_prod/external_design）
+    :return: (mmd_text, ds_count, job_count, edge_count) —— 计数为域内过滤后实数（不含外部节点）
     """
-    # 灰色主题（对齐 06_decision_architecture 的 _MERMAID_INIT，默认无 classDef）
-    lines = [
-        "%%{init: {'theme': 'base', 'themeVariables': {"
-        "'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', "
-        "'primaryBorderColor': '#666666', 'lineColor': '#666666', "
-        "'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
-        "'fontSize': '14px'}}}%%",
-        f"flowchart {direction}",
-    ]
+    lines = [_MERMAID_THEME, "flowchart TD"]
 
     # 过滤（scope + maturity 双维度）
     def _match(item: dict) -> bool:
@@ -317,100 +591,103 @@ def _gen_mermaid(
     ds_ids = {d["id"] for d in ds_list}
     job_ids = {j["id"] for j in job_list}
 
-    # 节点中文标签优先取 format_summary/description（完整功能简述，含括号说明），
-    # 未收录时回退到 terminology_glossary 短名。保证设计态/运营态显示方式一致，
-    # 用户能在节点上直接看到功能简述（不只英文名）。
+    # maturity 查找表（边箭头判定用）
+    ds_mat = {d["id"]: d.get("maturity") for d in ds_list}
+    job_mat = {j["id"]: j.get("maturity") for j in job_list}
+
+    # 节点定义（四要素标签 + 预折行，模板 §4.3/§4.10）
+    # Dataset 矩形 [""] / Job 圆角 ("") 靠节点语法区分形状（dataflow 语义增强）
     for d in ds_list:
-        tag = _maturity_tag(d.get("maturity"))
-        zh = _extract_zh_label(d.get("format_summary")) or _zh(d["name"])
-        label = f"{tag}{d['name']}" + (f"<br/>{zh}" if zh else "")
-        lines.append(f'    DS{d["id"]}["{label}"]')
-
+        lines.append(f'    DS{d["id"]}["{_ds_node_label(d)}"]')
     for j in job_list:
-        tag = _maturity_tag(j.get("maturity"))
-        zh = _extract_zh_label(j.get("description")) or _zh(j["name"])
-        label = f"{tag}{j['name']}" + (f"<br/>{zh}" if zh else "")
-        lines.append(f'    JOB{j["id"]}("{label}")')
+        lines.append(f'    JOB{j["id"]}("{_job_node_label(j)}")')
 
-    # Edges —— 边标签英文+中文并列
+    # 跨域外部节点（模板 §4.3 跨域节点，仅全景图传 external_ds 时渲染）
+    ext_ds_ids: set[int] = set()
+    if external_ds:
+        for d in external_ds:
+            ext_ds_ids.add(d["id"])
+            lines.append(f'    DS{d["id"]}["{_ext_ds_node_label(d)}"]')
+
+    # 边（实线/虚线 + 中英标签，模板 §4.5）
     edge_count = 0
     for e in edges:
         if e["from_type"] == "job" and e["to_type"] == "dataset":
+            # job produces dataset
             if e["from_id"] in job_ids and e["to_id"] in ds_ids:
-                lines.append(f'    JOB{e["from_id"]} -->|{_en_zh("produces")}| DS{e["to_id"]}')
+                arrow = _edge_arrow(job_mat.get(e["from_id"]), ds_mat.get(e["to_id"]))
+                lines.append(f'    JOB{e["from_id"]} {arrow}|{_en_zh("produces")}| DS{e["to_id"]}')
                 edge_count += 1
         elif e["from_type"] == "dataset" and e["to_type"] == "job":
+            # dataset consumed by job
             if e["from_id"] in ds_ids and e["to_id"] in job_ids:
-                lines.append(f'    DS{e["from_id"]} -->|{_en_zh("consumed by")}| JOB{e["to_id"]}')
+                arrow = _edge_arrow(ds_mat.get(e["from_id"]), job_mat.get(e["to_id"]))
+                lines.append(f'    DS{e["from_id"]} {arrow}|{_en_zh("consumed by")}| JOB{e["to_id"]}')
                 edge_count += 1
+            elif e["from_id"] in ext_ds_ids and e["to_id"] in job_ids:
+                # 跨域外部 Dataset → 本域 Job（全景图跨域边，虚线）
+                lines.append(f'    DS{e["from_id"]} -.->|{_en_zh("consumed by")}| JOB{e["to_id"]}')
 
-    # 强制竖向布局（设计态域文档）：仅有 JOB→DS 单向 push 边时 mermaid 默认横向铺开，
-    # 用 ~~~ 不可见链接将前一个 JOB 的产出 DS 串联到下一个 JOB，形成单一纵列
-    # （JOB1→DS1~~~JOB2→DS2~~~…），对齐运营态/决策流程图的竖向高列显示。
-    # ~~~ 为 Mermaid 不可见链接（9.3+），不影响视觉、不计入 edge_count。
-    if force_vertical and len(job_list) > 1:
-        job_to_last_ds: dict[int, int] = {}
-        for e in edges:
-            if e["from_type"] == "job" and e["to_type"] == "dataset":
-                if e["from_id"] in job_ids and e["to_id"] in ds_ids:
-                    job_to_last_ds[e["from_id"]] = e["to_id"]
-        for i in range(len(job_list) - 1):
-            cur_job_id = job_list[i]["id"]
-            next_job_id = job_list[i + 1]["id"]
-            last_ds = job_to_last_ds.get(cur_job_id)
-            if last_ds is not None:
-                lines.append(f"    DS{last_ds} ~~~ JOB{next_job_id}")
-            else:
-                lines.append(f"    JOB{cur_job_id} ~~~ JOB{next_job_id}")
+    # 拓扑分层（Kahn，模板 §4.6 强制竖排）：同层节点用 ~~~ 串联强制同 rank
+    layers = _compute_dataflow_topo_layers(ds_list, job_list, edges)
+    layer_nodes: dict[int, list[str]] = {}
+    for nid, lyr in layers.items():
+        layer_nodes.setdefault(lyr, []).append(nid)
+    for lyr in sorted(layer_nodes):
+        nodes = layer_nodes[lyr]
+        for i in range(len(nodes) - 1):
+            lines.append(f"    {nodes[i]} ~~~ {nodes[i + 1]}")
 
-    # 全景合并图着色：design=橙色虚线边框（未实现）/ production=蓝色填充（已实现）
-    # 仅 color_by_maturity=True 时启用，单独图保持纯灰色主题（对齐决策流程图）。
-    if color_by_maturity:
-        _append_maturity_classes(lines, ds_list, job_list)
+    # 4-class classDef（模板 §4.7，始终启用）
+    lines.append(f"    {_CLASSDEF_PRODUCTION}")
+    lines.append(f"    {_CLASSDEF_DESIGN}")
+    lines.append(f"    {_CLASSDEF_EXTERNAL_PROD}")
+    lines.append(f"    {_CLASSDEF_EXTERNAL_DESIGN}")
+
+    # class 赋值（按 maturity 分组，模板 §4.8）
+    prod_nodes: list[str] = []
+    design_nodes: list[str] = []
+    for d in ds_list:
+        (design_nodes if d.get("maturity") == "design" else prod_nodes).append(f"DS{d['id']}")
+    for j in job_list:
+        (design_nodes if j.get("maturity") == "design" else prod_nodes).append(f"JOB{j['id']}")
+    ext_prod: list[str] = []
+    ext_design: list[str] = []
+    for d in external_ds or []:
+        (ext_design if d.get("maturity") == "design" else ext_prod).append(f"DS{d['id']}")
+
+    if prod_nodes:
+        lines.append(f"    class {','.join(prod_nodes)} production")
+    if design_nodes:
+        lines.append(f"    class {','.join(design_nodes)} design")
+    if ext_prod:
+        lines.append(f"    class {','.join(ext_prod)} external_prod")
+    if ext_design:
+        lines.append(f"    class {','.join(ext_design)} external_design")
 
     return "\n".join(lines) + "\n", len(ds_list), len(job_list), edge_count
 
 
-def _append_maturity_classes(lines: list[str], ds_list: list[dict], job_list: list[dict]) -> None:
-    """为合并图追加 design/production classDef + class 赋值（直观区分已造/未造）。
-
-    design: 橙色填充 + 虚线边框（蓝图未实现）
-    production: 蓝色填充 + 实线边框（已实现稳定运行）
-    """
-    design_nodes: list[str] = []
-    prod_nodes: list[str] = []
-    for d in ds_list:
-        nid = f"DS{d['id']}"
-        if d.get("maturity") == "design":
-            design_nodes.append(nid)
-        else:
-            prod_nodes.append(nid)
-    for j in job_list:
-        nid = f"JOB{j['id']}"
-        if j.get("maturity") == "design":
-            design_nodes.append(nid)
-        else:
-            prod_nodes.append(nid)
-    lines.append(
-        "    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,"
-        "color:#000,stroke-dasharray: 5 5"
-    )
-    lines.append(
-        "    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000"
-    )
-    if design_nodes:
-        lines.append(f"    class {','.join(design_nodes)} design")
-    if prod_nodes:
-        lines.append(f"    class {','.join(prod_nodes)} production")
+_LEGEND_BLOCK = """\
+> **图例说明 / Legend**：
+>
+> - 🟦 **蓝色 = 运营态节点**（production，已上线运行）
+> - 🟧 **橙色虚线 = 设计态节点**（design，蓝图阶段，代码未写）
+> - 🟦更浅蓝 = 跨域外部 Dataset（external_prod/external_design）
+> - **实线箭头 ``-->`` = 运营态数据流**（两端均 production）
+> - **虚线箭头 ``-.->`` = 非运营态数据流**（含 design、混合）
+> - 矩形 = Dataset（数据集）/ 圆角矩形 = Job（作业）
+> - ``JOB -->|produces / 产出| DS`` = Job 产出 Dataset
+> - ``DS -->|consumed by / 被消费于| JOB`` = Job 消费 Dataset
+"""
 
 
 def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
-    """生成运营态全景文档 dataflow_production.md（frontmatter + 内嵌 Mermaid 图 + 统计 + 清单，英文+中文并列）。
+    """生成运营态全景文档 dataflow_production.md（模板 V1.2 三视图 + HTML 链接 + 图例 + 清单）。
 
-    治本（2026-07-31）：原函数名 _gen_index_md 误导（实际生成 production.md 而非索引），
-    重命名为 _gen_production_md 以显化职责，消除 AI 幻觉/漂移温床。
-    单 MD 文件可看全部（图 + 清单），符合 02_domain_architecture_docs/ 风格。
-    所有英文术语后附加中文翻译（通过 _ZH_MAP 映射，新增节点时需同步更新映射）。
+    治本（2026-08-01 模板 V1.2 升级）：三视图结构（全景→运营态→设计态）为主，
+    scope 附加图（生产/回测）为辅；顶部加 HTML 跳转链接；图例对齐模板四类样式；
+    节点四要素标签内嵌 Mermaid；空视图用占位说明（模板 §3.2）。
     """
     prod_ds = sum(1 for d in datasets if d["scope"] == "production")
     bt_ds = sum(1 for d in datasets if d["scope"] == "backtest_internal")
@@ -424,6 +701,7 @@ def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]
     design_job = sum(1 for j in jobs if j.get("maturity") == "design")
 
     now = datetime.now().isoformat(timespec="seconds")
+    html_link = _html_link_for("dataflow_production")
 
     lines = []
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
@@ -445,14 +723,35 @@ def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]
     lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
     lines.append(f"> 生成器: `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")
-    lines.append("## 概述（自动生成 · 生成器: generate_dataflow_diagram.py）")
+    # HTML 跳转链接（模板 §14：http:// 绝对路径，IDE 预览面板可点开浏览器渲染）
+    lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({html_link})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
+    lines.append("")
+
+    # 概述
+    lines.append("## 概述")
     lines.append("")
     lines.append("数据流图（dataflowgraph）是与依赖图（depgraph）正交的第三维度全景图。")
     lines.append('- depgraph 表达"谁依赖谁"（模块依赖）')
     lines.append('- dataflowgraph 表达"数据从哪流到哪"（数据流向）')
     lines.append("- 通过 `Job.source_code_ref` 引用 depgraph 模块 path，建立跨图关联")
     lines.append("")
-    lines.append("## 统计（自动生成 · 生成器: generate_dataflow_diagram.py）")
+
+    # 域基本信息表（模板 §3.1）
+    lines.append("## 域基本信息 / Overview")
+    lines.append("")
+    lines.append("| 字段 | 值 | Field | Value |")
+    lines.append("|------|------|-------|-------|")
+    lines.append(f"| Dataset 数 | {len(datasets)} | Datasets | {len(datasets)} |")
+    lines.append(f"| Job 数 | {len(jobs)} | Jobs | {len(jobs)} |")
+    lines.append(f"| Edge 数 | {len(edges)} | Edges | {len(edges)} |")
+    lines.append(f"| 运营态 Dataset | {prod_m_ds} | Production Datasets | {prod_m_ds} |")
+    lines.append(f"| 设计态 Dataset | {design_ds} | Design Datasets | {design_ds} |")
+    lines.append(f"| 运营态 Job | {prod_m_job} | Production Jobs | {prod_m_job} |")
+    lines.append(f"| 设计态 Job | {design_job} | Design Jobs | {design_job} |")
+    lines.append("")
+
+    # 统计（scope 维度）
+    lines.append("## 统计")
     lines.append("")
     lines.append(f"| 类型 | 生产 (production) | 回测内部 (backtest_internal) | 合计 |")
     lines.append(f"|------|-------------------|------------------------------|------|")
@@ -475,72 +774,84 @@ def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]
     )
     lines.append("")
 
-    # 内嵌 Mermaid 图
-    lines.append("## Mermaid 图表（自动生成 · 生成器: generate_dataflow_diagram.py）")
+    # 三视图（模板 §3.2 铁律：全景图 → 运营态的图 → 设计态的图）
+    lines.append("## 数据流图")
     lines.append("")
-    lines.append("> 图表内嵌在本文档中，IDE 可直接渲染显示。视觉风格对齐 06_decision_architecture（灰色主题 + TD 竖向）。")
-    lines.append(">")
-    lines.append("> **图例说明 / Legend**：")
-    lines.append(">")
-    lines.append("> - **灰色矩形** = Dataset（数据集）")
-    lines.append("> - **灰色圆角矩形** = Job（作业）")
-    lines.append("> - 节点标签前缀 `[design]`/`[production]` 标注 design_maturity")
-    lines.append("> - `JOB -->|produces / 产出| DS` = Job 产出 Dataset")
-    lines.append("> - `DS -->|consumed by / 被消费于| JOB` = Job 消费 Dataset")
-    lines.append("> - 节点 label 仅含名称（2 行）；详细信息（CTR/域/蓝图/功能简述）见下方 Dataset/Job 清单表")
+    lines.append(_LEGEND_BLOCK.rstrip())
     lines.append("")
 
-    # 全景图（设计态 + 运营态合并，标签标注 [design]/[production]）
-    lines.append("### 全景图（设计态 + 运营态合并，标签标注 [design]/[production]）")
+    # ① 全景图（全部节点，颜色区分运营态/设计态）
+    lines.append("### 全景图（全部模块，颜色区分运营态/设计态）")
     lines.append("")
     mmd_overview, o_ds, o_job, o_edge = _gen_mermaid(datasets, jobs, edges, scope_filter=None)
-    lines.append(f"> 节点数: {o_ds} datasets / 数据集, {o_job} jobs / 作业, {o_edge} edges / 边")
+    lines.append(f"> 展示全部 {o_ds + o_job} 个节点（Dataset {o_ds} + Job {o_job}），含 {o_edge} 条边。颜色区分运营态（蓝）/设计态（橙虚线）。")
     lines.append("")
     lines.append("```mermaid")
     lines.append(mmd_overview.rstrip())
     lines.append("```")
     lines.append("")
 
-    # 运营态全景图（仅 design_maturity=production）
-    lines.append("### 运营态全景图（仅 design_maturity=production）")
+    # ② 运营态的图（仅 design_maturity=production）
+    lines.append("### 运营态的图（仅 design_maturity=production）")
     lines.append("")
     mmd_op, op_ds, op_job, op_edge = _gen_mermaid(
         datasets, jobs, edges, scope_filter=None, maturity_filter="production"
     )
-    lines.append(
-        f"> 仅展示已实现稳定运行的节点（运营态：{op_ds} datasets / 数据集, "
-        f"{op_job} jobs / 作业, {op_edge} edges / 边）。"
-    )
-    lines.append("")
-    lines.append("```mermaid")
-    lines.append(mmd_op.rstrip())
-    lines.append("```")
+    if op_ds > 0 or op_job > 0:
+        lines.append(f"> 仅展示已实现稳定运行的节点（运营态：{op_ds} datasets / 数据集, {op_job} jobs / 作业, {op_edge} edges / 边）。")
+        lines.append("")
+        lines.append("```mermaid")
+        lines.append(mmd_op.rstrip())
+        lines.append("```")
+    else:
+        lines.append("> （无模块 / No modules）")
     lines.append("")
 
-    # 生产数据流图
-    lines.append("### 生产数据流图（scope=production）")
+    # ③ 设计态的图（仅 design_maturity=design）
+    lines.append("### 设计态的图（仅 design_maturity=design）")
+    lines.append("")
+    mmd_des, d_ds2, d_job2, d_edge2 = _gen_mermaid(
+        datasets, jobs, edges, scope_filter=None, maturity_filter="design"
+    )
+    if d_ds2 > 0 or d_job2 > 0:
+        lines.append(f"> 仅展示蓝图阶段、代码未写的设计态节点（设计态：{d_ds2} datasets / 数据集, {d_job2} jobs / 作业, {d_edge2} edges / 边）。")
+        lines.append("")
+        lines.append("```mermaid")
+        lines.append(mmd_des.rstrip())
+        lines.append("```")
+    else:
+        lines.append("> （无模块 / No modules）")
+    lines.append("")
+
+    # scope 附加视图（模板 §9.2 可调整项：按 scope 维度补充）
+    lines.append("### 生产数据流图（scope=production，附加视图）")
     lines.append("")
     mmd_prod, p_ds, p_job, p_edge = _gen_mermaid(datasets, jobs, edges, scope_filter="production")
-    lines.append(f"> 节点数: {p_ds} datasets / 数据集, {p_job} jobs / 作业, {p_edge} edges / 边")
-    lines.append("")
-    lines.append("```mermaid")
-    lines.append(mmd_prod.rstrip())
-    lines.append("```")
+    if p_ds > 0 or p_job > 0:
+        lines.append(f"> 节点数: {p_ds} datasets / 数据集, {p_job} jobs / 作业, {p_edge} edges / 边")
+        lines.append("")
+        lines.append("```mermaid")
+        lines.append(mmd_prod.rstrip())
+        lines.append("```")
+    else:
+        lines.append("> （无模块 / No modules）")
     lines.append("")
 
-    # 回测内部数据流图
-    lines.append("### 回测内部数据流图（scope=backtest_internal）")
+    lines.append("### 回测内部数据流图（scope=backtest_internal，附加视图）")
     lines.append("")
     mmd_bt, b_ds, b_job, b_edge = _gen_mermaid(datasets, jobs, edges, scope_filter="backtest_internal")
-    lines.append(f"> 节点数: {b_ds} datasets / 数据集, {b_job} jobs / 作业, {b_edge} edges / 边")
-    lines.append("")
-    lines.append("```mermaid")
-    lines.append(mmd_bt.rstrip())
-    lines.append("```")
+    if b_ds > 0 or b_job > 0:
+        lines.append(f"> 节点数: {b_ds} datasets / 数据集, {b_job} jobs / 作业, {b_edge} edges / 边")
+        lines.append("")
+        lines.append("```mermaid")
+        lines.append(mmd_bt.rstrip())
+        lines.append("```")
+    else:
+        lines.append("> （无模块 / No modules）")
     lines.append("")
 
     # Dataset 清单
-    lines.append("## Dataset 清单（自动生成 · 生成器: generate_dataflow_diagram.py）")
+    lines.append("## Dataset 清单")
     lines.append("")
     lines.append("| ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |")
     lines.append("|----|----------------------|--------------|---------------------------|------------|------------------|------------------|---------------------------|--------------------|----------|")
@@ -553,7 +864,7 @@ def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]
 
     # Job 清单
     lines.append("")
-    lines.append("## Job 清单（自动生成 · 生成器: generate_dataflow_diagram.py）")
+    lines.append("## Job 清单")
     lines.append("")
     lines.append("| ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |")
     lines.append("|----|-------------------|--------------|------------------------------|----------------------------|------------------------------|------------------|---------------------------|--------------------|----------|")
@@ -630,18 +941,27 @@ def _job_domain_group(job: dict, datasets: list[dict], edges: list[dict]) -> str
     return "d_unknown"
 
 
-def _gen_domain_md(grp: dict, datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
-    """生成单个域分组的 Markdown 文档（frontmatter + 全景合并图 + 设计态/运营态分图 + 清单）。
+def _gen_domain_md(
+    grp: dict, datasets: list[dict], jobs: list[dict], edges: list[dict],
+    all_datasets: list[dict] | None = None,
+) -> str:
+    """生成单个域分组的 Markdown 文档（模板 V1.2 三视图 + HTML 链接 + 跨域外部节点 + 清单）。
 
-    每个域文档包含三张数据流图：
-      1. 全景合并图：设计态+运营态合并，颜色区分已造（蓝）/未造（橙虚线），LR 横向布局
-      2. 设计态图：仅 design_maturity=design 的节点（蓝图规划，代码未写）
-      3. 运营态图：仅 design_maturity=production 的节点（已实现稳定运行）
-    当某态节点数为 0 时，对应分图区块不渲染（对标 05_d_infra_recovery.md 双图模式）。
-    Dataset/Job 清单合并列出该域所有节点，用 design_maturity 列区分两态。
+    治本（2026-08-01 模板 V1.2 升级）：三视图顺序固定为 全景图 → 运营态的图 → 设计态的图
+    （模板 §3.2 铁律）；全景图含跨域外部 Dataset 节点（external_ds，由 all_datasets 解析），
+    运营态/设计态分图不含跨域节点；顶部加 HTML 跳转链接；空视图用占位说明。
+
+    :param all_datasets: 全量 Dataset（用于解析全景图跨域外部节点）；None 时回退到 datasets
     """
     now = datetime.now().isoformat(timespec="seconds")
     title = grp["title"]
+    key = grp["key"]
+    html_link = _html_link_for(key)
+
+    # 跨域外部 Dataset（全景图用）：被本域 Job 消费但不属于本域的 Dataset
+    ext_ds = _collect_external_datasets(
+        jobs, datasets, all_datasets or datasets, edges
+    )
 
     lines = []
     lines.append("---")
@@ -660,6 +980,9 @@ def _gen_domain_md(grp: dict, datasets: list[dict], jobs: list[dict], edges: lis
     lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表")
     lines.append(f"> 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")
+    # HTML 跳转链接（模板 §14）
+    lines.append(f"> **[可缩放 HTML 版 / Zoomable HTML]({html_link})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式")
+    lines.append("")
 
     # 域职责（对标 06_decision_architecture 的"域职责 / Responsibility"说明）
     responsibility = grp.get("responsibility", "")
@@ -667,52 +990,77 @@ def _gen_domain_md(grp: dict, datasets: list[dict], jobs: list[dict], edges: lis
         lines.append(f"> **域职责 / Responsibility**: {responsibility}")
         lines.append("")
 
-    # 全景合并图（设计态+运营态合并，颜色区分已造/未造，LR 横向布局降低高度）
+    # 域基本信息表（模板 §3.1）
+    prod_m_ds = sum(1 for d in datasets if d.get("maturity") == "production")
+    design_ds_n = sum(1 for d in datasets if d.get("maturity") == "design")
+    prod_m_job = sum(1 for j in jobs if j.get("maturity") == "production")
+    design_job_n = sum(1 for j in jobs if j.get("maturity") == "design")
+    lines.append("## 域基本信息 / Overview")
+    lines.append("")
+    lines.append("| 字段 | 值 | Field | Value |")
+    lines.append("|------|------|-------|-------|")
+    lines.append(f"| Dataset 数 | {len(datasets)} | Datasets | {len(datasets)} |")
+    lines.append(f"| Job 数 | {len(jobs)} | Jobs | {len(jobs)} |")
+    lines.append(f"| 运营态 Dataset | {prod_m_ds} | Production Datasets | {prod_m_ds} |")
+    lines.append(f"| 设计态 Dataset | {design_ds_n} | Design Datasets | {design_ds_n} |")
+    lines.append(f"| 运营态 Job | {prod_m_job} | Production Jobs | {prod_m_job} |")
+    lines.append(f"| 设计态 Job | {design_job_n} | Design Jobs | {design_job_n} |")
+    if ext_ds:
+        lines.append(f"| 跨域外部 Dataset | {len(ext_ds)} | Cross-domain Datasets | {len(ext_ds)} |")
+    lines.append("")
+
+    # 数据流图（三视图 + 图例）
+    lines.append("## 数据流图")
+    lines.append("")
+    lines.append(_LEGEND_BLOCK.rstrip())
+    lines.append("")
+
+    # ① 全景图（全部模块，颜色区分运营态/设计态，含跨域外部节点）
+    lines.append("### 全景图（全部模块，颜色区分运营态/设计态）")
+    lines.append("")
     all_mmd, a_ds, a_job, a_edge = _gen_mermaid(
         datasets, jobs, edges, scope_filter=None, maturity_filter=None,
-        force_vertical=False, color_by_maturity=True, direction="LR",
+        external_ds=ext_ds,
     )
-    if a_ds > 0 or a_job > 0:
-        lines.append("## 数据流图（全景：设计态+运营态合并）")
-        lines.append("")
-        lines.append(f"> 节点数: {a_ds} datasets / 数据集, {a_job} jobs / 作业, {a_edge} edges / 边")
-        lines.append(">")
-        lines.append("> **图例**：🟦 蓝色 = 运营态（已实现）/ 🟧 橙色虚线 = 设计态（未实现）")
-        lines.append("")
-        lines.append("```mermaid")
-        lines.append(all_mmd.rstrip())
-        lines.append("```")
-        lines.append("")
+    ext_hint = f"，含 {len(ext_ds)} 个跨域外部 Dataset" if ext_ds else ""
+    lines.append(f"> 展示全部 {a_ds + a_job} 个节点（Dataset {a_ds} + Job {a_job}），含 {a_edge} 条边{ext_hint}。颜色区分运营态（蓝）/设计态（橙虚线）。")
+    lines.append("")
+    lines.append("```mermaid")
+    lines.append(all_mmd.rstrip())
+    lines.append("```")
+    lines.append("")
 
-    # 设计态数据流图（仅 design_maturity=design，force_vertical 强制竖向高列布局）
-    design_mmd, d_ds, d_job, d_edge = _gen_mermaid(
-        datasets, jobs, edges, scope_filter=None, maturity_filter="design",
-        force_vertical=True,
-    )
-    if d_ds > 0 or d_job > 0:
-        lines.append("## 数据流图（设计态）")
-        lines.append("")
-        lines.append(f"> 节点数: {d_ds} datasets / 数据集, {d_job} jobs / 作业, {d_edge} edges / 边")
-        lines.append("")
-        lines.append("```mermaid")
-        lines.append(design_mmd.rstrip())
-        lines.append("```")
-        lines.append("")
-
-    # 运营态数据流图（仅 design_maturity=production，有交叉边用横向布局）
+    # ② 运营态的图（仅 design_maturity=production，不含跨域节点）
+    lines.append("### 运营态的图（仅 design_maturity=production）")
+    lines.append("")
     op_mmd, op_ds, op_job, op_edge = _gen_mermaid(
         datasets, jobs, edges, scope_filter=None, maturity_filter="production",
-        force_vertical=False,
     )
     if op_ds > 0 or op_job > 0:
-        lines.append("## 数据流图（运营态）")
-        lines.append("")
-        lines.append(f"> 节点数: {op_ds} datasets / 数据集, {op_job} jobs / 作业, {op_edge} edges / 边")
+        lines.append(f"> 仅展示已实现稳定运行的节点（运营态：{op_ds} datasets / 数据集, {op_job} jobs / 作业, {op_edge} edges / 边）。")
         lines.append("")
         lines.append("```mermaid")
         lines.append(op_mmd.rstrip())
         lines.append("```")
+    else:
+        lines.append("> （无模块 / No modules）")
+    lines.append("")
+
+    # ③ 设计态的图（仅 design_maturity=design，不含跨域节点）
+    lines.append("### 设计态的图（仅 design_maturity=design）")
+    lines.append("")
+    design_mmd, d_ds, d_job, d_edge = _gen_mermaid(
+        datasets, jobs, edges, scope_filter=None, maturity_filter="design",
+    )
+    if d_ds > 0 or d_job > 0:
+        lines.append(f"> 仅展示蓝图阶段、代码未写的设计态节点（设计态：{d_ds} datasets / 数据集, {d_job} jobs / 作业, {d_edge} edges / 边）。")
         lines.append("")
+        lines.append("```mermaid")
+        lines.append(design_mmd.rstrip())
+        lines.append("```")
+    else:
+        lines.append("> （无模块 / No modules）")
+    lines.append("")
 
     # Dataset 清单（设计态 + 运营态合并，design_maturity 列区分）
     lines.append("## Dataset 清单")
@@ -740,6 +1088,28 @@ def _gen_domain_md(grp: dict, datasets: list[dict], jobs: list[dict], edges: lis
             f"{_en_zh(j['trigger'] or '-')} | {_en_zh(j.get('maturity') or '-')} | "
             f"{j.get('module_id') or '-'} | {jdesc} |"
         )
+
+    # 跨域依赖清单（出边：本域 Job 产出的 Dataset 被其他域 Job 消费；入边：外部 Dataset 被本域 Job 消费）
+    if ext_ds:
+        lines.append("")
+        lines.append("## 跨域依赖 / Cross-domain Dependencies")
+        lines.append("")
+        lines.append("### 依赖本域的外部 Dataset（入边）/ Consumed From")
+        lines.append("")
+        lines.append("| 外部 Dataset | 域 | 成熟度 | 被本域 Job 消费 |")
+        lines.append("|-------------|------|--------|----------------|")
+        # 找到消费外部 dataset 的本域 job
+        job_map = {j["id"]: j for j in jobs}
+        for d in ext_ds:
+            consumers = []
+            for e in edges:
+                if (e["from_type"] == "dataset" and e["from_id"] == d["id"]
+                        and e["to_type"] == "job" and e["to_id"] in job_map):
+                    consumers.append(job_map[e["to_id"]]["name"])
+            lines.append(
+                f"| {d['name']} | {_domain_en_zh(d.get('domain') or '-')} | "
+                f"{_en_zh(d.get('maturity') or '-')} | {', '.join(consumers) or '-'} |"
+            )
 
     lines.append("")
     lines.append(f"[← 返回索引](dataflow_index.md)")
@@ -794,20 +1164,22 @@ def _gen_overview_index(datasets: list[dict], jobs: list[dict], edges: list[dict
     lines.append("")
     lines.append(f"> {prod_job} 个作业 / {prod_ds} 个数据集 / {prod_edge} 条边")
     lines.append("")
-    lines.append("- [dataflow_production.md](dataflow_production.md) — 运营态全景图 + Dataset/Job 清单")
+    lines.append(f"- [dataflow_production.md](dataflow_production.md) — 运营态全景图 + Dataset/Job 清单")
+    lines.append(f"- [可缩放 HTML 版]({_html_link_for('dataflow_production')}) — 浏览器打开可 Ctrl+滚轮缩放")
     lines.append("")
 
-    # 域文件链接（每个域文档含设计态+运营态双图，节点数为 0 的态不渲染）
-    lines.append("## 数据流（按域拆分，含设计态+运营态双图）")
+    # 域文件链接（每个域文档含三视图：全景图→运营态的图→设计态的图）
+    lines.append("## 数据流（按域拆分，含三视图）")
     lines.append("")
-    lines.append(f"> {len(jobs)} 个作业 / {len(datasets)} 个数据集 / {len(edges)} 条边，按功能域拆分（每个域文档含设计态+运营态双图）：")
+    lines.append(f"> {len(jobs)} 个作业 / {len(datasets)} 个数据集 / {len(edges)} 条边，按功能域拆分（每个域文档含三视图：全景图 → 运营态的图 → 设计态的图）：")
     lines.append("")
-    lines.append("| 文件 | 功能域 | Job 数 | Dataset 数 |")
-    lines.append("|------|--------|:---:|:---:|")
+    lines.append("| 文件 | 功能域 | Job 数 | Dataset 数 | 可缩放 HTML |")
+    lines.append("|------|--------|:---:|:---:|:---:|")
     for grp in _DOMAIN_GROUPS:
         gc = group_counts.get(grp["key"], {"jobs": 0, "datasets": 0})
+        html_l = f"[HTML]({_html_link_for(grp['key'])})" if gc["jobs"] else "-"
         lines.append(
-            f"| [{grp['key']}.md]({grp['key']}.md) | {grp['title']} | {gc['jobs']} | {gc['datasets']} |"
+            f"| [{grp['key']}.md]({grp['key']}.md) | {grp['title']} | {gc['jobs']} | {gc['datasets']} | {html_l} |"
         )
     lines.append("")
 
@@ -867,14 +1239,22 @@ def main() -> int:
         else:
             e["design"] = "production"
 
+    # 辅助：写 MD 后联动生成可缩放 HTML（模板 V1.2 §9.1 #1：MD+HTML 双产物）
+    def _write_md_and_html(stem: str, md_text: str) -> None:
+        md_path = out_dir / f"{stem}.md"
+        md_path.write_text(md_text, encoding="utf-8")
+        html_path = emit_zoomable_html(md_path, md_text, out_dir / HTML_SUBDIR)
+        if html_path:
+            print(f"[OK]   └ _zoomable_html/{stem}.html（可缩放交互版）")
+
     # 1. 生成运营态文件
     prod_datasets = [d for d in datasets if d.get("maturity") != "design"]
     prod_jobs = [j for j in jobs if j.get("maturity") != "design"]
     prod_md = _gen_production_md(prod_datasets, prod_jobs, edges)
-    (out_dir / "dataflow_production.md").write_text(prod_md, encoding="utf-8")
+    _write_md_and_html("dataflow_production", prod_md)
     print(f"[OK] 生成 dataflow_production.md（{len(prod_jobs)} jobs / {len(prod_datasets)} datasets）")
 
-    # 2. 按域分组所有 Job + Dataset（含设计态+运营态，每个域文档双图展示）
+    # 2. 按域分组所有 Job + Dataset（含设计态+运营态，每个域文档三视图展示）
     group_jobs: dict[str, list] = {g["key"]: [] for g in _DOMAIN_GROUPS}
     group_jobs["d_unknown"] = []
     for j in jobs:
@@ -892,7 +1272,7 @@ def main() -> int:
             if d["id"] in produced_ds_ids:
                 group_datasets[grp_key].append(d)
 
-    # 3. 生成各域文件（含设计态+运营态双图，节点数为 0 的态不渲染图区块）
+    # 3. 生成各域文件（模板 V1.2 三视图，传 all_datasets 解析跨域外部节点）
     group_counts = {}
     for grp in _DOMAIN_GROUPS:
         key = grp["key"]
@@ -900,8 +1280,8 @@ def main() -> int:
         g_ds = group_datasets.get(key, [])
         if not g_jobs:
             continue
-        md = _gen_domain_md(grp, g_ds, g_jobs, edges)
-        (out_dir / f"{key}.md").write_text(md, encoding="utf-8")
+        md = _gen_domain_md(grp, g_ds, g_jobs, edges, all_datasets=datasets)
+        _write_md_and_html(key, md)
         print(f"[OK] 生成 {key}.md（{len(g_jobs)} jobs / {len(g_ds)} datasets）")
         group_counts[key] = {"jobs": len(g_jobs), "datasets": len(g_ds)}
 
@@ -910,15 +1290,27 @@ def main() -> int:
         g_jobs = group_jobs["d_unknown"]
         g_ds = group_datasets.get("d_unknown", [])
         unk_grp = {"key": "d_unknown", "title": "未分类域"}
-        md = _gen_domain_md(unk_grp, g_ds, g_jobs, edges)
-        (out_dir / "d_unknown.md").write_text(md, encoding="utf-8")
+        md = _gen_domain_md(unk_grp, g_ds, g_jobs, edges, all_datasets=datasets)
+        _write_md_and_html("d_unknown", md)
         print(f"[OK] 生成 d_unknown.md（{len(g_jobs)} jobs）")
         group_counts["d_unknown"] = {"jobs": len(g_jobs), "datasets": len(g_ds)}
 
-    # 4. 生成索引文件
+    # 4. 生成索引文件（无 Mermaid 块，不生成 HTML）
     index_md = _gen_overview_index(datasets, jobs, edges, group_counts)
     (out_dir / "dataflow_index.md").write_text(index_md, encoding="utf-8")
     print(f"[OK] 生成 dataflow_index.md（索引+统计+链接）")
+
+    # 5. 清理过时 HTML（域分组变更后旧 HTML 残留，模板 §16 reconciler 回退应对）
+    # 治本（2026-08-01）：本目录 _zoomable_html/ 由两个生成器共享——
+    # generate_data_acquisition_flow.py 也输出 data_acquisition_flow.html 到此处，
+    # 清理时必须保留它，否则交叉运行会互相删 HTML。
+    html_dir = out_dir / HTML_SUBDIR
+    if html_dir.exists():
+        valid_stems = {"dataflow_production", "dataflow_index", "data_acquisition_flow"} | set(group_counts.keys())
+        for old_html in html_dir.glob("*.html"):
+            if old_html.stem not in valid_stems:
+                old_html.unlink()
+                print(f"[OK] 清理过时 HTML: {old_html.name}")
 
     print(f"\n输出目录: {out_dir}")
     return EXIT_PASS

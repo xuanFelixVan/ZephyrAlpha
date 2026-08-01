@@ -15,6 +15,8 @@ ttl: permanent
 > **数据源连接和 API 细节**见 [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)。
 > **自动下载命令**：`python -m zephyr.data run <task_id>` 手动触发任务，`python -m zephyr.data start` 启动常驻调度（见 [cli.py](../../../src/zephyr/data/cli.py)）。
 
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/data_acquisition_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+
 ---
 
 ## 一句话说清楚（自动生成 · 生成器: generate_data_acquisition_flow.py）
@@ -363,43 +365,57 @@ ttl: permanent
 
 ## 数据流向图（自动生成 · 生成器: generate_data_acquisition_flow.py）
 
+> **图例说明 / Legend**：
+>
+> - 🟦 **蓝色 = 生产态节点**（production，ZephyrAlpha 内部 ClickHouse 库，已上线运行）
+> - 🟦更浅蓝 = 外部数据源（external_prod，系统外部第三方数据提供方）
+> - **实线箭头 ``-->`` = 数据流向**（数据源 → ClickHouse 库）
+> - 节点含四要素：成熟度 + 双语名称 + 大白话简介 + 标识（模板 V1.2 §4.3）
+
 ```mermaid
-flowchart LR
-    subgraph 外部数据源
-        S6["miniqmt<br/>迅投QMT<br/>60任务"]
-        S0["akshare<br/>AKShare<br/>54任务"]
-        S5["ifind<br/>同花顺iFind<br/>9任务"]
-        S8["tdx<br/>通达信<br/>7任务"]
-        S9["tickflow<br/>TickFlow<br/>4任务"]
-        S10["tqcenter<br/>通达信tqcenter<br/>4任务"]
-        S7["rss<br/>RSS<br/>2任务"]
-        S2["baostock<br/>BaoStock<br/>2任务"]
-        S3["cls<br/>cls<br/>1任务"]
-        S4["eastmoney_news<br/>eastmoney_news<br/>1任务"]
-        S11["tushare<br/>Tushare<br/>1任务"]
-        S1["backfill<br/>backfill<br/>1任务"]
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+flowchart TD
+    subgraph ext_sources["外部数据源 / External Data Sources"]
+        S0["(生产态 / production) miniqmt / 迅投QMT<br/>主力数据源，采 A股/港股/期货的 K线行情（日/周<br/>/月/分钟级）和财务报表、股东数据、期权可转债等。<br/>数据源 / data-source（60任务）"]
+        S1["(生产态 / production) akshare / AKShare<br/>开源数据源，采估值、融资融券、龙虎榜、大宗交易、<br/>宏观数据、限售解禁等事件类数据。<br/>数据源 / data-source（54任务）"]
+        S2["(生产态 / production) ifind / 同花顺iFind<br/>付费数据源，采资金流向、股权质押、行业分类等<br/>iFind 独有数据。<br/>数据源 / data-source（9任务）"]
+        S3["(生产态 / production) tdx / 通达信<br/>板块数据源，采通达信板块分类、板块K线、板块成分<br/>股。<br/>数据源 / data-source（7任务）"]
+        S4["(生产态 / production) tickflow / TickFlow<br/>美股数据源，采美股日K线和美股指数（ETF替代）。<br/>数据源 / data-source（4任务）"]
+        S5["(生产态 / production) tqcenter / 通达信tqcenter<br/>880xxx板块数据源，采板块K线、板块实时快照、板块<br/>成分股映射；99只推送+584只轮询混合模式，动态5因<br/>子排名调整推送池。<br/>数据源 / data-source（4任务）"]
+        S6["(生产态 / production) rss / RSS<br/>RSS爬虫，采财经新闻。<br/>数据源 / data-source（2任务）"]
+        S7["(生产态 / production) baostock / BaoStock<br/>开源数据源，采交易日历和沪深300成分股。<br/>数据源 / data-source（2任务）"]
+        S8["(生产态 / production) cls<br/>数据源 / data-source（1任务）"]
+        S9["(生产态 / production) eastmoney_news<br/>数据源 / data-source（1任务）"]
+        S10["(生产态 / production) tushare / Tushare<br/>付费数据源，采新闻快讯和证券新闻。<br/>数据源 / data-source（1任务）"]
+        S11["(生产态 / production) backfill<br/>数据源 / data-source（1任务）"]
     end
 
-    subgraph ClickHouse
-        D0["c1_market<br/>行情库"]
-        D1["c3_fundamental<br/>基本面库"]
+    subgraph clickhouse["ClickHouse 数据库 / Databases"]
+        D0["(生产态 / production) c1_market / 行情库<br/>K线、指数、期货、资金、估值等行情类数据<br/>ClickHouse库 / database"]
+        D1["(生产态 / production) c3_fundamental / 基本面库<br/>财务报表、新闻、股东、分红等基本面类数据<br/>ClickHouse库 / database"]
     end
 
-    S0 --> D0
-    S0 --> D1
-    S1 --> D0
-    S2 --> D0
-    S3 --> D1
-    S4 --> D1
-    S5 --> D0
-    S5 --> D1
-    S6 --> D0
-    S6 --> D1
-    S7 --> D1
-    S8 --> D0
-    S9 --> D0
-    S10 --> D0
-    S11 --> D1
+    S1 -->|采集 / ingests| D0
+    S1 -->|采集 / ingests| D1
+    S11 -->|采集 / ingests| D0
+    S7 -->|采集 / ingests| D0
+    S8 -->|采集 / ingests| D1
+    S9 -->|采集 / ingests| D1
+    S2 -->|采集 / ingests| D0
+    S2 -->|采集 / ingests| D1
+    S0 -->|采集 / ingests| D0
+    S0 -->|采集 / ingests| D1
+    S6 -->|采集 / ingests| D1
+    S3 -->|采集 / ingests| D0
+    S4 -->|采集 / ingests| D0
+    S5 -->|采集 / ingests| D0
+    S10 -->|采集 / ingests| D1
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11 external_prod
+    class D0,D1 production
 ```
 
 ---

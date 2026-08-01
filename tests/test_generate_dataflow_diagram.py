@@ -273,59 +273,62 @@ class TestGenMermaid:
         assert "|produces / 产出|" in mmd
         assert "|consumed by / 被消费于|" in mmd
 
-    def test_mmd_uses_gray_theme_no_classdef(self, sample_datasets, sample_jobs, sample_edges):
-        """mmd 使用灰色主题（%%{init}%% + TD），不使用 classDef（对齐决策流程图视觉）。"""
+    def test_mmd_uses_gray_theme_with_classdef(self, sample_datasets, sample_jobs, sample_edges):
+        """mmd 使用灰色主题（%%{init}%% + TD）+ 4-class classDef（模板 V1.2 §4.1/§4.7）。"""
         mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
         assert "%%{init:" in mmd
         assert "'primaryColor': '#eaeaea'" in mmd
         assert "flowchart TD" in mmd
-        # 不应有 classDef（视觉对齐决策流程图，全灰）
-        assert "classDef" not in mmd
+        # 模板 V1.2：4-class classDef 始终启用
+        assert "classDef production" in mmd
+        assert "classDef design" in mmd
+        assert "classDef external_prod" in mmd
+        assert "classDef external_design" in mmd
 
     def test_mmd_contains_maturity_prefix(self, sample_datasets, sample_jobs, sample_edges):
-        """mmd 节点标签包含 [production] design_maturity 前缀（运营态 fixture）。"""
+        """mmd 节点标签包含 (生产态 / production) 成熟度全称（模板 V1.2 §4.3 四要素）。"""
         mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
-        # 全部节点 design_maturity=production → 标签前缀 [production]
-        assert "[production]" in mmd
+        # 全部节点 design_maturity=production → 四要素首行含 (生产态 / production)
+        assert "(生产态 / production)" in mmd
 
 
 # ---------- 设计态/运营态（design_maturity）测试 ----------
 
 class TestDesignMaturity:
-    """design_maturity 维度测试：[design] 前缀 + maturity_filter（灰色主题，无 classDef）。"""
+    """design_maturity 维度测试：(设计态 / design) 四要素 + maturity_filter（模板 V1.2 classDef）。"""
 
-    def test_design_node_no_classdef_uses_prefix(
+    def test_design_node_has_class_and_label(
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
     ):
-        """design_maturity=design 的节点无 class，靠 [design] 标签前缀区分（灰色主题）。"""
+        """design_maturity=design 的节点有 class 赋值 + (设计态 / design) 四要素标签。"""
         mmd, _, _, _ = _gen_mermaid(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
-        # DS4 是设计态 Dataset → 节点定义存在 + 无 :::class
+        # DS4 是设计态 Dataset → 节点定义存在 + class design 赋值行含 DS4
         assert "DS4" in mmd
-        assert ":::" not in mmd
+        assert "class DS4" in mmd  # design class 赋值行（如 'class DS4,JOB13 design'）
         # JOB13 是设计态 Job → 节点定义存在
         assert "JOB13" in mmd
 
     def test_design_node_has_design_prefix(
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
     ):
-        """design_maturity=design 的节点标签前缀为 [design]。"""
+        """design_maturity=design 的节点四要素首行含 (设计态 / design)。"""
         mmd, _, _, _ = _gen_mermaid(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
-        assert "[design]" in mmd
+        assert "(设计态 / design)" in mmd
 
-    def test_production_node_no_classdef(
+    def test_production_node_has_class(
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
     ):
-        """design_maturity=production 的节点无 class（灰色主题，全靠标签前缀）。"""
+        """design_maturity=production 的节点有 class production 赋值（模板 V1.2 §4.8）。"""
         mmd, _, _, _ = _gen_mermaid(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
-        # DS1 是 production scope + production maturity → 节点定义存在 + 无 :::class
+        # DS1 是 production scope + production maturity → 节点定义存在 + class production
         assert "DS1" in mmd
-        assert ":::" not in mmd
+        assert "class " in mmd  # 有 class 赋值行
 
     def test_maturity_filter_production_excludes_design(
         self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
@@ -383,14 +386,15 @@ class TestGenProductionMd:
         assert "设计态 vs 运营态" in md
 
     def test_contains_operation_state_diagram(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
-        """运营态全景文档包含运营态全景图章节（仅 design_maturity=production）。"""
+        """运营态全景文档包含运营态的图章节（仅 design_maturity=production，模板 V1.2 三视图）。"""
         md = _gen_production_md(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
-        assert "运营态全景图" in md
-        # 运营态全景图应排除设计态节点 DS4/JOB13
-        # （注意：运营态全景图 section 之后的内容会包含 DS4，所以只检查该 section 的 mermaid 块）
-        assert "### 运营态全景图（仅 design_maturity=production）" in md
+        assert "运营态的图" in md
+        # 三视图铁律：全景图 → 运营态的图 → 设计态的图
+        assert "### 全景图（全部模块，颜色区分运营态/设计态）" in md
+        assert "### 运营态的图（仅 design_maturity=production）" in md
+        assert "### 设计态的图（仅 design_maturity=design）" in md
 
     def test_contains_dataset_list(self, sample_datasets, sample_jobs, sample_edges):
         """运营态全景文档包含 Dataset 清单。"""
@@ -405,3 +409,145 @@ class TestGenProductionMd:
         assert "ingest.ifind_kline" in md
         assert "synthesize.signal" in md
         assert "backtest.replay_ticks" in md
+
+    def test_production_md_has_html_link(self, sample_datasets, sample_jobs, sample_edges):
+        """运营态全景文档顶部有 HTML 跳转链接（模板 §14：http:// 绝对路径）。"""
+        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
+        assert "可缩放 HTML 版" in md
+        assert "http://localhost:8765/" in md
+        assert "_zoomable_html/dataflow_production.html" in md
+
+    def test_production_md_has_three_views(self, sample_datasets, sample_jobs, sample_edges):
+        """运营态全景文档有三视图铁律顺序：全景图 → 运营态的图 → 设计态的图。"""
+        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
+        idx_panorama = md.find("### 全景图")
+        idx_op = md.find("### 运营态的图")
+        idx_design = md.find("### 设计态的图")
+        assert idx_panorama != -1 and idx_op != -1 and idx_design != -1
+        assert idx_panorama < idx_op < idx_design  # 顺序铁律
+
+
+# ---------- 模板 V1.2 对齐测试 ----------
+
+class TestTopologicalLayering:
+    """拓扑分层（Kahn + ~~~ 不可见边）测试（模板 §4.6）。"""
+
+    def test_has_invisible_edges_for_layering(self, sample_datasets, sample_jobs, sample_edges):
+        """多节点图应含 ~~~ 不可见边强制同 rank 竖排。"""
+        mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
+        assert "~~~" in mmd
+
+    def test_single_node_no_layering(self):
+        """单节点无同层串联（无需 ~~~）。"""
+        ds = [{"id": 1, "name": "a", "scope": "production", "maturity": "production"}]
+        job = [{"id": 10, "name": "j", "scope": "production", "maturity": "production"}]
+        edges = [{"from_id": 10, "to_id": 1, "from_type": "job", "to_type": "dataset", "type": "produces"}]
+        mmd, _, _, _ = _gen_mermaid(ds, job, edges)
+        # 2 节点 1 边，layer 0=JOB10, layer 1=DS1，不同层无 ~~~
+        assert "~~~" not in mmd
+
+
+class TestSolidDashedArrows:
+    """实线/虚线箭头测试（模板 §4.5：production 间实线，其余虚线）。"""
+
+    def test_production_to_production_solid(self, sample_datasets, sample_jobs, sample_edges):
+        """两端均 production → 实线箭头 -->。"""
+        mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
+        assert "JOB10 -->|produces" in mmd  # production→production
+
+    def test_design_to_design_dashed(
+        self, design_only_datasets, design_only_jobs, design_only_edges
+    ):
+        """两端均 design → 虚线箭头 -.->。"""
+        mmd, _, _, _ = _gen_mermaid(design_only_datasets, design_only_jobs, design_only_edges)
+        assert "JOB31 -.->|produces" in mmd  # design→design
+
+    def test_mixed_maturity_dashed(
+        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
+    ):
+        """混合 maturity 图含实线（production 间）和虚线（design 相关）。"""
+        # sample_edges 无 JOB13→DS4 边，补一条 design→design 边测试虚线
+        edges_with_design = sample_edges + [
+            {"from_id": 13, "to_id": 4, "from_type": "job", "to_type": "dataset", "type": "produces"},
+        ]
+        mmd, _, _, _ = _gen_mermaid(
+            sample_datasets_with_design, sample_jobs_with_design, edges_with_design
+        )
+        assert "JOB10 -->|produces" in mmd   # production→production 实线
+        assert "JOB13 -.->|produces" in mmd  # design→design 虚线
+
+
+class TestCrossDomainExternal:
+    """跨域外部 Dataset 节点测试（模板 §4.3 跨域节点）。"""
+
+    def test_external_ds_rendered_with_class(self):
+        """external_ds 参数传入的节点渲染为 external_prod/external_design 类。"""
+        local_ds = [{"id": 1, "name": "local.out", "scope": "production",
+                     "maturity": "production", "domain": "D_FACTOR", "contract": "CTR-1"}]
+        local_job = [{"id": 10, "name": "local.compute", "scope": "production",
+                      "maturity": "production", "source": "src/x.py"}]
+        ext_ds = [{"id": 99, "name": "ext.market", "scope": "production",
+                   "maturity": "production", "domain": "D_MKT_DATA", "contract": "CTR-9"}]
+        edges = [
+            {"from_id": 10, "to_id": 1, "from_type": "job", "to_type": "dataset", "type": "produces"},
+            {"from_id": 99, "to_id": 10, "from_type": "dataset", "to_type": "job", "type": "consumed_by"},
+        ]
+        mmd, ds_count, _, _ = _gen_mermaid(local_ds, local_job, edges, external_ds=ext_ds)
+        # 外部节点 DS99 出现在图中
+        assert "DS99" in mmd
+        # 计数只含域内节点（1 dataset），不含外部
+        assert ds_count == 1
+        # 外部节点绑 external_prod 类（maturity=production）——赋值行含 DS99 + external_prod
+        assignment_lines = [l for l in mmd.split("\n") if l.strip().startswith("class ")]
+        assert any("DS99" in l and "external_prod" in l for l in assignment_lines)
+        # 跨域边为虚线
+        assert "DS99 -.->|consumed by" in mmd
+        # 跨域标识
+        assert "跨域节点 / cross-domain" in mmd
+
+    def test_no_external_ds_when_param_none(self, sample_datasets, sample_jobs, sample_edges):
+        """不传 external_ds 时无跨域节点标识，无 external_* class 赋值行。"""
+        mmd, _, _, _ = _gen_mermaid(sample_datasets, sample_jobs, sample_edges)
+        assert "跨域节点 / cross-domain" not in mmd
+        # classDef external_prod 定义行始终存在，但不应有 class ... external_prod 赋值行
+        assignment_lines = [l for l in mmd.split("\n") if l.strip().startswith("class ")]
+        assert not any("external_prod" in l for l in assignment_lines)
+        assert not any("external_design" in l for l in assignment_lines)
+
+
+class TestDomainMdTemplate:
+    """_gen_domain_md 模板 V1.2 对齐测试。"""
+
+    @staticmethod
+    def _mk_grp():
+        return {"key": "d_test", "title": "测试域", "responsibility": "测试"}
+
+    @staticmethod
+    def _mk_ds():
+        return [{"id": 1, "name": "a", "scope": "production", "maturity": "production",
+                 "domain": "D_TEST", "contract": "CTR-1"}]
+
+    @staticmethod
+    def _mk_job():
+        return [{"id": 10, "name": "j", "scope": "production", "maturity": "production",
+                 "source": "src/x.py", "trigger": "scheduled"}]
+
+    def test_domain_md_has_html_link(self):
+        """域文档顶部有 HTML 跳转链接。"""
+        md = _gen_domain_md(self._mk_grp(), self._mk_ds(), self._mk_job(), [])
+        assert "可缩放 HTML 版" in md
+        assert "_zoomable_html/d_test.html" in md
+
+    def test_domain_md_three_views_order(self):
+        """域文档三视图顺序：全景图 → 运营态的图 → 设计态的图。"""
+        md = _gen_domain_md(self._mk_grp(), self._mk_ds(), self._mk_job(), [])
+        idx_pan = md.find("### 全景图")
+        idx_op = md.find("### 运营态的图")
+        idx_des = md.find("### 设计态的图")
+        assert idx_pan != -1 and idx_op != -1
+        assert idx_pan < idx_op
+
+    def test_domain_md_empty_view_placeholder(self):
+        """无设计态节点时，设计态视图用占位说明。"""
+        md = _gen_domain_md(self._mk_grp(), self._mk_ds(), self._mk_job(), [])
+        assert "（无模块 / No modules）" in md  # 设计态视图占位

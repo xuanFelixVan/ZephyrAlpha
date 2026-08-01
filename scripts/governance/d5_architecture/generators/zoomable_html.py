@@ -38,6 +38,7 @@ mermaid.min.js 策略：dev 环境（仓库根 tmp/mermaid.min.js 存在）内�
 """
 
 import re
+from datetime import datetime
 from pathlib import Path
 
 _THIS_FILE = Path(__file__).resolve()
@@ -204,11 +205,15 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
             f"</div>"
         )
     diagrams = "\n".join(diagrams_html)
+    gen_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 静态服务器（python -m http.server）无 Cache-Control，浏览器启发式缓存会让用户
+     看到旧版 HTML 误以为修复没生效。no-cache 强制每次重验证（文件小，代价可忽略）。 -->
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <title>{_escape_for_html(doc_title)}</title>
 <style>
   body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
@@ -270,7 +275,7 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
   <kbd>Ctrl</kbd> + <kbd>0</kbd> 重置 ｜ <kbd>Ctrl</kbd> + <kbd>+</kbd>/<kbd>-</kbd> 步进。
   模式：<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> 切换
   <span id="mode-indicator" class="mode-badge">拖动模式（可平移）</span> ↔ 选择模式（可复制文字）。
-  共 {len(blocks)} 个图。
+  共 {len(blocks)} 个图。生成于 {gen_time}（内容异常请先 <kbd>Ctrl</kbd>+<kbd>F5</kbd> 强刷）。
 </div>
 </div>
 {diagrams}
