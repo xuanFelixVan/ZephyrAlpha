@@ -469,6 +469,7 @@ def _run_batch(conn, ops: list[dict], dry_run: bool = False) -> list[dict]:
 
 
 def _build_argparser() -> argparse.ArgumentParser:
+    """_build_argparser implementation."""
     p = argparse.ArgumentParser(
         description="battlemap 作战地图写入入口（对标 apply_decisiongraph.py）",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -520,6 +521,7 @@ def _build_argparser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = _build_argparser()
     args = parser.parse_args(argv)
 

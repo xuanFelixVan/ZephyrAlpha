@@ -346,6 +346,7 @@ def _format_indicators_table(step: dict) -> str:
     rows: list[str] = []
 
     def _kv(items):
+        """_kv implementation."""
         if not items:
             return "—"
         if isinstance(items, list):
@@ -776,6 +777,7 @@ def _generate_cross_cutting_md() -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="生成交易决策作战地图可视化")
     parser.add_argument(
         "--output-dir",
