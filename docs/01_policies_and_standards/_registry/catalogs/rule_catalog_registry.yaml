@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-01T05:04:39Z'
+generated_at: '2026-08-01T05:06:22Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 188
@@ -2062,7 +2062,7 @@ files:
   section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
   module_id: ''
-  title: 项目目录登记?
+  title: 项目目录登记表
   doc_type: register
   status: active
   version: 1.0.2
