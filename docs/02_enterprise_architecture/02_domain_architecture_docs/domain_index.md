@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3125 |
-| 生产态模块 | 2887 |
-| 设计态模块 | 238 |
+| 模块总数 | 3123 |
+| 生产态模块 | 2889 |
+| 设计态模块 | 234 |
 
 ## 域清单（按架构层分组）
 
@@ -81,7 +81,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 / A2A Communication | 72 | 72 | 0 | 72/150 (OK) | [📄 03_d_infra_a2a.md](03_d_infra_a2a.md) |
 | D_INFRA_OPS | 基础设施运维 / Asset Inventory | 0 | 0 | 0 | 0/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 55 | 55 | 0 | 55/150 (OK) | [📄 05_d_infra_recovery.md](05_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 169 | 168 | 1 | 169/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 168 | 167 | 1 | 168/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | 可观测性 / Observability | 0 | 0 | 0 | 0/150 (OK) | [📄 07_d_infra_telemetry.md](07_d_infra_telemetry.md) |
 | D_SHARED | 共享服务 / Shared Services | 184 | 184 | 0 | 184/150 (超容) | [📄 08_d_shared.md](08_d_shared.md) |
 
@@ -91,7 +91,7 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|------|------|
 | D_ALT_DATA | 另类数据 / Alternative Data | 8 | 7 | 1 | 8/150 (OK) | [📄 09_d_alt_data.md](09_d_alt_data.md) |
 | D_AUTONOMY_CORE | 自治核心 / Autonomy Core | 130 | 130 | 0 | 130/150 (OK) | [📄 10_d_autonomy_core.md](10_d_autonomy_core.md) |
-| D_DATA | 数据接入层 / Data Access Layer | 179 | 162 | 17 | 179/150 (超容) | [📄 11_d_data.md](11_d_data.md) |
+| D_DATA | 数据接入层 / Data Access Layer | 178 | 162 | 16 | 178/150 (超容) | [📄 11_d_data.md](11_d_data.md) |
 | D_DATA_ENG | 数据工程 / Data Engineering | 20 | 7 | 13 | 20/150 (OK) | [📄 12_d_data_eng.md](12_d_data_eng.md) |
 | D_DATA_GOV | 数据治理 / Data Governance | 10 | 10 | 0 | 10/150 (OK) | [📄 13_d_data_gov.md](13_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 7 | 0 | 7/150 (OK) | [📄 14_d_data_sec.md](14_d_data_sec.md) |
@@ -129,7 +129,7 @@ ttl: permanent
 | D_DATA_SCRIPTS | 数据治理脚本 / D_DATA_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 41_d_data_scripts.md](41_d_data_scripts.md) |
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 7 | 7 | 0 | 7/150 (OK) | [📄 42_d_digital_twin.md](42_d_digital_twin.md) |
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 7 | 0 | 7/150 (OK) | [📄 43_d_exec_sim.md](43_d_exec_sim.md) |
-| D_EX_CORE | 执行核心 / Execution Core | 25 | 8 | 17 | 25/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
+| D_EX_CORE | 执行核心 / Execution Core | 25 | 9 | 16 | 25/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 7 | 10 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 86 | 37 | 49 | 86/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
 | D_FRONTEND | 前端 / Frontend | 16 | 12 | 4 | 16/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
@@ -149,7 +149,7 @@ ttl: permanent
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 9 | 5 | 4 | 9/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
 | D_PF_CORE | 组合核心 / Portfolio Core | 18 | 10 | 8 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
-| D_POSITION | 仓位管理 / Position Management | 12 | 3 | 9 | 12/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
+| D_POSITION | 仓位管理 / Position Management | 12 | 5 | 7 | 12/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 16 | 11 | 5 | 16/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 23 | 8 | 15 | 23/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |

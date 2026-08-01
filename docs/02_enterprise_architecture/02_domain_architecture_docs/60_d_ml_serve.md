@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ml_serve_init_py["zephyr/ml_serve 包入口<br/>__init__<br/>文件: ml_serve/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_extensions_init_py["ml_serve/_extensions 包入口<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_api_init_py["ml_serve/api 包入口<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_core_init_py["ml_serve/core 包入口<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_infrastructure_init_py["ml_serve/infrastructure 包入口<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_models_init_py["ml_serve/models 包入口<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_services_init_py["ml_serve/services 包入口<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_init_py["zephyr/ml_serve 包入口<br/>管理zephyr.ml_serve子包的加载和懒导入<br/>文件: ml_serve/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_extensions_init_py["ml_serve/_extensions 包入口<br/>管理ml_serve._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_api_init_py["ml_serve/api 包入口<br/>管理ml_serve.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_core_init_py["ml_serve/core 包入口<br/>管理ml_serve.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_infrastructure_init_py["ml_serve/infrastructure 包入口<br/>管理ml_serve.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_models_init_py["ml_serve/models 包入口<br/>管理ml_serve.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_services_init_py["ml_serve/services 包入口<br/>管理ml_serve.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ml_serve_init_py ~~~ src_zephyr_ml_serve_extensions_init_py
     src_zephyr_ml_serve_extensions_init_py ~~~ src_zephyr_ml_serve_api_init_py
     src_zephyr_ml_serve_api_init_py ~~~ src_zephyr_ml_serve_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ml_serve_init_py["zephyr/ml_serve 包入口<br/>__init__<br/>文件: ml_serve/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_extensions_init_py["ml_serve/_extensions 包入口<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_api_init_py["ml_serve/api 包入口<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_core_init_py["ml_serve/core 包入口<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_infrastructure_init_py["ml_serve/infrastructure 包入口<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_models_init_py["ml_serve/models 包入口<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ml_serve_services_init_py["ml_serve/services 包入口<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_init_py["zephyr/ml_serve 包入口<br/>管理zephyr.ml_serve子包的加载和懒导入<br/>文件: ml_serve/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_extensions_init_py["ml_serve/_extensions 包入口<br/>管理ml_serve._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_api_init_py["ml_serve/api 包入口<br/>管理ml_serve.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_core_init_py["ml_serve/core 包入口<br/>管理ml_serve.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_infrastructure_init_py["ml_serve/infrastructure 包入口<br/>管理ml_serve.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_models_init_py["ml_serve/models 包入口<br/>管理ml_serve.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ml_serve_services_init_py["ml_serve/services 包入口<br/>管理ml_serve.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ml_serve_init_py ~~~ src_zephyr_ml_serve_extensions_init_py
     src_zephyr_ml_serve_extensions_init_py ~~~ src_zephyr_ml_serve_api_init_py
     src_zephyr_ml_serve_api_init_py ~~~ src_zephyr_ml_serve_core_init_py

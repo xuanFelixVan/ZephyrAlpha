@@ -47,7 +47,7 @@ tags: [redis, hot-cache, online-store, feature-store, cqrs, realtime, factor-cro
 priority: P1
 runtime_plane: hot
 responsibility_domain: 
-build_status: stable
+build_status: generated
 design_maturity: production
 ---
 
