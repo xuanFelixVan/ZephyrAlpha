@@ -43,7 +43,7 @@ try:
     _mod = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_mod)
     _gen_mermaid = _mod._gen_mermaid
-    _gen_production_md = _mod._gen_production_md
+    _gen_panorama_md = _mod._gen_panorama_md
     _gen_domain_md = _mod._gen_domain_md
     _extract_zh_label = _mod._extract_zh_label
 except Exception as e:  # noqa: BLE001
@@ -360,22 +360,22 @@ class TestDesignMaturity:
         assert "DS1" not in mmd
 
 
-# ---------- _gen_production_md 测试 ----------
+# ---------- _gen_panorama_md 测试 ----------
 
-class TestGenProductionMd:
-    """_gen_production_md 统计正确性测试。"""
+class TestGenPanoramaMd:
+    """_gen_panorama_md 统计正确性测试（全项目数据流全景：运营态 + 设计态）。"""
 
     def test_stats_table(self, sample_datasets, sample_jobs, sample_edges):
-        """运营态全景文档统计表正确。"""
-        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
+        """全景文档统计表正确。"""
+        md = _gen_panorama_md(sample_datasets, sample_jobs, sample_edges)
         # | Dataset | 2 | 1 | 3 |  production=2, backtest=1, total=3
         assert "| Dataset | 2 | 1 | 3 |" in md
         assert "| Job | 2 | 1 | 3 |" in md
         assert "| Edge | - | - | 5 |" in md
 
     def test_design_maturity_stats_table(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
-        """运营态全景文档包含设计态/运营态统计子表（design_maturity 维度）。"""
-        md = _gen_production_md(
+        """全景文档包含设计态/运营态统计子表（design_maturity 维度）。"""
+        md = _gen_panorama_md(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
         # 4 dataset: 3 production + 1 design（4 列：运营态/设计态/合计）
@@ -386,8 +386,8 @@ class TestGenProductionMd:
         assert "设计态 vs 运营态" in md
 
     def test_contains_operation_state_diagram(self, sample_datasets_with_design, sample_jobs_with_design, sample_edges):
-        """运营态全景文档包含运营态的图章节（仅 design_maturity=production，模板 V1.2 三视图）。"""
-        md = _gen_production_md(
+        """全景文档包含运营态的图章节（仅 design_maturity=production，模板 V1.2 三视图）。"""
+        md = _gen_panorama_md(
             sample_datasets_with_design, sample_jobs_with_design, sample_edges
         )
         assert "运营态的图" in md
@@ -397,34 +397,52 @@ class TestGenProductionMd:
         assert "### 设计态的图（仅 design_maturity=design）" in md
 
     def test_contains_dataset_list(self, sample_datasets, sample_jobs, sample_edges):
-        """运营态全景文档包含 Dataset 清单。"""
-        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
+        """全景文档包含 Dataset 清单。"""
+        md = _gen_panorama_md(sample_datasets, sample_jobs, sample_edges)
         assert "market_data.tick" in md
         assert "signal.composite" in md
         assert "backtest.fills" in md
 
     def test_contains_job_list(self, sample_datasets, sample_jobs, sample_edges):
-        """运营态全景文档包含 Job 清单。"""
-        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
+        """全景文档包含 Job 清单。"""
+        md = _gen_panorama_md(sample_datasets, sample_jobs, sample_edges)
         assert "ingest.ifind_kline" in md
         assert "synthesize.signal" in md
         assert "backtest.replay_ticks" in md
 
-    def test_production_md_has_html_link(self, sample_datasets, sample_jobs, sample_edges):
-        """运营态全景文档顶部有 HTML 跳转链接（模板 §14：http:// 绝对路径）。"""
-        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
+    def test_panorama_md_has_html_link(self, sample_datasets, sample_jobs, sample_edges):
+        """全景文档顶部有 HTML 跳转链接（模板 §14：http:// 绝对路径）。"""
+        md = _gen_panorama_md(sample_datasets, sample_jobs, sample_edges)
         assert "可缩放 HTML 版" in md
         assert "http://localhost:8765/" in md
-        assert "_zoomable_html/dataflow_production.html" in md
+        assert "_zoomable_html/dataflow_panorama.html" in md
 
-    def test_production_md_has_three_views(self, sample_datasets, sample_jobs, sample_edges):
-        """运营态全景文档有三视图铁律顺序：全景图 → 运营态的图 → 设计态的图。"""
-        md = _gen_production_md(sample_datasets, sample_jobs, sample_edges)
+    def test_panorama_md_has_three_views(self, sample_datasets, sample_jobs, sample_edges):
+        """全景文档有三视图铁律顺序：全景图 → 运营态的图 → 设计态的图。"""
+        md = _gen_panorama_md(sample_datasets, sample_jobs, sample_edges)
         idx_panorama = md.find("### 全景图")
         idx_op = md.find("### 运营态的图")
         idx_design = md.find("### 设计态的图")
         assert idx_panorama != -1 and idx_op != -1 and idx_design != -1
         assert idx_panorama < idx_op < idx_design  # 顺序铁律
+
+    def test_panorama_includes_both_production_and_design(
+        self, sample_datasets_with_design, sample_jobs_with_design, sample_edges
+    ):
+        """全景图 Mermaid 块同时含运营态和设计态节点（用户核心需求：一张看完所有东西）。"""
+        md = _gen_panorama_md(
+            sample_datasets_with_design, sample_jobs_with_design, sample_edges
+        )
+        # 提取全景图 Mermaid 块（### 全景图 到 ### 运营态的图 之间）
+        idx_pan = md.find("### 全景图")
+        idx_op = md.find("### 运营态的图")
+        panorama_block = md[idx_pan:idx_op]
+        # 全景图必须同时含生产态和设计态节点
+        assert "(生产态 / production)" in panorama_block
+        assert "(设计态 / design)" in panorama_block
+        # 设计态节点 DS4/JOB13 必须出现在全景图中
+        assert "DS4" in panorama_block
+        assert "JOB13" in panorama_block
 
 
 # ---------- 模板 V1.2 对齐测试 ----------

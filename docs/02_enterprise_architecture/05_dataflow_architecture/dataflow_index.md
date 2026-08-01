@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-08-01T22:11:49
+> 生成时间: 2026-08-01T22:21:37
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -50,7 +50,7 @@ ttl: permanent
 ### 四、这份索引主要看什么？
 
 1. **有多少数据流** —— 看"统计"表里的 Job / Dataset 数量
-2. **数据流长啥样** —— 点进 [dataflow_production.md](dataflow_production.md) 看运营态全景图
+2. **数据流长啥样** —— 点进 [dataflow_panorama.md](dataflow_panorama.md) 看全项目数据流全景图（运营态+设计态）
 3. **按域拆分的数据流** —— 下面表格按功能域列出每个域的数据流文档
 
 > 运营态 = 实际在跑的数据流；设计态 = 还在图纸上没动工的数据流。
@@ -65,12 +65,12 @@ ttl: permanent
 | Job | 13 | 62 | 75 |
 | Edge | 28 | 62 | 90 |
 
-## 运营态数据流（全景）
+## 数据流全景（运营态 + 设计态）
 
-> 13 个作业 / 14 个数据集 / 28 条边
+> 75 个作业 / 76 个数据集 / 90 条边（含设计态 62 jobs / 62 datasets）
 
-- [dataflow_production.md](dataflow_production.md) — 运营态全景图 + Dataset/Job 清单
-- [可缩放 HTML 版](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/dataflow_production.html) — 浏览器打开可 Ctrl+滚轮缩放
+- [dataflow_panorama.md](dataflow_panorama.md) — 全项目数据流全景图（运营态+设计态）+ Dataset/Job 清单
+- [可缩放 HTML 版](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/dataflow_panorama.html) — 浏览器打开可 Ctrl+滚轮缩放
 
 ## 数据流（按域拆分，含三视图）
 

@@ -10,7 +10,7 @@ ttl: permanent
 
 # 因子域-因子分析
 
-> 生成时间: 2026-08-01T22:11:49
+> 生成时间: 2026-08-01T22:21:37
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -85,28 +85,28 @@ flowchart TD
     JOB757600 -.->|produces / 产出| DS11236
     JOB757601 -.->|produces / 产出| DS11237
     JOB757602 -.->|produces / 产出| DS11238
-    JOB757596 ~~~ JOB757597
-    JOB757597 ~~~ JOB757602
+    JOB757592 ~~~ JOB757596
+    JOB757596 ~~~ JOB757594
+    JOB757594 ~~~ JOB757601
+    JOB757601 ~~~ JOB757599
+    JOB757599 ~~~ JOB757602
     JOB757602 ~~~ JOB757595
-    JOB757595 ~~~ JOB757594
-    JOB757594 ~~~ JOB757591
-    JOB757591 ~~~ JOB757598
-    JOB757598 ~~~ JOB757600
-    JOB757600 ~~~ JOB757592
-    JOB757592 ~~~ JOB757593
-    JOB757593 ~~~ JOB757599
-    JOB757599 ~~~ JOB757601
-    DS11232 ~~~ DS11233
-    DS11233 ~~~ DS11238
+    JOB757595 ~~~ JOB757598
+    JOB757598 ~~~ JOB757593
+    JOB757593 ~~~ JOB757591
+    JOB757591 ~~~ JOB757597
+    JOB757597 ~~~ JOB757600
+    DS11228 ~~~ DS11232
+    DS11232 ~~~ DS11230
+    DS11230 ~~~ DS11237
+    DS11237 ~~~ DS11235
+    DS11235 ~~~ DS11238
     DS11238 ~~~ DS11231
-    DS11231 ~~~ DS11230
-    DS11230 ~~~ DS11227
-    DS11227 ~~~ DS11234
-    DS11234 ~~~ DS11236
-    DS11236 ~~~ DS11228
-    DS11228 ~~~ DS11229
-    DS11229 ~~~ DS11235
-    DS11235 ~~~ DS11237
+    DS11231 ~~~ DS11234
+    DS11234 ~~~ DS11229
+    DS11229 ~~~ DS11227
+    DS11227 ~~~ DS11233
+    DS11233 ~~~ DS11236
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -161,28 +161,28 @@ flowchart TD
     JOB757600 -.->|produces / 产出| DS11236
     JOB757601 -.->|produces / 产出| DS11237
     JOB757602 -.->|produces / 产出| DS11238
-    JOB757596 ~~~ JOB757597
-    JOB757597 ~~~ JOB757602
+    JOB757592 ~~~ JOB757596
+    JOB757596 ~~~ JOB757594
+    JOB757594 ~~~ JOB757601
+    JOB757601 ~~~ JOB757599
+    JOB757599 ~~~ JOB757602
     JOB757602 ~~~ JOB757595
-    JOB757595 ~~~ JOB757594
-    JOB757594 ~~~ JOB757591
-    JOB757591 ~~~ JOB757598
-    JOB757598 ~~~ JOB757600
-    JOB757600 ~~~ JOB757592
-    JOB757592 ~~~ JOB757593
-    JOB757593 ~~~ JOB757599
-    JOB757599 ~~~ JOB757601
-    DS11232 ~~~ DS11233
-    DS11233 ~~~ DS11238
+    JOB757595 ~~~ JOB757598
+    JOB757598 ~~~ JOB757593
+    JOB757593 ~~~ JOB757591
+    JOB757591 ~~~ JOB757597
+    JOB757597 ~~~ JOB757600
+    DS11228 ~~~ DS11232
+    DS11232 ~~~ DS11230
+    DS11230 ~~~ DS11237
+    DS11237 ~~~ DS11235
+    DS11235 ~~~ DS11238
     DS11238 ~~~ DS11231
-    DS11231 ~~~ DS11230
-    DS11230 ~~~ DS11227
-    DS11227 ~~~ DS11234
-    DS11234 ~~~ DS11236
-    DS11236 ~~~ DS11228
-    DS11228 ~~~ DS11229
-    DS11229 ~~~ DS11235
-    DS11235 ~~~ DS11237
+    DS11231 ~~~ DS11234
+    DS11234 ~~~ DS11229
+    DS11229 ~~~ DS11227
+    DS11227 ~~~ DS11233
+    DS11233 ~~~ DS11236
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

@@ -10,7 +10,7 @@ ttl: permanent
 
 # 执行核心+组合核心域
 
-> 生成时间: 2026-08-01T22:11:49
+> 生成时间: 2026-08-01T22:21:37
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -54,28 +54,25 @@ flowchart TD
     DS11264["(设计态 / design) execution.fill_handler /<br/>成交处理记录<br/>（成交回报处理/状态更新）<br/>契约: - · 域: 执行核心"]
     DS11266["(设计态 / design) execution.live_portfolio /<br/>实盘组合状态<br/>（实时组合/资金/持仓汇总）<br/>契约: - · 域: 执行核心"]
     DS11265["(设计态 / design) execution.position_tracker /<br/>持仓跟踪记录<br/>（实时持仓/成本/盈亏跟踪）<br/>契约: - · 域: 执行核心"]
-    DS16830["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
-    DS16829["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
+    DS16906["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
+    DS16905["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
     DS11267["(设计态 / design) portfolio.optimizer /<br/>优化后目标权重<br/>（均值方差/风险平价/Black-Litterman）<br/>契约: - · 域: 组合核心"]
     DS11268["(设计态 / design) portfolio.portfolio_aggregate<br/>/ 组合汇总状态<br/>（多策略组合/资金分配/持仓汇总）<br/>契约: - · 域: 组合核心"]
     DS11269["(设计态 / design) portfolio.strategy_runner /<br/>策略目标权重<br/>（策略信号→目标权重转换）<br/>契约: - · 域: 组合核心"]
     DS11270["(设计态 / design) portfolio.topn_momentum_<br/>strategy / TopN动量信号<br/>（TopN选股/动量排名信号）<br/>契约: - · 域: 组合核心"]
-    DS16831["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
+    DS16907["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
     JOB757627("(设计态 / design) ex_core.audit_journal /<br/>审计日志<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: audit_journal/")
     JOB757628("(设计态 / design) ex_core.fill_handler /<br/>成交处理<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: ex_core/fill_handler.py")
     JOB757630("(设计态 / design) ex_core.live_portfolio /<br/>实盘组合<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: services/live_portfolio.py")
     JOB757629("(设计态 / design) ex_core.position_tracker /<br/>持仓跟踪<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: position_tracker/")
-    JOB859262("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
-    JOB859261("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
+    JOB866029("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
+    JOB866028("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
     JOB757631("(设计态 / design) pf_core.optimizer / 组合优化<br/>（消费信号，产出组合/权重）<br/>文件: optimizer/")
     JOB757632("(设计态 / design) pf_core.portfolio_aggregate /<br/>组合汇总<br/>（消费信号，产出组合/权重）<br/>文件: portfolio_aggregate/")
     JOB757633("(设计态 / design) pf_core.strategy_runner /<br/>策略运行<br/>（消费信号，产出组合/权重）<br/>文件: strategy_engine/strategy_runner.py")
     JOB757634("(设计态 / design) pf_core.topn_momentum_<br/>strategy / TopN动量策略<br/>（消费信号，产出组合/权重）<br/>文件: pf_core/topn_momentum_strategy.py")
-    DS16827["(生产态 / production) signal.composite /<br/>信号.合成信号<br/>合成交易信号（多因子加权/截面排名<br/>/置信度），CTR-P1-015 SynthesizedSignal<br/>契约: CTR-P1-015 · 域: 信号遗留设计态<br/>跨域节点 / cross-domain"]
-    DS16828["(生产态 / production) risk.limits / 风险.限额<br/>风险限额（max_position/max_drawdown/exposure_<br/>limits），CTR-003 RiskLimits<br/>契约: CTR-003 · 域: 风控<br/>跨域节点 / cross-domain"]
-    JOB859261 -->|produces / 产出| DS16829
-    JOB859262 -->|produces / 产出| DS16830
-    JOB859262 -->|produces / 产出| DS16831
+    DS16903["(生产态 / production) signal.composite /<br/>信号.合成信号<br/>合成交易信号（多因子加权/截面排名<br/>/置信度），CTR-P1-015 SynthesizedSignal<br/>契约: CTR-P1-015 · 域: 信号遗留设计态<br/>跨域节点 / cross-domain"]
+    DS16904["(生产态 / production) risk.limits / 风险.限额<br/>风险限额（max_position/max_drawdown/exposure_<br/>limits），CTR-003 RiskLimits<br/>契约: CTR-003 · 域: 风控<br/>跨域节点 / cross-domain"]
     JOB757627 -.->|produces / 产出| DS11263
     JOB757628 -.->|produces / 产出| DS11264
     JOB757629 -.->|produces / 产出| DS11265
@@ -84,33 +81,36 @@ flowchart TD
     JOB757632 -.->|produces / 产出| DS11268
     JOB757633 -.->|produces / 产出| DS11269
     JOB757634 -.->|produces / 产出| DS11270
-    DS16827 -.->|consumed by / 被消费于| JOB859261
-    DS16828 -.->|consumed by / 被消费于| JOB859261
-    DS16829 -->|consumed by / 被消费于| JOB859262
-    JOB859261 ~~~ JOB757630
-    JOB757630 ~~~ JOB757632
-    JOB757632 ~~~ JOB757634
+    JOB866028 -->|produces / 产出| DS16905
+    JOB866029 -->|produces / 产出| DS16906
+    JOB866029 -->|produces / 产出| DS16907
+    DS16903 -.->|consumed by / 被消费于| JOB866028
+    DS16904 -.->|consumed by / 被消费于| JOB866028
+    DS16905 -->|consumed by / 被消费于| JOB866029
+    JOB757632 ~~~ JOB757629
+    JOB757629 ~~~ JOB757631
+    JOB757631 ~~~ JOB757633
+    JOB757633 ~~~ JOB757627
+    JOB757627 ~~~ JOB866028
+    JOB866028 ~~~ JOB757634
     JOB757634 ~~~ JOB757628
-    JOB757628 ~~~ JOB757633
-    JOB757633 ~~~ JOB757631
-    JOB757631 ~~~ JOB757629
-    JOB757629 ~~~ JOB757627
-    DS16829 ~~~ DS11266
-    DS11266 ~~~ DS11268
-    DS11268 ~~~ DS11270
+    JOB757628 ~~~ JOB757630
+    DS11268 ~~~ DS11265
+    DS11265 ~~~ DS11267
+    DS11267 ~~~ DS11269
+    DS11269 ~~~ DS11263
+    DS11263 ~~~ DS16905
+    DS16905 ~~~ DS11270
     DS11270 ~~~ DS11264
-    DS11264 ~~~ DS11269
-    DS11269 ~~~ DS11267
-    DS11267 ~~~ DS11265
-    DS11265 ~~~ DS11263
-    DS16830 ~~~ DS16831
+    DS11264 ~~~ DS11266
+    DS16906 ~~~ DS16907
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS16830,DS16829,DS16831,JOB859262,JOB859261 production
+    class DS16906,DS16905,DS16907,JOB866029,JOB866028 production
     class DS11263,DS11264,DS11266,DS11265,DS11267,DS11268,DS11269,DS11270,JOB757627,JOB757628,JOB757630,JOB757629,JOB757631,JOB757632,JOB757633,JOB757634 design
-    class DS16827,DS16828 external_prod
+    class DS16903,DS16904 external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production）
@@ -120,21 +120,21 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS16830["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
-    DS16829["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
-    DS16831["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
-    JOB859262("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
-    JOB859261("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
-    JOB859261 -->|produces / 产出| DS16829
-    JOB859262 -->|produces / 产出| DS16830
-    JOB859262 -->|produces / 产出| DS16831
-    DS16829 -->|consumed by / 被消费于| JOB859262
-    DS16830 ~~~ DS16831
+    DS16906["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
+    DS16905["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
+    DS16907["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
+    JOB866029("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
+    JOB866028("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
+    JOB866028 -->|produces / 产出| DS16905
+    JOB866029 -->|produces / 产出| DS16906
+    JOB866029 -->|produces / 产出| DS16907
+    DS16905 -->|consumed by / 被消费于| JOB866029
+    DS16906 ~~~ DS16907
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS16830,DS16829,DS16831,JOB859262,JOB859261 production
+    class DS16906,DS16905,DS16907,JOB866029,JOB866028 production
 ```
 
 ### 设计态的图（仅 design_maturity=design）
@@ -168,20 +168,20 @@ flowchart TD
     JOB757632 -.->|produces / 产出| DS11268
     JOB757633 -.->|produces / 产出| DS11269
     JOB757634 -.->|produces / 产出| DS11270
-    JOB757629 ~~~ JOB757632
-    JOB757632 ~~~ JOB757630
-    JOB757630 ~~~ JOB757634
+    JOB757631 ~~~ JOB757627
+    JOB757627 ~~~ JOB757632
+    JOB757632 ~~~ JOB757634
     JOB757634 ~~~ JOB757628
-    JOB757628 ~~~ JOB757631
-    JOB757631 ~~~ JOB757633
-    JOB757633 ~~~ JOB757627
-    DS11265 ~~~ DS11268
-    DS11268 ~~~ DS11266
-    DS11266 ~~~ DS11270
+    JOB757628 ~~~ JOB757633
+    JOB757633 ~~~ JOB757629
+    JOB757629 ~~~ JOB757630
+    DS11267 ~~~ DS11263
+    DS11263 ~~~ DS11268
+    DS11268 ~~~ DS11270
     DS11270 ~~~ DS11264
-    DS11264 ~~~ DS11267
-    DS11267 ~~~ DS11269
-    DS11269 ~~~ DS11263
+    DS11264 ~~~ DS11269
+    DS11269 ~~~ DS11265
+    DS11265 ~~~ DS11266
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -197,13 +197,13 @@ flowchart TD
 | DS-11264 | execution.fill_handler | production / 生产 | D_EX_CORE / 执行核心 | design / 设计 | MOD-EX-001 | 成交处理记录（成交回报处理/状态更新） |
 | DS-11266 | execution.live_portfolio | production / 生产 | D_EX_CORE / 执行核心 | design / 设计 | MOD-L06-001 | 实盘组合状态（实时组合/资金/持仓汇总） |
 | DS-11265 | execution.position_tracker | production / 生产 | D_EX_CORE / 执行核心 | design / 设计 | MOD-EX-002 | 持仓跟踪记录（实时持仓/成本/盈亏跟踪） |
-| DS-16830 | fill.executed / 成交.已成交 | production / 生产 | D_EX_CORE / 执行核心 | production / 生产 | MOD-L06-001 | 成交回报（symbol/quantity/price/commission/timestamp），CTR-005 Fill |
-| DS-16829 | order.target / 订单.目标订单 | production / 生产 | D_PF_CORE / 组合核心 | production / 生产 | MOD-L05-001 | 目标订单（symbol/side/quantity/price/order_type），CTR-004 Order |
+| DS-16906 | fill.executed / 成交.已成交 | production / 生产 | D_EX_CORE / 执行核心 | production / 生产 | MOD-L06-001 | 成交回报（symbol/quantity/price/commission/timestamp），CTR-005 Fill |
+| DS-16905 | order.target / 订单.目标订单 | production / 生产 | D_PF_CORE / 组合核心 | production / 生产 | MOD-L05-001 | 目标订单（symbol/side/quantity/price/order_type），CTR-004 Order |
 | DS-11267 | portfolio.optimizer | production / 生产 | D_PF_CORE / 组合核心 | design / 设计 | MOD-PF-001 | 优化后目标权重（均值方差/风险平价/Black-Litterman） |
 | DS-11268 | portfolio.portfolio_aggregate | production / 生产 | D_PF_CORE / 组合核心 | design / 设计 | MOD-PF-003 | 组合汇总状态（多策略组合/资金分配/持仓汇总） |
 | DS-11269 | portfolio.strategy_runner | production / 生产 | D_PF_CORE / 组合核心 | design / 设计 | MOD-L05-001 | 策略目标权重（策略信号→目标权重转换） |
 | DS-11270 | portfolio.topn_momentum_strategy | production / 生产 | D_PF_CORE / 组合核心 | design / 设计 | MOD-L05-001 | TopN动量信号（TopN选股/动量排名信号） |
-| DS-16831 | position.snapshot / 持仓.快照 | production / 生产 | D_EX_CORE / 执行核心 | production / 生产 | MOD-L06-001 | 持仓快照（symbol/quantity/avg_cost/market_value/timestamp），CTR-006 PositionSnapshot |
+| DS-16907 | position.snapshot / 持仓.快照 | production / 生产 | D_EX_CORE / 执行核心 | production / 生产 | MOD-L06-001 | 持仓快照（symbol/quantity/avg_cost/market_value/timestamp），CTR-006 PositionSnapshot |
 
 ## Job 清单
 
@@ -213,8 +213,8 @@ flowchart TD
 | JOB-757628 | ex_core.fill_handler | event_driven / 事件驱动 | design / 设计 | MOD-EX-001 | 成交处理（消费成交/持仓数据，产出执行核心记录） |
 | JOB-757630 | ex_core.live_portfolio | event_driven / 事件驱动 | design / 设计 | MOD-L06-001 | 实盘组合（消费成交/持仓数据，产出执行核心记录） |
 | JOB-757629 | ex_core.position_tracker | event_driven / 事件驱动 | design / 设计 | MOD-EX-002 | 持仓跟踪（消费成交/持仓数据，产出执行核心记录） |
-| JOB-859262 | execute.order / 执行.订单 | event_driven / 事件驱动 | production / 生产 | MOD-L06-001 | 执行订单（实盘/模拟），产出DS-008 fill.executed + DS-009 position.snapshot |
-| JOB-859261 | generate.order / 生成.订单 | event_driven / 事件驱动 | production / 生产 | MOD-L05-001 | 根据信号+风险限额生成目标订单，产出DS-007 order.target |
+| JOB-866029 | execute.order / 执行.订单 | event_driven / 事件驱动 | production / 生产 | MOD-L06-001 | 执行订单（实盘/模拟），产出DS-008 fill.executed + DS-009 position.snapshot |
+| JOB-866028 | generate.order / 生成.订单 | event_driven / 事件驱动 | production / 生产 | MOD-L05-001 | 根据信号+风险限额生成目标订单，产出DS-007 order.target |
 | JOB-757631 | pf_core.optimizer | event_driven / 事件驱动 | design / 设计 | MOD-PF-001 | 组合优化（消费信号，产出组合/权重） |
 | JOB-757632 | pf_core.portfolio_aggregate | event_driven / 事件驱动 | design / 设计 | MOD-PF-003 | 组合汇总（消费信号，产出组合/权重） |
 | JOB-757633 | pf_core.strategy_runner | event_driven / 事件驱动 | design / 设计 | MOD-L05-001 | 策略运行（消费信号，产出组合/权重） |

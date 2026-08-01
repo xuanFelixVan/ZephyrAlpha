@@ -368,7 +368,7 @@ _DATAFLOW_PLAIN_LANGUAGE_INTRO = """\
 ### 四、这份索引主要看什么？
 
 1. **有多少数据流** —— 看"统计"表里的 Job / Dataset 数量
-2. **数据流长啥样** —— 点进 [dataflow_production.md](dataflow_production.md) 看运营态全景图
+2. **数据流长啥样** —— 点进 [dataflow_panorama.md](dataflow_panorama.md) 看全项目数据流全景图（运营态+设计态）
 3. **按域拆分的数据流** —— 下面表格按功能域列出每个域的数据流文档
 
 > 运营态 = 实际在跑的数据流；设计态 = 还在图纸上没动工的数据流。
@@ -682,12 +682,12 @@ _LEGEND_BLOCK = """\
 """
 
 
-def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
-    """生成运营态全景文档 dataflow_production.md（模板 V1.2 三视图 + HTML 链接 + 图例 + 清单）。
+def _gen_panorama_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> str:
+    """生成全项目数据流全景文档 dataflow_panorama.md（运营态 + 设计态，模板 V1.2 三视图 + HTML 链接 + 图例 + 清单）。
 
-    治本（2026-08-01 模板 V1.2 升级）：三视图结构（全景→运营态→设计态）为主，
-    scope 附加图（生产/回测）为辅；顶部加 HTML 跳转链接；图例对齐模板四类样式；
-    节点四要素标签内嵌 Mermaid；空视图用占位说明（模板 §3.2）。
+    治本（2026-08-01）：原 dataflow_production.md 仅含运营态节点，用户要求"一张看完所有东西"，
+    故改为全项目全景（运营态 + 设计态），文件名同步改为 dataflow_panorama.md。
+    三视图结构天然适配：全景图展示全部（production+design），运营态/设计态分图各聚焦一态。
     """
     prod_ds = sum(1 for d in datasets if d["scope"] == "production")
     bt_ds = sum(1 for d in datasets if d["scope"] == "backtest_internal")
@@ -701,13 +701,13 @@ def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]
     design_job = sum(1 for j in jobs if j.get("maturity") == "design")
 
     now = datetime.now().isoformat(timespec="seconds")
-    html_link = _html_link_for("dataflow_production")
+    html_link = _html_link_for("dataflow_panorama")
 
     lines = []
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
     lines.append("---")
     lines.append("doc_type: architecture_view")
-    lines.append("title: 数据流图（dataflowgraph）运营态全景")
+    lines.append("title: 数据流图（dataflowgraph）全景（运营态 + 设计态）")
     lines.append('version: "1.0"')
     lines.append("status: active")
     lines.append(f"date: {now.split('T')[0]}")
@@ -715,7 +715,7 @@ def _gen_production_md(datasets: list[dict], jobs: list[dict], edges: list[dict]
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
-    lines.append("# 数据流图（dataflowgraph）运营态全景")
+    lines.append("# 数据流图（dataflowgraph）全景（运营态 + 设计态）")
     lines.append("")
     lines.append(f"> 生成时间: {now}")
     lines.append(f"> 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）")
@@ -1159,13 +1159,13 @@ def _gen_overview_index(datasets: list[dict], jobs: list[dict], edges: list[dict
     lines.append(f"| Edge | {prod_edge} | {design_edge} | {len(edges)} |")
     lines.append("")
 
-    # 运营态链接
-    lines.append("## 运营态数据流（全景）")
+    # 全景链接（运营态 + 设计态，一张图看完所有数据流）
+    lines.append("## 数据流全景（运营态 + 设计态）")
     lines.append("")
-    lines.append(f"> {prod_job} 个作业 / {prod_ds} 个数据集 / {prod_edge} 条边")
+    lines.append(f"> {len(jobs)} 个作业 / {len(datasets)} 个数据集 / {len(edges)} 条边（含设计态 {design_job} jobs / {design_ds} datasets）")
     lines.append("")
-    lines.append(f"- [dataflow_production.md](dataflow_production.md) — 运营态全景图 + Dataset/Job 清单")
-    lines.append(f"- [可缩放 HTML 版]({_html_link_for('dataflow_production')}) — 浏览器打开可 Ctrl+滚轮缩放")
+    lines.append(f"- [dataflow_panorama.md](dataflow_panorama.md) — 全项目数据流全景图（运营态+设计态）+ Dataset/Job 清单")
+    lines.append(f"- [可缩放 HTML 版]({_html_link_for('dataflow_panorama')}) — 浏览器打开可 Ctrl+滚轮缩放")
     lines.append("")
 
     # 域文件链接（每个域文档含三视图：全景图→运营态的图→设计态的图）
@@ -1247,12 +1247,10 @@ def main() -> int:
         if html_path:
             print(f"[OK]   └ _zoomable_html/{stem}.html（可缩放交互版）")
 
-    # 1. 生成运营态文件
-    prod_datasets = [d for d in datasets if d.get("maturity") != "design"]
-    prod_jobs = [j for j in jobs if j.get("maturity") != "design"]
-    prod_md = _gen_production_md(prod_datasets, prod_jobs, edges)
-    _write_md_and_html("dataflow_production", prod_md)
-    print(f"[OK] 生成 dataflow_production.md（{len(prod_jobs)} jobs / {len(prod_datasets)} datasets）")
+    # 1. 生成全项目数据流全景文件（运营态 + 设计态，一张图看完所有数据流）
+    panorama_md = _gen_panorama_md(datasets, jobs, edges)
+    _write_md_and_html("dataflow_panorama", panorama_md)
+    print(f"[OK] 生成 dataflow_panorama.md（{len(jobs)} jobs / {len(datasets)} datasets，含设计态）")
 
     # 2. 按域分组所有 Job + Dataset（含设计态+运营态，每个域文档三视图展示）
     group_jobs: dict[str, list] = {g["key"]: [] for g in _DOMAIN_GROUPS}
@@ -1306,7 +1304,7 @@ def main() -> int:
     # 清理时必须保留它，否则交叉运行会互相删 HTML。
     html_dir = out_dir / HTML_SUBDIR
     if html_dir.exists():
-        valid_stems = {"dataflow_production", "dataflow_index", "data_acquisition_flow"} | set(group_counts.keys())
+        valid_stems = {"dataflow_panorama", "dataflow_index", "data_acquisition_flow"} | set(group_counts.keys())
         for old_html in html_dir.glob("*.html"):
             if old_html.stem not in valid_stems:
                 old_html.unlink()
