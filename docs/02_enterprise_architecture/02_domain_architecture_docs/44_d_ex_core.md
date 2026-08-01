@@ -51,7 +51,7 @@ ttl: permanent
 > 展示全部 25 个模块（生产态 8 + 设计态 17），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_ex_core_adapters_init_py["(生产态 / production) 包入口 / __init__<br/>D_EX_CORE adapters — 券商/风控适配器 re-export wrapper<br/>文件: adapters/__init__.py"]
     src_zephyr_ex_core_adapters_risk_validation_bridge_py["(生产态 / production) 风控验证桥接 / risk_validation_bridge<br/>Re-export wrapper: risk_validation_bridge 真源在 zephyr.governance.adapters.risk_validation_bridge<br/>文件: adapters/risk_validation_bridge.py"]
@@ -114,8 +114,8 @@ flowchart TD
     src_zephyr_ex_core_batch_take_profit_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_auction_deviation_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_simulation_broker_py
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_miniqmt_broker_py
+    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_simulation_broker_py
     src_zephyr_ex_core_conditional_order_manager_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_mcp_server_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_engine_py -.->|runtime / runtime| src_zephyr_ex_core_execution_report_py
@@ -124,6 +124,8 @@ flowchart TD
     D_SELL_DECISION["(设计态 / design) 卖出决策 / Sell Decision<br/>卖出决策，负责卖出信号生成、卖出时机判断和退出策略<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
+    D_RISK["(设计态 / design) 风控 / Risk Control<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>跨域节点 / cross-domain"]
+    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
     D_PF_CORE["(生产态 / production) 组合核心 / Portfolio Core<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_trading_session_py -.->|导入依赖 / import_depends| D_PF_CORE
     D_BACKTEST["(生产态 / production) 回测 / Backtest<br/>回测，负责历史数据回测、回测引擎和回测报告<br/>跨域节点 / cross-domain"]
@@ -136,8 +138,6 @@ flowchart TD
     D_GOVERNANCE["(生产态 / production) 生命周期管理 / Lifecycle Management<br/>生命周期管理，负责蓝图/模块/任务的声明周期管理和元数据治理<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
     src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
-    D_RISK["(设计态 / design) 风控 / Risk Control<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>跨域节点 / cross-domain"]
-    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
     D_REPORTING["(设计态 / design) 报告 / Reporting<br/>报告，负责投资报告、风险报告和合规报告的生成与分发<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_execution_report_py -.->|data / data| D_REPORTING
     src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
@@ -167,7 +167,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 8 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_ex_core_adapters_init_py["(生产态 / production) 包入口 / __init__<br/>D_EX_CORE adapters — 券商/风控适配器 re-export wrapper<br/>文件: adapters/__init__.py"]
     src_zephyr_ex_core_adapters_risk_validation_bridge_py["(生产态 / production) 风控验证桥接 / risk_validation_bridge<br/>Re-export wrapper: risk_validation_bridge 真源在 zephyr.governance.adapters.risk_validation_bridge<br/>文件: adapters/risk_validation_bridge.py"]
@@ -197,7 +197,7 @@ flowchart TD
 > 仅展示蓝图阶段、代码未写的设计态模块（共 17 个），不含跨域外部节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_ex_core_auction_deviation_executor_py["(设计态 / design) 拍卖偏差执行器 / auction_deviation_executor<br/>拍卖偏差执行器，执行核心的执行器，执行具体操作。<br/>文件: ex_core/auction_deviation_executor.py<br/>⛔ 交易执行核心域，设计已就绪，等待开发排期"]
     src_zephyr_ex_core_batch_executor_py["(设计态 / design) 批次执行器 / batch_executor<br/>批次执行器，执行核心的执行器，执行具体操作。<br/>文件: ex_core/batch_executor.py<br/>⛔ 交易执行核心域，设计已就绪，等待开发排期"]
@@ -302,7 +302,7 @@ flowchart TD
 > 本域与 11 个外部域直接连接（出边 36 条 + 入边 8 条 = 44 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 graph LR
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_TRADING["D_TRADING<br/>交易运营"]

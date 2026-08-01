@@ -51,7 +51,7 @@ ttl: permanent
 > 展示全部 76 个模块（生产态 76 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_feedback_loop_diagnosers_init_py["(生产态 / production) 包入口 / __init__<br/>包入口.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognitive/diagnosis/health/reliability)。<br/>文件: diagnosers/__init__.py"]
     src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) 自适应参数调优 / Adaptive Parameter Tuning — v0.37.0 R452<br/>自适应参数调优，提供包入口和模块加载功能<br/>文件: cognitive/adaptive_param_tuning.py"]
@@ -232,7 +232,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 76 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_feedback_loop_diagnosers_init_py["(生产态 / production) 包入口 / __init__<br/>包入口.diagnosers — GOV-DOC-018: 71个叶子模块拆分为4个逻辑子包(cognitive/diagnosis/health/reliability)。<br/>文件: diagnosers/__init__.py"]
     src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) 自适应参数调优 / Adaptive Parameter Tuning — v0.37.0 R452<br/>自适应参数调优，提供包入口和模块加载功能<br/>文件: cognitive/adaptive_param_tuning.py"]
@@ -428,7 +428,7 @@ flowchart TD
 > 本域与 2 个外部域直接连接（出边 1 条 + 入边 7 条 = 8 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 graph LR
     D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>反馈诊断器"]
     D_SHARED["D_SHARED<br/>共享服务"]

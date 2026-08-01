@@ -51,7 +51,7 @@ ttl: permanent
 > 展示全部 2 个模块（生产态 2 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) 检查终止开关latency / check_kill_switch_latency<br/>Kill Switch 延迟门禁<br/>文件: fitness_functions/check_kill_switch_latency.py"]
     scripts_governance_meta_manage_kill_switch_py["(生产态 / production) 管理终止开关 / manage_kill_switch<br/>Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py"]
@@ -73,7 +73,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 2 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["(生产态 / production) 检查终止开关latency / check_kill_switch_latency<br/>Kill Switch 延迟门禁<br/>文件: fitness_functions/check_kill_switch_latency.py"]
     scripts_governance_meta_manage_kill_switch_py["(生产态 / production) 管理终止开关 / manage_kill_switch<br/>Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py"]
@@ -110,7 +110,7 @@ flowchart TD
 > 本域与 1 个外部域直接连接（出边 3 条 + 入边 0 条 = 3 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 graph LR
     D_AUTONOMY_PERM["D_AUTONOMY_PERM<br/>自治保护"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]

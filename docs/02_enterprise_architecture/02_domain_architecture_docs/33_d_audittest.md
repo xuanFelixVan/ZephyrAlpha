@@ -51,7 +51,7 @@ ttl: permanent
 > 展示全部 1 个模块（生产态 1 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     docs_01_policies_and_standards_registry_catalogs_test_suite_registry_yaml["(生产态 / production) 测试suite注册表 / test_suite_registry<br/>测试suite注册表，机器学习的注册表，登记和查询已注册的条目。<br/>文件: catalogs/test_suite_registry.yaml"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -66,7 +66,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 1 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     docs_01_policies_and_standards_registry_catalogs_test_suite_registry_yaml["(生产态 / production) 测试suite注册表 / test_suite_registry<br/>测试suite注册表，机器学习的注册表，登记和查询已注册的条目。<br/>文件: catalogs/test_suite_registry.yaml"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

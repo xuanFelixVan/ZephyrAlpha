@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-01'
-total_scripts: 618
+total_scripts: 619
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -793,6 +793,14 @@ scripts:
 - name: governance/git_health_smoke.py
   path: governance/git_health_smoke.py
   description: AI session 启动时运行的核心工具健康度检查。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/harvest_candidates_from_drafts.py
+  path: governance/harvest_candidates_from_drafts.py
+  description: 从场外草稿 CSV 抓取候选模块入候选库（一次性 harvest 脚本，不进 generators/）。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1976,7 +1984,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/generators/generate_candidate_module_report.py
   path: governance/d5_architecture/generators/generate_candidate_module_report.py
-  description: '[BLUEPRINT] candidate_module_report_generator | .trae/documents/candidate_module_report_generator.md'
+  description: '治本(2026-08-01): 单文件 5301 条/3.57MB 卡死 IDE → 按功能域分文件输出。'
   domain: governance
   execution_plane: warm-path
   status: registered

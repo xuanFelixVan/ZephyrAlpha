@@ -51,7 +51,7 @@ ttl: permanent
 > 展示全部 2 个模块（生产态 2 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_signal_quality_init_py["(生产态 / production) 包入口 / D_SIGQC — Signal Quality Domain<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py"]
     src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) 退化监控基类 / D_SIGQC — Signal Quality Degradation Monitor Base<br/>退化监控基类。D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py"]
@@ -73,7 +73,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 2 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_signal_quality_init_py["(生产态 / production) 包入口 / D_SIGQC — Signal Quality Domain<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py"]
     src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) 退化监控基类 / D_SIGQC — Signal Quality Degradation Monitor Base<br/>退化监控基类。D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py"]
@@ -109,7 +109,7 @@ flowchart TD
 > 本域与 2 个外部域直接连接（出边 2 条 + 入边 0 条 = 2 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 graph LR
     D_SIGQC["D_SIGQC<br/>信号质量控制"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]

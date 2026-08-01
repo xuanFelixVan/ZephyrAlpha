@@ -51,7 +51,7 @@ ttl: permanent
 > 展示全部 16 个模块（生产态 7 + 设计态 9），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_signal_ashare_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: signal_ashare/__init__.py"]
     src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: _extensions/__init__.py"]
@@ -101,7 +101,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 7 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_signal_ashare_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: signal_ashare/__init__.py"]
     src_zephyr_signal_ashare_extensions_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: _extensions/__init__.py"]
@@ -128,7 +128,7 @@ flowchart TD
 > 仅展示蓝图阶段、代码未写的设计态模块（共 9 个），不含跨域外部节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 flowchart TD
     src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py["(设计态 / design) 资本流模式分析器 / capital_flow_pattern_analyzer<br/>资本流模式分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/capital_flow_pattern_analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py["(设计态 / design) 双引擎融合决策引擎 / dual_engine_fusion_decision_engine<br/>双引擎融合决策引擎，信号的引擎，执行核心逻辑的处理引擎。<br/>文件: signal_ashare/dual_engine_fusion_decision_engine.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
@@ -172,7 +172,7 @@ flowchart TD
 > 本域与 1 个外部域直接连接（出边 0 条 + 入边 1 条 = 1 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
 graph LR
     D_ASHARE_SIGNAL["D_ASHARE_SIGNAL<br/>A股特色信号"]
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
