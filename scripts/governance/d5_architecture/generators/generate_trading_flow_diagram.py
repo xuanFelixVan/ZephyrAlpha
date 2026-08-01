@@ -478,12 +478,20 @@ def _generate_index(flow_stages_def: list[dict], narrative: dict, stage_node_cou
     ])
     # 跨阶段附录：基础设施类候选（backtest/simulation/DR/死域等不归属任何交易流阶段）
     if cross_cutting_candidates:
+        from collections import Counter
+        status_counts = Counter(e.get("status", "?") for e in cross_cutting_candidates)
+        status_summary = "、".join(f"{s}×{c}" for s, c in status_counts.most_common())
         lines.extend([
             "## 附录·跨阶段候选（基础设施类）",
             "",
-            "以下候选不归属任何交易流阶段（回测/仿真/灾备/死域等），统一在此展示：",
+            f"以下候选不归属任何交易流阶段（回测/仿真/灾备/死域等），共 "
+            f"**{len(cross_cutting_candidates)} 条**（{status_summary}）。",
             "",
-            _format_candidate_table(cross_cutting_candidates),
+            "> 完整清单见 `docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml`。",
+            "",
+            "样例（前10条）：",
+            "",
+            _format_candidate_table(cross_cutting_candidates[:10]),
         ])
     lines.append(f"> 数据源：{DB_DISPLAY_NAME} + trading_flow_narrative.yaml + candidate_module_registry.yaml")
     return "\n".join(lines) + "\n"
