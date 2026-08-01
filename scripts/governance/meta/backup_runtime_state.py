@@ -65,15 +65,15 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-from _shared.constants import EXIT_PASS, REPO_ROOT, SCRIPTS_DIR
+from _shared.constants import EXIT_PASS, PROTECTED_PG_BACKUP_PREFIXES, REPO_ROOT, SCRIPTS_DIR
 
 # ARCH-041: 默认输出路径从 meta/_backups/（deprecated）改为 tmp/runtime_backups/（不进 git）
 DEFAULT_BACKUP_DIR = REPO_ROOT / "tmp" / "runtime_backups"
 
 # S3（AI-03 审计）：人工安全备份（回滚前快照，如 depgraph_pre_RSK_rollback_*）保护前缀。
+# 真源收敛至 _shared.constants.PROTECTED_PG_BACKUP_PREFIXES（原本地副本已删除，禁止重定义）。
 # 此类备份由人工/repair 脚本一次性产生（非 apply_depgraph 事件路径），排除出 keep-10
 # 保留计数，独立保留最新 _PROTECTED_KEEP 份，避免被自动保留策略挤出丢失安全快照。
-_PROTECTED_PREFIXES = ("depgraph_pre_", "depgraph_pinned_")
 _PROTECTED_KEEP = 5
 
 # §5.160.2 SQL 集中化：depgraph 备份导出 SQL（提取到模块级常量，禁裸 SQL 字面量）
@@ -83,7 +83,7 @@ _SQL_DUMP_EDGES = "SELECT * FROM edges ORDER BY edge_id"
 
 def _is_protected_backup(name: str) -> bool:
     """判定备份文件名是否为受保护的人工安全备份（排除出常规 keep-N 计数）。"""
-    return name.startswith(_PROTECTED_PREFIXES)
+    return name.startswith(PROTECTED_PG_BACKUP_PREFIXES)
 
 
 @contextlib.contextmanager

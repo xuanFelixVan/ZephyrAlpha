@@ -56,7 +56,13 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
+from _shared.constants import (  # noqa: E402
+    EXIT_ERROR,
+    EXIT_FINDINGS,
+    EXIT_PASS,
+    PROTECTED_PG_BACKUP_PREFIXES,
+    REPO_ROOT,
+)
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
 
 ensure_utf8_stdout()
@@ -74,9 +80,9 @@ _KEEP_SUFFIXES = (".lock",)
 _TMP_CLEAN_EXTS = (".py", ".txt", ".md", ".json", ".html", ".js", ".csv", ".log")
 
 # S3（AI-03 审计）：受保护的人工安全备份前缀（如 depgraph_pre_RSK_rollback_*）。
+# 真源收敛至 _shared.constants.PROTECTED_PG_BACKUP_PREFIXES（原本地副本已删除，禁止重定义）。
 # 此类备份由人工/repair 脚本一次性产生，排除出 keep-N 退役计数——
 # 保留策略与 backup_runtime_state.py._is_protected_backup 同源（真源唯一）。
-_PROTECTED_PG_PREFIXES = ("depgraph_pre_", "depgraph_pinned_")
 
 # S1（AI-03 审计）：tmp/ 子目录过期清理配置。
 # runtime_backups/ 由 backup_runtime_state.py max_backups 自管理（此处不动，防双重清理）；
@@ -86,8 +92,12 @@ _TMP_SUBDIR_DAYS_DEFAULT = 14
 
 
 def _is_protected_pg_backup(name: str) -> bool:
-    """判定 pg 备份是否为受保护人工安全备份（排除出 keep-N 退役计数）。"""
-    return name.startswith(_PROTECTED_PG_PREFIXES)
+    """判定 pg 备份是否为受保护人工安全备份（排除出 keep-N 退役计数）。
+
+    S3（AI-03 审计）：前缀真源为 _shared.constants.PROTECTED_PG_BACKUP_PREFIXES
+    （与 backup_runtime_state._is_protected_backup 同源，禁止本地重定义）。
+    """
+    return name.startswith(PROTECTED_PG_BACKUP_PREFIXES)
 
 
 def _is_protected(name: str) -> bool:

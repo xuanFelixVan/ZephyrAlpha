@@ -286,6 +286,13 @@ GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcemen
 #       经 grep 确认无任何脚本 import 此常量（generate_project_path_tree.py 自定义本地常量，P1 范围待治本）；
 #       测试 test_vocab_sync_chain.py::TestBugHDepgraphDbPath 已反转语义保护此治本成果。
 
+# AI-03 S3 治本（真源收敛，2026-08-01）：pg_backups/ 下受保护人工安全备份命名前缀。
+# 此类备份由人工/repair 脚本一次性产生（如 depgraph_pre_RSK_rollback_*），排除出自动
+# keep-N 退役计数——独立保留最新若干份，避免被自动保留策略挤出丢失回滚安全快照。
+# 消费方：backup_runtime_state._is_protected_backup + retire_tmp_artifacts._is_protected_pg_backup
+# 真源唯一收敛点（原两文件各定义一份副本，漂移风险——治本收敛至此，禁止他处重定义）。
+PROTECTED_PG_BACKUP_PREFIXES: tuple[str, ...] = ("depgraph_pre_", "depgraph_pinned_")
+
 EXIT_PASS: int = 0
 EXIT_FINDINGS: int = 1
 EXIT_ERROR: int = 2
