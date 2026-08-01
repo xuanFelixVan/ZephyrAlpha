@@ -112,7 +112,7 @@ flowchart TD
     src_zephyr_governance_resilience_governance_process_isolator_py["(生产态 / production) 进程隔离器 / process_<br/>isolator<br/>Process Isolator — v0.6.0 进程隔离器:<br/>engine运行在独立进程+资源限制+crash恢复。<br/>文件: resilience_governance/process_isolator.py"]
     src_zephyr_governance_resilience_governance_witness_isolation_py["(生产态 / production) Witness Isolation —<br/>v0.8.0 Witness隔离: N版 / witness_isolation<br/>Witness Isolation — v0.8.0 Witness隔离:<br/>N版本decision验证+投票机制+majority判定。<br/>文件: resilience_governance/witness_isolation.py"]
     src_zephyr_governance_security_governance_init_py["(生产态 / production) 包入口 / __init__<br/>安全的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: security_governance/__init__.py"]
-    src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) anti自动化bias /<br/>Anti-Automation Bias — D-022-09 mandatory human<br/>oversight en<br/>anti自动化bias，提供包入口和模块加载功能<br/>文件: security_governance/anti_automation_<br/>bias.py"]
+    src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) 对抗测试器 / adversarial_<br/>tester<br/>对抗测试器，依赖ipi防御、流中止守卫、预算引擎工<br/>作<br/>文件: security_governance/adversarial_tester.py"]
     src_zephyr_governance_security_governance_api_response_sanitizer_py["(生产态 / production) API响应清洗器 / api_<br/>response_sanitizer<br/>API Response Sanitizer — v0.9.0 API响应清洗器:<br/>外部API返回内容清洗+injection检测。<br/>文件: security_governance/api_response_<br/>sanitizer.py"]
     src_zephyr_governance_security_governance_bare_repo_scanner_py["(生产态 / production) barerepo扫描器 / bare_<br/>repo_scanner<br/>Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。<br/>文件: security_governance/bare_repo_scanner.py"]
     src_zephyr_governance_security_governance_compositional_safety_tester_py["(生产态 / production) compositional安全测试器 /<br/>compositional_safety_tester<br/>Compositional Safety Tester — v0.14.0<br/>组合性不安全测试器。<br/>文件: security_governance/compositional_safety_<br/>tester.py"]
@@ -188,8 +188,8 @@ flowchart TD
     src_zephyr_governance_resilience_governance_policy_sandbox_py ~~~ src_zephyr_governance_resilience_governance_process_isolator_py
     src_zephyr_governance_resilience_governance_process_isolator_py ~~~ src_zephyr_governance_resilience_governance_witness_isolation_py
     src_zephyr_governance_resilience_governance_witness_isolation_py ~~~ src_zephyr_governance_security_governance_init_py
-    src_zephyr_governance_security_governance_init_py ~~~ src_zephyr_governance_security_governance_anti_automation_bias_py
-    src_zephyr_governance_security_governance_anti_automation_bias_py ~~~ src_zephyr_governance_security_governance_api_response_sanitizer_py
+    src_zephyr_governance_security_governance_init_py ~~~ src_zephyr_governance_security_governance_adversarial_tester_py
+    src_zephyr_governance_security_governance_adversarial_tester_py ~~~ src_zephyr_governance_security_governance_api_response_sanitizer_py
     src_zephyr_governance_security_governance_api_response_sanitizer_py ~~~ src_zephyr_governance_security_governance_bare_repo_scanner_py
     src_zephyr_governance_security_governance_bare_repo_scanner_py ~~~ src_zephyr_governance_security_governance_compositional_safety_tester_py
     src_zephyr_governance_security_governance_compositional_safety_tester_py ~~~ src_zephyr_governance_security_governance_config_scanner_py
@@ -209,46 +209,46 @@ flowchart TD
     src_zephyr_governance_escalation_escalation_engine_py["(生产态 / production) 升级引擎 / Escalation<br/>Engine — MOD-INF-022<br/>escalation引擎。Escalation Engine — MOD-INF-022<br/>文件: escalation/escalation_engine.py"]
     src_zephyr_governance_ops_governance_event_hook_py["(生产态 / production) 事件钩子 / event_hook<br/>EventHook — 声明式任务系统事件订阅<br/>文件: ops_governance/event_hook.py"]
     src_zephyr_governance_ops_governance_phase_manager_py["(生产态 / production) 阶段管理器 / phase_manager<br/>Phase Manager — ZephyrAlpha 施工阶段门控引擎.<br/>文件: ops_governance/phase_manager.py"]
+    src_zephyr_governance_ops_governance_stream_abort_guard_py["(生产态 / production) 流中止守卫 / stream_abort_<br/>guard<br/>StreamAbortGuard — 流式中断守卫<br/>文件: ops_governance/stream_abort_guard.py"]
     src_zephyr_governance_resilience_governance_account_isolator_py["(生产态 / production) 账户隔离器 / account_<br/>isolator<br/>Account Isolator — v0.10.0 多账户升级隔离器。<br/>文件: resilience_governance/account_isolator.py"]
     src_zephyr_governance_resilience_governance_deadlock_detector_py["(生产态 / production) deadlock检测器 / deadlock_<br/>detector<br/>Deadlock Detector — D-022-04<br/>多Agent死锁+循环依赖检测+超时破解。<br/>文件: resilience_governance/deadlock_detector.py"]
     src_zephyr_governance_resilience_governance_decision_fatigue_py["(生产态 / production) 决策疲劳 / decision_<br/>fatigue<br/>决策疲劳，供MOD-INF-027;MOD-INF-020;MOD-IN使用<br/>文件: resilience_governance/decision_fatigue.py"]
-    src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) 对抗测试器 / adversarial_<br/>tester<br/>对抗测试器，依赖ipi防御、流中止守卫、预算引擎工<br/>作<br/>文件: security_governance/adversarial_tester.py"]
+    src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) anti自动化bias /<br/>Anti-Automation Bias — D-022-09 mandatory human<br/>oversight en<br/>anti自动化bias，提供包入口和模块加载功能<br/>文件: security_governance/anti_automation_<br/>bias.py"]
+    src_zephyr_governance_security_governance_ipi_defense_py["(生产态 / production) ipi防御 / ipi_defense<br/>ipi防御，安全的报告器，汇总数据生成报告。<br/>文件: security_governance/ipi_defense.py"]
     src_zephyr_governance_security_governance_security_gateway_base_py["(生产态 / production) 安全网关基类 / D_<br/>COMPLIANCE — Governance & Compliance Layer<br/>安全网关基类。D_COMPLIANCE — Governance &<br/>Compliance Layer<br/>文件: security_governance/security_gateway_<br/>base.py"]
     src_zephyr_governance_escalation_escalation_engine_py ~~~ src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_ops_governance_event_hook_py ~~~ src_zephyr_governance_ops_governance_phase_manager_py
-    src_zephyr_governance_ops_governance_phase_manager_py ~~~ src_zephyr_governance_resilience_governance_account_isolator_py
+    src_zephyr_governance_ops_governance_phase_manager_py ~~~ src_zephyr_governance_ops_governance_stream_abort_guard_py
+    src_zephyr_governance_ops_governance_stream_abort_guard_py ~~~ src_zephyr_governance_resilience_governance_account_isolator_py
     src_zephyr_governance_resilience_governance_account_isolator_py ~~~ src_zephyr_governance_resilience_governance_deadlock_detector_py
     src_zephyr_governance_resilience_governance_deadlock_detector_py ~~~ src_zephyr_governance_resilience_governance_decision_fatigue_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_py ~~~ src_zephyr_governance_security_governance_adversarial_tester_py
-    src_zephyr_governance_security_governance_adversarial_tester_py ~~~ src_zephyr_governance_security_governance_security_gateway_base_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_py ~~~ src_zephyr_governance_security_governance_anti_automation_bias_py
+    src_zephyr_governance_security_governance_anti_automation_bias_py ~~~ src_zephyr_governance_security_governance_ipi_defense_py
+    src_zephyr_governance_security_governance_ipi_defense_py ~~~ src_zephyr_governance_security_governance_security_gateway_base_py
     src_zephyr_governance_escalation_escalation_metrics_py["(生产态 / production) 升级指标 / escalation_<br/>metrics<br/>Escalation Metrics — D-022-07 指标收集器:<br/>升级率/误升级率/响应延迟。<br/>文件: escalation/escalation_metrics.py"]
     src_zephyr_governance_escalation_escalation_models_py["(生产态 / production) 升级模型 / Escalation<br/>Protocol data models — MOD-INF-022<br/>escalation模型。Escalation Protocol data models<br/>— MOD-INF-022<br/>文件: escalation/escalation_models.py"]
     src_zephyr_governance_ops_governance_phase_check_registry_py["(生产态 / production) 阶段检查注册表 / phase_<br/>check_registry<br/>PhaseManager->GateEngine 检查注册表桥梁 — 44<br/>个阶段门控检查映射.<br/>文件: ops_governance/phase_check_registry.py"]
-    src_zephyr_governance_ops_governance_stream_abort_guard_py["(生产态 / production) 流中止守卫 / stream_abort_<br/>guard<br/>StreamAbortGuard — 流式中断守卫<br/>文件: ops_governance/stream_abort_guard.py"]
     src_zephyr_governance_resilience_governance_circuit_breaker_py["(生产态 / production) 熔断断路器 / Circuit<br/>Breaker — MOD-INF-022<br/>熔断断路器。Circuit Breaker — MOD-INF-022<br/>文件: resilience_governance/circuit_breaker.py"]
-    src_zephyr_governance_security_governance_ipi_defense_py["(生产态 / production) ipi防御 / ipi_defense<br/>ipi防御，安全的报告器，汇总数据生成报告。<br/>文件: security_governance/ipi_defense.py"]
     src_zephyr_governance_escalation_escalation_metrics_py ~~~ src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_models_py ~~~ src_zephyr_governance_ops_governance_phase_check_registry_py
-    src_zephyr_governance_ops_governance_phase_check_registry_py ~~~ src_zephyr_governance_ops_governance_stream_abort_guard_py
-    src_zephyr_governance_ops_governance_stream_abort_guard_py ~~~ src_zephyr_governance_resilience_governance_circuit_breaker_py
-    src_zephyr_governance_resilience_governance_circuit_breaker_py ~~~ src_zephyr_governance_security_governance_ipi_defense_py
+    src_zephyr_governance_ops_governance_phase_check_registry_py ~~~ src_zephyr_governance_resilience_governance_circuit_breaker_py
     src_zephyr_governance_escalation_escalation_api_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_metrics_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_circuit_breaker_py
-    src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_manager_py
+    src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
     src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_resilience_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_resilience_governance_account_isolator_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_security_gateway_base_py
-    src_zephyr_governance_security_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_security_governance_adversarial_tester_py
+    src_zephyr_governance_security_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_security_governance_anti_automation_bias_py
     D_INFRA_A2A["(生产态 / production) A2A通信 / A2A<br/>Communication<br/>Agent 与 Agent 之间的通信协议层，负责 AI<br/>代理间的消息传递、请求路由和协议适配<br/>跨域节点 / cross-domain"]
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
     D_INTEGRATION["(生产态 / production) 管线路由 / Pipeline<br/>Routing<br/>管线路由，负责跨域数据流路由、管道编排和集成适配<br/>跨域节点 / cross-domain"]
@@ -266,10 +266,10 @@ flowchart TD
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_SHARED["(生产态 / production) 共享服务 / Shared Services<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>跨域节点 / cross-domain"]
     src_zephyr_governance_escalation_contracts_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_governance_resilience_governance_blast_radius_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_RULE["(生产态 / production) 规则治理 / Rule Governance<br/>规则治理，负责规则注册、规则版本和规则依赖管理<br/>跨域节点 / cross-domain"]
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_RULE
-    src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_COMPLIANCE["(设计态 / design) 合规 / Compliance<br/>合规，负责交易合规检查、规则引擎和合规报告<br/>跨域节点 / cross-domain"]
     D_COMPLIANCE -.->|runtime / runtime| src_zephyr_governance_security_governance_security_gateway_base_py
@@ -369,7 +369,7 @@ flowchart TD
     src_zephyr_governance_resilience_governance_process_isolator_py["(生产态 / production) 进程隔离器 / process_<br/>isolator<br/>Process Isolator — v0.6.0 进程隔离器:<br/>engine运行在独立进程+资源限制+crash恢复。<br/>文件: resilience_governance/process_isolator.py"]
     src_zephyr_governance_resilience_governance_witness_isolation_py["(生产态 / production) Witness Isolation —<br/>v0.8.0 Witness隔离: N版 / witness_isolation<br/>Witness Isolation — v0.8.0 Witness隔离:<br/>N版本decision验证+投票机制+majority判定。<br/>文件: resilience_governance/witness_isolation.py"]
     src_zephyr_governance_security_governance_init_py["(生产态 / production) 包入口 / __init__<br/>安全的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: security_governance/__init__.py"]
-    src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) anti自动化bias /<br/>Anti-Automation Bias — D-022-09 mandatory human<br/>oversight en<br/>anti自动化bias，提供包入口和模块加载功能<br/>文件: security_governance/anti_automation_<br/>bias.py"]
+    src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) 对抗测试器 / adversarial_<br/>tester<br/>对抗测试器，依赖ipi防御、流中止守卫、预算引擎工<br/>作<br/>文件: security_governance/adversarial_tester.py"]
     src_zephyr_governance_security_governance_api_response_sanitizer_py["(生产态 / production) API响应清洗器 / api_<br/>response_sanitizer<br/>API Response Sanitizer — v0.9.0 API响应清洗器:<br/>外部API返回内容清洗+injection检测。<br/>文件: security_governance/api_response_<br/>sanitizer.py"]
     src_zephyr_governance_security_governance_bare_repo_scanner_py["(生产态 / production) barerepo扫描器 / bare_<br/>repo_scanner<br/>Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。<br/>文件: security_governance/bare_repo_scanner.py"]
     src_zephyr_governance_security_governance_compositional_safety_tester_py["(生产态 / production) compositional安全测试器 /<br/>compositional_safety_tester<br/>Compositional Safety Tester — v0.14.0<br/>组合性不安全测试器。<br/>文件: security_governance/compositional_safety_<br/>tester.py"]
@@ -445,8 +445,8 @@ flowchart TD
     src_zephyr_governance_resilience_governance_policy_sandbox_py ~~~ src_zephyr_governance_resilience_governance_process_isolator_py
     src_zephyr_governance_resilience_governance_process_isolator_py ~~~ src_zephyr_governance_resilience_governance_witness_isolation_py
     src_zephyr_governance_resilience_governance_witness_isolation_py ~~~ src_zephyr_governance_security_governance_init_py
-    src_zephyr_governance_security_governance_init_py ~~~ src_zephyr_governance_security_governance_anti_automation_bias_py
-    src_zephyr_governance_security_governance_anti_automation_bias_py ~~~ src_zephyr_governance_security_governance_api_response_sanitizer_py
+    src_zephyr_governance_security_governance_init_py ~~~ src_zephyr_governance_security_governance_adversarial_tester_py
+    src_zephyr_governance_security_governance_adversarial_tester_py ~~~ src_zephyr_governance_security_governance_api_response_sanitizer_py
     src_zephyr_governance_security_governance_api_response_sanitizer_py ~~~ src_zephyr_governance_security_governance_bare_repo_scanner_py
     src_zephyr_governance_security_governance_bare_repo_scanner_py ~~~ src_zephyr_governance_security_governance_compositional_safety_tester_py
     src_zephyr_governance_security_governance_compositional_safety_tester_py ~~~ src_zephyr_governance_security_governance_config_scanner_py
@@ -466,46 +466,46 @@ flowchart TD
     src_zephyr_governance_escalation_escalation_engine_py["(生产态 / production) 升级引擎 / Escalation<br/>Engine — MOD-INF-022<br/>escalation引擎。Escalation Engine — MOD-INF-022<br/>文件: escalation/escalation_engine.py"]
     src_zephyr_governance_ops_governance_event_hook_py["(生产态 / production) 事件钩子 / event_hook<br/>EventHook — 声明式任务系统事件订阅<br/>文件: ops_governance/event_hook.py"]
     src_zephyr_governance_ops_governance_phase_manager_py["(生产态 / production) 阶段管理器 / phase_manager<br/>Phase Manager — ZephyrAlpha 施工阶段门控引擎.<br/>文件: ops_governance/phase_manager.py"]
+    src_zephyr_governance_ops_governance_stream_abort_guard_py["(生产态 / production) 流中止守卫 / stream_abort_<br/>guard<br/>StreamAbortGuard — 流式中断守卫<br/>文件: ops_governance/stream_abort_guard.py"]
     src_zephyr_governance_resilience_governance_account_isolator_py["(生产态 / production) 账户隔离器 / account_<br/>isolator<br/>Account Isolator — v0.10.0 多账户升级隔离器。<br/>文件: resilience_governance/account_isolator.py"]
     src_zephyr_governance_resilience_governance_deadlock_detector_py["(生产态 / production) deadlock检测器 / deadlock_<br/>detector<br/>Deadlock Detector — D-022-04<br/>多Agent死锁+循环依赖检测+超时破解。<br/>文件: resilience_governance/deadlock_detector.py"]
     src_zephyr_governance_resilience_governance_decision_fatigue_py["(生产态 / production) 决策疲劳 / decision_<br/>fatigue<br/>决策疲劳，供MOD-INF-027;MOD-INF-020;MOD-IN使用<br/>文件: resilience_governance/decision_fatigue.py"]
-    src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) 对抗测试器 / adversarial_<br/>tester<br/>对抗测试器，依赖ipi防御、流中止守卫、预算引擎工<br/>作<br/>文件: security_governance/adversarial_tester.py"]
+    src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) anti自动化bias /<br/>Anti-Automation Bias — D-022-09 mandatory human<br/>oversight en<br/>anti自动化bias，提供包入口和模块加载功能<br/>文件: security_governance/anti_automation_<br/>bias.py"]
+    src_zephyr_governance_security_governance_ipi_defense_py["(生产态 / production) ipi防御 / ipi_defense<br/>ipi防御，安全的报告器，汇总数据生成报告。<br/>文件: security_governance/ipi_defense.py"]
     src_zephyr_governance_security_governance_security_gateway_base_py["(生产态 / production) 安全网关基类 / D_<br/>COMPLIANCE — Governance & Compliance Layer<br/>安全网关基类。D_COMPLIANCE — Governance &<br/>Compliance Layer<br/>文件: security_governance/security_gateway_<br/>base.py"]
     src_zephyr_governance_escalation_escalation_engine_py ~~~ src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_ops_governance_event_hook_py ~~~ src_zephyr_governance_ops_governance_phase_manager_py
-    src_zephyr_governance_ops_governance_phase_manager_py ~~~ src_zephyr_governance_resilience_governance_account_isolator_py
+    src_zephyr_governance_ops_governance_phase_manager_py ~~~ src_zephyr_governance_ops_governance_stream_abort_guard_py
+    src_zephyr_governance_ops_governance_stream_abort_guard_py ~~~ src_zephyr_governance_resilience_governance_account_isolator_py
     src_zephyr_governance_resilience_governance_account_isolator_py ~~~ src_zephyr_governance_resilience_governance_deadlock_detector_py
     src_zephyr_governance_resilience_governance_deadlock_detector_py ~~~ src_zephyr_governance_resilience_governance_decision_fatigue_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_py ~~~ src_zephyr_governance_security_governance_adversarial_tester_py
-    src_zephyr_governance_security_governance_adversarial_tester_py ~~~ src_zephyr_governance_security_governance_security_gateway_base_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_py ~~~ src_zephyr_governance_security_governance_anti_automation_bias_py
+    src_zephyr_governance_security_governance_anti_automation_bias_py ~~~ src_zephyr_governance_security_governance_ipi_defense_py
+    src_zephyr_governance_security_governance_ipi_defense_py ~~~ src_zephyr_governance_security_governance_security_gateway_base_py
     src_zephyr_governance_escalation_escalation_metrics_py["(生产态 / production) 升级指标 / escalation_<br/>metrics<br/>Escalation Metrics — D-022-07 指标收集器:<br/>升级率/误升级率/响应延迟。<br/>文件: escalation/escalation_metrics.py"]
     src_zephyr_governance_escalation_escalation_models_py["(生产态 / production) 升级模型 / Escalation<br/>Protocol data models — MOD-INF-022<br/>escalation模型。Escalation Protocol data models<br/>— MOD-INF-022<br/>文件: escalation/escalation_models.py"]
     src_zephyr_governance_ops_governance_phase_check_registry_py["(生产态 / production) 阶段检查注册表 / phase_<br/>check_registry<br/>PhaseManager->GateEngine 检查注册表桥梁 — 44<br/>个阶段门控检查映射.<br/>文件: ops_governance/phase_check_registry.py"]
-    src_zephyr_governance_ops_governance_stream_abort_guard_py["(生产态 / production) 流中止守卫 / stream_abort_<br/>guard<br/>StreamAbortGuard — 流式中断守卫<br/>文件: ops_governance/stream_abort_guard.py"]
     src_zephyr_governance_resilience_governance_circuit_breaker_py["(生产态 / production) 熔断断路器 / Circuit<br/>Breaker — MOD-INF-022<br/>熔断断路器。Circuit Breaker — MOD-INF-022<br/>文件: resilience_governance/circuit_breaker.py"]
-    src_zephyr_governance_security_governance_ipi_defense_py["(生产态 / production) ipi防御 / ipi_defense<br/>ipi防御，安全的报告器，汇总数据生成报告。<br/>文件: security_governance/ipi_defense.py"]
     src_zephyr_governance_escalation_escalation_metrics_py ~~~ src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_models_py ~~~ src_zephyr_governance_ops_governance_phase_check_registry_py
-    src_zephyr_governance_ops_governance_phase_check_registry_py ~~~ src_zephyr_governance_ops_governance_stream_abort_guard_py
-    src_zephyr_governance_ops_governance_stream_abort_guard_py ~~~ src_zephyr_governance_resilience_governance_circuit_breaker_py
-    src_zephyr_governance_resilience_governance_circuit_breaker_py ~~~ src_zephyr_governance_security_governance_ipi_defense_py
+    src_zephyr_governance_ops_governance_phase_check_registry_py ~~~ src_zephyr_governance_resilience_governance_circuit_breaker_py
     src_zephyr_governance_escalation_escalation_api_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_metrics_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_circuit_breaker_py
-    src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_manager_py
+    src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
     src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_resilience_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_resilience_governance_account_isolator_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_security_gateway_base_py
-    src_zephyr_governance_security_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_security_governance_adversarial_tester_py
+    src_zephyr_governance_security_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_security_governance_anti_automation_bias_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
