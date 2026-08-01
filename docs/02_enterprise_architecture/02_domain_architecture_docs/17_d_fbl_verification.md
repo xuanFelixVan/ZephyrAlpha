@@ -59,8 +59,8 @@ flowchart TD
     src_zephyr_feedback_loop_gates_security_gates_py["(生产态 / production) 安全门禁 / _security_gates<br/>安全门禁，门禁的门禁，在关键节点检查是否放行。<br/>文件: gates/_security_gates.py"]
     src_zephyr_feedback_loop_gates_action_reversibility_py["(生产态 / production) 动作reversibility / Action Reversibility — v0.15.0 R208<br/>动作reversibility。Action Reversibility — v0.15.0 R208<br/>文件: gates/action_reversibility.py"]
     src_zephyr_feedback_loop_gates_adversarial_validation_py["(生产态 / production) adversarial验证 / Adversarial Validation Gate — FLE-ADVERSARIAL-VALIDATION + R<br/>adversarial验证。Adversarial Validation Gate — FLE-ADVERSARIAL-VALIDATION + RED-BLUE-GATE bridge.<br/>文件: gates/adversarial_validation.py"]
-    src_zephyr_feedback_loop_gates_autonomy_credit_py["(生产态 / production) autonomycredit / Autonomy Credit System — v0.7.0 R87<br/>autonomycredit，门禁的功能模块。<br/>文件: gates/autonomy_credit.py"]
-    src_zephyr_feedback_loop_gates_autonomy_maturity_py["(生产态 / production) autonomymaturity / Autonomy Maturity Ladder — v0.7.0 R86<br/>autonomymaturity，门禁的功能模块。<br/>文件: gates/autonomy_maturity.py"]
+    src_zephyr_feedback_loop_gates_autonomy_credit_py["(生产态 / production) 自治信用 / Autonomy Credit System — v0.7.0 R87<br/>自治信用，门禁的功能模块。<br/>文件: gates/autonomy_credit.py"]
+    src_zephyr_feedback_loop_gates_autonomy_maturity_py["(生产态 / production) 自治成熟度 / Autonomy Maturity Ladder — v0.7.0 R86<br/>自治成熟度，门禁的功能模块。<br/>文件: gates/autonomy_maturity.py"]
     src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py["(生产态 / production) 蓝图代码协调器 / Blueprint-Code Reconciler — v0.14.0 R195<br/>蓝图代码协调器。Blueprint-Code Reconciler — v0.14.0 R195<br/>文件: gates/blueprint_code_reconciler.py"]
     src_zephyr_feedback_loop_gates_blueprint_validator_py["(生产态 / production) 蓝图校验器 / Blueprint Validator — v0.8.0 R108<br/>蓝图校验器。Blueprint Validator — v0.8.0 R108<br/>文件: gates/blueprint_validator.py"]
     src_zephyr_feedback_loop_gates_checkpoint_manager_py["(生产态 / production) 检查点管理器 / Checkpoint Manager — v0.3.0 R18<br/>检查点管理器。Checkpoint Manager — v0.3.0 R18<br/>文件: gates/checkpoint_manager.py"]
@@ -68,7 +68,7 @@ flowchart TD
     src_zephyr_feedback_loop_gates_concurrent_change_deconfliction_py["(生产态 / production) 并发变更deconfliction / Concurrent Change Deconfliction — v0.16.0 R230<br/>并发变更deconfliction。Concurrent Change Deconfliction — v0.16.0 R230<br/>文件: gates/concurrent_change_deconfliction.py"]
     src_zephyr_feedback_loop_gates_config_complexity_budget_py["(生产态 / production) 配置complexity预算 / Config Complexity Budget — v0.16.0 R227<br/>配置complexity预算。Config Complexity Budget — v0.16.0 R227<br/>文件: gates/config_complexity_budget.py"]
     src_zephyr_feedback_loop_gates_config_governance_py["(生产态 / production) 配置治理 / Config Governance — v0.3.0 R8<br/>配置治理。Config Governance — v0.3.0 R8<br/>文件: gates/config_governance.py"]
-    src_zephyr_feedback_loop_gates_conflict_arbitration_py["(生产态 / production) conflictarbitration / Conflict Arbitration — v0.10.0 R130<br/>conflictarbitration，门禁的功能模块。<br/>文件: gates/conflict_arbitration.py"]
+    src_zephyr_feedback_loop_gates_conflict_arbitration_py["(生产态 / production) 冲突仲裁 / Conflict Arbitration — v0.10.0 R130<br/>冲突仲裁，门禁的功能模块。<br/>文件: gates/conflict_arbitration.py"]
     src_zephyr_feedback_loop_gates_cve_scanner_py["(生产态 / production) cve扫描器 / CVE Scanner — v0.8.0 R106<br/>cve扫描器。CVE Scanner — v0.8.0 R106<br/>文件: gates/cve_scanner.py"]
     src_zephyr_feedback_loop_gates_data_quality_gate_py["(生产态 / production) 数据质量门禁 / Data Quality Gate — v0.11.0 R143<br/>数据质量门禁。Data Quality Gate — v0.11.0 R143<br/>文件: gates/data_quality_gate.py"]
     src_zephyr_feedback_loop_gates_db_integrity_py["(生产态 / production) 数据库完整性 / DB Integrity Gate — v0.3.0 R17<br/>数据库完整性。DB Integrity Gate — v0.3.0 R17<br/>文件: gates/db_integrity.py"]
@@ -103,7 +103,7 @@ flowchart TD
     src_zephyr_feedback_loop_verifiers_ab_test_py["(生产态 / production) ab测试 / A/B Test Verifier — v0.9.0 R117<br/>ab测试。A/B Test Verifier — v0.9.0 R117<br/>文件: verifiers/ab_test.py"]
     src_zephyr_feedback_loop_verifiers_action_explainability_py["(生产态 / production) 动作explainability / Action Explainability — v0.3.0 R15<br/>动作explainability。Action Explainability — v0.3.0 R15<br/>文件: verifiers/action_explainability.py"]
     src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py["(生产态 / production) AIcommentveracity / AI Comment Veracity — v0.37.0 R459<br/>AIcommentveracity，反馈闭环的功能模块。<br/>文件: verifiers/ai_comment_veracity.py"]
-    src_zephyr_feedback_loop_verifiers_attack_simulator_py["(生产态 / production) attacksimulator / Attack Simulator — v0.6.0 R57<br/>attacksimulator，反馈闭环的功能模块。<br/>文件: verifiers/attack_simulator.py"]
+    src_zephyr_feedback_loop_verifiers_attack_simulator_py["(生产态 / production) 攻击simulator / Attack Simulator — v0.6.0 R57<br/>攻击simulator，反馈闭环的功能模块。<br/>文件: verifiers/attack_simulator.py"]
     src_zephyr_feedback_loop_verifiers_auto_rollback_py["(生产态 / production) 自动回滚 / Auto Rollback — v0.8.0 R93<br/>自动回滚。Auto Rollback — v0.8.0 R93<br/>文件: verifiers/auto_rollback.py"]
     src_zephyr_feedback_loop_verifiers_build_reproducibility_verifier_py["(生产态 / production) 构建reproducibility验证器 / Build Reproducibility Verifier — v0.38.0 R484<br/>构建reproducibility验证器。Build Reproducibility Verifier — v0.38.0 R484<br/>文件: verifiers/build_reproducibility_verifier.py"]
     src_zephyr_feedback_loop_verifiers_canary_repair_py["(生产态 / production) canaryrepair / Canary Repair — v0.8.0 R104b<br/>canaryrepair，反馈闭环的功能模块。<br/>文件: verifiers/canary_repair.py"]
@@ -249,8 +249,8 @@ flowchart TD
     src_zephyr_feedback_loop_gates_security_gates_py["(生产态 / production) 安全门禁 / _security_gates<br/>安全门禁，门禁的门禁，在关键节点检查是否放行。<br/>文件: gates/_security_gates.py"]
     src_zephyr_feedback_loop_gates_action_reversibility_py["(生产态 / production) 动作reversibility / Action Reversibility — v0.15.0 R208<br/>动作reversibility。Action Reversibility — v0.15.0 R208<br/>文件: gates/action_reversibility.py"]
     src_zephyr_feedback_loop_gates_adversarial_validation_py["(生产态 / production) adversarial验证 / Adversarial Validation Gate — FLE-ADVERSARIAL-VALIDATION + R<br/>adversarial验证。Adversarial Validation Gate — FLE-ADVERSARIAL-VALIDATION + RED-BLUE-GATE bridge.<br/>文件: gates/adversarial_validation.py"]
-    src_zephyr_feedback_loop_gates_autonomy_credit_py["(生产态 / production) autonomycredit / Autonomy Credit System — v0.7.0 R87<br/>autonomycredit，门禁的功能模块。<br/>文件: gates/autonomy_credit.py"]
-    src_zephyr_feedback_loop_gates_autonomy_maturity_py["(生产态 / production) autonomymaturity / Autonomy Maturity Ladder — v0.7.0 R86<br/>autonomymaturity，门禁的功能模块。<br/>文件: gates/autonomy_maturity.py"]
+    src_zephyr_feedback_loop_gates_autonomy_credit_py["(生产态 / production) 自治信用 / Autonomy Credit System — v0.7.0 R87<br/>自治信用，门禁的功能模块。<br/>文件: gates/autonomy_credit.py"]
+    src_zephyr_feedback_loop_gates_autonomy_maturity_py["(生产态 / production) 自治成熟度 / Autonomy Maturity Ladder — v0.7.0 R86<br/>自治成熟度，门禁的功能模块。<br/>文件: gates/autonomy_maturity.py"]
     src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py["(生产态 / production) 蓝图代码协调器 / Blueprint-Code Reconciler — v0.14.0 R195<br/>蓝图代码协调器。Blueprint-Code Reconciler — v0.14.0 R195<br/>文件: gates/blueprint_code_reconciler.py"]
     src_zephyr_feedback_loop_gates_blueprint_validator_py["(生产态 / production) 蓝图校验器 / Blueprint Validator — v0.8.0 R108<br/>蓝图校验器。Blueprint Validator — v0.8.0 R108<br/>文件: gates/blueprint_validator.py"]
     src_zephyr_feedback_loop_gates_checkpoint_manager_py["(生产态 / production) 检查点管理器 / Checkpoint Manager — v0.3.0 R18<br/>检查点管理器。Checkpoint Manager — v0.3.0 R18<br/>文件: gates/checkpoint_manager.py"]
@@ -258,7 +258,7 @@ flowchart TD
     src_zephyr_feedback_loop_gates_concurrent_change_deconfliction_py["(生产态 / production) 并发变更deconfliction / Concurrent Change Deconfliction — v0.16.0 R230<br/>并发变更deconfliction。Concurrent Change Deconfliction — v0.16.0 R230<br/>文件: gates/concurrent_change_deconfliction.py"]
     src_zephyr_feedback_loop_gates_config_complexity_budget_py["(生产态 / production) 配置complexity预算 / Config Complexity Budget — v0.16.0 R227<br/>配置complexity预算。Config Complexity Budget — v0.16.0 R227<br/>文件: gates/config_complexity_budget.py"]
     src_zephyr_feedback_loop_gates_config_governance_py["(生产态 / production) 配置治理 / Config Governance — v0.3.0 R8<br/>配置治理。Config Governance — v0.3.0 R8<br/>文件: gates/config_governance.py"]
-    src_zephyr_feedback_loop_gates_conflict_arbitration_py["(生产态 / production) conflictarbitration / Conflict Arbitration — v0.10.0 R130<br/>conflictarbitration，门禁的功能模块。<br/>文件: gates/conflict_arbitration.py"]
+    src_zephyr_feedback_loop_gates_conflict_arbitration_py["(生产态 / production) 冲突仲裁 / Conflict Arbitration — v0.10.0 R130<br/>冲突仲裁，门禁的功能模块。<br/>文件: gates/conflict_arbitration.py"]
     src_zephyr_feedback_loop_gates_cve_scanner_py["(生产态 / production) cve扫描器 / CVE Scanner — v0.8.0 R106<br/>cve扫描器。CVE Scanner — v0.8.0 R106<br/>文件: gates/cve_scanner.py"]
     src_zephyr_feedback_loop_gates_data_quality_gate_py["(生产态 / production) 数据质量门禁 / Data Quality Gate — v0.11.0 R143<br/>数据质量门禁。Data Quality Gate — v0.11.0 R143<br/>文件: gates/data_quality_gate.py"]
     src_zephyr_feedback_loop_gates_db_integrity_py["(生产态 / production) 数据库完整性 / DB Integrity Gate — v0.3.0 R17<br/>数据库完整性。DB Integrity Gate — v0.3.0 R17<br/>文件: gates/db_integrity.py"]
@@ -293,7 +293,7 @@ flowchart TD
     src_zephyr_feedback_loop_verifiers_ab_test_py["(生产态 / production) ab测试 / A/B Test Verifier — v0.9.0 R117<br/>ab测试。A/B Test Verifier — v0.9.0 R117<br/>文件: verifiers/ab_test.py"]
     src_zephyr_feedback_loop_verifiers_action_explainability_py["(生产态 / production) 动作explainability / Action Explainability — v0.3.0 R15<br/>动作explainability。Action Explainability — v0.3.0 R15<br/>文件: verifiers/action_explainability.py"]
     src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py["(生产态 / production) AIcommentveracity / AI Comment Veracity — v0.37.0 R459<br/>AIcommentveracity，反馈闭环的功能模块。<br/>文件: verifiers/ai_comment_veracity.py"]
-    src_zephyr_feedback_loop_verifiers_attack_simulator_py["(生产态 / production) attacksimulator / Attack Simulator — v0.6.0 R57<br/>attacksimulator，反馈闭环的功能模块。<br/>文件: verifiers/attack_simulator.py"]
+    src_zephyr_feedback_loop_verifiers_attack_simulator_py["(生产态 / production) 攻击simulator / Attack Simulator — v0.6.0 R57<br/>攻击simulator，反馈闭环的功能模块。<br/>文件: verifiers/attack_simulator.py"]
     src_zephyr_feedback_loop_verifiers_auto_rollback_py["(生产态 / production) 自动回滚 / Auto Rollback — v0.8.0 R93<br/>自动回滚。Auto Rollback — v0.8.0 R93<br/>文件: verifiers/auto_rollback.py"]
     src_zephyr_feedback_loop_verifiers_build_reproducibility_verifier_py["(生产态 / production) 构建reproducibility验证器 / Build Reproducibility Verifier — v0.38.0 R484<br/>构建reproducibility验证器。Build Reproducibility Verifier — v0.38.0 R484<br/>文件: verifiers/build_reproducibility_verifier.py"]
     src_zephyr_feedback_loop_verifiers_canary_repair_py["(生产态 / production) canaryrepair / Canary Repair — v0.8.0 R104b<br/>canaryrepair，反馈闭环的功能模块。<br/>文件: verifiers/canary_repair.py"]
@@ -440,7 +440,7 @@ flowchart TD
 | 13 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | ab测试 / A/B Test Verifier — v0.9.0 R117 (verifiers/ab_t... | 导入依赖 / import_depends |
 | 14 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | 动作explainability / Action Explainability — v0.3.0 R15 ... | 导入依赖 / import_depends |
 | 15 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | AIcommentveracity / AI Comment Veracity — v0.37.0 R459 (... | 导入依赖 / import_depends |
-| 16 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | attacksimulator / Attack Simulator — v0.6.0 R57 (verifie... | 导入依赖 / import_depends |
+| 16 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | 攻击simulator / Attack Simulator — v0.6.0 R57 (verifiers... | 导入依赖 / import_depends |
 | 17 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | 自动回滚 / Auto Rollback — v0.8.0 R93 (verifiers/auto_ro... | 导入依赖 / import_depends |
 | 18 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | 构建reproducibility验证器 / Build Reproducibility Verifie... | 导入依赖 / import_depends |
 | 19 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | canaryrepair / Canary Repair — v0.8.0 R104b (verifiers/c... | 导入依赖 / import_depends |

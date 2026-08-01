@@ -535,7 +535,7 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | SentinelServer: 意图路由哨兵 MCP Server / sentinel_server... | → | D_AUTONOMY_CORE 自治核心: intentkeywordmapper / IntentKeywordMapper - Stage 1 of th... | 导入依赖 / import_depends |
+| 1 | SentinelServer: 意图路由哨兵 MCP Server / sentinel_server... | → | D_AUTONOMY_CORE 自治核心: 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three... | 导入依赖 / import_depends |
 | 2 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_AUTONOMY_CORE 自治核心: PipelineSkillBridge — Agent Spec -> Pipe / pipeline_brid... | 导入依赖 / import_depends |
 | 3 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_AUTONOMY_CORE 自治核心: 技能反馈 / MOD-INF-019: Agent Spec — Skill Feedback Loop... | 导入依赖 / import_depends |
 | 4 | BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协 / _base_serve... | → | D_GOVERNANCE 生命周期管理: G-CT-007 契约：Budget -> RBAC 配额限制. / rbac_bridge (ag... | 导入依赖 / import_depends |

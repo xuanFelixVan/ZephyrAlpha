@@ -366,8 +366,8 @@ flowchart TD
     src_zephyr_security_adversarial_validation_validator_py ~~~ src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_protocol_py ~~~ src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
     src_zephyr_security_access_control_orphan_judge_duplicate_detector_py["(生产态 / production) L2 功能重复检测器——基于 AST 哈希的 Jaccard / duplicate_detector<br/>L2 功能重复检测器——基于 AST 哈希的 Jaccard 相似度检测模块间功能重叠。<br/>文件: orphan_judge/duplicate_detector.py"]
-    src_zephyr_security_adversarial_validation_blast_radius_py["(生产态 / production) blastradius / blast_radius<br/>blastradius，对抗验证的异常，定义本模块的异常类型。<br/>文件: adversarial_validation/blast_radius.py"]
-    src_zephyr_security_adversarial_validation_bypass_recorder_py["(生产态 / production) bypassrecorder / bypass_recorder<br/>bypassrecorder，把发生的事件/结果记下来留档，主要提供记录bypass、查询bypasses、escalated条目、总计bypasses等功能，是对抗验证的组成部分<br/>文件: adversarial_validation/bypass_recorder.py"]
+    src_zephyr_security_adversarial_validation_blast_radius_py["(生产态 / production) 爆炸半径 / blast_radius<br/>爆炸半径，对抗验证的异常，定义本模块的异常类型。<br/>文件: adversarial_validation/blast_radius.py"]
+    src_zephyr_security_adversarial_validation_bypass_recorder_py["(生产态 / production) 绕过记录器 / bypass_recorder<br/>绕过记录器，把发生的事件/结果记下来留档，主要提供记录bypass、查询bypasses、escalated条目、总计bypasses等功能，是对抗验证的组成部分<br/>文件: adversarial_validation/bypass_recorder.py"]
     src_zephyr_security_adversarial_validation_cleanup_py["(生产态 / production) 清理 / cleanup<br/>清理，对抗验证的异常，定义本模块的异常类型。<br/>文件: adversarial_validation/cleanup.py"]
     src_zephyr_security_adversarial_validation_defense_runner_py["(生产态 / production) 防御运行器 / defense_runner<br/>防御运行器，对抗验证的异常，定义本模块的异常类型。<br/>文件: adversarial_validation/defense_runner.py"]
     src_zephyr_security_adversarial_validation_scenario_loader_py["(生产态 / production) 场景加载器 / scenario_loader<br/>场景加载器，读取并加载配置/数据到内存，主要提供场景数量、加载、获取、列表by层等功能，是对抗验证的组成部分<br/>文件: adversarial_validation/scenario_loader.py"]
@@ -866,8 +866,8 @@ flowchart TD
     src_zephyr_security_adversarial_validation_validator_py ~~~ src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_protocol_py ~~~ src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
     src_zephyr_security_access_control_orphan_judge_duplicate_detector_py["(生产态 / production) L2 功能重复检测器——基于 AST 哈希的 Jaccard / duplicate_detector<br/>L2 功能重复检测器——基于 AST 哈希的 Jaccard 相似度检测模块间功能重叠。<br/>文件: orphan_judge/duplicate_detector.py"]
-    src_zephyr_security_adversarial_validation_blast_radius_py["(生产态 / production) blastradius / blast_radius<br/>blastradius，对抗验证的异常，定义本模块的异常类型。<br/>文件: adversarial_validation/blast_radius.py"]
-    src_zephyr_security_adversarial_validation_bypass_recorder_py["(生产态 / production) bypassrecorder / bypass_recorder<br/>bypassrecorder，把发生的事件/结果记下来留档，主要提供记录bypass、查询bypasses、escalated条目、总计bypasses等功能，是对抗验证的组成部分<br/>文件: adversarial_validation/bypass_recorder.py"]
+    src_zephyr_security_adversarial_validation_blast_radius_py["(生产态 / production) 爆炸半径 / blast_radius<br/>爆炸半径，对抗验证的异常，定义本模块的异常类型。<br/>文件: adversarial_validation/blast_radius.py"]
+    src_zephyr_security_adversarial_validation_bypass_recorder_py["(生产态 / production) 绕过记录器 / bypass_recorder<br/>绕过记录器，把发生的事件/结果记下来留档，主要提供记录bypass、查询bypasses、escalated条目、总计bypasses等功能，是对抗验证的组成部分<br/>文件: adversarial_validation/bypass_recorder.py"]
     src_zephyr_security_adversarial_validation_cleanup_py["(生产态 / production) 清理 / cleanup<br/>清理，对抗验证的异常，定义本模块的异常类型。<br/>文件: adversarial_validation/cleanup.py"]
     src_zephyr_security_adversarial_validation_defense_runner_py["(生产态 / production) 防御运行器 / defense_runner<br/>防御运行器，对抗验证的异常，定义本模块的异常类型。<br/>文件: adversarial_validation/defense_runner.py"]
     src_zephyr_security_adversarial_validation_scenario_loader_py["(生产态 / production) 场景加载器 / scenario_loader<br/>场景加载器，读取并加载配置/数据到内存，主要提供场景数量、加载、获取、列表by层等功能，是对抗验证的组成部分<br/>文件: adversarial_validation/scenario_loader.py"]

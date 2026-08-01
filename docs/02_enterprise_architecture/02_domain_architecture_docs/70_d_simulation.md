@@ -64,7 +64,7 @@ flowchart TD
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_look_ahead_bias_detector_py["(设计态 / design) lookaheadbias检测器 / look_ahead_bias_detector<br/>lookaheadbias检测器，模拟的检测器，检测特定模式或异常情况。<br/>文件: simulation/look_ahead_bias_detector.py"]
-    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design) parameterrobustnesstester / parameter_robustness_tester<br/>parameterrobustnesstester，模拟的功能模块。<br/>文件: simulation/parameter_robustness_tester.py"]
+    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design) parameterrobustness测试器 / parameter_robustness_tester<br/>parameterrobustness测试器，模拟的功能模块。<br/>文件: simulation/parameter_robustness_tester.py"]
     src_zephyr_simulation_sharpe_calculator_fixer_py["(设计态 / design) 夏普计算器修复器 / sharpe_calculator_fixer<br/>夏普计算器修复器，模拟的功能模块。<br/>文件: simulation/sharpe_calculator_fixer.py"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
@@ -119,7 +119,7 @@ flowchart TD
     src_zephyr_simulation_strategy_simulator_py["(设计态 / design) 策略simulator / strategy_simulator<br/>策略simulator，模拟的功能模块。<br/>文件: simulation/strategy_simulator.py"]
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_look_ahead_bias_detector_py["(设计态 / design) lookaheadbias检测器 / look_ahead_bias_detector<br/>lookaheadbias检测器，模拟的检测器，检测特定模式或异常情况。<br/>文件: simulation/look_ahead_bias_detector.py"]
-    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design) parameterrobustnesstester / parameter_robustness_tester<br/>parameterrobustnesstester，模拟的功能模块。<br/>文件: simulation/parameter_robustness_tester.py"]
+    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design) parameterrobustness测试器 / parameter_robustness_tester<br/>parameterrobustness测试器，模拟的功能模块。<br/>文件: simulation/parameter_robustness_tester.py"]
     src_zephyr_simulation_sharpe_calculator_fixer_py["(设计态 / design) 夏普计算器修复器 / sharpe_calculator_fixer<br/>夏普计算器修复器，模拟的功能模块。<br/>文件: simulation/sharpe_calculator_fixer.py"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py

@@ -68,7 +68,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["(生产态 / production) alignmentsyncer / alignment_syncer<br/>alignmentsyncer，提供扫描、修复、校验、回滚等功能，是引擎的组成部分<br/>文件: auto_fix_engine/alignment_syncer.py"]
     src_zephyr_infrastructure_auto_fix_engine_all_completer_py["(生产态 / production) allcompleter / all_completer<br/>allcompleter，提供解析all、提取公共symbols、扫描、修复等功能，是引擎的组成部分<br/>文件: auto_fix_engine/all_completer.py"]
     src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["(生产态 / production) 配置修复器 / config_fixer<br/>配置修复器，管理配置项的读取和校验，主要提供修复trailingwhitespace、修复tabs、修复合并conflicts、扫描等功能，是引擎的组成部分<br/>文件: auto_fix_engine/config_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production) dedupextractor / dedup_extractor<br/>dedupextractor，提供归一化代码、最小occurrences、最小occurrences、扫描等功能，是引擎的组成部分<br/>文件: auto_fix_engine/dedup_extractor.py"]
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production) 去重extractor / dedup_extractor<br/>去重extractor，提供归一化代码、最小occurrences、最小occurrences、扫描等功能，是引擎的组成部分<br/>文件: auto_fix_engine/dedup_extractor.py"]
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["(生产态 / production) dep版本修复器 / dep_version_fixer<br/>dep版本修复器，主要提供ishigher、扫描、修复等功能，供engine.py使用<br/>文件: auto_fix_engine/dep_version_fixer.py"]
     src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["(生产态 / production) 漂移修复器 / drift_fixer<br/>漂移修复器，提供扫描、修复、校验、回滚等功能，是引擎的组成部分<br/>文件: auto_fix_engine/drift_fixer.py"]
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["(生产态 / production) 订阅 EventBusBackpressure 的 drif / event_hooks<br/>订阅 EventBusBackpressure 的 drift_detected / validation_result 事件。<br/>文件: auto_fix_engine/event_hooks.py"]
@@ -586,7 +586,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_alignment_syncer_py["(生产态 / production) alignmentsyncer / alignment_syncer<br/>alignmentsyncer，提供扫描、修复、校验、回滚等功能，是引擎的组成部分<br/>文件: auto_fix_engine/alignment_syncer.py"]
     src_zephyr_infrastructure_auto_fix_engine_all_completer_py["(生产态 / production) allcompleter / all_completer<br/>allcompleter，提供解析all、提取公共symbols、扫描、修复等功能，是引擎的组成部分<br/>文件: auto_fix_engine/all_completer.py"]
     src_zephyr_infrastructure_auto_fix_engine_config_fixer_py["(生产态 / production) 配置修复器 / config_fixer<br/>配置修复器，管理配置项的读取和校验，主要提供修复trailingwhitespace、修复tabs、修复合并conflicts、扫描等功能，是引擎的组成部分<br/>文件: auto_fix_engine/config_fixer.py"]
-    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production) dedupextractor / dedup_extractor<br/>dedupextractor，提供归一化代码、最小occurrences、最小occurrences、扫描等功能，是引擎的组成部分<br/>文件: auto_fix_engine/dedup_extractor.py"]
+    src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["(生产态 / production) 去重extractor / dedup_extractor<br/>去重extractor，提供归一化代码、最小occurrences、最小occurrences、扫描等功能，是引擎的组成部分<br/>文件: auto_fix_engine/dedup_extractor.py"]
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["(生产态 / production) dep版本修复器 / dep_version_fixer<br/>dep版本修复器，主要提供ishigher、扫描、修复等功能，供engine.py使用<br/>文件: auto_fix_engine/dep_version_fixer.py"]
     src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["(生产态 / production) 漂移修复器 / drift_fixer<br/>漂移修复器，提供扫描、修复、校验、回滚等功能，是引擎的组成部分<br/>文件: auto_fix_engine/drift_fixer.py"]
     src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["(生产态 / production) 订阅 EventBusBackpressure 的 drif / event_hooks<br/>订阅 EventBusBackpressure 的 drift_detected / validation_result 事件。<br/>文件: auto_fix_engine/event_hooks.py"]
@@ -1137,7 +1137,7 @@ flowchart TD
 | 75 | 合规审计器 / compliance_auditor (auto_fix_engine/complian... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 76 | 合规审计器 / compliance_auditor (auto_fix_engine/complian... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） / sqlite_factory (io/sqlite_f... | 导入依赖 / import_depends |
 | 77 | 配置修复器 / config_fixer (auto_fix_engine/config_fixer.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 78 | dedupextractor / dedup_extractor (auto_fix_engine/dedup_e... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 78 | 去重extractor / dedup_extractor (auto_fix_engine/dedup_ex... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 79 | dep版本修复器 / dep_version_fixer (auto_fix_engine/dep_ve... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 80 | 漂移修复器 / drift_fixer (auto_fix_engine/drift_fixer.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 81 | 订阅 EventBusBackpressure 的 drif / event_hooks (auto_fix... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) / event_bus (sha... | 导入依赖 / import_depends |

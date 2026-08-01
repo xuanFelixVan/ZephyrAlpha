@@ -67,10 +67,10 @@ flowchart TD
     src_zephyr_shared_api_api_client_py["(生产态 / production) APIclient.py —— 统一 API Client 基类（Phase  / api_client<br/>— 统一 API Client 基类（Phase 7 新增 / 盲点 B11 修复）<br/>文件: api/api_client.py"]
     src_zephyr_shared_api_api_index_py["(生产态 / production) shared/ API 索引 — AI session 冷启动时的'员工通讯录' / api_index<br/>shared/ API 索引 — AI session 冷启动时的'员工通讯录'<br/>文件: api/api_index.py"]
     src_zephyr_shared_api_dos_launcher_py["(生产态 / production) doslauncher / dos_launcher<br/>doslauncher，接口的功能模块。<br/>文件: api/dos_launcher.py"]
-    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["(生产态 / production) AIunderstandabilityconstraint / ai_understandability_constraint<br/>AIunderstandabilityconstraint，blueprint_tools的结果，封装操作结果的数据结构。<br/>文件: blueprint_tools/ai_understandability_constraint.py"]
+    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["(生产态 / production) AI可理解性约束 / ai_understandability_constraint<br/>AIunderstandabilityconstraint，blueprint_tools的结果，封装操作结果的数据结构。<br/>文件: blueprint_tools/ai_understandability_constraint.py"]
     src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py["(生产态 / production) 蓝图代码审计器 / blueprint_code_auditor<br/>蓝图代码审计器，blueprint_tools的功能模块。<br/>文件: blueprint_tools/blueprint_code_auditor.py"]
     src_zephyr_shared_blueprint_tools_blueprint_scorer_py["(生产态 / production) 蓝图评分器 / blueprint_scorer.py — Re-export wrapper -> canonical: zephyr<br/>蓝图评分器，blueprint_tools的功能模块。<br/>文件: blueprint_tools/blueprint_scorer.py"]
-    src_zephyr_shared_capacity_governance_adaptive_sampler_py["(生产态 / production) adaptivesampler / adaptive_sampler<br/>adaptivesampler，治理的功能模块。<br/>文件: capacity_governance/adaptive_sampler.py"]
+    src_zephyr_shared_capacity_governance_adaptive_sampler_py["(生产态 / production) 自适应sampler / adaptive_sampler<br/>自适应sampler，治理的功能模块。<br/>文件: capacity_governance/adaptive_sampler.py"]
     src_zephyr_shared_capacity_governance_budget_aware_prompt_py["(生产态 / production) 预算aware提示 / budget_aware_prompt<br/>预算aware提示，治理的功能模块。<br/>文件: capacity_governance/budget_aware_prompt.py"]
     src_zephyr_shared_capacity_governance_capacity_calibrator_py["(生产态 / production) 容量calibrator / capacity_calibrator<br/>容量calibrator，治理的结果，封装操作结果的数据结构。<br/>文件: capacity_governance/capacity_calibrator.py"]
     src_zephyr_shared_capacity_governance_capacity_digital_twin_py["(生产态 / production) 容量digitaltwin / capacity_digital_twin<br/>容量digitaltwin，治理的状态机，管理状态流转。<br/>文件: capacity_governance/capacity_digital_twin.py"]
@@ -580,10 +580,10 @@ flowchart TD
     src_zephyr_shared_api_api_client_py["(生产态 / production) APIclient.py —— 统一 API Client 基类（Phase  / api_client<br/>— 统一 API Client 基类（Phase 7 新增 / 盲点 B11 修复）<br/>文件: api/api_client.py"]
     src_zephyr_shared_api_api_index_py["(生产态 / production) shared/ API 索引 — AI session 冷启动时的'员工通讯录' / api_index<br/>shared/ API 索引 — AI session 冷启动时的'员工通讯录'<br/>文件: api/api_index.py"]
     src_zephyr_shared_api_dos_launcher_py["(生产态 / production) doslauncher / dos_launcher<br/>doslauncher，接口的功能模块。<br/>文件: api/dos_launcher.py"]
-    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["(生产态 / production) AIunderstandabilityconstraint / ai_understandability_constraint<br/>AIunderstandabilityconstraint，blueprint_tools的结果，封装操作结果的数据结构。<br/>文件: blueprint_tools/ai_understandability_constraint.py"]
+    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["(生产态 / production) AI可理解性约束 / ai_understandability_constraint<br/>AIunderstandabilityconstraint，blueprint_tools的结果，封装操作结果的数据结构。<br/>文件: blueprint_tools/ai_understandability_constraint.py"]
     src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py["(生产态 / production) 蓝图代码审计器 / blueprint_code_auditor<br/>蓝图代码审计器，blueprint_tools的功能模块。<br/>文件: blueprint_tools/blueprint_code_auditor.py"]
     src_zephyr_shared_blueprint_tools_blueprint_scorer_py["(生产态 / production) 蓝图评分器 / blueprint_scorer.py — Re-export wrapper -> canonical: zephyr<br/>蓝图评分器，blueprint_tools的功能模块。<br/>文件: blueprint_tools/blueprint_scorer.py"]
-    src_zephyr_shared_capacity_governance_adaptive_sampler_py["(生产态 / production) adaptivesampler / adaptive_sampler<br/>adaptivesampler，治理的功能模块。<br/>文件: capacity_governance/adaptive_sampler.py"]
+    src_zephyr_shared_capacity_governance_adaptive_sampler_py["(生产态 / production) 自适应sampler / adaptive_sampler<br/>自适应sampler，治理的功能模块。<br/>文件: capacity_governance/adaptive_sampler.py"]
     src_zephyr_shared_capacity_governance_budget_aware_prompt_py["(生产态 / production) 预算aware提示 / budget_aware_prompt<br/>预算aware提示，治理的功能模块。<br/>文件: capacity_governance/budget_aware_prompt.py"]
     src_zephyr_shared_capacity_governance_capacity_calibrator_py["(生产态 / production) 容量calibrator / capacity_calibrator<br/>容量calibrator，治理的结果，封装操作结果的数据结构。<br/>文件: capacity_governance/capacity_calibrator.py"]
     src_zephyr_shared_capacity_governance_capacity_digital_twin_py["(生产态 / production) 容量digitaltwin / capacity_digital_twin<br/>容量digitaltwin，治理的状态机，管理状态流转。<br/>文件: capacity_governance/capacity_digital_twin.py"]
@@ -1079,7 +1079,7 @@ flowchart TD
 | 16 | D_AUTONOMY_CORE 自治核心: skill-registry.py —— Skill 注册基座（Phase 14 / skill_r... | → | constants.py —— 共享枚举 & 常量集中 re-export（Si / con... | 导入依赖 / import_depends |
 | 17 | D_AUTONOMY_CORE 自治核心: skill-registry.py —— Skill 注册基座（Phase 14 / skill_r... | → | yamlutils.py — vocabulary YAML 加载公共工具（S / yaml_ut... | 导入依赖 / import_depends |
 | 18 | D_AUTONOMY_CORE 自治核心: skill-registry.py —— Skill 注册基座（Phase 14 / skill_r... | → | 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 19 | D_AUTONOMY_CORE 自治核心: intentkeywordmapper / IntentKeywordMapper - Stage 1 of th... | → | 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 19 | D_AUTONOMY_CORE 自治核心: 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three... | → | 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
 | 20 | D_AUTONOMY_CORE 自治核心: IntentParser · 意图三阶段级联解析器（V-09） / intent_par... | → | 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
 | 21 | D_AUTONOMY_CORE 自治核心: SystemSnapshotter — M1 系统状态镜像（CL-017 RI  / system... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 22 | D_AUTONOMY_CORE 自治核心: SystemSnapshotter — M1 系统状态镜像（CL-017 RI  / system... | → | SQLite 连接工厂真源（SSoT） / sqlite_factory (io/sqlite_f... | 导入依赖 / import_depends |
@@ -1112,7 +1112,7 @@ flowchart TD
 | 49 | D_EX_CORE 执行核心: 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 / order_e... | 导入依赖 / import_depends |
 | 50 | D_FACTOR 因子: D-FACTOR-GOV-01 因子生命周期状态机——复用项目级 StateMa ... | → | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038 / stat... | 导入依赖 / import_depends |
 | 51 | D_FACTOR 因子: D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流... | → | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038 / stat... | 导入依赖 / import_depends |
-| 52 | D_FBL_DIAGNOSERS 反馈诊断器: operationalseasonality / Operational Seasonality — v0.16... | → | 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
+| 52 | D_FBL_DIAGNOSERS 反馈诊断器: 运营季节性 / Operational Seasonality — v0.16.0 R228 (rel... | → | 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
 | 53 | D_FEEDBACK_LOOP 反馈循环引擎: API版本契约 / API Version Contract — v0.14.0 R188 (actor... | → | 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
 | 54 | D_FEEDBACK_LOOP 反馈循环引擎: FeedbackLoop core — 反馈闭环核心类。 / core (feedback_lo... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 55 | D_FEEDBACK_LOOP 反馈循环引擎: FeedbackLoop core — 反馈闭环核心类。 / core (feedback_lo... | → | 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
@@ -1351,7 +1351,7 @@ flowchart TD
 | 288 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | SessionContinuity — Session 交接包自动生成与恢复 / sessi... | 导入依赖 / import_depends |
 | 289 | D_GOV_OPS_RESILIENCE 运维弹性治理: D-DATA -> ServiceRegistry 注册模块 / service_registration... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 290 | D_GOV_OPS_RESILIENCE 运维弹性治理: D-DATA -> ServiceRegistry 注册模块 / service_registration... | → | registry — 运行时 DI 容器 / registry (protocols/registry.py) | 导入依赖 / import_depends |
-| 291 | D_GOV_OPS_RESILIENCE 运维弹性治理: blastradius / blast_radius — MOD-INF-028 §3.1 Stage 9 (... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 291 | D_GOV_OPS_RESILIENCE 运维弹性治理: 爆炸半径 / blast_radius — MOD-INF-028 §3.1 Stage 9 (res... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 292 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5EventSubscriber — F5 事件启动机制 (MOD-INF-0 / f5_even... | → | EventBus — 事件总线（带背压控制）(M-07) / event_bus (sha... | 导入依赖 / import_depends |
 | 293 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 ( / ... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 294 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway / default_secur... | → | 安全决策 / security_decision (security/security_decision.py) | 导入依赖 / import_depends |
@@ -1428,7 +1428,7 @@ flowchart TD
 | 365 | D_INFRA_A2A A2A通信: Handoff Manager — Agent 间任务交接 / handoff_manager (la... | → | A2A模式 / A2A data structure contracts — Message, Task, ... | 导入依赖 / import_depends |
 | 366 | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalat / arbitra... | → | A2Acoordination / A2A Coordination — shared interface de... | 导入依赖 / import_depends |
 | 367 | D_INFRA_A2A A2A通信: 施工后验证器 — 自指悖论防御：不橡胶图章，真正验证 A2A 协... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 368 | D_INFRA_A2A A2A通信: supervisor / Supervisor — A2A Layer 3 Coordination (laye... | → | 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
+| 368 | D_INFRA_A2A A2A通信: 监督器 / Supervisor — A2A Layer 3 Coordination (layer3_c... | → | 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
 | 369 | D_INFRA_A2A A2A通信: 多agent.py —— Multi-Agent 编排基座（Phase / multi_agent... | → | A2Acoordination / A2A Coordination — shared interface de... | 导入依赖 / import_depends |
 | 370 | D_INFRA_RECOVERY 回滚恢复: AgentCooldown — Agent 冷却隔离器。 / agent_cooldown (rol... | → | SQLite 连接工厂真源（SSoT） / sqlite_factory (io/sqlite_f... | 导入依赖 / import_depends |
 | 371 | D_INFRA_RECOVERY 回滚恢复: External Merkle Proof — 外部可验证回滚完整性证明。 / ext... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
@@ -1485,7 +1485,7 @@ flowchart TD
 | 422 | D_INFRA_RUNTIME 运行时集成: 合规审计器 / compliance_auditor (auto_fix_engine/complian... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 423 | D_INFRA_RUNTIME 运行时集成: 合规审计器 / compliance_auditor (auto_fix_engine/complian... | → | SQLite 连接工厂真源（SSoT） / sqlite_factory (io/sqlite_f... | 导入依赖 / import_depends |
 | 424 | D_INFRA_RUNTIME 运行时集成: 配置修复器 / config_fixer (auto_fix_engine/config_fixer.py) | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 425 | D_INFRA_RUNTIME 运行时集成: dedupextractor / dedup_extractor (auto_fix_engine/dedup_e... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 425 | D_INFRA_RUNTIME 运行时集成: 去重extractor / dedup_extractor (auto_fix_engine/dedup_ex... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 426 | D_INFRA_RUNTIME 运行时集成: dep版本修复器 / dep_version_fixer (auto_fix_engine/dep_ve... | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 427 | D_INFRA_RUNTIME 运行时集成: 漂移修复器 / drift_fixer (auto_fix_engine/drift_fixer.py) | → | paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 428 | D_INFRA_RUNTIME 运行时集成: 订阅 EventBusBackpressure 的 drif / event_hooks (auto_fix... | → | EventBus — 事件总线（带背压控制）(M-07) / event_bus (sha... | 导入依赖 / import_depends |

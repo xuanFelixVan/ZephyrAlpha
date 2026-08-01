@@ -95,7 +95,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_time_sync_py["(生产态 / production) 时间同步 / time_sync<br/>时间同步，治理的功能模块。<br/>文件: ops_governance/time_sync.py"]
     src_zephyr_governance_ops_governance_timeout_guard_py["(生产态 / production) 超时守卫 / timeout_guard<br/>超时守卫，治理的组成部分，依赖包入口工作。<br/>文件: ops_governance/timeout_guard.py"]
     src_zephyr_governance_resilience_governance_init_py["(生产态 / production) 包入口 / __init__<br/>治理的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: resilience_governance/__init__.py"]
-    src_zephyr_governance_resilience_governance_blast_radius_py["(生产态 / production) blastradius / blast_radius — MOD-INF-028 §3.1 Stage 9<br/>depgraph YAML 加载或结构校验失败.<br/>文件: resilience_governance/blast_radius.py"]
+    src_zephyr_governance_resilience_governance_blast_radius_py["(生产态 / production) 爆炸半径 / blast_radius — MOD-INF-028 §3.1 Stage 9<br/>depgraph YAML 加载或结构校验失败.<br/>文件: resilience_governance/blast_radius.py"]
     src_zephyr_governance_resilience_governance_broker_resilience_py["(生产态 / production) 经纪人韧性 / broker_resilience<br/>经纪人韧性，治理的功能模块。<br/>文件: resilience_governance/broker_resilience.py"]
     src_zephyr_governance_resilience_governance_bus_factor_defense_py["(生产态 / production) 总线因子防御 / bus_factor_defense<br/>总线因子防御，治理的组成部分，依赖总线因子防御工作。<br/>文件: resilience_governance/bus_factor_defense.py"]
     src_zephyr_governance_resilience_governance_decision_fatigue_cli_py["(生产态 / production) 决策疲劳命令行 / decision_fatigue_cli<br/>决策疲劳命令行，治理的功能模块。<br/>文件: resilience_governance/decision_fatigue_cli.py"]
@@ -112,8 +112,8 @@ flowchart TD
     src_zephyr_governance_resilience_governance_process_isolator_py["(生产态 / production) Process Isolator — v0.6.0 进程隔离器: engine运 / process_isolator<br/>Process Isolator — v0.6.0 进程隔离器: engine运行在独立进程+资源限制+crash恢复。<br/>文件: resilience_governance/process_isolator.py"]
     src_zephyr_governance_resilience_governance_witness_isolation_py["(生产态 / production) Witness Isolation — v0.8.0 Witness隔离: N版 / witness_isolation<br/>Witness Isolation — v0.8.0 Witness隔离: N版本decision验证+投票机制+majority判定。<br/>文件: resilience_governance/witness_isolation.py"]
     src_zephyr_governance_security_governance_init_py["(生产态 / production) 包入口 / __init__<br/>安全的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: security_governance/__init__.py"]
-    src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) adversarialtester / adversarial_tester<br/>adversarialtester，安全的组成部分，依赖ipi防御、流中止守卫、预算引擎工作。<br/>文件: security_governance/adversarial_tester.py"]
-    src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) antiautomationbias / Anti-Automation Bias — D-022-09 mandatory human oversight en<br/>antiautomationbias，安全的功能模块。<br/>文件: security_governance/anti_automation_bias.py"]
+    src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) 对抗测试器 / adversarial_tester<br/>对抗测试器，安全的组成部分，依赖ipi防御、流中止守卫、预算引擎工作。<br/>文件: security_governance/adversarial_tester.py"]
+    src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) antiautomation偏差 / Anti-Automation Bias — D-022-09 mandatory human oversight en<br/>antiautomation偏差，安全的功能模块。<br/>文件: security_governance/anti_automation_bias.py"]
     src_zephyr_governance_security_governance_bare_repo_scanner_py["(生产态 / production) Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。 / bare_repo_scanner<br/>Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。<br/>文件: security_governance/bare_repo_scanner.py"]
     src_zephyr_governance_security_governance_compositional_safety_tester_py["(生产态 / production) Compositional Safety Tester — v0.14.0 组合 / compositional_safety_tester<br/>Compositional Safety Tester — v0.14.0 组合性不安全测试器。<br/>文件: security_governance/compositional_safety_tester.py"]
     src_zephyr_governance_security_governance_config_scanner_py["(生产态 / production) Config Scanner — v0.9.0 AI配置文件注入扫描器: 检测A / config_scanner<br/>Config Scanner — v0.9.0 AI配置文件注入扫描器: 检测AI修改的配置+注入攻击。<br/>文件: security_governance/config_scanner.py"]
@@ -352,7 +352,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_time_sync_py["(生产态 / production) 时间同步 / time_sync<br/>时间同步，治理的功能模块。<br/>文件: ops_governance/time_sync.py"]
     src_zephyr_governance_ops_governance_timeout_guard_py["(生产态 / production) 超时守卫 / timeout_guard<br/>超时守卫，治理的组成部分，依赖包入口工作。<br/>文件: ops_governance/timeout_guard.py"]
     src_zephyr_governance_resilience_governance_init_py["(生产态 / production) 包入口 / __init__<br/>治理的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: resilience_governance/__init__.py"]
-    src_zephyr_governance_resilience_governance_blast_radius_py["(生产态 / production) blastradius / blast_radius — MOD-INF-028 §3.1 Stage 9<br/>depgraph YAML 加载或结构校验失败.<br/>文件: resilience_governance/blast_radius.py"]
+    src_zephyr_governance_resilience_governance_blast_radius_py["(生产态 / production) 爆炸半径 / blast_radius — MOD-INF-028 §3.1 Stage 9<br/>depgraph YAML 加载或结构校验失败.<br/>文件: resilience_governance/blast_radius.py"]
     src_zephyr_governance_resilience_governance_broker_resilience_py["(生产态 / production) 经纪人韧性 / broker_resilience<br/>经纪人韧性，治理的功能模块。<br/>文件: resilience_governance/broker_resilience.py"]
     src_zephyr_governance_resilience_governance_bus_factor_defense_py["(生产态 / production) 总线因子防御 / bus_factor_defense<br/>总线因子防御，治理的组成部分，依赖总线因子防御工作。<br/>文件: resilience_governance/bus_factor_defense.py"]
     src_zephyr_governance_resilience_governance_decision_fatigue_cli_py["(生产态 / production) 决策疲劳命令行 / decision_fatigue_cli<br/>决策疲劳命令行，治理的功能模块。<br/>文件: resilience_governance/decision_fatigue_cli.py"]
@@ -369,8 +369,8 @@ flowchart TD
     src_zephyr_governance_resilience_governance_process_isolator_py["(生产态 / production) Process Isolator — v0.6.0 进程隔离器: engine运 / process_isolator<br/>Process Isolator — v0.6.0 进程隔离器: engine运行在独立进程+资源限制+crash恢复。<br/>文件: resilience_governance/process_isolator.py"]
     src_zephyr_governance_resilience_governance_witness_isolation_py["(生产态 / production) Witness Isolation — v0.8.0 Witness隔离: N版 / witness_isolation<br/>Witness Isolation — v0.8.0 Witness隔离: N版本decision验证+投票机制+majority判定。<br/>文件: resilience_governance/witness_isolation.py"]
     src_zephyr_governance_security_governance_init_py["(生产态 / production) 包入口 / __init__<br/>安全的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: security_governance/__init__.py"]
-    src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) adversarialtester / adversarial_tester<br/>adversarialtester，安全的组成部分，依赖ipi防御、流中止守卫、预算引擎工作。<br/>文件: security_governance/adversarial_tester.py"]
-    src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) antiautomationbias / Anti-Automation Bias — D-022-09 mandatory human oversight en<br/>antiautomationbias，安全的功能模块。<br/>文件: security_governance/anti_automation_bias.py"]
+    src_zephyr_governance_security_governance_adversarial_tester_py["(生产态 / production) 对抗测试器 / adversarial_tester<br/>对抗测试器，安全的组成部分，依赖ipi防御、流中止守卫、预算引擎工作。<br/>文件: security_governance/adversarial_tester.py"]
+    src_zephyr_governance_security_governance_anti_automation_bias_py["(生产态 / production) antiautomation偏差 / Anti-Automation Bias — D-022-09 mandatory human oversight en<br/>antiautomation偏差，安全的功能模块。<br/>文件: security_governance/anti_automation_bias.py"]
     src_zephyr_governance_security_governance_bare_repo_scanner_py["(生产态 / production) Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。 / bare_repo_scanner<br/>Bare Repo Scanner — v0.14.0 嵌入式裸仓库检测器。<br/>文件: security_governance/bare_repo_scanner.py"]
     src_zephyr_governance_security_governance_compositional_safety_tester_py["(生产态 / production) Compositional Safety Tester — v0.14.0 组合 / compositional_safety_tester<br/>Compositional Safety Tester — v0.14.0 组合性不安全测试器。<br/>文件: security_governance/compositional_safety_tester.py"]
     src_zephyr_governance_security_governance_config_scanner_py["(生产态 / production) Config Scanner — v0.9.0 AI配置文件注入扫描器: 检测A / config_scanner<br/>Config Scanner — v0.9.0 AI配置文件注入扫描器: 检测AI修改的配置+注入攻击。<br/>文件: security_governance/config_scanner.py"]
@@ -538,7 +538,7 @@ flowchart TD
 | 11 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | D_GOV_AUDIT 审计追踪: 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | 导入依赖 / import_depends |
 | 12 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
 | 13 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | D_GOV_AUDIT 审计追踪: sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | 导入依赖 / import_depends |
-| 14 | blastradius / blast_radius — MOD-INF-028 §3.1 Stage 9 (... | → | D_GOV_AUDIT 审计追踪: 语义审计管线数据模型 — MOD-INF-028 §4.2 / models (seman... | 导入依赖 / import_depends |
+| 14 | 爆炸半径 / blast_radius — MOD-INF-028 §3.1 Stage 9 (res... | → | D_GOV_AUDIT 审计追踪: 语义审计管线数据模型 — MOD-INF-028 §4.2 / models (seman... | 导入依赖 / import_depends |
 | 15 | 5.17.5 修复：解析 HMAC 密钥（env > 兜底默 / tamper_eviden... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
 | 16 | 安全网关基类 / D_COMPLIANCE — Governance & Compliance La... | → | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 z / complia... | 导入依赖 / import_depends |
 | 17 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） / triage (esca... | → | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
@@ -566,8 +566,8 @@ flowchart TD
 | 39 | 退化管理器 / degradation_manager (ops_governance/degradat... | → | D_OPS 反馈循环: 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
 | 40 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | D_OPS 反馈循环: 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
 | 41 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | D_OPS 反馈循环: 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
-| 42 | adversarialtester / adversarial_tester (security_governan... | → | D_OPS 反馈循环: 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
-| 43 | adversarialtester / adversarial_tester (security_governan... | → | D_OPS 反馈循环: 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 42 | 对抗测试器 / adversarial_tester (security_governance/adve... | → | D_OPS 反馈循环: 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 43 | 对抗测试器 / adversarial_tester (security_governance/adve... | → | D_OPS 反馈循环: 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
 | 44 | escalation引擎 / Escalation Engine — MOD-INF-022 (escala... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九 / gateway (llm_security/... | 导入依赖 / import_depends |
 | 45 | Phase Manager — ZephyrAlpha 施工阶段门控引擎. / phase_ma... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 / session_concurr... | 导入依赖 / import_depends |
 | 46 | DefaultSecurityGateway — SecurityGateway / default_secur... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九 / gateway (llm_security/... | 导入依赖 / import_depends |
@@ -580,7 +580,7 @@ flowchart TD
 | 53 | PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | D_SHARED 共享服务: SessionContinuity — Session 交接包自动生成与恢复 / sessi... | 导入依赖 / import_depends |
 | 54 | D-DATA -> ServiceRegistry 注册模块 / service_registration... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 55 | D-DATA -> ServiceRegistry 注册模块 / service_registration... | → | D_SHARED 共享服务: registry — 运行时 DI 容器 / registry (protocols/registry.py) | 导入依赖 / import_depends |
-| 56 | blastradius / blast_radius — MOD-INF-028 §3.1 Stage 9 (... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 56 | 爆炸半径 / blast_radius — MOD-INF-028 §3.1 Stage 9 (res... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 57 | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0 / f5_even... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) / event_bus (sha... | 导入依赖 / import_depends |
 | 58 | F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 ( / ... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 59 | DefaultSecurityGateway — SecurityGateway / default_secur... | → | D_SHARED 共享服务: 安全决策 / security_decision (security/security_decision.py) | 导入依赖 / import_depends |

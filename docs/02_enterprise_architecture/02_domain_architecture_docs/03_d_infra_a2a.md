@@ -184,7 +184,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py["(生产态 / production) 委托链 / a2a_delegation_chain<br/>委托链<br/>文件: layer3_coordination/a2a_delegation_chain.py"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py["(生产态 / production) A2A 安全内容扫描器 — 六大类威胁检测 / a2a_security<br/>A2A 安全内容扫描器 — 六大类威胁检测<br/>文件: layer3_coordination/a2a_security.py"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py["(生产态 / production) A2A Session 走私防御 — 防止跨 Agent session 上下文 / session_smuggling_defense<br/>A2A Session 走私防御 — 防止跨 Agent session 上下文伪造<br/>文件: layer3_coordination/session_smuggling_defense.py"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py["(生产态 / production) supervisor / Supervisor — A2A Layer 3 Coordination<br/>监督者——任务分配、死锁检测、超时管理<br/>文件: layer3_coordination/supervisor.py"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py["(生产态 / production) 监督器 / Supervisor — A2A Layer 3 Coordination<br/>监督者——任务分配、死锁检测、超时管理<br/>文件: layer3_coordination/supervisor.py"]
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py
@@ -408,7 +408,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py["(生产态 / production) 委托链 / a2a_delegation_chain<br/>委托链<br/>文件: layer3_coordination/a2a_delegation_chain.py"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py["(生产态 / production) A2A 安全内容扫描器 — 六大类威胁检测 / a2a_security<br/>A2A 安全内容扫描器 — 六大类威胁检测<br/>文件: layer3_coordination/a2a_security.py"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py["(生产态 / production) A2A Session 走私防御 — 防止跨 Agent session 上下文 / session_smuggling_defense<br/>A2A Session 走私防御 — 防止跨 Agent session 上下文伪造<br/>文件: layer3_coordination/session_smuggling_defense.py"]
-    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py["(生产态 / production) supervisor / Supervisor — A2A Layer 3 Coordination<br/>监督者——任务分配、死锁检测、超时管理<br/>文件: layer3_coordination/supervisor.py"]
+    src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py["(生产态 / production) 监督器 / Supervisor — A2A Layer 3 Coordination<br/>监督者——任务分配、死锁检测、超时管理<br/>文件: layer3_coordination/supervisor.py"]
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py
@@ -486,7 +486,7 @@ flowchart TD
 | 6 | Handoff Manager — Agent 间任务交接 / handoff_manager (la... | → | D_SHARED 共享服务: A2A模式 / A2A data structure contracts — Message, Task, ... | 导入依赖 / import_depends |
 | 7 | A2A 三级仲裁引擎 — priority -> rule -> escalat / arbitra... | → | D_SHARED 共享服务: A2Acoordination / A2A Coordination — shared interface de... | 导入依赖 / import_depends |
 | 8 | 施工后验证器 — 自指悖论防御：不橡胶图章，真正验证 A2A 协... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 9 | supervisor / Supervisor — A2A Layer 3 Coordination (laye... | → | D_SHARED 共享服务: 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
+| 9 | 监督器 / Supervisor — A2A Layer 3 Coordination (layer3_c... | → | D_SHARED 共享服务: 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
 | 10 | 多agent.py —— Multi-Agent 编排基座（Phase / multi_agent... | → | D_SHARED 共享服务: A2Acoordination / A2A Coordination — shared interface de... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

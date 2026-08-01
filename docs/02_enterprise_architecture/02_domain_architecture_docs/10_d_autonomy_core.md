@@ -91,7 +91,7 @@ flowchart TD
     src_zephyr_autonomy_core_context_staleness_manager_py["(生产态 / production) stalenessmanager.py — 全局过期检测 (DD112, TA / staleness_manager<br/>全局过期检测<br/>文件: context/staleness_manager.py"]
     src_zephyr_autonomy_core_context_vector_bridge_py["(生产态 / production) VectorBridge — CE↔VMS 检索桥接 (Connect CT-C / vector_bridge<br/>VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE-VMS-001)<br/>文件: context/vector_bridge.py"]
     src_zephyr_autonomy_core_file_autoregister_py["(生产态 / production) 文件autoregister / file_autoregister<br/>文件autoregister，主要提供注册等功能<br/>文件: autonomy_core/file_autoregister.py"]
-    src_zephyr_autonomy_core_ide_watcher_py["(生产态 / production) idewatcher / MOD-INF-019: Agent Spec — IDE Watcher<br/>IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.md<br/>文件: autonomy_core/ide_watcher.py"]
+    src_zephyr_autonomy_core_ide_watcher_py["(生产态 / production) IDE监视器 / MOD-INF-019: Agent Spec — IDE Watcher<br/>IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.md<br/>文件: autonomy_core/ide_watcher.py"]
     src_zephyr_autonomy_core_integration_pipeline_bridge_py["(生产态 / production) PipelineSkillBridge — Agent Spec -> Pipe / pipeline_bridge<br/>PipelineSkillBridge — Agent Spec -> Pipeline 双向桥接<br/>文件: integration/pipeline_bridge.py"]
     src_zephyr_autonomy_core_phase_planner_py["(生产态 / production) 阶段planner / MOD-INF-019: Agent Spec — Phase Planner<br/>阶段planner。MOD-INF-019: Agent Spec — Phase Planner<br/>文件: autonomy_core/phase_planner.py"]
     src_zephyr_autonomy_core_progressive_disclosure_injector_py["(生产态 / production) progressivedisclosureinjector.py — 渐进式 / progressive_disclosure_injector<br/>渐进式披露 (B7, DD81, TASK-015 beta w)<br/>文件: autonomy_core/progressive_disclosure_injector.py"]
@@ -286,7 +286,7 @@ flowchart TD
     src_zephyr_autonomy_core_skills_skill_model_evolution_py["(生产态 / production) 技能模型进化 / MOD-INF-019: Agent Spec — Skill Model Evolution<br/>技能模型进化。MOD-INF-019: Agent Spec — Skill Model Evolution<br/>文件: skills/skill_model_evolution.py"]
     src_zephyr_autonomy_core_skills_skill_registry_py["(生产态 / production) skill-registry.py —— Skill 注册基座（Phase 14 / skill_registry<br/>skill-registry.py —— Skill 注册基座（Phase 14 / 盲点 B34）<br/>文件: skills/skill_registry.py"]
     src_zephyr_autonomy_core_trigger_router_py["(生产态 / production) 触发器路由器 / trigger_router<br/>触发器路由器，主要提供from标签等功能<br/>文件: autonomy_core/trigger_router.py"]
-    src_zephyr_governance_persistence_intent_keyword_mapper_py["(生产态 / production) intentkeywordmapper / IntentKeywordMapper - Stage 1 of three-stage intent parsing <br/>意图识别域（D0-D9 + UNKNOWN，与 metadata_registry.yaml §9.2 domain 枚举对齐）。<br/>文件: persistence/intent_keyword_mapper.py"]
+    src_zephyr_governance_persistence_intent_keyword_mapper_py["(生产态 / production) 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three-stage intent parsing <br/>意图识别域（D0-D9 + UNKNOWN，与 metadata_registry.yaml §9.2 domain 枚举对齐）。<br/>文件: persistence/intent_keyword_mapper.py"]
     src_zephyr_autonomy_core_context_context_pipeline_py ~~~ src_zephyr_autonomy_core_skills_skill_evaluator_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py ~~~ src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_factory_py ~~~ src_zephyr_autonomy_core_skills_skill_kill_switch_py
@@ -440,7 +440,7 @@ flowchart TD
     src_zephyr_autonomy_core_context_staleness_manager_py["(生产态 / production) stalenessmanager.py — 全局过期检测 (DD112, TA / staleness_manager<br/>全局过期检测<br/>文件: context/staleness_manager.py"]
     src_zephyr_autonomy_core_context_vector_bridge_py["(生产态 / production) VectorBridge — CE↔VMS 检索桥接 (Connect CT-C / vector_bridge<br/>VectorBridge — CE↔VMS 检索桥接 (Connect CT-CE-VMS-001)<br/>文件: context/vector_bridge.py"]
     src_zephyr_autonomy_core_file_autoregister_py["(生产态 / production) 文件autoregister / file_autoregister<br/>文件autoregister，主要提供注册等功能<br/>文件: autonomy_core/file_autoregister.py"]
-    src_zephyr_autonomy_core_ide_watcher_py["(生产态 / production) idewatcher / MOD-INF-019: Agent Spec — IDE Watcher<br/>IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.md<br/>文件: autonomy_core/ide_watcher.py"]
+    src_zephyr_autonomy_core_ide_watcher_py["(生产态 / production) IDE监视器 / MOD-INF-019: Agent Spec — IDE Watcher<br/>IDE 热重载监视器——Skill 文件变更自动刷新 AGENTS.md<br/>文件: autonomy_core/ide_watcher.py"]
     src_zephyr_autonomy_core_integration_pipeline_bridge_py["(生产态 / production) PipelineSkillBridge — Agent Spec -> Pipe / pipeline_bridge<br/>PipelineSkillBridge — Agent Spec -> Pipeline 双向桥接<br/>文件: integration/pipeline_bridge.py"]
     src_zephyr_autonomy_core_phase_planner_py["(生产态 / production) 阶段planner / MOD-INF-019: Agent Spec — Phase Planner<br/>阶段planner。MOD-INF-019: Agent Spec — Phase Planner<br/>文件: autonomy_core/phase_planner.py"]
     src_zephyr_autonomy_core_progressive_disclosure_injector_py["(生产态 / production) progressivedisclosureinjector.py — 渐进式 / progressive_disclosure_injector<br/>渐进式披露 (B7, DD81, TASK-015 beta w)<br/>文件: autonomy_core/progressive_disclosure_injector.py"]
@@ -635,7 +635,7 @@ flowchart TD
     src_zephyr_autonomy_core_skills_skill_model_evolution_py["(生产态 / production) 技能模型进化 / MOD-INF-019: Agent Spec — Skill Model Evolution<br/>技能模型进化。MOD-INF-019: Agent Spec — Skill Model Evolution<br/>文件: skills/skill_model_evolution.py"]
     src_zephyr_autonomy_core_skills_skill_registry_py["(生产态 / production) skill-registry.py —— Skill 注册基座（Phase 14 / skill_registry<br/>skill-registry.py —— Skill 注册基座（Phase 14 / 盲点 B34）<br/>文件: skills/skill_registry.py"]
     src_zephyr_autonomy_core_trigger_router_py["(生产态 / production) 触发器路由器 / trigger_router<br/>触发器路由器，主要提供from标签等功能<br/>文件: autonomy_core/trigger_router.py"]
-    src_zephyr_governance_persistence_intent_keyword_mapper_py["(生产态 / production) intentkeywordmapper / IntentKeywordMapper - Stage 1 of three-stage intent parsing <br/>意图识别域（D0-D9 + UNKNOWN，与 metadata_registry.yaml §9.2 domain 枚举对齐）。<br/>文件: persistence/intent_keyword_mapper.py"]
+    src_zephyr_governance_persistence_intent_keyword_mapper_py["(生产态 / production) 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three-stage intent parsing <br/>意图识别域（D0-D9 + UNKNOWN，与 metadata_registry.yaml §9.2 domain 枚举对齐）。<br/>文件: persistence/intent_keyword_mapper.py"]
     src_zephyr_autonomy_core_context_context_pipeline_py ~~~ src_zephyr_autonomy_core_skills_skill_evaluator_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py ~~~ src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_factory_py ~~~ src_zephyr_autonomy_core_skills_skill_kill_switch_py
@@ -772,7 +772,7 @@ flowchart TD
 | 50 | skill-registry.py —— Skill 注册基座（Phase 14 / skill_r... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Si / con... | 导入依赖 / import_depends |
 | 51 | skill-registry.py —— Skill 注册基座（Phase 14 / skill_r... | → | D_SHARED 共享服务: yamlutils.py — vocabulary YAML 加载公共工具（S / yaml_ut... | 导入依赖 / import_depends |
 | 52 | skill-registry.py —— Skill 注册基座（Phase 14 / skill_r... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 53 | intentkeywordmapper / IntentKeywordMapper - Stage 1 of th... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 53 | 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
 | 54 | IntentParser · 意图三阶段级联解析器（V-09） / intent_par... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
 | 55 | SystemSnapshotter — M1 系统状态镜像（CL-017 RI  / system... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 56 | SystemSnapshotter — M1 系统状态镜像（CL-017 RI  / system... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） / sqlite_factory (io/sqlite_f... | 导入依赖 / import_depends |
@@ -789,7 +789,7 @@ flowchart TD
 | 3 | D_GOV_REPAIR 治理修复: 延迟导入 BudgetEngine 避免循环依赖. / budget_enforcement ... | → | Skill 加载前创建回滚检查点 / skill_executor (skills/skill... | 导入依赖 / import_depends |
 | 4 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 sou / boot_hooks (trading/... | → | 技能freshness扩展 / MOD-INF-019: Agent Spec — Skill Fres... | 导入依赖 / import_depends |
 | 5 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 sou / boot_hooks (trading/... | → | 技能生命周期 / MOD-INF-019: Agent Spec — Skill Lifecycle... | 导入依赖 / import_depends |
-| 6 | D_INTEGRATION 管线路由: SentinelServer: 意图路由哨兵 MCP Server / sentinel_server... | → | intentkeywordmapper / IntentKeywordMapper - Stage 1 of th... | 导入依赖 / import_depends |
+| 6 | D_INTEGRATION 管线路由: SentinelServer: 意图路由哨兵 MCP Server / sentinel_server... | → | 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three... | 导入依赖 / import_depends |
 | 7 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | PipelineSkillBridge — Agent Spec -> Pipe / pipeline_brid... | 导入依赖 / import_depends |
 | 8 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | 技能反馈 / MOD-INF-019: Agent Spec — Skill Feedback Loop... | 导入依赖 / import_depends |
 | 9 | D_ORCHESTRATOR 代理编排器: Orc->CE 上下文桥接 — requestcontext() 生产者 / context_b... | → | CE 向量写入器 — vectorizeandstore() 生产者 / vector_writ... | 导入依赖 / import_depends |
