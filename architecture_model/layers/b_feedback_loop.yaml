@@ -1,5 +1,5 @@
-# MOD-FEEDBACK_LOOP SSoT (Single Source of Truth) ?Architecture Model
-# 同步? docs/03_modules/_cross_layer/feedback_loop/blueprint.md §1.1
+# MOD-FEEDBACK_LOOP SSoT (Single Source of Truth) — Architecture Model
+# 同步自 docs/03_modules/_cross_layer/feedback_loop/blueprint.md §1.1
 
 module_id: MOD-FEEDBACK_LOOP
 ttl: permanent
@@ -74,69 +74,72 @@ new_blindspots_v0390:
 
 new_blindspots_v0400:
   detectors:
-    - R494: FlappingDetector ?alert toggle frequency
-    - R495: MetricCardinalityGuard ?label dimension explosion
-    - R499: SilentCorruptionDetector ?bit-flip/storage integrity
-    - R501: IntermittentFailurePattern ?conditional failure clustering
+    - R494: FlappingDetector — alert toggle frequency
+    - R495: MetricCardinalityGuard — label dimension explosion
+    - R499: SilentCorruptionDetector — bit-flip/storage integrity
+    - R501: IntermittentFailurePattern — conditional failure clustering
   diagnosers:
-    - R500: HumanAnomalyFloodDetector ?human cognitive overload
+    - R500: HumanAnomalyFloodDetector — human cognitive overload
   resilience:
-    - R496: "GracefulDegradationPlanner ?4-tier P0→P3 auto-degrade"
-    - R498: ConfigHotReloadGuard ?runtime config consistency
+    - R496: "GracefulDegradationPlanner — 4-tier P0→P3 auto-degrade"
+    - R498: ConfigHotReloadGuard — runtime config consistency
   forensic:
-    - R497: StateMigrationValidator ?cross-version state compat
+    - R497: StateMigrationValidator — cross-version state compat
 
 new_blindspots_v0410:
   L1_self_referential:
-    desc: 一阶·自??FLE监控自身机制
+    desc: 一阶·自我指涉 — FLE监控自身机制
     evolution:
-      - R502: PromptSelfOptimizationLoop ?DSPy/GEPA封闭自提示进化闭?
-      - R505: "SemanticIntentPreservationGuard ?自修改语义意图保真校?cosine sim)"
+      - R502: PromptSelfOptimizationLoop — DSPy/GEPA封闭自提示进化闭环
+      - R505: SemanticIntentPreservationGuard — 自修改语义意图保真校验
     detectors:
-      - R503: "AgentTrajectoryAnomalyDetector ?FLE执行轨迹静默故障(drift/cycle/miss)"
-      - R507: ActionEfficacyDecayDetector ?单动作有效性EWMA衰减检?
-      - R508: "PlaceboActionDetector ?伪有效动作Mann-Whitney统计检?    diagnosers:"
-      - R504: "IncidentKnowledgeInjector ?RCA发现→规?阈值自动注入闭?"
-      - R506: ContextWindowPressureManager ?上下文窗口压力主动预?压缩/优先?
-      - R509: "ColdStartConservativeMode ?冷启动渐进激?collect→detect→diagnose→full)"
-      - R510: CrossSessionConsistencyValidator ?跨session阈值跳?配置哈希?
-      - R511: ActionCompositionHealthMonitor ?复合动作链整体健?负协同检?
-  L2_guard_of_guards:
-    desc: 二阶·盾之??保护一阶保护机制的机制
-    detectors:
-      - R517: RecursiveDiagnosisTrustEvaluator ?自诊断vs外部信号交叉验证
-      - R519: GuardOscillationDetector ?守卫状态振荡频?振幅分析
+      - R503: AgentTrajectoryAnomalyDetector — FLE自身执行轨迹静默故障检测
+      - R507: ActionEfficacyDecayDetector — 单动作有效性EWMA衰减检测
+      - R508: PlaceboActionDetector — 伪有效动作统计检验
     diagnosers:
-      - R512: GuardSelfConsistencyAuditor ?每个Guard监控自身pass/fail分布漂移
-      - R513: CrossGuardConflictDetector ?守卫间矛盾建议配对冲突矩?
-      - R516: MetaGuardLatencyBudget ?累计Guard开销监控+超限降级
-      - R518: GuardInteractionTopologyMapper ?Guard交互有向?环路检?
-    evolution::
-      - R514: "PromptOptimizationRegressionDetector ?提示优化前A/B验证(held-out set)"
-    forensic:
-      - R515: "KnowledgeInjectionPreFlightVerifier ?新规则干跑验?历史回测)"
-  L3_system_of_guards:
-    desc: 三阶·系统之盾 ?多守卫协同涌现行?
-    detectors::
-      - R520: GuardCascadeDetector ?守卫触发级联检测与熔断
-      - R524: ExternalValidationCheckpoint ?Gödel边界人工升级触发条件
-      - R525: TemporalCoherenceOfSelfModel ?FLE自模型跨时间一致性校?
-    forensic::
-      - R521: GuardConfigurationDriftMonitor ?集体守卫参数vs黄金基线漂移
-      - R523: GuardComplexityBudget ?守卫数量边际收益递减追踪
+      - R504: IncidentKnowledgeInjector — RCA发现->规则/阈值自动注入闭环
+      - R506: ContextWindowPressureManager — 上下文窗口压力主动预防
+      - R509: ColdStartConservativeMode — 冷启动渐进激活
+      - R510: CrossSessionConsistencyValidator — 跨session阈值跳变+配置哈希链
+      - R511: ActionCompositionHealthMonitor — 复合动作链整体健康
+  L2_guard_of_guards:
+    desc: 二阶·盾之盾 — 保护一阶保护机制的机制
     evolution:
-      - R522: SelfModificationRateLimiter ?TokenBucket自修改速率限制
-  L4_terminal:
-    desc: 四阶·终末 ?边界条件与不可再分残?
-    detectors::
-      - R526: ActionSideEffectCumulativeDetector ?动作微副作用累积漂移检?
-      - R528: DiminishingReturnsDetector ?每新增Guard边际价值计?
-      - R530: SelfDiagnosisDataLeakDetector ?自诊断报告敏感数据泄漏扫?
-      - R532: "FLEPerformanceRegressionDetector ?自修改后基准性能回归检?    diagnosers:"
-      - R527: "SystemEntropyMonitor ?FLE内部熵增趋势(配置/行为混乱?"
+      - R514: PromptOptimizationRegressionDetector — 提示优化前A/B验证
+    detectors:
+      - R517: RecursiveDiagnosisTrustEvaluator — 自诊断vs外部信号交叉验证
+      - R519: GuardOscillationDetector — 守卫状态振荡频率/振幅分析
+    diagnosers:
+      - R512: GuardSelfConsistencyAuditor — 每个Guard监控自身pass/fail分布漂移
+      - R513: CrossGuardConflictDetector — 守卫间矛盾建议配对冲突矩阵
+      - R516: MetaGuardLatencyBudget — 累计Guard开销监控+超限降级
+      - R518: GuardInteractionTopologyMapper — Guard交互有向图+环路检测
     forensic:
-      - R529: FLEUpgradeSafetyValidator ?FLE自身代码升级兼容性校?
-      - R531: InterruptCoherenceValidator ?崩溃/重启后状态一致性校?
+      - R515: KnowledgeInjectionPreFlightVerifier — 新规则干跑验证
+  L3_system_of_guards:
+    desc: 三阶·系统之盾 — 多守卫协同涌现行为
+    evolution:
+      - R522: SelfModificationRateLimiter — TokenBucket自修改速率限制
+    detectors:
+      - R520: GuardCascadeDetector — 守卫触发级联检测与熔断
+      - R524: ExternalValidationCheckpoint — Godel边界人工升级触发条件
+      - R525: TemporalCoherenceOfSelfModel — FLE自模型跨时间一致性校验
+    forensic:
+      - R521: GuardConfigurationDriftMonitor — 集体守卫参数vs黄金基线漂移
+      - R523: GuardComplexityBudget — 守卫数量边际收益递减追踪
+  L4_terminal:
+    desc: 四阶·终末 — 边界条件与不可再分残余
+    detectors:
+      - R526: ActionSideEffectCumulativeDetector — 动作微副作用累积漂移检测
+      - R528: DiminishingReturnsDetector — 每新增Guard边际价值计算
+      - R530: SelfDiagnosisDataLeakDetector — 自诊断报告敏感数据泄漏扫描
+      - R532: FLEPerformanceRegressionDetector — 自修改后基准性能回归检测
+    diagnosers:
+      - R527: SystemEntropyMonitor — FLE内部熵增趋势
+    forensic:
+      - R529: FLEUpgradeSafetyValidator — FLE自身代码升级兼容性校验
+      - R531: InterruptCoherenceValidator — 崩溃/重启后状态一致性校验
+
 interfaces:
   - contract_id: CT-FLE-ORC-001
     role: both
