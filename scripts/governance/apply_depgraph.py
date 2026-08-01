@@ -84,6 +84,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -248,12 +249,12 @@ SQL_SELECT_DESIGN_MATURITY_BY_NODE = "SELECT design_maturity, path FROM nodes WH
 SQL_UPDATE_DESIGN_MATURITY = "UPDATE nodes SET design_maturity=%s WHERE node_id=%s"
 
 # --- remove_design_node ---
-SQL_SELECT_NODE_DETAIL_BY_ID = "SELECT node_id, path, design_maturity, build_status FROM nodes WHERE node_id=%s"
+SQL_SELECT_NODE_DETAIL_BY_ID = "SELECT node_id, path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s"
 SQL_COUNT_NODES_BY_PATH_EXCLUDE_ID = "SELECT COUNT(*) FROM nodes WHERE path=%s AND node_id!=%s"
 SQL_DELETE_EDGES_BY_NODE = "DELETE FROM edges WHERE from_node_id=%s OR to_node_id=%s"
 
 # --- deprecate_node ---
-SQL_SELECT_NODE_FULL_DETAIL_BY_ID = "SELECT node_id, path, file_path, design_maturity, build_status FROM nodes WHERE node_id=%s"
+SQL_SELECT_NODE_FULL_DETAIL_BY_ID = "SELECT node_id, path, file_path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s"
 
 # --- mark_blueprint_invalid ---
 SQL_SELECT_NODES_BY_BLUEPRINT = "SELECT node_id, path FROM nodes WHERE blueprint_id=%s"
@@ -1618,14 +1619,61 @@ def _sync_panorama_after_transition(node_id: int) -> None:
         print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
 
 
-def remove_design_node(node_id: int, db_path: str = None) -> bool:
+# --- design 节点删除审计（治本 RSK/RPT 误删，2026-07-31）---
+_DESIGN_NODE_DELETE_AUDIT_DIR = REPO_ROOT / ".runtime" / "gate_audit"
+_DESIGN_NODE_DELETE_AUDIT_FILE = "design_node_delete.jsonl"
+
+
+def _audit_design_node_delete(
+    *,
+    op: str,
+    node_id: int,
+    design_maturity: str,
+    build_status: str,
+    path: str,
+    blueprint_id: str = "",
+    evidence: str = "",
+    force: bool = False,
+) -> None:
+    """记录 design 节点删除/逃生操作到审计日志（非阻断）。
+
+    治本 RSK/RPT 误删（2026-07-31）：所有 design 节点的删除/强制逃生操作
+    MUST 落审计日志，便于事后追溯"谁在什么时候凭什么证据删了哪个 design 节点"。
+    日志路径：.runtime/gate_audit/design_node_delete.jsonl
+    """
+    try:
+        _DESIGN_NODE_DELETE_AUDIT_DIR.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": int(time.time()),
+            "session_id": os.environ.get("ZEPHYR_SESSION_ID", "cli-manual"),
+            "op": op,
+            "node_id": node_id,
+            "blueprint_id": blueprint_id,
+            "design_maturity": design_maturity,
+            "build_status": build_status,
+            "path": path,
+            "evidence": evidence,
+            "force": force,
+        }
+        with (_DESIGN_NODE_DELETE_AUDIT_DIR / _DESIGN_NODE_DELETE_AUDIT_FILE).open(
+            "a", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001
+        logger.debug("design_node_delete audit write failed (non-blocking)", exc_info=True)
+
+
+def remove_design_node(node_id: int, db_path: str = None, design_evidence: str = None) -> bool:
     """
     删除设计态节点（软删除）。
     返回：True=成功，False=失败
     流程：
     1. RULE-THREE 三步审判（登记检查/重复检查/功能价值检查）
-    2. 通过后软删除（build_status='deprecated'）
-    3. 拒绝硬删除（DELETE FROM nodes）
+    2. RULE-DESIGN-EVIDENCE 双源门禁：design_evidence 必填（设计文档引用，
+       如 "11-D-RISK §1.4 RK-09 P0核心"），无则硬阻断。证据落审计日志。
+       治本 RSK/RPT 误删（2026-07-31）：堵住"忘了查文档就 CLI 删"的后门。
+    3. 通过后软删除（build_status='deprecated'）
+    4. 拒绝硬删除（DELETE FROM nodes）
     """
     with _db_write_lock(db_path=db_path, task="remove_design_node"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
@@ -1641,12 +1689,24 @@ def remove_design_node(node_id: int, db_path: str = None) -> bool:
                 print(f"ERROR: node_id={node_id} design_maturity={row['design_maturity']}（非设计态节点，禁止删除）", file=sys.stderr)
                 return False
 
-            # STEP 2: 重复检查 - 是否有其他同path节点
+            # STEP 2: RULE-DESIGN-EVIDENCE 双源门禁（治本 RSK/RPT 误删，2026-07-31）
+            if not design_evidence or not design_evidence.strip():
+                print(
+                    f"ERROR: node_id={node_id} blueprint_id={row.get('blueprint_id') or ''}"
+                    f" 缺少 design_evidence —— 删除 design 节点 MUST 声明已查设计文档的证据"
+                    f"（如 \"11-D-RISK §1.4 RK-09 P0核心\"）。\n"
+                    f"  CLI: --remove-design-node {node_id} --design-evidence \"<文档引用>\"\n"
+                    f"  治本：堵住\"忘了查文档就 CLI 删\"的后门（RSK/RPT 误删事故根因）",
+                    file=sys.stderr,
+                )
+                return False
+
+            # STEP 3: 重复检查 - 是否有其他同path节点
             duplicates = conn.execute(
                 "SELECT COUNT(*) FROM nodes WHERE path=%s AND node_id!=%s", (row["path"], node_id)
             ).fetchone()["count"]
 
-            # STEP 3: 功能价值检查 - 检查是否有边引用此节点
+            # STEP 4: 功能价值检查 - 检查是否有边引用此节点
             edge_count = conn.execute(
                 SQL_COUNT_EDGES_BY_NODE, (node_id, node_id)
             ).fetchone()["count"]
@@ -1654,10 +1714,26 @@ def remove_design_node(node_id: int, db_path: str = None) -> bool:
                 print(f"WARNING: node_id={node_id} 有{edge_count}条边引用，将先删除边", file=sys.stderr)
                 conn.execute(SQL_DELETE_EDGES_BY_NODE, (node_id, node_id))
 
+            # 审计：双源证明落盘（软删除前，便于事后追溯）
+            _audit_design_node_delete(
+                op="remove_design_node",
+                node_id=node_id,
+                design_maturity=row["design_maturity"],
+                build_status=row["build_status"],
+                path=row.get("path") or "",
+                blueprint_id=row.get("blueprint_id") or "",
+                evidence=design_evidence.strip(),
+                force=False,
+            )
+
             # 软删除（build_status='deprecated'）
             conn.execute(SQL_DEPRECATE_NODE, (node_id,))
             conn.commit()
-            print(f"[OK] node_id={node_id}: 软删除（build_status='deprecated'）", file=sys.stderr)
+            print(
+                f"[OK] node_id={node_id} blueprint_id={row.get('blueprint_id') or ''}: "
+                f"软删除（build_status='deprecated'）evidence={design_evidence.strip()}",
+                file=sys.stderr,
+            )
             return True
         except Exception as e:
             conn.rollback()
@@ -1667,32 +1743,38 @@ def remove_design_node(node_id: int, db_path: str = None) -> bool:
             conn.close()
 
 
-def deprecate_node(node_id: int, db_path: str = None) -> bool:
+def deprecate_node(node_id: int, db_path: str = None, force: bool = False) -> bool:
     """
     软废弃任意节点（含 production）——专用于孤儿节点清理。
 
     与 remove_design_node 的区别：
-    - remove_design_node 仅限 design_maturity='design' 节点
+    - remove_design_node 仅限 design_maturity='design' 节点（带 design_evidence 双源门禁）
     - deprecate_node 不限制 design_maturity，绕过 5 态状态机
 
     使用场景：物理文件已删除的孤儿节点（如生成器删除后遗留的 proxy 文件、
     真源归一后的废弃副本），需要将 depgraph 节点标记为 deprecated 以保持
     depgraph 与磁盘一致。
 
+    治本（2026-07-31，RSK/RPT 误删）：design_maturity='design' 节点默认拒绝——
+    design 节点必须走正门 remove_design_node（带 design_evidence 双源门禁）。
+    --force 逃生通道用于合法 design 垃圾节点清理（如 MOD-TEST 类测试残留），
+    落审计日志。
+
     流程：
     1. 验证节点存在
     2. 验证当前 build_status 不是已 deprecated（幂等保护）
-    3. 检查边引用，有则警告（不阻断）
-    4. 诊断警告（P2 治本 2026-06-29，不阻断）：
+    3. RULE-DESIGN-GATE 双源门禁：design 节点禁止走后门（--force 逃生+审计）
+    4. 检查边引用，有则警告（不阻断）
+    5. 诊断警告（P2 治本 2026-06-29，不阻断）：
        a. 物理文件存在性——文件仍存在则警告（可能误废弃）
        b. path/file_path 一致性——不一致则警告（可能漂移）
-    5. 软删除（build_status='deprecated'）
+    6. 软删除（build_status='deprecated'）
     """
     with _db_write_lock(db_path=db_path, task="deprecate_node"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
-                "SELECT node_id, path, file_path, design_maturity, build_status FROM nodes WHERE node_id=%s",
+                "SELECT node_id, path, file_path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s",
                 (node_id,),
             ).fetchone()
             if not row:
@@ -1701,6 +1783,22 @@ def deprecate_node(node_id: int, db_path: str = None) -> bool:
             if row["build_status"] == "deprecated":
                 print(f"[SKIP] node_id={node_id} 已是 deprecated（幂等）", file=sys.stderr)
                 return True
+
+            # RULE-DESIGN-GATE 双源门禁（治本 RSK/RPT 误删，2026-07-31）
+            # design 节点禁止走 --deprecate-node 后门——必须走正门 remove_design_node
+            # （带 design_evidence 双源门禁）。--force 逃生用于合法 design 垃圾节点
+            # （如 MOD-TEST 类测试残留），落审计日志。
+            if row["design_maturity"] == "design" and not force:
+                print(
+                    f"ERROR: node_id={node_id} blueprint_id={row.get('blueprint_id') or ''}"
+                    f" design_maturity=design —— design 节点禁止走 --deprecate-node 后门"
+                    f"（RSK/RPT 误删事故根因）。\n"
+                    f"  正门：python scripts/governance/apply_depgraph.py --remove-design-node {node_id}"
+                    f" --design-evidence \"<设计文档引用>\"\n"
+                    f"  逃生（仅合法 design 垃圾节点如 MOD-TEST）：加 --force（落审计日志）",
+                    file=sys.stderr,
+                )
+                return False
 
             # 检查边引用
             edge_count = conn.execute(
@@ -1727,6 +1825,18 @@ def deprecate_node(node_id: int, db_path: str = None) -> bool:
                     f"WARNING: node_id={node_id} path({_pth}) != file_path({_fp}) —— "
                     f"不一致（可能漂移，cmd_update_path 已治本同步，此节点为历史遗留）",
                     file=sys.stderr,
+                )
+
+            # 审计：design 节点走后门 force 逃生（治本 RSK/RPT 误删）
+            if row["design_maturity"] == "design" and force:
+                _audit_design_node_delete(
+                    op="deprecate_design_force",
+                    node_id=node_id,
+                    design_maturity=row["design_maturity"],
+                    build_status=row["build_status"],
+                    path=row.get("path") or "",
+                    blueprint_id=row.get("blueprint_id") or "",
+                    force=True,
                 )
 
             conn.execute(SQL_DEPRECATE_NODE, (node_id,))
@@ -4356,12 +4466,26 @@ def main() -> None:
         help="转换design_maturity(ARCH-MM-002 两档化: design→production): NODE_ID TO_MATURITY。"
         "ARCH-MM-002 门禁：[MATURITY] header SSoT MUST == TO_MATURITY，否则硬阻断（--force 逃生）",
     )
-    parser.add_argument("--remove-design-node", type=int, metavar="NODE_ID", help="软删除设计态节点: NODE_ID")
+    parser.add_argument(
+        "--remove-design-node",
+        type=int,
+        metavar="NODE_ID",
+        help="软删除设计态节点: NODE_ID（MUST 配 --design-evidence 双源门禁，治本RSK/RPT误删）",
+    )
     parser.add_argument(
         "--deprecate-node",
         type=int,
         metavar="NODE_ID",
-        help="软废弃任意节点（含production）: NODE_ID — 专用于孤儿节点清理，绕过5态状态机",
+        help="软废弃任意节点（含production）: NODE_ID — 专用于孤儿节点清理，绕过5态状态机。"
+        "design 节点禁止走此后门（需 --remove-design-node），合法 design 垃圾节点加 --force 逃生。",
+    )
+    parser.add_argument(
+        "--design-evidence",
+        type=str,
+        metavar="DOC_REF",
+        default=None,
+        help="删除 design 节点的设计文档证据引用（必填，如 '11-D-RISK §1.4 RK-09 P0核心'）。"
+        "治本 RSK/RPT 误删：堵住\"忘了查文档就 CLI 删\"的后门。与 --remove-design-node 配合使用。",
     )
     parser.add_argument(
         "--delete-design-edge", type=int, metavar="EDGE_ID", help="删除设计态边（仅限dep_maturity=design）: EDGE_ID"
@@ -4506,7 +4630,8 @@ def main() -> None:
         "--force",
         action="store_true",
         help="强制执行（跳过安全门）。与 --delete-domain（级联删除 nodes 引用）、"
-        "--delete-nodes（跳过入边检查）或 --transition-design-maturity（跳过 [MATURITY] header 校验）配合使用。",
+        "--delete-nodes（跳过入边检查）、--transition-design-maturity（跳过 [MATURITY] header 校验）"
+        "或 --deprecate-node（design 节点逃生，落审计日志）配合使用。",
     )
     # 裁定#ARCH-target_layer_v1.0.0：废弃域归并——将 old_id 引用迁移到已存在的 new_id
     parser.add_argument(
@@ -4696,13 +4821,13 @@ def main() -> None:
         return
 
     if args.remove_design_node is not None:
-        ok = remove_design_node(args.remove_design_node)
+        ok = remove_design_node(args.remove_design_node, design_evidence=args.design_evidence)
         if not ok:
             sys.exit(4)
         return
 
     if args.deprecate_node is not None:
-        ok = deprecate_node(args.deprecate_node)
+        ok = deprecate_node(args.deprecate_node, force=args.force)
         if not ok:
             sys.exit(4)
         return

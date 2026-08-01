@@ -598,3 +598,148 @@ class TestSqlPlaceholderContract:
             "设计态边 SQL 应硬编码 dep_maturity='design'——"
             "add_design_edge 的核心契约（设计态边只能连设计态节点）"
         )
+
+
+# ============================================================================
+# Test 6: design 节点删除双源门禁 —— 治本 RSK/RPT 误删（2026-07-31）
+# ============================================================================
+
+def _make_mock_conn_seq(fetchone_seq=None, fetchall_result=None):
+    """构造 mock depgraph 连接，fetchone 按序返回（支持多查询序列）。
+
+    与 _make_mock_conn 的区别：用 side_effect 支持多次 fetchone 返回不同值
+    （remove_design_node/deprecate_node 内部有多次 conn.execute().fetchone()）。
+    """
+    conn = MagicMock()
+    cursor = MagicMock()
+    cursor.fetchone.side_effect = fetchone_seq or []
+    cursor.fetchall.return_value = fetchall_result or []
+    conn.execute.return_value = cursor
+    conn.cursor.return_value.__enter__.return_value = cursor
+    conn.cursor.return_value = cursor  # 兼容 conn.cursor() 直接调用
+    return conn
+
+
+def _patch_db(adg, monkeypatch, mock_conn):
+    """统一 patch：get_depgraph_pg_connection + _db_write_lock（对标 TestMaturityHeaderGateSmoke）。"""
+    monkeypatch.setattr(adg, "get_depgraph_pg_connection", lambda **kw: mock_conn)
+    from contextlib import contextmanager
+
+    @contextmanager
+    def _mock_lock(*args, **kwargs):
+        yield mock_conn
+
+    monkeypatch.setattr(adg, "_db_write_lock", _mock_lock)
+
+
+class TestDesignNodeDeleteDualSourceGate:
+    """治本 RSK/RPT 误删（2026-07-31）：design 节点删除双源门禁。
+
+    事故根因：用 depgraph 结构状态单源（design_isolation/孤儿信号）做弃用决策，
+    未查设计文档。治本：①remove_design_node 加 design_evidence 必填门禁；
+    ②deprecate_node 对 design 节点默认拒绝，--force 逃生+审计。
+    """
+
+    def test_deprecate_blocks_design_node(self, adg, monkeypatch, capsys):
+        """design 节点走 --deprecate-node 后门（无 force）→ 硬阻断。"""
+        mock_conn = _make_mock_conn_seq([{
+            "node_id": 999, "path": "x.py", "file_path": "",
+            "blueprint_id": "MOD-RSK-009",
+            "design_maturity": "design", "build_status": "planned",
+        }])
+        _patch_db(adg, monkeypatch, mock_conn)
+
+        result = adg.deprecate_node(node_id=999)
+        assert result is False, "design 节点走后门应被阻断（RSK 误删根因）"
+        err = capsys.readouterr().err
+        assert "禁止走" in err and "--design-evidence" in err, (
+            f"应提示 design 节点禁止走后门 + 正门 --design-evidence，实际 stderr: {err[:300]}"
+        )
+
+    def test_deprecate_force_allows_design_node(self, adg, monkeypatch):
+        """design 节点 + --force → 放行（逃生通道），且落审计日志。"""
+        mock_conn = _make_mock_conn_seq([
+            {"node_id": 999, "path": "x.py", "file_path": "",
+             "blueprint_id": "MOD-TEST",
+             "design_maturity": "design", "build_status": "planned"},
+            {"count": 0},  # edge_count
+        ])
+        _patch_db(adg, monkeypatch, mock_conn)
+        audit_spy = MagicMock()
+        monkeypatch.setattr(adg, "_audit_design_node_delete", audit_spy)
+
+        result = adg.deprecate_node(node_id=999, force=True)
+        assert result is True, "design 节点 + force 应放行（逃生通道）"
+        audit_spy.assert_called_once()
+        assert audit_spy.call_args.kwargs.get("op") == "deprecate_design_force"
+        assert audit_spy.call_args.kwargs.get("force") is True
+        assert audit_spy.call_args.kwargs.get("blueprint_id") == "MOD-TEST"
+
+    def test_deprecate_allows_production_node(self, adg, monkeypatch):
+        """production 节点走 --deprecate-node → 放行（不受 design 门禁影响）。"""
+        mock_conn = _make_mock_conn_seq([
+            {"node_id": 888, "path": "y.py", "file_path": "",
+             "blueprint_id": "MOD-X",
+             "design_maturity": "production", "build_status": "stable"},
+            {"count": 0},  # edge_count
+        ])
+        _patch_db(adg, monkeypatch, mock_conn)
+        audit_spy = MagicMock()
+        monkeypatch.setattr(adg, "_audit_design_node_delete", audit_spy)
+
+        result = adg.deprecate_node(node_id=888)
+        assert result is True, "production 节点应放行（design 门禁仅限 design 节点）"
+        audit_spy.assert_not_called()  # 非 design 节点不应触发审计
+
+    def test_remove_design_node_blocks_without_evidence(self, adg, monkeypatch, capsys):
+        """design 节点走正门但无 design_evidence → 硬阻断（治本核心）。"""
+        mock_conn = _make_mock_conn_seq([{
+            "node_id": 999, "path": "x.py", "blueprint_id": "MOD-RSK-009",
+            "design_maturity": "design", "build_status": "planned",
+        }])
+        _patch_db(adg, monkeypatch, mock_conn)
+
+        result = adg.remove_design_node(node_id=999)  # design_evidence 默认 None
+        assert result is False, "无 design_evidence 应硬阻断（治本 RSK/RPT 误删）"
+        err = capsys.readouterr().err
+        assert "design_evidence" in err and "--design-evidence" in err, (
+            f"应提示缺少 design_evidence + CLI 用法，实际 stderr: {err[:300]}"
+        )
+
+    def test_remove_design_node_allows_with_evidence(self, adg, monkeypatch):
+        """design 节点 + design_evidence → 放行，且落审计日志（含证据）。"""
+        mock_conn = _make_mock_conn_seq([
+            {"node_id": 999, "path": "x.py", "blueprint_id": "MOD-RSK-009",
+             "design_maturity": "design", "build_status": "planned"},
+            {"count": 0},  # duplicates
+            {"count": 0},  # edge_count
+        ])
+        _patch_db(adg, monkeypatch, mock_conn)
+        audit_spy = MagicMock()
+        monkeypatch.setattr(adg, "_audit_design_node_delete", audit_spy)
+
+        result = adg.remove_design_node(
+            node_id=999, design_evidence="11-D-RISK §1.4 RK-09 P0核心"
+        )
+        assert result is True, "有 design_evidence 应放行"
+        audit_spy.assert_called_once()
+        assert audit_spy.call_args.kwargs.get("op") == "remove_design_node"
+        assert audit_spy.call_args.kwargs.get("force") is False
+        assert "RK-09" in audit_spy.call_args.kwargs.get("evidence", "")
+
+    def test_remove_design_node_blocks_non_design(self, adg, monkeypatch, capsys):
+        """非 design 节点走正门 → 阻断（原有逻辑，design 检查在 evidence 之前）。"""
+        mock_conn = _make_mock_conn_seq([{
+            "node_id": 999, "path": "x.py", "blueprint_id": "MOD-X",
+            "design_maturity": "production", "build_status": "stable",
+        }])
+        _patch_db(adg, monkeypatch, mock_conn)
+
+        result = adg.remove_design_node(
+            node_id=999, design_evidence="某文档引用"
+        )
+        assert result is False, "非 design 节点应阻断（design 检查在 evidence 之前）"
+        err = capsys.readouterr().err
+        assert "非设计态节点" in err, (
+            f"应提示非设计态节点禁止删除，实际 stderr: {err[:300]}"
+        )
