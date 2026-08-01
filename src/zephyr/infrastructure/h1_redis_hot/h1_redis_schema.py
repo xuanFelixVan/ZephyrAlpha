@@ -1,0 +1,215 @@
+# [BLUEPRINT] MOD-H1-REDIS-HOT | docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md | §3
+# [MODULE] zephyr.infrastructure.h1_redis_hot.h1_redis_schema
+# [DOMAIN] D_INFRA_RUNTIME
+# [DEPENDENCIES]
+# [CONSUMERS] zephyr.infrastructure.h1_redis_hot.h1_redis_writer; h1_redis_reader; h1_cqrs_projectors
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] Key 命名全小写+冒号分隔; symbol 遵循 miniQMT 6位代码+交易所后缀; 窄表 Field=factor_name:ver
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS] tests/zephyr/infrastructure/h1_redis_hot/test_h1_redis_schema.py
+# [A_module] module_id=MOD-H1-schema | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+# M03豁免: AI趋同演化,非复制粘贴（项目内部标注，非 ruff code）
+
+"""H1 Redis 热缓存 Key Schema（DDL-as-Code）。
+
+真源：
+    - 数据架构.md §11.1.2（在线存储 Online Store）
+    - 数据架构.md §12.4.2（CQRS 读端物化视图）
+    - h1_redis_hot.md §3（Redis Schema Key 设计）
+
+定义 7 类 Redis Key 的命名规范与构造函数。所有 H1 业务代码（Writer/Reader/Projectors）
+MUST 通过本模块的构造函数生成 Key，禁止手写 f"feature:{symbol}" 散落各处——集中管理
+避免 Key 漂移（DD-11-01 在线存储一致性）。
+
+Key 命名规范（§3.4）：
+    - 全小写 + 冒号分隔：feature:000001.SZ、position:600000.SH
+    - symbol 格式遵循 miniQMT 约定（6 位代码 + 交易所后缀）
+    - 盘后清理脚本按前缀 scan 批量删除当日临时 Key
+
+容量估算（数据架构.md §7.2，~200MB 明细）：
+    因子截面 ~50MB（5000只×200因子×50字节）
+    Tick缓存 ~100MB
+    持仓/信号/风控 ~5MB
+    Redis内部开销 ~45MB
+"""
+
+from __future__ import annotations
+
+from typing import Final
+
+# ============================================================================
+# Key 前缀（全小写 + 冒号分隔，§3.4 命名规范）
+# ============================================================================
+
+# §3.1 因子截面（在线存储，DD-11-01）
+PREFIX_FEATURE: Final[str] = "feature"
+# §3.2 CQRS 读端物化视图（事件投影，DD-12-05）
+PREFIX_POSITION: Final[str] = "position"  # 当前持仓
+PREFIX_SIGNAL: Final[str] = "signal"  # 活跃信号
+PREFIX_TRADE: Final[str] = "trade"  # 当日交易
+PREFIX_RISK: Final[str] = "risk"  # 风控状态
+PREFIX_ACCOUNT: Final[str] = "account"  # 账户状态
+# §3.3 Tick 缓存
+PREFIX_TICK: Final[str] = "tick"
+
+
+# ============================================================================
+# §3.1 因子截面 Key（在线存储）
+# ============================================================================
+
+
+def feature_key(symbol: str) -> str:
+    """因子截面 Key：feature:{symbol}
+
+    数据结构：Hash
+    Field：{factor_name}:{ver}（窄表理念 DD-P3-01，新增因子不改 Key 结构）
+    Value：{factor_value} (float)
+    TTL：盘中无 TTL / 盘后 3600s
+
+    Example:
+        >>> feature_key("000001.SZ")
+        'feature:000001.SZ'
+    """
+    return f"{PREFIX_FEATURE}:{symbol}"
+
+
+def factor_field(factor_name: str, version: str = "v1") -> str:
+    """因子 Hash Field：{factor_name}:{version}
+
+    窄表理念（DD-P3-01）：Field 含因子名+版本，新增因子不改 Key 结构。
+
+    Example:
+        >>> factor_field("momentum_20d", "v2")
+        'momentum_20d:v2'
+    """
+    return f"{factor_name}:{version}"
+
+
+# ============================================================================
+# §3.2 CQRS 读端物化视图 Key
+# ============================================================================
+
+
+def position_key(symbol: str) -> str:
+    """当前持仓 Key：position:{symbol}
+
+    数据结构：Hash（amount/cost/avg_price/updated_at）
+    更新频率：实时（OrderFilled 事件）
+    查询延迟：<5ms
+    容量：~5MB
+
+    投影逻辑：数据架构.md §12.4.2 PositionProjector
+    """
+    return f"{PREFIX_POSITION}:{symbol}"
+
+
+def signal_active_key() -> str:
+    """活跃信号 Key：signal:active
+
+    数据结构：Set（活跃信号 symbol 集合）+ Hash（信号详情）
+    更新频率：实时（SignalEvent）
+    查询延迟：<5ms
+    """
+    return f"{PREFIX_SIGNAL}:active"
+
+
+def trade_today_key(symbol: str) -> str:
+    """当日交易 Key：trade:today:{symbol}
+
+    数据结构：List（当日成交记录）
+    更新频率：实时（ExecutionEvent）
+    查询延迟：<5ms
+    盘后清理：盘后清空（§7.3 生命周期）
+    """
+    return f"{PREFIX_TRADE}:today:{symbol}"
+
+
+def risk_status_key() -> str:
+    """风控状态 Key：risk:status
+
+    数据结构：Hash（level/rule_id/updated_at）
+    更新频率：实时（RiskEvent）
+    查询延迟：<5ms
+    """
+    return f"{PREFIX_RISK}:status"
+
+
+def account_summary_key() -> str:
+    """账户状态 Key：account:summary
+
+    数据结构：Hash（total_asset/cash/available/updated_at）
+    更新频率：实时
+    查询延迟：<5ms
+    盘后清理：盘后清空（§7.3 生命周期，敏感数据最小留存）
+    """
+    return f"{PREFIX_ACCOUNT}:summary"
+
+
+# ============================================================================
+# §3.3 Tick 缓存 Key
+# ============================================================================
+
+
+def tick_latest_key(symbol: str) -> str:
+    """盘中最新 tick Key：tick:{symbol}:latest
+
+    数据结构：Hash（price/volume/bid1-5/ask1-5）
+    TTL：盘中无 TTL / 盘后即清
+    容量：~100MB
+
+    用途：D-DATA (miniQMT) 盘中 tick 缓存，决策引擎快速取最新价
+    """
+    return f"{PREFIX_TICK}:{symbol}:latest"
+
+
+# ============================================================================
+# TTL 策略（数据架构.md §7.1/§11.1）
+# ============================================================================
+
+# 盘中无 TTL（交易日 09:30-15:00 因子截面常驻）
+# 盘后切换冷数据 TTL（15:30 后 feature Key 设 3600s 兜底，盘后清理脚本按前缀 scan 删除）
+TTL_POST_MARKET_SECONDS: Final[int] = 3600
+
+# Tick 缓存盘后即清（不留 TTL，盘后清理脚本直接删）
+TTL_TICK_POST_MARKET_SECONDS: Final[int] = 0
+
+
+# ============================================================================
+# 容量估算（数据架构.md §7.2，~200MB 明细）
+# ============================================================================
+
+MEMORY_ESTIMATE_FACTOR_MB: Final[int] = 50  # 5000只×200因子×50字节
+MEMORY_ESTIMATE_TICK_MB: Final[int] = 100
+MEMORY_ESTIMATE_POSITION_SIGNAL_RISK_MB: Final[int] = 5
+MEMORY_ESTIMATE_REDIS_OVERHEAD_MB: Final[int] = 45
+MEMORY_ESTIMATE_TOTAL_MB: Final[int] = (
+    MEMORY_ESTIMATE_FACTOR_MB
+    + MEMORY_ESTIMATE_TICK_MB
+    + MEMORY_ESTIMATE_POSITION_SIGNAL_RISK_MB
+    + MEMORY_ESTIMATE_REDIS_OVERHEAD_MB
+)  # = 200
+
+# maxmemory 上限（蓝图 §8.1 定 2gb；实际 VM 内存 9.2GB，部署时调整为 1gb 留余量给 CH）
+MAXMEMORY_LIMIT: Final[str] = "1gb"
+
+# 扩展触发（数据架构.md §7.2：maxmemory 使用率>70% 触发淘汰/告警）
+MAXMEMORY_EXPANSION_TRIGGER_RATIO: Final[float] = 0.70
+
+
+# ============================================================================
+# 盘后清理前缀（§3.4：盘后清理脚本按前缀 scan 批量删除当日临时 Key）
+# ============================================================================
+
+# 盘后清理的 Key 前缀（feature 保留 3600s TTL 兜底，其余直接删）
+POST_MARKET_CLEANUP_PREFIXES: Final[tuple[str, ...]] = (
+    PREFIX_TICK,  # tick 缓存盘后即清
+    PREFIX_TRADE,  # 当日交易盘后清空（敏感数据）
+    PREFIX_ACCOUNT,  # 账户状态盘后清空（敏感数据）
+    PREFIX_SIGNAL,  # 活跃信号盘后清空
+)

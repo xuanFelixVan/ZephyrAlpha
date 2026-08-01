@@ -1,0 +1,144 @@
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
+# [MODULE] zephyr.infrastructure.redis_config
+# [DOMAIN] D_INFRA_RUNTIME
+# [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.security.secrets
+# [CONSUMERS] zephyr.infrastructure.database_service; zephyr.infrastructure.h1_redis_hot
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] Redis 连接配置唯一真源为 config/.env.redis; 禁止任何入口硬编码 IP/密码默认值; ensure_redis_env_loaded 幂等; load_redis_config 读不到配置抛 RedisConfigError(fail-closed)
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] ensure_redis_env_loaded 文件不存在->log warning+不抛; load_redis_config 配置缺失->抛 RedisConfigError
+# [TESTS] tests/zephyr/infrastructure/test_redis_config.py
+# [A_module] module_id=MOD-INF-redis_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+"""Redis 连接配置单真源加载器（H1 业务热缓存 INFRA-DB-007）。
+
+背景：
+    仿 ch_config.py（裁定 #ARCH-CH-017 同源思想）。Redis 7.0.15 部署在 Hyper-V
+    Ubuntu VM（zephyr-ch, 172.24.30.100），与 ClickHouse 同 VM 共存（D1 决策）。
+    归属 MOD-INF-002（D2 决策：get_redis_conn 已在此模块）。当前单实例 + DB 号
+    隔离（D3 决策：sim=db0/live=db1/治理=db2，未来 INFRA-CACHE-001 立项时起独立实例）。
+
+治本原则（同 #ARCH-CH-017）：
+    - config/.env.redis 是 Redis 连接配置的唯一真源
+    - 所有 Redis 连接入口必须主动读取该文件，禁止用硬编码 IP/密码作为默认值
+    - 启动入口必须显式加载 .env.redis 到 os.environ
+    - 读不到配置 fail-closed（抛异常），而非静默用 localhost/空密码
+
+公共接口：
+    - ensure_redis_env_loaded(): 将 .env.redis 加载到 os.environ（幂等）
+    - load_redis_config(): 返回 Redis 连接配置字典，读不到抛 RedisConfigError
+"""
+
+from __future__ import annotations
+
+import logging
+import os
+import threading
+from pathlib import Path
+
+from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.security.secrets import get_secret_from_file_or_default
+
+log = logging.getLogger(__name__)
+
+# Redis 连接配置文件路径（唯一真源）
+_REDIS_ENV_PATH: Path = REPO_ROOT / "config" / ".env.redis"
+
+# 必须存在的配置键（host 是硬性要求，其余有默认值）
+_REQUIRED_KEYS = ("REDIS_HOST", "REDIS_PORT", "REDIS_PASSWORD")
+
+# 幂等加载标志（避免重复解析文件）
+_loaded: bool = False
+_load_lock = threading.Lock()
+
+
+class RedisConfigError(RuntimeError):
+    """Redis 配置缺失或不可读时抛出（fail-closed，禁止静默用默认值）。"""
+
+
+def ensure_redis_env_loaded() -> None:
+    """将 config/.env.redis 加载到 os.environ（幂等）。
+
+    优先级：已有 os.environ 不覆盖（允许环境变量显式 override）。
+    文件不存在时 log warning 但不抛异常（开发环境友好），
+    后续 load_redis_config() 会因配置缺失抛 RedisConfigError。
+
+    幂等：模块级 _loaded 标志保证只解析一次文件。
+    """
+    global _loaded
+    if _loaded:
+        return
+    with _load_lock:
+        if _loaded:
+            return
+        if not _REDIS_ENV_PATH.is_file():
+            log.warning("Redis 配置文件不存在: %s（Redis 连接将失败）", _REDIS_ENV_PATH)
+            _loaded = True
+            return
+        try:
+            for line in _REDIS_ENV_PATH.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k = k.strip()
+                v = v.strip().strip('"').strip("'")
+                # 不覆盖已有环境变量（允许显式 override）
+                os.environ.setdefault(k, v)
+            log.info("Redis 配置已加载: %s", _REDIS_ENV_PATH)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            log.error("Redis 配置加载失败 %s: %s", _REDIS_ENV_PATH, e)
+        finally:
+            _loaded = True
+
+
+def load_redis_config() -> dict[str, str | int | bool]:
+    """返回 Redis 连接配置字典。
+
+    优先级：os.environ > config/.env.redis > 抛 RedisConfigError。
+    禁止任何默认 IP/密码值（裁定 #ARCH-CH-017 同源思想）。
+
+    Returns:
+        包含 host/port/password/db/decode_responses 的字典。
+
+    Raises:
+        RedisConfigError: 如果 REDIS_HOST 配置缺失（fail-closed）。
+    """
+    ensure_redis_env_loaded()
+    # host 是必须的，缺失则 fail-closed（禁止默认 localhost/172.24.30.100）
+    host = os.environ.get("REDIS_HOST") or get_secret_from_file_or_default("REDIS_HOST", _REDIS_ENV_PATH, "")
+    if not host:
+        raise RedisConfigError(
+            f"REDIS_HOST 未配置：os.environ 未设置且 {_REDIS_ENV_PATH} 不含该键。"
+            f"请创建 config/.env.redis 并填写 REDIS_HOST=<Hyper-V VM IP>。"
+        )
+    password = os.environ.get("REDIS_PASSWORD") or get_secret_from_file_or_default(
+        "REDIS_PASSWORD", _REDIS_ENV_PATH, ""
+    )
+    if not password:
+        raise RedisConfigError(
+            "REDIS_PASSWORD 未配置：Redis 已启用 requirepass（蓝图 §7.1 安全考量），"
+            "禁止无密码连接。请在 config/.env.redis 填写 REDIS_PASSWORD。"
+        )
+    port = int(os.environ.get("REDIS_PORT") or get_secret_from_file_or_default("REDIS_PORT", _REDIS_ENV_PATH, "6379"))
+    db = int(os.environ.get("REDIS_DB") or get_secret_from_file_or_default("REDIS_DB", _REDIS_ENV_PATH, "0"))
+    decode_raw = os.environ.get("REDIS_DECODE_RESPONSES") or get_secret_from_file_or_default(
+        "REDIS_DECODE_RESPONSES", _REDIS_ENV_PATH, "true"
+    )
+    decode_responses = decode_raw.strip().lower() in ("1", "true", "yes")
+    return {
+        "host": host,
+        "port": port,
+        "password": password,
+        "db": db,
+        "decode_responses": decode_responses,
+    }
+
+
+def get_redis_env_path() -> Path:
+    """返回 Redis 配置文件路径（供测试/诊断使用）。"""
+    return _REDIS_ENV_PATH
