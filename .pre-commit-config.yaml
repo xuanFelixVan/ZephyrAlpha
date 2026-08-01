@@ -665,6 +665,11 @@ repos:
         stages: [post-commit]
         description: "每次 git commit 成功后记录 HEAD 变更清单到 handoff-logs/"
 
+      # ── TTL: 提交后退役 tmp/+logs/ 过期产物（AI-03 W3 治本，2026-08-01）──
+      # 病根：retire_tmp_artifacts.py 仅 manual 调用，无强制调度——tmp/ 子目录无界增长。
+      # 治本：post-commit 事件触发（非时间驱动），每次 commit 后自动 --apply 退役过期产物。
+      # 安全：retire_tmp_artifacts.py 仅清理 gitignored 产物（tmp/logs/），不入库的本地磁盘清理；
+      #       受保护人工备份（depgraph_pre_*/depgraph_pinned_*）排除出退役计数（S3 治本）。
       - id: retire-tmp-artifacts-post-commit
         name: "TTL: 提交后退役 tmp/+logs/ 过期产物（post-commit，AI-03 W3 治本）"
         entry: python scripts/governance/d6_security/retire_tmp_artifacts.py --apply
