@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-08-01 15:54:19
+> 自动生成时间: 2026-08-01 19:02:29
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 > 跨域依赖对数: 273
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-08-01 15:54:19
+%% 生成时间: 2026-08-01 19:02:29
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 %% 跨域依赖对数: 273
 
@@ -76,7 +76,7 @@ graph LR
         D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行<br/>(42模块)"]
         D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复<br/>(1模块)"]
         D_GOV_RULE["D_GOV_RULE<br/>规则治理<br/>(35模块)"]
-        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理<br/>(385模块)"]
+        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理<br/>(387模块)"]
         D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理<br/>(31模块)"]
         D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理<br/>(1模块)"]
         D_META_SCRIPTS["D_META_SCRIPTS<br/>元治理脚本<br/>(0模块)"]
@@ -107,17 +107,17 @@ graph LR
     D_COMPLIANCE -->|43条 import_depends| D_GOV_DRIFT
     D_ORCHESTRATOR -->|42条 import_depends| D_SHARED
     D_SECURITY -->|39条 import_depends| D_SHARED
+    D_GOV_SCRIPTS -->|36条 import_depends| D_SHARED
     D_FEEDBACK_LOOP -->|35条 import_depends| D_FBL_VERIFICATION
     D_INFRA_RECOVERY -->|34条 import_depends| D_SHARED
     D_GOV_DRIFT -->|34条 import_depends| D_SHARED
-    D_GOV_SCRIPTS -->|34条 import_depends| D_SHARED
     D_AUTONOMY_CORE -->|25条 import_depends| D_SHARED
     D_GOV_ENFORCEMENT -->|23条 import_depends| D_GOV_AUDIT
     D_TRADING -->|23条 import_depends| D_SHARED
-    D_FEEDBACK_LOOP -->|22条 import_depends| D_SHARED
+    D_GOV_ENFORCEMENT -->|22条 import_depends| D_SHARED
     D_AUTONOMY_CORE -->|22条 import_depends| D_INFRA_RUNTIME
     D_GOV_RULE -->|22条 import_depends| D_SHARED
-    D_GOV_ENFORCEMENT -->|22条 import_depends| D_SHARED
+    D_FEEDBACK_LOOP -->|22条 import_depends| D_SHARED
     D_INTELLIGENCE -->|19条 import_depends| D_SHARED
     D_GOV_CODE_QUALITY -->|19条 import_depends| D_SHARED
     D_DATA -->|19条 import_depends| D_SHARED
@@ -193,15 +193,15 @@ graph LR
     D_GOV_RULE -->|4条 import_depends| D_GOV_SCRIPTS
     D_GOV_SCRIPTS -->|4条 import_depends| D_GOV_AUDIT
     D_INFRA_RECOVERY -->|4条 import_depends| D_GOV_AUDIT
+    D_GOV_REPAIR -->|3条 import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_REPAIR -->|3条 import_depends| D_OPS
     D_GOV_RULE -->|3条 import_depends| D_GOVERNANCE
-    D_AUTONOMY_PERM -->|3条 import_depends| D_GOV_SCRIPTS
     %% ... 还有 173 条跨域依赖未显示
 
     %% 统计
     %% 域总数: 72
     %% 跨域依赖对数: 273
-    %% 跨域依赖边总数: 1818
+    %% 跨域依赖边总数: 1821
 
     %% Top 10 依赖对
     %% 1. D_INFRA_RUNTIME -> D_SHARED: 163 条

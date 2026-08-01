@@ -191,7 +191,7 @@ ttl: permanent
 | `config/sandbox_policy.yaml` | 1.5 | 2026-07-05 |
 | `config/sla_targets.yaml` | 0.9 | 2026-07-22 |
 | `config/sli_registry.yaml` | 2.8 | 2026-08-01 |
-| `config/tech_stack_manifest.yaml` | 5.4 | 2026-07-19 |
+| `config/tech_stack_manifest.yaml` | 5.9 | 2026-08-01 |
 | `config/trigger_router.yaml` | 4.9 | 2026-08-01 |
 | `config/worktree_state_machine.yaml` | 7.3 | 2026-07-21 |
 

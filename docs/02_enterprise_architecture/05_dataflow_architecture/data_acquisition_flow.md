@@ -31,8 +31,8 @@ ttl: permanent
 | 数据源 | 任务数 | 主要采什么 |
 |--------|--------|-----------|
 | **miniqmt**（迅投QMT） | 60 | K线行情、财务报表、股东数据、期权可转债 |
-| **akshare**（AKShare） | 55 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
-| **ifind**（同花顺iFind） | 8 | 资金流向、股权质押、行业分类 |
+| **akshare**（AKShare） | 54 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
+| **ifind**（同花顺iFind） | 9 | 资金流向、股权质押、行业分类 |
 | **tdx**（通达信） | 7 | 板块分类、板块K线、板块成分股 |
 | **tickflow**（TickFlow） | 4 | 美股K线、美股指数 |
 | **tqcenter**（通达信tqcenter） | 4 | 板块K线、板块实时快照、板块成分股映射 |
@@ -122,7 +122,7 @@ ttl: permanent
 
 ---
 
-### 2. akshare（AKShare）— 55 个任务
+### 2. akshare（AKShare）— 54 个任务
 
 **一句话**：开源数据源，采估值、融资融券、龙虎榜、大宗交易、宏观数据、限售解禁等事件类数据。
 
@@ -163,7 +163,6 @@ ttl: permanent
 | analyst_forecast_full_refresh | c3_fundamental.analyst_forecast | weekend_calibration | 分析师预期全量刷新 |
 | block_trade_detail_full_refresh | c1_market.block_trade_detail | weekend_calibration | 大宗交易明细全量刷新 |
 | concept_board_refresh | c1_market.concept_board | weekend_calibration | AKShare概念板块及成分股刷新 |
-| daily_valuation_full_refresh | c1_market.daily_valuation | weekend_calibration | 估值数据全量刷新 |
 | equity_pledge_full_refresh | c3_fundamental.equity_pledge_detail | weekend_calibration | 股权质押明细全量刷新 |
 | etf_nav_full_refresh | c1_market.etf_nav | weekend_calibration | ETF净值全量刷新 |
 | futures_position_incremental | c1_market.futures_position | intraday_realtime | 期货持仓增量（依赖kline_futures_incremental） |
@@ -188,7 +187,7 @@ ttl: permanent
 
 ---
 
-### 3. ifind（同花顺iFind）— 8 个任务
+### 3. ifind（同花顺iFind）— 9 个任务
 
 **一句话**：付费数据源，采资金流向、股权质押、行业分类等 iFind 独有数据。
 
@@ -201,6 +200,7 @@ ttl: permanent
 | money_flow_incremental | c1_market.money_flow | 盘后 17:00 | 资金流向增量 |
 | concept_sector_refresh | c1_market.concept_sector | 月初 09:00 | 概念板块列表全量刷新 |
 | industry_class_suppl_refresh | c3_fundamental.industry_class_suppl | 月初 09:00 | 申万/中证行业分类全量刷新 |
+| daily_valuation_full_refresh | c1_market.daily_valuation | weekend_calibration | 估值数据全量刷新 |
 | edb_data_incremental | c1_market.edb_data | event_driven | EDB宏观数据增量（**已禁用**） |
 | money_flow_full_refresh | c1_market.money_flow | weekend_calibration | 资金流向全量刷新 |
 | realtime_snapshot_incremental | c1_market.realtime_snapshot | intraday_realtime | 实时行情快照增量 |
@@ -367,8 +367,8 @@ ttl: permanent
 flowchart LR
     subgraph 外部数据源
         S6["miniqmt<br/>迅投QMT<br/>60任务"]
-        S0["akshare<br/>AKShare<br/>55任务"]
-        S5["ifind<br/>同花顺iFind<br/>8任务"]
+        S0["akshare<br/>AKShare<br/>54任务"]
+        S5["ifind<br/>同花顺iFind<br/>9任务"]
         S8["tdx<br/>通达信<br/>7任务"]
         S9["tickflow<br/>TickFlow<br/>4任务"]
         S10["tqcenter<br/>通达信tqcenter<br/>4任务"]

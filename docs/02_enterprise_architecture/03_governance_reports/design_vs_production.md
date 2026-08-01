@@ -20,16 +20,16 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2864 | 92.5% |
+| production（生产态） | 2866 | 92.5% |
 | design（设计态） | 232 | 7.5% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3096** | **100%** |
+| **总计** | **3098** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4030 | 130.2% |
+| generated | 4031 | 130.1% |
 | stable | 1663 | 53.7% |
 | planned | 145 | 4.7% |
 | deprecated | 83 | 2.7% |
@@ -78,7 +78,7 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | 91 | 91 | 0 | 0 | 100.0% |
 | D_GOV_REPAIR | 治理修复 | 1 | 1 | 0 | 0 | 100.0% |
 | D_GOV_RULE | 规则治理 | 35 | 35 | 0 | 0 | 100.0% |
-| D_GOV_SCRIPTS | 脚本治理 | 385 | 384 | 1 | 0 | 99.7% |
+| D_GOV_SCRIPTS | 脚本治理 | 387 | 386 | 1 | 0 | 99.7% |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | 25 | 25 | 0 | 0 | 100.0% |
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |

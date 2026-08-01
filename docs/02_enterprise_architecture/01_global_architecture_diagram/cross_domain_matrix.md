@@ -22,7 +22,7 @@ ttl: permanent
 |------|-----|
 | 域总数 | 72 |
 | 跨域依赖对数 | 273 |
-| 跨域依赖边总数 | 1818 |
+| 跨域依赖边总数 | 1821 |
 
 ## 跨域依赖 Top 20（按边数降序）
 
@@ -39,14 +39,14 @@ ttl: permanent
 | D_COMPLIANCE | D_GOV_DRIFT | 43 | import_depends |
 | D_ORCHESTRATOR | D_SHARED | 42 | import_depends |
 | D_SECURITY | D_SHARED | 39 | import_depends |
+| D_GOV_SCRIPTS | D_SHARED | 36 | import_depends |
 | D_FEEDBACK_LOOP | D_FBL_VERIFICATION | 35 | import_depends |
 | D_INFRA_RECOVERY | D_SHARED | 34 | import_depends |
 | D_GOV_DRIFT | D_SHARED | 34 | import_depends |
-| D_GOV_SCRIPTS | D_SHARED | 34 | import_depends |
 | D_AUTONOMY_CORE | D_SHARED | 25 | import_depends,test_depends |
 | D_GOV_ENFORCEMENT | D_GOV_AUDIT | 23 | import_depends |
 | D_TRADING | D_SHARED | 23 | import_depends |
-| D_FEEDBACK_LOOP | D_SHARED | 22 | import_depends |
+| D_GOV_ENFORCEMENT | D_SHARED | 22 | import_depends |
 | D_AUTONOMY_CORE | D_INFRA_RUNTIME | 22 | import_depends,test_depends |
 
 ## 完整跨域依赖清单
@@ -64,17 +64,17 @@ ttl: permanent
 | 9 | D_COMPLIANCE | D_GOV_DRIFT | 43 | import_depends |
 | 10 | D_ORCHESTRATOR | D_SHARED | 42 | import_depends |
 | 11 | D_SECURITY | D_SHARED | 39 | import_depends |
-| 12 | D_FEEDBACK_LOOP | D_FBL_VERIFICATION | 35 | import_depends |
-| 13 | D_INFRA_RECOVERY | D_SHARED | 34 | import_depends |
-| 14 | D_GOV_DRIFT | D_SHARED | 34 | import_depends |
-| 15 | D_GOV_SCRIPTS | D_SHARED | 34 | import_depends |
+| 12 | D_GOV_SCRIPTS | D_SHARED | 36 | import_depends |
+| 13 | D_FEEDBACK_LOOP | D_FBL_VERIFICATION | 35 | import_depends |
+| 14 | D_INFRA_RECOVERY | D_SHARED | 34 | import_depends |
+| 15 | D_GOV_DRIFT | D_SHARED | 34 | import_depends |
 | 16 | D_AUTONOMY_CORE | D_SHARED | 25 | import_depends,test_depends |
 | 17 | D_GOV_ENFORCEMENT | D_GOV_AUDIT | 23 | import_depends |
 | 18 | D_TRADING | D_SHARED | 23 | import_depends |
-| 19 | D_FEEDBACK_LOOP | D_SHARED | 22 | import_depends |
+| 19 | D_GOV_ENFORCEMENT | D_SHARED | 22 | import_depends |
 | 20 | D_AUTONOMY_CORE | D_INFRA_RUNTIME | 22 | import_depends,test_depends |
 | 21 | D_GOV_RULE | D_SHARED | 22 | import_depends |
-| 22 | D_GOV_ENFORCEMENT | D_SHARED | 22 | import_depends |
+| 22 | D_FEEDBACK_LOOP | D_SHARED | 22 | import_depends |
 | 23 | D_INTELLIGENCE | D_SHARED | 19 | import_depends |
 | 24 | D_GOV_CODE_QUALITY | D_SHARED | 19 | import_depends |
 | 25 | D_DATA | D_SHARED | 19 | import_depends |
@@ -150,86 +150,86 @@ ttl: permanent
 | 95 | D_GOV_RULE | D_GOV_SCRIPTS | 4 | import_depends |
 | 96 | D_GOV_SCRIPTS | D_GOV_AUDIT | 4 | import_depends |
 | 97 | D_INFRA_RECOVERY | D_GOV_AUDIT | 4 | import_depends |
-| 98 | D_GOV_REPAIR | D_OPS | 3 | import_depends |
-| 99 | D_GOV_RULE | D_GOVERNANCE | 3 | import_depends |
-| 100 | D_AUTONOMY_PERM | D_GOV_SCRIPTS | 3 | import_depends |
-| 101 | D_AUTONOMY_CORE | D_GOV_AUDIT | 3 | import_depends |
-| 102 | D_ORCHESTRATOR | D_GOVERNANCE | 3 | import_depends |
-| 103 | D_EX_CORE | D_BACKTEST | 3 | import_depends |
-| 104 | D_SECURITY | D_INFRA_RUNTIME | 3 | import_depends |
-| 105 | D_INFRA_RUNTIME | D_GOV_DRIFT | 3 | import_depends |
-| 106 | D_GOVERNANCE | D_GOV_CODE_QUALITY | 3 | import_depends |
-| 107 | D_BACKTEST | D_SHARED | 3 | import_depends |
-| 108 | D_INFRA_RUNTIME | D_GOV_AUDIT | 3 | import_depends |
-| 109 | D_INFRA_RUNTIME | D_FEEDBACK_LOOP | 3 | import_depends |
-| 110 | D_FACTOR | D_DATA | 3 | import_depends |
-| 111 | D_EX_CORE | D_FACTOR | 3 | import_depends |
-| 112 | D_GOV_OPS_RESILIENCE | D_INFRA_RECOVERY | 3 | import_depends |
-| 113 | D_FEEDBACK_LOOP | D_INFRA_RUNTIME | 3 | import_depends |
-| 114 | D_INTEGRATION | D_SECURITY | 3 | import_depends |
-| 115 | D_INTEGRATION | D_OPS | 3 | import_depends |
-| 116 | D_GOVERNANCE | D_DATA | 3 | import_depends |
-| 117 | D_GOV_DRIFT | D_SECURITY | 3 | import_depends |
-| 118 | D_PF_CORE | D_FACTOR | 3 | import_depends |
-| 119 | D_INTEGRATION | D_GOV_AUDIT | 3 | import_depends |
-| 120 | D_INTEGRATION | D_AUTONOMY_CORE | 3 | import_depends |
-| 121 | D_INFRA_RUNTIME | D_TRADING | 3 | import_depends |
-| 122 | D_FBL_DETECTORS | D_FEEDBACK_LOOP | 3 | import_depends |
-| 123 | D_DATA | D_GOV_ENFORCEMENT | 3 | import_depends,test_depends |
-| 124 | D_GOV_ENFORCEMENT | D_GOVERNANCE | 3 | import_depends |
-| 125 | D_INFRA_RUNTIME | D_INTELLIGENCE | 3 | import_depends |
-| 126 | D_INFRA_RUNTIME | D_INFRA_A2A | 3 | import_depends |
-| 127 | D_ML_TRAIN | D_SHARED | 3 | import_depends |
-| 128 | D_GOVERNANCE | D_GOV_DRIFT | 3 | import_depends |
-| 129 | D_GOV_AUDIT | D_GOV_RULE | 3 | import_depends,test_depends |
-| 130 | D_TRADING | D_ORCHESTRATOR | 3 | import_depends |
-| 131 | D_GOVERNANCE | D_INFRA_RECOVERY | 3 | import_depends |
-| 132 | D_GOV_REPAIR | D_GOV_OPS_RESILIENCE | 3 | import_depends |
-| 133 | D_GOV_CODE_QUALITY | D_DATA | 3 | import_depends,test_depends |
-| 134 | D_INTEGRATION | D_GOV_RULE | 2 | import_depends |
-| 135 | D_FUNDAMENTAL_SIGNAL | D_SHARED | 2 | import_depends |
-| 136 | D_TRADING | D_EX_CORE | 2 | import,runtime |
-| 137 | D_TRADING | D_DATA | 2 | runtime |
-| 138 | D_GOV_AUDIT | D_REPORTING | 2 | import_depends |
-| 139 | D_BACKTEST | D_DATA | 2 | import_depends |
-| 140 | D_EX_CORE | D_RISK | 2 | runtime |
-| 141 | D_GOV_AUDIT | D_GOV_OPS_RESILIENCE | 2 | import_depends |
-| 142 | D_FEEDBACK_LOOP | D_GOV_DRIFT | 2 | import_depends |
-| 143 | D_GOV_CODE_QUALITY | D_GOV_AUDIT | 2 | import_depends |
-| 144 | D_SECURITY | D_GOV_OPS_RESILIENCE | 2 | import_depends |
-| 145 | D_EX_CORE | D_SHARED | 2 | import_depends |
-| 146 | D_GOV_CODE_QUALITY | D_SECURITY | 2 | import_depends |
-| 147 | D_GOV_DOCS | D_GOV_SCRIPTS | 2 | test_depends |
-| 148 | D_RISK | D_INFRASTRUCTURE | 2 | import_depends |
-| 149 | D_GOVERNANCE | D_RISK | 2 | import_depends |
-| 150 | D_FRONTEND | D_GOVERNANCE | 2 | import_depends |
-| 151 | D_AUTONOMY_CORE | D_FEEDBACK_LOOP | 2 | test_depends |
-| 152 | D_BACKTEST | D_EX_CORE | 2 | import_depends |
-| 153 | D_PF_ALLOC | D_INFRASTRUCTURE | 2 | import_depends |
-| 154 | D_ORCHESTRATOR | D_SECURITY | 2 | import_depends |
-| 155 | D_FRONTEND | D_SHARED | 2 | import_depends |
-| 156 | D_GOV_ENFORCEMENT | D_GOV_SCRIPTS | 2 | import_depends |
-| 157 | D_FACTOR | D_INFRASTRUCTURE | 2 | import_depends |
-| 158 | D_FACTOR | D_SHARED | 2 | import_depends |
-| 159 | D_GOV_ENFORCEMENT | D_OPS | 2 | import_depends |
-| 160 | D_ORCHESTRATOR | D_INFRA_RUNTIME | 2 | import_depends |
-| 161 | D_ORCHESTRATOR | D_AUTONOMY_CORE | 2 | import_depends |
-| 162 | D_GOV_OPS_RESILIENCE | D_GOV_RULE | 2 | import_depends |
-| 163 | D_INFRA_RECOVERY | D_SECURITY | 2 | import_depends |
-| 164 | D_OPS | D_GOV_SCRIPTS | 2 | import_depends |
-| 165 | D_OPS | D_GOV_OPS_RESILIENCE | 2 | import_depends |
-| 166 | D_OPS | D_GOV_DRIFT | 2 | import_depends |
-| 167 | D_ML_TRAIN | D_TRADING | 2 | import_depends |
-| 168 | D_MKT_DATA | D_INFRASTRUCTURE | 2 | import_depends |
-| 169 | D_GOV_RULE | D_GOV_AUDIT | 2 | import_depends |
-| 170 | D_GOV_RULE | D_GOV_DRIFT | 2 | import_depends |
-| 171 | D_INFRA_RUNTIME | D_AUTONOMY_CORE | 2 | import_depends |
-| 172 | D_FEEDBACK_LOOP | D_GOV_OPS_RESILIENCE | 2 | import_depends |
-| 173 | D_INTELLIGENCE | D_INTEGRATION | 2 | import_depends |
-| 174 | D_INTELLIGENCE | D_GOV_RULE | 2 | import_depends |
-| 175 | D_GOV_SCRIPTS | D_GOV_CODE_QUALITY | 2 | import_depends |
-| 176 | D_GOV_SCRIPTS | D_GOV_OPS_RESILIENCE | 2 | import_depends |
-| 177 | D_FEEDBACK_LOOP | D_INTEGRATION | 2 | import_depends |
+| 98 | D_GOV_REPAIR | D_GOV_OPS_RESILIENCE | 3 | import_depends |
+| 99 | D_GOV_REPAIR | D_OPS | 3 | import_depends |
+| 100 | D_GOV_RULE | D_GOVERNANCE | 3 | import_depends |
+| 101 | D_AUTONOMY_PERM | D_GOV_SCRIPTS | 3 | import_depends |
+| 102 | D_GOV_RULE | D_GOV_DRIFT | 3 | config_depends,import_depends |
+| 103 | D_AUTONOMY_CORE | D_GOV_AUDIT | 3 | import_depends |
+| 104 | D_EX_CORE | D_BACKTEST | 3 | import_depends |
+| 105 | D_SECURITY | D_INFRA_RUNTIME | 3 | import_depends |
+| 106 | D_ORCHESTRATOR | D_GOVERNANCE | 3 | import_depends |
+| 107 | D_GOVERNANCE | D_GOV_CODE_QUALITY | 3 | import_depends |
+| 108 | D_INFRA_RUNTIME | D_GOV_DRIFT | 3 | import_depends |
+| 109 | D_BACKTEST | D_SHARED | 3 | import_depends |
+| 110 | D_INFRA_RUNTIME | D_FEEDBACK_LOOP | 3 | import_depends |
+| 111 | D_INFRA_RUNTIME | D_GOV_AUDIT | 3 | import_depends |
+| 112 | D_EX_CORE | D_FACTOR | 3 | import_depends |
+| 113 | D_FACTOR | D_DATA | 3 | import_depends |
+| 114 | D_FEEDBACK_LOOP | D_INFRA_RUNTIME | 3 | import_depends |
+| 115 | D_INTEGRATION | D_SECURITY | 3 | import_depends |
+| 116 | D_INTEGRATION | D_OPS | 3 | import_depends |
+| 117 | D_GOVERNANCE | D_DATA | 3 | import_depends |
+| 118 | D_GOV_OPS_RESILIENCE | D_INFRA_RECOVERY | 3 | import_depends |
+| 119 | D_GOV_DRIFT | D_SECURITY | 3 | import_depends |
+| 120 | D_INTEGRATION | D_GOV_AUDIT | 3 | import_depends |
+| 121 | D_INTEGRATION | D_AUTONOMY_CORE | 3 | import_depends |
+| 122 | D_INFRA_RUNTIME | D_TRADING | 3 | import_depends |
+| 123 | D_PF_CORE | D_FACTOR | 3 | import_depends |
+| 124 | D_DATA | D_GOV_ENFORCEMENT | 3 | import_depends,test_depends |
+| 125 | D_FBL_DETECTORS | D_FEEDBACK_LOOP | 3 | import_depends |
+| 126 | D_INFRA_RUNTIME | D_INTELLIGENCE | 3 | import_depends |
+| 127 | D_GOV_ENFORCEMENT | D_GOVERNANCE | 3 | import_depends |
+| 128 | D_INFRA_RUNTIME | D_INFRA_A2A | 3 | import_depends |
+| 129 | D_ML_TRAIN | D_SHARED | 3 | import_depends |
+| 130 | D_GOV_AUDIT | D_GOV_RULE | 3 | import_depends,test_depends |
+| 131 | D_TRADING | D_ORCHESTRATOR | 3 | import_depends |
+| 132 | D_GOVERNANCE | D_GOV_DRIFT | 3 | import_depends |
+| 133 | D_GOVERNANCE | D_INFRA_RECOVERY | 3 | import_depends |
+| 134 | D_GOV_CODE_QUALITY | D_DATA | 3 | import_depends,test_depends |
+| 135 | D_TRADING | D_EX_CORE | 2 | import,runtime |
+| 136 | D_TRADING | D_DATA | 2 | runtime |
+| 137 | D_GOV_AUDIT | D_REPORTING | 2 | import_depends |
+| 138 | D_BACKTEST | D_DATA | 2 | import_depends |
+| 139 | D_EX_CORE | D_RISK | 2 | runtime |
+| 140 | D_GOV_AUDIT | D_GOV_OPS_RESILIENCE | 2 | import_depends |
+| 141 | D_FEEDBACK_LOOP | D_GOV_DRIFT | 2 | import_depends |
+| 142 | D_GOV_CODE_QUALITY | D_GOV_AUDIT | 2 | import_depends |
+| 143 | D_SECURITY | D_GOV_OPS_RESILIENCE | 2 | import_depends |
+| 144 | D_EX_CORE | D_SHARED | 2 | import_depends |
+| 145 | D_GOV_CODE_QUALITY | D_SECURITY | 2 | import_depends |
+| 146 | D_GOV_DOCS | D_GOV_SCRIPTS | 2 | test_depends |
+| 147 | D_RISK | D_INFRASTRUCTURE | 2 | import_depends |
+| 148 | D_GOVERNANCE | D_RISK | 2 | import_depends |
+| 149 | D_FRONTEND | D_GOVERNANCE | 2 | import_depends |
+| 150 | D_AUTONOMY_CORE | D_FEEDBACK_LOOP | 2 | test_depends |
+| 151 | D_BACKTEST | D_EX_CORE | 2 | import_depends |
+| 152 | D_PF_ALLOC | D_INFRASTRUCTURE | 2 | import_depends |
+| 153 | D_ORCHESTRATOR | D_SECURITY | 2 | import_depends |
+| 154 | D_FRONTEND | D_SHARED | 2 | import_depends |
+| 155 | D_GOV_ENFORCEMENT | D_GOV_SCRIPTS | 2 | import_depends |
+| 156 | D_FACTOR | D_INFRASTRUCTURE | 2 | import_depends |
+| 157 | D_FACTOR | D_SHARED | 2 | import_depends |
+| 158 | D_GOV_ENFORCEMENT | D_OPS | 2 | import_depends |
+| 159 | D_ORCHESTRATOR | D_INFRA_RUNTIME | 2 | import_depends |
+| 160 | D_ORCHESTRATOR | D_AUTONOMY_CORE | 2 | import_depends |
+| 161 | D_GOV_OPS_RESILIENCE | D_GOV_RULE | 2 | import_depends |
+| 162 | D_INFRA_RECOVERY | D_SECURITY | 2 | import_depends |
+| 163 | D_OPS | D_GOV_SCRIPTS | 2 | import_depends |
+| 164 | D_OPS | D_GOV_OPS_RESILIENCE | 2 | import_depends |
+| 165 | D_OPS | D_GOV_DRIFT | 2 | import_depends |
+| 166 | D_ML_TRAIN | D_TRADING | 2 | import_depends |
+| 167 | D_MKT_DATA | D_INFRASTRUCTURE | 2 | import_depends |
+| 168 | D_GOV_RULE | D_GOV_AUDIT | 2 | import_depends |
+| 169 | D_INFRA_RUNTIME | D_AUTONOMY_CORE | 2 | import_depends |
+| 170 | D_FEEDBACK_LOOP | D_GOV_OPS_RESILIENCE | 2 | import_depends |
+| 171 | D_INTELLIGENCE | D_INTEGRATION | 2 | import_depends |
+| 172 | D_INTELLIGENCE | D_GOV_RULE | 2 | import_depends |
+| 173 | D_GOV_SCRIPTS | D_GOV_CODE_QUALITY | 2 | import_depends |
+| 174 | D_GOV_SCRIPTS | D_GOV_OPS_RESILIENCE | 2 | import_depends |
+| 175 | D_FEEDBACK_LOOP | D_INTEGRATION | 2 | import_depends |
+| 176 | D_INTEGRATION | D_GOV_RULE | 2 | import_depends |
+| 177 | D_FUNDAMENTAL_SIGNAL | D_SHARED | 2 | import_depends |
 | 178 | D_PF_CORE | D_RISK | 1 | import_depends |
 | 179 | D_AUTONOMY_CORE | D_GOV_RULE | 1 | import_depends |
 | 180 | D_AUTONOMY_CORE | D_ORCHESTRATOR | 1 | import_depends |
