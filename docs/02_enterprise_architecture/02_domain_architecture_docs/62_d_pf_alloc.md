@@ -57,8 +57,8 @@ flowchart TD
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["core/multi_strategy_capital_allocator<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["core/signal_synthesis_combiner<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py["core/strategy_correlation_gate<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>策略生命周期事件，pf_<br/>alloc的事件，定义和分发事件。<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>默认权益策略。D_PORTFOLIO_CORE — Default Equity<br/>Long-Only Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>pf_alloc的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_batched_position_builder_py ~~~ src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_core_signal_synthesis_combiner_py
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_core_strategy_correlation_gate_py
@@ -95,8 +95,8 @@ flowchart TD
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["core/multi_strategy_capital_allocator<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["core/signal_synthesis_combiner<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py["core/strategy_correlation_gate<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>策略生命周期事件，pf_<br/>alloc的事件，定义和分发事件。<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>默认权益策略。D_PORTFOLIO_CORE — Default Equity<br/>Long-Only Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>pf_alloc的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_core_signal_synthesis_combiner_py
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py ~~~ src_zephyr_pf_alloc_strategy_lifecycle_event_py

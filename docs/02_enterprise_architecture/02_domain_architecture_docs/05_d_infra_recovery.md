@@ -54,7 +54,7 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_governance_rollback_contracts_py["契约<br/>G-CT-002 Rollback 契约（re-export）。<br/>contracts<br/>文件: rollback/contracts.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_manifest_py["清单<br/>MOD-INF-021 Rollback System — 模块文件清单 (_<br/>manifest_)。<br/>文件: rollback/_manifest.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_manifest_py["清单<br/>MOD-INF-021 Rollback System — 模块文件清单<br/>(_manifest_)。<br/>文件: rollback/_manifest.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_agent_cooldown_py["代理cooldown<br/>AgentCooldown — Agent 冷却隔离器。<br/>agent_cooldown<br/>文件: rollback/agent_cooldown.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_auditor_py["审计器<br/>G-CT-004 契约：Rollback -> Audit 记录回滚操作.<br/>auditor<br/>文件: rollback/auditor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_budget_tracker_py["预算追踪器<br/>G-CT-009 契约：Rollback -> Budget<br/>回滚成本计入预算.<br/>budget_tracker<br/>文件: rollback/budget_tracker.py<br/>(生产态 / production)"]
@@ -155,7 +155,7 @@ flowchart TD
     src_zephyr_infrastructure_rollback_rollback_drill_py["回滚drill<br/>RollbackDrill — 定期回滚演练调度器<br/>(DiRT-style)。<br/>rollback_drill<br/>文件: rollback/rollback_drill.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_lock_py["回滚锁<br/>RollbackLock — 全局回滚锁管理。<br/>rollback_lock<br/>文件: rollback/rollback_lock.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_wal_py["回滚wal<br/>RollbackWAL — 回滚预写日志。<br/>rollback_wal<br/>文件: rollback/rollback_wal.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py["SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>层：dump / restore / verify。<br/>sqlite_dumper<br/>文件: rollback/sqlite_dumper.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py["SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>层：dump / restore / verify<br/>sqlite_dumper<br/>文件: rollback/sqlite_dumper.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_contract_py ~~~ src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback_rollback_drill_py ~~~ src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_lock_py ~~~ src_zephyr_infrastructure_rollback_rollback_wal_py
@@ -227,7 +227,7 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_governance_rollback_contracts_py["契约<br/>G-CT-002 Rollback 契约（re-export）。<br/>contracts<br/>文件: rollback/contracts.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_manifest_py["清单<br/>MOD-INF-021 Rollback System — 模块文件清单 (_<br/>manifest_)。<br/>文件: rollback/_manifest.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_manifest_py["清单<br/>MOD-INF-021 Rollback System — 模块文件清单<br/>(_manifest_)。<br/>文件: rollback/_manifest.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_agent_cooldown_py["代理cooldown<br/>AgentCooldown — Agent 冷却隔离器。<br/>agent_cooldown<br/>文件: rollback/agent_cooldown.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_auditor_py["审计器<br/>G-CT-004 契约：Rollback -> Audit 记录回滚操作.<br/>auditor<br/>文件: rollback/auditor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_budget_tracker_py["预算追踪器<br/>G-CT-009 契约：Rollback -> Budget<br/>回滚成本计入预算.<br/>budget_tracker<br/>文件: rollback/budget_tracker.py<br/>(生产态 / production)"]
@@ -328,7 +328,7 @@ flowchart TD
     src_zephyr_infrastructure_rollback_rollback_drill_py["回滚drill<br/>RollbackDrill — 定期回滚演练调度器<br/>(DiRT-style)。<br/>rollback_drill<br/>文件: rollback/rollback_drill.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_lock_py["回滚锁<br/>RollbackLock — 全局回滚锁管理。<br/>rollback_lock<br/>文件: rollback/rollback_lock.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_wal_py["回滚wal<br/>RollbackWAL — 回滚预写日志。<br/>rollback_wal<br/>文件: rollback/rollback_wal.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py["SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>层：dump / restore / verify。<br/>sqlite_dumper<br/>文件: rollback/sqlite_dumper.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py["SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>层：dump / restore / verify<br/>sqlite_dumper<br/>文件: rollback/sqlite_dumper.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_contract_py ~~~ src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback_rollback_drill_py ~~~ src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_lock_py ~~~ src_zephyr_infrastructure_rollback_rollback_wal_py

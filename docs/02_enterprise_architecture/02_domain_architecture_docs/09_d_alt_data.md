@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>zephyr/alt_data<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>alt_data/_extensions<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>alt_data/api<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>alt_data/core<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_infrastructure_init_py["alt_data/infrastructure 包入口<br/>alt_data/infrastructure<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_models_init_py["alt_data/models 包入口<br/>alt_data/models<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_services_init_py["alt_data/services 包入口<br/>alt_data/services<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>管理zephyr.alt_data子包的加载和懒导入<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>管理alt_data._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>管理alt_data.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>管理alt_data.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_infrastructure_init_py["alt_data/infrastructure 包入口<br/>管理alt_data.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_models_init_py["alt_data/models 包入口<br/>管理alt_data.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_services_init_py["alt_data/services 包入口<br/>管理alt_data.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_init_py ~~~ src_zephyr_alt_data_extensions_init_py
     src_zephyr_alt_data_extensions_init_py ~~~ src_zephyr_alt_data_api_init_py
     src_zephyr_alt_data_api_init_py ~~~ src_zephyr_alt_data_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>zephyr/alt_data<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>alt_data/_extensions<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>alt_data/api<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>alt_data/core<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_infrastructure_init_py["alt_data/infrastructure 包入口<br/>alt_data/infrastructure<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_models_init_py["alt_data/models 包入口<br/>alt_data/models<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_services_init_py["alt_data/services 包入口<br/>alt_data/services<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>管理zephyr.alt_data子包的加载和懒导入<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>管理alt_data._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>管理alt_data.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>管理alt_data.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_infrastructure_init_py["alt_data/infrastructure 包入口<br/>管理alt_data.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_models_init_py["alt_data/models 包入口<br/>管理alt_data.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_services_init_py["alt_data/services 包入口<br/>管理alt_data.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_init_py ~~~ src_zephyr_alt_data_extensions_init_py
     src_zephyr_alt_data_extensions_init_py ~~~ src_zephyr_alt_data_api_init_py
     src_zephyr_alt_data_api_init_py ~~~ src_zephyr_alt_data_core_init_py

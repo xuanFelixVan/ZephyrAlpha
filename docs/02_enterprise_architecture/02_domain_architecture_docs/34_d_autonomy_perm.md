@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["检查终止开关latency<br/>Kill Switch 延迟门禁<br/>check_kill_switch_latency<br/>文件: fitness_functions/check_kill_switch_<br/>latency.py<br/>(生产态 / production)"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["检查终止开关latency<br/>Kill Switch 延迟门禁<br/>check_kill_switch_latency<br/>文件: fitness_functions<br/>/check_kill_switch_latency.py<br/>(生产态 / production)"]
     scripts_governance_meta_manage_kill_switch_py["管理终止开关<br/>Kill Switch 管理工具<br/>manage_kill_switch<br/>文件: meta/manage_kill_switch.py<br/>(生产态 / production)"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -75,7 +75,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["检查终止开关latency<br/>Kill Switch 延迟门禁<br/>check_kill_switch_latency<br/>文件: fitness_functions/check_kill_switch_<br/>latency.py<br/>(生产态 / production)"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["检查终止开关latency<br/>Kill Switch 延迟门禁<br/>check_kill_switch_latency<br/>文件: fitness_functions<br/>/check_kill_switch_latency.py<br/>(生产态 / production)"]
     scripts_governance_meta_manage_kill_switch_py["管理终止开关<br/>Kill Switch 管理工具<br/>manage_kill_switch<br/>文件: meta/manage_kill_switch.py<br/>(生产态 / production)"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

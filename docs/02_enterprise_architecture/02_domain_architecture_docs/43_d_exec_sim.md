@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_execution_simulation_init_py["zephyr/execution_simulation 包入口<br/>zephyr/execution_simulation<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: execution_simulation/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_extensions_init_py["execution_simulation/_extensions 包入口<br/>execution_simulation/_extensions<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_api_init_py["execution_simulation/api 包入口<br/>execution_simulation/api<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_core_init_py["execution_simulation/core 包入口<br/>execution_simulation/core<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_infrastructure_init_py["execution_simulation/infrastructure 包入口<br/>execution_simulation/infrastructure<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_models_init_py["execution_simulation/models 包入口<br/>execution_simulation/models<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_services_init_py["execution_simulation/services 包入口<br/>execution_simulation/services<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_init_py["zephyr/execution_simulation 包入口<br/>管理zephyr.execution_simulation子包的加载和懒导<br/>入<br/>文件: execution_simulation/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_extensions_init_py["execution_simulation/_extensions 包入口<br/>管理execution_simulation._extensions子包的加载和<br/>懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_api_init_py["execution_simulation/api 包入口<br/>管理execution_simulation.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_core_init_py["execution_simulation/core 包入口<br/>管理execution_simulation.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_infrastructure_init_py["execution_simulation/infrastructure 包入口<br/>管理execution_simulation.infrastructure子包的加<br/>载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_models_init_py["execution_simulation/models 包入口<br/>管理execution_simulation.models子包的加载和懒导<br/>入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_services_init_py["execution_simulation/services 包入口<br/>管理execution_simulation.services子包的加载和懒<br/>导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_execution_simulation_init_py ~~~ src_zephyr_execution_simulation_extensions_init_py
     src_zephyr_execution_simulation_extensions_init_py ~~~ src_zephyr_execution_simulation_api_init_py
     src_zephyr_execution_simulation_api_init_py ~~~ src_zephyr_execution_simulation_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_execution_simulation_init_py["zephyr/execution_simulation 包入口<br/>zephyr/execution_simulation<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: execution_simulation/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_extensions_init_py["execution_simulation/_extensions 包入口<br/>execution_simulation/_extensions<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_api_init_py["execution_simulation/api 包入口<br/>execution_simulation/api<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_core_init_py["execution_simulation/core 包入口<br/>execution_simulation/core<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_infrastructure_init_py["execution_simulation/infrastructure 包入口<br/>execution_simulation/infrastructure<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_models_init_py["execution_simulation/models 包入口<br/>execution_simulation/models<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_execution_simulation_services_init_py["execution_simulation/services 包入口<br/>execution_simulation/services<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_init_py["zephyr/execution_simulation 包入口<br/>管理zephyr.execution_simulation子包的加载和懒导<br/>入<br/>文件: execution_simulation/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_extensions_init_py["execution_simulation/_extensions 包入口<br/>管理execution_simulation._extensions子包的加载和<br/>懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_api_init_py["execution_simulation/api 包入口<br/>管理execution_simulation.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_core_init_py["execution_simulation/core 包入口<br/>管理execution_simulation.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_infrastructure_init_py["execution_simulation/infrastructure 包入口<br/>管理execution_simulation.infrastructure子包的加<br/>载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_models_init_py["execution_simulation/models 包入口<br/>管理execution_simulation.models子包的加载和懒导<br/>入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_execution_simulation_services_init_py["execution_simulation/services 包入口<br/>管理execution_simulation.services子包的加载和懒<br/>导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_execution_simulation_init_py ~~~ src_zephyr_execution_simulation_extensions_init_py
     src_zephyr_execution_simulation_extensions_init_py ~~~ src_zephyr_execution_simulation_api_init_py
     src_zephyr_execution_simulation_api_init_py ~~~ src_zephyr_execution_simulation_core_init_py

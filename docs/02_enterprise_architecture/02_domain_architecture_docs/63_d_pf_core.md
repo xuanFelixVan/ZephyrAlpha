@@ -55,11 +55,11 @@ ttl: permanent
 flowchart TD
     src_zephyr_pf_core_decision_orchestrator_py["决策编排器<br/>编排组合核心的决策流程，从信号接收到持仓输出的全<br/>链路调度，确保各环节按序执行。<br/>文件: pf_core/decision_orchestrator.py<br/>(设计态 / design)"]
     src_zephyr_pf_core_multi_track_fusion_py["多轨道融合器<br/>把多个策略轨道的信号按权重融合成最终组合决策，解<br/>决多策略冲突时的取舍问题。<br/>文件: pf_core/multi_track_fusion.py<br/>(设计态 / design)"]
-    src_zephyr_pf_core_portfolio_aggregate["组合聚合<br/>组合聚合，组合的子目录，归集相关子模块。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: portfolio_aggregate/<br/>(设计态 / design)"]
+    src_zephyr_pf_core_portfolio_aggregate["组合聚合<br/>组合的子目录，归集相关子模块<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: portfolio_aggregate/<br/>(设计态 / design)"]
     src_zephyr_pf_core_topn_momentum_strategy_py["topnmomentum策略<br/>D_PORTFOLIO_CORE — TopN 动量等权策略<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>topn_momentum_strategy<br/>文件: pf_core/topn_momentum_strategy.py<br/>(设计态 / design)"]
-    tests_pf_core_test_intraday_surge_fall_strategy_py["测试intradaysurgefall策略<br/>IntradaySurgeFallStrategy 单元测试（路径 B<br/>示例策略）。<br/>test_intraday_surge_fall_strategy<br/>文件: pf_core/test_intraday_surge_fall_<br/>strategy.py<br/>(生产态 / production)"]
-    tests_pf_core_test_orderbook_imbalance_strategy_py["测试orderbookimbalance策略<br/>OrderBookImbalanceStrategy 单元测试（路径 B<br/>盘口失衡反转策略）。<br/>test_orderbook_imbalance_strategy<br/>文件: pf_core/test_orderbook_imbalance_<br/>strategy.py<br/>(生产态 / production)"]
-    tests_pf_core_test_strategy_runner_tick_py["测试策略运行器逐笔<br/>测试策略运行器逐笔.run_tick_backtest 单元测试<br/>（路径 A：日频信号 × tick 撮合）。<br/>test_strategy_runner_tick<br/>文件: pf_core/test_strategy_runner_tick.py<br/>(生产态 / production)"]
+    tests_pf_core_test_intraday_surge_fall_strategy_py["测试intradaysurgefall策略<br/>IntradaySurgeFallStrategy 单元测试（路径 B<br/>示例策略）。<br/>test_intraday_surge_fall_strategy<br/>文件: pf_core<br/>/test_intraday_surge_fall_strategy.py<br/>(生产态 / production)"]
+    tests_pf_core_test_orderbook_imbalance_strategy_py["测试orderbookimbalance策略<br/>OrderBookImbalanceStrategy 单元测试（路径 B<br/>盘口失衡反转策略）。<br/>test_orderbook_imbalance_strategy<br/>文件: pf_core<br/>/test_orderbook_imbalance_strategy.py<br/>(生产态 / production)"]
+    tests_pf_core_test_strategy_runner_tick_py["测试策略运行器逐笔<br/>run_tick_backtest 单元测试（路径 A：日频信号 ×<br/>tick 撮合）<br/>test_strategy_runner_tick<br/>文件: pf_core/test_strategy_runner_tick.py<br/>(生产态 / production)"]
     tests_pf_core_test_vwap_reversion_strategy_py["测试vwapreversion策略<br/>VWAPReversionStrategy 单元测试（路径 B<br/>均值回归策略）。<br/>test_vwap_reversion_strategy<br/>文件: pf_core/test_vwap_reversion_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_decision_orchestrator_py ~~~ src_zephyr_pf_core_multi_track_fusion_py
     src_zephyr_pf_core_multi_track_fusion_py ~~~ src_zephyr_pf_core_portfolio_aggregate
@@ -68,8 +68,8 @@ flowchart TD
     tests_pf_core_test_intraday_surge_fall_strategy_py ~~~ tests_pf_core_test_orderbook_imbalance_strategy_py
     tests_pf_core_test_orderbook_imbalance_strategy_py ~~~ tests_pf_core_test_strategy_runner_tick_py
     tests_pf_core_test_strategy_runner_tick_py ~~~ tests_pf_core_test_vwap_reversion_strategy_py
-    src_zephyr_pf_core_optimizer["优化器<br/>优化器，优化器的子目录，归集相关子模块。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: optimizer/<br/>(设计态 / design)"]
-    src_zephyr_pf_core_meta_router["元路由器<br/>元路由器，元路由的子目录，归集相关子模块。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: meta_router/<br/>(设计态 / design)"]
+    src_zephyr_pf_core_optimizer["优化器<br/>优化器的子目录，归集相关子模块<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: optimizer/<br/>(设计态 / design)"]
+    src_zephyr_pf_core_meta_router["元路由器<br/>元路由的子目录，归集相关子模块<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: meta_router/<br/>(设计态 / design)"]
     src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>包入口。D_PORTFOLIO_CORE — Portfolio<br/>Construction Strategies<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_strategy_engine_strategy_runner_py["策略运行器<br/>D_PORTFOLIO_CORE — StrategyRunner 策略运行器<br/>（胶水层）<br/>strategy_runner<br/>文件: strategy_engine/strategy_runner.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_intraday_surge_fall_strategy_py["DCORE — 30秒冲高回落做T策略（路径 B 示例策略<br/>D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B<br/>示例策略）<br/>intraday_surge_fall_strategy<br/>文件: pf_core/intraday_surge_fall_strategy.py<br/>(生产态 / production)"]
@@ -136,9 +136,9 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>包入口。D_PORTFOLIO_CORE — Portfolio<br/>Construction Strategies<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
-    tests_pf_core_test_intraday_surge_fall_strategy_py["测试intradaysurgefall策略<br/>IntradaySurgeFallStrategy 单元测试（路径 B<br/>示例策略）。<br/>test_intraday_surge_fall_strategy<br/>文件: pf_core/test_intraday_surge_fall_<br/>strategy.py<br/>(生产态 / production)"]
-    tests_pf_core_test_orderbook_imbalance_strategy_py["测试orderbookimbalance策略<br/>OrderBookImbalanceStrategy 单元测试（路径 B<br/>盘口失衡反转策略）。<br/>test_orderbook_imbalance_strategy<br/>文件: pf_core/test_orderbook_imbalance_<br/>strategy.py<br/>(生产态 / production)"]
-    tests_pf_core_test_strategy_runner_tick_py["测试策略运行器逐笔<br/>测试策略运行器逐笔.run_tick_backtest 单元测试<br/>（路径 A：日频信号 × tick 撮合）。<br/>test_strategy_runner_tick<br/>文件: pf_core/test_strategy_runner_tick.py<br/>(生产态 / production)"]
+    tests_pf_core_test_intraday_surge_fall_strategy_py["测试intradaysurgefall策略<br/>IntradaySurgeFallStrategy 单元测试（路径 B<br/>示例策略）。<br/>test_intraday_surge_fall_strategy<br/>文件: pf_core<br/>/test_intraday_surge_fall_strategy.py<br/>(生产态 / production)"]
+    tests_pf_core_test_orderbook_imbalance_strategy_py["测试orderbookimbalance策略<br/>OrderBookImbalanceStrategy 单元测试（路径 B<br/>盘口失衡反转策略）。<br/>test_orderbook_imbalance_strategy<br/>文件: pf_core<br/>/test_orderbook_imbalance_strategy.py<br/>(生产态 / production)"]
+    tests_pf_core_test_strategy_runner_tick_py["测试策略运行器逐笔<br/>run_tick_backtest 单元测试（路径 A：日频信号 ×<br/>tick 撮合）<br/>test_strategy_runner_tick<br/>文件: pf_core/test_strategy_runner_tick.py<br/>(生产态 / production)"]
     tests_pf_core_test_vwap_reversion_strategy_py["测试vwapreversion策略<br/>VWAPReversionStrategy 单元测试（路径 B<br/>均值回归策略）。<br/>test_vwap_reversion_strategy<br/>文件: pf_core/test_vwap_reversion_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_strategy_engine_init_py ~~~ tests_pf_core_test_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py ~~~ tests_pf_core_test_orderbook_imbalance_strategy_py
@@ -182,13 +182,13 @@ flowchart TD
 flowchart TD
     src_zephyr_pf_core_decision_orchestrator_py["决策编排器<br/>编排组合核心的决策流程，从信号接收到持仓输出的全<br/>链路调度，确保各环节按序执行。<br/>文件: pf_core/decision_orchestrator.py<br/>(设计态 / design)"]
     src_zephyr_pf_core_multi_track_fusion_py["多轨道融合器<br/>把多个策略轨道的信号按权重融合成最终组合决策，解<br/>决多策略冲突时的取舍问题。<br/>文件: pf_core/multi_track_fusion.py<br/>(设计态 / design)"]
-    src_zephyr_pf_core_portfolio_aggregate["组合聚合<br/>组合聚合，组合的子目录，归集相关子模块。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: portfolio_aggregate/<br/>(设计态 / design)"]
+    src_zephyr_pf_core_portfolio_aggregate["组合聚合<br/>组合的子目录，归集相关子模块<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: portfolio_aggregate/<br/>(设计态 / design)"]
     src_zephyr_pf_core_topn_momentum_strategy_py["topnmomentum策略<br/>D_PORTFOLIO_CORE — TopN 动量等权策略<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>topn_momentum_strategy<br/>文件: pf_core/topn_momentum_strategy.py<br/>(设计态 / design)"]
     src_zephyr_pf_core_decision_orchestrator_py ~~~ src_zephyr_pf_core_multi_track_fusion_py
     src_zephyr_pf_core_multi_track_fusion_py ~~~ src_zephyr_pf_core_portfolio_aggregate
     src_zephyr_pf_core_portfolio_aggregate ~~~ src_zephyr_pf_core_topn_momentum_strategy_py
-    src_zephyr_pf_core_optimizer["优化器<br/>优化器，优化器的子目录，归集相关子模块。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: optimizer/<br/>(设计态 / design)"]
-    src_zephyr_pf_core_meta_router["元路由器<br/>元路由器，元路由的子目录，归集相关子模块。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: meta_router/<br/>(设计态 / design)"]
+    src_zephyr_pf_core_optimizer["优化器<br/>优化器的子目录，归集相关子模块<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: optimizer/<br/>(设计态 / design)"]
+    src_zephyr_pf_core_meta_router["元路由器<br/>元路由的子目录，归集相关子模块<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: meta_router/<br/>(设计态 / design)"]
     src_zephyr_pf_core_optimizer -.->|import / import| src_zephyr_pf_core_meta_router
     src_zephyr_pf_core_portfolio_aggregate -.->|import / import| src_zephyr_pf_core_optimizer
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

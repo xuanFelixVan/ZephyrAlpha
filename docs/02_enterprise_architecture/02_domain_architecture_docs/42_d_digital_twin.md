@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_digital_twin_init_py["zephyr/digital_twin 包入口<br/>zephyr/digital_twin<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: digital_twin/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_extensions_init_py["digital_twin/_extensions 包入口<br/>digital_twin/_extensions<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_api_init_py["digital_twin/api 包入口<br/>digital_twin/api<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_core_init_py["digital_twin/core 包入口<br/>digital_twin/core<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_infrastructure_init_py["digital_twin/infrastructure 包入口<br/>digital_twin/infrastructure<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_models_init_py["digital_twin/models 包入口<br/>digital_twin/models<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_services_init_py["digital_twin/services 包入口<br/>digital_twin/services<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_init_py["zephyr/digital_twin 包入口<br/>管理zephyr.digital_twin子包的加载和懒导入<br/>文件: digital_twin/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_extensions_init_py["digital_twin/_extensions 包入口<br/>管理digital_twin._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_api_init_py["digital_twin/api 包入口<br/>管理digital_twin.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_core_init_py["digital_twin/core 包入口<br/>管理digital_twin.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_infrastructure_init_py["digital_twin/infrastructure 包入口<br/>管理digital_twin.infrastructure子包的加载和懒导<br/>入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_models_init_py["digital_twin/models 包入口<br/>管理digital_twin.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_services_init_py["digital_twin/services 包入口<br/>管理digital_twin.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_digital_twin_init_py ~~~ src_zephyr_digital_twin_extensions_init_py
     src_zephyr_digital_twin_extensions_init_py ~~~ src_zephyr_digital_twin_api_init_py
     src_zephyr_digital_twin_api_init_py ~~~ src_zephyr_digital_twin_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_digital_twin_init_py["zephyr/digital_twin 包入口<br/>zephyr/digital_twin<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: digital_twin/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_extensions_init_py["digital_twin/_extensions 包入口<br/>digital_twin/_extensions<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_api_init_py["digital_twin/api 包入口<br/>digital_twin/api<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_core_init_py["digital_twin/core 包入口<br/>digital_twin/core<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_infrastructure_init_py["digital_twin/infrastructure 包入口<br/>digital_twin/infrastructure<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_models_init_py["digital_twin/models 包入口<br/>digital_twin/models<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_digital_twin_services_init_py["digital_twin/services 包入口<br/>digital_twin/services<br/>包入口，管理该层子模块的统一加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_init_py["zephyr/digital_twin 包入口<br/>管理zephyr.digital_twin子包的加载和懒导入<br/>文件: digital_twin/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_extensions_init_py["digital_twin/_extensions 包入口<br/>管理digital_twin._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_api_init_py["digital_twin/api 包入口<br/>管理digital_twin.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_core_init_py["digital_twin/core 包入口<br/>管理digital_twin.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_infrastructure_init_py["digital_twin/infrastructure 包入口<br/>管理digital_twin.infrastructure子包的加载和懒导<br/>入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_models_init_py["digital_twin/models 包入口<br/>管理digital_twin.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_digital_twin_services_init_py["digital_twin/services 包入口<br/>管理digital_twin.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_digital_twin_init_py ~~~ src_zephyr_digital_twin_extensions_init_py
     src_zephyr_digital_twin_extensions_init_py ~~~ src_zephyr_digital_twin_api_init_py
     src_zephyr_digital_twin_api_init_py ~~~ src_zephyr_digital_twin_core_init_py
