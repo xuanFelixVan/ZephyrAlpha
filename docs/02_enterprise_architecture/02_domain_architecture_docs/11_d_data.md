@@ -294,7 +294,7 @@ flowchart TD
     tests_zephyr_data_test_cross_source_validator_py ~~~ tests_zephyr_data_test_tick_subscriber_py
     schemas_categories_fundamental_balance_sheet_py["fundamental余额sheet<br/>（资产负债表）DDL-as-Code（category_id:<br/>fundamental_balance_sheet, calc_mode: preload）<br/>文件: categories/fundamental_balance_sheet.py<br/>(生产态 / production)"]
     scripts_ch_apply_exchange_columns_py["apply交易所columns<br/>ClickHouse exchange+symbol_canonical<br/>列部署脚本（TRAE-082 1.1.0 治本<br/>#ARCH-DATA-SYMBOL-002）。<br/>apply_exchange_columns<br/>文件: ch/apply_exchange_columns.py<br/>(生产态 / production)"]
-    src_zephyr_data_alerter_py["告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8<br/>可观测性）<br/>告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8<br/>可观测性）。<br/>alerter<br/>文件: data/alerter.py<br/>(生产态 / production)"]
+    src_zephyr_data_alerter_py["告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8<br/>可观测性）<br/>数据包的alerter模块<br/>文件: data/alerter.py<br/>(生产态 / production)"]
     src_zephyr_data_cli_py["数据源集成器 CLI（MOD-L00-004 §8.4）。<br/>数据包的cli模块<br/>文件: data/cli.py<br/>(生产态 / production)"]
     src_zephyr_data_cross_source_validator_py["跨源校验器<br/>多源交叉校验器——比较 QMT 主源与 TDX 备源 tick<br/>数据一致性（P1-4）。<br/>cross_source_validator<br/>文件: data/cross_source_validator.py<br/>(生产态 / production)"]
     src_zephyr_data_normalizers["归一化器<br/>归一化的子目录，归集相关子模块<br/>⛔ 该域，设计已就绪，等待开发排期<br/>文件: normalizers/<br/>(设计态 / design)"]
@@ -936,7 +936,7 @@ flowchart TD
     tests_zephyr_data_test_cross_source_validator_py ~~~ tests_zephyr_data_test_tick_subscriber_py
     schemas_categories_fundamental_balance_sheet_py["fundamental余额sheet<br/>（资产负债表）DDL-as-Code（category_id:<br/>fundamental_balance_sheet, calc_mode: preload）<br/>文件: categories/fundamental_balance_sheet.py<br/>(生产态 / production)"]
     scripts_ch_apply_exchange_columns_py["apply交易所columns<br/>ClickHouse exchange+symbol_canonical<br/>列部署脚本（TRAE-082 1.1.0 治本<br/>#ARCH-DATA-SYMBOL-002）。<br/>apply_exchange_columns<br/>文件: ch/apply_exchange_columns.py<br/>(生产态 / production)"]
-    src_zephyr_data_alerter_py["告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8<br/>可观测性）<br/>告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8<br/>可观测性）。<br/>alerter<br/>文件: data/alerter.py<br/>(生产态 / production)"]
+    src_zephyr_data_alerter_py["告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8<br/>可观测性）<br/>数据包的alerter模块<br/>文件: data/alerter.py<br/>(生产态 / production)"]
     src_zephyr_data_cli_py["数据源集成器 CLI（MOD-L00-004 §8.4）。<br/>数据包的cli模块<br/>文件: data/cli.py<br/>(生产态 / production)"]
     src_zephyr_data_cross_source_validator_py["跨源校验器<br/>多源交叉校验器——比较 QMT 主源与 TDX 备源 tick<br/>数据一致性（P1-4）。<br/>cross_source_validator<br/>文件: data/cross_source_validator.py<br/>(生产态 / production)"]
     src_zephyr_data_pit_query_py["pit查询<br/>财报 Point-In-Time (PIT) 查询能力（#ARCH-CH-021<br/>P0-5）。<br/>pit_query<br/>文件: data/pit_query.py<br/>(生产态 / production)"]

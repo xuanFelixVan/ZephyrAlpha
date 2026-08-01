@@ -298,6 +298,60 @@ def is_generic_desc_zh(desc: str) -> bool:
     return desc.strip() in generic_desc
 
 
+# 通用后缀缓存：name_zh 前缀剥离后的后缀被多个模块共用（模板化后缀）
+_GENERIC_SUFFIX_CACHE: set[str] | None = None
+
+
+def _compute_generic_suffix_set() -> set[str]:
+    """预计算通用后缀集合：plain_zh 去掉模块自身 name_zh 前缀后的后缀，被 >1 模块共用。
+
+    治本场景：name_zh 前缀唯一（如不同模块名），但 plain_zh = "{name_zh}，定义本模块的异常类型"
+    后缀"定义本模块的异常类型"被多个模块共用 → 跨节点重复。全串检测（is_generic_plain_zh）
+    因前缀不同而漏判，需剥离前缀检测后缀。
+
+    Returns:
+        被多个模块共用的后缀文本集合；YAML 不可用时返回空 set
+    """
+    global _GENERIC_SUFFIX_CACHE
+    if _GENERIC_SUFFIX_CACHE is not None:
+        return _GENERIC_SUFFIX_CACHE
+    cache = _ensure_loaded()
+    suffix_counter: dict[str, set[str]] = {}
+    for mp, trans in cache.items():
+        plain = (trans.get("plain_zh") or "").strip().rstrip("。.，, ")
+        name_zh = (trans.get("name_zh") or "").strip()
+        if not plain or not name_zh:
+            continue
+        # 剥离 name_zh 前缀（plain 以 name_zh 开头时）
+        if plain.startswith(name_zh):
+            suffix = plain[len(name_zh):].strip("，,。.、：: ")
+            if suffix and len(suffix) >= 4:
+                suffix_counter.setdefault(suffix, set()).add(mp)
+    _GENERIC_SUFFIX_CACHE = {t for t, paths in suffix_counter.items() if len(paths) > 1}
+    return _GENERIC_SUFFIX_CACHE
+
+
+def is_generic_plain_suffix(plain: str, name_zh: str) -> bool:
+    """检测 plain_zh 剥离 name_zh 前缀后的后缀是否为多模块共用模板。
+
+    Args:
+        plain: 待检测的 plain_zh 文本
+        name_zh: 模块中文名（作为前缀剥离基准）
+
+    Returns:
+        True 表示后缀被 >1 模块共用（应回退到路径派生描述）；False 表示唯一或无法剥离
+    """
+    if not plain or not name_zh:
+        return False
+    p = plain.strip().rstrip("。.，, ")
+    if not p.startswith(name_zh):
+        return False
+    suffix = p[len(name_zh):].strip("，,。.、：: ")
+    if len(suffix) < 4:
+        return False
+    return suffix in _compute_generic_suffix_set()
+
+
 # ============================================================================
 # battle_map_steps 段——作战地图环节叙事真源（BM-INV-003）
 # ============================================================================

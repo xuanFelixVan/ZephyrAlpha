@@ -73,7 +73,15 @@ import yaml
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, PgConnExecuteWrapper  # 治本 #ARCH-TOOL-HEALTH-V1：PgConnExecuteWrapper 用于类型注解（8 处使用）
 
 from domain_name_mapping import get_domain_name_zh, get_domain_name_zh_strict, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh  # noqa: E402
-from _shared.module_translation_loader import get_module_translation, get_module_name_bilingual, get_module_desc_bilingual, get_module_plain  # noqa: E402 — 模块级翻译真源（#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级缺口）
+from _shared.module_translation_loader import (  # noqa: E402 — 模块级翻译真源（#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级缺口）
+    get_module_translation,
+    get_module_name_bilingual,
+    get_module_desc_bilingual,
+    get_module_plain,
+    is_generic_plain_zh,
+    is_generic_desc_zh,
+    is_generic_plain_suffix,
+)
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
 from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402 — 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步，reconciler 刷新 md 即刷新 HTML）
@@ -287,7 +295,9 @@ def _wrap_label_text(text: str, max_units: int = 48) -> str:
     必须在生成端用 <br/> 显式预折行，使测量行数 = 渲染行数。
 
     折行规则：显示宽度（CJK=2/ASCII=1）超 max_units 断行（48 ≈ 24 个汉字）；
-    优先在空格/下划线之后、左括号/斜杠之前软断（保持英文词完整），否则硬断。
+    优先在空格之后、左括号/斜杠之前软断（保持英文词完整），否则硬断。
+    注意：不在下划线处软断——会把 context_engine 拆成 context_+engine 导致
+    审计把 context_ 误判为 name_en 丢弃，造成假性跨节点重复。
     """
     if not text:
         return ""
@@ -296,14 +306,14 @@ def _wrap_label_text(text: str, max_units: int = 48) -> str:
     while remaining:
         width = 0
         cut = 0
-        soft = -1  # 软断点（断在空格/_之后，或（(/之前）
+        soft = -1  # 软断点（断在空格之后，或（(/之前）
         for i, ch in enumerate(remaining):
             u = 2 if ord(ch) > 0x2E7F else 1
             if width + u > max_units:
                 break
             width += u
             cut = i + 1
-            if ch in " _":
+            if ch == " ":
                 soft = i + 1
             elif ch in "（(/":
                 soft = i if i > 0 else -1
@@ -319,24 +329,173 @@ def _wrap_label_text(text: str, max_units: int = 48) -> str:
     return "<br/>".join(lines)
 
 
+# 顶层包中文名映射（用于路径派生简介，确保跨节点唯一）
+_PKG_ZH_MAP = {
+    "shared": "共享层", "infrastructure": "基础设施", "alt_data": "另类数据",
+    "factor": "因子", "signal": "信号", "risk": "风险", "position": "仓位",
+    "trading": "交易", "execution": "执行", "reporting": "报告",
+    "governance": "治理", "security": "安全", "orchestrator": "编排",
+    "integration": "集成", "data": "数据", "market_data": "行情数据",
+    "mkt_data": "行情数据", "pf_core": "组合核心", "pf_alloc": "组合配置",
+    "sell_decision": "卖出决策", "ops": "运维", "ml_train": "机器学习训练",
+    "simulation": "仿真", "audit": "审计", "docs": "文档",
+    "enforcement": "执行", "ops_resilience": "运维韧性", "contracts": "契约",
+    "errors": "错误", "events": "事件", "models": "模型", "api": "接口",
+    "core": "核心", "services": "服务", "connectors": "连接器",
+    "actors": "执行器", "adapters": "适配器", "runtime": "运行时",
+    "generators": "生成器", "reconcilers": "对账器", "scripts": "脚本",
+}
+
+# 通用名集合（name_zh 为这些值时需用路径兜底）
+_GENERIC_NAMES = {"包入口", "__init__", "模块", "工具", "配置", "", "启动关机", "命令行", "连接器", "标的合约", "准入响应"}
+
+# 无意义的 name_en（不显示）
+_MEANINGLESS_NAME_EN = {"__init__", "config", "utils", "helpers", "common", "base", "main", "cli", "types", "init"}
+
+
+def _is_placeholder(text: str) -> bool:
+    """检测简介是否为占位符/无意义文本（应跳过并回退到路径派生）。"""
+    if not text:
+        return True
+    t = text.strip()
+    if not t:
+        return True
+    placeholders = (
+        "Module docstring — see",
+        "（blueprint.md）",
+        "蓝图（blueprint.md）",
+        "Backward-compat shim",
+        "Stub module:",
+        "Re-export shim",
+        "Re-export bridge",
+        "提供包入口和模块加载功能",
+    )
+    for p in placeholders:
+        if t.startswith(p) or p in t:
+            return True
+    # 纯文件名（如 "detector.py"、"report.py"）
+    if re.match(r'^[a-z_][a-z0-9_]*\.py$', t):
+        return True
+    return False
+
+
+def _is_name_plus_trivial(candidate: str, name: str) -> bool:
+    """检测简介是否仅为名称+短后缀（无信息增量，如"绩效attribution报告模块"）。
+
+    suffix 经标点 strip 后：
+    - len==0：候选仅比名称多了标点（如 plain_zh=name_zh+"。"），无信息增量→跳过
+    - 0<len<=3：名称+短无意义后缀（如"…模块"）→跳过
+    - len>3：有实质信息增量→保留
+    """
+    if not candidate or not name:
+        return False
+    if not candidate.startswith(name):
+        return False
+    suffix = candidate[len(name):].strip("，。.，、 ：:()-")
+    return len(suffix) <= 3
+
+
+def _clean_intro_text(text: str) -> str:
+    """清洗简介中的消费者引用（如"供MOD-INF-xxx使用"），保留有效部分。"""
+    if not text:
+        return ""
+    t = text.strip()
+    # 去除尾部消费者引用（如"供GovernanceServer;run_all.py使用"）
+    t = re.sub(r'，?供[^，。]*使用[。.？?]？$', '', t)
+    return t
+
+
+def _blueprint_desc(path: str) -> str:
+    """为 blueprint.md 节点推导模块特异描述（治本 24 个 blueprint 节点简介相同）。"""
+    if not path:
+        return ""
+    p = Path(path)
+    stem = p.stem
+    mod = stem
+    for suffix in ("_blueprint", "blueprint"):
+        if mod.endswith(suffix):
+            mod = mod[:-len(suffix)].strip("_")
+            break
+    parent = p.parent.name
+    generic_parents = {"blueprints", "docs", "", "."}
+    # stem 为通用 "blueprint" 或剥离后为空 → 用父目录名作为模块名（确保唯一）
+    if not mod or mod == "blueprint":
+        if parent and parent not in generic_parents:
+            mod = parent
+        else:
+            mod = stem
+    return f"{mod}模块蓝图文档，描述该模块的设计意图和架构决策"
+
+
+def _path_derived_desc(path: str, name_zh: str) -> str:
+    """当 plain_zh/desc_zh/docstring 全空或全模板化时，从路径派生唯一简介。
+
+    生成格式：``{顶层包/父目录}包的{file_stem}模块``
+    唯一性保证：顶层包区分跨包同名模块；父目录区分同包内不同子目录；file_stem 区分同目录文件。
+    对 blueprint.md / __init__.py / YAML 聚合节点（path 含 #fragment）做特殊处理。
+    """
+    if not path:
+        return ""
+    # blueprint.md 节点
+    if path.endswith("blueprint.md") or path.endswith("_blueprint.md"):
+        return _blueprint_desc(path)
+    # YAML 聚合节点：path = "docs/.../xxx.yaml#FRAGMENT_ID"
+    if "#" in path:
+        base, _, fragment = path.partition("#")
+        file_stem = Path(base).stem
+        return f"{file_stem}的{fragment}条目模块"
+    # __init__.py：包入口，用包路径确保唯一。简介不以名称开头（避免前缀剥离后变通用）
+    if path.endswith("__init__.py"):
+        pkg_parent = Path(path).parent
+        pkg_parts = pkg_parent.parts
+        pkg_short = "/".join(pkg_parts[-2:]) if len(pkg_parts) >= 2 else pkg_parent.name
+        pkg_dot = pkg_short.replace("/", ".")
+        return f"管理{pkg_dot}子包的加载和懒导入"
+    p = Path(path)
+    parent_name = p.parent.name
+    file_stem = p.stem.lstrip("_")  # 去前导下划线（_safety_gates → safety_gates）
+    # 顶层包：src/zephyr/ 之后第一段
+    norm = path.replace("\\", "/")
+    top_seg = ""
+    for prefix in ("src/zephyr/", "src/"):
+        if prefix in norm:
+            rel = norm.split(prefix, 1)[1]
+            top_seg = rel.split("/", 1)[0] if "/" in rel else rel
+            break
+    if not top_seg:
+        top_seg = parent_name
+    top_zh = _PKG_ZH_MAP.get(top_seg, "")
+    parent_zh = _PKG_ZH_MAP.get(parent_name, "")
+    parts_desc = []
+    if top_zh and top_seg != parent_name:
+        parts_desc.append(top_zh)
+    if parent_zh and parent_zh not in parts_desc:
+        parts_desc.append(parent_zh)
+    elif parent_name and parent_name.replace("_", " ") not in parts_desc:
+        parts_desc.append(parent_name.replace("_", " "))
+    pkg_desc = "/".join(parts_desc) if parts_desc else ""
+    module_name = file_stem
+    if pkg_desc and module_name:
+        return f"{pkg_desc}包的{module_name}模块"
+    if module_name:
+        return f"{module_name}模块"
+    return file_stem or ""
+
+
 def _node_mermaid_label(n: dict) -> str:
     """生成 Mermaid 节点标签：中文在前（名+简介+受限），英文在后（名+简介），状态最后。
 
-    显示策略（2026-08-01 第四轮治本：中英分排，解决末行裁剪问题）：
-    - **中文部分（前面）**：中文名 → 中文简介(大白话) → ⛔受限原因(设计态)
-    - **英文部分（后面）**：英文名 → 英文简介
-    - **末尾**：文件路径 → 成熟度状态（颜色已区分运营态/设计态，放最后不碍阅读）
-    - 中文名称：真源 name_zh 优先 → docstring 首行兜底 → 文件名兜底
-    - 中文简介：真源 plain_zh 优先 → desc_zh 兜底 → 名称来自真源时用 docstring 兜底
-    - 英文名称/简介：真源 name_en/desc_en（可能为空，为空则整段不输出）
-    - ⛔ 受限原因：设计态节点 gate_reason 非空时追加（紧跟中文简介，说明"为什么没施工"）
+    治本（2026-08-02 第五轮）：解决跨节点简介重复、缺简介、占位符简介三大问题。
+    - 中文简介候选链：plain_zh → desc_zh → docstring → 路径派生兜底
+    - 每个候选经占位符/通用值/通用后缀检测，无效则跳过
+    - 路径派生兜底确保每个节点都有唯一非空简介
+    - blueprint.md / __init__.py / YAML 聚合节点特殊处理
     - 所有行经 _wrap_label_text 预折行（<br/> 显式断行），防 CSS 二次折行致框高不足
     """
     maturity = _maturity_display(n.get("design_maturity") or "unknown")
     short_name = _node_short_name(n)
     path = n.get("path") or ""
     desc = _node_desc_zh(n)
-    # 拆分取中英文名和简介（翻译真源独立字段）
     trans = get_module_translation(path) if path else None
     name_zh = (trans.get("name_zh", "") if trans else "").strip()
     name_en = (trans.get("name_en", "") if trans else "").strip()
@@ -344,44 +503,67 @@ def _node_mermaid_label(n: dict) -> str:
     desc_en = (trans.get("desc_en", "") if trans else "").strip()
     plain = get_module_plain(path) if path else ""
 
-    # __init__.py 特殊处理：翻译注册表中 90+ 个 __init__.py 填了通用的"包入口"名和描述，
-    # 用完整包路径区分各包，避免全部一样
-    _GENERIC_NAMES = {"包入口", "__init__", "模块", "工具", "配置", ""}
     is_init = path.endswith("__init__.py")
-    if is_init:
+    # __init__.py / 通用名：用包路径或文件名兜底 name_zh
+    if is_init and name_zh in _GENERIC_NAMES:
         pkg_parent = Path(path).parent
         pkg_parts = pkg_parent.parts
         pkg_short = "/".join(pkg_parts[-2:]) if len(pkg_parts) >= 2 else pkg_parent.name
-        if name_zh in _GENERIC_NAMES:
-            name_zh = f"{pkg_short} 包入口"
-        if not plain or ("包入口" in plain and "统一管理" in plain):
-            plain = f"{pkg_short} 包入口，管理该层子模块的统一加载和懒导入"
-    elif name_zh in _GENERIC_NAMES:
-        # 非 __init__.py 但 name_zh 是通用词（如"配置"、"工具"）→ 用文件名兜底
+        name_zh = f"{pkg_short} 包入口"
+    elif not is_init and name_zh in _GENERIC_NAMES:
         file_stem = Path(path).stem
         parent_name = Path(path).parent.name
         name_zh = f"{parent_name}/{file_stem}" if parent_name else file_stem
 
-    # 中文名称：name_zh > docstring > 文件名
     cn_name = name_zh or desc or short_name
-    # 中文简介（多级回退，确保每个节点都有大白话）：
-    # 1. plain_zh（真源大白话）——若与 name_zh 完全相同则视为"复述"跳过
-    # 2. desc_zh（真源技术简介）——若与 name_zh/cn_name 相同也跳过
-    # 3. docstring 首行——若与 cn_name 不同则用作兜底简介
-    # 4. 以上都与名字相同 → 留空（名字行已含功能描述，不需重复显示）
+
+    # 中文简介候选链（多级回退 + 占位符/通用值/通用后缀过滤）
     cn_intro = ""
-    for candidate in (plain, desc_zh, desc):
-        if candidate and candidate != name_zh and candidate != cn_name:
-            cn_intro = candidate
-            break
+    yaml_sources_generic = False  # plain_zh/desc_zh 是否因通用被跳过
+    for candidate, src in ((plain, "yaml"), (desc_zh, "yaml"), (desc, "doc")):
+        if not candidate:
+            continue
+        if candidate == name_zh or candidate == cn_name:
+            continue
+        candidate = _clean_intro_text(candidate)
+        if not candidate:
+            continue
+        if _is_placeholder(candidate):
+            continue
+        if _is_name_plus_trivial(candidate, name_zh):
+            continue
+        # 跳过候选是名称子串的情况（如 plain="冷启动" ⊂ name="冷启动booster"，无信息增量）
+        if candidate in cn_name and len(candidate) < len(cn_name):
+            continue
+        if src == "yaml":
+            if is_generic_plain_zh(candidate) or is_generic_desc_zh(candidate):
+                yaml_sources_generic = True
+                continue
+            if is_generic_plain_suffix(candidate, name_zh):
+                yaml_sources_generic = True
+                continue
+        else:  # doc
+            # YAML 真源被判定为通用时，docstring 大概率是复制粘贴的同样文本，跳过
+            if yaml_sources_generic:
+                continue
+        cn_intro = candidate
+        break
+
+    # 兜底：所有候选均无效 → 路径派生唯一简介（确保每个节点都有非空简介）
+    if not cn_intro:
+        cn_intro = _path_derived_desc(path, name_zh)
+
+    # 去除简介与名称的前缀重叠（治本节点内行重复：简介折行后首段与名称相同）
+    if cn_intro and cn_name and cn_intro.startswith(cn_name):
+        remainder = cn_intro[len(cn_name):].strip(" ，,。.、：:—-")
+        if len(remainder) >= 4:
+            cn_intro = remainder
 
     gate_reason = (n.get("gate_reason") or "").strip()
     is_design = (n.get("design_maturity") or "") == "design"
 
-    # 去重辅助：候选与已显示内容完全相同、候选是已显示内容的子串、或前20字符前缀匹配
-    # 则跳过。前缀匹配解决翻译注册表中 desc_zh 与 desc 末尾微差（如多一个"性"字）的重复。
-    # （翻译注册表 8314 条中大量 name_en/desc_zh/desc_en 填了同样的 docstring，
-    #  不去重会导致节点标签同一行内容重复 2-3 遍）
+    # 去重辅助：候选与已显示内容完全相同、候选是已显示内容的子串则跳过。
+    # 不用前缀匹配（前缀匹配会误杀"名称+增量简介"如 plain_zh=name_zh+"路径集合。"）。
     def _is_dup(candidate: str, shown: list[str]) -> bool:
         c = candidate.lower().strip()
         if not c:
@@ -392,14 +574,10 @@ def _node_mermaid_label(n: dict) -> str:
                 continue
             if c == sl or c in sl:
                 return True
-            # 前缀匹配：前20个字符相同则视为重复（解决末尾微差）
-            prefix_len = min(20, len(c), len(sl))
-            if prefix_len >= 10 and c[:prefix_len] == sl[:prefix_len]:
-                return True
         return False
 
     parts: list[str] = []
-    shown: list[str] = []  # 已显示的文本（用于去重判断）
+    shown: list[str] = []
     # ── 中文部分（前面）──
     parts.append(cn_name)
     shown.append(cn_name)
@@ -408,11 +586,15 @@ def _node_mermaid_label(n: dict) -> str:
         shown.append(cn_intro)
     if gate_reason and is_design:
         parts.append(f"⛔ {gate_reason}")
-    # ── 英文部分（后面）——与已显示内容重复则跳过 ──
-    if name_en and not _is_dup(name_en, shown):
+    # ── 英文部分（后面）——过滤无意义 name_en 与纯文件名 ──
+    if (name_en and name_en not in _MEANINGLESS_NAME_EN and len(name_en) <= 40
+            and not re.match(r'^[a-z_][a-z0-9_]*\.py$', name_en)
+            and not _is_dup(name_en, shown)):
         parts.append(name_en)
         shown.append(name_en)
-    if desc_en and not _is_dup(desc_en, shown):
+    # desc_en：与 name_en 前缀重叠则跳过（避免"name_en"+"name_en — desc"冗余）
+    if (desc_en and not _is_dup(desc_en, shown)
+            and not (name_en and len(name_en) >= 8 and desc_en.startswith(name_en))):
         parts.append(desc_en)
         shown.append(desc_en)
     # ── 末尾：文件路径 + 成熟度（颜色已区分，放最后）──

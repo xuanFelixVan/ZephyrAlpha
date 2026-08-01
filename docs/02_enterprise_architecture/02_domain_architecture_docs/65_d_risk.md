@@ -28,9 +28,9 @@ ttl: permanent
 | 域名称 | 风控 | Domain Name | Risk Control |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 19 | Module Count | 19 |
-| 域内依赖 | 19 | Internal Dependencies | 19 |
+| 域内依赖 | 18 | Internal Dependencies | 18 |
 | 跨域入边 | 5 | Cross-domain Incoming | 5 |
-| 跨域出边 | 8 | Cross-domain Outgoing | 8 |
+| 跨域出边 | 9 | Cross-domain Outgoing | 9 |
 | 设计态模块 | 4 | Design Modules | 4 |
 | 生产态模块 | 15 | Production Modules | 15 |
 | 容量 | 12/150 (正常) | Capacity | 12/150 (正常) |
@@ -53,16 +53,16 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_risk_ashare_stop_loss_rule_engine_py["A股停止亏损规则引擎<br/>风控的引擎，执行核心逻辑的处理引擎<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>ashare_stop_loss_rule_engine<br/>文件: risk/ashare_stop_loss_rule_engine.py<br/>(设计态 / design)"]
-    src_zephyr_risk_ashare_systemic_risk_detector_py["A股系统性风险检测器<br/>A股systemic风险检测器，风控的检测器，检测特定模<br/>式或异常情况。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>ashare_systemic_risk_detector<br/>文件: risk/ashare_systemic_risk_detector.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_ashare_stop_loss_engine_py["core/ashare_stop_loss_engine<br/>A-Share Stop-Loss Rule Engine — A股止损规则引擎<br/>(MOD-RK-09)<br/>文件: core/ashare_stop_loss_engine.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_ashare_systemic_risk_detector_py["core/ashare_systemic_risk_detector<br/>风险/核心包的ashare_systemic_risk_detector模块<br/>文件: core/ashare_systemic_risk_detector.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_concentration_monitor_py["core/concentration_monitor<br/>Concentration Risk Monitor — 集中度风险监控器<br/>(MOD-RK-07)<br/>文件: core/concentration_monitor.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_drawdown_tracker_py["core/drawdown_tracker<br/>Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>文件: core/drawdown_tracker.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_risk_budget_allocator_py["core/risk_budget_allocator<br/>Risk Budget Allocator — 风险预算分配器<br/>(MOD-RK-08)<br/>文件: core/risk_budget_allocator.py<br/>(生产态 / production)"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py["机器学习实验管线<br/>依赖机器学习实验管线工作<br/>ml_experiment_pipeline<br/>文件: cross_market_data_adapter<br/>/ml_experiment_pipeline.py<br/>(生产态 / production)"]
     src_zephyr_risk_drawdown_realtime_tracker_py["回撤实时追踪器<br/>风控的追踪器，持续跟踪某项指标或状态的变化<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>drawdown_realtime_tracker<br/>文件: risk/drawdown_realtime_tracker.py<br/>(设计态 / design)"]
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py["默认风险管理器编排器<br/>D_RISK — Default Risk Manager Orchestrator<br/>文件: implementations<br/>/default_risk_manager_orchestrator.py<br/>(生产态 / production)"]
-    src_zephyr_risk_ashare_stop_loss_rule_engine_py ~~~ src_zephyr_risk_ashare_systemic_risk_detector_py
-    src_zephyr_risk_ashare_systemic_risk_detector_py ~~~ src_zephyr_risk_core_concentration_monitor_py
+    src_zephyr_risk_core_ashare_stop_loss_engine_py ~~~ src_zephyr_risk_core_ashare_systemic_risk_detector_py
+    src_zephyr_risk_core_ashare_systemic_risk_detector_py ~~~ src_zephyr_risk_core_concentration_monitor_py
     src_zephyr_risk_core_concentration_monitor_py ~~~ src_zephyr_risk_core_drawdown_tracker_py
     src_zephyr_risk_core_drawdown_tracker_py ~~~ src_zephyr_risk_core_risk_budget_allocator_py
     src_zephyr_risk_core_risk_budget_allocator_py ~~~ src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
@@ -87,8 +87,6 @@ flowchart TD
     src_zephyr_risk_risk_limits_py ~~~ src_zephyr_risk_risk_manager_py
     src_zephyr_risk_risk_manager_py ~~~ src_zephyr_risk_risk_validator_py
     src_zephyr_risk_risk_manager_base_py["风险管理器基类<br/>D_RISK — Risk Management Layer Skeleton<br/>文件: risk/risk_manager_base.py<br/>(生产态 / production)"]
-    src_zephyr_risk_ashare_stop_loss_rule_engine_py -.->|导入依赖 / import_depends| src_zephyr_risk_stop_loss_py
-    src_zephyr_risk_ashare_systemic_risk_detector_py -.->|导入依赖 / import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_drawdown_realtime_tracker_py -.->|导入依赖 / import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_core_risk_budget_allocator_py -->|import / import| src_zephyr_risk_core_risk_decomposition_py
     src_zephyr_risk_core_risk_decomposition_py -->|import / import| src_zephyr_risk_core_var_calculator_py
@@ -106,8 +104,11 @@ flowchart TD
     src_zephyr_risk_implementations_default_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_validator_py
+    src_zephyr_risk_core_ashare_stop_loss_engine_py -.->|导入依赖 / import_depends| src_zephyr_risk_stop_loss_py
     D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_risk_risk_limits_py -->|runtime / runtime| D_POSITION
+    D_SECURITY["对抗验证<br/>对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验<br/>证<br/>Adversarial Validation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_risk_core_ashare_systemic_risk_detector_py -.->|导入依赖 / import_depends| D_SECURITY
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_risk_core_var_calculator_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -131,8 +132,8 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_risk_core_concentration_monitor_py,src_zephyr_risk_core_risk_budget_allocator_py,src_zephyr_risk_core_risk_decomposition_py,src_zephyr_risk_core_var_calculator_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py production
-    class src_zephyr_risk_ashare_stop_loss_rule_engine_py,src_zephyr_risk_ashare_systemic_risk_detector_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_drawdown_realtime_tracker_py design
-    class D_POSITION,D_SHARED,D_TRADING,D_INFRASTRUCTURE,D_GOVERNANCE external_prod
+    class src_zephyr_risk_core_ashare_stop_loss_engine_py,src_zephyr_risk_core_ashare_systemic_risk_detector_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_drawdown_realtime_tracker_py design
+    class D_POSITION,D_SECURITY,D_SHARED,D_TRADING,D_INFRASTRUCTURE,D_GOVERNANCE external_prod
     class D_PF_CORE,D_EX_CORE external_design
 ```
 
@@ -200,18 +201,18 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_risk_ashare_stop_loss_rule_engine_py["A股停止亏损规则引擎<br/>风控的引擎，执行核心逻辑的处理引擎<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>ashare_stop_loss_rule_engine<br/>文件: risk/ashare_stop_loss_rule_engine.py<br/>(设计态 / design)"]
-    src_zephyr_risk_ashare_systemic_risk_detector_py["A股系统性风险检测器<br/>A股systemic风险检测器，风控的检测器，检测特定模<br/>式或异常情况。<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>ashare_systemic_risk_detector<br/>文件: risk/ashare_systemic_risk_detector.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_ashare_stop_loss_engine_py["core/ashare_stop_loss_engine<br/>A-Share Stop-Loss Rule Engine — A股止损规则引擎<br/>(MOD-RK-09)<br/>文件: core/ashare_stop_loss_engine.py<br/>(设计态 / design)"]
+    src_zephyr_risk_core_ashare_systemic_risk_detector_py["core/ashare_systemic_risk_detector<br/>风险/核心包的ashare_systemic_risk_detector模块<br/>文件: core/ashare_systemic_risk_detector.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_drawdown_tracker_py["core/drawdown_tracker<br/>Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>文件: core/drawdown_tracker.py<br/>(设计态 / design)"]
     src_zephyr_risk_drawdown_realtime_tracker_py["回撤实时追踪器<br/>风控的追踪器，持续跟踪某项指标或状态的变化<br/>⛔ 风控域，设计已就绪，等待开发排期<br/>drawdown_realtime_tracker<br/>文件: risk/drawdown_realtime_tracker.py<br/>(设计态 / design)"]
-    src_zephyr_risk_ashare_stop_loss_rule_engine_py ~~~ src_zephyr_risk_ashare_systemic_risk_detector_py
-    src_zephyr_risk_ashare_systemic_risk_detector_py ~~~ src_zephyr_risk_core_drawdown_tracker_py
+    src_zephyr_risk_core_ashare_stop_loss_engine_py ~~~ src_zephyr_risk_core_ashare_systemic_risk_detector_py
+    src_zephyr_risk_core_ashare_systemic_risk_detector_py ~~~ src_zephyr_risk_core_drawdown_tracker_py
     src_zephyr_risk_core_drawdown_tracker_py ~~~ src_zephyr_risk_drawdown_realtime_tracker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_risk_ashare_stop_loss_rule_engine_py,src_zephyr_risk_ashare_systemic_risk_detector_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_drawdown_realtime_tracker_py design
+    class src_zephyr_risk_core_ashare_stop_loss_engine_py,src_zephyr_risk_core_ashare_systemic_risk_detector_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_drawdown_realtime_tracker_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -223,11 +224,12 @@ flowchart TD
 | 1 | 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 2 | 风控管理器 / risk_manager (risk/risk_manager.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 3 | 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | → | D_POSITION 仓位管理: 回撤控制器 / drawdown_controller (core/drawdown_controlle... | runtime / runtime |
-| 4 | VaR Calculator — 风险价值计算器 (MOD-RK-05, Phase 1) (co... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 5 | 机器学习实验管线 / ml_experiment_pipeline (cross_market_d... | → | D_SHARED 共享服务: 机器学习实验管线 / ml_experiment_pipeline (_cross_layer/m... | 导入依赖 / import_depends |
-| 6 | 风控管理器 / risk_manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险仪表盘快照 / risk_dashboard_snapshot (risk/risk_dashb... | 导入依赖 / import_depends |
-| 7 | 风控管理器 / risk_manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险限制违规错误 / risk_limit_violation_error (risk/risk_... | 导入依赖 / import_depends |
-| 8 | 风控管理器 / risk_manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险指标 / risk_metrics (risk/risk_metrics.py) | 导入依赖 / import_depends |
+| 4 | core/ashare_systemic_risk_detector.py | → | D_SECURITY 对抗验证: 终止开关 / kill_switch (access_control/kill_switch.py) | 导入依赖 / import_depends |
+| 5 | VaR Calculator — 风险价值计算器 (MOD-RK-05, Phase 1) (co... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 6 | 机器学习实验管线 / ml_experiment_pipeline (cross_market_d... | → | D_SHARED 共享服务: 机器学习实验管线 / ml_experiment_pipeline (_cross_layer/m... | 导入依赖 / import_depends |
+| 7 | 风控管理器 / risk_manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险仪表盘快照 / risk_dashboard_snapshot (risk/risk_dashb... | 导入依赖 / import_depends |
+| 8 | 风控管理器 / risk_manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险限制违规错误 / risk_limit_violation_error (risk/risk_... | 导入依赖 / import_depends |
+| 9 | 风控管理器 / risk_manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险指标 / risk_metrics (risk/risk_metrics.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -241,7 +243,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 7 个外部域直接连接（出边 8 条 + 入边 5 条 = 13 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 8 个外部域直接连接（出边 9 条 + 入边 5 条 = 14 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -251,6 +253,7 @@ graph LR
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_POSITION["D_POSITION<br/>仓位管理"]
+    D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
@@ -258,6 +261,7 @@ graph LR
     D_RISK -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_RISK -->|2条 导入依赖 / import_depends| D_SHARED
     D_RISK -->|1条 runtime / runtime| D_POSITION
+    D_RISK -->|1条 导入依赖 / import_depends| D_SECURITY
     D_GOVERNANCE -->|2条 导入依赖 / import_depends| D_RISK
     D_EX_CORE -->|1条 runtime / runtime| D_RISK
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_RISK
