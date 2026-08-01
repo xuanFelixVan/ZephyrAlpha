@@ -175,7 +175,7 @@ class TestTrigger:
 class TestReconcile:
     """reconcile 函数行为测试（用 mock 模拟 subprocess/git）。"""
 
-    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
     def test_subprocess_failure_returns_warn(self, mock_sub, tmp_path):
         """subprocess 失败时应返回 warn。"""
         mock_sub.return_value = _make_subprocess_result(
@@ -188,7 +188,7 @@ class TestReconcile:
         assert "frontmatter sync failed" in result.detail
         assert "rc=1" in result.detail
 
-    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
     def test_no_md_changes_returns_clean(self, mock_sub, tmp_path):
         """subprocess 成功但无 .md 变更时应返回 clean。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -198,7 +198,7 @@ class TestReconcile:
         assert result.action == "clean"
         assert "no drift" in result.detail
 
-    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
     def test_md_changes_with_commit_ok_returns_auto_committed(self, mock_sub, tmp_path):
         """subprocess 成功且有 .md 变更、commit 成功时应返回 auto_committed。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -212,13 +212,13 @@ class TestReconcile:
         assert result.action == "auto_committed"
         assert "2 files auto-reconciled" in result.detail
         # 验证 _commit_auto 被调用
-        assert len(gw.commit_calls) == 1
-        session_id, files, msg = gw.commit_calls[0]
+        assert len(gw._commit_calls) == 1
+        session_id, files, msg = gw._commit_calls[0]
         assert session_id == "sess-test"
         assert len(files) == 2
         assert "GATE-BLUEPRINT-FRONTMATTER-SYNC" in msg
 
-    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
     def test_md_changes_with_nothing_to_commit_returns_clean(self, mock_sub, tmp_path):
         """subprocess 成功且有 .md 变更但 commit 返回 NOTHING_TO_COMMIT 时返回 clean。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -232,7 +232,7 @@ class TestReconcile:
         assert result.action == "clean"
         assert "no staged changes" in result.detail
 
-    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
     def test_md_changes_with_commit_failure_returns_warn(self, mock_sub, tmp_path):
         """subprocess 成功且有 .md 变更但 commit 失败时返回 warn。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -247,7 +247,7 @@ class TestReconcile:
         assert "auto-commit failed" in result.detail
         assert "COMMIT_FAILED" in result.detail
 
-    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
     def test_non_md_diff_files_ignored(self, mock_sub, tmp_path):
         """git diff 返回非 .md 文件时不应触发 commit（只关心 frontmatter .md）。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")
@@ -259,9 +259,9 @@ class TestReconcile:
         result = spec.reconcile(["foo.py"], "sess-test")
         assert result.action == "clean"
         assert "no drift" in result.detail
-        assert len(gw.commit_calls) == 0
+        assert len(gw._commit_calls) == 0
 
-    @patch("zephyr.governance.audit.reconciliation_registry.run_subprocess")
+    @patch("zephyr.governance.audit.reconciliation_registry._run_subprocess")
     def test_git_diff_failure_returns_warn(self, mock_sub, tmp_path):
         """git diff 命令失败时应返回 warn。"""
         mock_sub.return_value = _make_subprocess_result(returncode=0, stdout="OK")

@@ -11,7 +11,7 @@ tier: tier_1_governance
 status: active
 version: 1.5.0
 created: '2026-06-26'
-last_updated: '2026-07-30'
+last_updated: '2026-08-02'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -10867,3 +10867,29 @@ entries:
   related_adjudication: 'harvest_candidates_from_drafts.py existing_translation_keys(), #ARCH-WORKTREE-DOCS-DRIFT（同根因：stash/restore数据丢失）'
   created: '2026-08-01'
   last_updated: '2026-08-01'
+- issue_id: '#ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001'
+  title: Stage4公共化产生的公共wrapper为死代码（无外部调用方）
+  severity: P3低
+  adjudication: |
+    问题：Stage4公共化阶段为私有实现函数新增了公共wrapper（reconciliation_registry
+      的 run_subprocess、gov_audit.bridge 的 get_writer、runtime_violation_snapshot
+      的 run_dashboard、GitCommitGateway 的 commit_auto），但代码内部仍调用私有实现
+      函数，且无任何外部调用方使用这些公共wrapper——公共wrapper为死代码。
+    影响：25个审计测试误patch公共wrapper（期望代码调公共），导致mock未命中、测试
+      失败。这正是公共化未完成的症状：意图让代码调公共、测试patch公共，但调用点
+      迁移未执行，停在"有公共wrapper但无人调"的中间态。
+    裁定（Route A，2026-08-02）：采用纯测试修复——patch目标改私有函数匹配代码
+      实际调用路径，零生产代码改动、零风险。理由：公共wrapper无外部调用方=死代码，
+      完成公共化（Route B，迁移35+调用点）无收益且高风险（碰 human_gated 的
+      bridge.py 需批准）。
+    待用户裁定方向（proposed）：
+      (a) 回退公共化——删除死代码公共wrapper，保持私有实现为唯一接口；
+      (b) 完成公共化——若未来确认有外部消费者，迁移调用点至公共wrapper，届时
+          测试patch目标同步改回公共。
+    当前选择Route A（测试patch私有）与(a)方向一致，但未执行(a)的wrapper删除，
+      仅修测试。wrapper删除留待用户裁定后执行。
+  fix_phase: 已执行（Route A测试修复，5文件132测试全绿）；wrapper删除待用户裁定
+  status: proposed
+  related_adjudication: 'Stage4公共化（run_subprocess/get_writer/run_dashboard/commit_auto wrapper）'
+  created: '2026-08-02'
+  last_updated: '2026-08-02'

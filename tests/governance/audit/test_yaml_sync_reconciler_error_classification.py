@@ -285,7 +285,7 @@ class TestReconcileErrorClassification:
         qpath.write_text(json.dumps({"attempt": 2, "error": "prev"}), encoding="utf-8")
 
         with patch(
-            "zephyr.governance.audit.reconciliation_registry.run_subprocess",
+            "zephyr.governance.audit.reconciliation_registry._run_subprocess",
             return_value=_make_subprocess_result(0, stdout="synced ok", stderr=""),
         ):
             r = spec.reconcile([], "sess-test")
@@ -305,7 +305,7 @@ class TestReconcileErrorClassification:
         guc_err = 'psycopg2.errors.UndefinedObject: 未认可的配置参数 "app.allow_design_maturity_delete"'
 
         with patch(
-            "zephyr.governance.audit.reconciliation_registry.run_subprocess",
+            "zephyr.governance.audit.reconciliation_registry._run_subprocess",
             return_value=_make_subprocess_result(1, stdout="", stderr=guc_err),
         ):
             r = spec.reconcile([], "sess-test")
@@ -328,7 +328,7 @@ class TestReconcileErrorClassification:
         transient_err = "psycopg2.OperationalError: connection refused"
 
         with patch(
-            "zephyr.governance.audit.reconciliation_registry.run_subprocess",
+            "zephyr.governance.audit.reconciliation_registry._run_subprocess",
             return_value=_make_subprocess_result(1, stdout="", stderr=transient_err),
         ):
             r = spec.reconcile([], "sess-test")
@@ -349,7 +349,7 @@ class TestReconcileErrorClassification:
         unknown_err = "KeyError: 'something weird'"
 
         with patch(
-            "zephyr.governance.audit.reconciliation_registry.run_subprocess",
+            "zephyr.governance.audit.reconciliation_registry._run_subprocess",
             return_value=_make_subprocess_result(1, stdout="", stderr=unknown_err),
         ):
             r = spec.reconcile([], "sess-test")
@@ -376,7 +376,7 @@ class TestReconcileErrorClassification:
 
         transient_err = "OperationalError: connection timeout"
         with patch(
-            "zephyr.governance.audit.reconciliation_registry.run_subprocess",
+            "zephyr.governance.audit.reconciliation_registry._run_subprocess",
             return_value=_make_subprocess_result(1, stdout="", stderr=transient_err),
         ):
             r = spec.reconcile([], "sess-test")
@@ -399,7 +399,7 @@ class TestReconcileErrorClassification:
 
         for _ in range(2):
             with patch(
-                "zephyr.governance.audit.reconciliation_registry.run_subprocess",
+                "zephyr.governance.audit.reconciliation_registry._run_subprocess",
                 return_value=_make_subprocess_result(1, stdout="", stderr=guc_err),
             ):
                 r = spec.reconcile([], "sess-test")
@@ -417,7 +417,7 @@ class TestReconcileErrorClassification:
         err = "syntax error at or near SELECT FROM WHERE"
 
         with patch(
-            "zephyr.governance.audit.reconciliation_registry.run_subprocess",
+            "zephyr.governance.audit.reconciliation_registry._run_subprocess",
             return_value=_make_subprocess_result(1, stdout="", stderr=err),
         ):
             r = spec.reconcile([], "sess-test")
