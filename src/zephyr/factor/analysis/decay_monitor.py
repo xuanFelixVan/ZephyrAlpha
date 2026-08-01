@@ -10,7 +10,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 数据不足->DecayStatus(half_life=0, is_decaying=True)
-# [TESTS] tests/factor/test_decay_monitor.py
+# [TESTS] tests/factor/test_factor_decay_monitor.py
 # [TTL] permanent
 """D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于阈值告警。
 

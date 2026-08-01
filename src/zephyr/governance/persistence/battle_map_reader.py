@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-DB-003 | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_panorama.md | §battlemap
+# [BLUEPRINT] SH-DB-003 | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md | §battlemap
 # [MODULE] zephyr.governance.persistence.battle_map_reader
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.battlemap_schema (get_battle_map_pg_connection); zephyr.governance.persistence.pg_wrapper (_PgConnExecuteWrapper)
@@ -16,7 +16,7 @@
 """
 battle_map_reader.py — 作战地图数据库只读查询工具模块
 
-[BLUEPRINT] SH-DB-003 | battle_map_panorama.md | §battlemap
+[BLUEPRINT] SH-DB-003 | battle_map_positioning.md | §battlemap
 [MODULE] zephyr.governance.persistence.battle_map_reader
 [INVARIANTS] 只读查询; 参数化防注入; 懒加载连接; JSONB 字段自动解析; 双向查询
 [CONSUMERS] apply_battle_map.py; align_battle_map.py; generate_trading_flow_diagram.py
@@ -33,7 +33,7 @@ battle_map_reader.py — 作战地图数据库只读查询工具模块
   - battle_map_anchors  — 双向锚点（7列，环节↔各图模块/候选/蓝图）
   - battle_map_edges    — 环节流转（6列，data_flow/trigger/degradation）
 
-双向查询（本模块灵魂，battle_map_panorama.md §七）：
+双向查询（本模块灵魂，battle_map_positioning.md §七）：
   - 方向A（环节→模块）：get_anchors_by_step(step_id) — 写决策时查环节落地
   - 方向B（模块→环节）：get_steps_by_target(target_graph, target_id) — 看模块时查作战位置
 

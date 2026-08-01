@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_ALIGN_BATTLE_MAP | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_panorama.md | §8.3
+# [BLUEPRINT] MOD-GOV_ALIGN_BATTLE_MAP | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md | §8.3
 # [MODULE] scripts.governance.align_battle_map
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.persistence.battle_map_reader (BattleMapReader); zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.persistence.dataflowgraph_schema (get_dataflowgraph_pg_connection); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); scripts.governance._shared.module_translation_loader (all_battle_map_step_ids, preload_battle_map_steps); scripts.governance._shared.constants (EXIT_*)
@@ -6,22 +6,22 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 只读PG（零写入）;只读YAML/文件系统（零写入）;输出幂等(相同输入→相同输出);输出到generated/battle_map_alignment_report.md
-# [MODIFY-GUARD] 修改需通过 battle_map_panorama.md §8.3 任务或后续维护任务
+# [MODIFY-GUARD] 修改需通过 battle_map_positioning.md §8.3 任务或后续维护任务
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] battle_map 表不存在→exit 2;findings→exit 1(EXIT_FINDINGS);无 findings→exit 0(EXIT_PASS)
 # [TESTS] tests/test_align_battle_map.py (规划中)
 # [TTL] permanent
-# [ARCH-REF] battle_map_panorama.md §七 §八
+# [ARCH-REF] battle_map_positioning.md §七 §八
 # 真源说明：本检测器从 battle_map_* 三表（PostgreSQL）读取环节/锚点/流转边，
 # 从翻译真源 module_translation_registry.yaml §battle_map_steps 段读取环节叙事，
 # 从 depgraph/dataflowgraph/decisiongraph/candidate/blueprint 读取锚点目标合法 id，
 # 生成作战地图对齐报告（孤儿环节/幽灵锚点/缺失叙事/悬空边）。
-# 详见 battle_map_panorama.md §8.3 + §7.4（BM-INV-001~003）。
-"""G-battle-map-align: 作战地图对齐检测器（battle_map_panorama.md §8.3）
+# 详见 battle_map_positioning.md §8.3 + §7.4（BM-INV-001~003）。
+"""G-battle-map-align: 作战地图对齐检测器（battle_map_positioning.md §8.3）
 
-依据：battle_map_panorama.md V0.2.0 §八（与全景图对齐体系的关系）+ §七（双向查找机制）
+依据：battle_map_positioning.md V0.2.0 §八（与全景图对齐体系的关系）+ §七（双向查找机制）
 
 功能：
   - 从 battle_map_steps / battle_map_anchors / battle_map_edges 读取作战地图三表（DB 真源）
@@ -220,7 +220,7 @@ class BattleMapAlignmentReport:
         lines.append("- 悬空边：修正 edge 的 from/to step_id，或删除孤立边")
         lines.append("")
         lines.append("> 域漂移检查（环节 flow_stage vs 锚点目标模块 domain）待后续补 flow_stage→domain "
-                     "映射表后实现（battle_map_panorama.md §8.3 第三项）。")
+                     "映射表后实现（battle_map_positioning.md §8.3 第三项）。")
         lines.append("")
 
         return "\n".join(lines)
@@ -506,7 +506,7 @@ def run_alignment(
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
-        description="作战地图对齐检测器（battle_map_panorama.md §8.3，君子协定）"
+        description="作战地图对齐检测器（battle_map_positioning.md §8.3，君子协定）"
     )
     parser.add_argument(
         "--output",

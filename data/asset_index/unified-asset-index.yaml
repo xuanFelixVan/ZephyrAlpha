@@ -55680,7 +55680,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_panorama.md"
+    relative_path: "docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"

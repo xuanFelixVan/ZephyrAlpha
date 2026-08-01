@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-DB-003 | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_panorama.md | §battlemap
+# [BLUEPRINT] SH-DB-003 | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md | §battlemap
 # [MODULE] zephyr.governance.persistence.battlemap_schema
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); psycopg2
@@ -17,7 +17,7 @@
 """
 battlemap Schema DDL + 不变量声明
 ==================================
-依据：battle_map_panorama.md V0.2（第四全景图 battlemap），作战地图与 depgraph 共享
+依据：battle_map_positioning.md V0.2（第四全景图 battlemap），作战地图与 depgraph 共享
 PostgreSQL 实例（同一 DB，不同表）。PG 连接由 depgraph_schema.get_depgraph_pg_connection()
 派生，本模块通过 get_battle_map_pg_connection() 委托，保证 PG 配置 SSoT。
 

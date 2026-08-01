@@ -1135,7 +1135,7 @@ class FactorMeta(BaseModel):
 | `tests/factor/test_ctr001_consumer.py` | ✅ 已实现 | |
 | `tests/factor/test_ctr002_producer.py` | ✅ 已实现 | |
 | `tests/factor/test_dag_manager.py` | ✅ 已实现 | |
-| `tests/factor/test_decay_monitor.py` | ✅ 已实现 | |
+| `tests/factor/test_factor_decay_monitor.py` | ✅ 已实现 | |
 | `tests/factor/test_dist_feature_eng.py` | ✅ 已实现 | |
 | `tests/factor/test_evaluation_backtest.py` | ✅ 已实现 | |
 | `tests/factor/test_evaluation_metrics.py` | ✅ 已实现 | |

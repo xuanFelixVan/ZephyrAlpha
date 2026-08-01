@@ -1,7 +1,7 @@
 -- ============================================================================
 -- 08_create_battlemap_schema.sql
 -- ============================================================================
--- [BLUEPRINT] SH-DB-003 | battle_map_panorama.md | §battlemap
+-- [BLUEPRINT] SH-DB-003 | battle_map_positioning.md | §battlemap
 -- [MODULE] battlemap PG schema 真源（DDL 执行文件）
 -- [DOMAIN] D_GOVERNANCE
 -- [INVARIANTS] BM-INV-001~004（见 battlemap_schema.py 注释）

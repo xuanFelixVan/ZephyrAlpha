@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_panorama.md | §battlemap
+# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md | §battlemap
 # [MODULE] scripts.governance.d5_architecture.generators.generate_battle_map_diagram
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.battle_map_reader (BattleMapReader); scripts.governance._shared.module_translation_loader (get_step_*; get_cross_cutting_*); scripts.governance.d5_architecture.generators.zoomable_html (emit_zoomable_html)
@@ -16,7 +16,7 @@
 """
 generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
 
-[BLUEPRINT] | battle_map_panorama.md | §battlemap
+[BLUEPRINT] | battle_map_positioning.md | §battlemap
 [MODULE] scripts.governance.d5_architecture.generators.generate_battle_map_diagram
 [INVARIANTS] 只读 battle_map三表 + 翻译真源(battle_map_steps + battle_map_cross_cutting)；颜色按锚点模块 depgraph build_status 推导五态；Mermaid 分页
 [CONSUMERS] AI/人生成作战地图可视化
@@ -41,7 +41,7 @@ generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
 
 与 generate_trading_flow_diagram.py 的关系：
   旧生成器读 decisiongraph + narrative.yaml；本生成器读 battle_map三表 + 翻译真源
-  （battle_map_panorama.md §五：battle_map 取代 decisiongraph+narrative 作为交易流真源）。
+  （battle_map_positioning.md §五：battle_map 取代 decisiongraph+narrative 作为交易流真源）。
   本生成器是 battle_map 上线后的新真源入口；旧生成器待 battle_map 跑顺后退役。
 
 用法:

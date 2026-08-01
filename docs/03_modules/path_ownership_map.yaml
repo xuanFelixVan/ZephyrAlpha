@@ -3709,7 +3709,7 @@ ownership:
     existence: 'generated'
     ownership_judgment: '本模块'
 
-  - path: 'tests/factor/test_decay_monitor.py'
+  - path: 'tests/factor/test_factor_decay_monitor.py'
     owner_blueprint: 'MOD-L02-001'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_domain_factor/blueprint.md'
