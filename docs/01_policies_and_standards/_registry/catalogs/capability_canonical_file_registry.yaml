@@ -5355,6 +5355,14 @@ creation_tokens:
     token: "auto-sell-009-urgency-bp-20260802"
     created_by: "session-sell007-continuation"
     capability: "sell_urgency_scorer"
+  - file: "src/zephyr/sell_decision/core/breakout_failure_detector.py"
+    token: "auto-sell-003-breakout-detector-20260802"
+    created_by: "session-sell003-continuation"
+    capability: "breakout_failure_detector"
+  - file: "docs/03_modules/_domain_sell_decision/breakout_failure_detector/blueprint.md"
+    token: "auto-sell-003-breakout-bp-20260802"
+    created_by: "session-sell003-continuation"
+    capability: "breakout_failure_detector"
 
   # --- 术语词汇表真源（2026-07-30，terminology_loader SSoT 重构，文件此前未入库补登记）---
   - file: "docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml"

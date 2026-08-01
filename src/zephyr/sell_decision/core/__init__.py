@@ -2,6 +2,12 @@
 # [TTL] permanent
 # sell_decision/core
 
+from zephyr.sell_decision.core.breakout_failure_detector import (
+    BreakoutFailureDetector,
+    BreakoutResult,
+    BreakoutStatus,
+    InvalidBreakoutInputError,
+)
 from zephyr.sell_decision.core.sell_conflict_arbitrator import (
     ArbitrationResult,
     ArbitrationVerdict,
@@ -41,6 +47,10 @@ from zephyr.sell_decision.core.sell_urgency_scorer import (
 )
 
 __all__ = [
+    "BreakoutFailureDetector",
+    "BreakoutResult",
+    "BreakoutStatus",
+    "InvalidBreakoutInputError",
     "DuplicateProviderError",
     "InvalidSellSignalError",
     "SellDirection",
