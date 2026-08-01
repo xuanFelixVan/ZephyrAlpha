@@ -7358,6 +7358,20 @@ creation_tokens:
     created_by: "session-pos008-build"
     capability: "drawdown_controller"
 
+  # --- POS-001 仓位决策引擎（2026-08-02，阶段1核心裁决层施工）---
+  - file: "src/zephyr/position/core/position_sizing_engine.py"
+    token: "auto-position-sizing-engine-20260802"
+    created_by: "session-pos001-build"
+    capability: "position_sizing_engine"
+  - file: "tests/position/test_position_sizing_engine.py"
+    token: "auto-position-sizing-engine-test-20260802"
+    created_by: "session-pos001-build"
+    capability: "position_sizing_engine"
+  - file: "docs/03_modules/_domain_position/position_sizing_engine/blueprint.md"
+    token: "auto-position-sizing-engine-bp-20260802"
+    created_by: "session-pos001-build"
+    capability: "position_sizing_engine"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

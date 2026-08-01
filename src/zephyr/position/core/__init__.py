@@ -2,6 +2,9 @@
 # [TTL] permanent
 # position/core
 
-from zephyr.position.core.drawdown_controller import DrawdownController
+from typing import Final
 
-__all__: list[str] = ["DrawdownController"]
+from zephyr.position.core.drawdown_controller import DrawdownController
+from zephyr.position.core.position_sizing_engine import PositionSizingEngine
+
+__all__: Final[list[str]] = ["DrawdownController", "PositionSizingEngine"]

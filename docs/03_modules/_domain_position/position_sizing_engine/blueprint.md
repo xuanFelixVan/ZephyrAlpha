@@ -4,7 +4,7 @@ title: "仓位决策引擎蓝图 — 四轨融合+半Kelly+13约束+分阶段施
 doc_type: blueprint
 status: Active
 version: "0.2.0"
-design_maturity: design
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position
