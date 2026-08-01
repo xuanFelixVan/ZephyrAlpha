@@ -30,10 +30,10 @@ ttl: permanent
 | 模块数 | 12 | Module Count | 12 |
 | 域内依赖 | 9 | Internal Dependencies | 9 |
 | 跨域入边 | 4 | Cross-domain Incoming | 4 |
-| 跨域出边 | 5 | Cross-domain Outgoing | 5 |
+| 跨域出边 | 6 | Cross-domain Outgoing | 6 |
 | 设计态模块 | 6 | Design Modules | 6 |
 | 生产态模块 | 6 | Production Modules | 6 |
-| 容量 | 5/150 (正常) | Capacity | 5/150 (正常) |
+| 容量 | 6/150 (正常) | Capacity | 6/150 (正常) |
 | 描述 | 仓位管理，负责持仓跟踪、仓位计算和盈亏分析 | Description | 仓位管理，负责持仓跟踪、仓位计算和盈亏分析 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -82,6 +82,7 @@ flowchart TD
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_position_core_position_sizing_engine_py -.->|runtime / runtime| D_RISK
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_position_core_drawdown_controller_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_sell_position_link_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_rebalance_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_position_limit_enforcer_py -->|导入依赖 / import_depends| D_SHARED
@@ -163,9 +164,10 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | 持仓sizing引擎 / position_sizing_engine (core/position_si... | → | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | runtime / runtime |
 | 2 | Cash Manager — 资金管理器 (MOD-POS-006) (core/cash_manag... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 3 | Position Limit Enforcer — 限仓执行器 (MOD-POS-010) (core... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 4 | rebalance引擎 / rebalance_engine (core/rebalance_engine.py) | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 5 | 卖出持仓链接 / sell_position_link (core/sell_position_lin... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 3 | 回撤控制器 / drawdown_controller (core/drawdown_controlle... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 4 | Position Limit Enforcer — 限仓执行器 (MOD-POS-010) (core... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 5 | rebalance引擎 / rebalance_engine (core/rebalance_engine.py) | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 6 | 卖出持仓链接 / sell_position_link (core/sell_position_lin... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -178,7 +180,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 5 个外部域直接连接（出边 5 条 + 入边 4 条 = 9 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 5 个外部域直接连接（出边 6 条 + 入边 4 条 = 10 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -189,7 +191,7 @@ graph LR
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
     D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策"]
     D_TRADING["D_TRADING<br/>交易运营"]
-    D_POSITION -->|4条 导入依赖 / import_depends| D_SHARED
+    D_POSITION -->|5条 导入依赖 / import_depends| D_SHARED
     D_POSITION -->|1条 runtime / runtime| D_RISK
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_POSITION
     D_RISK -->|1条 runtime / runtime| D_POSITION

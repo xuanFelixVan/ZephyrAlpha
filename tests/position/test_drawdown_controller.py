@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-017 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """DrawdownController 单元测试 (MOD-POS-008)。"""
 
 from __future__ import annotations
