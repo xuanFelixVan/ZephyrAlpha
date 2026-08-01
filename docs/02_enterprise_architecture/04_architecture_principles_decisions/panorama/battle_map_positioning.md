@@ -13,8 +13,7 @@ date: 2026-08-02
 > 写法：大白话为主，配表格和 ASCII 图。变更历史见文末。
 > **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目第四全景图——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
 
-> **取代声明**：本文档升级并取代 [trading_flow_panorama.md](trading_flow_panorama.md) V1.0.0。
-> 旧定位书的核心裁定"**07_ 不是新图、全景图只有三个**"作废；升级为"**07_ 背后有第四全景图 `battle_map` 作真源，07_ MD 是它的派生人类视图**"。旧文档有价值的内容（三态展示机制、SSoT 铁律、06_/07_ 区别）已提取融合到本文档。
+> **定位裁定**：`07_` 背后有第四全景图 `battle_map` 作真源，`07_` MD 是它的派生人类视图。全景图共四个：depgraph / dataflowgraph / decisiongraph / battle_map。
 
 ---
 
@@ -43,7 +42,7 @@ date: 2026-08-02
 
 ## 二、它解决什么问题？
 
-它解决三个老毛病，前两个是 AI 开发的，第三个是旧定位书没覆盖的：
+它解决三个老毛病：
 
 | 毛病 | battle_map 怎么治 |
 |---|---|
@@ -194,23 +193,16 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 
 ---
 
-## 五、和旧定位书的关系（取代声明）
+## 五、全景图体系裁定
 
-[trading_flow_panorama.md](trading_flow_panorama.md) V1.0.0 的核心裁定"**07_ 不是新图、全景图只有三个、07_ 不进四图对齐**"在 V0.1 升级中**作废**。新裁定：
+全景图共**四个**：depgraph / dataflowgraph / decisiongraph / **battle_map**。
 
-- 全景图从三个升级为**四个**：depgraph / dataflowgraph / decisiongraph / **battle_map**
-- 07_ MD 从"decisiongraph 的视图"升级为"**battle_map 的派生人类视图**"
-- 07_ 通过 battle_map 间接进对齐体系（battle_map 进，07_ 作为派生视图跟随）
-
-**旧文档有价值内容提取**（已融合到本文档）：
+- `07_` MD 是 **battle_map 的派生人类视图**
+- `07_` 通过 battle_map 间接进对齐体系（battle_map 进，`07_` 作为派生视图跟随）
 - 三态展示机制（production/design/候选）→ 本文 §十
 - SSoT 铁律（改真源不改派生物）→ 本文 §七
 - 06_/07_ 区别（零件 vs 装配）→ 本文 §一、§二
 - 四模式开关 + 应急保命降级 → 仍由翻译真源横切层承载，battle_map 环节引用
-
-**旧文档处置**（Owner 已定：删除重建）：
-- 本文档（`battle_map_panorama.md`）定稿后，直接删除 `trading_flow_panorama.md`，git log 留痕
-- 旧文档有价值内容已提取融合到本文档（见上文），删除不损失信息
 
 ---
 
@@ -420,7 +412,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ---
 
-## 十、三态展示机制（沿用旧定位书，扩展为四态）
+## 十、四态展示机制
 
 07_ MD 按模块状态颜色标注（生成器 join depgraph.build_status 产出）：
 
@@ -483,7 +475,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 | 第三批（横切） | §13 漏斗 / §16 冲突矩阵 / §30 缺失模块 | battle_map_edges + anchors | 流转边 + 缺失环节标灰 |
 
 **迁移原则**：
-- 草图里的过度工程（KAN/Mamba/Kronos 等）不进 battle_map，归候选池（沿用旧定位书四问过滤）
+- 草图里的过度工程（KAN/Mamba/Kronos 等）不进 battle_map，归候选池（四问过滤）
 - 草图里的实盘主链路进 battle_map_steps（design_maturity=production）
 - 每个环节的 indicators 从草图注解结构化 + 从现有模块代码提炼大白话
 
@@ -593,7 +585,7 @@ battle_map_steps:
 |---|---|---|
 | Q1 | 环节粒度 | 6 件套标准（§6.4），50-100 个环节，比草图 §1.2-1.6 更细 |
 | Q2 | 双向查找实现 | anchors 单一真源 + 全景图模块加派生只读字段（§8.2） |
-| Q3 | 旧 trading_flow_panorama.md 处置 | 删除重建，battle_map_panorama.md 替代 |
+| Q3 | 旧 trading_flow_panorama.md 处置 | 删除重建，battle_map_positioning.md 替代 |
 | Q4 | align_battle_map 门禁强度 | 先君子协定，跑顺再升级硬阻断 |
 | Q5 | 表前缀 / 图名 | 图名 `battlemap`（对标 depgraph/dataflowgraph/decisiongraph），表前缀 `battle_map_*`（对标 `decision_*`），不用 `bm_*` 缩写 |
 | Q6 | narrative.yaml 退场时机 | 并行观察一段，翻译真源完整覆盖后删除 |

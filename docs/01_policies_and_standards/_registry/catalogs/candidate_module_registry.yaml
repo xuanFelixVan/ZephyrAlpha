@@ -181196,3 +181196,54 @@ entries:
     next_review_date: '2026-11-30'
     review_frequency: quarterly
     last_review_outcome: 'harvest待评估（likely_new）'
+  # ----------------------------------------------------------
+  # CAND-RISK001-001: MOD-RISK-001 drawdown_tracker 重复陈旧登记（rejected，四问①挂——重复登记）
+  # 弃用时间: 2026-08-02 | 解锁 POS-001/EX-035 依赖
+  # ----------------------------------------------------------
+  - id: CAND-RISK001-001
+    name: "MOD-RISK-001 drawdown_tracker(重复陈旧登记)"
+    aliases: ["drawdown_tracker目录节点", "MOD-RISK-001"]
+    domain: D_RISK
+    domain_status: active
+    domain_node_count: 8
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7445494"}
+      dataflowgraph: {has_position: false, note: "陈旧登记,无数据流位置"}
+      decisiongraph: {has_position: false, note: "陈旧登记,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,真源蓝图在MOD-RK-011"}
+    description: "depgraph中blueprint_id=MOD-RISK-001、path=src/zephyr/risk/drawdown_tracker/(目录形式)的陈旧节点,与正确的MOD-RK-011(core/drawdown_tracker.py)重复"
+    capability: ""
+    problem_it_solves: "(已解决)drawdown_tracker回撤追踪已由MOD-RK-011(节点7855094 stable)正确承担"
+    trigger_signals: []
+    keywords: ["drawdown_tracker", "MOD-RISK-001", "重复陈旧", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: ["POS-001(已重定向→risk_limits)", "EX-035(已重定向→risk_validator)"]
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-RK-011(节点7855094)"], evidence: "drawdown_tracker已由core/drawdown_tracker.py(MATURITY production)实现,depgraph节点7855094 stable"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "功能已被MOD-RK-011正确承接,该节点为重复登记,无独立需求"}
+      q3_domain_alive: {result: true, evidence: "D_RISK活跃(8节点),但该具体节点为重复陈旧登记"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-02'
+    promoted_to: ""
+    source_draft: "docs/03_modules/_domain-risk/drawdown_tracker/blueprint.md"
+    source_section: "全文档(MOD-RK-011定义)"
+    original_id: "MOD-RISK-001"
+    estimated_complexity: ""
+    tech_notes: "双源对比:设计文档(drawdown_tracker=MOD-RK-011,65_d_risk.md) vs depgraph(节点7445494 blueprint_id=MOD-RISK-001+path=目录形式均错误,节点7855094 MOD-RK-011 stable为正确登记).POS-001重定向→risk_limits(7914542),EX-035重定向→risk_validator(7914544 KillSwitch状态管理核心).软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "MOD-RK-011(节点7855094,src/zephyr/risk/core/drawdown_tracker.py,stable/production)"
+    tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "blueprint_id错误"]
+    search_terms: ["mod-risk-001", "drawdown_tracker目录", "重复陈旧节点"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-02'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认重复陈旧登记。真源drawdown_tracker=MOD-RK-011(节点7855094).除非MOD-RK-011出现重大缺口,否则不再评估MOD-RISK-001"
