@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-01T14:29:05Z
+# 自动生成于 2026-08-01T14:56:33Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-01T14:29:05Z'
+generated_at: '2026-08-01T14:56:33Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 37
@@ -173,7 +173,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 14
+  entry_count: 15
   status: active
 - registry_id: CFG-interface-contract-registry
   name: 接口契约注册表
