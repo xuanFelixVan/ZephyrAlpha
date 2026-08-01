@@ -3,14 +3,14 @@ doc_type: architecture_view
 title: 决策流图 数据驱动轨（Data-Driven Track）
 version: "1.0"
 status: active
-date: 2026-07-31
+date: 2026-08-01
 owner: auto-generator
 ttl: permanent
 ---
 
 # 决策流图 · 数据驱动轨（Data-Driven Track）
 
-> 生成时间: 2026-07-31T17:21:51
+> 生成时间: 2026-08-01T22:22:08
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 2
