@@ -27,13 +27,13 @@ ttl: permanent
 | 域ID | D_SELL_DECISION | Domain ID | D_SELL_DECISION |
 | 域名称 | 卖出决策 | Domain Name | Sell Decision |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 21 | Module Count | 21 |
+| 模块数 | 20 | Module Count | 20 |
 | 域内依赖 | 13 | Internal Dependencies | 13 |
 | 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 14 | Design Modules | 14 |
-| 生产态模块 | 7 | Production Modules | 7 |
-| 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
+| 生产态模块 | 6 | Production Modules | 6 |
+| 容量 | 6/150 (正常) | Capacity | 6/150 (正常) |
 | 描述 | 卖出决策，负责卖出信号生成、卖出时机判断和退出策略 | Description | 卖出决策，负责卖出信号生成、卖出时机判断和退出策略 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 21 个模块（生产态 7 + 设计态 14），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 20 个模块（生产态 6 + 设计态 14），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -56,7 +56,6 @@ flowchart TD
     src_zephyr_sell_decision_init_py["(生产态 / production) 包入口 / __init__<br/>sell_decision的包入口，把这一层的子模块归到一起<br/>统一管理，用到谁才加载谁，避免一次性全加载拖慢启<br/>动。<br/>文件: sell_decision/__init__.py"]
     src_zephyr_sell_decision_extensions_init_py["(生产态 / production) 包入口 / __init__<br/>_extensions的包入口，把这一层的子模块归到一起统<br/>一管理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>。<br/>文件: _extensions/__init__.py"]
     src_zephyr_sell_decision_api_init_py["(生产态 / production) 包入口 / __init__<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: api/__init__.py"]
-    src_zephyr_sell_decision_core_init_py["(生产态 / production) 包入口 / __init__<br/>core的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: core/__init__.py"]
     src_zephyr_sell_decision_core_breakout_failure_detector_py["(设计态 / design) 突破故障检测器 / breakout_<br/>failure_detector<br/>突破failure检测器，core的检测器，检测特定模式或<br/>异常情况。<br/>文件: core/breakout_failure_detector.py<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
     src_zephyr_sell_decision_core_position_triage_py["(设计态 / design) 持仓分诊 / position_triage<br/>持仓分诊（position_triage.py）<br/>文件: core/position_triage.py<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
     src_zephyr_sell_decision_core_replacement_rebalance_sell_py["(设计态 / design) replacementrebalance卖出 /<br/>replacement_rebalance_sell<br/>replacementrebalance卖出（replacement_rebalance_<br/>sell.py）<br/>文件: core/replacement_rebalance_sell.py<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
@@ -68,8 +67,7 @@ flowchart TD
     src_zephyr_sell_decision_services_init_py["(生产态 / production) 包入口 / __init__<br/>services的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: services/__init__.py"]
     src_zephyr_sell_decision_init_py ~~~ src_zephyr_sell_decision_extensions_init_py
     src_zephyr_sell_decision_extensions_init_py ~~~ src_zephyr_sell_decision_api_init_py
-    src_zephyr_sell_decision_api_init_py ~~~ src_zephyr_sell_decision_core_init_py
-    src_zephyr_sell_decision_core_init_py ~~~ src_zephyr_sell_decision_core_breakout_failure_detector_py
+    src_zephyr_sell_decision_api_init_py ~~~ src_zephyr_sell_decision_core_breakout_failure_detector_py
     src_zephyr_sell_decision_core_breakout_failure_detector_py ~~~ src_zephyr_sell_decision_core_position_triage_py
     src_zephyr_sell_decision_core_position_triage_py ~~~ src_zephyr_sell_decision_core_replacement_rebalance_sell_py
     src_zephyr_sell_decision_core_replacement_rebalance_sell_py ~~~ src_zephyr_sell_decision_core_sell_urgency_scorer_py
@@ -114,14 +112,14 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_sell_decision_init_py,src_zephyr_sell_decision_extensions_init_py,src_zephyr_sell_decision_api_init_py,src_zephyr_sell_decision_core_init_py,src_zephyr_sell_decision_infrastructure_init_py,src_zephyr_sell_decision_models_init_py,src_zephyr_sell_decision_services_init_py production
+    class src_zephyr_sell_decision_init_py,src_zephyr_sell_decision_extensions_init_py,src_zephyr_sell_decision_api_init_py,src_zephyr_sell_decision_infrastructure_init_py,src_zephyr_sell_decision_models_init_py,src_zephyr_sell_decision_services_init_py production
     class src_zephyr_sell_decision_core_breakout_failure_detector_py,src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py,src_zephyr_sell_decision_core_exit_scenario_planner_py,src_zephyr_sell_decision_core_position_triage_py,src_zephyr_sell_decision_core_replacement_rebalance_sell_py,src_zephyr_sell_decision_core_scaling_out_architect_py,src_zephyr_sell_decision_core_sell_signal_collector_py,src_zephyr_sell_decision_core_sell_signal_fusion_engine_py,src_zephyr_sell_decision_core_sell_signal_scorer_py,src_zephyr_sell_decision_core_sell_urgency_scorer_py,src_zephyr_sell_decision_core_stop_loss_strategy_py,src_zephyr_sell_decision_core_strategy_specific_stop_framework_py,src_zephyr_sell_decision_core_t_trade_coordinator_py,src_zephyr_sell_decision_core_take_profit_strategy_py design
     class D_POSITION,D_EX_CORE external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 7 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 6 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -129,21 +127,19 @@ flowchart TD
     src_zephyr_sell_decision_init_py["(生产态 / production) 包入口 / __init__<br/>sell_decision的包入口，把这一层的子模块归到一起<br/>统一管理，用到谁才加载谁，避免一次性全加载拖慢启<br/>动。<br/>文件: sell_decision/__init__.py"]
     src_zephyr_sell_decision_extensions_init_py["(生产态 / production) 包入口 / __init__<br/>_extensions的包入口，把这一层的子模块归到一起统<br/>一管理，用到谁才加载谁，避免一次性全加载拖慢启动<br/>。<br/>文件: _extensions/__init__.py"]
     src_zephyr_sell_decision_api_init_py["(生产态 / production) 包入口 / __init__<br/>接口的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: api/__init__.py"]
-    src_zephyr_sell_decision_core_init_py["(生产态 / production) 包入口 / __init__<br/>core的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: core/__init__.py"]
     src_zephyr_sell_decision_infrastructure_init_py["(生产态 / production) 包入口 / __init__<br/>基础设施的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: infrastructure/__init__.py"]
     src_zephyr_sell_decision_models_init_py["(生产态 / production) 包入口 / __init__<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: models/__init__.py"]
     src_zephyr_sell_decision_services_init_py["(生产态 / production) 包入口 / __init__<br/>services的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: services/__init__.py"]
     src_zephyr_sell_decision_init_py ~~~ src_zephyr_sell_decision_extensions_init_py
     src_zephyr_sell_decision_extensions_init_py ~~~ src_zephyr_sell_decision_api_init_py
-    src_zephyr_sell_decision_api_init_py ~~~ src_zephyr_sell_decision_core_init_py
-    src_zephyr_sell_decision_core_init_py ~~~ src_zephyr_sell_decision_infrastructure_init_py
+    src_zephyr_sell_decision_api_init_py ~~~ src_zephyr_sell_decision_infrastructure_init_py
     src_zephyr_sell_decision_infrastructure_init_py ~~~ src_zephyr_sell_decision_models_init_py
     src_zephyr_sell_decision_models_init_py ~~~ src_zephyr_sell_decision_services_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_sell_decision_init_py,src_zephyr_sell_decision_extensions_init_py,src_zephyr_sell_decision_api_init_py,src_zephyr_sell_decision_core_init_py,src_zephyr_sell_decision_infrastructure_init_py,src_zephyr_sell_decision_models_init_py,src_zephyr_sell_decision_services_init_py production
+    class src_zephyr_sell_decision_init_py,src_zephyr_sell_decision_extensions_init_py,src_zephyr_sell_decision_api_init_py,src_zephyr_sell_decision_infrastructure_init_py,src_zephyr_sell_decision_models_init_py,src_zephyr_sell_decision_services_init_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）

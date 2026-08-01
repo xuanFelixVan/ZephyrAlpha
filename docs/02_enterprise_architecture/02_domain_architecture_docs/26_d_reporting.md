@@ -82,8 +82,8 @@ flowchart TD
     src_zephyr_reporting_report_version_manager_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_performance_attribution_report_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_report_watermark_tracker_py -.->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 /<br/>Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>跨域节点 / cross-domain"]
     src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -121,8 +121,8 @@ flowchart TD
     src_zephyr_reporting_default_tca_engine_py["(生产态 / production) 默认tca引擎 / D_REPORTING<br/>— Default TCA Engine<br/>默认tca引擎。D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_default_tca_engine_py
     src_zephyr_reporting_analytics_base_py["(生产态 / production) analytics基类 / D_<br/>REPORTING — Post-Trade Analytics Layer<br/>analytics基类。D_REPORTING — Post-Trade<br/>Analytics Layer<br/>文件: reporting/analytics_base.py"]
-    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

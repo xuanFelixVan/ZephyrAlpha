@@ -147,12 +147,12 @@ ttl: permanent
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 7 | 0 | 7/150 (OK) | [📄 60_d_ml_serve.md](60_d_ml_serve.md) |
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
-| D_PF_ALLOC | 组合分配 / Portfolio Allocation | 6 | 2 | 4 | 6/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
+| D_PF_ALLOC | 组合分配 / Portfolio Allocation | 7 | 3 | 4 | 7/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
 | D_PF_CORE | 组合核心 / Portfolio Core | 18 | 10 | 8 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 11 | 1 | 10 | 11/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 15 | 11 | 4 | 15/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
-| D_SELL_DECISION | 卖出决策 / Sell Decision | 21 | 7 | 14 | 21/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
+| D_SELL_DECISION | 卖出决策 / Sell Decision | 20 | 6 | 14 | 20/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
 | D_SIGLEGACY | 信号遗留设计态 / Signal Legacy (Design) | 0 | 0 | 0 | 0/150 (OK) | [📄 68_d_siglegacy.md](68_d_siglegacy.md) |
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 10 | 2 | 8 | 10/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
