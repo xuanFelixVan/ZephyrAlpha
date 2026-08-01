@@ -346,10 +346,16 @@ def _node_mermaid_label(n: dict) -> str:
 
     # 中文名称：name_zh > docstring > 文件名
     cn_name = name_zh or desc or short_name
-    # 中文简介：plain_zh > desc_zh > (名称来自真源时用 docstring 兜底，否则留空避免重复)
-    cn_intro = plain or desc_zh
-    if not cn_intro and name_zh:
-        cn_intro = desc
+    # 中文简介（多级回退，确保每个节点都有大白话）：
+    # 1. plain_zh（真源大白话）——若与 name_zh 完全相同则视为"复述"跳过
+    # 2. desc_zh（真源技术简介）——若与 name_zh/cn_name 相同也跳过
+    # 3. docstring 首行——若与 cn_name 不同则用作兜底简介
+    # 4. 以上都与名字相同 → 留空（名字行已含功能描述，不需重复显示）
+    cn_intro = ""
+    for candidate in (plain, desc_zh, desc):
+        if candidate and candidate != name_zh and candidate != cn_name:
+            cn_intro = candidate
+            break
 
     gate_reason = (n.get("gate_reason") or "").strip()
     is_design = (n.get("design_maturity") or "") == "design"

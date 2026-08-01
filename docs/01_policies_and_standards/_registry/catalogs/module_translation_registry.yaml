@@ -58236,6 +58236,55 @@ entries:
   desc_zh: "harvest来源:14-D-ALT-DATA-另类数据域.md"
   desc_en: ''
   plain_zh: "SignalExtractor 信号提取器(骨架)（来源:14-D-ALT-DATA-另类数据域.md, likely_new）"
+- module_path: src/zephyr/pf_core/multi_track_fusion.py
+  domain_id: D_PF_CORE
+  name_zh: 多轨道融合器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 把多个策略轨道的信号按权重融合成最终组合决策，解决多策略冲突时的取舍问题。
+- module_path: docs/03_modules/_cross_layer/database/business_data_architecture.md
+  domain_id: D_GOV_DOCS
+  name_zh: 业务数据架构文档
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 描述系统各业务数据的分层结构和跨层关系，是数据架构设计的顶层参考。
+- module_path: src/zephyr/pf_alloc/batched_position_builder.py
+  domain_id: D_PF_ALLOC
+  name_zh: 批量持仓构建器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 一次性为多个策略批量生成目标持仓，避免逐个构建的延迟，提升组合分配效率。
+- module_path: src/zephyr/signal_ashare/market_state_sensor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 市场状态传感器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 实时检测A股市场状态（牛市/熊市/震荡等），为策略切换提供状态依据。
+- module_path: src/zephyr/pf_core/decision_orchestrator.py
+  domain_id: D_PF_CORE
+  name_zh: 决策编排器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 编排组合核心的决策流程，从信号接收到持仓输出的全链路调度，确保各环节按序执行。
+- module_path: src/zephyr/signal_ashare/next_day_8state_forecast.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 次日8态预测器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 预测下一个交易日的8种市场状态概率分布，为次日交易策略提供前瞻性参考。
+- module_path: src/zephyr/infrastructure/h1_redis_hot
+  domain_id: D_INFRA_RUNTIME
+  name_zh: Redis热数据缓存
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 把高频访问的Level-1行情数据缓存在Redis中，降低读取延迟，支撑实时决策。
 
 # ============================================================================
 # battle_map_steps 段——作战地图环节叙事真源（BM-INV-003）
