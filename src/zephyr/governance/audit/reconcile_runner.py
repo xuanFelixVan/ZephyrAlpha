@@ -264,13 +264,29 @@ def _log_stale_to_db(
         )
         elapsed = int(time.time()) - started_at  # noqa: m46-time  M46豁免: 与本文件既有 time.time() 风格一致（5处既有调用），stale 判定需 Unix timestamp 整数差值
         session_id = status_data.get("session_id", "unknown")
+        worker_pid = status_data.get("worker_pid", 0)
+        # R1 治本（#ARCH-RECONCILE-WORKER-HEARTBEAT-001，2026-08-01）：
+        # 区分死进程孤儿 vs 活进程超时，消除"running for {elapsed}s"误导——
+        # 死进程不可能"running"，实际是"died {elapsed}s ago"。
+        # 两处调用方（read_status_file L236 / sweep_stale_workers L353）均已在
+        # 进程死亡后才调本函数，但防御性二次探测避免未来调用方变更引入误判。
+        if worker_pid and _is_pid_alive(worker_pid):
+            detail = (
+                f"live worker timeout (pid={worker_pid}, running {elapsed}s, "
+                f"threshold={_STALE_THRESHOLD_SECONDS}s, commit_sha={commit_sha}) — "
+                f"investigate slow reconciler"
+            )
+        else:
+            detail = (
+                f"orphaned worker detected (dead pid={worker_pid}, died {elapsed}s ago, "
+                f"threshold={_STALE_THRESHOLD_SECONDS}s, commit_sha={commit_sha}) — "
+                f"no active threat, status file cleaned"
+            )
         _log_reconcile_results(
             project_root,
             [ReconcileResult(
                 action="critical_warn",
-                detail=f"reconcile worker stale: running for {elapsed}s "
-                       f"(threshold={_STALE_THRESHOLD_SECONDS}s, commit_sha={commit_sha}, "
-                       f"worker_pid={status_data.get('worker_pid', 'unknown')})",
+                detail=detail,
                 gate_id="RECONCILE-WORKER-STALE",
             )],
             session_id,
@@ -377,6 +393,26 @@ def sweep_stale_workers(project_root: Path | str) -> int:
         swept += 1
         # 落 DB（与 read_status_file 的 _log_stale_to_db 一致，幂等去重）
         _log_stale_to_db(project_root, commit_sha, started_at, data)
+
+    # R2 治本（#ARCH-RECONCILE-WORKER-HEARTBEAT-001，2026-08-01）：
+    # 清理超龄的终态 status 文件（done/failed/stale），防止无限累积。
+    # 当前 259+ 文件只增不减，每次 launch_reconcile_async 顺带清理（O(n)，n 小）。
+    _DONE_RETENTION_SECONDS = 86400 * 7  # 7 天
+    for status_path in reports_dir.glob("reconcile_status_*.json"):
+        try:
+            ttl_data = json.loads(status_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if ttl_data.get("status") not in (STATUS_DONE, STATUS_FAILED, STATUS_STALE):
+            continue  # 只清理终态文件，不碰 running/pending
+        finished = ttl_data.get("finished_at", 0)
+        if not finished:
+            continue  # 无完成时间，保守不删
+        if now - finished > _DONE_RETENTION_SECONDS:
+            try:
+                status_path.unlink(missing_ok=True)
+            except OSError:
+                pass  # fail-open，清理失败不阻断 launch
     return swept
 
 

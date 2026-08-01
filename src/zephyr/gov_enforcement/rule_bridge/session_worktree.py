@@ -3517,7 +3517,34 @@ def _ensure_worktree_base_fresh(
 
     if session_commit_count == 0:
 
-        # 无 session commit，安全 reset 到主工作区 HEAD
+        # R4 治本（#ARCH-RECONCILE-WORKER-HEARTBEAT-001，2026-08-01）：
+        # git reset --hard 前检测 worktree 是否有 tracked 文件的未提交改动。
+        # 虽然本函数在 _sync_files_to_worktree 之前执行（worktree 通常干净），
+        # 但上次 sync 失败/中断可能留下脏文件，git reset --hard 会静默丢弃。
+        # 100% AI 开发下，AI 无法感知 worktree 脏状态，需 fail-loud 阻断。
+        # 注意：只检测 tracked 修改（M/A/D），忽略 untracked（??）——
+        # git reset --hard 不删除 untracked 文件，只丢弃 tracked 修改。
+        dirty_r = run_subprocess_hidden(
+            ["git", "status", "--porcelain"],
+            cwd=str(wt_path), capture_output=True, text=True, timeout=10,
+        )
+        dirty_lines = [
+            l for l in dirty_r.stdout.strip().splitlines()
+            if l.strip() and not l.startswith("??")
+        ] if dirty_r.returncode == 0 else []
+        if dirty_lines:
+            dirty_count = len(dirty_lines)
+            _log_base_freshness_event(root, session_id, stage, "fail_closed",
+                main_head=main_head[:8], wt_head=wt_head[:8],
+                event_detail=f"reset --hard blocked: worktree has {dirty_count} uncommitted changes")
+            return {
+                "session_id": session_id, "status": "FAILED",
+                "message": f"worktree base 对齐阻断：worktree 有 {dirty_count} 个未提交改动，"
+                           f"拒绝 git reset --hard 以防丢弃 AI 编辑。请先 commit 或 stash worktree 改动。",
+                "commit_hash": "", "base_sync_failed": True, "stage": stage,
+            }
+
+        # 无 session commit 且 worktree 干净，安全 reset 到主工作区 HEAD
 
         # P1.3 fast-path：session_worktree 是可信调用方，跳过 git_guard alias 扫描
 
@@ -7603,6 +7630,119 @@ def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
 
     return set()
 
+def _write_stash_notice(
+
+    root: Path, stash_msg: str, files: list[str],
+
+    reason: str, session_id: str | None = None,
+
+) -> None:
+
+    """R3 治本（#ARCH-RECONCILE-WORKER-HEARTBEAT-001，2026-08-01）：stash 操作后写入 AI 可读通告文件。
+
+    病根：session_worktree 的 git stash push 将 AI 编辑压入 stash 栈，文件还原到 HEAD。
+
+    AI 看到"编辑没了"但不知编辑被 stash 保存了，误判为"被覆盖/丢失"。
+
+    实际编辑安全在 stash 中（可恢复 via git stash pop）。
+
+    本函数在 stash 操作后写入 .runtime/workspace_alerts/stash_notice.json，
+
+    使 AI 在下次操作时能看到"你的编辑被 stash 了"的明确通告。
+
+    通告文件保留最近 10 条记录（多次 stash 累积），fail-open 不影响 stash 本身。
+
+    Args:
+
+        root: 主仓库根目录。
+
+        stash_msg: stash message（溯源用）。
+
+        files: 被 stash 的文件列表（相对路径）。
+
+        reason: stash 原因（如 "abort_dispose" / "pre_merge_clean"）。
+
+        session_id: session 标识（可恢复溯源）。
+
+    """
+
+    import json
+
+    import time as _time
+
+    notice = {
+
+        "event": "workspace_stashed",
+
+        "timestamp": int(_time.time()),
+
+        "stash_message": stash_msg,
+
+        "files": files,
+
+        "file_count": len(files),
+
+        "reason": reason,
+
+        "session_id": session_id or "unknown",
+
+        "recovery_cmd": "git stash list  # 查看所有 stash",
+
+        "recovery_cmd_specific": "git stash pop  # 恢复最近的 stash",
+
+        "ai_advisory": (
+
+            "AI 编辑已被 git stash push 保存（非丢失/覆盖）。"
+
+            "文件已还原到 HEAD。如需恢复编辑，执行 git stash pop 或 "
+
+            "git restore --source <stash_ref> -- <file>"
+
+        ),
+
+    }
+
+    alerts_dir = root / ".runtime" / "workspace_alerts"
+
+    alerts_dir.mkdir(parents=True, exist_ok=True)
+
+    notice_path = alerts_dir / "stash_notice.json"
+
+    try:
+
+        notices = []
+
+        if notice_path.exists():
+
+            try:
+
+                notices = json.loads(notice_path.read_text(encoding="utf-8"))
+
+                if not isinstance(notices, list):
+
+                    notices = []
+
+            except (OSError, json.JSONDecodeError):
+
+                notices = []
+
+        notices.append(notice)
+
+        notices = notices[-10:]  # 保留最近 10 条
+
+        notice_path.write_text(
+
+            json.dumps(notices, ensure_ascii=False, indent=2),
+
+            encoding="utf-8",
+
+        )
+
+    except OSError:
+
+        pass  # fail-open，通告写入失败不影响 stash 操作本身
+
+
 def _dispose_main_workdir_files(
 
     root: Path, rel_files: list[str], tracked_files: set[str],
@@ -7704,6 +7844,14 @@ def _dispose_main_workdir_files(
             cwd=str(root), capture_output=True,
 
         )
+
+        # R3 治本（#ARCH-RECONCILE-WORKER-HEARTBEAT-001，2026-08-01）：
+
+        # stash push 后写入 AI 可读通告，消除"编辑被覆盖"误判——
+
+        # AI 看到"编辑没了"实际是被 stash 保存（可恢复 via git stash pop）。
+
+        _write_stash_notice(root, stash_msg, to_stash, "abort_dispose", session_id)
 
         logger.info(
 
