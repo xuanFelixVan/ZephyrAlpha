@@ -322,12 +322,15 @@ def _build_mermaid_total(
 ) -> str:
     """构建总图 Mermaid 代码（全部节点按6阶段 subgraph 分层）。"""
     all_ids: set[int] = set()
+    subgraph_ids: list[str] = []  # 跟踪 subgraph ID，用于显式 style 着色
     lines = [_MERMAID_THEME, "flowchart TD"]
     for sid, nodes in stage_nodes.items():
         if not nodes:
             continue
         sname = stage_names.get(sid, sid)
-        lines.append(f'    subgraph S_{sid}["{sname}（{len(nodes)}节点）"]')
+        sg_id = f"S_{sid}"
+        lines.append(f'    subgraph {sg_id}["{sname}（{len(nodes)}节点）"]')
+        subgraph_ids.append(sg_id)
         for n in nodes:
             lines.append(_mermaid_node_def(n))
             all_ids.add(n["node_id"])
@@ -336,6 +339,9 @@ def _build_mermaid_total(
         if e["from_node_id"] in all_ids and e["to_node_id"] in all_ids:
             lines.append(_mermaid_edge_def(e, maturity_map))
     lines.append(_CLASSDEF_LINES)
+    # 显式 subgraph 着色（themeVariables.clusterBkg 在部分 Mermaid 版本不生效）
+    for sg_id in subgraph_ids:
+        lines.append(f"    style {sg_id} fill:#eaeaea,stroke:#888888,stroke-width:1px,color:#333")
     prod_ids = [nid for nid in all_ids if maturity_map.get(nid) == "production"]
     design_ids = [nid for nid in all_ids if maturity_map.get(nid) != "production"]
     if prod_ids:
