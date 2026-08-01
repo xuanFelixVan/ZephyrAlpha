@@ -69,6 +69,10 @@ from _shared.constants import EXIT_PASS, REPO_ROOT, SCRIPTS_DIR
 # ARCH-041: 默认输出路径从 meta/_backups/（deprecated）改为 tmp/runtime_backups/（不进 git）
 DEFAULT_BACKUP_DIR = REPO_ROOT / "tmp" / "runtime_backups"
 
+# §5.160.2 SQL 集中化：depgraph 备份导出 SQL（提取到模块级常量，禁裸 SQL 字面量）
+_SQL_DUMP_NODES = "SELECT * FROM nodes ORDER BY node_id"
+_SQL_DUMP_EDGES = "SELECT * FROM edges ORDER BY edge_id"
+
 
 # ── PG depgraph 备份（ARCH-041 §5.33.1 治本）──────────────────────────────
 # pg_dump 不可用时的 fallback：用 psycopg2 查询导出为 JSON。
@@ -137,12 +141,12 @@ def backup_pg_depgraph(
         cur = conn.cursor()
 
         # 导出 nodes 表
-        cur.execute("SELECT * FROM nodes ORDER BY node_id")
+        cur.execute(_SQL_DUMP_NODES)
         columns = [desc[0] for desc in cur.description]
         nodes = [dict(zip(columns, row, strict=False)) for row in cur.fetchall()]
 
         # 导出 edges 表
-        cur.execute("SELECT * FROM edges ORDER BY edge_id")
+        cur.execute(_SQL_DUMP_EDGES)
         columns = [desc[0] for desc in cur.description]
         edges = [dict(zip(columns, row, strict=False)) for row in cur.fetchall()]
 
