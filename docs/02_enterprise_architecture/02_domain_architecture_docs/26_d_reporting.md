@@ -27,18 +27,18 @@ ttl: permanent
 | 域ID | D_REPORTING | Domain ID | D_REPORTING |
 | 域名称 | 报告 | Domain Name | Reporting |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
-| 模块数 | 3 | Module Count | 3 |
-| 域内依赖 | 2 | Internal Dependencies | 2 |
+| 模块数 | 12 | Module Count | 12 |
+| 域内依赖 | 10 | Internal Dependencies | 10 |
 | 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 8 | Cross-domain Outgoing | 8 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 9 | Design Modules | 9 |
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
 | 描述 | 报告，负责投资报告、风险报告和合规报告的生成与分发 | Description | 报告，负责投资报告、风险报告和合规报告的生成与分发 |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
+> 依赖图内嵌在本文档中，共三个图：全景图、运营态图、设计态图。大图在 MD 预览可能渲染失败，请用可缩放 HTML 版查看（已放开渲染上限，浏览器可正常渲染 + Ctrl+滚轮缩放 + 拖动平移）。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -46,17 +46,81 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
-### 全景依赖图（全部模块，颜色区分运营态/设计态）
+### 全景图（全部模块）
 
-> 展示全部 3 个模块（生产态 3 + 设计态 0），节点含成熟度+中英文名+大白话+文件路径。
+> 展示全部 12 个模块（生产态 3 + 设计态 9），节点含成熟度+中英文名+大白话+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_default_attribution_engine_py["(生产态 / production) defaultattribution引擎 / Default Attribution Engine<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py"]
-    src_zephyr_reporting_default_tca_engine_py["(生产态 / production) defaulttca引擎 / Default Tca Engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
+    src_zephyr_reporting_ashare_performance_audit_py["(设计态 / design)<br/>文件: reporting/ashare_performance_audit.py"]
+    src_zephyr_reporting_ashare_trade_record_template_py["(设计态 / design)<br/>文件: reporting/ashare_trade_record_template.py"]
+    src_zephyr_reporting_default_tca_engine_py["(生产态 / production) D_REPORTING — Default TCA Engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
+    src_zephyr_reporting_performance_attribution_report_py["(设计态 / design)<br/>文件: reporting/performance_attribution_report.py"]
+    src_zephyr_reporting_realtime_pnl_dashboard_py["(设计态 / design)<br/>文件: reporting/realtime_pnl_dashboard.py"]
+    src_zephyr_reporting_regulatory_report_generator_py["(设计态 / design)<br/>文件: reporting/regulatory_report_generator.py"]
+    src_zephyr_reporting_report_version_manager_py["(设计态 / design)<br/>文件: reporting/report_version_manager.py"]
+    src_zephyr_reporting_report_watermark_tracker_py["(设计态 / design)<br/>文件: reporting/report_watermark_tracker.py"]
+    src_zephyr_reporting_risk_report_engine_py["(设计态 / design)<br/>文件: reporting/risk_report_engine.py"]
+    src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
+    src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_default_tca_engine_py
+    src_zephyr_reporting_default_tca_engine_py ~~~ src_zephyr_reporting_performance_attribution_report_py
+    src_zephyr_reporting_performance_attribution_report_py ~~~ src_zephyr_reporting_realtime_pnl_dashboard_py
+    src_zephyr_reporting_realtime_pnl_dashboard_py ~~~ src_zephyr_reporting_regulatory_report_generator_py
+    src_zephyr_reporting_regulatory_report_generator_py ~~~ src_zephyr_reporting_report_version_manager_py
+    src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
+    src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
+    src_zephyr_reporting_default_attribution_engine_py["(生产态 / production) D_REPORTING — Default Attribution Engine<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py"]
+    src_zephyr_reporting_report_publisher_py["(设计态 / design)<br/>文件: reporting/report_publisher.py"]
+    src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py"]
+    src_zephyr_reporting_ashare_performance_audit_py -.->|data / data| src_zephyr_reporting_default_attribution_engine_py
+    src_zephyr_reporting_ashare_trade_record_template_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_realtime_pnl_dashboard_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_regulatory_report_generator_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_risk_report_engine_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_report_version_manager_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_performance_attribution_report_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_report_watermark_tracker_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_EX_CORE["(设计态 / design) 执行核心 / Execution Core<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>跨域节点 / cross-domain"]
+    D_EX_CORE -.->|data / data| src_zephyr_reporting_report_publisher_py
+    D_GOV_AUDIT["(生产态 / production) 审计追踪 / Audit Trail<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>跨域节点 / cross-domain"]
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
+    D_GOVERNANCE["(生产态 / production) 生命周期管理 / Lifecycle Management<br/>生命周期管理，负责蓝图/模块/任务的声明周期管理和元数据治理<br/>跨域节点 / cross-domain"]
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py production
+    class src_zephyr_reporting_ashare_performance_audit_py,src_zephyr_reporting_ashare_trade_record_template_py,src_zephyr_reporting_performance_attribution_report_py,src_zephyr_reporting_realtime_pnl_dashboard_py,src_zephyr_reporting_regulatory_report_generator_py,src_zephyr_reporting_report_publisher_py,src_zephyr_reporting_report_version_manager_py,src_zephyr_reporting_report_watermark_tracker_py,src_zephyr_reporting_risk_report_engine_py design
+    class D_INFRASTRUCTURE,D_GOV_AUDIT,D_GOVERNANCE external_prod
+    class D_EX_CORE external_design
+```
+
+### 运营态图（仅 production 模块）
+
+> 仅展示已上线运行的模块（共 3 个，2 条域内依赖）。
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_reporting_default_attribution_engine_py["(生产态 / production) D_REPORTING — Default Attribution Engine<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py"]
+    src_zephyr_reporting_default_tca_engine_py["(生产态 / production) D_REPORTING — Default TCA Engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_default_tca_engine_py
-    src_zephyr_reporting_analytics_base_py["(生产态 / production) analytics基础 / Analytics Base<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py"]
+    src_zephyr_reporting_analytics_base_py["(生产态 / production) D_REPORTING — Post-Trade Analytics Layer<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py"]
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
@@ -81,28 +145,68 @@ flowchart TD
     class D_INFRASTRUCTURE,D_GOV_AUDIT,D_GOVERNANCE external_prod
 ```
 
+### 设计态图（仅 design 模块）
+
+> 仅展示蓝图阶段、代码未写的设计态模块（共 9 个，7 条域内依赖）。
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_reporting_ashare_performance_audit_py["(设计态 / design)<br/>文件: reporting/ashare_performance_audit.py"]
+    src_zephyr_reporting_ashare_trade_record_template_py["(设计态 / design)<br/>文件: reporting/ashare_trade_record_template.py"]
+    src_zephyr_reporting_performance_attribution_report_py["(设计态 / design)<br/>文件: reporting/performance_attribution_report.py"]
+    src_zephyr_reporting_realtime_pnl_dashboard_py["(设计态 / design)<br/>文件: reporting/realtime_pnl_dashboard.py"]
+    src_zephyr_reporting_regulatory_report_generator_py["(设计态 / design)<br/>文件: reporting/regulatory_report_generator.py"]
+    src_zephyr_reporting_report_version_manager_py["(设计态 / design)<br/>文件: reporting/report_version_manager.py"]
+    src_zephyr_reporting_report_watermark_tracker_py["(设计态 / design)<br/>文件: reporting/report_watermark_tracker.py"]
+    src_zephyr_reporting_risk_report_engine_py["(设计态 / design)<br/>文件: reporting/risk_report_engine.py"]
+    src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
+    src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_performance_attribution_report_py
+    src_zephyr_reporting_performance_attribution_report_py ~~~ src_zephyr_reporting_realtime_pnl_dashboard_py
+    src_zephyr_reporting_realtime_pnl_dashboard_py ~~~ src_zephyr_reporting_regulatory_report_generator_py
+    src_zephyr_reporting_regulatory_report_generator_py ~~~ src_zephyr_reporting_report_version_manager_py
+    src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
+    src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
+    src_zephyr_reporting_report_publisher_py["(设计态 / design)<br/>文件: reporting/report_publisher.py"]
+    src_zephyr_reporting_ashare_trade_record_template_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_realtime_pnl_dashboard_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_regulatory_report_generator_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_risk_report_engine_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_report_version_manager_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_performance_attribution_report_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_report_watermark_tracker_py -.->|data / data| src_zephyr_reporting_report_publisher_py
+    D_EX_CORE["(设计态 / design) 执行核心 / Execution Core<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>跨域节点 / cross-domain"]
+    D_EX_CORE -.->|data / data| src_zephyr_reporting_report_publisher_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_reporting_ashare_performance_audit_py,src_zephyr_reporting_ashare_trade_record_template_py,src_zephyr_reporting_performance_attribution_report_py,src_zephyr_reporting_realtime_pnl_dashboard_py,src_zephyr_reporting_regulatory_report_generator_py,src_zephyr_reporting_report_publisher_py,src_zephyr_reporting_report_version_manager_py,src_zephyr_reporting_report_watermark_tracker_py,src_zephyr_reporting_risk_report_engine_py design
+    class D_EX_CORE external_design
+```
+
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | analytics基础 / Analytics Base (reporting/analytics_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 执行报告 / Execution Report (contracts/execution_report.py) | 导入依赖 / import_depends |
-| 2 | analytics基础 / Analytics Base (reporting/analytics_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: fill / Fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 3 | analytics基础 / Analytics Base (reporting/analytics_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: order / Order (contracts/order.py) | 导入依赖 / import_depends |
-| 4 | analytics基础 / Analytics Base (reporting/analytics_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 性能attribution报告 / Performance Attribution Report (con... | 导入依赖 / import_depends |
-| 5 | defaultattribution引擎 / Default Attribution Engine (repo... | → | D_INFRASTRUCTURE 跨层契约基础设施: 性能attribution报告 / Performance Attribution Report (con... | 导入依赖 / import_depends |
-| 6 | defaulttca引擎 / Default Tca Engine (reporting/default_tc... | → | D_INFRASTRUCTURE 跨层契约基础设施: 执行报告 / Execution Report (contracts/execution_report.py) | 导入依赖 / import_depends |
-| 7 | defaulttca引擎 / Default Tca Engine (reporting/default_tc... | → | D_INFRASTRUCTURE 跨层契约基础设施: fill / Fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 8 | defaulttca引擎 / Default Tca Engine (reporting/default_tc... | → | D_INFRASTRUCTURE 跨层契约基础设施: order / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 1 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/execution_report.py | 导入依赖 / import_depends |
+| 2 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
+| 3 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
+| 4 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
+| 5 | D_REPORTING — Default Attribution Engine (reporting/defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
+| 6 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/execution_report.py | 导入依赖 / import_depends |
+| 7 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
+| 8 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOVERNANCE 生命周期管理: analytics基础 / Analytics Base (observability_governance/... | → | analytics基础 / Analytics Base (reporting/analytics_base.py) | 导入依赖 / import_depends |
-| 2 | D_GOV_AUDIT 审计追踪: defaultattribution引擎 / Default Attribution Engine (audi... | → | defaultattribution引擎 / Default Attribution Engine (repo... | 导入依赖 / import_depends |
-| 3 | D_GOV_AUDIT 审计追踪: defaulttca引擎 / Default Tca Engine (audit/default_tca_en... | → | defaulttca引擎 / Default Tca Engine (reporting/default_tc... | 导入依赖 / import_depends |
+| 1 | D_GOVERNANCE 生命周期管理: Re-export wrapper: analytics_base canonical at zephyr.rep... | → | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | 导入依赖 / import_depends |
+| 2 | D_GOV_AUDIT 审计追踪: Re-export wrapper: default_attribution_engine canonical a... | → | D_REPORTING — Default Attribution Engine (reporting/defa... | 导入依赖 / import_depends |
+| 3 | D_GOV_AUDIT 审计追踪: Re-export wrapper: default_tca_engine canonical at zephyr... | → | D_REPORTING — Default TCA Engine (reporting/default_tca_... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

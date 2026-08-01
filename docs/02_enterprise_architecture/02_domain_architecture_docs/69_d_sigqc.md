@@ -46,15 +46,15 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
-### 全景图（全部模块，颜色区分运营态/设计态）
+### 全景图（全部模块）
 
 > 展示全部 2 个模块（生产态 2 + 设计态 0），节点含成熟度+中英文名+大白话+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_quality_init_py["(生产态 / production) 信号质量控制域包 / Signal Quality Domain Package<br/>信号质量控制域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: signal_quality/__init__.py"]
-    src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) 降级监控器基础 / Degradation Monitor Base<br/>D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py"]
+    src_zephyr_signal_quality_init_py["(生产态 / production) D_SIGQC — Signal Quality Domain<br/>D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py"]
+    src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) D_SIGQC — Signal Quality Degradation Monitor Base<br/>D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
     D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -68,15 +68,15 @@ flowchart TD
     class D_INFRASTRUCTURE,D_TRADING external_prod
 ```
 
-### 运营态图（仅 design_maturity=production 的模块和依赖）
+### 运营态图（仅 production 模块）
 
 > 仅展示已上线运行的模块（共 2 个，1 条域内依赖）。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_quality_init_py["(生产态 / production) 信号质量控制域包 / Signal Quality Domain Package<br/>信号质量控制域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: signal_quality/__init__.py"]
-    src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) 降级监控器基础 / Degradation Monitor Base<br/>D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py"]
+    src_zephyr_signal_quality_init_py["(生产态 / production) D_SIGQC — Signal Quality Domain<br/>D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py"]
+    src_zephyr_signal_quality_degradation_monitor_base_py["(生产态 / production) D_SIGQC — Signal Quality Degradation Monitor Base<br/>D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
     D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -90,7 +90,7 @@ flowchart TD
     class D_INFRASTRUCTURE,D_TRADING external_prod
 ```
 
-### 设计态图（仅 design_maturity=design 的模块和依赖）
+### 设计态图（仅 design 模块）
 
 > 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
 
@@ -105,8 +105,8 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 降级监控器基础 / Degradation Monitor Base (signal_quality... | → | D_INFRASTRUCTURE 跨层契约基础设施: synthesized信号 / Synthesized Signal (contracts/synthesiz... | 导入依赖 / import_depends |
-| 2 | 降级监控器基础 / Degradation Monitor Base (signal_quality... | → | D_TRADING 交易运营: 信号降级警告 / Signal Degradation Warning (market/signal_... | 导入依赖 / import_depends |
+| 1 | D_SIGQC — Signal Quality Degradation Monitor Base (signa... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 2 | D_SIGQC — Signal Quality Degradation Monitor Base (signa... | → | D_TRADING 交易运营: market/signal_degradation_warning.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

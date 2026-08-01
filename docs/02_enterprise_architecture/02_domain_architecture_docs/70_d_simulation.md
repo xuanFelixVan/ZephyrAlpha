@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_SIMULATION | Domain ID | D_SIMULATION |
 | 域名称 | 仿真 | Domain Name | Simulation |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 2 | Module Count | 2 |
-| 域内依赖 | 1 | Internal Dependencies | 1 |
+| 模块数 | 10 | Module Count | 10 |
+| 域内依赖 | 8 | Internal Dependencies | 8 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 8 | Design Modules | 8 |
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | 仿真，负责市场仿真、模拟撮合和仿真环境管理 | Description | 仿真，负责市场仿真、模拟撮合和仿真环境管理 |
@@ -46,15 +46,36 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
-### 全景图（全部模块，颜色区分运营态/设计态）
+### 全景图（全部模块）
 
-> 展示全部 2 个模块（生产态 2 + 设计态 0），节点含成熟度+中英文名+大白话+文件路径。
+> 展示全部 10 个模块（生产态 2 + 设计态 8），节点含成熟度+中英文名+大白话+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) default实验流水线 / Default Experiment Pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
-    src_zephyr_simulation_pipeline_base_py["(生产态 / production) 流水线基础 / Pipeline Base<br/>实验 — Experimentation Pipeline Layer<br/>文件: simulation/pipeline_base.py"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
+    src_zephyr_simulation_result_analyzer_py["(设计态 / design)<br/>文件: simulation/result_analyzer.py"]
+    src_zephyr_simulation_scenario_generator_py["(设计态 / design)<br/>文件: simulation/scenario_generator.py"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ src_zephyr_simulation_result_analyzer_py
+    src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
+    src_zephyr_simulation_pipeline_base_py["(生产态 / production) 实验 — Experimentation Pipeline Layer<br/>实验 — Experimentation Pipeline Layer<br/>文件: simulation/pipeline_base.py"]
+    src_zephyr_simulation_risk_simulator_py["(设计态 / design)<br/>文件: simulation/risk_simulator.py"]
+    src_zephyr_simulation_strategy_simulator_py["(设计态 / design)<br/>文件: simulation/strategy_simulator.py"]
+    src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
+    src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
+    src_zephyr_simulation_look_ahead_bias_detector_py["(设计态 / design)<br/>文件: simulation/look_ahead_bias_detector.py"]
+    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design)<br/>文件: simulation/parameter_robustness_tester.py"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["(设计态 / design)<br/>文件: simulation/sharpe_calculator_fixer.py"]
+    src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
+    src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
+    src_zephyr_simulation_deflated_sharpe_calculator_py["(设计态 / design)<br/>文件: simulation/deflated_sharpe_calculator.py"]
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
+    src_zephyr_simulation_scenario_generator_py -.->|data / data| src_zephyr_simulation_strategy_simulator_py
+    src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
+    src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
+    src_zephyr_simulation_sharpe_calculator_fixer_py -.->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
     src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -63,18 +84,19 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
+    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_result_analyzer_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_scenario_generator_py,src_zephyr_simulation_sharpe_calculator_fixer_py,src_zephyr_simulation_strategy_simulator_py design
     class D_INFRASTRUCTURE external_prod
 ```
 
-### 运营态图（仅 design_maturity=production 的模块和依赖）
+### 运营态图（仅 production 模块）
 
 > 仅展示已上线运行的模块（共 2 个，1 条域内依赖）。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) default实验流水线 / Default Experiment Pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
-    src_zephyr_simulation_pipeline_base_py["(生产态 / production) 流水线基础 / Pipeline Base<br/>实验 — Experimentation Pipeline Layer<br/>文件: simulation/pipeline_base.py"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations/default_experiment_pipeline.py"]
+    src_zephyr_simulation_pipeline_base_py["(生产态 / production) 实验 — Experimentation Pipeline Layer<br/>实验 — Experimentation Pipeline Layer<br/>文件: simulation/pipeline_base.py"]
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
     src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -86,13 +108,37 @@ flowchart TD
     class D_INFRASTRUCTURE external_prod
 ```
 
-### 设计态图（仅 design_maturity=design 的模块和依赖）
+### 设计态图（仅 design 模块）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 8 个，7 条域内依赖）。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    empty["（无设计态模块 / No design modules）"]
+    src_zephyr_simulation_result_analyzer_py["(设计态 / design)<br/>文件: simulation/result_analyzer.py"]
+    src_zephyr_simulation_scenario_generator_py["(设计态 / design)<br/>文件: simulation/scenario_generator.py"]
+    src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
+    src_zephyr_simulation_risk_simulator_py["(设计态 / design)<br/>文件: simulation/risk_simulator.py"]
+    src_zephyr_simulation_strategy_simulator_py["(设计态 / design)<br/>文件: simulation/strategy_simulator.py"]
+    src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
+    src_zephyr_simulation_look_ahead_bias_detector_py["(设计态 / design)<br/>文件: simulation/look_ahead_bias_detector.py"]
+    src_zephyr_simulation_parameter_robustness_tester_py["(设计态 / design)<br/>文件: simulation/parameter_robustness_tester.py"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["(设计态 / design)<br/>文件: simulation/sharpe_calculator_fixer.py"]
+    src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
+    src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
+    src_zephyr_simulation_deflated_sharpe_calculator_py["(设计态 / design)<br/>文件: simulation/deflated_sharpe_calculator.py"]
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
+    src_zephyr_simulation_scenario_generator_py -.->|data / data| src_zephyr_simulation_strategy_simulator_py
+    src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
+    src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
+    src_zephyr_simulation_sharpe_calculator_fixer_py -.->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_result_analyzer_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_scenario_generator_py,src_zephyr_simulation_sharpe_calculator_fixer_py,src_zephyr_simulation_strategy_simulator_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -101,7 +147,7 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 流水线基础 / Pipeline Base (simulation/pipeline_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 实验结果 / Experiment Result (contracts/experiment_result... | 导入依赖 / import_depends |
+| 1 | 实验 — Experimentation Pipeline Layer (simulation/pipeli... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/experiment_result.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

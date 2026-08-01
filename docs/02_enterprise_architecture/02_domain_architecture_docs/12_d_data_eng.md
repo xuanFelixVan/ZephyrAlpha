@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
+> 依赖图内嵌在本文档中，共三个图：全景图、运营态图、设计态图。大图在 MD 预览可能渲染失败，请用可缩放 HTML 版查看（已放开渲染上限，浏览器可正常渲染 + Ctrl+滚轮缩放 + 拖动平移）。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -46,20 +46,20 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
-### 全景依赖图（全部模块，颜色区分运营态/设计态）
+### 全景图（全部模块）
 
 > 展示全部 7 个模块（生产态 7 + 设计态 0），节点含成熟度+中英文名+大白话+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_eng_init_py["(生产态 / production) 数据工程域包 / Data Eng Domain Package<br/>数据工程域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: data_eng/__init__.py"]
-    src_zephyr_data_eng_extensions_init_py["(生产态 / production) 数据工程扩展包 / Data Eng Extensions Package<br/>数据工程域下 _extensions 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: _extensions/__init__.py"]
-    src_zephyr_data_eng_api_init_py["(生产态 / production) 数据工程API包 / Data Eng API Package<br/>数据工程域下 api 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: api/__init__.py"]
-    src_zephyr_data_eng_core_init_py["(生产态 / production) 数据工程核心包 / Data Eng Core Package<br/>数据工程域下 core 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: core/__init__.py"]
-    src_zephyr_data_eng_infrastructure_init_py["(生产态 / production) 数据工程基础设施包 / Data Eng Infrastructure Package<br/>数据工程域下 infrastructure 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: infrastructure/__init__.py"]
-    src_zephyr_data_eng_models_init_py["(生产态 / production) 数据工程模型包 / Data Eng Models Package<br/>数据工程域下 models 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: models/__init__.py"]
-    src_zephyr_data_eng_services_init_py["(生产态 / production) 数据工程服务包 / Data Eng Services Package<br/>数据工程域下 services 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: services/__init__.py"]
+    src_zephyr_data_eng_init_py["(生产态 / production)<br/>文件: data_eng/__init__.py"]
+    src_zephyr_data_eng_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
+    src_zephyr_data_eng_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
+    src_zephyr_data_eng_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
+    src_zephyr_data_eng_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_data_eng_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
+    src_zephyr_data_eng_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
     src_zephyr_data_eng_init_py ~~~ src_zephyr_data_eng_extensions_init_py
     src_zephyr_data_eng_extensions_init_py ~~~ src_zephyr_data_eng_api_init_py
     src_zephyr_data_eng_api_init_py ~~~ src_zephyr_data_eng_core_init_py
@@ -71,6 +71,42 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_data_eng_init_py,src_zephyr_data_eng_extensions_init_py,src_zephyr_data_eng_api_init_py,src_zephyr_data_eng_core_init_py,src_zephyr_data_eng_infrastructure_init_py,src_zephyr_data_eng_models_init_py,src_zephyr_data_eng_services_init_py production
+```
+
+### 运营态图（仅 production 模块）
+
+> 仅展示已上线运行的模块（共 7 个，0 条域内依赖）。
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_data_eng_init_py["(生产态 / production)<br/>文件: data_eng/__init__.py"]
+    src_zephyr_data_eng_extensions_init_py["(生产态 / production)<br/>文件: _extensions/__init__.py"]
+    src_zephyr_data_eng_api_init_py["(生产态 / production)<br/>文件: api/__init__.py"]
+    src_zephyr_data_eng_core_init_py["(生产态 / production)<br/>文件: core/__init__.py"]
+    src_zephyr_data_eng_infrastructure_init_py["(生产态 / production)<br/>文件: infrastructure/__init__.py"]
+    src_zephyr_data_eng_models_init_py["(生产态 / production)<br/>文件: models/__init__.py"]
+    src_zephyr_data_eng_services_init_py["(生产态 / production)<br/>文件: services/__init__.py"]
+    src_zephyr_data_eng_init_py ~~~ src_zephyr_data_eng_extensions_init_py
+    src_zephyr_data_eng_extensions_init_py ~~~ src_zephyr_data_eng_api_init_py
+    src_zephyr_data_eng_api_init_py ~~~ src_zephyr_data_eng_core_init_py
+    src_zephyr_data_eng_core_init_py ~~~ src_zephyr_data_eng_infrastructure_init_py
+    src_zephyr_data_eng_infrastructure_init_py ~~~ src_zephyr_data_eng_models_init_py
+    src_zephyr_data_eng_models_init_py ~~~ src_zephyr_data_eng_services_init_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_data_eng_init_py,src_zephyr_data_eng_extensions_init_py,src_zephyr_data_eng_api_init_py,src_zephyr_data_eng_core_init_py,src_zephyr_data_eng_infrastructure_init_py,src_zephyr_data_eng_models_init_py,src_zephyr_data_eng_services_init_py production
+```
+
+### 设计态图（仅 design 模块）
+
+> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
+
+```mermaid
+flowchart TD
+    empty["（无设计态模块 / No design modules）"]
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

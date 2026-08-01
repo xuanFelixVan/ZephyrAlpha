@@ -27,18 +27,18 @@ ttl: permanent
 | 域ID | D_FUNDAMENTAL_SIGNAL | Domain ID | D_FUNDAMENTAL_SIGNAL |
 | 域名称 | 基本面信号 | Domain Name | Fundamental Signal |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 10 | Module Count | 10 |
-| 域内依赖 | 6 | Internal Dependencies | 6 |
+| 模块数 | 13 | Module Count | 13 |
+| 域内依赖 | 7 | Internal Dependencies | 7 |
 | 跨域入边 | 2 | Cross-domain Incoming | 2 |
 | 跨域出边 | 18 | Cross-domain Outgoing | 18 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 3 | Design Modules | 3 |
 | 生产态模块 | 10 | Production Modules | 10 |
 | 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 财务指标信号 | Description | 财务指标信号 |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
+> 依赖图内嵌在本文档中，共三个图：全景图、运营态图、设计态图。大图在 MD 预览可能渲染失败，请用可缩放 HTML 版查看（已放开渲染上限，浏览器可正常渲染 + Ctrl+滚轮缩放 + 拖动平移）。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -46,30 +46,100 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
-### 全景依赖图（全部模块，颜色区分运营态/设计态）
+### 全景图（全部模块）
 
-> 展示全部 10 个模块（生产态 10 + 设计态 0），节点含成熟度+中英文名+大白话+文件路径。
+> 展示全部 13 个模块（生产态 10 + 设计态 3），节点含成熟度+中英文名+大白话+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_fundamental_init_py["(生产态 / production) 基本面信号域包 / Signal Fundamental Domain Package<br/>基本面信号域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: signal_fundamental/__init__.py"]
-    src_zephyr_signal_fundamental_capital_capital_allocation_result_py["(生产态 / production) capitalallocation结果 / Capital Allocation Result<br/>D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim<br/>文件: capital/capital_allocation_result.py"]
-    src_zephyr_signal_fundamental_capital_capital_allocator_py["(生产态 / production) capitalallocator / Capital Allocator<br/>D_SIGNAL — Capital Allocator（兼容 re-export shim）<br/>文件: capital/capital_allocator.py"]
-    src_zephyr_signal_fundamental_capital_default_capital_allocator_py["(生产态 / production) defaultcapitalallocator / Default Capital Allocator<br/>D_SIGNAL — Default Capital Allocator（兼容 re-export shim）<br/>文件: capital/default_capital_allocator.py"]
-    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py["(生产态 / production) default信号aggregator / Default Signal Aggregator<br/>D_SIGNAL — Default Signal Aggregator<br/>文件: implementations/default_signal_aggregator.py"]
-    src_zephyr_signal_fundamental_pipeline_py["(生产态 / production) 流水线 / Pipeline<br/>AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道<br/>文件: signal_fundamental/pipeline.py"]
+    src_zephyr_signal_fundamental_init_py["(生产态 / production) D_SIGNAL Signal Domain<br/>D_SIGNAL Signal Domain<br/>文件: signal_fundamental/__init__.py"]
+    src_zephyr_signal_fundamental_audit_signal_audit_logger_py["(设计态 / design)<br/>文件: audit/signal_audit_logger.py"]
+    src_zephyr_signal_fundamental_capital_capital_allocation_result_py["(生产态 / production) D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim<br/>D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim<br/>文件: capital/capital_allocation_result.py"]
+    src_zephyr_signal_fundamental_capital_capital_allocator_py["(生产态 / production) D_SIGNAL — Capital Allocator（兼容 re-export shim）<br/>D_SIGNAL — Capital Allocator（兼容 re-export shim）<br/>文件: capital/capital_allocator.py"]
+    src_zephyr_signal_fundamental_capital_default_capital_allocator_py["(生产态 / production) D_SIGNAL — Default Capital Allocator（兼容 re-export shim）<br/>D_SIGNAL — Default Capital Allocator（兼容 re-export shim）<br/>文件: capital/default_capital_allocator.py"]
+    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py["(生产态 / production) D_SIGNAL — Default Signal Aggregator<br/>D_SIGNAL — Default Signal Aggregator<br/>文件: implementations/default_signal_aggregator.py"]
+    src_zephyr_signal_fundamental_pipeline_py["(生产态 / production) AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道<br/>AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道<br/>文件: signal_fundamental/pipeline.py"]
+    src_zephyr_signal_fundamental_router_signal_priority_router_py["(设计态 / design)<br/>文件: router/signal_priority_router.py"]
+    src_zephyr_signal_fundamental_init_py ~~~ src_zephyr_signal_fundamental_audit_signal_audit_logger_py
+    src_zephyr_signal_fundamental_audit_signal_audit_logger_py ~~~ src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    src_zephyr_signal_fundamental_capital_capital_allocation_result_py ~~~ src_zephyr_signal_fundamental_capital_capital_allocator_py
+    src_zephyr_signal_fundamental_capital_capital_allocator_py ~~~ src_zephyr_signal_fundamental_capital_default_capital_allocator_py
+    src_zephyr_signal_fundamental_capital_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
+    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py ~~~ src_zephyr_signal_fundamental_pipeline_py
+    src_zephyr_signal_fundamental_pipeline_py ~~~ src_zephyr_signal_fundamental_router_signal_priority_router_py
+    src_zephyr_signal_fundamental_router_signal_conflict_resolver_py["(设计态 / design)<br/>文件: router/signal_conflict_resolver.py"]
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py["(生产态 / production) D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出）<br/>D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出）<br/>文件: strategy/capital_allocator.py"]
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py["(生产态 / production) D_SIGNAL — Default Capital Allocator<br/>D_SIGNAL — Default Capital Allocator<br/>文件: implementations/default_capital_allocator.py"]
+    src_zephyr_signal_fundamental_synth_signal_synthesizer_py["(生产态 / production) D_SIGNAL — Signal Synthesizer<br/>D_SIGNAL — Signal Synthesizer<br/>文件: synth/signal_synthesizer.py"]
+    src_zephyr_signal_fundamental_router_signal_conflict_resolver_py ~~~ src_zephyr_signal_fundamental_strategy_capital_allocator_py
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py ~~~ src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_synth_signal_synthesizer_py
+    src_zephyr_signal_fundamental_gen_aggregator_base_py["(生产态 / production) D_SIGNAL — Signal Generation Layer<br/>D_SIGNAL — Signal Generation Layer<br/>文件: gen/aggregator_base.py"]
+    src_zephyr_signal_fundamental_router_signal_priority_router_py -.->|runtime / runtime| src_zephyr_signal_fundamental_router_signal_conflict_resolver_py
+    src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
+    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
+    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
+    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    D_ASHARE_SIGNAL["(设计态 / design) A股特色信号 / A-Share Signal<br/>A 股特色信号，负责 A 股市场特色交易信号的生成和管理<br/>跨域节点 / cross-domain"]
+    src_zephyr_signal_fundamental_router_signal_conflict_resolver_py -.->|event / event| D_ASHARE_SIGNAL
+    D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
+    src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_TRADING["(生产态 / production) 交易运营 / Trading Operations<br/>交易运营，负责交易生命周期管理、订单状态和成交处理<br/>跨域节点 / cross-domain"]
+    src_zephyr_signal_fundamental_capital_capital_allocation_result_py -->|导入依赖 / import_depends| D_TRADING
+    D_SHARED["(生产态 / production) 共享服务 / Shared Services<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>跨域节点 / cross-domain"]
+    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_FACTOR["(生产态 / production) 因子 / Factor<br/>因子，负责因子计算、因子库管理和因子评价<br/>跨域节点 / cross-domain"]
+    D_FACTOR -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_pipeline_py
+    D_GOVERNANCE["(生产态 / production) 生命周期管理 / Lifecycle Management<br/>生命周期管理，负责蓝图/模块/任务的声明周期管理和元数据治理<br/>跨域节点 / cross-domain"]
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_init_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
+    class src_zephyr_signal_fundamental_audit_signal_audit_logger_py,src_zephyr_signal_fundamental_router_signal_conflict_resolver_py,src_zephyr_signal_fundamental_router_signal_priority_router_py design
+    class D_INFRASTRUCTURE,D_TRADING,D_SHARED,D_FACTOR,D_GOVERNANCE external_prod
+    class D_ASHARE_SIGNAL external_design
+```
+
+### 运营态图（仅 production 模块）
+
+> 仅展示已上线运行的模块（共 10 个，6 条域内依赖）。
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_signal_fundamental_init_py["(生产态 / production) D_SIGNAL Signal Domain<br/>D_SIGNAL Signal Domain<br/>文件: signal_fundamental/__init__.py"]
+    src_zephyr_signal_fundamental_capital_capital_allocation_result_py["(生产态 / production) D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim<br/>D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim<br/>文件: capital/capital_allocation_result.py"]
+    src_zephyr_signal_fundamental_capital_capital_allocator_py["(生产态 / production) D_SIGNAL — Capital Allocator（兼容 re-export shim）<br/>D_SIGNAL — Capital Allocator（兼容 re-export shim）<br/>文件: capital/capital_allocator.py"]
+    src_zephyr_signal_fundamental_capital_default_capital_allocator_py["(生产态 / production) D_SIGNAL — Default Capital Allocator（兼容 re-export shim）<br/>D_SIGNAL — Default Capital Allocator（兼容 re-export shim）<br/>文件: capital/default_capital_allocator.py"]
+    src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py["(生产态 / production) D_SIGNAL — Default Signal Aggregator<br/>D_SIGNAL — Default Signal Aggregator<br/>文件: implementations/default_signal_aggregator.py"]
+    src_zephyr_signal_fundamental_pipeline_py["(生产态 / production) AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道<br/>AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道<br/>文件: signal_fundamental/pipeline.py"]
     src_zephyr_signal_fundamental_init_py ~~~ src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     src_zephyr_signal_fundamental_capital_capital_allocation_result_py ~~~ src_zephyr_signal_fundamental_capital_capital_allocator_py
     src_zephyr_signal_fundamental_capital_capital_allocator_py ~~~ src_zephyr_signal_fundamental_capital_default_capital_allocator_py
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py ~~~ src_zephyr_signal_fundamental_pipeline_py
-    src_zephyr_signal_fundamental_strategy_capital_allocator_py["(生产态 / production) capitalallocator / Capital Allocator<br/>D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出）<br/>文件: strategy/capital_allocator.py"]
-    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py["(生产态 / production) defaultcapitalallocator / Default Capital Allocator<br/>D_SIGNAL — Default Capital Allocator<br/>文件: implementations/default_capital_allocator.py"]
-    src_zephyr_signal_fundamental_synth_signal_synthesizer_py["(生产态 / production) 信号synthesizer / Signal Synthesizer<br/>D_SIGNAL — Signal Synthesizer<br/>文件: synth/signal_synthesizer.py"]
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py["(生产态 / production) D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出）<br/>D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出）<br/>文件: strategy/capital_allocator.py"]
+    src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py["(生产态 / production) D_SIGNAL — Default Capital Allocator<br/>D_SIGNAL — Default Capital Allocator<br/>文件: implementations/default_capital_allocator.py"]
+    src_zephyr_signal_fundamental_synth_signal_synthesizer_py["(生产态 / production) D_SIGNAL — Signal Synthesizer<br/>D_SIGNAL — Signal Synthesizer<br/>文件: synth/signal_synthesizer.py"]
     src_zephyr_signal_fundamental_strategy_capital_allocator_py ~~~ src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_synth_signal_synthesizer_py
-    src_zephyr_signal_fundamental_gen_aggregator_base_py["(生产态 / production) aggregator基础 / Aggregator Base<br/>D_SIGNAL — Signal Generation Layer<br/>文件: gen/aggregator_base.py"]
+    src_zephyr_signal_fundamental_gen_aggregator_base_py["(生产态 / production) D_SIGNAL — Signal Generation Layer<br/>D_SIGNAL — Signal Generation Layer<br/>文件: gen/aggregator_base.py"]
     src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
@@ -106,36 +176,58 @@ flowchart TD
     class D_INFRASTRUCTURE,D_TRADING,D_SHARED,D_FACTOR,D_GOVERNANCE external_prod
 ```
 
+### 设计态图（仅 design 模块）
+
+> 仅展示蓝图阶段、代码未写的设计态模块（共 3 个，1 条域内依赖）。
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_signal_fundamental_audit_signal_audit_logger_py["(设计态 / design)<br/>文件: audit/signal_audit_logger.py"]
+    src_zephyr_signal_fundamental_router_signal_priority_router_py["(设计态 / design)<br/>文件: router/signal_priority_router.py"]
+    src_zephyr_signal_fundamental_audit_signal_audit_logger_py ~~~ src_zephyr_signal_fundamental_router_signal_priority_router_py
+    src_zephyr_signal_fundamental_router_signal_conflict_resolver_py["(设计态 / design)<br/>文件: router/signal_conflict_resolver.py"]
+    src_zephyr_signal_fundamental_router_signal_priority_router_py -.->|runtime / runtime| src_zephyr_signal_fundamental_router_signal_conflict_resolver_py
+    D_ASHARE_SIGNAL["(设计态 / design) A股特色信号 / A-Share Signal<br/>A 股特色信号，负责 A 股市场特色交易信号的生成和管理<br/>跨域节点 / cross-domain"]
+    src_zephyr_signal_fundamental_router_signal_conflict_resolver_py -.->|event / event| D_ASHARE_SIGNAL
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_signal_fundamental_audit_signal_audit_logger_py,src_zephyr_signal_fundamental_router_signal_conflict_resolver_py,src_zephyr_signal_fundamental_router_signal_priority_router_py design
+    class D_ASHARE_SIGNAL external_design
+```
+
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 流水线 / Pipeline (signal_fundamental/pipeline.py) | → | D_FACTOR 因子: 因子基础 / Factor Base (factor/factor_base.py) | 导入依赖 / import_depends |
-| 2 | aggregator基础 / Aggregator Base (gen/aggregator_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 因子信号 / Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
-| 3 | aggregator基础 / Aggregator Base (gen/aggregator_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: synthesized信号 / Synthesized Signal (contracts/synthesiz... | 导入依赖 / import_depends |
-| 4 | default信号aggregator / Default Signal Aggregator (implem... | → | D_INFRASTRUCTURE 跨层契约基础设施: 因子信号 / Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
-| 5 | default信号aggregator / Default Signal Aggregator (implem... | → | D_INFRASTRUCTURE 跨层契约基础设施: synthesized信号 / Synthesized Signal (contracts/synthesiz... | 导入依赖 / import_depends |
-| 6 | 流水线 / Pipeline (signal_fundamental/pipeline.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 因子信号 / Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
-| 7 | 流水线 / Pipeline (signal_fundamental/pipeline.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: synthesized信号 / Synthesized Signal (contracts/synthesiz... | 导入依赖 / import_depends |
-| 8 | defaultcapitalallocator / Default Capital Allocator (impl... | → | D_INFRASTRUCTURE 跨层契约基础设施: synthesized信号 / Synthesized Signal (contracts/synthesiz... | 导入依赖 / import_depends |
-| 9 | 信号synthesizer / Signal Synthesizer (synth/signal_synthe... | → | D_INFRASTRUCTURE 跨层契约基础设施: 因子信号 / Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
-| 10 | 信号synthesizer / Signal Synthesizer (synth/signal_synthe... | → | D_INFRASTRUCTURE 跨层契约基础设施: synthesized信号 / Synthesized Signal (contracts/synthesiz... | 导入依赖 / import_depends |
-| 11 | 流水线 / Pipeline (signal_fundamental/pipeline.py) | → | D_SHARED 共享服务: 错误 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 12 | 流水线 / Pipeline (signal_fundamental/pipeline.py) | → | D_SHARED 共享服务: 时间utils / Time Utils (utils/time_utils.py) | 导入依赖 / import_depends |
-| 13 | capitalallocation结果 / Capital Allocation Result (capita... | → | D_TRADING 交易运营: capitalallocation结果 / Capital Allocation Result (execut... | 导入依赖 / import_depends |
-| 14 | aggregator基础 / Aggregator Base (gen/aggregator_base.py) | → | D_TRADING 交易运营: capitalallocation结果 / Capital Allocation Result (execut... | 导入依赖 / import_depends |
-| 15 | aggregator基础 / Aggregator Base (gen/aggregator_base.py) | → | D_TRADING 交易运营: 信号降级警告 / Signal Degradation Warning (market/signal_... | 导入依赖 / import_depends |
-| 16 | capitalallocator / Capital Allocator (strategy/capital_al... | → | D_TRADING 交易运营: capitalallocation结果 / Capital Allocation Result (execut... | 导入依赖 / import_depends |
-| 17 | defaultcapitalallocator / Default Capital Allocator (impl... | → | D_TRADING 交易运营: capitalallocation结果 / Capital Allocation Result (execut... | 导入依赖 / import_depends |
+| 1 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_FACTOR 因子: ZephyrAlpha — D_FACTOR Alpha Factor Layer (factor/factor... | 导入依赖 / import_depends |
+| 2 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
+| 3 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 4 | D_SIGNAL — Default Signal Aggregator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
+| 5 | D_SIGNAL — Default Signal Aggregator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 6 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
+| 7 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 8 | D_SIGNAL — Default Capital Allocator (implementations/de... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 9 | D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
+| 10 | D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 11 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 12 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 13 | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export... | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
+| 14 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
+| 15 | D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | D_TRADING 交易运营: market/signal_degradation_warning.py | 导入依赖 / import_depends |
+| 16 | D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出） (st... | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
+| 17 | D_SIGNAL — Default Capital Allocator (implementations/de... | → | D_TRADING 交易运营: execution/capital_allocation_result.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FACTOR 因子: alpha信号流水线 / Alpha Signal Pipeline (factor/alpha_sig... | → | 流水线 / Pipeline (signal_fundamental/pipeline.py) | 导入依赖 / import_depends |
-| 2 | D_GOVERNANCE 生命周期管理: demo端到端流水线 / Demo E2E Pipeline (construction/demo_e... | → | 基本面信号域包 / Signal Fundamental Domain Package (signa... | 导入依赖 / import_depends |
+| 1 | D_FACTOR 因子: factor/alpha_signal_pipeline.py | → | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | 导入依赖 / import_depends |
+| 2 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_SIGNAL Signal Domain (signal_fundamental/__init__.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
