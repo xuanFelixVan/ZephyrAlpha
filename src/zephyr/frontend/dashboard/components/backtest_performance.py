@@ -668,7 +668,7 @@ def _trades_log_to_records(trades_log: list) -> list[PerfTradeRecord]:
 
 
 def _build_perf_metrics_from_result(
-    result: Any, nav_curve: list[float], initial: float,
+    result: object, nav_curve: list[float], initial: float,
 ) -> PerformanceMetrics:
     """从 BacktestResult 标量 + 单位净值构造 PerformanceMetrics"""
     final_asset = nav_curve[-1] * initial if nav_curve and initial > 0 else initial
@@ -700,7 +700,7 @@ def _build_trade_stats_from_nav(daily_yields: list[float], n: int) -> TradeStati
 
 
 def backtest_result_to_performance_data(
-    result: Any, portfolio: Any,
+    result: object, portfolio: object,
 ) -> BacktestPerformanceData:
     """从 BacktestResult + Portfolio 构造 BacktestPerformanceData (真实数据适配器)
 

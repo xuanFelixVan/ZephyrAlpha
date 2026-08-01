@@ -80,7 +80,7 @@ class MetadataRegistry:
             raise KeyError(f"元数据 key '{key}' 未注册")
         return self._entries[key]
 
-    def get_value(self, key: str, field: str, default: Any = None) -> Any:
+    def get_value(self, key: str, field: str, default: object = None) -> object:
         """获取元数据中的单个字段值。"""
         entry = self._entries.get(key)
         if entry is None:

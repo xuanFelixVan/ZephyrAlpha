@@ -27,7 +27,7 @@ from typing import Any
 log = logging.getLogger(__name__)
 
 
-def _escape_value(v: Any) -> str:
+def _escape_value(v: object) -> str:
     """转义单个值为 TSV 格式（委托 ch_writer.tsv_escape，单一真源）。
 
     Args:

@@ -237,7 +237,7 @@ class MiniQmtBroker(BrokerInterface):
 
 
     @property
-    def xttrader(self) -> Any:
+    def xttrader(self) -> object:
         """只读：xttrader（Stage 4 公共化）。"""
         return self._xttrader
 

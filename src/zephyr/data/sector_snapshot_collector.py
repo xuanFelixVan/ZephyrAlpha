@@ -130,7 +130,7 @@ def _now_utc_naive() -> datetime:
 
 # ---------- 快照解析 ----------
 
-def _to_decimal(v: Any, default: float = 0.0) -> float:
+def _to_decimal(v: object, default: float = 0.0) -> float:
     """安全转 float（ClickHouse Decimal 接收 float）。"""
     if v is None or v == "" or v == "None":
         return default
@@ -140,7 +140,7 @@ def _to_decimal(v: Any, default: float = 0.0) -> float:
         return default
 
 
-def _to_uint(v: Any, default: int = 0) -> int:
+def _to_uint(v: object, default: int = 0) -> int:
     """安全转非负 int。"""
     if v is None or v == "" or v == "None":
         return default

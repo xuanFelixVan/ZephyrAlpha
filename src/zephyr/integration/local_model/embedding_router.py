@@ -207,21 +207,21 @@ class EmbeddingRouter:
         self._bge_small_dim = value
 
     @property
-    def bge_m3_model(self) -> Any:
+    def bge_m3_model(self) -> object:
         """BGE-M3 模型实例（Stage 4 公共化，read-write）。"""
         return self._bge_m3_model
 
     @bge_m3_model.setter
-    def bge_m3_model(self, value: Any) -> None:
+    def bge_m3_model(self, value: object) -> None:
         self._bge_m3_model = value
 
     @property
-    def bge_small_model(self) -> Any:
+    def bge_small_model(self) -> object:
         """bge-small 模型实例（Stage 4 公共化，read-write）。"""
         return self._bge_small_model
 
     @bge_small_model.setter
-    def bge_small_model(self, value: Any) -> None:
+    def bge_small_model(self, value: object) -> None:
         self._bge_small_model = value
 
     @property

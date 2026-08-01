@@ -55,12 +55,15 @@ from __future__ import annotations
 
 import logging
 from decimal import Decimal
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
 
 from zephyr.pf_core.strategy_engine.tick_strategy_base import (
     TickStrategyBase,
     TickStrategyMeta,
 )
+
+if TYPE_CHECKING:
+    from zephyr.backtest.core.tick_replay import TickEvent, TickSnapshot
 
 _logger = logging.getLogger(__name__)
 
@@ -131,7 +134,7 @@ class OrderBookImbalanceStrategy(TickStrategyBase):
         # 每 symbol 状态
         self._states: dict[str, str] = {}  # symbol -> long|flat
 
-    def on_tick(self, event: Any) -> dict[str, float]:
+    def on_tick(self, event: TickEvent) -> dict[str, float]:
         """每个 tick 调用，返回目标权重 dict。
 
         Args:
@@ -188,7 +191,7 @@ class OrderBookImbalanceStrategy(TickStrategyBase):
     # 辅助方法
     # ------------------------------------------------------------------
 
-    def _order_book_imbalance(self, tick: Any) -> float | None:
+    def _order_book_imbalance(self, tick: TickSnapshot) -> float | None:
         """5 档（或 1 档）盘口买卖盘失衡。
 
         Returns:

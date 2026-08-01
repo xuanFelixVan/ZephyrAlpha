@@ -56,12 +56,15 @@ from collections import deque
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from zephyr.pf_core.strategy_engine.tick_strategy_base import (
     TickStrategyBase,
     TickStrategyMeta,
 )
+
+if TYPE_CHECKING:
+    from zephyr.backtest.core.tick_replay import TickEvent, TickSnapshot
 
 _logger = logging.getLogger(__name__)
 
@@ -144,7 +147,7 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
         self._states: dict[str, str] = {}  # symbol -> long|flat
         self._sell_prices: dict[str, Decimal] = {}  # symbol -> 卖出价（flat 态）
 
-    def on_tick(self, event: Any) -> dict[str, float]:
+    def on_tick(self, event: TickEvent) -> dict[str, float]:
         """每个 tick 调用，返回目标权重 dict。
 
         Args:
@@ -173,7 +176,7 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
     # ------------------------------------------------------------------
 
     def _maybe_sell(
-        self, sym: str, price: Decimal, tick: Any
+        self, sym: str, price: Decimal, tick: TickSnapshot
     ) -> dict[str, float]:
         """冲高回落 → 卖出（long→flat）。"""
         ws = self._window_stats(sym)
@@ -220,7 +223,7 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
     # 窗口与盘口辅助
     # ------------------------------------------------------------------
 
-    def _update_window(self, sym: str, ts: Any, price: Decimal) -> None:
+    def _update_window(self, sym: str, ts: datetime, price: Decimal) -> None:
         """追加当前 tick 并淘汰超出窗口的旧 tick（PIT：仅保留 <= ts 的历史）。"""
         win = self._windows.setdefault(sym, deque())
         win.append((ts, price))
@@ -237,7 +240,7 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
         peak = max(p for _, p in win)
         return _WindowState(baseline=baseline, peak=peak)
 
-    def _order_book_imbalance(self, tick: Any) -> float:
+    def _order_book_imbalance(self, tick: TickSnapshot) -> float:
         """5 档盘口买卖盘失衡（>0 买盘强，<0 卖盘强）。
 
         取一档（最优买卖）量差，盘口缺失或为零时返回 0（中性）。
@@ -253,7 +256,7 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
         return float((bid1 - ask1) / total)
 
     @staticmethod
-    def _shift_ts(ts: Any, seconds: int) -> Any:
+    def _shift_ts(ts: datetime, seconds: int) -> datetime:
         """时间戳 ± 秒（兼容 datetime/pd.Timestamp，失败回退原值）。"""
         try:
             return ts + timedelta(seconds=seconds)
@@ -261,7 +264,7 @@ class IntradaySurgeFallStrategy(TickStrategyBase):
             return ts
 
     @staticmethod
-    def _ts_lt(a: Any, b: Any) -> bool:
+    def _ts_lt(a: datetime, b: datetime) -> bool:
         """时间戳比较 a < b（类型不一致时返回 False，避免误淘汰）。"""
         try:
             return bool(a < b)

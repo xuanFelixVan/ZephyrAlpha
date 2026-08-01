@@ -58,12 +58,15 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
 
 from zephyr.pf_core.strategy_engine.tick_strategy_base import (
     TickStrategyBase,
     TickStrategyMeta,
 )
+
+if TYPE_CHECKING:
+    from zephyr.backtest.core.tick_replay import TickEvent, TickSnapshot
 
 _logger = logging.getLogger(__name__)
 
@@ -142,7 +145,7 @@ class VWAPReversionStrategy(TickStrategyBase):
         # 每 symbol 状态
         self._states: dict[str, str] = {}  # symbol -> long|flat
 
-    def on_tick(self, event: Any) -> dict[str, float]:
+    def on_tick(self, event: TickEvent) -> dict[str, float]:
         """每个 tick 调用，返回目标权重 dict。
 
         Args:
@@ -173,7 +176,7 @@ class VWAPReversionStrategy(TickStrategyBase):
     # ------------------------------------------------------------------
 
     def _maybe_buy(
-        self, sym: str, vd: _VwapDeviation, tick: Any
+        self, sym: str, vd: _VwapDeviation, tick: TickSnapshot
     ) -> dict[str, float]:
         """价格低于 VWAP 超过阈值 → 买入（flat→long）。"""
         # 价格需低于 VWAP 超过 entry_threshold
@@ -209,7 +212,7 @@ class VWAPReversionStrategy(TickStrategyBase):
 
     @staticmethod
     def _compute_vwap_deviation(
-        price: Decimal, tick: Any
+        price: Decimal, tick: TickSnapshot
     ) -> _VwapDeviation | None:
         """计算 VWAP 及价格偏离。
 
@@ -229,7 +232,7 @@ class VWAPReversionStrategy(TickStrategyBase):
         return _VwapDeviation(vwap=vwap, deviation=deviation)
 
     @staticmethod
-    def _order_book_imbalance(tick: Any) -> float:
+    def _order_book_imbalance(tick: TickSnapshot) -> float:
         """5 档盘口买卖盘失衡（>0 买盘强，<0 卖盘强）。
 
         取一档（最优买卖）量差，盘口缺失或为零时返回 0（中性）。
