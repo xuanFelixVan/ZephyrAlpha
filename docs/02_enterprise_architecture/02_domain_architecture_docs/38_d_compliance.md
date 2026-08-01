@@ -87,55 +87,55 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Owner Absence Manager — Owner缺席模式 §6.32。 (gov_drif... | 导入依赖 / import_depends |
-| 2 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Detector AI 施工检测器 — ai_construction_detectors... | 导入依赖 / import_depends |
-| 3 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: AI Context Injector — 施工前预检D-023-16 · §6.8。 (gov... | 导入依赖 / import_depends |
-| 4 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Backward Compatibility Checker — 向后兼容策略漂移检测 D-... | 导入依赖 / import_depends |
-| 5 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Baseline Manager — baseline_manager.py (gov_drift/baseli... | 导入依赖 / import_depends |
-| 6 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.... | 导入依赖 / import_depends |
-| 7 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Detector Canary Controller — 检测器金丝雀部署 §6.11。 (... | 导入依赖 / import_depends |
-| 8 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Cascade Failure Detector — 级联故障检测 D-023-22 · §6.... | 导入依赖 / import_depends |
-| 9 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。 (go... | 导入依赖 / import_depends |
-| 10 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Config Consistency Checker — 配置多源一致性 D-023-29 · ... | 导入依赖 / import_depends |
-| 11 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: contract_drift_detector — 契约漂移检测器。 (gov_drift/co... | 导入依赖 / import_depends |
-| 12 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Correlation Engine — correlation_engine.py (gov_drift/co... | 导入依赖 / import_depends |
-| 13 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Credibility Engine — credibility_engine.py (gov_drift/cr... | 导入依赖 / import_depends |
-| 14 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Cross Module Score — cross_module_score.py (gov_drift/cr... | 导入依赖 / import_depends |
-| 15 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Coverage Dashboard — dashboard.py (gov_drift/dashboard.py) | 导入依赖 / import_depends |
-| 16 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Detector Dispatcher — detector_dispatcher.py (gov_drift/... | 导入依赖 / import_depends |
-| 17 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
-| 18 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Hotfix Bypass — drift_hotfix_bypass.py (gov_drift/... | 导入依赖 / import_depends |
-| 19 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | 导入依赖 / import_depends |
-| 20 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
-| 21 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Detector 结果类型 + 专项检测函数 — drift_result_ty... | 导入依赖 / import_depends |
-| 22 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Detector AI 训练闭环 + 跨语言检测 — drift_training... | 导入依赖 / import_depends |
-| 23 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: File Attribute Integrity — 文件底层属性完整性 §6.30。 (... | 导入依赖 / import_depends |
-| 24 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Drift Forensics Engine — 漂移取证引擎 §6.17。 (gov_drif... | 导入依赖 / import_depends |
-| 25 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Gate Persistence — gate_persistence.py (gov_drift/gate_p... | 导入依赖 / import_depends |
-| 26 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Git Bisector — git_bisector.py (gov_drift/git_bisector.py) | 导入依赖 / import_depends |
-| 27 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: .gitignore Integrity Auditor — gitignore完整性审计 D-023... | 导入依赖 / import_depends |
-| 28 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Cross-Session Handoff Manager — 跨Session修复上下文交接 ... | 导入依赖 / import_depends |
-| 29 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Headless Scanner — headless_scanner.py (gov_drift/headle... | 导入依赖 / import_depends |
-| 30 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Incremental Scanner — incremental_scanner.py (gov_drift/... | 导入依赖 / import_depends |
-| 31 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Naming Magic Checker — 命名魔数与隐式约定检测 §6.27。 (... | 导入依赖 / import_depends |
-| 32 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Orphan Resource Scanner — 孤儿资源检测 §6.28。 (gov_dri... | 导入依赖 / import_depends |
-| 33 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Python Compatibility Checker — Python版本兼容性漂移 D-02... | 导入依赖 / import_depends |
-| 34 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Resource Guard — 资源上限与优雅降级 D-023-23 · §6.16。... | 导入依赖 / import_depends |
-| 35 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: ROI Engine — roi_engine.py (gov_drift/roi_engine.py) | 导入依赖 / import_depends |
-| 36 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: G-CT-006 契约：Drift -> Rollback 漂移触发回滚. (gov_drift... | 导入依赖 / import_depends |
-| 37 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Scan Mutex — scan_mutex.py (gov_drift/scan_mutex.py) | 导入依赖 / import_depends |
-| 38 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Self-Drift Check — self_check.py (gov_drift/self_check.py) | 导入依赖 / import_depends |
-| 39 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Suppression Learner — suppression_learner.py (gov_drift/... | 导入依赖 / import_depends |
-| 40 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Symlink Integrity Checker — 软链接完整性检测 §6.29。 (g... | 导入依赖 / import_depends |
-| 41 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。 (go... | 导入依赖 / import_depends |
-| 42 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Test Fixture Checker — 测试夹具漂移检测 D-023-28 · §6.... | 导入依赖 / import_depends |
-| 43 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: Trend Analyzer — trend_analyzer.py (gov_drift/trend_anal... | 导入依赖 / import_depends |
-| 44 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_INFRA_RUNTIME 运行时集成: 漂移事件记录——对齐 test_state_machine.py 契约（裁定#17 ... | 导入依赖 / import_depends |
-| 45 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: Alert Router — alert_router.py (gov_drift/alert_router.py) | 导入依赖 / import_depends |
-| 46 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | 导入依赖 / import_depends |
-| 47 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: G-CT-005 — ManagedDriftEvent Pydantic V2 BaseModel 漂移... | 导入依赖 / import_depends |
-| 48 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: Auto Reconciler — reconciler.py (gov_drift/reconciler.py) | 导入依赖 / import_depends |
-| 49 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: Drift Runbook Generator — 漂移演练手册自动生成。 (gov_dr... | 导入依赖 / import_depends |
+| 1 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: absence管理器 / Absence Manager (gov_drift/absence_manage... | 导入依赖 / import_depends |
+| 2 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: AIconstructiondetectors / AI Construction Detectors (gov_... | 导入依赖 / import_depends |
+| 3 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: AI上下文injector / AI Context Injector (gov_drift/ai_cont... | 导入依赖 / import_depends |
+| 4 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: backcompat检查器 / Backcompat Checker (gov_drift/backcomp... | 导入依赖 / import_depends |
+| 5 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 基线管理器 / Baseline Manager (gov_drift/baseline_manager... | 导入依赖 / import_depends |
+| 6 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 基线poisoning守卫 / Baseline Poisoning Guard (gov_drift/b... | 导入依赖 / import_depends |
+| 7 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: canary控制器 / Canary Controller (gov_drift/canary_contro... | 导入依赖 / import_depends |
+| 8 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 级联检测器 / Cascade Detector (gov_drift/cascade_detector... | 导入依赖 / import_depends |
+| 9 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: chaosinjector / Chaos Injector (gov_drift/chaos_injector.py) | 导入依赖 / import_depends |
+| 10 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 配置一致性 / Config Consistency (gov_drift/config_consist... | 导入依赖 / import_depends |
+| 11 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: contract漂移检测器 / Contract Drift Detector (gov_drift/c... | 导入依赖 / import_depends |
+| 12 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: correlation引擎 / Correlation Engine (gov_drift/correlati... | 导入依赖 / import_depends |
+| 13 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: credibility引擎 / Credibility Engine (gov_drift/credibili... | 导入依赖 / import_depends |
+| 14 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 跨模块score / Cross Module Score (gov_drift/cross_module_... | 导入依赖 / import_depends |
+| 15 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 仪表板 / Dashboard (gov_drift/dashboard.py) | 导入依赖 / import_depends |
+| 16 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 检测器dispatcher / Detector Dispatcher (gov_drift/detecto... | 导入依赖 / import_depends |
+| 17 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 漂移引擎 / Drift Engine (gov_drift/drift_engine.py) | 导入依赖 / import_depends |
+| 18 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 漂移hotfix旁路 / Drift Hotfix Bypass (gov_drift/drift_hot... | 导入依赖 / import_depends |
+| 19 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 漂移infrastructure / Drift Infrastructure (gov_drift/drif... | 导入依赖 / import_depends |
+| 20 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 漂移模型 / Drift Models (gov_drift/drift_models.py) | 导入依赖 / import_depends |
+| 21 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 漂移结果类型 / Drift Result Types (gov_drift/drift_result... | 导入依赖 / import_depends |
+| 22 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 漂移training / Drift Training (gov_drift/drift_training.py) | 导入依赖 / import_depends |
+| 23 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 文件attr检查器 / File Attr Checker (gov_drift/file_attr_c... | 导入依赖 / import_depends |
+| 24 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: forensics引擎 / Forensics Engine (gov_drift/forensics_eng... | 导入依赖 / import_depends |
+| 25 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 门禁persistence / Gate Persistence (gov_drift/gate_persis... | 导入依赖 / import_depends |
+| 26 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: gitbisector / Git Bisector (gov_drift/git_bisector.py) | 导入依赖 / import_depends |
+| 27 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: gitignore审计器 / Gitignore Auditor (gov_drift/gitignore_... | 导入依赖 / import_depends |
+| 28 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: handoff管理器 / Handoff Manager (gov_drift/handoff_manage... | 导入依赖 / import_depends |
+| 29 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: headlessscanner / Headless Scanner (gov_drift/headless_sc... | 导入依赖 / import_depends |
+| 30 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 增量scanner / Incremental Scanner (gov_drift/incremental_... | 导入依赖 / import_depends |
+| 31 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 命名magic检查器 / Naming Magic Checker (gov_drift/naming_... | 导入依赖 / import_depends |
+| 32 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: orphanscanner / Orphan Scanner (gov_drift/orphan_scanner.py) | 导入依赖 / import_depends |
+| 33 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: pythoncompat / Python Compat (gov_drift/python_compat.py) | 导入依赖 / import_depends |
+| 34 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 资源守卫 / Resource Guard (gov_drift/resource_guard.py) | 导入依赖 / import_depends |
+| 35 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 投资回报引擎 / ROI Engine (gov_drift/roi_engine.py) | 导入依赖 / import_depends |
+| 36 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: rollback桥接 / Rollback Bridge (gov_drift/rollback_bridge... | 导入依赖 / import_depends |
+| 37 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: scanmutex / Scan Mutex (gov_drift/scan_mutex.py) | 导入依赖 / import_depends |
+| 38 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 自我检查 / Self Check (gov_drift/self_check.py) | 导入依赖 / import_depends |
+| 39 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: suppressionlearner / Suppression Learner (gov_drift/suppr... | 导入依赖 / import_depends |
+| 40 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: symlink检查器 / Symlink Checker (gov_drift/symlink_checke... | 导入依赖 / import_depends |
+| 41 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: tamperproof审计 / Tamper Proof Audit (gov_drift/tamper_pr... | 导入依赖 / import_depends |
+| 42 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: 测试fixture检查器 / Test Fixture Checker (gov_drift/test_... | 导入依赖 / import_depends |
+| 43 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_GOV_DRIFT 漂移检测: trend分析器 / Trend Analyzer (gov_drift/trend_analyzer.py) | 导入依赖 / import_depends |
+| 44 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_INFRA_RUNTIME 运行时集成: 状态machine / State Machine (auto_fix_engine/state_machin... | 导入依赖 / import_depends |
+| 45 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: 告警路由器 / Alert Router (gov_drift/alert_router.py) | 导入依赖 / import_depends |
+| 46 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: 冷启动 / Cold Start (gov_drift/cold_start.py) | 导入依赖 / import_depends |
+| 47 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: events / Events (gov_drift/events.py) | 导入依赖 / import_depends |
+| 48 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: reconciler / Reconciler (gov_drift/reconciler.py) | 导入依赖 / import_depends |
+| 49 | 合规Behavioral Auditor包 / Compliance Behavioral Auditor ... | → | D_SECURITY 对抗验证: 运行手册生成器 / Runbook Generator (gov_drift/runbook_gen... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

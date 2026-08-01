@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 9 | Module Count | 9 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
-| 跨域入边 | 4 | Cross-domain Incoming | 4 |
+| 跨域入边 | 8 | Cross-domain Incoming | 8 |
 | 跨域出边 | 36 | Cross-domain Outgoing | 36 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 8 | Production Modules | 8 |
@@ -54,20 +54,20 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_ex_core_adapters_init_py["(生产态 / production) 执行核心适配器包 / Ex Core Adapters Package<br/>执行核心域下 adapters 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: adapters/__init__.py"]
-    src_zephyr_ex_core_adapters_risk_validation_bridge_py["(生产态 / production) Re-export wrapper: risk_validation_bridge 真源在 zephyr.governance.adapters.r...<br/>Re-export wrapper: risk_validation_bridge 真源在 zephyr.governance.adapters.r...<br/>文件: adapters/risk_validation_bridge.py"]
-    src_zephyr_ex_core_adapters_simulation_broker_py["(生产态 / production) Re-export wrapper: simulation_broker 真源在 zephyr.governance.adapters.simula...<br/>Re-export wrapper: simulation_broker 真源在 zephyr.governance.adapters.simula...<br/>文件: adapters/simulation_broker.py"]
-    src_zephyr_ex_core_execution_engine_py["(生产态 / production) D_EXECUTION_CORE — Execution Engine<br/>D_EXECUTION_CORE — Execution Engine<br/>文件: ex_core/execution_engine.py"]
-    src_zephyr_ex_core_signal_providers_py["(生产态 / production) D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂<br/>D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂<br/>文件: ex_core/signal_providers.py"]
-    src_zephyr_ex_core_trading_session_py["(设计态 / design) D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器<br/>D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器<br/>文件: ex_core/trading_session.py"]
-    src_zephyr_governance_escalation_order_state_escalator_py["(生产态 / production) Order State Escalator — v0.10.0 订单状态机升级器。<br/>Order State Escalator — v0.10.0 订单状态机升级器。<br/>文件: escalation/order_state_escalator.py"]
+    src_zephyr_ex_core_adapters_risk_validation_bridge_py["(生产态 / production) 风险validation桥接 / Risk Validation Bridge<br/>Re-export wrapper: risk_validation_bridge 真源在 zephyr.governance.adapters.r...<br/>文件: adapters/risk_validation_bridge.py"]
+    src_zephyr_ex_core_adapters_simulation_broker_py["(生产态 / production) simulation券商 / Simulation Broker<br/>Re-export wrapper: simulation_broker 真源在 zephyr.governance.adapters.simula...<br/>文件: adapters/simulation_broker.py"]
+    src_zephyr_ex_core_execution_engine_py["(生产态 / production) 执行引擎 / Execution Engine<br/>D_EXECUTION_CORE — Execution Engine<br/>文件: ex_core/execution_engine.py"]
+    src_zephyr_ex_core_signal_providers_py["(生产态 / production) 信号providers / Signal Providers<br/>D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂<br/>文件: ex_core/signal_providers.py"]
+    src_zephyr_ex_core_trading_session_py["(设计态 / design) trading会话 / Trading Session<br/>D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器<br/>文件: ex_core/trading_session.py"]
+    src_zephyr_governance_escalation_order_state_escalator_py["(生产态 / production) order状态escalator / Order State Escalator<br/>Order State Escalator — v0.10.0 订单状态机升级器。<br/>文件: escalation/order_state_escalator.py"]
     src_zephyr_ex_core_adapters_init_py ~~~ src_zephyr_ex_core_adapters_risk_validation_bridge_py
     src_zephyr_ex_core_adapters_risk_validation_bridge_py ~~~ src_zephyr_ex_core_adapters_simulation_broker_py
     src_zephyr_ex_core_adapters_simulation_broker_py ~~~ src_zephyr_ex_core_execution_engine_py
     src_zephyr_ex_core_execution_engine_py ~~~ src_zephyr_ex_core_signal_providers_py
     src_zephyr_ex_core_signal_providers_py ~~~ src_zephyr_ex_core_trading_session_py
     src_zephyr_ex_core_trading_session_py ~~~ src_zephyr_governance_escalation_order_state_escalator_py
-    src_zephyr_ex_core_adapters_miniqmt_broker_py["(生产态 / production) MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易）<br/>MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易）<br/>文件: adapters/miniqmt_broker.py"]
-    src_zephyr_ex_core_order_manager_py["(生产态 / production) D_EXECUTION_CORE — Order Manager<br/>D_EXECUTION_CORE — Order Manager<br/>文件: ex_core/order_manager.py"]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py["(生产态 / production) miniqmt券商 / Miniqmt Broker<br/>MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易）<br/>文件: adapters/miniqmt_broker.py"]
+    src_zephyr_ex_core_order_manager_py["(生产态 / production) order管理器 / Order Manager<br/>D_EXECUTION_CORE — Order Manager<br/>文件: ex_core/order_manager.py"]
     src_zephyr_ex_core_adapters_miniqmt_broker_py ~~~ src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_trading_session_py -.->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
@@ -111,42 +111,42 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） (core/matching_lo... | 导入依赖 / import_depends |
-| 2 | D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂 (ex_cor... | → | D_FACTOR 因子: D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
-| 3 | D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂 (ex_cor... | → | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | 导入依赖 / import_depends |
-| 4 | D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂 (ex_cor... | → | D_FACTOR 因子: ZephyrAlpha — D_FACTOR Alpha Factor Layer (factor/factor... | 导入依赖 / import_depends |
-| 5 | 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | 导入依赖 / import_depends |
-| 6 | 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | 导入依赖 / import_depends |
-| 7 | Re-export wrapper: risk_validation_bridge 真源在 zephyr.g... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | 导入依赖 / import_depends |
-| 8 | Re-export wrapper: simulation_broker 真源在 zephyr.govern... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | 导入依赖 / import_depends |
-| 9 | D_EXECUTION_CORE — Execution Engine (ex_core/execution_e... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | 导入依赖 / import_depends |
-| 10 | D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器 (ex... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | contract / contract |
-| 11 | D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器 (ex... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta + Strateg... | contract / contract |
-| 12 | D_EXECUTION_CORE — Execution Engine (ex_core/execution_e... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-004 ==== (contracts/order.py) | 导入依赖 / import_depends |
-| 13 | D_EXECUTION_CORE — Execution Engine (ex_core/execution_e... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-003 ==== (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 14 | D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-005 ==== (contracts/fill.py) | 导入依赖 / import_depends |
-| 15 | D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-004 ==== (contracts/order.py) | 导入依赖 / import_depends |
-| 16 | D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器 (ex... | → | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | 导入依赖 / import_depends |
-| 17 | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 18 | D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 19 | 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 20 | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 21 | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | D_TRADING 交易运营: Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fi... | 导入依赖 / import_depends |
-| 22 | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | 导入依赖 / import_depends |
-| 23 | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | D_TRADING 交易运营: Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.... | 导入依赖 / import_depends |
-| 24 | D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 25 | D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器 (ex... | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
+| 1 | miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | D_BACKTEST 回测: matchinglogic / Matching Logic (core/matching_logic.py) | 导入依赖 / import_depends |
+| 2 | 信号providers / Signal Providers (ex_core/signal_provider... | → | D_FACTOR 因子: multifactorsynthesis / Multifactor Synthesis (analysis/mu... | 导入依赖 / import_depends |
+| 3 | 信号providers / Signal Providers (ex_core/signal_provider... | → | D_FACTOR 因子: backtest / Backtest (evaluation/backtest.py) | 导入依赖 / import_depends |
+| 4 | 信号providers / Signal Providers (ex_core/signal_provider... | → | D_FACTOR 因子: 因子基础 / Factor Base (factor/factor_base.py) | 导入依赖 / import_depends |
+| 5 | 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_GOVERNANCE 生命周期管理: 风险validation桥接 / Risk Validation Bridge (adapters/ris... | 导入依赖 / import_depends |
+| 6 | 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_GOVERNANCE 生命周期管理: simulation券商 / Simulation Broker (adapters/simulation_b... | 导入依赖 / import_depends |
+| 7 | 风险validation桥接 / Risk Validation Bridge (adapters/ris... | → | D_GOVERNANCE 生命周期管理: 风险validation桥接 / Risk Validation Bridge (adapters/ris... | 导入依赖 / import_depends |
+| 8 | simulation券商 / Simulation Broker (adapters/simulation_b... | → | D_GOVERNANCE 生命周期管理: simulation券商 / Simulation Broker (adapters/simulation_b... | 导入依赖 / import_depends |
+| 9 | 执行引擎 / Execution Engine (ex_core/execution_engine.py) | → | D_GOVERNANCE 生命周期管理: 风险validation桥接 / Risk Validation Bridge (adapters/ris... | 导入依赖 / import_depends |
+| 10 | trading会话 / Trading Session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险validation桥接 / Risk Validation Bridge (adapters/ris... | contract / contract |
+| 11 | trading会话 / Trading Session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 策略基础 / Strategy Base (strategies/strategy_base.py) | contract / contract |
+| 12 | 执行引擎 / Execution Engine (ex_core/execution_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: order / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 13 | 执行引擎 / Execution Engine (ex_core/execution_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 14 | order管理器 / Order Manager (ex_core/order_manager.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: fill / Fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 15 | order管理器 / Order Manager (ex_core/order_manager.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: order / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 16 | trading会话 / Trading Session (ex_core/trading_session.py) | → | D_PF_CORE 组合核心: 策略运行器 / Strategy Runner (strategy_engine/strategy_ru... | 导入依赖 / import_depends |
+| 17 | miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | D_SHARED 共享服务: 时间utils / Time Utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 18 | order管理器 / Order Manager (ex_core/order_manager.py) | → | D_SHARED 共享服务: orderenums / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 19 | 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_TRADING 交易运营: 券商interface / Broker Interface (trading_contracts/broke... | 导入依赖 / import_depends |
+| 20 | miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | D_TRADING 交易运营: 券商interface / Broker Interface (trading_contracts/broke... | 导入依赖 / import_depends |
+| 21 | miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | D_TRADING 交易运营: fill / Fill (execution/fill.py) | 导入依赖 / import_depends |
+| 22 | miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | D_TRADING 交易运营: order / Order (execution/order.py) | 导入依赖 / import_depends |
+| 23 | miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | D_TRADING 交易运营: position / Position (execution/position.py) | 导入依赖 / import_depends |
+| 24 | order管理器 / Order Manager (ex_core/order_manager.py) | → | D_TRADING 交易运营: 券商interface / Broker Interface (trading_contracts/broke... | 导入依赖 / import_depends |
+| 25 | trading会话 / Trading Session (ex_core/trading_session.py) | → | D_TRADING 交易运营: 券商interface / Broker Interface (trading_contracts/broke... | contract / contract |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_BACKTEST 回测: 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） (impleme... | → | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | 导入依赖 / import_depends |
-| 2 | D_BACKTEST 回测: 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） (impleme... | → | Re-export wrapper: simulation_broker 真源在 zephyr.govern... | 导入依赖 / import_depends |
+| 1 | D_BACKTEST 回测: 事件driven引擎 / Event Driven Engine (implementations/eve... | → | miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | 导入依赖 / import_depends |
+| 2 | D_BACKTEST 回测: 事件driven引擎 / Event Driven Engine (implementations/eve... | → | simulation券商 / Simulation Broker (adapters/simulation_b... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 10 个外部域直接连接（出边 36 条 + 入边 4 条 = 40 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 11 个外部域直接连接（出边 36 条 + 入边 8 条 = 44 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -162,6 +162,7 @@ graph LR
     D_SHARED["D_SHARED<br/>共享服务"]
     D_REPORTING["D_REPORTING<br/>报告"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
+    D_EX_SOR["D_EX_SOR<br/>执行路由"]
     D_EX_CORE -->|9条 contract / contract, 导入依赖 / import_depends| D_TRADING
     D_EX_CORE -->|7条 contract / contract, 导入依赖 / import_depends| D_GOVERNANCE
     D_EX_CORE -->|4条 runtime / runtime| D_SELL_DECISION
@@ -172,6 +173,7 @@ graph LR
     D_EX_CORE -->|2条 导入依赖 / import_depends| D_SHARED
     D_EX_CORE -->|1条 data / data| D_REPORTING
     D_EX_CORE -->|1条 导入依赖 / import_depends| D_PF_CORE
+    D_EX_SOR -->|4条 data / data, 导入依赖 / import_depends| D_EX_CORE
     D_BACKTEST -->|2条 导入依赖 / import_depends| D_EX_CORE
     D_TRADING -->|2条 import / import, runtime / runtime| D_EX_CORE
 ```

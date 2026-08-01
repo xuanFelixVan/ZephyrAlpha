@@ -75,8 +75,8 @@ flowchart TD
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design)<br/>文件: code_dedup_engine/blueprint.md"]
     docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design)<br/>文件: governance_automation/blueprint.md"]
     docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design)<br/>文件: registry_governance/blueprint.md"]
-    tests_governance_d8_doc_sync_test_guc_trigger_fix_py["(生产态 / production) test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smoke test（...<br/>test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smoke test（...<br/>文件: d8_doc_sync/test_guc_trigger_fix.py"]
-    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["(生产态 / production) test_sync_savepoint_isolation.py — sync_all() 级联失败隔离验证（...<br/>test_sync_savepoint_isolation.py — sync_all() 级联失败隔离验证（...<br/>文件: d8_doc_sync/test_sync_savepoint_isolation.py"]
+    tests_governance_d8_doc_sync_test_guc_trigger_fix_py["(生产态 / production) 测试guc触发器修复 / Test Guc Trigger Fix<br/>test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smoke test（...<br/>文件: d8_doc_sync/test_guc_trigger_fix.py"]
+    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["(生产态 / production) 测试同步savepointisolation / Test Sync Savepoint Isolation<br/>test_sync_savepoint_isolation.py — sync_all() 级联失败隔离验证（...<br/>文件: d8_doc_sync/test_sync_savepoint_isolation.py"]
     docs_03_modules_cross_layer_auto_fix_engine_blueprint_md ~~~ docs_03_modules_cross_layer_auto_runtime_core_blueprint_md
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md ~~~ docs_03_modules_cross_layer_behavioral_auditor_blueprint_md
     docs_03_modules_cross_layer_behavioral_auditor_blueprint_md ~~~ docs_03_modules_cross_layer_context_engine_blueprint_md
@@ -118,8 +118,8 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smo... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
-| 2 | test_sync_savepoint_isolation.py — sync_all() 级联失败隔... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
+| 1 | 测试guc触发器修复 / Test Guc Trigger Fix (d8_doc_sync/tes... | → | D_GOV_SCRIPTS 脚本治理: constants / Constants (_shared/constants.py) | 测试依赖 / test_depends |
+| 2 | 测试同步savepointisolation / Test Sync Savepoint Isolatio... | → | D_GOV_SCRIPTS 脚本治理: constants / Constants (_shared/constants.py) | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

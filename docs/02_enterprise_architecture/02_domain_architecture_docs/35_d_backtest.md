@@ -53,35 +53,35 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_backtest_core_data_handler_py["(生产态 / production) 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）<br/>回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）<br/>文件: core/data_handler.py"]
-    src_zephyr_backtest_implementations_event_driven_engine_py["(生产态 / production) 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>文件: implementations/event_driven_engine.py"]
+    src_zephyr_backtest_core_data_handler_py["(生产态 / production) 数据handler / Data Handler<br/>回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）<br/>文件: core/data_handler.py"]
+    src_zephyr_backtest_implementations_event_driven_engine_py["(生产态 / production) 事件driven引擎 / Event Driven Engine<br/>事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>文件: implementations/event_driven_engine.py"]
     src_zephyr_backtest_io_init_py["(生产态 / production) 回测Io包 / Backtest Io Package<br/>回测域下 io 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: io/__init__.py"]
-    src_zephyr_backtest_services_scheduler_py["(生产态 / production) D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。<br/>D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。<br/>文件: services/scheduler.py"]
+    src_zephyr_backtest_services_scheduler_py["(生产态 / production) 调度器 / Scheduler<br/>D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。<br/>文件: services/scheduler.py"]
     src_zephyr_backtest_core_data_handler_py ~~~ src_zephyr_backtest_implementations_event_driven_engine_py
     src_zephyr_backtest_implementations_event_driven_engine_py ~~~ src_zephyr_backtest_io_init_py
     src_zephyr_backtest_io_init_py ~~~ src_zephyr_backtest_services_scheduler_py
-    src_zephyr_backtest_core_pit_manager_py["(生产态 / production) PIT(Point-In-Time)铁律管理器模块<br/>PIT(Point-In-Time)铁律管理器模块<br/>文件: core/pit_manager.py"]
-    src_zephyr_backtest_core_tick_replay_py["(生产态 / production) Tick 回放引擎模块（v1.1.0 新增，秒级做T专用）<br/>Tick 回放引擎模块（v1.1.0 新增，秒级做T专用）<br/>文件: core/tick_replay.py"]
-    src_zephyr_backtest_implementations_vectorized_engine_py["(生产态 / production) L_BACKTEST — Vectorized Backtest Engine<br/>L_BACKTEST — Vectorized Backtest Engine<br/>文件: implementations/vectorized_engine.py"]
-    src_zephyr_backtest_io_decisiongraph_adapter_py["(生产态 / production) BacktestResult -> decisiongraph 适配器（TRAE-061 Phase 5）<br/>BacktestResult -> decisiongraph 适配器（TRAE-061 Phase 5）<br/>文件: io/decisiongraph_adapter.py"]
-    src_zephyr_backtest_io_result_repository_py["(生产态 / production) result_repository · 回测产物持久化/检索模块（v1.3.0 新增，#ARCH-047）<br/>result_repository · 回测产物持久化/检索模块（v1.3.0 新增，#ARCH-047）<br/>文件: io/result_repository.py"]
+    src_zephyr_backtest_core_pit_manager_py["(生产态 / production) pit管理器 / Pit Manager<br/>PIT(Point-In-Time)铁律管理器模块<br/>文件: core/pit_manager.py"]
+    src_zephyr_backtest_core_tick_replay_py["(生产态 / production) tickreplay / Tick Replay<br/>Tick 回放引擎模块（v1.1.0 新增，秒级做T专用）<br/>文件: core/tick_replay.py"]
+    src_zephyr_backtest_implementations_vectorized_engine_py["(生产态 / production) vectorized引擎 / Vectorized Engine<br/>L_BACKTEST — Vectorized Backtest Engine<br/>文件: implementations/vectorized_engine.py"]
+    src_zephyr_backtest_io_decisiongraph_adapter_py["(生产态 / production) decisiongraph适配器 / Decisiongraph Adapter<br/>BacktestResult -> decisiongraph 适配器（TRAE-061 Phase 5）<br/>文件: io/decisiongraph_adapter.py"]
+    src_zephyr_backtest_io_result_repository_py["(生产态 / production) 结果repository / Result Repository<br/>result_repository · 回测产物持久化/检索模块（v1.3.0 新增，#ARCH-047）<br/>文件: io/result_repository.py"]
     src_zephyr_backtest_core_pit_manager_py ~~~ src_zephyr_backtest_core_tick_replay_py
     src_zephyr_backtest_core_tick_replay_py ~~~ src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py ~~~ src_zephyr_backtest_io_decisiongraph_adapter_py
     src_zephyr_backtest_io_decisiongraph_adapter_py ~~~ src_zephyr_backtest_io_result_repository_py
-    src_zephyr_backtest_core_decision_gate_py["(生产态 / production) 3阶段决策门控模块(IS->WFA->OOS)<br/>3阶段决策门控模块(IS->WFA->OOS)<br/>文件: core/decision_gate.py"]
-    src_zephyr_backtest_core_matching_engine_py["(生产态 / production) 回测撮合引擎模块（v1.1.0 重构：委托 MatchingLogic 保证回测=实盘一致性）<br/>回测撮合引擎模块（v1.1.0 重构：委托 MatchingLogic 保证回测=实盘一致性）<br/>文件: core/matching_engine.py"]
-    src_zephyr_backtest_core_metrics_py["(生产态 / production) 回测绩效指标计算模块<br/>回测绩效指标计算模块<br/>文件: core/metrics.py"]
-    src_zephyr_backtest_core_walk_forward_py["(生产态 / production) Walk-Forward分析与多重比较偏差校正模块<br/>Walk-Forward分析与多重比较偏差校正模块<br/>文件: core/walk_forward.py"]
-    src_zephyr_backtest_io_backtest_result_sink_py["(生产态 / production) backtest_result_sink · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047）<br/>backtest_result_sink · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047）<br/>文件: io/backtest_result_sink.py"]
+    src_zephyr_backtest_core_decision_gate_py["(生产态 / production) 决策门禁 / Decision Gate<br/>3阶段决策门控模块(IS->WFA->OOS)<br/>文件: core/decision_gate.py"]
+    src_zephyr_backtest_core_matching_engine_py["(生产态 / production) matching引擎 / Matching Engine<br/>回测撮合引擎模块（v1.1.0 重构：委托 MatchingLogic 保证回测=实盘一致性）<br/>文件: core/matching_engine.py"]
+    src_zephyr_backtest_core_metrics_py["(生产态 / production) 指标 / Metrics<br/>回测绩效指标计算模块<br/>文件: core/metrics.py"]
+    src_zephyr_backtest_core_walk_forward_py["(生产态 / production) walkforward / Walk Forward<br/>Walk-Forward分析与多重比较偏差校正模块<br/>文件: core/walk_forward.py"]
+    src_zephyr_backtest_io_backtest_result_sink_py["(生产态 / production) backtest结果sink / Backtest Result Sink<br/>backtest_result_sink · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047）<br/>文件: io/backtest_result_sink.py"]
     src_zephyr_backtest_core_decision_gate_py ~~~ src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_core_matching_engine_py ~~~ src_zephyr_backtest_core_metrics_py
     src_zephyr_backtest_core_metrics_py ~~~ src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_core_walk_forward_py ~~~ src_zephyr_backtest_io_backtest_result_sink_py
-    src_zephyr_backtest_core_engine_base_py["(生产态 / production) L_BACKTEST — Backtest Engine Layer<br/>L_BACKTEST — Backtest Engine Layer<br/>文件: core/engine_base.py"]
-    src_zephyr_backtest_core_matching_logic_py["(生产态 / production) 共享撮合逻辑模块（回测=实盘一致性核心）<br/>共享撮合逻辑模块（回测=实盘一致性核心）<br/>文件: core/matching_logic.py"]
-    src_zephyr_backtest_core_overfitting_detector_py["(生产态 / production) 过拟合检测模块(三维度 + 三层)<br/>过拟合检测模块(三维度 + 三层)<br/>文件: core/overfitting_detector.py"]
-    src_zephyr_backtest_core_portfolio_py["(生产态 / production) 回测持仓管理模块<br/>回测持仓管理模块<br/>文件: core/portfolio.py"]
+    src_zephyr_backtest_core_engine_base_py["(生产态 / production) 引擎基础 / Engine Base<br/>L_BACKTEST — Backtest Engine Layer<br/>文件: core/engine_base.py"]
+    src_zephyr_backtest_core_matching_logic_py["(生产态 / production) matchinglogic / Matching Logic<br/>共享撮合逻辑模块（回测=实盘一致性核心）<br/>文件: core/matching_logic.py"]
+    src_zephyr_backtest_core_overfitting_detector_py["(生产态 / production) overfitting检测器 / Overfitting Detector<br/>过拟合检测模块(三维度 + 三层)<br/>文件: core/overfitting_detector.py"]
+    src_zephyr_backtest_core_portfolio_py["(生产态 / production) 投资组合 / Portfolio<br/>回测持仓管理模块<br/>文件: core/portfolio.py"]
     src_zephyr_backtest_core_engine_base_py ~~~ src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_core_matching_logic_py ~~~ src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_overfitting_detector_py ~~~ src_zephyr_backtest_core_portfolio_py
@@ -151,28 +151,28 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
-| 2 | 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | D_DATA 数据接入层: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
-| 3 | 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） (impleme... | → | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | 导入依赖 / import_depends |
-| 4 | 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） (impleme... | → | D_EX_CORE 执行核心: Re-export wrapper: simulation_broker 真源在 zephyr.govern... | 导入依赖 / import_depends |
-| 5 | BacktestResult -> decisiongraph 适配器（TRAE-061 Phase 5... | → | D_GOVERNANCE 生命周期管理: decisiongraph Schema DDL + 不变量声明 (persistence/decisi... | 导入依赖 / import_depends |
-| 6 | 回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现... | → | D_INFRA_RUNTIME 运行时集成: DatabaseService: 统一管理数据库的连接池、生命周期、健康检... | 导入依赖 / import_depends |
-| 7 | L_BACKTEST — Backtest Engine Layer (core/engine_base.py) | → | D_SHARED 共享服务: core/trace_context.py | 导入依赖 / import_depends |
-| 8 | result_repository · 回测产物持久化/检索模块（v1.3.0 新增... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 9 | result_repository · 回测产物持久化/检索模块（v1.3.0 新增... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 1 | 数据handler / Data Handler (core/data_handler.py) | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
+| 2 | 数据handler / Data Handler (core/data_handler.py) | → | D_DATA 数据接入层: chreader / Ch Reader (data/ch_reader.py) | 导入依赖 / import_depends |
+| 3 | 事件driven引擎 / Event Driven Engine (implementations/eve... | → | D_EX_CORE 执行核心: miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | 导入依赖 / import_depends |
+| 4 | 事件driven引擎 / Event Driven Engine (implementations/eve... | → | D_EX_CORE 执行核心: simulation券商 / Simulation Broker (adapters/simulation_b... | 导入依赖 / import_depends |
+| 5 | decisiongraph适配器 / Decisiongraph Adapter (io/decisiong... | → | D_GOVERNANCE 生命周期管理: decisiongraphschema / Decisiongraph Schema (persistence/d... | 导入依赖 / import_depends |
+| 6 | 数据handler / Data Handler (core/data_handler.py) | → | D_INFRA_RUNTIME 运行时集成: database服务 / Database Service (infrastructure/database_... | 导入依赖 / import_depends |
+| 7 | 引擎基础 / Engine Base (core/engine_base.py) | → | D_SHARED 共享服务: 追踪上下文 / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 8 | 结果repository / Result Repository (io/result_repository.py) | → | D_SHARED 共享服务: paths / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 9 | 结果repository / Result Repository (io/result_repository.py) | → | D_SHARED 共享服务: 时间utils / Time Utils (utils/time_utils.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | 共享撮合逻辑模块（回测=实盘一致性核心） (core/matching_lo... | 导入依赖 / import_depends |
-| 2 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | → | L_BACKTEST — Backtest Engine Layer (core/engine_base.py) | 导入依赖 / import_depends |
-| 3 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | → | 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心） (impleme... | 导入依赖 / import_depends |
-| 4 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | → | L_BACKTEST — Vectorized Backtest Engine (implementations... | 导入依赖 / import_depends |
-| 5 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — TickStrategyBase + TickStrategyRegist... | → | Tick 回放引擎模块（v1.1.0 新增，秒级做T专用） (core/tick_... | 导入依赖 / import_depends |
-| 6 | D_PF_CORE 组合核心: IntradaySurgeFallStrategy 单元测试（路径 B 示例策略）。 (... | → | 共享撮合逻辑模块（回测=实盘一致性核心） (core/matching_lo... | 测试依赖 / test_depends |
-| 7 | D_PF_CORE 组合核心: OrderBookImbalanceStrategy 单元测试（路径 B 盘口失衡反转... | → | 共享撮合逻辑模块（回测=实盘一致性核心） (core/matching_lo... | 测试依赖 / test_depends |
-| 8 | D_PF_CORE 组合核心: VWAPReversionStrategy 单元测试（路径 B 均值回归策略）。 (... | → | 共享撮合逻辑模块（回测=实盘一致性核心） (core/matching_lo... | 测试依赖 / test_depends |
+| 1 | D_EX_CORE 执行核心: miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | matchinglogic / Matching Logic (core/matching_logic.py) | 导入依赖 / import_depends |
+| 2 | D_PF_CORE 组合核心: 策略运行器 / Strategy Runner (strategy_engine/strategy_ru... | → | 引擎基础 / Engine Base (core/engine_base.py) | 导入依赖 / import_depends |
+| 3 | D_PF_CORE 组合核心: 策略运行器 / Strategy Runner (strategy_engine/strategy_ru... | → | 事件driven引擎 / Event Driven Engine (implementations/eve... | 导入依赖 / import_depends |
+| 4 | D_PF_CORE 组合核心: 策略运行器 / Strategy Runner (strategy_engine/strategy_ru... | → | vectorized引擎 / Vectorized Engine (implementations/vecto... | 导入依赖 / import_depends |
+| 5 | D_PF_CORE 组合核心: tick策略基础 / Tick Strategy Base (strategy_engine/tick_s... | → | tickreplay / Tick Replay (core/tick_replay.py) | 导入依赖 / import_depends |
+| 6 | D_PF_CORE 组合核心: 测试intradaysurgefall策略 / Test Intraday Surge Fall Stra... | → | matchinglogic / Matching Logic (core/matching_logic.py) | 测试依赖 / test_depends |
+| 7 | D_PF_CORE 组合核心: 测试orderbookimbalance策略 / Test Orderbook Imbalance Str... | → | matchinglogic / Matching Logic (core/matching_logic.py) | 测试依赖 / test_depends |
+| 8 | D_PF_CORE 组合核心: 测试vwapreversion策略 / Test Vwap Reversion Strategy (pf_... | → | matchinglogic / Matching Logic (core/matching_logic.py) | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

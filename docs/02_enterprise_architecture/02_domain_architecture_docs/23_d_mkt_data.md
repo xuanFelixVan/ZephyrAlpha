@@ -68,7 +68,7 @@ flowchart TD
     src_zephyr_market_data_infrastructure_init_py ~~~ src_zephyr_market_data_models_init_py
     src_zephyr_market_data_models_init_py ~~~ src_zephyr_market_data_normalized_market_data_producer_init_py
     src_zephyr_market_data_normalized_market_data_producer_init_py ~~~ src_zephyr_market_data_services_init_py
-    src_zephyr_market_data_normalized_market_data_producer_producer_py["(生产态 / production) NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据供给。<br/>NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据供给。<br/>文件: normalized_market_data_producer/producer.py"]
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["(生产态 / production) producer / Producer<br/>NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据供给。<br/>文件: normalized_market_data_producer/producer.py"]
     src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     D_DATA["(生产态 / production) 数据接入层 / Data Access Layer<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>跨域节点 / cross-domain"]
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
@@ -91,11 +91,11 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
-| 2 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
-| 3 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
-| 4 | 行情数据域包 / Market Data Domain Package (market_data/__... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-001 ==== (contracts/market_data.py) | 导入依赖 / import_depends |
-| 5 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-001 ==== (contracts/market_data.py) | 导入依赖 / import_depends |
+| 1 | producer / Producer (normalized_market_data_producer/prod... | → | D_DATA 数据接入层: 数据接入层域包 / Data Domain Package (data/__init__.py) | 导入依赖 / import_depends |
+| 2 | producer / Producer (normalized_market_data_producer/prod... | → | D_DATA 数据接入层: chreader / Ch Reader (data/ch_reader.py) | 导入依赖 / import_depends |
+| 3 | producer / Producer (normalized_market_data_producer/prod... | → | D_DATA 数据接入层: table注册表 / Table Registry (data/table_registry.py) | 导入依赖 / import_depends |
+| 4 | 行情数据域包 / Market Data Domain Package (market_data/__... | → | D_INFRASTRUCTURE 跨层契约基础设施: market数据 / Market Data (contracts/market_data.py) | 导入依赖 / import_depends |
+| 5 | producer / Producer (normalized_market_data_producer/prod... | → | D_INFRASTRUCTURE 跨层契约基础设施: market数据 / Market Data (contracts/market_data.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

@@ -54,10 +54,10 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     docs_03_modules_cross_layer_model_profiler_blueprint_md["(设计态 / design)<br/>文件: model_profiler/blueprint.md"]
-    src_zephyr_ml_train_implementations_default_inference_engine_py["(生产态 / production) D_ML_TRAIN — Default Inference Engine<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations/default_inference_engine.py"]
+    src_zephyr_ml_train_implementations_default_inference_engine_py["(生产态 / production) defaultinference引擎 / Default Inference Engine<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations/default_inference_engine.py"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_implementations_default_inference_engine_py
-    src_zephyr_ml_train_inference_base_py["(生产态 / production) D_ML_TRAIN — ML Inference Base<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py"]
-    src_zephyr_ml_train_trainer_base_py["(生产态 / production) D_ML_TRAIN — ML Training Base<br/>D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py"]
+    src_zephyr_ml_train_inference_base_py["(生产态 / production) inference基础 / Inference Base<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py"]
+    src_zephyr_ml_train_trainer_base_py["(生产态 / production) trainer基础 / Trainer Base<br/>D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py"]
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
@@ -89,21 +89,21 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: ==== BEGIN CODGEN:CTR-P1-005 ==== (experiment/model_servi... | 导入依赖 / import_depends |
-| 2 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 3 | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | D_SHARED 共享服务: ==== BEGIN CODGEN:CTR-P1-005 ==== (experiment/model_servi... | 导入依赖 / import_depends |
-| 4 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-004 ==== (execution/model_servin... | 导入依赖 / import_depends |
-| 5 | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | D_TRADING 交易运营: ==== BEGIN CODGEN:CTR-P1-004 ==== (execution/model_servin... | 导入依赖 / import_depends |
+| 1 | defaultinference引擎 / Default Inference Engine (implemen... | → | D_SHARED 共享服务: 模型serving响应 / Model Serving Response (experiment/mode... | 导入依赖 / import_depends |
+| 2 | defaultinference引擎 / Default Inference Engine (implemen... | → | D_SHARED 共享服务: paths / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 3 | inference基础 / Inference Base (ml_train/inference_base.py) | → | D_SHARED 共享服务: 模型serving响应 / Model Serving Response (experiment/mode... | 导入依赖 / import_depends |
+| 4 | defaultinference引擎 / Default Inference Engine (implemen... | → | D_TRADING 交易运营: 模型servingrequest / Model Serving Request (execution/mod... | 导入依赖 / import_depends |
+| 5 | inference基础 / Inference Base (ml_train/inference_base.py) | → | D_TRADING 交易运营: 模型servingrequest / Model Serving Request (execution/mod... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
-| 2 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
-| 3 | D_INTELLIGENCE 上下文管理: MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and ... | → | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
-| 4 | D_INTELLIGENCE 上下文管理: MIGRATED: SSoT moved to zephyr.ml_train.trainer_base and ... | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
-| 5 | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 (_cross... | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 1 | D_INTELLIGENCE 上下文管理: defaultinference引擎 / Default Inference Engine (implemen... | → | inference基础 / Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
+| 2 | D_INTELLIGENCE 上下文管理: defaultinference引擎 / Default Inference Engine (implemen... | → | trainer基础 / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 3 | D_INTELLIGENCE 上下文管理: inference基础 / Inference Base (model_evaluation/inferenc... | → | inference基础 / Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
+| 4 | D_INTELLIGENCE 上下文管理: inference基础 / Inference Base (model_evaluation/inferenc... | → | trainer基础 / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 5 | D_SHARED 共享服务: ML实验流水线 / ML Experiment Pipeline (_cross_layer/ml_ex... | → | trainer基础 / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

@@ -54,65 +54,65 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_feedback_loop_detectors_init_py["(生产态 / production) 反馈检测器域包 / Detectors Domain Package<br/>反馈检测器域的文件夹入口，标记该域的代码边界。本身不含业务逻辑，给域内模块一个稳定归属。<br/>文件: detectors/__init__.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py["(生产态 / production) Anomaly Clustering — v0.9.0 R119<br/>Anomaly Clustering — v0.9.0 R119<br/>文件: anomaly/anomaly_clustering.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py["(生产态 / production)<br/>文件: anomaly/anomaly_detector.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_emergent_behavior_detector_py["(生产态 / production) Emergent Behavior Detector — v0.38.0 R473<br/>Emergent Behavior Detector — v0.38.0 R473<br/>文件: anomaly/emergent_behavior_detector.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_flapping_detector_py["(生产态 / production) Flapping Detector — v0.40.0 R494<br/>Flapping Detector — v0.40.0 R494<br/>文件: anomaly/flapping_detector.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_heisenbug_detector_py["(生产态 / production) Heisenbug Detector — v0.38.0 R470<br/>Heisenbug Detector — v0.38.0 R470<br/>文件: anomaly/heisenbug_detector.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_infinite_loop_detector_py["(生产态 / production) Infinite Loop Detector — v0.15.0 R219<br/>Infinite Loop Detector — v0.15.0 R219<br/>文件: anomaly/infinite_loop_detector.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_intermittent_failure_pattern_py["(生产态 / production) Intermittent Failure Pattern Detector — v0.40.0 R501<br/>Intermittent Failure Pattern Detector — v0.40.0 R501<br/>文件: anomaly/intermittent_failure_pattern.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py["(生产态 / production) Log Anomaly Detector — v0.6.0 R61<br/>Log Anomaly Detector — v0.6.0 R61<br/>文件: anomaly/log_anomaly.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_silent_corruption_detector_py["(生产态 / production) Silent Corruption Detector — v0.40.0 R499<br/>Silent Corruption Detector — v0.40.0 R499<br/>文件: anomaly/silent_corruption_detector.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_synthetic_anomaly_generator_py["(生产态 / production) Synthetic Anomaly Generator — v0.9.0 R112<br/>Synthetic Anomaly Generator — v0.9.0 R112<br/>文件: anomaly/synthetic_anomaly_generator.py"]
-    src_zephyr_feedback_loop_detectors_anomaly_temporal_pattern_py["(生产态 / production) Temporal Pattern Detector — v0.12.0 R164<br/>Temporal Pattern Detector — v0.12.0 R164<br/>文件: anomaly/temporal_pattern.py"]
-    src_zephyr_feedback_loop_detectors_correlation_action_efficacy_decay_detector_py["(生产态 / production) R507: ActionEfficacyDecayDetector<br/>R507: ActionEfficacyDecayDetector<br/>文件: correlation/action_efficacy_decay_detector.py"]
-    src_zephyr_feedback_loop_detectors_correlation_action_interaction_detector_py["(生产态 / production) Action Interaction Detector — v0.38.0 R472<br/>Action Interaction Detector — v0.38.0 R472<br/>文件: correlation/action_interaction_detector.py"]
-    src_zephyr_feedback_loop_detectors_correlation_action_side_effect_cumulative_detector_py["(生产态 / production) R526: ActionSideEffectCumulativeDetector<br/>R526: ActionSideEffectCumulativeDetector<br/>文件: correlation/action_side_effect_cumulative_detector.py"]
-    src_zephyr_feedback_loop_detectors_correlation_agent_trajectory_anomaly_detector_py["(生产态 / production) R503: AgentTrajectoryAnomalyDetector<br/>R503: AgentTrajectoryAnomalyDetector<br/>文件: correlation/agent_trajectory_anomaly_detector.py"]
-    src_zephyr_feedback_loop_detectors_correlation_cross_signal_validator_py["(生产态 / production) Cross-Signal Validator — v0.6.0 R63<br/>Cross-Signal Validator — v0.6.0 R63<br/>文件: correlation/cross_signal_validator.py"]
-    src_zephyr_feedback_loop_detectors_correlation_cross_system_correlator_py["(生产态 / production) Cross-System Correlator — v0.13.0 R185<br/>Cross-System Correlator — v0.13.0 R185<br/>文件: correlation/cross_system_correlator.py"]
-    src_zephyr_feedback_loop_detectors_correlation_decision_provenance_py["(生产态 / production) Decision Provenance — v0.12.0 R166<br/>Decision Provenance — v0.12.0 R166<br/>文件: correlation/decision_provenance.py"]
-    src_zephyr_feedback_loop_detectors_correlation_dependency_freshness_monitor_py["(生产态 / production) Dependency Freshness Monitor — v0.38.0 R474<br/>Dependency Freshness Monitor — v0.38.0 R474<br/>文件: correlation/dependency_freshness_monitor.py"]
-    src_zephyr_feedback_loop_detectors_correlation_ensemble_detector_py["(生产态 / production) Ensemble Detector — v0.4.0 R21<br/>Ensemble Detector — v0.4.0 R21<br/>文件: correlation/ensemble_detector.py"]
-    src_zephyr_feedback_loop_detectors_correlation_external_health_py["(生产态 / production) External Health Monitor — v0.14.0 R193<br/>External Health Monitor — v0.14.0 R193<br/>文件: correlation/external_health.py"]
-    src_zephyr_feedback_loop_detectors_correlation_external_validation_checkpoint_py["(生产态 / production) R524: ExternalValidationCheckpoint<br/>R524: ExternalValidationCheckpoint<br/>文件: correlation/external_validation_checkpoint.py"]
-    src_zephyr_feedback_loop_detectors_correlation_fle_performance_regression_detector_py["(生产态 / production) R532: FLEPerformanceRegressionDetector<br/>R532: FLEPerformanceRegressionDetector<br/>文件: correlation/fle_performance_regression_detector.py"]
-    src_zephyr_feedback_loop_detectors_correlation_multi_signal_correlator_py["(生产态 / production) Multi-Signal Correlator — v0.4.0 R22<br/>Multi-Signal Correlator — v0.4.0 R22<br/>文件: correlation/multi_signal_correlator.py"]
-    src_zephyr_feedback_loop_detectors_correlation_rumor_noise_filter_py["(生产态 / production) Rumor Noise Filter — v0.37.0 R460<br/>Rumor Noise Filter — v0.37.0 R460<br/>文件: correlation/rumor_noise_filter.py"]
-    src_zephyr_feedback_loop_detectors_correlation_trace_causal_bridge_py["(生产态 / production) Trace Causal Bridge — v0.6.0 R62<br/>Trace Causal Bridge — v0.6.0 R62<br/>文件: correlation/trace_causal_bridge.py"]
-    src_zephyr_feedback_loop_detectors_correlation_traffic_replay_validator_py["(生产态 / production) Traffic Replay Validator — v0.14.0 R202<br/>Traffic Replay Validator — v0.14.0 R202<br/>文件: correlation/traffic_replay_validator.py"]
-    src_zephyr_feedback_loop_detectors_drift_concept_drift_py["(生产态 / production) Concept Drift Detector — v0.5.0 R42<br/>Concept Drift Detector — v0.5.0 R42<br/>文件: drift/concept_drift.py"]
-    src_zephyr_feedback_loop_detectors_drift_config_drift_py["(生产态 / production) Config Drift Detector — v0.13.0 R182<br/>Config Drift Detector — v0.13.0 R182<br/>文件: drift/config_drift.py"]
-    src_zephyr_feedback_loop_detectors_drift_context_window_contamination_detector_py["(生产态 / production) Context Window Contamination Detector — v0.38.0 R471<br/>Context Window Contamination Detector — v0.38.0 R471<br/>文件: drift/context_window_contamination_detector.py"]
-    src_zephyr_feedback_loop_detectors_drift_diminishing_returns_detector_py["(生产态 / production) R528: DiminishingReturnsDetector<br/>R528: DiminishingReturnsDetector<br/>文件: drift/diminishing_returns_detector.py"]
-    src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py["(生产态 / production) Ensemble Drift — v0.5.0 R43<br/>Ensemble Drift — v0.5.0 R43<br/>文件: drift/ensemble_drift.py"]
-    src_zephyr_feedback_loop_detectors_drift_gradual_poisoning_detector_py["(生产态 / production) Gradual Poisoning Detector — v0.15.0 R210<br/>Gradual Poisoning Detector — v0.15.0 R210<br/>文件: drift/gradual_poisoning_detector.py"]
-    src_zephyr_feedback_loop_detectors_drift_trend_cycle_separator_py["(生产态 / production) Trend-Cycle Separator — v0.9.0 R113<br/>Trend-Cycle Separator — v0.9.0 R113<br/>文件: drift/trend_cycle_separator.py"]
-    src_zephyr_feedback_loop_detectors_guard_alert_desensitization_curve_py["(生产态 / production) Alert Desensitization Curve — v0.37.0 R492<br/>Alert Desensitization Curve — v0.37.0 R492<br/>文件: guard/alert_desensitization_curve.py"]
-    src_zephyr_feedback_loop_detectors_guard_guard_cascade_detector_py["(生产态 / production) R520: GuardCascadeDetector<br/>R520: GuardCascadeDetector<br/>文件: guard/guard_cascade_detector.py"]
-    src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py["(生产态 / production) R519: GuardOscillationDetector<br/>R519: GuardOscillationDetector<br/>文件: guard/guard_oscillation_detector.py"]
-    src_zephyr_feedback_loop_detectors_guard_placebo_action_detector_py["(生产态 / production) R508: PlaceboActionDetector<br/>R508: PlaceboActionDetector<br/>文件: guard/placebo_action_detector.py"]
-    src_zephyr_feedback_loop_detectors_guard_positive_feedback_defense_py["(生产态 / production) Positive Feedback Defense — v0.4.0 R28<br/>Positive Feedback Defense — v0.4.0 R28<br/>文件: guard/positive_feedback_defense.py"]
-    src_zephyr_feedback_loop_detectors_guard_recursive_diagnosis_trust_evaluator_py["(生产态 / production) R517: RecursiveDiagnosisTrustEvaluator<br/>R517: RecursiveDiagnosisTrustEvaluator<br/>文件: guard/recursive_diagnosis_trust_evaluator.py"]
-    src_zephyr_feedback_loop_detectors_guard_self_audit_py["(生产态 / production) Self Audit — v0.13.0 R183<br/>Self Audit — v0.13.0 R183<br/>文件: guard/self_audit.py"]
-    src_zephyr_feedback_loop_detectors_guard_self_diagnosis_data_leak_detector_py["(生产态 / production) R530: SelfDiagnosisDataLeakDetector<br/>R530: SelfDiagnosisDataLeakDetector<br/>文件: guard/self_diagnosis_data_leak_detector.py"]
-    src_zephyr_feedback_loop_detectors_guard_self_ha_py["(生产态 / production) Self HA — v0.13.0 R173<br/>Self HA — v0.13.0 R173<br/>文件: guard/self_ha.py"]
-    src_zephyr_feedback_loop_detectors_guard_temporal_coherence_of_self_model_py["(生产态 / production) R525: TemporalCoherenceOfSelfModel<br/>R525: TemporalCoherenceOfSelfModel<br/>文件: guard/temporal_coherence_of_self_model.py"]
-    src_zephyr_feedback_loop_detectors_reliability_autoscale_remediation_py["(生产态 / production) Autoscale Remediation — v0.13.0 R174<br/>Autoscale Remediation — v0.13.0 R174<br/>文件: reliability/autoscale_remediation.py"]
-    src_zephyr_feedback_loop_detectors_reliability_blast_radius_py["(生产态 / production) Blast Radius Detector — v0.12.0 R167<br/>Blast Radius Detector — v0.12.0 R167<br/>文件: reliability/blast_radius.py"]
-    src_zephyr_feedback_loop_detectors_reliability_blast_radius_budget_py["(生产态 / production) Blast Radius Budget — v0.13.0 R178<br/>Blast Radius Budget — v0.13.0 R178<br/>文件: reliability/blast_radius_budget.py"]
-    src_zephyr_feedback_loop_detectors_reliability_capacity_forecast_py["(生产态 / production) Capacity Forecast — v0.13.0 R186b<br/>Capacity Forecast — v0.13.0 R186b<br/>文件: reliability/capacity_forecast.py"]
-    src_zephyr_feedback_loop_detectors_reliability_chaos_engineering_py["(生产态 / production) Chaos Engineering — v0.13.0 R172<br/>Chaos Engineering — v0.13.0 R172<br/>文件: reliability/chaos_engineering.py"]
-    src_zephyr_feedback_loop_detectors_reliability_ebpf_monitor_py["(生产态 / production) eBPF Monitor — v0.6.0 R64<br/>eBPF Monitor — v0.6.0 R64<br/>文件: reliability/ebpf_monitor.py"]
-    src_zephyr_feedback_loop_detectors_reliability_flag_lifecycle_py["(生产态 / production) Flag Lifecycle Detector — v0.13.0 R180<br/>Flag Lifecycle Detector — v0.13.0 R180<br/>文件: reliability/flag_lifecycle.py"]
-    src_zephyr_feedback_loop_detectors_reliability_maintenance_coordinator_py["(生产态 / production) Maintenance Coordinator — v0.12.0 R168<br/>Maintenance Coordinator — v0.12.0 R168<br/>文件: reliability/maintenance_coordinator.py"]
-    src_zephyr_feedback_loop_detectors_reliability_metric_cardinality_guard_py["(生产态 / production) Metric Cardinality Guard — v0.40.0 R495<br/>Metric Cardinality Guard — v0.40.0 R495<br/>文件: reliability/metric_cardinality_guard.py"]
-    src_zephyr_feedback_loop_detectors_reliability_openfeature_py["(生产态 / production) OpenFeature Integration — v0.13.0 R181<br/>OpenFeature Integration — v0.13.0 R181<br/>文件: reliability/openfeature.py"]
-    src_zephyr_feedback_loop_detectors_reliability_otel_adapter_py["(生产态 / production) OTel Adapter — v0.12.0 R170<br/>OTel Adapter — v0.12.0 R170<br/>文件: reliability/otel_adapter.py"]
-    src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py["(生产态 / production) Regulatory Audit Detector — v0.13.0 R184<br/>Regulatory Audit Detector — v0.13.0 R184<br/>文件: reliability/regulatory_audit.py"]
-    src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py["(生产态 / production) Resolution Tracker — v0.12.0 R165<br/>Resolution Tracker — v0.12.0 R165<br/>文件: reliability/resolution_tracker.py"]
-    src_zephyr_feedback_loop_detectors_reliability_runbook_executor_py["(生产态 / production) Runbook Executor — v0.13.0 R186a<br/>Runbook Executor — v0.13.0 R186a<br/>文件: reliability/runbook_executor.py"]
-    src_zephyr_feedback_loop_detectors_reliability_version_migrator_py["(生产态 / production) Version Migrator — v0.12.0 R169<br/>Version Migrator — v0.12.0 R169<br/>文件: reliability/version_migrator.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py["(生产态 / production) 异常clustering / Anomaly Clustering<br/>Anomaly Clustering — v0.9.0 R119<br/>文件: anomaly/anomaly_clustering.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py["(生产态 / production) 异常检测器 / Anomaly Detector<br/>定义 AnomalyEvent、AnomalyDetector 等类型。<br/>文件: anomaly/anomaly_detector.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_emergent_behavior_detector_py["(生产态 / production) emergentbehavior检测器 / Emergent Behavior Detector<br/>Emergent Behavior Detector — v0.38.0 R473<br/>文件: anomaly/emergent_behavior_detector.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_flapping_detector_py["(生产态 / production) flapping检测器 / Flapping Detector<br/>Flapping Detector — v0.40.0 R494<br/>文件: anomaly/flapping_detector.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_heisenbug_detector_py["(生产态 / production) heisenbug检测器 / Heisenbug Detector<br/>Heisenbug Detector — v0.38.0 R470<br/>文件: anomaly/heisenbug_detector.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_infinite_loop_detector_py["(生产态 / production) infinite环路检测器 / Infinite Loop Detector<br/>Infinite Loop Detector — v0.15.0 R219<br/>文件: anomaly/infinite_loop_detector.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_intermittent_failure_pattern_py["(生产态 / production) intermittentfailure模式 / Intermittent Failure Pattern<br/>Intermittent Failure Pattern Detector — v0.40.0 R501<br/>文件: anomaly/intermittent_failure_pattern.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py["(生产态 / production) log异常 / Log Anomaly<br/>Log Anomaly Detector — v0.6.0 R61<br/>文件: anomaly/log_anomaly.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_silent_corruption_detector_py["(生产态 / production) silentcorruption检测器 / Silent Corruption Detector<br/>Silent Corruption Detector — v0.40.0 R499<br/>文件: anomaly/silent_corruption_detector.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_synthetic_anomaly_generator_py["(生产态 / production) synthetic异常生成器 / Synthetic Anomaly Generator<br/>Synthetic Anomaly Generator — v0.9.0 R112<br/>文件: anomaly/synthetic_anomaly_generator.py"]
+    src_zephyr_feedback_loop_detectors_anomaly_temporal_pattern_py["(生产态 / production) temporal模式 / Temporal Pattern<br/>Temporal Pattern Detector — v0.12.0 R164<br/>文件: anomaly/temporal_pattern.py"]
+    src_zephyr_feedback_loop_detectors_correlation_action_efficacy_decay_detector_py["(生产态 / production) 动作efficacydecay检测器 / Action Efficacy Decay Detector<br/>R507: ActionEfficacyDecayDetector<br/>文件: correlation/action_efficacy_decay_detector.py"]
+    src_zephyr_feedback_loop_detectors_correlation_action_interaction_detector_py["(生产态 / production) 动作interaction检测器 / Action Interaction Detector<br/>Action Interaction Detector — v0.38.0 R472<br/>文件: correlation/action_interaction_detector.py"]
+    src_zephyr_feedback_loop_detectors_correlation_action_side_effect_cumulative_detector_py["(生产态 / production) 动作sideeffectcumulative检测器 / Action Side Effect Cumulative Detector<br/>R526: ActionSideEffectCumulativeDetector<br/>文件: correlation/action_side_effect_cumulative_detector.py"]
+    src_zephyr_feedback_loop_detectors_correlation_agent_trajectory_anomaly_detector_py["(生产态 / production) 代理trajectory异常检测器 / Agent Trajectory Anomaly Detector<br/>R503: AgentTrajectoryAnomalyDetector<br/>文件: correlation/agent_trajectory_anomaly_detector.py"]
+    src_zephyr_feedback_loop_detectors_correlation_cross_signal_validator_py["(生产态 / production) 跨信号校验器 / Cross Signal Validator<br/>Cross-Signal Validator — v0.6.0 R63<br/>文件: correlation/cross_signal_validator.py"]
+    src_zephyr_feedback_loop_detectors_correlation_cross_system_correlator_py["(生产态 / production) 跨系统correlator / Cross System Correlator<br/>Cross-System Correlator — v0.13.0 R185<br/>文件: correlation/cross_system_correlator.py"]
+    src_zephyr_feedback_loop_detectors_correlation_decision_provenance_py["(生产态 / production) 决策溯源 / Decision Provenance<br/>Decision Provenance — v0.12.0 R166<br/>文件: correlation/decision_provenance.py"]
+    src_zephyr_feedback_loop_detectors_correlation_dependency_freshness_monitor_py["(生产态 / production) 依赖freshness监控器 / Dependency Freshness Monitor<br/>Dependency Freshness Monitor — v0.38.0 R474<br/>文件: correlation/dependency_freshness_monitor.py"]
+    src_zephyr_feedback_loop_detectors_correlation_ensemble_detector_py["(生产态 / production) ensemble检测器 / Ensemble Detector<br/>Ensemble Detector — v0.4.0 R21<br/>文件: correlation/ensemble_detector.py"]
+    src_zephyr_feedback_loop_detectors_correlation_external_health_py["(生产态 / production) external健康 / External Health<br/>External Health Monitor — v0.14.0 R193<br/>文件: correlation/external_health.py"]
+    src_zephyr_feedback_loop_detectors_correlation_external_validation_checkpoint_py["(生产态 / production) externalvalidationcheckpoint / External Validation Checkpoint<br/>R524: ExternalValidationCheckpoint<br/>文件: correlation/external_validation_checkpoint.py"]
+    src_zephyr_feedback_loop_detectors_correlation_fle_performance_regression_detector_py["(生产态 / production) fle性能regression检测器 / Fle Performance Regression Detector<br/>R532: FLEPerformanceRegressionDetector<br/>文件: correlation/fle_performance_regression_detector.py"]
+    src_zephyr_feedback_loop_detectors_correlation_multi_signal_correlator_py["(生产态 / production) 多信号correlator / Multi Signal Correlator<br/>Multi-Signal Correlator — v0.4.0 R22<br/>文件: correlation/multi_signal_correlator.py"]
+    src_zephyr_feedback_loop_detectors_correlation_rumor_noise_filter_py["(生产态 / production) rumornoisefilter / Rumor Noise Filter<br/>Rumor Noise Filter — v0.37.0 R460<br/>文件: correlation/rumor_noise_filter.py"]
+    src_zephyr_feedback_loop_detectors_correlation_trace_causal_bridge_py["(生产态 / production) 追踪causal桥接 / Trace Causal Bridge<br/>Trace Causal Bridge — v0.6.0 R62<br/>文件: correlation/trace_causal_bridge.py"]
+    src_zephyr_feedback_loop_detectors_correlation_traffic_replay_validator_py["(生产态 / production) trafficreplay校验器 / Traffic Replay Validator<br/>Traffic Replay Validator — v0.14.0 R202<br/>文件: correlation/traffic_replay_validator.py"]
+    src_zephyr_feedback_loop_detectors_drift_concept_drift_py["(生产态 / production) concept漂移 / Concept Drift<br/>Concept Drift Detector — v0.5.0 R42<br/>文件: drift/concept_drift.py"]
+    src_zephyr_feedback_loop_detectors_drift_config_drift_py["(生产态 / production) 配置漂移 / Config Drift<br/>Config Drift Detector — v0.13.0 R182<br/>文件: drift/config_drift.py"]
+    src_zephyr_feedback_loop_detectors_drift_context_window_contamination_detector_py["(生产态 / production) 上下文windowcontamination检测器 / Context Window Contamination Detector<br/>Context Window Contamination Detector — v0.38.0 R471<br/>文件: drift/context_window_contamination_detector.py"]
+    src_zephyr_feedback_loop_detectors_drift_diminishing_returns_detector_py["(生产态 / production) diminishingreturns检测器 / Diminishing Returns Detector<br/>R528: DiminishingReturnsDetector<br/>文件: drift/diminishing_returns_detector.py"]
+    src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py["(生产态 / production) ensemble漂移 / Ensemble Drift<br/>Ensemble Drift — v0.5.0 R43<br/>文件: drift/ensemble_drift.py"]
+    src_zephyr_feedback_loop_detectors_drift_gradual_poisoning_detector_py["(生产态 / production) gradualpoisoning检测器 / Gradual Poisoning Detector<br/>Gradual Poisoning Detector — v0.15.0 R210<br/>文件: drift/gradual_poisoning_detector.py"]
+    src_zephyr_feedback_loop_detectors_drift_trend_cycle_separator_py["(生产态 / production) trendcycleseparator / Trend Cycle Separator<br/>Trend-Cycle Separator — v0.9.0 R113<br/>文件: drift/trend_cycle_separator.py"]
+    src_zephyr_feedback_loop_detectors_guard_alert_desensitization_curve_py["(生产态 / production) 告警desensitizationcurve / Alert Desensitization Curve<br/>Alert Desensitization Curve — v0.37.0 R492<br/>文件: guard/alert_desensitization_curve.py"]
+    src_zephyr_feedback_loop_detectors_guard_guard_cascade_detector_py["(生产态 / production) 守卫级联检测器 / Guard Cascade Detector<br/>R520: GuardCascadeDetector<br/>文件: guard/guard_cascade_detector.py"]
+    src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py["(生产态 / production) 守卫oscillation检测器 / Guard Oscillation Detector<br/>R519: GuardOscillationDetector<br/>文件: guard/guard_oscillation_detector.py"]
+    src_zephyr_feedback_loop_detectors_guard_placebo_action_detector_py["(生产态 / production) placebo动作检测器 / Placebo Action Detector<br/>R508: PlaceboActionDetector<br/>文件: guard/placebo_action_detector.py"]
+    src_zephyr_feedback_loop_detectors_guard_positive_feedback_defense_py["(生产态 / production) positive反馈防御 / Positive Feedback Defense<br/>Positive Feedback Defense — v0.4.0 R28<br/>文件: guard/positive_feedback_defense.py"]
+    src_zephyr_feedback_loop_detectors_guard_recursive_diagnosis_trust_evaluator_py["(生产态 / production) recursive诊断信任evaluator / Recursive Diagnosis Trust Evaluator<br/>R517: RecursiveDiagnosisTrustEvaluator<br/>文件: guard/recursive_diagnosis_trust_evaluator.py"]
+    src_zephyr_feedback_loop_detectors_guard_self_audit_py["(生产态 / production) 自我审计 / Self Audit<br/>Self Audit — v0.13.0 R183<br/>文件: guard/self_audit.py"]
+    src_zephyr_feedback_loop_detectors_guard_self_diagnosis_data_leak_detector_py["(生产态 / production) 自我诊断数据leak检测器 / Self Diagnosis Data Leak Detector<br/>R530: SelfDiagnosisDataLeakDetector<br/>文件: guard/self_diagnosis_data_leak_detector.py"]
+    src_zephyr_feedback_loop_detectors_guard_self_ha_py["(生产态 / production) 自我ha / Self Ha<br/>Self HA — v0.13.0 R173<br/>文件: guard/self_ha.py"]
+    src_zephyr_feedback_loop_detectors_guard_temporal_coherence_of_self_model_py["(生产态 / production) temporalcoherenceof自我模型 / Temporal Coherence Of Self Model<br/>R525: TemporalCoherenceOfSelfModel<br/>文件: guard/temporal_coherence_of_self_model.py"]
+    src_zephyr_feedback_loop_detectors_reliability_autoscale_remediation_py["(生产态 / production) autoscaleremediation / Autoscale Remediation<br/>Autoscale Remediation — v0.13.0 R174<br/>文件: reliability/autoscale_remediation.py"]
+    src_zephyr_feedback_loop_detectors_reliability_blast_radius_py["(生产态 / production) 爆炸半径 / Blast Radius<br/>Blast Radius Detector — v0.12.0 R167<br/>文件: reliability/blast_radius.py"]
+    src_zephyr_feedback_loop_detectors_reliability_blast_radius_budget_py["(生产态 / production) 爆炸半径预算 / Blast Radius Budget<br/>Blast Radius Budget — v0.13.0 R178<br/>文件: reliability/blast_radius_budget.py"]
+    src_zephyr_feedback_loop_detectors_reliability_capacity_forecast_py["(生产态 / production) 容量forecast / Capacity Forecast<br/>Capacity Forecast — v0.13.0 R186b<br/>文件: reliability/capacity_forecast.py"]
+    src_zephyr_feedback_loop_detectors_reliability_chaos_engineering_py["(生产态 / production) chaos工程 / Chaos Engineering<br/>Chaos Engineering — v0.13.0 R172<br/>文件: reliability/chaos_engineering.py"]
+    src_zephyr_feedback_loop_detectors_reliability_ebpf_monitor_py["(生产态 / production) ebpf监控器 / Ebpf Monitor<br/>eBPF Monitor — v0.6.0 R64<br/>文件: reliability/ebpf_monitor.py"]
+    src_zephyr_feedback_loop_detectors_reliability_flag_lifecycle_py["(生产态 / production) flag生命周期 / Flag Lifecycle<br/>Flag Lifecycle Detector — v0.13.0 R180<br/>文件: reliability/flag_lifecycle.py"]
+    src_zephyr_feedback_loop_detectors_reliability_maintenance_coordinator_py["(生产态 / production) maintenancecoordinator / Maintenance Coordinator<br/>Maintenance Coordinator — v0.12.0 R168<br/>文件: reliability/maintenance_coordinator.py"]
+    src_zephyr_feedback_loop_detectors_reliability_metric_cardinality_guard_py["(生产态 / production) metriccardinality守卫 / Metric Cardinality Guard<br/>Metric Cardinality Guard — v0.40.0 R495<br/>文件: reliability/metric_cardinality_guard.py"]
+    src_zephyr_feedback_loop_detectors_reliability_openfeature_py["(生产态 / production) openfeature / Openfeature<br/>OpenFeature Integration — v0.13.0 R181<br/>文件: reliability/openfeature.py"]
+    src_zephyr_feedback_loop_detectors_reliability_otel_adapter_py["(生产态 / production) otel适配器 / Otel Adapter<br/>OTel Adapter — v0.12.0 R170<br/>文件: reliability/otel_adapter.py"]
+    src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py["(生产态 / production) regulatory审计 / Regulatory Audit<br/>Regulatory Audit Detector — v0.13.0 R184<br/>文件: reliability/regulatory_audit.py"]
+    src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py["(生产态 / production) resolution追踪器 / Resolution Tracker<br/>Resolution Tracker — v0.12.0 R165<br/>文件: reliability/resolution_tracker.py"]
+    src_zephyr_feedback_loop_detectors_reliability_runbook_executor_py["(生产态 / production) 运行手册executor / Runbook Executor<br/>Runbook Executor — v0.13.0 R186a<br/>文件: reliability/runbook_executor.py"]
+    src_zephyr_feedback_loop_detectors_reliability_version_migrator_py["(生产态 / production) 版本migrator / Version Migrator<br/>Version Migrator — v0.12.0 R169<br/>文件: reliability/version_migrator.py"]
     src_zephyr_feedback_loop_detectors_init_py ~~~ src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py ~~~ src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py ~~~ src_zephyr_feedback_loop_detectors_anomaly_emergent_behavior_detector_py
@@ -210,20 +210,20 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | anomaly/anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: collectors/feedback_collector.py | 导入依赖 / import_depends |
-| 2 | anomaly/anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: collectors/metrics_collector.py | 导入依赖 / import_depends |
-| 3 | anomaly/anomaly_detector.py | → | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/protocols.py | 导入依赖 / import_depends |
+| 1 | 异常检测器 / Anomaly Detector (anomaly/anomaly_detector.py) | → | D_FEEDBACK_LOOP 反馈循环引擎: 反馈收集器 / Feedback Collector (collectors/feedback_coll... | 导入依赖 / import_depends |
+| 2 | 异常检测器 / Anomaly Detector (anomaly/anomaly_detector.py) | → | D_FEEDBACK_LOOP 反馈循环引擎: 指标收集器 / Metrics Collector (collectors/metrics_collec... | 导入依赖 / import_depends |
+| 3 | 异常检测器 / Anomaly Detector (anomaly/anomaly_detector.py) | → | D_FEEDBACK_LOOP 反馈循环引擎: 协议 / Protocols (feedback_loop/protocols.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
-| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose->act->ver... | → | anomaly/anomaly_detector.py | 导入依赖 / import_depends |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_act.py | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
-| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_collect_detect.py | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
-| 5 | D_FEEDBACK_LOOP 反馈循环引擎: feedback_loop/scheduler_health.py | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
-| 6 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDBACK_LOOP-0... | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / Scheduler (feedback_loop/scheduler.py) | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 2 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / Scheduler (feedback_loop/scheduler.py) | → | 异常检测器 / Anomaly Detector (anomaly/anomaly_detector.py) | 导入依赖 / import_depends |
+| 3 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器执行 / Scheduler Act (feedback_loop/scheduler_act.py) | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 4 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器收集检测 / Scheduler Collect Detect (feedback_loop/... | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 5 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器健康 / Scheduler Health (feedback_loop/scheduler_he... | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
+| 6 | D_FEEDBACK_LOOP 反馈循环引擎: 集成测试流水线 / Integration Test Pipeline (e2e/integrati... | → | 反馈检测器域包 / Detectors Domain Package (detectors/__in... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

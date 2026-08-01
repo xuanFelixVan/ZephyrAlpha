@@ -54,31 +54,31 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_trading_action_dispatcher_init_py["(生产态 / production) 交易运营Action Dispatcher包 / Trading Action Dispatcher Package<br/>交易运营域下 action_dispatcher 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: action_dispatcher/__init__.py"]
-    src_zephyr_trading_admission_controller_py["(生产态 / production) 5.171 修复：admit(event: Any) Any 滥用——定义 VerdictEvent Protocol<br/>5.171 修复：admit(event: Any) Any 滥用——定义 VerdictEvent Protocol<br/>文件: trading/admission_controller.py"]
-    src_zephyr_trading_auto_dispatcher_py["(生产态 / production) AutoDispatcher — 守护进程内的轻量 PipelineDispatcher<br/>AutoDispatcher — 守护进程内的轻量 PipelineDispatcher<br/>文件: trading/auto_dispatcher.py"]
-    src_zephyr_trading_conductor_py["(生产态 / production) Conductor — AI session 全自动指挥官。<br/>Conductor — AI session 全自动指挥官。<br/>文件: trading/conductor.py"]
-    src_zephyr_trading_gpu_consensus_scheduler_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: trading/gpu_consensus_scheduler.py"]
-    src_zephyr_trading_gpu_monitor_py["(生产态 / production) gpu_monitor.py — NVIDIA GPU 状态采集器<br/>gpu_monitor.py — NVIDIA GPU 状态采集器<br/>文件: trading/gpu_monitor.py"]
-    src_zephyr_trading_ide_health_daemon_py["(生产态 / production) ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程<br/>ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程<br/>文件: trading/ide_health_daemon.py"]
-    src_zephyr_trading_runtime_async_runtime_py["(生产态 / production) 事件循环引导 + run_in_executor 桥接。<br/>事件循环引导 + run_in_executor 桥接。<br/>文件: runtime/async_runtime.py"]
-    src_zephyr_trading_speed_baseline_checker_py["(生产态 / production) Return True if the process belongs to this project, is a Python process,<br/>Return True if the process belongs to this project, is a Python process,<br/>文件: trading/speed_baseline_checker.py"]
-    src_zephyr_trading_trading_contracts_broker_interface_py["(生产态 / production) D_EXECUTION_CORE — BrokerInterface<br/>D_EXECUTION_CORE — BrokerInterface<br/>文件: trading_contracts/broker_interface.py"]
-    src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py["(生产态 / production) ==== BEGIN CODGEN:CTR-P1-003 ====<br/>==== BEGIN CODGEN:CTR-P1-003 ====<br/>文件: execution/capital_allocation_result.py"]
-    src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["(生产态 / production) ==== BEGIN CODGEN:CTR-ERR-005 ====<br/>==== BEGIN CODGEN:CTR-ERR-005 ====<br/>文件: execution/execution_rejection_error.py"]
-    src_zephyr_trading_trading_contracts_execution_execution_report_py["(生产态 / production) Re-export wrapper: ExecutionReport 真源在 zephyr.shared.contracts.execution_r...<br/>Re-export wrapper: ExecutionReport 真源在 zephyr.shared.contracts.execution_r...<br/>文件: execution/execution_report.py"]
-    src_zephyr_trading_trading_contracts_execution_fill_py["(生产态 / production) Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fill（CTR-005 codegen）<br/>Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fill（CTR-005 codegen）<br/>文件: execution/fill.py"]
-    src_zephyr_trading_trading_contracts_execution_model_serving_request_py["(生产态 / production) ==== BEGIN CODGEN:CTR-P1-004 ====<br/>==== BEGIN CODGEN:CTR-P1-004 ====<br/>文件: execution/model_serving_request.py"]
-    src_zephyr_trading_trading_contracts_execution_position_py["(生产态 / production) Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.contracts.position（...<br/>Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.contracts.position（...<br/>文件: execution/position.py"]
-    src_zephyr_trading_trading_contracts_factories_py["(生产态 / production) trading-contracts/factories.py — 交易域数据契约工厂方法<br/>trading-contracts/factories.py — 交易域数据契约工厂方法<br/>文件: trading_contracts/factories.py"]
-    src_zephyr_trading_trading_contracts_market_instrument_py["(生产态 / production)<br/>文件: market/instrument.py"]
-    src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["(生产态 / production) ==== BEGIN CODGEN:CTR-ERR-003 ====<br/>==== BEGIN CODGEN:CTR-ERR-003 ====<br/>文件: market/signal_degradation_warning.py"]
-    src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["(生产态 / production) 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真源已收敛至 shared 侧。<br/>过渡兼容层（DEPRECATED）—— Money 契约 canonical 真源已收敛至 shared 侧。<br/>文件: contracts/money.py"]
-    src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["(生产态 / production) Re-export shim — 真源已收敛至 zephyr.shared.contracts.performance_attributio...<br/>Re-export shim — 真源已收敛至 zephyr.shared.contracts.performance_attributio...<br/>文件: contracts/performance_attribution_report.py"]
-    src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py["(生产态 / production) Re-export from shared SSoT — zephyr.shared.contracts.strategy_lifecycle_event<br/>Re-export from shared SSoT — zephyr.shared.contracts.strategy_lifecycle_event<br/>文件: contracts/strategy_lifecycle_event.py"]
-    src_zephyr_trading_trading_contracts_risk_compliance_rule_py["(生产态 / production) ==== BEGIN CODGEN:CTR-P1-012 ====<br/>==== BEGIN CODGEN:CTR-P1-012 ====<br/>文件: risk/compliance_rule.py"]
-    src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py["(生产态 / production)<br/>文件: risk/risk_limit_violation_error.py"]
-    src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["(生产态 / production)<br/>文件: risk/risk_validator_protocol.py"]
-    src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["(生产态 / production) SRC-0041: Copy file -- keep independent implementation, pending future review<br/>SRC-0041: Copy file -- keep independent implementation, pending future review<br/>文件: risk/trading_kill_switch.py"]
+    src_zephyr_trading_admission_controller_py["(生产态 / production) 准入控制器 / Admission Controller<br/>5.171 修复：admit(event: Any) Any 滥用——定义 VerdictEvent Protocol<br/>文件: trading/admission_controller.py"]
+    src_zephyr_trading_auto_dispatcher_py["(生产态 / production) 自动dispatcher / Auto Dispatcher<br/>AutoDispatcher — 守护进程内的轻量 PipelineDispatcher<br/>文件: trading/auto_dispatcher.py"]
+    src_zephyr_trading_conductor_py["(生产态 / production) conductor / Conductor<br/>Conductor — AI session 全自动指挥官。<br/>文件: trading/conductor.py"]
+    src_zephyr_trading_gpu_consensus_scheduler_py["(生产态 / production) gpu共识调度器 / Gpu Consensus Scheduler<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: trading/gpu_consensus_scheduler.py"]
+    src_zephyr_trading_gpu_monitor_py["(生产态 / production) gpu监控器 / Gpu Monitor<br/>gpu_monitor.py — NVIDIA GPU 状态采集器<br/>文件: trading/gpu_monitor.py"]
+    src_zephyr_trading_ide_health_daemon_py["(生产态 / production) ide健康daemon / Ide Health Daemon<br/>ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程<br/>文件: trading/ide_health_daemon.py"]
+    src_zephyr_trading_runtime_async_runtime_py["(生产态 / production) 异步运行时 / Async Runtime<br/>事件循环引导 + run_in_executor 桥接。<br/>文件: runtime/async_runtime.py"]
+    src_zephyr_trading_speed_baseline_checker_py["(生产态 / production) speed基线检查器 / Speed Baseline Checker<br/>Return True if the process belongs to this project, is a Python process,<br/>文件: trading/speed_baseline_checker.py"]
+    src_zephyr_trading_trading_contracts_broker_interface_py["(生产态 / production) 券商interface / Broker Interface<br/>D_EXECUTION_CORE — BrokerInterface<br/>文件: trading_contracts/broker_interface.py"]
+    src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py["(生产态 / production) capitalallocation结果 / Capital Allocation Result<br/>==== BEGIN CODGEN:CTR-P1-003 ====<br/>文件: execution/capital_allocation_result.py"]
+    src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["(生产态 / production) 执行拒绝错误 / Execution Rejection Error<br/>==== BEGIN CODGEN:CTR-ERR-005 ====<br/>文件: execution/execution_rejection_error.py"]
+    src_zephyr_trading_trading_contracts_execution_execution_report_py["(生产态 / production) 执行报告 / Execution Report<br/>Re-export wrapper: ExecutionReport 真源在 zephyr.shared.contracts.execution_r...<br/>文件: execution/execution_report.py"]
+    src_zephyr_trading_trading_contracts_execution_fill_py["(生产态 / production) fill / Fill<br/>Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fill（CTR-005 codegen）<br/>文件: execution/fill.py"]
+    src_zephyr_trading_trading_contracts_execution_model_serving_request_py["(生产态 / production) 模型servingrequest / Model Serving Request<br/>==== BEGIN CODGEN:CTR-P1-004 ====<br/>文件: execution/model_serving_request.py"]
+    src_zephyr_trading_trading_contracts_execution_position_py["(生产态 / production) position / Position<br/>Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.contracts.position（...<br/>文件: execution/position.py"]
+    src_zephyr_trading_trading_contracts_factories_py["(生产态 / production) factories / Factories<br/>trading-contracts/factories.py — 交易域数据契约工厂方法<br/>文件: trading_contracts/factories.py"]
+    src_zephyr_trading_trading_contracts_market_instrument_py["(生产态 / production) 金融工具 / Instrument<br/>定义 Instrument、Stock、ETF 等类型。<br/>文件: market/instrument.py"]
+    src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["(生产态 / production) 信号降级警告 / Signal Degradation Warning<br/>==== BEGIN CODGEN:CTR-ERR-003 ====<br/>文件: market/signal_degradation_warning.py"]
+    src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["(生产态 / production) money / Money<br/>过渡兼容层（DEPRECATED）—— Money 契约 canonical 真源已收敛至 shared 侧。<br/>文件: contracts/money.py"]
+    src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["(生产态 / production) 性能attribution报告 / Performance Attribution Report<br/>Re-export shim — 真源已收敛至 zephyr.shared.contracts.performance_attributio...<br/>文件: contracts/performance_attribution_report.py"]
+    src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py["(生产态 / production) 策略生命周期事件 / Strategy Lifecycle Event<br/>Re-export from shared SSoT — zephyr.shared.contracts.strategy_lifecycle_event<br/>文件: contracts/strategy_lifecycle_event.py"]
+    src_zephyr_trading_trading_contracts_risk_compliance_rule_py["(生产态 / production) 合规规则 / Compliance Rule<br/>==== BEGIN CODGEN:CTR-P1-012 ====<br/>文件: risk/compliance_rule.py"]
+    src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py["(生产态 / production) 风险限制违规错误 / Risk Limit Violation Error<br/>定义 RiskLimitViolationError 等类型。<br/>文件: risk/risk_limit_violation_error.py"]
+    src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["(生产态 / production) 风险校验器协议 / Risk Validator Protocol<br/>ValueError on negative limit_value<br/>文件: risk/risk_validator_protocol.py"]
+    src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["(生产态 / production) tradingkillswitch / Trading Kill Switch<br/>SRC-0041: Copy file -- keep independent implementation, pending future review<br/>文件: risk/trading_kill_switch.py"]
     src_zephyr_trading_action_dispatcher_init_py ~~~ src_zephyr_trading_admission_controller_py
     src_zephyr_trading_admission_controller_py ~~~ src_zephyr_trading_auto_dispatcher_py
     src_zephyr_trading_auto_dispatcher_py ~~~ src_zephyr_trading_conductor_py
@@ -104,16 +104,16 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_compliance_rule_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py ~~~ src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py
-    src_zephyr_trading_action_dispatcher_annotation_writer_py["(生产态 / production) 注释注解写入器（从 ActionDispatcher._annotate_py_file/_tag_module/_annotate_b...<br/>注释注解写入器（从 ActionDispatcher._annotate_py_file/_tag_module/_annotate_b...<br/>文件: action_dispatcher/_annotation_writer.py"]
-    src_zephyr_trading_action_dispatcher_audit_log_writer_py["(生产态 / production) 审计日志写入器（从 ActionDispatcher._write_triage_log 提取）。<br/>审计日志写入器（从 ActionDispatcher._write_triage_log 提取）。<br/>文件: action_dispatcher/_audit_log_writer.py"]
-    src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["(生产态 / production) 文件生命周期管理器（从 ActionDispatcher._create_file / _delete_file / _versio...<br/>文件生命周期管理器（从 ActionDispatcher._create_file / _delete_file / _versio...<br/>文件: action_dispatcher/_file_lifecycle_manager.py"]
-    src_zephyr_trading_action_dispatcher_search_replace_engine_py["(生产态 / production) 搜索替换引擎（从 ActionDispatcher._search_replace_file 及两个底层方法提取）。<br/>搜索替换引擎（从 ActionDispatcher._search_replace_file 及两个底层方法提取）。<br/>文件: action_dispatcher/_search_replace_engine.py"]
-    src_zephyr_trading_autopilot_py["(生产态 / production) AutoPilot — AI session 自动找活干、认领任务。<br/>AutoPilot — AI session 自动找活干、认领任务。<br/>文件: trading/autopilot.py"]
-    src_zephyr_trading_trading_contracts_execution_order_py["(生产态 / production) Re-export wrapper: Order 真源在 zephyr.shared.contracts.order（CTR-004 codegen）<br/>Re-export wrapper: Order 真源在 zephyr.shared.contracts.order（CTR-004 codegen）<br/>文件: execution/order.py"]
-    src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py["(生产态 / production) ==== BEGIN CODGEN:CTR-P1-008 ====<br/>==== BEGIN CODGEN:CTR-P1-008 ====<br/>文件: risk/risk_dashboard_snapshot.py"]
-    src_zephyr_trading_trading_contracts_risk_risk_limits_py["(生产态 / production) ==== BEGIN CODGEN:CTR-003 ====<br/>==== BEGIN CODGEN:CTR-003 ====<br/>文件: risk/risk_limits.py"]
-    src_zephyr_trading_trading_contracts_risk_risk_metrics_py["(生产态 / production) ==== BEGIN CODGEN:CTR-P1-011 ====<br/>==== BEGIN CODGEN:CTR-P1-011 ====<br/>文件: risk/risk_metrics.py"]
-    src_zephyr_trading_verdict_engine_py["(生产态 / production) noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: trading/verdict_engine.py"]
+    src_zephyr_trading_action_dispatcher_annotation_writer_py["(生产态 / production) annotationwriter / Annotation Writer<br/>注释注解写入器（从 ActionDispatcher._annotate_py_file/_tag_module/_annotate_b...<br/>文件: action_dispatcher/_annotation_writer.py"]
+    src_zephyr_trading_action_dispatcher_audit_log_writer_py["(生产态 / production) 审计logwriter / Audit Log Writer<br/>审计日志写入器（从 ActionDispatcher._write_triage_log 提取）。<br/>文件: action_dispatcher/_audit_log_writer.py"]
+    src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["(生产态 / production) 文件生命周期管理器 / File Lifecycle Manager<br/>文件生命周期管理器（从 ActionDispatcher._create_file / _delete_file / _versio...<br/>文件: action_dispatcher/_file_lifecycle_manager.py"]
+    src_zephyr_trading_action_dispatcher_search_replace_engine_py["(生产态 / production) searchreplace引擎 / Search Replace Engine<br/>搜索替换引擎（从 ActionDispatcher._search_replace_file 及两个底层方法提取）。<br/>文件: action_dispatcher/_search_replace_engine.py"]
+    src_zephyr_trading_autopilot_py["(生产态 / production) autopilot / Autopilot<br/>AutoPilot — AI session 自动找活干、认领任务。<br/>文件: trading/autopilot.py"]
+    src_zephyr_trading_trading_contracts_execution_order_py["(生产态 / production) order / Order<br/>Re-export wrapper: Order 真源在 zephyr.shared.contracts.order（CTR-004 codegen）<br/>文件: execution/order.py"]
+    src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py["(生产态 / production) 风险仪表板snapshot / Risk Dashboard Snapshot<br/>==== BEGIN CODGEN:CTR-P1-008 ====<br/>文件: risk/risk_dashboard_snapshot.py"]
+    src_zephyr_trading_trading_contracts_risk_risk_limits_py["(生产态 / production) 风险limits / Risk Limits<br/>==== BEGIN CODGEN:CTR-003 ====<br/>文件: risk/risk_limits.py"]
+    src_zephyr_trading_trading_contracts_risk_risk_metrics_py["(生产态 / production) 风险指标 / Risk Metrics<br/>==== BEGIN CODGEN:CTR-P1-011 ====<br/>文件: risk/risk_metrics.py"]
+    src_zephyr_trading_verdict_engine_py["(生产态 / production) verdict引擎 / Verdict Engine<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: trading/verdict_engine.py"]
     src_zephyr_trading_action_dispatcher_annotation_writer_py ~~~ src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_audit_log_writer_py ~~~ src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py ~~~ src_zephyr_trading_action_dispatcher_search_replace_engine_py
@@ -123,7 +123,7 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_risk_risk_limits_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py ~~~ src_zephyr_trading_verdict_engine_py
-    src_zephyr_trading_protection_index_py["(生产态 / production)<br/>文件: trading/protection_index.py"]
+    src_zephyr_trading_protection_index_py["(生产态 / production) 保护索引 / Protection Index<br/>query: BloomFilterError->fallback to Trie-only; rebuild: IOError->return part...<br/>文件: trading/protection_index.py"]
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
@@ -189,90 +189,90 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
-| 2 | AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
-| 3 | Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
-| 4 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04） (per... | 导入依赖 / import_depends |
-| 5 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_GOV_AUDIT 审计追踪: 治本（裁定#18 G2）：本文件原为桩实现——AuditEventType/Fi... | 导入依赖 / import_depends |
-| 6 | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-005 ==== (contracts/fill.py) | 导入依赖 / import_depends |
-| 7 | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-004 ==== (contracts/order.py) | 导入依赖 / import_depends |
-| 8 | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-006 ==== (contracts/position.py) | 导入依赖 / import_depends |
-| 9 | ==== BEGIN CODGEN:CTR-ERR-005 ==== (execution/execution_r... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-TRACE-001 ==== (contracts/trace_con... | 导入依赖 / import_depends |
-| 10 | Re-export wrapper: ExecutionReport 真源在 zephyr.shared.c... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-007 ==== (contracts/execution_re... | 导入依赖 / import_depends |
-| 11 | Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fi... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-005 ==== (contracts/fill.py) | 导入依赖 / import_depends |
-| 12 | Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-004 ==== (contracts/order.py) | 导入依赖 / import_depends |
-| 13 | Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-006 ==== (contracts/position.py) | 导入依赖 / import_depends |
-| 14 | trading-contracts/factories.py — 交易域数据契约工厂方法 ... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-002 ==== (contracts/factor_signal.py) | 导入依赖 / import_depends |
-| 15 | trading-contracts/factories.py — 交易域数据契约工厂方法 ... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-015 ==== (contracts/synthesized_... | 导入依赖 / import_depends |
-| 16 | ==== BEGIN CODGEN:CTR-ERR-003 ==== (market/signal_degrada... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-TRACE-001 ==== (contracts/trace_con... | 导入依赖 / import_depends |
-| 17 | Re-export shim — 真源已收敛至 zephyr.shared.contracts.pe... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-009 ==== (contracts/performance_... | 导入依赖 / import_depends |
-| 18 | Re-export from shared SSoT — zephyr.shared.contracts.str... | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-P1-006 ==== (contracts/strategy_lif... | 导入依赖 / import_depends |
-| 19 | risk/risk_limit_violation_error.py | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-TRACE-001 ==== (contracts/trace_con... | 导入依赖 / import_depends |
-| 20 | ==== BEGIN CODGEN:CTR-003 ==== (risk/risk_limits.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-TRACE-001 ==== (contracts/trace_con... | 导入依赖 / import_depends |
-| 21 | risk/risk_validator_protocol.py | → | D_INFRASTRUCTURE 跨层契约基础设施: ==== BEGIN CODGEN:CTR-003 ==== (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 22 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_INFRA_RUNTIME 运行时集成: Task Scheduler — 任务调度器。 (queue/task_scheduler.py) | 导入依赖 / import_depends |
-| 23 | 注释注解写入器（从 ActionDispatcher._annotate_py_file/_ta... | → | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | 导入依赖 / import_depends |
-| 24 | 审计日志写入器（从 ActionDispatcher._write_triage_log 提... | → | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | 导入依赖 / import_depends |
-| 25 | 文件生命周期管理器（从 ActionDispatcher._create_file / _d... | → | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | 导入依赖 / import_depends |
-| 26 | 搜索替换引擎（从 ActionDispatcher._search_replace_file 及... | → | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | 导入依赖 / import_depends |
-| 27 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | D_INFRA_RUNTIME 运行时集成: daemon_registry.py - unified daemon thread registry + res... | 导入依赖 / import_depends |
-| 28 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_INTEGRATION 管线路由: LocalModelScheduler — L2 本地模型 24/7 调度循环 (local_m... | 导入依赖 / import_depends |
-| 29 | AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | D_ORCHESTRATOR 代理编排器: ActiveTaskQueue — 后台任务轮询与自动分发 (core/task_queu... | 导入依赖 / import_depends |
-| 30 | AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | D_ORCHESTRATOR 代理编排器: Orc->CE 上下文桥接 — request_context() 生产者 (execution... | 导入依赖 / import_depends |
-| 31 | AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | D_ORCHESTRATOR 代理编排器: Orc->Script 脚本执行器 — run_audit() 生产者 (execution/s... | 导入依赖 / import_depends |
-| 32 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 33 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 34 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 35 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 36 | AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 37 | AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 38 | AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 39 | AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 40 | AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 41 | AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 42 | Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 43 | Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 44 | noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 45 | gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 46 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 47 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 48 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 49 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 50 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 51 | 事件循环引导 + run_in_executor 桥接。 (runtime/async_runt... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 52 | Return True if the process belongs to this project, is a ... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 53 | Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 54 | 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真源已... | → | D_SHARED 共享服务: 查询货币精度（小数位数）。 (portfolio/money.py) | 导入依赖 / import_depends |
+| 1 | 自动dispatcher / Auto Dispatcher (trading/auto_dispatcher... | → | D_GOVERNANCE 生命周期管理: 任务repo / Task Repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 2 | autopilot / Autopilot (trading/autopilot.py) | → | D_GOVERNANCE 生命周期管理: 任务repo / Task Repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 3 | conductor / Conductor (trading/conductor.py) | → | D_GOVERNANCE 生命周期管理: 任务repo / Task Repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 4 | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | → | D_GOVERNANCE 生命周期管理: 任务repo / Task Repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 5 | verdict引擎 / Verdict Engine (trading/verdict_engine.py) | → | D_GOV_AUDIT 审计追踪: 模型 / Models (gov_audit/models.py) | 导入依赖 / import_depends |
+| 6 | 券商interface / Broker Interface (trading_contracts/broke... | → | D_INFRASTRUCTURE 跨层契约基础设施: fill / Fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 7 | 券商interface / Broker Interface (trading_contracts/broke... | → | D_INFRASTRUCTURE 跨层契约基础设施: order / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 8 | 券商interface / Broker Interface (trading_contracts/broke... | → | D_INFRASTRUCTURE 跨层契约基础设施: position / Position (contracts/position.py) | 导入依赖 / import_depends |
+| 9 | 执行拒绝错误 / Execution Rejection Error (execution/execu... | → | D_INFRASTRUCTURE 跨层契约基础设施: 追踪上下文 / Trace Context (contracts/trace_context.py) | 导入依赖 / import_depends |
+| 10 | 执行报告 / Execution Report (execution/execution_report.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 执行报告 / Execution Report (contracts/execution_report.py) | 导入依赖 / import_depends |
+| 11 | fill / Fill (execution/fill.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: fill / Fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 12 | order / Order (execution/order.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: order / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 13 | position / Position (execution/position.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: position / Position (contracts/position.py) | 导入依赖 / import_depends |
+| 14 | factories / Factories (trading_contracts/factories.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 因子信号 / Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
+| 15 | factories / Factories (trading_contracts/factories.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: synthesized信号 / Synthesized Signal (contracts/synthesiz... | 导入依赖 / import_depends |
+| 16 | 信号降级警告 / Signal Degradation Warning (market/signal_... | → | D_INFRASTRUCTURE 跨层契约基础设施: 追踪上下文 / Trace Context (contracts/trace_context.py) | 导入依赖 / import_depends |
+| 17 | 性能attribution报告 / Performance Attribution Report (con... | → | D_INFRASTRUCTURE 跨层契约基础设施: 性能attribution报告 / Performance Attribution Report (con... | 导入依赖 / import_depends |
+| 18 | 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | → | D_INFRASTRUCTURE 跨层契约基础设施: 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | 导入依赖 / import_depends |
+| 19 | 风险限制违规错误 / Risk Limit Violation Error (risk/risk_... | → | D_INFRASTRUCTURE 跨层契约基础设施: 追踪上下文 / Trace Context (contracts/trace_context.py) | 导入依赖 / import_depends |
+| 20 | 风险limits / Risk Limits (risk/risk_limits.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 追踪上下文 / Trace Context (contracts/trace_context.py) | 导入依赖 / import_depends |
+| 21 | 风险校验器协议 / Risk Validator Protocol (risk/risk_valid... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 22 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_INFRA_RUNTIME 运行时集成: 任务调度器 / Task Scheduler (queue/task_scheduler.py) | 导入依赖 / import_depends |
+| 23 | annotationwriter / Annotation Writer (action_dispatcher/_... | → | D_INFRA_RUNTIME 运行时集成: 动作dispatcher / Action Dispatcher (trading/action_dispat... | 导入依赖 / import_depends |
+| 24 | 审计logwriter / Audit Log Writer (action_dispatcher/_audi... | → | D_INFRA_RUNTIME 运行时集成: 动作dispatcher / Action Dispatcher (trading/action_dispat... | 导入依赖 / import_depends |
+| 25 | 文件生命周期管理器 / File Lifecycle Manager (action_dispa... | → | D_INFRA_RUNTIME 运行时集成: 动作dispatcher / Action Dispatcher (trading/action_dispat... | 导入依赖 / import_depends |
+| 26 | searchreplace引擎 / Search Replace Engine (action_dispatc... | → | D_INFRA_RUNTIME 运行时集成: 动作dispatcher / Action Dispatcher (trading/action_dispat... | 导入依赖 / import_depends |
+| 27 | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | → | D_INFRA_RUNTIME 运行时集成: daemon注册表 / Daemon Registry (lifecycle/daemon_registry... | 导入依赖 / import_depends |
+| 28 | verdict引擎 / Verdict Engine (trading/verdict_engine.py) | → | D_INTEGRATION 管线路由: 本地模型调度器 / Local Model Scheduler (local_model/local... | 导入依赖 / import_depends |
+| 29 | 自动dispatcher / Auto Dispatcher (trading/auto_dispatcher... | → | D_ORCHESTRATOR 代理编排器: 任务queue / Task Queue (core/task_queue.py) | 导入依赖 / import_depends |
+| 30 | 自动dispatcher / Auto Dispatcher (trading/auto_dispatcher... | → | D_ORCHESTRATOR 代理编排器: 上下文桥接 / Context Bridge (execution/context_bridge.py) | 导入依赖 / import_depends |
+| 31 | 自动dispatcher / Auto Dispatcher (trading/auto_dispatcher... | → | D_ORCHESTRATOR 代理编排器: script运行器 / Script Runner (execution/script_runner.py) | 导入依赖 / import_depends |
+| 32 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_SHARED 共享服务: process池 / Process Pool (infra/process_pool.py) | 导入依赖 / import_depends |
+| 33 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_SHARED 共享服务: paths / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 34 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_SHARED 共享服务: serialization / Serialization (io/serialization.py) | 导入依赖 / import_depends |
+| 35 | 交易运营Action Dispatcher包 / Trading Action Dispatcher P... | → | D_SHARED 共享服务: 任务类型 / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 36 | 自动dispatcher / Auto Dispatcher (trading/auto_dispatcher... | → | D_SHARED 共享服务: 任务repository协议 / Task Repository Protocol (contracts/... | 导入依赖 / import_depends |
+| 37 | 自动dispatcher / Auto Dispatcher (trading/auto_dispatcher... | → | D_SHARED 共享服务: constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 38 | autopilot / Autopilot (trading/autopilot.py) | → | D_SHARED 共享服务: 任务repository协议 / Task Repository Protocol (contracts/... | 导入依赖 / import_depends |
+| 39 | autopilot / Autopilot (trading/autopilot.py) | → | D_SHARED 共享服务: 事件总线 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 40 | autopilot / Autopilot (trading/autopilot.py) | → | D_SHARED 共享服务: constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 41 | autopilot / Autopilot (trading/autopilot.py) | → | D_SHARED 共享服务: 模型 / Models (foundation/models.py) | 导入依赖 / import_depends |
+| 42 | conductor / Conductor (trading/conductor.py) | → | D_SHARED 共享服务: constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 43 | conductor / Conductor (trading/conductor.py) | → | D_SHARED 共享服务: 模型 / Models (foundation/models.py) | 导入依赖 / import_depends |
+| 44 | gpu共识调度器 / Gpu Consensus Scheduler (trading/gpu_cons... | → | D_SHARED 共享服务: constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 45 | gpu监控器 / Gpu Monitor (trading/gpu_monitor.py) | → | D_SHARED 共享服务: process池 / Process Pool (infra/process_pool.py) | 导入依赖 / import_depends |
+| 46 | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 任务repository协议 / Task Repository Protocol (contracts/... | 导入依赖 / import_depends |
+| 47 | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 事件总线 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 48 | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 49 | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: process池 / Process Pool (infra/process_pool.py) | 导入依赖 / import_depends |
+| 50 | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 时间utils / Time Utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 51 | 异步运行时 / Async Runtime (runtime/async_runtime.py) | → | D_SHARED 共享服务: 异步utils / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 52 | speed基线检查器 / Speed Baseline Checker (trading/speed_b... | → | D_SHARED 共享服务: paths / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 53 | order / Order (execution/order.py) | → | D_SHARED 共享服务: orderenums / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 54 | money / Money (contracts/money.py) | → | D_SHARED 共享服务: money / Money (portfolio/money.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_EX_CORE 执行核心: 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 2 | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 3 | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fi... | 导入依赖 / import_depends |
-| 4 | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | 导入依赖 / import_depends |
-| 5 | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘交易） (ada... | → | Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.... | 导入依赖 / import_depends |
-| 6 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 7 | D_EX_CORE 执行核心: D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器 (ex... | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
-| 8 | D_FRONTEND 前端: trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重... | → | Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | 导入依赖 / import_depends |
-| 9 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export... | → | ==== BEGIN CODGEN:CTR-P1-003 ==== (execution/capital_allo... | 导入依赖 / import_depends |
-| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | ==== BEGIN CODGEN:CTR-P1-003 ==== (execution/capital_allo... | 导入依赖 / import_depends |
-| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | ==== BEGIN CODGEN:CTR-ERR-003 ==== (market/signal_degrada... | 导入依赖 / import_depends |
-| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出） (st... | → | ==== BEGIN CODGEN:CTR-P1-003 ==== (execution/capital_allo... | 导入依赖 / import_depends |
-| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (implementations/de... | → | ==== BEGIN CODGEN:CTR-P1-003 ==== (execution/capital_allo... | 导入依赖 / import_depends |
-| 14 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 15 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
-| 16 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | 导入依赖 / import_depends |
-| 17 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
-| 18 | D_INTEGRATION 管线路由: behavioral_admission/admission_response.py | → | 5.171 修复：admit(event: Any) Any 滥用——定义 VerdictEve... | 导入依赖 / import_depends |
-| 19 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | ==== BEGIN CODGEN:CTR-P1-004 ==== (execution/model_servin... | 导入依赖 / import_depends |
-| 20 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | ==== BEGIN CODGEN:CTR-P1-004 ==== (execution/model_servin... | 导入依赖 / import_depends |
-| 21 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | ==== BEGIN CODGEN:CTR-P1-004 ==== (execution/model_servin... | 导入依赖 / import_depends |
-| 22 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | ==== BEGIN CODGEN:CTR-P1-008 ==== (risk/risk_dashboard_sn... | 导入依赖 / import_depends |
-| 23 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | risk/risk_limit_violation_error.py | 导入依赖 / import_depends |
-| 24 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | ==== BEGIN CODGEN:CTR-P1-011 ==== (risk/risk_metrics.py) | 导入依赖 / import_depends |
-| 25 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor Base (signa... | → | ==== BEGIN CODGEN:CTR-ERR-003 ==== (market/signal_degrada... | 导入依赖 / import_depends |
+| 1 | D_EX_CORE 执行核心: 执行核心适配器包 / Ex Core Adapters Package (adapters/__i... | → | 券商interface / Broker Interface (trading_contracts/broke... | 导入依赖 / import_depends |
+| 2 | D_EX_CORE 执行核心: miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | 券商interface / Broker Interface (trading_contracts/broke... | 导入依赖 / import_depends |
+| 3 | D_EX_CORE 执行核心: miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | fill / Fill (execution/fill.py) | 导入依赖 / import_depends |
+| 4 | D_EX_CORE 执行核心: miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | order / Order (execution/order.py) | 导入依赖 / import_depends |
+| 5 | D_EX_CORE 执行核心: miniqmt券商 / Miniqmt Broker (adapters/miniqmt_broker.py) | → | position / Position (execution/position.py) | 导入依赖 / import_depends |
+| 6 | D_EX_CORE 执行核心: order管理器 / Order Manager (ex_core/order_manager.py) | → | 券商interface / Broker Interface (trading_contracts/broke... | 导入依赖 / import_depends |
+| 7 | D_EX_CORE 执行核心: trading会话 / Trading Session (ex_core/trading_session.py) | → | 券商interface / Broker Interface (trading_contracts/broke... | contract / contract |
+| 8 | D_FRONTEND 前端: tradepanel / Trade Panel (components/trade_panel.py) | → | order / Order (execution/order.py) | 导入依赖 / import_depends |
+| 9 | D_FUNDAMENTAL_SIGNAL 基本面信号: capitalallocation结果 / Capital Allocation Result (capita... | → | capitalallocation结果 / Capital Allocation Result (execut... | 导入依赖 / import_depends |
+| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: aggregator基础 / Aggregator Base (gen/aggregator_base.py) | → | capitalallocation结果 / Capital Allocation Result (execut... | 导入依赖 / import_depends |
+| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: aggregator基础 / Aggregator Base (gen/aggregator_base.py) | → | 信号降级警告 / Signal Degradation Warning (market/signal_... | 导入依赖 / import_depends |
+| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: capitalallocator / Capital Allocator (strategy/capital_al... | → | capitalallocation结果 / Capital Allocation Result (execut... | 导入依赖 / import_depends |
+| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: defaultcapitalallocator / Default Capital Allocator (impl... | → | capitalallocation结果 / Capital Allocation Result (execut... | 导入依赖 / import_depends |
+| 14 | D_GOVERNANCE 生命周期管理: simulation券商 / Simulation Broker (adapters/simulation_b... | → | 券商interface / Broker Interface (trading_contracts/broke... | 导入依赖 / import_depends |
+| 15 | D_INFRA_RUNTIME 运行时集成: boothooks / Boot Hooks (trading/boot_hooks.py) | → | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | 导入依赖 / import_depends |
+| 16 | D_INFRA_RUNTIME 运行时集成: 资源optimization / Resource Optimization (trading/resourc... | → | gpu监控器 / Gpu Monitor (trading/gpu_monitor.py) | 导入依赖 / import_depends |
+| 17 | D_INFRA_RUNTIME 运行时集成: 资源optimization / Resource Optimization (trading/resourc... | → | ide健康daemon / Ide Health Daemon (trading/ide_health_dae... | 导入依赖 / import_depends |
+| 18 | D_INTEGRATION 管线路由: 准入响应 / Admission Response (behavioral_admission/admis... | → | 准入控制器 / Admission Controller (trading/admission_cont... | 导入依赖 / import_depends |
+| 19 | D_INTELLIGENCE 上下文管理: defaultinference引擎 / Default Inference Engine (implemen... | → | 模型servingrequest / Model Serving Request (execution/mod... | 导入依赖 / import_depends |
+| 20 | D_ML_TRAIN 训练: defaultinference引擎 / Default Inference Engine (implemen... | → | 模型servingrequest / Model Serving Request (execution/mod... | 导入依赖 / import_depends |
+| 21 | D_ML_TRAIN 训练: inference基础 / Inference Base (ml_train/inference_base.py) | → | 模型servingrequest / Model Serving Request (execution/mod... | 导入依赖 / import_depends |
+| 22 | D_RISK 风控: 风险管理器 / Risk Manager (risk/risk_manager.py) | → | 风险仪表板snapshot / Risk Dashboard Snapshot (risk/risk_d... | 导入依赖 / import_depends |
+| 23 | D_RISK 风控: 风险管理器 / Risk Manager (risk/risk_manager.py) | → | 风险限制违规错误 / Risk Limit Violation Error (risk/risk_... | 导入依赖 / import_depends |
+| 24 | D_RISK 风控: 风险管理器 / Risk Manager (risk/risk_manager.py) | → | 风险指标 / Risk Metrics (risk/risk_metrics.py) | 导入依赖 / import_depends |
+| 25 | D_SIGQC 信号质量控制: 降级监控器基础 / Degradation Monitor Base (signal_quality... | → | 信号降级警告 / Signal Degradation Warning (market/signal_... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_position_position_reconciler_py["(生产态 / production) Position Reconciler — v0.10.1 持仓对账: execution report+book record+counter...<br/>Position Reconciler — v0.10.1 持仓对账: execution report+book record+counter...<br/>文件: position/position_reconciler.py"]
+    src_zephyr_position_position_reconciler_py["(生产态 / production) positionreconciler / Position Reconciler<br/>Position Reconciler — v0.10.1 持仓对账: execution report+book record+counter...<br/>文件: position/position_reconciler.py"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
