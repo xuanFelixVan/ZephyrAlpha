@@ -257,11 +257,11 @@ flowchart TD
 | 6 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
 | 7 | D_EX_CORE 执行核心: D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器 (ex... | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
 | 8 | D_FRONTEND 前端: trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重... | → | Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | 导入依赖 / import_depends |
-| 9 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
-| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
-| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | market/signal_degradation_warning.py | 导入依赖 / import_depends |
-| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_FUNDAMENTAL_SIGNAL — Capital Allocator（兼容导出） (st... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
-| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (implementations/de... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
+| 9 | D_FUNDAMENTAL_SIGNAL 基本面信号: 资本分配结果（兼容导出） / Capital Allocation Result (Com... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
+| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号聚合器基类 / Signal Aggregator Base (gen/aggregator_b... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
+| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号聚合器基类 / Signal Aggregator Base (gen/aggregator_b... | → | market/signal_degradation_warning.py | 导入依赖 / import_depends |
+| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: 资本分配器（策略层兼容导出） / Capital Allocator (Strateg... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
+| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: 默认资本分配器 / Default Capital Allocator (implementatio... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
 | 14 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (adapters/s... | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
 | 15 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
 | 16 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | 导入依赖 / import_depends |

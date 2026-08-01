@@ -200,7 +200,7 @@ flowchart TD
 | 1 | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | → | D_DATA 数据接入层: zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
 | 2 | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | → | D_DATA 数据接入层: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (data/ch_rea... | 导入依赖 / import_depends |
 | 3 | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | → | D_DATA 数据接入层: 表名/品类注册表消费层（裁定 #ARCH-CH-024 Phase 2）。 (dat... | 导入依赖 / import_depends |
-| 4 | factor/alpha_signal_pipeline.py | → | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | 导入依赖 / import_depends |
+| 4 | factor/alpha_signal_pipeline.py | → | D_FUNDAMENTAL_SIGNAL 基本面信号: Alpha 信号管线 / Alpha Signal Pipeline (signal_fundamenta... | 导入依赖 / import_depends |
 | 5 | CTR-001 NormalizedMarketData 消费者——数据适配层。 (ctr0... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | 导入依赖 / import_depends |
 | 6 | CTR-002 FactorSignal 生产者——信号适配层。 (ctr002_produ... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | 导入依赖 / import_depends |
 | 7 | D-FACTOR-GOV-01 因子生命周期状态机——复用项目级 StateMac... | → | D_SHARED 共享服务: StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) (life... | 导入依赖 / import_depends |
@@ -213,7 +213,7 @@ flowchart TD
 | 1 | D_EX_CORE 执行核心: D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂 (ex_cor... | → | D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
 | 2 | D_EX_CORE 执行核心: D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂 (ex_cor... | → | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | 导入依赖 / import_depends |
 | 3 | D_EX_CORE 执行核心: D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂 (ex_cor... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (factor/factor... | 导入依赖 / import_depends |
-| 4 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (factor/factor... | 导入依赖 / import_depends |
+| 4 | D_FUNDAMENTAL_SIGNAL 基本面信号: Alpha 信号管线 / Alpha Signal Pipeline (signal_fundamenta... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (factor/factor... | 导入依赖 / import_depends |
 | 5 | D_GOV_OPS_RESILIENCE 运维弹性治理: resilience_governance/bus_factor_defense.py | → | factor/bus_factor_defense.py | 导入依赖 / import_depends |
 | 6 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | → | D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
 | 7 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层） (... | → | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 (evalu... | 导入依赖 / import_depends |

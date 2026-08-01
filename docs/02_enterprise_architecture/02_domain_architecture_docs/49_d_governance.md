@@ -599,7 +599,7 @@ flowchart TD
 | 1 | C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_DATA 数据接入层: zephyr.data — 数据源集成器（MOD-L00-004）。 (data/__init... | 导入依赖 / import_depends |
 | 2 | D_DATA — Memory Provider (intelligence_governance/memory... | → | D_DATA 数据接入层: per-source 调用策略注册表（MOD-L00-004 §5）。 (data/poli... | 导入依赖 / import_depends |
 | 3 | D_DATA — Memory Provider (intelligence_governance/memory... | → | D_DATA 数据接入层: 数据源 Provider 抽象基类（MOD-L00-004 §4）。 (data/provi... | 导入依赖 / import_depends |
-| 4 | C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL Signal Domain (signal_fundamental/__init__.py) | 导入依赖 / import_depends |
+| 4 | C-track 端到端演示 —— 全流水线一次性运行 (construction/... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: 基本面信号域包 / Fundamental Signal Domain Package (signa... | 导入依赖 / import_depends |
 | 5 | git_commit.py — GitCommitGateway CLI 封装（OPS-202606251... | → | D_GOV_AUDIT 审计追踪: workspace_hygiene_reconciler.py — 工作区卫生自动清理 rec... | 导入依赖 / import_depends |
 | 6 | ProjectionEngine — 事件折叠为当前状态（DW-0003） (observ... | → | D_GOV_AUDIT 审计追踪: EventStore — Event Sourcing 事件追加与回放（DW-0002） (g... | 导入依赖 / import_depends |
 | 7 | DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL che... | → | D_GOV_AUDIT 审计追踪: audit_schema — 审计视图与查询入口（SH-DB-001 v2.0） (gov... | 导入依赖 / import_depends |

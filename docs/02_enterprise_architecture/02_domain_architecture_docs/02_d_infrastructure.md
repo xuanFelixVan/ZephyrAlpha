@@ -170,15 +170,15 @@ flowchart TD
 | 4 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (ex_core/order_manager.py) | → | contracts/order.py | 导入依赖 / import_depends |
 | 5 | D_FACTOR 因子: CTR-001 NormalizedMarketData 消费者——数据适配层。 (ctr0... | → | contracts/market_data.py | 导入依赖 / import_depends |
 | 6 | D_FACTOR 因子: CTR-002 FactorSignal 生产者——信号适配层。 (ctr002_produ... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 7 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 8 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (gen/aggregator_base.py) | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 9 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (implementations/de... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (implementations/de... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成管道 (signa... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (implementations/de... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
-| 14 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | contracts/factor_signal.py | 导入依赖 / import_depends |
-| 15 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (synth/signal_synthesizer.py) | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 7 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号聚合器基类 / Signal Aggregator Base (gen/aggregator_b... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 8 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号聚合器基类 / Signal Aggregator Base (gen/aggregator_b... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 9 | D_FUNDAMENTAL_SIGNAL 基本面信号: 默认信号聚合器 / Default Signal Aggregator (implementatio... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: 默认信号聚合器 / Default Signal Aggregator (implementatio... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: Alpha 信号管线 / Alpha Signal Pipeline (signal_fundamenta... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: Alpha 信号管线 / Alpha Signal Pipeline (signal_fundamenta... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: 默认资本分配器 / Default Capital Allocator (implementatio... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
+| 14 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号合成器基类 / Signal Synthesizer Base (synth/signal_sy... | → | contracts/factor_signal.py | 导入依赖 / import_depends |
+| 15 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号合成器基类 / Signal Synthesizer Base (synth/signal_sy... | → | contracts/synthesized_signal.py | 导入依赖 / import_depends |
 | 16 | D_GOVERNANCE 生命周期管理: A2A Protocol 全链路满分验证脚本 (scripts/a2a_full_verific... | → | ZephyrAlpha — 基础设施 Infrastructure Layer — Configura... | 导入依赖 / import_depends |
 | 17 | D_GOVERNANCE 生命周期管理: local_layer_daemon.py — L2 本地模型层守护进程（薄包装，D... | → | ZephyrAlpha — 基础设施 Infrastructure Layer — Configura... | 导入依赖 / import_depends |
 | 18 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-239) (adap... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
