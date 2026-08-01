@@ -1,0 +1,537 @@
+---
+doc_type: audit_report
+title: 候选模块清单 — D_INTEGRATION
+version: "1.0"
+status: active
+date: auto-generated
+owner: auto-generator
+ttl: permanent
+---
+
+# D_INTEGRATION 候选模块清单
+
+> [← 返回索引](index.md)
+
+> 本域候选 **165** 条（原有 2 + harvest 163）。
+> harvest 去重四态: likely_new=52 / likely_implemented=104 / uncertain=7
+
+## 完整清单
+
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+|------|------|------|------|------|------|:---:|------|------|
+| CAND-HARVEST-0057 | Capital Flow Behavior Analysis 资金行为分析 | C 011：资金行为分析 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0100 | 微信多人互动 WeChat Multi-Person Interaction | C 019：微信多人互动 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0377 | API Gateway API网关 | / D-INTEGRATION-01 / API Gateway / ✅ 能建 / / API网关+路由+限流 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0378 | Adapter Manager 适配器管理器 | / D-INTEGRATION-07 / Adapter Manager / ✅ 能建 / 📋 项目内有蓝图编号MOD-L05-001已建设 / 适配器管理+Broker适配器 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0379 | MCP Server MCP服务器 | / D-INTEGRATION-08 / MCP Server / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-013已建设 / MCP协议+工具注册 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0380 | Event Bus Manager 事件总线 | / D-INTEGRATION-11 / Event Bus Manager / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-016已建设 / 事件总线+事件路由 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0381 | M2-S01 | M2 S01 Python包SBOM扫描器 ❌ 不能建 门禁: 需SBOM扫描基础设施 Python | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0382 | M2-S02 | M2 S02 脚本SBOM扫描器 ❌ 不能建 门禁: 需SBOM扫描基础设施 脚本扫描 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0383 | M2-S03 | M2 S03 模块注册SBOM生成器 ❌ 不能建 门禁: 需SBOM扫描基础设施 模块注册 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0384 | M2-S04 | M2 S04 CycloneDX生成器 ❌ 不能建 门禁: 需SBOM扫描基础设施 CycloneD | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0385 | M2-S05 | M2 S05 SPDX生成器 ❌ 不能建 门禁: 需SBOM扫描基础设施 SPDX格式 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0386 | M2-S06 | M2 S06 SBOM差异分析器 ❌ 不能建 门禁: 需SBOM扫描基础设施 差异分析 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0387 | M2-S07 | M2 S07 SBOM签名验证器 ❌ 不能建 门禁: 需SBOM扫描基础设施 签名验证 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0388 | M2-NEW-01 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0389 | M2-NEW-02 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0390 | M2-NEW-03 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0391 | M2-NEW-04 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0392 | M2-NEW-05 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0393 | M2-NEW-06 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0394 | M2-NEW-07 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0395 | M2-NEW-08 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0396 | M2-NEW-09 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0693 | Data Format Transformer 数据格式转换器 | 多格式支持+格式转换+Schema映射+格式验证 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0900 | A2A Protocol Handler A2A协议处理器 | A2A协议处理器Agent间通信+JSON-RPC 2.0+能力矩阵+A2A铁律 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0901 | External System Adapter 外部系统适配器 | 外部系统适配器miniQMT/iFind/tushare/券商接口+数据源故障降级 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0902 | Isolation Manager 隔离管理器 | 隔离管理器熔断器状态机+舱壁隔离+超时重试+Kill-Switch四级阶梯+混沌工程 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0903 | Integration Observability 集成可观测性 | 集成可观测性Python原生替代OTel+SLI/SLO体系+分布式追踪+集成健康度 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1180 | A2A Protocol Bridge A2A协议桥接 | A2A协议桥接+Agent Card+Task委托+Artifact交换 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1181 | External System Connector 外部系统连接器 | 外部系统连接器+券商API+数据源API | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1182 | Traffic Policy Dependency Mapper 流量策略依赖映射器 | 流量策略依赖映射门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1183 | Protocol Converter 协议转换器 | 协议转换器门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1184 | Plugin Marketplace 插件市场 | 插件市场门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1185 | Saga Orchestrator Saga编排器 | 下单Saga编排+再平衡Saga+模型上线Saga | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1186 | DistributedTracePropagator 分布式追踪传播器 | / D-INT-19 / DistributedTracePropagator / 轻量级TraceID传播(structlog+@trace+contextvars) / ✅ / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1187 | BackpressureManager 背压管理器 | CTR-BP-001~003暂停/限流/恢复 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1188 | Service Mesh Integration 服务网格集成 | 服务网格集成门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1191 | SDK Auto-Generator SDK自动生成器 | SDK自动生成门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1192 | Auto-Scaling Integration 自动扩缩集成 | 自动扩缩集成门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1194 | Multi-Region Coordinator 多区域协调器 | 多区域协调门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1195 | LLM Security Gateway Integration LLM安全网关集成 | 6层纵深防御集成+LLM 4层guardrails | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1196 | Zero Trust Integration 零信任集成 | 零信任集成门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1197 | CI/CDIntegration CI/CD集成 | 契约测试CI/CD集成+API变更自动验证+失败阻断部署 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1198 | Component Reuse Manager 组件复用管理器 | 集成组件复用管理+适配器/连接器/转换器跨流程复用 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1199 | Architecture Governance Integration 架构治理集成 | 蓝图-代码对齐+契约-实现漂移检测 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1200 | Architecture as Code Integration 架构即代码集成 | 架构即代码集成门禁未满足 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1201 | Compliance Policy Integration 合规策略集成 | 合规策略即代码+监管变更追踪+合规网关层 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1202 | FeatureFlagManager 功能开关管理器 | 功能开关管理+渐进式集成+灰度发布+开关联动 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1203 | DataSourceConnectorRegistry 数据源连接器注册中心 | 数据源连接器注册中心+生命周期+健康检查+自动发现 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1204 | Behavioral Admission Integration 行为准入门禁集成 | 行为准入门禁集成+准入控制器+裁决引擎 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1205 | Auto Integration Registry 自动集成注册表 | 自动集成注册表+运行时自动发现+集成闭环自动注册 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1423 | Trading Execution MCP Server 交易执行MCP服务器 | tools place_order/cancel_order/query_position | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1487 | Service Mesh 服务网格 | / 服务网格 / ❌不能建 / 无 / Istio Ambient Mesh+SPIFFE身份 / ①多进程架构(>5服务) ②跨机器部署 ③mTLS需求 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1796 | Secret Manager Integration 密钥管理器集成 | API密钥加密存储+90天自动轮换+Shamir 2-of-3 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1797 | Integration Config Manager 集成配置管理器 | 集成配置GitOps+分环境配置+热更新+版本追溯 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1798 | Dependency Semantics Integration 依赖语义集成 | 依赖语义分类(H/S/E/条件/可选)+依赖传播+影响分析 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1799 | Local Model Integration 本地模型集成 | 本地模型推理集成+嵌入路由+Ollama集成+推理缓存+调度器 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1800 | DepMap Integration DepMap集成 | MOD-INF-040编号冲突+AST依赖扫描准确率>95%门禁 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2172 | MCP Model Context Protocol 模型上下文协议 | MCP Model Context Protocol标准化工具集成协议 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2173 | Google A2A Protocol Google A2A协议 | Google A2A Protocol标准化智能体间通信协议 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2228 | ACL Anti-Corruption Layer ACL防腐层 | ACL防腐层事件订阅走ACL防腐层新增域事件只需在ACL注册 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2654 | External System Interaction Matrix 外部系统交互矩阵 | 9+系统外部系统交互矩阵 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2655 | Integration Style 集成风格 | 同步/异步/事件驱动/批量+决策矩阵 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2656 | Data Source Failure Degradation 数据源故障降级 | 三源互补+投票仲裁+自动切换+数据质量降级 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2657 | MCP Protocol Integration MCP协议集成 | / MCP协议集成（Client-Host-Server+MCP 2026规范+路线图） / 安全边界（→A5） / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2658 | A2A Protocol Integration A2A协议集成 | A2A与MCP边界裁定+能力矩阵+A2A铁律 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2659 | Isolation Strategy 隔离策略 | / 隔离策略（熔断器状态机+舱壁隔离+超时重试+Kill-Switch四级阶梯+混沌工程） / Agent通信（→A7） / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2660 | API Gateway Design API网关设计 | 四层架构路由/认证/限流/审计 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2661 | Integration Security Defense 集成安全纵深 | 安全威胁矩阵+安全能力矩阵+API密钥轮换 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2662 | Integration Test Strategy 集成测试策略 | 契约测试CDC+VCR录制回放+冒烟+混沌 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2663 | Integration Capacity Planning 集成容量规划与限流 | 降级容量预算+四级限流架构 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2664 | Data Consistency Guarantee 数据一致性保证 | 一致性SLA+下单执行Saga编排 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2665 | Integration Closed Loop Optimization 集成闭环优化与自迭代 | 集成闭环优化与自迭代+演进路线图+知识注入接口 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3643 | iFind REST API 同花顺数据源 | REST 20QPS研究数据主源 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3644 | tushare REST API 数据源 | REST待开通备选+新闻 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3645 | AkShare HTTP Crawler 另类数据源 | HTTP/爬虫另类数据降级 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3646 | LLM APIs 大语言模型API服务 | DeepSeek/TAE/Claude AI服务 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3647 | Local LLM 本地大语言模型 | RTX3090推理本地LLM | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3648 | Whisper Audio ASR 音频转录 | 本地音频ASR转录 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3649 | WeChat Webhook 微信通知 | 告警推送微信Webhook | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3650 | Isolation Layer 隔离层 | 熔断器矩阵舱壁隔离Kill-Switch | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3651 | Routing Layer 路由层 | 数据源路由LLM路由MCP路由 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3652 | Internal Consumer Layer 内部消费层 | 内部功能域消费集成产出 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3653 | miniQMT xtdata 行情模块 | 本地IPC实时行情主源 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3659 | DeepSeek V4 Pro API 深度求索API | 复杂推理交叉验证 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3660 | TAE GLM-5.1 API 智谱GLM API | 中文场景交叉验证 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3661 | Claude API 克劳德API | 英文场景代码审查 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3662 | MCP Server MCP协议服务器 | JSON-RPC 2.0 AI工具调用 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3663 | WeChat Notification 微信通知 | HTTPS Webhook交易告警审批推送 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3664 | Email System 邮件系统 | SMTP报告分发 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3665 | AkShare Crawler AkShare爬虫 | HTTP/爬虫另类数据采集 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3666 | Git Local Repository Git本地仓库 | 文件系统代码版本管理 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3669 | Data Source Manager 数据源管理器 | 三源互补仲裁层 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3670 | Model Context Protocol MCP模型上下文协议 | AI服务与外部工具数据标准交互协议 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3671 | Market Data MCP Server 行情数据MCP服务器 | │MCP Server│  │MCP Server│  │MCP Server│ | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3672 | Knowledge Graph MCP Server 知识图谱MCP服务器 | / 知识图谱Server / resources: knowledge_graph / research_notes / 研究Agent/进化Agent / 只读 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3673 | Operations Monitor MCP Server 运维监控MCP服务器 | tools health_check/restart_service/query_logs | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3674 | Factor Calculation MCP Server 因子计算MCP服务器 | │MCP Server│  │MCP Server│  │MCP Server│ | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3675 | Agent Card Discovery Agent Card发现机制 | 每个Agent注册能力描述Card | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3676 | Task Delegation Protocol Task委托协议 | Agent间Task创建+状态追踪+结果回调 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3677 | Artifact Exchange Artifact交换 | Agent间成果交换+版本标记 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3678 | A2A Message Encryption A2A消息加密 | 进程内通信无需加密日志脱敏 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3679 | A2A MCP Hybrid Orchestration A2A+MCP混合编排 | A2A编排层+MCP执行层 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3680 | Bulkhead Isolation 舱壁隔离 | 按关键性等级隔离资源池 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3681 | Trading Execution Pool 交易执行池 | 专用线程×2独占miniQMT下单 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3682 | Market Data Pool 行情接收池 | 专用线程×2独占miniQMT Tick | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3683 | Risk Control Pool 风控计算池 | 专用线程×2独占C-004风控 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3684 | Data Fetch Pool 数据拉取池 | 线程池×4共享iFind/tushare | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3685 | LLM Inference Pool LLM推理池 | GPU显存8GB本地LLM/Whisper | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3686 | Notification Pool 通知推送池 | 线程池×2共享微信/邮件 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3687 | Kill-Switch 紧急停机机制 | 四级阶梯KS-L1~L4多层防御 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3689 | structlog Structured Logging 结构化日志 | Python原生调用链追踪 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3690 | prometheus_client 指标采集 | Python原生指标采集 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3691 | loguru 日志轮转 | Python原生日志聚合 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3692 | TraceID Propagation TraceID传播 | contextvars+structlog自动注入 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3695 | SLO Error Budget Tracking SLO误差预算追踪 | 自定义误差预算计算器+告警 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3696 | TLS 1.3 Encryption TLS 1.3强制加密 | 所有外部API调用强制HTTPS | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3697 | API Key Encrypted Storage API密钥加密存储 | 本地加密存储+Shamir 2-of-3分割 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3698 | API Key 90-Day Auto Rotation API密钥90天自动轮换 | 定时任务+双密钥过渡期 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3699 | Data Desensitization 数据脱敏 | 脱敏层拦截策略持仓因子 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3700 | External API Response Validation 外部API响应合理性校验 | 统计异常检测+行为基线 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3701 | API Record Replay VCR API录制回放 | VCR.py录制真实API响应回放测试 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3702 | Integration Smoke Test 集成冒烟测试 | pytest+非交易时段真实API调用 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3703 | Fault Injection Test 故障注入测试 | §6.5混沌工程矩阵 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3704 | Authentication Layer 认证层 | API Key密钥校验 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3705 | Circuit Breaker Layer 熔断层 | §6.1实现联动舱壁 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3706 | Desensitization Layer 脱敏层 | 数据过滤字段裁剪 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3707 | Audit Layer 审计层 | 6W日志哈希链 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3708 | AI Gateway AI网关 | 本地优先路由GPU显存门控Prompt注入防护 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3709 | AI Security Boundary Execution Layer AI安全边界执行层 | 参数变更计数参数幅度校验跨域变更检测 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3710 | Order Saga 下单Saga | 编排式Saga风控→信号→下单→成交→持仓→报告 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3711 | SBOM Basic Scan Series SBOM基础扫描系列 | SBOM基础扫描/生成系列 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3712 | SBOM Enhancement Series SBOM增强系列 | SBOM增强系列 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3713 | Traffic Policy Mapping Series 流量策略映射系列 | 流量策略映射系列 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3714 | Traffic Policy Enhancement Series 流量策略增强系列 | 流量策略增强系列 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3715 | L00 Data Source Blueprint L00数据源蓝图 | l00_data_source/已建设 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3762 | LLM Large Language Model 大语言模型 | iFind+LLM知识图谱构建 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3792 | Runtime Contract Engine 运行时契约引擎 | 从静态注册表升级为运行时路由+限流+熔断决策依据 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3793 | Redis Cache Redis缓存 | 状态可重建性矩阵AOF+RDB混合恢复<15s | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3892 | SBOM系列 SBOM Series | 旧版移除归属D-SECURITY | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3893 | 流量策略系列 Traffic Policy Series | 旧版移除归属D-INFRA-RUNTIME | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3894 | 协议转换/数据格式/插件市场 Protocol/DataFormat/Plugin | 旧版移除非集成域核心 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3895 | IdempotencyKeyInterceptor 幂等Key拦截器 | INT-004 publish_event入口幂等Key拦截 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4240 | API Lifecycle API生命周期 | / api_lifecycle.py / governance/ / API生命周期 / ❌ 属于D-INTEGRATION——API生命周期是集成域 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4241 | MCP Result Push MCP结果推送 | / mcp_result_push.py / governance/ / MCP结果推送 / ❌ 属于D-INTEGRATION——MCP推送是集成域 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5006 | A2AProtocolBridge A2A协议桥 | Agent Card+Task+Artifact | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5008 | Bulkhead Isolation Pool 舱壁隔离池 | / — / 舱壁隔离池 / 6个资源池(交易×2/行情×2/风控×2/数据×4/GPU8G/通知×2) / ✅ / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5009 | Kill-Switch Four-Level Cascade Kill-Switch四级阶梯 | / — / Kill-Switch四级阶梯 / KS-L1软暂停→KS-L2会话熔断→KS-L3通道断开→KS-L4硬停机 / ✅ / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5010 | Data Source Router 数据源路由 | 三源互补+投票仲裁+品种差异化阈值 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5011 | LLM Router LLM路由 | 本地LLM优先+GPU显存门控+成本感知 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5012 | ContractVersionManager 契约版本管理器 | 契约版本管理+兼容性检查+冻结 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5013 | ServiceRegistry 服务注册发现 | 服务注册发现+健康检查+语义能力发现 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5014 | APIDocumentation API文档 | OpenAPI 3.0+自动生成 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5015 | IntegrationTester 集成测试器 | CDC+VCR+冒烟+混沌测试 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5016 | EventBusManager 事件总线管理器 | 事件总线管理+blinker/asyncio+事件路由 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5017 | IntegrationHealthMonitor 集成健康监控 | 集成健康监控+SLI/SLO+外部依赖SLA | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5018 | SecretManagerIntegration 密钥管理集成 | / D-INT-28 / SecretManagerIntegration / API密钥加密存储+90天自动轮换+Shamir 2-of-3 / ✅ / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5019 | AutoScaling 自动扩缩容 | 自动扩缩容 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5020 | MultiRegion 跨区域 | 跨区域 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5021 | ZeroTrust 零信任 | 零信任 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5049 | D-INT-36 ArchitectureAsCode 架构即代码 | / D-INT-36 ArchitectureAsCode / 架构元模型未稳定 / 依赖图↔架构定义双向自动更新成功率>95%+C-023上线 / | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5051 | API Routing Service Discovery API路由与服务发现 | 约束二单机约束二修改为多机部署 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5053 | Cross-Market Data Integrator 跨市场数据集成器 | 约束三+约束二约束三修改为跨境 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5055 | MCP Trading Execution Server MCP交易执行Server | HB-SEC-08+HB-SEC-07+HB-SEC-05 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-INT-001 | ONNX Inference Optimization / ONNX推理优化 | 把AI模型推理从PyTorch换成ONNX格式，速度快2-3倍。现在PyTorch推理不慢，等盘中推理真卡了再优化。 | D_INTEGRATION | 延后（deferred） | q2 无需求驱动 | P2 | PyTorch推理延迟>50ms(盘中) 等3条 | 2027-07-31 |
+| CAND-BACL-001 | Broker ACL 三层架构重构 / 经纪商访问控制分层 | 把券商接入的权限管理拆成认证/授权/审计三层。但现在只有2个券商适配器，平铺着够用，没到非要重构的程度。 | D_INTEGRATION | 否决（rejected） | q2 无需求驱动 | P2 | 经纪商数量超过5个且权限规则出现冲突 等2条 | 2027-07-31 |
+
+## 按四问卡点分组（为什么没开发）
+
+> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+
+### q2 无需求驱动（2 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-BACL-001 | Broker ACL 三层架构重构 / 经纪商访问控制分层 | 把券商接入的权限管理拆成认证/授权/审计三层。但现在只有2个券商适配器，平铺着够用，没到非要重构的程度。 | D_INTEGRATION | rejected,q2无重构驱动。除非经纪商数量超5个且权限规则冲突,否则不再评估 | 维持现有2 adapter平铺。代价:无,已满足需求 |
+| CAND-INT-001 | ONNX Inference Optimization / ONNX推理优化 | 把AI模型推理从PyTorch换成ONNX格式，速度快2-3倍。现在PyTorch推理不慢，等盘中推理真卡了再优化。 | D_INTEGRATION | 首次登记,待PyTorch推理延迟>50ms或ML模型稳定部署时重新评估 | PyTorch后端(当前实现)。代价:推理延迟较高 |
+
+### 待评估（163 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-HARVEST-0057 | Capital Flow Behavior Analysis 资金行为分析 | C 011：资金行为分析 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0100 | 微信多人互动 WeChat Multi-Person Interaction | C 019：微信多人互动 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0377 | API Gateway API网关 | / D-INTEGRATION-01 / API Gateway / ✅ 能建 / / API网关+路由+限流 / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0378 | Adapter Manager 适配器管理器 | / D-INTEGRATION-07 / Adapter Manager / ✅ 能建 / 📋 项目内有蓝图编号MOD-L05-001已建设 / 适配器管理+Broker适配器 / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0379 | MCP Server MCP服务器 | / D-INTEGRATION-08 / MCP Server / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-013已建设 / MCP协议+工具注册 / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0380 | Event Bus Manager 事件总线 | / D-INTEGRATION-11 / Event Bus Manager / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-016已建设 / 事件总线+事件路由 / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0381 | M2-S01 | M2 S01 Python包SBOM扫描器 ❌ 不能建 门禁: 需SBOM扫描基础设施 Python | D_INTEGRATION | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0382 | M2-S02 | M2 S02 脚本SBOM扫描器 ❌ 不能建 门禁: 需SBOM扫描基础设施 脚本扫描 | D_INTEGRATION | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0383 | M2-S03 | M2 S03 模块注册SBOM生成器 ❌ 不能建 门禁: 需SBOM扫描基础设施 模块注册 | D_INTEGRATION | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0384 | M2-S04 | M2 S04 CycloneDX生成器 ❌ 不能建 门禁: 需SBOM扫描基础设施 CycloneD | D_INTEGRATION | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0385 | M2-S05 | M2 S05 SPDX生成器 ❌ 不能建 门禁: 需SBOM扫描基础设施 SPDX格式 | D_INTEGRATION | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0386 | M2-S06 | M2 S06 SBOM差异分析器 ❌ 不能建 门禁: 需SBOM扫描基础设施 差异分析 | D_INTEGRATION | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0387 | M2-S07 | M2 S07 SBOM签名验证器 ❌ 不能建 门禁: 需SBOM扫描基础设施 签名验证 | D_INTEGRATION | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0388 | M2-NEW-01 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0389 | M2-NEW-02 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0390 | M2-NEW-03 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0391 | M2-NEW-04 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0392 | M2-NEW-05 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0393 | M2-NEW-06 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0394 | M2-NEW-07 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0395 | M2-NEW-08 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0396 | M2-NEW-09 | / M2-NEW-01 / CycloneDX 1.7增强生成器 / ❌ 不能建 / / 门禁: 需SBOM扫描基础设施+容器扫描/IaC扫描/Sigstore / CycloneDX1.7 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0693 | Data Format Transformer 数据格式转换器 | 多格式支持+格式转换+Schema映射+格式验证 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0900 | A2A Protocol Handler A2A协议处理器 | A2A协议处理器Agent间通信+JSON-RPC 2.0+能力矩阵+A2A铁律 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0901 | External System Adapter 外部系统适配器 | 外部系统适配器miniQMT/iFind/tushare/券商接口+数据源故障降级 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0902 | Isolation Manager 隔离管理器 | 隔离管理器熔断器状态机+舱壁隔离+超时重试+Kill-Switch四级阶梯+混沌工程 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0903 | Integration Observability 集成可观测性 | 集成可观测性Python原生替代OTel+SLI/SLO体系+分布式追踪+集成健康度 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1180 | A2A Protocol Bridge A2A协议桥接 | A2A协议桥接+Agent Card+Task委托+Artifact交换 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1181 | External System Connector 外部系统连接器 | 外部系统连接器+券商API+数据源API | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1182 | Traffic Policy Dependency Mapper 流量策略依赖映射器 | 流量策略依赖映射门禁未满足 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1183 | Protocol Converter 协议转换器 | 协议转换器门禁未满足 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1184 | Plugin Marketplace 插件市场 | 插件市场门禁未满足 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1185 | Saga Orchestrator Saga编排器 | 下单Saga编排+再平衡Saga+模型上线Saga | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1186 | DistributedTracePropagator 分布式追踪传播器 | / D-INT-19 / DistributedTracePropagator / 轻量级TraceID传播(structlog+@trace+contextvars) / ✅ / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1187 | BackpressureManager 背压管理器 | CTR-BP-001~003暂停/限流/恢复 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1188 | Service Mesh Integration 服务网格集成 | 服务网格集成门禁未满足 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1191 | SDK Auto-Generator SDK自动生成器 | SDK自动生成门禁未满足 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1192 | Auto-Scaling Integration 自动扩缩集成 | 自动扩缩集成门禁未满足 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1194 | Multi-Region Coordinator 多区域协调器 | 多区域协调门禁未满足 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1195 | LLM Security Gateway Integration LLM安全网关集成 | 6层纵深防御集成+LLM 4层guardrails | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1196 | Zero Trust Integration 零信任集成 | 零信任集成门禁未满足 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1197 | CI/CDIntegration CI/CD集成 | 契约测试CI/CD集成+API变更自动验证+失败阻断部署 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1198 | Component Reuse Manager 组件复用管理器 | 集成组件复用管理+适配器/连接器/转换器跨流程复用 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1199 | Architecture Governance Integration 架构治理集成 | 蓝图-代码对齐+契约-实现漂移检测 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1200 | Architecture as Code Integration 架构即代码集成 | 架构即代码集成门禁未满足 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1201 | Compliance Policy Integration 合规策略集成 | 合规策略即代码+监管变更追踪+合规网关层 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1202 | FeatureFlagManager 功能开关管理器 | 功能开关管理+渐进式集成+灰度发布+开关联动 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1203 | DataSourceConnectorRegistry 数据源连接器注册中心 | 数据源连接器注册中心+生命周期+健康检查+自动发现 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1204 | Behavioral Admission Integration 行为准入门禁集成 | 行为准入门禁集成+准入控制器+裁决引擎 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1205 | Auto Integration Registry 自动集成注册表 | 自动集成注册表+运行时自动发现+集成闭环自动注册 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1423 | Trading Execution MCP Server 交易执行MCP服务器 | tools place_order/cancel_order/query_position | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1487 | Service Mesh 服务网格 | / 服务网格 / ❌不能建 / 无 / Istio Ambient Mesh+SPIFFE身份 / ①多进程架构(>5服务) ②跨机器部署 ③mTLS需求 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1796 | Secret Manager Integration 密钥管理器集成 | API密钥加密存储+90天自动轮换+Shamir 2-of-3 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1797 | Integration Config Manager 集成配置管理器 | 集成配置GitOps+分环境配置+热更新+版本追溯 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1798 | Dependency Semantics Integration 依赖语义集成 | 依赖语义分类(H/S/E/条件/可选)+依赖传播+影响分析 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1799 | Local Model Integration 本地模型集成 | 本地模型推理集成+嵌入路由+Ollama集成+推理缓存+调度器 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1800 | DepMap Integration DepMap集成 | MOD-INF-040编号冲突+AST依赖扫描准确率>95%门禁 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2172 | MCP Model Context Protocol 模型上下文协议 | MCP Model Context Protocol标准化工具集成协议 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2173 | Google A2A Protocol Google A2A协议 | Google A2A Protocol标准化智能体间通信协议 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2228 | ACL Anti-Corruption Layer ACL防腐层 | ACL防腐层事件订阅走ACL防腐层新增域事件只需在ACL注册 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2654 | External System Interaction Matrix 外部系统交互矩阵 | 9+系统外部系统交互矩阵 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-2655 | Integration Style 集成风格 | 同步/异步/事件驱动/批量+决策矩阵 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2656 | Data Source Failure Degradation 数据源故障降级 | 三源互补+投票仲裁+自动切换+数据质量降级 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2657 | MCP Protocol Integration MCP协议集成 | / MCP协议集成（Client-Host-Server+MCP 2026规范+路线图） / 安全边界（→A5） / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2658 | A2A Protocol Integration A2A协议集成 | A2A与MCP边界裁定+能力矩阵+A2A铁律 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2659 | Isolation Strategy 隔离策略 | / 隔离策略（熔断器状态机+舱壁隔离+超时重试+Kill-Switch四级阶梯+混沌工程） / Agent通信（→A7） / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2660 | API Gateway Design API网关设计 | 四层架构路由/认证/限流/审计 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2661 | Integration Security Defense 集成安全纵深 | 安全威胁矩阵+安全能力矩阵+API密钥轮换 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2662 | Integration Test Strategy 集成测试策略 | 契约测试CDC+VCR录制回放+冒烟+混沌 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2663 | Integration Capacity Planning 集成容量规划与限流 | 降级容量预算+四级限流架构 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2664 | Data Consistency Guarantee 数据一致性保证 | 一致性SLA+下单执行Saga编排 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2665 | Integration Closed Loop Optimization 集成闭环优化与自迭代 | 集成闭环优化与自迭代+演进路线图+知识注入接口 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3643 | iFind REST API 同花顺数据源 | REST 20QPS研究数据主源 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3644 | tushare REST API 数据源 | REST待开通备选+新闻 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3645 | AkShare HTTP Crawler 另类数据源 | HTTP/爬虫另类数据降级 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3646 | LLM APIs 大语言模型API服务 | DeepSeek/TAE/Claude AI服务 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3647 | Local LLM 本地大语言模型 | RTX3090推理本地LLM | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3648 | Whisper Audio ASR 音频转录 | 本地音频ASR转录 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3649 | WeChat Webhook 微信通知 | 告警推送微信Webhook | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3650 | Isolation Layer 隔离层 | 熔断器矩阵舱壁隔离Kill-Switch | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3651 | Routing Layer 路由层 | 数据源路由LLM路由MCP路由 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3652 | Internal Consumer Layer 内部消费层 | 内部功能域消费集成产出 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3653 | miniQMT xtdata 行情模块 | 本地IPC实时行情主源 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3659 | DeepSeek V4 Pro API 深度求索API | 复杂推理交叉验证 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3660 | TAE GLM-5.1 API 智谱GLM API | 中文场景交叉验证 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3661 | Claude API 克劳德API | 英文场景代码审查 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3662 | MCP Server MCP协议服务器 | JSON-RPC 2.0 AI工具调用 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3663 | WeChat Notification 微信通知 | HTTPS Webhook交易告警审批推送 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3664 | Email System 邮件系统 | SMTP报告分发 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3665 | AkShare Crawler AkShare爬虫 | HTTP/爬虫另类数据采集 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3666 | Git Local Repository Git本地仓库 | 文件系统代码版本管理 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3669 | Data Source Manager 数据源管理器 | 三源互补仲裁层 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3670 | Model Context Protocol MCP模型上下文协议 | AI服务与外部工具数据标准交互协议 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3671 | Market Data MCP Server 行情数据MCP服务器 | │MCP Server│  │MCP Server│  │MCP Server│ | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3672 | Knowledge Graph MCP Server 知识图谱MCP服务器 | / 知识图谱Server / resources: knowledge_graph / research_notes / 研究Agent/进化Agent / 只读 / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3673 | Operations Monitor MCP Server 运维监控MCP服务器 | tools health_check/restart_service/query_logs | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3674 | Factor Calculation MCP Server 因子计算MCP服务器 | │MCP Server│  │MCP Server│  │MCP Server│ | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3675 | Agent Card Discovery Agent Card发现机制 | 每个Agent注册能力描述Card | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3676 | Task Delegation Protocol Task委托协议 | Agent间Task创建+状态追踪+结果回调 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3677 | Artifact Exchange Artifact交换 | Agent间成果交换+版本标记 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3678 | A2A Message Encryption A2A消息加密 | 进程内通信无需加密日志脱敏 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3679 | A2A MCP Hybrid Orchestration A2A+MCP混合编排 | A2A编排层+MCP执行层 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3680 | Bulkhead Isolation 舱壁隔离 | 按关键性等级隔离资源池 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3681 | Trading Execution Pool 交易执行池 | 专用线程×2独占miniQMT下单 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3682 | Market Data Pool 行情接收池 | 专用线程×2独占miniQMT Tick | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3683 | Risk Control Pool 风控计算池 | 专用线程×2独占C-004风控 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3684 | Data Fetch Pool 数据拉取池 | 线程池×4共享iFind/tushare | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3685 | LLM Inference Pool LLM推理池 | GPU显存8GB本地LLM/Whisper | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3686 | Notification Pool 通知推送池 | 线程池×2共享微信/邮件 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3687 | Kill-Switch 紧急停机机制 | 四级阶梯KS-L1~L4多层防御 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3689 | structlog Structured Logging 结构化日志 | Python原生调用链追踪 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3690 | prometheus_client 指标采集 | Python原生指标采集 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3691 | loguru 日志轮转 | Python原生日志聚合 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3692 | TraceID Propagation TraceID传播 | contextvars+structlog自动注入 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3695 | SLO Error Budget Tracking SLO误差预算追踪 | 自定义误差预算计算器+告警 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3696 | TLS 1.3 Encryption TLS 1.3强制加密 | 所有外部API调用强制HTTPS | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3697 | API Key Encrypted Storage API密钥加密存储 | 本地加密存储+Shamir 2-of-3分割 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3698 | API Key 90-Day Auto Rotation API密钥90天自动轮换 | 定时任务+双密钥过渡期 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3699 | Data Desensitization 数据脱敏 | 脱敏层拦截策略持仓因子 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3700 | External API Response Validation 外部API响应合理性校验 | 统计异常检测+行为基线 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3701 | API Record Replay VCR API录制回放 | VCR.py录制真实API响应回放测试 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3702 | Integration Smoke Test 集成冒烟测试 | pytest+非交易时段真实API调用 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3703 | Fault Injection Test 故障注入测试 | §6.5混沌工程矩阵 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3704 | Authentication Layer 认证层 | API Key密钥校验 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3705 | Circuit Breaker Layer 熔断层 | §6.1实现联动舱壁 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3706 | Desensitization Layer 脱敏层 | 数据过滤字段裁剪 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3707 | Audit Layer 审计层 | 6W日志哈希链 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3708 | AI Gateway AI网关 | 本地优先路由GPU显存门控Prompt注入防护 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3709 | AI Security Boundary Execution Layer AI安全边界执行层 | 参数变更计数参数幅度校验跨域变更检测 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3710 | Order Saga 下单Saga | 编排式Saga风控→信号→下单→成交→持仓→报告 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3711 | SBOM Basic Scan Series SBOM基础扫描系列 | SBOM基础扫描/生成系列 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3712 | SBOM Enhancement Series SBOM增强系列 | SBOM增强系列 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3713 | Traffic Policy Mapping Series 流量策略映射系列 | 流量策略映射系列 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3714 | Traffic Policy Enhancement Series 流量策略增强系列 | 流量策略增强系列 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3715 | L00 Data Source Blueprint L00数据源蓝图 | l00_data_source/已建设 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3762 | LLM Large Language Model 大语言模型 | iFind+LLM知识图谱构建 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3792 | Runtime Contract Engine 运行时契约引擎 | 从静态注册表升级为运行时路由+限流+熔断决策依据 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3793 | Redis Cache Redis缓存 | 状态可重建性矩阵AOF+RDB混合恢复<15s | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3892 | SBOM系列 SBOM Series | 旧版移除归属D-SECURITY | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3893 | 流量策略系列 Traffic Policy Series | 旧版移除归属D-INFRA-RUNTIME | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3894 | 协议转换/数据格式/插件市场 Protocol/DataFormat/Plugin | 旧版移除非集成域核心 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3895 | IdempotencyKeyInterceptor 幂等Key拦截器 | INT-004 publish_event入口幂等Key拦截 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4240 | API Lifecycle API生命周期 | / api_lifecycle.py / governance/ / API生命周期 / ❌ 属于D-INTEGRATION——API生命周期是集成域 / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4241 | MCP Result Push MCP结果推送 | / mcp_result_push.py / governance/ / MCP结果推送 / ❌ 属于D-INTEGRATION——MCP推送是集成域 / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5006 | A2AProtocolBridge A2A协议桥 | Agent Card+Task+Artifact | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5008 | Bulkhead Isolation Pool 舱壁隔离池 | / — / 舱壁隔离池 / 6个资源池(交易×2/行情×2/风控×2/数据×4/GPU8G/通知×2) / ✅ / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-5009 | Kill-Switch Four-Level Cascade Kill-Switch四级阶梯 | / — / Kill-Switch四级阶梯 / KS-L1软暂停→KS-L2会话熔断→KS-L3通道断开→KS-L4硬停机 / ✅ / | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-5010 | Data Source Router 数据源路由 | 三源互补+投票仲裁+品种差异化阈值 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5011 | LLM Router LLM路由 | 本地LLM优先+GPU显存门控+成本感知 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5012 | ContractVersionManager 契约版本管理器 | 契约版本管理+兼容性检查+冻结 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5013 | ServiceRegistry 服务注册发现 | 服务注册发现+健康检查+语义能力发现 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-5014 | APIDocumentation API文档 | OpenAPI 3.0+自动生成 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-5015 | IntegrationTester 集成测试器 | CDC+VCR+冒烟+混沌测试 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5016 | EventBusManager 事件总线管理器 | 事件总线管理+blinker/asyncio+事件路由 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5017 | IntegrationHealthMonitor 集成健康监控 | 集成健康监控+SLI/SLO+外部依赖SLA | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5018 | SecretManagerIntegration 密钥管理集成 | / D-INT-28 / SecretManagerIntegration / API密钥加密存储+90天自动轮换+Shamir 2-of-3 / ✅ / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5019 | AutoScaling 自动扩缩容 | 自动扩缩容 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5020 | MultiRegion 跨区域 | 跨区域 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-5021 | ZeroTrust 零信任 | 零信任 | D_INTEGRATION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-5049 | D-INT-36 ArchitectureAsCode 架构即代码 | / D-INT-36 ArchitectureAsCode / 架构元模型未稳定 / 依赖图↔架构定义双向自动更新成功率>95%+C-023上线 / | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5051 | API Routing Service Discovery API路由与服务发现 | 约束二单机约束二修改为多机部署 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5053 | Cross-Market Data Integrator 跨市场数据集成器 | 约束三+约束二约束三修改为跨境 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5055 | MCP Trading Execution Server MCP交易执行Server | HB-SEC-08+HB-SEC-07+HB-SEC-05 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
+
+## 复查时间表
+
+> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+
+| 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
+|------|------|------|------|------|------|------|
+| 2026-11-30 | quarterly | CAND-HARVEST-0057 | Capital Flow Behavior Analysis 资金行为分析 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0100 | 微信多人互动 WeChat Multi-Person Interaction | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0377 | API Gateway API网关 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0378 | Adapter Manager 适配器管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0379 | MCP Server MCP服务器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0380 | Event Bus Manager 事件总线 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0381 | M2-S01 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（uncertain） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0382 | M2-S02 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（uncertain） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0383 | M2-S03 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（uncertain） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0384 | M2-S04 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（uncertain） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0385 | M2-S05 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（uncertain） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0386 | M2-S06 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（uncertain） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0387 | M2-S07 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（uncertain） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0388 | M2-NEW-01 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0389 | M2-NEW-02 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0390 | M2-NEW-03 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0391 | M2-NEW-04 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0392 | M2-NEW-05 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0393 | M2-NEW-06 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0394 | M2-NEW-07 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0395 | M2-NEW-08 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0396 | M2-NEW-09 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0693 | Data Format Transformer 数据格式转换器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0900 | A2A Protocol Handler A2A协议处理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0901 | External System Adapter 外部系统适配器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0902 | Isolation Manager 隔离管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-0903 | Integration Observability 集成可观测性 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1180 | A2A Protocol Bridge A2A协议桥接 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1181 | External System Connector 外部系统连接器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1182 | Traffic Policy Dependency Mapper 流量策略依赖映射器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1183 | Protocol Converter 协议转换器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1184 | Plugin Marketplace 插件市场 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1185 | Saga Orchestrator Saga编排器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1186 | DistributedTracePropagator 分布式追踪传播器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1187 | BackpressureManager 背压管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1188 | Service Mesh Integration 服务网格集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1191 | SDK Auto-Generator SDK自动生成器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1192 | Auto-Scaling Integration 自动扩缩集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1194 | Multi-Region Coordinator 多区域协调器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1195 | LLM Security Gateway Integration LLM安全网关集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1196 | Zero Trust Integration 零信任集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1197 | CI/CDIntegration CI/CD集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1198 | Component Reuse Manager 组件复用管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1199 | Architecture Governance Integration 架构治理集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1200 | Architecture as Code Integration 架构即代码集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1201 | Compliance Policy Integration 合规策略集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1202 | FeatureFlagManager 功能开关管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1203 | DataSourceConnectorRegistry 数据源连接器注册中心 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1204 | Behavioral Admission Integration 行为准入门禁集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1205 | Auto Integration Registry 自动集成注册表 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1423 | Trading Execution MCP Server 交易执行MCP服务器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1487 | Service Mesh 服务网格 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1796 | Secret Manager Integration 密钥管理器集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1797 | Integration Config Manager 集成配置管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1798 | Dependency Semantics Integration 依赖语义集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1799 | Local Model Integration 本地模型集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-1800 | DepMap Integration DepMap集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2172 | MCP Model Context Protocol 模型上下文协议 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2173 | Google A2A Protocol Google A2A协议 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2228 | ACL Anti-Corruption Layer ACL防腐层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2654 | External System Interaction Matrix 外部系统交互矩阵 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2655 | Integration Style 集成风格 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2656 | Data Source Failure Degradation 数据源故障降级 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2657 | MCP Protocol Integration MCP协议集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2658 | A2A Protocol Integration A2A协议集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2659 | Isolation Strategy 隔离策略 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2660 | API Gateway Design API网关设计 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2661 | Integration Security Defense 集成安全纵深 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2662 | Integration Test Strategy 集成测试策略 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2663 | Integration Capacity Planning 集成容量规划与限流 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2664 | Data Consistency Guarantee 数据一致性保证 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-2665 | Integration Closed Loop Optimization 集成闭环优化与自迭代 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3643 | iFind REST API 同花顺数据源 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3644 | tushare REST API 数据源 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3645 | AkShare HTTP Crawler 另类数据源 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3646 | LLM APIs 大语言模型API服务 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3647 | Local LLM 本地大语言模型 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3648 | Whisper Audio ASR 音频转录 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3649 | WeChat Webhook 微信通知 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3650 | Isolation Layer 隔离层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3651 | Routing Layer 路由层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3652 | Internal Consumer Layer 内部消费层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3653 | miniQMT xtdata 行情模块 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3659 | DeepSeek V4 Pro API 深度求索API | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3660 | TAE GLM-5.1 API 智谱GLM API | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3661 | Claude API 克劳德API | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3662 | MCP Server MCP协议服务器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3663 | WeChat Notification 微信通知 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3664 | Email System 邮件系统 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3665 | AkShare Crawler AkShare爬虫 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3666 | Git Local Repository Git本地仓库 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3669 | Data Source Manager 数据源管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3670 | Model Context Protocol MCP模型上下文协议 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3671 | Market Data MCP Server 行情数据MCP服务器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3672 | Knowledge Graph MCP Server 知识图谱MCP服务器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3673 | Operations Monitor MCP Server 运维监控MCP服务器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3674 | Factor Calculation MCP Server 因子计算MCP服务器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3675 | Agent Card Discovery Agent Card发现机制 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3676 | Task Delegation Protocol Task委托协议 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3677 | Artifact Exchange Artifact交换 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3678 | A2A Message Encryption A2A消息加密 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3679 | A2A MCP Hybrid Orchestration A2A+MCP混合编排 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3680 | Bulkhead Isolation 舱壁隔离 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3681 | Trading Execution Pool 交易执行池 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3682 | Market Data Pool 行情接收池 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3683 | Risk Control Pool 风控计算池 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3684 | Data Fetch Pool 数据拉取池 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3685 | LLM Inference Pool LLM推理池 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3686 | Notification Pool 通知推送池 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3687 | Kill-Switch 紧急停机机制 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3689 | structlog Structured Logging 结构化日志 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3690 | prometheus_client 指标采集 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3691 | loguru 日志轮转 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3692 | TraceID Propagation TraceID传播 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3695 | SLO Error Budget Tracking SLO误差预算追踪 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3696 | TLS 1.3 Encryption TLS 1.3强制加密 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3697 | API Key Encrypted Storage API密钥加密存储 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3698 | API Key 90-Day Auto Rotation API密钥90天自动轮换 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3699 | Data Desensitization 数据脱敏 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3700 | External API Response Validation 外部API响应合理性校验 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3701 | API Record Replay VCR API录制回放 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3702 | Integration Smoke Test 集成冒烟测试 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3703 | Fault Injection Test 故障注入测试 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3704 | Authentication Layer 认证层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3705 | Circuit Breaker Layer 熔断层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3706 | Desensitization Layer 脱敏层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3707 | Audit Layer 审计层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3708 | AI Gateway AI网关 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3709 | AI Security Boundary Execution Layer AI安全边界执行层 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3710 | Order Saga 下单Saga | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3711 | SBOM Basic Scan Series SBOM基础扫描系列 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3712 | SBOM Enhancement Series SBOM增强系列 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3713 | Traffic Policy Mapping Series 流量策略映射系列 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3714 | Traffic Policy Enhancement Series 流量策略增强系列 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3715 | L00 Data Source Blueprint L00数据源蓝图 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3762 | LLM Large Language Model 大语言模型 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3792 | Runtime Contract Engine 运行时契约引擎 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3793 | Redis Cache Redis缓存 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3892 | SBOM系列 SBOM Series | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3893 | 流量策略系列 Traffic Policy Series | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3894 | 协议转换/数据格式/插件市场 Protocol/DataFormat/Plugin | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3895 | IdempotencyKeyInterceptor 幂等Key拦截器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-4240 | API Lifecycle API生命周期 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-4241 | MCP Result Push MCP结果推送 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5006 | A2AProtocolBridge A2A协议桥 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5008 | Bulkhead Isolation Pool 舱壁隔离池 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5009 | Kill-Switch Four-Level Cascade Kill-Switch四级阶梯 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5010 | Data Source Router 数据源路由 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5011 | LLM Router LLM路由 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5012 | ContractVersionManager 契约版本管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5013 | ServiceRegistry 服务注册发现 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5014 | APIDocumentation API文档 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5015 | IntegrationTester 集成测试器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5016 | EventBusManager 事件总线管理器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5017 | IntegrationHealthMonitor 集成健康监控 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5018 | SecretManagerIntegration 密钥管理集成 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5019 | AutoScaling 自动扩缩容 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5020 | MultiRegion 跨区域 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5021 | ZeroTrust 零信任 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5049 | D-INT-36 ArchitectureAsCode 架构即代码 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5051 | API Routing Service Discovery API路由与服务发现 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5053 | Cross-Market Data Integrator 跨市场数据集成器 | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-5055 | MCP Trading Execution Server MCP交易执行Server | D_INTEGRATION | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2027-07-31 | yearly | CAND-BACL-001 | Broker ACL 三层架构重构 / 经纪商访问控制分层 | D_INTEGRATION | 否决（rejected） | rejected,q2无重构驱动。除非经纪商数量超5个且权限规则冲突,否则不再评估 |
+| 2027-07-31 | yearly | CAND-INT-001 | ONNX Inference Optimization / ONNX推理优化 | D_INTEGRATION | 延后（deferred） | 首次登记,待PyTorch推理延迟>50ms或ML模型稳定部署时重新评估 |

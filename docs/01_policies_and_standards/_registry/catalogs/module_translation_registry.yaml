@@ -21121,3 +21121,501 @@ entries:
   desc_zh: verdict引擎模块
   desc_en: ''
   plain_zh: verdict引擎，交易的事件，定义和分发事件。
+
+  # ============================================================
+  # 候选模块翻译条目（key=候选ID CAND-xxx，非真实路径）
+  # 设计决策（HCS-14/Feature-Flag 实践，2026-08-01）：候选模块未实现、无 .py 路径，
+  # 用稳定的候选ID作key，不用易变的"未来预期路径"。晋升为真实模块后 CAND-xxx 永久保留，
+  # 真实module_path作为属性补充，不替换key——符合"ID不随endpoint变化"原则，避免翻译断链。
+  # 数据源: candidate_module_registry.yaml (候选库真源 REG-CAND-001)
+  # ============================================================
+- module_path: CAND-RSK-014
+  domain_id: D_RISK
+  name_zh: 黑天鹅模式库
+  name_en: black_swan_pattern_library
+  desc_zh: 极端事件模式识别+历史重放+预案匹配+黑天鹅事件分类+自动根因分析
+  desc_en: ''
+  plain_zh: "像2015股灾、2020疫情底这种极端行情，现有风控挡不住。这个库把历史极端事件存成模式，实盘遇到相似走势自动预警并触发熔断，保命用的。"
+- module_path: CAND-SIGLEGACY-001
+  domain_id: D_SIGLEGACY
+  name_zh: 多策略引擎（死域）
+  name_en: multi_strategy_engine_legacy
+  desc_zh: 原设计的多策略编排引擎，功能已由 D_PF_CORE 承接，域已死
+  desc_en: ''
+  plain_zh: "本来想做个'多策略总调度'，但这活儿已经被 D_PF_CORE 的 MOD-L05-001 干了。域也死了，留档只为防止以后有人重复设计。"
+- module_path: CAND-PTC-001
+  domain_id: D_RISK
+  name_zh: 盘前检查器（已实现组合）
+  name_en: pre_trade_checker
+  desc_zh: 盘前统一检查器，已被 risk_validator+risk_validation_bridge+position_limit_checker 三件组合承接
+  desc_en: ''
+  plain_zh: "下单前先查一遍：持仓够不够、资金够不够、有没有违规。但这功能已有三个模块组合起来做了，再单建一个等于重复造轮子。"
+- module_path: CAND-WFO-001
+  domain_id: D_BACKTEST
+  name_zh: 滚动前进优化器
+  name_en: walk_forward_optimizer
+  desc_zh: Walk-Forward 滚动优化，训练窗固定测试窗前推，评估参数稳健性防过拟合
+  desc_en: ''
+  plain_zh: "回测调参时用一段历史调、下一段验证，像考试一样滚动检验，防止参数只在历史上好看、实盘就拉胯。等真出现过拟合再说。"
+- module_path: CAND-AISA-001
+  domain_id: D_INTELLIGENCE
+  name_zh: AI舆情分析器
+  name_en: ai_sentiment_analyzer
+  desc_zh: AI 舆情分析，对新闻/公告/研报做 NLP 情绪打分，产出舆情分数与事件信号
+  desc_en: ''
+  plain_zh: "A股受政策和新闻影响大。这模块用AI读新闻/公告/研报打情绪分，给交易决策参考。但还在评估：是不是直接让AI运行时做就行，不用专门建模块。"
+- module_path: CAND-BACL-001
+  domain_id: D_INTEGRATION
+  name_zh: 经纪商访问控制三层架构
+  name_en: broker_acl_three_tier
+  desc_zh: 将经纪商访问控制重构为三层ACL（认证/授权/审计分层）
+  desc_en: ''
+  plain_zh: "把券商接入的权限管理拆成认证/授权/审计三层。但现在只有2个券商适配器，平铺着够用，没到非要重构的程度。"
+- module_path: CAND-PC-001
+  domain_id: D_GOV_RULE
+  name_zh: 策略编译器（AI替代）
+  name_en: policy_compiler
+  desc_zh: 将高层策略 DSL 编译为可执行检查器代码，实现规则→检查器自动翻译
+  desc_en: ''
+  plain_zh: "把高层规则自动翻译成可执行的检查器代码。但TRAE AI运行时直接能做这种翻译，专门造个编译器属于过度工程。"
+- module_path: CAND-DR-001
+  domain_id: D_INFRA_RECOVERY
+  name_zh: 异地备份（用户推翻）
+  name_en: offsite_backup
+  desc_zh: 异地/离线备份，本地外接盘之外增加异地副本，满足 3-2-1 备份原则
+  desc_en: ''
+  plain_zh: "本地备份之外再加一份云上/异地副本（3-2-1原则）。用户已裁定：单用户场景本地外接盘F盘就够，不预埋异地备份。"
+- module_path: CAND-EX-001
+  domain_id: D_EX_CORE
+  name_zh: 富途IB券商适配器
+  name_en: futu_ib_broker_adapters
+  desc_zh: 富途/IB券商适配器，对接富途OpenAPI/IB TWS API 实现真实券商下单
+  desc_en: ''
+  plain_zh: "对接富途/IB券商的真实下单API。现在MiniQMT只管A股，等真要做港股/美股/期货时再加。"
+- module_path: CAND-EX-002
+  domain_id: D_EX_CORE
+  name_zh: 多线程订单处理
+  name_en: multi_threaded_order_processing
+  desc_zh: execution_engine 从单线程升级为 ThreadPoolExecutor，支持并发订单提交
+  desc_en: ''
+  plain_zh: "下单从单线程改多线程并发，一次能同时发多个单。现在订单量小（并发<10），单线程不卡，等批量下单真成瓶颈再改。"
+- module_path: CAND-SIG-002
+  domain_id: D_SIGNAL
+  name_zh: ML驱动信号合成
+  name_en: ml_signal_synthesizer
+  desc_zh: 用机器学习模型学习因子IC权重，替代当前IC加权占位实现
+  desc_en: ''
+  plain_zh: "用机器学习学每个因子的权重，代替固定加权，能捕捉因子间的复杂关系。但当前因子太少（<50），ML学不出稳定权重，等因子攒够了再说。"
+- module_path: CAND-FAC-001
+  domain_id: D_FACTOR
+  name_zh: 因子缓存
+  name_en: factor_cache
+  desc_zh: 缓存因子计算结果，避免重复计算，降低计算延迟
+  desc_en: ''
+  plain_zh: "把算过的因子结果存起来，下次直接用，省得重复算。现在因子不到10个、算得又快，没到需要缓存的份。"
+- module_path: CAND-SIM-002
+  domain_id: D_SIMULATION
+  name_zh: 实验队列调度
+  name_en: experiment_queue_scheduler
+  desc_zh: 支持实验优先级排序+并发执行调度，当前为单次顺序执行
+  desc_en: ''
+  plain_zh: "多个实验排队、按优先级并发跑。现在实验都是单跑、顺序来，没几个并发，用不着排队调度。"
+- module_path: CAND-BT-001
+  domain_id: D_BACKTEST
+  name_zh: 回测v2.0辅助模块
+  name_en: backtest_v2_auxiliary
+  desc_zh: 回测v2.0辅助模块：scheduler+decay_monitor+report_generator+cache_manager
+  desc_en: ''
+  plain_zh: "回测的四个辅助工具：批量调度、衰减监控、自动报告、结果缓存。现在回测是手动单策略，等要批量跑、自动出报告时再开发。"
+- module_path: CAND-DAT-001
+  domain_id: D_DATA
+  name_zh: DataFrame迁移Pydantic
+  name_en: dataframe_to_pydantic_migration
+  desc_zh: 将数据层输出从 pandas DataFrame 迁移到 Pydantic V2 BaseModel
+  desc_en: ''
+  plain_zh: "把数据层从pandas DataFrame换成Pydantic强类型模型，运行时能自动校验类型对不对。现在DataFrame够用，等下游真强制要求再迁。"
+- module_path: CAND-INT-001
+  domain_id: D_INTEGRATION
+  name_zh: ONNX推理优化
+  name_en: onnx_inference_optimization
+  desc_zh: 将ML模型推理后端从 PyTorch 切换到 ONNX Runtime，实现2-3x加速
+  desc_en: ''
+  plain_zh: "把AI模型推理从PyTorch换成ONNX格式，速度快2-3倍。现在PyTorch推理不慢，等盘中推理真卡了再优化。"
+- module_path: CAND-PFALLOC-001
+  domain_id: D_PF_ALLOC
+  name_zh: 最小方差与风险平价再平衡
+  name_en: min_variance_risk_parity_rebalance
+  desc_zh: 在 DefaultEquityStrategy 内实现 Min-Variance 与 Risk-Parity 两种权重分配算法
+  desc_en: ''
+  plain_zh: "给组合分配加两种经典量化算法：最小方差（让组合波动最小）和风险平价（让各资产风险均摊）。现在枚举值定义了但方法没写，选了会偷偷退回等权。"
+- module_path: CAND-FAC-002
+  domain_id: D_FACTOR
+  name_zh: FactorMeta Pydantic迁移
+  name_en: factormeta_pydantic_migration
+  desc_zh: 将 factor_base.py 的 FactorMeta 从 @dataclass 迁移到 Pydantic V2 BaseModel
+  desc_en: ''
+  plain_zh: "把因子元数据FactorMeta从@dataclass换成Pydantic模型，统一全系统的数据格式规范（KBG-0040）。现在规范还是君子协定没强制，等强制了再迁。"
+- module_path: CAND-HARVEST-0001
+  domain_id: D_CROSS_ASSET
+  name_zh: "多市场数据路由"
+  name_en: "multi_market_data_router"
+  desc_zh: "harvest来源:数据架构.md"
+  desc_en: ''
+  plain_zh: "Multi-Market Data Router 多市场数据路由（来源:数据架构.md, likely_new）"
+- module_path: CAND-HARVEST-0002
+  domain_id: D_CROSS_ASSET
+  name_zh: "货币对冲器"
+  name_en: "currencyhedger"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CurrencyHedger 货币对冲器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0003
+  domain_id: D_CROSS_ASSET
+  name_zh: "相关性体制检测器"
+  name_en: "correlationregimedetector"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CorrelationRegimeDetector 相关性体制检测器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0004
+  domain_id: D_CROSS_ASSET
+  name_zh: "固收分析器"
+  name_en: "fixedincomeanalyzer"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "FixedIncomeAnalyzer 固收分析器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0005
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场风险传导器"
+  name_en: "crossmarketriskpropagator"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CrossMarketRiskPropagator 跨市场风险传导器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0006
+  domain_id: D_CROSS_ASSET
+  name_zh: "收益率曲线构建器"
+  name_en: "yieldcurvebuilder"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "YieldCurveBuilder 收益率曲线构建器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0007
+  domain_id: D_CROSS_ASSET
+  name_zh: "信用风险分析器"
+  name_en: "creditriskanalyzer"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CreditRiskAnalyzer 信用风险分析器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0008
+  domain_id: D_CROSS_ASSET
+  name_zh: "大宗商品分析器"
+  name_en: "commodityanalyzer"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CommodityAnalyzer 大宗商品分析器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0009
+  domain_id: D_CROSS_ASSET
+  name_zh: "房地产分析器"
+  name_en: "realestateanalyzer"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "RealEstateAnalyzer 房地产分析器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0010
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场套利检测器"
+  name_en: "crossmarketarbdetector"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CrossMarketArbDetector 跨市场套利检测器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0011
+  domain_id: D_CROSS_ASSET
+  name_zh: "波动率曲面建模器"
+  name_en: "volatilitysurfacemodeler"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "VolatilitySurfaceModeler 波动率曲面建模器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0012
+  domain_id: D_CROSS_ASSET
+  name_zh: "数字资产适配器"
+  name_en: "digitalassetadapter"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "DigitalAssetAdapter 数字资产适配器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0013
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨资产流动性监控器"
+  name_en: "crossassetliquiditymonitor"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CrossAssetLiquidityMonitor 跨资产流动性监控器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0014
+  domain_id: D_CROSS_ASSET
+  name_zh: "全球宏观情景生成器"
+  name_en: "globalmacroscenariogenerator"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "GlobalMacroScenarioGenerator 全球宏观情景生成器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0015
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨境监管导航器"
+  name_en: "crossborderregulatorynavigator"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CrossBorderRegulatoryNavigator 跨境监管导航器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0016
+  domain_id: D_CROSS_ASSET
+  name_zh: "期权定价与"
+  name_en: "optionspricinggreeks_greeks"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "OptionsPricingGreeks 期权定价与Greeks（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0017
+  domain_id: D_CROSS_ASSET
+  name_zh: "股跨市场风险矩阵"
+  name_en: "asharecrossmarketriskmatrix_a"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "AShareCrossMarketRiskMatrix A股跨市场风险矩阵（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0018
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场延迟检测器"
+  name_en: "crossmarketregimedelaydetector_regime"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CrossMarketRegimeDelayDetector 跨市场Regime延迟检测器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0019
+  domain_id: D_CROSS_ASSET
+  name_zh: "股多市场适配器"
+  name_en: "ashareqmtmultimarketadapter_a_qmt"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "AShareQMTMultiMarketAdapter A股QMT多市场适配器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0020
+  domain_id: D_CROSS_ASSET
+  name_zh: "微观结构分析引擎"
+  name_en: "microstructureanalysisengine"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "MicrostructureAnalysisEngine 微观结构分析引擎（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0021
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场套利扫描器"
+  name_en: "crossmarketarbscanner"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CrossMarketArbScanner 跨市场套利扫描器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0022
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "配置中心"
+  name_en: "config_center"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "Config Center 配置中心（来源:ZephyrAlpha全系统模块清单.md, likely_misplaced）"
+- module_path: CAND-HARVEST-0023
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "健康检查器"
+  name_en: "health_checker"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "Health Checker 健康检查器（来源:ZephyrAlpha全系统模块清单.md, likely_misplaced）"
+- module_path: CAND-HARVEST-0024
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "指标采集器"
+  name_en: "metrics_collector"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "Metrics Collector 指标采集器（来源:ZephyrAlpha全系统模块清单.md, likely_misplaced）"
+- module_path: CAND-HARVEST-0025
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "日志器"
+  name_en: "logger"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "Logger 日志器（来源:ZephyrAlpha全系统模块清单.md, likely_misplaced）"
+- module_path: CAND-HARVEST-0026
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "重试与熔断器"
+  name_en: "retry_circuit_breaker"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "Retry & Circuit Breaker 重试与熔断器（来源:ZephyrAlpha全系统模块清单.md, likely_misplaced）"
+- module_path: CAND-HARVEST-0027
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "任务调度器"
+  name_en: "task_scheduler"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "Task Scheduler 任务调度器（来源:ZephyrAlpha全系统模块清单.md, likely_misplaced）"
+- module_path: CAND-HARVEST-0028
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "审计系统"
+  name_en: "audit_system"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "审计系统 Audit System（来源:ZephyrAlpha全系统模块清单.md, likely_misplaced）"
+- module_path: CAND-HARVEST-0029
+  domain_id: D_CROSS_ASSET
+  name_zh: "测试模块"
+  name_en: "tests"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "Tests 测试模块（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0030
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场套利机会扫描器"
+  name_en: "cross_market_arbitrage_opportunity_scanner"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "Cross-Market Arbitrage Opportunity Scanner 跨市场套利机会扫描器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0031
+  domain_id: D_CROSS_ASSET
+  name_zh: "相关性状态检测器"
+  name_en: "correlationregimedetector"
+  desc_zh: "harvest来源:ZephyrAlpha全系统模块清单.md"
+  desc_en: ''
+  plain_zh: "CorrelationRegimeDetector 相关性状态检测器（来源:ZephyrAlpha全系统模块清单.md, likely_new）"
+- module_path: CAND-HARVEST-0032
+  domain_id: D_CROSS_ASSET
+  name_zh: "适配器机制"
+  name_en: "adapter_mechanism"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "适配器机制 Adapter Mechanism（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0033
+  domain_id: D_CROSS_ASSET
+  name_zh: "港股股传导"
+  name_en: "a_hk_a_share_propagation"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "港股A股传导 HK A-Share Propagation（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0034
+  domain_id: D_CROSS_ASSET
+  name_zh: "美股股传导"
+  name_en: "a_us_a_share_propagation"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "美股A股传导 US A-Share Propagation（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0035
+  domain_id: D_CROSS_ASSET
+  name_zh: "期货现货传导"
+  name_en: "futures_spot_propagation"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "期货现货传导 Futures Spot Propagation（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0036
+  domain_id: D_CROSS_ASSET
+  name_zh: "汇率股传导"
+  name_en: "a_fx_a_share_propagation"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "汇率A股传导 FX A-Share Propagation（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0037
+  domain_id: D_CROSS_ASSET
+  name_zh: "时变传导延迟函数"
+  name_en: "time_varying_propagation_delay"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "时变传导延迟函数 Time-Varying Propagation Delay（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0038
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨资产"
+  name_en: "feature_store_cross_asset_feature_store"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨资产Feature Store Cross-Asset Feature Store（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0039
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨资产管线"
+  name_en: "mlops_cross_asset_mlops_pipeline"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨资产MLOps管线 Cross-Asset MLOps Pipeline（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0040
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨资产四层闭环架构"
+  name_en: "cross_asset_four_layer_architecture"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨资产四层闭环架构 Cross-Asset Four-Layer Architecture（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0041
+  domain_id: D_CROSS_ASSET
+  name_zh: "事件版本管理"
+  name_en: "schema_event_schema_versioning"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "事件Schema版本管理 Event Schema Versioning（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0042
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场制度知识"
+  name_en: "cross_market_regime_knowledge"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨市场制度知识 Cross-Market Regime Knowledge（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0043
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨资产相关性知识"
+  name_en: "cross_asset_correlation_knowledge"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨资产相关性知识 Cross-Asset Correlation Knowledge（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0044
+  domain_id: D_CROSS_ASSET
+  name_zh: "在线"
+  name_en: "ewc_online_ewc"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "在线EWC Online EWC（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0045
+  domain_id: D_CROSS_ASSET
+  name_zh: "自动技能发现"
+  name_en: "autoskill_autoskill_discovery"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "AutoSkill自动技能发现 AutoSkill Discovery（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0046
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场管理器"
+  name_en: "pit_cross_market_pit_manager"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨市场PIT管理器 Cross-Market PIT Manager（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0047
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场情感引擎"
+  name_en: "cross_market_sentiment_engine"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨市场情感引擎 Cross-Market Sentiment Engine（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0048
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场公告引擎"
+  name_en: "nlp_cross_market_filing_nlp_engine"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨市场公告NLP引擎 Cross-Market Filing NLP Engine（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0049
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场多模态融合引擎"
+  name_en: "cross_market_multimodal_fusion_engine"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨市场多模态融合引擎 Cross-Market Multimodal Fusion Engine（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0050
+  domain_id: D_CROSS_ASSET
+  name_zh: "跨市场情感传导检测"
+  name_en: "cross_market_sentiment_propagation"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "跨市场情感传导检测 Cross-Market Sentiment Propagation（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0051
+  domain_id: D_CROSS_ASSET
+  name_zh: "情感传导时滞建模"
+  name_en: "sentiment_propagation_delay_modeling"
+  desc_zh: "harvest来源:16-D-CROSS-ASSET-跨资产跨市场域.md"
+  desc_en: ''
+  plain_zh: "情感传导时滞建模 Sentiment Propagation Delay Modeling（来源:16-D-CROSS-ASSET-跨资产跨市场域.md, likely_new）"
+- module_path: CAND-HARVEST-0052
+  domain_id: D_CROSS_ASSET
+  name_zh: "多市场数据路由器"
+  name_en: "multimarketdatarouter"
+  desc_zh: "harvest来源:01-跨域交叉点与因果链.md"
+  desc_en: ''
+  plain_zh: "MultiMarketDataRouter 多市场数据路由器（来源:01-跨域交叉点与因果链.md, likely_new）"

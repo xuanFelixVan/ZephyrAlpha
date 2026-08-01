@@ -5,7 +5,7 @@ collection_name: 脚本集 / Script Collection
 collection_path: scripts/governance/
 owner_module: MOD-GOV-SCRIPTS
 node_type: script_collection
-total_registered: 432
+total_registered: 434
 items:
 - file: scripts/governance/__init__.py
   name: __init__.py
@@ -1721,5 +1721,13 @@ items:
   status: active
 - file: scripts/governance/vms/vms_version_sync_check.py
   name: vms_version_sync_check.py
+  node_type: script
+  status: active
+- file: scripts/governance/harvest_candidates_from_drafts.py
+  name: harvest_candidates_from_drafts.py
+  node_type: script
+  status: active
+- file: scripts/governance/d5_architecture/generators/generate_candidate_module_report.py
+  name: generate_candidate_module_report.py
   node_type: script
   status: active
