@@ -7348,6 +7348,16 @@ creation_tokens:
     created_by: "session-battle-map-gaps"
     capability: "battle_map_cross_cutting_view"
 
+  # --- POS-008 回撤控制器（2026-08-02，D_POSITION 域基础设施批量施工）---
+  - file: "src/zephyr/position/core/drawdown_controller.py"
+    token: "auto-drawdown-controller-20260802"
+    created_by: "session-pos008-build"
+    capability: "drawdown_controller"
+  - file: "docs/03_modules/_domain_position/drawdown_controller/blueprint.md"
+    token: "auto-drawdown-controller-bp-20260802"
+    created_by: "session-pos008-build"
+    capability: "drawdown_controller"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
