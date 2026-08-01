@@ -157,7 +157,10 @@ def make_forged_gw_marker_gate() -> GateSpec:
             # gateway 无 project_root——无法校验，保守放行
             return True, "gateway.project_root missing, cannot verify session registration"
 
-        if _is_session_registered(project_root, session_id):
+        # 调公共 wrapper is_session_registered（非私有 _is_session_registered）——
+        # Stage 4 公共化（commit c8b1b8e493）后公共 wrapper 是模块级名字，
+        # 测试 patch "...forged_gw_marker_gate.is_session_registered" 才能命中。
+        if is_session_registered(project_root, session_id):
             # session_id 已注册 → 合法 GW commit
             return True, f"[GW:{session_id}] session registered, legitimate GW marker"
 

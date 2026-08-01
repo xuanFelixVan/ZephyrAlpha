@@ -81,7 +81,10 @@ def make_session_required_gate() -> GateSpec:
 
         # 第二道：session_id 非空但未注册 -> 阻断
         try:
-            info = gateway._registry.get_session(session_id)
+            # 读公共 registry 属性（非私有 _registry）——GitCommitGateway.registry
+            # @property 委托到 _registry，production 行为等价；测试 MagicMock 配置
+            # gw.registry 才能命中（gw._registry 与 gw.registry 是两个独立 auto-mock）。
+            info = gateway.registry.get_session(session_id)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # registry 读取异常 -> 安全降级放行
             # 理由：registry 故障不应卡死 commit 工作流（与 ClaimRequiredGate 一致）

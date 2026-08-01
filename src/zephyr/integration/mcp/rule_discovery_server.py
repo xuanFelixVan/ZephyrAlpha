@@ -262,8 +262,22 @@ class RuleDiscoveryServer(BaseMCPServer):
             handler=self._discover_applicable_rules,
         )
 
-    def discover_applicable_rules(self, operation, gate_id, scope, domain, tags, rule_id, session_id) -> dict[str, Any]:
-        """公共接口：discover_applicable_rules（Stage 4 公共化）。"""
+    def discover_applicable_rules(
+        self,
+        operation: str | None = None,
+        gate_id: str | None = None,
+        scope: str | None = None,
+        domain: str | None = None,
+        tags: list[str] | None = None,
+        rule_id: str | None = None,
+        session_id: str | None = None,
+    ) -> dict[str, Any]:
+        """公共接口：discover_applicable_rules（Stage 4 公共化）。
+
+        默认值与私有 ``_discover_applicable_rules`` 对齐——Stage 4 公共化时
+        漏带默认值，调用方按私有契约用 keyword args 调用会触发
+        "missing 5 required positional arguments"（commit c8b1b8e493 回归）。
+        """
         return self._discover_applicable_rules(operation, gate_id, scope, domain, tags, rule_id, session_id)
 
 
