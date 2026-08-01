@@ -241,18 +241,22 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
   /* subgraph/cluster 背景透明：Mermaid 默认浅蓝白，强制透明与分图白色背景保持一致。
      无 subgraph 的图（域文档等）无 .cluster 元素，此规则零影响。 */
   .mermaid .cluster rect {{ fill: transparent !important; stroke: #ccc !important; }}
-  /* 节点标签换行：生成端已用 _wrap_label_text 预折行（<br/>），测量行数=渲染行数，
-     节点框高度算得准、文字不被上下裁剪。max-width 560px 仅作异常兜底（预折行正常
-     约 ≤260px，远低于 560px 不触发二次折行——若调小到会触发二次折行的值，裁剪
-     问题立刻复发）；font-size 11px 必须小于 Mermaid 主题测量字号 14px，渲染比测量
-     更窄更矮，只可能宽松、不可能溢出。纪律详见 visualization_view_template.md §4.10。 */
+  /* 节点标签防裁剪（2026-08-01 两轮治本）：
+     ① 生成端 _wrap_label_text 预折行（<br/> 显式断行），测量行数=渲染行数；
+     ② 字号行高必须带 !important——Mermaid v11 为每张图注入 ID 作用域样式
+        （形如 #mermaid-N .nodeLabel 规则把字号设回 14px），ID 特异性压过本 class 规则。
+        不带 !important 时渲染阶段实际生效 14px，与测量阶段字号不一致 → 框高按
+        小字号算、文字按大字号长 → 文字被上下裁剪（实测溢出约一行）。!important
+        保证测量/渲染两阶段永远同一字号行高。纪律详见 visualization_view_template.md §4.10。
+     max-width 560px 仅作异常兜底（预折行正常约 ≤300px，远低于 560px 不触发二次
+     折行——若调小到会触发二次折行的值，裁剪问题立刻复发）。 */
   .mermaid .nodeLabel, .mermaid .edgeLabel, .mermaid foreignObject div, .mermaid foreignObject span {{
       white-space: normal !important;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      max-width: 560px;
-      font-size: 11px;
-      line-height: 1.3;
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
+      max-width: 560px !important;
+      font-size: 11px !important;
+      line-height: 1.3 !important;
   }}
   .mermaid:empty::after {{ content: "（渲染中…若长期空白请检查 mermaid.js 是否加载成功）";
                            color: #999; font-size: 13px; }}
