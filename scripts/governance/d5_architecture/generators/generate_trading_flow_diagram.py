@@ -81,12 +81,16 @@ if _GENERATORS_DIR not in sys.path:
     sys.path.insert(0, _GENERATORS_DIR)
 
 try:
-    from zoomable_html import emit_zoomable_html  # noqa: E402
+    from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402
 except ImportError:
     emit_zoomable_html = None  # type: ignore[assignment]
+    HTML_SUBDIR = "_zoomable_html"
 
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture"
-_ZOOMABLE_HTML_DIR = OUTPUT_DIR / "_zoomable_html"
+_ZOOMABLE_HTML_DIR = OUTPUT_DIR / HTML_SUBDIR
+# HTML 跳转链接必须用 http:// — IDE 预览对相对路径/file:/// 会在编辑器内打开源码，
+# 只有 http:// 链接交给外部浏览器渲染（需本地 doc http server，对标 generate_domain_doc.py）
+_DOC_HTTP_BASE = "http://localhost:8765"
 _DECISION_MODEL_YAML = _REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model.yaml"
 _NARRATIVE_YAML = _REPO_ROOT / "architecture_model" / "domain" / "trading_flow_narrative.yaml"
 _CANDIDATE_REGISTRY_YAML = (
@@ -341,11 +345,17 @@ def _build_mermaid_total(
 
 
 def _html_link_line(md_filename: str) -> str:
-    """生成 MD 顶部的 HTML 跳转链接行。"""
+    """生成 MD 顶部的 HTML 跳转链接行（http:// 绝对链接，IDE 预览点击直达浏览器）。
+
+    必须用 http:// 链接：Trae/VSCode 预览面板对相对路径和 file:/// 会在编辑器内打开源码，
+    只有 http:// 链接交给外部浏览器渲染（对标 generate_domain_doc.py line 1093-1105）。
+    """
     stem = Path(md_filename).stem
+    html_rel = (_ZOOMABLE_HTML_DIR / f"{stem}.html").relative_to(_REPO_ROOT).as_posix()
+    html_url = f"{_DOC_HTTP_BASE}/{html_rel}"
     return (
-        f"> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/{stem}.html)**\n"
-        f"> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
+        f"> **[可缩放 HTML 版 / Zoomable HTML]({html_url})** — "
+        f"Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
     )
 
 

@@ -9,8 +9,7 @@ generator: generate_trading_flow_diagram.py
 > 本图包含全部 141 个决策节点（按6阶段 subgraph 分层）+ 136 条决策边（含跨阶段）。
 > 一张图看懂「钱怎么赚」的完整交易决策流程。
 
-> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/00_panorama.html)**
-> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/_zoomable_html/00_panorama.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 怎么看这张图
 

@@ -9,8 +9,7 @@ flow_stage: stock_selection
 
 > flow_stage: `stock_selection` | 映射层: ['L0', 'L1', 'L2A'] | 产出契约: `candidate_pool`
 
-> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/01_stock_selection.html)**
-> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/_zoomable_html/01_stock_selection.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 大白话讲这个流程
 

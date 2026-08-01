@@ -9,8 +9,7 @@ flow_stage: reconciliation
 
 > flow_stage: `reconciliation` | 映射层: ['L4'] | 产出契约: `reconciliation_report`
 
-> **[可缩放 HTML 版 / Zoomable HTML](_zoomable_html/06_reconciliation.html)**
-> — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/_zoomable_html/06_reconciliation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 ## 大白话讲这个流程
 
