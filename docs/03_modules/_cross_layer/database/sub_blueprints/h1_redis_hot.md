@@ -40,12 +40,12 @@ depends_on:
   - target: ARCH-BIZDB-001
     at: "§8.1/§11.1"
     why: "母蓝图定义 H1 为实盘热缓存，能造现在就造"
+  - target: MOD-INF-002
+    at: "database_service.py:174"
+    why: "DatabaseService.get_redis_conn() 预留接口（infrastructure/database_service.py 属 MOD-INF-002，D_INFRA_RUNTIME 同域，已登记 depgraph edge_id=10068005）"
   - target: MOD-INF-012A
-    at: "§1.1"
-    why: "Redis 基础设施部署依赖（DatabaseService 统一入口）"
-  - target: SH-DB-001
-    at: "§1.1"
-    why: "DatabaseService.get_redis_conn() 预留接口（infrastructure/database_service.py:174）"
+    at: "§8.1"
+    why: "Redis 基础设施部署依赖（INFRA-DB-007 实例，节点待登记）"
 tags: [redis, hot-cache, online-store, feature-store, cqrs, realtime, factor-cross-section, h1, sub-blueprint, dd-11-01]
 priority: P1
 runtime_plane: hot
@@ -106,8 +106,8 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 > **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py H1-REDIS-HOT`
-> （待步骤 3 sync_panorama_module.py 执行后派生）
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-H1-REDIS-HOT`
+> （sync_panorama_module.py 已于 2026-08-01 执行，四图对齐通过：问题总数 0）
 
 ---
 

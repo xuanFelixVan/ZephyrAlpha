@@ -33,13 +33,13 @@ module_id: CFG-infrastructure-registry
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"
-version: "1.0.9"
+version: "1.0.10"
 status: active
 created: "2026-05-02"
-last_updated: "2026-07-04"
+last_updated: "2026-08-01"
 ai_autonomy: human_gated
 ttl: permanent
-total_registered: 14
+total_registered: 15
 depends_on:
   - target: PS-STD-001
     at: "§3.2.1"
@@ -322,27 +322,43 @@ infrastructure:
     provisioned_at: "2026-07-01"
     note: "ClickHouse 26.6.1 部署在 Hyper-V Ubuntu VM（D:\\HyperV\\VMs\\zephyr-ch\\data.vhdx，2026-07-16 从 WSL2 迁移）。网络: 专用 ZephyrCH-Net Internal 交换机（172.24.30.0/24 固定子网，Host=172.24.30.1，VM 静态 IP=172.24.30.100，重启不漂移）。端点: TCP 172.24.30.100:9000 / HTTP 172.24.30.100:8123。已创建 c0_meta/c1_market/c3_fundamental 三库 97 表。WSL2 已于 2026-07-18 完全移除（Docker Desktop 卸载 + WSL Store App 移除 + WSL 功能禁用）。DatabaseService L86-101 已实现 get_clickhouse_conn()。MOD-ARCH-BIZDB 业务数据库顶层架构。母蓝图: docs/03_modules/_cross_layer/database/business_data_architecture.md。"
 
+  # --- 业务热缓存（Redis，H1 redis_hot，2026-08-01 补登）---
+  - infra_id: "INFRA-DB-007"
+    name: "zephyr-redis-h1-hot"
+    type: cache
+    description: "Redis 业务热缓存——H1 redis_hot，盘中实盘/模拟盘 <5ms 因子截面在线存储（DD-11-01）。承载 D-FACTOR 每3秒截面写入、D-SIGNAL/D-RISK <5ms 读取、CQRS 物化视图（持仓/信号/风控）。与 INFRA-CACHE-001（治理缓存）分离实例（隔离故障域）。由子蓝图 docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md 定义。"
+    runtime_plane: hot
+    host: null
+    access_method: "入口: zephyr.infrastructure.database_service.DatabaseService.get_redis_conn()（已预留 NotImplementedError，待施工实现）；蓝图: docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md"
+    health_check: ping
+    dependency_of:
+      - "MOD-H1-REDIS-HOT"
+    sla: "99.99% uptime, <5ms GET p99（CP-02 因子值→信号≤5秒）"
+    status: planned
+    provisioned_at: null
+    note: "H1 redis_hot 实盘热缓存——三层冷热架构 Hot 平面。触发条件已命中（实盘交易启动前开发，2026-07-13 裁定）。模拟盘=国金QMT模拟端(8886156677)。持久化: AOF appendfsync everysec + RDB 每日快照。容量: ~200MB（1年~500MB/3年~1GB），maxmemory 上限~19GB。与 INFRA-CACHE-001 分离实例（§8.2）。depgraph 节点 MOD-H1-REDIS-HOT（node_id=7826555, D_INFRA_RUNTIME, planned）已登记，依赖边 edge_id=10068005 → MOD-INF-002。四图对齐通过（2026-08-01）。"
+
 # ============================================================================
 # 汇总统计
 # ============================================================================
 summary:
-  total: 14
+  total: 15
   by_type:
     event_bus: 1
     message_queue: 1
     relational_db: 3
     vector_db: 1
-    cache: 4
+    cache: 5
     object_storage: 1
     config_center: 1
     service_registry: 1
     ci_pipeline: 1
   by_plane:
-    hot: 6
+    hot: 7
     warm: 4
     cold: 4
   by_status:
-    planned: 8
+    planned: 9
     provisioned: 1
     connected: 5
     deleted: 0
@@ -370,11 +386,19 @@ summary:
     MOD-RESOURCE_OPTIMIZATION_ENGINE:
       - INFRA-PROC-001
       - INFRA-CACHE-002
+    MOD-H1-REDIS-HOT: [INFRA-DB-007]
 
 # ============================================================================
 # 变更记录
 # ============================================================================
 changelog:
+  - version: "1.0.10"
+    date: "2026-08-01"
+    author: "AI-GLM-5.2"
+    changes:
+      - "新增 INFRA-DB-007：zephyr-redis-h1-hot（cache）——H1 redis_hot 实盘热缓存，三层冷热架构 Hot 平面。承载 D-FACTOR 每3秒因子截面写入、D-SIGNAL/D-RISK <5ms 读取（DD-11-01）。与 INFRA-CACHE-001 治理缓存分离实例。蓝图: docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md。统一入口: DatabaseService.get_redis_conn()（已预留）。触发条件已命中（实盘交易启动前开发）。depgraph 节点 MOD-H1-REDIS-HOT 已登记（node_id=7826555, D_INFRA_RUNTIME, planned），依赖边 edge_id=10068005 → MOD-INF-002。四图对齐通过"
+      - "更新 summary：total 14→15, by_type.cache 4→5, by_plane.hot 6→7, by_status.planned 8→9"
+      - "更新 dependency_map：新增 MOD-H1-REDIS-HOT: [INFRA-DB-007]"
   - version: "1.0.9"
     date: "2026-07-04"
     author: "AI-GLM-5.2"
