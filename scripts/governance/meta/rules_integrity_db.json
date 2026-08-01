@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "b79700c69a3f70cf",
+      "hash": "ddad17a0e332f4f8",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -16,7 +16,7 @@
       "desc": "关键阈值 SSoT"
     },
     "config/runtime/kill_switch_state.yaml": {
-      "hash": "4fe45049f1d26627",
+      "hash": "a7892be4ad86206a",
       "critical": true,
       "desc": "Kill Switch 状态"
     },
@@ -26,7 +26,7 @@
       "desc": "Shadow Mode 状态"
     },
     "config/runtime/error_budget_state.yaml": {
-      "hash": "9e9dbb9c2a5ab4f6",
+      "hash": "b3a535adbb088fd4",
       "critical": true,
       "desc": "Error Budget 状态"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "ec78c75264f1332c",
+      "hash": "dba2e4e9e14adde3",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "0d3394d4b6481db8",
+      "hash": "1d9d3a773139d44e",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "6945f5447b721723",
+      "hash": "33ec468238d13f7e",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
