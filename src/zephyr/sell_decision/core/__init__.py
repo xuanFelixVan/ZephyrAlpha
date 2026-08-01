@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SELL-014 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # sell_decision/core
 
 from zephyr.sell_decision.core.sell_conflict_arbitrator import (

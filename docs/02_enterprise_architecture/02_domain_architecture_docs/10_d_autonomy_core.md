@@ -55,12 +55,12 @@ ttl: permanent
 flowchart TD
     src_zephyr_autonomy_core_main_py["主入口<br/>代理规范 MOD-INF-019 CLI — 蓝图->Skill<br/>升级引擎入口.<br/>__main__<br/>文件: autonomy_core/__main__.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_agent_observability_py["代理可观测性<br/>代理observability。MOD-INF-019: Agent Spec —<br/>Agent Observability<br/>文件: autonomy_core/agent_observability.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_all_skill_modules_py["all技能modules<br/>all技能modules。MOD-INF-019: Agent Spec — All<br/>Skill Modules<br/>文件: autonomy_core/all_skill_modules.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_all_skill_modules_py["all技能modules<br/>MOD-INF-019: Agent Spec — All Skill Modules<br/>文件: autonomy_core/all_skill_modules.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_atomic_injector_py["atomicinjector.py — 原子注入 (DD101, TASK-0<br/>atomic_injector<br/>文件: context/atomic_injector.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_ce_bootstrap_py["ce自举<br/>CE 自举架构 (B1, DD75, TASK-015 beta v)<br/>ce_bootstrap<br/>文件: context/ce_bootstrap.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_ce_explain_cli_py["ceexplain命令行<br/>KE inclusion rationale 解释 CLI<br/>ce_explain_cli<br/>文件: context/ce_explain_cli.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_ce_file_lister_py["ce文件lister<br/>CE 文件清单生成器<br/>ce_file_lister<br/>文件: context/ce_file_lister.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_context_ce_playground_v2_py["CE演练场v2<br/>CE演练场v2，context的结果，封装操作结果的数据结<br/>构。<br/>ce_playground_v2.py — V2 Playground with full<br/>decision chain<br/>ce_playground_v2.py — V2 Playground with full<br/>decision chain (TASK-016)<br/>文件: context/ce_playground_v2.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_context_ce_playground_v2_py["CE演练场v2<br/>CE演练场v2，context的结果，封装操作结果的数据结<br/>构。<br/>ce_playground_v2.py — V2 Playground with full<br/>decision chain<br/>文件: context/ce_playground_v2.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_ce_vibe_shortcuts_py["cevibeshortcuts.py — Vibe/Strict 模式切换<br/>ce_vibe_shortcuts<br/>文件: context/ce_vibe_shortcuts.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_checkpoint_manager_py["检查点管理器<br/>Inject 前快照<br/>checkpoint_manager<br/>文件: context/checkpoint_manager.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_cold_start_booster_py["冷启动booster<br/>cold_start_booster<br/>文件: context/cold_start_booster.py<br/>(生产态 / production)"]
@@ -90,7 +90,7 @@ flowchart TD
     src_zephyr_autonomy_core_context_shadow_canary_py["影子金丝雀<br/>金丝雀部署 (B4, DD78, TASK-015 beta w)<br/>shadow_canary<br/>文件: context/shadow_canary.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_staleness_manager_py["staleness管理器<br/>全局过期检测<br/>staleness_manager<br/>文件: context/staleness_manager.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_vector_bridge_py["向量桥接<br/>VectorBridge — CE↔VMS 检索桥接 (Connect<br/>CT-CE-VMS-001)<br/>vector_bridge<br/>文件: context/vector_bridge.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_file_autoregister_py["文件autoregister<br/>文件autoregister，主要提供注册等功能<br/>file_autoregister<br/>文件: autonomy_core/file_autoregister.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_file_autoregister_py["文件autoregister<br/>file_autoregister<br/>文件: autonomy_core/file_autoregister.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_ide_watcher_py["IDE监视器<br/>IDE 热重载监视器——Skill 文件变更自动刷新<br/>AGENTS.md<br/>MOD-INF-019: Agent Spec — IDE Watcher<br/>文件: autonomy_core/ide_watcher.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_integration_pipeline_bridge_py["管线桥接<br/>PipelineSkillBridge — Agent Spec -> Pipeline<br/>双向桥接<br/>pipeline_bridge<br/>文件: integration/pipeline_bridge.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_phase_planner_py["阶段规划器<br/>阶段planner。MOD-INF-019: Agent Spec — Phase<br/>Planner<br/>文件: autonomy_core/phase_planner.py<br/>(生产态 / production)"]
@@ -98,37 +98,37 @@ flowchart TD
     src_zephyr_autonomy_core_prompt_registry_py["提示注册表<br/>PromptRegistry: YAML-driven Prompt 模板注册表<br/>prompt_registry<br/>文件: autonomy_core/prompt_registry.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_self_evolution_fidelity_gate_py["self进化fidelity门禁<br/>自进化fidelity门禁。MOD-INF-019: Agent Spec —<br/>Self Evolution Fidelity Gate<br/>文件: autonomy_core/self_evolution_fidelity_<br/>gate.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skill_rbac_registry_py["skillRBAC注册表<br/>技能rbac注册表。G-CT-003: Agent Spec -> RBAC<br/>capability check.<br/>文件: autonomy_core/skill_rbac_registry.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_attention_py["技能attention<br/>技能attention。MOD-INF-019: Agent Spec — Skill<br/>Attention Management<br/>文件: skills/skill_attention.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_attention_py["技能attention<br/>MOD-INF-019: Agent Spec — Skill Attention<br/>Management<br/>文件: skills/skill_attention.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_breakage_checker_py["skillbreakage检查器<br/>技能breakage检查器。MOD-INF-019: Agent Spec —<br/>Skill Breakage Checker<br/>文件: skills/skill_breakage_checker.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_cache_provider_py["技能缓存提供器<br/>技能缓存提供器。MOD-INF-019: Agent Spec — Skill<br/>Cache Provider<br/>文件: skills/skill_cache_provider.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_calibration_py["技能calibration<br/>技能calibration。MOD-INF-019: Agent Spec —<br/>Skill Calibration<br/>文件: skills/skill_calibration.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_calibration_py["技能calibration<br/>MOD-INF-019: Agent Spec — Skill Calibration<br/>文件: skills/skill_calibration.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_canary_py["技能金丝雀<br/>技能canary。MOD-INF-019: Agent Spec — Skill<br/>Canary<br/>文件: skills/skill_canary.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_cognitive_preservation_py["skill认知preservation<br/>技能cognitivepreservation。MOD-INF-019: Agent<br/>Spec — Skill Cognitive Preservation<br/>文件: skills/skill_cognitive_preservation.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_compliance_py["技能合规<br/>技能合规。MOD-INF-019: Agent Spec — Skill<br/>Compliance<br/>文件: skills/skill_compliance.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_consensus_py["技能共识<br/>技能共识。MOD-INF-019: Agent Spec — Skill<br/>Consensus<br/>文件: skills/skill_consensus.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_constructor_py["技能constructor<br/>技能constructor。MOD-INF-019: Agent Spec —<br/>Skill Constructor<br/>文件: skills/skill_constructor.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_constructor_py["技能constructor<br/>MOD-INF-019: Agent Spec — Skill Constructor<br/>文件: skills/skill_constructor.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_context_isolation_py["skill上下文isolation<br/>技能上下文isolation。MOD-INF-019: Agent Spec —<br/>Context Isolation<br/>文件: skills/skill_context_isolation.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_contract_py["技能契约<br/>技能契约。MOD-INF-019: Agent Spec — Skill<br/>Contract<br/>文件: skills/skill_contract.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_cross_model_py["技能跨模型<br/>技能跨模型。MOD-INF-019: Agent Spec — Skill<br/>Cross-Model<br/>文件: skills/skill_cross_model.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_di_py["技能di<br/>技能di。MOD-INF-019: Agent Spec — Skill<br/>Dependency Injection<br/>文件: skills/skill_di.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_discovery_py["技能discovery<br/>技能discovery。MOD-INF-019: Agent Spec — Skill<br/>Discovery<br/>文件: skills/skill_discovery.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_discovery_py["技能discovery<br/>MOD-INF-019: Agent Spec — Skill Discovery<br/>文件: skills/skill_discovery.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_durable_py["技能durable<br/>技能durable。MOD-INF-019: Agent Spec — Durable<br/>Execution<br/>文件: skills/skill_durable.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_economics_py["技能economics<br/>技能economics。MOD-INF-019: Agent Spec — Skill<br/>Economics<br/>文件: skills/skill_economics.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_economics_py["技能economics<br/>MOD-INF-019: Agent Spec — Skill Economics<br/>文件: skills/skill_economics.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py["skillefficacy校准器<br/>技能efficacycalibrator。MOD-INF-019: Agent Spec<br/>— Skill Efficacy Calibrator<br/>文件: skills/skill_efficacy_calibrator.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_executor_py["技能执行器<br/>Skill 加载前创建回滚检查点<br/>skill_executor<br/>文件: skills/skill_executor.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_explain_py["技能explain<br/>技能explain。MOD-INF-019: Agent Spec — XAI<br/>Explainable Skill Engine<br/>文件: skills/skill_explain.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_feature_flags_py["技能功能标志<br/>技能功能标志。MOD-INF-019: Agent Spec — Skill<br/>Feature Flags<br/>文件: skills/skill_feature_flags.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_feedback_py["技能反馈<br/>技能反馈。MOD-INF-019: Agent Spec — Skill<br/>Feedback Loop<br/>文件: skills/skill_feedback.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_freshness_ext_py["技能freshness扩展<br/>技能freshness扩展。MOD-INF-019: Agent Spec —<br/>Skill Freshness Extensions<br/>文件: skills/skill_freshness_ext.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_freshness_ext_py["技能freshness扩展<br/>MOD-INF-019: Agent Spec — Skill Freshness<br/>Extensions<br/>文件: skills/skill_freshness_ext.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_gitops_py["技能gitops<br/>技能gitops。MOD-INF-019: Agent Spec — Skill<br/>GitOps<br/>文件: skills/skill_gitops.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_guardrails_py["技能guardrails<br/>技能guardrails。MOD-INF-019: Agent Spec — Skill<br/>Guardrails<br/>文件: skills/skill_guardrails.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_guardrails_py["技能guardrails<br/>MOD-INF-019: Agent Spec — Skill Guardrails<br/>文件: skills/skill_guardrails.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_idempotency_py["技能幂等性<br/>技能idempotency。MOD-INF-019: Agent Spec —<br/>Skill Idempotency<br/>文件: skills/skill_idempotency.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_kya_py["技能kya<br/>技能kya。MOD-INF-019: Agent Spec — Skill KYA<br/>文件: skills/skill_kya.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_learning_py["技能learning<br/>技能learning。MOD-INF-019: Agent Spec — Skill<br/>Self-Learning Engine<br/>文件: skills/skill_learning.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_learning_py["技能learning<br/>MOD-INF-019: Agent Spec — Skill Self-Learning<br/>Engine<br/>文件: skills/skill_learning.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_lineage_py["技能lineage<br/>技能lineage。MOD-INF-019: Agent Spec — Skill<br/>Lineage<br/>文件: skills/skill_lineage.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_locking_py["技能locking<br/>技能locking。MOD-INF-019: Agent Spec — Skill<br/>Locking (Production Hardening)<br/>文件: skills/skill_locking.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_observability_py["技能可观测性<br/>技能observability。MOD-INF-019: Agent Spec —<br/>Skill Observability<br/>文件: skills/skill_observability.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_ontology_py["技能ontology<br/>技能ontology。MOD-INF-019: Agent Spec — Skill<br/>Ontology<br/>文件: skills/skill_ontology.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_ontology_py["技能ontology<br/>MOD-INF-019: Agent Spec — Skill Ontology<br/>文件: skills/skill_ontology.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_postmortem_py["技能postmortem<br/>MOD-INF-019: Agent Spec — Skill Postmortem<br/>(追问到底)<br/>skill_postmortem<br/>文件: skills/skill_postmortem.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_prompt_cache_py["技能提示缓存<br/>技能提示缓存。MOD-INF-019: Agent Spec — Skill<br/>Prompt Cache<br/>文件: skills/skill_prompt_cache.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_prompt_opt_py["技能提示opt<br/>技能提示opt。MOD-INF-019: Agent Spec — Skill<br/>Prompt Optimizer<br/>文件: skills/skill_prompt_opt.py<br/>(生产态 / production)"]
@@ -142,9 +142,9 @@ flowchart TD
     src_zephyr_autonomy_core_skills_skill_silent_failure_py["skillsilent故障<br/>技能silentfailure。MOD-INF-019: Agent Spec —<br/>Silent Failure Detector<br/>文件: skills/skill_silent_failure.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_team_optimizer_py["技能团队优化器<br/>技能团队优化器。MOD-INF-019: Agent Spec — Skill<br/>Team Optimizer<br/>文件: skills/skill_team_optimizer.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_telemetry_py["技能遥测<br/>技能遥测。MOD-INF-019: Agent Spec — Skill<br/>Telemetry<br/>文件: skills/skill_telemetry.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_temperature_py["技能temperature<br/>技能temperature。MOD-INF-019: Agent Spec —<br/>Skill Temperature<br/>文件: skills/skill_temperature.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_tokenomics_py["技能tokenomics<br/>技能tokenomics。MOD-INF-019: Agent Spec — Skill<br/>Tokenomics<br/>文件: skills/skill_tokenomics.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_translator_py["技能translator<br/>技能translator。MOD-INF-019: Agent Spec — Skill<br/>Translator<br/>文件: skills/skill_translator.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_temperature_py["技能temperature<br/>MOD-INF-019: Agent Spec — Skill Temperature<br/>文件: skills/skill_temperature.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_tokenomics_py["技能tokenomics<br/>MOD-INF-019: Agent Spec — Skill Tokenomics<br/>文件: skills/skill_tokenomics.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_translator_py["技能translator<br/>MOD-INF-019: Agent Spec — Skill Translator<br/>文件: skills/skill_translator.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_workflow_py["技能工作流<br/>技能工作流。MOD-INF-019: Agent Spec — Skill<br/>Workflow Orchestrator<br/>文件: skills/skill_workflow.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_spec_engine_py["spec引擎<br/>MOD-INF-019: Agent Spec — SpecEngine<br/>蓝图->Skill 升级引擎<br/>spec_engine<br/>文件: autonomy_core/spec_engine.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_vibe_coding_quality_gate_py["vibecoding质量门禁<br/>VibeCodingQualityGate — 代码质量门禁（stub,<br/>tests 待实装后补全实现）<br/>vibe_coding_quality_gate<br/>文件: autonomy_core/vibe_coding_quality_gate.py<br/>(生产态 / production)"]
@@ -279,14 +279,14 @@ flowchart TD
     tests_f_lifecycle_test_f1_event_trigger_py ~~~ tests_trading_extreme_test_f14_pipeline_extreme_py
     tests_trading_extreme_test_f14_pipeline_extreme_py ~~~ tests_trading_extreme_test_f1_extreme_py
     src_zephyr_autonomy_core_context_context_pipeline_py["上下文管线<br/>上下文管线 — Context Engine **四段流水线组合根**<br/>context_pipeline<br/>文件: context/context_pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_evaluator_py["技能evaluator<br/>技能evaluator。MOD-INF-019: Agent Spec — Skill<br/>Evaluator<br/>文件: skills/skill_evaluator.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_evaluator_py["技能evaluator<br/>MOD-INF-019: Agent Spec — Skill Evaluator<br/>文件: skills/skill_evaluator.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_factory_py["技能工厂<br/>技能工厂，主要提供read蓝图、提取模块信息、findse<br/>ction等功能<br/>skill_factory<br/>文件: skills/skill_factory.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_kill_switch_py["技能终止开关<br/>技能终止开关。MOD-INF-019: Agent Spec — Skill<br/>Kill Switch<br/>文件: skills/skill_kill_switch.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_lifecycle_py["技能生命周期<br/>技能生命周期。MOD-INF-019: Agent Spec — Skill<br/>Lifecycle<br/>文件: skills/skill_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_model_evolution_py["技能模型进化<br/>技能模型进化。MOD-INF-019: Agent Spec — Skill<br/>Model Evolution<br/>文件: skills/skill_model_evolution.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_registry_py["技能注册表<br/>技能注册表.py —— Skill 注册基座（Phase 14 /<br/>盲点 B34）<br/>skill_registry<br/>文件: skills/skill_registry.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_trigger_router_py["触发器路由器<br/>触发器路由器，主要提供from标签等功能<br/>trigger_router<br/>文件: autonomy_core/trigger_router.py<br/>(生产态 / production)"]
-    src_zephyr_governance_persistence_intent_keyword_mapper_py["意图关键词映射器<br/>意图识别域（D0-D9 + UNKNOWN，与 metadata_<br/>registry.yaml §9.2 domain 枚举对齐）。<br/>IntentKeywordMapper - Stage 1 of three-stage<br/>intent parsing<br/>IntentKeywordMapper - Stage 1 of three-stage<br/>intent parsing (<br/>文件: persistence/intent_keyword_mapper.py<br/>(生产态 / production)"]
+    src_zephyr_governance_persistence_intent_keyword_mapper_py["意图关键词映射器<br/>意图识别域（D0-D9 + UNKNOWN，与 metadata_<br/>registry.yaml §9.2 domain 枚举对齐）。<br/>IntentKeywordMapper - Stage 1 of three-stage<br/>intent parsing<br/>文件: persistence/intent_keyword_mapper.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_context_pipeline_py ~~~ src_zephyr_autonomy_core_skills_skill_evaluator_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py ~~~ src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_factory_py ~~~ src_zephyr_autonomy_core_skills_skill_kill_switch_py
@@ -296,8 +296,8 @@ flowchart TD
     src_zephyr_autonomy_core_skills_skill_registry_py ~~~ src_zephyr_autonomy_core_trigger_router_py
     src_zephyr_autonomy_core_trigger_router_py ~~~ src_zephyr_governance_persistence_intent_keyword_mapper_py
     src_zephyr_autonomy_core_context_context_assembler_py["上下文assembler<br/>ContextAssembler — 上下文装配、校验、影子留档<br/>context_assembler<br/>文件: context/context_assembler.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_context_context_injector_py["上下文injector<br/>上下文injector。ContextInjector: retrieve and<br/>inject relevant knowledge into prompt context<br/>文件: context/context_injector.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_freshness_py["技能freshness<br/>技能freshness。MOD-INF-019: Agent Spec — Skill<br/>Freshness Decay<br/>文件: skills/skill_freshness.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_context_context_injector_py["上下文injector<br/>ContextInjector: retrieve and inject relevant<br/>knowledge into<br/>文件: context/context_injector.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_freshness_py["技能freshness<br/>MOD-INF-019: Agent Spec — Skill Freshness Decay<br/>文件: skills/skill_freshness.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_loader_py["技能加载器<br/>技能加载器，主要提供提取体、compressto严重rules<br/>、解析技能路径等功能<br/>skill_loader<br/>文件: skills/skill_loader.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_model_py["技能模型<br/>技能模型，提供包入口和模块加载功能<br/>skill_model<br/>文件: skills/skill_model.py<br/>(生产态 / production)"]
     src_zephyr_shared_blueprint_tools_architecture_context_loader_py["架构上下文加载器<br/>架构上下文加载器 — 加载 ``generate_architecture_<br/>context.py`` 产出的预编译 JSON<br/>architecture_context_loader<br/>文件: blueprint_tools/architecture_context_<br/>loader.py<br/>(生产态 / production)"]
@@ -317,9 +317,9 @@ flowchart TD
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
-    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_assembler_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
@@ -327,72 +327,72 @@ flowchart TD
     src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_trigger_router_py
     src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_consensus_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_constructor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_contract_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
-    src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
-    src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
+    src_zephyr_autonomy_core_skills_skill_consensus_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
+    src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
+    src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
+    src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_contract_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
     src_zephyr_autonomy_core_skills_skill_kya_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_lifecycle_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_postmortem_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_prompt_opt_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_translator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_shadow_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_workflow_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_translator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_governance_persistence_intent_parser_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
-    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_context_context_injector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_file_autoregister_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_sandbox_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_INTEGRATION["管线路由<br/>管线路由，负责跨域数据流路由、管道编排和集成适配<br/>Pipeline Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    tests_automation_test_auto_runtime_e2e_py -->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    src_zephyr_autonomy_core_context_context_budget_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    tests_f_lifecycle_test_f1_event_trigger_py -->|测试依赖 / test_depends| D_SHARED
+    src_zephyr_autonomy_core_context_context_injector_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| D_SHARED
     tests_trading_extreme_test_f1_extreme_py -->|测试依赖 / test_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| D_SHARED
-    tests_trading_extreme_test_f1_extreme_py -->|测试依赖 / test_depends| D_INFRA_RUNTIME
     src_zephyr_autonomy_core_context_checkpoint_manager_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| D_SHARED
-    tests_automation_test_auto_runtime_e2e_py -->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    src_zephyr_autonomy_core_skills_skill_factory_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_infrastructure_system_snapshot_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_ext_py
-    D_ORCHESTRATOR["代理编排器<br/>代理编排器，负责 Agent<br/>任务全生命周期：任务入队、调度、沙箱执行、幻觉检<br/>测和收尾归档<br/>Agent Orchestrator<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
-    D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
-    D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_writer_py
-    D_INTEGRATION["管线路由<br/>管线路由，负责跨域数据流路由、管道编排和集成适配<br/>Pipeline Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_feedback_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
     D_SECURITY["对抗验证<br/>对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验<br/>证<br/>Adversarial Validation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skill_rbac_registry_py
     D_GOV_REPAIR["治理修复<br/>治理修复，负责治理问题自动修复和修复策略管理<br/>Governance Repair<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_executor_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_ext_py
+    D_ORCHESTRATOR["代理编排器<br/>代理编排器，负责 Agent<br/>任务全生命周期：任务入队、调度、沙箱执行、幻觉检<br/>测和收尾归档<br/>Agent Orchestrator<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
+    D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_vector_bridge_py
+    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_writer_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_feedback_py
+    D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_autonomy_core_main_py,src_zephyr_autonomy_core_agent_observability_py,src_zephyr_autonomy_core_all_skill_modules_py,src_zephyr_autonomy_core_context_atomic_injector_py,src_zephyr_autonomy_core_context_ce_bootstrap_py,src_zephyr_autonomy_core_context_ce_explain_cli_py,src_zephyr_autonomy_core_context_ce_file_lister_py,src_zephyr_autonomy_core_context_ce_playground_v2_py,src_zephyr_autonomy_core_context_ce_vibe_shortcuts_py,src_zephyr_autonomy_core_context_checkpoint_manager_py,src_zephyr_autonomy_core_context_cold_start_booster_py,src_zephyr_autonomy_core_context_complexity_budget_py,src_zephyr_autonomy_core_context_context_assembler_py,src_zephyr_autonomy_core_context_context_budget_py,src_zephyr_autonomy_core_context_context_budget_tracker_py,src_zephyr_autonomy_core_context_context_debt_score_py,src_zephyr_autonomy_core_context_context_evaluator_py,src_zephyr_autonomy_core_context_context_evictor_py,src_zephyr_autonomy_core_context_context_health_score_py,src_zephyr_autonomy_core_context_context_injector_py,src_zephyr_autonomy_core_context_context_model_strategy_py,src_zephyr_autonomy_core_context_context_outcome_tracker_py,src_zephyr_autonomy_core_context_context_pipeline_py,src_zephyr_autonomy_core_context_context_pipeline_auto_py,src_zephyr_autonomy_core_context_context_playground_py,src_zephyr_autonomy_core_context_context_rot_model_py,src_zephyr_autonomy_core_context_context_rule_registry_py,src_zephyr_autonomy_core_context_context_value_attribution_py,src_zephyr_autonomy_core_context_contextual_fetch_api_py,src_zephyr_autonomy_core_context_curation_loop_py,src_zephyr_autonomy_core_context_diff_injector_py,src_zephyr_autonomy_core_context_diversity_constraint_py,src_zephyr_autonomy_core_context_domain_decay_config_py,src_zephyr_autonomy_core_context_fallback_staleness_gate_py,src_zephyr_autonomy_core_context_integrity_check_py,src_zephyr_autonomy_core_context_memory_bank_py,src_zephyr_autonomy_core_context_mode_manager_py,src_zephyr_autonomy_core_context_position_optimizer_py,src_zephyr_autonomy_core_context_shadow_canary_py,src_zephyr_autonomy_core_context_staleness_manager_py,src_zephyr_autonomy_core_context_vector_bridge_py,src_zephyr_autonomy_core_file_autoregister_py,src_zephyr_autonomy_core_ide_watcher_py,src_zephyr_autonomy_core_integration_pipeline_bridge_py,src_zephyr_autonomy_core_phase_planner_py,src_zephyr_autonomy_core_progressive_disclosure_injector_py,src_zephyr_autonomy_core_prompt_registry_py,src_zephyr_autonomy_core_self_evolution_fidelity_gate_py,src_zephyr_autonomy_core_skill_rbac_registry_py,src_zephyr_autonomy_core_skills_skill_attention_py,src_zephyr_autonomy_core_skills_skill_breakage_checker_py,src_zephyr_autonomy_core_skills_skill_cache_provider_py,src_zephyr_autonomy_core_skills_skill_calibration_py,src_zephyr_autonomy_core_skills_skill_canary_py,src_zephyr_autonomy_core_skills_skill_cognitive_preservation_py,src_zephyr_autonomy_core_skills_skill_compliance_py,src_zephyr_autonomy_core_skills_skill_consensus_py,src_zephyr_autonomy_core_skills_skill_constructor_py,src_zephyr_autonomy_core_skills_skill_context_isolation_py,src_zephyr_autonomy_core_skills_skill_contract_py,src_zephyr_autonomy_core_skills_skill_cross_model_py,src_zephyr_autonomy_core_skills_skill_di_py,src_zephyr_autonomy_core_skills_skill_discovery_py,src_zephyr_autonomy_core_skills_skill_durable_py,src_zephyr_autonomy_core_skills_skill_economics_py,src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py,src_zephyr_autonomy_core_skills_skill_evaluator_py,src_zephyr_autonomy_core_skills_skill_executor_py,src_zephyr_autonomy_core_skills_skill_explain_py,src_zephyr_autonomy_core_skills_skill_factory_py,src_zephyr_autonomy_core_skills_skill_feature_flags_py,src_zephyr_autonomy_core_skills_skill_feedback_py,src_zephyr_autonomy_core_skills_skill_freshness_py,src_zephyr_autonomy_core_skills_skill_freshness_ext_py,src_zephyr_autonomy_core_skills_skill_gitops_py,src_zephyr_autonomy_core_skills_skill_guardrails_py,src_zephyr_autonomy_core_skills_skill_idempotency_py,src_zephyr_autonomy_core_skills_skill_kill_switch_py,src_zephyr_autonomy_core_skills_skill_kya_py,src_zephyr_autonomy_core_skills_skill_learning_py,src_zephyr_autonomy_core_skills_skill_lifecycle_py,src_zephyr_autonomy_core_skills_skill_lineage_py,src_zephyr_autonomy_core_skills_skill_loader_py,src_zephyr_autonomy_core_skills_skill_locking_py,src_zephyr_autonomy_core_skills_skill_model_py,src_zephyr_autonomy_core_skills_skill_model_evolution_py,src_zephyr_autonomy_core_skills_skill_observability_py,src_zephyr_autonomy_core_skills_skill_ontology_py,src_zephyr_autonomy_core_skills_skill_postmortem_py,src_zephyr_autonomy_core_skills_skill_prompt_cache_py,src_zephyr_autonomy_core_skills_skill_prompt_opt_py,src_zephyr_autonomy_core_skills_skill_registry_py,src_zephyr_autonomy_core_skills_skill_resilience_py,src_zephyr_autonomy_core_skills_skill_risk_mitigator_py,src_zephyr_autonomy_core_skills_skill_router_py,src_zephyr_autonomy_core_skills_skill_sandbox_py,src_zephyr_autonomy_core_skills_skill_schema_registry_py,src_zephyr_autonomy_core_skills_skill_security_py,src_zephyr_autonomy_core_skills_skill_shadow_py,src_zephyr_autonomy_core_skills_skill_silent_failure_py,src_zephyr_autonomy_core_skills_skill_team_optimizer_py,src_zephyr_autonomy_core_skills_skill_telemetry_py,src_zephyr_autonomy_core_skills_skill_temperature_py,src_zephyr_autonomy_core_skills_skill_tokenomics_py,src_zephyr_autonomy_core_skills_skill_translator_py,src_zephyr_autonomy_core_skills_skill_workflow_py,src_zephyr_autonomy_core_spec_engine_py,src_zephyr_autonomy_core_trigger_router_py,src_zephyr_autonomy_core_vibe_coding_quality_gate_py,src_zephyr_governance_persistence_intent_keyword_mapper_py,src_zephyr_governance_persistence_intent_parser_py,src_zephyr_infrastructure_system_snapshot_py,src_zephyr_infrastructure_system_telemetry_otel_instrumentation_py,src_zephyr_integration_vector_memory_vector_writer_py,src_zephyr_security_llm_defense_llm_security_adversarial_robustness_py,src_zephyr_security_llm_defense_llm_security_alignment_scorer_py,src_zephyr_security_llm_defense_llm_security_lsg_pattern_tracker_py,src_zephyr_security_llm_defense_llm_security_poisoning_monitor_py,src_zephyr_security_llm_defense_llm_security_sensitivity_classifier_py,src_zephyr_security_llm_defense_llm_security_solo_dev_safety_net_py,src_zephyr_shared_ai_guards_config_safety_guard_py,src_zephyr_shared_blueprint_tools_architecture_context_loader_py,src_zephyr_shared_dependency_dependency_tracker_py,src_zephyr_shared_io_cache_invalidation_py,src_zephyr_shared_io_doc_compressor_py,src_zephyr_shared_utils_verify_paths_py,tests_automation_test_auto_runtime_e2e_py,tests_f_lifecycle_test_f1_event_trigger_py,tests_trading_extreme_test_f14_pipeline_extreme_py,tests_trading_extreme_test_f1_extreme_py production
-    class D_INFRA_RUNTIME,D_SHARED,D_GOV_AUDIT,D_ORCHESTRATOR,D_FEEDBACK_LOOP,D_GOV_CODE_QUALITY,D_INTEGRATION,D_SECURITY,D_GOV_REPAIR external_prod
+    class D_SHARED,D_INFRA_RUNTIME,D_GOV_AUDIT,D_INTEGRATION,D_SECURITY,D_GOV_REPAIR,D_ORCHESTRATOR,D_FEEDBACK_LOOP,D_GOV_CODE_QUALITY external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -404,12 +404,12 @@ flowchart TD
 flowchart TD
     src_zephyr_autonomy_core_main_py["主入口<br/>代理规范 MOD-INF-019 CLI — 蓝图->Skill<br/>升级引擎入口.<br/>__main__<br/>文件: autonomy_core/__main__.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_agent_observability_py["代理可观测性<br/>代理observability。MOD-INF-019: Agent Spec —<br/>Agent Observability<br/>文件: autonomy_core/agent_observability.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_all_skill_modules_py["all技能modules<br/>all技能modules。MOD-INF-019: Agent Spec — All<br/>Skill Modules<br/>文件: autonomy_core/all_skill_modules.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_all_skill_modules_py["all技能modules<br/>MOD-INF-019: Agent Spec — All Skill Modules<br/>文件: autonomy_core/all_skill_modules.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_atomic_injector_py["atomicinjector.py — 原子注入 (DD101, TASK-0<br/>atomic_injector<br/>文件: context/atomic_injector.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_ce_bootstrap_py["ce自举<br/>CE 自举架构 (B1, DD75, TASK-015 beta v)<br/>ce_bootstrap<br/>文件: context/ce_bootstrap.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_ce_explain_cli_py["ceexplain命令行<br/>KE inclusion rationale 解释 CLI<br/>ce_explain_cli<br/>文件: context/ce_explain_cli.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_ce_file_lister_py["ce文件lister<br/>CE 文件清单生成器<br/>ce_file_lister<br/>文件: context/ce_file_lister.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_context_ce_playground_v2_py["CE演练场v2<br/>CE演练场v2，context的结果，封装操作结果的数据结<br/>构。<br/>ce_playground_v2.py — V2 Playground with full<br/>decision chain<br/>ce_playground_v2.py — V2 Playground with full<br/>decision chain (TASK-016)<br/>文件: context/ce_playground_v2.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_context_ce_playground_v2_py["CE演练场v2<br/>CE演练场v2，context的结果，封装操作结果的数据结<br/>构。<br/>ce_playground_v2.py — V2 Playground with full<br/>decision chain<br/>文件: context/ce_playground_v2.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_ce_vibe_shortcuts_py["cevibeshortcuts.py — Vibe/Strict 模式切换<br/>ce_vibe_shortcuts<br/>文件: context/ce_vibe_shortcuts.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_checkpoint_manager_py["检查点管理器<br/>Inject 前快照<br/>checkpoint_manager<br/>文件: context/checkpoint_manager.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_cold_start_booster_py["冷启动booster<br/>cold_start_booster<br/>文件: context/cold_start_booster.py<br/>(生产态 / production)"]
@@ -439,7 +439,7 @@ flowchart TD
     src_zephyr_autonomy_core_context_shadow_canary_py["影子金丝雀<br/>金丝雀部署 (B4, DD78, TASK-015 beta w)<br/>shadow_canary<br/>文件: context/shadow_canary.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_staleness_manager_py["staleness管理器<br/>全局过期检测<br/>staleness_manager<br/>文件: context/staleness_manager.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_vector_bridge_py["向量桥接<br/>VectorBridge — CE↔VMS 检索桥接 (Connect<br/>CT-CE-VMS-001)<br/>vector_bridge<br/>文件: context/vector_bridge.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_file_autoregister_py["文件autoregister<br/>文件autoregister，主要提供注册等功能<br/>file_autoregister<br/>文件: autonomy_core/file_autoregister.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_file_autoregister_py["文件autoregister<br/>file_autoregister<br/>文件: autonomy_core/file_autoregister.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_ide_watcher_py["IDE监视器<br/>IDE 热重载监视器——Skill 文件变更自动刷新<br/>AGENTS.md<br/>MOD-INF-019: Agent Spec — IDE Watcher<br/>文件: autonomy_core/ide_watcher.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_integration_pipeline_bridge_py["管线桥接<br/>PipelineSkillBridge — Agent Spec -> Pipeline<br/>双向桥接<br/>pipeline_bridge<br/>文件: integration/pipeline_bridge.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_phase_planner_py["阶段规划器<br/>阶段planner。MOD-INF-019: Agent Spec — Phase<br/>Planner<br/>文件: autonomy_core/phase_planner.py<br/>(生产态 / production)"]
@@ -447,37 +447,37 @@ flowchart TD
     src_zephyr_autonomy_core_prompt_registry_py["提示注册表<br/>PromptRegistry: YAML-driven Prompt 模板注册表<br/>prompt_registry<br/>文件: autonomy_core/prompt_registry.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_self_evolution_fidelity_gate_py["self进化fidelity门禁<br/>自进化fidelity门禁。MOD-INF-019: Agent Spec —<br/>Self Evolution Fidelity Gate<br/>文件: autonomy_core/self_evolution_fidelity_<br/>gate.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skill_rbac_registry_py["skillRBAC注册表<br/>技能rbac注册表。G-CT-003: Agent Spec -> RBAC<br/>capability check.<br/>文件: autonomy_core/skill_rbac_registry.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_attention_py["技能attention<br/>技能attention。MOD-INF-019: Agent Spec — Skill<br/>Attention Management<br/>文件: skills/skill_attention.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_attention_py["技能attention<br/>MOD-INF-019: Agent Spec — Skill Attention<br/>Management<br/>文件: skills/skill_attention.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_breakage_checker_py["skillbreakage检查器<br/>技能breakage检查器。MOD-INF-019: Agent Spec —<br/>Skill Breakage Checker<br/>文件: skills/skill_breakage_checker.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_cache_provider_py["技能缓存提供器<br/>技能缓存提供器。MOD-INF-019: Agent Spec — Skill<br/>Cache Provider<br/>文件: skills/skill_cache_provider.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_calibration_py["技能calibration<br/>技能calibration。MOD-INF-019: Agent Spec —<br/>Skill Calibration<br/>文件: skills/skill_calibration.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_calibration_py["技能calibration<br/>MOD-INF-019: Agent Spec — Skill Calibration<br/>文件: skills/skill_calibration.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_canary_py["技能金丝雀<br/>技能canary。MOD-INF-019: Agent Spec — Skill<br/>Canary<br/>文件: skills/skill_canary.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_cognitive_preservation_py["skill认知preservation<br/>技能cognitivepreservation。MOD-INF-019: Agent<br/>Spec — Skill Cognitive Preservation<br/>文件: skills/skill_cognitive_preservation.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_compliance_py["技能合规<br/>技能合规。MOD-INF-019: Agent Spec — Skill<br/>Compliance<br/>文件: skills/skill_compliance.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_consensus_py["技能共识<br/>技能共识。MOD-INF-019: Agent Spec — Skill<br/>Consensus<br/>文件: skills/skill_consensus.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_constructor_py["技能constructor<br/>技能constructor。MOD-INF-019: Agent Spec —<br/>Skill Constructor<br/>文件: skills/skill_constructor.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_constructor_py["技能constructor<br/>MOD-INF-019: Agent Spec — Skill Constructor<br/>文件: skills/skill_constructor.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_context_isolation_py["skill上下文isolation<br/>技能上下文isolation。MOD-INF-019: Agent Spec —<br/>Context Isolation<br/>文件: skills/skill_context_isolation.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_contract_py["技能契约<br/>技能契约。MOD-INF-019: Agent Spec — Skill<br/>Contract<br/>文件: skills/skill_contract.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_cross_model_py["技能跨模型<br/>技能跨模型。MOD-INF-019: Agent Spec — Skill<br/>Cross-Model<br/>文件: skills/skill_cross_model.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_di_py["技能di<br/>技能di。MOD-INF-019: Agent Spec — Skill<br/>Dependency Injection<br/>文件: skills/skill_di.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_discovery_py["技能discovery<br/>技能discovery。MOD-INF-019: Agent Spec — Skill<br/>Discovery<br/>文件: skills/skill_discovery.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_discovery_py["技能discovery<br/>MOD-INF-019: Agent Spec — Skill Discovery<br/>文件: skills/skill_discovery.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_durable_py["技能durable<br/>技能durable。MOD-INF-019: Agent Spec — Durable<br/>Execution<br/>文件: skills/skill_durable.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_economics_py["技能economics<br/>技能economics。MOD-INF-019: Agent Spec — Skill<br/>Economics<br/>文件: skills/skill_economics.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_economics_py["技能economics<br/>MOD-INF-019: Agent Spec — Skill Economics<br/>文件: skills/skill_economics.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py["skillefficacy校准器<br/>技能efficacycalibrator。MOD-INF-019: Agent Spec<br/>— Skill Efficacy Calibrator<br/>文件: skills/skill_efficacy_calibrator.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_executor_py["技能执行器<br/>Skill 加载前创建回滚检查点<br/>skill_executor<br/>文件: skills/skill_executor.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_explain_py["技能explain<br/>技能explain。MOD-INF-019: Agent Spec — XAI<br/>Explainable Skill Engine<br/>文件: skills/skill_explain.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_feature_flags_py["技能功能标志<br/>技能功能标志。MOD-INF-019: Agent Spec — Skill<br/>Feature Flags<br/>文件: skills/skill_feature_flags.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_feedback_py["技能反馈<br/>技能反馈。MOD-INF-019: Agent Spec — Skill<br/>Feedback Loop<br/>文件: skills/skill_feedback.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_freshness_ext_py["技能freshness扩展<br/>技能freshness扩展。MOD-INF-019: Agent Spec —<br/>Skill Freshness Extensions<br/>文件: skills/skill_freshness_ext.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_freshness_ext_py["技能freshness扩展<br/>MOD-INF-019: Agent Spec — Skill Freshness<br/>Extensions<br/>文件: skills/skill_freshness_ext.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_gitops_py["技能gitops<br/>技能gitops。MOD-INF-019: Agent Spec — Skill<br/>GitOps<br/>文件: skills/skill_gitops.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_guardrails_py["技能guardrails<br/>技能guardrails。MOD-INF-019: Agent Spec — Skill<br/>Guardrails<br/>文件: skills/skill_guardrails.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_guardrails_py["技能guardrails<br/>MOD-INF-019: Agent Spec — Skill Guardrails<br/>文件: skills/skill_guardrails.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_idempotency_py["技能幂等性<br/>技能idempotency。MOD-INF-019: Agent Spec —<br/>Skill Idempotency<br/>文件: skills/skill_idempotency.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_kya_py["技能kya<br/>技能kya。MOD-INF-019: Agent Spec — Skill KYA<br/>文件: skills/skill_kya.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_learning_py["技能learning<br/>技能learning。MOD-INF-019: Agent Spec — Skill<br/>Self-Learning Engine<br/>文件: skills/skill_learning.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_learning_py["技能learning<br/>MOD-INF-019: Agent Spec — Skill Self-Learning<br/>Engine<br/>文件: skills/skill_learning.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_lineage_py["技能lineage<br/>技能lineage。MOD-INF-019: Agent Spec — Skill<br/>Lineage<br/>文件: skills/skill_lineage.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_locking_py["技能locking<br/>技能locking。MOD-INF-019: Agent Spec — Skill<br/>Locking (Production Hardening)<br/>文件: skills/skill_locking.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_observability_py["技能可观测性<br/>技能observability。MOD-INF-019: Agent Spec —<br/>Skill Observability<br/>文件: skills/skill_observability.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_ontology_py["技能ontology<br/>技能ontology。MOD-INF-019: Agent Spec — Skill<br/>Ontology<br/>文件: skills/skill_ontology.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_ontology_py["技能ontology<br/>MOD-INF-019: Agent Spec — Skill Ontology<br/>文件: skills/skill_ontology.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_postmortem_py["技能postmortem<br/>MOD-INF-019: Agent Spec — Skill Postmortem<br/>(追问到底)<br/>skill_postmortem<br/>文件: skills/skill_postmortem.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_prompt_cache_py["技能提示缓存<br/>技能提示缓存。MOD-INF-019: Agent Spec — Skill<br/>Prompt Cache<br/>文件: skills/skill_prompt_cache.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_prompt_opt_py["技能提示opt<br/>技能提示opt。MOD-INF-019: Agent Spec — Skill<br/>Prompt Optimizer<br/>文件: skills/skill_prompt_opt.py<br/>(生产态 / production)"]
@@ -491,9 +491,9 @@ flowchart TD
     src_zephyr_autonomy_core_skills_skill_silent_failure_py["skillsilent故障<br/>技能silentfailure。MOD-INF-019: Agent Spec —<br/>Silent Failure Detector<br/>文件: skills/skill_silent_failure.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_team_optimizer_py["技能团队优化器<br/>技能团队优化器。MOD-INF-019: Agent Spec — Skill<br/>Team Optimizer<br/>文件: skills/skill_team_optimizer.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_telemetry_py["技能遥测<br/>技能遥测。MOD-INF-019: Agent Spec — Skill<br/>Telemetry<br/>文件: skills/skill_telemetry.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_temperature_py["技能temperature<br/>技能temperature。MOD-INF-019: Agent Spec —<br/>Skill Temperature<br/>文件: skills/skill_temperature.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_tokenomics_py["技能tokenomics<br/>技能tokenomics。MOD-INF-019: Agent Spec — Skill<br/>Tokenomics<br/>文件: skills/skill_tokenomics.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_translator_py["技能translator<br/>技能translator。MOD-INF-019: Agent Spec — Skill<br/>Translator<br/>文件: skills/skill_translator.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_temperature_py["技能temperature<br/>MOD-INF-019: Agent Spec — Skill Temperature<br/>文件: skills/skill_temperature.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_tokenomics_py["技能tokenomics<br/>MOD-INF-019: Agent Spec — Skill Tokenomics<br/>文件: skills/skill_tokenomics.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_translator_py["技能translator<br/>MOD-INF-019: Agent Spec — Skill Translator<br/>文件: skills/skill_translator.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_workflow_py["技能工作流<br/>技能工作流。MOD-INF-019: Agent Spec — Skill<br/>Workflow Orchestrator<br/>文件: skills/skill_workflow.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_spec_engine_py["spec引擎<br/>MOD-INF-019: Agent Spec — SpecEngine<br/>蓝图->Skill 升级引擎<br/>spec_engine<br/>文件: autonomy_core/spec_engine.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_vibe_coding_quality_gate_py["vibecoding质量门禁<br/>VibeCodingQualityGate — 代码质量门禁（stub,<br/>tests 待实装后补全实现）<br/>vibe_coding_quality_gate<br/>文件: autonomy_core/vibe_coding_quality_gate.py<br/>(生产态 / production)"]
@@ -628,14 +628,14 @@ flowchart TD
     tests_f_lifecycle_test_f1_event_trigger_py ~~~ tests_trading_extreme_test_f14_pipeline_extreme_py
     tests_trading_extreme_test_f14_pipeline_extreme_py ~~~ tests_trading_extreme_test_f1_extreme_py
     src_zephyr_autonomy_core_context_context_pipeline_py["上下文管线<br/>上下文管线 — Context Engine **四段流水线组合根**<br/>context_pipeline<br/>文件: context/context_pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_evaluator_py["技能evaluator<br/>技能evaluator。MOD-INF-019: Agent Spec — Skill<br/>Evaluator<br/>文件: skills/skill_evaluator.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_evaluator_py["技能evaluator<br/>MOD-INF-019: Agent Spec — Skill Evaluator<br/>文件: skills/skill_evaluator.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_factory_py["技能工厂<br/>技能工厂，主要提供read蓝图、提取模块信息、findse<br/>ction等功能<br/>skill_factory<br/>文件: skills/skill_factory.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_kill_switch_py["技能终止开关<br/>技能终止开关。MOD-INF-019: Agent Spec — Skill<br/>Kill Switch<br/>文件: skills/skill_kill_switch.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_lifecycle_py["技能生命周期<br/>技能生命周期。MOD-INF-019: Agent Spec — Skill<br/>Lifecycle<br/>文件: skills/skill_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_model_evolution_py["技能模型进化<br/>技能模型进化。MOD-INF-019: Agent Spec — Skill<br/>Model Evolution<br/>文件: skills/skill_model_evolution.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_registry_py["技能注册表<br/>技能注册表.py —— Skill 注册基座（Phase 14 /<br/>盲点 B34）<br/>skill_registry<br/>文件: skills/skill_registry.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_trigger_router_py["触发器路由器<br/>触发器路由器，主要提供from标签等功能<br/>trigger_router<br/>文件: autonomy_core/trigger_router.py<br/>(生产态 / production)"]
-    src_zephyr_governance_persistence_intent_keyword_mapper_py["意图关键词映射器<br/>意图识别域（D0-D9 + UNKNOWN，与 metadata_<br/>registry.yaml §9.2 domain 枚举对齐）。<br/>IntentKeywordMapper - Stage 1 of three-stage<br/>intent parsing<br/>IntentKeywordMapper - Stage 1 of three-stage<br/>intent parsing (<br/>文件: persistence/intent_keyword_mapper.py<br/>(生产态 / production)"]
+    src_zephyr_governance_persistence_intent_keyword_mapper_py["意图关键词映射器<br/>意图识别域（D0-D9 + UNKNOWN，与 metadata_<br/>registry.yaml §9.2 domain 枚举对齐）。<br/>IntentKeywordMapper - Stage 1 of three-stage<br/>intent parsing<br/>文件: persistence/intent_keyword_mapper.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_context_context_pipeline_py ~~~ src_zephyr_autonomy_core_skills_skill_evaluator_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py ~~~ src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_factory_py ~~~ src_zephyr_autonomy_core_skills_skill_kill_switch_py
@@ -645,8 +645,8 @@ flowchart TD
     src_zephyr_autonomy_core_skills_skill_registry_py ~~~ src_zephyr_autonomy_core_trigger_router_py
     src_zephyr_autonomy_core_trigger_router_py ~~~ src_zephyr_governance_persistence_intent_keyword_mapper_py
     src_zephyr_autonomy_core_context_context_assembler_py["上下文assembler<br/>ContextAssembler — 上下文装配、校验、影子留档<br/>context_assembler<br/>文件: context/context_assembler.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_context_context_injector_py["上下文injector<br/>上下文injector。ContextInjector: retrieve and<br/>inject relevant knowledge into prompt context<br/>文件: context/context_injector.py<br/>(生产态 / production)"]
-    src_zephyr_autonomy_core_skills_skill_freshness_py["技能freshness<br/>技能freshness。MOD-INF-019: Agent Spec — Skill<br/>Freshness Decay<br/>文件: skills/skill_freshness.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_context_context_injector_py["上下文injector<br/>ContextInjector: retrieve and inject relevant<br/>knowledge into<br/>文件: context/context_injector.py<br/>(生产态 / production)"]
+    src_zephyr_autonomy_core_skills_skill_freshness_py["技能freshness<br/>MOD-INF-019: Agent Spec — Skill Freshness Decay<br/>文件: skills/skill_freshness.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_loader_py["技能加载器<br/>技能加载器，主要提供提取体、compressto严重rules<br/>、解析技能路径等功能<br/>skill_loader<br/>文件: skills/skill_loader.py<br/>(生产态 / production)"]
     src_zephyr_autonomy_core_skills_skill_model_py["技能模型<br/>技能模型，提供包入口和模块加载功能<br/>skill_model<br/>文件: skills/skill_model.py<br/>(生产态 / production)"]
     src_zephyr_shared_blueprint_tools_architecture_context_loader_py["架构上下文加载器<br/>架构上下文加载器 — 加载 ``generate_architecture_<br/>context.py`` 产出的预编译 JSON<br/>architecture_context_loader<br/>文件: blueprint_tools/architecture_context_<br/>loader.py<br/>(生产态 / production)"]
@@ -666,9 +666,9 @@ flowchart TD
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
-    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_assembler_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
@@ -676,30 +676,30 @@ flowchart TD
     src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_trigger_router_py
     src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_consensus_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_constructor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_contract_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
-    src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
-    src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
+    src_zephyr_autonomy_core_skills_skill_consensus_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
+    src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
+    src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
+    src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_contract_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
     src_zephyr_autonomy_core_skills_skill_kya_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_lifecycle_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_postmortem_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_prompt_opt_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_translator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_shadow_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_workflow_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_translator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_governance_persistence_intent_parser_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

@@ -74,10 +74,10 @@ flowchart TD
     docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["蓝图<br/>蓝图（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: escalation_protocol/blueprint.md<br/>(设计态 / design)"]
     docs_03_modules_domain_governance_blueprint_md["蓝图<br/>蓝图（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: _domain_governance/blueprint.md<br/>(设计态 / design)"]
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["蓝图<br/>蓝图（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: code_dedup_engine/blueprint.md<br/>(设计态 / design)"]
-    docs_03_modules_domain_governance_governance_automation_blueprint_md["脚本系统蓝图 — 第三条生产线的自动化审计与门禁<br/>脚本系统蓝图 — 第三条生产线的自动化审计与门禁<br/>（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: governance_automation/blueprint.md<br/>(设计态 / design)"]
+    docs_03_modules_domain_governance_governance_automation_blueprint_md["脚本系统蓝图 — 第三条生产线的自动化审计与门禁<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>blueprint<br/>文件: governance_automation/blueprint.md<br/>(设计态 / design)"]
     docs_03_modules_domain_governance_registry_governance_blueprint_md["注册表治理<br/>注册表治理（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: registry_governance/blueprint.md<br/>(设计态 / design)"]
     tests_governance_d8_doc_sync_test_guc_trigger_fix_py["测试guc触发器fix.py — GUC 触发器缺陷修复的端到<br/>GUC 触发器缺陷修复的端到端 smoke test<br/>（#ARCH-GUC-TRIGGER-FIX-001）<br/>test_guc_trigger_fix<br/>文件: d8_doc_sync/test_guc_trigger_fix.py<br/>(生产态 / production)"]
-    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["测试syncsavepointisolation<br/>测试syncsavepointisolation() 级联失败隔离验证<br/>（#ARCH-GUC-TRIGGER-FIX-001 裁定 B / P1）<br/>test_sync_savepoint_isolation<br/>文件: d8_doc_sync/test_sync_savepoint_<br/>isolation.py<br/>(生产态 / production)"]
+    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["测试syncsavepointisolation<br/>test_sync_savepoint_isolation<br/>文件: d8_doc_sync/test_sync_savepoint_<br/>isolation.py<br/>(生产态 / production)"]
     docs_03_modules_cross_layer_auto_fix_engine_blueprint_md ~~~ docs_03_modules_cross_layer_auto_runtime_core_blueprint_md
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md ~~~ docs_03_modules_cross_layer_behavioral_auditor_blueprint_md
     docs_03_modules_cross_layer_behavioral_auditor_blueprint_md ~~~ docs_03_modules_cross_layer_context_engine_blueprint_md
@@ -125,7 +125,7 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     tests_governance_d8_doc_sync_test_guc_trigger_fix_py["测试guc触发器fix.py — GUC 触发器缺陷修复的端到<br/>GUC 触发器缺陷修复的端到端 smoke test<br/>（#ARCH-GUC-TRIGGER-FIX-001）<br/>test_guc_trigger_fix<br/>文件: d8_doc_sync/test_guc_trigger_fix.py<br/>(生产态 / production)"]
-    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["测试syncsavepointisolation<br/>测试syncsavepointisolation() 级联失败隔离验证<br/>（#ARCH-GUC-TRIGGER-FIX-001 裁定 B / P1）<br/>test_sync_savepoint_isolation<br/>文件: d8_doc_sync/test_sync_savepoint_<br/>isolation.py<br/>(生产态 / production)"]
+    tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["测试syncsavepointisolation<br/>test_sync_savepoint_isolation<br/>文件: d8_doc_sync/test_sync_savepoint_<br/>isolation.py<br/>(生产态 / production)"]
     tests_governance_d8_doc_sync_test_guc_trigger_fix_py ~~~ tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -162,7 +162,7 @@ flowchart TD
     docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["蓝图<br/>蓝图（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: escalation_protocol/blueprint.md<br/>(设计态 / design)"]
     docs_03_modules_domain_governance_blueprint_md["蓝图<br/>蓝图（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: _domain_governance/blueprint.md<br/>(设计态 / design)"]
     docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["蓝图<br/>蓝图（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: code_dedup_engine/blueprint.md<br/>(设计态 / design)"]
-    docs_03_modules_domain_governance_governance_automation_blueprint_md["脚本系统蓝图 — 第三条生产线的自动化审计与门禁<br/>脚本系统蓝图 — 第三条生产线的自动化审计与门禁<br/>（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: governance_automation/blueprint.md<br/>(设计态 / design)"]
+    docs_03_modules_domain_governance_governance_automation_blueprint_md["脚本系统蓝图 — 第三条生产线的自动化审计与门禁<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>blueprint<br/>文件: governance_automation/blueprint.md<br/>(设计态 / design)"]
     docs_03_modules_domain_governance_registry_governance_blueprint_md["注册表治理<br/>注册表治理（blueprint.md）<br/>⛔ 治理文档域，设计已就绪，等待开发排期<br/>文件: registry_governance/blueprint.md<br/>(设计态 / design)"]
     docs_03_modules_cross_layer_auto_fix_engine_blueprint_md ~~~ docs_03_modules_cross_layer_auto_runtime_core_blueprint_md
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md ~~~ docs_03_modules_cross_layer_behavioral_auditor_blueprint_md

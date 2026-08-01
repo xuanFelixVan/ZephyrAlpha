@@ -53,16 +53,16 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ex_sor_init_py["包入口<br/>zephyr/ex_sor<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: ex_sor/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_extensions_init_py["包入口<br/>ex_sor/_extensions<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_api_init_py["包入口<br/>ex_sor/api<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_core_init_py["包入口<br/>ex_sor/core<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_init_py["zephyr/ex_sor 包入口<br/>__init__<br/>文件: ex_sor/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_extensions_init_py["ex_sor/_extensions 包入口<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_api_init_py["ex_sor/api 包入口<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_core_init_py["ex_sor/core 包入口<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_algo_execution_selector_py["算法执行选择器<br/>算法执行选择器，SOR执行的选择器，按条件选择最优<br/>项。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>algo_execution_selector<br/>文件: core/algo_execution_selector.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_core_broker_adapter_manager_py["经纪人适配器管理器<br/>经纪人适配器管理器，core的适配器，把外部接口适配<br/>成内部统一格式。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>broker_adapter_manager<br/>文件: core/broker_adapter_manager.py<br/>(设计态 / design)"]
-    src_zephyr_ex_sor_core_optimal_order_router_py["optimal订单路由器<br/>optimal订单路由器，core的路由器，按规则把请求分<br/>发到对应处理方。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>optimal_order_router<br/>文件: core/optimal_order_router.py<br/>(设计态 / design)"]
-    src_zephyr_ex_sor_infrastructure_init_py["包入口<br/>ex_sor/infrastructure<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_models_init_py["包入口<br/>ex_sor/models<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_services_init_py["包入口<br/>ex_sor/services<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_core_optimal_order_router_py["optimal订单路由器<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>optimal_order_router<br/>文件: core/optimal_order_router.py<br/>(设计态 / design)"]
+    src_zephyr_ex_sor_infrastructure_init_py["ex_sor/infrastructure 包入口<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_models_init_py["ex_sor/models 包入口<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_services_init_py["ex_sor/services 包入口<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_services_execution_quality_scorer_py["执行质量评分器<br/>执行质量评分器（execution_quality_scorer.py）<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>文件: services/execution_quality_scorer.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_services_slippage_analyzer_py["滑点分析器<br/>滑点分析器，services的分析器，分析数据找出问题或<br/>规律。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>slippage_analyzer<br/>文件: services/slippage_analyzer.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_services_transaction_cost_optimizer_py["交易成本优化器<br/>交易成本优化器，服务的优化器，优化参数或配置。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>transaction_cost_optimizer<br/>文件: services/transaction_cost_optimizer.py<br/>(设计态 / design)"]
@@ -87,21 +87,20 @@ flowchart TD
     src_zephyr_ex_sor_core_algo_trading_engine_py -.->|runtime / runtime| src_zephyr_ex_sor_core_broker_api_connector_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -.->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_broker_api_connector_py -.->|runtime / runtime| src_zephyr_ex_sor_core_api_rate_limiter_py
-    D_MKT_DATA["行情数据<br/>行情数据，负责市场行情数据的采集、分发和订阅管理<br/>Market Data<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
-    src_zephyr_ex_sor_core_init_py -.->|runtime / runtime| D_MKT_DATA
-    D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_core_broker_adapter_manager_py -.->|导入依赖 / import_depends| D_EX_CORE
+    D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     src_zephyr_ex_sor_services_slippage_analyzer_py -.->|data / data| D_EX_CORE
     src_zephyr_ex_sor_services_execution_quality_scorer_py -.->|data / data| D_EX_CORE
     src_zephyr_ex_sor_services_transaction_cost_optimizer_py -.->|data / data| D_EX_CORE
+    D_MKT_DATA["行情数据<br/>行情数据，负责市场行情数据的采集、分发和订阅管理<br/>Market Data<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    src_zephyr_ex_sor_core_init_py -.->|runtime / runtime| D_MKT_DATA
+    src_zephyr_ex_sor_core_broker_adapter_manager_py -.->|导入依赖 / import_depends| D_EX_CORE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_sor_init_py,src_zephyr_ex_sor_extensions_init_py,src_zephyr_ex_sor_api_init_py,src_zephyr_ex_sor_core_init_py,src_zephyr_ex_sor_infrastructure_init_py,src_zephyr_ex_sor_models_init_py,src_zephyr_ex_sor_services_init_py production
     class src_zephyr_ex_sor_core_algo_execution_selector_py,src_zephyr_ex_sor_core_algo_trading_engine_py,src_zephyr_ex_sor_core_api_rate_limiter_py,src_zephyr_ex_sor_core_broker_adapter_manager_py,src_zephyr_ex_sor_core_broker_api_connector_py,src_zephyr_ex_sor_core_execution_scheduler_py,src_zephyr_ex_sor_core_optimal_order_router_py,src_zephyr_ex_sor_services_execution_quality_scorer_py,src_zephyr_ex_sor_services_slippage_analyzer_py,src_zephyr_ex_sor_services_transaction_cost_optimizer_py design
-    class D_EX_CORE external_prod
-    class D_MKT_DATA external_design
+    class D_EX_CORE,D_MKT_DATA external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -111,13 +110,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ex_sor_init_py["包入口<br/>zephyr/ex_sor<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: ex_sor/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_extensions_init_py["包入口<br/>ex_sor/_extensions<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_api_init_py["包入口<br/>ex_sor/api<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_core_init_py["包入口<br/>ex_sor/core<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_infrastructure_init_py["包入口<br/>ex_sor/infrastructure<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_models_init_py["包入口<br/>ex_sor/models<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_services_init_py["包入口<br/>ex_sor/services<br/>包入口，管理该层子模块的统一加载和懒导入<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_init_py["zephyr/ex_sor 包入口<br/>__init__<br/>文件: ex_sor/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_extensions_init_py["ex_sor/_extensions 包入口<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_api_init_py["ex_sor/api 包入口<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_core_init_py["ex_sor/core 包入口<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_infrastructure_init_py["ex_sor/infrastructure 包入口<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_models_init_py["ex_sor/models 包入口<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_services_init_py["ex_sor/services 包入口<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_init_py ~~~ src_zephyr_ex_sor_extensions_init_py
     src_zephyr_ex_sor_extensions_init_py ~~~ src_zephyr_ex_sor_api_init_py
     src_zephyr_ex_sor_api_init_py ~~~ src_zephyr_ex_sor_core_init_py
@@ -140,7 +139,7 @@ flowchart TD
 flowchart TD
     src_zephyr_ex_sor_core_algo_execution_selector_py["算法执行选择器<br/>算法执行选择器，SOR执行的选择器，按条件选择最优<br/>项。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>algo_execution_selector<br/>文件: core/algo_execution_selector.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_core_broker_adapter_manager_py["经纪人适配器管理器<br/>经纪人适配器管理器，core的适配器，把外部接口适配<br/>成内部统一格式。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>broker_adapter_manager<br/>文件: core/broker_adapter_manager.py<br/>(设计态 / design)"]
-    src_zephyr_ex_sor_core_optimal_order_router_py["optimal订单路由器<br/>optimal订单路由器，core的路由器，按规则把请求分<br/>发到对应处理方。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>optimal_order_router<br/>文件: core/optimal_order_router.py<br/>(设计态 / design)"]
+    src_zephyr_ex_sor_core_optimal_order_router_py["optimal订单路由器<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>optimal_order_router<br/>文件: core/optimal_order_router.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_services_execution_quality_scorer_py["执行质量评分器<br/>执行质量评分器（execution_quality_scorer.py）<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>文件: services/execution_quality_scorer.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_services_slippage_analyzer_py["滑点分析器<br/>滑点分析器，services的分析器，分析数据找出问题或<br/>规律。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>slippage_analyzer<br/>文件: services/slippage_analyzer.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_services_transaction_cost_optimizer_py["交易成本优化器<br/>交易成本优化器，服务的优化器，优化参数或配置。<br/>⛔ 智能订单路由域，设计已就绪，等待开发排期<br/>transaction_cost_optimizer<br/>文件: services/transaction_cost_optimizer.py<br/>(设计态 / design)"]

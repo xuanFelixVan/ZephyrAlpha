@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_quality_init_py["包入口<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_signal_quality_init_py["zephyr/signal_quality 包入口<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py<br/>(生产态 / production)"]
     src_zephyr_signal_quality_degradation_monitor_base_py["退化监控基类<br/>退化监控基类。D_SIGQC — Signal Quality<br/>Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py<br/>(生产态 / production)"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -75,7 +75,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_quality_init_py["包入口<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_signal_quality_init_py["zephyr/signal_quality 包入口<br/>包入口。D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py<br/>(生产态 / production)"]
     src_zephyr_signal_quality_degradation_monitor_base_py["退化监控基类<br/>退化监控基类。D_SIGQC — Signal Quality<br/>Degradation Monitor Base<br/>文件: signal_quality/degradation_monitor_base.py<br/>(生产态 / production)"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

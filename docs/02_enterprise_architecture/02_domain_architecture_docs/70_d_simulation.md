@@ -63,7 +63,7 @@ flowchart TD
     src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>策略模拟器（strategy_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>lookaheadbias检测器，模拟的检测器，检测特定模式<br/>或异常情况。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
     src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>参数鲁棒性测试器，模拟的测试器，测试验证功能。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
     src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>夏普计算器修复器，模拟的计算器，计算得出结果。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
@@ -118,7 +118,7 @@ flowchart TD
     src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>风险模拟器（risk_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>策略模拟器（strategy_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>lookaheadbias检测器，模拟的检测器，检测特定模式<br/>或异常情况。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
     src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>参数鲁棒性测试器，模拟的测试器，测试验证功能。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
     src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>夏普计算器修复器，模拟的计算器，计算得出结果。<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
