@@ -55,6 +55,11 @@ if str(_REPO_ROOT) not in sys.path:
 _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
+# 治本（2026-08-01 模板升级）：zoomable_html.py 与本文件同目录，须将 generators 目录
+# 加入 sys.path，使 `from zoomable_html import` 在运行时与 importlib 测试加载下都可用。
+_GENERATORS_DIR = str(Path(__file__).resolve().parent)
+if _GENERATORS_DIR not in sys.path:
+    sys.path.insert(0, _GENERATORS_DIR)
 
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
@@ -71,6 +76,9 @@ except ImportError:
 from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
     get_decisiongraph_pg_connection,
 )
+# 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步）。真源：zoomable_html.py。
+# 对齐 generate_domain_doc.py 的联动模式（visualization_view_template.md §2/§8.4）。
+from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402
 
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "06_decision_architecture"
 _YAML_PATH = _REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model.yaml"
@@ -153,13 +161,44 @@ _ARCH_LAYER_RE = re.compile(r"^L[0-6]")
 # 节点是否在 subgraph 内都显示灰色。_gen_layers_mmd/invariants/cross_domain
 # 已去掉 subgraph（扁平布局），_gen_overview_mmd 保留 track subgraph（需 secondaryColor）。
 # _build_status_color() 保留供测试使用；生成逻辑用文字标注 build_status。
+# 治本（2026-08-01 模板升级）：对齐 visualization_view_template.md V1.2。
+#   ① 灰色主题头（§4.1）+ clusterBkg/clusterBorder 透明（§13.3：subgraph 容器背景
+#      默认浅蓝白，VS Code 渲染器不识别 clusterBkg，但 HTML 端 zoomable_html.py 已用
+#      JS `style.fill='transparent'` 后处理 + CSS `.cluster rect` 兜底；此处主题变量
+#      透明是第三层防线，无 subgraph 的图零影响）。
+#   ② fontSize 14px 是 Mermaid 测量字号；HTML 渲染字号 11px（zoomable_html CSS）< 测量字号，
+#      渲染比测量更窄更矮，只可能宽松不可能溢出（§4.10 配套纪律）。
 _MERMAID_INIT = (
     "%%{init: {'theme': 'base', 'themeVariables': "
     "{'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', "
     "'primaryBorderColor': '#666666', 'lineColor': '#666666', "
     "'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
+    "'clusterBkg': 'transparent', 'clusterBorder': 'transparent', "
     "'fontSize': '14px'}}}%%"
 )
+
+# classDef 四色（§4.7 铁律，照搬 generate_domain_doc.py:823-826，禁止自创色值）：
+# 🟦 蓝色 = 运营态（production，已上线）/ 🟧 橙色虚线 = 设计态（design，蓝图阶段）
+# external_* 更浅 + 1px 边框区分跨域节点（§4.7 表）。
+_CLASSDEFS = (
+    "    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000\n"
+    "    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5\n"
+    "    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000\n"
+    "    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
+)
+
+# 图例说明 block（§3.1 铁律：每个含 mermaid 的文件在首个视图前放一次图例）。
+_LEGEND_MD = (
+    "> **图例说明 / Legend**：\n"
+    "> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）\n"
+    "> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）\n"
+    "> - **实线箭头 `-->` = 运营态依赖**（两端都 production）\n"
+    "> - **虚线箭头 `-.->` = 非运营态依赖**（含 design / 混合）"
+)
+
+# 本地 doc HTTP server 前缀（§14 铁律：MD 顶部 HTML 跳转链接必须用 http:// 绝对链接，
+# 相对路径 / file:// 会在 IDE 编辑器内打开源码而非浏览器渲染）。
+_DOC_HTTP_BASE = "http://localhost:8765"
 
 # 功能域英文→中文映射（双语标题/节点标签用）
 # 真源：terminology_glossary.yaml 的 decision_domain_short 类别（经 _shared.terminology_loader 加载）
@@ -178,6 +217,168 @@ _BUILD_STATUS_ZH: dict[str, str] = get_category_map("build_status")
 _MATURITY_ZH: dict[str, str] = get_category_map("maturity")
 # 功能域核心职责（domain 文件头部"功能域"行后展示）。真源：glossary domain_responsibility 类别。
 _DOMAIN_RESPONSIBILITY_ZH: dict[str, str] = get_category_map("domain_responsibility")
+
+
+# ---------------------------------------------------------------------------
+# 模板 V1.2 标准辅助函数（照搬 generate_domain_doc.py，禁止自创逻辑）
+# ---------------------------------------------------------------------------
+
+
+def _wrap_label_text(text: str, max_units: int = 48) -> str:
+    """将长节点标签文本按显示宽度预折行（Mermaid 节点内显示用）。
+
+    治本铁律（visualization_view_template.md §4.10）：Mermaid 先按标签行数测量节点框
+    宽高，若依赖 HTML 渲染层 CSS max-width 二次折行，渲染行数 > 测量行数 → 框高不够、
+    文字被上下裁剪。必须在生成端用 <br/> 显式预折行，使测量行数 = 渲染行数。
+
+    折行规则：显示宽度（CJK=2/ASCII=1）超 max_units 断行（48 ≈ 24 个汉字）；
+    优先在空格/下划线之后、左括号/斜杠之前软断（保持英文词完整），否则硬断。
+    原样复制自 generate_domain_doc.py，勿改逻辑（改了会重新踩裁剪坑）。
+    """
+    if not text:
+        return ""
+    lines: list[str] = []
+    remaining = text.strip()
+    while remaining:
+        width = 0
+        cut = 0
+        soft = -1  # 软断点（断在空格/_之后，或（(/之前）
+        for i, ch in enumerate(remaining):
+            u = 2 if ord(ch) > 0x2E7F else 1
+            if width + u > max_units:
+                break
+            width += u
+            cut = i + 1
+            if ch in " _":
+                soft = i + 1
+            elif ch in "（(/":
+                soft = i if i > 0 else -1
+        if cut >= len(remaining):
+            lines.append(remaining)
+            break
+        if soft >= 8:  # 软断点至少留 8 单位，避免碎片行
+            cut = soft
+        line = remaining[:cut].rstrip()
+        if line:
+            lines.append(line)
+        remaining = remaining[cut:].lstrip(" ")
+    return "<br/>".join(lines)
+
+
+def _sanitize_mermaid_label(text: str) -> str:
+    """清理 Mermaid 标签中的特殊字符（方括号/引号/管道符）。§4.9。
+
+    `[`→`(` `]`→`)` `"`→`'` `|`→`/`。原样复制自 generate_domain_doc.py。
+    """
+    if not text:
+        return ""
+    return text.replace("[", "(").replace("]", ")").replace('"', "'").replace("|", "/")
+
+
+def _arrow(from_maturity: str | None, to_maturity: str | None) -> str:
+    """边箭头：两端都 production 返回 `-->`（实线），否则 `-.->`（虚线）。§4.5。"""
+    if from_maturity == "production" and to_maturity == "production":
+        return "-->"
+    return "-.->"
+
+
+def _maturity_display(maturity: str | None) -> str:
+    """成熟度 → 四要素①显示文本：`(生产态 / production)` / `(设计态 / design)`。§4.3。
+
+    真源 terminology_glossary.yaml 的 maturity 类别映射为短形（生产/设计）；模板 §4.3 要求
+    显示长形（生产态/设计态，与 generate_domain_doc.py MATURITY_DISPLAY 一致）。在此追加
+    "态"后缀而非改共享词表——避免影响其他读 maturity 短形的消费者。
+    """
+    if not maturity:
+        return "(未知 / unknown)"
+    zh = _MATURITY_ZH.get(maturity, maturity)
+    if zh and not zh.endswith("态"):
+        zh = f"{zh}态"
+    return f"({zh} / {maturity})"
+
+
+def _split_zh_en(name: str | None, name_en: str | None) -> tuple[str, str]:
+    """从 decision_name（DB 实测为"中文名 English"合并串）拆出纯中文 + 纯英文。
+
+    DB 真源（Step 0 实测）：decision_name='止盈信号 Take-Profit Signal'，
+    decision_name_en='Take-Profit Signal'。直接 `name / name_en` 会英文重复，
+    故用 name_en 作后缀从 name 剥离得到纯中文。name_en 为空或非后缀时退化为原 name。
+    """
+    name = (name or "").strip()
+    en = (name_en or "").strip()
+    if en and name.endswith(en):
+        zh = name[:-len(en)].rstrip(" /-·—:：")
+        if zh:
+            return zh, en
+    return name, en
+
+
+def _node_label_4el(n: dict) -> str:
+    """决策节点四要素标签：①成熟度 ②双语名 ③大白话 ④文件路径。§4.3。
+
+    ③大白话 = `{node_type 中文名}·{decision_name 中文}`（用户确认方案，完整 plain_zh
+    留作后续数据补齐任务）。每段过 _wrap_label_text 预折行后用 <br/> 拼接。
+    """
+    mat = n.get("maturity")
+    zh, en = _split_zh_en(n.get("name"), n.get("name_en"))
+    type_zh = _NODE_TYPE_ZH.get(n.get("type", ""), n.get("type", ""))
+    name_zh = zh or n.get("name", "")
+    plain = f"{type_zh}·{name_zh}" if type_zh and name_zh else (type_zh or name_zh)
+    path = n.get("path", "") or "-"
+    parts = [
+        f"{_maturity_display(mat)} {zh} / {en}" if en else f"{_maturity_display(mat)} {zh}",
+        plain,
+        f"文件: {path}",
+    ]
+    wrapped = [_wrap_label_text(p) for p in parts if p]
+    return _sanitize_mermaid_label("<br/>".join(wrapped))
+
+
+def _layer_label_4el(l: dict) -> str:
+    """层级节点四要素标签：①成熟度 ②双语名(含层ID) ③大白话(desc) ④文件(module_id/source_code_ref)。§4.3。"""
+    mat = l.get("maturity")
+    lid = l.get("id", "") or ""
+    zh = l.get("name", "") or ""
+    en = l.get("name_en", "") or ""
+    desc = _truncate(l.get("desc", ""), 40)
+    ref = l.get("source_code_ref") or l.get("module_id") or "（设计态，暂无代码引用）"
+    name_line = f"{lid} {zh} / {en}" if en else f"{lid} {zh}"
+    parts = [
+        f"{_maturity_display(mat)} {name_line}",
+        desc,
+        f"文件: {ref}",
+    ]
+    wrapped = [_wrap_label_text(p) for p in parts if p]
+    return _sanitize_mermaid_label("<br/>".join(wrapped))
+
+
+def _class_apply_lines(prod_ids: list[str], design_ids: list[str],
+                       ext_prod_ids: list[str] | None = None,
+                       ext_design_ids: list[str] | None = None) -> str:
+    """生成 class 应用行（§4.8）：按成熟度分组绑类。任一空组不输出该行。"""
+    out: list[str] = []
+    if prod_ids:
+        out.append(f"    class {','.join(prod_ids)} production")
+    if design_ids:
+        out.append(f"    class {','.join(design_ids)} design")
+    if ext_prod_ids:
+        out.append(f"    class {','.join(ext_prod_ids)} external_prod")
+    if ext_design_ids:
+        out.append(f"    class {','.join(ext_design_ids)} external_design")
+    return "\n".join(out)
+
+
+def _html_link_line(md_stem: str) -> str:
+    """构造 MD 顶部 HTML 跳转链接行（§14：http:// 绝对链接）。
+
+    md_stem：MD 文件名去 .md（如 '10_decision_l2a_sell'）。HTML 同名输出到
+    _zoomable_html/<stem>.html。
+    """
+    rel = f"docs/02_enterprise_architecture/06_decision_architecture/{HTML_SUBDIR}/{md_stem}.html"
+    return (
+        f"> **[可缩放 HTML 版 / Zoomable HTML]({_DOC_HTTP_BASE}/{rel})** "
+        f"— Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
+    )
 
 
 def _git_commit_timestamp() -> str:
@@ -232,14 +433,15 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
 
         cur.execute("""
             SELECT node_id, layer_id, node_type, path, module_id, decision_name,
-                   build_status, design_maturity, evidence_hash, source_code_ref
+                   decision_name_en, build_status, design_maturity, evidence_hash,
+                   source_code_ref
             FROM decision_nodes ORDER BY layer_id, node_id
         """)
         nodes = [
             {
                 "id": r[0], "layer_id": r[1], "type": r[2], "path": r[3],
-                "module_id": r[4], "name": r[5], "build": r[6],
-                "maturity": r[7], "hash": r[8], "source_code_ref": r[9],
+                "module_id": r[4], "name": r[5], "name_en": r[6], "build": r[7],
+                "maturity": r[8], "hash": r[9], "source_code_ref": r[10],
             }
             for r in cur.fetchall()
         ]
@@ -408,43 +610,58 @@ def _gen_overview_mmd(
     lines = [_MERMAID_INIT, "flowchart TD"]
 
     # 扁平布局（不使用 subgraph）——与 _gen_layers_mmd/_gen_invariants_mmd 一致。
-    # 用户实测确认（2026-07-30）：subgraph 内节点使用 secondaryColor 而非 primaryColor，
-    # 导致 %%{init}%% 设的 primaryColor 不生效（节点白色）；subgraph 容器背景
-    # (clusterBkg) VS Code 渲染器不识别主题变量，回退白色，与灰色节点不协调且
-    # 增加整体高度。去掉 subgraph 后 primaryColor 生效（节点灰色）、高度更紧凑。
+    # subgraph 内节点用 secondaryColor 致 primaryColor 不生效（节点白色），去掉后灰色生效。
     # per-track/per-domain 文件经 track_id/path_prefix 过滤后只有 1 个 track，无需分组。
+    prod_ids: list[str] = []
+    design_ids: list[str] = []
+    node_by_id: dict[int, dict] = {n["id"]: n for n in nodes}
     for track in tracks:
         tid = track["id"]
         track_layers = [l for l in layers if l["track"] == tid]
         for layer in track_layers:
             lid = layer["id"]
             safe_lid = lid.replace("-", "_")
-            # 精简 label：层 ID+名称+maturity/build+功能简介（截断）。蓝图/代码/频率在表格。
-            _mat = layer.get("maturity") or "-"
-            _desc = _truncate(layer.get("desc", ""), 30)
-            label = f'{layer["id"]}: {layer["name"]}<br/>{_mat}/{layer["build"]}'
-            if _desc:
-                label = f'{label}<br/>{_desc}'
-            lines.append(f'    L{safe_lid}["{label}"]')
+            node_id = f"L{safe_lid}"
+            # 四要素标签（§4.3）：①成熟度 ②双语名(含层ID) ③大白话(desc) ④文件
+            lines.append(f'    {node_id}["{_layer_label_4el(layer)}"]')
+            if layer.get("maturity") == "production":
+                prod_ids.append(node_id)
+            else:
+                design_ids.append(node_id)
             if not skeleton_only:
                 layer_nodes = [n for n in nodes if n["layer_id"] == lid]
                 for n in layer_nodes:
-                    # 精简：仅 type+name（1 行），path 在 Node 清单表
-                    nlabel = f'{n["type"]}: {n["name"]}'
-                    lines.append(f'    N{n["id"]}("{nlabel}")')
-                    lines.append(f'    L{safe_lid} --- N{n["id"]}')
+                    nid = f'N{n["id"]}'
+                    # 四要素标签（§4.3）：①成熟度 ②双语名 ③大白话 ④文件路径
+                    lines.append(f'    {nid}["{_node_label_4el(n)}"]')
+                    lines.append(f'    {node_id} --- {nid}')  # 层-节点附着边（无箭头）
+                    if n.get("maturity") == "production":
+                        prod_ids.append(nid)
+                    else:
+                        design_ids.append(nid)
 
-    # 层间边（triggering，按 layer 顺序）
+    # 层间边（triggering，按 layer 顺序）——箭头按两端成熟度（§4.5）
     layer_ids = [l["id"] for l in layers]
+    layer_mat = {l["id"]: l.get("maturity") for l in layers}
     for i in range(len(layer_ids) - 1):
         from_lid = layer_ids[i].replace("-", "_")
         to_lid = layer_ids[i + 1].replace("-", "_")
-        lines.append(f'    L{from_lid} -.->|{_edge_label("triggering")}| L{to_lid}')
+        arr = _arrow(layer_mat.get(layer_ids[i]), layer_mat.get(layer_ids[i + 1]))
+        lines.append(f'    L{from_lid} {arr}|{_edge_label("triggering")}| L{to_lid}')
 
-    # 节点间边（skeleton_only 模式下跳过——无决策节点）
+    # 节点间边（skeleton_only 模式下跳过——无决策节点）——箭头按两端成熟度（§4.5）
     if not skeleton_only:
         for e in edges:
-            lines.append(f'    N{e["from"]} -->|{_edge_label(e["type"])}| N{e["to"]}')
+            fn = node_by_id.get(e["from"], {})
+            tn = node_by_id.get(e["to"], {})
+            arr = _arrow(fn.get("maturity"), tn.get("maturity"))
+            lines.append(f'    N{e["from"]} {arr}|{_edge_label(e["type"])}| N{e["to"]}')
+
+    # classDef 四色 + class 应用（§4.7/§4.8 铁律）
+    lines.append(_CLASSDEFS)
+    class_apply = _class_apply_lines(prod_ids, design_ids)
+    if class_apply:
+        lines.append(class_apply)
 
     return "\n".join(lines) + "\n", len(tracks), len(layers), len(edges)
 
@@ -463,22 +680,25 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
     layers = [l for l in layers if _ARCH_LAYER_RE.match(l["id"])]
     lines = [_MERMAID_INIT, "flowchart TD"]
 
+    prod_ids: list[str] = []
+    design_ids: list[str] = []
     for layer in layers:
         lid = layer["id"].replace("-", "_")
-        # 精简 label：层 ID+名称+maturity/build+功能简介（截断）。蓝图/代码/频率详情在
-        # 同文件 Layer 清单表（_layer_table），图只承载视觉概览。
-        _mat = layer.get("maturity") or "-"
-        _desc = _truncate(layer.get("desc", ""), 30)
-        label = f'{layer["id"]} {layer["name"]}<br/>{_mat}/{layer["build"]}'
-        if _desc:
-            label = f'{label}<br/>{_desc}'
-        lines.append(f'    L{lid}["{label}"]')
+        node_id = f"L{lid}"
+        # 四要素标签（§4.3），蓝图/代码/频率详情在同文件 Layer 清单表
+        lines.append(f'    {node_id}["{_layer_label_4el(layer)}"]')
+        if layer.get("maturity") == "production":
+            prod_ids.append(node_id)
+        else:
+            design_ids.append(node_id)
 
     layer_ids = [l["id"] for l in layers]
+    layer_mat = {l["id"]: l.get("maturity") for l in layers}
     for i in range(len(layer_ids) - 1):
         from_lid = layer_ids[i].replace("-", "_")
         to_lid = layer_ids[i + 1].replace("-", "_")
-        lines.append(f'    L{from_lid} -->|{_edge_label("triggering")}| L{to_lid}')
+        arr = _arrow(layer_mat.get(layer_ids[i]), layer_mat.get(layer_ids[i + 1]))
+        lines.append(f'    L{from_lid} {arr}|{_edge_label("triggering")}| L{to_lid}')
 
     # 反馈边（L6 → L1/L5，学习闭环）。节点 ID = "L" + layer_id（与上方定义一致）
     if len(layer_ids) >= 6:
@@ -488,6 +708,12 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         if l1:
             lines.append(f'    {l6} -.->|{_edge_label("feedback")}| {l1}')
         lines.append(f'    {l6} -.->|{_edge_label("feedback")}| {l5}')
+
+    # classDef 四色 + class 应用（§4.7/§4.8）
+    lines.append(_CLASSDEFS)
+    class_apply = _class_apply_lines(prod_ids, design_ids)
+    if class_apply:
+        lines.append(class_apply)
 
     return "\n".join(lines) + "\n"
 
@@ -500,17 +726,22 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
     """
     lines = [_MERMAID_INIT, "flowchart TD"]
 
+    # 6 节点类型为设计态概念，统一 class design；标签四要素化（成熟度+双语名）并预折行/转义
     node_types = [
-        ("signal", "信号节点<br/>Signal"),
-        ("portfolio_target", "仓位目标节点<br/>Portfolio Target"),
-        ("risk_check", "风控节点<br/>Risk Check"),
-        ("order", "订单节点<br/>Order"),
-        ("execution", "执行节点<br/>Execution"),
-        ("feedback", "反馈节点<br/>Feedback"),
+        ("signal", "信号节点", "Signal"),
+        ("portfolio_target", "仓位目标节点", "Portfolio Target"),
+        ("risk_check", "风控节点", "Risk Check"),
+        ("order", "订单节点", "Order"),
+        ("execution", "执行节点", "Execution"),
+        ("feedback", "反馈节点", "Feedback"),
     ]
-    for nt, label in node_types:
+    nt_ids: list[str] = []
+    for nt, zh, en in node_types:
         safe = nt.replace("-", "_")
-        lines.append(f'    NT_{safe}["{label}"]')
+        nid = f"NT_{safe}"
+        nt_ids.append(nid)
+        label = _sanitize_mermaid_label(_wrap_label_text(f"{_maturity_display('design')} {zh} / {en}"))
+        lines.append(f'    {nid}["{label}"]')
 
     lines.append(f"    NT_signal -->|{_edge_label('portfolio_target')}| NT_portfolio_target")
     lines.append(f"    NT_portfolio_target -->|{_edge_label('risk_check')}| NT_risk_check")
@@ -522,16 +753,27 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
     lines.append("    NT_signal -.->|禁止| NT_order")
     lines.append("    linkStyle 6 stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5")
 
+    inv_ids: list[str] = []
     for inv in invariants:
         iid = inv["id"]
         safe_iid = iid.replace("-", "_")
-        label = f'{iid}<br/>{inv["name"]}<br/>{inv["name_en"]}'
-        lines.append(f'    INV_{safe_iid}(["{label}"])')
+        nid = f"INV_{safe_iid}"
+        inv_ids.append(nid)
+        label = _sanitize_mermaid_label(
+            "<br/>".join(_wrap_label_text(p) for p in [iid, inv.get("name", ""), inv.get("name_en", "")] if p)
+        )
+        lines.append(f'    {nid}(["{label}"])')
 
     lines.append("    INV_DEC_INV_001 -.- NT_order")
     lines.append("    INV_DEC_INV_002 -.- NT_signal")
     lines.append("    INV_DEC_INV_003 -.- NT_feedback")
     lines.append("    INV_DEC_INV_005 -.- NT_signal")
+
+    # classDef 四色（§4.7）：节点类型/不变量均为设计态概念 → class design
+    lines.append(_CLASSDEFS)
+    class_apply = _class_apply_lines([], nt_ids + inv_ids)
+    if class_apply:
+        lines.append(class_apply)
 
     return "\n".join(lines) + "\n"
 
@@ -649,34 +891,64 @@ def _node_path(nodes: list[dict], node_id: int) -> str:
 def _gen_cross_domain_mermaid(
     self_domain: str, outgoing_agg: list[dict], incoming_agg: list[dict],
 ) -> str:
-    """跨域依赖图：graph LR，本域居中，外部域为外围节点，边标计数。
+    """跨域依赖图：flowchart TD，本域居中，外部域为外围节点，边标计数。
 
-    参照 generate_domain_doc.py L544-598 改写（决策边只有单个 type 字段）。
-    不使用 subgraph——subgraph 内节点使用 secondaryColor 而非 primaryColor，
-    导致 %%{init}%% 设的 primaryColor 不生效（节点白色）。扁平布局保证灰色。
+    治本（2026-08-01 模板升级）：对齐 visualization_view_template.md §4.2/§4.3/§4.7。
+      ① flowchart LR → flowchart TD（§4.2 铁律：竖排才能看清依赖链路从上层到下层流动）。
+      ② SELF/EXT 节点改四要素标签（成熟度+双语名+域职责+跨域标识，§4.3 跨域外部节点）。
+      ③ 末尾追加 _CLASSDEFS + class 应用（SELF=design，EXT=external_design）。
+    决策流图当前全为设计态，故 SELF/EXT 统一标 design/external_design；未来 production
+    节点出现后可按域聚合成熟度细化（已知简化，非阻断）。
+    不使用 subgraph——扁平布局保证 primaryColor/状态色生效（§13.3）。
     """
-    lines = [_MERMAID_INIT, "flowchart LR"]
-    safe_self = self_domain.replace("-", "_")
+    lines = [_MERMAID_INIT, "flowchart TD"]
     _self_zh = _DOMAIN_NAME_ZH.get(self_domain, self_domain)
-    lines.append(f'    SELF["{self_domain}（{_self_zh}）"]')
+    _self_resp = _DOMAIN_RESPONSIBILITY_ZH.get(self_domain, "")
+    lines.append(f'    SELF["{_cross_domain_label(self_domain, _self_zh, _self_resp)}"]')
+    ext_ids: list[str] = []
     seen: set[str] = set()
     for d in outgoing_agg:
         other = d["other_domain"]
         safe = other.replace("-", "_")
         if other not in seen:
             _other_zh = _DOMAIN_NAME_ZH.get(other, other)
-            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]')
+            _other_resp = _DOMAIN_RESPONSIBILITY_ZH.get(other, "")
+            lines.append(f'    EXT_{safe}["{_cross_domain_label(other, _other_zh, _other_resp)}"]')
+            ext_ids.append(f"EXT_{safe}")
             seen.add(other)
-        lines.append(f'    SELF -->|出 {d["count"]}| EXT_{safe}')
+        # 边箭头：SELF=design → 非双 production → 虚线（§4.5）
+        lines.append(f'    SELF -.->|出 {d["count"]}| EXT_{safe}')
     for d in incoming_agg:
         other = d["other_domain"]
         safe = other.replace("-", "_")
         if other not in seen:
             _other_zh = _DOMAIN_NAME_ZH.get(other, other)
-            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]')
+            _other_resp = _DOMAIN_RESPONSIBILITY_ZH.get(other, "")
+            lines.append(f'    EXT_{safe}["{_cross_domain_label(other, _other_zh, _other_resp)}"]')
+            ext_ids.append(f"EXT_{safe}")
             seen.add(other)
-        lines.append(f'    EXT_{safe} -->|入 {d["count"]}| SELF')
+        lines.append(f'    EXT_{safe} -.->|入 {d["count"]}| SELF')
+    # classDef 四色 + class 应用（§4.7/§4.8）：SELF=design，EXT=external_design
+    lines.append(_CLASSDEFS)
+    class_apply = _class_apply_lines([], ["SELF"], [], ext_ids)
+    if class_apply:
+        lines.append(class_apply)
     return "\n".join(lines) + "\n"
+
+
+def _cross_domain_label(domain_en: str, domain_zh: str, responsibility: str) -> str:
+    """跨域节点四要素标签：①成熟度(design) ②双语名 ③域职责 ④跨域标识。§4.3 跨域外部节点。
+
+    格式：`(设计态 / design) 域中文 / Domain English<br/>域职责<br/>跨域节点 / cross-domain`。
+    每段过 _wrap_label_text 预折行 + _sanitize_mermaid_label 转义。
+    """
+    parts = [
+        f"{_maturity_display('design')} {domain_zh} / {domain_en}",
+        responsibility or "（域职责待补）",
+        "跨域节点 / cross-domain",
+    ]
+    wrapped = [_wrap_label_text(p) for p in parts if p]
+    return _sanitize_mermaid_label("<br/>".join(wrapped))
 
 
 def _atomic_write(path: Path, content: str) -> None:
@@ -725,17 +997,42 @@ def _assert_domain_set_stable(layers: list[dict], nodes: list[dict]) -> None:
 # ---------------------------------------------------------------------------
 
 
-def _md_header(title: str, breadcrumb: str) -> list[str]:
-    """统一的文件头部（标题 + 真源 + 生成时间）。"""
-    return [
-        f"# {title}",
-        "",
-        f"> 生成时间: {_git_commit_timestamp()}",
-        f"> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）",
-        f"> 数据库: {DB_DISPLAY_NAME}",
-        f"> 导航: [返回主索引 decision_index.md](decision_index.md) | {breadcrumb}",
-        "",
-    ]
+def _md_header(
+    title: str, breadcrumb: str, md_stem: str | None = None,
+    with_html_link: bool = True, doc_title: str | None = None,
+) -> list[str]:
+    """统一的文件头部（frontmatter + 标题 + 真源 + 生成时间 + HTML链接）。
+
+    治本（2026-08-01 模板升级）：对齐 visualization_view_template.md §3.1/§14。
+      - md_stem 提供（MD 文件名去 .md）时输出 frontmatter（§3.1 铁律）。
+      - with_html_link=True 时在导航行后输出 HTML 跳转链接（§14 绝对 http:// 链接）。
+        纯导航/无 mermaid 文件（index、空 track）传 False 跳过（链接指向的 HTML 不会生成）。
+    """
+    lines: list[str] = []
+    if md_stem is not None:
+        lines += [
+            "---",
+            "doc_type: architecture_view",
+            f"title: {doc_title or title}",
+            'version: "1.0"',
+            "status: active",
+            f"date: {_git_commit_timestamp()[:10]}",
+            "owner: auto-generator",
+            "ttl: permanent",
+            "---",
+            "",
+        ]
+    lines.append(f"# {title}")
+    lines.append("")
+    lines.append(f"> 生成时间: {_git_commit_timestamp()}")
+    lines.append(f"> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）")
+    lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
+    lines.append(f"> 导航: [返回主索引 decision_index.md](decision_index.md) | {breadcrumb}")
+    if md_stem is not None and with_html_link:
+        lines.append("")
+        lines.append(_html_link_line(md_stem))
+    lines.append("")
+    return lines
 
 
 def _layer_table(layers: list[dict]) -> list[str]:
@@ -803,19 +1100,48 @@ def _filter_track_data(
     return track_layers, track_nodes, track_edges, cross_track_edges
 
 
+def _emit_skeleton_view(
+    title: str, hint: str,
+    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
+    tid: str, *, production_only: bool = False, design_only: bool = False,
+) -> list[str]:
+    """输出单个 Layer 骨架视图（带 `###` 小标题；空层集用占位说明，避免空 mermaid 块）。
+
+    治本（2026-08-01 模板升级）：三视图铁律（§3.2）——全景/运营态/设计态各一图。
+    skeleton_only=True 仅画 Layer 节点 + 层间边（决策节点详情在功能域文件），避免大轨
+    数百节点撑爆单文件。空视图（l_count=0，如全 design 时运营态图）输出占位说明。
+    """
+    out = [f"### {title}", "", f"> {hint}", ""]
+    mmd, _, l_count, _ = _gen_overview_mmd(
+        tracks, layers, nodes, edges,
+        production_only=production_only, design_only=design_only,
+        track_id=tid, skeleton_only=True,
+    )
+    if l_count == 0:
+        out += ["> （无模块 / No modules）", ""]
+    else:
+        out += ["```mermaid", mmd.rstrip("\n"), "```", ""]
+    return out
+
+
 def _gen_track_views_section(
     tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict], tid: str,
 ) -> list[str]:
-    """生成 Layer 骨架图 + 统计表（概览模式，不画决策节点；Extract Method 降低复杂度）。
+    """生成 Layer 骨架三视图 + 统计表（概览模式，不画决策节点；Extract Method 降低复杂度）。
 
     Track 文件改为「概览+导航」角色：仅画 Layer 节点 + 层间边，决策节点详情在各
     功能域文件（L2A/L3）中查看。避免 model_driven 等大轨重复展示数百节点导致文件过长。
+
+    治本（2026-08-01 模板升级）：单骨架图 → 严格三视图（全景/运营态/设计态，§3.2 铁律），
+    为未来 production 节点出现后运营态图自动有内容做准备（一次到位，避免反复改造）。
 
     无决策节点的 track（如 placeholder/human_override/emergency）不画骨架图——
     骨架图是为决策节点提供 Layer 上下文，无节点时画图无意义（placeholder 轨有 645 个
     占位 Layer 但 0 决策节点，画图会产生无用的巨型 mermaid）。
     """
     track_layers, track_nodes, track_edges, cross_track_edges = _filter_track_data(tid, layers, nodes, edges)
+    prod_layers = [l for l in track_layers if l.get("maturity") == "production"]
+    design_layers = [l for l in track_layers if l.get("maturity") == "design"]
 
     lines = [
         "## 统计", "",
@@ -823,23 +1149,33 @@ def _gen_track_views_section(
         "|----------|-----------|----------|----------|",
         f"| {len(track_layers)} | {len(track_nodes)} | {len(track_edges)} | {len(cross_track_edges)} |",
         "",
-        "## Layer 骨架图",
+        "## Layer 骨架图（三视图）",
         "",
     ]
 
     if not track_nodes:
         # 无决策节点的 track 不画骨架图（骨架图是为决策节点提供上下文，无节点时无意义）
         lines += ["> 本轨无决策节点，骨架图省略。Layer 清单见下方表格。", ""]
-    else:
-        # Layer 骨架图（仅 Layer 节点 + 层间边，跳过决策节点）
-        skeleton_mmd, _, _, _ = _gen_overview_mmd(
-            tracks, layers, nodes, edges, track_id=tid, skeleton_only=True
-        )
-        lines += [
-            "> 仅展示 Layer 节点与层间流向；决策节点详情见下方「功能域文件」链接。",
-            "",
-            "```mermaid", skeleton_mmd.rstrip("\n"), "```", "",
-        ]
+        return lines
+
+    # 图例说明（§3.1 铁律：首个 mermaid 视图前放一次）
+    lines += [_LEGEND_MD, ""]
+    # 三视图（§3.2 铁律：全景图 → 运营态的图 → 设计态的图，顺序固定）
+    lines += _emit_skeleton_view(
+        "全景图（全部 Layer，颜色区分运营态/设计态）",
+        f"展示本轨全部 {len(track_layers)} 个 Layer 骨架（决策节点附着上下文），决策节点详情见各功能域文件。",
+        tracks, layers, nodes, edges, tid,
+    )
+    lines += _emit_skeleton_view(
+        "运营态的图（仅 design_maturity=production 的 Layer）",
+        f"仅展示已上线运行的 Layer 骨架（共 {len(prod_layers)} 个）。",
+        tracks, layers, nodes, edges, tid, production_only=True,
+    )
+    lines += _emit_skeleton_view(
+        "设计态的图（仅 design_maturity=design 的 Layer）",
+        f"仅展示蓝图阶段、代码未写的设计态 Layer 骨架（共 {len(design_layers)} 个）。",
+        tracks, layers, nodes, edges, tid, design_only=True,
+    )
     return lines
 
 
@@ -856,9 +1192,14 @@ def _gen_track_file_md(
     tid = track["id"]
     track_layers, track_nodes, track_edges, cross_track_edges = _filter_track_data(tid, layers, nodes, edges)
 
+    _track_fname = _track_filename(track)
     lines = _md_header(
         f"决策流图 · {track['name']}（{track['name_en']}）",
         f"Track {track.get('priority', '-')}",
+        md_stem=_track_fname[:-3],
+        # 无决策节点的 track 0 mermaid → 不输出 HTML 链接（指向的 HTML 不会生成）
+        with_html_link=bool(track_nodes),
+        doc_title=f"决策流图 {track['name']}（{track['name_en']}）",
     )
     lines += [
         f"**track_id**: `{tid}` | **优先级**: {track.get('priority', '-')} | **激活条件**: {track.get('activation') or '-'}",
@@ -896,25 +1237,59 @@ def _gen_track_file_md(
     return "\n".join(lines) + "\n"
 
 
+def _emit_domain_view(
+    title: str, hint: str, view_nodes: list[dict],
+    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
+    *, track_id: str, path_prefix: str,
+    production_only: bool = False, design_only: bool = False,
+) -> list[str]:
+    """输出单个域内依赖视图（带 `###` 小标题；空节点集用占位说明，避免空 mermaid 块）。§3.2。
+
+    治本（2026-08-01 模板升级）：决策节点全 design 时运营态视图输出占位说明（不输出空
+    mermaid），未来 production 节点出现后自动有内容。空视图判定基于 view_nodes（域内
+    决策节点数），非 layer 数——避免「有 production layer 但本域无 production 节点」时
+    误画出空 layer 卡片。
+    """
+    out = [f"### {title}", "", f"> {hint}", ""]
+    if not view_nodes:
+        out += ["> （无模块 / No modules）", ""]
+        return out
+    mmd, _, l_count, e_count = _gen_overview_mmd(
+        tracks, layers, nodes, edges,
+        production_only=production_only, design_only=design_only,
+        track_id=track_id, path_prefix=path_prefix,
+    )
+    out += [f"> 共 {l_count} 层，{e_count} 边。", "", "```mermaid", mmd.rstrip("\n"), "```", ""]
+    return out
+
+
 def _gen_domain_file_md(
     track: dict, layer_id: str, domain: str,
     tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
 ) -> str:
-    """Per-domain 文件：1 设计态 mermaid + 本域 Node 表 + 出/入边表 + 跨域 mermaid。"""
+    """Per-domain 文件：三视图 mermaid + 本域 Node 表 + 出/入边表 + 跨域 mermaid。
+
+    治本（2026-08-01 模板升级）：单「设计态全景图」→ 严格三视图（全景/运营态/设计态，
+    §3.2 铁律）+ 图例说明 + frontmatter + HTML 跳转链接。运营态当前 0 production 节点
+    → 占位说明；未来 production 节点出现后自动有内容（一次到位，避免反复改造）。
+    """
     domain_nodes = [n for n in nodes if n["layer_id"] == layer_id and _node_domain(n.get("path", "")) == domain]
     domain_node_ids = {n["id"] for n in domain_nodes}
     domain_edges = [e for e in edges if e["from"] in domain_node_ids and e["to"] in domain_node_ids]
     outgoing_agg, incoming_agg, outgoing_detail, incoming_detail = _aggregate_cross_domain_edges(nodes, edges, domain)
 
-    mmd, _, l_count, e_count = _gen_overview_mmd(
-        tracks, layers, nodes, edges,
-        design_only=True, track_id=track["id"], path_prefix=domain,
-    )
+    prod_domain_nodes = [n for n in domain_nodes if n.get("maturity") == "production"]
+    design_domain_nodes = [n for n in domain_nodes if n.get("maturity") == "design"]
 
     _domain_zh = _DOMAIN_NAME_ZH.get(domain, domain)
+    _domain_fname = _domain_filename(layer_id, domain)
     lines = _md_header(
         f"Decision Flow · {layer_id} Functional Domain {domain}（{_domain_zh}）",
         f"{track['name']} → {layer_id} → {domain}",
+        md_stem=_domain_fname[:-3],
+        # 域无决策节点时 0 mermaid（含跨域）→ 不输出 HTML 链接
+        with_html_link=bool(domain_nodes),
+        doc_title=f"{domain}（{_domain_zh}）决策流图",
     )
     _responsibility = _DOMAIN_RESPONSIBILITY_ZH.get(domain, "")
     lines += [
@@ -926,22 +1301,39 @@ def _gen_domain_file_md(
     lines += [
         "## 统计",
         "",
-        f"- 设计态节点数: {len(domain_nodes)}",
+        f"- 决策节点数（全部）: {len(domain_nodes)}",
+        f"- 运营态节点数（production）: {len(prod_domain_nodes)}",
+        f"- 设计态节点数（design）: {len(design_domain_nodes)}",
         f"- 域内边数: {len(domain_edges)}",
         f"- 跨域出边: {sum(d['count'] for d in outgoing_agg)}（{len(outgoing_agg)} 个外部域）",
         f"- 跨域入边: {sum(d['count'] for d in incoming_agg)}（{len(incoming_agg)} 个外部域）",
         "",
-        "## 设计态全景图",
+        "## 域内依赖图 / Internal Dependency Diagram",
         "",
-        f"> 共 {l_count} 层，{e_count} 边。",
-        "",
-        "```mermaid",
-        mmd.rstrip("\n"),
-        "```",
-        "",
-        "## Node 清单",
+        _LEGEND_MD,
         "",
     ]
+    # 三视图（§3.2 铁律：全景图 → 运营态的图 → 设计态的图，顺序固定）
+    lines += _emit_domain_view(
+        "全景图（全部模块，颜色区分运营态/设计态）",
+        f"展示全部 {len(domain_nodes)} 个决策节点（运营态 {len(prod_domain_nodes)} + 设计态 {len(design_domain_nodes)}），含跨域依赖外部节点。",
+        domain_nodes, tracks, layers, nodes, edges,
+        track_id=track["id"], path_prefix=domain,
+    )
+    lines += _emit_domain_view(
+        "运营态的图（仅 design_maturity=production 的模块和域内依赖）",
+        f"仅展示已上线运行的决策节点（共 {len(prod_domain_nodes)} 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。",
+        prod_domain_nodes, tracks, layers, nodes, edges,
+        track_id=track["id"], path_prefix=domain, production_only=True,
+    )
+    lines += _emit_domain_view(
+        "设计态的图（仅 design_maturity=design 的模块和域内依赖）",
+        f"仅展示蓝图阶段、代码未写的设计态决策节点（共 {len(design_domain_nodes)} 个），不含跨域外部节点。",
+        design_domain_nodes, tracks, layers, nodes, edges,
+        track_id=track["id"], path_prefix=domain, design_only=True,
+    )
+
+    lines += ["## Node 清单", ""]
     lines += _node_table(domain_nodes) + [""]
     lines += ["## Edge 清单（域内）", ""] + _edge_table(domain_edges) + [""]
 
@@ -986,9 +1378,14 @@ def _gen_domain_file_md(
 def _gen_layers_file_md(tracks: list[dict], layers: list[dict]) -> str:
     """层级详情图独立文件。"""
     mmd = _gen_layers_mmd(tracks, layers)
-    lines = _md_header("决策流图 · 层级详情图", "辅助图")
+    lines = _md_header(
+        "决策流图 · 层级详情图", "辅助图",
+        md_stem=_LAYERS_FILE_NAME[:-3], doc_title="决策流图 层级详情图",
+    )
     lines += [
         "L0-L6 层级卡片 + 频率/成熟度/状态 + 流向箭头 + 学习闭环反馈边。",
+        "",
+        _LEGEND_MD,
         "",
         "```mermaid",
         mmd.rstrip("\n"),
@@ -1001,9 +1398,14 @@ def _gen_layers_file_md(tracks: list[dict], layers: list[dict]) -> str:
 def _gen_invariants_file_md(invariants: list[dict]) -> str:
     """不变量图独立文件。"""
     mmd = _gen_invariants_mmd(invariants)
-    lines = _md_header("决策流图 · 不变量图", "辅助图")
+    lines = _md_header(
+        "决策流图 · 不变量图", "辅助图",
+        md_stem=_INVARIANTS_FILE_NAME[:-3], doc_title="决策流图 不变量图",
+    )
     lines += [
         "6 节点类型 + 5 承重墙不变量 + 合法/非法连接标注。",
+        "",
+        _LEGEND_MD,
         "",
         "```mermaid",
         mmd.rstrip("\n"),
@@ -1033,13 +1435,13 @@ def _gen_index_md(
     prod_nodes = [n for n in nodes if n.get("maturity") == "production"]
     design_nodes = [n for n in nodes if n.get("maturity") == "design"]
 
-    lines = [
-        "# 决策流图（decisiongraph）索引",
-        "",
-        f"> 生成时间: {_git_commit_timestamp()}",
-        f"> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）",
-        f"> 数据库: {DB_DISPLAY_NAME}",
-        "",
+    # frontmatter（§3.1）；with_html_link=False：主索引纯导航 0 mermaid，不输出 HTML 链接。
+    lines = _md_header(
+        "决策流图（decisiongraph）索引", "主索引",
+        md_stem="decision_index", with_html_link=False,
+        doc_title="决策流图（decisiongraph）索引",
+    )
+    lines += [
         # 大白话解释决策流图（治本 2026-07-31）：让入口索引对非架构读者也友好
         *_DECISION_PLAIN_LANGUAGE_INTRO.splitlines(),
         "",
@@ -1168,22 +1570,32 @@ def main() -> int:
 
     domain_index = _build_domain_index(tracks, layers, nodes)
     expected_basenames: set[str] = set()
+    html_count = 0  # 联动生成的 HTML 文件数
 
-    # 1. 主索引（纯导航）
+    def _write_md(rel_name: str, content: str) -> None:
+        """写 MD + 联动生成可缩放 HTML（无 mermaid 自动跳过）。对齐 generate_domain_doc.py。"""
+        nonlocal html_count
+        path = out_dir / rel_name
+        _atomic_write(path, content)
+        html_path = emit_zoomable_html(path, content)
+        if html_path:
+            html_count += 1
+
+    # 1. 主索引（纯导航，0 mermaid → 不生成 HTML）
     index_md = _gen_index_md(tracks, layers, nodes, edges, invariants, domain_index)
-    _atomic_write(out_dir / "decision_index.md", index_md)
+    _write_md("decision_index.md", index_md)
 
     # 2. Per-Track 文件（01-05）
     for track in tracks:
         fname = _track_filename(track)
         expected_basenames.add(fname)
-        _atomic_write(out_dir / fname, _gen_track_file_md(track, tracks, layers, nodes, edges, domain_index))
+        _write_md(fname, _gen_track_file_md(track, tracks, layers, nodes, edges, domain_index))
 
     # 3. Per-domain 文件（06-19）
     for entry in domain_index:
         expected_basenames.add(entry["filename"])
-        _atomic_write(
-            out_dir / entry["filename"],
+        _write_md(
+            entry["filename"],
             _gen_domain_file_md(
                 entry["track"], entry["layer_id"], entry["domain"],
                 tracks, layers, nodes, edges,
@@ -1191,20 +1603,28 @@ def main() -> int:
         )
 
     # 4. 辅助图（20, 21）
-    _atomic_write(out_dir / _LAYERS_FILE_NAME, _gen_layers_file_md(tracks, layers))
-    _atomic_write(out_dir / _INVARIANTS_FILE_NAME, _gen_invariants_file_md(invariants))
+    _write_md(_LAYERS_FILE_NAME, _gen_layers_file_md(tracks, layers))
+    _write_md(_INVARIANTS_FILE_NAME, _gen_invariants_file_md(invariants))
     expected_basenames.add(_LAYERS_FILE_NAME)
     expected_basenames.add(_INVARIANTS_FILE_NAME)
 
-    # 5. 清理陈旧文件
+    # 5. 清理陈旧 MD 文件
     deleted = cleanup_stale_files(out_dir, expected_basenames, _STALE_FILE_REGEX)
     if deleted:
-        print(f"[CLEANUP] 删除 {len(deleted)} 个残留文件: {deleted}")
+        print(f"[CLEANUP] 删除 {len(deleted)} 个残留 MD: {deleted}")
+    # 6. 清理陈旧 HTML（_zoomable_html/ 子文件夹，域/轨被删时联动 HTML 不残留）
+    expected_html = {name[:-3] + ".html" for name in expected_basenames}
+    expected_html.add("decision_index.html")  # index 无 mermaid 不会生成，留作占位避免误删
+    deleted_html = cleanup_stale_files(
+        out_dir / HTML_SUBDIR, expected_html, r"^[a-z0-9_]+\.html$"
+    )
+    if deleted_html:
+        print(f"[CLEANUP] 删除 {len(deleted_html)} 个残留 HTML: {deleted_html}")
 
     total_files = len(expected_basenames) + 1  # +1 for decision_index.md
     print(
-        f"[OK] 生成 {total_files} 文件 (1 index + {len(tracks)} tracks + "
-        f"{len(domain_index)} domains + 2 aux) 到 {out_dir}"
+        f"[OK] 生成 {total_files} MD (1 index + {len(tracks)} tracks + "
+        f"{len(domain_index)} domains + 2 aux) + {html_count} HTML 到 {out_dir}"
     )
     return EXIT_PASS
 
@@ -1232,6 +1652,14 @@ node_domain = _node_domain
 fetch_decision_data = _fetch_decision_data
 STALE_FILE_REGEX = _STALE_FILE_REGEX
 YAML_PATH = _YAML_PATH
+# 模板 V1.2 升级新增辅助函数别名（供测试断言四要素/图例/跨域标签）
+node_label_4el = _node_label_4el
+layer_label_4el = _layer_label_4el
+cross_domain_label = _cross_domain_label
+gen_cross_domain_mermaid = _gen_cross_domain_mermaid
+wrap_label_text = _wrap_label_text
+CLASSDEFS = _CLASSDEFS
+LEGEND_MD = _LEGEND_MD
 
 if __name__ == "__main__":
     sys.exit(main())

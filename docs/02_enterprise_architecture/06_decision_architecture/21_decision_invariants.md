@@ -1,21 +1,39 @@
+---
+doc_type: architecture_view
+title: 决策流图 不变量图
+version: "1.0"
+status: active
+date: 2026-07-31
+owner: auto-generator
+ttl: permanent
+---
+
 # 决策流图 · 不变量图
 
-> 生成时间: 2026-07-30T22:18:45
+> 生成时间: 2026-07-31T17:21:51
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 辅助图
 
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/06_decision_architecture/_zoomable_html/21_decision_invariants.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+
 6 节点类型 + 5 承重墙不变量 + 合法/非法连接标注。
 
+> **图例说明 / Legend**：
+> - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
+> - 🟧 **橙色虚线 = 设计态模块**（design，蓝图阶段，代码未写）
+> - **实线箭头 `-->` = 运营态依赖**（两端都 production）
+> - **虚线箭头 `-.->` = 非运营态依赖**（含 design / 混合）
+
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    NT_signal["信号节点<br/>Signal"]
-    NT_portfolio_target["仓位目标节点<br/>Portfolio Target"]
-    NT_risk_check["风控节点<br/>Risk Check"]
-    NT_order["订单节点<br/>Order"]
-    NT_execution["执行节点<br/>Execution"]
-    NT_feedback["反馈节点<br/>Feedback"]
+    NT_signal["(设计态 / design) 信号节点 / Signal"]
+    NT_portfolio_target["(设计态 / design) 仓位目标节点 / Portfolio<br/>Target"]
+    NT_risk_check["(设计态 / design) 风控节点 / Risk Check"]
+    NT_order["(设计态 / design) 订单节点 / Order"]
+    NT_execution["(设计态 / design) 执行节点 / Execution"]
+    NT_feedback["(设计态 / design) 反馈节点 / Feedback"]
     NT_signal -->|portfolio_target / 仓位目标| NT_portfolio_target
     NT_portfolio_target -->|risk_check / 风控检查| NT_risk_check
     NT_risk_check -->|approving / 批准| NT_order
@@ -33,5 +51,10 @@ flowchart TD
     INV_DEC_INV_002 -.- NT_signal
     INV_DEC_INV_003 -.- NT_feedback
     INV_DEC_INV_005 -.- NT_signal
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class NT_signal,NT_portfolio_target,NT_risk_check,NT_order,NT_execution,NT_feedback,INV_DEC_INV_001,INV_DEC_INV_002,INV_DEC_INV_003,INV_DEC_INV_004,INV_DEC_INV_005 design
 ```
 

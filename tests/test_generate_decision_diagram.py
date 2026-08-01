@@ -118,16 +118,16 @@ def sample_layers():
 
 @pytest.fixture
 def sample_nodes():
-    """3 个 Node（含 design_maturity 区分设计态/运营态 + source_code_ref）。"""
+    """3 个 Node（含 design_maturity 区分设计态/运营态 + source_code_ref + name_en 双语）。"""
     return [
         {"id": 1, "layer_id": "L0", "type": "signal", "path": "ingest.tick",
-         "module_id": "MOD-DATA-001", "name": "Tick接入", "build": "stable",
+         "module_id": "MOD-DATA-001", "name": "Tick接入", "name_en": "Tick Ingestion", "build": "stable",
          "maturity": "production", "hash": "abc123", "source_code_ref": "src/zephyr/data/ingest.py"},
         {"id": 2, "layer_id": "L2A", "type": "signal", "path": "signal.momentum",
-         "module_id": "MOD-SIG-001", "name": "动量信号", "build": "planned",
+         "module_id": "MOD-SIG-001", "name": "动量信号", "name_en": "Momentum Signal", "build": "planned",
          "maturity": "design", "hash": "def456", "source_code_ref": ""},
         {"id": 3, "layer_id": "L4", "type": "risk_check", "path": "risk.checker",
-         "module_id": "MOD-RISK-001", "name": "风控检查", "build": "stable",
+         "module_id": "MOD-RISK-001", "name": "风控检查", "name_en": "Risk Check", "build": "stable",
          "maturity": "production", "hash": "ghi789", "source_code_ref": "src/zephyr/risk/check.py"},
     ]
 
@@ -188,29 +188,29 @@ def sample_nodes_expanded():
     """
     return [
         {"id": 101, "layer_id": "L2A", "type": "sell_decision", "path": "decision/sell/sell_01",
-         "module_id": "", "name": "止盈信号", "build": "planned", "maturity": "design", "hash": "h1", "source_code_ref": ""},
+         "module_id": "", "name": "止盈信号", "name_en": "Take-Profit Signal", "build": "planned", "maturity": "design", "hash": "h1", "source_code_ref": ""},
         {"id": 102, "layer_id": "L2A", "type": "sell_decision", "path": "decision/sell/sell_02",
-         "module_id": "", "name": "止损信号", "build": "planned", "maturity": "design", "hash": "h2", "source_code_ref": ""},
+         "module_id": "", "name": "止损信号", "name_en": "Stop-Loss Signal", "build": "planned", "maturity": "design", "hash": "h2", "source_code_ref": ""},
         {"id": 111, "layer_id": "L2A", "type": "signal", "path": "decision/signal/sg_01",
-         "module_id": "", "name": "动量信号", "build": "planned", "maturity": "design", "hash": "h3", "source_code_ref": ""},
+         "module_id": "", "name": "动量信号", "name_en": "Momentum Signal", "build": "planned", "maturity": "design", "hash": "h3", "source_code_ref": ""},
         {"id": 112, "layer_id": "L2A", "type": "signal", "path": "decision/signal/sg_02",
-         "module_id": "", "name": "反转信号", "build": "planned", "maturity": "design", "hash": "h4", "source_code_ref": ""},
+         "module_id": "", "name": "反转信号", "name_en": "Reversal Signal", "build": "planned", "maturity": "design", "hash": "h4", "source_code_ref": ""},
         {"id": 121, "layer_id": "L2A", "type": "signal", "path": "decision/simulation/sim_01",
-         "module_id": "", "name": "市场仿真", "build": "planned", "maturity": "design", "hash": "h5", "source_code_ref": ""},
+         "module_id": "", "name": "市场仿真", "name_en": "Market Simulation", "build": "planned", "maturity": "design", "hash": "h5", "source_code_ref": ""},
         {"id": 201, "layer_id": "L3", "type": "portfolio_target", "path": "decision/position/pos_01",
-         "module_id": "", "name": "仓位裁决", "build": "planned", "maturity": "design", "hash": "h6", "source_code_ref": ""},
+         "module_id": "", "name": "仓位裁决", "name_en": "Position Decision", "build": "planned", "maturity": "design", "hash": "h6", "source_code_ref": ""},
         {"id": 202, "layer_id": "L3", "type": "portfolio_target", "path": "decision/position/pos_02",
-         "module_id": "", "name": "仓位调整", "build": "planned", "maturity": "design", "hash": "h7", "source_code_ref": ""},
+         "module_id": "", "name": "仓位调整", "name_en": "Position Adjust", "build": "planned", "maturity": "design", "hash": "h7", "source_code_ref": ""},
         {"id": 203, "layer_id": "L3", "type": "portfolio_target", "path": "decision/position/pos_03",
-         "module_id": "", "name": "仓位清零", "build": "planned", "maturity": "design", "hash": "h8", "source_code_ref": ""},
+         "module_id": "", "name": "仓位清零", "name_en": "Position Flatten", "build": "planned", "maturity": "design", "hash": "h8", "source_code_ref": ""},
         {"id": 211, "layer_id": "L3", "type": "portfolio_target", "path": "decision/trading/tr_01",
-         "module_id": "", "name": "交易决策", "build": "planned", "maturity": "design", "hash": "h9", "source_code_ref": ""},
+         "module_id": "", "name": "交易决策", "name_en": "Trade Decision", "build": "planned", "maturity": "design", "hash": "h9", "source_code_ref": ""},
         {"id": 212, "layer_id": "L3", "type": "portfolio_target", "path": "decision/trading/tr_02",
-         "module_id": "", "name": "交易执行", "build": "planned", "maturity": "design", "hash": "h10", "source_code_ref": ""},
+         "module_id": "", "name": "交易执行", "name_en": "Trade Execution", "build": "planned", "maturity": "design", "hash": "h10", "source_code_ref": ""},
         {"id": 221, "layer_id": "L3", "type": "portfolio_target", "path": "decision/pf_core/pc_01",
-         "module_id": "", "name": "组合核心", "build": "planned", "maturity": "design", "hash": "h11", "source_code_ref": ""},
+         "module_id": "", "name": "组合核心", "name_en": "Portfolio Core", "build": "planned", "maturity": "design", "hash": "h11", "source_code_ref": ""},
         {"id": 222, "layer_id": "L3", "type": "portfolio_target", "path": "decision/pf_core/pc_02",
-         "module_id": "", "name": "组合优化", "build": "planned", "maturity": "design", "hash": "h12", "source_code_ref": ""},
+         "module_id": "", "name": "组合优化", "name_en": "Portfolio Optimize", "build": "planned", "maturity": "design", "hash": "h12", "source_code_ref": ""},
     ]
 
 
@@ -366,10 +366,14 @@ class TestGenOverviewMmd:
         assert "LL2A" in mmd
         assert "LL4" in mmd
 
-    def test_no_class_defs(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """mmd 不含 classDef / :::类名（照搬 application_flows.md 纯默认主题）。"""
+    def test_has_class_defs(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """mmd 含四类 classDef（模板 V1.2 §4.7 铁律：production/design/external_prod/external_design）。"""
         mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "classDef" not in mmd
+        assert "classDef production" in mmd
+        assert "classDef design" in mmd
+        assert "classDef external_prod" in mmd
+        assert "classDef external_design" in mmd
+        # 用 `class X production` 语法绑类，不用内联 `:::` 标记
         assert ":::" not in mmd
 
     def test_empty_input(self):
@@ -500,10 +504,13 @@ class TestGenLayersMmd:
         mmd = _gen_layers_mmd(sample_tracks, sample_layers)
         assert "|triggering / 触发|" in mmd
 
-    def test_no_class_defs(self, sample_tracks, sample_layers):
-        """mmd 不含 classDef / :::类名（纯默认主题）。"""
+    def test_has_class_defs(self, sample_tracks, sample_layers):
+        """mmd 含四类 classDef（模板 V1.2 §4.7 铁律）。"""
         mmd = _gen_layers_mmd(sample_tracks, sample_layers)
-        assert "classDef" not in mmd
+        assert "classDef production" in mmd
+        assert "classDef design" in mmd
+        assert "classDef external_prod" in mmd
+        assert "classDef external_design" in mmd
         assert ":::" not in mmd
 
     def test_empty_input(self):
@@ -553,10 +560,15 @@ class TestGenInvariantsMmd:
         assert "NT_signal" in mmd
         assert "NT_order" in mmd
 
-    def test_no_class_defs(self, sample_invariants):
-        """mmd 不含 classDef / :::类名（纯默认主题）。"""
+    def test_has_class_defs(self, sample_invariants):
+        """mmd 含四类 classDef（模板 V1.2 §4.7 铁律；节点类型/不变量统一 class design）。"""
         mmd = _gen_invariants_mmd(sample_invariants)
-        assert "classDef" not in mmd
+        assert "classDef production" in mmd
+        assert "classDef design" in mmd
+        assert "classDef external_prod" in mmd
+        assert "classDef external_design" in mmd
+        # 节点类型/不变量均为设计态概念 → class design 应用行存在
+        assert "class " in mmd
         assert ":::" not in mmd
 
     def test_empty_invariants(self):
@@ -804,15 +816,19 @@ class TestGenTrackFileMd:
         )
         assert isinstance(md, str)
 
-    def test_contains_one_mermaid_block(self, sample_tracks, sample_layers_expanded,
-                                        sample_nodes_expanded, sample_edges_expanded):
-        """概览模式：仅 1 个 Layer 骨架图 mermaid（不画决策节点）。"""
+    def test_contains_three_mermaid_blocks(self, sample_tracks, sample_layers_expanded,
+                                           sample_nodes_expanded, sample_edges_expanded):
+        """三视图模式：model_driven 轨 3 个 Layer 骨架 mermaid（全景/运营态/设计态）。
+
+        治本（2026-08-01 模板升级）：单骨架图 → 严格三视图（§3.2 铁律）。
+        sample_layers_expanded: L0/L4=production, L2A/L3/L5/L6=design → 三视图均非空。
+        """
         di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
         md = _gen_track_file_md(
             sample_tracks[0], sample_tracks, sample_layers_expanded,
             sample_nodes_expanded, sample_edges_expanded, di,
         )
-        assert md.count("```mermaid") == 1
+        assert md.count("```mermaid") == 3
 
     def test_contains_layer_table(self, sample_tracks, sample_layers_expanded,
                                   sample_nodes_expanded, sample_edges_expanded):
@@ -882,14 +898,18 @@ class TestGenDomainFileMd:
         )
         assert isinstance(md, str)
 
-    def test_sell_has_two_mermaid_blocks(self, sample_tracks, sample_layers_expanded,
-                                         sample_nodes_expanded, sample_edges_expanded):
-        """sell 域有跨域出边（→position）→ 2 mermaid（设计态全景 + 跨域依赖图）。"""
+    def test_sell_has_three_mermaid_blocks(self, sample_tracks, sample_layers_expanded,
+                                            sample_nodes_expanded, sample_edges_expanded):
+        """sell 域三视图 + 跨域依赖图 → 3 mermaid。
+
+        治本（2026-08-01 模板升级）：全景图(1) + 运营态(占位无 mermaid, sell 全 design) +
+        设计态(1) + 跨域依赖图(1, sell→position) = 3。
+        """
         md = _gen_domain_file_md(
             sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
             sample_nodes_expanded, sample_edges_expanded,
         )
-        assert md.count("```mermaid") == 2
+        assert md.count("```mermaid") == 3
 
     def test_contains_node_table_with_sell_paths(self, sample_tracks, sample_layers_expanded,
                                                  sample_nodes_expanded, sample_edges_expanded):
@@ -911,14 +931,18 @@ class TestGenDomainFileMd:
         assert "## 跨域出边（Depends On）" in md
         assert "decision/position/pos_01" in md  # edge 1006 (102→201)
 
-    def test_isolated_domain_has_one_mermaid(self, sample_tracks, sample_layers_expanded,
+    def test_isolated_domain_has_two_mermaid(self, sample_tracks, sample_layers_expanded,
                                              sample_nodes_expanded, sample_edges_expanded):
-        """simulation 域无跨域边 → 仅 1 mermaid（设计态全景）+ 无跨域依赖提示。"""
+        """simulation 域无跨域边 → 2 mermaid（全景图 + 设计态图；运营态占位无 mermaid）。
+
+        治本（2026-08-01 模板升级）：三视图中运营态无 production 节点 → 占位说明（不输出
+        mermaid）；无跨域依赖 → 不输出跨域 mermaid。故全景(1) + 设计态(1) = 2。
+        """
         md = _gen_domain_file_md(
             sample_tracks[0], "L2A", "simulation", sample_tracks, sample_layers_expanded,
             sample_nodes_expanded, sample_edges_expanded,
         )
-        assert md.count("```mermaid") == 1
+        assert md.count("```mermaid") == 2
         assert "（无跨域依赖）" in md
 
 
@@ -1012,6 +1036,25 @@ class TestGenLayersFileMd:
         md = _gen_layers_file_md(sample_tracks, sample_layers_expanded)
         assert "flowchart TD" in md
 
+    def test_has_frontmatter(self, sample_tracks, sample_layers_expanded):
+        """含 frontmatter（doc_type: architecture_view）。§3.1。"""
+        md = _gen_layers_file_md(sample_tracks, sample_layers_expanded)
+        assert md.startswith("---")
+        assert "doc_type: architecture_view" in md
+
+    def test_has_html_link(self, sample_tracks, sample_layers_expanded):
+        """含 HTML 跳转链接（http://localhost:8765/...）。§14。"""
+        md = _gen_layers_file_md(sample_tracks, sample_layers_expanded)
+        assert "http://localhost:8765/" in md
+        assert "可缩放 HTML 版" in md
+
+    def test_has_legend(self, sample_tracks, sample_layers_expanded):
+        """含图例说明（蓝/橙/实线/虚线四种）。§3.1。"""
+        md = _gen_layers_file_md(sample_tracks, sample_layers_expanded)
+        assert "图例说明" in md
+        assert "蓝色 = 运营态" in md
+        assert "橙色虚线 = 设计态" in md
+
 
 class TestGenInvariantsFileMd:
     """不变量图独立文件测试。"""
@@ -1025,6 +1068,206 @@ class TestGenInvariantsFileMd:
         """含 1 个 mermaid 块。"""
         md = _gen_invariants_file_md(sample_invariants)
         assert md.count("```mermaid") == 1
+
+    def test_has_frontmatter(self, sample_invariants):
+        """含 frontmatter（doc_type: architecture_view）。§3.1。"""
+        md = _gen_invariants_file_md(sample_invariants)
+        assert md.startswith("---")
+        assert "doc_type: architecture_view" in md
+
+    def test_has_html_link(self, sample_invariants):
+        """含 HTML 跳转链接。§14。"""
+        md = _gen_invariants_file_md(sample_invariants)
+        assert "http://localhost:8765/" in md
+
+    def test_has_legend(self, sample_invariants):
+        """含图例说明。§3.1。"""
+        md = _gen_invariants_file_md(sample_invariants)
+        assert "图例说明" in md
+
+
+# ---------- 模板 V1.2 合规测试（四要素/三视图/frontmatter/HTML链接/图例） ----------
+
+class TestTemplateV12Compliance:
+    """可视化模板 V1.2 合规测试。
+
+    覆盖 §9.1 强制规则：MD+HTML 双产物、frontmatter、HTML 链接、灰色主题头、四要素、
+    预折行、classDef 四色、箭头规范、三视图铁律、图例说明。
+    """
+
+    def test_node_label_4el_has_four_elements(self):
+        """_node_label_4el 输出含 ①成熟度 ②双语名 ③大白话 ④文件路径。§4.3。"""
+        n = {"maturity": "design", "name": "止盈信号", "name_en": "Take-Profit Signal",
+             "type": "sell_decision", "path": "decision/sell/sell_01"}
+        label = _mod.node_label_4el(n)
+        # ① 成熟度
+        assert "设计" in label and "design" in label
+        # ② 双语名（_split_zh_en 从合并名剥离英文 → 纯中文 / 纯英文）
+        assert "止盈信号" in label
+        assert "Take-Profit Signal" in label
+        # ③ 大白话 = node_type中文 · decision_name中文
+        assert "·" in label
+        # ④ 文件路径
+        assert "文件:" in label
+        assert "decision/sell/sell_01" in label
+
+    def test_node_label_4el_wraps_long_text(self):
+        """_node_label_4el 对长文本预折行（<br/> 显式断行，§4.10 铁律）。"""
+        n = {"maturity": "production", "name": "这是一个非常非常长的决策节点名称用于测试预折行功能是否正常工作",
+             "name_en": "Very Long Decision Node Name For Testing Text Wrapping",
+             "type": "signal", "path": "decision/signal/long_name_node_path_here"}
+        label = _mod.node_label_4el(n)
+        # 预折行后应含 <br/> 断行（长文本不可能一行装下）
+        assert "<br/>" in label
+
+    def test_node_label_4el_sanitizes_special_chars(self):
+        """_node_label_4el 转义 [ ] " | 特殊字符。§4.9。"""
+        n = {"maturity": "design", "name": '含[方括号]"引号"|管道',
+             "name_en": "bracket", "type": "signal", "path": "p/q"}
+        label = _mod.node_label_4el(n)
+        assert "[" not in label
+        assert "]" not in label
+        assert '"' not in label
+        assert "|" not in label
+
+    def test_layer_label_4el_has_four_elements(self):
+        """_layer_label_4el 输出含 ①成熟度 ②双语名(含层ID) ③大白话 ④文件。§4.3。"""
+        l = {"id": "L2A", "name": "信号层", "name_en": "Signal", "maturity": "design",
+             "desc": "信号工厂多策略投票", "module_id": "MOD-SIG-001", "source_code_ref": ""}
+        label = _mod.layer_label_4el(l)
+        assert "L2A" in label
+        assert "信号层" in label
+        assert "Signal" in label
+        assert "信号工厂多策略投票" in label
+        assert "文件:" in label
+
+    def test_cross_domain_label_has_four_elements(self):
+        """_cross_domain_label 输出含 ①成熟度(design) ②双语名 ③域职责 ④跨域标识。§4.3 跨域外部节点。"""
+        label = _mod.cross_domain_label("sell", "卖出", "卖出决策域")
+        assert "设计" in label and "design" in label
+        assert "卖出" in label and "sell" in label
+        assert "卖出决策域" in label
+        assert "跨域节点 / cross-domain" in label
+
+    def test_cross_domain_mermaid_uses_td_and_classdef(self):
+        """跨域依赖图用 flowchart TD + classDef（§4.2/§4.7）。"""
+        mmd = _mod.gen_cross_domain_mermaid(
+            "sell",
+            [{"other_domain": "position", "count": 2, "types": ["informing"]}],
+            [],
+        )
+        assert "flowchart TD" in mmd
+        assert "classDef production" in mmd
+        assert "classDef design" in mmd
+        assert "classDef external_design" in mmd
+        # SELF 标 design，EXT 标 external_design
+        assert "class SELF design" in mmd
+        assert "external_design" in mmd
+
+    def test_track_file_has_frontmatter(self, sample_tracks, sample_layers_expanded,
+                                        sample_nodes_expanded, sample_edges_expanded):
+        """Track 文件含 frontmatter。§3.1。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert md.startswith("---")
+        assert "doc_type: architecture_view" in md
+
+    def test_track_file_has_html_link(self, sample_tracks, sample_layers_expanded,
+                                      sample_nodes_expanded, sample_edges_expanded):
+        """Track 文件（有决策节点）含 HTML 跳转链接。§14。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert "http://localhost:8765/" in md
+
+    def test_track_file_has_legend_and_three_views(self, sample_tracks, sample_layers_expanded,
+                                                   sample_nodes_expanded, sample_edges_expanded):
+        """Track 文件含图例 + 三视图小标题（§3.1/§3.2 铁律）。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert "图例说明" in md
+        assert "### 全景图" in md
+        assert "### 运营态的图" in md
+        assert "### 设计态的图" in md
+
+    def test_empty_track_no_html_link(self, sample_tracks, sample_layers_expanded,
+                                      sample_nodes_expanded, sample_edges_expanded):
+        """空 track（0 决策节点）不输出 HTML 链接（指向的 HTML 不会生成）。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[1], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert "http://localhost:8765/" not in md
+
+    def test_domain_file_has_frontmatter(self, sample_tracks, sample_layers_expanded,
+                                         sample_nodes_expanded, sample_edges_expanded):
+        """Domain 文件含 frontmatter。§3.1。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        assert md.startswith("---")
+        assert "doc_type: architecture_view" in md
+
+    def test_domain_file_has_html_link(self, sample_tracks, sample_layers_expanded,
+                                       sample_nodes_expanded, sample_edges_expanded):
+        """Domain 文件含 HTML 跳转链接。§14。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        assert "http://localhost:8765/" in md
+        assert "_zoomable_html/10_decision_l2a_sell.html" in md
+
+    def test_domain_file_has_legend_and_three_views(self, sample_tracks, sample_layers_expanded,
+                                                    sample_nodes_expanded, sample_edges_expanded):
+        """Domain 文件含图例 + 三视图小标题 + 运营态占位（sell 全 design）。§3.1/§3.2。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        assert "图例说明" in md
+        assert "### 全景图（全部模块" in md
+        assert "### 运营态的图" in md
+        assert "### 设计态的图" in md
+        # sell 域全 design → 运营态视图占位（无 mermaid）
+        assert "（无模块 / No modules）" in md
+
+    def test_domain_file_mermaid_has_gray_theme(self, sample_tracks, sample_layers_expanded,
+                                                sample_nodes_expanded, sample_edges_expanded):
+        """Domain 文件每个 mermaid 块第一行是灰色主题头。§4.1。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        # 每个 ```mermaid 后第一行含 themeVariables + primaryColor
+        blocks = md.split("```mermaid")[1:]
+        for block in blocks:
+            first_line = block.lstrip("\n").split("\n")[0]
+            assert "theme" in first_line
+            assert "primaryColor" in first_line
+            assert "clusterBkg" in first_line  # transparent clusterBkg（§13.3）
+
+    def test_index_has_frontmatter_no_html_link(self, sample_tracks, sample_layers_expanded,
+                                                sample_nodes_expanded, sample_edges_expanded):
+        """主索引含 frontmatter 但无 HTML 链接（0 mermaid 纯导航）。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_index_md(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded,
+            sample_edges_expanded, [], di,
+        )
+        assert md.startswith("---")
+        assert "doc_type: architecture_view" in md
+        assert "http://localhost:8765/" not in md
 
 
 # ---------- 文件编号与陈旧清理正则测试 ----------
