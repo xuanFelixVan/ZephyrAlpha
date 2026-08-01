@@ -38,7 +38,7 @@ ttl: permanent
 
 ## 域内依赖图 / Internal Dependency Diagram
 
-> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。全景图用颜色区分运营态/设计态，不再分页/拆子图。
+> 依赖图内嵌在本文档中，共三个图：全景图、运营态图、设计态图。大图在 MD 预览可能渲染失败，请用可缩放 HTML 版查看（已放开渲染上限，浏览器可正常渲染 + Ctrl+滚轮缩放 + 拖动平移）。
 >
 > **图例说明 / Legend**：
 > - 🟦 **蓝色 = 运营态模块**（production，已上线运行）
@@ -46,7 +46,7 @@ ttl: permanent
 > - **实线箭头 = 运营态依赖**（已生效的依赖关系）
 > - **虚线箭头 = 非运营态依赖**（计划中/验证中的依赖关系）
 
-### 全景依赖图（全部模块，颜色区分运营态/设计态）
+### 全景图（全部模块，颜色区分运营态/设计态）
 
 > 展示全部 184 个模块（生产态 184 + 设计态 0），节点含成熟度+中英文名+大白话+文件路径。
 
@@ -556,6 +556,527 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_version_py,src_zephyr_shared_cross_layer_ml_experiment_pipeline_py,src_zephyr_shared_adaptation_execution_tuner_py,src_zephyr_shared_adaptation_prompt_version_manager_py,src_zephyr_shared_ai_guards_ai_audit_guard_py,src_zephyr_shared_ai_guards_combinatorial_gate_py,src_zephyr_shared_ai_guards_core_integrity_guard_py,src_zephyr_shared_alerts_alert_escalation_py,src_zephyr_shared_alerts_alert_manager_py,src_zephyr_shared_alerts_alert_precision_tracker_py,src_zephyr_shared_alerts_dual_channel_alert_py,src_zephyr_shared_alerts_heartbeat_server_py,src_zephyr_shared_api_api_client_py,src_zephyr_shared_api_api_index_py,src_zephyr_shared_api_dos_launcher_py,src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py,src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py,src_zephyr_shared_blueprint_tools_blueprint_decomposer_py,src_zephyr_shared_blueprint_tools_blueprint_scorer_py,src_zephyr_shared_capacity_governance_adaptive_sampler_py,src_zephyr_shared_capacity_governance_budget_aware_prompt_py,src_zephyr_shared_capacity_governance_capacity_calibrator_py,src_zephyr_shared_capacity_governance_capacity_digital_twin_py,src_zephyr_shared_capacity_governance_capacity_fingerprint_py,src_zephyr_shared_capacity_governance_capacity_runbook_generator_py,src_zephyr_shared_capacity_governance_cost_estimator_py,src_zephyr_shared_capacity_governance_dependency_capacity_guard_py,src_zephyr_shared_capacity_governance_model_capacity_probe_py,src_zephyr_shared_compensation_saga_compensator_py,src_zephyr_shared_context_context_engine_py,src_zephyr_shared_contracts_backpressure_types_py,src_zephyr_shared_contracts_backpressure_pause_py,src_zephyr_shared_contracts_backpressure_resume_py,src_zephyr_shared_contracts_backpressure_throttle_py,src_zephyr_shared_contracts_contract_bus_py,src_zephyr_shared_contracts_core_base_event_py,src_zephyr_shared_contracts_core_enforcer_py,src_zephyr_shared_contracts_core_factories_py,src_zephyr_shared_contracts_core_gate_types_py,src_zephyr_shared_contracts_core_registry_py,src_zephyr_shared_contracts_core_runtime_plane_tag_py,src_zephyr_shared_contracts_core_system_configuration_py,src_zephyr_shared_contracts_core_timestamp_py,src_zephyr_shared_contracts_core_trace_context_py,src_zephyr_shared_contracts_enums_init_py,src_zephyr_shared_contracts_enums_order_enums_py,src_zephyr_shared_contracts_errors_contract_violation_error_py,src_zephyr_shared_contracts_errors_data_quality_error_py,src_zephyr_shared_contracts_errors_execution_rejection_error_py,src_zephyr_shared_contracts_errors_factor_computation_error_py,src_zephyr_shared_contracts_errors_risk_limit_violation_error_py,src_zephyr_shared_contracts_errors_signal_degradation_warning_py,src_zephyr_shared_contracts_escalation_budget_alert_py,src_zephyr_shared_contracts_execution_capital_allocation_result_py,src_zephyr_shared_contracts_execution_execution_report_py,src_zephyr_shared_contracts_execution_fill_py,src_zephyr_shared_contracts_execution_model_serving_request_py,src_zephyr_shared_contracts_execution_order_py,src_zephyr_shared_contracts_experiment_experiment_result_py,src_zephyr_shared_contracts_experiment_model_serving_response_py,src_zephyr_shared_contracts_external_ext_001_py,src_zephyr_shared_contracts_external_ext_002_py,src_zephyr_shared_contracts_external_ext_003_py,src_zephyr_shared_contracts_external_ext_004_py,src_zephyr_shared_contracts_identity_agent_identity_py,src_zephyr_shared_contracts_identity_permission_py,src_zephyr_shared_contracts_llm_gateway_protocol_py,src_zephyr_shared_contracts_market_instrument_py,src_zephyr_shared_contracts_orchestration_protocol_py,src_zephyr_shared_contracts_portfolio_money_py,src_zephyr_shared_contracts_portfolio_performance_attribution_report_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_database_init_py,src_zephyr_shared_database_database_crud_mixin_py,src_zephyr_shared_dependency_dependency_graph_py,src_zephyr_shared_draft_draft_assistant_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_events_observer_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_migration_py,src_zephyr_shared_foundation_models_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_limiter_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py,src_zephyr_shared_infra_process_lifecycle_gateway_py,src_zephyr_shared_infra_process_pool_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py,src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_sqlite_factory_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_io_workspace_telemetry_py,src_zephyr_shared_io_yaml_utils_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_healthcheck_service_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_state_machine_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py,src_zephyr_shared_maintenance_autonomy_monitor_py,src_zephyr_shared_maintenance_code_economy_analyzer_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_owner_trust_gauge_py,src_zephyr_shared_maintenance_slo_review_assistant_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_observability_dashboard_init_py,src_zephyr_shared_observability_metrics_py,src_zephyr_shared_observability_metrics_server_py,src_zephyr_shared_observability_reasoning_spans_py,src_zephyr_shared_observability_tracing_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py,src_zephyr_shared_protocols_capability_py,src_zephyr_shared_protocols_module_birth_registry_py,src_zephyr_shared_protocols_ports_py,src_zephyr_shared_protocols_registry_py,src_zephyr_shared_reliability_diff_planner_py,src_zephyr_shared_reliability_retry_handler_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_degradation_chain_py,src_zephyr_shared_resilience_error_budget_tracker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_fault_isolator_py,src_zephyr_shared_resilience_limiter_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_schema_base_config_py,src_zephyr_shared_schema_execution_model_py,src_zephyr_shared_schema_schema_registry_py,src_zephyr_shared_schema_schemas_py,src_zephyr_shared_schema_severity_types_py,src_zephyr_shared_schema_task_types_py,src_zephyr_shared_security_capability_py,src_zephyr_shared_security_idempotency_py,src_zephyr_shared_security_lock_py,src_zephyr_shared_security_sandbox_executor_py,src_zephyr_shared_security_secrets_py,src_zephyr_shared_security_ssot_guard_py,src_zephyr_shared_session_session_audit_py,src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_session_continuity_py,src_zephyr_shared_utils_async_utils_py,src_zephyr_shared_utils_cli_summary_py,src_zephyr_shared_utils_context_py,src_zephyr_shared_utils_converters_py,src_zephyr_shared_utils_db_utils_py,src_zephyr_shared_utils_diff_utils_py,src_zephyr_shared_utils_logging_py,src_zephyr_shared_utils_migration_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py,src_zephyr_shared_utils_zephyr_logger_py,src_zephyr_shared_versioning_vibe_experiment_tracker_py,tests_zephyr_shared_observability_test_metrics_server_py production
     class D_FEEDBACK_LOOP,D_INFRA_RUNTIME,D_GOV_RULE,D_INFRASTRUCTURE,D_ML_TRAIN,D_GOV_AUDIT,D_TRADING,D_INTEGRATION,D_DATA,D_GOVERNANCE,D_GOV_CODE_QUALITY external_prod
+```
+
+### 运营态图（仅 design_maturity=production 的模块和依赖）
+
+> 仅展示已上线运行的模块（共 184 个，99 条域内依赖）。
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py["(生产态 / production) ML实验流水线 / ML Experiment Pipeline<br/>MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道<br/>文件: _cross_layer/ml_experiment_pipeline.py"]
+    src_zephyr_shared_adaptation_execution_tuner_py["(生产态 / production) 执行tuner / Execution Tuner<br/>Execution Tuner — 执行调谐器（token/timeout 自适应）。<br/>文件: adaptation/execution_tuner.py"]
+    src_zephyr_shared_adaptation_prompt_version_manager_py["(生产态 / production) 提示词版本管理器 / Prompt Version Manager<br/>Prompt Version Manager — 版本化 Prompt 治理。<br/>文件: adaptation/prompt_version_manager.py"]
+    src_zephyr_shared_ai_guards_ai_audit_guard_py["(生产态 / production) AI审计守卫 / AI Audit Guard<br/>定义 AuditRecord、AiAuditGuard 等类型。<br/>文件: ai_guards/ai_audit_guard.py"]
+    src_zephyr_shared_ai_guards_combinatorial_gate_py["(生产态 / production) 组合门禁 / Combinatorial Gate<br/>定义 CombineOp、GateCheck、CombinedResult 等类型。<br/>文件: ai_guards/combinatorial_gate.py"]
+    src_zephyr_shared_ai_guards_core_integrity_guard_py["(生产态 / production) 核心完整性守卫 / Core Integrity Guard<br/>定义 IntegrityCheck、CoreIntegrityGuard 等类型。<br/>文件: ai_guards/core_integrity_guard.py"]
+    src_zephyr_shared_alerts_alert_escalation_py["(生产态 / production) 告警升级 / Alert Escalation<br/>AlertEscalation — re-homed to eliminate shared->infrastructure circular import.<br/>文件: alerts/alert_escalation.py"]
+    src_zephyr_shared_alerts_alert_manager_py["(生产态 / production) 告警管理器 / Alert Manager<br/>定义 AlertSeverity、Alert、AlertManager 等类型。<br/>文件: alerts/alert_manager.py"]
+    src_zephyr_shared_alerts_alert_precision_tracker_py["(生产态 / production) 告警精度追踪器 / Alert Precision Tracker<br/>定义 PrecisionMetrics、AlertPrecisionTracker 等类型。<br/>文件: alerts/alert_precision_tracker.py"]
+    src_zephyr_shared_alerts_dual_channel_alert_py["(生产态 / production) 双通道告警 / Dual Channel Alert<br/>定义 Channel、DualAlert、DualChannelAlert 等类型。<br/>文件: alerts/dual_channel_alert.py"]
+    src_zephyr_shared_alerts_heartbeat_server_py["(生产态 / production) 心跳服务端 / Heartbeat Server<br/>noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复...<br/>文件: alerts/heartbeat_server.py"]
+    src_zephyr_shared_api_api_client_py["(生产态 / production) APIclient / API Client<br/>api_client.py —— 统一 API Client 基类（Phase 7 新增 / 盲点 B11 修复）<br/>文件: api/api_client.py"]
+    src_zephyr_shared_api_api_index_py["(生产态 / production) API索引 / API Index<br/>shared/ API 索引 — AI session 冷启动时的'员工通讯录'<br/>文件: api/api_index.py"]
+    src_zephyr_shared_api_dos_launcher_py["(生产态 / production) doslauncher / Dos Launcher<br/>Load and execute DOS directive files.<br/>文件: api/dos_launcher.py"]
+    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["(生产态 / production) AI可理解性约束 / AI Understandability Constraint<br/>定义 UnderstandabilityResult、AiUnderstandabilityConstraint 等类型。<br/>文件: blueprint_tools/ai_understandability_constraint.py"]
+    src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py["(生产态 / production) 蓝图代码审计器 / Blueprint Code Auditor<br/>定义 DriftFinding、AuditReport、BlueprintCodeAuditor 等类型。<br/>文件: blueprint_tools/blueprint_code_auditor.py"]
+    src_zephyr_shared_blueprint_tools_blueprint_scorer_py["(生产态 / production) 蓝图评分器 / Blueprint Scorer<br/>blueprint_scorer.py — Re-export wrapper -> canonical: zephyr.orchestrator.qu...<br/>文件: blueprint_tools/blueprint_scorer.py"]
+    src_zephyr_shared_capacity_governance_adaptive_sampler_py["(生产态 / production) 自适应采样器 / Adaptive Sampler<br/>定义 SamplingDecision、AdaptiveSampler 等类型。<br/>文件: capacity_governance/adaptive_sampler.py"]
+    src_zephyr_shared_capacity_governance_budget_aware_prompt_py["(生产态 / production) 预算感知提示词 / Budget Aware Prompt<br/>定义 PromptBudget、BudgetAwarePrompt 等类型。<br/>文件: capacity_governance/budget_aware_prompt.py"]
+    src_zephyr_shared_capacity_governance_capacity_calibrator_py["(生产态 / production) 容量校准器 / Capacity Calibrator<br/>定义 CalibrationResult、CapacityCalibrator 等类型。<br/>文件: capacity_governance/capacity_calibrator.py"]
+    src_zephyr_shared_capacity_governance_capacity_digital_twin_py["(生产态 / production) 容量数字孪生 / Capacity Digital Twin<br/>定义 TwinState、CapacityDigitalTwin 等类型。<br/>文件: capacity_governance/capacity_digital_twin.py"]
+    src_zephyr_shared_capacity_governance_capacity_fingerprint_py["(生产态 / production) 容量指纹 / Capacity Fingerprint<br/>定义 CapacitySnapshot、CapacityFingerprint 等类型。<br/>文件: capacity_governance/capacity_fingerprint.py"]
+    src_zephyr_shared_capacity_governance_capacity_runbook_generator_py["(生产态 / production) 容量运行手册生成器 / Capacity Runbook Generator<br/>定义 RunbookStep、Runbook、CapacityRunbookGenerator 等类型。<br/>文件: capacity_governance/capacity_runbook_generator.py"]
+    src_zephyr_shared_capacity_governance_cost_estimator_py["(生产态 / production) 成本估计器 / Cost Estimator<br/>定义 CostEstimate、CostEstimator 等类型。<br/>文件: capacity_governance/cost_estimator.py"]
+    src_zephyr_shared_capacity_governance_dependency_capacity_guard_py["(生产态 / production) 依赖容量守卫 / Dependency Capacity Guard<br/>定义 CapacityViolation、DependencyCapacityGuard 等类型。<br/>文件: capacity_governance/dependency_capacity_guard.py"]
+    src_zephyr_shared_capacity_governance_model_capacity_probe_py["(生产态 / production) 模型容量探针 / Model Capacity Probe<br/>定义 ProbeResult、ModelCapacityProbe 等类型。<br/>文件: capacity_governance/model_capacity_probe.py"]
+    src_zephyr_shared_compensation_saga_compensator_py["(生产态 / production) sagacompensator / Saga Compensator<br/>Saga Compensator — 补偿事务：多步操作任一失败 -> 反向补偿。<br/>文件: compensation/saga_compensator.py"]
+    src_zephyr_shared_context_context_engine_py["(生产态 / production) 上下文引擎 / Context Engine<br/>Context Engine — AI 上下文组装与 Token 预算管理。<br/>文件: context/context_engine.py"]
+    src_zephyr_shared_contracts_backpressure_types_py["(生产态 / production) 类型 / Types<br/>Shared internal backpressure type definitions.<br/>文件: backpressure/_types.py"]
+    src_zephyr_shared_contracts_backpressure_pause_py["(生产态 / production) pause / Pause<br/>Import from shared-internal _types.py — eliminates circular import to infras...<br/>文件: backpressure/pause.py"]
+    src_zephyr_shared_contracts_backpressure_resume_py["(生产态 / production) resume / Resume<br/>Import from shared-internal _types.py — eliminates circular import to infras...<br/>文件: backpressure/resume.py"]
+    src_zephyr_shared_contracts_backpressure_throttle_py["(生产态 / production) throttle / Throttle<br/>Import from shared-internal _types.py — eliminates circular import to infras...<br/>文件: backpressure/throttle.py"]
+    src_zephyr_shared_contracts_contract_bus_py["(生产态 / production) contract总线 / Contract Bus<br/>ContractBus — 跨层通信抽象 + Pydantic v2 Schema Enforcement (M-09)<br/>文件: contracts/contract_bus.py"]
+    src_zephyr_shared_contracts_core_base_event_py["(生产态 / production) 基础事件 / Base Event<br/>BaseEvent — 跨层事件基类<br/>文件: core/base_event.py"]
+    src_zephyr_shared_contracts_core_enforcer_py["(生产态 / production) 执行器 / Enforcer<br/>ZephyrAlpha — shared/contracts/enforcer.py<br/>文件: core/enforcer.py"]
+    src_zephyr_shared_contracts_core_factories_py["(生产态 / production) factories / Factories<br/>shared/contracts/factories.py — 跨层数据契约工厂方法<br/>文件: core/factories.py"]
+    src_zephyr_shared_contracts_core_gate_types_py["(生产态 / production) 门禁类型 / Gate Types<br/>Lazy import to avoid circular dependency deadlock:<br/>文件: core/gate_types.py"]
+    src_zephyr_shared_contracts_core_registry_py["(生产态 / production) 注册表 / Registry<br/>ZephyrAlpha — shared/contracts/registry.py<br/>文件: core/registry.py"]
+    src_zephyr_shared_contracts_core_system_configuration_py["(生产态 / production) 系统配置 / System Configuration<br/>定义 SystemConfiguration 等类型。<br/>文件: core/system_configuration.py"]
+    src_zephyr_shared_contracts_core_timestamp_py["(生产态 / production) timestamp / Timestamp<br/>ZephyrAlpha — shared/contracts/timestamp.py<br/>文件: core/timestamp.py"]
+    src_zephyr_shared_contracts_enums_init_py["(生产态 / production) 跨层契约基础设施Enums包 / Contracts Enums Package<br/>跨层契约基础设施域下 enums 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: enums/__init__.py"]
+    src_zephyr_shared_contracts_errors_contract_violation_error_py["(生产态 / production) contract违规错误 / Contract Violation Error<br/>==== BEGIN CODGEN:CTR-ERR-006 ====<br/>文件: errors/contract_violation_error.py"]
+    src_zephyr_shared_contracts_errors_data_quality_error_py["(生产态 / production) 数据质量错误 / Data Quality Error<br/>CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py"]
+    src_zephyr_shared_contracts_errors_execution_rejection_error_py["(生产态 / production) 执行拒绝错误 / Execution Rejection Error<br/>定义 ExecutionRejectionError 等类型。<br/>文件: errors/execution_rejection_error.py"]
+    src_zephyr_shared_contracts_errors_factor_computation_error_py["(生产态 / production) 因子computation错误 / Factor Computation Error<br/>CTR-ERR-002: FactorComputationError / 因子计算失败错误<br/>文件: errors/factor_computation_error.py"]
+    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py["(生产态 / production) 风险限制违规错误 / Risk Limit Violation Error<br/>定义 RiskLimitViolationError 等类型。<br/>文件: errors/risk_limit_violation_error.py"]
+    src_zephyr_shared_contracts_errors_signal_degradation_warning_py["(生产态 / production) 信号降级警告 / Signal Degradation Warning<br/>定义 SignalDegradationWarning 等类型。<br/>文件: errors/signal_degradation_warning.py"]
+    src_zephyr_shared_contracts_escalation_budget_alert_py["(生产态 / production) 预算告警 / Budget Alert<br/>异常必须包含 budget_context 和 operation_id<br/>文件: escalation/budget_alert.py"]
+    src_zephyr_shared_contracts_execution_capital_allocation_result_py["(生产态 / production) capitalallocation结果 / Capital Allocation Result<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: execution/capital_allocation_result.py"]
+    src_zephyr_shared_contracts_execution_execution_report_py["(生产态 / production) 执行报告 / Execution Report<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: execution/execution_report.py"]
+    src_zephyr_shared_contracts_execution_fill_py["(生产态 / production) fill / Fill<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: execution/fill.py"]
+    src_zephyr_shared_contracts_execution_model_serving_request_py["(生产态 / production) 模型servingrequest / Model Serving Request<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: execution/model_serving_request.py"]
+    src_zephyr_shared_contracts_execution_order_py["(生产态 / production) order / Order<br/>Backward-compat shim — canonical location is zephyr.shared.contracts.order (...<br/>文件: execution/order.py"]
+    src_zephyr_shared_contracts_experiment_experiment_result_py["(生产态 / production) 实验结果 / Experiment Result<br/>定义 ExperimentResult 等类型。<br/>文件: experiment/experiment_result.py"]
+    src_zephyr_shared_contracts_experiment_model_serving_response_py["(生产态 / production) 模型serving响应 / Model Serving Response<br/>==== BEGIN CODGEN:CTR-P1-005 ====<br/>文件: experiment/model_serving_response.py"]
+    src_zephyr_shared_contracts_external_ext_001_py["(生产态 / production) ext001 / Ext 001<br/>==== BEGIN CODGEN:EXT-001 ====<br/>文件: external/ext_001.py"]
+    src_zephyr_shared_contracts_external_ext_002_py["(生产态 / production) ext002 / Ext 002<br/>==== BEGIN CODGEN:EXT-002 ====<br/>文件: external/ext_002.py"]
+    src_zephyr_shared_contracts_external_ext_003_py["(生产态 / production) ext003 / Ext 003<br/>==== BEGIN CODGEN:EXT-003 ====<br/>文件: external/ext_003.py"]
+    src_zephyr_shared_contracts_external_ext_004_py["(生产态 / production) ext004 / Ext 004<br/>==== BEGIN CODGEN:EXT-004 ====<br/>文件: external/ext_004.py"]
+    src_zephyr_shared_contracts_identity_agent_identity_py["(生产态 / production) 代理身份 / Agent Identity<br/>定义 MaturityLevel、IDESource、RbacRole 等类型。<br/>文件: identity/agent_identity.py"]
+    src_zephyr_shared_contracts_identity_permission_py["(生产态 / production) 权限 / Permission<br/>定义 GuardDecision、GuardResult 等类型。<br/>文件: identity/permission.py"]
+    src_zephyr_shared_contracts_llm_gateway_protocol_py["(生产态 / production) LLMgateway协议 / LLM Gateway Protocol<br/>LLMGatewayProtocol — LLM 网关抽象接口<br/>文件: contracts/llm_gateway_protocol.py"]
+    src_zephyr_shared_contracts_market_instrument_py["(生产态 / production) 金融工具 / Instrument<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: market/instrument.py"]
+    src_zephyr_shared_contracts_orchestration_protocol_py["(生产态 / production) orchestration协议 / Orchestration Protocol<br/>Shadow canary deployment protocol - decouples D-RES/D-GOV from D-ORCH.<br/>文件: contracts/orchestration_protocol.py"]
+    src_zephyr_shared_contracts_portfolio_money_py["(生产态 / production) money / Money<br/>查询货币精度（小数位数）。<br/>文件: portfolio/money.py"]
+    src_zephyr_shared_contracts_portfolio_performance_attribution_report_py["(生产态 / production) 性能attribution报告 / Performance Attribution Report<br/>Re-export shim — 真源已收敛至 zephyr.shared.contracts.performance_attributio...<br/>文件: portfolio/performance_attribution_report.py"]
+    src_zephyr_shared_contracts_portfolio_position_py["(生产态 / production) position / Position<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: portfolio/position.py"]
+    src_zephyr_shared_contracts_risk_compliance_rule_py["(生产态 / production) 合规规则 / Compliance Rule<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: risk/compliance_rule.py"]
+    src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py["(生产态 / production) 风险仪表板snapshot / Risk Dashboard Snapshot<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: risk/risk_dashboard_snapshot.py"]
+    src_zephyr_shared_contracts_risk_risk_limits_py["(生产态 / production) 风险limits / Risk Limits<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: risk/risk_limits.py"]
+    src_zephyr_shared_contracts_risk_risk_metrics_py["(生产态 / production) 风险指标 / Risk Metrics<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: risk/risk_metrics.py"]
+    src_zephyr_shared_contracts_risk_risk_validator_protocol_py["(生产态 / production) 风险校验器协议 / Risk Validator Protocol<br/>Backward-compat shim — canonical location is zephyr.trading.trading_contract...<br/>文件: risk/risk_validator_protocol.py"]
+    src_zephyr_shared_contracts_security_security_decision_py["(生产态 / production) 安全决策 / Security Decision<br/>定义 SecurityDecision 等类型。<br/>文件: security/security_decision.py"]
+    src_zephyr_shared_contracts_skill_protocol_py["(生产态 / production) 技能协议 / Skill Protocol<br/>Skill加载器协议——解耦D-INFRA/D-GOV对D-ORCH的直接依赖。<br/>文件: contracts/skill_protocol.py"]
+    src_zephyr_shared_database_init_py["(生产态 / production) 共享服务Database包 / Shared Database Package<br/>共享服务域下 database 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: database/__init__.py"]
+    src_zephyr_shared_dependency_dependency_graph_py["(生产态 / production) 依赖graph / Dependency Graph<br/>Dependency Graph — 任务卡依赖关系管理。<br/>文件: dependency/dependency_graph.py"]
+    src_zephyr_shared_draft_draft_assistant_py["(生产态 / production) draft助手 / Draft Assistant<br/>Draft Assistant — 想法 -> MTH-012 蓝图骨架生成。<br/>文件: draft/draft_assistant.py"]
+    src_zephyr_shared_events_dlq_bridge_py["(生产态 / production) dlq桥接 / Dlq Bridge<br/>CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.<br/>文件: events/dlq_bridge.py"]
+    src_zephyr_shared_events_event_bus_upgrade_py["(生产态 / production) 事件总线upgrade / Event Bus Upgrade<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>文件: events/event_bus_upgrade.py"]
+    src_zephyr_shared_events_event_reactor_py["(生产态 / production) 事件reactor / Event Reactor<br/>Event Reactor — 事件反应器（自动响应事件）。<br/>文件: events/event_reactor.py"]
+    src_zephyr_shared_events_event_schemas_py["(生产态 / production) 事件模式 / Event Schemas<br/>event_schemas.py —— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复）<br/>文件: events/event_schemas.py"]
+    src_zephyr_shared_events_hook_dispatcher_py["(生产态 / production) 钩子dispatcher / Hook Dispatcher<br/>Hook Dispatcher — 任务状态变更 -> 外部回调触发。<br/>文件: events/hook_dispatcher.py"]
+    src_zephyr_shared_events_upgrade_strategy_py["(生产态 / production) upgrade策略 / Upgrade Strategy<br/>EventBus 升级策略引擎<br/>文件: events/upgrade_strategy.py"]
+    src_zephyr_shared_foundation_constants_py["(生产态 / production) constants / Constants<br/>constants.py —— 共享枚举 & 常量集中 re-export（Single Source of Truth）<br/>文件: foundation/constants.py"]
+    src_zephyr_shared_foundation_deprecation_py["(生产态 / production) deprecation / Deprecation<br/>deprecation.py —— ZephyrAlpha API 废弃策略<br/>文件: foundation/deprecation.py"]
+    src_zephyr_shared_foundation_env_py["(生产态 / production) 环境 / Env<br/>仅在 dev 环境下为 True——生产环境永远 False。<br/>文件: foundation/env.py"]
+    src_zephyr_shared_foundation_flags_py["(生产态 / production) flags / Flags<br/>请求的 FeatureFlag 未在注册表中找到。<br/>文件: foundation/flags.py"]
+    src_zephyr_shared_foundation_migration_py["(生产态 / production) 迁移 / Migration<br/>migration.py —— Re-export wrapper -> canonical: zephyr.shared.utils.migration<br/>文件: foundation/migration.py"]
+    src_zephyr_shared_foundation_types_py["(生产态 / production) 类型 / Types<br/>types.py —— 共享类型别名 & 语义化 NewType（Phase 3 新增 / 盲点 #5 修复）<br/>文件: foundation/types.py"]
+    src_zephyr_shared_infra_cache_py["(生产态 / production) 缓存 / Cache<br/>cache.py —— 统一缓存抽象（Phase 8 新增 / 盲点 B13 修复）<br/>文件: infra/cache.py"]
+    src_zephyr_shared_infra_outbox_py["(生产态 / production) outbox / Outbox<br/>outbox.py —— 事务性 Outbox 模式（Phase 10 新增 / 盲点 B24 修复）<br/>文件: infra/outbox.py"]
+    src_zephyr_shared_infra_process_lifecycle_gateway_py["(生产态 / production) process生命周期gateway / Process Lifecycle Gateway<br/>ProcessLifecycleGateway — 进程生命周期统一入口<br/>文件: infra/process_lifecycle_gateway.py"]
+    src_zephyr_shared_io_content_fingerprint_py["(生产态 / production) content指纹 / Content Fingerprint<br/>SHA-256 content fingerprint computation and verification.<br/>文件: io/content_fingerprint.py"]
+    src_zephyr_shared_io_file_utils_py["(生产态 / production) 文件utils / File Utils<br/>file_utils.py —— 安全文件操作工具（Phase 3 新增 / 盲点 #15 修复）<br/>文件: io/file_utils.py"]
+    src_zephyr_shared_io_frontmatter_utils_py["(生产态 / production) frontmatterutils / Frontmatter Utils<br/>frontmatter_utils.py — Markdown/YAML frontmatter 解析 SSoT<br/>文件: io/frontmatter_utils.py"]
+    src_zephyr_shared_io_io_cache_py["(生产态 / production) io缓存 / Io Cache<br/>io_cache.py - File-level I/O cache with LRU eviction<br/>文件: io/io_cache.py"]
+    src_zephyr_shared_io_streaming_reader_py["(生产态 / production) 流式reader / Streaming Reader<br/>streaming_reader.py - Memory-efficient streaming file readers<br/>文件: io/streaming_reader.py"]
+    src_zephyr_shared_io_workspace_telemetry_py["(生产态 / production) workspace遥测 / Workspace Telemetry<br/>workspace_telemetry.py — 主工作区文件操作遥测公共 API（...<br/>文件: io/workspace_telemetry.py"]
+    src_zephyr_shared_io_yaml_utils_py["(生产态 / production) yamlutils / Yaml Utils<br/>yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源）<br/>文件: io/yaml_utils.py"]
+    src_zephyr_shared_lifecycle_health_py["(生产态 / production) 健康 / Health<br/>health.py —— ZephyrAlpha 聚合健康检查<br/>文件: lifecycle/health.py"]
+    src_zephyr_shared_lifecycle_health_discovery_py["(生产态 / production) 健康discovery / Health Discovery<br/>CT-HEALTH-001: System-wide Health Discovery Registration.<br/>文件: lifecycle/health_discovery.py"]
+    src_zephyr_shared_lifecycle_healthcheck_service_py["(生产态 / production) 健康检查服务 / Healthcheck Service<br/>定义 HealthStatus、HealthReport、HealthcheckService 等类型。<br/>文件: lifecycle/healthcheck_service.py"]
+    src_zephyr_shared_lifecycle_longevity_monitor_py["(生产态 / production) 长寿监控器 / Longevity Monitor<br/>定义 LongevityReport、LongevityMonitor 等类型。<br/>文件: lifecycle/longevity_monitor.py"]
+    src_zephyr_shared_lifecycle_state_machine_py["(生产态 / production) 状态machine / State Machine<br/>StateMachine(S) — 通用状态机泛型基类 (MOD-INF-038)<br/>文件: lifecycle/state_machine.py"]
+    src_zephyr_shared_lifecycle_task_heartbeat_py["(生产态 / production) 任务心跳 / Task Heartbeat<br/>定义 TaskPulse、TaskHeartbeat 等类型。<br/>文件: lifecycle/task_heartbeat.py"]
+    src_zephyr_shared_lifecycle_ttl_cleanup_engine_py["(生产态 / production) TTL清理引擎 / TTL Cleanup Engine<br/>定义 TtlEntry、CleanupResult、TtlCleanupEngine 等类型。<br/>文件: lifecycle/ttl_cleanup_engine.py"]
+    src_zephyr_shared_maintenance_autonomy_monitor_py["(生产态 / production) autonomy监控器 / Autonomy Monitor<br/>Autonomy Monitor — AI 自主等级监控与降级。<br/>文件: maintenance/autonomy_monitor.py"]
+    src_zephyr_shared_maintenance_code_economy_analyzer_py["(生产态 / production) 代码经济分析器 / Code Economy Analyzer<br/>定义 EconomyReport、CodeEconomyAnalyzer 等类型。<br/>文件: maintenance/code_economy_analyzer.py"]
+    src_zephyr_shared_maintenance_dogfooding_py["(生产态 / production) dogfooding / Dogfooding<br/>Dogfooding — 自举测试：用 TaskCard 管理 TaskCard 建设。<br/>文件: maintenance/dogfooding.py"]
+    src_zephyr_shared_maintenance_handbook_py["(生产态 / production) handbook / Handbook<br/>Onboarding Handbook — AI Agent 施工手册生成。<br/>文件: maintenance/handbook.py"]
+    src_zephyr_shared_maintenance_owner_trust_gauge_py["(生产态 / production) 所有者信任量规 / Owner Trust Gauge<br/>定义 TrustLevel、TrustAssessment、OwnerTrustGauge 等类型。<br/>文件: maintenance/owner_trust_gauge.py"]
+    src_zephyr_shared_maintenance_slo_review_assistant_py["(生产态 / production) SLO审查助手 / SLO Review Assistant<br/>定义 SloReview、SloReviewAssistant 等类型。<br/>文件: maintenance/slo_review_assistant.py"]
+    src_zephyr_shared_maintenance_zero_config_py["(生产态 / production) 零配置 / Zero Config<br/>定义 ConfigCheck、ZeroConfigResult、ZeroConfig 等类型。<br/>文件: maintenance/zero_config.py"]
+    src_zephyr_shared_observability_dashboard_init_py["(生产态 / production) 共享服务Dashboard包 / Shared Dashboard Package<br/>共享服务域下 dashboard 子包，归集该方向的模块。本身不含业务逻辑，只是组织归属。<br/>文件: dashboard/__init__.py"]
+    src_zephyr_shared_observability_reasoning_spans_py["(生产态 / production) 推理跨度 / Reasoning Spans<br/>定义 ReasoningSpan、ReasoningSpans 等类型。<br/>文件: observability/reasoning_spans.py"]
+    src_zephyr_shared_observability_tracing_py["(生产态 / production) tracing / Tracing<br/>tracing.py —— OpenTelemetry 分布式追踪（Phase B 补充 / 盲点 B1 修复）<br/>文件: observability/tracing.py"]
+    src_zephyr_shared_protocols_a2a_a2a_coordination_py["(生产态 / production) a2acoordination / A2a Coordination<br/>A2A Coordination — shared interface definitions for multi-agent coordination.<br/>文件: a2a/a2a_coordination.py"]
+    src_zephyr_shared_protocols_a2a_a2a_protocol_py["(生产态 / production) a2a协议 / A2a Protocol<br/>Core A2A Protocol interface and governance data contracts.<br/>文件: a2a/a2a_protocol.py"]
+    src_zephyr_shared_protocols_a2a_a2a_schemas_py["(生产态 / production) a2a模式 / A2a Schemas<br/>A2A data structure contracts — Message, Task, and StateMachine schemas.<br/>文件: a2a/a2a_schemas.py"]
+    src_zephyr_shared_protocols_capability_py["(生产态 / production) 能力 / Capability<br/>capability.py —— Re-export wrapper -> canonical: zephyr.shared.security.cap...<br/>文件: protocols/capability.py"]
+    src_zephyr_shared_protocols_module_birth_registry_py["(生产态 / production) 模块诞生注册表 / Module Birth Registry<br/>定义 BirthRecord、ModuleBirthRegistry 等类型。<br/>文件: protocols/module_birth_registry.py"]
+    src_zephyr_shared_protocols_ports_py["(生产态 / production) ports / Ports<br/>ports — D-DATA 服务的 Protocol 定义<br/>文件: protocols/ports.py"]
+    src_zephyr_shared_reliability_diff_planner_py["(生产态 / production) 差异planner / Diff Planner<br/>Diff Planner — 最小增量变更规划器。<br/>文件: reliability/diff_planner.py"]
+    src_zephyr_shared_reliability_retry_handler_py["(生产态 / production) retryhandler / Retry Handler<br/>Retry Handler — 指数退避重试 + 可恢复/不可恢复错误分类。<br/>文件: reliability/retry_handler.py"]
+    src_zephyr_shared_resilience_degradation_chain_py["(生产态 / production) 降级链 / Degradation Chain<br/>定义 DegradationLevel、DegradationNode、DegradationChain 等类型。<br/>文件: resilience/degradation_chain.py"]
+    src_zephyr_shared_resilience_error_budget_tracker_py["(生产态 / production) 错误预算追踪器 / Error Budget Tracker<br/>定义 BudgetStatus、ErrorBudgetTracker 等类型。<br/>文件: resilience/error_budget_tracker.py"]
+    src_zephyr_shared_resilience_fallback_py["(生产态 / production) fallback / Fallback<br/>fallback.py —— 降级策略模式（Phase 2 新增 / 零依赖）<br/>文件: resilience/fallback.py"]
+    src_zephyr_shared_resilience_fault_isolator_py["(生产态 / production) 故障隔离器 / Fault Isolator<br/>定义 IsolationState、FaultDomain、FaultIsolator 等类型。<br/>文件: resilience/fault_isolator.py"]
+    src_zephyr_shared_resilience_limiter_py["(生产态 / production) limiter / Limiter<br/>limiter.py —— Re-export wrapper -> canonical: zephyr.shared.infra.limiter<br/>文件: resilience/limiter.py"]
+    src_zephyr_shared_schema_schema_registry_py["(生产态 / production) schema注册表 / Schema Registry<br/>Schema Registry 操作失败——schema 不存在、版本冲突、兼容性违规。<br/>文件: schema/schema_registry.py"]
+    src_zephyr_shared_security_idempotency_py["(生产态 / production) idempotency / Idempotency<br/>idempotency.py —— Re-export wrapper -> canonical: zephyr.shared.infra.idemp...<br/>文件: security/idempotency.py"]
+    src_zephyr_shared_security_lock_py["(生产态 / production) lock / Lock<br/>lock.py —— Re-export wrapper -> canonical: zephyr.shared.infra.lock<br/>文件: security/lock.py"]
+    src_zephyr_shared_security_sandbox_executor_py["(生产态 / production) 沙箱executor / Sandbox Executor<br/>SandboxExecutor — re-homed to eliminate shared->infrastructure circular import.<br/>文件: security/sandbox_executor.py"]
+    src_zephyr_shared_security_secrets_py["(生产态 / production) 密钥 / Secrets<br/>secrets.py —— Secrets 管理抽象（Phase 7 新增 / 盲点 B12 修复）<br/>文件: security/secrets.py"]
+    src_zephyr_shared_security_ssot_guard_py["(生产态 / production) ssot守卫 / Ssot Guard<br/>将 Windows 控制台 stdout/stderr 设置为 UTF-8，仅在脚本直接运行时调用。<br/>文件: security/ssot_guard.py"]
+    src_zephyr_shared_session_session_audit_py["(生产态 / production) 会话审计 / Session Audit<br/>session_audit.py —— Session 审计轨迹（Phase 12 / 盲点 B32）<br/>文件: session/session_audit.py"]
+    src_zephyr_shared_session_session_boundary_py["(生产态 / production) 会话boundary / Session Boundary<br/>Session Boundary — 会话边界管理。<br/>文件: session/session_boundary.py"]
+    src_zephyr_shared_session_session_continuity_py["(生产态 / production) 会话continuity / Session Continuity<br/>SessionContinuity — Session 交接包自动生成与恢复<br/>文件: session/session_continuity.py"]
+    src_zephyr_shared_utils_async_utils_py["(生产态 / production) 异步utils / Async Utils<br/>async_utils.py — async/sync 边界桥接（5.12.8 修复）<br/>文件: utils/async_utils.py"]
+    src_zephyr_shared_utils_cli_summary_py["(生产态 / production) 命令行summary / CLI Summary<br/>CLI Summary — CLI 友好施工汇总。<br/>文件: utils/cli_summary.py"]
+    src_zephyr_shared_utils_context_py["(生产态 / production) 上下文 / Context<br/>context.py —— 结构化上下文传播（Phase 8 新增 / 盲点 B16 修复）<br/>文件: utils/context.py"]
+    src_zephyr_shared_utils_converters_py["(生产态 / production) converters / Converters<br/>converters.py — 类型转换工具（消除 '' vs None 语义鸿沟）<br/>文件: utils/converters.py"]
+    src_zephyr_shared_utils_db_utils_py["(生产态 / production) 数据库utils / DB Utils<br/>db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governance.persistence.sqlit...<br/>文件: utils/db_utils.py"]
+    src_zephyr_shared_utils_diff_utils_py["(生产态 / production) 差异utils / Diff Utils<br/>diff_utils.py —— 统一 Diff/Patch 工具（Phase 3 新增 / 盲点 #14 修复）<br/>文件: utils/diff_utils.py"]
+    src_zephyr_shared_utils_pagination_py["(生产态 / production) pagination / Pagination<br/>pagination.py —— 通用分页工具（Phase 9 新增 / 盲点 B18 修复）<br/>文件: utils/pagination.py"]
+    src_zephyr_shared_utils_testing_py["(生产态 / production) testing / Testing<br/>testing.py —— ZephyrAlpha 共享测试夹具/工厂<br/>文件: utils/testing.py"]
+    src_zephyr_shared_utils_zephyr_logger_py["(生产态 / production) Zephyr日志器 / Zephyr Logger<br/>Zephyr日志器模块。<br/>文件: utils/zephyr_logger.py"]
+    src_zephyr_shared_versioning_vibe_experiment_tracker_py["(生产态 / production) 直觉实验追踪器 / Vibe Experiment Tracker<br/>定义 ExperimentRecord、VibeExperimentTracker 等类型。<br/>文件: versioning/vibe_experiment_tracker.py"]
+    tests_zephyr_shared_observability_test_metrics_server_py["(生产态 / production) 测试指标服务端 / Test Metrics Server<br/>metrics_server 单元测试（P1-5 Prometheus /metrics 端点）。<br/>文件: observability/test_metrics_server.py"]
+    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py ~~~ src_zephyr_shared_adaptation_execution_tuner_py
+    src_zephyr_shared_adaptation_execution_tuner_py ~~~ src_zephyr_shared_adaptation_prompt_version_manager_py
+    src_zephyr_shared_adaptation_prompt_version_manager_py ~~~ src_zephyr_shared_ai_guards_ai_audit_guard_py
+    src_zephyr_shared_ai_guards_ai_audit_guard_py ~~~ src_zephyr_shared_ai_guards_combinatorial_gate_py
+    src_zephyr_shared_ai_guards_combinatorial_gate_py ~~~ src_zephyr_shared_ai_guards_core_integrity_guard_py
+    src_zephyr_shared_ai_guards_core_integrity_guard_py ~~~ src_zephyr_shared_alerts_alert_escalation_py
+    src_zephyr_shared_alerts_alert_escalation_py ~~~ src_zephyr_shared_alerts_alert_manager_py
+    src_zephyr_shared_alerts_alert_manager_py ~~~ src_zephyr_shared_alerts_alert_precision_tracker_py
+    src_zephyr_shared_alerts_alert_precision_tracker_py ~~~ src_zephyr_shared_alerts_dual_channel_alert_py
+    src_zephyr_shared_alerts_dual_channel_alert_py ~~~ src_zephyr_shared_alerts_heartbeat_server_py
+    src_zephyr_shared_alerts_heartbeat_server_py ~~~ src_zephyr_shared_api_api_client_py
+    src_zephyr_shared_api_api_client_py ~~~ src_zephyr_shared_api_api_index_py
+    src_zephyr_shared_api_api_index_py ~~~ src_zephyr_shared_api_dos_launcher_py
+    src_zephyr_shared_api_dos_launcher_py ~~~ src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py
+    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py ~~~ src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py
+    src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py ~~~ src_zephyr_shared_blueprint_tools_blueprint_scorer_py
+    src_zephyr_shared_blueprint_tools_blueprint_scorer_py ~~~ src_zephyr_shared_capacity_governance_adaptive_sampler_py
+    src_zephyr_shared_capacity_governance_adaptive_sampler_py ~~~ src_zephyr_shared_capacity_governance_budget_aware_prompt_py
+    src_zephyr_shared_capacity_governance_budget_aware_prompt_py ~~~ src_zephyr_shared_capacity_governance_capacity_calibrator_py
+    src_zephyr_shared_capacity_governance_capacity_calibrator_py ~~~ src_zephyr_shared_capacity_governance_capacity_digital_twin_py
+    src_zephyr_shared_capacity_governance_capacity_digital_twin_py ~~~ src_zephyr_shared_capacity_governance_capacity_fingerprint_py
+    src_zephyr_shared_capacity_governance_capacity_fingerprint_py ~~~ src_zephyr_shared_capacity_governance_capacity_runbook_generator_py
+    src_zephyr_shared_capacity_governance_capacity_runbook_generator_py ~~~ src_zephyr_shared_capacity_governance_cost_estimator_py
+    src_zephyr_shared_capacity_governance_cost_estimator_py ~~~ src_zephyr_shared_capacity_governance_dependency_capacity_guard_py
+    src_zephyr_shared_capacity_governance_dependency_capacity_guard_py ~~~ src_zephyr_shared_capacity_governance_model_capacity_probe_py
+    src_zephyr_shared_capacity_governance_model_capacity_probe_py ~~~ src_zephyr_shared_compensation_saga_compensator_py
+    src_zephyr_shared_compensation_saga_compensator_py ~~~ src_zephyr_shared_context_context_engine_py
+    src_zephyr_shared_context_context_engine_py ~~~ src_zephyr_shared_contracts_backpressure_types_py
+    src_zephyr_shared_contracts_backpressure_types_py ~~~ src_zephyr_shared_contracts_backpressure_pause_py
+    src_zephyr_shared_contracts_backpressure_pause_py ~~~ src_zephyr_shared_contracts_backpressure_resume_py
+    src_zephyr_shared_contracts_backpressure_resume_py ~~~ src_zephyr_shared_contracts_backpressure_throttle_py
+    src_zephyr_shared_contracts_backpressure_throttle_py ~~~ src_zephyr_shared_contracts_contract_bus_py
+    src_zephyr_shared_contracts_contract_bus_py ~~~ src_zephyr_shared_contracts_core_base_event_py
+    src_zephyr_shared_contracts_core_base_event_py ~~~ src_zephyr_shared_contracts_core_enforcer_py
+    src_zephyr_shared_contracts_core_enforcer_py ~~~ src_zephyr_shared_contracts_core_factories_py
+    src_zephyr_shared_contracts_core_factories_py ~~~ src_zephyr_shared_contracts_core_gate_types_py
+    src_zephyr_shared_contracts_core_gate_types_py ~~~ src_zephyr_shared_contracts_core_registry_py
+    src_zephyr_shared_contracts_core_registry_py ~~~ src_zephyr_shared_contracts_core_system_configuration_py
+    src_zephyr_shared_contracts_core_system_configuration_py ~~~ src_zephyr_shared_contracts_core_timestamp_py
+    src_zephyr_shared_contracts_core_timestamp_py ~~~ src_zephyr_shared_contracts_enums_init_py
+    src_zephyr_shared_contracts_enums_init_py ~~~ src_zephyr_shared_contracts_errors_contract_violation_error_py
+    src_zephyr_shared_contracts_errors_contract_violation_error_py ~~~ src_zephyr_shared_contracts_errors_data_quality_error_py
+    src_zephyr_shared_contracts_errors_data_quality_error_py ~~~ src_zephyr_shared_contracts_errors_execution_rejection_error_py
+    src_zephyr_shared_contracts_errors_execution_rejection_error_py ~~~ src_zephyr_shared_contracts_errors_factor_computation_error_py
+    src_zephyr_shared_contracts_errors_factor_computation_error_py ~~~ src_zephyr_shared_contracts_errors_risk_limit_violation_error_py
+    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py ~~~ src_zephyr_shared_contracts_errors_signal_degradation_warning_py
+    src_zephyr_shared_contracts_errors_signal_degradation_warning_py ~~~ src_zephyr_shared_contracts_escalation_budget_alert_py
+    src_zephyr_shared_contracts_escalation_budget_alert_py ~~~ src_zephyr_shared_contracts_execution_capital_allocation_result_py
+    src_zephyr_shared_contracts_execution_capital_allocation_result_py ~~~ src_zephyr_shared_contracts_execution_execution_report_py
+    src_zephyr_shared_contracts_execution_execution_report_py ~~~ src_zephyr_shared_contracts_execution_fill_py
+    src_zephyr_shared_contracts_execution_fill_py ~~~ src_zephyr_shared_contracts_execution_model_serving_request_py
+    src_zephyr_shared_contracts_execution_model_serving_request_py ~~~ src_zephyr_shared_contracts_execution_order_py
+    src_zephyr_shared_contracts_execution_order_py ~~~ src_zephyr_shared_contracts_experiment_experiment_result_py
+    src_zephyr_shared_contracts_experiment_experiment_result_py ~~~ src_zephyr_shared_contracts_experiment_model_serving_response_py
+    src_zephyr_shared_contracts_experiment_model_serving_response_py ~~~ src_zephyr_shared_contracts_external_ext_001_py
+    src_zephyr_shared_contracts_external_ext_001_py ~~~ src_zephyr_shared_contracts_external_ext_002_py
+    src_zephyr_shared_contracts_external_ext_002_py ~~~ src_zephyr_shared_contracts_external_ext_003_py
+    src_zephyr_shared_contracts_external_ext_003_py ~~~ src_zephyr_shared_contracts_external_ext_004_py
+    src_zephyr_shared_contracts_external_ext_004_py ~~~ src_zephyr_shared_contracts_identity_agent_identity_py
+    src_zephyr_shared_contracts_identity_agent_identity_py ~~~ src_zephyr_shared_contracts_identity_permission_py
+    src_zephyr_shared_contracts_identity_permission_py ~~~ src_zephyr_shared_contracts_llm_gateway_protocol_py
+    src_zephyr_shared_contracts_llm_gateway_protocol_py ~~~ src_zephyr_shared_contracts_market_instrument_py
+    src_zephyr_shared_contracts_market_instrument_py ~~~ src_zephyr_shared_contracts_orchestration_protocol_py
+    src_zephyr_shared_contracts_orchestration_protocol_py ~~~ src_zephyr_shared_contracts_portfolio_money_py
+    src_zephyr_shared_contracts_portfolio_money_py ~~~ src_zephyr_shared_contracts_portfolio_performance_attribution_report_py
+    src_zephyr_shared_contracts_portfolio_performance_attribution_report_py ~~~ src_zephyr_shared_contracts_portfolio_position_py
+    src_zephyr_shared_contracts_portfolio_position_py ~~~ src_zephyr_shared_contracts_risk_compliance_rule_py
+    src_zephyr_shared_contracts_risk_compliance_rule_py ~~~ src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py
+    src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py ~~~ src_zephyr_shared_contracts_risk_risk_limits_py
+    src_zephyr_shared_contracts_risk_risk_limits_py ~~~ src_zephyr_shared_contracts_risk_risk_metrics_py
+    src_zephyr_shared_contracts_risk_risk_metrics_py ~~~ src_zephyr_shared_contracts_risk_risk_validator_protocol_py
+    src_zephyr_shared_contracts_risk_risk_validator_protocol_py ~~~ src_zephyr_shared_contracts_security_security_decision_py
+    src_zephyr_shared_contracts_security_security_decision_py ~~~ src_zephyr_shared_contracts_skill_protocol_py
+    src_zephyr_shared_contracts_skill_protocol_py ~~~ src_zephyr_shared_database_init_py
+    src_zephyr_shared_database_init_py ~~~ src_zephyr_shared_dependency_dependency_graph_py
+    src_zephyr_shared_dependency_dependency_graph_py ~~~ src_zephyr_shared_draft_draft_assistant_py
+    src_zephyr_shared_draft_draft_assistant_py ~~~ src_zephyr_shared_events_dlq_bridge_py
+    src_zephyr_shared_events_dlq_bridge_py ~~~ src_zephyr_shared_events_event_bus_upgrade_py
+    src_zephyr_shared_events_event_bus_upgrade_py ~~~ src_zephyr_shared_events_event_reactor_py
+    src_zephyr_shared_events_event_reactor_py ~~~ src_zephyr_shared_events_event_schemas_py
+    src_zephyr_shared_events_event_schemas_py ~~~ src_zephyr_shared_events_hook_dispatcher_py
+    src_zephyr_shared_events_hook_dispatcher_py ~~~ src_zephyr_shared_events_upgrade_strategy_py
+    src_zephyr_shared_events_upgrade_strategy_py ~~~ src_zephyr_shared_foundation_constants_py
+    src_zephyr_shared_foundation_constants_py ~~~ src_zephyr_shared_foundation_deprecation_py
+    src_zephyr_shared_foundation_deprecation_py ~~~ src_zephyr_shared_foundation_env_py
+    src_zephyr_shared_foundation_env_py ~~~ src_zephyr_shared_foundation_flags_py
+    src_zephyr_shared_foundation_flags_py ~~~ src_zephyr_shared_foundation_migration_py
+    src_zephyr_shared_foundation_migration_py ~~~ src_zephyr_shared_foundation_types_py
+    src_zephyr_shared_foundation_types_py ~~~ src_zephyr_shared_infra_cache_py
+    src_zephyr_shared_infra_cache_py ~~~ src_zephyr_shared_infra_outbox_py
+    src_zephyr_shared_infra_outbox_py ~~~ src_zephyr_shared_infra_process_lifecycle_gateway_py
+    src_zephyr_shared_infra_process_lifecycle_gateway_py ~~~ src_zephyr_shared_io_content_fingerprint_py
+    src_zephyr_shared_io_content_fingerprint_py ~~~ src_zephyr_shared_io_file_utils_py
+    src_zephyr_shared_io_file_utils_py ~~~ src_zephyr_shared_io_frontmatter_utils_py
+    src_zephyr_shared_io_frontmatter_utils_py ~~~ src_zephyr_shared_io_io_cache_py
+    src_zephyr_shared_io_io_cache_py ~~~ src_zephyr_shared_io_streaming_reader_py
+    src_zephyr_shared_io_streaming_reader_py ~~~ src_zephyr_shared_io_workspace_telemetry_py
+    src_zephyr_shared_io_workspace_telemetry_py ~~~ src_zephyr_shared_io_yaml_utils_py
+    src_zephyr_shared_io_yaml_utils_py ~~~ src_zephyr_shared_lifecycle_health_py
+    src_zephyr_shared_lifecycle_health_py ~~~ src_zephyr_shared_lifecycle_health_discovery_py
+    src_zephyr_shared_lifecycle_health_discovery_py ~~~ src_zephyr_shared_lifecycle_healthcheck_service_py
+    src_zephyr_shared_lifecycle_healthcheck_service_py ~~~ src_zephyr_shared_lifecycle_longevity_monitor_py
+    src_zephyr_shared_lifecycle_longevity_monitor_py ~~~ src_zephyr_shared_lifecycle_state_machine_py
+    src_zephyr_shared_lifecycle_state_machine_py ~~~ src_zephyr_shared_lifecycle_task_heartbeat_py
+    src_zephyr_shared_lifecycle_task_heartbeat_py ~~~ src_zephyr_shared_lifecycle_ttl_cleanup_engine_py
+    src_zephyr_shared_lifecycle_ttl_cleanup_engine_py ~~~ src_zephyr_shared_maintenance_autonomy_monitor_py
+    src_zephyr_shared_maintenance_autonomy_monitor_py ~~~ src_zephyr_shared_maintenance_code_economy_analyzer_py
+    src_zephyr_shared_maintenance_code_economy_analyzer_py ~~~ src_zephyr_shared_maintenance_dogfooding_py
+    src_zephyr_shared_maintenance_dogfooding_py ~~~ src_zephyr_shared_maintenance_handbook_py
+    src_zephyr_shared_maintenance_handbook_py ~~~ src_zephyr_shared_maintenance_owner_trust_gauge_py
+    src_zephyr_shared_maintenance_owner_trust_gauge_py ~~~ src_zephyr_shared_maintenance_slo_review_assistant_py
+    src_zephyr_shared_maintenance_slo_review_assistant_py ~~~ src_zephyr_shared_maintenance_zero_config_py
+    src_zephyr_shared_maintenance_zero_config_py ~~~ src_zephyr_shared_observability_dashboard_init_py
+    src_zephyr_shared_observability_dashboard_init_py ~~~ src_zephyr_shared_observability_reasoning_spans_py
+    src_zephyr_shared_observability_reasoning_spans_py ~~~ src_zephyr_shared_observability_tracing_py
+    src_zephyr_shared_observability_tracing_py ~~~ src_zephyr_shared_protocols_a2a_a2a_coordination_py
+    src_zephyr_shared_protocols_a2a_a2a_coordination_py ~~~ src_zephyr_shared_protocols_a2a_a2a_protocol_py
+    src_zephyr_shared_protocols_a2a_a2a_protocol_py ~~~ src_zephyr_shared_protocols_a2a_a2a_schemas_py
+    src_zephyr_shared_protocols_a2a_a2a_schemas_py ~~~ src_zephyr_shared_protocols_capability_py
+    src_zephyr_shared_protocols_capability_py ~~~ src_zephyr_shared_protocols_module_birth_registry_py
+    src_zephyr_shared_protocols_module_birth_registry_py ~~~ src_zephyr_shared_protocols_ports_py
+    src_zephyr_shared_protocols_ports_py ~~~ src_zephyr_shared_reliability_diff_planner_py
+    src_zephyr_shared_reliability_diff_planner_py ~~~ src_zephyr_shared_reliability_retry_handler_py
+    src_zephyr_shared_reliability_retry_handler_py ~~~ src_zephyr_shared_resilience_degradation_chain_py
+    src_zephyr_shared_resilience_degradation_chain_py ~~~ src_zephyr_shared_resilience_error_budget_tracker_py
+    src_zephyr_shared_resilience_error_budget_tracker_py ~~~ src_zephyr_shared_resilience_fallback_py
+    src_zephyr_shared_resilience_fallback_py ~~~ src_zephyr_shared_resilience_fault_isolator_py
+    src_zephyr_shared_resilience_fault_isolator_py ~~~ src_zephyr_shared_resilience_limiter_py
+    src_zephyr_shared_resilience_limiter_py ~~~ src_zephyr_shared_schema_schema_registry_py
+    src_zephyr_shared_schema_schema_registry_py ~~~ src_zephyr_shared_security_idempotency_py
+    src_zephyr_shared_security_idempotency_py ~~~ src_zephyr_shared_security_lock_py
+    src_zephyr_shared_security_lock_py ~~~ src_zephyr_shared_security_sandbox_executor_py
+    src_zephyr_shared_security_sandbox_executor_py ~~~ src_zephyr_shared_security_secrets_py
+    src_zephyr_shared_security_secrets_py ~~~ src_zephyr_shared_security_ssot_guard_py
+    src_zephyr_shared_security_ssot_guard_py ~~~ src_zephyr_shared_session_session_audit_py
+    src_zephyr_shared_session_session_audit_py ~~~ src_zephyr_shared_session_session_boundary_py
+    src_zephyr_shared_session_session_boundary_py ~~~ src_zephyr_shared_session_session_continuity_py
+    src_zephyr_shared_session_session_continuity_py ~~~ src_zephyr_shared_utils_async_utils_py
+    src_zephyr_shared_utils_async_utils_py ~~~ src_zephyr_shared_utils_cli_summary_py
+    src_zephyr_shared_utils_cli_summary_py ~~~ src_zephyr_shared_utils_context_py
+    src_zephyr_shared_utils_context_py ~~~ src_zephyr_shared_utils_converters_py
+    src_zephyr_shared_utils_converters_py ~~~ src_zephyr_shared_utils_db_utils_py
+    src_zephyr_shared_utils_db_utils_py ~~~ src_zephyr_shared_utils_diff_utils_py
+    src_zephyr_shared_utils_diff_utils_py ~~~ src_zephyr_shared_utils_pagination_py
+    src_zephyr_shared_utils_pagination_py ~~~ src_zephyr_shared_utils_testing_py
+    src_zephyr_shared_utils_testing_py ~~~ src_zephyr_shared_utils_zephyr_logger_py
+    src_zephyr_shared_utils_zephyr_logger_py ~~~ src_zephyr_shared_versioning_vibe_experiment_tracker_py
+    src_zephyr_shared_versioning_vibe_experiment_tracker_py ~~~ tests_zephyr_shared_observability_test_metrics_server_py
+    src_zephyr_shared_version_py["(生产态 / production) 版本 / Version<br/>__version__.py —— ZephyrAlpha Shared 模块版本常量<br/>文件: shared/__version__.py"]
+    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py["(生产态 / production) 蓝图decomposer / Blueprint Decomposer<br/>ZephyrAlpha 蓝图拆解器<br/>文件: blueprint_tools/blueprint_decomposer.py"]
+    src_zephyr_shared_contracts_core_runtime_plane_tag_py["(生产态 / production) 运行时plane标签 / Runtime Plane Tag<br/>ZephyrAlpha — shared/contracts/runtime_plane_tag.py<br/>文件: core/runtime_plane_tag.py"]
+    src_zephyr_shared_contracts_core_trace_context_py["(生产态 / production) 追踪上下文 / Trace Context<br/>定义 TraceContext 等类型。<br/>文件: core/trace_context.py"]
+    src_zephyr_shared_contracts_enums_order_enums_py["(生产态 / production) orderenums / Order Enums<br/>OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1 修复)<br/>文件: enums/order_enums.py"]
+    src_zephyr_shared_contracts_task_repository_protocol_py["(生产态 / production) 任务repository协议 / Task Repository Protocol<br/>TaskRepositoryProtocol — TaskRepository 的 Protocol 接口<br/>文件: contracts/task_repository_protocol.py"]
+    src_zephyr_shared_database_database_crud_mixin_py["(生产态 / production) databasecrudmixin / Database Crud Mixin<br/>DatabaseCRUDMixin: 共享的 governance.db + depgraph CRUD 方法<br/>文件: database/database_crud_mixin.py"]
+    src_zephyr_shared_events_dlq_py["(生产态 / production) dlq / Dlq<br/>dlq.py —— ZephyrAlpha 死信队列（Dead Letter Queue）<br/>文件: events/dlq.py"]
+    src_zephyr_shared_events_observer_py["(生产态 / production) observer / Observer<br/>observer.py —— Re-export wrapper -> canonical: zephyr.shared.infra.observer<br/>文件: events/observer.py"]
+    src_zephyr_shared_infra_idempotency_py["(生产态 / production) idempotency / Idempotency<br/>idempotency.py —— 幂等性基础设施（Phase 8 新增 / 盲点 B15 修复）<br/>文件: infra/idempotency.py"]
+    src_zephyr_shared_infra_limiter_py["(生产态 / production) limiter / Limiter<br/>速率限制耗尽——等待时间过长或无法获取 token。<br/>文件: infra/limiter.py"]
+    src_zephyr_shared_infra_lock_py["(生产态 / production) lock / Lock<br/>lock.py —— 分布式锁抽象（Phase 10 新增 / 盲点 B23 修复）<br/>文件: infra/lock.py"]
+    src_zephyr_shared_infra_process_pool_py["(生产态 / production) process池 / Process Pool<br/>process_pool.py - Shared process pool for MCP servers and subprocess tasks<br/>文件: infra/process_pool.py"]
+    src_zephyr_shared_observability_metrics_server_py["(生产态 / production) 指标服务端 / Metrics Server<br/>Prometheus /metrics HTTP 端点（P1-5 可观测性改造）。<br/>文件: observability/metrics_server.py"]
+    src_zephyr_shared_protocols_a2a_a2a_registry_py["(生产态 / production) a2a注册表 / A2a Registry<br/>A2A Registry and Agent Card contracts — discovery and identity interfaces.<br/>文件: a2a/a2a_registry.py"]
+    src_zephyr_shared_protocols_registry_py["(生产态 / production) 注册表 / Registry<br/>registry — 运行时 DI 容器<br/>文件: protocols/registry.py"]
+    src_zephyr_shared_resilience_circuit_breaker_py["(生产态 / production) 断路熔断器 / Circuit Breaker<br/>circuit_breaker.py —— 轻量熔断器状态机（Phase 2 新增 / 零依赖）<br/>文件: resilience/circuit_breaker.py"]
+    src_zephyr_shared_resilience_retry_py["(生产态 / production) retry / Retry<br/>retry.py —— 统一重试策略（Phase 2 新增 / 零依赖）<br/>文件: resilience/retry.py"]
+    src_zephyr_shared_schema_schemas_py["(生产态 / production) 模式 / Schemas<br/>ImportError on missing sub-module<br/>文件: schema/schemas.py"]
+    src_zephyr_shared_security_capability_py["(生产态 / production) 能力 / Capability<br/>CBAC 能力检查器 (Capability-Based Access Control)<br/>文件: security/capability.py"]
+    src_zephyr_shared_utils_logging_py["(生产态 / production) logging / Logging<br/>logging.py —— ZephyrAlpha 结构化日志系统（Structured JSON Logger）<br/>文件: utils/logging.py"]
+    src_zephyr_shared_utils_migration_py["(生产态 / production) 迁移 / Migration<br/>migration.py —— ZephyrAlpha Schema 版本化迁移系统<br/>文件: utils/migration.py"]
+    src_zephyr_shared_version_py ~~~ src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
+    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py ~~~ src_zephyr_shared_contracts_core_runtime_plane_tag_py
+    src_zephyr_shared_contracts_core_runtime_plane_tag_py ~~~ src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_core_trace_context_py ~~~ src_zephyr_shared_contracts_enums_order_enums_py
+    src_zephyr_shared_contracts_enums_order_enums_py ~~~ src_zephyr_shared_contracts_task_repository_protocol_py
+    src_zephyr_shared_contracts_task_repository_protocol_py ~~~ src_zephyr_shared_database_database_crud_mixin_py
+    src_zephyr_shared_database_database_crud_mixin_py ~~~ src_zephyr_shared_events_dlq_py
+    src_zephyr_shared_events_dlq_py ~~~ src_zephyr_shared_events_observer_py
+    src_zephyr_shared_events_observer_py ~~~ src_zephyr_shared_infra_idempotency_py
+    src_zephyr_shared_infra_idempotency_py ~~~ src_zephyr_shared_infra_limiter_py
+    src_zephyr_shared_infra_limiter_py ~~~ src_zephyr_shared_infra_lock_py
+    src_zephyr_shared_infra_lock_py ~~~ src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_infra_process_pool_py ~~~ src_zephyr_shared_observability_metrics_server_py
+    src_zephyr_shared_observability_metrics_server_py ~~~ src_zephyr_shared_protocols_a2a_a2a_registry_py
+    src_zephyr_shared_protocols_a2a_a2a_registry_py ~~~ src_zephyr_shared_protocols_registry_py
+    src_zephyr_shared_protocols_registry_py ~~~ src_zephyr_shared_resilience_circuit_breaker_py
+    src_zephyr_shared_resilience_circuit_breaker_py ~~~ src_zephyr_shared_resilience_retry_py
+    src_zephyr_shared_resilience_retry_py ~~~ src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_schema_schemas_py ~~~ src_zephyr_shared_security_capability_py
+    src_zephyr_shared_security_capability_py ~~~ src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_utils_logging_py ~~~ src_zephyr_shared_utils_migration_py
+    src_zephyr_shared_foundation_models_py["(生产态 / production) 模型 / Models<br/>ZephyrAlpha 任务系统核心数据模型<br/>文件: foundation/models.py"]
+    src_zephyr_shared_infra_observer_py["(生产态 / production) observer / Observer<br/>Zero-dependency Observer pattern (subscribe/emit/unsubscribe).<br/>文件: infra/observer.py"]
+    src_zephyr_shared_io_serialization_py["(生产态 / production) serialization / Serialization<br/>serialization.py —— 统一序列化/反序列化基础设施（Phase 7 新增 / 盲点 B10 修复）<br/>文件: io/serialization.py"]
+    src_zephyr_shared_io_sqlite_factory_py["(生产态 / production) sqlite工厂 / Sqlite Factory<br/>SQLite 连接工厂真源（SSoT）<br/>文件: io/sqlite_factory.py"]
+    src_zephyr_shared_observability_metrics_py["(生产态 / production) 指标 / Metrics<br/>metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增 / 盲点 B17 修复）<br/>文件: observability/metrics.py"]
+    src_zephyr_shared_schema_base_config_py["(生产态 / production) 基础配置 / Base Config<br/>定义 Classification、EvolutionPolicy 等类型。<br/>文件: schema/base_config.py"]
+    src_zephyr_shared_schema_execution_model_py["(生产态 / production) 执行模型 / Execution Model<br/>ValueError on invalid execution model string<br/>文件: schema/execution_model.py"]
+    src_zephyr_shared_schema_severity_types_py["(生产态 / production) severity类型 / Severity Types<br/>Circuit breaker states — re-homed from infrastructure_runtime_integration.db...<br/>文件: schema/severity_types.py"]
+    src_zephyr_shared_schema_task_types_py["(生产态 / production) 任务类型 / Task Types<br/>task_types — 任务系统核心类型 re-export 层<br/>文件: schema/task_types.py"]
+    src_zephyr_shared_foundation_models_py ~~~ src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_infra_observer_py ~~~ src_zephyr_shared_io_serialization_py
+    src_zephyr_shared_io_serialization_py ~~~ src_zephyr_shared_io_sqlite_factory_py
+    src_zephyr_shared_io_sqlite_factory_py ~~~ src_zephyr_shared_observability_metrics_py
+    src_zephyr_shared_observability_metrics_py ~~~ src_zephyr_shared_schema_base_config_py
+    src_zephyr_shared_schema_base_config_py ~~~ src_zephyr_shared_schema_execution_model_py
+    src_zephyr_shared_schema_execution_model_py ~~~ src_zephyr_shared_schema_severity_types_py
+    src_zephyr_shared_schema_severity_types_py ~~~ src_zephyr_shared_schema_task_types_py
+    src_zephyr_shared_event_bus_py["(生产态 / production) 事件总线 / Event Bus<br/>EventBus — 事件总线（带背压控制）(M-07)<br/>文件: shared/event_bus.py"]
+    src_zephyr_shared_foundation_errors_py["(生产态 / production) 错误 / Errors<br/>errors.py —— ZephyrAlpha 统一错误层次（Traditional Exception Hierarchy）<br/>文件: foundation/errors.py"]
+    src_zephyr_shared_io_paths_py["(生产态 / production) paths / Paths<br/>paths.py — 项目路径常量 SSoT（Single Source of Truth）<br/>文件: io/paths.py"]
+    src_zephyr_shared_utils_time_utils_py["(生产态 / production) 时间utils / Time Utils<br/>time_utils.py —— 时间/日期工具（Phase 9 新增 / 盲点 B19 修复）<br/>文件: utils/time_utils.py"]
+    src_zephyr_shared_event_bus_py ~~~ src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_foundation_errors_py ~~~ src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_paths_py ~~~ src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_alerts_alert_escalation_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
+    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
+    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_idempotency_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_circuit_breaker_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_retry_py
+    src_zephyr_shared_contracts_backpressure_resume_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_types_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_pause_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_throttle_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_core_timestamp_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_contracts_errors_data_quality_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_contract_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
+    src_zephyr_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_factor_computation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_signal_degradation_warning_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_experiment_experiment_result_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_database_init_py -->|config_depends / config_depends| src_zephyr_shared_database_database_crud_mixin_py
+    src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
+    src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
+    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
+    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_events_observer_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
+    src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_events_upgrade_strategy_py -->|导入依赖 / import_depends| src_zephyr_shared_events_observer_py
+    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_foundation_migration_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_migration_py
+    src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_io_workspace_telemetry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_sqlite_factory_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_yaml_utils_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
+    src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
+    src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_maintenance_zero_config_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_observability_metrics_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_protocols_capability_py -->|导入依赖 / import_depends| src_zephyr_shared_security_capability_py
+    src_zephyr_shared_observability_metrics_server_py -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
+    src_zephyr_shared_observability_tracing_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_protocols_ports_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    src_zephyr_shared_protocols_a2a_a2a_coordination_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
+    src_zephyr_shared_protocols_a2a_a2a_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_resilience_degradation_chain_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_resilience_fallback_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_resilience_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_resilience_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_limiter_py
+    src_zephyr_shared_resilience_retry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_version_py
+    src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
+    src_zephyr_shared_security_capability_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_security_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_idempotency_py
+    src_zephyr_shared_security_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_lock_py
+    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_utils_logging_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
+    src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_registry_py
+    src_zephyr_shared_utils_zephyr_logger_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_utils_testing_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
+    tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
+    tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_server_py
+    D_FEEDBACK_LOOP["(生产态 / production) 反馈循环引擎 / Feedback Loop Engine<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根因诊断、自动修复和自我进化<br/>跨域节点 / cross-domain"]
+    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_INFRA_RUNTIME["(生产态 / production) 运行时集成 / Runtime Integration<br/>运行时集成，负责组件生命周期编排、启动钩子和运行时上下文管理<br/>跨域节点 / cross-domain"]
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_shared_infra_process_pool_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_shared_io_io_cache_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_RULE["(生产态 / production) 规则治理 / Rule Governance<br/>规则治理，负责规则注册、规则版本和规则依赖管理<br/>跨域节点 / cross-domain"]
+    src_zephyr_shared_protocols_a2a_a2a_coordination_py -->|导入依赖 / import_depends| D_GOV_RULE
+    D_INFRASTRUCTURE["(生产态 / production) 跨层契约基础设施 / Cross-Layer Contract Infrastructure<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验<br/>跨域节点 / cross-domain"]
+    src_zephyr_shared_contracts_portfolio_performance_attribution_report_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_ML_TRAIN["(生产态 / production) 训练 / Training<br/>训练，负责模型训练、特征工程和模型评估<br/>跨域节点 / cross-domain"]
+    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| D_ML_TRAIN
+    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_AUDIT["(生产态 / production) 审计追踪 / Audit Trail<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>跨域节点 / cross-domain"]
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
+    D_TRADING["(生产态 / production) 交易运营 / Trading Operations<br/>交易运营，负责交易生命周期管理、订单状态和成交处理<br/>跨域节点 / cross-domain"]
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    D_INTEGRATION["(生产态 / production) 管线路由 / Pipeline Routing<br/>管线路由，负责跨域数据流路由、管道编排和集成适配<br/>跨域节点 / cross-domain"]
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_protocols_ports_py
+    D_DATA["(生产态 / production) 数据接入层 / Data Access Layer<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>跨域节点 / cross-domain"]
+    D_DATA -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    D_DATA -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    D_GOVERNANCE["(生产态 / production) 生命周期管理 / Lifecycle Management<br/>生命周期管理，负责蓝图/模块/任务的声明周期管理和元数据治理<br/>跨域节点 / cross-domain"]
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_shared_io_paths_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
+    D_GOV_CODE_QUALITY["(生产态 / production) 代码质量治理 / Code Quality Governance<br/>代码质量治理，负责代码去重引擎、函数重复检测、AST语义分析和提交门禁引擎<br/>跨域节点 / cross-domain"]
+    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_utils_async_utils_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_shared_version_py,src_zephyr_shared_cross_layer_ml_experiment_pipeline_py,src_zephyr_shared_adaptation_execution_tuner_py,src_zephyr_shared_adaptation_prompt_version_manager_py,src_zephyr_shared_ai_guards_ai_audit_guard_py,src_zephyr_shared_ai_guards_combinatorial_gate_py,src_zephyr_shared_ai_guards_core_integrity_guard_py,src_zephyr_shared_alerts_alert_escalation_py,src_zephyr_shared_alerts_alert_manager_py,src_zephyr_shared_alerts_alert_precision_tracker_py,src_zephyr_shared_alerts_dual_channel_alert_py,src_zephyr_shared_alerts_heartbeat_server_py,src_zephyr_shared_api_api_client_py,src_zephyr_shared_api_api_index_py,src_zephyr_shared_api_dos_launcher_py,src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py,src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py,src_zephyr_shared_blueprint_tools_blueprint_decomposer_py,src_zephyr_shared_blueprint_tools_blueprint_scorer_py,src_zephyr_shared_capacity_governance_adaptive_sampler_py,src_zephyr_shared_capacity_governance_budget_aware_prompt_py,src_zephyr_shared_capacity_governance_capacity_calibrator_py,src_zephyr_shared_capacity_governance_capacity_digital_twin_py,src_zephyr_shared_capacity_governance_capacity_fingerprint_py,src_zephyr_shared_capacity_governance_capacity_runbook_generator_py,src_zephyr_shared_capacity_governance_cost_estimator_py,src_zephyr_shared_capacity_governance_dependency_capacity_guard_py,src_zephyr_shared_capacity_governance_model_capacity_probe_py,src_zephyr_shared_compensation_saga_compensator_py,src_zephyr_shared_context_context_engine_py,src_zephyr_shared_contracts_backpressure_types_py,src_zephyr_shared_contracts_backpressure_pause_py,src_zephyr_shared_contracts_backpressure_resume_py,src_zephyr_shared_contracts_backpressure_throttle_py,src_zephyr_shared_contracts_contract_bus_py,src_zephyr_shared_contracts_core_base_event_py,src_zephyr_shared_contracts_core_enforcer_py,src_zephyr_shared_contracts_core_factories_py,src_zephyr_shared_contracts_core_gate_types_py,src_zephyr_shared_contracts_core_registry_py,src_zephyr_shared_contracts_core_runtime_plane_tag_py,src_zephyr_shared_contracts_core_system_configuration_py,src_zephyr_shared_contracts_core_timestamp_py,src_zephyr_shared_contracts_core_trace_context_py,src_zephyr_shared_contracts_enums_init_py,src_zephyr_shared_contracts_enums_order_enums_py,src_zephyr_shared_contracts_errors_contract_violation_error_py,src_zephyr_shared_contracts_errors_data_quality_error_py,src_zephyr_shared_contracts_errors_execution_rejection_error_py,src_zephyr_shared_contracts_errors_factor_computation_error_py,src_zephyr_shared_contracts_errors_risk_limit_violation_error_py,src_zephyr_shared_contracts_errors_signal_degradation_warning_py,src_zephyr_shared_contracts_escalation_budget_alert_py,src_zephyr_shared_contracts_execution_capital_allocation_result_py,src_zephyr_shared_contracts_execution_execution_report_py,src_zephyr_shared_contracts_execution_fill_py,src_zephyr_shared_contracts_execution_model_serving_request_py,src_zephyr_shared_contracts_execution_order_py,src_zephyr_shared_contracts_experiment_experiment_result_py,src_zephyr_shared_contracts_experiment_model_serving_response_py,src_zephyr_shared_contracts_external_ext_001_py,src_zephyr_shared_contracts_external_ext_002_py,src_zephyr_shared_contracts_external_ext_003_py,src_zephyr_shared_contracts_external_ext_004_py,src_zephyr_shared_contracts_identity_agent_identity_py,src_zephyr_shared_contracts_identity_permission_py,src_zephyr_shared_contracts_llm_gateway_protocol_py,src_zephyr_shared_contracts_market_instrument_py,src_zephyr_shared_contracts_orchestration_protocol_py,src_zephyr_shared_contracts_portfolio_money_py,src_zephyr_shared_contracts_portfolio_performance_attribution_report_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_database_init_py,src_zephyr_shared_database_database_crud_mixin_py,src_zephyr_shared_dependency_dependency_graph_py,src_zephyr_shared_draft_draft_assistant_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_events_observer_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_migration_py,src_zephyr_shared_foundation_models_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_limiter_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py,src_zephyr_shared_infra_process_lifecycle_gateway_py,src_zephyr_shared_infra_process_pool_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py,src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_sqlite_factory_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_io_workspace_telemetry_py,src_zephyr_shared_io_yaml_utils_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_healthcheck_service_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_state_machine_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py,src_zephyr_shared_maintenance_autonomy_monitor_py,src_zephyr_shared_maintenance_code_economy_analyzer_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_owner_trust_gauge_py,src_zephyr_shared_maintenance_slo_review_assistant_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_observability_dashboard_init_py,src_zephyr_shared_observability_metrics_py,src_zephyr_shared_observability_metrics_server_py,src_zephyr_shared_observability_reasoning_spans_py,src_zephyr_shared_observability_tracing_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py,src_zephyr_shared_protocols_capability_py,src_zephyr_shared_protocols_module_birth_registry_py,src_zephyr_shared_protocols_ports_py,src_zephyr_shared_protocols_registry_py,src_zephyr_shared_reliability_diff_planner_py,src_zephyr_shared_reliability_retry_handler_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_degradation_chain_py,src_zephyr_shared_resilience_error_budget_tracker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_fault_isolator_py,src_zephyr_shared_resilience_limiter_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_schema_base_config_py,src_zephyr_shared_schema_execution_model_py,src_zephyr_shared_schema_schema_registry_py,src_zephyr_shared_schema_schemas_py,src_zephyr_shared_schema_severity_types_py,src_zephyr_shared_schema_task_types_py,src_zephyr_shared_security_capability_py,src_zephyr_shared_security_idempotency_py,src_zephyr_shared_security_lock_py,src_zephyr_shared_security_sandbox_executor_py,src_zephyr_shared_security_secrets_py,src_zephyr_shared_security_ssot_guard_py,src_zephyr_shared_session_session_audit_py,src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_session_continuity_py,src_zephyr_shared_utils_async_utils_py,src_zephyr_shared_utils_cli_summary_py,src_zephyr_shared_utils_context_py,src_zephyr_shared_utils_converters_py,src_zephyr_shared_utils_db_utils_py,src_zephyr_shared_utils_diff_utils_py,src_zephyr_shared_utils_logging_py,src_zephyr_shared_utils_migration_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py,src_zephyr_shared_utils_zephyr_logger_py,src_zephyr_shared_versioning_vibe_experiment_tracker_py,tests_zephyr_shared_observability_test_metrics_server_py production
+    class D_FEEDBACK_LOOP,D_INFRA_RUNTIME,D_GOV_RULE,D_INFRASTRUCTURE,D_ML_TRAIN,D_GOV_AUDIT,D_TRADING,D_INTEGRATION,D_DATA,D_GOVERNANCE,D_GOV_CODE_QUALITY external_prod
+```
+
+### 设计态图（仅 design_maturity=design 的模块和依赖）
+
+> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个，0 条域内依赖）。
+
+```mermaid
+flowchart TD
+    empty["（无设计态模块 / No design modules）"]
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
