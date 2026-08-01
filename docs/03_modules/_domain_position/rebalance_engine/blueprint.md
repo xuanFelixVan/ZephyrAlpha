@@ -4,6 +4,7 @@ title: "再平衡引擎蓝图 — 成本收益判定+三级触发"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position

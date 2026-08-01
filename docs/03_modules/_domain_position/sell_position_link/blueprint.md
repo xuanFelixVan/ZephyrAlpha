@@ -4,6 +4,7 @@ title: "卖出-仓位双向链接蓝图 — 阈值动态调整+买入后即时�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position
