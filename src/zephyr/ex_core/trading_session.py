@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill
 # [CONSUMERS]
 # [STARTUP] imported
-# [MATURITY] evolving
+# [MATURITY] production
 # [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort；权重驱动非订单驱动
 # [MODIFY-GUARD]
 # [STABILITY] evolving
