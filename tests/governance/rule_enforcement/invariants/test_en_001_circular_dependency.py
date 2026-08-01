@@ -244,7 +244,7 @@ class TestFindCycles:
 
 
 class TestBuildDependencyGraph:
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency.parse_imports")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._parse_imports")
     def test_builds_graph_from_imports(self, mock_parse):
         mock_parse.return_value = {"zephyr.l01_infrastructure", "os"}
 
@@ -253,7 +253,7 @@ class TestBuildDependencyGraph:
         for mod in ALL_MODULES:
             assert mod in graph
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency.parse_imports")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._parse_imports")
     def test_self_dependency_excluded(self, mock_parse):
         mock_parse.return_value = {"zephyr.l01_infrastructure"}
 
@@ -263,19 +263,19 @@ class TestBuildDependencyGraph:
 
 
 class TestRunScan:
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency.build_dependency_graph")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
     def test_returns_scan_result(self, mock_build):
         mock_build.return_value = {"a": set(), "b": set()}
         result = run_scan()
         assert isinstance(result, ScanResult)
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency.build_dependency_graph")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
     def test_acyclic_passes(self, mock_build):
         mock_build.return_value = {"a": set(), "b": set()}
         result = run_scan()
         assert result.passed is True
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency.build_dependency_graph")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
     def test_cyclic_fails(self, mock_build):
         mock_build.return_value = {"a": {"b"}, "b": {"a"}}
         result = run_scan()

@@ -108,14 +108,14 @@ class TestLoadContracts:
 
 
 class TestRunCheck:
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_empty_contracts_passes(self, mock_load):
         mock_load.return_value = {"contracts": []}
         result = run_check()
         assert result.passed is True
         assert result.total_contracts == 0
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_p0_with_valid_enforcement_mode(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -126,7 +126,7 @@ class TestRunCheck:
         assert result.passed is True
         assert result.total_contracts == 1
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_p0_with_invalid_enforcement_mode(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -138,7 +138,7 @@ class TestRunCheck:
         assert len(result.violations) == 1
         assert "invalid enforcement_mode" in result.violations[0]
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_p0_missing_enforcement_mode_warns(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -150,7 +150,7 @@ class TestRunCheck:
         assert len(result.warnings) >= 1
         assert "missing enforcement_mode" in result.warnings[0]
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_enforcement_action_as_fallback(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -160,7 +160,7 @@ class TestRunCheck:
         result = run_check()
         assert result.passed is True
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_enforcement_action_invalid(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -171,7 +171,7 @@ class TestRunCheck:
         assert result.passed is False
         assert len(result.violations) == 1
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_non_p0_no_enforcement_ok(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -182,7 +182,7 @@ class TestRunCheck:
         assert result.passed is True
         assert result.total_contracts == 0
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_all_valid_modes_accepted(self, mock_load):
         contracts = [
             {"id": f"CTR-{i}", "priority": "P0", "enforcement_mode": mode}
@@ -193,14 +193,14 @@ class TestRunCheck:
         assert result.passed is True
         assert result.total_contracts == 5
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_no_contracts_key(self, mock_load):
         mock_load.return_value = {}
         result = run_check()
         assert result.passed is True
         assert result.total_contracts == 0
 
-    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator.load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator._load_contracts")
     def test_mixed_valid_and_invalid(self, mock_load):
         mock_load.return_value = {
             "contracts": [

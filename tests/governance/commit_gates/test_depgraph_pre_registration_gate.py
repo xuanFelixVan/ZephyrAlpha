@@ -212,7 +212,7 @@ class TestCheckClosure:
         gate = make_depgraph_pre_registration_gate()
         # Even with mocked DB returning planned, tests/ should be exempt
         with (
-            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.extract_ttl", return_value="permanent"),
+            patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate._extract_ttl", return_value="permanent"),
             patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status", return_value="planned"),
             patch("zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.count_impl_lines", return_value=100),
         ):

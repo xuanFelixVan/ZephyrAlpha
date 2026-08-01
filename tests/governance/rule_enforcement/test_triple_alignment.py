@@ -415,7 +415,7 @@ class TestExtractDepMapDepths:
 
 class TestCheckTripleAlignment:
     def test_returns_result_on_missing_blueprint_registry(self):
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.load_yaml", return_value=None):
+        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=None):
             result = check_triple_alignment()
             assert isinstance(result, TripleAlignmentResult)
             assert result.passed is False
@@ -423,14 +423,14 @@ class TestCheckTripleAlignment:
             assert result.violations[0].check == "registry_load"
 
     def test_returns_result_on_invalid_blueprint_registry(self):
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.load_yaml", return_value={"other_key": []}):
+        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value={"other_key": []}):
             result = check_triple_alignment()
             assert isinstance(result, TripleAlignmentResult)
             assert result.passed is False
             assert result.violations[0].check == "registry_load"
 
     def test_empty_blueprints_list(self):
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.load_yaml", return_value={"blueprints": []}):
+        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value={"blueprints": []}):
             with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.extract_dep_map_modules", return_value={}):
                 result = check_triple_alignment()
                 assert result.checked_modules == 0
@@ -445,7 +445,7 @@ class TestCheckTripleAlignment:
                 },
             ]
         }
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.load_yaml", return_value=registry_data):
+        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
             with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.extract_dep_map_modules", return_value={}):
                 result = check_triple_alignment(warn_only=True)
                 assert result.passed is True
@@ -457,7 +457,7 @@ class TestCheckTripleAlignment:
                 {"module_id": "MOD-INF-020", "file_path": "b.md"},
             ]
         }
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.load_yaml", return_value=registry_data):
+        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
             with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.extract_dep_map_modules", return_value={}):
                 result = check_triple_alignment(specific_module="MOD-GATE_ENGINE")
                 assert result.checked_modules == 1
@@ -471,7 +471,7 @@ class TestCheckTripleAlignment:
                 },
             ]
         }
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.load_yaml", return_value=registry_data):
+        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
             with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.extract_dep_map_modules", return_value={}):
                 result = check_triple_alignment()
                 bp_missing = [v for v in result.violations if v.check == "blueprint_file_missing"]
@@ -483,7 +483,7 @@ class TestCheckTripleAlignment:
         dep_map_modules = {
             "MOD-INF-099": {"source_path": "src/orphan/", "blueprint_path": "bp.md"},
         }
-        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.load_yaml", return_value=registry_data):
+        with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment._load_yaml", return_value=registry_data):
             with patch("zephyr.gov_enforcement.rule_enforcement.triple_alignment.extract_dep_map_modules", return_value=dep_map_modules):
                 result = check_triple_alignment()
                 orphans = [v for v in result.violations if v.check == "dep_map_orphan_module"]
