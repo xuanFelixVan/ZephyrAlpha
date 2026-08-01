@@ -8,6 +8,12 @@ from zephyr.sell_decision.core.breakout_failure_detector import (
     BreakoutStatus,
     InvalidBreakoutInputError,
 )
+from zephyr.sell_decision.core.replacement_rebalance_seller import (
+    InvalidRebalanceInputError,
+    ReplacementRebalanceOrder,
+    ReplacementRebalanceSeller,
+    SellOrderType,
+)
 from zephyr.sell_decision.core.sell_conflict_arbitrator import (
     ArbitrationResult,
     ArbitrationVerdict,
@@ -51,6 +57,10 @@ __all__ = [
     "BreakoutResult",
     "BreakoutStatus",
     "InvalidBreakoutInputError",
+    "InvalidRebalanceInputError",
+    "ReplacementRebalanceOrder",
+    "ReplacementRebalanceSeller",
+    "SellOrderType",
     "DuplicateProviderError",
     "InvalidSellSignalError",
     "SellDirection",

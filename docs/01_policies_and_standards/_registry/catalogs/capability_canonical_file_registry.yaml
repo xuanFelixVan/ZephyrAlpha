@@ -5363,6 +5363,14 @@ creation_tokens:
     token: "auto-sell-003-breakout-bp-20260802"
     created_by: "session-sell003-continuation"
     capability: "breakout_failure_detector"
+  - file: "src/zephyr/sell_decision/core/replacement_rebalance_seller.py"
+    token: "auto-sell-006-rebalance-seller-20260802"
+    created_by: "session-sell006-continuation"
+    capability: "replacement_rebalance_seller"
+  - file: "docs/03_modules/_domain_sell_decision/replacement_rebalance_seller/blueprint.md"
+    token: "auto-sell-006-rebalance-bp-20260802"
+    created_by: "session-sell006-continuation"
+    capability: "replacement_rebalance_seller"
 
   # --- 术语词汇表真源（2026-07-30，terminology_loader SSoT 重构，文件此前未入库补登记）---
   - file: "docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml"
