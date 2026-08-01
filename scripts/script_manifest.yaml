@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-01'
-total_scripts: 619
+total_scripts: 621
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -673,6 +673,14 @@ scripts:
 - name: governance/add_deferred_design_edges.py
   path: governance/add_deferred_design_edges.py
   description: 为暂缓模块添加设计态依赖边（dep_maturity='design'）。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/apply_battle_map.py
+  path: governance/apply_battle_map.py
+  description: '[BLUEPRINT] | scripts/governance/apply_battle_map.py | §battlemap'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3163,6 +3171,14 @@ scripts:
   description: generate_gate_registry.py — 门禁登记表自动生成器
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/generators/generate_importlinter.py
+  path: governance/generators/generate_importlinter.py
+  description: generate_importlinter.py — .importlinter forbidden_modules 自动生成器
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []

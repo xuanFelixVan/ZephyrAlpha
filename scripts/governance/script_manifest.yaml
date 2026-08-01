@@ -1,17 +1,17 @@
-# 自动生成于 2026-08-01T12:12:14Z
+# 自动生成于 2026-08-01T13:12:18Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-01T12:12:14Z'
+generated_at: '2026-08-01T13:12:18Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 374
-with_manifest: 317
+total_scripts: 375
+with_manifest: 318
 missing_manifest: 57
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 30
+  governance: 31
   governance:d10_performance: 1
   governance:d11_compliance: 21
   governance:d12_ai_hallucination: 4
@@ -116,6 +116,17 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: apply_battle_map.py
+  owner: governance
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: battlemap 作战地图写入入口（对标 apply_decisiongraph.py）
+  tags:
+  - Quick
 - name: apply_dataflowgraph.py
   owner: governance
   dimensions: []
