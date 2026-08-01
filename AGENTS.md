@@ -92,6 +92,8 @@
 > 规则真源：[`trae_080_panorama_alignment.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml)；执行细节见 §11.0.2 ARCH-053/056。
 >
 > **文件重命名 MUST 先重建 depgraph**（AI-14 审计 S1，2026-07-17）：`git mv old.py new.py` 后、commit 前，MUST 运行 `python scripts/governance/generate_project_depgraph.py --force` 重建 depgraph。RENAME-DEPGRAPH-SYNC commit gate（priority=39）会检测 staged .py 重命名的新路径是否已在 depgraph nodes 表登记，未登记则硬阻断。历史债务扫描：`python scripts/governance/d8_doc_sync/audit_rename_completeness.py --check-file-renames`。
+>
+> **分层契约诊断辅助 .importlinter**（AI-01 P4 治本，2026-08-01）：分层契约主守护 = 上文 depgraph 拓扑验证（`check_blueprint_code_alignment.py`，HIGH drift 已 pre-merge 硬阻断）。[`.importlinter`](file:///d:/ZephyrAlpha/.importlinter) 是**诊断辅助工具**（warn-only，未接 pre-commit），用于本地 `lint-imports` 诊断 shared 层是否误 import 业务层。**不登记 GATE-IMPORT-LAYER 硬阻断**——避免与 depgraph 拓扑验证职责重叠（双真源漂移风险：两套检测逻辑对"shared 能 import 谁"判定不一致时 AI 无所适从）。运行：`lint-imports`（需安装 import-linter，非核心依赖）。
 
 ## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
 

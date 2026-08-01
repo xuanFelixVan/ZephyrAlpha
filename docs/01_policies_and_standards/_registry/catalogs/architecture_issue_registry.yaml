@@ -10531,3 +10531,11 @@ entries:
   related_adjudication: 'TRAE-062(SSoT真源分类:规则数据YAML vs 架构数据DB同步), #ARCH-ORPHAN-REAUDIT-004(发现入口)'
   created: '2026-08-01'
   last_updated: '2026-08-01'
+- issue_id: '#ARCH-BP-REGISTRY-DELETION-001'
+  title: blueprint_registry.yaml KB 清理误删与恢复
+  severity: P2中
+  adjudication: 'commit 303fb9c9b2 KB 清理误删 blueprint_registry.yaml 派生文件，导致 _load_blueprint_registry_module_ids() 返回空集、GAP-2 blueprint_id 存在性检测静默失效、20+ 消费者静默降级。2026-08-01 从 303fb9c9b2^ 恢复并 sync_registry_from_blueprints.py --write 同步至 57 条目（v2.7.11），检测恢复生效。漂移由 GATE-21 守护。'
+  fix_phase: 已完成（2026-08-01 恢复 + sync 至 57 条目）
+  status: resolved
+  created: '2026-08-01'
+  last_updated: '2026-08-01'

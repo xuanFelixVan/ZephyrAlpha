@@ -382,6 +382,11 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
 | 21 | `dashboard/app.py` | §3 | Streamlit仪表板 | 已实现 | |
 | 22 | `signal_bus/` | §0 升级 | v2.0.0安全信号总线（路由/去重/隔离） | 未实现 | |
 
+> **根目录 bootstrap 入口（非本模块代码落位，非 depgraph 管辖，AI-01 P3+P5 治本 2026-08-01）**：
+> `sitecustomize.py`（仓库根）— Python 解释器启动时自动加载的 GATE-20 运行时后备防线 fallback。非 `src/zephyr/llm_security/` 包内文件，仅 `import runtime_interceptor.install()` 做零业务侵入拦截。
+> 依赖关系由代码 import 体现，**不登记 depgraph**（根目录 bootstrap，`generate_project_depgraph.py` 扫描范围为 src/zephyr + scripts，设计上不扫根目录——非遗漏，是 depgraph 设计边界）。
+> 主要机制为 usercustomize.py（全局，不在版本控制）；本文件仅 fallback（见裁定 #ARCH-PYTHON-SITECUSTOMIZE）。
+
 ### §0.2 对齐验证矩阵
 
 | 验证项 | 验证方法 | 结果 |

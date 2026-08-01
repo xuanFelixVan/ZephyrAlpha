@@ -189,7 +189,7 @@ sections:
       fail: 后缀与doc_type不一致(V1阻断)
     - type: constraint
       check: 大写文件白名单
-      pass: 仅AGENTS.md允许保留;新建文件一律全小写
+      pass: AGENTS.md/Dockerfile/LICENSE/MANIFEST.in平台约定允许保留;新建文件一律全小写
       fail: 新建大写文件名
     - type: constraint
       check: 规则文件主题前缀(ARCH-037)

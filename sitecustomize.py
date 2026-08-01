@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §0.1
 # [MODULE] sitecustomize
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.runtime_interceptor
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.runtime_interceptor (bootstrap 调用,不登记 depgraph — 根目录解释器级入口,非业务模块拓扑,depgraph 设计不扫根目录;见 blueprint §0.1 末尾 bootstrap 说明块)
 # [CONSUMERS]
 # [STARTUP] automatic
 # [MATURITY] production

@@ -109,6 +109,7 @@ FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "AGENTS.md",
     "Dockerfile",
     "LICENSE",
+    "MANIFEST.in",  # Python setuptools 平台约定（对标 Dockerfile/LICENSE，AI-01 P2 治本）
 ]
 
 TECH_VERSION_TOKENS: list[str] = [

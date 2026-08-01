@@ -69,8 +69,8 @@ _EXEMPT_PATH_PATTERNS = [
     re.compile(r"^data/"),
     re.compile(r"^reports/"),
     re.compile(r"^docs/01_policies_and_standards/rules/trae_0(28|34)_"),
-    re.compile(r"^\\.pre-commit-config\\.yaml$"),
-    re.compile(r"^AGENTS\\.md$"),
+    re.compile(r"^\.pre-commit-config\.yaml$"),
+    re.compile(r"^AGENTS\.md$"),
 ]
 
 
