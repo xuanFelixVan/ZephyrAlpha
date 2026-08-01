@@ -2391,6 +2391,12 @@ entries:
     - 2026-07-17 补登：scripts/governance/generate_project_path_tree.py
       （arch_directory_tree 表写入器，原 _write_tree_to_db 调用未传 read_only=False，
       导致 path_tree sync failed reconciler 警告——本次治本修复）
+    - 2026-08-01 补登：scripts/governance/apply_battle_map.py
+      （battle_map_steps/anchors/edges 表写入器，第四全景图 battle_map 唯一合法写入 CLI。
+      注意：本脚本写 battle_map_* 表（非 depgraph nodes/edges 表），但因复用
+      depgraph_writer 角色（DML 角色）需传 read_only=False，被 DEPGRAPH-WRITE-PATH gate
+      正则检出——加入白名单豁免。gate 正则机制无法区分目标表，legitimate battle_map
+      写入器与 depgraph 写入器同类受控入口，故纳入同一白名单。）
   adjudication: |
     6 项裁定：
     (a) 新增 04_create_roles.sql 创建 depgraph_reader/depgraph_writer 角色
@@ -2406,20 +2412,28 @@ entries:
         表的写入器，与 apply_depgraph.py（nodes/edges 写入器）同类
     (h) _write_tree_to_db 显式传 read_only=False（原 SQLite→PG 迁移遗漏）
     (i) 明确白名单扩展规则（治本文档漂移，三步流程）
+
+    2026-08-01 补登裁定（第四全景图 battle_map 写入路径）：
+    (j) apply_battle_map.py 加入白名单——battle_map_steps/anchors/edges 表的写入器，
+        第四全景图 battle_map 唯一合法写入 CLI（对标 apply_depgraph.py 对 depgraph 的地位）。
+        本脚本写 battle_map_* 表（非 depgraph nodes/edges 表），但因复用 depgraph_writer
+        角色（DML 角色）需传 read_only=False，被 gate 正则检出。gate 正则机制无法区分
+        目标表，legitimate battle_map 写入器与 depgraph 写入器同类受控入口，故纳入同一白名单。
   impact:
   - scripts/governance/migrate_sqlite_to_pg/04_create_roles.sql（新增角色创建DDL）
   - src/zephyr/governance/depgraph_schema.py（连接函数添加 read_only 参数）
   - scripts/governance/_shared/constants.py（wrapper 传参）
   - scripts/governance/generate_project_depgraph.py（read_only=False）
   - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（superuser=True）
-  - src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py（新增gate + 2026-07-17 白名单扩展）
+  - src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py（新增gate + 2026-07-17 白名单扩展 + 2026-08-01 白名单扩展 apply_battle_map.py）
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（注册gate）
   - scripts/governance/repair/cleanup_arch_dir_orphans.py（删除，task_bound已完成）
   - scripts/governance/generate_project_path_tree.py（2026-07-17 修复：read_only=False）
-  fix_phase: 已完成（6 阶段全部完成 + 验证通过 + 2026-07-17 遗留项治本）
+  - scripts/governance/apply_battle_map.py（2026-08-01 修复：read_only=False + 白名单扩展）
+  fix_phase: 已完成（6 阶段全部完成 + 验证通过 + 2026-07-17 遗留项治本 + 2026-08-01 battle_map 写入路径治本）
   status: resolved
   created: '2026-07-15'
-  last_updated: '2026-07-17'
+  last_updated: '2026-08-01'
 
 # --- #ARCH-BACKFILL-001: L10 周末补下载层（tick_data 缺失自动检测+补下载） ---
 - issue_id: '#ARCH-BACKFILL-001'

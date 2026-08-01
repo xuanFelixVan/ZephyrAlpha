@@ -577,8 +577,13 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _execute_ops(ops: list[dict], dry_run: bool = False) -> int:
-    """执行 op 列表（带写锁 + 事务，原子提交/回滚）。"""
-    conn = get_battle_map_pg_connection(autocommit=False)
+    """执行 op 列表（带写锁 + 事务，原子提交/回滚）。
+
+    裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: apply_battle_map.py 是 battlemap 写入唯一合法 CLI
+    （白名单脚本），使用 read_only=False 升级到 depgraph_writer 角色。
+    DEPGRAPH-WRITE-PATH gate 白名单已收录本脚本（扩展三步 a/b/c）。
+    """
+    conn = get_battle_map_pg_connection(autocommit=False, read_only=False)
     try:
         with _db_write_lock(conn):
             results = _run_batch(conn, ops, dry_run=dry_run)

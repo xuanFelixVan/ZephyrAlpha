@@ -276,7 +276,20 @@ BUILT_PANORAMAS: list[dict] = [
         "generator": "generate_trading_flow_diagram.py",
         "output_path": "07_trading_decision_architecture/",
         "artifact_path": "07_trading_decision_architecture/trading_flow_index.md",
-        "description": "decisiongraph 业务流程视图（选股/买入/卖出/仓位/执行/对账6阶段叙事），对标 application_flows.md 先例，不进四图对齐",
+        "description": "decisiongraph 业务流程视图（选股/买入/卖出/仓位/执行/对账6阶段叙事），对标 application_flows.md 先例，不进四图对齐。迁移并行观察期保留，将被 PAN-BATTLE-MAP-01 取代",
+    },
+    # --- 07_trading_decision_architecture/battle_map/（第四全景图 battle_map 真源） ---
+    {
+        "panorama_id": "PAN-BATTLE-MAP-01",
+        "name": "交易决策作战地图（battle_map 第四全景图）",
+        "category": "作战地图",
+        "category_id": "battle_map",
+        "data_source": DB_DISPLAY_NAME + " (battle_map_* 表)",
+        "source_architecture": "battle_map",
+        "generator": "generate_battle_map_diagram.py",
+        "output_path": "07_trading_decision_architecture/battle_map/",
+        "artifact_path": "07_trading_decision_architecture/battle_map/battle_map_panorama.md",
+        "description": "交易决策作战地图（第四全景图 battle_map），以决策环节为节点串联 depgraph/decisiongraph/候选池/蓝图，6件套标准 + 双向锚点查找；取代 PAN-BUILT-21 旧 trading_flow 视图（battle_map_panorama.md §四 取代声明）",
     },
     # --- generated/ ---
     {
