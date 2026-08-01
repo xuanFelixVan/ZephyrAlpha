@@ -114,8 +114,8 @@ flowchart TD
     src_zephyr_ex_core_batch_take_profit_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_auction_deviation_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_miniqmt_broker_py
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_simulation_broker_py
+    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_miniqmt_broker_py
     src_zephyr_ex_core_conditional_order_manager_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_mcp_server_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_engine_py -.->|runtime / runtime| src_zephyr_ex_core_execution_report_py
@@ -124,10 +124,6 @@ flowchart TD
     D_SELL_DECISION["(设计态 / design) 卖出决策 / Sell Decision<br/>卖出决策，负责卖出信号生成、卖出时机判断和退出策略<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
-    D_RISK["(设计态 / design) 风控 / Risk Control<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>跨域节点 / cross-domain"]
-    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
-    D_REPORTING["(设计态 / design) 报告 / Reporting<br/>报告，负责投资报告、风险报告和合规报告的生成与分发<br/>跨域节点 / cross-domain"]
-    src_zephyr_ex_core_execution_report_py -.->|data / data| D_REPORTING
     D_PF_CORE["(生产态 / production) 组合核心 / Portfolio Core<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_trading_session_py -.->|导入依赖 / import_depends| D_PF_CORE
     D_BACKTEST["(生产态 / production) 回测 / Backtest<br/>回测，负责历史数据回测、回测引擎和回测报告<br/>跨域节点 / cross-domain"]
@@ -140,6 +136,10 @@ flowchart TD
     D_GOVERNANCE["(生产态 / production) 生命周期管理 / Lifecycle Management<br/>生命周期管理，负责蓝图/模块/任务的声明周期管理和元数据治理<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
     src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
+    D_RISK["(设计态 / design) 风控 / Risk Control<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>跨域节点 / cross-domain"]
+    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
+    D_REPORTING["(设计态 / design) 报告 / Reporting<br/>报告，负责投资报告、风险报告和合规报告的生成与分发<br/>跨域节点 / cross-domain"]
+    src_zephyr_ex_core_execution_report_py -.->|data / data| D_REPORTING
     src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
