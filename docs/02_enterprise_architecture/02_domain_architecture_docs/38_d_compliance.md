@@ -53,9 +53,9 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_compliance_async_intercept_queue_py["异步intercept队列<br/>合规的同步器，保持数据同步一致。<br/>⛔ 合规域，设计已就绪，等待开发排期<br/>async_intercept_queue<br/>文件: compliance/async_intercept_queue.py<br/>(设计态 / design)"]
-    src_zephyr_compliance_behavioral_auditor_init_py["compliance/behavioral_auditor 包入口<br/>管理compliance.behavioral_auditor子包加载<br/>文件: behavioral_auditor/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_compliance_zero_knowledge_audit_stub_init_py["compliance/zero_knowledge_audit_stub 包入口<br/>管理compliance.zero_knowledge_audit_stub子包加载<br/>D_COMPLIANCE Compliance<br/>文件: zero_knowledge_audit_stub/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_compliance_async_intercept_queue_py["异步intercept队列<br/>⛔ 合规域，设计已就绪，等待开发排期<br/>async_intercept_queue<br/>文件: compliance/async_intercept_queue.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_behavioral_auditor_init_py["compliance/behavioral_auditor 包入口<br/>__init__<br/>文件: behavioral_auditor/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_compliance_zero_knowledge_audit_stub_init_py["compliance/zero_knowledge_audit_stub 包入口<br/>包入口。D_COMPLIANCE Compliance<br/>文件: zero_knowledge_audit_stub/__init__.py<br/>(生产态 / production)"]
     src_zephyr_compliance_async_intercept_queue_py ~~~ src_zephyr_compliance_behavioral_auditor_init_py
     src_zephyr_compliance_behavioral_auditor_init_py ~~~ src_zephyr_compliance_zero_knowledge_audit_stub_init_py
     D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -92,8 +92,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_compliance_behavioral_auditor_init_py["compliance/behavioral_auditor 包入口<br/>管理compliance.behavioral_auditor子包加载<br/>文件: behavioral_auditor/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_compliance_zero_knowledge_audit_stub_init_py["compliance/zero_knowledge_audit_stub 包入口<br/>管理compliance.zero_knowledge_audit_stub子包加载<br/>D_COMPLIANCE Compliance<br/>文件: zero_knowledge_audit_stub/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_compliance_behavioral_auditor_init_py["compliance/behavioral_auditor 包入口<br/>__init__<br/>文件: behavioral_auditor/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_compliance_zero_knowledge_audit_stub_init_py["compliance/zero_knowledge_audit_stub 包入口<br/>包入口。D_COMPLIANCE Compliance<br/>文件: zero_knowledge_audit_stub/__init__.py<br/>(生产态 / production)"]
     src_zephyr_compliance_behavioral_auditor_init_py ~~~ src_zephyr_compliance_zero_knowledge_audit_stub_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -109,7 +109,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_compliance_async_intercept_queue_py["异步intercept队列<br/>合规的同步器，保持数据同步一致。<br/>⛔ 合规域，设计已就绪，等待开发排期<br/>async_intercept_queue<br/>文件: compliance/async_intercept_queue.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_async_intercept_queue_py["异步intercept队列<br/>⛔ 合规域，设计已就绪，等待开发排期<br/>async_intercept_queue<br/>文件: compliance/async_intercept_queue.py<br/>(设计态 / design)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

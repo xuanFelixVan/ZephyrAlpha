@@ -53,15 +53,15 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_governance_init_py["zephyr/data_governance 包入口<br/>管理zephyr.data_governance子包加载<br/>文件: data_governance/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_extensions_init_py["data_governance/_extensions 包入口<br/>管理data_governance._extensions子包加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_api_init_py["data_governance/api 包入口<br/>管理data_governance.api子包加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_core_init_py["data_governance/core 包入口<br/>管理data_governance.core子包加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_init_py["zephyr/data_governance 包入口<br/>__init__<br/>文件: data_governance/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_extensions_init_py["data_governance/_extensions 包入口<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_api_init_py["data_governance/api 包入口<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_core_init_py["data_governance/core 包入口<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_core_lineage_tracker_py["lineage追踪器<br/>D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>lineage_tracker<br/>文件: core/lineage_tracker.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_core_metadata_registry_py["元数据注册表<br/>D-DATA-GOV Metadata Registry——元数据管理。<br/>metadata_registry<br/>文件: core/metadata_registry.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_infrastructure_init_py["data_governance/infrastructure 包入口<br/>管理data_governance.infrastructure子包加载<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_models_init_py["data_governance/models 包入口<br/>管理data_governance.models子包加载<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_services_init_py["data_governance/services 包入口<br/>管理data_governance.services子包加载<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_infrastructure_init_py["data_governance/infrastructure 包入口<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_models_init_py["data_governance/models 包入口<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_services_init_py["data_governance/services 包入口<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_init_py ~~~ src_zephyr_data_governance_extensions_init_py
     src_zephyr_data_governance_extensions_init_py ~~~ src_zephyr_data_governance_api_init_py
     src_zephyr_data_governance_api_init_py ~~~ src_zephyr_data_governance_core_init_py
@@ -86,15 +86,15 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_governance_init_py["zephyr/data_governance 包入口<br/>管理zephyr.data_governance子包加载<br/>文件: data_governance/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_extensions_init_py["data_governance/_extensions 包入口<br/>管理data_governance._extensions子包加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_api_init_py["data_governance/api 包入口<br/>管理data_governance.api子包加载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_core_init_py["data_governance/core 包入口<br/>管理data_governance.core子包加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_init_py["zephyr/data_governance 包入口<br/>__init__<br/>文件: data_governance/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_extensions_init_py["data_governance/_extensions 包入口<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_api_init_py["data_governance/api 包入口<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_core_init_py["data_governance/core 包入口<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_core_lineage_tracker_py["lineage追踪器<br/>D-DATA-GOV Lineage Tracker——数据血缘追踪。<br/>lineage_tracker<br/>文件: core/lineage_tracker.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_core_metadata_registry_py["元数据注册表<br/>D-DATA-GOV Metadata Registry——元数据管理。<br/>metadata_registry<br/>文件: core/metadata_registry.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_infrastructure_init_py["data_governance/infrastructure 包入口<br/>管理data_governance.infrastructure子包加载<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_models_init_py["data_governance/models 包入口<br/>管理data_governance.models子包加载<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_governance_services_init_py["data_governance/services 包入口<br/>管理data_governance.services子包加载<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_infrastructure_init_py["data_governance/infrastructure 包入口<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_models_init_py["data_governance/models 包入口<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_governance_services_init_py["data_governance/services 包入口<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_governance_init_py ~~~ src_zephyr_data_governance_extensions_init_py
     src_zephyr_data_governance_extensions_init_py ~~~ src_zephyr_data_governance_api_init_py
     src_zephyr_data_governance_api_init_py ~~~ src_zephyr_data_governance_core_init_py
