@@ -51,18 +51,18 @@ ttl: permanent
 > 展示全部 27 个模块（生产态 18 + 设计态 9），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_backtest_core_data_handler_py["(生产态 / production) 数据处理器 / data_handler<br/>回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）<br/>文件: core/data_handler.py"]
     src_zephyr_backtest_implementations_event_driven_engine_py["(生产态 / production) 事件driven引擎 / event_driven_engine<br/>事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>文件: implementations/event_driven_engine.py"]
     src_zephyr_backtest_io_init_py["(生产态 / production) 包入口 / __init__<br/>io · D_BACKTEST 可视化产物 io 子包（v1.3.0 新增，#ARCH-047）<br/>文件: io/__init__.py"]
-    src_zephyr_backtest_services_anomaly_diagnoser_py["(设计态 / design) 异常诊断器 / anomaly_diagnoser<br/>异常诊断器（anomaly_diagnoser.py）<br/>文件: services/anomaly_diagnoser.py<br/>⛔ 暂缓：P2优先级，当前回测失败率低"]
-    src_zephyr_backtest_services_decay_monitor_py["(设计态 / design) decay监控器 / decay_monitor<br/>decay监控，回测的监控器，持续监视某项指标，异常时上报。<br/>文件: services/decay_monitor.py<br/>⛔ 暂缓：因子侧decay_monitor已覆盖IC衰减监控"]
-    src_zephyr_backtest_services_nan_processor_py["(设计态 / design) nan处理器 / nan_processor<br/>nan处理器，服务的处理器，处理加工数据。<br/>文件: services/nan_processor.py<br/>⛔ 暂缓：P2优先级，当前数据缺失率低"]
-    src_zephyr_backtest_services_param_analyzer_py["(设计态 / design) param分析器 / param_analyzer<br/>param分析器，回测的分析器，分析数据找出问题或规律。<br/>文件: services/param_analyzer.py<br/>⛔ 暂缓：scheduler已含best/worst/mean摘要"]
-    src_zephyr_backtest_services_report_generator_py["(设计态 / design) 报告生成器 / report_generator<br/>报告生成器，回测的生成器，按规则生成所需的数据或报告。<br/>文件: services/report_generator.py<br/>⛔ 暂缓：P2优先级，当前无报告展示需求"]
-    src_zephyr_backtest_services_result_comparator_py["(设计态 / design) 结果比较器 / result_comparator<br/>结果comparator，回测的结果，封装操作结果的数据结构。<br/>文件: services/result_comparator.py<br/>⛔ 暂缓：P2优先级，当前无多次对比需求"]
-    src_zephyr_backtest_services_result_deployer_py["(设计态 / design) 结果deployer / result_deployer<br/>结果deployer，回测的结果，封装操作结果的数据结构。<br/>文件: services/result_deployer.py<br/>⛔ 受限：涉及实盘安全，需D-EX-CORE执行域就绪"]
+    src_zephyr_backtest_services_anomaly_diagnoser_py["(设计态 / design) 异常诊断器 / anomaly_diagnoser<br/>异常诊断器（anomaly_diagnoser.py）<br/>文件: services/anomaly_diagnoser.py"]
+    src_zephyr_backtest_services_decay_monitor_py["(设计态 / design) decay监控器 / decay_monitor<br/>decay监控，回测的监控器，持续监视某项指标，异常时上报。<br/>文件: services/decay_monitor.py"]
+    src_zephyr_backtest_services_nan_processor_py["(设计态 / design) nan处理器 / nan_processor<br/>nan处理器，服务的处理器，处理加工数据。<br/>文件: services/nan_processor.py"]
+    src_zephyr_backtest_services_param_analyzer_py["(设计态 / design) param分析器 / param_analyzer<br/>param分析器，回测的分析器，分析数据找出问题或规律。<br/>文件: services/param_analyzer.py"]
+    src_zephyr_backtest_services_report_generator_py["(设计态 / design) 报告生成器 / report_generator<br/>报告生成器，回测的生成器，按规则生成所需的数据或报告。<br/>文件: services/report_generator.py"]
+    src_zephyr_backtest_services_result_comparator_py["(设计态 / design) 结果比较器 / result_comparator<br/>结果comparator，回测的结果，封装操作结果的数据结构。<br/>文件: services/result_comparator.py"]
+    src_zephyr_backtest_services_result_deployer_py["(设计态 / design) 结果deployer / result_deployer<br/>结果deployer，回测的结果，封装操作结果的数据结构。<br/>文件: services/result_deployer.py"]
     src_zephyr_backtest_services_scheduler_py["(生产态 / production) D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结 / scheduler<br/>D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。<br/>文件: services/scheduler.py"]
     src_zephyr_backtest_core_data_handler_py ~~~ src_zephyr_backtest_implementations_event_driven_engine_py
     src_zephyr_backtest_implementations_event_driven_engine_py ~~~ src_zephyr_backtest_io_init_py
@@ -79,8 +79,8 @@ flowchart TD
     src_zephyr_backtest_implementations_vectorized_engine_py["(生产态 / production) vectorized引擎 / L_BACKTEST — Vectorized Backtest Engine<br/>vectorized引擎。L_BACKTEST — Vectorized Backtest Engine<br/>文件: implementations/vectorized_engine.py"]
     src_zephyr_backtest_io_decisiongraph_adapter_py["(生产态 / production) decisiongraph适配器 / decisiongraph_adapter<br/>BacktestResult -> decisiongraph 适配器（TRAE-061 Phase 5）<br/>文件: io/decisiongraph_adapter.py"]
     src_zephyr_backtest_io_result_repository_py["(生产态 / production) 结果仓库 / result_repository<br/>result_repository · 回测产物持久化/检索模块（v1.3.0 新增，#ARCH-047）<br/>文件: io/result_repository.py"]
-    src_zephyr_backtest_services_cache_manager_py["(设计态 / design) 缓存管理器 / cache_manager<br/>缓存管理器，回测的缓存，暂存常用数据加速访问。<br/>文件: services/cache_manager.py<br/>⛔ 暂缓：P2优先级，当前回测量不大"]
-    src_zephyr_backtest_services_data_quality_checker_py["(设计态 / design) 数据质量检查器 / data_quality_checker<br/>数据质量检查器，回测的检查器，检查某项条件是否满足。<br/>文件: services/data_quality_checker.py<br/>⛔ 暂缓：data域已有quality_gate+integrity_checker"]
+    src_zephyr_backtest_services_cache_manager_py["(设计态 / design) 缓存管理器 / cache_manager<br/>缓存管理器，回测的缓存，暂存常用数据加速访问。<br/>文件: services/cache_manager.py"]
+    src_zephyr_backtest_services_data_quality_checker_py["(设计态 / design) 数据质量检查器 / data_quality_checker<br/>数据质量检查器，回测的检查器，检查某项条件是否满足。<br/>文件: services/data_quality_checker.py"]
     src_zephyr_backtest_core_pit_manager_py ~~~ src_zephyr_backtest_core_tick_replay_py
     src_zephyr_backtest_core_tick_replay_py ~~~ src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py ~~~ src_zephyr_backtest_io_decisiongraph_adapter_py
@@ -118,32 +118,32 @@ flowchart TD
     src_zephyr_backtest_services_result_comparator_py -.->|import / import| src_zephyr_backtest_services_cache_manager_py
     src_zephyr_backtest_services_result_comparator_py -.->|import / import| src_zephyr_backtest_services_cache_manager_py
     src_zephyr_backtest_services_result_comparator_py -.->|import / import| src_zephyr_backtest_services_cache_manager_py
-    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
     src_zephyr_backtest_core_decision_gate_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
+    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_core_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
+    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
+    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_result_repository_py
+    src_zephyr_backtest_io_backtest_result_sink_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_io_backtest_result_sink_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
-    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
-    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_result_repository_py
     src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_io_result_repository_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
@@ -186,7 +186,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 18 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_backtest_core_data_handler_py["(生产态 / production) 数据处理器 / data_handler<br/>回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）<br/>文件: core/data_handler.py"]
     src_zephyr_backtest_implementations_event_driven_engine_py["(生产态 / production) 事件driven引擎 / event_driven_engine<br/>事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>文件: implementations/event_driven_engine.py"]
@@ -220,32 +220,32 @@ flowchart TD
     src_zephyr_backtest_core_engine_base_py ~~~ src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_core_matching_logic_py ~~~ src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_overfitting_detector_py ~~~ src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
     src_zephyr_backtest_core_decision_gate_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
+    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_core_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
+    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
+    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_result_repository_py
+    src_zephyr_backtest_io_backtest_result_sink_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_io_backtest_result_sink_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
-    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
-    src_zephyr_backtest_io_init_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_result_repository_py
     src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_io_result_repository_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
@@ -261,23 +261,23 @@ flowchart TD
 > 仅展示蓝图阶段、代码未写的设计态模块（共 9 个），不含跨域外部节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_backtest_services_anomaly_diagnoser_py["(设计态 / design) 异常诊断器 / anomaly_diagnoser<br/>异常诊断器（anomaly_diagnoser.py）<br/>文件: services/anomaly_diagnoser.py<br/>⛔ 暂缓：P2优先级，当前回测失败率低"]
-    src_zephyr_backtest_services_decay_monitor_py["(设计态 / design) decay监控器 / decay_monitor<br/>decay监控，回测的监控器，持续监视某项指标，异常时上报。<br/>文件: services/decay_monitor.py<br/>⛔ 暂缓：因子侧decay_monitor已覆盖IC衰减监控"]
-    src_zephyr_backtest_services_nan_processor_py["(设计态 / design) nan处理器 / nan_processor<br/>nan处理器，服务的处理器，处理加工数据。<br/>文件: services/nan_processor.py<br/>⛔ 暂缓：P2优先级，当前数据缺失率低"]
-    src_zephyr_backtest_services_param_analyzer_py["(设计态 / design) param分析器 / param_analyzer<br/>param分析器，回测的分析器，分析数据找出问题或规律。<br/>文件: services/param_analyzer.py<br/>⛔ 暂缓：scheduler已含best/worst/mean摘要"]
-    src_zephyr_backtest_services_report_generator_py["(设计态 / design) 报告生成器 / report_generator<br/>报告生成器，回测的生成器，按规则生成所需的数据或报告。<br/>文件: services/report_generator.py<br/>⛔ 暂缓：P2优先级，当前无报告展示需求"]
-    src_zephyr_backtest_services_result_comparator_py["(设计态 / design) 结果比较器 / result_comparator<br/>结果comparator，回测的结果，封装操作结果的数据结构。<br/>文件: services/result_comparator.py<br/>⛔ 暂缓：P2优先级，当前无多次对比需求"]
-    src_zephyr_backtest_services_result_deployer_py["(设计态 / design) 结果deployer / result_deployer<br/>结果deployer，回测的结果，封装操作结果的数据结构。<br/>文件: services/result_deployer.py<br/>⛔ 受限：涉及实盘安全，需D-EX-CORE执行域就绪"]
+    src_zephyr_backtest_services_anomaly_diagnoser_py["(设计态 / design) 异常诊断器 / anomaly_diagnoser<br/>异常诊断器（anomaly_diagnoser.py）<br/>文件: services/anomaly_diagnoser.py"]
+    src_zephyr_backtest_services_decay_monitor_py["(设计态 / design) decay监控器 / decay_monitor<br/>decay监控，回测的监控器，持续监视某项指标，异常时上报。<br/>文件: services/decay_monitor.py"]
+    src_zephyr_backtest_services_nan_processor_py["(设计态 / design) nan处理器 / nan_processor<br/>nan处理器，服务的处理器，处理加工数据。<br/>文件: services/nan_processor.py"]
+    src_zephyr_backtest_services_param_analyzer_py["(设计态 / design) param分析器 / param_analyzer<br/>param分析器，回测的分析器，分析数据找出问题或规律。<br/>文件: services/param_analyzer.py"]
+    src_zephyr_backtest_services_report_generator_py["(设计态 / design) 报告生成器 / report_generator<br/>报告生成器，回测的生成器，按规则生成所需的数据或报告。<br/>文件: services/report_generator.py"]
+    src_zephyr_backtest_services_result_comparator_py["(设计态 / design) 结果比较器 / result_comparator<br/>结果comparator，回测的结果，封装操作结果的数据结构。<br/>文件: services/result_comparator.py"]
+    src_zephyr_backtest_services_result_deployer_py["(设计态 / design) 结果deployer / result_deployer<br/>结果deployer，回测的结果，封装操作结果的数据结构。<br/>文件: services/result_deployer.py"]
     src_zephyr_backtest_services_anomaly_diagnoser_py ~~~ src_zephyr_backtest_services_decay_monitor_py
     src_zephyr_backtest_services_decay_monitor_py ~~~ src_zephyr_backtest_services_nan_processor_py
     src_zephyr_backtest_services_nan_processor_py ~~~ src_zephyr_backtest_services_param_analyzer_py
     src_zephyr_backtest_services_param_analyzer_py ~~~ src_zephyr_backtest_services_report_generator_py
     src_zephyr_backtest_services_report_generator_py ~~~ src_zephyr_backtest_services_result_comparator_py
     src_zephyr_backtest_services_result_comparator_py ~~~ src_zephyr_backtest_services_result_deployer_py
-    src_zephyr_backtest_services_cache_manager_py["(设计态 / design) 缓存管理器 / cache_manager<br/>缓存管理器，回测的缓存，暂存常用数据加速访问。<br/>文件: services/cache_manager.py<br/>⛔ 暂缓：P2优先级，当前回测量不大"]
-    src_zephyr_backtest_services_data_quality_checker_py["(设计态 / design) 数据质量检查器 / data_quality_checker<br/>数据质量检查器，回测的检查器，检查某项条件是否满足。<br/>文件: services/data_quality_checker.py<br/>⛔ 暂缓：data域已有quality_gate+integrity_checker"]
+    src_zephyr_backtest_services_cache_manager_py["(设计态 / design) 缓存管理器 / cache_manager<br/>缓存管理器，回测的缓存，暂存常用数据加速访问。<br/>文件: services/cache_manager.py"]
+    src_zephyr_backtest_services_data_quality_checker_py["(设计态 / design) 数据质量检查器 / data_quality_checker<br/>数据质量检查器，回测的检查器，检查某项条件是否满足。<br/>文件: services/data_quality_checker.py"]
     src_zephyr_backtest_services_cache_manager_py ~~~ src_zephyr_backtest_services_data_quality_checker_py
     src_zephyr_backtest_services_param_analyzer_py -.->|import / import| src_zephyr_backtest_services_cache_manager_py
     src_zephyr_backtest_services_param_analyzer_py -.->|import / import| src_zephyr_backtest_services_cache_manager_py
@@ -337,7 +337,7 @@ flowchart TD
 > 本域与 6 个外部域直接连接（出边 9 条 + 入边 10 条 = 19 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_BACKTEST["D_BACKTEST<br/>回测"]
     D_SHARED["D_SHARED<br/>共享服务"]

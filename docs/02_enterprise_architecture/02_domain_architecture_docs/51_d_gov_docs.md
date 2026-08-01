@@ -51,30 +51,30 @@ ttl: permanent
 > 展示全部 24 个模块（生产态 2 + 设计态 22），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_auto_fix_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图，自动修复引擎的模块。<br/>文件: auto_fix_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_auto_runtime_core_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: auto_runtime_core/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_behavioral_auditor_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: behavioral_auditor/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_context_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: context_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_database_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: database/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: feedback_loop/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_gate_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: gate_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_model_capability_exam_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: model_capability_exam/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_orphan_judge_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: orphan_judge/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_pipeline_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: pipeline/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: red_blue_validator/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md["(设计态 / design) 资源优化引擎蓝图 / blueprint<br/>资源优化引擎蓝图（blueprint.md）<br/>文件: resource_optimization_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_semantic_auditor_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: semantic_auditor/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_shared_core_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: shared_core/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: agent_spec/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: rollback_system/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: budget_enforcer/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: escalation_protocol/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_governance_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: _domain_governance/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: code_dedup_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design) 脚本系统蓝图 — 第三条生产线的自动化审计与门禁 / blueprint<br/>脚本系统蓝图 — 第三条生产线的自动化审计与门禁（blueprint.md）<br/>文件: governance_automation/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design) 注册表治理 / blueprint<br/>注册表治理（blueprint.md）<br/>文件: registry_governance/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
+    docs_03_modules_cross_layer_auto_fix_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图，自动修复引擎的模块。<br/>文件: auto_fix_engine/blueprint.md"]
+    docs_03_modules_cross_layer_auto_runtime_core_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: auto_runtime_core/blueprint.md"]
+    docs_03_modules_cross_layer_behavioral_auditor_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: behavioral_auditor/blueprint.md"]
+    docs_03_modules_cross_layer_context_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: context_engine/blueprint.md"]
+    docs_03_modules_cross_layer_database_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: database/blueprint.md"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: feedback_loop/blueprint.md"]
+    docs_03_modules_cross_layer_gate_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: gate_engine/blueprint.md"]
+    docs_03_modules_cross_layer_model_capability_exam_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: model_capability_exam/blueprint.md"]
+    docs_03_modules_cross_layer_orphan_judge_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: orphan_judge/blueprint.md"]
+    docs_03_modules_cross_layer_pipeline_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: pipeline/blueprint.md"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: red_blue_validator/blueprint.md"]
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md["(设计态 / design) 资源优化引擎蓝图 / blueprint<br/>资源优化引擎蓝图（blueprint.md）<br/>文件: resource_optimization_engine/blueprint.md"]
+    docs_03_modules_cross_layer_semantic_auditor_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: semantic_auditor/blueprint.md"]
+    docs_03_modules_cross_layer_shared_core_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: shared_core/blueprint.md"]
+    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: agent_spec/blueprint.md"]
+    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: rollback_system/blueprint.md"]
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: budget_enforcer/blueprint.md"]
+    docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: escalation_protocol/blueprint.md"]
+    docs_03_modules_domain_governance_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: _domain_governance/blueprint.md"]
+    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: code_dedup_engine/blueprint.md"]
+    docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design) 脚本系统蓝图 — 第三条生产线的自动化审计与门禁 / blueprint<br/>脚本系统蓝图 — 第三条生产线的自动化审计与门禁（blueprint.md）<br/>文件: governance_automation/blueprint.md"]
+    docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design) 注册表治理 / blueprint<br/>注册表治理（blueprint.md）<br/>文件: registry_governance/blueprint.md"]
     tests_governance_d8_doc_sync_test_guc_trigger_fix_py["(生产态 / production) 测试guc触发器fix.py — GUC 触发器缺陷修复的端到 / test_guc_trigger_fix<br/>GUC 触发器缺陷修复的端到端 smoke test（#ARCH-GUC-TRIGGER-FIX-001）<br/>文件: d8_doc_sync/test_guc_trigger_fix.py"]
     tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["(生产态 / production) 测试syncsavepointisolation / test_sync_savepoint_isolation<br/>测试syncsavepointisolation() 级联失败隔离验证（#ARCH-GUC-TRIGGER-FIX-001 裁定 B / P1）<br/>文件: d8_doc_sync/test_sync_savepoint_isolation.py"]
     docs_03_modules_cross_layer_auto_fix_engine_blueprint_md ~~~ docs_03_modules_cross_layer_auto_runtime_core_blueprint_md
@@ -117,7 +117,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 2 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     tests_governance_d8_doc_sync_test_guc_trigger_fix_py["(生产态 / production) 测试guc触发器fix.py — GUC 触发器缺陷修复的端到 / test_guc_trigger_fix<br/>GUC 触发器缺陷修复的端到端 smoke test（#ARCH-GUC-TRIGGER-FIX-001）<br/>文件: d8_doc_sync/test_guc_trigger_fix.py"]
     tests_governance_d8_doc_sync_test_sync_savepoint_isolation_py["(生产态 / production) 测试syncsavepointisolation / test_sync_savepoint_isolation<br/>测试syncsavepointisolation() 级联失败隔离验证（#ARCH-GUC-TRIGGER-FIX-001 裁定 B / P1）<br/>文件: d8_doc_sync/test_sync_savepoint_isolation.py"]
@@ -134,30 +134,30 @@ flowchart TD
 > 仅展示蓝图阶段、代码未写的设计态模块（共 22 个），不含跨域外部节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_auto_fix_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图，自动修复引擎的模块。<br/>文件: auto_fix_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_auto_runtime_core_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: auto_runtime_core/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_behavioral_auditor_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: behavioral_auditor/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_context_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: context_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_database_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: database/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_feedback_loop_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: feedback_loop/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_gate_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: gate_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_model_capability_exam_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: model_capability_exam/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_orphan_judge_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: orphan_judge/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_pipeline_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: pipeline/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: red_blue_validator/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md["(设计态 / design) 资源优化引擎蓝图 / blueprint<br/>资源优化引擎蓝图（blueprint.md）<br/>文件: resource_optimization_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_semantic_auditor_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: semantic_auditor/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_cross_layer_shared_core_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: shared_core/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: agent_spec/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: rollback_system/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: budget_enforcer/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: escalation_protocol/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_governance_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: _domain_governance/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: code_dedup_engine/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design) 脚本系统蓝图 — 第三条生产线的自动化审计与门禁 / blueprint<br/>脚本系统蓝图 — 第三条生产线的自动化审计与门禁（blueprint.md）<br/>文件: governance_automation/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
-    docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design) 注册表治理 / blueprint<br/>注册表治理（blueprint.md）<br/>文件: registry_governance/blueprint.md<br/>⛔ 治理文档域，设计已就绪，等待开发排期"]
+    docs_03_modules_cross_layer_auto_fix_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图，自动修复引擎的模块。<br/>文件: auto_fix_engine/blueprint.md"]
+    docs_03_modules_cross_layer_auto_runtime_core_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: auto_runtime_core/blueprint.md"]
+    docs_03_modules_cross_layer_behavioral_auditor_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: behavioral_auditor/blueprint.md"]
+    docs_03_modules_cross_layer_context_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: context_engine/blueprint.md"]
+    docs_03_modules_cross_layer_database_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: database/blueprint.md"]
+    docs_03_modules_cross_layer_feedback_loop_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: feedback_loop/blueprint.md"]
+    docs_03_modules_cross_layer_gate_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: gate_engine/blueprint.md"]
+    docs_03_modules_cross_layer_model_capability_exam_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: model_capability_exam/blueprint.md"]
+    docs_03_modules_cross_layer_orphan_judge_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: orphan_judge/blueprint.md"]
+    docs_03_modules_cross_layer_pipeline_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: pipeline/blueprint.md"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: red_blue_validator/blueprint.md"]
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md["(设计态 / design) 资源优化引擎蓝图 / blueprint<br/>资源优化引擎蓝图（blueprint.md）<br/>文件: resource_optimization_engine/blueprint.md"]
+    docs_03_modules_cross_layer_semantic_auditor_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: semantic_auditor/blueprint.md"]
+    docs_03_modules_cross_layer_shared_core_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: shared_core/blueprint.md"]
+    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: agent_spec/blueprint.md"]
+    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: rollback_system/blueprint.md"]
+    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: budget_enforcer/blueprint.md"]
+    docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: escalation_protocol/blueprint.md"]
+    docs_03_modules_domain_governance_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: _domain_governance/blueprint.md"]
+    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: code_dedup_engine/blueprint.md"]
+    docs_03_modules_domain_governance_governance_automation_blueprint_md["(设计态 / design) 脚本系统蓝图 — 第三条生产线的自动化审计与门禁 / blueprint<br/>脚本系统蓝图 — 第三条生产线的自动化审计与门禁（blueprint.md）<br/>文件: governance_automation/blueprint.md"]
+    docs_03_modules_domain_governance_registry_governance_blueprint_md["(设计态 / design) 注册表治理 / blueprint<br/>注册表治理（blueprint.md）<br/>文件: registry_governance/blueprint.md"]
     docs_03_modules_cross_layer_auto_fix_engine_blueprint_md ~~~ docs_03_modules_cross_layer_auto_runtime_core_blueprint_md
     docs_03_modules_cross_layer_auto_runtime_core_blueprint_md ~~~ docs_03_modules_cross_layer_behavioral_auditor_blueprint_md
     docs_03_modules_cross_layer_behavioral_auditor_blueprint_md ~~~ docs_03_modules_cross_layer_context_engine_blueprint_md
@@ -204,7 +204,7 @@ flowchart TD
 > 本域与 1 个外部域直接连接（出边 2 条 + 入边 0 条 = 2 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]

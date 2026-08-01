@@ -51,7 +51,7 @@ ttl: permanent
 > 展示全部 65 个模块（生产态 65 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_feedback_loop_detectors_init_py["(生产态 / production) 包入口 / __init__<br/>包入口.detectors — GOV-DOC-018: 60个叶子模块拆分为5个逻辑子包(anomaly/correlation/drift/guard/reliability)。<br/>文件: detectors/__init__.py"]
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py["(生产态 / production) 异常聚类 / Anomaly Clustering — v0.9.0 R119<br/>异常聚类。Anomaly Clustering — v0.9.0 R119<br/>文件: anomaly/anomaly_clustering.py"]
@@ -209,7 +209,7 @@ flowchart TD
 > 仅展示已上线运行的模块（共 65 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_feedback_loop_detectors_init_py["(生产态 / production) 包入口 / __init__<br/>包入口.detectors — GOV-DOC-018: 60个叶子模块拆分为5个逻辑子包(anomaly/correlation/drift/guard/reliability)。<br/>文件: detectors/__init__.py"]
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py["(生产态 / production) 异常聚类 / Anomaly Clustering — v0.9.0 R119<br/>异常聚类。Anomaly Clustering — v0.9.0 R119<br/>文件: anomaly/anomaly_clustering.py"]
@@ -383,7 +383,7 @@ flowchart TD
 > 本域与 1 个外部域直接连接（出边 3 条 + 入边 6 条 = 9 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '12px'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_FBL_DETECTORS["D_FBL_DETECTORS<br/>反馈检测器"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
