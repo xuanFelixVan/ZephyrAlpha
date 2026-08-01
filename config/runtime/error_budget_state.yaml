@@ -3,10 +3,9 @@
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
-# ai_autonomy: ai_modifiable
+# ai_autonomy: human_gated
 # ttl: permanent
 # --- 治理锚定结束 ---
-# ---
 # title: Error Budget 状态
 # status: active
 # version: "1.0.0"
@@ -17,15 +16,12 @@
 # created_by: human_plus_agent
 # date: "2026-05-05"
 # valid_from: "2026-05-05"
-# ttl: permanent
 # summary: >
 #   Error Budget 运行时状态。对标 B14（Error Budget + Burn Rate）+ Google SRE。
 #   tracking_window_start_end 定义当前预算窗口。
 #   consumption_log 记录每次消耗事件。
 #   run_all.py 每次扫描后更新此文件。
-# ai_autonomy: human_gated
 # tags: [error-budget, sre, burn-rate, b14]
-# ---
 
 module_id: MOD-INF-002
 tracking_window:

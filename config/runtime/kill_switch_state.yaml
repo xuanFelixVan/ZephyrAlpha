@@ -3,10 +3,9 @@
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
-# ai_autonomy: ai_modifiable
+# ai_autonomy: human_gated
 # ttl: permanent
 # --- 治理锚定结束 ---
-# ---
 # title: 脚本 Kill Switch 状态
 # status: active
 # version: "1.0.0"
@@ -17,15 +16,12 @@
 # created_by: human_plus_agent
 # date: "2026-05-05"
 # valid_from: "2026-05-05"
-# ttl: permanent
 # summary: >
 #   脚本 Kill Switch 集中管理。对标 B25（Kill Switch）。
 #   global_freeze=true → 冻结所有新脚本开发，只修复现有脚本。
 #   单个脚本 disabled=true + reason → 不运行该脚本。
 #   run_all.py 启动时检查此文件。
-# ai_autonomy: human_gated
 # tags: [kill-switch, safety, governance, b25]
-# ---
 
 # 全局冻结——Error Budget 耗尽时自动设为 true
 module_id: MOD-INF-002

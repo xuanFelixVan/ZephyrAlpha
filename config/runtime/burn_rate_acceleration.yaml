@@ -3,10 +3,9 @@
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
-# ai_autonomy: ai_modifiable
+# ai_autonomy: human_gated
 # ttl: permanent
 # --- 治理锚定结束 ---
-# ---
 # title: Burn Rate 二阶导数（加速度）追踪
 # status: active
 # version: "1.0.0"
@@ -17,14 +16,11 @@
 # created_by: human_plus_agent
 # date: "2026-05-05"
 # valid_from: "2026-05-05"
-# ttl: permanent
 # summary: >
 #   Burn Rate 加速度（二阶导数）数据——对标 B55。
 #   检测 Error Budget 消耗是"加速"还是"减速"。
 #   used by manage_error_budget.py --check-acceleration
-# ai_autonomy: human_gated
 # tags: [burn-rate, acceleration, sre, b55]
-# ---
 
 # 加速度 tracker——过去 1h 消耗 vs 前一个 1h 消耗
 module_id: MOD-INF-002

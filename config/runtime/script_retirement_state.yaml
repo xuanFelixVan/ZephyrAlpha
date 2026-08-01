@@ -3,10 +3,9 @@
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
-# ai_autonomy: ai_modifiable
+# ai_autonomy: human_gated
 # ttl: permanent
 # --- 治理锚定结束 ---
-# ---
 # title: 脚本退役状态
 # status: active
 # version: "1.0.0"
@@ -17,15 +16,12 @@
 # created_by: human_plus_agent
 # date: "2026-05-05"
 # valid_from: "2026-05-05"
-# ttl: permanent
 # summary: >
 #   脚本退役生命周期管理——对标 B52。
 #   retired: 脚本已正式退役（记录原因+替代脚本）。
 #   deprecated: 脚本标记废弃但仍在运行（过渡期 30 天）。
 #   run_all.py 会对 deprecated 脚本输出警告、retired 脚本跳过并记录。
-# ai_autonomy: human_gated
 # tags: [retirement, deprecation, lifecycle, b52]
-# ---
 
 module_id: MOD-INF-002
 scripts: {}
