@@ -66,7 +66,7 @@ flowchart TD
     src_zephyr_signal_ashare_models_init_py["(生产态 / production) 包入口 / __init__<br/>模型的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: models/__init__.py"]
     src_zephyr_signal_ashare_sector_analyzer_py["(设计态 / design) 板块分析器 / sector_analyzer<br/>板块分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/sector_analyzer.py"]
     src_zephyr_signal_ashare_services_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: services/__init__.py"]
-    src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) 短期股票选择器 / short_term_stock_selector<br/>短期股票选择器，信号的功能模块。<br/>文件: signal_ashare/short_term_stock_selector.py"]
+    src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) 短期股票选择器 / short_term_stock_selector<br/>短期股票选择器，信号的选择器，按条件选择最优项。<br/>文件: signal_ashare/short_term_stock_selector.py"]
     src_zephyr_signal_ashare_init_py ~~~ src_zephyr_signal_ashare_extensions_init_py
     src_zephyr_signal_ashare_extensions_init_py ~~~ src_zephyr_signal_ashare_api_init_py
     src_zephyr_signal_ashare_api_init_py ~~~ src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py
@@ -136,7 +136,7 @@ flowchart TD
     src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py["(设计态 / design) 日内买卖点分析器 / intraday_buy_sell_point_analyzer<br/>日内买卖点分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/intraday_buy_sell_point_analyzer.py"]
     src_zephyr_signal_ashare_market_sentiment_analyzer_py["(设计态 / design) 市场情绪分析器 / market_sentiment_analyzer<br/>市场情绪分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/market_sentiment_analyzer.py"]
     src_zephyr_signal_ashare_sector_analyzer_py["(设计态 / design) 板块分析器 / sector_analyzer<br/>板块分析器，信号的分析器，分析数据找出问题或规律。<br/>文件: signal_ashare/sector_analyzer.py"]
-    src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) 短期股票选择器 / short_term_stock_selector<br/>短期股票选择器，信号的功能模块。<br/>文件: signal_ashare/short_term_stock_selector.py"]
+    src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) 短期股票选择器 / short_term_stock_selector<br/>短期股票选择器，信号的选择器，按条件选择最优项。<br/>文件: signal_ashare/short_term_stock_selector.py"]
     src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py ~~~ src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py
     src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py ~~~ src_zephyr_signal_ashare_institutional_behavior_analyzer_py
     src_zephyr_signal_ashare_institutional_behavior_analyzer_py ~~~ src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py

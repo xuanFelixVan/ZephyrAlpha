@@ -73,7 +73,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py["(生产态 / production) KISS 约束执行器 / KISS Enforcer<br/>守保持简单原则的检查器。检测 AI 写的代码有没有过度复杂、堆冗余。防止 AI 为了看起来完整而过度设计。<br/>文件: rule_enforcement/kiss_enforcer.py"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_init_py["(生产态 / production) 规则引擎模块集 / Rule Engine Package<br/>规则引擎的文件夹入口，把规则相关的模块归到一起。本身不含逻辑，只是给它们一个稳定归属。<br/>文件: rule_engine/__init__.py"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py["(生产态 / production) 规则加载器 / Rule Loader<br/>按需加载规则的核心接口。先查索引找规则文件，读出来用；找不到再扫目录。让规则按需加载、有索引可循，不每次全量扫。<br/>文件: rule_engine/rule_engine.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py["(生产态 / production) Secrets 守护 / Secrets Guard<br/>守护密钥安全的三件套：检查配置合不合规、扫历史提交有没有漏密钥、给日志脱敏。防当下写错、历史遗留、日志泄密三类风险。<br/>文件: rule_enforcement/secrets_guard.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py["(生产态 / production) 密钥守卫 / Secrets Guard<br/>守护密钥安全的三件套：检查配置合不合规、扫历史提交有没有漏密钥、给日志脱敏。防当下写错、历史遗留、日志泄密三类风险。<br/>文件: rule_enforcement/secrets_guard.py"]
     src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py["(生产态 / production) 任务完成门禁 / Task Completion Gate<br/>任务收尾门禁。扫任务范围之外有没有残留的临时文件、备份、缓存，验证任务真做干净了。防止做一半留堆垃圾就算交付。<br/>文件: rule_enforcement/task_completion_gate.py"]
     src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py["(生产态 / production) 三方对齐门禁 / Triple Alignment<br/>守三方对齐的门禁：检查蓝图、代码、依赖图三样对不对得上。防止蓝图写了没做、依赖图登记了但代码没有这类脱节。<br/>文件: rule_enforcement/triple_alignment.py"]
     src_zephyr_gov_rule_init_py["(生产态 / production) 规则治理域包 / Gov Rule Package<br/>规则治理域的文件夹入口，标记这个域的边界。本身不含逻辑，给域内模块一个归属。<br/>文件: gov_rule/__init__.py"]
@@ -207,7 +207,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_kiss_enforcer_py["(生产态 / production) KISS 约束执行器 / KISS Enforcer<br/>守保持简单原则的检查器。检测 AI 写的代码有没有过度复杂、堆冗余。防止 AI 为了看起来完整而过度设计。<br/>文件: rule_enforcement/kiss_enforcer.py"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_init_py["(生产态 / production) 规则引擎模块集 / Rule Engine Package<br/>规则引擎的文件夹入口，把规则相关的模块归到一起。本身不含逻辑，只是给它们一个稳定归属。<br/>文件: rule_engine/__init__.py"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_engine_py["(生产态 / production) 规则加载器 / Rule Loader<br/>按需加载规则的核心接口。先查索引找规则文件，读出来用；找不到再扫目录。让规则按需加载、有索引可循，不每次全量扫。<br/>文件: rule_engine/rule_engine.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py["(生产态 / production) Secrets 守护 / Secrets Guard<br/>守护密钥安全的三件套：检查配置合不合规、扫历史提交有没有漏密钥、给日志脱敏。防当下写错、历史遗留、日志泄密三类风险。<br/>文件: rule_enforcement/secrets_guard.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_secrets_guard_py["(生产态 / production) 密钥守卫 / Secrets Guard<br/>守护密钥安全的三件套：检查配置合不合规、扫历史提交有没有漏密钥、给日志脱敏。防当下写错、历史遗留、日志泄密三类风险。<br/>文件: rule_enforcement/secrets_guard.py"]
     src_zephyr_gov_enforcement_rule_enforcement_task_completion_gate_py["(生产态 / production) 任务完成门禁 / Task Completion Gate<br/>任务收尾门禁。扫任务范围之外有没有残留的临时文件、备份、缓存，验证任务真做干净了。防止做一半留堆垃圾就算交付。<br/>文件: rule_enforcement/task_completion_gate.py"]
     src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py["(生产态 / production) 三方对齐门禁 / Triple Alignment<br/>守三方对齐的门禁：检查蓝图、代码、依赖图三样对不对得上。防止蓝图写了没做、依赖图登记了但代码没有这类脱节。<br/>文件: rule_enforcement/triple_alignment.py"]
     src_zephyr_gov_rule_init_py["(生产态 / production) 规则治理域包 / Gov Rule Package<br/>规则治理域的文件夹入口，标记这个域的边界。本身不含逻辑，给域内模块一个归属。<br/>文件: gov_rule/__init__.py"]
@@ -285,29 +285,29 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 规则加载器 / Rule Loader (rule_engine/rule_engine.py) | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 / depgraph_schema (g... | 导入依赖 / import_depends |
-| 2 | 规则加载器 / Rule Loader (rule_engine/rule_engine.py) | → | D_GOVERNANCE 生命周期管理: pgwrapper.py — psycopg2 connection 的 sq / pg_wrapper (p... | 导入依赖 / import_depends |
-| 3 | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | D_GOVERNANCE 生命周期管理: depgraph Schema DDL + 版本化迁移框架 / depgraph_schema (g... | 导入依赖 / import_depends |
+| 1 | 规则加载器 / Rule Loader (rule_engine/rule_engine.py) | → | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 2 | 规则加载器 / Rule Loader (rule_engine/rule_engine.py) | → | D_GOVERNANCE 生命周期管理: pg包装 / pg_wrapper (persistence/pg_wrapper.py) | 导入依赖 / import_depends |
+| 3 | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
 | 4 | 能力检查器 / Capability Checker (rule_enforcement/capabil... | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
 | 5 | 门禁紧急旁路 / Gate Override (gate_engine/gate_override.py) | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
-| 6 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — driftinfrastructu / drift_infr... | 导入依赖 / import_depends |
-| 7 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_GOV_DRIFT 漂移检测: en002enforcement校验器 / EN-002 — Enforcement Mode Valid... | 导入依赖 / import_depends |
-| 8 | 规则引擎模块集 / Rule Engine Package (rule_engine/__init_... | → | D_GOV_ENFORCEMENT 规则执行: Rule Shadow Runner — v0.10.0 规则影子模式: 新规则 / rule... | config_depends / config_depends |
-| 9 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 / constants (_shared/con... | 导入依赖 / import_depends |
+| 6 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_GOV_DRIFT 漂移检测: 漂移基础设施 / drift_infrastructure (gov_drift/drift_infr... | 导入依赖 / import_depends |
+| 7 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_GOV_DRIFT 漂移检测: en002执行校验器 / EN-002 — Enforcement Mode Validator (i... | 导入依赖 / import_depends |
+| 8 | 规则引擎模块集 / Rule Engine Package (rule_engine/__init_... | → | D_GOV_ENFORCEMENT 规则执行: 规则影子运行器 / rule_shadow_runner (rule_engine/rule_sha... | config_depends / config_depends |
+| 9 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: 常量 / constants (_shared/constants.py) | 导入依赖 / import_depends |
 | 10 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: encoding.py — UTF-8 编码安全工具 / encoding (_shared/enc... | 导入依赖 / import_depends |
-| 11 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: shared/fileutils.py — 原子写入共享工具（ARCH-03 / file_u... | 导入依赖 / import_depends |
-| 12 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: shared/yamlutils.py — YAML 文件加载共享工具 / yaml_utils... | 导入依赖 / import_depends |
-| 13 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_INFRA_RECOVERY 回滚恢复: CT-RBK-GATE-001 集成契约落地——Rollback System  / contra... | 导入依赖 / import_depends |
-| 14 | 任务完成门禁 / Task Completion Gate (rule_enforcement/tas... | → | D_INFRA_RUNTIME 运行时集成: Task Lifecycle Manager — G0-G7 任务生命周期门禁。 / task... | 导入依赖 / import_depends |
+| 11 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: 文件工具 / file_utils (_shared/file_utils.py) | 导入依赖 / import_depends |
+| 12 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: yaml工具 / yaml_utils (_shared/yaml_utils.py) | 导入依赖 / import_depends |
+| 13 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_INFRA_RECOVERY 回滚恢复: 契约 / contract (rollback/contract.py) | 导入依赖 / import_depends |
+| 14 | 任务完成门禁 / Task Completion Gate (rule_enforcement/tas... | → | D_INFRA_RUNTIME 运行时集成: 任务生命周期管理器 / task_lifecycle_manager (lifecycle/ta... | 导入依赖 / import_depends |
 | 15 | AI 能力边界守卫 / AI Capability Guard (rule_enforcement/a... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 16 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 17 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: CBAC 能力检查器 (Capability-Based Access Cont / capabilit... | 导入依赖 / import_depends |
-| 18 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: 数据库utils.py — SQLite 连接公共 API（SSoT: zeph / db_ut... | 导入依赖 / import_depends |
+| 17 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: 能力 / capability (security/capability.py) | 导入依赖 / import_depends |
+| 18 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: 数据库工具 / db_utils (utils/db_utils.py) | 导入依赖 / import_depends |
 | 19 | 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 20 | 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
 | 21 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_SHARED 共享服务: io缓存 / io_cache.py - File-level I/O cache with LRU evic... | 导入依赖 / import_depends |
 | 22 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 23 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_SHARED 共享服务: 数据库utils.py — SQLite 连接公共 API（SSoT: zeph / db_ut... | 导入依赖 / import_depends |
+| 23 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_SHARED 共享服务: 数据库工具 / db_utils (utils/db_utils.py) | 导入依赖 / import_depends |
 | 24 | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
 | 25 | 集成测试运行器 / Integration Test Runner (rule_enforcemen... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
 | 26 | 循环依赖扫描器 / Circular Dependency Scanner (invariants/... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
@@ -317,44 +317,44 @@ flowchart TD
 | 30 | 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 31 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: 基类配置 / base_config (schema/base_config.py) | 导入依赖 / import_depends |
 | 32 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: 执行模型 / execution_model (schema/execution_model.py) | 导入依赖 / import_depends |
-| 33 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: severity类型定义 / severity_types (schema/severity_types.py) | 导入依赖 / import_depends |
+| 33 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: severity类型 / severity_types (schema/severity_types.py) | 导入依赖 / import_depends |
 | 34 | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 35 | 宪法自愈 / Constitutional Update (constitutional_update/c... | → | D_SHARED 共享服务: 文件utils.py —— 安全文件操作工具（Phase 3 新增 | 盲 / f... | 导入依赖 / import_depends |
-| 36 | 宪法自愈 / Constitutional Update (constitutional_update/c... | → | D_SHARED 共享服务: 会话audit.py —— Session 审计轨迹（Phase 1 / session_aud... | 导入依赖 / import_depends |
+| 35 | 宪法自愈 / Constitutional Update (constitutional_update/c... | → | D_SHARED 共享服务: 文件工具 / file_utils (io/file_utils.py) | 导入依赖 / import_depends |
+| 36 | 宪法自愈 / Constitutional Update (constitutional_update/c... | → | D_SHARED 共享服务: 会话审计 / session_audit (session/session_audit.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUTONOMY_CORE 自治核心: Skill 加载前创建回滚检查点 / skill_executor (skills/skill... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 2 | D_GOVERNANCE 生命周期管理: transition — 状态机转换 Mixin（从 taskrepo.py  / transit... | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
-| 3 | D_GOVERNANCE 生命周期管理: transition — 状态机转换 Mixin（从 taskrepo.py  / transit... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 4 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04 / task... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 5 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04 / task... | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
-| 6 | D_GOV_AUDIT 审计追踪: 审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta... | → | 门禁上下文传播 / Gate Context (gate_engine/gate_context.py) | 导入依赖 / import_depends |
-| 7 | D_GOV_AUDIT 审计追踪: 提交网关abuse监控器reconciler. / commit_gateway_abuse_mon... | → | 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 导入依赖 / import_depends |
-| 8 | D_GOV_AUDIT 审计追踪: 测试p3集成smoke.py — Phase 3 全 / test_p3_integration_sm... | → | 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 测试依赖 / test_depends |
-| 9 | D_GOV_OPS_RESILIENCE 运维弹性治理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） / triage (esca... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） / triage (esca... | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
-| 11 | D_GOV_SCRIPTS 脚本治理: CBG 熔断器重置 CLI (CircuitBreakerGateway Res / cbg_reset... | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
-| 12 | D_GOV_SCRIPTS 脚本治理: CBG 熔断器重置 CLI (CircuitBreakerGateway Res / reset_cbg... | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
-| 13 | D_GOV_SCRIPTS 脚本治理: 创建任务fromfinding.py — Finding →  / create_task_from_... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 1 | D_AUTONOMY_CORE 自治核心: 技能执行器 / skill_executor (skills/skill_executor.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 2 | D_GOVERNANCE 生命周期管理: 转换 / transition (lifecycle_governance/transition.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 3 | D_GOVERNANCE 生命周期管理: 转换 / transition (lifecycle_governance/transition.py) | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 4 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 5 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 6 | D_GOV_AUDIT 审计追踪: 审计链验证器 / audit_chain_verifier (rule_enforcement/aud... | → | 门禁上下文传播 / Gate Context (gate_engine/gate_context.py) | 导入依赖 / import_depends |
+| 7 | D_GOV_AUDIT 审计追踪: commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | → | 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 导入依赖 / import_depends |
+| 8 | D_GOV_AUDIT 审计追踪: 测试p3集成smoke / test_p3_integration_smoke (audit/test_p... | → | 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 测试依赖 / test_depends |
+| 9 | D_GOV_OPS_RESILIENCE 运维弹性治理: 分诊 / triage (escalation/triage.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: 分诊 / triage (escalation/triage.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 11 | D_GOV_SCRIPTS 脚本治理: cbg重置 / cbg_reset (d1_structure/cbg_reset.py) | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
+| 12 | D_GOV_SCRIPTS 脚本治理: 重置cbg / reset_cbg (d1_structure/reset_cbg.py) | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
+| 13 | D_GOV_SCRIPTS 脚本治理: 创建任务from发现 / create_task_from_finding (meta/create_... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 | 14 | D_GOV_SCRIPTS 脚本治理: 门禁引擎selfcheck / Gate Engine Bootstrap Self-Check — Q... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 15 | D_GOV_SCRIPTS 脚本治理: 校验门禁引擎external.py — Gate  / validate_gate_engine_e... | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
-| 16 | D_GOV_SCRIPTS 脚本治理: 校验门禁引擎external.py — Gate  / validate_gate_engine_e... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 17 | D_INFRA_RUNTIME 运行时集成: Task Lifecycle Manager — G0-G7 任务生命周期门禁。 / task... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 18 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） / auto_... | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
-| 19 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 sou / boot_hooks (trading/... | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
+| 15 | D_GOV_SCRIPTS 脚本治理: 校验门禁引擎外部 / validate_gate_engine_external (meta/va... | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
+| 16 | D_GOV_SCRIPTS 脚本治理: 校验门禁引擎外部 / validate_gate_engine_external (meta/va... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 17 | D_INFRA_RUNTIME 运行时集成: 任务生命周期管理器 / task_lifecycle_manager (lifecycle/ta... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 18 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
+| 19 | D_INFRA_RUNTIME 运行时集成: 启动钩子 / boot_hooks (trading/boot_hooks.py) | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
 | 20 | D_INFRA_RUNTIME 运行时集成: 工作编排子系统——决定什么工作、什么时候、用什么模型、什... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 | 21 | D_INTEGRATION 管线路由: 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 | 22 | D_INTEGRATION 管线路由: 协议 / Structural Protocol interfaces for cross-module co... | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
-| 23 | D_INTELLIGENCE 上下文管理: G4 Activate 门禁 — 人工激活（T-2-13-D） / activate (mode... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 24 | D_INTELLIGENCE 上下文管理: G4 Activate 门禁 — 人工激活（T-2-13-D） / activate (mode... | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
-| 25 | D_SECURITY 对抗验证: OrphanJudge 模块基础异常 / judge (orphan_judge/judge.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 23 | D_INTELLIGENCE 上下文管理: 激活 / activate (model_evaluation/activate.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 24 | D_INTELLIGENCE 上下文管理: 激活 / activate (model_evaluation/activate.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 25 | D_SECURITY 对抗验证: 判定 / judge (orphan_judge/judge.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
 | 26 | D_SECURITY 对抗验证: constitution守卫 / constitution_guard (adversarial_valida... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
 | 27 | D_SECURITY 对抗验证: 防御运行器 / defense_runner (adversarial_validation/defen... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
 | 28 | D_SECURITY 对抗验证: 防御运行器 / defense_runner (adversarial_validation/defen... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 29 | D_SHARED 共享服务: A2Acoordination / A2A Coordination — shared interface de... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 29 | D_SHARED 共享服务: A2A协调 / A2A Coordination — shared interface definition... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

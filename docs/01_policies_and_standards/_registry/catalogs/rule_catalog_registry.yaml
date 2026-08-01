@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-01T06:16:02Z'
+generated_at: '2026-08-01T07:07:40Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 188
@@ -2290,7 +2290,7 @@ files:
   title: 模块级翻译注册表（中英对照真源）
   doc_type: register
   status: active
-  version: 1.1.0
+  version: 1.8.1
   rule_form: ''
   scope: ''
   stability: ''

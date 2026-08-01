@@ -53,31 +53,31 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml["(生产态 / production) 规则enforcement注册表 / rule_enforcement_registry<br/>规则enforcement注册表，规则执行的注册表，登记和查询已注册的条目。<br/>文件: catalogs/rule_enforcement_registry.yaml"]
-    scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py["(生产态 / production) 指标数量漂移reconciler.py — dashb / metric_count_drift_reconciler<br/>dashboard 指标数描述派生校验 reconciler<br/>文件: d8_doc_sync/metric_count_drift_reconciler.py"]
-    scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py["(生产态 / production) readme版本同步reconciler.py — READ / readme_version_sync_reconciler<br/>README 版本号派生展示校验 reconciler<br/>文件: d8_doc_sync/readme_version_sync_reconciler.py"]
-    scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py["(生产态 / production) requirements版本同步reconciler.py  / requirements_version_sync_reconciler<br/>requirements.txt ↔ pyproject.toml 依赖一致性校验 reconciler<br/>文件: d8_doc_sync/requirements_version_sync_reconciler.py"]
-    scripts_governance_session_worktree_cli_py["(生产态 / production) 会话worktreecli.py — session worktr / session_worktree_cli<br/>session worktree 管理 CLI（治本遗留项#2，2026-07-17）<br/>文件: governance/session_worktree_cli.py"]
-    src_zephyr_gov_enforcement_init_py["(生产态 / production) govenforcement package — 执行治理域（DGOVEN / __init__<br/>gov_enforcement package — 执行治理域（D_GOV_ENFORCEMENT）<br/>文件: gov_enforcement/__init__.py"]
+    docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml["(生产态 / production) 规则执行注册表 / rule_enforcement_registry<br/>规则enforcement注册表，规则执行的注册表，登记和查询已注册的条目。<br/>文件: catalogs/rule_enforcement_registry.yaml"]
+    scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py["(生产态 / production) 指标数量漂移协调器 / metric_count_drift_reconciler<br/>dashboard 指标数描述派生校验 reconciler<br/>文件: d8_doc_sync/metric_count_drift_reconciler.py"]
+    scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py["(生产态 / production) readme版本sync对账器 / readme_version_sync_reconciler<br/>README 版本号派生展示校验 reconciler<br/>文件: d8_doc_sync/readme_version_sync_reconciler.py"]
+    scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py["(生产态 / production) requirements版本sync对账器 / requirements_version_sync_reconciler<br/>requirements版本sync对账器.txt ↔ pyproject.toml 依赖一致性校验 reconciler<br/>文件: d8_doc_sync/requirements_version_sync_reconciler.py"]
+    scripts_governance_session_worktree_cli_py["(生产态 / production) 会话worktreecli / session_worktree_cli<br/>会话 worktree 管理 CLI（治本遗留项#2，2026-07-17）<br/>文件: governance/session_worktree_cli.py"]
+    src_zephyr_gov_enforcement_init_py["(生产态 / production) 包入口 / __init__<br/>gov_enforcement package — 执行治理域（D_GOV_ENFORCEMENT）<br/>文件: gov_enforcement/__init__.py"]
     src_zephyr_gov_enforcement_behavioral_admission_init_py["(生产态 / production) 包入口 / __init__<br/>治理执行的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: behavioral_admission/__init__.py"]
-    src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py["(设计态 / design) 依赖图预registrationgate.py — depg / depgraph_pre_registration_gate<br/>depgraph planned→production 流转强制门禁<br/>文件: commit_gates/depgraph_pre_registration_gate.py"]
-    src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py["(生产态 / production) stashaccumulationgate.py — stash 堆积阈值检 / stash_accumulation_gate<br/>stash 堆积阈值检测门禁<br/>文件: commit_gates/stash_accumulation_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_approval_py["(生产态 / production) approval / G-CT-004 — Backward-compat re-export of ApprovalRequest from<br/>approval，规则执行的功能模块。<br/>文件: rule_enforcement/approval.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py["(生产态 / production) Re-export shim — ComplianceRule 真源已合并至 z / compliance_rule<br/>Re-export shim — ComplianceRule 真源已合并至 zephyr.shared.contracts.compliance_rule。<br/>文件: rule_enforcement/compliance_rule.py"]
+    src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py["(设计态 / design) depgraphpreregistration门禁 / depgraph_pre_registration_gate<br/>depgraph planned→production 流转强制门禁<br/>文件: commit_gates/depgraph_pre_registration_gate.py"]
+    src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py["(生产态 / production) stashaccumulation门禁 / stash_accumulation_gate<br/>stash 堆积阈值检测门禁<br/>文件: commit_gates/stash_accumulation_gate.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_approval_py["(生产态 / production) 审批 / G-CT-004 — Backward-compat re-export of ApprovalRequest from<br/>审批，供zephyr.governance.services.ada使用<br/>文件: rule_enforcement/approval.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py["(生产态 / production) 合规规则 / compliance_rule<br/>Re-export shim — ComplianceRule 真源已合并至 zephyr.shared.contracts.compliance_rule。<br/>文件: rule_enforcement/compliance_rule.py"]
     src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py["(生产态 / production) 默认质量门禁 / D_DATA — Default Data Quality Gate<br/>默认质量门禁。D_DATA — Default Data Quality Gate<br/>文件: rule_enforcement/default_quality_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py["(生产态 / production) DLQ 重试策略 — 对接 shared/events/dlq.DeadLett / dlq_retry_policy<br/>DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。<br/>文件: rule_enforcement/dlq_retry_policy.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py["(生产态 / production) output质量门禁 / output_quality_gate<br/>output质量门禁，规则执行的组成部分，依赖包入口工作。<br/>文件: rule_enforcement/output_quality_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py["(生产态 / production) 预flight门禁 / pre_flight_gate<br/>预flight门禁，规则执行的组成部分，依赖预算模型、预算引擎工作。<br/>文件: rule_enforcement/pre_flight_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py["(生产态 / production) Rule Canary Manager — v0.10.0 规则金丝雀: 1%用 / rule_canary_manager<br/>Rule Canary Manager — v0.10.0 规则金丝雀: 1%用户先上新规则->A/B对比->rollback。<br/>文件: rule_engine/rule_canary_manager.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py["(生产态 / production) Rule Debt Auditor — v0.7.0 规则债务审计器: 分析es / rule_debt_auditor<br/>Rule Debt Auditor — v0.7.0 规则债务审计器: 分析escalation_rules.yaml维护债务指标。<br/>文件: rule_engine/rule_debt_auditor.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py["(生产态 / production) Rule Shadow Runner — v0.10.0 规则影子模式: 新规则 / rule_shadow_runner<br/>Rule Shadow Runner — v0.10.0 规则影子模式: 新规则shadow运行3天->diff old vs new->promote。<br/>文件: rule_engine/rule_shadow_runner.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["(生产态 / production) RuleWatcher — YAML 规则文件变更检测与自动同步 / rule_watcher<br/>RuleWatcher — YAML 规则文件变更检测与自动同步<br/>文件: rule_engine/rule_watcher.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py["(生产态 / production) dlq重试策略 / dlq_retry_policy<br/>DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。<br/>文件: rule_enforcement/dlq_retry_policy.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py["(生产态 / production) output质量门禁 / output_quality_gate<br/>output质量门禁，提供包入口和模块加载功能<br/>文件: rule_enforcement/output_quality_gate.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py["(生产态 / production) preflight门禁 / pre_flight_gate<br/>preflight门禁，依赖预算模型、预算引擎工作<br/>文件: rule_enforcement/pre_flight_gate.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py["(生产态 / production) 规则金丝雀管理器 / rule_canary_manager<br/>Rule Canary Manager — v0.10.0 规则金丝雀: 1%用户先上新规则->A/B对比->rollback。<br/>文件: rule_engine/rule_canary_manager.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py["(生产态 / production) 规则debt审计器 / rule_debt_auditor<br/>Rule Debt Auditor — v0.7.0 规则债务审计器: 分析escalation_rules.yaml维护债务指标。<br/>文件: rule_engine/rule_debt_auditor.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py["(生产态 / production) 规则影子运行器 / rule_shadow_runner<br/>Rule Shadow Runner — v0.10.0 规则影子模式: 新规则shadow运行3天->diff old vs new->promote。<br/>文件: rule_engine/rule_shadow_runner.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["(生产态 / production) 规则监视器 / rule_watcher<br/>RuleWatcher — YAML 规则文件变更检测与自动同步<br/>文件: rule_engine/rule_watcher.py"]
     src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py["(生产态 / production) SLO契约 / SLO-Driven Escalation Contract — D-022-12.<br/>SLO契约。SLO-Driven Escalation Contract — D-022-12.<br/>文件: rule_enforcement/slo_contract.py"]
-    tests_governance_commit_gates_test_create_guard_py["(生产态 / production) 测试创建guard.py — CREATE-GUARD 门禁单元 / test_create_guard<br/>CREATE-GUARD 门禁单元测试（2026-06-30 治本补全）<br/>文件: commit_gates/test_create_guard.py"]
-    tests_governance_commit_gates_test_r5_digit_suffix_gate_py["(生产态 / production) 测试r5digitsuffixgate.py — R5-DIGIT- / test_r5_digit_suffix_gate<br/>R5-DIGIT-SUFFIX 门禁单元测试<br/>文件: commit_gates/test_r5_digit_suffix_gate.py"]
-    tests_governance_rule_bridge_test_claim_files_for_edit_py["(生产态 / production) 测试claimfilesforedit.py — P2-2 并发 s / test_claim_files_for_edit<br/>P2-2 并发 session 文件级原子性测试<br/>文件: rule_bridge/test_claim_files_for_edit.py"]
-    tests_governance_rule_bridge_test_emergency_commit_py["(生产态 / production) 测试紧急commit.py — emergencycom / test_emergency_commit<br/>emergency_commit API 测试（Ruling:100PCT-AI-GOVERNANCE P2-1）<br/>文件: rule_bridge/test_emergency_commit.py"]
-    tests_governance_rule_bridge_test_heartbeat_daemon_py["(生产态 / production) 测试heartbeatdaemon.py — heartbeat dae / test_heartbeat_daemon<br/>heartbeat daemon + 成本递增 smoke test（Ruling:100PCT-AI-GOVERNANCE P3-1）<br/>文件: rule_bridge/test_heartbeat_daemon.py"]
+    tests_governance_commit_gates_test_create_guard_py["(生产态 / production) 测试创建守卫 / test_create_guard<br/>CREATE-GUARD 门禁单元测试（2026-06-30 治本补全）<br/>文件: commit_gates/test_create_guard.py"]
+    tests_governance_commit_gates_test_r5_digit_suffix_gate_py["(生产态 / production) 测试r5digitsuffix门禁 / test_r5_digit_suffix_gate<br/>R5-DIGIT-SUFFIX 门禁单元测试<br/>文件: commit_gates/test_r5_digit_suffix_gate.py"]
+    tests_governance_rule_bridge_test_claim_files_for_edit_py["(生产态 / production) 测试claimfilesforedit / test_claim_files_for_edit<br/>P2-2 并发 session 文件级原子性测试<br/>文件: rule_bridge/test_claim_files_for_edit.py"]
+    tests_governance_rule_bridge_test_emergency_commit_py["(生产态 / production) 测试紧急提交 / test_emergency_commit<br/>emergency_commit API 测试（Ruling:100PCT-AI-GOVERNANCE P2-1）<br/>文件: rule_bridge/test_emergency_commit.py"]
+    tests_governance_rule_bridge_test_heartbeat_daemon_py["(生产态 / production) 测试heartbeatdaemon / test_heartbeat_daemon<br/>heartbeat daemon + 成本递增 smoke test（Ruling:100PCT-AI-GOVERNANCE P3-1）<br/>文件: rule_bridge/test_heartbeat_daemon.py"]
     docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml ~~~ scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py
     scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py ~~~ scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py
     scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py ~~~ scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py
@@ -102,13 +102,13 @@ flowchart TD
     tests_governance_commit_gates_test_r5_digit_suffix_gate_py ~~~ tests_governance_rule_bridge_test_claim_files_for_edit_py
     tests_governance_rule_bridge_test_claim_files_for_edit_py ~~~ tests_governance_rule_bridge_test_emergency_commit_py
     tests_governance_rule_bridge_test_emergency_commit_py ~~~ tests_governance_rule_bridge_test_heartbeat_daemon_py
-    src_zephyr_gov_enforcement_behavioral_admission_admission_response_py["(生产态 / production) 准入响应 / admission_response<br/>准入响应，治理执行的功能模块。<br/>文件: behavioral_admission/admission_response.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_admission_response_py["(生产态 / production) 准入响应 / admission_response<br/>准入响应，供GovernanceServer;run_all.py使用<br/>文件: behavioral_admission/admission_response.py"]
     src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py["(生产态 / production) 代码审查AI / code_review_ai<br/>代码审查AI，治理执行的核心类，封装ReviewLevel相关逻辑。<br/>文件: behavioral_admission/code_review_ai.py"]
-    src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py["(生产态 / production) GateEventAdapter — GateRepo 事件适配器（DW-000 / gate_event_adapter<br/>GateEventAdapter — GateRepo 事件适配器（DW-0006）<br/>文件: behavioral_admission/gate_event_adapter.py"]
-    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py["(生产态 / production) GPU共识调度器 / gpu_consensus_scheduler<br/>GPU共识调度器，治理执行的功能模块。<br/>文件: behavioral_admission/gpu_consensus_scheduler.py"]
-    src_zephyr_gov_enforcement_behavioral_admission_protection_index_py["(生产态 / production) 保护索引 / protection_index<br/>保护索引，治理执行的功能模块。<br/>文件: behavioral_admission/protection_index.py"]
-    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["(生产态 / production) 提交门禁registry.py — GitCommitGatew / commit_gate_registry<br/>GitCommitGateway pre-commit 门禁注册表（架构债务 #AD-001 治本）<br/>文件: rule_bridge/commit_gate_registry.py"]
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py["(生产态 / production) 会话worktree.py — AI 对话 worktree 物理隔 / session_worktree<br/>AI 对话 worktree 物理隔离 helper（FP-ISO.4C，2026-07-01 治本）<br/>文件: rule_bridge/session_worktree.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py["(生产态 / production) 门禁事件适配器 / gate_event_adapter<br/>GateEventAdapter — GateRepo 事件适配器（DW-0006）<br/>文件: behavioral_admission/gate_event_adapter.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py["(生产态 / production) GPU共识调度器 / gpu_consensus_scheduler<br/>GPU共识调度器，IO的调度器，按时间或优先级安排任务。<br/>文件: behavioral_admission/gpu_consensus_scheduler.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_protection_index_py["(生产态 / production) 保护索引 / protection_index<br/>保护索引，供zephyr.gov_enforcement.behavio使用<br/>文件: behavioral_admission/protection_index.py"]
+    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["(生产态 / production) 提交门禁注册表 / commit_gate_registry<br/>GitCommitGateway pre-commit 门禁注册表（架构债务 #AD-001 治本）<br/>文件: rule_bridge/commit_gate_registry.py"]
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py["(生产态 / production) 会话worktree / session_worktree<br/>AI 对话 worktree 物理隔离 helper（FP-ISO.4C，2026-07-01 治本）<br/>文件: rule_bridge/session_worktree.py"]
     src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py["(生产态 / production) 质量门禁 / D_DATA — Data Quality Gate<br/>质量门禁。D_DATA — Data Quality Gate<br/>文件: rule_enforcement/quality_gate.py"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py ~~~ src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
     src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py ~~~ src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
@@ -117,21 +117,21 @@ flowchart TD
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py ~~~ src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py ~~~ src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
-    src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["(生产态 / production) 准入控制器 / admission_controller<br/>准入控制器，治理执行的功能模块。<br/>文件: behavioral_admission/admission_controller.py"]
-    src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["(生产态 / production) verdict引擎 / verdict_engine<br/>verdict引擎，治理执行的事件，定义和分发事件。<br/>文件: behavioral_admission/verdict_engine.py"]
-    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["(生产态 / production) 紧急commit.py — 紧急提交通道（Ruling:100P / emergency_commit<br/>紧急提交通道（Ruling:100PCT-AI-GOVERNANCE P2-1，2026-07-19）<br/>文件: rule_bridge/emergency_commit.py"]
-    src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py["(生产态 / production) heartbeat_daemon.py — session heartbeat  / heartbeat_daemon<br/>session heartbeat 独立进程（Ruling:100PCT-AI-GOVERNANCE P3-1，2026-07-20）<br/>文件: rule_bridge/heartbeat_daemon.py"]
-    src_zephyr_gov_enforcement_rule_bridge_session_claim_py["(生产态 / production) 会话claim.py — AI 对话并发声明 helper（FP-I / session_claim<br/>AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）<br/>文件: rule_bridge/session_claim.py"]
-    src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["(生产态 / production) worktreemanager.py — session worktree 物 / worktree_manager<br/>session worktree 物理隔离管理器（阶段3 治本 stash 循环）<br/>文件: rule_bridge/worktree_manager.py"]
-    src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py["(生产态 / production) worktreepool.py — Worktree 预创建池（ARCH-GI / worktree_pool<br/>Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）<br/>文件: rule_bridge/worktree_pool.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["(生产态 / production) 准入控制器 / admission_controller<br/>准入控制器，IO的控制器，协调组件按流程执行。<br/>文件: behavioral_admission/admission_controller.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["(生产态 / production) 裁定引擎 / verdict_engine<br/>verdict引擎，治理执行的事件，定义和分发事件。<br/>文件: behavioral_admission/verdict_engine.py"]
+    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["(生产态 / production) 紧急提交 / emergency_commit<br/>紧急提交通道（Ruling:100PCT-AI-GOVERNANCE P2-1，2026-07-19）<br/>文件: rule_bridge/emergency_commit.py"]
+    src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py["(生产态 / production) 心跳守护 / heartbeat_daemon<br/>心跳守护.py — session heartbeat 独立进程（Ruling:100PCT-AI-GOVERNANCE P3-1，2026-07-20）<br/>文件: rule_bridge/heartbeat_daemon.py"]
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py["(生产态 / production) 会话claim / session_claim<br/>AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）<br/>文件: rule_bridge/session_claim.py"]
+    src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["(生产态 / production) worktree管理器 / worktree_manager<br/>会话 worktree 物理隔离管理器（阶段3 治本 stash 循环）<br/>文件: rule_bridge/worktree_manager.py"]
+    src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py["(生产态 / production) worktree池 / worktree_pool<br/>Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）<br/>文件: rule_bridge/worktree_pool.py"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py ~~~ src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py ~~~ src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
     src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py ~~~ src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py ~~~ src_zephyr_gov_enforcement_rule_bridge_session_claim_py
     src_zephyr_gov_enforcement_rule_bridge_session_claim_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["(生产态 / production) GitCommitGateway — 全项目唯一合法 git commit 入口 / git_commit_gateway<br/>GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2026062512 治本）<br/>文件: rule_bridge/git_commit_gateway.py"]
-    src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["(生产态 / production) batched自动committer.py — Reconciler 批 / batched_auto_committer<br/>Reconciler 批量化 auto-commit 拦截器（ARCH-GIT-CALL-BUDGET P2.3，2026-07-19）<br/>文件: rule_bridge/batched_auto_committer.py"]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["(生产态 / production) Git提交网关 / git_commit_gateway<br/>GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2026062512 治本）<br/>文件: rule_bridge/git_commit_gateway.py"]
+    src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["(生产态 / production) batched自动committer / batched_auto_committer<br/>Reconciler 批量化 auto-commit 拦截器（ARCH-GIT-CALL-BUDGET P2.3，2026-07-19）<br/>文件: rule_bridge/batched_auto_committer.py"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
@@ -219,30 +219,30 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml["(生产态 / production) 规则enforcement注册表 / rule_enforcement_registry<br/>规则enforcement注册表，规则执行的注册表，登记和查询已注册的条目。<br/>文件: catalogs/rule_enforcement_registry.yaml"]
-    scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py["(生产态 / production) 指标数量漂移reconciler.py — dashb / metric_count_drift_reconciler<br/>dashboard 指标数描述派生校验 reconciler<br/>文件: d8_doc_sync/metric_count_drift_reconciler.py"]
-    scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py["(生产态 / production) readme版本同步reconciler.py — READ / readme_version_sync_reconciler<br/>README 版本号派生展示校验 reconciler<br/>文件: d8_doc_sync/readme_version_sync_reconciler.py"]
-    scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py["(生产态 / production) requirements版本同步reconciler.py  / requirements_version_sync_reconciler<br/>requirements.txt ↔ pyproject.toml 依赖一致性校验 reconciler<br/>文件: d8_doc_sync/requirements_version_sync_reconciler.py"]
-    scripts_governance_session_worktree_cli_py["(生产态 / production) 会话worktreecli.py — session worktr / session_worktree_cli<br/>session worktree 管理 CLI（治本遗留项#2，2026-07-17）<br/>文件: governance/session_worktree_cli.py"]
-    src_zephyr_gov_enforcement_init_py["(生产态 / production) govenforcement package — 执行治理域（DGOVEN / __init__<br/>gov_enforcement package — 执行治理域（D_GOV_ENFORCEMENT）<br/>文件: gov_enforcement/__init__.py"]
+    docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml["(生产态 / production) 规则执行注册表 / rule_enforcement_registry<br/>规则enforcement注册表，规则执行的注册表，登记和查询已注册的条目。<br/>文件: catalogs/rule_enforcement_registry.yaml"]
+    scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py["(生产态 / production) 指标数量漂移协调器 / metric_count_drift_reconciler<br/>dashboard 指标数描述派生校验 reconciler<br/>文件: d8_doc_sync/metric_count_drift_reconciler.py"]
+    scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py["(生产态 / production) readme版本sync对账器 / readme_version_sync_reconciler<br/>README 版本号派生展示校验 reconciler<br/>文件: d8_doc_sync/readme_version_sync_reconciler.py"]
+    scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py["(生产态 / production) requirements版本sync对账器 / requirements_version_sync_reconciler<br/>requirements版本sync对账器.txt ↔ pyproject.toml 依赖一致性校验 reconciler<br/>文件: d8_doc_sync/requirements_version_sync_reconciler.py"]
+    scripts_governance_session_worktree_cli_py["(生产态 / production) 会话worktreecli / session_worktree_cli<br/>会话 worktree 管理 CLI（治本遗留项#2，2026-07-17）<br/>文件: governance/session_worktree_cli.py"]
+    src_zephyr_gov_enforcement_init_py["(生产态 / production) 包入口 / __init__<br/>gov_enforcement package — 执行治理域（D_GOV_ENFORCEMENT）<br/>文件: gov_enforcement/__init__.py"]
     src_zephyr_gov_enforcement_behavioral_admission_init_py["(生产态 / production) 包入口 / __init__<br/>治理执行的包入口，把这一层的子模块归到一起统一管理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: behavioral_admission/__init__.py"]
-    src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py["(生产态 / production) stashaccumulationgate.py — stash 堆积阈值检 / stash_accumulation_gate<br/>stash 堆积阈值检测门禁<br/>文件: commit_gates/stash_accumulation_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_approval_py["(生产态 / production) approval / G-CT-004 — Backward-compat re-export of ApprovalRequest from<br/>approval，规则执行的功能模块。<br/>文件: rule_enforcement/approval.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py["(生产态 / production) Re-export shim — ComplianceRule 真源已合并至 z / compliance_rule<br/>Re-export shim — ComplianceRule 真源已合并至 zephyr.shared.contracts.compliance_rule。<br/>文件: rule_enforcement/compliance_rule.py"]
+    src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py["(生产态 / production) stashaccumulation门禁 / stash_accumulation_gate<br/>stash 堆积阈值检测门禁<br/>文件: commit_gates/stash_accumulation_gate.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_approval_py["(生产态 / production) 审批 / G-CT-004 — Backward-compat re-export of ApprovalRequest from<br/>审批，供zephyr.governance.services.ada使用<br/>文件: rule_enforcement/approval.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py["(生产态 / production) 合规规则 / compliance_rule<br/>Re-export shim — ComplianceRule 真源已合并至 zephyr.shared.contracts.compliance_rule。<br/>文件: rule_enforcement/compliance_rule.py"]
     src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py["(生产态 / production) 默认质量门禁 / D_DATA — Default Data Quality Gate<br/>默认质量门禁。D_DATA — Default Data Quality Gate<br/>文件: rule_enforcement/default_quality_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py["(生产态 / production) DLQ 重试策略 — 对接 shared/events/dlq.DeadLett / dlq_retry_policy<br/>DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。<br/>文件: rule_enforcement/dlq_retry_policy.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py["(生产态 / production) output质量门禁 / output_quality_gate<br/>output质量门禁，规则执行的组成部分，依赖包入口工作。<br/>文件: rule_enforcement/output_quality_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py["(生产态 / production) 预flight门禁 / pre_flight_gate<br/>预flight门禁，规则执行的组成部分，依赖预算模型、预算引擎工作。<br/>文件: rule_enforcement/pre_flight_gate.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py["(生产态 / production) Rule Canary Manager — v0.10.0 规则金丝雀: 1%用 / rule_canary_manager<br/>Rule Canary Manager — v0.10.0 规则金丝雀: 1%用户先上新规则->A/B对比->rollback。<br/>文件: rule_engine/rule_canary_manager.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py["(生产态 / production) Rule Debt Auditor — v0.7.0 规则债务审计器: 分析es / rule_debt_auditor<br/>Rule Debt Auditor — v0.7.0 规则债务审计器: 分析escalation_rules.yaml维护债务指标。<br/>文件: rule_engine/rule_debt_auditor.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py["(生产态 / production) Rule Shadow Runner — v0.10.0 规则影子模式: 新规则 / rule_shadow_runner<br/>Rule Shadow Runner — v0.10.0 规则影子模式: 新规则shadow运行3天->diff old vs new->promote。<br/>文件: rule_engine/rule_shadow_runner.py"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["(生产态 / production) RuleWatcher — YAML 规则文件变更检测与自动同步 / rule_watcher<br/>RuleWatcher — YAML 规则文件变更检测与自动同步<br/>文件: rule_engine/rule_watcher.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py["(生产态 / production) dlq重试策略 / dlq_retry_policy<br/>DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。<br/>文件: rule_enforcement/dlq_retry_policy.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py["(生产态 / production) output质量门禁 / output_quality_gate<br/>output质量门禁，提供包入口和模块加载功能<br/>文件: rule_enforcement/output_quality_gate.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py["(生产态 / production) preflight门禁 / pre_flight_gate<br/>preflight门禁，依赖预算模型、预算引擎工作<br/>文件: rule_enforcement/pre_flight_gate.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py["(生产态 / production) 规则金丝雀管理器 / rule_canary_manager<br/>Rule Canary Manager — v0.10.0 规则金丝雀: 1%用户先上新规则->A/B对比->rollback。<br/>文件: rule_engine/rule_canary_manager.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py["(生产态 / production) 规则debt审计器 / rule_debt_auditor<br/>Rule Debt Auditor — v0.7.0 规则债务审计器: 分析escalation_rules.yaml维护债务指标。<br/>文件: rule_engine/rule_debt_auditor.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py["(生产态 / production) 规则影子运行器 / rule_shadow_runner<br/>Rule Shadow Runner — v0.10.0 规则影子模式: 新规则shadow运行3天->diff old vs new->promote。<br/>文件: rule_engine/rule_shadow_runner.py"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["(生产态 / production) 规则监视器 / rule_watcher<br/>RuleWatcher — YAML 规则文件变更检测与自动同步<br/>文件: rule_engine/rule_watcher.py"]
     src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py["(生产态 / production) SLO契约 / SLO-Driven Escalation Contract — D-022-12.<br/>SLO契约。SLO-Driven Escalation Contract — D-022-12.<br/>文件: rule_enforcement/slo_contract.py"]
-    tests_governance_commit_gates_test_create_guard_py["(生产态 / production) 测试创建guard.py — CREATE-GUARD 门禁单元 / test_create_guard<br/>CREATE-GUARD 门禁单元测试（2026-06-30 治本补全）<br/>文件: commit_gates/test_create_guard.py"]
-    tests_governance_commit_gates_test_r5_digit_suffix_gate_py["(生产态 / production) 测试r5digitsuffixgate.py — R5-DIGIT- / test_r5_digit_suffix_gate<br/>R5-DIGIT-SUFFIX 门禁单元测试<br/>文件: commit_gates/test_r5_digit_suffix_gate.py"]
-    tests_governance_rule_bridge_test_claim_files_for_edit_py["(生产态 / production) 测试claimfilesforedit.py — P2-2 并发 s / test_claim_files_for_edit<br/>P2-2 并发 session 文件级原子性测试<br/>文件: rule_bridge/test_claim_files_for_edit.py"]
-    tests_governance_rule_bridge_test_emergency_commit_py["(生产态 / production) 测试紧急commit.py — emergencycom / test_emergency_commit<br/>emergency_commit API 测试（Ruling:100PCT-AI-GOVERNANCE P2-1）<br/>文件: rule_bridge/test_emergency_commit.py"]
-    tests_governance_rule_bridge_test_heartbeat_daemon_py["(生产态 / production) 测试heartbeatdaemon.py — heartbeat dae / test_heartbeat_daemon<br/>heartbeat daemon + 成本递增 smoke test（Ruling:100PCT-AI-GOVERNANCE P3-1）<br/>文件: rule_bridge/test_heartbeat_daemon.py"]
+    tests_governance_commit_gates_test_create_guard_py["(生产态 / production) 测试创建守卫 / test_create_guard<br/>CREATE-GUARD 门禁单元测试（2026-06-30 治本补全）<br/>文件: commit_gates/test_create_guard.py"]
+    tests_governance_commit_gates_test_r5_digit_suffix_gate_py["(生产态 / production) 测试r5digitsuffix门禁 / test_r5_digit_suffix_gate<br/>R5-DIGIT-SUFFIX 门禁单元测试<br/>文件: commit_gates/test_r5_digit_suffix_gate.py"]
+    tests_governance_rule_bridge_test_claim_files_for_edit_py["(生产态 / production) 测试claimfilesforedit / test_claim_files_for_edit<br/>P2-2 并发 session 文件级原子性测试<br/>文件: rule_bridge/test_claim_files_for_edit.py"]
+    tests_governance_rule_bridge_test_emergency_commit_py["(生产态 / production) 测试紧急提交 / test_emergency_commit<br/>emergency_commit API 测试（Ruling:100PCT-AI-GOVERNANCE P2-1）<br/>文件: rule_bridge/test_emergency_commit.py"]
+    tests_governance_rule_bridge_test_heartbeat_daemon_py["(生产态 / production) 测试heartbeatdaemon / test_heartbeat_daemon<br/>heartbeat daemon + 成本递增 smoke test（Ruling:100PCT-AI-GOVERNANCE P3-1）<br/>文件: rule_bridge/test_heartbeat_daemon.py"]
     docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml ~~~ scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py
     scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py ~~~ scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py
     scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py ~~~ scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py
@@ -266,13 +266,13 @@ flowchart TD
     tests_governance_commit_gates_test_r5_digit_suffix_gate_py ~~~ tests_governance_rule_bridge_test_claim_files_for_edit_py
     tests_governance_rule_bridge_test_claim_files_for_edit_py ~~~ tests_governance_rule_bridge_test_emergency_commit_py
     tests_governance_rule_bridge_test_emergency_commit_py ~~~ tests_governance_rule_bridge_test_heartbeat_daemon_py
-    src_zephyr_gov_enforcement_behavioral_admission_admission_response_py["(生产态 / production) 准入响应 / admission_response<br/>准入响应，治理执行的功能模块。<br/>文件: behavioral_admission/admission_response.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_admission_response_py["(生产态 / production) 准入响应 / admission_response<br/>准入响应，供GovernanceServer;run_all.py使用<br/>文件: behavioral_admission/admission_response.py"]
     src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py["(生产态 / production) 代码审查AI / code_review_ai<br/>代码审查AI，治理执行的核心类，封装ReviewLevel相关逻辑。<br/>文件: behavioral_admission/code_review_ai.py"]
-    src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py["(生产态 / production) GateEventAdapter — GateRepo 事件适配器（DW-000 / gate_event_adapter<br/>GateEventAdapter — GateRepo 事件适配器（DW-0006）<br/>文件: behavioral_admission/gate_event_adapter.py"]
-    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py["(生产态 / production) GPU共识调度器 / gpu_consensus_scheduler<br/>GPU共识调度器，治理执行的功能模块。<br/>文件: behavioral_admission/gpu_consensus_scheduler.py"]
-    src_zephyr_gov_enforcement_behavioral_admission_protection_index_py["(生产态 / production) 保护索引 / protection_index<br/>保护索引，治理执行的功能模块。<br/>文件: behavioral_admission/protection_index.py"]
-    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["(生产态 / production) 提交门禁registry.py — GitCommitGatew / commit_gate_registry<br/>GitCommitGateway pre-commit 门禁注册表（架构债务 #AD-001 治本）<br/>文件: rule_bridge/commit_gate_registry.py"]
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py["(生产态 / production) 会话worktree.py — AI 对话 worktree 物理隔 / session_worktree<br/>AI 对话 worktree 物理隔离 helper（FP-ISO.4C，2026-07-01 治本）<br/>文件: rule_bridge/session_worktree.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py["(生产态 / production) 门禁事件适配器 / gate_event_adapter<br/>GateEventAdapter — GateRepo 事件适配器（DW-0006）<br/>文件: behavioral_admission/gate_event_adapter.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py["(生产态 / production) GPU共识调度器 / gpu_consensus_scheduler<br/>GPU共识调度器，IO的调度器，按时间或优先级安排任务。<br/>文件: behavioral_admission/gpu_consensus_scheduler.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_protection_index_py["(生产态 / production) 保护索引 / protection_index<br/>保护索引，供zephyr.gov_enforcement.behavio使用<br/>文件: behavioral_admission/protection_index.py"]
+    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["(生产态 / production) 提交门禁注册表 / commit_gate_registry<br/>GitCommitGateway pre-commit 门禁注册表（架构债务 #AD-001 治本）<br/>文件: rule_bridge/commit_gate_registry.py"]
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py["(生产态 / production) 会话worktree / session_worktree<br/>AI 对话 worktree 物理隔离 helper（FP-ISO.4C，2026-07-01 治本）<br/>文件: rule_bridge/session_worktree.py"]
     src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py["(生产态 / production) 质量门禁 / D_DATA — Data Quality Gate<br/>质量门禁。D_DATA — Data Quality Gate<br/>文件: rule_enforcement/quality_gate.py"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py ~~~ src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
     src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py ~~~ src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
@@ -281,21 +281,21 @@ flowchart TD
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py ~~~ src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py ~~~ src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
-    src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["(生产态 / production) 准入控制器 / admission_controller<br/>准入控制器，治理执行的功能模块。<br/>文件: behavioral_admission/admission_controller.py"]
-    src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["(生产态 / production) verdict引擎 / verdict_engine<br/>verdict引擎，治理执行的事件，定义和分发事件。<br/>文件: behavioral_admission/verdict_engine.py"]
-    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["(生产态 / production) 紧急commit.py — 紧急提交通道（Ruling:100P / emergency_commit<br/>紧急提交通道（Ruling:100PCT-AI-GOVERNANCE P2-1，2026-07-19）<br/>文件: rule_bridge/emergency_commit.py"]
-    src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py["(生产态 / production) heartbeat_daemon.py — session heartbeat  / heartbeat_daemon<br/>session heartbeat 独立进程（Ruling:100PCT-AI-GOVERNANCE P3-1，2026-07-20）<br/>文件: rule_bridge/heartbeat_daemon.py"]
-    src_zephyr_gov_enforcement_rule_bridge_session_claim_py["(生产态 / production) 会话claim.py — AI 对话并发声明 helper（FP-I / session_claim<br/>AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）<br/>文件: rule_bridge/session_claim.py"]
-    src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["(生产态 / production) worktreemanager.py — session worktree 物 / worktree_manager<br/>session worktree 物理隔离管理器（阶段3 治本 stash 循环）<br/>文件: rule_bridge/worktree_manager.py"]
-    src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py["(生产态 / production) worktreepool.py — Worktree 预创建池（ARCH-GI / worktree_pool<br/>Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）<br/>文件: rule_bridge/worktree_pool.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["(生产态 / production) 准入控制器 / admission_controller<br/>准入控制器，IO的控制器，协调组件按流程执行。<br/>文件: behavioral_admission/admission_controller.py"]
+    src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["(生产态 / production) 裁定引擎 / verdict_engine<br/>verdict引擎，治理执行的事件，定义和分发事件。<br/>文件: behavioral_admission/verdict_engine.py"]
+    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["(生产态 / production) 紧急提交 / emergency_commit<br/>紧急提交通道（Ruling:100PCT-AI-GOVERNANCE P2-1，2026-07-19）<br/>文件: rule_bridge/emergency_commit.py"]
+    src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py["(生产态 / production) 心跳守护 / heartbeat_daemon<br/>心跳守护.py — session heartbeat 独立进程（Ruling:100PCT-AI-GOVERNANCE P3-1，2026-07-20）<br/>文件: rule_bridge/heartbeat_daemon.py"]
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py["(生产态 / production) 会话claim / session_claim<br/>AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）<br/>文件: rule_bridge/session_claim.py"]
+    src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["(生产态 / production) worktree管理器 / worktree_manager<br/>会话 worktree 物理隔离管理器（阶段3 治本 stash 循环）<br/>文件: rule_bridge/worktree_manager.py"]
+    src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py["(生产态 / production) worktree池 / worktree_pool<br/>Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）<br/>文件: rule_bridge/worktree_pool.py"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py ~~~ src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py ~~~ src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
     src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py ~~~ src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py ~~~ src_zephyr_gov_enforcement_rule_bridge_session_claim_py
     src_zephyr_gov_enforcement_rule_bridge_session_claim_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["(生产态 / production) GitCommitGateway — 全项目唯一合法 git commit 入口 / git_commit_gateway<br/>GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2026062512 治本）<br/>文件: rule_bridge/git_commit_gateway.py"]
-    src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["(生产态 / production) batched自动committer.py — Reconciler 批 / batched_auto_committer<br/>Reconciler 批量化 auto-commit 拦截器（ARCH-GIT-CALL-BUDGET P2.3，2026-07-19）<br/>文件: rule_bridge/batched_auto_committer.py"]
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["(生产态 / production) Git提交网关 / git_commit_gateway<br/>GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2026062512 治本）<br/>文件: rule_bridge/git_commit_gateway.py"]
+    src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["(生产态 / production) batched自动committer / batched_auto_committer<br/>Reconciler 批量化 auto-commit 拦截器（ARCH-GIT-CALL-BUDGET P2.3，2026-07-19）<br/>文件: rule_bridge/batched_auto_committer.py"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
@@ -342,7 +342,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py["(设计态 / design) 依赖图预registrationgate.py — depg / depgraph_pre_registration_gate<br/>depgraph planned→production 流转强制门禁<br/>文件: commit_gates/depgraph_pre_registration_gate.py"]
+    src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py["(设计态 / design) depgraphpreregistration门禁 / depgraph_pre_registration_gate<br/>depgraph planned→production 流转强制门禁<br/>文件: commit_gates/depgraph_pre_registration_gate.py"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -356,189 +356,189 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 包入口 / __init__ (behavioral_admission/__init__.py) | → | D_GOVERNANCE 生命周期管理: WorktreeLifecycle — worktree 生命周期状态机（5态  / work... | 导入依赖 / import_depends |
-| 2 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOVERNANCE 生命周期管理: CapabilityLookup — 能力->真源文件反查注册表的查询 API  /... | 导入依赖 / import_depends |
-| 3 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_GOVERNANCE 生命周期管理: CapabilityLookup — 能力->真源文件反查注册表的查询 API  /... | 导入依赖 / import_depends |
-| 4 | 指标数量漂移reconciler.py — dashb / metric_count_drift_r... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGa / reconciliatio... | 导入依赖 / import_depends |
-| 5 | readme版本同步reconciler.py — READ / readme_version_sync... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGa / reconciliatio... | 导入依赖 / import_depends |
-| 6 | requirements版本同步reconciler.py  / requirements_version... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGa / reconciliatio... | 导入依赖 / import_depends |
+| 1 | 包入口 / __init__ (behavioral_admission/__init__.py) | → | D_GOVERNANCE 生命周期管理: worktree生命周期 / worktree_lifecycle (rule_bridge/worktr... | 导入依赖 / import_depends |
+| 2 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOVERNANCE 生命周期管理: 能力lookup / capability_lookup (governance/capability_loo... | 导入依赖 / import_depends |
+| 3 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_GOVERNANCE 生命周期管理: 能力lookup / capability_lookup (governance/capability_loo... | 导入依赖 / import_depends |
+| 4 | 指标数量漂移协调器 / metric_count_drift_reconciler (d8_do... | → | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 5 | readme版本sync对账器 / readme_version_sync_reconciler (d8... | → | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 6 | requirements版本sync对账器 / requirements_version_sync_re... | → | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
 | 7 | 包入口 / __init__ (behavioral_admission/__init__.py) | → | D_GOV_AUDIT 审计追踪: MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | 导入依赖 / import_depends |
-| 8 | 包入口 / __init__ (behavioral_admission/__init__.py) | → | D_GOV_AUDIT 审计追踪: 提交process.py —— AI 生成代码后处理管道（Phase 13 / pos... | 导入依赖 / import_depends |
+| 8 | 包入口 / __init__ (behavioral_admission/__init__.py) | → | D_GOV_AUDIT 审计追踪: 提交进程 / post_process (behavioral_admission/post_proces... | 导入依赖 / import_depends |
 | 9 | 包入口 / __init__ (behavioral_admission/__init__.py) | → | D_GOV_AUDIT 审计追踪: vibecoding执行器 / vibe_coding_enforcer (behavioral_admis... | 导入依赖 / import_depends |
-| 10 | GateEventAdapter — GateRepo 事件适配器（DW-000 / gate_ev... | → | D_GOV_AUDIT 审计追踪: EventStore — Event Sourcing 事件追加与回放（DW-0 / event... | 导入依赖 / import_depends |
-| 11 | verdict引擎 / verdict_engine (behavioral_admission/verdic... | → | D_GOV_AUDIT 审计追踪: 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
-| 12 | 紧急commit.py — 紧急提交通道（Ruling:100P / emergency_co... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGa / reconciliatio... | 导入依赖 / import_depends |
-| 13 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: 蓝图状态转换reconciler.p / blueprint_status_transition_re... | 导入依赖 / import_depends |
-| 14 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: 提交网关abuse监控器reconciler. / commit_gateway_abuse_mon... | 导入依赖 / import_depends |
-| 15 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: 跨层契约signature对账 / cross_layer_contract_signature_re... | 导入依赖 / import_depends |
-| 16 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: 错误模式消费者reconciler.py — A / error_pattern_consumer... | 导入依赖 / import_depends |
-| 17 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: git绩效监控器reconciler.py —  / git_performance_monitor_... | 导入依赖 / import_depends |
-| 18 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: 对账runner.py — Reconciler 链路异步化（R / reconcile_run... | 导入依赖 / import_depends |
-| 19 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGa / reconciliatio... | 导入依赖 / import_depends |
-| 20 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: remediationprogressreconciler.py — 治本进 / remediation_... | 导入依赖 / import_depends |
-| 21 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: 运行时违规快照reconciler.py / runtime_violation_snapshot_... | 导入依赖 / import_depends |
-| 22 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_AUDIT 审计追踪: workspacehygienereconciler.py — 工作区卫生自 / workspace... | 导入依赖 / import_depends |
-| 23 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_GOV_AUDIT 审计追踪: AI错误模式library.py — AI 错误模式库（只 / ai_error_patt... | 导入依赖 / import_depends |
-| 24 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_GOV_AUDIT 审计追踪: 对账runner.py — Reconciler 链路异步化（R / reconcile_run... | 导入依赖 / import_depends |
-| 25 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGa / reconciliatio... | 导入依赖 / import_depends |
-| 26 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_GOV_AUDIT 审计追踪: workspacehygienereconciler.py — 工作区卫生自 / workspace... | 导入依赖 / import_depends |
-| 27 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_CODE_QUALITY 代码质量治理: 门禁自动registrar.py — YAML 驱动的 in-pro / gate_auto_re... | 导入依赖 / import_depends |
-| 28 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_GOV_CODE_QUALITY 代码质量治理: 提交gates — GitCommitGateway pre-comm / __init__ (commit... | 导入依赖 / import_depends |
-| 29 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_GOV_CODE_QUALITY 代码质量治理: 能力lookuprequiredgate.py — Cap / capability_lookup_requ... | 导入依赖 / import_depends |
-| 30 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_GOV_CODE_QUALITY 代码质量治理: 测试源一致性gate.py — 测试-源码符 / test_source_consiste... | 导入依赖 / import_depends |
-| 31 | 测试创建guard.py — CREATE-GUARD 门禁单元 / test_create_g... | → | D_GOV_CODE_QUALITY 代码质量治理: 创建guard.py — 新建 .py / 非 rules/ .yam / create_guard ... | 测试依赖 / test_depends |
-| 32 | 测试r5digitsuffixgate.py — R5-DIGIT- / test_r5_digit_suf... | → | D_GOV_CODE_QUALITY 代码质量治理: r5digitsuffixgate.py — R5 数字后缀目录禁止门禁（ / r5_di... | 测试依赖 / test_depends |
-| 33 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Phase Manager — ZephyrAlpha 施工阶段门控引擎. / phase_ma... | 导入依赖 / import_depends |
-| 34 | 指标数量漂移reconciler.py — dashb / metric_count_drift_r... | → | D_GOV_SCRIPTS 脚本治理: 架构健康dashboard.py — 架构健康度 / architecture_health_... | 导入依赖 / import_depends |
-| 35 | 会话worktreecli.py — session worktr / session_worktree_c... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 / constants (_shared/con... | 导入依赖 / import_depends |
-| 36 | Re-export shim — ComplianceRule 真源已合并至 z / complia... | → | D_INFRASTRUCTURE 跨层契约基础设施: 合规规则 / compliance_rule (contracts/compliance_rule.py) | 导入依赖 / import_depends |
-| 37 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_INFRA_RUNTIME 运行时集成: gitbatcher.py — Git 命令批量化工具（ARCH-GIT-CA / git_ba... | 导入依赖 / import_depends |
-| 38 | approval / G-CT-004 — Backward-compat re-export of Appro... | → | D_INTEGRATION 管线路由: G-CT-004 — ApprovalRequest Pydantic V2 B / approval_type... | 导入依赖 / import_depends |
-| 39 | 预flight门禁 / pre_flight_gate (rule_enforcement/pre_flig... | → | D_OPS 反馈循环: 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
-| 40 | 预flight门禁 / pre_flight_gate (rule_enforcement/pre_flig... | → | D_OPS 反馈循环: 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
-| 41 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 / session_concurr... | 导入依赖 / import_depends |
-| 42 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030 / co... | 导入依赖 / import_depends |
-| 43 | heartbeat_daemon.py — session heartbeat  / heartbeat_dae... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 / session_concurr... | 导入依赖 / import_depends |
-| 44 | 会话claim.py — AI 对话并发声明 helper（FP-I / session_cl... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 / session_concurr... | 导入依赖 / import_depends |
-| 45 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 / session_concurr... | 导入依赖 / import_depends |
-| 46 | 测试claimfilesforedit.py — P2-2 并发 s / test_claim_file... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 / session_concurr... | 测试依赖 / test_depends |
-| 47 | 会话worktreecli.py — session worktr / session_worktree_c... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 48 | GateEventAdapter — GateRepo 事件适配器（DW-000 / gate_ev... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 49 | GPU共识调度器 / gpu_consensus_scheduler (behavioral_admis... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Si / con... | 导入依赖 / import_depends |
-| 50 | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 51 | 紧急commit.py — 紧急提交通道（Ruling:100P / emergency_co... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 52 | 紧急commit.py — 紧急提交通道（Ruling:100P / emergency_co... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 53 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) / event_bus (sha... | 导入依赖 / import_depends |
-| 54 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 55 | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 56 | 会话claim.py — AI 对话并发声明 helper（FP-I / session_cl... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 57 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 58 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 59 | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | → | D_SHARED 共享服务: workspacetelemetry.py — 主工作区文件操作遥测公共 AP / wo... | 导入依赖 / import_depends |
-| 60 | worktreemanager.py — session worktree 物 / worktree_mana... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 61 | worktreemanager.py — session worktree 物 / worktree_mana... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 62 | worktreepool.py — Worktree 预创建池（ARCH-GI / worktree_... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 63 | worktreepool.py — Worktree 预创建池（ARCH-GI / worktree_... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 64 | DLQ 重试策略 — 对接 shared/events/dlq.DeadLett / dlq_ret... | → | D_SHARED 共享服务: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q / dlq (ev... | 导入依赖 / import_depends |
-| 65 | DLQ 重试策略 — 对接 shared/events/dlq.DeadLett / dlq_ret... | → | D_SHARED 共享服务: 观察者 / Zero-dependency Observer pattern (subscribe/emit... | 导入依赖 / import_depends |
-| 66 | DLQ 重试策略 — 对接 shared/events/dlq.DeadLett / dlq_ret... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 67 | RuleWatcher — YAML 规则文件变更检测与自动同步 / rule_wat... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 68 | RuleWatcher — YAML 规则文件变更检测与自动同步 / rule_wat... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） / sqlite_factory (io/sqlite_f... | 导入依赖 / import_depends |
+| 10 | 门禁事件适配器 / gate_event_adapter (behavioral_admission... | → | D_GOV_AUDIT 审计追踪: 事件存储 / event_store (gov_audit/event_store.py) | 导入依赖 / import_depends |
+| 11 | 裁定引擎 / verdict_engine (behavioral_admission/verdict_e... | → | D_GOV_AUDIT 审计追踪: 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
+| 12 | 紧急提交 / emergency_commit (rule_bridge/emergency_commit... | → | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 13 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: 蓝图状态转换协调器 / blueprint_status_transition_reconcil... | 导入依赖 / import_depends |
+| 14 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | 导入依赖 / import_depends |
+| 15 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: 跨layercontractsignature对账器 / cross_layer_contract_sig... | 导入依赖 / import_depends |
+| 16 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: 错误模式消费者协调器 / error_pattern_consumer_reconciler ... | 导入依赖 / import_depends |
+| 17 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: Git绩效监控协调器 / git_performance_monitor_reconciler (a... | 导入依赖 / import_depends |
+| 18 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | 导入依赖 / import_depends |
+| 19 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 20 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: 修复进度对账器 / remediation_progress_reconciler (audit/r... | 导入依赖 / import_depends |
+| 21 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: 运行时违规快照协调器 / runtime_violation_snapshot_reconci... | 导入依赖 / import_depends |
+| 22 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_AUDIT 审计追踪: 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | 导入依赖 / import_depends |
+| 23 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_GOV_AUDIT 审计追踪: AI错误模式库 / ai_error_pattern_library (audit/ai_error_p... | 导入依赖 / import_depends |
+| 24 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_GOV_AUDIT 审计追踪: 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | 导入依赖 / import_depends |
+| 25 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 26 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_GOV_AUDIT 审计追踪: 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | 导入依赖 / import_depends |
+| 27 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_CODE_QUALITY 代码质量治理: 门禁自动registrar / gate_auto_registrar (rule_bridge/gate... | 导入依赖 / import_depends |
+| 28 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_GOV_CODE_QUALITY 代码质量治理: 包入口 / __init__ (commit_gates/__init__.py) | 导入依赖 / import_depends |
+| 29 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_GOV_CODE_QUALITY 代码质量治理: capabilitylookuprequired门禁 / capability_lookup_required... | 导入依赖 / import_depends |
+| 30 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_GOV_CODE_QUALITY 代码质量治理: 测试源一致性门禁 / test_source_consistency_gate (commit_g... | 导入依赖 / import_depends |
+| 31 | 测试创建守卫 / test_create_guard (commit_gates/test_creat... | → | D_GOV_CODE_QUALITY 代码质量治理: 创建守卫 / create_guard (commit_gates/create_guard.py) | 测试依赖 / test_depends |
+| 32 | 测试r5digitsuffix门禁 / test_r5_digit_suffix_gate (commit... | → | D_GOV_CODE_QUALITY 代码质量治理: r5digitsuffix门禁 / r5_digit_suffix_gate (commit_gates/r5... | 测试依赖 / test_depends |
+| 33 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 阶段管理器 / phase_manager (ops_governance/phase_manager.py) | 导入依赖 / import_depends |
+| 34 | 指标数量漂移协调器 / metric_count_drift_reconciler (d8_do... | → | D_GOV_SCRIPTS 脚本治理: 架构健康仪表盘 / architecture_health_dashboard (governanc... | 导入依赖 / import_depends |
+| 35 | 会话worktreecli / session_worktree_cli (governance/sessio... | → | D_GOV_SCRIPTS 脚本治理: 常量 / constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 36 | 合规规则 / compliance_rule (rule_enforcement/compliance_r... | → | D_INFRASTRUCTURE 跨层契约基础设施: 合规规则 / compliance_rule (contracts/compliance_rule.py) | 导入依赖 / import_depends |
+| 37 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_INFRA_RUNTIME 运行时集成: Git批处理 / git_batcher (infrastructure/git_batcher.py) | 导入依赖 / import_depends |
+| 38 | 审批 / G-CT-004 — Backward-compat re-export of ApprovalR... | → | D_INTEGRATION 管线路由: 审批类型定义 / approval_types (contracts/approval_types.py) | 导入依赖 / import_depends |
+| 39 | preflight门禁 / pre_flight_gate (rule_enforcement/pre_fli... | → | D_OPS 反馈循环: 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 40 | preflight门禁 / pre_flight_gate (rule_enforcement/pre_fli... | → | D_OPS 反馈循环: 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 41 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_SECURITY 对抗验证: 会话并发 / session_concurrency (access_control/session_co... | 导入依赖 / import_depends |
+| 42 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_SECURITY 对抗验证: 提交触发器 / commit_trigger (adversarial_validation/commi... | 导入依赖 / import_depends |
+| 43 | 心跳守护 / heartbeat_daemon (rule_bridge/heartbeat_daemon... | → | D_SECURITY 对抗验证: 会话并发 / session_concurrency (access_control/session_co... | 导入依赖 / import_depends |
+| 44 | 会话claim / session_claim (rule_bridge/session_claim.py) | → | D_SECURITY 对抗验证: 会话并发 / session_concurrency (access_control/session_co... | 导入依赖 / import_depends |
+| 45 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_SECURITY 对抗验证: 会话并发 / session_concurrency (access_control/session_co... | 导入依赖 / import_depends |
+| 46 | 测试claimfilesforedit / test_claim_files_for_edit (rule_b... | → | D_SECURITY 对抗验证: 会话并发 / session_concurrency (access_control/session_co... | 测试依赖 / test_depends |
+| 47 | 会话worktreecli / session_worktree_cli (governance/sessio... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 48 | 门禁事件适配器 / gate_event_adapter (behavioral_admission... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 49 | GPU共识调度器 / gpu_consensus_scheduler (behavioral_admis... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 50 | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 51 | 紧急提交 / emergency_commit (rule_bridge/emergency_commit... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 52 | 紧急提交 / emergency_commit (rule_bridge/emergency_commit... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 53 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_SHARED 共享服务: 事件总线 / event_bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 54 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 55 | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 56 | 会话claim / session_claim (rule_bridge/session_claim.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 57 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 58 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 59 | 会话worktree / session_worktree (rule_bridge/session_work... | → | D_SHARED 共享服务: 工作区遥测 / workspace_telemetry (io/workspace_telemetry.py) | 导入依赖 / import_depends |
+| 60 | worktree管理器 / worktree_manager (rule_bridge/worktree_m... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 61 | worktree管理器 / worktree_manager (rule_bridge/worktree_m... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 62 | worktree池 / worktree_pool (rule_bridge/worktree_pool.py) | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 63 | worktree池 / worktree_pool (rule_bridge/worktree_pool.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 64 | dlq重试策略 / dlq_retry_policy (rule_enforcement/dlq_retr... | → | D_SHARED 共享服务: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q / dlq (ev... | 导入依赖 / import_depends |
+| 65 | dlq重试策略 / dlq_retry_policy (rule_enforcement/dlq_retr... | → | D_SHARED 共享服务: 观察者 / Zero-dependency Observer pattern (subscribe/emit... | 导入依赖 / import_depends |
+| 66 | dlq重试策略 / dlq_retry_policy (rule_enforcement/dlq_retr... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 67 | 规则监视器 / rule_watcher (rule_engine/rule_watcher.py) | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 68 | 规则监视器 / rule_watcher (rule_engine/rule_watcher.py) | → | D_SHARED 共享服务: sqlite工厂 / sqlite_factory (io/sqlite_factory.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_DATA 数据接入层: Re-export wrapper: QualityReport 真源在 zep / quality_gat... | → | 质量门禁 / D_DATA — Data Quality Gate (rule_enforcement/... | 导入依赖 / import_depends |
+| 1 | D_DATA 数据接入层: 质量门禁 / quality_gate (data/quality_gate.py) | → | 质量门禁 / D_DATA — Data Quality Gate (rule_enforcement/... | 导入依赖 / import_depends |
 | 2 | D_DATA 数据接入层: 包入口 / D_DATA Data Source (satellite_geospatial_engine/... | → | 质量门禁 / D_DATA — Data Quality Gate (rule_enforcement/... | 导入依赖 / import_depends |
 | 3 | D_DATA 数据接入层: #ARCH-CH-021 P0-4: 写入路径异常值校验器四门禁测试。 / tes... | → | 质量门禁 / D_DATA — Data Quality Gate (rule_enforcement/... | 测试依赖 / test_depends |
-| 4 | D_GOVERNANCE 生命周期管理: gitcommit.py — GitCommitGateway CLI 封装（ / git_commit ... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 导入依赖 / import_depends |
-| 5 | D_GOVERNANCE 生命周期管理: ZephyrAlpha — D_COMPLIANCE Compliance La / compliance_ma... | → | Re-export shim — ComplianceRule 真源已合并至 z / complia... | 导入依赖 / import_depends |
-| 6 | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04 / task... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 导入依赖 / import_depends |
-| 7 | D_GOVERNANCE 生命周期管理: session 隔离 stash 红蓝对抗极限测试。 / test_session_awar... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 测试依赖 / test_depends |
-| 8 | D_GOVERNANCE 生命周期管理: 测试git提交concurrent.py — 幽灵提交红蓝对抗 / test_git_c... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 测试依赖 / test_depends |
-| 9 | D_GOVERNANCE 生命周期管理: 测试git提交concurrent.py — 幽灵提交红蓝对抗 / test_git_c... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 测试依赖 / test_depends |
-| 10 | D_GOVERNANCE 生命周期管理: 测试git提交extreme.py — GitCommitGa / test_git_commit_ex... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 测试依赖 / test_depends |
-| 11 | D_GOVERNANCE 生命周期管理: 测试git提交gateway.py — GitCommitGa / test_git_commit_ga... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 测试依赖 / test_depends |
-| 12 | D_GOVERNANCE 生命周期管理: 测试任务repo网关e2e.py — 端到端链路测试（ / test_task_re... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 测试依赖 / test_depends |
-| 13 | D_GOV_AUDIT 审计追踪: git绩效监控器reconciler.py —  / git_performance_monitor_... | → | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | 导入依赖 / import_depends |
-| 14 | D_GOV_AUDIT 审计追踪: 对账worker.py — 异步 reconciler work / reconcile_worker ... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 导入依赖 / import_depends |
-| 15 | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGa / reconciliatio... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 16 | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGa / reconciliatio... | → | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | 导入依赖 / import_depends |
-| 17 | D_GOV_AUDIT 审计追踪: 测试对账async.py — P2-3 reconcile / test_reconcile_async... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 测试依赖 / test_depends |
-| 18 | D_GOV_AUDIT 审计追踪: 测试对账工作器selfheal.py — #ARC / test_reconcile_worker... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 测试依赖 / test_depends |
-| 19 | D_GOV_AUDIT 审计追踪: 测试会话worktree异步reconcile.py / test_session_worktree_... | → | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | 测试依赖 / test_depends |
-| 20 | D_GOV_CODE_QUALITY 代码质量治理: referencehelpers.py — 引用检测门禁共享工具函数（ARC / _r... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 21 | D_GOV_CODE_QUALITY 代码质量治理: 架构referencegate.py — #ARCH-NNN / #AR / arch_reference_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 22 | D_GOV_CODE_QUALITY 代码质量治理: asyncio运行入上下文gate.py — 异步上下文误用 / asyncio_ru... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 23 | D_GOV_CODE_QUALITY 代码质量治理: baregetenvgate.py — 裸 os.getenv 读密钥阻断门 / bare_get... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 24 | D_GOV_CODE_QUALITY 代码质量治理: baresqlgate.py — 裸SQL字面量阻断门禁（NO-BARE-S / bare_s... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 25 | D_GOV_CODE_QUALITY 代码质量治理: baresubprocessgate.py — 裸 subprocess 调 / bare_subproce... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 26 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图amodule一致性gate.py —  / blueprint_amodule_consiste... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 27 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图amodule跨检查gate.py —  / blueprint_amodule_cross_ch... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 28 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图formatgate.py — [BLUEPRINT] 头 / blueprint_format_ga... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 29 | D_GOV_CODE_QUALITY 代码质量治理: 能力一致性gate.py — Provide / capability_consistency_gat... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 30 | D_GOV_CODE_QUALITY 代码质量治理: 能力lookuprequiredgate.py — Cap / capability_lookup_requ... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 31 | D_GOV_CODE_QUALITY 代码质量治理: 能力overlapgate.py — 新建 .py 文件 C / capability_overla... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 32 | D_GOV_CODE_QUALITY 代码质量治理: ch批次大小gate.py — CH 批量写入防回退门禁（CH- / ch_batc... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 33 | D_GOV_CODE_QUALITY 代码质量治理: ch最终gate.py — chwriter.query() 直接调 / ch_final_gate ... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 34 | D_GOV_CODE_QUALITY 代码质量治理: ch版本colgate.py — CH version 列语义误 / ch_version_col_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 35 | D_GOV_CODE_QUALITY 代码质量治理: claimrequiredgate.py — claimfiles 前置检 / claim_require... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 36 | D_GOV_CODE_QUALITY 代码质量治理: 消费者accuracygate.py — CONSUMERS 字 / consumers_accurac... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 37 | D_GOV_CODE_QUALITY 代码质量治理: 创建guard.py — 新建 .py / 非 rules/ .yam / create_guard ... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 38 | D_GOV_CODE_QUALITY 代码质量治理: dangling_reference_gate.py — AGENTS.md § / dangling_ref... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 39 | D_GOV_CODE_QUALITY 代码质量治理: 数据任务completenessgate.py — 数据任务完整性 / data_task... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 40 | D_GOV_CODE_QUALITY 代码质量治理: datetimenowforbiddengate.py — 时间戳约定硬阻 / datetime_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 41 | D_GOV_CODE_QUALITY 代码质量治理: 依赖图freshnessgate.py — depgraph 新鲜 / depgraph_freshn... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 42 | D_GOV_CODE_QUALITY 代码质量治理: 依赖图write路径gate.py — depgraph 写 / depgraph_write_pa... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 43 | D_GOV_CODE_QUALITY 代码质量治理: derivationannotationgate.py — 派生关系声明真实 / derivat... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 44 | D_GOV_CODE_QUALITY 代码质量治理: directory契约gate.py — DCR-001~007 / directory_contract_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 45 | D_GOV_CODE_QUALITY 代码质量治理: docrefbrokengate.py — 文档相对路径断裂引用阻断门禁（ / d... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 46 | D_GOV_CODE_QUALITY 代码质量治理: 域fkgate.py — [DOMAIN] 头部域注册表 FK 校 / domain_fk_ga... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 47 | D_GOV_CODE_QUALITY 代码质量治理: 域namezhdirectaccessgate.py — D / domain_name_zh_direct_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 48 | D_GOV_CODE_QUALITY 代码质量治理: empty处理器gate.py — 空事件 handler 函数阻断 / empty_han... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 49 | D_GOV_CODE_QUALITY 代码质量治理: encodinggate.py — 编码安全校验门禁（治本：弥补 --no-v / ... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 50 | D_GOV_CODE_QUALITY 代码质量治理: exemptzonefrontmattergate.py — 豁免区 fr / exempt_zone_f... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 51 | D_GOV_CODE_QUALITY 代码质量治理: 文件copygate.py — 新增 .py 文件复制检测阻断门禁（FI / fi... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 52 | D_GOV_CODE_QUALITY 代码质量治理: 文件placement存活时间gate.py — 文件放置与 TTL 一 / file_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 53 | D_GOV_CODE_QUALITY 代码质量治理: folder容量hard限制gate.py — 文件夹 / folder_capacity_har... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 54 | D_GOV_CODE_QUALITY 代码质量治理: foreign变更gate.py — 外来变更检测门禁（FOREIG / foreign_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 55 | D_GOV_CODE_QUALITY 代码质量治理: forged_gw_marker_gate.py — Forged GW Mar / forged_gw_mar... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 56 | D_GOV_CODE_QUALITY 代码质量治理: 函数dupgate.py — 重复函数实现阻断门禁（FUNCTI / function... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 57 | D_GOV_CODE_QUALITY 代码质量治理: gitcall预算gate.py — Git 调用预算 warn- / git_call_budge... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 58 | D_GOV_CODE_QUALITY 代码质量治理: god类gate.py — God Class 阻断门禁（NO-GO / god_class_gat... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 59 | D_GOV_CODE_QUALITY 代码质量治理: hardcodedurlgate.py — 硬编码 localhost UR / hardcoded_ur... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 60 | D_GOV_CODE_QUALITY 代码质量治理: heldoverlapgate.py — 搭便车防护门禁（HELD-OVER / held_ov... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 61 | D_GOV_CODE_QUALITY 代码质量治理: highcomplexitygate.py — 高循环复杂度阻断门禁（NO- / high... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 62 | D_GOV_CODE_QUALITY 代码质量治理: id_uniqueness_gate.py — pre-commit hook  / id_uniqueness... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 63 | D_GOV_CODE_QUALITY 代码质量治理: 导入directiongate.py — shared 层向上依赖阻 / import_dire... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 64 | D_GOV_CODE_QUALITY 代码质量治理: 导入完整性gate.py — IMPORT-INTEGR / import_integrity_gat... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 65 | D_GOV_CODE_QUALITY 代码质量治理: issueresolved完整性gate.py — ISSUE / issue_resolved_inte... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 66 | D_GOV_CODE_QUALITY 代码质量治理: 多param列表gate.py — 长参数列表阻断门禁（NO-L / long_par... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 67 | D_GOV_CODE_QUALITY 代码质量治理: manualonlypermanentgate.py — 永久系统脚本 m / manual_onl... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 68 | D_GOV_CODE_QUALITY 代码质量治理: MCP版本字段gate.py — MCP version  / mcp_version_field_ga... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 69 | D_GOV_CODE_QUALITY 代码质量治理: 模块id一致性gate.py — modulei / module_id_consistency_ga... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 70 | D_GOV_CODE_QUALITY 代码质量治理: msg敞口gate.py — 错误消息暴露敏感信息阻断门禁（MS / msg_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 71 | D_GOV_CODE_QUALITY 代码质量治理: msgstylegate.py — 错误消息标点/箭头风格阻断门禁（MSG- / ... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 72 | D_GOV_CODE_QUALITY 代码质量治理: 可变常量without最终gate.py — 可变 / mutable_const_withou... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 73 | D_GOV_CODE_QUALITY 代码质量治理: 新文件依赖图gate.py — 新建 .py 文件 de / new_file_depgra... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 74 | D_GOV_CODE_QUALITY 代码质量治理: no导入sideeffectgate.py — 模块导入零副作用 / no_import_s... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 75 | D_GOV_CODE_QUALITY 代码质量治理: noqa验证gate.py — 自定义 noqa 标记合规性 / noqa_validati... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 76 | D_GOV_CODE_QUALITY 代码质量治理: openwithoutwithgate.py — open() 未在 wi / open_without_w... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 77 | D_GOV_CODE_QUALITY 代码质量治理: orphan模块gate.py — 孤儿模块（无 import 引用 / orphan_mo... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 78 | D_GOV_CODE_QUALITY 代码质量治理: panoramaalignmentgate.py — 三图模块对齐门禁（四图 / pano... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 79 | D_GOV_CODE_QUALITY 代码质量治理: perm触发器gate.py — 永久系统脚本时间触发模式无事件订阅 /... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 80 | D_GOV_CODE_QUALITY 代码质量治理: precommit离线gate.py — pre-commit 配 / precommit_offline... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 81 | D_GOV_CODE_QUALITY 代码质量治理: pureassertiongate.py — 纯陈述原则阻断门禁（PURE- / pure_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 82 | D_GOV_CODE_QUALITY 代码质量治理: pureshimgate.py — 纯 re-export shim 阻断门 / pure_shim_g... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 83 | D_GOV_CODE_QUALITY 代码质量治理: r5digitsuffixgate.py — R5 数字后缀目录禁止门禁（ / r5_di... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 84 | D_GOV_CODE_QUALITY 代码质量治理: 协调器健康gate.py — reconciler 健 / reconciler_health_ga... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 85 | D_GOV_CODE_QUALITY 代码质量治理: relative路径literalgate.py — 相对路径字面量硬 / relative... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 86 | D_GOV_CODE_QUALITY 代码质量治理: rename依赖图同步gate.py — 文件重命名后 de / rename_depgr... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 87 | D_GOV_CODE_QUALITY 代码质量治理: 规则执行pairinggate.py — 规则-执行配对 / rule_execution_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 88 | D_GOV_CODE_QUALITY 代码质量治理: 规则fourwayalignmentgate.py — 规则四方对齐 / rule_four_w... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 89 | D_GOV_CODE_QUALITY 代码质量治理: ruling提交verifiedgate.py — 文档"已完成" / ruling_commit... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 90 | D_GOV_CODE_QUALITY 代码质量治理: rulingreferencegate.py — 裁定#NNN 悬空引用自动 / ruling_... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 91 | D_GOV_CODE_QUALITY 代码质量治理: 结构文件existsgate.py — SCHEMA-FILE / schema_file_exists... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 92 | D_GOV_CODE_QUALITY 代码质量治理: scripts导入完整性gate.py — shar / scripts_import_integri... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 93 | D_GOV_CODE_QUALITY 代码质量治理: 会话requiredgate.py — session 注册强制门 / session_requi... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 94 | D_GOV_CODE_QUALITY 代码质量治理: 快照漂移gate.py — 运行时违规快照漂移阻断门禁（S / snapsh... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 95 | D_GOV_CODE_QUALITY 代码质量治理: ssotredefinitiongate.py — SSoT 符号重复定义硬 / ssot_red... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 96 | D_GOV_CODE_QUALITY 代码质量治理: tablename注册表gate.py — TABLE-NAME / table_name_registr... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 97 | D_GOV_CODE_QUALITY 代码质量治理: 测试源一致性gate.py — 测试-源码符 / test_source_consiste... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 98 | D_GOV_CODE_QUALITY 代码质量治理: testscoveragegate.py — Gate 测试覆盖率校验 me / tests_co... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 99 | D_GOV_CODE_QUALITY 代码质量治理: 存活时间gate.py — ttl 字段校验门禁（治本：弥补 --no-veri... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 100 | D_GOV_CODE_QUALITY 代码质量治理: undefined_name_gate.py — UNDEFINED-NAME  / undefined_nam... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 101 | D_GOV_CODE_QUALITY 代码质量治理: unsafedict价差gate.py — ``**data``  / unsafe_dict_spread... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 102 | D_GOV_CODE_QUALITY 代码质量治理: vocab链gate.py — SSoT 引用硬编码阻断门禁（VOC / vocab_ch... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 103 | D_GOV_CODE_QUALITY 代码质量治理: vocabhardcodegate.py — 新增 .py 文件词表硬编码阻 / vocab... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 104 | D_GOV_CODE_QUALITY 代码质量治理: zephyr环境directaccessgate.py — ZEPHY / zephyr_env_direc... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 105 | D_GOV_CODE_QUALITY 代码质量治理: 门禁自动registrar.py — YAML 驱动的 in-pro / gate_auto_re... | → | 提交门禁registry.py — GitCommitGatew / commit_gate_regis... | 导入依赖 / import_depends |
-| 106 | D_GOV_CODE_QUALITY 代码质量治理: 测试审计worktree运维telemetry.py — w / test_audit_worktr... | → | 会话worktree.py — AI 对话 worktree 物理隔 / session_work... | 测试依赖 / test_depends |
-| 107 | D_GOV_DRIFT 漂移检测: Tamper-Proof Audit — 防篡改审计 D-023-37 · §6 / tamper... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 导入依赖 / import_depends |
-| 108 | D_GOV_OPS_RESILIENCE 运维弹性治理: 安全网关基类 / D_COMPLIANCE — Governance & Compliance La... | → | Re-export shim — ComplianceRule 真源已合并至 z / complia... | 导入依赖 / import_depends |
-| 109 | D_GOV_RULE 规则治理: 规则引擎模块集 / Rule Engine Package (rule_engine/__init_... | → | Rule Shadow Runner — v0.10.0 规则影子模式: 新规则 / rule... | config_depends / config_depends |
-| 110 | D_GOV_SCRIPTS 脚本治理: 并发提交test.py — 幽灵提交红蓝对抗脚本（O / concurrent_c... | → | GitCommitGateway — 全项目唯一合法 git commit 入口 / git_... | 导入依赖 / import_depends |
+| 4 | D_GOVERNANCE 生命周期管理: Git提交 / git_commit (scripts/git_commit.py) | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 导入依赖 / import_depends |
+| 5 | D_GOVERNANCE 生命周期管理: 合规管理器 / compliance_manager (compliance_gate_a6/compl... | → | 合规规则 / compliance_rule (rule_enforcement/compliance_r... | 导入依赖 / import_depends |
+| 6 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 导入依赖 / import_depends |
+| 7 | D_GOVERNANCE 生命周期管理: 测试会话感知stashredblue / test_session_aware_stash_red_b... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 测试依赖 / test_depends |
+| 8 | D_GOVERNANCE 生命周期管理: 测试Git提交并发 / test_git_commit_concurrent (git/test_gi... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 测试依赖 / test_depends |
+| 9 | D_GOVERNANCE 生命周期管理: 测试Git提交并发 / test_git_commit_concurrent (git/test_gi... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 测试依赖 / test_depends |
+| 10 | D_GOVERNANCE 生命周期管理: 测试Gitcommitextreme / test_git_commit_extreme (git/test_... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 测试依赖 / test_depends |
+| 11 | D_GOVERNANCE 生命周期管理: 测试Git提交网关 / test_git_commit_gateway (git/test_git_c... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 测试依赖 / test_depends |
+| 12 | D_GOVERNANCE 生命周期管理: 测试taskrepogatewaye2e / test_task_repo_gateway_e2e (task... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 测试依赖 / test_depends |
+| 13 | D_GOV_AUDIT 审计追踪: Git绩效监控协调器 / git_performance_monitor_reconciler (a... | → | 会话worktree / session_worktree (rule_bridge/session_work... | 导入依赖 / import_depends |
+| 14 | D_GOV_AUDIT 审计追踪: 对账工作器 / reconcile_worker (audit/reconcile_worker.py) | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 导入依赖 / import_depends |
+| 15 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 16 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | 会话worktree / session_worktree (rule_bridge/session_work... | 导入依赖 / import_depends |
+| 17 | D_GOV_AUDIT 审计追踪: 测试对账异步 / test_reconcile_async (audit/test_reconcile... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 测试依赖 / test_depends |
+| 18 | D_GOV_AUDIT 审计追踪: 测试对账工作进程selfheal / test_reconcile_worker_selfheal... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 测试依赖 / test_depends |
+| 19 | D_GOV_AUDIT 审计追踪: 测试会话worktree异步对账 / test_session_worktree_async_re... | → | 会话worktree / session_worktree (rule_bridge/session_work... | 测试依赖 / test_depends |
+| 20 | D_GOV_CODE_QUALITY 代码质量治理: reference辅助 / _reference_helpers (commit_gates/_referen... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 21 | D_GOV_CODE_QUALITY 代码质量治理: archreference门禁 / arch_reference_gate (commit_gates/arc... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 22 | D_GOV_CODE_QUALITY 代码质量治理: asynciorunin上下文门禁 / asyncio_run_in_context_gate (com... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 23 | D_GOV_CODE_QUALITY 代码质量治理: baregetenv门禁 / bare_getenv_gate (commit_gates/bare_gete... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 24 | D_GOV_CODE_QUALITY 代码质量治理: baresql门禁 / bare_sql_gate (commit_gates/bare_sql_gate.py) | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 25 | D_GOV_CODE_QUALITY 代码质量治理: baresubprocess门禁 / bare_subprocess_gate (commit_gates/b... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 26 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图amoduleconsistency门禁 / blueprint_amodule_consistenc... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 27 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图amodule跨check门禁 / blueprint_amodule_cross_check_ga... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 28 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图format门禁 / blueprint_format_gate (commit_gates/blue... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 29 | D_GOV_CODE_QUALITY 代码质量治理: 能力一致性门禁 / capability_consistency_gate (commit_gate... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 30 | D_GOV_CODE_QUALITY 代码质量治理: capabilitylookuprequired门禁 / capability_lookup_required... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 31 | D_GOV_CODE_QUALITY 代码质量治理: capabilityoverlap门禁 / capability_overlap_gate (commit_g... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 32 | D_GOV_CODE_QUALITY 代码质量治理: ch批次大小门禁 / ch_batch_size_gate (commit_gates/ch_batc... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 33 | D_GOV_CODE_QUALITY 代码质量治理: ch最终门禁 / ch_final_gate (commit_gates/ch_final_gate.py) | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 34 | D_GOV_CODE_QUALITY 代码质量治理: ch版本col门禁 / ch_version_col_gate (commit_gates/ch_vers... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 35 | D_GOV_CODE_QUALITY 代码质量治理: claimrequired门禁 / claim_required_gate (commit_gates/cla... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 36 | D_GOV_CODE_QUALITY 代码质量治理: consumersaccuracy门禁 / consumers_accuracy_gate (commit_g... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 37 | D_GOV_CODE_QUALITY 代码质量治理: 创建守卫 / create_guard (commit_gates/create_guard.py) | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 38 | D_GOV_CODE_QUALITY 代码质量治理: danglingreference门禁 / dangling_reference_gate (commit_g... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 39 | D_GOV_CODE_QUALITY 代码质量治理: 数据taskcompleteness门禁 / data_task_completeness_gate (c... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 40 | D_GOV_CODE_QUALITY 代码质量治理: datetimenowforbidden门禁 / datetime_now_forbidden_gate (c... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 41 | D_GOV_CODE_QUALITY 代码质量治理: depgraphfreshness门禁 / depgraph_freshness_gate (commit_g... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 42 | D_GOV_CODE_QUALITY 代码质量治理: depgraphwritepath门禁 / depgraph_write_path_gate (commit_... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 43 | D_GOV_CODE_QUALITY 代码质量治理: derivationannotation门禁 / derivation_annotation_gate (co... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 44 | D_GOV_CODE_QUALITY 代码质量治理: directorycontract门禁 / directory_contract_gate (commit_g... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 45 | D_GOV_CODE_QUALITY 代码质量治理: docrefbroken门禁 / doc_ref_broken_gate (commit_gates/doc_... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 46 | D_GOV_CODE_QUALITY 代码质量治理: 域fk门禁 / domain_fk_gate (commit_gates/domain_fk_gate.py) | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 47 | D_GOV_CODE_QUALITY 代码质量治理: domainnamezhdirect访问门禁 / domain_name_zh_direct_access... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 48 | D_GOV_CODE_QUALITY 代码质量治理: empty处理器门禁 / empty_handler_gate (commit_gates/empty_... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 49 | D_GOV_CODE_QUALITY 代码质量治理: encoding门禁 / encoding_gate (commit_gates/encoding_gate.py) | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 50 | D_GOV_CODE_QUALITY 代码质量治理: exemptzonefrontmatter门禁 / exempt_zone_frontmatter_gate ... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 51 | D_GOV_CODE_QUALITY 代码质量治理: filecopy门禁 / file_copy_gate (commit_gates/file_copy_gat... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 52 | D_GOV_CODE_QUALITY 代码质量治理: fileplacementttl门禁 / file_placement_ttl_gate (commit_ga... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 53 | D_GOV_CODE_QUALITY 代码质量治理: folder容量hardlimit门禁 / folder_capacity_hard_limit_gate... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 54 | D_GOV_CODE_QUALITY 代码质量治理: foreignchange门禁 / foreign_change_gate (commit_gates/for... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 55 | D_GOV_CODE_QUALITY 代码质量治理: forgedgwmarker门禁 / forged_gw_marker_gate (commit_gates/... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 56 | D_GOV_CODE_QUALITY 代码质量治理: 函数dup门禁 / function_dup_gate (commit_gates/function_du... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 57 | D_GOV_CODE_QUALITY 代码质量治理: Gitcall预算门禁 / git_call_budget_gate (commit_gates/git_... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 58 | D_GOV_CODE_QUALITY 代码质量治理: god类门禁 / god_class_gate (commit_gates/god_class_gate.py) | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 59 | D_GOV_CODE_QUALITY 代码质量治理: hardcodedurl门禁 / hardcoded_url_gate (commit_gates/hardc... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 60 | D_GOV_CODE_QUALITY 代码质量治理: heldoverlap门禁 / held_overlap_gate (commit_gates/held_ov... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 61 | D_GOV_CODE_QUALITY 代码质量治理: highcomplexity门禁 / high_complexity_gate (commit_gates/h... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 62 | D_GOV_CODE_QUALITY 代码质量治理: iduniqueness门禁 / id_uniqueness_gate (commit_gates/id_un... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 63 | D_GOV_CODE_QUALITY 代码质量治理: importdirection门禁 / import_direction_gate (commit_gates... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 64 | D_GOV_CODE_QUALITY 代码质量治理: 导入完整性门禁 / import_integrity_gate (commit_gates/impo... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 65 | D_GOV_CODE_QUALITY 代码质量治理: issueresolved完整性门禁 / issue_resolved_integrity_gate (... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 66 | D_GOV_CODE_QUALITY 代码质量治理: longparamlist门禁 / long_param_list_gate (commit_gates/lo... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 67 | D_GOV_CODE_QUALITY 代码质量治理: 手册onlypermanent门禁 / manual_only_permanent_gate (commi... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 68 | D_GOV_CODE_QUALITY 代码质量治理: MCP版本字段门禁 / mcp_version_field_gate (commit_gates/mc... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 69 | D_GOV_CODE_QUALITY 代码质量治理: 模块id一致性门禁 / module_id_consistency_gate (commit_gat... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 70 | D_GOV_CODE_QUALITY 代码质量治理: msg敞口门禁 / msg_exposure_gate (commit_gates/msg_exposur... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 71 | D_GOV_CODE_QUALITY 代码质量治理: msgstyle门禁 / msg_style_gate (commit_gates/msg_style_gat... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 72 | D_GOV_CODE_QUALITY 代码质量治理: mutableconstwithoutfinal门禁 / mutable_const_without_fina... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 73 | D_GOV_CODE_QUALITY 代码质量治理: 新文件依赖图门禁 / new_file_depgraph_gate (commit_gates/n... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 74 | D_GOV_CODE_QUALITY 代码质量治理: noimportsideeffect门禁 / no_import_side_effect_gate (comm... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 75 | D_GOV_CODE_QUALITY 代码质量治理: noqa验证门禁 / noqa_validation_gate (commit_gates/noqa_va... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 76 | D_GOV_CODE_QUALITY 代码质量治理: openwithoutwith门禁 / open_without_with_gate (commit_gate... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 77 | D_GOV_CODE_QUALITY 代码质量治理: 孤儿module门禁 / orphan_module_gate (commit_gates/orphan_... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 78 | D_GOV_CODE_QUALITY 代码质量治理: panorama对齐门禁 / panorama_alignment_gate (commit_gates/... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 79 | D_GOV_CODE_QUALITY 代码质量治理: permtrigger门禁 / perm_trigger_gate (commit_gates/perm_tr... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 80 | D_GOV_CODE_QUALITY 代码质量治理: precommitoffline门禁 / precommit_offline_gate (commit_gat... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 81 | D_GOV_CODE_QUALITY 代码质量治理: pureassertion门禁 / pure_assertion_gate (commit_gates/pur... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 82 | D_GOV_CODE_QUALITY 代码质量治理: pureshim门禁 / pure_shim_gate (commit_gates/pure_shim_gat... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 83 | D_GOV_CODE_QUALITY 代码质量治理: r5digitsuffix门禁 / r5_digit_suffix_gate (commit_gates/r5... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 84 | D_GOV_CODE_QUALITY 代码质量治理: 协调器健康门禁 / reconciler_health_gate (commit_gates/rec... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 85 | D_GOV_CODE_QUALITY 代码质量治理: relativepathliteral门禁 / relative_path_literal_gate (com... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 86 | D_GOV_CODE_QUALITY 代码质量治理: renamedepgraphsync门禁 / rename_depgraph_sync_gate (commi... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 87 | D_GOV_CODE_QUALITY 代码质量治理: 规则执行pairing门禁 / rule_execution_pairing_gate (commit... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 88 | D_GOV_CODE_QUALITY 代码质量治理: 规则fourway对齐门禁 / rule_four_way_alignment_gate (commi... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 89 | D_GOV_CODE_QUALITY 代码质量治理: rulingcommitverified门禁 / ruling_commit_verified_gate (c... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 90 | D_GOV_CODE_QUALITY 代码质量治理: rulingreference门禁 / ruling_reference_gate (commit_gates... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 91 | D_GOV_CODE_QUALITY 代码质量治理: 结构fileexists门禁 / schema_file_exists_gate (commit_gate... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 92 | D_GOV_CODE_QUALITY 代码质量治理: 脚本导入完整性门禁 / scripts_import_integrity_gate (commi... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 93 | D_GOV_CODE_QUALITY 代码质量治理: 会话required门禁 / session_required_gate (commit_gates/se... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 94 | D_GOV_CODE_QUALITY 代码质量治理: 快照漂移门禁 / snapshot_drift_gate (commit_gates/snapshot... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 95 | D_GOV_CODE_QUALITY 代码质量治理: ssotredefinition门禁 / ssot_redefinition_gate (commit_gat... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 96 | D_GOV_CODE_QUALITY 代码质量治理: tablename注册表门禁 / table_name_registry_gate (commit_ga... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 97 | D_GOV_CODE_QUALITY 代码质量治理: 测试源一致性门禁 / test_source_consistency_gate (commit_g... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 98 | D_GOV_CODE_QUALITY 代码质量治理: testscoverage门禁 / tests_coverage_gate (commit_gates/tes... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 99 | D_GOV_CODE_QUALITY 代码质量治理: 存活时间门禁 / ttl_gate (commit_gates/ttl_gate.py) | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 100 | D_GOV_CODE_QUALITY 代码质量治理: undefinedname门禁 / undefined_name_gate (commit_gates/und... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 101 | D_GOV_CODE_QUALITY 代码质量治理: unsafedictspread门禁 / unsafe_dict_spread_gate (commit_ga... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 102 | D_GOV_CODE_QUALITY 代码质量治理: vocabchain门禁 / vocab_chain_gate (commit_gates/vocab_cha... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 103 | D_GOV_CODE_QUALITY 代码质量治理: vocabhardcode门禁 / vocab_hardcode_gate (commit_gates/voc... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 104 | D_GOV_CODE_QUALITY 代码质量治理: zephyrenvdirect访问门禁 / zephyr_env_direct_access_gate (... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 105 | D_GOV_CODE_QUALITY 代码质量治理: 门禁自动registrar / gate_auto_registrar (rule_bridge/gate... | → | 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 106 | D_GOV_CODE_QUALITY 代码质量治理: 测试审计worktree运维遥测 / test_audit_worktree_ops_teleme... | → | 会话worktree / session_worktree (rule_bridge/session_work... | 测试依赖 / test_depends |
+| 107 | D_GOV_DRIFT 漂移检测: tamperproof审计 / tamper_proof_audit (gov_drift/tamper_pr... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 导入依赖 / import_depends |
+| 108 | D_GOV_OPS_RESILIENCE 运维弹性治理: 安全网关基类 / D_COMPLIANCE — Governance & Compliance La... | → | 合规规则 / compliance_rule (rule_enforcement/compliance_r... | 导入依赖 / import_depends |
+| 109 | D_GOV_RULE 规则治理: 规则引擎模块集 / Rule Engine Package (rule_engine/__init_... | → | 规则影子运行器 / rule_shadow_runner (rule_engine/rule_sha... | config_depends / config_depends |
+| 110 | D_GOV_SCRIPTS 脚本治理: 并发提交测试 / concurrent_commit_test (repair/concurrent_... | → | Git提交网关 / git_commit_gateway (rule_bridge/git_commit_... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

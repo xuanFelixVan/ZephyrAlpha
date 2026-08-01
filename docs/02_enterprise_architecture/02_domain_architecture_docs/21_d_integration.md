@@ -53,41 +53,41 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_integration_behavioral_admission_admission_response_py["(生产态 / production) 准入响应 / admission_response<br/>准入响应，behavioral_admission的功能模块。<br/>文件: behavioral_admission/admission_response.py"]
-    src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py["(生产态 / production) Degradation Spiral Detector — 模型幻觉-容量正反馈 / degradation_spiral_detector<br/>Degradation Spiral Detector — 模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29)<br/>文件: budget_enforcer/degradation_spiral_detector.py"]
+    src_zephyr_integration_behavioral_admission_admission_response_py["(生产态 / production) 准入响应 / admission_response<br/>准入响应，供GovernanceServer;run_all.py使用<br/>文件: behavioral_admission/admission_response.py"]
+    src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py["(生产态 / production) 退化螺旋检测器 / degradation_spiral_detector<br/>Degradation Spiral Detector — 模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29)<br/>文件: budget_enforcer/degradation_spiral_detector.py"]
     src_zephyr_integration_llm_bridge_py["(生产态 / production) 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成 / llm_bridge<br/>接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成。<br/>文件: integration/llm_bridge.py"]
-    src_zephyr_integration_mcp_gateway_server_py["(生产态 / production) MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phas / gateway_server<br/>MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。<br/>文件: mcp/gateway_server.py"]
-    src_zephyr_integration_mcp_handoff_auto_loader_py["(生产态 / production) Handoff 自动加载器——从 handoff 包恢复 AI session  / handoff_auto_loader<br/>Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。<br/>文件: mcp/handoff_auto_loader.py"]
-    src_zephyr_integration_mcp_prompt_provider_py["(生产态 / production) MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关 / prompt_provider<br/>MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。<br/>文件: mcp/prompt_provider.py"]
-    src_zephyr_integration_mcp_resource_provider_py["(生产态 / production) MCP Resource 提供者（MOD-INF-013 Phase 6 — 关 / resource_provider<br/>MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。<br/>文件: mcp/resource_provider.py"]
+    src_zephyr_integration_mcp_gateway_server_py["(生产态 / production) 网关服务端 / gateway_server<br/>MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。<br/>文件: mcp/gateway_server.py"]
+    src_zephyr_integration_mcp_handoff_auto_loader_py["(生产态 / production) handoff自动加载器 / handoff_auto_loader<br/>Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。<br/>文件: mcp/handoff_auto_loader.py"]
+    src_zephyr_integration_mcp_prompt_provider_py["(生产态 / production) 提示提供器 / prompt_provider<br/>MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。<br/>文件: mcp/prompt_provider.py"]
+    src_zephyr_integration_mcp_resource_provider_py["(生产态 / production) 资源提供器 / resource_provider<br/>MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。<br/>文件: mcp/resource_provider.py"]
     src_zephyr_integration_mcp_rule_discovery_server_py["(生产态 / production) 规则discovery服务端 / RuleDiscoveryServer — MCP Server for rule discovery（#ARCH-GO<br/>规则discovery服务端。RuleDiscoveryServer — MCP Server for rule discovery（#ARCH-GOV-CONVERGENCE-META Phase 3.2b）<br/>文件: mcp/rule_discovery_server.py"]
-    src_zephyr_integration_mcp_server_py["(生产态 / production) AssetInventory MCP Server — MOD-INF-026  / mcp_server<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>文件: integration/mcp_server.py"]
-    src_zephyr_integration_pipeline_orchestrator_py["(生产态 / production) PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orchestrator<br/>PipelineOrchestrator — M1-M11 管线协调器<br/>文件: integration/pipeline_orchestrator.py"]
-    src_zephyr_integration_ports_py["(生产态 / production) ports / Protocol-based interface layer for pipeline->mcp dependency <br/>ports，integration的功能模块。<br/>文件: integration/ports.py"]
+    src_zephyr_integration_mcp_server_py["(生产态 / production) MCP服务端 / mcp_server<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>文件: integration/mcp_server.py"]
+    src_zephyr_integration_pipeline_orchestrator_py["(生产态 / production) 管线编排器 / pipeline_orchestrator<br/>PipelineOrchestrator — M1-M11 管线协调器<br/>文件: integration/pipeline_orchestrator.py"]
+    src_zephyr_integration_ports_py["(生产态 / production) 端口 / Protocol-based interface layer for pipeline->mcp dependency <br/>端口，提供findrelevantblueprint等方法，供zephyr.integration.pipeli使用<br/>文件: integration/ports.py"]
     src_zephyr_integration_shared_contracts_errors_contract_violation_error_py["(生产态 / production) 契约违规错误 / contract_violation_error<br/>契约违规错误，errors的异常，定义本模块的异常类型。<br/>文件: errors/contract_violation_error.py"]
-    src_zephyr_integration_shared_contracts_errors_data_quality_error_py["(生产态 / production) CTR-ERR-001: DataQualityError / 行情质量门禁不通 / data_quality_error<br/>CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py"]
+    src_zephyr_integration_shared_contracts_errors_data_quality_error_py["(生产态 / production) 数据质量错误 / data_quality_error<br/>CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py"]
     src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py["(生产态 / production) 执行拒绝错误 / execution_rejection_error<br/>执行拒绝错误，errors的异常，定义本模块的异常类型。<br/>文件: errors/execution_rejection_error.py"]
-    src_zephyr_integration_shared_contracts_errors_factor_computation_error_py["(生产态 / production) CTR-ERR-002: FactorComputationError / 因子 / factor_computation_error<br/>CTR-ERR-002: FactorComputationError / 因子计算失败错误<br/>文件: errors/factor_computation_error.py"]
+    src_zephyr_integration_shared_contracts_errors_factor_computation_error_py["(生产态 / production) 因子computation错误 / factor_computation_error<br/>CTR-ERR-002: FactorComputationError / 因子计算失败错误<br/>文件: errors/factor_computation_error.py"]
     src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py["(生产态 / production) 风险限制违规错误 / risk_limit_violation_error<br/>风险限制违规错误，errors的异常，定义本模块的异常类型。<br/>文件: errors/risk_limit_violation_error.py"]
-    src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py["(生产态 / production) 信号退化警告 / signal_degradation_warning<br/>信号退化警告，errors的功能模块。<br/>文件: errors/signal_degradation_warning.py"]
+    src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py["(生产态 / production) 信号退化警告 / signal_degradation_warning<br/>信号退化警告，供zephyr.integration.shared.cont使用<br/>文件: errors/signal_degradation_warning.py"]
     src_zephyr_integration_shared_events_dlq_bridge_py["(生产态 / production) dlq桥接 / CT-DLQ-001: DeadLetterQueue -> System Event Bus integration <br/>dlq桥接。CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.<br/>文件: events/dlq_bridge.py"]
-    src_zephyr_integration_shared_events_event_bus_upgrade_py["(生产态 / production) EventBus Upgrade — 事件总线升级 (M-16) / event_bus_upgrade<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>文件: events/event_bus_upgrade.py"]
-    src_zephyr_integration_shared_events_event_schemas_py["(生产态 / production) 事件schemas.py —— Observer 事件体 Pydanti / event_schemas<br/>— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复）<br/>文件: events/event_schemas.py"]
-    src_zephyr_integration_shared_events_upgrade_strategy_py["(生产态 / production) EventBus 升级策略引擎 / upgrade_strategy<br/>EventBus 升级策略引擎<br/>文件: events/upgrade_strategy.py"]
-    src_zephyr_integration_vector_memory_bm25_index_py["(生产态 / production) BM25Index — MOD-INF-011 稀疏检索组件 / bm25_index<br/>BM25Index — MOD-INF-011 稀疏检索组件<br/>文件: vector_memory/bm25_index.py"]
+    src_zephyr_integration_shared_events_event_bus_upgrade_py["(生产态 / production) 事件总线upgrade / event_bus_upgrade<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>文件: events/event_bus_upgrade.py"]
+    src_zephyr_integration_shared_events_event_schemas_py["(生产态 / production) 事件模式 / event_schemas<br/>— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复）<br/>文件: events/event_schemas.py"]
+    src_zephyr_integration_shared_events_upgrade_strategy_py["(生产态 / production) upgrade策略 / upgrade_strategy<br/>EventBus 升级策略引擎<br/>文件: events/upgrade_strategy.py"]
+    src_zephyr_integration_vector_memory_bm25_index_py["(生产态 / production) bm25索引 / bm25_index<br/>BM25Index — MOD-INF-011 稀疏检索组件<br/>文件: vector_memory/bm25_index.py"]
     src_zephyr_integration_vector_memory_cache_layer_py["(生产态 / production) 缓存层 / cache_layer<br/>缓存层，vector_memory的缓存，暂存常用数据加速访问。<br/>文件: vector_memory/cache_layer.py"]
-    src_zephyr_integration_vector_memory_context_ingest_py["(生产态 / production) VMS 上下文注入器 — ingestcontext() 消费者 / context_ingest<br/>VMS 上下文注入器 — ingest_context() 消费者<br/>文件: vector_memory/context_ingest.py"]
-    src_zephyr_integration_vector_memory_cross_collection_retriever_py["(生产态 / production) CrossCollectionRetriever — MOD-INF-011 跨 / cross_collection_retriever<br/>CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索<br/>文件: vector_memory/cross_collection_retriever.py"]
-    src_zephyr_integration_vector_memory_delegated_vector_memory_py["(生产态 / production) DelegatedVectorMemory — VectorMemoryBase / delegated_vector_memory<br/>DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器<br/>文件: vector_memory/delegated_vector_memory.py"]
+    src_zephyr_integration_vector_memory_context_ingest_py["(生产态 / production) 上下文ingest / context_ingest<br/>VMS 上下文注入器 — ingest_context() 消费者<br/>文件: vector_memory/context_ingest.py"]
+    src_zephyr_integration_vector_memory_cross_collection_retriever_py["(生产态 / production) 跨collectionretriever / cross_collection_retriever<br/>CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索<br/>文件: vector_memory/cross_collection_retriever.py"]
+    src_zephyr_integration_vector_memory_delegated_vector_memory_py["(生产态 / production) delegated向量记忆 / delegated_vector_memory<br/>DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器<br/>文件: vector_memory/delegated_vector_memory.py"]
     src_zephyr_integration_vector_memory_design_principles_py["(生产态 / production) 设计原则 / design_principles<br/>设计原则，主要提供校验维度、校验块策略、校验存活时间等功能，供collection_manager; in_process使用<br/>文件: vector_memory/design_principles.py"]
     src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py["(生产态 / production) ChromDB -> FAISS + SQLite WAL 数据迁移脚本 / migrate_chroma_to_faiss<br/>ChromDB -> FAISS + SQLite WAL 数据迁移脚本<br/>文件: vector_memory/migrate_chroma_to_faiss.py"]
-    src_zephyr_integration_vector_memory_ollama_embedding_py["(生产态 / production) ollama嵌入 / ollama_embedding<br/>ollama嵌入，vector_memory的功能模块。<br/>文件: vector_memory/ollama_embedding.py"]
-    src_zephyr_integration_vector_memory_vms_memory_backend_py["(生产态 / production) VMSMemoryBackend — UnifiedMemoryAPI 的 VM / vms_memory_backend<br/>VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器<br/>文件: vector_memory/vms_memory_backend.py"]
-    src_zephyr_shared_contracts_approval_types_py["(生产态 / production) G-CT-004 — ApprovalRequest Pydantic V2 B / approval_types<br/>G-CT-004 — ApprovalRequest Pydantic V2 BaseModel 审批请求数据结构.<br/>文件: contracts/approval_types.py"]
-    src_zephyr_shared_contracts_rollback_types_py["(生产态 / production) G-CT-003 — RollbackResult Pydantic V2 Ba / rollback_types<br/>G-CT-003 — RollbackResult Pydantic V2 BaseModel 回滚结果数据结构.<br/>文件: contracts/rollback_types.py"]
+    src_zephyr_integration_vector_memory_ollama_embedding_py["(生产态 / production) ollama嵌入 / ollama_embedding<br/>ollama嵌入，供vector-memory.__init__;embeddi使用<br/>文件: vector_memory/ollama_embedding.py"]
+    src_zephyr_integration_vector_memory_vms_memory_backend_py["(生产态 / production) vms记忆后端 / vms_memory_backend<br/>VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器<br/>文件: vector_memory/vms_memory_backend.py"]
+    src_zephyr_shared_contracts_approval_types_py["(生产态 / production) 审批类型定义 / approval_types<br/>G-CT-004 — ApprovalRequest Pydantic V2 BaseModel 审批请求数据结构.<br/>文件: contracts/approval_types.py"]
+    src_zephyr_shared_contracts_rollback_types_py["(生产态 / production) 回滚类型定义 / rollback_types<br/>G-CT-003 — RollbackResult Pydantic V2 BaseModel 回滚结果数据结构.<br/>文件: contracts/rollback_types.py"]
     src_zephyr_shared_contracts_runtime_types_py["(生产态 / production) 运行时类型定义 / runtime_types<br/>运行时类型定义，contracts的配置，管理配置项的读取和校验。<br/>文件: contracts/runtime_types.py"]
-    src_zephyr_shared_evaluation_evals_py["(生产态 / production) evals / evals<br/>evals，evaluation的功能模块。<br/>文件: evaluation/evals.py"]
-    src_zephyr_shared_resilience_durable_execution_py["(生产态 / production) durable执行 / durable_execution<br/>durable执行，韧性的功能模块。<br/>文件: resilience/durable_execution.py"]
+    src_zephyr_shared_evaluation_evals_py["(生产态 / production) 评估 / evals<br/>评估，供tests使用<br/>文件: evaluation/evals.py"]
+    src_zephyr_shared_resilience_durable_execution_py["(生产态 / production) durable执行 / durable_execution<br/>durable执行，供tests使用<br/>文件: resilience/durable_execution.py"]
     src_zephyr_shared_versioning_version_negotiation_py["(生产态 / production) 版本negotiation / version_negotiation<br/>版本negotiation，版本的结构定义，定义数据的结构和约束。<br/>文件: versioning/version_negotiation.py"]
     src_zephyr_integration_behavioral_admission_admission_response_py ~~~ src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py
     src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py ~~~ src_zephyr_integration_llm_bridge_py
@@ -124,27 +124,27 @@ flowchart TD
     src_zephyr_shared_contracts_runtime_types_py ~~~ src_zephyr_shared_evaluation_evals_py
     src_zephyr_shared_evaluation_evals_py ~~~ src_zephyr_shared_resilience_durable_execution_py
     src_zephyr_shared_resilience_durable_execution_py ~~~ src_zephyr_shared_versioning_version_negotiation_py
-    src_zephyr_integration_local_model_cache_layer_py["(生产态 / production) CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU / cache_layer<br/>CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU<br/>文件: local_model/cache_layer.py"]
-    src_zephyr_integration_local_model_local_model_scheduler_py["(生产态 / production) LocalModelScheduler — L2 本地模型 24/7 调度循环 / local_model_scheduler<br/>LocalModelScheduler — L2 本地模型 24/7 调度循环<br/>文件: local_model/local_model_scheduler.py"]
-    src_zephyr_integration_local_model_ollama_embedding_py["(生产态 / production) OllamaEmbedder — 通过 Ollama HTTP API 生成文本 / ollama_embedding<br/>OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入<br/>文件: local_model/ollama_embedding.py"]
-    src_zephyr_integration_mcp_audit_logger_py["(生产态 / production) MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 / audit_logger<br/>MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。<br/>文件: mcp/audit_logger.py"]
+    src_zephyr_integration_local_model_cache_layer_py["(生产态 / production) 缓存层 / cache_layer<br/>CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU<br/>文件: local_model/cache_layer.py"]
+    src_zephyr_integration_local_model_local_model_scheduler_py["(生产态 / production) 本地模型调度器 / local_model_scheduler<br/>LocalModelScheduler — L2 本地模型 24/7 调度循环<br/>文件: local_model/local_model_scheduler.py"]
+    src_zephyr_integration_local_model_ollama_embedding_py["(生产态 / production) ollama嵌入 / ollama_embedding<br/>OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入<br/>文件: local_model/ollama_embedding.py"]
+    src_zephyr_integration_mcp_audit_logger_py["(生产态 / production) 审计日志器 / audit_logger<br/>MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。<br/>文件: mcp/audit_logger.py"]
     src_zephyr_integration_mcp_blueprint_search_server_py["(生产态 / production) 蓝图search服务端 / BlueprintSearchServer — MCP Server for blueprint discovery<br/>蓝图search服务端。BlueprintSearchServer — MCP Server for blueprint discovery<br/>文件: mcp/blueprint_search_server.py"]
-    src_zephyr_integration_mcp_doc_guard_server_py["(生产态 / production) DocGuardServer: 跨会话交接协议服务 MCP Server / doc_guard_server<br/>DocGuardServer: 跨会话交接协议服务 MCP Server<br/>文件: mcp/doc_guard_server.py"]
-    src_zephyr_integration_mcp_gate_engine_server_py["(生产态 / production) GateEngineServer: 门禁裁决服务 MCP Server / gate_engine_server<br/>GateEngineServer: 门禁裁决服务 MCP Server<br/>文件: mcp/gate_engine_server.py"]
-    src_zephyr_integration_mcp_rate_limiter_py["(生产态 / production) MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step / rate_limiter<br/>MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。<br/>文件: mcp/rate_limiter.py"]
-    src_zephyr_integration_mcp_sandbox_server_py["(生产态 / production) MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 / sandbox_server<br/>MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。<br/>文件: mcp/sandbox_server.py"]
-    src_zephyr_integration_mcp_sentinel_server_py["(生产态 / production) SentinelServer: 意图路由哨兵 MCP Server / sentinel_server<br/>SentinelServer: 意图路由哨兵 MCP Server<br/>文件: mcp/sentinel_server.py"]
+    src_zephyr_integration_mcp_doc_guard_server_py["(生产态 / production) doc守卫服务端 / doc_guard_server<br/>DocGuardServer: 跨会话交接协议服务 MCP Server<br/>文件: mcp/doc_guard_server.py"]
+    src_zephyr_integration_mcp_gate_engine_server_py["(生产态 / production) 门禁引擎服务端 / gate_engine_server<br/>GateEngineServer: 门禁裁决服务 MCP Server<br/>文件: mcp/gate_engine_server.py"]
+    src_zephyr_integration_mcp_rate_limiter_py["(生产态 / production) 速率限制器 / rate_limiter<br/>MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。<br/>文件: mcp/rate_limiter.py"]
+    src_zephyr_integration_mcp_sandbox_server_py["(生产态 / production) 沙箱服务端 / sandbox_server<br/>MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。<br/>文件: mcp/sandbox_server.py"]
+    src_zephyr_integration_mcp_sentinel_server_py["(生产态 / production) 哨兵服务端 / sentinel_server<br/>SentinelServer: 意图路由哨兵 MCP Server<br/>文件: mcp/sentinel_server.py"]
     src_zephyr_integration_mcp_task_manager_server_py["(生产态 / production) 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server<br/>任务管理器服务端。ZephyrAlpha MCP Task Manager Server<br/>文件: mcp/task_manager_server.py"]
-    src_zephyr_integration_mcp_telemetry_server_py["(生产态 / production) ZephyrAlpha MCP Telemetry Server — 系统可观测 / telemetry_server<br/>ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口<br/>文件: mcp/telemetry_server.py"]
-    src_zephyr_integration_mcp_vector_memory_server_py["(生产态 / production) VectorMemoryServer: VMS 向量记忆 MCP Server  / vector_memory_server<br/>VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 v0.7.0)<br/>文件: mcp/vector_memory_server.py"]
-    src_zephyr_integration_vector_memory_bridge_layer_py["(生产态 / production) BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 / bridge_layer<br/>BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接<br/>文件: vector_memory/bridge_layer.py"]
+    src_zephyr_integration_mcp_telemetry_server_py["(生产态 / production) 遥测服务端 / telemetry_server<br/>ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口<br/>文件: mcp/telemetry_server.py"]
+    src_zephyr_integration_mcp_vector_memory_server_py["(生产态 / production) 向量记忆服务端 / vector_memory_server<br/>VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 v0.7.0)<br/>文件: mcp/vector_memory_server.py"]
+    src_zephyr_integration_vector_memory_bridge_layer_py["(生产态 / production) 桥接层 / bridge_layer<br/>BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接<br/>文件: vector_memory/bridge_layer.py"]
     src_zephyr_integration_vector_memory_collection_schemas_py["(生产态 / production) 收集模式 / collection_schemas<br/>收集模式，vector_memory的采集器，从多处收集数据。<br/>文件: vector_memory/collection_schemas.py"]
-    src_zephyr_integration_vector_memory_faiss_collection_manager_py["(生产态 / production) FAISSCollectionManager — FAISS HNSW/IVF+ / faiss_collection_manager<br/>FAISSCollectionManager — FAISS HNSW/IVF+PQ 8 Collection 全生命周期管理<br/>文件: vector_memory/faiss_collection_manager.py"]
+    src_zephyr_integration_vector_memory_faiss_collection_manager_py["(生产态 / production) faisscollection管理器 / faiss_collection_manager<br/>FAISSCollectionManager — FAISS HNSW/IVF+PQ 8 Collection 全生命周期管理<br/>文件: vector_memory/faiss_collection_manager.py"]
     src_zephyr_integration_vector_memory_hybrid_retriever_py["(生产态 / production) HybridRetriever — MOD-INF-011 混合检索架构 / hybrid_retriever<br/>HybridRetriever — MOD-INF-011 混合检索架构<br/>文件: vector_memory/hybrid_retriever.py"]
-    src_zephyr_integration_vector_memory_in_memory_fake_vms_py["(生产态 / production) InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎 / in_memory_fake_vms<br/>InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎<br/>文件: vector_memory/in_memory_fake_vms.py"]
-    src_zephyr_integration_vector_memory_interface_py["(生产态 / production) VMS — Vector Memory Service 接口基类 / interface<br/>VMS — Vector Memory Service 接口基类<br/>文件: vector_memory/interface.py"]
-    src_zephyr_integration_vector_memory_provenance_enforcer_py["(生产态 / production) ProvenanceEnforcer — MOD-INF-011 写入溯源强制执 / provenance_enforcer<br/>ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行<br/>文件: vector_memory/provenance_enforcer.py"]
-    src_zephyr_integration_vector_memory_sqlite_metadata_store_py["(生产态 / production) SQLiteMetadataStore — VMS 元数据存储 (SQLite  / sqlite_metadata_store<br/>SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 BM25)<br/>文件: vector_memory/sqlite_metadata_store.py"]
+    src_zephyr_integration_vector_memory_in_memory_fake_vms_py["(生产态 / production) in记忆fakevms / in_memory_fake_vms<br/>InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎<br/>文件: vector_memory/in_memory_fake_vms.py"]
+    src_zephyr_integration_vector_memory_interface_py["(生产态 / production) 接口 / interface<br/>VMS — Vector Memory Service 接口基类<br/>文件: vector_memory/interface.py"]
+    src_zephyr_integration_vector_memory_provenance_enforcer_py["(生产态 / production) 溯源执行器 / provenance_enforcer<br/>ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行<br/>文件: vector_memory/provenance_enforcer.py"]
+    src_zephyr_integration_vector_memory_sqlite_metadata_store_py["(生产态 / production) sqlitemetadata存储 / sqlite_metadata_store<br/>SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 BM25)<br/>文件: vector_memory/sqlite_metadata_store.py"]
     src_zephyr_integration_vector_memory_vms_schemas_py["(生产态 / production) VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 / vms_schemas<br/>VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约<br/>文件: vector_memory/vms_schemas.py"]
     src_zephyr_shared_contracts_protocols_py["(生产态 / production) 协议 / Structural Protocol interfaces for cross-module contracts.<br/>协议。Structural Protocol interfaces for cross-module contracts.<br/>文件: contracts/protocols.py"]
     src_zephyr_integration_local_model_cache_layer_py ~~~ src_zephyr_integration_local_model_local_model_scheduler_py
@@ -169,11 +169,11 @@ flowchart TD
     src_zephyr_integration_vector_memory_provenance_enforcer_py ~~~ src_zephyr_integration_vector_memory_sqlite_metadata_store_py
     src_zephyr_integration_vector_memory_sqlite_metadata_store_py ~~~ src_zephyr_integration_vector_memory_vms_schemas_py
     src_zephyr_integration_vector_memory_vms_schemas_py ~~~ src_zephyr_shared_contracts_protocols_py
-    src_zephyr_integration_local_model_embedding_router_py["(生产态 / production) EmbeddingRouter — MOD-INF-011 双嵌入维度路由 / embedding_router<br/>EmbeddingRouter — MOD-INF-011 双嵌入维度路由<br/>文件: local_model/embedding_router.py"]
+    src_zephyr_integration_local_model_embedding_router_py["(生产态 / production) 嵌入路由器 / embedding_router<br/>EmbeddingRouter — MOD-INF-011 双嵌入维度路由<br/>文件: local_model/embedding_router.py"]
     src_zephyr_integration_local_model_ollama_chat_py["(生产态 / production) OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_chat<br/>OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理<br/>文件: local_model/ollama_chat.py"]
-    src_zephyr_integration_mcp_base_server_py["(生产态 / production) BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协 / _base_server<br/>BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类<br/>文件: mcp/_base_server.py"]
-    src_zephyr_integration_vector_memory_collection_manager_py["(生产态 / production) CollectionManager — MOD-INF-011 八大 Colle / collection_manager<br/>CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理<br/>文件: vector_memory/collection_manager.py"]
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py["(生产态 / production) InProcessVectorMemory — MOD-INF-011 VMS  / in_process_vector_memory<br/>InProcessVectorMemory — MOD-INF-011 VMS 统一入口<br/>文件: vector_memory/in_process_vector_memory.py"]
+    src_zephyr_integration_mcp_base_server_py["(生产态 / production) 基类服务端 / _base_server<br/>BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类<br/>文件: mcp/_base_server.py"]
+    src_zephyr_integration_vector_memory_collection_manager_py["(生产态 / production) 收集管理器 / collection_manager<br/>CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理<br/>文件: vector_memory/collection_manager.py"]
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py["(生产态 / production) 入进程向量记忆 / in_process_vector_memory<br/>InProcessVectorMemory — MOD-INF-011 VMS 统一入口<br/>文件: vector_memory/in_process_vector_memory.py"]
     src_zephyr_integration_vector_memory_vms_errors_py["(生产态 / production) vms错误 / vms_errors<br/>vms错误，vector_memory的异常，定义本模块的异常类型。<br/>文件: vector_memory/vms_errors.py"]
     src_zephyr_integration_local_model_embedding_router_py ~~~ src_zephyr_integration_local_model_ollama_chat_py
     src_zephyr_integration_local_model_ollama_chat_py ~~~ src_zephyr_integration_mcp_base_server_py
@@ -181,11 +181,11 @@ flowchart TD
     src_zephyr_integration_vector_memory_collection_manager_py ~~~ src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py ~~~ src_zephyr_integration_vector_memory_vms_errors_py
     src_zephyr_integration_mcp_error_codes_py["(生产态 / production) MCP 错误码集中注册（MOD-INF-013 §3.4）。 / error_codes<br/>MCP 错误码集中注册（MOD-INF-013 §3.4）。<br/>文件: mcp/error_codes.py"]
-    src_zephyr_integration_vector_memory_chunk_strategy_router_py["(生产态 / production) ChunkStrategyRouter — MOD-INF-011 分块策略调度 / chunk_strategy_router<br/>ChunkStrategyRouter — MOD-INF-011 分块策略调度<br/>文件: vector_memory/chunk_strategy_router.py"]
-    src_zephyr_integration_vector_memory_in_memory_memory_backend_py["(生产态 / production) DegradedVMSBackend — MOD-INF-011 降级兜底 / in_memory_memory_backend<br/>DegradedVMSBackend — MOD-INF-011 降级兜底<br/>文件: vector_memory/in_memory_memory_backend.py"]
-    src_zephyr_integration_vector_memory_index_health_monitor_py["(生产态 / production) IndexHealthMonitor — MOD-INF-011 索引健康自检与 / index_health_monitor<br/>IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复<br/>文件: vector_memory/index_health_monitor.py"]
-    src_zephyr_integration_vector_memory_retrieval_feedback_py["(生产态 / production) RetrievalFeedback — MOD-INF-011 FLE 检索质量 / retrieval_feedback<br/>RetrievalFeedback — MOD-INF-011 FLE 检索质量消费<br/>文件: vector_memory/retrieval_feedback.py"]
-    src_zephyr_integration_vector_memory_vector_bridge_py["(生产态 / production) VectorBridge — MOD-INF-011 CE/KB 外部集成适配器 / vector_bridge<br/>VectorBridge — MOD-INF-011 CE/KB 外部集成适配器<br/>文件: vector_memory/vector_bridge.py"]
+    src_zephyr_integration_vector_memory_chunk_strategy_router_py["(生产态 / production) 块策略路由器 / chunk_strategy_router<br/>ChunkStrategyRouter — MOD-INF-011 分块策略调度<br/>文件: vector_memory/chunk_strategy_router.py"]
+    src_zephyr_integration_vector_memory_in_memory_memory_backend_py["(生产态 / production) 入记忆记忆后端 / in_memory_memory_backend<br/>DegradedVMSBackend — MOD-INF-011 降级兜底<br/>文件: vector_memory/in_memory_memory_backend.py"]
+    src_zephyr_integration_vector_memory_index_health_monitor_py["(生产态 / production) 索引健康监控 / index_health_monitor<br/>IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复<br/>文件: vector_memory/index_health_monitor.py"]
+    src_zephyr_integration_vector_memory_retrieval_feedback_py["(生产态 / production) retrieval反馈 / retrieval_feedback<br/>RetrievalFeedback — MOD-INF-011 FLE 检索质量消费<br/>文件: vector_memory/retrieval_feedback.py"]
+    src_zephyr_integration_vector_memory_vector_bridge_py["(生产态 / production) 向量桥接 / vector_bridge<br/>VectorBridge — MOD-INF-011 CE/KB 外部集成适配器<br/>文件: vector_memory/vector_bridge.py"]
     src_zephyr_integration_vector_memory_chunk_strategy_router_py ~~~ src_zephyr_integration_vector_memory_in_memory_memory_backend_py
     src_zephyr_integration_vector_memory_in_memory_memory_backend_py ~~~ src_zephyr_integration_vector_memory_index_health_monitor_py
     src_zephyr_integration_vector_memory_index_health_monitor_py ~~~ src_zephyr_integration_vector_memory_retrieval_feedback_py
@@ -311,41 +311,41 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_integration_behavioral_admission_admission_response_py["(生产态 / production) 准入响应 / admission_response<br/>准入响应，behavioral_admission的功能模块。<br/>文件: behavioral_admission/admission_response.py"]
-    src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py["(生产态 / production) Degradation Spiral Detector — 模型幻觉-容量正反馈 / degradation_spiral_detector<br/>Degradation Spiral Detector — 模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29)<br/>文件: budget_enforcer/degradation_spiral_detector.py"]
+    src_zephyr_integration_behavioral_admission_admission_response_py["(生产态 / production) 准入响应 / admission_response<br/>准入响应，供GovernanceServer;run_all.py使用<br/>文件: behavioral_admission/admission_response.py"]
+    src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py["(生产态 / production) 退化螺旋检测器 / degradation_spiral_detector<br/>Degradation Spiral Detector — 模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29)<br/>文件: budget_enforcer/degradation_spiral_detector.py"]
     src_zephyr_integration_llm_bridge_py["(生产态 / production) 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成 / llm_bridge<br/>接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成。<br/>文件: integration/llm_bridge.py"]
-    src_zephyr_integration_mcp_gateway_server_py["(生产态 / production) MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phas / gateway_server<br/>MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。<br/>文件: mcp/gateway_server.py"]
-    src_zephyr_integration_mcp_handoff_auto_loader_py["(生产态 / production) Handoff 自动加载器——从 handoff 包恢复 AI session  / handoff_auto_loader<br/>Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。<br/>文件: mcp/handoff_auto_loader.py"]
-    src_zephyr_integration_mcp_prompt_provider_py["(生产态 / production) MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关 / prompt_provider<br/>MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。<br/>文件: mcp/prompt_provider.py"]
-    src_zephyr_integration_mcp_resource_provider_py["(生产态 / production) MCP Resource 提供者（MOD-INF-013 Phase 6 — 关 / resource_provider<br/>MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。<br/>文件: mcp/resource_provider.py"]
+    src_zephyr_integration_mcp_gateway_server_py["(生产态 / production) 网关服务端 / gateway_server<br/>MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。<br/>文件: mcp/gateway_server.py"]
+    src_zephyr_integration_mcp_handoff_auto_loader_py["(生产态 / production) handoff自动加载器 / handoff_auto_loader<br/>Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。<br/>文件: mcp/handoff_auto_loader.py"]
+    src_zephyr_integration_mcp_prompt_provider_py["(生产态 / production) 提示提供器 / prompt_provider<br/>MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。<br/>文件: mcp/prompt_provider.py"]
+    src_zephyr_integration_mcp_resource_provider_py["(生产态 / production) 资源提供器 / resource_provider<br/>MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）。<br/>文件: mcp/resource_provider.py"]
     src_zephyr_integration_mcp_rule_discovery_server_py["(生产态 / production) 规则discovery服务端 / RuleDiscoveryServer — MCP Server for rule discovery（#ARCH-GO<br/>规则discovery服务端。RuleDiscoveryServer — MCP Server for rule discovery（#ARCH-GOV-CONVERGENCE-META Phase 3.2b）<br/>文件: mcp/rule_discovery_server.py"]
-    src_zephyr_integration_mcp_server_py["(生产态 / production) AssetInventory MCP Server — MOD-INF-026  / mcp_server<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>文件: integration/mcp_server.py"]
-    src_zephyr_integration_pipeline_orchestrator_py["(生产态 / production) PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orchestrator<br/>PipelineOrchestrator — M1-M11 管线协调器<br/>文件: integration/pipeline_orchestrator.py"]
-    src_zephyr_integration_ports_py["(生产态 / production) ports / Protocol-based interface layer for pipeline->mcp dependency <br/>ports，integration的功能模块。<br/>文件: integration/ports.py"]
+    src_zephyr_integration_mcp_server_py["(生产态 / production) MCP服务端 / mcp_server<br/>AssetInventory MCP Server — MOD-INF-026 蓝图 §21<br/>文件: integration/mcp_server.py"]
+    src_zephyr_integration_pipeline_orchestrator_py["(生产态 / production) 管线编排器 / pipeline_orchestrator<br/>PipelineOrchestrator — M1-M11 管线协调器<br/>文件: integration/pipeline_orchestrator.py"]
+    src_zephyr_integration_ports_py["(生产态 / production) 端口 / Protocol-based interface layer for pipeline->mcp dependency <br/>端口，提供findrelevantblueprint等方法，供zephyr.integration.pipeli使用<br/>文件: integration/ports.py"]
     src_zephyr_integration_shared_contracts_errors_contract_violation_error_py["(生产态 / production) 契约违规错误 / contract_violation_error<br/>契约违规错误，errors的异常，定义本模块的异常类型。<br/>文件: errors/contract_violation_error.py"]
-    src_zephyr_integration_shared_contracts_errors_data_quality_error_py["(生产态 / production) CTR-ERR-001: DataQualityError / 行情质量门禁不通 / data_quality_error<br/>CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py"]
+    src_zephyr_integration_shared_contracts_errors_data_quality_error_py["(生产态 / production) 数据质量错误 / data_quality_error<br/>CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py"]
     src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py["(生产态 / production) 执行拒绝错误 / execution_rejection_error<br/>执行拒绝错误，errors的异常，定义本模块的异常类型。<br/>文件: errors/execution_rejection_error.py"]
-    src_zephyr_integration_shared_contracts_errors_factor_computation_error_py["(生产态 / production) CTR-ERR-002: FactorComputationError / 因子 / factor_computation_error<br/>CTR-ERR-002: FactorComputationError / 因子计算失败错误<br/>文件: errors/factor_computation_error.py"]
+    src_zephyr_integration_shared_contracts_errors_factor_computation_error_py["(生产态 / production) 因子computation错误 / factor_computation_error<br/>CTR-ERR-002: FactorComputationError / 因子计算失败错误<br/>文件: errors/factor_computation_error.py"]
     src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py["(生产态 / production) 风险限制违规错误 / risk_limit_violation_error<br/>风险限制违规错误，errors的异常，定义本模块的异常类型。<br/>文件: errors/risk_limit_violation_error.py"]
-    src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py["(生产态 / production) 信号退化警告 / signal_degradation_warning<br/>信号退化警告，errors的功能模块。<br/>文件: errors/signal_degradation_warning.py"]
+    src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py["(生产态 / production) 信号退化警告 / signal_degradation_warning<br/>信号退化警告，供zephyr.integration.shared.cont使用<br/>文件: errors/signal_degradation_warning.py"]
     src_zephyr_integration_shared_events_dlq_bridge_py["(生产态 / production) dlq桥接 / CT-DLQ-001: DeadLetterQueue -> System Event Bus integration <br/>dlq桥接。CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.<br/>文件: events/dlq_bridge.py"]
-    src_zephyr_integration_shared_events_event_bus_upgrade_py["(生产态 / production) EventBus Upgrade — 事件总线升级 (M-16) / event_bus_upgrade<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>文件: events/event_bus_upgrade.py"]
-    src_zephyr_integration_shared_events_event_schemas_py["(生产态 / production) 事件schemas.py —— Observer 事件体 Pydanti / event_schemas<br/>— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复）<br/>文件: events/event_schemas.py"]
-    src_zephyr_integration_shared_events_upgrade_strategy_py["(生产态 / production) EventBus 升级策略引擎 / upgrade_strategy<br/>EventBus 升级策略引擎<br/>文件: events/upgrade_strategy.py"]
-    src_zephyr_integration_vector_memory_bm25_index_py["(生产态 / production) BM25Index — MOD-INF-011 稀疏检索组件 / bm25_index<br/>BM25Index — MOD-INF-011 稀疏检索组件<br/>文件: vector_memory/bm25_index.py"]
+    src_zephyr_integration_shared_events_event_bus_upgrade_py["(生产态 / production) 事件总线upgrade / event_bus_upgrade<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>文件: events/event_bus_upgrade.py"]
+    src_zephyr_integration_shared_events_event_schemas_py["(生产态 / production) 事件模式 / event_schemas<br/>— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复）<br/>文件: events/event_schemas.py"]
+    src_zephyr_integration_shared_events_upgrade_strategy_py["(生产态 / production) upgrade策略 / upgrade_strategy<br/>EventBus 升级策略引擎<br/>文件: events/upgrade_strategy.py"]
+    src_zephyr_integration_vector_memory_bm25_index_py["(生产态 / production) bm25索引 / bm25_index<br/>BM25Index — MOD-INF-011 稀疏检索组件<br/>文件: vector_memory/bm25_index.py"]
     src_zephyr_integration_vector_memory_cache_layer_py["(生产态 / production) 缓存层 / cache_layer<br/>缓存层，vector_memory的缓存，暂存常用数据加速访问。<br/>文件: vector_memory/cache_layer.py"]
-    src_zephyr_integration_vector_memory_context_ingest_py["(生产态 / production) VMS 上下文注入器 — ingestcontext() 消费者 / context_ingest<br/>VMS 上下文注入器 — ingest_context() 消费者<br/>文件: vector_memory/context_ingest.py"]
-    src_zephyr_integration_vector_memory_cross_collection_retriever_py["(生产态 / production) CrossCollectionRetriever — MOD-INF-011 跨 / cross_collection_retriever<br/>CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索<br/>文件: vector_memory/cross_collection_retriever.py"]
-    src_zephyr_integration_vector_memory_delegated_vector_memory_py["(生产态 / production) DelegatedVectorMemory — VectorMemoryBase / delegated_vector_memory<br/>DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器<br/>文件: vector_memory/delegated_vector_memory.py"]
+    src_zephyr_integration_vector_memory_context_ingest_py["(生产态 / production) 上下文ingest / context_ingest<br/>VMS 上下文注入器 — ingest_context() 消费者<br/>文件: vector_memory/context_ingest.py"]
+    src_zephyr_integration_vector_memory_cross_collection_retriever_py["(生产态 / production) 跨collectionretriever / cross_collection_retriever<br/>CrossCollectionRetriever — MOD-INF-011 跨 Collection 联合检索<br/>文件: vector_memory/cross_collection_retriever.py"]
+    src_zephyr_integration_vector_memory_delegated_vector_memory_py["(生产态 / production) delegated向量记忆 / delegated_vector_memory<br/>DelegatedVectorMemory — VectorMemoryBase 的 RI-02 落地适配器<br/>文件: vector_memory/delegated_vector_memory.py"]
     src_zephyr_integration_vector_memory_design_principles_py["(生产态 / production) 设计原则 / design_principles<br/>设计原则，主要提供校验维度、校验块策略、校验存活时间等功能，供collection_manager; in_process使用<br/>文件: vector_memory/design_principles.py"]
     src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py["(生产态 / production) ChromDB -> FAISS + SQLite WAL 数据迁移脚本 / migrate_chroma_to_faiss<br/>ChromDB -> FAISS + SQLite WAL 数据迁移脚本<br/>文件: vector_memory/migrate_chroma_to_faiss.py"]
-    src_zephyr_integration_vector_memory_ollama_embedding_py["(生产态 / production) ollama嵌入 / ollama_embedding<br/>ollama嵌入，vector_memory的功能模块。<br/>文件: vector_memory/ollama_embedding.py"]
-    src_zephyr_integration_vector_memory_vms_memory_backend_py["(生产态 / production) VMSMemoryBackend — UnifiedMemoryAPI 的 VM / vms_memory_backend<br/>VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器<br/>文件: vector_memory/vms_memory_backend.py"]
-    src_zephyr_shared_contracts_approval_types_py["(生产态 / production) G-CT-004 — ApprovalRequest Pydantic V2 B / approval_types<br/>G-CT-004 — ApprovalRequest Pydantic V2 BaseModel 审批请求数据结构.<br/>文件: contracts/approval_types.py"]
-    src_zephyr_shared_contracts_rollback_types_py["(生产态 / production) G-CT-003 — RollbackResult Pydantic V2 Ba / rollback_types<br/>G-CT-003 — RollbackResult Pydantic V2 BaseModel 回滚结果数据结构.<br/>文件: contracts/rollback_types.py"]
+    src_zephyr_integration_vector_memory_ollama_embedding_py["(生产态 / production) ollama嵌入 / ollama_embedding<br/>ollama嵌入，供vector-memory.__init__;embeddi使用<br/>文件: vector_memory/ollama_embedding.py"]
+    src_zephyr_integration_vector_memory_vms_memory_backend_py["(生产态 / production) vms记忆后端 / vms_memory_backend<br/>VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器<br/>文件: vector_memory/vms_memory_backend.py"]
+    src_zephyr_shared_contracts_approval_types_py["(生产态 / production) 审批类型定义 / approval_types<br/>G-CT-004 — ApprovalRequest Pydantic V2 BaseModel 审批请求数据结构.<br/>文件: contracts/approval_types.py"]
+    src_zephyr_shared_contracts_rollback_types_py["(生产态 / production) 回滚类型定义 / rollback_types<br/>G-CT-003 — RollbackResult Pydantic V2 BaseModel 回滚结果数据结构.<br/>文件: contracts/rollback_types.py"]
     src_zephyr_shared_contracts_runtime_types_py["(生产态 / production) 运行时类型定义 / runtime_types<br/>运行时类型定义，contracts的配置，管理配置项的读取和校验。<br/>文件: contracts/runtime_types.py"]
-    src_zephyr_shared_evaluation_evals_py["(生产态 / production) evals / evals<br/>evals，evaluation的功能模块。<br/>文件: evaluation/evals.py"]
-    src_zephyr_shared_resilience_durable_execution_py["(生产态 / production) durable执行 / durable_execution<br/>durable执行，韧性的功能模块。<br/>文件: resilience/durable_execution.py"]
+    src_zephyr_shared_evaluation_evals_py["(生产态 / production) 评估 / evals<br/>评估，供tests使用<br/>文件: evaluation/evals.py"]
+    src_zephyr_shared_resilience_durable_execution_py["(生产态 / production) durable执行 / durable_execution<br/>durable执行，供tests使用<br/>文件: resilience/durable_execution.py"]
     src_zephyr_shared_versioning_version_negotiation_py["(生产态 / production) 版本negotiation / version_negotiation<br/>版本negotiation，版本的结构定义，定义数据的结构和约束。<br/>文件: versioning/version_negotiation.py"]
     src_zephyr_integration_behavioral_admission_admission_response_py ~~~ src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py
     src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py ~~~ src_zephyr_integration_llm_bridge_py
@@ -382,27 +382,27 @@ flowchart TD
     src_zephyr_shared_contracts_runtime_types_py ~~~ src_zephyr_shared_evaluation_evals_py
     src_zephyr_shared_evaluation_evals_py ~~~ src_zephyr_shared_resilience_durable_execution_py
     src_zephyr_shared_resilience_durable_execution_py ~~~ src_zephyr_shared_versioning_version_negotiation_py
-    src_zephyr_integration_local_model_cache_layer_py["(生产态 / production) CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU / cache_layer<br/>CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU<br/>文件: local_model/cache_layer.py"]
-    src_zephyr_integration_local_model_local_model_scheduler_py["(生产态 / production) LocalModelScheduler — L2 本地模型 24/7 调度循环 / local_model_scheduler<br/>LocalModelScheduler — L2 本地模型 24/7 调度循环<br/>文件: local_model/local_model_scheduler.py"]
-    src_zephyr_integration_local_model_ollama_embedding_py["(生产态 / production) OllamaEmbedder — 通过 Ollama HTTP API 生成文本 / ollama_embedding<br/>OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入<br/>文件: local_model/ollama_embedding.py"]
-    src_zephyr_integration_mcp_audit_logger_py["(生产态 / production) MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 / audit_logger<br/>MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。<br/>文件: mcp/audit_logger.py"]
+    src_zephyr_integration_local_model_cache_layer_py["(生产态 / production) 缓存层 / cache_layer<br/>CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU<br/>文件: local_model/cache_layer.py"]
+    src_zephyr_integration_local_model_local_model_scheduler_py["(生产态 / production) 本地模型调度器 / local_model_scheduler<br/>LocalModelScheduler — L2 本地模型 24/7 调度循环<br/>文件: local_model/local_model_scheduler.py"]
+    src_zephyr_integration_local_model_ollama_embedding_py["(生产态 / production) ollama嵌入 / ollama_embedding<br/>OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入<br/>文件: local_model/ollama_embedding.py"]
+    src_zephyr_integration_mcp_audit_logger_py["(生产态 / production) 审计日志器 / audit_logger<br/>MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。<br/>文件: mcp/audit_logger.py"]
     src_zephyr_integration_mcp_blueprint_search_server_py["(生产态 / production) 蓝图search服务端 / BlueprintSearchServer — MCP Server for blueprint discovery<br/>蓝图search服务端。BlueprintSearchServer — MCP Server for blueprint discovery<br/>文件: mcp/blueprint_search_server.py"]
-    src_zephyr_integration_mcp_doc_guard_server_py["(生产态 / production) DocGuardServer: 跨会话交接协议服务 MCP Server / doc_guard_server<br/>DocGuardServer: 跨会话交接协议服务 MCP Server<br/>文件: mcp/doc_guard_server.py"]
-    src_zephyr_integration_mcp_gate_engine_server_py["(生产态 / production) GateEngineServer: 门禁裁决服务 MCP Server / gate_engine_server<br/>GateEngineServer: 门禁裁决服务 MCP Server<br/>文件: mcp/gate_engine_server.py"]
-    src_zephyr_integration_mcp_rate_limiter_py["(生产态 / production) MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step / rate_limiter<br/>MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。<br/>文件: mcp/rate_limiter.py"]
-    src_zephyr_integration_mcp_sandbox_server_py["(生产态 / production) MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 / sandbox_server<br/>MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。<br/>文件: mcp/sandbox_server.py"]
-    src_zephyr_integration_mcp_sentinel_server_py["(生产态 / production) SentinelServer: 意图路由哨兵 MCP Server / sentinel_server<br/>SentinelServer: 意图路由哨兵 MCP Server<br/>文件: mcp/sentinel_server.py"]
+    src_zephyr_integration_mcp_doc_guard_server_py["(生产态 / production) doc守卫服务端 / doc_guard_server<br/>DocGuardServer: 跨会话交接协议服务 MCP Server<br/>文件: mcp/doc_guard_server.py"]
+    src_zephyr_integration_mcp_gate_engine_server_py["(生产态 / production) 门禁引擎服务端 / gate_engine_server<br/>GateEngineServer: 门禁裁决服务 MCP Server<br/>文件: mcp/gate_engine_server.py"]
+    src_zephyr_integration_mcp_rate_limiter_py["(生产态 / production) 速率限制器 / rate_limiter<br/>MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。<br/>文件: mcp/rate_limiter.py"]
+    src_zephyr_integration_mcp_sandbox_server_py["(生产态 / production) 沙箱服务端 / sandbox_server<br/>MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。<br/>文件: mcp/sandbox_server.py"]
+    src_zephyr_integration_mcp_sentinel_server_py["(生产态 / production) 哨兵服务端 / sentinel_server<br/>SentinelServer: 意图路由哨兵 MCP Server<br/>文件: mcp/sentinel_server.py"]
     src_zephyr_integration_mcp_task_manager_server_py["(生产态 / production) 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server<br/>任务管理器服务端。ZephyrAlpha MCP Task Manager Server<br/>文件: mcp/task_manager_server.py"]
-    src_zephyr_integration_mcp_telemetry_server_py["(生产态 / production) ZephyrAlpha MCP Telemetry Server — 系统可观测 / telemetry_server<br/>ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口<br/>文件: mcp/telemetry_server.py"]
-    src_zephyr_integration_mcp_vector_memory_server_py["(生产态 / production) VectorMemoryServer: VMS 向量记忆 MCP Server  / vector_memory_server<br/>VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 v0.7.0)<br/>文件: mcp/vector_memory_server.py"]
-    src_zephyr_integration_vector_memory_bridge_layer_py["(生产态 / production) BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 / bridge_layer<br/>BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接<br/>文件: vector_memory/bridge_layer.py"]
+    src_zephyr_integration_mcp_telemetry_server_py["(生产态 / production) 遥测服务端 / telemetry_server<br/>ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口<br/>文件: mcp/telemetry_server.py"]
+    src_zephyr_integration_mcp_vector_memory_server_py["(生产态 / production) 向量记忆服务端 / vector_memory_server<br/>VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 v0.7.0)<br/>文件: mcp/vector_memory_server.py"]
+    src_zephyr_integration_vector_memory_bridge_layer_py["(生产态 / production) 桥接层 / bridge_layer<br/>BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接<br/>文件: vector_memory/bridge_layer.py"]
     src_zephyr_integration_vector_memory_collection_schemas_py["(生产态 / production) 收集模式 / collection_schemas<br/>收集模式，vector_memory的采集器，从多处收集数据。<br/>文件: vector_memory/collection_schemas.py"]
-    src_zephyr_integration_vector_memory_faiss_collection_manager_py["(生产态 / production) FAISSCollectionManager — FAISS HNSW/IVF+ / faiss_collection_manager<br/>FAISSCollectionManager — FAISS HNSW/IVF+PQ 8 Collection 全生命周期管理<br/>文件: vector_memory/faiss_collection_manager.py"]
+    src_zephyr_integration_vector_memory_faiss_collection_manager_py["(生产态 / production) faisscollection管理器 / faiss_collection_manager<br/>FAISSCollectionManager — FAISS HNSW/IVF+PQ 8 Collection 全生命周期管理<br/>文件: vector_memory/faiss_collection_manager.py"]
     src_zephyr_integration_vector_memory_hybrid_retriever_py["(生产态 / production) HybridRetriever — MOD-INF-011 混合检索架构 / hybrid_retriever<br/>HybridRetriever — MOD-INF-011 混合检索架构<br/>文件: vector_memory/hybrid_retriever.py"]
-    src_zephyr_integration_vector_memory_in_memory_fake_vms_py["(生产态 / production) InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎 / in_memory_fake_vms<br/>InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎<br/>文件: vector_memory/in_memory_fake_vms.py"]
-    src_zephyr_integration_vector_memory_interface_py["(生产态 / production) VMS — Vector Memory Service 接口基类 / interface<br/>VMS — Vector Memory Service 接口基类<br/>文件: vector_memory/interface.py"]
-    src_zephyr_integration_vector_memory_provenance_enforcer_py["(生产态 / production) ProvenanceEnforcer — MOD-INF-011 写入溯源强制执 / provenance_enforcer<br/>ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行<br/>文件: vector_memory/provenance_enforcer.py"]
-    src_zephyr_integration_vector_memory_sqlite_metadata_store_py["(生产态 / production) SQLiteMetadataStore — VMS 元数据存储 (SQLite  / sqlite_metadata_store<br/>SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 BM25)<br/>文件: vector_memory/sqlite_metadata_store.py"]
+    src_zephyr_integration_vector_memory_in_memory_fake_vms_py["(生产态 / production) in记忆fakevms / in_memory_fake_vms<br/>InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎<br/>文件: vector_memory/in_memory_fake_vms.py"]
+    src_zephyr_integration_vector_memory_interface_py["(生产态 / production) 接口 / interface<br/>VMS — Vector Memory Service 接口基类<br/>文件: vector_memory/interface.py"]
+    src_zephyr_integration_vector_memory_provenance_enforcer_py["(生产态 / production) 溯源执行器 / provenance_enforcer<br/>ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行<br/>文件: vector_memory/provenance_enforcer.py"]
+    src_zephyr_integration_vector_memory_sqlite_metadata_store_py["(生产态 / production) sqlitemetadata存储 / sqlite_metadata_store<br/>SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 BM25)<br/>文件: vector_memory/sqlite_metadata_store.py"]
     src_zephyr_integration_vector_memory_vms_schemas_py["(生产态 / production) VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 / vms_schemas<br/>VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约<br/>文件: vector_memory/vms_schemas.py"]
     src_zephyr_shared_contracts_protocols_py["(生产态 / production) 协议 / Structural Protocol interfaces for cross-module contracts.<br/>协议。Structural Protocol interfaces for cross-module contracts.<br/>文件: contracts/protocols.py"]
     src_zephyr_integration_local_model_cache_layer_py ~~~ src_zephyr_integration_local_model_local_model_scheduler_py
@@ -427,11 +427,11 @@ flowchart TD
     src_zephyr_integration_vector_memory_provenance_enforcer_py ~~~ src_zephyr_integration_vector_memory_sqlite_metadata_store_py
     src_zephyr_integration_vector_memory_sqlite_metadata_store_py ~~~ src_zephyr_integration_vector_memory_vms_schemas_py
     src_zephyr_integration_vector_memory_vms_schemas_py ~~~ src_zephyr_shared_contracts_protocols_py
-    src_zephyr_integration_local_model_embedding_router_py["(生产态 / production) EmbeddingRouter — MOD-INF-011 双嵌入维度路由 / embedding_router<br/>EmbeddingRouter — MOD-INF-011 双嵌入维度路由<br/>文件: local_model/embedding_router.py"]
+    src_zephyr_integration_local_model_embedding_router_py["(生产态 / production) 嵌入路由器 / embedding_router<br/>EmbeddingRouter — MOD-INF-011 双嵌入维度路由<br/>文件: local_model/embedding_router.py"]
     src_zephyr_integration_local_model_ollama_chat_py["(生产态 / production) OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_chat<br/>OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理<br/>文件: local_model/ollama_chat.py"]
-    src_zephyr_integration_mcp_base_server_py["(生产态 / production) BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协 / _base_server<br/>BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类<br/>文件: mcp/_base_server.py"]
-    src_zephyr_integration_vector_memory_collection_manager_py["(生产态 / production) CollectionManager — MOD-INF-011 八大 Colle / collection_manager<br/>CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理<br/>文件: vector_memory/collection_manager.py"]
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py["(生产态 / production) InProcessVectorMemory — MOD-INF-011 VMS  / in_process_vector_memory<br/>InProcessVectorMemory — MOD-INF-011 VMS 统一入口<br/>文件: vector_memory/in_process_vector_memory.py"]
+    src_zephyr_integration_mcp_base_server_py["(生产态 / production) 基类服务端 / _base_server<br/>BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类<br/>文件: mcp/_base_server.py"]
+    src_zephyr_integration_vector_memory_collection_manager_py["(生产态 / production) 收集管理器 / collection_manager<br/>CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理<br/>文件: vector_memory/collection_manager.py"]
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py["(生产态 / production) 入进程向量记忆 / in_process_vector_memory<br/>InProcessVectorMemory — MOD-INF-011 VMS 统一入口<br/>文件: vector_memory/in_process_vector_memory.py"]
     src_zephyr_integration_vector_memory_vms_errors_py["(生产态 / production) vms错误 / vms_errors<br/>vms错误，vector_memory的异常，定义本模块的异常类型。<br/>文件: vector_memory/vms_errors.py"]
     src_zephyr_integration_local_model_embedding_router_py ~~~ src_zephyr_integration_local_model_ollama_chat_py
     src_zephyr_integration_local_model_ollama_chat_py ~~~ src_zephyr_integration_mcp_base_server_py
@@ -439,11 +439,11 @@ flowchart TD
     src_zephyr_integration_vector_memory_collection_manager_py ~~~ src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py ~~~ src_zephyr_integration_vector_memory_vms_errors_py
     src_zephyr_integration_mcp_error_codes_py["(生产态 / production) MCP 错误码集中注册（MOD-INF-013 §3.4）。 / error_codes<br/>MCP 错误码集中注册（MOD-INF-013 §3.4）。<br/>文件: mcp/error_codes.py"]
-    src_zephyr_integration_vector_memory_chunk_strategy_router_py["(生产态 / production) ChunkStrategyRouter — MOD-INF-011 分块策略调度 / chunk_strategy_router<br/>ChunkStrategyRouter — MOD-INF-011 分块策略调度<br/>文件: vector_memory/chunk_strategy_router.py"]
-    src_zephyr_integration_vector_memory_in_memory_memory_backend_py["(生产态 / production) DegradedVMSBackend — MOD-INF-011 降级兜底 / in_memory_memory_backend<br/>DegradedVMSBackend — MOD-INF-011 降级兜底<br/>文件: vector_memory/in_memory_memory_backend.py"]
-    src_zephyr_integration_vector_memory_index_health_monitor_py["(生产态 / production) IndexHealthMonitor — MOD-INF-011 索引健康自检与 / index_health_monitor<br/>IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复<br/>文件: vector_memory/index_health_monitor.py"]
-    src_zephyr_integration_vector_memory_retrieval_feedback_py["(生产态 / production) RetrievalFeedback — MOD-INF-011 FLE 检索质量 / retrieval_feedback<br/>RetrievalFeedback — MOD-INF-011 FLE 检索质量消费<br/>文件: vector_memory/retrieval_feedback.py"]
-    src_zephyr_integration_vector_memory_vector_bridge_py["(生产态 / production) VectorBridge — MOD-INF-011 CE/KB 外部集成适配器 / vector_bridge<br/>VectorBridge — MOD-INF-011 CE/KB 外部集成适配器<br/>文件: vector_memory/vector_bridge.py"]
+    src_zephyr_integration_vector_memory_chunk_strategy_router_py["(生产态 / production) 块策略路由器 / chunk_strategy_router<br/>ChunkStrategyRouter — MOD-INF-011 分块策略调度<br/>文件: vector_memory/chunk_strategy_router.py"]
+    src_zephyr_integration_vector_memory_in_memory_memory_backend_py["(生产态 / production) 入记忆记忆后端 / in_memory_memory_backend<br/>DegradedVMSBackend — MOD-INF-011 降级兜底<br/>文件: vector_memory/in_memory_memory_backend.py"]
+    src_zephyr_integration_vector_memory_index_health_monitor_py["(生产态 / production) 索引健康监控 / index_health_monitor<br/>IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复<br/>文件: vector_memory/index_health_monitor.py"]
+    src_zephyr_integration_vector_memory_retrieval_feedback_py["(生产态 / production) retrieval反馈 / retrieval_feedback<br/>RetrievalFeedback — MOD-INF-011 FLE 检索质量消费<br/>文件: vector_memory/retrieval_feedback.py"]
+    src_zephyr_integration_vector_memory_vector_bridge_py["(生产态 / production) 向量桥接 / vector_bridge<br/>VectorBridge — MOD-INF-011 CE/KB 外部集成适配器<br/>文件: vector_memory/vector_bridge.py"]
     src_zephyr_integration_vector_memory_chunk_strategy_router_py ~~~ src_zephyr_integration_vector_memory_in_memory_memory_backend_py
     src_zephyr_integration_vector_memory_in_memory_memory_backend_py ~~~ src_zephyr_integration_vector_memory_index_health_monitor_py
     src_zephyr_integration_vector_memory_index_health_monitor_py ~~~ src_zephyr_integration_vector_memory_retrieval_feedback_py
@@ -535,159 +535,159 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | SentinelServer: 意图路由哨兵 MCP Server / sentinel_server... | → | D_AUTONOMY_CORE 自治核心: 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three... | 导入依赖 / import_depends |
-| 2 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_AUTONOMY_CORE 自治核心: PipelineSkillBridge — Agent Spec -> Pipe / pipeline_brid... | 导入依赖 / import_depends |
-| 3 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_AUTONOMY_CORE 自治核心: 技能反馈 / MOD-INF-019: Agent Spec — Skill Feedback Loop... | 导入依赖 / import_depends |
-| 4 | BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协 / _base_serve... | → | D_GOVERNANCE 生命周期管理: G-CT-007 契约：Budget -> RBAC 配额限制. / rbac_bridge (ag... | 导入依赖 / import_depends |
-| 5 | MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phas / gatew... | → | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 / governance_server (... | 导入依赖 / import_depends |
-| 6 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_GOVERNANCE 生命周期管理: PathResolver — 模块路径解析器 / path_resolver (architect... | 导入依赖 / import_depends |
-| 7 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_GOVERNANCE 生命周期管理: G-CT-007 契约：Budget -> RBAC 配额限制. / rbac_bridge (ag... | 导入依赖 / import_depends |
+| 1 | 哨兵服务端 / sentinel_server (mcp/sentinel_server.py) | → | D_AUTONOMY_CORE 自治核心: 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three... | 导入依赖 / import_depends |
+| 2 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_AUTONOMY_CORE 自治核心: 管线桥接 / pipeline_bridge (integration/pipeline_bridge.py) | 导入依赖 / import_depends |
+| 3 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_AUTONOMY_CORE 自治核心: 技能反馈 / MOD-INF-019: Agent Spec — Skill Feedback Loop... | 导入依赖 / import_depends |
+| 4 | 基类服务端 / _base_server (mcp/_base_server.py) | → | D_GOVERNANCE 生命周期管理: RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | 导入依赖 / import_depends |
+| 5 | 网关服务端 / gateway_server (mcp/gateway_server.py) | → | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | 导入依赖 / import_depends |
+| 6 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_GOVERNANCE 生命周期管理: 路径解析器 / path_resolver (architecture_governance/path_... | 导入依赖 / import_depends |
+| 7 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_GOVERNANCE 生命周期管理: RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | 导入依赖 / import_depends |
 | 8 | 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时... | → | D_GOV_AUDIT 审计追踪: 语义审计管线数据模型 — MOD-INF-028 §4.2 / models (seman... | 导入依赖 / import_depends |
-| 9 | MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 / a... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 10 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 9 | 审计日志器 / audit_logger (mcp/audit_logger.py) | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 10 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
 | 11 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 | 12 | 协议 / Structural Protocol interfaces for cross-module co... | → | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
-| 13 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RECOVERY 回滚恢复: CT-RBK-GATE-001 集成契约落地——Rollback System  / contra... | 导入依赖 / import_depends |
-| 14 | LocalModelScheduler — L2 本地模型 24/7 调度循环 / local_... | → | D_INFRA_RUNTIME 运行时集成: resourceoptimization / resource_optimization.py - MAPE-K ... | 导入依赖 / import_depends |
-| 15 | ZephyrAlpha MCP Telemetry Server — 系统可观测 / telemetr... | → | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0） / facad... | 导入依赖 / import_depends |
-| 16 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: 熔断断路器管理器 / CircuitBreakerManager -- standalone ci... | 导入依赖 / import_depends |
-| 17 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: CostTracker —— LLM 调用成本追踪器（SRC-0025） / cost_tr... | 导入依赖 / import_depends |
-| 18 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由 / ct_pipe... | 导入依赖 / import_depends |
-| 19 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: DeadLetterQueue — 死信队列 / dead_letter_queue (pipeline... | 导入依赖 / import_depends |
-| 20 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: ModelRouter — 模型路由与降级链管理 / model_router (pipel... | 导入依赖 / import_depends |
-| 21 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 / models (pipeline/models.py) | 导入依赖 / import_depends |
-| 22 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: Pipeline -> Agent Bridge — 双编排器桥接层 / pipeline_age... | 导入依赖 / import_depends |
-| 23 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: Pipeline Lock — 双管线并发锁 / pipeline_lock (pipeline/p... | 导入依赖 / import_depends |
-| 24 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: PreemptionManager -- 优先级抢占管理器 / preemption_manage... | 导入依赖 / import_depends |
-| 25 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: Pipeline Routing Plugin System — K8s Sch / routing_plugi... | 导入依赖 / import_depends |
-| 26 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INFRA_RUNTIME 运行时集成: hooks.py —— 模块生命周期钩子（Phase 2 新增 | 盲点 B8  /... | 导入依赖 / import_depends |
-| 27 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INTELLIGENCE 上下文管理: Cross-Encoder 重排序层 — BGE-reranker-v2-m3 / reranker (... | 导入依赖 / import_depends |
-| 28 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 / profiler (pipeline_ro... | 导入依赖 / import_depends |
-| 29 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比 / r... | 导入依赖 / import_depends |
-| 30 | DelegatedVectorMemory — VectorMemoryBase / delegated_vec... | → | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块 / unifi... | 导入依赖 / import_depends |
-| 31 | VMSMemoryBackend — UnifiedMemoryAPI 的 VM / vms_memory_b... | → | D_INTELLIGENCE 上下文管理: 记忆后端 / Backend protocol & shared data classes for the... | 导入依赖 / import_depends |
-| 32 | VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 / ... | → | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块 / unifi... | 导入依赖 / import_depends |
+| 13 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RECOVERY 回滚恢复: 契约 / contract (rollback/contract.py) | 导入依赖 / import_depends |
+| 14 | 本地模型调度器 / local_model_scheduler (local_model/local... | → | D_INFRA_RUNTIME 运行时集成: 资源优化 / resource_optimization.py - MAPE-K autonomic re... | 导入依赖 / import_depends |
+| 15 | 遥测服务端 / telemetry_server (mcp/telemetry_server.py) | → | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0） / facad... | 导入依赖 / import_depends |
+| 16 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: 熔断断路器管理器 / CircuitBreakerManager -- standalone ci... | 导入依赖 / import_depends |
+| 17 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: 成本追踪器 / cost_tracker (pipeline/cost_tracker.py) | 导入依赖 / import_depends |
+| 18 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由 / ct_pipe... | 导入依赖 / import_depends |
+| 19 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: deadletter队列 / dead_letter_queue (pipeline/dead_letter_... | 导入依赖 / import_depends |
+| 20 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: 模型路由器 / model_router (pipeline/model_router.py) | 导入依赖 / import_depends |
+| 21 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: 模型 / models (pipeline/models.py) | 导入依赖 / import_depends |
+| 22 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: 管线代理桥接 / pipeline_agent_bridge (pipeline/pipeline_a... | 导入依赖 / import_depends |
+| 23 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: 管线锁 / pipeline_lock (pipeline/pipeline_lock.py) | 导入依赖 / import_depends |
+| 24 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: preemption管理器 / preemption_manager (pipeline/preemptio... | 导入依赖 / import_depends |
+| 25 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: 管线 / routing_plugins (pipeline/routing_plugins.py) | 导入依赖 / import_depends |
+| 26 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INFRA_RUNTIME 运行时集成: 钩子 / hooks (lifecycle/hooks.py) | 导入依赖 / import_depends |
+| 27 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INTELLIGENCE 上下文管理: Cross-Encoder 重排序层 — BGE-reranker-v2-m3 / reranker (... | 导入依赖 / import_depends |
+| 28 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INTELLIGENCE 上下文管理: 性能分析器 / profiler (pipeline_routing/profiler.py) | 导入依赖 / import_depends |
+| 29 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_INTELLIGENCE 上下文管理: results写入器 / results_writer (pipeline_routing/results_... | 导入依赖 / import_depends |
+| 30 | delegated向量记忆 / delegated_vector_memory (vector_memor... | → | D_INTELLIGENCE 上下文管理: unified记忆API / unified_memory_api (model_evaluation/uni... | 导入依赖 / import_depends |
+| 31 | vms记忆后端 / vms_memory_backend (vector_memory/vms_memor... | → | D_INTELLIGENCE 上下文管理: 记忆后端 / Backend protocol & shared data classes for the... | 导入依赖 / import_depends |
+| 32 | VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 / ... | → | D_INTELLIGENCE 上下文管理: unified记忆API / unified_memory_api (model_evaluation/uni... | 导入依赖 / import_depends |
 | 33 | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | → | D_OPS 反馈循环: 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
-| 34 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_OPS 反馈循环: 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
-| 35 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_OPS 反馈循环: 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
-| 36 | MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phas / gatew... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九 / gateway (llm_security/... | 导入依赖 / import_depends |
-| 37 | MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phas / gatew... | → | D_SECURITY 对抗验证: LLM Security Gateway 九层防御统一接口契 / protocol (llm_s... | 导入依赖 / import_depends |
-| 38 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SECURITY 对抗验证: LLM Security Gateway — L0-L8 九 / gateway (llm_security/... | 导入依赖 / import_depends |
-| 39 | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Si / con... | 导入依赖 / import_depends |
-| 40 | OllamaEmbedder — 通过 Ollama HTTP API 生成文本 / ollama_... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Si / con... | 导入依赖 / import_depends |
-| 41 | BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协 / _base_serve... | → | D_SHARED 共享服务: 异步utils.py — async/sync 边界桥接（5.12.8  / async_util... | 导入依赖 / import_depends |
-| 42 | MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 / a... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 34 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_OPS 反馈循环: 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 35 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_OPS 反馈循环: 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 36 | 网关服务端 / gateway_server (mcp/gateway_server.py) | → | D_SECURITY 对抗验证: 网关 / gateway (llm_security/gateway.py) | 导入依赖 / import_depends |
+| 37 | 网关服务端 / gateway_server (mcp/gateway_server.py) | → | D_SECURITY 对抗验证: 协议 / protocol (llm_security/protocol.py) | 导入依赖 / import_depends |
+| 38 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SECURITY 对抗验证: 网关 / gateway (llm_security/gateway.py) | 导入依赖 / import_depends |
+| 39 | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 40 | ollama嵌入 / ollama_embedding (local_model/ollama_embeddi... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 41 | 基类服务端 / _base_server (mcp/_base_server.py) | → | D_SHARED 共享服务: 异步工具 / async_utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 42 | 审计日志器 / audit_logger (mcp/audit_logger.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 43 | 蓝图search服务端 / BlueprintSearchServer — MCP Server fo... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 44 | DocGuardServer: 跨会话交接协议服务 MCP Server / doc_guard... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 45 | DocGuardServer: 跨会话交接协议服务 MCP Server / doc_guard... | → | D_SHARED 共享服务: 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
-| 46 | GateEngineServer: 门禁裁决服务 MCP Server / gate_engine_s... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 47 | GateEngineServer: 门禁裁决服务 MCP Server / gate_engine_s... | → | D_SHARED 共享服务: 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
-| 48 | MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phas / gatew... | → | D_SHARED 共享服务: 异步utils.py — async/sync 边界桥接（5.12.8  / async_util... | 导入依赖 / import_depends |
-| 49 | MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step / rate_... | → | D_SHARED 共享服务: 速率限制耗尽——等待时间过长或无法获取 token。 / limiter ... | 导入依赖 / import_depends |
-| 50 | MCP Resource 提供者（MOD-INF-013 Phase 6 — 关 / resource... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 44 | doc守卫服务端 / doc_guard_server (mcp/doc_guard_server.py) | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 45 | doc守卫服务端 / doc_guard_server (mcp/doc_guard_server.py) | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 46 | 门禁引擎服务端 / gate_engine_server (mcp/gate_engine_serv... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 47 | 门禁引擎服务端 / gate_engine_server (mcp/gate_engine_serv... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 48 | 网关服务端 / gateway_server (mcp/gateway_server.py) | → | D_SHARED 共享服务: 异步工具 / async_utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 49 | 速率限制器 / rate_limiter (mcp/rate_limiter.py) | → | D_SHARED 共享服务: 限制器 / limiter (infra/limiter.py) | 导入依赖 / import_depends |
+| 50 | 资源提供器 / resource_provider (mcp/resource_provider.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 51 | 规则discovery服务端 / RuleDiscoveryServer — MCP Server f... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 52 | MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 / sandb... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 53 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: ZephyrAlpha 蓝图拆解器 / blueprint_decomposer (blueprint_... | 导入依赖 / import_depends |
-| 54 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 / models (foundation/mod... | 导入依赖 / import_depends |
+| 52 | 沙箱服务端 / sandbox_server (mcp/sandbox_server.py) | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 53 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: 蓝图decomposer / blueprint_decomposer (blueprint_tools/bl... | 导入依赖 / import_depends |
+| 54 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: 模型 / models (foundation/models.py) | 导入依赖 / import_depends |
 | 55 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 56 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 57 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: severity类型定义 / severity_types (schema/severity_types.py) | 导入依赖 / import_depends |
-| 58 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
-| 59 | ZephyrAlpha MCP Telemetry Server — 系统可观测 / telemetr... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 60 | VectorMemoryServer: VMS 向量记忆 MCP Server  / vector_mem... | → | D_SHARED 共享服务: ports — D-DATA 服务的 Protocol 定义 / ports (protocols/p... | 导入依赖 / import_depends |
-| 61 | AssetInventory MCP Server — MOD-INF-026  / mcp_server (i... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) / event_bus (sha... | 导入依赖 / import_depends |
-| 62 | AssetInventory MCP Server — MOD-INF-026  / mcp_server (i... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 63 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: LLMGatewayProtocol — LLM 网关抽象接口 / llm_gateway_prot... | 导入依赖 / import_depends |
-| 64 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository  / task_reposito... | 导入依赖 / import_depends |
-| 65 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) / event_bus (sha... | 导入依赖 / import_depends |
-| 66 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 / models (foundation/mod... | 导入依赖 / import_depends |
-| 67 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: 观察者 / Zero-dependency Observer pattern (subscribe/emit... | 导入依赖 / import_depends |
-| 68 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 69 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: ports — D-DATA 服务的 Protocol 定义 / ports (protocols/p... | 导入依赖 / import_depends |
-| 70 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: 任务types — 任务系统核心类型 re-export 层 / task_types (... | 导入依赖 / import_depends |
-| 71 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: 异步utils.py — async/sync 边界桥接（5.12.8  / async_util... | 导入依赖 / import_depends |
-| 72 | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | → | D_SHARED 共享服务: 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
+| 57 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: severity类型 / severity_types (schema/severity_types.py) | 导入依赖 / import_depends |
+| 58 | 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 59 | 遥测服务端 / telemetry_server (mcp/telemetry_server.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 60 | 向量记忆服务端 / vector_memory_server (mcp/vector_memory_... | → | D_SHARED 共享服务: 端口 / ports (protocols/ports.py) | 导入依赖 / import_depends |
+| 61 | MCP服务端 / mcp_server (integration/mcp_server.py) | → | D_SHARED 共享服务: 事件总线 / event_bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 62 | MCP服务端 / mcp_server (integration/mcp_server.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 63 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: LLM网关协议 / llm_gateway_protocol (contracts/llm_gateway... | 导入依赖 / import_depends |
+| 64 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: 任务仓库协议 / task_repository_protocol (contracts/task_r... | 导入依赖 / import_depends |
+| 65 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: 事件总线 / event_bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 66 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: 模型 / models (foundation/models.py) | 导入依赖 / import_depends |
+| 67 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: 观察者 / Zero-dependency Observer pattern (subscribe/emit... | 导入依赖 / import_depends |
+| 68 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 69 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: 端口 / ports (protocols/ports.py) | 导入依赖 / import_depends |
+| 70 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: 任务类型定义 / task_types (schema/task_types.py) | 导入依赖 / import_depends |
+| 71 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: 异步工具 / async_utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 72 | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
 | 73 | 契约违规错误 / contract_violation_error (errors/contract_... | → | D_SHARED 共享服务: 追踪上下文 / trace_context (core/trace_context.py) | 导入依赖 / import_depends |
-| 74 | CTR-ERR-001: DataQualityError / 行情质量门禁不通 / data_q... | → | D_SHARED 共享服务: 追踪上下文 / trace_context (core/trace_context.py) | 导入依赖 / import_depends |
+| 74 | 数据质量错误 / data_quality_error (errors/data_quality_er... | → | D_SHARED 共享服务: 追踪上下文 / trace_context (core/trace_context.py) | 导入依赖 / import_depends |
 | 75 | 执行拒绝错误 / execution_rejection_error (errors/executio... | → | D_SHARED 共享服务: 追踪上下文 / trace_context (core/trace_context.py) | 导入依赖 / import_depends |
-| 76 | CTR-ERR-002: FactorComputationError / 因子 / factor_compu... | → | D_SHARED 共享服务: 追踪上下文 / trace_context (core/trace_context.py) | 导入依赖 / import_depends |
+| 76 | 因子computation错误 / factor_computation_error (errors/fa... | → | D_SHARED 共享服务: 追踪上下文 / trace_context (core/trace_context.py) | 导入依赖 / import_depends |
 | 77 | 风险限制违规错误 / risk_limit_violation_error (errors/ris... | → | D_SHARED 共享服务: 追踪上下文 / trace_context (core/trace_context.py) | 导入依赖 / import_depends |
 | 78 | 信号退化警告 / signal_degradation_warning (errors/signal_... | → | D_SHARED 共享服务: 追踪上下文 / trace_context (core/trace_context.py) | 导入依赖 / import_depends |
 | 79 | dlq桥接 / CT-DLQ-001: DeadLetterQueue -> System Event Bus... | → | D_SHARED 共享服务: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q / dlq (ev... | 导入依赖 / import_depends |
 | 80 | dlq桥接 / CT-DLQ-001: DeadLetterQueue -> System Event Bus... | → | D_SHARED 共享服务: 观察者 / Zero-dependency Observer pattern (subscribe/emit... | 导入依赖 / import_depends |
-| 81 | 事件schemas.py —— Observer 事件体 Pydanti / event_schem... | → | D_SHARED 共享服务: 观察者 / Zero-dependency Observer pattern (subscribe/emit... | 导入依赖 / import_depends |
-| 82 | 事件schemas.py —— Observer 事件体 Pydanti / event_schem... | → | D_SHARED 共享服务: 基类配置 / base_config (schema/base_config.py) | 导入依赖 / import_depends |
-| 83 | EventBus 升级策略引擎 / upgrade_strategy (events/upgrade_... | → | D_SHARED 共享服务: 观察者 / observer.py —— Re-export wrapper -> canonical:... | 导入依赖 / import_depends |
-| 84 | ChunkStrategyRouter — MOD-INF-011 分块策略调度 / chunk_s... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 85 | CollectionManager — MOD-INF-011 八大 Colle / collection_... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 86 | CollectionManager — MOD-INF-011 八大 Colle / collection_... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 81 | 事件模式 / event_schemas (events/event_schemas.py) | → | D_SHARED 共享服务: 观察者 / Zero-dependency Observer pattern (subscribe/emit... | 导入依赖 / import_depends |
+| 82 | 事件模式 / event_schemas (events/event_schemas.py) | → | D_SHARED 共享服务: 基类配置 / base_config (schema/base_config.py) | 导入依赖 / import_depends |
+| 83 | upgrade策略 / upgrade_strategy (events/upgrade_strategy.py) | → | D_SHARED 共享服务: 观察者 / observer.py —— Re-export wrapper -> canonical:... | 导入依赖 / import_depends |
+| 84 | 块策略路由器 / chunk_strategy_router (vector_memory/chunk... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 85 | 收集管理器 / collection_manager (vector_memory/collection... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 86 | 收集管理器 / collection_manager (vector_memory/collection... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
 | 87 | 收集模式 / collection_schemas (vector_memory/collection_s... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 88 | 收集模式 / collection_schemas (vector_memory/collection_s... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 89 | HybridRetriever — MOD-INF-011 混合检索架构 / hybrid_retr... | → | D_SHARED 共享服务: ports — D-DATA 服务的 Protocol 定义 / ports (protocols/p... | 导入依赖 / import_depends |
+| 89 | HybridRetriever — MOD-INF-011 混合检索架构 / hybrid_retr... | → | D_SHARED 共享服务: 端口 / ports (protocols/ports.py) | 导入依赖 / import_depends |
 | 90 | HybridRetriever — MOD-INF-011 混合检索架构 / hybrid_retr... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 91 | IndexHealthMonitor — MOD-INF-011 索引健康自检与 / index_... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 91 | 索引健康监控 / index_health_monitor (vector_memory/index_... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
 | 92 | ChromDB -> FAISS + SQLite WAL 数据迁移脚本 / migrate_chro... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 93 | RetrievalFeedback — MOD-INF-011 FLE 检索质量 / retrieval... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 94 | SQLiteMetadataStore — VMS 元数据存储 (SQLite  / sqlite_m... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） / sqlite_factory (io/sqlite_f... | 导入依赖 / import_depends |
-| 95 | VectorBridge — MOD-INF-011 CE/KB 外部集成适配器 / vector... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 93 | retrieval反馈 / retrieval_feedback (vector_memory/retriev... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 94 | sqlitemetadata存储 / sqlite_metadata_store (vector_memory... | → | D_SHARED 共享服务: sqlite工厂 / sqlite_factory (io/sqlite_factory.py) | 导入依赖 / import_depends |
+| 95 | 向量桥接 / vector_bridge (vector_memory/vector_bridge.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
 | 96 | VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 / ... | → | D_SHARED 共享服务: 模式 / schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 97 | 运行时类型定义 / runtime_types (contracts/runtime_types.py) | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Si / con... | 导入依赖 / import_depends |
+| 97 | 运行时类型定义 / runtime_types (contracts/runtime_types.py) | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
 | 98 | 运行时类型定义 / runtime_types (contracts/runtime_types.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 99 | 运行时类型定义 / runtime_types (contracts/runtime_types.py) | → | D_SHARED 共享服务: 基类配置 / base_config (schema/base_config.py) | 导入依赖 / import_depends |
-| 100 | 准入响应 / admission_response (behavioral_admission/admis... | → | D_TRADING 交易运营: 5.171 修复：admit(event: Any) Any / admission_controller ... | 导入依赖 / import_depends |
+| 100 | 准入响应 / admission_response (behavioral_admission/admis... | → | D_TRADING 交易运营: 准入控制器 / admission_controller (trading/admission_cont... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUTONOMY_CORE 自治核心: Skill 加载前创建回滚检查点 / skill_executor (skills/skill... | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
-| 2 | D_AUTONOMY_CORE 自治核心: 技能路由器 / skill_router (skills/skill_router.py) | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 / embedding... | 导入依赖 / import_depends |
-| 3 | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — SpecEngine 蓝图- / spec_engine... | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
-| 4 | D_AUTONOMY_CORE 自治核心: CE 向量写入器 — vectorizeandstore() 生产者 / vector_writ... | → | VMS 上下文注入器 — ingestcontext() 消费者 / context_inge... | 导入依赖 / import_depends |
+| 1 | D_AUTONOMY_CORE 自治核心: 技能执行器 / skill_executor (skills/skill_executor.py) | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
+| 2 | D_AUTONOMY_CORE 自治核心: 技能路由器 / skill_router (skills/skill_router.py) | → | 嵌入路由器 / embedding_router (local_model/embedding_rout... | 导入依赖 / import_depends |
+| 3 | D_AUTONOMY_CORE 自治核心: spec引擎 / spec_engine (autonomy_core/spec_engine.py) | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
+| 4 | D_AUTONOMY_CORE 自治核心: 向量写入器 / vector_writer (vector_memory/vector_writer.py) | → | 上下文ingest / context_ingest (vector_memory/context_inge... | 导入依赖 / import_depends |
 | 5 | D_FEEDBACK_LOOP 反馈循环引擎: 协议 / protocols (feedback_loop/protocols.py) | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
-| 6 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose- / schedu... | → | InProcessVectorMemory — MOD-INF-011 VMS  / in_process_ve... | 导入依赖 / import_depends |
-| 7 | D_GOVERNANCE 生命周期管理: 本地层daemon.py — L2 本地模型层守护进程（薄包装 / local_... | → | LocalModelScheduler — L2 本地模型 24/7 调度循环 / local_... | 导入依赖 / import_depends |
-| 8 | D_GOVERNANCE 生命周期管理: 启动brain.py — ZephyrAlpha 系统大脑一键启动 / start_brai... | → | 运行时类型定义 / runtime_types (contracts/runtime_types.py) | 导入依赖 / import_depends |
-| 9 | D_GOVERNANCE 生命周期管理: Ollama 入职考试运行脚本 / run_ollama_exam (scripts/run_ol... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | 导入依赖 / import_depends |
-| 10 | D_GOVERNANCE 生命周期管理: G-CT-007 — Audit.record代理spec() 记录  / spec_auditor (... | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
-| 11 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 / governance_server (... | → | BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协 / _base_serve... | 导入依赖 / import_depends |
-| 12 | D_GOV_DRIFT 漂移检测: 漂移hotfixbypass / Drift Hotfix Bypass — drift_hotfix_by... | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
-| 13 | D_GOV_ENFORCEMENT 规则执行: approval / G-CT-004 — Backward-compat re-export of Appro... | → | G-CT-004 — ApprovalRequest Pydantic V2 B / approval_type... | 导入依赖 / import_depends |
-| 14 | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on回滚fa / contracts (escal... | → | G-CT-003 — RollbackResult Pydantic V2 Ba / rollback_type... | 导入依赖 / import_depends |
-| 15 | D_GOV_OPS_RESILIENCE 运维弹性治理: 结果类型定义 / G-CT-003 — RollbackResult backward-compat... | → | G-CT-003 — RollbackResult Pydantic V2 Ba / rollback_type... | 导入依赖 / import_depends |
-| 16 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 / bridge_l... | 导入依赖 / import_depends |
-| 17 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | CollectionManager — MOD-INF-011 八大 Colle / collection_... | 导入依赖 / import_depends |
-| 18 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | InProcessVectorMemory — MOD-INF-011 VMS  / in_process_ve... | 导入依赖 / import_depends |
-| 19 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | IndexHealthMonitor — MOD-INF-011 索引健康自检与 / index_... | 导入依赖 / import_depends |
-| 20 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶 / phas... | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
-| 21 | D_GOV_OPS_RESILIENCE 运维弹性治理: D-DATA -> ServiceRegistry 注册模块 / service_registration... | → | CollectionManager — MOD-INF-011 八大 Colle / collection_... | 导入依赖 / import_depends |
-| 22 | D_GOV_OPS_RESILIENCE 运维弹性治理: D-DATA -> ServiceRegistry 注册模块 / service_registration... | → | InProcessVectorMemory — MOD-INF-011 VMS  / in_process_ve... | 导入依赖 / import_depends |
-| 23 | D_GOV_SCRIPTS 脚本治理: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-02 / vms_cron_... | → | CollectionManager — MOD-INF-011 八大 Colle / collection_... | 导入依赖 / import_depends |
-| 24 | D_GOV_SCRIPTS 脚本治理: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-02 / vms_cron_... | → | IndexHealthMonitor — MOD-INF-011 索引健康自检与 / index_... | 导入依赖 / import_depends |
-| 25 | D_GOV_SCRIPTS 脚本治理: VMS Health Check 脚本 — MOD-INF-011 · Phas / vms_health... | → | CollectionManager — MOD-INF-011 八大 Colle / collection_... | 导入依赖 / import_depends |
-| 26 | D_GOV_SCRIPTS 脚本治理: VMS Health Check 脚本 — MOD-INF-011 · Phas / vms_health... | → | IndexHealthMonitor — MOD-INF-011 索引健康自检与 / index_... | 导入依赖 / import_depends |
-| 27 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 / vms_migrate (vm... | → | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 / bridge_l... | 导入依赖 / import_depends |
-| 28 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 / vms_migrate (vm... | → | CollectionManager — MOD-INF-011 八大 Colle / collection_... | 导入依赖 / import_depends |
-| 29 | D_GOV_SCRIPTS 脚本治理: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2  / vms_migra... | → | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 / bridge_l... | 导入依赖 / import_depends |
-| 30 | D_GOV_SCRIPTS 脚本治理: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-02 / vms_cron_... | → | CollectionManager — MOD-INF-011 八大 Colle / collection_... | 导入依赖 / import_depends |
-| 31 | D_GOV_SCRIPTS 脚本治理: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-02 / vms_cron_... | → | IndexHealthMonitor — MOD-INF-011 索引健康自检与 / index_... | 导入依赖 / import_depends |
-| 32 | D_GOV_SCRIPTS 脚本治理: VMS Health Check 脚本 — MOD-INF-011 · Phas / vms_health... | → | CollectionManager — MOD-INF-011 八大 Colle / collection_... | 导入依赖 / import_depends |
-| 33 | D_GOV_SCRIPTS 脚本治理: VMS Health Check 脚本 — MOD-INF-011 · Phas / vms_health... | → | IndexHealthMonitor — MOD-INF-011 索引健康自检与 / index_... | 导入依赖 / import_depends |
-| 34 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 / vms_migrate (vm... | → | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 / bridge_l... | 导入依赖 / import_depends |
-| 35 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 / vms_migrate (vm... | → | CollectionManager — MOD-INF-011 八大 Colle / collection_... | 导入依赖 / import_depends |
-| 36 | D_GOV_SCRIPTS 脚本治理: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2  / vms_migra... | → | BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 / bridge_l... | 导入依赖 / import_depends |
-| 37 | D_INFRA_RUNTIME 运行时集成: DEPRECATED: 此文件已废弃。 / event_bus_upgrade (infrastru... | → | EventBus 升级策略引擎 / upgrade_strategy (events/upgrade_... | 导入依赖 / import_depends |
-| 38 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） / auto_... | → | EmbeddingRouter — MOD-INF-011 双嵌入维度路由 / embedding... | 导入依赖 / import_depends |
-| 39 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） / auto_... | → | LocalModelScheduler — L2 本地模型 24/7 调度循环 / local_... | 导入依赖 / import_depends |
-| 40 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） / auto_... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | 导入依赖 / import_depends |
-| 41 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） / auto_... | → | PipelineOrchestrator — M1-M11 管线协调器 / pipeline_orch... | 导入依赖 / import_depends |
-| 42 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） / auto_... | → | InProcessVectorMemory — MOD-INF-011 VMS  / in_process_ve... | 导入依赖 / import_depends |
-| 43 | D_INFRA_RUNTIME 运行时集成: AutoTaskGenerator — 自动任务生成器 / auto_task_generator... | → | LocalModelScheduler — L2 本地模型 24/7 调度循环 / local_... | 导入依赖 / import_depends |
+| 6 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | 入进程向量记忆 / in_process_vector_memory (vector_memory/... | 导入依赖 / import_depends |
+| 7 | D_GOVERNANCE 生命周期管理: 本地层daemon / local_layer_daemon (construction/local_lay... | → | 本地模型调度器 / local_model_scheduler (local_model/local... | 导入依赖 / import_depends |
+| 8 | D_GOVERNANCE 生命周期管理: 启动brain / start_brain (construction/start_brain.py) | → | 运行时类型定义 / runtime_types (contracts/runtime_types.py) | 导入依赖 / import_depends |
+| 9 | D_GOVERNANCE 生命周期管理: 运行ollamaexam / run_ollama_exam (scripts/run_ollama_exam... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | 导入依赖 / import_depends |
+| 10 | D_GOVERNANCE 生命周期管理: spec审计器 / spec_auditor (bridges/spec_auditor.py) | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
+| 11 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | 基类服务端 / _base_server (mcp/_base_server.py) | 导入依赖 / import_depends |
+| 12 | D_GOV_DRIFT 漂移检测: 漂移hotfix绕过 / Drift Hotfix Bypass — drift_hotfix_bypa... | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
+| 13 | D_GOV_ENFORCEMENT 规则执行: 审批 / G-CT-004 — Backward-compat re-export of ApprovalR... | → | 审批类型定义 / approval_types (contracts/approval_types.py) | 导入依赖 / import_depends |
+| 14 | D_GOV_OPS_RESILIENCE 运维弹性治理: 契约 / contracts (escalation/contracts.py) | → | 回滚类型定义 / rollback_types (contracts/rollback_types.py) | 导入依赖 / import_depends |
+| 15 | D_GOV_OPS_RESILIENCE 运维弹性治理: 结果类型定义 / G-CT-003 — RollbackResult backward-compat... | → | 回滚类型定义 / rollback_types (contracts/rollback_types.py) | 导入依赖 / import_depends |
+| 16 | D_GOV_OPS_RESILIENCE 运维弹性治理: 阶段检查注册表 / phase_check_registry (ops_governance/pha... | → | 桥接层 / bridge_layer (vector_memory/bridge_layer.py) | 导入依赖 / import_depends |
+| 17 | D_GOV_OPS_RESILIENCE 运维弹性治理: 阶段检查注册表 / phase_check_registry (ops_governance/pha... | → | 收集管理器 / collection_manager (vector_memory/collection... | 导入依赖 / import_depends |
+| 18 | D_GOV_OPS_RESILIENCE 运维弹性治理: 阶段检查注册表 / phase_check_registry (ops_governance/pha... | → | 入进程向量记忆 / in_process_vector_memory (vector_memory/... | 导入依赖 / import_depends |
+| 19 | D_GOV_OPS_RESILIENCE 运维弹性治理: 阶段检查注册表 / phase_check_registry (ops_governance/pha... | → | 索引健康监控 / index_health_monitor (vector_memory/index_... | 导入依赖 / import_depends |
+| 20 | D_GOV_OPS_RESILIENCE 运维弹性治理: 阶段检查注册表 / phase_check_registry (ops_governance/pha... | → | 协议 / Structural Protocol interfaces for cross-module co... | 导入依赖 / import_depends |
+| 21 | D_GOV_OPS_RESILIENCE 运维弹性治理: 服务registration / service_registration (ops_governance/s... | → | 收集管理器 / collection_manager (vector_memory/collection... | 导入依赖 / import_depends |
+| 22 | D_GOV_OPS_RESILIENCE 运维弹性治理: 服务registration / service_registration (ops_governance/s... | → | 入进程向量记忆 / in_process_vector_memory (vector_memory/... | 导入依赖 / import_depends |
+| 23 | D_GOV_SCRIPTS 脚本治理: vmscron监控器 / vms_cron_monitor (vms_ri/vms_cron_monitor... | → | 收集管理器 / collection_manager (vector_memory/collection... | 导入依赖 / import_depends |
+| 24 | D_GOV_SCRIPTS 脚本治理: vmscron监控器 / vms_cron_monitor (vms_ri/vms_cron_monitor... | → | 索引健康监控 / index_health_monitor (vector_memory/index_... | 导入依赖 / import_depends |
+| 25 | D_GOV_SCRIPTS 脚本治理: vms健康检查 / vms_health_check (vms_ri/vms_health_check.py) | → | 收集管理器 / collection_manager (vector_memory/collection... | 导入依赖 / import_depends |
+| 26 | D_GOV_SCRIPTS 脚本治理: vms健康检查 / vms_health_check (vms_ri/vms_health_check.py) | → | 索引健康监控 / index_health_monitor (vector_memory/index_... | 导入依赖 / import_depends |
+| 27 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 / vms_migrate (vm... | → | 桥接层 / bridge_layer (vector_memory/bridge_layer.py) | 导入依赖 / import_depends |
+| 28 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 / vms_migrate (vm... | → | 收集管理器 / collection_manager (vector_memory/collection... | 导入依赖 / import_depends |
+| 29 | D_GOV_SCRIPTS 脚本治理: vms迁移dry运行 / vms_migration_dry_run (vms_ri/vms_migrat... | → | 桥接层 / bridge_layer (vector_memory/bridge_layer.py) | 导入依赖 / import_depends |
+| 30 | D_GOV_SCRIPTS 脚本治理: vmscron监控器 / vms_cron_monitor (vms/vms_cron_monitor.py) | → | 收集管理器 / collection_manager (vector_memory/collection... | 导入依赖 / import_depends |
+| 31 | D_GOV_SCRIPTS 脚本治理: vmscron监控器 / vms_cron_monitor (vms/vms_cron_monitor.py) | → | 索引健康监控 / index_health_monitor (vector_memory/index_... | 导入依赖 / import_depends |
+| 32 | D_GOV_SCRIPTS 脚本治理: vms健康检查 / vms_health_check (vms/vms_health_check.py) | → | 收集管理器 / collection_manager (vector_memory/collection... | 导入依赖 / import_depends |
+| 33 | D_GOV_SCRIPTS 脚本治理: vms健康检查 / vms_health_check (vms/vms_health_check.py) | → | 索引健康监控 / index_health_monitor (vector_memory/index_... | 导入依赖 / import_depends |
+| 34 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 / vms_migrate (vm... | → | 桥接层 / bridge_layer (vector_memory/bridge_layer.py) | 导入依赖 / import_depends |
+| 35 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 / vms_migrate (vm... | → | 收集管理器 / collection_manager (vector_memory/collection... | 导入依赖 / import_depends |
+| 36 | D_GOV_SCRIPTS 脚本治理: vms迁移dry运行 / vms_migration_dry_run (vms/vms_migration... | → | 桥接层 / bridge_layer (vector_memory/bridge_layer.py) | 导入依赖 / import_depends |
+| 37 | D_INFRA_RUNTIME 运行时集成: DEPRECATED: 此文件已废弃。 / event_bus_upgrade (infrastru... | → | upgrade策略 / upgrade_strategy (events/upgrade_strategy.py) | 导入依赖 / import_depends |
+| 38 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 嵌入路由器 / embedding_router (local_model/embedding_rout... | 导入依赖 / import_depends |
+| 39 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 本地模型调度器 / local_model_scheduler (local_model/local... | 导入依赖 / import_depends |
+| 40 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | 导入依赖 / import_depends |
+| 41 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 管线编排器 / pipeline_orchestrator (integration/pipeline_... | 导入依赖 / import_depends |
+| 42 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 入进程向量记忆 / in_process_vector_memory (vector_memory/... | 导入依赖 / import_depends |
+| 43 | D_INFRA_RUNTIME 运行时集成: 自动任务生成器 / auto_task_generator (trading/auto_task_g... | → | 本地模型调度器 / local_model_scheduler (local_model/local... | 导入依赖 / import_depends |
 | 44 | D_INFRA_RUNTIME 运行时集成: 启动前配置完整性校验（5.71.1 治本）——必填字段/类型 / ru... | → | 运行时类型定义 / runtime_types (contracts/runtime_types.py) | 导入依赖 / import_depends |
-| 45 | D_INTELLIGENCE 上下文管理: 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。 / quick_p... | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | 导入依赖 / import_depends |
-| 46 | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块 / unifi... | → | VMSMemoryBackend — UnifiedMemoryAPI 的 VM / vms_memory_b... | 导入依赖 / import_depends |
-| 47 | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器 / memory_writer (execution/memory_wri... | → | InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎 / in_m... | 导入依赖 / import_depends |
-| 48 | D_TRADING 交易运营: verdict引擎 / verdict_engine (trading/verdict_engine.py) | → | LocalModelScheduler — L2 本地模型 24/7 调度循环 / local_... | 导入依赖 / import_depends |
+| 45 | D_INTELLIGENCE 上下文管理: quick画像 / quick_profile (scripts/quick_profile.py) | → | OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | 导入依赖 / import_depends |
+| 46 | D_INTELLIGENCE 上下文管理: unified记忆API / unified_memory_api (model_evaluation/uni... | → | vms记忆后端 / vms_memory_backend (vector_memory/vms_memor... | 导入依赖 / import_depends |
+| 47 | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器 / memory_writer (execution/memory_wri... | → | in记忆fakevms / in_memory_fake_vms (vector_memory/in_memo... | 导入依赖 / import_depends |
+| 48 | D_TRADING 交易运营: 裁定引擎 / verdict_engine (trading/verdict_engine.py) | → | 本地模型调度器 / local_model_scheduler (local_model/local... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

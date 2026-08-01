@@ -53,22 +53,22 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_tests_test_frontend_components_py["(生产态 / production) 5个前端组件综合验证脚本（TTL=taskbound，施工完成后退役） / test_frontend_components<br/>5个前端组件综合验证脚本（TTL=task_bound，施工完成后退役）<br/>文件: tests/test_frontend_components.py"]
-    src_zephyr_frontend_dashboard_app_py["(生产态 / production) ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃 / app<br/>ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃用 v3.1.0）<br/>文件: dashboard/app.py"]
-    src_zephyr_frontend_dashboard_app_panel_py["(生产态 / production) apppanel · Panel 仪表盘主应用入口（v3.1.0, #ARCH / app_panel<br/>app_panel · Panel 仪表盘主应用入口（v3.1.0, #ARCH-047）<br/>文件: dashboard/app_panel.py"]
-    src_zephyr_frontend_implementations_default_approval_gateway_py["(设计态 / design) 默认approval网关 / default_approval_gateway<br/>默认approval网关，前端的门禁，在关键节点检查是否放行。<br/>文件: implementations/default_approval_gateway.py"]
+    scripts_tests_test_frontend_components_py["(生产态 / production) 测试前端components / test_frontend_components<br/>5个前端组件综合验证脚本（TTL=task_bound，施工完成后退役）<br/>文件: tests/test_frontend_components.py"]
+    src_zephyr_frontend_dashboard_app_py["(生产态 / production) 应用 / app<br/>ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃用 v3.1.0）<br/>文件: dashboard/app.py"]
+    src_zephyr_frontend_dashboard_app_panel_py["(生产态 / production) 应用面板 / app_panel<br/>app_panel · Panel 仪表盘主应用入口（v3.1.0, #ARCH-047）<br/>文件: dashboard/app_panel.py"]
+    src_zephyr_frontend_implementations_default_approval_gateway_py["(设计态 / design) 默认审批网关 / default_approval_gateway<br/>默认approval网关，前端的门禁，在关键节点检查是否放行。<br/>文件: implementations/default_approval_gateway.py"]
     src_zephyr_frontend_implementations_default_notification_manager_py["(设计态 / design) 默认通知管理器 / default_notification_manager<br/>默认通知管理器，前端的通知器，把消息推送给接收方。<br/>文件: implementations/default_notification_manager.py"]
     scripts_tests_test_frontend_components_py ~~~ src_zephyr_frontend_dashboard_app_py
     src_zephyr_frontend_dashboard_app_py ~~~ src_zephyr_frontend_dashboard_app_panel_py
     src_zephyr_frontend_dashboard_app_panel_py ~~~ src_zephyr_frontend_implementations_default_approval_gateway_py
     src_zephyr_frontend_implementations_default_approval_gateway_py ~~~ src_zephyr_frontend_implementations_default_notification_manager_py
-    src_zephyr_frontend_dashboard_components_backtest_performance_py["(生产态 / production) 回测performance · 掘金量化风格绩效分析可视化（v1. / backtest_performance<br/>backtest_performance · 掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047）<br/>文件: components/backtest_performance.py"]
-    src_zephyr_frontend_dashboard_components_backtest_results_py["(生产态 / production) 回测results · 回测结果可视化组件（v3.0.0 Pane / backtest_results<br/>backtest_results · 回测结果可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/backtest_results.py"]
-    src_zephyr_frontend_dashboard_components_fitness_functions_py["(生产态 / production) 适应度functions · Fitness Functions 仪表 / fitness_functions<br/>fitness_functions · Fitness Functions 仪表盘组件（v3.1.0 Panel 迁移, #ARCH-047）<br/>文件: components/fitness_functions.py"]
-    src_zephyr_frontend_dashboard_components_order_book_py["(生产态 / production) 订单book · 5档盘口实时展示组件（v3.0.0 Panel+Hol / order_book<br/>order_book · 5档盘口实时展示组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/order_book.py"]
-    src_zephyr_frontend_dashboard_components_position_monitor_py["(生产态 / production) 持仓monitor · 实盘持仓监控组件（v3.0.0 Panel / position_monitor<br/>position_monitor · 实盘持仓监控组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py"]
-    src_zephyr_frontend_dashboard_components_tick_replay_py["(生产态 / production) 逐笔replay · Tick 回放可视化组件（v3.0.0 Panel+ / tick_replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py"]
-    src_zephyr_frontend_dashboard_components_trade_panel_py["(生产态 / production) 成交panel · 实盘交易面板组件（v3.0.0 Panel+Holo / trade_panel<br/>trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047, human_gated）<br/>文件: components/trade_panel.py"]
+    src_zephyr_frontend_dashboard_components_backtest_performance_py["(生产态 / production) 回测绩效 / backtest_performance<br/>backtest_performance · 掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047）<br/>文件: components/backtest_performance.py"]
+    src_zephyr_frontend_dashboard_components_backtest_results_py["(生产态 / production) 回测results / backtest_results<br/>backtest_results · 回测结果可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/backtest_results.py"]
+    src_zephyr_frontend_dashboard_components_fitness_functions_py["(生产态 / production) 适应度functions / fitness_functions<br/>fitness_functions · Fitness Functions 仪表盘组件（v3.1.0 Panel 迁移, #ARCH-047）<br/>文件: components/fitness_functions.py"]
+    src_zephyr_frontend_dashboard_components_order_book_py["(生产态 / production) 订单book / order_book<br/>order_book · 5档盘口实时展示组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/order_book.py"]
+    src_zephyr_frontend_dashboard_components_position_monitor_py["(生产态 / production) 持仓监控 / position_monitor<br/>position_monitor · 实盘持仓监控组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py"]
+    src_zephyr_frontend_dashboard_components_tick_replay_py["(生产态 / production) 逐笔replay / tick_replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py"]
+    src_zephyr_frontend_dashboard_components_trade_panel_py["(生产态 / production) 交易面板 / trade_panel<br/>trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047, human_gated）<br/>文件: components/trade_panel.py"]
     src_zephyr_frontend_interface_base_py["(生产态 / production) 接口基类 / D_FRONTEND — Human-AI Interface Layer Skeleton<br/>接口基类。D_FRONTEND — Human-AI Interface Layer Skeleton<br/>文件: frontend/interface_base.py"]
     src_zephyr_frontend_dashboard_components_backtest_performance_py ~~~ src_zephyr_frontend_dashboard_components_backtest_results_py
     src_zephyr_frontend_dashboard_components_backtest_results_py ~~~ src_zephyr_frontend_dashboard_components_fitness_functions_py
@@ -77,7 +77,7 @@ flowchart TD
     src_zephyr_frontend_dashboard_components_position_monitor_py ~~~ src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_components_tick_replay_py ~~~ src_zephyr_frontend_dashboard_components_trade_panel_py
     src_zephyr_frontend_dashboard_components_trade_panel_py ~~~ src_zephyr_frontend_interface_base_py
-    src_zephyr_frontend_dashboard_components_chart_factory_py["(生产态 / production) chartfactory · 图表统一工厂（v3.0.0新增, #ARCH-047 / chart_factory<br/>chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047）<br/>文件: components/chart_factory.py"]
+    src_zephyr_frontend_dashboard_components_chart_factory_py["(生产态 / production) chart工厂 / chart_factory<br/>chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047）<br/>文件: components/chart_factory.py"]
     src_zephyr_frontend_implementations_default_notification_manager_py -.->|导入依赖 / import_depends| src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_implementations_default_approval_gateway_py -.->|导入依赖 / import_depends| src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
@@ -124,27 +124,27 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_tests_test_frontend_components_py["(生产态 / production) 5个前端组件综合验证脚本（TTL=taskbound，施工完成后退役） / test_frontend_components<br/>5个前端组件综合验证脚本（TTL=task_bound，施工完成后退役）<br/>文件: tests/test_frontend_components.py"]
-    src_zephyr_frontend_dashboard_app_py["(生产态 / production) ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃 / app<br/>ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃用 v3.1.0）<br/>文件: dashboard/app.py"]
-    src_zephyr_frontend_dashboard_app_panel_py["(生产态 / production) apppanel · Panel 仪表盘主应用入口（v3.1.0, #ARCH / app_panel<br/>app_panel · Panel 仪表盘主应用入口（v3.1.0, #ARCH-047）<br/>文件: dashboard/app_panel.py"]
+    scripts_tests_test_frontend_components_py["(生产态 / production) 测试前端components / test_frontend_components<br/>5个前端组件综合验证脚本（TTL=task_bound，施工完成后退役）<br/>文件: tests/test_frontend_components.py"]
+    src_zephyr_frontend_dashboard_app_py["(生产态 / production) 应用 / app<br/>ZephyrAlpha Dashboard · Streamlit 仪表盘（已弃用 v3.1.0）<br/>文件: dashboard/app.py"]
+    src_zephyr_frontend_dashboard_app_panel_py["(生产态 / production) 应用面板 / app_panel<br/>app_panel · Panel 仪表盘主应用入口（v3.1.0, #ARCH-047）<br/>文件: dashboard/app_panel.py"]
     src_zephyr_frontend_interface_base_py["(生产态 / production) 接口基类 / D_FRONTEND — Human-AI Interface Layer Skeleton<br/>接口基类。D_FRONTEND — Human-AI Interface Layer Skeleton<br/>文件: frontend/interface_base.py"]
     scripts_tests_test_frontend_components_py ~~~ src_zephyr_frontend_dashboard_app_py
     src_zephyr_frontend_dashboard_app_py ~~~ src_zephyr_frontend_dashboard_app_panel_py
     src_zephyr_frontend_dashboard_app_panel_py ~~~ src_zephyr_frontend_interface_base_py
-    src_zephyr_frontend_dashboard_components_backtest_performance_py["(生产态 / production) 回测performance · 掘金量化风格绩效分析可视化（v1. / backtest_performance<br/>backtest_performance · 掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047）<br/>文件: components/backtest_performance.py"]
-    src_zephyr_frontend_dashboard_components_backtest_results_py["(生产态 / production) 回测results · 回测结果可视化组件（v3.0.0 Pane / backtest_results<br/>backtest_results · 回测结果可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/backtest_results.py"]
-    src_zephyr_frontend_dashboard_components_fitness_functions_py["(生产态 / production) 适应度functions · Fitness Functions 仪表 / fitness_functions<br/>fitness_functions · Fitness Functions 仪表盘组件（v3.1.0 Panel 迁移, #ARCH-047）<br/>文件: components/fitness_functions.py"]
-    src_zephyr_frontend_dashboard_components_order_book_py["(生产态 / production) 订单book · 5档盘口实时展示组件（v3.0.0 Panel+Hol / order_book<br/>order_book · 5档盘口实时展示组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/order_book.py"]
-    src_zephyr_frontend_dashboard_components_position_monitor_py["(生产态 / production) 持仓monitor · 实盘持仓监控组件（v3.0.0 Panel / position_monitor<br/>position_monitor · 实盘持仓监控组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py"]
-    src_zephyr_frontend_dashboard_components_tick_replay_py["(生产态 / production) 逐笔replay · Tick 回放可视化组件（v3.0.0 Panel+ / tick_replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py"]
-    src_zephyr_frontend_dashboard_components_trade_panel_py["(生产态 / production) 成交panel · 实盘交易面板组件（v3.0.0 Panel+Holo / trade_panel<br/>trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047, human_gated）<br/>文件: components/trade_panel.py"]
+    src_zephyr_frontend_dashboard_components_backtest_performance_py["(生产态 / production) 回测绩效 / backtest_performance<br/>backtest_performance · 掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047）<br/>文件: components/backtest_performance.py"]
+    src_zephyr_frontend_dashboard_components_backtest_results_py["(生产态 / production) 回测results / backtest_results<br/>backtest_results · 回测结果可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/backtest_results.py"]
+    src_zephyr_frontend_dashboard_components_fitness_functions_py["(生产态 / production) 适应度functions / fitness_functions<br/>fitness_functions · Fitness Functions 仪表盘组件（v3.1.0 Panel 迁移, #ARCH-047）<br/>文件: components/fitness_functions.py"]
+    src_zephyr_frontend_dashboard_components_order_book_py["(生产态 / production) 订单book / order_book<br/>order_book · 5档盘口实时展示组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/order_book.py"]
+    src_zephyr_frontend_dashboard_components_position_monitor_py["(生产态 / production) 持仓监控 / position_monitor<br/>position_monitor · 实盘持仓监控组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py"]
+    src_zephyr_frontend_dashboard_components_tick_replay_py["(生产态 / production) 逐笔replay / tick_replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py"]
+    src_zephyr_frontend_dashboard_components_trade_panel_py["(生产态 / production) 交易面板 / trade_panel<br/>trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047, human_gated）<br/>文件: components/trade_panel.py"]
     src_zephyr_frontend_dashboard_components_backtest_performance_py ~~~ src_zephyr_frontend_dashboard_components_backtest_results_py
     src_zephyr_frontend_dashboard_components_backtest_results_py ~~~ src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_components_fitness_functions_py ~~~ src_zephyr_frontend_dashboard_components_order_book_py
     src_zephyr_frontend_dashboard_components_order_book_py ~~~ src_zephyr_frontend_dashboard_components_position_monitor_py
     src_zephyr_frontend_dashboard_components_position_monitor_py ~~~ src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_components_tick_replay_py ~~~ src_zephyr_frontend_dashboard_components_trade_panel_py
-    src_zephyr_frontend_dashboard_components_chart_factory_py["(生产态 / production) chartfactory · 图表统一工厂（v3.0.0新增, #ARCH-047 / chart_factory<br/>chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047）<br/>文件: components/chart_factory.py"]
+    src_zephyr_frontend_dashboard_components_chart_factory_py["(生产态 / production) chart工厂 / chart_factory<br/>chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047）<br/>文件: components/chart_factory.py"]
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
@@ -177,7 +177,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_frontend_implementations_default_approval_gateway_py["(设计态 / design) 默认approval网关 / default_approval_gateway<br/>默认approval网关，前端的门禁，在关键节点检查是否放行。<br/>文件: implementations/default_approval_gateway.py"]
+    src_zephyr_frontend_implementations_default_approval_gateway_py["(设计态 / design) 默认审批网关 / default_approval_gateway<br/>默认approval网关，前端的门禁，在关键节点检查是否放行。<br/>文件: implementations/default_approval_gateway.py"]
     src_zephyr_frontend_implementations_default_notification_manager_py["(设计态 / design) 默认通知管理器 / default_notification_manager<br/>默认通知管理器，前端的通知器，把消息推送给接收方。<br/>文件: implementations/default_notification_manager.py"]
     src_zephyr_frontend_implementations_default_approval_gateway_py ~~~ src_zephyr_frontend_implementations_default_notification_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -193,12 +193,12 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 适应度functions · Fitness Functions 仪表 / fitness_funct... | → | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | 导入依赖 / import_depends |
-| 2 | apppanel · Panel 仪表盘主应用入口（v3.1.0, #ARCH / app_p... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-1-02  / sq... | 导入依赖 / import_depends |
-| 3 | apppanel · Panel 仪表盘主应用入口（v3.1.0, #ARCH / app_p... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1-04 / task... | 导入依赖 / import_depends |
-| 4 | chartfactory · 图表统一工厂（v3.0.0新增, #ARCH-047 / cha... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 5 | 成交panel · 实盘交易面板组件（v3.0.0 Panel+Holo / trade_... | → | D_SHARED 共享服务: 时间utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 / ti... | 导入依赖 / import_depends |
-| 6 | 成交panel · 实盘交易面板组件（v3.0.0 Panel+Holo / trade_... | → | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shar / order (exec... | 导入依赖 / import_depends |
+| 1 | 适应度functions / fitness_functions (components/fitness_f... | → | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | 导入依赖 / import_depends |
+| 2 | 应用面板 / app_panel (dashboard/app_panel.py) | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
+| 3 | 应用面板 / app_panel (dashboard/app_panel.py) | → | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 4 | chart工厂 / chart_factory (components/chart_factory.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 5 | 交易面板 / trade_panel (components/trade_panel.py) | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 6 | 交易面板 / trade_panel (components/trade_panel.py) | → | D_TRADING 交易运营: 订单 / order (execution/order.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

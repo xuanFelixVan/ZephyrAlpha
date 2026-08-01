@@ -53,12 +53,12 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_ashare_performance_audit_py["(设计态 / design) A股绩效审计 / ashare_performance_audit<br/>A股绩效审计，报告的功能模块。<br/>文件: reporting/ashare_performance_audit.py"]
+    src_zephyr_reporting_ashare_performance_audit_py["(设计态 / design) A股绩效审计 / ashare_performance_audit<br/>A股绩效审计（ashare_performance_audit.py）<br/>文件: reporting/ashare_performance_audit.py"]
     src_zephyr_reporting_ashare_trade_record_template_py["(设计态 / design) A股交易记录模板 / ashare_trade_record_template<br/>A股交易记录模板，报告的记录器，把发生的事件/结果记下来留档。<br/>文件: reporting/ashare_trade_record_template.py"]
     src_zephyr_reporting_default_tca_engine_py["(生产态 / production) 默认tca引擎 / D_REPORTING — Default TCA Engine<br/>默认tca引擎。D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py"]
     src_zephyr_reporting_performance_attribution_report_py["(设计态 / design) 绩效attribution报告 / performance_attribution_report<br/>绩效attribution报告，报告的报告器，汇总数据生成报告。<br/>文件: reporting/performance_attribution_report.py"]
-    src_zephyr_reporting_realtime_pnl_dashboard_py["(设计态 / design) 实时盈亏仪表盘 / realtime_pnl_dashboard<br/>实时盈亏仪表盘，报告的功能模块。<br/>文件: reporting/realtime_pnl_dashboard.py"]
-    src_zephyr_reporting_regulatory_report_generator_py["(设计态 / design) regulatory报告生成器 / regulatory_report_generator<br/>regulatory报告生成器，报告的生成器，按规则生成所需的数据或报告。<br/>文件: reporting/regulatory_report_generator.py"]
+    src_zephyr_reporting_realtime_pnl_dashboard_py["(设计态 / design) 实时盈亏仪表盘 / realtime_pnl_dashboard<br/>实时盈亏仪表盘（realtime_pnl_dashboard.py）<br/>文件: reporting/realtime_pnl_dashboard.py"]
+    src_zephyr_reporting_regulatory_report_generator_py["(设计态 / design) regulatory报告generator / regulatory_report_generator<br/>regulatory报告生成器，报告的生成器，按规则生成所需的数据或报告。<br/>文件: reporting/regulatory_report_generator.py"]
     src_zephyr_reporting_report_version_manager_py["(设计态 / design) 报告版本管理器 / report_version_manager<br/>报告版本管理器，报告的报告器，汇总数据生成报告。<br/>文件: reporting/report_version_manager.py"]
     src_zephyr_reporting_report_watermark_tracker_py["(设计态 / design) 报告watermark追踪器 / report_watermark_tracker<br/>报告watermark追踪器，报告的追踪器，持续跟踪某项指标或状态的变化。<br/>文件: reporting/report_watermark_tracker.py"]
     src_zephyr_reporting_risk_report_engine_py["(设计态 / design) 风险报告引擎 / risk_report_engine<br/>风险报告引擎，报告的报告器，汇总数据生成报告。<br/>文件: reporting/risk_report_engine.py"]
@@ -137,11 +137,11 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_ashare_performance_audit_py["(设计态 / design) A股绩效审计 / ashare_performance_audit<br/>A股绩效审计，报告的功能模块。<br/>文件: reporting/ashare_performance_audit.py"]
+    src_zephyr_reporting_ashare_performance_audit_py["(设计态 / design) A股绩效审计 / ashare_performance_audit<br/>A股绩效审计（ashare_performance_audit.py）<br/>文件: reporting/ashare_performance_audit.py"]
     src_zephyr_reporting_ashare_trade_record_template_py["(设计态 / design) A股交易记录模板 / ashare_trade_record_template<br/>A股交易记录模板，报告的记录器，把发生的事件/结果记下来留档。<br/>文件: reporting/ashare_trade_record_template.py"]
     src_zephyr_reporting_performance_attribution_report_py["(设计态 / design) 绩效attribution报告 / performance_attribution_report<br/>绩效attribution报告，报告的报告器，汇总数据生成报告。<br/>文件: reporting/performance_attribution_report.py"]
-    src_zephyr_reporting_realtime_pnl_dashboard_py["(设计态 / design) 实时盈亏仪表盘 / realtime_pnl_dashboard<br/>实时盈亏仪表盘，报告的功能模块。<br/>文件: reporting/realtime_pnl_dashboard.py"]
-    src_zephyr_reporting_regulatory_report_generator_py["(设计态 / design) regulatory报告生成器 / regulatory_report_generator<br/>regulatory报告生成器，报告的生成器，按规则生成所需的数据或报告。<br/>文件: reporting/regulatory_report_generator.py"]
+    src_zephyr_reporting_realtime_pnl_dashboard_py["(设计态 / design) 实时盈亏仪表盘 / realtime_pnl_dashboard<br/>实时盈亏仪表盘（realtime_pnl_dashboard.py）<br/>文件: reporting/realtime_pnl_dashboard.py"]
+    src_zephyr_reporting_regulatory_report_generator_py["(设计态 / design) regulatory报告generator / regulatory_report_generator<br/>regulatory报告生成器，报告的生成器，按规则生成所需的数据或报告。<br/>文件: reporting/regulatory_report_generator.py"]
     src_zephyr_reporting_report_version_manager_py["(设计态 / design) 报告版本管理器 / report_version_manager<br/>报告版本管理器，报告的报告器，汇总数据生成报告。<br/>文件: reporting/report_version_manager.py"]
     src_zephyr_reporting_report_watermark_tracker_py["(设计态 / design) 报告watermark追踪器 / report_watermark_tracker<br/>报告watermark追踪器，报告的追踪器，持续跟踪某项指标或状态的变化。<br/>文件: reporting/report_watermark_tracker.py"]
     src_zephyr_reporting_risk_report_engine_py["(设计态 / design) 风险报告引擎 / risk_report_engine<br/>风险报告引擎，报告的报告器，汇总数据生成报告。<br/>文件: reporting/risk_report_engine.py"]
