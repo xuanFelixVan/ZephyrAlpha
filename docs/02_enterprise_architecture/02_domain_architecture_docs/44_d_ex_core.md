@@ -123,6 +123,7 @@ flowchart TD
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     D_SELL_DECISION["(设计态 / design) 卖出决策 / Sell Decision<br/>卖出决策，负责卖出信号生成、卖出时机判断和退出策<br/>略<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
+    src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
     D_PF_CORE["(生产态 / production) 组合核心 / Portfolio Core<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_trading_session_py -.->|导入依赖 / import_depends| D_PF_CORE
     D_BACKTEST["(生产态 / production) 回测 / Backtest<br/>回测，负责历史数据回测、回测引擎和回测报告<br/>跨域节点 / cross-domain"]
@@ -134,18 +135,17 @@ flowchart TD
     src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_TRADING
     D_GOVERNANCE["(生产态 / production) 生命周期管理 / Lifecycle<br/>Management<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
-    src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
-    src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
     D_RISK["(设计态 / design) 风控 / Risk Control<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
+    src_zephyr_ex_core_trading_session_py -.->|contract / contract| D_GOVERNANCE
     D_REPORTING["(设计态 / design) 报告 / Reporting<br/>报告，负责投资报告、风险报告和合规报告的生成与分<br/>发<br/>跨域节点 / cross-domain"]
     src_zephyr_ex_core_execution_report_py -.->|data / data| D_REPORTING
     src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
+    D_TRADING -.->|import / import| src_zephyr_ex_core_fill_handler_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
-    D_TRADING -.->|import / import| src_zephyr_ex_core_fill_handler_py
     D_TRADING -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     D_EX_SOR["(设计态 / design) 执行路由 / Execution Routing<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>跨域节点 / cross-domain"]
     D_EX_SOR -.->|导入依赖 / import_depends| src_zephyr_ex_core_execution_engine_py
