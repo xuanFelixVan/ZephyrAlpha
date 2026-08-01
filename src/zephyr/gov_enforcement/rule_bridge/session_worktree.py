@@ -5342,6 +5342,10 @@ def _execute_cleanups(
 
         )
 
+        # R3 治本扩展（P1 修复，2026-08-01）：pre-merge stash 同样写入 AI 可读通告
+
+        _write_stash_notice(root, stash_msg, to_checkout, "pre_merge_clean", session_id)
+
         logger.info(
 
             "session_worktree_pre_merge: stashed %d tracked file(s) for session=%s "
