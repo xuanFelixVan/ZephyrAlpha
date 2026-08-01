@@ -22,7 +22,7 @@ ttl: permanent
 |------|-----|
 | 域总数 | 72 |
 | 跨域依赖对数 | 273 |
-| 跨域依赖边总数 | 1817 |
+| 跨域依赖边总数 | 1818 |
 
 ## 跨域依赖 Top 20（按边数降序）
 
@@ -33,7 +33,7 @@ ttl: permanent
 | D_GOVERNANCE | D_SHARED | 71 | import_depends,test_depends |
 | D_INTEGRATION | D_SHARED | 61 | import_depends |
 | D_GOV_AUDIT | D_SHARED | 58 | import_depends,test_depends |
-| D_GOV_SCRIPTS | D_GOVERNANCE | 48 | import_depends |
+| D_GOV_SCRIPTS | D_GOVERNANCE | 49 | import_depends |
 | D_GOVERNANCE | D_GOV_SCRIPTS | 45 | import_depends,test_depends |
 | D_SECURITY | D_GOV_DRIFT | 44 | import_depends |
 | D_COMPLIANCE | D_GOV_DRIFT | 43 | import_depends |
@@ -58,7 +58,7 @@ ttl: permanent
 | 3 | D_GOVERNANCE | D_SHARED | 71 | import_depends,test_depends |
 | 4 | D_INTEGRATION | D_SHARED | 61 | import_depends |
 | 5 | D_GOV_AUDIT | D_SHARED | 58 | import_depends,test_depends |
-| 6 | D_GOV_SCRIPTS | D_GOVERNANCE | 48 | import_depends |
+| 6 | D_GOV_SCRIPTS | D_GOVERNANCE | 49 | import_depends |
 | 7 | D_GOVERNANCE | D_GOV_SCRIPTS | 45 | import_depends,test_depends |
 | 8 | D_SECURITY | D_GOV_DRIFT | 44 | import_depends |
 | 9 | D_COMPLIANCE | D_GOV_DRIFT | 43 | import_depends |

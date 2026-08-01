@@ -25,7 +25,7 @@ ttl: permanent
 | 基础设施组件 | 14 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
 | 配置项 | 33 | config/*.yaml |
-| 数据流作业 | 909 | dataflow_graph_registry.yaml |
+| 数据流作业 | 230 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
 | **合计** | **261** | |
 
@@ -166,33 +166,33 @@ ttl: permanent
 | `config/alert_rules.yaml` | 2.4 | 2026-07-20 |
 | `config/asset_inventory.yaml` | 2.3 | 2026-07-04 |
 | `config/blueprint_routing.yaml` | 22.4 | 2026-07-24 |
-| `config/budget_policy.yaml` | 3.1 | 2026-06-12 |
-| `config/capabilities.yaml` | 0.9 | 2026-06-12 |
-| `config/capacity_params.yaml` | 7.3 | 2026-08-01 |
+| `config/budget_policy.yaml` | 3.0 | 2026-08-01 |
+| `config/capabilities.yaml` | 0.9 | 2026-08-01 |
+| `config/capacity_params.yaml` | 7.1 | 2026-08-01 |
 | `config/capacity_slo.yaml` | 4.6 | 2026-07-24 |
 | `config/compression_policy.yaml` | 2.5 | 2026-07-04 |
 | `config/context_rules.yaml` | 5.6 | 2026-07-17 |
 | `config/degradation_chain.yaml` | 1.3 | 2026-07-02 |
-| `config/dr_policy.yaml` | 5.4 | 2026-08-01 |
+| `config/dr_policy.yaml` | 4.5 | 2026-08-01 |
 | `config/embedding_model_registry.yaml` | 3.5 | 2026-06-23 |
 | `config/error_budget_config.yaml` | 1.6 | 2026-07-02 |
 | `config/external_watchdog.yaml` | 0.9 | 2026-07-02 |
-| `config/flags.yaml` | 2.0 | 2026-08-01 |
+| `config/flags.yaml` | 1.9 | 2026-08-01 |
 | `config/immutable_core.yaml` | 2.8 | 2026-07-23 |
 | `config/metrics_schema.yaml` | 2.6 | 2026-07-02 |
-| `config/model_pricing.yaml` | 1.3 | 2026-06-12 |
+| `config/model_pricing.yaml` | 1.3 | 2026-08-01 |
 | `config/nav_table_mapping.yaml` | 20.1 | 2026-07-01 |
 | `config/owner_offline_protocol.yaml` | 1.0 | 2026-07-02 |
 | `config/qmt_environments.yaml` | 4.0 | 2026-08-01 |
 | `config/rbac_roles.yaml` | 1.1 | 2026-07-04 |
-| `config/resource_optimization.yaml` | 1.6 | 2026-06-24 |
-| `config/risk_params.yaml` | 1.3 | 2026-06-12 |
+| `config/resource_optimization.yaml` | 1.5 | 2026-08-01 |
+| `config/risk_params.yaml` | 1.3 | 2026-08-01 |
 | `config/risk_register.yaml` | 9.1 | 2026-07-02 |
 | `config/sandbox_policy.yaml` | 1.5 | 2026-07-05 |
 | `config/sla_targets.yaml` | 0.9 | 2026-07-22 |
 | `config/sli_registry.yaml` | 2.8 | 2026-08-01 |
 | `config/tech_stack_manifest.yaml` | 5.4 | 2026-07-19 |
-| `config/trigger_router.yaml` | 5.0 | 2026-07-14 |
+| `config/trigger_router.yaml` | 4.9 | 2026-08-01 |
 | `config/worktree_state_machine.yaml` | 7.3 | 2026-07-21 |
 
 ## 7. 数据源 API 清单

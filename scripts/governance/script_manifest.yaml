@@ -1,17 +1,17 @@
-# 自动生成于 2026-08-01T07:46:58Z
+# 自动生成于 2026-08-01T07:54:10Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-01T07:46:58Z'
+generated_at: '2026-08-01T07:54:10Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 372
+total_scripts: 373
 with_manifest: 315
-missing_manifest: 57
+missing_manifest: 58
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 29
+  governance: 30
   governance:d10_performance: 1
   governance:d11_compliance: 21
   governance:d12_ai_hallucination: 4
@@ -3628,6 +3628,16 @@ scripts:
   - Critical
   - Quick
 - name: git_health_smoke.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: harvest_candidates_from_drafts.py
   owner: governance
   dimensions: []
   priority: P2
