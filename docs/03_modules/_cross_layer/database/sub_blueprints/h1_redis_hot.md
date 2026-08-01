@@ -17,8 +17,8 @@ date: "2026-08-01"
 ttl: permanent
 construction_progress: not_started
 actual_disk_path: "src/zephyr/infrastructure/h1_redis_hot/"
-belongs_to: "ARCH-BIZDB-001"
-parent_module: "ARCH-BIZDB-001"
+belongs_to: "MOD-ARCH-BIZDB"
+parent_module: "MOD-ARCH-BIZDB"
 codification_level: L1
 last_updated: "2026-08-01"
 generation: 1
@@ -37,7 +37,7 @@ references:
     section: "三层冷热架构定位"
     why: "数据库集成蓝图——三层冷热架构 Hot 层触发条件裁定(2026-07-13)"
 depends_on:
-  - target: ARCH-BIZDB-001
+  - target: MOD-ARCH-BIZDB
     at: "§8.1/§11.1"
     why: "母蓝图定义 H1 为实盘热缓存，能造现在就造"
   - target: MOD-INF-002
@@ -57,7 +57,7 @@ design_maturity: design
 
 H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中实盘/模拟盘的实时热缓存，承载决策引擎 <5ms 因子截面读取（DD-11-01 在线存储）。它是实盘交易命脉：盘中 tick 下载后 D-FACTOR Engine 每 3 秒计算因子截面写入 Redis，决策引擎（D-SIGNAL/D-RISK）<5ms 读取做信号触发与风控。
 
-本蓝图是母蓝图 [ARCH-BIZDB-001](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/business_data_architecture.md) 的子蓝图之一（§11.1 现在建第 7 项），承接 [数据架构.md](file:///D:/临时工作区/架构图/数据架构.md) §7.1/§11.1/§12.4.2 的设计要素，细化到 Redis Key 字段级 + 接口级。
+本蓝图是母蓝图 [MOD-ARCH-BIZDB](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/business_data_architecture.md) 的子蓝图之一（§11.1 现在建第 7 项），承接 [数据架构.md](file:///D:/临时工作区/架构图/数据架构.md) §7.1/§11.1/§12.4.2 的设计要素，细化到 Redis Key 字段级 + 接口级。
 
 **触发条件已命中**：[blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/blueprint.md) §三层冷热架构定位（2026-07-13 裁定）"Hot 层(Redis) 施工时机=实盘交易启动前开发"。用户即将进入"盘中模拟盘交易 + 盘后回测"双线并行阶段，模拟盘=国金 QMT 模拟端（账号 8886156677，模拟资金 1000 万，真实盘中交易流程，仅资金非真），是实盘完整彩排，盘中推理闭环与真实实盘同节奏。
 
@@ -138,7 +138,7 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 | 4 | 数据架构.md | §7.4 备份策略 | Redis 持久化：AOF appendfsync everysec + RDB 每日快照 |
 | 5 | 数据架构.md | §7.2 容量规划 | ~200MB→1年~500MB→3年~1GB，扩展触发 maxmemory>70% |
 | 6 | 数据架构.md | §7.3 生命周期 | 盘中无 TTL/盘后切 3600s；盘后清 Redis→3 个月迁 E 盘 |
-| 7 | 母蓝图 ARCH-BIZDB-001 | §8.1/§11.1 | H1=Redis，64G 内存够，实盘热缓存，能造现在就造 |
+| 7 | 母蓝图 MOD-ARCH-BIZDB | §8.1/§11.1 | H1=Redis，64G 内存够，实盘热缓存，能造现在就造 |
 | 8 | blueprint.md | 三层冷热架构定位 | Hot 层触发条件=实盘交易启动前开发（2026-07-13 裁定） |
 | 9 | 能力定位书 | 约束三/B-017 | miniQMT Tick=3秒、下单10笔/秒；策略日频不做HFT，3秒Tick用于信号触发/风控 |
 | 10 | qmt_environments.yaml | sim 终端 | 模拟盘=国金QMT模拟端(8886156677)，真实盘中流程，实盘彩排 |
