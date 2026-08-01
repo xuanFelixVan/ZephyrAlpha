@@ -97,7 +97,7 @@ flowchart TD
     src_zephyr_infrastructure_events_event_store_py["(生产态 / production) 事件存储 / event_store<br/>Event Store — 事件持久化存储。<br/>文件: events/event_store.py"]
     src_zephyr_infrastructure_finding_task_bridge_py["(生产态 / production) 发现任务桥接 / finding_<br/>task_bridge<br/>Finding->TaskCard 桥接器<br/>文件: infrastructure/finding_task_bridge.py"]
     src_zephyr_infrastructure_git_batcher_py["(生产态 / production) Git批处理 / git_batcher<br/>Git批处理.py — Git 命令批量化工具<br/>（ARCH-GIT-CALL-BUDGET P2.2，2026-07-19）<br/>文件: infrastructure/git_batcher.py"]
-    src_zephyr_infrastructure_h1_redis_hot["(设计态 / design) h1_redis_hot/<br/>文件: h1_redis_hot/"]
+    src_zephyr_infrastructure_h1_redis_hot["(设计态 / design) infrastructure/h1_redis_hot<br/>文件: infrastructure/h1_redis_hot"]
     src_zephyr_infrastructure_health_monitor_health_aggregator_py["(生产态 / production) 健康聚合器 / health_<br/>aggregator<br/>全系统健康聚合 — check_all_systems()<br/>文件: health_monitor/health_aggregator.py"]
     src_zephyr_infrastructure_hooks_event_hook_py["(生产态 / production) 事件钩子 / event_hook<br/>EventHook — 声明式任务系统事件订阅<br/>文件: hooks/event_hook.py"]
     src_zephyr_infrastructure_impact_impact_propagator_py["(生产态 / production) 冲击propagator / impact_<br/>propagator<br/>Impact Propagator — 变更影响传播分析。<br/>文件: impact/impact_propagator.py"]
@@ -1033,7 +1033,7 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     docs_03_modules_cross_layer_agent_orchestrator_blueprint_md["(设计态 / design) 蓝图 / blueprint<br/>蓝图（blueprint.md）<br/>文件: agent_orchestrator/blueprint.md<br/>⛔ 基础设施运行时域，设计已就绪，等待开发排期"]
-    src_zephyr_infrastructure_h1_redis_hot["(设计态 / design) h1_redis_hot/<br/>文件: h1_redis_hot/"]
+    src_zephyr_infrastructure_h1_redis_hot["(设计态 / design) infrastructure/h1_redis_hot<br/>文件: infrastructure/h1_redis_hot"]
     docs_03_modules_cross_layer_agent_orchestrator_blueprint_md ~~~ src_zephyr_infrastructure_h1_redis_hot
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
