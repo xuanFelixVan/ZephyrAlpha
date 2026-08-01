@@ -10868,28 +10868,40 @@ entries:
   created: '2026-08-01'
   last_updated: '2026-08-01'
 - issue_id: '#ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001'
-  title: Stage4公共化产生的公共wrapper为死代码（无外部调用方）
+  title: Stage4公共化产生的公共wrapper为死代码（无外部调用方，已裁定回退删除）
   severity: P3低
   adjudication: |
-    问题：Stage4公共化阶段为私有实现函数新增了公共wrapper（reconciliation_registry
-      的 run_subprocess、gov_audit.bridge 的 get_writer、runtime_violation_snapshot
-      的 run_dashboard、GitCommitGateway 的 commit_auto），但代码内部仍调用私有实现
-      函数，且无任何外部调用方使用这些公共wrapper——公共wrapper为死代码。
-    影响：25个审计测试误patch公共wrapper（期望代码调公共），导致mock未命中、测试
-      失败。这正是公共化未完成的症状：意图让代码调公共、测试patch公共，但调用点
-      迁移未执行，停在"有公共wrapper但无人调"的中间态。
-    裁定（Route A，2026-08-02）：采用纯测试修复——patch目标改私有函数匹配代码
-      实际调用路径，零生产代码改动、零风险。理由：公共wrapper无外部调用方=死代码，
-      完成公共化（Route B，迁移35+调用点）无收益且高风险（碰 human_gated 的
-      bridge.py 需批准）。
-    待用户裁定方向（proposed）：
-      (a) 回退公共化——删除死代码公共wrapper，保持私有实现为唯一接口；
-      (b) 完成公共化——若未来确认有外部消费者，迁移调用点至公共wrapper，届时
-          测试patch目标同步改回公共。
-    当前选择Route A（测试patch私有）与(a)方向一致，但未执行(a)的wrapper删除，
-      仅修测试。wrapper删除留待用户裁定后执行。
-  fix_phase: 已执行（Route A测试修复，5文件132测试全绿）；wrapper删除待用户裁定
-  status: proposed
-  related_adjudication: 'Stage4公共化（run_subprocess/get_writer/run_dashboard/commit_auto wrapper）'
+    问题：2026-07-29 某 AI 会话误读"Stage 4 公共化"标注约定（仅 full_project_tree_zh.md
+      标签，非 TRAE-036 规则——TRAE-036 Stage 4 是阶段成熟度 scaffold→stable终态，
+      非 API 公共化），预防性为 5 个私有实现函数新增公共 wrapper，但代码内部仍调用
+      私有实现函数，且无任何外部调用方使用这些公共 wrapper——公共 wrapper 为死代码。
+      实际 5 个死 wrapper（跨 4 文件；原登记误列 commit_auto 实际不存在、漏列
+      log_reconcile_results 和 contracts.get_writer，已纠正）：
+      ① reconciliation_registry.run_subprocess（0 调用方，_run_subprocess 38 处调用）
+      ② reconciliation_registry.log_reconcile_results（0 调用方，_log_reconcile_results ~10 处）
+      ③ gov_audit.bridge.get_writer（0 调用方，_get_writer 被 write_to_core 调用）
+      ④ gov_audit.contracts.get_writer（0 调用方，_get_writer 被 _CoreAuditWriter 调用）
+      ⑤ runtime_violation_snapshot.run_dashboard（0 调用方，_run_dashboard 2 处调用）
+      注：原登记所列 GitCommitGateway.commit_auto 公共 wrapper 经 grep 实证不存在
+      （def commit_auto 零匹配），仅私有 _commit_auto 存在，此条登记有误已纠正。
+    影响：25 新审计测试 + 8 旧审计测试（tests/audit/）误 patch 公共 wrapper（期望代码
+      调公共），导致 mock 未命中、测试失败。这是 dual 公共/私有并存在 100% AI 开发
+      语境下的结构性必然——AI 靠模式匹配生成代码，两个同名函数并存必导致调用方与
+      测试 patch 方不一致。
+    裁定（decided，2026-08-02，方向 a 回退公共化）：删除 5 个死公共 wrapper，保持
+      私有实现为唯一接口；测试统一 patch 私有（匹配代码实际调用路径）。理由（第一性
+      原理）：① 公共 API 价值=外部消费者，5 个 wrapper 零外部消费者=零价值=纯负担；
+      ② "Stage 4 公共化"非约束性规则（TRAE-036 Stage 4 是阶段成熟度），无合规义务；
+      ③ 100% AI 开发语境下 dual-API 是持续复发源（每会话须重决公共/私有），删 dual
+      回归单一函数是治本；④ Route B（完成公共化，迁移 35+ 调用点）碰 human_gated 的
+      bridge.py、高风险、零功能收益、且需持续强制防 AI 重新引入私有调用；⑤ 违反
+      "需求驱动"铁律（四问过滤 q2），预防性公共化=过度工程=幽灵节点；⑥ 正典先例
+      session_worktree_sweep（FP-ISO.4C）按需公共化，第一调用方即消费者。
+    防复发：AGENTS.md P0-6 公共函数按需创建铁律（公共函数仅在存在真实外部消费者时
+      创建，禁止预防性公共化，dual 公共/私有禁止作为终态）。未来自动化候选
+      GATE-DEAD-PUBLIC-WRAPPER reconciler 持续检测死公共 wrapper。
+  fix_phase: 已执行（删 5 死 wrapper + 旧测试 8 失败改 patch 私有 + AGENTS.md P0-6 铁律）；旧13+新132测试全绿
+  status: decided
+  related_adjudication: 'Stage4公共化（run_subprocess/log_reconcile_results/bridge.get_writer/contracts.get_writer/run_dashboard 共5个死wrapper删除；commit_auto公共本不存在已纠正）'
   created: '2026-08-02'
   last_updated: '2026-08-02'

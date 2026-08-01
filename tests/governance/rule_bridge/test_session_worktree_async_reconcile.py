@@ -221,7 +221,7 @@ class TestRunReconcilersAfterMergeSyncFallback:
             "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway"
         ) as mock_gw_cls, \
              patch(
-                 "zephyr.governance.audit.reconciliation_registry.log_reconcile_results"
+                 "zephyr.governance.audit.reconciliation_registry._log_reconcile_results"
              ):
             mock_gw = MagicMock()
             mock_gw_cls.return_value = mock_gw

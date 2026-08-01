@@ -12643,14 +12643,4 @@ def make_session_staging_lifecycle_reconciler(gateway: "object") -> ReconcilerSp
 
     )
 
-# ── Stage 4 公共化（2026-07-29）：public wrapper ──
-def run_subprocess(cmd, **kwargs) -> subprocess.CompletedProcess:
-    """公共接口：run_subprocess（Stage 4 公共化，委托到 _run_subprocess）。"""
-    return _run_subprocess(cmd, **kwargs)
-
-# ── Stage 4 公共化（2026-07-29）：public wrapper ──
-def log_reconcile_results(project_root, results, session_id, trigger_source, committed_files, commit_message) -> None:
-    """公共接口：log_reconcile_results（Stage 4 公共化，委托到 _log_reconcile_results）。"""
-    return _log_reconcile_results(project_root, results, session_id, trigger_source, committed_files, commit_message)
-
 

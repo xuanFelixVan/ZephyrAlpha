@@ -94,7 +94,7 @@ def _insert_log(root: Path) -> str:
         action="warn",
         detail="test detail for P4-1a column migration",
     )
-    reg_mod.log_reconcile_results(
+    reg_mod._log_reconcile_results(
         project_root=root,
         results=[result],
         session_id="sess-test-p4-1a",

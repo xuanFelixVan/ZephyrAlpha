@@ -342,9 +342,4 @@ class IntegrityChecker(ABC):
 
     def verify_merkle(self, hour_key: str, expected_root: str) -> bool: ...
 
-# ── Stage 4 公共化（2026-07-29）：public wrapper ──
-def get_writer():
-    """公共接口：get_writer（Stage 4 公共化）。"""
-    return _get_writer()
-
 
