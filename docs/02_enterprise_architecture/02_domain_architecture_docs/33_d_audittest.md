@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_test_suite_registry_yaml["测试suite注册表<br/>机器学习的注册表，登记和查询已注册的条目<br/>test_suite_registry<br/>文件: catalogs/test_suite_registry.yaml<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_test_suite_registry_yaml["测试suite注册表<br/>test_suite_registry<br/>文件: catalogs/test_suite_registry.yaml<br/>(生产态 / production)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -68,7 +68,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_01_policies_and_standards_registry_catalogs_test_suite_registry_yaml["测试suite注册表<br/>机器学习的注册表，登记和查询已注册的条目<br/>test_suite_registry<br/>文件: catalogs/test_suite_registry.yaml<br/>(生产态 / production)"]
+    docs_01_policies_and_standards_registry_catalogs_test_suite_registry_yaml["测试suite注册表<br/>test_suite_registry<br/>文件: catalogs/test_suite_registry.yaml<br/>(生产态 / production)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

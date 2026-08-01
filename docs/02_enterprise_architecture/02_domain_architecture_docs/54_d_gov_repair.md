@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_financial_governance_budget_enforcement_py["预算执行<br/>延迟导入 BudgetEngine 避免循环依赖<br/>budget_enforcement<br/>文件: financial_governance/budget_enforcement.py<br/>(生产态 / production)"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py["预算执行<br/>延迟导入 BudgetEngine 避免循环依赖.<br/>budget_enforcement<br/>文件: financial_governance/budget_enforcement.py<br/>(生产态 / production)"]
     D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
@@ -85,7 +85,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_financial_governance_budget_enforcement_py["预算执行<br/>延迟导入 BudgetEngine 避免循环依赖<br/>budget_enforcement<br/>文件: financial_governance/budget_enforcement.py<br/>(生产态 / production)"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py["预算执行<br/>延迟导入 BudgetEngine 避免循环依赖.<br/>budget_enforcement<br/>文件: financial_governance/budget_enforcement.py<br/>(生产态 / production)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

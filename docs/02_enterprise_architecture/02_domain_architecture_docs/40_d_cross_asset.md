@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_cross_asset_init_py["zephyr/cross_asset 包入口<br/>跨资产域cross_asset包入口，归集子模块按需懒加载<br/>文件: cross_asset/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_extensions_init_py["cross_asset/_extensions 包入口<br/>跨资产域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_api_init_py["cross_asset/api 包入口<br/>跨资产域API接口层包入口，归集该层子模块按需懒加<br/>载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_core_init_py["cross_asset/core 包入口<br/>跨资产域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_infrastructure_init_py["cross_asset/infrastructure 包入口<br/>跨资产域基础设施层包入口，归集该层子模块按需懒加<br/>载<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_models_init_py["cross_asset/models 包入口<br/>跨资产域模型层包入口，归集该层子模块按需懒加载<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_services_init_py["cross_asset/services 包入口<br/>跨资产域服务层包入口，归集该层子模块按需懒加载<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_init_py["zephyr/cross_asset 包入口<br/>__init__<br/>文件: cross_asset/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_extensions_init_py["cross_asset/_extensions 包入口<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_api_init_py["cross_asset/api 包入口<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_core_init_py["cross_asset/core 包入口<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_infrastructure_init_py["cross_asset/infrastructure 包入口<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_models_init_py["cross_asset/models 包入口<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_services_init_py["cross_asset/services 包入口<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_cross_asset_init_py ~~~ src_zephyr_cross_asset_extensions_init_py
     src_zephyr_cross_asset_extensions_init_py ~~~ src_zephyr_cross_asset_api_init_py
     src_zephyr_cross_asset_api_init_py ~~~ src_zephyr_cross_asset_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_cross_asset_init_py["zephyr/cross_asset 包入口<br/>跨资产域cross_asset包入口，归集子模块按需懒加载<br/>文件: cross_asset/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_extensions_init_py["cross_asset/_extensions 包入口<br/>跨资产域扩展层包入口，归集该层子模块按需懒加载<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_api_init_py["cross_asset/api 包入口<br/>跨资产域API接口层包入口，归集该层子模块按需懒加<br/>载<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_core_init_py["cross_asset/core 包入口<br/>跨资产域核心层包入口，归集该层子模块按需懒加载<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_infrastructure_init_py["cross_asset/infrastructure 包入口<br/>跨资产域基础设施层包入口，归集该层子模块按需懒加<br/>载<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_models_init_py["cross_asset/models 包入口<br/>跨资产域模型层包入口，归集该层子模块按需懒加载<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_cross_asset_services_init_py["cross_asset/services 包入口<br/>跨资产域服务层包入口，归集该层子模块按需懒加载<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_init_py["zephyr/cross_asset 包入口<br/>__init__<br/>文件: cross_asset/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_extensions_init_py["cross_asset/_extensions 包入口<br/>__init__<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_api_init_py["cross_asset/api 包入口<br/>__init__<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_core_init_py["cross_asset/core 包入口<br/>__init__<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_infrastructure_init_py["cross_asset/infrastructure 包入口<br/>__init__<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_models_init_py["cross_asset/models 包入口<br/>__init__<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_cross_asset_services_init_py["cross_asset/services 包入口<br/>__init__<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_cross_asset_init_py ~~~ src_zephyr_cross_asset_extensions_init_py
     src_zephyr_cross_asset_extensions_init_py ~~~ src_zephyr_cross_asset_api_init_py
     src_zephyr_cross_asset_api_init_py ~~~ src_zephyr_cross_asset_core_init_py

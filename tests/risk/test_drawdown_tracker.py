@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """DrawdownTracker 单元测试 (MOD-RK-011)。"""
 
 from __future__ import annotations
