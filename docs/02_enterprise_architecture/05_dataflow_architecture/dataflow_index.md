@@ -3,14 +3,14 @@ doc_type: architecture_view
 title: 数据流图（dataflowgraph）索引
 version: "1.0"
 status: active
-date: 2026-07-31
+date: 2026-08-01
 owner: auto-generator
 ttl: permanent
 ---
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-07-31T19:29:38
+> 生成时间: 2026-08-01T13:04:16
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 

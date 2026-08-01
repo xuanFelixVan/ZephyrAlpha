@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: 数据采集流图 / Data Acquisition Flow
 version: "2.0"
 status: active
-date: 2026-07-31
+date: 2026-08-01
 owner: auto-generator
 ttl: permanent
 ---
