@@ -15,7 +15,7 @@
 # ============================================================================
 module_id: CFG-qmt-environments
 ttl: permanent
-doc_type: config
+doc_type: register
 title: QMT 终端环境显化登记表
 version: "1.0.0"
 created: "2026-07-31"
