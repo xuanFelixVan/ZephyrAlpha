@@ -1,4 +1,11 @@
-# [A_config] module_id=CFG-qmt-environments | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# --- 治理锚定 ---
+# blueprint: #ARCH-QMT-ENV-DISAMBIG-001 | config/qmt_environments.yaml | §
+# module_id: CFG-qmt-environments
+# stability: stable
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
 # ============================================================================
 # QMT 终端环境显化真源 — 模拟盘 vs 真实资金盘的唯一辨识源
 # ============================================================================
