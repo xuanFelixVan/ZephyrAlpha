@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 默认 dry-run（--apply 才删除）；保留 .gitkeep/*.lock/活跃运行日志；仅清理 tmp/根层 + pg_backups/depgraph_* + logs/顶层(backup_report_*.json+*.log) 三类目标；不删子目录/.jsonl
+# [INVARIANTS] 默认 dry-run（--apply 才删除）；保留 .gitkeep/*.lock/活跃运行日志；清理四类目标：tmp/根层 + pg_backups/depgraph_*(排除受保护前缀) + logs/顶层(backup_report_*.json+*.log) + tmp/子目录(data_gap_check/startup_backup_* 过期)；不删 runtime_backups/pg_backups/.jsonl
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -28,13 +28,17 @@ retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/
   - tmp/.gitkeep（维持目录结构）
   - tmp/*.lock（活跃锁：scheduler.lock / tick_subscriber.lock）
   - tmp/scheduler* / tmp/tick_subscriber*（活跃运行日志，由产生方自行轮转）
-  - tmp/ 子目录内容（除 pg_backups 显式保留策略外，runtime_backups/data_gap_check 不动）
+  - tmp/ 子目录内容（runtime_backups/ 由 backup_runtime_state.py max_backups 自管理不动；
+    data_gap_check/ + startup_backup_*/ 由 --subdir-days 整目录过期清理，AI-03 S1 治本）
 
-清理目标（三类）：
+清理目标（四类）：
   1. tmp/ 根层任务产物（.py/.txt/.md/.json/.html/.js/.csv），mtime > --tmp-days（默认 7）
-  2. tmp/pg_backups/depgraph_*.json，保留最新 --pg-keep 个（默认 10），删余
+  2. tmp/pg_backups/depgraph_*.json，保留最新 --pg-keep 个（默认 10），删余；
+     排除受保护人工备份（depgraph_pre_*/depgraph_pinned_*，AI-03 S3）
   3. logs/ 顶层过期文件（backup_report_*.json + *.log），mtime > --logs-days（默认 14）；
      不动子目录（auto_fix/mcp_audit 等审计目录）与 .jsonl（追加型审计流，由产生方管理）
+  4. tmp/ 子目录（data_gap_check/ + startup_backup_*/），整目录最新 mtime > --subdir-days
+     （默认 14）；runtime_backups/ 由 backup_runtime_state.py 自管理不动（AI-03 S1）
 
 用法：
   python scripts/governance/d6_security/retire_tmp_artifacts.py            # dry-run，列出待删
@@ -43,6 +47,7 @@ retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/
 """
 
 import argparse
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -67,6 +72,22 @@ _KEEP_NAMES = {".gitkeep"}
 _KEEP_SUFFIXES = (".lock",)
 # tmp/ 根层可清理的扩展名（任务产物；.log 受 _ACTIVE_PREFIXES 保护，仅清理非活跃 .log）
 _TMP_CLEAN_EXTS = (".py", ".txt", ".md", ".json", ".html", ".js", ".csv", ".log")
+
+# S3（AI-03 审计）：受保护的人工安全备份前缀（如 depgraph_pre_RSK_rollback_*）。
+# 此类备份由人工/repair 脚本一次性产生，排除出 keep-N 退役计数——
+# 保留策略与 backup_runtime_state.py._is_protected_backup 同源（真源唯一）。
+_PROTECTED_PG_PREFIXES = ("depgraph_pre_", "depgraph_pinned_")
+
+# S1（AI-03 审计）：tmp/ 子目录过期清理配置。
+# runtime_backups/ 由 backup_runtime_state.py max_backups 自管理（此处不动，防双重清理）；
+# pg_backups/ 由 collect_pg_backups_excess 单独处理；__pycache__ 跳过。
+# data_gap_check/ + startup_backup_*/ 为一次性调查/快照目录，整目录最新 mtime 过期则清理。
+_TMP_SUBDIR_DAYS_DEFAULT = 14
+
+
+def _is_protected_pg_backup(name: str) -> bool:
+    """判定 pg 备份是否为受保护人工安全备份（排除出 keep-N 退役计数）。"""
+    return name.startswith(_PROTECTED_PG_PREFIXES)
 
 
 def _is_protected(name: str) -> bool:
@@ -101,18 +122,61 @@ def collect_tmp_root_stale(tmp_days: int) -> list[Path]:
 
 
 def collect_pg_backups_excess(pg_keep: int) -> list[Path]:
-    """pg_backups/depgraph_*.json 保留最新 pg_keep 个，返回待删余量。"""
+    """pg_backups/depgraph_*.json 保留最新 pg_keep 个，返回待删余量。
+
+    S3（AI-03 审计）：受保护人工安全备份（depgraph_pre_*/depgraph_pinned_*）
+    排除出 keep-N 退役计数——其保留由 backup_runtime_state.py 独立管理（真源唯一），
+    本脚本不删除受保护备份，防回滚安全快照被自动退役丢失。
+    """
     if not PG_BACKUPS_DIR.is_dir() or pg_keep < 0:
         return []
     files = [
         p
         for p in PG_BACKUPS_DIR.iterdir()
-        if p.is_file() and p.name.startswith("depgraph_") and p.suffix == ".json"
+        if p.is_file()
+        and p.name.startswith("depgraph_")
+        and p.suffix == ".json"
+        and not _is_protected_pg_backup(p.name)
     ]
     files.sort(key=lambda p: p.stat().st_mtime)
     if len(files) <= pg_keep:
         return []
     return files[: len(files) - pg_keep]
+
+
+def collect_tmp_subdir_stale(subdir_days: int) -> list[Path]:
+    """tmp/ 子目录过期清理（AI-03 S1）：data_gap_check/ + startup_backup_*/ 整目录过期。
+
+    病根：原 retire_tmp_artifacts 显式"runtime_backups/data_gap_check 不动"，
+    导致 data_gap_check/（一次性调查脚本）+ startup_backup_*/（一次性快照）永久堆积无界。
+
+    边界（防双重清理 / 防误删）：
+      - runtime_backups/ 由 backup_runtime_state.py max_backups 自管理 → 跳过
+      - pg_backups/ 由 collect_pg_backups_excess 单独处理 → 跳过
+      - __pycache__ → 跳过
+      - 仅清理 data_gap_check/ 与 startup_backup_* 日期目录
+      - 整目录最新文件 mtime > subdir_days 才清理（任一文件活跃则保留整目录）
+    """
+    cutoff = time.time() - subdir_days * 86400
+    stale: list[Path] = []
+    if not TMP_DIR.is_dir():
+        return stale
+    for p in TMP_DIR.iterdir():
+        if not p.is_dir():
+            continue
+        if p.name in ("runtime_backups", "pg_backups", "__pycache__"):
+            continue  # 自管理 / 单独处理
+        if not (p.name == "data_gap_check" or p.name.startswith("startup_backup_")):
+            continue
+        try:
+            mtimes = [f.stat().st_mtime for f in p.rglob("*") if f.is_file()]
+        except OSError:
+            continue
+        if not mtimes:
+            continue  # 空目录不在此处理（避免误删占位）
+        if max(mtimes) < cutoff:
+            stale.append(p)
+    return stale
 
 
 def collect_logs_stale(logs_days: int) -> list[Path]:
@@ -141,11 +205,14 @@ def collect_logs_stale(logs_days: int) -> list[Path]:
     return stale
 
 
-def _gather(tmp_days: int, pg_keep: int, logs_days: int) -> dict[str, list[Path]]:
+def _gather(
+    tmp_days: int, pg_keep: int, logs_days: int, subdir_days: int
+) -> dict[str, list[Path]]:
     return {
         "tmp_root": collect_tmp_root_stale(tmp_days),
         "pg_backups": collect_pg_backups_excess(pg_keep),
         "logs_stale": collect_logs_stale(logs_days),
+        "tmp_subdir": collect_tmp_subdir_stale(subdir_days),
     }
 
 
@@ -182,23 +249,31 @@ def main() -> int:
     parser.add_argument("--tmp-days", type=int, default=7, help="tmp/ 根层文件保留天数（默认 7）")
     parser.add_argument("--pg-keep", type=int, default=10, help="pg_backups/depgraph_*.json 保留份数（默认 10）")
     parser.add_argument("--logs-days", type=int, default=14, help="logs/顶层(backup_report_*.json+*.log) 保留天数（默认 14）")
+    parser.add_argument(
+        "--subdir-days",
+        type=int,
+        default=_TMP_SUBDIR_DAYS_DEFAULT,
+        help="tmp/ 子目录(data_gap_check/startup_backup_*)整体过期天数（AI-03 S1，默认 14）",
+    )
     args = parser.parse_args()
 
-    plan = _gather(args.tmp_days, args.pg_keep, args.logs_days)
+    plan = _gather(args.tmp_days, args.pg_keep, args.logs_days, args.subdir_days)
     grand_count = sum(len(v) for v in plan.values())
     grand_bytes = sum(_total_size(v) for v in plan.values())
 
     mode = "APPLY" if args.apply else "DRY-RUN"
     print(f"=== retire_tmp_artifacts [{mode}] ===")
     print(
-        f"阈值: tmp_root>{args.tmp_days}d | pg_backups keep {args.pg_keep} | logs_stale>{args.logs_days}d"
+        f"阈值: tmp_root>{args.tmp_days}d | pg_backups keep {args.pg_keep} | "
+        f"logs_stale>{args.logs_days}d | tmp_subdir>{args.subdir_days}d"
     )
     for label, paths in plan.items():
         sz = _total_size(paths)
-        print(f"  [{label}] {len(paths)} file(s), {_fmt_size(sz)}")
+        unit = "item(s)" if label == "tmp_subdir" else "file(s)"
+        print(f"  [{label}] {len(paths)} {unit}, {_fmt_size(sz)}")
         for p in paths:
             print(f"      - {_rel(p)}")
-    print(f"合计: {grand_count} file(s), {_fmt_size(grand_bytes)}")
+    print(f"合计: {grand_count} item(s), {_fmt_size(grand_bytes)}")
 
     if not args.apply:
         if grand_count > 0:
@@ -207,17 +282,20 @@ def main() -> int:
         print("\n[dry-run] 无待清理项。")
         return EXIT_PASS
 
-    # --apply 真删
+    # --apply 真删（tmp_subdir 为目录用 rmtree，其余为文件用 unlink）
     deleted = 0
     errors: list[str] = []
-    for paths in plan.values():
+    for label, paths in plan.items():
         for p in paths:
             try:
-                p.unlink()
+                if label == "tmp_subdir":
+                    shutil.rmtree(p, ignore_errors=False)
+                else:
+                    p.unlink()
                 deleted += 1
             except OSError as e:
                 errors.append(f"{_rel(p)}: {e}")
-    print(f"\n[apply] 已删除 {deleted}/{grand_count} file(s)。")
+    print(f"\n[apply] 已删除 {deleted}/{grand_count} item(s)。")
     if errors:
         print(f"[apply] {len(errors)} 个错误：")
         for e in errors:

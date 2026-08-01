@@ -665,6 +665,15 @@ repos:
         stages: [post-commit]
         description: "每次 git commit 成功后记录 HEAD 变更清单到 handoff-logs/"
 
+      - id: retire-tmp-artifacts-post-commit
+        name: "TTL: 提交后退役 tmp/+logs/ 过期产物（post-commit，AI-03 W3 治本）"
+        entry: python scripts/governance/d6_security/retire_tmp_artifacts.py --apply
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [post-commit]
+        description: "每次 git commit 成功后执行 tmp/+logs/ TTL 退役（事件触发，非时间驱动；gitignored 产物不入库，仅本地磁盘清理；治本 W3 manual-only 无强制调度缺口）"
+
       # ── GATE-C1 已删除（脚本 validate_ssot_status.py 已归档至 scripts/_archive/，status 校验由 validate_ssot.py 覆盖）──
 
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
