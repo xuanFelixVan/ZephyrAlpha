@@ -103,8 +103,8 @@ flowchart TD
     src_zephyr_infrastructure_config_app_config_py["(生产态 / production) 应用配置 / app_config<br/>应用配置数据类与加载/热重载逻辑<br/>文件: config/app_config.py"]
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_SHARED["(生产态 / production) 共享服务 / Shared Services<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>跨域节点 / cross-domain"]
-    src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) 审计追踪 / Audit Trail<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>跨域节点 / cross-domain"]
     scripts_backup_backup_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED

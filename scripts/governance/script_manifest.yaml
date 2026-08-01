@@ -1,17 +1,17 @@
-# 自动生成于 2026-08-01T13:15:34Z
+# 自动生成于 2026-08-01T13:44:43Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-01T13:15:34Z'
+generated_at: '2026-08-01T13:44:43Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 375
+total_scripts: 377
 with_manifest: 318
-missing_manifest: 57
+missing_manifest: 59
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 31
+  governance: 32
   governance:d10_performance: 1
   governance:d11_compliance: 21
   governance:d12_ai_hallucination: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 23
   governance:d4_paths: 4
-  governance:d5_architecture: 106
+  governance:d5_architecture: 107
   governance:d6_security: 15
   governance:d7_code: 40
   governance:d8_doc_sync: 12
@@ -107,6 +107,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
 - name: add_deferred_design_edges.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: align_battle_map.py
   owner: governance
   dimensions: []
   priority: P2
@@ -1734,6 +1744,16 @@ scripts:
   tags:
   - Critical
 - name: d5_architecture/generators/generate_asset_catalog.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: d5_architecture/generators/generate_battle_map_diagram.py
   owner: governance:d5_architecture
   dimensions: []
   priority: P2
