@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_PF_CORE | Domain ID | D_PF_CORE |
 | 域名称 | 组合核心 | Domain Name | Portfolio Core |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 14 | Module Count | 14 |
+| 模块数 | 16 | Module Count | 16 |
 | 域内依赖 | 18 | Internal Dependencies | 18 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 14 | Cross-domain Outgoing | 14 |
-| 设计态模块 | 4 | Design Modules | 4 |
+| 设计态模块 | 6 | Design Modules | 6 |
 | 生产态模块 | 10 | Production Modules | 10 |
 | 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 组合核心，负责投资组合构建、持仓管理和组合优化 | Description | 组合核心，负责投资组合构建、持仓管理和组合优化 |
@@ -48,17 +48,21 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 14 个模块（生产态 10 + 设计态 4），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 16 个模块（生产态 10 + 设计态 6），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
+    src_zephyr_pf_core_decision_orchestrator_py["(设计态 / design) pf_core/decision_<br/>orchestrator.py<br/>文件: pf_core/decision_orchestrator.py"]
+    src_zephyr_pf_core_multi_track_fusion_py["(设计态 / design) pf_core/multi_track_fusion.py<br/>文件: pf_core/multi_track_fusion.py"]
     src_zephyr_pf_core_portfolio_aggregate["(设计态 / design) 组合聚合<br/>组合聚合，组合的子目录，归集相关子模块。<br/>文件: portfolio_aggregate/<br/>⛔ 组合核心域，设计已就绪，等待开发排期"]
     src_zephyr_pf_core_topn_momentum_strategy_py["(设计态 / design) topnmomentum策略 / topn_<br/>momentum_strategy<br/>D_PORTFOLIO_CORE — TopN 动量等权策略<br/>文件: pf_core/topn_momentum_strategy.py<br/>⛔ 组合核心域，设计已就绪，等待开发排期"]
     tests_pf_core_test_intraday_surge_fall_strategy_py["(生产态 / production) 测试intradaysurgefall策略<br/>/ test_intraday_surge_fall_strategy<br/>IntradaySurgeFallStrategy 单元测试（路径 B<br/>示例策略）。<br/>文件: pf_core/test_intraday_surge_fall_<br/>strategy.py"]
     tests_pf_core_test_orderbook_imbalance_strategy_py["(生产态 / production)<br/>测试orderbookimbalance策略 / test_orderbook_<br/>imbalance_strategy<br/>OrderBookImbalanceStrategy 单元测试（路径 B<br/>盘口失衡反转策略）。<br/>文件: pf_core/test_orderbook_imbalance_<br/>strategy.py"]
     tests_pf_core_test_strategy_runner_tick_py["(生产态 / production) 测试策略运行器逐笔 / test_<br/>strategy_runner_tick<br/>测试策略运行器逐笔.run_tick_backtest 单元测试<br/>（路径 A：日频信号 × tick 撮合）。<br/>文件: pf_core/test_strategy_runner_tick.py"]
     tests_pf_core_test_vwap_reversion_strategy_py["(生产态 / production) 测试vwapreversion策略 /<br/>test_vwap_reversion_strategy<br/>VWAPReversionStrategy 单元测试（路径 B<br/>均值回归策略）。<br/>文件: pf_core/test_vwap_reversion_strategy.py"]
+    src_zephyr_pf_core_decision_orchestrator_py ~~~ src_zephyr_pf_core_multi_track_fusion_py
+    src_zephyr_pf_core_multi_track_fusion_py ~~~ src_zephyr_pf_core_portfolio_aggregate
     src_zephyr_pf_core_portfolio_aggregate ~~~ src_zephyr_pf_core_topn_momentum_strategy_py
     src_zephyr_pf_core_topn_momentum_strategy_py ~~~ tests_pf_core_test_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py ~~~ tests_pf_core_test_orderbook_imbalance_strategy_py
@@ -119,7 +123,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_orderbook_imbalance_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,src_zephyr_pf_core_vwap_reversion_strategy_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_orderbook_imbalance_strategy_py,tests_pf_core_test_strategy_runner_tick_py,tests_pf_core_test_vwap_reversion_strategy_py production
-    class src_zephyr_pf_core_meta_router,src_zephyr_pf_core_optimizer,src_zephyr_pf_core_portfolio_aggregate,src_zephyr_pf_core_topn_momentum_strategy_py design
+    class src_zephyr_pf_core_decision_orchestrator_py,src_zephyr_pf_core_meta_router,src_zephyr_pf_core_multi_track_fusion_py,src_zephyr_pf_core_optimizer,src_zephyr_pf_core_portfolio_aggregate,src_zephyr_pf_core_topn_momentum_strategy_py design
     class D_POSITION,D_RISK,D_GOVERNANCE,D_BACKTEST,D_FACTOR,D_PF_ALLOC external_prod
     class D_EX_CORE external_design
 ```
@@ -171,13 +175,17 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 4 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 6 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
+    src_zephyr_pf_core_decision_orchestrator_py["(设计态 / design) pf_core/decision_<br/>orchestrator.py<br/>文件: pf_core/decision_orchestrator.py"]
+    src_zephyr_pf_core_multi_track_fusion_py["(设计态 / design) pf_core/multi_track_fusion.py<br/>文件: pf_core/multi_track_fusion.py"]
     src_zephyr_pf_core_portfolio_aggregate["(设计态 / design) 组合聚合<br/>组合聚合，组合的子目录，归集相关子模块。<br/>文件: portfolio_aggregate/<br/>⛔ 组合核心域，设计已就绪，等待开发排期"]
     src_zephyr_pf_core_topn_momentum_strategy_py["(设计态 / design) topnmomentum策略 / topn_<br/>momentum_strategy<br/>D_PORTFOLIO_CORE — TopN 动量等权策略<br/>文件: pf_core/topn_momentum_strategy.py<br/>⛔ 组合核心域，设计已就绪，等待开发排期"]
+    src_zephyr_pf_core_decision_orchestrator_py ~~~ src_zephyr_pf_core_multi_track_fusion_py
+    src_zephyr_pf_core_multi_track_fusion_py ~~~ src_zephyr_pf_core_portfolio_aggregate
     src_zephyr_pf_core_portfolio_aggregate ~~~ src_zephyr_pf_core_topn_momentum_strategy_py
     src_zephyr_pf_core_optimizer["(设计态 / design) 优化器<br/>优化器，优化器的子目录，归集相关子模块。<br/>文件: optimizer/<br/>⛔ 组合核心域，设计已就绪，等待开发排期"]
     src_zephyr_pf_core_meta_router["(设计态 / design) 元路由器<br/>元路由器，元路由的子目录，归集相关子模块。<br/>文件: meta_router/<br/>⛔ 组合核心域，设计已就绪，等待开发排期"]
@@ -187,7 +195,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_meta_router,src_zephyr_pf_core_optimizer,src_zephyr_pf_core_portfolio_aggregate,src_zephyr_pf_core_topn_momentum_strategy_py design
+    class src_zephyr_pf_core_decision_orchestrator_py,src_zephyr_pf_core_meta_router,src_zephyr_pf_core_multi_track_fusion_py,src_zephyr_pf_core_optimizer,src_zephyr_pf_core_portfolio_aggregate,src_zephyr_pf_core_topn_momentum_strategy_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3100 |
+| 模块总数 | 3105 |
 | 生产态模块 | 2868 |
-| 设计态模块 | 232 |
+| 设计态模块 | 237 |
 
 ## 域清单（按架构层分组）
 
@@ -117,7 +117,7 @@ ttl: permanent
 | D_ARCHIVE_SCRIPTS | Archived Scripts / D_ARCHIVE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 29_d_archive_scripts.md](29_d_archive_scripts.md) |
 | D_ARCH_GUARD | 架构守护脚本 / D_ARCH_GUARD | 0 | 0 | 0 | 0/150 (OK) | [📄 30_d_arch_guard.md](30_d_arch_guard.md) |
 | D_ARCH_SCRIPTS | 架构治理脚本 / D_ARCH_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 31_d_arch_scripts.md](31_d_arch_scripts.md) |
-| D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 17 | 7 | 10 | 17/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
+| D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 19 | 7 | 12 | 19/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
 | D_AUDITTEST | 审计测试套件 / Audit Test Suite | 1 | 1 | 0 | 1/150 (OK) | [📄 33_d_audittest.md](33_d_audittest.md) |
 | D_AUTONOMY_PERM | 自治保护 / Autonomy Protection | 2 | 2 | 0 | 2/150 (OK) | [📄 34_d_autonomy_perm.md](34_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 27 | 18 | 9 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
@@ -147,8 +147,8 @@ ttl: permanent
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 7 | 0 | 7/150 (OK) | [📄 60_d_ml_serve.md](60_d_ml_serve.md) |
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
-| D_PF_ALLOC | 组合分配 / Portfolio Allocation | 5 | 2 | 3 | 5/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
-| D_PF_CORE | 组合核心 / Portfolio Core | 16 | 10 | 6 | 16/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
+| D_PF_ALLOC | 组合分配 / Portfolio Allocation | 6 | 2 | 4 | 6/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
+| D_PF_CORE | 组合核心 / Portfolio Core | 18 | 10 | 8 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 11 | 1 | 10 | 11/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 15 | 11 | 4 | 15/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |

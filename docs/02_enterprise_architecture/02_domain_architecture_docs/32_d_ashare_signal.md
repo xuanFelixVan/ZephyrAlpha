@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_ASHARE_SIGNAL | Domain ID | D_ASHARE_SIGNAL |
 | 域名称 | A股特色信号 | Domain Name | A-Share Signal |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 16 | Module Count | 16 |
+| 模块数 | 18 | Module Count | 18 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
-| 设计态模块 | 9 | Design Modules | 9 |
+| 设计态模块 | 11 | Design Modules | 11 |
 | 生产态模块 | 7 | Production Modules | 7 |
 | 容量 | 7/150 (正常) | Capacity | 7/150 (正常) |
 | 描述 | A股特色信号生成 | Description | A股特色信号生成 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 16 个模块（生产态 7 + 设计态 9），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 18 个模块（生产态 7 + 设计态 11），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -63,7 +63,9 @@ flowchart TD
     src_zephyr_signal_ashare_institutional_behavior_analyzer_py["(设计态 / design) 机构行为分析器 /<br/>institutional_behavior_analyzer<br/>机构行为分析器，信号的分析器，分析数据找出问题或<br/>规律。<br/>文件: signal_ashare/institutional_behavior_<br/>analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py["(设计态 / design) 日内买卖点分析器 / intraday_<br/>buy_sell_point_analyzer<br/>日内买卖点分析器，信号的分析器，分析数据找出问题<br/>或规律。<br/>文件: signal_ashare/intraday_buy_sell_point_<br/>analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_market_sentiment_analyzer_py["(设计态 / design) 市场情绪分析器 / market_<br/>sentiment_analyzer<br/>市场情绪分析器，信号的分析器，分析数据找出问题或<br/>规律。<br/>文件: signal_ashare/market_sentiment_analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
+    src_zephyr_signal_ashare_market_state_sensor_py["(设计态 / design) signal_ashare/market_state_<br/>sensor.py<br/>文件: signal_ashare/market_state_sensor.py"]
     src_zephyr_signal_ashare_models_init_py["(生产态 / production) 包入口 / __init__<br/>模型的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: models/__init__.py"]
+    src_zephyr_signal_ashare_next_day_8state_forecast_py["(设计态 / design) signal_ashare/next_day_8state_<br/>forecast.py<br/>文件: signal_ashare/next_day_8state_forecast.py"]
     src_zephyr_signal_ashare_sector_analyzer_py["(设计态 / design) 板块分析器 / sector_analyzer<br/>板块分析器，信号的分析器，分析数据找出问题或规律<br/>。<br/>文件: signal_ashare/sector_analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_services_init_py["(生产态 / production) 包入口 / __init__<br/>信号的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: services/__init__.py"]
     src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) 短期股票选择器 / short_term_<br/>stock_selector<br/>短期股票选择器，信号的选择器，按条件选择最优项。<br/>文件: signal_ashare/short_term_stock_selector.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
@@ -76,8 +78,10 @@ flowchart TD
     src_zephyr_signal_ashare_infrastructure_init_py ~~~ src_zephyr_signal_ashare_institutional_behavior_analyzer_py
     src_zephyr_signal_ashare_institutional_behavior_analyzer_py ~~~ src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py
     src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py ~~~ src_zephyr_signal_ashare_market_sentiment_analyzer_py
-    src_zephyr_signal_ashare_market_sentiment_analyzer_py ~~~ src_zephyr_signal_ashare_models_init_py
-    src_zephyr_signal_ashare_models_init_py ~~~ src_zephyr_signal_ashare_sector_analyzer_py
+    src_zephyr_signal_ashare_market_sentiment_analyzer_py ~~~ src_zephyr_signal_ashare_market_state_sensor_py
+    src_zephyr_signal_ashare_market_state_sensor_py ~~~ src_zephyr_signal_ashare_models_init_py
+    src_zephyr_signal_ashare_models_init_py ~~~ src_zephyr_signal_ashare_next_day_8state_forecast_py
+    src_zephyr_signal_ashare_next_day_8state_forecast_py ~~~ src_zephyr_signal_ashare_sector_analyzer_py
     src_zephyr_signal_ashare_sector_analyzer_py ~~~ src_zephyr_signal_ashare_services_init_py
     src_zephyr_signal_ashare_services_init_py ~~~ src_zephyr_signal_ashare_short_term_stock_selector_py
     src_zephyr_signal_ashare_quant_short_term_strength_engine_py["(设计态 / design) 量化短期强度引擎 / quant_<br/>short_term_strength_engine<br/>量化短期强度引擎，信号的引擎，执行核心逻辑的处理<br/>引擎。<br/>文件: signal_ashare/quant_short_term_strength_<br/>engine.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
@@ -92,7 +96,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_ashare_init_py,src_zephyr_signal_ashare_extensions_init_py,src_zephyr_signal_ashare_api_init_py,src_zephyr_signal_ashare_core_init_py,src_zephyr_signal_ashare_infrastructure_init_py,src_zephyr_signal_ashare_models_init_py,src_zephyr_signal_ashare_services_init_py production
-    class src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py,src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py,src_zephyr_signal_ashare_institutional_behavior_analyzer_py,src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py,src_zephyr_signal_ashare_market_sentiment_analyzer_py,src_zephyr_signal_ashare_quant_short_term_strength_engine_py,src_zephyr_signal_ashare_sector_analyzer_py,src_zephyr_signal_ashare_short_term_stock_selector_py,src_zephyr_signal_ashare_youzi_relay_emotion_engine_py design
+    class src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py,src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py,src_zephyr_signal_ashare_institutional_behavior_analyzer_py,src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py,src_zephyr_signal_ashare_market_sentiment_analyzer_py,src_zephyr_signal_ashare_market_state_sensor_py,src_zephyr_signal_ashare_next_day_8state_forecast_py,src_zephyr_signal_ashare_quant_short_term_strength_engine_py,src_zephyr_signal_ashare_sector_analyzer_py,src_zephyr_signal_ashare_short_term_stock_selector_py,src_zephyr_signal_ashare_youzi_relay_emotion_engine_py design
     class D_FUNDAMENTAL_SIGNAL external_design
 ```
 
@@ -125,7 +129,7 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 9 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 11 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -135,13 +139,17 @@ flowchart TD
     src_zephyr_signal_ashare_institutional_behavior_analyzer_py["(设计态 / design) 机构行为分析器 /<br/>institutional_behavior_analyzer<br/>机构行为分析器，信号的分析器，分析数据找出问题或<br/>规律。<br/>文件: signal_ashare/institutional_behavior_<br/>analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py["(设计态 / design) 日内买卖点分析器 / intraday_<br/>buy_sell_point_analyzer<br/>日内买卖点分析器，信号的分析器，分析数据找出问题<br/>或规律。<br/>文件: signal_ashare/intraday_buy_sell_point_<br/>analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_market_sentiment_analyzer_py["(设计态 / design) 市场情绪分析器 / market_<br/>sentiment_analyzer<br/>市场情绪分析器，信号的分析器，分析数据找出问题或<br/>规律。<br/>文件: signal_ashare/market_sentiment_analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
+    src_zephyr_signal_ashare_market_state_sensor_py["(设计态 / design) signal_ashare/market_state_<br/>sensor.py<br/>文件: signal_ashare/market_state_sensor.py"]
+    src_zephyr_signal_ashare_next_day_8state_forecast_py["(设计态 / design) signal_ashare/next_day_8state_<br/>forecast.py<br/>文件: signal_ashare/next_day_8state_forecast.py"]
     src_zephyr_signal_ashare_sector_analyzer_py["(设计态 / design) 板块分析器 / sector_analyzer<br/>板块分析器，信号的分析器，分析数据找出问题或规律<br/>。<br/>文件: signal_ashare/sector_analyzer.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_short_term_stock_selector_py["(设计态 / design) 短期股票选择器 / short_term_<br/>stock_selector<br/>短期股票选择器，信号的选择器，按条件选择最优项。<br/>文件: signal_ashare/short_term_stock_selector.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py ~~~ src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py
     src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py ~~~ src_zephyr_signal_ashare_institutional_behavior_analyzer_py
     src_zephyr_signal_ashare_institutional_behavior_analyzer_py ~~~ src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py
     src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py ~~~ src_zephyr_signal_ashare_market_sentiment_analyzer_py
-    src_zephyr_signal_ashare_market_sentiment_analyzer_py ~~~ src_zephyr_signal_ashare_sector_analyzer_py
+    src_zephyr_signal_ashare_market_sentiment_analyzer_py ~~~ src_zephyr_signal_ashare_market_state_sensor_py
+    src_zephyr_signal_ashare_market_state_sensor_py ~~~ src_zephyr_signal_ashare_next_day_8state_forecast_py
+    src_zephyr_signal_ashare_next_day_8state_forecast_py ~~~ src_zephyr_signal_ashare_sector_analyzer_py
     src_zephyr_signal_ashare_sector_analyzer_py ~~~ src_zephyr_signal_ashare_short_term_stock_selector_py
     src_zephyr_signal_ashare_quant_short_term_strength_engine_py["(设计态 / design) 量化短期强度引擎 / quant_<br/>short_term_strength_engine<br/>量化短期强度引擎，信号的引擎，执行核心逻辑的处理<br/>引擎。<br/>文件: signal_ashare/quant_short_term_strength_<br/>engine.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
     src_zephyr_signal_ashare_youzi_relay_emotion_engine_py["(设计态 / design) 游资中继情绪引擎 / youzi_<br/>relay_emotion_engine<br/>游资中继情绪引擎，信号的引擎，执行核心逻辑的处理<br/>引擎。<br/>文件: signal_ashare/youzi_relay_emotion_<br/>engine.py<br/>⛔ A股信号域，设计已就绪，等待开发排期"]
@@ -152,7 +160,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py,src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py,src_zephyr_signal_ashare_institutional_behavior_analyzer_py,src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py,src_zephyr_signal_ashare_market_sentiment_analyzer_py,src_zephyr_signal_ashare_quant_short_term_strength_engine_py,src_zephyr_signal_ashare_sector_analyzer_py,src_zephyr_signal_ashare_short_term_stock_selector_py,src_zephyr_signal_ashare_youzi_relay_emotion_engine_py design
+    class src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py,src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py,src_zephyr_signal_ashare_institutional_behavior_analyzer_py,src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py,src_zephyr_signal_ashare_market_sentiment_analyzer_py,src_zephyr_signal_ashare_market_state_sensor_py,src_zephyr_signal_ashare_next_day_8state_forecast_py,src_zephyr_signal_ashare_quant_short_term_strength_engine_py,src_zephyr_signal_ashare_sector_analyzer_py,src_zephyr_signal_ashare_short_term_stock_selector_py,src_zephyr_signal_ashare_youzi_relay_emotion_engine_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
