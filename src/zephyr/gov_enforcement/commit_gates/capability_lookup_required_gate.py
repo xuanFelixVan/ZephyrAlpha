@@ -269,14 +269,18 @@ def _check_audit_log(session_id: str) -> tuple[bool, str]:
     Returns:
         (passed, msg) — fail-closed：目录缺失/解析失败/entry_count=0 均阻断。
     """
-    if not _audit_log_dir_exists():
+    # 调公共 wrapper（audit_log_dir_exists / get_audit_log_path）而非私有
+    # _audit_log_dir_exists / _get_audit_log_path——Stage 4 公共化后公共 wrapper
+    # 是模块级名字，测试 patch "...capability_lookup_required_gate.audit_log_dir_exists"
+    # 才能命中（与 forged_gw_marker_gate B1 修复同模式）。
+    if not audit_log_dir_exists():
         return False, (
             f"CAPABILITY-LOOKUP-REQUIRED: audit log 目录缺失 "
             f"({REPO_ROOT / LOOKUP_AUDIT_DIR_REL})。"
             f"修复：mkdir {LOOKUP_AUDIT_DIR_REL} 或确认 .runtime/ 未被误删。"
             f"病根3治本：删目录绕过是红蓝攻击向量，fail-closed 阻断。"
         )
-    log_path = _get_audit_log_path(session_id)
+    log_path = get_audit_log_path(session_id)
     entry_count, err = _count_valid_log_entries(log_path)
     if err is not None:
         return False, (

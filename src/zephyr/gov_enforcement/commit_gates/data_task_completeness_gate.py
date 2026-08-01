@@ -165,7 +165,10 @@ def make_data_task_completeness_gate() -> GateSpec:
             return True, "no new task_id in tasks.yaml"
 
         # 3. 检查新增任务是否有 fallback_sources
-        tasks = _load_tasks_yaml(project_root)
+        # 调公共 wrapper load_tasks_yaml（非私有 _load_tasks_yaml）——Stage 4 公共化后
+        # 公共 wrapper 是模块级名字，测试 patch "...data_task_completeness_gate.load_tasks_yaml"
+        # 才能命中（与 forged_gw_marker_gate B1 修复同模式）。
+        tasks = load_tasks_yaml(project_root)
         missing = [
             tid for tid in new_task_ids
             if not _check_task_has_fallback(tasks, tid)

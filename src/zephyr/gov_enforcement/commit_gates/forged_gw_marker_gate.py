@@ -109,7 +109,10 @@ def _is_session_registered(project_root: str | Path, session_id: str) -> bool:
     """
     try:
         registry = SessionRegistry(project_root)
-        info = registry.get(session_id)
+        # SessionRegistry 只有 get_session，没有 .get——原 registry.get(session_id)
+        # 抛 AttributeError 被 except 吞掉→返回 False（保守阻断），导致任何 sess- 前缀
+        # session 的合法 GW commit 被误判为 forged marker。修正为 get_session。
+        info = registry.get_session(session_id)
         return info is not None
     except Exception:
         # registry 读取异常——降级为"未注册"（保守阻断，防 registry 损坏导致伪造放行）

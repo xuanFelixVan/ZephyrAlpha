@@ -160,12 +160,14 @@ class TestRegistryExceptionSafe:
         """SessionRegistry.get 抛异常 → _is_session_registered 内部 try/except 返回 False → 阻断。"""
         monkeypatch.delenv("ZEPHYR_COMMIT_GATEWAY", raising=False)
 
-        # patch SessionRegistry 让其 .get() 抛异常
+        # patch SessionRegistry 让其 get_session() 抛异常
         # _is_session_registered 内部 try/except 会捕获并返回 False（保守阻断）
+        # 注：mock get_session（非 .get）——SessionRegistry 真实 API 是 get_session，
+        # 原 .get 调用是 bug（#7 修复：forge_gw_marker_gate._is_session_registered）
         with patch(
             "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry"
         ) as mock_reg:
-            mock_reg.return_value.get.side_effect = RuntimeError("registry corrupted")
+            mock_reg.return_value.get_session.side_effect = RuntimeError("registry corrupted")
             gw = _make_gateway(tmp_path)
             gate = make_forged_gw_marker_gate()
             passed, detail = gate.check(
@@ -234,7 +236,7 @@ class TestIsSessionRegistered:
         with patch(
             "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry"
         ) as mock_reg:
-            mock_reg.return_value.get.return_value = MagicMock()
+            mock_reg.return_value.get_session.return_value = MagicMock()
             result = _is_session_registered(tmp_path, "sess-test-12345678")
         assert result is True
 
@@ -243,7 +245,7 @@ class TestIsSessionRegistered:
         with patch(
             "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry"
         ) as mock_reg:
-            mock_reg.return_value.get.return_value = None
+            mock_reg.return_value.get_session.return_value = None
             result = _is_session_registered(tmp_path, "sess-test-12345678")
         assert result is False
 
@@ -252,6 +254,6 @@ class TestIsSessionRegistered:
         with patch(
             "zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate.SessionRegistry"
         ) as mock_reg:
-            mock_reg.return_value.get.side_effect = RuntimeError("corrupted")
+            mock_reg.return_value.get_session.side_effect = RuntimeError("corrupted")
             result = _is_session_registered(tmp_path, "sess-test-12345678")
         assert result is False
