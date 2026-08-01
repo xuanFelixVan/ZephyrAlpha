@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-017 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TESTS] tests/position/test_position_sizing_engine.py
 # [MODULE] tests.position.test_position_sizing_engine
 # [DOMAIN] D_POSITION
