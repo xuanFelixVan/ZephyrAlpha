@@ -157,7 +157,7 @@ class TestResourceAwarePoolE2E:
         pool = ResourceAwarePool(cpu_workers=2, gpu_workers=1)
         pool.submit("file_scan", lambda: "done")
         pool.shutdown()
-        assert pool.shutdown is True
+        assert pool._shutdown is True
         with pytest.raises(RuntimeError, match="shut down"):
             pool.submit("file_scan", lambda: "should_fail")
 

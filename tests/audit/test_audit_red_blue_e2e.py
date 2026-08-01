@@ -99,7 +99,7 @@ class TestDefenseRunnerE2E:
 
     def test_run_defense_without_gate_engine_fallback(self):
         runner = DefenseRunner(gate_engine=None)
-        runner.gate_engine = None
+        runner._gate_engine = None
         scenario = _make_scenario(
             scenario_id="E2E-DR-002",
             tier=AttackTier.TIER_1,
@@ -112,7 +112,7 @@ class TestDefenseRunnerE2E:
 
     def test_tier1_always_blocked(self):
         runner = DefenseRunner(gate_engine=None)
-        runner.gate_engine = None
+        runner._gate_engine = None
         for i in range(5):
             scenario = _make_scenario(
                 scenario_id=f"E2E-DR-T1-{i:03d}",
@@ -125,7 +125,7 @@ class TestDefenseRunnerE2E:
 
     def test_results_accumulated(self):
         runner = DefenseRunner(gate_engine=None)
-        runner.gate_engine = None
+        runner._gate_engine = None
         assert runner.results() == []
         scenario_a = _make_scenario(
             scenario_id="E2E-DR-ACC-001",

@@ -97,8 +97,8 @@ class TestPrincpledCheckDecorator:
             return 0
 
         assert hasattr(sample_func, "_zephyr_principles")
-        assert ArchPrinciple.P1_SSOT in sample_func.zephyr_principles
-        assert ArchPrinciple.P4_OCP in sample_func.zephyr_principles
+        assert ArchPrinciple.P1_SSOT in sample_func._zephyr_principles
+        assert ArchPrinciple.P4_OCP in sample_func._zephyr_principles
 
     def test_decorator_with_no_principles(self):
         @princpled_check()
@@ -106,7 +106,7 @@ class TestPrincpledCheckDecorator:
             return 1
 
         assert sample_func() == 1
-        assert sample_func.zephyr_principles == []
+        assert sample_func._zephyr_principles == []
 
     def test_decorator_preserves_function_name(self):
         @princpled_check(ArchPrinciple.P1_SSOT)
