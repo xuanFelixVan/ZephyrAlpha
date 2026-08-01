@@ -25,12 +25,13 @@ DatabaseService: 统一管理数据库的连接池、生命周期、健康检查
 [STABILITY] stable
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
-[ERROR_CONTRACT] ConnectionError; TimeoutError; NotImplementedError(Redis 预留，ClickHouse 已实现)
+[ERROR_CONTRACT] ConnectionError; TimeoutError; RedisConfigError(Redis 配置缺失); redis.RedisError(Redis 连接异常)
 [TESTS] tests/db/test_db_auto_ops.py::test_database_service_init
 
 提供 governance.db / depgraph (PostgreSQL) / ClickHouse (c1_market) 的统一连接管理。
 ClickHouse C1 行情仓库已于 2026-07-01 部署（INFRA-DB-006），get_clickhouse_conn() 已实现。
-Redis H1 热缓存为预留接口（抛 NotImplementedError），待 P2 实盘需求触发施工（#ARCH-048 已裁决）。
+Redis H1 热缓存（INFRA-DB-007）已于 2026-08-02 部署——Redis 7.0.15 @ Hyper-V Ubuntu VM
+（172.24.30.100:6379，与 ClickHouse 同 VM，D1 决策），get_redis_conn() 已实现。
 
 注：market.duckdb（旧 DuckDB 业务时序库）已于 2026-07-05 删除（524KB 残留文件，无有价值数据）。业务行情数据已迁移至 ClickHouse c1_market。
 """
@@ -97,6 +98,7 @@ class DatabaseService(DatabaseCRUDMixin):
         self._live_pg_conns: list[psycopg2.extensions.connection] = []
         self._live_pg_lock = threading.Lock()
         self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
+        self._redis_conn: Any | None = None  # redis.Redis (H1热缓存, INFRA-DB-007)
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 HIGH）：lazy init 线程安全
 
     def get_governance_conn(self, read_only: bool = False) -> sqlite3.Connection:
@@ -172,11 +174,40 @@ class DatabaseService(DatabaseCRUDMixin):
         return self._clickhouse_conn
 
     def get_redis_conn(self):
-        """获取 Redis 连接（业务数据库 H1 热缓存）
+        """获取 Redis 连接（业务数据库 H1 热缓存，INFRA-DB-007）
 
-        TODO: Spiral 2 业务数据库子蓝图施工时实现。
+        Redis 7.0.15 部署在 Hyper-V Ubuntu VM（172.24.30.100:6379），与 ClickHouse
+        同 VM 共存（D1 决策 2026-08-02）。归属 MOD-INF-002（D2 决策：本方法在此模块）。
+
+        配置真源：config/.env.redis（仿 ch_config.py 模式，裁定 #ARCH-CH-017 同源思想）。
+        连接参数由 redis_config.load_redis_config() 提供，fail-closed（缺配置抛 RedisConfigError）。
+
+        D3 决策（2026-08-02）：单实例 + DB 号隔离——
+            db0=模拟盘（sim）、db1=实盘（live）、db2=治理缓存（INFRA-CACHE-001 预留）。
+            升级触发条件见蓝图 §8.3（T1-T4），任一命中即启动拆分评估。
+
+        线程安全：redis-py 内置 ConnectionPool（线程安全），单例连接跨线程共享，
+        无需像 psycopg2 那样 per-thread 持有。惰性初始化 + 双重检查锁同 get_clickhouse_conn。
+
+        Returns:
+            redis.Redis 连接实例（decode_responses=True，业务代码直接拿 str 而非 bytes）。
+
+        Raises:
+            RedisConfigError: config/.env.redis 配置缺失（由 load_redis_config 抛出）。
         """
-        raise NotImplementedError("Redis连接待Spiral 2业务数据库施工时实现")
+        if self._redis_conn is None:
+            with self._lock:
+                if self._redis_conn is None:
+                    from zephyr.infrastructure.redis_config import load_redis_config
+                    import redis as redis_lib
+
+                    cfg = load_redis_config()
+                    self._redis_conn = redis_lib.Redis(**cfg)
+                    logger.info(
+                        "Redis H1 热缓存连接已建立: %s:%s db=%s",
+                        cfg["host"], cfg["port"], cfg["db"],
+                    )
+        return self._redis_conn
 
     def health_check(self) -> dict[str, bool]:
         """健康检查"""
@@ -204,6 +235,13 @@ class DatabaseService(DatabaseCRUDMixin):
             result["clickhouse"] = True
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             result["clickhouse"] = False
+
+        try:
+            r = self.get_redis_conn()
+            r.ping()
+            result["redis"] = True
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            result["redis"] = False
 
         return result
 
@@ -244,6 +282,14 @@ class DatabaseService(DatabaseCRUDMixin):
             except Exception:  # noqa: BLE001 — 5.64.5：异常隔离
                 logger.warning("close_all: failed to disconnect ClickHouse", exc_info=True)
         self._clickhouse_conn = None
+
+        # redis.Redis: close() 关闭连接池（线程安全，幂等）
+        if self._redis_conn is not None:
+            try:
+                self._redis_conn.close()
+            except Exception:  # noqa: BLE001 — 5.64.5：异常隔离
+                logger.warning("close_all: failed to close Redis", exc_info=True)
+        self._redis_conn = None
 
     # ========== governance.db + depgraph CRUD 方法 ==========
     # P-PLAN 专项工程：以下 9 个 CRUD 方法已抽取到 DatabaseCRUDMixin：

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/h1_redis_hot
 title: "H1 redis_hot 实盘热缓存施工蓝图 — Redis <5ms 因子截面在线存储"
 doc_type: blueprint
 status: Active
-version: "1.0.0"
+version: "1.1.0"
 layer: L2_domain
 layer_name: hot_cache
 functional_domain: data
@@ -15,12 +15,12 @@ created_by: AI-session-20260801-h1
 valid_from: "2026-08-01"
 date: "2026-08-01"
 ttl: permanent
-construction_progress: not_started
+construction_progress: in_progress
 actual_disk_path: "src/zephyr/infrastructure/h1_redis_hot/"
 belongs_to: "MOD-ARCH-BIZDB"
 parent_module: "MOD-ARCH-BIZDB"
 codification_level: L1
-last_updated: "2026-08-01"
+last_updated: "2026-08-02"
 generation: 1
 rule_form: structural
 scope: module
@@ -41,8 +41,8 @@ depends_on:
     at: "§8.1/§11.1"
     why: "母蓝图定义 H1 为实盘热缓存，能造现在就造"
   - target: MOD-INF-002
-    at: "database_service.py:174"
-    why: "DatabaseService.get_redis_conn() 预留接口（MOD-INF-002, D_INFRA_RUNTIME, edge_id=10068005）；Redis实例部署(INFRA-DB-007)归属待定（MOD-INF-012A实为Database Core SQLite+DuckDB非Redis部署，见 .trae/documents/redis_deployment_施工计划.md）"
+    at: "database_service.py:176"
+    why: "DatabaseService.get_redis_conn() 已实现（2026-08-02，D2 决策归属 MOD-INF-002）；redis_config.py 配置加载器同模块（真源 config/.env.redis）；edge_id=10068005"
 tags: [redis, hot-cache, online-store, feature-store, cqrs, realtime, factor-cross-section, h1, sub-blueprint, dd-11-01]
 priority: P1
 runtime_plane: hot
@@ -61,7 +61,7 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 
 **触发条件已命中**：[blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/blueprint.md) §三层冷热架构定位（2026-07-13 裁定）"Hot 层(Redis) 施工时机=实盘交易启动前开发"。用户即将进入"盘中模拟盘交易 + 盘后回测"双线并行阶段，模拟盘=国金 QMT 模拟端（账号 8886156677，模拟资金 1000 万，真实盘中交易流程，仅资金非真），是实盘完整彩排，盘中推理闭环与真实实盘同节奏。
 
-> **本蓝图是设计书**：描述目标态。`construction_progress: not_started`（Redis 实例未部署，代码未施工）。本阶段只做设计 + depgraph 登记 + 四图对齐，不含部署与代码实现。
+> **施工进度**：`construction_progress: in_progress`（Redis 7.0.15 已部署 172.24.30.100:6379，schema/writer/reader/projectors 代码已实现并联调通过，待步骤6-7：D-FACTOR/SIGNAL/RISK 集成 + build_status→production）。
 
 ---
 
@@ -88,10 +88,10 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = not_started → §0.1 全部待建（除 get_redis_conn 预留） | 逐文件核对 | ☐ |
+| construction_progress = in_progress → §0.1 步骤1-5已建（部署+schema+writer+reader+projectors），步骤6-7待建（集成+production） | 逐文件核对 | ☑ |
 | Redis Key 设计 = 数据架构.md §11.1/§12.4.2 | 路径比对 | ☐ |
 | actual_disk_path = §11 产出物路径 | 路径比对 | ☐ |
-| get_redis_conn() 预留接口存在 | `grep "get_redis_conn" src/zephyr/infrastructure/database_service.py` | ☐ |
+| get_redis_conn() 已实现 | `grep "get_redis_conn" src/zephyr/infrastructure/database_service.py` | ☑ |
 
 ### §0.3 版本-代码映射
 
