@@ -18250,7 +18250,7 @@ entries:
   name_en: contracts
   desc_zh: 契约.py — G-CT-001 RBAC 契约（re-export）。
   desc_en: ''
-  plain_zh: 契约.py — G-CT-001 RBAC 契约（re-export）。
+  plain_zh: "RBAC 契约兼容转发层（G-CT-001），把角色权限契约符号 re-export 到 agent-rbac 入口，老导入路径不用改。"
 - module_path: src/zephyr/red_blue_validator/__init__.py
   domain_id: D_SECURITY
   name_zh: 包入口
@@ -18320,7 +18320,7 @@ entries:
   name_en: 'Stub module: zephyr.security.access_control.build_sanitizer '
   desc_zh: 构建sanitizer模块
   desc_en: 'Stub module: zephyr.security.access_control.build_sanitizer — implementation pending.'
-  plain_zh: '构建sanitizer。Stub module: zephyr.security.access_control.build_sanitizer — implementation pending.'
+  plain_zh: "构建产物清洗器（占位待实现），预留对构建产物做安全清洗的接口，当前 implementation pending。"
 - module_path: src/zephyr/security/access_control/cache_invalidation.py
   domain_id: D_SECURITY
   name_zh: 缓存invalidation
@@ -18642,7 +18642,7 @@ entries:
   name_en: identity
   desc_zh: Agent identity — 角色与成熟度定义.
   desc_en: ''
-  plain_zh: Agent identity — 角色与成熟度定义.
+  plain_zh: "Agent 身份载体，定义角色（RbacRole 7 成员）、5 级成熟度（L0 实习~L4 首席）、7 种 IDE 来源，类型从 shared 契约层 re-export。"
 - module_path: src/zephyr/security/access_control/immutable_core.py
   domain_id: D_SECURITY
   name_zh: 不可变核心
@@ -18677,7 +18677,7 @@ entries:
   name_en: 'Stub module: zephyr.security.access_control.key_hierarchy — '
   desc_zh: 密钥hierarchy模块
   desc_en: 'Stub module: zephyr.security.access_control.key_hierarchy — implementation pending.'
-  plain_zh: '密钥hierarchy。Stub module: zephyr.security.access_control.key_hierarchy — implementation pending.'
+  plain_zh: "密钥层级管理（占位待实现），预留多级密钥派生与轮换接口，当前 implementation pending。"
 - module_path: src/zephyr/security/access_control/kill_switch.py
   domain_id: D_SECURITY
   name_zh: 终止开关
@@ -18698,7 +18698,7 @@ entries:
   name_en: microstructure_defense
   desc_zh: 微结构防御——对抗做市/交易微结构攻击的策略与保真度因子。
   desc_en: ''
-  plain_zh: 微结构防御——对抗做市/交易微结构攻击的策略与保真度因子。
+  plain_zh: "交易微结构攻击防御，定义 spoofing/layering 等 5 类威胁的反制策略，并基于成交概率/滑点/盘口深度给出保真度综合评分。"
 - module_path: src/zephyr/security/access_control/monotonic_clock.py
   domain_id: D_SECURITY
   name_zh: MonotonicClock — 单调时钟.
@@ -18733,28 +18733,28 @@ entries:
   name_en: cascade_analyzer
   desc_zh: 删除级联分析器——分析删除文件对项目的影响。
   desc_en: ''
-  plain_zh: 删除级联分析器——分析删除文件对项目的影响。
+  plain_zh: "删除级联影响分析器，基于 import 引用图（grep 搜索 import 语句）识别直接和间接依赖者，评估删文件会波及哪些模块。"
 - module_path: src/zephyr/security/access_control/orphan_judge/config_loader.py
   domain_id: D_SECURITY
   name_zh: 配置加载器
   name_en: config_loader
   desc_zh: 配置加载器模块
   desc_en: ''
-  plain_zh: 配置加载器，主要提供加载、save、配置等功能，供orphan-judge.judge.OrphanJudge使用
+  plain_zh: "孤儿判定引擎配置加载器，load/save/reload OrphanJudgeConfig，是配置 SSoT，YAML schema 变更需同步 blueprint。"
 - module_path: src/zephyr/security/access_control/orphan_judge/db.py
   domain_id: D_SECURITY
   name_zh: 数据库
   name_en: db
   desc_zh: 数据库模块
   desc_en: ''
-  plain_zh: 数据库，主要提供insert、获取、列表byverdict等功能，供orphan-judge.__main__._cmd_rep使用
+  plain_zh: "孤儿判定记录 SQLite 库，存每个文件的判决/置信度/原因/扫描时间/文件哈希，供报告与复查使用。"
 - module_path: src/zephyr/security/access_control/orphan_judge/decision_table.py
   domain_id: D_SECURITY
   name_zh: 五层判定结果 -> 处置动作映射表。
   name_en: decision_table
   desc_zh: 五层判定结果 -> 处置动作映射表。
   desc_en: ''
-  plain_zh: 五层判定结果 -> 处置动作映射表。
+  plain_zh: "五层判定结果到处置动作的映射表，按优先级匹配：安全拦截→升级、已注册/可达→保留、有独立价值→保留并登记、重复无价值→删除、重复有价值→抽取合并。"
 - module_path: src/zephyr/security/access_control/orphan_judge/deprecation_tracker.py
   domain_id: D_SECURITY
   name_zh: 废弃文件追踪器——标记和追踪废弃文件的生命周期。
@@ -18768,7 +18768,7 @@ entries:
   name_en: drift_bridge
   desc_zh: 漂移桥接模块
   desc_en: ''
-  plain_zh: 漂移桥接，主要提供notify变更、isavailable等功能，供orphan-judge.judge.OrphanJudge使用
+  plain_zh: "漂移检测桥接层，不实现检测逻辑，仅转发到 DriftDetector.trigger_recovery，供孤儿判定做 starve/stale 判定。"
 - module_path: src/zephyr/security/access_control/orphan_judge/duplicate_detector.py
   domain_id: D_SECURITY
   name_zh: 重复检测器
@@ -18782,14 +18782,14 @@ entries:
   name_en: escalation_bridge
   desc_zh: escalation桥接模块
   desc_en: ''
-  plain_zh: escalation桥接，主要提供escalatejudgment、评估风险、isavailable等功能，供orphan-judge.judge.OrphanJudge使用
+  plain_zh: "升级桥接层，不实现升级逻辑，仅转发到 EscalationEngine.evaluate + escalate，供孤儿判定做 ESCALATE 判决。"
 - module_path: src/zephyr/security/access_control/orphan_judge/feedback_bridge.py
   domain_id: D_SECURITY
   name_zh: 反馈桥接
   name_en: feedback_bridge
   desc_zh: 反馈桥接模块
   desc_en: ''
-  plain_zh: 反馈桥接，主要提供报告misjudgment、isavailable等功能，供orphan-judge.judge.OrphanJudge使用
+  plain_zh: "误判反馈桥接层，不实现反馈逻辑，仅转发到 FeedbackLoop.analyze_pending + generate_proposals，把误判样本回灌学习。"
 - module_path: src/zephyr/security/access_control/orphan_judge/judge.py
   domain_id: D_SECURITY
   name_zh: 判定
@@ -18803,14 +18803,14 @@ entries:
   name_en: kb_bridge
   desc_zh: kb桥接模块
   desc_en: ''
-  plain_zh: kb桥接，主要提供writejudgment、search历史、isavailable等功能，供orphan-judge.__main__._cmd_rep使用
+  plain_zh: "知识库桥接层，不实现 KB 逻辑，仅转发到 UnifiedMemoryAPI.write + search，把判定记录写入统一记忆并支持历史查询。"
 - module_path: src/zephyr/security/access_control/orphan_judge/mcp_integration.py
   domain_id: D_SECURITY
   name_zh: MCP集成
   name_en: mcp_integration
   desc_zh: MCP集成，供MCP Server Tool Registry; Fast使用
   desc_en: ''
-  plain_zh: MCP集成，供MCP Server Tool Registry; Fast使用
+  plain_zh: "MCP 工具注册器，把孤儿判定能力（单文件判定/目录批量扫描）注册为 MCP 工具，供外部 agent 调用。"
 - module_path: src/zephyr/security/access_control/orphan_judge/models.py
   domain_id: D_SECURITY
   name_zh: 模型
@@ -18838,7 +18838,7 @@ entries:
   name_en: rbac_bridge
   desc_zh: rbac桥接，主要提供检查删除权限、isavailable等功能，供orphan-judge.judge.OrphanJudge使用
   desc_en: ''
-  plain_zh: rbac桥接，主要提供检查删除权限、isavailable等功能，供orphan-judge.judge.OrphanJudge使用
+  plain_zh: "RBAC 权限桥接层，不实现权限逻辑，仅转发到 PermissionGuard.check，删除文件前校验是否有删除权限，桥接失败默认拒绝。"
 - module_path: src/zephyr/security/access_control/orphan_judge/reference_graph_engine.py
   domain_id: D_SECURITY
   name_zh: referencegraph引擎
@@ -18852,14 +18852,14 @@ entries:
   name_en: registration_checker
   desc_zh: 扫描项目注册表，判断文件是否已登记在册。
   desc_en: ''
-  plain_zh: 扫描项目注册表，判断文件是否已登记在册。
+  plain_zh: "L0 注册检查器，扫描项目注册表判断文件是否已登记在册，作为孤儿判定的第一道关卡。"
 - module_path: src/zephyr/security/access_control/orphan_judge/report_generator.py
   domain_id: D_SECURITY
   name_zh: 报告生成器
   name_en: report_generator
   desc_zh: 报告生成器模块
   desc_en: ''
-  plain_zh: 报告生成器，主要提供生成、摘要text等功能，供orphan-judge.__main__._cmd_rep使用
+  plain_zh: "孤儿判定报告生成器，支持 JSON/CSV/Markdown 三种格式输出判决结果，并提供汇总摘要文本。"
 - module_path: src/zephyr/security/access_control/orphan_judge/safety_fence.py
   domain_id: D_SECURITY
   name_zh: 安全护栏
@@ -18880,14 +18880,14 @@ entries:
   name_en: swid_tag
   desc_zh: swid标签，主要提供构建等功能，供orphan-judge.db.JudgmentDB; re使用
   desc_en: ''
-  plain_zh: swid标签，主要提供构建等功能，供orphan-judge.db.JudgmentDB; re使用
+  plain_zh: "SWID 软件标签生成器，为判定记录生成标签标注文件来源和判决归属，便于追溯。"
 - module_path: src/zephyr/security/access_control/orphan_judge/unique_analyzer.py
   domain_id: D_SECURITY
   name_zh: AST节点比对，检测文件中的独特代码元素(类/函数/常量定义等)。
   name_en: unique_analyzer
   desc_zh: AST节点比对，检测文件中的独特代码元素(类/函数/常量定义等)。
   desc_en: ''
-  plain_zh: AST节点比对，检测文件中的独特代码元素(类/函数/常量定义等)。
+  plain_zh: "L3 独特价值分析器，用 AST 节点比对检测文件中的独特代码元素（类/函数/常量定义），判断文件是否有不可替代的独立价值。"
 - module_path: src/zephyr/security/access_control/permission_hooks.py
   domain_id: D_SECURITY
   name_zh: 权限钩子
@@ -19006,7 +19006,7 @@ entries:
   name_en: attack_registry
   desc_zh: attack注册表模块
   desc_en: ''
-  plain_zh: attack注册表，主要提供注册、查询by层、数量等功能，供见蓝图 §4 接口契约使用
+  plain_zh: "攻击场景注册表，register 登记攻击、query_by_tier 按层级查询、count 计数，蓝图文件清单与代码双向对齐。"
 - module_path: src/zephyr/security/adversarial_validation/blast_radius.py
   domain_id: D_SECURITY
   name_zh: 爆炸半径
@@ -19020,7 +19020,7 @@ entries:
   name_en: bypass_recorder
   desc_zh: 绕过记录器，提供recordbypass、querybypasses、escalatedentries等方法，供validator.py ; convergenc使用
   desc_en: ''
-  plain_zh: 绕过记录器，提供recordbypass、querybypasses、escalatedentries等方法，供validator.py ; convergenc使用
+  plain_zh: "门禁绕过记录器，record_bypass 记录对抗中门禁被绕过的事件、query_bypasses 查询、escalated_entries 提取需升级条目，落盘到日志。"
 - module_path: src/zephyr/security/adversarial_validation/circuit_breaker.py
   domain_id: D_SECURITY
   name_zh: 熔断断路器
@@ -19041,21 +19041,21 @@ entries:
   name_en: cli
   desc_zh: 命令行，供End users; CI/CD; MCP tool wra使用
   desc_en: ''
-  plain_zh: 命令行，供End users; CI/CD; MCP tool wra使用
+  plain_zh: "红蓝对抗 CLI，提供 list/report/status/gameday/onboard 子命令，供终端用户、CI/CD、MCP 工具调用。"
 - module_path: src/zephyr/security/adversarial_validation/cold_start.py
   domain_id: D_SECURITY
   name_zh: 冷启动
   name_en: cold_start
   desc_zh: 冷启动，供game_day_runner.py; validator.使用
   desc_en: ''
-  plain_zh: 冷启动，供game_day_runner.py; validator.使用
+  plain_zh: "红蓝对抗冷启动器，为 game_day_runner 和 validator 准备初始数据与 registry_path（Stage 4 公共化只读）。"
 - module_path: src/zephyr/security/adversarial_validation/commit_trigger.py
   domain_id: D_SECURITY
   name_zh: 提交触发器
   name_en: commit_trigger
   desc_zh: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
   desc_en: ''
-  plain_zh: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
+  plain_zh: "提交触发器（MOD-INF-030），把 GitCommitGateway 的 post-commit 事件桥接到红蓝对抗验证器，锁内轻量 emit 触发提交后对抗验证会话。"
 - module_path: src/zephyr/security/adversarial_validation/constitution_engine.py
   domain_id: D_SECURITY
   name_zh: constitution引擎
@@ -19090,7 +19090,7 @@ entries:
   name_en: game_day_runner
   desc_zh: gameday运行器，提供tier、blastradius等方法，供game_day_scheduler.py; cl使用
   desc_en: ''
-  plain_zh: gameday运行器，提供tier、blastradius等方法，供game_day_scheduler.py; cl使用
+  plain_zh: "Game Day 演练运行器，按 per_commit/daily/weekly/monthly 频率执行攻击演练，可跑完整周期，返回带 tier 和 blast_radius 的结果。"
 - module_path: src/zephyr/security/adversarial_validation/game_day_scheduler.py
   domain_id: D_SECURITY
   name_zh: gameday调度器
@@ -19104,7 +19104,7 @@ entries:
   name_en: injection_engine
   desc_zh: 注入引擎，提供blastradius、blastradius、inject等方法，供validator.py ; game_day_r使用
   desc_en: ''
-  plain_zh: 注入引擎，提供blastradius、blastradius、inject等方法，供validator.py ; game_day_r使用
+  plain_zh: "故障注入引擎，按 blast_radius 控制爆炸半径，注入延迟/错误/崩溃/退出码四类故障，含备份恢复与完整性校验。"
 - module_path: src/zephyr/security/adversarial_validation/mcp_endpoints.py
   domain_id: D_SECURITY
   name_zh: MCP端点
@@ -19125,7 +19125,7 @@ entries:
   name_en: scenario_loader
   desc_zh: 场景加载器，提供scenariocount、加载、获取等方法，供validator.py; attack_regi使用
   desc_en: ''
-  plain_zh: 场景加载器，提供scenariocount、加载、获取等方法，供validator.py; attack_regi使用
+  plain_zh: "攻击场景加载器，从 registry 加载 AttackScenario，支持按 tier/target/severity 筛选与计数，可热重载。"
 - module_path: src/zephyr/security/adversarial_validation/steady_state.py
   domain_id: D_SECURITY
   name_zh: steady状态
@@ -19181,14 +19181,14 @@ entries:
   name_en: l0_supply_chain
   desc_zh: l0supply链模块
   desc_en: ''
-  plain_zh: l0supply链。Result of a supply chain audit check.
+  plain_zh: "L0 供应链审计层，对依赖与构建产物做供应链安全审计，产出审计检查结果。"
 - module_path: src/zephyr/security/llm_defense/llm_security/layers/l1_input.py
   domain_id: D_SECURITY
   name_zh: 输入来源类型。
   name_en: l1_input
   desc_zh: 输入来源类型。
   desc_en: ''
-  plain_zh: 输入来源类型。
+  plain_zh: "L1 输入防御层，检测直接注入/越狱/间接注入（URL/工具结果），防御零宽字符、同形字、编码绕过，区分 4 种输入来源。"
 - module_path: src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py
   domain_id: D_SECURITY
   name_zh: l2提示保护
@@ -19202,14 +19202,14 @@ entries:
   name_en: l2a_process_sandbox
   desc_zh: l2a进程sandbox模块
   desc_en: ''
-  plain_zh: l2a进程sandbox。Status of a sandbox execution.
+  plain_zh: "L2a 进程沙箱层，在隔离环境中执行代码并产出沙箱执行状态，防不可信代码污染主进程。"
 - module_path: src/zephyr/security/llm_defense/llm_security/layers/l3_output.py
   domain_id: D_SECURITY
   name_zh: 兼容旧接口的输出过滤层。
   name_en: l3_output
   desc_zh: 兼容旧接口的输出过滤层。
   desc_en: ''
-  plain_zh: 兼容旧接口的输出过滤层。
+  plain_zh: "L3 输出安全层，做 schema 校验、沙箱执行、敏感数据脱敏、幻觉检测、内容安全检测，含密钥或危险内容则拒绝。"
 - module_path: src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py
   domain_id: D_SECURITY
   name_zh: 风险等级。
@@ -19237,7 +19237,7 @@ entries:
   name_en: L6 Observability Layer — security event logging, alerting, a
   desc_zh: l6可观测性，供zephyr.security.llm_defense.ll使用
   desc_en: L6 Observability Layer — security event logging, alerting, and reporting.
-  plain_zh: l6可观测性，供zephyr.security.llm_defense.ll使用
+  plain_zh: "L6 可观测性层，记录安全事件、告警与报告，为 LLM 安全防御提供可追溯的审计链路。"
 - module_path: src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py
   domain_id: D_SECURITY
   name_zh: l8合规
@@ -19258,7 +19258,7 @@ entries:
   name_en: injection_patterns
   desc_zh: 注入模式，提供match等方法，供tests.llm_security.test_i使用
   desc_en: ''
-  plain_zh: 注入模式，提供match等方法，供tests.llm_security.test_i使用
+  plain_zh: "注入模式描述符（legacy），定义提示注入的匹配模式供测试与检测使用。"
 - module_path: src/zephyr/security/llm_defense/llm_security/patterns/secrets.py
   domain_id: D_SECURITY
   name_zh: 密钥
@@ -19307,14 +19307,14 @@ entries:
   name_en: isolation
   desc_zh: LSG 自身隔离策略.
   desc_en: ''
-  plain_zh: LSG 自身隔离策略.
+  plain_zh: "LLM 安全守护（LSG）自身隔离策略，限制文件系统只读、网络禁外连、进程禁子进程、内存 W^X、模块加载白名单，防守护层被攻破反噬。"
 - module_path: src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py
   domain_id: D_SECURITY
   name_zh: l7验证
   name_en: l7_validation
   desc_zh: l7验证模块
   desc_en: ''
-  plain_zh: l7验证。Manages special risks for DeepSeek models.
+  plain_zh: "L7 验证层，评估当前上下文的安全态势，单元测试覆盖率低于阈值则拒绝，并管理 DeepSeek 模型的特殊风险。"
 - module_path: src/zephyr/security/llm_defense/llm_security/self_protection/red_team_scanner.py
   domain_id: D_SECURITY
   name_zh: red团队扫描器
