@@ -1579,11 +1579,11 @@ entries:
   plain_zh: result_repository · 回测产物持久化/检索模块（v1.3.0 新增，#ARCH-047）
 - module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
   domain_id: D_BACKTEST
-  name_zh: 异常诊断器
-  name_en: anomaly_diagnoser
-  desc_zh: 异常诊断器（anomaly_diagnoser.py）
-  desc_en: ''
-  plain_zh: "异常诊断器，回测验证"
+  name_zh: "回测异常诊断器"
+  name_en: "Anomaly Diagnoser"
+  desc_zh: "对回测结果指标执行异常检测,覆盖性能/统计/一致性三类异常,每条附带修复建议"
+  desc_en: ""
+  plain_zh: "给定回测结果,检查Sharpe是不是太高(可能过拟合)/胜率是不是太离谱(可能用了未来数据)/回撤是不是太深/交易次数够不够/回测时间够不够长等,发现问题就给出修复建议。纯阈值判定,不改输入。"
 - module_path: src/zephyr/backtest/services/cache_manager.py
   domain_id: D_BACKTEST
   name_zh: "回测缓存管理器"
@@ -12679,13 +12679,6 @@ entries:
   desc_zh: "遍历 data_sources，对每个有非空 policy 的数据源，"
   desc_en: ''
   plain_zh: "遍历 data_sources，对每个有非空 policy 的数据源，"
-- module_path: scripts/governance/d5_architecture/generators/generate_trading_flow_diagram.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: generate交易流程diagram
-  name_en: generate_trading_flow_diagram
-  desc_zh: 'G-trading-flow: 从 decisiongraph + 叙事YAML + 候选库 生成交易决策架构视图(.md)'
-  desc_en: ''
-  plain_zh: 'G-trading-flow: 从 decisiongraph + 叙事YAML + 候选库 生成交易决策架构视图(.md)'
 - module_path: scripts/governance/d5_architecture/panorama_common.py
   domain_id: D_GOV_SCRIPTS
   name_zh: panorama通用
@@ -58304,7 +58297,7 @@ entries:
 # battle_map_steps 段——作战地图环节叙事真源（BM-INV-003）
 # ============================================================================
 # 环节叙事（中英文名/大白话/机制说明/指标文案）的真源。生成器
-# (generate_trading_flow_diagram.py) MUST 从此段读取叙事，禁止硬编码。
+# (generate_battle_map_diagram.py) MUST 从此段读取叙事，禁止硬编码。
 #
 # 与 DB battle_map_steps.indicators JSONB 的分工（SSoT 分类 TRAE-062）：
 #   - 本段（YAML，规则数据真源）：叙事文案
