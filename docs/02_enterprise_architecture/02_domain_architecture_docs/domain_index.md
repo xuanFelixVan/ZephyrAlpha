@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3194 |
-| 生产态模块 | 2995 |
-| 设计态模块 | 199 |
+| 模块总数 | 3198 |
+| 生产态模块 | 3000 |
+| 设计态模块 | 198 |
 
 ## 域清单（按架构层分组）
 
@@ -81,7 +81,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 / A2A Communication | 72 | 72 | 0 | 72/150 (OK) | [📄 03_d_infra_a2a.md](03_d_infra_a2a.md) |
 | D_INFRA_OPS | 基础设施运维 / Asset Inventory | 0 | 0 | 0 | 0/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 55 | 55 | 0 | 55/150 (OK) | [📄 05_d_infra_recovery.md](05_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 169 | 166 | 3 | 169/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 173 | 170 | 3 | 173/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | 可观测性 / Observability | 0 | 0 | 0 | 0/150 (OK) | [📄 07_d_infra_telemetry.md](07_d_infra_telemetry.md) |
 | D_SHARED | 共享服务 / Shared Services | 184 | 184 | 0 | 184/150 (超容) | [📄 08_d_shared.md](08_d_shared.md) |
 
@@ -120,7 +120,7 @@ ttl: permanent
 | D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 19 | 9 | 10 | 19/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
 | D_AUDITTEST | 审计测试套件 / Audit Test Suite | 1 | 1 | 0 | 1/150 (OK) | [📄 33_d_audittest.md](33_d_audittest.md) |
 | D_AUTONOMY_PERM | 自治保护 / Autonomy Protection | 2 | 2 | 0 | 2/150 (OK) | [📄 34_d_autonomy_perm.md](34_d_autonomy_perm.md) |
-| D_BACKTEST | 回测 / Backtest | 27 | 20 | 7 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
+| D_BACKTEST | 回测 / Backtest | 27 | 21 | 6 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
 | D_BEHAVIORAL_AUDIT | 行为审计 / Behavioral Audit | 0 | 0 | 0 | 0/150 (OK) | [📄 36_d_behavioral_audit.md](36_d_behavioral_audit.md) |
 | D_CODE_SCRIPTS | 代码质量脚本 / D_CODE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 37_d_code_scripts.md](37_d_code_scripts.md) |
 | D_COMPLIANCE | 合规 / Compliance | 3 | 2 | 1 | 3/150 (OK) | [📄 38_d_compliance.md](38_d_compliance.md) |

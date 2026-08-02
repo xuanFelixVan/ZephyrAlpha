@@ -1416,58 +1416,56 @@ flowchart TD
 | 95 | D_GOV_SCRIPTS 脚本治理: 生成dataflowdiagram / generate_dataflow_diagram (generato... | → | dataflowgraph结构 / dataflowgraph_schema (persistence/dat... | 导入依赖 / import_depends |
 | 96 | D_GOV_SCRIPTS 脚本治理: generate决策diagram / generate_decision_diagram (generato... | → | 可缩放 Mermaid HTML 生成器（共享模块）。 / zoomable_html ... | 导入依赖 / import_depends |
 | 97 | D_GOV_SCRIPTS 脚本治理: generate决策diagram / generate_decision_diagram (generato... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
-| 98 | D_GOV_SCRIPTS 脚本治理: generate交易流程diagram / generate_trading_flow_diagram (... | → | 可缩放 Mermaid HTML 生成器（共享模块）。 / zoomable_html ... | 导入依赖 / import_depends |
-| 99 | D_GOV_SCRIPTS 脚本治理: generate交易流程diagram / generate_trading_flow_diagram (... | → | 决策graph读取器 / decision_graph_reader (persistence/deci... | 导入依赖 / import_depends |
-| 100 | D_GOV_SCRIPTS 脚本治理: 蓝图frontmatter对账器 / blueprint_frontmatter_reconciler ... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 101 | D_GOV_SCRIPTS 脚本治理: 同步yamlto依赖图 / sync_yaml_to_depgraph (d8_doc_sync/syn... | → | dataflowgraph结构 / dataflowgraph_schema (persistence/dat... | 导入依赖 / import_depends |
-| 102 | D_GOV_SCRIPTS 脚本治理: 决策节点大白话回填脚本 (governance/decision_node_plain_zh... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
-| 103 | D_GOV_SCRIPTS 脚本治理: 提取decisiongraph / extract_decisiongraph - decisiongraph... | → | 决策graph读取器 / decision_graph_reader (persistence/deci... | 导入依赖 / import_depends |
-| 104 | D_GOV_SCRIPTS 脚本治理: 提取decisiongraph / extract_decisiongraph - decisiongraph... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
-| 105 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] YAML 是唯一真源; DB 为只读缓存; 同步单向  / ... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
-| 106 | D_GOV_SCRIPTS 脚本治理: 生成project依赖图 / # [BLUEPRINT] MOD-INF-005 | scripts/g... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 107 | D_GOV_SCRIPTS 脚本治理: 生成路径ownershipmap / generate_path_ownership_map (gener... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 108 | D_GOV_SCRIPTS 脚本治理: 生成路径ownershipmap / generate_path_ownership_map (gener... | → | 规则模式 / rule_patterns (governance/rule_patterns.py) | 导入依赖 / import_depends |
-| 109 | D_GOV_SCRIPTS 脚本治理: 备份运行时状态 / backup_runtime_state (meta/backup_runtim... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 110 | D_GOV_SCRIPTS 脚本治理: 创建任务from发现 / create_task_from_finding (meta/create_... | → | sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
-| 111 | D_GOV_SCRIPTS 脚本治理: 创建任务from发现 / create_task_from_finding (meta/create_... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 112 | D_GOV_SCRIPTS 脚本治理: migrateto元数据tables / migrate_to_metadata_tables (gover... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 113 | D_GOV_SCRIPTS 脚本治理: 数据域审计查询 / data_domain_audit_query (oneoff/data_dom... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 114 | D_GOV_SCRIPTS 脚本治理: 查询modulepanorama / query_module_panorama (governance/qu... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 115 | D_GOV_SCRIPTS 脚本治理: 查询modulepanorama / query_module_panorama (governance/qu... | → | dataflowgraph结构 / dataflowgraph_schema (persistence/dat... | 导入依赖 / import_depends |
-| 116 | D_GOV_SCRIPTS 脚本治理: 查询modulepanorama / query_module_panorama (governance/qu... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
-| 117 | D_GOV_SCRIPTS 脚本治理: 注册deferredmodules / register_deferred_modules (governan... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 118 | D_GOV_SCRIPTS 脚本治理: 同步panorama模块 / sync_panorama_module (governance/sync_... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 119 | D_GOV_SCRIPTS 脚本治理: 同步panorama模块 / sync_panorama_module (governance/sync_... | → | dataflowgraph结构 / dataflowgraph_schema (persistence/dat... | 导入依赖 / import_depends |
-| 120 | D_GOV_SCRIPTS 脚本治理: 同步panorama模块 / sync_panorama_module (governance/sync_... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
-| 121 | D_INFRA_RUNTIME 运行时集成: 仪表盘 / dashboard (asset_inventory/dashboard.py) | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 122 | D_INFRA_RUNTIME 运行时集成: 升级桥接 / escalation_bridge (auto_fix_engine/escalation_... | → | 适配器 / adapter (services/adapter.py) | 导入依赖 / import_depends |
-| 123 | D_INFRA_RUNTIME 运行时集成: RBAC桥接 / rbac_bridge (budget_enforcement/rbac_bridge.py) | → | RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | 导入依赖 / import_depends |
-| 124 | D_INFRA_RUNTIME 运行时集成: 契约总线 / contract_bus (contracts/contract_bus.py) | → | batch2治理 / batch2_governance (contracts/batch2_governan... | 导入依赖 / import_depends |
-| 125 | D_INFRA_RUNTIME 运行时集成: 数据库服务 / database_service (infrastructure/database_se... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
-| 126 | D_INFRA_RUNTIME 运行时集成: 数据库服务 / database_service (infrastructure/database_se... | → | sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
-| 127 | D_INFRA_RUNTIME 运行时集成: preemption管理器 / preemption_manager (pipeline/preemptio... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 128 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 模型路由器 / model_router (intelligence_governance/model_... | 导入依赖 / import_depends |
-| 129 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 130 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 适配器 / adapter (services/adapter.py) | 导入依赖 / import_depends |
-| 131 | D_INFRA_RUNTIME 运行时集成: 启动钩子 / boot_hooks (trading/boot_hooks.py) | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 132 | D_INFRA_RUNTIME 运行时集成: 资源优化 / resource_optimization.py - MAPE-K autonomic re... | → | 容量治理循环 / capacity_governance_loop (capacity_governa... | 导入依赖 / import_depends |
-| 133 | D_INTEGRATION 管线路由: 基类服务端 / _base_server (mcp/_base_server.py) | → | RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | 导入依赖 / import_depends |
-| 134 | D_INTEGRATION 管线路由: 网关服务端 / gateway_server (mcp/gateway_server.py) | → | 治理服务端 / governance_server (mcp/governance_server.py) | 导入依赖 / import_depends |
-| 135 | D_INTEGRATION 管线路由: 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | 路径解析器 / path_resolver (architecture_governance/path_... | 导入依赖 / import_depends |
-| 136 | D_INTEGRATION 管线路由: 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | 导入依赖 / import_depends |
-| 137 | D_OPS 反馈循环: 预算处理器 / budget_handler (ops_governance/budget_handle... | → | 适配器 / adapter (services/adapter.py) | 导入依赖 / import_depends |
-| 138 | D_ORCHESTRATOR 代理编排器: 告警处理器 / alert_handler (contracts/alert_handler.py) | → | sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
-| 139 | D_ORCHESTRATOR 代理编排器: 告警处理器 / alert_handler (contracts/alert_handler.py) | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 140 | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 / finding_bridge (contracts/... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 141 | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 142 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 143 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 144 | D_PF_CORE 组合核心: 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 145 | D_SECURITY 对抗验证: 数据库 / db (orphan_judge/db.py) | → | sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
-| 146 | D_TRADING 交易运营: 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 147 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 148 | D_TRADING 交易运营: Conductor — AI session 全自动指挥官。 / conductor (tradi... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 149 | D_TRADING 交易运营: ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 98 | D_GOV_SCRIPTS 脚本治理: 蓝图frontmatter对账器 / blueprint_frontmatter_reconciler ... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 99 | D_GOV_SCRIPTS 脚本治理: 同步yamlto依赖图 / sync_yaml_to_depgraph (d8_doc_sync/syn... | → | dataflowgraph结构 / dataflowgraph_schema (persistence/dat... | 导入依赖 / import_depends |
+| 100 | D_GOV_SCRIPTS 脚本治理: 决策节点大白话回填脚本 (governance/decision_node_plain_zh... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
+| 101 | D_GOV_SCRIPTS 脚本治理: 提取decisiongraph / extract_decisiongraph - decisiongraph... | → | 决策graph读取器 / decision_graph_reader (persistence/deci... | 导入依赖 / import_depends |
+| 102 | D_GOV_SCRIPTS 脚本治理: 提取decisiongraph / extract_decisiongraph - decisiongraph... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
+| 103 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] YAML 是唯一真源; DB 为只读缓存; 同步单向  / ... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
+| 104 | D_GOV_SCRIPTS 脚本治理: 生成project依赖图 / # [BLUEPRINT] MOD-INF-005 | scripts/g... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 105 | D_GOV_SCRIPTS 脚本治理: 生成路径ownershipmap / generate_path_ownership_map (gener... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 106 | D_GOV_SCRIPTS 脚本治理: 生成路径ownershipmap / generate_path_ownership_map (gener... | → | 规则模式 / rule_patterns (governance/rule_patterns.py) | 导入依赖 / import_depends |
+| 107 | D_GOV_SCRIPTS 脚本治理: 备份运行时状态 / backup_runtime_state (meta/backup_runtim... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 108 | D_GOV_SCRIPTS 脚本治理: 创建任务from发现 / create_task_from_finding (meta/create_... | → | sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
+| 109 | D_GOV_SCRIPTS 脚本治理: 创建任务from发现 / create_task_from_finding (meta/create_... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 110 | D_GOV_SCRIPTS 脚本治理: migrateto元数据tables / migrate_to_metadata_tables (gover... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 111 | D_GOV_SCRIPTS 脚本治理: 数据域审计查询 / data_domain_audit_query (oneoff/data_dom... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 112 | D_GOV_SCRIPTS 脚本治理: 查询modulepanorama / query_module_panorama (governance/qu... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 113 | D_GOV_SCRIPTS 脚本治理: 查询modulepanorama / query_module_panorama (governance/qu... | → | dataflowgraph结构 / dataflowgraph_schema (persistence/dat... | 导入依赖 / import_depends |
+| 114 | D_GOV_SCRIPTS 脚本治理: 查询modulepanorama / query_module_panorama (governance/qu... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
+| 115 | D_GOV_SCRIPTS 脚本治理: 注册deferredmodules / register_deferred_modules (governan... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 116 | D_GOV_SCRIPTS 脚本治理: 同步panorama模块 / sync_panorama_module (governance/sync_... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 117 | D_GOV_SCRIPTS 脚本治理: 同步panorama模块 / sync_panorama_module (governance/sync_... | → | dataflowgraph结构 / dataflowgraph_schema (persistence/dat... | 导入依赖 / import_depends |
+| 118 | D_GOV_SCRIPTS 脚本治理: 同步panorama模块 / sync_panorama_module (governance/sync_... | → | decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
+| 119 | D_INFRA_RUNTIME 运行时集成: 仪表盘 / dashboard (asset_inventory/dashboard.py) | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 120 | D_INFRA_RUNTIME 运行时集成: 升级桥接 / escalation_bridge (auto_fix_engine/escalation_... | → | 适配器 / adapter (services/adapter.py) | 导入依赖 / import_depends |
+| 121 | D_INFRA_RUNTIME 运行时集成: RBAC桥接 / rbac_bridge (budget_enforcement/rbac_bridge.py) | → | RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | 导入依赖 / import_depends |
+| 122 | D_INFRA_RUNTIME 运行时集成: 契约总线 / contract_bus (contracts/contract_bus.py) | → | batch2治理 / batch2_governance (contracts/batch2_governan... | 导入依赖 / import_depends |
+| 123 | D_INFRA_RUNTIME 运行时集成: 数据库服务 / database_service (infrastructure/database_se... | → | 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 124 | D_INFRA_RUNTIME 运行时集成: 数据库服务 / database_service (infrastructure/database_se... | → | sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
+| 125 | D_INFRA_RUNTIME 运行时集成: preemption管理器 / preemption_manager (pipeline/preemptio... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 126 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 模型路由器 / model_router (intelligence_governance/model_... | 导入依赖 / import_depends |
+| 127 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 128 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / auto_runtime_core (trading/auto_runtime_... | → | 适配器 / adapter (services/adapter.py) | 导入依赖 / import_depends |
+| 129 | D_INFRA_RUNTIME 运行时集成: 启动钩子 / boot_hooks (trading/boot_hooks.py) | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 130 | D_INFRA_RUNTIME 运行时集成: 资源优化 / resource_optimization.py - MAPE-K autonomic re... | → | 容量治理循环 / capacity_governance_loop (capacity_governa... | 导入依赖 / import_depends |
+| 131 | D_INTEGRATION 管线路由: 基类服务端 / _base_server (mcp/_base_server.py) | → | RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | 导入依赖 / import_depends |
+| 132 | D_INTEGRATION 管线路由: 网关服务端 / gateway_server (mcp/gateway_server.py) | → | 治理服务端 / governance_server (mcp/governance_server.py) | 导入依赖 / import_depends |
+| 133 | D_INTEGRATION 管线路由: 任务管理器服务端 / ZephyrAlpha MCP Task Manager Server (m... | → | 路径解析器 / path_resolver (architecture_governance/path_... | 导入依赖 / import_depends |
+| 134 | D_INTEGRATION 管线路由: 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | 导入依赖 / import_depends |
+| 135 | D_OPS 反馈循环: 预算处理器 / budget_handler (ops_governance/budget_handle... | → | 适配器 / adapter (services/adapter.py) | 导入依赖 / import_depends |
+| 136 | D_ORCHESTRATOR 代理编排器: 告警处理器 / alert_handler (contracts/alert_handler.py) | → | sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
+| 137 | D_ORCHESTRATOR 代理编排器: 告警处理器 / alert_handler (contracts/alert_handler.py) | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 138 | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 / finding_bridge (contracts/... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 139 | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
+| 140 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
+| 141 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
+| 142 | D_PF_CORE 组合核心: 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
+| 143 | D_SECURITY 对抗验证: 数据库 / db (orphan_judge/db.py) | → | sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
+| 144 | D_TRADING 交易运营: 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 145 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 146 | D_TRADING 交易运营: Conductor — AI session 全自动指挥官。 / conductor (tradi... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
+| 147 | D_TRADING 交易运营: ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
