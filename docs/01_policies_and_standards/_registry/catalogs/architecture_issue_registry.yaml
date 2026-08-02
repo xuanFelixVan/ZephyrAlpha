@@ -10992,13 +10992,21 @@ entries:
       单测：tests/zephyr/data/redundant_source/test_heartbeat_monitor_alert.py（5 测试全绿）
 
     改进d（持续监控）：scheduler _probe_loop 每 30s 探活，覆盖调度器运行期。
-      R4b（7×24 独立探针，覆盖盘后 event_driven 时段）待后续推进。
+      R4b（7×24 独立探针）已实现：scripts/ops/ch_health_probe.py 独立守护进程，
+      默认 60s 间隔 + 3 次失败阈值，覆盖盘后/周末/节假日调度器不运行时段。
+      部署：手动后台启动或 Windows 计划任务 ONLOGON 自启。
 
-    提交：793884f1（R4a 代码）+ e2e 验证脚本 scripts/ops/e2e_ch_alert_probe.py
+    改进e（表级恢复验证）：R6 已完成。
+      两表 RESTORE FROM Disk('backups', 'market.zip') 验证通过：
+      - trade_calendar: 13162 行，源表==恢复表行数一致，业务数据一致
+      - market_index_meta: 50 行，源表==恢复表行数一致，数据完全一致
+      脚本：scripts/ops/r6_restore_via_vm.py（可复用，支持表名参数）
+
+    提交：793884f1（R4a 代码）+ 6505a6bb（issue+report+e2e 脚本）+ R4b/R6 提交
 
     遗留项（不阻断 C3 闭环）：
-    - R4b：盘后 7×24 独立探针（当前探针仅在调度器运行期生效）
-    - R6：表级恢复演练（RESTORE TABLE 到临时库校验行数）
+    - 告警通道（.env）未配置 ZEPHYR_FEISHU_WEBHOOK / ZEPHYR_SMTP_*，告警仅写 failures/ + 日志。
+      实盘前需配置 .env 凭据以触达飞书/邮件。
   related_rules:
   - '#ARCH-CH-031'
   - '#ARCH-DR-BACKUP-001'
