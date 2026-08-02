@@ -1,0 +1,101 @@
+---
+module_id: MOD-SIM-005
+title: "场景生成器蓝图 — 蒙特卡洛+历史场景+自定义场景"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+design_maturity: production
+build_status: stable
+ttl: permanent
+layer: L_SIMULATION
+layer_name: simulation
+functional_domain: simulation
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-02"
+last_updated: "2026-08-02"
+priority: P1
+blueprint_level: module
+responsibility_domain: 
+---
+
+# MOD-SIM-005 Scenario Generator — 场景生成器 蓝图
+
+> **module_id**: MOD-SIM-005 | **域**: D_SIMULATION | **层**: L_SIMULATION 仿真层
+> **优先级**: P1 | **成熟度**: L1 🔵 骨架 → production | **建设标记**: ✅可建
+> **SSoT**: depgraph MOD-SIM-005 | **设计真源**: D:\临时工作区\依赖图\19-D-SIMULATION-仿真域.md §1 D-SIMULATION-05
+
+## 1. 定位
+
+场景生成器——生成 what-if 市场场景(SimulationScenario), 供 SIM-01 市场仿真 / SIM-02 策略仿真 / SIM-04 压力测试 / SIM-06 蒙特卡洛引擎消费。是仿真流水线的起点(场景→市场→策略)。
+
+三种生成模式:
+- **蒙特卡洛**: 基于几何布朗运动(GBM)生成随机价格路径, 可配漂移率/波动率/期限/种子
+- **历史场景**: 从真实历史数据切片封装为可重放场景(如 2008 危机/2015 股灾片段)
+- **自定义场景**: 用户指定冲击序列(价格跳变)+趋势, 生成确定性 what-if 场景
+
+属 A 类基础设施(确定性生成: GBM 公式+历史切片+冲击叠加), 阈值为 C 类可调参数。
+核心 Aggregate: SimulationScenario。核心事件: E-SIM-02 ScenarioGenerated。
+
+设计真源: D-SIMULATION-05 "场景生成器+蒙特卡洛+历史场景+自定义场景 | Monte Carlo"。
+
+## 2. 输入 / 输出
+
+| 方向 | 内容 | 契约/事件 |
+|------|------|-----------|
+| 输入 | 生成参数(MonteCarloParams/HistoricalParams/CustomParams) + Config | 调用方传入 |
+| 输出 | SimulationScenario (含 market_data DataFrame + 元数据) | 供 SIM-01/02/04/06 消费, 触发 E-SIM-02 |
+
+## 3. 核心规则 (设计真源 §1 D-SIMULATION-05)
+
+### 3.1 蒙特卡洛场景 (GBM)
+
+几何布朗运动价格路径:
+- `S_t = S_{t-1} * exp((drift - 0.5*vol²)*dt + vol*sqrt(dt)*Z)`, Z~N(0,1)
+- 参数: start_price, drift(年化漂移), volatility(年化波动率), n_bars, dt(年化时间步, 默认1/252), seed
+- 生成 OHLCV: close=GBM 路径, open=前收, high/low 围绕 close, volume=常数
+
+### 3.2 历史场景
+
+- 从真实历史 DataFrame 切片 [start_idx : start_idx+n_bars] 封装为场景
+- 保留原始 OHLCV, 附加场景元数据
+- 参数: source_data, start_idx, n_bars
+
+### 3.3 自定义场景
+
+- 基础路径 + 用户指定冲击序列: 在指定 bar_idx 叠加 pct_shock (如 -10% 跳空)
+- 可配 trend (线性漂移)
+- 确定性(给定 seed 可复现)
+- 参数: start_price, n_bars, shocks(list[(bar_idx, pct)]), trend, seed
+
+### 3.4 SimulationScenario Aggregate
+
+- scenario_id: 全局唯一 (类型+时间戳+短哈希)
+- scenario_type: monte_carlo / historical / custom
+- market_data: 生成的 OHLCV DataFrame
+- params: 生成参数快照 (dict, 用于复现)
+- generated_at: ISO8601 时间戳
+
+## 4. 关键不变量 (INVARIANTS)
+
+- 纯 numpy/pandas 生成, 不依赖外部数据库
+- 全部数据模型 frozen 不可变
+- 蒙特卡洛/自定义场景给定 seed 可精确复现
+- 历史场景不修改源数据 (切片拷贝)
+- n_bars<=0 或 start_price<=0 → ScenarioGenerationError
+- 历史场景 start_idx+n_bars 越界 → ScenarioGenerationError
+
+## 5. 错误契约
+
+- `ScenarioGenerationError` (ZA-SIM-0005): 参数非法(n_bars<=0/start_price<=0/越界/源数据缺列)
+
+## 6. 测试
+
+- `tests/simulation/test_scenario_generator.py`
+- 覆盖: 三种生成模式、GBM 可复现性(同 seed)、历史切片正确性、自定义冲击叠加、参数校验、scenario_id 唯一性、Aggregate frozen、空/越界输入
+
+## 7. 依赖
+
+- `numpy` (GBM 随机数), `pandas` (DataFrame)
+- `zephyr.shared.foundation.errors` (ZephyrBaseError)
+- 消费者: MOD-SIM-002 strategy_simulator / SIM-01 市场仿真 / SIM-04 压力测试 / SIM-06 蒙特卡洛引擎

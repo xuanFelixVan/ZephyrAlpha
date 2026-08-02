@@ -20815,11 +20815,11 @@ entries:
   plain_zh: "给定一段收益率数据,算出最坏情况下可能亏多少(VaR)和亏的时候平均亏多少(CVaR),再模拟最大回撤有多大/多久能恢复/是否触发熔断阈值。纯数学计算,不决定买卖。"
 - module_path: src/zephyr/simulation/scenario_generator.py
   domain_id: D_SIMULATION
-  name_zh: 场景生成器
-  name_en: scenario_generator
-  desc_zh: 场景生成器模块
-  desc_en: ''
-  plain_zh: 场景生成器，模拟的生成器，按规则生成所需的数据或报告。
+  name_zh: "场景生成器"
+  name_en: "Scenario Generator"
+  desc_zh: "生成what-if市场场景:蒙特卡洛(GBM)+历史切片+自定义冲击"
+  desc_en: ""
+  plain_zh: "给仿真造市场行情的工厂——三种模式:蒙特卡洛用几何布朗运动随机生成一条价格路径,历史模式从真实数据切一段下来,自定义模式让你指定在某几根K线上插个涨跌冲击。跑完吐出一个场景包(含OHLCV数据+参数快照),喂给策略仿真器看策略在这种假设行情下会怎样。"
 - module_path: src/zephyr/simulation/sharpe_calculator_fixer.py
   domain_id: D_SIMULATION
   name_zh: 夏普计算器修复器
