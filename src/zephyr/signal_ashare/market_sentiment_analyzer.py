@@ -1,0 +1,436 @@
+# [BLUEPRINT] MOD-SIG-025 | docs/03_modules/_domain_signal/blueprint.md
+# [MODULE] zephyr.signal_ashare.market_sentiment_analyzer
+# [DOMAIN] D_ASHARE_SIGNAL
+# [DEPENDENCIES] zephyr.shared.contracts.synthesized_signal
+# [CONSUMERS] zephyr.signal_ashare.youzi_relay_emotion_engine; zephyr.signal_ashare.dual_engine_fusion_decision_engine
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] overall_sentiment_score in [0, 100]; all sub-scores in [0, 100]
+# [MODIFY-GUARD] none
+# [STABILITY] stable
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] MarketSentimentDataError
+# [TESTS] tests/signal_ashare/test_market_sentiment_analyzer.py
+# [A_module] module_id=MOD-SIG-025 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+
+"""
+D-SIGNAL-25 — A股市场情绪分析引擎
+
+7维度市场情绪分析：
+  1. 涨跌家数分析（二八分化检测）
+  2. 涨停跌停数量分析（做多热情/恐慌蔓延）
+  3. 赚钱效应评估器（涨停板/板块涨幅/市场温度）
+  4. 次日回调风险预警器（指数涨个股跌→次日风险）
+  5. 市场士气评估器（散户游资跟随度）
+  6. 封板率分析
+  7. 昨日涨停表现追踪
+
+设计真源: D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §1 D-SIGNAL-25
+策略参数: 全部通过 MarketSentimentConfig 可配置，默认值取自设计文档
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+from typing import Optional
+
+
+class SentimentPhase(str, Enum):
+    """市场情绪阶段"""
+
+    FREEZING = "冰点"
+    REVERSAL = "反核"
+    MAIN_RALLY = "主升"
+    EUPHORIA = "疯狂"
+    RETREATING = "退潮"
+
+
+@dataclass(frozen=True)
+class MarketBreadthData:
+    """市场涨跌家数数据"""
+
+    advancing_count: int
+    declining_count: int
+    flat_count: int
+    total_count: int
+
+
+@dataclass(frozen=True)
+class LimitUpDownData:
+    """涨跌停数据"""
+
+    limit_up_count: int
+    limit_down_count: int
+    near_limit_up_count: int  # 接近涨停（涨幅>9%）
+    sealed_limit_up_count: int  # 封住涨停的数量
+    attempted_limit_up_count: int  # 曾涨停（含炸板）
+
+
+@dataclass(frozen=True)
+class IndexPerformanceData:
+    """指数表现数据"""
+
+    index_name: str
+    index_change_pct: float  # 指数涨跌幅
+
+
+@dataclass(frozen=True)
+class YesterdayLimitUpPerformance:
+    """昨日涨停股今日表现"""
+
+    count: int  # 昨日涨停数量
+    avg_return_today: float  # 今日平均收益
+    positive_ratio: float  # 今日正收益比例
+
+
+@dataclass(frozen=True)
+class MarketSentimentInput:
+    """市场情绪分析输入"""
+
+    timestamp: datetime
+    breadth: MarketBreadthData
+    limit_data: LimitUpDownData
+    index_performance: IndexPerformanceData
+    yesterday_limit_up: YesterdayLimitUpPerformance | None = None
+    market_turnover: float = 0.0  # 市场成交额（亿）
+
+
+@dataclass
+class MarketSentimentConfig:
+    """市场情绪分析配置（全部可配置，默认值取自设计文档）"""
+
+    # 二八分化检测
+    divergence_ratio_threshold: float = 0.8  # 上涨占比>80%或<20%=二八分化
+
+    # 涨停热情阈值
+    limit_up_zeal_threshold: int = 50  # 涨停>50=做多热情
+    limit_down_panic_threshold: int = 20  # 跌停>20=恐慌蔓延
+
+    # 封板率阈值
+    seal_rate_good: float = 0.7  # >70%=好
+    seal_rate_bad: float = 0.4  # <40%=差
+
+    # 赚钱效应阈值
+    profit_effect_strong: float = 0.6  # 上涨家数占比>60%=强
+    profit_effect_weak: float = 0.3  # <30%=弱
+
+    # 次日回调风险
+    next_day_risk_divergence_threshold: float = 0.3  # 指数涨但个股跌占比>30%=高风险
+
+    # 市场士气阈值
+    morale_high_threshold: float = 0.6  # 上涨占比>60%=高涨
+    morale_low_threshold: float = 0.3  # <30%=低迷
+
+    # 昨日涨停表现
+    yesterday_lu_good_return: float = 0.03  # 均收益>3%=好
+    yesterday_lu_bad_return: float = -0.02  # <-2%=差
+
+    # 情绪阶段评分阈值
+    phase_freezing_score: float = 20.0  # <20=冰点
+    phase_reversal_score: float = 40.0  # 20-40=反核
+    phase_main_rally_score: float = 60.0  # 40-60=主升
+    phase_euphoria_score: float = 80.0  # 60-80=疯狂
+    # >80=退潮（高位开始退潮）
+
+
+@dataclass(frozen=True)
+class MarketSentimentResult:
+    """市场情绪分析结果"""
+
+    timestamp: datetime
+
+    # 1. 涨跌家数分析
+    breadth_status: str  # "二八分化"/"普涨"/"普跌"/"均衡"
+    breadth_score: float  # 0-100
+
+    # 2. 涨跌停分析
+    limit_zeal_status: str  # "做多热情"/"正常"/"恐慌蔓延"
+    limit_score: float  # 0-100
+
+    # 3. 赚钱效应
+    profit_effect_status: str  # "强"/"中"/"弱"
+    profit_effect_score: float  # 0-100
+
+    # 4. 次日回调风险
+    next_day_risk_status: str  # "高风险"/"中风险"/"低风险"
+    next_day_risk_score: float  # 0-100
+
+    # 5. 市场士气
+    morale_status: str  # "高涨"/"正常"/"低迷"
+    morale_score: float  # 0-100
+
+    # 6. 封板率
+    seal_rate_status: str  # "好"/"中"/"差"
+    seal_rate: float  # 0-1
+
+    # 7. 昨日涨停表现
+    yesterday_lu_status: str  # "好"/"中"/"差"/"无数据"
+
+    # 综合
+    overall_score: float  # 0-100
+    sentiment_phase: str  # SentimentPhase enum value
+
+
+class MarketSentimentDataError(Exception):
+    """市场情绪数据不完整错误"""
+
+
+class MarketSentimentAnalyzer:
+    """
+    A股市场情绪分析引擎（D-SIGNAL-25）
+
+    7维度分析 → 综合情绪评分 → 情绪阶段定位
+
+    所有策略参数通过 config 可配置，默认值取自设计文档。
+    """
+
+    def __init__(self, config: MarketSentimentConfig | None = None) -> None:
+        self._config = config or MarketSentimentConfig()
+
+    # ------------------------------------------------------------------
+    # 1. 涨跌家数分析（二八分化检测）
+    # ------------------------------------------------------------------
+    def analyze_breadth(self, breadth: MarketBreadthData) -> tuple[str, float]:
+        """分析涨跌家数，检测二八分化"""
+        total = breadth.total_count or (breadth.advancing_count + breadth.declining_count + breadth.flat_count)
+        if total == 0:
+            return "无数据", 50.0
+
+        advance_ratio = breadth.advancing_count / total
+        decline_ratio = breadth.declining_count / total
+
+        # 二八分化检测
+        if advance_ratio >= self._config.divergence_ratio_threshold:
+            status = "二八分化"
+            score = 80.0 + (advance_ratio - self._config.divergence_ratio_threshold) * 100
+        elif decline_ratio >= self._config.divergence_ratio_threshold:
+            status = "二八分化"
+            score = 20.0 - (decline_ratio - self._config.divergence_ratio_threshold) * 100
+        elif advance_ratio > 0.6:
+            status = "普涨"
+            score = 60.0 + (advance_ratio - 0.6) * 50
+        elif decline_ratio > 0.6:
+            status = "普跌"
+            score = 40.0 - (decline_ratio - 0.6) * 50
+        else:
+            status = "均衡"
+            score = 50.0 + (advance_ratio - decline_ratio) * 25
+
+        return status, max(0.0, min(100.0, score))
+
+    # ------------------------------------------------------------------
+    # 2. 涨停跌停数量分析（做多热情/恐慌蔓延）
+    # ------------------------------------------------------------------
+    def analyze_limit_activity(self, limit_data: LimitUpDownData) -> tuple[str, float]:
+        """分析涨停跌停数量，判断做多热情或恐慌蔓延"""
+        lu = limit_data.limit_up_count
+        ld = limit_data.limit_down_count
+
+        if lu >= self._config.limit_up_zeal_threshold:
+            status = "做多热情"
+            score = 70.0 + min(30.0, (lu - self._config.limit_up_zeal_threshold) * 0.5)
+        elif ld >= self._config.limit_down_panic_threshold:
+            status = "恐慌蔓延"
+            score = 30.0 - min(30.0, (ld - self._config.limit_down_panic_threshold) * 0.5)
+        else:
+            status = "正常"
+            # 涨停多于跌停=偏多，反之偏空
+            diff = lu - ld
+            score = 50.0 + diff * 2.0
+
+        return status, max(0.0, min(100.0, score))
+
+    # ------------------------------------------------------------------
+    # 3. 赚钱效应评估器
+    # ------------------------------------------------------------------
+    def evaluate_profit_effect(self, breadth: MarketBreadthData) -> tuple[str, float]:
+        """评估赚钱效应"""
+        total = breadth.total_count or (breadth.advancing_count + breadth.declining_count + breadth.flat_count)
+        if total == 0:
+            return "无数据", 50.0
+
+        advance_ratio = breadth.advancing_count / total
+
+        if advance_ratio >= self._config.profit_effect_strong:
+            status = "强"
+            score = 60.0 + (advance_ratio - self._config.profit_effect_strong) * 100
+        elif advance_ratio <= self._config.profit_effect_weak:
+            status = "弱"
+            score = 40.0 - (self._config.profit_effect_weak - advance_ratio) * 100
+        else:
+            status = "中"
+            score = 50.0
+
+        return status, max(0.0, min(100.0, score))
+
+    # ------------------------------------------------------------------
+    # 4. 次日回调风险预警器
+    # ------------------------------------------------------------------
+    def warn_next_day_risk(
+        self, breadth: MarketBreadthData, index_perf: IndexPerformanceData
+    ) -> tuple[str, float]:
+        """预警次日回调风险（指数涨个股跌→次日风险）"""
+        total = breadth.total_count or (breadth.advancing_count + breadth.declining_count + breadth.flat_count)
+        if total == 0:
+            return "无数据", 50.0
+
+        decline_ratio = breadth.declining_count / total
+        index_up = index_perf.index_change_pct > 0
+
+        # 指数涨但个股跌=虚假繁荣，次日回调风险高
+        if index_up and decline_ratio >= self._config.next_day_risk_divergence_threshold:
+            status = "高风险"
+            score = 80.0 + (decline_ratio - self._config.next_day_risk_divergence_threshold) * 100
+        elif index_up and decline_ratio >= 0.4:
+            status = "中风险"
+            score = 60.0
+        else:
+            status = "低风险"
+            score = 30.0
+
+        return status, max(0.0, min(100.0, score))
+
+    # ------------------------------------------------------------------
+    # 5. 市场士气评估器
+    # ------------------------------------------------------------------
+    def evaluate_morale(self, breadth: MarketBreadthData) -> tuple[str, float]:
+        """评估市场士气（散户游资跟随度）"""
+        total = breadth.total_count or (breadth.advancing_count + breadth.declining_count + breadth.flat_count)
+        if total == 0:
+            return "无数据", 50.0
+
+        advance_ratio = breadth.advancing_count / total
+
+        if advance_ratio >= self._config.morale_high_threshold:
+            status = "高涨"
+            score = 60.0 + (advance_ratio - self._config.morale_high_threshold) * 100
+        elif advance_ratio <= self._config.morale_low_threshold:
+            status = "低迷"
+            score = 40.0 - (self._config.morale_low_threshold - advance_ratio) * 100
+        else:
+            status = "正常"
+            score = 50.0
+
+        return status, max(0.0, min(100.0, score))
+
+    # ------------------------------------------------------------------
+    # 6. 封板率分析
+    # ------------------------------------------------------------------
+    def analyze_seal_rate(self, limit_data: LimitUpDownData) -> tuple[str, float]:
+        """分析封板率"""
+        attempted = limit_data.attempted_limit_up_count
+        if attempted == 0:
+            return "无数据", 50.0, 0.0
+
+        seal_rate = limit_data.sealed_limit_up_count / attempted
+
+        if seal_rate >= self._config.seal_rate_good:
+            status = "好"
+        elif seal_rate <= self._config.seal_rate_bad:
+            status = "差"
+        else:
+            status = "中"
+
+        score = seal_rate * 100
+        return status, max(0.0, min(100.0, score)), seal_rate
+
+    # ------------------------------------------------------------------
+    # 7. 昨日涨停表现追踪
+    # ------------------------------------------------------------------
+    def track_yesterday_limit_up(
+        self, yesterday_lu: YesterdayLimitUpPerformance | None
+    ) -> str:
+        """追踪昨日涨停股今日表现"""
+        if yesterday_lu is None or yesterday_lu.count == 0:
+            return "无数据"
+
+        avg_ret = yesterday_lu.avg_return_today
+        if avg_ret >= self._config.yesterday_lu_good_return:
+            return "好"
+        elif avg_ret <= self._config.yesterday_lu_bad_return:
+            return "差"
+        else:
+            return "中"
+
+    # ------------------------------------------------------------------
+    # 综合7维度分析
+    # ------------------------------------------------------------------
+    def analyze(self, input_data: MarketSentimentInput) -> MarketSentimentResult:
+        """
+        综合7维度市场情绪分析
+
+        输入: MarketSentimentInput
+        输出: MarketSentimentResult
+        """
+        # 1. 涨跌家数
+        breadth_status, breadth_score = self.analyze_breadth(input_data.breadth)
+
+        # 2. 涨跌停
+        limit_status, limit_score = self.analyze_limit_activity(input_data.limit_data)
+
+        # 3. 赚钱效应
+        profit_status, profit_score = self.evaluate_profit_effect(input_data.breadth)
+
+        # 4. 次日回调风险
+        risk_status, risk_score = self.warn_next_day_risk(
+            input_data.breadth, input_data.index_performance
+        )
+
+        # 5. 市场士气
+        morale_status, morale_score = self.evaluate_morale(input_data.breadth)
+
+        # 6. 封板率
+        seal_status, seal_score, seal_rate = self.analyze_seal_rate(input_data.limit_data)
+
+        # 7. 昨日涨停表现
+        yesterday_lu_status = self.track_yesterday_limit_up(input_data.yesterday_limit_up)
+
+        # 综合评分（加权平均）
+        # 权重: 涨跌停20% + 赚钱效应20% + 市场士气15% + 封板率15% + 涨跌家数15% + 次日风险15%
+        overall_score = (
+            limit_score * 0.20
+            + profit_score * 0.20
+            + morale_score * 0.15
+            + seal_score * 0.15
+            + breadth_score * 0.15
+            + risk_score * 0.15
+        )
+
+        # 情绪阶段定位
+        phase = self._determine_phase(overall_score)
+
+        return MarketSentimentResult(
+            timestamp=input_data.timestamp,
+            breadth_status=breadth_status,
+            breadth_score=breadth_score,
+            limit_zeal_status=limit_status,
+            limit_score=limit_score,
+            profit_effect_status=profit_status,
+            profit_effect_score=profit_score,
+            next_day_risk_status=risk_status,
+            next_day_risk_score=risk_score,
+            morale_status=morale_status,
+            morale_score=morale_score,
+            seal_rate_status=seal_status,
+            seal_rate=seal_rate,
+            yesterday_lu_status=yesterday_lu_status,
+            overall_score=max(0.0, min(100.0, overall_score)),
+            sentiment_phase=phase,
+        )
+
+    def _determine_phase(self, score: float) -> str:
+        """根据综合评分定位情绪阶段"""
+        if score < self._config.phase_freezing_score:
+            return SentimentPhase.FREEZING.value
+        elif score < self._config.phase_reversal_score:
+            return SentimentPhase.REVERSAL.value
+        elif score < self._config.phase_main_rally_score:
+            return SentimentPhase.MAIN_RALLY.value
+        elif score < self._config.phase_euphoria_score:
+            return SentimentPhase.EUPHORIA.value
+        else:
+            return SentimentPhase.RETREATING.value
