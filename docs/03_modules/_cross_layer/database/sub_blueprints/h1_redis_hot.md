@@ -48,7 +48,7 @@ priority: P1
 runtime_plane: hot
 responsibility_domain: 
 build_status: generated
-design_maturity: production
+design_maturity: design
 ---
 
 # H1 redis_hot 实盘热缓存施工蓝图
