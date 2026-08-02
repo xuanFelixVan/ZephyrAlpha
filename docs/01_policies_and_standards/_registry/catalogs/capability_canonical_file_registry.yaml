@@ -7466,6 +7466,18 @@ creation_tokens:
     token: "auto-exsor-execution-quality-scorer-20260802"
     created_by: "session-exsor-ext-batch"
     capability: "execution_quality_scorer"
+  - file: "docs/03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md"
+    token: "auto-exsor-slippage-analyzer-bp-20260802"
+    created_by: "session-exsor-ext-batch"
+    capability: "slippage_analyzer"
+  - file: "docs/03_modules/_domain_ex_sor/transaction_cost_optimizer/blueprint.md"
+    token: "auto-exsor-transaction-cost-optimizer-bp-20260802"
+    created_by: "session-exsor-ext-batch"
+    capability: "transaction_cost_optimizer"
+  - file: "docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md"
+    token: "auto-exsor-execution-quality-scorer-bp-20260802"
+    created_by: "session-exsor-ext-batch"
+    capability: "execution_quality_scorer"
 
   # --- D-POSITION 仓位审计记录器（2026-08-02，MOD-POS-009）---
   - file: "src/zephyr/position/services/position_audit_logger.py"
