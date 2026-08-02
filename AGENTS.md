@@ -234,6 +234,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | Trigger Router（6 触发器） | [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml) | 事件驱动路由表（含 handler/优先级/重试策略） |
 | Dashboard (Panel) | `src/zephyr/frontend/dashboard/app_panel.py` | Panel+HoloViz 仪表盘主入口（v3.1.0, #ARCH-047），10 Tab 治理+交易/回测；`panel serve app_panel.py --show --port 5006` |
 | Data Source Integrator | `integrator` / `python -m zephyr.data` | 数据源集成器 CLI（MOD-L00-004 §8.4），7 子命令：`status`/`list`/`run`/`rerun-failed`/`pause <source>`/`resume <source>`/`start`；统一管理 8 源 61 任务的自动下载+断点续传+熔断 |
+| IntradayRuntime（盘中运行时） | `python -m zephyr.runtime.intraday_main` | 盘中端到端编排器（tick→Redis→因子→H1）：单进程串起 tick_subscriber + IntradayFactorLoop + H1 Redis；启动顺序=tick订阅先(预热Redis)→因子循环后；停止反序(因子先停→订阅后停,保WAL flush)；交易日守卫(`is_trading_day`，`--force` 强制)；SIGINT/SIGTERM 优雅停止。依赖 QMT 终端先就绪，故 `[STARTUP] manual`（与 tick_subscriber 惯例一致）。真源：[`intraday_main.py`](file:///d:/ZephyrAlpha/src/zephyr/runtime/intraday_main.py) |
 
 ### 基础设施层（D_INFRA_RUNTIME / D_INFRA_RECOVERY / D_GOVERNANCE）
 

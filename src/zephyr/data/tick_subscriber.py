@@ -698,6 +698,15 @@ class TickSubscriber:
     def errors(self, value: int) -> None:
         self._errors = value
 
+    @property
+    def subscribed_symbols(self) -> set[str]:
+        """只读：已成功订阅的标的集合（Stage 4 公共化）。
+
+        供盘中编排器在 start() 后获取实际订阅标的，传给 IntradayFactorLoop
+        作为 tick 读取范围（编排器拉起因子循环的 symbols 来源）。
+        """
+        return self._subscribed
+
     def on_tick(self, datas: dict) -> None:
         """公共 API：tick 回调入口（Stage 4 公共化别名）。"""
         return self._on_tick(datas)
