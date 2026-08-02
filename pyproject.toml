@@ -204,6 +204,40 @@ ignore = [
     "F841",  # unused variable (风格问题，不影响功能)
 ]
 
+# 治本（2026-08-02）：项目自定义规则码 + 外部工具规则码登记到 lint.external。
+# Ruff 遇到 # noqa: <code> 中非 Ruff 内置的 code 时，会发出 RUF102 或 parse warning。
+# 登记到 external 后 Ruff 视其为外部规则码，不再 warning/error。
+# 自定义规则码来自 scripts/governance/ 下的自定义 AST 扫描器（M01-M46/N114/R144/A100/E34 等），
+# 非 Ruff 内置规则；WPS 来自 wemake-python-styleguide（Ruff 不实现其规则集）。
+external = [
+    "WPS",  # wemake-python-styleguide（外部工具，Ruff 不实现）
+    # 项目自定义规则码（scripts/governance/ AST 扫描器，# noqa: <code> 标注豁免）
+    "m01-vocab-hardcode",
+    "m02-manual",
+    "m02-manual-trigger",
+    "m03-duplicate",
+    "m07-orphan",
+    "m10-time-trigger",
+    "m11-perm-manual-legitimate",
+    "m12-broad-except-legitimate",
+    "m20-snapshot-drift",
+    "m46-time",
+    "a100-asyncio",
+    "any-abuse",
+    "bare-subprocess",
+    "blueprint-amodule-cross-check",
+    "consumers-accuracy",
+    "e34-env",
+    "gate-vocab",
+    "import-integrity",
+    "MSG-EXPOSURE",
+    "MSG-STYLE",
+    "no-verify-ruling",
+    "n114-final",
+    "r144-open",
+    "table-name-registry",
+]
+
 [tool.ruff.lint.flake8-import-conventions]
 extend-aliases = { "zephyr.shared.paths" = "paths", "zephyr.shared.time_utils" = "time_utils" }
 
