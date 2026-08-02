@@ -6476,7 +6476,7 @@ entries:
   name_en: Fix freezemanifest.yaml - comprehensive repair of all corrup
   desc_zh: 修复freezemanifest模块
   desc_en: Fix freezemanifest.yaml - comprehensive repair of all corrupted desc fields.
-  plain_zh: 修复freezemanifest。Fix freezemanifest.yaml - comprehensive repair of all corrupted desc fields.
+  plain_zh: "freeze manifest 修复脚本，全面修复 freeze_manifest.yaml 中所有损坏的 desc 字段。"
 - module_path: scripts/fix_orphan_all.py
   domain_id: D_GOVERNANCE
   name_zh: 修复孤儿all
@@ -6553,14 +6553,14 @@ entries:
   name_en: generate_ide_config
   desc_zh: 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD-INF-013 §5.3 Step 2）。
   desc_en: ''
-  plain_zh: 从 config/mcp.json 生成各 IDE MCP 配置文件（MOD-INF-013 §5.3 Step 2）。
+  plain_zh: "IDE 配置生成器，从 config/mcp.json 生成各 IDE 的 MCP 配置文件，支持多 IDE 格式。"
 - module_path: scripts/mcp/launcher.py
   domain_id: D_GOVERNANCE
   name_zh: MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + Pro
   name_en: launcher
   desc_zh: MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLifecycleGateway 管理）。
   desc_en: ''
-  plain_zh: MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLifecycleGateway 管理）。
+  plain_zh: "MCP DAG 编排启动器，按拓扑排序启动 MCP Server，并通过生命周期网关管理进程启停。"
 - module_path: scripts/mcp/start_all.py
   domain_id: D_GOVERNANCE
   name_zh: 启动all
@@ -6574,7 +6574,7 @@ entries:
   name_en: status_all
   desc_zh: MCP 全 Server 状态检查脚本（MOD-INF-013 §14）。
   desc_en: ''
-  plain_zh: MCP 全 Server 状态检查脚本（MOD-INF-013 §14）。
+  plain_zh: "MCP 全 Server 状态检查脚本，批量查询所有 MCP Server 的运行状态并汇总。"
 - module_path: scripts/mcp/stop_all.py
   domain_id: D_GOVERNANCE
   name_zh: 停止all
@@ -6630,7 +6630,7 @@ entries:
   name_en: rollback
   desc_zh: Rollback System CLI — MOD-INF-021 v0.10.0 Git-native+SQLite Checkpoint 操作入口。
   desc_en: ''
-  plain_zh: Rollback System CLI — MOD-INF-021 v0.10.0 Git-native+SQLite Checkpoint 操作入口。
+  plain_zh: "回滚系统 CLI，基于 Git-native 与 SQLite Checkpoint 的操作回滚入口，支持检查点恢复。"
 - module_path: scripts/run_deepseek_v4_exam.py
   domain_id: D_GOVERNANCE
   name_zh: 运行deepseekv4exam
@@ -7036,7 +7036,7 @@ entries:
   name_en: evidence_pack
   desc_zh: 证据包，主要提供pack、验证、列表packs等功能，供audit-orchestrator.integrity; 使用
   desc_en: ''
-  plain_zh: 证据包，主要提供pack、验证、列表packs等功能，供audit-orchestrator.integrity; 使用
+  plain_zh: "证据打包器，pack 打包审计证据、验证签名、列出已有证据包，签名后禁止修改保证不可变性。"
 - module_path: src/zephyr/governance/financial_governance/arbitrage_asymmetry_detector.py
   domain_id: D_GOVERNANCE
   name_zh: arbitrageasymmetry检测器
@@ -7071,7 +7071,7 @@ entries:
   name_en: instrument
   desc_zh: 标的合约，供data ; factor ; pf_core ; ex_c使用
   desc_en: ''
-  plain_zh: 标的合约，供data ; factor ; pf_core ; ex_c使用
+  plain_zh: "标的合约定义，定义 Stock/ETF/Future/Option 等金融工具类型与属性，是各交易域共享的合约基类。"
 - module_path: src/zephyr/governance/financial_governance/microstructure_defense.py
   domain_id: D_GOVERNANCE
   name_zh: microstructure防御
@@ -7092,7 +7092,7 @@ entries:
   name_en: risk_matrix
   desc_zh: 风险矩阵，供MOD-INF-027;MOD-INF-020;MOD-IN使用
   desc_en: ''
-  plain_zh: 风险矩阵，供MOD-INF-027;MOD-INF-020;MOD-IN使用
+  plain_zh: "风险矩阵，定义 OPERATIONAL/DATA/LEGAL_COMPLIANCE/ISOLATION 四类风险，支持升级裁决与 Kill Switch。"
 - module_path: src/zephyr/governance/financial_governance/strategy_portfolio.py
   domain_id: D_GOVERNANCE
   name_zh: 策略组合
@@ -7274,7 +7274,7 @@ entries:
   name_en: Escalation Protocol Self-Test — MOD-INF-022.
   desc_zh: 自测试模块
   desc_en: Escalation Protocol Self-Test — MOD-INF-022.
-  plain_zh: 自测试。Escalation Protocol Self-Test — MOD-INF-022.
+  plain_zh: "升级协议自测试器，验证升级协议的规则匹配与级别判定是否正常工作。"
 - module_path: src/zephyr/governance/intelligence_governance/self_validator.py
   domain_id: D_GOVERNANCE
   name_zh: 自校验器
@@ -7442,7 +7442,7 @@ entries:
   name_en: adapter
   desc_zh: Escalation Adapter — MOD-INF-022 统一集成入口.
   desc_en: ''
-  plain_zh: Escalation Adapter — MOD-INF-022 统一集成入口.
+  plain_zh: "升级适配器，升级协议的统一集成入口，把外部事件适配为升级协议可处理的内部事件。"
 - module_path: src/zephyr/governance/services/cross_session_correlator.py
   domain_id: D_GOVERNANCE
   name_zh: 跨会话关联器
@@ -7568,7 +7568,7 @@ entries:
   name_en: Registry Governance — MOD-INF-037
   desc_zh: 注册表治理模块
   desc_en: Registry Governance — MOD-INF-037
-  plain_zh: 注册表治理。Registry Governance — MOD-INF-037
+  plain_zh: "注册表治理器，管理功能域注册表的加载、查询、重叠检测与注册。"
 - module_path: src/zephyr/integration/mcp/governance_server.py
   domain_id: D_GOVERNANCE
   name_zh: 治理服务端
@@ -7589,7 +7589,7 @@ entries:
   name_en: A2A Governance — shared interface definitions for governance
   desc_zh: A2A治理模块
   desc_en: A2A Governance — shared interface definitions for governance layer.
-  plain_zh: A2A治理。A2A Governance — shared interface definitions for governance layer.
+  plain_zh: "A2A 治理层共享接口定义，定义 agent 间治理相关的协议接口与数据契约。"
 - module_path: tests/agent_rbac/test_session_aware_stash_red_blue.py
   domain_id: D_GOVERNANCE
   name_zh: 测试会话感知stashredblue
@@ -10851,7 +10851,7 @@ entries:
   name_en: incident_response
   desc_zh: incident响应，供MOD-INF-027;MOD-INF-020;MOD-IN使用
   desc_en: ''
-  plain_zh: incident响应，供MOD-INF-027;MOD-INF-020;MOD-IN使用
+  plain_zh: "事件响应分级器，定义 L1即时/L2降级/L3部分/L4全面四级事件级别与响应策略，支持升级裁决与 Kill Switch。"
 - module_path: src/zephyr/governance/escalation/owner_absent.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: 所有者absent
@@ -10942,7 +10942,7 @@ entries:
   name_en: daily_ops
   desc_zh: daily运维，供MOD-INF-020;MOD-INF-018;MOD-IN使用
   desc_en: ''
-  plain_zh: daily运维，供MOD-INF-020;MOD-INF-018;MOD-IN使用
+  plain_zh: "日常运维阶段定义，P1盘前/P2主交易/P3收市核实/P4盘后维护四阶段，含 Token/Cost/Time 三维预算管控。"
 - module_path: src/zephyr/governance/ops_governance/decision_fatigue.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: 决策疲劳
@@ -10998,7 +10998,7 @@ entries:
   name_en: ops_foundation
   desc_zh: 运维foundation，供MOD-INF-020;MOD-INF-018;MOD-IN使用
   desc_en: ''
-  plain_zh: 运维foundation，供MOD-INF-020;MOD-INF-018;MOD-IN使用
+  plain_zh: "运维基础设施，定义 BackupLayer 备份层（CloudZip/DbDump/SecretsVault）与 LogCategory 日志分类。"
 - module_path: src/zephyr/governance/ops_governance/parent_child_attributor.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: 父子attributor
@@ -11110,7 +11110,7 @@ entries:
   name_en: broker_resilience
   desc_zh: 经纪人韧性，供MOD-INF-027;MOD-INF-020;MOD-IN使用
   desc_en: ''
-  plain_zh: 经纪人韧性，供MOD-INF-027;MOD-INF-020;MOD-IN使用
+  plain_zh: "经纪商韧性管理，P0主/P1备/P2应急三级故障切换，定义经纪商故障类型与恢复策略。"
 - module_path: src/zephyr/governance/resilience_governance/bus_factor_defense.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: 总线因子防御
@@ -11124,7 +11124,7 @@ entries:
   name_en: Circuit Breaker — MOD-INF-022
   desc_zh: 熔断断路器模块
   desc_en: Circuit Breaker — MOD-INF-022
-  plain_zh: 熔断断路器。Circuit Breaker — MOD-INF-022
+  plain_zh: "熔断断路器，在错误率超阈值时熔断请求，防止级联故障扩散。"
 - module_path: src/zephyr/governance/resilience_governance/deadlock_detector.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: deadlock检测器
@@ -11138,28 +11138,28 @@ entries:
   name_en: decision_fatigue
   desc_zh: 决策疲劳，供MOD-INF-027;MOD-INF-020;MOD-IN使用
   desc_en: ''
-  plain_zh: 决策疲劳，供MOD-INF-027;MOD-INF-020;MOD-IN使用
+  plain_zh: "决策疲劳管理器，用 Eisenhower 矩阵按 P0立即做/P1计划/P2委派/P3消除四象限分类任务，减轻决策疲劳。"
 - module_path: src/zephyr/governance/resilience_governance/decision_fatigue_cli.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: 决策疲劳命令行
   name_en: decision_fatigue_cli
   desc_zh: 决策疲劳命令行，供MOD-INF-027;MOD-INF-020;MOD-IN使用
   desc_en: ''
-  plain_zh: 决策疲劳命令行，供MOD-INF-027;MOD-INF-020;MOD-IN使用
+  plain_zh: "决策疲劳 CLI，Eisenhower 矩阵优先级分类看板命令行，支持按 P0/P1/P2/P3 筛选任务。"
 - module_path: src/zephyr/governance/resilience_governance/engine_sandbox.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: 引擎沙箱
   name_en: EngineSandbox — D-022-08 OS-level sandboxing for the escalat
   desc_zh: 引擎sandbox模块
   desc_en: EngineSandbox — D-022-08 OS-level sandboxing for the escalation engine.
-  plain_zh: 引擎sandbox。EngineSandbox — D-022-08 OS-level sandboxing for the escalation engine.
+  plain_zh: "引擎沙箱，为升级引擎提供 OS 级沙箱隔离，防升级操作越界影响宿主系统。"
 - module_path: src/zephyr/governance/resilience_governance/f5_boot_integration.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: f5启动集成
   name_en: f5_boot_integration
   desc_zh: F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §2).
   desc_en: ''
-  plain_zh: F5BootIntegration — F5 自动启动/关闭集成 (MOD-INF-022 §2).
+  plain_zh: "F5 自动启动集成，把升级引擎接入 F5 键的自动启动/关闭流程。"
 - module_path: src/zephyr/governance/resilience_governance/f5_event_subscriber.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: f5事件订阅器
@@ -11173,7 +11173,7 @@ entries:
   name_en: f5_shutdown_manager
   desc_zh: F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD-INF-022 §2).
   desc_en: ''
-  plain_zh: F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD-INF-022 §2).
+  plain_zh: "F5 关机管理器，管理自动关闭流程，含状态持久化与信号处理，保证关机可恢复。"
 - module_path: src/zephyr/governance/resilience_governance/fail_mode_manager.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: failmode管理器
@@ -16304,7 +16304,7 @@ entries:
   name_en: cache_layer
   desc_zh: CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU
   desc_en: ''
-  plain_zh: CacheLayer — MOD-INF-011 嵌入缓存与查询结果 LRU
+  plain_zh: "缓存层，用 LRU 策略缓存嵌入向量与查询结果，减少重复计算开销。"
 - module_path: src/zephyr/integration/local_model/embedding_router.py
   domain_id: D_INTEGRATION
   name_zh: 嵌入路由器
@@ -16346,7 +16346,7 @@ entries:
   name_en: audit_logger
   desc_zh: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。
   desc_en: ''
-  plain_zh: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。
+  plain_zh: "MCP 全量工具调用审计日志器，记录每次 MCP 工具调用的输入输出与耗时。"
 - module_path: src/zephyr/integration/mcp/blueprint_search_server.py
   domain_id: D_INTEGRATION
   name_zh: 蓝图search服务端
@@ -16388,14 +16388,14 @@ entries:
   name_en: handoff_auto_loader
   desc_zh: Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。
   desc_en: ''
-  plain_zh: Handoff 自动加载器——从 handoff 包恢复 AI session 上下文（MOD-INF-013 §5.3）。
+  plain_zh: "Handoff 自动加载器，从 handoff 包恢复 AI session 上下文，实现跨 session 状态续接。"
 - module_path: src/zephyr/integration/mcp/prompt_provider.py
   domain_id: D_INTEGRATION
   name_zh: 提示提供器
   name_en: prompt_provider
   desc_zh: MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。
   desc_en: ''
-  plain_zh: MCP Prompt 模板提供者（MOD-INF-013 Phase 6 — 关闭 B3）。
+  plain_zh: "MCP Prompt 模板提供者，为 MCP 工具提供标准化提示词模板。"
 - module_path: src/zephyr/integration/mcp/rate_limiter.py
   domain_id: D_INTEGRATION
   name_zh: 速率限制器
@@ -16423,7 +16423,7 @@ entries:
   name_en: sandbox_server
   desc_zh: MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。
   desc_en: ''
-  plain_zh: MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭 B4）。
+  plain_zh: "MCP 安全代码执行沙箱，在隔离环境中执行 MCP 工具生成的代码，防注入风险。"
 - module_path: src/zephyr/integration/mcp/sentinel_server.py
   domain_id: D_INTEGRATION
   name_zh: 哨兵服务端
@@ -16472,7 +16472,7 @@ entries:
   name_en: 'Protocol-based interface layer for pipeline->mcp dependency '
   desc_zh: 端口，提供findrelevantblueprint等方法，供zephyr.integration.pipeli使用
   desc_en: Protocol-based interface layer for pipeline->mcp dependency abstraction.
-  plain_zh: 端口，提供findrelevantblueprint等方法，供zephyr.integration.pipeli使用
+  plain_zh: "端口抽象层，用 Protocol 接口抽象 pipeline 到 MCP 的依赖，解耦调用方与实现。"
 - module_path: src/zephyr/integration/shared/contracts/errors/contract_violation_error.py
   domain_id: D_INTEGRATION
   name_zh: 契约违规错误
@@ -16514,14 +16514,14 @@ entries:
   name_en: signal_degradation_warning
   desc_zh: 信号退化警告，供zephyr.integration.shared.cont使用
   desc_en: ''
-  plain_zh: 信号退化警告，供zephyr.integration.shared.cont使用
+  plain_zh: "信号退化警告契约，定义信号质量退化时的警告数据结构与触发条件。"
 - module_path: src/zephyr/integration/shared/events/dlq_bridge.py
   domain_id: D_INTEGRATION
   name_zh: dlq桥接
   name_en: 'CT-DLQ-001: DeadLetterQueue -> System Event Bus integration '
   desc_zh: dlq桥接模块
   desc_en: 'CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.'
-  plain_zh: 'dlq桥接。CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.'
+  plain_zh: "死信队列桥接器，把死信队列中的无法处理消息桥接到系统事件总线，供统一监控。"
 - module_path: src/zephyr/integration/shared/events/event_bus_upgrade.py
   domain_id: D_INTEGRATION
   name_zh: 事件总线upgrade
@@ -16577,7 +16577,7 @@ entries:
   name_en: collection_manager
   desc_zh: CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理
   desc_en: ''
-  plain_zh: CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理
+  plain_zh: "Collection 管理器，管理八大向量 Collection 的全生命周期（创建/写入/查询/迁移/删除）。"
 - module_path: src/zephyr/integration/vector_memory/collection_schemas.py
   domain_id: D_INTEGRATION
   name_zh: 收集模式
@@ -16612,7 +16612,7 @@ entries:
   name_en: design_principles
   desc_zh: 设计原则模块
   desc_en: ''
-  plain_zh: 设计原则，主要提供校验维度、校验块策略、校验存活时间等功能，供collection_manager; in_process使用
+  plain_zh: "设计原则强制器，校验嵌入维度白名单、热冷数据分块策略匹配、存活时间合规，防违规配置。"
 - module_path: src/zephyr/integration/vector_memory/faiss_collection_manager.py
   domain_id: D_INTEGRATION
   name_zh: faisscollection管理器
@@ -16633,7 +16633,7 @@ entries:
   name_en: in_memory_fake_vms
   desc_zh: InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎
   desc_en: ''
-  plain_zh: InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎
+  plain_zh: "内存假 VMS，零依赖测试双胞胎，在无向量数据库环境模拟 VMS 行为供测试使用。"
 - module_path: src/zephyr/integration/vector_memory/in_memory_memory_backend.py
   domain_id: D_INTEGRATION
   name_zh: 入记忆记忆后端
@@ -16654,7 +16654,7 @@ entries:
   name_en: index_health_monitor
   desc_zh: IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
   desc_en: ''
-  plain_zh: IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复
+  plain_zh: "索引健康监控器，定期自检向量索引健康状态并自动修复异常。"
 - module_path: src/zephyr/integration/vector_memory/interface.py
   domain_id: D_INTEGRATION
   name_zh: 接口
@@ -16668,21 +16668,21 @@ entries:
   name_en: migrate_chroma_to_faiss
   desc_zh: ChromDB -> FAISS + SQLite WAL 数据迁移脚本
   desc_en: ''
-  plain_zh: ChromDB -> FAISS + SQLite WAL 数据迁移脚本
+  plain_zh: "向量数据迁移脚本，把数据从 ChromaDB 迁移到 FAISS + SQLite WAL 存储后端。"
 - module_path: src/zephyr/integration/vector_memory/ollama_embedding.py
   domain_id: D_INTEGRATION
   name_zh: ollama嵌入
   name_en: ollama_embedding
   desc_zh: ollama嵌入，供vector-memory.__init__;embeddi使用
   desc_en: ''
-  plain_zh: ollama嵌入，供vector-memory.__init__;embeddi使用
+  plain_zh: "Ollama 嵌入生成器，调用本地 Ollama 模型生成文本嵌入向量。"
 - module_path: src/zephyr/integration/vector_memory/provenance_enforcer.py
   domain_id: D_INTEGRATION
   name_zh: 溯源执行器
   name_en: provenance_enforcer
   desc_zh: ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行
   desc_en: ''
-  plain_zh: ProvenanceEnforcer — MOD-INF-011 写入溯源强制执行
+  plain_zh: "写入溯源强制器，强制每条向量写入携带来源信息，保证数据可追溯。"
 - module_path: src/zephyr/integration/vector_memory/retrieval_feedback.py
   domain_id: D_INTEGRATION
   name_zh: retrieval反馈
@@ -16759,14 +16759,14 @@ entries:
   name_en: evals
   desc_zh: 评估，供tests使用
   desc_en: ''
-  plain_zh: 评估，供tests使用
+  plain_zh: "评估框架，按 relevance/accuracy/safety 三维度评估模型输出质量，含评估用例与打分。"
 - module_path: src/zephyr/shared/resilience/durable_execution.py
   domain_id: D_INTEGRATION
   name_zh: durable执行
   name_en: durable_execution
   desc_zh: durable执行，供tests使用
   desc_en: ''
-  plain_zh: durable执行，供tests使用
+  plain_zh: "持久执行框架，用 PENDING/RUNNING/COMPLETED/FAILED/SKIPPED 活动状态机管理可恢复的执行流。"
 - module_path: src/zephyr/shared/versioning/version_negotiation.py
   domain_id: D_INTEGRATION
   name_zh: 版本negotiation
