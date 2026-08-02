@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-056 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """FillHandler 测试——部分成交处理器。
 
