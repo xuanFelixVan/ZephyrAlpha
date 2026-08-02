@@ -20829,11 +20829,11 @@ entries:
   plain_zh: "夏普计算器修复器，模拟的计算器，计算得出结果（sharpe calculator fixer）"
 - module_path: src/zephyr/simulation/strategy_simulator.py
   domain_id: D_SIMULATION
-  name_zh: 策略模拟器
-  name_en: strategy_simulator
-  desc_zh: 策略模拟器（strategy_simulator.py）
-  desc_en: ''
-  plain_zh: "策略模拟器，模拟仿真（strategy simulator）"
+  name_zh: "策略仿真器"
+  name_en: "Strategy Simulator"
+  desc_zh: "策略沙箱:对模拟市场数据运行注入的策略,仿真信号生成(L2)+组合构建(L3)"
+  desc_en: ""
+  plain_zh: "给策略搭一个隔离沙箱——喂进去模拟行情和一个策略函数,它就逐根K线模拟这个策略会怎么发信号、怎么建仓、最后赚多少亏多少,跑完吐出净值曲线和交易记录,方便分析策略在假设行情下表现如何。策略本身由调用方注入,仿真器只管调度和记账,不掺和策略决策。"
 - module_path: src/zephyr/trading/action_dispatcher/__init__.py
   domain_id: D_TRADING
   name_zh: 包入口
