@@ -11425,7 +11425,7 @@ entries:
   name_en: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/create_alignm'
   desc_zh: 创建对齐任务，供governance automation; alignme使用
   desc_en: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/create_alignment_tasks.py | §7'
-  plain_zh: 创建对齐任务，供governance automation; alignme使用
+  plain_zh: "对齐任务批量创建器，为治理自动化与对齐工作流生成对齐任务卡片并写入任务仓库（已归档 one-off 脚本）。"
 - module_path: scripts/governance/_archive/one_off/dm105_depgraph_triage.py
   domain_id: D_GOV_SCRIPTS
   name_zh: dm105depgraph分诊
@@ -11558,7 +11558,7 @@ entries:
   name_en: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/scan_ground_t'
   desc_zh: 扫描groundtruthdeps，供Task card system; governance a使用
   desc_en: '# [BLUEPRINT] MOD-INF-005 | scripts/governance/scan_ground_truth_deps.py | §7'
-  plain_zh: 扫描groundtruthdeps，供Task card system; governance a使用
+  plain_zh: "Ground truth 依赖扫描器，为任务卡系统与架构重构扫描真实依赖关系作为基准数据（已归档原型）。"
 - module_path: scripts/governance/_archive/prototype/session_simulator.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 会话模拟器
@@ -11614,7 +11614,7 @@ entries:
   name_en: vms_cross_file_check
   desc_zh: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
   desc_en: ''
-  plain_zh: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
+  plain_zh: "VMS 跨文件内容一致性检查器，校验 12 个文件中 Collection 列表、嵌入维度（1024d/512d）、chunk_strategy 路由、导入路径四维度一致性（已归档版）。"
 - module_path: scripts/governance/_archive/vms_ri/vms_health_check.py
   domain_id: D_GOV_SCRIPTS
   name_zh: vms健康检查
@@ -11635,7 +11635,7 @@ entries:
   name_en: vms_migration_dry_run
   desc_zh: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
   desc_en: ''
-  plain_zh: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
+  plain_zh: "VMS 迁移 dry-run 脚本，预览 unified_memory topic 到 Collection 的映射，作为 Phase 2 迁移前置检查（已归档版）。"
 - module_path: scripts/governance/_archive/vms_ri/vms_phase_rollback.py
   domain_id: D_GOV_SCRIPTS
   name_zh: vms阶段回滚
@@ -11740,14 +11740,14 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 检查p0状态模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 检查p0状态。Module docstring — see module-level docstring for details.
+  plain_zh: "P0 优先级任务状态检查器，扫描任务仓库统计 P0 级任务的待办与完成情况，供治理同步使用。"
 - module_path: scripts/governance/_sync/cleanup_p0_auto_bridged.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 清理历史 P0 自动桥接任务
   name_en: cleanup_p0_auto_bridged
   desc_zh: 清理历史 P0 自动桥接任务
   desc_en: ''
-  plain_zh: 清理历史 P0 自动桥接任务
+  plain_zh: "历史 P0 自动桥接任务清理器（一次性止血操作），把 tags 含 auto-bridged 的 PENDING P0 任务降级为 P1+COMPLETED，避免自动桥接 Finding 阻塞人工队列。"
 - module_path: scripts/governance/_sync/cleanup_p0_ops_pending.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 清理p0运维待处理
@@ -11824,7 +11824,7 @@ entries:
   name_en: AST-based import rewriter for governance directory migration
   desc_zh: ast导入rewriter模块
   desc_en: AST-based import rewriter for governance directory migration.
-  plain_zh: ast导入rewriter。AST-based import rewriter for governance directory migration.
+  plain_zh: "AST 导入重写器，governance 目录迁移时用 ast 模块精确重写 import 路径（from zephyr.governance.foo → from zephyr.governance.subdir.foo），非正则替换避免误伤。"
 - module_path: scripts/governance/audit_return_contract_usage.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 审计returncontractusage
@@ -11929,7 +11929,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 校验manifest准入模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 校验manifest准入。Module docstring — see module-level docstring for details.
+  plain_zh: "Manifest 准入校验器，检查清单文件是否符合准入标准，决定是否允许进入治理流水线。"
 - module_path: scripts/governance/d11_compliance/validate_no_utf8_bom.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验noutf8bom
@@ -11971,7 +11971,7 @@ entries:
   name_en: verify_audit_integrity
   desc_zh: verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器
   desc_en: ''
-  plain_zh: MOD-INF-020 · 零依赖外部独立验证器
+  plain_zh: "审计完整性零依赖独立验证器，纯标准库实现，只需 events.jsonl 即可验证哈希链与签名，任何环境都能直接运行。"
 - module_path: scripts/governance/d11_compliance/verify_schema_health.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验模式健康
@@ -12174,7 +12174,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 校验索引reality模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 校验索引reality。Module docstring — see module-level docstring for details.
+  plain_zh: "索引真实性校验器，比对索引文件与磁盘实际文件，检测索引中记录但磁盘不存在（或反之）的偏移。"
 - module_path: scripts/governance/d1_structure/validate_read_before_write.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验readbeforewrite
@@ -12377,7 +12377,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: analyze变更冲击模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: analyze变更冲击。Module docstring — see module-level docstring for details.
+  plain_zh: "变更影响分析器，分析某次改动会波及哪些模块与依赖，产出影响范围报告供评审决策。"
 - module_path: scripts/governance/d5_architecture/analyzers/analyze_contract_impact.py
   domain_id: D_GOV_SCRIPTS
   name_zh: analyzecontract冲击
@@ -12412,7 +12412,7 @@ entries:
   name_en: check_budget_health
   desc_zh: '[INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析'
   desc_en: ''
-  plain_zh: '[INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析'
+  plain_zh: "预算健康检查器，检查预算执行情况是否健康，结果必须可机器解析且不可跳过（MOD-INF-024）。"
 - module_path: scripts/governance/d5_architecture/check_drift_e2e.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 检查漂移端到端
@@ -12447,7 +12447,7 @@ entries:
   name_en: check_blueprint_template_compliance
   desc_zh: '[INVARIANTS] 蓝图模板合规检查不可绕过;52项检查全覆盖'
   desc_en: ''
-  plain_zh: '[INVARIANTS] 蓝图模板合规检查不可绕过;52项检查全覆盖'
+  plain_zh: "蓝图模板合规检查器，52 项检查全覆盖，校验蓝图文件是否符合模板规范（GOV-DOC-011），不可绕过。"
 - module_path: scripts/governance/d5_architecture/checkers/check_canonical_yaml_drift.py
   domain_id: D_GOV_SCRIPTS
   name_zh: check规范yaml漂移
@@ -12762,7 +12762,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 校验蓝图路径一致性模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 校验蓝图路径一致性。Module docstring — see module-level docstring for details.
+  plain_zh: "蓝图路径一致性校验器，检查蓝图内引用的路径与实际磁盘路径是否一致，防悬空引用。"
 - module_path: scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py
   domain_id: D_GOV_SCRIPTS
   name_zh: validate蓝图placement
@@ -12797,7 +12797,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 校验会话日志索引完整性模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 校验会话日志索引完整性。Module docstring — see module-level docstring for details.
+  plain_zh: "会话日志索引完整性校验器，检查会话日志与其索引文件是否对齐，防索引丢失或日志孤立。"
 - module_path: scripts/governance/d5_architecture/validators/session/validate_session_log_updated.py
   domain_id: D_GOV_SCRIPTS
   name_zh: validate会话日志updated
@@ -12867,7 +12867,7 @@ entries:
   name_en: validate_dependency_graph_template
   desc_zh: '[INVARIANTS] 治理脚本执行正确'
   desc_en: ''
-  plain_zh: '[INVARIANTS] 治理脚本执行正确'
+  plain_zh: "依赖图模板验证器，校验依赖图数据是否符合模板规范，保证治理脚本执行正确（MOD-INF-005）。"
 - module_path: scripts/governance/d5_architecture/validators/validate_depends_on_format.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验depends开format
@@ -12888,7 +12888,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 校验directorystructure模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 校验directorystructure。Module docstring — see module-level docstring for details.
+  plain_zh: "目录结构校验器，检查项目目录结构是否符合规范，防目录层级错乱或命名违规。"
 - module_path: scripts/governance/d5_architecture/validators/validate_field_ownership.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验字段ownership
@@ -12923,7 +12923,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 校验加载路径完整性模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 校验加载路径完整性。Module docstring — see module-level docstring for details.
+  plain_zh: "加载路径完整性校验器，检查模块加载路径是否完整有效，防 import 断链。"
 - module_path: scripts/governance/d5_architecture/validators/validate_module_schema.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验模块模式
@@ -12937,7 +12937,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 校验nestedflatdirs模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 校验nestedflatdirs。Module docstring — see module-level docstring for details.
+  plain_zh: "嵌套与扁平目录规范校验器，检查哪些目录应嵌套、哪些应扁平，防目录结构混乱。"
 - module_path: scripts/governance/d5_architecture/validators/validate_p0_module_contracts.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验p0模块契约
@@ -13315,7 +13315,7 @@ entries:
   name_en: validate_init_all
   desc_zh: 校验初始化all.py — 初始化.py all.py __all__ 完整性校验
   desc_en: ''
-  plain_zh: 校验初始化all.py — 初始化.py all.py __all__ 完整性校验
+  plain_zh: "__init__.py __all__ 完整性校验器，检测有 import 语句的 __init__.py 是否定义了 __all__，骨架包（空文件）跳过，对标 PEP 8 显式公开接口。"
 - module_path: scripts/governance/d7_code/validate_kb_write_provenance.py
   domain_id: D_GOV_SCRIPTS
   name_zh: validate知识库write溯源
@@ -13448,7 +13448,7 @@ entries:
   name_en: extract_decisiongraph - decisiongraph on-demand extraction t
   desc_zh: 提取decisiongraph模块
   desc_en: extract_decisiongraph - decisiongraph on-demand extraction tool
-  plain_zh: 提取decisiongraph。extract_decisiongraph - decisiongraph on-demand extraction tool
+  plain_zh: "决策图按需提取工具，支持 --summary/--layers/--track 等参数按层与按轨道提取 decisiongraph 子集。"
 - module_path: scripts/governance/extract_depgraph.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 提取依赖图
@@ -13574,14 +13574,14 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: incomplete模块模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: incomplete模块。Module docstring — see module-level docstring for details.
+  plain_zh: "Benchmark 测试夹具——故意不完整的模块，用于测试检测器能否识别不合规模块。"
 - module_path: scripts/governance/meta/benchmark/test_fixtures/orphan_file_without_module_registration.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 孤儿filewithoutmoduleregistration
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: orphan文件without模块registration模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: orphan文件without模块registration。Module docstring — see module-level docstring for details.
+  plain_zh: "Benchmark 测试夹具——未登记的孤儿文件，用于测试孤儿判定器能否识别未注册文件。"
 - module_path: scripts/governance/meta/compute_sla_metrics.py
   domain_id: D_GOV_SCRIPTS
   name_zh: computesla指标
@@ -13763,7 +13763,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 校验automationboundary模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 校验automationboundary。Module docstring — see module-level docstring for details.
+  plain_zh: "自动化边界校验器，检查哪些操作应自动化、哪些应保留人工，防止越界自动化。"
 - module_path: scripts/governance/meta/validate_cross_model_consensus.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验跨模型共识
@@ -14015,7 +14015,7 @@ entries:
   name_en: vms_cross_file_check
   desc_zh: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
   desc_en: ''
-  plain_zh: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF-0211
+  plain_zh: "VMS 跨文件内容一致性检查器，校验 12 个文件中 Collection 列表、嵌入维度（1024d/512d）、chunk_strategy 路由、导入路径四维度一致性。"
 - module_path: scripts/governance/vms/vms_health_check.py
   domain_id: D_GOV_SCRIPTS
   name_zh: vms健康检查
@@ -14036,7 +14036,7 @@ entries:
   name_en: vms_migration_dry_run
   desc_zh: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
   desc_en: ''
-  plain_zh: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前置检查
+  plain_zh: "VMS 迁移 dry-run 脚本，预览 unified_memory topic 到 Collection 的映射，作为 Phase 2 迁移前置检查（R15 缓解）。"
 - module_path: scripts/governance/vms/vms_phase_rollback.py
   domain_id: D_GOV_SCRIPTS
   name_zh: vms阶段回滚
