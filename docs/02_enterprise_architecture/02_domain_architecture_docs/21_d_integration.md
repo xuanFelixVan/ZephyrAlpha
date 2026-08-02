@@ -53,16 +53,16 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_integration_behavioral_admission_admission_response_py["behavioral_admission/admission_response<br/>集成/behavioral<br/>admission包的admission_response模块<br/>文件: behavioral_admission/admission_response.py<br/>(生产态 / production)"]
+    src_zephyr_integration_behavioral_admission_admission_response_py["behavioral_admission/admission_response<br/>5.152 #25 sanctioned: integration<br/>为组合层，允许依赖全部层（trading.L2<br/>准入决策契约）<br/>文件: behavioral_admission/admission_response.py<br/>(生产态 / production)"]
     src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py["退化螺旋检测器<br/>Degradation Spiral Detector —<br/>模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29)<br/>degradation_spiral_detector<br/>文件: budget_enforcer<br/>/degradation_spiral_detector.py<br/>(生产态 / production)"]
-    src_zephyr_integration_llm_bridge_py["接收 RED 问题,生成修复文本。LLM<br/>只润色不做判断。不可用时降级为模板生成<br/>集成包的llm_bridge模块<br/>文件: integration/llm_bridge.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_gateway_server_py["网关服务端<br/>MCP Gateway 集中式治理节点（MOD-INF-013 §12<br/>Phase 5）。<br/>gateway_server<br/>文件: mcp/gateway_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_llm_bridge_py["接收 RED 问题,生成修复文本。LLM<br/>只润色不做判断。不可用时降级为模板生成<br/>Stage 6 LLM 桥接 — 修复文本生成<br/>llm_bridge<br/>文件: integration/llm_bridge.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_gateway_server_py["网关服务端<br/>架构对标 IBM ContextForge Gateway 模式。五模块：<br/>gateway_server<br/>文件: mcp/gateway_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_handoff_auto_loader_py["handoff自动加载器<br/>Handoff 自动加载器——从 handoff 包恢复 AI<br/>session 上下文（MOD-INF-013 §5.3）。<br/>handoff_auto_loader<br/>文件: mcp/handoff_auto_loader.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_prompt_provider_py["提示提供器<br/>MCP Prompt 模板提供者（MOD-INF-013 Phase 6 —<br/>关闭 B3）。<br/>prompt_provider<br/>文件: mcp/prompt_provider.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_resource_provider_py["资源提供器<br/>MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭<br/>B2/B41）。<br/>resource_provider<br/>文件: mcp/resource_provider.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_rule_discovery_server_py["规则discovery服务端<br/>RuleDiscoveryServer — MCP Server for rule<br/>discovery（#ARCH-GOV-CONVERGENCE-META Phase<br/>3.2b）<br/>文件: mcp/rule_discovery_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_server_py["MCP服务端<br/>集成包的mcp_server模块<br/>文件: integration/mcp_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_pipeline_orchestrator_py["管线编排器<br/>PipelineOrchestrator — M1-M11 管线协调器<br/>pipeline_orchestrator<br/>文件: integration/pipeline_orchestrator.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_prompt_provider_py["提示提供器<br/>MCP Prompt 模板提供者（MOD-INF-013 Phase 6 —<br/>关闭<br/>prompt_provider<br/>文件: mcp/prompt_provider.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_resource_provider_py["资源提供器<br/>注册至少 3 类资源：蓝图/任务卡/测试报告<br/>resource_provider<br/>文件: mcp/resource_provider.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_rule_discovery_server_py["规则discovery服务端<br/>病根2（规则可发现性）治本：64条 trae<br/>规则分散在各 YAML 文件中，AI 无法在施工前<br/>文件: mcp/rule_discovery_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_server_py["MCP服务端<br/>集成的8 tool + 2 resource 暴露盘点功能给 IDE AI<br/>agent。，8 tool + 2 resource 暴露盘点功能给 IDE<br/>AI agent。相关功能的实现。<br/>mcp_server<br/>文件: integration/mcp_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_pipeline_orchestrator_py["管线编排器<br/>- **M1–M11 入口与模块切片**：``TaskCard``（含<br/>ct_pipe 提示）+<br/>``ct_pipe_routing.resolve_ct_pipe_orc001``<br/>pipeline_orchestrator<br/>文件: integration/pipeline_orchestrator.py<br/>(生产态 / production)"]
     src_zephyr_integration_ports_py["端口<br/>提供findrelevantblueprint等方法，供zephyr.integr<br/>ation.pipeli使用<br/>文件: integration/ports.py<br/>(生产态 / production)"]
     src_zephyr_integration_shared_contracts_errors_contract_violation_error_py["契约违规错误<br/>集成/错误包的contract_violation_error模块<br/>文件: errors/contract_violation_error.py<br/>(生产态 / production)"]
     src_zephyr_integration_shared_contracts_errors_data_quality_error_py["数据质量错误<br/>集成/错误包的data_quality_error模块<br/>文件: errors/data_quality_error.py<br/>(生产态 / production)"]
@@ -74,20 +74,20 @@ flowchart TD
     src_zephyr_integration_shared_events_event_bus_upgrade_py["事件总线upgrade<br/>集成/事件包的event_bus_upgrade模块<br/>文件: events/event_bus_upgrade.py<br/>(生产态 / production)"]
     src_zephyr_integration_shared_events_event_schemas_py["事件模式<br/>集成/事件包的event_schemas模块<br/>文件: events/event_schemas.py<br/>(生产态 / production)"]
     src_zephyr_integration_shared_events_upgrade_strategy_py["upgrade策略<br/>集成/事件包的upgrade_strategy模块<br/>文件: events/upgrade_strategy.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_bm25_index_py["bm25索引<br/>BM25Index — MOD-INF-011 稀疏检索组件<br/>bm25_index<br/>文件: vector_memory/bm25_index.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_bm25_index_py["bm25索引<br/>蓝图 §3.2 · BM25 稀疏检索索引<br/>bm25_index<br/>文件: vector_memory/bm25_index.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_cache_layer_py["缓存层<br/>vector_memory的缓存，暂存常用数据加速访问<br/>cache_layer<br/>文件: vector_memory/cache_layer.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_context_ingest_py["上下文ingest<br/>VMS 上下文注入器 — ingest_context() 消费者<br/>context_ingest<br/>文件: vector_memory/context_ingest.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_cross_collection_retriever_py["跨collectionretriever<br/>CrossCollectionRetriever — MOD-INF-011 跨<br/>Collection 联合检索<br/>cross_collection_retriever<br/>文件: vector_memory<br/>/cross_collection_retriever.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_delegated_vector_memory_py["delegated向量记忆<br/>DelegatedVectorMemory — VectorMemoryBase 的<br/>RI-02 落地适配器<br/>delegated_vector_memory<br/>文件: vector_memory/delegated_vector_memory.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_cross_collection_retriever_py["跨collectionretriever<br/>蓝图 §3 · §6 · 多 Collection 并行检索 -> 聚合<br/>-> 重排序<br/>cross_collection_retriever<br/>文件: vector_memory<br/>/cross_collection_retriever.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_delegated_vector_memory_py["delegated向量记忆<br/>将 ``VectorMemoryBase`` 映射到<br/>``UnifiedMemoryAPI``（Chroma / InMemory 后端）<br/>delegated_vector_memory<br/>文件: vector_memory/delegated_vector_memory.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_design_principles_py["设计原则<br/>主要提供校验维度、校验块策略、校验存活时间等功能<br/>，供collection_manager; in_process使用<br/>design_principles<br/>文件: vector_memory/design_principles.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py["ChromDB -> FAISS + SQLite WAL 数据迁移脚本<br/>集成/vector<br/>memory包的migrate_chroma_to_faiss模块<br/>文件: vector_memory/migrate_chroma_to_faiss.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_ollama_embedding_py["ollama嵌入<br/>供vector-memory.__init__;embeddi使用<br/>ollama_embedding<br/>文件: vector_memory/ollama_embedding.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_vms_memory_backend_py["vms记忆后端<br/>VMSMemoryBackend — UnifiedMemoryAPI 的 VMS<br/>后端适配器<br/>vms_memory_backend<br/>文件: vector_memory/vms_memory_backend.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py["ChromDB -> FAISS + SQLite WAL 数据迁移脚本<br/>集成的ChromDB -> FAISS + SQLite WAL<br/>数据迁移脚本，ChromDB -> FAISS + SQLite WAL<br/>数据迁移脚本相关功能的实现。<br/>migrate_chroma_to_faiss<br/>文件: vector_memory/migrate_chroma_to_faiss.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_ollama_embedding_py["ollama嵌入<br/>集成的ollama嵌入，供vector-memory.__init__;embed<br/>di使用，ollama嵌入，供vector-memory.__init__;emb<br/>eddi使用相关功能的实现。<br/>ollama_embedding<br/>文件: vector_memory/ollama_embedding.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_vms_memory_backend_py["vms记忆后端<br/>实现 MemoryBackend 协议，将 UnifiedMemoryAPI<br/>的三件套 API<br/>vms_memory_backend<br/>文件: vector_memory/vms_memory_backend.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_approval_types_py["审批类型定义<br/>G-CT-004 — ApprovalRequest Pydantic V2<br/>BaseModel 审批请求数据结构.<br/>approval_types<br/>文件: contracts/approval_types.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_rollback_types_py["回滚类型定义<br/>G-CT-003 — RollbackResult Pydantic V2 BaseModel<br/>回滚结果数据结构.<br/>rollback_types<br/>文件: contracts/rollback_types.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_runtime_types_py["运行时类型定义<br/>供启动brain、scripts使用<br/>runtime_types<br/>文件: contracts/runtime_types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_evaluation_evals_py["评估<br/>共享层/evaluation包的evals模块<br/>文件: evaluation/evals.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_durable_execution_py["durable执行<br/>共享层/resilience包的durable_execution模块<br/>文件: resilience/durable_execution.py<br/>(生产态 / production)"]
+    src_zephyr_shared_evaluation_evals_py["评估<br/>共享层的评估，供tests使用，评估，供tests使用相关<br/>功能的实现。<br/>evals<br/>文件: evaluation/evals.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_durable_execution_py["durable执行<br/>共享层的durable执行，供tests使用，durable执行，<br/>供tests使用相关功能的实现。<br/>durable_execution<br/>文件: resilience/durable_execution.py<br/>(生产态 / production)"]
     src_zephyr_shared_versioning_version_negotiation_py["版本negotiation<br/>版本的结构定义，定义数据的结构和约束<br/>version_negotiation<br/>文件: versioning/version_negotiation.py<br/>(生产态 / production)"]
     src_zephyr_integration_behavioral_admission_admission_response_py ~~~ src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py
     src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py ~~~ src_zephyr_integration_llm_bridge_py
@@ -128,25 +128,25 @@ flowchart TD
     src_zephyr_integration_local_model_local_model_scheduler_py["本地模型调度器<br/>LocalModelScheduler — L2 本地模型 24/7 调度循环<br/>local_model_scheduler<br/>文件: local_model/local_model_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_integration_local_model_ollama_embedding_py["ollama嵌入<br/>OllamaEmbedder — 通过 Ollama HTTP API<br/>生成文本嵌入<br/>ollama_embedding<br/>文件: local_model/ollama_embedding.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_audit_logger_py["审计日志器<br/>MCP 全量工具调用审计日志（MOD-INF-013 §12 Step<br/>4）。<br/>audit_logger<br/>文件: mcp/audit_logger.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_blueprint_search_server_py["蓝图search服务端<br/>BlueprintSearchServer — MCP Server for<br/>blueprint discovery<br/>文件: mcp/blueprint_search_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_blueprint_search_server_py["蓝图search服务端<br/>Spec     : MOD-INF-013 §3（MCP Tool 清单）+<br/>MOD-INF-009 §8（蓝图触发路由表）<br/>文件: mcp/blueprint_search_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_doc_guard_server_py["doc守卫服务端<br/>DocGuardServer: 跨会话交接协议服务 MCP Server<br/>doc_guard_server<br/>文件: mcp/doc_guard_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_gate_engine_server_py["门禁引擎服务端<br/>GateEngineServer: 门禁裁决服务 MCP Server<br/>gate_engine_server<br/>文件: mcp/gate_engine_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_rate_limiter_py["速率限制器<br/>MCP Gateway 同步速率限制器（MOD-INF-013 §12<br/>Step 3）。<br/>rate_limiter<br/>文件: mcp/rate_limiter.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_gate_engine_server_py["门禁引擎服务端<br/>- gate_engine.run_g1_write     — 写入防护 Gate<br/>（UTF-8 / 命名 / 路径白名单）<br/>gate_engine_server<br/>文件: mcp/gate_engine_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_rate_limiter_py["速率限制器<br/>- Token Bucket 算法 + 线程安全（threading.Lock）<br/>rate_limiter<br/>文件: mcp/rate_limiter.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_sandbox_server_py["沙箱服务端<br/>MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase<br/>7 — 关闭 B4）。<br/>sandbox_server<br/>文件: mcp/sandbox_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_sentinel_server_py["哨兵服务端<br/>SentinelServer: 意图路由哨兵 MCP Server<br/>sentinel_server<br/>文件: mcp/sentinel_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_sentinel_server_py["哨兵服务端<br/>文件命名说明<br/>sentinel_server<br/>文件: mcp/sentinel_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_task_manager_server_py["任务管理器服务端<br/>ZephyrAlpha MCP Task Manager Server<br/>文件: mcp/task_manager_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_telemetry_server_py["遥测服务端<br/>ZephyrAlpha MCP Telemetry Server — 系统可观测性<br/>MCP 接口<br/>telemetry_server<br/>文件: mcp/telemetry_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_vector_memory_server_py["向量记忆服务端<br/>VectorMemoryServer: VMS 向量记忆 MCP Server<br/>(MOD-INF-011 v0.7.0)<br/>vector_memory_server<br/>文件: mcp/vector_memory_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_bridge_layer_py["桥接层<br/>BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接<br/>bridge_layer<br/>文件: vector_memory/bridge_layer.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_vector_memory_server_py["向量记忆服务端<br/>- vector-memory.write            — 写入记忆<br/>(provenance强制)<br/>vector_memory_server<br/>文件: mcp/vector_memory_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_bridge_layer_py["桥接层<br/>蓝图 §5.2 · §6 · Phase 1-2 过渡期双读策略<br/>bridge_layer<br/>文件: vector_memory/bridge_layer.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_collection_schemas_py["收集模式<br/>vector_memory的采集器，从多处收集数据<br/>collection_schemas<br/>文件: vector_memory/collection_schemas.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_faiss_collection_manager_py["faisscollection管理器<br/>FAISSCollectionManager — FAISS HNSW/IVF+PQ 8<br/>Collection 全生命周期管理<br/>faiss_collection_manager<br/>文件: vector_memory/faiss_collection_manager.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_hybrid_retriever_py["HybridRetriever — MOD-INF-011 混合检索架构<br/>集成/vector memory包的hybrid_retriever模块<br/>文件: vector_memory/hybrid_retriever.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_faiss_collection_manager_py["faisscollection管理器<br/>真源: VMS 蓝图 §12.2 · 迁自 ChromaDB 0.6<br/>CollectionManager<br/>faiss_collection_manager<br/>文件: vector_memory/faiss_collection_manager.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_hybrid_retriever_py["HybridRetriever — MOD-INF-011 混合检索架构<br/>- 查询超时机制 timeout_ms=2000<br/>hybrid_retriever<br/>文件: vector_memory/hybrid_retriever.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_in_memory_fake_vms_py["in记忆fakevms<br/>InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎<br/>in_memory_fake_vms<br/>文件: vector_memory/in_memory_fake_vms.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_interface_py["接口<br/>VMS — Vector Memory Service 接口基类<br/>interface<br/>文件: vector_memory/interface.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_interface_py["接口<br/>向量化记忆服务。负责语义向量存储、检索与记忆管理<br/>。<br/>interface<br/>文件: vector_memory/interface.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_provenance_enforcer_py["溯源执行器<br/>ProvenanceEnforcer — MOD-INF-011<br/>写入溯源强制执行<br/>provenance_enforcer<br/>文件: vector_memory/provenance_enforcer.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_sqlite_metadata_store_py["sqlitemetadata存储<br/>SQLiteMetadataStore — VMS 元数据存储 (SQLite<br/>WAL + FTS5 BM25)<br/>sqlite_metadata_store<br/>文件: vector_memory/sqlite_metadata_store.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_vms_schemas_py["VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1<br/>接口契约<br/>集成/vector memory包的vms_schemas模块<br/>文件: vector_memory/vms_schemas.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_protocols_py["协议<br/>Structural Protocol interfaces for cross-module<br/>contracts<br/>文件: contracts/protocols.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_sqlite_metadata_store_py["sqlitemetadata存储<br/>真源: VMS 蓝图 §12.3 · 迁自 BridgeLayer /<br/>ChromaDB 内嵌 SQLite<br/>sqlite_metadata_store<br/>文件: vector_memory/sqlite_metadata_store.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_vms_schemas_py["VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1<br/>接口契约<br/>全部 Pydantic V2 BaseModel（ADR-0040 强制——禁止<br/>dataclass）<br/>vms_schemas<br/>文件: vector_memory/vms_schemas.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_protocols_py["协议<br/>注册 ContractRegistry 类/工厂（由 orchestrator<br/>侧模块加载时调用）<br/>文件: contracts/protocols.py<br/>(生产态 / production)"]
     src_zephyr_integration_local_model_cache_layer_py ~~~ src_zephyr_integration_local_model_local_model_scheduler_py
     src_zephyr_integration_local_model_local_model_scheduler_py ~~~ src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_local_model_ollama_embedding_py ~~~ src_zephyr_integration_mcp_audit_logger_py
@@ -169,23 +169,23 @@ flowchart TD
     src_zephyr_integration_vector_memory_provenance_enforcer_py ~~~ src_zephyr_integration_vector_memory_sqlite_metadata_store_py
     src_zephyr_integration_vector_memory_sqlite_metadata_store_py ~~~ src_zephyr_integration_vector_memory_vms_schemas_py
     src_zephyr_integration_vector_memory_vms_schemas_py ~~~ src_zephyr_shared_contracts_protocols_py
-    src_zephyr_integration_local_model_embedding_router_py["嵌入路由器<br/>EmbeddingRouter — MOD-INF-011 双嵌入维度路由<br/>embedding_router<br/>文件: local_model/embedding_router.py<br/>(生产态 / production)"]
-    src_zephyr_integration_local_model_ollama_chat_py["OllamaChat — 通过 Ollama HTTP API 进行本地 LLM<br/>集成/local model包的ollama_chat模块<br/>文件: local_model/ollama_chat.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_base_server_py["基类服务端<br/>BaseMCPServer: stdio 传输 + JSON-RPC 2.0<br/>协议基类<br/>_base_server<br/>文件: mcp/_base_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_local_model_embedding_router_py["嵌入路由器<br/>蓝图 §3.1 · V-VMS-505/507 · 按 Collection<br/>路由到对应模型<br/>embedding_router<br/>文件: local_model/embedding_router.py<br/>(生产态 / production)"]
+    src_zephyr_integration_local_model_ollama_chat_py["OllamaChat — 通过 Ollama HTTP API 进行本地 LLM<br/>替代外部 API 调用，使用本地 Ollama 的 qwen3:8b<br/>等模型<br/>ollama_chat<br/>文件: local_model/ollama_chat.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_base_server_py["基类服务端<br/>Task ID  : T-3-04 共享基础设施<br/>_base_server<br/>文件: mcp/_base_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_collection_manager_py["收集管理器<br/>CollectionManager — MOD-INF-011 八大 Collection<br/>全生命周期管理<br/>collection_manager<br/>文件: vector_memory/collection_manager.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py["入进程向量记忆<br/>InProcessVectorMemory — MOD-INF-011 VMS 统一入口<br/>in_process_vector_memory<br/>文件: vector_memory/in_process_vector_memory.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py["入进程向量记忆<br/>蓝图 §6 架构分层 · Phase 1-4 施工 · 11<br/>子模块组装<br/>in_process_vector_memory<br/>文件: vector_memory/in_process_vector_memory.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_vms_errors_py["vms错误<br/>vector_memory的异常，定义本模块的异常类型<br/>vms_errors<br/>文件: vector_memory/vms_errors.py<br/>(生产态 / production)"]
     src_zephyr_integration_local_model_embedding_router_py ~~~ src_zephyr_integration_local_model_ollama_chat_py
     src_zephyr_integration_local_model_ollama_chat_py ~~~ src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_base_server_py ~~~ src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_collection_manager_py ~~~ src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py ~~~ src_zephyr_integration_vector_memory_vms_errors_py
-    src_zephyr_integration_mcp_error_codes_py["MCP 错误码集中注册（MOD-INF-013 §3.4）。<br/>集成/mcp包的error_codes模块<br/>文件: mcp/error_codes.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_chunk_strategy_router_py["块策略路由器<br/>ChunkStrategyRouter — MOD-INF-011 分块策略调度<br/>chunk_strategy_router<br/>文件: vector_memory/chunk_strategy_router.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_in_memory_memory_backend_py["入记忆记忆后端<br/>DegradedVMSBackend — MOD-INF-011 降级兜底<br/>in_memory_memory_backend<br/>文件: vector_memory/in_memory_memory_backend.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_error_codes_py["MCP 错误码集中注册（MOD-INF-013 §3.4）。<br/>本文件是 MCP 协议错误码的 canonical SSoT<br/>error_codes<br/>文件: mcp/error_codes.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_chunk_strategy_router_py["块策略路由器<br/>蓝图 §2.1 · §6 · 6 种分块策略按 Collection<br/>差异化路由<br/>chunk_strategy_router<br/>文件: vector_memory/chunk_strategy_router.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_in_memory_memory_backend_py["入记忆记忆后端<br/>蓝图 §6 · V-VMS-505/507 · ChromaDB +<br/>双模型全不可用时的最后防线<br/>in_memory_memory_backend<br/>文件: vector_memory/in_memory_memory_backend.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_index_health_monitor_py["索引健康监控<br/>IndexHealthMonitor — MOD-INF-011<br/>索引健康自检与自动修复<br/>index_health_monitor<br/>文件: vector_memory/index_health_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_retrieval_feedback_py["retrieval反馈<br/>RetrievalFeedback — MOD-INF-011 FLE 检索质量消费<br/>retrieval_feedback<br/>文件: vector_memory/retrieval_feedback.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_vector_bridge_py["向量桥接<br/>VectorBridge — MOD-INF-011 CE/KB 外部集成适配器<br/>vector_bridge<br/>文件: vector_memory/vector_bridge.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_retrieval_feedback_py["retrieval反馈<br/>蓝图 §7 · §6 · 检索结果质量闭环 + IMET 采样接口<br/>retrieval_feedback<br/>文件: vector_memory/retrieval_feedback.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_vector_bridge_py["向量桥接<br/>蓝图 §8 · §6 · 6 系统集成目标<br/>vector_bridge<br/>文件: vector_memory/vector_bridge.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_chunk_strategy_router_py ~~~ src_zephyr_integration_vector_memory_in_memory_memory_backend_py
     src_zephyr_integration_vector_memory_in_memory_memory_backend_py ~~~ src_zephyr_integration_vector_memory_index_health_monitor_py
     src_zephyr_integration_vector_memory_index_health_monitor_py ~~~ src_zephyr_integration_vector_memory_retrieval_feedback_py
@@ -197,95 +197,95 @@ flowchart TD
     src_zephyr_integration_local_model_local_model_scheduler_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_local_model_local_model_scheduler_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_chat_py
     src_zephyr_integration_mcp_blueprint_search_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_doc_guard_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_gate_engine_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_audit_logger_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_blueprint_search_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_doc_guard_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_rate_limiter_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sandbox_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sentinel_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_gate_engine_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sandbox_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_rate_limiter_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_task_manager_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_telemetry_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_vector_memory_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_doc_guard_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sentinel_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_vector_memory_server_py
     src_zephyr_integration_mcp_sandbox_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_sentinel_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_rule_discovery_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_gate_engine_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_base_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
+    src_zephyr_integration_mcp_sentinel_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_errors_py
-    src_zephyr_integration_mcp_base_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
     src_zephyr_integration_vector_memory_cache_layer_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
     src_zephyr_integration_vector_memory_bridge_layer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_errors_py
-    src_zephyr_integration_vector_memory_delegated_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_interface_py
     src_zephyr_integration_vector_memory_context_ingest_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_fake_vms_py
-    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
-    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
-    src_zephyr_integration_vector_memory_hybrid_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
-    src_zephyr_integration_vector_memory_hybrid_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_delegated_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_interface_py
     src_zephyr_integration_vector_memory_cross_collection_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector_memory_faiss_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_chunk_strategy_router_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_bridge_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_memory_backend_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_retrieval_feedback_py
+    src_zephyr_integration_vector_memory_hybrid_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
+    src_zephyr_integration_vector_memory_hybrid_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
+    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
+    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
+    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
+    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_errors_py
+    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
     src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_index_health_monitor_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_faiss_collection_manager_py
+    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_sqlite_metadata_store_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_chunk_strategy_router_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_memory_backend_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_retrieval_feedback_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_bridge_py
+    src_zephyr_integration_vector_memory_sqlite_metadata_store_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
-    src_zephyr_integration_vector_memory_vector_bridge_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_ollama_embedding_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_vector_memory_retrieval_feedback_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector_memory_retrieval_feedback_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
-    src_zephyr_integration_vector_memory_sqlite_metadata_store_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_vector_bridge_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_vms_memory_backend_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
     src_zephyr_integration_vector_memory_vms_memory_backend_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
-    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_SHARED
     D_OPS["反馈循环<br/>反馈循环，负责系统运行反馈、性能监控和自动调优闭<br/>环<br/>Feedback Loop<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_OPS
+    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_local_model_ollama_embedding_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_mcp_rate_limiter_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_OPS
     D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_vms_schemas_py -->|导入依赖 / import_depends| D_INTELLIGENCE
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_integration_llm_bridge_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_integration_mcp_sandbox_server_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_integration_pipeline_orchestrator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_integration_mcp_telemetry_server_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
-    D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_rollback_types_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_contracts_runtime_types_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
@@ -301,7 +301,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_integration_behavioral_admission_admission_response_py,src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py,src_zephyr_integration_llm_bridge_py,src_zephyr_integration_local_model_cache_layer_py,src_zephyr_integration_local_model_embedding_router_py,src_zephyr_integration_local_model_local_model_scheduler_py,src_zephyr_integration_local_model_ollama_chat_py,src_zephyr_integration_local_model_ollama_embedding_py,src_zephyr_integration_mcp_base_server_py,src_zephyr_integration_mcp_audit_logger_py,src_zephyr_integration_mcp_blueprint_search_server_py,src_zephyr_integration_mcp_doc_guard_server_py,src_zephyr_integration_mcp_error_codes_py,src_zephyr_integration_mcp_gate_engine_server_py,src_zephyr_integration_mcp_gateway_server_py,src_zephyr_integration_mcp_handoff_auto_loader_py,src_zephyr_integration_mcp_prompt_provider_py,src_zephyr_integration_mcp_rate_limiter_py,src_zephyr_integration_mcp_resource_provider_py,src_zephyr_integration_mcp_rule_discovery_server_py,src_zephyr_integration_mcp_sandbox_server_py,src_zephyr_integration_mcp_sentinel_server_py,src_zephyr_integration_mcp_task_manager_server_py,src_zephyr_integration_mcp_telemetry_server_py,src_zephyr_integration_mcp_vector_memory_server_py,src_zephyr_integration_mcp_server_py,src_zephyr_integration_pipeline_orchestrator_py,src_zephyr_integration_ports_py,src_zephyr_integration_shared_contracts_errors_contract_violation_error_py,src_zephyr_integration_shared_contracts_errors_data_quality_error_py,src_zephyr_integration_shared_contracts_errors_execution_rejection_error_py,src_zephyr_integration_shared_contracts_errors_factor_computation_error_py,src_zephyr_integration_shared_contracts_errors_risk_limit_violation_error_py,src_zephyr_integration_shared_contracts_errors_signal_degradation_warning_py,src_zephyr_integration_shared_events_dlq_bridge_py,src_zephyr_integration_shared_events_event_bus_upgrade_py,src_zephyr_integration_shared_events_event_schemas_py,src_zephyr_integration_shared_events_upgrade_strategy_py,src_zephyr_integration_vector_memory_bm25_index_py,src_zephyr_integration_vector_memory_bridge_layer_py,src_zephyr_integration_vector_memory_cache_layer_py,src_zephyr_integration_vector_memory_chunk_strategy_router_py,src_zephyr_integration_vector_memory_collection_manager_py,src_zephyr_integration_vector_memory_collection_schemas_py,src_zephyr_integration_vector_memory_context_ingest_py,src_zephyr_integration_vector_memory_cross_collection_retriever_py,src_zephyr_integration_vector_memory_delegated_vector_memory_py,src_zephyr_integration_vector_memory_design_principles_py,src_zephyr_integration_vector_memory_faiss_collection_manager_py,src_zephyr_integration_vector_memory_hybrid_retriever_py,src_zephyr_integration_vector_memory_in_memory_fake_vms_py,src_zephyr_integration_vector_memory_in_memory_memory_backend_py,src_zephyr_integration_vector_memory_in_process_vector_memory_py,src_zephyr_integration_vector_memory_index_health_monitor_py,src_zephyr_integration_vector_memory_interface_py,src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py,src_zephyr_integration_vector_memory_ollama_embedding_py,src_zephyr_integration_vector_memory_provenance_enforcer_py,src_zephyr_integration_vector_memory_retrieval_feedback_py,src_zephyr_integration_vector_memory_sqlite_metadata_store_py,src_zephyr_integration_vector_memory_vector_bridge_py,src_zephyr_integration_vector_memory_vms_errors_py,src_zephyr_integration_vector_memory_vms_memory_backend_py,src_zephyr_integration_vector_memory_vms_schemas_py,src_zephyr_shared_contracts_approval_types_py,src_zephyr_shared_contracts_protocols_py,src_zephyr_shared_contracts_rollback_types_py,src_zephyr_shared_contracts_runtime_types_py,src_zephyr_shared_evaluation_evals_py,src_zephyr_shared_resilience_durable_execution_py,src_zephyr_shared_versioning_version_negotiation_py production
-    class D_SHARED,D_OPS,D_INTELLIGENCE,D_GOV_AUDIT,D_INFRA_RUNTIME,D_GOV_SCRIPTS,D_GOVERNANCE,D_GOV_OPS_RESILIENCE external_prod
+    class D_OPS,D_SHARED,D_INTELLIGENCE,D_GOV_AUDIT,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_GOV_SCRIPTS,D_GOVERNANCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -311,16 +311,16 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_integration_behavioral_admission_admission_response_py["behavioral_admission/admission_response<br/>集成/behavioral<br/>admission包的admission_response模块<br/>文件: behavioral_admission/admission_response.py<br/>(生产态 / production)"]
+    src_zephyr_integration_behavioral_admission_admission_response_py["behavioral_admission/admission_response<br/>5.152 #25 sanctioned: integration<br/>为组合层，允许依赖全部层（trading.L2<br/>准入决策契约）<br/>文件: behavioral_admission/admission_response.py<br/>(生产态 / production)"]
     src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py["退化螺旋检测器<br/>Degradation Spiral Detector —<br/>模型幻觉-容量正反馈螺旋检测 (盲点 #19, M-29)<br/>degradation_spiral_detector<br/>文件: budget_enforcer<br/>/degradation_spiral_detector.py<br/>(生产态 / production)"]
-    src_zephyr_integration_llm_bridge_py["接收 RED 问题,生成修复文本。LLM<br/>只润色不做判断。不可用时降级为模板生成<br/>集成包的llm_bridge模块<br/>文件: integration/llm_bridge.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_gateway_server_py["网关服务端<br/>MCP Gateway 集中式治理节点（MOD-INF-013 §12<br/>Phase 5）。<br/>gateway_server<br/>文件: mcp/gateway_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_llm_bridge_py["接收 RED 问题,生成修复文本。LLM<br/>只润色不做判断。不可用时降级为模板生成<br/>Stage 6 LLM 桥接 — 修复文本生成<br/>llm_bridge<br/>文件: integration/llm_bridge.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_gateway_server_py["网关服务端<br/>架构对标 IBM ContextForge Gateway 模式。五模块：<br/>gateway_server<br/>文件: mcp/gateway_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_handoff_auto_loader_py["handoff自动加载器<br/>Handoff 自动加载器——从 handoff 包恢复 AI<br/>session 上下文（MOD-INF-013 §5.3）。<br/>handoff_auto_loader<br/>文件: mcp/handoff_auto_loader.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_prompt_provider_py["提示提供器<br/>MCP Prompt 模板提供者（MOD-INF-013 Phase 6 —<br/>关闭 B3）。<br/>prompt_provider<br/>文件: mcp/prompt_provider.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_resource_provider_py["资源提供器<br/>MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭<br/>B2/B41）。<br/>resource_provider<br/>文件: mcp/resource_provider.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_rule_discovery_server_py["规则discovery服务端<br/>RuleDiscoveryServer — MCP Server for rule<br/>discovery（#ARCH-GOV-CONVERGENCE-META Phase<br/>3.2b）<br/>文件: mcp/rule_discovery_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_server_py["MCP服务端<br/>集成包的mcp_server模块<br/>文件: integration/mcp_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_pipeline_orchestrator_py["管线编排器<br/>PipelineOrchestrator — M1-M11 管线协调器<br/>pipeline_orchestrator<br/>文件: integration/pipeline_orchestrator.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_prompt_provider_py["提示提供器<br/>MCP Prompt 模板提供者（MOD-INF-013 Phase 6 —<br/>关闭<br/>prompt_provider<br/>文件: mcp/prompt_provider.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_resource_provider_py["资源提供器<br/>注册至少 3 类资源：蓝图/任务卡/测试报告<br/>resource_provider<br/>文件: mcp/resource_provider.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_rule_discovery_server_py["规则discovery服务端<br/>病根2（规则可发现性）治本：64条 trae<br/>规则分散在各 YAML 文件中，AI 无法在施工前<br/>文件: mcp/rule_discovery_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_server_py["MCP服务端<br/>集成的8 tool + 2 resource 暴露盘点功能给 IDE AI<br/>agent。，8 tool + 2 resource 暴露盘点功能给 IDE<br/>AI agent。相关功能的实现。<br/>mcp_server<br/>文件: integration/mcp_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_pipeline_orchestrator_py["管线编排器<br/>- **M1–M11 入口与模块切片**：``TaskCard``（含<br/>ct_pipe 提示）+<br/>``ct_pipe_routing.resolve_ct_pipe_orc001``<br/>pipeline_orchestrator<br/>文件: integration/pipeline_orchestrator.py<br/>(生产态 / production)"]
     src_zephyr_integration_ports_py["端口<br/>提供findrelevantblueprint等方法，供zephyr.integr<br/>ation.pipeli使用<br/>文件: integration/ports.py<br/>(生产态 / production)"]
     src_zephyr_integration_shared_contracts_errors_contract_violation_error_py["契约违规错误<br/>集成/错误包的contract_violation_error模块<br/>文件: errors/contract_violation_error.py<br/>(生产态 / production)"]
     src_zephyr_integration_shared_contracts_errors_data_quality_error_py["数据质量错误<br/>集成/错误包的data_quality_error模块<br/>文件: errors/data_quality_error.py<br/>(生产态 / production)"]
@@ -332,20 +332,20 @@ flowchart TD
     src_zephyr_integration_shared_events_event_bus_upgrade_py["事件总线upgrade<br/>集成/事件包的event_bus_upgrade模块<br/>文件: events/event_bus_upgrade.py<br/>(生产态 / production)"]
     src_zephyr_integration_shared_events_event_schemas_py["事件模式<br/>集成/事件包的event_schemas模块<br/>文件: events/event_schemas.py<br/>(生产态 / production)"]
     src_zephyr_integration_shared_events_upgrade_strategy_py["upgrade策略<br/>集成/事件包的upgrade_strategy模块<br/>文件: events/upgrade_strategy.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_bm25_index_py["bm25索引<br/>BM25Index — MOD-INF-011 稀疏检索组件<br/>bm25_index<br/>文件: vector_memory/bm25_index.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_bm25_index_py["bm25索引<br/>蓝图 §3.2 · BM25 稀疏检索索引<br/>bm25_index<br/>文件: vector_memory/bm25_index.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_cache_layer_py["缓存层<br/>vector_memory的缓存，暂存常用数据加速访问<br/>cache_layer<br/>文件: vector_memory/cache_layer.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_context_ingest_py["上下文ingest<br/>VMS 上下文注入器 — ingest_context() 消费者<br/>context_ingest<br/>文件: vector_memory/context_ingest.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_cross_collection_retriever_py["跨collectionretriever<br/>CrossCollectionRetriever — MOD-INF-011 跨<br/>Collection 联合检索<br/>cross_collection_retriever<br/>文件: vector_memory<br/>/cross_collection_retriever.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_delegated_vector_memory_py["delegated向量记忆<br/>DelegatedVectorMemory — VectorMemoryBase 的<br/>RI-02 落地适配器<br/>delegated_vector_memory<br/>文件: vector_memory/delegated_vector_memory.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_cross_collection_retriever_py["跨collectionretriever<br/>蓝图 §3 · §6 · 多 Collection 并行检索 -> 聚合<br/>-> 重排序<br/>cross_collection_retriever<br/>文件: vector_memory<br/>/cross_collection_retriever.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_delegated_vector_memory_py["delegated向量记忆<br/>将 ``VectorMemoryBase`` 映射到<br/>``UnifiedMemoryAPI``（Chroma / InMemory 后端）<br/>delegated_vector_memory<br/>文件: vector_memory/delegated_vector_memory.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_design_principles_py["设计原则<br/>主要提供校验维度、校验块策略、校验存活时间等功能<br/>，供collection_manager; in_process使用<br/>design_principles<br/>文件: vector_memory/design_principles.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py["ChromDB -> FAISS + SQLite WAL 数据迁移脚本<br/>集成/vector<br/>memory包的migrate_chroma_to_faiss模块<br/>文件: vector_memory/migrate_chroma_to_faiss.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_ollama_embedding_py["ollama嵌入<br/>供vector-memory.__init__;embeddi使用<br/>ollama_embedding<br/>文件: vector_memory/ollama_embedding.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_vms_memory_backend_py["vms记忆后端<br/>VMSMemoryBackend — UnifiedMemoryAPI 的 VMS<br/>后端适配器<br/>vms_memory_backend<br/>文件: vector_memory/vms_memory_backend.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py["ChromDB -> FAISS + SQLite WAL 数据迁移脚本<br/>集成的ChromDB -> FAISS + SQLite WAL<br/>数据迁移脚本，ChromDB -> FAISS + SQLite WAL<br/>数据迁移脚本相关功能的实现。<br/>migrate_chroma_to_faiss<br/>文件: vector_memory/migrate_chroma_to_faiss.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_ollama_embedding_py["ollama嵌入<br/>集成的ollama嵌入，供vector-memory.__init__;embed<br/>di使用，ollama嵌入，供vector-memory.__init__;emb<br/>eddi使用相关功能的实现。<br/>ollama_embedding<br/>文件: vector_memory/ollama_embedding.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_vms_memory_backend_py["vms记忆后端<br/>实现 MemoryBackend 协议，将 UnifiedMemoryAPI<br/>的三件套 API<br/>vms_memory_backend<br/>文件: vector_memory/vms_memory_backend.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_approval_types_py["审批类型定义<br/>G-CT-004 — ApprovalRequest Pydantic V2<br/>BaseModel 审批请求数据结构.<br/>approval_types<br/>文件: contracts/approval_types.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_rollback_types_py["回滚类型定义<br/>G-CT-003 — RollbackResult Pydantic V2 BaseModel<br/>回滚结果数据结构.<br/>rollback_types<br/>文件: contracts/rollback_types.py<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_runtime_types_py["运行时类型定义<br/>供启动brain、scripts使用<br/>runtime_types<br/>文件: contracts/runtime_types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_evaluation_evals_py["评估<br/>共享层/evaluation包的evals模块<br/>文件: evaluation/evals.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_durable_execution_py["durable执行<br/>共享层/resilience包的durable_execution模块<br/>文件: resilience/durable_execution.py<br/>(生产态 / production)"]
+    src_zephyr_shared_evaluation_evals_py["评估<br/>共享层的评估，供tests使用，评估，供tests使用相关<br/>功能的实现。<br/>evals<br/>文件: evaluation/evals.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_durable_execution_py["durable执行<br/>共享层的durable执行，供tests使用，durable执行，<br/>供tests使用相关功能的实现。<br/>durable_execution<br/>文件: resilience/durable_execution.py<br/>(生产态 / production)"]
     src_zephyr_shared_versioning_version_negotiation_py["版本negotiation<br/>版本的结构定义，定义数据的结构和约束<br/>version_negotiation<br/>文件: versioning/version_negotiation.py<br/>(生产态 / production)"]
     src_zephyr_integration_behavioral_admission_admission_response_py ~~~ src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py
     src_zephyr_integration_budget_enforcer_degradation_spiral_detector_py ~~~ src_zephyr_integration_llm_bridge_py
@@ -386,25 +386,25 @@ flowchart TD
     src_zephyr_integration_local_model_local_model_scheduler_py["本地模型调度器<br/>LocalModelScheduler — L2 本地模型 24/7 调度循环<br/>local_model_scheduler<br/>文件: local_model/local_model_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_integration_local_model_ollama_embedding_py["ollama嵌入<br/>OllamaEmbedder — 通过 Ollama HTTP API<br/>生成文本嵌入<br/>ollama_embedding<br/>文件: local_model/ollama_embedding.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_audit_logger_py["审计日志器<br/>MCP 全量工具调用审计日志（MOD-INF-013 §12 Step<br/>4）。<br/>audit_logger<br/>文件: mcp/audit_logger.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_blueprint_search_server_py["蓝图search服务端<br/>BlueprintSearchServer — MCP Server for<br/>blueprint discovery<br/>文件: mcp/blueprint_search_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_blueprint_search_server_py["蓝图search服务端<br/>Spec     : MOD-INF-013 §3（MCP Tool 清单）+<br/>MOD-INF-009 §8（蓝图触发路由表）<br/>文件: mcp/blueprint_search_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_doc_guard_server_py["doc守卫服务端<br/>DocGuardServer: 跨会话交接协议服务 MCP Server<br/>doc_guard_server<br/>文件: mcp/doc_guard_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_gate_engine_server_py["门禁引擎服务端<br/>GateEngineServer: 门禁裁决服务 MCP Server<br/>gate_engine_server<br/>文件: mcp/gate_engine_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_rate_limiter_py["速率限制器<br/>MCP Gateway 同步速率限制器（MOD-INF-013 §12<br/>Step 3）。<br/>rate_limiter<br/>文件: mcp/rate_limiter.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_gate_engine_server_py["门禁引擎服务端<br/>- gate_engine.run_g1_write     — 写入防护 Gate<br/>（UTF-8 / 命名 / 路径白名单）<br/>gate_engine_server<br/>文件: mcp/gate_engine_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_rate_limiter_py["速率限制器<br/>- Token Bucket 算法 + 线程安全（threading.Lock）<br/>rate_limiter<br/>文件: mcp/rate_limiter.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_sandbox_server_py["沙箱服务端<br/>MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase<br/>7 — 关闭 B4）。<br/>sandbox_server<br/>文件: mcp/sandbox_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_sentinel_server_py["哨兵服务端<br/>SentinelServer: 意图路由哨兵 MCP Server<br/>sentinel_server<br/>文件: mcp/sentinel_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_sentinel_server_py["哨兵服务端<br/>文件命名说明<br/>sentinel_server<br/>文件: mcp/sentinel_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_task_manager_server_py["任务管理器服务端<br/>ZephyrAlpha MCP Task Manager Server<br/>文件: mcp/task_manager_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_mcp_telemetry_server_py["遥测服务端<br/>ZephyrAlpha MCP Telemetry Server — 系统可观测性<br/>MCP 接口<br/>telemetry_server<br/>文件: mcp/telemetry_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_vector_memory_server_py["向量记忆服务端<br/>VectorMemoryServer: VMS 向量记忆 MCP Server<br/>(MOD-INF-011 v0.7.0)<br/>vector_memory_server<br/>文件: mcp/vector_memory_server.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_bridge_layer_py["桥接层<br/>BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接<br/>bridge_layer<br/>文件: vector_memory/bridge_layer.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_vector_memory_server_py["向量记忆服务端<br/>- vector-memory.write            — 写入记忆<br/>(provenance强制)<br/>vector_memory_server<br/>文件: mcp/vector_memory_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_bridge_layer_py["桥接层<br/>蓝图 §5.2 · §6 · Phase 1-2 过渡期双读策略<br/>bridge_layer<br/>文件: vector_memory/bridge_layer.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_collection_schemas_py["收集模式<br/>vector_memory的采集器，从多处收集数据<br/>collection_schemas<br/>文件: vector_memory/collection_schemas.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_faiss_collection_manager_py["faisscollection管理器<br/>FAISSCollectionManager — FAISS HNSW/IVF+PQ 8<br/>Collection 全生命周期管理<br/>faiss_collection_manager<br/>文件: vector_memory/faiss_collection_manager.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_hybrid_retriever_py["HybridRetriever — MOD-INF-011 混合检索架构<br/>集成/vector memory包的hybrid_retriever模块<br/>文件: vector_memory/hybrid_retriever.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_faiss_collection_manager_py["faisscollection管理器<br/>真源: VMS 蓝图 §12.2 · 迁自 ChromaDB 0.6<br/>CollectionManager<br/>faiss_collection_manager<br/>文件: vector_memory/faiss_collection_manager.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_hybrid_retriever_py["HybridRetriever — MOD-INF-011 混合检索架构<br/>- 查询超时机制 timeout_ms=2000<br/>hybrid_retriever<br/>文件: vector_memory/hybrid_retriever.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_in_memory_fake_vms_py["in记忆fakevms<br/>InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎<br/>in_memory_fake_vms<br/>文件: vector_memory/in_memory_fake_vms.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_interface_py["接口<br/>VMS — Vector Memory Service 接口基类<br/>interface<br/>文件: vector_memory/interface.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_interface_py["接口<br/>向量化记忆服务。负责语义向量存储、检索与记忆管理<br/>。<br/>interface<br/>文件: vector_memory/interface.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_provenance_enforcer_py["溯源执行器<br/>ProvenanceEnforcer — MOD-INF-011<br/>写入溯源强制执行<br/>provenance_enforcer<br/>文件: vector_memory/provenance_enforcer.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_sqlite_metadata_store_py["sqlitemetadata存储<br/>SQLiteMetadataStore — VMS 元数据存储 (SQLite<br/>WAL + FTS5 BM25)<br/>sqlite_metadata_store<br/>文件: vector_memory/sqlite_metadata_store.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_vms_schemas_py["VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1<br/>接口契约<br/>集成/vector memory包的vms_schemas模块<br/>文件: vector_memory/vms_schemas.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_protocols_py["协议<br/>Structural Protocol interfaces for cross-module<br/>contracts<br/>文件: contracts/protocols.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_sqlite_metadata_store_py["sqlitemetadata存储<br/>真源: VMS 蓝图 §12.3 · 迁自 BridgeLayer /<br/>ChromaDB 内嵌 SQLite<br/>sqlite_metadata_store<br/>文件: vector_memory/sqlite_metadata_store.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_vms_schemas_py["VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1<br/>接口契约<br/>全部 Pydantic V2 BaseModel（ADR-0040 强制——禁止<br/>dataclass）<br/>vms_schemas<br/>文件: vector_memory/vms_schemas.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_protocols_py["协议<br/>注册 ContractRegistry 类/工厂（由 orchestrator<br/>侧模块加载时调用）<br/>文件: contracts/protocols.py<br/>(生产态 / production)"]
     src_zephyr_integration_local_model_cache_layer_py ~~~ src_zephyr_integration_local_model_local_model_scheduler_py
     src_zephyr_integration_local_model_local_model_scheduler_py ~~~ src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_local_model_ollama_embedding_py ~~~ src_zephyr_integration_mcp_audit_logger_py
@@ -427,23 +427,23 @@ flowchart TD
     src_zephyr_integration_vector_memory_provenance_enforcer_py ~~~ src_zephyr_integration_vector_memory_sqlite_metadata_store_py
     src_zephyr_integration_vector_memory_sqlite_metadata_store_py ~~~ src_zephyr_integration_vector_memory_vms_schemas_py
     src_zephyr_integration_vector_memory_vms_schemas_py ~~~ src_zephyr_shared_contracts_protocols_py
-    src_zephyr_integration_local_model_embedding_router_py["嵌入路由器<br/>EmbeddingRouter — MOD-INF-011 双嵌入维度路由<br/>embedding_router<br/>文件: local_model/embedding_router.py<br/>(生产态 / production)"]
-    src_zephyr_integration_local_model_ollama_chat_py["OllamaChat — 通过 Ollama HTTP API 进行本地 LLM<br/>集成/local model包的ollama_chat模块<br/>文件: local_model/ollama_chat.py<br/>(生产态 / production)"]
-    src_zephyr_integration_mcp_base_server_py["基类服务端<br/>BaseMCPServer: stdio 传输 + JSON-RPC 2.0<br/>协议基类<br/>_base_server<br/>文件: mcp/_base_server.py<br/>(生产态 / production)"]
+    src_zephyr_integration_local_model_embedding_router_py["嵌入路由器<br/>蓝图 §3.1 · V-VMS-505/507 · 按 Collection<br/>路由到对应模型<br/>embedding_router<br/>文件: local_model/embedding_router.py<br/>(生产态 / production)"]
+    src_zephyr_integration_local_model_ollama_chat_py["OllamaChat — 通过 Ollama HTTP API 进行本地 LLM<br/>替代外部 API 调用，使用本地 Ollama 的 qwen3:8b<br/>等模型<br/>ollama_chat<br/>文件: local_model/ollama_chat.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_base_server_py["基类服务端<br/>Task ID  : T-3-04 共享基础设施<br/>_base_server<br/>文件: mcp/_base_server.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_collection_manager_py["收集管理器<br/>CollectionManager — MOD-INF-011 八大 Collection<br/>全生命周期管理<br/>collection_manager<br/>文件: vector_memory/collection_manager.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py["入进程向量记忆<br/>InProcessVectorMemory — MOD-INF-011 VMS 统一入口<br/>in_process_vector_memory<br/>文件: vector_memory/in_process_vector_memory.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py["入进程向量记忆<br/>蓝图 §6 架构分层 · Phase 1-4 施工 · 11<br/>子模块组装<br/>in_process_vector_memory<br/>文件: vector_memory/in_process_vector_memory.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_vms_errors_py["vms错误<br/>vector_memory的异常，定义本模块的异常类型<br/>vms_errors<br/>文件: vector_memory/vms_errors.py<br/>(生产态 / production)"]
     src_zephyr_integration_local_model_embedding_router_py ~~~ src_zephyr_integration_local_model_ollama_chat_py
     src_zephyr_integration_local_model_ollama_chat_py ~~~ src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_base_server_py ~~~ src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_collection_manager_py ~~~ src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_in_process_vector_memory_py ~~~ src_zephyr_integration_vector_memory_vms_errors_py
-    src_zephyr_integration_mcp_error_codes_py["MCP 错误码集中注册（MOD-INF-013 §3.4）。<br/>集成/mcp包的error_codes模块<br/>文件: mcp/error_codes.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_chunk_strategy_router_py["块策略路由器<br/>ChunkStrategyRouter — MOD-INF-011 分块策略调度<br/>chunk_strategy_router<br/>文件: vector_memory/chunk_strategy_router.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_in_memory_memory_backend_py["入记忆记忆后端<br/>DegradedVMSBackend — MOD-INF-011 降级兜底<br/>in_memory_memory_backend<br/>文件: vector_memory/in_memory_memory_backend.py<br/>(生产态 / production)"]
+    src_zephyr_integration_mcp_error_codes_py["MCP 错误码集中注册（MOD-INF-013 §3.4）。<br/>本文件是 MCP 协议错误码的 canonical SSoT<br/>error_codes<br/>文件: mcp/error_codes.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_chunk_strategy_router_py["块策略路由器<br/>蓝图 §2.1 · §6 · 6 种分块策略按 Collection<br/>差异化路由<br/>chunk_strategy_router<br/>文件: vector_memory/chunk_strategy_router.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_in_memory_memory_backend_py["入记忆记忆后端<br/>蓝图 §6 · V-VMS-505/507 · ChromaDB +<br/>双模型全不可用时的最后防线<br/>in_memory_memory_backend<br/>文件: vector_memory/in_memory_memory_backend.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_index_health_monitor_py["索引健康监控<br/>IndexHealthMonitor — MOD-INF-011<br/>索引健康自检与自动修复<br/>index_health_monitor<br/>文件: vector_memory/index_health_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_retrieval_feedback_py["retrieval反馈<br/>RetrievalFeedback — MOD-INF-011 FLE 检索质量消费<br/>retrieval_feedback<br/>文件: vector_memory/retrieval_feedback.py<br/>(生产态 / production)"]
-    src_zephyr_integration_vector_memory_vector_bridge_py["向量桥接<br/>VectorBridge — MOD-INF-011 CE/KB 外部集成适配器<br/>vector_bridge<br/>文件: vector_memory/vector_bridge.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_retrieval_feedback_py["retrieval反馈<br/>蓝图 §7 · §6 · 检索结果质量闭环 + IMET 采样接口<br/>retrieval_feedback<br/>文件: vector_memory/retrieval_feedback.py<br/>(生产态 / production)"]
+    src_zephyr_integration_vector_memory_vector_bridge_py["向量桥接<br/>蓝图 §8 · §6 · 6 系统集成目标<br/>vector_bridge<br/>文件: vector_memory/vector_bridge.py<br/>(生产态 / production)"]
     src_zephyr_integration_vector_memory_chunk_strategy_router_py ~~~ src_zephyr_integration_vector_memory_in_memory_memory_backend_py
     src_zephyr_integration_vector_memory_in_memory_memory_backend_py ~~~ src_zephyr_integration_vector_memory_index_health_monitor_py
     src_zephyr_integration_vector_memory_index_health_monitor_py ~~~ src_zephyr_integration_vector_memory_retrieval_feedback_py
@@ -455,65 +455,65 @@ flowchart TD
     src_zephyr_integration_local_model_local_model_scheduler_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_local_model_local_model_scheduler_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_chat_py
     src_zephyr_integration_mcp_blueprint_search_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_doc_guard_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_gate_engine_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_audit_logger_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_blueprint_search_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_doc_guard_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_rate_limiter_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sandbox_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sentinel_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_gate_engine_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sandbox_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_rate_limiter_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_task_manager_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_telemetry_server_py
-    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_vector_memory_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_doc_guard_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_sentinel_server_py
+    src_zephyr_integration_mcp_gateway_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_vector_memory_server_py
     src_zephyr_integration_mcp_sandbox_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_sentinel_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_rule_discovery_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
-    src_zephyr_integration_mcp_gate_engine_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
+    src_zephyr_integration_mcp_base_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
+    src_zephyr_integration_mcp_sentinel_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_base_server_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_errors_py
-    src_zephyr_integration_mcp_base_server_py -->|导入依赖 / import_depends| src_zephyr_integration_mcp_error_codes_py
     src_zephyr_integration_vector_memory_cache_layer_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
     src_zephyr_integration_vector_memory_bridge_layer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
-    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_errors_py
-    src_zephyr_integration_vector_memory_delegated_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_interface_py
     src_zephyr_integration_vector_memory_context_ingest_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_fake_vms_py
-    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
-    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
-    src_zephyr_integration_vector_memory_hybrid_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
-    src_zephyr_integration_vector_memory_hybrid_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_delegated_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_interface_py
     src_zephyr_integration_vector_memory_cross_collection_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector_memory_faiss_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_chunk_strategy_router_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_bridge_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_memory_backend_py
-    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_retrieval_feedback_py
+    src_zephyr_integration_vector_memory_hybrid_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
+    src_zephyr_integration_vector_memory_hybrid_retriever_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
+    src_zephyr_integration_vector_memory_collection_manager_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
+    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
+    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
+    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_errors_py
+    src_zephyr_integration_vector_memory_design_principles_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
     src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_index_health_monitor_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_faiss_collection_manager_py
+    src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_migrate_chroma_to_faiss_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_sqlite_metadata_store_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_cache_layer_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_embedding_router_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_chunk_strategy_router_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_memory_memory_backend_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_retrieval_feedback_py
+    src_zephyr_integration_vector_memory_in_process_vector_memory_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_bridge_py
+    src_zephyr_integration_vector_memory_sqlite_metadata_store_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
-    src_zephyr_integration_vector_memory_vector_bridge_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_ollama_embedding_py -->|导入依赖 / import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_vector_memory_retrieval_feedback_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector_memory_retrieval_feedback_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
-    src_zephyr_integration_vector_memory_sqlite_metadata_store_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_vector_bridge_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     src_zephyr_integration_vector_memory_vms_memory_backend_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
     src_zephyr_integration_vector_memory_vms_memory_backend_py -->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_in_process_vector_memory_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

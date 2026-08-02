@@ -74,7 +74,7 @@ flowchart TD
     src_zephyr_market_data_infrastructure_init_py ~~~ src_zephyr_market_data_models_init_py
     src_zephyr_market_data_models_init_py ~~~ src_zephyr_market_data_normalized_market_data_producer_init_py
     src_zephyr_market_data_normalized_market_data_producer_init_py ~~~ src_zephyr_market_data_services_init_py
-    src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>NormalizedMarketData<br/>生产者——D_MKT_DATA→D_FACTOR 数据供给。<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>从 ClickHouse c1_market.kline_daily<br/>加载日K行情，转为 CTR-001 NormalizedMarketData<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
     src_zephyr_market_data_vendor_registry_py["vendor注册表<br/>数据的注册表，登记和查询已注册的条目<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_registry<br/>文件: market_data/vendor_registry.py<br/>(设计态 / design)"]
     src_zephyr_market_data_normalized_market_data_producer_producer_py ~~~ src_zephyr_market_data_vendor_registry_py
     src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>行情数据包的raw_data_cache模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
@@ -83,8 +83,8 @@ flowchart TD
     src_zephyr_market_data_vendor_registry_py -.->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_connectors -.->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_autoload_py -.->|runtime / runtime| src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_normalized_market_data_producer_producer_py -.->|data / data| src_zephyr_market_data_raw_data_cache
     src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
+    src_zephyr_market_data_normalized_market_data_producer_producer_py -.->|data / data| src_zephyr_market_data_raw_data_cache
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_market_data_raw_data_cache -.->|data / data| D_DATA
     src_zephyr_market_data_autoload_py -.->|runtime / runtime| D_DATA
@@ -127,7 +127,7 @@ flowchart TD
     src_zephyr_market_data_infrastructure_init_py ~~~ src_zephyr_market_data_models_init_py
     src_zephyr_market_data_models_init_py ~~~ src_zephyr_market_data_normalized_market_data_producer_init_py
     src_zephyr_market_data_normalized_market_data_producer_init_py ~~~ src_zephyr_market_data_services_init_py
-    src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>NormalizedMarketData<br/>生产者——D_MKT_DATA→D_FACTOR 数据供给。<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>从 ClickHouse c1_market.kline_daily<br/>加载日K行情，转为 CTR-001 NormalizedMarketData<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
     src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

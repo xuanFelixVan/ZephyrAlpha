@@ -54,31 +54,31 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_trading_action_dispatcher_init_py["trading/action_dispatcher 包入口<br/>BRAIN 注释块文本编辑器（ActionDispatcher<br/>协作者，职责簇：纯文本块构建/插入/更新，无 I/O<br/>无状态）。<br/>文件: action_dispatcher/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_trading_admission_controller_py["准入控制器<br/>5.171 修复：admit(event: Any) Any 滥用——定义<br/>VerdictEvent Protocol<br/>admission_controller<br/>文件: trading/admission_controller.py<br/>(生产态 / production)"]
+    src_zephyr_trading_admission_controller_py["准入控制器<br/>替代 Any。运行时 runtime_checkable 支持<br/>isinstance 校验。defensive fallback<br/>admission_controller<br/>文件: trading/admission_controller.py<br/>(生产态 / production)"]
     src_zephyr_trading_auto_dispatcher_py["自动分发器<br/>AutoDispatcher — 守护进程内的轻量<br/>PipelineDispatcher<br/>auto_dispatcher<br/>文件: trading/auto_dispatcher.py<br/>(生产态 / production)"]
-    src_zephyr_trading_conductor_py["Conductor — AI session 全自动指挥官。<br/>交易包的conductor模块<br/>文件: trading/conductor.py<br/>(生产态 / production)"]
+    src_zephyr_trading_conductor_py["Conductor — AI session 全自动指挥官。<br/>- plan_cycle: 认领任务 + 文件冲突检测 + 并行分组<br/>文件: trading/conductor.py<br/>(生产态 / production)"]
     src_zephyr_trading_corporate_action_processor_py["公司行为处理器<br/>交易的处理器，处理加工数据<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>corporate_action_processor<br/>文件: trading/corporate_action_processor.py<br/>(设计态 / design)"]
     src_zephyr_trading_gpu_consensus_scheduler_py["GPU共识调度器<br/>交易的调度器，按时间或优先级安排任务<br/>gpu_consensus_scheduler<br/>文件: trading/gpu_consensus_scheduler.py<br/>(生产态 / production)"]
-    src_zephyr_trading_gpu_monitor_py["GPU监控<br/>NVIDIA GPU 状态采集器<br/>gpu_monitor<br/>文件: trading/gpu_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_trading_gpu_monitor_py["GPU监控<br/>通过 nvidia-smi 采集 GPU 使用率/显存，纳入<br/>ResourceOptimizationEngine 压力分级。<br/>gpu_monitor<br/>文件: trading/gpu_monitor.py<br/>(生产态 / production)"]
     src_zephyr_trading_ide_health_daemon_py["ide健康daemon<br/>TRAE IDE 幽灵窗口守护线程<br/>ide_health_daemon<br/>文件: trading/ide_health_daemon.py<br/>(生产态 / production)"]
     src_zephyr_trading_pnl_calculator["盈亏计算器<br/>盈亏计算的子目录，归集相关子模块<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: pnl_calculator/<br/>(设计态 / design)"]
     src_zephyr_trading_runtime_async_runtime_py["异步运行时<br/>事件循环引导 + run_in_executor 桥接。<br/>async_runtime<br/>文件: runtime/async_runtime.py<br/>(生产态 / production)"]
-    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>（settlement_reconciliation.py）<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
+    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>交易的结算对账（settlement_reconciliation.py），<br/>结算对账（settlement_reconciliation.py）相关功能<br/>的实现。<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
     src_zephyr_trading_speed_baseline_checker_py["测速基线检查器<br/>speed基线检查器，交易的检查器，检查条件是否满足<br/>。<br/>speed_baseline_checker<br/>文件: trading/speed_baseline_checker.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_broker_interface_py["经纪人接口<br/>D_EXECUTION_CORE — BrokerInterface<br/>文件: trading_contracts/broker_interface.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_broker_interface_py["经纪人接口<br/>券商接口抽象基类（OCP-003 OCP 扩展点）<br/>D_EXECUTION_CORE — BrokerInterface<br/>文件: trading_contracts/broker_interface.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py["资本分配结果<br/>资本allocation结果，执行的结果，封装操作结果的数<br/>据结构。<br/>capital_allocation_result<br/>文件: execution/capital_allocation_result.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["执行拒绝错误<br/>执行的异常，定义本模块的异常类型<br/>execution_rejection_error<br/>文件: execution/execution_rejection_error.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_execution_execution_report_py["执行报告<br/>Re-export wrapper: ExecutionReport 真源在<br/>zephyr.shared.contracts.execution_report<br/>（CTR-P1-007 codegen）<br/>文件: execution/execution_report.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_execution_fill_py["成交<br/>Re-export wrapper: Fill 真源在<br/>zephyr.shared.contracts.fill（CTR-005 codegen）<br/>文件: execution/fill.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_execution_execution_report_py["执行报告<br/>治本修复: 原文件重复定义 ExecutionReport 类<br/>（多真源），导致 isinstance 跨模块判断失败。<br/>execution_report<br/>文件: execution/execution_report.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_execution_fill_py["成交<br/>治本修复: 原文件重复定义 Fill 类<br/>（多真源），导致 isinstance 跨模块判断失败。<br/>文件: execution/fill.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_model_serving_request_py["模型服务请求<br/>执行的模型，定义数据结构和字段<br/>model_serving_request<br/>文件: execution/model_serving_request.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_execution_position_py["持仓<br/>Re-export wrapper: PositionSnapshot 真源在<br/>zephyr.shared.contracts.position（CTR-006<br/>codegen）<br/>文件: execution/position.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_execution_position_py["持仓<br/>治本修复: 原文件重复定义 PositionSnapshot 类<br/>（多真源），导致 isinstance 跨模块判断失败。<br/>文件: execution/position.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_factories_py["工厂<br/>py — 交易域数据契约工厂方法<br/>factories<br/>文件: trading_contracts/factories.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_market_instrument_py["market/instrument<br/>交易/market包的instrument模块<br/>文件: market/instrument.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["信号退化警告<br/>供signal; risk; pf_core使用<br/>signal_degradation_warning<br/>文件: market/signal_degradation_warning.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["过渡兼容层（DEPRECATED）—— Money 契约 canonical<br/>真<br/>源已收敛至 shared 侧<br/>文件: contracts/money.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["绩效attribution报告<br/>交易/契约包的performance_attribution_report模块<br/>文件: contracts<br/>/performance_attribution_report.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py["策略生命周期事件<br/>组合的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: contracts/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_risk_compliance_rule_py["合规规则<br/>供l10-compliance使用<br/>compliance_rule<br/>文件: risk/compliance_rule.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_risk_compliance_rule_py["合规规则<br/>风险的合规规则，供l10-compliance使用，合规规则，<br/>供l10-compliance使用相关功能的实现。<br/>compliance_rule<br/>文件: risk/compliance_rule.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py["风险限制违规错误<br/>风控的异常，定义本模块的异常类型<br/>risk_limit_violation_error<br/>文件: risk/risk_limit_violation_error.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["风险校验器协议<br/>风控的校验器，检查输入是否符合规则<br/>risk_validator_protocol<br/>文件: risk/risk_validator_protocol.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["交易终止开关<br/>供MOD-INF-022 ; MOD-INF-020使用<br/>trading_kill_switch<br/>文件: risk/trading_kill_switch.py<br/>(生产态 / production)"]
@@ -114,8 +114,8 @@ flowchart TD
     src_zephyr_trading_action_dispatcher_audit_log_writer_py["审计日志写入器<br/>（从 ActionDispatcher._write_triage_log 提取）<br/>_audit_log_writer<br/>文件: action_dispatcher/_audit_log_writer.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["文件生命周期管理器<br/>（从 ActionDispatcher._create_file /<br/>_delete_file / _version_backup 提取）<br/>_file_lifecycle_manager<br/>文件: action_dispatcher<br/>/_file_lifecycle_manager.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_search_replace_engine_py["searchreplace引擎<br/>搜索替换引擎（从<br/>ActionDispatcher._search_replace_file<br/>及两个底层方法提取）。<br/>_search_replace_engine<br/>文件: action_dispatcher<br/>/_search_replace_engine.py<br/>(生产态 / production)"]
-    src_zephyr_trading_autopilot_py["AutoPilot — AI session 自动找活干、认领任务。<br/>交易包的autopilot模块<br/>文件: trading/autopilot.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_execution_order_py["订单<br/>Re-export wrapper: Order 真源在<br/>zephyr.shared.contracts.order（CTR-004 codegen）<br/>文件: execution/order.py<br/>(生产态 / production)"]
+    src_zephyr_trading_autopilot_py["AutoPilot — AI session 自动找活干、认领任务。<br/>- scan / status_report -> 只读，告诉 AI<br/>当前有什么活<br/>文件: trading/autopilot.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_execution_order_py["订单<br/>治本修复: 原文件重复定义 Order 类（多真源），且<br/>TraceContext 未 import（NameError bug）。<br/>文件: execution/order.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py["风险仪表盘快照<br/>供risk; ops使用<br/>risk_dashboard_snapshot<br/>文件: risk/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_limits_py["风险limits<br/>供risk; pf_core使用<br/>risk_limits<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py["风险指标<br/>风控的报告器，汇总数据生成报告<br/>risk_metrics<br/>文件: risk/risk_metrics.py<br/>(生产态 / production)"]
@@ -129,15 +129,15 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_risk_risk_limits_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py ~~~ src_zephyr_trading_verdict_engine_py
-    src_zephyr_trading_protection_index_py["保护索引<br/>供zephyr.trading.verdict_engine;使用<br/>protection_index<br/>文件: trading/protection_index.py<br/>(生产态 / production)"]
+    src_zephyr_trading_protection_index_py["保护索引<br/>交易的保护索引，供zephyr.trading.verdict_engine;<br/>使用，保护索引，供zephyr.trading.verdict_engine;<br/>使用相关功能的实现。<br/>protection_index<br/>文件: trading/protection_index.py<br/>(生产态 / production)"]
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
@@ -154,17 +154,17 @@ flowchart TD
     D_ORCHESTRATOR["代理编排器<br/>代理编排器，负责 Agent<br/>任务全生命周期：任务入队、调度、沙箱执行、幻觉检<br/>测和收尾归档<br/>Agent Orchestrator<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_auto_dispatcher_py -->|导入依赖 / import_depends| D_ORCHESTRATOR
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_speed_baseline_checker_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_gpu_monitor_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_broker_interface_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_gpu_monitor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_auto_dispatcher_py -->|导入依赖 / import_depends| D_SHARED
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_position_py
     D_EX_CORE -->|contract / contract| src_zephyr_trading_trading_contracts_broker_interface_py
@@ -201,28 +201,28 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_trading_action_dispatcher_init_py["trading/action_dispatcher 包入口<br/>BRAIN 注释块文本编辑器（ActionDispatcher<br/>协作者，职责簇：纯文本块构建/插入/更新，无 I/O<br/>无状态）。<br/>文件: action_dispatcher/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_trading_admission_controller_py["准入控制器<br/>5.171 修复：admit(event: Any) Any 滥用——定义<br/>VerdictEvent Protocol<br/>admission_controller<br/>文件: trading/admission_controller.py<br/>(生产态 / production)"]
+    src_zephyr_trading_admission_controller_py["准入控制器<br/>替代 Any。运行时 runtime_checkable 支持<br/>isinstance 校验。defensive fallback<br/>admission_controller<br/>文件: trading/admission_controller.py<br/>(生产态 / production)"]
     src_zephyr_trading_auto_dispatcher_py["自动分发器<br/>AutoDispatcher — 守护进程内的轻量<br/>PipelineDispatcher<br/>auto_dispatcher<br/>文件: trading/auto_dispatcher.py<br/>(生产态 / production)"]
-    src_zephyr_trading_conductor_py["Conductor — AI session 全自动指挥官。<br/>交易包的conductor模块<br/>文件: trading/conductor.py<br/>(生产态 / production)"]
+    src_zephyr_trading_conductor_py["Conductor — AI session 全自动指挥官。<br/>- plan_cycle: 认领任务 + 文件冲突检测 + 并行分组<br/>文件: trading/conductor.py<br/>(生产态 / production)"]
     src_zephyr_trading_gpu_consensus_scheduler_py["GPU共识调度器<br/>交易的调度器，按时间或优先级安排任务<br/>gpu_consensus_scheduler<br/>文件: trading/gpu_consensus_scheduler.py<br/>(生产态 / production)"]
-    src_zephyr_trading_gpu_monitor_py["GPU监控<br/>NVIDIA GPU 状态采集器<br/>gpu_monitor<br/>文件: trading/gpu_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_trading_gpu_monitor_py["GPU监控<br/>通过 nvidia-smi 采集 GPU 使用率/显存，纳入<br/>ResourceOptimizationEngine 压力分级。<br/>gpu_monitor<br/>文件: trading/gpu_monitor.py<br/>(生产态 / production)"]
     src_zephyr_trading_ide_health_daemon_py["ide健康daemon<br/>TRAE IDE 幽灵窗口守护线程<br/>ide_health_daemon<br/>文件: trading/ide_health_daemon.py<br/>(生产态 / production)"]
     src_zephyr_trading_runtime_async_runtime_py["异步运行时<br/>事件循环引导 + run_in_executor 桥接。<br/>async_runtime<br/>文件: runtime/async_runtime.py<br/>(生产态 / production)"]
     src_zephyr_trading_speed_baseline_checker_py["测速基线检查器<br/>speed基线检查器，交易的检查器，检查条件是否满足<br/>。<br/>speed_baseline_checker<br/>文件: trading/speed_baseline_checker.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_broker_interface_py["经纪人接口<br/>D_EXECUTION_CORE — BrokerInterface<br/>文件: trading_contracts/broker_interface.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_broker_interface_py["经纪人接口<br/>券商接口抽象基类（OCP-003 OCP 扩展点）<br/>D_EXECUTION_CORE — BrokerInterface<br/>文件: trading_contracts/broker_interface.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py["资本分配结果<br/>资本allocation结果，执行的结果，封装操作结果的数<br/>据结构。<br/>capital_allocation_result<br/>文件: execution/capital_allocation_result.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["执行拒绝错误<br/>执行的异常，定义本模块的异常类型<br/>execution_rejection_error<br/>文件: execution/execution_rejection_error.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_execution_execution_report_py["执行报告<br/>Re-export wrapper: ExecutionReport 真源在<br/>zephyr.shared.contracts.execution_report<br/>（CTR-P1-007 codegen）<br/>文件: execution/execution_report.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_execution_fill_py["成交<br/>Re-export wrapper: Fill 真源在<br/>zephyr.shared.contracts.fill（CTR-005 codegen）<br/>文件: execution/fill.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_execution_execution_report_py["执行报告<br/>治本修复: 原文件重复定义 ExecutionReport 类<br/>（多真源），导致 isinstance 跨模块判断失败。<br/>execution_report<br/>文件: execution/execution_report.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_execution_fill_py["成交<br/>治本修复: 原文件重复定义 Fill 类<br/>（多真源），导致 isinstance 跨模块判断失败。<br/>文件: execution/fill.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_model_serving_request_py["模型服务请求<br/>执行的模型，定义数据结构和字段<br/>model_serving_request<br/>文件: execution/model_serving_request.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_execution_position_py["持仓<br/>Re-export wrapper: PositionSnapshot 真源在<br/>zephyr.shared.contracts.position（CTR-006<br/>codegen）<br/>文件: execution/position.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_execution_position_py["持仓<br/>治本修复: 原文件重复定义 PositionSnapshot 类<br/>（多真源），导致 isinstance 跨模块判断失败。<br/>文件: execution/position.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_factories_py["工厂<br/>py — 交易域数据契约工厂方法<br/>factories<br/>文件: trading_contracts/factories.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_market_instrument_py["market/instrument<br/>交易/market包的instrument模块<br/>文件: market/instrument.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["信号退化警告<br/>供signal; risk; pf_core使用<br/>signal_degradation_warning<br/>文件: market/signal_degradation_warning.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["过渡兼容层（DEPRECATED）—— Money 契约 canonical<br/>真<br/>源已收敛至 shared 侧<br/>文件: contracts/money.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["绩效attribution报告<br/>交易/契约包的performance_attribution_report模块<br/>文件: contracts<br/>/performance_attribution_report.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py["策略生命周期事件<br/>组合的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: contracts/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_risk_compliance_rule_py["合规规则<br/>供l10-compliance使用<br/>compliance_rule<br/>文件: risk/compliance_rule.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_risk_compliance_rule_py["合规规则<br/>风险的合规规则，供l10-compliance使用，合规规则，<br/>供l10-compliance使用相关功能的实现。<br/>compliance_rule<br/>文件: risk/compliance_rule.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py["风险限制违规错误<br/>风控的异常，定义本模块的异常类型<br/>risk_limit_violation_error<br/>文件: risk/risk_limit_violation_error.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["风险校验器协议<br/>风控的校验器，检查输入是否符合规则<br/>risk_validator_protocol<br/>文件: risk/risk_validator_protocol.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["交易终止开关<br/>供MOD-INF-022 ; MOD-INF-020使用<br/>trading_kill_switch<br/>文件: risk/trading_kill_switch.py<br/>(生产态 / production)"]
@@ -255,8 +255,8 @@ flowchart TD
     src_zephyr_trading_action_dispatcher_audit_log_writer_py["审计日志写入器<br/>（从 ActionDispatcher._write_triage_log 提取）<br/>_audit_log_writer<br/>文件: action_dispatcher/_audit_log_writer.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["文件生命周期管理器<br/>（从 ActionDispatcher._create_file /<br/>_delete_file / _version_backup 提取）<br/>_file_lifecycle_manager<br/>文件: action_dispatcher<br/>/_file_lifecycle_manager.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_search_replace_engine_py["searchreplace引擎<br/>搜索替换引擎（从<br/>ActionDispatcher._search_replace_file<br/>及两个底层方法提取）。<br/>_search_replace_engine<br/>文件: action_dispatcher<br/>/_search_replace_engine.py<br/>(生产态 / production)"]
-    src_zephyr_trading_autopilot_py["AutoPilot — AI session 自动找活干、认领任务。<br/>交易包的autopilot模块<br/>文件: trading/autopilot.py<br/>(生产态 / production)"]
-    src_zephyr_trading_trading_contracts_execution_order_py["订单<br/>Re-export wrapper: Order 真源在<br/>zephyr.shared.contracts.order（CTR-004 codegen）<br/>文件: execution/order.py<br/>(生产态 / production)"]
+    src_zephyr_trading_autopilot_py["AutoPilot — AI session 自动找活干、认领任务。<br/>- scan / status_report -> 只读，告诉 AI<br/>当前有什么活<br/>文件: trading/autopilot.py<br/>(生产态 / production)"]
+    src_zephyr_trading_trading_contracts_execution_order_py["订单<br/>治本修复: 原文件重复定义 Order 类（多真源），且<br/>TraceContext 未 import（NameError bug）。<br/>文件: execution/order.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py["风险仪表盘快照<br/>供risk; ops使用<br/>risk_dashboard_snapshot<br/>文件: risk/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_limits_py["风险limits<br/>供risk; pf_core使用<br/>risk_limits<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py["风险指标<br/>风控的报告器，汇总数据生成报告<br/>risk_metrics<br/>文件: risk/risk_metrics.py<br/>(生产态 / production)"]
@@ -270,15 +270,15 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_risk_risk_limits_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py ~~~ src_zephyr_trading_verdict_engine_py
-    src_zephyr_trading_protection_index_py["保护索引<br/>供zephyr.trading.verdict_engine;使用<br/>protection_index<br/>文件: trading/protection_index.py<br/>(生产态 / production)"]
+    src_zephyr_trading_protection_index_py["保护索引<br/>交易的保护索引，供zephyr.trading.verdict_engine;<br/>使用，保护索引，供zephyr.trading.verdict_engine;<br/>使用相关功能的实现。<br/>protection_index<br/>文件: trading/protection_index.py<br/>(生产态 / production)"]
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
@@ -299,7 +299,7 @@ flowchart TD
 flowchart TD
     src_zephyr_trading_corporate_action_processor_py["公司行为处理器<br/>交易的处理器，处理加工数据<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>corporate_action_processor<br/>文件: trading/corporate_action_processor.py<br/>(设计态 / design)"]
     src_zephyr_trading_pnl_calculator["盈亏计算器<br/>盈亏计算的子目录，归集相关子模块<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: pnl_calculator/<br/>(设计态 / design)"]
-    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>（settlement_reconciliation.py）<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
+    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>交易的结算对账（settlement_reconciliation.py），<br/>结算对账（settlement_reconciliation.py）相关功能<br/>的实现。<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
     src_zephyr_trading_corporate_action_processor_py ~~~ src_zephyr_trading_pnl_calculator
     src_zephyr_trading_pnl_calculator ~~~ src_zephyr_trading_settlement_reconciliation_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
