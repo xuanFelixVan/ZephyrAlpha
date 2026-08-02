@@ -1621,11 +1621,11 @@ entries:
   plain_zh: param分析器，回测的分析器，分析数据找出问题或规律。
 - module_path: src/zephyr/backtest/services/report_generator.py
   domain_id: D_BACKTEST
-  name_zh: 报告生成器
-  name_en: report_generator
-  desc_zh: 报告生成器模块
-  desc_en: ''
-  plain_zh: 报告生成器，回测的生成器，按规则生成所需的数据或报告。
+  name_zh: "回测报告生成器"
+  name_en: "Backtest Report Generator"
+  desc_zh: "将回测结果转为HTML/TEXT报告,含指标表/权益曲线SVG/交易日志/过拟合警告,纯标准库自包含"
+  desc_en: ""
+  plain_zh: "给定回测结果数据,生成一份能直接打开看的HTML报告,里面有收益/Sharpe/回撤/胜率等指标表,可选画权益曲线和列交易明细。纯字符串模板渲染,不需要装额外库。"
 - module_path: src/zephyr/backtest/services/result_comparator.py
   domain_id: D_BACKTEST
   name_zh: 结果比较器
