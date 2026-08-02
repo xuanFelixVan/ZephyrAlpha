@@ -6,7 +6,7 @@ status: Active
 version: "0.1.0"
 design_maturity: production
 ttl: permanent
-responsibility_domain: D_EX_CORE
+responsibility_domain: 
 ---
 
 # 持仓跟踪器 (Position Tracker) — D-EX-CORE-04
