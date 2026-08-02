@@ -18,7 +18,7 @@
 
 module_id: MOD-GOVERNANCE
 meta:
-  module_id: GOV-TECH-VC-INFRA-STACK-001
+  module_id: CFG-TECH-VC-INFRA-STACK-001
   title: "Vibe Coding 2.0 Infrastructure Tech Stack / 基建技术选型栈"
   schema_version: "2.0"
   status: active
