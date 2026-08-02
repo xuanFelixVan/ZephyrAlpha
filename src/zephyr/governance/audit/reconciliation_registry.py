@@ -7869,13 +7869,63 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
         if reg_result.returncode == 0:
 
+            # 治本（2026-08-02 audit-02）：--register 更新 rules_integrity_db.json 后 MUST 调
+
+            # _commit_auto 提交，否则 DB 变更残留工作区不入库。原仅 return action="auto_committed"
+
+            # 但未调 _commit_auto（对标 make_manifest_reconciler L2177-2217 模式补齐）。
+
+            _db_rel = "scripts/governance/meta/rules_integrity_db.json"
+
+            _diff_result = gateway.run_git(["git", "diff", "--name-only", "--", _db_rel])
+
+            if _diff_result.returncode == 0 and not _diff_result.stdout.strip():
+
+                return ReconcileResult(
+
+                    action="clean",
+
+                    detail=f"rules_integrity baseline up to date, report={report_path.name}",
+
+                )
+
+            _auto_msg = "chore(integrity): auto-re-register rules_integrity_db by GitCommitGateway post-commit"
+
+            _abs_db = str(project_root / _db_rel)
+
+            _commit_result = gateway._commit_auto(session_id, [_abs_db], _auto_msg)
+
+            if _commit_result.status == "OK":
+
+                return ReconcileResult(
+
+                    action="auto_committed",
+
+                    detail=f"rules_integrity baseline re-registered post-commit "
+
+                           f"(C层基线已同步合法 commit), report={report_path.name}",
+
+                )
+
+            if _commit_result.status == "NOTHING_TO_COMMIT":
+
+                return ReconcileResult(
+
+                    action="clean",
+
+                    detail=f"rules_integrity baseline no drift (auto-commit found no staged changes), "
+
+                           f"report={report_path.name}",
+
+                )
+
             return ReconcileResult(
 
-                action="auto_committed",
+                action="warn",
 
-                detail=f"rules_integrity baseline re-registered post-commit "
+                detail=f"rules_integrity --register succeeded but auto-commit failed "
 
-                       f"(C层基线已同步合法 commit), report={report_path.name}",
+                       f"({_commit_result.status}): {_commit_result.message[:200]}",
 
             )
 
