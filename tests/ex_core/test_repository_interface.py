@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-056 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 """Repository Interface 测试——执行域仓储接口。
 
