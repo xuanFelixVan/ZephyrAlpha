@@ -99,12 +99,69 @@ def _cjk_len(s: str) -> int:
 
 
 def _is_in_scope(file_path: str) -> bool:
-    """判断 file_path 是否在检测范围内（src/zephyr/ 或 scripts/ 下）。
+    """判断 file_path 是否在检测范围内（能力模块，需大白话简介）。
 
-    与 translation_coverage_gate.py 同范围（tests/ 不在 depgraph file_path 中，
-    天然排除）。
+    范围：src/zephyr/ + scripts/ 下的 .py 能力模块。豁免（非能力模块，不需要大白话简介）：
+      - tests/ 路径段（is_test_exempt 单一真源，含 scripts/tests/）—— 测试脚本
+      - demos/ 路径段 —— 演示脚本
+      - test_*.py / *_test.py 文件名 —— 测试文件（任意层级，含 backup/test_*、construction/test_*）
+      - __init__.py —— 包初始化，不构成独立模块
+      - _archive/ —— 归档废弃代码
+
+    治本（2026-08-02，#ARCH-TRANSLATION-SCOPE-NARROW）：原实现漏调 is_test_exempt，假设
+    "tests/ 不在 depgraph file_path 中"——但 scripts/tests/smoke_test_*.py 实际已登记在
+    depgraph，导致 7 条测试脚本被误报为漂移。同时未豁免 demos/、test_ 文件名，导致
+    scripts/demos/*、scripts/backup/test_* 同类误报。现与 translation_coverage_gate._is_in_scope
+    统一收窄。两处 MUST 保持一致（同范围铁律——复制而非共享避免跨域依赖，同步靠测试覆盖保证）。
+
+    is_test_exempt 懒加载：reconciler → commit_gate_registry → reconciliation_registry →
+    reconciler 存在循环导入，顶层 import 会部分绑定失败（NameError）。改为函数内懒加载+
+    模块级缓存——调用时（commit 后全扫）所有模块已加载完毕，懒加载安全且零循环风险。
+
+    注意：scripts/backup/ch_vm_ssh.py（无 test_ 前缀，有 blueprint MOD-INF-043）、
+    scripts/ide_health_service.py、scripts/record_session_start_commit.py 等真能力脚本
+    不命中任何豁免规则，仍在范围内（需大白话简介）。
     """
+    # 只检测 .py 文件（depgraph 也登记 .ps1/.sh/.yaml，翻译注册表面向 Python 模块）
+    if not file_path.endswith(".py"):
+        return False
+    # tests/ 路径段（含 scripts/tests/）—— is_test_exempt 单一真源（懒加载，见模块级 _load_is_test_exempt）
+    if _load_is_test_exempt()(file_path):
+        return False
+    # demos/ 路径段——演示脚本，非能力模块
+    _norm = file_path.replace("\\", "/")
+    if "demos" in _norm.split("/"):
+        return False
+    # test_*.py / *_test.py 文件名——测试文件（任意层级）
+    _base = _norm.rsplit("/", 1)[-1]
+    if _base.startswith("test_") or _base.endswith("_test.py"):
+        return False
+    # 包初始化 + 归档
+    if file_path.endswith("__init__.py"):
+        return False
+    if "/_archive/" in file_path or file_path.startswith("_archive/"):
+        return False
     return file_path.startswith(_SRC_ZEPHYR_PREFIX) or file_path.startswith(_SCRIPTS_PREFIX)
+
+
+# is_test_exempt 懒加载缓存——避免循环导入（reconciler ↔ commit_gate_registry ↔
+# reconciliation_registry）顶层 import 部分绑定。首次调用后缓存，全扫 8000+ 节点零开销。
+_is_test_exempt_cache = None
+
+
+def _load_is_test_exempt():
+    """懒加载 commit_gate_registry.is_test_exempt（tests/ 路径段判断单一真源）。
+
+    顶层 import 因循环导入部分绑定失败（NameError），函数内懒加载在调用时所有模块已加载，
+    安全。缓存避免全扫 8000+ 节点重复 import 开销。
+    """
+    global _is_test_exempt_cache
+    if _is_test_exempt_cache is None:
+        from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: WPS433
+            is_test_exempt,
+        )
+        _is_test_exempt_cache = is_test_exempt
+    return _is_test_exempt_cache
 
 
 def _query_depgraph_nodes() -> list[dict[str, str]] | None:

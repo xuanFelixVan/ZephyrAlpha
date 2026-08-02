@@ -92,6 +92,46 @@ class TestIsInScope:
     def test_root_level_out_of_scope(self) -> None:
         assert _is_in_scope("foo.py") is False
 
+    # --- 治本 2026-08-02 #ARCH-TRANSLATION-SCOPE-NARROW：非业务脚本豁免 ---
+
+    def test_scripts_tests_exempt(self) -> None:
+        """scripts/tests/ 下 smoke 测试脚本豁免（reconciler 曾漏豁免致误报）。"""
+        assert _is_in_scope("scripts/tests/smoke_test_ede_e2e.py") is False
+
+    def test_demos_dir_exempt(self) -> None:
+        """scripts/demos/ 演示脚本豁免。"""
+        assert _is_in_scope("scripts/demos/demo_e2e_pipeline.py") is False
+
+    def test_test_filename_exempt(self) -> None:
+        """test_*.py / *_test.py 文件名豁免（任意层级）。"""
+        assert _is_in_scope("scripts/backup/test_get_redis_conn.py") is False
+        assert _is_in_scope("scripts/construction/test_deepseek_api.py") is False
+        assert _is_in_scope("scripts/test_exam_scoring_unit.py") is False
+
+    def test_init_exempt(self) -> None:
+        """__init__.py 包初始化文件豁免。"""
+        assert _is_in_scope("src/zephyr/governance/audit/__init__.py") is False
+
+    def test_archive_exempt(self) -> None:
+        """_archive/ 归档废弃代码豁免。"""
+        assert _is_in_scope("src/zephyr/governance/_archive/old.py") is False
+
+    def test_non_py_exempt(self) -> None:
+        """非 .py 文件豁免（翻译注册表面向 Python 模块）。"""
+        assert _is_in_scope("src/zephyr/governance/audit/config.yaml") is False
+
+    def test_windows_backslash_normalized(self) -> None:
+        """Windows 反斜杠路径归一化（tests/ 豁免仍生效）。"""
+        assert _is_in_scope("scripts\\tests\\smoke_test_x.py") is False
+
+    # --- 真能力脚本仍在范围内（不误豁免）---
+
+    def test_real_capability_scripts_in_scope(self) -> None:
+        """有 blueprint 的真能力脚本不命中豁免规则，仍需大白话简介。"""
+        assert _is_in_scope("scripts/ide_health_service.py") is True
+        assert _is_in_scope("scripts/record_session_start_commit.py") is True
+        assert _is_in_scope("scripts/backup/ch_vm_ssh.py") is True
+
 
 # ---------------------------------------------------------------------------
 # TestCheckTranslationEntry

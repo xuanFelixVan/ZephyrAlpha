@@ -41,6 +41,7 @@ from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
     ReconcilerSpec,
 )
 from zephyr.governance.audit.translation_coverage_reconciler import (  # noqa: E402
+    _is_in_scope,
     make_translation_coverage_reconciler,
 )
 
@@ -63,6 +64,56 @@ class TestReconcilerSpec:
     def test_is_reconciler_spec(self) -> None:
         spec = make_translation_coverage_reconciler(MagicMock())
         assert isinstance(spec, ReconcilerSpec)
+
+
+# ---------------------------------------------------------------------------
+# TestIsInScope
+# ---------------------------------------------------------------------------
+
+class TestIsInScope:
+    """_is_in_scope 范围判断（与 translation_coverage_gate._is_in_scope 同范围铁律）。
+
+    治本 2026-08-02 #ARCH-TRANSLATION-SCOPE-NARROW：reconciler 原漏调 is_test_exempt，
+    导致 scripts/tests/* 误报为漂移。本组锁定豁免规则，与 gate 测试同步。
+    """
+
+    def test_src_zephyr_in_scope(self) -> None:
+        assert _is_in_scope("src/zephyr/governance/audit/foo.py") is True
+
+    def test_scripts_governance_in_scope(self) -> None:
+        assert _is_in_scope("scripts/governance/foo.py") is True
+
+    def test_scripts_tests_exempt(self) -> None:
+        """scripts/tests/ 下 smoke 测试脚本豁免（治本：原漏调 is_test_exempt 致误报）。"""
+        assert _is_in_scope("scripts/tests/smoke_test_ede_e2e.py") is False
+
+    def test_demos_dir_exempt(self) -> None:
+        assert _is_in_scope("scripts/demos/demo_e2e_pipeline.py") is False
+
+    def test_test_filename_exempt(self) -> None:
+        """test_*.py 文件名豁免（任意层级）。"""
+        assert _is_in_scope("scripts/backup/test_get_redis_conn.py") is False
+        assert _is_in_scope("scripts/construction/test_deepseek_api.py") is False
+
+    def test_init_exempt(self) -> None:
+        assert _is_in_scope("src/zephyr/governance/audit/__init__.py") is False
+
+    def test_archive_exempt(self) -> None:
+        assert _is_in_scope("src/zephyr/_archive/old.py") is False
+
+    def test_non_py_exempt(self) -> None:
+        """非 .py 文件豁免（depgraph 也登记 .ps1/.sh/.yaml，但翻译注册表面向 Python）。"""
+        assert _is_in_scope("src/zephyr/governance/audit/config.yaml") is False
+        assert _is_in_scope("scripts/governance/deploy.ps1") is False
+
+    def test_docs_out_of_scope(self) -> None:
+        assert _is_in_scope("docs/foo.md") is False
+
+    def test_real_capability_scripts_in_scope(self) -> None:
+        """真能力脚本（有 blueprint，无 test_ 前缀）仍需大白话简介。"""
+        assert _is_in_scope("scripts/ide_health_service.py") is True
+        assert _is_in_scope("scripts/record_session_start_commit.py") is True
+        assert _is_in_scope("scripts/backup/ch_vm_ssh.py") is True
 
 
 # ---------------------------------------------------------------------------

@@ -86,17 +86,50 @@ _OBSERVATION_PERIOD = True
 # plain_zh 最低 CJK 字符数（与 add_module_translation.py 写入工具一致，防过短无信息简介）
 _MIN_CJK = 8
 
-# 范围限定：src/zephyr/ + scripts/ 下（tests/ 由 is_test_exempt 豁免）
+# 范围限定：src/zephyr/ + scripts/ 下的 .py 能力模块（tests/demos/test_ 文件豁免）
 _SRC_ZEPHYR_PREFIX = "src/zephyr/"
 _SCRIPTS_PREFIX = "scripts/"
 
 
 def _is_in_scope(file_path: str) -> bool:
-    """判断文件路径是否在 gate 检测范围内（src/zephyr/ 或 scripts/ 下，tests/ 豁免）。
+    """判断 file_path 是否在检测范围内（能力模块，需大白话简介）。
 
-    与 NEW-FILE-DEPGRAPH-ENFORCEMENT 同范围（真源：commit_gate_registry.is_test_exempt）。
+    范围：src/zephyr/ + scripts/ 下的 .py 能力模块。豁免（非能力模块，不需要大白话简介）：
+      - tests/ 路径段（is_test_exempt 单一真源，含 scripts/tests/）—— 测试脚本
+      - demos/ 路径段 —— 演示脚本
+      - test_*.py / *_test.py 文件名 —— 测试文件（任意层级，含 backup/test_*、construction/test_*）
+      - __init__.py —— 包初始化，不构成独立模块
+      - _archive/ —— 归档废弃代码
+
+    治本（2026-08-02，#ARCH-TRANSLATION-SCOPE-NARROW）：原范围过宽——scripts/tests/*、
+    scripts/demos/*、scripts/backup/test_* 等测试/演示脚本被误判为需翻译的能力模块，
+    在 reconciler 侧制造漂移误报（reconciler 还漏调 is_test_exempt，gate 与 reconciler
+    两处 _is_in_scope 反方向不一致）。现统一收窄。本函数与
+    translation_coverage_reconciler._is_in_scope MUST 保持一致（同范围铁律——两处复制
+    而非共享是为了避免 governance.audit → gov_enforcement 的跨域依赖，同步靠测试覆盖保证）。
+
+    注意：scripts/backup/ch_vm_ssh.py（无 test_ 前缀，有 blueprint MOD-INF-043）、
+    scripts/ide_health_service.py、scripts/record_session_start_commit.py 等真能力脚本
+    不命中任何豁免规则，仍在范围内（需大白话简介）。
     """
+    # 只检测 .py 文件（翻译注册表面向 Python 模块）
+    if not file_path.endswith(".py"):
+        return False
+    # tests/ 路径段（含 scripts/tests/）—— is_test_exempt 单一真源
     if is_test_exempt(file_path):
+        return False
+    # demos/ 路径段——演示脚本，非能力模块
+    _norm = file_path.replace("\\", "/")
+    if "demos" in _norm.split("/"):
+        return False
+    # test_*.py / *_test.py 文件名——测试文件（任意层级）
+    _base = _norm.rsplit("/", 1)[-1]
+    if _base.startswith("test_") or _base.endswith("_test.py"):
+        return False
+    # 包初始化 + 归档
+    if file_path.endswith("__init__.py"):
+        return False
+    if "/_archive/" in file_path or file_path.startswith("_archive/"):
         return False
     return file_path.startswith(_SRC_ZEPHYR_PREFIX) or file_path.startswith(_SCRIPTS_PREFIX)
 
