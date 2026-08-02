@@ -15,8 +15,8 @@ last_updated: "2026-08-02"
 priority: P2
 blueprint_level: module
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: generated
 ---
 
 # MOD-RPT-027 A股交易记录模板引擎 — A股交易记录模板引擎 蓝图

@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 26 | Module Count | 26 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 91 | Cross-domain Incoming | 91 |
+| 跨域入边 | 92 | Cross-domain Incoming | 92 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 26 | Production Modules | 26 |
@@ -121,7 +121,7 @@ flowchart TD
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|contract / contract| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_PF_CORE -->|contract / contract| src_zephyr_shared_contracts_target_portfolio_py
-    D_PF_CORE -.->|contract / contract| src_zephyr_shared_contracts_performance_attribution_report_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
@@ -136,7 +136,6 @@ flowchart TD
     D_TRADING -->|测试依赖 / test_depends| src_zephyr_shared_contracts_fill_py
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -287,14 +286,14 @@ flowchart TD
 | 46 | D_PF_ALLOC 组合分配: 策略生命周期事件 / strategy_lifecycle_event (pf_alloc/str... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
 | 47 | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
 | 48 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 49 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 50 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
-| 51 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | contract / contract |
-| 52 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 53 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
-| 54 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
-| 55 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
-| 56 | D_PF_CORE 组合核心: 决策编排器 (pf_core/decision_orchestrator.py) | → | 绩效attribution报告 / performance_attribution_report (con... | contract / contract |
+| 49 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
+| 50 | D_PF_CORE 组合核心: 组合优化器 / Portfolio Optimizer (core/portfolio_optimize... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 51 | D_PF_CORE 组合核心: 组合优化器 / Portfolio Optimizer (core/portfolio_optimize... | → | contracts/target_portfolio.py | contract / contract |
+| 52 | D_PF_CORE 组合核心: 组合优化器 / Portfolio Optimizer (core/portfolio_optimize... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
+| 53 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 54 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
+| 55 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
+| 56 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
 | 57 | D_POSITION 仓位管理: 持仓sizing引擎 / position_sizing_engine (core/position_si... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 58 | D_POSITION 仓位管理: Position Sizing Engine 测试 (MOD-POS-001 阶段1)。 (positi... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
 | 59 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
@@ -333,7 +332,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 19 个外部域直接连接（出边 11 条 + 入边 91 条 = 102 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 19 个外部域直接连接（出边 11 条 + 入边 92 条 = 103 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -343,8 +342,8 @@ graph LR
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
-    D_REPORTING["D_REPORTING<br/>报告"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
+    D_REPORTING["D_REPORTING<br/>报告"]
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_EX_SOR["D_EX_SOR<br/>执行路由"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
@@ -362,8 +361,8 @@ graph LR
     D_INFRASTRUCTURE -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
     D_TRADING -->|18条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_EX_CORE -->|16条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_PF_CORE -->|10条 contract / contract, 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_REPORTING -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
-    D_PF_CORE -->|9条 contract / contract, 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_FUNDAMENTAL_SIGNAL -->|9条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_EX_SOR -->|7条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE -->|6条 导入依赖 / import_depends| D_INFRASTRUCTURE

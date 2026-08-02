@@ -14,9 +14,9 @@ date: "2026-08-02"
 last_updated: "2026-08-02"
 priority: P2
 blueprint_level: module
-responsibility_domain:
+responsibility_domain: 
 design_maturity: production
-build_status: generated
+build_status: stable
 ---
 
 # MOD-RPT-013 Report Version Manager — 报告版本管理器 蓝图

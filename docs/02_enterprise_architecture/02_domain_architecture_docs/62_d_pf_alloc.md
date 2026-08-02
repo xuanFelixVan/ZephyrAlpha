@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 6 | Module Count | 6 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 5 | Production Modules | 5 |
@@ -56,7 +56,7 @@ flowchart TD
     src_zephyr_pf_alloc_batched_position_builder_py["批量持仓构建器<br/>一次性为多个策略批量生成目标持仓，避免逐个构建的<br/>延迟，提升组合分配效率。<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["core/multi_strategy_capital_allocator<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["core/signal_synthesis_combiner<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["core/strategy_correlation_gate<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["策略相关性门禁<br/>G12 相关性门禁: 策略两两之间检查相关性/因子重叠<br/>/股票池重叠/行业集中度/尾部相关, 超阈值产出<br/>PA-E03 CorrelationGateTriggered,<br/>阻止过度同质化策略组合上线<br/>Strategy Correlation Gate<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>pf_alloc的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>默认股票多头策略。实现 StrategyBase<br/>(OCP-002)，等权或信号加权配置。<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_batched_position_builder_py ~~~ src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py
@@ -67,16 +67,16 @@ flowchart TD
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
-    D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -96,7 +96,7 @@ flowchart TD
 flowchart TD
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["core/multi_strategy_capital_allocator<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["core/signal_synthesis_combiner<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["core/strategy_correlation_gate<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["策略相关性门禁<br/>G12 相关性门禁: 策略两两之间检查相关性/因子重叠<br/>/股票池重叠/行业集中度/尾部相关, 超阈值产出<br/>PA-E03 CorrelationGateTriggered,<br/>阻止过度同质化策略组合上线<br/>Strategy Correlation Gate<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py["策略生命周期事件<br/>pf_alloc的事件，定义和分发事件<br/>strategy_lifecycle_event<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py["默认权益策略<br/>默认股票多头策略。实现 StrategyBase<br/>(OCP-002)，等权或信号加权配置。<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_core_signal_synthesis_combiner_py
@@ -136,20 +136,20 @@ flowchart TD
 | 3 | 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
 | 4 | Multi-Strategy Capital Allocator — 多策略资金分配器 (MOD... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 5 | Signal Synthesis Combiner — 信号合成器 (MOD-PA-002) (cor... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 6 | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 6 | 策略相关性门禁 / Strategy Correlation Gate (core/strategy... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 7 | 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
-| 2 | D_PF_CORE 组合核心: 决策编排器 (pf_core/decision_orchestrator.py) | → | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
+| 1 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | 策略相关性门禁 / Strategy Correlation Gate (core/strategy... | 导入依赖 / import_depends |
+| 2 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | 策略相关性门禁 / Strategy Correlation Gate (core/strategy... | 导入依赖 / import_depends |
 | 3 | D_PF_CORE 组合核心: 包入口 / D_PORTFOLIO_CORE — Portfolio Construction Strat... | → | 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 7 条 + 入边 3 条 = 10 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 7 条 + 入边 4 条 = 11 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -162,7 +162,7 @@ graph LR
     D_PF_ALLOC -->|4条 导入依赖 / import_depends| D_SHARED
     D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_GOVERNANCE
-    D_PF_CORE -->|3条 导入依赖 / import_depends| D_PF_ALLOC
+    D_PF_CORE -->|4条 导入依赖 / import_depends| D_PF_ALLOC
 ```
 
 ## 说明 / Notes

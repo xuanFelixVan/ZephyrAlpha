@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """Performance Attribution Engine 测试 (MOD-PF-007 / PC-10)
 
 覆盖: Brinson 三因子守恒、因子归因、风险归因(RK-16 复用)、IC 衰减降级、
