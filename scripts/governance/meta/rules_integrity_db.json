@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "d1776844dae2a436",
+      "hash": "f9adf4f3c3431e1a",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "03a2a15eb6a1022b",
+      "hash": "732b10ce360178b3",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "6667938bfa5ab1e7",
+      "hash": "6c0611b52cc70832",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -71,6 +71,6 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-08-02T08:10:59.201876+00:00",
-  "last_check_at": "2026-08-02T07:54:52.832318+00:00"
+  "registered_at": "2026-08-02T08:15:54.579949+00:00",
+  "last_check_at": "2026-08-02T08:15:56.847969+00:00"
 }

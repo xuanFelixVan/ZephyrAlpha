@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-RUNTIME-INTRADAY | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """ZephyrAlpha 交易运行时入口层。
 
 承载盘中/盘后等运行时编排器，把各域组件（D-DATA/D-FACTOR/D-INFRA）组装成
