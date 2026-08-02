@@ -20815,11 +20815,11 @@ entries:
   plain_zh: 结果分析器，模拟的分析器，分析数据找出问题或规律。
 - module_path: src/zephyr/simulation/risk_simulator.py
   domain_id: D_SIMULATION
-  name_zh: 风险模拟器
-  name_en: risk_simulator
-  desc_zh: 风险模拟器（risk_simulator.py）
-  desc_en: ''
-  plain_zh: "风险模拟器，模拟仿真（risk simulator）"
+  name_zh: "风控仿真器"
+  name_en: "Risk Simulator"
+  desc_zh: "VaR(风险价值)模拟+回撤模拟+熔断模拟,基于收益率序列计算多方法VaR/CVaR/最大回撤/熔断触发"
+  desc_en: ""
+  plain_zh: "给定一段收益率数据,算出最坏情况下可能亏多少(VaR)和亏的时候平均亏多少(CVaR),再模拟最大回撤有多大/多久能恢复/是否触发熔断阈值。纯数学计算,不决定买卖。"
 - module_path: src/zephyr/simulation/scenario_generator.py
   domain_id: D_SIMULATION
   name_zh: 场景生成器
