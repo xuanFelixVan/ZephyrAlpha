@@ -4,16 +4,16 @@ title: "持仓跟踪器蓝图 — Fill回调驱动+平均成本+PositionSnapshot
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
+design_maturity: production
 ttl: permanent
-responsibility_domain: 
+responsibility_domain: D_EX_CORE
 ---
 
 # 持仓跟踪器 (Position Tracker) — D-EX-CORE-04
 
-> **优先级**: P0 | **成熟度**: design | **建设标记**: ✅可建
+> **优先级**: P0 | **成熟度**: production | **建设标记**: ✅可建
 > **设计真源**: `D:\临时工作区\依赖图\08-D-EX-CORE-执行核心域.md` §1 D-EX-CORE-04
-> **depgraph**: MOD-EX-002 (design/planned/can_build=1, node_id=7451163)
+> **depgraph**: MOD-EX-002 (production/testing/can_build=1, node_id=7451163)
 
 ## 1. 大白话简介
 

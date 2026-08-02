@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.ex_core.position_tracker.tracker
 # [CONSUMERS] zephyr.governance.adapters.simulation_broker
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving

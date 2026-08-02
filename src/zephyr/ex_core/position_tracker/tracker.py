@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.shared.contracts.position; zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS] zephyr.governance.adapters.simulation_broker; zephyr.ex_core.trading_session
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] Decimal-only金额计算; PositionSnapshot frozen不可变; apply_fill需显式side(Fill契约无side字段)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
