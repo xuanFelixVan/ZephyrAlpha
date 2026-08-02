@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.core.data_handler
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.infrastructure.database_service; zephyr.governance.data_governance.miniqmt_provider
+# [DEPENDENCIES] zephyr.infrastructure.database_service; zephyr.governance.data_governance.miniqmt_provider; zephyr.data.pit_query; zephyr.data.ch_reader
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
@@ -95,6 +95,7 @@ class BacktestDataHandler:
         date_column: str = "date",
         symbol_column: str = "symbol",
         pit_manager: PITManager | None = None,
+        fundamental_data: pd.DataFrame | None = None,
     ):
         """初始化数据处理器
 
@@ -104,6 +105,8 @@ class BacktestDataHandler:
             date_column: 日期列名
             symbol_column: symbol列名
             pit_manager: PIT管理器实例(可选,默认自动创建)
+            fundamental_data: PIT财务数据(可选,含symbol/report_period/announce_date/eps_basic等列)。
+                预加载全部版本,get_bar时按announce_date<=date过滤取最新(AS OF JOIN语义)。
 
         Raises:
             DataHandlerError: 数据格式无效
@@ -115,6 +118,7 @@ class BacktestDataHandler:
         self._date_column = date_column
         self._symbol_column = symbol_column
         self._pit_manager = pit_manager or PITManager()
+        self._fundamental_data = fundamental_data  # PIT 财务数据（全版本预加载）
         self._dates: list[Any] = []
         self._current_idx = 0
 
@@ -161,11 +165,14 @@ class BacktestDataHandler:
     def get_bar(self, date: object) -> pd.DataFrame:
         """获取指定日期的bar数据(PIT:仅返回该日期的数据)
 
+        若已加载 fundamental_data，自动合并 PIT 正确的财务数据（AS OF JOIN 语义：
+        仅返回 announce_date <= date 的最新版本，消除前视偏差）。
+
         Args:
             date: 日期
 
         Returns:
-            该日期的所有symbol的OHLCV数据
+            该日期的所有symbol的OHLCV数据(+财务列如有)
 
         Raises:
             DataHandlerError: 日期不存在
@@ -181,6 +188,58 @@ class BacktestDataHandler:
         if bar.empty:
             raise DataHandlerError(f"日期{date}无数据")
 
+        # PIT 财务数据合并（AS OF JOIN：announce_date <= date 的最新版本）
+        if self._fundamental_data is not None and not self._fundamental_data.empty:
+            bar = self._merge_fundamental_pit(bar, date)
+
+        return bar
+
+    def _merge_fundamental_pit(self, bar: pd.DataFrame, date: object) -> pd.DataFrame:
+        """将 PIT 正确的财务数据合并到 bar（AS OF JOIN 语义）。
+
+        PIT 铁律（蓝图 §5.1）：仅使用 announce_date <= date 的最新版本，
+        禁止使用查询时点之后才公告的修正数据（消除前视偏差）。
+
+        Args:
+            bar: OHLCV bar 数据
+            date: 当前回测日期
+
+        Returns:
+            合并财务列后的 bar（left join，无财务数据的 symbol 保留 NaN）
+        """
+        fund = self._fundamental_data
+        date_str = pd.Timestamp(date).strftime("%Y-%m-%d")
+
+        # PIT 过滤：只保留 announce_date <= date 的版本
+        pit_visible = fund[fund["announce_date"] <= date_str].copy()
+        if pit_visible.empty:
+            return bar
+
+        # AS OF JOIN：每个 symbol 取最新 report_period 的最新 announce_date 版本
+        pit_latest = (
+            pit_visible
+            .sort_values(["symbol", "report_period", "announce_date"])
+            .groupby("symbol", as_index=False)
+            .tail(1)
+        )
+
+        # 选择要合并的列（排除已有的 key 列）
+        merge_cols = [c for c in pit_latest.columns if c not in bar.columns]
+        if not merge_cols:
+            return bar
+
+        # 确保 symbol 列类型一致后 left join
+        bar = bar.copy()
+        bar["_symbol_key"] = bar[self._symbol_column].astype(str)
+        pit_latest = pit_latest.copy()
+        pit_latest["_symbol_key"] = pit_latest["symbol"].astype(str)
+
+        bar = bar.merge(
+            pit_latest[["_symbol_key"] + merge_cols],
+            on="_symbol_key",
+            how="left",
+        )
+        bar = bar.drop(columns=["_symbol_key"])
         return bar
 
     def get_history(self, date: object, lookback: int = 1) -> pd.DataFrame:
@@ -272,11 +331,13 @@ class BacktestDataHandler:
         end_date: str,
         database_service: object | None = None,
         table: str = "daily_kline",
+        fundamental_tables: list[str] | None = None,
     ) -> "BacktestDataHandler":
         """从ClickHouse加载OHLCV数据（通过 DatabaseService）
 
         v1.1.0 实现：通过 DatabaseService 访问 ClickHouse(c1_market)，
         禁止裸 clickhouse_driver.connect。
+        v1.3.0 新增：fundamental_tables 参数，加载 PIT 财务数据（#ARCH-CH-021 P0-5）。
 
         Args:
             symbols: symbol列表
@@ -284,6 +345,8 @@ class BacktestDataHandler:
             end_date: 结束日期(YYYY-MM-DD)
             database_service: DatabaseService实例(可选,默认自动创建)
             table: ClickHouse表名(默认daily_kline)
+            fundamental_tables: PIT财务表列表(可选,如["income_statement","balance_sheet"])。
+                加载全版本(含修正公告),get_bar时按announce_date<=date过滤取最新(AS OF JOIN)。
 
         Returns:
             BacktestDataHandler实例
@@ -345,9 +408,96 @@ class BacktestDataHandler:
         df["date"] = pd.to_datetime(df["date"])
 
         _logger.info(
-            "ClickHouse 加载完成: %d rows, symbols=%s", len(df), symbols
+            "ClickHouse OHLCV 加载完成: %d rows, symbols=%s", len(df), symbols
         )
-        return cls(data=df, date_column="date", symbol_column="symbol")
+
+        # PIT 财务数据加载（#ARCH-CH-021 P0-5，蓝图 §5.1 PIT铁律）
+        fundamental_data = None
+        if fundamental_tables:
+            fundamental_data = cls._load_fundamental_pit(
+                symbols, end_date, fundamental_tables
+            )
+            _logger.info(
+                "PIT 财务数据加载完成: %d rows, tables=%s",
+                len(fundamental_data) if fundamental_data is not None else 0,
+                fundamental_tables,
+            )
+
+        return cls(
+            data=df,
+            date_column="date",
+            symbol_column="symbol",
+            fundamental_data=fundamental_data,
+        )
+
+    @staticmethod
+    def _load_fundamental_pit(
+        symbols: list[str],
+        end_date: str,
+        tables: list[str],
+    ) -> pd.DataFrame | None:
+        """加载 PIT 财务数据（全版本预加载，get_bar 时按 AS OF JOIN 过滤）。
+
+        使用 pit_query.resolve_table 解析逻辑表名→全限定表名，
+        用 ch_reader.query 加载 announce_date <= end_date 的全部版本（含修正公告）。
+        不使用 pit_query.as_of_panel（后者只返回最新版本，无法支持逐日 PIT 过滤）。
+
+        Args:
+            symbols: symbol列表
+            end_date: 回测结束日期（announce_date 上界）
+            tables: 逻辑表名列表（如 ["income_statement"]）
+
+        Returns:
+            含 symbol/report_period/announce_date + 财务列的 DataFrame；无数据时返回 None
+        """
+        from zephyr.data.pit_query import resolve_table
+
+        frames: list[pd.DataFrame] = []
+        for logical_table in tables:
+            try:
+                qualified_table, _period_col = resolve_table(logical_table)
+            except Exception as e:  # noqa: BLE001 — 非白名单表等
+                _logger.warning("PIT 财务表 %s 解析失败: %s", logical_table, e)
+                continue
+
+            symbols_str = ", ".join([f"'{s}'" for s in symbols])
+            query = (
+                f"SELECT symbol, report_period, announce_date, eps_basic, eps_diluted "
+                f"FROM {qualified_table} "
+                f"WHERE symbol IN ({symbols_str}) "
+                f"AND announce_date <= toDate('{end_date}') "
+                f"ORDER BY symbol, report_period, announce_date"
+            )
+            query = ch_reader.inject_final(query)
+
+            try:
+                tsv = ch_reader.query(query)
+            except Exception as e:  # noqa: BLE001 — CH 查询失败不应阻断回测
+                _logger.warning("PIT 财务表 %s 查询失败: %s", logical_table, e)
+                continue
+
+            if not tsv or not tsv.strip():
+                continue
+
+            records: list[dict] = []
+            for line in tsv.strip().split("\n"):
+                line = line.rstrip("\r")
+                if not line:
+                    continue
+                vals = line.split("\t")
+                records.append({
+                    "symbol": vals[0],
+                    "report_period": vals[1],
+                    "announce_date": vals[2],
+                    "eps_basic": float(vals[3]) if len(vals) > 3 and vals[3] and vals[3] != "\\N" else None,
+                    "eps_diluted": float(vals[4]) if len(vals) > 4 and vals[4] and vals[4] != "\\N" else None,
+                })
+            if records:
+                frames.append(pd.DataFrame(records))
+
+        if not frames:
+            return None
+        return pd.concat(frames, ignore_index=True)
 
 
 class MultiSourceDataHandler:
