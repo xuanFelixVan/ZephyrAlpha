@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-RUNTIME-INTRADAY | self-contained (runtime entry) | §
 # [MODULE] zephyr.runtime.intraday_main
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.data.tick_subscriber; zephyr.data.tick_redis_cache; zephyr.factor.core.intraday_factor_loop; zephyr.infrastructure.database_service; zephyr.data.trading_calendar
+# [DEPENDENCIES] zephyr.data.tick_subscriber; zephyr.data.tick_redis_cache; zephyr.factor.core.intraday_factor_loop; zephyr.infrastructure.database_service; zephyr.data.trading_calendar; zephyr.data.redundant_source.heartbeat_monitor; zephyr.data.alerter
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -107,6 +107,7 @@ class IntradayRuntime:
         self._tick_subscriber = tick_subscriber
         self._factor_loop = factor_loop
         self._tick_cache: TickRedisCache | None = None
+        self._heartbeat = None  # P0-2: CH 健康探针 + tick 心跳（IntradayRuntime 内创建）
         self._running = False
 
     def start(self) -> bool:
@@ -137,10 +138,18 @@ class IntradayRuntime:
 
         # ④ 创建并启动 TickSubscriber（先启动，预热 Redis tick 数据）
         if self._tick_subscriber is None:
+            # P0-2: 启用心跳检测 + CH 健康监控（R4a Alerter 集成）
+            # TickSubscriber 内部管理 heartbeat 生命周期（start/record_tick/stop）
+            from zephyr.data.alerter import Alerter
+            from zephyr.data.redundant_source.heartbeat_monitor import HeartbeatMonitor
+
+            self._heartbeat = HeartbeatMonitor(alerter=Alerter())
             self._tick_subscriber = TickSubscriber(
                 symbols=self._symbols,
                 tick_cache=self._tick_cache,
+                heartbeat=self._heartbeat,
             )
+            logger.info("IntradayRuntime: 已启用 CH 心跳探针 + tick 中断检测（P0-2）")
         logger.info("IntradayRuntime: 启动 TickSubscriber（等 QMT 就绪 + 订阅 + 预热）...")
         if not self._tick_subscriber.start():
             logger.error("IntradayRuntime: TickSubscriber 启动失败，退出")
