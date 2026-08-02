@@ -4,20 +4,12 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-02'
-total_scripts: 625
+total_scripts: 628
 scripts:
 - name: __init__.py
   path: __init__.py
   description: No description
   domain: __init__.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: _tmp_q_sell008.py
-  path: _tmp_q_sell008.py
-  description: import os
-  domain: _tmp_q_sell008.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -462,6 +454,38 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: backup/test_get_redis_conn.py
+  path: backup/test_get_redis_conn.py
+  description: 测试项：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backup/test_h1_schema_e2e.py
+  path: backup/test_h1_schema_e2e.py
+  description: 验证项：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backup/test_h1_writer_reader_projectors.py
+  path: backup/test_h1_writer_reader_projectors.py
+  description: 测试流程：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backup/test_redis_e2e.py
+  path: backup/test_redis_e2e.py
+  description: 验证项：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ch/_data_inventory.py
   path: ch/_data_inventory.py
   description: 输出完整数据资产清单，用于"收口"——确认数据完整性 + 识别缺口。
@@ -688,7 +712,7 @@ scripts:
   dimensions: []
 - name: governance/align_battle_map.py
   path: governance/align_battle_map.py
-  description: 依据：battle_map_panorama.md V0.2.0 §八（与全景图对齐体系的关系）+ §七（双向查找机制）
+  description: 依据：battle_map_positioning.md V0.2.0 §八（与全景图对齐体系的关系）+ §七（双向查找机制）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -849,14 +873,6 @@ scripts:
 - name: governance/query_module_panorama.py
   path: governance/query_module_panorama.py
   description: 输入 module_id（MOD-XXX），输出该模块在三图（depgraph/dataflow/decision）的所有记录，
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/query_node_status.py
-  path: governance/query_node_status.py
-  description: '用途: 施工前/后查模块的 node_id 和 build_status，配合 apply_depgraph 加边+转状态。'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2793,6 +2809,14 @@ scripts:
 - name: governance/d7_code/check_pure_shim.py
   path: governance/d7_code/check_pure_shim.py
   description: check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1 2026-06-29）
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d7_code/check_yaml_anchor_consistency.py
+  path: governance/d7_code/check_yaml_anchor_consistency.py
+  description: 检测 config/ 与 architecture_model/ 下所有 YAML 文件的 B_yaml 治理锚定块一致性，
   domain: governance
   execution_plane: warm-path
   status: registered

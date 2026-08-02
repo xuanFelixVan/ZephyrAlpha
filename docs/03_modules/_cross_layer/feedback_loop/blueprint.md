@@ -43,7 +43,7 @@ depends_on:
 references:
   - {id: "MOD-INF-020", at: "all", why: "Audit Trail——运行期写入；DAG 上不保留 depends_on"}
 last_updated: "2026-05-19"
-build_status: planned
+build_status: generated
 design_maturity: design
 responsibility_domain: 
 ---

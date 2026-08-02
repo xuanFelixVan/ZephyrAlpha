@@ -53,15 +53,15 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_model_profiler_blueprint_md["蓝图<br/>model_profiler模块蓝图文档，描述该模块的设计意图<br/>和架构决策<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>blueprint<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
-    src_zephyr_ml_train_ai_operator["ai操作器<br/>AI操作器的子目录，归集相关子模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
-    src_zephyr_ml_train_implementations_default_inference_engine_py["默认推理引擎<br/>机器学习训练/implementations包的default_inferenc<br/>e_engine模块<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations<br/>/default_inference_engine.py<br/>(生产态 / production)"]
+    docs_03_modules_cross_layer_model_profiler_blueprint_md["model_profiler/blueprint<br/>model_profiler模块蓝图文档，描述该模块的设计意图<br/>和架构决策<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
+    src_zephyr_ml_train_ai_operator["ml_train/ai_operator<br/>机器学习训练包的ai_operator模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
+    src_zephyr_ml_train_implementations_default_inference_engine_py["implementations/default_inference_engine<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations<br/>/default_inference_engine.py<br/>(生产态 / production)"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_ai_operator
     src_zephyr_ml_train_ai_operator ~~~ src_zephyr_ml_train_implementations_default_inference_engine_py
-    src_zephyr_ml_train_inference_base_py["推理基类<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
-    src_zephyr_ml_train_training_pipeline["训练管线<br/>ML模型训练管线，串联数据准备→特征工程→模型训练→<br/>评估→保存的全流程。<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: training_pipeline/<br/>(设计态 / design)"]
+    src_zephyr_ml_train_inference_base_py["ml_train/inference_base<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_training_pipeline["ml_train/training_pipeline<br/>机器学习训练包的training_pipeline模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: training_pipeline/<br/>(设计态 / design)"]
     src_zephyr_ml_train_inference_base_py ~~~ src_zephyr_ml_train_training_pipeline
-    src_zephyr_ml_train_trainer_base_py["训练器基类<br/>trainer基类。D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_trainer_base_py["ml_train/trainer_base<br/>D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
@@ -99,9 +99,9 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ml_train_implementations_default_inference_engine_py["默认推理引擎<br/>机器学习训练/implementations包的default_inferenc<br/>e_engine模块<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations<br/>/default_inference_engine.py<br/>(生产态 / production)"]
-    src_zephyr_ml_train_inference_base_py["推理基类<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
-    src_zephyr_ml_train_trainer_base_py["训练器基类<br/>trainer基类。D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_implementations_default_inference_engine_py["implementations/default_inference_engine<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations<br/>/default_inference_engine.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_inference_base_py["ml_train/inference_base<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_trainer_base_py["ml_train/trainer_base<br/>D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
@@ -119,10 +119,10 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    docs_03_modules_cross_layer_model_profiler_blueprint_md["蓝图<br/>model_profiler模块蓝图文档，描述该模块的设计意图<br/>和架构决策<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>blueprint<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
-    src_zephyr_ml_train_ai_operator["ai操作器<br/>AI操作器的子目录，归集相关子模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
+    docs_03_modules_cross_layer_model_profiler_blueprint_md["model_profiler/blueprint<br/>model_profiler模块蓝图文档，描述该模块的设计意图<br/>和架构决策<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
+    src_zephyr_ml_train_ai_operator["ml_train/ai_operator<br/>机器学习训练包的ai_operator模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_ai_operator
-    src_zephyr_ml_train_training_pipeline["训练管线<br/>ML模型训练管线，串联数据准备→特征工程→模型训练→<br/>评估→保存的全流程。<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: training_pipeline/<br/>(设计态 / design)"]
+    src_zephyr_ml_train_training_pipeline["ml_train/training_pipeline<br/>机器学习训练包的training_pipeline模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: training_pipeline/<br/>(设计态 / design)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -137,23 +137,23 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 训练管线 (training_pipeline/) | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
-| 2 | 训练管线 (training_pipeline/) | → | D_ORCHESTRATOR 代理编排器: 模型注册表 / model_registry (governance/model_registry.py) | runtime / runtime |
-| 3 | 默认推理引擎 / D_ML_TRAIN — Default Inference Engine (im... | → | D_SHARED 共享服务: 模型服务响应 / model_serving_response (experiment/model_s... | 导入依赖 / import_depends |
-| 4 | 默认推理引擎 / D_ML_TRAIN — Default Inference Engine (im... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 5 | 推理基类 / D_ML_TRAIN — ML Inference Base (ml_train/infe... | → | D_SHARED 共享服务: 模型服务响应 / model_serving_response (experiment/model_s... | 导入依赖 / import_depends |
-| 6 | 默认推理引擎 / D_ML_TRAIN — Default Inference Engine (im... | → | D_TRADING 交易运营: 模型服务请求 / model_serving_request (execution/model_ser... | 导入依赖 / import_depends |
-| 7 | 推理基类 / D_ML_TRAIN — ML Inference Base (ml_train/infe... | → | D_TRADING 交易运营: 模型服务请求 / model_serving_request (execution/model_ser... | 导入依赖 / import_depends |
+| 1 | training_pipeline/ | → | D_DATA 数据接入层: 财报 Point-In-Time (PIT) 查询能力（#ARCH-CH-021 P0-5）。 ... | data / data |
+| 2 | training_pipeline/ | → | D_ORCHESTRATOR 代理编排器: governance/model_registry.py | runtime / runtime |
+| 3 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: experiment/model_serving_response.py | 导入依赖 / import_depends |
+| 4 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 5 | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | D_SHARED 共享服务: experiment/model_serving_response.py | 导入依赖 / import_depends |
+| 6 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_TRADING 交易运营: execution/model_serving_request.py | 导入依赖 / import_depends |
+| 7 | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | D_TRADING 交易运营: execution/model_serving_request.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_INTELLIGENCE 上下文管理: 默认推理引擎 / D_ML_TRAIN — Default Inference Engine (im... | → | 推理基类 / D_ML_TRAIN — ML Inference Base (ml_train/infe... | 导入依赖 / import_depends |
-| 2 | D_INTELLIGENCE 上下文管理: 默认推理引擎 / D_ML_TRAIN — Default Inference Engine (im... | → | 训练器基类 / D_ML_TRAIN — ML Training Base (ml_train/tra... | 导入依赖 / import_depends |
-| 3 | D_INTELLIGENCE 上下文管理: 推理基类 / inference_base (model_evaluation/inference_bas... | → | 推理基类 / D_ML_TRAIN — ML Inference Base (ml_train/infe... | 导入依赖 / import_depends |
-| 4 | D_INTELLIGENCE 上下文管理: 推理基类 / inference_base (model_evaluation/inference_bas... | → | 训练器基类 / D_ML_TRAIN — ML Training Base (ml_train/tra... | 导入依赖 / import_depends |
-| 5 | D_SHARED 共享服务: 机器学习实验管线 / ml_experiment_pipeline (_cross_layer/m... | → | 训练器基类 / D_ML_TRAIN — ML Training Base (ml_train/tra... | 导入依赖 / import_depends |
+| 1 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
+| 2 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 3 | D_INTELLIGENCE 上下文管理: model_evaluation/inference_base.py | → | D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | 导入依赖 / import_depends |
+| 4 | D_INTELLIGENCE 上下文管理: model_evaluation/inference_base.py | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 5 | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 (_cross... | → | D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

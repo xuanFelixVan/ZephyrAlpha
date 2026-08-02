@@ -38,7 +38,7 @@ mod_master_contracts:
   - "CT-TELE-FLE-001"
 responsibility_domain: 
 design_maturity: design
-build_status: planned
+build_status: generated
 ---
 
 # Feedback Loop Engine Interface / 反馈闭环引擎接口规范
