@@ -1,0 +1,99 @@
+---
+module_id: MOD-RK-15
+title: "尾部风险监控器蓝图 — ES/CVaR + POT模型 + 跳跃检测 + FRTB加价"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+ttl: permanent
+layer: L02_risk
+layer_name: risk
+functional_domain: risk
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-02"
+last_updated: "2026-08-02"
+priority: P1
+blueprint_level: module
+responsibility_domain: 
+---
+
+# MOD-RK-15 Tail Risk Monitor — 尾部风险监控器 蓝图
+
+> **module_id**: MOD-RK-15 | **域**: D_RISK | **层**: L2 Real-Time 盘中监控
+> **优先级**: P1 | **成熟度**: production | **对标能力**: C-004●
+> **SSoT**: depgraph MOD-RK-15 | **设计真源**: D:\临时工作区\依赖图\11-D-RISK-风控域.md §1.2 RK-15, §2 依赖(RK-05→RK-15)
+
+## 1. 定位
+
+尾部风险监控器——D-RISK L2 实时监控核心模块。度量与监控极端损失风险:
+- 期望短缺 (Expected Shortfall / CVaR): 尾部条件期望
+- POT 模型 (Peaks-Over-Threshold): 广义帕累托分布拟合, 识别厚尾
+- 跳跃检测 (Jump Detection): 收益率绝对值超 σ 阈值计为跳跃
+- 极值预警: ES 或 POT shape 超阈值分级告警
+- FRTB 尾部风险加价: 基于 shape 的资本加价
+
+属 A 类基础设施 (统计拟合 + 阈值判定, 数学逻辑明确), 阈值为 C 类可调参数。
+
+## 2. 输入 / 输出
+
+| 方向 | 内容 | 契约/事件 |
+|------|------|-----------|
+| 输入 | 收益率序列 returns (np.ndarray) + 配置 TailRiskConfig | — |
+| 输出 | TailRiskSnapshot (var/es/es_var_ratio/pot/jump_count/frtb_addon/alert_level) | 联动 RK-03, RK-17 |
+| 依赖 | RK-05 VaR (基准对比, 可选) | — |
+
+## 3. 核心规则 (设计真源 §1.2 RK-15, §2)
+
+### 3.1 VaR 与 ES
+
+- VaR_α = -quantile(returns, 1-α)  (正数, 损失额比率)
+- ES_α = -mean(R | R <= VaR_quantile)  (尾部条件期望, 正数)
+- 不变量: ES >= VaR (尾部期望 >= 分位数)
+
+### 3.2 POT 模型 (广义帕累托分布)
+
+- 超过阈值 u 的超额值 X-u ~ GPD(ξ, β)
+- ξ (shape): >0=厚尾(Fréchet), =0=指数(Gumbel), <0=有界(Weibull)
+- β (scale): 尺度参数
+- tail_index = 1/ξ (厚尾程度, 越小越厚尾)
+- 拟合方法: scipy.stats.genpareto.fit
+
+### 3.3 跳跃检测
+
+- threshold = std(returns) × jump_threshold_sigma (默认 3.0σ)
+- jump_count = |returns| > threshold 的数量
+- 浮点近零保护: std < 1e-12 时返回 0 (恒定序列)
+
+### 3.4 极值预警分级
+
+- CRITICAL: POT shape >= critical_shape_threshold (默认 0.5)
+- WARNING: POT shape >= heavy_tail_shape_threshold (默认 0.2) 或 ES/VaR >= es_warning_ratio (默认 1.5)
+- NONE: 其余
+
+### 3.5 FRTB 尾部风险加价
+
+- frtb_addon = base_addon × (1 + shape × multiplier)
+- shape 越大 (越厚尾), 加价越高, >= 0
+
+## 4. 关键不变量 (INVARIANTS)
+
+- ES >= VaR (尾部条件期望的损失 >= 分位数处的损失)
+- POT shape > 0 = 厚尾
+- tail_index = 1/shape
+- jump_count 单调非减 (窗口内)
+- FRTB 加价 >= 0
+
+## 5. 错误契约
+
+- `InvalidTailRiskInputError` (ZA-RK-0015): 收益率序列过短 / 置信度非 (0,1) / 阈值非正
+
+## 6. 测试
+
+- `tests/risk/test_tail_risk_monitor.py`
+- 覆盖: VaR/ES 计算 + ES>=VaR 不变量 / POT 拟合 (厚尾/轻尾/恒定) / 跳跃检测 (含零 std 浮点保护) / 告警分级 (NONE/WARNING/CRITICAL) / FRTB 加价 / assess 综合评估 / 输入校验
+
+## 7. 依赖
+
+- `zephyr.shared.foundation.errors` (ZephyrBaseError)
+- `numpy`, `scipy.stats`
+- 消费: RK-05 VaR (基准, 可选) ; 产出: RK-03 Portfolio Risk Monitor (尾部告警), RK-17 Kill Switch (极值触发)

@@ -7372,6 +7372,28 @@ creation_tokens:
     created_by: "session-pos001-build"
     capability: "position_sizing_engine"
 
+  # --- D-RISK 剩余 P0/P1 模块（2026-08-02，RK-12/15/20 批量施工）---
+  - file: "src/zephyr/risk/core/stress_test_engine.py"
+    token: "auto-risk-stress-test-engine-20260802"
+    created_by: "session-drisk-rk121520"
+    capability: "stress_test_engine"
+  - file: "src/zephyr/risk/core/tail_risk_monitor.py"
+    token: "auto-risk-tail-risk-monitor-20260802"
+    created_by: "session-drisk-rk121520"
+    capability: "tail_risk_monitor"
+  - file: "src/zephyr/risk/core/daily_auditor.py"
+    token: "auto-risk-daily-auditor-20260802"
+    created_by: "session-drisk-rk121520"
+    capability: "daily_auditor"
+  - file: "docs/03_modules/_domain-risk/stress_test_engine/blueprint.md"
+    token: "auto-risk-stress-test-engine-bp-20260802"
+    created_by: "session-drisk-rk121520"
+    capability: "stress_test_engine"
+  - file: "docs/03_modules/_domain-risk/tail_risk_monitor/blueprint.md"
+    token: "auto-risk-tail-risk-monitor-bp-20260802"
+    created_by: "session-drisk-rk121520"
+    capability: "tail_risk_monitor"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
