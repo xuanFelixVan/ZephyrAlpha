@@ -53,16 +53,16 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_governance_observability_gate_cache_py["observability/gate_cache<br/>observability包的gate_cache模块<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
-    scripts_setup_dev_env_py["scripts/setup_dev_env<br/>开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE）。<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
-    src_zephyr_governance_observability_governance_observability_dashboard_py["observability_governance/observability_dashboard<br/>治理/observability<br/>governance包的observability_dashboard模块<br/>文件: observability_governance<br/>/observability_dashboard.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_engine_py["ops_governance/budget_engine<br/>Budget Enforcer core engine — MOD-INF-024<br/>文件: ops_governance/budget_engine.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_handler_py["ops_governance/budget_handler<br/>G-CT-006 消费端 — Escalation.on_budget_alert()<br/>预算告急升级处理.<br/>文件: ops_governance/budget_handler.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_profile_manager_py["ops_governance/budget_profile_manager<br/>治理/ops governance包的budget_profile_manager模<br/>块<br/>文件: ops_governance/budget_profile_manager.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_tracker_py["ops_governance/budget_tracker<br/>治理/ops governance包的budget_tracker模块<br/>文件: ops_governance/budget_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_cost_budget_py["ops_governance/cost_budget<br/>cost_budget.py —— AI 成本预算与强制熔断（Phase<br/>11 / 盲点 B26）<br/>文件: ops_governance/cost_budget.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_meta_observability_py["ops_governance/meta_observability<br/>Meta Observability — v0.10.0 协议自身可观测性:<br/>self loop latency+p99+edge ca...<br/>文件: ops_governance/meta_observability.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_token_budget_py["ops_governance/token_budget<br/>治理/ops governance包的token_budget模块<br/>文件: ops_governance/token_budget.py<br/>(生产态 / production)"]
+    scripts_governance_observability_gate_cache_py["门禁缓存<br/>observability包的gate_cache模块<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
+    scripts_setup_dev_env_py["开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE<br/>开发环境一次性初始化。<br/>setup_dev_env<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
+    src_zephyr_governance_observability_governance_observability_dashboard_py["可观测性仪表盘<br/>observability仪表盘，治理的核心类，封装Dashboard<br/>Panel相关逻辑。<br/>observability_dashboard<br/>文件: observability_governance<br/>/observability_dashboard.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_engine_py["预算引擎<br/>BudgetEngine 协议——5.133.2 DI 注入契约。<br/>文件: ops_governance/budget_engine.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_handler_py["预算处理器<br/>G-CT-006 消费端 — Escalation.on_budget_alert()<br/>预算告急升级处理.<br/>budget_handler<br/>文件: ops_governance/budget_handler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_profile_manager_py["预算档案管理器<br/>治理/ops governance包的budget_profile_manager模<br/>块<br/>文件: ops_governance/budget_profile_manager.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_tracker_py["预算追踪器<br/>治理的追踪器，持续跟踪某项指标或状态的变化<br/>budget_tracker<br/>文件: ops_governance/budget_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_cost_budget_py["成本预算<br/>— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>cost_budget<br/>文件: ops_governance/cost_budget.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_meta_observability_py["元可观测性<br/>Meta Observability — v0.10.0 协议自身可观测性:<br/>self loop latency+p99+edge case rate。<br/>meta_observability<br/>文件: ops_governance/meta_observability.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_token_budget_py["令牌预算<br/>三级 Token Budget 管理器。<br/>token_budget<br/>文件: ops_governance/token_budget.py<br/>(生产态 / production)"]
     scripts_governance_observability_gate_cache_py ~~~ scripts_setup_dev_env_py
     scripts_setup_dev_env_py ~~~ src_zephyr_governance_observability_governance_observability_dashboard_py
     src_zephyr_governance_observability_governance_observability_dashboard_py ~~~ src_zephyr_governance_ops_governance_budget_engine_py
@@ -72,7 +72,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_budget_tracker_py ~~~ src_zephyr_governance_ops_governance_cost_budget_py
     src_zephyr_governance_ops_governance_cost_budget_py ~~~ src_zephyr_governance_ops_governance_meta_observability_py
     src_zephyr_governance_ops_governance_meta_observability_py ~~~ src_zephyr_governance_ops_governance_token_budget_py
-    src_zephyr_governance_ops_governance_budget_models_py["ops_governance/budget_models<br/>Budget Enforcer data models — MOD-INF-024<br/>文件: ops_governance/budget_models.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_models_py["预算模型<br/>Budget Enforcer data models — MOD-INF-024<br/>文件: ops_governance/budget_models.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -125,16 +125,16 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_governance_observability_gate_cache_py["observability/gate_cache<br/>observability包的gate_cache模块<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
-    scripts_setup_dev_env_py["scripts/setup_dev_env<br/>开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE）。<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
-    src_zephyr_governance_observability_governance_observability_dashboard_py["observability_governance/observability_dashboard<br/>治理/observability<br/>governance包的observability_dashboard模块<br/>文件: observability_governance<br/>/observability_dashboard.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_engine_py["ops_governance/budget_engine<br/>Budget Enforcer core engine — MOD-INF-024<br/>文件: ops_governance/budget_engine.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_handler_py["ops_governance/budget_handler<br/>G-CT-006 消费端 — Escalation.on_budget_alert()<br/>预算告急升级处理.<br/>文件: ops_governance/budget_handler.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_profile_manager_py["ops_governance/budget_profile_manager<br/>治理/ops governance包的budget_profile_manager模<br/>块<br/>文件: ops_governance/budget_profile_manager.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_budget_tracker_py["ops_governance/budget_tracker<br/>治理/ops governance包的budget_tracker模块<br/>文件: ops_governance/budget_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_cost_budget_py["ops_governance/cost_budget<br/>cost_budget.py —— AI 成本预算与强制熔断（Phase<br/>11 / 盲点 B26）<br/>文件: ops_governance/cost_budget.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_meta_observability_py["ops_governance/meta_observability<br/>Meta Observability — v0.10.0 协议自身可观测性:<br/>self loop latency+p99+edge ca...<br/>文件: ops_governance/meta_observability.py<br/>(生产态 / production)"]
-    src_zephyr_governance_ops_governance_token_budget_py["ops_governance/token_budget<br/>治理/ops governance包的token_budget模块<br/>文件: ops_governance/token_budget.py<br/>(生产态 / production)"]
+    scripts_governance_observability_gate_cache_py["门禁缓存<br/>observability包的gate_cache模块<br/>文件: observability/gate_cache.py<br/>(生产态 / production)"]
+    scripts_setup_dev_env_py["开发环境一次性初始化（裁定<br/>#ARCH-PYTHON-SITECUSTOMIZE<br/>开发环境一次性初始化。<br/>setup_dev_env<br/>文件: scripts/setup_dev_env.py<br/>(生产态 / production)"]
+    src_zephyr_governance_observability_governance_observability_dashboard_py["可观测性仪表盘<br/>observability仪表盘，治理的核心类，封装Dashboard<br/>Panel相关逻辑。<br/>observability_dashboard<br/>文件: observability_governance<br/>/observability_dashboard.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_engine_py["预算引擎<br/>BudgetEngine 协议——5.133.2 DI 注入契约。<br/>文件: ops_governance/budget_engine.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_handler_py["预算处理器<br/>G-CT-006 消费端 — Escalation.on_budget_alert()<br/>预算告急升级处理.<br/>budget_handler<br/>文件: ops_governance/budget_handler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_profile_manager_py["预算档案管理器<br/>治理/ops governance包的budget_profile_manager模<br/>块<br/>文件: ops_governance/budget_profile_manager.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_tracker_py["预算追踪器<br/>治理的追踪器，持续跟踪某项指标或状态的变化<br/>budget_tracker<br/>文件: ops_governance/budget_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_cost_budget_py["成本预算<br/>— AI 成本预算与强制熔断（Phase 11 / 盲点 B26）<br/>cost_budget<br/>文件: ops_governance/cost_budget.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_meta_observability_py["元可观测性<br/>Meta Observability — v0.10.0 协议自身可观测性:<br/>self loop latency+p99+edge case rate。<br/>meta_observability<br/>文件: ops_governance/meta_observability.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_token_budget_py["令牌预算<br/>三级 Token Budget 管理器。<br/>token_budget<br/>文件: ops_governance/token_budget.py<br/>(生产态 / production)"]
     scripts_governance_observability_gate_cache_py ~~~ scripts_setup_dev_env_py
     scripts_setup_dev_env_py ~~~ src_zephyr_governance_observability_governance_observability_dashboard_py
     src_zephyr_governance_observability_governance_observability_dashboard_py ~~~ src_zephyr_governance_ops_governance_budget_engine_py
@@ -144,7 +144,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_budget_tracker_py ~~~ src_zephyr_governance_ops_governance_cost_budget_py
     src_zephyr_governance_ops_governance_cost_budget_py ~~~ src_zephyr_governance_ops_governance_meta_observability_py
     src_zephyr_governance_ops_governance_meta_observability_py ~~~ src_zephyr_governance_ops_governance_token_budget_py
-    src_zephyr_governance_ops_governance_budget_models_py["ops_governance/budget_models<br/>Budget Enforcer data models — MOD-INF-024<br/>文件: ops_governance/budget_models.py<br/>(生产态 / production)"]
+    src_zephyr_governance_ops_governance_budget_models_py["预算模型<br/>Budget Enforcer data models — MOD-INF-024<br/>文件: ops_governance/budget_models.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_budget_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_budget_models_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -166,43 +166,43 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | D_GOVERNANCE 生命周期管理: Escalation Adapter — MOD-INF-022 统一集成入口. (services... | 导入依赖 / import_depends |
-| 2 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | 导入依赖 / import_depends |
-| 3 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_GOV_DRIFT 漂移检测: gov_drift/spiral_ews.py | 导入依赖 / import_depends |
-| 4 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/ipi_defense.py | 导入依赖 / import_depends |
-| 5 | G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | 导入依赖 / import_depends |
-| 6 | Module docstring — see module-level docstring for detail... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 7 | Module docstring — see module-level docstring for detail... | → | D_GOV_SCRIPTS 脚本治理: _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
-| 8 | ops_governance/budget_tracker.py | → | D_INFRA_RECOVERY 回滚恢复: G-CT-009 契约：Rollback -> Budget 回滚成本计入预算. (roll... | 导入依赖 / import_depends |
-| 9 | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 10 | G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | D_SHARED 共享服务: escalation/budget_alert.py | 导入依赖 / import_depends |
-| 11 | cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 12 | cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | D_SHARED 共享服务: metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
+| 1 | 预算处理器 / budget_handler (ops_governance/budget_handle... | → | D_GOVERNANCE 生命周期管理: 适配器 / adapter (services/adapter.py) | 导入依赖 / import_depends |
+| 2 | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | → | D_GOV_DRIFT 漂移检测: 漂移基础设施 / drift_infrastructure (gov_drift/drift_infr... | 导入依赖 / import_depends |
+| 3 | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | → | D_GOV_DRIFT 漂移检测: 螺旋预警系统 / spiral_ews (gov_drift/spiral_ews.py) | 导入依赖 / import_depends |
+| 4 | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ipi防御 / ipi_defense (security_governance/ipi_defense.py) | 导入依赖 / import_depends |
+| 5 | 预算处理器 / budget_handler (ops_governance/budget_handle... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 契约 / contracts (escalation/contracts.py) | 导入依赖 / import_depends |
+| 6 | 门禁缓存 / Module docstring — see module-level docstring... | → | D_GOV_SCRIPTS 脚本治理: 常量 / constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 7 | 门禁缓存 / Module docstring — see module-level docstring... | → | D_GOV_SCRIPTS 脚本治理: 文件工具 / file_utils (_shared/file_utils.py) | 导入依赖 / import_depends |
+| 8 | 预算追踪器 / budget_tracker (ops_governance/budget_tracke... | → | D_INFRA_RECOVERY 回滚恢复: 预算追踪器 / budget_tracker (rollback/budget_tracker.py) | 导入依赖 / import_depends |
+| 9 | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | → | D_SHARED 共享服务: 事件总线 / event_bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 10 | 预算处理器 / budget_handler (ops_governance/budget_handle... | → | D_SHARED 共享服务: 预算告警 / budget_alert (escalation/budget_alert.py) | 导入依赖 / import_depends |
+| 11 | 成本预算 / cost_budget (ops_governance/cost_budget.py) | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 12 | 成本预算 / cost_budget (ops_governance/cost_budget.py) | → | D_SHARED 共享服务: 指标 / metrics (observability/metrics.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOVERNANCE 生命周期管理: intelligence_governance/model_provider_data.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 2 | D_GOVERNANCE 生命周期管理: intelligence_governance/model_router.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 3 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 4 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (mcp/governance_serve... | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 5 | D_GOV_ENFORCEMENT 规则执行: rule_enforcement/pre_flight_gate.py | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 6 | D_GOV_ENFORCEMENT 规则执行: rule_enforcement/pre_flight_gate.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 7 | D_GOV_OPS_RESILIENCE 运维弹性治理: Burn Rate Monitor — MOD-INF-024 (ops_governance/burn_rat... | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 8 | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/cost_attributor.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 9 | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/degradation_manager.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 11 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 12 | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/adversarial_tester.py | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 13 | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/adversarial_tester.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 14 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 15 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 16 | D_GOV_REPAIR 治理修复: financial_governance/budget_enforcement.py | → | ops_governance/budget_tracker.py | 导入依赖 / import_depends |
-| 17 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 18 | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理 (loc... | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 19 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 20 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
+| 1 | D_GOVERNANCE 生命周期管理: 模型提供器数据 / model_provider_data (intelligence_govern... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 2 | D_GOVERNANCE 生命周期管理: 模型路由器 / model_router (intelligence_governance/model_... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 3 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 4 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 5 | D_GOV_ENFORCEMENT 规则执行: preflight门禁 / pre_flight_gate (rule_enforcement/pre_fli... | → | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 6 | D_GOV_ENFORCEMENT 规则执行: preflight门禁 / pre_flight_gate (rule_enforcement/pre_fli... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 7 | D_GOV_OPS_RESILIENCE 运维弹性治理: burn速率监控器 / Burn Rate Monitor — MOD-INF-024 (ops_go... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 8 | D_GOV_OPS_RESILIENCE 运维弹性治理: 成本attributor / cost_attributor (ops_governance/cost_att... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 9 | D_GOV_OPS_RESILIENCE 运维弹性治理: 退化管理器 / degradation_manager (ops_governance/degradat... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: 阶段检查注册表 / phase_check_registry (ops_governance/pha... | → | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 11 | D_GOV_OPS_RESILIENCE 运维弹性治理: 阶段检查注册表 / phase_check_registry (ops_governance/pha... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 12 | D_GOV_OPS_RESILIENCE 运维弹性治理: 对抗测试器 / adversarial_tester (security_governance/adve... | → | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 13 | D_GOV_OPS_RESILIENCE 运维弹性治理: 对抗测试器 / adversarial_tester (security_governance/adve... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 14 | D_GOV_REPAIR 治理修复: 预算执行 / budget_enforcement (financial_governance/budge... | → | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 15 | D_GOV_REPAIR 治理修复: 预算执行 / budget_enforcement (financial_governance/budge... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 16 | D_GOV_REPAIR 治理修复: 预算执行 / budget_enforcement (financial_governance/budge... | → | 预算追踪器 / budget_tracker (ops_governance/budget_tracke... | 导入依赖 / import_depends |
+| 17 | D_INFRA_RUNTIME 运行时集成: 启动钩子 / boot_hooks (trading/boot_hooks.py) | → | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 18 | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM / ollama_... | → | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 19 | D_INTEGRATION 管线路由: 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | 预算引擎 / Budget Enforcer core engine — MOD-INF-024 (op... | 导入依赖 / import_depends |
+| 20 | D_INTEGRATION 管线路由: 管线编排器 / pipeline_orchestrator (integration/pipeline_... | → | 预算模型 / Budget Enforcer data models — MOD-INF-024 (op... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

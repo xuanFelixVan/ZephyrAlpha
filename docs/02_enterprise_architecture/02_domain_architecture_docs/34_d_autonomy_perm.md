@@ -53,8 +53,8 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["fitness_functions/check_kill_switch_latency<br/>check_kill_switch_latency.py — Kill Switch<br/>延迟门禁 (INV-001)<br/>文件: fitness_functions<br/>/check_kill_switch_latency.py<br/>(生产态 / production)"]
-    scripts_governance_meta_manage_kill_switch_py["meta/manage_kill_switch<br/>manage_kill_switch.py — Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py<br/>(生产态 / production)"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["检查终止开关latency<br/>T0 实测：ZEPHYR_T1_KILL_SWITCH_PROBE=1 时运行<br/>KillSwitchSimulator 健康检查<br/>check_kill_switch_latency<br/>文件: fitness_functions<br/>/check_kill_switch_latency.py<br/>(生产态 / production)"]
+    scripts_governance_meta_manage_kill_switch_py["管理终止开关<br/>提供 CLI 命令禁用<br/>/启用脚本、查看状态、设置全局冻结。<br/>manage_kill_switch<br/>文件: meta/manage_kill_switch.py<br/>(生产态 / production)"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
@@ -75,8 +75,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["fitness_functions/check_kill_switch_latency<br/>check_kill_switch_latency.py — Kill Switch<br/>延迟门禁 (INV-001)<br/>文件: fitness_functions<br/>/check_kill_switch_latency.py<br/>(生产态 / production)"]
-    scripts_governance_meta_manage_kill_switch_py["meta/manage_kill_switch<br/>manage_kill_switch.py — Kill Switch 管理工具<br/>文件: meta/manage_kill_switch.py<br/>(生产态 / production)"]
+    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py["检查终止开关latency<br/>T0 实测：ZEPHYR_T1_KILL_SWITCH_PROBE=1 时运行<br/>KillSwitchSimulator 健康检查<br/>check_kill_switch_latency<br/>文件: fitness_functions<br/>/check_kill_switch_latency.py<br/>(生产态 / production)"]
+    scripts_governance_meta_manage_kill_switch_py["管理终止开关<br/>提供 CLI 命令禁用<br/>/启用脚本、查看状态、设置全局冻结。<br/>manage_kill_switch<br/>文件: meta/manage_kill_switch.py<br/>(生产态 / production)"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -97,9 +97,9 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | check_kill_switch_latency.py — Kill Switch 延迟门禁 (INV... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 2 | manage_kill_switch.py — Kill Switch 管理工具 (meta/manag... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 3 | manage_kill_switch.py — Kill Switch 管理工具 (meta/manag... | → | D_GOV_SCRIPTS 脚本治理: _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
+| 1 | 检查终止开关latency / check_kill_switch_latency (fitness_... | → | D_GOV_SCRIPTS 脚本治理: 常量 / constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 2 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: 常量 / constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 3 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: 文件工具 / file_utils (_shared/file_utils.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
