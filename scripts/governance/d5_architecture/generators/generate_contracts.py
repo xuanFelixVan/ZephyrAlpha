@@ -70,6 +70,7 @@ _TYPE_IMPORTS: dict[str, str] = {
     "OrderSide": "from zephyr.shared.contracts.enums.order_enums import OrderSide",
     "OrderType": "from zephyr.shared.contracts.enums.order_enums import OrderType",
     "OrderStatus": "from zephyr.shared.contracts.enums.order_enums import OrderStatus",
+    "RiskLimits": "from zephyr.shared.contracts.risk_limits import RiskLimits",
 }
 
 _STANDARD_IMPORTS = [
@@ -113,6 +114,7 @@ def _generate_14field_header(physical_path: str) -> str:
         "# [AI_AUTONOMY] ai_modifiable",
         "# [ERROR_CONTRACT]",
         "# [TESTS]",
+        "# [TTL] permanent",
     ]
     return "\n".join(lines) + "\n"
 

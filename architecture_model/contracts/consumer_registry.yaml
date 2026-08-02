@@ -74,6 +74,13 @@ consumers:
       - {domain: D_GOV_ENFORCEMENT, module: "compliance", tier: 2, pinned_version: "1.0", registered_at: "2026-05-06"}
       - {domain: D_ML_TRAIN, module: "ml_platform", tier: 2, pinned_version: "1.0", registered_at: "2026-04-30"}
 
+  - contract_id: CTR-007
+    contract_name: TargetPortfolio
+    registered_consumers:
+      - {domain: D_EX_CORE, module: "trade_execution", tier: 1, pinned_version: "1.0", registered_at: "2026-08-02"}
+      - {domain: D_POSITION, module: "position_management", tier: 1, pinned_version: "1.0", registered_at: "2026-08-02"}
+      - {domain: D_REPORTING, module: "performance_attribution", tier: 2, pinned_version: "1.0", registered_at: "2026-08-02"}
+
   # ─── P0 全链路追踪消费者 ───
   - contract_id: CTR-TRACE-001
     contract_name: TraceContext
