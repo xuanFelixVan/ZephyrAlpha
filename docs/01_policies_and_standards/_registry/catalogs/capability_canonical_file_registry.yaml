@@ -4872,6 +4872,60 @@ capabilities:
       零调用方）。本 reconciler 将手工发现升级为持续自动检测，防复发。
 
   # --------------------------------------------------------------------------
+  - capability_id: add_module_translation
+    canonical_override: scripts/governance/d3_metadata/add_module_translation.py
+    aliases:
+      - add_module_translation
+      - add_translation
+      - TRANSLATION-COVERAGE-write-tool
+      - 翻译条目写入工具
+      - 大白话简介写入
+    description: >-
+      模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套，2026-08-02）。AI 新建/更新
+      模块时调用本脚本向翻译真源 module_translation_registry.yaml upsert 一条含大白话
+      plain_zh 的 entry。写入前校验：plain_zh 非空+CJK≥8+非通用模板（is_generic_plain_zh/
+      is_generic_plain_suffix）。强制双引号转义+写后 YAML 解析校验+失效 loader 缓存。
+      canonical = scripts/governance/d3_metadata/add_module_translation.py
+      （MOD-INF-005）。真源边界（TRAE-062）：翻译属规则数据→YAML 真源，本工具是 YAML
+      合规写入入口，与 apply_depgraph.py（写 DB 架构数据）正交。
+
+  # --------------------------------------------------------------------------
+  - capability_id: translation_coverage_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py
+    aliases:
+      - make_translation_coverage_gate
+      - TRANSLATION-COVERAGE
+      - translation_coverage_gate
+      - 翻译覆盖率门禁
+      - 大白话简介覆盖率
+    description: >-
+      新建 .py 文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE，2026-08-02）。检测 staged
+      新增 .py 文件（src/zephyr/+scripts/，tests 豁免）在翻译真源有非空且非通用模板的
+      plain_zh。四层防御 Layer 2（提交时阻断）。priority=59（NEW-FILE-DEPGRAPH-ENFORCEMENT(58)
+      之后、CREATE-GUARD(60) 之前）。观察期 warn-only（_OBSERVATION_PERIOD=True），观察期
+      后翻 False 转硬阻断。canonical = src/zephyr/gov_enforcement/commit_gates/
+      translation_coverage_gate.py（MOD-GOV-translation_coverage_gate）。
+
+  # --------------------------------------------------------------------------
+  - capability_id: translation_coverage_reconciler
+    canonical_override: src/zephyr/governance/audit/translation_coverage_reconciler.py
+    aliases:
+      - make_translation_coverage_reconciler
+      - TRANSLATION-COVERAGE-reconciler
+      - translation_coverage_reconciler
+      - 翻译覆盖率存量对账
+      - 翻译漂移检测
+    description: >-
+      翻译覆盖率存量对账 reconciler（TRANSLATION-COVERAGE Layer 4，2026-08-02）。
+      post-commit 事件触发（priority=951，warn-only），全扫 depgraph 节点（有 file_path
+      且在 src/zephyr/+scripts/ 范围内）vs 翻译真源，生成 missing_plain/short_plain/
+      generic_plain 三类漂移报告，落盘到 .runtime/translation_coverage/drift_report.json。
+      与 gate（只检 staged 新增）互补——reconciler 做全量存量对账。canonical =
+      src/zephyr/governance/audit/translation_coverage_reconciler.py
+      （MOD-GOV_TRANSLATION_COVERAGE_RECONCILER）。注册点：git_commit_gateway.py
+      _register_default_reconcilers。
+
+  # --------------------------------------------------------------------------
   - capability_id: metric_count_drift_check
     canonical_override: scripts/governance/d8_doc_sync/metric_count_drift_reconciler.py
     aliases:
@@ -5364,6 +5418,21 @@ creation_tokens:
     token: "auto-module-translation-registry-20260801"
     created_by: "session-sess-module-translation-001"
     capability: "module_translation_loader"
+
+  # --- 翻译覆盖率门禁配套四件套（2026-08-02，TRANSLATION-COVERAGE 四层防御）---
+  # 写入工具（Layer 0 入口）+ 提交门禁（Layer 2 阻断）+ 存量对账 reconciler（Layer 4）
+  - file: "scripts/governance/d3_metadata/add_module_translation.py"
+    token: "auto-add-module-translation-20260802"
+    created_by: "session-translation-coverage-gate"
+    capability: "add_module_translation"
+  - file: "src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py"
+    token: "auto-translation-coverage-gate-20260802"
+    created_by: "session-translation-coverage-gate"
+    capability: "translation_coverage_gate"
+  - file: "src/zephyr/governance/audit/translation_coverage_reconciler.py"
+    token: "auto-translation-coverage-reconciler-20260802"
+    created_by: "session-translation-coverage-gate"
+    capability: "translation_coverage_reconciler"
 
   # --- 卖出决策域信号管道（2026-08-02，SELL-001/007 补登记 creation_tokens）---
   - file: "src/zephyr/sell_decision/core/sell_signal_collector.py"

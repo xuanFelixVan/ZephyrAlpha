@@ -275,10 +275,10 @@ class TestRealProjectIntegration:
     """真实项目集成测试——使用真实 in_process_gate_registry.yaml。"""
 
     def test_load_real_yaml_entries(self) -> None:
-        """真实 YAML 可加载且有 82 个条目。"""
+        """真实 YAML 可加载且有 83 个条目。"""
         from zephyr.shared.io.paths import REPO_ROOT
         entries = load_gate_entries(Path(REPO_ROOT))
-        assert len(entries) == 82, f"expected 82 entries, got {len(entries)}"
+        assert len(entries) == 83, f"expected 83 entries, got {len(entries)}"
 
     def test_real_yaml_all_enabled(self) -> None:
         """真实 YAML 所有 gate enabled=true。"""
@@ -296,16 +296,16 @@ class TestRealProjectIntegration:
             assert entry.get("module_path"), f"missing module_path: {entry}"
             assert entry.get("factory_function"), f"missing factory_function: {entry}"
 
-    def test_auto_register_all_82_gates(self) -> None:
-        """auto_register_gates 注册全部 82 个 gate（无失败）。"""
+    def test_auto_register_all_83_gates(self) -> None:
+        """auto_register_gates 注册全部 83 个 gate（无失败）。"""
         from zephyr.shared.io.paths import REPO_ROOT
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, Path(REPO_ROOT))
         # 可能有少量失败（如某些 gate 依赖运行时上下文），但应少于 5 个
         if failures:
             pytest.skip(f"some gates failed to register (may need runtime context): {failures[:3]}")
-        # 验证至少注册了 77 个
-        assert len(registry.specs) >= 77, f"only {len(registry.specs)} gates registered"
+        # 验证至少注册了 78 个
+        assert len(registry.specs) >= 78, f"only {len(registry.specs)} gates registered"
 
     def test_auto_register_matches_explicit_register(self) -> None:
         """auto_register 注册的 gate 集合与显式注册一致。"""

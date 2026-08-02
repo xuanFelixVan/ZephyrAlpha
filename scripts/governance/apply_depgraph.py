@@ -860,6 +860,40 @@ def cmd_batch(dep: dict, changes: list[dict], dry_run: bool) -> None:
 # ===== P0-2 新增：设计态节点/边管理（§22.5）=====
 
 
+def _warn_translation_coverage(path: str) -> None:
+    """Layer 1 君子协定提示：新登记节点在翻译真源无合格 plain_zh 大白话简介时 warn。
+
+    TRANSLATION-COVERAGE 四层防御的 Layer 1（登记时提示，不阻断）——add_design_node
+    成功写 DB 后调用。检查 path 在 module_translation_registry.yaml 是否有非空 plain_zh；
+    无则 stderr+logger 提示 AI 运行 add_module_translation.py。fail-open：loader 不可达
+    或查询异常时不阻断登记流程（提交时 Layer 2 gate 兜底）。
+
+    真源边界（TRAE-062）：本函数只读翻译 YAML 校验，不写（apply_depgraph 写 DB 架构数据，
+    翻译是规则数据，正交真源）。
+    """
+    if not path or path.endswith("/"):
+        return  # directory 粒度无单文件翻译条目，跳过
+    try:
+        from _shared.module_translation_loader import get_module_translation  # noqa: WPS433 — _GOV_DIR 已在 sys.path
+
+        trans = get_module_translation(path)
+        plain = (trans or {}).get("plain_zh", "") if trans else ""
+        if plain and plain.strip():
+            return  # 已有合格简介，不提示
+    except Exception as e:  # noqa: BLE001 — loader 不可达=环境异常，fail-open 不阻断登记
+        logger.debug("translation coverage warn 跳过（loader 不可达）: %s: %s", type(e).__name__, e)
+        return
+    # 缺简介 → 提示（不阻断）
+    msg = (
+        f"[TRANSLATION-COVERAGE] 新节点 {path} 在翻译真源无 plain_zh 大白话简介。"
+        f"请运行：python scripts/governance/d3_metadata/add_module_translation.py "
+        f"--path {path} --domain <D_*> --name-zh <中文名> --plain-zh <大白话简介>。"
+        f"提交时 TRANSLATION-COVERAGE 门禁将校验（观察期 warn，之后硬阻断）。"
+    )
+    print(msg, file=sys.stderr)
+    logger.warning(msg)
+
+
 def add_design_node(
     path: str, blueprint_id: str, domain_id: str, build_status: str = "planned",
     granularity: str = "directory", node_type: str | None = None, db_path: str = None,
@@ -942,6 +976,7 @@ def add_design_node(
                     (blueprint_id, domain_id, build_status, blueprint_path, granularity, node_type, existing["node_id"]),
                 )
                 conn.commit()
+                _warn_translation_coverage(path)
                 return existing["node_id"]
 
             # 插入新节点（granularity/node_type 参数化，消除硬编码 trae_060 §2）
@@ -955,6 +990,7 @@ def add_design_node(
             node_id = cur.fetchone()["node_id"]
             conn.commit()
             print(f"[OK] 新增设计态节点 node_id={node_id} path={path} granularity={granularity}", file=sys.stderr)
+            _warn_translation_coverage(path)
             return node_id
         except Exception as e:
             conn.rollback()

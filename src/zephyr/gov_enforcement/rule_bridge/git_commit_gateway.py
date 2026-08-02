@@ -108,6 +108,9 @@ from zephyr.governance.audit.workspace_hygiene_reconciler import (  # ARCH-TOOL-
 from zephyr.governance.audit.dead_public_wrapper_reconciler import (  # #ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发——死公共 wrapper 持续自动检测
     make_dead_public_wrapper_reconciler,
 )
+from zephyr.governance.audit.translation_coverage_reconciler import (  # TRANSLATION-COVERAGE Layer 4——翻译覆盖率存量对账（post-commit warn-only，priority=951）
+    make_translation_coverage_reconciler,
+)
 from zephyr.gov_enforcement.rule_bridge.batched_auto_committer import BatchedAutoCommitter  # ARCH-GIT-CALL-BUDGET P2.3
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import auto_register_gates  # #ARCH-GATE-REGISTRY-AUTO-001 Phase 4——YAML 驱动自动注册替代 76 个显式 import
@@ -785,6 +788,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_error_pattern_consumer_reconciler(self))  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b AI behavior telemetry JSONL 错误事件聚合 consumer（priority=880，post-commit 事件触发，聚合到 .runtime/ai_error_patterns/aggregated_patterns.json）
         self._reconciliation_registry.register(make_workspace_hygiene_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002 工作区卫生自动清理（priority=890，post-commit auto-sync 产物 git restore 还原）
         self._reconciliation_registry.register(make_dead_public_wrapper_reconciler(self))  # #ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发——死公共 wrapper 持续自动检测（priority=950，post-commit warn-only）
+        self._reconciliation_registry.register(make_translation_coverage_reconciler(self))  # TRANSLATION-COVERAGE Layer 4——翻译覆盖率存量对账（priority=951，post-commit warn-only，全扫 depgraph vs 翻译真源，落盘 drift_report.json）
         self._reconciliation_registry.register(make_cross_layer_contract_signature_reconciler(self))  # 12维度审计自动化 P1-b——跨层契约签名漂移检测（priority=215，post-commit 事件触发，对比 [C_contract] 签名 git show HEAD~1 vs HEAD）
         self._reconciliation_registry.register(make_blueprint_status_transition_reconciler(self))  # 12维度审计自动化 P1-d——BLUEPRINT 状态转跃检测（priority=825，post-commit 事件触发，STABILITY/MATURITY 逆向转跃 hard-fail）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
