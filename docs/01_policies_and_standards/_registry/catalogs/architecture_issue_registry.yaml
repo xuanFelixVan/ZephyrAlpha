@@ -11017,3 +11017,103 @@ entries:
   - 'audit_03 5.8'
   created: '2026-08-02'
   last_updated: '2026-08-02'
+
+# --- #ARCH-TRANSLATION-SCOPE-NARROW: 翻译覆盖率 gate/reconciler 范围不一致（非业务脚本误报漂移，2026-08-02）---
+- issue_id: '#ARCH-TRANSLATION-SCOPE-NARROW'
+  title: 翻译覆盖率门禁与对账器 _is_in_scope 范围不一致（非业务脚本误报漂移）
+  severity: P3低
+  category: governance_gate
+  adjudication: |
+    问题：translation_coverage_gate（Layer 2 提交门禁）与 translation_coverage_reconciler
+    （Layer 4 存量对账）的 _is_in_scope 范围不一致，导致非业务脚本误报漂移：
+      - gate 调用 is_test_exempt 豁免 tests/ 路径，但未豁免 demos/ 路径段、test_*.py/*_test.py
+        文件名、_archive/ 路径；
+      - reconciler 完全漏调 is_test_exempt（假设"tests/ 不在 depgraph file_path 中"），
+        且未豁免非 .py 文件，导致 scripts/tests/*、scripts/demos/*、scripts/backup/test_*
+        等已登记在 depgraph 的测试/演示脚本被误报为 missing_plain 漂移（7 条误报）。
+    根因（第一性原理）：两处 _is_in_scope 是复制而非共享（避免 governance.audit →
+    gov_enforcement 跨域依赖），但缺乏"同范围铁律"的同步保证——gate 收窄时 reconciler
+    未同步，反方向不一致。100% AI 开发语境下，复制代码的同步靠人工/AI 记忆=必漂移。
+    治本（已执行 2026-08-02，3 commits）：
+      1. 统一两处 _is_in_scope 范围：豁免 tests/ 路径段（is_test_exempt 单一真源，含
+         scripts/tests/）、demos/ 路径段、test_*.py/*_test.py 文件名（任意层级）、
+         __init__.py、_archive/ 路径、非 .py 文件。真能力脚本仍 in-scope。
+      2. reconciler 采用函数内懒加载+模块级缓存引入 is_test_exempt，解决循环导入。
+      3. 添加测试覆盖确保 gate 与 reconciler _is_in_scope 范围一致（同范围铁律）。
+    验证：drift_report 三类漂移全清零；gate/reconciler 单测全绿。
+    提交：415547ff1d + 56371b5b04 + 68d88e28fd。
+    防复发：两处 _is_in_scope MUST 保持一致（同范围铁律，docstring 已标注），同步靠测试覆盖保证。
+  fix_phase: 已执行（范围统一 + 懒加载解决循环导入 + 测试覆盖保证同范围铁律 + drift 清零验证）
+  status: decided
+  related_adjudication: 'translation_coverage_gate.py _is_in_scope; translation_coverage_reconciler.py _is_in_scope; TRANSLATION-COVERAGE 四层防御 Layer 0/1/2/4'
+  created: '2026-08-02'
+  last_updated: '2026-08-02'
+
+# --- #ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION: 全量重扫 depgraph 状态保护（防 rescan 静默回滚，2026-08-02）---
+- issue_id: '#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION'
+  title: 全量重扫 depgraph 前快照生命周期状态，DELETE+INSERT 后恢复（防 rescan 静默回滚）
+  severity: P2中
+  category: depgraph_governance
+  adjudication: |
+    问题：generate_project_depgraph.py 全量重扫采用 DELETE+INSERT 重建 depgraph。若 AI/人工
+    此前手动提升了某些节点的 build_status（generated→testing→stable）或 design_maturity
+    （prototype→production），重扫会静默回滚到脚本能推断的初始状态，导致生命周期状态丢失
+    （对标 edges_metadata UPSERT 保护机制的反面教训）。
+    根因（第一性原理）：重扫=全量重建，不区分"脚本可推断的状态"与"人工裁定的状态"。人工
+    裁定的状态不在任何脚本推断范围内，DELETE 后无法重建=丢失。
+    治本（已执行 2026-08-02，commit 71b79e423f）：重扫前快照所有节点的 build_status +
+    design_maturity（{path: {build_status, design_maturity}}），DELETE+INSERT 完成后按 path
+    恢复快照中的状态。脚本推断的状态照常重建，人工裁定的状态由快照兜底恢复。
+    验证：重扫后手动提升的 build_status/design_maturity 不再回滚。
+    后续：#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION-REFINEMENT 进一步收窄——design_maturity
+    的 SSoT 是 [MATURITY] 文件头，不应由 rescan 快照保留（会掩盖 header/DB 不一致）。
+  fix_phase: 已执行（快照-恢复机制）；后由 REFINEMENT 裁定收窄（design_maturity 改从 header 读）
+  status: decided
+  related_adjudication: '#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION-REFINEMENT; #ARCH-DATA-LAYER-STATUS-ALIGNMENT; generate_project_depgraph.py 重扫状态保护'
+  created: '2026-08-02'
+  last_updated: '2026-08-02'
+
+# --- #ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION-REFINEMENT: rescan 状态保护收窄（design_maturity SSoT=header，2026-08-02）---
+- issue_id: '#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION-REFINEMENT'
+  title: rescan 状态保护收窄——仅保留 build_status（depgraph-only），不再保留 design_maturity（SSoT 是 [MATURITY] 文件头）
+  severity: P2中
+  category: depgraph_governance
+  adjudication: |
+    问题：#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION 初版同时快照保留 build_status + design_maturity。
+    但 design_maturity 的 SSoT 是 .py 文件头的 [MATURITY] 声明，depgraph 只是缓存。rescan 快照
+    保留 design_maturity 会掩盖 header/DB 不一致——当 header=prototype 而 DB=production（人工
+    提升过 DB 未同步 header）时，rescan 从快照恢复 DB=production，导致 931 个 header/DB 不一致
+    被隐藏，违背 SSoT 铁律（TRAE-062）。
+    根因（第一性原理）：design_maturity 是"规则数据"（SSoT=文件头），不是"架构数据"（SSoT=DB）。
+    rescan 不应保留规则数据的 DB 副本——应从真源（header）重新读取。
+    治本（已执行 2026-08-02，commit d84394d226）：rescan 状态保护仅保留 build_status
+    （depgraph-only，不在文件头），design_maturity 改为从 [MATURITY] 文件头读取。修正后 931 个
+    header/DB 不一致暴露并可修复。
+    验证：rescan 后 design_maturity 与 [MATURITY] header 一致；build_status 仍由快照保护。
+  fix_phase: 已执行（状态保护收窄，design_maturity 改从 header 读）
+  status: decided
+  related_adjudication: '#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION; SSoT 分类铁律 TRAE-062'
+  created: '2026-08-02'
+  last_updated: '2026-08-02'
+
+# --- #ARCH-DATA-LAYER-STATUS-ALIGNMENT: data 层 [MATURITY] prototype→production 同步 depgraph（2026-08-02）---
+- issue_id: '#ARCH-DATA-LAYER-STATUS-ALIGNMENT'
+  title: wal_writer/tick_subscriber [MATURITY] prototype→production 同步 depgraph design_maturity（消除 header/DB 不一致）
+  severity: P2中
+  category: depgraph_governance
+  adjudication: |
+    问题：data 层 wal_writer、tick_subscriber 模块的 [MATURITY] 文件头已标注 production，但
+    depgraph design_maturity 仍为 prototype（此前手动提升因 rescan bug 丢失）。导致 header/DB
+    不一致，违反 SSoT 对齐。
+    根因（第一性原理）：[MATURITY] header 是 design_maturity 的 SSoT，depgraph 是缓存。header
+    改了但 DB 未同步=缓存陈旧。rescan bug（#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION）导致此前
+    提升丢失，需重新对齐。
+    治本（已执行 2026-08-02，commit 61f92338b2）：wal_writer depgraph build_status
+    generated→testing→stable + design_maturity prototype→production（Phase A-D+G 完成，15 tests
+    pass）。由 rescan 状态保护机制（#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION）兜底防再次丢失。
+    验证：header/DB design_maturity 一致；15 tests pass。
+  fix_phase: 已执行（design_maturity 同步 + build_status 提升 + 15 tests pass）
+  status: decided
+  related_adjudication: '#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION; wal_writer; tick_subscriber'
+  created: '2026-08-02'
+  last_updated: '2026-08-02'

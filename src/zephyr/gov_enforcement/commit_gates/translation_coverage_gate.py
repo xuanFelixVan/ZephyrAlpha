@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 检测 staged 新增 .py 文件（src/zephyr/ + scripts/ 下，tests/ 豁免）在 module_translation_registry.yaml 有非空且非通用模板的 plain_zh 大白话简介；翻译真源不可达时 fail-open（环境异常非违规，对标 NEW-FILE-DEPGRAPH-ENFORCEMENT）；_OBSERVATION_PERIOD=False 硬阻断模式（2026-08-02 观察期结束，drift 已清零转 fail-closed）；只读查询（loader 只读 YAML）；bootstrap 豁免——只检测本次 commit 新增文件，现有 8422 条目不受影响
+# [INVARIANTS] 检测 staged 新增 .py 文件（src/zephyr/ + scripts/ 下，tests/ 豁免）在 module_translation_registry.yaml 有非空且非通用模板的 plain_zh 大白话简介；翻译真源不可达时 fail-open（环境异常非违规，对标 NEW-FILE-DEPGRAPH-ENFORCEMENT）；_OBSERVATION_PERIOD=False 硬阻断模式（2026-08-02 观察期结束，drift 已清零转 fail-closed）；只读查询（loader 只读 YAML）；bootstrap 豁免——只检测本次 commit 新增文件，现有全量条目不受影响
 # [MODIFY-GUARD] gate_id="TRANSLATION-COVERAGE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -21,7 +21,7 @@
 
 病根（第一性原理）
 -----------------
-节点标签质量治理把 8324 条目的 plain_zh 合格率提到 100%（0 通用模板），但治标不治本——
+节点标签质量治理把全量条目的 plain_zh 合格率提到 100%（0 通用模板），但治标不治本——
 新模块仍可持续制造缺口：AI 新建 .py 文件时不写大白话简介，事后靠审计→批量修→提交补救。
 100% AI 开发下，事后治理永远滞后于缺口制造。本 gate 把"新模块必有大白话简介"从君子协定
 升级为提交时技术强制（对标 NEW-FILE-DEPGRAPH-ENFORCEMENT 把 L1 铁律升级为技术强制）。
@@ -32,10 +32,11 @@
 ``scripts/governance/d3_metadata/add_module_translation.py`` 是 YAML 合规写入入口。
 与 depgraph（架构数据，DB 真源）正交，互不写入。
 
-治本方案（四层防御之一）
+治本方案（四层防御 Layer 2）
 ------------------------
-本 gate 是 Layer 2（提交时硬阻断），与 Layer 1（apply_depgraph.py 登记时 warn）、
-Layer 3（is_generic 质量检测，gate 内嵌）、Layer 4（post-commit reconciler 存量对账）配合：
+本 gate 是 Layer 2（提交时硬阻断），与 Layer 0（add_module_translation.py 合规写入工具）、
+Layer 1（apply_depgraph.py 登记时 warn）、Layer 4（post-commit reconciler 存量对账）配合
+（is_generic 质量检测内嵌于本 gate 与 Layer 4 reconciler，非独立层；canonical Layer 0/1/2/4）：
   1. ``git diff --cached --name-only --diff-filter=A`` 获取 staged 新增 .py 文件
   2. 过滤范围：src/zephyr/ 或 scripts/ 下，tests/ 豁免（对标 NEW-FILE-DEPGRAPH-ENFORCEMENT）
   3. 对每个新 .py 查翻译真源：entry 存在 + plain_zh 非空 + CJK≥8 + 非通用模板
@@ -50,7 +51,7 @@ Layer 3（is_generic 质量检测，gate 内嵌）、Layer 4（post-commit recon
 2. **范围与 depgraph gate 同**（src/zephyr/+scripts/，tests 豁免）：depgraph 已要求这些 .py
    登记节点，节点必有简介是自然延伸，两 gate 同范围保证一致性。
 3. **fail-open on loader error**：YAML 不可达时不阻断（环境异常非违规，对标 depgraph gate）。
-4. **bootstrap 豁免**：只检测本次 commit 新增文件，现有 8324 条目不受影响。
+4. **bootstrap 豁免**：只检测本次 commit 新增文件，现有全量条目不受影响。
 5. **priority=59**：在 NEW-FILE-DEPGRAPH-ENFORCEMENT(58) 之后、CREATE-GUARD(60) 之前
    ——depgraph 结构登记检查应先于翻译完整性检查（先确认是节点，再要求节点有简介）。
 6. **质量检测复用 loader**：is_generic_plain_zh/is_generic_plain_suffix 与生成器候选链
@@ -147,9 +148,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
     时返回 None（fail-open 检测器失效）。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
                 "TRANSLATION-COVERAGE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -170,7 +169,9 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "TRANSLATION-COVERAGE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -191,15 +192,17 @@ def _check_translation_entry(file_path: str) -> str:
         _shared_dir = str(REPO_ROOT / "scripts" / "governance")
         if _shared_dir not in sys.path:
             sys.path.insert(0, _shared_dir)
-        from _shared.module_translation_loader import (  # noqa: WPS433 — 跨边界懒加载
+        from _shared.module_translation_loader import (
             get_module_translation,
-            is_generic_plain_zh,
             is_generic_plain_suffix,
+            is_generic_plain_zh,
         )
     except Exception as e:  # noqa: BLE001 — loader 不可达=环境异常，fail-open
         logger.warning(
             "TRANSLATION-COVERAGE gate fail-open: 翻译 loader 不可达(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return "__OPEN__"
 
@@ -221,7 +224,10 @@ def _check_translation_entry(file_path: str) -> str:
     except Exception as e:  # noqa: BLE001 — loader 查询异常=环境异常，fail-open
         logger.warning(
             "TRANSLATION-COVERAGE gate fail-open: 翻译查询异常(%s: %s) file=%s。",
-            type(e).__name__, e, file_path, exc_info=True,
+            type(e).__name__,
+            e,
+            file_path,
+            exc_info=True,
         )
         return "__OPEN__"
 

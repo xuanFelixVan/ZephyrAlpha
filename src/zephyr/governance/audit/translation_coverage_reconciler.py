@@ -25,10 +25,12 @@ TRANSLATION-COVERAGE 四层防御的 Layer 4（post-commit 存量对账）：扫
 
 治本动机（第一性原理）
 --------------------
-Layer 1（apply_depgraph 登记时 warn）+ Layer 2（提交时 gate 阻断）+ Layer 3（is_generic
-质量检测）只管"新增模块"。存量 8324 条目中仍可能因 reconciler 回退、手工编辑、批量
-修复遗漏等产生漂移。本 reconciler 做**全量存量对账**——每次 commit 涉及 .py 文件时
-全扫 depgraph，把漂移落盘供追踪，与 gate（只检 staged 新增）互补。
+Layer 0（add_module_translation 写入工具）+ Layer 1（apply_depgraph 登记时 warn）+
+Layer 2（提交时 gate 阻断，含 is_generic 质量检测）只管"新增模块"。存量全量条目中
+仍可能因 reconciler 回退、手工编辑、批量修复遗漏等产生漂移。本 reconciler 做**全量
+存量对账**（Layer 4，亦含 is_generic 质量检测）——每次 commit 涉及 .py 文件时
+全扫 depgraph，把漂移落盘供追踪，与 gate（只检 staged 新增）互补。（canonical Layer 0/1/2/4，
+is_generic 内嵌于 Layer 2 与 Layer 4，非独立层。）
 
 真源边界（SSoT 分类铁律 TRAE-062）
 ----------------------------------
@@ -84,10 +86,7 @@ _SRC_ZEPHYR_PREFIX = "src/zephyr/"
 _SCRIPTS_PREFIX = "scripts/"
 
 # SQL 集中化（NO-BARE-SQL gate 合规，常量名需匹配 ^_?SQL_\w+$ 豁免正则）
-_SQL_GET_NODES_WITH_FILE_PATH = (
-    "SELECT path, file_path FROM nodes "
-    "WHERE file_path IS NOT NULL AND file_path != ''"
-)
+_SQL_GET_NODES_WITH_FILE_PATH = "SELECT path, file_path FROM nodes WHERE file_path IS NOT NULL AND file_path != ''"
 
 # detail 中每类最多显示的条目数（防过长）
 _MAX_DETAIL_ITEMS = 5
@@ -157,9 +156,10 @@ def _load_is_test_exempt():
     """
     global _is_test_exempt_cache
     if _is_test_exempt_cache is None:
-        from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (  # noqa: WPS433
+        from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
             is_test_exempt,
         )
+
         _is_test_exempt_cache = is_test_exempt
     return _is_test_exempt_cache
 
@@ -192,7 +192,9 @@ def _query_depgraph_nodes() -> list[dict[str, str]] | None:
     except Exception as e:  # noqa: BLE001 — DB 不可达=环境异常，fail-open
         logger.warning(
             "translation_coverage_reconciler: depgraph 查询失败(%s: %s)，fail-open。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -208,11 +210,12 @@ def _load_translation_loader():
         _shared_dir = str(REPO_ROOT / "scripts" / "governance")
         if _shared_dir not in sys.path:
             sys.path.insert(0, _shared_dir)
-        from _shared.module_translation_loader import (  # noqa: WPS433 — 跨边界懒加载
+        from _shared.module_translation_loader import (
             get_module_translation,
-            is_generic_plain_zh,
             is_generic_plain_suffix,
+            is_generic_plain_zh,
         )
+
         return {
             "get_module_translation": get_module_translation,
             "is_generic_plain_zh": is_generic_plain_zh,
@@ -221,7 +224,9 @@ def _load_translation_loader():
     except Exception as e:  # noqa: BLE001 — loader 不可达=环境异常，fail-open
         logger.warning(
             "translation_coverage_reconciler: 翻译 loader 不可达(%s: %s)，fail-open。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
         return None
 
@@ -264,7 +269,9 @@ def _scan_drift(nodes: list[dict[str, str]], loader: dict) -> dict[str, list[str
         except Exception as e:  # noqa: BLE001 — 单条查询异常跳过，不中断全扫
             logger.debug(
                 "translation_coverage_reconciler: 查询 %s 异常(%s: %s)，跳过。",
-                file_path, type(e).__name__, e,
+                file_path,
+                type(e).__name__,
+                e,
             )
 
     return drift
@@ -289,13 +296,13 @@ def _write_drift_report(drift: dict[str, list[str]]) -> None:
                 "total_drift": len(drift["missing"]) + len(drift["short"]) + len(drift["generic"]),
             },
         }
-        _DRIFT_REPORT_PATH.write_text(
-            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        _DRIFT_REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     except Exception as e:  # noqa: BLE001 — 落盘失败不阻断
         logger.warning(
             "translation_coverage_reconciler: 漂移报告落盘失败(%s: %s)。",
-            type(e).__name__, e, exc_info=True,
+            type(e).__name__,
+            e,
+            exc_info=True,
         )
 
 
@@ -329,14 +336,9 @@ def make_translation_coverage_reconciler(gateway: object) -> ReconcilerSpec:
 
     def _trigger(committed_files: list[str]) -> bool:
         """Trigger when Python files in src/ or scripts/ are committed."""
-        return any(
-            (f.startswith("src/") or f.startswith("scripts/")) and f.endswith(".py")
-            for f in committed_files
-        )
+        return any((f.startswith("src/") or f.startswith("scripts/")) and f.endswith(".py") for f in committed_files)
 
-    def _reconcile(
-        committed_files: list[str], session_id: str
-    ) -> ReconcileResult:
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         """全扫 depgraph 节点 vs 翻译真源，生成漂移报告并 warn。"""
         try:
             # 1. 查 depgraph 全量节点（None=fail-open DB 不可达）
@@ -363,9 +365,7 @@ def make_translation_coverage_reconciler(gateway: object) -> ReconcilerSpec:
             # 4. 落盘报告（fail-open）
             _write_drift_report(drift)
 
-            total = (
-                len(drift["missing"]) + len(drift["short"]) + len(drift["generic"])
-            )
+            total = len(drift["missing"]) + len(drift["short"]) + len(drift["generic"])
             if total == 0:
                 return ReconcileResult(
                     action="clean",
@@ -382,7 +382,9 @@ def make_translation_coverage_reconciler(gateway: object) -> ReconcilerSpec:
         except Exception as e:  # noqa: BLE001 — reconciler 永不抛异常
             logger.warning(
                 "translation_coverage_reconciler: reconcile 失败(%s: %s)。",
-                type(e).__name__, e, exc_info=True,
+                type(e).__name__,
+                e,
+                exc_info=True,
             )
             return ReconcileResult(
                 action="warn",
