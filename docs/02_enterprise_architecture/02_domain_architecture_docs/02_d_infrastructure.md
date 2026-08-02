@@ -103,6 +103,7 @@ flowchart TD
     src_zephyr_infrastructure_config_app_config_py["应用配置<br/>数据类与加载/热重载逻辑<br/>app_config<br/>文件: config/app_config.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_config_init_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_app_config_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -112,7 +113,6 @@ flowchart TD
     src_zephyr_shared_contracts_fill_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
