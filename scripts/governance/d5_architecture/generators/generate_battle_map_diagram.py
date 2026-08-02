@@ -97,20 +97,35 @@ FLOW_STAGES = [
 # Mermaid 分页大小（防 >100 节点渲染失败，memory lesson）
 PAGE_SIZE = 30
 
-# 颜色 classDef（panorama §九 五态：运营/设计/弃用/缺失/候选）
-# 治本（2026-08-01，Gap1）：颜色改由锚点模块的 depgraph build_status 推导（真实状态），
-# 不再用 step.design_maturity 自报。design 用虚线（§九"橙色虚线"）。
-_CLASSDEFS = """classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;"""
+# 灰色主题头（visualization_view_template §4.1 + §13.3 clusterBkg 透明）。
+# 每个 Mermaid 代码块第一行必须输出此主题头：节点背景统一浅灰，状态色（蓝/橙）由
+# classDef 覆盖；clusterBkg/clusterBorder 透明让 subgraph 与分图背景一致。
+_MERMAID_THEME = (
+    "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', "
+    "'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', "
+    "'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
+    "'clusterBkg': 'transparent', 'clusterBorder': 'transparent', "
+    "'fontSize': '14px'}}}%%"
+)
 
-# edge_type → Mermaid 线型
-_EDGE_STYLE = {
-    "data_flow": "---",
-    "trigger": "->>",
-    "degradation": "-.-",
+# classDef 颜色（模板 §4.7 production/design 精确对齐 + battle map 三扩展态）。
+# 治本（2026-08-02，模板对齐）：浅填充 + 黑字（color:#000）取代旧深填充白字——
+# 与 visualization_view_template §4.7 域文档 classDef 风格一致，图例颜色跨文档统一。
+# production/design 取模板精确色值；deprecated/missing/candidate 是 battle map 五态扩展
+# （panorama §九），用同风格浅色（红/灰/黄）+ design/candidate 虚线区分"未实线落地"。
+_CLASSDEFS = """classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5"""
+
+# edge_type → 中英双语标签（移入边标签，模板 §4.5 箭头按端点状态而非 edge_type 分）。
+# 箭头本身由 _edge_arrow 按 from/to 的 _effective_status 推导：两端均 production→-->，
+# 否则 -.->。edge_type 语义保留在标签里（数据流/触发/降级）。
+_EDGE_TYPE_LABEL = {
+    "data_flow": "数据流 / data_flow",
+    "trigger": "触发 / trigger",
+    "degradation": "降级 / degradation",
 }
 
 # depgraph build_status（5态生命周期）→ 作战地图展示态（panorama §九 五态）
@@ -132,6 +147,20 @@ _STATE_LABEL: dict[str, str] = {
     "missing": "⬜ 缺失态（无锚点）",
     "candidate": "🟨 候选态（候选池）",
 }
+
+# 五态 → 节点标签成熟度前缀（模板 §4.3 要素①：节点首行 "(生产态 / production)" 前缀）。
+# battle map 五态在模板 production/design 之外扩展 deprecated/missing/candidate——
+# 成熟度前缀同样用"中文 / english"双语格式，与模板四要素风格一致。
+_STATE_TO_MATURITY: dict[str, str] = {
+    "production": "(生产态 / production)",
+    "design": "(设计态 / design)",
+    "deprecated": "(弃用态 / deprecated)",
+    "missing": "(缺失态 / missing)",
+    "candidate": "(候选态 / candidate)",
+}
+
+# 本地文档 HTTP server 前缀（模板 §14：HTML 链接必须 http:// 绝对路径，IDE 才会交外部浏览器）。
+_HTML_SERVER_PREFIX = "http://localhost:8765/"
 
 
 # ---------------------------------------------------------------------------
@@ -199,27 +228,44 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
     for a in anchors:
         anchors_by_step.setdefault(a["step_id"], []).append(a)
 
-    # Gap1：查 depgraph 真实 build_status（替代 step.design_maturity 自报着色）
+    # Gap1：查 depgraph 真实 build_status + gate_reason（替代 step.design_maturity 自报着色）。
+    # 治本（2026-08-02，模板 §4.3 要素⑤）：一次查询取回 build_status + gate_reason，
+    # 供 ⛔ 受限原因行渲染（design 态 + gate_reason 非空时显示）。
     dg_ids = [a["target_id"] for a in anchors if a.get("target_graph") == "depgraph"]
     status_map: dict[str, str] = {}
+    gate_map: dict[str, str] = {}
     if dg_ids:
         dr = DepgraphReader()
         try:
-            status_map = dr.get_build_status_map(dg_ids)
+            sg_map = dr.get_status_and_gate_map(dg_ids)
         finally:
             dr.close()
+        # 拆成两个 dict：status_map（供 _compute_step_status）+ gate_map（供 ⛔ 行）
+        for tid, entry in sg_map.items():
+            status_map[tid] = entry["build_status"]
+            gr = entry.get("gate_reason") or ""
+            if gr:
+                gate_map[tid] = gr
 
     # enrich anchors：附加 live build_status
     for a in anchors:
         if a.get("target_graph") == "depgraph":
             a["_live_build_status"] = status_map.get(a["target_id"], "<未命中>")
 
-    # enrich steps：附加有效状态 + 候选标记
+    # enrich steps：附加有效状态 + 候选标记 + gate_reason（取 primary depgraph 锚点的）
     for s in steps:
         sid = s["step_id"]
         al = anchors_by_step.get(sid, [])
         s["_effective_status"] = _compute_step_status(al, status_map)
         s["_has_candidate"] = _has_candidate_anchor(al)
+        # gate_reason：取该环节 primary depgraph 锚点的 gate_reason（首个非空）
+        s["_gate_reason"] = ""
+        for a in al:
+            if a.get("target_role") == "primary" and a.get("target_graph") == "depgraph":
+                gr = gate_map.get(a["target_id"], "")
+                if gr:
+                    s["_gate_reason"] = gr
+                break
 
     return steps, edges, anchors_by_step
 
@@ -230,17 +276,63 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
 
 
 def _sanitize(text: str) -> str:
-    """转义 Mermaid 节点标签中的特殊字符。"""
+    """转义 Mermaid 节点标签中的特殊字符（模板 §4.9）。
+
+    注意：不转义 ``<`` ``>`` —— 节点标签用 ``<br/>`` 折行，转义会破坏折行。
+    旧版把 ``<>`` 替换为全角 ``〈〉`` 是因为旧标签用 ``\\n`` 折行；改用 ``<br/>`` 后
+    必须保留尖括号（模板 §4.10 预折行铁律依赖 ``<br/>``）。
+    """
     if not text:
         return ""
     return (
-        text.replace('"', "'")
-        .replace("<", "〈")
-        .replace(">", "〉")
-        .replace("[", "【")
-        .replace("]", "】")
+        text.replace("[", "(")
+        .replace("]", ")")
+        .replace('"', "'")
+        .replace("|", "/")
         .replace("\n", " ")
     )
+
+
+def _wrap_label_text(text: str, max_units: int = 48) -> str:
+    """将长节点标签文本按显示宽度预折行（Mermaid 节点内显示用）。
+
+    治本（2026-08-01，模板 §4.10 铁律）：Mermaid 先按标签行数测量节点框宽高，若依赖
+    HTML 渲染层 CSS max-width 二次折行，渲染行数 > 测量行数 → 框高不够、文字被上下
+    裁剪。必须在生成端用 ``<br/>`` 显式预折行，使测量行数 = 渲染行数。
+
+    逐字复制自 ``generate_domain_doc.py``（真源），保持跨生成器折行逻辑一致。
+    折行规则：显示宽度（CJK=2/ASCII=1）超 max_units 断行（48 ≈ 24 个汉字）；优先在
+    空格之后、左括号/斜杠之前软断（保持英文词完整），否则硬断。不在下划线处软断——
+    会把 context_engine 拆成 context_+engine 导致审计误判。
+    """
+    if not text:
+        return ""
+    lines: list[str] = []
+    remaining = text.strip()
+    while remaining:
+        width = 0
+        cut = 0
+        soft = -1  # 软断点（断在空格之后，或（(/之前）
+        for i, ch in enumerate(remaining):
+            u = 2 if ord(ch) > 0x2E7F else 1
+            if width + u > max_units:
+                break
+            width += u
+            cut = i + 1
+            if ch == " ":
+                soft = i + 1
+            elif ch in "（(/":
+                soft = i if i > 0 else -1
+        if cut >= len(remaining):
+            lines.append(remaining)
+            break
+        if soft >= 8:  # 软断点至少留 8 单位，避免碎片行
+            cut = soft
+        line = remaining[:cut].rstrip()
+        if line:
+            lines.append(line)
+        remaining = remaining[cut:].lstrip(" ")
+    return "<br/>".join(lines)
 
 
 def _node_class(step: dict) -> str:
@@ -256,34 +348,126 @@ def _node_class(step: dict) -> str:
 
 
 def _node_label(step: dict) -> str:
-    """构建节点标签：step_id + 双语名 + 大白话（截断）+ 状态标记。
+    """构建节点标签（模板 §4.3 四要素 + ⛔ 第五行 + 状态标记）。
 
-    标记（panorama §九）：
-      - ⚠无锚点 = 缺失态（BM-INV-001 君子协定违例）
-      - 🟡候选 = 环节有候选池锚点（候选承载，未进全景图）
+    结构（每行过 ``_wrap_label_text`` 预折行，再用 ``<br/>`` 拼接，模板 §4.10 铁律）：
+      第1行：(成熟度) step_id 中文名 / English       ← 要素①②
+      第2行：大白话简介                              ← 要素③
+      第3行：作战环节 / battle-step                   ← 要素④（流程步骤标识，§9.3 适配）
+      第4行（可选）：标记（⚠无锚点 / 🟡候选承载）
+      第5行（可选）：⛔ 受限原因（仅 design 态 + gate_reason 非空，要素⑤）
     """
     sid = step["step_id"]
     name_bi = get_step_name_bilingual(sid) or step.get("step_name", sid)
     plain = get_step_plain(sid)
-    plain_short = plain[:30] + "…" if len(plain) > 30 else plain
     status = step.get("_effective_status") or "design"
+    maturity = _STATE_TO_MATURITY.get(status, "(设计态 / design)")
+
+    parts: list[str] = [f"{maturity} {sid} {name_bi}".strip()]
+    parts.append(plain if plain else "—")
+    parts.append("作战环节 / battle-step")
+
     marks: list[str] = []
     if status == "missing":
         marks.append("⚠无锚点")
     if step.get("_has_candidate"):
-        marks.append("🟡候选")
-    mark = (" " + " ".join(marks)) if marks else ""
-    label = f"{sid}\\n{name_bi}"
-    if plain_short:
-        label += f"\\n{plain_short}"
-    if mark:
-        label += mark
+        marks.append("🟡候选承载")
+    if marks:
+        parts.append("、".join(marks))
+
+    gate = (step.get("_gate_reason") or "").strip()
+    if status == "design" and gate:
+        parts.append(f"⛔ {gate}")
+
+    label = "<br/>".join(_wrap_label_text(p) for p in parts if p)
     return _sanitize(label)
 
 
 def _mermaid_node_id(step_id: str) -> str:
-    """Mermaid 节点 ID（step_id 含连字符，用引号包裹的安全 id）。"""
+    """Mermaid 节点 ID（step_id 含连字符，替换为下划线的安全 id）。"""
     return step_id.replace("-", "_")
+
+
+def _edge_arrow(from_status: str, to_status: str) -> str:
+    """边箭头（模板 §4.5）：两端均 production → ``-->`` 实线，否则 ``-.->`` 虚线。"""
+    if from_status == "production" and to_status == "production":
+        return "-->"
+    return "-.->"
+
+
+def _edge_label(edge: dict) -> str:
+    """边标签（模板 §4.5：``|中英双语|``）。
+
+    优先用 DB 具体标签（如"标准化行情"）+ edge_type 英文（``标准化行情 / data_flow``）；
+    无 DB 标签则用 edge_type 双语（``数据流 / data_flow``）。
+    """
+    et = edge.get("edge_type") or ""
+    db_label = (edge.get("label") or "").strip()
+    if db_label and et:
+        text = f"{db_label} / {et}"
+    elif db_label:
+        text = db_label
+    else:
+        text = _EDGE_TYPE_LABEL.get(et, f"{et} / {et}" if et else "流转 / flow")
+    return f"|{_sanitize(text)}|"
+
+
+def _topological_layers(steps: list[dict], edges: list[dict]) -> dict[str, int]:
+    """Kahn 算法计算拓扑层级（模板 §4.6 强制竖排）。
+
+    ``layer(n) = max(layer(前驱)) + 1``；入度 0 = layer 0；环内剩余节点统一放当前层
+    （断环兜底）。仅按本图内有效边算（边两端都在 steps 集合内）。
+
+    返回 ``{step_id: layer}``，供 ``_emit_layer_chains`` 输出 ``~~~`` 同层串联。
+    """
+    step_ids = {s["step_id"] for s in steps}
+    preds: dict[str, list[str]] = {sid: [] for sid in step_ids}
+    for e in edges:
+        f, t = e.get("from_step_id"), e.get("to_step_id")
+        if f in step_ids and t in step_ids:
+            preds[t].append(f)
+    layer: dict[str, int] = {}
+    remaining = set(step_ids)
+    current = 0
+    while remaining:
+        ready = [sid for sid in remaining if all(p in layer for p in preds[sid])]
+        if not ready:
+            # 环：剩余节点统一放当前层，断环保证有层级
+            for sid in remaining:
+                layer[sid] = current
+            break
+        for sid in ready:
+            layer[sid] = current
+            remaining.discard(sid)
+        current += 1
+    return layer
+
+
+def _emit_layer_chains(steps: list[dict], layer_map: dict[str, int]) -> list[str]:
+    """同层节点用 ``~~~`` 不可见边串联（模板 §4.6：强制同 rank 横排，层间纵向流动）。"""
+    by_layer: dict[int, list[str]] = {}
+    for s in steps:
+        sid = s["step_id"]
+        by_layer.setdefault(layer_map.get(sid, 0), []).append(_mermaid_node_id(sid))
+    lines: list[str] = []
+    for lv in sorted(by_layer):
+        ids = by_layer[lv]
+        if len(ids) >= 2:
+            lines.append("    " + " ~~~ ".join(ids))
+    return lines
+
+
+def _class_statements(steps: list[dict]) -> list[str]:
+    """class 应用语句（模板 §4.8：按状态分组 ``class a,b,c production``）。"""
+    by_class: dict[str, list[str]] = {}
+    for s in steps:
+        by_class.setdefault(_node_class(s), []).append(_mermaid_node_id(s["step_id"]))
+    out: list[str] = []
+    for cls in ("production", "design", "deprecated", "missing", "candidate"):
+        ids = by_class.get(cls)
+        if ids:
+            out.append(f"    class {','.join(ids)} {cls}")
+    return out
 
 
 def _build_mermaid(
@@ -292,25 +476,32 @@ def _build_mermaid(
     anchors_by_step: dict[str, list[dict]],
     title: str,
 ) -> str:
-    """构建一个 Mermaid 流程图块。"""
-    lines = ["```mermaid", f"%% {title}", "flowchart LR"]
+    """构建一个 Mermaid 流程图块（模板合规：主题头 + TD + 四要素节点 + 拓扑分层 + 状态边 + class）。"""
+    lines = ["```mermaid", _MERMAID_THEME, f"%% {title}", "flowchart TD"]
     step_ids = {s["step_id"] for s in steps}
-    # 节点定义（颜色/标记由 step._effective_status 推导，Gap1）
+    status_by_id = {s["step_id"]: s.get("_effective_status") or "design" for s in steps}
+
+    # 节点定义（标签含四要素 + 预折行；颜色由末尾 class 语句绑，不内联 :::cls）
     for s in steps:
         nid = _mermaid_node_id(s["step_id"])
-        cls = _node_class(s)
         label = _node_label(s)
-        lines.append(f'    {nid}["{label}"]:::{cls}')
-    # 边定义（只画两端都在本图 step 集内的边）
+        lines.append(f'    {nid}["{label}"]')
+
+    # 拓扑分层 ~~~ 同层串联（模板 §4.6 强制竖排）
+    layer_map = _topological_layers(steps, edges)
+    lines.extend(_emit_layer_chains(steps, layer_map))
+
+    # 边定义（只画两端都在本图 step 集内的边；箭头按端点状态，标签含 edge_type）
     for e in edges:
         if e["from_step_id"] in step_ids and e["to_step_id"] in step_ids:
             from_n = _mermaid_node_id(e["from_step_id"])
             to_n = _mermaid_node_id(e["to_step_id"])
-            style = _EDGE_STYLE.get(e["edge_type"], "---")
-            label = e.get("label") or ""
-            label_part = f'|{_sanitize(label)}|' if label else ""
-            lines.append(f"    {from_n} {style} {label_part} {to_n}")
+            arrow = _edge_arrow(status_by_id[e["from_step_id"]], status_by_id[e["to_step_id"]])
+            lines.append(f"    {from_n} {arrow}{_edge_label(e)} {to_n}")
+
+    # classDef + class 应用（模板 §4.7 + §4.8）
     lines.append(_CLASSDEFS)
+    lines.extend(_class_statements(steps))
     lines.append("```")
     return "\n".join(lines)
 
@@ -455,11 +646,57 @@ def _make_frontmatter() -> str:
         "---\n"
         "ttl: permanent\n"
         "doc_type: architecture_view\n"
-        "status: draft\n"
-        'version: "0.2.0"\n'
+        "status: active\n"
+        'version: "1.0.0"\n'
         f"date: {date.today().isoformat()}\n"
         "---\n"
     )
+
+
+def _html_link_line(stem: str) -> str:
+    """HTML 跳转链接（模板 §14：http:// 绝对路径，IDE 才会交外部浏览器渲染）。
+
+    :param stem: MD 文件名 stem（如 ``battle_map_panorama``），对应 ``_zoomable_html/<stem>.html``
+    """
+    url = (
+        f"{_HTML_SERVER_PREFIX}docs/02_enterprise_architecture/"
+        f"07_trading_decision_architecture/battle_map/_zoomable_html/{stem}.html"
+    )
+    return (
+        f"> **[可缩放 HTML 版 / Zoomable HTML]({url})** "
+        "— Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
+    )
+
+
+def _legend_blockquote() -> str:
+    """图例说明 blockquote（模板 §3.1，适配 battle map 五态 + 双箭头）。"""
+    return (
+        "> **图例说明 / Legend**：\n"
+        "> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）\n"
+        "> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）\n"
+        "> - 🟥 **红色 = 弃用态**（deprecated）\n"
+        "> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）\n"
+        "> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）\n"
+        "> - **实线箭头 ``-->`` = 运营态流转**（两端均 production）\n"
+        "> - **虚线箭头 ``-.->`` = 非运营态流转**（含设计/候选/混合）"
+    )
+
+
+def _view_subset(
+    steps: list[dict], edges: list[dict], statuses: set[str]
+) -> tuple[list[dict], list[dict]]:
+    """按展示态筛选视图子集（模板 §3.2：运营态=production，设计态=design）。
+
+    返回 (筛选后 steps, 两端均在筛选集内且两端状态均在 statuses 内的 edges)。
+    candidate/deprecated/missing 不进运营/设计视图，仅在全景图展示。
+    """
+    sel = [s for s in steps if s.get("_effective_status") in statuses]
+    sel_ids = {s["step_id"] for s in sel}
+    sel_edges = [
+        e for e in edges
+        if e["from_step_id"] in sel_ids and e["to_step_id"] in sel_ids
+    ]
+    return sel, sel_edges
 
 
 def _generate_panorama_md(
@@ -467,7 +704,7 @@ def _generate_panorama_md(
     edges: list[dict],
     anchors_by_step: dict[str, list[dict]],
 ) -> str:
-    """总指挥图 MD（全部环节 + 流转边 + 每环节详情）。"""
+    """总指挥图 MD（三视图 + 每环节详情，模板 §3.1/§3.2 铁律）。"""
     no_anchor_count = sum(1 for s in steps if s.get("_effective_status") == "missing")
     # 五态分布统计（Gap1）
     state_counts: dict[str, int] = {}
@@ -478,29 +715,65 @@ def _generate_panorama_md(
         f"{_STATE_LABEL.get(st, st)}={cnt}"
         for st, cnt in sorted(state_counts.items(), key=lambda x: -x[1])
     )
-    parts = [
+
+    # 三视图子集（模板 §3.2：全景图 → 运营态的图 → 设计态的图）
+    prod_steps, prod_edges = _view_subset(steps, edges, {"production"})
+    design_steps, design_edges = _view_subset(steps, edges, {"design"})
+
+    parts: list[str] = [
         "# 交易决策作战地图（总指挥图）",
+        "",
+        _html_link_line("battle_map_panorama"),
         "",
         "> 第四全景图 battle_map 真源：`battle_map_steps` / `battle_map_anchors` / `battle_map_edges` 三表 + 翻译真源 `module_translation_registry.yaml` §battle_map_steps 段。",
         "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编（改环节→改 DB/YAML 真源→重跑生成器）。",
         "",
-        f"**环节总数**：{len(steps)} ｜ **流转边**：{len(edges)} ｜ **无锚点环节**（BM-INV-001）: {no_anchor_count}",
+        "## 文档基本信息 / Document Overview",
         "",
-        f"**状态分布**：{dist}",
+        "| 字段 | 值 | Field | Value |",
+        "|------|------|-------|-------|",
+        f"| 环节总数 | {len(steps)} | Steps | {len(steps)} |",
+        f"| 流转边 | {len(edges)} | Edges | {len(edges)} |",
+        f"| 无锚点环节（BM-INV-001） | {no_anchor_count} | No-Anchor Steps | {no_anchor_count} |",
+        f"| 运营态环节 | {len(prod_steps)} | Production Steps | {len(prod_steps)} |",
+        f"| 设计态环节 | {len(design_steps)} | Design Steps | {len(design_steps)} |",
+        f"| 状态分布 | {dist} | State Distribution | {dist} |",
         "",
-        "## 颜色标注说明（panorama §九 五态）",
+        _legend_blockquote(),
         "",
-        "- 🟦 蓝色实线 = 运营态（锚点模块 build_status=stable/generated/testing，已建）",
-        "- 🟧 橙色虚线 = 设计态（锚点模块 build_status=planned，待施工）",
-        "- 🟥 红色 = 弃用态（锚点模块 build_status=deprecated）",
-        "- ⬜ 灰色 = 缺失态（环节无锚点，BM-INV-001 君子协定违例，悬空决策风险）",
-        "- 🟨 黄色 = 候选态（承载模块在候选池，未进全景图）",
-        "- 🟡 标记 = 环节有候选池锚点（候选承载备选）",
+        "## 域内依赖图 / Internal Dependency Diagram",
         "",
-        "## 总指挥图（全流程）",
+        "> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。",
         "",
-        _build_mermaid_paged(steps, edges, anchors_by_step, "作战地图总指挥图"),
+        "### 全景图（全部环节，颜色区分五态）",
         "",
+        f"> 展示全部 {len(steps)} 个环节（运营态 {len(prod_steps)} + 设计态 {len(design_steps)} "
+        f"+ 弃用/缺失/候选 {len(steps) - len(prod_steps) - len(design_steps)}），含跨阶段流转边。",
+        "",
+        _build_mermaid_paged(steps, edges, anchors_by_step, "作战地图总指挥图·全景图"),
+        "",
+        "### 运营态的图（仅 production 环节和流转）",
+        "",
+    ]
+    if prod_steps:
+        parts.append(f"> 仅展示已上线运行的环节（共 {len(prod_steps)} 个），不含跨阶段外部节点。")
+        parts.append("")
+        parts.append(_build_mermaid_paged(prod_steps, prod_edges, anchors_by_step, "作战地图·运营态"))
+    else:
+        parts.append("> （无环节 / No steps）")
+    parts.append("")
+
+    parts.append("### 设计态的图（仅 design 环节和流转）")
+    parts.append("")
+    if design_steps:
+        parts.append(f"> 仅展示设计态、锚点模块待施工的环节（共 {len(design_steps)} 个）。")
+        parts.append("")
+        parts.append(_build_mermaid_paged(design_steps, design_edges, anchors_by_step, "作战地图·设计态"))
+    else:
+        parts.append("> （无环节 / No steps）")
+    parts.append("")
+
+    parts += [
         "## 分阶段导航",
         "",
     ]
@@ -519,11 +792,16 @@ def _generate_panorama_md(
 def _generate_stage_md(
     stage_id: str,
     stage_name: str,
+    stage_num: str,
     steps: list[dict],
     edges: list[dict],
     anchors_by_step: dict[str, list[dict]],
 ) -> str:
-    """单阶段 MD（该阶段环节 + 相关边 + 详情）。"""
+    """单阶段 MD（模板合规：HTML链接 + 基本信息表 + 图例 + 阶段图 + 详情）。
+
+    治本（2026-08-02，模板对齐）：补齐 HTML 跳转链接、文档基本信息表、图例说明，
+    与 panorama 文档结构一致；阶段图是单视图（§9.2 视图数量按需，阶段级无需三视图）。
+    """
     stage_steps = [s for s in steps if s["flow_stage"] == stage_id]
     stage_step_ids = {s["step_id"] for s in stage_steps}
     # 边：任一端在本阶段
@@ -531,14 +809,41 @@ def _generate_stage_md(
         e for e in edges
         if e["from_step_id"] in stage_step_ids or e["to_step_id"] in stage_step_ids
     ]
-    parts = [
+    # 五态分布统计
+    state_counts: dict[str, int] = {}
+    for s in stage_steps:
+        st = s.get("_effective_status", "design")
+        state_counts[st] = state_counts.get(st, 0) + 1
+    dist = " ｜ ".join(
+        f"{_STATE_LABEL.get(st, st)}={cnt}"
+        for st, cnt in sorted(state_counts.items(), key=lambda x: -x[1])
+    ) or "—"
+    stem = f"battle_map_{stage_num}_{stage_id}"
+
+    parts: list[str] = [
         f"# 作战地图·{stage_name}阶段",
         "",
+        _html_link_line(stem),
+        "",
         f"> battle_map §{stage_id} 阶段，{len(stage_steps)} 环节。",
+        "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。",
         "",
-        "## 阶段图",
+        "## 文档基本信息 / Document Overview",
         "",
-        _build_mermaid(stage_steps, stage_edges, anchors_by_step, f"{stage_name}阶段图"),
+        "| 字段 | 值 | Field | Value |",
+        "|------|------|-------|-------|",
+        f"| 阶段 | {stage_name}（{stage_id}） | Stage | {stage_name} |",
+        f"| 环节数 | {len(stage_steps)} | Steps | {len(stage_steps)} |",
+        f"| 流转边 | {len(stage_edges)} | Edges | {len(stage_edges)} |",
+        f"| 状态分布 | {dist} | State Distribution | {dist} |",
+        "",
+        _legend_blockquote(),
+        "",
+        "## 阶段图 / Stage Diagram",
+        "",
+        f"> 展示 {stage_name} 阶段全部 {len(stage_steps)} 个环节及流转边，颜色区分五态。",
+        "",
+        _build_mermaid_paged(stage_steps, stage_edges, anchors_by_step, f"{stage_name}阶段图"),
         "",
         "## 环节详情",
         "",
@@ -996,20 +1301,20 @@ def main() -> int:
 
     # 6 分阶段图
     for stage_id, stage_name, num in FLOW_STAGES:
-        stage_md = _generate_stage_md(stage_id, stage_name, steps, edges, anchors_by_step)
+        stage_md = _generate_stage_md(stage_id, stage_name, num, steps, edges, anchors_by_step)
         stage_md = f"{_make_frontmatter()}\n{stage_md}"
         stage_path = out_dir / f"battle_map_{num}_{stage_id}.md"
         stage_path.write_text(stage_md, encoding="utf-8")
-        html = emit_zoomable_html(panorama_path, stage_md)
-        print(f"  {stage_name}阶段: {stage_path}" + (" + HTML" if html else ""))
+        html = emit_zoomable_html(stage_path, stage_md)
+        print(f"  {stage_name}阶段: {stage_path}" + (f" + HTML: {html}" if html else ""))
 
     # 横切视图（Gap3：§13漏斗 / §14盘中事件 / §16冲突矩阵）
     cross_md = _generate_cross_cutting_md()
     cross_md = f"{_make_frontmatter()}\n{cross_md}"
     cross_path = out_dir / "battle_map_07_cross_cutting.md"
     cross_path.write_text(cross_md, encoding="utf-8")
-    html = emit_zoomable_html(panorama_path, cross_md)
-    print(f"  横切视图: {cross_path}" + (" + HTML" if html else ""))
+    html = emit_zoomable_html(cross_path, cross_md)
+    print(f"  横切视图: {cross_path}" + (f" + HTML: {html}" if html else ""))
 
     print(f"\n完成。输出目录: {out_dir}")
     return 0

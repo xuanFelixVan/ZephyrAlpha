@@ -1,30 +1,55 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-status: draft
-version: "0.2.0"
+status: active
+version: "1.0.0"
 date: 2026-08-02
 ---
 
 # 作战地图·对账阶段
 
-> battle_map §reconciliation 阶段，3 环节。
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_06_reconciliation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-## 阶段图
+> battle_map §reconciliation 阶段，3 环节。
+> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
+
+## 文档基本信息 / Document Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 阶段 | 对账（reconciliation） | Stage | 对账 |
+| 环节数 | 3 | Steps | 3 |
+| 流转边 | 5 | Edges | 5 |
+| 状态分布 | 🟦 运营态（已建）=3 | State Distribution | 🟦 运营态（已建）=3 |
+
+> **图例说明 / Legend**：
+> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
+> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟥 **红色 = 弃用态**（deprecated）
+> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
+> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
+> - **实线箭头 ``-->`` = 运营态流转**（两端均 production）
+> - **虚线箭头 ``-.->`` = 非运营态流转**（含设计/候选/混合）
+
+## 阶段图 / Stage Diagram
+
+> 展示 对账 阶段全部 3 个环节及流转边，颜色区分五态。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 对账阶段图
-flowchart LR
-    BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::production
-    BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::production
-    BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型… 🟡候选"]:::production
-    BM_REC_01 --- |运营数据| BM_REC_02
-    BM_REC_02 --- |复盘报告| BM_REC_03
-classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
+flowchart TD
+    BM_REC_01["(生产态 / production) BM-REC-01 交易运营清算 /<br/>Trade Ops & Settlement<br/>把成交回报拿去清算、算费率、处理公司行为，变成运<br/>营数据。<br/>作战环节 / battle-step"]
+    BM_REC_02["(生产态 / production) BM-REC-02 报告复盘 /<br/>Reporting & Review<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>作战环节 / battle-step"]
+    BM_REC_03["(生产态 / production) BM-REC-03 闭环优化反馈 /<br/>Closed-Loop Optimization Feedback<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_REC_01 -->|运营数据 / data_flow| BM_REC_02
+    BM_REC_02 -->|复盘报告 / data_flow| BM_REC_03
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_REC_01,BM_REC_02,BM_REC_03 production
 ```
 
 ## 环节详情

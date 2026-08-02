@@ -1,140 +1,265 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-status: draft
-version: "0.2.0"
+status: active
+version: "1.0.0"
 date: 2026-08-02
 ---
 
 # 交易决策作战地图（总指挥图）
 
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_panorama.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+
 > 第四全景图 battle_map 真源：`battle_map_steps` / `battle_map_anchors` / `battle_map_edges` 三表 + 翻译真源 `module_translation_registry.yaml` §battle_map_steps 段。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编（改环节→改 DB/YAML 真源→重跑生成器）。
 
-**环节总数**：44 ｜ **流转边**：48 ｜ **无锚点环节**（BM-INV-001）: 0
+## 文档基本信息 / Document Overview
 
-**状态分布**：🟦 运营态（已建）=23 ｜ 🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=5
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 环节总数 | 44 | Steps | 44 |
+| 流转边 | 48 | Edges | 48 |
+| 无锚点环节（BM-INV-001） | 0 | No-Anchor Steps | 0 |
+| 运营态环节 | 23 | Production Steps | 23 |
+| 设计态环节 | 5 | Design Steps | 5 |
+| 状态分布 | 🟦 运营态（已建）=23 ｜ 🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=5 | State Distribution | 🟦 运营态（已建）=23 ｜ 🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=5 |
 
-## 颜色标注说明（panorama §九 五态）
+> **图例说明 / Legend**：
+> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
+> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟥 **红色 = 弃用态**（deprecated）
+> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
+> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
+> - **实线箭头 ``-->`` = 运营态流转**（两端均 production）
+> - **虚线箭头 ``-.->`` = 非运营态流转**（含设计/候选/混合）
 
-- 🟦 蓝色实线 = 运营态（锚点模块 build_status=stable/generated/testing，已建）
-- 🟧 橙色虚线 = 设计态（锚点模块 build_status=planned，待施工）
-- 🟥 红色 = 弃用态（锚点模块 build_status=deprecated）
-- ⬜ 灰色 = 缺失态（环节无锚点，BM-INV-001 君子协定违例，悬空决策风险）
-- 🟨 黄色 = 候选态（承载模块在候选池，未进全景图）
-- 🟡 标记 = 环节有候选池锚点（候选承载备选）
+## 域内依赖图 / Internal Dependency Diagram
 
-## 总指挥图（全流程）
+> 依赖图内嵌在本文档中，IDE 可直接渲染；网页版可 Ctrl+滚轮缩放 + 拖动平移查看细节。
+
+### 全景图（全部环节，颜色区分五态）
+
+> 展示全部 44 个环节（运营态 23 + 设计态 5 + 弃用/缺失/候选 16），含跨阶段流转边。
 
 ```mermaid
-%% 作战地图总指挥图（第 1/2 页）
-flowchart LR
-    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 🟡候选"]:::production
-    BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::production
-    BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::production
-    BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破…"]:::design
-    BM_BUY_05["BM-BUY-05\n做T日内套利 / Intraday T+0 Arbitrage\nA股T+1约束下的日内套利——每天扫全部持仓，找有日内T+0…"]:::design
-    BM_BUY_06["BM-BUY-06\n外部指令盯盘 / External Order Monitoring\n接收用户从微信/前端发来的买卖调仓指令，解析后走风控检查→执…"]:::production
-    BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单… 🟡候选"]:::production
-    BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。 🟡候选"]:::production
-    BM_EXE_03["BM-EXE-03\n执行质量TCA / Execution Quality TCA\n每笔成交后做'成本尸检'——把决策时刻到最终成交的总成本拆成…"]:::production
-    BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决… 🟡候选"]:::production
-    BM_POS_02["BM-POS-02\n标级仓位Kelly / Per-Symbol Kelly Sizing\n每只票该买多少——用Kelly公式算理论仓位，半Kelly硬…"]:::production
-    BM_POS_03["BM-POS-03\n持仓状态机漂移 / Position State Machine & Drift\n每只票有自己的状态(NONE→BUILDING→ACTIVE…"]:::production
-    BM_POS_04["BM-POS-04\n跨策略仓位硬限制 / Cross-Strategy Position Hard Limit\n多策略同标的仓位合并取sum不超上限，新策略上线仓位砍到正常…"]:::production
-    BM_POS_05["BM-POS-05\n资金曲线回撤缩放 / Capital Curve Drawdown Scaling\n系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢加仓(每…"]:::production
-    BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::production
-    BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::production
-    BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型… 🟡候选"]:::production
-    BM_SELL_01["BM-SELL-01\n突破成败信号 / Breakout Success/Failure Signal\n判断股价冲压力位是冲上去了还是冲不动——冲上去留着，冲不动止…"]:::production
-    BM_SELL_02["BM-SELL-02\n卖出信号融合仲裁 / Sell Signal Fusion Arbitration\n把所有卖出信号（含突破成败）汇总仲裁，强制清仓永远最高优先级…"]:::production
-    BM_SELL_03["BM-SELL-03\n卖出信号收集评分 / Sell Signal Collection & Scoring\n卖出端的'信号层'——先把持仓分级(Watch/Monito…"]:::production
-    BM_SELL_04["BM-SELL-04\n止盈止损族 / Take-Profit & Stop-Loss Strategy Family\n卖出端的'策略工厂'——根据策略类型用不同的止盈止损范式(趋…"]:::design
-    BM_SELL_05["BM-SELL-05\n置换再平衡卖出 / Replacement & Rebalance Sell\n机会成本驱动+权重偏离驱动的被动卖出——候选池有更优标的就卖…"]:::production
-    BM_SELL_06["BM-SELL-06\n买卖冲突仲裁 / Buy-Sell Conflict Arbitration\n同一只票同时有买入和卖出信号时怎么办——卖出优先(保守原则)…"]:::production
-    BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，… 🟡候选"]:::production
-    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、… 🟡候选"]:::production
-    BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… 🟡候选"]:::design
-    BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… 🟡候选"]:::design
-    BM_SEL_05["BM-SEL-05\n主力行为感知 / Main-Force Behavior Sensing\n识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是出货弃庄，… 🟡候选"]:::candidate
-    BM_SEL_06["BM-SEL-06\n跨市场传导感知 / Cross-Market Conduction Sensing\n美股、港股、汇率、商品一异动，立刻算出对A股的传导系数和影响… 🟡候选"]:::candidate
-    BM_SEL_07["BM-SEL-07\n体制转换检测 / Regime Change Detection\n盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点提前预警。 🟡候选"]:::candidate
-    BM_SEL_01 --- |标准化行情| BM_SEL_02
-    BM_SEL_02 --- |因子池| BM_SEL_03
-    BM_SEL_03 --- |市场状态| BM_SEL_04
-    BM_SEL_04 --- |8态预测| BM_BUY_01
-    BM_SEL_02 --- |压力位因子| BM_SELL_01
-    BM_SEL_03 --- |进度+阶段+轮动| BM_BUY_04
-    BM_BUY_01 --- |买入预案| BM_BUY_02
-    BM_BUY_02 --- |统一决策流| BM_BUY_03
-    BM_BUY_04 --- |分批仓位方案| BM_POS_01
-    BM_SELL_01 --- |突破成败信号| BM_SELL_02
-    BM_SELL_02 --- |卖出决策| BM_POS_01
-    BM_BUY_03 --- |编排后决策| BM_POS_01
-    BM_POS_01 --- |仓位指令| BM_EXE_01
-    BM_EXE_01 --- |审批后订单| BM_EXE_02
-    BM_EXE_02 --- |成交回报| BM_REC_01
-    BM_REC_01 --- |运营数据| BM_REC_02
-    BM_REC_02 --- |复盘报告| BM_REC_03
-    BM_REC_03 ->> |迭代反馈（IC衰减/重训练）| BM_SEL_02
-    BM_SEL_03 -.- |C-021未就绪→跳过降级| BM_SEL_04
-    BM_BUY_04 ->> |分批建仓完成→做T监控| BM_BUY_05
-    BM_BUY_05 --- |T指令(底仓不变)→仓位裁决| BM_POS_01
-    BM_BUY_06 --- |外部指令→风控检查| BM_EXE_01
-    BM_BUY_05 ->> |做T信号→买卖冲突仲裁| BM_SELL_06
-    BM_BUY_06 ->> |外部指令→买卖冲突仲裁| BM_SELL_06
-    BM_SELL_01 --- |突破成败信号→收集评分| BM_SELL_03
-    BM_SELL_03 --- |评分输出→止盈止损族| BM_SELL_04
-    BM_SELL_03 --- |评分输出→置换再平衡| BM_SELL_05
-    BM_SELL_04 --- |止盈止损决策→融合仲裁| BM_SELL_02
-    BM_SELL_05 --- |置换再平衡→融合仲裁| BM_SELL_02
-    BM_SELL_02 --- |融合仲裁→买卖冲突仲裁| BM_SELL_06
-    BM_SELL_06 --- |统一决策→仓位裁决| BM_POS_01
-    BM_SELL_05 ->> |再平衡触发→状态机漂移检测| BM_POS_03
-    BM_POS_01 --- |风险配额→标级Kelly| BM_POS_02
-    BM_POS_02 --- |标级仓位→跨策略硬限制| BM_POS_04
-    BM_POS_03 ->> |漂移触发→标级仓位调整| BM_POS_02
-    BM_POS_05 ->> |回撤缩放→标级仓位约束| BM_POS_02
-    BM_POS_05 ->> |回撤缩放→跨策略硬限制| BM_POS_04
-    BM_POS_04 --- |实际仓位→风控审批| BM_EXE_01
-    BM_EXE_02 --- |成交回报→TCA分析| BM_EXE_03
-    BM_EXE_03 --- |执行质量→报告复盘| BM_REC_02
-    BM_EXE_03 -.- |TCA反馈→执行算法优化| BM_EXE_02
-    BM_POS_04 --- |实际仓位→交易执行| BM_EXE_02
-classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图总指挥图·全景图（第 1/2 页）
+flowchart TD
+    BM_BUY_01["(生产态 / production) BM-BUY-01 多情景对策生成<br/>/ Multi-Scenario Countermeasure<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_BUY_02["(生产态 / production) BM-BUY-02 四轨融合 /<br/>Four-Track Fusion (MTF)<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>作战环节 / battle-step"]
+    BM_BUY_03["(生产态 / production) BM-BUY-03 决策编排 /<br/>Decision Orchestration (DO)<br/>把融合后的决策按5条路径（买/卖/做T/人工<br/>/应急）统一出口编排，处理冲突、去重、排时序。<br/>作战环节 / battle-step"]
+    BM_BUY_04["(设计态 / design) BM-BUY-04 分批建仓 / Batched<br/>Position Building<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>作战环节 / battle-step"]
+    BM_BUY_05["(设计态 / design) BM-BUY-05 做T日内套利 /<br/>Intraday T+0 Arbitrage<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>作战环节 / battle-step<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
+    BM_BUY_06["(生产态 / production) BM-BUY-06 外部指令盯盘 /<br/>External Order Monitoring<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控检查→执行，是人工干预系统的入口。<br/>作战环节 / battle-step"]
+    BM_EXE_01["(生产态 / production) BM-EXE-01 自适应风控审批<br/>/ Adaptive Risk Approval<br/>下单前的最后一道闸——风控审批，审不过的订单直接拦<br/>下，是订单拦截器不是事后检查。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_EXE_02["(生产态 / production) BM-EXE-02 交易执行 /<br/>Trade Execution<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_EXE_03["(生产态 / production) BM-EXE-03 执行质量TCA /<br/>Execution Quality TCA<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>作战环节 / battle-step"]
+    BM_POS_01["(生产态 / production) BM-POS-01 仓位管理裁决 /<br/>Position Adjudication<br/>所有买卖决策都到这里统一算最终仓位——这是仓位决策<br/>的唯一裁决中心，谁都别想绕过。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_POS_02["(生产态 / production) BM-POS-02 标级仓位Kelly /<br/>Per-Symbol Kelly Sizing<br/>每只票该买多少——用Kelly公式算理论仓位，半Kelly硬<br/>上限截断(禁止全Kelly)，在风险配额内决策，再用密<br/>度PDF的偏度/峰度/前瞻VaR做分布感知调整<br/>(防御性只减不增)。<br/>作战环节 / battle-step"]
+    BM_POS_03["(生产态 / production) BM-POS-03 持仓状态机漂移<br/>/ Position State Machine & Drift<br/>每只票有自己的状态<br/>(NONE→BUILDING→ACTIVE→OBSERVING→REDUCING→EXITING<br/>→CLOSED)，权重漂移超±2%(组合)/±3%<br/>(单标的)就触发再平衡评估，观察期内禁止新买入。<br/>作战环节 / battle-step"]
+    BM_POS_04["(生产态 / production) BM-POS-04<br/>跨策略仓位硬限制 / Cross-Strategy Position Hard<br/>Limit<br/>多策略同标的仓位合并取sum不超上限，新策略上线仓<br/>位砍到正常的30%，行业偏离<br/>/风格暴露有硬约束，C-047是仓位裁决唯一中心<br/>(只有C-004风控veto能绕过)。<br/>作战环节 / battle-step"]
+    BM_POS_05["(生产态 / production) BM-POS-05<br/>资金曲线回撤缩放 / Capital Curve Drawdown<br/>Scaling<br/>系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢<br/>加仓(每次+5%)，亏钱回撤超5%就砍仓位10%、超10%就<br/>砍20%，回到回撤前高点才能恢复原仓位。<br/>作战环节 / battle-step"]
+    BM_REC_01["(生产态 / production) BM-REC-01 交易运营清算 /<br/>Trade Ops & Settlement<br/>把成交回报拿去清算、算费率、处理公司行为，变成运<br/>营数据。<br/>作战环节 / battle-step"]
+    BM_REC_02["(生产态 / production) BM-REC-02 报告复盘 /<br/>Reporting & Review<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>作战环节 / battle-step"]
+    BM_REC_03["(生产态 / production) BM-REC-03 闭环优化反馈 /<br/>Closed-Loop Optimization Feedback<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SELL_01["(生产态 / production) BM-SELL-01 突破成败信号 /<br/>Breakout Success/Failure Signal<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>作战环节 / battle-step"]
+    BM_SELL_02["(生产态 / production) BM-SELL-02<br/>卖出信号融合仲裁 / Sell Signal Fusion<br/>Arbitration<br/>把所有卖出信号（含突破成败）汇总仲裁，强制清仓永<br/>远最高优先级，谁的信号最狠听谁的。<br/>作战环节 / battle-step"]
+    BM_SELL_03["(生产态 / production) BM-SELL-03<br/>卖出信号收集评分 / Sell Signal Collection &<br/>Scoring<br/>卖出端的'信号层'——先把持仓分级(Watch/Monitor<br/>/Hold)，再收集7类卖出信号，多时间框架共振加权，<br/>产出卖出信号评分和紧迫度。<br/>作战环节 / battle-step"]
+    BM_SELL_04["(设计态 / design) BM-SELL-04 止盈止损族 /<br/>Take-Profit & Stop-Loss Strategy Family<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式(趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损)，叠加猎杀防护和期权定价<br/>评估。<br/>作战环节 / battle-step<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
+    BM_SELL_05["(生产态 / production) BM-SELL-05 置换再平衡卖出<br/>/ Replacement & Rebalance Sell<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>作战环节 / battle-step"]
+    BM_SELL_06["(生产态 / production) BM-SELL-06 买卖冲突仲裁 /<br/>Buy-Sell Conflict Arbitration<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>(保守原则)；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>作战环节 / battle-step"]
+    BM_SEL_01["(生产态 / production) BM-SEL-01<br/>数据接入与预处理 / Data Ingestion &<br/>Preprocessing<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_02["(生产态 / production) BM-SEL-02<br/>因子计算与信号生成 / Factor Compute & Signal Gen<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_03["(设计态 / design) BM-SEL-03 市场状态感知 /<br/>Market State Sensing<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_04["(设计态 / design) BM-SEL-04 次日8态走势预测 /<br/>Next-Day 8-State Forecast<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_05["(候选态 / candidate) BM-SEL-05 主力行为感知 /<br/>Main-Force Behavior Sensing<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_06["(候选态 / candidate) BM-SEL-06 跨市场传导感知 /<br/>Cross-Market Conduction Sensing<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_07["(候选态 / candidate) BM-SEL-07 体制转换检测 /<br/>Regime Change Detection<br/>盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点<br/>提前预警。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_BUY_06 ~~~ BM_POS_05 ~~~ BM_SEL_01 ~~~ BM_SEL_05 ~~~ BM_SEL_06 ~~~ BM_SEL_07
+    BM_BUY_01 ~~~ BM_BUY_02 ~~~ BM_BUY_03 ~~~ BM_BUY_04 ~~~ BM_BUY_05 ~~~ BM_EXE_01 ~~~ BM_EXE_02 ~~~ BM_EXE_03 ~~~ BM_POS_01 ~~~ BM_POS_02 ~~~ BM_POS_03 ~~~ BM_POS_04 ~~~ BM_REC_01 ~~~ BM_REC_02 ~~~ BM_REC_03 ~~~ BM_SELL_01 ~~~ BM_SELL_02 ~~~ BM_SELL_03 ~~~ BM_SELL_04 ~~~ BM_SELL_05 ~~~ BM_SELL_06 ~~~ BM_SEL_02 ~~~ BM_SEL_03 ~~~ BM_SEL_04
+    BM_SEL_01 -->|标准化行情 / data_flow| BM_SEL_02
+    BM_SEL_02 -.->|因子池 / data_flow| BM_SEL_03
+    BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
+    BM_SEL_04 -.->|8态预测 / data_flow| BM_BUY_01
+    BM_SEL_02 -->|压力位因子 / data_flow| BM_SELL_01
+    BM_SEL_03 -.->|进度+阶段+轮动 / data_flow| BM_BUY_04
+    BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
+    BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
+    BM_BUY_04 -.->|分批仓位方案 / data_flow| BM_POS_01
+    BM_SELL_01 -->|突破成败信号 / data_flow| BM_SELL_02
+    BM_SELL_02 -->|卖出决策 / data_flow| BM_POS_01
+    BM_BUY_03 -->|编排后决策 / data_flow| BM_POS_01
+    BM_POS_01 -->|仓位指令 / data_flow| BM_EXE_01
+    BM_EXE_01 -->|审批后订单 / data_flow| BM_EXE_02
+    BM_EXE_02 -->|成交回报 / data_flow| BM_REC_01
+    BM_REC_01 -->|运营数据 / data_flow| BM_REC_02
+    BM_REC_02 -->|复盘报告 / data_flow| BM_REC_03
+    BM_REC_03 -->|迭代反馈（IC衰减/重训练） / trigger| BM_SEL_02
+    BM_SEL_03 -.->|C-021未就绪→跳过降级 / degradation| BM_SEL_04
+    BM_BUY_04 -.->|分批建仓完成→做T监控 / trigger| BM_BUY_05
+    BM_BUY_05 -.->|T指令(底仓不变)→仓位裁决 / data_flow| BM_POS_01
+    BM_BUY_06 -->|外部指令→风控检查 / data_flow| BM_EXE_01
+    BM_BUY_05 -.->|做T信号→买卖冲突仲裁 / trigger| BM_SELL_06
+    BM_BUY_06 -->|外部指令→买卖冲突仲裁 / trigger| BM_SELL_06
+    BM_SELL_01 -->|突破成败信号→收集评分 / data_flow| BM_SELL_03
+    BM_SELL_03 -.->|评分输出→止盈止损族 / data_flow| BM_SELL_04
+    BM_SELL_03 -->|评分输出→置换再平衡 / data_flow| BM_SELL_05
+    BM_SELL_04 -.->|止盈止损决策→融合仲裁 / data_flow| BM_SELL_02
+    BM_SELL_05 -->|置换再平衡→融合仲裁 / data_flow| BM_SELL_02
+    BM_SELL_02 -->|融合仲裁→买卖冲突仲裁 / data_flow| BM_SELL_06
+    BM_SELL_06 -->|统一决策→仓位裁决 / data_flow| BM_POS_01
+    BM_SELL_05 -->|再平衡触发→状态机漂移检测 / trigger| BM_POS_03
+    BM_POS_01 -->|风险配额→标级Kelly / data_flow| BM_POS_02
+    BM_POS_02 -->|标级仓位→跨策略硬限制 / data_flow| BM_POS_04
+    BM_POS_03 -->|漂移触发→标级仓位调整 / trigger| BM_POS_02
+    BM_POS_05 -->|回撤缩放→标级仓位约束 / trigger| BM_POS_02
+    BM_POS_05 -->|回撤缩放→跨策略硬限制 / trigger| BM_POS_04
+    BM_POS_04 -->|实际仓位→风控审批 / data_flow| BM_EXE_01
+    BM_EXE_02 -->|成交回报→TCA分析 / data_flow| BM_EXE_03
+    BM_EXE_03 -->|执行质量→报告复盘 / data_flow| BM_REC_02
+    BM_EXE_03 -->|TCA反馈→执行算法优化 / degradation| BM_EXE_02
+    BM_POS_04 -->|实际仓位→交易执行 / data_flow| BM_EXE_02
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_EXE_01,BM_EXE_02,BM_EXE_03,BM_POS_01,BM_POS_02,BM_POS_03,BM_POS_04,BM_POS_05,BM_REC_01,BM_REC_02,BM_REC_03,BM_SELL_01,BM_SELL_02,BM_SELL_03,BM_SELL_05,BM_SELL_06,BM_SEL_01,BM_SEL_02 production
+    class BM_BUY_04,BM_BUY_05,BM_SELL_04,BM_SEL_03,BM_SEL_04 design
+    class BM_SEL_05,BM_SEL_06,BM_SEL_07 candidate
 ```
 
 ```mermaid
-%% 作战地图总指挥图（第 2/2 页）
-flowchart LR
-    BM_SEL_08["BM-SEL-08\n板块轮动序列追踪 / Sector Rotation Sequence Tracking\n追踪板块强弱的轮动顺序，给回踩质量打A/B/C级，决定买入优… 🟡候选"]:::candidate
-    BM_SEL_09["BM-SEL-09\n调整周期追踪 / Adjustment Cycle Tracking\n追踪板块调整走到哪了——进度≥80%才允许分批低吸，初期〈4… 🟡候选"]:::candidate
-    BM_SEL_10["BM-SEL-10\n行情生命周期阶段 / Market Lifecycle Phase\n判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破失败更倾向… 🟡候选"]:::candidate
-    BM_SEL_11["BM-SEL-11\n知识图谱与因果推演 / Knowledge Graph & Causal Inference\n把事件、公司、行业的关联织成图谱，事件一来就推演传导路径，并… 🟡候选"]:::candidate
-    BM_SEL_12["BM-SEL-12\n分布特征工程 / Distribution Feature Engineering\n给因子加料——滞后项、交互项、滚动统计量、签名方法，专门喂给… 🟡候选"]:::candidate
-    BM_SEL_13["BM-SEL-13\n收益率条件密度预测 / Conditional Density Prediction\n不只预测明天涨多少，而是预测明天收益率的完整概率分布——偏多… 🟡候选"]:::candidate
-    BM_SEL_14["BM-SEL-14\n共形预测 / Conformal Prediction\n给预测区间加数学保证——不管分布长什么样，区间覆盖率有数学证… 🟡候选"]:::candidate
-    BM_SEL_15["BM-SEL-15\nSurvival止盈止损时间预测 / Survival Stop-Time Prediction\n预测止盈止损还有多久发生——不是固定N天，而是时间概率分布。 🟡候选"]:::candidate
-    BM_SEL_16["BM-SEL-16\n分级指标过滤 / Tiered Screening Filter\n选股漏斗第一层——3秒级把全市场7000只砍到1200只，涨… 🟡候选"]:::candidate
-    BM_SEL_17["BM-SEL-17\n初筛漏斗 / Coarse Screening Funnel\n漏斗第二层——60秒级从1200只筛到300只，看技术形态、… 🟡候选"]:::candidate
-    BM_SEL_18["BM-SEL-18\n精筛评分 / Fine Scoring\n漏斗第三层——60秒级从300只评到50只，多维因子打分+市… 🟡候选"]:::candidate
-    BM_SEL_19["BM-SEL-19\n事件驱动分布筛选 / Event-Driven Distribution Screening\n漏斗第四层——从50只筛到30只，看事件影响、事件修正后的概… 🟡候选"]:::candidate
-    BM_SEL_20["BM-SEL-20\n多策略交叉投票 / Multi-Strategy Cross Voting\n漏斗第五层——多策略对每只票投YES/NO，加上主力合力和市… 🟡候选"]:::candidate
-    BM_SEL_21["BM-SEL-21\n组合优化 / Portfolio Optimization\n漏斗第六层——从30只里算出最终N≤10只下单清单和每只权重… 🟡候选"]:::production
-    BM_SEL_16 --- |漏斗L1→L2(~1200只)| BM_SEL_17
-    BM_SEL_17 --- |漏斗L2→L3(~300只)| BM_SEL_18
-    BM_SEL_18 --- |漏斗L3→L4(~50只)| BM_SEL_19
-    BM_SEL_19 --- |漏斗L4→L5(~30只)| BM_SEL_20
-    BM_SEL_20 --- |漏斗L5→L6| BM_SEL_21
-classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图总指挥图·全景图（第 2/2 页）
+flowchart TD
+    BM_SEL_08["(候选态 / candidate) BM-SEL-08 板块轮动序列追踪<br/>/ Sector Rotation Sequence Tracking<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_09["(候选态 / candidate) BM-SEL-09 调整周期追踪 /<br/>Adjustment Cycle Tracking<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期<40%直接拦截。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_10["(候选态 / candidate) BM-SEL-10 行情生命周期阶段<br/>/ Market Lifecycle Phase<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_11["(候选态 / candidate) BM-SEL-11<br/>知识图谱与因果推演 / Knowledge Graph & Causal<br/>Inference<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_12["(候选态 / candidate) BM-SEL-12 分布特征工程 /<br/>Distribution Feature Engineering<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_13["(候选态 / candidate) BM-SEL-13<br/>收益率条件密度预测 / Conditional Density<br/>Prediction<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_14["(候选态 / candidate) BM-SEL-14 共形预测 /<br/>Conformal Prediction<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_15["(候选态 / candidate) BM-SEL-15<br/>Survival止盈止损时间预测 / Survival Stop-Time<br/>Prediction<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_16["(候选态 / candidate) BM-SEL-16 分级指标过滤 /<br/>Tiered Screening Filter<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_17["(候选态 / candidate) BM-SEL-17 初筛漏斗 /<br/>Coarse Screening Funnel<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_18["(候选态 / candidate) BM-SEL-18 精筛评分 / Fine<br/>Scoring<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_19["(候选态 / candidate) BM-SEL-19 事件驱动分布筛选<br/>/ Event-Driven Distribution Screening<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_20["(候选态 / candidate) BM-SEL-20 多策略交叉投票 /<br/>Multi-Strategy Cross Voting<br/>漏斗第五层——多策略对每只票投YES<br/>/NO，加上主力合力和市场状态否决，少数服从多数。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_21["(生产态 / production) BM-SEL-21 组合优化 /<br/>Portfolio Optimization<br/>漏斗第六层——从30只里算出最终N≤10只下单清单和每只<br/>权重，行业、市值、风险、相关性、拥挤度全约束。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_08 ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16
+    BM_SEL_16 -.->|漏斗L1→L2(~1200只) / data_flow| BM_SEL_17
+    BM_SEL_17 -.->|漏斗L2→L3(~300只) / data_flow| BM_SEL_18
+    BM_SEL_18 -.->|漏斗L3→L4(~50只) / data_flow| BM_SEL_19
+    BM_SEL_19 -.->|漏斗L4→L5(~30只) / data_flow| BM_SEL_20
+    BM_SEL_20 -.->|漏斗L5→L6 / data_flow| BM_SEL_21
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_SEL_21 production
+    class BM_SEL_08,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19,BM_SEL_20 candidate
+```
+
+### 运营态的图（仅 production 环节和流转）
+
+> 仅展示已上线运行的环节（共 23 个），不含跨阶段外部节点。
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图·运营态
+flowchart TD
+    BM_BUY_01["(生产态 / production) BM-BUY-01 多情景对策生成<br/>/ Multi-Scenario Countermeasure<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_BUY_02["(生产态 / production) BM-BUY-02 四轨融合 /<br/>Four-Track Fusion (MTF)<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>作战环节 / battle-step"]
+    BM_BUY_03["(生产态 / production) BM-BUY-03 决策编排 /<br/>Decision Orchestration (DO)<br/>把融合后的决策按5条路径（买/卖/做T/人工<br/>/应急）统一出口编排，处理冲突、去重、排时序。<br/>作战环节 / battle-step"]
+    BM_BUY_06["(生产态 / production) BM-BUY-06 外部指令盯盘 /<br/>External Order Monitoring<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控检查→执行，是人工干预系统的入口。<br/>作战环节 / battle-step"]
+    BM_EXE_01["(生产态 / production) BM-EXE-01 自适应风控审批<br/>/ Adaptive Risk Approval<br/>下单前的最后一道闸——风控审批，审不过的订单直接拦<br/>下，是订单拦截器不是事后检查。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_EXE_02["(生产态 / production) BM-EXE-02 交易执行 /<br/>Trade Execution<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_EXE_03["(生产态 / production) BM-EXE-03 执行质量TCA /<br/>Execution Quality TCA<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>作战环节 / battle-step"]
+    BM_POS_01["(生产态 / production) BM-POS-01 仓位管理裁决 /<br/>Position Adjudication<br/>所有买卖决策都到这里统一算最终仓位——这是仓位决策<br/>的唯一裁决中心，谁都别想绕过。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_POS_02["(生产态 / production) BM-POS-02 标级仓位Kelly /<br/>Per-Symbol Kelly Sizing<br/>每只票该买多少——用Kelly公式算理论仓位，半Kelly硬<br/>上限截断(禁止全Kelly)，在风险配额内决策，再用密<br/>度PDF的偏度/峰度/前瞻VaR做分布感知调整<br/>(防御性只减不增)。<br/>作战环节 / battle-step"]
+    BM_POS_03["(生产态 / production) BM-POS-03 持仓状态机漂移<br/>/ Position State Machine & Drift<br/>每只票有自己的状态<br/>(NONE→BUILDING→ACTIVE→OBSERVING→REDUCING→EXITING<br/>→CLOSED)，权重漂移超±2%(组合)/±3%<br/>(单标的)就触发再平衡评估，观察期内禁止新买入。<br/>作战环节 / battle-step"]
+    BM_POS_04["(生产态 / production) BM-POS-04<br/>跨策略仓位硬限制 / Cross-Strategy Position Hard<br/>Limit<br/>多策略同标的仓位合并取sum不超上限，新策略上线仓<br/>位砍到正常的30%，行业偏离<br/>/风格暴露有硬约束，C-047是仓位裁决唯一中心<br/>(只有C-004风控veto能绕过)。<br/>作战环节 / battle-step"]
+    BM_POS_05["(生产态 / production) BM-POS-05<br/>资金曲线回撤缩放 / Capital Curve Drawdown<br/>Scaling<br/>系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢<br/>加仓(每次+5%)，亏钱回撤超5%就砍仓位10%、超10%就<br/>砍20%，回到回撤前高点才能恢复原仓位。<br/>作战环节 / battle-step"]
+    BM_REC_01["(生产态 / production) BM-REC-01 交易运营清算 /<br/>Trade Ops & Settlement<br/>把成交回报拿去清算、算费率、处理公司行为，变成运<br/>营数据。<br/>作战环节 / battle-step"]
+    BM_REC_02["(生产态 / production) BM-REC-02 报告复盘 /<br/>Reporting & Review<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>作战环节 / battle-step"]
+    BM_REC_03["(生产态 / production) BM-REC-03 闭环优化反馈 /<br/>Closed-Loop Optimization Feedback<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SELL_01["(生产态 / production) BM-SELL-01 突破成败信号 /<br/>Breakout Success/Failure Signal<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>作战环节 / battle-step"]
+    BM_SELL_02["(生产态 / production) BM-SELL-02<br/>卖出信号融合仲裁 / Sell Signal Fusion<br/>Arbitration<br/>把所有卖出信号（含突破成败）汇总仲裁，强制清仓永<br/>远最高优先级，谁的信号最狠听谁的。<br/>作战环节 / battle-step"]
+    BM_SELL_03["(生产态 / production) BM-SELL-03<br/>卖出信号收集评分 / Sell Signal Collection &<br/>Scoring<br/>卖出端的'信号层'——先把持仓分级(Watch/Monitor<br/>/Hold)，再收集7类卖出信号，多时间框架共振加权，<br/>产出卖出信号评分和紧迫度。<br/>作战环节 / battle-step"]
+    BM_SELL_05["(生产态 / production) BM-SELL-05 置换再平衡卖出<br/>/ Replacement & Rebalance Sell<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>作战环节 / battle-step"]
+    BM_SELL_06["(生产态 / production) BM-SELL-06 买卖冲突仲裁 /<br/>Buy-Sell Conflict Arbitration<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>(保守原则)；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>作战环节 / battle-step"]
+    BM_SEL_01["(生产态 / production) BM-SEL-01<br/>数据接入与预处理 / Data Ingestion &<br/>Preprocessing<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_02["(生产态 / production) BM-SEL-02<br/>因子计算与信号生成 / Factor Compute & Signal Gen<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_21["(生产态 / production) BM-SEL-21 组合优化 /<br/>Portfolio Optimization<br/>漏斗第六层——从30只里算出最终N≤10只下单清单和每只<br/>权重，行业、市值、风险、相关性、拥挤度全约束。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_BUY_06 ~~~ BM_POS_05 ~~~ BM_SEL_01 ~~~ BM_SEL_21
+    BM_EXE_01 ~~~ BM_EXE_02 ~~~ BM_EXE_03 ~~~ BM_POS_01 ~~~ BM_POS_02 ~~~ BM_POS_03 ~~~ BM_POS_04 ~~~ BM_REC_01 ~~~ BM_REC_02 ~~~ BM_REC_03 ~~~ BM_SELL_01 ~~~ BM_SELL_02 ~~~ BM_SELL_03 ~~~ BM_SELL_05 ~~~ BM_SELL_06 ~~~ BM_SEL_02
+    BM_SEL_01 -->|标准化行情 / data_flow| BM_SEL_02
+    BM_SEL_02 -->|压力位因子 / data_flow| BM_SELL_01
+    BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
+    BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
+    BM_SELL_01 -->|突破成败信号 / data_flow| BM_SELL_02
+    BM_SELL_02 -->|卖出决策 / data_flow| BM_POS_01
+    BM_BUY_03 -->|编排后决策 / data_flow| BM_POS_01
+    BM_POS_01 -->|仓位指令 / data_flow| BM_EXE_01
+    BM_EXE_01 -->|审批后订单 / data_flow| BM_EXE_02
+    BM_EXE_02 -->|成交回报 / data_flow| BM_REC_01
+    BM_REC_01 -->|运营数据 / data_flow| BM_REC_02
+    BM_REC_02 -->|复盘报告 / data_flow| BM_REC_03
+    BM_REC_03 -->|迭代反馈（IC衰减/重训练） / trigger| BM_SEL_02
+    BM_SEL_21 -->|N≤10只下单清单→买入 / data_flow| BM_BUY_01
+    BM_BUY_06 -->|外部指令→风控检查 / data_flow| BM_EXE_01
+    BM_BUY_06 -->|外部指令→买卖冲突仲裁 / trigger| BM_SELL_06
+    BM_SELL_01 -->|突破成败信号→收集评分 / data_flow| BM_SELL_03
+    BM_SELL_03 -->|评分输出→置换再平衡 / data_flow| BM_SELL_05
+    BM_SELL_05 -->|置换再平衡→融合仲裁 / data_flow| BM_SELL_02
+    BM_SELL_02 -->|融合仲裁→买卖冲突仲裁 / data_flow| BM_SELL_06
+    BM_SELL_06 -->|统一决策→仓位裁决 / data_flow| BM_POS_01
+    BM_SELL_05 -->|再平衡触发→状态机漂移检测 / trigger| BM_POS_03
+    BM_POS_01 -->|风险配额→标级Kelly / data_flow| BM_POS_02
+    BM_POS_02 -->|标级仓位→跨策略硬限制 / data_flow| BM_POS_04
+    BM_POS_03 -->|漂移触发→标级仓位调整 / trigger| BM_POS_02
+    BM_POS_05 -->|回撤缩放→标级仓位约束 / trigger| BM_POS_02
+    BM_POS_05 -->|回撤缩放→跨策略硬限制 / trigger| BM_POS_04
+    BM_POS_04 -->|实际仓位→风控审批 / data_flow| BM_EXE_01
+    BM_EXE_02 -->|成交回报→TCA分析 / data_flow| BM_EXE_03
+    BM_EXE_03 -->|执行质量→报告复盘 / data_flow| BM_REC_02
+    BM_EXE_03 -->|TCA反馈→执行算法优化 / degradation| BM_EXE_02
+    BM_POS_04 -->|实际仓位→交易执行 / data_flow| BM_EXE_02
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_EXE_01,BM_EXE_02,BM_EXE_03,BM_POS_01,BM_POS_02,BM_POS_03,BM_POS_04,BM_POS_05,BM_REC_01,BM_REC_02,BM_REC_03,BM_SELL_01,BM_SELL_02,BM_SELL_03,BM_SELL_05,BM_SELL_06,BM_SEL_01,BM_SEL_02,BM_SEL_21 production
+```
+
+### 设计态的图（仅 design 环节和流转）
+
+> 仅展示设计态、锚点模块待施工的环节（共 5 个）。
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图·设计态
+flowchart TD
+    BM_BUY_04["(设计态 / design) BM-BUY-04 分批建仓 / Batched<br/>Position Building<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>作战环节 / battle-step"]
+    BM_BUY_05["(设计态 / design) BM-BUY-05 做T日内套利 /<br/>Intraday T+0 Arbitrage<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>作战环节 / battle-step<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
+    BM_SELL_04["(设计态 / design) BM-SELL-04 止盈止损族 /<br/>Take-Profit & Stop-Loss Strategy Family<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式(趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损)，叠加猎杀防护和期权定价<br/>评估。<br/>作战环节 / battle-step<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
+    BM_SEL_03["(设计态 / design) BM-SEL-03 市场状态感知 /<br/>Market State Sensing<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_04["(设计态 / design) BM-SEL-04 次日8态走势预测 /<br/>Next-Day 8-State Forecast<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SELL_04 ~~~ BM_SEL_03
+    BM_BUY_04 ~~~ BM_SEL_04
+    BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
+    BM_SEL_03 -.->|进度+阶段+轮动 / data_flow| BM_BUY_04
+    BM_SEL_03 -.->|C-021未就绪→跳过降级 / degradation| BM_SEL_04
+    BM_BUY_04 -.->|分批建仓完成→做T监控 / trigger| BM_BUY_05
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_BUY_04,BM_BUY_05,BM_SELL_04,BM_SEL_03,BM_SEL_04 design
 ```
 
 ## 分阶段导航
@@ -179,7 +304,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | generated |
+| depgraph | MOD-L05-001 | supplement | stable | stable |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -213,7 +338,7 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | planned | stable |
+| depgraph | MOD-PF-006 | primary | planned | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 

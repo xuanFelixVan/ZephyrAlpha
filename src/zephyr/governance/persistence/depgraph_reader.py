@@ -148,6 +148,43 @@ class DepgraphReader:
                     result[str(v)] = r.get("build_status") or "planned"
         return result
 
+    def get_status_and_gate_map(self, target_ids: list[str]) -> dict[str, dict[str, str]]:
+        """批量查询节点的 build_status + gate_reason（一次查询）。
+
+        供 battle_map 生成器渲染 ⛔ 受限原因行用（visualization_view_template
+        §4.3 要素⑤）。与 ``get_build_status_map`` 互补：后者只返回 build_status，
+        本方法同时返回 gate_reason，避免生成器为渲染 ⛔ 行发起第二次 DB 往返。
+
+        gate_reason 列由 ``11_add_gate_blocker_fields.sql`` 迁移添加（与
+        ``generate_domain_doc.get_domain_nodes`` 使用的同一列）。
+
+        :param target_ids: 锚点 target_id 列表（可能是 path 或 blueprint_id，
+                           见 ``align_battle_map._valid_ids_depgraph``）
+        :return: ``{target_id: {"build_status": ..., "gate_reason": ...}}``；
+                 未命中的 target_id 不在返回 dict 中（调用方按 '未命中' 处理，
+                 保守视为 planned、gate_reason 为空）。
+        """
+        ids = [t for t in target_ids if t]
+        if not ids:
+            return {}
+        conn = self._get_conn()
+        cursor = conn.execute(
+            "SELECT path, blueprint_id, build_status, gate_reason FROM nodes "
+            "WHERE path = ANY(%s) OR blueprint_id = ANY(%s)",
+            (ids, ids),
+        )
+        result: dict[str, dict[str, str]] = {}
+        for row in cursor.fetchall():
+            r = dict(row)
+            bs = r.get("build_status") or "planned"
+            gr = r.get("gate_reason") or ""
+            entry: dict[str, str] = {"build_status": bs, "gate_reason": gr}
+            for k in ("path", "blueprint_id"):
+                v = r.get(k)
+                if v:
+                    result[str(v)] = entry
+        return result
+
     def get_all_nodes(self) -> list[dict[str, Any]]:
         """获取所有节点"""
         conn = self._get_conn()

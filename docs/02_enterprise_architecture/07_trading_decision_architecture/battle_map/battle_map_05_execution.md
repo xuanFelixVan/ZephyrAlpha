@@ -1,31 +1,57 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-status: draft
-version: "0.2.0"
+status: active
+version: "1.0.0"
 date: 2026-08-02
 ---
 
 # 作战地图·执行阶段
 
-> battle_map §execution 阶段，3 环节。
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_05_execution.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-## 阶段图
+> battle_map §execution 阶段，3 环节。
+> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
+
+## 文档基本信息 / Document Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 阶段 | 执行（execution） | Stage | 执行 |
+| 环节数 | 3 | Steps | 3 |
+| 流转边 | 9 | Edges | 9 |
+| 状态分布 | 🟦 运营态（已建）=3 | State Distribution | 🟦 运营态（已建）=3 |
+
+> **图例说明 / Legend**：
+> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
+> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟥 **红色 = 弃用态**（deprecated）
+> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
+> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
+> - **实线箭头 ``-->`` = 运营态流转**（两端均 production）
+> - **虚线箭头 ``-.->`` = 非运营态流转**（含设计/候选/混合）
+
+## 阶段图 / Stage Diagram
+
+> 展示 执行 阶段全部 3 个环节及流转边，颜色区分五态。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 执行阶段图
-flowchart LR
-    BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单… 🟡候选"]:::production
-    BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。 🟡候选"]:::production
-    BM_EXE_03["BM-EXE-03\n执行质量TCA / Execution Quality TCA\n每笔成交后做'成本尸检'——把决策时刻到最终成交的总成本拆成…"]:::production
-    BM_EXE_01 --- |审批后订单| BM_EXE_02
-    BM_EXE_02 --- |成交回报→TCA分析| BM_EXE_03
-    BM_EXE_03 -.- |TCA反馈→执行算法优化| BM_EXE_02
-classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
+flowchart TD
+    BM_EXE_01["(生产态 / production) BM-EXE-01 自适应风控审批<br/>/ Adaptive Risk Approval<br/>下单前的最后一道闸——风控审批，审不过的订单直接拦<br/>下，是订单拦截器不是事后检查。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_EXE_02["(生产态 / production) BM-EXE-02 交易执行 /<br/>Trade Execution<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_EXE_03["(生产态 / production) BM-EXE-03 执行质量TCA /<br/>Execution Quality TCA<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>作战环节 / battle-step"]
+    BM_EXE_02 ~~~ BM_EXE_03
+    BM_EXE_01 -->|审批后订单 / data_flow| BM_EXE_02
+    BM_EXE_02 -->|成交回报→TCA分析 / data_flow| BM_EXE_03
+    BM_EXE_03 -->|TCA反馈→执行算法优化 / degradation| BM_EXE_02
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_EXE_01,BM_EXE_02,BM_EXE_03 production
 ```
 
 ## 环节详情

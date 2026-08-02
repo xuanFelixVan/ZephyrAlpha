@@ -1,55 +1,86 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-status: draft
-version: "0.2.0"
+status: active
+version: "1.0.0"
 date: 2026-08-02
 ---
 
 # 作战地图·选股阶段
 
-> battle_map §stock_selection 阶段，21 环节。
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_01_stock_selection.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-## 阶段图
+> battle_map §stock_selection 阶段，21 环节。
+> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
+
+## 文档基本信息 / Document Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 阶段 | 选股（stock_selection） | Stage | 选股 |
+| 环节数 | 21 | Steps | 21 |
+| 流转边 | 14 | Edges | 14 |
+| 状态分布 | 🟨 候选态（候选池）=16 ｜ 🟦 运营态（已建）=3 ｜ 🟧 设计态（待施工）=2 | State Distribution | 🟨 候选态（候选池）=16 ｜ 🟦 运营态（已建）=3 ｜ 🟧 设计态（待施工）=2 |
+
+> **图例说明 / Legend**：
+> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
+> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟥 **红色 = 弃用态**（deprecated）
+> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
+> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
+> - **实线箭头 ``-->`` = 运营态流转**（两端均 production）
+> - **虚线箭头 ``-.->`` = 非运营态流转**（含设计/候选/混合）
+
+## 阶段图 / Stage Diagram
+
+> 展示 选股 阶段全部 21 个环节及流转边，颜色区分五态。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 选股阶段图
-flowchart LR
-    BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，… 🟡候选"]:::production
-    BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、… 🟡候选"]:::production
-    BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… 🟡候选"]:::design
-    BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… 🟡候选"]:::design
-    BM_SEL_05["BM-SEL-05\n主力行为感知 / Main-Force Behavior Sensing\n识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是出货弃庄，… 🟡候选"]:::candidate
-    BM_SEL_06["BM-SEL-06\n跨市场传导感知 / Cross-Market Conduction Sensing\n美股、港股、汇率、商品一异动，立刻算出对A股的传导系数和影响… 🟡候选"]:::candidate
-    BM_SEL_07["BM-SEL-07\n体制转换检测 / Regime Change Detection\n盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点提前预警。 🟡候选"]:::candidate
-    BM_SEL_08["BM-SEL-08\n板块轮动序列追踪 / Sector Rotation Sequence Tracking\n追踪板块强弱的轮动顺序，给回踩质量打A/B/C级，决定买入优… 🟡候选"]:::candidate
-    BM_SEL_09["BM-SEL-09\n调整周期追踪 / Adjustment Cycle Tracking\n追踪板块调整走到哪了——进度≥80%才允许分批低吸，初期〈4… 🟡候选"]:::candidate
-    BM_SEL_10["BM-SEL-10\n行情生命周期阶段 / Market Lifecycle Phase\n判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破失败更倾向… 🟡候选"]:::candidate
-    BM_SEL_11["BM-SEL-11\n知识图谱与因果推演 / Knowledge Graph & Causal Inference\n把事件、公司、行业的关联织成图谱，事件一来就推演传导路径，并… 🟡候选"]:::candidate
-    BM_SEL_12["BM-SEL-12\n分布特征工程 / Distribution Feature Engineering\n给因子加料——滞后项、交互项、滚动统计量、签名方法，专门喂给… 🟡候选"]:::candidate
-    BM_SEL_13["BM-SEL-13\n收益率条件密度预测 / Conditional Density Prediction\n不只预测明天涨多少，而是预测明天收益率的完整概率分布——偏多… 🟡候选"]:::candidate
-    BM_SEL_14["BM-SEL-14\n共形预测 / Conformal Prediction\n给预测区间加数学保证——不管分布长什么样，区间覆盖率有数学证… 🟡候选"]:::candidate
-    BM_SEL_15["BM-SEL-15\nSurvival止盈止损时间预测 / Survival Stop-Time Prediction\n预测止盈止损还有多久发生——不是固定N天，而是时间概率分布。 🟡候选"]:::candidate
-    BM_SEL_16["BM-SEL-16\n分级指标过滤 / Tiered Screening Filter\n选股漏斗第一层——3秒级把全市场7000只砍到1200只，涨… 🟡候选"]:::candidate
-    BM_SEL_17["BM-SEL-17\n初筛漏斗 / Coarse Screening Funnel\n漏斗第二层——60秒级从1200只筛到300只，看技术形态、… 🟡候选"]:::candidate
-    BM_SEL_18["BM-SEL-18\n精筛评分 / Fine Scoring\n漏斗第三层——60秒级从300只评到50只，多维因子打分+市… 🟡候选"]:::candidate
-    BM_SEL_19["BM-SEL-19\n事件驱动分布筛选 / Event-Driven Distribution Screening\n漏斗第四层——从50只筛到30只，看事件影响、事件修正后的概… 🟡候选"]:::candidate
-    BM_SEL_20["BM-SEL-20\n多策略交叉投票 / Multi-Strategy Cross Voting\n漏斗第五层——多策略对每只票投YES/NO，加上主力合力和市… 🟡候选"]:::candidate
-    BM_SEL_21["BM-SEL-21\n组合优化 / Portfolio Optimization\n漏斗第六层——从30只里算出最终N≤10只下单清单和每只权重… 🟡候选"]:::production
-    BM_SEL_01 --- |标准化行情| BM_SEL_02
-    BM_SEL_02 --- |因子池| BM_SEL_03
-    BM_SEL_03 --- |市场状态| BM_SEL_04
-    BM_SEL_03 -.- |C-021未就绪→跳过降级| BM_SEL_04
-    BM_SEL_16 --- |漏斗L1→L2(~1200只)| BM_SEL_17
-    BM_SEL_17 --- |漏斗L2→L3(~300只)| BM_SEL_18
-    BM_SEL_18 --- |漏斗L3→L4(~50只)| BM_SEL_19
-    BM_SEL_19 --- |漏斗L4→L5(~30只)| BM_SEL_20
-    BM_SEL_20 --- |漏斗L5→L6| BM_SEL_21
-classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
+flowchart TD
+    BM_SEL_01["(生产态 / production) BM-SEL-01<br/>数据接入与预处理 / Data Ingestion &<br/>Preprocessing<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_02["(生产态 / production) BM-SEL-02<br/>因子计算与信号生成 / Factor Compute & Signal Gen<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_03["(设计态 / design) BM-SEL-03 市场状态感知 /<br/>Market State Sensing<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_04["(设计态 / design) BM-SEL-04 次日8态走势预测 /<br/>Next-Day 8-State Forecast<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_05["(候选态 / candidate) BM-SEL-05 主力行为感知 /<br/>Main-Force Behavior Sensing<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_06["(候选态 / candidate) BM-SEL-06 跨市场传导感知 /<br/>Cross-Market Conduction Sensing<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_07["(候选态 / candidate) BM-SEL-07 体制转换检测 /<br/>Regime Change Detection<br/>盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点<br/>提前预警。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_08["(候选态 / candidate) BM-SEL-08 板块轮动序列追踪<br/>/ Sector Rotation Sequence Tracking<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_09["(候选态 / candidate) BM-SEL-09 调整周期追踪 /<br/>Adjustment Cycle Tracking<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期<40%直接拦截。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_10["(候选态 / candidate) BM-SEL-10 行情生命周期阶段<br/>/ Market Lifecycle Phase<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_11["(候选态 / candidate) BM-SEL-11<br/>知识图谱与因果推演 / Knowledge Graph & Causal<br/>Inference<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_12["(候选态 / candidate) BM-SEL-12 分布特征工程 /<br/>Distribution Feature Engineering<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_13["(候选态 / candidate) BM-SEL-13<br/>收益率条件密度预测 / Conditional Density<br/>Prediction<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_14["(候选态 / candidate) BM-SEL-14 共形预测 /<br/>Conformal Prediction<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_15["(候选态 / candidate) BM-SEL-15<br/>Survival止盈止损时间预测 / Survival Stop-Time<br/>Prediction<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_16["(候选态 / candidate) BM-SEL-16 分级指标过滤 /<br/>Tiered Screening Filter<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_17["(候选态 / candidate) BM-SEL-17 初筛漏斗 /<br/>Coarse Screening Funnel<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_18["(候选态 / candidate) BM-SEL-18 精筛评分 / Fine<br/>Scoring<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_19["(候选态 / candidate) BM-SEL-19 事件驱动分布筛选<br/>/ Event-Driven Distribution Screening<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_20["(候选态 / candidate) BM-SEL-20 多策略交叉投票 /<br/>Multi-Strategy Cross Voting<br/>漏斗第五层——多策略对每只票投YES<br/>/NO，加上主力合力和市场状态否决，少数服从多数。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_21["(生产态 / production) BM-SEL-21 组合优化 /<br/>Portfolio Optimization<br/>漏斗第六层——从30只里算出最终N≤10只下单清单和每只<br/>权重，行业、市值、风险、相关性、拥挤度全约束。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_01 ~~~ BM_SEL_05 ~~~ BM_SEL_06 ~~~ BM_SEL_07 ~~~ BM_SEL_08 ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16
+    BM_SEL_02 ~~~ BM_SEL_17
+    BM_SEL_03 ~~~ BM_SEL_18
+    BM_SEL_04 ~~~ BM_SEL_19
+    BM_SEL_01 -->|标准化行情 / data_flow| BM_SEL_02
+    BM_SEL_02 -.->|因子池 / data_flow| BM_SEL_03
+    BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
+    BM_SEL_03 -.->|C-021未就绪→跳过降级 / degradation| BM_SEL_04
+    BM_SEL_16 -.->|漏斗L1→L2(~1200只) / data_flow| BM_SEL_17
+    BM_SEL_17 -.->|漏斗L2→L3(~300只) / data_flow| BM_SEL_18
+    BM_SEL_18 -.->|漏斗L3→L4(~50只) / data_flow| BM_SEL_19
+    BM_SEL_19 -.->|漏斗L4→L5(~30只) / data_flow| BM_SEL_20
+    BM_SEL_20 -.->|漏斗L5→L6 / data_flow| BM_SEL_21
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_SEL_01,BM_SEL_02,BM_SEL_21 production
+    class BM_SEL_03,BM_SEL_04 design
+    class BM_SEL_05,BM_SEL_06,BM_SEL_07,BM_SEL_08,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19,BM_SEL_20 candidate
 ```
 
 ## 环节详情

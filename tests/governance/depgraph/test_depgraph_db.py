@@ -339,5 +339,79 @@ def test_all():
             sys.exit(0)
 
 
+def test_get_status_and_gate_map():
+    """测试 DepgraphReader.get_status_and_gate_map 批量查询 build_status + gate_reason。
+
+    治本（2026-08-02，模板对齐）：get_status_and_gate_map 是 battle_map 生成器
+    渲染 ⛔ 受限原因行的数据来源（visualization_view_template §4.3 要素⑤），
+    必须返回 build_status + gate_reason 两个字段，供生成器同时取回避免二次 DB 往返。
+    """
+    from zephyr.governance.persistence.depgraph_reader import DepgraphReader
+    from zephyr.governance.persistence.pg_wrapper import _PgConnExecuteWrapper
+
+    conn = _make_connection()
+    try:
+        # 显式用 RealDictCursor——_make_connection 回退生产库时默认 cursor 是 tuple
+        c = conn.cursor(cursor_factory=RealDictCursor)
+        # 取 5 个有 path 的现有节点作为测试样本
+        c.execute(
+            "SELECT path, blueprint_id, build_status, gate_reason "
+            "FROM nodes WHERE path IS NOT NULL LIMIT 5"
+        )
+        existing = c.fetchall()
+        if not existing:
+            if _in_pytest():
+                pytest.skip("test DB has no nodes with path")
+            print("SKIP: no nodes with path found")
+            return
+
+        # 构造 DepgraphReader 并注入测试连接（绕过 get_depgraph_pg_connection）
+        reader = DepgraphReader()
+        reader._tls.conn = _PgConnExecuteWrapper(conn)
+
+        # 收集测试 ID（path + blueprint_id 都测）
+        test_ids: list[str] = []
+        expected: dict[str, dict[str, str]] = {}
+        for row in existing:
+            bs = row["build_status"] or "planned"
+            gr = row["gate_reason"] or ""
+            entry = {"build_status": bs, "gate_reason": gr}
+            for k in ("path", "blueprint_id"):
+                v = row[k]
+                if v:
+                    test_ids.append(v)
+                    expected[v] = entry
+
+        # ① 正常查询：返回 dict 含正确 build_status + gate_reason
+        result = reader.get_status_and_gate_map(test_ids)
+        assert len(result) > 0, f"expected results for {test_ids}, got empty"
+        for tid, exp in expected.items():
+            assert tid in result, f"{tid} not in result"
+            assert result[tid]["build_status"] == exp["build_status"], (
+                f"{tid} build_status: got {result[tid]['build_status']}, "
+                f"expected {exp['build_status']}"
+            )
+            assert result[tid]["gate_reason"] == exp["gate_reason"], (
+                f"{tid} gate_reason: got {result[tid]['gate_reason']!r}, "
+                f"expected {exp['gate_reason']!r}"
+            )
+            # 必须恰好含两个 key
+            assert set(result[tid].keys()) == {"build_status", "gate_reason"}
+
+        # ② 空输入 → 空 dict
+        assert reader.get_status_and_gate_map([]) == {}
+        assert reader.get_status_and_gate_map([""]) == {}
+
+        # ③ 不存在的 ID → 不在返回 dict 中
+        result_missing = reader.get_status_and_gate_map(["NONEXISTENT_PATH_xyz_123"])
+        assert "NONEXISTENT_PATH_xyz_123" not in result_missing
+
+        # 不调用 reader.close()——会关闭测试连接，由 finally 统一关闭
+        print("PASS: test_get_status_and_gate_map")
+    finally:
+        conn.close()
+
+
 if __name__ == "__main__":
     test_all()
+    test_get_status_and_gate_map()

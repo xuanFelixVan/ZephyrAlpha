@@ -1,34 +1,62 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-status: draft
-version: "0.2.0"
+status: active
+version: "1.0.0"
 date: 2026-08-02
 ---
 
 # 作战地图·买入阶段
 
-> battle_map §buy_flow 阶段，6 环节。
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_02_buy_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-## 阶段图
+> battle_map §buy_flow 阶段，6 环节。
+> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
+
+## 文档基本信息 / Document Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 阶段 | 买入（buy_flow） | Stage | 买入 |
+| 环节数 | 6 | Steps | 6 |
+| 流转边 | 12 | Edges | 12 |
+| 状态分布 | 🟦 运营态（已建）=4 ｜ 🟧 设计态（待施工）=2 | State Distribution | 🟦 运营态（已建）=4 ｜ 🟧 设计态（待施工）=2 |
+
+> **图例说明 / Legend**：
+> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
+> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟥 **红色 = 弃用态**（deprecated）
+> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
+> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
+> - **实线箭头 ``-->`` = 运营态流转**（两端均 production）
+> - **虚线箭头 ``-.->`` = 非运营态流转**（含设计/候选/混合）
+
+## 阶段图 / Stage Diagram
+
+> 展示 买入 阶段全部 6 个环节及流转边，颜色区分五态。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 买入阶段图
-flowchart LR
-    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 🟡候选"]:::production
-    BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::production
-    BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::production
-    BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破…"]:::design
-    BM_BUY_05["BM-BUY-05\n做T日内套利 / Intraday T+0 Arbitrage\nA股T+1约束下的日内套利——每天扫全部持仓，找有日内T+0…"]:::design
-    BM_BUY_06["BM-BUY-06\n外部指令盯盘 / External Order Monitoring\n接收用户从微信/前端发来的买卖调仓指令，解析后走风控检查→执…"]:::production
-    BM_BUY_01 --- |买入预案| BM_BUY_02
-    BM_BUY_02 --- |统一决策流| BM_BUY_03
-    BM_BUY_04 ->> |分批建仓完成→做T监控| BM_BUY_05
-classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
+flowchart TD
+    BM_BUY_01["(生产态 / production) BM-BUY-01 多情景对策生成<br/>/ Multi-Scenario Countermeasure<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_BUY_02["(生产态 / production) BM-BUY-02 四轨融合 /<br/>Four-Track Fusion (MTF)<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>作战环节 / battle-step"]
+    BM_BUY_03["(生产态 / production) BM-BUY-03 决策编排 /<br/>Decision Orchestration (DO)<br/>把融合后的决策按5条路径（买/卖/做T/人工<br/>/应急）统一出口编排，处理冲突、去重、排时序。<br/>作战环节 / battle-step"]
+    BM_BUY_04["(设计态 / design) BM-BUY-04 分批建仓 / Batched<br/>Position Building<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>作战环节 / battle-step"]
+    BM_BUY_05["(设计态 / design) BM-BUY-05 做T日内套利 /<br/>Intraday T+0 Arbitrage<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>作战环节 / battle-step<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
+    BM_BUY_06["(生产态 / production) BM-BUY-06 外部指令盯盘 /<br/>External Order Monitoring<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控检查→执行，是人工干预系统的入口。<br/>作战环节 / battle-step"]
+    BM_BUY_01 ~~~ BM_BUY_04 ~~~ BM_BUY_06
+    BM_BUY_02 ~~~ BM_BUY_05
+    BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
+    BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
+    BM_BUY_04 -.->|分批建仓完成→做T监控 / trigger| BM_BUY_05
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06 production
+    class BM_BUY_04,BM_BUY_05 design
 ```
 
 ## 环节详情
@@ -63,7 +91,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | generated |
+| depgraph | MOD-L05-001 | supplement | stable | stable |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -97,7 +125,7 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | planned | stable |
+| depgraph | MOD-PF-006 | primary | planned | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 

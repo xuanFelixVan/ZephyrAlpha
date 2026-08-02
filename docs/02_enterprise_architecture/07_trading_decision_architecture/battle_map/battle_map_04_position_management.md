@@ -1,35 +1,61 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-status: draft
-version: "0.2.0"
+status: active
+version: "1.0.0"
 date: 2026-08-02
 ---
 
 # 作战地图·仓位阶段
 
-> battle_map §position_management 阶段，5 环节。
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_04_position_management.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-## 阶段图
+> battle_map §position_management 阶段，5 环节。
+> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
+
+## 文档基本信息 / Document Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 阶段 | 仓位（position_management） | Stage | 仓位 |
+| 环节数 | 5 | Steps | 5 |
+| 流转边 | 14 | Edges | 14 |
+| 状态分布 | 🟦 运营态（已建）=5 | State Distribution | 🟦 运营态（已建）=5 |
+
+> **图例说明 / Legend**：
+> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
+> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟥 **红色 = 弃用态**（deprecated）
+> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
+> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
+> - **实线箭头 ``-->`` = 运营态流转**（两端均 production）
+> - **虚线箭头 ``-.->`` = 非运营态流转**（含设计/候选/混合）
+
+## 阶段图 / Stage Diagram
+
+> 展示 仓位 阶段全部 5 个环节及流转边，颜色区分五态。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 仓位阶段图
-flowchart LR
-    BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决… 🟡候选"]:::production
-    BM_POS_02["BM-POS-02\n标级仓位Kelly / Per-Symbol Kelly Sizing\n每只票该买多少——用Kelly公式算理论仓位，半Kelly硬…"]:::production
-    BM_POS_03["BM-POS-03\n持仓状态机漂移 / Position State Machine & Drift\n每只票有自己的状态(NONE→BUILDING→ACTIVE…"]:::production
-    BM_POS_04["BM-POS-04\n跨策略仓位硬限制 / Cross-Strategy Position Hard Limit\n多策略同标的仓位合并取sum不超上限，新策略上线仓位砍到正常…"]:::production
-    BM_POS_05["BM-POS-05\n资金曲线回撤缩放 / Capital Curve Drawdown Scaling\n系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢加仓(每…"]:::production
-    BM_POS_01 --- |风险配额→标级Kelly| BM_POS_02
-    BM_POS_02 --- |标级仓位→跨策略硬限制| BM_POS_04
-    BM_POS_03 ->> |漂移触发→标级仓位调整| BM_POS_02
-    BM_POS_05 ->> |回撤缩放→标级仓位约束| BM_POS_02
-    BM_POS_05 ->> |回撤缩放→跨策略硬限制| BM_POS_04
-classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
+flowchart TD
+    BM_POS_01["(生产态 / production) BM-POS-01 仓位管理裁决 /<br/>Position Adjudication<br/>所有买卖决策都到这里统一算最终仓位——这是仓位决策<br/>的唯一裁决中心，谁都别想绕过。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_POS_02["(生产态 / production) BM-POS-02 标级仓位Kelly /<br/>Per-Symbol Kelly Sizing<br/>每只票该买多少——用Kelly公式算理论仓位，半Kelly硬<br/>上限截断(禁止全Kelly)，在风险配额内决策，再用密<br/>度PDF的偏度/峰度/前瞻VaR做分布感知调整<br/>(防御性只减不增)。<br/>作战环节 / battle-step"]
+    BM_POS_03["(生产态 / production) BM-POS-03 持仓状态机漂移<br/>/ Position State Machine & Drift<br/>每只票有自己的状态<br/>(NONE→BUILDING→ACTIVE→OBSERVING→REDUCING→EXITING<br/>→CLOSED)，权重漂移超±2%(组合)/±3%<br/>(单标的)就触发再平衡评估，观察期内禁止新买入。<br/>作战环节 / battle-step"]
+    BM_POS_04["(生产态 / production) BM-POS-04<br/>跨策略仓位硬限制 / Cross-Strategy Position Hard<br/>Limit<br/>多策略同标的仓位合并取sum不超上限，新策略上线仓<br/>位砍到正常的30%，行业偏离<br/>/风格暴露有硬约束，C-047是仓位裁决唯一中心<br/>(只有C-004风控veto能绕过)。<br/>作战环节 / battle-step"]
+    BM_POS_05["(生产态 / production) BM-POS-05<br/>资金曲线回撤缩放 / Capital Curve Drawdown<br/>Scaling<br/>系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢<br/>加仓(每次+5%)，亏钱回撤超5%就砍仓位10%、超10%就<br/>砍20%，回到回撤前高点才能恢复原仓位。<br/>作战环节 / battle-step"]
+    BM_POS_01 ~~~ BM_POS_03 ~~~ BM_POS_05
+    BM_POS_01 -->|风险配额→标级Kelly / data_flow| BM_POS_02
+    BM_POS_02 -->|标级仓位→跨策略硬限制 / data_flow| BM_POS_04
+    BM_POS_03 -->|漂移触发→标级仓位调整 / trigger| BM_POS_02
+    BM_POS_05 -->|回撤缩放→标级仓位约束 / trigger| BM_POS_02
+    BM_POS_05 -->|回撤缩放→跨策略硬限制 / trigger| BM_POS_04
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_POS_01,BM_POS_02,BM_POS_03,BM_POS_04,BM_POS_05 production
 ```
 
 ## 环节详情

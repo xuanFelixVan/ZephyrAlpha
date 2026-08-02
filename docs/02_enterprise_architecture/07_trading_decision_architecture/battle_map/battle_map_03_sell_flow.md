@@ -1,38 +1,65 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-status: draft
-version: "0.2.0"
+status: active
+version: "1.0.0"
 date: 2026-08-02
 ---
 
 # 作战地图·卖出阶段
 
-> battle_map §sell_flow 阶段，6 环节。
+> **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_03_sell_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-## 阶段图
+> battle_map §sell_flow 阶段，6 环节。
+> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
+
+## 文档基本信息 / Document Overview
+
+| 字段 | 值 | Field | Value |
+|------|------|-------|-------|
+| 阶段 | 卖出（sell_flow） | Stage | 卖出 |
+| 环节数 | 6 | Steps | 6 |
+| 流转边 | 13 | Edges | 13 |
+| 状态分布 | 🟦 运营态（已建）=5 ｜ 🟧 设计态（待施工）=1 | State Distribution | 🟦 运营态（已建）=5 ｜ 🟧 设计态（待施工）=1 |
+
+> **图例说明 / Legend**：
+> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
+> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟥 **红色 = 弃用态**（deprecated）
+> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
+> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
+> - **实线箭头 ``-->`` = 运营态流转**（两端均 production）
+> - **虚线箭头 ``-.->`` = 非运营态流转**（含设计/候选/混合）
+
+## 阶段图 / Stage Diagram
+
+> 展示 卖出 阶段全部 6 个环节及流转边，颜色区分五态。
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 卖出阶段图
-flowchart LR
-    BM_SELL_01["BM-SELL-01\n突破成败信号 / Breakout Success/Failure Signal\n判断股价冲压力位是冲上去了还是冲不动——冲上去留着，冲不动止…"]:::production
-    BM_SELL_02["BM-SELL-02\n卖出信号融合仲裁 / Sell Signal Fusion Arbitration\n把所有卖出信号（含突破成败）汇总仲裁，强制清仓永远最高优先级…"]:::production
-    BM_SELL_03["BM-SELL-03\n卖出信号收集评分 / Sell Signal Collection & Scoring\n卖出端的'信号层'——先把持仓分级(Watch/Monito…"]:::production
-    BM_SELL_04["BM-SELL-04\n止盈止损族 / Take-Profit & Stop-Loss Strategy Family\n卖出端的'策略工厂'——根据策略类型用不同的止盈止损范式(趋…"]:::design
-    BM_SELL_05["BM-SELL-05\n置换再平衡卖出 / Replacement & Rebalance Sell\n机会成本驱动+权重偏离驱动的被动卖出——候选池有更优标的就卖…"]:::production
-    BM_SELL_06["BM-SELL-06\n买卖冲突仲裁 / Buy-Sell Conflict Arbitration\n同一只票同时有买入和卖出信号时怎么办——卖出优先(保守原则)…"]:::production
-    BM_SELL_01 --- |突破成败信号| BM_SELL_02
-    BM_SELL_01 --- |突破成败信号→收集评分| BM_SELL_03
-    BM_SELL_03 --- |评分输出→止盈止损族| BM_SELL_04
-    BM_SELL_03 --- |评分输出→置换再平衡| BM_SELL_05
-    BM_SELL_04 --- |止盈止损决策→融合仲裁| BM_SELL_02
-    BM_SELL_05 --- |置换再平衡→融合仲裁| BM_SELL_02
-    BM_SELL_02 --- |融合仲裁→买卖冲突仲裁| BM_SELL_06
-classDef production fill:#4A90D9,stroke:#2C5F8A,color:#fff,stroke-width:2px;
-classDef design fill:#E8A33D,stroke:#B57520,color:#fff,stroke-width:2px,stroke-dasharray: 5 5;
-classDef deprecated fill:#D93636,stroke:#A02020,color:#fff,stroke-width:2px;
-classDef missing fill:#BBBBBB,stroke:#888888,color:#fff,stroke-width:2px;
-classDef candidate fill:#F4D03F,stroke:#B7950B,color:#000,stroke-width:2px;
+flowchart TD
+    BM_SELL_01["(生产态 / production) BM-SELL-01 突破成败信号 /<br/>Breakout Success/Failure Signal<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>作战环节 / battle-step"]
+    BM_SELL_02["(生产态 / production) BM-SELL-02<br/>卖出信号融合仲裁 / Sell Signal Fusion<br/>Arbitration<br/>把所有卖出信号（含突破成败）汇总仲裁，强制清仓永<br/>远最高优先级，谁的信号最狠听谁的。<br/>作战环节 / battle-step"]
+    BM_SELL_03["(生产态 / production) BM-SELL-03<br/>卖出信号收集评分 / Sell Signal Collection &<br/>Scoring<br/>卖出端的'信号层'——先把持仓分级(Watch/Monitor<br/>/Hold)，再收集7类卖出信号，多时间框架共振加权，<br/>产出卖出信号评分和紧迫度。<br/>作战环节 / battle-step"]
+    BM_SELL_04["(设计态 / design) BM-SELL-04 止盈止损族 /<br/>Take-Profit & Stop-Loss Strategy Family<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式(趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损)，叠加猎杀防护和期权定价<br/>评估。<br/>作战环节 / battle-step<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
+    BM_SELL_05["(生产态 / production) BM-SELL-05 置换再平衡卖出<br/>/ Replacement & Rebalance Sell<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>作战环节 / battle-step"]
+    BM_SELL_06["(生产态 / production) BM-SELL-06 买卖冲突仲裁 /<br/>Buy-Sell Conflict Arbitration<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>(保守原则)；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>作战环节 / battle-step"]
+    BM_SELL_04 ~~~ BM_SELL_05
+    BM_SELL_01 -->|突破成败信号 / data_flow| BM_SELL_02
+    BM_SELL_01 -->|突破成败信号→收集评分 / data_flow| BM_SELL_03
+    BM_SELL_03 -.->|评分输出→止盈止损族 / data_flow| BM_SELL_04
+    BM_SELL_03 -->|评分输出→置换再平衡 / data_flow| BM_SELL_05
+    BM_SELL_04 -.->|止盈止损决策→融合仲裁 / data_flow| BM_SELL_02
+    BM_SELL_05 -->|置换再平衡→融合仲裁 / data_flow| BM_SELL_02
+    BM_SELL_02 -->|融合仲裁→买卖冲突仲裁 / data_flow| BM_SELL_06
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_SELL_01,BM_SELL_02,BM_SELL_03,BM_SELL_05,BM_SELL_06 production
+    class BM_SELL_04 design
 ```
 
 ## 环节详情
