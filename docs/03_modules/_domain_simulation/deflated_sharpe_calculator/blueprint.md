@@ -15,8 +15,8 @@ last_updated: "2026-08-02"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ---
 
 # MOD-SIM-024 Deflated Sharpe Ratio Calculator — DSR 计算器 蓝图

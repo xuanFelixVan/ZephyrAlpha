@@ -27,13 +27,13 @@ ttl: permanent
 | 域ID | D_SIMULATION | Domain ID | D_SIMULATION |
 | 域名称 | 仿真 | Domain Name | Simulation |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 10 | Module Count | 10 |
-| 域内依赖 | 8 | Internal Dependencies | 8 |
+| 模块数 | 14 | Module Count | 14 |
+| 域内依赖 | 13 | Internal Dependencies | 13 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
-| 设计态模块 | 8 | Design Modules | 8 |
-| 生产态模块 | 2 | Production Modules | 2 |
-| 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
+| 跨域出边 | 5 | Cross-domain Outgoing | 5 |
+| 设计态模块 | 4 | Design Modules | 4 |
+| 生产态模块 | 10 | Production Modules | 10 |
+| 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 仿真，负责市场仿真、模拟撮合和仿真环境管理 | Description | 仿真，负责市场仿真、模拟撮合和仿真环境管理 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 10 个模块（生产态 2 + 设计态 8），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 14 个模块（生产态 10 + 设计态 4），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -56,58 +56,97 @@ flowchart TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管线<br/>simulation implementations<br/>包入口，整合implementations相关子模块导出<br/>default_experiment_pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
     src_zephyr_simulation_result_analyzer_py["结果分析器<br/>模拟的分析器，分析数据找出问题或规律<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>result_analyzer<br/>文件: simulation/result_analyzer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_scenario_generator_py["场景生成器<br/>模拟的生成器，按规则生成所需的数据或报告<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>scenario_generator<br/>文件: simulation/scenario_generator.py<br/>(设计态 / design)"]
+    tests_simulation_test_deflated_sharpe_calculator_py["simulation/test_deflated_sharpe_calculator<br/>MOD-SIM-024 Deflated Sharpe Ratio Calculator<br/>单元测试.<br/>文件: simulation<br/>/test_deflated_sharpe_calculator.py<br/>(生产态 / production)"]
+    tests_simulation_test_look_ahead_bias_detector_py["simulation/test_look_ahead_bias_detector<br/>MOD-SIM-022 Look-Ahead Bias Detector 单元测试.<br/>文件: simulation<br/>/test_look_ahead_bias_detector.py<br/>(生产态 / production)"]
+    tests_simulation_test_parameter_robustness_tester_py["simulation/test_parameter_robustness_tester<br/>MOD-SIM-021 Parameter Robustness Tester<br/>单元测试.<br/>文件: simulation<br/>/test_parameter_robustness_tester.py<br/>(生产态 / production)"]
+    tests_simulation_test_sharpe_calculator_fixer_py["simulation/test_sharpe_calculator_fixer<br/>MOD-SIM-023 Sharpe Calculator Fixer 单元测试.<br/>文件: simulation/test_sharpe_calculator_fixer.py<br/>(生产态 / production)"]
     src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ src_zephyr_simulation_result_analyzer_py
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
+    src_zephyr_simulation_scenario_generator_py ~~~ tests_simulation_test_deflated_sharpe_calculator_py
+    tests_simulation_test_deflated_sharpe_calculator_py ~~~ tests_simulation_test_look_ahead_bias_detector_py
+    tests_simulation_test_look_ahead_bias_detector_py ~~~ tests_simulation_test_parameter_robustness_tester_py
+    tests_simulation_test_parameter_robustness_tester_py ~~~ tests_simulation_test_sharpe_calculator_fixer_py
     src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真相关功能（pipeline base）<br/>pipeline_base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
     src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>模拟仿真（risk simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>risk_simulator<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>模拟仿真（strategy simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>strategy_simulator<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>模拟的检测器，检测特定模式或异常情况<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>模拟的测试器，测试验证功能<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>模拟的计算器，计算得出结果（sharpe calculator<br/>fixer）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>模拟的检测器，检测特定模式或异常情况<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>模拟的测试器，测试验证功能<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>模拟的计算器，计算得出结果（sharpe calculator<br/>fixer）<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(生产态 / production)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>模拟的计算器，计算得出结果（deflated sharpe<br/>calculator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>模拟的计算器，计算得出结果（deflated sharpe<br/>calculator）<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
-    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_scenario_generator_py -.->|data / data| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
-    src_zephyr_simulation_sharpe_calculator_fixer_py -.->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
+    src_zephyr_simulation_sharpe_calculator_fixer_py -->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
+    src_zephyr_simulation_sharpe_calculator_fixer_py -->|导入依赖 / import_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
+    tests_simulation_test_deflated_sharpe_calculator_py -->|测试依赖 / test_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
+    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
+    tests_simulation_test_look_ahead_bias_detector_py -->|测试依赖 / test_depends| src_zephyr_simulation_look_ahead_bias_detector_py
+    tests_simulation_test_parameter_robustness_tester_py -->|测试依赖 / test_depends| src_zephyr_simulation_parameter_robustness_tester_py
+    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_simulation_deflated_sharpe_calculator_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_simulation_sharpe_calculator_fixer_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_simulation_parameter_robustness_tester_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_simulation_look_ahead_bias_detector_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
-    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_result_analyzer_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_scenario_generator_py,src_zephyr_simulation_sharpe_calculator_fixer_py,src_zephyr_simulation_strategy_simulator_py design
-    class D_INFRASTRUCTURE external_prod
+    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_pipeline_base_py,src_zephyr_simulation_sharpe_calculator_fixer_py,tests_simulation_test_deflated_sharpe_calculator_py,tests_simulation_test_look_ahead_bias_detector_py,tests_simulation_test_parameter_robustness_tester_py,tests_simulation_test_sharpe_calculator_fixer_py production
+    class src_zephyr_simulation_result_analyzer_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_scenario_generator_py,src_zephyr_simulation_strategy_simulator_py design
+    class D_SHARED,D_INFRASTRUCTURE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 2 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 10 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管线<br/>simulation implementations<br/>包入口，整合implementations相关子模块导出<br/>default_experiment_pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
+    tests_simulation_test_deflated_sharpe_calculator_py["simulation/test_deflated_sharpe_calculator<br/>MOD-SIM-024 Deflated Sharpe Ratio Calculator<br/>单元测试.<br/>文件: simulation<br/>/test_deflated_sharpe_calculator.py<br/>(生产态 / production)"]
+    tests_simulation_test_look_ahead_bias_detector_py["simulation/test_look_ahead_bias_detector<br/>MOD-SIM-022 Look-Ahead Bias Detector 单元测试.<br/>文件: simulation<br/>/test_look_ahead_bias_detector.py<br/>(生产态 / production)"]
+    tests_simulation_test_parameter_robustness_tester_py["simulation/test_parameter_robustness_tester<br/>MOD-SIM-021 Parameter Robustness Tester<br/>单元测试.<br/>文件: simulation<br/>/test_parameter_robustness_tester.py<br/>(生产态 / production)"]
+    tests_simulation_test_sharpe_calculator_fixer_py["simulation/test_sharpe_calculator_fixer<br/>MOD-SIM-023 Sharpe Calculator Fixer 单元测试.<br/>文件: simulation/test_sharpe_calculator_fixer.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ tests_simulation_test_deflated_sharpe_calculator_py
+    tests_simulation_test_deflated_sharpe_calculator_py ~~~ tests_simulation_test_look_ahead_bias_detector_py
+    tests_simulation_test_look_ahead_bias_detector_py ~~~ tests_simulation_test_parameter_robustness_tester_py
+    tests_simulation_test_parameter_robustness_tester_py ~~~ tests_simulation_test_sharpe_calculator_fixer_py
+    src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>模拟的检测器，检测特定模式或异常情况<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>模拟的测试器，测试验证功能<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(生产态 / production)"]
     src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真相关功能（pipeline base）<br/>pipeline_base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>模拟的计算器，计算得出结果（sharpe calculator<br/>fixer）<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
+    src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_pipeline_base_py
+    src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
+    src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>模拟的计算器，计算得出结果（deflated sharpe<br/>calculator）<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py -->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
+    src_zephyr_simulation_sharpe_calculator_fixer_py -->|导入依赖 / import_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
+    tests_simulation_test_deflated_sharpe_calculator_py -->|测试依赖 / test_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
+    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
+    tests_simulation_test_look_ahead_bias_detector_py -->|测试依赖 / test_depends| src_zephyr_simulation_look_ahead_bias_detector_py
+    tests_simulation_test_parameter_robustness_tester_py -->|测试依赖 / test_depends| src_zephyr_simulation_parameter_robustness_tester_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
+    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_pipeline_base_py,src_zephyr_simulation_sharpe_calculator_fixer_py,tests_simulation_test_deflated_sharpe_calculator_py,tests_simulation_test_look_ahead_bias_detector_py,tests_simulation_test_parameter_robustness_tester_py,tests_simulation_test_sharpe_calculator_fixer_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 8 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 4 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -118,24 +157,14 @@ flowchart TD
     src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>模拟仿真（risk simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>risk_simulator<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>模拟仿真（strategy simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>strategy_simulator<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>模拟的检测器，检测特定模式或异常情况<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>模拟的测试器，测试验证功能<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>模拟的计算器，计算得出结果（sharpe calculator<br/>fixer）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
-    src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>模拟的计算器，计算得出结果（deflated sharpe<br/>calculator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
-    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
-    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_scenario_generator_py -.->|data / data| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
-    src_zephyr_simulation_sharpe_calculator_fixer_py -.->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_result_analyzer_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_scenario_generator_py,src_zephyr_simulation_sharpe_calculator_fixer_py,src_zephyr_simulation_strategy_simulator_py design
+    class src_zephyr_simulation_result_analyzer_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_scenario_generator_py,src_zephyr_simulation_strategy_simulator_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -145,6 +174,10 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | 管线基类 / pipeline_base (simulation/pipeline_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 实验结果 / experiment_result (contracts/experiment_result... | 导入依赖 / import_depends |
+| 2 | 缩水夏普计算器 / deflated_sharpe_calculator (simulation/d... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 3 | lookaheadbias检测器 / look_ahead_bias_detector (simulatio... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 4 | 参数鲁棒性测试器 / parameter_robustness_tester (simulatio... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 5 | 夏普计算器修复器 / sharpe_calculator_fixer (simulation/sh... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -152,13 +185,15 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 1 个外部域直接连接（出边 1 条 + 入边 0 条 = 1 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 2 个外部域直接连接（出边 5 条 + 入边 0 条 = 5 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_SIMULATION["D_SIMULATION<br/>仿真"]
+    D_SHARED["D_SHARED<br/>共享服务"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
+    D_SIMULATION -->|4条 导入依赖 / import_depends| D_SHARED
     D_SIMULATION -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
 ```
 

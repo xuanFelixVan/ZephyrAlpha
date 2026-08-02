@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: generated
+build_status: stable
 ---
 
 # MOD-SIM-021 Parameter Robustness Tester — 参数鲁棒性测试器 蓝图

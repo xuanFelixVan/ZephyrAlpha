@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: generated
+build_status: stable
 ---
 
 # MOD-SIM-022 Look-Ahead Bias Detector — 未来函数风险检测器 蓝图
