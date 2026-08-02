@@ -3767,7 +3767,7 @@ entries:
   name_en: Intermittent Failure Pattern Detector — v0.40.0 R501
   desc_zh: intermittentfailure模式模块
   desc_en: Intermittent Failure Pattern Detector — v0.40.0 R501
-  plain_zh: intermittentfailure模式。Intermittent Failure Pattern Detector — v0.40.0 R501
+  plain_zh: "检测只在特定条件（特定时段、负载或事件序列）下才出现的间歇性故障，把零散故障关联成模式并标出触发条件，避免当成孤立事件反复误修。"
 - module_path: src/zephyr/feedback_loop/detectors/anomaly/log_anomaly.py
   domain_id: D_FBL_DETECTORS
   name_zh: 日志异常
@@ -3795,7 +3795,7 @@ entries:
   name_en: Temporal Pattern Detector — v0.12.0 R164
   desc_zh: temporal模式模块
   desc_en: Temporal Pattern Detector — v0.12.0 R164
-  plain_zh: temporal模式。Temporal Pattern Detector — v0.12.0 R164
+  plain_zh: "识别与一天或一周时段绑定的异常模式（如凌晨备份尖峰），避免把周期性正常波动误判为异常。"
 - module_path: src/zephyr/feedback_loop/detectors/correlation/__init__.py
   domain_id: D_FBL_DETECTORS
   name_zh: 包入口
@@ -3844,14 +3844,14 @@ entries:
   name_en: Cross-System Correlator — v0.13.0 R185
   desc_zh: 跨systemcorrelator模块
   desc_en: Cross-System Correlator — v0.13.0 R185
-  plain_zh: 跨systemcorrelator。Cross-System Correlator — v0.13.0 R185
+  plain_zh: "把外部系统故障与内部异常做关联，避免外部 API 宕机被误诊为内部流水线故障。"
 - module_path: src/zephyr/feedback_loop/detectors/correlation/decision_provenance.py
   domain_id: D_FBL_DETECTORS
   name_zh: 决策溯源
   name_en: Decision Provenance — v0.12.0 R166
   desc_zh: 决策provenance模块
   desc_en: Decision Provenance — v0.12.0 R166
-  plain_zh: 决策provenance。Decision Provenance — v0.12.0 R166
+  plain_zh: "记录每次决策的促成因素审计链，事后可追溯某次修复为何被选中。"
 - module_path: src/zephyr/feedback_loop/detectors/correlation/dependency_freshness_monitor.py
   domain_id: D_FBL_DETECTORS
   name_zh: 依赖freshness监控器
@@ -3900,7 +3900,7 @@ entries:
   name_en: Rumor Noise Filter — v0.37.0 R460
   desc_zh: rumornoise过滤模块
   desc_en: Rumor Noise Filter — v0.37.0 R460
-  plain_zh: rumornoise过滤。Rumor Noise Filter — v0.37.0 R460
+  plain_zh: "对未证实的市场传闻要求至少两个独立来源印证后才允许采取行动，未印证的只记日志不动作，防止误信传闻触发假交易或误关停。"
 - module_path: src/zephyr/feedback_loop/detectors/correlation/trace_causal_bridge.py
   domain_id: D_FBL_DETECTORS
   name_zh: 追踪causal桥接
@@ -3928,7 +3928,7 @@ entries:
   name_en: Concept Drift Detector — v0.5.0 R42
   desc_zh: concept漂移模块
   desc_en: Concept Drift Detector — v0.5.0 R42
-  plain_zh: concept漂移。Concept Drift Detector — v0.5.0 R42
+  plain_zh: "检测指标统计分布随时间漂移，避免静态阈值在分布漂移后把正常行为误判为异常。"
 - module_path: src/zephyr/feedback_loop/detectors/drift/config_drift.py
   domain_id: D_FBL_DETECTORS
   name_zh: 配置漂移
@@ -3956,7 +3956,7 @@ entries:
   name_en: Ensemble Drift — v0.5.0 R43
   desc_zh: ensemble漂移模块
   desc_en: Ensemble Drift — v0.5.0 R43
-  plain_zh: ensemble漂移。Ensemble Drift — v0.5.0 R43
+  plain_zh: "监控集成模型一致性是趋向完全一致还是趋向混乱，一致性过高说明模型趋同单一化、失去多样性。"
 - module_path: src/zephyr/feedback_loop/detectors/drift/gradual_poisoning_detector.py
   domain_id: D_FBL_DETECTORS
   name_zh: gradualpoisoning检测器
@@ -3970,7 +3970,7 @@ entries:
   name_en: Trend-Cycle Separator — v0.9.0 R113
   desc_zh: 趋势cycleseparator模块
   desc_en: Trend-Cycle Separator — v0.9.0 R113
-  plain_zh: 趋势cycleseparator。Trend-Cycle Separator — v0.9.0 R113
+  plain_zh: "把长期趋势和短期异常分离，避免渐变趋势增长在健康指标上误触异常告警。"
 - module_path: src/zephyr/feedback_loop/detectors/guard/__init__.py
   domain_id: D_FBL_DETECTORS
   name_zh: 包入口
@@ -3984,7 +3984,7 @@ entries:
   name_en: Alert Desensitization Curve — v0.37.0 R492
   desc_zh: 告警desensitizationcurve模块
   desc_en: Alert Desensitization Curve — v0.37.0 R492
-  plain_zh: 告警desensitizationcurve。Alert Desensitization Curve — v0.37.0 R492
+  plain_zh: "按告警类型追踪运维人员暴露次数，用指数衰减建模响应概率，疲劳度降到阈值以下时自动换通道或升级严重度，防止告警疲劳漏掉真事故。"
 - module_path: src/zephyr/feedback_loop/detectors/guard/guard_cascade_detector.py
   domain_id: D_FBL_DETECTORS
   name_zh: 守卫级联检测器
@@ -4040,7 +4040,7 @@ entries:
   name_en: Self HA — v0.13.0 R173
   desc_zh: 自ha模块
   desc_en: Self HA — v0.13.0 R173
-  plain_zh: 自ha。Self HA — v0.13.0 R173
+  plain_zh: "为 FLE 自愈实例提供主备高可用，主实例故障时备实例接管，避免自愈能力本身成为单点。"
 - module_path: src/zephyr/feedback_loop/detectors/guard/temporal_coherence_of_self_model.py
   domain_id: D_FBL_DETECTORS
   name_zh: temporalcoherenceofself模型
@@ -4075,7 +4075,7 @@ entries:
   name_en: Blast Radius Budget — v0.13.0 R178
   desc_zh: blastradius预算模块
   desc_en: Blast Radius Budget — v0.13.0 R178
-  plain_zh: blastradius预算。Blast Radius Budget — v0.13.0 R178
+  plain_zh: "限制同时进行的修复数量上限，防止所有子系统同时修复一旦出错引发全局崩溃。"
 - module_path: src/zephyr/feedback_loop/detectors/reliability/capacity_forecast.py
   domain_id: D_FBL_DETECTORS
   name_zh: 容量预测
@@ -4096,7 +4096,7 @@ entries:
   name_en: eBPF Monitor — v0.6.0 R64
   desc_zh: ebpf监控。eBPF Monitor — v0.6.0 R64
   desc_en: eBPF Monitor — v0.6.0 R64
-  plain_zh: ebpf监控。eBPF Monitor — v0.6.0 R64
+  plain_zh: "用 eBPF 采集内核级异常，避免内核瓶颈导致的应用异常被误诊为应用 Bug。"
 - module_path: src/zephyr/feedback_loop/detectors/reliability/flag_lifecycle.py
   domain_id: D_FBL_DETECTORS
   name_zh: 标志生命周期
@@ -4138,7 +4138,7 @@ entries:
   name_en: Regulatory Audit Detector — v0.13.0 R184
   desc_zh: regulatory审计模块
   desc_en: Regulatory Audit Detector — v0.13.0 R184
-  plain_zh: regulatory审计。Regulatory Audit Detector — v0.13.0 R184
+  plain_zh: "把 FLE 自动修复动作与监管合规框架（如 MiFID II 最佳执行）对照检查，防止自动修复违规。"
 - module_path: src/zephyr/feedback_loop/detectors/reliability/resolution_tracker.py
   domain_id: D_FBL_DETECTORS
   name_zh: resolution追踪器
@@ -4159,7 +4159,7 @@ entries:
   name_en: Version Migrator — v0.12.0 R169
   desc_zh: 版本migrator模块
   desc_en: Version Migrator — v0.12.0 R169
-  plain_zh: 版本migrator。Version Migrator — v0.12.0 R169
+  plain_zh: "协调跨子系统的 Schema/API 版本升级，避免版本错配导致子系统间静默数据损坏。"
 - module_path: src/zephyr/feedback_loop/diagnosers/__init__.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 包入口
@@ -4187,7 +4187,7 @@ entries:
   name_en: Cognitive Load Estimator — v0.6.0 R68
   desc_zh: cognitive加载模块
   desc_en: Cognitive Load Estimator — v0.6.0 R68
-  plain_zh: cognitive加载。Cognitive Load Estimator — v0.6.0 R68
+  plain_zh: "估算运维负责人认知负荷与疲劳分，告警洪水淹没单人时预警，防止关键告警被漏掉。"
 - module_path: src/zephyr/feedback_loop/diagnosers/cognitive/cognitive_load_budget.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 认知load预算
@@ -4285,14 +4285,14 @@ entries:
   name_en: Diagnosis KPI — v0.9.0 R116
   desc_zh: 诊断kpi模块
   desc_en: Diagnosis KPI — v0.9.0 R116
-  plain_zh: 诊断kpi。Diagnosis KPI — v0.9.0 R116
+  plain_zh: "统计诊断有多少比例真正导向有效修复，暴露诊断流水线失效、修复反馈链断裂的问题。"
 - module_path: src/zephyr/feedback_loop/diagnosers/diagnosis/impact_predictor.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 冲击预测器
   name_en: Impact Predictor — v0.9.0 R121
   desc_zh: 冲击predictor模块
   desc_en: Impact Predictor — v0.9.0 R121
-  plain_zh: 冲击predictor。Impact Predictor — v0.9.0 R121
+  plain_zh: "在执行修复前预测其副作用，防止修复引发新的连锁异常。"
 - module_path: src/zephyr/feedback_loop/diagnosers/diagnosis/incident_knowledge_injector.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: incident知识injector
@@ -4306,7 +4306,7 @@ entries:
   name_en: Interactive Diagnosis — v0.7.0 R80
   desc_zh: interactive诊断模块
   desc_en: Interactive Diagnosis — v0.7.0 R80
-  plain_zh: interactive诊断。Interactive Diagnosis — v0.7.0 R80
+  plain_zh: "对模糊症状做多轮探询式诊断，避免一次性草率诊断导致误修。"
 - module_path: src/zephyr/feedback_loop/diagnosers/diagnosis/knowledge_bus_factor_monitor.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 知识总线因子监控
@@ -4348,7 +4348,7 @@ entries:
   name_en: Vertical Self Assessment — v0.10.0 R137
   desc_zh: vertical自assessment模块
   desc_en: Vertical Self Assessment — v0.10.0 R137
-  plain_zh: vertical自assessment。Vertical Self Assessment — v0.10.0 R137
+  plain_zh: "让 FLE 评估自身能力成熟度等级，防止高估能力而做出危险的自主动作。"
 - module_path: src/zephyr/feedback_loop/diagnosers/health/__init__.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 包入口
@@ -4383,7 +4383,7 @@ entries:
   name_en: FLE Dogfood Monitor — v0.38.0 R480
   desc_zh: fledogfood监控模块
   desc_en: FLE Dogfood Monitor — v0.38.0 R480
-  plain_zh: fledogfood监控。FLE Dogfood Monitor — v0.38.0 R480
+  plain_zh: "把 FLE 自己的采集-检测-诊断-执行-验证流水线反过来用在自己身上，盯自身 SLO 并自诊自愈，防止监控系统自己静默失效。"
 - module_path: src/zephyr/feedback_loop/diagnosers/health/fle_self_slo_metrics.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: fle自SLO指标
@@ -4418,7 +4418,7 @@ entries:
   name_en: Self Benchmark — v0.9.0 R115
   desc_zh: 自benchmark模块
   desc_en: Self Benchmark — v0.9.0 R115
-  plain_zh: 自benchmark。Self Benchmark — v0.9.0 R115
+  plain_zh: "用历史基线对比 FLE 性能趋势，发现没有基线对照就看不出的渐进退化。"
 - module_path: src/zephyr/feedback_loop/diagnosers/health/self_bottleneck_detector.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: selfbottleneck检测器
@@ -4439,7 +4439,7 @@ entries:
   name_en: Self LLM Observability — v0.12.0 R160
   desc_zh: 自llmobservability模块
   desc_en: Self LLM Observability — v0.12.0 R160
-  plain_zh: 自llmobservability。Self LLM Observability — v0.12.0 R160
+  plain_zh: "观测 FLE 自身所用 LLM 的错误率和延迟，质量静默下滑时告警，防止污染所有下游诊断。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/__init__.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 包入口
@@ -4453,7 +4453,7 @@ entries:
   name_en: Amplification Guard — v0.10.0 R134
   desc_zh: amplification守卫模块
   desc_en: Amplification Guard — v0.10.0 R134
-  plain_zh: amplification守卫。Amplification Guard — v0.10.0 R134
+  plain_zh: "监控多跳提示链是否把小偏差放大成大错误，超过放大上限就拦住，防止诊断级联失败。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/api_dependency_metrics.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: API依赖指标
@@ -4467,7 +4467,7 @@ entries:
   name_en: Burn Rate Alerter — v0.14.0 R200
   desc_zh: burn率alerter模块
   desc_en: Burn Rate Alerter — v0.14.0 R200
-  plain_zh: burn率alerter。Burn Rate Alerter — v0.14.0 R200
+  plain_zh: "按 Google SRE 多窗口方法跟踪 SLO 错误预算燃烧速率，预算被快速烧光前告警，而不是等 SLO 已破才报。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/burnout_alarm.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 倦怠告警
@@ -4481,7 +4481,7 @@ entries:
   name_en: Capacity Aware Repair — v0.9.0 R120
   desc_zh: 容量awarerepair模块
   desc_en: Capacity Aware Repair — v0.9.0 R120
-  plain_zh: 容量awarerepair。Capacity Aware Repair — v0.9.0 R120
+  plain_zh: "执行修复前先看当前资源余量是否够动作开销，防止修复动作本身把资源耗尽引发级联故障。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/cold_start_conservative_mode.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 冷启动conservativemode
@@ -4579,14 +4579,14 @@ entries:
   name_en: Model Rotation — v0.9.0 R125
   desc_zh: 模型rotation模块
   desc_en: Model Rotation — v0.9.0 R125
-  plain_zh: 模型rotation。Model Rotation — v0.9.0 R125
+  plain_zh: "在多个诊断模型间轮换，避免单模型退化导致整套诊断流水线失效。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/model_rotation_v2.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 模型rotationv2
   name_en: Model Rotation v2 — v0.10.0 R140
   desc_zh: 模型rotationv2模块
   desc_en: Model Rotation v2 — v0.10.0 R140
-  plain_zh: 模型rotationv2。Model Rotation v2 — v0.10.0 R140
+  plain_zh: "按近期表现加权选择诊断模型的增强版轮换，性能好的模型优先被选中。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/model_version_semantic_drift.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 模型版本semantic漂移
@@ -4600,7 +4600,7 @@ entries:
   name_en: Numerical Stability Guard — v0.38.0 R475
   desc_zh: numericalstability守卫模块
   desc_en: Numerical Stability Guard — v0.38.0 R475
-  plain_zh: numericalstability守卫。Numerical Stability Guard — v0.38.0 R475
+  plain_zh: "拦截进入流水线的 NaN、Inf、溢出等浮点异常，分类隔离或封顶，防止坏数值引发假异常或掩盖真异常。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/operational_seasonality.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 运营季节性
@@ -4614,14 +4614,14 @@ entries:
   name_en: Prompt Fingerprint — v0.3.0 R14
   desc_zh: 提示fingerprint模块
   desc_en: Prompt Fingerprint — v0.3.0 R14
-  plain_zh: 提示fingerprint。Prompt Fingerprint — v0.3.0 R14
+  plain_zh: "给 LLM 提示词内容算哈希留版本指纹，发现提示词静默漂移导致跨会话诊断不一致。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/prompt_sanitizer.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 提示清洗器
   name_en: Prompt Sanitizer — v0.10.0 R133
   desc_zh: 提示sanitizer模块
   desc_en: Prompt Sanitizer — v0.10.0 R133
-  plain_zh: 提示sanitizer。Prompt Sanitizer — v0.10.0 R133
+  plain_zh: "清洗注入诊断证据的外部数据，防止提示注入攻击污染 LLM 输出。"
 - module_path: src/zephyr/feedback_loop/diagnosers/reliability/recovery_time_stats.py
   domain_id: D_FBL_DIAGNOSERS
   name_zh: 恢复timestats
@@ -4726,7 +4726,7 @@ entries:
   name_en: Action Reversibility — v0.15.0 R208
   desc_zh: 动作reversibility模块
   desc_en: Action Reversibility — v0.15.0 R208
-  plain_zh: 动作reversibility。Action Reversibility — v0.15.0 R208
+  plain_zh: "所有破坏性动作门禁：必须先验证有可回滚路径才放行，防止执行不可逆操作（如误删生产数据）。"
 - module_path: src/zephyr/feedback_loop/gates/adversarial_validation.py
   domain_id: D_FBL_VERIFICATION
   name_zh: 对抗验证
@@ -4845,14 +4845,14 @@ entries:
   name_en: Emergency Takeover — v0.7.0 R88
   desc_zh: 紧急takeover模块
   desc_en: Emergency Takeover — v0.7.0 R88
-  plain_zh: 紧急takeover。Emergency Takeover — v0.7.0 R88
+  plain_zh: "提供人工紧急接管机制，自主修复循环失控时能强制叫停。"
 - module_path: src/zephyr/feedback_loop/gates/federated_security.py
   domain_id: D_FBL_VERIFICATION
   name_zh: federated安全
   name_en: Federated Security — v0.10.0 R131
   desc_zh: federated安全模块
   desc_en: Federated Security — v0.10.0 R131
-  plain_zh: federated安全。Federated Security — v0.10.0 R131
+  plain_zh: "多实例 FLE 部署共享安全上下文与可信对等方集合，防止一个实例被攻陷毒化整个联邦。"
 - module_path: src/zephyr/feedback_loop/gates/flag_lifecycle_manager.py
   domain_id: D_FBL_VERIFICATION
   name_zh: 标志生命周期管理器
@@ -4866,7 +4866,7 @@ entries:
   name_en: License Compliance — v0.14.0 R198
   desc_zh: license合规模块
   desc_en: License Compliance — v0.14.0 R198
-  plain_zh: license合规。License Compliance — v0.14.0 R198
+  plain_zh: "对第三方库做 SPDX 许可审计并执行依赖策略，发现 copyleft 污染专有代码时告警，避免法律风险。"
 - module_path: src/zephyr/feedback_loop/gates/llm_cost_router.py
   domain_id: D_FBL_VERIFICATION
   name_zh: llm成本路由器
@@ -5034,14 +5034,14 @@ entries:
   name_en: A/B Test Verifier — v0.9.0 R117
   desc_zh: ab测试模块
   desc_en: A/B Test Verifier — v0.9.0 R117
-  plain_zh: ab测试。A/B Test Verifier — v0.9.0 R117
+  plain_zh: "用对照组和实验组 A/B 验证修复是否真的带来改善，而不是自愈造成的假象。"
 - module_path: src/zephyr/feedback_loop/verifiers/action_explainability.py
   domain_id: D_FBL_VERIFICATION
   name_zh: 行为explainability
   name_en: Action Explainability — v0.3.0 R15
   desc_zh: 动作explainability模块
   desc_en: Action Explainability — v0.3.0 R15
-  plain_zh: 动作explainability。Action Explainability — v0.3.0 R15
+  plain_zh: "为每个修复动作生成可解释说明，让运维能理解为何选这个修复，避免因不透明而误否正确修复。"
 - module_path: src/zephyr/feedback_loop/verifiers/ai_comment_veracity.py
   domain_id: D_FBL_VERIFICATION
   name_zh: AI评论真实性
@@ -5118,14 +5118,14 @@ entries:
   name_en: Dry Run Sandbox — v0.3.0 R19
   desc_zh: dry运行sandbox模块
   desc_en: Dry Run Sandbox — v0.3.0 R19
-  plain_zh: dry运行sandbox。Dry Run Sandbox — v0.3.0 R19
+  plain_zh: "在沙箱里先模拟运行修复动作预览效果，通过验证后再上生产，防止破坏性修复直接打到生产。"
 - module_path: src/zephyr/feedback_loop/verifiers/federated_protocol.py
   domain_id: D_FBL_VERIFICATION
   name_zh: federated协议
   name_en: Federated Protocol — v0.10.0 R129
   desc_zh: federated协议模块
   desc_en: Federated Protocol — v0.10.0 R129
-  plain_zh: federated协议。Federated Protocol — v0.10.0 R129
+  plain_zh: "为多 FLE 实例提供协同协议，避免无协调各自为政。"
 - module_path: src/zephyr/feedback_loop/verifiers/golden_test_external.py
   domain_id: D_FBL_VERIFICATION
   name_zh: golden测试external
@@ -5139,14 +5139,14 @@ entries:
   name_en: No-LLM Degradation Mode — v0.8.0 R94
   desc_zh: nollm退化。No-LLM Degradation Mode — v0.8.0 R94
   desc_en: No-LLM Degradation Mode — v0.8.0 R94
-  plain_zh: nollm退化。No-LLM Degradation Mode — v0.8.0 R94
+  plain_zh: "LLM 不可用时降级到规则引擎继续诊断修复，防止 LLM 宕机导致 FLE 整体瘫痪。"
 - module_path: src/zephyr/feedback_loop/verifiers/pre_flight_simulator.py
   domain_id: D_FBL_VERIFICATION
   name_zh: preflight模拟器
   name_en: Pre-Flight Simulator — v0.12.0 R169b
   desc_zh: 预flightsimulator模块
   desc_en: Pre-Flight Simulator — v0.12.0 R169b
-  plain_zh: 预flightsimulator。Pre-Flight Simulator — v0.12.0 R169b
+  plain_zh: "修复执行前先跑起飞前检查清单，清单全过才放行，防止未经验证直接上线。"
 - module_path: src/zephyr/feedback_loop/verifiers/preventive_repair.py
   domain_id: D_FBL_VERIFICATION
   name_zh: 预防性修复
@@ -5258,7 +5258,7 @@ entries:
   name_en: Intent-Driven Ops — v0.12.0 R159
   desc_zh: intentdriven运维模块
   desc_en: Intent-Driven Ops — v0.12.0 R159
-  plain_zh: intentdriven运维。Intent-Driven Ops — v0.12.0 R159
+  plain_zh: "按运维声明的意图而非表面症状来驱动运维动作，防止 FLE 把运维故意配的东西当故障修掉。"
 - module_path: src/zephyr/feedback_loop/actors/multi_agent_orchestrator.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 多代理编排器
@@ -5272,7 +5272,7 @@ entries:
   name_en: Notification Personalizer — v0.6.0 R67
   desc_zh: 通知personalizer模块
   desc_en: Notification Personalizer — v0.6.0 R67
-  plain_zh: 通知personalizer。Notification Personalizer — v0.6.0 R67
+  plain_zh: "按运维偏好个性化告警通知，减少千篇一律的告警导致的告警疲劳。"
 - module_path: src/zephyr/feedback_loop/actors/owner_absence_escalation.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: ownerabsence升级
@@ -5335,7 +5335,7 @@ entries:
   name_en: Config Timeline — v0.8.0 R99
   desc_zh: 配置timeline模块
   desc_en: Config Timeline — v0.8.0 R99
-  plain_zh: 配置timeline。Config Timeline — v0.8.0 R99
+  plain_zh: "记录配置变更时间线，把配置变更与异常关联，避免改配置后的异常被误诊为系统故障。"
 - module_path: src/zephyr/feedback_loop/collectors/data_quality_validator.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 数据质量校验器
@@ -5370,28 +5370,28 @@ entries:
   name_en: Knowledge Capture — v0.4.0 R30
   desc_zh: 知识capture模块
   desc_en: Knowledge Capture — v0.4.0 R30
-  plain_zh: 知识capture。Knowledge Capture — v0.4.0 R30
+  plain_zh: "把成功诊断沉淀成可复用知识，避免重复诊断同一异常浪费资源。"
 - module_path: src/zephyr/feedback_loop/collectors/knowledge_freshness.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 知识freshness
   name_en: Knowledge Freshness — v0.5.0 R47
   desc_zh: 知识freshness模块
   desc_en: Knowledge Freshness — v0.5.0 R47
-  plain_zh: 知识freshness。Knowledge Freshness — v0.5.0 R47
+  plain_zh: "给知识库条目算新鲜度，过期知识与新鲜知识权重不同，防止过时知识误导当前诊断。"
 - module_path: src/zephyr/feedback_loop/collectors/knowledge_injection.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 知识注入
   name_en: Knowledge Injection — v0.8.0 R102
   desc_zh: 知识injection模块
   desc_en: Knowledge Injection — v0.8.0 R102
-  plain_zh: 知识injection。Knowledge Injection — v0.8.0 R102
+  plain_zh: "把人类专家知识注入 FLE 知识库，避免 FLE 重复学习运维已知的东西。"
 - module_path: src/zephyr/feedback_loop/collectors/knowledge_packaging.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 知识packaging
   name_en: Knowledge Packaging — v0.9.0 R123
   desc_zh: 知识packaging模块
   desc_en: Knowledge Packaging — v0.9.0 R123
-  plain_zh: 知识packaging。Knowledge Packaging — v0.9.0 R123
+  plain_zh: "把非结构化知识打包成结构化形式，方便下游子系统高效复用。"
 - module_path: src/zephyr/feedback_loop/collectors/known_unknown_registry.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: knownunknown注册表
@@ -5405,14 +5405,14 @@ entries:
   name_en: LLM Cost Accounting — v0.4.0 R35
   desc_zh: llm成本accounting模块
   desc_en: LLM Cost Accounting — v0.4.0 R35
-  plain_zh: llm成本accounting。LLM Cost Accounting — v0.4.0 R35
+  plain_zh: "核算 LLM API 调用成本，让预算可见，防止失控调用带来意外账单。"
 - module_path: src/zephyr/feedback_loop/collectors/market_calendar.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 行情日历
   name_en: Market Calendar — v0.5.0 R48
   desc_zh: 市场calendar模块
   desc_en: Market Calendar — v0.5.0 R48
-  plain_zh: 市场calendar。Market Calendar — v0.5.0 R48
+  plain_zh: "提供市场交易日历，避免节假日无数据被误诊为流水线故障而误告警。"
 - module_path: src/zephyr/feedback_loop/collectors/market_event_integrator.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 行情事件integrator
@@ -5461,7 +5461,7 @@ entries:
   name_en: Token FinOps — v0.12.0 R162
   desc_zh: 令牌finops模块
   desc_en: Token FinOps — v0.12.0 R162
-  plain_zh: 令牌finops。Token FinOps — v0.12.0 R162
+  plain_zh: "按子系统核算 Token 消耗，防止单个子系统悄悄烧掉大部分 LLM 预算。"
 - module_path: src/zephyr/feedback_loop/config.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 配置
@@ -5545,7 +5545,7 @@ entries:
   name_en: Conformal Prediction — v0.7.0 R74
   desc_zh: conformal预测模块
   desc_en: Conformal Prediction — v0.7.0 R74
-  plain_zh: conformal预测。Conformal Prediction — v0.7.0 R74
+  plain_zh: "给异常分加上校准的置信区间，防止宽置信区间下过度自信的诊断。"
 - module_path: src/zephyr/feedback_loop/evolution/cross_gen_validation.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 跨gen验证
@@ -5566,7 +5566,7 @@ entries:
   name_en: EWC KB Review — v0.6.0 R51
   desc_zh: ewckb审查。EWC KB Review — v0.6.0 R51
   desc_en: EWC KB Review — v0.6.0 R51
-  plain_zh: ewckb审查。EWC KB Review — v0.6.0 R51
+  plain_zh: "用弹性权重巩固审查知识库更新，防止新知识灾难性抹掉旧的临界知识。"
 - module_path: src/zephyr/feedback_loop/evolution/failure_replay.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 故障replay
@@ -5580,7 +5580,7 @@ entries:
   name_en: Graduated Activation Protocol — v0.38.0 R485
   desc_zh: graduatedactivation协议模块
   desc_en: Graduated Activation Protocol — v0.38.0 R485
-  plain_zh: graduatedactivation协议。Graduated Activation Protocol — v0.38.0 R485
+  plain_zh: "新规则和模型按金丝雀、Beta、稳定分阶段灰度上线，每阶段卡置信阈值，回归自动回滚，防止一次坏部署打垮整套自动修复。"
 - module_path: src/zephyr/feedback_loop/evolution/hypernetwork.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 超网络
@@ -5594,14 +5594,14 @@ entries:
   name_en: Knowledge Distillation — v0.6.0 R52
   desc_zh: 知识distillation模块
   desc_en: Knowledge Distillation — v0.6.0 R52
-  plain_zh: 知识distillation。Knowledge Distillation — v0.6.0 R52
+  plain_zh: "把大知识库蒸馏压缩，防止知识库超过 LLM 上下文窗口导致关键知识被截断。"
 - module_path: src/zephyr/feedback_loop/evolution/online_feature_importance.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: online特征importance
   name_en: Online Feature Importance — v0.7.0 R73
   desc_zh: online功能importance模块
   desc_en: Online Feature Importance — v0.7.0 R73
-  plain_zh: online功能importance。Online Feature Importance — v0.7.0 R73
+  plain_zh: "在线实时计算特征重要性，防止离线计算的重要性排名滞后、用错特征驱动诊断。"
 - module_path: src/zephyr/feedback_loop/evolution/prompt_factory_governance.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 提示工厂治理
@@ -5636,14 +5636,14 @@ entries:
   name_en: Self Reflection — v0.7.0 R75
   desc_zh: 自reflection模块
   desc_en: Self Reflection — v0.7.0 R75
-  plain_zh: 自reflection。Self Reflection — v0.7.0 R75
+  plain_zh: "让 FLE 反思自身诊断质量，防止过度自信不受约束、从不触发自我纠正。"
 - module_path: src/zephyr/feedback_loop/evolution/self_upgrade_canary.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: selfupgrade金丝雀
   name_en: Self Upgrade Canary — v0.14.0 R194
   desc_zh: 自upgradecanary模块
   desc_en: Self Upgrade Canary — v0.14.0 R194
-  plain_zh: 自upgradecanary。Self Upgrade Canary — v0.14.0 R194
+  plain_zh: "FLE 自身升级按 5% 到 100% 金丝雀部署并自动回滚，防止坏升级一次性影响全部。"
 - module_path: src/zephyr/feedback_loop/evolution/semantic_intent_preservation_guard.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: semanticintentpreservation守卫
@@ -5664,7 +5664,7 @@ entries:
   name_en: Training Data Governance — v0.14.0 R191
   desc_zh: training数据gov模块
   desc_en: Training Data Governance — v0.14.0 R191
-  plain_zh: training数据gov。Training Data Governance — v0.14.0 R191
+  plain_zh: "给训练数据做版本快照并检测分布漂移，防止模型在漂移数据上训练导致精度静默下降。"
 - module_path: src/zephyr/feedback_loop/evolution_engine.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 进化引擎
@@ -5818,7 +5818,7 @@ entries:
   name_en: TOCTOU Guard — v0.15.0 R207
   desc_zh: toctou守卫模块
   desc_en: TOCTOU Guard — v0.15.0 R207
-  plain_zh: toctou守卫。TOCTOU Guard — v0.15.0 R207
+  plain_zh: "时间检查到时间使用守卫：诊断时快照状态，执行前重新校验，防止状态在诊断和执行之间已变化导致按过期假设操作。"
 - module_path: src/zephyr/feedback_loop/forensic/worm_write_integrity.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: wormwrite完整性
@@ -5874,7 +5874,7 @@ entries:
   name_en: Deadman Switch — v0.15.0 R212
   desc_zh: deadman开关模块
   desc_en: Deadman Switch — v0.15.0 R212
-  plain_zh: deadman开关。Deadman Switch — v0.15.0 R212
+  plain_zh: "60 秒心跳、连续 3 次缺失即自动自锁并外部告警，给失控的自主 FLE 提供外部强制停机手段。"
 - module_path: src/zephyr/feedback_loop/resilience/dr_automation.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 灾备自动化
@@ -5888,14 +5888,14 @@ entries:
   name_en: Graceful Degradation Planner — v0.40.0 R496
   desc_zh: graceful退化planner模块
   desc_en: Graceful Degradation Planner — v0.40.0 R496
-  plain_zh: graceful退化planner。Graceful Degradation Planner — v0.40.0 R496
+  plain_zh: "FLE 过载时按四级降级预案逐级降级，避免要么全跑加剧过载、要么整体崩溃的极端，保证峰值时监控不消失。"
 - module_path: src/zephyr/feedback_loop/resilience/multi_instance_coord.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 多instancecoord
   name_en: Multi-Instance Coordinator — v0.14.0 R199
   desc_zh: 多instancecoord模块
   desc_en: Multi-Instance Coordinator — v0.14.0 R199
-  plain_zh: 多instancecoord。Multi-Instance Coordinator — v0.14.0 R199
+  plain_zh: "用 Raft 共识选主并防脑裂，避免多 FLE 实例无主各自为政做出冲突修复。"
 - module_path: src/zephyr/feedback_loop/resilience/oscillation_damping.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 振荡阻尼
@@ -5923,7 +5923,7 @@ entries:
   name_en: Split-Brain Quorum — v0.37.0 R451
   desc_zh: 拆分brainquorum模块
   desc_en: Split-Brain Quorum — v0.37.0 R451
-  plain_zh: 拆分brainquorum。Split-Brain Quorum — v0.37.0 R451
+  plain_zh: "分布式法定人数锁：实例行动前须获取租约锁，过期自动释放，防止多实例对同一问题竞相做出矛盾修复。"
 - module_path: src/zephyr/feedback_loop/scheduler.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 调度器
@@ -5944,21 +5944,21 @@ entries:
   name_en: scheduler_collect_detect
   desc_zh: 调度器collect检测模块
   desc_en: ''
-  plain_zh: 调度器collect检测，主要提供运行collect、运行检测、运行diagnose等功能，供调度器使用
+  plain_zh: "调度器的采集检测诊断执行器，编排一次运行中的采集、检测、诊断流程并把早退判定回传调度器。"
 - module_path: src/zephyr/feedback_loop/scheduler_health.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 调度器健康
   name_en: scheduler_health
   desc_zh: 调度器健康，主要提供报告等功能，供调度器使用
   desc_en: ''
-  plain_zh: 调度器健康，主要提供报告等功能，供调度器使用
+  plain_zh: "调度器的健康报告器，汇总多项健康指标产出运行健康报告。"
 - module_path: src/zephyr/feedback_loop/scheduler_safety.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 调度器安全
   name_en: scheduler_safety
   desc_zh: 调度器安全，主要提供运行安全门禁、fle门禁缓存、fle门禁缓存等功能，供调度器使用
   desc_en: ''
-  plain_zh: 调度器安全，主要提供运行安全门禁、fle门禁缓存、fle门禁缓存等功能，供调度器使用
+  plain_zh: "调度器的安全门禁管理器，运行数值稳定性、时序完整性、启动完整性等安全门禁并返回通过情况。"
 - module_path: src/zephyr/feedback_loop/security/__init__.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 包入口
@@ -5993,7 +5993,7 @@ entries:
   name_en: Remote Attestation — v0.15.0 R211
   desc_zh: 远程attestation模块
   desc_en: Remote Attestation — v0.15.0 R211
-  plain_zh: 远程attestation。Remote Attestation — v0.15.0 R211
+  plain_zh: "用 TPM 远程证实验证 FLE 运行时完整性，不再只信自我报告，防止被攻陷的 FLE 谎报自己正常。"
 - module_path: src/zephyr/feedback_loop/security/secret_rotation.py
   domain_id: D_FEEDBACK_LOOP
   name_zh: 密钥rotation
