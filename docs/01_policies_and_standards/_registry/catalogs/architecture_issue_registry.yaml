@@ -10925,3 +10925,55 @@ entries:
   related_adjudication: 'Stage4公共化（run_subprocess/log_reconcile_results/bridge.get_writer/contracts.get_writer/run_dashboard 共5个死wrapper删除；commit_auto公共本不存在已纠正）'
   created: '2026-08-02'
   last_updated: '2026-08-02'
+
+# --- #ARCH-DR-CH-RESTART-001: CH 服务自愈+远程可启——灾备演练 RTO 风险发现（C3，2026-08-02）---
+- issue_id: '#ARCH-DR-CH-RESTART-001'
+  title: CH 服务停机无告警+无法远程非交互启动——实盘 RTO 风险（C3 灾备演练发现）
+  severity: P0高
+  category: disaster_recovery
+  adjudication: |
+    发现背景：2026-08-02 执行 §8 改期项 C3 备份恢复演练（docs/_working/reports/backup_recovery_drill_20260802.md）。
+    inventory + verify 全通过（备份产物完整可恢复），但 CH 服务诊断暴露两个 RTO 风险：
+
+    发现1：CH 服务停机 17h 未告警
+    - VM "zephyr-ch" 运行中（uptime 2天10h），ping 通，但 CH 9000/8123 端口拒绝连接
+    - systemctl status: inactive(dead) since 2026-08-01 18:29:54 UTC（约17h前）
+    - 停止方式: systemd 手动 stop（非崩溃），服务 enabled 但停止后未自愈
+    - 无告警触达（B2 告警通道已修复但未接 CH 存活探针）
+    - 若在实盘运行期发生，将导致数据中断无感知
+
+    发现2：CH 服务无法远程非交互启动
+    - ch_vm_ssh.py --sudo --cmd "systemctl start clickhouse-server" 失败
+    - 原因: systemctl start 触发 polkit，pam_authenticate failed（get_pty+stdin.write 密码方式被 polkit 拒绝）
+    - 灾时 CH 崩溃无法远程自动恢复，必须人工介入 VM 控制台 = RTO 风险
+
+    第一性原理分析：
+    1. #ARCH-CH-031 裁定单节点 CH 回测期接受（RPO=24h, RTO=8h），但触发升级条件含"实盘立项"
+    2. 实盘交易系统已在密集施工（ex_core 下单Saga/持仓对账/执行审计、ex_sor、IntradayRuntime 盘中运行时）
+    3. 实盘场景下 CH 不可达 = 交易数据中断 = 不可接受，RTO 必须从 8h 降到分钟级
+    4. 当前既无 CH 崩溃自愈（systemd Restart=on-failure 未配置/未生效），也无远程启动能力，更无存活告警
+
+    建议改进（proposed，待用户确认优先级与方案）：
+    a) CH 服务 systemd 配置 Restart=on-failure + RestartSec=10（崩溃自愈）
+    b) 配置 NOPASSWD sudo for clickhouse-server（或 SSH key + sudoers），使 ch_vm_ssh.py 可远程启动
+       退而求其次：用 polkit 规则允许 ubuntu 用户免密 start clickhouse-server
+    c) CH 存活探针接入告警通道（B2 已修复 SMTP/飞书，补 CH ping/tcp 探针，1min 间隔）
+    d) last_ch_vm_autocheck 之外补主动健康探针（当前 autocheck 仅备份时触发，非持续监控）
+
+    与现有裁定的关系：
+    - #ARCH-CH-031 升级触发条件"实盘立项"已实质满足（ex_core/IntradayRuntime 施工中）
+    - 本议题不推翻 #ARCH-CH-031（单节点仍可接受），但要求补齐自愈+告警+远程恢复能力
+    - 表级恢复演练（C3-3）因 CH 不可达阻断，待服务恢复后补做
+  impact:
+    - 演练报告: docs/_working/reports/backup_recovery_drill_20260802.md
+    - 暴露 RTO 风险：实盘前必须补齐 CH 自愈+告警+远程启动，否则 CH 崩溃=交易中断
+    - 当前 CH 服务已停 17h，需用户手动启动（VM 控制台 systemctl start 或修复 sudoers）
+  fix_phase: proposed（待用户确认方案与优先级）
+  status: proposed
+  related_rules:
+  - '#ARCH-CH-031'
+  - '#ARCH-DR-BACKUP-001'
+  - 'B2 告警通道'
+  - 'audit_03 5.8'
+  created: '2026-08-02'
+  last_updated: '2026-08-02'
