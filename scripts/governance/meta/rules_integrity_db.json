@@ -56,12 +56,12 @@
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
     "scripts/governance/meta/validate_rules_integrity.py": {
-      "hash": "ecffe230aaa67628",
+      "hash": "50e3c59e9f0f757d",
       "critical": true,
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "70544c1d6c48ea95",
+      "hash": "17b22a445a4ee0a5",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -71,6 +71,6 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-08-02T13:56:48.810179+00:00",
+  "registered_at": "2026-08-02T14:04:58.246574+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
