@@ -195,7 +195,7 @@ flowchart TD
     src_zephyr_gov_enforcement_commit_gates_table_name_registry_gate_py["tablename注册表门禁<br/>裁定 # Phase 4：SSoT 真源强制闭环。<br/>table_name_registry_gate<br/>文件: commit_gates/table_name_registry_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_test_source_consistency_gate_py["测试源一致性门禁<br/>测试-源码符号一致性门禁<br/>（TEST-SOURCE-CONSISTENCY，§5.178 防复发）<br/>test_source_consistency_gate<br/>文件: commit_gates<br/>/test_source_consistency_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_tests_coverage_gate_py["testscoverage门禁<br/>Gate 测试覆盖率校验 meta-gate<br/>（META-TESTS-COVERAGE，提交前合规门禁检查<br/>tests_coverage_gate<br/>文件: commit_gates/tests_coverage_gate.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_commit_gates_translation_coverage_gate_py["commit_gates/translation_coverage_gate<br/>translation_coverage_gate.py — 新建 .py<br/>文件大白话简介覆盖率门禁（TRANSLATIO...<br/>文件: commit_gates/translation_coverage_gate.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_commit_gates_translation_coverage_gate_py["新建 .py 文件大白话简介覆盖率门禁<br/>translation_coverage_gate.py — 新建 .py<br/>文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE）<br/>文件: commit_gates/translation_coverage_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_ttl_gate_py["存活时间门禁<br/>ttl 字段校验门禁（治本：弥补 --no-verify 绕过<br/>pre-commit GATE-15 的缺口）<br/>ttl_gate<br/>文件: commit_gates/ttl_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_undefined_name_gate_py["undefinedname门禁<br/>UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）<br/>undefined_name_gate<br/>文件: commit_gates/undefined_name_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_unsafe_dict_spread_gate_py["unsafedictspread门禁<br/>``**data`` 直接展开模式 warn 级门禁<br/>unsafe_dict_spread_gate<br/>文件: commit_gates/unsafe_dict_spread_gate.py<br/>(生产态 / production)"]
@@ -631,7 +631,7 @@ flowchart TD
     src_zephyr_gov_enforcement_commit_gates_table_name_registry_gate_py["tablename注册表门禁<br/>裁定 # Phase 4：SSoT 真源强制闭环。<br/>table_name_registry_gate<br/>文件: commit_gates/table_name_registry_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_test_source_consistency_gate_py["测试源一致性门禁<br/>测试-源码符号一致性门禁<br/>（TEST-SOURCE-CONSISTENCY，§5.178 防复发）<br/>test_source_consistency_gate<br/>文件: commit_gates<br/>/test_source_consistency_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_tests_coverage_gate_py["testscoverage门禁<br/>Gate 测试覆盖率校验 meta-gate<br/>（META-TESTS-COVERAGE，提交前合规门禁检查<br/>tests_coverage_gate<br/>文件: commit_gates/tests_coverage_gate.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_commit_gates_translation_coverage_gate_py["commit_gates/translation_coverage_gate<br/>translation_coverage_gate.py — 新建 .py<br/>文件大白话简介覆盖率门禁（TRANSLATIO...<br/>文件: commit_gates/translation_coverage_gate.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_commit_gates_translation_coverage_gate_py["新建 .py 文件大白话简介覆盖率门禁<br/>translation_coverage_gate.py — 新建 .py<br/>文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE）<br/>文件: commit_gates/translation_coverage_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_ttl_gate_py["存活时间门禁<br/>ttl 字段校验门禁（治本：弥补 --no-verify 绕过<br/>pre-commit GATE-15 的缺口）<br/>ttl_gate<br/>文件: commit_gates/ttl_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_undefined_name_gate_py["undefinedname门禁<br/>UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）<br/>undefined_name_gate<br/>文件: commit_gates/undefined_name_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_unsafe_dict_spread_gate_py["unsafedictspread门禁<br/>``**data`` 直接展开模式 warn 级门禁<br/>unsafe_dict_spread_gate<br/>文件: commit_gates/unsafe_dict_spread_gate.py<br/>(生产态 / production)"]
@@ -987,7 +987,7 @@ flowchart TD
 | 91 | tablename注册表门禁 / table_name_registry_gate (commit_ga... | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
 | 92 | 测试源一致性门禁 / test_source_consistency_gate (commit_g... | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
 | 93 | testscoverage门禁 / tests_coverage_gate (commit_gates/tes... | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
-| 94 | translation_coverage_gate.py — 新建 .py 文件大白话简介覆... | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
+| 94 | 新建 .py 文件大白话简介覆盖率门禁 / translation_coverage_... | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
 | 95 | 存活时间门禁 / ttl_gate (commit_gates/ttl_gate.py) | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
 | 96 | undefinedname门禁 / undefined_name_gate (commit_gates/und... | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
 | 97 | unsafedictspread门禁 / unsafe_dict_spread_gate (commit_ga... | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
@@ -997,7 +997,7 @@ flowchart TD
 | 101 | 门禁自动registrar / gate_auto_registrar (rule_bridge/gate... | → | D_GOV_ENFORCEMENT 规则执行: 提交门禁注册表 / commit_gate_registry (rule_bridge/commit... | 导入依赖 / import_depends |
 | 102 | 测试审计worktree运维遥测 / test_audit_worktree_ops_teleme... | → | D_GOV_ENFORCEMENT 规则执行: 会话worktree / session_worktree (rule_bridge/session_work... | 测试依赖 / test_depends |
 | 103 | 检查模块id一致性 / check_module_id_consistency (d7_code/c... | → | D_GOV_SCRIPTS 脚本治理: 常量 / constants (_shared/constants.py) | 导入依赖 / import_depends |
-| 104 | translation_coverage_gate.py — 新建 .py 文件大白话简介覆... | → | D_GOV_SCRIPTS 脚本治理: moduletranslation加载器 / module_translation_loader (_sha... | 导入依赖 / import_depends |
+| 104 | 新建 .py 文件大白话简介覆盖率门禁 / translation_coverage_... | → | D_GOV_SCRIPTS 脚本治理: moduletranslation加载器 / module_translation_loader (_sha... | 导入依赖 / import_depends |
 | 105 | 配置 / config (code_dedup/config.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 应用配置 / app_config (config/app_config.py) | 导入依赖 / import_depends |
 | 106 | 命令行 / cli (code_dedup/cli.py) | → | D_INFRA_RUNTIME 运行时集成: 扫描器 / scanner (asset_inventory/scanner.py) | 导入依赖 / import_depends |
 | 107 | forgedgwmarker门禁 / forged_gw_marker_gate (commit_gates/... | → | D_SECURITY 对抗验证: 会话并发 / session_concurrency (access_control/session_co... | 导入依赖 / import_depends |
@@ -1020,7 +1020,7 @@ flowchart TD
 | 124 | rulingcommitverified门禁 / ruling_commit_verified_gate (c... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
 | 125 | 脚本导入完整性门禁 / scripts_import_integrity_gate (commi... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 126 | 测试源一致性门禁 / test_source_consistency_gate (commit_g... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 127 | translation_coverage_gate.py — 新建 .py 文件大白话简介覆... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 127 | 新建 .py 文件大白话简介覆盖率门禁 / translation_coverage_... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 | 128 | 门禁自动registrar / gate_auto_registrar (rule_bridge/gate... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
