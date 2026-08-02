@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 166 | Module Count | 166 |
 | 域内依赖 | 263 | Internal Dependencies | 263 |
-| 跨域入边 | 24 | Cross-domain Incoming | 24 |
+| 跨域入边 | 26 | Cross-domain Incoming | 26 |
 | 跨域出边 | 22 | Cross-domain Outgoing | 22 |
 | 设计态模块 | 4 | Design Modules | 4 |
 | 生产态模块 | 162 | Production Modules | 162 |
@@ -660,12 +660,14 @@ flowchart TD
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_ch_config_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_alerter_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_data_tick_subscriber_py
     D_MKT_DATA["行情数据<br/>行情数据，负责市场行情数据的采集、分发和订阅管理<br/>Market Data<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_MKT_DATA -.->|data / data| src_zephyr_data_provider_base_py
     D_MKT_DATA -.->|runtime / runtime| src_zephyr_data_table_registry_py
     D_ML_TRAIN["训练<br/>训练，负责模型训练、特征工程和模型评估<br/>Training<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_ML_TRAIN -.->|data / data| src_zephyr_data_pit_query_py
-    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_data_trading_calendar_py
     D_INFRA_RUNTIME -->|测试依赖 / test_depends| src_zephyr_data_tick_subscriber_py
     D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -679,8 +681,6 @@ flowchart TD
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_capability_validator_py
-    D_GOV_CODE_QUALITY -->|测试依赖 / test_depends| src_zephyr_data_symbol_normalizer_init_py
-    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -1355,17 +1355,19 @@ flowchart TD
 | 15 | D_GOV_SCRIPTS 脚本治理: check逐笔duplication / check_tick_duplication (data_quali... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
 | 16 | D_GOV_SCRIPTS 脚本治理: check逐笔duplication / check_tick_duplication (data_quali... | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
 | 17 | D_INFRA_RUNTIME 运行时集成: 数据库服务 / database_service (infrastructure/database_se... | → | ch配置 / ch_config (data/ch_config.py) | 导入依赖 / import_depends |
-| 18 | D_INFRA_RUNTIME 运行时集成: TickRedisCache 单元测试——tick→Redis tick:{symbol}:late... | → | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | 测试依赖 / test_depends |
-| 19 | D_MKT_DATA 行情数据: 自动加载 / autoload (market_data/autoload.py) | → | table注册表 / table_registry (data/table_registry.py) | runtime / runtime |
-| 20 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
-| 21 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
-| 22 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
-| 23 | D_MKT_DATA 行情数据: raw数据缓存 (raw_data_cache/) | → | 提供器基类 / provider_base (data/provider_base.py) | data / data |
-| 24 | D_ML_TRAIN 训练: 训练管线 (training_pipeline/) | → | pit查询 / pit_query (data/pit_query.py) | data / data |
+| 18 | D_INFRA_RUNTIME 运行时集成: 盘中运行时编排器——单进程串起 tick_subscriber + Intraday... | → | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | 导入依赖 / import_depends |
+| 19 | D_INFRA_RUNTIME 运行时集成: 盘中运行时编排器——单进程串起 tick_subscriber + Intraday... | → | A 股交易日历守卫（MOD-L00-004）。 / trading_calendar (dat... | 导入依赖 / import_depends |
+| 20 | D_INFRA_RUNTIME 运行时集成: TickRedisCache 单元测试——tick→Redis tick:{symbol}:late... | → | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | 测试依赖 / test_depends |
+| 21 | D_MKT_DATA 行情数据: 自动加载 / autoload (market_data/autoload.py) | → | table注册表 / table_registry (data/table_registry.py) | runtime / runtime |
+| 22 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
+| 23 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
+| 24 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
+| 25 | D_MKT_DATA 行情数据: raw数据缓存 (raw_data_cache/) | → | 提供器基类 / provider_base (data/provider_base.py) | data / data |
+| 26 | D_ML_TRAIN 训练: 训练管线 (training_pipeline/) | → | pit查询 / pit_query (data/pit_query.py) | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 10 个外部域直接连接（出边 22 条 + 入边 24 条 = 46 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 10 个外部域直接连接（出边 22 条 + 入边 26 条 = 48 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -1375,21 +1377,21 @@ graph LR
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_FACTOR["D_FACTOR<br/>因子"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_BACKTEST["D_BACKTEST<br/>回测"]
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
     D_DATA -->|19条 导入依赖 / import_depends| D_SHARED
     D_DATA -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_MKT_DATA -->|5条 data / data, 导入依赖 / import_depends, runtime / runtime| D_DATA
     D_GOV_SCRIPTS -->|5条 导入依赖 / import_depends| D_DATA
+    D_INFRA_RUNTIME -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
     D_FACTOR -->|3条 导入依赖 / import_depends| D_DATA
     D_GOVERNANCE -->|3条 导入依赖 / import_depends| D_DATA
     D_GOV_CODE_QUALITY -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
     D_BACKTEST -->|2条 导入依赖 / import_depends| D_DATA
-    D_INFRA_RUNTIME -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
     D_ML_TRAIN -->|1条 data / data| D_DATA
 ```
 
