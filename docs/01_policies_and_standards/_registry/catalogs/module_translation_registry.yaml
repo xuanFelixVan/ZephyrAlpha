@@ -19545,14 +19545,14 @@ entries:
   name_en: dual_channel_alert
   desc_zh: 双通道告警，供zephyr.infrastructure.capacity使用
   desc_en: ''
-  plain_zh: 双通道告警，供zephyr.infrastructure.capacity使用
+  plain_zh: "双通道告警，把同一告警同时推到仪表盘和消息两个通道，确保关键告警不因单通道失效被漏掉。"
 - module_path: src/zephyr/shared/alerts/heartbeat_server.py
   domain_id: D_SHARED
   name_zh: heartbeat服务端
   name_en: heartbeat_server
   desc_zh: heartbeat服务端，供zephyr.infrastructure.capacity使用
   desc_en: ''
-  plain_zh: heartbeat服务端，供zephyr.infrastructure.capacity使用
+  plain_zh: "心跳服务端，接收并跟踪各组件心跳，按心跳间隔判定组件是否存活。"
 - module_path: src/zephyr/shared/api/api_client.py
   domain_id: D_SHARED
   name_zh: API客户端
@@ -19587,7 +19587,7 @@ entries:
   name_en: blueprint_code_auditor
   desc_zh: 蓝图代码审计器，供zephyr.governance.__init__ ; z使用
   desc_en: ''
-  plain_zh: 蓝图代码审计器，供zephyr.governance.__init__ ; z使用
+  plain_zh: "蓝图代码审计器，比对蓝图章节与实际代码文件，找出蓝图与代码的漂移（缺失、过期、不一致）并产出审计报告。"
 - module_path: src/zephyr/shared/blueprint_tools/blueprint_decomposer.py
   domain_id: D_SHARED
   name_zh: 蓝图decomposer
@@ -19608,7 +19608,7 @@ entries:
   name_en: adaptive_sampler
   desc_zh: adaptive采样器，供zephyr.feedback_loop.__init___使用
   desc_en: ''
-  plain_zh: adaptive采样器，供zephyr.feedback_loop.__init___使用
+  plain_zh: "自适应采样器，按基础采样率加错误加权动态决定是否采样，错误多时提高采样率、平时压低，平衡可观测性与开销。"
 - module_path: src/zephyr/shared/capacity_governance/budget_aware_prompt.py
   domain_id: D_SHARED
   name_zh: 预算感知提示
@@ -19636,7 +19636,7 @@ entries:
   name_en: capacity_fingerprint
   desc_zh: 容量指纹，供zephyr.trading.resource_optimi使用
   desc_en: ''
-  plain_zh: 容量指纹，供zephyr.trading.resource_optimi使用
+  plain_zh: "容量指纹，把 CPU、内存、磁盘、网络、活跃任务等资源快照打包成指纹，供资源优化判断当前容量水位。"
 - module_path: src/zephyr/shared/capacity_governance/capacity_runbook_generator.py
   domain_id: D_SHARED
   name_zh: 容量runbookgenerator
@@ -19839,42 +19839,42 @@ entries:
   name_en: budget_alert
   desc_zh: 预算告警，供zephyr.infrastructure.budget_e使用
   desc_en: ''
-  plain_zh: 预算告警，供zephyr.infrastructure.budget_e使用
+  plain_zh: "预算告警契约，定义预算告警严重度与事件结构，告警阈值不可静默、告警事件必须可审计。"
 - module_path: src/zephyr/shared/contracts/execution/capital_allocation_result.py
   domain_id: D_SHARED
   name_zh: 资本分配结果
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 资本allocation结果模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.capital_allo
-  plain_zh: 资本allocation结果。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.capital_allo
+  plain_zh: "兼容转发层，资金分配结果的真正定义已搬到交易契约执行模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/execution/execution_report.py
   domain_id: D_SHARED
   name_zh: 执行报告
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 执行报告模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.execution_re
-  plain_zh: 执行报告。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.execution_re
+  plain_zh: "兼容转发层，执行报告的真正定义已搬到交易契约执行模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/execution/fill.py
   domain_id: D_SHARED
   name_zh: 成交
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 成交模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.fill.
-  plain_zh: 成交。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.fill.
+  plain_zh: "兼容转发层，成交记录的真正定义已搬到交易契约执行模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/execution/model_serving_request.py
   domain_id: D_SHARED
   name_zh: 模型服务请求
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 模型服务请求模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.model_servin
-  plain_zh: 模型服务请求。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.model_servin
+  plain_zh: "兼容转发层，模型服务请求的真正定义已搬到交易契约执行模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/execution/order.py
   domain_id: D_SHARED
   name_zh: 订单
   name_en: order
   desc_zh: 'Backward-compat shim — canonical location is zephyr.shared.contracts.order (5.152 #1 修复后).'
   desc_en: ''
-  plain_zh: 'Backward-compat shim — canonical location is zephyr.shared.contracts.order (5.152 #1 修复后).'
+  plain_zh: "兼容转发层，订单的真正定义已搬到共享订单契约模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/experiment/experiment_result.py
   domain_id: D_SHARED
   name_zh: 实验结果
@@ -19923,7 +19923,7 @@ entries:
   name_en: agent_identity
   desc_zh: 代理identity，供zephyr.security.access_control使用
   desc_en: ''
-  plain_zh: 代理identity，供zephyr.security.access_control使用
+  plain_zh: "代理身份契约，定义 Agent 身份模型与成熟度分级，身份不可被篡改、成熟度分级不可扩展，供安全访问与升级链路使用。"
 - module_path: src/zephyr/shared/contracts/identity/permission.py
   domain_id: D_SHARED
   name_zh: 权限
@@ -19951,7 +19951,7 @@ entries:
   name_en: orchestration_protocol
   desc_zh: orchestration协议模块
   desc_en: ''
-  plain_zh: orchestration协议。Shadow canary deployment protocol - decouples D-RES/D-GOV from D-ORCH.
+  plain_zh: "编排协议契约，定义影子金丝雀部署等编排层 Protocol 接口，把韧性与治理域和编排域解耦，且禁止依赖交易域。"
 - module_path: src/zephyr/shared/contracts/portfolio/money.py
   domain_id: D_SHARED
   name_zh: 金额精度错误（如试图用 float 构造 Money）。
@@ -19972,49 +19972,49 @@ entries:
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 持仓模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.position.
-  plain_zh: 持仓。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.execution.position.
+  plain_zh: "兼容转发层，持仓的真正定义已搬到交易契约执行模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/risk/compliance_rule.py
   domain_id: D_SHARED
   name_zh: 合规规则
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 合规规则模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.compliance_rule.
-  plain_zh: 合规规则。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.compliance_rule.
+  plain_zh: "兼容转发层，合规规则的真正定义已搬到交易契约风险模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/risk/risk_dashboard_snapshot.py
   domain_id: D_SHARED
   name_zh: 风险仪表盘快照
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 风险仪表盘快照模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_dashboard_sn
-  plain_zh: 风险仪表盘快照。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_dashboard_sn
+  plain_zh: "兼容转发层，风险仪表盘快照的真正定义已搬到交易契约风险模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/risk/risk_limits.py
   domain_id: D_SHARED
   name_zh: 风险limits
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 风险limits模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_limits.
-  plain_zh: 风险limits。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_limits.
+  plain_zh: "兼容转发层，风险限额的真正定义已搬到交易契约风险模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/risk/risk_metrics.py
   domain_id: D_SHARED
   name_zh: 风险指标
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 风险指标模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_metrics.
-  plain_zh: 风险指标。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_metrics.
+  plain_zh: "兼容转发层，风险指标的真正定义已搬到交易契约风险模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/risk/risk_validator_protocol.py
   domain_id: D_SHARED
   name_zh: 风险校验器协议
   name_en: Backward-compat shim — canonical location is zephyr.trading.
   desc_zh: 风险校验器协议模块
   desc_en: Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_validator_pr
-  plain_zh: 风险校验器协议。Backward-compat shim — canonical location is zephyr.trading.trading_contracts.risk.risk_validator_pr
+  plain_zh: "兼容转发层，风险校验器协议的真正定义已搬到交易契约风险模块，这里保留旧入口转发引用，老代码不用改。"
 - module_path: src/zephyr/shared/contracts/security/security_decision.py
   domain_id: D_SHARED
   name_zh: 安全决策
   name_en: security_decision
   desc_zh: 安全决策，供l10-compliance ; llm-security.使用
   desc_en: ''
-  plain_zh: 安全决策，供l10-compliance ; llm-security.使用
+  plain_zh: "安全决策契约，定义放行、拒绝、标记等安全裁定枚举，成员冻结、新增需 ADR，供合规与 LLM 安全层使用。"
 - module_path: src/zephyr/shared/contracts/skill_protocol.py
   domain_id: D_SHARED
   name_zh: 技能协议
@@ -20077,7 +20077,7 @@ entries:
   name_en: 'CT-DLQ-001: DeadLetterQueue -> System Event Bus integration '
   desc_zh: dlq桥接模块
   desc_en: 'CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.'
-  plain_zh: 'dlq桥接。CT-DLQ-001: DeadLetterQueue -> System Event Bus integration bridge.'
+  plain_zh: "死信队列桥接，把死信队列接到系统事件总线，让处理失败的事件自动落入死信队列持久化，防止失败事件丢失。"
 - module_path: src/zephyr/shared/events/event_bus_upgrade.py
   domain_id: D_SHARED
   name_zh: 事件总线upgrade
@@ -20315,7 +20315,7 @@ entries:
   name_en: 'CT-HEALTH-001: System-wide Health Discovery Registration.'
   desc_zh: 健康discovery模块
   desc_en: 'CT-HEALTH-001: System-wide Health Discovery Registration.'
-  plain_zh: '健康discovery。CT-HEALTH-001: System-wide Health Discovery Registration.'
+  plain_zh: "健康发现注册，为多个基础设施子系统注册聚合健康并对外提供统一 healthz 端点，供外部监控探活。"
 - module_path: src/zephyr/shared/lifecycle/healthcheck_service.py
   domain_id: D_SHARED
   name_zh: healthcheck服务
@@ -20336,14 +20336,14 @@ entries:
   name_en: state_machine
   desc_zh: StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038)
   desc_en: ''
-  plain_zh: StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038)
+  plain_zh: "通用状态机泛型基类，统一全项目多个状态机实现，提供合法转换校验、转换守卫与命名空间注册，消除各处重复的同名异常。"
 - module_path: src/zephyr/shared/lifecycle/task_heartbeat.py
   domain_id: D_SHARED
   name_zh: 任务heartbeat
   name_en: task_heartbeat
   desc_zh: 任务heartbeat，供zephyr.infrastructure.capacity使用
   desc_en: ''
-  plain_zh: 任务heartbeat，供zephyr.infrastructure.capacity使用
+  plain_zh: "任务心跳，记录任务脉冲与间隔判定任务是否存活，供容量保障盯住长跑任务健康。"
 - module_path: src/zephyr/shared/lifecycle/ttl_cleanup_engine.py
   domain_id: D_SHARED
   name_zh: 存活时间清理引擎
@@ -20364,7 +20364,7 @@ entries:
   name_en: code_economy_analyzer
   desc_zh: 代码economy分析器模块
   desc_en: ''
-  plain_zh: 代码economy分析器，供使用
+  plain_zh: "代码经济性分析器，统计总行数、活跃行、死行、复用率、冗余率，衡量代码资产的经济健康度。"
 - module_path: src/zephyr/shared/maintenance/dogfooding.py
   domain_id: D_SHARED
   name_zh: Dogfooding — 自举测试：用 TaskCard 管理 TaskCard
@@ -20378,7 +20378,7 @@ entries:
   name_en: handbook
   desc_zh: Onboarding Handbook — AI Agent 施工手册生成。
   desc_en: ''
-  plain_zh: Onboarding Handbook — AI Agent 施工手册生成。
+  plain_zh: "新手上路手册生成器，按蓝图与任务卡为 AI Agent 自动生成施工手册，帮助新 Agent 快速上手施工规范。"
 - module_path: src/zephyr/shared/maintenance/owner_trust_gauge.py
   domain_id: D_SHARED
   name_zh: ownertrust仪表
@@ -20392,7 +20392,7 @@ entries:
   name_en: slo_review_assistant
   desc_zh: SLO审查assistant模块
   desc_en: ''
-  plain_zh: SLO审查assistant，供使用
+  plain_zh: "SLO 审查助手，按 SLO 名称、目标、实际值、合规与否、差距产出审查记录，辅助 SLO 达成度复盘。"
 - module_path: src/zephyr/shared/maintenance/zero_config.py
   domain_id: D_SHARED
   name_zh: zero配置
@@ -20406,7 +20406,7 @@ entries:
   name_en: __init__
   desc_zh: Grafana 双数据源仪表盘模块（MOD-INF-044）。
   desc_en: ''
-  plain_zh: Grafana 双数据源仪表盘模块（MOD-INF-044）。
+  plain_zh: "Grafana 双数据源仪表盘模块，生成 Prometheus 加 ClickHouse 数据源配置、仪表盘 JSON 模板和告警规则，配置由代码生成确保单一真源。"
 - module_path: src/zephyr/shared/observability/metrics.py
   domain_id: D_SHARED
   name_zh: 指标
@@ -20427,7 +20427,7 @@ entries:
   name_en: reasoning_spans
   desc_zh: 推理跨度，主要提供久期ms等功能，供初始化使用
   desc_en: ''
-  plain_zh: 推理跨度，主要提供久期ms等功能，供初始化使用
+  plain_zh: "推理跨度，记录一次推理操作的起止时间、父跨度与元数据，串起推理链路供可观测性追踪。"
 - module_path: src/zephyr/shared/observability/tracing.py
   domain_id: D_SHARED
   name_zh: 'tracing.py —— OpenTelemetry 分布式追踪（Phase '
@@ -20441,14 +20441,14 @@ entries:
   name_en: A2A Coordination — shared interface definitions for multi-ag
   desc_zh: A2A协调，提供fromstring等方法，供zephyr.shared.protocols.a使用
   desc_en: A2A Coordination — shared interface definitions for multi-agent coordination.
-  plain_zh: A2A协调，提供fromstring等方法，供zephyr.shared.protocols.a使用
+  plain_zh: "A2A 协调契约，定义多 Agent 协调的角色优先级、任务状态、合并策略等接口与数据契约，且禁止依赖基础设施和交易域。"
 - module_path: src/zephyr/shared/protocols/a2a/a2a_protocol.py
   domain_id: D_SHARED
   name_zh: A2A协议
   name_en: Core A2A Protocol interface and governance data contracts.
   desc_zh: A2A协议模块
   desc_en: Core A2A Protocol interface and governance data contracts.
-  plain_zh: A2A协议。Core A2A Protocol interface and governance data contracts.
+  plain_zh: "A2A 核心协议契约，定义 Agent 间通信的 Protocol 接口与治理数据模型，是所有域共享的通信抽象。"
 - module_path: src/zephyr/shared/protocols/a2a/a2a_registry.py
   domain_id: D_SHARED
   name_zh: A2A注册表
@@ -20462,7 +20462,7 @@ entries:
   name_en: A2A data structure contracts — Message, Task, and StateMachi
   desc_zh: A2A模式模块
   desc_en: A2A data structure contracts — Message, Task, and StateMachine schemas.
-  plain_zh: A2A模式。A2A data structure contracts — Message, Task, and StateMachine schemas.
+  plain_zh: "A2A 数据结构契约，定义消息、任务、状态机等线格式 Pydantic 模型，是各域共享的通信数据契约。"
 - module_path: src/zephyr/shared/protocols/capability.py
   domain_id: D_SHARED
   name_zh: 能力
