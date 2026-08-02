@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 22 | Internal Dependencies | 22 |
-| 跨域入边 | 8 | Cross-domain Incoming | 8 |
+| 跨域入边 | 5 | Cross-domain Incoming | 5 |
 | 跨域出边 | 43 | Cross-domain Outgoing | 43 |
 | 设计态模块 | 16 | Design Modules | 16 |
 | 生产态模块 | 9 | Production Modules | 9 |
@@ -129,8 +129,6 @@ flowchart TD
     src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| D_PF_CORE
     D_BACKTEST["回测<br/>回测，负责历史数据回测、回测引擎和回测报告<br/>Backtest<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_services_live_portfolio_py -.->|导入依赖 / import_depends| D_BACKTEST
-    D_REPORTING["报告<br/>报告，负责投资报告、风险报告和合规报告的生成与分<br/>发<br/>Reporting<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
-    src_zephyr_ex_core_execution_report_py -.->|data / data| D_REPORTING
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_services_live_portfolio_py -.->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ex_core_services_live_portfolio_py -.->|导入依赖 / import_depends| D_BACKTEST
@@ -139,9 +137,11 @@ flowchart TD
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_trading_session_py -->|contract / contract| D_GOVERNANCE
     src_zephyr_ex_core_trading_session_py -->|contract / contract| D_GOVERNANCE
+    D_REPORTING["报告<br/>报告，负责投资报告、风险报告和合规报告的生成与分<br/>发<br/>Reporting<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    src_zephyr_ex_core_execution_report_py -.->|data / data| D_REPORTING
+    src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
-    src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_TRADING -.->|import / import| src_zephyr_ex_core_fill_handler_py
@@ -150,9 +150,6 @@ flowchart TD
     D_TRADING -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_ex_core_execution_engine_py
-    D_EX_SOR -.->|data / data| src_zephyr_ex_core_execution_report_py
-    D_EX_SOR -.->|data / data| src_zephyr_ex_core_execution_report_py
-    D_EX_SOR -.->|data / data| src_zephyr_ex_core_execution_report_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -261,8 +258,8 @@ flowchart TD
 | 9 | 风控验证桥接 / risk_validation_bridge (adapters/risk_vali... | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
 | 10 | 模拟经纪人 / simulation_broker (adapters/simulation_broke... | → | D_GOVERNANCE 生命周期管理: 仿真经纪人 / D_EXECUTION_CORE — Simulation Broker Adapte... | 导入依赖 / import_depends |
 | 11 | 执行引擎 / D_EXECUTION_CORE — Execution Engine (ex_core/... | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
-| 12 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | contract / contract |
-| 13 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
+| 12 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
+| 13 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | contract / contract |
 | 14 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | contract / contract |
 | 15 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
 | 16 | 执行引擎 / D_EXECUTION_CORE — Execution Engine (ex_core/... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
@@ -301,15 +298,12 @@ flowchart TD
 | 1 | D_BACKTEST 回测: 事件driven引擎 / event_driven_engine (implementations/eve... | → | miniqmt券商 / miniqmt_broker (adapters/miniqmt_broker.py) | 导入依赖 / import_depends |
 | 2 | D_BACKTEST 回测: 事件driven引擎 / event_driven_engine (implementations/eve... | → | 模拟经纪人 / simulation_broker (adapters/simulation_broke... | 导入依赖 / import_depends |
 | 3 | D_EX_SOR 执行路由: 经纪人适配器管理器 / broker_adapter_manager (core/broker_... | → | 执行引擎 / D_EXECUTION_CORE — Execution Engine (ex_core/... | 导入依赖 / import_depends |
-| 4 | D_EX_SOR 执行路由: 执行质量评分器 / execution_quality_scorer (services/execu... | → | 执行报告 / execution_report (ex_core/execution_report.py) | data / data |
-| 5 | D_EX_SOR 执行路由: 滑点分析器 / slippage_analyzer (services/slippage_analyze... | → | 执行报告 / execution_report (ex_core/execution_report.py) | data / data |
-| 6 | D_EX_SOR 执行路由: 交易成本优化器 / transaction_cost_optimizer (services/tra... | → | 执行报告 / execution_report (ex_core/execution_report.py) | data / data |
-| 7 | D_TRADING 交易运营: 盈亏计算器 (pnl_calculator/) | → | 成交处理器 / fill_handler (ex_core/fill_handler.py) | import / import |
-| 8 | D_TRADING 交易运营: 结算对账 / settlement_reconciliation (trading/settlement_... | → | 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | runtime / runtime |
+| 4 | D_TRADING 交易运营: 盈亏计算器 (pnl_calculator/) | → | 成交处理器 / fill_handler (ex_core/fill_handler.py) | import / import |
+| 5 | D_TRADING 交易运营: 结算对账 / settlement_reconciliation (trading/settlement_... | → | 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 11 个外部域直接连接（出边 43 条 + 入边 8 条 = 51 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 11 个外部域直接连接（出边 43 条 + 入边 5 条 = 48 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -336,9 +330,9 @@ graph LR
     D_EX_CORE -->|1条 data / data| D_REPORTING
     D_EX_CORE -->|1条 导入依赖 / import_depends| D_PF_CORE
     D_EX_CORE -->|1条 runtime / runtime| D_RISK
-    D_EX_SOR -->|4条 data / data, 导入依赖 / import_depends| D_EX_CORE
     D_BACKTEST -->|2条 导入依赖 / import_depends| D_EX_CORE
     D_TRADING -->|2条 import / import, runtime / runtime| D_EX_CORE
+    D_EX_SOR -->|1条 导入依赖 / import_depends| D_EX_CORE
 ```
 
 ## 说明 / Notes
