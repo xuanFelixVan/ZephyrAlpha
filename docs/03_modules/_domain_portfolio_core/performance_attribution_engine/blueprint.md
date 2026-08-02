@@ -15,8 +15,8 @@ last_updated: "2026-08-02"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ---
 
 # MOD-PF-007 Performance Attribution Engine — 绩效归因引擎 蓝图
