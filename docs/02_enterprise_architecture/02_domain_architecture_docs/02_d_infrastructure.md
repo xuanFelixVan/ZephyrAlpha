@@ -118,19 +118,19 @@ flowchart TD
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
-    D_MKT_DATA["行情数据<br/>行情数据，负责市场行情数据的采集、分发和订阅管理<br/>Market Data<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
-    D_MKT_DATA -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_data_py
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|contract / contract| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_PF_CORE -->|contract / contract| src_zephyr_shared_contracts_target_portfolio_py
+    D_MKT_DATA["行情数据<br/>行情数据，负责市场行情数据的采集、分发和订阅管理<br/>Market Data<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_MKT_DATA -->|测试依赖 / test_depends| src_zephyr_shared_contracts_market_data_py
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_TRADING -->|测试依赖 / test_depends| src_zephyr_shared_contracts_fill_py
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
-    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
-    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_target_portfolio_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_target_portfolio_py
     D_REPORTING["报告<br/>报告，负责投资报告、风险报告和合规报告的生成与分<br/>发<br/>Reporting<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -142,8 +142,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_target_portfolio_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
-    class D_SHARED,D_GOV_AUDIT,D_PF_CORE,D_TRADING,D_REPORTING external_prod
-    class D_MKT_DATA external_design
+    class D_SHARED,D_GOV_AUDIT,D_PF_CORE,D_MKT_DATA,D_TRADING,D_REPORTING external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -285,7 +284,7 @@ flowchart TD
 | 43 | D_INFRA_RUNTIME 运行时集成: 健康监控 / health_monitor (trading/health_monitor.py) | → | 遥测发射器 / telemetry_emitter (contracts/telemetry_emitt... | 导入依赖 / import_depends |
 | 44 | D_MKT_DATA 行情数据: 包入口 / __init__ (market_data/__init__.py) | → | 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
 | 45 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
-| 46 | D_MKT_DATA 行情数据: vendor基类 / vendor_base (market_data/vendor_base.py) | → | 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
+| 46 | D_MKT_DATA 行情数据: MOD-MKT-002 Vendor Base 单元测试. (market_data/test_vendo... | → | 市场数据 / market_data (contracts/market_data.py) | 测试依赖 / test_depends |
 | 47 | D_PF_ALLOC 组合分配: 策略生命周期事件 / strategy_lifecycle_event (pf_alloc/str... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
 | 48 | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
 | 49 | D_PF_CORE 组合核心: 约束求解器 (core/constraint_solver.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
@@ -295,8 +294,8 @@ flowchart TD
 | 53 | D_PF_CORE 组合核心: 组合优化器 (core/portfolio_optimizer.py) | → | 目标组合契约 / TargetPortfolio (contracts/target_portfoli... | 导入依赖 / import_depends |
 | 54 | D_PF_CORE 组合核心: 再平衡调度器 (core/rebalance_scheduler.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 55 | D_PF_CORE 组合核心: 再平衡调度器 (core/rebalance_scheduler.py) | → | 目标组合契约 / TargetPortfolio (contracts/target_portfoli... | 导入依赖 / import_depends |
-| 56 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
-| 57 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
+| 56 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
+| 57 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
 | 58 | D_POSITION 仓位管理: 持仓sizing引擎 / position_sizing_engine (core/position_si... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 59 | D_POSITION 仓位管理: Position Sizing Engine 测试 (MOD-POS-001 阶段1)。 (positi... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
 | 60 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
@@ -371,7 +370,7 @@ graph LR
     D_FUNDAMENTAL_SIGNAL -->|9条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_EX_SOR -->|7条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE -->|6条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_MKT_DATA -->|3条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_MKT_DATA -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_FACTOR -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_POSITION -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE

@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3180 |
-| 生产态模块 | 2969 |
-| 设计态模块 | 211 |
+| 模块总数 | 3184 |
+| 生产态模块 | 2976 |
+| 设计态模块 | 208 |
 
 ## 域清单（按架构层分组）
 
@@ -103,7 +103,7 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 / Ops Resilience Governance | 91 | 91 | 0 | 91/150 (OK) | [📄 20_d_gov_ops_resilience.md](20_d_gov_ops_resilience.md) |
 | D_INTEGRATION | 管线路由 / Pipeline Routing | 71 | 71 | 0 | 71/150 (OK) | [📄 21_d_integration.md](21_d_integration.md) |
 | D_INTEGRATION_GATEWAY | 集成网关 / Integration Gateway | 0 | 0 | 0 | 0/150 (OK) | [📄 22_d_integration_gateway.md](22_d_integration_gateway.md) |
-| D_MKT_DATA | 行情数据 / Market Data | 15 | 9 | 6 | 15/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
+| D_MKT_DATA | 行情数据 / Market Data | 17 | 14 | 3 | 17/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
 | D_OPS | 反馈循环 / Feedback Loop | 11 | 11 | 0 | 11/150 (OK) | [📄 24_d_ops.md](24_d_ops.md) |
 | D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 70 | 70 | 0 | 70/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 20 | 19 | 1 | 20/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
@@ -133,7 +133,7 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 17 | 0 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 88 | 39 | 49 | 88/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
 | D_FRONTEND | 前端 / Frontend | 16 | 12 | 4 | 16/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
-| D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 13 | 11 | 2 | 13/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
+| D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 14 | 12 | 2 | 14/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
 | D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 224 | 224 | 0 | 224/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 126 | 123 | 3 | 126/150 (OK) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |
 | D_GOV_DOCS | 架构文档治理 / Architecture Docs Governance | 27 | 2 | 25 | 27/150 (OK) | [📄 51_d_gov_docs.md](51_d_gov_docs.md) |
@@ -157,4 +157,4 @@ ttl: permanent
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 10 | 2 | 8 | 10/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
 | D_STRUCT_SCRIPTS | 结构治理脚本 / D_STRUCT_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 71_d_struct_scripts.md](71_d_struct_scripts.md) |
-| D_TRADING | 交易运营 / Trading Operations | 42 | 42 | 0 | 42/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 43 | 43 | 0 | 43/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |
