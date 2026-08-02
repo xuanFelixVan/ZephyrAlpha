@@ -41,17 +41,23 @@
 
 from __future__ import annotations
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+# bootstrap sys.path —— _shared 在 scripts/governance/，pre-commit 从 repo root 运行需显式加入
+import sys
+from pathlib import Path
 
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
 import argparse
 import ast
-import sys
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Iterable
 
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
 # ── 阈值（可调）──────────────────────────────────────────────────────────
-MAX_BOOL_PARAMS = 3          # DEBT-2: 函数含 ≥3 个 bool 参数即报警
+MAX_BOOL_PARAMS = 3  # DEBT-2: 函数含 ≥3 个 bool 参数即报警
 MIN_REDUNDANT_BOOL_FIELDS = 2  # DEBT-1/3: ≥2 个派生布尔字段才报警
 ACTION_FIELD_NAMES = {"action", "role", "kind", "type", "category"}
 BOOL_FIELD_PREFIXES = ("should_", "is_", "has_", "can_", "allow_", "do_")
@@ -61,10 +67,10 @@ BOOL_FIELD_SUFFIXES = ("_allowed", "_enabled", "_required")
 # ── 违规记录 ─────────────────────────────────────────────────────────────
 @dataclass
 class DebtViolation:
-    code: str        # DEBT-1 / DEBT-2 / DEBT-3
+    code: str  # DEBT-1 / DEBT-2 / DEBT-3
     file: str
     line: int
-    symbol: str      # 类名或函数名
+    symbol: str  # 类名或函数名
     detail: str
 
     def format(self) -> str:
@@ -165,14 +171,16 @@ class DebtScanner(ast.NodeVisitor):
             code = "DEBT-1" if is_dataclass else "DEBT-3"
             action_str = ",".join(n for n, _ in action_fields)
             bool_str = ",".join(n for n, _ in bool_flag_fields)
-            self.violations.append(DebtViolation(
-                code=code,
-                file=self.file,
-                line=node.lineno,
-                symbol=node.name,
-                detail=f"action 字段 [{action_str}] 与 {len(bool_flag_fields)} 个派生布尔字段 "
-                      f"[{bool_str}] 共存 → 应改为 Enum + @property 派生（5.96.2 病根）",
-            ))
+            self.violations.append(
+                DebtViolation(
+                    code=code,
+                    file=self.file,
+                    line=node.lineno,
+                    symbol=node.name,
+                    detail=f"action 字段 [{action_str}] 与 {len(bool_flag_fields)} 个派生布尔字段 "
+                    f"[{bool_str}] 共存 → 应改为 Enum + @property 派生（5.96.2 病根）",
+                )
+            )
 
         self.generic_visit(node)
 
@@ -195,14 +203,16 @@ class DebtScanner(ast.NodeVisitor):
                 bool_params.append(arg.arg)
 
         if len(bool_params) >= MAX_BOOL_PARAMS:
-            self.violations.append(DebtViolation(
-                code="DEBT-2",
-                file=self.file,
-                line=node.lineno,
-                symbol=node.name,
-                detail=f"含 {len(bool_params)} 个 bool 位置参数 [{','.join(bool_params)}] "
-                      f"→ 应改为 dict[str, bool] 或 keyword-only（5.96.3 病根；注：keyword-only bool 不算蔓延）",
-            ))
+            self.violations.append(
+                DebtViolation(
+                    code="DEBT-2",
+                    file=self.file,
+                    line=node.lineno,
+                    symbol=node.name,
+                    detail=f"含 {len(bool_params)} 个 bool 位置参数 [{','.join(bool_params)}] "
+                    f"→ 应改为 dict[str, bool] 或 keyword-only（5.96.3 病根；注：keyword-only bool 不算蔓延）",
+                )
+            )
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         """visit_FunctionDef implementation."""
@@ -277,5 +287,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.ci and all_violations:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

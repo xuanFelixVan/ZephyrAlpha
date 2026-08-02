@@ -138,7 +138,7 @@ def _class_style_flags(node: ast.ClassDef) -> tuple[bool, bool]:
 
 
 def _style_drift_events(
-    has_dataclass: bool, has_direct_init: bool, has_async: bool, has_sync_equivalent: bool
+    *, has_dataclass: bool, has_direct_init: bool, has_async: bool, has_sync_equivalent: bool
 ) -> list[DriftEvent]:
     events: list[DriftEvent] = []
     if has_dataclass and has_direct_init:
@@ -217,13 +217,9 @@ class AIConstructionDetectors:
 
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
-                    events.extend(
-                        _hallucination_events_for_import(node, fname, stdlib, safe_prefixes)
-                    )
+                    events.extend(_hallucination_events_for_import(node, fname, stdlib, safe_prefixes))
                 if isinstance(node, ast.ImportFrom):
-                    events.extend(
-                        _hallucination_events_for_importfrom(node, fname, stdlib)
-                    )
+                    events.extend(_hallucination_events_for_importfrom(node, fname, stdlib))
 
         return events
 
@@ -522,7 +518,12 @@ class AIConstructionDetectors:
                     has_sync_equivalent = True
 
         events.extend(
-            _style_drift_events(has_dataclass, has_direct_init, has_async, has_sync_equivalent)
+            _style_drift_events(
+                has_dataclass=has_dataclass,
+                has_direct_init=has_direct_init,
+                has_async=has_async,
+                has_sync_equivalent=has_sync_equivalent,
+            )
         )
 
         return events

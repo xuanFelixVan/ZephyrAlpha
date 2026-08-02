@@ -2557,6 +2557,8 @@ def session_worktree_start(
 
     project_root: str | Path | None = None,
 
+    *,
+
     breaking_change: bool = False,
 
     allow_concurrent: bool = False,
@@ -4693,6 +4695,8 @@ def session_worktree_commit(
     message: str,
 
     project_root: str | Path | None = None,
+
+    *,
 
     allow_overlap: bool = False,
 
@@ -6943,6 +6947,8 @@ def session_worktree_merge(
     session_id: str,
 
     project_root: str | Path | None = None,
+
+    *,
 
     reconcile_verify: bool = True,
 

@@ -93,8 +93,9 @@ class SizingMarketRegime(str, Enum):
     SLOW_DECLINE = "SLOW_DECLINE"  # ⑦阴跌
     ACCEL_DECLINE = "ACCEL_DECLINE"  # ⑧加速下跌
     PANIC_CRASH = "PANIC_CRASH"  # ⑨恐慌崩盘
-    EVENT_DRIVEN = "EVENT_DRIVEN"  # ⑩事件驱动(叠加态)
-    SECTOR_ROTATION = "SECTOR_ROTATION"  # ⑪板块轮动(叠加态)
+    CRISIS = "CRISIS"  # ⑩危机(特殊态)
+    RECOVERY = "RECOVERY"  # ⑪复苏(特殊态)
+    BREAKOUT = "BREAKOUT"  # ⑫突破(特殊态)
 
 
 # 市场状态 → 仓位上限映射 (immutable, 不可 AI 修改, 调整需 Trader 审批)

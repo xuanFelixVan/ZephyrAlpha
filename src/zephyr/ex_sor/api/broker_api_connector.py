@@ -289,6 +289,7 @@ class SimulatedProtocol(BrokerProtocol):
 
     def set_failure_mode(
         self,
+        *,
         submit: bool = False,
         heartbeat: bool = False,
         cancel: bool = False,

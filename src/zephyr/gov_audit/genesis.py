@@ -81,11 +81,12 @@ class GenesisVerificationResult:
 
     def __init__(
         self,
+        issues: list[str] | None = None,
+        genesis_hash: str = "",
+        *,
         is_valid: bool = False,
         hash_valid: bool = False,
         prev_hash_valid: bool = False,
-        issues: list[str] | None = None,
-        genesis_hash: str = "",
     ) -> None:
         self.is_valid = is_valid
         self.hash_valid = hash_valid
@@ -129,7 +130,6 @@ class GenesisManager:
     def system_id(self, value):
         """写入：system_id（Stage 4 公共化）。"""
         self._system_id = value
-
 
     @property
     def data_dir(self) -> Path:
