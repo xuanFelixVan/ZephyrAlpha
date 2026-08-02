@@ -58649,11 +58649,11 @@ entries:
   plain_zh: "限仓执行器——仓位方案硬约束检查器: 单票/行业/总仓位/亏损加仓/压力测试, 产出 5 级否决裁决+违规告警"
 - module_path: scripts/governance/decision_node_plain_zh_backfill.py
   domain_id: D_GOV_SCRIPTS
-  name_zh: "一次性补齐 213 决策节点的 plain_zh 大白话简介。"
-  name_en: "decision_node_plain_zh_backfill.py"
+  name_zh: "决策节点大白话回填脚本"
+  name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "decision_node_plain_zh_backfill.py — 一次性补齐 213 决策节点的 plain_zh 大白话简介。"
+  plain_zh: "把 213 个决策节点的大白话简介用三问法（是什么/干什么/解决什么问题）写进数据库 facets 字段，让决策流图的节点标签显示真实说明而非模板占位符，幂等可重跑"
 - module_path: src/zephyr/risk/core/concentration_monitor.py
   domain_id: D_RISK
   name_zh: "集中度风险监控器"
