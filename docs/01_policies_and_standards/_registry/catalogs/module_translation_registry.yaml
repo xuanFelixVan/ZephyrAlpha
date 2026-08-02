@@ -14281,7 +14281,7 @@ entries:
   name_en: agent_card
   desc_zh: Agent Card 模型 — A2A Layer 1 Discovery
   desc_en: ''
-  plain_zh: Agent Card 模型 — A2A Layer 1 Discovery
+  plain_zh: "Agent 名片模型入口（A2A 第1层发现层），类型从 shared 协议层转发到这里，本模块只是 infrastructure 层的兼容别名，老导入路径不用改。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer1_discovery/identity_verifier.py
   domain_id: D_INFRA_A2A
   name_zh: identity验证器
@@ -14295,7 +14295,7 @@ entries:
   name_en: a2a_schemas
   desc_zh: A2A Message/Part 系统 — Layer 2 Communication
   desc_en: ''
-  plain_zh: A2A Message/Part 系统 — Layer 2 Communication
+  plain_zh: "A2A 消息与分片结构入口（第2层通信层），消息/分片类型从 shared 协议层转发到这里，老导入路径不用改。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer2_communication/a2a_state.py
   domain_id: D_INFRA_A2A
   name_zh: A2A状态
@@ -14344,35 +14344,35 @@ entries:
   name_en: trigger_monitor
   desc_zh: 触发监控器
   desc_en: ''
-  plain_zh: 触发监控器
+  plain_zh: "触发条件监控器，注册触发器及其判断条件，check 时按上下文逐个判断是否命中，供 Stage 4 公共化只读访问。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_consensus.py
   domain_id: D_INFRA_A2A
   name_zh: 共识
   name_en: Re-export bridge for layer3_coordination consensus symbols.
   desc_zh: 共识模块
   desc_en: Re-export bridge for layer3_coordination consensus symbols.
-  plain_zh: 共识。Re-export bridge for layer3_coordination consensus symbols.
+  plain_zh: "共识子域兼容转发层，把 5 个共识模块的 17 个符号聚合成单一入口，老代码 from _consensus import 不用改。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_core_coordination.py
   domain_id: D_INFRA_A2A
   name_zh: 核心coordination
   name_en: Re-export bridge for layer3_coordination core coordination s
   desc_zh: 核心coordination模块
   desc_en: Re-export bridge for layer3_coordination core coordination symbols.
-  plain_zh: 核心coordination。Re-export bridge for layer3_coordination core coordination symbols.
+  plain_zh: "核心协调子域兼容转发层，把 8 个模块的 23 个符号聚合成单一入口，老代码 from _core_coordination import 不用改。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_intelligence.py
   domain_id: D_INFRA_A2A
   name_zh: 智能
   name_en: Re-export bridge for layer3_coordination intelligence symbol
   desc_zh: 智能模块
   desc_en: Re-export bridge for layer3_coordination intelligence symbols.
-  plain_zh: 智能。Re-export bridge for layer3_coordination intelligence symbols.
+  plain_zh: "智能子域兼容转发层，把 7 个模块的 19 个符号聚合成单一入口，老代码 from _intelligence import 不用改。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_security_and_economics.py
   domain_id: D_INFRA_A2A
   name_zh: 安全andeconomics
   name_en: Re-export bridge for layer3_coordination security and econom
   desc_zh: 安全andeconomics模块
   desc_en: Re-export bridge for layer3_coordination security and economics symbols.
-  plain_zh: 安全andeconomics。Re-export bridge for layer3_coordination security and economics symbols.
+  plain_zh: "安全与经济子域兼容转发层，把 10 个模块的 22 个符号聚合成单一入口，老代码 from _security_and_economics import 不用改。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_agent_blocklist.py
   domain_id: D_INFRA_A2A
   name_zh: A2A代理blocklist
@@ -14407,7 +14407,7 @@ entries:
   name_en: a2a_carbon
   desc_zh: A2A 碳足迹追踪
   desc_en: ''
-  plain_zh: A2A 碳足迹追踪
+  plain_zh: "A2A 通信碳足迹估算器，按 token 数量把模型调用量换算成能耗与碳排放，用于可持续性核算。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_causal_trace.py
   domain_id: D_INFRA_A2A
   name_zh: A2Acausal追踪
@@ -14421,7 +14421,7 @@ entries:
   name_en: a2a_checkpoint
   desc_zh: A2A 检查点管理器
   desc_en: ''
-  plain_zh: A2A 检查点管理器
+  plain_zh: "任务状态检查点管理器，save 存快照、load 恢复，长任务中断后可从检查点续跑。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_collusion_detector.py
   domain_id: D_INFRA_A2A
   name_zh: A2Acollusion检测器
@@ -14435,21 +14435,21 @@ entries:
   name_en: a2a_consent
   desc_zh: 'P2: Agent同意管理'
   desc_en: ''
-  plain_zh: 'P2: Agent同意管理'
+  plain_zh: "Agent 行为授权管理，grant 授权某 agent 在某 scope 的操作、revoke 撤销，控制跨 agent 操作的合法范围。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_constitutional.py
   domain_id: D_INFRA_A2A
   name_zh: 'P2: 宪法性Agent管理'
   name_en: a2a_constitutional
   desc_zh: 'P2: 宪法性Agent管理'
   desc_en: ''
-  plain_zh: 'P2: 宪法性Agent管理'
+  plain_zh: "宪法级高危动作否决器，对 delete/drop_table/mass_update/rm_rf/shutdown 等动作可 veto 拦截，防误操作造成不可逆损害。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_context_rot.py
   domain_id: D_INFRA_A2A
   name_zh: 上下文腐烂检测
   name_en: a2a_context_rot
   desc_zh: 上下文腐烂检测
   desc_en: ''
-  plain_zh: 上下文腐烂检测
+  plain_zh: "上下文腐烂度检测器，按上下文年龄线性衰减，1 小时判定 100% 腐烂，提示需要刷新上下文。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_cross_agent_semantic_flow.py
   domain_id: D_INFRA_A2A
   name_zh: A2A跨代理semantic流程
@@ -14477,21 +14477,21 @@ entries:
   name_en: a2a_delegation_chain
   desc_zh: 委托链
   desc_en: ''
-  plain_zh: 委托链
+  plain_zh: "任务委托链记录器，记录 from→to 的委托关系，最多 5 层防无限传递和责任不清。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_economics.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 经济学——Token/API成本追踪
   name_en: a2a_economics
   desc_zh: A2A 经济学——Token/API成本追踪
   desc_en: ''
-  plain_zh: A2A 经济学——Token/API成本追踪
+  plain_zh: "A2A 调用成本追踪器，按 task 记录 token in/out 和模型，核算每次 agent 通信的 API 与 token 开销。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_forgetting.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 遗忘机制
   name_en: a2a_forgetting
   desc_zh: A2A 遗忘机制
   desc_en: ''
-  plain_zh: A2A 遗忘机制
+  plain_zh: "有限记忆机制，remember 存条目，超过 max_memory（默认 100）时遗忘最旧条目，防记忆无限膨胀。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_formal_verification.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 形式化验证 — 协议属性模型检查
@@ -14512,35 +14512,35 @@ entries:
   name_en: a2a_hardware_router
   desc_zh: A2A 硬件路由器——GPU/CPU 调度
   desc_en: ''
-  plain_zh: A2A 硬件路由器——GPU/CPU 调度
+  plain_zh: "硬件路由器，按任务类型分派到 GPU 或 CPU 执行，让算力匹配任务特征。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_hibernate.py
   domain_id: D_INFRA_A2A
   name_zh: 'P2: Agent休眠管理'
   name_en: a2a_hibernate
   desc_zh: 'P2: Agent休眠管理'
   desc_en: ''
-  plain_zh: 'P2: Agent休眠管理'
+  plain_zh: "Agent 休眠管理器，sleep 让 agent 暂停接活、wake 唤醒、is_sleeping 查状态，用于节能与调度。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_idempotency.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 幂等性保证
   name_en: a2a_idempotency
   desc_zh: A2A 幂等性保证
   desc_en: ''
-  plain_zh: A2A 幂等性保证
+  plain_zh: "幂等性保证器，按 task_id 加 input_hash 判重，重复请求不重复执行，防网络重试导致副作用翻倍。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_idle_guard.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 空闲守卫
   name_en: a2a_idle_guard
   desc_zh: A2A 空闲守卫
   desc_en: ''
-  plain_zh: A2A 空闲守卫
+  plain_zh: "空闲守卫，agent 超过 idle_timeout（默认 300 秒）没活动判定为空闲，供调度回收资源。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_immune.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 免疫系统
   name_en: a2a_immune
   desc_zh: A2A 免疫系统
   desc_en: ''
-  plain_zh: A2A 免疫系统
+  plain_zh: "A2A 免疫系统，detect_threat 按模式识别威胁 agent、quarantine 隔离，防恶意或异常 agent 污染协作。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_knowledge_distill.py
   domain_id: D_INFRA_A2A
   name_zh: A2A知识distill
@@ -14561,7 +14561,7 @@ entries:
   name_en: a2a_metrics
   desc_zh: A2A 指标收集
   desc_en: ''
-  plain_zh: A2A 指标收集
+  plain_zh: "A2A 指标收集器，record 记时序数值、get 查询，带 tags 维度，供监控与告警。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_negotiation.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 协商协议 — Agent 间资源/任务分配协商
@@ -14603,7 +14603,7 @@ entries:
   name_en: a2a_temporal_admission
   desc_zh: 时序准入控制
   desc_en: ''
-  plain_zh: 时序准入控制
+  plain_zh: "时序准入控制器，限制并发数（默认 10），admit/enter/leave 管流量，防 agent 同时涌入压垮系统。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_tracing.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 分布式追踪 — 跨 Agent 请求链追踪 (Span-based)
@@ -14617,7 +14617,7 @@ entries:
   name_en: a2a_vector_reputation
   desc_zh: 向量化信誉系统
   desc_en: ''
-  plain_zh: 向量化信誉系统
+  plain_zh: "向量化信誉系统，按多维度 rate 给 agent 打分、reputation 聚合查询，用于任务分派时的信任评估。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_voting.py
   domain_id: D_INFRA_A2A
   name_zh: A2A 加权投票协议 — 多 Agent 共识达成机制
@@ -14666,14 +14666,14 @@ entries:
   name_en: deadlock_guard
   desc_zh: 'P2: 死锁守卫'
   desc_en: ''
-  plain_zh: 'P2: 死锁守卫'
+  plain_zh: "死锁守卫，try_acquire 抢占资源、release 释放，防多 agent 互等资源死锁，供 Stage 4 公共化只读访问。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/livelock_detector.py
   domain_id: D_INFRA_A2A
   name_zh: 'P2: 活锁检测器'
   name_en: livelock_detector
   desc_zh: 'P2: 活锁检测器'
   desc_en: ''
-  plain_zh: 'P2: 活锁检测器'
+  plain_zh: "活锁检测器，记录 agent 状态哈希，cycle_limit（默认 10）内状态重复判定活锁，提示需要打破循环。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/layer3_coordination/semantic_diff.py
   domain_id: D_INFRA_A2A
   name_zh: semantic差异
@@ -14708,14 +14708,14 @@ entries:
   name_en: local_first_arch
   desc_zh: 本地首架构，供MOD-INF-027;MOD-INF-018;MOD-IN使用
   desc_en: ''
-  plain_zh: 本地首架构，供MOD-INF-027;MOD-INF-018;MOD-IN使用
+  plain_zh: "本地优先架构策略，定义 LOCAL/CLOUD_BACKFILL 计算位置，唯一远程依赖仅 WebSocket 行情，云端只做灾备 backfill，保证断网可独立运行。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/migration_strategy.py
   domain_id: D_INFRA_A2A
   name_zh: 迁移策略
   name_en: migration_strategy
   desc_zh: 迁移策略，供MOD-INF-027;MOD-INF-018;MOD-IN使用
   desc_en: ''
-  plain_zh: 迁移策略，供MOD-INF-027;MOD-INF-018;MOD-IN使用
+  plain_zh: "迁移流程状态机，7 阶段（问题追踪→风险评估→回滚计划→预发布→灰度→全量→复盘），每阶段带定义与流转规则，防激进迁移翻车。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/multi_agent.py
   domain_id: D_INFRA_A2A
   name_zh: 多代理
@@ -14736,14 +14736,14 @@ entries:
   name_en: offline_autonomy
   desc_zh: 离线autonomy，供MOD-INF-027;MOD-INF-018;MOD-IN使用
   desc_en: ''
-  plain_zh: 离线autonomy，供MOD-INF-027;MOD-INF-018;MOD-IN使用
+  plain_zh: "离线自治状态机，AUTO/半自动/ONLINE 三态，按连接状态切换，断网时缓存命令待重连补发，保证离线可继续工作。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/offline_resilience.py
   domain_id: D_INFRA_A2A
   name_zh: 离线韧性
   name_en: offline_resilience
   desc_zh: 离线韧性，供MOD-INF-027;MOD-INF-018;MOD-IN使用
   desc_en: ''
-  plain_zh: 离线韧性，供MOD-INF-027;MOD-INF-018;MOD-IN使用
+  plain_zh: "离线韧性等级定义，定义断网降级的容忍级别与策略，指导离线场景下的服务降级行为。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/phase_hold.py
   domain_id: D_INFRA_A2A
   name_zh: 阶段hold
@@ -14757,14 +14757,14 @@ entries:
   name_en: prompt_lifecycle
   desc_zh: 提示生命周期，供MOD-INF-027;MOD-INF-018;MOD-IN使用
   desc_en: ''
-  plain_zh: 提示生命周期，供MOD-INF-027;MOD-INF-018;MOD-IN使用
+  plain_zh: "Prompt 版本生命周期管理，PromptVersion 跟踪提示词版本演进，支持版本回退与变更追溯。"
 - module_path: src/zephyr/infrastructure/a2a_protocol/realtime_streaming.py
   domain_id: D_INFRA_A2A
   name_zh: 实时流式
   name_en: realtime_streaming
   desc_zh: 实时流式，供MOD-INF-027;MOD-INF-018;MOD-IN使用
   desc_en: ''
-  plain_zh: 实时流式，供MOD-INF-027;MOD-INF-018;MOD-IN使用
+  plain_zh: "实时流式管道模式，Batch/Stream 双模切换，让同一套管道在批量与流式两种场景下复用。"
 - module_path: src/zephyr/governance/rollback/contracts.py
   domain_id: D_INFRA_RECOVERY
   name_zh: 契约
