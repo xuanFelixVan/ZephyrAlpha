@@ -1586,11 +1586,11 @@ entries:
   plain_zh: "异常诊断器，回测验证"
 - module_path: src/zephyr/backtest/services/cache_manager.py
   domain_id: D_BACKTEST
-  name_zh: 缓存管理器
-  name_en: cache_manager
-  desc_zh: 缓存管理器模块
-  desc_en: ''
-  plain_zh: 缓存管理器，回测的缓存，暂存常用数据加速访问。
+  name_zh: "回测缓存管理器"
+  name_en: "Backtest Cache Manager"
+  desc_zh: "回测结果内存缓存与复用,LRU淘汰,支持按键/按策略/全量失效,命中率统计"
+  desc_en: ""
+  plain_zh: "给定回测参数(策略ID+参数+日期范围),算出缓存键,把回测结果存进内存缓存。下次相同参数来查直接返回缓存结果不用重算,满了按LRU淘汰最久没用的。纯内存管理,不依赖数据库。"
 - module_path: src/zephyr/backtest/services/data_quality_checker.py
   domain_id: D_BACKTEST
   name_zh: 数据质量检查器
