@@ -187,8 +187,9 @@ BEGIN
     -- OLD::text 将整行转为文本, 不引用任何特定列, 对所有表通用.
     IF TG_OP = 'DELETE' AND OLD.design_maturity = 'design' THEN
         RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design 态 dataflow 行（表=%, row=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, OLD::text;
-    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity = 'design' AND NEW.design_maturity IS DISTINCT FROM OLD.design_maturity THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design 态 dataflow 行降级（表=%, row=%, %→%）', TG_TABLE_NAME, OLD::text, OLD.design_maturity, NEW.design_maturity;
+    -- TRAE-082 治本 (2026-08-02): 放行 design→production 升级，禁止 production→design 降级
+    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity = 'production' AND NEW.design_maturity = 'design' THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 production→design 降级（表=%, row=%, %→%）。如确需降级请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, OLD::text, OLD.design_maturity, NEW.design_maturity;
     END IF;
     RETURN COALESCE(NEW, OLD);
 END;

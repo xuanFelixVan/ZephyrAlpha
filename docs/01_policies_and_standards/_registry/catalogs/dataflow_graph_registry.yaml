@@ -460,165 +460,165 @@ datasets:
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/correlation_analyzer/
+  physical_type: src/zephyr/factor/analysis/correlation_analyzer.py
   produced_by_job: JOB-028
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: 因子间相关系数矩阵（识别冗余因子）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-005'
+  design_maturity: production
 
 - dataset_id: DS-030
   entity_name: factor_analysis.correlation_dedup
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/correlation_dedup/
+  physical_type: src/zephyr/factor/analysis/correlation_dedup.py
   produced_by_job: JOB-029
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: 去重后的因子集合（移除高相关冗余因子）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-006'
+  design_maturity: production
 
 - dataset_id: DS-031
   entity_name: factor_analysis.decay_monitor
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/decay_monitor/
+  physical_type: src/zephyr/factor/analysis/decay_monitor.py
   produced_by_job: JOB-030
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: 因子衰减报告（IC随时间衰减趋势）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-009'
+  design_maturity: production
 
 - dataset_id: DS-032
   entity_name: factor_analysis.factor_attribution
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/factor_attribution/
+  physical_type: src/zephyr/factor/analysis/factor_attribution.py
   produced_by_job: JOB-031
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: 因子归因报告（各因子对收益的贡献分解）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-010'
+  design_maturity: production
 
 - dataset_id: DS-033
   entity_name: factor_analysis.factor_optimization
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/factor_optimization/
+  physical_type: src/zephyr/factor/analysis/factor_optimization.py
   produced_by_job: JOB-032
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: 优化后的因子权重（最大化IC/最小化相关性）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-012'
+  design_maturity: production
 
 - dataset_id: DS-034
   entity_name: factor_analysis.ic_decay
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/ic_decay/
+  physical_type: src/zephyr/factor/analysis/ic_decay.py
   produced_by_job: JOB-033
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: IC衰减曲线（因子预测力随滞后的变化）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-004'
+  design_maturity: production
 
 - dataset_id: DS-035
   entity_name: factor_analysis.ic_ir_calc
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/ic_ir_calc/
+  physical_type: src/zephyr/factor/analysis/ic_ir_calc.py
   produced_by_job: JOB-034
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: IC/IR指标序列（因子信息系数/信息比率）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-002'
+  design_maturity: production
 
 - dataset_id: DS-036
   entity_name: factor_analysis.ic_ir_evaluator
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/ic_ir_evaluator/
+  physical_type: src/zephyr/factor/analysis/ic_ir_evaluator.py
   produced_by_job: JOB-035
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: IC/IR评估报告（因子有效性评级）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-003'
+  design_maturity: production
 
 - dataset_id: DS-037
   entity_name: factor_analysis.layered_backtest
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/layered_backtest/
+  physical_type: src/zephyr/factor/analysis/layered_backtest.py
   produced_by_job: JOB-036
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: 分层回测结果（按因子分层的收益统计）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-007'
+  design_maturity: production
 
 - dataset_id: DS-038
   entity_name: factor_analysis.multifactor_synthesis
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/multifactor_synthesis/
+  physical_type: src/zephyr/factor/analysis/multifactor_synthesis.py
   produced_by_job: JOB-037
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: 合成因子信号（多因子加权/截面排名/置信度）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-011'
+  design_maturity: production
 
 - dataset_id: DS-039
   entity_name: factor_analysis.three_level_judgment
   entity_type: dataset
   scope: production
   contract_ref: null
-  physical_type: src/zephyr/factor/analysis/three_level_judgment/
+  physical_type: src/zephyr/factor/analysis/three_level_judgment.py
   produced_by_job: JOB-038
   consumed_by_jobs: []
   domain_id: D_FACTOR
   pit_policy: strict
   format_summary: 三级研判结果（因子有效性/稳定性/贡献度评级）
   valid_since: '2020-01-01'
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-008'
+  design_maturity: production
 
 - dataset_id: DS-040
   entity_name: factor_analysis.turnover_analyzer
@@ -1589,7 +1589,7 @@ jobs:
   job_name: analyze.correlation_analyzer
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/correlation_analyzer/
+  source_code_ref: src/zephyr/factor/analysis/correlation_analyzer.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1599,14 +1599,14 @@ jobs:
   - DS-029
   pit_relevance: strict
   description: 因子相关性分析（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-005'
+  design_maturity: production
 
 - job_id: JOB-029
   job_name: analyze.correlation_dedup
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/correlation_dedup/
+  source_code_ref: src/zephyr/factor/analysis/correlation_dedup.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1616,14 +1616,14 @@ jobs:
   - DS-030
   pit_relevance: strict
   description: 因子去重（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-006'
+  design_maturity: production
 
 - job_id: JOB-030
   job_name: analyze.decay_monitor
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/decay_monitor/
+  source_code_ref: src/zephyr/factor/analysis/decay_monitor.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1633,14 +1633,14 @@ jobs:
   - DS-031
   pit_relevance: strict
   description: 因子衰减监控（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-009'
+  design_maturity: production
 
 - job_id: JOB-031
   job_name: analyze.factor_attribution
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/factor_attribution/
+  source_code_ref: src/zephyr/factor/analysis/factor_attribution.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1650,14 +1650,14 @@ jobs:
   - DS-032
   pit_relevance: strict
   description: 因子归因（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-010'
+  design_maturity: production
 
 - job_id: JOB-032
   job_name: analyze.factor_optimization
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/factor_optimization/
+  source_code_ref: src/zephyr/factor/analysis/factor_optimization.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1667,14 +1667,14 @@ jobs:
   - DS-033
   pit_relevance: strict
   description: 因子优化（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-012'
+  design_maturity: production
 
 - job_id: JOB-033
   job_name: analyze.ic_decay
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/ic_decay/
+  source_code_ref: src/zephyr/factor/analysis/ic_decay.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1684,14 +1684,14 @@ jobs:
   - DS-034
   pit_relevance: strict
   description: IC衰减分析（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-004'
+  design_maturity: production
 
 - job_id: JOB-034
   job_name: analyze.ic_ir_calc
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/ic_ir_calc/
+  source_code_ref: src/zephyr/factor/analysis/ic_ir_calc.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1701,14 +1701,14 @@ jobs:
   - DS-035
   pit_relevance: strict
   description: IC/IR计算（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-002'
+  design_maturity: production
 
 - job_id: JOB-035
   job_name: analyze.ic_ir_evaluator
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/ic_ir_evaluator/
+  source_code_ref: src/zephyr/factor/analysis/ic_ir_evaluator.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1718,14 +1718,14 @@ jobs:
   - DS-036
   pit_relevance: strict
   description: IC/IR评估（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-003'
+  design_maturity: production
 
 - job_id: JOB-036
   job_name: analyze.layered_backtest
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/layered_backtest/
+  source_code_ref: src/zephyr/factor/analysis/layered_backtest.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1735,14 +1735,14 @@ jobs:
   - DS-037
   pit_relevance: strict
   description: 分层回测（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-007'
+  design_maturity: production
 
 - job_id: JOB-037
   job_name: analyze.multifactor_synthesis
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/multifactor_synthesis/
+  source_code_ref: src/zephyr/factor/analysis/multifactor_synthesis.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1752,14 +1752,14 @@ jobs:
   - DS-038
   pit_relevance: strict
   description: 多因子合成（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-011'
+  design_maturity: production
 
 - job_id: JOB-038
   job_name: analyze.three_level_judgment
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/factor/analysis/three_level_judgment/
+  source_code_ref: src/zephyr/factor/analysis/three_level_judgment.py
   trigger_type: manual
   run_context: production
   inputs:
@@ -1769,8 +1769,8 @@ jobs:
   - DS-039
   pit_relevance: strict
   description: 三级研判（消费因子信号，产出分析结果）
-  module_id: 'MOD-L02-001'
-  design_maturity: design
+  module_id: 'MOD-L02-008'
+  design_maturity: production
 
 - job_id: JOB-039
   job_name: analyze.turnover_analyzer

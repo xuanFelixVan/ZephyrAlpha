@@ -3,14 +3,14 @@ doc_type: architecture_view
 title: 数据流图（dataflowgraph）全景（运营态 + 设计态）
 version: "1.0"
 status: active
-date: 2026-08-01
+date: 2026-08-02
 owner: auto-generator
 ttl: permanent
 ---
 
 # 数据流图（dataflowgraph）全景（运营态 + 设计态）
 
-> 生成时间: 2026-08-01T22:21:37
+> 生成时间: 2026-08-02T21:06:13
 > 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）
 > 注: `dataflow_jobs` 另含 `entity_type='module_placeholder'` 占位记录（`sync_panorama_module.py` 从 depgraph 模块派生，用于四图对齐 ARCH-056，非数据流作业，本文档不展示）
 > 数据库: depgraph (PostgreSQL)
@@ -32,10 +32,10 @@ ttl: permanent
 | Dataset 数 | 76 | Datasets | 76 |
 | Job 数 | 75 | Jobs | 75 |
 | Edge 数 | 90 | Edges | 90 |
-| 运营态 Dataset | 14 | Production Datasets | 14 |
-| 设计态 Dataset | 62 | Design Datasets | 62 |
-| 运营态 Job | 13 | Production Jobs | 13 |
-| 设计态 Job | 62 | Design Jobs | 62 |
+| 运营态 Dataset | 25 | Production Datasets | 25 |
+| 设计态 Dataset | 51 | Design Datasets | 51 |
+| 运营态 Job | 24 | Production Jobs | 24 |
+| 设计态 Job | 51 | Design Jobs | 51 |
 
 ## 统计
 
@@ -49,8 +49,8 @@ ttl: permanent
 
 | 类型 | 运营态 (production) | 设计态 (design) | 合计 |
 |------|---------------------|-----------------|------|
-| Dataset | 14 | 62 | 76 |
-| Job | 13 | 62 | 75 |
+| Dataset | 25 | 51 | 76 |
+| Job | 24 | 51 | 75 |
 
 > **设计态 vs 运营态 / Design vs Production**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行。对标 depgraph 的设计态/运营态机制（decision_index.md）。
 
@@ -77,16 +77,16 @@ flowchart TD
     DS11245["(设计态 / design) backtest.anomaly_diagnoser_<br/>result / 回测异常诊断报告<br/>（识别异常收益/过拟合信号）<br/>契约: - · 域: 回测"]
     DS11246["(设计态 / design) backtest.data_quality_checker_<br/>result / 数据质量报告<br/>（缺失值/异常值/完整性检查）<br/>契约: - · 域: 回测"]
     DS11247["(设计态 / design) backtest.decay_monitor_result<br/>/ 策略衰减报告<br/>（策略性能随时间衰减趋势）<br/>契约: - · 域: 回测"]
-    DS16911["(生产态 / production) backtest.fills /<br/>回测.模拟成交<br/>回测模拟成交（symbol/quantity/price/commission<br/>/slippage），撮合引擎产出<br/>契约: - · 域: 回测"]
+    DS20863["(生产态 / production) backtest.fills /<br/>回测.模拟成交<br/>回测模拟成交（symbol/quantity/price/commission<br/>/slippage），撮合引擎产出<br/>契约: - · 域: 回测"]
     DS11248["(设计态 / design) backtest.nan_processor_result<br/>/ 清洗后数据<br/>（NaN值处理/插值/标记）<br/>契约: - · 域: 回测"]
-    DS16912["(生产态 / production) backtest.nav_series /<br/>回测.净值序列<br/>回测净值序列（timestamp/nav/cash<br/>/positions），组合更新产出<br/>契约: - · 域: 回测"]
+    DS20864["(生产态 / production) backtest.nav_series /<br/>回测.净值序列<br/>回测净值序列（timestamp/nav/cash<br/>/positions），组合更新产出<br/>契约: - · 域: 回测"]
     DS11249["(设计态 / design) backtest.param_analyzer_<br/>result / 参数敏感性分析报告<br/>（参数变化对收益的影响）<br/>契约: - · 域: 回测"]
     DS11250["(设计态 / design) backtest.report_generator_<br/>result / 回测报告<br/>（净值/回撤/交易明细/绩效归因）<br/>契约: - · 域: 回测"]
     DS11251["(设计态 / design) backtest.result_comparator_<br/>result / 回测对比报告<br/>（多策略/多周期收益对比）<br/>契约: - · 域: 回测"]
     DS11252["(设计态 / design) backtest.result_deployer_<br/>result / 部署状态记录<br/>（回测结果发布到外部系统）<br/>契约: - · 域: 回测"]
-    DS16910["(生产态 / production) backtest.target_weights /<br/>回测.目标权重<br/>回测目标权重（symbol/target_weight<br/>/timestamp），策略根据tick事件生成<br/>契约: - · 域: 回测"]
-    DS16909["(生产态 / production) backtest.tick_event /<br/>回测.Tick事件<br/>回测Tick事件（历史tick重放，含timestamp/symbol<br/>/price/volume），回测内部类型<br/>契约: - · 域: 回测"]
-    DS16908["(生产态 / production) backtest.result /<br/>回测.结果<br/>回测结果（nav_series/sharpe/max_drawdown<br/>/trades），CTR-P1-016 BacktestResult<br/>契约: CTR-P1-016 · 域: 回测"]
+    DS20862["(生产态 / production) backtest.target_weights /<br/>回测.目标权重<br/>回测目标权重（symbol/target_weight<br/>/timestamp），策略根据tick事件生成<br/>契约: - · 域: 回测"]
+    DS20861["(生产态 / production) backtest.tick_event /<br/>回测.Tick事件<br/>回测Tick事件（历史tick重放，含timestamp/symbol<br/>/price/volume），回测内部类型<br/>契约: - · 域: 回测"]
+    DS20860["(生产态 / production) backtest.result /<br/>回测.结果<br/>回测结果（nav_series/sharpe/max_drawdown<br/>/trades），CTR-P1-016 BacktestResult<br/>契约: CTR-P1-016 · 域: 回测"]
     DS11253["(设计态 / design) data.feature_store /<br/>特征数据集<br/>（特征值/特征元数据/版本管理）<br/>契约: - · 域: 数据接入层"]
     DS11256["(设计态 / design) data.kline_resampler /<br/>重采样K线数据<br/>（多周期K线/自定义周期重采样）<br/>契约: - · 域: 数据接入层"]
     DS11254["(设计态 / design) data.realtime_push_manager /<br/>实时推送数据流<br/>（实时行情/交易推送）<br/>契约: - · 域: 数据接入层"]
@@ -119,64 +119,64 @@ flowchart TD
     DS11240["(设计态 / design) factor.barra_exposure_<br/>calculator / Barra因子暴露矩阵<br/>（风险因子敞口）<br/>契约: - · 域: 因子"]
     DS11241["(设计态 / design) factor.barra_risk_budget_<br/>allocator / 风险预算分配方案<br/>（各因子风险贡献权重）<br/>契约: - · 域: 因子"]
     DS11242["(设计态 / design) factor.barra_risk_model /<br/>Barra风险模型协方差矩阵<br/>（因子收益协方差）<br/>契约: - · 域: 因子"]
-    DS16902["(生产态 / production) factor.momentum_20d /<br/>因子.20日动量<br/>20日动量因子信号（factor_id/symbol/as_of_date<br/>/raw_value/rank_pct），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
-    DS16901["(生产态 / production) factor.value_factor /<br/>因子.价值因子<br/>价值因子信号（factor_id/symbol/as_of_date/raw_<br/>value/normalized_value），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
-    DS11227["(设计态 / design) factor_analysis.correlation_<br/>analyzer / 因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
-    DS11228["(设计态 / design) factor_analysis.correlation_<br/>dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
-    DS11229["(设计态 / design) factor_analysis.decay_monitor<br/>/ 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
-    DS11230["(设计态 / design) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
-    DS11231["(设计态 / design) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
-    DS11232["(设计态 / design) factor_analysis.ic_decay /<br/>IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
-    DS11233["(设计态 / design) factor_analysis.ic_ir_calc /<br/>IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
-    DS11234["(设计态 / design) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
-    DS11235["(设计态 / design) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
-    DS11236["(设计态 / design) factor_analysis.multifactor_<br/>synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
-    DS11237["(设计态 / design) factor_analysis.three_level_<br/>judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
+    DS20854["(生产态 / production) factor.momentum_20d /<br/>因子.20日动量<br/>20日动量因子信号（factor_id/symbol/as_of_date<br/>/raw_value/rank_pct），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
+    DS20853["(生产态 / production) factor.value_factor /<br/>因子.价值因子<br/>价值因子信号（factor_id/symbol/as_of_date/raw_<br/>value/normalized_value），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
+    DS20879["(生产态 / production) factor_<br/>analysis.correlation_analyzer /<br/>因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
+    DS20880["(生产态 / production) factor_<br/>analysis.correlation_dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
+    DS20881["(生产态 / production) factor_analysis.decay_<br/>monitor / 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
+    DS20882["(生产态 / production) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
+    DS20883["(生产态 / production) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
+    DS20884["(生产态 / production) factor_analysis.ic_decay<br/>/ IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
+    DS20885["(生产态 / production) factor_analysis.ic_ir_<br/>calc / IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
+    DS20886["(生产态 / production) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
+    DS20887["(生产态 / production) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
+    DS20888["(生产态 / production) factor_<br/>analysis.multifactor_synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
+    DS20889["(生产态 / production) factor_analysis.three_<br/>level_judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
     DS11238["(设计态 / design) factor_analysis.turnover_<br/>analyzer / 换手率分析报告<br/>（因子换手成本评估）<br/>契约: - · 域: 因子"]
     DS11243["(设计态 / design) factor_mining.causal_<br/>validator / 因子因果性验证报告<br/>（统计因果检验结果）<br/>契约: - · 域: 因子"]
     DS11244["(设计态 / design) factor_mining.mining_agent /<br/>候选因子集合<br/>（AI挖掘的新因子列表及回测指标）<br/>契约: - · 域: 因子"]
-    DS16906["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
-    DS16900["(生产态 / production) market_data.ohlc_bar /<br/>市场数据.OHLC K线<br/>聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001<br/>derived<br/>契约: CTR-001 · 域: 行情数据"]
-    DS16899["(生产态 / production) market_data.tick /<br/>市场数据.Tick行情<br/>标准化Tick行情（symbol/timestamp/OHLCV/quality_<br/>score），CTR-001 NormalizedMarketData<br/>契约: CTR-001 · 域: 行情数据"]
+    DS20858["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
+    DS20852["(生产态 / production) market_data.ohlc_bar /<br/>市场数据.OHLC K线<br/>聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001<br/>derived<br/>契约: CTR-001 · 域: 行情数据"]
+    DS20851["(生产态 / production) market_data.tick /<br/>市场数据.Tick行情<br/>标准化Tick行情（symbol/timestamp/OHLCV/quality_<br/>score），CTR-001 NormalizedMarketData<br/>契约: CTR-001 · 域: 行情数据"]
     DS11271["(设计态 / design) ml.ai_operator_decisions /<br/>AI操作员决策记录<br/>（模型推理/决策建议/置信度）<br/>契约: - · 域: 训练"]
     DS11272["(设计态 / design) ml.training_dataset /<br/>训练数据集<br/>（特征/标签/样本/版本管理）<br/>契约: - · 域: 训练"]
-    DS16905["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
+    DS20857["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
     DS11267["(设计态 / design) portfolio.optimizer /<br/>优化后目标权重<br/>（均值方差/风险平价/Black-Litterman）<br/>契约: - · 域: 组合核心"]
     DS11268["(设计态 / design) portfolio.portfolio_aggregate<br/>/ 组合汇总状态<br/>（多策略组合/资金分配/持仓汇总）<br/>契约: - · 域: 组合核心"]
     DS11269["(设计态 / design) portfolio.strategy_runner /<br/>策略目标权重<br/>（策略信号→目标权重转换）<br/>契约: - · 域: 组合核心"]
     DS11270["(设计态 / design) portfolio.topn_momentum_<br/>strategy / TopN动量信号<br/>（TopN选股/动量排名信号）<br/>契约: - · 域: 组合核心"]
-    DS16907["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
+    DS20859["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
     DS11273["(设计态 / design) risk.drawdown_metric /<br/>回撤指标序列<br/>（最大回撤/当前回撤/恢复时间）<br/>契约: - · 域: 风控"]
-    DS16904["(生产态 / production) risk.limits / 风险.限额<br/>风险限额（max_position/max_drawdown/exposure_<br/>limits），CTR-003 RiskLimits<br/>契约: CTR-003 · 域: 风控"]
-    DS16903["(生产态 / production) signal.composite /<br/>信号.合成信号<br/>合成交易信号（多因子加权/截面排名<br/>/置信度），CTR-P1-015 SynthesizedSignal<br/>契约: CTR-P1-015 · 域: 信号遗留设计态"]
+    DS20856["(生产态 / production) risk.limits / 风险.限额<br/>风险限额（max_position/max_drawdown/exposure_<br/>limits），CTR-003 RiskLimits<br/>契约: CTR-003 · 域: 风控"]
+    DS20855["(生产态 / production) signal.composite /<br/>信号.合成信号<br/>合成交易信号（多因子加权/截面排名<br/>/置信度），CTR-P1-015 SynthesizedSignal<br/>契约: CTR-P1-015 · 域: 信号遗留设计态"]
     DS11274["(设计态 / design) trading.pnl / 盈亏序列<br/>（已实现/未实现盈亏/总盈亏）<br/>契约: - · 域: 交易运营"]
     JOB757609("(设计态 / design) backtest.anomaly_diagnoser /<br/>回测异常诊断<br/>（消费回测结果，产出分析/报告）<br/>文件: services/anomaly_diagnoser.py")
-    JOB866034("(生产态 / production) backtest.calc_metrics /<br/>回测.计算指标<br/>回测指标计算（Sharpe/MaxDrawdown<br/>/胜率等，含DSR修正+PIT校验），产出DS-010<br/>backtest.result<br/>文件: backtest/metrics.py")
+    JOB969552("(生产态 / production) backtest.calc_metrics /<br/>回测.计算指标<br/>回测指标计算（Sharpe/MaxDrawdown<br/>/胜率等，含DSR修正+PIT校验），产出DS-010<br/>backtest.result<br/>文件: backtest/metrics.py")
     JOB757610("(设计态 / design) backtest.data_quality_checker<br/>/ 回测数据质量检查<br/>（消费回测结果，产出分析/报告）<br/>文件: services/data_quality_checker.py")
     JOB757611("(设计态 / design) backtest.decay_monitor /<br/>策略衰减监控<br/>（消费回测结果，产出分析/报告）<br/>文件: services/decay_monitor.py")
-    JOB866032("(生产态 / production) backtest.match_fills /<br/>回测.撮合成交<br/>回测撮合引擎（根据目标权重模拟成交，含滑点<br/>/手续费），产出DS-013 backtest.fills<br/>文件: backtest/matching_logic.py")
+    JOB969550("(生产态 / production) backtest.match_fills /<br/>回测.撮合成交<br/>回测撮合引擎（根据目标权重模拟成交，含滑点<br/>/手续费），产出DS-013 backtest.fills<br/>文件: backtest/matching_logic.py")
     JOB757612("(设计态 / design) backtest.nan_processor /<br/>NaN数据处理<br/>（消费回测结果，产出分析/报告）<br/>文件: services/nan_processor.py")
     JOB757613("(设计态 / design) backtest.param_analyzer /<br/>参数分析<br/>（消费回测结果，产出分析/报告）<br/>文件: services/param_analyzer.py")
-    JOB866030("(生产态 / production) backtest.replay_ticks /<br/>回测.Tick重放<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放），产出DS<br/>-011 backtest.tick_event<br/>文件: backtest/tick_replay.py")
+    JOB969548("(生产态 / production) backtest.replay_ticks /<br/>回测.Tick重放<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放），产出DS<br/>-011 backtest.tick_event<br/>文件: backtest/tick_replay.py")
     JOB757614("(设计态 / design) backtest.report_generator /<br/>回测报告生成<br/>（消费回测结果，产出分析/报告）<br/>文件: services/report_generator.py")
     JOB757615("(设计态 / design) backtest.result_comparator /<br/>回测结果比较<br/>（消费回测结果，产出分析/报告）<br/>文件: services/result_comparator.py")
     JOB757616("(设计态 / design) backtest.result_deployer /<br/>回测结果部署<br/>（消费回测结果，产出分析/报告）<br/>文件: services/result_deployer.py")
-    JOB866031("(生产态 / production) backtest.run_event_driven<br/>/ 回测.事件驱动运行<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重），产出DS-0<br/>12 backtest.target_weights<br/>文件: backtest/event_engine.py")
-    JOB866033("(生产态 / production) backtest.update_portfolio<br/>/ 回测.更新组合<br/>回测组合更新（根据成交更新持仓/现金<br/>/净值），产出DS-014 backtest.nav_series<br/>文件: backtest/portfolio.py")
-    JOB866023("(生产态 / production) aggregate.ohlc_bar /<br/>聚合.OHLC K线<br/>将Tick数据聚合为OHLC K线（1m/5m<br/>/日线），产出DS-002 market_data.ohlc_bar<br/>文件: data/aggregator.py")
-    JOB757591("(设计态 / design) analyze.correlation_analyzer<br/>/ 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: correlation_analyzer/")
-    JOB757592("(设计态 / design) analyze.correlation_dedup /<br/>因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: correlation_dedup/")
-    JOB757593("(设计态 / design) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: decay_monitor/")
-    JOB757594("(设计态 / design) analyze.factor_attribution /<br/>因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: factor_attribution/")
-    JOB757595("(设计态 / design) analyze.factor_optimization /<br/>因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: factor_optimization/")
-    JOB757596("(设计态 / design) analyze.ic_decay / IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: ic_decay/")
-    JOB757597("(设计态 / design) analyze.ic_ir_calc / IC/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: ic_ir_calc/")
-    JOB757598("(设计态 / design) analyze.ic_ir_evaluator / IC<br/>/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: ic_ir_evaluator/")
-    JOB757599("(设计态 / design) analyze.layered_backtest /<br/>分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: layered_backtest/")
-    JOB757600("(设计态 / design) analyze.multifactor_synthesis<br/>/ 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: multifactor_synthesis/")
-    JOB757601("(设计态 / design) analyze.three_level_judgment<br/>/ 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: three_level_judgment/")
+    JOB969549("(生产态 / production) backtest.run_event_driven<br/>/ 回测.事件驱动运行<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重），产出DS-0<br/>12 backtest.target_weights<br/>文件: backtest/event_engine.py")
+    JOB969551("(生产态 / production) backtest.update_portfolio<br/>/ 回测.更新组合<br/>回测组合更新（根据成交更新持仓/现金<br/>/净值），产出DS-014 backtest.nav_series<br/>文件: backtest/portfolio.py")
+    JOB969541("(生产态 / production) aggregate.ohlc_bar /<br/>聚合.OHLC K线<br/>将Tick数据聚合为OHLC K线（1m/5m<br/>/日线），产出DS-002 market_data.ohlc_bar<br/>文件: data/aggregator.py")
+    JOB969567("(生产态 / production) analyze.correlation_<br/>analyzer / 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_analyzer.py")
+    JOB969568("(生产态 / production) analyze.correlation_dedup<br/>/ 因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_dedup.py")
+    JOB969569("(生产态 / production) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/decay_monitor.py")
+    JOB969570("(生产态 / production) analyze.factor_<br/>attribution / 因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_attribution.py")
+    JOB969571("(生产态 / production) analyze.factor_<br/>optimization / 因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_optimization.py")
+    JOB969572("(生产态 / production) analyze.ic_decay /<br/>IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_decay.py")
+    JOB969573("(生产态 / production) analyze.ic_ir_calc / IC<br/>/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_calc.py")
+    JOB969574("(生产态 / production) analyze.ic_ir_evaluator /<br/>IC/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_evaluator.py")
+    JOB969575("(生产态 / production) analyze.layered_backtest<br/>/ 分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/layered_backtest.py")
+    JOB969576("(生产态 / production) analyze.multifactor_<br/>synthesis / 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/multifactor_synthesis.py")
+    JOB969577("(生产态 / production) analyze.three_level_<br/>judgment / 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/three_level_judgment.py")
     JOB757602("(设计态 / design) analyze.turnover_analyzer /<br/>换手率分析<br/>（消费因子信号，产出分析结果）<br/>文件: turnover_analyzer/")
-    JOB866027("(生产态 / production) check.risk_limits /<br/>检查.风险限额<br/>风险限额检查（持仓/回撤/暴露度），产出DS-006<br/>risk.limits<br/>文件: risk/risk_checker.py")
+    JOB969545("(生产态 / production) check.risk_limits /<br/>检查.风险限额<br/>风险限额检查（持仓/回撤/暴露度），产出DS-006<br/>risk.limits<br/>文件: risk/risk_checker.py")
     JOB757577("(设计态 / design) compute.ashare_alpha87 /<br/>计算Alpha#87因子<br/>（消费OHLC K线，产出因子信号）<br/>文件: alpha87/")
     JOB757578("(设计态 / design) compute.ashare_capital_flow /<br/>计算资金流因子<br/>（消费OHLC K线，产出因子信号）<br/>文件: capital_flow/")
     JOB757579("(设计态 / design) compute.ashare_cross_market /<br/>计算跨市场因子<br/>（消费OHLC K线，产出因子信号）<br/>文件: cross_market/")
@@ -195,8 +195,8 @@ flowchart TD
     JOB757604("(设计态 / design) compute.barra_exposure_<br/>calculator / 计算Barra暴露计算<br/>（消费市场数据，产出风险因子）<br/>文件: exposure_calculator/")
     JOB757605("(设计态 / design) compute.barra_risk_budget_<br/>allocator / 计算风险预算分配<br/>（消费市场数据，产出风险因子）<br/>文件: risk_budget_allocator/")
     JOB757606("(设计态 / design) compute.barra_risk_model /<br/>计算Barra风险模型<br/>（消费市场数据，产出风险因子）<br/>文件: risk_model/")
-    JOB866025("(生产态 / production) compute.momentum_20d /<br/>计算.20日动量<br/>计算20日动量因子（收益率/相对强度），产出DS-004<br/>factor.momentum_20d<br/>文件: factor/momentum.py")
-    JOB866024("(生产态 / production) compute.value_factor /<br/>计算.价值因子<br/>计算价值因子（PE/PB/股息率等），产出DS-003<br/>factor.value_factor<br/>文件: factor/value_factor.py")
+    JOB969543("(生产态 / production) compute.momentum_20d /<br/>计算.20日动量<br/>计算20日动量因子（收益率/相对强度），产出DS-004<br/>factor.momentum_20d<br/>文件: factor/momentum.py")
+    JOB969542("(生产态 / production) compute.value_factor /<br/>计算.价值因子<br/>计算价值因子（PE/PB/股息率等），产出DS-003<br/>factor.value_factor<br/>文件: factor/value_factor.py")
     JOB757617("(设计态 / design) data.feature_store /<br/>特征存储管理<br/>（数据采集/管理服务）<br/>文件: feature_store/")
     JOB757620("(设计态 / design) data.kline_resampler /<br/>K线重采样<br/>（数据采集/管理服务）<br/>文件: zephyr.data.kline_resampler")
     JOB757618("(设计态 / design) data.realtime_push_manager /<br/>实时推送管理<br/>（数据采集/管理服务）<br/>文件: realtime_push_manager/")
@@ -211,9 +211,9 @@ flowchart TD
     JOB757628("(设计态 / design) ex_core.fill_handler /<br/>成交处理<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: ex_core/fill_handler.py")
     JOB757630("(设计态 / design) ex_core.live_portfolio /<br/>实盘组合<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: services/live_portfolio.py")
     JOB757629("(设计态 / design) ex_core.position_tracker /<br/>持仓跟踪<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: position_tracker/")
-    JOB866029("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
-    JOB866028("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
-    JOB866022("(生产态 / production) ingest.ifind_kline /<br/>采集.iFind行情<br/>从同花顺iFind THS_RQ接口采集K线<br/>/Tick行情数据，写入DS-001 market_data.tick<br/>文件: data/ingest_ifind.py")
+    JOB969547("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
+    JOB969546("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
+    JOB969540("(生产态 / production) ingest.ifind_kline /<br/>采集.iFind行情<br/>从同花顺iFind THS_RQ接口采集K线<br/>/Tick行情数据，写入DS-001 market_data.tick<br/>文件: data/ingest_ifind.py")
     JOB757607("(设计态 / design) mine.causal_validator /<br/>因果性验证<br/>（消费因子数据，产出挖掘/验证结果）<br/>文件: causal_validator/")
     JOB757608("(设计态 / design) mine.mining_agent / 因子挖掘<br/>（消费因子数据，产出挖掘/验证结果）<br/>文件: mining_agent/")
     JOB757635("(设计态 / design) ml_train.ai_operator /<br/>AI操作员决策<br/>（消费信号，产出AI辅助决策）<br/>文件: ai_operator/")
@@ -223,8 +223,22 @@ flowchart TD
     JOB757633("(设计态 / design) pf_core.strategy_runner /<br/>策略运行<br/>（消费信号，产出组合/权重）<br/>文件: strategy_engine/strategy_runner.py")
     JOB757634("(设计态 / design) pf_core.topn_momentum_<br/>strategy / TopN动量策略<br/>（消费信号，产出组合/权重）<br/>文件: pf_core/topn_momentum_strategy.py")
     JOB757637("(设计态 / design) risk.track_drawdown / 回撤跟踪<br/>（消费持仓快照，产出回撤指标）<br/>文件: drawdown_tracker/")
-    JOB866026("(生产态 / production) synthesize.signal /<br/>合成.信号<br/>合成多因子信号（加权/截面排名<br/>/置信度），产出DS-005 signal.composite<br/>文件: signal_ashare/synthesizer.py")
+    JOB969544("(生产态 / production) synthesize.signal /<br/>合成.信号<br/>合成多因子信号（加权/截面排名<br/>/置信度），产出DS-005 signal.composite<br/>文件: signal_ashare/synthesizer.py")
     JOB757638("(设计态 / design) trading.calc_pnl / PnL计算<br/>（消费成交数据，产出盈亏）<br/>文件: pnl_calculator/")
+    JOB969540 -->|produces / 产出| DS20851
+    JOB969541 -->|produces / 产出| DS20852
+    JOB969542 -->|produces / 产出| DS20853
+    JOB969543 -->|produces / 产出| DS20854
+    JOB969544 -->|produces / 产出| DS20855
+    JOB969545 -->|produces / 产出| DS20856
+    JOB969546 -->|produces / 产出| DS20857
+    JOB969547 -->|produces / 产出| DS20858
+    JOB969547 -->|produces / 产出| DS20859
+    JOB969552 -->|produces / 产出| DS20860
+    JOB969548 -->|produces / 产出| DS20861
+    JOB969549 -->|produces / 产出| DS20862
+    JOB969550 -->|produces / 产出| DS20863
+    JOB969551 -->|produces / 产出| DS20864
     JOB757577 -.->|produces / 产出| DS11213
     JOB757578 -.->|produces / 产出| DS11214
     JOB757579 -.->|produces / 产出| DS11215
@@ -239,17 +253,15 @@ flowchart TD
     JOB757588 -.->|produces / 产出| DS11224
     JOB757589 -.->|produces / 产出| DS11225
     JOB757590 -.->|produces / 产出| DS11226
-    JOB757591 -.->|produces / 产出| DS11227
-    JOB757592 -.->|produces / 产出| DS11228
-    JOB757593 -.->|produces / 产出| DS11229
-    JOB757594 -.->|produces / 产出| DS11230
-    JOB757595 -.->|produces / 产出| DS11231
-    JOB757596 -.->|produces / 产出| DS11232
-    JOB757597 -.->|produces / 产出| DS11233
-    JOB757598 -.->|produces / 产出| DS11234
-    JOB757599 -.->|produces / 产出| DS11235
-    JOB757600 -.->|produces / 产出| DS11236
-    JOB757601 -.->|produces / 产出| DS11237
+    JOB969567 -->|produces / 产出| DS20879
+    JOB969568 -->|produces / 产出| DS20880
+    JOB969569 -->|produces / 产出| DS20881
+    JOB969570 -->|produces / 产出| DS20882
+    JOB969571 -->|produces / 产出| DS20883
+    JOB969572 -->|produces / 产出| DS20884
+    JOB969573 -->|produces / 产出| DS20885
+    JOB969574 -->|produces / 产出| DS20886
+    JOB969575 -->|produces / 产出| DS20887
     JOB757602 -.->|produces / 产出| DS11238
     JOB757603 -.->|produces / 产出| DS11239
     JOB757604 -.->|produces / 产出| DS11240
@@ -286,265 +298,308 @@ flowchart TD
     JOB757635 -.->|produces / 产出| DS11271
     JOB757636 -.->|produces / 产出| DS11272
     JOB757637 -.->|produces / 产出| DS11273
+    JOB969576 -->|produces / 产出| DS20888
+    JOB969577 -->|produces / 产出| DS20889
+    DS20851 -->|consumed by / 被消费于| JOB969541
+    DS20851 -->|consumed by / 被消费于| JOB969548
+    DS20852 -->|consumed by / 被消费于| JOB969542
+    DS20852 -->|consumed by / 被消费于| JOB969543
+    DS20853 -->|consumed by / 被消费于| JOB969544
+    DS20854 -->|consumed by / 被消费于| JOB969544
+    DS20855 -->|consumed by / 被消费于| JOB969545
     JOB757638 -.->|produces / 产出| DS11274
-    JOB866022 -->|produces / 产出| DS16899
-    JOB866023 -->|produces / 产出| DS16900
-    JOB866024 -->|produces / 产出| DS16901
-    JOB866025 -->|produces / 产出| DS16902
-    JOB866026 -->|produces / 产出| DS16903
-    JOB866027 -->|produces / 产出| DS16904
-    JOB866028 -->|produces / 产出| DS16905
-    JOB866029 -->|produces / 产出| DS16906
-    JOB866029 -->|produces / 产出| DS16907
-    JOB866034 -->|produces / 产出| DS16908
-    JOB866030 -->|produces / 产出| DS16909
-    JOB866031 -->|produces / 产出| DS16910
-    JOB866032 -->|produces / 产出| DS16911
-    JOB866033 -->|produces / 产出| DS16912
-    DS16899 -->|consumed by / 被消费于| JOB866023
-    DS16899 -->|consumed by / 被消费于| JOB866030
-    DS16900 -->|consumed by / 被消费于| JOB866024
-    DS16900 -->|consumed by / 被消费于| JOB866025
-    DS16901 -->|consumed by / 被消费于| JOB866026
-    DS16902 -->|consumed by / 被消费于| JOB866026
-    DS16903 -->|consumed by / 被消费于| JOB866027
-    DS16903 -->|consumed by / 被消费于| JOB866028
-    DS16904 -->|consumed by / 被消费于| JOB866028
-    DS16905 -->|consumed by / 被消费于| JOB866029
-    DS16909 -->|consumed by / 被消费于| JOB866031
-    DS16910 -->|consumed by / 被消费于| JOB866032
-    DS16911 -->|consumed by / 被消费于| JOB866033
-    DS16912 -->|consumed by / 被消费于| JOB866034
-    JOB757601 ~~~ JOB757619
-    JOB757619 ~~~ JOB757609
-    JOB757609 ~~~ JOB757602
-    JOB757602 ~~~ JOB757611
-    JOB757611 ~~~ JOB757588
-    JOB757588 ~~~ JOB757579
-    JOB757579 ~~~ JOB757591
-    JOB757591 ~~~ JOB757622
-    JOB757622 ~~~ JOB757607
-    JOB757607 ~~~ JOB757618
-    JOB757618 ~~~ JOB757638
-    JOB757638 ~~~ JOB757637
-    JOB757637 ~~~ JOB757583
-    JOB757583 ~~~ JOB757635
-    JOB757635 ~~~ JOB757592
-    JOB757592 ~~~ JOB757596
-    JOB757596 ~~~ JOB757589
-    JOB757589 ~~~ JOB757608
-    JOB757608 ~~~ JOB757617
-    JOB757617 ~~~ JOB757590
-    JOB757590 ~~~ JOB757598
-    JOB757598 ~~~ JOB757593
-    JOB757593 ~~~ JOB757624
-    JOB757624 ~~~ JOB757614
-    JOB757614 ~~~ JOB757612
-    JOB757612 ~~~ JOB757630
-    JOB757630 ~~~ JOB757584
-    JOB757584 ~~~ JOB757582
-    JOB757582 ~~~ JOB757626
-    JOB757626 ~~~ JOB757629
-    JOB757629 ~~~ JOB757616
-    JOB757616 ~~~ JOB757623
-    JOB757623 ~~~ JOB757615
-    JOB757615 ~~~ JOB757610
-    JOB757610 ~~~ JOB757606
-    JOB757606 ~~~ JOB757580
-    JOB757580 ~~~ JOB757633
-    JOB757633 ~~~ JOB757581
-    JOB757581 ~~~ JOB757595
-    JOB757595 ~~~ JOB757585
-    JOB757585 ~~~ JOB757587
-    JOB757587 ~~~ JOB757603
-    JOB757603 ~~~ JOB757597
-    JOB757597 ~~~ JOB757620
-    JOB757620 ~~~ JOB866022
-    JOB866022 ~~~ JOB757636
-    JOB757636 ~~~ JOB757605
-    JOB757605 ~~~ JOB757625
-    JOB757625 ~~~ JOB757634
-    JOB757634 ~~~ JOB757628
-    JOB757628 ~~~ JOB757632
-    JOB757632 ~~~ JOB757613
-    JOB757613 ~~~ JOB757594
-    JOB757594 ~~~ JOB757599
-    JOB757599 ~~~ JOB757631
-    JOB757631 ~~~ JOB757586
-    JOB757586 ~~~ JOB757627
-    JOB757627 ~~~ JOB757604
-    JOB757604 ~~~ JOB757578
-    JOB757578 ~~~ JOB757577
-    JOB757577 ~~~ JOB757600
-    JOB757600 ~~~ JOB757621
-    DS11237 ~~~ DS11255
-    DS11255 ~~~ DS11245
-    DS11245 ~~~ DS11238
-    DS11238 ~~~ DS11247
-    DS11247 ~~~ DS11224
-    DS11224 ~~~ DS11215
-    DS11215 ~~~ DS11227
-    DS11227 ~~~ DS11258
-    DS11258 ~~~ DS11243
-    DS11243 ~~~ DS11254
-    DS11254 ~~~ DS11274
-    DS11274 ~~~ DS11273
-    DS11273 ~~~ DS11219
-    DS11219 ~~~ DS11271
-    DS11271 ~~~ DS11228
-    DS11228 ~~~ DS11232
-    DS11232 ~~~ DS11225
-    DS11225 ~~~ DS11244
-    DS11244 ~~~ DS11253
-    DS11253 ~~~ DS11226
-    DS11226 ~~~ DS11234
-    DS11234 ~~~ DS11229
-    DS11229 ~~~ DS11260
-    DS11260 ~~~ DS11250
-    DS11250 ~~~ DS11248
-    DS11248 ~~~ DS11266
-    DS11266 ~~~ DS11220
-    DS11220 ~~~ DS11218
-    DS11218 ~~~ DS11262
-    DS11262 ~~~ DS11265
-    DS11265 ~~~ DS11252
-    DS11252 ~~~ DS11259
-    DS11259 ~~~ DS11251
-    DS11251 ~~~ DS11246
-    DS11246 ~~~ DS11242
-    DS11242 ~~~ DS11216
-    DS11216 ~~~ DS11269
-    DS11269 ~~~ DS11217
-    DS11217 ~~~ DS11231
-    DS11231 ~~~ DS11221
-    DS11221 ~~~ DS11223
-    DS11223 ~~~ DS11239
-    DS11239 ~~~ DS11233
-    DS11233 ~~~ DS11256
-    DS11256 ~~~ DS16899
-    DS16899 ~~~ DS11272
-    DS11272 ~~~ DS11241
-    DS11241 ~~~ DS11261
-    DS11261 ~~~ DS11270
-    DS11270 ~~~ DS11264
-    DS11264 ~~~ DS11268
-    DS11268 ~~~ DS11249
-    DS11249 ~~~ DS11230
-    DS11230 ~~~ DS11235
-    DS11235 ~~~ DS11267
-    DS11267 ~~~ DS11222
-    DS11222 ~~~ DS11263
-    DS11263 ~~~ DS11240
-    DS11240 ~~~ DS11214
-    DS11214 ~~~ DS11213
-    DS11213 ~~~ DS11236
-    DS11236 ~~~ DS11257
-    JOB866023 ~~~ JOB866030
-    DS16900 ~~~ DS16909
-    JOB866024 ~~~ JOB866025
-    JOB866025 ~~~ JOB866031
-    DS16901 ~~~ DS16902
-    DS16902 ~~~ DS16910
-    JOB866026 ~~~ JOB866032
-    DS16903 ~~~ DS16911
-    JOB866027 ~~~ JOB866033
-    DS16904 ~~~ DS16912
-    JOB866028 ~~~ JOB866034
-    DS16905 ~~~ DS16908
-    DS16906 ~~~ DS16907
+    DS20855 -->|consumed by / 被消费于| JOB969546
+    DS20856 -->|consumed by / 被消费于| JOB969546
+    DS20857 -->|consumed by / 被消费于| JOB969547
+    DS20861 -->|consumed by / 被消费于| JOB969549
+    DS20862 -->|consumed by / 被消费于| JOB969550
+    DS20863 -->|consumed by / 被消费于| JOB969551
+    DS20864 -->|consumed by / 被消费于| JOB969552
+    JOB757621 ~~~ JOB757583
+    JOB757583 ~~~ JOB757628
+    JOB757628 ~~~ JOB757619
+    JOB757619 ~~~ JOB757611
+    JOB757611 ~~~ JOB757627
+    JOB757627 ~~~ JOB969577
+    JOB969577 ~~~ JOB757580
+    JOB757580 ~~~ JOB757629
+    JOB757629 ~~~ JOB757614
+    JOB757614 ~~~ JOB757590
+    JOB757590 ~~~ JOB757616
+    JOB757616 ~~~ JOB757638
+    JOB757638 ~~~ JOB757630
+    JOB757630 ~~~ JOB757604
+    JOB757604 ~~~ JOB757636
+    JOB757636 ~~~ JOB757618
+    JOB757618 ~~~ JOB969576
+    JOB969576 ~~~ JOB757603
+    JOB757603 ~~~ JOB757609
+    JOB757609 ~~~ JOB969569
+    JOB969569 ~~~ JOB757613
+    JOB757613 ~~~ JOB969575
+    JOB969575 ~~~ JOB757622
+    JOB757622 ~~~ JOB757605
+    JOB757605 ~~~ JOB757589
+    JOB757589 ~~~ JOB969540
+    JOB969540 ~~~ JOB969571
+    JOB969571 ~~~ JOB757615
+    JOB757615 ~~~ JOB969574
+    JOB969574 ~~~ JOB757633
+    JOB757633 ~~~ JOB969572
+    JOB969572 ~~~ JOB757634
+    JOB757634 ~~~ JOB757608
+    JOB757608 ~~~ JOB757607
+    JOB757607 ~~~ JOB757581
+    JOB757581 ~~~ JOB757623
+    JOB757623 ~~~ JOB757637
+    JOB757637 ~~~ JOB757624
+    JOB757624 ~~~ JOB757578
+    JOB757578 ~~~ JOB757617
+    JOB757617 ~~~ JOB757602
+    JOB757602 ~~~ JOB757612
+    JOB757612 ~~~ JOB757626
+    JOB757626 ~~~ JOB757606
+    JOB757606 ~~~ JOB757577
+    JOB757577 ~~~ JOB757587
+    JOB757587 ~~~ JOB757579
+    JOB757579 ~~~ JOB757584
+    JOB757584 ~~~ JOB757620
+    JOB757620 ~~~ JOB969573
+    JOB969573 ~~~ JOB969567
+    JOB969567 ~~~ JOB757588
+    JOB757588 ~~~ JOB757585
+    JOB757585 ~~~ JOB757586
+    JOB757586 ~~~ JOB757631
+    JOB757631 ~~~ JOB757582
+    JOB757582 ~~~ JOB969570
+    JOB969570 ~~~ JOB757632
+    JOB757632 ~~~ JOB757635
+    JOB757635 ~~~ JOB969568
+    JOB969568 ~~~ JOB757625
+    JOB757625 ~~~ JOB757610
+    DS11257 ~~~ DS11219
+    DS11219 ~~~ DS11264
+    DS11264 ~~~ DS11255
+    DS11255 ~~~ DS11247
+    DS11247 ~~~ DS11263
+    DS11263 ~~~ DS20889
+    DS20889 ~~~ DS11216
+    DS11216 ~~~ DS11265
+    DS11265 ~~~ DS11250
+    DS11250 ~~~ DS11226
+    DS11226 ~~~ DS11252
+    DS11252 ~~~ DS11274
+    DS11274 ~~~ DS11266
+    DS11266 ~~~ DS11240
+    DS11240 ~~~ DS11272
+    DS11272 ~~~ DS11254
+    DS11254 ~~~ DS20888
+    DS20888 ~~~ DS11239
+    DS11239 ~~~ DS11245
+    DS11245 ~~~ DS20881
+    DS20881 ~~~ DS11249
+    DS11249 ~~~ DS20887
+    DS20887 ~~~ DS11258
+    DS11258 ~~~ DS11241
+    DS11241 ~~~ DS11225
+    DS11225 ~~~ DS20851
+    DS20851 ~~~ DS20883
+    DS20883 ~~~ DS11251
+    DS11251 ~~~ DS20886
+    DS20886 ~~~ DS11269
+    DS11269 ~~~ DS20884
+    DS20884 ~~~ DS11270
+    DS11270 ~~~ DS11244
+    DS11244 ~~~ DS11243
+    DS11243 ~~~ DS11217
+    DS11217 ~~~ DS11259
+    DS11259 ~~~ DS11273
+    DS11273 ~~~ DS11260
+    DS11260 ~~~ DS11214
+    DS11214 ~~~ DS11253
+    DS11253 ~~~ DS11238
+    DS11238 ~~~ DS11248
+    DS11248 ~~~ DS11262
+    DS11262 ~~~ DS11242
+    DS11242 ~~~ DS11213
+    DS11213 ~~~ DS11223
+    DS11223 ~~~ DS11215
+    DS11215 ~~~ DS11220
+    DS11220 ~~~ DS11256
+    DS11256 ~~~ DS20885
+    DS20885 ~~~ DS20879
+    DS20879 ~~~ DS11224
+    DS11224 ~~~ DS11221
+    DS11221 ~~~ DS11222
+    DS11222 ~~~ DS11267
+    DS11267 ~~~ DS11218
+    DS11218 ~~~ DS20882
+    DS20882 ~~~ DS11268
+    DS11268 ~~~ DS11271
+    DS11271 ~~~ DS20880
+    DS20880 ~~~ DS11261
+    DS11261 ~~~ DS11246
+    JOB969541 ~~~ JOB969548
+    DS20852 ~~~ DS20861
+    JOB969542 ~~~ JOB969543
+    JOB969543 ~~~ JOB969549
+    DS20853 ~~~ DS20854
+    DS20854 ~~~ DS20862
+    JOB969544 ~~~ JOB969550
+    DS20855 ~~~ DS20863
+    JOB969545 ~~~ JOB969551
+    DS20856 ~~~ DS20864
+    JOB969546 ~~~ JOB969552
+    DS20857 ~~~ DS20860
+    DS20858 ~~~ DS20859
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS16911,DS16912,DS16910,DS16909,DS16908,DS16902,DS16901,DS16906,DS16900,DS16899,DS16905,DS16907,DS16904,DS16903,JOB866034,JOB866032,JOB866030,JOB866031,JOB866033,JOB866023,JOB866027,JOB866025,JOB866024,JOB866029,JOB866028,JOB866022,JOB866026 production
-    class DS11245,DS11246,DS11247,DS11248,DS11249,DS11250,DS11251,DS11252,DS11253,DS11256,DS11254,DS11257,DS11255,DS11258,DS11259,DS11260,DS11261,DS11262,DS11263,DS11264,DS11266,DS11265,DS11213,DS11214,DS11215,DS11216,DS11217,DS11218,DS11219,DS11220,DS11221,DS11222,DS11223,DS11224,DS11225,DS11226,DS11239,DS11240,DS11241,DS11242,DS11227,DS11228,DS11229,DS11230,DS11231,DS11232,DS11233,DS11234,DS11235,DS11236,DS11237,DS11238,DS11243,DS11244,DS11271,DS11272,DS11267,DS11268,DS11269,DS11270,DS11273,DS11274,JOB757609,JOB757610,JOB757611,JOB757612,JOB757613,JOB757614,JOB757615,JOB757616,JOB757591,JOB757592,JOB757593,JOB757594,JOB757595,JOB757596,JOB757597,JOB757598,JOB757599,JOB757600,JOB757601,JOB757602,JOB757577,JOB757578,JOB757579,JOB757580,JOB757581,JOB757582,JOB757583,JOB757584,JOB757585,JOB757586,JOB757587,JOB757588,JOB757589,JOB757590,JOB757603,JOB757604,JOB757605,JOB757606,JOB757617,JOB757620,JOB757618,JOB757621,JOB757619,JOB757622,JOB757623,JOB757624,JOB757625,JOB757626,JOB757627,JOB757628,JOB757630,JOB757629,JOB757607,JOB757608,JOB757635,JOB757636,JOB757631,JOB757632,JOB757633,JOB757634,JOB757637,JOB757638 design
+    class DS20863,DS20864,DS20862,DS20861,DS20860,DS20854,DS20853,DS20879,DS20880,DS20881,DS20882,DS20883,DS20884,DS20885,DS20886,DS20887,DS20888,DS20889,DS20858,DS20852,DS20851,DS20857,DS20859,DS20856,DS20855,JOB969552,JOB969550,JOB969548,JOB969549,JOB969551,JOB969541,JOB969567,JOB969568,JOB969569,JOB969570,JOB969571,JOB969572,JOB969573,JOB969574,JOB969575,JOB969576,JOB969577,JOB969545,JOB969543,JOB969542,JOB969547,JOB969546,JOB969540,JOB969544 production
+    class DS11245,DS11246,DS11247,DS11248,DS11249,DS11250,DS11251,DS11252,DS11253,DS11256,DS11254,DS11257,DS11255,DS11258,DS11259,DS11260,DS11261,DS11262,DS11263,DS11264,DS11266,DS11265,DS11213,DS11214,DS11215,DS11216,DS11217,DS11218,DS11219,DS11220,DS11221,DS11222,DS11223,DS11224,DS11225,DS11226,DS11239,DS11240,DS11241,DS11242,DS11238,DS11243,DS11244,DS11271,DS11272,DS11267,DS11268,DS11269,DS11270,DS11273,DS11274,JOB757609,JOB757610,JOB757611,JOB757612,JOB757613,JOB757614,JOB757615,JOB757616,JOB757602,JOB757577,JOB757578,JOB757579,JOB757580,JOB757581,JOB757582,JOB757583,JOB757584,JOB757585,JOB757586,JOB757587,JOB757588,JOB757589,JOB757590,JOB757603,JOB757604,JOB757605,JOB757606,JOB757617,JOB757620,JOB757618,JOB757621,JOB757619,JOB757622,JOB757623,JOB757624,JOB757625,JOB757626,JOB757627,JOB757628,JOB757630,JOB757629,JOB757607,JOB757608,JOB757635,JOB757636,JOB757631,JOB757632,JOB757633,JOB757634,JOB757637,JOB757638 design
 ```
 
 ### 运营态的图（仅 design_maturity=production）
 
-> 仅展示已实现稳定运行的节点（运营态：14 datasets / 数据集, 13 jobs / 作业, 28 edges / 边）。
+> 仅展示已实现稳定运行的节点（运营态：25 datasets / 数据集, 24 jobs / 作业, 39 edges / 边）。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS16911["(生产态 / production) backtest.fills /<br/>回测.模拟成交<br/>回测模拟成交（symbol/quantity/price/commission<br/>/slippage），撮合引擎产出<br/>契约: - · 域: 回测"]
-    DS16912["(生产态 / production) backtest.nav_series /<br/>回测.净值序列<br/>回测净值序列（timestamp/nav/cash<br/>/positions），组合更新产出<br/>契约: - · 域: 回测"]
-    DS16910["(生产态 / production) backtest.target_weights /<br/>回测.目标权重<br/>回测目标权重（symbol/target_weight<br/>/timestamp），策略根据tick事件生成<br/>契约: - · 域: 回测"]
-    DS16909["(生产态 / production) backtest.tick_event /<br/>回测.Tick事件<br/>回测Tick事件（历史tick重放，含timestamp/symbol<br/>/price/volume），回测内部类型<br/>契约: - · 域: 回测"]
-    DS16908["(生产态 / production) backtest.result /<br/>回测.结果<br/>回测结果（nav_series/sharpe/max_drawdown<br/>/trades），CTR-P1-016 BacktestResult<br/>契约: CTR-P1-016 · 域: 回测"]
-    DS16902["(生产态 / production) factor.momentum_20d /<br/>因子.20日动量<br/>20日动量因子信号（factor_id/symbol/as_of_date<br/>/raw_value/rank_pct），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
-    DS16901["(生产态 / production) factor.value_factor /<br/>因子.价值因子<br/>价值因子信号（factor_id/symbol/as_of_date/raw_<br/>value/normalized_value），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
-    DS16906["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
-    DS16900["(生产态 / production) market_data.ohlc_bar /<br/>市场数据.OHLC K线<br/>聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001<br/>derived<br/>契约: CTR-001 · 域: 行情数据"]
-    DS16899["(生产态 / production) market_data.tick /<br/>市场数据.Tick行情<br/>标准化Tick行情（symbol/timestamp/OHLCV/quality_<br/>score），CTR-001 NormalizedMarketData<br/>契约: CTR-001 · 域: 行情数据"]
-    DS16905["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
-    DS16907["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
-    DS16904["(生产态 / production) risk.limits / 风险.限额<br/>风险限额（max_position/max_drawdown/exposure_<br/>limits），CTR-003 RiskLimits<br/>契约: CTR-003 · 域: 风控"]
-    DS16903["(生产态 / production) signal.composite /<br/>信号.合成信号<br/>合成交易信号（多因子加权/截面排名<br/>/置信度），CTR-P1-015 SynthesizedSignal<br/>契约: CTR-P1-015 · 域: 信号遗留设计态"]
-    JOB866034("(生产态 / production) backtest.calc_metrics /<br/>回测.计算指标<br/>回测指标计算（Sharpe/MaxDrawdown<br/>/胜率等，含DSR修正+PIT校验），产出DS-010<br/>backtest.result<br/>文件: backtest/metrics.py")
-    JOB866032("(生产态 / production) backtest.match_fills /<br/>回测.撮合成交<br/>回测撮合引擎（根据目标权重模拟成交，含滑点<br/>/手续费），产出DS-013 backtest.fills<br/>文件: backtest/matching_logic.py")
-    JOB866030("(生产态 / production) backtest.replay_ticks /<br/>回测.Tick重放<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放），产出DS<br/>-011 backtest.tick_event<br/>文件: backtest/tick_replay.py")
-    JOB866031("(生产态 / production) backtest.run_event_driven<br/>/ 回测.事件驱动运行<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重），产出DS-0<br/>12 backtest.target_weights<br/>文件: backtest/event_engine.py")
-    JOB866033("(生产态 / production) backtest.update_portfolio<br/>/ 回测.更新组合<br/>回测组合更新（根据成交更新持仓/现金<br/>/净值），产出DS-014 backtest.nav_series<br/>文件: backtest/portfolio.py")
-    JOB866023("(生产态 / production) aggregate.ohlc_bar /<br/>聚合.OHLC K线<br/>将Tick数据聚合为OHLC K线（1m/5m<br/>/日线），产出DS-002 market_data.ohlc_bar<br/>文件: data/aggregator.py")
-    JOB866027("(生产态 / production) check.risk_limits /<br/>检查.风险限额<br/>风险限额检查（持仓/回撤/暴露度），产出DS-006<br/>risk.limits<br/>文件: risk/risk_checker.py")
-    JOB866025("(生产态 / production) compute.momentum_20d /<br/>计算.20日动量<br/>计算20日动量因子（收益率/相对强度），产出DS-004<br/>factor.momentum_20d<br/>文件: factor/momentum.py")
-    JOB866024("(生产态 / production) compute.value_factor /<br/>计算.价值因子<br/>计算价值因子（PE/PB/股息率等），产出DS-003<br/>factor.value_factor<br/>文件: factor/value_factor.py")
-    JOB866029("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
-    JOB866028("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
-    JOB866022("(生产态 / production) ingest.ifind_kline /<br/>采集.iFind行情<br/>从同花顺iFind THS_RQ接口采集K线<br/>/Tick行情数据，写入DS-001 market_data.tick<br/>文件: data/ingest_ifind.py")
-    JOB866026("(生产态 / production) synthesize.signal /<br/>合成.信号<br/>合成多因子信号（加权/截面排名<br/>/置信度），产出DS-005 signal.composite<br/>文件: signal_ashare/synthesizer.py")
-    JOB866022 -->|produces / 产出| DS16899
-    JOB866023 -->|produces / 产出| DS16900
-    JOB866024 -->|produces / 产出| DS16901
-    JOB866025 -->|produces / 产出| DS16902
-    JOB866026 -->|produces / 产出| DS16903
-    JOB866027 -->|produces / 产出| DS16904
-    JOB866028 -->|produces / 产出| DS16905
-    JOB866029 -->|produces / 产出| DS16906
-    JOB866029 -->|produces / 产出| DS16907
-    JOB866034 -->|produces / 产出| DS16908
-    JOB866030 -->|produces / 产出| DS16909
-    JOB866031 -->|produces / 产出| DS16910
-    JOB866032 -->|produces / 产出| DS16911
-    JOB866033 -->|produces / 产出| DS16912
-    DS16899 -->|consumed by / 被消费于| JOB866023
-    DS16899 -->|consumed by / 被消费于| JOB866030
-    DS16900 -->|consumed by / 被消费于| JOB866024
-    DS16900 -->|consumed by / 被消费于| JOB866025
-    DS16901 -->|consumed by / 被消费于| JOB866026
-    DS16902 -->|consumed by / 被消费于| JOB866026
-    DS16903 -->|consumed by / 被消费于| JOB866027
-    DS16903 -->|consumed by / 被消费于| JOB866028
-    DS16904 -->|consumed by / 被消费于| JOB866028
-    DS16905 -->|consumed by / 被消费于| JOB866029
-    DS16909 -->|consumed by / 被消费于| JOB866031
-    DS16910 -->|consumed by / 被消费于| JOB866032
-    DS16911 -->|consumed by / 被消费于| JOB866033
-    DS16912 -->|consumed by / 被消费于| JOB866034
-    JOB866023 ~~~ JOB866030
-    DS16900 ~~~ DS16909
-    JOB866024 ~~~ JOB866025
-    JOB866025 ~~~ JOB866031
-    DS16901 ~~~ DS16902
-    DS16902 ~~~ DS16910
-    JOB866026 ~~~ JOB866032
-    DS16903 ~~~ DS16911
-    JOB866027 ~~~ JOB866033
-    DS16904 ~~~ DS16912
-    JOB866028 ~~~ JOB866034
-    DS16905 ~~~ DS16908
-    DS16906 ~~~ DS16907
+    DS20863["(生产态 / production) backtest.fills /<br/>回测.模拟成交<br/>回测模拟成交（symbol/quantity/price/commission<br/>/slippage），撮合引擎产出<br/>契约: - · 域: 回测"]
+    DS20864["(生产态 / production) backtest.nav_series /<br/>回测.净值序列<br/>回测净值序列（timestamp/nav/cash<br/>/positions），组合更新产出<br/>契约: - · 域: 回测"]
+    DS20862["(生产态 / production) backtest.target_weights /<br/>回测.目标权重<br/>回测目标权重（symbol/target_weight<br/>/timestamp），策略根据tick事件生成<br/>契约: - · 域: 回测"]
+    DS20861["(生产态 / production) backtest.tick_event /<br/>回测.Tick事件<br/>回测Tick事件（历史tick重放，含timestamp/symbol<br/>/price/volume），回测内部类型<br/>契约: - · 域: 回测"]
+    DS20860["(生产态 / production) backtest.result /<br/>回测.结果<br/>回测结果（nav_series/sharpe/max_drawdown<br/>/trades），CTR-P1-016 BacktestResult<br/>契约: CTR-P1-016 · 域: 回测"]
+    DS20854["(生产态 / production) factor.momentum_20d /<br/>因子.20日动量<br/>20日动量因子信号（factor_id/symbol/as_of_date<br/>/raw_value/rank_pct），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
+    DS20853["(生产态 / production) factor.value_factor /<br/>因子.价值因子<br/>价值因子信号（factor_id/symbol/as_of_date/raw_<br/>value/normalized_value），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
+    DS20879["(生产态 / production) factor_<br/>analysis.correlation_analyzer /<br/>因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
+    DS20880["(生产态 / production) factor_<br/>analysis.correlation_dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
+    DS20881["(生产态 / production) factor_analysis.decay_<br/>monitor / 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
+    DS20882["(生产态 / production) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
+    DS20883["(生产态 / production) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
+    DS20884["(生产态 / production) factor_analysis.ic_decay<br/>/ IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
+    DS20885["(生产态 / production) factor_analysis.ic_ir_<br/>calc / IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
+    DS20886["(生产态 / production) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
+    DS20887["(生产态 / production) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
+    DS20888["(生产态 / production) factor_<br/>analysis.multifactor_synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
+    DS20889["(生产态 / production) factor_analysis.three_<br/>level_judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
+    DS20858["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
+    DS20852["(生产态 / production) market_data.ohlc_bar /<br/>市场数据.OHLC K线<br/>聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001<br/>derived<br/>契约: CTR-001 · 域: 行情数据"]
+    DS20851["(生产态 / production) market_data.tick /<br/>市场数据.Tick行情<br/>标准化Tick行情（symbol/timestamp/OHLCV/quality_<br/>score），CTR-001 NormalizedMarketData<br/>契约: CTR-001 · 域: 行情数据"]
+    DS20857["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
+    DS20859["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
+    DS20856["(生产态 / production) risk.limits / 风险.限额<br/>风险限额（max_position/max_drawdown/exposure_<br/>limits），CTR-003 RiskLimits<br/>契约: CTR-003 · 域: 风控"]
+    DS20855["(生产态 / production) signal.composite /<br/>信号.合成信号<br/>合成交易信号（多因子加权/截面排名<br/>/置信度），CTR-P1-015 SynthesizedSignal<br/>契约: CTR-P1-015 · 域: 信号遗留设计态"]
+    JOB969552("(生产态 / production) backtest.calc_metrics /<br/>回测.计算指标<br/>回测指标计算（Sharpe/MaxDrawdown<br/>/胜率等，含DSR修正+PIT校验），产出DS-010<br/>backtest.result<br/>文件: backtest/metrics.py")
+    JOB969550("(生产态 / production) backtest.match_fills /<br/>回测.撮合成交<br/>回测撮合引擎（根据目标权重模拟成交，含滑点<br/>/手续费），产出DS-013 backtest.fills<br/>文件: backtest/matching_logic.py")
+    JOB969548("(生产态 / production) backtest.replay_ticks /<br/>回测.Tick重放<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放），产出DS<br/>-011 backtest.tick_event<br/>文件: backtest/tick_replay.py")
+    JOB969549("(生产态 / production) backtest.run_event_driven<br/>/ 回测.事件驱动运行<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重），产出DS-0<br/>12 backtest.target_weights<br/>文件: backtest/event_engine.py")
+    JOB969551("(生产态 / production) backtest.update_portfolio<br/>/ 回测.更新组合<br/>回测组合更新（根据成交更新持仓/现金<br/>/净值），产出DS-014 backtest.nav_series<br/>文件: backtest/portfolio.py")
+    JOB969541("(生产态 / production) aggregate.ohlc_bar /<br/>聚合.OHLC K线<br/>将Tick数据聚合为OHLC K线（1m/5m<br/>/日线），产出DS-002 market_data.ohlc_bar<br/>文件: data/aggregator.py")
+    JOB969567("(生产态 / production) analyze.correlation_<br/>analyzer / 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_analyzer.py")
+    JOB969568("(生产态 / production) analyze.correlation_dedup<br/>/ 因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_dedup.py")
+    JOB969569("(生产态 / production) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/decay_monitor.py")
+    JOB969570("(生产态 / production) analyze.factor_<br/>attribution / 因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_attribution.py")
+    JOB969571("(生产态 / production) analyze.factor_<br/>optimization / 因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_optimization.py")
+    JOB969572("(生产态 / production) analyze.ic_decay /<br/>IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_decay.py")
+    JOB969573("(生产态 / production) analyze.ic_ir_calc / IC<br/>/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_calc.py")
+    JOB969574("(生产态 / production) analyze.ic_ir_evaluator /<br/>IC/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_evaluator.py")
+    JOB969575("(生产态 / production) analyze.layered_backtest<br/>/ 分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/layered_backtest.py")
+    JOB969576("(生产态 / production) analyze.multifactor_<br/>synthesis / 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/multifactor_synthesis.py")
+    JOB969577("(生产态 / production) analyze.three_level_<br/>judgment / 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/three_level_judgment.py")
+    JOB969545("(生产态 / production) check.risk_limits /<br/>检查.风险限额<br/>风险限额检查（持仓/回撤/暴露度），产出DS-006<br/>risk.limits<br/>文件: risk/risk_checker.py")
+    JOB969543("(生产态 / production) compute.momentum_20d /<br/>计算.20日动量<br/>计算20日动量因子（收益率/相对强度），产出DS-004<br/>factor.momentum_20d<br/>文件: factor/momentum.py")
+    JOB969542("(生产态 / production) compute.value_factor /<br/>计算.价值因子<br/>计算价值因子（PE/PB/股息率等），产出DS-003<br/>factor.value_factor<br/>文件: factor/value_factor.py")
+    JOB969547("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
+    JOB969546("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
+    JOB969540("(生产态 / production) ingest.ifind_kline /<br/>采集.iFind行情<br/>从同花顺iFind THS_RQ接口采集K线<br/>/Tick行情数据，写入DS-001 market_data.tick<br/>文件: data/ingest_ifind.py")
+    JOB969544("(生产态 / production) synthesize.signal /<br/>合成.信号<br/>合成多因子信号（加权/截面排名<br/>/置信度），产出DS-005 signal.composite<br/>文件: signal_ashare/synthesizer.py")
+    JOB969540 -->|produces / 产出| DS20851
+    JOB969541 -->|produces / 产出| DS20852
+    JOB969542 -->|produces / 产出| DS20853
+    JOB969543 -->|produces / 产出| DS20854
+    JOB969544 -->|produces / 产出| DS20855
+    JOB969545 -->|produces / 产出| DS20856
+    JOB969546 -->|produces / 产出| DS20857
+    JOB969547 -->|produces / 产出| DS20858
+    JOB969547 -->|produces / 产出| DS20859
+    JOB969552 -->|produces / 产出| DS20860
+    JOB969548 -->|produces / 产出| DS20861
+    JOB969549 -->|produces / 产出| DS20862
+    JOB969550 -->|produces / 产出| DS20863
+    JOB969551 -->|produces / 产出| DS20864
+    JOB969567 -->|produces / 产出| DS20879
+    JOB969568 -->|produces / 产出| DS20880
+    JOB969569 -->|produces / 产出| DS20881
+    JOB969570 -->|produces / 产出| DS20882
+    JOB969571 -->|produces / 产出| DS20883
+    JOB969572 -->|produces / 产出| DS20884
+    JOB969573 -->|produces / 产出| DS20885
+    JOB969574 -->|produces / 产出| DS20886
+    JOB969575 -->|produces / 产出| DS20887
+    JOB969576 -->|produces / 产出| DS20888
+    JOB969577 -->|produces / 产出| DS20889
+    DS20851 -->|consumed by / 被消费于| JOB969541
+    DS20851 -->|consumed by / 被消费于| JOB969548
+    DS20852 -->|consumed by / 被消费于| JOB969542
+    DS20852 -->|consumed by / 被消费于| JOB969543
+    DS20853 -->|consumed by / 被消费于| JOB969544
+    DS20854 -->|consumed by / 被消费于| JOB969544
+    DS20855 -->|consumed by / 被消费于| JOB969545
+    DS20855 -->|consumed by / 被消费于| JOB969546
+    DS20856 -->|consumed by / 被消费于| JOB969546
+    DS20857 -->|consumed by / 被消费于| JOB969547
+    DS20861 -->|consumed by / 被消费于| JOB969549
+    DS20862 -->|consumed by / 被消费于| JOB969550
+    DS20863 -->|consumed by / 被消费于| JOB969551
+    DS20864 -->|consumed by / 被消费于| JOB969552
+    JOB969569 ~~~ JOB969577
+    JOB969577 ~~~ JOB969570
+    JOB969570 ~~~ JOB969575
+    JOB969575 ~~~ JOB969576
+    JOB969576 ~~~ JOB969540
+    JOB969540 ~~~ JOB969571
+    JOB969571 ~~~ JOB969574
+    JOB969574 ~~~ JOB969568
+    JOB969568 ~~~ JOB969573
+    JOB969573 ~~~ JOB969572
+    JOB969572 ~~~ JOB969567
+    DS20881 ~~~ DS20889
+    DS20889 ~~~ DS20882
+    DS20882 ~~~ DS20887
+    DS20887 ~~~ DS20888
+    DS20888 ~~~ DS20851
+    DS20851 ~~~ DS20883
+    DS20883 ~~~ DS20886
+    DS20886 ~~~ DS20880
+    DS20880 ~~~ DS20885
+    DS20885 ~~~ DS20884
+    DS20884 ~~~ DS20879
+    JOB969541 ~~~ JOB969548
+    DS20852 ~~~ DS20861
+    JOB969542 ~~~ JOB969543
+    JOB969543 ~~~ JOB969549
+    DS20853 ~~~ DS20854
+    DS20854 ~~~ DS20862
+    JOB969544 ~~~ JOB969550
+    DS20855 ~~~ DS20863
+    JOB969545 ~~~ JOB969551
+    DS20856 ~~~ DS20864
+    JOB969546 ~~~ JOB969552
+    DS20857 ~~~ DS20860
+    DS20858 ~~~ DS20859
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS16911,DS16912,DS16910,DS16909,DS16908,DS16902,DS16901,DS16906,DS16900,DS16899,DS16905,DS16907,DS16904,DS16903,JOB866034,JOB866032,JOB866030,JOB866031,JOB866033,JOB866023,JOB866027,JOB866025,JOB866024,JOB866029,JOB866028,JOB866022,JOB866026 production
+    class DS20863,DS20864,DS20862,DS20861,DS20860,DS20854,DS20853,DS20879,DS20880,DS20881,DS20882,DS20883,DS20884,DS20885,DS20886,DS20887,DS20888,DS20889,DS20858,DS20852,DS20851,DS20857,DS20859,DS20856,DS20855,JOB969552,JOB969550,JOB969548,JOB969549,JOB969551,JOB969541,JOB969567,JOB969568,JOB969569,JOB969570,JOB969571,JOB969572,JOB969573,JOB969574,JOB969575,JOB969576,JOB969577,JOB969545,JOB969543,JOB969542,JOB969547,JOB969546,JOB969540,JOB969544 production
 ```
 
 ### 设计态的图（仅 design_maturity=design）
 
-> 仅展示蓝图阶段、代码未写的设计态节点（设计态：62 datasets / 数据集, 62 jobs / 作业, 62 edges / 边）。
+> 仅展示蓝图阶段、代码未写的设计态节点（设计态：51 datasets / 数据集, 51 jobs / 作业, 51 edges / 边）。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -589,17 +644,6 @@ flowchart TD
     DS11240["(设计态 / design) factor.barra_exposure_<br/>calculator / Barra因子暴露矩阵<br/>（风险因子敞口）<br/>契约: - · 域: 因子"]
     DS11241["(设计态 / design) factor.barra_risk_budget_<br/>allocator / 风险预算分配方案<br/>（各因子风险贡献权重）<br/>契约: - · 域: 因子"]
     DS11242["(设计态 / design) factor.barra_risk_model /<br/>Barra风险模型协方差矩阵<br/>（因子收益协方差）<br/>契约: - · 域: 因子"]
-    DS11227["(设计态 / design) factor_analysis.correlation_<br/>analyzer / 因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
-    DS11228["(设计态 / design) factor_analysis.correlation_<br/>dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
-    DS11229["(设计态 / design) factor_analysis.decay_monitor<br/>/ 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
-    DS11230["(设计态 / design) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
-    DS11231["(设计态 / design) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
-    DS11232["(设计态 / design) factor_analysis.ic_decay /<br/>IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
-    DS11233["(设计态 / design) factor_analysis.ic_ir_calc /<br/>IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
-    DS11234["(设计态 / design) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
-    DS11235["(设计态 / design) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
-    DS11236["(设计态 / design) factor_analysis.multifactor_<br/>synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
-    DS11237["(设计态 / design) factor_analysis.three_level_<br/>judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
     DS11238["(设计态 / design) factor_analysis.turnover_<br/>analyzer / 换手率分析报告<br/>（因子换手成本评估）<br/>契约: - · 域: 因子"]
     DS11243["(设计态 / design) factor_mining.causal_<br/>validator / 因子因果性验证报告<br/>（统计因果检验结果）<br/>契约: - · 域: 因子"]
     DS11244["(设计态 / design) factor_mining.mining_agent /<br/>候选因子集合<br/>（AI挖掘的新因子列表及回测指标）<br/>契约: - · 域: 因子"]
@@ -619,17 +663,6 @@ flowchart TD
     JOB757614("(设计态 / design) backtest.report_generator /<br/>回测报告生成<br/>（消费回测结果，产出分析/报告）<br/>文件: services/report_generator.py")
     JOB757615("(设计态 / design) backtest.result_comparator /<br/>回测结果比较<br/>（消费回测结果，产出分析/报告）<br/>文件: services/result_comparator.py")
     JOB757616("(设计态 / design) backtest.result_deployer /<br/>回测结果部署<br/>（消费回测结果，产出分析/报告）<br/>文件: services/result_deployer.py")
-    JOB757591("(设计态 / design) analyze.correlation_analyzer<br/>/ 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: correlation_analyzer/")
-    JOB757592("(设计态 / design) analyze.correlation_dedup /<br/>因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: correlation_dedup/")
-    JOB757593("(设计态 / design) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: decay_monitor/")
-    JOB757594("(设计态 / design) analyze.factor_attribution /<br/>因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: factor_attribution/")
-    JOB757595("(设计态 / design) analyze.factor_optimization /<br/>因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: factor_optimization/")
-    JOB757596("(设计态 / design) analyze.ic_decay / IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: ic_decay/")
-    JOB757597("(设计态 / design) analyze.ic_ir_calc / IC/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: ic_ir_calc/")
-    JOB757598("(设计态 / design) analyze.ic_ir_evaluator / IC<br/>/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: ic_ir_evaluator/")
-    JOB757599("(设计态 / design) analyze.layered_backtest /<br/>分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: layered_backtest/")
-    JOB757600("(设计态 / design) analyze.multifactor_synthesis<br/>/ 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: multifactor_synthesis/")
-    JOB757601("(设计态 / design) analyze.three_level_judgment<br/>/ 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: three_level_judgment/")
     JOB757602("(设计态 / design) analyze.turnover_analyzer /<br/>换手率分析<br/>（消费因子信号，产出分析结果）<br/>文件: turnover_analyzer/")
     JOB757577("(设计态 / design) compute.ashare_alpha87 /<br/>计算Alpha#87因子<br/>（消费OHLC K线，产出因子信号）<br/>文件: alpha87/")
     JOB757578("(设计态 / design) compute.ashare_capital_flow /<br/>计算资金流因子<br/>（消费OHLC K线，产出因子信号）<br/>文件: capital_flow/")
@@ -687,17 +720,6 @@ flowchart TD
     JOB757588 -.->|produces / 产出| DS11224
     JOB757589 -.->|produces / 产出| DS11225
     JOB757590 -.->|produces / 产出| DS11226
-    JOB757591 -.->|produces / 产出| DS11227
-    JOB757592 -.->|produces / 产出| DS11228
-    JOB757593 -.->|produces / 产出| DS11229
-    JOB757594 -.->|produces / 产出| DS11230
-    JOB757595 -.->|produces / 产出| DS11231
-    JOB757596 -.->|produces / 产出| DS11232
-    JOB757597 -.->|produces / 产出| DS11233
-    JOB757598 -.->|produces / 产出| DS11234
-    JOB757599 -.->|produces / 产出| DS11235
-    JOB757600 -.->|produces / 产出| DS11236
-    JOB757601 -.->|produces / 产出| DS11237
     JOB757602 -.->|produces / 产出| DS11238
     JOB757603 -.->|produces / 产出| DS11239
     JOB757604 -.->|produces / 产出| DS11240
@@ -735,133 +757,111 @@ flowchart TD
     JOB757636 -.->|produces / 产出| DS11272
     JOB757637 -.->|produces / 产出| DS11273
     JOB757638 -.->|produces / 产出| DS11274
-    JOB757601 ~~~ JOB757619
-    JOB757619 ~~~ JOB757609
-    JOB757609 ~~~ JOB757602
-    JOB757602 ~~~ JOB757611
-    JOB757611 ~~~ JOB757588
-    JOB757588 ~~~ JOB757579
-    JOB757579 ~~~ JOB757591
-    JOB757591 ~~~ JOB757622
-    JOB757622 ~~~ JOB757607
-    JOB757607 ~~~ JOB757618
-    JOB757618 ~~~ JOB757638
-    JOB757638 ~~~ JOB757637
-    JOB757637 ~~~ JOB757583
-    JOB757583 ~~~ JOB757635
-    JOB757635 ~~~ JOB757592
-    JOB757592 ~~~ JOB757596
-    JOB757596 ~~~ JOB757589
-    JOB757589 ~~~ JOB757608
-    JOB757608 ~~~ JOB757617
-    JOB757617 ~~~ JOB757590
-    JOB757590 ~~~ JOB757598
-    JOB757598 ~~~ JOB757593
-    JOB757593 ~~~ JOB757624
-    JOB757624 ~~~ JOB757614
-    JOB757614 ~~~ JOB757612
-    JOB757612 ~~~ JOB757630
-    JOB757630 ~~~ JOB757584
-    JOB757584 ~~~ JOB757582
-    JOB757582 ~~~ JOB757626
-    JOB757626 ~~~ JOB757629
-    JOB757629 ~~~ JOB757616
-    JOB757616 ~~~ JOB757623
-    JOB757623 ~~~ JOB757615
-    JOB757615 ~~~ JOB757610
-    JOB757610 ~~~ JOB757606
-    JOB757606 ~~~ JOB757580
-    JOB757580 ~~~ JOB757633
-    JOB757633 ~~~ JOB757581
-    JOB757581 ~~~ JOB757595
-    JOB757595 ~~~ JOB757585
-    JOB757585 ~~~ JOB757587
-    JOB757587 ~~~ JOB757603
-    JOB757603 ~~~ JOB757597
-    JOB757597 ~~~ JOB757620
-    JOB757620 ~~~ JOB757636
-    JOB757636 ~~~ JOB757605
-    JOB757605 ~~~ JOB757625
-    JOB757625 ~~~ JOB757634
-    JOB757634 ~~~ JOB757628
-    JOB757628 ~~~ JOB757632
-    JOB757632 ~~~ JOB757613
-    JOB757613 ~~~ JOB757594
-    JOB757594 ~~~ JOB757599
-    JOB757599 ~~~ JOB757631
-    JOB757631 ~~~ JOB757586
-    JOB757586 ~~~ JOB757627
-    JOB757627 ~~~ JOB757604
-    JOB757604 ~~~ JOB757578
-    JOB757578 ~~~ JOB757577
-    JOB757577 ~~~ JOB757600
-    JOB757600 ~~~ JOB757621
-    DS11237 ~~~ DS11255
-    DS11255 ~~~ DS11245
-    DS11245 ~~~ DS11238
-    DS11238 ~~~ DS11247
-    DS11247 ~~~ DS11224
-    DS11224 ~~~ DS11215
-    DS11215 ~~~ DS11227
-    DS11227 ~~~ DS11258
-    DS11258 ~~~ DS11243
-    DS11243 ~~~ DS11254
-    DS11254 ~~~ DS11274
-    DS11274 ~~~ DS11273
-    DS11273 ~~~ DS11219
-    DS11219 ~~~ DS11271
-    DS11271 ~~~ DS11228
-    DS11228 ~~~ DS11232
-    DS11232 ~~~ DS11225
-    DS11225 ~~~ DS11244
-    DS11244 ~~~ DS11253
-    DS11253 ~~~ DS11226
-    DS11226 ~~~ DS11234
-    DS11234 ~~~ DS11229
-    DS11229 ~~~ DS11260
-    DS11260 ~~~ DS11250
-    DS11250 ~~~ DS11248
-    DS11248 ~~~ DS11266
-    DS11266 ~~~ DS11220
-    DS11220 ~~~ DS11218
-    DS11218 ~~~ DS11262
-    DS11262 ~~~ DS11265
-    DS11265 ~~~ DS11252
-    DS11252 ~~~ DS11259
-    DS11259 ~~~ DS11251
-    DS11251 ~~~ DS11246
-    DS11246 ~~~ DS11242
-    DS11242 ~~~ DS11216
-    DS11216 ~~~ DS11269
-    DS11269 ~~~ DS11217
-    DS11217 ~~~ DS11231
-    DS11231 ~~~ DS11221
-    DS11221 ~~~ DS11223
-    DS11223 ~~~ DS11239
-    DS11239 ~~~ DS11233
-    DS11233 ~~~ DS11256
-    DS11256 ~~~ DS11272
-    DS11272 ~~~ DS11241
-    DS11241 ~~~ DS11261
-    DS11261 ~~~ DS11270
-    DS11270 ~~~ DS11264
-    DS11264 ~~~ DS11268
-    DS11268 ~~~ DS11249
-    DS11249 ~~~ DS11230
-    DS11230 ~~~ DS11235
-    DS11235 ~~~ DS11267
-    DS11267 ~~~ DS11222
-    DS11222 ~~~ DS11263
-    DS11263 ~~~ DS11240
-    DS11240 ~~~ DS11214
-    DS11214 ~~~ DS11213
-    DS11213 ~~~ DS11236
-    DS11236 ~~~ DS11257
+    JOB757621 ~~~ JOB757583
+    JOB757583 ~~~ JOB757628
+    JOB757628 ~~~ JOB757619
+    JOB757619 ~~~ JOB757611
+    JOB757611 ~~~ JOB757627
+    JOB757627 ~~~ JOB757580
+    JOB757580 ~~~ JOB757629
+    JOB757629 ~~~ JOB757614
+    JOB757614 ~~~ JOB757590
+    JOB757590 ~~~ JOB757616
+    JOB757616 ~~~ JOB757638
+    JOB757638 ~~~ JOB757630
+    JOB757630 ~~~ JOB757604
+    JOB757604 ~~~ JOB757636
+    JOB757636 ~~~ JOB757618
+    JOB757618 ~~~ JOB757603
+    JOB757603 ~~~ JOB757609
+    JOB757609 ~~~ JOB757613
+    JOB757613 ~~~ JOB757622
+    JOB757622 ~~~ JOB757605
+    JOB757605 ~~~ JOB757589
+    JOB757589 ~~~ JOB757615
+    JOB757615 ~~~ JOB757633
+    JOB757633 ~~~ JOB757634
+    JOB757634 ~~~ JOB757608
+    JOB757608 ~~~ JOB757607
+    JOB757607 ~~~ JOB757581
+    JOB757581 ~~~ JOB757623
+    JOB757623 ~~~ JOB757637
+    JOB757637 ~~~ JOB757624
+    JOB757624 ~~~ JOB757578
+    JOB757578 ~~~ JOB757617
+    JOB757617 ~~~ JOB757602
+    JOB757602 ~~~ JOB757612
+    JOB757612 ~~~ JOB757626
+    JOB757626 ~~~ JOB757606
+    JOB757606 ~~~ JOB757577
+    JOB757577 ~~~ JOB757587
+    JOB757587 ~~~ JOB757579
+    JOB757579 ~~~ JOB757584
+    JOB757584 ~~~ JOB757620
+    JOB757620 ~~~ JOB757588
+    JOB757588 ~~~ JOB757585
+    JOB757585 ~~~ JOB757586
+    JOB757586 ~~~ JOB757631
+    JOB757631 ~~~ JOB757582
+    JOB757582 ~~~ JOB757632
+    JOB757632 ~~~ JOB757635
+    JOB757635 ~~~ JOB757625
+    JOB757625 ~~~ JOB757610
+    DS11257 ~~~ DS11219
+    DS11219 ~~~ DS11264
+    DS11264 ~~~ DS11255
+    DS11255 ~~~ DS11247
+    DS11247 ~~~ DS11263
+    DS11263 ~~~ DS11216
+    DS11216 ~~~ DS11265
+    DS11265 ~~~ DS11250
+    DS11250 ~~~ DS11226
+    DS11226 ~~~ DS11252
+    DS11252 ~~~ DS11274
+    DS11274 ~~~ DS11266
+    DS11266 ~~~ DS11240
+    DS11240 ~~~ DS11272
+    DS11272 ~~~ DS11254
+    DS11254 ~~~ DS11239
+    DS11239 ~~~ DS11245
+    DS11245 ~~~ DS11249
+    DS11249 ~~~ DS11258
+    DS11258 ~~~ DS11241
+    DS11241 ~~~ DS11225
+    DS11225 ~~~ DS11251
+    DS11251 ~~~ DS11269
+    DS11269 ~~~ DS11270
+    DS11270 ~~~ DS11244
+    DS11244 ~~~ DS11243
+    DS11243 ~~~ DS11217
+    DS11217 ~~~ DS11259
+    DS11259 ~~~ DS11273
+    DS11273 ~~~ DS11260
+    DS11260 ~~~ DS11214
+    DS11214 ~~~ DS11253
+    DS11253 ~~~ DS11238
+    DS11238 ~~~ DS11248
+    DS11248 ~~~ DS11262
+    DS11262 ~~~ DS11242
+    DS11242 ~~~ DS11213
+    DS11213 ~~~ DS11223
+    DS11223 ~~~ DS11215
+    DS11215 ~~~ DS11220
+    DS11220 ~~~ DS11256
+    DS11256 ~~~ DS11224
+    DS11224 ~~~ DS11221
+    DS11221 ~~~ DS11222
+    DS11222 ~~~ DS11267
+    DS11267 ~~~ DS11218
+    DS11218 ~~~ DS11268
+    DS11268 ~~~ DS11271
+    DS11271 ~~~ DS11261
+    DS11261 ~~~ DS11246
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS11245,DS11246,DS11247,DS11248,DS11249,DS11250,DS11251,DS11252,DS11253,DS11256,DS11254,DS11257,DS11255,DS11258,DS11259,DS11260,DS11261,DS11262,DS11263,DS11264,DS11266,DS11265,DS11213,DS11214,DS11215,DS11216,DS11217,DS11218,DS11219,DS11220,DS11221,DS11222,DS11223,DS11224,DS11225,DS11226,DS11239,DS11240,DS11241,DS11242,DS11227,DS11228,DS11229,DS11230,DS11231,DS11232,DS11233,DS11234,DS11235,DS11236,DS11237,DS11238,DS11243,DS11244,DS11271,DS11272,DS11267,DS11268,DS11269,DS11270,DS11273,DS11274,JOB757609,JOB757610,JOB757611,JOB757612,JOB757613,JOB757614,JOB757615,JOB757616,JOB757591,JOB757592,JOB757593,JOB757594,JOB757595,JOB757596,JOB757597,JOB757598,JOB757599,JOB757600,JOB757601,JOB757602,JOB757577,JOB757578,JOB757579,JOB757580,JOB757581,JOB757582,JOB757583,JOB757584,JOB757585,JOB757586,JOB757587,JOB757588,JOB757589,JOB757590,JOB757603,JOB757604,JOB757605,JOB757606,JOB757617,JOB757620,JOB757618,JOB757621,JOB757619,JOB757622,JOB757623,JOB757624,JOB757625,JOB757626,JOB757627,JOB757628,JOB757630,JOB757629,JOB757607,JOB757608,JOB757635,JOB757636,JOB757631,JOB757632,JOB757633,JOB757634,JOB757637,JOB757638 design
+    class DS11245,DS11246,DS11247,DS11248,DS11249,DS11250,DS11251,DS11252,DS11253,DS11256,DS11254,DS11257,DS11255,DS11258,DS11259,DS11260,DS11261,DS11262,DS11263,DS11264,DS11266,DS11265,DS11213,DS11214,DS11215,DS11216,DS11217,DS11218,DS11219,DS11220,DS11221,DS11222,DS11223,DS11224,DS11225,DS11226,DS11239,DS11240,DS11241,DS11242,DS11238,DS11243,DS11244,DS11271,DS11272,DS11267,DS11268,DS11269,DS11270,DS11273,DS11274,JOB757609,JOB757610,JOB757611,JOB757612,JOB757613,JOB757614,JOB757615,JOB757616,JOB757602,JOB757577,JOB757578,JOB757579,JOB757580,JOB757581,JOB757582,JOB757583,JOB757584,JOB757585,JOB757586,JOB757587,JOB757588,JOB757589,JOB757590,JOB757603,JOB757604,JOB757605,JOB757606,JOB757617,JOB757620,JOB757618,JOB757621,JOB757619,JOB757622,JOB757623,JOB757624,JOB757625,JOB757626,JOB757627,JOB757628,JOB757630,JOB757629,JOB757607,JOB757608,JOB757635,JOB757636,JOB757631,JOB757632,JOB757633,JOB757634,JOB757637,JOB757638 design
 ```
 
 ### 生产数据流图（scope=production，附加视图）
@@ -871,7 +871,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS16908["(生产态 / production) backtest.result /<br/>回测.结果<br/>回测结果（nav_series/sharpe/max_drawdown<br/>/trades），CTR-P1-016 BacktestResult<br/>契约: CTR-P1-016 · 域: 回测"]
+    DS20860["(生产态 / production) backtest.result /<br/>回测.结果<br/>回测结果（nav_series/sharpe/max_drawdown<br/>/trades），CTR-P1-016 BacktestResult<br/>契约: CTR-P1-016 · 域: 回测"]
     DS11253["(设计态 / design) data.feature_store /<br/>特征数据集<br/>（特征值/特征元数据/版本管理）<br/>契约: - · 域: 数据接入层"]
     DS11256["(设计态 / design) data.kline_resampler /<br/>重采样K线数据<br/>（多周期K线/自定义周期重采样）<br/>契约: - · 域: 数据接入层"]
     DS11254["(设计态 / design) data.realtime_push_manager /<br/>实时推送数据流<br/>（实时行情/交易推送）<br/>契约: - · 域: 数据接入层"]
@@ -904,51 +904,51 @@ flowchart TD
     DS11240["(设计态 / design) factor.barra_exposure_<br/>calculator / Barra因子暴露矩阵<br/>（风险因子敞口）<br/>契约: - · 域: 因子"]
     DS11241["(设计态 / design) factor.barra_risk_budget_<br/>allocator / 风险预算分配方案<br/>（各因子风险贡献权重）<br/>契约: - · 域: 因子"]
     DS11242["(设计态 / design) factor.barra_risk_model /<br/>Barra风险模型协方差矩阵<br/>（因子收益协方差）<br/>契约: - · 域: 因子"]
-    DS16902["(生产态 / production) factor.momentum_20d /<br/>因子.20日动量<br/>20日动量因子信号（factor_id/symbol/as_of_date<br/>/raw_value/rank_pct），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
-    DS16901["(生产态 / production) factor.value_factor /<br/>因子.价值因子<br/>价值因子信号（factor_id/symbol/as_of_date/raw_<br/>value/normalized_value），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
-    DS11227["(设计态 / design) factor_analysis.correlation_<br/>analyzer / 因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
-    DS11228["(设计态 / design) factor_analysis.correlation_<br/>dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
-    DS11229["(设计态 / design) factor_analysis.decay_monitor<br/>/ 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
-    DS11230["(设计态 / design) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
-    DS11231["(设计态 / design) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
-    DS11232["(设计态 / design) factor_analysis.ic_decay /<br/>IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
-    DS11233["(设计态 / design) factor_analysis.ic_ir_calc /<br/>IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
-    DS11234["(设计态 / design) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
-    DS11235["(设计态 / design) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
-    DS11236["(设计态 / design) factor_analysis.multifactor_<br/>synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
-    DS11237["(设计态 / design) factor_analysis.three_level_<br/>judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
+    DS20854["(生产态 / production) factor.momentum_20d /<br/>因子.20日动量<br/>20日动量因子信号（factor_id/symbol/as_of_date<br/>/raw_value/rank_pct），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
+    DS20853["(生产态 / production) factor.value_factor /<br/>因子.价值因子<br/>价值因子信号（factor_id/symbol/as_of_date/raw_<br/>value/normalized_value），CTR-002 FactorSignal<br/>契约: CTR-002 · 域: 因子"]
+    DS20879["(生产态 / production) factor_<br/>analysis.correlation_analyzer /<br/>因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
+    DS20880["(生产态 / production) factor_<br/>analysis.correlation_dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
+    DS20881["(生产态 / production) factor_analysis.decay_<br/>monitor / 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
+    DS20882["(生产态 / production) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
+    DS20883["(生产态 / production) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
+    DS20884["(生产态 / production) factor_analysis.ic_decay<br/>/ IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
+    DS20885["(生产态 / production) factor_analysis.ic_ir_<br/>calc / IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
+    DS20886["(生产态 / production) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
+    DS20887["(生产态 / production) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
+    DS20888["(生产态 / production) factor_<br/>analysis.multifactor_synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
+    DS20889["(生产态 / production) factor_analysis.three_<br/>level_judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
     DS11238["(设计态 / design) factor_analysis.turnover_<br/>analyzer / 换手率分析报告<br/>（因子换手成本评估）<br/>契约: - · 域: 因子"]
     DS11243["(设计态 / design) factor_mining.causal_<br/>validator / 因子因果性验证报告<br/>（统计因果检验结果）<br/>契约: - · 域: 因子"]
     DS11244["(设计态 / design) factor_mining.mining_agent /<br/>候选因子集合<br/>（AI挖掘的新因子列表及回测指标）<br/>契约: - · 域: 因子"]
-    DS16906["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
-    DS16900["(生产态 / production) market_data.ohlc_bar /<br/>市场数据.OHLC K线<br/>聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001<br/>derived<br/>契约: CTR-001 · 域: 行情数据"]
-    DS16899["(生产态 / production) market_data.tick /<br/>市场数据.Tick行情<br/>标准化Tick行情（symbol/timestamp/OHLCV/quality_<br/>score），CTR-001 NormalizedMarketData<br/>契约: CTR-001 · 域: 行情数据"]
+    DS20858["(生产态 / production) fill.executed /<br/>成交.已成交<br/>成交回报（symbol/quantity/price/commission<br/>/timestamp），CTR-005 Fill<br/>契约: CTR-005 · 域: 执行核心"]
+    DS20852["(生产态 / production) market_data.ohlc_bar /<br/>市场数据.OHLC K线<br/>聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001<br/>derived<br/>契约: CTR-001 · 域: 行情数据"]
+    DS20851["(生产态 / production) market_data.tick /<br/>市场数据.Tick行情<br/>标准化Tick行情（symbol/timestamp/OHLCV/quality_<br/>score），CTR-001 NormalizedMarketData<br/>契约: CTR-001 · 域: 行情数据"]
     DS11271["(设计态 / design) ml.ai_operator_decisions /<br/>AI操作员决策记录<br/>（模型推理/决策建议/置信度）<br/>契约: - · 域: 训练"]
     DS11272["(设计态 / design) ml.training_dataset /<br/>训练数据集<br/>（特征/标签/样本/版本管理）<br/>契约: - · 域: 训练"]
-    DS16905["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
+    DS20857["(生产态 / production) order.target /<br/>订单.目标订单<br/>目标订单（symbol/side/quantity/price/order_<br/>type），CTR-004 Order<br/>契约: CTR-004 · 域: 组合核心"]
     DS11267["(设计态 / design) portfolio.optimizer /<br/>优化后目标权重<br/>（均值方差/风险平价/Black-Litterman）<br/>契约: - · 域: 组合核心"]
     DS11268["(设计态 / design) portfolio.portfolio_aggregate<br/>/ 组合汇总状态<br/>（多策略组合/资金分配/持仓汇总）<br/>契约: - · 域: 组合核心"]
     DS11269["(设计态 / design) portfolio.strategy_runner /<br/>策略目标权重<br/>（策略信号→目标权重转换）<br/>契约: - · 域: 组合核心"]
     DS11270["(设计态 / design) portfolio.topn_momentum_<br/>strategy / TopN动量信号<br/>（TopN选股/动量排名信号）<br/>契约: - · 域: 组合核心"]
-    DS16907["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
+    DS20859["(生产态 / production) position.snapshot /<br/>持仓.快照<br/>持仓快照（symbol/quantity/avg_cost/market_value<br/>/timestamp），CTR-006 PositionSnapshot<br/>契约: CTR-006 · 域: 执行核心"]
     DS11273["(设计态 / design) risk.drawdown_metric /<br/>回撤指标序列<br/>（最大回撤/当前回撤/恢复时间）<br/>契约: - · 域: 风控"]
-    DS16904["(生产态 / production) risk.limits / 风险.限额<br/>风险限额（max_position/max_drawdown/exposure_<br/>limits），CTR-003 RiskLimits<br/>契约: CTR-003 · 域: 风控"]
-    DS16903["(生产态 / production) signal.composite /<br/>信号.合成信号<br/>合成交易信号（多因子加权/截面排名<br/>/置信度），CTR-P1-015 SynthesizedSignal<br/>契约: CTR-P1-015 · 域: 信号遗留设计态"]
+    DS20856["(生产态 / production) risk.limits / 风险.限额<br/>风险限额（max_position/max_drawdown/exposure_<br/>limits），CTR-003 RiskLimits<br/>契约: CTR-003 · 域: 风控"]
+    DS20855["(生产态 / production) signal.composite /<br/>信号.合成信号<br/>合成交易信号（多因子加权/截面排名<br/>/置信度），CTR-P1-015 SynthesizedSignal<br/>契约: CTR-P1-015 · 域: 信号遗留设计态"]
     DS11274["(设计态 / design) trading.pnl / 盈亏序列<br/>（已实现/未实现盈亏/总盈亏）<br/>契约: - · 域: 交易运营"]
-    JOB866023("(生产态 / production) aggregate.ohlc_bar /<br/>聚合.OHLC K线<br/>将Tick数据聚合为OHLC K线（1m/5m<br/>/日线），产出DS-002 market_data.ohlc_bar<br/>文件: data/aggregator.py")
-    JOB757591("(设计态 / design) analyze.correlation_analyzer<br/>/ 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: correlation_analyzer/")
-    JOB757592("(设计态 / design) analyze.correlation_dedup /<br/>因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: correlation_dedup/")
-    JOB757593("(设计态 / design) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: decay_monitor/")
-    JOB757594("(设计态 / design) analyze.factor_attribution /<br/>因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: factor_attribution/")
-    JOB757595("(设计态 / design) analyze.factor_optimization /<br/>因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: factor_optimization/")
-    JOB757596("(设计态 / design) analyze.ic_decay / IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: ic_decay/")
-    JOB757597("(设计态 / design) analyze.ic_ir_calc / IC/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: ic_ir_calc/")
-    JOB757598("(设计态 / design) analyze.ic_ir_evaluator / IC<br/>/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: ic_ir_evaluator/")
-    JOB757599("(设计态 / design) analyze.layered_backtest /<br/>分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: layered_backtest/")
-    JOB757600("(设计态 / design) analyze.multifactor_synthesis<br/>/ 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: multifactor_synthesis/")
-    JOB757601("(设计态 / design) analyze.three_level_judgment<br/>/ 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: three_level_judgment/")
+    JOB969541("(生产态 / production) aggregate.ohlc_bar /<br/>聚合.OHLC K线<br/>将Tick数据聚合为OHLC K线（1m/5m<br/>/日线），产出DS-002 market_data.ohlc_bar<br/>文件: data/aggregator.py")
+    JOB969567("(生产态 / production) analyze.correlation_<br/>analyzer / 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_analyzer.py")
+    JOB969568("(生产态 / production) analyze.correlation_dedup<br/>/ 因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_dedup.py")
+    JOB969569("(生产态 / production) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/decay_monitor.py")
+    JOB969570("(生产态 / production) analyze.factor_<br/>attribution / 因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_attribution.py")
+    JOB969571("(生产态 / production) analyze.factor_<br/>optimization / 因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_optimization.py")
+    JOB969572("(生产态 / production) analyze.ic_decay /<br/>IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_decay.py")
+    JOB969573("(生产态 / production) analyze.ic_ir_calc / IC<br/>/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_calc.py")
+    JOB969574("(生产态 / production) analyze.ic_ir_evaluator /<br/>IC/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_evaluator.py")
+    JOB969575("(生产态 / production) analyze.layered_backtest<br/>/ 分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/layered_backtest.py")
+    JOB969576("(生产态 / production) analyze.multifactor_<br/>synthesis / 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/multifactor_synthesis.py")
+    JOB969577("(生产态 / production) analyze.three_level_<br/>judgment / 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/three_level_judgment.py")
     JOB757602("(设计态 / design) analyze.turnover_analyzer /<br/>换手率分析<br/>（消费因子信号，产出分析结果）<br/>文件: turnover_analyzer/")
-    JOB866027("(生产态 / production) check.risk_limits /<br/>检查.风险限额<br/>风险限额检查（持仓/回撤/暴露度），产出DS-006<br/>risk.limits<br/>文件: risk/risk_checker.py")
+    JOB969545("(生产态 / production) check.risk_limits /<br/>检查.风险限额<br/>风险限额检查（持仓/回撤/暴露度），产出DS-006<br/>risk.limits<br/>文件: risk/risk_checker.py")
     JOB757577("(设计态 / design) compute.ashare_alpha87 /<br/>计算Alpha#87因子<br/>（消费OHLC K线，产出因子信号）<br/>文件: alpha87/")
     JOB757578("(设计态 / design) compute.ashare_capital_flow /<br/>计算资金流因子<br/>（消费OHLC K线，产出因子信号）<br/>文件: capital_flow/")
     JOB757579("(设计态 / design) compute.ashare_cross_market /<br/>计算跨市场因子<br/>（消费OHLC K线，产出因子信号）<br/>文件: cross_market/")
@@ -967,8 +967,8 @@ flowchart TD
     JOB757604("(设计态 / design) compute.barra_exposure_<br/>calculator / 计算Barra暴露计算<br/>（消费市场数据，产出风险因子）<br/>文件: exposure_calculator/")
     JOB757605("(设计态 / design) compute.barra_risk_budget_<br/>allocator / 计算风险预算分配<br/>（消费市场数据，产出风险因子）<br/>文件: risk_budget_allocator/")
     JOB757606("(设计态 / design) compute.barra_risk_model /<br/>计算Barra风险模型<br/>（消费市场数据，产出风险因子）<br/>文件: risk_model/")
-    JOB866025("(生产态 / production) compute.momentum_20d /<br/>计算.20日动量<br/>计算20日动量因子（收益率/相对强度），产出DS-004<br/>factor.momentum_20d<br/>文件: factor/momentum.py")
-    JOB866024("(生产态 / production) compute.value_factor /<br/>计算.价值因子<br/>计算价值因子（PE/PB/股息率等），产出DS-003<br/>factor.value_factor<br/>文件: factor/value_factor.py")
+    JOB969543("(生产态 / production) compute.momentum_20d /<br/>计算.20日动量<br/>计算20日动量因子（收益率/相对强度），产出DS-004<br/>factor.momentum_20d<br/>文件: factor/momentum.py")
+    JOB969542("(生产态 / production) compute.value_factor /<br/>计算.价值因子<br/>计算价值因子（PE/PB/股息率等），产出DS-003<br/>factor.value_factor<br/>文件: factor/value_factor.py")
     JOB757617("(设计态 / design) data.feature_store /<br/>特征存储管理<br/>（数据采集/管理服务）<br/>文件: feature_store/")
     JOB757620("(设计态 / design) data.kline_resampler /<br/>K线重采样<br/>（数据采集/管理服务）<br/>文件: zephyr.data.kline_resampler")
     JOB757618("(设计态 / design) data.realtime_push_manager /<br/>实时推送管理<br/>（数据采集/管理服务）<br/>文件: realtime_push_manager/")
@@ -983,9 +983,9 @@ flowchart TD
     JOB757628("(设计态 / design) ex_core.fill_handler /<br/>成交处理<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: ex_core/fill_handler.py")
     JOB757630("(设计态 / design) ex_core.live_portfolio /<br/>实盘组合<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: services/live_portfolio.py")
     JOB757629("(设计态 / design) ex_core.position_tracker /<br/>持仓跟踪<br/>（消费成交/持仓数据，产出执行核心记录）<br/>文件: position_tracker/")
-    JOB866029("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
-    JOB866028("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
-    JOB866022("(生产态 / production) ingest.ifind_kline /<br/>采集.iFind行情<br/>从同花顺iFind THS_RQ接口采集K线<br/>/Tick行情数据，写入DS-001 market_data.tick<br/>文件: data/ingest_ifind.py")
+    JOB969547("(生产态 / production) execute.order / 执行.订单<br/>执行订单（实盘/模拟），产出DS-008 fill.executed<br/>+ DS-009 position.snapshot<br/>文件: ex_core/executor.py")
+    JOB969546("(生产态 / production) generate.order / 生成.订单<br/>根据信号+风险限额生成目标订单，产出DS-007<br/>order.target<br/>文件: pf_core/order_generator.py")
+    JOB969540("(生产态 / production) ingest.ifind_kline /<br/>采集.iFind行情<br/>从同花顺iFind THS_RQ接口采集K线<br/>/Tick行情数据，写入DS-001 market_data.tick<br/>文件: data/ingest_ifind.py")
     JOB757607("(设计态 / design) mine.causal_validator /<br/>因果性验证<br/>（消费因子数据，产出挖掘/验证结果）<br/>文件: causal_validator/")
     JOB757608("(设计态 / design) mine.mining_agent / 因子挖掘<br/>（消费因子数据，产出挖掘/验证结果）<br/>文件: mining_agent/")
     JOB757635("(设计态 / design) ml_train.ai_operator /<br/>AI操作员决策<br/>（消费信号，产出AI辅助决策）<br/>文件: ai_operator/")
@@ -995,8 +995,17 @@ flowchart TD
     JOB757633("(设计态 / design) pf_core.strategy_runner /<br/>策略运行<br/>（消费信号，产出组合/权重）<br/>文件: strategy_engine/strategy_runner.py")
     JOB757634("(设计态 / design) pf_core.topn_momentum_<br/>strategy / TopN动量策略<br/>（消费信号，产出组合/权重）<br/>文件: pf_core/topn_momentum_strategy.py")
     JOB757637("(设计态 / design) risk.track_drawdown / 回撤跟踪<br/>（消费持仓快照，产出回撤指标）<br/>文件: drawdown_tracker/")
-    JOB866026("(生产态 / production) synthesize.signal /<br/>合成.信号<br/>合成多因子信号（加权/截面排名<br/>/置信度），产出DS-005 signal.composite<br/>文件: signal_ashare/synthesizer.py")
+    JOB969544("(生产态 / production) synthesize.signal /<br/>合成.信号<br/>合成多因子信号（加权/截面排名<br/>/置信度），产出DS-005 signal.composite<br/>文件: signal_ashare/synthesizer.py")
     JOB757638("(设计态 / design) trading.calc_pnl / PnL计算<br/>（消费成交数据，产出盈亏）<br/>文件: pnl_calculator/")
+    JOB969540 -->|produces / 产出| DS20851
+    JOB969541 -->|produces / 产出| DS20852
+    JOB969542 -->|produces / 产出| DS20853
+    JOB969543 -->|produces / 产出| DS20854
+    JOB969544 -->|produces / 产出| DS20855
+    JOB969545 -->|produces / 产出| DS20856
+    JOB969546 -->|produces / 产出| DS20857
+    JOB969547 -->|produces / 产出| DS20858
+    JOB969547 -->|produces / 产出| DS20859
     JOB757577 -.->|produces / 产出| DS11213
     JOB757578 -.->|produces / 产出| DS11214
     JOB757579 -.->|produces / 产出| DS11215
@@ -1011,17 +1020,15 @@ flowchart TD
     JOB757588 -.->|produces / 产出| DS11224
     JOB757589 -.->|produces / 产出| DS11225
     JOB757590 -.->|produces / 产出| DS11226
-    JOB757591 -.->|produces / 产出| DS11227
-    JOB757592 -.->|produces / 产出| DS11228
-    JOB757593 -.->|produces / 产出| DS11229
-    JOB757594 -.->|produces / 产出| DS11230
-    JOB757595 -.->|produces / 产出| DS11231
-    JOB757596 -.->|produces / 产出| DS11232
-    JOB757597 -.->|produces / 产出| DS11233
-    JOB757598 -.->|produces / 产出| DS11234
-    JOB757599 -.->|produces / 产出| DS11235
-    JOB757600 -.->|produces / 产出| DS11236
-    JOB757601 -.->|produces / 产出| DS11237
+    JOB969567 -->|produces / 产出| DS20879
+    JOB969568 -->|produces / 产出| DS20880
+    JOB969569 -->|produces / 产出| DS20881
+    JOB969570 -->|produces / 产出| DS20882
+    JOB969571 -->|produces / 产出| DS20883
+    JOB969572 -->|produces / 产出| DS20884
+    JOB969573 -->|produces / 产出| DS20885
+    JOB969574 -->|produces / 产出| DS20886
+    JOB969575 -->|produces / 产出| DS20887
     JOB757602 -.->|produces / 产出| DS11238
     JOB757603 -.->|produces / 产出| DS11239
     JOB757604 -.->|produces / 产出| DS11240
@@ -1050,143 +1057,136 @@ flowchart TD
     JOB757635 -.->|produces / 产出| DS11271
     JOB757636 -.->|produces / 产出| DS11272
     JOB757637 -.->|produces / 产出| DS11273
+    JOB969576 -->|produces / 产出| DS20888
+    JOB969577 -->|produces / 产出| DS20889
+    DS20851 -->|consumed by / 被消费于| JOB969541
+    DS20852 -->|consumed by / 被消费于| JOB969542
+    DS20852 -->|consumed by / 被消费于| JOB969543
+    DS20853 -->|consumed by / 被消费于| JOB969544
+    DS20854 -->|consumed by / 被消费于| JOB969544
+    DS20855 -->|consumed by / 被消费于| JOB969545
     JOB757638 -.->|produces / 产出| DS11274
-    JOB866022 -->|produces / 产出| DS16899
-    JOB866023 -->|produces / 产出| DS16900
-    JOB866024 -->|produces / 产出| DS16901
-    JOB866025 -->|produces / 产出| DS16902
-    JOB866026 -->|produces / 产出| DS16903
-    JOB866027 -->|produces / 产出| DS16904
-    JOB866028 -->|produces / 产出| DS16905
-    JOB866029 -->|produces / 产出| DS16906
-    JOB866029 -->|produces / 产出| DS16907
-    DS16899 -->|consumed by / 被消费于| JOB866023
-    DS16900 -->|consumed by / 被消费于| JOB866024
-    DS16900 -->|consumed by / 被消费于| JOB866025
-    DS16901 -->|consumed by / 被消费于| JOB866026
-    DS16902 -->|consumed by / 被消费于| JOB866026
-    DS16903 -->|consumed by / 被消费于| JOB866027
-    DS16903 -->|consumed by / 被消费于| JOB866028
-    DS16904 -->|consumed by / 被消费于| JOB866028
-    DS16905 -->|consumed by / 被消费于| JOB866029
-    JOB757601 ~~~ JOB757619
-    JOB757619 ~~~ JOB757602
-    JOB757602 ~~~ JOB757588
-    JOB757588 ~~~ JOB757579
-    JOB757579 ~~~ JOB757591
-    JOB757591 ~~~ JOB757622
-    JOB757622 ~~~ JOB757607
-    JOB757607 ~~~ JOB757618
-    JOB757618 ~~~ JOB757638
-    JOB757638 ~~~ JOB757637
-    JOB757637 ~~~ JOB757583
-    JOB757583 ~~~ JOB757635
-    JOB757635 ~~~ JOB757592
-    JOB757592 ~~~ JOB757596
-    JOB757596 ~~~ JOB757589
-    JOB757589 ~~~ JOB757608
-    JOB757608 ~~~ JOB757617
-    JOB757617 ~~~ JOB757590
-    JOB757590 ~~~ JOB757598
-    JOB757598 ~~~ JOB757593
-    JOB757593 ~~~ JOB757624
-    JOB757624 ~~~ JOB757630
-    JOB757630 ~~~ JOB757584
-    JOB757584 ~~~ JOB757582
-    JOB757582 ~~~ JOB757626
-    JOB757626 ~~~ JOB757629
-    JOB757629 ~~~ JOB757623
-    JOB757623 ~~~ DS16908
-    DS16908 ~~~ JOB757606
-    JOB757606 ~~~ JOB757580
-    JOB757580 ~~~ JOB757633
-    JOB757633 ~~~ JOB757581
-    JOB757581 ~~~ JOB757595
-    JOB757595 ~~~ JOB757585
-    JOB757585 ~~~ JOB757587
-    JOB757587 ~~~ JOB757603
-    JOB757603 ~~~ JOB757597
-    JOB757597 ~~~ JOB757620
-    JOB757620 ~~~ JOB866022
-    JOB866022 ~~~ JOB757636
-    JOB757636 ~~~ JOB757605
-    JOB757605 ~~~ JOB757625
-    JOB757625 ~~~ JOB757634
-    JOB757634 ~~~ JOB757628
-    JOB757628 ~~~ JOB757632
-    JOB757632 ~~~ JOB757594
-    JOB757594 ~~~ JOB757599
-    JOB757599 ~~~ JOB757631
-    JOB757631 ~~~ JOB757586
-    JOB757586 ~~~ JOB757627
-    JOB757627 ~~~ JOB757604
-    JOB757604 ~~~ JOB757578
-    JOB757578 ~~~ JOB757577
-    JOB757577 ~~~ JOB757600
-    JOB757600 ~~~ JOB757621
-    DS11237 ~~~ DS11255
-    DS11255 ~~~ DS11238
-    DS11238 ~~~ DS11224
-    DS11224 ~~~ DS11215
-    DS11215 ~~~ DS11227
-    DS11227 ~~~ DS11258
-    DS11258 ~~~ DS11243
-    DS11243 ~~~ DS11254
-    DS11254 ~~~ DS11274
-    DS11274 ~~~ DS11273
-    DS11273 ~~~ DS11219
-    DS11219 ~~~ DS11271
-    DS11271 ~~~ DS11228
-    DS11228 ~~~ DS11232
-    DS11232 ~~~ DS11225
-    DS11225 ~~~ DS11244
-    DS11244 ~~~ DS11253
-    DS11253 ~~~ DS11226
-    DS11226 ~~~ DS11234
-    DS11234 ~~~ DS11229
-    DS11229 ~~~ DS11260
-    DS11260 ~~~ DS11266
-    DS11266 ~~~ DS11220
-    DS11220 ~~~ DS11218
-    DS11218 ~~~ DS11262
-    DS11262 ~~~ DS11265
-    DS11265 ~~~ DS11259
-    DS11259 ~~~ DS11242
-    DS11242 ~~~ DS11216
-    DS11216 ~~~ DS11269
-    DS11269 ~~~ DS11217
-    DS11217 ~~~ DS11231
-    DS11231 ~~~ DS11221
-    DS11221 ~~~ DS11223
-    DS11223 ~~~ DS11239
-    DS11239 ~~~ DS11233
-    DS11233 ~~~ DS11256
-    DS11256 ~~~ DS16899
-    DS16899 ~~~ DS11272
-    DS11272 ~~~ DS11241
-    DS11241 ~~~ DS11261
-    DS11261 ~~~ DS11270
-    DS11270 ~~~ DS11264
-    DS11264 ~~~ DS11268
-    DS11268 ~~~ DS11230
-    DS11230 ~~~ DS11235
-    DS11235 ~~~ DS11267
-    DS11267 ~~~ DS11222
-    DS11222 ~~~ DS11263
-    DS11263 ~~~ DS11240
-    DS11240 ~~~ DS11214
-    DS11214 ~~~ DS11213
-    DS11213 ~~~ DS11236
-    DS11236 ~~~ DS11257
-    JOB866024 ~~~ JOB866025
-    DS16901 ~~~ DS16902
-    DS16906 ~~~ DS16907
+    DS20855 -->|consumed by / 被消费于| JOB969546
+    DS20856 -->|consumed by / 被消费于| JOB969546
+    DS20857 -->|consumed by / 被消费于| JOB969547
+    JOB757621 ~~~ JOB757583
+    JOB757583 ~~~ JOB757628
+    JOB757628 ~~~ JOB757619
+    JOB757619 ~~~ JOB757627
+    JOB757627 ~~~ DS20860
+    DS20860 ~~~ JOB969577
+    JOB969577 ~~~ JOB757580
+    JOB757580 ~~~ JOB757629
+    JOB757629 ~~~ JOB757590
+    JOB757590 ~~~ JOB757638
+    JOB757638 ~~~ JOB757630
+    JOB757630 ~~~ JOB757604
+    JOB757604 ~~~ JOB757636
+    JOB757636 ~~~ JOB757618
+    JOB757618 ~~~ JOB969576
+    JOB969576 ~~~ JOB757603
+    JOB757603 ~~~ JOB969569
+    JOB969569 ~~~ JOB969575
+    JOB969575 ~~~ JOB757622
+    JOB757622 ~~~ JOB757605
+    JOB757605 ~~~ JOB757589
+    JOB757589 ~~~ JOB969540
+    JOB969540 ~~~ JOB969571
+    JOB969571 ~~~ JOB969574
+    JOB969574 ~~~ JOB757633
+    JOB757633 ~~~ JOB969572
+    JOB969572 ~~~ JOB757634
+    JOB757634 ~~~ JOB757608
+    JOB757608 ~~~ JOB757607
+    JOB757607 ~~~ JOB757581
+    JOB757581 ~~~ JOB757623
+    JOB757623 ~~~ JOB757637
+    JOB757637 ~~~ JOB757624
+    JOB757624 ~~~ JOB757578
+    JOB757578 ~~~ JOB757617
+    JOB757617 ~~~ JOB757602
+    JOB757602 ~~~ JOB757626
+    JOB757626 ~~~ JOB757606
+    JOB757606 ~~~ JOB757577
+    JOB757577 ~~~ JOB757587
+    JOB757587 ~~~ JOB757579
+    JOB757579 ~~~ JOB757584
+    JOB757584 ~~~ JOB757620
+    JOB757620 ~~~ JOB969573
+    JOB969573 ~~~ JOB969567
+    JOB969567 ~~~ JOB757588
+    JOB757588 ~~~ JOB757585
+    JOB757585 ~~~ JOB757586
+    JOB757586 ~~~ JOB757631
+    JOB757631 ~~~ JOB757582
+    JOB757582 ~~~ JOB969570
+    JOB969570 ~~~ JOB757632
+    JOB757632 ~~~ JOB757635
+    JOB757635 ~~~ JOB969568
+    JOB969568 ~~~ JOB757625
+    DS11257 ~~~ DS11219
+    DS11219 ~~~ DS11264
+    DS11264 ~~~ DS11255
+    DS11255 ~~~ DS11263
+    DS11263 ~~~ DS20889
+    DS20889 ~~~ DS11216
+    DS11216 ~~~ DS11265
+    DS11265 ~~~ DS11226
+    DS11226 ~~~ DS11274
+    DS11274 ~~~ DS11266
+    DS11266 ~~~ DS11240
+    DS11240 ~~~ DS11272
+    DS11272 ~~~ DS11254
+    DS11254 ~~~ DS20888
+    DS20888 ~~~ DS11239
+    DS11239 ~~~ DS20881
+    DS20881 ~~~ DS20887
+    DS20887 ~~~ DS11258
+    DS11258 ~~~ DS11241
+    DS11241 ~~~ DS11225
+    DS11225 ~~~ DS20851
+    DS20851 ~~~ DS20883
+    DS20883 ~~~ DS20886
+    DS20886 ~~~ DS11269
+    DS11269 ~~~ DS20884
+    DS20884 ~~~ DS11270
+    DS11270 ~~~ DS11244
+    DS11244 ~~~ DS11243
+    DS11243 ~~~ DS11217
+    DS11217 ~~~ DS11259
+    DS11259 ~~~ DS11273
+    DS11273 ~~~ DS11260
+    DS11260 ~~~ DS11214
+    DS11214 ~~~ DS11253
+    DS11253 ~~~ DS11238
+    DS11238 ~~~ DS11262
+    DS11262 ~~~ DS11242
+    DS11242 ~~~ DS11213
+    DS11213 ~~~ DS11223
+    DS11223 ~~~ DS11215
+    DS11215 ~~~ DS11220
+    DS11220 ~~~ DS11256
+    DS11256 ~~~ DS20885
+    DS20885 ~~~ DS20879
+    DS20879 ~~~ DS11224
+    DS11224 ~~~ DS11221
+    DS11221 ~~~ DS11222
+    DS11222 ~~~ DS11267
+    DS11267 ~~~ DS11218
+    DS11218 ~~~ DS20882
+    DS20882 ~~~ DS11268
+    DS11268 ~~~ DS11271
+    DS11271 ~~~ DS20880
+    DS20880 ~~~ DS11261
+    JOB969542 ~~~ JOB969543
+    DS20853 ~~~ DS20854
+    DS20858 ~~~ DS20859
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS16908,DS16902,DS16901,DS16906,DS16900,DS16899,DS16905,DS16907,DS16904,DS16903,JOB866023,JOB866027,JOB866025,JOB866024,JOB866029,JOB866028,JOB866022,JOB866026 production
-    class DS11253,DS11256,DS11254,DS11257,DS11255,DS11258,DS11259,DS11260,DS11261,DS11262,DS11263,DS11264,DS11266,DS11265,DS11213,DS11214,DS11215,DS11216,DS11217,DS11218,DS11219,DS11220,DS11221,DS11222,DS11223,DS11224,DS11225,DS11226,DS11239,DS11240,DS11241,DS11242,DS11227,DS11228,DS11229,DS11230,DS11231,DS11232,DS11233,DS11234,DS11235,DS11236,DS11237,DS11238,DS11243,DS11244,DS11271,DS11272,DS11267,DS11268,DS11269,DS11270,DS11273,DS11274,JOB757591,JOB757592,JOB757593,JOB757594,JOB757595,JOB757596,JOB757597,JOB757598,JOB757599,JOB757600,JOB757601,JOB757602,JOB757577,JOB757578,JOB757579,JOB757580,JOB757581,JOB757582,JOB757583,JOB757584,JOB757585,JOB757586,JOB757587,JOB757588,JOB757589,JOB757590,JOB757603,JOB757604,JOB757605,JOB757606,JOB757617,JOB757620,JOB757618,JOB757621,JOB757619,JOB757622,JOB757623,JOB757624,JOB757625,JOB757626,JOB757627,JOB757628,JOB757630,JOB757629,JOB757607,JOB757608,JOB757635,JOB757636,JOB757631,JOB757632,JOB757633,JOB757634,JOB757637,JOB757638 design
+    class DS20860,DS20854,DS20853,DS20879,DS20880,DS20881,DS20882,DS20883,DS20884,DS20885,DS20886,DS20887,DS20888,DS20889,DS20858,DS20852,DS20851,DS20857,DS20859,DS20856,DS20855,JOB969541,JOB969567,JOB969568,JOB969569,JOB969570,JOB969571,JOB969572,JOB969573,JOB969574,JOB969575,JOB969576,JOB969577,JOB969545,JOB969543,JOB969542,JOB969547,JOB969546,JOB969540,JOB969544 production
+    class DS11253,DS11256,DS11254,DS11257,DS11255,DS11258,DS11259,DS11260,DS11261,DS11262,DS11263,DS11264,DS11266,DS11265,DS11213,DS11214,DS11215,DS11216,DS11217,DS11218,DS11219,DS11220,DS11221,DS11222,DS11223,DS11224,DS11225,DS11226,DS11239,DS11240,DS11241,DS11242,DS11238,DS11243,DS11244,DS11271,DS11272,DS11267,DS11268,DS11269,DS11270,DS11273,DS11274,JOB757602,JOB757577,JOB757578,JOB757579,JOB757580,JOB757581,JOB757582,JOB757583,JOB757584,JOB757585,JOB757586,JOB757587,JOB757588,JOB757589,JOB757590,JOB757603,JOB757604,JOB757605,JOB757606,JOB757617,JOB757620,JOB757618,JOB757621,JOB757619,JOB757622,JOB757623,JOB757624,JOB757625,JOB757626,JOB757627,JOB757628,JOB757630,JOB757629,JOB757607,JOB757608,JOB757635,JOB757636,JOB757631,JOB757632,JOB757633,JOB757634,JOB757637,JOB757638 design
 ```
 
 ### 回测内部数据流图（scope=backtest_internal，附加视图）
@@ -1199,28 +1199,32 @@ flowchart TD
     DS11245["(设计态 / design) backtest.anomaly_diagnoser_<br/>result / 回测异常诊断报告<br/>（识别异常收益/过拟合信号）<br/>契约: - · 域: 回测"]
     DS11246["(设计态 / design) backtest.data_quality_checker_<br/>result / 数据质量报告<br/>（缺失值/异常值/完整性检查）<br/>契约: - · 域: 回测"]
     DS11247["(设计态 / design) backtest.decay_monitor_result<br/>/ 策略衰减报告<br/>（策略性能随时间衰减趋势）<br/>契约: - · 域: 回测"]
-    DS16911["(生产态 / production) backtest.fills /<br/>回测.模拟成交<br/>回测模拟成交（symbol/quantity/price/commission<br/>/slippage），撮合引擎产出<br/>契约: - · 域: 回测"]
+    DS20863["(生产态 / production) backtest.fills /<br/>回测.模拟成交<br/>回测模拟成交（symbol/quantity/price/commission<br/>/slippage），撮合引擎产出<br/>契约: - · 域: 回测"]
     DS11248["(设计态 / design) backtest.nan_processor_result<br/>/ 清洗后数据<br/>（NaN值处理/插值/标记）<br/>契约: - · 域: 回测"]
-    DS16912["(生产态 / production) backtest.nav_series /<br/>回测.净值序列<br/>回测净值序列（timestamp/nav/cash<br/>/positions），组合更新产出<br/>契约: - · 域: 回测"]
+    DS20864["(生产态 / production) backtest.nav_series /<br/>回测.净值序列<br/>回测净值序列（timestamp/nav/cash<br/>/positions），组合更新产出<br/>契约: - · 域: 回测"]
     DS11249["(设计态 / design) backtest.param_analyzer_<br/>result / 参数敏感性分析报告<br/>（参数变化对收益的影响）<br/>契约: - · 域: 回测"]
     DS11250["(设计态 / design) backtest.report_generator_<br/>result / 回测报告<br/>（净值/回撤/交易明细/绩效归因）<br/>契约: - · 域: 回测"]
     DS11251["(设计态 / design) backtest.result_comparator_<br/>result / 回测对比报告<br/>（多策略/多周期收益对比）<br/>契约: - · 域: 回测"]
     DS11252["(设计态 / design) backtest.result_deployer_<br/>result / 部署状态记录<br/>（回测结果发布到外部系统）<br/>契约: - · 域: 回测"]
-    DS16910["(生产态 / production) backtest.target_weights /<br/>回测.目标权重<br/>回测目标权重（symbol/target_weight<br/>/timestamp），策略根据tick事件生成<br/>契约: - · 域: 回测"]
-    DS16909["(生产态 / production) backtest.tick_event /<br/>回测.Tick事件<br/>回测Tick事件（历史tick重放，含timestamp/symbol<br/>/price/volume），回测内部类型<br/>契约: - · 域: 回测"]
+    DS20862["(生产态 / production) backtest.target_weights /<br/>回测.目标权重<br/>回测目标权重（symbol/target_weight<br/>/timestamp），策略根据tick事件生成<br/>契约: - · 域: 回测"]
+    DS20861["(生产态 / production) backtest.tick_event /<br/>回测.Tick事件<br/>回测Tick事件（历史tick重放，含timestamp/symbol<br/>/price/volume），回测内部类型<br/>契约: - · 域: 回测"]
     JOB757609("(设计态 / design) backtest.anomaly_diagnoser /<br/>回测异常诊断<br/>（消费回测结果，产出分析/报告）<br/>文件: services/anomaly_diagnoser.py")
-    JOB866034("(生产态 / production) backtest.calc_metrics /<br/>回测.计算指标<br/>回测指标计算（Sharpe/MaxDrawdown<br/>/胜率等，含DSR修正+PIT校验），产出DS-010<br/>backtest.result<br/>文件: backtest/metrics.py")
+    JOB969552("(生产态 / production) backtest.calc_metrics /<br/>回测.计算指标<br/>回测指标计算（Sharpe/MaxDrawdown<br/>/胜率等，含DSR修正+PIT校验），产出DS-010<br/>backtest.result<br/>文件: backtest/metrics.py")
     JOB757610("(设计态 / design) backtest.data_quality_checker<br/>/ 回测数据质量检查<br/>（消费回测结果，产出分析/报告）<br/>文件: services/data_quality_checker.py")
     JOB757611("(设计态 / design) backtest.decay_monitor /<br/>策略衰减监控<br/>（消费回测结果，产出分析/报告）<br/>文件: services/decay_monitor.py")
-    JOB866032("(生产态 / production) backtest.match_fills /<br/>回测.撮合成交<br/>回测撮合引擎（根据目标权重模拟成交，含滑点<br/>/手续费），产出DS-013 backtest.fills<br/>文件: backtest/matching_logic.py")
+    JOB969550("(生产态 / production) backtest.match_fills /<br/>回测.撮合成交<br/>回测撮合引擎（根据目标权重模拟成交，含滑点<br/>/手续费），产出DS-013 backtest.fills<br/>文件: backtest/matching_logic.py")
     JOB757612("(设计态 / design) backtest.nan_processor /<br/>NaN数据处理<br/>（消费回测结果，产出分析/报告）<br/>文件: services/nan_processor.py")
     JOB757613("(设计态 / design) backtest.param_analyzer /<br/>参数分析<br/>（消费回测结果，产出分析/报告）<br/>文件: services/param_analyzer.py")
-    JOB866030("(生产态 / production) backtest.replay_ticks /<br/>回测.Tick重放<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放），产出DS<br/>-011 backtest.tick_event<br/>文件: backtest/tick_replay.py")
+    JOB969548("(生产态 / production) backtest.replay_ticks /<br/>回测.Tick重放<br/>历史Tick重放<br/>（从DS-001读取历史tick，按时间顺序重放），产出DS<br/>-011 backtest.tick_event<br/>文件: backtest/tick_replay.py")
     JOB757614("(设计态 / design) backtest.report_generator /<br/>回测报告生成<br/>（消费回测结果，产出分析/报告）<br/>文件: services/report_generator.py")
     JOB757615("(设计态 / design) backtest.result_comparator /<br/>回测结果比较<br/>（消费回测结果，产出分析/报告）<br/>文件: services/result_comparator.py")
     JOB757616("(设计态 / design) backtest.result_deployer /<br/>回测结果部署<br/>（消费回测结果，产出分析/报告）<br/>文件: services/result_deployer.py")
-    JOB866031("(生产态 / production) backtest.run_event_driven<br/>/ 回测.事件驱动运行<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重），产出DS-0<br/>12 backtest.target_weights<br/>文件: backtest/event_engine.py")
-    JOB866033("(生产态 / production) backtest.update_portfolio<br/>/ 回测.更新组合<br/>回测组合更新（根据成交更新持仓/现金<br/>/净值），产出DS-014 backtest.nav_series<br/>文件: backtest/portfolio.py")
+    JOB969549("(生产态 / production) backtest.run_event_driven<br/>/ 回测.事件驱动运行<br/>事件驱动回测引擎<br/>（消费tick事件，运行策略生成目标权重），产出DS-0<br/>12 backtest.target_weights<br/>文件: backtest/event_engine.py")
+    JOB969551("(生产态 / production) backtest.update_portfolio<br/>/ 回测.更新组合<br/>回测组合更新（根据成交更新持仓/现金<br/>/净值），产出DS-014 backtest.nav_series<br/>文件: backtest/portfolio.py")
+    JOB969548 -->|produces / 产出| DS20861
+    JOB969549 -->|produces / 产出| DS20862
+    JOB969550 -->|produces / 产出| DS20863
+    JOB969551 -->|produces / 产出| DS20864
     JOB757609 -.->|produces / 产出| DS11245
     JOB757610 -.->|produces / 产出| DS11246
     JOB757611 -.->|produces / 产出| DS11247
@@ -1229,35 +1233,31 @@ flowchart TD
     JOB757614 -.->|produces / 产出| DS11250
     JOB757615 -.->|produces / 产出| DS11251
     JOB757616 -.->|produces / 产出| DS11252
-    JOB866030 -->|produces / 产出| DS16909
-    JOB866031 -->|produces / 产出| DS16910
-    JOB866032 -->|produces / 产出| DS16911
-    JOB866033 -->|produces / 产出| DS16912
-    DS16909 -->|consumed by / 被消费于| JOB866031
-    DS16910 -->|consumed by / 被消费于| JOB866032
-    DS16911 -->|consumed by / 被消费于| JOB866033
-    DS16912 -->|consumed by / 被消费于| JOB866034
-    JOB757613 ~~~ JOB757616
-    JOB757616 ~~~ JOB757609
-    JOB757609 ~~~ JOB757615
+    DS20861 -->|consumed by / 被消费于| JOB969549
+    DS20862 -->|consumed by / 被消费于| JOB969550
+    DS20863 -->|consumed by / 被消费于| JOB969551
+    DS20864 -->|consumed by / 被消费于| JOB969552
+    JOB757609 ~~~ JOB757611
+    JOB757611 ~~~ JOB757612
+    JOB757612 ~~~ JOB757613
+    JOB757613 ~~~ JOB757614
+    JOB757614 ~~~ JOB969548
+    JOB969548 ~~~ JOB757616
+    JOB757616 ~~~ JOB757615
     JOB757615 ~~~ JOB757610
-    JOB757610 ~~~ JOB757611
-    JOB757611 ~~~ JOB866030
-    JOB866030 ~~~ JOB757614
-    JOB757614 ~~~ JOB757612
-    DS11249 ~~~ DS11252
-    DS11252 ~~~ DS11245
-    DS11245 ~~~ DS11251
+    DS11245 ~~~ DS11247
+    DS11247 ~~~ DS11248
+    DS11248 ~~~ DS11249
+    DS11249 ~~~ DS11250
+    DS11250 ~~~ DS20861
+    DS20861 ~~~ DS11252
+    DS11252 ~~~ DS11251
     DS11251 ~~~ DS11246
-    DS11246 ~~~ DS11247
-    DS11247 ~~~ DS16909
-    DS16909 ~~~ DS11250
-    DS11250 ~~~ DS11248
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS16911,DS16912,DS16910,DS16909,JOB866034,JOB866032,JOB866030,JOB866031,JOB866033 production
+    class DS20863,DS20864,DS20862,DS20861,JOB969552,JOB969550,JOB969548,JOB969549,JOB969551 production
     class DS11245,DS11246,DS11247,DS11248,DS11249,DS11250,DS11251,DS11252,JOB757609,JOB757610,JOB757611,JOB757612,JOB757613,JOB757614,JOB757615,JOB757616 design
 ```
 
@@ -1268,16 +1268,16 @@ flowchart TD
 | DS-11245 | backtest.anomaly_diagnoser_result | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-023 | design / 设计 | planned / 已规划 | 回测异常诊断报告（识别异常收益/过拟合信号） |
 | DS-11246 | backtest.data_quality_checker_result | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-022 | design / 设计 | planned / 已规划 | 数据质量报告（缺失值/异常值/完整性检查） |
 | DS-11247 | backtest.decay_monitor_result | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-018 | design / 设计 | planned / 已规划 | 策略衰减报告（策略性能随时间衰减趋势） |
-| DS-16911 | backtest.fills / 回测.模拟成交 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测模拟成交（symbol/quantity/price/commission/slippage），撮合引擎产出 |
+| DS-20863 | backtest.fills / 回测.模拟成交 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测模拟成交（symbol/quantity/price/commission/slippage），撮合引擎产出 |
 | DS-11248 | backtest.nan_processor_result | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-026 | design / 设计 | planned / 已规划 | 清洗后数据（NaN值处理/插值/标记） |
-| DS-16912 | backtest.nav_series / 回测.净值序列 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测净值序列（timestamp/nav/cash/positions），组合更新产出 |
+| DS-20864 | backtest.nav_series / 回测.净值序列 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测净值序列（timestamp/nav/cash/positions），组合更新产出 |
 | DS-11249 | backtest.param_analyzer_result | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-021 | design / 设计 | planned / 已规划 | 参数敏感性分析报告（参数变化对收益的影响） |
 | DS-11250 | backtest.report_generator_result | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-019 | design / 设计 | planned / 已规划 | 回测报告（净值/回撤/交易明细/绩效归因） |
 | DS-11251 | backtest.result_comparator_result | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-024 | design / 设计 | planned / 已规划 | 回测对比报告（多策略/多周期收益对比） |
 | DS-11252 | backtest.result_deployer_result | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-025 | design / 设计 | planned / 已规划 | 部署状态记录（回测结果发布到外部系统） |
-| DS-16910 | backtest.target_weights / 回测.目标权重 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测目标权重（symbol/target_weight/timestamp），策略根据tick事件生成 |
-| DS-16909 | backtest.tick_event / 回测.Tick事件 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测Tick事件（历史tick重放，含timestamp/symbol/price/volume），回测内部类型 |
-| DS-16908 | backtest.result / 回测.结果 | production / 生产 | CTR-P1-016 | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测结果（nav_series/sharpe/max_drawdown/trades），CTR-P1-016 BacktestResult |
+| DS-20862 | backtest.target_weights / 回测.目标权重 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测目标权重（symbol/target_weight/timestamp），策略根据tick事件生成 |
+| DS-20861 | backtest.tick_event / 回测.Tick事件 | backtest_internal / 回测内部 | - | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测Tick事件（历史tick重放，含timestamp/symbol/price/volume），回测内部类型 |
+| DS-20860 | backtest.result / 回测.结果 | production / 生产 | CTR-P1-016 | D_BACKTEST / 回测 | strict / 严格 | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测结果（nav_series/sharpe/max_drawdown/trades），CTR-P1-016 BacktestResult |
 | DS-11253 | data.feature_store | production / 生产 | - | D_DATA / 数据接入层 | strict / 严格 | MOD-L00-004 | design / 设计 | planned / 已规划 | 特征数据集（特征值/特征元数据/版本管理） |
 | DS-11256 | data.kline_resampler | production / 生产 | - | D_DATA / 数据接入层 | strict / 严格 | MOD-L00-004 | design / 设计 | planned / 已规划 | 重采样K线数据（多周期K线/自定义周期重采样） |
 | DS-11254 | data.realtime_push_manager | production / 生产 | - | D_DATA / 数据接入层 | strict / 严格 | MOD-L00-004 | design / 设计 | planned / 已规划 | 实时推送数据流（实时行情/交易推送） |
@@ -1310,36 +1310,36 @@ flowchart TD
 | DS-11240 | factor.barra_exposure_calculator | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | Barra因子暴露矩阵（风险因子敞口） |
 | DS-11241 | factor.barra_risk_budget_allocator | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 风险预算分配方案（各因子风险贡献权重） |
 | DS-11242 | factor.barra_risk_model | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | Barra风险模型协方差矩阵（因子收益协方差） |
-| DS-16902 | factor.momentum_20d / 因子.20日动量 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | production / 生产 | generated / 已生成 | 20日动量因子信号（factor_id/symbol/as_of_date/raw_value/rank_pct），CTR-002 FactorSignal |
-| DS-16901 | factor.value_factor / 因子.价值因子 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | production / 生产 | generated / 已生成 | 价值因子信号（factor_id/symbol/as_of_date/raw_value/normalized_value），CTR-002 FactorSignal |
-| DS-11227 | factor_analysis.correlation_analyzer | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子间相关系数矩阵（识别冗余因子） |
-| DS-11228 | factor_analysis.correlation_dedup | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 去重后的因子集合（移除高相关冗余因子） |
-| DS-11229 | factor_analysis.decay_monitor | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子衰减报告（IC随时间衰减趋势） |
-| DS-11230 | factor_analysis.factor_attribution | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子归因报告（各因子对收益的贡献分解） |
-| DS-11231 | factor_analysis.factor_optimization | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 优化后的因子权重（最大化IC/最小化相关性） |
-| DS-11232 | factor_analysis.ic_decay | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | IC衰减曲线（因子预测力随滞后的变化） |
-| DS-11233 | factor_analysis.ic_ir_calc | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | IC/IR指标序列（因子信息系数/信息比率） |
-| DS-11234 | factor_analysis.ic_ir_evaluator | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | IC/IR评估报告（因子有效性评级） |
-| DS-11235 | factor_analysis.layered_backtest | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 分层回测结果（按因子分层的收益统计） |
-| DS-11236 | factor_analysis.multifactor_synthesis | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 合成因子信号（多因子加权/截面排名/置信度） |
-| DS-11237 | factor_analysis.three_level_judgment | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 三级研判结果（因子有效性/稳定性/贡献度评级） |
+| DS-20854 | factor.momentum_20d / 因子.20日动量 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | production / 生产 | generated / 已生成 | 20日动量因子信号（factor_id/symbol/as_of_date/raw_value/rank_pct），CTR-002 FactorSignal |
+| DS-20853 | factor.value_factor / 因子.价值因子 | production / 生产 | CTR-002 | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | production / 生产 | generated / 已生成 | 价值因子信号（factor_id/symbol/as_of_date/raw_value/normalized_value），CTR-002 FactorSignal |
+| DS-20879 | factor_analysis.correlation_analyzer | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-005 | production / 生产 | generated / 已生成 | 因子间相关系数矩阵（识别冗余因子） |
+| DS-20880 | factor_analysis.correlation_dedup | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-006 | production / 生产 | generated / 已生成 | 去重后的因子集合（移除高相关冗余因子） |
+| DS-20881 | factor_analysis.decay_monitor | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-009 | production / 生产 | generated / 已生成 | 因子衰减报告（IC随时间衰减趋势） |
+| DS-20882 | factor_analysis.factor_attribution | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-010 | production / 生产 | generated / 已生成 | 因子归因报告（各因子对收益的贡献分解） |
+| DS-20883 | factor_analysis.factor_optimization | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-012 | production / 生产 | generated / 已生成 | 优化后的因子权重（最大化IC/最小化相关性） |
+| DS-20884 | factor_analysis.ic_decay | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-004 | production / 生产 | generated / 已生成 | IC衰减曲线（因子预测力随滞后的变化） |
+| DS-20885 | factor_analysis.ic_ir_calc | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-002 | production / 生产 | generated / 已生成 | IC/IR指标序列（因子信息系数/信息比率） |
+| DS-20886 | factor_analysis.ic_ir_evaluator | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-003 | production / 生产 | generated / 已生成 | IC/IR评估报告（因子有效性评级） |
+| DS-20887 | factor_analysis.layered_backtest | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-007 | production / 生产 | generated / 已生成 | 分层回测结果（按因子分层的收益统计） |
+| DS-20888 | factor_analysis.multifactor_synthesis | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-011 | production / 生产 | generated / 已生成 | 合成因子信号（多因子加权/截面排名/置信度） |
+| DS-20889 | factor_analysis.three_level_judgment | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-008 | production / 生产 | generated / 已生成 | 三级研判结果（因子有效性/稳定性/贡献度评级） |
 | DS-11238 | factor_analysis.turnover_analyzer | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 换手率分析报告（因子换手成本评估） |
 | DS-11243 | factor_mining.causal_validator | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子因果性验证报告（统计因果检验结果） |
 | DS-11244 | factor_mining.mining_agent | production / 生产 | - | D_FACTOR / 因子 | strict / 严格 | MOD-L02-001 | design / 设计 | planned / 已规划 | 候选因子集合（AI挖掘的新因子列表及回测指标） |
-| DS-16906 | fill.executed / 成交.已成交 | production / 生产 | CTR-005 | D_EX_CORE / 执行核心 | strict / 严格 | MOD-L06-001 | production / 生产 | generated / 已生成 | 成交回报（symbol/quantity/price/commission/timestamp），CTR-005 Fill |
-| DS-16900 | market_data.ohlc_bar / 市场数据.OHLC K线 | production / 生产 | CTR-001 | D_MKT_DATA / 行情数据 | strict / 严格 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001 derived |
-| DS-16899 | market_data.tick / 市场数据.Tick行情 | production / 生产 | CTR-001 | D_MKT_DATA / 行情数据 | strict / 严格 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 标准化Tick行情（symbol/timestamp/OHLCV/quality_score），CTR-001 NormalizedMarketData |
+| DS-20858 | fill.executed / 成交.已成交 | production / 生产 | CTR-005 | D_EX_CORE / 执行核心 | strict / 严格 | MOD-L06-001 | production / 生产 | generated / 已生成 | 成交回报（symbol/quantity/price/commission/timestamp），CTR-005 Fill |
+| DS-20852 | market_data.ohlc_bar / 市场数据.OHLC K线 | production / 生产 | CTR-001 | D_MKT_DATA / 行情数据 | strict / 严格 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 聚合OHLC K线（1m/5m/日线，由tick聚合），CTR-001 derived |
+| DS-20851 | market_data.tick / 市场数据.Tick行情 | production / 生产 | CTR-001 | D_MKT_DATA / 行情数据 | strict / 严格 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 标准化Tick行情（symbol/timestamp/OHLCV/quality_score），CTR-001 NormalizedMarketData |
 | DS-11271 | ml.ai_operator_decisions | production / 生产 | - | D_ML_TRAIN / 训练 | strict / 严格 | MOD-ML-002 | design / 设计 | planned / 已规划 | AI操作员决策记录（模型推理/决策建议/置信度） |
 | DS-11272 | ml.training_dataset | production / 生产 | - | D_ML_TRAIN / 训练 | strict / 严格 | MOD-ML-001 | design / 设计 | planned / 已规划 | 训练数据集（特征/标签/样本/版本管理） |
-| DS-16905 | order.target / 订单.目标订单 | production / 生产 | CTR-004 | D_PF_CORE / 组合核心 | strict / 严格 | MOD-L05-001 | production / 生产 | generated / 已生成 | 目标订单（symbol/side/quantity/price/order_type），CTR-004 Order |
+| DS-20857 | order.target / 订单.目标订单 | production / 生产 | CTR-004 | D_PF_CORE / 组合核心 | strict / 严格 | MOD-L05-001 | production / 生产 | generated / 已生成 | 目标订单（symbol/side/quantity/price/order_type），CTR-004 Order |
 | DS-11267 | portfolio.optimizer | production / 生产 | - | D_PF_CORE / 组合核心 | strict / 严格 | MOD-PF-001 | design / 设计 | planned / 已规划 | 优化后目标权重（均值方差/风险平价/Black-Litterman） |
 | DS-11268 | portfolio.portfolio_aggregate | production / 生产 | - | D_PF_CORE / 组合核心 | strict / 严格 | MOD-PF-003 | design / 设计 | planned / 已规划 | 组合汇总状态（多策略组合/资金分配/持仓汇总） |
 | DS-11269 | portfolio.strategy_runner | production / 生产 | - | D_PF_CORE / 组合核心 | strict / 严格 | MOD-L05-001 | design / 设计 | planned / 已规划 | 策略目标权重（策略信号→目标权重转换） |
 | DS-11270 | portfolio.topn_momentum_strategy | production / 生产 | - | D_PF_CORE / 组合核心 | strict / 严格 | MOD-L05-001 | design / 设计 | planned / 已规划 | TopN动量信号（TopN选股/动量排名信号） |
-| DS-16907 | position.snapshot / 持仓.快照 | production / 生产 | CTR-006 | D_EX_CORE / 执行核心 | strict / 严格 | MOD-L06-001 | production / 生产 | generated / 已生成 | 持仓快照（symbol/quantity/avg_cost/market_value/timestamp），CTR-006 PositionSnapshot |
+| DS-20859 | position.snapshot / 持仓.快照 | production / 生产 | CTR-006 | D_EX_CORE / 执行核心 | strict / 严格 | MOD-L06-001 | production / 生产 | generated / 已生成 | 持仓快照（symbol/quantity/avg_cost/market_value/timestamp），CTR-006 PositionSnapshot |
 | DS-11273 | risk.drawdown_metric | production / 生产 | - | D_RISK / 风控 | strict / 严格 | MOD-RISK-001 | design / 设计 | planned / 已规划 | 回撤指标序列（最大回撤/当前回撤/恢复时间） |
-| DS-16904 | risk.limits / 风险.限额 | production / 生产 | CTR-003 | D_RISK / 风控 | strict / 严格 | MOD-L04-001 | production / 生产 | generated / 已生成 | 风险限额（max_position/max_drawdown/exposure_limits），CTR-003 RiskLimits |
-| DS-16903 | signal.composite / 信号.合成信号 | production / 生产 | CTR-P1-015 | D_SIGLEGACY / 信号遗留设计态 | strict / 严格 | - | production / 生产 | generated / 已生成 | 合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal |
+| DS-20856 | risk.limits / 风险.限额 | production / 生产 | CTR-003 | D_RISK / 风控 | strict / 严格 | MOD-L04-001 | production / 生产 | generated / 已生成 | 风险限额（max_position/max_drawdown/exposure_limits），CTR-003 RiskLimits |
+| DS-20855 | signal.composite / 信号.合成信号 | production / 生产 | CTR-P1-015 | D_SIGLEGACY / 信号遗留设计态 | strict / 严格 | - | production / 生产 | generated / 已生成 | 合成交易信号（多因子加权/截面排名/置信度），CTR-P1-015 SynthesizedSignal |
 | DS-11274 | trading.pnl | production / 生产 | - | D_TRADING / 交易运营 | strict / 严格 | MOD-TRADING-002 | design / 设计 | planned / 已规划 | 盈亏序列（已实现/未实现盈亏/总盈亏） |
 
 ## Job 清单
@@ -1347,32 +1347,32 @@ flowchart TD
 | ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |
 |----|-------------------|--------------|------------------------------|----------------------------|------------------------------|------------------|---------------------------|--------------------|----------|
 | JOB-757609 | backtest.anomaly_diagnoser | backtest_internal / 回测内部 | src/zephyr/backtest/services/anomaly_diagnoser.py | manual / 手动 | backtest_tick | MOD-BT-023 | design / 设计 | planned / 已规划 | 回测异常诊断（消费回测结果，产出分析/报告） |
-| JOB-866034 | backtest.calc_metrics / 回测.计算指标 | backtest_internal / 回测内部 | src/zephyr/backtest/metrics.py | manual / 手动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测指标计算（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验），产出DS-010 backtest.result |
+| JOB-969552 | backtest.calc_metrics / 回测.计算指标 | backtest_internal / 回测内部 | src/zephyr/backtest/metrics.py | manual / 手动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测指标计算（Sharpe/MaxDrawdown/胜率等，含DSR修正+PIT校验），产出DS-010 backtest.result |
 | JOB-757610 | backtest.data_quality_checker | backtest_internal / 回测内部 | src/zephyr/backtest/services/data_quality_checker.py | manual / 手动 | backtest_tick | MOD-BT-022 | design / 设计 | planned / 已规划 | 回测数据质量检查（消费回测结果，产出分析/报告） |
 | JOB-757611 | backtest.decay_monitor | backtest_internal / 回测内部 | src/zephyr/backtest/services/decay_monitor.py | manual / 手动 | backtest_tick | MOD-BT-018 | design / 设计 | planned / 已规划 | 策略衰减监控（消费回测结果，产出分析/报告） |
-| JOB-866032 | backtest.match_fills / 回测.撮合成交 | backtest_internal / 回测内部 | src/zephyr/backtest/matching_logic.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测撮合引擎（根据目标权重模拟成交，含滑点/手续费），产出DS-013 backtest.fills |
+| JOB-969550 | backtest.match_fills / 回测.撮合成交 | backtest_internal / 回测内部 | src/zephyr/backtest/matching_logic.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测撮合引擎（根据目标权重模拟成交，含滑点/手续费），产出DS-013 backtest.fills |
 | JOB-757612 | backtest.nan_processor | backtest_internal / 回测内部 | src/zephyr/backtest/services/nan_processor.py | manual / 手动 | backtest_tick | MOD-BT-026 | design / 设计 | planned / 已规划 | NaN数据处理（消费回测结果，产出分析/报告） |
 | JOB-757613 | backtest.param_analyzer | backtest_internal / 回测内部 | src/zephyr/backtest/services/param_analyzer.py | manual / 手动 | backtest_tick | MOD-BT-021 | design / 设计 | planned / 已规划 | 参数分析（消费回测结果，产出分析/报告） |
-| JOB-866030 | backtest.replay_ticks / 回测.Tick重放 | backtest_internal / 回测内部 | src/zephyr/backtest/tick_replay.py | manual / 手动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 历史Tick重放（从DS-001读取历史tick，按时间顺序重放），产出DS-011 backtest.tick_event |
+| JOB-969548 | backtest.replay_ticks / 回测.Tick重放 | backtest_internal / 回测内部 | src/zephyr/backtest/tick_replay.py | manual / 手动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 历史Tick重放（从DS-001读取历史tick，按时间顺序重放），产出DS-011 backtest.tick_event |
 | JOB-757614 | backtest.report_generator | backtest_internal / 回测内部 | src/zephyr/backtest/services/report_generator.py | manual / 手动 | backtest_tick | MOD-BT-019 | design / 设计 | planned / 已规划 | 回测报告生成（消费回测结果，产出分析/报告） |
 | JOB-757615 | backtest.result_comparator | backtest_internal / 回测内部 | src/zephyr/backtest/services/result_comparator.py | manual / 手动 | backtest_tick | MOD-BT-024 | design / 设计 | planned / 已规划 | 回测结果比较（消费回测结果，产出分析/报告） |
 | JOB-757616 | backtest.result_deployer | backtest_internal / 回测内部 | src/zephyr/backtest/services/result_deployer.py | manual / 手动 | backtest_tick | MOD-BT-025 | design / 设计 | planned / 已规划 | 回测结果部署（消费回测结果，产出分析/报告） |
-| JOB-866031 | backtest.run_event_driven / 回测.事件驱动运行 | backtest_internal / 回测内部 | src/zephyr/backtest/event_engine.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 事件驱动回测引擎（消费tick事件，运行策略生成目标权重），产出DS-012 backtest.target_weights |
-| JOB-866033 | backtest.update_portfolio / 回测.更新组合 | backtest_internal / 回测内部 | src/zephyr/backtest/portfolio.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测组合更新（根据成交更新持仓/现金/净值），产出DS-014 backtest.nav_series |
-| JOB-866023 | aggregate.ohlc_bar / 聚合.OHLC K线 | production / 生产 | src/zephyr/data/aggregator.py | event_driven / 事件驱动 | production / 生产 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 将Tick数据聚合为OHLC K线（1m/5m/日线），产出DS-002 market_data.ohlc_bar |
-| JOB-757591 | analyze.correlation_analyzer | production / 生产 | src/zephyr/factor/analysis/correlation_analyzer/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子相关性分析（消费因子信号，产出分析结果） |
-| JOB-757592 | analyze.correlation_dedup | production / 生产 | src/zephyr/factor/analysis/correlation_dedup/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子去重（消费因子信号，产出分析结果） |
-| JOB-757593 | analyze.decay_monitor | production / 生产 | src/zephyr/factor/analysis/decay_monitor/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子衰减监控（消费因子信号，产出分析结果） |
-| JOB-757594 | analyze.factor_attribution | production / 生产 | src/zephyr/factor/analysis/factor_attribution/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子归因（消费因子信号，产出分析结果） |
-| JOB-757595 | analyze.factor_optimization | production / 生产 | src/zephyr/factor/analysis/factor_optimization/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子优化（消费因子信号，产出分析结果） |
-| JOB-757596 | analyze.ic_decay | production / 生产 | src/zephyr/factor/analysis/ic_decay/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | IC衰减分析（消费因子信号，产出分析结果） |
-| JOB-757597 | analyze.ic_ir_calc | production / 生产 | src/zephyr/factor/analysis/ic_ir_calc/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | IC/IR计算（消费因子信号，产出分析结果） |
-| JOB-757598 | analyze.ic_ir_evaluator | production / 生产 | src/zephyr/factor/analysis/ic_ir_evaluator/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | IC/IR评估（消费因子信号，产出分析结果） |
-| JOB-757599 | analyze.layered_backtest | production / 生产 | src/zephyr/factor/analysis/layered_backtest/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 分层回测（消费因子信号，产出分析结果） |
-| JOB-757600 | analyze.multifactor_synthesis | production / 生产 | src/zephyr/factor/analysis/multifactor_synthesis/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 多因子合成（消费因子信号，产出分析结果） |
-| JOB-757601 | analyze.three_level_judgment | production / 生产 | src/zephyr/factor/analysis/three_level_judgment/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 三级研判（消费因子信号，产出分析结果） |
+| JOB-969549 | backtest.run_event_driven / 回测.事件驱动运行 | backtest_internal / 回测内部 | src/zephyr/backtest/event_engine.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 事件驱动回测引擎（消费tick事件，运行策略生成目标权重），产出DS-012 backtest.target_weights |
+| JOB-969551 | backtest.update_portfolio / 回测.更新组合 | backtest_internal / 回测内部 | src/zephyr/backtest/portfolio.py | event_driven / 事件驱动 | backtest_tick | MOD-BT-001 | production / 生产 | generated / 已生成 | 回测组合更新（根据成交更新持仓/现金/净值），产出DS-014 backtest.nav_series |
+| JOB-969541 | aggregate.ohlc_bar / 聚合.OHLC K线 | production / 生产 | src/zephyr/data/aggregator.py | event_driven / 事件驱动 | production / 生产 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 将Tick数据聚合为OHLC K线（1m/5m/日线），产出DS-002 market_data.ohlc_bar |
+| JOB-969567 | analyze.correlation_analyzer | production / 生产 | src/zephyr/factor/analysis/correlation_analyzer.py | manual / 手动 | production / 生产 | MOD-L02-005 | production / 生产 | generated / 已生成 | 因子相关性分析（消费因子信号，产出分析结果） |
+| JOB-969568 | analyze.correlation_dedup | production / 生产 | src/zephyr/factor/analysis/correlation_dedup.py | manual / 手动 | production / 生产 | MOD-L02-006 | production / 生产 | generated / 已生成 | 因子去重（消费因子信号，产出分析结果） |
+| JOB-969569 | analyze.decay_monitor | production / 生产 | src/zephyr/factor/analysis/decay_monitor.py | manual / 手动 | production / 生产 | MOD-L02-009 | production / 生产 | generated / 已生成 | 因子衰减监控（消费因子信号，产出分析结果） |
+| JOB-969570 | analyze.factor_attribution | production / 生产 | src/zephyr/factor/analysis/factor_attribution.py | manual / 手动 | production / 生产 | MOD-L02-010 | production / 生产 | generated / 已生成 | 因子归因（消费因子信号，产出分析结果） |
+| JOB-969571 | analyze.factor_optimization | production / 生产 | src/zephyr/factor/analysis/factor_optimization.py | manual / 手动 | production / 生产 | MOD-L02-012 | production / 生产 | generated / 已生成 | 因子优化（消费因子信号，产出分析结果） |
+| JOB-969572 | analyze.ic_decay | production / 生产 | src/zephyr/factor/analysis/ic_decay.py | manual / 手动 | production / 生产 | MOD-L02-004 | production / 生产 | generated / 已生成 | IC衰减分析（消费因子信号，产出分析结果） |
+| JOB-969573 | analyze.ic_ir_calc | production / 生产 | src/zephyr/factor/analysis/ic_ir_calc.py | manual / 手动 | production / 生产 | MOD-L02-002 | production / 生产 | generated / 已生成 | IC/IR计算（消费因子信号，产出分析结果） |
+| JOB-969574 | analyze.ic_ir_evaluator | production / 生产 | src/zephyr/factor/analysis/ic_ir_evaluator.py | manual / 手动 | production / 生产 | MOD-L02-003 | production / 生产 | generated / 已生成 | IC/IR评估（消费因子信号，产出分析结果） |
+| JOB-969575 | analyze.layered_backtest | production / 生产 | src/zephyr/factor/analysis/layered_backtest.py | manual / 手动 | production / 生产 | MOD-L02-007 | production / 生产 | generated / 已生成 | 分层回测（消费因子信号，产出分析结果） |
+| JOB-969576 | analyze.multifactor_synthesis | production / 生产 | src/zephyr/factor/analysis/multifactor_synthesis.py | manual / 手动 | production / 生产 | MOD-L02-011 | production / 生产 | generated / 已生成 | 多因子合成（消费因子信号，产出分析结果） |
+| JOB-969577 | analyze.three_level_judgment | production / 生产 | src/zephyr/factor/analysis/three_level_judgment.py | manual / 手动 | production / 生产 | MOD-L02-008 | production / 生产 | generated / 已生成 | 三级研判（消费因子信号，产出分析结果） |
 | JOB-757602 | analyze.turnover_analyzer | production / 生产 | src/zephyr/factor/analysis/turnover_analyzer/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 换手率分析（消费因子信号，产出分析结果） |
-| JOB-866027 | check.risk_limits / 检查.风险限额 | production / 生产 | src/zephyr/risk/risk_checker.py | event_driven / 事件驱动 | production / 生产 | MOD-L04-001 | production / 生产 | generated / 已生成 | 风险限额检查（持仓/回撤/暴露度），产出DS-006 risk.limits |
+| JOB-969545 | check.risk_limits / 检查.风险限额 | production / 生产 | src/zephyr/risk/risk_checker.py | event_driven / 事件驱动 | production / 生产 | MOD-L04-001 | production / 生产 | generated / 已生成 | 风险限额检查（持仓/回撤/暴露度），产出DS-006 risk.limits |
 | JOB-757577 | compute.ashare_alpha87 | production / 生产 | src/zephyr/factor/ashare/alpha87/ | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 计算Alpha#87因子（消费OHLC K线，产出因子信号） |
 | JOB-757578 | compute.ashare_capital_flow | production / 生产 | src/zephyr/factor/ashare/capital_flow/ | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 计算资金流因子（消费OHLC K线，产出因子信号） |
 | JOB-757579 | compute.ashare_cross_market | production / 生产 | src/zephyr/factor/ashare/cross_market/ | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 计算跨市场因子（消费OHLC K线，产出因子信号） |
@@ -1391,8 +1391,8 @@ flowchart TD
 | JOB-757604 | compute.barra_exposure_calculator | production / 生产 | src/zephyr/factor/barra/exposure_calculator/ | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 计算Barra暴露计算（消费市场数据，产出风险因子） |
 | JOB-757605 | compute.barra_risk_budget_allocator | production / 生产 | src/zephyr/factor/barra/risk_budget_allocator/ | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 计算风险预算分配（消费市场数据，产出风险因子） |
 | JOB-757606 | compute.barra_risk_model | production / 生产 | src/zephyr/factor/barra/risk_model/ | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 计算Barra风险模型（消费市场数据，产出风险因子） |
-| JOB-866025 | compute.momentum_20d / 计算.20日动量 | production / 生产 | src/zephyr/factor/momentum.py | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | production / 生产 | generated / 已生成 | 计算20日动量因子（收益率/相对强度），产出DS-004 factor.momentum_20d |
-| JOB-866024 | compute.value_factor / 计算.价值因子 | production / 生产 | src/zephyr/factor/value_factor.py | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | production / 生产 | generated / 已生成 | 计算价值因子（PE/PB/股息率等），产出DS-003 factor.value_factor |
+| JOB-969543 | compute.momentum_20d / 计算.20日动量 | production / 生产 | src/zephyr/factor/momentum.py | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | production / 生产 | generated / 已生成 | 计算20日动量因子（收益率/相对强度），产出DS-004 factor.momentum_20d |
+| JOB-969542 | compute.value_factor / 计算.价值因子 | production / 生产 | src/zephyr/factor/value_factor.py | event_driven / 事件驱动 | production / 生产 | MOD-L02-001 | production / 生产 | generated / 已生成 | 计算价值因子（PE/PB/股息率等），产出DS-003 factor.value_factor |
 | JOB-757617 | data.feature_store | production / 生产 | src/zephyr/data/feature_store/ | scheduled / 定时 | production / 生产 | MOD-L00-004 | design / 设计 | planned / 已规划 | 特征存储管理（数据采集/管理服务） |
 | JOB-757620 | data.kline_resampler | production / 生产 | zephyr.data.kline_resampler | scheduled / 定时 | production / 生产 | MOD-L00-004 | design / 设计 | planned / 已规划 | K线重采样（数据采集/管理服务） |
 | JOB-757618 | data.realtime_push_manager | production / 生产 | src/zephyr/data/realtime_push_manager/ | scheduled / 定时 | production / 生产 | MOD-L00-004 | design / 设计 | planned / 已规划 | 实时推送管理（数据采集/管理服务） |
@@ -1407,9 +1407,9 @@ flowchart TD
 | JOB-757628 | ex_core.fill_handler | production / 生产 | src/zephyr/ex_core/fill_handler.py | event_driven / 事件驱动 | production / 生产 | MOD-EX-001 | design / 设计 | planned / 已规划 | 成交处理（消费成交/持仓数据，产出执行核心记录） |
 | JOB-757630 | ex_core.live_portfolio | production / 生产 | src/zephyr/ex_core/services/live_portfolio.py | event_driven / 事件驱动 | production / 生产 | MOD-L06-001 | design / 设计 | planned / 已规划 | 实盘组合（消费成交/持仓数据，产出执行核心记录） |
 | JOB-757629 | ex_core.position_tracker | production / 生产 | src/zephyr/ex_core/position_tracker/ | event_driven / 事件驱动 | production / 生产 | MOD-EX-002 | design / 设计 | planned / 已规划 | 持仓跟踪（消费成交/持仓数据，产出执行核心记录） |
-| JOB-866029 | execute.order / 执行.订单 | production / 生产 | src/zephyr/ex_core/executor.py | event_driven / 事件驱动 | production / 生产 | MOD-L06-001 | production / 生产 | generated / 已生成 | 执行订单（实盘/模拟），产出DS-008 fill.executed + DS-009 position.snapshot |
-| JOB-866028 | generate.order / 生成.订单 | production / 生产 | src/zephyr/pf_core/order_generator.py | event_driven / 事件驱动 | production / 生产 | MOD-L05-001 | production / 生产 | generated / 已生成 | 根据信号+风险限额生成目标订单，产出DS-007 order.target |
-| JOB-866022 | ingest.ifind_kline / 采集.iFind行情 | production / 生产 | src/zephyr/data/ingest_ifind.py | scheduled / 定时 | production / 生产 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick |
+| JOB-969547 | execute.order / 执行.订单 | production / 生产 | src/zephyr/ex_core/executor.py | event_driven / 事件驱动 | production / 生产 | MOD-L06-001 | production / 生产 | generated / 已生成 | 执行订单（实盘/模拟），产出DS-008 fill.executed + DS-009 position.snapshot |
+| JOB-969546 | generate.order / 生成.订单 | production / 生产 | src/zephyr/pf_core/order_generator.py | event_driven / 事件驱动 | production / 生产 | MOD-L05-001 | production / 生产 | generated / 已生成 | 根据信号+风险限额生成目标订单，产出DS-007 order.target |
+| JOB-969540 | ingest.ifind_kline / 采集.iFind行情 | production / 生产 | src/zephyr/data/ingest_ifind.py | scheduled / 定时 | production / 生产 | MOD-MKT_DATA | production / 生产 | generated / 已生成 | 从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick |
 | JOB-757607 | mine.causal_validator | production / 生产 | src/zephyr/factor/mine/causal_validator/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因果性验证（消费因子数据，产出挖掘/验证结果） |
 | JOB-757608 | mine.mining_agent | production / 生产 | src/zephyr/factor/mine/mining_agent/ | manual / 手动 | production / 生产 | MOD-L02-001 | design / 设计 | planned / 已规划 | 因子挖掘（消费因子数据，产出挖掘/验证结果） |
 | JOB-757635 | ml_train.ai_operator | production / 生产 | src/zephyr/ml_train/ai_operator/ | event_driven / 事件驱动 | production / 生产 | MOD-ML-002 | design / 设计 | planned / 已规划 | AI操作员决策（消费信号，产出AI辅助决策） |
@@ -1419,5 +1419,5 @@ flowchart TD
 | JOB-757633 | pf_core.strategy_runner | production / 生产 | src/zephyr/pf_core/strategy_engine/strategy_runner.py | event_driven / 事件驱动 | production / 生产 | MOD-L05-001 | design / 设计 | planned / 已规划 | 策略运行（消费信号，产出组合/权重） |
 | JOB-757634 | pf_core.topn_momentum_strategy | production / 生产 | src/zephyr/pf_core/topn_momentum_strategy.py | event_driven / 事件驱动 | production / 生产 | MOD-L05-001 | design / 设计 | planned / 已规划 | TopN动量策略（消费信号，产出组合/权重） |
 | JOB-757637 | risk.track_drawdown | production / 生产 | src/zephyr/risk/drawdown_tracker/ | event_driven / 事件驱动 | production / 生产 | MOD-RISK-001 | design / 设计 | planned / 已规划 | 回撤跟踪（消费持仓快照，产出回撤指标） |
-| JOB-866026 | synthesize.signal / 合成.信号 | production / 生产 | src/zephyr/signal_ashare/synthesizer.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 | 合成多因子信号（加权/截面排名/置信度），产出DS-005 signal.composite |
+| JOB-969544 | synthesize.signal / 合成.信号 | production / 生产 | src/zephyr/signal_ashare/synthesizer.py | event_driven / 事件驱动 | production / 生产 | - | production / 生产 | generated / 已生成 | 合成多因子信号（加权/截面排名/置信度），产出DS-005 signal.composite |
 | JOB-757638 | trading.calc_pnl | production / 生产 | src/zephyr/trading/pnl_calculator/ | event_driven / 事件驱动 | production / 生产 | MOD-TRADING-002 | design / 设计 | planned / 已规划 | PnL计算（消费成交数据，产出盈亏） |

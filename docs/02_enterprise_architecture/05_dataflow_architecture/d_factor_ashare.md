@@ -3,14 +3,14 @@ doc_type: architecture_view
 title: 因子域-A股因子计算
 version: "1.0"
 status: active
-date: 2026-08-01
+date: 2026-08-02
 owner: auto-generator
 ttl: permanent
 ---
 
 # 因子域-A股因子计算
 
-> 生成时间: 2026-08-01T22:21:37
+> 生成时间: 2026-08-02T21:06:13
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -91,32 +91,32 @@ flowchart TD
     JOB757588 -.->|produces / 产出| DS11224
     JOB757589 -.->|produces / 产出| DS11225
     JOB757590 -.->|produces / 产出| DS11226
-    JOB757584 ~~~ JOB757582
-    JOB757582 ~~~ JOB757589
-    JOB757589 ~~~ JOB757580
-    JOB757580 ~~~ JOB757581
-    JOB757581 ~~~ JOB757586
-    JOB757586 ~~~ JOB757588
-    JOB757588 ~~~ JOB757590
-    JOB757590 ~~~ JOB757579
-    JOB757579 ~~~ JOB757585
-    JOB757585 ~~~ JOB757587
-    JOB757587 ~~~ JOB757578
-    JOB757578 ~~~ JOB757577
-    JOB757577 ~~~ JOB757583
-    DS11220 ~~~ DS11218
-    DS11218 ~~~ DS11225
-    DS11225 ~~~ DS11216
-    DS11216 ~~~ DS11217
-    DS11217 ~~~ DS11222
-    DS11222 ~~~ DS11224
-    DS11224 ~~~ DS11226
-    DS11226 ~~~ DS11215
-    DS11215 ~~~ DS11221
-    DS11221 ~~~ DS11223
-    DS11223 ~~~ DS11214
-    DS11214 ~~~ DS11213
-    DS11213 ~~~ DS11219
+    JOB757588 ~~~ JOB757581
+    JOB757581 ~~~ JOB757585
+    JOB757585 ~~~ JOB757578
+    JOB757578 ~~~ JOB757583
+    JOB757583 ~~~ JOB757586
+    JOB757586 ~~~ JOB757582
+    JOB757582 ~~~ JOB757580
+    JOB757580 ~~~ JOB757590
+    JOB757590 ~~~ JOB757577
+    JOB757577 ~~~ JOB757587
+    JOB757587 ~~~ JOB757589
+    JOB757589 ~~~ JOB757579
+    JOB757579 ~~~ JOB757584
+    DS11224 ~~~ DS11217
+    DS11217 ~~~ DS11221
+    DS11221 ~~~ DS11214
+    DS11214 ~~~ DS11219
+    DS11219 ~~~ DS11222
+    DS11222 ~~~ DS11218
+    DS11218 ~~~ DS11216
+    DS11216 ~~~ DS11226
+    DS11226 ~~~ DS11213
+    DS11213 ~~~ DS11223
+    DS11223 ~~~ DS11225
+    DS11225 ~~~ DS11215
+    DS11215 ~~~ DS11220
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -177,32 +177,32 @@ flowchart TD
     JOB757588 -.->|produces / 产出| DS11224
     JOB757589 -.->|produces / 产出| DS11225
     JOB757590 -.->|produces / 产出| DS11226
-    JOB757584 ~~~ JOB757582
-    JOB757582 ~~~ JOB757589
-    JOB757589 ~~~ JOB757580
-    JOB757580 ~~~ JOB757581
-    JOB757581 ~~~ JOB757586
-    JOB757586 ~~~ JOB757588
-    JOB757588 ~~~ JOB757590
-    JOB757590 ~~~ JOB757579
-    JOB757579 ~~~ JOB757585
-    JOB757585 ~~~ JOB757587
-    JOB757587 ~~~ JOB757578
-    JOB757578 ~~~ JOB757577
-    JOB757577 ~~~ JOB757583
-    DS11220 ~~~ DS11218
-    DS11218 ~~~ DS11225
-    DS11225 ~~~ DS11216
-    DS11216 ~~~ DS11217
-    DS11217 ~~~ DS11222
-    DS11222 ~~~ DS11224
-    DS11224 ~~~ DS11226
-    DS11226 ~~~ DS11215
-    DS11215 ~~~ DS11221
-    DS11221 ~~~ DS11223
-    DS11223 ~~~ DS11214
-    DS11214 ~~~ DS11213
-    DS11213 ~~~ DS11219
+    JOB757588 ~~~ JOB757581
+    JOB757581 ~~~ JOB757585
+    JOB757585 ~~~ JOB757578
+    JOB757578 ~~~ JOB757583
+    JOB757583 ~~~ JOB757586
+    JOB757586 ~~~ JOB757582
+    JOB757582 ~~~ JOB757580
+    JOB757580 ~~~ JOB757590
+    JOB757590 ~~~ JOB757577
+    JOB757577 ~~~ JOB757587
+    JOB757587 ~~~ JOB757589
+    JOB757589 ~~~ JOB757579
+    JOB757579 ~~~ JOB757584
+    DS11224 ~~~ DS11217
+    DS11217 ~~~ DS11221
+    DS11221 ~~~ DS11214
+    DS11214 ~~~ DS11219
+    DS11219 ~~~ DS11222
+    DS11222 ~~~ DS11218
+    DS11218 ~~~ DS11216
+    DS11216 ~~~ DS11226
+    DS11226 ~~~ DS11213
+    DS11213 ~~~ DS11223
+    DS11223 ~~~ DS11225
+    DS11225 ~~~ DS11215
+    DS11215 ~~~ DS11220
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
