@@ -16,11 +16,13 @@ ttl: task_bound
 |------|------|------|
 | 备份产物存在性 | ✅ PASS | inventory 全部产物齐全且新鲜 |
 | 备份完整性 | ✅ PASS | verify 13 项检查全通过 |
-| CH 服务可达性 | ⚠️ FAIL | 服务停机 17h，未自动恢复 |
-| CH 远程启动能力 | ⚠️ FAIL | sudo/polkit 认证失败，无法非交互启动 |
-| 表级恢复验证 | ⏸ 阻断 | CH 不可达，待服务恢复后补做 |
+| CH 服务可达性 | ✅ PASS（已修复） | 服务已启动，TCP+HTTP 均可达 |
+| CH 远程启动能力 | ✅ PASS（已修复） | NOPASSWD sudoers 配置就位，远程启动验证通过 |
+| CH 崩溃自愈 | ✅ PASS（已验证） | systemd Restart=always，kill -9 后 ~23s 自动重启 |
+| CH 停机告警 | ✅ PASS（已验证） | 探针接入 Alerter，CH stop→CRITICAL 告警，start→INFO 恢复 |
+| 表级恢复验证 | ⏸ 待补做 | R6 遗留项，CH 已恢复可执行 |
 
-**总结**: 备份数据层完整可用（灾后能恢复数据），但服务层存在 RTO 风险（CH 停机未告警 + 无法远程自动重启）。
+**总结**: 备份数据层完整可用（灾后能恢复数据），服务层 RTO 风险已闭环（CH 自愈+告警+远程启动均已验证通过）。
 
 ## 2. 演练明细
 
@@ -99,5 +101,10 @@ backup_state.json 关键字段:
 - [x] inventory 执行
 - [x] verify 执行
 - [x] CH 诊断
-- [ ] 表级恢复验证（待 CH 服务恢复）
-- [ ] 改进建议登记到 architecture_issue_registry.yaml
+- [x] CH 服务启动（NOPASSWD sudoers 配置 + systemctl start）
+- [x] CH 崩溃自愈验证（kill -9 → systemd Restart=always 自动重启，NRestarts=1）
+- [x] CH 停机告警接入（HeartbeatMonitor + scheduler _probe_loop → Alerter，R4a）
+- [x] 告警端到端验证（R5：CH stop→CRITICAL，CH start→INFO 恢复，failure 文件写入）
+- [x] 改进建议登记到 architecture_issue_registry.yaml（#ARCH-DR-CH-RESTART-001，status=resolved）
+- [ ] 表级恢复验证（R6 遗留项，CH 已恢复可执行）
+- [ ] R4b：盘后 7×24 独立探针（当前探针仅在调度器运行期生效）

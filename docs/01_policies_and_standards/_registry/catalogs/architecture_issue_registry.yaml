@@ -10968,8 +10968,37 @@ entries:
     - 演练报告: docs/_working/reports/backup_recovery_drill_20260802.md
     - 暴露 RTO 风险：实盘前必须补齐 CH 自愈+告警+远程启动，否则 CH 崩溃=交易中断
     - 当前 CH 服务已停 17h，需用户手动启动（VM 控制台 systemctl start 或修复 sudoers）
-  fix_phase: proposed（待用户确认方案与优先级）
-  status: proposed
+  fix_phase: resolved（R4a 告警接入 + R5 端到端验证通过 + 自愈+远程启动配置就位）
+  status: resolved
+  resolution: |
+    解决时间：2026-08-02（C3 闭环完成）
+
+    改进a（自愈）：systemd Restart=always 已配置并验证。
+      验证证据：kill -9 26131（模拟崩溃）→ systemd 自动重启，新 PID=27834，
+      NRestarts=1，~23s 内恢复 active 状态，TCP+HTTP 均恢复可达。
+
+    改进b（远程启动）：NOPASSWD sudoers 已配置 /etc/sudoers.d/ch-restart。
+      允许 ubuntu 用户免密执行 systemctl start/stop/restart/is-active clickhouse-server。
+      验证证据：ch_vm_ssh.py --sudo --cmd "sudo systemctl start clickhouse-server" 成功。
+
+    改进c（告警接入）：HeartbeatMonitor + scheduler _probe_loop 均已接入 Alerter。
+      - heartbeat_monitor.py: alerter 参数 + _fire_ch_state_alert（ALIVE→DEAD=CRITICAL，DEAD→ALIVE=INFO）
+      - scheduler.py: _probe_loop 连续 3 次失败（~90s）发 CRITICAL，恢复发 INFO
+      验证证据（R5 端到端）：
+        - CH stop → 探针 6s 内检测 DEAD → CRITICAL 告警触发 → failure 文件写入
+          data/failures/20260802_ch_heartbeat_120857.json
+        - CH start → 探针检测 ALIVE → INFO 恢复告警触发 → "CH 已恢复连通"
+        - 状态变化完整复现：alive → dead → alive
+      单测：tests/zephyr/data/redundant_source/test_heartbeat_monitor_alert.py（5 测试全绿）
+
+    改进d（持续监控）：scheduler _probe_loop 每 30s 探活，覆盖调度器运行期。
+      R4b（7×24 独立探针，覆盖盘后 event_driven 时段）待后续推进。
+
+    提交：793884f1（R4a 代码）+ e2e 验证脚本 scripts/ops/e2e_ch_alert_probe.py
+
+    遗留项（不阻断 C3 闭环）：
+    - R4b：盘后 7×24 独立探针（当前探针仅在调度器运行期生效）
+    - R6：表级恢复演练（RESTORE TABLE 到临时库校验行数）
   related_rules:
   - '#ARCH-CH-031'
   - '#ARCH-DR-BACKUP-001'
