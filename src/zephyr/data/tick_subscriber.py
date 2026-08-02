@@ -195,6 +195,7 @@ class TickSubscriber:
         batch_seconds: float = 5.0,
         heartbeat=None,
         backup_provider=None,
+        tick_cache=None,
     ):
         """初始化订阅器。
 
@@ -206,12 +207,15 @@ class TickSubscriber:
                 传入后在 _on_tick 中自动调用 record_tick()，使主源心跳检测生效。
             backup_provider: TDXProvider 实例（P1-3 双源冗余，可选）。
                 传入后与 heartbeat 配合，主源中断时自动切换 TDX 备源轮询。
+            tick_cache: TickRedisCache 实例（H1 Redis 热缓存双写，可选）。
+                传入后 _drain_batch 批量写入 tick:{symbol}:latest 到 Redis（CP-01）。
         """
         self._symbols = symbols
         self._batch_rows = batch_rows
         self._batch_seconds = batch_seconds
         self._heartbeat = heartbeat  # P2-8: 主源心跳检测集成
         self._backup_provider = backup_provider  # P1-3: TDX 备源
+        self._tick_cache = tick_cache  # H1 Redis tick 缓存双写
         self._switcher = None  # P1-3: SourceSwitcher（start 中创建）
         self._backup_poller = None  # P1-3: BackupTickPoller
 
@@ -321,11 +325,13 @@ class TickSubscriber:
         reg.observe("zephyr_tick_stage_queue_wait_seconds", time.perf_counter() - t_wait)
 
         rows: list[tuple] = []
+        cache_ticks: list[tuple[str, dict]] = []  # H1 Redis tick 缓存双写收集
         # P2-5: Stage 3——tick_to_row 批量转换耗时（首行 + 非阻塞批量取）
         t_conv = time.perf_counter()
         row = tick_to_row(symbol, tick, data_source=tick.pop("_data_source", _DATA_SOURCE))
         if row:
             rows.append(row)
+        cache_ticks.append((symbol, tick))
         for _ in range(max_n - 1):
             try:
                 symbol, tick = self._tick_queue.get_nowait()
@@ -334,6 +340,7 @@ class TickSubscriber:
             r = tick_to_row(symbol, tick, data_source=tick.pop("_data_source", _DATA_SOURCE))
             if r:
                 rows.append(r)
+            cache_ticks.append((symbol, tick))
         reg.observe("zephyr_tick_stage_convert_seconds", time.perf_counter() - t_conv)
 
         if not rows:
@@ -350,6 +357,13 @@ class TickSubscriber:
         t_wal = time.perf_counter()
         add_ok = self._writer.add(result)
         reg.observe("zephyr_tick_stage_wal_add_seconds", time.perf_counter() - t_wal)
+
+        # H1 Redis tick 缓存双写（best-effort，不阻断 WAL 主路径，CP-01 Tick→Redis ≤3秒）
+        if self._tick_cache and cache_ticks:
+            try:
+                self._tick_cache.write_batch(cache_ticks)
+            except Exception:  # noqa: BLE001 — best-effort
+                log.debug("Redis tick cache write failed (non-fatal)", exc_info=True)
 
         if add_ok:
             self._written += len(rows)
