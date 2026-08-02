@@ -226,7 +226,7 @@ class MultiContractRegistry:
         if old_schema.frozen and not force:
             raise ContractFrozenError(
                 f"契约 {contract_id} 已冻结 (frozen=True)，"
-                f"禁止版本升级。如需强制升级，使用 force=True。"
+                f"禁止版本升级。如需强制升级，使用 force=True"
             )
 
         # 版本降级检查

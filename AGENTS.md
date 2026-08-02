@@ -95,6 +95,8 @@
 >
 > 规则真源：[`trae_080_panorama_alignment.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml)；执行细节见 §11.0.2 ARCH-053/056。
 >
+> **作战地图对齐（step_id 轴，2026-08-02）**：与四图对齐（module_id 轴）正交——[`align_battle_map.py`](file:///d:/ZephyrAlpha/scripts/governance/align_battle_map.py) 检测 battle_map 三表（steps/anchors/edges）五类问题：孤儿环节(BM-INV-001)/幽灵锚点(BM-INV-002)/缺失叙事(BM-INV-003)/悬空边/域漂移(BM-INV-004)。域漂移规则真源：[`battle_map_domain_policy.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml)（flow_stage→允许 domain 列表，TRAE-062 规则数据真源=YAML）。君子协定 warn-only，不硬阻断。spec：[`battle_map_positioning.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md) §8.4/§9.3。
+>
 > **文件重命名 MUST 先重建 depgraph**（AI-14 审计 S1，2026-07-17）：`git mv old.py new.py` 后、commit 前，MUST 运行 `python scripts/governance/generate_project_depgraph.py --force` 重建 depgraph。RENAME-DEPGRAPH-SYNC commit gate（priority=39）会检测 staged .py 重命名的新路径是否已在 depgraph nodes 表登记，未登记则硬阻断。历史债务扫描：`python scripts/governance/d8_doc_sync/audit_rename_completeness.py --check-file-renames`。
 >
 > **分层契约诊断辅助 .importlinter**（AI-01 P4 治本，2026-08-01）：分层契约主守护 = 上文 depgraph 拓扑验证（`check_blueprint_code_alignment.py`，HIGH drift 已 pre-merge 硬阻断）。[`.importlinter`](file:///d:/ZephyrAlpha/.importlinter) 是**诊断辅助工具**（warn-only，未接 pre-commit），用于本地 `lint-imports` 诊断 shared 层是否误 import 业务层。**不登记 GATE-IMPORT-LAYER 硬阻断**——避免与 depgraph 拓扑验证职责重叠（双真源漂移风险：两套检测逻辑对"shared 能 import 谁"判定不一致时 AI 无所适从）。运行：`lint-imports`（需安装 import-linter，非核心依赖）。
