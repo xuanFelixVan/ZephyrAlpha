@@ -17,7 +17,7 @@
 - TestGatewayIntegration: mock gateway + monkeypatch 查询
   - 无新增 .py → 放行
   - 新增 .py 有合格简介 → 放行
-  - 新增 .py 缺简介 → 观察期 warn（pass=True）
+  - 新增 .py 缺简介 → 硬阻断（pass=False，_OBSERVATION_PERIOD=False 2026-08-02 转正）
   - 非 Zephyr 项目 → skip
   - git diff 失败 → fail-open 放行
 
@@ -221,10 +221,14 @@ class TestGatewayIntegration:
         passed, msg = gate.check(gw, files=files)
         assert passed is True
 
-    def test_new_py_missing_translation_observation_warn(
+    def test_new_py_missing_translation_blocked(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """新增 .py 缺简介 → 观察期 warn（pass=True，不阻断）。"""
+        """新增 .py 缺简介 → 硬阻断（pass=False）。
+
+        2026-08-02 观察期结束转硬阻断（_OBSERVATION_PERIOD=False）：
+        Step 1 收窄范围 + Step B 补齐 108 条 missing，drift 清零，无误报风险。
+        """
         gw = self._make_gateway(
             tmp_path, diff_stdout="src/zephyr/new_module.py\n"
         )
@@ -233,8 +237,9 @@ class TestGatewayIntegration:
         gate = make_translation_coverage_gate()
         files = [str(tmp_path / "src/zephyr/new_module.py")]
         passed, msg = gate.check(gw, files=files)
-        # 观察期：warn 不阻断（pass=True）
-        assert passed is True
+        # 硬阻断：pass=False
+        assert passed is False
+        assert "TRANSLATION-COVERAGE" in msg
 
     def test_git_diff_fail_fail_open(self, tmp_path: Path) -> None:
         """git diff 失败 → fail-open 放行。"""

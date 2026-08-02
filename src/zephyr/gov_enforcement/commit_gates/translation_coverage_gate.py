@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 检测 staged 新增 .py 文件（src/zephyr/ + scripts/ 下，tests/ 豁免）在 module_translation_registry.yaml 有非空且非通用模板的 plain_zh 大白话简介；翻译真源不可达时 fail-open（环境异常非违规，对标 NEW-FILE-DEPGRAPH-ENFORCEMENT）；观察期 _OBSERVATION_PERIOD=True 时违规则 logger.warning 不阻断（防上线即卡死其他 session），观察期结束后翻 False 转硬阻断；只读查询（loader 只读 YAML）；bootstrap 豁免——只检测本次 commit 新增文件，现有 8324 条目不受影响
+# [INVARIANTS] 检测 staged 新增 .py 文件（src/zephyr/ + scripts/ 下，tests/ 豁免）在 module_translation_registry.yaml 有非空且非通用模板的 plain_zh 大白话简介；翻译真源不可达时 fail-open（环境异常非违规，对标 NEW-FILE-DEPGRAPH-ENFORCEMENT）；_OBSERVATION_PERIOD=False 硬阻断模式（2026-08-02 观察期结束，drift 已清零转 fail-closed）；只读查询（loader 只读 YAML）；bootstrap 豁免——只检测本次 commit 新增文件，现有 8422 条目不受影响
 # [MODIFY-GUARD] gate_id="TRANSLATION-COVERAGE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——YAML/git/loader 异常降级为 fail-open（passed=True，logger.warning）；检出违规则观察期 fail-open（warn 不阻断）/观察期后 fail-closed 阻断（passed=False）
+# [ERROR_CONTRACT] check 永不抛异常——YAML/git/loader 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 硬阻断（passed=False，_OBSERVATION_PERIOD=False 2026-08-02 转硬阻断）
 # [TESTS] tests/governance/commit_gates/test_translation_coverage_gate.py
 # [A_module] module_id=MOD-GOV-translation_coverage_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -43,9 +43,9 @@ Layer 3（is_generic 质量检测，gate 内嵌）、Layer 4（post-commit recon
 
 设计权衡
 --------
-1. **观察期 warn-only（_OBSERVATION_PERIOD=True）**：GateSpec 无 warn_only 字段（in-process
-   gate 设计为硬阻断），故观察期在 check 内 logger.warning + print stderr 后 return (True,"")，
-   不阻断。防"上线即卡死其他活跃 session 中未补简介的新文件"。观察期结束后翻 False 转硬阻断。
+1. **硬阻断模式（_OBSERVATION_PERIOD=False，2026-08-02 转正）**：观察期已结束——
+   Step 1 收窄范围（豁免 tests/demos/test_ 文件）+ Step B 补齐 108 条 missing 简介，
+   drift_report 三类漂移全清零，无误报风险。违规时 return (False, msg) 阻断提交。
    （对标 GATE-DEBT-BRIDGE/GATE-SILENT-DEGRADATION 的 warn→hard 分阶段模式。）
 2. **范围与 depgraph gate 同**（src/zephyr/+scripts/，tests 豁免）：depgraph 已要求这些 .py
    登记节点，节点必有简介是自然延伸，两 gate 同范围保证一致性。
@@ -80,8 +80,9 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_translation_coverage_gate"]
 
 # 观察期开关（治本防上线即卡死）：True=违规则 warn 不阻断；False=违规则硬阻断。
-# 上线后观察 1-2 周，确认 reconciler 报告清零 + 无误报后翻 False。
-_OBSERVATION_PERIOD = True
+# 2026-08-02 观察期结束转硬阻断：drift_report 已清零（missing/short/generic 全 0），
+# 范围收窄（Step 1）+ 存量补齐（Step B）均已完成，无误报风险。
+_OBSERVATION_PERIOD = False
 
 # plain_zh 最低 CJK 字符数（与 add_module_translation.py 写入工具一致，防过短无信息简介）
 _MIN_CJK = 8
