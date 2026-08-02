@@ -64,16 +64,18 @@ if str(_REPO_ROOT) not in sys.path:
 _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
+# _common 在 scripts/governance/d5_architecture/generators，须将其目录加入 sys.path
+_GENERATORS_DIR = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "generators")
+if _GENERATORS_DIR not in sys.path:
+    sys.path.insert(0, _GENERATORS_DIR)
 
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR  # noqa: E402
 from _shared.module_translation_loader import (  # noqa: E402
     all_battle_map_step_ids,
     preload_battle_map_steps,
-)
+)  # noqa: E402
 from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # noqa: E402
-
-# 数据库名显示（SSoT: d5_architecture/generators 公共常量，跨包未设路径故直接赋值）
-DB_DISPLAY_NAME = "depgraph (PostgreSQL)"
+from _common import DB_DISPLAY_NAME  # noqa: E402
 
 # 候选池 YAML 真源（target_graph=candidate 的合法 id 来源）
 _CANDIDATE_YAML = (
