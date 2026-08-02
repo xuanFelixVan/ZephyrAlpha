@@ -119,9 +119,9 @@ flowchart TD
     D_EX_CORE -->|测试依赖 / test_depends| src_zephyr_shared_contracts_position_py
     D_EX_CORE -->|测试依赖 / test_depends| src_zephyr_shared_contracts_fill_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_position_py
     D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
+    D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_position_py
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py

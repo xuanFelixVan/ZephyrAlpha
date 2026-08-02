@@ -1,12 +1,12 @@
-# 自动生成于 2026-08-02T09:47:29Z
+# 自动生成于 2026-08-02T10:03:44Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-02T09:47:29Z'
+generated_at: '2026-08-02T10:03:44Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 379
-with_manifest: 318
+total_scripts: 380
+with_manifest: 319
 missing_manifest: 61
 categories:
   governance:_sync: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 24
   governance:d4_paths: 4
-  governance:d5_architecture: 107
+  governance:d5_architecture: 108
   governance:d6_security: 15
   governance:d7_code: 41
   governance:d8_doc_sync: 12
@@ -1524,6 +1524,19 @@ scripts:
   tags:
   - Critical
   - Security
+- name: d5_architecture/checkers/check_node_label_quality.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 30
+  args:
+  - --ci
+  - --warn-only
+  warn_only: true
+  description: GATE-NODE-LABEL-QUALITY - 审计域文档 Mermaid 节点标签简介质量（五类坏简介防复发）
+  tags:
+  - Critical
 - name: d5_architecture/checkers/check_orphan_outputs.py
   owner: governance:d5_architecture
   dimensions:
