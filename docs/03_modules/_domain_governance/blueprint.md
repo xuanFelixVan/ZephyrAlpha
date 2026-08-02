@@ -2144,10 +2144,10 @@ STEP 3: 拆分后验证
 | 文件 | 角色 | 能力 ID |
 |------|------|---------|
 | `architecture_model/domain/decision_graph_model.yaml` §flow_stages | 6 阶段定义真源（规则数据） | trading_flow_stages_definition |
-| `architecture_model/domain/trading_flow_narrative.yaml` | 叙事真源（大白话/ASCII框图/ai_directive） | trading_flow_narrative |
-| `scripts/governance/d5_architecture/generators/generate_trading_flow_diagram.py` | 生成器（读 DB+YAML→07_ MD） | trading_flow_generator |
-| `docs/02_enterprise_architecture/07_trading_decision_architecture/` | 生成产物（7 个 MD） | trading_flow_artifacts |
-| `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/trading_flow_panorama.md` | 能力定位书 | trading_flow_capability_doc |
+| `docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml` §battle_map_steps + §battle_map_cross_cutting | 环节叙事 + 横切叙事真源（退役迁移自 trading_flow_narrative.yaml，2026-08-02） | battle_map_translation |
+| `scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py` | 作战地图生成器（读 battle_map 三表 + 翻译真源 → battle_map/ MD+HTML） | battle_map_generator |
+| `docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/` | 生成产物（总指挥图 + 6 分阶段 + 横切视图 + HTML） | battle_map_artifacts |
+| `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md` | 能力定位书（第四全景图） | battle_map_capability_doc |
 
 **SSoT 分工**：
 - 结构化数据（节点/边/flow_stage 字段）真源 = decisiongraph (PostgreSQL)

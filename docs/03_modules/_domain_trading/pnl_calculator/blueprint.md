@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: testing
+build_status: stable
 ---
 
 # MOD-TRADING-002 PnL Calculator — 盈亏计算器 蓝图

@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3169 |
-| 生产态模块 | 2939 |
-| 设计态模块 | 230 |
+| 模块总数 | 3170 |
+| 生产态模块 | 2942 |
+| 设计态模块 | 228 |
 
 ## 域清单（按架构层分组）
 
@@ -77,7 +77,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|------|------|
 | D_CONTRACTS | 共享契约 / D_CONTRACTS | 0 | 0 | 0 | 0/150 (OK) | [📄 01_d_contracts.md](01_d_contracts.md) |
-| D_INFRASTRUCTURE | 跨层契约基础设施 / Cross-Layer Contract Infrastructure | 25 | 25 | 0 | 25/150 (OK) | [📄 02_d_infrastructure.md](02_d_infrastructure.md) |
+| D_INFRASTRUCTURE | 跨层契约基础设施 / Cross-Layer Contract Infrastructure | 26 | 26 | 0 | 26/150 (OK) | [📄 02_d_infrastructure.md](02_d_infrastructure.md) |
 | D_INFRA_A2A | A2A通信 / A2A Communication | 72 | 72 | 0 | 72/150 (OK) | [📄 03_d_infra_a2a.md](03_d_infra_a2a.md) |
 | D_INFRA_OPS | 基础设施运维 / Asset Inventory | 0 | 0 | 0 | 0/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 55 | 55 | 0 | 55/150 (OK) | [📄 05_d_infra_recovery.md](05_d_infra_recovery.md) |
@@ -106,7 +106,7 @@ ttl: permanent
 | D_MKT_DATA | 行情数据 / Market Data | 15 | 9 | 6 | 15/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
 | D_OPS | 反馈循环 / Feedback Loop | 11 | 11 | 0 | 11/150 (OK) | [📄 24_d_ops.md](24_d_ops.md) |
 | D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 70 | 70 | 0 | 70/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
-| D_REPORTING | 报告 / Reporting | 12 | 3 | 9 | 12/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
+| D_REPORTING | 报告 / Reporting | 12 | 4 | 8 | 12/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
 | D_SECURITY | 对抗验证 / Adversarial Validation | 166 | 166 | 0 | 166/150 (超容) | [📄 27_d_security.md](27_d_security.md) |
 | D_SECURITY_LLM | LLM防御 / LLM Defense | 0 | 0 | 0 | 0/150 (OK) | [📄 28_d_security_llm.md](28_d_security_llm.md) |
 
@@ -141,7 +141,7 @@ ttl: permanent
 | D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 42 | 41 | 1 | 42/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 35 | 35 | 0 | 35/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 394 | 393 | 1 | 394/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 393 | 392 | 1 | 393/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
@@ -157,4 +157,4 @@ ttl: permanent
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 10 | 2 | 8 | 10/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
 | D_STRUCT_SCRIPTS | 结构治理脚本 / D_STRUCT_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 71_d_struct_scripts.md](71_d_struct_scripts.md) |
-| D_TRADING | 交易运营 / Trading Operations | 40 | 37 | 3 | 40/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 41 | 39 | 2 | 41/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |
