@@ -302,3 +302,6 @@ def sanitizer(tmp_project_dir):
 def kb_root(tmp_path: Path) -> Path:
     """知识库测试根路径——所有 kb/ 相关测试复用此 fixture。"""
     return tmp_path / "kb"
+
+
+

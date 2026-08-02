@@ -441,7 +441,8 @@ class TestAdmissionControllerUpdateRate:
 
 
 class TestAdmissionControllerWithVerdictEngine:
-    def test_admission_then_verdict(self):
+    @pytest.mark.asyncio
+    async def test_admission_then_verdict(self):
         ctrl = AdmissionController()
         engine = VerdictEngine()
         event = AuditEvent(
@@ -455,12 +456,11 @@ class TestAdmissionControllerWithVerdictEngine:
         adm = ctrl.admit(event)
         assert adm.decision == AdmissionDecision.ADMIT
 
-        import asyncio
-
-        verdict = asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
+        verdict = await engine.evaluate(event)
         assert verdict.verdict_level == VerdictLevel.PASS
 
-    def test_verdict_red_on_anchor(self):
+    @pytest.mark.asyncio
+    async def test_verdict_red_on_anchor(self):
         ctrl = AdmissionController()
         engine = VerdictEngine()
         event = AuditEvent(
@@ -473,12 +473,11 @@ class TestAdmissionControllerWithVerdictEngine:
         adm = ctrl.admit(event)
         assert adm.decision == AdmissionDecision.ADMIT
 
-        import asyncio
-
-        verdict = asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
+        verdict = await engine.evaluate(event)
         assert verdict.verdict_level == VerdictLevel.RED
 
-    def test_verdict_yellow_on_low_trust(self):
+    @pytest.mark.asyncio
+    async def test_verdict_yellow_on_low_trust(self):
         engine = VerdictEngine()
         event = AuditEvent(
             event_type="file_write",
@@ -488,12 +487,12 @@ class TestAdmissionControllerWithVerdictEngine:
             protection_level="normal",
             trust_score=10.0,
         )
-        import asyncio
 
-        verdict = asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
+        verdict = await engine.evaluate(event)
         assert verdict.verdict_level == VerdictLevel.YELLOW
 
-    def test_verdict_pass_for_human(self):
+    @pytest.mark.asyncio
+    async def test_verdict_pass_for_human(self):
         engine = VerdictEngine()
         event = AuditEvent(
             event_type="file_write",
@@ -503,9 +502,8 @@ class TestAdmissionControllerWithVerdictEngine:
             protection_level="normal",
             is_human=True,
         )
-        import asyncio
 
-        verdict = asyncio.get_event_loop().run_until_complete(engine.evaluate(event))
+        verdict = await engine.evaluate(event)
         assert verdict.verdict_level == VerdictLevel.PASS
         assert verdict.reason == "human_actor_auto_pass"
 
