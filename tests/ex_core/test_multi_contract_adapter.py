@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-056 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """测试 multi_contract_adapter——契约注册中心。"""
 
 from __future__ import annotations

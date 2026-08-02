@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 20 | Module Count | 20 |
 | 域内依赖 | 18 | Internal Dependencies | 18 |
-| 跨域入边 | 5 | Cross-domain Incoming | 5 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 29 | Cross-domain Outgoing | 29 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 19 | Production Modules | 19 |
@@ -124,8 +124,6 @@ flowchart TD
     tests_reporting_test_risk_report_engine_py -->|测试依赖 / test_depends| D_SHARED
     src_zephyr_reporting_report_version_manager_py -->|导入依赖 / import_depends| D_SHARED
     tests_reporting_test_realtime_pnl_dashboard_py -->|测试依赖 / test_depends| D_SHARED
-    D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
-    D_EX_CORE -.->|data / data| src_zephyr_reporting_report_publisher_py
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -140,7 +138,6 @@ flowchart TD
     class src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_ashare_performance_audit_py,src_zephyr_reporting_ashare_trade_record_template_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_realtime_pnl_dashboard_py,src_zephyr_reporting_regulatory_report_generator_py,src_zephyr_reporting_report_publisher_py,src_zephyr_reporting_report_version_manager_py,src_zephyr_reporting_report_watermark_tracker_py,src_zephyr_reporting_risk_report_engine_py,tests_reporting_test_ashare_performance_audit_py,tests_reporting_test_ashare_trade_record_template_py,tests_reporting_test_realtime_pnl_dashboard_py,tests_reporting_test_regulatory_report_generator_py,tests_reporting_test_report_publisher_py,tests_reporting_test_report_version_manager_py,tests_reporting_test_report_watermark_tracker_py,tests_reporting_test_risk_report_engine_py production
     class src_zephyr_reporting_performance_attribution_report_py design
     class D_SHARED,D_INFRASTRUCTURE,D_PF_CORE,D_GOV_AUDIT,D_GOVERNANCE external_prod
-    class D_EX_CORE external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -263,15 +260,14 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_EX_CORE 执行核心: 执行报告 / execution_report (ex_core/execution_report.py) | → | 报告发布器 / report_publisher (reporting/report_publisher... | data / data |
-| 2 | D_GOVERNANCE 生命周期管理: analytics基类 / Re-export wrapper: analytics_base canonic... | → | analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | 导入依赖 / import_depends |
-| 3 | D_GOV_AUDIT 审计追踪: 默认attribution引擎 / Re-export wrapper: default_attribut... | → | 默认attribution引擎 / D_REPORTING — Default Attribution ... | 导入依赖 / import_depends |
-| 4 | D_GOV_AUDIT 审计追踪: 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | 导入依赖 / import_depends |
-| 5 | D_PF_CORE 组合核心: 绩效归因引擎 (core/performance_attribution_engine.py) | → | analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | 导入依赖 / import_depends |
+| 1 | D_GOVERNANCE 生命周期管理: analytics基类 / Re-export wrapper: analytics_base canonic... | → | analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | 导入依赖 / import_depends |
+| 2 | D_GOV_AUDIT 审计追踪: 默认attribution引擎 / Re-export wrapper: default_attribut... | → | 默认attribution引擎 / D_REPORTING — Default Attribution ... | 导入依赖 / import_depends |
+| 3 | D_GOV_AUDIT 审计追踪: 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | 导入依赖 / import_depends |
+| 4 | D_PF_CORE 组合核心: 绩效归因引擎 (core/performance_attribution_engine.py) | → | analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 7 个外部域直接连接（出边 29 条 + 入边 5 条 = 34 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 7 个外部域直接连接（出边 29 条 + 入边 4 条 = 33 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -289,7 +285,6 @@ graph LR
     D_REPORTING -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_EX_CORE
     D_REPORTING -->|1条 导入依赖 / import_depends| D_TRADING
     D_GOV_AUDIT -->|2条 导入依赖 / import_depends| D_REPORTING
-    D_EX_CORE -->|1条 data / data| D_REPORTING
     D_GOVERNANCE -->|1条 导入依赖 / import_depends| D_REPORTING
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_REPORTING
 ```
