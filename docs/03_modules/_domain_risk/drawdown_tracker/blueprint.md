@@ -15,8 +15,8 @@ last_updated: "2026-08-02"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
-design_maturity: design
-build_status: generated
+design_maturity: production
+build_status: stable
 ---
 
 # MOD-RK-011 Drawdown Real-Time Tracker — 回撤实时追踪器 蓝图

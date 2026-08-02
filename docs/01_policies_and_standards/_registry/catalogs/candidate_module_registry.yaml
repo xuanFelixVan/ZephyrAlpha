@@ -181249,6 +181249,58 @@ entries:
     last_review_outcome: "rejected,确认重复陈旧登记。真源drawdown_tracker=MOD-RK-011(节点7855094).除非MOD-RK-011出现重大缺口,否则不再评估MOD-RISK-001"
 
   # ----------------------------------------------------------
+  # CAND-RSK011-001: MOD-RSK-011 drawdown_realtime_tracker 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-02 | 与 CAND-RISK001-001 同类(第3个 drawdown 重复节点)
+  # ----------------------------------------------------------
+  - id: CAND-RSK011-001
+    name: "MOD-RSK-011 drawdown_realtime_tracker(重复幽灵节点)"
+    aliases: ["MOD-RSK-011", "drawdown_realtime_tracker"]
+    domain: D_RISK
+    domain_status: active
+    domain_node_count: 8
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7741060"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,真源蓝图在MOD-RK-011(docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md)"}
+    description: "depgraph中blueprint_id=MOD-RSK-011、path=src/zephyr/risk/drawdown_realtime_tracker.py的设计态节点,该文件不存在(幽灵),与正确的MOD-RK-011(core/drawdown_tracker.py)重复。前缀RSK非规范RK。"
+    capability: "C-032"
+    problem_it_solves: "(已解决)回撤实时追踪已由MOD-RK-011(节点7855094 stable+production)正确承担,20个单元测试通过"
+    trigger_signals: []
+    keywords: ["drawdown", "realtime_tracker", "MOD-RSK-011", "重复幽灵", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-RK-011(节点7855094)"], evidence: "drawdown_tracker已由core/drawdown_tracker.py(MATURITY production)实现,depgraph节点7855094 stable+production,20测试通过(tests/risk/test_drawdown_tracker.py)"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "功能已被MOD-RK-011正确承接,该节点为重复幽灵登记,无独立需求"}
+      q3_domain_alive: {result: true, evidence: "D_RISK活跃(8节点),但该具体节点为重复幽灵登记"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-02'
+    promoted_to: ""
+    source_draft: "D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md"
+    source_section: "§1 RK-11 Drawdown Real-Time Tracker(设计文档只定义一个回撤追踪器)"
+    original_id: "MOD-RSK-011"
+    estimated_complexity: ""
+    tech_notes: "双源对比:设计文档(11-D-RISK-风控域.md §1只定义RK-11一个回撤追踪器) vs depgraph(MOD-RK-011节点7855094 stable+production已实现同功能;MOD-RSK-011节点7741060 path=src/zephyr/risk/drawdown_realtime_tracker.py文件不存在=幽灵,前缀RSK非规范RK,无blueprint无代码)。此为第3个drawdown重复节点(前两个:MOD-RK-011=正确实现,MOD-RISK-001=目录形式陈旧已rejected见CAND-RISK001-001)。软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "MOD-RK-011(节点7855094,src/zephyr/risk/core/drawdown_tracker.py,stable/production,20测试通过)"
+    tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "前缀错误"]
+    search_terms: ["mod-rsk-011", "drawdown_realtime_tracker", "重复幽灵节点"]
+    related_candidates: ["CAND-RISK001-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-02'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认重复幽灵节点。真源drawdown_tracker=MOD-RK-011(节点7855094).与CAND-RISK001-001同类(第3个drawdown重复),除非MOD-RK-011出现重大缺口,否则不再评估MOD-RSK-011"
+
+  # ----------------------------------------------------------
   # CAND-H1FS-001: H1 Factor Source / 信号端因子截面读取适配器（rejected，四问①②挂——功能已实现+无消费者）
   # 来源: depgraph 幽灵节点审查 (2026-08-02, TRAE-083 双源对比+四问过滤)
   # ----------------------------------------------------------
