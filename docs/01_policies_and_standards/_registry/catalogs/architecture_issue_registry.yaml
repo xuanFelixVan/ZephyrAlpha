@@ -10916,9 +10916,11 @@ entries:
       "需求驱动"铁律（四问过滤 q2），预防性公共化=过度工程=幽灵节点；⑥ 正典先例
       session_worktree_sweep（FP-ISO.4C）按需公共化，第一调用方即消费者。
     防复发：AGENTS.md P0-6 公共函数按需创建铁律（公共函数仅在存在真实外部消费者时
-      创建，禁止预防性公共化，dual 公共/私有禁止作为终态）。未来自动化候选
-      GATE-DEAD-PUBLIC-WRAPPER reconciler 持续检测死公共 wrapper。
-  fix_phase: 已执行（删 5 死 wrapper + 旧测试 8 失败改 patch 私有 + AGENTS.md P0-6 铁律）；旧13+新132测试全绿
+      创建，禁止预防性公共化，dual 公共/私有禁止作为终态）。防复发自动化已实现
+      （2026-08-02）：GATE-DEAD-PUBLIC-WRAPPER reconciler（dead_public_wrapper_reconciler.py，
+      priority=950，warn-only）post-commit AST 扫描 trivial wrapper + 多目录 regex 调用方计数，
+      零外部调用方→warn，持续检测死公共 wrapper。当前检测到 21 个死 wrapper（Stage 4 公共化产物）。
+  fix_phase: 已执行（删 5 死 wrapper + 旧测试 8 失败改 patch 私有 + AGENTS.md P0-6 铁律 + GATE-DEAD-PUBLIC-WRAPPER reconciler 防复发自动化）；旧13+新132测试全绿 + 34 reconciler 单测全绿
   status: decided
   related_adjudication: 'Stage4公共化（run_subprocess/log_reconcile_results/bridge.get_writer/contracts.get_writer/run_dashboard 共5个死wrapper删除；commit_auto公共本不存在已纠正）'
   created: '2026-08-02'
