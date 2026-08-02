@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-005 | docs/03_modules/_domain-ex_sor/algo_trading_engine/blueprint.md
+# [BLUEPRINT] MOD-XS-005 | docs/03_modules/_domain_ex_sor/algo_trading_engine/blueprint.md
 # [MODULE] zephyr.ex_sor.core.algo_trading_engine
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors

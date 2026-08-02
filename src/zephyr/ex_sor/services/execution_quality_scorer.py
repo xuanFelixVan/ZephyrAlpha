@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-EX_SOR_EXT-002 | docs/03_modules/_domain-ex_sor/execution_quality_scorer/blueprint.md
+# [BLUEPRINT] MOD-EX_SOR_EXT-002 | docs/03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md
 # [MODULE] zephyr.ex_sor.services.execution_quality_scorer
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors; zephyr.ex_sor.services.slippage_analyzer; zephyr.ex_sor.services.transaction_cost_optimizer

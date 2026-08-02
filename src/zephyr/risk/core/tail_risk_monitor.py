@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-15 | docs/03_modules/_domain-risk/tail_risk_monitor/blueprint.md
+# [BLUEPRINT] MOD-RK-15 | docs/03_modules/_domain_risk/tail_risk_monitor/blueprint.md
 # [MODULE] zephyr.risk.core.tail_risk_monitor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; numpy; scipy.stats; MOD-RK-05(VaR基准)

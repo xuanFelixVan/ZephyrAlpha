@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-09 | docs/03_modules/_domain-risk/ashare_stop_loss_engine/blueprint.md | §
+# [BLUEPRINT] MOD-RK-09 | docs/03_modules/_domain_risk/ashare_stop_loss_engine/blueprint.md | §
 # [TTL] permanent
 """AshareStopLossRuleEngine 单元测试 (MOD-RK-09)。"""
 

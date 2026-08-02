@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
+# [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain_risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk.implementations.default_position_limit_checker
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.risk_manager_base; zephyr.risk.risk_manager

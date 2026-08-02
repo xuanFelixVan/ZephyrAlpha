@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-20 | docs/03_modules/_domain-risk/daily_auditor/blueprint.md
+# [BLUEPRINT] MOD-RK-20 | docs/03_modules/_domain_risk/daily_auditor/blueprint.md
 # [MODULE] zephyr.risk.core.daily_auditor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; MOD-RK-16(Risk Decomposition,归因复用); MOD-RK-06(限额消耗); MOD-RK-03(持仓快照)

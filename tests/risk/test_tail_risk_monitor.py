@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-15 | docs/03_modules/_domain-risk/tail_risk_monitor/blueprint.md | §
+# [BLUEPRINT] MOD-RK-15 | docs/03_modules/_domain_risk/tail_risk_monitor/blueprint.md | §
 # [TTL] permanent
 """TailRiskMonitor 单元测试 (MOD-RK-15)。"""
 

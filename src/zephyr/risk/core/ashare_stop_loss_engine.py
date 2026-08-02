@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-09 | docs/03_modules/_domain-risk/ashare_stop_loss_engine/blueprint.md
+# [BLUEPRINT] MOD-RK-09 | docs/03_modules/_domain_risk/ashare_stop_loss_engine/blueprint.md
 # [MODULE] zephyr.risk.core.ashare_stop_loss_engine
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; MOD-RK-04(Stop Loss Engine,执行止损)

@@ -1015,7 +1015,7 @@ docs/  (包含2个文件: .md(1), .yaml(1))
 │   │   ├── semantic_auditor/  (包含2个文件: .md(2))  
 │   │   ├── shared_core/  (包含6个文件: .md(6))  
 │   │   └── index.md  — 索引  
-│   ├── _domain-risk/  
+│   ├── _domain_risk/  
 │   │   ├── ashare_stop_loss_engine/  (包含1个文件: .md(1))  
 │   │   ├── ashare_systemic_risk_detector/  (包含1个文件: .md(1))  
 │   │   ├── concentration_monitor/  (包含1个文件: .md(1))  

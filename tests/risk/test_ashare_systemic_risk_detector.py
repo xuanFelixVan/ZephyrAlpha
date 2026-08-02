@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-10 | docs/03_modules/_domain-risk/ashare_systemic_risk_detector/blueprint.md | §
+# [BLUEPRINT] MOD-RK-10 | docs/03_modules/_domain_risk/ashare_systemic_risk_detector/blueprint.md | §
 # [TTL] permanent
 """AshareSystemicRiskDetector 单元测试 (MOD-RK-10)。"""
 

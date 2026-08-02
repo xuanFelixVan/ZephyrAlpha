@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-EX_SOR_EXT-003 | docs/03_modules/_domain-ex_sor/transaction_cost_optimizer/blueprint.md
+# [BLUEPRINT] MOD-EX_SOR_EXT-003 | docs/03_modules/_domain_ex_sor/transaction_cost_optimizer/blueprint.md
 # [TTL] permanent
 """TransactionCostOptimizer 单元测试 (MOD-EX_SOR_EXT-003)。全成本计算+分解+优化建议。"""
 

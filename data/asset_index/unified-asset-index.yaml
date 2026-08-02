@@ -58530,7 +58530,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/ashare_systemic_risk_detector/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/ashare_systemic_risk_detector/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58545,7 +58545,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/concentration_monitor/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/concentration_monitor/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58560,7 +58560,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/stress_test_engine/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/stress_test_engine/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58575,7 +58575,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/daily_auditor/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/daily_auditor/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58590,7 +58590,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/ashare_stop_loss_engine/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/ashare_stop_loss_engine/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58605,7 +58605,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/drawdown_tracker/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58620,7 +58620,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/tail_risk_monitor/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/tail_risk_monitor/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58635,7 +58635,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/risk_budget_allocator/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/risk_budget_allocator/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58650,7 +58650,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/risk_decomposition/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/risk_decomposition/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"
@@ -58680,7 +58680,7 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/03_modules/_domain-risk/var_calculator/blueprint.md"
+    relative_path: "docs/03_modules/_domain_risk/var_calculator/blueprint.md"
     asset_type: "doc"
     layer: "L03"
     status: "active"

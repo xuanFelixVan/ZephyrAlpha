@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-011 | docs/03_modules/_domain-risk/drawdown_tracker/blueprint.md
+# [BLUEPRINT] MOD-RK-011 | docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md
 # [MODULE] zephyr.risk.core.drawdown_tracker
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors

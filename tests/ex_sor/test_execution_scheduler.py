@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-004 | docs/03_modules/_domain-ex_sor/execution_scheduler/blueprint.md | §
+# [BLUEPRINT] MOD-XS-004 | docs/03_modules/_domain_ex_sor/execution_scheduler/blueprint.md | §
 # [TTL] permanent
 """ExecutionScheduler 单元测试 (MOD-XS-004)。时间切片+优先级队列+自适应降速+进度监控。"""
 

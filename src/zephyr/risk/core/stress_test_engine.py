@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-12 | docs/03_modules/_domain-risk/stress_test_engine/blueprint.md
+# [BLUEPRINT] MOD-RK-12 | docs/03_modules/_domain_risk/stress_test_engine/blueprint.md
 # [MODULE] zephyr.risk.core.stress_test_engine
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; numpy; MOD-RK-05(VaR基准)

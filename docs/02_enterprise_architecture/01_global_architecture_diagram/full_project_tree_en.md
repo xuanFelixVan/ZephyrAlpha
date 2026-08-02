@@ -1015,7 +1015,7 @@ docs/  (2 files: .md(1), .yaml(1))
 │   │   ├── semantic_auditor/  (2 files: .md(2))  
 │   │   ├── shared_core/  (6 files: .md(6))  
 │   │   └── index.md  — Index  
-│   ├── _domain-risk/  
+│   ├── _domain_risk/  
 │   │   ├── ashare_stop_loss_engine/  (1 files: .md(1))  
 │   │   ├── ashare_systemic_risk_detector/  (1 files: .md(1))  
 │   │   ├── concentration_monitor/  (1 files: .md(1))  

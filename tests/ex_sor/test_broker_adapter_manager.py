@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-002 | docs/03_modules/_domain-ex_sor/broker_adapter_manager/blueprint.md | §
+# [BLUEPRINT] MOD-XS-002 | docs/03_modules/_domain_ex_sor/broker_adapter_manager/blueprint.md | §
 # [TTL] permanent
 """BrokerAdapterManager 单元测试 (MOD-XS-002)。多券商 + 故障转移 + Feature Toggle。"""
 

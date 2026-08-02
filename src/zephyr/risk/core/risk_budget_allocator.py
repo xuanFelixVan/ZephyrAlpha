@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-08 | docs/03_modules/_domain-risk/risk_budget_allocator/blueprint.md
+# [BLUEPRINT] MOD-RK-08 | docs/03_modules/_domain_risk/risk_budget_allocator/blueprint.md
 # [MODULE] zephyr.risk.core.risk_budget_allocator
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; numpy; scipy; MOD-RK-16(Risk Decomposition,风险贡献复用)

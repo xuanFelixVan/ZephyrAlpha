@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-011 | docs/03_modules/_domain-ex_sor/algo_execution_selector/blueprint.md | §
+# [BLUEPRINT] MOD-XS-011 | docs/03_modules/_domain_ex_sor/algo_execution_selector/blueprint.md | §
 # [TTL] permanent
 """AlgoExecutionSelector 单元测试 (MOD-XS-011)。订单特征→评分→选算法 + 效果评估。"""
 

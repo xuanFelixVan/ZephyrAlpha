@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-014 | docs/03_modules/_domain-ex_sor/api_rate_limiter/blueprint.md | §
+# [BLUEPRINT] MOD-XS-014 | docs/03_modules/_domain_ex_sor/api_rate_limiter/blueprint.md | §
 # [TTL] permanent
 """ApiRateLimiter 单元测试 (MOD-XS-014)。四级限流架构 L1~L4。"""
 

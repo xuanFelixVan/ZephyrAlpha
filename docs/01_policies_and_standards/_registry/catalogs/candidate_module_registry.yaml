@@ -181233,7 +181233,7 @@ entries:
     priority: P2
     created_at: '2026-08-02'
     promoted_to: ""
-    source_draft: "docs/03_modules/_domain-risk/drawdown_tracker/blueprint.md"
+    source_draft: "docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md"
     source_section: "全文档(MOD-RK-011定义)"
     original_id: "MOD-RISK-001"
     estimated_complexity: ""

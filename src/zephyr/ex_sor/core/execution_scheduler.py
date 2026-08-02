@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-004 | docs/03_modules/_domain-ex_sor/execution_scheduler/blueprint.md
+# [BLUEPRINT] MOD-XS-004 | docs/03_modules/_domain_ex_sor/execution_scheduler/blueprint.md
 # [MODULE] zephyr.ex_sor.core.execution_scheduler
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.foundation.errors; zephyr.ex_sor.core.algo_trading_engine

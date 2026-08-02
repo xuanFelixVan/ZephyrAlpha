@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain-risk/risk-management-core/blueprint.md
+# [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain_risk/risk-management-core/blueprint.md
 # [MODULE] zephyr.risk.risk_manager
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.trading.trading_contracts.risk.risk_limit_violation_error; zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot; zephyr.shared.contracts.risk_limits; zephyr.trading.trading_contracts.risk.risk_metrics

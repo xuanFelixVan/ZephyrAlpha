@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-12 | docs/03_modules/_domain-risk/stress_test_engine/blueprint.md | §
+# [BLUEPRINT] MOD-RK-12 | docs/03_modules/_domain_risk/stress_test_engine/blueprint.md | §
 # [TTL] permanent
 """StressTestEngine 单元测试 (MOD-RK-12)。"""
 

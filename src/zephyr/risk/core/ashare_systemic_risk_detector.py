@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-10 | docs/03_modules/_domain-risk/ashare_systemic_risk_detector/blueprint.md
+# [BLUEPRINT] MOD-RK-10 | docs/03_modules/_domain_risk/ashare_systemic_risk_detector/blueprint.md
 # [MODULE] zephyr.risk.core.ashare_systemic_risk_detector
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; MOD-RK-17(Kill Switch,≥3因子清仓联动)

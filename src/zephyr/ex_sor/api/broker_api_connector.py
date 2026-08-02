@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-013 | docs/03_modules/_domain-ex_sor/broker_api_connector/blueprint.md
+# [BLUEPRINT] MOD-XS-013 | docs/03_modules/_domain_ex_sor/broker_api_connector/blueprint.md
 # [MODULE] zephyr.ex_sor.api.broker_api_connector
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors; zephyr.ex_sor.api.api_rate_limiter

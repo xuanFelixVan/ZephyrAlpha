@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-002 | docs/03_modules/_domain-ex_sor/broker_adapter_manager/blueprint.md
+# [BLUEPRINT] MOD-XS-002 | docs/03_modules/_domain_ex_sor/broker_adapter_manager/blueprint.md
 # [MODULE] zephyr.ex_sor.core.broker_adapter_manager
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.foundation.errors; zephyr.ex_sor.api.broker_api_connector; zephyr.ex_sor.api.api_rate_limiter

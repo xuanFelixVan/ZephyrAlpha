@@ -1,12 +1,12 @@
 registry:
   version: 2.7.10
   created: '2026-05-02'
-  last_updated: '2026-07-31'
-  total_blueprints: 57
+  last_updated: '2026-08-02'
+  total_blueprints: 94
   scope: 03_modules/
-  note: Auto-synced from 57 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 94 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-07-31'
+  generated_at: '2026-08-02'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -104,6 +104,45 @@ blueprints:
   generation: 1
   last_updated: '2026-07-19'
   file_path: 03_modules/_domain_backtest/blueprint.md
+- module_id: MOD-BT-018
+  name: decay_monitor
+  title: 策略衰减监控告警器蓝图 — 短期/长期均值对比+趋势检测
+  summary: ''
+  layer: L_BACKTEST
+  functional_domain: backtest
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_backtest/decay_monitor/blueprint.md
+- module_id: MOD-BT-022
+  name: data_quality_checker
+  title: 回测数据质量检查器蓝图 — 缺失检测+异常检测+一致性检查
+  summary: ''
+  layer: L_BACKTEST
+  functional_domain: backtest
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_backtest/data_quality_checker/blueprint.md
+- module_id: MOD-BT-026
+  name: nan_processor
+  title: 指标NaN处理器蓝图 — 智能填充+清洗
+  summary: ''
+  layer: L_BACKTEST
+  functional_domain: backtest
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_backtest/nan_processor/blueprint.md
 - module_id: MOD-CONTEXT_ENGINE
   name: context_engine
   title: Context Engine 集成蓝图 — 上下文引擎集成索引
@@ -118,6 +157,45 @@ blueprints:
   generation: 1
   last_updated: 2026-07-02
   file_path: 03_modules/_cross_layer/context_engine/blueprint.md
+- module_id: MOD-EX_SOR_EXT-001
+  name: slippage_analyzer
+  title: 滑点分析器蓝图 — 多基准滑点计算+三因子归因+平方根冲击预测
+  summary: ''
+  layer: L2_domain
+  functional_domain: execution
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_ex_sor/slippage_analyzer/blueprint.md
+- module_id: MOD-EX_SOR_EXT-002
+  name: execution_quality_scorer
+  title: 执行质量评分器蓝图 — 四维评分+加权汇总+评定
+  summary: ''
+  layer: L2_domain
+  functional_domain: execution
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_ex_sor/execution_quality_scorer/blueprint.md
+- module_id: MOD-EX_SOR_EXT-003
+  name: transaction_cost_optimizer
+  title: 交易成本优化器蓝图 — A股全成本分解+优化建议
+  summary: ''
+  layer: L2_domain
+  functional_domain: execution
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_ex_sor/transaction_cost_optimizer/blueprint.md
 - module_id: MOD-FEEDBACK_LOOP
   name: feedback_loop
   title: Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心
@@ -212,7 +290,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 6.1.4
+  version: 6.1.5
   generation: 7
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
@@ -831,6 +909,188 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_master_blueprint/blueprint.md
+- module_id: MOD-PA-002
+  name: signal_synthesis_combiner
+  title: 信号合成器蓝图 — 多策略加权投票+共振融合
+  summary: ''
+  layer: L02_pf_alloc
+  functional_domain: pf_alloc
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_portfolio_alloc/signal_synthesis_combiner/blueprint.md
+- module_id: MOD-PA-003
+  name: multi_strategy_capital_allocator
+  title: 多策略资金分配器蓝图 — 容量+MaxDD+冷启动+再平衡频率
+  summary: ''
+  layer: L02_pf_alloc
+  functional_domain: pf_alloc
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_portfolio_alloc/multi_strategy_capital_allocator/blueprint.md
+- module_id: MOD-PA-004
+  name: strategy_correlation_gate
+  title: 策略相关性门禁蓝图 — 多维度相关性检查+5级裁决
+  summary: ''
+  layer: L02_pf_alloc
+  functional_domain: pf_alloc
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_portfolio_alloc/strategy_correlation_gate/blueprint.md
+- module_id: MOD-POS-001
+  name: position_sizing_engine
+  title: 仓位决策引擎蓝图 — 四轨融合+半Kelly+13约束+分阶段施工
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.2.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/position_sizing_engine/blueprint.md
+- module_id: MOD-POS-002
+  name: position_state_machine
+  title: 仓位状态机蓝图 — 仓位生命周期状态转换
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/position_state_machine/blueprint.md
+- module_id: MOD-POS-003
+  name: position_drift_monitor
+  title: 仓位漂移监控器蓝图 — 两级阈值+三级监控频率
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/position_drift_monitor/blueprint.md
+- module_id: MOD-POS-004
+  name: rebalance_engine
+  title: 再平衡引擎蓝图 — 成本收益判定+三级触发
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/rebalance_engine/blueprint.md
+- module_id: MOD-POS-006
+  name: cash_manager
+  title: 资金管理器蓝图 — T+1约束+储备计算
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/cash_manager/blueprint.md
+- module_id: MOD-POS-007
+  name: capital_curve_manager
+  title: 资金曲线管理器蓝图 — 回撤分级动态调仓上限
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/capital_curve_manager/blueprint.md
+- module_id: MOD-POS-008
+  name: drawdown_controller
+  title: 回撤控制器蓝图 — 系统性风险5级+策略止损+黑天鹅处置
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/drawdown_controller/blueprint.md
+- module_id: MOD-POS-009
+  name: position_audit_logger
+  title: 仓位审计记录器蓝图 — 全记录+哈希链+可追溯
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/position_audit_logger/blueprint.md
+- module_id: MOD-POS-010
+  name: position_limit_enforcer
+  title: 限仓执行器蓝图 — 硬约束+5级否决
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/position_limit_enforcer/blueprint.md
+- module_id: MOD-POS-016
+  name: sell_position_link
+  title: 卖出-仓位双向链接蓝图 — 阈值动态调整+买入后即时验证
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/sell_position_link/blueprint.md
+- module_id: MOD-POS-017
+  name: calendar_position_constraint
+  title: 日历仓位约束蓝图 — A股风险日历→仓位上限调整
+  summary: ''
+  layer: L03_position
+  functional_domain: position
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_position/calendar_position_constraint/blueprint.md
 - module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
   name: resource_optimization_engine
   title: 资源优化引擎蓝图
@@ -844,6 +1104,227 @@ blueprints:
   generation: 2
   last_updated: '2026-05-22'
   file_path: 03_modules/_cross_layer/resource_optimization_engine/blueprint.md
+- module_id: MOD-RK-011
+  name: drawdown_tracker
+  title: 回撤实时追踪器蓝图 — 峰值谷值+三级阈值告警
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/drawdown_tracker/blueprint.md
+- module_id: MOD-RK-05
+  name: var_calculator
+  title: VaR 风险价值计算器蓝图 — 参数法+历史模拟法 Phase 1
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/var_calculator/blueprint.md
+- module_id: MOD-RK-07
+  name: concentration_monitor
+  title: 集中度风险监控器蓝图 — HHI+行业暴露+个股集中度
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/concentration_monitor/blueprint.md
+- module_id: MOD-RK-08
+  name: risk_budget_allocator
+  title: 风险预算分配器蓝图 — ERC + 自定义预算 SLSQP 优化
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/risk_budget_allocator/blueprint.md
+- module_id: MOD-RK-09
+  name: ashare_stop_loss_engine
+  title: A股止损规则引擎蓝图 — 6种止损模式 + 亏损限额三级
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/ashare_stop_loss_engine/blueprint.md
+- module_id: MOD-RK-10
+  name: ashare_systemic_risk_detector
+  title: A股系统性风险检测器蓝图 — 5信号扫描 + 三级警报 + 情绪断路器
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/ashare_systemic_risk_detector/blueprint.md
+- module_id: MOD-RK-12
+  name: stress_test_engine
+  title: 压力测试引擎蓝图 — 历史情景 + 假设情景 + 反向压力 + 敏感性 + 传染效应
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/stress_test_engine/blueprint.md
+- module_id: MOD-RK-15
+  name: tail_risk_monitor
+  title: 尾部风险监控器蓝图 — ES/CVaR + POT模型 + 跳跃检测 + FRTB加价
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/tail_risk_monitor/blueprint.md
+- module_id: MOD-RK-16
+  name: risk_decomposition
+  title: 风险分解引擎蓝图 — 因子/残差分解 + MCR/CCR 贡献
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/risk_decomposition/blueprint.md
+- module_id: MOD-RK-20
+  name: daily_auditor
+  title: 日终审计器蓝图 — PnL对账 + 归因偏差 + 合规报告 + 日终检查清单
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_risk/daily_auditor/blueprint.md
+- module_id: MOD-SELL-001
+  name: sell_signal_collector
+  title: 卖出信号收集器蓝图 — 8类卖出信号聚合+去重
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_sell_decision/sell_signal_collector/blueprint.md
+- module_id: MOD-SELL-003
+  name: breakout_failure_detector
+  title: 突破成败检测器蓝图 — 压力位突破判定+强制清仓
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_sell_decision/breakout_failure_detector/blueprint.md
+- module_id: MOD-SELL-006
+  name: replacement_rebalance_seller
+  title: 置换与再平衡卖出蓝图 — 机会成本驱动+组合权重偏离驱动
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_sell_decision/replacement_rebalance_seller/blueprint.md
+- module_id: MOD-SELL-007
+  name: sell_signal_fusion_engine
+  title: 卖出信号融合引擎蓝图 — 多信号加权融合+多时间框架共振
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_sell_decision/sell_signal_fusion_engine/blueprint.md
+- module_id: MOD-SELL-008
+  name: sell_conflict_arbitrator
+  title: 买卖冲突仲裁器蓝图 — 卖出优先保守原则+冲突分级
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_sell_decision/sell_conflict_arbitrator/blueprint.md
+- module_id: MOD-SELL-009
+  name: sell_urgency_scorer
+  title: 卖出紧迫度评分器蓝图 — 信号→紧迫度→执行策略映射
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_sell_decision/sell_urgency_scorer/blueprint.md
+- module_id: MOD-SELL-015
+  name: stop_hunting_protector
+  title: 止损猎杀防护器蓝图 — 止损位偏移+软止损OBSERVING观察期
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-02'
+  file_path: 03_modules/_domain_sell_decision/stop_hunting_protector/blueprint.md
 - module_id: MOD-TASK_SYSTEM
   name: task_system
   title: Task System 蓝图 — 全链路任务卡生命周期管理
@@ -886,18 +1367,23 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_system_master/blueprint.md
 summary:
-  total: 57
+  total: 94
   by_blueprint_status:
-    Active: 51
+    Active: 88
     Draft: 6
   by_layer:
-    L2_domain: 11
+    L2_domain: 14
+    L_BACKTEST: 3
     L1_foundation: 28
     L0_infrastructure: 17
     L3_application: 1
+    L02_pf_alloc: 3
+    L03_position: 11
+    L02_risk: 10
+    L03_sell_decision: 7
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress
     已于 2026-07-18 退役）
-  last_recomputed: '2026-07-31'
+  last_recomputed: '2026-08-02'
 changelog:
 - version: 2.7.11
   date: '2026-07-31'

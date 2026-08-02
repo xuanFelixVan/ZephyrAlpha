@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-07 | docs/03_modules/_domain-risk/concentration_monitor/blueprint.md
+# [BLUEPRINT] MOD-RK-07 | docs/03_modules/_domain_risk/concentration_monitor/blueprint.md
 # [MODULE] zephyr.risk.core.concentration_monitor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; numpy

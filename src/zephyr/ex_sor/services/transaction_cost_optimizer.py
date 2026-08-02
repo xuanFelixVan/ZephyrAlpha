@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-EX_SOR_EXT-003 | docs/03_modules/_domain-ex_sor/transaction_cost_optimizer/blueprint.md
+# [BLUEPRINT] MOD-EX_SOR_EXT-003 | docs/03_modules/_domain_ex_sor/transaction_cost_optimizer/blueprint.md
 # [MODULE] zephyr.ex_sor.services.transaction_cost_optimizer
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.contracts.enums.order_enums; zephyr.shared.foundation.errors

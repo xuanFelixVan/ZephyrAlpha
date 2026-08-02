@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-05 | docs/03_modules/_domain-risk/var_calculator/blueprint.md
+# [BLUEPRINT] MOD-RK-05 | docs/03_modules/_domain_risk/var_calculator/blueprint.md
 # [MODULE] zephyr.risk.core.var_calculator
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; numpy; scipy

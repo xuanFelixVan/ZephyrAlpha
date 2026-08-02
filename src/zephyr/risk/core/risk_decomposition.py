@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-16 | docs/03_modules/_domain-risk/risk_decomposition/blueprint.md
+# [BLUEPRINT] MOD-RK-16 | docs/03_modules/_domain_risk/risk_decomposition/blueprint.md
 # [MODULE] zephyr.risk.core.risk_decomposition
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.shared.foundation.errors; numpy; MOD-RK-05(VaR输入)

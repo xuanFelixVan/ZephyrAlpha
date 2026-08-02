@@ -14954,42 +14954,42 @@ ownership:
   - path: 'src/zephyr/risk/core/ashare_stop_loss_engine.py'
     owner_blueprint: 'MOD-RK-09'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/ashare_stop_loss_engine/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/ashare_stop_loss_engine/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/risk/core/ashare_systemic_risk_detector.py'
     owner_blueprint: 'MOD-RK-10'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/ashare_systemic_risk_detector/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/ashare_systemic_risk_detector/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/risk/core/concentration_monitor.py'
     owner_blueprint: 'MOD-RK-07'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/concentration_monitor/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/concentration_monitor/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/risk/core/var_calculator.py'
     owner_blueprint: 'MOD-RK-05'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/var_calculator/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/var_calculator/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/risk/core/risk_budget_allocator.py'
     owner_blueprint: 'MOD-RK-08'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/risk_budget_allocator/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/risk_budget_allocator/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/risk/core/risk_decomposition.py'
     owner_blueprint: 'MOD-RK-16'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/risk_decomposition/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/risk_decomposition/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -15038,7 +15038,7 @@ ownership:
   - path: 'src/zephyr/risk/core/daily_auditor.py'
     owner_blueprint: 'MOD-RK-20'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/daily_auditor/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/daily_auditor/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -15129,7 +15129,7 @@ ownership:
   - path: 'src/zephyr/risk/core/stress_test_engine.py'
     owner_blueprint: 'MOD-RK-12'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/stress_test_engine/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/stress_test_engine/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -15283,7 +15283,7 @@ ownership:
   - path: 'src/zephyr/risk/core/tail_risk_monitor.py'
     owner_blueprint: 'MOD-RK-15'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/tail_risk_monitor/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/tail_risk_monitor/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -32636,7 +32636,7 @@ ownership:
   - path: 'tests/risk/test_stress_test_engine.py'
     owner_blueprint: 'MOD-RK-12'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/stress_test_engine/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/stress_test_engine/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -32650,7 +32650,7 @@ ownership:
   - path: 'tests/risk/test_tail_risk_monitor.py'
     owner_blueprint: 'MOD-RK-15'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/tail_risk_monitor/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/tail_risk_monitor/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -33959,7 +33959,7 @@ ownership:
   - path: 'tests/risk/test_daily_auditor.py'
     owner_blueprint: 'MOD-RK-20'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/daily_auditor/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/daily_auditor/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -35338,7 +35338,7 @@ ownership:
   - path: 'tests/risk/test_ashare_systemic_risk_detector.py'
     owner_blueprint: 'MOD-RK-10'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/ashare_systemic_risk_detector/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/ashare_systemic_risk_detector/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -35352,7 +35352,7 @@ ownership:
   - path: 'tests/risk/test_ashare_stop_loss_engine.py'
     owner_blueprint: 'MOD-RK-09'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/ashare_stop_loss_engine/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/ashare_stop_loss_engine/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -35366,7 +35366,7 @@ ownership:
   - path: 'tests/risk/test_concentration_monitor.py'
     owner_blueprint: 'MOD-RK-07'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/concentration_monitor/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/concentration_monitor/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -35387,7 +35387,7 @@ ownership:
   - path: 'tests/risk/test_risk_budget_allocator.py'
     owner_blueprint: 'MOD-RK-08'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/risk_budget_allocator/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/risk_budget_allocator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -35415,7 +35415,7 @@ ownership:
   - path: 'tests/risk/test_risk_decomposition.py'
     owner_blueprint: 'MOD-RK-16'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/risk_decomposition/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/risk_decomposition/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -35478,7 +35478,7 @@ ownership:
   - path: 'tests/risk/test_var_calculator.py'
     owner_blueprint: 'MOD-RK-05'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain-risk/var_calculator/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_risk/var_calculator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 

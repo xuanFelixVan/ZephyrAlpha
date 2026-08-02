@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-014 | docs/03_modules/_domain-ex_sor/api_rate_limiter/blueprint.md
+# [BLUEPRINT] MOD-XS-014 | docs/03_modules/_domain_ex_sor/api_rate_limiter/blueprint.md
 # [MODULE] zephyr.ex_sor.api.api_rate_limiter
 # [DOMAIN] D_EX_SOR
 # [DEPENDENCIES] zephyr.shared.foundation.errors; time; collections.deque

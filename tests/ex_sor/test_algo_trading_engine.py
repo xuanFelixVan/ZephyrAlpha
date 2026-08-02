@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-005 | docs/03_modules/_domain-ex_sor/algo_trading_engine/blueprint.md | §
+# [BLUEPRINT] MOD-XS-005 | docs/03_modules/_domain_ex_sor/algo_trading_engine/blueprint.md | §
 # [TTL] permanent
 """AlgoTradingEngine 单元测试 (MOD-XS-005)。6 种算法 + 注册表 + 参数优化器。"""
 

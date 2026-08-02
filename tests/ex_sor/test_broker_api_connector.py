@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-013 | docs/03_modules/_domain-ex_sor/broker_api_connector/blueprint.md | §
+# [BLUEPRINT] MOD-XS-013 | docs/03_modules/_domain_ex_sor/broker_api_connector/blueprint.md | §
 # [TTL] permanent
 """BrokerApiConnector 单元测试 (MOD-XS-013)。协议层 + 心跳 + 限速 + 熔断。"""
 

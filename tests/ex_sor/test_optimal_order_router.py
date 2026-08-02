@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-XS-001 | docs/03_modules/_domain-ex_sor/optimal_order_router/blueprint.md | §
+# [BLUEPRINT] MOD-XS-001 | docs/03_modules/_domain_ex_sor/optimal_order_router/blueprint.md | §
 # [TTL] permanent
 """OptimalOrderRouter 单元测试 (MOD-XS-001)。三维加权路由 + 审计。"""
 
