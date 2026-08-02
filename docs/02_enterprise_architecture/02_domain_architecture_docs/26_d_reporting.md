@@ -91,18 +91,18 @@ flowchart TD
     src_zephyr_reporting_analytics_base_py["analytics基类<br/>盘后分析层。负责交易执行后的绩效评估与归因分析。<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_reporting_performance_attribution_report_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_ashare_performance_audit_py -->|data / data| src_zephyr_reporting_default_attribution_engine_py
-    src_zephyr_reporting_ashare_trade_record_template_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
-    src_zephyr_reporting_report_version_manager_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_regulatory_report_generator_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_realtime_pnl_dashboard_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_risk_report_engine_py -->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_ashare_trade_record_template_py -->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_regulatory_report_generator_py -->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_report_version_manager_py -->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_report_watermark_tracker_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    tests_reporting_test_ashare_performance_audit_py -->|测试依赖 / test_depends| src_zephyr_reporting_ashare_performance_audit_py
+    src_zephyr_reporting_risk_report_engine_py -->|data / data| src_zephyr_reporting_report_publisher_py
     tests_reporting_test_ashare_trade_record_template_py -->|测试依赖 / test_depends| src_zephyr_reporting_ashare_trade_record_template_py
-    tests_reporting_test_report_publisher_py -->|测试依赖 / test_depends| src_zephyr_reporting_report_publisher_py
     tests_reporting_test_realtime_pnl_dashboard_py -->|测试依赖 / test_depends| src_zephyr_reporting_realtime_pnl_dashboard_py
+    tests_reporting_test_ashare_performance_audit_py -->|测试依赖 / test_depends| src_zephyr_reporting_ashare_performance_audit_py
+    tests_reporting_test_report_publisher_py -->|测试依赖 / test_depends| src_zephyr_reporting_report_publisher_py
     tests_reporting_test_regulatory_report_generator_py -->|测试依赖 / test_depends| src_zephyr_reporting_regulatory_report_generator_py
     tests_reporting_test_report_version_manager_py -->|测试依赖 / test_depends| src_zephyr_reporting_report_version_manager_py
     tests_reporting_test_risk_report_engine_py -->|测试依赖 / test_depends| src_zephyr_reporting_risk_report_engine_py
@@ -184,18 +184,18 @@ flowchart TD
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_analytics_base_py["analytics基类<br/>盘后分析层。负责交易执行后的绩效评估与归因分析。<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_performance_audit_py -->|data / data| src_zephyr_reporting_default_attribution_engine_py
-    src_zephyr_reporting_ashare_trade_record_template_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
-    src_zephyr_reporting_report_version_manager_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_regulatory_report_generator_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_realtime_pnl_dashboard_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_risk_report_engine_py -->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_ashare_trade_record_template_py -->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_regulatory_report_generator_py -->|data / data| src_zephyr_reporting_report_publisher_py
+    src_zephyr_reporting_report_version_manager_py -->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_report_watermark_tracker_py -->|data / data| src_zephyr_reporting_report_publisher_py
-    tests_reporting_test_ashare_performance_audit_py -->|测试依赖 / test_depends| src_zephyr_reporting_ashare_performance_audit_py
+    src_zephyr_reporting_risk_report_engine_py -->|data / data| src_zephyr_reporting_report_publisher_py
     tests_reporting_test_ashare_trade_record_template_py -->|测试依赖 / test_depends| src_zephyr_reporting_ashare_trade_record_template_py
-    tests_reporting_test_report_publisher_py -->|测试依赖 / test_depends| src_zephyr_reporting_report_publisher_py
     tests_reporting_test_realtime_pnl_dashboard_py -->|测试依赖 / test_depends| src_zephyr_reporting_realtime_pnl_dashboard_py
+    tests_reporting_test_ashare_performance_audit_py -->|测试依赖 / test_depends| src_zephyr_reporting_ashare_performance_audit_py
+    tests_reporting_test_report_publisher_py -->|测试依赖 / test_depends| src_zephyr_reporting_report_publisher_py
     tests_reporting_test_regulatory_report_generator_py -->|测试依赖 / test_depends| src_zephyr_reporting_regulatory_report_generator_py
     tests_reporting_test_report_version_manager_py -->|测试依赖 / test_depends| src_zephyr_reporting_report_version_manager_py
     tests_reporting_test_risk_report_engine_py -->|测试依赖 / test_depends| src_zephyr_reporting_risk_report_engine_py

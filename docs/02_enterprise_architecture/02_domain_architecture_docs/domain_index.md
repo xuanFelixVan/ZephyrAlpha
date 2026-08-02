@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3184 |
-| 生产态模块 | 2976 |
-| 设计态模块 | 208 |
+| 模块总数 | 3193 |
+| 生产态模块 | 2988 |
+| 设计态模块 | 205 |
 
 ## 域清单（按架构层分组）
 
@@ -103,7 +103,7 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 / Ops Resilience Governance | 91 | 91 | 0 | 91/150 (OK) | [📄 20_d_gov_ops_resilience.md](20_d_gov_ops_resilience.md) |
 | D_INTEGRATION | 管线路由 / Pipeline Routing | 71 | 71 | 0 | 71/150 (OK) | [📄 21_d_integration.md](21_d_integration.md) |
 | D_INTEGRATION_GATEWAY | 集成网关 / Integration Gateway | 0 | 0 | 0 | 0/150 (OK) | [📄 22_d_integration_gateway.md](22_d_integration_gateway.md) |
-| D_MKT_DATA | 行情数据 / Market Data | 17 | 14 | 3 | 17/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
+| D_MKT_DATA | 行情数据 / Market Data | 26 | 26 | 0 | 26/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
 | D_OPS | 反馈循环 / Feedback Loop | 11 | 11 | 0 | 11/150 (OK) | [📄 24_d_ops.md](24_d_ops.md) |
 | D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 70 | 70 | 0 | 70/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 20 | 19 | 1 | 20/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
