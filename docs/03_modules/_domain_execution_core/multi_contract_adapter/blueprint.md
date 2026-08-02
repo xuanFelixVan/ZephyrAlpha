@@ -1,0 +1,95 @@
+---
+module_id: MOD-EX-055
+title: "多契约生产适配器蓝图 — CTR-004/005/006 Schema版本演进+消费者注册+变更通知"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+design_maturity: production
+ttl: permanent
+responsibility_domain: 
+---
+
+# MOD-EX-055 | 多契约生产适配器 (Multi-Contract Adapter)
+
+> **域**: D_EX_CORE | **优先级**: P2 | **成熟度**: design→production
+> **SSoT**: depgraph MOD-EX-055 | **设计真源**: D-EX-CORE-55 "CTR-004/005/006 Schema+版本演进+消费者注册+变更通知"
+
+## §1 模块定位
+
+多契约生产适配器——D_EX_CORE 域的**契约注册中心**。
+
+管理 CTR-004 (Order) / CTR-005 (Fill) / CTR-006 (PositionSnapshot) 三份
+跨域契约的 Schema 元数据、版本演进、消费者注册和变更通知。
+
+**不是**契约本身的定义（契约定义在 `zephyr.shared.contracts.*`），而是契约的
+**管理面**：谁生产、谁消费、什么版本、是否冻结、变更时通知谁。
+
+### 与 contracts 的关系
+
+| 层 | 职责 | 真源 |
+|----|------|------|
+| contracts/ (CTR-004/005/006) | 契约**数据结构**定义 (dataclass + 字段) | cross_layer_contracts.yaml |
+| multi_contract_adapter (本模块) | 契约**管理面** (版本/消费者/通知) | depgraph MOD-EX-055 |
+
+## §2 输入输出
+
+### 输入
+- 契约注册请求 (contract_id, version, producer, consumers, frozen)
+- 消费者注册请求 (contract_id, consumer_domain, callback)
+- 版本升级请求 (contract_id, new_version, changelog)
+
+### 输出
+- `ContractSchema`: 契约元数据快照 (不可变)
+- `ContractRegistry`: 全量契约注册表
+- 变更通知: 推送给已注册消费者
+
+## §3 核心规则
+
+1. **契约注册**: 启动时自动注册 CTR-004/005/006 三份契约的元数据
+2. **版本追踪**: 每份契约有 schema_version (语义版本)，变更时版本递增
+3. **消费者注册**: 消费域通过 `register_consumer()` 订阅契约变更
+4. **冻结契约**: 已冻结契约 (frozen=True) 禁止版本升级，需 `--force` 逃生
+5. **变更通知**: 契约版本变更时，自动通知所有已注册消费者
+6. **不可变快照**: ContractSchema 为 frozen dataclass，变更生成新实例
+7. **审计日志**: 所有注册/升级/通知操作记录审计日志
+
+## §4 数据模型
+
+```python
+@dataclass(frozen=True)
+class ContractSchema:
+    contract_id: str          # "CTR-004"
+    name: str                 # "Order"
+    version: str              # "1.0"
+    producer_domain: str      # "D_EX_CORE"
+    consumer_domains: tuple[str, ...]  # ("D_PORTFOLIO", "D_EX_SOR")
+    frozen: bool              # 是否冻结（禁止升级）
+    ssot_path: str            # "cross_layer_contracts.yaml -> CTR-004"
+    contract_class_path: str  # "zephyr.shared.contracts.order.Order"
+    changelog: tuple[str, ...]  # 版本变更日志
+
+@dataclass(frozen=True)
+class MultiContractRegistry:
+    contracts: dict[str, ContractSchema]  # contract_id -> schema
+    consumer_callbacks: dict[str, list[Callable]]  # contract_id -> callbacks
+```
+
+## §5 错误契约
+
+- `ContractAlreadyRegisteredError` (ZA-EX-055-01): 重复注册同一 contract_id
+- `ContractNotFoundError` (ZA-EX-055-02): 查询/升级不存在的契约
+- `ContractFrozenError` (ZA-EX-055-03): 升级已冻结契约（无 --force）
+- `InvalidVersionError` (ZA-EX-055-04): 版本号格式非法或降级
+
+## §6 测试计划
+
+1. 契约注册: 注册 CTR-004/005/006，验证元数据正确
+2. 重复注册: 同一 contract_id 二次注册 → ContractAlreadyRegisteredError
+3. 消费者注册: 注册消费者 + 验证回调列表
+4. 版本升级: 非冻结契约升级 → 版本递增 + 变更日志 + 通知消费者
+5. 冻结契约升级: frozen=True 契约升级 → ContractFrozenError
+6. 冻结契约强制升级: --force 升级 → 成功 + 审计标记
+7. 版本降级: "2.0"→"1.0" → InvalidVersionError
+8. 变更通知: 升级后所有已注册回调被调用
+9. 查询: 按 contract_id / producer_domain / consumer_domain 查询
+10. 审计日志: 所有操作有审计记录

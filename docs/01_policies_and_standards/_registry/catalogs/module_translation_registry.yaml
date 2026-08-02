@@ -59004,6 +59004,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "绩效归因引擎——将组合收益分解为配置效应选择效应交互效应Brinson三因子，供报告和审计消费"
+- module_path: src/zephyr/ex_core/multi_contract_adapter.py
+  domain_id: D_EX_CORE
+  name_zh: "多契约生产适配器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "多契约生产适配器——D_EX_CORE域的契约注册中心,管理CTR-004(Order)/CTR-005(Fill)/CTR-006(PositionSnapshot)三份跨域契约的Schema元数据、版本演进、消费者注册和变更通知,冻结契约禁止升级(force逃生),变更时同步通知已注册消费者回调"
 
 battle_map_steps:
   - step_id: BM-BUY-04

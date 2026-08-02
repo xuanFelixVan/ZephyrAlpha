@@ -18,7 +18,11 @@ This package re-exports for backward compatibility.
 
 from __future__ import annotations
 
-__all__ = [
+from typing import Final
+
+from zephyr.ex_core import multi_contract_adapter  # noqa: F401 — 包级导出（契约注册中心）
+
+__all__: Final = [
     "AlgoType",
     "BrokerInterface",
     "ExecutionConfig",
@@ -29,10 +33,11 @@ __all__ = [
     "OrderManager",
     "adapters",
     "execution_engine",
+    "multi_contract_adapter",
     "order_manager",
 ]
 
-_LAZY_IMPORTS = {
+_LAZY_IMPORTS: Final = {
     "ExecutionEngine": ("zephyr.ex_core.execution_engine", "ExecutionEngine"),
     "ExecutionEngineRunRecord": ("zephyr.ex_core.execution_engine", "ExecutionEngineRunRecord"),
     "ExecutionConfig": ("zephyr.ex_core.execution_engine", "ExecutionConfig"),
@@ -44,7 +49,7 @@ _LAZY_IMPORTS = {
     "OrderAction": ("zephyr.ex_core.order_manager", "OrderAction"),
 }
 
-_SUBMODULES = ["execution_engine", "order_manager", "adapters"]
+_SUBMODULES: Final = ["execution_engine", "order_manager", "adapters", "multi_contract_adapter"]
 
 
 def __getattr__(name):
