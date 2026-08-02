@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIM-021 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIM-012 Simulation Result Analyzer — 仿真结果分析器单元测试。
 
 覆盖: 单场景指标、多场景聚合(mean/std/分位数/CI)、分布直方图、Jarque-Bera 正态性、
