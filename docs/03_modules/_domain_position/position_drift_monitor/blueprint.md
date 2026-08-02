@@ -4,6 +4,7 @@ title: "仓位漂移监控器蓝图 — 两级阈值+三级监控频率"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position

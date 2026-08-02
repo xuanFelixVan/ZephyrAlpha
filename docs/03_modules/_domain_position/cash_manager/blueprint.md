@@ -4,6 +4,7 @@ title: "资金管理器蓝图 — T+1约束+储备计算"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position

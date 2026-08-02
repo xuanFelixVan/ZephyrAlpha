@@ -4,6 +4,7 @@ title: "日历仓位约束蓝图 — A股风险日历→仓位上限调整"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position

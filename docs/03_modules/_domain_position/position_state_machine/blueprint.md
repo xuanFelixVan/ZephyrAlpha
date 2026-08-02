@@ -4,6 +4,7 @@ title: "仓位状态机蓝图 — 仓位生命周期状态转换"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position

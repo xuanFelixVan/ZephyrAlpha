@@ -4,6 +4,7 @@ title: "限仓执行器蓝图 — 硬约束+5级否决"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position
