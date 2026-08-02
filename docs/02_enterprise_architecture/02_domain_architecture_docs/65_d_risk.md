@@ -139,8 +139,8 @@ flowchart TD
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_EX_CORE -.->|runtime / runtime| src_zephyr_risk_risk_validator_py
     D_PF_CORE -->|contract / contract| src_zephyr_risk_risk_limits_py
-    D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_risk_core_risk_budget_allocator_py
-    D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_budget_allocator_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_risk_stop_loss_py
@@ -268,10 +268,10 @@ flowchart TD
 | 2 | D_GOVERNANCE 生命周期管理: demoe2e管线 / demo_e2e_pipeline (construction/demo_e2e_pi... | → | 风控管理器 / risk_manager (risk/risk_manager.py) | 导入依赖 / import_depends |
 | 3 | D_GOVERNANCE 生命周期管理: demoe2e管线 / demo_e2e_pipeline (construction/demo_e2e_pi... | → | 停止亏损 / stop_loss (risk/stop_loss.py) | 导入依赖 / import_depends |
 | 4 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | contract / contract |
-| 5 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | 导入依赖 / import_depends |
-| 6 | D_PF_CORE 组合核心: 决策编排器 (pf_core/decision_orchestrator.py) | → | Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | 导入依赖 / import_depends |
-| 7 | D_PF_CORE 组合核心: 元路由器 (meta_router/) | → | Risk Budget Allocator — 风险预算分配器 (MOD-RK-08) (core... | 导入依赖 / import_depends |
-| 8 | D_PF_CORE 组合核心: 元路由器 (meta_router/) | → | Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | 导入依赖 / import_depends |
+| 5 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | Risk Budget Allocator — 风险预算分配器 (MOD-RK-08) (core... | 导入依赖 / import_depends |
+| 6 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | 导入依赖 / import_depends |
+| 7 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | 导入依赖 / import_depends |
+| 8 | D_PF_CORE 组合核心: 决策编排器 (pf_core/decision_orchestrator.py) | → | Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | 导入依赖 / import_depends |
 | 9 | D_POSITION 仓位管理: 持仓sizing引擎 / position_sizing_engine (core/position_si... | → | 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram

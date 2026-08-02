@@ -16,7 +16,7 @@ priority: P1
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: testing
+build_status: stable
 ---
 
 # MOD-RPT-004 Real-time P&L Dashboard — 实时盈亏仪表盘 蓝图

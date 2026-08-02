@@ -31,8 +31,8 @@ ttl: permanent
 | 域内依赖 | 21 | Internal Dependencies | 21 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 29 | Cross-domain Outgoing | 29 |
-| 设计态模块 | 4 | Design Modules | 4 |
-| 生产态模块 | 12 | Production Modules | 12 |
+| 设计态模块 | 3 | Design Modules | 3 |
+| 生产态模块 | 13 | Production Modules | 13 |
 | 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 组合核心，负责投资组合构建、持仓管理和组合优化 | Description | 组合核心，负责投资组合构建、持仓管理和组合优化 |
 
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 16 个模块（生产态 12 + 设计态 4），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 16 个模块（生产态 13 + 设计态 3），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -66,7 +66,7 @@ flowchart TD
     tests_pf_core_test_intraday_surge_fall_strategy_py ~~~ tests_pf_core_test_orderbook_imbalance_strategy_py
     tests_pf_core_test_orderbook_imbalance_strategy_py ~~~ tests_pf_core_test_strategy_runner_tick_py
     tests_pf_core_test_strategy_runner_tick_py ~~~ tests_pf_core_test_vwap_reversion_strategy_py
-    src_zephyr_pf_core_meta_router["元路由器<br/>元路由的子目录，归集相关子模块<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: meta_router/<br/>(设计态 / design)"]
+    src_zephyr_pf_core_core_portfolio_optimizer_py["core/portfolio_optimizer<br/>Portfolio Optimizer — 组合优化器 (MOD-PF-002)<br/>文件: core/portfolio_optimizer.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_constraint_solver_py["core/constraint_solver<br/>Constraint Solver — 约束求解器 (MOD-PF-006)<br/>文件: core/constraint_solver.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_strategy_engine_py["core/strategy_engine<br/>Strategy Engine — 策略引擎 (MOD-PF-001)<br/>文件: core/strategy_engine.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>策略引擎包：策略运行器 + 具体策略实现。<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
@@ -79,11 +79,11 @@ flowchart TD
     src_zephyr_pf_core_intraday_surge_fall_strategy_py ~~~ src_zephyr_pf_core_orderbook_imbalance_strategy_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py ~~~ src_zephyr_pf_core_vwap_reversion_strategy_py
     src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["逐笔策略基类<br/>与 StrategyBase<br/>（日频截面，signals=dict(str,float)）正交。本基<br/>类的策略每个 tick<br/>tick_strategy_base<br/>文件: strategy_engine/tick_strategy_base.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_meta_router -.->|import / import| src_zephyr_pf_core_core_strategy_engine_py
-    src_zephyr_pf_core_meta_router -.->|import / import| src_zephyr_pf_core_core_constraint_solver_py
-    src_zephyr_pf_core_meta_router -.->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_init_py
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|import / import| src_zephyr_pf_core_core_strategy_engine_py
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|import / import| src_zephyr_pf_core_core_constraint_solver_py
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_init_py
     src_zephyr_pf_core_portfolio_aggregate -.->|import / import| src_zephyr_pf_core_core_strategy_engine_py
-    src_zephyr_pf_core_portfolio_aggregate -.->|import / import| src_zephyr_pf_core_meta_router
+    src_zephyr_pf_core_portfolio_aggregate -.->|import / import| src_zephyr_pf_core_core_portfolio_optimizer_py
     src_zephyr_pf_core_decision_orchestrator_py -.->|import / import| src_zephyr_pf_core_core_strategy_engine_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
@@ -107,14 +107,14 @@ flowchart TD
     src_zephyr_pf_core_core_constraint_solver_py -->|contract / contract| D_RISK
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_strategy_engine_py -->|contract / contract| D_INFRASTRUCTURE
-    src_zephyr_pf_core_meta_router -.->|contract / contract| D_INFRASTRUCTURE
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|contract / contract| D_INFRASTRUCTURE
     src_zephyr_pf_core_decision_orchestrator_py -.->|contract / contract| D_INFRASTRUCTURE
     D_PF_ALLOC["组合分配<br/>组合分配，负责资产配置、权重分配和再平衡<br/>Portfolio Allocation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_constraint_solver_py -->|导入依赖 / import_depends| D_PF_ALLOC
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_strategy_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_meta_router -.->|导入依赖 / import_depends| D_RISK
-    src_zephyr_pf_core_meta_router -.->|导入依赖 / import_depends| D_RISK
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|导入依赖 / import_depends| D_RISK
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|导入依赖 / import_depends| D_RISK
     src_zephyr_pf_core_portfolio_aggregate -.->|导入依赖 / import_depends| D_POSITION
     src_zephyr_pf_core_portfolio_aggregate -.->|导入依赖 / import_depends| D_POSITION
     src_zephyr_pf_core_decision_orchestrator_py -.->|导入依赖 / import_depends| D_RISK
@@ -127,31 +127,32 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_core_constraint_solver_py,src_zephyr_pf_core_core_strategy_engine_py,src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_orderbook_imbalance_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,src_zephyr_pf_core_vwap_reversion_strategy_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_orderbook_imbalance_strategy_py,tests_pf_core_test_strategy_runner_tick_py,tests_pf_core_test_vwap_reversion_strategy_py production
-    class src_zephyr_pf_core_decision_orchestrator_py,src_zephyr_pf_core_meta_router,src_zephyr_pf_core_portfolio_aggregate,src_zephyr_pf_core_topn_momentum_strategy_py design
+    class src_zephyr_pf_core_core_constraint_solver_py,src_zephyr_pf_core_core_portfolio_optimizer_py,src_zephyr_pf_core_core_strategy_engine_py,src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_orderbook_imbalance_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,src_zephyr_pf_core_vwap_reversion_strategy_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_orderbook_imbalance_strategy_py,tests_pf_core_test_strategy_runner_tick_py,tests_pf_core_test_vwap_reversion_strategy_py production
+    class src_zephyr_pf_core_decision_orchestrator_py,src_zephyr_pf_core_portfolio_aggregate,src_zephyr_pf_core_topn_momentum_strategy_py design
     class D_POSITION,D_RISK,D_INFRASTRUCTURE,D_PF_ALLOC,D_GOVERNANCE,D_BACKTEST,D_EX_CORE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 12 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 13 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_core_core_constraint_solver_py["core/constraint_solver<br/>Constraint Solver — 约束求解器 (MOD-PF-006)<br/>文件: core/constraint_solver.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_core_strategy_engine_py["core/strategy_engine<br/>Strategy Engine — 策略引擎 (MOD-PF-001)<br/>文件: core/strategy_engine.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>策略引擎包：策略运行器 + 具体策略实现。<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_core_portfolio_optimizer_py["core/portfolio_optimizer<br/>Portfolio Optimizer — 组合优化器 (MOD-PF-002)<br/>文件: core/portfolio_optimizer.py<br/>(生产态 / production)"]
     tests_pf_core_test_intraday_surge_fall_strategy_py["测试intradaysurgefall策略<br/>IntradaySurgeFallStrategy 单元测试（路径 B<br/>示例策略）。<br/>test_intraday_surge_fall_strategy<br/>文件: pf_core<br/>/test_intraday_surge_fall_strategy.py<br/>(生产态 / production)"]
     tests_pf_core_test_orderbook_imbalance_strategy_py["测试orderbookimbalance策略<br/>OrderBookImbalanceStrategy 单元测试（路径 B<br/>盘口失衡反转策略）。<br/>test_orderbook_imbalance_strategy<br/>文件: pf_core<br/>/test_orderbook_imbalance_strategy.py<br/>(生产态 / production)"]
     tests_pf_core_test_strategy_runner_tick_py["测试策略运行器逐笔<br/>run_tick_backtest 单元测试（路径 A：日频信号 ×<br/>tick 撮合）<br/>test_strategy_runner_tick<br/>文件: pf_core/test_strategy_runner_tick.py<br/>(生产态 / production)"]
     tests_pf_core_test_vwap_reversion_strategy_py["测试vwapreversion策略<br/>VWAPReversionStrategy 单元测试（路径 B<br/>均值回归策略）。<br/>test_vwap_reversion_strategy<br/>文件: pf_core/test_vwap_reversion_strategy.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_core_constraint_solver_py ~~~ src_zephyr_pf_core_core_strategy_engine_py
-    src_zephyr_pf_core_core_strategy_engine_py ~~~ src_zephyr_pf_core_strategy_engine_init_py
-    src_zephyr_pf_core_strategy_engine_init_py ~~~ tests_pf_core_test_intraday_surge_fall_strategy_py
+    src_zephyr_pf_core_core_portfolio_optimizer_py ~~~ tests_pf_core_test_intraday_surge_fall_strategy_py
     tests_pf_core_test_intraday_surge_fall_strategy_py ~~~ tests_pf_core_test_orderbook_imbalance_strategy_py
     tests_pf_core_test_orderbook_imbalance_strategy_py ~~~ tests_pf_core_test_strategy_runner_tick_py
     tests_pf_core_test_strategy_runner_tick_py ~~~ tests_pf_core_test_vwap_reversion_strategy_py
+    src_zephyr_pf_core_core_constraint_solver_py["core/constraint_solver<br/>Constraint Solver — 约束求解器 (MOD-PF-006)<br/>文件: core/constraint_solver.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_core_strategy_engine_py["core/strategy_engine<br/>Strategy Engine — 策略引擎 (MOD-PF-001)<br/>文件: core/strategy_engine.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>策略引擎包：策略运行器 + 具体策略实现。<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_core_constraint_solver_py ~~~ src_zephyr_pf_core_core_strategy_engine_py
+    src_zephyr_pf_core_core_strategy_engine_py ~~~ src_zephyr_pf_core_strategy_engine_init_py
     src_zephyr_pf_core_strategy_engine_strategy_runner_py["策略运行器<br/>D_PORTFOLIO_CORE — StrategyRunner 策略运行器<br/>（胶水层）<br/>strategy_runner<br/>文件: strategy_engine/strategy_runner.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_intraday_surge_fall_strategy_py["DCORE — 30秒冲高回落做T策略（路径 B 示例策略<br/>D_PORTFOLIO_CORE — 30秒冲高回落做T策略（路径 B<br/>示例策略）<br/>intraday_surge_fall_strategy<br/>文件: pf_core/intraday_surge_fall_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_orderbook_imbalance_strategy_py["DCORE — 盘口失衡反转做T策略（路径 B 策略）<br/>D_PORTFOLIO_CORE — 盘口失衡反转做T策略（路径 B<br/>策略）<br/>orderbook_imbalance_strategy<br/>文件: pf_core/orderbook_imbalance_strategy.py<br/>(生产态 / production)"]
@@ -159,6 +160,9 @@ flowchart TD
     src_zephyr_pf_core_intraday_surge_fall_strategy_py ~~~ src_zephyr_pf_core_orderbook_imbalance_strategy_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py ~~~ src_zephyr_pf_core_vwap_reversion_strategy_py
     src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["逐笔策略基类<br/>与 StrategyBase<br/>（日频截面，signals=dict(str,float)）正交。本基<br/>类的策略每个 tick<br/>tick_strategy_base<br/>文件: strategy_engine/tick_strategy_base.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|import / import| src_zephyr_pf_core_core_strategy_engine_py
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|import / import| src_zephyr_pf_core_core_constraint_solver_py
+    src_zephyr_pf_core_core_portfolio_optimizer_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_init_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     src_zephyr_pf_core_vwap_reversion_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
@@ -178,12 +182,12 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_core_constraint_solver_py,src_zephyr_pf_core_core_strategy_engine_py,src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_orderbook_imbalance_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,src_zephyr_pf_core_vwap_reversion_strategy_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_orderbook_imbalance_strategy_py,tests_pf_core_test_strategy_runner_tick_py,tests_pf_core_test_vwap_reversion_strategy_py production
+    class src_zephyr_pf_core_core_constraint_solver_py,src_zephyr_pf_core_core_portfolio_optimizer_py,src_zephyr_pf_core_core_strategy_engine_py,src_zephyr_pf_core_intraday_surge_fall_strategy_py,src_zephyr_pf_core_orderbook_imbalance_strategy_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_engine_strategy_runner_py,src_zephyr_pf_core_strategy_engine_tick_strategy_base_py,src_zephyr_pf_core_vwap_reversion_strategy_py,tests_pf_core_test_intraday_surge_fall_strategy_py,tests_pf_core_test_orderbook_imbalance_strategy_py,tests_pf_core_test_strategy_runner_tick_py,tests_pf_core_test_vwap_reversion_strategy_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 4 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 3 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -193,13 +197,11 @@ flowchart TD
     src_zephyr_pf_core_topn_momentum_strategy_py["topnmomentum策略<br/>截面动量打分取前 N 等权配置。Phase A MVP<br/>证链策略——验证 因子→策略→回测 端到端链路。<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>topn_momentum_strategy<br/>文件: pf_core/topn_momentum_strategy.py<br/>(设计态 / design)"]
     src_zephyr_pf_core_decision_orchestrator_py ~~~ src_zephyr_pf_core_portfolio_aggregate
     src_zephyr_pf_core_portfolio_aggregate ~~~ src_zephyr_pf_core_topn_momentum_strategy_py
-    src_zephyr_pf_core_meta_router["元路由器<br/>元路由的子目录，归集相关子模块<br/>⛔ 组合核心域，设计已就绪，等待开发排期<br/>文件: meta_router/<br/>(设计态 / design)"]
-    src_zephyr_pf_core_portfolio_aggregate -.->|import / import| src_zephyr_pf_core_meta_router
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_decision_orchestrator_py,src_zephyr_pf_core_meta_router,src_zephyr_pf_core_portfolio_aggregate,src_zephyr_pf_core_topn_momentum_strategy_py design
+    class src_zephyr_pf_core_decision_orchestrator_py,src_zephyr_pf_core_portfolio_aggregate,src_zephyr_pf_core_topn_momentum_strategy_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -223,9 +225,9 @@ flowchart TD
 | 13 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_FACTOR 因子: 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
 | 14 | Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
 | 15 | 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 16 | Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | D_INFRASTRUCTURE 跨层契约基础设施: 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
-| 17 | 决策编排器 (pf_core/decision_orchestrator.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 绩效attribution报告 / performance_attribution_report (con... | contract / contract |
-| 18 | 元路由器 (meta_router/) | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/target_portfolio.py | contract / contract |
+| 16 | Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/target_portfolio.py | contract / contract |
+| 17 | Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | D_INFRASTRUCTURE 跨层契约基础设施: 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
+| 18 | 决策编排器 (pf_core/decision_orchestrator.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 绩效attribution报告 / performance_attribution_report (con... | contract / contract |
 | 19 | Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | D_PF_ALLOC 组合分配: Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
 | 20 | 决策编排器 (pf_core/decision_orchestrator.py) | → | D_PF_ALLOC 组合分配: Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
 | 21 | 包入口 / D_PORTFOLIO_CORE — Portfolio Construction Strat... | → | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | 导入依赖 / import_depends |
@@ -233,10 +235,10 @@ flowchart TD
 | 23 | 组合聚合 (portfolio_aggregate/) | → | D_POSITION 仓位管理: rebalance引擎 / rebalance_engine (core/rebalance_engine.py) | 导入依赖 / import_depends |
 | 24 | 组合聚合 (portfolio_aggregate/) | → | D_POSITION 仓位管理: 持仓协调器 / position_reconciler (position/position_recon... | 导入依赖 / import_depends |
 | 25 | Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | contract / contract |
-| 26 | Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | 导入依赖 / import_depends |
-| 27 | 决策编排器 (pf_core/decision_orchestrator.py) | → | D_RISK 风控: Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | 导入依赖 / import_depends |
-| 28 | 元路由器 (meta_router/) | → | D_RISK 风控: Risk Budget Allocator — 风险预算分配器 (MOD-RK-08) (core... | 导入依赖 / import_depends |
-| 29 | 元路由器 (meta_router/) | → | D_RISK 风控: Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | 导入依赖 / import_depends |
+| 26 | Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | D_RISK 风控: Risk Budget Allocator — 风险预算分配器 (MOD-RK-08) (core... | 导入依赖 / import_depends |
+| 27 | Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | D_RISK 风控: Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | 导入依赖 / import_depends |
+| 28 | Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | 导入依赖 / import_depends |
+| 29 | 决策编排器 (pf_core/decision_orchestrator.py) | → | D_RISK 风控: Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

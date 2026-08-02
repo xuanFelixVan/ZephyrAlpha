@@ -132,7 +132,7 @@ flowchart TD
     D_REPORTING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|contract / contract| src_zephyr_shared_contracts_strategy_lifecycle_event_py
-    D_PF_CORE -.->|contract / contract| src_zephyr_shared_contracts_target_portfolio_py
+    D_PF_CORE -->|contract / contract| src_zephyr_shared_contracts_target_portfolio_py
     D_PF_CORE -.->|contract / contract| src_zephyr_shared_contracts_performance_attribution_report_py
     D_REPORTING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_REPORTING -->|测试依赖 / test_depends| src_zephyr_shared_contracts_fill_py
@@ -288,9 +288,9 @@ flowchart TD
 | 45 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
 | 46 | D_PF_ALLOC 组合分配: 策略生命周期事件 / strategy_lifecycle_event (pf_alloc/str... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
 | 47 | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
-| 48 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
-| 49 | D_PF_CORE 组合核心: 决策编排器 (pf_core/decision_orchestrator.py) | → | 绩效attribution报告 / performance_attribution_report (con... | contract / contract |
-| 50 | D_PF_CORE 组合核心: 元路由器 (meta_router/) | → | contracts/target_portfolio.py | contract / contract |
+| 48 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | contract / contract |
+| 49 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
+| 50 | D_PF_CORE 组合核心: 决策编排器 (pf_core/decision_orchestrator.py) | → | 绩效attribution报告 / performance_attribution_report (con... | contract / contract |
 | 51 | D_POSITION 仓位管理: 持仓sizing引擎 / position_sizing_engine (core/position_si... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 52 | D_POSITION 仓位管理: Position Sizing Engine 测试 (MOD-POS-001 阶段1)。 (positi... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
 | 53 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
