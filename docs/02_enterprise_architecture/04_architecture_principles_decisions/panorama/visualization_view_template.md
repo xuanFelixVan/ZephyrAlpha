@@ -1,7 +1,7 @@
 ---
 doc_type: architecture_view
 title: 可视化视图模板规范（三视图 + 可缩放 HTML）
-version: "1.3"
+version: "1.4"
 status: active
 date: 2026-08-02
 owner: MOD-INF-037
@@ -10,7 +10,7 @@ ttl: permanent
 
 # 可视化视图模板规范（三视图 + 可缩放 HTML）
 
-> **版本**：V1.3 | 2026-08-02
+> **版本**：V1.4 | 2026-08-02
 > **读者**：项目 Owner + AI 开发 Agent + 架构治理人员
 > **写法**：大白话为主，配完整代码模板和验收清单。变更历史见 git log。
 
@@ -886,7 +886,7 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 - [ ] 所有节点有大白话（`plain_zh` 非空、无"待补充"）
 - [ ] 所有节点有英文名（`name_en` 非空，且不是 docstring 片段如 `G-CT-004 — Backward-compat...`）
 - [ ] **plain_zh 合格**：回答三问（是什么/干什么/解决什么问题）、≥6 个汉字、不以 name_zh 开头、不含"供X使用"消费者引用
-- [ ] **运行简介质量审计**：`python tmp/_audit_doc_labels.py <域文档.md>`，问题节点数 = 0（§十七.4）
+- [ ] **运行简介质量审计**：`python scripts/governance/d5_architecture/checkers/check_node_label_quality.py <域文档.md>`，问题节点数 = 0（§十七.4）
 - [ ] 设计态模块（`design_maturity=design`）未被幽灵文件过滤误删
 - [ ] 跨域节点有域中文名和功能简介
 
@@ -1160,7 +1160,7 @@ plain_zh (YAML)  ──过滤──→  desc_zh (YAML)  ──过滤──→  d
 发现某域文档节点简介质量差时，按此流程**循环至问题清零**：
 
 ```
-步骤1：审计  ──→  python tmp/_audit_doc_labels.py <域文档.md>
+步骤1：审计  ──→  python scripts/governance/d5_architecture/checkers/check_node_label_quality.py <域文档.md>
                    （检测五类坏简介，输出问题模块清单）
 
 步骤2：读源码  ──→  对每个问题模块，读 .py 文件的 module docstring + 首个 class/func docstring
@@ -1178,7 +1178,14 @@ plain_zh (YAML)  ──过滤──→  desc_zh (YAML)  ──过滤──→  d
                    （不为 0 则回到步骤2，直到清零）
 ```
 
-**审计脚本模板**（`tmp/_audit_doc_labels.py`，可直接复制使用）：
+**审计脚本**（已落地为 committed 治理脚本 + warn-only pre-commit gate `GATE-NODE-LABEL-QUALITY`）：
+
+- **权威真源**：[`scripts/governance/d5_architecture/checkers/check_node_label_quality.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/checkers/check_node_label_quality.py)
+- **用法**：`python scripts/governance/d5_architecture/checkers/check_node_label_quality.py [--warn-only|--ci] [<域文档.md>...]`（无参数扫描 `docs/02_enterprise_architecture/02_domain_architecture_docs/` 全部 .md）
+- **模式**：`--warn-only` 仅报告（观察期，当前 pre-commit gate 用此模式）；`--ci` 有问题 exit 1（存量清零后转此模式）
+- **退出码**：0=PASS/干净或 warn-only，1=FINDINGS（--ci 且有问题），2=ERROR
+
+> 以下为检测逻辑摘要（权威实现以 committed 脚本为准，勿再复制 tmp/ 版本——tmp/ 被 gitignore，fresh checkout 不可用）：
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1288,6 +1295,7 @@ python scripts/git_commit.py \
 | V1.1 | 2026-08-01 | ①新增 §4.10 标签预折行铁律；②§4.3 节点新增要素⑤ ⛔ 受限原因行；③§7.4 gate_reason 数据真源；④§6.3 CSS 更新；⑤§9.1/§10 验收清单同步 |
 | V1.2 | 2026-08-01 | ①新增 §13 subgraph/cluster 背景与边框陷阱（clusterBkg 不生效、style 命令失效、JS setAttribute 无效 → 必须用 `style.fill` 后处理）；②新增 §14 HTML 链接格式陷阱（http:// 绝对链接 vs 相对路径）；③新增 §15 候选库污染防护（索引附录汇总计数）；④新增 §16 Reconciler 回退应对策略 |
 | V1.3 | 2026-08-02 | ①新增 §4.11 节点标签简介质量铁律（五类坏简介概览 + 指向 §十七）；②新增 §十七 节点标签简介质量规范与审计（三问法标准、正反例对照、五类坏简介详解、生成器兜底链、人工补齐 SOP 含审计脚本、GitCommitGateway 提交注意事项）；③§十 验收清单新增"简介无五类坏值"+"运行审计脚本问题=0"+"name_en 非 docstring 片段"检查项；④§十一 常见问题表新增 12 行（五类坏简介+name_en 片段+desc_zh 未同步+审计误报+LOCK_TIMEOUT+DOC-REF-BROKEN+文档未重生成+提交被回退）；⑤§17.5 审计脚本更新为防误报版（重建完整简介、遇纯英文段停止）；⑥§17.6 提交坑表新增 LOCK_TIMEOUT + DOC-REF-BROKEN 两个坑及应对；⑦起因：D_GOV_ENFORCEMENT 域 42 模块中 21 个 plain_zh 是坏值（模板话/截断片段/消费者引用/术语堆砌/名称重复），用户反馈"看不懂有什么作用" |
+| V1.4 | 2026-08-02 | ①审计脚本从 tmp/（gitignored）提升为 committed 治理脚本 `scripts/governance/d5_architecture/checkers/check_node_label_quality.py`；②新增 GATE-NODE-LABEL-QUALITY pre-commit gate（warn-only 观察期，与 TRANSLATION-COVERAGE 互补——后者管 plain_zh 存在性，本 gate 管质量）；③§17.5 审计脚本引用从 `tmp/_audit_doc_labels.py` 改为 committed 路径；④脚本泛化：无参数扫描全部域文档 + `--warn-only`/`--ci` 双模式 + `__manifest__` 块（script_manifest.yaml 自动登记）；⑤起因：tmp/ 被 gitignore，pre-commit hook 指向 tmp/ 在 fresh checkout/CI 不可用——治本为 committed 脚本 |
 
 ---
 

@@ -730,6 +730,24 @@ repos:
         stages: [pre-commit]
         description: "canonical YAML SSoT 防漂移——5 项断言防止 Phase A 修过的 markdown 同步到 YAML 后再被改回陈旧值（human_gated YAML 无 reconciler 自动重生，靠本门禁兜底）"
 
+      # ── GATE-NODE-LABEL-QUALITY: 域文档节点标签简介质量审计（五类坏简介防复发，2026-08-02 治本）──
+      # 权威依据：visualization_view_template.md §十七（节点标签简介质量规范与审计）
+      # 真源：scripts/governance/d5_architecture/checkers/check_node_label_quality.py
+      # 检测范围：域文档 docs/02_enterprise_architecture/02_domain_architecture_docs/*.md 变更时触发（pass_filenames 传 staged 文档）
+      # 检测内容：五类坏简介——①模板话 ②截断代码片段 ③消费者引用 ④技术术语堆砌 ⑤名称重复
+      #           （生成器兜底链只能过滤坏值+派生唯一值，不能凭空写好简介；本 gate 是"生成后"安全网）
+      # 模式：--warn-only（观察期；与 TRANSLATION-COVERAGE 互补——后者管 plain_zh 存在性，本 gate 管质量）
+      #       存量清零 + AI 适应后转 --ci 硬阻断（args 中 --warn-only 改 --ci）
+      - id: gate-node-label-quality
+        name: "GATE-NODE-LABEL-QUALITY: 域文档节点标签简介质量审计（五类坏简介防复发）"
+        entry: python scripts/governance/d5_architecture/checkers/check_node_label_quality.py
+        args: ["--warn-only"]
+        language: system
+        pass_filenames: true
+        always_run: false
+        files: "^docs/02_enterprise_architecture/02_domain_architecture_docs/.*\\.md$"
+        description: "审计域文档 Mermaid 节点标签简介质量——检测五类坏简介（模板话/截断/消费者引用/术语堆砌/名称重复）。warn-only 观察期，存量清零后转 --ci。与 TRANSLATION-COVERAGE 互补（存在性 vs 质量）。详见 visualization_view_template.md §十七"
+
       # ── GATE-ENCODING: 编码安全+mojibake+BOM检测（合并 GATE-BOM，DM-379 强制执行层）──
       # 权威依据：encoding_safety_standard.md (GOV-DOC-005) + DM-379 根因修复
       # 检测范围：全项目（--dir . 递归扫描，覆盖原 GATE-BOM 的 yaml/md/py 范围）

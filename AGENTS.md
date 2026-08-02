@@ -1153,6 +1153,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 - **候选库真源**：[`candidate_module_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml)（5301条=18原始+5283harvest）
 - **翻译真源**：[`module_translation_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml)（候选以`CAND-HARVEST-xxxx`为key，`plain_zh`字段存大白话解释）
+- **节点标签简介质量**：`plain_zh` 须过三问法（是什么/干什么/解决什么问题），禁五类坏简介（①模板话 ②截断片段 ③消费者引用 ④术语堆砌 ⑤名称重复）。审计脚本 [`check_node_label_quality.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/checkers/check_node_label_quality.py)（warn-only pre-commit gate `GATE-NODE-LABEL-QUALITY`，与 TRANSLATION-COVERAGE 互补——后者管存在性，本 gate 管质量）；完整规范 + 人工补齐 SOP 见 [可视化视图模板 §十七](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/visualization_view_template.md)
 - **幂等保证**：harvest脚本双注册表去重（`existing_harvest_keys`候选库+`existing_translation_keys`翻译真源+`max_harvest_seq`扫描双注册表防seq碰撞），重跑不会产生重复
 - **四问过滤**：每条候选含`four_question`字段（q1已实现/q2需求驱动/q3域活着/q4 AI替代），任一问"否"即不登记depgraph
 
