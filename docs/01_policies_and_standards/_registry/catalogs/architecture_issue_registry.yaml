@@ -9800,6 +9800,15 @@ entries:
   status: decided
   created: '2026-07-24'
   last_updated: '2026-07-29'
+- issue_id: '#ARCH-HEARTBEAT-LIVENESS-001'
+  title: session_worktree heartbeat 新鲜度检查替代 PID liveness（治本 R1 阈值跨进程误判）
+  severity: P2中
+  adjudication: 'session_worktree.py 原 R1 阈值（held_files 重叠检测）依赖 os.kill(pid, 0) PID 存活判定，跨进程/僵尸进程场景误判（PID 复用、进程已死但 PID 仍存在）。治本：heartbeat 文件机制替代 PID liveness——session_worktree_start 创建 .runtime/sessions/<sid>/heartbeat.jsonl，WorktreeManager 新增 _write_heartbeat()（30s 定时或 API 调用追加），session_worktree_merge 用 _check_heartbeat_freshness() 替代 os.kill(pid, 0)（>5min 无更新=stale），heartbeat IO 失败降级为 PID liveness。出处：.trae/documents/P3_leftover_todos_strategic_ruling_and_treatment_plan.md Phase B（B1-B4 施工计划）。'
+  fix_phase: 'proposed（P3 治疗计划 Phase B 待施工，未实现）'
+  status: proposed
+  related_rules: 'AGENTS.md §8 worktree 君子协定；R1 阈值'
+  created: '2026-08-02'
+  last_updated: '2026-08-02'
 # --- Group B: scheduler.py 数据管线治本系列（2 个） ---
 - issue_id: '#ARCH-SILENT-SUCCESS'
   title: 0 行写入被标记 SUCCESS 且无告警（静默成功陷阱）
