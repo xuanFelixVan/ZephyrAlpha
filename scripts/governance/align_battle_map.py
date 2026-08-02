@@ -72,10 +72,8 @@ from _shared.module_translation_loader import (  # noqa: E402
 )
 from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # noqa: E402
 
-try:
-    from _common import DB_DISPLAY_NAME  # noqa: E402
-except ImportError:
-    DB_DISPLAY_NAME = "PostgreSQL depgraph"
+# 数据库名显示（SSoT: d5_architecture/generators 公共常量，跨包未设路径故直接赋值）
+DB_DISPLAY_NAME = "depgraph (PostgreSQL)"
 
 # 候选池 YAML 真源（target_graph=candidate 的合法 id 来源）
 _CANDIDATE_YAML = (
@@ -231,13 +229,15 @@ class BattleMapAlignmentReport:
             lines.append("> ✅ 无域漂移，所有锚点 target domain 都在对应 flow_stage 允许列表里。")
         else:
             lines.append("| anchor_id | step_id | flow_stage | target_graph | target_id | "
-                         "target_domain | 角色 |")
+                         "target_domains | 角色 |")
             lines.append("|---|---|---|---|---|---|---|")
             for a in self.domain_drifts:
+                domains = a.get("domains")
+                domains_str = ", ".join(domains) if domains else "—"
                 lines.append(
                     f"| {a.get('anchor_id', '—')} | {a.get('step_id', '—')} | "
                     f"{a.get('flow_stage', '—')} | {a.get('target_graph', '—')} | "
-                    f"{a.get('target_id', '—')} | {a.get('domain', '—')} | "
+                    f"{a.get('target_id', '—')} | {domains_str} | "
                     f"{a.get('target_role', '—')} |"
                 )
         lines.append("")
@@ -254,7 +254,8 @@ class BattleMapAlignmentReport:
         lines.append("- 域漂移：① 确认锚点是否挂错环节（如 D_SELL_DECISION 不应在 buy_flow）；"
                      "② 若挂错，迁移到正确环节或删除；③ 若认为该 domain 应被允许，"
                      "修改 `battle_map_domain_policy.yaml` 的 `flow_stage_allowed_domains` 段"
-                     "（真源在 YAML，禁止改代码）")
+                     "（真源在 YAML，禁止改代码）；④ target_domains 含多个 domain 时，"
+                     "任一在允许列表即通过（跨域蓝图如 MOD-INF-002 含 80+ 子模块跨 8 domain）")
         lines.append("")
 
         return "\n".join(lines)
@@ -461,15 +462,19 @@ def _load_domain_policy() -> dict[str, set[str]] | None:
         return None
 
 
-def _anchor_domain_map_depgraph() -> tuple[dict[str, str], bool]:
-    """采集 depgraph 节点的 domain_id（key=blueprint_id/path, value=domain_id）。
+def _anchor_domain_map_depgraph() -> tuple[dict[str, set[str]], bool]:
+    """采集 depgraph 节点的 domain_id（key=blueprint_id/path, value=set(domain_id)）。
 
     与 _valid_ids_depgraph 互补：后者只采集合法 id 集合（BM-INV-002），
-    本方法同时采集 domain_id（BM-INV-004 域漂移校验用）。
+    本方法同时采集 domain_id 集合（BM-INV-004 域漂移校验用）。
+
+    返回 set 而非 str：跨域巨型蓝图（如 MOD-INF-002 含 80+ 子模块跨 8 domain）
+    的 blueprint_id 对应多节点多 domain，用 set 采集全部，校验时任一 domain 在
+    允许列表即通过（防误报——单一 domain_id 对跨域蓝图是非确定性采样）。
     """
     try:
         from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
-        domain_map: dict[str, str] = {}
+        domain_map: dict[str, set[str]] = {}
         conn = get_depgraph_pg_connection()
         try:
             with conn.cursor() as cur:
@@ -486,7 +491,7 @@ def _anchor_domain_map_depgraph() -> tuple[dict[str, str], bool]:
                     for k in ("blueprint_id", "path"):
                         v = r.get(k)
                         if v:
-                            domain_map[str(v)] = str(domain_id)
+                            domain_map.setdefault(str(v), set()).add(str(domain_id))
         finally:
             conn.close()
         return domain_map, True
@@ -494,10 +499,11 @@ def _anchor_domain_map_depgraph() -> tuple[dict[str, str], bool]:
         return {}, False
 
 
-def _anchor_domain_map_candidate() -> tuple[dict[str, str], bool]:
-    """采集候选池模块的 domain（key=candidate_id, value=domain）。
+def _anchor_domain_map_candidate() -> tuple[dict[str, set[str]], bool]:
+    """采集候选池模块的 domain（key=candidate_id, value=set(domain)）。
 
     与 _valid_ids_candidate 互补：后者只采集合法 id 集合，本方法采集 domain。
+    返回 set 与 _anchor_domain_map_depgraph 对齐（候选通常单 domain，但保持类型一致）。
     """
     try:
         import yaml  # type: ignore[import-untyped]
@@ -513,7 +519,7 @@ def _anchor_domain_map_candidate() -> tuple[dict[str, str], bool]:
                 if isinstance(v, list):
                     entries = v
                     break
-        domain_map: dict[str, str] = {}
+        domain_map: dict[str, set[str]] = {}
         for e in entries:
             if not isinstance(e, dict):
                 continue
@@ -523,7 +529,7 @@ def _anchor_domain_map_candidate() -> tuple[dict[str, str], bool]:
             for k in ("id", "candidate_id", "module_id"):
                 v = e.get(k)
                 if v:
-                    domain_map[str(v)] = str(domain)
+                    domain_map.setdefault(str(v), set()).add(str(domain))
                     break
         return domain_map, True
     except Exception:
@@ -620,7 +626,7 @@ def run_alignment(
         step_to_stage = {s["step_id"]: s.get("flow_stage") for s in steps}
         # 按 target_graph 采集 domain map（只对 depgraph/candidate 校验）
         graphs_for_domain = {a.get("target_graph") for a in anchors}
-        domain_maps: dict[str, dict[str, str]] = {}
+        domain_maps: dict[str, dict[str, set[str]]] = {}
         for graph in graphs_for_domain:
             collector = _DOMAIN_COLLECTORS.get(graph)
             if collector is None:
@@ -640,14 +646,15 @@ def run_alignment(
             dmap = domain_maps.get(tg)
             if not dmap:
                 continue  # 该 target_graph 无 domain 采集器或不可用
-            domain = dmap.get(str(tid))
-            if domain is None:
+            domains = dmap.get(str(tid))
+            if not domains:
                 continue  # 查不到 domain（可能 depgraph 该节点无 domain_id）
-            if domain not in policy[stage]:
+            # 跨域蓝图任一 domain 在允许列表即通过（防误报）
+            if not (domains & policy[stage]):
                 domain_drifts.append({
                     **a,
                     "flow_stage": stage,
-                    "domain": domain,
+                    "domains": sorted(domains),
                     "reason": "domain_not_in_allowed_list",
                 })
 

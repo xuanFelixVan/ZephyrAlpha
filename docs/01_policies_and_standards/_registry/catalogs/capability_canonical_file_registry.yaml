@@ -7605,6 +7605,16 @@ creation_tokens:
     created_by: "session-sim012"
     capability: "simulation_result_analyzer"
 
+  # --- D-EX-CORE 多契约生产适配器（2026-08-02，MOD-EX-055）---
+  - file: "src/zephyr/ex_core/multi_contract_adapter.py"
+    token: "auto-ex-multi-contract-adapter-20260802"
+    created_by: "session-ex055"
+    capability: "multi_contract_adapter"
+  - file: "docs/03_modules/_domain_execution_core/multi_contract_adapter/blueprint.md"
+    token: "auto-ex-multi-contract-adapter-bp-20260802"
+    created_by: "session-ex055"
+    capability: "multi_contract_adapter"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

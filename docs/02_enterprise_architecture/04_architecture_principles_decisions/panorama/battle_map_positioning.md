@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: draft
-version: "0.3.1"
+version: "0.3.2"
 date: 2026-08-03
 ---
 
@@ -600,10 +600,160 @@ battle_map_steps:
 
 ---
 
+## 十七、运作机制速查总览（一页纸看懂）
+
+> 本节是整篇文档的"导读速查版"——把前面 §一~§十五 的核心机制浓缩成一页纸，方便 Owner 快速确认机制设计是否正确，也方便 AI 写决策前快速定位"该查哪、该写哪"。详细设计见各对应章节，本节不重复展开。
+
+### 17.1 四张全景图定位
+
+battle_map 是项目第四全景图。前三图是横向切片（按 module/decision/entity 轴），作战地图是纵向贯穿（按业务流程 step 轴），它把前三图的节点按"选股→买入→卖出→仓位→执行→对账"6 阶段重新编排成端到端作战链条。
+
+| 全景图 | 真源 | 关注轴 | 回答的问题 |
+|---|---|---|---|
+| 依赖全景图 depgraph | PostgreSQL `nodes`/`edges` | module_id | "谁连谁？模块依赖关系是什么？" |
+| 数据流全景图 dataflowgraph | PostgreSQL `dataflow_*` | entity/job | "数据怎么流？谁消费谁产出？" |
+| 决策流全景图 decisiongraph | PostgreSQL `decision_*` | decision_id | "决策怎么编排？谁触发谁？" |
+| **作战地图 battle_map** | PostgreSQL `battle_map_*` + YAML 叙事 | **step_id** | "业务作战环节怎么串？每环节靠哪些模块落地？" |
+
+详见 §一、§九。
+
+### 17.2 作战地图三表结构
+
+定义在 `src/zephyr/governance/persistence/battlemap_schema.py`，三张表共享 depgraph 的 PostgreSQL 实例（同一 DB，不同表前缀 `battle_map_*`）：
+
+| 表 | 角色 | 关键列 |
+|---|---|---|
+| `battle_map_steps` | 作战环节（11 列） | `step_id`(PK) / `flow_stage`(6 选 1) / `narrative_ref`(指向 YAML 叙事) / `indicators`(JSONB 6 件套) / `design_maturity`(design/production) |
+| `battle_map_anchors` | 双向对齐锚点（7 列） | `step_id` ↔ `target_graph`(5 选 1) + `target_id` + `target_role`(primary/supplement/degradation) |
+| `battle_map_edges` | 环节流转（6 列） | `from_step_id` → `to_step_id` + `edge_type`(data_flow/trigger/degradation) |
+
+详见 §六。
+
+### 17.3 与其他全景图/真源的对齐机制（核心）
+
+对齐通过 `battle_map_anchors.target_graph` 字段实现——每个锚点声明"这个作战环节由哪个图的哪个节点承载"。
+
+#### 17.3.1 五类 target_graph 对齐路径
+
+| target_graph | target_id 含义 | 合法 id 采集来源（align_battle_map.py 校验） |
+|---|---|---|
+| `depgraph` | module_id | depgraph.nodes 的 blueprint_id ∪ path |
+| `dataflowgraph` | entity_name / job_name / module_id | dataflow_datasets + dataflow_jobs |
+| `decisiongraph` | decision_node_id | decision_nodes |
+| `candidate` | candidate_id | candidate_module_registry.yaml entry id |
+| `blueprint` | blueprint_section | docs/03_modules/ 下蓝图文件锚点 |
+
+校验逻辑见 `scripts/governance/align_battle_map.py` 的 `_valid_ids_*()` 函数族。详见 §8.4、§14.3。
+
+#### 17.3.2 与翻译真源的对齐（BM-INV-003）
+
+作战地图同时有"结构数据"（在 DB）和"叙事数据"（在 YAML），分属两条 SSoT 流：
+
+| 数据类型 | 真源 | 写入工具 |
+|---|---|---|
+| 架构数据（环节/锚点/边的结构） | PostgreSQL `battle_map_*` 三表 | `apply_battle_map.py` 直接写 DB |
+| 规则数据①环节叙事（name_zh/plain_zh/mechanism_zh/indicators_zh） | `module_translation_registry.yaml` 的 `battle_map_steps` 段 | 手编 YAML，生成器只读 |
+| 规则数据②域漂移规则（哪个阶段允许哪个域） | `battle_map_domain_policy.yaml` | 手编 YAML，对齐器只读 |
+
+`battle_map_steps.narrative_ref` 字段是 **DB → YAML 的指针**：DB 只存 step_id，叙事内容去 YAML 取。生成器 `generate_battle_map_diagram.py` 读取 YAML 渲染文档，**禁止在代码里硬编码叙事**（BM-INV-003）。详见 §七。
+
+#### 17.3.3 四条承重墙不变量（BM-INV-001~004）
+
+定义在 `battlemap_schema.py` §四条承重墙不变量段，由 `align_battle_map.py` 检测，输出到 `docs/02_enterprise_architecture/generated/battle_map_alignment_report.md`：
+
+| 编号 | 检查项 | 含义 | 触发条件 |
+|---|---|---|---|
+| BM-INV-001 | 孤儿环节 | step 无任何 anchor = 悬空决策 = AI 凭记忆推断 = 幻觉风险 | `battle_map_steps` 在 `battle_map_anchors` 中无记录 |
+| BM-INV-002 | 幽灵锚点 | anchor.target_id 在 target_graph 对应图/仓库找不到 | target_id 不在 depgraph/dataflowgraph/decisiongraph/candidate/blueprint 的合法 id 集合里 |
+| BM-INV-003 | 缺失叙事 | DB 有 step 但 YAML `battle_map_steps` 段无对应叙事 | 生成器降级到 DB step_name，文档质量受损 |
+| BM-INV-004 | 域漂移 | anchor 的 target module/candidate 的 domain 不在 step.flow_stage 允许列表 | 如把 `D_SELL_DECISION`（卖出域）挂在 `buy_flow`（买入阶段）环节上 |
+
+> BM-INV-005（派生只读字段禁令）属于派生展示层约束，不在对齐检测系列，详见 §8.4。
+
+#### 17.3.4 域漂移检查规则（BM-INV-004 真源）
+
+规则真源在 `docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`，定义每个 `flow_stage` 允许挂载的 `domain_id`：
+
+| flow_stage | 允许的域（节选） | 禁止典型 |
+|---|---|---|
+| stock_selection（选股） | D_FACTOR / D_ASHARE_SIGNAL / D_FUNDAMENTAL_SIGNAL / D_SIGNAL / D_INTELLIGENCE / D_KNOWLEDGE / D_INTEGRATION / D_MKT_DATA / D_DATA / D_ML_SERVE / D_ML_TRAIN / D_ALT_DATA / D_CROSS_ASSET / D_INFRA_RUNTIME / D_SHARED | D_PF_CORE / D_PF_ALLOC / D_SELL_DECISION / D_EX_CORE / D_POSITION |
+| buy_flow（买入） | D_PF_CORE / D_PF_ALLOC / D_TRADING / D_RISK / D_INTEGRATION / D_ORCHESTRATOR / D_INTELLIGENCE | D_SELL_DECISION / D_FRONTEND / D_EX_CORE / D_POSITION |
+| sell_flow（卖出） | D_SELL_DECISION / D_TRADING / D_RISK / D_POSITION | D_PF_CORE / D_FRONTEND |
+| position_management（仓位） | D_POSITION / D_PF_CORE / D_PF_ALLOC / D_RISK | D_SELL_DECISION / D_EX_CORE / D_FRONTEND |
+| execution（执行） | D_EX_CORE / D_EX_SOR / D_TRADING / D_RISK / D_REPORTING | D_FACTOR / D_SIGNAL / D_FRONTEND / D_SELL_DECISION |
+| reconciliation（对账） | D_REPORTING / D_BACKTEST / D_SIMULATION / D_TRADING / D_FACTOR / D_FEEDBACK_LOOP | D_EX_CORE / D_SELL_DECISION / D_FRONTEND |
+
+**当前已知漂移**（V1.0.0 严格模式启用后预期发现 7 个，severity=warn 君子协定，不硬阻断）：
+- `buy_flow`: D_SELL_DECISION(1) + D_FRONTEND(1)
+- `stock_selection`: D_PF_CORE(3) + D_PF_ALLOC(2)
+
+> 严格模式依据：组合优化（D_PF_CORE/D_PF_ALLOC）不属于 stock_selection——选股是"挑哪些股票"，组合优化是"挑完之后怎么配仓位"，语义正交。详见 `battle_map_domain_policy.yaml` 顶部注释。
+
+### 17.4 运作机制图（数据流全貌）
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  真源层（SSoT 分类，TRAE-062）                                     │
+├──────────────────────────┬──────────────────────────────────────┤
+│  规则数据真源（YAML）     │  架构数据真源（PostgreSQL）            │
+│  ① module_translation_    │  ① depgraph.nodes/edges              │
+│     registry.yaml         │  ② dataflowgraph.dataflow_*          │
+│     §battle_map_steps     │  ③ decisiongraph.decision_*          │
+│     (环节叙事)            │  ④ battle_map.battle_map_*  ← 第四   │
+│  ② battle_map_domain_     │     (steps/anchors/edges)             │
+│     policy.yaml           │                                      │
+│     (域漂移规则)          │                                      │
+└──────────┬───────────────┴──────────────┬───────────────────────┘
+           │ 只读                        │ 只读
+           ▼                            ▼
+┌──────────────────────────────────────┐ ┌────────────────────────┐
+│  apply_battle_map.py（写 DB 唯一入口）│ │ align_battle_map.py    │
+│  - add/update/remove step/anchor/edge│ │ (只读检测器)            │
+│  - pg_advisory_lock=424245           │ │ - BM-INV-001~004 五查   │
+│  - 写架构数据，不动 YAML             │ │ - 输出对齐报告 MD       │
+└──────────────────────────────────────┘ └────────────────────────┘
+           │                                       │
+           ▼                                       ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  generate_battle_map_diagram.py（生成器，只读）                   │
+│  读 DB 三表 + YAML 叙事 → 渲染 MD + 可缩放 HTML                   │
+│  产物：07_trading_decision_architecture/battle_map/*.md          │
+│       + _zoomable_html/*.html                                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 17.5 写入流程决策表（改东西时该走哪条路）
+
+按 SSoT 分类铁律（TRAE-062），**先问"规则数据还是架构数据"**：
+
+| 想改的内容 | 数据类型 | 走哪条路 |
+|---|---|---|
+| 环节叙事（name_zh/plain_zh/mechanism_zh/indicators_zh） | 规则数据 | 改 `module_translation_registry.yaml` → 生成器读取 |
+| 域策略（某阶段允许新域） | 规则数据 | 改 `battle_map_domain_policy.yaml` → 对齐器读取 |
+| 新增/修改/删除环节、锚点、边 | 架构数据 | `apply_battle_map.py` 写 DB |
+| indicators 结构化字段（trigger/consumes/params/code_mapping/degradation） | 架构数据 | `apply_battle_map.py --update-step` 写 DB |
+| depgraph/dataflowgraph/decisiongraph 的节点 | 架构数据 | 各自的 `apply_*.py` 写 DB |
+
+**禁止反向操作**：DB → YAML（如把 DB 的 step 同步回 YAML 叙事）是违规的。详见 §七 SSoT 铁律。
+
+### 17.6 与前三图对齐的正交关系
+
+`align_battle_map.py` 顶部明确：与 `align_panoramas.py` 正交，互不干扰。
+
+| 对齐工具 | 轴 | 回答 | 用途 |
+|---|---|---|---|
+| `align_panoramas.py` | module_id | 一个模块在 4 张图里一致吗 | 建模块时 |
+| `align_battle_map.py` | step_id | 一个环节都落地了吗、落在哪 | 写决策时 |
+
+二者通过 `battle_map_anchors.target_id` 间接耦合——作战地图锚点指向的模块，必须在前三图里真实存在（BM-INV-002）。详见 §9.2。
+
+---
+
 ## 十六、变更历史
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
+| V0.3.2 | 2026-08-03 | 新增 §十七「运作机制速查总览（一页纸看懂）」：把 §一~§十五 的核心机制浓缩成导读速查版，含①四图定位速查表②三表结构简表③五类 target_graph 对齐路径详表④四条承重墙不变量 BM-INV-001~004⑤域漂移规则与当前已知 7 漂移点⑥运作机制数据流 ASCII 图⑦写入流程决策表⑧与 align_panoramas 正交关系。补充文档此前分散/缺失的"一页纸总览"视角，方便 Owner 快速确认机制与 AI 写决策前定位。重复部分以"详见 §X"引用，不破坏现有设计章节。 |
 | V0.1.0 | 2026-08-01 | 草案：第四全景图 battle_map 设计。三表数据模型 + 翻译真源 battle_map_steps 段 + 双向查找机制 + 取代 trading_flow_panorama.md V1.0.0。 |
 | V0.3.1 | 2026-08-03 | BM-INV-004 域漂移检查实现落地：①新增规则真源 `battle_map_domain_policy.yaml`（flow_stage→允许 domain 列表，TRAE-062 规则数据真源=YAML）；②`align_battle_map.py` 新增 §5 域漂移检测（采集 depgraph/candidate 的 target domain，逐锚点校验是否在 flow_stage 允许列表）；③对齐报告新增域漂移段+处置建议。首跑发现 8 处漂移（含误报：MOD-INF-002 跨域巨型蓝图单一 domain_id 采集器局限，待采集器修复）。④不变量编号调整：原 BM-INV-004（派生只读字段禁令）renumber 为 BM-INV-005，BM-INV-004 归位为域漂移（与 001孤儿/002幽灵/003叙事同属 align_battle_map.py 对齐检查系列）。 |
 | V0.3.0 | 2026-08-02 | 缺口2补完：①新增§三系统架构上下文（草图§1.1/§1.8摘要，L0-L6分层+数据流主动脉+闭环反馈+工厂三兄弟+作战地图对应关系）；②横切视图扩展§15计算节奏与时序+§1.7分布感知增强体系（翻译真源+生成器渲染函数）；③16个选股孤儿环节挂载candidate锚点；④13个非HARVEST候选池模块挂载到对应环节；⑤BM-SEL-01参数code_location反向回填。对齐报告0问题。 |

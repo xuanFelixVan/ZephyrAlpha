@@ -45,7 +45,7 @@ design_maturity 受控词表（与 depgraph/decisiongraph 节点表对齐）
 - BM-INV-001: 每个作战环节至少有一个锚点（环节无锚点=悬空决策，君子协定告警）
 - BM-INV-002: 锚点 target_id 必须能在 target_graph 对应图/仓库找到（防幽灵锚点）
 - BM-INV-003: 环节叙事必须来自翻译真源 battle_map_steps 段，禁止生成器硬编码
-- BM-INV-004: 全景图模块的 battle_map_step_ids 是派生只读缓存，禁止直接写入
+- BM-INV-005: 全景图模块的 battle_map_step_ids 是派生只读缓存，禁止直接写入
 
 PG schema 真源
 --------------
@@ -231,7 +231,7 @@ _DDL_INDEXES = [
 #   说明: 叙事真源是 module_translation_registry.yaml 的 battle_map_steps 段，
 #         生成器禁止在代码里硬编码环节叙事。
 #
-# BM-INV-004: 全景图模块的 battle_map_step_ids 是派生只读缓存
+# BM-INV-005: 全景图模块的 battle_map_step_ids 是派生只读缓存
 #   约束位置: 应用层（apply_battle_map.py 单向 sync：anchors→各图字段，禁止反向写入）
 #   约束类型: 应用层规约（君子协定）
 #   说明: 全景图模块节点的 battle_map_step_ids 字段由 anchors 表派生，
