@@ -18,7 +18,7 @@ tier: tier_1_governance
 status: active
 version: 1.8.1
 created: '2026-07-31'
-last_updated: '2026-08-01'
+last_updated: 2026-08-02
 unique_key:
 - module_path
 entry_schema:
@@ -10485,9 +10485,9 @@ entries:
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 会话worktreecli
   name_en: session_worktree_cli
-  desc_zh: 会话 worktree 管理 CLI（治本遗留项#2，2026-07-17）
+  desc_zh: 会话工作树管理命令行工具，提供sweep清理过期残留工作树、list查看现有工作树的命令，方便AI和运维随时清理临时工作区。
   desc_en: ''
-  plain_zh: 会话 worktree 管理 CLI（治本遗留项#2，2026-07-17）
+  plain_zh: 会话工作树管理命令行工具，提供sweep清理过期残留工作树、list查看现有工作树的命令，方便AI和运维随时清理临时工作区。
 - module_path: src/zephyr/gov_enforcement/__init__.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 包入口
@@ -10506,51 +10506,51 @@ entries:
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 准入控制器
   name_en: admission_controller
-  desc_zh: 准入控制器，供behavioraladmiss使用
+  desc_zh: 用令牌桶限流（每秒50次）加熔断器把控请求进出，请求太快就排队、连续失败就熔断，防止AI把系统冲垮。
   desc_en: ''
-  plain_zh: 准入控制器，IO的控制器，协调组件按流程执行。
+  plain_zh: 用令牌桶限流（每秒50次）加熔断器把控请求进出，请求太快就排队、连续失败就熔断，防止AI把系统冲垮。
 - module_path: src/zephyr/gov_enforcement/behavioral_admission/admission_response.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 准入响应
   name_en: admission_response
-  desc_zh: 准入响应，供GovernanceServer;run_all.py使用
+  desc_zh: 把准入控制器的裁定结果（放行/排队/拒绝/降级）打包成标准响应，附排队位置、拒绝原因等信息，对外统一返回。
   desc_en: ''
-  plain_zh: 准入响应，供GovernanceServer;run_all.py使用
+  plain_zh: 把准入控制器的裁定结果（放行/排队/拒绝/降级）打包成标准响应，附排队位置、拒绝原因等信息，对外统一返回。
 - module_path: src/zephyr/gov_enforcement/behavioral_admission/code_review_ai.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 代码审查AI
   name_en: code_review_ai
-  desc_zh: 代码审查AI模块
+  desc_zh: 按审查级别对代码变更做自动评审，级别越高审查越严，配合行为审计拦截高风险改动。
   desc_en: ''
-  plain_zh: 代码审查AI，治理执行的核心类，封装ReviewLevel相关逻辑。
+  plain_zh: 按审查级别对代码变更做自动评审，级别越高审查越严，配合行为审计拦截高风险改动。
 - module_path: src/zephyr/gov_enforcement/behavioral_admission/gate_event_adapter.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 门禁事件适配器
   name_en: gate_event_adapter
-  desc_zh: GateEventAdapter — GateRepo 事件适配器（DW-0006）
+  desc_zh: 把门禁运行结果（通过/失败）作为事件追加到task_events表，实现门禁结果的事件溯源，方便事后审计回溯每次门禁判定。
   desc_en: ''
-  plain_zh: GateEventAdapter — GateRepo 事件适配器（DW-0006）
+  plain_zh: 把门禁运行结果（通过/失败）作为事件追加到task_events表，实现门禁结果的事件溯源，方便事后审计回溯每次门禁判定。
 - module_path: src/zephyr/gov_enforcement/behavioral_admission/gpu_consensus_scheduler.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: GPU共识调度器
   name_en: gpu_consensus_scheduler
-  desc_zh: GPU共识调度器模块
+  desc_zh: 关键操作要两个本地模型都点头才放行（2/2共识），防单模型幻觉误判；按保护级别排优先级，锚点级文件最高优先不可被抢占。
   desc_en: ''
-  plain_zh: GPU共识调度器，IO的调度器，按时间或优先级安排任务。
+  plain_zh: 关键操作要两个本地模型都点头才放行（2/2共识），防单模型幻觉误判；按保护级别排优先级，锚点级文件最高优先不可被抢占。
 - module_path: src/zephyr/gov_enforcement/behavioral_admission/protection_index.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 保护索引
   name_en: protection_index
-  desc_zh: 保护索引，供zephyr.gov_enforcement.behavio使用
+  desc_zh: 文件保护级别索引，用布隆过滤器加前缀树快速判断文件属于哪级保护（锚点/受保护/普通/公开），锚点级文件改动触发最严格审查，防止AI误改关键规则文件。
   desc_en: ''
-  plain_zh: 保护索引，供zephyr.gov_enforcement.behavio使用
+  plain_zh: 文件保护级别索引，用布隆过滤器加前缀树快速判断文件属于哪级保护（锚点/受保护/普通/公开），锚点级文件改动触发最严格审查，防止AI误改关键规则文件。
 - module_path: src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 裁定引擎
   name_en: verdict_engine
-  desc_zh: verdict引擎模块
+  desc_zh: 根据审计事件综合判断本次操作该不该放行（红/黄/绿三态），结合文件保护级别、门禁结果、违规次数给出升级裁定，是行为审计的最终裁判。
   desc_en: ''
-  plain_zh: verdict引擎，治理执行的事件，定义和分发事件。
+  plain_zh: 根据审计事件综合判断本次操作该不该放行（红/黄/绿三态），结合文件保护级别、门禁结果、违规次数给出升级裁定，是行为审计的最终裁判。
 - module_path: src/zephyr/gov_enforcement/commit_gates/depgraph_pre_registration_gate.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: depgraphpreregistration门禁
@@ -10562,9 +10562,9 @@ entries:
   domain_id: D_GOV_ENFORCEMENT
   name_zh: stashaccumulation门禁
   name_en: stash_accumulation_gate
-  desc_zh: stash_accumulation_gate.py — stash 堆积阈值检测门禁（STASH-ACCUMULATION）
+  desc_zh: 提交前数一下git stash积了多少条，超过阈值就拦住并提示先清理，防止stash越堆越多撑爆git对象库、还让AI误判有未提交工作。
   desc_en: ''
-  plain_zh: stash 堆积阈值检测门禁
+  plain_zh: 提交前数一下git stash积了多少条，超过阈值就拦住并提示先清理，防止stash越堆越多撑爆git对象库、还让AI误判有未提交工作。
 - module_path: src/zephyr/gov_enforcement/rule_bridge/batched_auto_committer.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: batched自动committer
@@ -10597,16 +10597,16 @@ entries:
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 心跳守护
   name_en: heartbeat_daemon
-  desc_zh: 心跳守护.py — session heartbeat 独立进程（Ruling:100PCT-AI-GOVERNANCE P3-1，2026-07-20）
+  desc_zh: 会话心跳独立进程，定期刷新session存活标记，跨进程的会话工作流靠它确认会话还活着，防止正在做的工作因超时被误当僵尸清理掉。
   desc_en: ''
-  plain_zh: 心跳守护.py — session heartbeat 独立进程（Ruling:100PCT-AI-GOVERNANCE P3-1，2026-07-20）
+  plain_zh: 会话心跳独立进程，定期刷新session存活标记，跨进程的会话工作流靠它确认会话还活着，防止正在做的工作因超时被误当僵尸清理掉。
 - module_path: src/zephyr/gov_enforcement/rule_bridge/session_claim.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 会话claim
   name_en: session_claim
-  desc_zh: session_claim.py — AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）
+  desc_zh: 已废弃的会话并发声明工具，原用于AI对话并发控制，已被session_worktree物理隔离方案完全替代且更强，零实际调用方，仅generate_session_id函数仍被复用。
   desc_en: ''
-  plain_zh: AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）
+  plain_zh: 已废弃的会话并发声明工具，原用于AI对话并发控制，已被session_worktree物理隔离方案完全替代且更强，零实际调用方，仅generate_session_id函数仍被复用。
 - module_path: src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 会话worktree
@@ -10618,58 +10618,58 @@ entries:
   domain_id: D_GOV_ENFORCEMENT
   name_zh: worktree管理器
   name_en: worktree_manager
-  desc_zh: 会话 worktree 物理隔离管理器（阶段3 治本 stash 循环）
+  desc_zh: 给每个AI会话开独立git工作目录实现物理隔离，彻底解决多会话共享工作区导致的stash冲突循环问题。
   desc_en: ''
-  plain_zh: 会话 worktree 物理隔离管理器（阶段3 治本 stash 循环）
+  plain_zh: 给每个AI会话开独立git工作目录实现物理隔离，彻底解决多会话共享工作区导致的stash冲突循环问题。
 - module_path: src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: worktree池
   name_en: worktree_pool
-  desc_zh: worktree_pool.py — Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）
+  desc_zh: 工作树预创建池，提前批量创建git worktree放着，AI开新会话时直接从池里领一个用，省掉每次启动都要等git worktree add的两到五秒，加快会话启动。
   desc_en: ''
-  plain_zh: Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）
+  plain_zh: 工作树预创建池，提前批量创建git worktree放着，AI开新会话时直接从池里领一个用，省掉每次启动都要等git worktree add的两到五秒，加快会话启动。
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/approval.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 审批
-  name_en: G-CT-004 — Backward-compat re-export of ApprovalRequest from
-  desc_zh: 审批，供zephyr.governance.services.ada使用
+  name_en: approval
+  desc_zh: 兼容转发层，真正的审批类型已搬到共享契约层，这里保留旧入口转发引用，老代码不用改。
   desc_en: G-CT-004 — Backward-compat re-export of ApprovalRequest from shared.contracts.approval_types.
-  plain_zh: 审批，供zephyr.governance.services.ada使用
+  plain_zh: 兼容转发层，真正的审批类型已搬到共享契约层，这里保留旧入口转发引用，老代码不用改。
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/compliance_rule.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 合规规则
   name_en: compliance_rule
-  desc_zh: Re-export shim — ComplianceRule 真源已合并至 zephyr.shared.contracts.compliance_rule。
+  desc_zh: 兼容转发层，真正的合规规则定义已搬到共享契约层，这里保留旧入口转发引用，老代码不用改。
   desc_en: ''
-  plain_zh: Re-export shim — ComplianceRule 真源已合并至 zephyr.shared.contracts.compliance_rule。
+  plain_zh: 兼容转发层，真正的合规规则定义已搬到共享契约层，这里保留旧入口转发引用，老代码不用改。
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/default_quality_gate.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 默认质量门禁
   name_en: D_DATA — Default Data Quality Gate
-  desc_zh: 默认质量门禁模块
+  desc_zh: 对行情数据打质量分（缺失、异常、延迟、停牌都扣分），分太低的数据直接拒收不下发，防止坏数据污染下游因子计算。
   desc_en: D_DATA — Default Data Quality Gate
-  plain_zh: 默认质量门禁。D_DATA — Default Data Quality Gate
+  plain_zh: 对行情数据打质量分（缺失、异常、延迟、停牌都扣分），分太低的数据直接拒收不下发，防止坏数据污染下游因子计算。
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/dlq_retry_policy.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: dlq重试策略
   name_en: dlq_retry_policy
-  desc_zh: DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。
+  desc_zh: 把处理失败被丢进死信队列的消息捞出来重新投递，成功就标记解决，连续失败到上限就标记耗尽不再试，防止死信永远躺尸。
   desc_en: ''
-  plain_zh: DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。
+  plain_zh: 把处理失败被丢进死信队列的消息捞出来重新投递，成功就标记解决，连续失败到上限就标记耗尽不再试，防止死信永远躺尸。
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/output_quality_gate.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: output质量门禁
   name_en: output_quality_gate
-  desc_zh: output质量门禁，提供包入口和模块加载功能
+  desc_zh: 检查大模型输出的长度、重复度、占位符、成本效率、格式，不合格的输出直接挡住，防止垃圾结果流入下游。
   desc_en: ''
-  plain_zh: output质量门禁，提供包入口和模块加载功能
+  plain_zh: 检查大模型输出的长度、重复度、占位符、成本效率、格式，不合格的输出直接挡住，防止垃圾结果流入下游。
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/pre_flight_gate.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: preflight门禁
   name_en: pre_flight_gate
-  desc_zh: preflight门禁，依赖预算模型、预算引擎工作
+  desc_zh: 任务执行前先检查token、成本、时间三项预算还剩多少，预算快爆了就告警或拦住，防止一个任务把整个预算吃光。
   desc_en: ''
-  plain_zh: preflight门禁，依赖预算模型、预算引擎工作
+  plain_zh: 任务执行前先检查token、成本、时间三项预算还剩多少，预算快爆了就告警或拦住，防止一个任务把整个预算吃光。
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/quality_gate.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 质量门禁
@@ -10702,16 +10702,16 @@ entries:
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 规则监视器
   name_en: rule_watcher
-  desc_zh: RuleWatcher — YAML 规则文件变更检测与自动同步
+  desc_zh: 盯住YAML规则文件的修改时间，发现有人改了规则就自动同步到依赖图并做哈希校验，防止规则文件改了但系统还在用旧规则。
   desc_en: ''
-  plain_zh: RuleWatcher — YAML 规则文件变更检测与自动同步
+  plain_zh: 盯住YAML规则文件的修改时间，发现有人改了规则就自动同步到依赖图并做哈希校验，防止规则文件改了但系统还在用旧规则。
 - module_path: src/zephyr/gov_enforcement/rule_enforcement/slo_contract.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: SLO契约
   name_en: SLO-Driven Escalation Contract — D-022-12.
-  desc_zh: SLO契约模块
+  desc_zh: 服务等级契约引擎，实时盯住服务质量指标和目标的差距，按错误预算消耗速度决定是否升级处理，防止服务质量偷偷下滑没人管。
   desc_en: SLO-Driven Escalation Contract — D-022-12.
-  plain_zh: SLO契约。SLO-Driven Escalation Contract — D-022-12.
+  plain_zh: 服务等级契约引擎，实时盯住服务质量指标和目标的差距，按错误预算消耗速度决定是否升级处理，防止服务质量偷偷下滑没人管。
 - module_path: tests/governance/commit_gates/test_create_guard.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 测试创建守卫
