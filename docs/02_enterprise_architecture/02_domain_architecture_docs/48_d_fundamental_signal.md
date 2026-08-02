@@ -31,8 +31,8 @@ ttl: permanent
 | 域内依赖 | 7 | Internal Dependencies | 7 |
 | 跨域入边 | 2 | Cross-domain Incoming | 2 |
 | 跨域出边 | 18 | Cross-domain Outgoing | 18 |
-| 设计态模块 | 3 | Design Modules | 3 |
-| 生产态模块 | 10 | Production Modules | 10 |
+| 设计态模块 | 2 | Design Modules | 2 |
+| 生产态模块 | 11 | Production Modules | 11 |
 | 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
 | 描述 | 财务指标信号 | Description | 财务指标信号 |
 
@@ -48,13 +48,13 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 13 个模块（生产态 10 + 设计态 3），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 13 个模块（生产态 11 + 设计态 2），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_signal_fundamental_init_py["基本面信号域包<br/>基本面信号域的总入口文件夹。把这个域里管信号生成<br/>、资金分配、信号合成的几块代码归到一起，用到谁才<br/>加载谁，避免一上来全加载拖慢启动。<br/>Fundamental Signal Domain Package<br/>Unified package for D_FUNDAMENTAL_SIGNAL<br/>domain, aggregating signal generation,<br/>strategy, synthesis, combiner, capital<br/>allocation and pipeline; lazily re-exports<br/>submodule main classes via __getattr__<br/>文件: signal_fundamental/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_signal_fundamental_audit_signal_audit_logger_py["信号审计日志器<br/>给信号留操作录像的记账员。从因子变信号、信号变资<br/>金分配，每一步关键操作都记一笔，事后出问题能倒查<br/>是哪一步、哪个信号出了岔。<br/>⛔ 基本面信号域，设计已就绪，等待开发排期<br/>Signal Audit Logger<br/>(Design) Full-link audit logger for signal<br/>generation, recording key operations and<br/>intermediate results in factor->signal->capital<br/>allocation process<br/>文件: audit/signal_audit_logger.py<br/>(设计态 / design)"]
+    src_zephyr_signal_fundamental_audit_signal_audit_logger_py["信号审计日志器<br/>给信号留操作录像的记账员。从因子变信号、信号变资<br/>金分配，每一步关键操作都记一笔，事后出问题能倒查<br/>是哪一步、哪个信号出了岔。<br/>Signal Audit Logger<br/>(Design) Full-link audit logger for signal<br/>generation, recording key operations and<br/>intermediate results in factor->signal->capital<br/>allocation process<br/>文件: audit/signal_audit_logger.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_capital_capital_allocation_result_py["资本分配结果（兼容导出）<br/>资本分配结果的兼容导出垫片。老代码从这导入不会断<br/>，真源在别处，这层只是转发，避免改一处坏一片。<br/>Compat re-export shim for<br/>CapitalAllocationResult, keeping old import<br/>paths working<br/>文件: capital/capital_allocation_result.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_capital_capital_allocator_py["资本分配器（兼容导出）<br/>资本分配器的兼容入口。老代码从这导入不会断，真源<br/>在 strategy<br/>目录里。这层只转发不定义，防止多真源同步漂移。<br/>Capital Allocator (compat re-export)<br/>Backward-compat entry, real source in<br/>strategy.capital_allocator; do not redefine<br/>contract types or ABCs here<br/>文件: capital/capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py["默认资本分配器（兼容导出）<br/>默认资本分配器的兼容导出垫片，真源在 strategy<br/>目录，这层只转发保持老路径不断。<br/>Compat re-export shim for default capital<br/>allocator, real source in strategy dir<br/>文件: capital/default_capital_allocator.py<br/>(生产态 / production)"]
@@ -80,8 +80,8 @@ flowchart TD
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
-    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     D_ASHARE_SIGNAL["A股特色信号<br/>A 股特色信号，负责 A<br/>股市场特色交易信号的生成和管理<br/>A-Share Signal<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     src_zephyr_signal_fundamental_router_signal_conflict_resolver_py -.->|event / event| D_ASHARE_SIGNAL
@@ -110,26 +110,28 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
-    class src_zephyr_signal_fundamental_audit_signal_audit_logger_py,src_zephyr_signal_fundamental_router_signal_conflict_resolver_py,src_zephyr_signal_fundamental_router_signal_priority_router_py design
+    class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_audit_signal_audit_logger_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
+    class src_zephyr_signal_fundamental_router_signal_conflict_resolver_py,src_zephyr_signal_fundamental_router_signal_priority_router_py design
     class D_TRADING,D_INFRASTRUCTURE,D_SHARED,D_GOVERNANCE,D_FACTOR external_prod
     class D_ASHARE_SIGNAL external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 10 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 11 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_signal_fundamental_init_py["基本面信号域包<br/>基本面信号域的总入口文件夹。把这个域里管信号生成<br/>、资金分配、信号合成的几块代码归到一起，用到谁才<br/>加载谁，避免一上来全加载拖慢启动。<br/>Fundamental Signal Domain Package<br/>Unified package for D_FUNDAMENTAL_SIGNAL<br/>domain, aggregating signal generation,<br/>strategy, synthesis, combiner, capital<br/>allocation and pipeline; lazily re-exports<br/>submodule main classes via __getattr__<br/>文件: signal_fundamental/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_signal_fundamental_audit_signal_audit_logger_py["信号审计日志器<br/>给信号留操作录像的记账员。从因子变信号、信号变资<br/>金分配，每一步关键操作都记一笔，事后出问题能倒查<br/>是哪一步、哪个信号出了岔。<br/>Signal Audit Logger<br/>(Design) Full-link audit logger for signal<br/>generation, recording key operations and<br/>intermediate results in factor->signal->capital<br/>allocation process<br/>文件: audit/signal_audit_logger.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_capital_capital_allocation_result_py["资本分配结果（兼容导出）<br/>资本分配结果的兼容导出垫片。老代码从这导入不会断<br/>，真源在别处，这层只是转发，避免改一处坏一片。<br/>Compat re-export shim for<br/>CapitalAllocationResult, keeping old import<br/>paths working<br/>文件: capital/capital_allocation_result.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_capital_capital_allocator_py["资本分配器（兼容导出）<br/>资本分配器的兼容入口。老代码从这导入不会断，真源<br/>在 strategy<br/>目录里。这层只转发不定义，防止多真源同步漂移。<br/>Capital Allocator (compat re-export)<br/>Backward-compat entry, real source in<br/>strategy.capital_allocator; do not redefine<br/>contract types or ABCs here<br/>文件: capital/capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py["默认资本分配器（兼容导出）<br/>默认资本分配器的兼容导出垫片，真源在 strategy<br/>目录，这层只转发保持老路径不断。<br/>Compat re-export shim for default capital<br/>allocator, real source in strategy dir<br/>文件: capital/default_capital_allocator.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py["默认信号聚合器<br/>信号聚合器的默认实现。基类定了怎么聚合，这层填具<br/>体怎么把多个因子信号合并成一个合成信号。<br/>Default Signal Aggregator<br/>Default implementation of signal aggregator,<br/>concrete multi-factor signal merging logic<br/>文件: implementations<br/>/default_signal_aggregator.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_pipeline_py["管线<br/>从因子域到信号域的跨层集成管道。把因子信号一路加<br/>工成可交易信号，是整个信号生成流程的总调度。<br/>Alpha Signal Pipeline<br/>AlphaSignalPipeline, D_FACTOR->D_SIGNAL<br/>cross-layer integration pipeline, processes<br/>factor signals into tradeable signals<br/>文件: signal_fundamental/pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_signal_fundamental_init_py ~~~ src_zephyr_signal_fundamental_capital_capital_allocation_result_py
+    src_zephyr_signal_fundamental_init_py ~~~ src_zephyr_signal_fundamental_audit_signal_audit_logger_py
+    src_zephyr_signal_fundamental_audit_signal_audit_logger_py ~~~ src_zephyr_signal_fundamental_capital_capital_allocation_result_py
     src_zephyr_signal_fundamental_capital_capital_allocation_result_py ~~~ src_zephyr_signal_fundamental_capital_capital_allocator_py
     src_zephyr_signal_fundamental_capital_capital_allocator_py ~~~ src_zephyr_signal_fundamental_capital_default_capital_allocator_py
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
@@ -143,33 +145,31 @@ flowchart TD
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
-    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
+    class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_audit_signal_audit_logger_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 3 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 2 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_signal_fundamental_audit_signal_audit_logger_py["信号审计日志器<br/>给信号留操作录像的记账员。从因子变信号、信号变资<br/>金分配，每一步关键操作都记一笔，事后出问题能倒查<br/>是哪一步、哪个信号出了岔。<br/>⛔ 基本面信号域，设计已就绪，等待开发排期<br/>Signal Audit Logger<br/>(Design) Full-link audit logger for signal<br/>generation, recording key operations and<br/>intermediate results in factor->signal->capital<br/>allocation process<br/>文件: audit/signal_audit_logger.py<br/>(设计态 / design)"]
     src_zephyr_signal_fundamental_router_signal_priority_router_py["信号优先级路由器<br/>给信号排优先级的路由器。多个信号同时来时，按优先<br/>级决定先处理谁后处理谁，避免重要信号被淹没。<br/>⛔ 基本面信号域，设计已就绪，等待开发排期<br/>Signal Priority Router<br/>(Design) Signal priority router, decides<br/>processing order when multiple signals arrive<br/>simultaneously by priority<br/>文件: router/signal_priority_router.py<br/>(设计态 / design)"]
-    src_zephyr_signal_fundamental_audit_signal_audit_logger_py ~~~ src_zephyr_signal_fundamental_router_signal_priority_router_py
     src_zephyr_signal_fundamental_router_signal_conflict_resolver_py["信号冲突解决器<br/>解决信号冲突的裁判。多个信号互相矛盾<br/>（一个说买一个说卖）时，裁定听谁的，避免信号打架<br/>系统无所适从。<br/>⛔ 基本面信号域，设计已就绪，等待开发排期<br/>Signal Conflict Resolver<br/>(Design) Signal conflict resolver, adjudicates<br/>which signal to adopt when multiple signals<br/>contradict each other<br/>文件: router/signal_conflict_resolver.py<br/>(设计态 / design)"]
     src_zephyr_signal_fundamental_router_signal_priority_router_py -.->|runtime / runtime| src_zephyr_signal_fundamental_router_signal_conflict_resolver_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_signal_fundamental_audit_signal_audit_logger_py,src_zephyr_signal_fundamental_router_signal_conflict_resolver_py,src_zephyr_signal_fundamental_router_signal_priority_router_py design
+    class src_zephyr_signal_fundamental_router_signal_conflict_resolver_py,src_zephyr_signal_fundamental_router_signal_priority_router_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

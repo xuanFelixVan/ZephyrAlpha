@@ -30,7 +30,7 @@ ttl: permanent
 | 模块数 | 15 | Module Count | 15 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 7 | Cross-domain Outgoing | 7 |
+| 跨域出边 | 10 | Cross-domain Outgoing | 10 |
 | 设计态模块 | 6 | Design Modules | 6 |
 | 生产态模块 | 9 | Production Modules | 9 |
 | 容量 | 9/150 (正常) | Capacity | 9/150 (正常) |
@@ -83,14 +83,18 @@ flowchart TD
     src_zephyr_market_data_vendor_registry_py -.->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_connectors -.->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_autoload_py -.->|runtime / runtime| src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     src_zephyr_market_data_normalized_market_data_producer_producer_py -.->|data / data| src_zephyr_market_data_raw_data_cache
+    src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
+    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_market_data_vendor_base_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_market_data_vendor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_market_data_vendor_registry_py -.->|导入依赖 / import_depends| D_SHARED
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_market_data_raw_data_cache -.->|data / data| D_DATA
     src_zephyr_market_data_autoload_py -.->|runtime / runtime| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
-    D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
@@ -102,7 +106,7 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_normalized_market_data_producer_init_py,src_zephyr_market_data_normalized_market_data_producer_producer_py,src_zephyr_market_data_services_init_py production
     class src_zephyr_market_data_autoload_py,src_zephyr_market_data_connectors,src_zephyr_market_data_failover,src_zephyr_market_data_raw_data_cache,src_zephyr_market_data_vendor_base_py,src_zephyr_market_data_vendor_registry_py design
-    class D_DATA,D_INFRASTRUCTURE,D_EX_SOR external_prod
+    class D_SHARED,D_INFRASTRUCTURE,D_DATA,D_EX_SOR external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -175,6 +179,9 @@ flowchart TD
 | 5 | raw数据缓存 (raw_data_cache/) | → | D_DATA 数据接入层: 提供器基类 / provider_base (data/provider_base.py) | data / data |
 | 6 | 包入口 / __init__ (market_data/__init__.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
 | 7 | 生产者 / producer (normalized_market_data_producer/produc... | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
+| 8 | vendor基类 / vendor_base (market_data/vendor_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
+| 9 | vendor基类 / vendor_base (market_data/vendor_base.py) | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 10 | vendor注册表 / vendor_registry (market_data/vendor_regist... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -184,7 +191,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 3 个外部域直接连接（出边 7 条 + 入边 1 条 = 8 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 10 条 + 入边 1 条 = 11 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -192,9 +199,11 @@ graph LR
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_DATA["D_DATA<br/>数据接入层"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
+    D_SHARED["D_SHARED<br/>共享服务"]
     D_EX_SOR["D_EX_SOR<br/>执行路由"]
     D_MKT_DATA -->|5条 data / data, 导入依赖 / import_depends, runtime / runtime| D_DATA
-    D_MKT_DATA -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_MKT_DATA -->|3条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_MKT_DATA -->|2条 导入依赖 / import_depends| D_SHARED
     D_EX_SOR -->|1条 runtime / runtime| D_MKT_DATA
 ```
 

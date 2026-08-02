@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 26 | Module Count | 26 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 92 | Cross-domain Incoming | 92 |
+| 跨域入边 | 94 | Cross-domain Incoming | 94 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 26 | Production Modules | 26 |
@@ -115,14 +115,17 @@ flowchart TD
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_fill_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -->|导入依赖 / import_depends| D_SHARED
-    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
-    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
+    D_MKT_DATA["行情数据<br/>行情数据，负责市场行情数据的采集、分发和订阅管理<br/>Market Data<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    D_MKT_DATA -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_data_py
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|contract / contract| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_PF_CORE -->|contract / contract| src_zephyr_shared_contracts_target_portfolio_py
+    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_TRADING -->|测试依赖 / test_depends| src_zephyr_shared_contracts_fill_py
+    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
@@ -134,16 +137,13 @@ flowchart TD
     D_REPORTING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_REPORTING -->|测试依赖 / test_depends| src_zephyr_shared_contracts_fill_py
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_TRADING -->|测试依赖 / test_depends| src_zephyr_shared_contracts_fill_py
-    D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_target_portfolio_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
-    class D_SHARED,D_GOV_AUDIT,D_PF_CORE,D_REPORTING,D_EX_CORE external_prod
-    class D_TRADING external_design
+    class D_SHARED,D_GOV_AUDIT,D_PF_CORE,D_TRADING,D_REPORTING external_prod
+    class D_MKT_DATA external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -285,57 +285,59 @@ flowchart TD
 | 43 | D_INFRA_RUNTIME 运行时集成: 健康监控 / health_monitor (trading/health_monitor.py) | → | 遥测发射器 / telemetry_emitter (contracts/telemetry_emitt... | 导入依赖 / import_depends |
 | 44 | D_MKT_DATA 行情数据: 包入口 / __init__ (market_data/__init__.py) | → | 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
 | 45 | D_MKT_DATA 行情数据: 生产者 / producer (normalized_market_data_producer/produc... | → | 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
-| 46 | D_PF_ALLOC 组合分配: 策略生命周期事件 / strategy_lifecycle_event (pf_alloc/str... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
-| 47 | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
-| 48 | D_PF_CORE 组合核心: 约束求解器 (core/constraint_solver.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 49 | D_PF_CORE 组合核心: 绩效归因引擎 (core/performance_attribution_engine.py) | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
-| 50 | D_PF_CORE 组合核心: 组合优化器 (core/portfolio_optimizer.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 51 | D_PF_CORE 组合核心: 组合优化器 (core/portfolio_optimizer.py) | → | 目标组合契约 / TargetPortfolio (contracts/target_portfoli... | contract / contract |
-| 52 | D_PF_CORE 组合核心: 组合优化器 (core/portfolio_optimizer.py) | → | 目标组合契约 / TargetPortfolio (contracts/target_portfoli... | 导入依赖 / import_depends |
-| 53 | D_PF_CORE 组合核心: 再平衡调度器 (core/rebalance_scheduler.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 54 | D_PF_CORE 组合核心: 再平衡调度器 (core/rebalance_scheduler.py) | → | 目标组合契约 / TargetPortfolio (contracts/target_portfoli... | 导入依赖 / import_depends |
-| 55 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
-| 56 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
-| 57 | D_POSITION 仓位管理: 持仓sizing引擎 / position_sizing_engine (core/position_si... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 58 | D_POSITION 仓位管理: Position Sizing Engine 测试 (MOD-POS-001 阶段1)。 (positi... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
-| 59 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
-| 60 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 61 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
-| 62 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
-| 63 | D_REPORTING 报告: 默认attribution引擎 / D_REPORTING — Default Attribution ... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
-| 64 | D_REPORTING 报告: 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
-| 65 | D_REPORTING 报告: 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 66 | D_REPORTING 报告: 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
-| 67 | D_REPORTING 报告: 实时盈亏仪表盘 / realtime_pnl_dashboard (reporting/realti... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 68 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | 成交 / fill (contracts/fill.py) | 测试依赖 / test_depends |
-| 69 | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 70 | D_RISK 风控: 风控管理器 / risk_manager (risk/risk_manager.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 71 | D_SHARED 共享服务: 绩效attribution报告 / performance_attribution_report (por... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
-| 72 | D_SIGQC 信号质量控制: 退化监控基类 / D_SIGQC — Signal Quality Degradation Moni... | → | synthesized信号 / synthesized_signal (contracts/synthesiz... | 导入依赖 / import_depends |
-| 73 | D_SIMULATION 仿真: 管线基类 / pipeline_base (simulation/pipeline_base.py) | → | 实验结果 / experiment_result (contracts/experiment_result... | 导入依赖 / import_depends |
-| 74 | D_TRADING 交易运营: PnL Calculator / D_TRADING (trading/pnl_calculator.py) | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 75 | D_TRADING 交易运营: 结算对账 / settlement_reconciliation (trading/settlement_... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 76 | D_TRADING 交易运营: 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 77 | D_TRADING 交易运营: 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
-| 78 | D_TRADING 交易运营: 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | → | 持仓 / position (contracts/position.py) | 导入依赖 / import_depends |
-| 79 | D_TRADING 交易运营: 执行拒绝错误 / execution_rejection_error (execution/execu... | → | 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
-| 80 | D_TRADING 交易运营: 执行报告 / execution_report (execution/execution_report.py) | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
-| 81 | D_TRADING 交易运营: 成交 / fill (execution/fill.py) | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 82 | D_TRADING 交易运营: 订单 / order (execution/order.py) | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
-| 83 | D_TRADING 交易运营: 持仓 / position (execution/position.py) | → | 持仓 / position (contracts/position.py) | 导入依赖 / import_depends |
-| 84 | D_TRADING 交易运营: 工厂 / factories (trading_contracts/factories.py) | → | 因子信号 / factor_signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
-| 85 | D_TRADING 交易运营: 工厂 / factories (trading_contracts/factories.py) | → | synthesized信号 / synthesized_signal (contracts/synthesiz... | 导入依赖 / import_depends |
-| 86 | D_TRADING 交易运营: 信号退化警告 / signal_degradation_warning (market/signal_... | → | 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
-| 87 | D_TRADING 交易运营: 绩效attribution报告 / performance_attribution_report (con... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
-| 88 | D_TRADING 交易运营: 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
-| 89 | D_TRADING 交易运营: 风险限制违规错误 / risk_limit_violation_error (risk/risk_... | → | 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
-| 90 | D_TRADING 交易运营: 风险limits / risk_limits (risk/risk_limits.py) | → | 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
-| 91 | D_TRADING 交易运营: 风险校验器协议 / risk_validator_protocol (risk/risk_valid... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 92 | D_TRADING 交易运营: MOD-TRADING-002 PnL Calculator 单元测试. (trading/test_pn... | → | 成交 / fill (contracts/fill.py) | 测试依赖 / test_depends |
+| 46 | D_MKT_DATA 行情数据: vendor基类 / vendor_base (market_data/vendor_base.py) | → | 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
+| 47 | D_PF_ALLOC 组合分配: 策略生命周期事件 / strategy_lifecycle_event (pf_alloc/str... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
+| 48 | D_PF_ALLOC 组合分配: 默认权益策略 / D_PORTFOLIO_CORE — Default Equity Long-On... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
+| 49 | D_PF_CORE 组合核心: 约束求解器 (core/constraint_solver.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 50 | D_PF_CORE 组合核心: 绩效归因引擎 (core/performance_attribution_engine.py) | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
+| 51 | D_PF_CORE 组合核心: 组合优化器 (core/portfolio_optimizer.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 52 | D_PF_CORE 组合核心: 组合优化器 (core/portfolio_optimizer.py) | → | 目标组合契约 / TargetPortfolio (contracts/target_portfoli... | contract / contract |
+| 53 | D_PF_CORE 组合核心: 组合优化器 (core/portfolio_optimizer.py) | → | 目标组合契约 / TargetPortfolio (contracts/target_portfoli... | 导入依赖 / import_depends |
+| 54 | D_PF_CORE 组合核心: 再平衡调度器 (core/rebalance_scheduler.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 55 | D_PF_CORE 组合核心: 再平衡调度器 (core/rebalance_scheduler.py) | → | 目标组合契约 / TargetPortfolio (contracts/target_portfoli... | 导入依赖 / import_depends |
+| 56 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
+| 57 | D_PF_CORE 组合核心: 策略引擎 (core/strategy_engine.py) | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | contract / contract |
+| 58 | D_POSITION 仓位管理: 持仓sizing引擎 / position_sizing_engine (core/position_si... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 59 | D_POSITION 仓位管理: Position Sizing Engine 测试 (MOD-POS-001 阶段1)。 (positi... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
+| 60 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
+| 61 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 62 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
+| 63 | D_REPORTING 报告: analytics基类 / D_REPORTING — Post-Trade Analytics Layer... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
+| 64 | D_REPORTING 报告: 默认attribution引擎 / D_REPORTING — Default Attribution ... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
+| 65 | D_REPORTING 报告: 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
+| 66 | D_REPORTING 报告: 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 67 | D_REPORTING 报告: 默认tca引擎 / D_REPORTING — Default TCA Engine (reportin... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
+| 68 | D_REPORTING 报告: 实时盈亏仪表盘 / realtime_pnl_dashboard (reporting/realti... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 69 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | 成交 / fill (contracts/fill.py) | 测试依赖 / test_depends |
+| 70 | D_RISK 风控: 风险limits / D_RISK — Risk Limits Calculator (risk/risk_... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 71 | D_RISK 风控: 风控管理器 / risk_manager (risk/risk_manager.py) | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 72 | D_SHARED 共享服务: 绩效attribution报告 / performance_attribution_report (por... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
+| 73 | D_SIGQC 信号质量控制: 退化监控基类 / D_SIGQC — Signal Quality Degradation Moni... | → | synthesized信号 / synthesized_signal (contracts/synthesiz... | 导入依赖 / import_depends |
+| 74 | D_SIMULATION 仿真: 管线基类 / pipeline_base (simulation/pipeline_base.py) | → | 实验结果 / experiment_result (contracts/experiment_result... | 导入依赖 / import_depends |
+| 75 | D_TRADING 交易运营: PnL Calculator / D_TRADING (trading/pnl_calculator.py) | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 76 | D_TRADING 交易运营: 结算对账 / settlement_reconciliation (trading/settlement_... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 77 | D_TRADING 交易运营: 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 78 | D_TRADING 交易运营: 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
+| 79 | D_TRADING 交易运营: 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | → | 持仓 / position (contracts/position.py) | 导入依赖 / import_depends |
+| 80 | D_TRADING 交易运营: 执行拒绝错误 / execution_rejection_error (execution/execu... | → | 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
+| 81 | D_TRADING 交易运营: 执行报告 / execution_report (execution/execution_report.py) | → | 执行报告 / execution_report (contracts/execution_report.py) | 导入依赖 / import_depends |
+| 82 | D_TRADING 交易运营: 成交 / fill (execution/fill.py) | → | 成交 / fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 83 | D_TRADING 交易运营: 订单 / order (execution/order.py) | → | 订单 / order (contracts/order.py) | 导入依赖 / import_depends |
+| 84 | D_TRADING 交易运营: 持仓 / position (execution/position.py) | → | 持仓 / position (contracts/position.py) | 导入依赖 / import_depends |
+| 85 | D_TRADING 交易运营: 工厂 / factories (trading_contracts/factories.py) | → | 因子信号 / factor_signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
+| 86 | D_TRADING 交易运营: 工厂 / factories (trading_contracts/factories.py) | → | synthesized信号 / synthesized_signal (contracts/synthesiz... | 导入依赖 / import_depends |
+| 87 | D_TRADING 交易运营: 信号退化警告 / signal_degradation_warning (market/signal_... | → | 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
+| 88 | D_TRADING 交易运营: 绩效attribution报告 / performance_attribution_report (con... | → | 绩效attribution报告 / performance_attribution_report (con... | 导入依赖 / import_depends |
+| 89 | D_TRADING 交易运营: 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | → | 策略生命周期事件 / strategy_lifecycle_event (contracts/st... | 导入依赖 / import_depends |
+| 90 | D_TRADING 交易运营: 风险限制违规错误 / risk_limit_violation_error (risk/risk_... | → | 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
+| 91 | D_TRADING 交易运营: 风险limits / risk_limits (risk/risk_limits.py) | → | 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
+| 92 | D_TRADING 交易运营: 风险校验器协议 / risk_validator_protocol (risk/risk_valid... | → | 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 93 | D_TRADING 交易运营: MOD-TRADING-002 PnL Calculator 单元测试. (trading/test_pn... | → | 成交 / fill (contracts/fill.py) | 测试依赖 / test_depends |
+| 94 | D_TRADING 交易运营: MOD-TRADING-003 Settlement & Reconciliation Engine 单元测... | → | 成交 / fill (contracts/fill.py) | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 19 个外部域直接连接（出边 11 条 + 入边 92 条 = 103 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 19 个外部域直接连接（出边 11 条 + 入边 94 条 = 105 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -351,8 +353,8 @@ graph LR
     D_EX_SOR["D_EX_SOR<br/>执行路由"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
-    D_PF_ALLOC["D_PF_ALLOC<br/>组合分配"]
     D_FACTOR["D_FACTOR<br/>因子"]
+    D_PF_ALLOC["D_PF_ALLOC<br/>组合分配"]
     D_POSITION["D_POSITION<br/>仓位管理"]
     D_RISK["D_RISK<br/>风控"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
@@ -362,16 +364,16 @@ graph LR
     D_SIMULATION["D_SIMULATION<br/>仿真"]
     D_INFRASTRUCTURE -->|10条 导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
-    D_TRADING -->|19条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_TRADING -->|20条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_EX_CORE -->|16条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_REPORTING -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_PF_CORE -->|9条 contract / contract, 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_FUNDAMENTAL_SIGNAL -->|9条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_EX_SOR -->|7条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE -->|6条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_MKT_DATA -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_MKT_DATA -->|3条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_FACTOR -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_POSITION -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_RISK -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_INFRA_RUNTIME -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE

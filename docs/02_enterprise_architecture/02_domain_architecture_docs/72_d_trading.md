@@ -27,13 +27,13 @@ ttl: permanent
 | 域ID | D_TRADING | Domain ID | D_TRADING |
 | 域名称 | 交易运营 | Domain Name | Trading Operations |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 41 | Module Count | 41 |
-| 域内依赖 | 13 | Internal Dependencies | 13 |
+| 模块数 | 42 | Module Count | 42 |
+| 域内依赖 | 14 | Internal Dependencies | 14 |
 | 跨域入边 | 30 | Cross-domain Incoming | 30 |
-| 跨域出边 | 64 | Cross-domain Outgoing | 64 |
-| 设计态模块 | 2 | Design Modules | 2 |
-| 生产态模块 | 39 | Production Modules | 39 |
-| 容量 | 39/150 (正常) | Capacity | 39/150 (正常) |
+| 跨域出边 | 66 | Cross-domain Outgoing | 66 |
+| 设计态模块 | 0 | Design Modules | 0 |
+| 生产态模块 | 42 | Production Modules | 42 |
+| 容量 | 41/150 (正常) | Capacity | 41/150 (正常) |
 | 描述 | 交易运营，负责交易生命周期管理、订单状态和成交处理 | Description | 交易运营，负责交易生命周期管理、订单状态和成交处理 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 41 个模块（生产态 39 + 设计态 2），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 42 个模块（生产态 42 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -57,12 +57,11 @@ flowchart TD
     src_zephyr_trading_admission_controller_py["准入控制器<br/>替代 Any。运行时 runtime_checkable 支持<br/>isinstance 校验。defensive fallback<br/>admission_controller<br/>文件: trading/admission_controller.py<br/>(生产态 / production)"]
     src_zephyr_trading_auto_dispatcher_py["自动分发器<br/>AutoDispatcher — 守护进程内的轻量<br/>PipelineDispatcher<br/>auto_dispatcher<br/>文件: trading/auto_dispatcher.py<br/>(生产态 / production)"]
     src_zephyr_trading_conductor_py["Conductor — AI session 全自动指挥官。<br/>- plan_cycle: 认领任务 + 文件冲突检测 + 并行分组<br/>文件: trading/conductor.py<br/>(生产态 / production)"]
-    src_zephyr_trading_corporate_action_processor_py["公司行为处理器<br/>交易的处理器，处理加工数据<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>corporate_action_processor<br/>文件: trading/corporate_action_processor.py<br/>(设计态 / design)"]
+    src_zephyr_trading_corporate_action_processor_py["公司行为处理器<br/>交易的处理器，处理加工数据<br/>corporate_action_processor<br/>文件: trading/corporate_action_processor.py<br/>(生产态 / production)"]
     src_zephyr_trading_gpu_consensus_scheduler_py["GPU共识调度器<br/>交易的调度器，按时间或优先级安排任务<br/>gpu_consensus_scheduler<br/>文件: trading/gpu_consensus_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_trading_gpu_monitor_py["GPU监控<br/>通过 nvidia-smi 采集 GPU 使用率/显存，纳入<br/>ResourceOptimizationEngine 压力分级。<br/>gpu_monitor<br/>文件: trading/gpu_monitor.py<br/>(生产态 / production)"]
     src_zephyr_trading_ide_health_daemon_py["ide健康daemon<br/>TRAE IDE 幽灵窗口守护线程<br/>ide_health_daemon<br/>文件: trading/ide_health_daemon.py<br/>(生产态 / production)"]
     src_zephyr_trading_runtime_async_runtime_py["异步运行时<br/>事件循环引导 + run_in_executor 桥接。<br/>async_runtime<br/>文件: runtime/async_runtime.py<br/>(生产态 / production)"]
-    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>交易决策<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>settlement_reconciliation<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
     src_zephyr_trading_speed_baseline_checker_py["测速基线检查器<br/>speed基线检查器，交易的检查器，检查条件是否满足<br/>。<br/>speed_baseline_checker<br/>文件: trading/speed_baseline_checker.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_broker_interface_py["经纪人接口<br/>券商接口抽象基类（OCP-003 OCP 扩展点）<br/>D_EXECUTION_CORE — BrokerInterface<br/>文件: trading_contracts/broker_interface.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py["资本分配结果<br/>资本allocation结果，执行的结果，封装操作结果的数<br/>据结构。<br/>capital_allocation_result<br/>文件: execution/capital_allocation_result.py<br/>(生产态 / production)"]
@@ -82,6 +81,7 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["风险校验器协议<br/>风控的校验器，检查输入是否符合规则<br/>risk_validator_protocol<br/>文件: risk/risk_validator_protocol.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["交易终止开关<br/>定义五级 KillSwitch（仓位限制/单日亏损/熔断<br/>/二级熔断等），触发时强制停止交易<br/>trading_kill_switch<br/>文件: risk/trading_kill_switch.py<br/>(生产态 / production)"]
     tests_trading_test_pnl_calculator_py["trading/test_pnl_calculator<br/>MOD-TRADING-002 PnL Calculator 单元测试.<br/>文件: trading/test_pnl_calculator.py<br/>(生产态 / production)"]
+    tests_trading_test_settlement_reconciliation_py["trading/test_settlement_reconciliation<br/>MOD-TRADING-003 Settlement & Reconciliation<br/>Engine 单元测试.<br/>文件: trading/test_settlement_reconciliation.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_init_py ~~~ src_zephyr_trading_admission_controller_py
     src_zephyr_trading_admission_controller_py ~~~ src_zephyr_trading_auto_dispatcher_py
     src_zephyr_trading_auto_dispatcher_py ~~~ src_zephyr_trading_conductor_py
@@ -90,8 +90,7 @@ flowchart TD
     src_zephyr_trading_gpu_consensus_scheduler_py ~~~ src_zephyr_trading_gpu_monitor_py
     src_zephyr_trading_gpu_monitor_py ~~~ src_zephyr_trading_ide_health_daemon_py
     src_zephyr_trading_ide_health_daemon_py ~~~ src_zephyr_trading_runtime_async_runtime_py
-    src_zephyr_trading_runtime_async_runtime_py ~~~ src_zephyr_trading_settlement_reconciliation_py
-    src_zephyr_trading_settlement_reconciliation_py ~~~ src_zephyr_trading_speed_baseline_checker_py
+    src_zephyr_trading_runtime_async_runtime_py ~~~ src_zephyr_trading_speed_baseline_checker_py
     src_zephyr_trading_speed_baseline_checker_py ~~~ src_zephyr_trading_trading_contracts_broker_interface_py
     src_zephyr_trading_trading_contracts_broker_interface_py ~~~ src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py ~~~ src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
@@ -110,12 +109,14 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py ~~~ src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py
     src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py ~~~ tests_trading_test_pnl_calculator_py
+    tests_trading_test_pnl_calculator_py ~~~ tests_trading_test_settlement_reconciliation_py
     src_zephyr_trading_action_dispatcher_annotation_writer_py["annotation写入器<br/>注释注解写入器（从<br/>ActionDispatcher._annotate_py_file/_tag_module<br/>/_annotate_blueprint 提取）。<br/>_annotation_writer<br/>文件: action_dispatcher/_annotation_writer.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_audit_log_writer_py["审计日志写入器<br/>（从 ActionDispatcher._write_triage_log 提取）<br/>_audit_log_writer<br/>文件: action_dispatcher/_audit_log_writer.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["文件生命周期管理器<br/>（从 ActionDispatcher._create_file /<br/>_delete_file / _version_backup 提取）<br/>_file_lifecycle_manager<br/>文件: action_dispatcher<br/>/_file_lifecycle_manager.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_search_replace_engine_py["searchreplace引擎<br/>搜索替换引擎（从<br/>ActionDispatcher._search_replace_file<br/>及两个底层方法提取）。<br/>_search_replace_engine<br/>文件: action_dispatcher<br/>/_search_replace_engine.py<br/>(生产态 / production)"]
     src_zephyr_trading_autopilot_py["AutoPilot — AI session 自动找活干、认领任务。<br/>- scan / status_report -> 只读，告诉 AI<br/>当前有什么活<br/>文件: trading/autopilot.py<br/>(生产态 / production)"]
     src_zephyr_trading_pnl_calculator_py["PnL Calculator<br/>交易后盈亏核算基础设施<br/>D_TRADING<br/>文件: trading/pnl_calculator.py<br/>(生产态 / production)"]
+    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>交易决策<br/>settlement_reconciliation<br/>文件: trading/settlement_reconciliation.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_order_py["订单<br/>治本修复: 原文件重复定义 Order 类（多真源），且<br/>TraceContext 未 import（NameError bug）。<br/>文件: execution/order.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py["风险仪表盘快照<br/>契约，定义某时刻风险状态的快照数据结构，供风险与<br/>运维展示<br/>risk_dashboard_snapshot<br/>文件: risk/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_limits_py["风险limits<br/>风险限额契约，定义仓位、单日亏损等风险限额的数据<br/>结构。<br/>risk_limits<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
@@ -126,44 +127,46 @@ flowchart TD
     src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py ~~~ src_zephyr_trading_action_dispatcher_search_replace_engine_py
     src_zephyr_trading_action_dispatcher_search_replace_engine_py ~~~ src_zephyr_trading_autopilot_py
     src_zephyr_trading_autopilot_py ~~~ src_zephyr_trading_pnl_calculator_py
-    src_zephyr_trading_pnl_calculator_py ~~~ src_zephyr_trading_trading_contracts_execution_order_py
+    src_zephyr_trading_pnl_calculator_py ~~~ src_zephyr_trading_settlement_reconciliation_py
+    src_zephyr_trading_settlement_reconciliation_py ~~~ src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_execution_order_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_risk_risk_limits_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py ~~~ src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_protection_index_py["保护索引<br/>用 Bloom Filter 快速筛查加 Trie<br/>精确二次验证判断路径是否受保护，anchor<br/>路径永远返回 anchor 级别<br/>protection_index<br/>文件: trading/protection_index.py<br/>(生产态 / production)"]
-    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
+    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
+    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     tests_trading_test_pnl_calculator_py -->|测试依赖 / test_depends| src_zephyr_trading_pnl_calculator_py
-    D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_trading_settlement_reconciliation_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    tests_trading_test_settlement_reconciliation_py -->|测试依赖 / test_depends| src_zephyr_trading_settlement_reconciliation_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_trading_settlement_reconciliation_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_corporate_action_processor_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_pnl_calculator_py -->|导入依赖 / import_depends| D_POSITION
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_trading_settlement_reconciliation_py -.->|runtime / runtime| D_EX_CORE
+    src_zephyr_trading_settlement_reconciliation_py -->|runtime / runtime| D_EX_CORE
     src_zephyr_trading_pnl_calculator_py -.->|import / import| D_EX_CORE
+    D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    tests_trading_test_settlement_reconciliation_py -->|测试依赖 / test_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_settlement_reconciliation_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_settlement_reconciliation_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_pnl_calculator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_pnl_calculator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_pnl_calculator_py -->|导入依赖 / import_depends| D_SHARED
     tests_trading_test_pnl_calculator_py -->|测试依赖 / test_depends| D_SHARED
     tests_trading_test_pnl_calculator_py -->|测试依赖 / test_depends| D_INFRASTRUCTURE
-    src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_gpu_monitor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_trading_contracts_broker_interface_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_auto_dispatcher_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_position_py
     D_EX_CORE -->|contract / contract| src_zephyr_trading_trading_contracts_broker_interface_py
@@ -190,14 +193,13 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_trading_action_dispatcher_init_py,src_zephyr_trading_action_dispatcher_annotation_writer_py,src_zephyr_trading_action_dispatcher_audit_log_writer_py,src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py,src_zephyr_trading_action_dispatcher_search_replace_engine_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_pnl_calculator_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_trading_contracts_broker_interface_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py,src_zephyr_trading_trading_contracts_factories_py,src_zephyr_trading_trading_contracts_market_instrument_py,src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py,src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py,src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py,src_zephyr_trading_trading_contracts_risk_compliance_rule_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_limits_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py,tests_trading_test_pnl_calculator_py production
-    class src_zephyr_trading_corporate_action_processor_py,src_zephyr_trading_settlement_reconciliation_py design
-    class D_INFRASTRUCTURE,D_SHARED,D_POSITION,D_EX_CORE,D_REPORTING,D_RISK,D_INFRA_RUNTIME,D_FUNDAMENTAL_SIGNAL,D_ML_TRAIN,D_SIGQC,D_GOVERNANCE external_prod
+    class src_zephyr_trading_action_dispatcher_init_py,src_zephyr_trading_action_dispatcher_annotation_writer_py,src_zephyr_trading_action_dispatcher_audit_log_writer_py,src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py,src_zephyr_trading_action_dispatcher_search_replace_engine_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_corporate_action_processor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_pnl_calculator_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_settlement_reconciliation_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_trading_contracts_broker_interface_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py,src_zephyr_trading_trading_contracts_factories_py,src_zephyr_trading_trading_contracts_market_instrument_py,src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py,src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py,src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py,src_zephyr_trading_trading_contracts_risk_compliance_rule_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_limits_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py,tests_trading_test_pnl_calculator_py,tests_trading_test_settlement_reconciliation_py production
+    class D_SHARED,D_POSITION,D_EX_CORE,D_INFRASTRUCTURE,D_REPORTING,D_RISK,D_INFRA_RUNTIME,D_FUNDAMENTAL_SIGNAL,D_ML_TRAIN,D_SIGQC,D_GOVERNANCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 39 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 42 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -206,6 +208,7 @@ flowchart TD
     src_zephyr_trading_admission_controller_py["准入控制器<br/>替代 Any。运行时 runtime_checkable 支持<br/>isinstance 校验。defensive fallback<br/>admission_controller<br/>文件: trading/admission_controller.py<br/>(生产态 / production)"]
     src_zephyr_trading_auto_dispatcher_py["自动分发器<br/>AutoDispatcher — 守护进程内的轻量<br/>PipelineDispatcher<br/>auto_dispatcher<br/>文件: trading/auto_dispatcher.py<br/>(生产态 / production)"]
     src_zephyr_trading_conductor_py["Conductor — AI session 全自动指挥官。<br/>- plan_cycle: 认领任务 + 文件冲突检测 + 并行分组<br/>文件: trading/conductor.py<br/>(生产态 / production)"]
+    src_zephyr_trading_corporate_action_processor_py["公司行为处理器<br/>交易的处理器，处理加工数据<br/>corporate_action_processor<br/>文件: trading/corporate_action_processor.py<br/>(生产态 / production)"]
     src_zephyr_trading_gpu_consensus_scheduler_py["GPU共识调度器<br/>交易的调度器，按时间或优先级安排任务<br/>gpu_consensus_scheduler<br/>文件: trading/gpu_consensus_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_trading_gpu_monitor_py["GPU监控<br/>通过 nvidia-smi 采集 GPU 使用率/显存，纳入<br/>ResourceOptimizationEngine 压力分级。<br/>gpu_monitor<br/>文件: trading/gpu_monitor.py<br/>(生产态 / production)"]
     src_zephyr_trading_ide_health_daemon_py["ide健康daemon<br/>TRAE IDE 幽灵窗口守护线程<br/>ide_health_daemon<br/>文件: trading/ide_health_daemon.py<br/>(生产态 / production)"]
@@ -229,10 +232,12 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["风险校验器协议<br/>风控的校验器，检查输入是否符合规则<br/>risk_validator_protocol<br/>文件: risk/risk_validator_protocol.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["交易终止开关<br/>定义五级 KillSwitch（仓位限制/单日亏损/熔断<br/>/二级熔断等），触发时强制停止交易<br/>trading_kill_switch<br/>文件: risk/trading_kill_switch.py<br/>(生产态 / production)"]
     tests_trading_test_pnl_calculator_py["trading/test_pnl_calculator<br/>MOD-TRADING-002 PnL Calculator 单元测试.<br/>文件: trading/test_pnl_calculator.py<br/>(生产态 / production)"]
+    tests_trading_test_settlement_reconciliation_py["trading/test_settlement_reconciliation<br/>MOD-TRADING-003 Settlement & Reconciliation<br/>Engine 单元测试.<br/>文件: trading/test_settlement_reconciliation.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_init_py ~~~ src_zephyr_trading_admission_controller_py
     src_zephyr_trading_admission_controller_py ~~~ src_zephyr_trading_auto_dispatcher_py
     src_zephyr_trading_auto_dispatcher_py ~~~ src_zephyr_trading_conductor_py
-    src_zephyr_trading_conductor_py ~~~ src_zephyr_trading_gpu_consensus_scheduler_py
+    src_zephyr_trading_conductor_py ~~~ src_zephyr_trading_corporate_action_processor_py
+    src_zephyr_trading_corporate_action_processor_py ~~~ src_zephyr_trading_gpu_consensus_scheduler_py
     src_zephyr_trading_gpu_consensus_scheduler_py ~~~ src_zephyr_trading_gpu_monitor_py
     src_zephyr_trading_gpu_monitor_py ~~~ src_zephyr_trading_ide_health_daemon_py
     src_zephyr_trading_ide_health_daemon_py ~~~ src_zephyr_trading_runtime_async_runtime_py
@@ -255,12 +260,14 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py ~~~ src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py
     src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py ~~~ tests_trading_test_pnl_calculator_py
+    tests_trading_test_pnl_calculator_py ~~~ tests_trading_test_settlement_reconciliation_py
     src_zephyr_trading_action_dispatcher_annotation_writer_py["annotation写入器<br/>注释注解写入器（从<br/>ActionDispatcher._annotate_py_file/_tag_module<br/>/_annotate_blueprint 提取）。<br/>_annotation_writer<br/>文件: action_dispatcher/_annotation_writer.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_audit_log_writer_py["审计日志写入器<br/>（从 ActionDispatcher._write_triage_log 提取）<br/>_audit_log_writer<br/>文件: action_dispatcher/_audit_log_writer.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py["文件生命周期管理器<br/>（从 ActionDispatcher._create_file /<br/>_delete_file / _version_backup 提取）<br/>_file_lifecycle_manager<br/>文件: action_dispatcher<br/>/_file_lifecycle_manager.py<br/>(生产态 / production)"]
     src_zephyr_trading_action_dispatcher_search_replace_engine_py["searchreplace引擎<br/>搜索替换引擎（从<br/>ActionDispatcher._search_replace_file<br/>及两个底层方法提取）。<br/>_search_replace_engine<br/>文件: action_dispatcher<br/>/_search_replace_engine.py<br/>(生产态 / production)"]
     src_zephyr_trading_autopilot_py["AutoPilot — AI session 自动找活干、认领任务。<br/>- scan / status_report -> 只读，告诉 AI<br/>当前有什么活<br/>文件: trading/autopilot.py<br/>(生产态 / production)"]
     src_zephyr_trading_pnl_calculator_py["PnL Calculator<br/>交易后盈亏核算基础设施<br/>D_TRADING<br/>文件: trading/pnl_calculator.py<br/>(生产态 / production)"]
+    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>交易决策<br/>settlement_reconciliation<br/>文件: trading/settlement_reconciliation.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_order_py["订单<br/>治本修复: 原文件重复定义 Order 类（多真源），且<br/>TraceContext 未 import（NameError bug）。<br/>文件: execution/order.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py["风险仪表盘快照<br/>契约，定义某时刻风险状态的快照数据结构，供风险与<br/>运维展示<br/>risk_dashboard_snapshot<br/>文件: risk/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_risk_risk_limits_py["风险limits<br/>风险限额契约，定义仓位、单日亏损等风险限额的数据<br/>结构。<br/>risk_limits<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
@@ -271,48 +278,39 @@ flowchart TD
     src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py ~~~ src_zephyr_trading_action_dispatcher_search_replace_engine_py
     src_zephyr_trading_action_dispatcher_search_replace_engine_py ~~~ src_zephyr_trading_autopilot_py
     src_zephyr_trading_autopilot_py ~~~ src_zephyr_trading_pnl_calculator_py
-    src_zephyr_trading_pnl_calculator_py ~~~ src_zephyr_trading_trading_contracts_execution_order_py
+    src_zephyr_trading_pnl_calculator_py ~~~ src_zephyr_trading_settlement_reconciliation_py
+    src_zephyr_trading_settlement_reconciliation_py ~~~ src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_execution_order_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_risk_risk_limits_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py ~~~ src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_protection_index_py["保护索引<br/>用 Bloom Filter 快速筛查加 Trie<br/>精确二次验证判断路径是否受保护，anchor<br/>路径永远返回 anchor 级别<br/>protection_index<br/>文件: trading/protection_index.py<br/>(生产态 / production)"]
-    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
+    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
+    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     tests_trading_test_pnl_calculator_py -->|测试依赖 / test_depends| src_zephyr_trading_pnl_calculator_py
+    tests_trading_test_settlement_reconciliation_py -->|测试依赖 / test_depends| src_zephyr_trading_settlement_reconciliation_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_trading_action_dispatcher_init_py,src_zephyr_trading_action_dispatcher_annotation_writer_py,src_zephyr_trading_action_dispatcher_audit_log_writer_py,src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py,src_zephyr_trading_action_dispatcher_search_replace_engine_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_pnl_calculator_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_trading_contracts_broker_interface_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py,src_zephyr_trading_trading_contracts_factories_py,src_zephyr_trading_trading_contracts_market_instrument_py,src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py,src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py,src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py,src_zephyr_trading_trading_contracts_risk_compliance_rule_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_limits_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py,tests_trading_test_pnl_calculator_py production
+    class src_zephyr_trading_action_dispatcher_init_py,src_zephyr_trading_action_dispatcher_annotation_writer_py,src_zephyr_trading_action_dispatcher_audit_log_writer_py,src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py,src_zephyr_trading_action_dispatcher_search_replace_engine_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_corporate_action_processor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_pnl_calculator_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_settlement_reconciliation_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_trading_contracts_broker_interface_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py,src_zephyr_trading_trading_contracts_factories_py,src_zephyr_trading_trading_contracts_market_instrument_py,src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py,src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py,src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py,src_zephyr_trading_trading_contracts_risk_compliance_rule_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_limits_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py,tests_trading_test_pnl_calculator_py,tests_trading_test_settlement_reconciliation_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 2 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个），不含跨域外部节点。
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
-flowchart TD
-    src_zephyr_trading_corporate_action_processor_py["公司行为处理器<br/>交易的处理器，处理加工数据<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>corporate_action_processor<br/>文件: trading/corporate_action_processor.py<br/>(设计态 / design)"]
-    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>交易决策<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>settlement_reconciliation<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
-    src_zephyr_trading_corporate_action_processor_py ~~~ src_zephyr_trading_settlement_reconciliation_py
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
-    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_trading_corporate_action_processor_py,src_zephyr_trading_settlement_reconciliation_py design
-```
+> （无模块 / No modules）
 
 ## 跨域依赖 / Cross-domain Dependencies
 
@@ -346,44 +344,46 @@ flowchart TD
 | 24 | 风险limits / risk_limits (risk/risk_limits.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 追踪上下文 / trace_context (contracts/trace_context.py) | 导入依赖 / import_depends |
 | 25 | 风险校验器协议 / risk_validator_protocol (risk/risk_valid... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险limits / risk_limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 26 | MOD-TRADING-002 PnL Calculator 单元测试. (trading/test_pn... | → | D_INFRASTRUCTURE 跨层契约基础设施: 成交 / fill (contracts/fill.py) | 测试依赖 / test_depends |
-| 27 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_INFRA_RUNTIME 运行时集成: 任务调度器 / task_scheduler (queue/task_scheduler.py) | 导入依赖 / import_depends |
-| 28 | annotation写入器 / _annotation_writer (action_dispatcher/... | → | D_INFRA_RUNTIME 运行时集成: 行为分发器 / action_dispatcher (trading/action_dispatcher... | 导入依赖 / import_depends |
-| 29 | 审计日志写入器 / _audit_log_writer (action_dispatcher/_au... | → | D_INFRA_RUNTIME 运行时集成: 行为分发器 / action_dispatcher (trading/action_dispatcher... | 导入依赖 / import_depends |
-| 30 | 文件生命周期管理器 / _file_lifecycle_manager (action_disp... | → | D_INFRA_RUNTIME 运行时集成: 行为分发器 / action_dispatcher (trading/action_dispatcher... | 导入依赖 / import_depends |
-| 31 | searchreplace引擎 / _search_replace_engine (action_dispat... | → | D_INFRA_RUNTIME 运行时集成: 行为分发器 / action_dispatcher (trading/action_dispatcher... | 导入依赖 / import_depends |
-| 32 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_INFRA_RUNTIME 运行时集成: daemon注册表 / daemon_registry.py - unified daemon thread... | 导入依赖 / import_depends |
-| 33 | 裁定引擎 / verdict_engine (trading/verdict_engine.py) | → | D_INTEGRATION 管线路由: 本地模型调度器 / local_model_scheduler (local_model/local... | 导入依赖 / import_depends |
-| 34 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_ORCHESTRATOR 代理编排器: 任务队列 / task_queue (core/task_queue.py) | 导入依赖 / import_depends |
-| 35 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_ORCHESTRATOR 代理编排器: 上下文桥接 / context_bridge (execution/context_bridge.py) | 导入依赖 / import_depends |
-| 36 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_ORCHESTRATOR 代理编排器: script运行器 / script_runner (execution/script_runner.py) | 导入依赖 / import_depends |
-| 37 | PnL Calculator / D_TRADING (trading/pnl_calculator.py) | → | D_POSITION 仓位管理: 持仓协调器 / position_reconciler (position/position_recon... | 导入依赖 / import_depends |
-| 38 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 39 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 40 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 41 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_SHARED 共享服务: 任务类型定义 / task_types (schema/task_types.py) | 导入依赖 / import_depends |
-| 42 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_SHARED 共享服务: 任务仓库协议 / task_repository_protocol (contracts/task_r... | 导入依赖 / import_depends |
-| 43 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 44 | AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | D_SHARED 共享服务: 任务仓库协议 / task_repository_protocol (contracts/task_r... | 导入依赖 / import_depends |
-| 45 | AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | D_SHARED 共享服务: 事件总线 / event_bus (shared/event_bus.py) | 导入依赖 / import_depends |
-| 46 | AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 47 | AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | D_SHARED 共享服务: 模型 / models (foundation/models.py) | 导入依赖 / import_depends |
-| 48 | Conductor — AI session 全自动指挥官。 / conductor (tradi... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 49 | Conductor — AI session 全自动指挥官。 / conductor (tradi... | → | D_SHARED 共享服务: 模型 / models (foundation/models.py) | 导入依赖 / import_depends |
-| 50 | GPU共识调度器 / gpu_consensus_scheduler (trading/gpu_cons... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 51 | GPU监控 / gpu_monitor (trading/gpu_monitor.py) | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 52 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 任务仓库协议 / task_repository_protocol (contracts/task_r... | 导入依赖 / import_depends |
-| 53 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 事件总线 / event_bus (shared/event_bus.py) | 导入依赖 / import_depends |
-| 54 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 55 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
-| 56 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
-| 57 | PnL Calculator / D_TRADING (trading/pnl_calculator.py) | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 导入依赖 / import_depends |
-| 58 | PnL Calculator / D_TRADING (trading/pnl_calculator.py) | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 59 | 异步运行时 / async_runtime (runtime/async_runtime.py) | → | D_SHARED 共享服务: 异步工具 / async_utils (utils/async_utils.py) | 导入依赖 / import_depends |
-| 60 | 结算对账 / settlement_reconciliation (trading/settlement_... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 61 | 测速基线检查器 / speed_baseline_checker (trading/speed_ba... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 62 | 订单 / order (execution/order.py) | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 导入依赖 / import_depends |
-| 63 | 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真 / mo... | → | D_SHARED 共享服务: 金额精度错误（如试图用 float 构造 Money）。 / money (port... | 导入依赖 / import_depends |
-| 64 | MOD-TRADING-002 PnL Calculator 单元测试. (trading/test_pn... | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 测试依赖 / test_depends |
+| 27 | MOD-TRADING-003 Settlement & Reconciliation Engine 单元测... | → | D_INFRASTRUCTURE 跨层契约基础设施: 成交 / fill (contracts/fill.py) | 测试依赖 / test_depends |
+| 28 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_INFRA_RUNTIME 运行时集成: 任务调度器 / task_scheduler (queue/task_scheduler.py) | 导入依赖 / import_depends |
+| 29 | annotation写入器 / _annotation_writer (action_dispatcher/... | → | D_INFRA_RUNTIME 运行时集成: 行为分发器 / action_dispatcher (trading/action_dispatcher... | 导入依赖 / import_depends |
+| 30 | 审计日志写入器 / _audit_log_writer (action_dispatcher/_au... | → | D_INFRA_RUNTIME 运行时集成: 行为分发器 / action_dispatcher (trading/action_dispatcher... | 导入依赖 / import_depends |
+| 31 | 文件生命周期管理器 / _file_lifecycle_manager (action_disp... | → | D_INFRA_RUNTIME 运行时集成: 行为分发器 / action_dispatcher (trading/action_dispatcher... | 导入依赖 / import_depends |
+| 32 | searchreplace引擎 / _search_replace_engine (action_dispat... | → | D_INFRA_RUNTIME 运行时集成: 行为分发器 / action_dispatcher (trading/action_dispatcher... | 导入依赖 / import_depends |
+| 33 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_INFRA_RUNTIME 运行时集成: daemon注册表 / daemon_registry.py - unified daemon thread... | 导入依赖 / import_depends |
+| 34 | 裁定引擎 / verdict_engine (trading/verdict_engine.py) | → | D_INTEGRATION 管线路由: 本地模型调度器 / local_model_scheduler (local_model/local... | 导入依赖 / import_depends |
+| 35 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_ORCHESTRATOR 代理编排器: 任务队列 / task_queue (core/task_queue.py) | 导入依赖 / import_depends |
+| 36 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_ORCHESTRATOR 代理编排器: 上下文桥接 / context_bridge (execution/context_bridge.py) | 导入依赖 / import_depends |
+| 37 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_ORCHESTRATOR 代理编排器: script运行器 / script_runner (execution/script_runner.py) | 导入依赖 / import_depends |
+| 38 | PnL Calculator / D_TRADING (trading/pnl_calculator.py) | → | D_POSITION 仓位管理: 持仓协调器 / position_reconciler (position/position_recon... | 导入依赖 / import_depends |
+| 39 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 40 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 41 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 42 | 包入口 / __init__ (action_dispatcher/__init__.py) | → | D_SHARED 共享服务: 任务类型定义 / task_types (schema/task_types.py) | 导入依赖 / import_depends |
+| 43 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_SHARED 共享服务: 任务仓库协议 / task_repository_protocol (contracts/task_r... | 导入依赖 / import_depends |
+| 44 | 自动分发器 / auto_dispatcher (trading/auto_dispatcher.py) | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 45 | AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | D_SHARED 共享服务: 任务仓库协议 / task_repository_protocol (contracts/task_r... | 导入依赖 / import_depends |
+| 46 | AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | D_SHARED 共享服务: 事件总线 / event_bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 47 | AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 48 | AutoPilot — AI session 自动找活干、认领任务。 / autopilo... | → | D_SHARED 共享服务: 模型 / models (foundation/models.py) | 导入依赖 / import_depends |
+| 49 | Conductor — AI session 全自动指挥官。 / conductor (tradi... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 50 | Conductor — AI session 全自动指挥官。 / conductor (tradi... | → | D_SHARED 共享服务: 模型 / models (foundation/models.py) | 导入依赖 / import_depends |
+| 51 | 公司行为处理器 / corporate_action_processor (trading/corp... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 52 | GPU共识调度器 / gpu_consensus_scheduler (trading/gpu_cons... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 53 | GPU监控 / gpu_monitor (trading/gpu_monitor.py) | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 54 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 任务仓库协议 / task_repository_protocol (contracts/task_r... | 导入依赖 / import_depends |
+| 55 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 事件总线 / event_bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 56 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 57 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 进程池 / process_pool.py - Shared process pool for MCP se... | 导入依赖 / import_depends |
+| 58 | ide健康daemon / ide_health_daemon (trading/ide_health_dae... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 59 | PnL Calculator / D_TRADING (trading/pnl_calculator.py) | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 60 | PnL Calculator / D_TRADING (trading/pnl_calculator.py) | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 61 | 异步运行时 / async_runtime (runtime/async_runtime.py) | → | D_SHARED 共享服务: 异步工具 / async_utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 62 | 结算对账 / settlement_reconciliation (trading/settlement_... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 63 | 测速基线检查器 / speed_baseline_checker (trading/speed_ba... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 64 | 订单 / order (execution/order.py) | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 65 | 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真 / mo... | → | D_SHARED 共享服务: 金额精度错误（如试图用 float 构造 Money）。 / money (port... | 导入依赖 / import_depends |
+| 66 | MOD-TRADING-002 PnL Calculator 单元测试. (trading/test_pn... | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -398,8 +398,8 @@ flowchart TD
 | 7 | D_EX_CORE 执行核心: 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | → | 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | 导入依赖 / import_depends |
 | 8 | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | → | 持仓 / position (execution/position.py) | 导入依赖 / import_depends |
 | 9 | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | → | 风险limits / risk_limits (risk/risk_limits.py) | 导入依赖 / import_depends |
-| 10 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | 导入依赖 / import_depends |
-| 11 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | contract / contract |
+| 10 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | contract / contract |
+| 11 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | 经纪人接口 / D_EXECUTION_CORE — BrokerInterface (trading... | 导入依赖 / import_depends |
 | 12 | D_FRONTEND 前端: 交易面板 / trade_panel (components/trade_panel.py) | → | 订单 / order (execution/order.py) | 导入依赖 / import_depends |
 | 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: 资本分配结果（兼容导出） / Capital Allocation Result (com... | → | 资本分配结果 / capital_allocation_result (execution/capit... | 导入依赖 / import_depends |
 | 14 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号生成聚合基类 / Signal Generation Aggregator Base (gen... | → | 资本分配结果 / capital_allocation_result (execution/capit... | 导入依赖 / import_depends |
@@ -422,7 +422,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 16 个外部域直接连接（出边 64 条 + 入边 30 条 = 94 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 16 个外部域直接连接（出边 66 条 + 入边 30 条 = 96 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -444,8 +444,8 @@ graph LR
     D_SIGQC["D_SIGQC<br/>信号质量控制"]
     D_FRONTEND["D_FRONTEND<br/>前端"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
-    D_TRADING -->|27条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
-    D_TRADING -->|19条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_TRADING -->|28条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
+    D_TRADING -->|20条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_TRADING -->|6条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_TRADING -->|4条 导入依赖 / import_depends| D_GOVERNANCE
     D_TRADING -->|3条 导入依赖 / import_depends| D_ORCHESTRATOR
