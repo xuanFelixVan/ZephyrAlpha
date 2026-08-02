@@ -1614,11 +1614,11 @@ entries:
   plain_zh: nan处理器，服务的处理器，处理加工数据。
 - module_path: src/zephyr/backtest/services/param_analyzer.py
   domain_id: D_BACKTEST
-  name_zh: param分析器
-  name_en: param_analyzer
-  desc_zh: param分析器模块
-  desc_en: ''
-  plain_zh: param分析器，回测的分析器，分析数据找出问题或规律。
+  name_zh: "参数优化结果分析器"
+  name_en: "Parameter Analyzer"
+  desc_zh: "对多组参数回测结果执行显著性分析和过拟合检测,含敏感度/IS-OOS差距/稳定性评估"
+  desc_en: ""
+  plain_zh: "给定一组用不同参数跑出来的回测结果,找出哪组参数最好,每个参数对结果影响有多大(敏感度),样本内外差距是不是太大(过拟合),以及排名靠前的结果是不是稳定。纯统计分析,不改输入。"
 - module_path: src/zephyr/backtest/services/report_generator.py
   domain_id: D_BACKTEST
   name_zh: "回测报告生成器"
