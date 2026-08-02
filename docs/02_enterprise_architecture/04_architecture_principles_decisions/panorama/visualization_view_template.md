@@ -1,16 +1,16 @@
 ---
 doc_type: architecture_view
 title: 可视化视图模板规范（三视图 + 可缩放 HTML）
-version: "1.2"
+version: "1.3"
 status: active
-date: 2026-08-01
+date: 2026-08-02
 owner: MOD-INF-037
 ttl: permanent
 ---
 
 # 可视化视图模板规范（三视图 + 可缩放 HTML）
 
-> **版本**：V1.2 | 2026-08-01
+> **版本**：V1.3 | 2026-08-02
 > **读者**：项目 Owner + AI 开发 Agent + 架构治理人员
 > **写法**：大白话为主，配完整代码模板和验收清单。变更历史见 git log。
 
@@ -417,6 +417,30 @@ label = "<br/>".join(_wrap_label_text(p) for p in parts)
 
 **自查方法**：生成的 HTML 里任意节点，数它的 `<br/>` 段数，应等于浏览器里实际显示的行数。
 若实际行数更多 → 说明有长行漏了预折行，或 CSS max-width 被调太小。
+
+### 4.11 节点标签简介质量铁律（2026-08-02 治本）
+
+> **这是和 §4.10 预折行同等重要的铁律。** 预折行解决"文字被裁剪"的显示问题；
+> 本铁律解决"简介本身就是坏值"的内容问题——显示再完美，内容是垃圾照样看不懂。
+
+**一句话铁律**：每个节点的 `plain_zh` 必须用日常语言回答三问——**是什么 / 干什么 / 解决什么问题**，
+且不以模块名开头（避免被前缀剥离逻辑切成残句）。
+
+**五类坏简介**（生成器能过滤但无法自动修复，必须人工补齐）：
+
+| 坏类型 | 症状 | 反例 |
+|--------|------|------|
+| ① 模板话 | 多模块共用一句模板 | `IO的控制器，协调组件按流程执行` |
+| ② 截断代码片段 | docstring 被错误截取 | `<path> <head>``。在 Windows 14 万文件` |
+| ③ 消费者引用 | 只说给谁用不说干什么 | `审批，供zephyr.governance.services.ada使用` |
+| ④ 技术术语堆砌 | 英文+编号无中文说明 | `SLO契约。SLO-Driven Escalation Contract — D-022-12.` |
+| ⑤ 名称重复 | plain_zh == name_zh | name=`审批`，plain=`审批` |
+
+> 生成器有自动兜底链（`plain_zh → desc_zh → docstring → 路径派生`）和五道过滤
+> （`_is_placeholder` / `is_generic_plain_zh` / `is_generic_plain_suffix` /
+> `_is_name_plus_trivial` / `_clean_intro_text`），但**只能过滤坏值+派生唯一值，
+> 不能凭空写出好简介**。坏简介的根治只能靠人工读源码后写入 YAML 真源。
+> **完整规范、正反例、审计脚本、补齐 SOP 见 §十七。**
 
 ---
 
@@ -830,6 +854,7 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 - [ ] 节点标签四要素齐全（成熟度 + 双语名称 + 大白话 + 文件路径）
 - [ ] 设计态节点（`gate_reason` 非空）有 `⛔ 受限原因` 行
 - [ ] 标签长行已预折行（单行显示宽度 ≤48，约 24 汉字；`<br/>` 显式断行）
+- [ ] **简介无五类坏值**（§4.11/§十七）：无模板话、无截断代码片段、无"供X使用"消费者引用、无纯技术术语堆砌、plain_zh ≠ name_zh
 - [ ] 节点标签无 `[` `]` `"` `|` 特殊字符（已转义）
 - [ ] 边用 `-->`（production 间）或 `-.->`（其他）
 - [ ] 末尾有四类 classDef + class 应用
@@ -859,7 +884,9 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 
 - [ ] 所有节点有中文名（`name_zh` 非空）
 - [ ] 所有节点有大白话（`plain_zh` 非空、无"待补充"）
-- [ ] 所有节点有英文名（`name_en` 非空）
+- [ ] 所有节点有英文名（`name_en` 非空，且不是 docstring 片段如 `G-CT-004 — Backward-compat...`）
+- [ ] **plain_zh 合格**：回答三问（是什么/干什么/解决什么问题）、≥6 个汉字、不以 name_zh 开头、不含"供X使用"消费者引用
+- [ ] **运行简介质量审计**：`python tmp/_audit_doc_labels.py <域文档.md>`，问题节点数 = 0（§十七.4）
 - [ ] 设计态模块（`design_maturity=design`）未被幽灵文件过滤误删
 - [ ] 跨域节点有域中文名和功能简介
 
@@ -872,13 +899,21 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 | 大图渲染失败 "Edge limit exceeded" | mermaid 默认 maxEdges=500 | `maxEdges: 10000` |
 | 大图渲染失败 "Syntax error" | mermaid 默认 maxTextSize=50000 | `maxTextSize: 100000000` |
 | 节点只显示英文名无中文 | 翻译真源未登记 | 补齐 `module_translation_registry.yaml` |
-| 节点无大白话简介 | 翻译真源 `plain_zh` 为空 | 补齐 `plain_zh` 字段 |
+| 节点无大白话简介 | 翻译真源 `plain_zh` 为空 | 补齐 `plain_zh` 字段（§十七 三问法） |
+| 简介是模板话（多模块共用一句，如"IO的控制器，协调组件按流程执行"） | 批量自动生成时套用模板，未读源码 | 人工读源码后重写，每模块独立简介（§十七.3 坏类型①） |
+| 简介是截断代码片段（如 `<path> <head>``。在 Windows 14 万`） | docstring 跨行被错误截取首行 | 人工读源码后重写（§十七.3 坏类型②） |
+| 简介只写"供X使用"消费者引用 | 自动提取误把 CONSUMERS 头部当简介 | 人工读源码后重写，说"干什么"而非"给谁用"（§十七.3 坏类型③） |
+| 简介是技术术语堆砌（如 `SLO契约。SLO-Driven Escalation Contract — D-022-12.`） | docstring 直译，无中文说明 | 人工翻译为大白话（§十七.3 坏类型④） |
+| 简介与名称完全相同（plain_zh == name_zh） | 占位填充，未写实质内容 | 人工补齐实质说明（§十七.3 坏类型⑤） |
+| name_en 是 docstring 片段（如 `G-CT-004 — Backward-compat re-export...`） | 自动提取把 docstring 当 name_en | YAML 手动改为简短英文标识符（如 `approval`） |
 | 设计态模块消失 | `_is_ghost` 误过滤 | `design_maturity=design` 时跳过幽灵检查 |
 | 图横向铺开太宽 | dagre 默认横向 | 拓扑分层 + `~~~` 不可见边强制同 rank 竖排 |
 | 节点标签被裁剪（上下裁掉/英文拦腰截断） | CSS max-width 二次折行：渲染行数 > Mermaid 测量行数，框高不够 | **生成端 `_wrap_label_text()` 预折行**（§4.10），CSS max-width 保持 560px 仅兜底、渲染字号 11px < 测量字号 14px。**禁止**靠调小 CSS max-width 解决 |
 | 设计态节点 ⛔ 受限原因不显示 | `get_domain_nodes` 没 SELECT `gate_reason`，或 DB 字段为空 | 查询带 `n.gate_reason`；数据侧用 `register_deferred_modules.py`/`apply_depgraph.py` 写入 |
 | 三视图变成一个图 | 生成器重构时合并了视图 | 恢复 `_emit_internal_view` 三次调用 |
 | HTML 里图空白 | mermaid.js 未加载 | 检查内嵌/CDN 策略，看控制台报错 |
+| YAML 修复后文档仍显示旧值 | 文档未重新生成 | `python generate_domain_doc.py <DOMAIN_ID>` 重新生成（§十七.5 SOP 步骤4） |
+| 修改 YAML 后被回退、提交丢失 | 直接 `git commit` 被 pre-commit 钩子阻断 / 并发 session 干扰 / reconciler 回退 | 走 `scripts/git_commit.py`（GitCommitGateway），见 §十七.6 |
 
 ---
 
@@ -1032,13 +1067,198 @@ else:
 
 ---
 
-## 十七、版本历史（更新）
+## 十七、节点标签简介质量规范与审计（2026-08-02 治本）
+
+> **这是 V1.3 的核心新增。** 起因：D_GOV_ENFORCEMENT 域 42 个模块里 21 个简介是坏的，
+> 用户点开图发现"有些有简介有些没有、有的是什么意思？它有什么作用？完全看不懂"。
+> 根因不是显示问题（§4.10 已解决），而是 **YAML 真源里的 `plain_zh` 本身就是坏值**。
+> 本节把"什么是好简介、什么是坏简介、怎么修、怎么验、怎么提交"一次性讲透，
+> 避免后续每个 AI 都要从头踩这个坑。
+
+### 17.1 合格 plain_zh 的标准（三问法）
+
+每条 `plain_zh` 必须用**日常语言**回答三问，缺一不可：
+
+| 问题 | 要回答 | 判定 |
+|------|--------|------|
+| **是什么** | 这东西在系统里扮演什么角色 | 一句话说清身份 |
+| **干什么** | 它具体做什么操作 | 有动词、有对象 |
+| **解决什么问题** | 没有它会怎样 | 点出痛点/风险 |
+
+**格式要求**：
+
+| 要求 | 原因 |
+|------|------|
+| ≥ 6 个汉字 | 防过短无信息量 |
+| **不以 `name_zh` 开头** | 生成器有前缀剥离逻辑（`_strip_prefix`），以名称开头会被切成残句 |
+| 不含"供X使用"消费者引用 | 那是说"给谁用"，不是"干什么" |
+| 不含英文编号引用（如 `D-022-12`、`CTR-ERR-001`） | 架构编号对看图的人无意义，放 blueprint 里 |
+| 不含 docstring 代码片段 | `<path>`、`` ` ``、`Args:` 等是代码不是人话 |
+| 每模块独立、不与其他模块共用同一句 | 模板话等于没说（生成器 `is_generic_plain_zh` 会过滤但仍需源头治本） |
+
+### 17.2 正反例对照
+
+| module_path | name_zh | ❌ 坏 plain_zh | ✅ 好 plain_zh |
+|-------------|---------|---------------|---------------|
+| `rule_enforcement/approval.py` | 审批 | `审批，供zephyr.governance.services.ada使用` | `兼容转发层，真正的审批类型已搬到共享契约层，这里保留旧入口转发引用，老代码不用改。` |
+| `rule_enforcement/slo_contract.py` | SLO契约 | `SLO契约。SLO-Driven Escalation Contract — D-022-12.` | `服务等级契约引擎，实时盯住服务质量指标和目标的差距，按错误预算消耗速度决定是否升级处理，防止服务质量偷偷下滑没人管。` |
+| `behavioral_admission/admission_controller.py` | 准入控制器 | `IO的控制器，协调组件按流程执行` | `用令牌桶限流（每秒50次）加熔断器把控请求进出，请求太快就排队、连续失败就熔断，防止AI把系统冲垮。` |
+| `rule_bridge/worktree_pool.py` | worktree池 | `<path> <head>``。在 Windows 14 万文件工作区` | `工作树预创建池，提前批量创建git worktree放着，AI开新会话时直接从池里领一个用，省掉每次启动都要等git worktree add的两到五秒，加快会话启动。` |
+| `commit_gates/stash_accumulation_gate.py` | stash堆积门禁 | `stash 堆积阈值检测门禁` | `提交前数一下git stash积了多少条，超过阈值就拦住并提示先清理，防止stash越堆越多撑爆git对象库、还让AI误判有未提交工作。` |
+
+> **好简介的共同点**：有具体数字/阈值、有"防止X"的痛点描述、读完知道这东西为什么存在。
+> **坏简介的共同点**：把名称复述一遍、堆英文编号、贴代码片段、只说给谁用。
+
+### 17.3 五类坏简介详解
+
+| # | 坏类型 | 症状 | 根因 | 生成器能否拦截 |
+|---|--------|------|------|---------------|
+| ① | **模板话** | 多个模块共用同一句（如"IO的控制器，协调组件按流程执行"） | 批量自动生成时套模板，未读源码 | `is_generic_plain_zh` 能检测通用值并跳过，但跳过后走路径派生兜底，派生值也是模板化的——**源头必须人工写** |
+| ② | **截断代码片段** | 简介是 docstring 的半句话（如 `<path> <head>``。在 Windows 14 万`） | docstring 跨行，自动提取只取首行且未清洗 | `_clean_intro_text` 能清洗部分，但跨行截断无法还原——**必须人工读完整 docstring 重写** |
+| ③ | **消费者引用** | `审批，供zephyr.governance.services.ada使用` | 自动提取误把 `[CONSUMERS]` 头部当简介 | `_clean_intro_text` 能清洗"供X使用"，但清洗后剩"审批"=名称，无信息——**必须人工补实质内容** |
+| ④ | **技术术语堆砌** | `SLO契约。SLO-Driven Escalation Contract — D-022-12.` | docstring 直译，英文+编号无中文说明 | 无法自动翻译——**必须人工翻译为大白话** |
+| ⑤ | **名称重复** | plain_zh == name_zh（如 name=`审批`，plain=`审批`） | 占位填充 | `_is_name_plus_trivial` 能检测并跳过，但跳过后无简介——**必须人工写** |
+
+> **结论**：生成器的五道过滤（`_is_placeholder` / `is_generic_plain_zh` / `is_generic_plain_suffix` /
+> `_is_name_plus_trivial` / `_clean_intro_text`）只能**过滤坏值 + 派生唯一占位**，
+> **不能凭空写出好简介**。坏简介的根治 100% 靠人工读源码后写入 YAML 真源。
+
+### 17.4 生成器自动兜底链（已实现，了解即可）
+
+`_node_mermaid_label` 构造中文简介时的候选链（`generate_domain_doc.py`）：
+
+```
+plain_zh (YAML)  ──过滤──→  desc_zh (YAML)  ──过滤──→  docstring (源码)  ──过滤──→  路径派生兜底
+     │                            │                          │                        │
+     ▼                            ▼                          ▼                        ▼
+  _is_placeholder             同 plain                  yaml_sources_generic      _path_derived_desc
+  is_generic_plain_zh         过滤逻辑                  → 跳过 docstring           (确保非空唯一)
+  is_generic_plain_suffix
+  _is_name_plus_trivial
+  _clean_intro_text
+```
+
+| 过滤函数 | 位置 | 作用 |
+|---------|------|------|
+| `_is_placeholder(text)` | generate_domain_doc.py | 检测"待补充"、"TODO"等占位符 |
+| `is_generic_plain_zh(plain)` | module_translation_loader.py | 检测被多模块共用的模板话 |
+| `is_generic_desc_zh(desc)` | 同上 | 同上，针对 desc_zh |
+| `is_generic_plain_suffix(plain, name_zh)` | 同上 | 检测"名称前缀唯一 + 后缀通用"的隐藏模板 |
+| `_is_name_plus_trivial(candidate, name)` | generate_domain_doc.py | 检测"名称+两三个字"的无信息简介 |
+| `_clean_intro_text(text)` | 同上 | 清洗"供X使用"消费者引用、"Module docstring — see..."占位符 |
+| `_path_derived_desc(path, name_zh)` | 同上 | 兜底：从路径派生唯一简介（最后防线，确保非空） |
+
+> **AI 开发者注意**：不要试图改生成器让它"自动写好简介"——这是 NLP 问题不是模板问题。
+> 正确做法是人工补 YAML，生成器只负责"过滤坏值 + 派生兜底"。
+
+### 17.5 人工补齐 SOP（标准操作流程）
+
+发现某域文档节点简介质量差时，按此流程**循环至问题清零**：
+
+```
+步骤1：审计  ──→  python tmp/_audit_doc_labels.py <域文档.md>
+                   （检测五类坏简介，输出问题模块清单）
+
+步骤2：读源码  ──→  对每个问题模块，读 .py 文件的 module docstring + 首个 class/func docstring
+                   （理解它真正干什么）
+
+步骤3：编写   ──→  用三问法（是什么/干什么/解决什么问题）写 plain_zh
+                   （≥6 汉字、不以 name_zh 开头、无消费者引用、无英文编号）
+
+步骤4：写入   ──→  定向替换 module_translation_registry.yaml 的 plain_zh + desc_zh 行
+                   （用 Python 脚本做 block 级替换，避免破坏 YAML 其余结构）
+
+步骤5：重生成  ──→  python scripts/governance/d5_architecture/generators/generate_domain_doc.py <DOMAIN_ID>
+
+步骤6：复审计  ──→  再跑步骤1的审计脚本，确认问题节点数 = 0
+                   （不为 0 则回到步骤2，直到清零）
+```
+
+**审计脚本模板**（`tmp/_audit_doc_labels.py`，可直接复制使用）：
+
+```python
+# -*- coding: utf-8 -*-
+"""审计域文档 Mermaid 节点标签的简介质量，检测五类坏简介。"""
+import re, sys
+
+DOC = sys.argv[1] if len(sys.argv) > 1 else "docs/.../你的文档.md"
+text = open(DOC, encoding="utf-8").read()
+
+# 提取所有节点定义  <id>["label"]
+nodes = re.findall(r'^\s*[a-z0-9_]+\["([^"]*)"\]', text, re.M)
+
+BAD_PATTERNS = ["供zephyr", "供GovernanceServer", "供behavioral",
+                "Re-export shim", "Backward-compat", "<path>", ".py —",
+                "SLO-Driven", "D-022", "CTR-ERR"]
+
+bad = []
+for label in nodes:
+    parts = label.split("<br/>")
+    if len(parts) < 2:
+        bad.append(("无简介行", label[:50])); continue
+    name = parts[0].strip()
+    intro = parts[1].strip()
+    if intro.startswith("文件:") or intro.startswith("("):
+        bad.append(("简介缺失", name)); continue
+    cjk = len(re.findall(r"[\u4e00-\u9fff]", intro))
+    if cjk < 6:
+        bad.append(("技术/过短", name + " | " + intro[:40])); continue
+    for p in BAD_PATTERNS:
+        if p in intro:
+            bad.append(("含模板/术语: " + p, name + " | " + intro[:50])); break
+    if intro == name:
+        bad.append(("名称重复", name))
+
+print("节点数: %d, 问题节点: %d" % (len(nodes), len(bad)))
+for flag, name in bad:
+    print("  [%s] %s" % (flag, name))
+```
+
+> **循环铁律**：步骤1→6 不是一次性的。修一批后重生成可能暴露新的坏简介（之前被通用值
+> 检测跳过的、现在兜底成路径派生的）。**必须循环到审计脚本输出"问题节点: 0"为止。**
+
+### 17.6 提交注意事项（GitCommitGateway）
+
+修改 `module_translation_registry.yaml` 后提交，**不要用裸 `git commit`**，原因：
+
+| 坑 | 现象 | 根因 |
+|----|------|------|
+| pre-commit 钩子阻断 | `git commit` 报 GATE-NAMING 失败、files modified | 项目装了 pre-commit 框架，钩子扫全库报已存在的命名违规 |
+| 修改被回退 | 提交失败后 YAML 改动消失、回到 HEAD | 失败的 commit + 并发 session 干扰清掉了暂存区 |
+| FOREIGN_CHANGE_VIOLATION | `scripts/git_commit.py` 报"目标文件有外来变更" | 搭便车防护——直接编辑文件（没走 session claim）被当外来变更 |
+
+**正确提交方式**：
+
+```bash
+# 1. 用项目 sanctioned 入口（GitCommitGateway），不用裸 git commit
+python scripts/git_commit.py \
+  --session <your-session-id> \
+  --files "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml" \
+  --message-file tmp/_commit_msg.txt \
+  --allow-overlap   # 若遇 FOREIGN_CHANGE_VIOLATION 误报，加此参数放行（已落审计）
+```
+
+| 要点 | 说明 |
+|------|------|
+| `--message-file` | 用文件传 message，避免 PowerShell 中文/特殊字符编码问题 |
+| `--allow-overlap` | 仅在搭便车防护误报时用（直接编辑文件场景），会追加 `[GW:<sid>:overlap]` 标记并落审计 |
+| `--no-verify` 内置 | GitCommitGateway 自带 in-process 门禁，按设计跳过 pre-commit 框架钩子 |
+| 提交后验证 | `git log --oneline -1` 确认 commit 在；`python -c "import yaml..."` 确认 plain_zh 在 HEAD 中 |
+| 重新生成文档 | MD 文件改动可能被 post-commit reconciler 自动提交，YAML 改动需主动走 gateway |
+
+> **铁律**：YAML 真源修改 + 域文档重生成 + 提交，三步要紧凑完成。
+> 拖太久会被并发 session / reconciler 干扰。详见 §十六 Reconciler 回退应对策略。
+
+---
+
+## 十八、版本历史（更新）
 
 | 版本 | 日期 | 变更 |
 |------|------|------|
 | V1.0 | 2026-08-01 | 初版：从 generate_domain_doc.py + zoomable_html.py 提取为统一模板规范 |
 | V1.1 | 2026-08-01 | ①新增 §4.10 标签预折行铁律；②§4.3 节点新增要素⑤ ⛔ 受限原因行；③§7.4 gate_reason 数据真源；④§6.3 CSS 更新；⑤§9.1/§10 验收清单同步 |
 | V1.2 | 2026-08-01 | ①新增 §13 subgraph/cluster 背景与边框陷阱（clusterBkg 不生效、style 命令失效、JS setAttribute 无效 → 必须用 `style.fill` 后处理）；②新增 §14 HTML 链接格式陷阱（http:// 绝对链接 vs 相对路径）；③新增 §15 候选库污染防护（索引附录汇总计数）；④新增 §16 Reconciler 回退应对策略 |
+| V1.3 | 2026-08-02 | ①新增 §4.11 节点标签简介质量铁律（五类坏简介概览 + 指向 §十七）；②新增 §十七 节点标签简介质量规范与审计（三问法标准、正反例对照、五类坏简介详解、生成器兜底链、人工补齐 SOP 含审计脚本、GitCommitGateway 提交注意事项）；③§十 验收清单新增"简介无五类坏值"+"运行审计脚本问题=0"+"name_en 非 docstring 片段"检查项；④§十一 常见问题表新增 8 行（五类坏简介+name_en 片段+文档未重生成+提交被回退）；⑤起因：D_GOV_ENFORCEMENT 域 42 模块中 21 个 plain_zh 是坏值（模板话/截断片段/消费者引用/术语堆砌/名称重复），用户反馈"看不懂有什么作用" |
 
 ---
 
