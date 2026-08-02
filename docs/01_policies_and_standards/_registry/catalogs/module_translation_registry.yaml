@@ -540,7 +540,7 @@ entries:
   name_en: __main__
   desc_zh: 代理规范 MOD-INF-019 CLI — 蓝图->Skill 升级引擎入口.
   desc_en: ''
-  plain_zh: 代理规范 MOD-INF-019 CLI — 蓝图->Skill 升级引擎入口.
+  plain_zh: "agent-spec CLI 入口，蓝图→Skill 升级引擎命令行，提供 list 列出技能、status 模块健康、help 帮助子命令。"
 - module_path: src/zephyr/autonomy_core/agent_observability.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 代理可观测性
@@ -575,7 +575,7 @@ entries:
   name_en: ce_explain_cli
   desc_zh: ce_explain_cli.py — KE inclusion rationale 解释 CLI (TASK-016)
   desc_en: ''
-  plain_zh: KE inclusion rationale 解释 CLI
+  plain_zh: "知识元素纳入理由解释 CLI，解释为什么某个知识元素被纳入上下文，提升上下文透明度。"
 - module_path: src/zephyr/autonomy_core/context/ce_file_lister.py
   domain_id: D_AUTONOMY_CORE
   name_zh: ce文件lister
@@ -666,7 +666,7 @@ entries:
   name_en: context_health_score
   desc_zh: ContextHealthScore.py — 统一健康分 (B6, DD80, TASK-015 beta v)
   desc_en: ''
-  plain_zh: 统一健康分 (B6, DD80, TASK-015 beta v)
+  plain_zh: "上下文健康评分器，计算统一健康分，量化上下文质量供调度决策。"
 - module_path: src/zephyr/autonomy_core/context/context_injector.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 上下文injector
@@ -708,7 +708,7 @@ entries:
   name_en: context_playground
   desc_zh: context_playground.py — 上下文沙箱 dry-run (B5, DD79, TASK-015 beta v)
   desc_en: ''
-  plain_zh: 上下文沙箱 dry-run (B5, DD79, TASK-015 beta v)
+  plain_zh: "上下文沙箱，dry-run 模式测试上下文管道，不污染真实上下文。"
 - module_path: src/zephyr/autonomy_core/context/context_rot_model.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 上下文rot模型
@@ -729,14 +729,14 @@ entries:
   name_en: context_value_attribution
   desc_zh: context_value_attribution.py — KE 级 ROI 归因 (B2, DD76, TASK-015 beta v)
   desc_en: ''
-  plain_zh: KE 级 ROI 归因 (B2, DD76, TASK-015 beta v)
+  plain_zh: "上下文价值归因器，按知识元素级计算 ROI 归因，量化每条上下文的收益。"
 - module_path: src/zephyr/autonomy_core/context/contextual_fetch_api.py
   domain_id: D_AUTONOMY_CORE
   name_zh: contextual获取API
   name_en: contextual_fetch_api
   desc_zh: contextual_fetch_api.py — HTTP FE 对外 API (DD115, TASK-020)
   desc_en: ''
-  plain_zh: HTTP FE 对外 API
+  plain_zh: "上下文获取对外 HTTP API，前端与外部服务查询上下文数据的接口。"
 - module_path: src/zephyr/autonomy_core/context/curation_loop.py
   domain_id: D_AUTONOMY_CORE
   name_zh: curation循环
@@ -785,7 +785,7 @@ entries:
   name_en: memory_bank
   desc_zh: 'memory_bank.py — AI 读写结构化持久上下文 (DD: memory_bank, TASK-014 beta c)'
   desc_en: ''
-  plain_zh: 'AI 读写结构化持久上下文 (DD: memory_bank, TASK-014 beta c)'
+  plain_zh: "记忆库，6 个结构化 markdown 文件供 AI 读写，作为跨 session 的持久上下文存储。"
 - module_path: src/zephyr/autonomy_core/context/mode_manager.py
   domain_id: D_AUTONOMY_CORE
   name_zh: mode管理器
@@ -848,7 +848,7 @@ entries:
   name_en: 'MOD-INF-019: Agent Spec — Phase Planner'
   desc_zh: 阶段planner模块
   desc_en: 'MOD-INF-019: Agent Spec — Phase Planner'
-  plain_zh: '阶段planner。MOD-INF-019: Agent Spec — Phase Planner'
+  plain_zh: "阶段规划器，Agent Spec 的阶段规划组件，把目标分解为可执行阶段。"
 - module_path: src/zephyr/autonomy_core/progressive_disclosure_injector.py
   domain_id: D_AUTONOMY_CORE
   name_zh: progressivedisclosureinjector.py — 渐进式
@@ -911,7 +911,7 @@ entries:
   name_en: 'MOD-INF-019: Agent Spec — Skill Canary'
   desc_zh: 技能canary模块
   desc_en: 'MOD-INF-019: Agent Spec — Skill Canary'
-  plain_zh: '技能canary。MOD-INF-019: Agent Spec — Skill Canary'
+  plain_zh: "技能金丝雀发布器，渐进式灰度部署新技能，先小流量验证再全量推开。"
 - module_path: src/zephyr/autonomy_core/skills/skill_cognitive_preservation.py
   domain_id: D_AUTONOMY_CORE
   name_zh: skill认知preservation
@@ -960,7 +960,7 @@ entries:
   name_en: 'MOD-INF-019: Agent Spec — Skill Cross-Model'
   desc_zh: 技能跨模型模块
   desc_en: 'MOD-INF-019: Agent Spec — Skill Cross-Model'
-  plain_zh: '技能跨模型。MOD-INF-019: Agent Spec — Skill Cross-Model'
+  plain_zh: "技能跨模型适配器，让同一技能在不同模型间迁移与复用。"
 - module_path: src/zephyr/autonomy_core/skills/skill_di.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 技能di
@@ -988,7 +988,7 @@ entries:
   name_en: 'MOD-INF-019: Agent Spec — Skill Economics'
   desc_zh: 技能economics模块
   desc_en: 'MOD-INF-019: Agent Spec — Skill Economics'
-  plain_zh: '技能economics。MOD-INF-019: Agent Spec — Skill Economics'
+  plain_zh: "技能经济学追踪器，跟踪技能调用的 Token 与 API 成本。"
 - module_path: src/zephyr/autonomy_core/skills/skill_efficacy_calibrator.py
   domain_id: D_AUTONOMY_CORE
   name_zh: skillefficacy校准器
@@ -1051,7 +1051,7 @@ entries:
   name_en: 'MOD-INF-019: Agent Spec — Skill Freshness Extensions'
   desc_zh: 技能freshness扩展模块
   desc_en: 'MOD-INF-019: Agent Spec — Skill Freshness Extensions'
-  plain_zh: '技能freshness扩展。MOD-INF-019: Agent Spec — Skill Freshness Extensions'
+  plain_zh: "技能新鲜度扩展，scan_all 全量扫描与 auto_deprecate 自动弃用过期技能，是这些操作的权威位置。"
 - module_path: src/zephyr/autonomy_core/skills/skill_gitops.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 技能gitops
@@ -1065,7 +1065,7 @@ entries:
   name_en: 'MOD-INF-019: Agent Spec — Skill Guardrails'
   desc_zh: 技能guardrails模块
   desc_en: 'MOD-INF-019: Agent Spec — Skill Guardrails'
-  plain_zh: '技能guardrails。MOD-INF-019: Agent Spec — Skill Guardrails'
+  plain_zh: "技能运行时护栏，做预算、变更、输出三类检查防技能越界。"
 - module_path: src/zephyr/autonomy_core/skills/skill_idempotency.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 技能幂等性
@@ -1177,7 +1177,7 @@ entries:
   name_en: skill_registry
   desc_zh: 技能注册表.py —— Skill 注册基座（Phase 14 | 盲点 B34）
   desc_en: ''
-  plain_zh: 技能注册表.py —— Skill 注册基座（Phase 14 | 盲点 B34）
+  plain_zh: "技能注册基座，定义 PromptTemplate 与 SkillDefinition Pydantic 模型作为跨层契约。"
 - module_path: src/zephyr/autonomy_core/skills/skill_resilience.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 技能韧性
@@ -1261,7 +1261,7 @@ entries:
   name_en: 'MOD-INF-019: Agent Spec — Skill Tokenomics'
   desc_zh: 技能tokenomics模块
   desc_en: 'MOD-INF-019: Agent Spec — Skill Tokenomics'
-  plain_zh: '技能tokenomics。MOD-INF-019: Agent Spec — Skill Tokenomics'
+  plain_zh: "技能代币经济学，管理技能调用的 token 预算与经济激励模型。"
 - module_path: src/zephyr/autonomy_core/skills/skill_translator.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 技能translator
@@ -1324,7 +1324,7 @@ entries:
   name_en: otel_instrumentation
   desc_zh: otel_instrumentation.py — 全链路 OTel (B12, DD86, TASK-015 beta v)
   desc_en: ''
-  plain_zh: 全链路 OTel (B12, DD86, TASK-015 beta v)
+  plain_zh: "全链路 OpenTelemetry 注入器，为系统调用链埋点，产出分布式追踪数据。"
 - module_path: src/zephyr/integration/vector_memory/vector_writer.py
   domain_id: D_AUTONOMY_CORE
   name_zh: 向量写入器
@@ -1345,7 +1345,7 @@ entries:
   name_en: alignment_scorer
   desc_zh: alignment_scorer.py — 对齐评分 (B11, DD85, TASK-015 beta w)
   desc_en: ''
-  plain_zh: 对齐评分 (B11, DD85, TASK-015 beta w)
+  plain_zh: "对齐评分器，评估模型输出与价值对齐的程度，输出对齐分数。"
 - module_path: src/zephyr/security/llm_defense/llm_security/lsg_pattern_tracker.py
   domain_id: D_AUTONOMY_CORE
   name_zh: lsg模式追踪器
@@ -1366,7 +1366,7 @@ entries:
   name_en: sensitivity_classifier
   desc_zh: sensitivity_classifier.py — 数据分级 (B9, DD83, TASK-015 beta w)
   desc_en: ''
-  plain_zh: 数据分级 (B9, DD83, TASK-015 beta w)
+  plain_zh: "敏感度分类器，对数据进行分级标注，指导脱敏与访问控制。"
 - module_path: src/zephyr/security/llm_defense/llm_security/solo_dev_safety_net.py
   domain_id: D_AUTONOMY_CORE
   name_zh: solodev安全net
@@ -8128,7 +8128,7 @@ entries:
   name_en: resource_aware_pool
   desc_zh: 资源感知池，供audit_admission_controller; or使用
   desc_en: ''
-  plain_zh: "资源感知池，管理 GPU futures 等计算资源的感知与调度（Stage 4 公共化只读），供审计准入控制器使用。"
+  plain_zh: "资源感知池，管理 GPU futures 等计算资源的感知与调度（Stage 4 公共化只读），为审计准入控制器提供资源视图。"
 - module_path: src/zephyr/gov_audit/retention.py
   domain_id: D_GOV_AUDIT
   name_zh: 保留策略（补全测试期望接口）。
@@ -8149,7 +8149,7 @@ entries:
   name_en: spec_auditor
   desc_zh: spec审计器，供zephyr.gov_audit使用
   desc_en: ''
-  plain_zh: "Agent 规格审计器，record_agent_spec 记录 agent 能力声明到审计链，供 gov_audit 内部使用。"
+  plain_zh: "Agent 规格审计器，record_agent_spec 记录 agent 能力声明到审计链，是 gov_audit 内部规格登记入口。"
 - module_path: src/zephyr/gov_audit/supply_chain.py
   domain_id: D_GOV_AUDIT
   name_zh: supply链
@@ -8415,14 +8415,14 @@ entries:
   name_en: compliance_map
   desc_zh: 合规map.compliance_map — MOD-INF-020 · 合规框架映射
   desc_en: ''
-  plain_zh: "语义审计的合规框架映射器（MOD-INF-028），将审计事件映射到 GDPR/HIPAA/EU AI Act/NIST 条款，支持多框架交叉映射。"
+  plain_zh: "语义审计的合规框架映射器，将审计事件映射到 GDPR/HIPAA/EU AI Act/NIST 条款，支持多框架交叉映射。"
 - module_path: src/zephyr/governance/semantic_audit/feedback_self_audit.py
   domain_id: D_GOV_AUDIT
   name_zh: 反馈自审计
   name_en: feedback_self_audit
   desc_zh: 反馈自审计.feedback_self_audit — MOD-INF-020 · 反馈自审计
   desc_en: ''
-  plain_zh: "语义审计的反馈自审计器（MOD-INF-028），检测自强化反馈环、循环依赖、异常放大，与 gov_audit 版本对齐。"
+  plain_zh: "语义审计的反馈自审计器，检测自强化反馈环、循环依赖、异常放大，与 gov_audit 版本对齐。"
 - module_path: src/zephyr/governance/semantic_audit/fix_prioritizer.py
   domain_id: D_GOV_AUDIT
   name_zh: 修复prioritizer
@@ -8450,7 +8450,7 @@ entries:
   name_en: kb_gate
   desc_zh: 知识库门禁.kb_gate — MOD-INF-020 · KB 审计门控
   desc_en: ''
-  plain_zh: "语义审计的 KB 门控（MOD-INF-028），检测知识库投毒、验证写入来源、识别可疑修改模式，与 gov_audit 版本对齐。"
+  plain_zh: "语义审计的 KB 门控，检测知识库投毒、验证写入来源、识别可疑修改模式，与 gov_audit 版本对齐。"
 - module_path: src/zephyr/governance/semantic_audit/llm_bridge.py
   domain_id: D_GOV_AUDIT
   name_zh: 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成
@@ -9773,147 +9773,147 @@ entries:
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "自动运行时核心蓝图，定义 MAPE-K 调和循环的大脑主控，协调监控-分析-规划-执行四阶段自洽循环。"
 - module_path: docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "AI 行为边界审计引擎蓝图，定义 agent 行为合规性审计的主控类与审计规则。"
 - module_path: docs/03_modules/_cross_layer/context_engine/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "上下文引擎集成蓝图，定义上下文注入管道（build→compress→validate→inject）与 Token 预算管控。"
 - module_path: docs/03_modules/_cross_layer/database/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "数据库层蓝图，定义数据持久化的分层架构与访问契约。"
 - module_path: docs/03_modules/_cross_layer/feedback_loop/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "反馈循环蓝图，定义反馈采集-分析-提案-应用的自强化学习闭环。"
 - module_path: docs/03_modules/_cross_layer/gate_engine/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "门禁引擎蓝图，定义门禁检查的注册、执行与阻断机制。"
 - module_path: docs/03_modules/_cross_layer/model_capability_exam/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "模型能力考试蓝图，定义五轴入职考试主控，评估模型是否具备上岗能力。"
 - module_path: docs/03_modules/_cross_layer/orphan_judge/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "孤儿判定引擎蓝图，定义五层判定→决策路由→安全围栏→处置建议的孤儿文件判定主控。"
 - module_path: docs/03_modules/_cross_layer/pipeline/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "管线协调器蓝图，定义 M1-M11 双管线调度核心，协调数据与执行两条管线的流转。"
 - module_path: docs/03_modules/_cross_layer/red_blue_validator/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "红蓝对抗验证器蓝图，定义红队攻击与蓝队防御的对抗验证框架。"
 - module_path: docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 资源优化引擎蓝图
   name_en: blueprint
   desc_zh: 资源优化引擎蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 资源优化引擎蓝图（blueprint.md）
+  plain_zh: "资源优化引擎蓝图，定义 MAPE-K 循环驱动的资源监控、分析、优化与自愈主控。"
 - module_path: docs/03_modules/_cross_layer/semantic_auditor/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "语义审计器蓝图，定义 2 类纯语义触发与 9 阶段管道的语义审计主控。"
 - module_path: docs/03_modules/_cross_layer/shared_core/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "共享核心蓝图，定义跨域共享的基础数据结构与工具契约。"
 - module_path: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "Agent 规格蓝图，定义蓝图→Skill 升级引擎，把 agent 规格声明转为可执行技能。"
 - module_path: docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "回滚系统蓝图，定义回滚执行器，管理回滚生命周期与变更撤销。"
 - module_path: docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "预算执行器蓝图，定义预算限额的检查、消耗与熔断机制。"
 - module_path: docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "升级协议蓝图，定义规则匹配→级别判定→经济护栏检查→返回 EscalationEvent 的升级流程。"
 - module_path: docs/03_modules/_domain_governance/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "治理域蓝图，定义治理域的总体架构与各治理子域的协调关系。"
 - module_path: docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "代码去重引擎蓝图，定义全生命周期七维去重的主控，检测并合并重复代码。"
 - module_path: docs/03_modules/_domain_governance/governance_automation/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
   name_en: blueprint
   desc_zh: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁（blueprint.md）
   desc_en: ''
-  plain_zh: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁（blueprint.md）
+  plain_zh: "治理自动化蓝图，定义运行全维度或指定维度审计扫描的自动化主控。"
 - module_path: docs/03_modules/_domain_governance/registry_governance/blueprint.md
   domain_id: D_GOV_DOCS
   name_zh: 注册表治理
   name_en: blueprint
   desc_zh: 注册表治理（blueprint.md）
   desc_en: ''
-  plain_zh: 注册表治理（blueprint.md）
+  plain_zh: "注册表治理蓝图，定义功能域注册表的加载、查询、重叠检测与注册管理。"
 - module_path: tests/governance/d8_doc_sync/test_guc_trigger_fix.py
   domain_id: D_GOV_DOCS
   name_zh: 测试guc触发器fix.py — GUC 触发器缺陷修复的端到
@@ -11740,7 +11740,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 检查p0状态模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: "P0 优先级任务状态检查器，扫描任务仓库统计 P0 级任务的待办与完成情况，供治理同步使用。"
+  plain_zh: "P0 优先级任务状态检查器，扫描任务仓库统计 P0 级任务的待办与完成情况，为治理同步提供 P0 状态快照。"
 - module_path: scripts/governance/_sync/cleanup_p0_auto_bridged.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 清理历史 P0 自动桥接任务
@@ -12412,7 +12412,7 @@ entries:
   name_en: check_budget_health
   desc_zh: '[INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析'
   desc_en: ''
-  plain_zh: "预算健康检查器，检查预算执行情况是否健康，结果必须可机器解析且不可跳过（MOD-INF-024）。"
+  plain_zh: "预算健康检查器，检查预算执行情况是否健康，结果必须可机器解析且不可跳过。"
 - module_path: scripts/governance/d5_architecture/check_drift_e2e.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 检查漂移端到端
@@ -12867,7 +12867,7 @@ entries:
   name_en: validate_dependency_graph_template
   desc_zh: '[INVARIANTS] 治理脚本执行正确'
   desc_en: ''
-  plain_zh: "依赖图模板验证器，校验依赖图数据是否符合模板规范，保证治理脚本执行正确（MOD-INF-005）。"
+  plain_zh: "依赖图模板验证器，校验依赖图数据是否符合模板规范，保证治理脚本执行正确。"
 - module_path: scripts/governance/d5_architecture/validators/validate_depends_on_format.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 校验depends开format
@@ -18747,7 +18747,7 @@ entries:
   name_en: db
   desc_zh: 数据库模块
   desc_en: ''
-  plain_zh: "孤儿判定记录 SQLite 库，存每个文件的判决/置信度/原因/扫描时间/文件哈希，供报告与复查使用。"
+  plain_zh: "孤儿判定记录 SQLite 库，存每个文件的判决/置信度/原因/扫描时间与文件哈希，支持报告生成与历史复查。"
 - module_path: src/zephyr/security/access_control/orphan_judge/decision_table.py
   domain_id: D_SECURITY
   name_zh: 五层判定结果 -> 处置动作映射表。
@@ -19055,7 +19055,7 @@ entries:
   name_en: commit_trigger
   desc_zh: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
   desc_en: ''
-  plain_zh: "提交触发器（MOD-INF-030），把 GitCommitGateway 的 post-commit 事件桥接到红蓝对抗验证器，锁内轻量 emit 触发提交后对抗验证会话。"
+  plain_zh: "提交触发器，把 GitCommitGateway 的 post-commit 事件桥接到红蓝对抗验证器，锁内轻量 emit 触发提交后的对抗验证会话。"
 - module_path: src/zephyr/security/adversarial_validation/constitution_engine.py
   domain_id: D_SECURITY
   name_zh: constitution引擎
@@ -19258,7 +19258,7 @@ entries:
   name_en: injection_patterns
   desc_zh: 注入模式，提供match等方法，供tests.llm_security.test_i使用
   desc_en: ''
-  plain_zh: "注入模式描述符（legacy），定义提示注入的匹配模式供测试与检测使用。"
+  plain_zh: "注入模式描述符（legacy），定义提示注入的匹配模式，用于测试用例与检测引擎。"
 - module_path: src/zephyr/security/llm_defense/llm_security/patterns/secrets.py
   domain_id: D_SECURITY
   name_zh: 密钥
