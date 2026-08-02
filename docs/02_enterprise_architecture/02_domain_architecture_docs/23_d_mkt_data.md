@@ -57,7 +57,7 @@ flowchart TD
     src_zephyr_market_data_extensions_init_py["market_data/_extensions 包入口<br/>管理market_data._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_api_init_py["market_data/api 包入口<br/>管理market_data.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_autoload_py["自动加载<br/>数据的加载器，读取并加载配置/数据到内存<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>autoload<br/>文件: market_data/autoload.py<br/>(设计态 / design)"]
-    src_zephyr_market_data_connectors["market_data/connectors<br/>行情数据包的connectors模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
+    src_zephyr_market_data_connectors["market_data/connectors<br/>行情数据连接器包，适配行情数据源连接与实时行情接<br/>收<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
     src_zephyr_market_data_core_init_py["market_data/core 包入口<br/>管理market_data.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_failover["故障切换<br/>故障切换的子目录，归集相关子模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: failover/<br/>(设计态 / design)"]
     src_zephyr_market_data_infrastructure_init_py["market_data/infrastructure 包入口<br/>管理market_data.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
@@ -77,7 +77,7 @@ flowchart TD
     src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>从 ClickHouse c1_market.kline_daily<br/>加载日K行情，转为 CTR-001 NormalizedMarketData<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
     src_zephyr_market_data_vendor_registry_py["vendor注册表<br/>数据的注册表，登记和查询已注册的条目<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_registry<br/>文件: market_data/vendor_registry.py<br/>(设计态 / design)"]
     src_zephyr_market_data_normalized_market_data_producer_producer_py ~~~ src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>数据的子目录，归集相关子模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
+    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>原始行情数据缓存包，缓存未加工的原始行情数据<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
     src_zephyr_market_data_vendor_base_py["vendor基类<br/>数据的基类，定义抽象接口供子类实现<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_base<br/>文件: market_data/vendor_base.py<br/>(设计态 / design)"]
     src_zephyr_market_data_raw_data_cache ~~~ src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_vendor_registry_py -.->|import / import| src_zephyr_market_data_vendor_base_py
@@ -92,8 +92,8 @@ flowchart TD
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_DATA
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_market_data_normalized_market_data_producer_producer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_market_data_init_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_SOR -.->|runtime / runtime| src_zephyr_market_data_failover
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -144,9 +144,9 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_market_data_autoload_py["自动加载<br/>数据的加载器，读取并加载配置/数据到内存<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>autoload<br/>文件: market_data/autoload.py<br/>(设计态 / design)"]
-    src_zephyr_market_data_connectors["market_data/connectors<br/>行情数据包的connectors模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
+    src_zephyr_market_data_connectors["market_data/connectors<br/>行情数据连接器包，适配行情数据源连接与实时行情接<br/>收<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
     src_zephyr_market_data_failover["故障切换<br/>故障切换的子目录，归集相关子模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: failover/<br/>(设计态 / design)"]
-    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>数据的子目录，归集相关子模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
+    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>原始行情数据缓存包，缓存未加工的原始行情数据<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
     src_zephyr_market_data_autoload_py ~~~ src_zephyr_market_data_connectors
     src_zephyr_market_data_connectors ~~~ src_zephyr_market_data_failover
     src_zephyr_market_data_failover ~~~ src_zephyr_market_data_raw_data_cache

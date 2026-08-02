@@ -54,9 +54,9 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml["规则执行注册表<br/>规则enforcement注册表，规则执行的注册表，登记和<br/>查询已注册的条目。<br/>rule_enforcement_registry<br/>文件: catalogs/rule_enforcement_registry.yaml<br/>(生产态 / production)"]
-    scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py["指标数量漂移协调器<br/>dashboard 指标数描述派生校验 reconciler<br/>metric_count_drift_reconciler<br/>文件: d8_doc_sync<br/>/metric_count_drift_reconciler.py<br/>(生产态 / production)"]
-    scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py["readme版本sync对账器<br/>README 版本号派生展示校验 reconciler<br/>readme_version_sync_reconciler<br/>文件: d8_doc_sync<br/>/readme_version_sync_reconciler.py<br/>(生产态 / production)"]
-    scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py["requirements版本sync对账器<br/>txt ↔ pyproject.toml 依赖一致性校验 reconciler<br/>requirements_version_sync_reconciler<br/>文件: d8_doc_sync<br/>/requirements_version_sync_reconciler.py<br/>(生产态 / production)"]
+    scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py["指标数量漂移协调器<br/>自动检查文档里写的指标数量和代码里实际的指标数量<br/>是否一致，不一致就报警，防止文档和代码脱节。<br/>metric_count_drift_reconciler<br/>文件: d8_doc_sync<br/>/metric_count_drift_reconciler.py<br/>(生产态 / production)"]
+    scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py["readme版本sync对账器<br/>自动校对 README<br/>里写的版本号和项目实际配置的版本号是否对得上，防<br/>止文档和代码版本打架。<br/>readme_version_sync_reconciler<br/>文件: d8_doc_sync<br/>/readme_version_sync_reconciler.py<br/>(生产态 / production)"]
+    scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py["requirements版本sync对账器<br/>检查 requirements.txt 和 pyproject.toml<br/>里的依赖项是否一致，防止漏配或错配导致构建失败。<br/>requirements_version_sync_reconciler<br/>文件: d8_doc_sync<br/>/requirements_version_sync_reconciler.py<br/>(生产态 / production)"]
     scripts_governance_session_worktree_cli_py["会话worktreecli<br/>会话工作树管理命令行工具，提供sweep清理过期残留<br/>工作树、list查看现有工作树的命令，方便AI和运维随<br/>时清理临时工作区。<br/>session_worktree_cli<br/>文件: governance/session_worktree_cli.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_init_py["zephyr/gov_enforcement 包入口<br/>域拆分 Phase 2 物理迁移目标包 容量治理）：<br/>文件: gov_enforcement/__init__.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_init_py["gov_enforcement/behavioral_admission 包入口<br/>治理执行的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: behavioral_admission/__init__.py<br/>(生产态 / production)"]
@@ -68,7 +68,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py["dlq重试策略<br/>把处理失败被丢进死信队列的消息捞出来重新投递，成<br/>功就标记解决，连续失败到上限就标记耗尽不再试，防<br/>止死信永远躺尸。<br/>dlq_retry_policy<br/>文件: rule_enforcement/dlq_retry_policy.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py["output质量门禁<br/>检查大模型输出的长度、重复度、占位符、成本效率、<br/>格式，不合格的输出直接挡住，防止垃圾结果流入下游<br/>。<br/>output_quality_gate<br/>文件: rule_enforcement/output_quality_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py["preflight门禁<br/>任务执行前先检查token、成本、时间三项预算还剩多<br/>少，预算快爆了就告警或拦住，防止一个任务把整个预<br/>算吃光。<br/>pre_flight_gate<br/>文件: rule_enforcement/pre_flight_gate.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py["规则金丝雀管理器<br/>Rule Canary Manager — v0.10.0 规则金丝雀:<br/>1%用户先上新规则->A/B对比->rollback。<br/>rule_canary_manager<br/>文件: rule_engine/rule_canary_manager.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py["规则金丝雀管理器<br/>新规则先给1%的用户试用，对比效果达标后才全量上线<br/>，不达标就自动回滚，防止新规则直接全量上线出问题<br/>。<br/>rule_canary_manager<br/>文件: rule_engine/rule_canary_manager.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py["规则debt审计器<br/>Rule Debt Auditor — v0.7.0 规则债务审计器:<br/>分析escalation_rules.yaml维护债务指标。<br/>rule_debt_auditor<br/>文件: rule_engine/rule_debt_auditor.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py["规则影子运行器<br/>Rule Shadow Runner — v0.10.0 规则影子模式:<br/>新规则shadow运行3天->diff old vs new->promote。<br/>rule_shadow_runner<br/>文件: rule_engine/rule_shadow_runner.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["规则监视器<br/>盯住YAML规则文件的修改时间，发现有人改了规则就自<br/>动同步到依赖图并做哈希校验，防止规则文件改了但系<br/>统还在用旧规则。<br/>rule_watcher<br/>文件: rule_engine/rule_watcher.py<br/>(生产态 / production)"]
@@ -107,7 +107,7 @@ flowchart TD
     src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py["门禁事件适配器<br/>把门禁运行结果（通过<br/>/失败）作为事件追加到task_events表，实现门禁结果<br/>的事件溯源，方便事后审计回溯每次门禁判定。<br/>gate_event_adapter<br/>文件: behavioral_admission/gate_event_adapter.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py["GPU共识调度器<br/>关键操作要两个本地模型都点头才放行（2<br/>/2共识），防单模型幻觉误判；按保护级别排优先级，<br/>锚点级文件最高优先不可被抢占。<br/>gpu_consensus_scheduler<br/>文件: behavioral_admission<br/>/gpu_consensus_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py["保护索引<br/>文件保护级别索引，用布隆过滤器加前缀树快速判断文<br/>件属于哪级保护（锚点/受保护/普通<br/>/公开），锚点级文件改动触发最严格审查，防止AI误<br/>改关键规则文件。<br/>protection_index<br/>文件: behavioral_admission/protection_index.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["提交门禁注册表<br/>GitCommitGateway pre-commit 门禁注册表<br/>（架构债务 #AD-001 治本）<br/>commit_gate_registry<br/>文件: rule_bridge/commit_gate_registry.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["提交门禁注册表<br/>提交门禁的注册表，把原来写死在代码里的各种检查改<br/>成可配置的，新增门禁只需注册不用改提交逻辑，方便<br/>维护和扩展。<br/>commit_gate_registry<br/>文件: rule_bridge/commit_gate_registry.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py["会话worktree<br/>AI 对话 worktree 物理隔离 helper<br/>（FP-ISO.4C，2026-07-01 治本）<br/>session_worktree<br/>文件: rule_bridge/session_worktree.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py["质量门禁<br/>数据质量门禁。对 D_DATA<br/>接入的原始市场数据进行质量校验，不合格数据拒绝下<br/>发。<br/>D_DATA — Data Quality Gate<br/>文件: rule_enforcement/quality_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py ~~~ src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
@@ -119,7 +119,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["准入控制器<br/>用令牌桶限流（每秒50次）加熔断器把控请求进出，请<br/>求太快就排队、连续失败就熔断，防止AI把系统冲垮。<br/>admission_controller<br/>文件: behavioral_admission<br/>/admission_controller.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["裁定引擎<br/>根据审计事件综合判断本次操作该不该放行（红/黄<br/>/绿三态），结合文件保护级别、门禁结果、违规次数<br/>给出升级裁定，是行为审计的最终裁判。<br/>verdict_engine<br/>文件: behavioral_admission/verdict_engine.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["紧急提交<br/>规则桥接<br/>emergency_commit<br/>文件: rule_bridge/emergency_commit.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["紧急提交<br/>提交门禁全锁死时的紧急逃生通道，用git底层命令绕<br/>过所有钩子直接提交，防止门禁卡死时整个开发流程瘫<br/>痪。<br/>emergency_commit<br/>文件: rule_bridge/emergency_commit.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py["心跳守护<br/>会话心跳独立进程，定期刷新session存活标记，跨进<br/>程的会话工作流靠它确认会话还活着，防止正在做的工<br/>作因超时被误当僵尸清理掉。<br/>heartbeat_daemon<br/>文件: rule_bridge/heartbeat_daemon.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_session_claim_py["会话claim<br/>已废弃的会话并发声明工具，原用于AI对话并发控制，<br/>已被session_worktree物理隔离方案完全替代且更强，<br/>零实际调用方，仅generate_session_id函数仍被复用<br/>。<br/>session_claim<br/>文件: rule_bridge/session_claim.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["worktree管理器<br/>给每个AI会话开独立git工作目录实现物理隔离，彻底<br/>解决多会话共享工作区导致的stash冲突循环问题。<br/>worktree_manager<br/>文件: rule_bridge/worktree_manager.py<br/>(生产态 / production)"]
@@ -131,32 +131,32 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_bridge_session_claim_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["Git提交网关<br/>GitCommitGateway — 全项目唯一合法 git commit<br/>入口（OPS-2026062512 治本）<br/>git_commit_gateway<br/>文件: rule_bridge/git_commit_gateway.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["batched自动committer<br/>将 post-commit reconciler 阶段的 N 次独立<br/>``_commit_auto`` 调用合并为 1 次 squash<br/>batched_auto_committer<br/>文件: rule_bridge/batched_auto_committer.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["batched自动committer<br/>把提交后多个reconciler各自触发的多次自动提交合并<br/>成一次，防止git<br/>log被刷屏成几十条reconciler提交。<br/>batched_auto_committer<br/>文件: rule_bridge/batched_auto_committer.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
     src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_response_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_response_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_claim_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
-    scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_claim_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
+    scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     tests_governance_commit_gates_test_create_guard_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     tests_governance_commit_gates_test_r5_digit_suffix_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_rule_bridge_test_claim_files_for_edit_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
@@ -164,6 +164,8 @@ flowchart TD
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
+    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
@@ -183,10 +185,9 @@ flowchart TD
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
@@ -202,14 +203,13 @@ flowchart TD
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py,scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py,scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py,scripts_governance_session_worktree_cli_py,src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_admission_response_py,src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py,src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py,src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py,src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py,src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py,src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py,src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_bridge_session_worktree_py,src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py,src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py,src_zephyr_gov_enforcement_rule_enforcement_approval_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py,src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py,src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py,tests_governance_rule_bridge_test_claim_files_for_edit_py,tests_governance_rule_bridge_test_emergency_commit_py,tests_governance_rule_bridge_test_heartbeat_daemon_py production
     class src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py design
-    class D_GOV_AUDIT,D_SECURITY,D_GOV_CODE_QUALITY,D_OPS,D_GOV_SCRIPTS,D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_SHARED,D_DATA external_prod
+    class D_SHARED,D_GOV_AUDIT,D_SECURITY,D_GOV_CODE_QUALITY,D_OPS,D_GOV_SCRIPTS,D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_DATA external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -220,9 +220,9 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml["规则执行注册表<br/>规则enforcement注册表，规则执行的注册表，登记和<br/>查询已注册的条目。<br/>rule_enforcement_registry<br/>文件: catalogs/rule_enforcement_registry.yaml<br/>(生产态 / production)"]
-    scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py["指标数量漂移协调器<br/>dashboard 指标数描述派生校验 reconciler<br/>metric_count_drift_reconciler<br/>文件: d8_doc_sync<br/>/metric_count_drift_reconciler.py<br/>(生产态 / production)"]
-    scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py["readme版本sync对账器<br/>README 版本号派生展示校验 reconciler<br/>readme_version_sync_reconciler<br/>文件: d8_doc_sync<br/>/readme_version_sync_reconciler.py<br/>(生产态 / production)"]
-    scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py["requirements版本sync对账器<br/>txt ↔ pyproject.toml 依赖一致性校验 reconciler<br/>requirements_version_sync_reconciler<br/>文件: d8_doc_sync<br/>/requirements_version_sync_reconciler.py<br/>(生产态 / production)"]
+    scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py["指标数量漂移协调器<br/>自动检查文档里写的指标数量和代码里实际的指标数量<br/>是否一致，不一致就报警，防止文档和代码脱节。<br/>metric_count_drift_reconciler<br/>文件: d8_doc_sync<br/>/metric_count_drift_reconciler.py<br/>(生产态 / production)"]
+    scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py["readme版本sync对账器<br/>自动校对 README<br/>里写的版本号和项目实际配置的版本号是否对得上，防<br/>止文档和代码版本打架。<br/>readme_version_sync_reconciler<br/>文件: d8_doc_sync<br/>/readme_version_sync_reconciler.py<br/>(生产态 / production)"]
+    scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py["requirements版本sync对账器<br/>检查 requirements.txt 和 pyproject.toml<br/>里的依赖项是否一致，防止漏配或错配导致构建失败。<br/>requirements_version_sync_reconciler<br/>文件: d8_doc_sync<br/>/requirements_version_sync_reconciler.py<br/>(生产态 / production)"]
     scripts_governance_session_worktree_cli_py["会话worktreecli<br/>会话工作树管理命令行工具，提供sweep清理过期残留<br/>工作树、list查看现有工作树的命令，方便AI和运维随<br/>时清理临时工作区。<br/>session_worktree_cli<br/>文件: governance/session_worktree_cli.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_init_py["zephyr/gov_enforcement 包入口<br/>域拆分 Phase 2 物理迁移目标包 容量治理）：<br/>文件: gov_enforcement/__init__.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_init_py["gov_enforcement/behavioral_admission 包入口<br/>治理执行的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: behavioral_admission/__init__.py<br/>(生产态 / production)"]
@@ -233,7 +233,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py["dlq重试策略<br/>把处理失败被丢进死信队列的消息捞出来重新投递，成<br/>功就标记解决，连续失败到上限就标记耗尽不再试，防<br/>止死信永远躺尸。<br/>dlq_retry_policy<br/>文件: rule_enforcement/dlq_retry_policy.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py["output质量门禁<br/>检查大模型输出的长度、重复度、占位符、成本效率、<br/>格式，不合格的输出直接挡住，防止垃圾结果流入下游<br/>。<br/>output_quality_gate<br/>文件: rule_enforcement/output_quality_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py["preflight门禁<br/>任务执行前先检查token、成本、时间三项预算还剩多<br/>少，预算快爆了就告警或拦住，防止一个任务把整个预<br/>算吃光。<br/>pre_flight_gate<br/>文件: rule_enforcement/pre_flight_gate.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py["规则金丝雀管理器<br/>Rule Canary Manager — v0.10.0 规则金丝雀:<br/>1%用户先上新规则->A/B对比->rollback。<br/>rule_canary_manager<br/>文件: rule_engine/rule_canary_manager.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py["规则金丝雀管理器<br/>新规则先给1%的用户试用，对比效果达标后才全量上线<br/>，不达标就自动回滚，防止新规则直接全量上线出问题<br/>。<br/>rule_canary_manager<br/>文件: rule_engine/rule_canary_manager.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py["规则debt审计器<br/>Rule Debt Auditor — v0.7.0 规则债务审计器:<br/>分析escalation_rules.yaml维护债务指标。<br/>rule_debt_auditor<br/>文件: rule_engine/rule_debt_auditor.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py["规则影子运行器<br/>Rule Shadow Runner — v0.10.0 规则影子模式:<br/>新规则shadow运行3天->diff old vs new->promote。<br/>rule_shadow_runner<br/>文件: rule_engine/rule_shadow_runner.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["规则监视器<br/>盯住YAML规则文件的修改时间，发现有人改了规则就自<br/>动同步到依赖图并做哈希校验，防止规则文件改了但系<br/>统还在用旧规则。<br/>rule_watcher<br/>文件: rule_engine/rule_watcher.py<br/>(生产态 / production)"]
@@ -271,7 +271,7 @@ flowchart TD
     src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py["门禁事件适配器<br/>把门禁运行结果（通过<br/>/失败）作为事件追加到task_events表，实现门禁结果<br/>的事件溯源，方便事后审计回溯每次门禁判定。<br/>gate_event_adapter<br/>文件: behavioral_admission/gate_event_adapter.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py["GPU共识调度器<br/>关键操作要两个本地模型都点头才放行（2<br/>/2共识），防单模型幻觉误判；按保护级别排优先级，<br/>锚点级文件最高优先不可被抢占。<br/>gpu_consensus_scheduler<br/>文件: behavioral_admission<br/>/gpu_consensus_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py["保护索引<br/>文件保护级别索引，用布隆过滤器加前缀树快速判断文<br/>件属于哪级保护（锚点/受保护/普通<br/>/公开），锚点级文件改动触发最严格审查，防止AI误<br/>改关键规则文件。<br/>protection_index<br/>文件: behavioral_admission/protection_index.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["提交门禁注册表<br/>GitCommitGateway pre-commit 门禁注册表<br/>（架构债务 #AD-001 治本）<br/>commit_gate_registry<br/>文件: rule_bridge/commit_gate_registry.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py["提交门禁注册表<br/>提交门禁的注册表，把原来写死在代码里的各种检查改<br/>成可配置的，新增门禁只需注册不用改提交逻辑，方便<br/>维护和扩展。<br/>commit_gate_registry<br/>文件: rule_bridge/commit_gate_registry.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py["会话worktree<br/>AI 对话 worktree 物理隔离 helper<br/>（FP-ISO.4C，2026-07-01 治本）<br/>session_worktree<br/>文件: rule_bridge/session_worktree.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py["质量门禁<br/>数据质量门禁。对 D_DATA<br/>接入的原始市场数据进行质量校验，不合格数据拒绝下<br/>发。<br/>D_DATA — Data Quality Gate<br/>文件: rule_enforcement/quality_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py ~~~ src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
@@ -283,7 +283,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["准入控制器<br/>用令牌桶限流（每秒50次）加熔断器把控请求进出，请<br/>求太快就排队、连续失败就熔断，防止AI把系统冲垮。<br/>admission_controller<br/>文件: behavioral_admission<br/>/admission_controller.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["裁定引擎<br/>根据审计事件综合判断本次操作该不该放行（红/黄<br/>/绿三态），结合文件保护级别、门禁结果、违规次数<br/>给出升级裁定，是行为审计的最终裁判。<br/>verdict_engine<br/>文件: behavioral_admission/verdict_engine.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["紧急提交<br/>规则桥接<br/>emergency_commit<br/>文件: rule_bridge/emergency_commit.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["紧急提交<br/>提交门禁全锁死时的紧急逃生通道，用git底层命令绕<br/>过所有钩子直接提交，防止门禁卡死时整个开发流程瘫<br/>痪。<br/>emergency_commit<br/>文件: rule_bridge/emergency_commit.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py["心跳守护<br/>会话心跳独立进程，定期刷新session存活标记，跨进<br/>程的会话工作流靠它确认会话还活着，防止正在做的工<br/>作因超时被误当僵尸清理掉。<br/>heartbeat_daemon<br/>文件: rule_bridge/heartbeat_daemon.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_session_claim_py["会话claim<br/>已废弃的会话并发声明工具，原用于AI对话并发控制，<br/>已被session_worktree物理隔离方案完全替代且更强，<br/>零实际调用方，仅generate_session_id函数仍被复用<br/>。<br/>session_claim<br/>文件: rule_bridge/session_claim.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["worktree管理器<br/>给每个AI会话开独立git工作目录实现物理隔离，彻底<br/>解决多会话共享工作区导致的stash冲突循环问题。<br/>worktree_manager<br/>文件: rule_bridge/worktree_manager.py<br/>(生产态 / production)"]
@@ -295,32 +295,32 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_bridge_session_claim_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py ~~~ src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["Git提交网关<br/>GitCommitGateway — 全项目唯一合法 git commit<br/>入口（OPS-2026062512 治本）<br/>git_commit_gateway<br/>文件: rule_bridge/git_commit_gateway.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["batched自动committer<br/>将 post-commit reconciler 阶段的 N 次独立<br/>``_commit_auto`` 调用合并为 1 次 squash<br/>batched_auto_committer<br/>文件: rule_bridge/batched_auto_committer.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["batched自动committer<br/>把提交后多个reconciler各自触发的多次自动提交合并<br/>成一次，防止git<br/>log被刷屏成几十条reconciler提交。<br/>batched_auto_committer<br/>文件: rule_bridge/batched_auto_committer.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
     src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_response_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_response_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_claim_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
-    scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_claim_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
+    scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     tests_governance_commit_gates_test_create_guard_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     tests_governance_commit_gates_test_r5_digit_suffix_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_rule_bridge_test_claim_files_for_edit_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
