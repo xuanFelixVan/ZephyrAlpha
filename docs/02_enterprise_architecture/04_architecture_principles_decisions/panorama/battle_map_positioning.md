@@ -320,6 +320,7 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 - 改环节结构/锚点/指标结构化字段 → 用 `apply_battle_map.py` 改 DB → 重跑生成器
 - 禁止直接改 07_ MD（派生产物，会被覆盖）
 - 禁止在生成器代码里硬编码叙事（必须读翻译真源）
+- **备份先行**（对标 depgraph 备份铁律 trae_054 STEP0，2026-08-03 补）：改 battle_map 三表（steps/anchors/edges）前 MUST 先 `git commit` 备份当前 YAML + 生成产物。battle_map 同属 PostgreSQL 架构数据真源，虽回滚可靠 `apply_battle_map.py --remove-step` 级联删 anchor/edge，但备份先行防止结构丢失、提供可回溯基线。写 DB 用 `pg_advisory_lock 424245` + 事务原子性（`--batch` 任一失败回滚），备份是事务外的第二道防线。
 
 ---
 
