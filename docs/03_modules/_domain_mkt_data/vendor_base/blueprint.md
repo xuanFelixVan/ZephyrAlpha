@@ -1,0 +1,94 @@
+---
+module_id: MOD-MKT-002
+title: "Vendor基类蓝图 — 行情数据源抽象接口+状态管理+能力声明"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+ttl: permanent
+layer: L01_foundation
+layer_name: market_data
+functional_domain: mkt_data
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-02"
+last_updated: "2026-08-02"
+priority: P1
+blueprint_level: module
+responsibility_domain: 
+design_maturity: production
+build_status: stable
+---
+
+# MOD-MKT-002 Vendor Base — 行情数据源基类 蓝图
+
+> **module_id**: MOD-MKT-002 | **域**: D_MKT_DATA | **层**: L1 基础平台
+> **优先级**: P1 | **成熟度**: production | **对标能力**: 行情数据源抽象
+> **SSoT**: depgraph MOD-MKT-002
+
+## 1. 定位
+
+行情数据源基类——定义所有行情数据 vendor 的统一抽象接口。提供状态管理
+(ACTIVE/INACTIVE/DEGRADED/ERROR)、能力声明(支持K线/Tick/Level2)和
+健康检查接口, 供 VendorRegistry 注册管理和 Connectors 适配。
+
+属 A 类基础设施(抽象接口定义), 纯基础层不涉及策略。
+
+## 2. 输入 / 输出
+
+| 方向 | 内容 | 契约/事件 |
+|------|------|-----------|
+| 输入 | symbol, start_date, end_date (查询参数) | — |
+| 输出 | list[NormalizedMarketData] (CTR-001) | CTR-001 |
+| 输出 | VendorStatus (状态) | — |
+| 输出 | VendorCapabilities (能力声明) | — |
+
+## 3. 核心设计
+
+### 3.1 VendorStatus 枚举
+
+| 状态 | 说明 |
+|------|------|
+| ACTIVE | 正常运行 |
+| INACTIVE | 未激活/已停用 |
+| DEGRADED | 降级运行(延迟/部分不可用) |
+| ERROR | 错误状态(不可用) |
+
+### 3.2 VendorCapabilities 能力声明
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| supports_daily_kline | bool | 支持日K数据 |
+| supports_tick | bool | 支持Tick数据 |
+| supports_level2 | bool | 支持Level2行情 |
+| supports_realtime | bool | 支持实时推送 |
+
+### 3.3 MarketDataVendor ABC
+
+抽象基类, 子类(tushare/akshare/wind等)实现具体接口:
+- `vendor_id` (property): vendor 唯一标识
+- `status` (property): 当前状态
+- `capabilities` (property): 能力声明
+- `fetch_daily_kline(symbol, start, end)`: 获取日K数据(抽象方法)
+- `health_check()`: 健康检查(抽象方法)
+
+## 4. 关键不变量 (INVARIANTS)
+
+- VendorStatus/VendorCapabilities 为 frozen dataclass/enum
+- MarketDataVendor 为 ABC, 不可直接实例化
+- status 变更通过 set_status() 方法, 非直接属性赋值
+- 纯抽象层, 不包含具体数据源实现
+
+## 5. 错误契约
+
+- `VendorError` (ZA-MKT-0002): vendor 操作异常
+
+## 6. 依赖
+
+- `zephyr.shared.contracts.market_data` (NormalizedMarketData, CTR-001)
+- `zephyr.shared.foundation.errors` (ZephyrBaseError)
+- 消费者: MOD-MKT-001(vendor_registry), MOD-MKT-003(connectors)
+
+## 7. 测试
+
+- `tests/market_data/test_vendor_base.py`
+- 覆盖: 状态转换合法性、能力声明、ABC不可实例化、子类实现验证
