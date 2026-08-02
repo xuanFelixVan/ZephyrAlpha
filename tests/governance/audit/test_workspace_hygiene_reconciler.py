@@ -217,9 +217,13 @@ class TestIsAutoSyncProduct:
         assert _is_auto_sync_product("data/metrics/kill_switch_probes.jsonl") is True
 
     def test_prefix_match_scripts_governance(self):
+        # rules_integrity_db.json 已移除出 auto-sync（2026-08-02 audit-02 治本）：
+        # 该文件是 validate_rules_integrity.py --register 的写入产物（golden hash DB），
+        # 列入 auto-sync 导致 register() 写入的新 hash 被 git restore 还原回 HEAD，
+        # 形成"写入→还原"循环。post-flush re-register 负责提交 DB 变更。
         assert _is_auto_sync_product(
             "scripts/governance/meta/rules_integrity_db.json"
-        ) is True
+        ) is False
         assert _is_auto_sync_product("scripts/governance/script_manifest.yaml") is True
         assert _is_auto_sync_product("scripts/script_manifest.yaml") is True
 
