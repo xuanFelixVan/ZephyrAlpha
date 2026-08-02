@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-RK-011 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # risk/core
 
 from typing import Final

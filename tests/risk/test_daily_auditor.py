@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """DailyAuditor 单元测试 (MOD-RK-20)。"""
 
