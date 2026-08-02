@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-SIM-021 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """MOD-SIM-002 Strategy Simulator — 策略仿真器单元测试。
 
 覆盖: 配置校验、单/多标的仿真、PIT无前瞻、做空截断、佣金/滑点、空/单bar、
