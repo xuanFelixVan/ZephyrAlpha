@@ -15,8 +15,8 @@ date: 2026-08-02
 ```mermaid
 %% 对账阶段图
 flowchart LR
-    BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::design
-    BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::design
+    BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::production
+    BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::production
     BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型… 🟡候选"]:::production
     BM_REC_01 --- |运营数据| BM_REC_02
     BM_REC_02 --- |复盘报告| BM_REC_03
@@ -58,10 +58,10 @@ L5/运营层。C-017 交易运营：清算/费率/公司行为。是闭环反馈
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-003 | primary | planned | planned |
-| depgraph | MOD-RPT-027 | supplement | planned | planned |
+| depgraph | MOD-TRADING-003 | primary | planned | generated |
+| depgraph | MOD-RPT-027 | supplement | planned | generated |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-02 报告复盘 / Reporting & Review
 
@@ -92,10 +92,10 @@ L5 层。C-010 报告复盘：把运营数据加工成复盘报告，作为闭�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-026 | primary | planned | planned |
+| depgraph | MOD-RPT-026 | primary | planned | generated |
 | depgraph | MOD-RPT-015 | supplement | planned | planned |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-03 闭环优化反馈 / Closed-Loop Optimization Feedback
 

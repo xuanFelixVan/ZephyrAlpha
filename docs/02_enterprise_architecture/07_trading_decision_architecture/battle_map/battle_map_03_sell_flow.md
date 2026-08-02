@@ -219,7 +219,7 @@ v6.0分批退出模式(Scaling Out Architecture)：等分退出(1/3-1/3-1/3)/倒
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-SELL-006 | primary | planned | stable |
-| depgraph | MOD-POS-004 | supplement | planned | planned |
+| depgraph | MOD-POS-004 | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
 

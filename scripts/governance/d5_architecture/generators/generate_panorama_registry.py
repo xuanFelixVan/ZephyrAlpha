@@ -60,8 +60,9 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
 from _common import DB_DISPLAY_NAME  # noqa: E402
+from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 BASE_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture"
@@ -265,18 +266,19 @@ BUILT_PANORAMAS: list[dict] = [
         "artifact_path": "06_decision_architecture/decision_index.md",
         "description": "决策流图 decisiongraph（L0-L6 四轨），三图正交第三维度",
     },
-    # --- 07_trading_decision_architecture/（decisiongraph 业务流程视图） ---
+    # --- 07_trading_decision_architecture/（decisiongraph 业务流程视图，已退役 2026-08-02） ---
     {
         "panorama_id": "PAN-BUILT-21",
-        "name": "交易决策架构视图",
+        "name": "交易决策架构视图（已退役）",
         "category": "决策流",
         "category_id": "decision",
         "data_source": DB_DISPLAY_NAME,
         "source_architecture": "decisiongraph",
-        "generator": "generate_trading_flow_diagram.py",
-        "output_path": "07_trading_decision_architecture/",
-        "artifact_path": "07_trading_decision_architecture/trading_flow_index.md",
-        "description": "decisiongraph 业务流程视图（选股/买入/卖出/仓位/执行/对账6阶段叙事），对标 application_flows.md 先例，不进四图对齐。迁移并行观察期保留，将被 PAN-BATTLE-MAP-01 取代",
+        "generator": "(已退役删除) generate_trading_flow_diagram.py",
+        "output_path": "(已退役) 07_trading_decision_architecture/",
+        "artifact_path": "(已退役) 07_trading_decision_architecture/trading_flow_index.md",
+        "description": "已退役（2026-08-02）：旧生成器 generate_trading_flow_diagram.py + 旧叙事 trading_flow_narrative.yaml + 9 旧 MD + 7 旧 HTML 全部删除。4 横切叙事段迁移至 module_translation_registry.yaml §battle_map_cross_cutting。被 PAN-BATTLE-MAP-01 完全取代。",
+        "status": "retired",
     },
     # --- 07_trading_decision_architecture/battle_map/（第四全景图 battle_map 真源） ---
     {
@@ -877,7 +879,7 @@ def _fetch_db_stats(conn: PgConnExecuteWrapper) -> dict:
                 cur = conn.execute(f"SELECT COUNT(*) AS cnt FROM {table}")
                 row = cur.fetchone()
                 stats[table] = row["cnt"] if row else 0
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 stats[table] = f"❌({type(e).__name__})"
     return stats
 
@@ -1277,7 +1279,7 @@ def generate_panorama_registry(db_stats: dict) -> str:
     lines.append("")
     lines.append("| 日期 | 说明 |")
     lines.append("|------|------|")
-    lines.append(f"| auto-generated | 自动生成 |")
+    lines.append("| auto-generated | 自动生成 |")
 
     return "\n".join(lines)
 
@@ -1299,7 +1301,7 @@ def main() -> None:
             db_stats = _fetch_db_stats(conn)
         finally:
             conn.close()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"[ERROR] 无法连接 {DB_DISPLAY_NAME}：{e}", file=sys.stderr)
         db_stats = {table: "❌(DB不可达)" for group in DB_TABLE_GROUPS for table in group["tables"]}
 

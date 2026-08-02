@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
-# [TESTS] tests/rollback/test_position_reconciler.py
+# [TESTS] tests/rollback/test_rollback_position_reconciler.py
 # [A_module] module_id=MOD-RES-position_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: "cron"在注释中，非实际cron调用

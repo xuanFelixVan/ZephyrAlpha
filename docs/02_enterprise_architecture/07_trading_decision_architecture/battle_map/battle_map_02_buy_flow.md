@@ -15,9 +15,9 @@ date: 2026-08-02
 ```mermaid
 %% 买入阶段图
 flowchart LR
-    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 🟡候选"]:::design
-    BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::design
-    BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::design
+    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 🟡候选"]:::production
+    BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::production
+    BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::production
     BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破…"]:::design
     BM_BUY_05["BM-BUY-05\n做T日内套利 / Intraday T+0 Arbitrage\nA股T+1约束下的日内套利——每天扫全部持仓，找有日内T+0…"]:::design
     BM_BUY_06["BM-BUY-06\n外部指令盯盘 / External Order Monitoring\n接收用户从微信/前端发来的买卖调仓指令，解析后走风控检查→执…"]:::production
@@ -62,11 +62,11 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | planned | planned |
-| depgraph | MOD-L05-001 | supplement | stable | stable |
+| depgraph | MOD-PF-002 | primary | planned | generated |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02 四轨融合 / Four-Track Fusion (MTF)
 
@@ -97,9 +97,9 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | planned | planned |
+| depgraph | MOD-PF-006 | primary | planned | stable |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-03 决策编排 / Decision Orchestration (DO)
 
@@ -130,9 +130,9 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-007 | primary | planned | planned |
+| depgraph | MOD-PF-007 | primary | planned | stable |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-04 分批建仓 / Batched Position Building
 

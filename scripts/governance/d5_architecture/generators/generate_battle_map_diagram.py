@@ -67,17 +67,18 @@ if _SCRIPTS_DIR not in sys.path:
 
 from _shared.constants import REPO_ROOT  # noqa: E402
 from _shared.module_translation_loader import (  # noqa: E402
+    get_cross_cutting_all,
+    get_step_indicators_zh,
+    get_step_mechanism,
     get_step_name_bilingual,
     get_step_plain,
-    get_step_mechanism,
-    get_step_indicators_zh,
-    preload_battle_map_steps,
-    get_cross_cutting_all,
     preload_battle_map_cross_cutting,
+    preload_battle_map_steps,
 )
+from d5_architecture.generators.zoomable_html import emit_zoomable_html  # noqa: E402
+
 from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # noqa: E402
 from zephyr.governance.persistence.depgraph_reader import DepgraphReader  # noqa: E402
-from d5_architecture.generators.zoomable_html import emit_zoomable_html  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -292,7 +293,7 @@ def _build_mermaid(
     title: str,
 ) -> str:
     """构建一个 Mermaid 流程图块。"""
-    lines = [f"```mermaid", f"%% {title}", "flowchart LR"]
+    lines = ["```mermaid", f"%% {title}", "flowchart LR"]
     step_ids = {s["step_id"] for s in steps}
     # 节点定义（颜色/标记由 step._effective_status 推导，Gap1）
     for s in steps:
@@ -829,27 +830,112 @@ def _format_distribution_awareness_md(item: dict) -> str:
     return "\n".join(parts)
 
 
-# 横切类别 → 渲染函数分派（ Gap3 ）
+def _format_generic_cross_cutting_md(item: dict) -> str:
+    """渲染通用横切视图项（标题+大白话+机制说明+关联环节+可选结构化表）。
+
+    用于退役迁移自 trading_flow_narrative.yaml §cross_cutting 的 4 个系统级横切段
+    （four_modes / emergency_degradation / four_tracks / shared_signal_injection）。
+    这些段无对应草图§ref（sketch_ref="—"），结构化字段按类别可选渲染：
+      - four_modes              → modes 表
+      - emergency_degradation   → degradation_tiers 表
+      - four_tracks             → tracks 表
+      - shared_signal_injection → 纯叙事（无结构化表）
+    """
+    name_bi = item.get("name_zh", "") + (
+        f" / {item['name_en']}" if item.get("name_en") else ""
+    )
+    parts = [
+        f"## {name_bi}（{item.get('sketch_ref', '—')}）",
+        "",
+        f"> **大白话**：{item.get('plain_zh', '').strip()}",
+        "",
+    ]
+    mech = item.get("mechanism_zh", "").strip()
+    if mech:
+        parts += ["**机制说明**：", "", mech, ""]
+    related = item.get("related_steps") or []
+    if related:
+        parts.append(f"**关联环节**：{_related_steps_links(related)}")
+        parts.append("")
+    # 四模式开关：modes 表
+    modes = item.get("modes") or []
+    if modes:
+        parts += [
+            "### 模式清单",
+            "",
+            "| 模式ID | 名称 | 数据源 | 下单方式 |",
+            "|---|---|---|---|",
+        ]
+        for m in modes:
+            parts.append(
+                f"| {m.get('mode_id', '—')} | {m.get('mode_name', '—')} "
+                f"| {m.get('data_source', '—')} | {m.get('order_mode', '—')} |"
+            )
+        parts.append("")
+    # 应急保命降级：degradation_tiers 表
+    tiers = item.get("degradation_tiers") or []
+    if tiers:
+        parts += [
+            "### 降级路径（逐级保命）",
+            "",
+            "| 触发条件 | 失效层 | 降级行为 |",
+            "|---|---|---|",
+        ]
+        for t in tiers:
+            parts.append(
+                f"| {t.get('trigger', '—')} | {t.get('failed_layer', '—')} "
+                f"| {t.get('fallback', '—')} |"
+            )
+        parts.append("")
+    # 四轨并行：tracks 表
+    tracks = item.get("tracks") or []
+    if tracks:
+        parts += [
+            "### 四轨清单",
+            "",
+            "| 轨道 | 角色 | 优先级 | 说明 |",
+            "|---|---|---|---|",
+        ]
+        for tr in tracks:
+            parts.append(
+                f"| {tr.get('track_id', '—')} | {tr.get('role', '—')} "
+                f"| {tr.get('priority', '—')} | {tr.get('description', '—')} |"
+            )
+        parts.append("")
+    return "\n".join(parts)
+
+
+# 横切类别 → 渲染函数分派（ Gap3 + 退役迁移横切段 ）
 _CROSS_CUTTING_RENDERERS = {
     "funnel": _format_funnel_md,
     "intraday_events": _format_intraday_events_md,
     "timeline": _format_timeline_md,
     "conflict_matrix": _format_conflict_matrix_md,
     "distribution_awareness": _format_distribution_awareness_md,
+    # 以下 4 项退役迁移自 trading_flow_narrative.yaml §cross_cutting（2026-08-02）
+    "four_modes": _format_generic_cross_cutting_md,
+    "emergency_degradation": _format_generic_cross_cutting_md,
+    "four_tracks": _format_generic_cross_cutting_md,
+    "shared_signal_injection": _format_generic_cross_cutting_md,
 }
 
 
 def _generate_cross_cutting_md() -> str:
-    """横切视图 MD（§13漏斗 + §14盘中事件 + §16冲突矩阵，Gap3）。
+    """横切视图 MD（§13漏斗 + §14盘中事件 + §16冲突矩阵 + 4 退役迁移段，Gap3）。
 
     横切内容来自翻译真源 battle_map_cross_cutting 段（规则数据，TRAE-062），
     不属任何单一阶段，贯穿选股→买入→卖出→仓位→执行→对账全流程。
+
+    2026-08-02 退役迁移：trading_flow_narrative.yaml §cross_cutting 的 4 个系统级横切段
+    （four_modes / emergency_degradation / four_tracks / shared_signal_injection）
+    迁入本段，由 _format_generic_cross_cutting_md 渲染。
     """
     items = get_cross_cutting_all()
     parts = [
         "# 交易决策作战地图（横切视图）",
         "",
-        "> 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则。",
+        "> 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则",
+        ">           + 4 系统级横切（四模式开关 / 应急保命降级 / 四轨并行 / 共享信号注入，迁移自 trading_flow_narrative.yaml）。",
         "> 真源：`module_translation_registry.yaml` §battle_map_cross_cutting 段（规则数据，TRAE-062）。",
         "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。",
         "",
@@ -857,7 +943,11 @@ def _generate_cross_cutting_md() -> str:
     if not items:
         parts.append("⚠ 未加载到横切视图数据（YAML battle_map_cross_cutting 段缺失或解析失败）。")
         return "\n".join(parts)
-    parts.append(f"**横切类别数**：{len(items)}（funnel / intraday_events / conflict_matrix）")
+    parts.append(
+        f"**横切类别数**：{len(items)}（funnel / intraday_events / conflict_matrix / "
+        f"timeline / distribution_awareness / four_modes / emergency_degradation / "
+        f"four_tracks / shared_signal_injection）"
+    )
     parts.append("")
     for item in items:
         cat = item.get("category", "")
@@ -911,7 +1001,7 @@ def main() -> int:
         stage_path = out_dir / f"battle_map_{num}_{stage_id}.md"
         stage_path.write_text(stage_md, encoding="utf-8")
         html = emit_zoomable_html(panorama_path, stage_md)
-        print(f"  {stage_name}阶段: {stage_path}" + (f" + HTML" if html else ""))
+        print(f"  {stage_name}阶段: {stage_path}" + (" + HTML" if html else ""))
 
     # 横切视图（Gap3：§13漏斗 / §14盘中事件 / §16冲突矩阵）
     cross_md = _generate_cross_cutting_md()
@@ -919,7 +1009,7 @@ def main() -> int:
     cross_path = out_dir / "battle_map_07_cross_cutting.md"
     cross_path.write_text(cross_md, encoding="utf-8")
     html = emit_zoomable_html(panorama_path, cross_md)
-    print(f"  横切视图: {cross_path}" + (f" + HTML" if html else ""))
+    print(f"  横切视图: {cross_path}" + (" + HTML" if html else ""))
 
     print(f"\n完成。输出目录: {out_dir}")
     return 0

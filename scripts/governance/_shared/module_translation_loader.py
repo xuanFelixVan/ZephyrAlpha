@@ -356,7 +356,7 @@ def is_generic_plain_suffix(plain: str, name_zh: str) -> bool:
 # battle_map_steps 段——作战地图环节叙事真源（BM-INV-003）
 # ============================================================================
 # 与 module_path 翻译并列的第二个真源段：环节级叙事。生成器
-# (generate_trading_flow_diagram.py) MUST 经此加载器读取环节叙事，禁止硬编码。
+# (generate_battle_map_diagram.py) MUST 经此加载器读取环节叙事，禁止硬编码。
 #
 # 与 DB battle_map_steps.indicators JSONB 分工：
 #   - 本段（YAML）：叙事文案 name_zh/name_en/plain_zh/mechanism_zh/indicators_zh

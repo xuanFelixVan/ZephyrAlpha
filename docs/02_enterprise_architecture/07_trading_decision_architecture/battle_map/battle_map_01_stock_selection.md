@@ -15,7 +15,7 @@ date: 2026-08-02
 ```mermaid
 %% 选股阶段图
 flowchart LR
-    BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，… 🟡候选"]:::design
+    BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，… 🟡候选"]:::production
     BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、… 🟡候选"]:::production
     BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… 🟡候选"]:::design
     BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… 🟡候选"]:::design
@@ -35,7 +35,7 @@ flowchart LR
     BM_SEL_18["BM-SEL-18\n精筛评分 / Fine Scoring\n漏斗第三层——60秒级从300只评到50只，多维因子打分+市… 🟡候选"]:::candidate
     BM_SEL_19["BM-SEL-19\n事件驱动分布筛选 / Event-Driven Distribution Screening\n漏斗第四层——从50只筛到30只，看事件影响、事件修正后的概… 🟡候选"]:::candidate
     BM_SEL_20["BM-SEL-20\n多策略交叉投票 / Multi-Strategy Cross Voting\n漏斗第五层——多策略对每只票投YES/NO，加上主力合力和市… 🟡候选"]:::candidate
-    BM_SEL_21["BM-SEL-21\n组合优化 / Portfolio Optimization\n漏斗第六层——从30只里算出最终N≤10只下单清单和每只权重… 🟡候选"]:::design
+    BM_SEL_21["BM-SEL-21\n组合优化 / Portfolio Optimization\n漏斗第六层——从30只里算出最终N≤10只下单清单和每只权重… 🟡候选"]:::production
     BM_SEL_01 --- |标准化行情| BM_SEL_02
     BM_SEL_02 --- |因子池| BM_SEL_03
     BM_SEL_03 --- |市场状态| BM_SEL_04
@@ -83,12 +83,12 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-003 | primary | planned | planned |
+| depgraph | MOD-MKT-003 | primary | planned | generated |
 | depgraph | MOD-INF-002 | supplement | production | generated |
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
 ### BM-SEL-02 因子计算与信号生成 / Factor Compute & Signal Gen
 
@@ -119,7 +119,7 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | stable |
+| depgraph | MOD-L02-001 | primary | production | generated |
 | candidate | CAND-SIG-002 | supplement | deferred | — |
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
@@ -753,10 +753,10 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | planned | planned |
+| depgraph | MOD-PF-002 | primary | planned | generated |
 | candidate | CAND-PFALLOC-001 | supplement | deferred | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection
 
 
 [← 返回总指挥图](battle_map_panorama.md)

@@ -15,8 +15,8 @@ date: 2026-08-02
 ```mermaid
 %% 仓位阶段图
 flowchart LR
-    BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决… 🟡候选"]:::design
-    BM_POS_02["BM-POS-02\n标级仓位Kelly / Per-Symbol Kelly Sizing\n每只票该买多少——用Kelly公式算理论仓位，半Kelly硬…"]:::design
+    BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决… 🟡候选"]:::production
+    BM_POS_02["BM-POS-02\n标级仓位Kelly / Per-Symbol Kelly Sizing\n每只票该买多少——用Kelly公式算理论仓位，半Kelly硬…"]:::production
     BM_POS_03["BM-POS-03\n持仓状态机漂移 / Position State Machine & Drift\n每只票有自己的状态(NONE→BUILDING→ACTIVE…"]:::production
     BM_POS_04["BM-POS-04\n跨策略仓位硬限制 / Cross-Strategy Position Hard Limit\n多策略同标的仓位合并取sum不超上限，新策略上线仓位砍到正常…"]:::production
     BM_POS_05["BM-POS-05\n资金曲线回撤缩放 / Capital Curve Drawdown Scaling\n系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢加仓(每…"]:::production
@@ -63,10 +63,10 @@ L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | planned | planned |
+| depgraph | MOD-POS-001 | primary | planned | generated |
 | candidate | CAND-HARVEST-0019 | supplement | candidate | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
 ### BM-POS-02 标级仓位Kelly / Per-Symbol Kelly Sizing
 
@@ -106,9 +106,9 @@ Kelly仓位与原优化仓位取较小值(防御性原则: Kelly只减不增)。
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | planned | planned |
+| depgraph | MOD-POS-001 | primary | planned | generated |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
 ### BM-POS-03 持仓状态机漂移 / Position State Machine & Drift
 
@@ -225,7 +225,7 @@ C-032异常模式检测：识别资金曲线的结构性恶化(非随机下行�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-POS-007 | primary | stable | stable |
-| depgraph | MOD-POS-008 | supplement | planned | planned |
+| depgraph | MOD-POS-008 | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 

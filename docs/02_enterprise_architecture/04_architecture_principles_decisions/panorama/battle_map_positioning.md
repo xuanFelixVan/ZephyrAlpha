@@ -25,7 +25,7 @@ date: 2026-08-02
 
 > **"我这个赚钱流程的每一个环节，到底落在哪些模块/候选/蓝图章节上？落地没有？谁来承载？"**
 
-它存在 PostgreSQL（`battle_map_*` 三张表）里，由 `apply_battle_map.py` 写入，由 `generate_trading_flow_diagram.py` 派生成 `07_/` 目录下的人类视图 MD。
+它存在 PostgreSQL（`battle_map_*` 三张表）里，由 `apply_battle_map.py` 写入，由 `generate_battle_map_diagram.py` 派生成 `07_trading_decision_architecture/battle_map/` 目录下的人类视图 MD（旧生成器 `generate_trading_flow_diagram.py` 已于 2026-08-02 退役删除）。
 
 **和现有三图的关系**：
 
@@ -189,7 +189,7 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 | 07_ 视图本身 | 07_ MD 是 battle_map 的派生人类视图。battle_map 在 DB，07_ 在 docs |
 | 策略参数文档 | battle_map 的 `indicators` 字段记录"指标方案的结构化引用"（trigger/threshold/source_module），不是策略参数清单。具体参数值在策略蓝图/代码里 |
 | 新造的孤立图 | battle_map 是索引层，所有锚点指向已有四图+候选池的现存节点。不 invent 新模块 |
-| 替代 trading_flow_narrative.yaml | 叙事职责移交给翻译真源 `battle_map_steps` 段，narrative.yaml 逐步退场（不立即删） |
+| 替代 trading_flow_narrative.yaml | 叙事职责移交给翻译真源 `battle_map_steps` 段；narrative.yaml 已于 2026-08-02 退役删除（4 横切段迁至 `module_translation_registry.yaml §battle_map_cross_cutting`） |
 
 ---
 
@@ -295,12 +295,12 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
                │                                      │
                └─────────────────┬────────────────────┘
                                  ▼
-                    generate_trading_flow_diagram.py（改造）
+                    generate_battle_map_diagram.py（取代旧 generate_trading_flow_diagram.py，2026-08-02 退役）
                                  │
                                  ▼
               ┌────────────────────────────────────────┐
               │ 07_trading_decision_architecture/       │（派生产物）
-              │   9 MD + 7 HTML（人类视图，带颜色标注）  │
+              │   battle_map/ 7 MD + 7 HTML（带颜色）   │
               └────────────────────────────────────────┘
 ```
 
@@ -311,7 +311,7 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 | 环节流转（edges） | DB | `apply_battle_map.py` | 架构数据 |
 | indicators 结构化字段（trigger/threshold/source_modules） | DB | `apply_battle_map.py` | 架构数据，要和模块代码联动 |
 | 环节叙事（中英文名/大白话/机制/指标文案） | YAML 翻译真源 | 手工编辑 `module_translation_registry.yaml` | 规则数据，可被多视图复用 |
-| 07_ MD + HTML | 派生产物 | `generate_trading_flow_diagram.py` | 只读，禁止手编 |
+| 07_ MD + HTML | 派生产物 | `generate_battle_map_diagram.py` | 只读，禁止手编 |
 
 **SSoT 铁律**：
 - 改环节叙事 → 改翻译真源 `battle_map_steps` 段 → 重跑生成器
@@ -430,7 +430,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ## 十一、可视化规范
 
-遵循 [visualization_view_template.md](visualization_view_template.md)（三视图 + 可缩放 HTML + 节点四要素 + 预折行铁律）。battle_map 生成器（`generate_trading_flow_diagram.py` 改造版）必须复用：
+遵循 [visualization_view_template.md](visualization_view_template.md)（三视图 + 可缩放 HTML + 节点四要素 + 预折行铁律）。battle_map 生成器（`generate_battle_map_diagram.py`，取代已退役的 `generate_trading_flow_diagram.py`）必须复用：
 - 灰色主题头 + `flowchart TD`
 - 节点四要素（成熟度 + 双语名称 + 大白话 + 路径/标识），叙事来自翻译真源 `battle_map_steps` 段
 - `_wrap_label_text()` 预折行（禁止 CSS max-width 二次折行）
@@ -444,23 +444,23 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ---
 
-## 十二、生成器改造
+## 十二、生成器现状
 
-`generate_trading_flow_diagram.py` 改造：
+`generate_battle_map_diagram.py`（已取代旧生成器 `generate_trading_flow_diagram.py`，旧生成器+旧叙事 YAML 已于 2026-08-02 退役删除）：
 
-| 改造点 | 旧 | 新 |
+| 改造点 | 旧（已退役） | 新（当前真源） |
 |---|---|---|
 | 主真源 | decisiongraph + narrative.yaml | **battle_map 三表**（steps/anchors/edges） |
 | 模块状态 | 不查 depgraph | join depgraph（build_status→颜色） |
 | 候选挂载 | 只进附录2 | join 候选池，通过 anchors 挂到环节 |
 | 节点细节 | decisiongraph 节点 | join decisiongraph（环节聚合的决策节点） |
-| 叙事 | narrative.yaml | 翻译真源 `battle_map_steps` 段 |
+| 叙事 | narrative.yaml | 翻译真源 `battle_map_steps` + `battle_map_cross_cutting` 段 |
 | 颜色标注 | 仅 production/design | 五态（§十） |
 
-**narrative.yaml 退场计划**（Owner 已定：并行观察一段再删）：
-- `trading_flow_narrative.yaml` 现在是 07_ MD 的"故事底稿"（每阶段大白话/ASCII框图/指挥AI提示/横切层四轨共享信号应急降级四模式）。battle_map 上线后这些叙事移交给翻译真源 `battle_map_steps` 段
-- 退场分三步：① 迁移期 narrative 与翻译真源并行存在；② 翻译真源完整覆盖 narrative 全部内容、且生成器只读翻译真源跑通后；③ narrative.yaml 标 deprecated 删除
-- 不立即删（风险大），也不永久并存（两处叙事真源会漂移）
+**narrative.yaml 退场记录**（已完成 2026-08-02）：
+- `trading_flow_narrative.yaml` 原是 07_ MD 的"故事底稿"（每阶段大白话/ASCII框图/指挥AI提示/横切层四轨共享信号应急降级四模式）
+- 退场三步已完成：①迁移期→②4 横切段 YAML→YAML 迁移至 `module_translation_registry.yaml §battle_map_cross_cutting`（four_modes/emergency_degradation/four_tracks/shared_signal_injection）→③narrative.yaml + 旧生成器 + 9 旧 MD + 7 旧 HTML 全部删除
+- 防幻觉铁律：两处叙事真源并行会漂移，故退役彻底删除而非永久并存
 
 ---
 
@@ -588,7 +588,7 @@ battle_map_steps:
 | Q3 | 旧 trading_flow_panorama.md 处置 | 删除重建，battle_map_positioning.md 替代 |
 | Q4 | align_battle_map 门禁强度 | 先君子协定，跑顺再升级硬阻断 |
 | Q5 | 表前缀 / 图名 | 图名 `battlemap`（对标 depgraph/dataflowgraph/decisiongraph），表前缀 `battle_map_*`（对标 `decision_*`），不用 `bm_*` 缩写 |
-| Q6 | narrative.yaml 退场时机 | 并行观察一段，翻译真源完整覆盖后删除 |
+| Q6 | narrative.yaml 退场时机 | ✅ 已完成（2026-08-02 退役删除，4 横切段迁至 `module_translation_registry.yaml §battle_map_cross_cutting`） |
 
 ### 15.2 剩余开放问题（待 Owner 拍板或施工时定）
 

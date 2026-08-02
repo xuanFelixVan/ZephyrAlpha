@@ -362,7 +362,7 @@ invariants:
 
 # === 业务流程阶段定义（07_ 交易决策架构视图组织维度，与 layers/tracks 正交）===
 # flow_stage 字段存储在 decision_nodes 表，用于把零件决策流按"钱怎么赚"的业务流程重新组织。
-# 真源：本 YAML 段（规则数据）→ sync 到 DB CHECK 约束；叙事真源见 trading_flow_narrative.yaml。
+# 真源：本 YAML 段（规则数据）→ sync 到 DB CHECK 约束；叙事真源见 module_translation_registry.yaml §battle_map_steps（2026-08-02 起取代已退役的 trading_flow_narrative.yaml）。
 flow_stages:
   - stage_id: stock_selection
     stage_name: 选股决策流

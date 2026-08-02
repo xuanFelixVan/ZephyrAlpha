@@ -5231,8 +5231,8 @@ items:
   name: test_concurrent_mv_guard.py
   node_type: test
   status: active
-- file: tests/rollback/test_position_reconciler.py
-  name: test_position_reconciler.py
+- file: tests/rollback/test_rollback_position_reconciler.py
+  name: test_rollback_position_reconciler.py
   node_type: test
   status: active
 - file: tests/rollback/test_rollback_abuse_detector.py

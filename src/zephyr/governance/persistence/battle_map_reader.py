@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.persistence.battle_map_reader
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.persistence.battlemap_schema (get_battle_map_pg_connection); zephyr.governance.persistence.pg_wrapper (_PgConnExecuteWrapper)
-# [CONSUMERS] scripts/governance/apply_battle_map.py; scripts/governance/align_battle_map.py; scripts/governance/generate_trading_flow_diagram.py
+# [CONSUMERS] scripts/governance/apply_battle_map.py; scripts/governance/align_battle_map.py; scripts/governance/generate_battle_map_diagram.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只读查询; 参数化防注入; 懒加载连接; 与 depgraph 共享 PG 实例（不同表）; 双向查询是核心
@@ -19,7 +19,7 @@ battle_map_reader.py — 作战地图数据库只读查询工具模块
 [BLUEPRINT] SH-DB-003 | battle_map_positioning.md | §battlemap
 [MODULE] zephyr.governance.persistence.battle_map_reader
 [INVARIANTS] 只读查询; 参数化防注入; 懒加载连接; JSONB 字段自动解析; 双向查询
-[CONSUMERS] apply_battle_map.py; align_battle_map.py; generate_trading_flow_diagram.py
+[CONSUMERS] apply_battle_map.py; align_battle_map.py; generate_battle_map_diagram.py
 [STABILITY] evolving
 [SAFETY] M
 [AI_AUTONOMY] ai_modifiable
@@ -130,7 +130,7 @@ class BattleMapReader:
     def get_steps_by_flow_stage(self, flow_stage: str) -> list[dict[str, Any]]:
         """按 flow_stage（stock_selection/buy_flow/.../reconciliation）查询环节。
 
-        生成器 generate_trading_flow_diagram.py 按阶段生成 07_ 视图用。
+        生成器 generate_battle_map_diagram.py 按阶段生成 07_ battle_map 视图用。
         """
         conn = self._get_conn()
         cursor = conn.execute(

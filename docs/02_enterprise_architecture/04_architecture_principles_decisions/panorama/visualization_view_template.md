@@ -400,7 +400,7 @@ def _wrap_label_text(text: str, max_units: int = 48) -> str:
 label = "<br/>".join(_wrap_label_text(p) for p in parts)
 ```
 
-> **其他生成器注意**（如 `generate_trading_flow_diagram.py` 等）：把上面函数**原样复制**到自己的
+> **其他生成器注意**（如 `generate_battle_map_diagram.py` 等）：把上面函数**原样复制**到自己的
 > 生成器里，节点标签每一行都过 `_wrap_label_text()`。不要自己发明折行逻辑，也不要省略
 > 软断点规则——`multi_strategy_capital_allocato r` 这种英文词拦腰截断就是硬断造成的。
 

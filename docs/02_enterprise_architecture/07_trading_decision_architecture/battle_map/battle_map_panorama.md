@@ -13,7 +13,7 @@ date: 2026-08-02
 
 **环节总数**：44 ｜ **流转边**：48 ｜ **无锚点环节**（BM-INV-001）: 0
 
-**状态分布**：🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=15 ｜ 🟦 运营态（已建）=13
+**状态分布**：🟦 运营态（已建）=23 ｜ 🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=5
 
 ## 颜色标注说明（panorama §九 五态）
 
@@ -29,22 +29,22 @@ date: 2026-08-02
 ```mermaid
 %% 作战地图总指挥图（第 1/2 页）
 flowchart LR
-    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 🟡候选"]:::design
-    BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::design
-    BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::design
+    BM_BUY_01["BM-BUY-01\n多情景对策生成 / Multi-Scenario Countermeasure\n根据明天的8种走法，从策略库里挑出对应的买入对策预案。 🟡候选"]:::production
+    BM_BUY_02["BM-BUY-02\n四轨融合 / Four-Track Fusion (MTF)\n把逻辑驱动、数据驱动、人工指令、应急保命四路信号按优先级融成…"]:::production
+    BM_BUY_03["BM-BUY-03\n决策编排 / Decision Orchestration (DO)\n把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口…"]:::production
     BM_BUY_04["BM-BUY-04\n分批建仓 / Batched Position Building\n不是一次买够，而是分几批买，每批都要重新确认条件还成立，跌破…"]:::design
     BM_BUY_05["BM-BUY-05\n做T日内套利 / Intraday T+0 Arbitrage\nA股T+1约束下的日内套利——每天扫全部持仓，找有日内T+0…"]:::design
     BM_BUY_06["BM-BUY-06\n外部指令盯盘 / External Order Monitoring\n接收用户从微信/前端发来的买卖调仓指令，解析后走风控检查→执…"]:::production
     BM_EXE_01["BM-EXE-01\n自适应风控审批 / Adaptive Risk Approval\n下单前的最后一道闸——风控审批，审不过的订单直接拦下，是订单… 🟡候选"]:::production
-    BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。 🟡候选"]:::design
+    BM_EXE_02["BM-EXE-02\n交易执行 / Trade Execution\n审过的订单真正发出去下单，拿回成交回报和盈亏数据。 🟡候选"]:::production
     BM_EXE_03["BM-EXE-03\n执行质量TCA / Execution Quality TCA\n每笔成交后做'成本尸检'——把决策时刻到最终成交的总成本拆成…"]:::production
-    BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决… 🟡候选"]:::design
-    BM_POS_02["BM-POS-02\n标级仓位Kelly / Per-Symbol Kelly Sizing\n每只票该买多少——用Kelly公式算理论仓位，半Kelly硬…"]:::design
+    BM_POS_01["BM-POS-01\n仓位管理裁决 / Position Adjudication\n所有买卖决策都到这里统一算最终仓位——这是仓位决策的唯一裁决… 🟡候选"]:::production
+    BM_POS_02["BM-POS-02\n标级仓位Kelly / Per-Symbol Kelly Sizing\n每只票该买多少——用Kelly公式算理论仓位，半Kelly硬…"]:::production
     BM_POS_03["BM-POS-03\n持仓状态机漂移 / Position State Machine & Drift\n每只票有自己的状态(NONE→BUILDING→ACTIVE…"]:::production
     BM_POS_04["BM-POS-04\n跨策略仓位硬限制 / Cross-Strategy Position Hard Limit\n多策略同标的仓位合并取sum不超上限，新策略上线仓位砍到正常…"]:::production
     BM_POS_05["BM-POS-05\n资金曲线回撤缩放 / Capital Curve Drawdown Scaling\n系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢加仓(每…"]:::production
-    BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::design
-    BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::design
+    BM_REC_01["BM-REC-01\n交易运营清算 / Trade Ops & Settlement\n把成交回报拿去清算、算费率、处理公司行为，变成运营数据。"]:::production
+    BM_REC_02["BM-REC-02\n报告复盘 / Reporting & Review\n把运营数据做成复盘报告，看今天打得怎么样。"]:::production
     BM_REC_03["BM-REC-03\n闭环优化反馈 / Closed-Loop Optimization Feedback\n复盘完把教训反馈回每一层——因子衰减就换、信号不准就退、模型… 🟡候选"]:::production
     BM_SELL_01["BM-SELL-01\n突破成败信号 / Breakout Success/Failure Signal\n判断股价冲压力位是冲上去了还是冲不动——冲上去留着，冲不动止…"]:::production
     BM_SELL_02["BM-SELL-02\n卖出信号融合仲裁 / Sell Signal Fusion Arbitration\n把所有卖出信号（含突破成败）汇总仲裁，强制清仓永远最高优先级…"]:::production
@@ -52,7 +52,7 @@ flowchart LR
     BM_SELL_04["BM-SELL-04\n止盈止损族 / Take-Profit & Stop-Loss Strategy Family\n卖出端的'策略工厂'——根据策略类型用不同的止盈止损范式(趋…"]:::design
     BM_SELL_05["BM-SELL-05\n置换再平衡卖出 / Replacement & Rebalance Sell\n机会成本驱动+权重偏离驱动的被动卖出——候选池有更优标的就卖…"]:::production
     BM_SELL_06["BM-SELL-06\n买卖冲突仲裁 / Buy-Sell Conflict Arbitration\n同一只票同时有买入和卖出信号时怎么办——卖出优先(保守原则)…"]:::production
-    BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，… 🟡候选"]:::design
+    BM_SEL_01["BM-SEL-01\n数据接入与预处理 / Data Ingestion & Preprocessing\n把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，… 🟡候选"]:::production
     BM_SEL_02["BM-SEL-02\n因子计算与信号生成 / Factor Compute & Signal Gen\n把洗干净的行情算成各种因子，再用因子工厂管起来，盘前算全量、… 🟡候选"]:::production
     BM_SEL_03["BM-SEL-03\n市场状态感知 / Market State Sensing\n判断现在市场是什么脾气——趋势/波动/量能三维打分，再叠加体… 🟡候选"]:::design
     BM_SEL_04["BM-SEL-04\n次日8态走势预测 / Next-Day 8-State Forecast\n预测明天大盘和个股会走成哪种样子，8 种走势各占多少概率——… 🟡候选"]:::design
@@ -124,7 +124,7 @@ flowchart LR
     BM_SEL_18["BM-SEL-18\n精筛评分 / Fine Scoring\n漏斗第三层——60秒级从300只评到50只，多维因子打分+市… 🟡候选"]:::candidate
     BM_SEL_19["BM-SEL-19\n事件驱动分布筛选 / Event-Driven Distribution Screening\n漏斗第四层——从50只筛到30只，看事件影响、事件修正后的概… 🟡候选"]:::candidate
     BM_SEL_20["BM-SEL-20\n多策略交叉投票 / Multi-Strategy Cross Voting\n漏斗第五层——多策略对每只票投YES/NO，加上主力合力和市… 🟡候选"]:::candidate
-    BM_SEL_21["BM-SEL-21\n组合优化 / Portfolio Optimization\n漏斗第六层——从30只里算出最终N≤10只下单清单和每只权重… 🟡候选"]:::design
+    BM_SEL_21["BM-SEL-21\n组合优化 / Portfolio Optimization\n漏斗第六层——从30只里算出最终N≤10只下单清单和每只权重… 🟡候选"]:::production
     BM_SEL_16 --- |漏斗L1→L2(~1200只)| BM_SEL_17
     BM_SEL_17 --- |漏斗L2→L3(~300只)| BM_SEL_18
     BM_SEL_18 --- |漏斗L3→L4(~50只)| BM_SEL_19
@@ -178,11 +178,11 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | planned | planned |
-| depgraph | MOD-L05-001 | supplement | stable | stable |
+| depgraph | MOD-PF-002 | primary | planned | generated |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02 四轨融合 / Four-Track Fusion (MTF)
 
@@ -213,9 +213,9 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | planned | planned |
+| depgraph | MOD-PF-006 | primary | planned | stable |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-03 决策编排 / Decision Orchestration (DO)
 
@@ -246,9 +246,9 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-007 | primary | planned | planned |
+| depgraph | MOD-PF-007 | primary | planned | stable |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-04 分批建仓 / Batched Position Building
 
@@ -429,13 +429,13 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-XS-002 | primary | planned | planned |
+| depgraph | MOD-XS-002 | primary | planned | generated |
 | depgraph | MOD-EX-030 | supplement | planned | planned |
 | candidate | CAND-HARVEST-0021 | supplement | candidate | — |
 | candidate | CAND-EX-001 | supplement | deferred | — |
 | candidate | CAND-EX-002 | supplement | deferred | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
 ### BM-EXE-03 执行质量TCA / Execution Quality TCA
 
@@ -507,10 +507,10 @@ L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | planned | planned |
+| depgraph | MOD-POS-001 | primary | planned | generated |
 | candidate | CAND-HARVEST-0019 | supplement | candidate | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
 ### BM-POS-02 标级仓位Kelly / Per-Symbol Kelly Sizing
 
@@ -550,9 +550,9 @@ Kelly仓位与原优化仓位取较小值(防御性原则: Kelly只减不增)。
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | planned | planned |
+| depgraph | MOD-POS-001 | primary | planned | generated |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
 ### BM-POS-03 持仓状态机漂移 / Position State Machine & Drift
 
@@ -669,7 +669,7 @@ C-032异常模式检测：识别资金曲线的结构性恶化(非随机下行�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-POS-007 | primary | stable | stable |
-| depgraph | MOD-POS-008 | supplement | planned | planned |
+| depgraph | MOD-POS-008 | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -702,10 +702,10 @@ L5/运营层。C-017 交易运营：清算/费率/公司行为。是闭环反馈
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-003 | primary | planned | planned |
-| depgraph | MOD-RPT-027 | supplement | planned | planned |
+| depgraph | MOD-TRADING-003 | primary | planned | generated |
+| depgraph | MOD-RPT-027 | supplement | planned | generated |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-02 报告复盘 / Reporting & Review
 
@@ -736,10 +736,10 @@ L5 层。C-010 报告复盘：把运营数据加工成复盘报告，作为闭�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-026 | primary | planned | planned |
+| depgraph | MOD-RPT-026 | primary | planned | generated |
 | depgraph | MOD-RPT-015 | supplement | planned | planned |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-03 闭环优化反馈 / Closed-Loop Optimization Feedback
 
@@ -959,7 +959,7 @@ v6.0分批退出模式(Scaling Out Architecture)：等分退出(1/3-1/3-1/3)/倒
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-SELL-006 | primary | planned | stable |
-| depgraph | MOD-POS-004 | supplement | planned | planned |
+| depgraph | MOD-POS-004 | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
 
@@ -1040,12 +1040,12 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-003 | primary | planned | planned |
+| depgraph | MOD-MKT-003 | primary | planned | generated |
 | depgraph | MOD-INF-002 | supplement | production | generated |
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
 ### BM-SEL-02 因子计算与信号生成 / Factor Compute & Signal Gen
 
@@ -1076,7 +1076,7 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | stable |
+| depgraph | MOD-L02-001 | primary | production | generated |
 | candidate | CAND-SIG-002 | supplement | deferred | — |
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
@@ -1710,7 +1710,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | planned | planned |
+| depgraph | MOD-PF-002 | primary | planned | generated |
 | candidate | CAND-PFALLOC-001 | supplement | deferred | — |
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection

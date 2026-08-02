@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.persistence.battlemap_schema
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); psycopg2
-# [CONSUMERS] apply_battle_map.py; battle_map_reader.py; align_battle_map.py; generate_trading_flow_diagram.py
+# [CONSUMERS] apply_battle_map.py; battle_map_reader.py; align_battle_map.py; generate_battle_map_diagram.py
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] battlemap shares PostgreSQL connection with depgraph (same DB, different tables); init_db must be idempotent; BM-INV-001~004
@@ -226,7 +226,7 @@ _DDL_INDEXES = [
 #         apply_battle_map.py 写入时查 target_graph 验证 target_id 存在。
 #
 # BM-INV-003: 环节叙事必须来自翻译真源 battle_map_steps 段
-#   约束位置: 应用层（generate_trading_flow_diagram.py 只读翻译真源，禁止硬编码）
+#   约束位置: 应用层（generate_battle_map_diagram.py 只读翻译真源，禁止硬编码）
 #   约束类型: 应用层规约（君子协定）
 #   说明: 叙事真源是 module_translation_registry.yaml 的 battle_map_steps 段，
 #         生成器禁止在代码里硬编码环节叙事。
