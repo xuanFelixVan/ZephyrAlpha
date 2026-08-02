@@ -10,7 +10,7 @@ ttl: permanent
 
 # Decision Flow · L2A Functional Domain research（研究）
 
-> 生成时间: 2026-08-01T22:22:08
+> 生成时间: 2026-08-01T22:45:17
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → research
@@ -47,28 +47,28 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 → 事件总…<br/>文件: MOD-MKT_DATA"]
-    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：fa…<br/>文件: MOD-L02-001"]
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    N204["(设计态 / design) 4级风控决策 / APPROVE/REDUCE<br/>/REJECT/FLATTEN<br/>信号节点·4级风控决策<br/>文件: decision/research/rs_01"]
+    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 →<br/>事件总线 → 分层时序存储 产出：tick_data / ohlc_<br/>bar / factor_input_data<br/>文件: MOD-MKT_DATA"]
+    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：factor_value<br/>（带 PIT 合规标记）<br/>文件: MOD-L02-001"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    N204["(设计态 / design) 4级风控决策 / APPROVE/REDUCE<br/>/REJECT/FLATTEN<br/>把风控结果分为批准减仓拒绝清仓四级输出，统一风控<br/>决策粒度<br/>文件: decision/research/rs_01"]
     LL2A --- N204
-    N205["(设计态 / design) 3阶段决策门控 / IS→WFA→OOS<br/>3-Stage Decision Gate<br/>信号节点·3阶段决策门控<br/>文件: decision/research/rs_02"]
+    N205["(设计态 / design) 3阶段决策门控 / IS→WFA→OOS<br/>3-Stage Decision Gate<br/>按样本内到样本外三阶段门控策略验证，防止过拟合上<br/>线<br/>文件: decision/research/rs_02"]
     LL2A --- N205
-    N206["(设计态 / design) Decision Audit Trail R-102<br/>Decision Audit Trail / Decision Audit Trail<br/>R-102 Decision Audit Trail<br/>信号节点·Decision Audit Trail R-102 Decision<br/>Audit Trail<br/>文件: decision/research/rs_03"]
+    N206["(设计态 / design) Decision Audit Trail R-102<br/>Decision Audit Trail<br/>完整记录每个决策的输入输出和依据，支持事后审计追<br/>溯<br/>文件: decision/research/rs_03"]
     LL2A --- N206
-    N211["(设计态 / design) 策略可解释性报告器 / Strategy<br/>Explainability Reporter<br/>信号节点·策略可解释性报告器<br/>文件: decision/research/rs_04"]
+    N211["(设计态 / design) 策略可解释性报告器 / Strategy<br/>Explainability Reporter<br/>生成策略决策的可解释报告，让非技术人员理解策略为<br/>何这样决策<br/>文件: decision/research/rs_04"]
     LL2A --- N211
-    N212["(设计态 / design) A股绩效审计与优化触发器 /<br/>A-Share Performance Audit<br/>信号节点·A股绩效审计与优化触发器<br/>文件: decision/research/rs_05"]
+    N212["(设计态 / design) A股绩效审计与优化触发器 /<br/>A-Share Performance Audit<br/>审计A股交易绩效并触发优化流程，持续改进A股策略<br/>文件: decision/research/rs_05"]
     LL2A --- N212
-    N213["(设计态 / design) 异常决策自检 / Anomaly<br/>Decision Self-Check<br/>信号节点·异常决策自检<br/>文件: decision/research/rs_06"]
+    N213["(设计态 / design) 异常决策自检 / Anomaly<br/>Decision Self-Check<br/>检测异常决策模式并自检报警，防止系统产生不可解释<br/>的异常交易<br/>文件: decision/research/rs_06"]
     LL2A --- N213
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfo…<br/>文件: MOD-L05-001"]
-    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 + …<br/>文件: MOD-L04-001"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfolio_target<br/>（PortfolioTarget: 目标仓位）<br/>文件: MOD-L05-001"]
+    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 +<br/>止损评估 产出：risk_check（RiskDecision:<br/>approve/veto/adjust）<br/>文件: MOD-L04-001"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL0 -->|triggering / 触发| LL1
     LL1 -.->|triggering / 触发| LL2A
     LL2A -.->|triggering / 触发| LL2B
@@ -106,24 +106,24 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    N204["(设计态 / design) 4级风控决策 / APPROVE/REDUCE<br/>/REJECT/FLATTEN<br/>信号节点·4级风控决策<br/>文件: decision/research/rs_01"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    N204["(设计态 / design) 4级风控决策 / APPROVE/REDUCE<br/>/REJECT/FLATTEN<br/>把风控结果分为批准减仓拒绝清仓四级输出，统一风控<br/>决策粒度<br/>文件: decision/research/rs_01"]
     LL2A --- N204
-    N205["(设计态 / design) 3阶段决策门控 / IS→WFA→OOS<br/>3-Stage Decision Gate<br/>信号节点·3阶段决策门控<br/>文件: decision/research/rs_02"]
+    N205["(设计态 / design) 3阶段决策门控 / IS→WFA→OOS<br/>3-Stage Decision Gate<br/>按样本内到样本外三阶段门控策略验证，防止过拟合上<br/>线<br/>文件: decision/research/rs_02"]
     LL2A --- N205
-    N206["(设计态 / design) Decision Audit Trail R-102<br/>Decision Audit Trail / Decision Audit Trail<br/>R-102 Decision Audit Trail<br/>信号节点·Decision Audit Trail R-102 Decision<br/>Audit Trail<br/>文件: decision/research/rs_03"]
+    N206["(设计态 / design) Decision Audit Trail R-102<br/>Decision Audit Trail<br/>完整记录每个决策的输入输出和依据，支持事后审计追<br/>溯<br/>文件: decision/research/rs_03"]
     LL2A --- N206
-    N211["(设计态 / design) 策略可解释性报告器 / Strategy<br/>Explainability Reporter<br/>信号节点·策略可解释性报告器<br/>文件: decision/research/rs_04"]
+    N211["(设计态 / design) 策略可解释性报告器 / Strategy<br/>Explainability Reporter<br/>生成策略决策的可解释报告，让非技术人员理解策略为<br/>何这样决策<br/>文件: decision/research/rs_04"]
     LL2A --- N211
-    N212["(设计态 / design) A股绩效审计与优化触发器 /<br/>A-Share Performance Audit<br/>信号节点·A股绩效审计与优化触发器<br/>文件: decision/research/rs_05"]
+    N212["(设计态 / design) A股绩效审计与优化触发器 /<br/>A-Share Performance Audit<br/>审计A股交易绩效并触发优化流程，持续改进A股策略<br/>文件: decision/research/rs_05"]
     LL2A --- N212
-    N213["(设计态 / design) 异常决策自检 / Anomaly<br/>Decision Self-Check<br/>信号节点·异常决策自检<br/>文件: decision/research/rs_06"]
+    N213["(设计态 / design) 异常决策自检 / Anomaly<br/>Decision Self-Check<br/>检测异常决策模式并自检报警，防止系统产生不可解释<br/>的异常交易<br/>文件: decision/research/rs_06"]
     LL2A --- N213
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL2A -.->|triggering / 触发| LL2B
     LL2B -.->|triggering / 触发| LL2C
     LL2C -.->|triggering / 触发| LL2D

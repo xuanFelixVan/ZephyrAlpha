@@ -5381,6 +5381,20 @@ capabilities:
       check_yaml_anchor_consistency 匹配 alias）。B_yaml 6 字段格式真源 trae_047。
       解决防重建：新 AI 搜 "yaml anchor/锚定块/B_yaml 一致性" 可定位真源，不另造扫描器。
 
+  # --------------------------------------------------------------------------
+  - capability_id: decision_node_plain_zh_backfill
+    aliases:
+      - PLAIN_ZH_DRAFTS
+      - backfill_plain_zh
+    description: >-
+      决策节点 plain_zh 大白话一次性幂等回填脚本（V1.3 §4.11 治本，2026-08-02）。
+      将 213 条三问法（是什么/干什么/解决什么问题）草稿经 apply_decisiongraph.
+      op_update_node_field 读-改-写合并写入 decision_nodes.facets.plain_zh（JSONB，
+      保留已有 facets 键，幂等可重跑）。canonical = scripts/governance/
+      decision_node_plain_zh_backfill.py（auto 派生：basename 匹配 capability_id）。
+      解决发现性：新 AI 搜 "plain_zh 回填/decision_node_plain_zh" 可定位脚本与 213 条草稿。
+      解决防重建：DB plain_zh 丢失时重跑可恢复，无需重写草稿。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -5433,6 +5447,12 @@ creation_tokens:
     token: "auto-translation-coverage-reconciler-20260802"
     created_by: "session-translation-coverage-gate"
     capability: "translation_coverage_reconciler"
+
+  # --- 决策节点 plain_zh 回填脚本（2026-08-02，V1.3 §4.11 治本）---
+  - file: "scripts/governance/decision_node_plain_zh_backfill.py"
+    token: "auto-decision-node-plain-zh-backfill-20260802"
+    created_by: "session-decision-viz-v13-upgrade"
+    capability: "decision_node_plain_zh_backfill"
 
   # --- 卖出决策域信号管道（2026-08-02，SELL-001/007 补登记 creation_tokens）---
   - file: "src/zephyr/sell_decision/core/sell_signal_collector.py"

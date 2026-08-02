@@ -10,7 +10,7 @@ ttl: permanent
 
 # Decision Flow · L3 Functional Domain ex_core（执行核心）
 
-> 生成时间: 2026-08-01T22:22:08
+> 生成时间: 2026-08-01T22:45:17
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_core
@@ -47,46 +47,46 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 → 事件总…<br/>文件: MOD-MKT_DATA"]
-    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：fa…<br/>文件: MOD-L02-001"]
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfo…<br/>文件: MOD-L05-001"]
-    N59["(设计态 / design) 50ms SLA Fail-Closed 50ms SLA<br/>Fail-Closed / 50ms SLA Fail-Closed 50ms SLA<br/>Fail-Closed<br/>订单节点·50ms SLA Fail-Closed 50ms SLA<br/>Fail-Closed<br/>文件: decision/ex_core/ex_03"]
+    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 →<br/>事件总线 → 分层时序存储 产出：tick_data / ohlc_<br/>bar / factor_input_data<br/>文件: MOD-MKT_DATA"]
+    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：factor_value<br/>（带 PIT 合规标记）<br/>文件: MOD-L02-001"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfolio_target<br/>（PortfolioTarget: 目标仓位）<br/>文件: MOD-L05-001"]
+    N59["(设计态 / design) 50ms SLA Fail-Closed 50ms SLA<br/>Fail-Closed<br/>执行链路50毫秒超时即失败关闭，保证执行延迟可控不<br/>堆积<br/>文件: decision/ex_core/ex_03"]
     LL3 --- N59
-    N60["(设计态 / design) Saga编排式事务 / Saga<br/>Orchestrated Transaction<br/>订单节点·Saga编排式事务<br/>文件: decision/ex_core/ex_04"]
+    N60["(设计态 / design) Saga编排式事务 / Saga<br/>Orchestrated Transaction<br/>用 Saga 模式编排分布式交易事务，保证跨服务最终一<br/>致性<br/>文件: decision/ex_core/ex_04"]
     LL3 --- N60
-    N61["(设计态 / design) 风控检查 / Risk Check<br/>订单节点·风控检查<br/>文件: decision/ex_core/ex_05"]
+    N61["(设计态 / design) 风控检查 / Risk Check<br/>下单前的风控校验环节，拦截不合格订单<br/>文件: decision/ex_core/ex_05"]
     LL3 --- N61
-    N62["(设计态 / design) 信号确认 / Signal Confirmation<br/>订单节点·信号确认<br/>文件: decision/ex_core/ex_06"]
+    N62["(设计态 / design) 信号确认 / Signal Confirmation<br/>下单前最后确认信号有效性，防止过期或错误信号成交<br/>文件: decision/ex_core/ex_06"]
     LL3 --- N62
-    N63["(设计态 / design) 下单提交 / Order Submit<br/>订单节点·下单提交<br/>文件: decision/ex_core/ex_07"]
+    N63["(设计态 / design) 下单提交 / Order Submit<br/>向券商接口提交订单指令，完成实际下单动作<br/>文件: decision/ex_core/ex_07"]
     LL3 --- N63
-    N64["(设计态 / design) 成交确认 / Fill Confirmation<br/>订单节点·成交确认<br/>文件: decision/ex_core/ex_08"]
+    N64["(设计态 / design) 成交确认 / Fill Confirmation<br/>接收券商回报确认成交结果，更新订单状态<br/>文件: decision/ex_core/ex_08"]
     LL3 --- N64
-    N65["(设计态 / design) 持仓更新 / Position Update<br/>订单节点·持仓更新<br/>文件: decision/ex_core/ex_09"]
+    N65["(设计态 / design) 持仓更新 / Position Update<br/>成交后更新持仓记录，保证持仓数据实时准确<br/>文件: decision/ex_core/ex_09"]
     LL3 --- N65
-    N66["(设计态 / design) 报告生成 / Report Generation<br/>订单节点·报告生成<br/>文件: decision/ex_core/ex_10"]
+    N66["(设计态 / design) 报告生成 / Report Generation<br/>生成交易执行报告供审计和分析，记录交易全流程<br/>文件: decision/ex_core/ex_10"]
     LL3 --- N66
-    N71["(设计态 / design) 流动性螺旋3阶段 / Liquidity<br/>Spiral 3-Phase<br/>订单节点·流动性螺旋3阶段<br/>文件: decision/ex_core/ex_15"]
+    N71["(设计态 / design) 流动性螺旋3阶段 / Liquidity<br/>Spiral 3-Phase<br/>识别流动性螺旋的三个阶段并应对，防止流动性枯竭时<br/>踩踏<br/>文件: decision/ex_core/ex_15"]
     LL3 --- N71
-    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 + …<br/>文件: MOD-L04-001"]
-    N57["(设计态 / design) Pre-Trade主链6项检查 /<br/>Pre-Trade Main Chain 6 Checks<br/>合规检查节点·Pre-Trade主链6项检查<br/>文件: decision/ex_core/ex_01"]
+    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 +<br/>止损评估 产出：risk_check（RiskDecision:<br/>approve/veto/adjust）<br/>文件: MOD-L04-001"]
+    N57["(设计态 / design) Pre-Trade主链6项检查 /<br/>Pre-Trade Main Chain 6 Checks<br/>下单前主链路六项必检项目的合规检查，拦截不合规订<br/>单<br/>文件: decision/ex_core/ex_01"]
     LL4 --- N57
-    N58["(设计态 / design) Kill Switch 5层防御 / Kill<br/>Switch 5-Layer Defense<br/>风控检查节点·Kill Switch 5层防御<br/>文件: decision/ex_core/ex_02"]
+    N58["(设计态 / design) Kill Switch 5层防御 / Kill<br/>Switch 5-Layer Defense<br/>五层防御的急停开关体系，多层级保障紧急停止能力<br/>文件: decision/ex_core/ex_02"]
     LL4 --- N58
-    N67["(设计态 / design) Kill Switch AI自动激活 / Kill<br/>Switch AI Auto Trigger<br/>风控检查节点·Kill Switch AI自动激活<br/>文件: decision/ex_core/ex_11"]
+    N67["(设计态 / design) Kill Switch AI自动激活 / Kill<br/>Switch AI Auto Trigger<br/>AI 检测到异常时自动激活急停开关，比人工更快响应<br/>危机<br/>文件: decision/ex_core/ex_11"]
     LL4 --- N67
-    N68["(设计态 / design) Kill Switch人工激活 / Kill<br/>Switch Manual Trigger<br/>风控检查节点·Kill Switch人工激活<br/>文件: decision/ex_core/ex_12"]
+    N68["(设计态 / design) Kill Switch人工激活 / Kill<br/>Switch Manual Trigger<br/>人工一键激活急停开关，作为自动激活的兜底手段<br/>文件: decision/ex_core/ex_12"]
     LL4 --- N68
-    N69["(设计态 / design) Kill Switch定时激活 / Kill<br/>Switch Timer Trigger<br/>风控检查节点·Kill Switch定时激活<br/>文件: decision/ex_core/ex_13"]
+    N69["(设计态 / design) Kill Switch定时激活 / Kill<br/>Switch Timer Trigger<br/>按预设时间自动激活急停开关，如收盘前强制平仓<br/>文件: decision/ex_core/ex_13"]
     LL4 --- N69
-    N70["(设计态 / design) Kill Switch外部信号激活 /<br/>Kill Switch External Signal<br/>风控检查节点·Kill Switch外部信号激活<br/>文件: decision/ex_core/ex_14"]
+    N70["(设计态 / design) Kill Switch外部信号激活 /<br/>Kill Switch External Signal<br/>外部系统信号触发急停开关，支持跨系统联动急停<br/>文件: decision/ex_core/ex_14"]
     LL4 --- N70
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL0 -->|triggering / 触发| LL1
     LL1 -.->|triggering / 触发| LL2A
     LL2A -.->|triggering / 触发| LL2B
@@ -132,12 +132,12 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL2A -.->|triggering / 触发| LL2B
     LL2B -.->|triggering / 触发| LL2C
     LL2C -.->|triggering / 触发| LL2D

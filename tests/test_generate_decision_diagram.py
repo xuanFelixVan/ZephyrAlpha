@@ -1086,30 +1086,80 @@ class TestGenInvariantsFileMd:
         assert "图例说明" in md
 
 
-# ---------- 模板 V1.2 合规测试（四要素/三视图/frontmatter/HTML链接/图例） ----------
+# ---------- 模板 V1.3 合规测试（四要素/三视图/frontmatter/HTML链接/图例/plain_zh 真源/不截断） ----------
 
-class TestTemplateV12Compliance:
-    """可视化模板 V1.2 合规测试。
+class TestTemplateV13Compliance:
+    """可视化模板 V1.3 合规测试。
 
     覆盖 §9.1 强制规则：MD+HTML 双产物、frontmatter、HTML 链接、灰色主题头、四要素、
     预折行、classDef 四色、箭头规范、三视图铁律、图例说明。
+
+    V1.3 治本增量（§4.11）：③大白话真源=decision_nodes.facets.plain_zh，禁止
+    ``{type_zh}·{name_zh}`` 模板话占位；§4.10 Layer desc 不截断；§4.3 双语名去重。
     """
 
     def test_node_label_4el_has_four_elements(self):
-        """_node_label_4el 输出含 ①成熟度 ②双语名 ③大白话 ④文件路径。§4.3。"""
+        """_node_label_4el 输出含 ①成熟度 ②双语名 ③大白话 ④文件路径。§4.3。
+
+        V1.3：③大白话取 facets.plain_zh；无 facets 时诚实占位（非 {type_zh}·{name_zh}）。
+        """
         n = {"maturity": "design", "name": "止盈信号", "name_en": "Take-Profit Signal",
-             "type": "sell_decision", "path": "decision/sell/sell_01"}
+             "type": "sell_decision", "path": "decision/sell/sell_01",
+             "facets": {"plain_zh": "持仓达到盈利目标时卖出锁定收益"}}
         label = _mod.node_label_4el(n)
         # ① 成熟度
         assert "设计" in label and "design" in label
         # ② 双语名（_split_zh_en 从合并名剥离英文 → 纯中文 / 纯英文）
         assert "止盈信号" in label
         assert "Take-Profit Signal" in label
-        # ③ 大白话 = node_type中文 · decision_name中文
-        assert "·" in label
+        # ③ 大白话 = facets.plain_zh 真源（V1.3 §4.11，禁止 {type_zh}·{name_zh} 占位）
+        assert "持仓达到盈利目标时卖出锁定收益" in label
+        assert "·" not in label  # 不再使用 type_zh·name_zh 占位
         # ④ 文件路径
         assert "文件:" in label
         assert "decision/sell/sell_01" in label
+
+    def test_node_label_4el_pending_placeholder_when_no_facets(self):
+        """无 facets.plain_zh 时显示诚实占位，不用 {type_zh}·{name_zh} 模板话。§4.11。"""
+        n = {"maturity": "design", "name": "某节点", "name_en": "Some Node",
+             "type": "signal", "path": "decision/x/y"}  # 无 facets 键
+        label = _mod.node_label_4el(n)
+        assert "大白话待补" in label
+        assert "plain_zh pending" in label
+        # 禁止回退到 type_zh·name_zh 占位
+        assert "·" not in label
+
+    def test_node_label_4el_pending_placeholder_when_facets_empty(self):
+        """facets 为空 dict 时也显示诚实占位（非崩溃、非模板话）。§4.11。"""
+        n = {"maturity": "design", "name": "某节点", "name_en": "Some Node",
+             "type": "signal", "path": "p", "facets": {}}
+        label = _mod.node_label_4el(n)
+        assert "大白话待补" in label
+
+    def test_split_zh_en_dedup_when_name_equals_name_en(self):
+        """name == name_en 时仅返回单名，避免标签显示"同名 / 同名"重复。§4.3 V1.3。"""
+        zh, en = _mod.split_zh_en("Synthesizer 信号合成+权重分配",
+                                  "Synthesizer 信号合成+权重分配")
+        assert en == ""  # 英文不重复输出
+        assert zh == "Synthesizer 信号合成+权重分配"
+
+    def test_split_zh_en_normal_still_strips_english_suffix(self):
+        """name='止盈信号 Take-Profit Signal' + name_en='Take-Profit Signal' → 剥离英文。"""
+        zh, en = _mod.split_zh_en("止盈信号 Take-Profit Signal", "Take-Profit Signal")
+        assert zh == "止盈信号"
+        assert en == "Take-Profit Signal"
+
+    def test_layer_label_4el_no_truncation(self):
+        """_layer_label_4el 不截断 desc（V1.3 §4.10 治本：预折行已处理长度）。"""
+        long_desc = "这是一个非常非常长的层级描述用于测试不再截断的治本修复是否生效" * 3
+        l = {"id": "L2A", "name": "信号层", "name_en": "Signal", "maturity": "design",
+             "desc": long_desc, "module_id": "MOD-SIG-001", "source_code_ref": ""}
+        label = _mod.layer_label_4el(l)
+        # 不应有省略号（_truncate 会加 …，V1.3 已移除）
+        assert "…" not in label
+        # 完整 desc 内容应存在（去掉 <br/> 后比对）
+        label_no_br = label.replace("<br/>", "")
+        assert long_desc in label_no_br
 
     def test_node_label_4el_wraps_long_text(self):
         """_node_label_4el 对长文本预折行（<br/> 显式断行，§4.10 铁律）。"""

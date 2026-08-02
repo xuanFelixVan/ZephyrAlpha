@@ -10,7 +10,7 @@ ttl: permanent
 
 # Decision Flow · L2A Functional Domain simulation（仿真）
 
-> 生成时间: 2026-08-01T22:22:08
+> 生成时间: 2026-08-01T22:45:17
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → simulation
@@ -47,46 +47,46 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 → 事件总…<br/>文件: MOD-MKT_DATA"]
-    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：fa…<br/>文件: MOD-L02-001"]
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    N141["(设计态 / design) 市场仿真器 / Market Simulator<br/>信号节点·市场仿真器<br/>文件: decision/simulation/sim_01"]
+    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 →<br/>事件总线 → 分层时序存储 产出：tick_data / ohlc_<br/>bar / factor_input_data<br/>文件: MOD-MKT_DATA"]
+    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：factor_value<br/>（带 PIT 合规标记）<br/>文件: MOD-L02-001"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    N141["(设计态 / design) 市场仿真器 / Market Simulator<br/>模拟市场行情数据生成合成数据流，为策略验证提供可<br/>控的测试环境<br/>文件: decision/simulation/sim_01"]
     LL2A --- N141
-    N142["(设计态 / design) 策略仿真器 / Strategy<br/>Simulator<br/>信号节点·策略仿真器<br/>文件: decision/simulation/sim_02"]
+    N142["(设计态 / design) 策略仿真器 / Strategy<br/>Simulator<br/>在仿真市场中运行策略逻辑并记录决策轨迹，离线评估<br/>策略表现<br/>文件: decision/simulation/sim_02"]
     LL2A --- N142
-    N143["(设计态 / design) 风控仿真器 / Risk Simulator<br/>信号节点·风控仿真器<br/>文件: decision/simulation/sim_03"]
+    N143["(设计态 / design) 风控仿真器 / Risk Simulator<br/>模拟风控规则在极端行情下的触发行为，验证风控参数<br/>有效性<br/>文件: decision/simulation/sim_03"]
     LL2A --- N143
-    N144["(设计态 / design) 压力测试引擎 / Stress Test<br/>Engine<br/>信号节点·压力测试引擎<br/>文件: decision/simulation/sim_04"]
+    N144["(设计态 / design) 压力测试引擎 / Stress Test<br/>Engine<br/>对组合施加极端场景冲击测试生存能力，找出崩盘前的<br/>脆弱点<br/>文件: decision/simulation/sim_04"]
     LL2A --- N144
-    N145["(设计态 / design) 场景生成器 / Scenario<br/>Generator<br/>信号节点·场景生成器<br/>文件: decision/simulation/sim_05"]
+    N145["(设计态 / design) 场景生成器 / Scenario<br/>Generator<br/>构造历史重放和假设性极端市场场景，为仿真提供多样<br/>化输入<br/>文件: decision/simulation/sim_05"]
     LL2A --- N145
-    N146["(设计态 / design) 历史重放引擎 / History Replay<br/>Engine<br/>信号节点·历史重放引擎<br/>文件: decision/simulation/sim_07"]
+    N146["(设计态 / design) 历史重放引擎 / History Replay<br/>Engine<br/>按时间顺序回放历史行情数据重现过去交易日，支持策<br/>略复盘<br/>文件: decision/simulation/sim_07"]
     LL2A --- N146
-    N147["(设计态 / design) 极端事件仿真 / Extreme Event<br/>Simulator<br/>信号节点·极端事件仿真<br/>文件: decision/simulation/sim_10"]
+    N147["(设计态 / design) 极端事件仿真 / Extreme Event<br/>Simulator<br/>模拟熔断闪崩等极端行情检验系统韧性，确保黑天鹅下<br/>不失控<br/>文件: decision/simulation/sim_10"]
     LL2A --- N147
-    N148["(设计态 / design) 依赖图数字孪生 / Dependency<br/>Graph Digital Twin<br/>信号节点·依赖图数字孪生<br/>文件: decision/simulation/sim_13"]
+    N148["(设计态 / design) 依赖图数字孪生 / Dependency<br/>Graph Digital Twin<br/>构建依赖图的数字镜像用于仿真推演，预测架构变更的<br/>连锁影响<br/>文件: decision/simulation/sim_13"]
     LL2A --- N148
-    N149["(设计态 / design) 混沌实验自动生成 / Chaos<br/>Experiment Auto-Generator<br/>信号节点·混沌实验自动生成<br/>文件: decision/simulation/sim_15"]
+    N149["(设计态 / design) 混沌实验自动生成 / Chaos<br/>Experiment Auto-Generator<br/>自动注入故障和延迟测试系统容错能力，发现隐藏的单<br/>点故障<br/>文件: decision/simulation/sim_15"]
     LL2A --- N149
-    N150["(设计态 / design) 回测过拟合检测器 / Backtest<br/>Overfitting Detector<br/>信号节点·回测过拟合检测器<br/>文件: decision/simulation/sim_18"]
+    N150["(设计态 / design) 回测过拟合检测器 / Backtest<br/>Overfitting Detector<br/>检测策略回测是否过度拟合历史数据，防止上线后实盘<br/>失效<br/>文件: decision/simulation/sim_18"]
     LL2A --- N150
-    N151["(设计态 / design) Walk-Forward分析器 /<br/>Walk-Forward Analyzer<br/>信号节点·Walk-Forward分析器<br/>文件: decision/simulation/sim_19"]
+    N151["(设计态 / design) Walk-Forward分析器 /<br/>Walk-Forward Analyzer<br/>用滚动窗口前推验证策略稳健性，避免参数只对特定区<br/>间有效<br/>文件: decision/simulation/sim_19"]
     LL2A --- N151
-    N152["(设计态 / design) 参数鲁棒性测试器 / Parameter<br/>Robustness Tester<br/>信号节点·参数鲁棒性测试器<br/>文件: decision/simulation/sim_21"]
+    N152["(设计态 / design) 参数鲁棒性测试器 / Parameter<br/>Robustness Tester<br/>扰动策略参数观察收益稳定性，确认参数非过拟合的临<br/>界值<br/>文件: decision/simulation/sim_21"]
     LL2A --- N152
-    N153["(设计态 / design) 验证自动化流水线 / Validation<br/>Automation Pipeline<br/>信号节点·验证自动化流水线<br/>文件: decision/simulation/sim_33"]
+    N153["(设计态 / design) 验证自动化流水线 / Validation<br/>Automation Pipeline<br/>串联三阶段验证为自动化流水线，降低人工验证成本<br/>文件: decision/simulation/sim_33"]
     LL2A --- N153
-    N154["(设计态 / design) 自动化过拟合门禁 / Automated<br/>Overfitting Detector Gate<br/>信号节点·自动化过拟合门禁<br/>文件: decision/simulation/sim_56"]
+    N154["(设计态 / design) 自动化过拟合门禁 / Automated<br/>Overfitting Detector Gate<br/>在 CI 中自动检测过拟合并阻断不合格策略上线，守住<br/>质量门槛<br/>文件: decision/simulation/sim_56"]
     LL2A --- N154
-    N155["(设计态 / design) 3阶段决策门控 / IS→WFA→OOS<br/>3-Stage Decision Gate<br/>信号节点·3阶段决策门控<br/>文件: decision/simulation/sim_g1"]
+    N155["(设计态 / design) 3阶段决策门控 / IS→WFA→OOS<br/>3-Stage Decision Gate<br/>按样本内训练到样本外测试三阶段门控策略发布，防过<br/>拟合上线<br/>文件: decision/simulation/sim_g1"]
     LL2A --- N155
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfo…<br/>文件: MOD-L05-001"]
-    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 + …<br/>文件: MOD-L04-001"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfolio_target<br/>（PortfolioTarget: 目标仓位）<br/>文件: MOD-L05-001"]
+    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 +<br/>止损评估 产出：risk_check（RiskDecision:<br/>approve/veto/adjust）<br/>文件: MOD-L04-001"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL0 -->|triggering / 触发| LL1
     LL1 -.->|triggering / 触发| LL2A
     LL2A -.->|triggering / 触发| LL2B
@@ -133,42 +133,42 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    N141["(设计态 / design) 市场仿真器 / Market Simulator<br/>信号节点·市场仿真器<br/>文件: decision/simulation/sim_01"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    N141["(设计态 / design) 市场仿真器 / Market Simulator<br/>模拟市场行情数据生成合成数据流，为策略验证提供可<br/>控的测试环境<br/>文件: decision/simulation/sim_01"]
     LL2A --- N141
-    N142["(设计态 / design) 策略仿真器 / Strategy<br/>Simulator<br/>信号节点·策略仿真器<br/>文件: decision/simulation/sim_02"]
+    N142["(设计态 / design) 策略仿真器 / Strategy<br/>Simulator<br/>在仿真市场中运行策略逻辑并记录决策轨迹，离线评估<br/>策略表现<br/>文件: decision/simulation/sim_02"]
     LL2A --- N142
-    N143["(设计态 / design) 风控仿真器 / Risk Simulator<br/>信号节点·风控仿真器<br/>文件: decision/simulation/sim_03"]
+    N143["(设计态 / design) 风控仿真器 / Risk Simulator<br/>模拟风控规则在极端行情下的触发行为，验证风控参数<br/>有效性<br/>文件: decision/simulation/sim_03"]
     LL2A --- N143
-    N144["(设计态 / design) 压力测试引擎 / Stress Test<br/>Engine<br/>信号节点·压力测试引擎<br/>文件: decision/simulation/sim_04"]
+    N144["(设计态 / design) 压力测试引擎 / Stress Test<br/>Engine<br/>对组合施加极端场景冲击测试生存能力，找出崩盘前的<br/>脆弱点<br/>文件: decision/simulation/sim_04"]
     LL2A --- N144
-    N145["(设计态 / design) 场景生成器 / Scenario<br/>Generator<br/>信号节点·场景生成器<br/>文件: decision/simulation/sim_05"]
+    N145["(设计态 / design) 场景生成器 / Scenario<br/>Generator<br/>构造历史重放和假设性极端市场场景，为仿真提供多样<br/>化输入<br/>文件: decision/simulation/sim_05"]
     LL2A --- N145
-    N146["(设计态 / design) 历史重放引擎 / History Replay<br/>Engine<br/>信号节点·历史重放引擎<br/>文件: decision/simulation/sim_07"]
+    N146["(设计态 / design) 历史重放引擎 / History Replay<br/>Engine<br/>按时间顺序回放历史行情数据重现过去交易日，支持策<br/>略复盘<br/>文件: decision/simulation/sim_07"]
     LL2A --- N146
-    N147["(设计态 / design) 极端事件仿真 / Extreme Event<br/>Simulator<br/>信号节点·极端事件仿真<br/>文件: decision/simulation/sim_10"]
+    N147["(设计态 / design) 极端事件仿真 / Extreme Event<br/>Simulator<br/>模拟熔断闪崩等极端行情检验系统韧性，确保黑天鹅下<br/>不失控<br/>文件: decision/simulation/sim_10"]
     LL2A --- N147
-    N148["(设计态 / design) 依赖图数字孪生 / Dependency<br/>Graph Digital Twin<br/>信号节点·依赖图数字孪生<br/>文件: decision/simulation/sim_13"]
+    N148["(设计态 / design) 依赖图数字孪生 / Dependency<br/>Graph Digital Twin<br/>构建依赖图的数字镜像用于仿真推演，预测架构变更的<br/>连锁影响<br/>文件: decision/simulation/sim_13"]
     LL2A --- N148
-    N149["(设计态 / design) 混沌实验自动生成 / Chaos<br/>Experiment Auto-Generator<br/>信号节点·混沌实验自动生成<br/>文件: decision/simulation/sim_15"]
+    N149["(设计态 / design) 混沌实验自动生成 / Chaos<br/>Experiment Auto-Generator<br/>自动注入故障和延迟测试系统容错能力，发现隐藏的单<br/>点故障<br/>文件: decision/simulation/sim_15"]
     LL2A --- N149
-    N150["(设计态 / design) 回测过拟合检测器 / Backtest<br/>Overfitting Detector<br/>信号节点·回测过拟合检测器<br/>文件: decision/simulation/sim_18"]
+    N150["(设计态 / design) 回测过拟合检测器 / Backtest<br/>Overfitting Detector<br/>检测策略回测是否过度拟合历史数据，防止上线后实盘<br/>失效<br/>文件: decision/simulation/sim_18"]
     LL2A --- N150
-    N151["(设计态 / design) Walk-Forward分析器 /<br/>Walk-Forward Analyzer<br/>信号节点·Walk-Forward分析器<br/>文件: decision/simulation/sim_19"]
+    N151["(设计态 / design) Walk-Forward分析器 /<br/>Walk-Forward Analyzer<br/>用滚动窗口前推验证策略稳健性，避免参数只对特定区<br/>间有效<br/>文件: decision/simulation/sim_19"]
     LL2A --- N151
-    N152["(设计态 / design) 参数鲁棒性测试器 / Parameter<br/>Robustness Tester<br/>信号节点·参数鲁棒性测试器<br/>文件: decision/simulation/sim_21"]
+    N152["(设计态 / design) 参数鲁棒性测试器 / Parameter<br/>Robustness Tester<br/>扰动策略参数观察收益稳定性，确认参数非过拟合的临<br/>界值<br/>文件: decision/simulation/sim_21"]
     LL2A --- N152
-    N153["(设计态 / design) 验证自动化流水线 / Validation<br/>Automation Pipeline<br/>信号节点·验证自动化流水线<br/>文件: decision/simulation/sim_33"]
+    N153["(设计态 / design) 验证自动化流水线 / Validation<br/>Automation Pipeline<br/>串联三阶段验证为自动化流水线，降低人工验证成本<br/>文件: decision/simulation/sim_33"]
     LL2A --- N153
-    N154["(设计态 / design) 自动化过拟合门禁 / Automated<br/>Overfitting Detector Gate<br/>信号节点·自动化过拟合门禁<br/>文件: decision/simulation/sim_56"]
+    N154["(设计态 / design) 自动化过拟合门禁 / Automated<br/>Overfitting Detector Gate<br/>在 CI 中自动检测过拟合并阻断不合格策略上线，守住<br/>质量门槛<br/>文件: decision/simulation/sim_56"]
     LL2A --- N154
-    N155["(设计态 / design) 3阶段决策门控 / IS→WFA→OOS<br/>3-Stage Decision Gate<br/>信号节点·3阶段决策门控<br/>文件: decision/simulation/sim_g1"]
+    N155["(设计态 / design) 3阶段决策门控 / IS→WFA→OOS<br/>3-Stage Decision Gate<br/>按样本内训练到样本外测试三阶段门控策略发布，防过<br/>拟合上线<br/>文件: decision/simulation/sim_g1"]
     LL2A --- N155
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL2A -.->|triggering / 触发| LL2B
     LL2B -.->|triggering / 触发| LL2C
     LL2C -.->|triggering / 触发| LL2D

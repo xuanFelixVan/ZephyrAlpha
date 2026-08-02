@@ -62,17 +62,11 @@ ttl: permanent
 
 ## 概述
 
-决策流图（decisiongraph）是与依赖图（depgraph）、数据流图（dataflowgraph）正交的第三维度全景图，管理 L0-L6 交易决策链。
-
-> 三图正交声明见 [AGENTS.md §11](../../../../AGENTS.md)。
-
-| 全景图 | 维度 | 表达 | 文档位置 |
-|--------|------|------|----------|
-| depgraph | 模块依赖 | "谁依赖谁"（静态） | `02_domain_architecture_docs/` |
-| dataflowgraph | 数据流 | "数据从哪流到哪"（动态） | `05_dataflow_architecture/` |
-| **decisiongraph** | **决策流** | **"决策如何产生"（动态）** | **`06_decision_architecture/`（本目录）** |
-
-三图通过 `module_id` 关联：决策节点 → 实现模块（depgraph）→ 数据流作业（dataflowgraph）。
+决策流图（decisiongraph）是与依赖图（depgraph）、数据流图（dataflowgraph）正交的第三维度全景图。
+- depgraph 表达"谁依赖谁"（模块依赖，静态）
+- dataflowgraph 表达"数据从哪流到哪"（数据流向，动态）
+- decisiongraph 表达"决策如何产生"（决策流，动态）
+- 三图通过 `module_id` 关联：决策节点 → 实现模块（depgraph）→ 数据流作业（dataflowgraph）
 
 > 本索引为纯导航枢纽。各 Track / 功能域 / 辅助图分别独立成文件，避免单文件过大无法阅读。
 
@@ -93,13 +87,13 @@ ttl: permanent
 
 ## Track 导航（按优先级）
 
-| 序号 | track_id | 名称 | 优先级 | 激活条件 | Layer 数 | Node 数 | [📄 文档](.) |
-|------|----------|------|--------|----------|----------|---------|------|
-| 01 | model_driven | 模型驱动轨 | 1 | 正常运行时 | 10 | 213 | [📄 01_decision_track_model_driven.md](01_decision_track_model_driven.md) |
-| 02 | data_driven | 数据驱动轨 | 2 | 模型驱动轨信号不足时补充 | 0 | 0 | [📄 02_decision_track_data_driven.md](02_decision_track_data_driven.md) |
-| 03 | human_override | 人工指令轨 | 3 | 人工干预时 | 0 | 0 | [📄 03_decision_track_human_override.md](03_decision_track_human_override.md) |
-| 04 | emergency | 应急保命轨 | 4 | 所有模型/策略/信号失效时 | 0 | 0 | [📄 04_decision_track_emergency.md](04_decision_track_emergency.md) |
-| 99 | placeholder | 占位轨 | 99 | - | 540 | 0 | [📄 99_decision_track_placeholder.md](99_decision_track_placeholder.md) |
+| 序号 | track_id | 名称 | 优先级 | Layer 数 | Node 数 | [📄 文档](.) |
+|------|----------|------|--------|----------|---------|------|
+| 01 | model_driven | 模型驱动轨 | 1 | 10 | 213 | [📄 01_decision_track_model_driven.md](01_decision_track_model_driven.md) |
+| 02 | data_driven | 数据驱动轨 | 2 | 0 | 0 | [📄 02_decision_track_data_driven.md](02_decision_track_data_driven.md) |
+| 03 | human_override | 人工指令轨 | 3 | 0 | 0 | [📄 03_decision_track_human_override.md](03_decision_track_human_override.md) |
+| 04 | emergency | 应急保命轨 | 4 | 0 | 0 | [📄 04_decision_track_emergency.md](04_decision_track_emergency.md) |
+| 99 | placeholder | 占位轨 | 99 | 540 | 0 | [📄 99_decision_track_placeholder.md](99_decision_track_placeholder.md) |
 
 ## L2A 信号层 · 功能域导航（7 域）
 
@@ -130,37 +124,10 @@ ttl: permanent
 - [📄 20_decision_layers.md](20_decision_layers.md) — 层级详情图（L0-L6 卡片 + 流向）
 - [📄 21_decision_invariants.md](21_decision_invariants.md) — 不变量图（6 节点类型 + 5 承重墙不变量）
 
-## 五条承重墙不变量
-
-| 编号 | 不变量 | 英文名 | 强制点 / enforcement |
-|------|--------|--------|----------------------|
-| DEC-INV-001 | 风控一票否决 | Risk Veto Mandatory | DB trigger on decision_edges INSERT |
-| DEC-INV-002 | 信号仓位分离 | Signal-Order Separation | DB CHECK on decision_edges INSERT |
-| DEC-INV-003 | DAG 无环 | DAG No-Cycle | Tarjan SCC algorithm (照搬 depgraph detect_cycles_tarjan) |
-| DEC-INV-004 | 时间单调性 | Time Monotonicity | DB CHECK on decision_edges valid_since |
-| DEC-INV-005 | 证据哈希必填 | Evidence Hash Required | DB NOT NULL on decision_nodes.evidence_hash |
-
-> 不变量图见 [📄 21_decision_invariants.md](21_decision_invariants.md)；定义真源 `architecture_model/domain/decision_graph_model.yaml` 的 `invariants` 段。
-
-## 程序化访问
-
-- **只读查询**：[`extract_decisiongraph.py`](../../../../scripts/governance/extract_decisiongraph.py)（CLI）或 `DecisionGraphReader`（Python）
-- **写入设计态**：[`apply_decisiongraph.py`](../../../../scripts/governance/apply_decisiongraph.py)（`pg_advisory_lock=424244`）
-- **YAML→DB 同步**：[`generate_decision_graph.py`](../../../../scripts/governance/generate_decision_graph.py)（tracks/layers 同步）
-- **回测落图**：`backtest_result_to_decision_node()`（BacktestResult → L5 学习层节点）
-
-## 生成器
-
-- **脚本**：[`generate_decision_diagram.py`](../../../../scripts/governance/d5_architecture/generators/generate_decision_diagram.py)
-- **触发**：手动运行（`python scripts/governance/d5_architecture/generators/generate_decision_diagram.py`）
-- **数据源**：PostgreSQL `decision_tracks` / `decision_layers` / `decision_nodes` / `decision_edges` 表 + `decision_graph_model.yaml`（invariants 真源）
-- **输出**：`docs/02_enterprise_architecture/06_decision_architecture/`（22 份文档，本目录）
-
 ## 旧锚点重定向
 
 原单文件 `decision_index.md` 的各 section 已拆分到对应文件，外部 wiki 链接请按下方映射更新：
 
-- 原 `index.md`（module_id: ARCH-VIEW-006, v2.0.0）已删除，有价值内容（三图正交表/不变量 enforcement/程序化访问/生成器）已并入本 `decision_index.md`（自动生成）
 - `#全景图` / `#运营态全景图` / `#设计态全景图` → 见各 [Track 文件](#track-导航按优先级)
 - `#层级详情图` → [20_decision_layers.md](20_decision_layers.md)
 - `#不变量图` → [21_decision_invariants.md](21_decision_invariants.md)

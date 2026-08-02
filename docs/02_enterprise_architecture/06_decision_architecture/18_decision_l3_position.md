@@ -10,7 +10,7 @@ ttl: permanent
 
 # Decision Flow · L3 Functional Domain position（持仓）
 
-> 生成时间: 2026-08-01T22:22:08
+> 生成时间: 2026-08-01T22:45:17
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → position
@@ -47,54 +47,54 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 → 事件总…<br/>文件: MOD-MKT_DATA"]
-    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：fa…<br/>文件: MOD-L02-001"]
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfo…<br/>文件: MOD-L05-001"]
-    N38["(设计态 / design) 仓位唯一裁决中心 / C-047<br/>Position Sole Arbiter<br/>组合目标节点·仓位唯一裁决中心<br/>文件: decision/position/pos_01"]
+    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 →<br/>事件总线 → 分层时序存储 产出：tick_data / ohlc_<br/>bar / factor_input_data<br/>文件: MOD-MKT_DATA"]
+    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：factor_value<br/>（带 PIT 合规标记）<br/>文件: MOD-L02-001"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfolio_target<br/>（PortfolioTarget: 目标仓位）<br/>文件: MOD-L05-001"]
+    N38["(设计态 / design) 仓位唯一裁决中心 / C-047<br/>Position Sole Arbiter<br/>全系统唯一的仓位最终裁决者，保证仓位指令不冲突<br/>文件: decision/position/pos_01"]
     LL3 --- N38
-    N39["(设计态 / design) 持仓状态机 / Position State<br/>Machine<br/>组合目标节点·持仓状态机<br/>文件: decision/position/pos_02"]
+    N39["(设计态 / design) 持仓状态机 / Position State<br/>Machine<br/>管理持仓的生命周期状态转换，防止非法状态跳转<br/>文件: decision/position/pos_02"]
     LL3 --- N39
-    N40["(设计态 / design) 仓位漂移监控 / Position Drift<br/>Monitor<br/>组合目标节点·仓位漂移监控<br/>文件: decision/position/pos_03"]
+    N40["(设计态 / design) 仓位漂移监控 / Position Drift<br/>Monitor<br/>监控实际仓位与目标的偏差，漂移超阈值时报警触发再<br/>平衡<br/>文件: decision/position/pos_03"]
     LL3 --- N40
-    N41["(设计态 / design) Kelly仓位决策 / Kelly<br/>Position Decision<br/>组合目标节点·Kelly仓位决策<br/>文件: decision/position/pos_04"]
+    N41["(设计态 / design) Kelly仓位决策 / Kelly<br/>Position Decision<br/>用凯利公式计算理论最优仓位，作为仓位决策的数学基<br/>准<br/>文件: decision/position/pos_04"]
     LL3 --- N41
-    N42["(设计态 / design) 风险配额 / Risk Quota<br/>组合目标节点·风险配额<br/>文件: decision/position/pos_05"]
+    N42["(设计态 / design) 风险配额 / Risk Quota<br/>为每个仓位分配风险额度上限，防止单仓位占用过多风<br/>险预算<br/>文件: decision/position/pos_05"]
     LL3 --- N42
-    N43["(设计态 / design) 11种市场状态→仓位上限 /<br/>Market State Position Cap<br/>组合目标节点·11种市场状态→仓位上限<br/>文件: decision/position/pos_06"]
+    N43["(设计态 / design) 11种市场状态→仓位上限 /<br/>Market State Position Cap<br/>按市场状态分类设置仓位上限，熊市自动降仓控风险<br/>文件: decision/position/pos_06"]
     LL3 --- N43
-    N44["(设计态 / design) 组合层决策 / Portfolio Layer<br/>Decision<br/>组合目标节点·组合层决策<br/>文件: decision/position/pos_07"]
+    N44["(设计态 / design) 组合层决策 / Portfolio Layer<br/>Decision<br/>组合层面决定整体仓位水平，自顶向下分配风险<br/>文件: decision/position/pos_07"]
     LL3 --- N44
-    N45["(设计态 / design) 策略层决策 / Strategy Layer<br/>Decision<br/>组合目标节点·策略层决策<br/>文件: decision/position/pos_08"]
+    N45["(设计态 / design) 策略层决策 / Strategy Layer<br/>Decision<br/>策略层面决定单策略仓位，承接组合层分配<br/>文件: decision/position/pos_08"]
     LL3 --- N45
-    N46["(设计态 / design) 标层决策 / Instrument Layer<br/>Decision<br/>组合目标节点·标层决策<br/>文件: decision/position/pos_09"]
+    N46["(设计态 / design) 标层决策 / Instrument Layer<br/>Decision<br/>单个标的层面决定具体仓位，承接策略层指令<br/>文件: decision/position/pos_09"]
     LL3 --- N46
-    N47["(设计态 / design) 动态层决策 / Dynamic Layer<br/>Decision<br/>组合目标节点·动态层决策<br/>文件: decision/position/pos_10"]
+    N47["(设计态 / design) 动态层决策 / Dynamic Layer<br/>Decision<br/>动态调整各层决策的权重分配，适配市场变化<br/>文件: decision/position/pos_10"]
     LL3 --- N47
-    N48["(设计态 / design) 再平衡触发 / Rebalance Trigger<br/>组合目标节点·再平衡触发<br/>文件: decision/position/pos_11"]
+    N48["(设计态 / design) 再平衡触发 / Rebalance Trigger<br/>判定是否触发再平衡的条件检查，避免频繁或滞后再平<br/>衡<br/>文件: decision/position/pos_11"]
     LL3 --- N48
-    N49["(设计态 / design) 仓位上限硬约束 / Position Cap<br/>Hard Constraint<br/>组合目标节点·仓位上限硬约束<br/>文件: decision/position/pos_12"]
+    N49["(设计态 / design) 仓位上限硬约束 / Position Cap<br/>Hard Constraint<br/>不可违反的仓位上限硬约束，兜底防止超仓<br/>文件: decision/position/pos_12"]
     LL3 --- N49
-    N50["(设计态 / design) REDUCING→EXITING状态转换 /<br/>REDUCING to EXITING<br/>组合目标节点·REDUCING→EXITING状态转换<br/>文件: decision/position/pos_13"]
+    N50["(设计态 / design) REDUCING→EXITING状态转换 /<br/>REDUCING to EXITING<br/>从减仓状态切换到清仓状态的决策，规范减仓到清仓的<br/>过渡<br/>文件: decision/position/pos_13"]
     LL3 --- N50
-    N51["(设计态 / design) 风险预算→Kelly决策 / Risk<br/>Budget to Kelly<br/>组合目标节点·风险预算→Kelly决策<br/>文件: decision/position/pos_14"]
+    N51["(设计态 / design) 风险预算→Kelly决策 / Risk<br/>Budget to Kelly<br/>把风险预算转换为凯利仓位参数，打通风险到仓位的映<br/>射<br/>文件: decision/position/pos_14"]
     LL3 --- N51
-    N52["(设计态 / design) 半Kelly硬上限 / Half-Kelly<br/>Hard Cap<br/>组合目标节点·半Kelly硬上限<br/>文件: decision/position/pos_15"]
+    N52["(设计态 / design) 半Kelly硬上限 / Half-Kelly<br/>Hard Cap<br/>凯利仓位减半作为硬上限，保守控制单笔风险敞口<br/>文件: decision/position/pos_15"]
     LL3 --- N52
-    N53["(设计态 / design) 仓位降级 / Position<br/>Degradation<br/>组合目标节点·仓位降级<br/>文件: decision/position/pos_16"]
+    N53["(设计态 / design) 仓位降级 / Position<br/>Degradation<br/>风险升高时主动降低仓位等级，渐进式风险控制<br/>文件: decision/position/pos_16"]
     LL3 --- N53
-    N54["(设计态 / design) 持仓状态→卖出阈值 / Position<br/>State to Sell Threshold<br/>组合目标节点·持仓状态→卖出阈值<br/>文件: decision/position/pos_17"]
+    N54["(设计态 / design) 持仓状态→卖出阈值 / Position<br/>State to Sell Threshold<br/>按持仓状态动态调整卖出阈值，不同状态用不同止盈止<br/>损标准<br/>文件: decision/position/pos_17"]
     LL3 --- N54
-    N55["(设计态 / design) 仓位四轨决策 / Position<br/>Four-Track Decision<br/>组合目标节点·仓位四轨决策<br/>文件: decision/position/pos_18"]
+    N55["(设计态 / design) 仓位四轨决策 / Position<br/>Four-Track Decision<br/>四轨对仓位的不同要求进行融合决策，处理多轨仓位冲<br/>突<br/>文件: decision/position/pos_18"]
     LL3 --- N55
-    N56["(设计态 / design) 仓位裁决→执行 / Position<br/>Arbitration to Execution<br/>组合目标节点·仓位裁决→执行<br/>文件: decision/position/pos_19"]
+    N56["(设计态 / design) 仓位裁决→执行 / Position<br/>Arbitration to Execution<br/>仓位裁决结果下发到执行层，完成决策到执行的闭环<br/>文件: decision/position/pos_19"]
     LL3 --- N56
-    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 + …<br/>文件: MOD-L04-001"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 +<br/>止损评估 产出：risk_check（RiskDecision:<br/>approve/veto/adjust）<br/>文件: MOD-L04-001"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL0 -->|triggering / 触发| LL1
     LL1 -.->|triggering / 触发| LL2A
     LL2A -.->|triggering / 触发| LL2B
@@ -145,12 +145,12 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL2A -.->|triggering / 触发| LL2B
     LL2B -.->|triggering / 触发| LL2C
     LL2C -.->|triggering / 触发| LL2D

@@ -39,6 +39,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import subprocess
@@ -303,10 +304,19 @@ def _split_zh_en(name: str | None, name_en: str | None) -> tuple[str, str]:
     DB 真源（Step 0 实测）：decision_name='止盈信号 Take-Profit Signal'，
     decision_name_en='Take-Profit Signal'。直接 `name / name_en` 会英文重复，
     故用 name_en 作后缀从 name 剥离得到纯中文。name_en 为空或非后缀时退化为原 name。
+
+    治本（V1.3 §4.3）：当 name == name_en（DB 实测存在，如两者都为
+    "Synthesizer 信号合成+权重分配"），剥离后 zh 为空 → 返回 (name, "") 避免标签
+    显示"同名 / 同名"重复（坏类型⑤名称重复）。
     """
     name = (name or "").strip()
     en = (name_en or "").strip()
-    if en and name.endswith(en):
+    if not en:
+        return name, ""
+    if name == en:
+        # name 与 name_en 完全相同 → 仅显示一次，不输出英文（防重复，V1.3 §4.3）
+        return name, ""
+    if name.endswith(en):
         zh = name[:-len(en)].rstrip(" /-·—:：")
         if zh:
             return zh, en
@@ -314,16 +324,24 @@ def _split_zh_en(name: str | None, name_en: str | None) -> tuple[str, str]:
 
 
 def _node_label_4el(n: dict) -> str:
-    """决策节点四要素标签：①成熟度 ②双语名 ③大白话 ④文件路径。§4.3。
+    """决策节点四要素标签：①成熟度 ②双语名 ③大白话 ④文件路径。§4.3/§4.11。
 
-    ③大白话 = `{node_type 中文名}·{decision_name 中文}`（用户确认方案，完整 plain_zh
-    留作后续数据补齐任务）。每段过 _wrap_label_text 预折行后用 <br/> 拼接。
+    ③大白话真源 = ``facets.plain_zh``（PostgreSQL decision_nodes.facets JSONB）。
+    - 有 plain_zh → 显示它（三问法起草，真实非模板）。
+    - 无 plain_zh → 诚实占位 ``（大白话待补 / plain_zh pending）``（V1.3 §4.11 禁止
+      ``{type_zh}·{name_zh}`` 模板话占位，坏类型①模板话 + ⑤名称重复）。
+
+    ②双语名：_split_zh_en 后若 zh==en 或 en 为空，仅显示一个名字，不输出
+    ``zh / en`` 重复（§4.3，治本 V1.3）。
+
+    每段过 _wrap_label_text 预折行后用 <br/> 拼接。
     """
     mat = n.get("maturity")
     zh, en = _split_zh_en(n.get("name"), n.get("name_en"))
-    type_zh = _NODE_TYPE_ZH.get(n.get("type", ""), n.get("type", ""))
-    name_zh = zh or n.get("name", "")
-    plain = f"{type_zh}·{name_zh}" if type_zh and name_zh else (type_zh or name_zh)
+    # ③大白话：facets.plain_zh 真源，无则诚实占位（V1.3 §4.11 治本）
+    facets = n.get("facets") or {}
+    plain_zh = facets.get("plain_zh") if isinstance(facets, dict) else None
+    plain = plain_zh or "（大白话待补 / plain_zh pending）"
     path = n.get("path", "") or "-"
     parts = [
         f"{_maturity_display(mat)} {zh} / {en}" if en else f"{_maturity_display(mat)} {zh}",
@@ -335,12 +353,16 @@ def _node_label_4el(n: dict) -> str:
 
 
 def _layer_label_4el(l: dict) -> str:
-    """层级节点四要素标签：①成熟度 ②双语名(含层ID) ③大白话(desc) ④文件(module_id/source_code_ref)。§4.3。"""
+    """层级节点四要素标签：①成熟度 ②双语名(含层ID) ③大白话(desc) ④文件(module_id/source_code_ref)。§4.3。
+
+    治本（V1.3 §4.10）：去掉 _truncate(desc, 40) 硬截断——预折行（_wrap_label_text）
+    已处理长度，截断只会丢失信息（坏类型②截断）。改用完整 desc。
+    """
     mat = l.get("maturity")
     lid = l.get("id", "") or ""
     zh = l.get("name", "") or ""
     en = l.get("name_en", "") or ""
-    desc = _truncate(l.get("desc", ""), 40)
+    desc = (l.get("desc", "") or "").strip().replace("\n", " ")
     ref = l.get("source_code_ref") or l.get("module_id") or "（设计态，暂无代码引用）"
     name_line = f"{lid} {zh} / {en}" if en else f"{lid} {zh}"
     parts = [
@@ -401,6 +423,29 @@ def _git_commit_timestamp() -> str:
     return "unknown"
 
 
+def _parse_facets(raw) -> dict:
+    """解析 decision_nodes.facets JSONB 列为 dict。
+
+    psycopg2 对 JSONB 列默认返回 str（未注册 jsonb adapter 时）或 dict（已注册时）。
+    本函数兼容两种：str→json.loads，dict/None→原样返回，解析失败→空 dict（降级，
+    不让单个坏值阻断整批生成）。V1.3 §4.11：plain_zh 真源在此列。
+    """
+    if raw is None:
+        return {}
+    if isinstance(raw, dict):
+        return raw
+    if isinstance(raw, str):
+        s = raw.strip()
+        if not s:
+            return {}
+        try:
+            parsed = json.loads(s)
+            return parsed if isinstance(parsed, dict) else {}
+        except (json.JSONDecodeError, TypeError):
+            return {}
+    return {}
+
+
 def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
     """从 PG 读取 tracks/layers/nodes/edges。"""
     with conn.cursor() as cur:
@@ -434,7 +479,7 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
         cur.execute("""
             SELECT node_id, layer_id, node_type, path, module_id, decision_name,
                    decision_name_en, build_status, design_maturity, evidence_hash,
-                   source_code_ref
+                   source_code_ref, facets
             FROM decision_nodes ORDER BY layer_id, node_id
         """)
         nodes = [
@@ -442,6 +487,7 @@ def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list
                 "id": r[0], "layer_id": r[1], "type": r[2], "path": r[3],
                 "module_id": r[4], "name": r[5], "name_en": r[6], "build": r[7],
                 "maturity": r[8], "hash": r[9], "source_code_ref": r[10],
+                "facets": _parse_facets(r[11]),
             }
             for r in cur.fetchall()
         ]
@@ -1652,9 +1698,10 @@ node_domain = _node_domain
 fetch_decision_data = _fetch_decision_data
 STALE_FILE_REGEX = _STALE_FILE_REGEX
 YAML_PATH = _YAML_PATH
-# 模板 V1.2 升级新增辅助函数别名（供测试断言四要素/图例/跨域标签）
+# 模板升级新增辅助函数别名（供测试断言四要素/图例/跨域标签/双语拆分）
 node_label_4el = _node_label_4el
 layer_label_4el = _layer_label_4el
+split_zh_en = _split_zh_en
 cross_domain_label = _cross_domain_label
 gen_cross_domain_mermaid = _gen_cross_domain_mermaid
 wrap_label_text = _wrap_label_text

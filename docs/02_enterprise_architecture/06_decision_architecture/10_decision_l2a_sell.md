@@ -10,7 +10,7 @@ ttl: permanent
 
 # Decision Flow · L2A Functional Domain sell（卖出）
 
-> 生成时间: 2026-08-01T22:22:08
+> 生成时间: 2026-08-01T22:45:17
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → sell
@@ -47,54 +47,54 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 → 事件总…<br/>文件: MOD-MKT_DATA"]
-    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：fa…<br/>文件: MOD-L02-001"]
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    N1["(设计态 / design) 卖出决策域入口 / Sell<br/>Decision Entry<br/>卖出决策节点·卖出决策域入口<br/>文件: decision/sell/sell_00"]
+    LL0["(生产态 / production) L0 数据接入与预处理层 /<br/>Data Ingestion & Preprocessing<br/>miniQMT + iFind + tushare + 另类数据源 →<br/>事件总线 → 分层时序存储 产出：tick_data / ohlc_<br/>bar / factor_input_data<br/>文件: MOD-MKT_DATA"]
+    LL1["(生产态 / production) L1 因子计算层 / Factor<br/>Calculation<br/>因子工厂全生命周期管理 → 盘前全量<br/>/盘中增量双模计算 → 因子池 产出：factor_value<br/>（带 PIT 合规标记）<br/>文件: MOD-L02-001"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    N1["(设计态 / design) 卖出决策域入口 / Sell<br/>Decision Entry<br/>卖出决策的统一入口，汇总各类卖出信号后分发给下游<br/>仲裁器，解决卖出信号来源分散无统一调度的问题<br/>文件: decision/sell/sell_00"]
     LL2A --- N1
-    N2["(设计态 / design) 止盈信号 / Take-Profit Signal<br/>卖出决策节点·止盈信号<br/>文件: decision/sell/sell_01"]
+    N2["(设计态 / design) 止盈信号 / Take-Profit Signal<br/>持仓达到预设盈利目标时产生止盈卖出信号，锁定收益<br/>防止盈利回吐<br/>文件: decision/sell/sell_01"]
     LL2A --- N2
-    N3["(设计态 / design) 止损信号 / Stop-Loss Signal<br/>卖出决策节点·止损信号<br/>文件: decision/sell/sell_02"]
+    N3["(设计态 / design) 止损信号 / Stop-Loss Signal<br/>持仓跌破止损线时触发强制卖出信号，控制单笔亏损上<br/>限<br/>文件: decision/sell/sell_02"]
     LL2A --- N3
-    N4["(设计态 / design) 移动止损 / Trailing Stop<br/>卖出决策节点·移动止损<br/>文件: decision/sell/sell_03"]
+    N4["(设计态 / design) 移动止损 / Trailing Stop<br/>随价格上涨动态上移止损线，保护浮盈的同时给予趋势<br/>延续空间<br/>文件: decision/sell/sell_03"]
     LL2A --- N4
-    N5["(设计态 / design) 主力出货信号 / Main Force<br/>Distribution Signal<br/>卖出决策节点·主力出货信号<br/>文件: decision/sell/sell_04"]
+    N5["(设计态 / design) 主力出货信号 / Main Force<br/>Distribution Signal<br/>识别主力资金大单抛售行为并发出跟进出货信号，避免<br/>在主力出货时被动套牢<br/>文件: decision/sell/sell_04"]
     LL2A --- N5
-    N6["(设计态 / design) 量价背离卖出 / Volume-Price<br/>Divergence Sell<br/>卖出决策节点·量价背离卖出<br/>文件: decision/sell/sell_05"]
+    N6["(设计态 / design) 量价背离卖出 / Volume-Price<br/>Divergence Sell<br/>价格上涨但成交量萎缩或价跌量增时发出卖出信号，捕<br/>捉趋势反转前兆<br/>文件: decision/sell/sell_05"]
     LL2A --- N6
-    N7["(设计态 / design) 突破关键位卖出 / Key-Level<br/>Breakdown Sell<br/>卖出决策节点·突破关键位卖出<br/>文件: decision/sell/sell_06"]
+    N7["(设计态 / design) 突破关键位卖出 / Key-Level<br/>Breakdown Sell<br/>价格跌破支撑位或关键技术位时触发卖出，防止破位后<br/>加速下跌<br/>文件: decision/sell/sell_06"]
     LL2A --- N7
-    N8["(设计态 / design) Watch List 实时卖出 / Watch<br/>List Realtime Sell<br/>卖出决策节点·Watch List 实时卖出<br/>文件: decision/sell/sell_07"]
+    N8["(设计态 / design) Watch List 实时卖出 / Watch<br/>List Realtime Sell<br/>对自选股池实时监控并触发卖出信号，解决盯盘精力有<br/>限导致错过卖出时机的问题<br/>文件: decision/sell/sell_07"]
     LL2A --- N8
-    N9["(设计态 / design) Monitor List 定期扫描 /<br/>Monitor List Periodic Scan<br/>卖出决策节点·Monitor List 定期扫描<br/>文件: decision/sell/sell_08"]
+    N9["(设计态 / design) Monitor List 定期扫描 /<br/>Monitor List Periodic Scan<br/>定期扫描观察名单中标的的卖出条件，降低高频监控的<br/>资源消耗<br/>文件: decision/sell/sell_08"]
     LL2A --- N9
-    N10["(设计态 / design) 卖出信号融合仲裁 / Sell<br/>Signal Fusion Arbiter<br/>卖出决策节点·卖出信号融合仲裁<br/>文件: decision/sell/sell_09"]
+    N10["(设计态 / design) 卖出信号融合仲裁 / Sell<br/>Signal Fusion Arbiter<br/>将多来源卖出信号按优先级和置信度融合裁决，解决多<br/>信号冲突时无法决策的问题<br/>文件: decision/sell/sell_09"]
     LL2A --- N10
-    N11["(设计态 / design) 买卖冲突仲裁 / Buy-Sell<br/>Conflict Arbiter<br/>卖出决策节点·买卖冲突仲裁<br/>文件: decision/sell/sell_10"]
+    N11["(设计态 / design) 买卖冲突仲裁 / Buy-Sell<br/>Conflict Arbiter<br/>买入和卖出信号同时出现时按规则仲裁取舍，防止自相<br/>矛盾的交易指令<br/>文件: decision/sell/sell_10"]
     LL2A --- N11
-    N12["(设计态 / design) 部分卖出vs全部清仓决策 /<br/>Partial vs Full Sell Decision<br/>卖出决策节点·部分卖出vs全部清仓决策<br/>文件: decision/sell/sell_11"]
+    N12["(设计态 / design) 部分卖出vs全部清仓决策 /<br/>Partial vs Full Sell Decision<br/>根据信号强度决定减仓比例还是全部清仓，平衡风险控<br/>制与机会成本<br/>文件: decision/sell/sell_11"]
     LL2A --- N12
-    N13["(设计态 / design) D-S证据理论融合 / D-S<br/>Evidence Theory Fusion<br/>卖出决策节点·D-S证据理论融合<br/>文件: decision/sell/sell_12"]
+    N13["(设计态 / design) D-S证据理论融合 / D-S<br/>Evidence Theory Fusion<br/>用证据理论将不确定的卖出信号合并为统一置信度，处<br/>理证据冲突场景<br/>文件: decision/sell/sell_12"]
     LL2A --- N13
-    N14["(设计态 / design) 做T决策协调 / T-Trade<br/>Coordinator<br/>卖出决策节点·做T决策协调<br/>文件: decision/sell/sell_13"]
+    N14["(设计态 / design) 做T决策协调 / T-Trade<br/>Coordinator<br/>协调日内做T与趋势持仓的卖出冲突，避免做T破坏主趋<br/>势仓位<br/>文件: decision/sell/sell_13"]
     LL2A --- N14
-    N15["(设计态 / design) 黑天鹅强制卖出 / Black Swan<br/>Forced Sell<br/>卖出决策节点·黑天鹅强制卖出<br/>文件: decision/sell/sell_14"]
+    N15["(设计态 / design) 黑天鹅强制卖出 / Black Swan<br/>Forced Sell<br/>突发极端事件时绕过常规流程强制清仓，保命优先于收<br/>益<br/>文件: decision/sell/sell_14"]
     LL2A --- N15
-    N16["(设计态 / design) Gap开盘决策框架 / Gap Opening<br/>Decision Framework<br/>卖出决策节点·Gap开盘决策框架<br/>文件: decision/sell/sell_15"]
+    N16["(设计态 / design) Gap开盘决策框架 / Gap Opening<br/>Decision Framework<br/>处理跳空开盘情形下的卖出时机决策，避免开盘缺口造<br/>成滑点损失<br/>文件: decision/sell/sell_15"]
     LL2A --- N16
-    N17["(设计态 / design) 强制清仓信号 / Forced<br/>Liquidation Signal<br/>卖出决策节点·强制清仓信号<br/>文件: decision/sell/sell_16"]
+    N17["(设计态 / design) 强制清仓信号 / Forced<br/>Liquidation Signal<br/>风控或合规触发的不可撤销清仓指令，确保极端情况下<br/>仓位能立即归零<br/>文件: decision/sell/sell_16"]
     LL2A --- N17
-    N18["(设计态 / design) 卖出降级模式 / Sell<br/>Degradation Mode<br/>卖出决策节点·卖出降级模式<br/>文件: decision/sell/sell_17"]
+    N18["(设计态 / design) 卖出降级模式 / Sell<br/>Degradation Mode<br/>主卖出链路故障时切换到简化卖出路径，保证关键卖出<br/>功能不中断<br/>文件: decision/sell/sell_17"]
     LL2A --- N18
-    N19["(设计态 / design) 卖出决策闭环优化 / Sell<br/>Decision Closed-Loop<br/>卖出决策节点·卖出决策闭环优化<br/>文件: decision/sell/sell_18"]
+    N19["(设计态 / design) 卖出决策闭环优化 / Sell<br/>Decision Closed-Loop<br/>收集卖出执行结果反馈优化卖出参数，形成卖出决策的<br/>自我改进闭环<br/>文件: decision/sell/sell_18"]
     LL2A --- N19
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfo…<br/>文件: MOD-L05-001"]
-    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 + …<br/>文件: MOD-L04-001"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL3["(生产态 / production) L3 策略组合层 / Strategy<br/>& Portfolio Combination<br/>多策略信号合成 → 资本分配 → 元策略路由 →<br/>组合构建 产出：portfolio_target<br/>（PortfolioTarget: 目标仓位）<br/>文件: MOD-L05-001"]
+    LL4["(生产态 / production) L4 风控层 / Risk Control<br/>Pre/Post-Trade 风控校验 + Kill Switch 熔断 +<br/>止损评估 产出：risk_check（RiskDecision:<br/>approve/veto/adjust）<br/>文件: MOD-L04-001"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL0 -->|triggering / 触发| LL1
     LL1 -.->|triggering / 触发| LL2A
     LL2A -.->|triggering / 触发| LL2B
@@ -145,50 +145,50 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/…<br/>文件: （设计态，暂无代码引用）"]
-    N1["(设计态 / design) 卖出决策域入口 / Sell<br/>Decision Entry<br/>卖出决策节点·卖出决策域入口<br/>文件: decision/sell/sell_00"]
+    LL2A["(设计态 / design) L2A 信号层 / Signal Generation<br/>信号工厂 → 多策略投票 → 收益率条件密度预测 →<br/>Transformer/Mamba时序增强 → 共形预测<br/>产出：signal（Insight: direction/confidence<br/>/horizon）<br/>文件: （设计态，暂无代码引用）"]
+    N1["(设计态 / design) 卖出决策域入口 / Sell<br/>Decision Entry<br/>卖出决策的统一入口，汇总各类卖出信号后分发给下游<br/>仲裁器，解决卖出信号来源分散无统一调度的问题<br/>文件: decision/sell/sell_00"]
     LL2A --- N1
-    N2["(设计态 / design) 止盈信号 / Take-Profit Signal<br/>卖出决策节点·止盈信号<br/>文件: decision/sell/sell_01"]
+    N2["(设计态 / design) 止盈信号 / Take-Profit Signal<br/>持仓达到预设盈利目标时产生止盈卖出信号，锁定收益<br/>防止盈利回吐<br/>文件: decision/sell/sell_01"]
     LL2A --- N2
-    N3["(设计态 / design) 止损信号 / Stop-Loss Signal<br/>卖出决策节点·止损信号<br/>文件: decision/sell/sell_02"]
+    N3["(设计态 / design) 止损信号 / Stop-Loss Signal<br/>持仓跌破止损线时触发强制卖出信号，控制单笔亏损上<br/>限<br/>文件: decision/sell/sell_02"]
     LL2A --- N3
-    N4["(设计态 / design) 移动止损 / Trailing Stop<br/>卖出决策节点·移动止损<br/>文件: decision/sell/sell_03"]
+    N4["(设计态 / design) 移动止损 / Trailing Stop<br/>随价格上涨动态上移止损线，保护浮盈的同时给予趋势<br/>延续空间<br/>文件: decision/sell/sell_03"]
     LL2A --- N4
-    N5["(设计态 / design) 主力出货信号 / Main Force<br/>Distribution Signal<br/>卖出决策节点·主力出货信号<br/>文件: decision/sell/sell_04"]
+    N5["(设计态 / design) 主力出货信号 / Main Force<br/>Distribution Signal<br/>识别主力资金大单抛售行为并发出跟进出货信号，避免<br/>在主力出货时被动套牢<br/>文件: decision/sell/sell_04"]
     LL2A --- N5
-    N6["(设计态 / design) 量价背离卖出 / Volume-Price<br/>Divergence Sell<br/>卖出决策节点·量价背离卖出<br/>文件: decision/sell/sell_05"]
+    N6["(设计态 / design) 量价背离卖出 / Volume-Price<br/>Divergence Sell<br/>价格上涨但成交量萎缩或价跌量增时发出卖出信号，捕<br/>捉趋势反转前兆<br/>文件: decision/sell/sell_05"]
     LL2A --- N6
-    N7["(设计态 / design) 突破关键位卖出 / Key-Level<br/>Breakdown Sell<br/>卖出决策节点·突破关键位卖出<br/>文件: decision/sell/sell_06"]
+    N7["(设计态 / design) 突破关键位卖出 / Key-Level<br/>Breakdown Sell<br/>价格跌破支撑位或关键技术位时触发卖出，防止破位后<br/>加速下跌<br/>文件: decision/sell/sell_06"]
     LL2A --- N7
-    N8["(设计态 / design) Watch List 实时卖出 / Watch<br/>List Realtime Sell<br/>卖出决策节点·Watch List 实时卖出<br/>文件: decision/sell/sell_07"]
+    N8["(设计态 / design) Watch List 实时卖出 / Watch<br/>List Realtime Sell<br/>对自选股池实时监控并触发卖出信号，解决盯盘精力有<br/>限导致错过卖出时机的问题<br/>文件: decision/sell/sell_07"]
     LL2A --- N8
-    N9["(设计态 / design) Monitor List 定期扫描 /<br/>Monitor List Periodic Scan<br/>卖出决策节点·Monitor List 定期扫描<br/>文件: decision/sell/sell_08"]
+    N9["(设计态 / design) Monitor List 定期扫描 /<br/>Monitor List Periodic Scan<br/>定期扫描观察名单中标的的卖出条件，降低高频监控的<br/>资源消耗<br/>文件: decision/sell/sell_08"]
     LL2A --- N9
-    N10["(设计态 / design) 卖出信号融合仲裁 / Sell<br/>Signal Fusion Arbiter<br/>卖出决策节点·卖出信号融合仲裁<br/>文件: decision/sell/sell_09"]
+    N10["(设计态 / design) 卖出信号融合仲裁 / Sell<br/>Signal Fusion Arbiter<br/>将多来源卖出信号按优先级和置信度融合裁决，解决多<br/>信号冲突时无法决策的问题<br/>文件: decision/sell/sell_09"]
     LL2A --- N10
-    N11["(设计态 / design) 买卖冲突仲裁 / Buy-Sell<br/>Conflict Arbiter<br/>卖出决策节点·买卖冲突仲裁<br/>文件: decision/sell/sell_10"]
+    N11["(设计态 / design) 买卖冲突仲裁 / Buy-Sell<br/>Conflict Arbiter<br/>买入和卖出信号同时出现时按规则仲裁取舍，防止自相<br/>矛盾的交易指令<br/>文件: decision/sell/sell_10"]
     LL2A --- N11
-    N12["(设计态 / design) 部分卖出vs全部清仓决策 /<br/>Partial vs Full Sell Decision<br/>卖出决策节点·部分卖出vs全部清仓决策<br/>文件: decision/sell/sell_11"]
+    N12["(设计态 / design) 部分卖出vs全部清仓决策 /<br/>Partial vs Full Sell Decision<br/>根据信号强度决定减仓比例还是全部清仓，平衡风险控<br/>制与机会成本<br/>文件: decision/sell/sell_11"]
     LL2A --- N12
-    N13["(设计态 / design) D-S证据理论融合 / D-S<br/>Evidence Theory Fusion<br/>卖出决策节点·D-S证据理论融合<br/>文件: decision/sell/sell_12"]
+    N13["(设计态 / design) D-S证据理论融合 / D-S<br/>Evidence Theory Fusion<br/>用证据理论将不确定的卖出信号合并为统一置信度，处<br/>理证据冲突场景<br/>文件: decision/sell/sell_12"]
     LL2A --- N13
-    N14["(设计态 / design) 做T决策协调 / T-Trade<br/>Coordinator<br/>卖出决策节点·做T决策协调<br/>文件: decision/sell/sell_13"]
+    N14["(设计态 / design) 做T决策协调 / T-Trade<br/>Coordinator<br/>协调日内做T与趋势持仓的卖出冲突，避免做T破坏主趋<br/>势仓位<br/>文件: decision/sell/sell_13"]
     LL2A --- N14
-    N15["(设计态 / design) 黑天鹅强制卖出 / Black Swan<br/>Forced Sell<br/>卖出决策节点·黑天鹅强制卖出<br/>文件: decision/sell/sell_14"]
+    N15["(设计态 / design) 黑天鹅强制卖出 / Black Swan<br/>Forced Sell<br/>突发极端事件时绕过常规流程强制清仓，保命优先于收<br/>益<br/>文件: decision/sell/sell_14"]
     LL2A --- N15
-    N16["(设计态 / design) Gap开盘决策框架 / Gap Opening<br/>Decision Framework<br/>卖出决策节点·Gap开盘决策框架<br/>文件: decision/sell/sell_15"]
+    N16["(设计态 / design) Gap开盘决策框架 / Gap Opening<br/>Decision Framework<br/>处理跳空开盘情形下的卖出时机决策，避免开盘缺口造<br/>成滑点损失<br/>文件: decision/sell/sell_15"]
     LL2A --- N16
-    N17["(设计态 / design) 强制清仓信号 / Forced<br/>Liquidation Signal<br/>卖出决策节点·强制清仓信号<br/>文件: decision/sell/sell_16"]
+    N17["(设计态 / design) 强制清仓信号 / Forced<br/>Liquidation Signal<br/>风控或合规触发的不可撤销清仓指令，确保极端情况下<br/>仓位能立即归零<br/>文件: decision/sell/sell_16"]
     LL2A --- N17
-    N18["(设计态 / design) 卖出降级模式 / Sell<br/>Degradation Mode<br/>卖出决策节点·卖出降级模式<br/>文件: decision/sell/sell_17"]
+    N18["(设计态 / design) 卖出降级模式 / Sell<br/>Degradation Mode<br/>主卖出链路故障时切换到简化卖出路径，保证关键卖出<br/>功能不中断<br/>文件: decision/sell/sell_17"]
     LL2A --- N18
-    N19["(设计态 / design) 卖出决策闭环优化 / Sell<br/>Decision Closed-Loop<br/>卖出决策节点·卖出决策闭环优化<br/>文件: decision/sell/sell_18"]
+    N19["(设计态 / design) 卖出决策闭环优化 / Sell<br/>Decision Closed-Loop<br/>收集卖出执行结果反馈优化卖出参数，形成卖出决策的<br/>自我改进闭环<br/>文件: decision/sell/sell_18"]
     LL2A --- N19
-    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_f…<br/>文件: （设计态，暂无代码引用）"]
-    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体…<br/>文件: （设计态，暂无代码引用）"]
-    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 →…<br/>文件: （设计态，暂无代码引用）"]
-    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learni…<br/>文件: （设计态，暂无代码引用）"]
-    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻…<br/>文件: （设计态，暂无代码引用）"]
+    LL2B["(设计态 / design) L2B 主力行为层 / Main Force<br/>Behavior Analysis<br/>六阶段识别 + 自迭代推演 + 庄家专项 +<br/>群体博弈模拟 产出：main_force_signal<br/>（主力行为画像）<br/>文件: （设计态，暂无代码引用）"]
+    LL2C["(设计态 / design) L2C 市场状态与大盘预测层 /<br/>Market State & Index Prediction<br/>3×3矩阵 + 2叠加态 + 三层大盘预测 +<br/>T+1次日8态走势预测 + 体制转换检测(HMM/变点)<br/>产出：market_state_prediction（大盘方向/波动率<br/>/体制判断）<br/>文件: （设计态，暂无代码引用）"]
+    LL2D["(设计态 / design) L2D 知识图谱与因果推演层 /<br/>Knowledge Graph & Causal Inference<br/>六类知识图谱 → 事件影响链分析 → 因果传导推演 →<br/>GNN股票关系建模 → Causal ML 产出：causal_<br/>inference_result（因果推断结果）<br/>文件: （设计态，暂无代码引用）"]
+    LL5["(设计态 / design) L5 学习层 / Learning &<br/>Optimization<br/>7阶段学习流水线 → 模块工厂 → 知识采集 →<br/>反馈闭环 产出：learning_feedback（策略优化建议）<br/>文件: （设计态，暂无代码引用）"]
+    LL6["(设计态 / design) L6 自评估层 / Self Evaluation<br/>LLM 自评估(Judge+交叉验证) + 多模态金融推理 +<br/>VeNRA零幻觉锚定 产出：self_evaluation<br/>（决策质量评估）<br/>文件: （设计态，暂无代码引用）"]
     LL2A -.->|triggering / 触发| LL2B
     LL2B -.->|triggering / 触发| LL2C
     LL2C -.->|triggering / 触发| LL2D
