@@ -125,18 +125,19 @@ flowchart TD
     D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_position_py
+    D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_POSITION -->|测试依赖 / test_depends| src_zephyr_shared_contracts_risk_limits_py
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
-    class D_SHARED,D_GOV_AUDIT,D_EX_CORE,D_EX_SOR external_prod
+    class D_SHARED,D_GOV_AUDIT,D_EX_CORE,D_EX_SOR,D_POSITION external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）

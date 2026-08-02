@@ -20,20 +20,19 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2935 | 92.7% |
-| design（设计态） | 231 | 7.3% |
+| production（生产态） | 2939 | 92.7% |
+| design（设计态） | 230 | 7.3% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3166** | **100%** |
+| **总计** | **3169** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4111 | 129.8% |
-| stable | 1724 | 54.5% |
-| planned | 128 | 4.0% |
-| deprecated | 89 | 2.8% |
-| testing | 1 | 0.0% |
+| generated | 4114 | 129.8% |
+| stable | 1728 | 54.5% |
+| planned | 127 | 4.0% |
+| deprecated | 90 | 2.8% |
 
 ## 各域设计成熟度统计
 
@@ -71,7 +70,7 @@ ttl: permanent
 | D_FRONTEND | 前端 | 16 | 12 | 4 | 0 | 75.0% |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | 13 | 10 | 3 | 0 | 76.9% |
 | D_GOVERNANCE | 生命周期管理 | 224 | 224 | 0 | 0 | 100.0% |
-| D_GOV_AUDIT | 审计追踪 | 125 | 122 | 3 | 0 | 97.6% |
+| D_GOV_AUDIT | 审计追踪 | 126 | 123 | 3 | 0 | 97.6% |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 172 | 172 | 0 | 0 | 100.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 25 | 0 | 7.4% |
 | D_GOV_DRIFT | 漂移检测 | 75 | 74 | 1 | 0 | 98.7% |
@@ -79,7 +78,7 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | 91 | 91 | 0 | 0 | 100.0% |
 | D_GOV_REPAIR | 治理修复 | 1 | 1 | 0 | 0 | 100.0% |
 | D_GOV_RULE | 规则治理 | 35 | 35 | 0 | 0 | 100.0% |
-| D_GOV_SCRIPTS | 脚本治理 | 392 | 391 | 1 | 0 | 99.7% |
+| D_GOV_SCRIPTS | 脚本治理 | 394 | 393 | 1 | 0 | 99.7% |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | 25 | 25 | 0 | 0 | 100.0% |
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |
@@ -100,7 +99,7 @@ ttl: permanent
 | D_PF_CORE | 组合核心 | 18 | 10 | 8 | 0 | 55.6% |
 | D_POSITION | 仓位管理 | 15 | 15 | 0 | 0 | 100.0% |
 | D_REPORTING | 报告 | 12 | 3 | 9 | 0 | 25.0% |
-| D_RISK | 风控 | 25 | 20 | 5 | 0 | 80.0% |
+| D_RISK | 风控 | 25 | 21 | 4 | 0 | 84.0% |
 | D_SECURITY | 对抗验证 | 166 | 166 | 0 | 0 | 100.0% |
 | D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | N/A |
 | D_SEC_SCRIPTS | 安全治理脚本 | 0 | 0 | 0 | 0 | N/A |

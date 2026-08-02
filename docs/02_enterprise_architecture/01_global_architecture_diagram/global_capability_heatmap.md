@@ -140,12 +140,12 @@ ttl: permanent
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | C1 | 数据接入 | 4 | 202 | 166 | 36 | 2.25 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 121 | 57 | 64 | 2.00 | 🟡 部分覆盖 / Partial |
-| C3 | 风险控制 | 2 | 28 | 22 | 6 | 2.50 | 🟡 部分覆盖 / Partial |
+| C3 | 风险控制 | 2 | 28 | 23 | 5 | 2.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 53 | 26 | 27 | 2.75 | 🟡 部分覆盖 / Partial |
 | C5 | 执行交易 | 4 | 113 | 82 | 31 | 3.00 | ✅ 完全覆盖 / Full |
 | C6 | ML平台 | 2 | 13 | 10 | 3 | 2.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 51 | 35 | 16 | 2.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 14 | 1009 | 979 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 14 | 1010 | 980 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 173 | 173 | 0 | 1.00 | 🟡 部分覆盖 / Partial |
 | CC3 | 基础设施 | 16 | 837 | 820 | 17 | 2.31 | 🟡 部分覆盖 / Partial |
 
@@ -163,12 +163,12 @@ ttl: permanent
 | D_SIGLEGACY | 信号遗留设计态 | C2 | L2_domain | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_SIGQC | 信号质量控制 | C2 | L2_domain | 2 | 2 | 0 | 0 | L2 🟡 | 🟡 |
 | D_COMPLIANCE | 合规 | C3 | L2_domain | 3 | 2 | 1 | 0 | L2 🟡 | 🟡 |
-| D_RISK | 风控 | C3 | L2_domain | 25 | 20 | 5 | 18 | L3 🟢 | ✅ |
+| D_RISK | 风控 | C3 | L2_domain | 25 | 21 | 4 | 19 | L3 🟢 | ✅ |
 | D_CROSS_ASSET | 跨资产 | C4 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_PF_ALLOC | 组合分配 | C4 | L2_domain | 9 | 5 | 4 | 4 | L3 🟢 | ✅ |
 | D_PF_CORE | 组合核心 | C4 | L2_domain | 14 | 6 | 8 | 5 | L3 🟢 | ✅ |
 | D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 23 | 8 | 15 | 2 | L3 🟢 | ✅ |
-| D_EX_CORE | 执行核心 | C5 | L2_domain | 43 | 15 | 28 | 10 | L3 🟢 | ✅ |
+| D_EX_CORE | 执行核心 | C5 | L2_domain | 43 | 15 | 28 | 11 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 17 | 17 | 0 | 10 | L3 🟢 | ✅ |
 | D_POSITION | 仓位管理 | C5 | L2_domain | 13 | 13 | 0 | 12 | L3 🟢 | ✅ |
 | D_TRADING | 交易运营 | C5 | L2_domain | 40 | 37 | 3 | 20 | L3 🟢 | ✅ |
@@ -184,8 +184,8 @@ ttl: permanent
 | D_FBL_VERIFICATION | 反馈验证 | CC1 | L1_foundation | 71 | 71 | 0 | 67 | L3 🟢 | ✅ |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L1_foundation | 125 | 125 | 0 | 111 | L3 🟢 | ✅ |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L2_domain | 136 | 136 | 0 | 99 | L3 🟢 | ✅ |
-| D_GOV_AUDIT | 审计追踪 | CC1 | L2_domain | 114 | 111 | 3 | 76 | L3 🟢 | ✅ |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 157 | 157 | 0 | 139 | L3 🟢 | ✅ |
+| D_GOV_AUDIT | 审计追踪 | CC1 | L2_domain | 115 | 112 | 3 | 77 | L3 🟢 | ✅ |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 157 | 157 | 0 | 140 | L3 🟢 | ✅ |
 | D_GOV_DOCS | 架构文档治理 | CC1 | L2_domain | 25 | 0 | 25 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L2_domain | 71 | 70 | 1 | 65 | L3 🟢 | ✅ |
 | D_GOV_ENFORCEMENT | 规则执行 | CC1 | L2_domain | 33 | 32 | 1 | 18 | L3 🟢 | ✅ |
@@ -290,7 +290,7 @@ ttl: permanent
 | D_FBL_VERIFICATION | 反馈验证 | CC1 | L3 | 71 |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L3 | 125 |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L3 | 136 |
-| D_GOV_AUDIT | 审计追踪 | CC1 | L3 | 114 |
+| D_GOV_AUDIT | 审计追踪 | CC1 | L3 | 115 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 157 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L3 | 71 |
 | D_GOV_ENFORCEMENT | 规则执行 | CC1 | L3 | 33 |
