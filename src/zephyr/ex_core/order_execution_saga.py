@@ -1,0 +1,689 @@
+# [BLUEPRINT] MOD-EX-057 | docs/03_modules/_domain_execution_core/order_execution_saga/blueprint.md
+# [MODULE] zephyr.ex_core.order_execution_saga
+# [DOMAIN] D_EX_CORE
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.position_tracker.tracker; zephyr.ex_core.audit_journal.auditor; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.fill; zephyr.shared.contracts.enums.order_enums; zephyr.shared.contracts.risk_limits
+# [CONSUMERS] D-PORTFOLIO(TradingSession可调用); D-EX-CORE(ExecutionEngine可调用)
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] 六步严格顺序;补偿幂等;≤5s超时;每步审计不可跳过;SagaResult frozen不可变;execute同步阻塞
+# [MODIFY-GUARD] blueprint.md
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] SagaTimeoutError;SagaCompensationError
+# [TESTS] tests/ex_core/test_order_execution_saga.py
+# [A_module] module_id=MOD-EX-057 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+
+"""Order Execution Saga — 下单执行 Saga 编排器 (MOD-EX-057 / D-EX-CORE-57)
+
+D_EXECUTION_CORE 域事务编排基础设施: 将单笔订单的执行封装为六步 Saga 事务,
+任何一步失败自动补偿回滚, 保证系统不会处于"半完成"的不一致状态。
+
+六步流程 (设计真源 §13):
+    1. 风控检查    → risk_validator.validate_order()
+    2. 信号确认    → signal_confirmer(order) (可选)
+    3. 下单提交    → order_manager.create_order() + submit_order()
+    4. 成交确认    → 等待 Fill 回调 (Event + timeout)
+    5. 持仓更新    → position_tracker.apply_fill(fill, side)
+    6. 报告生成    → audit_logger.log_order_filled() 等
+
+补偿规则:
+    - 步骤3失败 → 撤单 (cancel_order, 幂等: 已成交则忽略)
+    - 步骤5失败 → 持仓回滚 (反向 apply_fill, 幂等: 覆盖)
+    - 步骤4超时 → 撤单 (步骤3补偿)
+
+纯基础设施: 不决定"买什么/何时买/买多少", 只负责"按顺序执行六步, 失败就补偿回滚"。
+
+SSoT: depgraph MOD-EX-057
+设计真源: D-EX-CORE-57 §13
+Version: 0.1.0
+"""
+
+from __future__ import annotations
+
+import logging
+import threading
+import time
+import uuid
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from decimal import Decimal
+from enum import Enum
+from typing import Any, Final
+
+from zephyr.ex_core.audit_journal.auditor import (
+    AuditSource,
+    ExecutionAuditEventType,
+    ExecutionAuditLogger,
+)
+from zephyr.ex_core.order_manager import OrderManager
+from zephyr.ex_core.position_tracker.tracker import PositionTracker
+from zephyr.governance.adapters.risk_validation_bridge import (
+    RiskValidationPort,
+    RiskViolation,
+)
+from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
+from zephyr.shared.contracts.fill import Fill
+from zephyr.shared.contracts.order import Order
+from zephyr.shared.contracts.risk_limits import RiskLimits
+
+try:
+    from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
+except ImportError:
+    # broker_interface 可能在某些环境不可用, 用 Protocol 兜底
+    from typing import Protocol
+
+    class BrokerInterface(Protocol):  # type: ignore[no-redef]
+        def submit_order(self, order: Order) -> str: ...
+        def cancel_order(self, broker_order_id: str) -> bool: ...
+        def register_fill_callback(self, callback: Any) -> None: ...
+        def get_positions(self) -> Any: ...
+        def connect(self) -> None: ...
+        def disconnect(self) -> None: ...
+
+_logger = logging.getLogger(__name__)
+
+__all__: Final = [
+    "SagaState",
+    "SagaResult",
+    "SagaConfig",
+    "OrderExecutionSaga",
+    "SagaTimeoutError",
+    "SagaCompensationError",
+]
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 错误
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class SagaTimeoutError(Exception):
+    """Saga 执行超时。"""
+
+
+class SagaCompensationError(Exception):
+    """Saga 补偿操作失败。"""
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 状态机
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class SagaState(str, Enum):
+    """Saga 状态机——六步编排 + 失败/补偿状态。"""
+
+    INIT = "INIT"
+    RISK_PASSED = "RISK_PASSED"
+    SIGNAL_CONFIRMED = "SIGNAL_CONFIRMED"
+    ORDER_SUBMITTED = "ORDER_SUBMITTED"
+    FILL_RECEIVED = "FILL_RECEIVED"
+    POSITION_UPDATED = "POSITION_UPDATED"
+    COMPLETED = "COMPLETED"
+    # 失败/补偿状态
+    RISK_REJECTED = "RISK_REJECTED"
+    SIGNAL_INVALID = "SIGNAL_INVALID"
+    ORDER_REJECTED = "ORDER_REJECTED"
+    TIMEOUT = "TIMEOUT"
+    COMPENSATED = "COMPENSATED"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 数据模型
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class SagaResult:
+    """单笔 Saga 执行结果（不可变）。
+
+    Attributes:
+        saga_id: UUID, 唯一标识
+        order_id: 订单ID
+        symbol: 标的代码
+        side: 买卖方向 (OrderSide.value)
+        state: 最终 Saga 状态
+        steps_completed: 已完成的步骤名列表
+        fill: 成交回报 (None=未成交)
+        error: 错误信息 (None=无错误)
+        compensated: 是否执行了补偿
+        started_at: 开始时间
+        completed_at: 完成时间
+        duration_ms: 总耗时(毫秒)
+    """
+
+    saga_id: str
+    order_id: str
+    symbol: str
+    side: str
+    state: SagaState
+    steps_completed: tuple[str, ...]
+    fill: Fill | None
+    error: str | None
+    compensated: bool
+    started_at: datetime
+    completed_at: datetime
+    duration_ms: float
+
+
+@dataclass
+class SagaConfig:
+    """Saga 配置。
+
+    Attributes:
+        timeout_seconds: 总 Saga 超时(秒), 默认 5.0 (设计约束 ≤5s)
+        fill_poll_interval: 成交确认轮询间隔(秒), 仅影响 Event.wait 精度
+        broker_id: OrderManager 中注册的 broker_id
+    """
+
+    timeout_seconds: float = 5.0
+    fill_poll_interval: float = 0.05
+    broker_id: str = "simulation"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 内部: Fill 收集器 (线程安全, 一次性)
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class _FillCollector:
+    """收集指定 order_id 的 Fill（线程安全，一次性）。
+
+    注册为 OrderManager 的 fill callback，当指定 order_id 的 fill 到达时
+    自动捕获并设置 Event。用于 Saga 步骤4（成交确认）的同步等待。
+    """
+
+    def __init__(self, order_id: str) -> None:
+        self._order_id = order_id
+        self._event = threading.Event()
+        self._fill: Fill | None = None
+
+    def __call__(self, fill: Fill) -> None:
+        """fill callback 入口——仅捕获匹配 order_id 的首个 fill。"""
+        if fill.order_id == self._order_id and not self._event.is_set():
+            self._fill = fill
+            self._event.set()
+
+    def wait(self, timeout: float) -> Fill | None:
+        """等待 fill 到达（阻塞至 timeout 或 fill 到达）。"""
+        if self._event.wait(timeout=timeout):
+            return self._fill
+        return None
+
+    @property
+    def collected(self) -> bool:
+        """是否已收到 fill。"""
+        return self._event.is_set()
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 内部: Saga 执行上下文
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+@dataclass
+class _SagaContext:
+    """单笔 Saga 执行的内部上下文（可变，仅在 execute() 内使用）。"""
+
+    saga_id: str
+    order: Order
+    side: OrderSide
+    state: SagaState = SagaState.INIT
+    steps_completed: list[str] = field(default_factory=list)
+    fill: Fill | None = None
+    error: str | None = None
+    compensated: bool = False
+    start_time: float = 0.0  # time.monotonic()
+    started_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    collector: _FillCollector | None = None  # step3 注册, execute() finally 清理
+
+    def remaining_timeout(self, config: SagaConfig) -> float:
+        """剩余超时秒数。"""
+        elapsed = time.monotonic() - self.start_time
+        return max(0.0, config.timeout_seconds - elapsed)
+
+    def mark_step(self, step: str) -> None:
+        """标记步骤完成。"""
+        self.steps_completed.append(step)
+
+    def to_result(self) -> SagaResult:
+        """转换为不可变 SagaResult。"""
+        completed_at = datetime.now(UTC)
+        duration_ms = (time.monotonic() - self.start_time) * 1000.0
+        return SagaResult(
+            saga_id=self.saga_id,
+            order_id=self.order.order_id,
+            symbol=self.order.symbol,
+            side=self.side.value,
+            state=self.state,
+            steps_completed=tuple(self.steps_completed),
+            fill=self.fill,
+            error=self.error,
+            compensated=self.compensated,
+            started_at=self.started_at,
+            completed_at=completed_at,
+            duration_ms=duration_ms,
+        )
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 下单执行 Saga 编排器
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class OrderExecutionSaga:
+    """下单执行 Saga 编排器 — 六步编排 + 补偿 + 超时。
+
+    用法:
+        saga = OrderExecutionSaga(
+            order_manager=om,
+            risk_validator=bridge,
+            position_tracker=tracker,
+            audit_logger=audit,
+            broker=broker,
+            broker_id="simulation",
+        )
+
+        # 执行单笔订单 (同步阻塞, ≤5s)
+        result = saga.execute(order, OrderSide.BUY)
+
+        if result.state == SagaState.COMPLETED:
+            print(f"成交: {result.fill}")
+        elif result.compensated:
+            print(f"已补偿: {result.error}")
+    """
+
+    def __init__(
+        self,
+        order_manager: OrderManager,
+        risk_validator: RiskValidationPort,
+        position_tracker: PositionTracker,
+        audit_logger: ExecutionAuditLogger,
+        broker: BrokerInterface,
+        broker_id: str = "simulation",
+        risk_limits: RiskLimits | None = None,
+        config: SagaConfig | None = None,
+        signal_confirmer: Callable[[Order], bool] | None = None,
+    ) -> None:
+        """初始化 Saga 编排器。
+
+        Args:
+            order_manager: 订单管理器（创建/提交/撤单）
+            risk_validator: 风控校验端口
+            position_tracker: 持仓跟踪器（更新/回滚）
+            audit_logger: 执行审计记录器（哈希链审计）
+            broker: 券商接口（fill 回调源）
+            broker_id: OrderManager 中注册的 broker_id
+            risk_limits: 风控限额（None=用默认）
+            config: Saga 配置（None=默认 5s 超时）
+            signal_confirmer: 信号确认回调（None=跳过步骤2）
+        """
+        self._order_manager = order_manager
+        self._risk_validator = risk_validator
+        self._position_tracker = position_tracker
+        self._audit = audit_logger
+        self._broker = broker
+        self._config = config or SagaConfig(broker_id=broker_id)
+        self._config.broker_id = broker_id
+        self._risk_limits = risk_limits or self._default_risk_limits()
+        self._signal_confirmer = signal_confirmer
+
+    @staticmethod
+    def _default_risk_limits() -> RiskLimits:
+        """默认风控限额（A 股多头：单标的 10%、杠杆 1.0）。"""
+        now = datetime.now(UTC)
+        return RiskLimits(
+            as_of_date=now,
+            idempotency_key=f"saga-default-{now.isoformat()}",
+            max_single_position=0.10,
+            max_gross_leverage=1.0,
+        )
+
+    # ── 公共入口 ──
+
+    def execute(self, order: Order, side: OrderSide) -> SagaResult:
+        """执行单笔订单的 Saga 六步流程（同步阻塞至完成或超时）。
+
+        Args:
+            order: 订单（需包含 symbol/quantity/limit_price 等）
+            side: 买卖方向
+
+        Returns:
+            SagaResult（不可变，含最终状态/成交/补偿信息）
+        """
+        ctx = _SagaContext(
+            saga_id=uuid.uuid4().hex,
+            order=order,
+            side=side,
+            start_time=time.monotonic(),
+        )
+        _logger.info(
+            "[Saga %s] START order=%s symbol=%s side=%s",
+            ctx.saga_id[:8], order.order_id, order.symbol, side.value,
+        )
+
+        try:
+            return self._run_saga(ctx)
+        finally:
+            # 清理 fill callback（step3 可能注册了 collector）
+            if ctx.collector is not None:
+                try:
+                    self._order_manager._fill_callbacks.remove(ctx.collector)
+                except (ValueError, AttributeError):
+                    pass  # 已清理或不存在
+
+    # ── Saga 主流程 ──
+
+    def _run_saga(self, ctx: _SagaContext) -> SagaResult:
+        """执行六步 Saga（内部, collector 在 step3 注册到 ctx.collector）。"""
+        try:
+            # 步骤1: 风控检查
+            if not self._step1_risk_check(ctx):
+                return ctx.to_result()
+
+            # 步骤2: 信号确认（可选）
+            if not self._step2_signal_confirm(ctx):
+                return ctx.to_result()
+
+            # 步骤3: 下单提交（注册 fill collector 到 ctx.collector）
+            if not self._step3_order_submit(ctx):
+                return ctx.to_result()
+
+            # 步骤4: 成交确认
+            remaining = ctx.remaining_timeout(self._config)
+            fill = self._step4_fill_confirm(ctx, ctx.collector, remaining)
+            if fill is None:
+                # 超时 → 补偿撤单
+                ctx.state = SagaState.TIMEOUT
+                ctx.error = f"fill timeout after {self._config.timeout_seconds}s"
+                self._compensate_order(ctx)
+                self._audit_timeout(ctx)
+                return ctx.to_result()
+
+            ctx.fill = fill
+            ctx.state = SagaState.FILL_RECEIVED
+            ctx.mark_step("fill_confirm")
+            self._audit.log(
+                ExecutionAuditEventType.FILL_RECEIVED,
+                ctx.order.order_id,
+                ctx.order.symbol,
+                AuditSource.AUTO,
+                {"fill_id": fill.fill_id, "fill_price": str(fill.fill_price),
+                 "filled_qty": str(fill.filled_quantity)},
+            )
+
+            # 步骤5: 持仓更新
+            if not self._step5_position_update(ctx):
+                return ctx.to_result()
+
+            # 步骤6: 报告生成
+            self._step6_report(ctx)
+
+            ctx.state = SagaState.COMPLETED
+            _logger.info(
+                "[Saga %s] COMPLETED order=%s fill=%s duration=%.1fms",
+                ctx.saga_id[:8], ctx.order.order_id,
+                ctx.fill.fill_id if ctx.fill else None,
+                (time.monotonic() - ctx.start_time) * 1000,
+            )
+            return ctx.to_result()
+
+        except Exception as exc:
+            ctx.error = f"saga exception: {exc}"
+            _logger.error("[Saga %s] EXCEPTION: %s", ctx.saga_id[:8], exc, exc_info=True)
+            # 尝试补偿
+            if ctx.state in (SagaState.ORDER_SUBMITTED, SagaState.FILL_RECEIVED):
+                self._compensate_order(ctx)
+            return ctx.to_result()
+
+    # ── 六步实现 ──
+
+    def _step1_risk_check(self, ctx: _SagaContext) -> bool:
+        """步骤1: 风控检查。"""
+        try:
+            # 获取当前持仓用于风控校验
+            snapshot = self._position_tracker.get_positions()
+            current_holdings: dict[str, float] = {
+                s: float(q) for s, q in snapshot.holdings.items()
+            }
+            # target_weight: 简化估算（实际应由调用方提供）
+            total_nav = float(snapshot.cash + snapshot.total_market_value)
+            target_weight = (
+                float(ctx.order.quantity * (ctx.order.limit_price or Decimal("0"))) / total_nav
+                if total_nav > 0
+                else 0.0
+            )
+
+            violations = self._risk_validator.validate_order(
+                symbol=ctx.order.symbol,
+                target_weight=target_weight,
+                current_holdings=current_holdings,
+                limits=self._risk_limits,
+            )
+
+            halt_violations = [v for v in violations if v.severity == "HALT"]
+            if halt_violations:
+                ctx.state = SagaState.RISK_REJECTED
+                ctx.error = f"risk rejected: {'; '.join(v.description for v in halt_violations)}"
+                self._audit.log(
+                    ExecutionAuditEventType.ORDER_REJECTED,
+                    ctx.order.order_id,
+                    ctx.order.symbol,
+                    AuditSource.AUTO,
+                    {"reason": "risk_check_failed", "violations": [v.description for v in halt_violations]},
+                )
+                _logger.warning("[Saga %s] RISK_REJECTED: %s", ctx.saga_id[:8], ctx.error)
+                return False
+
+            ctx.state = SagaState.RISK_PASSED
+            ctx.mark_step("risk_check")
+            self._audit.log(
+                ExecutionAuditEventType.ORDER_CREATED,
+                ctx.order.order_id,
+                ctx.order.symbol,
+                AuditSource.AUTO,
+                {"qty": str(ctx.order.quantity), "side": ctx.side.value,
+                 "limit_price": str(ctx.order.limit_price) if ctx.order.limit_price else None},
+            )
+            return True
+
+        except Exception as exc:
+            ctx.state = SagaState.RISK_REJECTED
+            ctx.error = f"risk check error: {exc}"
+            return False
+
+    def _step2_signal_confirm(self, ctx: _SagaContext) -> bool:
+        """步骤2: 信号确认（可选，signal_confirmer=None 时跳过）。"""
+        if self._signal_confirmer is None:
+            ctx.state = SagaState.SIGNAL_CONFIRMED
+            ctx.mark_step("signal_confirm(skipped)")
+            return True
+
+        try:
+            valid = self._signal_confirmer(ctx.order)
+            if not valid:
+                ctx.state = SagaState.SIGNAL_INVALID
+                ctx.error = "signal confirmation failed"
+                _logger.info("[Saga %s] SIGNAL_INVALID", ctx.saga_id[:8])
+                return False
+            ctx.state = SagaState.SIGNAL_CONFIRMED
+            ctx.mark_step("signal_confirm")
+            return True
+        except Exception as exc:
+            ctx.state = SagaState.SIGNAL_INVALID
+            ctx.error = f"signal confirm error: {exc}"
+            return False
+
+    def _step3_order_submit(self, ctx: _SagaContext) -> bool:
+        """步骤3: 下单提交（create + register collector + submit）。"""
+        try:
+            # 如果订单还未注册到 OrderManager（TradingSession 传入的可能是值对象）
+            if ctx.order.order_id not in self._order_manager.orders:
+                registered = self._order_manager.create_order(
+                    symbol=ctx.order.symbol,
+                    strategy_id=ctx.order.strategy_id,
+                    side=ctx.side,
+                    order_type=ctx.order.order_type,
+                    quantity=ctx.order.quantity,
+                    limit_price=ctx.order.limit_price,
+                    broker_id=self._config.broker_id,
+                )
+                ctx.order = registered  # 替换为已注册的 Order
+
+            # 注册 fill collector（用实际 order_id, 在 submit 前注册防同步成交竞态）
+            ctx.collector = _FillCollector(ctx.order.order_id)
+            self._order_manager.register_fill_callback(ctx.collector)
+
+            self._order_manager.submit_order(ctx.order.order_id, self._config.broker_id)
+            ctx.state = SagaState.ORDER_SUBMITTED
+            ctx.mark_step("order_submit")
+            self._audit.log(
+                ExecutionAuditEventType.ORDER_SUBMITTED,
+                ctx.order.order_id,
+                ctx.order.symbol,
+                AuditSource.AUTO,
+                {"broker_id": self._config.broker_id, "broker_order_id": ctx.order.broker_order_id},
+            )
+            _logger.info(
+                "[Saga %s] ORDER_SUBMITTED order=%s broker=%s",
+                ctx.saga_id[:8], ctx.order.order_id, self._config.broker_id,
+            )
+            return True
+
+        except Exception as exc:
+            ctx.state = SagaState.ORDER_REJECTED
+            ctx.error = f"order submit failed: {exc}"
+            self._audit.log(
+                ExecutionAuditEventType.ORDER_REJECTED,
+                ctx.order.order_id,
+                ctx.order.symbol,
+                AuditSource.AUTO,
+                {"reason": "submit_error", "error": str(exc)},
+            )
+            return False
+
+    def _step4_fill_confirm(
+        self, ctx: _SagaContext, collector: _FillCollector | None, timeout: float
+    ) -> Fill | None:
+        """步骤4: 成交确认（等待 fill 回调）。"""
+        if collector is None or timeout <= 0:
+            return None
+
+        # 如果 fill 已经在 submit_order 期间同步到达（SimulationBroker 场景）
+        if collector.collected:
+            return collector._fill
+
+        fill = collector.wait(timeout=timeout)
+        return fill
+
+    def _step5_position_update(self, ctx: _SagaContext) -> bool:
+        """步骤5: 持仓更新。"""
+        if ctx.fill is None:
+            ctx.error = "no fill to apply"
+            return False
+
+        try:
+            self._position_tracker.apply_fill(ctx.fill, ctx.side)
+            ctx.state = SagaState.POSITION_UPDATED
+            ctx.mark_step("position_update")
+            self._audit.log(
+                ExecutionAuditEventType.ORDER_FILLED,
+                ctx.order.order_id,
+                ctx.order.symbol,
+                AuditSource.AUTO,
+                {"fill_id": ctx.fill.fill_id, "avg_price": str(ctx.fill.fill_price),
+                 "filled_qty": str(ctx.fill.filled_quantity),
+                 "commission": str(ctx.fill.commission)},
+            )
+            return True
+        except Exception as exc:
+            ctx.error = f"position update failed: {exc}"
+            # 补偿: 持仓回滚
+            self._compensate_position(ctx)
+            return False
+
+    def _step6_report(self, ctx: _SagaContext) -> None:
+        """步骤6: 报告生成（best-effort, 失败不阻断）。"""
+        try:
+            # 标记订单完成
+            if ctx.order.status not in (OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED):
+                ctx.order.status = OrderStatus.FILLED
+                ctx.order.updated_at = datetime.now(UTC)
+            ctx.mark_step("report")
+        except Exception as exc:
+            _logger.warning("[Saga %s] report step failed (best-effort): %s", ctx.saga_id[:8], exc)
+
+    # ── 补偿操作 ──
+
+    def _compensate_order(self, ctx: _SagaContext) -> None:
+        """步骤3补偿: 撤单（幂等）。"""
+        try:
+            if ctx.order.status in (OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL):
+                cancelled = self._order_manager.cancel_order(ctx.order.order_id)
+                if cancelled:
+                    ctx.compensated = True
+                    ctx.state = SagaState.COMPENSATED
+                    self._audit.log(
+                        ExecutionAuditEventType.ORDER_CANCELLED,
+                        ctx.order.order_id,
+                        ctx.order.symbol,
+                        AuditSource.AUTO,
+                        {"reason": "saga_compensate", "saga_state": ctx.state.value},
+                    )
+                    _logger.info("[Saga %s] COMPENSATED: order cancelled", ctx.saga_id[:8])
+                else:
+                    # 撤单失败——可能已成交（幂等: 忽略）
+                    _logger.warning(
+                        "[Saga %s] cancel returned False (may already be filled)", ctx.saga_id[:8]
+                    )
+            else:
+                # 订单已终态（FILLED/CANCELLED/REJECTED）——无需补偿
+                _logger.info(
+                    "[Saga %s] skip compensate: order status=%s", ctx.saga_id[:8], ctx.order.status
+                )
+        except Exception as exc:
+            _logger.error("[Saga %s] compensate_order failed: %s", ctx.saga_id[:8], exc, exc_info=True)
+
+    def _compensate_position(self, ctx: _SagaContext) -> None:
+        """步骤5补偿: 持仓回滚（反向 apply_fill, 幂等）。"""
+        if ctx.fill is None:
+            return
+        try:
+            reverse_fill = Fill(
+                fill_id=f"rollback-{ctx.fill.fill_id}",
+                fill_price=ctx.fill.fill_price,
+                fill_timestamp=datetime.now(UTC),
+                filled_quantity=ctx.fill.filled_quantity,
+                idempotency_key=f"rollback-{ctx.fill.idempotency_key}",
+                order_id=ctx.fill.order_id,
+                strategy_id=ctx.fill.strategy_id,
+                symbol=ctx.fill.symbol,
+                commission=Decimal("0"),  # 回滚不收佣金
+            )
+            reverse_side = OrderSide.SELL if ctx.side == OrderSide.BUY else OrderSide.BUY
+            self._position_tracker.apply_fill(reverse_fill, reverse_side)
+            ctx.compensated = True
+            ctx.state = SagaState.COMPENSATED
+            self._audit.log(
+                ExecutionAuditEventType.ORDER_CANCELLED,
+                ctx.order.order_id,
+                ctx.order.symbol,
+                AuditSource.AUTO,
+                {"reason": "position_rollback", "original_fill": ctx.fill.fill_id},
+            )
+            _logger.info("[Saga %s] COMPENSATED: position rolled back", ctx.saga_id[:8])
+        except Exception as exc:
+            _logger.error("[Saga %s] compensate_position failed: %s", ctx.saga_id[:8], exc, exc_info=True)
+
+    def _audit_timeout(self, ctx: _SagaContext) -> None:
+        """记录超时事件到审计日志。"""
+        self._audit.log(
+            ExecutionAuditEventType.ORDER_EXPIRED,
+            ctx.order.order_id,
+            ctx.order.symbol,
+            AuditSource.AUTO,
+            {"reason": "saga_timeout", "timeout_seconds": self._config.timeout_seconds},
+        )
