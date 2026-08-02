@@ -1,0 +1,146 @@
+---
+module_id: MOD-SIM-023
+title: "Sharpe 计算修正器蓝图 — 非正态检测+Sortino+DSR+滚动"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+ttl: permanent
+layer: L03_simulation
+layer_name: simulation
+functional_domain: simulation
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-02"
+last_updated: "2026-08-02"
+priority: P1
+blueprint_level: module
+responsibility_domain: 
+design_maturity: design
+build_status: planned
+---
+
+# MOD-SIM-023 Sharpe Calculator Fixer — Sharpe 计算修正器 蓝图
+
+> **module_id**: MOD-SIM-023 | **域**: D_SIMULATION | **层**: L03 仿真
+> **优先级**: P1 | **成熟度**: production | **对标能力**: C-033 过拟合系统性防护
+> **SSoT**: depgraph MOD-SIM-023 | **设计真源**: 19-D-SIMULATION §1 SIM-23
+
+## 1. 定位
+
+Sharpe 计算修正器——A股场景的 Sharpe 比率修正计算。解决标准 Sharpe 的5个问题:
+1. 无风险利率用中国10年期国债(非美国T-bill)
+2. 样本量<60不计算(统计不显著)
+3. 非正态分布用 Sortino 替代
+4. 多重测试偏差用 DSR(MOD-SIM-024)修正
+5. 滚动 rolling Sharpe + 年化按频率自动选择
+
+属 A 类基础设施(确定性数学计算), 纯基础层不涉及策略。
+
+## 2. 输入 / 输出
+
+| 方向 | 内容 | 契约/事件 |
+|------|------|-----------|
+| 输入 | returns (收益率序列) | — |
+| 输入 | num_trials (试次数, 传给DSR) | — |
+| 输入 | risk_free_rate (默认中国10Y国债) | — |
+| 输出 | SharpeResult (Sharpe+Sortino+DSR+方法选择) | — |
+| 输出 | rolling Sharpe 序列 | — |
+
+## 3. 核心规则
+
+### 3.1 样本量门禁
+```
+if len(returns) < min_samples (60):
+    return SharpeResult(sharpe=None, reason="样本不足")
+```
+
+### 3.2 非正态检测 (Jarque-Bera)
+```
+JB = n/6 * (γ² + κ²/4)
+if JB > jb_critical (5.99, α=0.05, χ²(2)):
+    method = "sortino"  # 非正态 -> 用 Sortino
+else:
+    method = "sharpe"   # 正态 -> 用 Sharpe
+```
+
+### 3.3 Sortino 比率 (非正态替代)
+```
+downside_returns = min(0, returns - rf)
+downside_std = sqrt(mean(downside_returns²))
+Sortino = (mean(returns) - rf) / downside_std
+```
+
+### 3.4 DSR 集成
+调用 MOD-SIM-024 DeflatedSharpeCalculator 计算 DSR, 纳入结果。
+
+### 3.5 年化
+```
+annual_factor = sqrt(periods_per_year)
+sharpe_annual = sharpe * annual_factor
+```
+频率自动选择: 日度=252 / 周度=52 / 月度=12。
+
+## 4. 关键不变量
+
+- SharpeResult/SharpeConfig 为 frozen dataclass
+- 样本<60 时 sharpe=None (不计算)
+- float 计算(非 Decimal)
+- 无第三方依赖(自实现 Jarque-Bera + Sortino)
+
+## 5. 错误契约
+
+- `SimulationError` (ZA-SIM-0023): 输入非法(空序列/非法频率)
+
+## 6. 数据模型
+
+```python
+class SharpeMethod(str, Enum):
+    SHARPE = "sharpe"
+    SORTINO = "sortino"
+    INSUFFICIENT = "insufficient"
+
+@dataclass(frozen=True)
+class SharpeConfig:
+    min_samples: int = 60
+    periods_per_year: int = 252
+    risk_free_rate: float = 0.025/252  # 中国10Y国债~2.5%年化
+    jb_critical: float = 5.99  # χ²(2) α=0.05
+    dsr_threshold: float = 0.95
+
+@dataclass(frozen=True)
+class SharpeResult:
+    sharpe: float | None          # 非年化(样本不足为None)
+    sharpe_annualized: float | None
+    sortino: float | None         # 非正态时计算
+    sortino_annualized: float | None
+    dsr: float | None             # DSR(来自MOD-SIM-024)
+    method: SharpeMethod
+    is_non_normal: bool
+    skewness: float
+    kurtosis: float
+    jb_statistic: float
+    num_obs: int
+    risk_free_rate: float
+```
+
+## 7. API
+
+```python
+class SharpeCalculatorFixer:
+    def __init__(self, config: SharpeConfig | None = None) -> None: ...
+    def calculate(self, returns, num_trials=1, risk_free_rate=None) -> SharpeResult: ...
+    def rolling_sharpe(self, returns, window=60, num_trials=1) -> list[SharpeResult]: ...
+```
+
+## 8. 依赖
+
+- `zephyr.simulation.deflated_sharpe_calculator` (DeflatedSharpeCalculator) — data
+- `zephyr.shared.foundation.errors` (ZephyrBaseError)
+- 消费者: MOD-SIM-002 (strategy_simulator), MOD-SIM-012 (result_analyzer)
+- 设计真源: 19-D-SIMULATION §1 SIM-23
+
+## 9. 测试
+
+- `tests/simulation/test_sharpe_calculator_fixer.py`
+- 覆盖: 样本不足返回None、正态用Sharpe、非正态用Sortino、DSR集成、
+  年化、滚动Sharpe、Jarque-Bera检测、中国国债利率默认值
