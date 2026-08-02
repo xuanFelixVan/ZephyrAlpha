@@ -30,9 +30,9 @@ ttl: permanent
 | 模块数 | 18 | Module Count | 18 |
 | 域内依赖 | 15 | Internal Dependencies | 15 |
 | 跨域入边 | 5 | Cross-domain Incoming | 5 |
-| 跨域出边 | 27 | Cross-domain Outgoing | 27 |
-| 设计态模块 | 3 | Design Modules | 3 |
-| 生产态模块 | 15 | Production Modules | 15 |
+| 跨域出边 | 28 | Cross-domain Outgoing | 28 |
+| 设计态模块 | 2 | Design Modules | 2 |
+| 生产态模块 | 16 | Production Modules | 16 |
 | 容量 | 14/150 (正常) | Capacity | 14/150 (正常) |
 | 描述 | 报告，负责投资报告、风险报告和合规报告的生成与分发 | Description | 报告，负责投资报告、风险报告和合规报告的生成与分发 |
 
@@ -48,12 +48,12 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 18 个模块（生产态 15 + 设计态 3），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 18 个模块（生产态 16 + 设计态 2），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_ashare_performance_audit_py["A股绩效审计<br/>生成报表与报告<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>ashare_performance_audit<br/>文件: reporting/ashare_performance_audit.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_ashare_performance_audit_py["A股绩效审计<br/>生成报表与报告<br/>ashare_performance_audit<br/>文件: reporting/ashare_performance_audit.py<br/>(生产态 / production)"]
     src_zephyr_reporting_default_tca_engine_py["默认tca引擎<br/>交易成本分析引擎具体实现。成交回报 -><br/>执行分析报告。<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
     src_zephyr_reporting_performance_attribution_report_py["绩效attribution报告<br/>报告的报告器，汇总数据生成报告（performance<br/>attribution report）<br/>⛔ D-EX-CORE执行报告未就绪(CTR-P1-007<br/>/CTR-ERR-005),设计文档§1.4标注受限,暂不可建<br/>performance_attribution_report<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
     src_zephyr_reporting_regulatory_report_generator_py["regulatory报告generator<br/>regulatory报告生成器，报告的生成器，按规则生成所<br/>需的数据或报告。<br/>regulatory_report_generator<br/>文件: reporting/regulatory_report_generator.py<br/>(生产态 / production)"]
@@ -86,7 +86,7 @@ flowchart TD
     src_zephyr_reporting_analytics_base_py["analytics基类<br/>盘后分析层。负责交易执行后的绩效评估与归因分析。<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告的报告器，汇总数据生成报告（report<br/>publisher）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_publisher<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
     src_zephyr_reporting_analytics_base_py ~~~ src_zephyr_reporting_report_publisher_py
-    src_zephyr_reporting_ashare_performance_audit_py -.->|data / data| src_zephyr_reporting_default_attribution_engine_py
+    src_zephyr_reporting_ashare_performance_audit_py -->|data / data| src_zephyr_reporting_default_attribution_engine_py
     src_zephyr_reporting_regulatory_report_generator_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_performance_attribution_report_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
@@ -102,7 +102,8 @@ flowchart TD
     tests_reporting_test_risk_report_engine_py -->|测试依赖 / test_depends| src_zephyr_reporting_risk_report_engine_py
     tests_reporting_test_ashare_trade_record_template_py -->|测试依赖 / test_depends| src_zephyr_reporting_ashare_trade_record_template_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_reporting_ashare_performance_audit_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_ashare_performance_audit_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_reporting_report_publisher_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_reporting_ashare_trade_record_template_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_reporting_report_watermark_tracker_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_reporting_risk_report_engine_py -->|导入依赖 / import_depends| D_SHARED
@@ -118,8 +119,6 @@ flowchart TD
     src_zephyr_reporting_realtime_pnl_dashboard_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_realtime_pnl_dashboard_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_reporting_realtime_pnl_dashboard_py -->|导入依赖 / import_depends| D_SHARED
-    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_reporting_realtime_pnl_dashboard_py -->|导入依赖 / import_depends| D_TRADING
     D_EX_CORE -.->|data / data| src_zephyr_reporting_report_publisher_py
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
@@ -132,19 +131,19 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_ashare_trade_record_template_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_realtime_pnl_dashboard_py,src_zephyr_reporting_regulatory_report_generator_py,src_zephyr_reporting_report_version_manager_py,src_zephyr_reporting_report_watermark_tracker_py,src_zephyr_reporting_risk_report_engine_py,tests_reporting_test_ashare_trade_record_template_py,tests_reporting_test_realtime_pnl_dashboard_py,tests_reporting_test_regulatory_report_generator_py,tests_reporting_test_report_version_manager_py,tests_reporting_test_report_watermark_tracker_py,tests_reporting_test_risk_report_engine_py production
-    class src_zephyr_reporting_ashare_performance_audit_py,src_zephyr_reporting_performance_attribution_report_py,src_zephyr_reporting_report_publisher_py design
-    class D_SHARED,D_EX_CORE,D_INFRASTRUCTURE,D_TRADING,D_PF_CORE,D_GOV_AUDIT,D_GOVERNANCE external_prod
+    class src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_ashare_performance_audit_py,src_zephyr_reporting_ashare_trade_record_template_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_realtime_pnl_dashboard_py,src_zephyr_reporting_regulatory_report_generator_py,src_zephyr_reporting_report_version_manager_py,src_zephyr_reporting_report_watermark_tracker_py,src_zephyr_reporting_risk_report_engine_py,tests_reporting_test_ashare_trade_record_template_py,tests_reporting_test_realtime_pnl_dashboard_py,tests_reporting_test_regulatory_report_generator_py,tests_reporting_test_report_version_manager_py,tests_reporting_test_report_watermark_tracker_py,tests_reporting_test_risk_report_engine_py production
+    class src_zephyr_reporting_performance_attribution_report_py,src_zephyr_reporting_report_publisher_py design
+    class D_SHARED,D_EX_CORE,D_INFRASTRUCTURE,D_PF_CORE,D_GOV_AUDIT,D_GOVERNANCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 15 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 16 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_default_attribution_engine_py["默认attribution引擎<br/>绩效归因引擎具体实现。Brinson 模型 3 因子分解。<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_ashare_performance_audit_py["A股绩效审计<br/>生成报表与报告<br/>ashare_performance_audit<br/>文件: reporting/ashare_performance_audit.py<br/>(生产态 / production)"]
     src_zephyr_reporting_default_tca_engine_py["默认tca引擎<br/>交易成本分析引擎具体实现。成交回报 -><br/>执行分析报告。<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
     src_zephyr_reporting_regulatory_report_generator_py["regulatory报告generator<br/>regulatory报告生成器，报告的生成器，按规则生成所<br/>需的数据或报告。<br/>regulatory_report_generator<br/>文件: reporting/regulatory_report_generator.py<br/>(生产态 / production)"]
     tests_reporting_test_ashare_trade_record_template_py["reporting/test_ashare_trade_record_template<br/>MOD-RPT-027 A股交易记录模板引擎 单元测试.<br/>文件: reporting<br/>/test_ashare_trade_record_template.py<br/>(生产态 / production)"]
@@ -153,7 +152,7 @@ flowchart TD
     tests_reporting_test_report_version_manager_py["reporting/test_report_version_manager<br/>MOD-RPT-013 Report Version Manager 单元测试.<br/>文件: reporting/test_report_version_manager.py<br/>(生产态 / production)"]
     tests_reporting_test_report_watermark_tracker_py["reporting/test_report_watermark_tracker<br/>MOD-RPT-017 Report Watermark Tracker 单元测试.<br/>文件: reporting/test_report_watermark_tracker.py<br/>(生产态 / production)"]
     tests_reporting_test_risk_report_engine_py["reporting/test_risk_report_engine<br/>MOD-RPT-008 Risk Report Engine 单元测试.<br/>文件: reporting/test_risk_report_engine.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_default_tca_engine_py
+    src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_default_tca_engine_py
     src_zephyr_reporting_default_tca_engine_py ~~~ src_zephyr_reporting_regulatory_report_generator_py
     src_zephyr_reporting_regulatory_report_generator_py ~~~ tests_reporting_test_ashare_trade_record_template_py
     tests_reporting_test_ashare_trade_record_template_py ~~~ tests_reporting_test_realtime_pnl_dashboard_py
@@ -161,17 +160,19 @@ flowchart TD
     tests_reporting_test_regulatory_report_generator_py ~~~ tests_reporting_test_report_version_manager_py
     tests_reporting_test_report_version_manager_py ~~~ tests_reporting_test_report_watermark_tracker_py
     tests_reporting_test_report_watermark_tracker_py ~~~ tests_reporting_test_risk_report_engine_py
-    src_zephyr_reporting_analytics_base_py["analytics基类<br/>盘后分析层。负责交易执行后的绩效评估与归因分析。<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_trade_record_template_py["A股交易记录模板<br/>报告的记录器，把发生的事件/结果记下来留档<br/>ashare_trade_record_template<br/>文件: reporting/ashare_trade_record_template.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_default_attribution_engine_py["默认attribution引擎<br/>绩效归因引擎具体实现。Brinson 模型 3 因子分解。<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py<br/>(生产态 / production)"]
     src_zephyr_reporting_realtime_pnl_dashboard_py["实时盈亏仪表盘<br/>生成报表<br/>realtime_pnl_dashboard<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(生产态 / production)"]
     src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告的报告器，汇总数据生成报告（report version）<br/>report_version_manager<br/>文件: reporting/report_version_manager.py<br/>(生产态 / production)"]
     src_zephyr_reporting_report_watermark_tracker_py["报告watermark追踪器<br/>报告的追踪器，持续跟踪某项指标或状态的变化<br/>report_watermark_tracker<br/>文件: reporting/report_watermark_tracker.py<br/>(生产态 / production)"]
     src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>报告的报告器，汇总数据生成报告（risk report）<br/>risk_report_engine<br/>文件: reporting/risk_report_engine.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_analytics_base_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
-    src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_realtime_pnl_dashboard_py
+    src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_default_attribution_engine_py
+    src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_realtime_pnl_dashboard_py
     src_zephyr_reporting_realtime_pnl_dashboard_py ~~~ src_zephyr_reporting_report_version_manager_py
     src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
     src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
+    src_zephyr_reporting_analytics_base_py["analytics基类<br/>盘后分析层。负责交易执行后的绩效评估与归因分析。<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_ashare_performance_audit_py -->|data / data| src_zephyr_reporting_default_attribution_engine_py
     src_zephyr_reporting_default_attribution_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_tca_engine_py -->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     tests_reporting_test_report_version_manager_py -->|测试依赖 / test_depends| src_zephyr_reporting_report_version_manager_py
@@ -183,26 +184,24 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_ashare_trade_record_template_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_realtime_pnl_dashboard_py,src_zephyr_reporting_regulatory_report_generator_py,src_zephyr_reporting_report_version_manager_py,src_zephyr_reporting_report_watermark_tracker_py,src_zephyr_reporting_risk_report_engine_py,tests_reporting_test_ashare_trade_record_template_py,tests_reporting_test_realtime_pnl_dashboard_py,tests_reporting_test_regulatory_report_generator_py,tests_reporting_test_report_version_manager_py,tests_reporting_test_report_watermark_tracker_py,tests_reporting_test_risk_report_engine_py production
+    class src_zephyr_reporting_analytics_base_py,src_zephyr_reporting_ashare_performance_audit_py,src_zephyr_reporting_ashare_trade_record_template_py,src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py,src_zephyr_reporting_realtime_pnl_dashboard_py,src_zephyr_reporting_regulatory_report_generator_py,src_zephyr_reporting_report_version_manager_py,src_zephyr_reporting_report_watermark_tracker_py,src_zephyr_reporting_risk_report_engine_py,tests_reporting_test_ashare_trade_record_template_py,tests_reporting_test_realtime_pnl_dashboard_py,tests_reporting_test_regulatory_report_generator_py,tests_reporting_test_report_version_manager_py,tests_reporting_test_report_watermark_tracker_py,tests_reporting_test_risk_report_engine_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 3 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 2 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_ashare_performance_audit_py["A股绩效审计<br/>生成报表与报告<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>ashare_performance_audit<br/>文件: reporting/ashare_performance_audit.py<br/>(设计态 / design)"]
     src_zephyr_reporting_performance_attribution_report_py["绩效attribution报告<br/>报告的报告器，汇总数据生成报告（performance<br/>attribution report）<br/>⛔ D-EX-CORE执行报告未就绪(CTR-P1-007<br/>/CTR-ERR-005),设计文档§1.4标注受限,暂不可建<br/>performance_attribution_report<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_performance_attribution_report_py
     src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告的报告器，汇总数据生成报告（report<br/>publisher）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_publisher<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
     src_zephyr_reporting_performance_attribution_report_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_reporting_ashare_performance_audit_py,src_zephyr_reporting_performance_attribution_report_py,src_zephyr_reporting_report_publisher_py design
+    class src_zephyr_reporting_performance_attribution_report_py,src_zephyr_reporting_report_publisher_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -228,16 +227,17 @@ flowchart TD
 | 15 | 实时盈亏仪表盘 / realtime_pnl_dashboard (reporting/realti... | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 导入依赖 / import_depends |
 | 16 | 实时盈亏仪表盘 / realtime_pnl_dashboard (reporting/realti... | → | D_SHARED 共享服务: 风险仪表盘快照 / Backward-compat shim — canonical locati... | 导入依赖 / import_depends |
 | 17 | 实时盈亏仪表盘 / realtime_pnl_dashboard (reporting/realti... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 18 | 报告版本管理器 / report_version_manager (reporting/report... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 19 | 报告watermark追踪器 / report_watermark_tracker (reporting... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 20 | 风险报告引擎 / risk_report_engine (reporting/risk_report_... | → | D_SHARED 共享服务: 风险仪表盘快照 / Backward-compat shim — canonical locati... | 导入依赖 / import_depends |
-| 21 | 风险报告引擎 / risk_report_engine (reporting/risk_report_... | → | D_SHARED 共享服务: 风险指标 / Backward-compat shim — canonical location is ... | 导入依赖 / import_depends |
-| 22 | 风险报告引擎 / risk_report_engine (reporting/risk_report_... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 23 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 测试依赖 / test_depends |
-| 24 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | D_SHARED 共享服务: 风险仪表盘快照 / Backward-compat shim — canonical locati... | 测试依赖 / test_depends |
-| 25 | MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | D_SHARED 共享服务: 风险仪表盘快照 / Backward-compat shim — canonical locati... | 测试依赖 / test_depends |
-| 26 | MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | D_SHARED 共享服务: 风险指标 / Backward-compat shim — canonical location is ... | 测试依赖 / test_depends |
-| 27 | 实时盈亏仪表盘 / realtime_pnl_dashboard (reporting/realti... | → | D_TRADING 交易运营: PnL Calculator / D_TRADING (trading/pnl_calculator.py) | 导入依赖 / import_depends |
+| 18 | 报告发布器 / report_publisher (reporting/report_publisher... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 19 | 报告版本管理器 / report_version_manager (reporting/report... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 20 | 报告watermark追踪器 / report_watermark_tracker (reporting... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 21 | 风险报告引擎 / risk_report_engine (reporting/risk_report_... | → | D_SHARED 共享服务: 风险仪表盘快照 / Backward-compat shim — canonical locati... | 导入依赖 / import_depends |
+| 22 | 风险报告引擎 / risk_report_engine (reporting/risk_report_... | → | D_SHARED 共享服务: 风险指标 / Backward-compat shim — canonical location is ... | 导入依赖 / import_depends |
+| 23 | 风险报告引擎 / risk_report_engine (reporting/risk_report_... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 24 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | D_SHARED 共享服务: 订单枚举 / order_enums (enums/order_enums.py) | 测试依赖 / test_depends |
+| 25 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | D_SHARED 共享服务: 风险仪表盘快照 / Backward-compat shim — canonical locati... | 测试依赖 / test_depends |
+| 26 | MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | D_SHARED 共享服务: 风险仪表盘快照 / Backward-compat shim — canonical locati... | 测试依赖 / test_depends |
+| 27 | MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | D_SHARED 共享服务: 风险指标 / Backward-compat shim — canonical location is ... | 测试依赖 / test_depends |
+| 28 | 实时盈亏仪表盘 / realtime_pnl_dashboard (reporting/realti... | → | D_TRADING 交易运营: PnL Calculator / D_TRADING (trading/pnl_calculator.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -251,7 +251,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 7 个外部域直接连接（出边 27 条 + 入边 5 条 = 32 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 7 个外部域直接连接（出边 28 条 + 入边 5 条 = 33 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -264,7 +264,7 @@ graph LR
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
-    D_REPORTING -->|14条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
+    D_REPORTING -->|15条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
     D_REPORTING -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_REPORTING -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_EX_CORE
     D_REPORTING -->|1条 导入依赖 / import_depends| D_TRADING
