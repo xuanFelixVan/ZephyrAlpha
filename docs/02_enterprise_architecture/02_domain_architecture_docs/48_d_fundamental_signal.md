@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_FUNDAMENTAL_SIGNAL 基本面信号架构文档
 version: "1.0"
 status: active
-date: 2026-08-02
+date: 2026-08-03
 owner: auto-generator
 ttl: permanent
 ---

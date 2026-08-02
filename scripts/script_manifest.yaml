@@ -4,12 +4,20 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-02'
-total_scripts: 631
+total_scripts: 635
 scripts:
 - name: __init__.py
   path: __init__.py
   description: No description
   domain: __init__.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _q.py
+  path: _q.py
+  description: import sys
+  domain: _q.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -2217,14 +2225,6 @@ scripts:
 - name: governance/d5_architecture/generators/generate_policies.py
   path: governance/d5_architecture/generators/generate_policies.py
   description: 真源：architecture_model/data/data_sources_registry.yaml
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d5_architecture/generators/generate_trading_flow_diagram.py
-  path: governance/d5_architecture/generators/generate_trading_flow_diagram.py
-  description: '- 从 decision_graph_model.yaml 读 flow_stages 定义（6阶段）'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4506,6 +4506,38 @@ scripts:
   path: migration/governance_root_split.py
   description: Orchestrator that delegates import rewriting to ``ast_import_rewriter.py``
   domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ops/ch_health_probe.py
+  path: ops/ch_health_probe.py
+  description: 独立于调度器运行，覆盖盘后/周末/节假日等调度器不运行的时段。
+  domain: health
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ops/e2e_ch_alert_probe.py
+  path: ops/e2e_ch_alert_probe.py
+  description: 启动一个 HeartbeatMonitor + Alerter 探针，指向真实 CH。
+  domain: ops
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ops/r6_restore_check.py
+  path: ops/r6_restore_check.py
+  description: from zephyr.data import ch_reader
+  domain: ops
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ops/r6_restore_via_vm.py
+  path: ops/r6_restore_via_vm.py
+  description: 在 VM 上以 clickhouse OS 用户运行 clickhouse-client，拥有完整 DB 权限。
+  domain: ops
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
