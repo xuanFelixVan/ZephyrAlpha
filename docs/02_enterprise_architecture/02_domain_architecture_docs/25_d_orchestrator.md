@@ -28,7 +28,7 @@ ttl: permanent
 | 域名称 | 代理编排器 | Domain Name | Agent Orchestrator |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 70 | Module Count | 70 |
-| 域内依赖 | 20 | Internal Dependencies | 20 |
+| 域内依赖 | 21 | Internal Dependencies | 21 |
 | 跨域入边 | 8 | Cross-domain Incoming | 8 |
 | 跨域出边 | 55 | Cross-domain Outgoing | 55 |
 | 设计态模块 | 0 | Design Modules | 0 |
@@ -64,7 +64,7 @@ flowchart TD
     src_zephyr_orchestrator_core_init_py["orchestrator/core 包入口<br/>core 包入口，整合核心逻辑相关模块<br/>文件: core/__init__.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_deferred_queue_py["deferred队列<br/>DeferredQueue 内部任务状态（非全局<br/>TaskStatus，仅 WAITING->READY->RUNNING->DONE<br/>/FAILED）。<br/>文件: orchestrator/deferred_queue.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_init_py["orchestrator/execution 包入口<br/>execution 包入口，整合执行管理相关模块<br/>文件: execution/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_execution_batch_orchestrator_py["批次编排器<br/>多 Worker 批量任务协调器，分派批量任务到多个<br/>Worker 并发执行，汇总结果。<br/>batch_orchestrator<br/>文件: execution/batch_orchestrator.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_execution_data_lifecycle_py["数据生命周期<br/>主要提供获取策略、列表类型定义、应该清除等功能<br/>data_lifecycle<br/>文件: execution/data_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_dispatch_table_py["分发table<br/>依据：MOD-MASTER-002 蓝图 §零 AI Agent<br/>分派与阅读指南<br/>dispatch_table<br/>文件: execution/dispatch_table.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_dlq_manager_py["dlq管理器<br/>编排调度多组件协作（dlq）<br/>dlq_manager<br/>文件: execution/dlq_manager.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_phase_executor_py["阶段执行器<br/>依据：MOD-MASTER-002 蓝图 §六 施工 Phase 规划<br/>phase_executor<br/>文件: execution/phase_executor.py<br/>(生产态 / production)"]
@@ -78,8 +78,8 @@ flowchart TD
     src_zephyr_orchestrator_fault_tolerance_disk_guard_py["disk守卫<br/>主要提供检查、应该enter只读等功能<br/>disk_guard<br/>文件: fault_tolerance/disk_guard.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_fault_tolerance_network_partition_py["网络分区容忍（CT-NETWORK-PARTITION）——CAP定理CP<br/>优先+<br/>脑裂检测+quorum write<br/>network_partition<br/>文件: fault_tolerance/network_partition.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_init_py["orchestrator/governance 包入口<br/>governance 包入口，整合治理管控相关模块<br/>文件: governance/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_governance_autonomy_guard_py["autonomy守卫<br/>Owner 缺位分级自治<br/>（CT-AUTONOMY）——Owner离线->自动降级->最小安全运<br/>行。<br/>autonomy_guard<br/>文件: governance/autonomy_guard.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_capacity_budget_py["容量预算<br/>全局容量预算控制器（Capacity Budget Controller）<br/>capacity_budget<br/>文件: governance/capacity_budget.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_governance_dependency_lock_py["依赖锁<br/>外部依赖版本锁（CT-DEPS）——Python包版本锁定+hash<br/>验证+安全审计。<br/>dependency_lock<br/>文件: governance/dependency_lock.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_model_registry_py["模型注册表<br/>主要提供获取、列表all、获取by提供器等功能<br/>model_registry<br/>文件: governance/model_registry.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_path_index_py["路径索引<br/>主要提供lookup、注册等功能<br/>path_index<br/>文件: governance/path_index.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_risk_registry_py["风险注册表<br/>治理管控（risk registry）<br/>risk_registry<br/>文件: governance/risk_registry.py<br/>(生产态 / production)"]
@@ -96,7 +96,6 @@ flowchart TD
     src_zephyr_orchestrator_lifecycle_system_transfer_py["系统迁移<br/>系统移交恢复（CT-TRANSFER）——系统Owner变更+配置<br/>迁移+密钥轮转+健康验证。<br/>system_transfer<br/>文件: lifecycle/system_transfer.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_lifecycle_teardown_manager_py["teardown管理器<br/>编排调度组件协作（teardown）<br/>teardown_manager<br/>文件: lifecycle/teardown_manager.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_agent_quality_py["代理质量<br/>AI Agent 质量反馈闭环<br/>（CT-AGENT-QUALITY）——task完成质量评分+agent绩效<br/>追踪。<br/>agent_quality<br/>文件: quality/agent_quality.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_quality_benchmark_runner_py["基准运行器<br/>benchmark运行器，主要提供获取基线、检测回归等功<br/>能<br/>benchmark_runner<br/>文件: quality/benchmark_runner.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_blind_spot_closure_py["盲点闭合<br/>编排调度（blind spot closure）<br/>blind_spot_closure<br/>文件: quality/blind_spot_closure.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_ke_quality_py["知识质量评分契约<br/>（CT-KE-QUALITY）——KE完整性+准确性+时效性三维<br/>知识条目质量评分器，按完整性、准确性、时效性三维<br/>度评分，判定是否可接受或需人工复核。<br/>ke_quality<br/>文件: quality/ke_quality.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_knowledge_freshness_py["知识新鲜度废止管理器<br/>（CT-KNOWLEDGE-FRESHNESS）——KE过期<br/>标记+自动失效<br/>knowledge_freshness<br/>文件: quality/knowledge_freshness.py<br/>(生产态 / production)"]
@@ -115,8 +114,8 @@ flowchart TD
     src_zephyr_orchestrator_contracts_prompt_version_py ~~~ src_zephyr_orchestrator_core_init_py
     src_zephyr_orchestrator_core_init_py ~~~ src_zephyr_orchestrator_deferred_queue_py
     src_zephyr_orchestrator_deferred_queue_py ~~~ src_zephyr_orchestrator_execution_init_py
-    src_zephyr_orchestrator_execution_init_py ~~~ src_zephyr_orchestrator_execution_batch_orchestrator_py
-    src_zephyr_orchestrator_execution_batch_orchestrator_py ~~~ src_zephyr_orchestrator_execution_dispatch_table_py
+    src_zephyr_orchestrator_execution_init_py ~~~ src_zephyr_orchestrator_execution_data_lifecycle_py
+    src_zephyr_orchestrator_execution_data_lifecycle_py ~~~ src_zephyr_orchestrator_execution_dispatch_table_py
     src_zephyr_orchestrator_execution_dispatch_table_py ~~~ src_zephyr_orchestrator_execution_dlq_manager_py
     src_zephyr_orchestrator_execution_dlq_manager_py ~~~ src_zephyr_orchestrator_execution_phase_executor_py
     src_zephyr_orchestrator_execution_phase_executor_py ~~~ src_zephyr_orchestrator_execution_reconciliation_loop_py
@@ -129,9 +128,9 @@ flowchart TD
     src_zephyr_orchestrator_fault_tolerance_degrade_cascade_py ~~~ src_zephyr_orchestrator_fault_tolerance_disk_guard_py
     src_zephyr_orchestrator_fault_tolerance_disk_guard_py ~~~ src_zephyr_orchestrator_fault_tolerance_network_partition_py
     src_zephyr_orchestrator_fault_tolerance_network_partition_py ~~~ src_zephyr_orchestrator_governance_init_py
-    src_zephyr_orchestrator_governance_init_py ~~~ src_zephyr_orchestrator_governance_capacity_budget_py
-    src_zephyr_orchestrator_governance_capacity_budget_py ~~~ src_zephyr_orchestrator_governance_dependency_lock_py
-    src_zephyr_orchestrator_governance_dependency_lock_py ~~~ src_zephyr_orchestrator_governance_model_registry_py
+    src_zephyr_orchestrator_governance_init_py ~~~ src_zephyr_orchestrator_governance_autonomy_guard_py
+    src_zephyr_orchestrator_governance_autonomy_guard_py ~~~ src_zephyr_orchestrator_governance_capacity_budget_py
+    src_zephyr_orchestrator_governance_capacity_budget_py ~~~ src_zephyr_orchestrator_governance_model_registry_py
     src_zephyr_orchestrator_governance_model_registry_py ~~~ src_zephyr_orchestrator_governance_path_index_py
     src_zephyr_orchestrator_governance_path_index_py ~~~ src_zephyr_orchestrator_governance_risk_registry_py
     src_zephyr_orchestrator_governance_risk_registry_py ~~~ src_zephyr_orchestrator_governance_schema_migration_py
@@ -147,8 +146,7 @@ flowchart TD
     src_zephyr_orchestrator_lifecycle_state_synchronizer_py ~~~ src_zephyr_orchestrator_lifecycle_system_transfer_py
     src_zephyr_orchestrator_lifecycle_system_transfer_py ~~~ src_zephyr_orchestrator_lifecycle_teardown_manager_py
     src_zephyr_orchestrator_lifecycle_teardown_manager_py ~~~ src_zephyr_orchestrator_quality_agent_quality_py
-    src_zephyr_orchestrator_quality_agent_quality_py ~~~ src_zephyr_orchestrator_quality_benchmark_runner_py
-    src_zephyr_orchestrator_quality_benchmark_runner_py ~~~ src_zephyr_orchestrator_quality_blind_spot_closure_py
+    src_zephyr_orchestrator_quality_agent_quality_py ~~~ src_zephyr_orchestrator_quality_blind_spot_closure_py
     src_zephyr_orchestrator_quality_blind_spot_closure_py ~~~ src_zephyr_orchestrator_quality_ke_quality_py
     src_zephyr_orchestrator_quality_ke_quality_py ~~~ src_zephyr_orchestrator_quality_knowledge_freshness_py
     src_zephyr_orchestrator_quality_knowledge_freshness_py ~~~ src_zephyr_orchestrator_quality_lean_scanner_py
@@ -160,15 +158,15 @@ flowchart TD
     src_zephyr_orchestrator_contracts_alert_handler_py["告警处理器<br/>Orc 告警接收器 — handle_alert() 消费者<br/>alert_handler<br/>文件: contracts/alert_handler.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_contracts_contract_registry_py["契约注册表<br/>拆包方案（contract_registry/ 包，enums/models<br/>/registry 分离）需新建 .py<br/>文件: contracts/contract_registry.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_core_task_queue_py["任务队列<br/>核心相关功能（task queue）<br/>task_queue<br/>文件: core/task_queue.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_execution_batch_orchestrator_py["批次编排器<br/>多 Worker 批量任务协调器，分派批量任务到多个<br/>Worker 并发执行，汇总结果。<br/>batch_orchestrator<br/>文件: execution/batch_orchestrator.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_context_bridge_py["上下文桥接<br/>Orc->CE 上下文桥接 — request_context() 生产者<br/>context_bridge<br/>文件: execution/context_bridge.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_execution_data_lifecycle_py["数据生命周期<br/>主要提供获取策略、列表类型定义、应该清除等功能<br/>data_lifecycle<br/>文件: execution/data_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_memory_writer_py["Orc->VMS 记忆写入器<br/>编排器到向量记忆的写入器，任务完成时把结果归档到<br/>VMS，VMS 不可用则降级不阻塞。<br/>memory_writer<br/>文件: execution/memory_writer.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_script_runner_py["script运行器<br/>Orc->Script 脚本执行器 — run_audit() 生产者<br/>script_runner<br/>文件: execution/script_runner.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py["舱壁管理器<br/>bulkhead管理器，主要提供获取配额、列表systems、<br/>检测slowcall等功能<br/>bulkhead_manager<br/>文件: fault_tolerance/bulkhead_manager.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_fault_tolerance_chaos_engine_py["chaos引擎<br/>Chaos 故障注入引擎<br/>（CT-CHAOS-001）——4注入点×月度执行。<br/>chaos_engine<br/>文件: fault_tolerance/chaos_engine.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_fault_tolerance_fault_types_py["故障类型定义<br/>编排调度多组件协作（fault types）<br/>文件: fault_tolerance/fault_types.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_file_task_mapper_py["文件任务mapper<br/>FileTaskMapper — 文件路径 ↔ Task N:N 映射器<br/>（#21 裁定重写）<br/>file_task_mapper<br/>文件: orchestrator/file_task_mapper.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_governance_autonomy_guard_py["autonomy守卫<br/>Owner 缺位分级自治<br/>（CT-AUTONOMY）——Owner离线->自动降级->最小安全运<br/>行。<br/>autonomy_guard<br/>文件: governance/autonomy_guard.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_governance_dependency_lock_py["依赖锁<br/>外部依赖版本锁（CT-DEPS）——Python包版本锁定+hash<br/>验证+安全审计。<br/>dependency_lock<br/>文件: governance/dependency_lock.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_lifecycle_housekeeping_py["文件卫生保洁管理器<br/>（CT-HOUSEKEEPING）——临时文件扫描+日志轮转+<br/>废弃目录清理<br/>文件: lifecycle/housekeeping.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_init_py["orchestrator/quality 包入口<br/>质量包入口，整合编排调度的服务质量保障模块<br/>文件: quality/__init__.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_blueprint_scorer_py["蓝图评分器<br/>BlueprintScorer — 蓝图路由统一打分逻辑<br/>blueprint_scorer<br/>文件: quality/blueprint_scorer.py<br/>(生产态 / production)"]
@@ -176,37 +174,40 @@ flowchart TD
     src_zephyr_orchestrator_agent_orchestrator_py ~~~ src_zephyr_orchestrator_contracts_alert_handler_py
     src_zephyr_orchestrator_contracts_alert_handler_py ~~~ src_zephyr_orchestrator_contracts_contract_registry_py
     src_zephyr_orchestrator_contracts_contract_registry_py ~~~ src_zephyr_orchestrator_core_task_queue_py
-    src_zephyr_orchestrator_core_task_queue_py ~~~ src_zephyr_orchestrator_execution_context_bridge_py
-    src_zephyr_orchestrator_execution_context_bridge_py ~~~ src_zephyr_orchestrator_execution_data_lifecycle_py
-    src_zephyr_orchestrator_execution_data_lifecycle_py ~~~ src_zephyr_orchestrator_execution_memory_writer_py
+    src_zephyr_orchestrator_core_task_queue_py ~~~ src_zephyr_orchestrator_execution_batch_orchestrator_py
+    src_zephyr_orchestrator_execution_batch_orchestrator_py ~~~ src_zephyr_orchestrator_execution_context_bridge_py
+    src_zephyr_orchestrator_execution_context_bridge_py ~~~ src_zephyr_orchestrator_execution_memory_writer_py
     src_zephyr_orchestrator_execution_memory_writer_py ~~~ src_zephyr_orchestrator_execution_script_runner_py
     src_zephyr_orchestrator_execution_script_runner_py ~~~ src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py
     src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py ~~~ src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
     src_zephyr_orchestrator_fault_tolerance_chaos_engine_py ~~~ src_zephyr_orchestrator_fault_tolerance_fault_types_py
     src_zephyr_orchestrator_fault_tolerance_fault_types_py ~~~ src_zephyr_orchestrator_file_task_mapper_py
-    src_zephyr_orchestrator_file_task_mapper_py ~~~ src_zephyr_orchestrator_governance_autonomy_guard_py
-    src_zephyr_orchestrator_governance_autonomy_guard_py ~~~ src_zephyr_orchestrator_lifecycle_housekeeping_py
+    src_zephyr_orchestrator_file_task_mapper_py ~~~ src_zephyr_orchestrator_governance_dependency_lock_py
+    src_zephyr_orchestrator_governance_dependency_lock_py ~~~ src_zephyr_orchestrator_lifecycle_housekeeping_py
     src_zephyr_orchestrator_lifecycle_housekeeping_py ~~~ src_zephyr_orchestrator_quality_init_py
     src_zephyr_orchestrator_quality_init_py ~~~ src_zephyr_orchestrator_quality_blueprint_scorer_py
     src_zephyr_orchestrator_quality_blueprint_scorer_py ~~~ src_zephyr_orchestrator_resilience_failure_matcher_py
     src_zephyr_orchestrator_execution_task_context_builder_py["任务上下文构建器<br/>CE 任务上下文构建器 — build_from_task() 消费者<br/>task_context_builder<br/>文件: execution/task_context_builder.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_quality_benchmark_runner_py["基准运行器<br/>benchmark运行器，主要提供获取基线、检测回归等功<br/>能<br/>benchmark_runner<br/>文件: quality/benchmark_runner.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_execution_task_context_builder_py ~~~ src_zephyr_orchestrator_quality_benchmark_runner_py
     src_zephyr_orchestrator_agent_health_monitor_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_agent_orchestrator_py
-    src_zephyr_orchestrator_task_queue_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_alert_handler_py
-    src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_memory_writer_py
     src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_context_bridge_py
+    src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_memory_writer_py
     src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_script_runner_py
+    src_zephyr_orchestrator_task_queue_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_contracts_contract_router_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_contract_registry_py
     src_zephyr_orchestrator_core_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_execution_context_bridge_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_task_context_builder_py
     src_zephyr_orchestrator_execution_trigger_router_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_quality_blueprint_scorer_py
-    src_zephyr_orchestrator_execution_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_execution_data_lifecycle_py
-    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
-    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
+    src_zephyr_orchestrator_execution_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_execution_batch_orchestrator_py
     src_zephyr_orchestrator_fault_tolerance_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py
-    src_zephyr_orchestrator_governance_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_governance_autonomy_guard_py
-    src_zephyr_orchestrator_lifecycle_state_synchronizer_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_file_task_mapper_py
+    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
+    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
+    src_zephyr_orchestrator_governance_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_governance_dependency_lock_py
     src_zephyr_orchestrator_lifecycle_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_lifecycle_housekeeping_py
+    src_zephyr_orchestrator_lifecycle_state_synchronizer_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_file_task_mapper_py
+    src_zephyr_orchestrator_quality_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_quality_benchmark_runner_py
     src_zephyr_orchestrator_quality_knowledge_freshness_py -->|config_depends / config_depends| src_zephyr_orchestrator_quality_init_py
     src_zephyr_orchestrator_quality_ke_quality_py -->|config_depends / config_depends| src_zephyr_orchestrator_quality_init_py
     src_zephyr_orchestrator_resilience_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_resilience_failure_matcher_py
@@ -268,7 +269,7 @@ flowchart TD
     src_zephyr_orchestrator_core_init_py["orchestrator/core 包入口<br/>core 包入口，整合核心逻辑相关模块<br/>文件: core/__init__.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_deferred_queue_py["deferred队列<br/>DeferredQueue 内部任务状态（非全局<br/>TaskStatus，仅 WAITING->READY->RUNNING->DONE<br/>/FAILED）。<br/>文件: orchestrator/deferred_queue.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_init_py["orchestrator/execution 包入口<br/>execution 包入口，整合执行管理相关模块<br/>文件: execution/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_execution_batch_orchestrator_py["批次编排器<br/>多 Worker 批量任务协调器，分派批量任务到多个<br/>Worker 并发执行，汇总结果。<br/>batch_orchestrator<br/>文件: execution/batch_orchestrator.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_execution_data_lifecycle_py["数据生命周期<br/>主要提供获取策略、列表类型定义、应该清除等功能<br/>data_lifecycle<br/>文件: execution/data_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_dispatch_table_py["分发table<br/>依据：MOD-MASTER-002 蓝图 §零 AI Agent<br/>分派与阅读指南<br/>dispatch_table<br/>文件: execution/dispatch_table.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_dlq_manager_py["dlq管理器<br/>编排调度多组件协作（dlq）<br/>dlq_manager<br/>文件: execution/dlq_manager.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_phase_executor_py["阶段执行器<br/>依据：MOD-MASTER-002 蓝图 §六 施工 Phase 规划<br/>phase_executor<br/>文件: execution/phase_executor.py<br/>(生产态 / production)"]
@@ -282,8 +283,8 @@ flowchart TD
     src_zephyr_orchestrator_fault_tolerance_disk_guard_py["disk守卫<br/>主要提供检查、应该enter只读等功能<br/>disk_guard<br/>文件: fault_tolerance/disk_guard.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_fault_tolerance_network_partition_py["网络分区容忍（CT-NETWORK-PARTITION）——CAP定理CP<br/>优先+<br/>脑裂检测+quorum write<br/>network_partition<br/>文件: fault_tolerance/network_partition.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_init_py["orchestrator/governance 包入口<br/>governance 包入口，整合治理管控相关模块<br/>文件: governance/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_governance_autonomy_guard_py["autonomy守卫<br/>Owner 缺位分级自治<br/>（CT-AUTONOMY）——Owner离线->自动降级->最小安全运<br/>行。<br/>autonomy_guard<br/>文件: governance/autonomy_guard.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_capacity_budget_py["容量预算<br/>全局容量预算控制器（Capacity Budget Controller）<br/>capacity_budget<br/>文件: governance/capacity_budget.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_governance_dependency_lock_py["依赖锁<br/>外部依赖版本锁（CT-DEPS）——Python包版本锁定+hash<br/>验证+安全审计。<br/>dependency_lock<br/>文件: governance/dependency_lock.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_model_registry_py["模型注册表<br/>主要提供获取、列表all、获取by提供器等功能<br/>model_registry<br/>文件: governance/model_registry.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_path_index_py["路径索引<br/>主要提供lookup、注册等功能<br/>path_index<br/>文件: governance/path_index.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_governance_risk_registry_py["风险注册表<br/>治理管控（risk registry）<br/>risk_registry<br/>文件: governance/risk_registry.py<br/>(生产态 / production)"]
@@ -300,7 +301,6 @@ flowchart TD
     src_zephyr_orchestrator_lifecycle_system_transfer_py["系统迁移<br/>系统移交恢复（CT-TRANSFER）——系统Owner变更+配置<br/>迁移+密钥轮转+健康验证。<br/>system_transfer<br/>文件: lifecycle/system_transfer.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_lifecycle_teardown_manager_py["teardown管理器<br/>编排调度组件协作（teardown）<br/>teardown_manager<br/>文件: lifecycle/teardown_manager.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_agent_quality_py["代理质量<br/>AI Agent 质量反馈闭环<br/>（CT-AGENT-QUALITY）——task完成质量评分+agent绩效<br/>追踪。<br/>agent_quality<br/>文件: quality/agent_quality.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_quality_benchmark_runner_py["基准运行器<br/>benchmark运行器，主要提供获取基线、检测回归等功<br/>能<br/>benchmark_runner<br/>文件: quality/benchmark_runner.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_blind_spot_closure_py["盲点闭合<br/>编排调度（blind spot closure）<br/>blind_spot_closure<br/>文件: quality/blind_spot_closure.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_ke_quality_py["知识质量评分契约<br/>（CT-KE-QUALITY）——KE完整性+准确性+时效性三维<br/>知识条目质量评分器，按完整性、准确性、时效性三维<br/>度评分，判定是否可接受或需人工复核。<br/>ke_quality<br/>文件: quality/ke_quality.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_knowledge_freshness_py["知识新鲜度废止管理器<br/>（CT-KNOWLEDGE-FRESHNESS）——KE过期<br/>标记+自动失效<br/>knowledge_freshness<br/>文件: quality/knowledge_freshness.py<br/>(生产态 / production)"]
@@ -319,8 +319,8 @@ flowchart TD
     src_zephyr_orchestrator_contracts_prompt_version_py ~~~ src_zephyr_orchestrator_core_init_py
     src_zephyr_orchestrator_core_init_py ~~~ src_zephyr_orchestrator_deferred_queue_py
     src_zephyr_orchestrator_deferred_queue_py ~~~ src_zephyr_orchestrator_execution_init_py
-    src_zephyr_orchestrator_execution_init_py ~~~ src_zephyr_orchestrator_execution_batch_orchestrator_py
-    src_zephyr_orchestrator_execution_batch_orchestrator_py ~~~ src_zephyr_orchestrator_execution_dispatch_table_py
+    src_zephyr_orchestrator_execution_init_py ~~~ src_zephyr_orchestrator_execution_data_lifecycle_py
+    src_zephyr_orchestrator_execution_data_lifecycle_py ~~~ src_zephyr_orchestrator_execution_dispatch_table_py
     src_zephyr_orchestrator_execution_dispatch_table_py ~~~ src_zephyr_orchestrator_execution_dlq_manager_py
     src_zephyr_orchestrator_execution_dlq_manager_py ~~~ src_zephyr_orchestrator_execution_phase_executor_py
     src_zephyr_orchestrator_execution_phase_executor_py ~~~ src_zephyr_orchestrator_execution_reconciliation_loop_py
@@ -333,9 +333,9 @@ flowchart TD
     src_zephyr_orchestrator_fault_tolerance_degrade_cascade_py ~~~ src_zephyr_orchestrator_fault_tolerance_disk_guard_py
     src_zephyr_orchestrator_fault_tolerance_disk_guard_py ~~~ src_zephyr_orchestrator_fault_tolerance_network_partition_py
     src_zephyr_orchestrator_fault_tolerance_network_partition_py ~~~ src_zephyr_orchestrator_governance_init_py
-    src_zephyr_orchestrator_governance_init_py ~~~ src_zephyr_orchestrator_governance_capacity_budget_py
-    src_zephyr_orchestrator_governance_capacity_budget_py ~~~ src_zephyr_orchestrator_governance_dependency_lock_py
-    src_zephyr_orchestrator_governance_dependency_lock_py ~~~ src_zephyr_orchestrator_governance_model_registry_py
+    src_zephyr_orchestrator_governance_init_py ~~~ src_zephyr_orchestrator_governance_autonomy_guard_py
+    src_zephyr_orchestrator_governance_autonomy_guard_py ~~~ src_zephyr_orchestrator_governance_capacity_budget_py
+    src_zephyr_orchestrator_governance_capacity_budget_py ~~~ src_zephyr_orchestrator_governance_model_registry_py
     src_zephyr_orchestrator_governance_model_registry_py ~~~ src_zephyr_orchestrator_governance_path_index_py
     src_zephyr_orchestrator_governance_path_index_py ~~~ src_zephyr_orchestrator_governance_risk_registry_py
     src_zephyr_orchestrator_governance_risk_registry_py ~~~ src_zephyr_orchestrator_governance_schema_migration_py
@@ -351,8 +351,7 @@ flowchart TD
     src_zephyr_orchestrator_lifecycle_state_synchronizer_py ~~~ src_zephyr_orchestrator_lifecycle_system_transfer_py
     src_zephyr_orchestrator_lifecycle_system_transfer_py ~~~ src_zephyr_orchestrator_lifecycle_teardown_manager_py
     src_zephyr_orchestrator_lifecycle_teardown_manager_py ~~~ src_zephyr_orchestrator_quality_agent_quality_py
-    src_zephyr_orchestrator_quality_agent_quality_py ~~~ src_zephyr_orchestrator_quality_benchmark_runner_py
-    src_zephyr_orchestrator_quality_benchmark_runner_py ~~~ src_zephyr_orchestrator_quality_blind_spot_closure_py
+    src_zephyr_orchestrator_quality_agent_quality_py ~~~ src_zephyr_orchestrator_quality_blind_spot_closure_py
     src_zephyr_orchestrator_quality_blind_spot_closure_py ~~~ src_zephyr_orchestrator_quality_ke_quality_py
     src_zephyr_orchestrator_quality_ke_quality_py ~~~ src_zephyr_orchestrator_quality_knowledge_freshness_py
     src_zephyr_orchestrator_quality_knowledge_freshness_py ~~~ src_zephyr_orchestrator_quality_lean_scanner_py
@@ -364,15 +363,15 @@ flowchart TD
     src_zephyr_orchestrator_contracts_alert_handler_py["告警处理器<br/>Orc 告警接收器 — handle_alert() 消费者<br/>alert_handler<br/>文件: contracts/alert_handler.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_contracts_contract_registry_py["契约注册表<br/>拆包方案（contract_registry/ 包，enums/models<br/>/registry 分离）需新建 .py<br/>文件: contracts/contract_registry.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_core_task_queue_py["任务队列<br/>核心相关功能（task queue）<br/>task_queue<br/>文件: core/task_queue.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_execution_batch_orchestrator_py["批次编排器<br/>多 Worker 批量任务协调器，分派批量任务到多个<br/>Worker 并发执行，汇总结果。<br/>batch_orchestrator<br/>文件: execution/batch_orchestrator.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_context_bridge_py["上下文桥接<br/>Orc->CE 上下文桥接 — request_context() 生产者<br/>context_bridge<br/>文件: execution/context_bridge.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_execution_data_lifecycle_py["数据生命周期<br/>主要提供获取策略、列表类型定义、应该清除等功能<br/>data_lifecycle<br/>文件: execution/data_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_memory_writer_py["Orc->VMS 记忆写入器<br/>编排器到向量记忆的写入器，任务完成时把结果归档到<br/>VMS，VMS 不可用则降级不阻塞。<br/>memory_writer<br/>文件: execution/memory_writer.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_execution_script_runner_py["script运行器<br/>Orc->Script 脚本执行器 — run_audit() 生产者<br/>script_runner<br/>文件: execution/script_runner.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py["舱壁管理器<br/>bulkhead管理器，主要提供获取配额、列表systems、<br/>检测slowcall等功能<br/>bulkhead_manager<br/>文件: fault_tolerance/bulkhead_manager.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_fault_tolerance_chaos_engine_py["chaos引擎<br/>Chaos 故障注入引擎<br/>（CT-CHAOS-001）——4注入点×月度执行。<br/>chaos_engine<br/>文件: fault_tolerance/chaos_engine.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_fault_tolerance_fault_types_py["故障类型定义<br/>编排调度多组件协作（fault types）<br/>文件: fault_tolerance/fault_types.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_file_task_mapper_py["文件任务mapper<br/>FileTaskMapper — 文件路径 ↔ Task N:N 映射器<br/>（#21 裁定重写）<br/>file_task_mapper<br/>文件: orchestrator/file_task_mapper.py<br/>(生产态 / production)"]
-    src_zephyr_orchestrator_governance_autonomy_guard_py["autonomy守卫<br/>Owner 缺位分级自治<br/>（CT-AUTONOMY）——Owner离线->自动降级->最小安全运<br/>行。<br/>autonomy_guard<br/>文件: governance/autonomy_guard.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_governance_dependency_lock_py["依赖锁<br/>外部依赖版本锁（CT-DEPS）——Python包版本锁定+hash<br/>验证+安全审计。<br/>dependency_lock<br/>文件: governance/dependency_lock.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_lifecycle_housekeeping_py["文件卫生保洁管理器<br/>（CT-HOUSEKEEPING）——临时文件扫描+日志轮转+<br/>废弃目录清理<br/>文件: lifecycle/housekeeping.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_init_py["orchestrator/quality 包入口<br/>质量包入口，整合编排调度的服务质量保障模块<br/>文件: quality/__init__.py<br/>(生产态 / production)"]
     src_zephyr_orchestrator_quality_blueprint_scorer_py["蓝图评分器<br/>BlueprintScorer — 蓝图路由统一打分逻辑<br/>blueprint_scorer<br/>文件: quality/blueprint_scorer.py<br/>(生产态 / production)"]
@@ -380,37 +379,40 @@ flowchart TD
     src_zephyr_orchestrator_agent_orchestrator_py ~~~ src_zephyr_orchestrator_contracts_alert_handler_py
     src_zephyr_orchestrator_contracts_alert_handler_py ~~~ src_zephyr_orchestrator_contracts_contract_registry_py
     src_zephyr_orchestrator_contracts_contract_registry_py ~~~ src_zephyr_orchestrator_core_task_queue_py
-    src_zephyr_orchestrator_core_task_queue_py ~~~ src_zephyr_orchestrator_execution_context_bridge_py
-    src_zephyr_orchestrator_execution_context_bridge_py ~~~ src_zephyr_orchestrator_execution_data_lifecycle_py
-    src_zephyr_orchestrator_execution_data_lifecycle_py ~~~ src_zephyr_orchestrator_execution_memory_writer_py
+    src_zephyr_orchestrator_core_task_queue_py ~~~ src_zephyr_orchestrator_execution_batch_orchestrator_py
+    src_zephyr_orchestrator_execution_batch_orchestrator_py ~~~ src_zephyr_orchestrator_execution_context_bridge_py
+    src_zephyr_orchestrator_execution_context_bridge_py ~~~ src_zephyr_orchestrator_execution_memory_writer_py
     src_zephyr_orchestrator_execution_memory_writer_py ~~~ src_zephyr_orchestrator_execution_script_runner_py
     src_zephyr_orchestrator_execution_script_runner_py ~~~ src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py
     src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py ~~~ src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
     src_zephyr_orchestrator_fault_tolerance_chaos_engine_py ~~~ src_zephyr_orchestrator_fault_tolerance_fault_types_py
     src_zephyr_orchestrator_fault_tolerance_fault_types_py ~~~ src_zephyr_orchestrator_file_task_mapper_py
-    src_zephyr_orchestrator_file_task_mapper_py ~~~ src_zephyr_orchestrator_governance_autonomy_guard_py
-    src_zephyr_orchestrator_governance_autonomy_guard_py ~~~ src_zephyr_orchestrator_lifecycle_housekeeping_py
+    src_zephyr_orchestrator_file_task_mapper_py ~~~ src_zephyr_orchestrator_governance_dependency_lock_py
+    src_zephyr_orchestrator_governance_dependency_lock_py ~~~ src_zephyr_orchestrator_lifecycle_housekeeping_py
     src_zephyr_orchestrator_lifecycle_housekeeping_py ~~~ src_zephyr_orchestrator_quality_init_py
     src_zephyr_orchestrator_quality_init_py ~~~ src_zephyr_orchestrator_quality_blueprint_scorer_py
     src_zephyr_orchestrator_quality_blueprint_scorer_py ~~~ src_zephyr_orchestrator_resilience_failure_matcher_py
     src_zephyr_orchestrator_execution_task_context_builder_py["任务上下文构建器<br/>CE 任务上下文构建器 — build_from_task() 消费者<br/>task_context_builder<br/>文件: execution/task_context_builder.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_quality_benchmark_runner_py["基准运行器<br/>benchmark运行器，主要提供获取基线、检测回归等功<br/>能<br/>benchmark_runner<br/>文件: quality/benchmark_runner.py<br/>(生产态 / production)"]
+    src_zephyr_orchestrator_execution_task_context_builder_py ~~~ src_zephyr_orchestrator_quality_benchmark_runner_py
     src_zephyr_orchestrator_agent_health_monitor_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_agent_orchestrator_py
-    src_zephyr_orchestrator_task_queue_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_alert_handler_py
-    src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_memory_writer_py
     src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_context_bridge_py
+    src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_memory_writer_py
     src_zephyr_orchestrator_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_script_runner_py
+    src_zephyr_orchestrator_task_queue_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_contracts_contract_router_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_contract_registry_py
     src_zephyr_orchestrator_core_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_execution_context_bridge_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_task_context_builder_py
     src_zephyr_orchestrator_execution_trigger_router_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_quality_blueprint_scorer_py
-    src_zephyr_orchestrator_execution_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_execution_data_lifecycle_py
-    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
-    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
+    src_zephyr_orchestrator_execution_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_execution_batch_orchestrator_py
     src_zephyr_orchestrator_fault_tolerance_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py
-    src_zephyr_orchestrator_governance_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_governance_autonomy_guard_py
-    src_zephyr_orchestrator_lifecycle_state_synchronizer_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_file_task_mapper_py
+    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
+    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
+    src_zephyr_orchestrator_governance_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_governance_dependency_lock_py
     src_zephyr_orchestrator_lifecycle_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_lifecycle_housekeeping_py
+    src_zephyr_orchestrator_lifecycle_state_synchronizer_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_file_task_mapper_py
+    src_zephyr_orchestrator_quality_init_py -->|config_depends / config_depends| src_zephyr_orchestrator_quality_benchmark_runner_py
     src_zephyr_orchestrator_quality_knowledge_freshness_py -->|config_depends / config_depends| src_zephyr_orchestrator_quality_init_py
     src_zephyr_orchestrator_quality_ke_quality_py -->|config_depends / config_depends| src_zephyr_orchestrator_quality_init_py
     src_zephyr_orchestrator_resilience_init_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_resilience_failure_matcher_py

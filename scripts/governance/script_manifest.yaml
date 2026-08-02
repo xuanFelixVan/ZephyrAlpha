@@ -1,17 +1,17 @@
-# 自动生成于 2026-08-02T18:51:09Z
+# 自动生成于 2026-08-02T19:02:15Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-02T18:51:09Z'
+generated_at: '2026-08-02T19:02:15Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 382
+total_scripts: 381
 with_manifest: 320
-missing_manifest: 62
+missing_manifest: 61
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 35
+  governance: 34
   governance:d10_performance: 1
   governance:d11_compliance: 21
   governance:d12_ai_hallucination: 4
@@ -106,16 +106,6 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: _tmp_verify_dtrading.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: add_deferred_design_edges.py
   owner: governance
   dimensions: []
