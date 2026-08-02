@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3140 |
-| 生产态模块 | 2913 |
+| 模块总数 | 3142 |
+| 生产态模块 | 2915 |
 | 设计态模块 | 227 |
 
 ## 域清单（按架构层分组）
@@ -131,7 +131,7 @@ ttl: permanent
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 7 | 0 | 7/150 (OK) | [📄 43_d_exec_sim.md](43_d_exec_sim.md) |
 | D_EX_CORE | 执行核心 / Execution Core | 25 | 9 | 16 | 25/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 14 | 3 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
-| D_FACTOR | 因子 / Factor | 87 | 38 | 49 | 87/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
+| D_FACTOR | 因子 / Factor | 88 | 39 | 49 | 88/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
 | D_FRONTEND | 前端 / Frontend | 16 | 12 | 4 | 16/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 13 | 10 | 3 | 13/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
 | D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 224 | 224 | 0 | 224/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
@@ -149,7 +149,7 @@ ttl: permanent
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 9 | 5 | 4 | 9/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
 | D_PF_CORE | 组合核心 / Portfolio Core | 18 | 10 | 8 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
-| D_POSITION | 仓位管理 / Position Management | 13 | 8 | 5 | 13/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
+| D_POSITION | 仓位管理 / Position Management | 14 | 9 | 5 | 14/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 25 | 20 | 5 | 25/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 23 | 8 | 15 | 23/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
