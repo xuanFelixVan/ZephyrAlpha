@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-INF-043 | disaster_recovery
+# [BLUEPRINT] MOD-INF-045 | disaster_recovery
 # [MODULE] zephyr.ops.ch_health_probe
 # [DOMAIN] D_INF
 # [TTL] permanent

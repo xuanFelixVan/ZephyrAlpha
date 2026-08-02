@@ -5395,6 +5395,27 @@ capabilities:
       解决发现性：新 AI 搜 "plain_zh 回填/decision_node_plain_zh" 可定位脚本与 213 条草稿。
       解决防重建：DB plain_zh 丢失时重跑可恢复，无需重写草稿。
 
+  # --------------------------------------------------------------------------
+  # 2026-08-02 C3 灾备闭环（#ARCH-DR-CH-RESTART-001）补登记：
+  #   - ch_health_probe 是 7×24 灾备守护进程，AI 需能发现并部署
+  #   - 治本（可发现性）：find("CH健康") / find("存活探针") / find("灾备监控") 可定位
+  #   - 治本（防重建）：CREATE-GUARD + capability 反查阻断重复造监控脚本
+  - capability_id: ch_health_probe
+    canonical_override: scripts/ops/ch_health_probe.py
+    aliases:
+      - CHHealthProbe
+      - ch_health_probe
+      - ARCH-DR-CH-RESTART-001
+      - R4b
+    description: >-
+      7×24 CH 健康探针守护进程（R4b，#ARCH-DR-CH-RESTART-001）。独立于调度器
+      运行，覆盖盘后/周末/节假日等调度器不运行时段。CH 状态变化时触发告警
+      （ALIVE→DEAD=CRITICAL，DEAD→ALIVE=INFO 恢复）。canonical =
+      scripts/ops/ch_health_probe.py（scripts/ 下，需 canonical_override）。
+      部署：手动后台启动或 Windows 计划任务 ONLOGON 自启（docstring 已文档化）。
+      新 AI 想做"CH 健康监控/存活探针/7×24 灾备监控"前，CapabilityLookup
+      会反查到本文件，提示"扩展现有探针，勿新建监控脚本"。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

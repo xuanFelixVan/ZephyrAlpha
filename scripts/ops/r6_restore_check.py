@@ -1,5 +1,4 @@
 # [BLUEPRINT] MOD-INF-005 | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
 #!/usr/bin/env python
 # [TTL] task_bound
 """R6: 表级恢复演练——检查备份磁盘配置 + 候选表行数（非破坏性只读查询）。"""
