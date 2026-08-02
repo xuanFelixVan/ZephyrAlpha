@@ -7394,6 +7394,24 @@ creation_tokens:
     created_by: "session-drisk-rk121520"
     capability: "tail_risk_monitor"
 
+  # --- D-EX-SOR 执行路由域 P0 批次（2026-08-02，XS-014/013/002/001 四模块）---
+  - file: "src/zephyr/ex_sor/api/api_rate_limiter.py"
+    token: "auto-exsor-api-rate-limiter-20260802"
+    created_by: "session-exsor-p0-batch"
+    capability: "api_rate_limiter"
+  - file: "src/zephyr/ex_sor/api/broker_api_connector.py"
+    token: "auto-exsor-broker-api-connector-20260802"
+    created_by: "session-exsor-p0-batch"
+    capability: "broker_api_connector"
+  - file: "src/zephyr/ex_sor/core/broker_adapter_manager.py"
+    token: "auto-exsor-broker-adapter-manager-20260802"
+    created_by: "session-exsor-p0-batch"
+    capability: "broker_adapter_manager"
+  - file: "src/zephyr/ex_sor/core/optimal_order_router.py"
+    token: "auto-exsor-optimal-order-router-20260802"
+    created_by: "session-exsor-p0-batch"
+    capability: "optimal_order_router"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
