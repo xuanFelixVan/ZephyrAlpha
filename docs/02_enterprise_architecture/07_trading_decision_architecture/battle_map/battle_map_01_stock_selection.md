@@ -20,7 +20,7 @@ date: 2026-08-03
 | 阶段 | 选股（stock_selection） | Stage | 选股 |
 | 环节数 | 21 | Steps | 21 |
 | 流转边 | 14 | Edges | 14 |
-| 状态分布 | 🟨 候选态（候选池）=16 ｜ 🟦 运营态（已建）=2 ｜ 🟧 设计态（待施工）=2 ｜ 🟥 弃用态=1 | State Distribution | 🟨 候选态（候选池）=16 ｜ 🟦 运营态（已建）=2 ｜ 🟧 设计态（待施工）=2 ｜ 🟥 弃用态=1 |
+| 状态分布 | 🟨 候选态（候选池）=16 ｜ 🟦 运营态（已建）=3 ｜ 🟧 设计态（待施工）=2 | State Distribution | 🟨 候选态（候选池）=16 ｜ 🟦 运营态（已建）=3 ｜ 🟧 设计态（待施工）=2 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -40,7 +40,7 @@ date: 2026-08-03
 %% 选股阶段图
 flowchart TD
     BM_SEL_01["【BM-SEL-01 数据接入与预处理】<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Data Ingestion &amp; Preprocessing】"]
-    BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>选股阶段 / stock_selection<br/>（弃用态 / deprecated）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
+    BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
     BM_SEL_03["【BM-SEL-03 市场状态感知】<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>🟡候选承载<br/>【Market State Sensing】"]
     BM_SEL_04["【BM-SEL-04 次日8态走势预测】<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>🟡候选承载<br/>【Next-Day 8-State Forecast】"]
     BM_SEL_05["【BM-SEL-05 主力行为感知】<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Main-Force Behavior Sensing】"]
@@ -64,7 +64,7 @@ flowchart TD
     BM_SEL_02 ~~~ BM_SEL_17
     BM_SEL_03 ~~~ BM_SEL_18
     BM_SEL_04 ~~~ BM_SEL_19
-    BM_SEL_01 -.->|标准化行情 / data_flow| BM_SEL_02
+    BM_SEL_01 -->|标准化行情 / data_flow| BM_SEL_02
     BM_SEL_02 -.->|因子池 / data_flow| BM_SEL_03
     BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
     BM_SEL_03 -.->|C-021未就绪→跳过降级 / degradation| BM_SEL_04
@@ -78,9 +78,8 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_SEL_01,BM_SEL_21 production
+    class BM_SEL_01,BM_SEL_02,BM_SEL_21 production
     class BM_SEL_03,BM_SEL_04 design
-    class BM_SEL_02 deprecated
     class BM_SEL_05,BM_SEL_06,BM_SEL_07,BM_SEL_08,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19,BM_SEL_20 candidate
 ```
 
@@ -116,7 +115,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-003 | primary | planned | generated |
-| depgraph | MOD-INF-002 | supplement | production | generated |
+| depgraph | MOD-INF-002 | supplement | production | stable |
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 
@@ -151,13 +150,13 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-001 | primary | production | stable |
 | candidate | CAND-SIG-002 | supplement | deferred | — |
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-03 市场状态感知 / Market State Sensing
 

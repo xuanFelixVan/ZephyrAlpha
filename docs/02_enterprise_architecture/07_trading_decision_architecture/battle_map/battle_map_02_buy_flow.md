@@ -10,7 +10,7 @@ date: 2026-08-03
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_02_buy_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §buy_flow 阶段，10 环节。
+> battle_map §buy_flow 阶段，11 环节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
 ## 文档基本信息 / Document Overview
@@ -18,9 +18,9 @@ date: 2026-08-03
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
-| 环节数 | 10 | Steps | 10 |
-| 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟦 运营态（已建）=8 ｜ 🟧 设计态（待施工）=2 | State Distribution | 🟦 运营态（已建）=8 ｜ 🟧 设计态（待施工）=2 |
+| 环节数 | 11 | Steps | 11 |
+| 流转边 | 13 | Edges | 13 |
+| 状态分布 | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=2 | State Distribution | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=2 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -33,7 +33,7 @@ date: 2026-08-03
 
 ## 阶段图 / Stage Diagram
 
-> 展示 买入 阶段全部 10 个环节及流转边，颜色区分五态。
+> 展示 买入 阶段全部 11 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -55,17 +55,19 @@ flowchart TD
     BM_BUY_04["【BM-BUY-04 分批建仓】<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>买入阶段 / buy_flow<br/>（设计态 / design）<br/>【Batched Position Building】"]
     BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>买入阶段 / buy_flow<br/>（设计态 / design）<br/>【Intraday T+0 Arbitrage】"]
     BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控→仓位裁决→置信度分层→执行四级优先级，是人工<br/>干预系统的入口。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【External Order Monitoring】"]
-    BM_BUY_01 ~~~ BM_BUY_04 ~~~ BM_BUY_06 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D
-    BM_BUY_02 ~~~ BM_BUY_05
+    BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【WeChat Interaction Hub】"]
+    BM_BUY_01 ~~~ BM_BUY_04 ~~~ BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D
+    BM_BUY_02 ~~~ BM_BUY_05 ~~~ BM_BUY_06
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
     BM_BUY_04 -.->|分批建仓完成→做T监控 / trigger| BM_BUY_05
+    BM_BUY_07 -->|微信指令→外部指令盯盘 / data_flow| BM_BUY_06
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D production
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D production
     class BM_BUY_04,BM_BUY_05 design
 ```
 
@@ -101,7 +103,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | generated |
+| depgraph | MOD-L05-001 | supplement | stable | stable |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -289,6 +291,41 @@ C-047未就绪降级：跳过仓位裁决，按原始目标参数执行，日志
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L08-001 | primary | stable | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：buy_flow
+
+### BM-BUY-07 微信互动中心 / WeChat Interaction Hub
+
+> **大白话**：微信机器人双向交互——接收用户买卖指令、自然语言解析、指令路由、多人通知。微信是外部指令的主要输入通道，与BM-BUY-06外部指令盯盘联动。
+
+**机制说明**：
+
+L3/决策层。C-019●核心微信多人互动(D-TRADING-06)。微信机器人双向交互/指令路由/自然语言解析/多人通知。
+与C-013联动：微信是外部指令的主要输入通道，用户微信消息→自然语言解析→标准指令→BM-BUY-06外部指令盯盘。
+输出：执行结果→微信推送确认 / 拦截结果→微信推送拦截原因 / 多人通知（多人订阅同一策略）。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 用户微信消息（实时） 阈值: 实时 |
+| ② 消费数据/因子 | 用户指令（自然语言） |
+| ③ 参数 | parse_mode=自然语言解析（范围 自然语言/结构化，代码当前: None，状态: proposed）<br>notify_list=多人通知列表（范围 —，代码当前: None，状态: proposed） |
+| ④ 数据流 | 输入: 用户微信消息 → 处理: D-TRADING-06 解析/路由 → 输出: 标准指令 → 下游: BM-BUY-06外部指令盯盘→执行结果→微信推送 |
+| ⑤ 代码映射 | D-TRADING-06 / C-019 微信多人互动 |
+| ⑥ 降级/中止 | 微信API不可用 → 前端/其他通道接收指令 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：用户微信消息（实时）；②消费：用户指令（自然语言）；③参数：parse_mode=自然语言解析、notify_list=多人通知列表；④数据流：用户微信消息→D-TRADING-06 解析/路由→标准指令→BM-BUY-06外部指令盯盘→执行结果→微信推送；⑤代码：D-TRADING-06(未开发)、C-019；⑥降级：微信API不可用→前端/其他通道接收指令。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-INF-039 | supplement | planned | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：buy_flow
 

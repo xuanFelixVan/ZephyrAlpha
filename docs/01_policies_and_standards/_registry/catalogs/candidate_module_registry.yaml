@@ -7816,7 +7816,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -7824,12 +7824,12 @@ entries:
     source_section: 'LL12514'
     original_id: "D-TRADING-01"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_planned; depgraph该域节点数=40; 命中build_status=planned(planned); 该域设计态path命中关键词, 已在depgraph设计管道, 勿重复登记;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_planned; depgraph该域节点数=40; 命中build_status=planned(planned); 该域设计态path命中关键词, 已在depgraph设计管道, 勿重复登记; 【2026-08-03 reject·真源冲突】源文档'交易决策架构.md'已删除(孤儿harvest);ID(D-TRADING-XX)与依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义复用且冲突;depgraph已实现MOD-TRADING-002/003/004印证依赖图文档为权威设计意图真源(TRAE-083双源对比)。reject消除ID歧义。"
     tags: ['harvest', 'likely_planned', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_planned）'
+    last_review_outcome: "rejected(真源冲突):ID复用与依赖图文档冲突+源文档已删除,以依赖图文档为权威设计意图真源(TRAE-083)"
   - id: CAND-HARVEST-0185
     name: "Reconciliation Engine对账引擎"
     aliases: [D-TRADING-02]
@@ -7850,7 +7850,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -7858,12 +7858,12 @@ entries:
     source_section: 'LL12515'
     original_id: "D-TRADING-02"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated,planned,stable); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated,planned,stable); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·真源冲突】源文档'交易决策架构.md'已删除(孤儿harvest);ID(D-TRADING-XX)与依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义复用且冲突;depgraph已实现MOD-TRADING-002/003/004印证依赖图文档为权威设计意图真源(TRAE-083双源对比)。reject消除ID歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(真源冲突):ID复用与依赖图文档冲突+源文档已删除,以依赖图文档为权威设计意图真源(TRAE-083)"
   - id: CAND-HARVEST-0186
     name: "Settlement Manager结算管理器"
     aliases: [D-TRADING-03]
@@ -7884,7 +7884,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -7892,12 +7892,12 @@ entries:
     source_section: 'LL12516'
     original_id: "D-TRADING-03"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated,planned); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated,planned); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·真源冲突】源文档'交易决策架构.md'已删除(孤儿harvest);ID(D-TRADING-XX)与依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义复用且冲突;depgraph已实现MOD-TRADING-002/003/004印证依赖图文档为权威设计意图真源(TRAE-083双源对比)。reject消除ID歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(真源冲突):ID复用与依赖图文档冲突+源文档已删除,以依赖图文档为权威设计意图真源(TRAE-083)"
   - id: CAND-HARVEST-0187
     name: "EOD Processor日终处理器"
     aliases: [D-TRADING-04]
@@ -7918,7 +7918,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -7926,12 +7926,12 @@ entries:
     source_section: 'LL12517'
     original_id: "D-TRADING-04"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_planned; depgraph该域节点数=40; 命中build_status=planned(planned); 该域设计态path命中关键词, 已在depgraph设计管道, 勿重复登记;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_planned; depgraph该域节点数=40; 命中build_status=planned(planned); 该域设计态path命中关键词, 已在depgraph设计管道, 勿重复登记; 【2026-08-03 reject·真源冲突】源文档'交易决策架构.md'已删除(孤儿harvest);ID(D-TRADING-XX)与依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义复用且冲突;depgraph已实现MOD-TRADING-002/003/004印证依赖图文档为权威设计意图真源(TRAE-083双源对比)。reject消除ID歧义。"
     tags: ['harvest', 'likely_planned', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_planned）'
+    last_review_outcome: "rejected(真源冲突):ID复用与依赖图文档冲突+源文档已删除,以依赖图文档为权威设计意图真源(TRAE-083)"
   - id: CAND-HARVEST-0188
     name: "Pre-Market Checker盘前检查器"
     aliases: [D-TRADING-05]
@@ -7952,7 +7952,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -7960,12 +7960,12 @@ entries:
     source_section: 'LL12518'
     original_id: "D-TRADING-05"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·真源冲突】源文档'交易决策架构.md'已删除(孤儿harvest);ID(D-TRADING-XX)与依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义复用且冲突;depgraph已实现MOD-TRADING-002/003/004印证依赖图文档为权威设计意图真源(TRAE-083双源对比)。reject消除ID歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(真源冲突):ID复用与依赖图文档冲突+源文档已删除,以依赖图文档为权威设计意图真源(TRAE-083)"
   - id: CAND-HARVEST-0189
     name: "Trading Calendar Engine交易日历引擎"
     aliases: [D-TRADING-07]
@@ -7986,7 +7986,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -7994,12 +7994,12 @@ entries:
     source_section: 'LL12519'
     original_id: "D-TRADING-07"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated,planned,stable); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated,planned,stable); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·真源冲突】源文档'交易决策架构.md'已删除(孤儿harvest);ID(D-TRADING-XX)与依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义复用且冲突;depgraph已实现MOD-TRADING-002/003/004印证依赖图文档为权威设计意图真源(TRAE-083双源对比)。reject消除ID歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(真源冲突):ID复用与依赖图文档冲突+源文档已删除,以依赖图文档为权威设计意图真源(TRAE-083)"
   - id: CAND-HARVEST-0190
     name: "Position Accountant持仓会计"
     aliases: [D-TRADING-08]
@@ -8020,7 +8020,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -8028,12 +8028,12 @@ entries:
     source_section: 'LL12520'
     original_id: "D-TRADING-08"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(stable); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(stable); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·孤儿harvest】源文档已删除(孤儿harvest);D-TRADING-XX ID空间归属依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md),该文档未定义此ID,candidate池不应占用。reject消除ID空间歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(孤儿harvest):源文档已删除+依赖图文档未定义此ID,清理D-TRADING ID空间"
   - id: CAND-HARVEST-0191
     name: "Trading Cost Analyzer交易成本分析"
     aliases: [D-TRADING-10]
@@ -8054,7 +8054,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -8062,12 +8062,12 @@ entries:
     source_section: 'LL12521'
     original_id: "D-TRADING-10"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated,planned,stable); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated,planned,stable); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·孤儿harvest】源文档已删除(孤儿harvest);D-TRADING-XX ID空间归属依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md),该文档未定义此ID,candidate池不应占用。reject消除ID空间歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(孤儿harvest):源文档已删除+依赖图文档未定义此ID,清理D-TRADING ID空间"
   - id: CAND-HARVEST-0192
     name: "A-Share Pre-Market Standardized Workflow A股盘前标准化工作流"
     aliases: [D-TRADING-15]
@@ -8088,7 +8088,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -8096,12 +8096,12 @@ entries:
     source_section: 'LL12522'
     original_id: "D-TRADING-15"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·孤儿harvest】源文档已删除(孤儿harvest);D-TRADING-XX ID空间归属依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md),该文档未定义此ID,candidate池不应占用。reject消除ID空间歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(孤儿harvest):源文档已删除+依赖图文档未定义此ID,清理D-TRADING ID空间"
   - id: CAND-HARVEST-0193
     name: "Feature Store特征存储"
     aliases: [D-RESEARCH-02]
@@ -28386,7 +28386,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -28394,12 +28394,12 @@ entries:
     source_section: 'LL286'
     original_id: "D-TRADING-06"
     estimated_complexity: M
-    tech_notes: "harvest来源:ZephyrAlpha全系统模块清单.md; 类型=模块; likely_status=likely_new; depgraph该域节点数=40; 该域无运营态/设计态path命中, 疑真候选;"
+    tech_notes: "harvest来源:ZephyrAlpha全系统模块清单.md; 类型=模块; likely_status=likely_new; depgraph该域节点数=40; 该域无运营态/设计态path命中, 疑真候选; 【2026-08-03 reject·真源冲突】源文档'ZephyrAlpha全系统模块清单.md'已删除(孤儿harvest);ID(D-TRADING-XX)与依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义复用且冲突;depgraph已实现MOD-TRADING-002/003/004印证依赖图文档为权威设计意图真源(TRAE-083双源对比)。reject消除ID歧义。"
     tags: ['harvest', 'likely_new', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_new）'
+    last_review_outcome: "rejected(真源冲突):ID复用与依赖图文档冲突+源文档已删除,以依赖图文档为权威设计意图真源(TRAE-083)"
   - id: CAND-HARVEST-0790
     name: "Counterparty Simulator 对手仿真器"
     aliases: [D-SIMULATION-08]
@@ -42394,7 +42394,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -42402,12 +42402,12 @@ entries:
     source_section: 'LL1463'
     original_id: "D-TRADING-11"
     estimated_complexity: M
-    tech_notes: "harvest来源:ZephyrAlpha全系统模块清单.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:ZephyrAlpha全系统模块清单.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·孤儿harvest】源文档已删除(孤儿harvest);D-TRADING-XX ID空间归属依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md),该文档未定义此ID,candidate池不应占用。reject消除ID空间歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(孤儿harvest):源文档已删除+依赖图文档未定义此ID,清理D-TRADING ID空间"
   - id: CAND-HARVEST-1202
     name: "Cash Flow Manager 现金流管理器"
     aliases: [D-TRADING-12]
@@ -42428,7 +42428,7 @@ entries:
       q3: pending
       q4: pending
       blocking_question: pending
-    status: candidate
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
     last_reviewed_at: '2026-08-01'
@@ -42436,12 +42436,12 @@ entries:
     source_section: 'LL1464'
     original_id: "D-TRADING-12"
     estimated_complexity: M
-    tech_notes: "harvest来源:ZephyrAlpha全系统模块清单.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated); 该域运营态path命中关键词, 疑已实现;"
+    tech_notes: "harvest来源:ZephyrAlpha全系统模块清单.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=40; 命中build_status=operational(generated); 该域运营态path命中关键词, 疑已实现; 【2026-08-03 reject·孤儿harvest】源文档已删除(孤儿harvest);D-TRADING-XX ID空间归属依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md),该文档未定义此ID,candidate池不应占用。reject消除ID空间歧义。"
     tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    alternatives: "以依赖图文档(docs/_working/依赖图/18-D-TRADING-交易运营域.md)子模块定义为准"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: "rejected(孤儿harvest):源文档已删除+依赖图文档未定义此ID,清理D-TRADING ID空间"
   - id: CAND-HARVEST-1203
     name: "Degradation Notification Downstream Manager 降级通知下游管理器"
     aliases: [D-SIGNAL-80]
