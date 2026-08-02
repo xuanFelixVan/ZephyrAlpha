@@ -4,6 +4,8 @@ title: "策略相关性门禁蓝图 — 多维度相关性检查+5级裁决"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: design
+build_status: stable
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc

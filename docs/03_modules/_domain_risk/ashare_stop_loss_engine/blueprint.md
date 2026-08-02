@@ -15,6 +15,8 @@ last_updated: "2026-08-02"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
+design_maturity: production
+build_status: stable
 ---
 
 # MOD-RK-09 A-Share Stop-Loss Rule Engine — A股止损规则引擎 蓝图

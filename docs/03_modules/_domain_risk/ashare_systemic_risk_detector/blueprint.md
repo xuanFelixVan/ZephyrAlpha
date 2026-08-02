@@ -15,6 +15,8 @@ last_updated: "2026-08-02"
 priority: P0
 blueprint_level: module
 responsibility_domain: 
+design_maturity: production
+build_status: stable
 ---
 
 # MOD-RK-10 A-Share Systemic Risk Detector — A股系统性风险检测器 蓝图

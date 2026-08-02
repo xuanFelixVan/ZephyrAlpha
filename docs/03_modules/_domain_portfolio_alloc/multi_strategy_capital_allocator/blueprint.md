@@ -4,6 +4,8 @@ title: "多策略资金分配器蓝图 — 容量+MaxDD+冷启动+再平衡频�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: design
+build_status: stable
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc

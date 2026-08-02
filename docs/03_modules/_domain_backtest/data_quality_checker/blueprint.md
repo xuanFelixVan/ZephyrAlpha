@@ -4,6 +4,8 @@ title: "回测数据质量检查器蓝图 — 缺失检测+异常检测+一致�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: production
+build_status: stable
 ttl: permanent
 layer: L_BACKTEST
 layer_name: backtest

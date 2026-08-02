@@ -319,7 +319,14 @@ def _has_m11_exemption(content: str) -> bool:
 
 
 def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str, content: str) -> bool:
-    """检测修改文件的 staged 新增行是否含 manual 触发且全文件无事件订阅。"""
+    """检测修改文件的 staged 新增行是否含 manual 触发且全文件无事件订阅。
+
+    P3-1.2 治本对齐（2026-08-02）：modified 文件同样适用 m11 合规豁免——
+    合法 manual 触发 permanent 脚本（如 apply_depgraph.py / apply_dataflowgraph.py
+    等 CLI 写入工具）在新增命令/参数时不应被误判，与 new 文件豁免逻辑一致。
+    """
+    if _has_m11_exemption(content):
+        return False  # 合规豁免，放行（与 _check_manual_only_permanent_new 一致）
     try:
         diff_content = gateway.run_git(
             ["git", "diff", "--cached", "--unified=0", "--", rel_path]

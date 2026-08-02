@@ -4,6 +4,8 @@ title: "卖出紧迫度评分器蓝图 — 信号→紧迫度→执行策略映�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: design
+build_status: stable
 ttl: permanent
 layer: L03_sell_decision
 layer_name: sell_decision

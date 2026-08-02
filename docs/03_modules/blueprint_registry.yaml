@@ -2,9 +2,9 @@ registry:
   version: 2.7.10
   created: '2026-05-02'
   last_updated: '2026-08-02'
-  total_blueprints: 94
+  total_blueprints: 97
   scope: 03_modules/
-  note: Auto-synced from 94 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 97 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
   generated_at: '2026-08-02'
   generated_by: sync_registry_from_blueprints.py
@@ -157,6 +157,45 @@ blueprints:
   generation: 1
   last_updated: 2026-07-02
   file_path: 03_modules/_cross_layer/context_engine/blueprint.md
+- module_id: MOD-EX-002
+  name: position_tracker
+  title: 持仓跟踪器蓝图 — Fill回调驱动+平均成本+PositionSnapshot产出
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 0.1.0
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_execution_core/position_tracker/blueprint.md
+- module_id: MOD-EX-003
+  name: audit_journal
+  title: 执行审计器蓝图 — 执行事件哈希链审计日志+报告
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 0.1.0
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_execution_core/audit_journal/blueprint.md
+- module_id: MOD-EX-056
+  name: position_reconciler
+  title: 盘中持仓对账器蓝图 — 系统账vs券商账定期比对+差异冻结
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 0.1.0
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_execution_core/position_reconciler/blueprint.md
 - module_id: MOD-EX_SOR_EXT-001
   name: slippage_analyzer
   title: 滑点分析器蓝图 — 多基准滑点计算+三因子归因+平方根冲击预测
@@ -1367,14 +1406,16 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_system_master/blueprint.md
 summary:
-  total: 94
+  total: 97
   by_blueprint_status:
-    Active: 88
+    Active: 91
     Draft: 6
   by_layer:
     L2_domain: 14
     L_BACKTEST: 3
     L1_foundation: 28
+    ? ''
+    : 3
     L0_infrastructure: 17
     L3_application: 1
     L02_pf_alloc: 3

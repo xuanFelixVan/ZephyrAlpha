@@ -4,6 +4,8 @@ title: "信号合成器蓝图 — 多策略加权投票+共振融合"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: design
+build_status: stable
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc

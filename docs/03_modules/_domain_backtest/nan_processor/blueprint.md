@@ -4,6 +4,8 @@ title: "指标NaN处理器蓝图 — 智能填充+清洗"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: design
+build_status: stable
 ttl: permanent
 layer: L_BACKTEST
 layer_name: backtest

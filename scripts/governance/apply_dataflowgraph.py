@@ -14,6 +14,7 @@
 # [TESTS] tests/test_apply_dataflowgraph.py
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051
+# noqa: m11-perm-manual-legitimate  合法 manual CLI 写入工具（ARCH-051 裁定）：人工/AI 按需调用 dataflowgraph 变更入口，对齐 apply_depgraph.py 模式，非永久自动运行器
 
 """
 apply_dataflowgraph.py — dataflowgraph 变更写入工具（CLI）
@@ -102,6 +103,24 @@ def _parse_kv_pairs(pairs: list[str] | None) -> dict[str, str]:
         key, _, value = pair.partition("=")
         result[key.strip()] = value.strip()
     return result
+
+
+# ---------------------------------------------------------------------------
+# SQL 集中化常量（§5.160.2 NO-BARE-SQL 治本：禁止 cur.execute 内裸 SQL 字面量）
+# 对齐 apply_depgraph.py 的 SQL_* 模块级常量模式。
+# ---------------------------------------------------------------------------
+SQL_SELECT_JOB_BY_NAME = (
+    "SELECT job_id, job_name, module_id, design_maturity, build_status "
+    "FROM dataflow_jobs WHERE job_name = %s"
+)
+SQL_SELECT_JOB_BY_MODULE_ID = (
+    "SELECT job_id, job_name, module_id, design_maturity, build_status "
+    "FROM dataflow_jobs WHERE module_id = %s"
+)
+SQL_DELETE_EDGES_BY_ENTITY = (
+    "DELETE FROM dataflow_edges WHERE from_entity_id = %s OR to_entity_id = %s"
+)
+SQL_DELETE_JOB_BY_ID = "DELETE FROM dataflow_jobs WHERE job_id = %s"
 
 
 # ---------------------------------------------------------------------------
@@ -271,6 +290,70 @@ def cmd_transition_build_status(args: argparse.Namespace) -> int:
         conn.close()
 
 
+def cmd_delete_design_job(args: argparse.Namespace) -> int:
+    """删除设计态 Job 节点（含其关联边，仅限 design_maturity=design）。
+
+    用途：清理被弃用/重命名后的孤儿设计态 Job（如 module_id 变更后残留的旧占位节点）。
+    安全闸：仅允许删除 design_maturity='design' 的 Job，禁止删除 production 运营态节点。
+    定位方式：--job-name（精确名）或 --module-id（按 module_id 匹配，可批量）。
+
+    用法:
+        python scripts/governance/apply_dataflowgraph.py --delete-design-job --job-name MOD-XS-EXT-001
+        python scripts/governance/apply_dataflowgraph.py --delete-design-job --module-id MOD-XS-EXT-001
+    """
+    if not args.job_name and not args.module_id:
+        print("ERROR: --delete-design-job 需配合 --job-name 或 --module-id", file=sys.stderr)
+        return EXIT_FINDINGS
+
+    init_dataflow_db()
+    conn = get_dataflowgraph_pg_connection(autocommit=False, allow_design_delete=True)  # ARCH-053: 允许设计态写入
+    try:
+        acquire_dataflow_write_lock(conn)
+        with conn.cursor() as cur:
+            if args.job_name:
+                cur.execute(SQL_SELECT_JOB_BY_NAME, (args.job_name,))
+            else:
+                cur.execute(SQL_SELECT_JOB_BY_MODULE_ID, (args.module_id,))
+            rows = cur.fetchall()
+            if not rows:
+                print(f"ERROR: 未找到 Job (job_name={args.job_name!r}, module_id={args.module_id!r})", file=sys.stderr)
+                return EXIT_FINDINGS
+
+            # 安全闸：仅允许删除 design 态 Job
+            non_design = [r for r in rows if r[3] != "design"]
+            if non_design:
+                for r in non_design:
+                    print(
+                        f"ERROR: 拒绝删除非设计态 Job job_id={r[0]} job_name={r[1]!r} "
+                        f"(design_maturity={r[3]}, build_status={r[4]})；仅允许删除 design 态节点。",
+                        file=sys.stderr,
+                    )
+                return EXIT_FINDINGS
+
+            deleted = 0
+            for r in rows:
+                job_id, job_name, module_id, _, _ = r
+                # 级联清理关联边（from/to 任一端引用此 job_id）
+                cur.execute(SQL_DELETE_EDGES_BY_ENTITY, (job_id, job_id))
+                edge_count = cur.rowcount
+                cur.execute(SQL_DELETE_JOB_BY_ID, (job_id,))
+                deleted += 1
+                print(f"OK: 删除设计态 Job job_id={job_id} job_name={job_name!r} module_id={module_id!r} (级联边 {edge_count} 条)")
+        conn.commit()
+        print(f"共删除 {deleted} 个设计态 Job")
+        return EXIT_PASS
+    except Exception as e:
+        conn.rollback()
+        print(f"ERROR: {e}", file=sys.stderr)
+        return EXIT_FINDINGS
+    finally:
+        try:
+            release_dataflow_write_lock(conn)
+        except psycopg2.Error as lock_err:
+            print(f"WARN: 释放 dataflow 写锁失败（可能遗留 advisory lock）: {lock_err}", file=sys.stderr)
+        conn.close()
+
+
 def cmd_list_datasets(args: argparse.Namespace) -> int:
     """列出所有 Dataset。"""
     init_dataflow_db()
@@ -325,6 +408,7 @@ def cmd_list_ops() -> int:
     print("  --add-design-job           新增设计态 Job（design_maturity=design, build_status=planned）")
     print("  --add-design-edge          新增设计态数据流边")
     print("  --transition-build-status  转换 build_status（planned→generated→testing→stable）")
+    print("  --delete-design-job        删除设计态 Job（仅限 design 态，级联清理边；--job-name 或 --module-id）")
     print()
     print("只读命令：")
     print("  --list-datasets            列出所有 Dataset")
@@ -353,6 +437,7 @@ def main() -> None:
     parser.add_argument("--add-design-dataset", action="store_true", help="新增设计态 Dataset")
     parser.add_argument("--add-design-job", action="store_true", help="新增设计态 Job")
     parser.add_argument("--add-design-edge", action="store_true", help="新增设计态数据流边")
+    parser.add_argument("--delete-design-job", action="store_true", help="删除设计态 Job（仅限 design 态，级联清理边）")
     parser.add_argument(
         "--transition-build-status",
         nargs=3,
@@ -373,6 +458,7 @@ def main() -> None:
 
     # Job 参数
     parser.add_argument("--job-name", type=str, help="Job job_name（如 ingest.ifind_kline）")
+    parser.add_argument("--module-id", type=str, default=None, help="module_id（--delete-design-job 按 module_id 定位）")
     parser.add_argument("--source-code-ref", type=str, default=None, help="depgraph 模块 path（跨图关联）")
     parser.add_argument("--trigger-type", type=str, default=None, choices=["event_driven", "scheduled", "manual", "stream"], help="触发类型")
     parser.add_argument("--run-context", type=str, default=None, help="运行上下文")
@@ -414,6 +500,8 @@ def main() -> None:
             print("ERROR: --add-design-edge 需要 --from-id --to-id --from-type --to-type", file=sys.stderr)
             sys.exit(EXIT_ERROR)
         sys.exit(cmd_add_design_edge(args))
+    if args.delete_design_job:
+        sys.exit(cmd_delete_design_job(args))
     if args.transition_build_status:
         entity_type, entity_ref, new_status = args.transition_build_status
         if entity_type not in ("dataset", "job"):

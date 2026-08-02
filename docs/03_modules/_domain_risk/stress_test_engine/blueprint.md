@@ -15,6 +15,8 @@ last_updated: "2026-08-02"
 priority: P1
 blueprint_level: module
 responsibility_domain: 
+design_maturity: production
+build_status: stable
 ---
 
 # MOD-RK-12 Stress Test Engine — 压力测试引擎 蓝图

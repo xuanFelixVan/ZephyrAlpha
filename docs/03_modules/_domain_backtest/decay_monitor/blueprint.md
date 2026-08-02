@@ -4,6 +4,8 @@ title: "策略衰减监控告警器蓝图 — 短期/长期均值对比+趋势�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
+design_maturity: design
+build_status: stable
 ttl: permanent
 layer: L_BACKTEST
 layer_name: backtest

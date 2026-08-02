@@ -422,6 +422,67 @@ class TestGateM11ExemptionModified:
         assert passed is False, "should block (no m11, modified adds argparse)"
         assert "manual" in msg.lower() or "argparse" in msg.lower() or "事件订阅" in msg
 
+    def test_modified_adds_argparse_namespace_with_m11_exempt(self, tmp_path):
+        """修改文件新增含 `argparse.Namespace` 类型注解的函数签名（触发 quick_hit
+        的 ``argparse.`` 模式）+ 文件含合规 m11 → 放行。
+
+        P3-1.2 治本对齐（2026-08-02）：modified 文件同样适用 m11 豁免——
+        合法 manual CLI 工具（如 apply_dataflowgraph.py）新增命令时函数签名含
+        argparse.Namespace 不应被误判，与 new 文件豁免逻辑一致。
+        """
+        rel = _write_file(tmp_path, "scripts/modified_m11_argparse_ns.py", _VIOLATION_WITH_M11_COMPLIANT)
+        # diff 模拟：新增函数签名含 argparse.Namespace（匹配 "argparse." quick_hit 模式）
+        diff_stdout = (
+            f"diff --git a/{rel} b/{rel}\n"
+            f"--- a/{rel}\n"
+            f"+++ b/{rel}\n"
+            "@@ -10,3 +10,4 @@\n"
+            " def main():\n"
+            "     pass\n"
+            "+def cmd_new(args: argparse.Namespace) -> int:\n"
+        )
+
+        gw = _make_gateway(
+            tmp_path,
+            staged_files=[rel],
+            added_files=[],
+            diff_stdout=diff_stdout,
+        )
+
+        gate = make_manual_only_permanent_gate()
+        passed, msg = gate.check(gw, [rel])
+        assert passed is True, (
+            f"should pass (m11 exempt even when added line triggers quick_hit): {msg}"
+        )
+
+    def test_modified_adds_argparse_namespace_no_m11_blocked(self, tmp_path):
+        """修改文件新增含 `argparse.Namespace` 行（触发 quick_hit）+ 无 m11 → 阻断。
+
+        对照组：确认 m11 豁免修复未削弱对无豁免文件的检测能力。
+        """
+        rel = _write_file(tmp_path, "scripts/modified_no_m11_argparse_ns.py", _VIOLATION_TEMPLATE)
+        diff_stdout = (
+            f"diff --git a/{rel} b/{rel}\n"
+            f"--- a/{rel}\n"
+            f"+++ b/{rel}\n"
+            "@@ -10,3 +10,4 @@\n"
+            " def main():\n"
+            "     pass\n"
+            "+def cmd_new(args: argparse.Namespace) -> int:\n"
+        )
+
+        gw = _make_gateway(
+            tmp_path,
+            staged_files=[rel],
+            added_files=[],
+            diff_stdout=diff_stdout,
+        )
+
+        gate = make_manual_only_permanent_gate()
+        passed, msg = gate.check(gw, [rel])
+        assert passed is False, "should block (no m11, added line triggers quick_hit)"
+        assert "manual" in msg.lower() or "argparse" in msg.lower() or "事件订阅" in msg
+
 
 # ===========================================================================
 # TestGateIntegrationNew — 通过 gate.check 测试新增文件场景（端到端）
