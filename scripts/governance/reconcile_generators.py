@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 生成器失败→返回{"status":"failed"}不阻断调用方；注册表缺失→返回{"status":"error"}跳过
-# [TESTS] tests/test_reconcile_generators.py (规划中)
+# [TESTS] tests/governance/test_reconcile_generators.py
 # [TTL] permanent
 # [ARCH-REF] generator_auto_trigger_pilot.md
 """
@@ -49,7 +49,9 @@ warn_only: false
 """
 
 import importlib
+import concurrent.futures
 import logging
+import os
 import subprocess
 import sys
 import time
@@ -61,9 +63,21 @@ _LOGGER = logging.getLogger(__name__)
 # （批量写 20+ 域文档），实测 <60s；300s 留足余量防慢机环境误杀。
 _SUBPROCESS_TIMEOUT = 300
 
+# 并行重生成 worker 数（治本缺口#2：depgraph_db 串行 19 个 subprocess ~50s → 并行 ~13s）。
+# 安全前提（已从 generator_registry.yaml 验证）：同一 trigger_source 的生成器
+# output_globs 互斥（无文件写冲突）、input_sources 均为 db: 前缀（无生成器间读取依赖）。
+# 可由 ZEPHYR_REGENERATE_WORKERS 环境变量覆盖（批量环境可调高，弱机可调低）。
+_MAX_WORKERS = max(1, int(os.environ.get("ZEPHYR_REGENERATE_WORKERS", "4")))
+
 # 退出码语义（_shared/constants.py）：0=PASS, 1=FINDINGS（生成成功但有告警）, 2=ERROR
 # 生成器视角：0/1 均表示产物已生成（ok），2+ 表示未生成或失败。
 _OK_RETURNCODES = {0, 1}
+
+# 后台子进程 nursery——持有 Popen 引用避免 GC 触发 "subprocess still running"
+# ResourceWarning（fire-and-forget spawn 后函数立即返回，Popen 对象无引用即被 GC，
+# 此时子进程仍在运行→Popen.__del__ 发警告）。进程退出后由 _prune_detached() 清理，
+# 列表不会无限增长（每次 reconcile_async 调用先 prune）。
+_DETACHED_PROCS: list = []
 
 # 仓库根（编排器在 scripts/governance/，parents[2]=repo root）
 _REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -211,8 +225,49 @@ def _invoke_generator(entry: dict) -> dict:
     return result
 
 
+def _invoke_parallel(entries: list[dict]) -> list[dict]:
+    """并行调用多个生成器（治本缺口#2：串行 N 个 subprocess → 并行）。
+
+    安全前提（已从 generator_registry.yaml 验证）：
+      - 同一 trigger_source 的生成器 output_globs 互斥（无文件写冲突）
+      - input_sources 均为 db: 前缀（无生成器间读取依赖，各读各的 DB 表）
+    单个生成器失败不影响其他（_invoke_generator 内部捕获异常返回 failed dict）。
+    结果顺序与 entries 一致（确定性报告，便于日志解读）。
+
+    实测：depgraph_db 19 生成器串行 ~50s → 4 worker 并行 ~13s。
+    """
+    if not entries:
+        return []
+    results: list[dict | None] = [None] * len(entries)
+
+    def _run(idx: int, entry: dict) -> None:
+        try:
+            results[idx] = _invoke_generator(entry)
+        except Exception as e:  # noqa: BLE001 — _invoke_generator 已捕获，此处双保险
+            name = entry.get("name", "<unknown>")
+            results[idx] = {
+                "status": "failed",
+                "generator": name,
+                "error": f"{type(e).__name__}: {e}",
+            }
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=_MAX_WORKERS) as ex:
+        futures = [ex.submit(_run, i, e) for i, e in enumerate(entries)]
+        for fut in concurrent.futures.as_completed(futures):
+            fut.result()  # _run 内已捕获异常，此处仅确认完成
+    # 防御性填充（理论不会发生）
+    for i, r in enumerate(results):
+        if r is None:
+            results[i] = {
+                "status": "failed",
+                "generator": entries[i].get("name", "?"),
+                "error": "no result (unknown)",
+            }
+    return results
+
+
 def reconcile(source: str) -> dict:
-    """按触发源精确匹配，调用对应生成器重生成（apply_*.py 写完 DB 后调用）。
+    """按触发源精确匹配，并行调用对应生成器重生成（apply_*.py 写完 DB 后调用）。
 
     Args:
         source: 触发源标识（如 "battle_map_db"），匹配注册表 trigger_sources
@@ -221,15 +276,26 @@ def reconcile(source: str) -> dict:
         {"source": source, "regenerated": [result, ...], "total": N}
     """
     registry = _load_registry()
-    results: list[dict] = []
-    for entry in registry.get("generators", []):
-        if source in entry.get("trigger_sources", []):
-            results.append(_invoke_generator(entry))
+    matched = [
+        e for e in registry.get("generators", [])
+        if source in e.get("trigger_sources", [])
+    ]
+    results = _invoke_parallel(matched)
     return {
         "source": source,
         "regenerated": results,
         "total": len(results),
     }
+
+
+def _prune_detached() -> None:
+    """清理已退出的后台子进程引用（避免 _DETACHED_PROCS 无限增长）。
+
+    poll() 返回 None 表示进程仍在运行→保留；返回退出码表示已退出→移除。
+    幂等，每次 reconcile_async 调用前先 prune。
+    """
+    global _DETACHED_PROCS
+    _DETACHED_PROCS = [p for p in _DETACHED_PROCS if p.poll() is None]
 
 
 def reconcile_async(source: str) -> dict:
@@ -270,7 +336,13 @@ def reconcile_async(source: str) -> dict:
             stderr=subprocess.STDOUT,
             creationflags=creationflags,
         )
-        # 不 close log_handle——子进程继承它；Popen 会在子进程退出时自动关闭
+        # 父进程关闭自己的 log_handle 副本——子进程已在 Popen 返回前 dup/继承该
+        # 句柄，父进程副本若不关闭会泄漏（ResourceWarning: unclosed file）。
+        log_handle.close()
+        # 持有 Popen 引用避免 GC 触发 "subprocess still running" 警告；
+        # _prune_detached() 在进程退出后清理本列表。
+        _prune_detached()
+        _DETACHED_PROCS.append(proc)
         return {
             "source": source,
             "pid": proc.pid,
@@ -321,25 +393,41 @@ def _is_stale(entry: dict) -> tuple[bool, str]:
 
 
 def reconcile_stale() -> dict:
-    """扫描全部生成器，YAML 输入比产物新则重生成（boot_hooks 启动时调用）。
+    """扫描全部生成器，YAML 输入比产物新则并行重生成（boot_hooks 启动时调用）。
+
+    两阶段：①stale 判定（mtime 对比，纯文件 stat，快，串行）→ ②stale 生成器并行重生成
+    （治本缺口#2：原串行 N 个 subprocess，启动时若多生成器 stale 会阻塞 ~N×2s）。
 
     Returns:
         {"regenerated": [result,...], "skipped": [name,...], "total_scanned": N}
     """
     registry = _load_registry()
-    regenerated: list[dict] = []
+    # 阶段1：stale 判定（串行，快——仅文件 mtime stat）
+    stale_entries: list[tuple[dict, str]] = []  # (entry, reason)
     skipped: list[str] = []
     for entry in registry.get("generators", []):
         name = entry.get("name", "<unknown>")
         is_stale, reason = _is_stale(entry)
         if is_stale:
-            result = _invoke_generator(entry)
-            result["stale_reason"] = reason
-            regenerated.append(result)
-            _LOGGER.info("reconcile_stale: %s regenerated (reason=%s)", name, reason)
+            stale_entries.append((entry, reason))
         else:
             skipped.append(name)
             _LOGGER.debug("reconcile_stale: %s skipped (reason=%s)", name, reason)
+
+    # 阶段2：并行重生成 stale 生成器（慢——subprocess spawn）
+    raw_results = _invoke_parallel([e for e, _ in stale_entries])
+    regenerated: list[dict] = []
+    for r, (entry, reason) in zip(raw_results, stale_entries):
+        name = entry.get("name", "<unknown>")
+        r["stale_reason"] = reason
+        regenerated.append(r)
+        if r.get("status") == "ok":
+            _LOGGER.info("reconcile_stale: %s regenerated (reason=%s)", name, reason)
+        else:
+            _LOGGER.warning(
+                "reconcile_stale: %s FAILED (reason=%s): %s",
+                name, reason, r.get("error"),
+            )
     return {
         "regenerated": regenerated,
         "skipped": skipped,

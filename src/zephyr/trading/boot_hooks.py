@@ -187,7 +187,10 @@ def _subscribe_eventbus_consumers() -> None:
       6. F30 validator_event_bridge — fix_completed
       7. F1  autopilot              — task_completed
       8. F6  drift_bridge           — gate_blocked/task_completed
-      9. auto_task_generator        — task_completed（P3 生成器触发接入）
+      9. auto_task_generator        — task_completed（自动任务生成，非架构文档生成器）
+    注：架构文档生成器（23 个 generate_*.py）的自动触发不走 EventBus——见
+    _subscribe_governance_regeneration()，启动时调 reconcile_stale() 按 mtime 扫描
+    兜底；DB 真源变更由 apply_*.py 内联 reconcile_async() 实时触发。
     """
     global _eventbus_consumers_subscribed
     if _eventbus_consumers_subscribed:

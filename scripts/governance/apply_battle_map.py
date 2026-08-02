@@ -621,20 +621,27 @@ def _execute_ops(ops: list[dict], dry_run: bool = False) -> int:
                 print(json.dumps(results, ensure_ascii=False, indent=2, default=str))
                 # 真源写入成功 → 自动派生重生成（编排器查 generator_registry.yaml，§2.3 派生关系）
                 # 生成失败不阻断 apply（apply 是真源，生成是派生）
-                # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过（boot_hooks 启动兜底）
+                # 生成器自动重生成（reconcile_generators §reconcile_async 非阻塞）：
+                # apply 写完 DB → reconcile_async("battle_map_db") 后台 spawn 生成器子进程。
+                # 异步非阻塞——与 apply_depgraph/dataflowgraph/decisiongraph 一致（治本缺口#1）。
+                # 失败不丢失：boot_hooks 启动时 reconcile_stale() 兜底重跑（生成器幂等）。
+                # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过。
                 if os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
                     try:
-                        from scripts.governance.reconcile_generators import reconcile
-                        regen = reconcile("battle_map_db")
-                        for r in regen.get("regenerated", []):
-                            if r.get("status") == "ok":
-                                out_ct = len(r.get('outputs', []))
-                                print(f"  ↳ 自动重生成: {r['generator']} "
-                                      f"({out_ct} 文件, {r.get('elapsed_ms')}ms)")
-                            else:
-                                print(f"  ⚠ 自动重生成失败（不阻断写入）: "
-                                      f"{r.get('generator')}: {r.get('error')}", file=sys.stderr)
-                    except Exception as e:
+                        try:
+                            from scripts.governance.reconcile_generators import reconcile_async
+                        except ImportError:
+                            from reconcile_generators import reconcile_async
+                        regen = reconcile_async("battle_map_db")
+                        if regen.get("status") == "spawned":
+                            print(
+                                f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} "
+                                f"日志: {regen['log_file']}",
+                                file=sys.stderr,
+                            )
+                        else:
+                            print(f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=sys.stderr)
+                    except Exception as e:  # noqa: BLE001 — 编排器不可用不阻断主流程
                         print(f"  ⚠ 编排器不可用（不阻断写入）: {e}", file=sys.stderr)
         return 0
     except (ValueError, KeyError) as e:
