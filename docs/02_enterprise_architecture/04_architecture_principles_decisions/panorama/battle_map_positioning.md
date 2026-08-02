@@ -8,7 +8,7 @@ date: 2026-08-03
 
 # 交易决策作战地图能力定位书（第四全景图 / battle_map）
 
-> 版本：V0.3.0（草案，待 Owner 评审）| 2026-08-02
+> 版本：V0.4.0（父子嵌套机制落地）| 2026-08-03
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
 > 写法：大白话为主，配表格和 ASCII 图。变更历史见文末。
 > **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目第四全景图——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
@@ -224,6 +224,8 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 | `narrative_ref` | TEXT | 指向翻译真源 `battle_map_steps` 段的 step_id（叙事真源在外部 YAML） |
 | `indicators` | JSONB | 结构化指标（trigger/threshold/source_modules/source_ref），见 §十三 |
 | `source_ref` | TEXT | 出处（草图 §1.4 / 现有模块代码），可追溯 |
+| `parent_step_id` | TEXT FK | 父环节 step_id（V0.4.0 新增），NULL=根环节，指向同表 step_id（ON DELETE SET NULL） |
+| `depth` | INT | 层级深度（V0.4.0 新增），0=根 / 1=子 / 2=孙（上限2，防 subgraph 渲染过深） |
 | `design_maturity` | TEXT | production / design（环节本身是否已在实盘主链路） |
 | `created_at` / `updated_at` | TIMESTAMP | 审计 |
 
@@ -382,6 +384,7 @@ Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_positi
 - **BM-INV-003**：环节叙事必须来自翻译真源 `battle_map_steps` 段，禁止在生成器硬编码
 - **BM-INV-004**：anchor 的 target module/candidate 的 domain 必须在 step.flow_stage 对应的允许域列表里（防域漂移=语义错位，如把卖出决策挂在买入流程）。规则真源：`docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`，检测器：`align_battle_map.py` §5
 - **BM-INV-005**：全景图模块的 `battle_map_step_ids` 字段是派生只读缓存，禁止直接写入（真源在 anchors）
+- **BM-INV-006**（V0.4.0 新增）：父子嵌套一致性——① `parent_step_id` 必须指向同 flow_stage 的已存在环节（防悬空父引用+防跨阶段嵌套）；② `depth ≤ 2`（根→子→孙，防 subgraph 渲染过深）；③ parent 链不能成环（A→B→A）；④ `depth` 值与 parent 链长度一致。写入校验：`apply_battle_map.py` op_add_step；对齐检测：`align_battle_map.py` `_check_parent_child_consistency()`
 
 ---
 
@@ -753,6 +756,7 @@ battle_map 是项目第四全景图。前三图是横向切片（按 module/deci
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
+| V0.4.0 | 2026-08-03 | 父子嵌套机制落地：①§6.1 `battle_map_steps` 表新增 `parent_step_id`（FK 自引用）+ `depth`（层级深度，上限2）两字段；②§8.4 新增 BM-INV-006 不变量（父存在+同阶段+无环+depth≤2+depth一致），写入校验在 `apply_battle_map.py` op_add_step，对齐检测在 `align_battle_map.py` `_check_parent_child_consistency()`；③生成器 `generate_battle_map_diagram.py` 支持 subgraph 渲染父子嵌套 + `-.->｜嵌套｜` 虚线边 + 子环节状态继承父环节 + 【】节点格式（⛔最前/成熟度最后/英文名最后）；④首批拆子落地：BM-BUY-02 四轨融合→4子环节（A逻辑驱动/B数据驱动/C人工指令/D应急保命）；⑤可视化模板 `visualization_view_template.md` V1.5 同步更新（§4.3 作战地图节点格式 + §4.12 父子嵌套关系） |
 | V0.3.2 | 2026-08-03 | 新增 §十七「运作机制速查总览（一页纸看懂）」：把 §一~§十五 的核心机制浓缩成导读速查版，含①四图定位速查表②三表结构简表③五类 target_graph 对齐路径详表④四条承重墙不变量 BM-INV-001~004⑤域漂移规则与当前已知 7 漂移点⑥运作机制数据流 ASCII 图⑦写入流程决策表⑧与 align_panoramas 正交关系。补充文档此前分散/缺失的"一页纸总览"视角，方便 Owner 快速确认机制与 AI 写决策前定位。重复部分以"详见 §X"引用，不破坏现有设计章节。 |
 | V0.1.0 | 2026-08-01 | 草案：第四全景图 battle_map 设计。三表数据模型 + 翻译真源 battle_map_steps 段 + 双向查找机制 + 取代 trading_flow_panorama.md V1.0.0。 |
 | V0.3.1 | 2026-08-03 | BM-INV-004 域漂移检查实现落地：①新增规则真源 `battle_map_domain_policy.yaml`（flow_stage→允许 domain 列表，TRAE-062 规则数据真源=YAML）；②`align_battle_map.py` 新增 §5 域漂移检测（采集 depgraph/candidate 的 target domain，逐锚点校验是否在 flow_stage 允许列表）；③对齐报告新增域漂移段+处置建议。首跑发现 8 处漂移（含误报：MOD-INF-002 跨域巨型蓝图单一 domain_id 采集器局限，待采集器修复）。④不变量编号调整：原 BM-INV-004（派生只读字段禁令）renumber 为 BM-INV-005，BM-INV-004 归位为域漂移（与 001孤儿/002幽灵/003叙事同属 align_battle_map.py 对齐检查系列）。 |
