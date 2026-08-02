@@ -906,6 +906,10 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 | 简介是技术术语堆砌（如 `SLO契约。SLO-Driven Escalation Contract — D-022-12.`） | docstring 直译，无中文说明 | 人工翻译为大白话（§十七.3 坏类型④） |
 | 简介与名称完全相同（plain_zh == name_zh） | 占位填充，未写实质内容 | 人工补齐实质说明（§十七.3 坏类型⑤） |
 | name_en 是 docstring 片段（如 `G-CT-004 — Backward-compat re-export...`） | 自动提取把 docstring 当 name_en | YAML 手动改为简短英文标识符（如 `approval`） |
+| plain_zh 改好了但文档仍显示旧值 | 只改了 plain_zh 没同步改 desc_zh，生成器 plain_zh 被过滤后回退到旧 desc_zh | **plain_zh 和 desc_zh 必须一起改**（§十七.5 SOP 步骤4） |
+| 审计脚本误报"技术/过短" | 预折行把一句好简介拆成多段，旧脚本只查首段（汉字少）误报 | 用重建完整简介的审计脚本（§十七.5，拼含中文段直到纯英文段停止） |
+| 提交报 LOCK_TIMEOUT | 另一 session 正持全局提交锁 | 检查 `.ailocks/git_commit_global.lock` age，等释放后重试（§十七.6） |
+| 提交报 DOC-REF-BROKEN | 其他 session 暂存的 blueprint 引用断裂连累全库 | `git reset HEAD <他人文件>` 取消暂存，提交后再让其重暂存（§十七.6） |
 | 设计态模块消失 | `_is_ghost` 误过滤 | `design_maturity=design` 时跳过幽灵检查 |
 | 图横向铺开太宽 | dagre 默认横向 | 拓扑分层 + `~~~` 不可见边强制同 rank 竖排 |
 | 节点标签被裁剪（上下裁掉/英文拦腰截断） | CSS max-width 二次折行：渲染行数 > Mermaid 测量行数，框高不够 | **生成端 `_wrap_label_text()` 预折行**（§4.10），CSS max-width 保持 560px 仅兜底、渲染字号 11px < 测量字号 14px。**禁止**靠调小 CSS max-width 解决 |
@@ -1187,9 +1191,10 @@ text = open(DOC, encoding="utf-8").read()
 # 提取所有节点定义  <id>["label"]
 nodes = re.findall(r'^\s*[a-z0-9_]+\["([^"]*)"\]', text, re.M)
 
+# ①②③ 类坏模式
 BAD_PATTERNS = ["供zephyr", "供GovernanceServer", "供behavioral",
                 "Re-export shim", "Backward-compat", "<path>", ".py —",
-                "SLO-Driven", "D-022", "CTR-ERR"]
+                "SLO-Driven", "D-022", "CTR-ERR", "in-process"]
 
 bad = []
 for label in nodes:
@@ -1197,22 +1202,42 @@ for label in nodes:
     if len(parts) < 2:
         bad.append(("无简介行", label[:50])); continue
     name = parts[0].strip()
-    intro = parts[1].strip()
-    if intro.startswith("文件:") or intro.startswith("("):
+
+    # 重建完整简介：拼含中文的段，遇到纯英文段（name_en/desc_en）停止
+    # 治本：旧版只查 parts[1] 首段，预折行后首段可能只有几个汉字导致误报
+    intro_parts = []
+    for p in parts[1:]:
+        p = p.strip()
+        if p.startswith("文件:") or p.startswith("(") or p.startswith("⛔"):
+            break
+        has_cjk = bool(re.search(r"[\u4e00-\u9fff]", p))
+        if not has_cjk and intro_parts:
+            break  # 已有中文段，遇到纯英文段→停止
+        intro_parts.append(p)
+    full_intro = "".join(intro_parts).strip()
+
+    if not full_intro:
         bad.append(("简介缺失", name)); continue
-    cjk = len(re.findall(r"[\u4e00-\u9fff]", intro))
+    if full_intro == name:
+        bad.append(("名称重复", name)); continue
+    cjk = len(re.findall(r"[\u4e00-\u9fff]", full_intro))
     if cjk < 6:
-        bad.append(("技术/过短", name + " | " + intro[:40])); continue
+        bad.append(("技术/过短", name + " | " + full_intro[:60])); continue
     for p in BAD_PATTERNS:
-        if p in intro:
-            bad.append(("含模板/术语: " + p, name + " | " + intro[:50])); break
-    if intro == name:
-        bad.append(("名称重复", name))
+        if p in full_intro:
+            bad.append(("含模板/术语: " + p, name + " | " + full_intro[:60])); break
 
 print("节点数: %d, 问题节点: %d" % (len(nodes), len(bad)))
 for flag, name in bad:
     print("  [%s] %s" % (flag, name))
 ```
+
+> **审计脚本防误报要点**（2026-08-02 踩坑治本）：
+> - **必须重建完整简介**——预折行会把一句简介拆成多段 `<br/>`，只查 `parts[1]` 首段
+>   会因首段汉字太少（如"自动校对 README"只有 4 个汉字）误报"技术/过短"。
+>   正确做法：从 `parts[1]` 开始拼含中文的段，遇到纯英文段（name_en/desc_en）停止。
+> - **"reconciler"等英文术语在中文句子里不算坏**——只有当完整简介汉字 < 6 时
+>   才判定为"技术/过短"。不要把中文句子里出现的英文词当坏模式。
 
 > **循环铁律**：步骤1→6 不是一次性的。修一批后重生成可能暴露新的坏简介（之前被通用值
 > 检测跳过的、现在兜底成路径派生的）。**必须循环到审计脚本输出"问题节点: 0"为止。**
@@ -1226,6 +1251,8 @@ for flag, name in bad:
 | pre-commit 钩子阻断 | `git commit` 报 GATE-NAMING 失败、files modified | 项目装了 pre-commit 框架，钩子扫全库报已存在的命名违规 |
 | 修改被回退 | 提交失败后 YAML 改动消失、回到 HEAD | 失败的 commit + 并发 session 干扰清掉了暂存区 |
 | FOREIGN_CHANGE_VIOLATION | `scripts/git_commit.py` 报"目标文件有外来变更" | 搭便车防护——直接编辑文件（没走 session claim）被当外来变更 |
+| LOCK_TIMEOUT | `scripts/git_commit.py` 报"internal error" | 另一 session 正持全局提交锁（`.ailocks/git_commit_global.lock`，TTL=1800s），需等它完成 |
+| DOC-REF-BROKEN 阻断 | 其他 session 暂存的 blueprint 引用断裂，导致全库提交被阻断 | 门禁扫描已暂存文件，其他 session 的坏 blueprint 连累你的提交 |
 
 **正确提交方式**：
 
@@ -1243,6 +1270,8 @@ python scripts/git_commit.py \
 | `--message-file` | 用文件传 message，避免 PowerShell 中文/特殊字符编码问题 |
 | `--allow-overlap` | 仅在搭便车防护误报时用（直接编辑文件场景），会追加 `[GW:<sid>:overlap]` 标记并落审计 |
 | `--no-verify` 内置 | GitCommitGateway 自带 in-process 门禁，按设计跳过 pre-commit 框架钩子 |
+| LOCK_TIMEOUT 应对 | 检查 `.ailocks/git_commit_global.lock` 是否存在及 age；等另一 session 完成后重试；锁 TTL=1800s 会自动过期 |
+| DOC-REF-BROKEN 应对 | 若其他 session 暂存的 blueprint 引用断裂连累你，先 `git reset HEAD <他人文件>` 取消暂存，提交后再让其重暂存 |
 | 提交后验证 | `git log --oneline -1` 确认 commit 在；`python -c "import yaml..."` 确认 plain_zh 在 HEAD 中 |
 | 重新生成文档 | MD 文件改动可能被 post-commit reconciler 自动提交，YAML 改动需主动走 gateway |
 
@@ -1258,7 +1287,7 @@ python scripts/git_commit.py \
 | V1.0 | 2026-08-01 | 初版：从 generate_domain_doc.py + zoomable_html.py 提取为统一模板规范 |
 | V1.1 | 2026-08-01 | ①新增 §4.10 标签预折行铁律；②§4.3 节点新增要素⑤ ⛔ 受限原因行；③§7.4 gate_reason 数据真源；④§6.3 CSS 更新；⑤§9.1/§10 验收清单同步 |
 | V1.2 | 2026-08-01 | ①新增 §13 subgraph/cluster 背景与边框陷阱（clusterBkg 不生效、style 命令失效、JS setAttribute 无效 → 必须用 `style.fill` 后处理）；②新增 §14 HTML 链接格式陷阱（http:// 绝对链接 vs 相对路径）；③新增 §15 候选库污染防护（索引附录汇总计数）；④新增 §16 Reconciler 回退应对策略 |
-| V1.3 | 2026-08-02 | ①新增 §4.11 节点标签简介质量铁律（五类坏简介概览 + 指向 §十七）；②新增 §十七 节点标签简介质量规范与审计（三问法标准、正反例对照、五类坏简介详解、生成器兜底链、人工补齐 SOP 含审计脚本、GitCommitGateway 提交注意事项）；③§十 验收清单新增"简介无五类坏值"+"运行审计脚本问题=0"+"name_en 非 docstring 片段"检查项；④§十一 常见问题表新增 8 行（五类坏简介+name_en 片段+文档未重生成+提交被回退）；⑤起因：D_GOV_ENFORCEMENT 域 42 模块中 21 个 plain_zh 是坏值（模板话/截断片段/消费者引用/术语堆砌/名称重复），用户反馈"看不懂有什么作用" |
+| V1.3 | 2026-08-02 | ①新增 §4.11 节点标签简介质量铁律（五类坏简介概览 + 指向 §十七）；②新增 §十七 节点标签简介质量规范与审计（三问法标准、正反例对照、五类坏简介详解、生成器兜底链、人工补齐 SOP 含审计脚本、GitCommitGateway 提交注意事项）；③§十 验收清单新增"简介无五类坏值"+"运行审计脚本问题=0"+"name_en 非 docstring 片段"检查项；④§十一 常见问题表新增 12 行（五类坏简介+name_en 片段+desc_zh 未同步+审计误报+LOCK_TIMEOUT+DOC-REF-BROKEN+文档未重生成+提交被回退）；⑤§17.5 审计脚本更新为防误报版（重建完整简介、遇纯英文段停止）；⑥§17.6 提交坑表新增 LOCK_TIMEOUT + DOC-REF-BROKEN 两个坑及应对；⑦起因：D_GOV_ENFORCEMENT 域 42 模块中 21 个 plain_zh 是坏值（模板话/截断片段/消费者引用/术语堆砌/名称重复），用户反馈"看不懂有什么作用" |
 
 ---
 
