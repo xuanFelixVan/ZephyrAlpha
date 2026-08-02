@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: architecture_model/cross_cutting/value_stream_map.yaml (self-contained; 原 business_principles.md 已删 2026-07-30)
+# blueprint: CFG-VALUE-STREAM-MAP | architecture_model/cross_cutting/value_stream_map.yaml (self-contained; 原 business_principles.md 已删 2026-07-30) | §
 # module_id: CFG-VALUE-STREAM-MAP
 # stability: evolving
 # safety_level: L

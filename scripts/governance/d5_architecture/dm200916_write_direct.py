@@ -145,7 +145,15 @@ print(f"领域事件: {event_count} 条 / {event_domain_count} 域")
 today = date.today().isoformat()
 
 # 生成 index.yaml 内容（domains 从 depgraph 派生，b_track 从物理文件派生，其余手工模板）
-yaml_content = f"""# v3.0.3: 治本版（b_track 从 layers/b_*.yaml 物理蓝图文件派生，消除手工模板第二真源）
+yaml_content = f"""# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §architecture-index
+# module_id: MOD-GOVERNANCE
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v3.0.3: 治本版（b_track 从 layers/b_*.yaml 物理蓝图文件派生，消除手工模板第二真源）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
 # c_track（14层 l00-l13）已废弃：§2.1 裁定 14 层降级为域属性，物理分类由 depgraph domains 表定义。
 # 本文件由 dm200916_write_direct.py 派生，禁止手工编辑 domains 与 b_track 列表：

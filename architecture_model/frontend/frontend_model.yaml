@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: docs/02_enterprise_architecture/04_architecture_principles_decisions/frontend_principles.md
+# blueprint: CFG-FRONTEND-MODEL | architecture_model/frontend/frontend_model.yaml (self-contained; 原 frontend_principles.md 已删) | §
 # module_id: CFG-FRONTEND-MODEL
 # stability: evolving
 # safety_level: L

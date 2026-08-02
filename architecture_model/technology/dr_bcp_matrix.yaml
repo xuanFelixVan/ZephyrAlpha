@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: architecture_model/technology/dr_bcp_matrix.yaml (self-contained; 原 technology_principles.md 已删 2026-07-30)
+# blueprint: CFG-DR-BCP-MATRIX | architecture_model/technology/dr_bcp_matrix.yaml (self-contained; 原 technology_principles.md 已删 2026-07-30) | §
 # module_id: CFG-DR-BCP-MATRIX
 # stability: evolving
 # safety_level: L

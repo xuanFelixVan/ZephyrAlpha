@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: architecture_model/security/threat_model.yaml (self-contained; 原 security_principles.md 已删 2026-07-30)
+# blueprint: CFG-SECURITY-THREAT-MODEL | architecture_model/security/threat_model.yaml (self-contained; 原 security_principles.md 已删 2026-07-30) | §
 # module_id: CFG-SECURITY-THREAT-MODEL
 # stability: evolving
 # safety_level: L

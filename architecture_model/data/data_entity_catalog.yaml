@@ -1,4 +1,5 @@
 # --- 治理锚定 ---
+# blueprint: CFG-DATA-ENTITY-CATALOG | architecture_model/data/data_entity_catalog.yaml (self-contained; 原 data_architecture.md 已删) | §
 # module_id: CFG-DATA-ENTITY-CATALOG
 # stability: evolving
 # safety_level: L

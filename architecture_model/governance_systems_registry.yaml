@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: architecture_model/governance_systems_registry.yaml (self-contained; 原 governance_principles.md 已删 2026-07-30)
+# blueprint: CFG-GOVERNANCE-SYSTEMS-REGISTRY | architecture_model/governance_systems_registry.yaml (self-contained; 原 governance_principles.md 已删 2026-07-30) | §
 # module_id: CFG-GOVERNANCE-SYSTEMS-REGISTRY
 # stability: evolving
 # safety_level: L
