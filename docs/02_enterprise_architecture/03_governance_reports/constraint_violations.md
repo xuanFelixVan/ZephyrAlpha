@@ -20,8 +20,8 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 约束总数 | 86 |
-| Open（未解决） | 86 |
+| 约束总数 | 97 |
+| Open（未解决） | 97 |
 | Resolved（已解决） | 0 |
 | 其他状态 | 0 |
 
@@ -29,7 +29,7 @@ ttl: permanent
 
 | 严重程度 / Severity | 数量 / Count |
 |---------|:---:|
-| error | 79 |
+| error | 90 |
 | hard | 7 |
 
 ## 按约束类型分组
@@ -38,9 +38,9 @@ ttl: permanent
 |---------|:---:|
 | architecture_contract | 1 |
 | capacity_exceeded | 7 |
-| cross_domain_violation | 59 |
+| cross_domain_violation | 68 |
 | hard_limit_exceeded | 7 |
-| layer_violation | 12 |
+| layer_violation | 14 |
 
 ## Open 违规清单（需处理）
 
@@ -89,6 +89,7 @@ ttl: permanent
 | V-CROSS-D_INFRA_RUNTIME-D_DATA | 跨域违规: D_INFRA_RUNTIME -> D_DATA | cross_domain_violation | D_INFRA_RUNTIME | D_DATA | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_DATA |
 | V-CROSS-D_INFRA_RUNTIME-D_FEEDBACK_LOOP | 跨域违规: D_INFRA_RUNTIME -> D_FEEDBACK_LOOP | cross_domain_violation | D_INFRA_RUNTIME | D_FEEDBACK_LOOP | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_FEEDBACK_LOOP |
 | V-CROSS-D_INFRA_RUNTIME-D_GOV_REPAIR | 跨域违规: D_INFRA_RUNTIME -> D_GOV_REPAIR | cross_domain_violation | D_INFRA_RUNTIME | D_GOV_REPAIR | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_GOV_REPAIR |
+| V-CROSS-D_INFRA_RUNTIME-D_GOV_SCRIPTS | 跨域违规: D_INFRA_RUNTIME -> D_GOV_SCRIPTS | cross_domain_violation | D_INFRA_RUNTIME | D_GOV_SCRIPTS | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_GOV_SCRIPTS |
 | V-CROSS-D_INFRA_RUNTIME-D_INFRASTRUCTURE | 跨域违规: D_INFRA_RUNTIME -> D_INFRASTRUCTURE | cross_domain_violation | D_INFRA_RUNTIME | D_INFRASTRUCTURE | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_INFRASTRUCTURE |
 | V-CROSS-D_INFRA_RUNTIME-D_INFRA_RECOVERY | 跨域违规: D_INFRA_RUNTIME -> D_INFRA_RECOVERY | cross_domain_violation | D_INFRA_RUNTIME | D_INFRA_RECOVERY | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_INFRA_RECOVERY |
 | V-CROSS-D_INFRA_RUNTIME-D_INTEGRATION | 跨域违规: D_INFRA_RUNTIME -> D_INTEGRATION | cross_domain_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_INTEGRATION |
@@ -99,20 +100,28 @@ ttl: permanent
 | V-CROSS-D_INFRA_RUNTIME-D_TRADING | 跨域违规: D_INFRA_RUNTIME -> D_TRADING | cross_domain_violation | D_INFRA_RUNTIME | D_TRADING | error | gate | 跨域依赖未声明: D_INFRA_RUNTIME -> D_TRADING |
 | V-CROSS-D_INTEGRATION-D_TRADING | 跨域违规: D_INTEGRATION -> D_TRADING | cross_domain_violation | D_INTEGRATION | D_TRADING | error | gate | 跨域依赖未声明: D_INTEGRATION -> D_TRADING |
 | V-CROSS-D_MKT_DATA-D_DATA | 跨域违规: D_MKT_DATA -> D_DATA | cross_domain_violation | D_MKT_DATA | D_DATA | error | gate | 跨域依赖未声明: D_MKT_DATA -> D_DATA |
+| V-CROSS-D_MKT_DATA-D_SHARED | 跨域违规: D_MKT_DATA -> D_SHARED | cross_domain_violation | D_MKT_DATA | D_SHARED | error | gate | 跨域依赖未声明: D_MKT_DATA -> D_SHARED |
 | V-CROSS-D_OPS-D_GOV_SCRIPTS | 跨域违规: D_OPS -> D_GOV_SCRIPTS | cross_domain_violation | D_OPS | D_GOV_SCRIPTS | error | gate | 跨域依赖未声明: D_OPS -> D_GOV_SCRIPTS |
 | V-CROSS-D_ORCHESTRATOR-D_SECURITY | 跨域违规: D_ORCHESTRATOR -> D_SECURITY | cross_domain_violation | D_ORCHESTRATOR | D_SECURITY | error | gate | 跨域依赖未声明: D_ORCHESTRATOR -> D_SECURITY |
 | V-CROSS-D_PF_ALLOC-D_SHARED | 跨域违规: D_PF_ALLOC -> D_SHARED | cross_domain_violation | D_PF_ALLOC | D_SHARED | error | gate | 跨域依赖未声明: D_PF_ALLOC -> D_SHARED |
 | V-CROSS-D_PF_CORE-D_BACKTEST | 跨域违规: D_PF_CORE -> D_BACKTEST | cross_domain_violation | D_PF_CORE | D_BACKTEST | error | gate | 跨域依赖未声明: D_PF_CORE -> D_BACKTEST |
 | V-CROSS-D_PF_CORE-D_FACTOR | 跨域违规: D_PF_CORE -> D_FACTOR | cross_domain_violation | D_PF_CORE | D_FACTOR | error | gate | 跨域依赖未声明: D_PF_CORE -> D_FACTOR |
 | V-CROSS-D_PF_CORE-D_GOVERNANCE | 跨域违规: D_PF_CORE -> D_GOVERNANCE | cross_domain_violation | D_PF_CORE | D_GOVERNANCE | error | gate | 跨域依赖未声明: D_PF_CORE -> D_GOVERNANCE |
+| V-CROSS-D_PF_CORE-D_INFRASTRUCTURE | 跨域违规: D_PF_CORE -> D_INFRASTRUCTURE | cross_domain_violation | D_PF_CORE | D_INFRASTRUCTURE | error | gate | 跨域依赖未声明: D_PF_CORE -> D_INFRASTRUCTURE |
+| V-CROSS-D_PF_CORE-D_REPORTING | 跨域违规: D_PF_CORE -> D_REPORTING | cross_domain_violation | D_PF_CORE | D_REPORTING | error | gate | 跨域依赖未声明: D_PF_CORE -> D_REPORTING |
+| V-CROSS-D_PF_CORE-D_RISK | 跨域违规: D_PF_CORE -> D_RISK | cross_domain_violation | D_PF_CORE | D_RISK | error | gate | 跨域依赖未声明: D_PF_CORE -> D_RISK |
+| V-CROSS-D_PF_CORE-D_SHARED | 跨域违规: D_PF_CORE -> D_SHARED | cross_domain_violation | D_PF_CORE | D_SHARED | error | gate | 跨域依赖未声明: D_PF_CORE -> D_SHARED |
 | V-CROSS-D_POSITION-D_INFRASTRUCTURE | 跨域违规: D_POSITION -> D_INFRASTRUCTURE | cross_domain_violation | D_POSITION | D_INFRASTRUCTURE | error | gate | 跨域依赖未声明: D_POSITION -> D_INFRASTRUCTURE |
 | V-CROSS-D_POSITION-D_SHARED | 跨域违规: D_POSITION -> D_SHARED | cross_domain_violation | D_POSITION | D_SHARED | error | gate | 跨域依赖未声明: D_POSITION -> D_SHARED |
+| V-CROSS-D_REPORTING-D_EX_CORE | 跨域违规: D_REPORTING -> D_EX_CORE | cross_domain_violation | D_REPORTING | D_EX_CORE | error | gate | 跨域依赖未声明: D_REPORTING -> D_EX_CORE |
+| V-CROSS-D_REPORTING-D_SHARED | 跨域违规: D_REPORTING -> D_SHARED | cross_domain_violation | D_REPORTING | D_SHARED | error | gate | 跨域依赖未声明: D_REPORTING -> D_SHARED |
+| V-CROSS-D_REPORTING-D_TRADING | 跨域违规: D_REPORTING -> D_TRADING | cross_domain_violation | D_REPORTING | D_TRADING | error | gate | 跨域依赖未声明: D_REPORTING -> D_TRADING |
 | V-CROSS-D_RISK-D_SHARED | 跨域违规: D_RISK -> D_SHARED | cross_domain_violation | D_RISK | D_SHARED | error | gate | 跨域依赖未声明: D_RISK -> D_SHARED |
 | V-CROSS-D_SELL_DECISION-D_SHARED | 跨域违规: D_SELL_DECISION -> D_SHARED | cross_domain_violation | D_SELL_DECISION | D_SHARED | error | gate | 跨域依赖未声明: D_SELL_DECISION -> D_SHARED |
 | V-CROSS-D_SHARED-D_INFRASTRUCTURE | 跨域违规: D_SHARED -> D_INFRASTRUCTURE | cross_domain_violation | D_SHARED | D_INFRASTRUCTURE | error | gate | 跨域依赖未声明: D_SHARED -> D_INFRASTRUCTURE |
 | V-CROSS-D_SHARED-D_INFRA_RUNTIME | 跨域违规: D_SHARED -> D_INFRA_RUNTIME | cross_domain_violation | D_SHARED | D_INFRA_RUNTIME | error | gate | 跨域依赖未声明: D_SHARED -> D_INFRA_RUNTIME |
 | V-CROSS-D_SHARED-D_ML_TRAIN | 跨域违规: D_SHARED -> D_ML_TRAIN | cross_domain_violation | D_SHARED | D_ML_TRAIN | error | gate | 跨域依赖未声明: D_SHARED -> D_ML_TRAIN |
-| V-CROSS-D_SHARED-D_TRADING | 跨域违规: D_SHARED -> D_TRADING | cross_domain_violation | D_SHARED | D_TRADING | error | gate | 跨域依赖未声明: D_SHARED -> D_TRADING |
+| V-CROSS-D_SIMULATION-D_SHARED | 跨域违规: D_SIMULATION -> D_SHARED | cross_domain_violation | D_SIMULATION | D_SHARED | error | gate | 跨域依赖未声明: D_SIMULATION -> D_SHARED |
 | V-HARD150-D_DATA | 硬上限违规: D_DATA | hard_limit_exceeded | D_DATA |  | error | gate | 域 D_DATA(数据接入层) production 节点 162 超过硬上限 150 (ARCH-CAP-002 v1... |
 | V-HARD150-D_GOVERNANCE | 硬上限违规: D_GOVERNANCE | hard_limit_exceeded | D_GOVERNANCE |  | error | gate | 域 D_GOVERNANCE(生命周期管理) production 节点 224 超过硬上限 150 (ARCH-CAP... |
 | V-HARD150-D_GOV_CODE_QUALITY | 硬上限违规: D_GOV_CODE_QUALITY | hard_limit_exceeded | D_GOV_CODE_QUALITY |  | error | gate | 域 D_GOV_CODE_QUALITY(代码质量治理) production 节点 172 超过硬上限 150 (AR... |
@@ -120,18 +129,20 @@ ttl: permanent
 | V-HARD150-D_INFRA_RUNTIME | 硬上限违规: D_INFRA_RUNTIME | hard_limit_exceeded | D_INFRA_RUNTIME |  | error | gate | 域 D_INFRA_RUNTIME(运行时集成) production 节点 170 超过硬上限 150 (ARCH-C... |
 | V-HARD150-D_SECURITY | 硬上限违规: D_SECURITY | hard_limit_exceeded | D_SECURITY |  | error | gate | 域 D_SECURITY(对抗验证) production 节点 166 超过硬上限 150 (ARCH-CAP-002... |
 | V-HARD150-D_SHARED | 硬上限违规: D_SHARED | hard_limit_exceeded | D_SHARED |  | error | gate | 域 D_SHARED(共享服务) production 节点 184 超过硬上限 150 (ARCH-CAP-002 v... |
-| V-LAYER-D_GOV_CODE_QUALITY-D_GOV_SCRIPTS | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_CODE_QUALITY | D_GOV_SCRIPTS | error | gate | 层级违规: 8035936 -> 8037769 (L1_foundation -> L2_domain) |
-| V-LAYER-D_INFRA_RUNTIME-D_AUTONOMY_CORE | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_AUTONOMY_CORE | error | gate | 层级违规: 8037168 -> 8034721 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_DATA | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_DATA | error | gate | 层级违规: 8036646 -> 8034825 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_GOV_REPAIR | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOV_REPAIR | error | gate | 层级违规: 8036174 -> 8035455 (L0_infrastructure -> L2_domain) |
-| V-LAYER-D_INFRA_RUNTIME-D_INTEGRATION | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | gate | 层级违规: 8037178 -> 8036897 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_OPS | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_OPS | error | gate | 层级违规: 8037168 -> 8035505 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_ORCHESTRATOR | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_ORCHESTRATOR | error | gate | 层级违规: 8037168 -> 8036511 (L0_infrastructure -> L1_foundation... |
-| V-LAYER-D_INFRA_RUNTIME-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_TRADING | error | gate | 层级违规: 8037181 -> 8037165 (L0_infrastructure -> L2_domain) |
-| V-LAYER-D_INTEGRATION-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_INTEGRATION | D_TRADING | error | gate | 层级违规: 8036345 -> 8037152 (L1_foundation -> L2_domain) |
-| V-LAYER-D_OPS-D_GOV_SCRIPTS | 层级违规: L1_foundation -> L2_domain | layer_violation | D_OPS | D_GOV_SCRIPTS | error | gate | 层级违规: 8037699 -> 8037767 (L1_foundation -> L2_domain) |
-| V-LAYER-D_SHARED-D_ML_TRAIN | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_SHARED | D_ML_TRAIN | error | gate | 层级违规: 8037102 -> 8036475 (L0_infrastructure -> L2_domain) |
-| V-LAYER-D_SHARED-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_SHARED | D_TRADING | error | gate | 层级违规: 8036985 -> 7445492 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_GOV_CODE_QUALITY-D_GOV_SCRIPTS | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_CODE_QUALITY | D_GOV_SCRIPTS | error | gate | 层级违规: 8179545 -> 8179733 (L1_foundation -> L2_domain) |
+| V-LAYER-D_INFRA_RUNTIME-D_AUTONOMY_CORE | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_AUTONOMY_CORE | error | gate | 层级违规: 8179123 -> 8176627 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_DATA | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_DATA | error | gate | 层级违规: 8178591 -> 8176738 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_GOV_REPAIR | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOV_REPAIR | error | gate | 层级违规: 8178091 -> 8177368 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_INFRA_RUNTIME-D_GOV_SCRIPTS | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOV_SCRIPTS | error | gate | 层级违规: 8179123 -> 8179334 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_INFRA_RUNTIME-D_INTEGRATION | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | gate | 层级违规: 8179139 -> 8178840 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_OPS | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_OPS | error | gate | 层级违规: 8179123 -> 8177423 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_ORCHESTRATOR | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_ORCHESTRATOR | error | gate | 层级违规: 8179123 -> 8178433 (L0_infrastructure -> L1_foundation... |
+| V-LAYER-D_INFRA_RUNTIME-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_TRADING | error | gate | 层级违规: 8179138 -> 8179134 (L0_infrastructure -> L2_domain) |
+| V-LAYER-D_INTEGRATION-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_INTEGRATION | D_TRADING | error | gate | 层级违规: 8178265 -> 8179113 (L1_foundation -> L2_domain) |
+| V-LAYER-D_OPS-D_GOV_SCRIPTS | 层级违规: L1_foundation -> L2_domain | layer_violation | D_OPS | D_GOV_SCRIPTS | error | gate | 层级违规: 8179660 -> 8179732 (L1_foundation -> L2_domain) |
+| V-LAYER-D_REPORTING-D_EX_CORE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_REPORTING | D_EX_CORE | error | gate | 层级违规: 8178536 -> 8176823 (L1_foundation -> L2_domain) |
+| V-LAYER-D_REPORTING-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_REPORTING | D_TRADING | error | gate | 层级违规: 8178536 -> 8179142 (L1_foundation -> L2_domain) |
+| V-LAYER-D_SHARED-D_ML_TRAIN | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_SHARED | D_ML_TRAIN | error | gate | 层级违规: 8179043 -> 8178407 (L0_infrastructure -> L2_domain) |
 
 ## 完整约束清单
 
@@ -180,6 +191,7 @@ ttl: permanent
 | V-CROSS-D_INFRA_RUNTIME-D_DATA | 跨域违规: D_INFRA_RUNTIME -> D_DATA | cross_domain_violation | D_INFRA_RUNTIME | D_DATA | error | open |
 | V-CROSS-D_INFRA_RUNTIME-D_FEEDBACK_LOOP | 跨域违规: D_INFRA_RUNTIME -> D_FEEDBACK_LOOP | cross_domain_violation | D_INFRA_RUNTIME | D_FEEDBACK_LOOP | error | open |
 | V-CROSS-D_INFRA_RUNTIME-D_GOV_REPAIR | 跨域违规: D_INFRA_RUNTIME -> D_GOV_REPAIR | cross_domain_violation | D_INFRA_RUNTIME | D_GOV_REPAIR | error | open |
+| V-CROSS-D_INFRA_RUNTIME-D_GOV_SCRIPTS | 跨域违规: D_INFRA_RUNTIME -> D_GOV_SCRIPTS | cross_domain_violation | D_INFRA_RUNTIME | D_GOV_SCRIPTS | error | open |
 | V-CROSS-D_INFRA_RUNTIME-D_INFRASTRUCTURE | 跨域违规: D_INFRA_RUNTIME -> D_INFRASTRUCTURE | cross_domain_violation | D_INFRA_RUNTIME | D_INFRASTRUCTURE | error | open |
 | V-CROSS-D_INFRA_RUNTIME-D_INFRA_RECOVERY | 跨域违规: D_INFRA_RUNTIME -> D_INFRA_RECOVERY | cross_domain_violation | D_INFRA_RUNTIME | D_INFRA_RECOVERY | error | open |
 | V-CROSS-D_INFRA_RUNTIME-D_INTEGRATION | 跨域违规: D_INFRA_RUNTIME -> D_INTEGRATION | cross_domain_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | open |
@@ -190,20 +202,28 @@ ttl: permanent
 | V-CROSS-D_INFRA_RUNTIME-D_TRADING | 跨域违规: D_INFRA_RUNTIME -> D_TRADING | cross_domain_violation | D_INFRA_RUNTIME | D_TRADING | error | open |
 | V-CROSS-D_INTEGRATION-D_TRADING | 跨域违规: D_INTEGRATION -> D_TRADING | cross_domain_violation | D_INTEGRATION | D_TRADING | error | open |
 | V-CROSS-D_MKT_DATA-D_DATA | 跨域违规: D_MKT_DATA -> D_DATA | cross_domain_violation | D_MKT_DATA | D_DATA | error | open |
+| V-CROSS-D_MKT_DATA-D_SHARED | 跨域违规: D_MKT_DATA -> D_SHARED | cross_domain_violation | D_MKT_DATA | D_SHARED | error | open |
 | V-CROSS-D_OPS-D_GOV_SCRIPTS | 跨域违规: D_OPS -> D_GOV_SCRIPTS | cross_domain_violation | D_OPS | D_GOV_SCRIPTS | error | open |
 | V-CROSS-D_ORCHESTRATOR-D_SECURITY | 跨域违规: D_ORCHESTRATOR -> D_SECURITY | cross_domain_violation | D_ORCHESTRATOR | D_SECURITY | error | open |
 | V-CROSS-D_PF_ALLOC-D_SHARED | 跨域违规: D_PF_ALLOC -> D_SHARED | cross_domain_violation | D_PF_ALLOC | D_SHARED | error | open |
 | V-CROSS-D_PF_CORE-D_BACKTEST | 跨域违规: D_PF_CORE -> D_BACKTEST | cross_domain_violation | D_PF_CORE | D_BACKTEST | error | open |
 | V-CROSS-D_PF_CORE-D_FACTOR | 跨域违规: D_PF_CORE -> D_FACTOR | cross_domain_violation | D_PF_CORE | D_FACTOR | error | open |
 | V-CROSS-D_PF_CORE-D_GOVERNANCE | 跨域违规: D_PF_CORE -> D_GOVERNANCE | cross_domain_violation | D_PF_CORE | D_GOVERNANCE | error | open |
+| V-CROSS-D_PF_CORE-D_INFRASTRUCTURE | 跨域违规: D_PF_CORE -> D_INFRASTRUCTURE | cross_domain_violation | D_PF_CORE | D_INFRASTRUCTURE | error | open |
+| V-CROSS-D_PF_CORE-D_REPORTING | 跨域违规: D_PF_CORE -> D_REPORTING | cross_domain_violation | D_PF_CORE | D_REPORTING | error | open |
+| V-CROSS-D_PF_CORE-D_RISK | 跨域违规: D_PF_CORE -> D_RISK | cross_domain_violation | D_PF_CORE | D_RISK | error | open |
+| V-CROSS-D_PF_CORE-D_SHARED | 跨域违规: D_PF_CORE -> D_SHARED | cross_domain_violation | D_PF_CORE | D_SHARED | error | open |
 | V-CROSS-D_POSITION-D_INFRASTRUCTURE | 跨域违规: D_POSITION -> D_INFRASTRUCTURE | cross_domain_violation | D_POSITION | D_INFRASTRUCTURE | error | open |
 | V-CROSS-D_POSITION-D_SHARED | 跨域违规: D_POSITION -> D_SHARED | cross_domain_violation | D_POSITION | D_SHARED | error | open |
+| V-CROSS-D_REPORTING-D_EX_CORE | 跨域违规: D_REPORTING -> D_EX_CORE | cross_domain_violation | D_REPORTING | D_EX_CORE | error | open |
+| V-CROSS-D_REPORTING-D_SHARED | 跨域违规: D_REPORTING -> D_SHARED | cross_domain_violation | D_REPORTING | D_SHARED | error | open |
+| V-CROSS-D_REPORTING-D_TRADING | 跨域违规: D_REPORTING -> D_TRADING | cross_domain_violation | D_REPORTING | D_TRADING | error | open |
 | V-CROSS-D_RISK-D_SHARED | 跨域违规: D_RISK -> D_SHARED | cross_domain_violation | D_RISK | D_SHARED | error | open |
 | V-CROSS-D_SELL_DECISION-D_SHARED | 跨域违规: D_SELL_DECISION -> D_SHARED | cross_domain_violation | D_SELL_DECISION | D_SHARED | error | open |
 | V-CROSS-D_SHARED-D_INFRASTRUCTURE | 跨域违规: D_SHARED -> D_INFRASTRUCTURE | cross_domain_violation | D_SHARED | D_INFRASTRUCTURE | error | open |
 | V-CROSS-D_SHARED-D_INFRA_RUNTIME | 跨域违规: D_SHARED -> D_INFRA_RUNTIME | cross_domain_violation | D_SHARED | D_INFRA_RUNTIME | error | open |
 | V-CROSS-D_SHARED-D_ML_TRAIN | 跨域违规: D_SHARED -> D_ML_TRAIN | cross_domain_violation | D_SHARED | D_ML_TRAIN | error | open |
-| V-CROSS-D_SHARED-D_TRADING | 跨域违规: D_SHARED -> D_TRADING | cross_domain_violation | D_SHARED | D_TRADING | error | open |
+| V-CROSS-D_SIMULATION-D_SHARED | 跨域违规: D_SIMULATION -> D_SHARED | cross_domain_violation | D_SIMULATION | D_SHARED | error | open |
 | V-HARD150-D_DATA | 硬上限违规: D_DATA | hard_limit_exceeded | D_DATA |  | error | open |
 | V-HARD150-D_GOVERNANCE | 硬上限违规: D_GOVERNANCE | hard_limit_exceeded | D_GOVERNANCE |  | error | open |
 | V-HARD150-D_GOV_CODE_QUALITY | 硬上限违规: D_GOV_CODE_QUALITY | hard_limit_exceeded | D_GOV_CODE_QUALITY |  | error | open |
@@ -215,11 +235,13 @@ ttl: permanent
 | V-LAYER-D_INFRA_RUNTIME-D_AUTONOMY_CORE | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_AUTONOMY_CORE | error | open |
 | V-LAYER-D_INFRA_RUNTIME-D_DATA | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_DATA | error | open |
 | V-LAYER-D_INFRA_RUNTIME-D_GOV_REPAIR | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOV_REPAIR | error | open |
+| V-LAYER-D_INFRA_RUNTIME-D_GOV_SCRIPTS | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_GOV_SCRIPTS | error | open |
 | V-LAYER-D_INFRA_RUNTIME-D_INTEGRATION | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_INTEGRATION | error | open |
 | V-LAYER-D_INFRA_RUNTIME-D_OPS | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_OPS | error | open |
 | V-LAYER-D_INFRA_RUNTIME-D_ORCHESTRATOR | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_RUNTIME | D_ORCHESTRATOR | error | open |
 | V-LAYER-D_INFRA_RUNTIME-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_RUNTIME | D_TRADING | error | open |
 | V-LAYER-D_INTEGRATION-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_INTEGRATION | D_TRADING | error | open |
 | V-LAYER-D_OPS-D_GOV_SCRIPTS | 层级违规: L1_foundation -> L2_domain | layer_violation | D_OPS | D_GOV_SCRIPTS | error | open |
+| V-LAYER-D_REPORTING-D_EX_CORE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_REPORTING | D_EX_CORE | error | open |
+| V-LAYER-D_REPORTING-D_TRADING | 层级违规: L1_foundation -> L2_domain | layer_violation | D_REPORTING | D_TRADING | error | open |
 | V-LAYER-D_SHARED-D_ML_TRAIN | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_SHARED | D_ML_TRAIN | error | open |
-| V-LAYER-D_SHARED-D_TRADING | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_SHARED | D_TRADING | error | open |

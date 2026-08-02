@@ -702,8 +702,8 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_tmp_run_gen.py
-  path: governance/_tmp_run_gen.py
+- name: governance/_tmp_check_dtrading.py
+  path: governance/_tmp_check_dtrading.py
   description: import sys
   domain: governance
   execution_plane: warm-path
