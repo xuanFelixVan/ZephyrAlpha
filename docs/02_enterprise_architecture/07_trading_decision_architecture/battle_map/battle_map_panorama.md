@@ -17,12 +17,12 @@ date: 2026-08-03
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 环节总数 | 51 | Steps | 51 |
-| 流转边 | 51 | Edges | 51 |
+| 环节总数 | 82 | Steps | 82 |
+| 流转边 | 77 | Edges | 77 |
 | 无锚点环节（BM-INV-001） | 0 | No-Anchor Steps | 0 |
-| 运营态环节 | 30 | Production Steps | 30 |
-| 设计态环节 | 5 | Design Steps | 5 |
-| 状态分布 | 🟦 运营态（已建）=30 ｜ 🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=5 | State Distribution | 🟦 运营态（已建）=30 ｜ 🟨 候选态（候选池）=16 ｜ 🟧 设计态（待施工）=5 |
+| 运营态环节 | 55 | Production Steps | 55 |
+| 设计态环节 | 9 | Design Steps | 9 |
+| 状态分布 | 🟦 运营态（已建）=55 ｜ 🟨 候选态（候选池）=15 ｜ 🟧 设计态（待施工）=9 ｜ 🟥 弃用态=3 | State Distribution | 🟦 运营态（已建）=55 ｜ 🟨 候选态（候选池）=15 ｜ 🟧 设计态（待施工）=9 ｜ 🟥 弃用态=3 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -39,77 +39,102 @@ date: 2026-08-03
 
 ### 全景图（全部环节，颜色区分五态）
 
-> 展示全部 51 个环节（运营态 30 + 设计态 5 + 弃用/缺失/候选 16），含跨阶段流转边。
+> 展示全部 82 个环节（运营态 55 + 设计态 9 + 弃用/缺失/候选 18），含跨阶段流转边。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
-%% 作战地图总指挥图·全景图
+%% 作战地图总指挥图·全景图（第 1/2 页）
 flowchart TD
     BM_BUY_01["【BM-BUY-01 多情景对策生成】<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Multi-Scenario Countermeasure】"]
     BM_EXE_01["【BM-EXE-01 自适应风控审批】<br/>下单前的最后一道闸——风控审批，审不过的订单直接拦<br/>下，是订单拦截器不是事后检查。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>🟡候选承载<br/>【Adaptive Risk Approval】"]
     BM_POS_01["【BM-POS-01 仓位管理裁决】<br/>所有买卖决策都到这里统一算最终仓位——这是仓位决策<br/>的唯一裁决中心，谁都别想绕过。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>🟡候选承载<br/>【Position Adjudication】"]
-    BM_REC_01["【BM-REC-01 交易运营清算】<br/>把成交回报拿去结算对账、算费率、处理除权除息和公<br/>司行为、监控保证金，变成运营数据。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Trade Ops &amp; Settlement】"]
+    subgraph sg_BM_REC_01 ["交易运营清算"]
+        BM_REC_01["【BM-REC-01 交易运营清算】<br/>把成交回报拿去结算对账、算费率、处理除权除息和公<br/>司行为、监控保证金，变成运营数据。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Trade Ops &amp; Settlement】"]
+        BM_REC_01_A["【BM-REC-01-A 结算对账】<br/>每日盘后把系统记录和券商结算单逐笔核对，发现差异<br/>立刻告警，是T+1对账的核心。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Settlement &amp; Reconciliation】"]
+        BM_REC_01_B["【BM-REC-01-B 公司行为与费率】<br/>处理除权除息自动调持仓成本、算佣金印花税过户费、<br/>监控分红配股拆股，是运营数据准确性的保障。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Corporate Action &amp; Fee】"]
+        BM_REC_01 -.->|嵌套| BM_REC_01_A
+        BM_REC_01 -.->|嵌套| BM_REC_01_B
+    end
     BM_SELL_01["【BM-SELL-01 突破成败信号】<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Breakout Success/Failure Signal】"]
     BM_SEL_01["【BM-SEL-01 数据接入与预处理】<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Data Ingestion &amp; Preprocessing】"]
+    BM_POS_06["【BM-POS-06 现金管理约束】<br/>仓位的'现金刹车'——留够保命钱（最低储备金）+机会钱<br/>（X%），T+1结算约束下算可用资金，节假日多留5-15%现<br/>金，闲置钱做逆回购生息，反馈给仓位裁决作为现金硬<br/>约束。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Cash Management Constraint】"]
+    BM_POS_08["【BM-POS-08 日历仓位约束】<br/>A股'风险日历'自动收紧仓位——期权交割日只许减仓不<br/>许开新，4月下旬ST股强制清零，财报发布前3天降仓位<br/>+禁新建，微盘股空窗期收紧50%，交割日前后临时下调<br/>5-10%。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Calendar Position Constraint】"]
     subgraph sg_BM_BUY_02 ["四轨融合"]
-        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Four-Track Fusion （MTF）】"]
-        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Logic-Driven Track】"]
-        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Data-Driven Track （AI Discovery）】"]
-        BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Manual Override Track】"]
-        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Emergency Protection Track】"]
+        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Four-Track Fusion （MTF）】"]
+        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Logic-Driven Track】"]
+        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Data-Driven Track （AI Discovery）】"]
+        BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Manual Override Track】"]
+        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Emergency Protection Track】"]
         BM_BUY_02 -.->|嵌套| BM_BUY_02_A
         BM_BUY_02 -.->|嵌套| BM_BUY_02_B
         BM_BUY_02 -.->|嵌套| BM_BUY_02_C
         BM_BUY_02 -.->|嵌套| BM_BUY_02_D
     end
-    BM_EXE_02["【BM-EXE-02 交易执行】<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>🟡候选承载<br/>【Trade Execution】"]
+    BM_EXE_04["⛔ 门禁:D-RISK风控参数就绪+市场状态实时数据源<br/>（D-EX-CORE-24）<br/>【BM-EXE-04 Pre-Trade合规检查】<br/>下单前的交易所合规硬闸——涨跌停/参与率/撤单率<br/>/报单停留时间锁/Wash Trade/Spoofing<br/>全检查，Fail-Closed，不过就拦。<br/>执行阶段 / execution<br/>（设计态 / design）<br/>【Pre-Trade Compliance Gate】"]
     BM_POS_02["【BM-POS-02 标级仓位Kelly】<br/>每只票该买多少——用Kelly公式算理论仓位，半Kelly硬<br/>上限截断（禁止全Kelly），在风险配额内决策，再用密<br/>度PDF的偏度/峰度/前瞻VaR做分布感知调整<br/>（防御性只减不增）。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Per-Symbol Kelly Sizing】"]
-    BM_REC_02["【BM-REC-02 报告复盘】<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Reporting &amp; Review】"]
+    subgraph sg_BM_REC_02 ["报告复盘"]
+        BM_REC_02["【BM-REC-02 报告复盘】<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Reporting &amp; Review】"]
+        BM_REC_02_A["【BM-REC-02-A TCA执行质量分析】<br/>算每笔交易的真实成本——滑点、冲击成本、市场影响，<br/>看执行得好不好。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【TCA Execution Quality Analysis】"]
+        BM_REC_02_B["⛔ D-EX-CORE执行报告未就绪（CTR-P1-007<br/>/CTR-ERR-005）,设计文档§1.4标注受限,暂不可建<br/>【BM-REC-02-B 绩效归因】<br/>把盈亏拆开看——赚的钱是选股选对的、还是配比配对的<br/>、还是行业轮动轮对的，找出Alpha来源。<br/>对账阶段 / reconciliation<br/>（设计态 / design）<br/>【Performance Attribution】"]
+        BM_REC_02_C["【BM-REC-02-C A股交易复盘】<br/>针对A股特色做盘前信号验证、盘中异常检测、盘后归<br/>因、大额交易异动检测，生成复盘报告。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【A-Share Trading Review】"]
+        BM_REC_02_D["【BM-REC-02-D 报告发布】<br/>把复盘报告归档、发到微信和邮件，留好审计凭证。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Report Publishing】"]
+        BM_REC_02 -.->|嵌套| BM_REC_02_A
+        BM_REC_02 -.->|嵌套| BM_REC_02_B
+        BM_REC_02 -.->|嵌套| BM_REC_02_C
+        BM_REC_02 -.->|嵌套| BM_REC_02_D
+    end
     BM_SELL_02["【BM-SELL-02 卖出信号融合仲裁】<br/>把所有卖出信号（含突破成败）汇总仲裁，强制清仓永<br/>远最高优先级，谁的信号最狠听谁的。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Sell Signal Fusion Arbitration】"]
-    BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
+    BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>选股阶段 / stock_selection<br/>（弃用态 / deprecated）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
+    BM_SEL_22["【BM-SEL-22 短线选股评分卡】<br/>给短线标的打分——7个维度100分制评分（连板高度<br/>/封单强度/板块效应/分歧程度/市值流动性/封板时间<br/>/催化强度），再识别强庄股，专门服务短线和打板选<br/>股。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Short-Term Stock Selection Scorecard】"]
+    BM_SEL_23["【BM-SEL-23 游资接力情绪周期】<br/>测游资接力情绪——6个因子打0-100分（连板高度<br/>/封单质量/涨停时间/开板次数/竞价强度<br/>/助攻梯队），再定位情绪周期4+1阶段（冰点/反核<br/>/主升/疯狂/退潮），不同阶段用不同策略。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Youzi Relay Emotion Cycle】"]
+    BM_SEL_24["【BM-SEL-24 量化短线强度评级】<br/>量化角度评短线强度——6个维度打0-100分（价格动量<br/>/行业强度/相对强度/资金/技术<br/>/风险），评出A到E五级，作为双引擎融合的量化引擎<br/>输入。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Quant Short-Term Strength Rating】"]
+    BM_SEL_25["【BM-SEL-25 双引擎融合决策】<br/>把游资情绪引擎和量化强度引擎的信号融合起来——基准<br/>是游资60%+量化40%，但情绪周期会自动调权重<br/>（冰点时量化占70%，主升时游资占70%），输出6类决<br/>策（主升龙头/二进三/跟风/复苏/伪强/地天反包）。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Dual-Engine Fusion Decision】"]
     BM_BUY_03["【BM-BUY-03 决策编排】<br/>把融合后的决策按5条路径（买/卖/做T/人工<br/>/应急）统一出口编排，处理冲突、去重、排时序。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Decision Orchestration （DO）】"]
-    BM_EXE_03["【BM-EXE-03 执行质量TCA】<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>【Execution Quality TCA】"]
+    BM_EXE_05["⛔ 门禁:TCA<br/>（D-EX-CORE-12）就绪+订单簿深度数据可获取<br/>（D-EX-CORE-14）<br/>【BM-EXE-05 智能订单路由与拆单】<br/>大单拆小单+选最优算法+控参与率——Almgren-Chriss<br/>算最优执行轨迹，TWAP/VWAP/POV/IS<br/>拆单，参与率&lt;15%分钟成交量，挑开盘<br/>/尾盘窗口，流动性不足就暂停。<br/>执行阶段 / execution<br/>（设计态 / design）<br/>【Smart Order Routing &amp; Splitting】"]
     BM_POS_03["【BM-POS-03 持仓状态机漂移】<br/>每只票有自己的状态<br/>（NONE→BUILDING→ACTIVE→OBSERVING→REDUCING→EXITING<br/>→CLOSED），权重漂移超±2%（组合）/±3%<br/>（单标的）就触发再平衡评估，观察期内禁止新买入。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Position State Machine &amp; Drift】"]
-    BM_REC_03["【BM-REC-03 闭环优化反馈】<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Closed-Loop Optimization Feedback】"]
+    subgraph sg_BM_REC_03 ["闭环优化反馈"]
+        BM_REC_03["【BM-REC-03 闭环优化反馈】<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Closed-Loop Optimization Feedback】"]
+        BM_REC_03_A["【BM-REC-03-A 因子层反馈】<br/>看因子还灵不灵——IC衰减了就换因子，算半衰期，保证<br/>因子池新鲜。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Factor-Layer Feedback】"]
+        BM_REC_03_B["【BM-REC-03-B 信号层反馈】<br/>看信号准不准——准确率持续下降就退役信号，避免用失<br/>效信号下单。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Signal-Layer Feedback】"]
+        BM_REC_03_C["【BM-REC-03-C 模型层反馈】<br/>看模型飘没飘——检测到漂移就重训练，防止模型用旧数<br/>据预测新市场。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Model-Layer Feedback】"]
+        BM_REC_03 -.->|嵌套| BM_REC_03_A
+        BM_REC_03 -.->|嵌套| BM_REC_03_B
+        BM_REC_03 -.->|嵌套| BM_REC_03_C
+    end
     BM_SELL_03["【BM-SELL-03 卖出信号收集评分】<br/>卖出端的'信号层'——先把持仓分级（Watch/Monitor<br/>/Hold），再收集7类卖出信号，多时间框架共振加权，<br/>产出卖出信号评分和紧迫度。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Sell Signal Collection &amp; Scoring】"]
     BM_SEL_03["【BM-SEL-03 市场状态感知】<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>🟡候选承载<br/>【Market State Sensing】"]
+    BM_POS_07["【BM-POS-07 再平衡执行】<br/>漂移超阈值后算'划不划得来'——预期收益改善&gt;2×交易<br/>成本才动手，阴跌/加速下跌<br/>/恐慌崩盘时成本×1.5更谨慎，再平衡后组合仓位偏差&lt;<br/>1%才算到位，周频强制+偏离+事件三类触发。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Rebalance Execution】"]
+    BM_POS_09["【BM-POS-09 卖出仓位反馈链路】<br/>仓位和卖出'双向通话'——盈利时放宽卖出阈值、亏损时<br/>收紧；买入后即时验证（5min跌破1%放量→观察<br/>/15min破分时均线→减半<br/>/30min反向2ATR→止损），把仓位状态反馈给卖出决策。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Sell-Position Bidirectional Link】"]
     BM_BUY_04["【BM-BUY-04 分批建仓】<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>买入阶段 / buy_flow<br/>（设计态 / design）<br/>【Batched Position Building】"]
+    BM_EXE_02["【BM-EXE-02 交易执行】<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>🟡候选承载<br/>【Trade Execution】"]
     BM_POS_04["【BM-POS-04 跨策略仓位硬限制】<br/>多策略同标的仓位合并取sum不超上限，新策略上线仓<br/>位砍到正常的30%，行业偏离<br/>/风格暴露有硬约束，C-047是仓位裁决唯一中心<br/>（只有C-004风控veto能绕过）。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Cross-Strategy Position Hard Limit】"]
     BM_REC_04["【BM-REC-04 保证金管理】<br/>监控融资融券保证金比例——低于预警线告警、需要追加<br/>时提醒用户；融资融券API不可用时自动休眠，不影响<br/>其他运营功能。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Margin Manager】"]
     BM_SELL_04["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04 止盈止损族】<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式（趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损），叠加猎杀防护和期权定价<br/>评估。<br/>卖出阶段 / sell_flow<br/>（设计态 / design）<br/>【Take-Profit &amp; Stop-Loss Strategy Family】"]
     BM_SEL_04["【BM-SEL-04 次日8态走势预测】<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>🟡候选承载<br/>【Next-Day 8-State Forecast】"]
     BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>买入阶段 / buy_flow<br/>（设计态 / design）<br/>【Intraday T+0 Arbitrage】"]
+    BM_EXE_06["⛔ 门禁:Broker<br/>Adapter回报回调稳定+佣金费率表数据源就绪<br/>（D-EX-CORE-08）<br/>【BM-EXE-06 成交回报处理与持仓更新】<br/>成交回来后拆解回报、算费用、更新持仓、推订单状态<br/>机——部分成交聚合、T+1<br/>结算、持仓对账，把成交变成可用的持仓和账面数据。<br/>执行阶段 / execution<br/>（设计态 / design）<br/>【Fill Processing &amp; Position Update】"]
     BM_POS_05["【BM-POS-05 资金曲线回撤缩放】<br/>系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢<br/>加仓（每次+5%），亏钱回撤超5%就砍仓位10%、超10%就<br/>砍20%，回到回撤前高点才能恢复原仓位。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Capital Curve Drawdown Scaling】"]
     BM_REC_05["【BM-REC-05 多账户分仓管理】<br/>一个策略同时管多个账户，按各账户AUM分仓，每个账<br/>户独立风控、独立PnL、独立报告。多账户≠多租户SaaS<br/>，所有账户属于同一信任域。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Multi-Account Manager】"]
     BM_SELL_05["【BM-SELL-05 置换再平衡卖出】<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Replacement &amp; Rebalance Sell】"]
-    BM_SEL_05["【BM-SEL-05 主力行为感知】<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Main-Force Behavior Sensing】"]
+    BM_SEL_05["【BM-SEL-05 主力行为感知】<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Main-Force Behavior Sensing】"]
     BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控→仓位裁决→置信度分层→执行四级优先级，是人工<br/>干预系统的入口。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【External Order Monitoring】"]
+    BM_EXE_03["【BM-EXE-03 执行质量TCA】<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>【Execution Quality TCA】"]
     BM_SELL_06["【BM-SELL-06 买卖冲突仲裁】<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>（保守原则）；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Buy-Sell Conflict Arbitration】"]
     BM_SEL_06["【BM-SEL-06 跨市场传导感知】<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Cross-Market Conduction Sensing】"]
     BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【WeChat Interaction Hub】"]
     BM_SEL_07["【BM-SEL-07 体制转换检测】<br/>盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点<br/>提前预警。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Regime Change Detection】"]
-    BM_SEL_08["【BM-SEL-08 板块轮动序列追踪】<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Sector Rotation Sequence Tracking】"]
-    BM_SEL_09["【BM-SEL-09 调整周期追踪】<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期&lt;40%直接拦截。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Adjustment Cycle Tracking】"]
-    BM_SEL_10["【BM-SEL-10 行情生命周期阶段】<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Market Lifecycle Phase】"]
-    BM_SEL_11["【BM-SEL-11 知识图谱与因果推演】<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Knowledge Graph &amp; Causal Inference】"]
-    BM_SEL_12["【BM-SEL-12 分布特征工程】<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Distribution Feature Engineering】"]
-    BM_SEL_13["【BM-SEL-13 收益率条件密度预测】<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conditional Density Prediction】"]
-    BM_SEL_14["【BM-SEL-14 共形预测】<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conformal Prediction】"]
-    BM_SEL_15["【BM-SEL-15 Survival止盈止损时间预测】<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Survival Stop-Time Prediction】"]
-    BM_SEL_16["【BM-SEL-16 分级指标过滤】<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Tiered Screening Filter】"]
-    BM_SEL_17["【BM-SEL-17 初筛漏斗】<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Coarse Screening Funnel】"]
-    BM_SEL_18["【BM-SEL-18 精筛评分】<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Fine Scoring】"]
-    BM_SEL_19["【BM-SEL-19 事件驱动分布筛选】<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Event-Driven Distribution Screening】"]
-    BM_SEL_20["【BM-SEL-20 多策略交叉投票】<br/>漏斗第五层——多策略对每只票投YES<br/>/NO，加上主力合力和市场状态否决，少数服从多数。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Multi-Strategy Cross Voting】"]
-    BM_SEL_21["【BM-SEL-21 组合优化】<br/>漏斗第六层——从30只里算出最终N≤10只下单清单和每只<br/>权重，行业、市值、风险、相关性、拥挤度全约束。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Portfolio Optimization】"]
-    BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D ~~~ BM_POS_05 ~~~ BM_SEL_01 ~~~ BM_SEL_05 ~~~ BM_SEL_06 ~~~ BM_SEL_07 ~~~ BM_SEL_08 ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16
-    BM_BUY_06 ~~~ BM_SEL_17
-    BM_BUY_01 ~~~ BM_BUY_02 ~~~ BM_BUY_03 ~~~ BM_BUY_04 ~~~ BM_BUY_05 ~~~ BM_EXE_01 ~~~ BM_EXE_02 ~~~ BM_EXE_03 ~~~ BM_POS_01 ~~~ BM_POS_02 ~~~ BM_POS_03 ~~~ BM_POS_04 ~~~ BM_REC_01 ~~~ BM_REC_02 ~~~ BM_REC_03 ~~~ BM_REC_04 ~~~ BM_REC_05 ~~~ BM_SELL_01 ~~~ BM_SELL_02 ~~~ BM_SELL_03 ~~~ BM_SELL_04 ~~~ BM_SELL_05 ~~~ BM_SELL_06 ~~~ BM_SEL_02 ~~~ BM_SEL_03 ~~~ BM_SEL_04
-    BM_SEL_01 -->|标准化行情 / data_flow| BM_SEL_02
+    BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>买入阶段 / buy_flow<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
+    BM_SEL_08["【BM-SEL-08 板块轮动序列追踪】<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Sector Rotation Sequence Tracking】"]
+    BM_POS_10["【BM-POS-10 仓位审计追溯】<br/>仓位变动的'黑匣子'——每次仓位变更全记录+审批链+哈<br/>希链防篡改，可追溯到报告域和治理域，是仓位决策合<br/>规追溯的唯一真源。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Position Audit Trail】"]
+    BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D ~~~ BM_POS_08 ~~~ BM_POS_05 ~~~ BM_REC_01_A ~~~ BM_REC_02_A ~~~ BM_REC_03_A ~~~ BM_SEL_01 ~~~ BM_SEL_22 ~~~ BM_SEL_23 ~~~ BM_SEL_24 ~~~ BM_SEL_05 ~~~ BM_SEL_06 ~~~ BM_SEL_07 ~~~ BM_SEL_08
+    BM_BUY_06 ~~~ BM_REC_01_B ~~~ BM_REC_02_B ~~~ BM_REC_03_B ~~~ BM_SEL_25
+    BM_REC_02_C ~~~ BM_REC_03_C
+    BM_BUY_01 ~~~ BM_BUY_02 ~~~ BM_BUY_03 ~~~ BM_BUY_04 ~~~ BM_BUY_05 ~~~ BM_BUY_08 ~~~ BM_EXE_01 ~~~ BM_EXE_04 ~~~ BM_EXE_05 ~~~ BM_EXE_02 ~~~ BM_EXE_06 ~~~ BM_EXE_03 ~~~ BM_POS_01 ~~~ BM_POS_06 ~~~ BM_POS_02 ~~~ BM_POS_03 ~~~ BM_POS_07 ~~~ BM_POS_09 ~~~ BM_POS_04 ~~~ BM_POS_10 ~~~ BM_REC_01 ~~~ BM_REC_02 ~~~ BM_REC_03 ~~~ BM_REC_04 ~~~ BM_REC_05 ~~~ BM_SELL_01 ~~~ BM_SELL_02 ~~~ BM_SELL_03 ~~~ BM_SELL_04 ~~~ BM_SELL_05 ~~~ BM_SELL_06 ~~~ BM_SEL_02 ~~~ BM_SEL_03 ~~~ BM_SEL_04
+    BM_SEL_01 -.->|标准化行情 / data_flow| BM_SEL_02
     BM_SEL_02 -.->|因子池 / data_flow| BM_SEL_03
     BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
     BM_SEL_04 -.->|8态预测 / data_flow| BM_BUY_01
-    BM_SEL_02 -->|压力位因子 / data_flow| BM_SELL_01
+    BM_SEL_02 -.->|压力位因子 / data_flow| BM_SELL_01
     BM_SEL_03 -.->|进度+阶段+轮动 / data_flow| BM_BUY_04
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
@@ -118,18 +143,11 @@ flowchart TD
     BM_SELL_02 -->|卖出决策 / data_flow| BM_POS_01
     BM_BUY_03 -->|编排后决策 / data_flow| BM_POS_01
     BM_POS_01 -->|仓位指令 / data_flow| BM_EXE_01
-    BM_EXE_01 -->|审批后订单 / data_flow| BM_EXE_02
     BM_EXE_02 -->|成交回报 / data_flow| BM_REC_01
     BM_REC_01 -->|运营数据 / data_flow| BM_REC_02
     BM_REC_02 -->|复盘报告 / data_flow| BM_REC_03
-    BM_REC_03 -->|迭代反馈（IC衰减/重训练） / trigger| BM_SEL_02
+    BM_REC_03 -.->|迭代反馈（IC衰减/重训练） / trigger| BM_SEL_02
     BM_SEL_03 -.->|C-021未就绪→跳过降级 / degradation| BM_SEL_04
-    BM_SEL_16 -.->|漏斗L1→L2（~1200只） / data_flow| BM_SEL_17
-    BM_SEL_17 -.->|漏斗L2→L3（~300只） / data_flow| BM_SEL_18
-    BM_SEL_18 -.->|漏斗L3→L4（~50只） / data_flow| BM_SEL_19
-    BM_SEL_19 -.->|漏斗L4→L5（~30只） / data_flow| BM_SEL_20
-    BM_SEL_20 -.->|漏斗L5→L6 / data_flow| BM_SEL_21
-    BM_SEL_21 -->|N≤10只下单清单→买入 / data_flow| BM_BUY_01
     BM_BUY_04 -.->|分批建仓完成→做T监控 / trigger| BM_BUY_05
     BM_BUY_05 -.->|T指令（底仓不变）→仓位裁决 / data_flow| BM_POS_01
     BM_BUY_06 -->|外部指令→风控检查 / data_flow| BM_EXE_01
@@ -149,26 +167,86 @@ flowchart TD
     BM_POS_05 -->|回撤缩放→标级仓位约束 / trigger| BM_POS_02
     BM_POS_05 -->|回撤缩放→跨策略硬限制 / trigger| BM_POS_04
     BM_POS_04 -->|实际仓位→风控审批 / data_flow| BM_EXE_01
-    BM_EXE_02 -->|成交回报→TCA分析 / data_flow| BM_EXE_03
     BM_EXE_03 -->|执行质量→报告复盘 / data_flow| BM_REC_02
-    BM_EXE_03 -->|TCA反馈→执行算法优化 / degradation| BM_EXE_02
     BM_POS_04 -->|实际仓位→交易执行 / data_flow| BM_EXE_02
     BM_REC_01 -->|保证金监控消费清算数据 / data_flow| BM_REC_04
     BM_REC_01 -->|多账户独立核算消费清算数据 / data_flow| BM_REC_05
     BM_BUY_07 -->|微信指令→外部指令盯盘 / data_flow| BM_BUY_06
+    BM_BUY_03 -.->|编排后决策→纪律合规闸 / trigger| BM_BUY_08
+    BM_BUY_08 -.->|纪律合规通过→风控执行 / data_flow| BM_EXE_01
+    BM_POS_01 -->|风险配额→现金约束 / data_flow| BM_POS_06
+    BM_POS_06 -->|现金约束→标级Kelly / data_flow| BM_POS_02
+    BM_POS_03 -->|漂移触发→再平衡执行 / trigger| BM_POS_07
+    BM_POS_07 -->|再平衡→标级仓位调整 / data_flow| BM_POS_02
+    BM_POS_07 -->|再平衡→仓位审计 / data_flow| BM_POS_10
+    BM_POS_08 -->|日历约束→仓位裁决上限 / trigger| BM_POS_01
+    BM_POS_08 -->|日历约束→跨策略硬限制 / trigger| BM_POS_04
+    BM_SELL_02 -->|卖出决策→仓位反馈 / data_flow| BM_POS_09
+    BM_POS_09 -->|仓位反馈→状态机 / trigger| BM_POS_03
+    BM_POS_02 -->|标级仓位→审计 / data_flow| BM_POS_10
+    BM_POS_04 -->|实际仓位→审计 / data_flow| BM_POS_10
+    BM_SEL_22 -->|短线选股评分→双引擎融合 / data_flow| BM_SEL_25
+    BM_SEL_23 -->|游资情绪→双引擎融合 / data_flow| BM_SEL_25
+    BM_SEL_24 -->|量化强度→双引擎融合 / data_flow| BM_SEL_25
+    BM_REC_01_A -->|结算对账后处理公司行为与费率 / data_flow| BM_REC_01_B
+    BM_REC_02_A -.->|TCA执行成本→归因输入 / data_flow| BM_REC_02_B
+    BM_REC_02_B -.->|归因结果→复盘素材 / data_flow| BM_REC_02_C
+    BM_REC_02_C -->|复盘报告→发布 / data_flow| BM_REC_02_D
+    BM_REC_03_A -->|因子反馈→信号反馈 / data_flow| BM_REC_03_B
+    BM_REC_03_B -->|信号反馈→模型反馈 / data_flow| BM_REC_03_C
+    BM_EXE_01 -.->|审批后订单→合规检查 / data_flow| BM_EXE_04
+    BM_EXE_04 -.->|合规通过→路由拆单 / data_flow| BM_EXE_05
+    BM_EXE_05 -.->|拆单方案/子订单→下单执行 / data_flow| BM_EXE_02
+    BM_EXE_02 -.->|成交回报→Fill处理与持仓更新 / data_flow| BM_EXE_06
+    BM_EXE_06 -.->|成交数据→TCA分析 / data_flow| BM_EXE_03
+    BM_EXE_03 -.->|TCA反馈→拆单算法优化 / degradation| BM_EXE_05
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D,BM_EXE_01,BM_EXE_02,BM_EXE_03,BM_POS_01,BM_POS_02,BM_POS_03,BM_POS_04,BM_POS_05,BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_SELL_01,BM_SELL_02,BM_SELL_03,BM_SELL_05,BM_SELL_06,BM_SEL_01,BM_SEL_02,BM_SEL_21 production
-    class BM_BUY_04,BM_BUY_05,BM_SELL_04,BM_SEL_03,BM_SEL_04 design
-    class BM_SEL_05,BM_SEL_06,BM_SEL_07,BM_SEL_08,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19,BM_SEL_20 candidate
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D,BM_EXE_01,BM_EXE_02,BM_EXE_03,BM_POS_01,BM_POS_06,BM_POS_08,BM_POS_02,BM_POS_03,BM_POS_07,BM_POS_09,BM_POS_04,BM_POS_05,BM_POS_10,BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A,BM_REC_03_B,BM_REC_03_C,BM_SELL_01,BM_SELL_02,BM_SELL_03,BM_SELL_05,BM_SELL_06,BM_SEL_01,BM_SEL_22,BM_SEL_23,BM_SEL_24,BM_SEL_25,BM_SEL_05,BM_SEL_08 production
+    class BM_BUY_04,BM_BUY_05,BM_EXE_04,BM_EXE_05,BM_EXE_06,BM_REC_02_B,BM_SELL_04,BM_SEL_03,BM_SEL_04 design
+    class BM_SEL_02 deprecated
+    class BM_BUY_08,BM_SEL_06,BM_SEL_07 candidate
+```
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图总指挥图·全景图（第 2/2 页）
+flowchart TD
+    BM_SEL_09["【BM-SEL-09 调整周期追踪】<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期&lt;40%直接拦截。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Adjustment Cycle Tracking】"]
+    BM_SEL_10["【BM-SEL-10 行情生命周期阶段】<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Market Lifecycle Phase】"]
+    BM_SEL_11["【BM-SEL-11 知识图谱与因果推演】<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Knowledge Graph &amp; Causal Inference】"]
+    BM_SEL_12["【BM-SEL-12 分布特征工程】<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Distribution Feature Engineering】"]
+    BM_SEL_13["【BM-SEL-13 收益率条件密度预测】<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conditional Density Prediction】"]
+    BM_SEL_14["【BM-SEL-14 共形预测】<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conformal Prediction】"]
+    BM_SEL_15["【BM-SEL-15 Survival止盈止损时间预测】<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Survival Stop-Time Prediction】"]
+    BM_SEL_16["【BM-SEL-16 分级指标过滤】<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Tiered Screening Filter】"]
+    BM_SEL_17["【BM-SEL-17 初筛漏斗】<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Coarse Screening Funnel】"]
+    BM_SEL_18["【BM-SEL-18 精筛评分】<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Fine Scoring】"]
+    BM_SEL_19["【BM-SEL-19 事件驱动分布筛选】<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Event-Driven Distribution Screening】"]
+    BM_SEL_20["【BM-SEL-20 多策略交叉投票】<br/>漏斗第五层——多策略对每只票投YES<br/>/NO，加上主力合力和市场状态否决，少数服从多数。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Multi-Strategy Cross Voting】"]
+    BM_SEL_21["【BM-SEL-21 组合优化】<br/>漏斗第六层——从30只里算出最终N≤10只下单清单和每只<br/>权重，行业、市值、风险、相关性、拥挤度全约束。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Portfolio Optimization】"]
+    BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16 ~~~ BM_SEL_02_A ~~~ BM_SEL_02_B ~~~ BM_SEL_02_C ~~~ BM_SEL_02_D ~~~ BM_SEL_02_E ~~~ BM_SEL_02_F ~~~ BM_SEL_02_G ~~~ BM_SEL_02_H ~~~ BM_SEL_02_I
+    BM_SEL_16 -.->|漏斗L1→L2（~1200只） / data_flow| BM_SEL_17
+    BM_SEL_17 -.->|漏斗L2→L3（~300只） / data_flow| BM_SEL_18
+    BM_SEL_18 -.->|漏斗L3→L4（~50只） / data_flow| BM_SEL_19
+    BM_SEL_19 -.->|漏斗L4→L5（~30只） / data_flow| BM_SEL_20
+    BM_SEL_20 -.->|漏斗L5→L6 / data_flow| BM_SEL_21
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_SEL_02_B,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_21 production
+    class BM_SEL_02_A,BM_SEL_02_C deprecated
+    class BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19,BM_SEL_20 candidate
 ```
 
 ### 运营态的图（仅 production 环节和流转）
 
-> 仅展示已上线运行的环节（共 30 个），不含跨阶段外部节点。
+> 仅展示已上线运行的环节（共 55 个），不含跨阶段外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -177,55 +255,89 @@ flowchart TD
     BM_BUY_01["【BM-BUY-01 多情景对策生成】<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Multi-Scenario Countermeasure】"]
     BM_EXE_01["【BM-EXE-01 自适应风控审批】<br/>下单前的最后一道闸——风控审批，审不过的订单直接拦<br/>下，是订单拦截器不是事后检查。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>🟡候选承载<br/>【Adaptive Risk Approval】"]
     BM_POS_01["【BM-POS-01 仓位管理裁决】<br/>所有买卖决策都到这里统一算最终仓位——这是仓位决策<br/>的唯一裁决中心，谁都别想绕过。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>🟡候选承载<br/>【Position Adjudication】"]
-    BM_REC_01["【BM-REC-01 交易运营清算】<br/>把成交回报拿去结算对账、算费率、处理除权除息和公<br/>司行为、监控保证金，变成运营数据。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Trade Ops &amp; Settlement】"]
+    subgraph sg_BM_REC_01 ["交易运营清算"]
+        BM_REC_01["【BM-REC-01 交易运营清算】<br/>把成交回报拿去结算对账、算费率、处理除权除息和公<br/>司行为、监控保证金，变成运营数据。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Trade Ops &amp; Settlement】"]
+        BM_REC_01_A["【BM-REC-01-A 结算对账】<br/>每日盘后把系统记录和券商结算单逐笔核对，发现差异<br/>立刻告警，是T+1对账的核心。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Settlement &amp; Reconciliation】"]
+        BM_REC_01_B["【BM-REC-01-B 公司行为与费率】<br/>处理除权除息自动调持仓成本、算佣金印花税过户费、<br/>监控分红配股拆股，是运营数据准确性的保障。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Corporate Action &amp; Fee】"]
+        BM_REC_01 -.->|嵌套| BM_REC_01_A
+        BM_REC_01 -.->|嵌套| BM_REC_01_B
+    end
     BM_SELL_01["【BM-SELL-01 突破成败信号】<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Breakout Success/Failure Signal】"]
     BM_SEL_01["【BM-SEL-01 数据接入与预处理】<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Data Ingestion &amp; Preprocessing】"]
+    BM_POS_06["【BM-POS-06 现金管理约束】<br/>仓位的'现金刹车'——留够保命钱（最低储备金）+机会钱<br/>（X%），T+1结算约束下算可用资金，节假日多留5-15%现<br/>金，闲置钱做逆回购生息，反馈给仓位裁决作为现金硬<br/>约束。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Cash Management Constraint】"]
+    BM_POS_08["【BM-POS-08 日历仓位约束】<br/>A股'风险日历'自动收紧仓位——期权交割日只许减仓不<br/>许开新，4月下旬ST股强制清零，财报发布前3天降仓位<br/>+禁新建，微盘股空窗期收紧50%，交割日前后临时下调<br/>5-10%。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Calendar Position Constraint】"]
     subgraph sg_BM_BUY_02 ["四轨融合"]
-        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Four-Track Fusion （MTF）】"]
-        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Logic-Driven Track】"]
-        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Data-Driven Track （AI Discovery）】"]
-        BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Manual Override Track】"]
-        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Emergency Protection Track】"]
+        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Four-Track Fusion （MTF）】"]
+        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Logic-Driven Track】"]
+        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Data-Driven Track （AI Discovery）】"]
+        BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Manual Override Track】"]
+        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>🟡候选承载<br/>【Emergency Protection Track】"]
         BM_BUY_02 -.->|嵌套| BM_BUY_02_A
         BM_BUY_02 -.->|嵌套| BM_BUY_02_B
         BM_BUY_02 -.->|嵌套| BM_BUY_02_C
         BM_BUY_02 -.->|嵌套| BM_BUY_02_D
     end
-    BM_EXE_02["【BM-EXE-02 交易执行】<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>🟡候选承载<br/>【Trade Execution】"]
     BM_POS_02["【BM-POS-02 标级仓位Kelly】<br/>每只票该买多少——用Kelly公式算理论仓位，半Kelly硬<br/>上限截断（禁止全Kelly），在风险配额内决策，再用密<br/>度PDF的偏度/峰度/前瞻VaR做分布感知调整<br/>（防御性只减不增）。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Per-Symbol Kelly Sizing】"]
-    BM_REC_02["【BM-REC-02 报告复盘】<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Reporting &amp; Review】"]
+    subgraph sg_BM_REC_02 ["报告复盘"]
+        BM_REC_02["【BM-REC-02 报告复盘】<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Reporting &amp; Review】"]
+        BM_REC_02_A["【BM-REC-02-A TCA执行质量分析】<br/>算每笔交易的真实成本——滑点、冲击成本、市场影响，<br/>看执行得好不好。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【TCA Execution Quality Analysis】"]
+        BM_REC_02_C["【BM-REC-02-C A股交易复盘】<br/>针对A股特色做盘前信号验证、盘中异常检测、盘后归<br/>因、大额交易异动检测，生成复盘报告。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【A-Share Trading Review】"]
+        BM_REC_02_D["【BM-REC-02-D 报告发布】<br/>把复盘报告归档、发到微信和邮件，留好审计凭证。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Report Publishing】"]
+        BM_REC_02 -.->|嵌套| BM_REC_02_A
+        BM_REC_02 -.->|嵌套| BM_REC_02_C
+        BM_REC_02 -.->|嵌套| BM_REC_02_D
+    end
     BM_SELL_02["【BM-SELL-02 卖出信号融合仲裁】<br/>把所有卖出信号（含突破成败）汇总仲裁，强制清仓永<br/>远最高优先级，谁的信号最狠听谁的。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Sell Signal Fusion Arbitration】"]
-    BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
+    BM_SEL_22["【BM-SEL-22 短线选股评分卡】<br/>给短线标的打分——7个维度100分制评分（连板高度<br/>/封单强度/板块效应/分歧程度/市值流动性/封板时间<br/>/催化强度），再识别强庄股，专门服务短线和打板选<br/>股。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Short-Term Stock Selection Scorecard】"]
+    BM_SEL_23["【BM-SEL-23 游资接力情绪周期】<br/>测游资接力情绪——6个因子打0-100分（连板高度<br/>/封单质量/涨停时间/开板次数/竞价强度<br/>/助攻梯队），再定位情绪周期4+1阶段（冰点/反核<br/>/主升/疯狂/退潮），不同阶段用不同策略。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Youzi Relay Emotion Cycle】"]
+    BM_SEL_24["【BM-SEL-24 量化短线强度评级】<br/>量化角度评短线强度——6个维度打0-100分（价格动量<br/>/行业强度/相对强度/资金/技术<br/>/风险），评出A到E五级，作为双引擎融合的量化引擎<br/>输入。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Quant Short-Term Strength Rating】"]
+    BM_SEL_25["【BM-SEL-25 双引擎融合决策】<br/>把游资情绪引擎和量化强度引擎的信号融合起来——基准<br/>是游资60%+量化40%，但情绪周期会自动调权重<br/>（冰点时量化占70%，主升时游资占70%），输出6类决<br/>策（主升龙头/二进三/跟风/复苏/伪强/地天反包）。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Dual-Engine Fusion Decision】"]
     BM_BUY_03["【BM-BUY-03 决策编排】<br/>把融合后的决策按5条路径（买/卖/做T/人工<br/>/应急）统一出口编排，处理冲突、去重、排时序。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【Decision Orchestration （DO）】"]
-    BM_EXE_03["【BM-EXE-03 执行质量TCA】<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>【Execution Quality TCA】"]
     BM_POS_03["【BM-POS-03 持仓状态机漂移】<br/>每只票有自己的状态<br/>（NONE→BUILDING→ACTIVE→OBSERVING→REDUCING→EXITING<br/>→CLOSED），权重漂移超±2%（组合）/±3%<br/>（单标的）就触发再平衡评估，观察期内禁止新买入。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Position State Machine &amp; Drift】"]
-    BM_REC_03["【BM-REC-03 闭环优化反馈】<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Closed-Loop Optimization Feedback】"]
+    subgraph sg_BM_REC_03 ["闭环优化反馈"]
+        BM_REC_03["【BM-REC-03 闭环优化反馈】<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Closed-Loop Optimization Feedback】"]
+        BM_REC_03_A["【BM-REC-03-A 因子层反馈】<br/>看因子还灵不灵——IC衰减了就换因子，算半衰期，保证<br/>因子池新鲜。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Factor-Layer Feedback】"]
+        BM_REC_03_B["【BM-REC-03-B 信号层反馈】<br/>看信号准不准——准确率持续下降就退役信号，避免用失<br/>效信号下单。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Signal-Layer Feedback】"]
+        BM_REC_03_C["【BM-REC-03-C 模型层反馈】<br/>看模型飘没飘——检测到漂移就重训练，防止模型用旧数<br/>据预测新市场。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Model-Layer Feedback】"]
+        BM_REC_03 -.->|嵌套| BM_REC_03_A
+        BM_REC_03 -.->|嵌套| BM_REC_03_B
+        BM_REC_03 -.->|嵌套| BM_REC_03_C
+    end
     BM_SELL_03["【BM-SELL-03 卖出信号收集评分】<br/>卖出端的'信号层'——先把持仓分级（Watch/Monitor<br/>/Hold），再收集7类卖出信号，多时间框架共振加权，<br/>产出卖出信号评分和紧迫度。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Sell Signal Collection &amp; Scoring】"]
+    BM_POS_07["【BM-POS-07 再平衡执行】<br/>漂移超阈值后算'划不划得来'——预期收益改善&gt;2×交易<br/>成本才动手，阴跌/加速下跌<br/>/恐慌崩盘时成本×1.5更谨慎，再平衡后组合仓位偏差&lt;<br/>1%才算到位，周频强制+偏离+事件三类触发。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Rebalance Execution】"]
+    BM_POS_09["【BM-POS-09 卖出仓位反馈链路】<br/>仓位和卖出'双向通话'——盈利时放宽卖出阈值、亏损时<br/>收紧；买入后即时验证（5min跌破1%放量→观察<br/>/15min破分时均线→减半<br/>/30min反向2ATR→止损），把仓位状态反馈给卖出决策。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Sell-Position Bidirectional Link】"]
+    BM_EXE_02["【BM-EXE-02 交易执行】<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>🟡候选承载<br/>【Trade Execution】"]
     BM_POS_04["【BM-POS-04 跨策略仓位硬限制】<br/>多策略同标的仓位合并取sum不超上限，新策略上线仓<br/>位砍到正常的30%，行业偏离<br/>/风格暴露有硬约束，C-047是仓位裁决唯一中心<br/>（只有C-004风控veto能绕过）。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Cross-Strategy Position Hard Limit】"]
     BM_REC_04["【BM-REC-04 保证金管理】<br/>监控融资融券保证金比例——低于预警线告警、需要追加<br/>时提醒用户；融资融券API不可用时自动休眠，不影响<br/>其他运营功能。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Margin Manager】"]
     BM_POS_05["【BM-POS-05 资金曲线回撤缩放】<br/>系统的'自动驾驶油门刹车'——赚钱了净值创新高就慢慢<br/>加仓（每次+5%），亏钱回撤超5%就砍仓位10%、超10%就<br/>砍20%，回到回撤前高点才能恢复原仓位。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Capital Curve Drawdown Scaling】"]
     BM_REC_05["【BM-REC-05 多账户分仓管理】<br/>一个策略同时管多个账户，按各账户AUM分仓，每个账<br/>户独立风控、独立PnL、独立报告。多账户≠多租户SaaS<br/>，所有账户属于同一信任域。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Multi-Account Manager】"]
     BM_SELL_05["【BM-SELL-05 置换再平衡卖出】<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Replacement &amp; Rebalance Sell】"]
+    BM_SEL_05["【BM-SEL-05 主力行为感知】<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Main-Force Behavior Sensing】"]
     BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控→仓位裁决→置信度分层→执行四级优先级，是人工<br/>干预系统的入口。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【External Order Monitoring】"]
+    BM_EXE_03["【BM-EXE-03 执行质量TCA】<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>执行阶段 / execution<br/>（生产态 / production）<br/>【Execution Quality TCA】"]
     BM_SELL_06["【BM-SELL-06 买卖冲突仲裁】<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>（保守原则）；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>卖出阶段 / sell_flow<br/>（生产态 / production）<br/>【Buy-Sell Conflict Arbitration】"]
     BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>买入阶段 / buy_flow<br/>（生产态 / production）<br/>【WeChat Interaction Hub】"]
+    BM_SEL_08["【BM-SEL-08 板块轮动序列追踪】<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Sector Rotation Sequence Tracking】"]
+    BM_POS_10["【BM-POS-10 仓位审计追溯】<br/>仓位变动的'黑匣子'——每次仓位变更全记录+审批链+哈<br/>希链防篡改，可追溯到报告域和治理域，是仓位决策合<br/>规追溯的唯一真源。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Position Audit Trail】"]
     BM_SEL_21["【BM-SEL-21 组合优化】<br/>漏斗第六层——从30只里算出最终N≤10只下单清单和每只<br/>权重，行业、市值、风险、相关性、拥挤度全约束。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Portfolio Optimization】"]
-    BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D ~~~ BM_POS_05 ~~~ BM_SEL_01 ~~~ BM_SEL_21
-    BM_BUY_01 ~~~ BM_BUY_06
-    BM_EXE_01 ~~~ BM_EXE_02 ~~~ BM_EXE_03 ~~~ BM_POS_01 ~~~ BM_POS_02 ~~~ BM_POS_03 ~~~ BM_POS_04 ~~~ BM_REC_01 ~~~ BM_REC_02 ~~~ BM_REC_03 ~~~ BM_REC_04 ~~~ BM_REC_05 ~~~ BM_SELL_01 ~~~ BM_SELL_02 ~~~ BM_SELL_03 ~~~ BM_SELL_05 ~~~ BM_SELL_06 ~~~ BM_SEL_02
-    BM_SEL_01 -->|标准化行情 / data_flow| BM_SEL_02
-    BM_SEL_02 -->|压力位因子 / data_flow| BM_SELL_01
+    BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D ~~~ BM_EXE_03 ~~~ BM_POS_08 ~~~ BM_POS_05 ~~~ BM_REC_01_A ~~~ BM_REC_02_A ~~~ BM_REC_02_C ~~~ BM_REC_03_A ~~~ BM_SELL_01 ~~~ BM_SEL_01 ~~~ BM_SEL_22 ~~~ BM_SEL_23 ~~~ BM_SEL_24 ~~~ BM_SEL_05 ~~~ BM_SEL_08 ~~~ BM_SEL_02_B ~~~ BM_SEL_02_D ~~~ BM_SEL_02_E ~~~ BM_SEL_02_F ~~~ BM_SEL_02_G ~~~ BM_SEL_02_H ~~~ BM_SEL_02_I
+    BM_BUY_06 ~~~ BM_REC_01_B ~~~ BM_REC_02_D ~~~ BM_REC_03_B ~~~ BM_SELL_03 ~~~ BM_SEL_25
+    BM_REC_03_C ~~~ BM_SELL_05 ~~~ BM_SEL_21
+    BM_BUY_01 ~~~ BM_SELL_02
+    BM_BUY_02 ~~~ BM_POS_09 ~~~ BM_SELL_06
+    BM_BUY_03 ~~~ BM_POS_03
+    BM_POS_01 ~~~ BM_POS_07
+    BM_EXE_01 ~~~ BM_EXE_02 ~~~ BM_POS_10
+    BM_REC_02 ~~~ BM_REC_04 ~~~ BM_REC_05
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
     BM_SELL_01 -->|突破成败信号 / data_flow| BM_SELL_02
     BM_SELL_02 -->|卖出决策 / data_flow| BM_POS_01
     BM_BUY_03 -->|编排后决策 / data_flow| BM_POS_01
     BM_POS_01 -->|仓位指令 / data_flow| BM_EXE_01
-    BM_EXE_01 -->|审批后订单 / data_flow| BM_EXE_02
     BM_EXE_02 -->|成交回报 / data_flow| BM_REC_01
     BM_REC_01 -->|运营数据 / data_flow| BM_REC_02
     BM_REC_02 -->|复盘报告 / data_flow| BM_REC_03
-    BM_REC_03 -->|迭代反馈（IC衰减/重训练） / trigger| BM_SEL_02
     BM_SEL_21 -->|N≤10只下单清单→买入 / data_flow| BM_BUY_01
     BM_BUY_06 -->|外部指令→风控检查 / data_flow| BM_EXE_01
     BM_BUY_06 -->|外部指令→买卖冲突仲裁 / trigger| BM_SELL_06
@@ -241,56 +353,77 @@ flowchart TD
     BM_POS_05 -->|回撤缩放→标级仓位约束 / trigger| BM_POS_02
     BM_POS_05 -->|回撤缩放→跨策略硬限制 / trigger| BM_POS_04
     BM_POS_04 -->|实际仓位→风控审批 / data_flow| BM_EXE_01
-    BM_EXE_02 -->|成交回报→TCA分析 / data_flow| BM_EXE_03
     BM_EXE_03 -->|执行质量→报告复盘 / data_flow| BM_REC_02
-    BM_EXE_03 -->|TCA反馈→执行算法优化 / degradation| BM_EXE_02
     BM_POS_04 -->|实际仓位→交易执行 / data_flow| BM_EXE_02
     BM_REC_01 -->|保证金监控消费清算数据 / data_flow| BM_REC_04
     BM_REC_01 -->|多账户独立核算消费清算数据 / data_flow| BM_REC_05
     BM_BUY_07 -->|微信指令→外部指令盯盘 / data_flow| BM_BUY_06
+    BM_POS_01 -->|风险配额→现金约束 / data_flow| BM_POS_06
+    BM_POS_06 -->|现金约束→标级Kelly / data_flow| BM_POS_02
+    BM_POS_03 -->|漂移触发→再平衡执行 / trigger| BM_POS_07
+    BM_POS_07 -->|再平衡→标级仓位调整 / data_flow| BM_POS_02
+    BM_POS_07 -->|再平衡→仓位审计 / data_flow| BM_POS_10
+    BM_POS_08 -->|日历约束→仓位裁决上限 / trigger| BM_POS_01
+    BM_POS_08 -->|日历约束→跨策略硬限制 / trigger| BM_POS_04
+    BM_SELL_02 -->|卖出决策→仓位反馈 / data_flow| BM_POS_09
+    BM_POS_09 -->|仓位反馈→状态机 / trigger| BM_POS_03
+    BM_POS_02 -->|标级仓位→审计 / data_flow| BM_POS_10
+    BM_POS_04 -->|实际仓位→审计 / data_flow| BM_POS_10
+    BM_SEL_22 -->|短线选股评分→双引擎融合 / data_flow| BM_SEL_25
+    BM_SEL_23 -->|游资情绪→双引擎融合 / data_flow| BM_SEL_25
+    BM_SEL_24 -->|量化强度→双引擎融合 / data_flow| BM_SEL_25
+    BM_SEL_25 -->|双引擎决策→组合优化 / data_flow| BM_SEL_21
+    BM_REC_01_A -->|结算对账后处理公司行为与费率 / data_flow| BM_REC_01_B
+    BM_REC_02_C -->|复盘报告→发布 / data_flow| BM_REC_02_D
+    BM_REC_03_A -->|因子反馈→信号反馈 / data_flow| BM_REC_03_B
+    BM_REC_03_B -->|信号反馈→模型反馈 / data_flow| BM_REC_03_C
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D,BM_EXE_01,BM_EXE_02,BM_EXE_03,BM_POS_01,BM_POS_02,BM_POS_03,BM_POS_04,BM_POS_05,BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_SELL_01,BM_SELL_02,BM_SELL_03,BM_SELL_05,BM_SELL_06,BM_SEL_01,BM_SEL_02,BM_SEL_21 production
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D,BM_EXE_01,BM_EXE_02,BM_EXE_03,BM_POS_01,BM_POS_06,BM_POS_08,BM_POS_02,BM_POS_03,BM_POS_07,BM_POS_09,BM_POS_04,BM_POS_05,BM_POS_10,BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A,BM_REC_03_B,BM_REC_03_C,BM_SELL_01,BM_SELL_02,BM_SELL_03,BM_SELL_05,BM_SELL_06,BM_SEL_01,BM_SEL_22,BM_SEL_23,BM_SEL_24,BM_SEL_25,BM_SEL_05,BM_SEL_08,BM_SEL_02_B,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_21 production
 ```
 
 ### 设计态的图（仅 design 环节和流转）
 
-> 仅展示设计态、锚点模块待施工的环节（共 5 个）。
+> 仅展示设计态、锚点模块待施工的环节（共 9 个）。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 作战地图·设计态
 flowchart TD
+    BM_EXE_04["⛔ 门禁:D-RISK风控参数就绪+市场状态实时数据源<br/>（D-EX-CORE-24）<br/>【BM-EXE-04 Pre-Trade合规检查】<br/>下单前的交易所合规硬闸——涨跌停/参与率/撤单率<br/>/报单停留时间锁/Wash Trade/Spoofing<br/>全检查，Fail-Closed，不过就拦。<br/>执行阶段 / execution<br/>（设计态 / design）<br/>【Pre-Trade Compliance Gate】"]
+    BM_EXE_05["⛔ 门禁:TCA<br/>（D-EX-CORE-12）就绪+订单簿深度数据可获取<br/>（D-EX-CORE-14）<br/>【BM-EXE-05 智能订单路由与拆单】<br/>大单拆小单+选最优算法+控参与率——Almgren-Chriss<br/>算最优执行轨迹，TWAP/VWAP/POV/IS<br/>拆单，参与率&lt;15%分钟成交量，挑开盘<br/>/尾盘窗口，流动性不足就暂停。<br/>执行阶段 / execution<br/>（设计态 / design）<br/>【Smart Order Routing &amp; Splitting】"]
     BM_SEL_03["【BM-SEL-03 市场状态感知】<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>🟡候选承载<br/>【Market State Sensing】"]
     BM_BUY_04["【BM-BUY-04 分批建仓】<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>买入阶段 / buy_flow<br/>（设计态 / design）<br/>【Batched Position Building】"]
     BM_SELL_04["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04 止盈止损族】<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式（趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损），叠加猎杀防护和期权定价<br/>评估。<br/>卖出阶段 / sell_flow<br/>（设计态 / design）<br/>【Take-Profit &amp; Stop-Loss Strategy Family】"]
     BM_SEL_04["【BM-SEL-04 次日8态走势预测】<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>🟡候选承载<br/>【Next-Day 8-State Forecast】"]
     BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>买入阶段 / buy_flow<br/>（设计态 / design）<br/>【Intraday T+0 Arbitrage】"]
-    BM_SELL_04 ~~~ BM_SEL_03
-    BM_BUY_04 ~~~ BM_SEL_04
+    BM_EXE_06["⛔ 门禁:Broker<br/>Adapter回报回调稳定+佣金费率表数据源就绪<br/>（D-EX-CORE-08）<br/>【BM-EXE-06 成交回报处理与持仓更新】<br/>成交回来后拆解回报、算费用、更新持仓、推订单状态<br/>机——部分成交聚合、T+1<br/>结算、持仓对账，把成交变成可用的持仓和账面数据。<br/>执行阶段 / execution<br/>（设计态 / design）<br/>【Fill Processing &amp; Position Update】"]
+    BM_EXE_04 ~~~ BM_EXE_06 ~~~ BM_REC_02_B ~~~ BM_SELL_04 ~~~ BM_SEL_03
+    BM_BUY_04 ~~~ BM_EXE_05 ~~~ BM_SEL_04
     BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
     BM_SEL_03 -.->|进度+阶段+轮动 / data_flow| BM_BUY_04
     BM_SEL_03 -.->|C-021未就绪→跳过降级 / degradation| BM_SEL_04
     BM_BUY_04 -.->|分批建仓完成→做T监控 / trigger| BM_BUY_05
+    BM_EXE_04 -.->|合规通过→路由拆单 / data_flow| BM_EXE_05
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_04,BM_BUY_05,BM_SELL_04,BM_SEL_03,BM_SEL_04 design
+    class BM_BUY_04,BM_BUY_05,BM_EXE_04,BM_EXE_05,BM_EXE_06,BM_REC_02_B,BM_SELL_04,BM_SEL_03,BM_SEL_04 design
 ```
 
 ## 分阶段导航
 
-- [选股阶段（21 环节）](battle_map_01_stock_selection.md)
-- [买入阶段（11 环节）](battle_map_02_buy_flow.md)
+- [选股阶段（34 环节）](battle_map_01_stock_selection.md)
+- [买入阶段（12 环节）](battle_map_02_buy_flow.md)
 - [卖出阶段（6 环节）](battle_map_03_sell_flow.md)
-- [仓位阶段（5 环节）](battle_map_04_position_management.md)
-- [执行阶段（3 环节）](battle_map_05_execution.md)
-- [对账阶段（5 环节）](battle_map_06_reconciliation.md)
+- [仓位阶段（10 环节）](battle_map_04_position_management.md)
+- [执行阶段（6 环节）](battle_map_05_execution.md)
+- [对账阶段（14 环节）](battle_map_06_reconciliation.md)
 - [横切视图（§13漏斗 / §14盘中事件 / §16冲突矩阵）](battle_map_07_cross_cutting.md)
 
 ## 全环节详情（6 件套）
@@ -325,7 +458,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | stable |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -360,6 +493,7 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-006 | primary | planned | generated |
+| candidate | CAND-HARVEST-0926 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -412,18 +546,18 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 | 要素 | 内容 |
 |---|---|
 | ① 触发条件 | 满足2/3（调整周期到位/二次回落/缩量） 阈值: 2/3 |
-| ② 消费数据/因子 | §6.6 调整周期进度（来自 BM-SEL-03）<br>§6.7 生命周期阶段（来自 BM-SEL-03）<br>§6.1.3 轮动序列（来自 BM-SEL-03）<br>量比（来自 BM-SEL-02） |
-| ③ 参数 | batch_count=2（范围 2-4，代码当前: 待实现，状态: proposed）<br>batch_interval=1交易日（范围 1-3，代码当前: 待实现，状态: proposed）<br>satisfy_threshold=2/3（范围 1/3-3/3，代码当前: 待实现，状态: proposed） |
-| ④ 数据流 | 输入: 进度+阶段+轮动 → 处理: 分批条件判定 → 输出: L3.5 分批仓位方案 → 下游: BM-POS-01 仓位裁决 |
+| ② 消费数据/因子 | §6.6 调整周期进度（来自 BM-SEL-03）<br>§6.7 生命周期阶段（来自 BM-SEL-03）<br>§6.1.3 轮动序列（来自 BM-SEL-03）<br>量比（来自 BM-SEL-02）<br>C-031 置信度分层(高置信度→激进建仓/低置信度→分批建仓)（来自 C-031(横切)） |
+| ③ 参数 | batch_count=2（范围 2-4，代码当前: 待实现，状态: proposed）<br>batch_interval=1交易日（范围 1-3，代码当前: 待实现，状态: proposed）<br>satisfy_threshold=2/3（范围 1/3-3/3，代码当前: 待实现，状态: proposed）<br>confidence_tier_mode=高置信度→激进建仓/低置信度→分批建仓（范围 激进/分批，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 进度+阶段+轮动+置信度 → 处理: 分批条件判定+置信度分层调节建仓节奏 → 输出: L3.5 分批仓位方案 → 下游: BM-POS-01 仓位裁决 |
 | ⑤ 代码映射 | MOD-待定 / 草图§1.3 v4.1 |
 | ⑥ 降级/中止 | 跌破前低 → 暂停后续批次→触发止损评估 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：满足 2/3（调整周期到位 / 二次回落 / 缩量）才放行下一批；
-②消费：§6.6 建仓进度、§6.7 阶段判定、§6.1.3 轮动序列、量比；
-③参数：分批数=2（可配 2-4）、间隔=1 交易日、满足阈值=2/3；
-④数据流：进度+阶段+轮动→条件判定→L3.5 仓位决策→L4 执行；
+②消费：§6.6 建仓进度、§6.7 阶段判定、§6.1.3 轮动序列、量比、C-031 置信度分层；
+③参数：分批数=2（可配 2-4）、间隔=1 交易日、满足阈值=2/3、置信度分层模式=高置信度→激进建仓/低置信度→分批建仓；
+④数据流：进度+阶段+轮动+置信度→条件判定+置信度调节建仓节奏→L3.5 仓位决策→L4 执行；
 ⑤代码映射：MOD-xxx / src/zephyr/.../xxx.py；
 ⑥降级：跌破前低→暂停后续批次→止损评估。
 
@@ -550,6 +684,41 @@ L3/决策层。C-019●核心微信多人互动(D-TRADING-06)。微信机器人�
 | depgraph | MOD-INF-039 | supplement | planned | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：buy_flow
+
+### BM-BUY-08 交易纪律合规闸 / Trading Discipline Compliance Gate
+
+> **大白话**：买入下单前的A股交易纪律合规闸——自动检测四项严禁（踏空追高/被套补仓/盈利骄傲/亏损报复），违规即拦截或告警，守住"不追高、不补仓、不骄傲、不报复"的纪律底线。
+
+**机制说明**：
+
+§7.1.2 A股交易纪律四项严禁自动化检测（源自A6§12.2.2，由 D-COMPLIANCE-23 A-Share Trading Discipline Checker 执行，未开发时由 C-004 代管）。
+四项严禁：①踏空追高——价格追涨幅度超阈值+买入在急剧拉升后→C-004 价格偏离度检测→Hard Block 拒绝追高买入；②被套补仓——持仓亏损>X%(建议-5%)后继续加仓同标的→C-004 持仓亏损+同标的加仓检测→Hard Block 拒绝补仓；③盈利骄傲——连续盈利N笔后单笔风险敞口超常规→C-004 风险敞口变化率检测→Warning 推送；④亏损报复——当日亏损>Y%(建议-2%)后交易频率/单笔规模异常增加→C-004 交易行为异常检测→Hard Block 触发强制停盘(Kill Switch 轻量版)。
+定位：买入决策形成后/分批建仓每批下单前的合规闸，位于 BM-BUY-03 决策编排之后、BM-EXE-01 风控执行之前。纪律检查是辅助工具，最终纪律责任归人类交易者。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 买入决策形成后/分批建仓每批下单前 阈值: 四项严禁任一触发即拦截 |
+| ② 消费数据/因子 | 编排后决策（来自 BM-BUY-03）<br>C-004 风控信号(价格偏离度/持仓亏损/风险敞口/交易频率)（来自 BM-EXE-01/C-004）<br>持仓状态（来自 BM-POS-01）<br>C-031 置信度分层（来自 C-031(横切)） |
+| ③ 参数 | chase_high_threshold=价格追涨幅度阈值(踏空追高)（范围 —，代码当前: 待实现，状态: proposed）<br>avg_down_loss_threshold=-5%(持仓亏损后继续加仓同标的=被套补仓)（范围 -3%~-8%，代码当前: 待实现，状态: proposed）<br>revenge_loss_threshold=-2%(当日亏损后交易频率/单笔规模异常增加=亏损报复)（范围 -1%~-3%，代码当前: 待实现，状态: proposed）<br>pride_consecutive_wins=连续盈利N笔后单笔风险敞口超常规(盈利骄傲)（范围 N=3~5，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 编排后决策+风控信号+持仓状态+置信度 → 处理: 四项严禁检测(①踏空追高拒绝 ②被套补仓拒绝 ③盈利骄傲告警 ④亏损报复停盘) → 输出: 合规通过→放行 / 违规→Hard Block拦截或Warning推送 → 下游: BM-EXE-01 风控执行 |
+| ⑤ 代码映射 | D-COMPLIANCE-23(CAND-HARVEST-0169,未开发) / 18-D-TRADING §7.1.2 / A6§12.2.2 |
+| ⑥ 降级/中止 | D-COMPLIANCE-23未开发 → 降级由C-004(BM-EXE-01)代管四项严禁检测 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：买入决策形成后/分批建仓每批下单前；②消费：编排后决策(BM-BUY-03)+C-004风控信号(价格偏离度/持仓亏损/风险敞口/交易频率)+持仓状态(BM-POS-01)+C-031置信度分层；③参数：追涨幅度阈值、被套补仓亏损阈值-5%(-3%~-8%)、亏损报复阈值-2%(-1%~-3%)、连续盈利N笔N=3~5(proposed)；④数据流：编排后决策+风控信号+持仓+置信度→四项严禁检测→合规通过放行/违规Hard Block拦截或Warning→BM-EXE-01风控执行；⑤代码：D-COMPLIANCE-23 A-Share Trading Discipline Checker(CAND-HARVEST-0169,未开发)、C-004代管；⑥降级：D-COMPLIANCE-23未开发→由C-004(BM-EXE-01)代管四项严禁检测。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0169 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-A 逻辑驱动轨 / Logic-Driven Track
 
@@ -699,13 +868,13 @@ L4 层。C-004 自适应风控，作为订单拦截器：C-005 生成预案→MT
 | ① 触发条件 | 仓位指令就绪 阈值: 订单拦截器（审批后才执行） |
 | ② 消费数据/因子 | 仓位指令（来自 BM-POS-01）<br>C-001/C-002/C-009/C-021/C-047 状态（来自 多环节） |
 | ③ 参数 | risk_threshold=自适应（范围 -，代码当前: max_single_position=0.10 (单标的权重上限) + HALT级违例阻断下单，状态: implemented） |
-| ④ 数据流 | 输入: 仓位指令 → 处理: C-004 风控审批（订单拦截） → 输出: 审批后订单 → 下游: BM-EXE-02 交易执行 |
+| ④ 数据流 | 输入: 仓位指令 → 处理: C-004 风控审批（订单拦截） → 输出: 审批后订单 → 下游: BM-EXE-04 Pre-Trade合规检查 |
 | ⑤ 代码映射 | C-004 / 草图§9 L4 层 |
 | ⑥ 降级/中止 | C-004 不可用 → 降级硬编码仓位上限10%（应急保命轨） |
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：仓位指令就绪；②消费：BM-POS-01 仓位指令 + 多环节状态；③参数：risk_threshold=自适应；④数据流：仓位指令→C-004 审批拦截→审批后订单→BM-EXE-02；⑤代码：C-004 L4 层；⑥降级：C-004 不可用→硬编码仓位上限10%。
+①触发：仓位指令就绪；②消费：BM-POS-01 仓位指令 + 多环节状态；③参数：risk_threshold=自适应；④数据流：仓位指令→C-004 审批拦截→审批后订单→BM-EXE-04；⑤代码：C-004 L4 层；⑥降级：C-004 不可用→硬编码仓位上限10%。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -716,6 +885,86 @@ L4 层。C-004 自适应风控，作为订单拦截器：C-005 生成预案→MT
 | candidate | CAND-RSK-014 | supplement | deferred | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
+
+### BM-EXE-04 Pre-Trade合规检查 / Pre-Trade Compliance Gate
+
+> **大白话**：下单前的交易所合规硬闸——涨跌停/参与率/撤单率/报单停留时间锁/Wash Trade/Spoofing 全检查，Fail-Closed，不过就拦。
+
+**机制说明**：
+
+L4 层。C-002 执行域 Pre-Trade 合规主链（D-EX-CORE-24 Pre-Execution Checker + D-EX-CORE-07 Execution Risk Gate）。
+与 BM-EXE-01 的 C-004 仓位风控互补：C-004 管仓位/单笔上限（自适应风控），本环节管交易所合规硬阻断（2026.4.7新规）。
+Pre-Trade 合规检查主链6项顺序（均 Hard Block）：涨跌停→参与率(≤5%)→持仓限额→行业集中度→撤单率(≤15%)→报单停留时间锁(≥50μs)。
+并行阻塞管道：Wash Trade 自交易检测(C-002执行域) + Spoofing/Layering/尾盘操纵检测(C-004)。
+程序化交易报告先报后交易铁律：report_confirmed=False→拒绝所有订单。
+Fail-Closed：合规规则引擎不可用→C-004默认拒绝所有订单→C-002亦不可用→Kill Switch自动触发。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 风控审批通过(BM-EXE-01) 阈值: Pre-Trade合规主链6项顺序检查 |
+| ② 消费数据/因子 | 审批后订单（来自 BM-EXE-01）<br>市场状态(涨跌停)（来自 L0）<br>持仓/撤单率/参与率实时累计（来自 多环节） |
+| ③ 参数 | 报单停留时间锁=≥50μs（范围 -，代码当前: 待实现，状态: proposed）<br>参与率=≤5%（范围 -，代码当前: 待实现，状态: proposed）<br>撤单率=≤15%（范围 -，代码当前: 待实现，状态: proposed）<br>Wash Trade检测=自交易检测（范围 -，代码当前: 待实现，状态: proposed）<br>report_confirmed前置=先报后交易（范围 -，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 审批后订单 → 处理: Pre-Trade合规主链6项顺序检查+操纵防护(Wash Trade/Spoofing/Layering) → 输出: 合规通过订单 → 下游: BM-EXE-05 智能订单路由与拆单 |
+| ⑤ 代码映射 | MOD-EX-024+MOD-EX-007 / 草图§9 L4层+A6§Pre-Trade |
+| ⑥ 降级/中止 | 合规引擎不可用 → Fail-Closed拒所有新订单(C-004默认拒绝) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：风控审批通过(BM-EXE-01)；②消费：BM-EXE-01 审批后订单 + 市场状态(涨跌停)+持仓/撤单率/参与率实时累计；③参数：报单停留时间锁≥50μs、参与率≤5%、撤单率≤15%、Wash Trade检测、Spoofing/Layering检测、report_confirmed前置；④数据流：审批后订单→Pre-Trade合规主链6项顺序检查+操纵防护→合规通过订单→BM-EXE-05；⑤代码：MOD-EX-024 pre_execution_checker(planned)+MOD-EX-007 execution_risk_gate(planned) / 草图§9 L4层+A6§Pre-Trade；⑥降级：合规引擎不可用→Fail-Closed拒所有新订单(C-004默认拒绝)。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-EX-024 | primary | planned | planned |
+| depgraph | MOD-EX-007 | supplement | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
+
+### BM-EXE-05 智能订单路由与拆单 / Smart Order Routing & Splitting
+
+> **大白话**：大单拆小单+选最优算法+控参与率——Almgren-Chriss 算最优执行轨迹，TWAP/VWAP/POV/IS 拆单，参与率<15%分钟成交量，挑开盘/尾盘窗口，流动性不足就暂停。
+
+**机制说明**：
+
+L4 层。D-EX-CORE-14 Order Splitter（Almgren-Chriss 最优执行轨迹）+ D-EX-SOR 智能路由域。
+Almgren-Chriss 最优执行框架：执行计划生成(基于TCA历史+策略容量)→大单拆分策略(最优轨迹)→参与率控制(<15%分钟成交量)→执行时间窗口选择→执行进度监控(实际vs计划偏差>阈值→暂停+告警)→流动性前置检查(不足→暂停+告警)。
+算法清单(XS-05 Algo Trading Engine)：TWAP/VWAP/ICEBERG/POV/Implementation Shortfall/ALT(激进流动性摄取)。
+时变参与率(降本15-25%)：开盘(9:30-10:00)15% / 上午(10:00-11:30)10% / 午盘(13:00-14:00)5% / 尾盘(14:00-15:00)15%。
+XS-01 Optimal Order Router：延迟/成交率/费用三维加权选最优券商。XS-04 Execution Scheduler：TWAP/VWAP时间切片调度。XS-11 Algo Execution Selector：按订单特征(大小/紧急度/流动性)自动选算法。
+miniQMT个人账户不支持券商端VWAP/TWAP算法接口，本系统自行实现拆单逻辑。SOR不做风控判断(风控由BM-EXE-01/04做)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | Pre-Trade合规通过(BM-EXE-04) 阈值: 拆单+路由 |
+| ② 消费数据/因子 | 合规通过订单（来自 BM-EXE-04）<br>盘口流动性（来自 L0）<br>C-046历史TCA数据（来自 BM-EXE-03）<br>C-042策略容量（来自 L3） |
+| ③ 参数 | 算法=自适应选择（范围 TWAP/VWAP/ICEBERG/POV/IS/ALT，代码当前: algo_trading_engine(stable)，状态: implemented）<br>参与率=<15%分钟成交量(时变)（范围 -，代码当前: participation_rate=0.10，状态: implemented）<br>执行时间窗口=开盘前5min/收盘前10min/均匀分布（范围 -，代码当前: 待实现，状态: proposed）<br>Almgren-Chriss最优轨迹=E[cost]+λ×Var[cost]（范围 -，代码当前: order_splitter待实现，状态: proposed）<br>执行进度偏差阈值=—（范围 -，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 合规通过订单 → 处理: Almgren-Chriss最优轨迹+算法选择+大单拆分+参与率控制+流动性前置检查 → 输出: 子订单序列 → 下游: BM-EXE-02 交易执行 |
+| ⑤ 代码映射 | MOD-EX-014+MOD-XS-001/004/005/011 / 草图§9.2 Almgren-Chriss+§15执行算法 |
+| ⑥ 降级/中止 | Order Splitter未就绪 → 整单直发(无拆单，冲击成本升高) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：Pre-Trade合规通过(BM-EXE-04)；②消费：BM-EXE-04 合规通过订单 + 盘口流动性(L0)+C-046历史TCA(BM-EXE-03)+C-042策略容量(L3)；③参数：算法=TWAP/VWAP/ICEBERG/POV/IS/ALT、参与率<15%分钟成交量(时变:开盘15%/上午10%/午盘5%/尾盘15%)、执行时间窗口=开盘前5min/收盘前10min/均匀分布、流动性前置检查、执行进度偏差阈值(proposed)；④数据流：合规订单→Almgren-Chriss最优轨迹+算法选择+大单拆分+参与率控制→子订单序列→BM-EXE-02；⑤代码：MOD-EX-014 order_splitter(planned)+MOD-XS-001/004/005/011(stable) / 草图§9.2 Almgren-Chriss+§15执行算法；⑥降级：Order Splitter未就绪→整单直发(无拆单，冲击成本升高)。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-EX-014 | primary | planned | planned |
+| depgraph | MOD-XS-001 | supplement | stable | generated |
+| depgraph | MOD-XS-004 | supplement | stable | generated |
+| depgraph | MOD-XS-005 | supplement | stable | generated |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
 ### BM-EXE-02 交易执行 / Trade Execution
 
@@ -730,16 +979,16 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | 风控审批通过 阈值: 下单+成交回报 |
-| ② 消费数据/因子 | 审批后订单（来自 BM-EXE-01） |
-| ③ 参数 | order_algo=自适应（范围 -，代码当前: 待实现，状态: proposed） |
-| ④ 数据流 | 输入: 审批后订单 → 处理: C-002 下单+成交回报 → 输出: 交易指令+成交回报+PnL → 下游: BM-REC-01 运营清算 |
-| ⑤ 代码映射 | C-002 / 草图§9 L4 层 |
-| ⑥ 降级/中止 | C-002 失败 → 订单重试+告警 |
+| ① 触发条件 | 拆单方案就绪(BM-EXE-05) 阈值: 下单+成交回报 |
+| ② 消费数据/因子 | 子订单序列（来自 BM-EXE-05） |
+| ③ 参数 | order_algo=自适应（范围 -，代码当前: 待实现，状态: proposed）<br>miniqmt_rate=10笔/秒（范围 -，代码当前: 下单速率10笔/秒+同标的间隔≥500ms，状态: implemented） |
+| ④ 数据流 | 输入: 子订单序列 → 处理: C-002 下单(miniQMT通道)+成交回报 → 输出: 交易指令+成交回报+PnL → 下游: BM-EXE-06 成交回报处理与持仓更新 + BM-REC-01 运营清算 |
+| ⑤ 代码映射 | C-002 / 草图§9 L4 层 / MOD-XS-002 broker_adapter |
+| ⑥ 降级/中止 | C-002 失败 → 下单零重试(幂等Key HB-07)+告警 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：风控审批通过；②消费：BM-EXE-01 审批后订单；③参数：order_algo=自适应；④数据流：审批后订单→C-002 下单→交易指令+成交回报+PnL→BM-REC-01；⑤代码：C-002 L4 层；⑥降级：C-002 失败→订单重试+告警。
+①触发：拆单方案就绪(BM-EXE-05)；②消费：BM-EXE-05 子订单序列；③参数：order_algo=自适应、miniQMT下单速率10笔/秒、同标的间隔≥500ms；④数据流：子订单→C-002 下单(miniQMT通道)→交易指令+成交回报+PnL→BM-EXE-06；⑤代码：C-002 L4 层 / MOD-XS-002 broker_adapter；⑥降级：C-002 失败→下单零重试(幂等Key HB-07)+告警。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -753,6 +1002,48 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 | candidate | CAND-EX-002 | supplement | deferred | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
+
+### BM-EXE-06 成交回报处理与持仓更新 / Fill Processing & Position Update
+
+> **大白话**：成交回来后拆解回报、算费用、更新持仓、推订单状态机——部分成交聚合、T+1 结算、持仓对账，把成交变成可用的持仓和账面数据。
+
+**机制说明**：
+
+L4 层。D-EX-CORE-08 Fill Processor + D-EX-CORE-04 Position Tracker + D-EX-CORE-11 Order State Machine + D-EX-CORE-57 下单执行Saga编排器 + D-EX-CORE-56 持仓对账器。
+Fill Processor(D-EX-CORE-08)：成交解析器+部分成交聚合器+成交归因器+费用计算器(佣金/印花税/过户费)，T+1结算合规。
+Position Tracker(D-EX-CORE-04)：AGG-002 Position聚合根(symbol/quantity/avg_cost/market_value/unrealized_pnl)，方案C(风控发指令+Fill回调写入)，每笔成交后更新Redis，持仓数据3秒内一致。
+Order State Machine(D-EX-CORE-11)：7状态机 PENDING→{SUBMITTED,CANCELLED}/SUBMITTED→{PARTIAL,FILLED,CANCELLED,REJECTED,EXPIRED}/PARTIAL→{FILLED,CANCELLED,REJECTED,EXPIRED}，持久化+事件发射。
+下单执行Saga(D-EX-CORE-57)：编排式六步(风控检查→信号确认→下单提交→成交确认→持仓更新→报告生成)，≤5s超时硬约束，补偿幂等，Redis Stream状态持久化。
+持仓对账(D-EX-CORE-56)：每5分钟与miniQMT持仓查询自动对账，差异>0→立即告警+冻结该标的交易，恢复后先对账不一致→D-L1降级。
+最终一致性：订单成交→持仓更新<100ms。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 成交回报到达(BM-EXE-02) 阈值: — |
+| ② 消费数据/因子 | 成交回报（来自 BM-EXE-02）<br>订单状态（来自 BM-EXE-02） |
+| ③ 参数 | 订单7状态机=7状态（范围 PENDING→SUBMITTED→PARTIAL/FILLED/CANCELLED/REJECTED/EXPIRED，代码当前: order_manager(stable)，状态: implemented）<br>部分成交聚合=聚合器（范围 -，代码当前: fill_processor待实现，状态: proposed）<br>费用计算=佣金/印花税/过户费（范围 -，代码当前: 待实现，状态: proposed）<br>T+1结算=T+1（范围 -，代码当前: A股T+1，状态: implemented）<br>持仓对账周期=5min（范围 -，代码当前: position_reconciler(stable)，状态: implemented）<br>Saga超时=≤5s（范围 -，代码当前: order_execution_saga(stable)，状态: implemented） |
+| ④ 数据流 | 输入: 成交回报+订单状态 → 处理: Fill解析+部分成交聚合+费用计算+持仓更新+订单状态机流转+持仓对账 → 输出: 持仓快照+PnL → 下游: BM-EXE-03(TCA) + BM-POS-03(持仓状态机) + BM-REC-01(清算) |
+| ⑤ 代码映射 | MOD-EX-008+MOD-EX-002+MOD-EX-057+MOD-EX-056 / 草图§9 L4层+§13 Saga |
+| ⑥ 降级/中止 | Fill Processor未就绪 → 仅原始成交记录(持仓更新延迟，依赖盘后对账) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：成交回报到达(BM-EXE-02)；②消费：BM-EXE-02 成交回报 + 订单状态；③参数：订单7状态机(PENDING→SUBMITTED→PARTIAL/FILLED/CANCELLED/REJECTED/EXPIRED)、部分成交聚合、费用计算=佣金/印花税/过户费、T+1结算、持仓对账周期=5min、Saga超时≤5s；④数据流：成交回报→Fill解析+部分成交聚合+费用计算+持仓更新+订单状态机流转→持仓快照+PnL→BM-EXE-03(TCA)+BM-POS-03(持仓状态机)+BM-REC-01(清算)；⑤代码：MOD-EX-008 fill_processor(planned)+MOD-EX-002 tracker(stable)+MOD-EX-057 saga(stable)+MOD-EX-056 reconciler(stable) / 草图§9 L4层+§13 Saga；⑥降级：Fill Processor未就绪→仅原始成交记录(持仓更新延迟，依赖盘后对账)。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-EX-008 | primary | planned | planned |
+| depgraph | MOD-EX-002 | supplement | stable | stable |
+| depgraph | MOD-EX-057 | supplement | stable | stable |
+| depgraph | MOD-EX-056 | supplement | stable | generated |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
 ### BM-EXE-03 执行质量TCA / Execution Quality TCA
 
@@ -776,15 +1067,15 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 | 要素 | 内容 |
 |---|---|
 | ① 触发条件 | 成交回报到达 阈值: — |
-| ② 消费数据/因子 | 成交回报（来自 BM-EXE-02）<br>决策时刻价格（来自 BM-BUY-04/BM-SELL-02）<br>VWAP/TWAP/开盘价/收盘价（来自 L0）<br>C-042策略容量（来自 L3）<br>C-046历史TCA数据（来自 本环节） |
+| ② 消费数据/因子 | 成交回报（来自 BM-EXE-06）<br>决策时刻价格（来自 BM-BUY-04/BM-SELL-02）<br>VWAP/TWAP/开盘价/收盘价（来自 L0）<br>C-042策略容量（来自 L3）<br>C-046历史TCA数据（来自 本环节） |
 | ③ 参数 | IS成本分解=时机成本+市场冲击+滑点+佣金（范围 -，代码当前: 滑点slippage_bps + 佣金commission + IS shortfall(_calc_shortfall)，状态: implemented）<br>TCA阶段=Pre-trade/At-trade/Post-trade（范围 -，代码当前: Post-trade(analyze/analyze_batch方法); Pre-trade/At-trade未实现，状态: implemented）<br>执行基准=VWAP/TWAP/开盘价/收盘价（范围 -，代码当前: arrival(到达价)——benchmark_price_source默认值，状态: implemented）<br>参与率控制=<15%分钟成交量（范围 -，代码当前: participation_rate=0.10 (10%分钟成交量)，状态: implemented）<br>执行进度偏差阈值=—（范围 -，代码当前: 待实现，状态: proposed） |
-| ④ 数据流 | 输入: 成交回报+决策时刻价格 → 处理: IS成本分解+三阶段TCA+基准对比 → 输出: 执行质量评分+成本归因 → 下游: 反馈到BM-EXE-02执行算法(Almgren-Chriss) + BM-REC-02复盘 |
+| ④ 数据流 | 输入: 成交回报+决策时刻价格 → 处理: IS成本分解+三阶段TCA+基准对比 → 输出: 执行质量评分+成本归因 → 下游: 反馈到BM-EXE-05拆单算法(Almgren-Chriss) + BM-REC-02复盘 |
 | ⑤ 代码映射 | MOD-L07-001 / 草图§9.2 C-046（MOD-L07-001 default_tca_engine） |
 | ⑥ 降级/中止 | TCA引擎未就绪 → 仅记录成交不分析(复盘缺执行质量维度) |
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：成交回报到达；②消费：成交回报(BM-EXE-02)+决策时刻价格(BM-BUY-04/BM-SELL-02)+VWAP/TWAP/开盘价/收盘价(L0)+C-042策略容量(L3)+C-046历史TCA数据(本环节)；③参数：IS成本分解(时机+冲击+滑点+佣金)、Pre/At/Post三阶段、执行基准VWAP/TWAP/开盘/收盘、参与率<15%、执行进度偏差阈值(proposed)；④数据流：成交回报+决策时刻价格→IS成本分解+三阶段TCA+基准对比→执行质量评分+成本归因→反馈到执行算法+复盘；⑤代码：MOD-L07-001 default_tca_engine(stable)；⑥降级：TCA引擎未就绪→仅记录成交不分析(复盘缺执行质量维度)。
+①触发：成交回报到达；②消费：成交回报(BM-EXE-06)+决策时刻价格(BM-BUY-04/BM-SELL-02)+VWAP/TWAP/开盘价/收盘价(L0)+C-042策略容量(L3)+C-046历史TCA数据(本环节)；③参数：IS成本分解(时机+冲击+滑点+佣金)、Pre/At/Post三阶段、执行基准VWAP/TWAP/开盘/收盘、参与率<15%、执行进度偏差阈值(proposed)；④数据流：成交回报+决策时刻价格→IS成本分解+三阶段TCA+基准对比→执行质量评分+成本归因→反馈到BM-EXE-05拆单算法+BM-REC-02复盘；⑤代码：MOD-L07-001 default_tca_engine(stable)；⑥降级：TCA引擎未就绪→仅记录成交不分析(复盘缺执行质量维度)。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -826,6 +1117,92 @@ L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决
 |---|---|---|---|---|
 | depgraph | MOD-POS-001 | primary | planned | generated |
 | candidate | CAND-HARVEST-0019 | supplement | candidate | — |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+
+### BM-POS-06 现金管理约束 / Cash Management Constraint
+
+> **大白话**：仓位的"现金刹车"——留够保命钱(最低储备金)+机会钱(X%)，T+1结算约束下算可用资金，节假日多留5-15%现金，闲置钱做逆回购生息，反馈给仓位裁决作为现金硬约束。
+
+**机制说明**：
+
+D-POSITION §1.1 POS-06 Cash Manager + §7.1 第一层组合层现金约束。
+现金管理独立子模块(T+1结算约束下现金规划刚需)：资金流水+结算状态 → 可用资金头寸+现金约束 → 反馈 POS-01 仓位裁决。
+约束体系：
+  最低储备金：账户最低现金底线，任何仓位决策不可突破。
+  机会储备X%：预留用于突发机会的现金比例。
+  T+1结算约束：当日卖出资金T+1才可用，仓位决策须按T+1可用资金计算。
+  现金储备≥最低阈值：低于阈值自动收紧仓位上限。
+  节假日持币规划：节前2天+节后1天提高现金比例5-15%(规避节假日不确定性)。
+  闲置资金逆回购：闲置现金做逆回购生息，提升资金利用率。
+与POS-01的反馈：现金约束作为组合层第一道约束，仓位裁决必须在现金可用额度内决策。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 资金流水变更 / 结算状态更新 / 节假日临近 阈值: — |
+| ② 消费数据/因子 | 资金流水+结算状态（来自 D-EX-CORE CTR-006）<br>最低储备金配置（来自 D-PF-CORE）<br>节假日日历（来自 D-DATA） |
+| ③ 参数 | 最低储备金=账户最低现金底线（范围 -，代码当前: 最低储备金约束，状态: implemented）<br>机会储备X%=预留突发机会现金比例（范围 -，代码当前: 机会储备比例，状态: implemented）<br>T+1结算约束=当日卖出资金T+1才可用（范围 -，代码当前: T+1结算约束，状态: implemented）<br>节假日现金比例=节前2天+节后1天提高5-15%（范围 5-15%，代码当前: 节假日持币规划，状态: implemented）<br>闲置资金逆回购=闲置现金逆回购生息（范围 -，代码当前: 逆回购，状态: implemented） |
+| ④ 数据流 | 输入: 资金流水+结算状态 → 处理: 可用资金计算+现金约束判定 → 输出: 现金头寸+现金约束 → 下游: BM-POS-01 仓位裁决(现金可用额度内决策) |
+| ⑤ 代码映射 | MOD-POS-006 / D-POSITION §1.1 POS-06 + §7.1 第一层组合层现金约束 |
+| ⑥ 降级/中止 | 现金管理器未就绪 → 按T+1可用资金粗略估算(可能高估可用资金，需风控层兜底) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：资金流水变更/结算状态更新/节假日临近；②消费：资金流水+结算状态(D-EX-CORE CTR-006)+最低储备金配置+节假日日历(D-DATA)；③参数：最低储备金、机会储备X%、T+1结算、节假日现金比例5-15%、闲置资金逆回购(implemented)；④数据流：资金流水+结算→可用资金计算+现金约束判定→现金头寸+现金约束→反馈POS-01仓位裁决(现金可用额度内决策)；⑤代码：MOD-POS-006 cash_manager(stable)；⑥降级：现金管理器未就绪→按T+1可用资金粗略估算(可能高估可用资金，需风控层兜底)。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-POS-006 | primary | stable | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+
+### BM-POS-08 日历仓位约束 / Calendar Position Constraint
+
+> **大白话**：A股"风险日历"自动收紧仓位——期权交割日只许减仓不许开新，4月下旬ST股强制清零，财报发布前3天降仓位+禁新建，微盘股空窗期收紧50%，交割日前后临时下调5-10%。
+
+**机制说明**：
+
+D-POSITION §1.5 POS-17 Calendar Position Constraint + §7.4 A股风险日历→仓位约束(v8.0)。
+日历仓位约束：A股风险日历 + 当前日期 → CalendarPositionAlert + 临时仓位上限调整。
+可预测周期性风险事件驱动的自动仓位收紧(仓位框架自优化的日历维度)：
+  股指期货交割日(每月第三个周五)：交割日前1日VaR置信度95%→99%。
+  股指期权交割日(每月第四个周三)：否决新开仓位(仅允许减仓)。
+  年报预告截止日(1月31日)：截止日前5日否决未出预告个股新买入。
+  年报+一季报截止日(4月30日)：4月下旬ST股仓位强制清零。
+  半年报预告截止日(7月15日)：截止日前5日否决未出预告个股新买入。
+  股东信息空窗期(11月-次年4月30日)：微盘股(<50亿市值)仓位上限收紧50%。
+  交割日前2天+后1天：仓位上限临时下调5-10%。
+  财报发布前3天：该标的仓位上限临时下调+禁止新建。
+产出：CalendarPositionAlert事件(E-POS-06) → D-RISK/D-REPORTING，并临时调整仓位上限反馈POS-01/POS-10。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 当前日期命中风险日历事件 阈值: — |
+| ② 消费数据/因子 | A股风险日历（来自 D-DATA）<br>当前持仓（来自 D-EX-CORE）<br>ST标记（来自 D-FACTOR）<br>市值分类（来自 D-FACTOR） |
+| ③ 参数 | 期权交割日=否决新开仓位(仅允许减仓)（范围 -，代码当前: 期权交割日否决新开仓，状态: implemented）<br>4月下旬ST清零=ST股仓位强制清零（范围 -，代码当前: 年报截止日ST清零，状态: implemented）<br>预告截止日前5日=否决未出预告个股新买入（范围 -，代码当前: 预告截止日前5日否决新买入，状态: implemented）<br>微盘股空窗期=<50亿市值仓位上限收紧50%（范围 -，代码当前: 股东信息空窗期微盘股收紧50%，状态: implemented）<br>交割日前后=仓位上限临时下调5-10%（范围 5-10%，代码当前: 交割日前后下调5-10%，状态: implemented）<br>财报前3天=标的仓位上限下调+禁止新建（范围 -，代码当前: 财报前3天降仓位+禁新建，状态: implemented） |
+| ④ 数据流 | 输入: 风险日历+当前日期 → 处理: 日历事件匹配+临时仓位上限调整 → 输出: CalendarPositionAlert+临时仓位上限 → 下游: BM-POS-01 仓位裁决上限 / BM-POS-04 跨策略硬限制 |
+| ⑤ 代码映射 | MOD-POS-017 / D-POSITION §1.5 POS-17 + §7.4 A股风险日历 |
+| ⑥ 降级/中止 | 日历数据缺失 → 跳过日历约束(仅依赖市场状态仓位上限，可能漏防周期性风险) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：当前日期命中风险日历事件；②消费：A股风险日历(D-DATA)+当前持仓(D-EX-CORE)+ST标记+市值分类(D-FACTOR)；③参数：期权交割日仅减仓、4月下旬ST清零、预告截止日前5日否决新买入、微盘股空窗期收紧50%、交割日前后下调5-10%、财报前3天降仓位+禁新建(implemented)；④数据流：风险日历+当前日期→日历事件匹配+临时仓位上限调整→CalendarPositionAlert→仓位裁决上限(BM-POS-01)+跨策略硬限制(BM-POS-04)；⑤代码：MOD-POS-017 calendar_position_constraint(stable)；⑥降级：日历数据缺失→跳过日历约束(仅依赖市场状态仓位上限，可能漏防周期性风险)。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-POS-017 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -910,6 +1287,92 @@ v6.0持仓时间预算(Position Time Budget)：每标的最大持仓时间→超
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
+### BM-POS-07 再平衡执行 / Rebalance Execution
+
+> **大白话**：漂移超阈值后算"划不划得来"——预期收益改善>2×交易成本才动手，阴跌/加速下跌/恐慌崩盘时成本×1.5更谨慎，再平衡后组合仓位偏差<1%才算到位，周频强制+偏离+事件三类触发。
+
+**机制说明**：
+
+D-POSITION §1.1 POS-04 Rebalance Engine + §7.1 第四层动态层 + §20.13约束13.4再平衡成本-收益决策。
+再平衡引擎：DriftDetected(漂移检测) + 再平衡调度 → RebalanceTriggered事件 + 调仓指令列表。
+再平衡成本-收益决策规则(约束13.4)：再平衡执行前必须计算预期收益改善vs交易成本(佣金+滑点+冲击成本)。
+  只有预期收益改善>2×交易成本时才执行再平衡。
+  市场状态为⑦阴跌/⑧加速下跌/⑨恐慌崩盘时成本系数×1.5(恶化市场更谨慎)。
+三类触发源：
+  日历触发：周频强制再平衡评估(防止长期不调导致偏离累积)。
+  偏离触发：组合±2%/单标的±3%漂移(来自POS-03)。
+  事件触发：重大事件(黑天鹅/政策变化)驱动的紧急再平衡。
+再平衡执行后约束：组合仓位偏差<1%(执行质量SLA)。
+与POS-03的关系：POS-03漂移监控触发评估→POS-04再平衡决策(成本-收益)→执行→反馈POS-01/POS-02仓位调整。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | DriftDetected漂移检测 / 周频日历 / 重大事件 阈值: 组合±2%/单标的±3% |
+| ② 消费数据/因子 | 漂移检测结果（来自 BM-POS-03）<br>交易成本（来自 BM-EXE-03）<br>市场状态（来自 BM-SEL-03/C-021）<br>当前持仓（来自 D-EX-CORE CTR-006） |
+| ③ 参数 | 收益改善门槛=>2×交易成本（范围 -，代码当前: 再平衡收益改善>2×成本，状态: implemented）<br>恶化市场成本系数=⑦⑧⑨成本×1.5（范围 -，代码当前: 恶化市场成本系数×1.5，状态: implemented）<br>周频强制触发=周频强制再平衡评估（范围 -，代码当前: 周频日历触发，状态: implemented）<br>再平衡后偏差=<1%（范围 -，代码当前: 组合仓位偏差<1%，状态: implemented） |
+| ④ 数据流 | 输入: 漂移检测+再平衡调度 → 处理: 成本-收益决策 → 输出: RebalanceTriggered+调仓指令 → 下游: BM-POS-02 标级仓位调整 / BM-POS-10 仓位审计 |
+| ⑤ 代码映射 | MOD-POS-004 / D-POSITION §1.1 POS-04 + §7.1 第四层 + §20.13约束13.4 |
+| ⑥ 降级/中止 | 再平衡引擎未就绪 → 仅机会成本驱动置换，跳过权重偏离再平衡(保守原则) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：DriftDetected漂移检测/周频日历/重大事件；②消费：漂移检测结果(BM-POS-03)+交易成本(BM-EXE-03)+市场状态(BM-SEL-03/C-021)+当前持仓(D-EX-CORE CTR-006)；③参数：收益改善门槛>2×交易成本、⑦⑧⑨成本系数×1.5、周频强制触发、再平衡后偏差<1%(implemented)；④数据流：漂移检测+调度→成本-收益决策→RebalanceTriggered+调仓指令→标级仓位调整(BM-POS-02)+仓位审计(BM-POS-10)；⑤代码：MOD-POS-004 rebalance_engine(stable)；⑥降级：再平衡引擎未就绪→仅机会成本驱动置换，跳过权重偏离再平衡(保守原则)。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-POS-004 | primary | stable | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+
+### BM-POS-09 卖出仓位反馈链路 / Sell-Position Bidirectional Link
+
+> **大白话**：仓位和卖出"双向通话"——盈利时放宽卖出阈值、亏损时收紧；买入后即时验证(5min跌破1%放量→观察/15min破分时均线→减半/30min反向2ATR→止损)，把仓位状态反馈给卖出决策。
+
+**机制说明**：
+
+D-POSITION §1.4 POS-16 Sell-Position Bidirectional Link(v6.0)。
+卖出-仓位双向链路：SellDecision + 仓位状态 → PositionStateFeedback → D-SELL-DECISION。
+双向反馈机制：
+  盈利状态→卖出阈值放宽(让利润奔跑，减少过早止盈)。
+  亏损状态→卖出阈值收紧(加速止损，控制亏损)。
+买入后即时验证(防止买入即套)：
+  5min跌破买入价>1%且放量→进入观察期(OBSERVING)。
+  15min跌破分时均线且反弹无力→减仓50%。
+  30min反向运动>2ATR→全部止损。
+与POS-02状态机联动：即时验证结果驱动状态机迁移(BUILDING→OBSERVING→REDUCING→EXITING)。
+PositionStateFeedback作为D-SELL-DECISION的输入，实现仓位状态→卖出决策的闭环。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 卖出决策到达 / 买入后即时验证窗口 / 仓位状态变更 阈值: — |
+| ② 消费数据/因子 | 卖出决策（来自 BM-SELL-02 CTR-SELL-001）<br>仓位状态（来自 BM-POS-01/03）<br>买入价+分时均线+ATR（来自 D-MKT_DATA） |
+| ③ 参数 | 盈利放宽阈值=盈利状态→卖出阈值放宽（范围 -，代码当前: 盈利状态卖出阈值放宽，状态: implemented）<br>亏损收紧阈值=亏损状态→卖出阈值收紧（范围 -，代码当前: 亏损状态卖出阈值收紧，状态: implemented）<br>5min跌破1%放量=→观察期(OBSERVING)（范围 -，代码当前: 5min跌破买入价>1%且放量→观察，状态: implemented）<br>15min破分时均线=→减仓50%（范围 -，代码当前: 15min跌破分时均线→减仓50%，状态: implemented）<br>30min反向2ATR=→全部止损（范围 -，代码当前: 30min反向运动>2ATR→全部止损，状态: implemented） |
+| ④ 数据流 | 输入: 卖出决策+仓位状态 → 处理: 盈亏状态判定+即时验证 → 输出: PositionStateFeedback → 下游: D-SELL-DECISION 卖出阈值动态调整 / BM-POS-03 状态机 |
+| ⑤ 代码映射 | MOD-POS-016 / D-POSITION §1.4 POS-16 Sell-Position Bidirectional Link(v6.0) |
+| ⑥ 降级/中止 | 双向链路未就绪 → 卖出阈值固定不随盈亏调整(可能过早止盈或过晚止损) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：卖出决策到达/买入后即时验证窗口/仓位状态变更；②消费：卖出决策(BM-SELL-02 CTR-SELL-001)+仓位状态(BM-POS-01/03)+买入价+分时均线+ATR(D-MKT_DATA)；③参数：盈利放宽阈值、亏损收紧阈值、5min跌破1%放量→观察、15min破分时均线→减半、30min反向2ATR→止损(implemented)；④数据流：卖出决策+仓位状态→盈亏状态判定+即时验证→PositionStateFeedback→D-SELL-DECISION(卖出阈值动态调整)+状态机(BM-POS-03)；⑤代码：MOD-POS-016 sell_position_link(stable)；⑥降级：双向链路未就绪→卖出阈值固定不随盈亏调整(可能过早止盈或过晚止损)。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-POS-016 | primary | stable | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+
 ### BM-POS-04 跨策略仓位硬限制 / Cross-Strategy Position Hard Limit
 
 > **大白话**：多策略同标的仓位合并取sum不超上限，新策略上线仓位砍到正常的30%，行业偏离/风格暴露有硬约束，C-047是仓位裁决唯一中心(只有C-004风控veto能绕过)。
@@ -987,6 +1450,45 @@ C-032异常模式检测：识别资金曲线的结构性恶化(非随机下行�
 |---|---|---|---|---|
 | depgraph | MOD-POS-007 | primary | stable | stable |
 | depgraph | MOD-POS-008 | supplement | planned | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+
+### BM-POS-10 仓位审计追溯 / Position Audit Trail
+
+> **大白话**：仓位变动的"黑匣子"——每次仓位变更全记录+审批链+哈希链防篡改，可追溯到报告域和治理域，是仓位决策合规追溯的唯一真源。
+
+**机制说明**：
+
+D-POSITION §1.3 POS-09 Position Audit Logger。
+仓位审计日志：仓位变更事件 → 仓位审计报告 → D-REPORTING + D-GOVERNANCE。
+审计要素：全记录(每次仓位变更)+审批链(决策→裁决→风控→执行全链路)+可追溯(哈希链防篡改)。
+审计范围：仓位裁决(C-047)决策+标级Kelly仓位+漂移再平衡+资金曲线缩放+日历约束调整+跨策略合并等全部仓位变更事件。
+审计报告产出：PositionAuditReport → D-REPORTING(报告域归档) + D-GOVERNANCE(治理域合规审计)。
+与不变量INV-POS-001(仓位裁决不可绕过)的关系：审计日志是"不可绕过"的事后验证手段——所有仓位决策必须留痕，无留痕=绕过裁决。
+哈希链机制：每条审计记录含前一条哈希，篡改任意记录会导致后续哈希全部失效，确保审计完整性。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 任意仓位变更事件(裁决/Kelly/漂移/再平衡/缩放/日历/合并) 阈值: — |
+| ② 消费数据/因子 | 仓位变更事件（来自 BM-POS-01~09全部环节）<br>审批链（来自 D-RISK C-004）<br>执行结果（来自 D-EX-CORE） |
+| ③ 参数 | 全记录=每次仓位变更全记录（范围 -，代码当前: 全记录，状态: implemented）<br>审批链=决策→裁决→风控→执行全链路（范围 -，代码当前: 审批链，状态: implemented）<br>哈希链防篡改=前一条哈希链接（范围 -，代码当前: 哈希链防篡改，状态: implemented） |
+| ④ 数据流 | 输入: 仓位变更事件 → 处理: 全记录+审批链+哈希链 → 输出: PositionAuditReport → 下游: D-REPORTING 归档 / D-GOVERNANCE 合规审计 |
+| ⑤ 代码映射 | MOD-POS-009 / D-POSITION §1.3 POS-09 Position Audit Logger |
+| ⑥ 降级/中止 | 审计日志器未就绪 → 仓位决策阻断(审计是合规底线，无审计不允许执行，保守原则) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：任意仓位变更事件(裁决/Kelly/漂移/再平衡/缩放/日历/合并)；②消费：仓位变更事件(BM-POS-01~09全部环节)+审批链(D-RISK C-004)+执行结果(D-EX-CORE)；③参数：全记录、审批链、哈希链防篡改(implemented)；④数据流：仓位变更事件→全记录+审批链+哈希链→PositionAuditReport→D-REPORTING归档+D-GOVERNANCE合规审计；⑤代码：MOD-POS-009 position_audit_logger(stable)；⑥降级：审计日志器未就绪→仓位决策阻断(审计是合规底线，无审计不允许执行，保守原则)。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-POS-009 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -1164,6 +1666,314 @@ L5/运营层。C-018●核心多账户多策略(D-TRADING-05)。按AUM分仓/独
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-TRADING-003 | supplement | planned | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-01-A 结算对账 / Settlement & Reconciliation
+
+> **大白话**：每日盘后把系统记录和券商结算单逐笔核对，发现差异立刻告警，是T+1对账的核心。
+
+**机制说明**：
+
+BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力②结算对账(D-TRADING-02)。
+每日15:30后自动对账：系统成交记录vs券商结算单逐笔比对，差异告警，A股T+1结算。
+事件E-TR-01 SettlementCompleted / E-TR-02 ReconciliationCompleted。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：成交回报就绪+每日15:30自动触发(A股T+1)；②消费：BM-EXE-02成交回报+券商结算单；③参数：settle_cycle=T+1、settles_at=15:30；④数据流：成交回报→D-TRADING-02结算对账→运营数据→BM-REC-02；⑤代码：MOD-TRADING-003 settlement_reconciliation.py(stable)、C-017②；⑥降级：D-TRADING-02不可用→手动清算兜底。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-TRADING-003 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-01-B 公司行为与费率 / Corporate Action & Fee
+
+> **大白话**：处理除权除息自动调持仓成本、算佣金印花税过户费、监控分红配股拆股，是运营数据准确性的保障。
+
+**机制说明**：
+
+BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力③④⑤：
+③除权除息(D-TRADING-03 除权日自动调整持仓成本+目标价)④费率(佣金/印花税/过户费→向C-010供PnL数据)⑤公司行为(分红/配股/拆股监控→通知用户)。
+事件E-TR-03 CorporateActionAdjusted。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：除权除息日+公司行为公告；②消费：BM-REC-01-A清算数据+公告；③参数：fee_types=佣金/印花税/过户费、corporate_action_types=分红/配股/拆股；④数据流：清算数据→D-TRADING-03除权除息/费率/公司行为→调整后持仓+费率→C-010 PnL；⑤代码：MOD-TRADING-004 corporate_action_processor.py(stable)、C-017③④⑤；⑥降级：D-TRADING-03不可用→手动调整持仓成本。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-TRADING-004 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-A TCA执行质量分析 / TCA Execution Quality Analysis
+
+> **大白话**：算每笔交易的真实成本——滑点、冲击成本、市场影响，看执行得好不好。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-01 TCA Engine：交易成本分析(滑点/冲击成本/市场影响量化)。
+输入CTR-005 Fill+CTR-006 PositionSnapshot。承接BM-EXE-03执行质量数据，输出TCA报告供绩效归因消费。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：成交回报就绪；②消费：BM-EXE-03执行质量+CTR-005成交+CTR-006持仓；③参数：tca_metrics=滑点/冲击成本/市场影响；④数据流：成交→D-REPORTING-01 TCA→TCA报告→BM-REC-02-B绩效归因；⑤代码：MOD-L07-001 default_tca_engine.py(generated)、D-REPORTING-01；⑥降级：TCA不可用→仅名义成本统计。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L07-001 | supplement | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-B 绩效归因 / Performance Attribution
+
+> **大白话**：把盈亏拆开看——赚的钱是选股选对的、还是配比配对的、还是行业轮动轮对的，找出Alpha来源。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-02 Attribution Engine：
+Brinson归因(配置效应+选择效应+交互效应)+因子归因+风险归因+策略退化检测(IC衰减>50%=退化+拥挤度检测+自动降权)。
+输入CTR-005+CTR-006+CTR-P1-001。MOD-RPT-015 planned未实现，MOD-L07-001 default_attribution_engine.py generated。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：TCA报告就绪；②消费：BM-REC-02-A TCA报告+CTR-005/006/P1-001；③参数：attribution_method=Brinson+多因子、decay_threshold=IC衰减50%；④数据流：TCA→D-REPORTING-02归因→归因报告→BM-REC-02-C复盘；⑤代码：MOD-RPT-015 performance_attribution_report.py(planned)、MOD-L07-001 default_attribution_engine.py(generated)、D-REPORTING-02；⑥降级：归因不可用→基础PnL报表。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-015 | primary | planned | planned |
+| depgraph | MOD-L07-001 | supplement | production | generated |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-C A股交易复盘 / A-Share Trading Review
+
+> **大白话**：针对A股特色做盘前信号验证、盘中异常检测、盘后归因、大额交易异动检测，生成复盘报告。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-15 A-Share Trading Review Engine：
+盘前信号验证(因子IC>阈值∧信号一致性>阈值)/盘中异常检测(价格偏离>2σ∨成交量>3倍均值)/盘后归因分析(Brinson+因子归因)/绩效统计/大额交易异动检测。
+MOD-RPT-026 ashare_performance_audit.py(stable)+MOD-RPT-027 ashare_trade_record_template.py(stable)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：归因报告就绪；②消费：BM-REC-02-B归因报告+CTR-005/006/P1-001；③参数：ic_threshold=因子IC阈值、volume_anomaly=3倍均值；④数据流：归因→D-REPORTING-15 A股复盘→复盘报告→BM-REC-02-D发布；⑤代码：MOD-RPT-026 ashare_performance_audit.py(stable)、MOD-RPT-027 ashare_trade_record_template.py(stable)、D-REPORTING-15、C-010；⑥降级：复盘不可用→基础PnL报表。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-026 | primary | production | generated |
+| depgraph | MOD-RPT-027 | supplement | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-D 报告发布 / Report Publishing
+
+> **大白话**：把复盘报告归档、发到微信和邮件，留好审计凭证。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-03 Report Publisher：
+报告生成/分发/归档+SQLite report_archive+Parquet数据文件+LLM摘要+ACL防腐层数据汇聚。
+分发渠道:微信Webhook+邮件SMTP。MOD-RPT-003 report_publisher.py(stable)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：复盘报告就绪；②消费：BM-REC-02-C复盘报告；③参数：channels=微信/邮件、archive=SQLite+Parquet；④数据流：复盘报告→D-REPORTING-03发布→微信/邮件推送+归档→BM-REC-03闭环优化；⑤代码：MOD-RPT-003 report_publisher.py(stable)、D-REPORTING-03；⑥降级：发布不可用→本地归档不推送。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-003 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-03-A 因子层反馈 / Factor-Layer Feedback
+
+> **大白话**：看因子还灵不灵——IC衰减了就换因子，算半衰期，保证因子池新鲜。
+
+**机制说明**：
+
+BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈到L2因子层：
+IC衰减→因子替代、半衰期compute_half_life计算、单层因子质量反馈。
+MOD-L02-004 ic_decay.py(stable)已production。反馈信号反向回到BM-SEL-02因子计算。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：复盘报告就绪；②消费：BM-REC-02-D复盘报告；③参数：ic_decay_lag=1~20期(max_lag=20)、half_life=compute_half_life；④数据流：复盘报告→MOD-L02-004 IC衰减分析→因子替代信号→BM-SEL-02(反向闭环)；⑤代码：MOD-L02-004 ic_decay.py(stable)、C-007因子层反馈；⑥降级：IC衰减不可用→人工评估因子质量。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-004 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-03-B 信号层反馈 / Signal-Layer Feedback
+
+> **大白话**：看信号准不准——准确率持续下降就退役信号，避免用失效信号下单。
+
+**机制说明**：
+
+BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈到L3信号层：准确率监控→信号退役。
+L1~L4+L3.5多层架构未完整实现(当前仅单层因子质量反馈)。
+无独立锚点，通过父环节BM-REC-03的MOD-L02-004间接覆盖(BM-INV-001君子协定)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：复盘报告就绪；②消费：BM-REC-03-A因子反馈+BM-REC-02-D复盘报告；③参数：accuracy_threshold=信号准确率阈值、retire_window=退役观察窗口；④数据流：复盘报告→准确率监控→信号退役信号→BM-SEL-02(反向闭环)；⑤代码：C-007信号层反馈(未完整实现)；⑥降级：准确率监控不可用→人工评估信号质量。
+
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-03-C 模型层反馈 / Model-Layer Feedback
+
+> **大白话**：看模型飘没飘——检测到漂移就重训练，防止模型用旧数据预测新市场。
+
+**机制说明**：
+
+BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈到L3.5模型层：漂移检测→模型重训练。
+每轮迭代改动必须经过C-003回测门禁。D_ML_TRAIN不在对账阶段域白名单(battle_map_domain_policy.yaml)，
+故无独立锚点，通过父环节BM-REC-03间接覆盖(BM-INV-001君子协定)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：复盘报告就绪；②消费：BM-REC-03-B信号反馈+BM-REC-02-D复盘报告；③参数：drift_threshold=PSI>0.2、retrain_gate=C-003回测门禁；④数据流：复盘报告→漂移检测→模型重训练信号→C-003回测门禁→BM-SEL-02(反向闭环)；⑤代码：C-007模型层反馈(未完整实现)、C-003回测门禁；⑥降级：漂移检测不可用→人工评估模型质量。
+
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -1431,7 +2241,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-003 | primary | planned | generated |
-| depgraph | MOD-INF-002 | supplement | production | stable |
+| depgraph | MOD-INF-002 | supplement | production | generated |
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 
@@ -1466,13 +2276,158 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | stable |
+| depgraph | MOD-L02-001 | primary | production | deprecated |
 | candidate | CAND-SIG-002 | supplement | deferred | — |
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-22 短线选股评分卡 / Short-Term Stock Selection Scorecard
+
+> **大白话**：给短线标的打分——7个维度100分制评分（连板高度/封单强度/板块效应/分歧程度/市值流动性/封板时间/催化强度），再识别强庄股，专门服务短线和打板选股。
+
+**机制说明**：
+
+L2-B 层 A股特色信号。MOD-SIG-023 short_term_stock_selector.py（stable）。
+机构选股评分器（目标价空间40%+基本面30%+技术趋势20%+流动性10%）+ 强庄股识别器（走势独立/换手率异常/盘口神秘大单）+
+连板潜力评分卡（7维100分：连板高度/封单强度/板块效应/分歧程度/市值流动性/封板时间/催化强度）+
+连板分歧程度评估器。产出短线选股清单注入双引擎融合决策。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 盘前全量+盘中增量 阈值: 7维100分评分卡 |
+| ② 消费数据/因子 | 机构选股评分(目标价空间40%+基本面30%+技术趋势20%+流动性10%)（来自 L1/L2）<br>强庄股识别(走势独立/换手率异常/盘口神秘大单)（来自 L0/L2-B）<br>连板评分卡7维(连板高度/封单强度/板块效应/分歧程度/市值流动性/封板时间/催化强度)（来自 L0/L2-B） |
+| ③ 参数 | 评分维度数=7维（范围 -，代码当前: 7维100分，状态: implemented）<br>连板潜力评分=100分制（范围 0-100，代码当前: 已实现，状态: implemented）<br>强庄股识别阈值=走势独立+换手异常+盘口大单（范围 -，代码当前: 已实现，状态: implemented） |
+| ④ 数据流 | 输入: 因子池+资金流+盘口数据 → 处理: 7维评分+强庄股识别+连板潜力评分 → 输出: 短线选股清单+评分 → 下游: BM-SEL-25 双引擎融合决策 |
+| ⑤ 代码映射 | MOD-SIG-023 / src/zephyr/signal_ashare/short_term_stock_selector.py (stable) |
+| ⑥ 降级/中止 | 评分卡未就绪 → 仅技术面筛选，跳过连板/强庄维度 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：盘前全量+盘中增量，7维100分评分卡；②消费：机构选股评分(L1/L2)+强庄股识别(L0/L2-B)+连板评分卡7维(L0/L2-B)；③参数：评分维度数=7维100分(implemented)、连板潜力评分0-100(implemented)、强庄股识别阈值(implemented)；④数据流：因子池+资金流+盘口→7维评分+强庄股识别+连板潜力→短线选股清单→BM-SEL-25 双引擎融合；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：评分卡未就绪→仅技术面筛选跳过连板/强庄维度。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-023 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L2B ｜ **阶段**：stock_selection
+
+### BM-SEL-23 游资接力情绪周期 / Youzi Relay Emotion Cycle
+
+> **大白话**：测游资接力情绪——6个因子打0-100分（连板高度/封单质量/涨停时间/开板次数/竞价强度/助攻梯队），再定位情绪周期4+1阶段（冰点/反核/主升/疯狂/退潮），不同阶段用不同策略。
+
+**机制说明**：
+
+L2-C 层 A股特色信号。MOD-SIG-033 youzi_relay_emotion_engine.py（stable）。
+6因子0-100分评分（连板高度25分+封单质量20分+涨停时间15分+开板次数15分+竞价强度10分+助攻梯队10分）+
+情绪周期4+1阶段定位（冰点/反核/主升/疯狂/退潮）+ 各阶段策略映射。
+产出游资接力情绪评分和周期阶段，作为双引擎融合的游资引擎输入。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 盘中实时（涨停数据到达） 阈值: 6因子0-100分 |
+| ② 消费数据/因子 | 连板高度(25分)+封单质量(20分)+涨停时间(15分)+开板次数(15分)+竞价强度(10分)+助攻梯队(10分)（来自 L0涨停数据）<br>情绪周期4+1阶段(冰点/反核/主升/疯狂/退潮)（来自 L2-C情绪） |
+| ③ 参数 | 6因子权重=25/20/15/15/10/10（范围 -，代码当前: 已实现，状态: implemented）<br>情绪周期阶段数=4+1(冰点/反核/主升/疯狂/退潮)（范围 -，代码当前: 已实现，状态: implemented） |
+| ④ 数据流 | 输入: 涨停数据+竞价+梯队 → 处理: 6因子评分→情绪周期定位→策略映射 → 输出: 游资接力情绪评分+周期阶段 → 下游: BM-SEL-25 双引擎融合决策 |
+| ⑤ 代码映射 | MOD-SIG-033 / src/zephyr/signal_ashare/youzi_relay_emotion_engine.py (stable) |
+| ⑥ 降级/中止 | 情绪引擎未就绪 → 仅量化强度单引擎决策 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：盘中实时（涨停数据到达），6因子0-100分；②消费：连板高度+封单质量+涨停时间+开板次数+竞价强度+助攻梯队(L0涨停数据)+情绪周期4+1阶段(L2-C)；③参数：6因子权重25/20/15/15/10/10(implemented)、情绪周期阶段数=4+1(冰点/反核/主升/疯狂/退潮)(implemented)；④数据流：涨停数据+竞价+梯队→6因子评分→情绪周期定位→策略映射→BM-SEL-25 双引擎融合；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：情绪引擎未就绪→仅量化强度单引擎决策。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-033 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+
+### BM-SEL-24 量化短线强度评级 / Quant Short-Term Strength Rating
+
+> **大白话**：量化角度评短线强度——6个维度打0-100分（价格动量/行业强度/相对强度/资金/技术/风险），评出A到E五级，作为双引擎融合的量化引擎输入。
+
+**机制说明**：
+
+L2-A 层 A股特色信号。MOD-SIG-034 quant_short_term_strength_engine.py（stable）。
+6维度0-100分评分（价格动量Z-score+行业强度+相对强度+资金+技术+风险）+ A~E五级评级 +
+与游资引擎双引擎融合（60%游资+40%量化基准权重）+ 6类输出（主升龙头/二进三/跟风/复苏/伪强/地天反包）。
+产出量化强度评分和评级，作为双引擎融合的量化引擎输入。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 盘前+盘中增量 阈值: 6维度0-100分→A~E五级 |
+| ② 消费数据/因子 | 价格动量Z-score+行业强度+相对强度+资金+技术+风险(6维度)（来自 L1/L2）<br>与游资引擎双引擎融合基准权重(60%游资+40%量化)（来自 BM-SEL-23） |
+| ③ 参数 | 评分维度数=6维度（范围 -，代码当前: 已实现，状态: implemented）<br>评级等级=5级（范围 A~E，代码当前: 已实现，状态: implemented）<br>双引擎基准权重=60%游资+40%量化（范围 -，代码当前: 已实现，状态: implemented） |
+| ④ 数据流 | 输入: 因子池+动量+资金 → 处理: 6维度评分→A~E评级→双引擎融合输入 → 输出: 量化强度评分+评级 → 下游: BM-SEL-25 双引擎融合决策 |
+| ⑤ 代码映射 | MOD-SIG-034 / src/zephyr/signal_ashare/quant_short_term_strength_engine.py (stable) |
+| ⑥ 降级/中止 | 强度引擎未就绪 → 仅游资情绪单引擎决策 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：盘前+盘中增量，6维度0-100分→A~E五级；②消费：价格动量Z-score+行业强度+相对强度+资金+技术+风险(6维度)(L1/L2)+双引擎基准权重60%游资+40%量化(BM-SEL-23)；③参数：评分维度数=6维度(implemented)、评级等级=A~E五级(implemented)、双引擎基准权重60%游资+40%量化(implemented)；④数据流：因子池+动量+资金→6维度评分→A~E评级→双引擎融合输入→BM-SEL-25；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：强度引擎未就绪→仅游资情绪单引擎决策。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-034 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+
+### BM-SEL-25 双引擎融合决策 / Dual-Engine Fusion Decision
+
+> **大白话**：把游资情绪引擎和量化强度引擎的信号融合起来——基准是游资60%+量化40%，但情绪周期会自动调权重（冰点时量化占70%，主升时游资占70%），输出6类决策（主升龙头/二进三/跟风/复苏/伪强/地天反包）。
+
+**机制说明**：
+
+L3 层 A股特色信号。MOD-SIG-035 dual_engine_fusion_decision_engine.py（stable）。
+游资引擎+量化引擎信号融合（60%游资+40%量化基准权重）+ 情绪周期自适应权重调整
+（冰点→量化70%/主升→游资70%/退潮→量化60%）+ 6类决策输出
+（主升龙头/二进三/跟风/复苏/伪强/地天反包）+ PDF分布信号提取
+（方向/置信度/尾部风险/相对价值）。融合结果注入组合优化层。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 游资+量化双引擎就绪 阈值: 6类决策输出 |
+| ② 消费数据/因子 | 游资引擎信号(60%基准)（来自 BM-SEL-23）<br>量化引擎信号(40%基准)（来自 BM-SEL-24）<br>情绪周期自适应权重(冰点→量化70%/主升→游资70%/退潮→量化60%)（来自 BM-SEL-23） |
+| ③ 参数 | 基准权重=60%游资+40%量化（范围 -，代码当前: 已实现，状态: implemented）<br>自适应权重切换=情绪周期驱动（范围 -，代码当前: 已实现，状态: implemented）<br>决策输出类型数=6类(主升龙头/二进三/跟风/复苏/伪强/地天反包)（范围 -，代码当前: 已实现，状态: implemented） |
+| ④ 数据流 | 输入: 双引擎信号+情绪周期 → 处理: 融合+自适应权重+PDF分布信号提取 → 输出: 6类决策输出+PDF分布信号(方向/置信度/尾部风险/相对价值) → 下游: BM-SEL-21 组合优化 |
+| ⑤ 代码映射 | MOD-SIG-035 / src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py (stable) |
+| ⑥ 降级/中止 | 融合引擎未就绪 → 两引擎独立输出，不做融合 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：游资+量化双引擎就绪，6类决策输出；②消费：游资引擎信号60%基准(BM-SEL-23)+量化引擎信号40%基准(BM-SEL-24)+情绪周期自适应权重(冰点→量化70%/主升→游资70%/退潮→量化60%)(BM-SEL-23)；③参数：基准权重60%游资+40%量化(implemented)、自适应权重切换=情绪周期驱动(implemented)、决策输出类型数=6类(implemented)；④数据流：双引擎信号+情绪周期→融合+自适应权重+PDF分布信号提取→6类决策输出+PDF分布信号→BM-SEL-21 组合优化；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：融合引擎未就绪→两引擎独立输出不做融合。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-035 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection
 
 ### BM-SEL-03 市场状态感知 / Market State Sensing
 
@@ -1505,6 +2460,7 @@ L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日
 |---|---|---|---|---|
 | depgraph | MOD-SIG-036 | primary | planned | planned |
 | candidate | CAND-HARVEST-0007 | supplement | candidate | — |
+| depgraph | MOD-SIG-025 | supplement | production | stable |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
@@ -1573,8 +2529,10 @@ L2-B 层。C-011 六阶段识别（吸筹/洗盘/拉升/出货）+ C-034 主力�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0005 | primary | candidate | — |
+| depgraph | MOD-SIG-021 | primary | production | stable |
+| depgraph | MOD-SIG-022 | supplement | production | stable |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2B ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L2B ｜ **阶段**：stock_selection
 
 ### BM-SEL-06 跨市场传导感知 / Cross-Market Conduction Sensing
 
@@ -1672,8 +2630,9 @@ L2-C 层 v4.1。板块轮动序列追踪，输出回踩质量等级（A/B/C）�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-1649 | primary | candidate | — |
+| depgraph | MOD-SIG-026 | supplement | production | stable |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-09 调整周期追踪 / Adjustment Cycle Tracking
 
@@ -2070,6 +3029,223 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | candidate | CAND-HARVEST-3225 | primary | candidate | — |
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-A 因子计算引擎
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 表达式AST解析+算子库(6类预定义)+增量计算调度 阈值: DSL算子空间内组合（数学/时序/截面/逻辑/比较/聚合） |
+| ② 消费数据/因子 | 标准化行情 CTR-001（来自 BM-SEL-01）<br>因子定义 YAML DSL（来自 D-FACTOR-01） |
+| ③ 参数 | factor_pool_max=64（范围 32-128，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: NormalizedMarketData CTR-001 → 处理: AST解析→算子执行→标准化/去极值/中性化 → 输出: FactorSignal CTR-002/003 → 下游: BM-SEL-02-B 注册表 / BM-SEL-03 市场状态 |
+| ⑤ 代码映射 | MOD-L02-001 / 03-D-FACTOR §1.1 D-FACTOR-01 |
+| ⑥ 降级/中止 | 引擎AST解析失败 → 降级硬编码均线规则（应急保命轨） |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-001 | primary | production | deprecated |
+
+**有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-B 因子注册表与池管理
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 因子元数据Schema+版本树+依赖图+四维索引 阈值: 活跃池≤60 + 休眠≤4（N_max≈64） |
+| ② 消费数据/因子 | 因子定义与血缘（来自 BM-SEL-02-A） |
+| ③ 参数 | active_pool_max=60（范围 ≤N_max-4，代码当前: 待实现，状态: proposed）<br>dormant_pool_max=4（范围 ≤4，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 因子定义+血缘字段 → 处理: 注册→版本管理→依赖图维护→末位淘汰 → 输出: 因子池（活跃+休眠）+ 废弃流程状态机 → 下游: BM-SEL-02-C 管线调度 |
+| ⑤ 代码映射 | MOD-L02-018 / 03-D-FACTOR §1.1 D-FACTOR-02 |
+| ⑥ 降级/中止 | 注册表不可用 → 使用上一交易日因子池快照 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-018 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-C 因子管线双模调度
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 盘前全量(03:00-09:15) + 盘中增量(09:30-15:00 事件驱动) 阈值: 盘中增量重算 <5秒/受影响标的 |
+| ② 消费数据/因子 | 因子池（来自 BM-SEL-02-B）<br>因子依赖图DAG（来自 D-FACTOR-04） |
+| ③ 参数 | compute_mode=盘前全量+盘中增量（范围 batch|incremental，代码当前: 待实现，状态: proposed）<br>backpressure_ctr=启用（范围 CTR-BP-001~003，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 因子池+DAG+标准化行情 → 处理: DAG拓扑排序→全量回算/增量重算→断点续跑→背压 → 输出: 全量/增量因子值 → 下游: BM-SEL-02-D 评估 / BM-SEL-12 分布特征 |
+| ⑤ 代码映射 | MOD-L02-001(intraday_factor_loop) / 03-D-FACTOR §1.1 D-FACTOR-04 |
+| ⑥ 降级/中止 | 增量调度超时>5秒 → 降级为全量重算或沿用上一增量结果 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-001 | primary | production | deprecated |
+
+**有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-D 因子评估-IC/IR体系
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | Rank IC + ICIR计算 + IC衰减分析 + 多重回归校验 阈值: CUSUM k=0.5×IC_std，预警>2σ，行动>4σ |
+| ② 消费数据/因子 | 因子值+收益率（来自 BM-SEL-02-C） |
+| ③ 参数 | ic_threshold=0.03（范围 >0.03，代码当前: 待实现，状态: proposed）<br>vif_threshold=5（范围 <5，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 因子值序列+收益率序列 → 处理: IC计算→ICIR评估→CUSUM控制图→多重回归t检验 → 输出: IC/IR指标+衰减曲线+VIF/Durbin-Watson → 下游: BM-SEL-02-E 相关性去重 |
+| ⑤ 代码映射 | MOD-L02-002/003/004 / 03-D-FACTOR §1.2 FAC-ANALYSIS |
+| ⑥ 降级/中止 | IC数据样本不足<60日 → 标记因子为观察态，暂不参与淘汰 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-002 | primary | production | stable |
+| depgraph | MOD-L02-003 | supplement | production | stable |
+| depgraph | MOD-L02-004 | supplement | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-E 因子评估-相关性与语义去重
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 滚动相关矩阵+条件相关性+聚类+LLM语义去重 阈值: 数值相关性>0.85 丢弃；逻辑等价→保留IC高者 |
+| ② 消费数据/因子 | 因子IC排名（来自 BM-SEL-02-D） |
+| ③ 参数 | corr_threshold=0.85（范围 >0.85，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 因子值矩阵+IC排名 → 处理: 相关矩阵→聚类→LLM语义等价判断→保留IC高者 → 输出: 去重后因子集+语义冗余标记 → 下游: BM-SEL-02-F 分层回测 |
+| ⑤ 代码映射 | MOD-L02-005/006 / 03-D-FACTOR §1.1 D-FACTOR-09 |
+| ⑥ 降级/中止 | LLM语义判断不可用 → 仅数值去重，标记待人工复核 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-005 | primary | production | stable |
+| depgraph | MOD-L02-006 | supplement | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-F 因子评估-分层回测与三级判断
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 分层回测+过拟合检测3维度+三级判断 阈值: Walk-Forward/参数敏感性/泛化能力 三维过拟合检测 |
+| ② 消费数据/因子 | 去重后因子集（来自 BM-SEL-02-E） |
+| ③ 参数 | walkforward_windows=5（范围 ≥5，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 因子集+历史行情 → 处理: 分层回测→Walk-Forward→参数敏感性→泛化→三级判断 → 输出: 分层收益曲线+过拟合评分+三级判定 → 下游: BM-SEL-02-G 衰减监控 |
+| ⑤ 代码映射 | MOD-L02-007/008 / 03-D-FACTOR §1.2 FAC-ANALYSIS |
+| ⑥ 降级/中止 | 回测数据不足1年 → 降级为单层回测，标记低置信度 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-007 | primary | production | generated |
+| depgraph | MOD-L02-008 | supplement | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-G 因子衰减监控与归因
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | IC时序追踪+半衰期估计+制度转换检测+因子归因 阈值: CUSUM预警>2σ触发复核，行动>4σ触发淘汰 |
+| ② 消费数据/因子 | 因子IC时序（来自 BM-SEL-02-D）<br>组合收益（来自 BM-SEL-21） |
+| ③ 参数 | half_life_min=20（范围 >20交易日，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: IC时序+组合收益/风险 → 处理: CUSUM→半衰期估计→制度转换→收益归因分解 → 输出: 衰减预警+半衰期+归因贡献度 → 下游: BM-SEL-02-I 治理淘汰 |
+| ⑤ 代码映射 | MOD-L02-009/010 / 03-D-FACTOR §1.1 D-FACTOR-08 |
+| ⑥ 降级/中止 | 衰减监控数据中断 → 沿用上一日衰减评估，标记监控降级 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-009 | primary | production | generated |
+| depgraph | MOD-L02-010 | supplement | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-H 多因子合成与优化
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 多因子合成验证+因子组合优化（IC加权/风险预算） 阈值: 合成因子IR优于单因子最优 |
+| ② 消费数据/因子 | 通过评估的因子集（来自 BM-SEL-02-F）<br>因子衰减状态（来自 BM-SEL-02-G） |
+| ③ 参数 | synthesis_method=ic_weighted（范围 ic_weighted|risk_budget，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 因子集+IC/IR+风险预算 → 处理: IC加权→风险预算约束→组合优化→合成验证 → 输出: 合成因子信号+优化权重 → 下游: BM-SEL-12 分布特征 / BM-SEL-13 密度预测 |
+| ⑤ 代码映射 | MOD-L02-011/012 / 03-D-FACTOR §1.2 FAC-ANALYSIS |
+| ⑥ 降级/中止 | 合成优化求解失败 → 降级为等权合成，标记优化降级 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-011 | primary | production | generated |
+| depgraph | MOD-L02-012 | supplement | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+
+### BM-SEL-02-I 因子治理-生命周期与门禁
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 准入门禁+运行时监控+废弃审批+灰度发布+六步流程 阈值: ABS-001门禁+漂移检测器(39类)+灰度比例 |
+| ② 消费数据/因子 | 因子衰减与归因（来自 BM-SEL-02-G）<br>新因子候选（来自 D-FACTOR-05 Mining） |
+| ③ 参数 | grayscale_ratio=10%→50%→100%（范围 0%-100%，代码当前: 待实现，状态: proposed）<br>drift_detectors=全启（范围 39类，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 因子表现+漂移信号+新候选 → 处理: 门禁校验→灰度发布→六步流程→漂移检测→废弃审批 → 输出: 因子生命周期状态(准入/活跃/观察/休眠/废弃) → 下游: BM-SEL-02-B 池状态更新 |
+| ⑤ 代码映射 | MOD-L02-013~017 / 03-D-FACTOR §1.1 D-FACTOR-07 |
+| ⑥ 降级/中止 | 治理引擎不可用 → 冻结因子池变更（只读模式），告警人工介入 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-013 | primary | production | stable |
+| depgraph | MOD-L02-014 | supplement | production | stable |
+| depgraph | MOD-L02-015 | supplement | production | stable |
+| depgraph | MOD-L02-016 | supplement | production | stable |
+| depgraph | MOD-L02-017 | supplement | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-21 组合优化 / Portfolio Optimization
 

@@ -51,7 +51,7 @@ flow_stage_allowed_domains:
       D_POSITION: "仓位管理属仓位阶段"
 
   buy_flow:
-    description: "买入流程——决策买入信号、多情景对策、四轨融合、决策编排。对应 L3 策略决策 + MTF + DO"
+    description: "买入流程——决策买入信号、多情景对策、四轨融合、决策编排、交易纪律合规闸。对应 L3 策略决策 + MTF + DO + 买入侧合规"
     allowed:
       - D_PF_CORE             # 组合核心（买入决策涉及组合构建）
       - D_PF_ALLOC             # 组合分配（买入时分配仓位）
@@ -60,6 +60,7 @@ flow_stage_allowed_domains:
       - D_INTEGRATION          # 管线路由
       - D_ORCHESTRATOR         # 决策编排器
       - D_INTELLIGENCE         # 上下文管理
+      - D_COMPLIANCE           # 合规（A股交易纪律四项严禁合规闸，BM-BUY-08，2026-08-03 增补）
     forbidden_rationale:
       D_SELL_DECISION: "卖出决策不应在买入流程承载——语义正交"
       D_FRONTEND: "前端域是 UI 层，不属于作战决策流程"
