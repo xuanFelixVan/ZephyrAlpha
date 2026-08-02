@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_rollback_contracts_py["契约<br/>治理的G-CT-002 Rollback 契约<br/>（re-export）。，G-CT-002 Rollback 契约<br/>（re-export）。相关功能的实现。<br/>contracts<br/>文件: rollback/contracts.py<br/>(生产态 / production)"]
+    src_zephyr_governance_rollback_contracts_py["契约<br/>G-CT-002 Rollback 契约（re-export）。<br/>contracts<br/>文件: rollback/contracts.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_manifest_py["清单<br/>本文件声明模块内所有 .py 文件及其职责，对齐<br/>blueprint §3 文件组成表<br/>_manifest<br/>文件: rollback/_manifest.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_agent_cooldown_py["代理cooldown<br/>回滚后 5min 禁止修改被回滚文件。<br/>agent_cooldown<br/>文件: rollback/agent_cooldown.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_auditor_py["审计器<br/>G-CT-004 契约：Rollback -> Audit 记录回滚操作.<br/>auditor<br/>文件: rollback/auditor.py<br/>(生产态 / production)"]
@@ -63,7 +63,7 @@ flowchart TD
     src_zephyr_infrastructure_rollback_complexity_budget_py["complexity预算<br/>ComplexityBudget — 回滚复杂度元 Budget 监控。<br/>complexity_budget<br/>文件: rollback/complexity_budget.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_credential_rotation_trigger_py["凭证rotationtrigger<br/>CredentialRotationDetector —<br/>回滚后凭据泄露检测（仅检测，不轮换）。<br/>credential_rotation_trigger<br/>文件: rollback/credential_rotation_trigger.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_cross_platform_shell_py["跨platformshell<br/>CrossPlatformShell — 跨平台 Shell 脚本双输出。<br/>cross_platform_shell<br/>文件: rollback/cross_platform_shell.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_drift_fix_py["漂移自动修复处理器 — G-CT-005 消费端.<br/>基础设施的漂移自动修复处理器 — G-CT-005<br/>消费端.，漂移自动修复处理器 — G-CT-005<br/>消费端.相关功能的实现。<br/>drift_fix<br/>文件: rollback/drift_fix.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_drift_fix_py["漂移自动修复处理器 — G-CT-005 消费端.<br/>基础设施/rollback包的drift_fix模块<br/>文件: rollback/drift_fix.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_env_watcher_py["env监视器<br/>EnvWatcher — 环境变量热重载监控器。<br/>env_watcher<br/>文件: rollback/env_watcher.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_external_merkle_proof_py["外部merkleproof<br/>External Merkle Proof —<br/>外部可验证回滚完整性证明。<br/>external_merkle_proof<br/>文件: rollback/external_merkle_proof.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_forensic_py["取证<br/>Forensic Engine — 取证基础设施（Phase 8<br/>完整实现）。<br/>文件: rollback/forensic.py<br/>(生产态 / production)"]
@@ -226,7 +226,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_rollback_contracts_py["契约<br/>治理的G-CT-002 Rollback 契约<br/>（re-export）。，G-CT-002 Rollback 契约<br/>（re-export）。相关功能的实现。<br/>contracts<br/>文件: rollback/contracts.py<br/>(生产态 / production)"]
+    src_zephyr_governance_rollback_contracts_py["契约<br/>G-CT-002 Rollback 契约（re-export）。<br/>contracts<br/>文件: rollback/contracts.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_manifest_py["清单<br/>本文件声明模块内所有 .py 文件及其职责，对齐<br/>blueprint §3 文件组成表<br/>_manifest<br/>文件: rollback/_manifest.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_agent_cooldown_py["代理cooldown<br/>回滚后 5min 禁止修改被回滚文件。<br/>agent_cooldown<br/>文件: rollback/agent_cooldown.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_auditor_py["审计器<br/>G-CT-004 契约：Rollback -> Audit 记录回滚操作.<br/>auditor<br/>文件: rollback/auditor.py<br/>(生产态 / production)"]
@@ -236,7 +236,7 @@ flowchart TD
     src_zephyr_infrastructure_rollback_complexity_budget_py["complexity预算<br/>ComplexityBudget — 回滚复杂度元 Budget 监控。<br/>complexity_budget<br/>文件: rollback/complexity_budget.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_credential_rotation_trigger_py["凭证rotationtrigger<br/>CredentialRotationDetector —<br/>回滚后凭据泄露检测（仅检测，不轮换）。<br/>credential_rotation_trigger<br/>文件: rollback/credential_rotation_trigger.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_cross_platform_shell_py["跨platformshell<br/>CrossPlatformShell — 跨平台 Shell 脚本双输出。<br/>cross_platform_shell<br/>文件: rollback/cross_platform_shell.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_drift_fix_py["漂移自动修复处理器 — G-CT-005 消费端.<br/>基础设施的漂移自动修复处理器 — G-CT-005<br/>消费端.，漂移自动修复处理器 — G-CT-005<br/>消费端.相关功能的实现。<br/>drift_fix<br/>文件: rollback/drift_fix.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_drift_fix_py["漂移自动修复处理器 — G-CT-005 消费端.<br/>基础设施/rollback包的drift_fix模块<br/>文件: rollback/drift_fix.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_env_watcher_py["env监视器<br/>EnvWatcher — 环境变量热重载监控器。<br/>env_watcher<br/>文件: rollback/env_watcher.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_external_merkle_proof_py["外部merkleproof<br/>External Merkle Proof —<br/>外部可验证回滚完整性证明。<br/>external_merkle_proof<br/>文件: rollback/external_merkle_proof.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_forensic_py["取证<br/>Forensic Engine — 取证基础设施（Phase 8<br/>完整实现）。<br/>文件: rollback/forensic.py<br/>(生产态 / production)"]

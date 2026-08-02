@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>基础设施的A2A Card Registry — 全局 Agent Card<br/>注册单例，A2A Card Registry — 全局 Agent Card<br/>注册单例相关功能的实现。<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>A2A Card Registry — 全局 Agent Card 注册单例<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py["上下文包<br/>Context Package — A2A 上下文包<br/>context_package<br/>文件: layer2_communication/context_package.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py["handoff管理器<br/>Handoff Manager — Agent 间任务交接<br/>handoff_manager<br/>文件: layer2_communication/handoff_manager.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py["message路由器<br/>Message Router — A2A 消息路由<br/>message_router<br/>文件: layer2_communication/message_router.py<br/>(生产态 / production)"]
@@ -82,14 +82,14 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_vector_reputation_py["向量化信誉系统<br/>基础设施/layer3<br/>coordination包的a2a_vector_reputation模块<br/>文件: layer3_coordination<br/>/a2a_vector_reputation.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_spec_sync_py["spec同步<br/>A2A Living Spec 同步 — 蓝图与实现的双向漂移管理<br/>spec_sync<br/>文件: layer3_coordination/spec_sync.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_local_first_arch_py["本地首架构<br/>基础设施/a2a protocol包的local_first_arch模块<br/>文件: a2a_protocol/local_first_arch.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["迁移策略<br/>基础设施的迁移策略，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用，迁移策略，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用相关功能的实现。<br/>migration_strategy<br/>文件: a2a_protocol/migration_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["迁移策略<br/>基础设施/a2a protocol包的migration_strategy模块<br/>文件: a2a_protocol/migration_strategy.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py["多代理<br/>— Multi-Agent 编排基座（Phase 14 / 盲点<br/>multi_agent<br/>文件: a2a_protocol/multi_agent.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["多模型共识<br/>基础设施的模型，定义数据结构和字段<br/>multi_model_consensus<br/>文件: a2a_protocol/multi_model_consensus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_autonomy_py["离线autonomy<br/>基础设施/a2a protocol包的offline_autonomy模块<br/>文件: a2a_protocol/offline_autonomy.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["离线韧性<br/>基础设施的离线韧性，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用，离线韧性，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用相关功能的实现。<br/>offline_resilience<br/>文件: a2a_protocol/offline_resilience.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["离线韧性<br/>基础设施/a2a protocol包的offline_resilience模块<br/>文件: a2a_protocol/offline_resilience.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_phase_hold_py["阶段hold<br/>基础设施/a2a protocol包的phase_hold模块<br/>文件: a2a_protocol/phase_hold.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_prompt_lifecycle_py["提示生命周期<br/>基础设施/a2a protocol包的prompt_lifecycle模块<br/>文件: a2a_protocol/prompt_lifecycle.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_realtime_streaming_py["实时流式<br/>基础设施的实时流式，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用，实时流式，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用相关功能的实现。<br/>realtime_streaming<br/>文件: a2a_protocol/realtime_streaming.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_realtime_streaming_py["实时流式<br/>基础设施/a2a protocol包的realtime_streaming模块<br/>文件: a2a_protocol/realtime_streaming.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py
@@ -277,7 +277,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>基础设施的A2A Card Registry — 全局 Agent Card<br/>注册单例，A2A Card Registry — 全局 Agent Card<br/>注册单例相关功能的实现。<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>A2A Card Registry — 全局 Agent Card 注册单例<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py["上下文包<br/>Context Package — A2A 上下文包<br/>context_package<br/>文件: layer2_communication/context_package.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py["handoff管理器<br/>Handoff Manager — Agent 间任务交接<br/>handoff_manager<br/>文件: layer2_communication/handoff_manager.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py["message路由器<br/>Message Router — A2A 消息路由<br/>message_router<br/>文件: layer2_communication/message_router.py<br/>(生产态 / production)"]
@@ -306,14 +306,14 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_vector_reputation_py["向量化信誉系统<br/>基础设施/layer3<br/>coordination包的a2a_vector_reputation模块<br/>文件: layer3_coordination<br/>/a2a_vector_reputation.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_spec_sync_py["spec同步<br/>A2A Living Spec 同步 — 蓝图与实现的双向漂移管理<br/>spec_sync<br/>文件: layer3_coordination/spec_sync.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_local_first_arch_py["本地首架构<br/>基础设施/a2a protocol包的local_first_arch模块<br/>文件: a2a_protocol/local_first_arch.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["迁移策略<br/>基础设施的迁移策略，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用，迁移策略，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用相关功能的实现。<br/>migration_strategy<br/>文件: a2a_protocol/migration_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["迁移策略<br/>基础设施/a2a protocol包的migration_strategy模块<br/>文件: a2a_protocol/migration_strategy.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_multi_agent_py["多代理<br/>— Multi-Agent 编排基座（Phase 14 / 盲点<br/>multi_agent<br/>文件: a2a_protocol/multi_agent.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["多模型共识<br/>基础设施的模型，定义数据结构和字段<br/>multi_model_consensus<br/>文件: a2a_protocol/multi_model_consensus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_autonomy_py["离线autonomy<br/>基础设施/a2a protocol包的offline_autonomy模块<br/>文件: a2a_protocol/offline_autonomy.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["离线韧性<br/>基础设施的离线韧性，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用，离线韧性，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用相关功能的实现。<br/>offline_resilience<br/>文件: a2a_protocol/offline_resilience.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["离线韧性<br/>基础设施/a2a protocol包的offline_resilience模块<br/>文件: a2a_protocol/offline_resilience.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_phase_hold_py["阶段hold<br/>基础设施/a2a protocol包的phase_hold模块<br/>文件: a2a_protocol/phase_hold.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_prompt_lifecycle_py["提示生命周期<br/>基础设施/a2a protocol包的prompt_lifecycle模块<br/>文件: a2a_protocol/prompt_lifecycle.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_realtime_streaming_py["实时流式<br/>基础设施的实时流式，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用，实时流式，供MOD-INF-027;MOD-INF-018;MO<br/>D-IN使用相关功能的实现。<br/>realtime_streaming<br/>文件: a2a_protocol/realtime_streaming.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_realtime_streaming_py["实时流式<br/>基础设施/a2a protocol包的realtime_streaming模块<br/>文件: a2a_protocol/realtime_streaming.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py

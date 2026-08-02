@@ -16,12 +16,12 @@
 
 | 维度 | 值 |
 |------|:---:|
-| 已建全景图总数 | 20 |
+| 已建全景图总数 | 21 |
 | 待建全景图总数 | 16 |
-| 全景图总数 | 36 |
-| 已建覆盖率 | 55.6% |
+| 全景图总数 | 37 |
+| 已建覆盖率 | 56.8% |
 
-| 已建产物存在 | 18/20 |
+| 已建产物存在 | 19/21 |
 
 ### 数据库真源健康度
 
@@ -30,10 +30,10 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5922 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5922 个 |
-| 依赖图 depgraph | `edges` | 8718 | 依赖边——节点间的依赖关系（import/契约/事件订阅），8718 条 |
+| 依赖图 depgraph | `nodes` | 6012 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6012 个 |
+| 依赖图 depgraph | `edges` | 8897 | 依赖边——节点间的依赖关系（import/契约/事件订阅），8897 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 76 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 230 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 229 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 90 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），90 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
@@ -47,7 +47,7 @@
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 15 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，15 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `service_assets` | 10 | 服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，10 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `config_assets` | 33 | 配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），33 项 |
-| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `infrastructure_components` | 14 | 基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，14 个 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `infrastructure_components` | 15 | 基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，15 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `interface_contracts` | 5 | 接口级契约——模块对外 API（函数名/参数签名/返回值/消费方），5 行（仅 5=大部分模块接口未登记，AI 会幻觉函数名） |
 
 ---
@@ -82,7 +82,7 @@
 
 ## 已建全景图清单
 
-> 共 20 项已建全景图。状态由生成器扫描实际产物文件自动验证。
+> 共 21 项已建全景图。状态由生成器扫描实际产物文件自动验证。
 >
 > 排序：按输出目录顺序（00→01→02→...→target_architecture）。
 
@@ -106,6 +106,7 @@
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-03 | 手绘 Mermaid 图（时序/治理） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/application_flows.md) | ✅存在 |
 | PAN-BUILT-21 | 交易决策架构视图 | 决策流 | decisiongraph | depgraph (PostgreSQL) | `generate_trading_flow_diagram.py` | [`07_trading_decision_architecture`](../07_trading_decision_architecture/trading_flow_index.md) | ✅存在 |
+| PAN-BATTLE-MAP-01 | 交易决策作战地图（battle_map 第四全景图） | 作战地图 | battle_map | depgraph (PostgreSQL) (battle_map_* 表) | `generate_battle_map_diagram.py` | [`07_trading_decision_architecture/battle_map`](../07_trading_decision_architecture/battle_map/battle_map_panorama.md) | ✅存在 |
 | PAN-BUILT-16 | 架构债务注册表（已归档） | 治理健康度 | 手工 | 手工 | `(手工维护)` | `_archive/` | ❌缺失 |
 | PAN-BUILT-01 | 架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线） | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | `architecture_model/` | ✅存在(4文件) |
 
@@ -180,6 +181,7 @@
 | 手工 | 4 | 人工维护的架构文档，无自动生成器 |
 | decisiongraph | 2 | 决策流图——L0-L6 四轨，生成决策流图 |
 | 文件系统扫描 | 2 | 扫描实际文件系统派生，无 DB 真源 |
+| battle_map | 1 | 待裁定真源类型 |
 | dataflowgraph | 1 | 数据流图——Dataset/Job/Edge，生成数据流图 |
 | depgraph + dataflowgraph + decisiongraph | 1 | 综合三个架构图派生（如本总表） |
 | 待裁定（AlertManager API vs 独立表） | 1 | 待裁定真源类型 |
@@ -194,7 +196,7 @@
 | 待裁定（depgraph contracts 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（depgraph 扩展 vs 独立表） | 1 | 待裁定真源类型 |
 | 待裁定（代码扫描派生 vs 独立表） | 1 | 待裁定真源类型 |
-| **合计** | **36** | 已建 20 + 待建 16 |
+| **合计** | **37** | 已建 21 + 待建 16 |
 
 ---
 
@@ -310,7 +312,8 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-BUILT-21 | 交易决策架构视图 | ✅已建 | decisiongraph | decisiongraph 业务流程视图（选股/买入/卖出/仓位/执行/对账6阶段叙事），对标 application_flows.md 先例，不进四图对齐 | 真源：depgraph (PostgreSQL)<br>生成器：[`generate_trading_flow_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_trading_flow_diagram.py)<br>产物：[`07_trading_decision_architecture/trading_flow_index.md`](../07_trading_decision_architecture/trading_flow_index.md) |
+| PAN-BUILT-21 | 交易决策架构视图 | ✅已建 | decisiongraph | decisiongraph 业务流程视图（选股/买入/卖出/仓位/执行/对账6阶段叙事），对标 application_flows.md 先例，不进四图对齐。迁移并行观察期保留，将被 PAN-BATTLE-MAP-01 取代 | 真源：depgraph (PostgreSQL)<br>生成器：[`generate_trading_flow_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_trading_flow_diagram.py)<br>产物：[`07_trading_decision_architecture/trading_flow_index.md`](../07_trading_decision_architecture/trading_flow_index.md) |
+| PAN-BATTLE-MAP-01 | 交易决策作战地图（battle_map 第四全景图） | ✅已建 | battle_map | 交易决策作战地图（第四全景图 battle_map），以决策环节为节点串联 depgraph/decisiongraph/候选池/蓝图，6件套标准 + 双向锚点查找；取代 PAN-BUILT-21 旧 trading_flow 视图（battle_map_panorama.md §四 取代声明） | 真源：depgraph (PostgreSQL) (battle_map_* 表)<br>生成器：[`generate_battle_map_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py)<br>产物：[`07_trading_decision_architecture/battle_map/battle_map_panorama.md`](../07_trading_decision_architecture/battle_map/battle_map_panorama.md) |
 
 ### _archive
 

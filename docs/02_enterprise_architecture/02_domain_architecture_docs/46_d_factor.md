@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_FACTOR | Domain ID | D_FACTOR |
 | 域名称 | 因子 | Domain Name | Factor |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 37 | Module Count | 37 |
+| 模块数 | 38 | Module Count | 38 |
 | 域内依赖 | 38 | Internal Dependencies | 38 |
-| 跨域入边 | 8 | Cross-domain Incoming | 8 |
+| 跨域入边 | 10 | Cross-domain Incoming | 10 |
 | 跨域出边 | 8 | Cross-domain Outgoing | 8 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 37 | Production Modules | 37 |
 | 容量 | 37/150 (正常) | Capacity | 37/150 (正常) |
 | 描述 | 因子，负责因子计算、因子库管理和因子评价 | Description | 因子，负责因子计算、因子库管理和因子评价 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 37 个模块（生产态 37 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 38 个模块（生产态 37 + 设计态 1），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -72,6 +72,7 @@ flowchart TD
     src_zephyr_factor_core_dist_feature_eng_init_py["core/dist_feature_eng 包入口<br/>D_FACTOR core dist_feature_eng<br/>子包——分布式特征工程引擎。<br/>文件: dist_feature_eng/__init__.py<br/>(生产态 / production)"]
     src_zephyr_factor_core_evaluation_init_py["D-FACTOR-03 因子评估包——IC/IR/OOS 正率<br/>/过拟合检测。<br/>- metrics: 纯函数模块（无 IO<br/>依赖），可独立用合成数据测试<br/>文件: evaluation/__init__.py<br/>(生产态 / production)"]
     src_zephyr_factor_core_factor_dag_init_py["core/factor_dag 包入口<br/>D_FACTOR core factor_dag 子包——因子 DAG<br/>数据结构 + Kahn 拓扑分层。<br/>文件: factor_dag/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_factor_core_intraday_factor_loop_py["core/intraday_factor_loop<br/>因子/核心包的intraday_factor_loop模块<br/>文件: core/intraday_factor_loop.py<br/>(设计态 / design)"]
     src_zephyr_factor_governance_engine_py["D-FACTOR-GOV-05<br/>因子治理引擎——顶层编排六步流程+灰度发布。<br/>提供因子从提交到实盘的完整治理入口<br/>engine<br/>文件: governance/engine.py<br/>(生产态 / production)"]
     src_zephyr_factor_governance_factor_pool_manager_py["D-FACTOR-08 因子池容量管理——活跃池/休眠池 +<br/>IC末位淘汰 +<br/>批量裁剪<br/>factor_pool_manager<br/>文件: governance/factor_pool_manager.py<br/>(生产态 / production)"]
     src_zephyr_factor_momentum_factor_py["动量因子<br/>20 日动量因子。计算过去 20<br/>个交易日的价格变化率。<br/>D_FACTOR — Momentum Factor<br/>文件: factor/momentum_factor.py<br/>(生产态 / production)"]
@@ -94,7 +95,8 @@ flowchart TD
     src_zephyr_factor_core_dag_manager_init_py ~~~ src_zephyr_factor_core_dist_feature_eng_init_py
     src_zephyr_factor_core_dist_feature_eng_init_py ~~~ src_zephyr_factor_core_evaluation_init_py
     src_zephyr_factor_core_evaluation_init_py ~~~ src_zephyr_factor_core_factor_dag_init_py
-    src_zephyr_factor_core_factor_dag_init_py ~~~ src_zephyr_factor_governance_engine_py
+    src_zephyr_factor_core_factor_dag_init_py ~~~ src_zephyr_factor_core_intraday_factor_loop_py
+    src_zephyr_factor_core_intraday_factor_loop_py ~~~ src_zephyr_factor_governance_engine_py
     src_zephyr_factor_governance_engine_py ~~~ src_zephyr_factor_governance_factor_pool_manager_py
     src_zephyr_factor_governance_factor_pool_manager_py ~~~ src_zephyr_factor_momentum_factor_py
     src_zephyr_factor_momentum_factor_py ~~~ src_zephyr_factor_value_factor_py
@@ -172,6 +174,9 @@ flowchart TD
     src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| D_DATA
     D_FUNDAMENTAL_SIGNAL["基本面信号<br/>基本面信号，负责基于财务数据的基本面信号生成<br/>Fundamental Signal<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_factor_alpha_signal_pipeline_py -->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
+    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    D_INFRA_RUNTIME -.->|import / import| src_zephyr_factor_core_intraday_factor_loop_py
+    D_INFRA_RUNTIME -.->|runtime / runtime| src_zephyr_factor_alpha_signal_pipeline_py
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -188,7 +193,9 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_analysis_init_py,src_zephyr_factor_analysis_correlation_analyzer_py,src_zephyr_factor_analysis_correlation_dedup_py,src_zephyr_factor_analysis_decay_monitor_py,src_zephyr_factor_analysis_factor_attribution_py,src_zephyr_factor_analysis_factor_optimization_py,src_zephyr_factor_analysis_ic_decay_py,src_zephyr_factor_analysis_ic_ir_calc_py,src_zephyr_factor_analysis_ic_ir_evaluator_py,src_zephyr_factor_analysis_layered_backtest_py,src_zephyr_factor_analysis_multifactor_synthesis_py,src_zephyr_factor_analysis_three_level_judgment_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_core_backpressure_init_py,src_zephyr_factor_core_batch_output_init_py,src_zephyr_factor_core_config_manager_init_py,src_zephyr_factor_core_ctr001_consumer_init_py,src_zephyr_factor_core_ctr001_consumer_converter_py,src_zephyr_factor_core_ctr002_producer_init_py,src_zephyr_factor_core_ctr002_producer_converter_py,src_zephyr_factor_core_dag_manager_init_py,src_zephyr_factor_core_dist_feature_eng_init_py,src_zephyr_factor_core_evaluation_init_py,src_zephyr_factor_core_evaluation_backtest_py,src_zephyr_factor_core_evaluation_metrics_py,src_zephyr_factor_core_factor_dag_init_py,src_zephyr_factor_factor_base_py,src_zephyr_factor_governance_init_py,src_zephyr_factor_governance_abs001_gate_py,src_zephyr_factor_governance_engine_py,src_zephyr_factor_governance_factor_pool_manager_py,src_zephyr_factor_governance_grayscale_rollout_py,src_zephyr_factor_governance_lifecycle_state_machine_py,src_zephyr_factor_governance_six_step_flow_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_value_factor_py production
+    class src_zephyr_factor_core_intraday_factor_loop_py design
     class D_SHARED,D_INFRASTRUCTURE,D_DATA,D_FUNDAMENTAL_SIGNAL,D_EX_CORE,D_PF_CORE,D_GOV_OPS_RESILIENCE external_prod
+    class D_INFRA_RUNTIME external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -314,9 +321,18 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 1 个），不含跨域外部节点。
 
-> （无模块 / No modules）
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_factor_core_intraday_factor_loop_py["core/intraday_factor_loop<br/>因子/核心包的intraday_factor_loop模块<br/>文件: core/intraday_factor_loop.py<br/>(设计态 / design)"]
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_factor_core_intraday_factor_loop_py design
+```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
@@ -342,13 +358,15 @@ flowchart TD
 | 3 | D_EX_CORE 执行核心: 信号提供器 / signal_providers (ex_core/signal_providers.py) | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
 | 4 | D_FUNDAMENTAL_SIGNAL 基本面信号: 管线 / Alpha Signal Pipeline (signal_fundamental/pipeline... | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
 | 5 | D_GOV_OPS_RESILIENCE 运维弹性治理: 总线因子防御 / bus_factor_defense (resilience_governance/... | → | 总线因子防御 / bus_factor_defense (factor/bus_factor_defe... | 导入依赖 / import_depends |
-| 6 | D_PF_CORE 组合核心: 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
-| 7 | D_PF_CORE 组合核心: 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | 导入依赖 / import_depends |
-| 8 | D_PF_CORE 组合核心: 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
+| 6 | D_INFRA_RUNTIME 运行时集成: data/tick_redis_cache.py | → | core/intraday_factor_loop.py | import / import |
+| 7 | D_INFRA_RUNTIME 运行时集成: h1_redis_hot/h1_factor_source.py | → | 阿尔法信号管线 / alpha_signal_pipeline (factor/alpha_sign... | runtime / runtime |
+| 8 | D_PF_CORE 组合核心: 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
+| 9 | D_PF_CORE 组合核心: 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | 导入依赖 / import_depends |
+| 10 | D_PF_CORE 组合核心: 策略运行器 / strategy_runner (strategy_engine/strategy_ru... | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 7 个外部域直接连接（出边 8 条 + 入边 8 条 = 16 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 8 个外部域直接连接（出边 8 条 + 入边 10 条 = 18 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -360,6 +378,7 @@ graph LR
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_FACTOR -->|3条 导入依赖 / import_depends| D_DATA
     D_FACTOR -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
@@ -367,6 +386,7 @@ graph LR
     D_FACTOR -->|1条 导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_EX_CORE -->|3条 导入依赖 / import_depends| D_FACTOR
     D_PF_CORE -->|3条 导入依赖 / import_depends| D_FACTOR
+    D_INFRA_RUNTIME -->|2条 import / import, runtime / runtime| D_FACTOR
     D_FUNDAMENTAL_SIGNAL -->|1条 导入依赖 / import_depends| D_FACTOR
     D_GOV_OPS_RESILIENCE -->|1条 导入依赖 / import_depends| D_FACTOR
 ```

@@ -30,7 +30,7 @@ ttl: permanent
 | 模块数 | 166 | Module Count | 166 |
 | 域内依赖 | 263 | Internal Dependencies | 263 |
 | 跨域入边 | 23 | Cross-domain Incoming | 23 |
-| 跨域出边 | 22 | Cross-domain Outgoing | 22 |
+| 跨域出边 | 23 | Cross-domain Outgoing | 23 |
 | 设计态模块 | 4 | Design Modules | 4 |
 | 生产态模块 | 162 | Production Modules | 162 |
 | 容量 | 162/150 (超容) | Capacity | 162/150 (超容) |
@@ -156,9 +156,9 @@ flowchart TD
     scripts_start_scheduler_ps1["启动调度器<br/>调度器的调度器，按时间或优先级安排任务执行<br/>start_scheduler<br/>文件: scripts/start_scheduler.ps1<br/>(生产态 / production)"]
     scripts_start_tick_subscriber_ps1["启动逐笔订阅器<br/>start_tick_subscriber.ps1的订阅器，订阅接收数据<br/>文件: scripts/start_tick_subscriber.ps1<br/>(生产态 / production)"]
     src_zephyr_data_main_py["主入口<br/>data — 数据源集成器 CLI 入口<br/>__main__<br/>文件: data/__main__.py<br/>(生产态 / production)"]
-    src_zephyr_data_config_policies_yaml["策略<br/>数据的策略（policies.yaml），策略<br/>（policies.yaml）相关功能的实现。<br/>文件: config/policies.yaml<br/>(生产态 / production)"]
+    src_zephyr_data_config_policies_yaml["策略<br/>（policies.yaml）<br/>文件: config/policies.yaml<br/>(生产态 / production)"]
     src_zephyr_data_config_schedule_yaml["调度计划<br/>机器学习的调度器，按时间或优先级安排任务执行<br/>schedule<br/>文件: config/schedule.yaml<br/>(生产态 / production)"]
-    src_zephyr_data_config_tasks_yaml["任务<br/>数据的任务（tasks.yaml），任务<br/>（tasks.yaml）相关功能的实现。<br/>文件: config/tasks.yaml<br/>(生产态 / production)"]
+    src_zephyr_data_config_tasks_yaml["任务<br/>（tasks.yaml）<br/>文件: config/tasks.yaml<br/>(生产态 / production)"]
     src_zephyr_data_connectors["data/connectors<br/>数据包的connectors模块<br/>⛔ 该域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
     src_zephyr_data_implementations_init_py["data/implementations 包入口<br/>每个 Provider 封装一个数据源 SDK，继承<br/>IngestProviderBase<br/>文件: implementations/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_kline_resampler_py["880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m<br/>写<br/>入 ClickHouse<br/>kline_resampler<br/>文件: data/kline_resampler.py<br/>(生产态 / production)"]
@@ -643,6 +643,8 @@ flowchart TD
     schemas_categories_market_us_index_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_st_stock_list_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
     schemas_categories_market_trade_calendar_py -->|config_depends / config_depends| schemas_categories_fundamental_analyst_forecast_py
+    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    src_zephyr_data_tick_subscriber_py -.->|data / data| D_INFRA_RUNTIME
     D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_data_satellite_geospatial_engine_init_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -659,7 +661,6 @@ flowchart TD
     src_zephyr_data_local_replay_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_tick_subscriber_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_data_ch_config_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_data_alerter_py -->|导入依赖 / import_depends| D_SHARED
     D_MKT_DATA["行情数据<br/>行情数据，负责市场行情数据的采集、分发和订阅管理<br/>Market Data<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_MKT_DATA -.->|data / data| src_zephyr_data_provider_base_py
     D_MKT_DATA -.->|runtime / runtime| src_zephyr_data_table_registry_py
@@ -687,7 +688,7 @@ flowchart TD
     class schemas_categories_cross_validation_log_py,schemas_categories_fundamental_analyst_forecast_py,schemas_categories_fundamental_balance_sheet_py,schemas_categories_fundamental_cashflow_statement_py,schemas_categories_fundamental_disclosure_plan_py,schemas_categories_fundamental_equity_pledge_detail_py,schemas_categories_fundamental_income_statement_py,schemas_categories_fundamental_industry_class_py,schemas_categories_fundamental_industry_class_suppl_py,schemas_categories_fundamental_restricted_shares_py,schemas_categories_fundamental_rights_issue_py,schemas_categories_fundamental_share_change_py,schemas_categories_fundamental_share_unlock_py,schemas_categories_macro_edb_data_py,schemas_categories_macro_macro_data_py,schemas_categories_market_adj_factor_py,schemas_categories_market_auction_py,schemas_categories_market_auction_book_py,schemas_categories_market_block_trade_py,schemas_categories_market_block_trade_detail_py,schemas_categories_market_cb_iv_py,schemas_categories_market_concept_board_py,schemas_categories_market_concept_board_constituent_py,schemas_categories_market_concept_sector_py,schemas_categories_market_convertible_bond_list_py,schemas_categories_market_daily_valuation_py,schemas_categories_market_dragon_tiger_py,schemas_categories_market_dragon_tiger_seat_py,schemas_categories_market_etf_benchmark_py,schemas_categories_market_etf_list_py,schemas_categories_market_etf_nav_py,schemas_categories_market_futures_kline_qmt_py,schemas_categories_market_futures_position_py,schemas_categories_market_futures_term_py,schemas_categories_market_hk_connect_flow_py,schemas_categories_market_hk_kline_py,schemas_categories_market_hk_stock_list_py,schemas_categories_market_hk_trade_calendar_py,schemas_categories_market_index_py,schemas_categories_market_index_constituent_py,schemas_categories_market_index_list_py,schemas_categories_market_index_meta_py,schemas_categories_market_index_weight_py,schemas_categories_market_kline_15min_py,schemas_categories_market_kline_1min_py,schemas_categories_market_kline_30min_py,schemas_categories_market_kline_5min_py,schemas_categories_market_kline_60min_py,schemas_categories_market_kline_cb_py,schemas_categories_market_kline_daily_py,schemas_categories_market_kline_daily_hfq_py,schemas_categories_market_kline_etf_15min_py,schemas_categories_market_kline_etf_1min_py,schemas_categories_market_kline_etf_30min_py,schemas_categories_market_kline_etf_5min_py,schemas_categories_market_kline_etf_60min_py,schemas_categories_market_kline_futures_py,schemas_categories_market_kline_hk_daily_py,schemas_categories_market_kline_index_py,schemas_categories_market_kline_lof_15min_py,schemas_categories_market_kline_lof_1min_py,schemas_categories_market_kline_lof_30min_py,schemas_categories_market_kline_lof_5min_py,schemas_categories_market_kline_lof_60min_py,schemas_categories_market_kline_monthly_py,schemas_categories_market_kline_monthly_hfq_py,schemas_categories_market_kline_sector_py,schemas_categories_market_kline_sector_880_py,schemas_categories_market_kline_sector_intraday_py,schemas_categories_market_kline_us_daily_py,schemas_categories_market_kline_weekly_py,schemas_categories_market_kline_weekly_hfq_py,schemas_categories_market_l2_tick_py,schemas_categories_market_limit_up_down_py,schemas_categories_market_lof_list_py,schemas_categories_market_margin_trading_py,schemas_categories_market_money_flow_py,schemas_categories_market_option_greeks_py,schemas_categories_market_option_iv_py,schemas_categories_market_option_kline_py,schemas_categories_market_realtime_snapshot_py,schemas_categories_market_sector_constituent_py,schemas_categories_market_sector_list_py,schemas_categories_market_sector_meta_py,schemas_categories_market_sector_snapshot_py,schemas_categories_market_st_stock_list_py,schemas_categories_market_stock_indicator_py,schemas_categories_market_stock_list_py,schemas_categories_market_tick_py,schemas_categories_market_trade_calendar_py,schemas_categories_market_us_index_py,scripts_ch_data_inventory_py,scripts_ch_recovery_drill_py,scripts_ch_apply_exchange_columns_py,scripts_ch_apply_fundamental_tables_ddl_py,scripts_ch_apply_market_tables_ddl_py,scripts_ch_apply_rbac_py,scripts_ch_apply_timezone_migration_py,scripts_ch_lint_symbol_convention_py,scripts_ch_verify_exchange_coverage_py,scripts_ch_verify_schema_truth_py,scripts_ops_verify_alert_channels_py,scripts_register_aux_tasks_ps1,scripts_register_guard_tasks_ps1,scripts_start_scheduler_ps1,scripts_start_tick_subscriber_ps1,src_zephyr_data_init_py,src_zephyr_data_main_py,src_zephyr_data_alerter_py,src_zephyr_data_backfill_checker_py,src_zephyr_data_buffered_writer_py,src_zephyr_data_capability_validator_py,src_zephyr_data_ch_config_py,src_zephyr_data_ch_reader_py,src_zephyr_data_ch_writer_py,src_zephyr_data_cli_py,src_zephyr_data_config_policies_yaml,src_zephyr_data_config_schedule_yaml,src_zephyr_data_config_tasks_yaml,src_zephyr_data_cross_source_validator_py,src_zephyr_data_error_classifier_py,src_zephyr_data_implementations_init_py,src_zephyr_data_implementations_akshare_provider_py,src_zephyr_data_implementations_baostock_provider_py,src_zephyr_data_implementations_cls_provider_py,src_zephyr_data_implementations_eastmoney_news_provider_py,src_zephyr_data_implementations_ifind_provider_py,src_zephyr_data_implementations_miniqmt_provider_py,src_zephyr_data_implementations_rss_provider_py,src_zephyr_data_implementations_tdx_provider_py,src_zephyr_data_implementations_tickflow_provider_py,src_zephyr_data_implementations_tqcenter_provider_py,src_zephyr_data_implementations_tushare_provider_py,src_zephyr_data_integrity_checker_py,src_zephyr_data_kline_resampler_py,src_zephyr_data_local_replay_py,src_zephyr_data_metrics_py,src_zephyr_data_news_dedup_py,src_zephyr_data_pit_query_py,src_zephyr_data_policy_registry_py,src_zephyr_data_progress_store_py,src_zephyr_data_provider_base_py,src_zephyr_data_quality_gate_py,src_zephyr_data_redundant_source_init_py,src_zephyr_data_satellite_geospatial_engine_init_py,src_zephyr_data_scheduler_py,src_zephyr_data_sector_kline_downloader_py,src_zephyr_data_sector_ranking_engine_py,src_zephyr_data_sector_snapshot_collector_py,src_zephyr_data_speed_tester_py,src_zephyr_data_symbol_normalizer_init_py,src_zephyr_data_symbol_normalizer_normalizer_py,src_zephyr_data_table_registry_py,src_zephyr_data_task_queue_py,src_zephyr_data_tick_subscriber_py,src_zephyr_data_trading_calendar_py,src_zephyr_data_wal_codec_init_py,src_zephyr_data_wal_writer_py,tests_data_test_market_quality_validator_py,tests_data_test_pit_query_py,tests_zephyr_data_test_cross_source_validator_py,tests_zephyr_data_test_tick_subscriber_py production
     class src_zephyr_data_cache,src_zephyr_data_connectors,src_zephyr_data_normalizers,src_zephyr_data_storage design
     class D_GOV_ENFORCEMENT,D_SHARED,D_GOV_SCRIPTS,D_FACTOR,D_GOV_CODE_QUALITY external_prod
-    class D_MKT_DATA,D_ML_TRAIN external_design
+    class D_INFRA_RUNTIME,D_MKT_DATA,D_ML_TRAIN external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -800,9 +801,9 @@ flowchart TD
     scripts_start_scheduler_ps1["启动调度器<br/>调度器的调度器，按时间或优先级安排任务执行<br/>start_scheduler<br/>文件: scripts/start_scheduler.ps1<br/>(生产态 / production)"]
     scripts_start_tick_subscriber_ps1["启动逐笔订阅器<br/>start_tick_subscriber.ps1的订阅器，订阅接收数据<br/>文件: scripts/start_tick_subscriber.ps1<br/>(生产态 / production)"]
     src_zephyr_data_main_py["主入口<br/>data — 数据源集成器 CLI 入口<br/>__main__<br/>文件: data/__main__.py<br/>(生产态 / production)"]
-    src_zephyr_data_config_policies_yaml["策略<br/>数据的策略（policies.yaml），策略<br/>（policies.yaml）相关功能的实现。<br/>文件: config/policies.yaml<br/>(生产态 / production)"]
+    src_zephyr_data_config_policies_yaml["策略<br/>（policies.yaml）<br/>文件: config/policies.yaml<br/>(生产态 / production)"]
     src_zephyr_data_config_schedule_yaml["调度计划<br/>机器学习的调度器，按时间或优先级安排任务执行<br/>schedule<br/>文件: config/schedule.yaml<br/>(生产态 / production)"]
-    src_zephyr_data_config_tasks_yaml["任务<br/>数据的任务（tasks.yaml），任务<br/>（tasks.yaml）相关功能的实现。<br/>文件: config/tasks.yaml<br/>(生产态 / production)"]
+    src_zephyr_data_config_tasks_yaml["任务<br/>（tasks.yaml）<br/>文件: config/tasks.yaml<br/>(生产态 / production)"]
     src_zephyr_data_implementations_init_py["data/implementations 包入口<br/>每个 Provider 封装一个数据源 SDK，继承<br/>IngestProviderBase<br/>文件: implementations/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_kline_resampler_py["880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m<br/>写<br/>入 ClickHouse<br/>kline_resampler<br/>文件: data/kline_resampler.py<br/>(生产态 / production)"]
     src_zephyr_data_redundant_source_init_py["数据源冗余与热切换模块（MOD-L00-005）。<br/>P2-8：主备数据源热切换 + CH 冗余降级<br/>文件: redundant_source/__init__.py<br/>(生产态 / production)"]
@@ -1313,25 +1314,26 @@ flowchart TD
 | 1 | 质量门禁 / quality_gate (data/quality_gate.py) | → | D_GOV_ENFORCEMENT 规则执行: 质量门禁 / D_DATA — Data Quality Gate (rule_enforcement/... | 导入依赖 / import_depends |
 | 2 | 包入口 / D_DATA Data Source (satellite_geospatial_engine/... | → | D_GOV_ENFORCEMENT 规则执行: 质量门禁 / D_DATA — Data Quality Gate (rule_enforcement/... | 导入依赖 / import_depends |
 | 3 | #ARCH-CH-021 P0-4: 写入路径异常值校验器四门禁测试。 / tes... | → | D_GOV_ENFORCEMENT 规则执行: 质量门禁 / D_DATA — Data Quality Gate (rule_enforcement/... | 测试依赖 / test_depends |
-| 4 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 5 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: 密钥 / secrets (security/secrets.py) | 导入依赖 / import_depends |
-| 6 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
-| 7 | ch配置 / ch_config (data/ch_config.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 8 | ch配置 / ch_config (data/ch_config.py) | → | D_SHARED 共享服务: 密钥 / secrets (security/secrets.py) | 导入依赖 / import_depends |
-| 9 | ch写入器 / ch_writer (data/ch_writer.py) | → | D_SHARED 共享服务: 指标 / metrics (observability/metrics.py) | 导入依赖 / import_depends |
-| 10 | cls提供器 / cls_provider (implementations/cls_provider.py) | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 11 | rss提供器 / rss_provider (implementations/rss_provider.py) | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 12 | tushare提供器 / tushare_provider (implementations/tushare... | → | D_SHARED 共享服务: 密钥 / secrets (security/secrets.py) | 导入依赖 / import_depends |
-| 13 | 本地replay / local_replay (data/local_replay.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 14 | 可观测性指标采集（MOD-L00-004 §11）。 / metrics (data/me... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 15 | 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 16 | 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
-| 17 | 数据源调度编排层（MOD-L00-004 §6）。 / scheduler (data/s... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 18 | 数据源测速器（MOD-L00-004 §8.5）。 / speed_tester (data/... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 19 | table注册表 / table_registry (data/table_registry.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
-| 20 | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | D_SHARED 共享服务: 指标 / metrics (observability/metrics.py) | 导入依赖 / import_depends |
-| 21 | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | D_SHARED 共享服务: 指标服务端 / metrics_server (observability/metrics_server... | 导入依赖 / import_depends |
-| 22 | wal写入器 / wal_writer (data/wal_writer.py) | → | D_SHARED 共享服务: 指标 / metrics (observability/metrics.py) | 导入依赖 / import_depends |
+| 4 | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | D_INFRA_RUNTIME 运行时集成: data/tick_redis_cache.py | data / data |
+| 5 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 6 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: 密钥 / secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 7 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 8 | ch配置 / ch_config (data/ch_config.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 9 | ch配置 / ch_config (data/ch_config.py) | → | D_SHARED 共享服务: 密钥 / secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 10 | ch写入器 / ch_writer (data/ch_writer.py) | → | D_SHARED 共享服务: 指标 / metrics (observability/metrics.py) | 导入依赖 / import_depends |
+| 11 | cls提供器 / cls_provider (implementations/cls_provider.py) | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 12 | rss提供器 / rss_provider (implementations/rss_provider.py) | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 13 | tushare提供器 / tushare_provider (implementations/tushare... | → | D_SHARED 共享服务: 密钥 / secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 14 | 本地replay / local_replay (data/local_replay.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 15 | 可观测性指标采集（MOD-L00-004 §11）。 / metrics (data/me... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 16 | 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 17 | 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | D_SHARED 共享服务: 时间工具 / time_utils (utils/time_utils.py) | 导入依赖 / import_depends |
+| 18 | 数据源调度编排层（MOD-L00-004 §6）。 / scheduler (data/s... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 19 | 数据源测速器（MOD-L00-004 §8.5）。 / speed_tester (data/... | → | D_SHARED 共享服务: 常量 / constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 20 | table注册表 / table_registry (data/table_registry.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of  / paths ... | 导入依赖 / import_depends |
+| 21 | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | D_SHARED 共享服务: 指标 / metrics (observability/metrics.py) | 导入依赖 / import_depends |
+| 22 | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | D_SHARED 共享服务: 指标服务端 / metrics_server (observability/metrics_server... | 导入依赖 / import_depends |
+| 23 | wal写入器 / wal_writer (data/wal_writer.py) | → | D_SHARED 共享服务: 指标 / metrics (observability/metrics.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -1363,7 +1365,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 10 个外部域直接连接（出边 22 条 + 入边 23 条 = 45 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 10 个外部域直接连接（出边 23 条 + 入边 23 条 = 46 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -1371,16 +1373,17 @@ graph LR
     D_DATA["D_DATA<br/>数据接入层"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_FACTOR["D_FACTOR<br/>因子"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_BACKTEST["D_BACKTEST<br/>回测"]
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
     D_DATA -->|19条 导入依赖 / import_depends| D_SHARED
     D_DATA -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
+    D_DATA -->|1条 data / data| D_INFRA_RUNTIME
     D_MKT_DATA -->|5条 data / data, 导入依赖 / import_depends, runtime / runtime| D_DATA
     D_GOV_SCRIPTS -->|5条 导入依赖 / import_depends| D_DATA
     D_FACTOR -->|3条 导入依赖 / import_depends| D_DATA

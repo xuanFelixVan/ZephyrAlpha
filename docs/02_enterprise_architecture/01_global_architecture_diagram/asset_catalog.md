@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共261项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共262项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -22,12 +22,12 @@ ttl: permanent
 | 外部数据源 | 15 | data_sources_registry.yaml |
 | 数据源 API | 124 | data_source_apis_registry.yaml |
 | 服务资产 | 10 | service_registry.yaml |
-| 基础设施组件 | 14 | infrastructure_components.yaml |
+| 基础设施组件 | 15 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
 | 配置项 | 33 | config/*.yaml |
-| 数据流作业 | 230 | dataflow_graph_registry.yaml |
+| 数据流作业 | 229 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
-| **合计** | **261** | |
+| **合计** | **262** | |
 
 ## 2. 外部数据源资产
 
@@ -77,6 +77,7 @@ ttl: permanent
 | INFRA-DB-003 | relational_db | localhost:5432/depgraph | connected | ACID, MVCC, < 30ms read p50 |
 | INFRA-DB-004 | cache | :memory: | connected | 内存模式，无持久化SLA；查询延迟 < 200ms p95 |
 | INFRA-DB-006 | relational_db | 172.24.30.100:9000/c1_market | connected | 持久化, 列式压缩, < 50ms write p95, < 200ms OLAP query p95 |
+| INFRA-DB-007 | cache | 172.24.30.100:6379 (Hyper-V Ubuntu VM zephyr-ch, 与 ClickHouse 同 VM) | connected | 99.99% uptime, <5ms GET p99（CP-02 因子值→信号≤5秒） |
 | INFRA-EVT-001 | event_bus | — | planned | 99.9% uptime, < 100ms publish-delivery |
 | INFRA-MQ-001 | message_queue | — | planned | 99.5% uptime, < 5s task pickup delay |
 | INFRA-PROC-001 | cache | in-process | planned | 进程复用率 ≥ 80%，启动延迟 < 500ms |
@@ -162,36 +163,36 @@ ttl: permanent
 | 文件路径 | 大小(KB) | 最后修改 |
 |----------|---------|----------|
 | `config/ai_capability_matrix.yaml` | 6.1 | 2026-07-24 |
-| `config/ai_context_policy.yaml` | 1.0 | 2026-07-04 |
-| `config/alert_rules.yaml` | 2.4 | 2026-07-20 |
-| `config/asset_inventory.yaml` | 2.3 | 2026-07-04 |
-| `config/blueprint_routing.yaml` | 22.4 | 2026-07-24 |
+| `config/ai_context_policy.yaml` | 1.1 | 2026-08-02 |
+| `config/alert_rules.yaml` | 2.3 | 2026-08-02 |
+| `config/asset_inventory.yaml` | 2.3 | 2026-08-02 |
+| `config/blueprint_routing.yaml` | 22.4 | 2026-08-02 |
 | `config/budget_policy.yaml` | 3.0 | 2026-08-01 |
 | `config/capabilities.yaml` | 0.9 | 2026-08-01 |
-| `config/capacity_params.yaml` | 7.1 | 2026-08-01 |
-| `config/capacity_slo.yaml` | 4.6 | 2026-07-24 |
+| `config/capacity_params.yaml` | 7.1 | 2026-08-02 |
+| `config/capacity_slo.yaml` | 4.6 | 2026-08-02 |
 | `config/compression_policy.yaml` | 2.5 | 2026-07-04 |
 | `config/context_rules.yaml` | 5.6 | 2026-07-17 |
-| `config/degradation_chain.yaml` | 1.3 | 2026-07-02 |
+| `config/degradation_chain.yaml` | 1.3 | 2026-08-02 |
 | `config/dr_policy.yaml` | 4.5 | 2026-08-01 |
 | `config/embedding_model_registry.yaml` | 3.5 | 2026-06-23 |
-| `config/error_budget_config.yaml` | 1.6 | 2026-07-02 |
-| `config/external_watchdog.yaml` | 0.9 | 2026-07-02 |
+| `config/error_budget_config.yaml` | 1.7 | 2026-08-02 |
+| `config/external_watchdog.yaml` | 0.9 | 2026-08-02 |
 | `config/flags.yaml` | 1.9 | 2026-08-01 |
 | `config/immutable_core.yaml` | 2.8 | 2026-07-23 |
-| `config/metrics_schema.yaml` | 2.6 | 2026-07-02 |
+| `config/metrics_schema.yaml` | 2.6 | 2026-08-02 |
 | `config/model_pricing.yaml` | 1.3 | 2026-08-01 |
 | `config/nav_table_mapping.yaml` | 20.1 | 2026-07-01 |
-| `config/owner_offline_protocol.yaml` | 1.0 | 2026-07-02 |
-| `config/qmt_environments.yaml` | 4.0 | 2026-08-01 |
+| `config/owner_offline_protocol.yaml` | 1.4 | 2026-08-02 |
+| `config/qmt_environments.yaml` | 4.2 | 2026-08-02 |
 | `config/rbac_roles.yaml` | 1.1 | 2026-07-04 |
 | `config/resource_optimization.yaml` | 1.5 | 2026-08-01 |
 | `config/risk_params.yaml` | 1.3 | 2026-08-01 |
-| `config/risk_register.yaml` | 9.1 | 2026-07-02 |
-| `config/sandbox_policy.yaml` | 1.5 | 2026-07-05 |
+| `config/risk_register.yaml` | 9.1 | 2026-08-02 |
+| `config/sandbox_policy.yaml` | 1.5 | 2026-08-02 |
 | `config/sla_targets.yaml` | 0.9 | 2026-07-22 |
 | `config/sli_registry.yaml` | 2.8 | 2026-08-01 |
-| `config/tech_stack_manifest.yaml` | 5.9 | 2026-08-01 |
+| `config/tech_stack_manifest.yaml` | 5.9 | 2026-08-02 |
 | `config/trigger_router.yaml` | 4.9 | 2026-08-01 |
 | `config/worktree_state_machine.yaml` | 7.3 | 2026-07-21 |
 
