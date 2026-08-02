@@ -341,6 +341,10 @@ class IntegratorScheduler:
         self._ch_health_cache: dict[str, Any] = {"status": "unknown", "last_check": 0.0, "latency_ms": 0}
         self._ch_health_lock = threading.Lock()
         self._ch_health_interval = 30  # 秒：每 30 秒探活一次
+        # CH 探活告警状态（R4a，#ARCH-DR-CH-RESTART-001）：
+        # 连续失败达阈值才告警（防单次抖动误报），状态变化时才触发（防重复刷屏）
+        self._ch_probe_fail_count = 0
+        self._ch_probe_alerted_dead = False  # 是否已发过 DEAD 告警（去重）
         # 卡死任务定期清理（Phase 3-B 治本修复 v2）
         # 启动时清理 >24h 的历史僵尸任务，运行中每小时清理 >6h 的卡死任务
         self._stale_reap_interval = 3600  # 秒：每小时 reap 一次
@@ -482,14 +486,18 @@ class IntegratorScheduler:
         - 缓存超过 3 个间隔未更新 → 判定探活线程死亡
         """
         def _probe_loop() -> None:
+            # CH 探活告警阈值（连续失败次数，与 HeartbeatMonitor 对齐）
+            ch_probe_fail_threshold = 3
             while self._started:
                 t0 = time.time()
+                probe_ok = False
                 try:
                     result = ch_reader.query("SELECT 1", timeout=3)
                     latency = (time.time() - t0) * 1000
+                    probe_ok = bool(result.strip())
                     with self._ch_health_lock:
                         self._ch_health_cache = {
-                            "status": "ok" if result.strip() else "error: empty response",
+                            "status": "ok" if probe_ok else "error: empty response",
                             "last_check": time.time(),
                             "latency_ms": round(latency, 1),
                         }
@@ -503,6 +511,44 @@ class IntegratorScheduler:
                             "latency_ms": round(latency, 1),
                         }
                     log.warning("CH 健康探活失败: %s", e, exc_info=True)
+
+                # ── CH 探活告警（R4a，#ARCH-DR-CH-RESTART-001）──
+                # 连续失败达阈值才告警（防单次抖动），状态变化才触发（防刷屏）。
+                # alerter.notify 内部有 300s 冷却 + 通道吞异常，不影响探活主流程。
+                if probe_ok:
+                    self._ch_probe_fail_count = 0
+                    if self._ch_probe_alerted_dead:
+                        # 恢复通知（DEAD→ALIVE）
+                        self._ch_probe_alerted_dead = False
+                        try:
+                            self._alerter.notify(
+                                task_id="ch_health_probe",
+                                error="CH 健康探活已恢复（SELECT 1 成功），服务可达。",
+                                level="INFO",
+                                source="clickhouse",
+                            )
+                        except Exception:  # noqa: BLE001
+                            pass
+                else:
+                    self._ch_probe_fail_count += 1
+                    if (self._ch_probe_fail_count >= ch_probe_fail_threshold
+                            and not self._ch_probe_alerted_dead):
+                        self._ch_probe_alerted_dead = True
+                        try:
+                            self._alerter.notify(
+                                task_id="ch_health_probe",
+                                error=(
+                                    f"CH 健康探活连续 {self._ch_probe_fail_count} 次失败"
+                                    f"（间隔 {self._ch_health_interval}s，约 "
+                                    f"{self._ch_probe_fail_count * self._ch_health_interval}s），"
+                                    f"服务不可达。灾时若在实盘运行期将导致数据中断，"
+                                    f"请立即检查 CH 服务状态（systemctl status clickhouse-server）。"
+                                ),
+                                level="CRITICAL",
+                                source="clickhouse",
+                            )
+                        except Exception:  # noqa: BLE001
+                            pass
                 # 等待下次探活（用 Event 实现可中断的 sleep 更优雅，但此处简单实现）
                 time.sleep(self._ch_health_interval)
 

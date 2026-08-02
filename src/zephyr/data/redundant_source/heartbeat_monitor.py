@@ -62,11 +62,14 @@ class HeartbeatMonitor:
         ch_ping_interval: float = _CH_PING_INTERVAL,
         ch_fail_threshold: int = _CH_FAIL_THRESHOLD,
         ch_ping_fn=None,
+        alerter=None,
     ) -> None:
         self._tick_timeout = tick_timeout
         self._ch_ping_interval = ch_ping_interval
         self._ch_fail_threshold = ch_fail_threshold
         self._ch_ping_fn = ch_ping_fn or self._default_ch_ping
+        # 告警器（惰性创建，避免 import 循环 + 未配置通道时静默）
+        self._alerter = alerter
 
         self._lock = threading.Lock()
         self._status = HeartbeatStatus()
@@ -138,35 +141,91 @@ class HeartbeatMonitor:
             self._thread = None
 
     def _ch_ping_loop(self) -> None:
-        """CH 心跳检测循环。"""
+        """CH 心跳检测循环。
+
+        状态变化时触发告警（R4a，#ARCH-DR-CH-RESTART-001）：
+        - ALIVE→DEAD：CRITICAL 告警（CH 不可达，灾时数据中断风险）
+        - DEAD→ALIVE：INFO 恢复通知（CH 已恢复）
+        告警在锁外发送，避免 alerter 内部锁与 _lock 嵌套死锁。
+        """
+        prev_ch_state = SourceState.UNKNOWN
         while self._running:
-            ok = self._ch_ping_fn()
-            now = time.time()
-            primary_alive = False
-            with self._lock:
-                if ok:
-                    self._status.last_ch_ok_ts = now
-                    self._status.ch_consecutive_failures = 0
-                    self._status.ch_state = SourceState.ALIVE
-                else:
-                    self._status.ch_consecutive_failures += 1
-                    if self._status.ch_consecutive_failures >= self._ch_fail_threshold:
-                        self._status.ch_state = SourceState.DEAD
-                        log.warning("CH 连续 %d 次 ping 失败，标记不可达",
-                                    self._status.ch_consecutive_failures)
-
-                # 内联计算 primary_alive（避免在持锁时调用 is_primary_alive 导致死锁）
-                if self._status.last_tick_ts > 0:
-                    primary_alive = (now - self._status.last_tick_ts) < self._tick_timeout
-                    if not primary_alive:
-                        self._status.primary_state = SourceState.DEAD
-
-                # 暴露 metrics
-                self._registry.set_gauge(
-                    "zephyr_ch_heartbeat", 1.0 if ok else 0.0
-                )
-                self._registry.set_gauge(
-                    "zephyr_primary_heartbeat", 1.0 if primary_alive else 0.0
-                )
-
+            state_changed_to = self._ping_once(prev_ch_state)
+            prev_ch_state = self._status.ch_state
+            # 锁外发送告警（alerter 内部自带锁，避免与 _lock 嵌套）
+            if state_changed_to is not None and self._alerter is not None:
+                self._fire_ch_state_alert(state_changed_to)
             time.sleep(self._ch_ping_interval)
+
+    def _ping_once(self, prev_ch_state: SourceState) -> SourceState | None:
+        """执行单次 CH 心跳探测 + 状态更新（_ch_ping_loop 的可测单轮）。
+
+        Args:
+            prev_ch_state: 上一轮的 CH 状态（用于检测状态变化）。
+
+        Returns:
+            状态变化后的新状态（仅跨过阈值时返回，否则 None）；同时更新 self._status。
+        """
+        ok = self._ch_ping_fn()
+        now = time.time()
+        primary_alive = False
+        state_changed_to: SourceState | None = None
+        with self._lock:
+            if ok:
+                self._status.last_ch_ok_ts = now
+                self._status.ch_consecutive_failures = 0
+                new_state = SourceState.ALIVE
+            else:
+                self._status.ch_consecutive_failures += 1
+                if self._status.ch_consecutive_failures >= self._ch_fail_threshold:
+                    new_state = SourceState.DEAD
+                    log.warning("CH 连续 %d 次 ping 失败，标记不可达",
+                                self._status.ch_consecutive_failures)
+                else:
+                    new_state = self._status.ch_state  # 未达阈值，保持原状态
+
+            # 检测状态变化（仅在跨过阈值时触发，避免每轮重复告警）
+            if new_state != prev_ch_state and prev_ch_state is not SourceState.UNKNOWN:
+                state_changed_to = new_state
+            self._status.ch_state = new_state
+
+            # 内联计算 primary_alive（避免在持锁时调用 is_primary_alive 导致死锁）
+            if self._status.last_tick_ts > 0:
+                primary_alive = (now - self._status.last_tick_ts) < self._tick_timeout
+                if not primary_alive:
+                    self._status.primary_state = SourceState.DEAD
+
+            # 暴露 metrics
+            self._registry.set_gauge(
+                "zephyr_ch_heartbeat", 1.0 if ok else 0.0
+            )
+            self._registry.set_gauge(
+                "zephyr_primary_heartbeat", 1.0 if primary_alive else 0.0
+            )
+        return state_changed_to
+
+    def _fire_ch_state_alert(self, new_state: SourceState) -> None:
+        """CH 状态变化时发送告警（R4a，#ARCH-DR-CH-RESTART-001）。
+
+        - DEAD：CRITICAL（CH 不可达，灾时数据中断风险）
+        - ALIVE：INFO 恢复通知
+        告警失败不影响主流程（alerter 内部吞异常）。
+        """
+        try:
+            if new_state == SourceState.DEAD:
+                self._alerter.notify(
+                    task_id="ch_heartbeat",
+                    error=f"CH 连续 {self._ch_fail_threshold} 次 ping 失败，已标记为不可达（DEAD）。"
+                          f"灾时若在实盘运行期将导致数据中断，请立即检查 CH 服务状态。",
+                    level="CRITICAL",
+                    source="clickhouse",
+                )
+            elif new_state == SourceState.ALIVE:
+                self._alerter.notify(
+                    task_id="ch_heartbeat",
+                    error="CH 已恢复连通（ALIVE），ping 成功。",
+                    level="INFO",
+                    source="clickhouse",
+                )
+        except Exception as e:  # noqa: BLE001 — 告警失败不应影响心跳检测主流程
+            log.error("CH 状态告警发送异常: %s", e)
