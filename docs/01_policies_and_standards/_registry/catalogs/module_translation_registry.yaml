@@ -20801,11 +20801,11 @@ entries:
   plain_zh: "管线基类，仿真相关功能（pipeline base）"
 - module_path: src/zephyr/simulation/result_analyzer.py
   domain_id: D_SIMULATION
-  name_zh: 结果分析器
-  name_en: result_analyzer
-  desc_zh: 结果分析器模块
-  desc_en: ''
-  plain_zh: 结果分析器，模拟的分析器，分析数据找出问题或规律。
+  name_zh: "仿真结果分析器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "仿真结果分析器——对多个策略仿真结果执行跨场景聚合统计(均值/标准差/分位数/置信区间)、收益率分布Jarque-Bera正态性检验和可视化数据准备,产出含摘要的分析报告"
 - module_path: src/zephyr/simulation/risk_simulator.py
   domain_id: D_SIMULATION
   name_zh: "风控仿真器"

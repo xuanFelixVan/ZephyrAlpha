@@ -7595,6 +7595,16 @@ creation_tokens:
     created_by: "session-position-pos009"
     capability: "position_audit_logger"
 
+  # --- D-SIMULATION 仿真结果分析器（2026-08-02，MOD-SIM-012）---
+  - file: "src/zephyr/simulation/result_analyzer.py"
+    token: "auto-sim-result-analyzer-20260802"
+    created_by: "session-sim012"
+    capability: "simulation_result_analyzer"
+  - file: "docs/03_modules/_domain_simulation/result_analyzer/blueprint.md"
+    token: "auto-sim-result-analyzer-bp-20260802"
+    created_by: "session-sim012"
+    capability: "simulation_result_analyzer"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

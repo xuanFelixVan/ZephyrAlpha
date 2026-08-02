@@ -1,0 +1,100 @@
+---
+module_id: MOD-SIM-012
+title: "仿真结果分析器蓝图 — 聚合统计+分布检验+可视化数据"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+design_maturity: production
+build_status: stable
+ttl: permanent
+layer: L_SIMULATION
+layer_name: simulation
+functional_domain: simulation
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-02"
+last_updated: "2026-08-02"
+priority: P1
+blueprint_level: module
+responsibility_domain: 
+---
+
+# MOD-SIM-012 Simulation Result Analyzer — 仿真结果分析器 蓝图
+
+> **module_id**: MOD-SIM-012 | **域**: D_SIMULATION | **层**: L_SIMULATION 仿真层
+> **优先级**: P1 | **成熟度**: L1 🔵 骨架 → production | **建设标记**: ✅可建
+> **SSoT**: depgraph MOD-SIM-012 | **设计真源**: D:\临时工作区\依赖图\19-D-SIMULATION-仿真域.md §1 D-SIMULATION-12
+
+## 1. 定位
+
+仿真结果分析器——对多个 SimulationResult(跨场景, 来自 SIM-02 策略仿真)执行聚合统计分析+分布检验+可视化数据准备, 输出 SimulationAnalysisReport。是仿真流水线的分析终点(策略仿真→结果分析)。
+
+消费 SIM-02/SIM-03/SIM-04 的仿真结果, 跨场景聚合回答"策略在 N 个 what-if 场景下的整体表现如何"——均值/标准差/分位数/置信区间 + 收益分布正态性检验 + 可视化数据。
+
+属 A 类基础设施(纯统计计算+numpy, 逻辑明确), 阈值为 C 类可调参数。
+自包含不跨域依赖 D_BACKTEST metrics (避免仿真↔回测耦合)。
+
+设计真源: D-SIMULATION-12 "仿真结果分析+统计检验+可视化 | 与D-FRONTEND联动"。
+
+## 2. 输入 / 输出
+
+| 方向 | 内容 | 契约/事件 |
+|------|------|-----------|
+| 输入 | list[SimulationResult] (跨场景) + AnalysisConfig | 来自 SIM-02 strategy_simulator |
+| 输出 | SimulationAnalysisReport (聚合统计+分布+可视化数据+摘要) | 供 D_FRONTEND 可视化 / 人工审查 |
+
+## 3. 核心规则 (设计真源 §1 D-SIMULATION-12)
+
+### 3.1 单场景指标 (ScenarioMetrics)
+
+从每个 SimulationResult 提取:
+- total_return: 总收益率
+- annualized_return: 年化收益(按 annualization_factor 折算)
+- volatility: 收益波动率(年化)
+- sharpe: Sharpe 比率 ((annualized_return - rf) / volatility)
+- max_drawdown: 最大回撤
+- win_rate: 胜率(盈利交易占比)
+- trades_count: 交易次数
+
+### 3.2 跨场景聚合 (AggregateAnalysis)
+
+对每个指标跨 N 场景计算:
+- mean / std / min / max
+- percentiles: p5 / p25 / p50 / p75 / p95
+- confidence_interval: 均值的 (1-α) 置信区间 [mean ± z*std/√N]
+
+### 3.3 分布检验 (DistributionAnalysis)
+
+- 收益率直方图分桶 (return_histogram: bins + counts)
+- 正态性检验: 基于偏度/峰度的 Jarque-Bera 统计量 (JB = N/6 * (S² + K²/4)), JB > 临界值 → 非正态
+- 提供偏度(skewness)/峰度(kurtosis)
+
+### 3.4 可视化数据 (VisualizationData)
+
+- equity_curve_ensemble: 各场景净值曲线(供 D_FRONTEND 绘制)
+- metric_distributions: 各指标分布(分位数)供箱线图
+- summary: 文本摘要(场景数/均值收益/95%CI/正态性结论)
+
+## 4. 关键不变量 (INVARIANTS)
+
+- 纯 numpy 统计计算, 不依赖外部数据库/scipy
+- 全部数据模型 frozen 不可变
+- 空列表 → SimulationAnalysisReport 含空聚合 (不报错)
+- 单场景 → std/CI 退化为 0/None
+- 不修改输入 SimulationResult
+
+## 5. 错误契约
+
+- `SimulationAnalysisError` (ZA-SIM-0012): 输入非 list / 元素非 SimulationResult
+
+## 6. 测试
+
+- `tests/simulation/test_result_analyzer.py`
+- 覆盖: 单场景指标计算、多场景聚合(mean/std/分位数/CI)、分布直方图、Jarque-Bera 正态性、可视化数据、空列表、输入校验、frozen
+
+## 7. 依赖
+
+- `numpy` (统计计算)
+- `zephyr.simulation.strategy_simulator` (SimulationResult 类型, 仅类型引用)
+- `zephyr.shared.foundation.errors` (ZephyrBaseError)
+- 消费者: D_FRONTEND 可视化 / 人工审查 / C-007 AI自治进化闭环
