@@ -6,7 +6,7 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-08-02T12:13:31Z'
+  generated_at: '2026-08-02T12:17:01Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 5614
   total_ssot_claims: 16
@@ -1395,7 +1395,7 @@ ownership:
   - path: 'src/zephyr/reporting/report_publisher.py'
     owner_blueprint: 'MOD-RPT-003'
     claim_type: 'depgraph_node'
-    declared_in: ''
+    declared_in: 'docs/03_modules/_domain_reporting/report_publisher/blueprint.md'
     existence: '未实现'
     ownership_judgment: '本模块'
 

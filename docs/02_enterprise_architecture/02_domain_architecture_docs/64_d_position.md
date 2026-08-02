@@ -97,6 +97,7 @@ flowchart TD
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| D_RISK
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_position_core_position_limit_enforcer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_position_state_machine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_calendar_position_constraint_py -->|导入依赖 / import_depends| D_SHARED
@@ -105,11 +106,10 @@ flowchart TD
     src_zephyr_position_core_position_drift_monitor_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     tests_position_test_position_sizing_engine_py -->|测试依赖 / test_depends| D_INFRASTRUCTURE
-    src_zephyr_position_core_position_sizing_engine_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_position_core_cash_manager_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_position_core_position_limit_enforcer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_position_sizing_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_position_core_drawdown_controller_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_position_sizing_engine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_cash_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_sell_position_link_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_rebalance_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_RISK -->|runtime / runtime| src_zephyr_position_core_drawdown_controller_py
