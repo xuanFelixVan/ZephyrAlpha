@@ -67,8 +67,8 @@ ttl: permanent
 |------|-----|
 | 域总数 | 72 |
 | 模块总数 | 3142 |
-| 生产态模块 | 2922 |
-| 设计态模块 | 220 |
+| 生产态模块 | 2923 |
+| 设计态模块 | 219 |
 
 ## 域清单（按架构层分组）
 
@@ -149,7 +149,7 @@ ttl: permanent
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 9 | 5 | 4 | 9/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
 | D_PF_CORE | 组合核心 / Portfolio Core | 18 | 10 | 8 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
-| D_POSITION | 仓位管理 / Position Management | 15 | 14 | 1 | 15/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
+| D_POSITION | 仓位管理 / Position Management | 15 | 15 | 0 | 15/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 25 | 20 | 5 | 25/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 23 | 8 | 15 | 23/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
