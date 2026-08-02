@@ -20,20 +20,19 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2942 | 92.8% |
-| design（设计态） | 228 | 7.2% |
+| production（生产态） | 3006 | 94.0% |
+| design（设计态） | 191 | 6.0% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3170** | **100%** |
+| **总计** | **3197** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4114 | 129.8% |
-| stable | 1729 | 54.5% |
-| planned | 125 | 3.9% |
+| generated | 4169 | 130.4% |
+| stable | 1768 | 55.3% |
 | deprecated | 90 | 2.8% |
-| testing | 1 | 0.0% |
+| planned | 89 | 2.8% |
 
 ## 各域设计成熟度统计
 
@@ -43,11 +42,11 @@ ttl: permanent
 | D_ARCHIVE_SCRIPTS | Archived Scripts | 0 | 0 | 0 | 0 | N/A |
 | D_ARCH_GUARD | 架构守护脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_ARCH_SCRIPTS | 架构治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_ASHARE_SIGNAL | A股特色信号 | 19 | 7 | 12 | 0 | 36.8% |
+| D_ASHARE_SIGNAL | A股特色信号 | 19 | 13 | 6 | 0 | 68.4% |
 | D_AUDITTEST | 审计测试套件 | 1 | 1 | 0 | 0 | 100.0% |
 | D_AUTONOMY_CORE | 自治核心 | 130 | 130 | 0 | 0 | 100.0% |
 | D_AUTONOMY_PERM | 自治保护 | 2 | 2 | 0 | 0 | 100.0% |
-| D_BACKTEST | 回测 | 27 | 19 | 8 | 0 | 70.4% |
+| D_BACKTEST | 回测 | 31 | 28 | 3 | 0 | 90.3% |
 | D_BEHAVIORAL_AUDIT | 行为审计 | 0 | 0 | 0 | 0 | N/A |
 | D_CODE_SCRIPTS | 代码质量脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_COMPLIANCE | 合规 | 3 | 2 | 1 | 0 | 66.7% |
@@ -69,7 +68,7 @@ ttl: permanent
 | D_FBL_VERIFICATION | 反馈验证 | 71 | 71 | 0 | 0 | 100.0% |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | 125 | 125 | 0 | 0 | 100.0% |
 | D_FRONTEND | 前端 | 16 | 12 | 4 | 0 | 75.0% |
-| D_FUNDAMENTAL_SIGNAL | 基本面信号 | 13 | 10 | 3 | 0 | 76.9% |
+| D_FUNDAMENTAL_SIGNAL | 基本面信号 | 14 | 12 | 2 | 0 | 85.7% |
 | D_GOVERNANCE | 生命周期管理 | 224 | 224 | 0 | 0 | 100.0% |
 | D_GOV_AUDIT | 审计追踪 | 126 | 123 | 3 | 0 | 97.6% |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 172 | 172 | 0 | 0 | 100.0% |
@@ -84,22 +83,22 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
-| D_INFRA_RUNTIME | 运行时集成 | 173 | 170 | 3 | 0 | 98.3% |
+| D_INFRA_RUNTIME | 运行时集成 | 169 | 166 | 3 | 0 | 98.2% |
 | D_INFRA_TELEMETRY | 可观测性 | 0 | 0 | 0 | 0 | N/A |
 | D_INTEGRATION | 管线路由 | 71 | 71 | 0 | 0 | 100.0% |
 | D_INTEGRATION_GATEWAY | 集成网关 | 0 | 0 | 0 | 0 | N/A |
 | D_INTELLIGENCE | 上下文管理 | 31 | 31 | 0 | 0 | 100.0% |
 | D_KNOWLEDGE | 知识管理 | 1 | 0 | 1 | 0 | 0.0% |
 | D_META_SCRIPTS | 元治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_MKT_DATA | 行情数据 | 15 | 9 | 6 | 0 | 60.0% |
+| D_MKT_DATA | 行情数据 | 26 | 26 | 0 | 0 | 100.0% |
 | D_ML_SERVE | 推理 | 7 | 7 | 0 | 0 | 100.0% |
 | D_ML_TRAIN | 训练 | 6 | 3 | 3 | 0 | 50.0% |
 | D_OPS | 反馈循环 | 11 | 11 | 0 | 0 | 100.0% |
 | D_ORCHESTRATOR | 代理编排器 | 70 | 70 | 0 | 0 | 100.0% |
 | D_PF_ALLOC | 组合分配 | 9 | 5 | 4 | 0 | 55.6% |
-| D_PF_CORE | 组合核心 | 18 | 10 | 8 | 0 | 55.6% |
+| D_PF_CORE | 组合核心 | 18 | 15 | 3 | 0 | 83.3% |
 | D_POSITION | 仓位管理 | 15 | 15 | 0 | 0 | 100.0% |
-| D_REPORTING | 报告 | 12 | 4 | 8 | 0 | 33.3% |
+| D_REPORTING | 报告 | 20 | 19 | 1 | 0 | 95.0% |
 | D_RISK | 风控 | 25 | 21 | 4 | 0 | 84.0% |
 | D_SECURITY | 对抗验证 | 166 | 166 | 0 | 0 | 100.0% |
 | D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | N/A |
@@ -108,9 +107,9 @@ ttl: permanent
 | D_SHARED | 共享服务 | 184 | 184 | 0 | 0 | 100.0% |
 | D_SIGLEGACY | 信号遗留设计态 | 0 | 0 | 0 | 0 | N/A |
 | D_SIGQC | 信号质量控制 | 2 | 2 | 0 | 0 | 100.0% |
-| D_SIMULATION | 仿真 | 10 | 2 | 8 | 0 | 20.0% |
+| D_SIMULATION | 仿真 | 15 | 12 | 3 | 0 | 80.0% |
 | D_STRUCT_SCRIPTS | 结构治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_TRADING | 交易运营 | 41 | 39 | 2 | 0 | 95.1% |
+| D_TRADING | 交易运营 | 43 | 43 | 0 | 0 | 100.0% |
 
 ## 生产化率最低的域（Top 10，需优先推进）
 
@@ -118,11 +117,11 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|
 | D_KNOWLEDGE | 知识管理 | 1 | 0 | 0.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 7.4% |
-| D_SIMULATION | 仿真 | 10 | 2 | 20.0% |
-| D_REPORTING | 报告 | 12 | 4 | 33.3% |
 | D_SELL_DECISION | 卖出决策 | 23 | 8 | 34.8% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 35.0% |
 | D_EX_CORE | 执行核心 | 44 | 16 | 36.4% |
-| D_ASHARE_SIGNAL | A股特色信号 | 19 | 7 | 36.8% |
 | D_FACTOR | 因子 | 88 | 39 | 44.3% |
 | D_ML_TRAIN | 训练 | 6 | 3 | 50.0% |
+| D_PF_ALLOC | 组合分配 | 9 | 5 | 55.6% |
+| D_COMPLIANCE | 合规 | 3 | 2 | 66.7% |
+| D_ASHARE_SIGNAL | A股特色信号 | 19 | 13 | 68.4% |

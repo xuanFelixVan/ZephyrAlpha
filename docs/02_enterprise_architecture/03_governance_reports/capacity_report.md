@@ -75,11 +75,11 @@ ttl: permanent
 | D_ARCHIVE_SCRIPTS | Archived Scripts | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_ARCH_GUARD | 架构守护脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_ARCH_SCRIPTS | 架构治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_ASHARE_SIGNAL | A股特色信号 | L2_domain | 7 | 150 | 4.7% | 正常 |
+| D_ASHARE_SIGNAL | A股特色信号 | L2_domain | 12 | 150 | 8.0% | 正常 |
 | D_AUDITTEST | 审计测试套件 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_AUTONOMY_CORE | 自治核心 | L1_foundation | 130 | 150 | 86.7% | 接近超容 |
 | D_AUTONOMY_PERM | 自治保护 | L2_domain | 2 | 150 | 1.3% | 正常 |
-| D_BACKTEST | 回测 | L2_domain | 19 | 150 | 12.7% | 正常 |
+| D_BACKTEST | 回测 | L2_domain | 28 | 150 | 18.7% | 正常 |
 | D_BEHAVIORAL_AUDIT | 行为审计 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_CODE_SCRIPTS | 代码质量脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_COMPLIANCE | 合规 | L2_domain | 2 | 150 | 1.3% | 正常 |
@@ -101,7 +101,7 @@ ttl: permanent
 | D_FBL_VERIFICATION | 反馈验证 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | L1_foundation | 125 | 150 | 83.3% | 接近超容 |
 | D_FRONTEND | 前端 | L2_domain | 12 | 150 | 8.0% | 正常 |
-| D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 10 | 150 | 6.7% | 正常 |
+| D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 12 | 150 | 8.0% | 正常 |
 | D_GOVERNANCE | 生命周期管理 | L2_domain | 224 | 150 | 149.3% | 超容 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 123 | 150 | 82.0% | 接近超容 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 172 | 150 | 114.7% | 超容 |
@@ -123,15 +123,15 @@ ttl: permanent
 | D_INTELLIGENCE | 上下文管理 | L2_domain | 31 | 150 | 20.7% | 正常 |
 | D_KNOWLEDGE | 知识管理 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_META_SCRIPTS | 元治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_MKT_DATA | 行情数据 | L1_foundation | 9 | 150 | 6.0% | 正常 |
+| D_MKT_DATA | 行情数据 | L1_foundation | 26 | 150 | 17.3% | 正常 |
 | D_ML_SERVE | 推理 | L2_domain | 7 | 150 | 4.7% | 正常 |
 | D_ML_TRAIN | 训练 | L2_domain | 3 | 150 | 2.0% | 正常 |
 | D_OPS | 反馈循环 | L1_foundation | 11 | 150 | 7.3% | 正常 |
 | D_ORCHESTRATOR | 代理编排器 | L1_foundation | 70 | 150 | 46.7% | 正常 |
 | D_PF_ALLOC | 组合分配 | L2_domain | 5 | 150 | 3.3% | 正常 |
-| D_PF_CORE | 组合核心 | L2_domain | 10 | 150 | 6.7% | 正常 |
+| D_PF_CORE | 组合核心 | L2_domain | 15 | 150 | 10.0% | 正常 |
 | D_POSITION | 仓位管理 | L2_domain | 15 | 150 | 10.0% | 正常 |
-| D_REPORTING | 报告 | L1_foundation | 3 | 150 | 2.0% | 正常 |
+| D_REPORTING | 报告 | L1_foundation | 19 | 150 | 12.7% | 正常 |
 | D_RISK | 风控 | L2_domain | 21 | 150 | 14.0% | 正常 |
 | D_SECURITY | 对抗验证 | L1_foundation | 166 | 150 | 110.7% | 超容 |
 | D_SECURITY_LLM | LLM防御 | L1_foundation | 0 | 150 | 0.0% | 空 |
@@ -140,6 +140,6 @@ ttl: permanent
 | D_SHARED | 共享服务 | L0_infrastructure | 184 | 150 | 122.7% | 超容 |
 | D_SIGLEGACY | 信号遗留设计态 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_SIGQC | 信号质量控制 | L2_domain | 2 | 150 | 1.3% | 正常 |
-| D_SIMULATION | 仿真 | L2_domain | 2 | 150 | 1.3% | 正常 |
+| D_SIMULATION | 仿真 | L2_domain | 12 | 150 | 8.0% | 正常 |
 | D_STRUCT_SCRIPTS | 结构治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_TRADING | 交易运营 | L2_domain | 39 | 150 | 26.0% | 正常 |
+| D_TRADING | 交易运营 | L2_domain | 43 | 150 | 28.7% | 正常 |
