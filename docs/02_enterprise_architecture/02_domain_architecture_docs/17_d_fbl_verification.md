@@ -58,7 +58,7 @@ flowchart TD
     src_zephyr_feedback_loop_gates_safety_gates_py["安全门禁<br/>gates包的safety_gates模块<br/>_safety_gates<br/>文件: gates/_safety_gates.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_security_gates_py["安全门禁<br/>gates包的security_gates模块<br/>_security_gates<br/>文件: gates/_security_gates.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_action_reversibility_py["行为reversibility<br/>动作reversibility。Action Reversibility —<br/>v0.15.0 R208<br/>文件: gates/action_reversibility.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_gates_adversarial_validation_py["对抗验证<br/>红方注入 -> 蓝方 Gate 判定 -> 绕过检测 -><br/>收敛验证 -> 宪法自进化。<br/>文件: gates/adversarial_validation.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_gates_adversarial_validation_py["对抗验证<br/>adversarial验证。Adversarial Validation Gate —<br/>FLE-ADVERSARIAL-VALIDATION + RED-BLUE-GATE<br/>bridge.<br/>文件: gates/adversarial_validation.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_autonomy_credit_py["自治信用<br/>Autonomy Credit System — v0.7.0 R87<br/>文件: gates/autonomy_credit.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_autonomy_maturity_py["自治成熟度<br/>Autonomy Maturity Ladder — v0.7.0 R86<br/>文件: gates/autonomy_maturity.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py["蓝图代码协调器<br/>Blueprint-Code Reconciler — v0.14.0 R195<br/>文件: gates/blueprint_code_reconciler.py<br/>(生产态 / production)"]
@@ -81,7 +81,7 @@ flowchart TD
     src_zephyr_feedback_loop_gates_llm_cost_router_py["llm成本路由器<br/>LLM Cost Router — v0.3.0 R20<br/>文件: gates/llm_cost_router.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_merkle_audit_root_py["merkle审计root<br/>merkle审计根。Merkle Audit Root — v0.8.0 R104<br/>文件: gates/merkle_audit_root.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_meta_performance_gate_py["元绩效门禁<br/>Meta Performance Gate — v0.11.0 R158<br/>文件: gates/meta_performance_gate.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_gates_parameterized_safety_gate_py["parameterized安全门禁<br/>gates包的parameterized_safety_gate模块<br/>GateVerdict — GateVerdict<br/>文件: gates/parameterized_safety_gate.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_gates_parameterized_safety_gate_py["parameterized安全门禁<br/>GateVerdict — GateVerdict<br/>文件: gates/parameterized_safety_gate.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py["安全门禁l28l29<br/>Safety Gates L28-L29 — DR Readiness + Supply<br/>Chain (MOD-FEEDBACK_LOOP §3 L28-L41)<br/>文件: gates/safety_gate_l28_l29.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py["安全门禁l36l37<br/>Safety Gates L36-L37 — AI Code Integrity + Vibe<br/>Maintainability<br/>文件: gates/safety_gate_l36_l37.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py["安全门禁l38l39<br/>Safety Gates L38-L39 — Deterministic Safety +<br/>Architectural Integrity<br/>文件: gates/safety_gate_l38_l39.py<br/>(生产态 / production)"]
@@ -98,7 +98,7 @@ flowchart TD
     src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py["安全门禁l60l61<br/>Safety Gates L60-L61 — Environmental Grounding<br/>+ Meta-System Integrity<br/>文件: gates/safety_gate_l60_l61.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l62_l63_py["安全门禁l62l63<br/>Safety Gates L62-L63 — Infrastructure Reality +<br/>Market Reality<br/>文件: gates/safety_gate_l62_l63.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l64_l65_py["安全门禁l64l65<br/>Safety Gates L64-L65 — Financial Integrity +<br/>VibeOps:Solo<br/>文件: gates/safety_gate_l64_l65.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py["安全门禁l66l67<br/>同时写入核心 zephyr.gov_audit.writer.AuditWriter<br/>不可变审计链。<br/>文件: gates/safety_gate_l66_l67.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py["安全门禁l66l67<br/>Safety Gates L66-L67 — Financial Prudence +<br/>Full Integration Audit<br/>文件: gates/safety_gate_l66_l67.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_scope_creep_monitor_py["作用域creep监控器<br/>作用域creep监控。Scope Creep Monitor — v0.15.0<br/>R220<br/>文件: gates/scope_creep_monitor.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_ab_test_py["ab测试<br/>A/B Test Verifier — v0.9.0 R117<br/>文件: verifiers/ab_test.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_action_explainability_py["行为explainability<br/>动作explainability。Action Explainability —<br/>v0.3.0 R15<br/>文件: verifiers/action_explainability.py<br/>(生产态 / production)"]
@@ -116,7 +116,7 @@ flowchart TD
     src_zephyr_feedback_loop_verifiers_federated_protocol_py["federated协议<br/>Federated Protocol — v0.10.0 R129<br/>文件: verifiers/federated_protocol.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_golden_test_external_py["golden测试external<br/>golden测试外部。Golden Test External — v0.15.0<br/>R214<br/>文件: verifiers/golden_test_external.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_no_llm_degradation_py["noLLM退化<br/>nollm退化。No-LLM Degradation Mode — v0.8.0 R94<br/>文件: verifiers/no_llm_degradation.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py["preflight模拟器<br/>反馈环模块，实现preflight模拟器功能。<br/>Pre-Flight Simulator — v0.12.0 R169b<br/>文件: verifiers/pre_flight_simulator.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py["preflight模拟器<br/>预flightsimulator。Pre-Flight Simulator —<br/>v0.12.0 R169b<br/>文件: verifiers/pre_flight_simulator.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_preventive_repair_py["预防性修复<br/>反馈闭环的事件，定义和分发事件<br/>Preventive Repair — v0.6.0 R69<br/>文件: verifiers/preventive_repair.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_rollback_integrity_py["回滚完整性<br/>Rollback Integrity — v0.3.0 R18b<br/>文件: verifiers/rollback_integrity.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_sim2real_calibration_py["仿真到实盘校准<br/>验证器的核心类，封装Sim2RealCalibration相关逻辑<br/>Sim2Real Calibration — v0.6.0 R56<br/>文件: verifiers/sim2real_calibration.py<br/>(生产态 / production)"]
@@ -192,7 +192,7 @@ flowchart TD
     src_zephyr_feedback_loop_verifiers_sim2real_calibration_py ~~~ src_zephyr_feedback_loop_verifiers_stochastic_diagnosis_verifier_py
     src_zephyr_feedback_loop_verifiers_stochastic_diagnosis_verifier_py ~~~ src_zephyr_feedback_loop_verifiers_toctou_revalidation_py
     src_zephyr_feedback_loop_verifiers_toctou_revalidation_py ~~~ src_zephyr_feedback_loop_verifiers_verification_engine_py
-    src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py["安全门禁l1l27<br/>gates包的safety_gate_l1_l27模块<br/>文件: gates/safety_gate_l1_l27.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py["安全门禁l1l27<br/>Safety Gates L1-L27 — Unified Pipeline<br/>(MOD-FEEDBACK_LOOP §3)<br/>文件: gates/safety_gate_l1_l27.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
@@ -248,7 +248,7 @@ flowchart TD
     src_zephyr_feedback_loop_gates_safety_gates_py["安全门禁<br/>gates包的safety_gates模块<br/>_safety_gates<br/>文件: gates/_safety_gates.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_security_gates_py["安全门禁<br/>gates包的security_gates模块<br/>_security_gates<br/>文件: gates/_security_gates.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_action_reversibility_py["行为reversibility<br/>动作reversibility。Action Reversibility —<br/>v0.15.0 R208<br/>文件: gates/action_reversibility.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_gates_adversarial_validation_py["对抗验证<br/>红方注入 -> 蓝方 Gate 判定 -> 绕过检测 -><br/>收敛验证 -> 宪法自进化。<br/>文件: gates/adversarial_validation.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_gates_adversarial_validation_py["对抗验证<br/>adversarial验证。Adversarial Validation Gate —<br/>FLE-ADVERSARIAL-VALIDATION + RED-BLUE-GATE<br/>bridge.<br/>文件: gates/adversarial_validation.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_autonomy_credit_py["自治信用<br/>Autonomy Credit System — v0.7.0 R87<br/>文件: gates/autonomy_credit.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_autonomy_maturity_py["自治成熟度<br/>Autonomy Maturity Ladder — v0.7.0 R86<br/>文件: gates/autonomy_maturity.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py["蓝图代码协调器<br/>Blueprint-Code Reconciler — v0.14.0 R195<br/>文件: gates/blueprint_code_reconciler.py<br/>(生产态 / production)"]
@@ -271,7 +271,7 @@ flowchart TD
     src_zephyr_feedback_loop_gates_llm_cost_router_py["llm成本路由器<br/>LLM Cost Router — v0.3.0 R20<br/>文件: gates/llm_cost_router.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_merkle_audit_root_py["merkle审计root<br/>merkle审计根。Merkle Audit Root — v0.8.0 R104<br/>文件: gates/merkle_audit_root.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_meta_performance_gate_py["元绩效门禁<br/>Meta Performance Gate — v0.11.0 R158<br/>文件: gates/meta_performance_gate.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_gates_parameterized_safety_gate_py["parameterized安全门禁<br/>gates包的parameterized_safety_gate模块<br/>GateVerdict — GateVerdict<br/>文件: gates/parameterized_safety_gate.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_gates_parameterized_safety_gate_py["parameterized安全门禁<br/>GateVerdict — GateVerdict<br/>文件: gates/parameterized_safety_gate.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py["安全门禁l28l29<br/>Safety Gates L28-L29 — DR Readiness + Supply<br/>Chain (MOD-FEEDBACK_LOOP §3 L28-L41)<br/>文件: gates/safety_gate_l28_l29.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py["安全门禁l36l37<br/>Safety Gates L36-L37 — AI Code Integrity + Vibe<br/>Maintainability<br/>文件: gates/safety_gate_l36_l37.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py["安全门禁l38l39<br/>Safety Gates L38-L39 — Deterministic Safety +<br/>Architectural Integrity<br/>文件: gates/safety_gate_l38_l39.py<br/>(生产态 / production)"]
@@ -288,7 +288,7 @@ flowchart TD
     src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py["安全门禁l60l61<br/>Safety Gates L60-L61 — Environmental Grounding<br/>+ Meta-System Integrity<br/>文件: gates/safety_gate_l60_l61.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l62_l63_py["安全门禁l62l63<br/>Safety Gates L62-L63 — Infrastructure Reality +<br/>Market Reality<br/>文件: gates/safety_gate_l62_l63.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l64_l65_py["安全门禁l64l65<br/>Safety Gates L64-L65 — Financial Integrity +<br/>VibeOps:Solo<br/>文件: gates/safety_gate_l64_l65.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py["安全门禁l66l67<br/>同时写入核心 zephyr.gov_audit.writer.AuditWriter<br/>不可变审计链。<br/>文件: gates/safety_gate_l66_l67.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py["安全门禁l66l67<br/>Safety Gates L66-L67 — Financial Prudence +<br/>Full Integration Audit<br/>文件: gates/safety_gate_l66_l67.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_scope_creep_monitor_py["作用域creep监控器<br/>作用域creep监控。Scope Creep Monitor — v0.15.0<br/>R220<br/>文件: gates/scope_creep_monitor.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_ab_test_py["ab测试<br/>A/B Test Verifier — v0.9.0 R117<br/>文件: verifiers/ab_test.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_action_explainability_py["行为explainability<br/>动作explainability。Action Explainability —<br/>v0.3.0 R15<br/>文件: verifiers/action_explainability.py<br/>(生产态 / production)"]
@@ -306,7 +306,7 @@ flowchart TD
     src_zephyr_feedback_loop_verifiers_federated_protocol_py["federated协议<br/>Federated Protocol — v0.10.0 R129<br/>文件: verifiers/federated_protocol.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_golden_test_external_py["golden测试external<br/>golden测试外部。Golden Test External — v0.15.0<br/>R214<br/>文件: verifiers/golden_test_external.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_no_llm_degradation_py["noLLM退化<br/>nollm退化。No-LLM Degradation Mode — v0.8.0 R94<br/>文件: verifiers/no_llm_degradation.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py["preflight模拟器<br/>反馈环模块，实现preflight模拟器功能。<br/>Pre-Flight Simulator — v0.12.0 R169b<br/>文件: verifiers/pre_flight_simulator.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py["preflight模拟器<br/>预flightsimulator。Pre-Flight Simulator —<br/>v0.12.0 R169b<br/>文件: verifiers/pre_flight_simulator.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_preventive_repair_py["预防性修复<br/>反馈闭环的事件，定义和分发事件<br/>Preventive Repair — v0.6.0 R69<br/>文件: verifiers/preventive_repair.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_rollback_integrity_py["回滚完整性<br/>Rollback Integrity — v0.3.0 R18b<br/>文件: verifiers/rollback_integrity.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_verifiers_sim2real_calibration_py["仿真到实盘校准<br/>验证器的核心类，封装Sim2RealCalibration相关逻辑<br/>Sim2Real Calibration — v0.6.0 R56<br/>文件: verifiers/sim2real_calibration.py<br/>(生产态 / production)"]
@@ -382,7 +382,7 @@ flowchart TD
     src_zephyr_feedback_loop_verifiers_sim2real_calibration_py ~~~ src_zephyr_feedback_loop_verifiers_stochastic_diagnosis_verifier_py
     src_zephyr_feedback_loop_verifiers_stochastic_diagnosis_verifier_py ~~~ src_zephyr_feedback_loop_verifiers_toctou_revalidation_py
     src_zephyr_feedback_loop_verifiers_toctou_revalidation_py ~~~ src_zephyr_feedback_loop_verifiers_verification_engine_py
-    src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py["安全门禁l1l27<br/>gates包的safety_gate_l1_l27模块<br/>文件: gates/safety_gate_l1_l27.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py["安全门禁l1l27<br/>Safety Gates L1-L27 — Unified Pipeline<br/>(MOD-FEEDBACK_LOOP §3)<br/>文件: gates/safety_gate_l1_l27.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py

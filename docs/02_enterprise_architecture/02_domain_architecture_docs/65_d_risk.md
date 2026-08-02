@@ -70,22 +70,22 @@ flowchart TD
     src_zephyr_risk_drawdown_realtime_tracker_py ~~~ src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     src_zephyr_risk_core_risk_decomposition_py["core/risk_decomposition<br/>Risk Decomposition Engine — 风险分解引擎<br/>(MOD-RK-16)<br/>文件: core/risk_decomposition.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_position_limit_checker_py["默认持仓限制检查器<br/>D_RISK — Default Position Limit Checker<br/>文件: implementations<br/>/default_position_limit_checker.py<br/>(生产态 / production)"]
-    src_zephyr_risk_implementations_default_risk_limits_calculator_py["默认风险limits计算器<br/>风险限额计算引擎具体实现。输入持仓快照 +<br/>因子信号，输出 RiskLimits (CTR-003)。<br/>D_RISK — Default Risk Limits Calculator<br/>文件: implementations<br/>/default_risk_limits_calculator.py<br/>(生产态 / production)"]
-    src_zephyr_risk_implementations_default_risk_validator_py["默认风险校验器<br/>风险校验器具体实现。Pre-trade 订单校验 +<br/>全组合风控状态校验。<br/>D_RISK — Default Risk Validator<br/>文件: implementations/default_risk_validator.py<br/>(生产态 / production)"]
-    src_zephyr_risk_stop_loss_py["停止亏损<br/>止损评估逻辑已迁移至<br/>zephyr.risk.implementations.default_stop_loss_en<br/>gine（真源）。<br/>文件: risk/stop_loss.py<br/>(生产态 / production)"]
+    src_zephyr_risk_implementations_default_risk_limits_calculator_py["默认风险limits计算器<br/>D_RISK — Default Risk Limits Calculator<br/>文件: implementations<br/>/default_risk_limits_calculator.py<br/>(生产态 / production)"]
+    src_zephyr_risk_implementations_default_risk_validator_py["默认风险校验器<br/>D_RISK — Default Risk Validator<br/>文件: implementations/default_risk_validator.py<br/>(生产态 / production)"]
+    src_zephyr_risk_stop_loss_py["停止亏损<br/>D_RISK — Stop-Loss & Kill Switch 兼容层<br/>stop_loss<br/>文件: risk/stop_loss.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_risk_decomposition_py ~~~ src_zephyr_risk_implementations_default_position_limit_checker_py
     src_zephyr_risk_implementations_default_position_limit_checker_py ~~~ src_zephyr_risk_implementations_default_risk_limits_calculator_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py ~~~ src_zephyr_risk_implementations_default_risk_validator_py
     src_zephyr_risk_implementations_default_risk_validator_py ~~~ src_zephyr_risk_stop_loss_py
     src_zephyr_risk_implementations_default_stop_loss_engine_py["默认停止亏损引擎<br/>D_RISK — Default Stop-Loss Engine<br/>文件: implementations<br/>/default_stop_loss_engine.py<br/>(生产态 / production)"]
-    src_zephyr_risk_risk_limits_py["风险limits<br/>风险限额计算引擎。根据持仓和信号计算风险约束集，<br/>输出给 D_PORTFOLIO_CORE 组合优化器强制执行。<br/>D_RISK — Risk Limits Calculator<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
-    src_zephyr_risk_risk_manager_py["风控管理器<br/>Phase B 骨架——定义风控层的公共接口<br/>risk_manager<br/>文件: risk/risk_manager.py<br/>(生产态 / production)"]
-    src_zephyr_risk_risk_validator_py["风险校验器<br/>风险校验引擎。在交易执行前校验订单和持仓是否符合<br/>风险限额。<br/>D_RISK — Risk Validator<br/>文件: risk/risk_validator.py<br/>(生产态 / production)"]
+    src_zephyr_risk_risk_limits_py["风险limits<br/>D_RISK — Risk Limits Calculator<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
+    src_zephyr_risk_risk_manager_py["风控管理器<br/>ZephyrAlpha — D_RISK Risk Management Layer —<br/>风控管理器接口<br/>risk_manager<br/>文件: risk/risk_manager.py<br/>(生产态 / production)"]
+    src_zephyr_risk_risk_validator_py["风险校验器<br/>D_RISK — Risk Validator<br/>文件: risk/risk_validator.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_stop_loss_engine_py ~~~ src_zephyr_risk_risk_limits_py
     src_zephyr_risk_risk_limits_py ~~~ src_zephyr_risk_risk_manager_py
     src_zephyr_risk_risk_manager_py ~~~ src_zephyr_risk_risk_validator_py
     src_zephyr_risk_core_daily_auditor_py["core/daily_auditor<br/>Post-Trade Daily Auditor — 日终审计器<br/>(MOD-RK-20)<br/>文件: core/daily_auditor.py<br/>(生产态 / production)"]
-    src_zephyr_risk_risk_manager_base_py["风险管理器基类<br/>风险管理层抽象基类。定义事前<br/>/事后风控、限额检查、止损与熔断的核心接口。<br/>D_RISK — Risk Management Layer Skeleton<br/>文件: risk/risk_manager_base.py<br/>(生产态 / production)"]
+    src_zephyr_risk_risk_manager_base_py["风险管理器基类<br/>D_RISK — Risk Management Layer Skeleton<br/>文件: risk/risk_manager_base.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_daily_auditor_py ~~~ src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_stress_test_engine_py["core/stress_test_engine<br/>Stress Test Engine — 压力测试引擎 (MOD-RK-12)<br/>文件: core/stress_test_engine.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_tail_risk_monitor_py["core/tail_risk_monitor<br/>Tail Risk Monitor — 尾部风险监控器 (MOD-RK-15)<br/>文件: core/tail_risk_monitor.py<br/>(生产态 / production)"]
@@ -175,22 +175,22 @@ flowchart TD
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py ~~~ src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     src_zephyr_risk_core_risk_decomposition_py["core/risk_decomposition<br/>Risk Decomposition Engine — 风险分解引擎<br/>(MOD-RK-16)<br/>文件: core/risk_decomposition.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_position_limit_checker_py["默认持仓限制检查器<br/>D_RISK — Default Position Limit Checker<br/>文件: implementations<br/>/default_position_limit_checker.py<br/>(生产态 / production)"]
-    src_zephyr_risk_implementations_default_risk_limits_calculator_py["默认风险limits计算器<br/>风险限额计算引擎具体实现。输入持仓快照 +<br/>因子信号，输出 RiskLimits (CTR-003)。<br/>D_RISK — Default Risk Limits Calculator<br/>文件: implementations<br/>/default_risk_limits_calculator.py<br/>(生产态 / production)"]
-    src_zephyr_risk_implementations_default_risk_validator_py["默认风险校验器<br/>风险校验器具体实现。Pre-trade 订单校验 +<br/>全组合风控状态校验。<br/>D_RISK — Default Risk Validator<br/>文件: implementations/default_risk_validator.py<br/>(生产态 / production)"]
-    src_zephyr_risk_stop_loss_py["停止亏损<br/>止损评估逻辑已迁移至<br/>zephyr.risk.implementations.default_stop_loss_en<br/>gine（真源）。<br/>文件: risk/stop_loss.py<br/>(生产态 / production)"]
+    src_zephyr_risk_implementations_default_risk_limits_calculator_py["默认风险limits计算器<br/>D_RISK — Default Risk Limits Calculator<br/>文件: implementations<br/>/default_risk_limits_calculator.py<br/>(生产态 / production)"]
+    src_zephyr_risk_implementations_default_risk_validator_py["默认风险校验器<br/>D_RISK — Default Risk Validator<br/>文件: implementations/default_risk_validator.py<br/>(生产态 / production)"]
+    src_zephyr_risk_stop_loss_py["停止亏损<br/>D_RISK — Stop-Loss & Kill Switch 兼容层<br/>stop_loss<br/>文件: risk/stop_loss.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_risk_decomposition_py ~~~ src_zephyr_risk_implementations_default_position_limit_checker_py
     src_zephyr_risk_implementations_default_position_limit_checker_py ~~~ src_zephyr_risk_implementations_default_risk_limits_calculator_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py ~~~ src_zephyr_risk_implementations_default_risk_validator_py
     src_zephyr_risk_implementations_default_risk_validator_py ~~~ src_zephyr_risk_stop_loss_py
     src_zephyr_risk_implementations_default_stop_loss_engine_py["默认停止亏损引擎<br/>D_RISK — Default Stop-Loss Engine<br/>文件: implementations<br/>/default_stop_loss_engine.py<br/>(生产态 / production)"]
-    src_zephyr_risk_risk_limits_py["风险limits<br/>风险限额计算引擎。根据持仓和信号计算风险约束集，<br/>输出给 D_PORTFOLIO_CORE 组合优化器强制执行。<br/>D_RISK — Risk Limits Calculator<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
-    src_zephyr_risk_risk_manager_py["风控管理器<br/>Phase B 骨架——定义风控层的公共接口<br/>risk_manager<br/>文件: risk/risk_manager.py<br/>(生产态 / production)"]
-    src_zephyr_risk_risk_validator_py["风险校验器<br/>风险校验引擎。在交易执行前校验订单和持仓是否符合<br/>风险限额。<br/>D_RISK — Risk Validator<br/>文件: risk/risk_validator.py<br/>(生产态 / production)"]
+    src_zephyr_risk_risk_limits_py["风险limits<br/>D_RISK — Risk Limits Calculator<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
+    src_zephyr_risk_risk_manager_py["风控管理器<br/>ZephyrAlpha — D_RISK Risk Management Layer —<br/>风控管理器接口<br/>risk_manager<br/>文件: risk/risk_manager.py<br/>(生产态 / production)"]
+    src_zephyr_risk_risk_validator_py["风险校验器<br/>D_RISK — Risk Validator<br/>文件: risk/risk_validator.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_stop_loss_engine_py ~~~ src_zephyr_risk_risk_limits_py
     src_zephyr_risk_risk_limits_py ~~~ src_zephyr_risk_risk_manager_py
     src_zephyr_risk_risk_manager_py ~~~ src_zephyr_risk_risk_validator_py
     src_zephyr_risk_core_daily_auditor_py["core/daily_auditor<br/>Post-Trade Daily Auditor — 日终审计器<br/>(MOD-RK-20)<br/>文件: core/daily_auditor.py<br/>(生产态 / production)"]
-    src_zephyr_risk_risk_manager_base_py["风险管理器基类<br/>风险管理层抽象基类。定义事前<br/>/事后风控、限额检查、止损与熔断的核心接口。<br/>D_RISK — Risk Management Layer Skeleton<br/>文件: risk/risk_manager_base.py<br/>(生产态 / production)"]
+    src_zephyr_risk_risk_manager_base_py["风险管理器基类<br/>D_RISK — Risk Management Layer Skeleton<br/>文件: risk/risk_manager_base.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_daily_auditor_py ~~~ src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_stress_test_engine_py["core/stress_test_engine<br/>Stress Test Engine — 压力测试引擎 (MOD-RK-12)<br/>文件: core/stress_test_engine.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_tail_risk_monitor_py["core/tail_risk_monitor<br/>Tail Risk Monitor — 尾部风险监控器 (MOD-RK-15)<br/>文件: core/tail_risk_monitor.py<br/>(生产态 / production)"]
