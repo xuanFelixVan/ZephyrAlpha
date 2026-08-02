@@ -5885,6 +5885,9 @@ def _run_reconcilers_after_merge_sync(
 
             )
 
+        # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线
+        gateway._post_flush_rules_integrity_re_register(session_id)
+
         # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级 auto_committed → warn
         _downgrade_auto_committed_on_flush_failure(
             results, getattr(gateway._batcher, "_last_flush_result", None),
@@ -6862,6 +6865,9 @@ def _run_post_commit_reconcile(
                 committed_files, session_id, commit_message="",
 
             )
+
+        # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线
+        gateway._post_flush_rules_integrity_re_register(session_id)
 
         # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级 auto_committed → warn
         _downgrade_auto_committed_on_flush_failure(

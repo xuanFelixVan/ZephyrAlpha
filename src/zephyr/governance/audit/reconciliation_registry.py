@@ -7805,6 +7805,34 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile_rules_integrity(committed_files: list[str], session_id: str) -> ReconcileResult:
 
+        # 治本（2026-08-02 audit-02 时序竞态）：batcher 启用期间（reconcile_for 内）跳过 --register，
+
+        # 改由 GitCommitGateway._post_flush_rules_integrity_re_register 的 post-flush 重注册捕获最终 HEAD。
+
+        # 病根：register() 用 _hash_git_head() 读 pre-flush HEAD（git show HEAD:），而 manifest/catalog 等
+
+        # reconciler 变更在 flush() 后才入 HEAD，导致 DB 基线滞后一周期 →
+
+        # script_manifest.yaml / capability_canonical_file_registry.yaml 永久 TAMPERED。
+
+        # 修复：batcher 启用时 defer 到 post-flush，读 post-flush HEAD = 最终状态 → --check 0 TAMPERED。
+
+        # 安全性：post-flush register 仍用 _hash_git_head()（HEAD-based），红蓝发现3 的 WIP 篡改防护不降级。
+
+        _batcher = getattr(gateway, "_batcher", None)
+
+        if _batcher is not None and _batcher.is_enabled():
+
+            return ReconcileResult(
+
+                action="skip",
+
+                detail="rules_integrity --register deferred to post-flush "
+
+                       "(时序竞态治本 2026-08-02: pre-flush HEAD 滞后 → post-flush 捕获最终状态)",
+
+            )
+
         # 1. post-commit 重注册基线（--register 内部读 RULES_MANIFEST 真源，重算全部 hash）
 
         # 红蓝发现4 治本：设置 ZEPHYR_RECONCILER_MODE=1 门禁令牌，允许 --register。

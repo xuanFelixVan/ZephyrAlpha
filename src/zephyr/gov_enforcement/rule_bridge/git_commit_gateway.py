@@ -947,6 +947,70 @@ class GitCommitGateway:
         """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
         return self.run_post_commit_reconcile(existing, session_id, result, commit_message)
 
+    def _post_flush_rules_integrity_re_register(self, session_id: str) -> None:
+        """flush 后重注册 rules_integrity 基线（治本时序竞态，2026-08-02 audit-02）。
+
+        病根：reconcile_for 内 GATE-INTEGRITY-AUDIT 的 --register 用
+        ``_hash_git_head()`` 读 pre-flush HEAD（``git show HEAD:``），而
+        manifest/catalog 等 reconciler 变更在 ``flush()`` 后才入 HEAD，导致 DB
+        基线滞后一周期 → ``script_manifest.yaml`` /
+        ``capability_canonical_file_registry.yaml`` 永久 TAMPERED。
+
+        修复：flush 后（batcher 已 disable）再跑一次 ``--register``，读 post-flush
+        HEAD（含所有 reconciler 变更），DB 基线 = 最终状态 → ``--check`` 0 TAMPERED。
+
+        安全性：仍用 ``_hash_git_head()``（HEAD-based），红蓝发现3 的 WIP 篡改防护
+        不降级——post-flush HEAD 不含未 commit 的 WIP 篡改（攻击者篡改 protected
+        文件不入 commit，flush 不会将其纳入 HEAD）。
+
+        递归安全：``_commit_auto`` 不触发 reconciler（见 _commit_auto docstring），无递归。
+        fail-open：任何异常降级为 warning log，不阻断主流程。
+        """
+        import os as _os
+        import subprocess as _sp
+        import sys as _sys
+        _env = dict(_os.environ)
+        _env["ZEPHYR_RECONCILER_MODE"] = "1"
+        _script = "scripts/governance/meta/validate_rules_integrity.py"
+        try:
+            reg_result = _sp.run(
+                [_sys.executable, _script, "--register"],
+                cwd=str(self.project_root),
+                capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
+                timeout=30, env=_env,
+            )
+        except Exception as e:  # noqa: BLE001 — fail-open 不阻断主流程
+            logger.warning("post-flush rules_integrity --register error: %s", e)
+            return
+        if reg_result.returncode != 0:
+            logger.warning(
+                "post-flush rules_integrity --register failed (rc=%d): %s",
+                reg_result.returncode, (reg_result.stderr or "")[:200],
+            )
+            return
+        # 提交 DB 变更（_commit_auto 不触发 reconciler，无递归）
+        _db_rel = "scripts/governance/meta/rules_integrity_db.json"
+        _diff = self.run_git(["git", "diff", "--name-only", "--", _db_rel])
+        if _diff.returncode == 0 and not _diff.stdout.strip():
+            return  # DB 无变更（基线已匹配 post-flush HEAD）
+        _abs_db = str(self.project_root / _db_rel)
+        _msg = ("chore(integrity): post-flush re-register rules_integrity_db "
+                "(capture final HEAD, 时序竞态治本 2026-08-02)")
+        _cr = self._commit_auto(session_id, [_abs_db], _msg)
+        if _cr.status == "OK":
+            logger.info(
+                "post-flush rules_integrity re-registered (hash=%s, session=%s)",
+                _cr.commit_hash, session_id,
+            )
+        elif _cr.status == "NOTHING_TO_COMMIT":
+            logger.debug("post-flush rules_integrity: no DB drift")
+        else:
+            logger.warning(
+                "post-flush rules_integrity DB auto-commit %s: %s",
+                _cr.status, (_cr.message or "")[:200],
+            )
+
     def _run_post_commit_reconcile_sync(
         self, existing: list[str], session_id: str, commit_message: str = "",
         result: CommitResult | None = None,
@@ -969,6 +1033,10 @@ class GitCommitGateway:
                 reconcile_results = self._reconciliation_registry.reconcile_for(
                     existing, session_id, commit_message=commit_message,
                 )
+            # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线，
+            # 读 post-flush HEAD（含所有 reconciler 变更）→ 消除 DB 滞后导致的永久 TAMPERED。
+            # GATE-INTEGRITY-AUDIT 在 reconcile_for 内已 defer（见 _reconcile_rules_integrity）。
+            self._post_flush_rules_integrity_re_register(session_id)
             if result is not None:
                 result.reconcile = reconcile_results
             # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级
@@ -1016,6 +1084,9 @@ class GitCommitGateway:
                 existing, session_id, commit_message=commit_message,
                 heartbeat=heartbeat,
             )
+        # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线，
+        # 读 post-flush HEAD（含所有 reconciler 变更）→ 消除 DB 滞后导致的永久 TAMPERED。
+        self._post_flush_rules_integrity_re_register(session_id)
         # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级
         # auto_committed → warn，防止日志误报"已自动提交"但文件未真正提交。
         _downgrade_auto_committed_on_flush_failure(
