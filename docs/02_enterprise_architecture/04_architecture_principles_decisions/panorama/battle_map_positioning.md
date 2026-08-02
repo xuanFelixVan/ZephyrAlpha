@@ -2,8 +2,8 @@
 ttl: permanent
 doc_type: architecture_view
 status: draft
-version: "0.3.0"
-date: 2026-08-02
+version: "0.3.1"
+date: 2026-08-03
 ---
 
 # 交易决策作战地图能力定位书（第四全景图 / battle_map）
@@ -380,7 +380,8 @@ Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_positi
 - **BM-INV-001**：每个 `battle_map_steps` 必须至少有一个 `battle_map_anchors`（环节无锚点 = 悬空决策 = 幻觉风险，君子协定告警，跑顺后升级硬阻断）
 - **BM-INV-002**：`battle_map_anchors.target_id` 必须能在 `target_graph` 对应的图/仓库里找到（防幽灵锚点）
 - **BM-INV-003**：环节叙事必须来自翻译真源 `battle_map_steps` 段，禁止在生成器硬编码
-- **BM-INV-004**：全景图模块的 `battle_map_step_ids` 字段是派生只读缓存，禁止直接写入（真源在 anchors）
+- **BM-INV-004**：anchor 的 target module/candidate 的 domain 必须在 step.flow_stage 对应的允许域列表里（防域漂移=语义错位，如把卖出决策挂在买入流程）。规则真源：`docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`，检测器：`align_battle_map.py` §5
+- **BM-INV-005**：全景图模块的 `battle_map_step_ids` 字段是派生只读缓存，禁止直接写入（真源在 anchors）
 
 ---
 
@@ -604,5 +605,6 @@ battle_map_steps:
 | 版本 | 日期 | 变更 |
 |---|---|---|
 | V0.1.0 | 2026-08-01 | 草案：第四全景图 battle_map 设计。三表数据模型 + 翻译真源 battle_map_steps 段 + 双向查找机制 + 取代 trading_flow_panorama.md V1.0.0。 |
+| V0.3.1 | 2026-08-03 | BM-INV-004 域漂移检查实现落地：①新增规则真源 `battle_map_domain_policy.yaml`（flow_stage→允许 domain 列表，TRAE-062 规则数据真源=YAML）；②`align_battle_map.py` 新增 §5 域漂移检测（采集 depgraph/candidate 的 target domain，逐锚点校验是否在 flow_stage 允许列表）；③对齐报告新增域漂移段+处置建议。首跑发现 8 处漂移（含误报：MOD-INF-002 跨域巨型蓝图单一 domain_id 采集器局限，待采集器修复）。④不变量编号调整：原 BM-INV-004（派生只读字段禁令）renumber 为 BM-INV-005，BM-INV-004 归位为域漂移（与 001孤儿/002幽灵/003叙事同属 align_battle_map.py 对齐检查系列）。 |
 | V0.3.0 | 2026-08-02 | 缺口2补完：①新增§三系统架构上下文（草图§1.1/§1.8摘要，L0-L6分层+数据流主动脉+闭环反馈+工厂三兄弟+作战地图对应关系）；②横切视图扩展§15计算节奏与时序+§1.7分布感知增强体系（翻译真源+生成器渲染函数）；③16个选股孤儿环节挂载candidate锚点；④13个非HARVEST候选池模块挂载到对应环节；⑤BM-SEL-01参数code_location反向回填。对齐报告0问题。 |
 | V0.2.0 | 2026-08-01 | Owner 评审反馈落地：① 环节粒度升级为 6 件套标准（§6.4），50-100 个环节，indicators JSONB 扩展为 6 件套 + 双向参数（implemented/proposed/testing）；② 图名定为 battlemap，表前缀 battle_map_*（对标 decision_*）；③ 旧文档处置定为删除重建；④ narrative.yaml 退场定为并行观察；⑤ 双向查找确认 anchors 单真源 + 派生只读字段方案；⑥ 门禁君子协定。 |

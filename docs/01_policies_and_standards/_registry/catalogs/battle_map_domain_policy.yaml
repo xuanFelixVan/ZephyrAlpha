@@ -1,0 +1,126 @@
+---
+# [BLUEPRINT] MOD-GOV-BATTLE-MAP-DOMAIN-POLICY | battle_map_positioning.md §8.3 第三项 | align_battle_map.py §5 域漂移检查
+# [MODULE] docs.01_policies_and_standards._registry.catalogs.battle_map_domain_policy
+# [DOMAIN] D_GOV_RULE
+# [TTL] permanent
+# 战作地图域漂移检查规则真源
+# 定义每个 flow_stage 允许挂载哪些 domain 的模块/候选
+# align_battle_map.py 从此文件读取规则，校验 battle_map_anchors 的 target domain 是否在允许列表
+#
+# SSoT 分类（TRAE-062）：规则数据 → 真源是本 YAML 文件，禁止 DB 反向写入
+# 真源流向：本 YAML（规则真源）→ align_battle_map.py（读取）→ 对齐报告（派生）
+#
+# 严格模式（V1.0.0，2026-08-02，Owner 拍板）：
+# 组合优化（D_PF_CORE/D_PF_ALLOC）不属于 stock_selection 阶段——
+# 选股是"挑哪些股票"，组合优化是"挑完之后怎么配仓位"，语义正交
+# 预期发现 7 个漂移锚点：
+#   - buy_flow: D_SELL_DECISION(1) + D_FRONTEND(1)
+#   - stock_selection: D_PF_CORE(3) + D_PF_ALLOC(2)
+
+policy_version: "1.0.0"
+policy_status: active
+last_updated: "2026-08-02"
+decision_basis: "battle_map_positioning.md §3.1 L0-L6 分层架构 + §3.6 作战阶段与架构层对应关系"
+
+# flow_stage → 允许的 domain_id 列表
+# domain_id 必须是 depgraph.domains.domain_id 或 candidate_module_registry.yaml 的 domain 字段值
+flow_stage_allowed_domains:
+  stock_selection:
+    description: "选股阶段——从全市场筛选出候选股票池。对应 L1 因子 + L2 信号 + L3 策略工厂 + 筛选漏斗"
+    allowed:
+      - D_FACTOR              # 因子计算
+      - D_ASHARE_SIGNAL       # A股特色信号
+      - D_FUNDAMENTAL_SIGNAL  # 基本面信号
+      - D_SIGNAL              # 通用信号（候选池专用 domain）
+      - D_INTELLIGENCE        # 上下文管理/智能分析
+      - D_KNOWLEDGE           # 知识图谱
+      - D_INTEGRATION         # 管线路由/信号集成
+      - D_MKT_DATA            # 行情数据
+      - D_DATA                # 数据接入
+      - D_ML_SERVE            # ML 推理
+      - D_ML_TRAIN            # ML 训练
+      - D_ALT_DATA            # 另类数据
+      - D_CROSS_ASSET         # 跨资产
+      - D_INFRA_RUNTIME       # 运行时（基础设施）
+      - D_SHARED              # 共享服务
+    forbidden_rationale:
+      D_PF_CORE: "组合核心属仓位管理域，选股阶段不应承载组合决策"
+      D_PF_ALLOC: "组合分配属仓位管理域，选股阶段不应承载仓位分配"
+      D_SELL_DECISION: "卖出决策属卖出阶段，不应出现在选股"
+      D_EX_CORE: "执行核心属执行阶段"
+      D_POSITION: "仓位管理属仓位阶段"
+
+  buy_flow:
+    description: "买入流程——决策买入信号、多情景对策、四轨融合、决策编排。对应 L3 策略决策 + MTF + DO"
+    allowed:
+      - D_PF_CORE             # 组合核心（买入决策涉及组合构建）
+      - D_PF_ALLOC             # 组合分配（买入时分配仓位）
+      - D_TRADING              # 交易运营
+      - D_RISK                 # 风控（买入前风险检查）
+      - D_INTEGRATION          # 管线路由
+      - D_ORCHESTRATOR         # 决策编排器
+      - D_INTELLIGENCE         # 上下文管理
+    forbidden_rationale:
+      D_SELL_DECISION: "卖出决策不应在买入流程承载——语义正交"
+      D_FRONTEND: "前端域是 UI 层，不属于作战决策流程"
+      D_EX_CORE: "执行核心属执行阶段，买入是决策不是执行"
+      D_POSITION: "仓位管理属仓位阶段，买入流程产出信号但仓位裁决在后续环节"
+
+  sell_flow:
+    description: "卖出流程——卖出信号触发、卖出决策、止损止盈。对应 L3 卖出决策 + DO"
+    allowed:
+      - D_SELL_DECISION        # 卖出决策核心
+      - D_TRADING              # 交易运营
+      - D_RISK                 # 风控（止损触发）
+      - D_POSITION             # 仓位管理（止损触发的仓位调整）
+    forbidden_rationale:
+      D_PF_CORE: "组合核心属仓位/买入，不在卖出流程"
+      D_FRONTEND: "前端不属于作战决策"
+
+  position_management:
+    description: "仓位管理——持仓状态机、仓位漂移监控、再平衡。对应 L3.5 仓位管理"
+    allowed:
+      - D_POSITION             # 仓位管理核心
+      - D_PF_CORE              # 组合核心（仓位调整涉及组合）
+      - D_PF_ALLOC             # 组合分配
+      - D_RISK                 # 风控（仓位受风控约束）
+    forbidden_rationale:
+      D_SELL_DECISION: "卖出决策属卖出阶段"
+      D_EX_CORE: "执行核心属执行阶段"
+      D_FRONTEND: "前端不属于作战决策"
+
+  execution:
+    description: "执行——风控审批、订单生成、交易执行。对应 L4 风控 + 交易执行"
+    allowed:
+      - D_EX_CORE              # 执行核心
+      - D_EX_SOR               # 执行路由（Smart Order Routing）
+      - D_TRADING              # 交易运营
+      - D_RISK                 # 风控
+      - D_REPORTING            # 报告（执行产出执行报告）
+    forbidden_rationale:
+      D_FACTOR: "因子属选股阶段"
+      D_SIGNAL: "信号属选股阶段"
+      D_FRONTEND: "前端不属于作战决策"
+      D_SELL_DECISION: "卖出决策属卖出阶段"
+
+  reconciliation:
+    description: "对账——清算/费率/公司行为、报告复盘、闭环优化反馈。对应 L5 闭环 + C-017 交易运营"
+    allowed:
+      - D_REPORTING            # 报告
+      - D_BACKTEST             # 回测（策略验证）
+      - D_SIMULATION           # 仿真
+      - D_TRADING               # 交易运营（清算/公司行为）
+      - D_FACTOR                # 因子（IC 衰减反馈）
+      - D_FEEDBACK_LOOP         # 反馈循环引擎
+    forbidden_rationale:
+      D_EX_CORE: "执行核心属执行阶段，对账是事后"
+      D_SELL_DECISION: "卖出决策属卖出阶段"
+      D_FRONTEND: "前端不属于作战决策"
+
+# 校验规则元数据
+validation:
+  check_id: "BM-INV-004"
+  check_name: "域漂移检查"
+  severity: "warn"  # 君子协定，先 warn 不阻断
+  enforcement_type: "doc"  # 启用方式：君子协定告警，不硬阻断
+  ai_pre_action_check: true  # AI 挂载新锚点前应查此规则
