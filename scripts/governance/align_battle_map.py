@@ -122,6 +122,7 @@ class BattleMapAlignmentReport:
     missing_narratives: list[dict] = field(default_factory=list)  # BM-INV-003 缺失叙事
     dangling_edges: list[dict] = field(default_factory=list)  # 悬空边
     domain_drifts: list[dict] = field(default_factory=list)  # BM-INV-004 域漂移
+    parent_child_issues: list[dict] = field(default_factory=list)  # BM-INV-006 父子嵌套
     # 降级告警（目标图源不可用时记录，非对齐问题）
     source_unavailable: list[str] = field(default_factory=list)
     # 汇总
@@ -143,6 +144,7 @@ class BattleMapAlignmentReport:
         lines.append("  - 缺失叙事（BM-INV-003，翻译真源无环节）: {}".format(len(self.missing_narratives)))
         lines.append("  - 悬空边（edge 指向不存在环节）: {}".format(len(self.dangling_edges)))
         lines.append("  - 域漂移（BM-INV-004，target domain 不在 flow_stage 允许列表）: {}".format(len(self.domain_drifts)))
+        lines.append("  - 父子嵌套问题（BM-INV-006，父不存在/跨阶段/成环/depth超限）: {}".format(len(self.parent_child_issues)))
         if self.source_unavailable:
             lines.append("")
             lines.append("> ⚠ 目标图源不可用（已跳过该图 BM-INV-002 校验）: "
@@ -244,8 +246,26 @@ class BattleMapAlignmentReport:
                 )
         lines.append("")
 
+        # 6. 父子嵌套问题
+        lines.append("## 6. 父子嵌套问题（BM-INV-006：父不存在/跨阶段/成环/depth超限）")
+        lines.append("")
+        lines.append("> 君子协定：parent_step_id 必须指向同 flow_stage 的已存在环节，"
+                     "depth≤2，parent 链不能成环。规则真源：battle_map_positioning.md §8.4。")
+        lines.append("")
+        if not self.parent_child_issues:
+            lines.append("> ✅ 无父子嵌套问题。")
+        else:
+            lines.append("| step_id | 环节名 | 问题类型 | 详情 |")
+            lines.append("|---|---|---|---|")
+            for s in self.parent_child_issues:
+                lines.append(
+                    f"| {s.get('step_id', '—')} | {s.get('step_name', '—')} | "
+                    f"{s.get('issue_type', '—')} | {s.get('detail', '—')} |"
+                )
+        lines.append("")
+
         # 处置建议
-        lines.append("## 6. 处置建议")
+        lines.append("## 7. 处置建议")
         lines.append("")
         lines.append("- 孤儿环节：用 `apply_battle_map.py --add-anchor` 为环节挂载承载模块/候选/蓝图"
                      "（草图 §12 迁移第二批「锚点」）")
@@ -660,6 +680,9 @@ def run_alignment(
                     "reason": "domain_not_in_allowed_list",
                 })
 
+    # BM-INV-006 父子嵌套一致性：父存在/同阶段/无环/depth≤2
+    parent_child_issues = _check_parent_child_consistency(steps)
+
     report = BattleMapAlignmentReport(
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         step_count=len(steps),
@@ -671,11 +694,13 @@ def run_alignment(
         missing_narratives=missing_narratives,
         dangling_edges=dangling_edges,
         domain_drifts=domain_drifts,
+        parent_child_issues=parent_child_issues,
         source_unavailable=source_unavailable,
         issues_total=(
             len(orphan_steps) + len(ghost_anchors)
             + len(missing_narratives) + len(dangling_edges)
             + len(domain_drifts)
+            + len(parent_child_issues)
         ),
     )
 
@@ -686,11 +711,92 @@ def run_alignment(
         print(f"    问题总数: {report.issues_total} "
               f"(孤儿环节={len(orphan_steps)}, 幽灵锚点={len(ghost_anchors)}, "
               f"缺失叙事={len(missing_narratives)}, 悬空边={len(dangling_edges)}, "
-              f"域漂移={len(domain_drifts)})")
+              f"域漂移={len(domain_drifts)}, "
+              f"父子嵌套={len(parent_child_issues)})")
         if source_unavailable:
             print(f"    ⚠ 目标图源不可用（跳过校验）: {', '.join(source_unavailable)}")
 
     return report
+
+
+
+def _check_parent_child_consistency(steps: list[dict]) -> list[dict]:
+    """BM-INV-006: 父子嵌套一致性检查。
+
+    检查项：
+      1. 悬空父引用：parent_step_id 指向不存在的 step
+      2. 跨阶段嵌套：子 flow_stage 与父不一致
+      3. 成环：parent 链 A→B→A
+      4. depth 超限：depth > 2
+      5. depth 不符：depth 值与 parent 链长度不一致
+    """
+    issues: list[dict] = []
+    step_map = {s["step_id"]: s for s in steps}
+
+    for s in steps:
+        sid = s["step_id"]
+        pid = s.get("parent_step_id")
+        if not pid:
+            continue  # 根环节，跳过
+
+        parent = step_map.get(pid)
+        if parent is None:
+            issues.append({
+                "step_id": sid,
+                "step_name": s.get("step_name", "—"),
+                "issue_type": "悬空父引用",
+                "detail": f"parent_step_id='{pid}' 不存在",
+            })
+            continue
+
+        # 同阶段校验
+        if s.get("flow_stage") != parent.get("flow_stage"):
+            issues.append({
+                "step_id": sid,
+                "step_name": s.get("step_name", "—"),
+                "issue_type": "跨阶段嵌套",
+                "detail": f"子 flow_stage='{s.get('flow_stage')}' 与父='{parent.get('flow_stage')}' 不一致",
+            })
+
+        # depth 上限校验
+        depth = s.get("depth", 0)
+        if depth > 2:
+            issues.append({
+                "step_id": sid,
+                "step_name": s.get("step_name", "—"),
+                "issue_type": "depth超限",
+                "detail": f"depth={depth} > 2（上限根→子→孙）",
+            })
+
+        # depth 与 parent 链长度一致性
+        chain_depth = 0
+        cursor = s
+        seen = {sid}
+        while cursor.get("parent_step_id"):
+            pid2 = cursor["parent_step_id"]
+            if pid2 in seen:
+                issues.append({
+                    "step_id": sid,
+                    "step_name": s.get("step_name", "—"),
+                    "issue_type": "成环",
+                    "detail": f"parent 链成环: {' → '.join(seen)} → {pid2}",
+                })
+                break
+            seen.add(pid2)
+            cursor = step_map.get(pid2)
+            if cursor is None:
+                break  # 悬空父引用已在上面报过
+            chain_depth += 1
+        else:
+            if depth != chain_depth:
+                issues.append({
+                    "step_id": sid,
+                    "step_name": s.get("step_name", "—"),
+                    "issue_type": "depth不符",
+                    "detail": f"depth={depth} 但 parent 链长度={chain_depth}",
+                })
+
+    return issues
 
 
 def main() -> int:
