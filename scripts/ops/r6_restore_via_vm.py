@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 # [TTL] task_bound
 """R6: 表级恢复演练——通过 VM clickhouse-client 执行 RESTORE（绕过 zephyr_writer 权限限制）。
