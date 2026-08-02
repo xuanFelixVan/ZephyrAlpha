@@ -59,16 +59,16 @@ flowchart TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ src_zephyr_simulation_result_analyzer_py
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
     src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真包的pipeline_base模块<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>（risk_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>（strategy_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>模拟仿真（risk simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>risk_simulator<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>模拟仿真（strategy simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>strategy_simulator<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>模拟的检测器，检测特定模式或异常情况<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
     src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>模拟的测试器，测试验证功能<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>仿真包的sharpe_calculator_fixer模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>模拟的计算器，计算得出结果（sharpe calculator<br/>fixer）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>deflated夏普计算器模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>模拟的计算器，计算得出结果（deflated sharpe<br/>calculator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
@@ -115,15 +115,15 @@ flowchart TD
     src_zephyr_simulation_result_analyzer_py["结果分析器<br/>模拟的分析器，分析数据找出问题或规律<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>result_analyzer<br/>文件: simulation/result_analyzer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_scenario_generator_py["场景生成器<br/>模拟的生成器，按规则生成所需的数据或报告<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>scenario_generator<br/>文件: simulation/scenario_generator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
-    src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>（risk_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>（strategy_simulator.py）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>模拟仿真（risk simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>risk_simulator<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>模拟仿真（strategy simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>strategy_simulator<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>模拟的检测器，检测特定模式或异常情况<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(设计态 / design)"]
     src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>模拟的测试器，测试验证功能<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(设计态 / design)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>仿真包的sharpe_calculator_fixer模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>模拟的计算器，计算得出结果（sharpe calculator<br/>fixer）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>deflated夏普计算器模块<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(设计态 / design)"]
+    src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>模拟的计算器，计算得出结果（deflated sharpe<br/>calculator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py

@@ -77,7 +77,7 @@ flowchart TD
     src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>从 ClickHouse c1_market.kline_daily<br/>加载日K行情，转为 CTR-001 NormalizedMarketData<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
     src_zephyr_market_data_vendor_registry_py["vendor注册表<br/>数据的注册表，登记和查询已注册的条目<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_registry<br/>文件: market_data/vendor_registry.py<br/>(设计态 / design)"]
     src_zephyr_market_data_normalized_market_data_producer_producer_py ~~~ src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>行情数据包的raw_data_cache模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
+    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>数据的子目录，归集相关子模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
     src_zephyr_market_data_vendor_base_py["vendor基类<br/>数据的基类，定义抽象接口供子类实现<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>vendor_base<br/>文件: market_data/vendor_base.py<br/>(设计态 / design)"]
     src_zephyr_market_data_raw_data_cache ~~~ src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_vendor_registry_py -.->|import / import| src_zephyr_market_data_vendor_base_py
@@ -146,7 +146,7 @@ flowchart TD
     src_zephyr_market_data_autoload_py["自动加载<br/>数据的加载器，读取并加载配置/数据到内存<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>autoload<br/>文件: market_data/autoload.py<br/>(设计态 / design)"]
     src_zephyr_market_data_connectors["market_data/connectors<br/>行情数据包的connectors模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
     src_zephyr_market_data_failover["故障切换<br/>故障切换的子目录，归集相关子模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: failover/<br/>(设计态 / design)"]
-    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>行情数据包的raw_data_cache模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
+    src_zephyr_market_data_raw_data_cache["raw数据缓存<br/>数据的子目录，归集相关子模块<br/>⛔ 行情数据域，设计已就绪，等待开发排期<br/>文件: raw_data_cache/<br/>(设计态 / design)"]
     src_zephyr_market_data_autoload_py ~~~ src_zephyr_market_data_connectors
     src_zephyr_market_data_connectors ~~~ src_zephyr_market_data_failover
     src_zephyr_market_data_failover ~~~ src_zephyr_market_data_raw_data_cache

@@ -78,7 +78,7 @@ flowchart TD
     src_zephyr_ex_sor_core_broker_adapter_manager_py["经纪人适配器管理器<br/>core的适配器，把外部接口适配成内部统一格式<br/>broker_adapter_manager<br/>文件: core/broker_adapter_manager.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_execution_scheduler_py["执行调度器<br/>core的调度器，按时间或优先级安排任务执行<br/>execution_scheduler<br/>文件: core/execution_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_broker_adapter_manager_py ~~~ src_zephyr_ex_sor_core_execution_scheduler_py
-    src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>核心包的algo_trading_engine模块<br/>文件: core/algo_trading_engine.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>core的引擎，执行核心逻辑的处理引擎（algo<br/>trading）<br/>algo_trading_engine<br/>文件: core/algo_trading_engine.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_broker_api_connector_py["api/broker_api_connector<br/>Broker API Connector — 券商 API 连接器<br/>(MOD-XS-013)<br/>文件: api/broker_api_connector.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_api_rate_limiter_py["api/api_rate_limiter<br/>Exchange API Rate Limiter — 交易所 API 限速器<br/>(MOD-XS-014)<br/>文件: api/api_rate_limiter.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
@@ -161,7 +161,7 @@ flowchart TD
     src_zephyr_ex_sor_core_broker_adapter_manager_py["经纪人适配器管理器<br/>core的适配器，把外部接口适配成内部统一格式<br/>broker_adapter_manager<br/>文件: core/broker_adapter_manager.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_execution_scheduler_py["执行调度器<br/>core的调度器，按时间或优先级安排任务执行<br/>execution_scheduler<br/>文件: core/execution_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_broker_adapter_manager_py ~~~ src_zephyr_ex_sor_core_execution_scheduler_py
-    src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>核心包的algo_trading_engine模块<br/>文件: core/algo_trading_engine.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>core的引擎，执行核心逻辑的处理引擎（algo<br/>trading）<br/>algo_trading_engine<br/>文件: core/algo_trading_engine.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_broker_api_connector_py["api/broker_api_connector<br/>Broker API Connector — 券商 API 连接器<br/>(MOD-XS-013)<br/>文件: api/broker_api_connector.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_api_rate_limiter_py["api/api_rate_limiter<br/>Exchange API Rate Limiter — 交易所 API 限速器<br/>(MOD-XS-014)<br/>文件: api/api_rate_limiter.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py

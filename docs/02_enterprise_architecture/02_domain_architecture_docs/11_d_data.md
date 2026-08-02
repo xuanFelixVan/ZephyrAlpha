@@ -291,13 +291,13 @@ flowchart TD
     tests_data_test_pit_query_py ~~~ tests_zephyr_data_test_cross_source_validator_py
     tests_zephyr_data_test_cross_source_validator_py ~~~ tests_zephyr_data_test_tick_subscriber_py
     schemas_categories_cross_validation_log_py["跨验证日志<br/>存储 QMT 主源 vs TDX 备源的 tick<br/>数据交叉校验结果，<br/>cross_validation_log<br/>文件: categories/cross_validation_log.py<br/>(生产态 / production)"]
-    scripts_ch_apply_exchange_columns_py["apply交易所columns<br/>ClickHouse exchange+symbol_canonical 列部署脚本<br/>1.1.0 治本 ）。<br/>apply_exchange_columns<br/>文件: ch/apply_exchange_columns.py<br/>(生产态 / production)"]
+    scripts_ch_apply_exchange_columns_py["apply交易所columns<br/>处理数据读写与转换（apply exchange columns）<br/>apply_exchange_columns<br/>文件: ch/apply_exchange_columns.py<br/>(生产态 / production)"]
     scripts_ch_apply_fundamental_tables_ddl_py["应用fundamentaltablesddl<br/>ClickHouse c3_fundamental 财务三表 DDL 部署 +<br/>精度验证脚本（audit 1.2 治本）。<br/>apply_fundamental_tables_ddl<br/>文件: ch/apply_fundamental_tables_ddl.py<br/>(生产态 / production)"]
     src_zephyr_data_alerter_py["告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8<br/>可观测性）<br/>告警触发条件（蓝图 §6.5）：<br/>alerter<br/>文件: data/alerter.py<br/>(生产态 / production)"]
     src_zephyr_data_cli_py["数据源集成器 CLI（MOD-L00-004 §8.4）。<br/>数据源集成器命令行入口，用 argparse 加<br/>subparsers 实现 8 个子命令。<br/>文件: data/cli.py<br/>(生产态 / production)"]
     src_zephyr_data_cross_source_validator_py["跨源校验器<br/>多源交叉校验器——比较 QMT 主源与 TDX 备源 tick<br/>数据一致性（P1-4）。<br/>cross_source_validator<br/>文件: data/cross_source_validator.py<br/>(生产态 / production)"]
     src_zephyr_data_normalizers["归一化器<br/>归一化的子目录，归集相关子模块<br/>⛔ 该域，设计已就绪，等待开发排期<br/>文件: normalizers/<br/>(设计态 / design)"]
-    src_zephyr_data_pit_query_py["pit查询<br/>财报 Point-In-Time (PIT) 查询能力（# P0-5）。<br/>pit_query<br/>文件: data/pit_query.py<br/>(生产态 / production)"]
+    src_zephyr_data_pit_query_py["pit查询<br/>处理数据读写与转换（pit query）<br/>pit_query<br/>文件: data/pit_query.py<br/>(生产态 / production)"]
     src_zephyr_data_sector_ranking_engine_py["880xxx 板块动态排名引擎——5因子复合排名调整99只推<br/>送池。<br/>5因子复合排名（权重之和=1.0）：<br/>sector_ranking_engine<br/>文件: data/sector_ranking_engine.py<br/>(生产态 / production)"]
     src_zephyr_data_tick_subscriber_py["逐笔订阅器<br/>QMT 实时 Tick 订阅服务——subscribe_quote<br/>实时推送，写入 ClickHouse tick_data。<br/>tick_subscriber<br/>文件: data/tick_subscriber.py<br/>(生产态 / production)"]
     schemas_categories_cross_validation_log_py ~~~ scripts_ch_apply_exchange_columns_py
@@ -311,7 +311,7 @@ flowchart TD
     src_zephyr_data_sector_ranking_engine_py ~~~ src_zephyr_data_tick_subscriber_py
     schemas_categories_fundamental_analyst_forecast_py["fundamentalanalyst预测<br/>本文件是 c3_fundamental.analyst_forecast<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>fundamental_analyst_forecast<br/>文件: categories/fundamental_analyst_forecast.py<br/>(生产态 / production)"]
     src_zephyr_data_ch_config_py["ch配置<br/>ClickHouse 连接配置单真源加载器（裁定<br/>#ARCH-CH-017 / #ARCH-CH-019）。<br/>ch_config<br/>文件: data/ch_config.py<br/>(生产态 / production)"]
-    src_zephyr_data_ch_reader_py["ch读取器<br/>ClickHouse 统一读取层（裁定 #。<br/>ch_reader<br/>文件: data/ch_reader.py<br/>(生产态 / production)"]
+    src_zephyr_data_ch_reader_py["ch读取器<br/>处理数据读写与转换（ch reader）<br/>ch_reader<br/>文件: data/ch_reader.py<br/>(生产态 / production)"]
     src_zephyr_data_progress_store_py["统一进度存储（MOD-L00-004 §7）。<br/>统一进度存储，SQLite<br/>单文件存储数据集成进度，支持断点续传。<br/>progress_store<br/>文件: data/progress_store.py<br/>(生产态 / production)"]
     src_zephyr_data_scheduler_py["数据源调度编排层（MOD-L00-004 §6）。<br/>APScheduler 常驻进程，按 cron<br/>时段触发任务批次，管理 DAG 依赖，<br/>文件: data/scheduler.py<br/>(生产态 / production)"]
     src_zephyr_data_speed_tester_py["数据源测速器（MOD-L00-004 §8.5）。<br/>对每个数据能力×每个可用数据源做小样本测速，记录<br/>rows/sec、symbols/sec、错误率，<br/>speed_tester<br/>文件: data/speed_tester.py<br/>(生产态 / production)"]
@@ -933,12 +933,12 @@ flowchart TD
     tests_data_test_pit_query_py ~~~ tests_zephyr_data_test_cross_source_validator_py
     tests_zephyr_data_test_cross_source_validator_py ~~~ tests_zephyr_data_test_tick_subscriber_py
     schemas_categories_cross_validation_log_py["跨验证日志<br/>存储 QMT 主源 vs TDX 备源的 tick<br/>数据交叉校验结果，<br/>cross_validation_log<br/>文件: categories/cross_validation_log.py<br/>(生产态 / production)"]
-    scripts_ch_apply_exchange_columns_py["apply交易所columns<br/>ClickHouse exchange+symbol_canonical 列部署脚本<br/>1.1.0 治本 ）。<br/>apply_exchange_columns<br/>文件: ch/apply_exchange_columns.py<br/>(生产态 / production)"]
+    scripts_ch_apply_exchange_columns_py["apply交易所columns<br/>处理数据读写与转换（apply exchange columns）<br/>apply_exchange_columns<br/>文件: ch/apply_exchange_columns.py<br/>(生产态 / production)"]
     scripts_ch_apply_fundamental_tables_ddl_py["应用fundamentaltablesddl<br/>ClickHouse c3_fundamental 财务三表 DDL 部署 +<br/>精度验证脚本（audit 1.2 治本）。<br/>apply_fundamental_tables_ddl<br/>文件: ch/apply_fundamental_tables_ddl.py<br/>(生产态 / production)"]
     src_zephyr_data_alerter_py["告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8<br/>可观测性）<br/>告警触发条件（蓝图 §6.5）：<br/>alerter<br/>文件: data/alerter.py<br/>(生产态 / production)"]
     src_zephyr_data_cli_py["数据源集成器 CLI（MOD-L00-004 §8.4）。<br/>数据源集成器命令行入口，用 argparse 加<br/>subparsers 实现 8 个子命令。<br/>文件: data/cli.py<br/>(生产态 / production)"]
     src_zephyr_data_cross_source_validator_py["跨源校验器<br/>多源交叉校验器——比较 QMT 主源与 TDX 备源 tick<br/>数据一致性（P1-4）。<br/>cross_source_validator<br/>文件: data/cross_source_validator.py<br/>(生产态 / production)"]
-    src_zephyr_data_pit_query_py["pit查询<br/>财报 Point-In-Time (PIT) 查询能力（# P0-5）。<br/>pit_query<br/>文件: data/pit_query.py<br/>(生产态 / production)"]
+    src_zephyr_data_pit_query_py["pit查询<br/>处理数据读写与转换（pit query）<br/>pit_query<br/>文件: data/pit_query.py<br/>(生产态 / production)"]
     src_zephyr_data_sector_ranking_engine_py["880xxx 板块动态排名引擎——5因子复合排名调整99只推<br/>送池。<br/>5因子复合排名（权重之和=1.0）：<br/>sector_ranking_engine<br/>文件: data/sector_ranking_engine.py<br/>(生产态 / production)"]
     src_zephyr_data_tick_subscriber_py["逐笔订阅器<br/>QMT 实时 Tick 订阅服务——subscribe_quote<br/>实时推送，写入 ClickHouse tick_data。<br/>tick_subscriber<br/>文件: data/tick_subscriber.py<br/>(生产态 / production)"]
     schemas_categories_cross_validation_log_py ~~~ scripts_ch_apply_exchange_columns_py
@@ -951,7 +951,7 @@ flowchart TD
     src_zephyr_data_sector_ranking_engine_py ~~~ src_zephyr_data_tick_subscriber_py
     schemas_categories_fundamental_analyst_forecast_py["fundamentalanalyst预测<br/>本文件是 c3_fundamental.analyst_forecast<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>fundamental_analyst_forecast<br/>文件: categories/fundamental_analyst_forecast.py<br/>(生产态 / production)"]
     src_zephyr_data_ch_config_py["ch配置<br/>ClickHouse 连接配置单真源加载器（裁定<br/>#ARCH-CH-017 / #ARCH-CH-019）。<br/>ch_config<br/>文件: data/ch_config.py<br/>(生产态 / production)"]
-    src_zephyr_data_ch_reader_py["ch读取器<br/>ClickHouse 统一读取层（裁定 #。<br/>ch_reader<br/>文件: data/ch_reader.py<br/>(生产态 / production)"]
+    src_zephyr_data_ch_reader_py["ch读取器<br/>处理数据读写与转换（ch reader）<br/>ch_reader<br/>文件: data/ch_reader.py<br/>(生产态 / production)"]
     src_zephyr_data_progress_store_py["统一进度存储（MOD-L00-004 §7）。<br/>统一进度存储，SQLite<br/>单文件存储数据集成进度，支持断点续传。<br/>progress_store<br/>文件: data/progress_store.py<br/>(生产态 / production)"]
     src_zephyr_data_scheduler_py["数据源调度编排层（MOD-L00-004 §6）。<br/>APScheduler 常驻进程，按 cron<br/>时段触发任务批次，管理 DAG 依赖，<br/>文件: data/scheduler.py<br/>(生产态 / production)"]
     src_zephyr_data_speed_tester_py["数据源测速器（MOD-L00-004 §8.5）。<br/>对每个数据能力×每个可用数据源做小样本测速，记录<br/>rows/sec、symbols/sec、错误率，<br/>speed_tester<br/>文件: data/speed_tester.py<br/>(生产态 / production)"]

@@ -65,12 +65,12 @@ flowchart TD
     src_zephyr_position_services_init_py ~~~ tests_position_test_position_audit_logger_py
     tests_position_test_position_audit_logger_py ~~~ tests_position_test_position_sizing_engine_py
     src_zephyr_position_services_position_audit_logger_py["持仓审计日志器<br/>持仓的日志器，记录运行日志<br/>position_audit_logger<br/>文件: services/position_audit_logger.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>仓位/核心包的rebalance_engine模块<br/>文件: core/rebalance_engine.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>持仓的引擎，执行核心逻辑的处理引擎（rebalance）<br/>rebalance_engine<br/>文件: core/rebalance_engine.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_drift_monitor_py["持仓漂移监控<br/>持仓的监控器，持续监视某项指标，异常时上报<br/>position_drift_monitor<br/>文件: core/position_drift_monitor.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_state_machine_py["持仓状态machine<br/>持仓的状态机，管理状态流转<br/>position_state_machine<br/>文件: core/position_state_machine.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_position_sizing_engine_py["持仓sizing引擎<br/>仓位/核心包的position_sizing_engine模块<br/>文件: core/position_sizing_engine.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_position_sizing_engine_py["持仓sizing引擎<br/>持仓的引擎，执行核心逻辑的处理引擎（position<br/>sizing）<br/>position_sizing_engine<br/>文件: core/position_sizing_engine.py<br/>(生产态 / production)"]
     src_zephyr_position_core_calendar_position_constraint_py["日历持仓约束<br/>calendar持仓constraint，持仓的常量，定义模块级常<br/>量。<br/>calendar_position_constraint<br/>文件: core/calendar_position_constraint.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_capital_curve_manager_py["资本curve管理器<br/>仓位/核心包的capital_curve_manager模块<br/>文件: core/capital_curve_manager.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_capital_curve_manager_py["资本curve管理器<br/>持仓的管理器，统一管理一类资源的生命周期<br/>（capital curve）<br/>capital_curve_manager<br/>文件: core/capital_curve_manager.py<br/>(生产态 / production)"]
     src_zephyr_position_core_cash_manager_py["core/cash_manager<br/>Cash Manager — 资金管理器 (MOD-POS-006)<br/>文件: core/cash_manager.py<br/>(生产态 / production)"]
     src_zephyr_position_core_calendar_position_constraint_py ~~~ src_zephyr_position_core_capital_curve_manager_py
     src_zephyr_position_core_capital_curve_manager_py ~~~ src_zephyr_position_core_cash_manager_py
@@ -147,12 +147,12 @@ flowchart TD
     src_zephyr_position_services_init_py ~~~ tests_position_test_position_audit_logger_py
     tests_position_test_position_audit_logger_py ~~~ tests_position_test_position_sizing_engine_py
     src_zephyr_position_services_position_audit_logger_py["持仓审计日志器<br/>持仓的日志器，记录运行日志<br/>position_audit_logger<br/>文件: services/position_audit_logger.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>仓位/核心包的rebalance_engine模块<br/>文件: core/rebalance_engine.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>持仓的引擎，执行核心逻辑的处理引擎（rebalance）<br/>rebalance_engine<br/>文件: core/rebalance_engine.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_drift_monitor_py["持仓漂移监控<br/>持仓的监控器，持续监视某项指标，异常时上报<br/>position_drift_monitor<br/>文件: core/position_drift_monitor.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_state_machine_py["持仓状态machine<br/>持仓的状态机，管理状态流转<br/>position_state_machine<br/>文件: core/position_state_machine.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_position_sizing_engine_py["持仓sizing引擎<br/>仓位/核心包的position_sizing_engine模块<br/>文件: core/position_sizing_engine.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_position_sizing_engine_py["持仓sizing引擎<br/>持仓的引擎，执行核心逻辑的处理引擎（position<br/>sizing）<br/>position_sizing_engine<br/>文件: core/position_sizing_engine.py<br/>(生产态 / production)"]
     src_zephyr_position_core_calendar_position_constraint_py["日历持仓约束<br/>calendar持仓constraint，持仓的常量，定义模块级常<br/>量。<br/>calendar_position_constraint<br/>文件: core/calendar_position_constraint.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_capital_curve_manager_py["资本curve管理器<br/>仓位/核心包的capital_curve_manager模块<br/>文件: core/capital_curve_manager.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_capital_curve_manager_py["资本curve管理器<br/>持仓的管理器，统一管理一类资源的生命周期<br/>（capital curve）<br/>capital_curve_manager<br/>文件: core/capital_curve_manager.py<br/>(生产态 / production)"]
     src_zephyr_position_core_cash_manager_py["core/cash_manager<br/>Cash Manager — 资金管理器 (MOD-POS-006)<br/>文件: core/cash_manager.py<br/>(生产态 / production)"]
     src_zephyr_position_core_calendar_position_constraint_py ~~~ src_zephyr_position_core_capital_curve_manager_py
     src_zephyr_position_core_capital_curve_manager_py ~~~ src_zephyr_position_core_cash_manager_py

@@ -56,12 +56,12 @@ flowchart TD
     src_zephyr_reporting_ashare_performance_audit_py["A股绩效审计<br/>生成报表与报告<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>ashare_performance_audit<br/>文件: reporting/ashare_performance_audit.py<br/>(设计态 / design)"]
     src_zephyr_reporting_ashare_trade_record_template_py["A股交易记录模板<br/>报告的记录器，把发生的事件/结果记下来留档<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>ashare_trade_record_template<br/>文件: reporting/ashare_trade_record_template.py<br/>(设计态 / design)"]
     src_zephyr_reporting_default_tca_engine_py["默认tca引擎<br/>交易成本分析引擎具体实现。成交回报 -><br/>执行分析报告。<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_performance_attribution_report_py["绩效attribution报告<br/>报告包的performance_attribution_report模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_performance_attribution_report_py["绩效attribution报告<br/>报告的报告器，汇总数据生成报告（performance<br/>attribution report）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>performance_attribution_report<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
     src_zephyr_reporting_realtime_pnl_dashboard_py["实时盈亏仪表盘<br/>生成报表<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>realtime_pnl_dashboard<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(设计态 / design)"]
     src_zephyr_reporting_regulatory_report_generator_py["regulatory报告generator<br/>regulatory报告生成器，报告的生成器，按规则生成所<br/>需的数据或报告。<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>regulatory_report_generator<br/>文件: reporting/regulatory_report_generator.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告包的report_version_manager模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting/report_version_manager.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告的报告器，汇总数据生成报告（report version）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_version_manager<br/>文件: reporting/report_version_manager.py<br/>(设计态 / design)"]
     src_zephyr_reporting_report_watermark_tracker_py["报告watermark追踪器<br/>报告的追踪器，持续跟踪某项指标或状态的变化<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_watermark_tracker<br/>文件: reporting/report_watermark_tracker.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>报告包的risk_report_engine模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting/risk_report_engine.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>报告的报告器，汇总数据生成报告（risk report）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>risk_report_engine<br/>文件: reporting/risk_report_engine.py<br/>(设计态 / design)"]
     src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
     src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_default_tca_engine_py
     src_zephyr_reporting_default_tca_engine_py ~~~ src_zephyr_reporting_performance_attribution_report_py
@@ -71,7 +71,7 @@ flowchart TD
     src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
     src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
     src_zephyr_reporting_default_attribution_engine_py["默认attribution引擎<br/>绩效归因引擎具体实现。Brinson 模型 3 因子分解。<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告包的report_publisher模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告的报告器，汇总数据生成报告（report<br/>publisher）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_publisher<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_analytics_base_py["analytics基类<br/>盘后分析层。负责交易执行后的绩效评估与归因分析。<br/>D_REPORTING — Post-Trade Analytics Layer<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_performance_audit_py -.->|data / data| src_zephyr_reporting_default_attribution_engine_py
@@ -139,12 +139,12 @@ flowchart TD
 flowchart TD
     src_zephyr_reporting_ashare_performance_audit_py["A股绩效审计<br/>生成报表与报告<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>ashare_performance_audit<br/>文件: reporting/ashare_performance_audit.py<br/>(设计态 / design)"]
     src_zephyr_reporting_ashare_trade_record_template_py["A股交易记录模板<br/>报告的记录器，把发生的事件/结果记下来留档<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>ashare_trade_record_template<br/>文件: reporting/ashare_trade_record_template.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_performance_attribution_report_py["绩效attribution报告<br/>报告包的performance_attribution_report模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_performance_attribution_report_py["绩效attribution报告<br/>报告的报告器，汇总数据生成报告（performance<br/>attribution report）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>performance_attribution_report<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
     src_zephyr_reporting_realtime_pnl_dashboard_py["实时盈亏仪表盘<br/>生成报表<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>realtime_pnl_dashboard<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(设计态 / design)"]
     src_zephyr_reporting_regulatory_report_generator_py["regulatory报告generator<br/>regulatory报告生成器，报告的生成器，按规则生成所<br/>需的数据或报告。<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>regulatory_report_generator<br/>文件: reporting/regulatory_report_generator.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告包的report_version_manager模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting/report_version_manager.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>报告的报告器，汇总数据生成报告（report version）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_version_manager<br/>文件: reporting/report_version_manager.py<br/>(设计态 / design)"]
     src_zephyr_reporting_report_watermark_tracker_py["报告watermark追踪器<br/>报告的追踪器，持续跟踪某项指标或状态的变化<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_watermark_tracker<br/>文件: reporting/report_watermark_tracker.py<br/>(设计态 / design)"]
-    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>报告包的risk_report_engine模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting/risk_report_engine.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>报告的报告器，汇总数据生成报告（risk report）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>risk_report_engine<br/>文件: reporting/risk_report_engine.py<br/>(设计态 / design)"]
     src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
     src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_performance_attribution_report_py
     src_zephyr_reporting_performance_attribution_report_py ~~~ src_zephyr_reporting_realtime_pnl_dashboard_py
@@ -152,7 +152,7 @@ flowchart TD
     src_zephyr_reporting_regulatory_report_generator_py ~~~ src_zephyr_reporting_report_version_manager_py
     src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
     src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
-    src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告包的report_publisher模块<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_report_publisher_py["报告发布器<br/>报告的报告器，汇总数据生成报告（report<br/>publisher）<br/>⛔ 报告域，设计已就绪，等待开发排期<br/>report_publisher<br/>文件: reporting/report_publisher.py<br/>(设计态 / design)"]
     src_zephyr_reporting_ashare_trade_record_template_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_realtime_pnl_dashboard_py -.->|data / data| src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_regulatory_report_generator_py -.->|data / data| src_zephyr_reporting_report_publisher_py

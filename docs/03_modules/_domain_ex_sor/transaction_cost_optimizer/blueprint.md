@@ -17,7 +17,7 @@ date: "2026-08-02"
 last_updated: "2026-08-02"
 priority: P2
 blueprint_level: module
-responsibility_domain: D_EX_SOR
+responsibility_domain: 
 ---
 
 # MOD-EX_SOR_EXT-003 Transaction Cost Optimizer — 交易成本优化器 蓝图

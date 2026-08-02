@@ -17,7 +17,7 @@ date: "2026-08-02"
 last_updated: "2026-08-02"
 priority: P2
 blueprint_level: module
-responsibility_domain: D_EX_SOR
+responsibility_domain: 
 ---
 
 # MOD-EX_SOR_EXT-002 Execution Quality Scorer — 执行质量评分器 蓝图

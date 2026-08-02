@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>A2A Card Registry — 全局 Agent Card 注册单例<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>支撑 Agent 间通信（a2a card registry）<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py["上下文包<br/>A2A 上下文包，封装 Agent<br/>间通信第二层的上下文数据。<br/>context_package<br/>文件: layer2_communication/context_package.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py["handoff管理器<br/>Handoff Manager — Agent 间任务交接，支撑 Agent<br/>间通信<br/>handoff_manager<br/>文件: layer2_communication/handoff_manager.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py["message路由器<br/>Message Router — A2A 消息路由，支撑 Agent 间通信<br/>message_router<br/>文件: layer2_communication/message_router.py<br/>(生产态 / production)"]
@@ -179,7 +179,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_semantic_diff_py
-    src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py["A2A注册表<br/>A2A Registry — Agent Card 注册与发现<br/>a2a_registry<br/>文件: layer1_discovery/a2a_registry.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py["A2A注册表<br/>支撑 Agent 间通信（a2a registry）<br/>a2a_registry<br/>文件: layer1_discovery/a2a_registry.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py["identity验证器<br/>5.110.9 修复: 显式 __repr__ 排除 _secret,<br/>防止调试/日志泄露<br/>identity_verifier<br/>文件: layer1_discovery/identity_verifier.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py["委托链<br/>任务委托链记录器，记录 from→to 的委托关系，最多<br/>5 层防无限传递和责任不清。<br/>a2a_delegation_chain<br/>文件: layer3_coordination<br/>/a2a_delegation_chain.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py["A2A 安全内容扫描器 — 六大类威胁检测<br/>对 A2A 消息 payload 进行内容安全扫描:<br/>a2a_security<br/>文件: layer3_coordination/a2a_security.py<br/>(生产态 / production)"]
@@ -277,7 +277,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>A2A Card Registry — 全局 Agent Card 注册单例<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>支撑 Agent 间通信（a2a card registry）<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py["上下文包<br/>A2A 上下文包，封装 Agent<br/>间通信第二层的上下文数据。<br/>context_package<br/>文件: layer2_communication/context_package.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py["handoff管理器<br/>Handoff Manager — Agent 间任务交接，支撑 Agent<br/>间通信<br/>handoff_manager<br/>文件: layer2_communication/handoff_manager.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py["message路由器<br/>Message Router — A2A 消息路由，支撑 Agent 间通信<br/>message_router<br/>文件: layer2_communication/message_router.py<br/>(生产态 / production)"]
@@ -403,7 +403,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_construction_verifier_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_deadlock_guard_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_livelock_detector_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_semantic_diff_py
-    src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py["A2A注册表<br/>A2A Registry — Agent Card 注册与发现<br/>a2a_registry<br/>文件: layer1_discovery/a2a_registry.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py["A2A注册表<br/>支撑 Agent 间通信（a2a registry）<br/>a2a_registry<br/>文件: layer1_discovery/a2a_registry.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_identity_verifier_py["identity验证器<br/>5.110.9 修复: 显式 __repr__ 排除 _secret,<br/>防止调试/日志泄露<br/>identity_verifier<br/>文件: layer1_discovery/identity_verifier.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_delegation_chain_py["委托链<br/>任务委托链记录器，记录 from→to 的委托关系，最多<br/>5 层防无限传递和责任不清。<br/>a2a_delegation_chain<br/>文件: layer3_coordination<br/>/a2a_delegation_chain.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py["A2A 安全内容扫描器 — 六大类威胁检测<br/>对 A2A 消息 payload 进行内容安全扫描:<br/>a2a_security<br/>文件: layer3_coordination/a2a_security.py<br/>(生产态 / production)"]
