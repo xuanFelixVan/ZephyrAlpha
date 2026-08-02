@@ -271,15 +271,11 @@ _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
 
     "data/cache/",
 
-    # rules_integrity_db.json 已移除出 auto-sync（偏离1修复，2026-07-22）：
-
+    # rules_integrity_db.json 已移除出 auto-sync（偏离1修复，2026-07-22；
+    # 2026-08-02 audit-02 治本：原修复仅加注释未删行，导致写入→还原循环仍存在）：
     # 该文件是 validate_rules_integrity.py --register 的写入产物（golden hash DB），
-
     # 非"派生产物"。列入 auto-sync 导致 register() 写入的新 hash 被 git restore 还原回
-
     # HEAD，形成"写入→还原"循环，post-commit reconciler 漏触发后 hash 永远停留旧值。
-
-    "scripts/governance/meta/rules_integrity_db.json",
 
     "scripts/governance/script_manifest.yaml",
 
