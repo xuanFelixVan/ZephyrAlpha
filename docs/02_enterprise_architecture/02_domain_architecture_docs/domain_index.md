@@ -67,8 +67,8 @@ ttl: permanent
 |------|-----|
 | 域总数 | 72 |
 | 模块总数 | 3198 |
-| 生产态模块 | 3000 |
-| 设计态模块 | 198 |
+| 生产态模块 | 3001 |
+| 设计态模块 | 197 |
 
 ## 域清单（按架构层分组）
 
@@ -120,7 +120,7 @@ ttl: permanent
 | D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 19 | 9 | 10 | 19/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
 | D_AUDITTEST | 审计测试套件 / Audit Test Suite | 1 | 1 | 0 | 1/150 (OK) | [📄 33_d_audittest.md](33_d_audittest.md) |
 | D_AUTONOMY_PERM | 自治保护 / Autonomy Protection | 2 | 2 | 0 | 2/150 (OK) | [📄 34_d_autonomy_perm.md](34_d_autonomy_perm.md) |
-| D_BACKTEST | 回测 / Backtest | 27 | 21 | 6 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
+| D_BACKTEST | 回测 / Backtest | 27 | 22 | 5 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
 | D_BEHAVIORAL_AUDIT | 行为审计 / Behavioral Audit | 0 | 0 | 0 | 0/150 (OK) | [📄 36_d_behavioral_audit.md](36_d_behavioral_audit.md) |
 | D_CODE_SCRIPTS | 代码质量脚本 / D_CODE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 37_d_code_scripts.md](37_d_code_scripts.md) |
 | D_COMPLIANCE | 合规 / Compliance | 3 | 2 | 1 | 3/150 (OK) | [📄 38_d_compliance.md](38_d_compliance.md) |
