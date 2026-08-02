@@ -2542,7 +2542,7 @@ entries:
   name_en: policies
   desc_zh: 策略（policies.yaml）
   desc_en: ''
-  plain_zh: 策略（policies.yaml）
+  plain_zh: "数据采集策略配置（派生物），由 generate_policies.py 从 data_sources_registry.yaml 派生，禁止手工修改，mtime 变化时热更新。"
 - module_path: src/zephyr/data/config/schedule.yaml
   domain_id: D_DATA
   name_zh: 调度计划
@@ -2556,7 +2556,7 @@ entries:
   name_en: tasks
   desc_zh: 任务（tasks.yaml）
   desc_en: ''
-  plain_zh: 任务（tasks.yaml）
+  plain_zh: "数据采集任务清单配置，定义首批 10 个任务的调度计划、DAG 依赖与数据源映射，覆盖 iFind/QMT/AKShare 三个 Provider。"
 - module_path: src/zephyr/data/connectors/
   domain_id: D_DATA
   name_zh: 连接器
@@ -3473,7 +3473,7 @@ entries:
   name_en: correlation_dedup
   desc_zh: D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。
   desc_en: ''
-  plain_zh: D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。
+  plain_zh: "因子相关性去重器，计算因子间相关性矩阵，识别并去除高度相关的冗余因子，减少特征共线性。"
 - module_path: src/zephyr/factor/analysis/decay_monitor.py
   domain_id: D_FACTOR
   name_zh: D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于
@@ -3543,7 +3543,7 @@ entries:
   name_en: bus_factor_defense
   desc_zh: 总线因子防御，供MOD-INF-027;MOD-INF-020;MOD-IN使用
   desc_en: ''
-  plain_zh: 总线因子防御，供MOD-INF-027;MOD-INF-020;MOD-IN使用
+  plain_zh: "总线因子风险评估器，按 SAFE/AT_RISK/DANGER 三级评估关键人员依赖风险，结合模块归属分析单点故障。"
 - module_path: src/zephyr/factor/core/backpressure/__init__.py
   domain_id: D_FACTOR
   name_zh: 包入口
@@ -8632,7 +8632,7 @@ entries:
   name_en: auto_fixer
   desc_zh: 安全自动修复引擎——五直接开关+五间接约束.
   desc_en: ''
-  plain_zh: 安全自动修复引擎——五直接开关+五间接约束.
+  plain_zh: "安全自动修复引擎，用五直接开关与五间接约束控制修复行为，按 SafetyTier(always/review/never) 分级放行。"
 - module_path: src/zephyr/gov_code_quality/code_dedup/behavioral_sampler.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: behavioral采样器
@@ -8821,7 +8821,7 @@ entries:
   name_en: integrations
   desc_zh: 集成管理——预提交钩子+CI-only 扫描+超时边界.
   desc_en: ''
-  plain_zh: 集成管理——预提交钩子+CI-only 扫描+超时边界.
+  plain_zh: "去重集成管理器，注册预提交钩子与 CI-only 扫描，设置超时边界防卡死。"
 - module_path: src/zephyr/gov_code_quality/code_dedup/micro_clone_detector.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: microclone检测器
@@ -8835,7 +8835,7 @@ entries:
   name_en: mock_duplicate_generator
   desc_zh: 可控克隆生产器——零假阳性可期待引擎分子离散
   desc_en: ''
-  plain_zh: 可控克隆生产器——零假阳性可期待引擎分子离散
+  plain_zh: "可控克隆生成器，按 exact/renamed/reordered/wrapped 四种类型生成测试用重复代码，零假阳性可期待。"
 - module_path: src/zephyr/gov_code_quality/code_dedup/monoculture_guard.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: monoculture守卫
@@ -8982,7 +8982,7 @@ entries:
   name_en: success_validator
   desc_zh: 成功验证——判断一次去重操作是否真正消灭了克隆.
   desc_en: ''
-  plain_zh: 成功验证——判断一次去重操作是否真正消灭了克隆.
+  plain_zh: "去重成功验证器，对比修复前后克隆计数判断一次去重操作是否真正消灭了克隆。"
 - module_path: src/zephyr/gov_code_quality/code_dedup/symbol_index.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: symbol索引
@@ -9017,7 +9017,7 @@ entries:
   name_en: consequence_tracker
   desc_zh: 后果追踪——记录每次修复操作对依赖方的影响.
   desc_en: ''
-  plain_zh: 后果追踪——记录每次修复操作对依赖方的影响.
+  plain_zh: "修复后果追踪器，记录每次修复操作对依赖方文件的影响，支持回滚与汇总。"
 - module_path: src/zephyr/gov_code_quality/code_dedup/trackers/hotspot_tracker.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: 热点追踪器 — 90天滑动窗口 + 高频变动检测 + 新项目预热清单.
@@ -9038,14 +9038,14 @@ entries:
   name_en: question_tracker
   desc_zh: 问题追踪——扫描中发现需要人工处理的问题.
   desc_en: ''
-  plain_zh: 问题追踪——扫描中发现需要人工处理的问题.
+  plain_zh: "问题追踪器，收集扫描中发现需人工处理的问题，支持 raise/resolve/get_open 生命周期。"
 - module_path: src/zephyr/gov_code_quality/code_dedup/trackers/risk_mitigation_tracker.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: 风险缓解追踪——捕获哪些克隆报告了但在N次扫描后仍未fix.
   name_en: risk_mitigation_tracker
   desc_zh: 风险缓解追踪——捕获哪些克隆报告了但在N次扫描后仍未fix.
   desc_en: ''
-  plain_zh: 风险缓解追踪——捕获哪些克隆报告了但在N次扫描后仍未fix.
+  plain_zh: "风险缓解追踪器，捕获报告了但在多次扫描后仍未修复的克隆，标记为 stale 提醒干预。"
 - module_path: src/zephyr/gov_code_quality/code_dedup/verifier.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: 验证器
@@ -9472,7 +9472,7 @@ entries:
   name_en: noqa_validation_gate
   desc_zh: noqa_validation_gate.py — 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）
   desc_en: ''
-  plain_zh: 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）
+  plain_zh: "自定义 lint 豁免标记合规性门禁，在 commit 阶段拦截未登记或无理由的自定义豁免标记防止滥用，标准 ruff/flake8 错误码放行，合法标记从豁免注册表动态加载。"
 - module_path: src/zephyr/gov_enforcement/commit_gates/open_without_with_gate.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: openwithoutwith门禁
@@ -9934,7 +9934,7 @@ entries:
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "漂移检测引擎蓝图，定义编排 39 个检测器执行、关联分析与报告生成的主控。"
 - module_path: scripts/governance/d11_compliance/validate_blueprint_overlap.py
   domain_id: D_GOV_DRIFT
   name_zh: validate蓝图overlap
@@ -9976,7 +9976,7 @@ entries:
   name_en: self_monitor
   desc_zh: 自监控模块
   desc_en: ''
-  plain_zh: 自监控，主要提供increment、设置gauge、快照等功能，供audit-orchestrator.cli; MCP go使用
+  plain_zh: "自监控器，increment 计数、set_gauge 设值、snapshot 快照，不引入外部依赖且不阻塞主流程。"
 - module_path: src/zephyr/gov_drift/absence_manager.py
   domain_id: D_GOV_DRIFT
   name_zh: absence管理器
@@ -10046,7 +10046,7 @@ entries:
   name_en: ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation
   desc_zh: brain集成模块
   desc_en: ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation
-  plain_zh: brain集成。ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation
+  plain_zh: "探针层级集成器，对接 K8s 三级探针（Liveness/Readiness/Startup）与 Terraform 对账，实现分层健康探测。"
 - module_path: src/zephyr/gov_drift/canary_controller.py
   domain_id: D_GOV_DRIFT
   name_zh: 金丝雀控制器
@@ -10116,21 +10116,21 @@ entries:
   name_en: MOD-INF-023 drift_detector core module.
   desc_zh: 包入口模块
   desc_en: MOD-INF-023 drift_detector core module.
-  plain_zh: 包入口。MOD-INF-023 drift_detector core module.
+  plain_zh: "漂移检测核心模块包入口，聚合各检测器子模块供上层统一导入。"
 - module_path: src/zephyr/gov_drift/detector_core/benchmark_integrity.py
   domain_id: D_GOV_DRIFT
   name_zh: 基准完整性
   name_en: benchmark_integrity
   desc_zh: 基准完整性，供MOD-GATE_ENGINE;MOD-INF-021;MO使用
   desc_en: ''
-  plain_zh: 基准完整性，供MOD-GATE_ENGINE;MOD-INF-021;MO使用
+  plain_zh: "基准完整性检测器，按 MARKET_COVERAGE/FACTOR_CONSISTENCY/BACKTEST_STABILITY/HFT_FIDELITY 四维检测基准漂移。"
 - module_path: src/zephyr/gov_drift/detector_core/bridges/drift_bridge.py
   domain_id: D_GOV_DRIFT
   name_zh: 漂移桥接
   name_en: drift_bridge
   desc_zh: DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).
   desc_en: ''
-  plain_zh: DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).
+  plain_zh: "漂移检测器事件桥接，把检测到的事件转发到升级协议与回滚系统。"
 - module_path: src/zephyr/gov_drift/detector_core/ml_engineering.py
   domain_id: D_GOV_DRIFT
   name_zh: 机器学习engineering
@@ -10172,7 +10172,7 @@ entries:
   name_en: drift_detector
   desc_zh: Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift (MOD-INF-023).
   desc_en: ''
-  plain_zh: Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift (MOD-INF-023).
+  plain_zh: "漂移检测器兼容别名，SSoT 已迁移到 zephyr.gov_drift 核心模块，本模块保留 API 兼容性内部委托。"
 - module_path: src/zephyr/gov_drift/drift_engine.py
   domain_id: D_GOV_DRIFT
   name_zh: 漂移引擎
@@ -10354,7 +10354,7 @@ entries:
   name_en: spiral_ews
   desc_zh: 螺旋预警系统，供src/zephyr/governance/ops_gove使用
   desc_en: ''
-  plain_zh: 螺旋预警系统，供src/zephyr/governance/ops_gove使用
+  plain_zh: "螺旋早期预警系统，监控 token/cost/depth 增长率，超过阈值时发出螺旋失控信号。"
 - module_path: src/zephyr/gov_drift/suppression_learner.py
   domain_id: D_GOV_DRIFT
   name_zh: 抑制学习器
@@ -10452,7 +10452,7 @@ entries:
   name_en: integrity
   desc_zh: 完整性模块
   desc_en: ''
-  plain_zh: 完整性，主要提供聚合、验证等功能，供audit-orchestrator.pipeline_ru使用
+  plain_zh: "完整性聚合器，MerkleAggregator 按小时聚合审计条目并验证所有审计组件健康状态，不通过则禁止审计操作。"
 - module_path: docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml
   domain_id: D_GOV_ENFORCEMENT
   name_zh: 规则执行注册表
@@ -14771,7 +14771,7 @@ entries:
   name_en: contracts
   desc_zh: rollback/contracts.py — G-CT-002 Rollback 契约（re-export）。
   desc_en: ''
-  plain_zh: G-CT-002 Rollback 契约（re-export）。
+  plain_zh: "Rollback 契约兼容转发层，把回滚契约符号 re-export 到 rollback 入口，老导入路径不用改。"
 - module_path: src/zephyr/infrastructure/rollback/_manifest.py
   domain_id: D_INFRA_RECOVERY
   name_zh: 清单
@@ -14862,7 +14862,7 @@ entries:
   name_en: drift_fix
   desc_zh: 漂移自动修复处理器 — G-CT-005 消费端.
   desc_en: ''
-  plain_zh: 漂移自动修复处理器 — G-CT-005 消费端.
+  plain_zh: "漂移自动修复处理器，消费漂移事件并在回滚系统上执行自动修复，VMS 不可用时降级不阻塞。"
 - module_path: src/zephyr/infrastructure/rollback/env_watcher.py
   domain_id: D_INFRA_RECOVERY
   name_zh: env监视器
@@ -14953,7 +14953,7 @@ entries:
   name_en: rollback_boot_integration
   desc_zh: RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 §1.2).
   desc_en: ''
-  plain_zh: RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD-INF-021 §1.2).
+  plain_zh: "回滚系统自动启动/关闭集成，把回滚系统接入系统启停流程，保证启动恢复与优雅关闭。"
 - module_path: src/zephyr/infrastructure/rollback/rollback_bootstrap.py
   domain_id: D_INFRA_RECOVERY
   name_zh: 回滚自举
@@ -15023,7 +15023,7 @@ entries:
   name_en: rollback_scheduler
   desc_zh: RollbackScheduler — 回滚系统事件驱动调度器 (MOD-INF-021 §7 Phase 5.3).
   desc_en: ''
-  plain_zh: RollbackScheduler — 回滚系统事件驱动调度器 (MOD-INF-021 §7 Phase 5.3).
+  plain_zh: "回滚系统事件驱动调度器，按事件触发回滚检查点创建与恢复，Phase 5.3 调度核心。"
 - module_path: src/zephyr/infrastructure/rollback/rollback_simulator.py
   domain_id: D_INFRA_RECOVERY
   name_zh: 回滚模拟器
@@ -15443,7 +15443,7 @@ entries:
   name_en: interrupt_guard
   desc_zh: 中断守卫，提供waldir、waldir、dbpath等方法，供engine.py;fix_scheduler.p使用
   desc_en: ''
-  plain_zh: "中断守卫，wal_dir + db_path 用 WAL 预写日志防修复过程被中断导致数据损坏，供调度器使用。"
+  plain_zh: "中断守卫，用 WAL 预写日志防修复过程被中断导致数据损坏，为调度器提供安全的中断恢复能力。"
 - module_path: src/zephyr/infrastructure/auto_fix_engine/llm_fix_adapter.py
   domain_id: D_INFRA_RUNTIME
   name_zh: llm修复适配器
@@ -16633,7 +16633,7 @@ entries:
   name_en: in_memory_fake_vms
   desc_zh: InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双胞胎
   desc_en: ''
-  plain_zh: "内存假 VMS，零依赖测试双胞胎，在无向量数据库环境模拟 VMS 行为供测试使用。"
+  plain_zh: "内存假 VMS，零依赖的测试双胞胎，在无向量数据库环境模拟 VMS 行为，用于单元测试隔离。"
 - module_path: src/zephyr/integration/vector_memory/in_memory_memory_backend.py
   domain_id: D_INTEGRATION
   name_zh: 入记忆记忆后端
@@ -16976,7 +16976,7 @@ entries:
   name_en: provider_data
   desc_zh: 提供器数据，供src.zephyr.infrastructure.budg使用
   desc_en: ''
-  plain_zh: 提供器数据，供src.zephyr.infrastructure.budg使用
+  plain_zh: "模型提供器与分层映射数据常量表，定义默认 LLM 提供商配置和模型分层（tier）映射，作为模型路由与发现的数据真源。"
 - module_path: src/zephyr/intelligence/model_profiling/results_writer.py
   domain_id: D_INTELLIGENCE
   name_zh: results写入器
@@ -16997,7 +16997,7 @@ entries:
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "向量记忆服务蓝图，基于 ChromaDB 0.6 与双嵌入维度本地推理，规划 8 大 Collection 的统一向量持久化与混合检索架构。"
 - module_path: src/zephyr/market_data/__init__.py
   domain_id: D_MKT_DATA
   name_zh: 包入口
@@ -17158,7 +17158,7 @@ entries:
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "模型画像器蓝图，规划 LLM 能力基线测量体系，含 7 维评测、任务与模型增量学习及智能路由推荐。"
 - module_path: src/zephyr/ml_train/ai_operator/
   domain_id: D_ML_TRAIN
   name_zh: ai操作器
@@ -17200,7 +17200,7 @@ entries:
   name_en: Module docstring — see module-level docstring for details.
   desc_zh: 门禁缓存模块
   desc_en: Module docstring — see module-level docstring for details.
-  plain_zh: 门禁缓存。Module docstring — see module-level docstring for details.
+  plain_zh: "门禁结果缓存器，缓存门禁检查结果避免重复计算，提升 CI 流水线执行速度。"
 - module_path: scripts/setup_dev_env.py
   domain_id: D_OPS
   name_zh: '开发环境一次性初始化（裁定 #ARCH-PYTHON-SITECUSTOMIZE'
@@ -17235,7 +17235,7 @@ entries:
   name_en: Budget Enforcer data models — MOD-INF-024
   desc_zh: 预算模型模块
   desc_en: Budget Enforcer data models — MOD-INF-024
-  plain_zh: 预算模型。Budget Enforcer data models — MOD-INF-024
+  plain_zh: "预算执行器数据模型，定义预算限额、消耗记录与决策的 Pydantic 模型。"
 - module_path: src/zephyr/governance/ops_governance/budget_profile_manager.py
   domain_id: D_OPS
   name_zh: 预算档案管理器
@@ -17382,7 +17382,7 @@ entries:
   name_en: batch_orchestrator
   desc_zh: BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）
   desc_en: ''
-  plain_zh: BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-016）
+  plain_zh: "多 Worker 批量任务协调器，分派批量任务到多个 Worker 并发执行，汇总结果。"
 - module_path: src/zephyr/orchestrator/execution/context_bridge.py
   domain_id: D_ORCHESTRATOR
   name_zh: 上下文桥接
@@ -17417,7 +17417,7 @@ entries:
   name_en: memory_writer
   desc_zh: Orc->VMS 记忆写入器
   desc_en: ''
-  plain_zh: Orc->VMS 记忆写入器
+  plain_zh: "编排器到向量记忆的写入器，任务完成时把结果归档到 VMS，VMS 不可用则降级不阻塞。"
 - module_path: src/zephyr/orchestrator/execution/phase_executor.py
   domain_id: D_ORCHESTRATOR
   name_zh: 阶段执行器
@@ -17480,7 +17480,7 @@ entries:
   name_en: canary_manager
   desc_zh: 金丝雀发布管理器（CT-CANARY）——权重分流+指标对比+自动回滚。
   desc_en: ''
-  plain_zh: 金丝雀发布管理器（CT-CANARY）——权重分流+指标对比+自动回滚。
+  plain_zh: "金丝雀发布管理器，按权重分流流量到新旧版本，对比指标异常时自动回滚。"
 - module_path: src/zephyr/orchestrator/fault_tolerance/chaos_engine.py
   domain_id: D_ORCHESTRATOR
   name_zh: chaos引擎
@@ -17494,7 +17494,7 @@ entries:
   name_en: ChaosHook — integrates ChaosEngine with the orchestrator exe
   desc_zh: chaos钩子模块
   desc_en: ChaosHook — integrates ChaosEngine with the orchestrator execution loop.
-  plain_zh: chaos钩子。ChaosHook — integrates ChaosEngine with the orchestrator execution loop.
+  plain_zh: "混沌工程钩子，把 ChaosEngine 故障注入集成到编排器执行循环，验证容错能力。"
 - module_path: src/zephyr/orchestrator/fault_tolerance/degrade_cascade.py
   domain_id: D_ORCHESTRATOR
   name_zh: degrade级联
@@ -17711,7 +17711,7 @@ entries:
   name_en: ke_quality
   desc_zh: 知识质量评分契约（CT-KE-QUALITY）——KE完整性+准确性+时效性三维评分。
   desc_en: ''
-  plain_zh: 知识质量评分契约（CT-KE-QUALITY）——KE完整性+准确性+时效性三维评分。
+  plain_zh: "知识条目质量评分器，按完整性、准确性、时效性三维度评分，判定是否可接受或需人工复核。"
 - module_path: src/zephyr/orchestrator/quality/knowledge_freshness.py
   domain_id: D_ORCHESTRATOR
   name_zh: 知识新鲜度废止管理器（CT-KNOWLEDGE-FRESHNESS）——KE过期
@@ -17725,7 +17725,7 @@ entries:
   name_en: lean_scanner
   desc_zh: 死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三款扫描器+自动化清理建议。
   desc_en: ''
-  plain_zh: 死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三款扫描器+自动化清理建议。
+  plain_zh: "精简扫描器，扫描死代码、孤儿文件、僵尸引用三类浪费，并产出自动化清理建议。"
 - module_path: src/zephyr/orchestrator/quality/stability_guard.py
   domain_id: D_ORCHESTRATOR
   name_zh: stability守卫
@@ -19384,14 +19384,14 @@ entries:
   name_en: replacement_rebalance_sell
   desc_zh: replacementrebalance卖出（replacement_rebalance_sell.py）
   desc_en: ''
-  plain_zh: replacementrebalance卖出（replacement_rebalance_sell.py）
+  plain_zh: "替代再平衡卖出策略，当标的被更好的替代品取代时触发卖出并再平衡组合。"
 - module_path: src/zephyr/sell_decision/core/scaling_out_architect.py
   domain_id: D_SELL_DECISION
   name_zh: scaling出architect
   name_en: scaling_out_architect
   desc_zh: scaling出architect（scaling_out_architect.py）
   desc_en: ''
-  plain_zh: scaling出architect（scaling_out_architect.py）
+  plain_zh: "分批减仓架构师，按计划分多批逐步减仓，控制单次冲击与滑点。"
 - module_path: src/zephyr/sell_decision/core/sell_signal_collector.py
   domain_id: D_SELL_DECISION
   name_zh: 卖信号收集器
@@ -19923,7 +19923,7 @@ entries:
   name_en: agent_identity
   desc_zh: 代理identity，供zephyr.security.access_control使用
   desc_en: ''
-  plain_zh: "代理身份契约，定义 Agent 身份模型与成熟度分级，身份不可被篡改、成熟度分级不可扩展，供安全访问与升级链路使用。"
+  plain_zh: "Agent 身份契约，定义身份模型与 L0-L4 五级成熟度分级，身份不可篡改、分级不可扩展，为访问控制与升级提供基准。"
 - module_path: src/zephyr/shared/contracts/identity/permission.py
   domain_id: D_SHARED
   name_zh: 权限
@@ -20014,7 +20014,7 @@ entries:
   name_en: security_decision
   desc_zh: 安全决策，供l10-compliance ; llm-security.使用
   desc_en: ''
-  plain_zh: "安全决策契约，定义放行、拒绝、标记等安全裁定枚举，成员冻结、新增需 ADR，供合规与 LLM 安全层使用。"
+  plain_zh: "安全决策契约，定义 BLOCK/ALLOW/DENY/FLAG 四种安全裁定枚举，成员冻结或新增需 ADR，为合规与安全层提供统一裁定语言。"
 - module_path: src/zephyr/shared/contracts/skill_protocol.py
   domain_id: D_SHARED
   name_zh: 技能协议
@@ -20945,7 +20945,7 @@ entries:
   name_en: protection_index
   desc_zh: 保护索引，供zephyr.trading.verdict_engine;使用
   desc_en: ''
-  plain_zh: 保护索引，供zephyr.trading.verdict_engine;使用
+  plain_zh: "保护索引，用 Bloom Filter 快速筛查加 Trie 精确二次验证判断路径是否受保护，anchor 路径永远返回 anchor 级别。"
 - module_path: src/zephyr/trading/runtime/async_runtime.py
   domain_id: D_TRADING
   name_zh: 异步运行时
@@ -21029,21 +21029,21 @@ entries:
   name_en: factories
   desc_zh: 工厂.py — 交易域数据契约工厂方法
   desc_en: ''
-  plain_zh: 工厂.py — 交易域数据契约工厂方法
+  plain_zh: "交易域数据契约工厂方法集，提供各交易契约类型的便捷构造函数。"
 - module_path: src/zephyr/trading/trading_contracts/market/instrument.py
   domain_id: D_TRADING
   name_zh: 标的合约
   name_en: instrument
   desc_zh: 标的合约，供data ; factor ; pf_core ; ex_c使用
   desc_en: ''
-  plain_zh: 标的合约，供data ; factor ; pf_core ; ex_c使用
+  plain_zh: "标的合约定义，定义 Stock/ETF/Future/Option 等金融工具类型与属性，是交易域共享的合约基类。"
 - module_path: src/zephyr/trading/trading_contracts/market/signal_degradation_warning.py
   domain_id: D_TRADING
   name_zh: 信号退化警告
   name_en: signal_degradation_warning
   desc_zh: 信号退化警告，供signal; risk; pf_core使用
   desc_en: ''
-  plain_zh: 信号退化警告，供signal; risk; pf_core使用
+  plain_zh: "信号退化警告契约，定义信号质量退化时的警告数据结构与触发阈值。"
 - module_path: src/zephyr/trading/trading_contracts/portfolio/contracts/money.py
   domain_id: D_TRADING
   name_zh: 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真
@@ -21071,14 +21071,14 @@ entries:
   name_en: compliance_rule
   desc_zh: 合规规则，供l10-compliance使用
   desc_en: ''
-  plain_zh: 合规规则，供l10-compliance使用
+  plain_zh: "合规规则契约，定义交易合规检查规则的数据结构与匹配逻辑。"
 - module_path: src/zephyr/trading/trading_contracts/risk/risk_dashboard_snapshot.py
   domain_id: D_TRADING
   name_zh: 风险仪表盘快照
   name_en: risk_dashboard_snapshot
   desc_zh: 风险仪表盘快照，供risk; ops使用
   desc_en: ''
-  plain_zh: 风险仪表盘快照，供risk; ops使用
+  plain_zh: "风险仪表盘快照契约，定义某时刻风险状态的快照数据结构，供风险与运维展示。"
 - module_path: src/zephyr/trading/trading_contracts/risk/risk_limit_violation_error.py
   domain_id: D_TRADING
   name_zh: 风险限制违规错误
@@ -21092,7 +21092,7 @@ entries:
   name_en: risk_limits
   desc_zh: 风险limits，供risk; pf_core使用
   desc_en: ''
-  plain_zh: 风险limits，供risk; pf_core使用
+  plain_zh: "风险限额契约，定义仓位、单日亏损等风险限额的数据结构。"
 - module_path: src/zephyr/trading/trading_contracts/risk/risk_metrics.py
   domain_id: D_TRADING
   name_zh: 风险指标
@@ -21113,7 +21113,7 @@ entries:
   name_en: trading_kill_switch
   desc_zh: 交易终止开关，供MOD-INF-022 ; MOD-INF-020使用
   desc_en: ''
-  plain_zh: 交易终止开关，供MOD-INF-022 ; MOD-INF-020使用
+  plain_zh: "交易终止开关，定义五级 KillSwitch（仓位限制/单日亏损/熔断/二级熔断等），触发时强制停止交易。"
 - module_path: src/zephyr/trading/verdict_engine.py
   domain_id: D_TRADING
   name_zh: 裁定引擎
@@ -21597,14 +21597,14 @@ entries:
   name_en: "mod_inf_034"
   desc_zh: "harvest来源:交易决策架构.md"
   desc_en: ''
-  plain_zh: "MOD-INF-034（来源:交易决策架构.md, likely_new）"
+  plain_zh: "候选基础设施模块，来源交易决策架构文档，标记为 likely_new 待评估是否需要独立实现。"
 - module_path: CAND-HARVEST-0050
   domain_id: D_INFRA_OPS
   name_zh: "MOD-INF-036"
   name_en: "mod_inf_036"
   desc_zh: "harvest来源:交易决策架构.md"
   desc_en: ''
-  plain_zh: "MOD-INF-036（来源:交易决策架构.md, likely_new）"
+  plain_zh: "候选基础设施模块，来源交易决策架构文档，标记为 likely_new 待评估是否需要独立实现。"
 - module_path: CAND-HARVEST-0051
   domain_id: D_AUTONOMY_CORE
   name_zh: "门禁引擎"
@@ -21618,7 +21618,7 @@ entries:
   name_en: "mod_inf_033"
   desc_zh: "harvest来源:交易决策架构.md"
   desc_en: ''
-  plain_zh: "MOD-INF-033（来源:交易决策架构.md, likely_new）"
+  plain_zh: "候选基础设施模块，来源交易决策架构文档，标记为 likely_new 待评估是否需要独立实现。"
 - module_path: CAND-HARVEST-0053
   domain_id: D_AUTONOMY_CORE
   name_zh: "协议"
@@ -21632,21 +21632,21 @@ entries:
   name_en: "mod_inf_024"
   desc_zh: "harvest来源:交易决策架构.md"
   desc_en: ''
-  plain_zh: "MOD-INF-024（来源:交易决策架构.md, likely_new）"
+  plain_zh: "候选预算执行模块，来源交易决策架构文档，标记为 likely_new 待评估是否需要独立实现。"
 - module_path: CAND-HARVEST-0055
   domain_id: D_INFRA_OPS
   name_zh: "MOD-INF-035"
   name_en: "mod_inf_035"
   desc_zh: "harvest来源:交易决策架构.md"
   desc_en: ''
-  plain_zh: "MOD-INF-035（来源:交易决策架构.md, likely_new）"
+  plain_zh: "候选基础设施模块，来源交易决策架构文档，标记为 likely_new 待评估是否需要独立实现。"
 - module_path: CAND-HARVEST-0056
   domain_id: D_INFRA_OPS
   name_zh: "MOD-INF-026"
   name_en: "mod_inf_026"
   desc_zh: "harvest来源:交易决策架构.md"
   desc_en: ''
-  plain_zh: "MOD-INF-026（来源:交易决策架构.md, likely_new）"
+  plain_zh: "候选资产盘点模块，来源交易决策架构文档，标记为 likely_new 待评估是否需要独立实现。"
 - module_path: CAND-HARVEST-0057
   domain_id: D_SELL_DECISION
   name_zh: "持仓分级器"
