@@ -5357,6 +5357,29 @@ if __name__ == "__main__":
                 mark_depgraph_dirty()
             except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断主流程（DB 已成功写入）
                 print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
+            # 生成器自动重生成（reconcile_generators §reconcile_async 非阻塞）：
+            # apply 写完 DB → reconcile_async("depgraph_db") 后台 spawn 生成器子进程。
+            # 异步非阻塞——depgraph 19 生成器同步跑需 ~50s（blueprint_panorama --all ~145s），
+            # 异步 spawn 后 apply 立即返回，生成器后台跑，日志写 .runtime/logs/。
+            # 失败不丢失：boot_hooks 启动时 reconcile_stale() 兜底重跑（生成器幂等）。
+            # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过。
+            if os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
+                try:
+                    try:
+                        from scripts.governance.reconcile_generators import reconcile_async
+                    except ImportError:
+                        from reconcile_generators import reconcile_async
+                    regen = reconcile_async("depgraph_db")
+                    if regen.get("status") == "spawned":
+                        print(
+                            f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} "
+                            f"日志: {regen['log_file']}",
+                            file=sys.stderr,
+                        )
+                    else:
+                        print(f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=sys.stderr)
+                except Exception as _e:  # noqa: BLE001 — 编排器不可用不阻断主流程
+                    print(f"[REGENERATE] WARNING: 编排器不可用（不阻断写入）: {_e}", file=sys.stderr)
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def read_maturity_header(file_path) -> str | None:

@@ -38,6 +38,16 @@ reconcile_generators.py — 生成器自动触发统一编排器
 """
 from __future__ import annotations
 
+__manifest__ = """
+args: []
+description: 生成器自动触发统一编排器——apply_*.py 写 DB 后调 reconcile(source) 实时触发，boot_hooks 启动时调 reconcile_stale() mtime 对比兜底。注册表驱动（generator_registry.yaml），双路径调用（in-process + subprocess 回退）。
+dimensions:
+- D5
+priority: P2
+timeout_seconds: 300
+warn_only: false
+"""
+
 import importlib
 import logging
 import subprocess

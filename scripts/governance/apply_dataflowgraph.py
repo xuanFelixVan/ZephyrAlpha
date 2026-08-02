@@ -518,4 +518,35 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    finally:
+        # 生成器自动重生成（reconcile_generators §双路径调用）：
+        # apply 写完 DB → reconcile("dataflowgraph_db") 查注册表调全部 dataflowgraph 读取生成器。
+        # 生成失败不阻断 apply（apply 是真源，生成是派生，§2.3 派生关系）。
+        # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过（boot_hooks 启动兜底）。
+        import os as _os
+        import sys as _sys
+        is_dry_run = "--dry-run" in _sys.argv
+        _write_cmds = {
+            "--add-design-dataset", "--add-design-job", "--add-design-edge",
+            "--delete-design-job", "--transition-build-status", "--batch",
+        }
+        has_write_cmd = any(arg in _write_cmds for arg in _sys.argv)
+        if has_write_cmd and not is_dry_run and _os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
+            try:
+                try:
+                    from scripts.governance.reconcile_generators import reconcile_async
+                except ImportError:
+                    from reconcile_generators import reconcile_async
+                regen = reconcile_async("dataflowgraph_db")
+                if regen.get("status") == "spawned":
+                    print(
+                        f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} "
+                        f"日志: {regen['log_file']}",
+                        file=_sys.stderr,
+                    )
+                else:
+                    print(f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=_sys.stderr)
+            except Exception as _e:  # noqa: BLE001 — 编排器不可用不阻断主流程
+                print(f"[REGENERATE] WARNING: 编排器不可用（不阻断写入）: {_e}", file=_sys.stderr)

@@ -55,6 +55,12 @@ _SRC_DIR = _REPO_ROOT / "src"
 for _p in (str(_REPO_ROOT), str(_SRC_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, str(_p))
+# _GOV_DIR（_shared 所在目录）——治本(2026-08-03)：reconcile_generators 子进程调用时
+# sys.path[0]=脚本目录，但 _shared 在 scripts/governance/ 而非 generators/，
+# 需显式添加否则 `from _shared.constants import ...` 崩溃（ModuleNotFoundError）。
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
 
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402

@@ -95,8 +95,15 @@ FLOW_STAGES = [
     ("reconciliation", "对账", "06"),
 ]
 
+# flow_stage -> 节点标签第4行"所属阶段"（V1.5：替换原"作战环节 / battle-step"冗余标识）
+FLOW_STAGE_LABELS = {
+    fs_id: f"{zh}阶段 / {fs_id}"
+    for fs_id, zh, _ in FLOW_STAGES
+}
+
 # Mermaid 分页大小（防 >100 节点渲染失败，memory lesson）
-PAGE_SIZE = 30
+# V1.5：48 环节全景图分 2 页用户反馈不直观，调到 60 合并为单图
+PAGE_SIZE = 60
 
 # 灰色主题头（visualization_view_template §4.1 + §13.3 clusterBkg 透明）。
 # 每个 Mermaid 代码块第一行必须输出此主题头：节点背景统一浅灰，状态色（蓝/橙）由
@@ -308,9 +315,14 @@ def _sanitize(text: str) -> str:
     # 恢复 <br/> 折行标签
     text = text.replace("\x00BR\x00", "<br/>")
     # Mermaid 语法字符转义
+    # [ ] -> 全角【】会改变语义，用全角（）更安全（节点标签和边标签中都不会冲突）
+    # ( ) -> 边标签 |...| 中的半角()被 Mermaid 误解析为节点形状（如 node(text)），
+    #        导致 Parse error（2026-08-03 渲染失败修复，如 |T指令(底仓不变)→仓位裁决|）
     return (
-        text.replace("[", "(")
-        .replace("]", ")")
+        text.replace("[", "（")
+        .replace("]", "）")
+        .replace("(", "（")
+        .replace(")", "）")
         .replace('"', "'")
         .replace("|", "/")
         .replace("\n", " ")
@@ -407,7 +419,10 @@ def _node_label(step: dict) -> str:
     parts.append(plain if plain else "—")
 
     # 作战环节标识
-    parts.append("作战环节 / battle-step")
+    # 所属阶段（V1.5：替换原"作战环节 / battle-step"——所有节点都是作战环节，无信息量；
+    #               改为环节所属 flow_stage，如"买入阶段 / buy_flow"，一眼看出阶段归属）
+    flow_stage = step.get("flow_stage", "")
+    parts.append(FLOW_STAGE_LABELS.get(flow_stage, "作战环节 / battle-step"))
 
     # 成熟度
     parts.append(maturity)
@@ -657,7 +672,8 @@ def _format_indicators_table(step: dict) -> str:
             return "—"
         if isinstance(items, list):
             return "<br>".join(
-                f"{it.get('item', it)}" + (f"（来自 {it['source']}）" if isinstance(it, dict) and it.get("source") else "")
+                f"{it.get('item', it) if isinstance(it, dict) else it}"
+                + (f"（来自 {it['source']}）" if isinstance(it, dict) and it.get("source") else "")
                 for it in items
             )
         if isinstance(items, dict):

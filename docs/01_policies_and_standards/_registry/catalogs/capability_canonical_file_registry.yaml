@@ -5436,6 +5436,32 @@ capabilities:
       新 AI 想做"作战地图对齐/锚点校验/域漂移检测"前，CapabilityLookup 会反查到
       本文件，提示"扩展现有检测器，勿新建"。
 
+  # --------------------------------------------------------------------------
+  - capability_id: generator_auto_trigger
+    canonical_override: scripts/governance/reconcile_generators.py
+    aliases:
+      - reconcile_generators
+      - reconcile
+      - reconcile_async
+      - reconcile_stale
+      - generator_registry
+      - 生成器自动触发
+      - 生成器编排器
+    description: >-
+      生成器自动触发统一编排器（generator_auto_trigger_pilot.md）。注册表驱动——
+      generator_registry.yaml 是"生成器→触发源→输入/输出"映射唯一真源（TRAE-062
+      规则数据真源=YAML），reconcile_generators.py 只读此表。双路径调用：
+      entry_function 存在→in-process importlib（快，如 battle_map）；否则→subprocess
+      python <script> 回退（隔离，免改造 main()-only 生成器）。两个入口：
+      reconcile(source)——apply_*.py 写 DB 后按 trigger_sources 精确匹配实时触发；
+      reconcile_stale()——boot_hooks 启动时按 input_sources mtime 对比兜底（YAML 变更）。
+      reconcile_async(source)——spawn detached subprocess 不阻塞调用方（depgraph 19
+      生成器 ~50s，UX 不可接受同步）。生成失败降级返回 failed dict 不阻断真源写入
+      （§2.3 派生不阻断真源）。新增生成器自动化只需在 generator_registry.yaml 加
+      一条，无需改编排器代码（§3.1 能现成不创造·注册表驱动）。新 AI 想做"生成器
+      自动触发/文档自动重生成/派生产物同步"前，CapabilityLookup 会反查到本文件，
+      提示"扩展现有编排器，勿新建"。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -7634,6 +7660,16 @@ creation_tokens:
     token: "auto-ex-multi-contract-adapter-bp-20260802"
     created_by: "session-ex055"
     capability: "multi_contract_adapter"
+
+  # --- 生成器自动触发编排器（2026-08-03，generator_auto_trigger_pilot 试点落地）---
+  - file: "scripts/governance/reconcile_generators.py"
+    token: "auto-reconcile-generators-20260803"
+    created_by: "session-generator-auto-trigger"
+    capability: "generator_auto_trigger"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/generator_registry.yaml"
+    token: "auto-generator-registry-20260803"
+    created_by: "session-generator-auto-trigger"
+    capability: "generator_auto_trigger"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

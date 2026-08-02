@@ -1199,6 +1199,52 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 - **标识符编号大写**：ARCH 编号必须大写（`ARCH-033` 合规，`arch-033` 违规），小写引用触发 ERROR 阻断；规则真源见 [trae_028 §标识符编号格式](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)
 - **当前状态**：ERROR 阻断（校验失败 sys.exit(1)，2026-07-02 从 WARN 升级为 ERROR）
 
+#### 11.1.3 生成器自动触发机制（generator_auto_trigger_pilot，2026-08-03）
+
+> **新 AI 涉及"生成器/架构文档自动重生成/派生产物同步"工作时 MUST 先读本节。**
+> 病根：23 个架构生成器需手动 `python generate_*.py` 运行，AI 忘记跑导致派生文档
+> 与真源（DB/YAML）漂移。治本：注册表驱动统一编排器——apply 写 DB 后实时触发，
+> boot_hooks 启动时 mtime 对比兜底。
+
+**架构（注册表驱动·§3.1 能现成不创造）**：
+
+| 组件 | 路径 | 角色 |
+|------|------|------|
+| **编排器** | [`reconcile_generators.py`](file:///d:/ZephyrAlpha/scripts/governance/reconcile_generators.py) | 统一入口，只读注册表，调度生成器执行 |
+| **注册表** | [`generator_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/generator_registry.yaml) | "生成器→触发源→输入/输出"映射唯一真源（TRAE-062 规则数据真源=YAML） |
+| **触发点1** | `apply_depgraph.py` / `apply_dataflowgraph.py` / `apply_decisiongraph.py` / `apply_battle_map.py` | DB 真源写入后 `finally` 块调 `reconcile_async(source)` 实时触发 |
+| **触发点2** | [`boot_hooks.py`](file:///d:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py) `_subscribe_governance_regeneration()` | 启动时调 `reconcile_stale()` 按 mtime 对比兜底（YAML 变更无 apply 调用） |
+
+**双路径调用**（免改造 23 个 main()-only 生成器）：
+- **路径1·in-process**：注册表声明 `entry_function`（如 battle_map 的 `regenerate`）→ importlib 动态加载调用，返回 dict。快（无进程启动开销）
+- **路径2·subprocess 回退**：无 `entry_function` → `python <script>` 子进程调 `main()`，按退出码判定（0/1=ok，2+=failed）。隔离（崩溃不影响编排器）
+
+**触发源命名约定**：
+- `<graph>_db` — apply_*.py 写 DB 后实时触发（如 `depgraph_db` / `dataflowgraph_db` / `decisiongraph_db` / `battle_map_db`）
+- `<name>_yaml` — YAML 真源变更，boot_hooks 启动时 mtime 对比兜底触发
+
+**新增生成器自动化**（无需改编排器代码）：
+1. 在 [`generator_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/generator_registry.yaml) 加一条：`name` + `module_path` + `trigger_sources` + `input_sources` + `output_globs`
+2. 若生成器有可调用入口函数（无参返回 dict），加 `entry_function` 字段走 in-process；否则留空走 subprocess 回退
+3. 若 main() 需要参数（如 `--all`），加 `args` 字段
+
+**逃生通道**：`ZEPHYR_SKIP_REGENERATE=1` 环境变量跳过自动重生成（批量操作时用，boot_hooks 启动时兜底补跑）
+
+**异步生成**（`reconcile_async`）：depgraph 19 生成器同步运行 ~50s，blueprint_panorama --all ~145s，同步阻塞 apply 脚本 UX 不可接受。`reconcile_async` spawn detached subprocess 立即返回，日志写入 `.runtime/logs/regenerate_<source>_<timestamp>.log`，生成器幂等确保重复运行无副作用
+
+**capability 反查入口**：`generator_auto_trigger`（aliases: reconcile_generators/reconcile/reconcile_async/reconcile_stale/generator_registry/生成器自动触发/生成器编排器）
+
+**覆盖范围**（23 个生成器，按目录）：
+- `00_overview_entry`：navigation_index、panorama_registry
+- `01_global_architecture_diagram`：asset_catalog、capability_heatmap、contract_catalog、cross_domain_matrix、integration_topology、path_tree
+- `02_domain_architecture_docs`：domain_doc、domain_index
+- `03_governance_reports`：candidate_module_report、capacity_report、constraint_violations、design_vs_production
+- `04_architecture_principles_decisions`：code_wiki_stats、blueprint_panorama
+- `05_dataflow_architecture`：dataflow_diagram、data_acquisition_flow、data_inventory
+- `06_decision_architecture`：decision_diagram
+- `07_trading_decision_architecture/battle_map`：battle_map（试点，in-process entry_function）
+- Codegen 管线：contracts、policies
+
 ### 11.2 P3 PostgreSQL 优化裁定记录（2026-06-28）
 
 > **本节是 P3 相关工作的硬约束。** 任何 AI 在涉及 PostgreSQL 优化时必须先读本节。
