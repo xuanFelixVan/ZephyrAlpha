@@ -4,7 +4,7 @@ title: "仓位审计记录器蓝图 — 全记录+哈希链+可追溯"
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
+design_maturity: production
 ttl: permanent
 layer: L03_position
 layer_name: position
@@ -21,7 +21,7 @@ responsibility_domain:
 # MOD-POS-009 Position Audit Logger — 仓位审计记录器 蓝图
 
 > **module_id**: MOD-POS-009 | **域**: D_POSITION | **层**: L03 仓位管理
-> **优先级**: P1 | **成熟度**: design(蓝图规划阶段) | **建设标记**: ✅可建
+> **优先级**: P1 | **成熟度**: production | **建设标记**: ✅可建
 > **SSoT**: depgraph MOD-POS-009 | **设计真源**: D:\临时工作区\依赖图\07-D-POSITION-仓位管理域.md §1.3 POS-09
 
 ## 1. 定位

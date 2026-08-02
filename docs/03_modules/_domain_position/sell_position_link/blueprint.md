@@ -21,7 +21,7 @@ responsibility_domain:
 # MOD-POS-016 Sell-Position Bidirectional Link — 卖出-仓位双向链接 蓝图
 
 > **module_id**: MOD-POS-016 | **域**: D_POSITION | **层**: L03 仓位管理
-> **优先级**: P0 | **成熟度**: design → production | **建设标记**: ✅可建
+> **优先级**: P0 | **成熟度**: production | **建设标记**: ✅可建
 > **SSoT**: depgraph MOD-POS-016 | **设计真源**: D:\临时工作区\依赖图\07-D-POSITION-仓位管理域.md §1.4 POS-16
 
 ## 1. 定位

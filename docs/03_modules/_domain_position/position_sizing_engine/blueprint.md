@@ -21,7 +21,7 @@ responsibility_domain:
 # MOD-POS-001 Position Sizing Engine — 仓位决策引擎 蓝图
 
 > **module_id**: MOD-POS-001 | **域**: D_POSITION | **层**: L03 仓位管理
-> **优先级**: P0 | **成熟度**: design(蓝图规划阶段, 待评审) | **建设标记**: ✅可建
+> **优先级**: P0 | **成熟度**: production | **建设标记**: ✅可建
 > **SSoT**: depgraph MOD-POS-001 | **设计真源**: D:\临时工作区\依赖图\07-D-POSITION-仓位管理域.md §1.1 POS-01, §7.1 四层架构, §7.2 四轨架构, §8 PositionPlan
 
 ## 1. 定位
