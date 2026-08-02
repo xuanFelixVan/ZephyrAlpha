@@ -1628,11 +1628,11 @@ entries:
   plain_zh: "给定回测结果数据,生成一份能直接打开看的HTML报告,里面有收益/Sharpe/回撤/胜率等指标表,可选画权益曲线和列交易明细。纯字符串模板渲染,不需要装额外库。"
 - module_path: src/zephyr/backtest/services/result_comparator.py
   domain_id: D_BACKTEST
-  name_zh: 结果比较器
-  name_en: result_comparator
-  desc_zh: 结果comparator模块
-  desc_en: ''
-  plain_zh: 结果comparator，回测的结果，封装操作结果的数据结构。
+  name_zh: "回测结果比较器"
+  name_en: "Result Comparator"
+  desc_zh: "多次回测结果差异分析:绝对指标比较+相对差异+统计显著性检验"
+  desc_en: ""
+  plain_zh: "给两组回测结果做差异对比——逐项比较年化收益、Sharpe、最大回撤等指标,算出候选比基线好多少差多少,再用统计检验判断差异是真显著还是碰巧,最后生成一张对比表方便人判断该不该换策略。"
 - module_path: src/zephyr/backtest/services/result_deployer.py
   domain_id: D_BACKTEST
   name_zh: 结果deployer
