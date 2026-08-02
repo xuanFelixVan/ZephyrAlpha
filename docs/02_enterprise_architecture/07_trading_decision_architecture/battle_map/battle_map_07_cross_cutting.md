@@ -19,7 +19,7 @@ date: 2026-08-03
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 横切类别数 | 9 | Categories | 9 |
+| 横切类别数 | 11 | Categories | 11 |
 | 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys |
 | 真源 | module_translation_registry.yaml | Source | YAML registry |
 
@@ -34,7 +34,7 @@ date: 2026-08-03
 
 ## 横切视图总览 / Cross-Cutting Overview
 
-> 展示全部 9 个横切机制，颜色区分五态。
+> 展示全部 11 个横切机制，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -49,13 +49,15 @@ flowchart TD
     CC_07["（设计态 / design） — 应急保命降级路径 /<br/>Emergency Fail-Safe Degradation Path<br/>当模型/策略/信号失效时，系统逐级降级保命——每一层<br/>失效都有硬编码兜底， 保证交易系统在最坏情况下仍<br/>能'活着'且不爆雷。降级触发由 Kill Switch 熔断 +<br/>数据健康监控驱动。 注意：这是系统级横切降级级联<br/>，区别于各环节 6 件套里的 ⑥降级/中止<br/>（后者是单环节级）。<br/>横切机制 / cross-cutting"]
     CC_08["（设计态 / design） — 四轨并行架构 / Four-Track<br/>Parallel Architecture<br/>交易决策不是单条流水线，而是四条轨道同时跑，按优<br/>先级接管：   ① 模型驱动轨（主力）——<br/>L0数据→L1因子→L2信号→L3策略→L4风控，正常交易走这<br/>条   ② 数据驱动轨（补充）—— 端到端 DL<br/>信号，模型驱动轨信号不足时补充   ③ 人工指令轨<br/>（干预）—— 人工买入/卖出/调仓<br/>/风控干预，优先级高于自动轨   ④ 应急保命轨<br/>（兜底）—— 全系统降级到最简规则，仅执行卖出 +<br/>硬编码上限 四轨的输出在 L3<br/>策略组合层融合，按优先级仲裁。人工指令 &gt;<br/>模型驱动 &gt; 数据驱动； 应急保命轨触发时压制所有其<br/>他轨。<br/>横切机制 / cross-cutting"]
     CC_09["（设计态 / design） — 共享信号注入层 / Shared<br/>Signal Injection Layer<br/>选股、买入、卖出三个流程共享同一批信号源——不重复<br/>造信号。 信号工厂统一产出 Insight（方向/置信度<br/>/时间跨度），注入到：   -<br/>选股流：信号作为筛选漏斗的输入   -<br/>买入流：信号作为四轨融合的输入   -<br/>卖出流：信号反转作为卖出触发之一 信号仓位分离铁<br/>律：signal 节点不能直接连 order，必须经<br/>portfolio_target 中转。<br/>横切机制 / cross-cutting"]
-    CC_01 ~~~ CC_02 ~~~ CC_03 ~~~ CC_04 ~~~ CC_05 ~~~ CC_06 ~~~ CC_07 ~~~ CC_08 ~~~ CC_09
+    CC_10["（设计态 / design） D-SIGNAL §3 信号生命周期治理<br/>/ Signal Lifecycle Governance<br/>信号不是'产生即用完'的一次性产物，而是有完整生命<br/>周期：生成→校准→降级监控→ 衰减追踪→绩效追踪→版本<br/>管理→审计→废弃。每个阶段都有对应能力保障信号质量<br/> 和可追溯性，避免'信号失效了还在用'。<br/>横切机制 / cross-cutting"]
+    CC_11["（设计态 / design） D-FACTOR §7 因子治理引擎 /<br/>Factor Governance Engine<br/>因子不是'算出来就用'的，而是要经过完整治理：注册<br/>→评估→治理门禁→衰减监控→ 相关性分析→废弃审批。因<br/>子池有容量上限（活跃池≤60，设计容量≥150），通过<br/>末位淘汰+批量裁剪维持因子池健康。<br/>横切机制 / cross-cutting"]
+    CC_01 ~~~ CC_02 ~~~ CC_03 ~~~ CC_04 ~~~ CC_05 ~~~ CC_06 ~~~ CC_07 ~~~ CC_08 ~~~ CC_09 ~~~ CC_10 ~~~ CC_11
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class CC_01,CC_02,CC_03,CC_04,CC_05,CC_06,CC_07,CC_08,CC_09 design
+    class CC_01,CC_02,CC_03,CC_04,CC_05,CC_06,CC_07,CC_08,CC_09,CC_10,CC_11 design
 ```
 
 ## 筛选漏斗模型 / Screening Funnel Model（§13）
@@ -353,5 +355,108 @@ cannot_directly_connect_to=[order]，必须经 portfolio_target 中转，这是�
 绕过仓位裁决直接下单的硬约束。
 
 **关联环节**：[BM-SEL-02](battle_map_01_stock_selection.md)、[BM-BUY-01](battle_map_02_buy_flow.md)、[BM-SELL-01](battle_map_03_sell_flow.md)
+
+## 信号生命周期治理 / Signal Lifecycle Governance（D-SIGNAL §3）
+
+> **大白话**：信号不是"产生即用完"的一次性产物，而是有完整生命周期：生成→校准→降级监控→
+衰减追踪→绩效追踪→版本管理→审计→废弃。每个阶段都有对应能力保障信号质量
+和可追溯性，避免"信号失效了还在用"。
+
+**机制说明**：
+
+信号生命周期横切贯穿信号从生产到废弃的全过程，由 D-SIGNAL 域 7 个能力协同：
+  ① D-SIGNAL-01 Synthesizer（信号合成+权重分配，产出标准 Insight 契约）
+  ② D-SIGNAL-17 Confidence Calibrator（Platt/Isotonic/温度缩放校准+ECE/MCE 评估）
+  ③ D-SIGNAL-03 Degradation Monitor（三级降级 MILD/MODERATE/SEVERE，SEVERE 立即撤销）
+  ④ D-SIGNAL-08 Decay Tracker（半衰期估计+衰减曲线拟合+消散预警）
+  ⑤ D-SIGNAL-11 Performance Tracker（滚动 IC/IR/Sharpe+归因分解+基准比较+异常检测）
+  ⑥ D-SIGNAL-12 Version Manager（版本树+A/B 分流+灰度发布+回滚引擎）
+  ⑦ D-SIGNAL-06 Audit Logger（WORM 不可变存储+事件溯源+合规报告，MiFID II 5 年保留）
+  ⑧ D-SIGNAL-14 Lifecycle Manager（7 状态机：研发/测试/灰度/生产/观察/废弃/归档）
+核心原则：降级判断必须可审计——每次降级决策的输入/阈值/结果必须记录；
+SEVERE 降级→立即撤销所有相关信号（E-SG-02）→通知 D-PORTFOLIO 停止建仓→通知 D-RISK 重新评估。
+与应急保命降级路径横切的关系：本横切是信号级降级（单一信号失效），
+应急保命降级是系统级降级（整个 L2 信号层失效）。
+
+**关联环节**：[BM-SEL-02](battle_map_01_stock_selection.md)、[BM-SEL-22](battle_map_01_stock_selection.md)、[BM-SEL-23](battle_map_01_stock_selection.md)、[BM-SEL-24](battle_map_01_stock_selection.md)、[BM-SEL-25](battle_map_01_stock_selection.md)、[BM-BUY-01](battle_map_02_buy_flow.md)、[BM-SELL-01](battle_map_03_sell_flow.md)
+
+### 生命周期阶段
+
+| 阶段 | 名称 | 能力 | 说明 |
+|---|---|---|---|
+| generation | 信号生成 | D-SIGNAL-01 Synthesizer | 信号合成+权重分配，产出标准 Insight 契约（direction/confidence/horizon） |
+| calibration | 置信度校准 | D-SIGNAL-17 Confidence Calibrator | Platt Scaling/Isotonic Regression/温度缩放，校准质量 ECE/MCE 评估+自适应校准 |
+| degradation_monitor | 降级监控 | D-SIGNAL-03 Degradation Monitor | 三级降级 MILD/MODERATE/SEVERE，输入因子 IC/IR+信号置信度+数据质量评分 |
+| decay_track | 衰减追踪 | D-SIGNAL-08 Decay Tracker | 半衰期估计器+衰减曲线拟合+消散预警+历史衰减对比 |
+| performance | 绩效追踪 | D-SIGNAL-11 Performance Tracker | 滚动 IC/IR/Sharpe+归因分解+基准比较+异常检测 |
+| versioning | 版本管理 | D-SIGNAL-12 Version Manager | 版本树管理+A/B 分流器+灰度发布调度+回滚引擎 |
+| audit | 审计日志 | D-SIGNAL-06 Audit Logger | 事件采集器+WORM 写入器+查询接口+合规报告生成器，MiFID II 5 年保留 |
+| retirement | 废弃流程 | D-SIGNAL-14 Lifecycle Manager | 7 状态机（研发/测试/灰度/生产/观察/废弃/归档）+准入门禁+灰度调度+废弃审批 |
+
+### 降级级别
+
+| 级别 | 触发条件 | 动作 | 下游影响 |
+|---|---|---|---|
+| MILD | 因子 IC 衰减 | 通知+降权 | 通知下游信号置信度下调 |
+| MODERATE | 多因子同时衰减 | 通知+建议暂停 | 建议暂停相关策略建仓 |
+| SEVERE | 数据源故障/模型崩溃 | 立即撤销所有相关信号（E-SG-02） | 通知 D-PORTFOLIO 停止建仓+通知 D-RISK 重新评估 |
+
+## 因子治理引擎 / Factor Governance Engine（D-FACTOR §7）
+
+> **大白话**：因子不是"算出来就用"的，而是要经过完整治理：注册→评估→治理门禁→衰减监控→
+相关性分析→废弃审批。因子池有容量上限（活跃池≤60，设计容量≥150），通过
+末位淘汰+批量裁剪维持因子池健康。
+
+**机制说明**：
+
+因子治理横切贯穿因子从注册到废弃的全过程，由 D-FACTOR 域 5 个能力协同：
+  ① D-FACTOR-02 Registry（因子注册表：元数据 Schema+版本树+依赖图+废弃流程+因子血缘+四维索引）
+  ② D-FACTOR-03 Evaluation（评估+过拟合检测 3 维度 Walk-Forward/参数敏感性/泛化+前视偏差+
+     多重回归校验 t 统计量/VIF 方差膨胀/Durbin-Watson 残差自相关+IC 偏差率监控>0.1%否决+
+     CUSUM 控制图 k=0.5σ 预警>2σ 行动>4σ）
+  ③ D-FACTOR-07 Governance Engine（准入门禁+运行时监控+废弃审批+漂移检测 39 类+
+     因子-模型联合优化 R&D-Agent-Quant：因子 IC 衰减评估模型敏感度，模型精度下降
+     反向评估高贡献因子→优先保留，高贡献因子保留率>80%）
+  ④ D-FACTOR-08 Decay Monitor（IC 时序追踪+半衰期估计+制度转换检测+衰减预警+
+     CUSUM 控制图比滚动 IC 更早发现衰减趋势）
+  ⑤ D-FACTOR-09 Correlation Analyzer（滚动相关矩阵+条件相关性+聚类分析+共线性检测+
+     因子语义去重 LLM 判断经济学逻辑等价性：数值不同但逻辑等价→保留 IC 高者+
+     标记"语义冗余"；逻辑不等价但数值相关→保留两者+标记"数值相关但逻辑独立"）
+因子池管理双机制（原"末位淘汰"+"批量裁剪"）：
+  - IC-Based Factor Replacement：活跃池满 N_max-4 时新因子逐个对比池内 IC 最低者，
+    核心因子标记不参与末位淘汰
+  - Batch Factor Pruning：全池≥64 时按 IC 从休眠/观察中裁撤，兜底维护全池≤N_max
+因子池容量：运行上限 N_max≈64，设计容量≥150，活跃池≤N_max-4≈60，休眠≤4。
+与信号生命周期横切的关系：因子衰减→触发信号降级（D-SIGNAL-03），
+因子废弃→相关信号进入观察期（D-SIGNAL-14）。
+
+**关联环节**：[BM-SEL-03](battle_map_01_stock_selection.md)、[BM-SEL-05](battle_map_01_stock_selection.md)、[BM-SEL-11](battle_map_01_stock_selection.md)、[BM-SEL-12](battle_map_01_stock_selection.md)、[BM-SEL-13](battle_map_01_stock_selection.md)
+
+### 治理阶段
+
+| 阶段 | 名称 | 能力 | 说明 |
+|---|---|---|---|
+| registration | 因子注册 | D-FACTOR-02 Registry | 元数据 Schema+版本树+依赖图+废弃流程状态机+因子血缘+四维索引（名称/类别/状态/SLA） |
+| evaluation | 因子评估 | D-FACTOR-03 Evaluation | 过拟合检测 3 维度+前视偏差检测+多重回归（t/VIF/DW）+IC 偏差率>0.1%否决+CUSUM 控制图 |
+| gatekeeping | 治理门禁 | D-FACTOR-07 Governance Engine | 准入门禁+运行时监控+废弃审批+漂移检测 39 类+因子-模型联合优化（高贡献因子保留率>80%） |
+| decay_monitor | 衰减监控 | D-FACTOR-08 Decay Monitor | IC 时序追踪+半衰期估计+CUSUM 控制图（k=0.5σ，预警>2σ，行动>4σ）+制度转换检测 |
+| correlation | 相关性分析 | D-FACTOR-09 Correlation Analyzer | 滚动相关矩阵+条件相关性+聚类+共线性 VIF+因子语义去重（LLM 判断逻辑等价性） |
+| retirement | 废弃审批 | D-FACTOR-07 Governance Engine | 废弃流程状态机+漂移检测触发+高贡献因子保留率>80%+因子-模型联合优化评估 |
+
+### 因子池容量
+
+| 参数 | 值 |
+|---|---|
+| 运行上限 N_max | 64 |
+| 活跃池上限 | 60 |
+| 休眠上限 | 4 |
+| 设计容量 | 150 |
+
+### 因子池管理机制
+
+| 机制 | 名称 | 触发条件 | 说明 |
+|---|---|---|---|
+| ic_replacement | IC-Based Factor Replacement（末位淘汰） | 活跃池满 N_max-4 时新因子逐个对比池内 IC 最低者 | 核心因子标记不参与末位淘汰 |
+| batch_pruning | Batch Factor Pruning（批量裁剪） | 全池≥64 时按 IC 从休眠/观察中裁撤 | 兜底机制，维护全池≤N_max |
 
 [← 返回总指挥图](battle_map_panorama.md)

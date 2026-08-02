@@ -10,7 +10,7 @@ date: 2026-08-03
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_06_reconciliation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §reconciliation 阶段，5 环节。
+> battle_map §reconciliation 阶段，14 环节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
 ## 文档基本信息 / Document Overview
@@ -18,9 +18,9 @@ date: 2026-08-03
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 对账（reconciliation） | Stage | 对账 |
-| 环节数 | 5 | Steps | 5 |
-| 流转边 | 7 | Edges | 7 |
-| 状态分布 | 🟦 运营态（已建）=5 | State Distribution | 🟦 运营态（已建）=5 |
+| 环节数 | 14 | Steps | 14 |
+| 流转边 | 13 | Edges | 13 |
+| 状态分布 | 🟦 运营态（已建）=13 ｜ 🟧 设计态（待施工）=1 | State Distribution | 🟦 运营态（已建）=13 ｜ 🟧 设计态（待施工）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -33,28 +33,61 @@ date: 2026-08-03
 
 ## 阶段图 / Stage Diagram
 
-> 展示 对账 阶段全部 5 个环节及流转边，颜色区分五态。
+> 展示 对账 阶段全部 14 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 对账阶段图
 flowchart TD
-    BM_REC_01["【BM-REC-01 交易运营清算】<br/>把成交回报拿去结算对账、算费率、处理除权除息和公<br/>司行为、监控保证金，变成运营数据。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Trade Ops &amp; Settlement】"]
-    BM_REC_02["【BM-REC-02 报告复盘】<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Reporting &amp; Review】"]
-    BM_REC_03["【BM-REC-03 闭环优化反馈】<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Closed-Loop Optimization Feedback】"]
+    subgraph sg_BM_REC_01 ["交易运营清算"]
+        BM_REC_01["【BM-REC-01 交易运营清算】<br/>把成交回报拿去结算对账、算费率、处理除权除息和公<br/>司行为、监控保证金，变成运营数据。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Trade Ops &amp; Settlement】"]
+        BM_REC_01_A["【BM-REC-01-A 结算对账】<br/>每日盘后把系统记录和券商结算单逐笔核对，发现差异<br/>立刻告警，是T+1对账的核心。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Settlement &amp; Reconciliation】"]
+        BM_REC_01_B["【BM-REC-01-B 公司行为与费率】<br/>处理除权除息自动调持仓成本、算佣金印花税过户费、<br/>监控分红配股拆股，是运营数据准确性的保障。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Corporate Action &amp; Fee】"]
+        BM_REC_01 -.->|嵌套| BM_REC_01_A
+        BM_REC_01 -.->|嵌套| BM_REC_01_B
+    end
+    subgraph sg_BM_REC_02 ["报告复盘"]
+        BM_REC_02["【BM-REC-02 报告复盘】<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Reporting &amp; Review】"]
+        BM_REC_02_A["【BM-REC-02-A TCA执行质量分析】<br/>算每笔交易的真实成本——滑点、冲击成本、市场影响，<br/>看执行得好不好。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【TCA Execution Quality Analysis】"]
+        BM_REC_02_B["⛔ D-EX-CORE执行报告未就绪（CTR-P1-007<br/>/CTR-ERR-005）,设计文档§1.4标注受限,暂不可建<br/>【BM-REC-02-B 绩效归因】<br/>把盈亏拆开看——赚的钱是选股选对的、还是配比配对的<br/>、还是行业轮动轮对的，找出Alpha来源。<br/>对账阶段 / reconciliation<br/>（设计态 / design）<br/>【Performance Attribution】"]
+        BM_REC_02_C["【BM-REC-02-C A股交易复盘】<br/>针对A股特色做盘前信号验证、盘中异常检测、盘后归<br/>因、大额交易异动检测，生成复盘报告。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【A-Share Trading Review】"]
+        BM_REC_02_D["【BM-REC-02-D 报告发布】<br/>把复盘报告归档、发到微信和邮件，留好审计凭证。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Report Publishing】"]
+        BM_REC_02 -.->|嵌套| BM_REC_02_A
+        BM_REC_02 -.->|嵌套| BM_REC_02_B
+        BM_REC_02 -.->|嵌套| BM_REC_02_C
+        BM_REC_02 -.->|嵌套| BM_REC_02_D
+    end
+    subgraph sg_BM_REC_03 ["闭环优化反馈"]
+        BM_REC_03["【BM-REC-03 闭环优化反馈】<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Closed-Loop Optimization Feedback】"]
+        BM_REC_03_A["【BM-REC-03-A 因子层反馈】<br/>看因子还灵不灵——IC衰减了就换因子，算半衰期，保证<br/>因子池新鲜。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Factor-Layer Feedback】"]
+        BM_REC_03_B["【BM-REC-03-B 信号层反馈】<br/>看信号准不准——准确率持续下降就退役信号，避免用失<br/>效信号下单。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Signal-Layer Feedback】"]
+        BM_REC_03_C["【BM-REC-03-C 模型层反馈】<br/>看模型飘没飘——检测到漂移就重训练，防止模型用旧数<br/>据预测新市场。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Model-Layer Feedback】"]
+        BM_REC_03 -.->|嵌套| BM_REC_03_A
+        BM_REC_03 -.->|嵌套| BM_REC_03_B
+        BM_REC_03 -.->|嵌套| BM_REC_03_C
+    end
     BM_REC_04["【BM-REC-04 保证金管理】<br/>监控融资融券保证金比例——低于预警线告警、需要追加<br/>时提醒用户；融资融券API不可用时自动休眠，不影响<br/>其他运营功能。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Margin Manager】"]
     BM_REC_05["【BM-REC-05 多账户分仓管理】<br/>一个策略同时管多个账户，按各账户AUM分仓，每个账<br/>户独立风控、独立PnL、独立报告。多账户≠多租户SaaS<br/>，所有账户属于同一信任域。<br/>对账阶段 / reconciliation<br/>（生产态 / production）<br/>【Multi-Account Manager】"]
-    BM_REC_02 ~~~ BM_REC_04 ~~~ BM_REC_05
+    BM_REC_01 ~~~ BM_REC_01_A ~~~ BM_REC_02_A ~~~ BM_REC_03_A
+    BM_REC_02 ~~~ BM_REC_04 ~~~ BM_REC_05 ~~~ BM_REC_01_B ~~~ BM_REC_02_B ~~~ BM_REC_03_B
+    BM_REC_03 ~~~ BM_REC_02_C ~~~ BM_REC_03_C
     BM_REC_01 -->|运营数据 / data_flow| BM_REC_02
     BM_REC_02 -->|复盘报告 / data_flow| BM_REC_03
     BM_REC_01 -->|保证金监控消费清算数据 / data_flow| BM_REC_04
     BM_REC_01 -->|多账户独立核算消费清算数据 / data_flow| BM_REC_05
+    BM_REC_01_A -->|结算对账后处理公司行为与费率 / data_flow| BM_REC_01_B
+    BM_REC_02_A -.->|TCA执行成本→归因输入 / data_flow| BM_REC_02_B
+    BM_REC_02_B -.->|归因结果→复盘素材 / data_flow| BM_REC_02_C
+    BM_REC_02_C -->|复盘报告→发布 / data_flow| BM_REC_02_D
+    BM_REC_03_A -->|因子反馈→信号反馈 / data_flow| BM_REC_03_B
+    BM_REC_03_B -->|信号反馈→模型反馈 / data_flow| BM_REC_03_C
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05 production
+    class BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A,BM_REC_03_B,BM_REC_03_C production
+    class BM_REC_02_B design
 ```
 
 ## 环节详情
@@ -233,6 +266,314 @@ L5/运营层。C-018●核心多账户多策略(D-TRADING-05)。按AUM分仓/独
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-TRADING-003 | supplement | planned | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-01-A 结算对账 / Settlement & Reconciliation
+
+> **大白话**：每日盘后把系统记录和券商结算单逐笔核对，发现差异立刻告警，是T+1对账的核心。
+
+**机制说明**：
+
+BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力②结算对账(D-TRADING-02)。
+每日15:30后自动对账：系统成交记录vs券商结算单逐笔比对，差异告警，A股T+1结算。
+事件E-TR-01 SettlementCompleted / E-TR-02 ReconciliationCompleted。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：成交回报就绪+每日15:30自动触发(A股T+1)；②消费：BM-EXE-02成交回报+券商结算单；③参数：settle_cycle=T+1、settles_at=15:30；④数据流：成交回报→D-TRADING-02结算对账→运营数据→BM-REC-02；⑤代码：MOD-TRADING-003 settlement_reconciliation.py(stable)、C-017②；⑥降级：D-TRADING-02不可用→手动清算兜底。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-TRADING-003 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-01-B 公司行为与费率 / Corporate Action & Fee
+
+> **大白话**：处理除权除息自动调持仓成本、算佣金印花税过户费、监控分红配股拆股，是运营数据准确性的保障。
+
+**机制说明**：
+
+BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力③④⑤：
+③除权除息(D-TRADING-03 除权日自动调整持仓成本+目标价)④费率(佣金/印花税/过户费→向C-010供PnL数据)⑤公司行为(分红/配股/拆股监控→通知用户)。
+事件E-TR-03 CorporateActionAdjusted。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：除权除息日+公司行为公告；②消费：BM-REC-01-A清算数据+公告；③参数：fee_types=佣金/印花税/过户费、corporate_action_types=分红/配股/拆股；④数据流：清算数据→D-TRADING-03除权除息/费率/公司行为→调整后持仓+费率→C-010 PnL；⑤代码：MOD-TRADING-004 corporate_action_processor.py(stable)、C-017③④⑤；⑥降级：D-TRADING-03不可用→手动调整持仓成本。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-TRADING-004 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-A TCA执行质量分析 / TCA Execution Quality Analysis
+
+> **大白话**：算每笔交易的真实成本——滑点、冲击成本、市场影响，看执行得好不好。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-01 TCA Engine：交易成本分析(滑点/冲击成本/市场影响量化)。
+输入CTR-005 Fill+CTR-006 PositionSnapshot。承接BM-EXE-03执行质量数据，输出TCA报告供绩效归因消费。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：成交回报就绪；②消费：BM-EXE-03执行质量+CTR-005成交+CTR-006持仓；③参数：tca_metrics=滑点/冲击成本/市场影响；④数据流：成交→D-REPORTING-01 TCA→TCA报告→BM-REC-02-B绩效归因；⑤代码：MOD-L07-001 default_tca_engine.py(generated)、D-REPORTING-01；⑥降级：TCA不可用→仅名义成本统计。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L07-001 | supplement | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-B 绩效归因 / Performance Attribution
+
+> **大白话**：把盈亏拆开看——赚的钱是选股选对的、还是配比配对的、还是行业轮动轮对的，找出Alpha来源。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-02 Attribution Engine：
+Brinson归因(配置效应+选择效应+交互效应)+因子归因+风险归因+策略退化检测(IC衰减>50%=退化+拥挤度检测+自动降权)。
+输入CTR-005+CTR-006+CTR-P1-001。MOD-RPT-015 planned未实现，MOD-L07-001 default_attribution_engine.py generated。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：TCA报告就绪；②消费：BM-REC-02-A TCA报告+CTR-005/006/P1-001；③参数：attribution_method=Brinson+多因子、decay_threshold=IC衰减50%；④数据流：TCA→D-REPORTING-02归因→归因报告→BM-REC-02-C复盘；⑤代码：MOD-RPT-015 performance_attribution_report.py(planned)、MOD-L07-001 default_attribution_engine.py(generated)、D-REPORTING-02；⑥降级：归因不可用→基础PnL报表。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-015 | primary | planned | planned |
+| depgraph | MOD-L07-001 | supplement | production | generated |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-C A股交易复盘 / A-Share Trading Review
+
+> **大白话**：针对A股特色做盘前信号验证、盘中异常检测、盘后归因、大额交易异动检测，生成复盘报告。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-15 A-Share Trading Review Engine：
+盘前信号验证(因子IC>阈值∧信号一致性>阈值)/盘中异常检测(价格偏离>2σ∨成交量>3倍均值)/盘后归因分析(Brinson+因子归因)/绩效统计/大额交易异动检测。
+MOD-RPT-026 ashare_performance_audit.py(stable)+MOD-RPT-027 ashare_trade_record_template.py(stable)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：归因报告就绪；②消费：BM-REC-02-B归因报告+CTR-005/006/P1-001；③参数：ic_threshold=因子IC阈值、volume_anomaly=3倍均值；④数据流：归因→D-REPORTING-15 A股复盘→复盘报告→BM-REC-02-D发布；⑤代码：MOD-RPT-026 ashare_performance_audit.py(stable)、MOD-RPT-027 ashare_trade_record_template.py(stable)、D-REPORTING-15、C-010；⑥降级：复盘不可用→基础PnL报表。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-026 | primary | production | generated |
+| depgraph | MOD-RPT-027 | supplement | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-D 报告发布 / Report Publishing
+
+> **大白话**：把复盘报告归档、发到微信和邮件，留好审计凭证。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-03 Report Publisher：
+报告生成/分发/归档+SQLite report_archive+Parquet数据文件+LLM摘要+ACL防腐层数据汇聚。
+分发渠道:微信Webhook+邮件SMTP。MOD-RPT-003 report_publisher.py(stable)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：复盘报告就绪；②消费：BM-REC-02-C复盘报告；③参数：channels=微信/邮件、archive=SQLite+Parquet；④数据流：复盘报告→D-REPORTING-03发布→微信/邮件推送+归档→BM-REC-03闭环优化；⑤代码：MOD-RPT-003 report_publisher.py(stable)、D-REPORTING-03；⑥降级：发布不可用→本地归档不推送。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-003 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-03-A 因子层反馈 / Factor-Layer Feedback
+
+> **大白话**：看因子还灵不灵——IC衰减了就换因子，算半衰期，保证因子池新鲜。
+
+**机制说明**：
+
+BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈到L2因子层：
+IC衰减→因子替代、半衰期compute_half_life计算、单层因子质量反馈。
+MOD-L02-004 ic_decay.py(stable)已production。反馈信号反向回到BM-SEL-02因子计算。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：复盘报告就绪；②消费：BM-REC-02-D复盘报告；③参数：ic_decay_lag=1~20期(max_lag=20)、half_life=compute_half_life；④数据流：复盘报告→MOD-L02-004 IC衰减分析→因子替代信号→BM-SEL-02(反向闭环)；⑤代码：MOD-L02-004 ic_decay.py(stable)、C-007因子层反馈；⑥降级：IC衰减不可用→人工评估因子质量。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L02-004 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-03-B 信号层反馈 / Signal-Layer Feedback
+
+> **大白话**：看信号准不准——准确率持续下降就退役信号，避免用失效信号下单。
+
+**机制说明**：
+
+BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈到L3信号层：准确率监控→信号退役。
+L1~L4+L3.5多层架构未完整实现(当前仅单层因子质量反馈)。
+无独立锚点，通过父环节BM-REC-03的MOD-L02-004间接覆盖(BM-INV-001君子协定)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：复盘报告就绪；②消费：BM-REC-03-A因子反馈+BM-REC-02-D复盘报告；③参数：accuracy_threshold=信号准确率阈值、retire_window=退役观察窗口；④数据流：复盘报告→准确率监控→信号退役信号→BM-SEL-02(反向闭环)；⑤代码：C-007信号层反馈(未完整实现)；⑥降级：准确率监控不可用→人工评估信号质量。
+
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-03-C 模型层反馈 / Model-Layer Feedback
+
+> **大白话**：看模型飘没飘——检测到漂移就重训练，防止模型用旧数据预测新市场。
+
+**机制说明**：
+
+BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈到L3.5模型层：漂移检测→模型重训练。
+每轮迭代改动必须经过C-003回测门禁。D_ML_TRAIN不在对账阶段域白名单(battle_map_domain_policy.yaml)，
+故无独立锚点，通过父环节BM-REC-03间接覆盖(BM-INV-001君子协定)。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：复盘报告就绪；②消费：BM-REC-03-B信号反馈+BM-REC-02-D复盘报告；③参数：drift_threshold=PSI>0.2、retrain_gate=C-003回测门禁；④数据流：复盘报告→漂移检测→模型重训练信号→C-003回测门禁→BM-SEL-02(反向闭环)；⑤代码：C-007模型层反馈(未完整实现)、C-003回测门禁；⑥降级：漂移检测不可用→人工评估模型质量。
+
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
