@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-017 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TESTS] tests/backtest/test_data_handler_pit.py
 # [TTL] permanent
 """BacktestDataHandler PIT 财务数据合并测试（#ARCH-CH-021 P0-5）。
