@@ -59011,6 +59011,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "多契约生产适配器——D_EX_CORE域的契约注册中心,管理CTR-004(Order)/CTR-005(Fill)/CTR-006(PositionSnapshot)三份跨域契约的Schema元数据、版本演进、消费者注册和变更通知,冻结契约禁止升级(force逃生),变更时同步通知已注册消费者回调"
+- module_path: src/zephyr/ex_core/repository_interface.py
+  domain_id: D_EX_CORE
+  name_zh: "执行域仓储接口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "执行域仓储接口是订单和持仓的保险柜——定义一套标准接口让订单Order和持仓快照PositionSnapshot的存取方式与具体存储引擎解耦现在用内存字典存将来可以换成SQLite或PostgreSQL上层代码不用改就像银行柜员窗口不管后面保险箱是铁皮柜还是金库柜员给你的存取接口都一样"
 
 battle_map_steps:
   - step_id: BM-BUY-04
