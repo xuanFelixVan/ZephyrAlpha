@@ -154,8 +154,8 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-TASK_SYSTEM` 的 7 个 file 节点 | prototype | `extract_depgraph.py --modules MOD-TASK_SYSTEM` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-TASK_SYSTEM` 的 8 个 file 节点 | production | `extract_depgraph.py --modules MOD-TASK_SYSTEM` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -166,7 +166,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 | module_id | MOD-TASK_SYSTEM | MOD-TASK_SYSTEM | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 7 文件 | 7 文件（§0.1） | ✅ |
+| file_count | 8 文件 | 7 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 

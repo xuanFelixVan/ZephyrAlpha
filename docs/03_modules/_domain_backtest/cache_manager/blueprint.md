@@ -157,3 +157,30 @@ class BacktestCacheManager:
 - 覆盖: 基本put/get、缓存命中/未命中、LRU淘汰、按键失效、按策略失效、全量清空、
   统计正确性、缓存键计算(相同参数→相同键/不同参数→不同键)、
   线程安全、空params、配置校验、frozen不可变
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-BT-020`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-BT-020` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-020` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-BT-020 | MOD-BT-020 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | stable | stable | ✅ |
+| file_count | 2 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

@@ -885,8 +885,8 @@ class AssetEventBus:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-026` 的 28 个 file 节点 | prototype | `extract_depgraph.py --modules MOD-INF-026` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-026` 的 29 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-026` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -896,8 +896,8 @@ class AssetEventBus:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-INF-026 | MOD-INF-026 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
-| file_count | 28 文件 | 15 文件（§0.1） | ❌ |
+| build_status | stable | stable | ✅ |
+| file_count | 29 文件 | 15 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 

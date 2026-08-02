@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-03'
-total_scripts: 634
+total_scripts: 636
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -702,6 +702,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/_tmp_run_gen.py
+  path: governance/_tmp_run_gen.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/add_deferred_design_edges.py
   path: governance/add_deferred_design_edges.py
   description: 为暂缓模块添加设计态依赖边（dep_maturity='design'）。
@@ -881,6 +889,14 @@ scripts:
 - name: governance/query_module_panorama.py
   path: governance/query_module_panorama.py
   description: 输入 module_id（MOD-XXX），输出该模块在三图（depgraph/dataflow/decision）的所有记录，
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/reconcile_generators.py
+  path: governance/reconcile_generators.py
+  description: reconcile_generators.py — 生成器自动触发统一编排器
   domain: governance
   execution_plane: warm-path
   status: registered
