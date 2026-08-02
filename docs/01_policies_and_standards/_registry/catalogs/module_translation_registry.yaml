@@ -58318,6 +58318,700 @@ entries:
 #
 # 6 阶段 × 8-15 环节，预计 50-100 个环节（蓝图 §5.4）。本段随草图 v9.0 挖掘逐步填充。
 # ============================================================================
+- module_path: src/zephyr/pf_core/core/portfolio_optimizer.py
+  domain_id: D_PF_CORE
+  name_zh: "组合优化器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "组合优化器——将策略目标权重加风险限额加协方差矩阵转化为合规目标组合，支持风险预算和均值方差优化"
+- module_path: src/zephyr/pf_alloc/core/strategy_correlation_gate.py
+  domain_id: D_PF_ALLOC
+  name_zh: "策略相关性门禁"
+  name_en: "Strategy Correlation Gate"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "策略相关性门禁——G12 相关性门禁: 策略两两之间检查相关性/因子重叠/股票池重叠/行业集中度/尾部相关, 超阈值产出 PA-E03 CorrelationGateTriggered, 阻止过度同质化策略组合上线"
+- module_path: src/zephyr/sell_decision/core/sell_conflict_arbitrator.py
+  domain_id: D_SELL_DECISION
+  name_zh: "买卖冲突仲裁器"
+  name_en: "Sell Conflict Arbitrator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "买卖冲突仲裁器——同标的同时存在买入+卖出信号 → 卖出优先(保守原则) + 冲突等级分类 + 审计追溯"
+- module_path: src/zephyr/pf_core/core/strategy_engine.py
+  domain_id: D_PF_CORE
+  name_zh: "策略引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "策略引擎——策略生命周期管理加冷启动协议加四维决策聚合，作为策略扩展点的运行时宿主"
+- module_path: src/zephyr/sell_decision/core/replacement_rebalance_seller.py
+  domain_id: D_SELL_DECISION
+  name_zh: "置换与再平衡卖出"
+  name_en: "Replacement & Rebalance Seller"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "置换与再平衡卖出——两种被动卖出驱动: ① 机会成本驱动(置换): 候选池有更优标的 → 卖A买B(REPLACE) ② 组合再平衡驱动: 权重偏离 > 阈值 → 被动卖出超配标的(REDUCE)"
+- module_path: src/zephyr/sell_decision/core/stop_hunting_protector.py
+  domain_id: D_SELL_DECISION
+  name_zh: "止损猎杀防护器"
+  name_en: "Stop-Hunting Protector"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "止损猎杀防护器——防护做市商/HFT 主动猎杀止损位: ① 止损位偏移: 不精确设在技术位, 偏移 1-2% 防猎杀 ② 软止损模式: 到达止损位→不立即执行→进入 OBSERVING 观察期 → 观察期确认跌破(收盘价<止损位)→执行 → 观察期收回(价格回升)→解除(CLEARED)"
+- module_path: src/zephyr/data/redundant_source/heartbeat_monitor.py
+  domain_id: D_DATA
+  name_zh: "心跳检测模块"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "心跳检测模块——监测主源 tick 推送 + CH 连通性。"
+- module_path: src/zephyr/data/redundant_source/backup_tick_poller.py
+  domain_id: D_DATA
+  name_zh: "备源 Tick 轮询器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "备源 Tick 轮询器——主源中断时自动切换到 TDX 备源（P1-3）。"
+- module_path: src/zephyr/data/redundant_source/sqlite_fallback.py
+  domain_id: D_DATA
+  name_zh: "CH 降级到本地 SQLite"
+  name_en: "CH 降级到本地 SQLite"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "CH 降级到本地 SQLite——CH 不可达时写本地 SQLite，查询层可读最近数据。"
+- module_path: src/zephyr/data/redundant_source/source_switcher.py
+  domain_id: D_DATA
+  name_zh: "数据源切换控制器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "数据源切换控制器——主源中断时自动切换备源，恢复后切回。"
+- module_path: src/zephyr/data/redundant_source/recovery.py
+  domain_id: D_DATA
+  name_zh: "CH 恢复后 SQLite→CH 回灌管理器。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "CH 恢复后 SQLite→CH 回灌管理器。"
+- module_path: src/zephyr/data/wal_codec/codec_registry.py
+  domain_id: D_DATA
+  name_zh: "Codec 注册表"
+  name_en: "Codec 注册表"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "Codec 注册表——按 magic number 路由到对应编解码器。"
+- module_path: src/zephyr/data/wal_codec/tsv_codec.py
+  domain_id: D_DATA
+  name_zh: "TSV 编解码器"
+  name_en: "TSV 编解码器"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "TSV 编解码器——WAL 段文件的当前格式。"
+- module_path: src/zephyr/frontend/dashboard/components/gate_statistics.py
+  domain_id: D_FRONTEND
+  name_zh: "门禁统计组件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "gate_statistics · 门禁统计组件（v3.1.0 Panel 迁移, #ARCH-047）"
+- module_path: src/zephyr/frontend/dashboard/components/knowledge_overview.py
+  domain_id: D_FRONTEND
+  name_zh: "知识库概览组件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "knowledge_overview · 知识库概览组件（v3.1.0 Panel 迁移, #ARCH-047）"
+- module_path: src/zephyr/frontend/dashboard/components/olap_trend.py
+  domain_id: D_FRONTEND
+  name_zh: "OLAP 趋势组件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "OLAP 趋势组件——数据源: OLAPEngine.task_progress_trend/compliance_rate_trend/knowledge_activation_trend 渲染依赖: Panel(布局) + ChartFactory.make_trend_line(趋势折线图)"
+- module_path: src/zephyr/frontend/dashboard/components/task_progress.py
+  domain_id: D_FRONTEND
+  name_zh: "任务进度看板组件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "task_progress · 任务进度看板组件（v3.1.0 Panel 迁移, #ARCH-047）"
+- module_path: src/zephyr/infrastructure/h1_redis_hot/h1_redis_schema.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "H1 Redis 热缓存 Key Schema。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "H1 Redis 热缓存 Key Schema。——Key 命名全小写+冒号分隔"
+- module_path: src/zephyr/pf_core/compliance_rule.py
+  domain_id: D_PF_CORE
+  name_zh: "公共模块别名"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "公共模块别名（R5 公共化）— 从 canonical 路径重新导出 ComplianceRule。"
+- module_path: src/zephyr/ex_core/position_reconciler.py
+  domain_id: D_EX_CORE
+  name_zh: "盘中持仓对账器"
+  name_en: "D_EXECUTION_CORE"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘中持仓对账器——定期比对\"系统账\"（PositionTracker，靠成交回报累计）与\"外部账\"（Broker 的 get_positions 查询），差异 > tolerance → 告警 + 冻结该标的交易"
+- module_path: src/zephyr/ex_core/order_execution_saga.py
+  domain_id: D_EX_CORE
+  name_zh: "下单执行 Saga 编排器"
+  name_en: "Order Execution Saga"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "下单执行 Saga 编排器——D_EXECUTION_CORE 域事务编排基础设施: 将单笔订单的执行封装为六步 Saga 事务, 任何一步失败自动补偿回滚, 保证系统不会处于\"半完成\"的不一致状态"
+- module_path: src/zephyr/ex_core/position_tracker/tracker.py
+  domain_id: D_EX_CORE
+  name_zh: "Position Tracker"
+  name_en: "D_EXECUTION_CORE"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "Position Tracker——从 SimulationBroker 拆出的独立持仓跟踪模块"
+- module_path: src/zephyr/ex_core/audit_journal/auditor.py
+  domain_id: D_EX_CORE
+  name_zh: "执行审计记录器"
+  name_en: "Execution Audit Logger"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "执行审计记录器——D_EXECUTION_CORE 域审计基础设施: 记录执行事件(E-EX-01~08)的哈希链审计日志, 全量记录 + 哈希链防篡改 + 可追溯, 产出执行审计报告"
+- module_path: src/zephyr/ex_sor/api/broker_api_connector.py
+  domain_id: D_EX_SOR
+  name_zh: "券商 API 连接器"
+  name_en: "Broker API Connector"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "券商 API 连接器——XS-13: REST/FIX 4.2+ 连接 + 心跳 + 消息序列化 + 重连 + API 版本迁移适配"
+- module_path: src/zephyr/ex_sor/api/api_rate_limiter.py
+  domain_id: D_EX_SOR
+  name_zh: "交易所 API 限速器"
+  name_en: "Exchange API Rate Limiter"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "交易所 API 限速器——四级限流架构: L1 全局限流: 滑动窗口, 所有外部 API 合计 ≤50 QPS L2 外部系统级: 令牌桶, miniQMT ≤10 TPS (各系统独立) L3 操作级: 令牌桶 + 分时段, 盘前15/集合竞价5/盘中8/盘后15 TPS L4 优先级: 优先级队列, 交易>风控>行情>因子>通知, P0 不受非交易限流影响"
+- module_path: src/zephyr/feedback_loop/gen_inherited.py
+  domain_id: D_FEEDBACK_LOOP
+  name_zh: "公共模块别名"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "公共模块别名（R5 公共化）— 从 _gen_inherited 重新导出所有公共符号。"
+- module_path: src/zephyr/governance/audit/dead_public_wrapper_reconciler.py
+  domain_id: D_GOVERNANCE
+  name_zh: "死公共 wrapper 自动检测 reconciler."
+  name_en: "dead_public_wrapper_reconciler.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "死公共 wrapper 自动检测 reconciler.——#ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发自动化：post-commit 事件触发， 扫描 src/zephyr/ 下所有 Python 文件，检测\"死公共 wrapper\"——即公共函数（无下划线 前缀）包裹同名私有函数（_前缀），但无任何外部调用方的 wrapper"
+- module_path: src/zephyr/governance/audit/translation_coverage_reconciler.py
+  domain_id: D_GOVERNANCE
+  name_zh: "翻译覆盖率存量对账 reconciler."
+  name_en: "translation_coverage_reconciler.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "translation_coverage_reconciler.py — 翻译覆盖率存量对账 reconciler."
+- module_path: src/zephyr/risk/core/drawdown_tracker.py
+  domain_id: D_RISK
+  name_zh: "回撤实时追踪器"
+  name_en: "Drawdown Real-Time Tracker"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "回撤实时追踪器——盘中实时跟踪组合净值最大回撤(峰值/谷值), 三级阈值告警, 回撤恢复检测, 资金曲线诊断"
+- module_path: src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "新建 .py 文件大白话简介覆盖率门禁"
+  name_en: "translation_coverage_gate.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "translation_coverage_gate.py — 新建 .py 文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE）"
+- module_path: src/zephyr/risk/core/daily_auditor.py
+  domain_id: D_RISK
+  name_zh: "日终审计器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "日终审计器——收盘后执行PnL对账和归因偏差检测，预期收益vs账面收益缺口超阈值告警"
+- module_path: src/zephyr/infrastructure/redis_config.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "Redis 连接配置单真源加载器（H1 业务热缓存 INFRA-DB-007）。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "Redis 连接配置单真源加载器（H1 业务热缓存 INFRA-DB-007）。"
+- module_path: src/zephyr/risk/core/risk_budget_allocator.py
+  domain_id: D_RISK
+  name_zh: "风险预算分配器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "风险预算分配器——基于风险贡献实现等风险贡献ERC和自定义预算分配，漂移超阈值触发再平衡"
+- module_path: src/zephyr/infrastructure/h1_redis_hot/h1_integration.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "H1 Redis 集成适配器"
+  name_en: "H1 Redis 集成适配器"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "H1 Redis 集成适配器——连接 D-FACTOR/SIGNAL/RISK 与 H1 热缓存。"
+- module_path: src/zephyr/risk/core/risk_decomposition.py
+  domain_id: D_RISK
+  name_zh: "风险分解引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "风险分解引擎——将组合风险分解为因子风险和残差风险成分，计算边际风险贡献MCR供归因分析"
+- module_path: src/zephyr/infrastructure/h1_redis_hot/h1_cqrs_projectors.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "事件→Redis 物化视图投影器。"
+  name_en: "H1CqrsProjectors"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "H1CqrsProjectors — 事件→Redis 物化视图投影器。"
+- module_path: src/zephyr/risk/core/tail_risk_monitor.py
+  domain_id: D_RISK
+  name_zh: "尾部风险监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "尾部风险监控器——计算期望短缺ES和POT模型广义帕累托分布拟合，监控尾部风险度量"
+- module_path: src/zephyr/infrastructure/h1_redis_hot/h1_redis_reader.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "决策引擎 <5ms 在线特征查询。"
+  name_en: "H1RedisReader"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "H1RedisReader — 决策引擎 <5ms 在线特征查询。"
+- module_path: src/zephyr/risk/core/stress_test_engine.py
+  domain_id: D_RISK
+  name_zh: "压力测试引擎"
+  name_en: "Stress Test Engine"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "压力测试引擎——分析引擎核心模块"
+- module_path: src/zephyr/infrastructure/h1_redis_hot/h1_redis_writer.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "D-FACTOR Engine 每 3 秒截面写入 Redis"
+  name_en: "H1RedisWriter"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "H1RedisWriter — D-FACTOR Engine 每 3 秒截面写入 Redis（PIPELINE 模式）。"
+- module_path: src/zephyr/pf_alloc/core/signal_synthesis_combiner.py
+  domain_id: D_PF_ALLOC
+  name_zh: "信号合成器"
+  name_en: "Signal Synthesis Combiner"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "信号合成器——多策略信号→重合加权重→输出合成信号给 PF-CORE"
+- module_path: src/zephyr/trading/pnl_calculator.py
+  domain_id: D_TRADING
+  name_zh: "PnL Calculator"
+  name_en: "D_TRADING"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "PnL Calculator——交易后盈亏核算基础设施"
+- module_path: src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py
+  domain_id: D_PF_ALLOC
+  name_zh: "多策略资金分配器"
+  name_en: "Multi-Strategy Capital Allocator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "多策略资金分配器——在策略权重基础上施加: 容量约束 + MaxDDLimit减仓 + 冷启动缩放 + 再平衡频率控制, 产出最终权重(和=1.0)+风险预算"
+- module_path: scripts/governance/align_battle_map.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G-battle-map-align: 作战地图对齐检测器（battle_map_positioning.md §8.3）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G-battle-map-align: 作战地图对齐检测器（battle_map_positioning.md §8.3）"
+- module_path: src/zephyr/position/core/cash_manager.py
+  domain_id: D_POSITION
+  name_zh: "资金管理器"
+  name_en: "Cash Manager"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "资金管理器——管理资金流水与结算状态, A股T+1约束下计算可用资金头寸, 维护最低/机会/节假日储备, 产出现金约束反馈 POS-01"
+- module_path: scripts/governance/apply_battle_map.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "作战地图写入入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "作战地图写入入口——提供作战环节、双向对齐关系、环节流转三张表的写入操作，使用 pg_advisory_lock 写锁保证并发安全"
+- module_path: src/zephyr/position/core/position_limit_enforcer.py
+  domain_id: D_POSITION
+  name_zh: "限仓执行器"
+  name_en: "Position Limit Enforcer"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "限仓执行器——仓位方案硬约束检查器: 单票/行业/总仓位/亏损加仓/压力测试, 产出 5 级否决裁决+违规告警"
+- module_path: scripts/governance/decision_node_plain_zh_backfill.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "一次性补齐 213 决策节点的 plain_zh 大白话简介。"
+  name_en: "decision_node_plain_zh_backfill.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "decision_node_plain_zh_backfill.py — 一次性补齐 213 决策节点的 plain_zh 大白话简介。"
+- module_path: src/zephyr/risk/core/concentration_monitor.py
+  domain_id: D_RISK
+  name_zh: "集中度风险监控器"
+  name_en: "Concentration Risk Monitor"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "集中度风险监控器——weights归一化(总和=1)"
+- module_path: scripts/governance/harvest_candidates_from_drafts.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "从场外草稿 CSV 抓取候选模块入候选库（一次性 harvest 脚本，不进 generators/）。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从场外草稿 CSV 抓取候选模块入候选库（一次性 harvest 脚本，不进 generators/）。"
+- module_path: src/zephyr/risk/core/ashare_systemic_risk_detector.py
+  domain_id: D_RISK
+  name_zh: "A股系统性风险检测器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "A股系统性风险检测器——扫描融资盘平仓潮、量化踩踏、流动性危机、政策转向、外围冲击5大信号，按触发数分三级警报（停开仓/降仓30%/清仓联动Kill Switch）"
+- module_path: scripts/governance/d3_metadata/add_module_translation.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "模块翻译条目合规写入工具"
+  name_en: "add_module_translation.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "add_module_translation.py — 模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套）。"
+- module_path: scripts/governance/d5_architecture/checkers/check_node_label_quality.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "GATE-NODE-LABEL-QUALITY"
+  name_en: "check_node_label_quality.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "GATE-NODE-LABEL-QUALITY——审计域文档 Mermaid 节点标签的简介质量，检测五类坏简介（治本 2026-08-02）"
+- module_path: scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "交易决策作战地图可视化生成器"
+  name_en: "generate_battle_map_diagram.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "generate_battle_map_diagram.py — 交易决策作战地图可视化生成器"
+- module_path: scripts/governance/d5_architecture/generators/generate_candidate_module_report.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "从 candidate_module_registry.yaml 生成候选模块清单报告（分片：索引 + 每域一个文件）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从 candidate_module_registry.yaml 生成候选模块清单报告（分片：索引 + 每域一个文件）"
+- module_path: scripts/governance/d5_architecture/generators/domain_name_mapping.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "功能域中文名称映射表 / Functional Domain Chinese Name Mapping"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "功能域中文名称映射表 / Functional Domain Chinese Name Mapping"
+- module_path: scripts/governance/d7_code/check_yaml_anchor_consistency.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "YAML 治理锚定一致性扫描."
+  name_en: "check_yaml_anchor_consistency.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "check_yaml_anchor_consistency.py — YAML 治理锚定一致性扫描."
+- module_path: scripts/governance/generators/generate_importlinter.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: ".importlinter forbidden_modules 自动生成器"
+  name_en: "generate_importlinter.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: ".importlinter forbidden_modules 自动生成器——从 src/zephyr/ 顶层包扫描派生 .importlinter 的 [contracts].forbidden_modules 块"
+- module_path: src/zephyr/gov_audit/orchestrator_compat.py
+  domain_id: D_GOV_AUDIT
+  name_zh: "公共模块别名"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "公共模块别名（R5 公共化）— 从 _orchestrator_compat 重新导出所有公共符号。"
+- module_path: src/zephyr/gov_enforcement/rule_enforcement/invariants/post_doc_review_check.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "Session 关门时文档内容审查扫描器。"
+  name_en: "PostDocReviewScanner"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "PostDocReviewScanner — Session 关门时文档内容审查扫描器。"
+- module_path: src/zephyr/governance/persistence/battle_map_reader.py
+  domain_id: D_GOVERNANCE
+  name_zh: "作战地图数据库只读查询工具模块"
+  name_en: "battle_map_reader.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "battle_map_reader.py — 作战地图数据库只读查询工具模块"
+- module_path: src/zephyr/integration/local_model/deepseek_chat.py
+  domain_id: D_INTEGRATION
+  name_zh: "通过 DeepSeek API 进行 LLM 推理"
+  name_en: "DeepSeekChat"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理（requests 实现）"
+- module_path: src/zephyr/integration/mcp/base_server.py
+  domain_id: D_INTEGRATION
+  name_zh: "公共模块别名"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "公共模块别名（R5 公共化）— 从 _base_server 重新导出所有公共符号。"
+- module_path: src/zephyr/shared/observability/dashboard/dashboard_templates.py
+  domain_id: D_SHARED
+  name_zh: "Grafana Dashboard JSON 模板生成器。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "Grafana Dashboard JSON 模板生成器。——生成 Grafana 11 provisioning 兼容的 Dashboard JSON，覆盖"
+- module_path: src/zephyr/shared/observability/dashboard/datasource_config.py
+  domain_id: D_SHARED
+  name_zh: "Grafana 数据源配置生成器。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "Grafana 数据源配置生成器。"
+- module_path: src/zephyr/shared/observability/dashboard/alert_rules.py
+  domain_id: D_SHARED
+  name_zh: "Grafana / Prometheus 告警规则定义。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "Grafana / Prometheus 告警规则定义。——告警规则与 P1-5 metrics 指标名对齐，覆盖"
+- module_path: scripts/governance/query_candidate_registry.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "候选模块登记表查询工具。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "候选模块登记表查询工具。"
+- module_path: scripts/governance/d11_compliance/check_test_structure.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "测试结构合规门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "测试结构合规门禁——检查 test_*.py 文件结构，防止\"脚本伪装测试\"和模块级副作用。"
+- module_path: scripts/governance/d11_compliance/verify_key_imports.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "governance/verify_key_imports 脚本"
+  name_en: "governance/verify_key_imports 脚本"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "governance/verify_key_imports 脚本 — 关键模块导入验证"
+- module_path: scripts/governance/d3_metadata/validate_rule_frontmatter.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "GATE-RULE-FM: 校验所有 trae_XXX.yaml 的 frontmatter 7标准字段+顺序+枚举值合法性。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "GATE-RULE-FM: 校验所有 trae_XXX.yaml 的 frontmatter 7标准字段+顺序+枚举值合法性。"
+- module_path: scripts/governance/d5_architecture/dm200916_write_direct.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "从 depgraph (PostgreSQL) + 物理蓝图文件 派生 architecture_model/index.yaml。"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从 depgraph (PostgreSQL) + 物理蓝图文件 派生 architecture_model/index.yaml。"
+- module_path: scripts/governance/d5_architecture/dm200912_query_domains.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "DM-200912 Phase4-A: 查询 depgraph (PostgreSQL) 域+模块统计，输出 JSON 供视图重写使用"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "DM-200912 Phase4-A: 查询 depgraph (PostgreSQL) 域+模块统计，输出 JSON 供视图重写使用"
+- module_path: scripts/governance/d5_architecture/generators/generate_capacity_report.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G7: 从 depgraph (PostgreSQL) domains 表生成域容量报告MD文档"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G7: 从 depgraph (PostgreSQL) domains 表生成域容量报告MD文档"
+- module_path: scripts/governance/d5_architecture/generators/generate_constraint_violations.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G9: 从 depgraph (PostgreSQL) arch_constraints 表生成架构约束违规报告MD文档"
+- module_path: scripts/governance/d5_architecture/generators/generate_capability_heatmap.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G11: 从 depgraph (PostgreSQL) 生成能力热力图"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G11: 从 depgraph (PostgreSQL) 生成能力热力图"
+- module_path: scripts/governance/d5_architecture/generators/generate_cross_domain_matrix.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G6: 从 depgraph (PostgreSQL) edges 表生成域间依赖矩阵MD文档"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G6: 从 depgraph (PostgreSQL) edges 表生成域间依赖矩阵MD文档"
+- module_path: scripts/governance/d5_architecture/generators/generate_integration_topology.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G4: 从 depgraph (PostgreSQL) edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G4: 从 depgraph (PostgreSQL) edges 表生成所有功能域的集成依赖关系图(.mmd Mermaid格式)"
+- module_path: scripts/governance/d5_architecture/generators/generate_domain_doc.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G2+G10 合并：从 depgraph (PostgreSQL) nodes+edges 表生成指定域的 MD 文档"
+- module_path: scripts/governance/d5_architecture/generators/generate_domain_index.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G5: 从 depgraph (PostgreSQL) domains+nodes 表生成域总览索引MD文档"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G5: 从 depgraph (PostgreSQL) domains+nodes 表生成域总览索引MD文档"
+- module_path: scripts/governance/d5_architecture/generators/generate_design_vs_production.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G8: 从 depgraph (PostgreSQL) nodes 表生成设计态vs运营态统计报告MD文档"
+- module_path: scripts/governance/d5_architecture/generators/generate_navigation_index.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G10: 自动生成架构文档库导航总览"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G10: 自动生成架构文档库导航总览"
+- module_path: scripts/governance/d5_architecture/generators/generate_path_tree.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "G1: 从 depgraph (PostgreSQL) arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/ 目录树(中英文)输出到 generated/"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "G1: 从 depgraph (PostgreSQL) arch_directory_tree 表 + 文件系统生成 docs/02_enterprise_architecture/ 目录树(中英文)输出到 generated/"
+- module_path: scripts/governance/repair/apply_verification_results.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "第32轮验证结果批量应用到架构债务注册表"
+  name_en: "apply_verification_results.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "apply_verification_results.py — 第32轮验证结果批量应用到架构债务注册表"
+- module_path: scripts/governance/shared/frontmatter.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "公共模块别名"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "公共模块别名（R5 公共化）— 从 _shared.frontmatter 重新导出。"
+- module_path: src/zephyr/factor/core/dag_manager/executor.py
+  domain_id: D_FACTOR
+  name_zh: "DAG 调度执行器。"
+  name_en: "D_FACTOR core dag_manager.executor"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "DAG 调度执行器。——输入 FactorDAG + 数据，按拓扑层串行推进、层内并发执行因子计算（ThreadPoolExecutor）， 受 BackpressureLimiter 限流"
+- module_path: src/zephyr/gov_enforcement/commit_gates/diff_helpers.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "公共模块别名"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "公共模块别名（R5 公共化）— 从 _diff_helpers 重新导出所有公共符号。"
+- module_path: scripts/ide_health_service.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "IDE健康守护进程CLI包装器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "IDE健康守护进程CLI包装器"
+- module_path: scripts/print_exam_summary.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "输出所有模型考试成绩清单（中文版）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "输出所有模型考试成绩清单（中文版）"
+- module_path: scripts/record_session_start_commit.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "记录 session 起点 commit hash"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "记录 session 起点 commit hash——R1 防御数据流起点。"
+- module_path: src/zephyr/runtime/intraday_main.py
+  domain_id: D_RUNTIME
+  name_zh: "盘中运行时编排器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘中运行时编排器——单进程串起 tick_subscriber + IntradayFactorLoop。"
+- module_path: src/zephyr/governance/persistence/battlemap_schema.py
+  domain_id: D_GOVERNANCE
+  name_zh: "作战地图 Schema"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "作战地图 Schema DDL 与不变量声明——定义作战环节表、双向对齐关系表、环节流转表三张表结构，与 depgraph 共享 PostgreSQL 实例"
+- module_path: src/zephyr/shared/contracts/target_portfolio.py
+  domain_id: D_SHARED
+  name_zh: "目标组合契约"
+  name_en: "TargetPortfolio"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "目标组合契约——组合优化器输出的不可变快照，代表再平衡决策产生的目标权重及漂移信息，供执行、持仓、报告域消费"
+- module_path: scripts/governance/d5_architecture/checkers/check_src_no_data.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "src 禁止 data 子目录门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "src 下禁止 data 子目录校验门禁——防止运行态数据双真源漂移，违规拒绝提交"
+- module_path: scripts/backup/ch_vm_ssh.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "ClickHouse 虚拟机 SSH 助手"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "ClickHouse 虚拟机 SSH 操作助手——通过 SSH 执行备份文件管理命令（删除、查看、统计备份），凭据从环境变量读取"
+- module_path: src/zephyr/pf_core/core/constraint_solver.py
+  domain_id: D_PF_CORE
+  name_zh: "约束求解器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "约束求解器——将风险限额和拥挤检测转化为可执行权重约束，7约束链迭代投影法求解（行业/市值/MDD/相关性/风格/仓位），供组合优化器消费"
+- module_path: src/zephyr/risk/core/ashare_stop_loss_engine.py
+  domain_id: D_RISK
+  name_zh: "A股止损规则引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "A股止损规则引擎——检测6种止损模式（固定比例/支撑破位/逻辑失效/竞价不及预期/分时破位/板块退潮）加亏损限额三级（日周月），触发强制停盘"
+- module_path: src/zephyr/risk/core/var_calculator.py
+  domain_id: D_RISK
+  name_zh: "风险价值计算器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "风险价值计算器——参数法和历史模拟法并发计算VaR取保守最大值，供盘中实时风控监控使用"
+- module_path: src/zephyr/pf_core/core/rebalance_scheduler.py
+  domain_id: D_PF_CORE
+  name_zh: "再平衡调度器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "再平衡调度器——组合级再平衡调度决定是否重跑组合优化器，四触发源漂移日历事件压力任一满足即触发"
+- module_path: src/zephyr/pf_core/core/performance_attribution_engine.py
+  domain_id: D_PF_CORE
+  name_zh: "绩效归因引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "绩效归因引擎——将组合收益分解为配置效应选择效应交互效应Brinson三因子，供报告和审计消费"
+
 battle_map_steps:
   - step_id: BM-BUY-04
     flow_stage: buy_flow
@@ -59253,3 +59947,139 @@ battle_map_cross_cutting:
         4方法论可叠加使用，互相校验：
         密度预测画分布→共形预测在分布上切区间→Survival预测分布上事件时间→
         Causal ML验证分布背后的因果机制。叠加使用时取最保守结果。
+
+  # ============================================================================
+  # 以下 4 段为退役迁移自 trading_flow_narrative.yaml §cross_cutting（2026-08-02）。
+  # 旧叙事 YAML 已退役删除，4 个系统级横切叙事段迁入此处作为新真源。
+  # 这些段非草图来源（sketch_ref="—"），是系统级架构叙事（四模式/应急降级/四轨/信号注入）。
+  # 渲染由 generate_battle_map_diagram.py 的 _format_generic_cross_cutting_md 处理。
+  # ============================================================================
+
+  # §四模式开关——迁移自 trading_flow_narrative.yaml §cross_cutting.four_modes（退役迁移 2026-08-02）
+  - category: four_modes
+    name_zh: 四模式开关（回测/Paper/Shadow/实盘）
+    name_en: Four-Mode Switch
+    sketch_ref: "—"
+    source_ref: "migrated from trading_flow_narrative.yaml §cross_cutting.four_modes (retired)"
+    related_steps: [BM-EXE-02]
+    plain_zh: |
+      同一套决策代码路径，通过模式开关切换运行形态，保证 sim↔实盘同构：
+        - backtest  —— 历史数据回放 + 模拟撮合，验证策略
+        - paper     —— 实时数据 + 模拟下单不成交，验证实时链路
+        - shadow    —— 实时数据 + 全链路实跑不下单，测量 sim↔live divergence
+        - live      —— 实时数据 + 真实下单
+      模式开关在执行层（execution flow）生效，不影响信号/策略/风控的决策逻辑。
+      实盘同构铁律：回测引擎必须串入 D_POSITION + D_RISK，不跳过仓位和风控。
+    mechanism_zh: |
+      模式开关仅切换执行层下单方式（模拟撮合 / 模拟不成交 / 全链路不下单 / 真实下单），
+      信号 / 策略 / 风控 / 仓位裁决的决策逻辑在四模式下完全一致——这是 sim↔实盘同构的保证。
+      回测引擎必须串入 D_POSITION + D_RISK，跳过仓位或风控裁决会破坏同构。
+    modes:
+      - mode_id: backtest
+        mode_name: 回测模式
+        data_source: 历史回放
+        order_mode: 模拟撮合
+      - mode_id: paper
+        mode_name: Paper 模式
+        data_source: 实时
+        order_mode: 模拟下单不成交
+      - mode_id: shadow
+        mode_name: Shadow 模式
+        data_source: 实时
+        order_mode: 全链路实跑不下单
+      - mode_id: live
+        mode_name: 实盘模式
+        data_source: 实时
+        order_mode: 真实下单
+
+  # §应急保命降级路径——迁移自 trading_flow_narrative.yaml §cross_cutting.emergency_degradation（退役迁移 2026-08-02）
+  - category: emergency_degradation
+    name_zh: 应急保命降级路径
+    name_en: Emergency Fail-Safe Degradation Path
+    sketch_ref: "—"
+    source_ref: "migrated from trading_flow_narrative.yaml §cross_cutting.emergency_degradation (retired)"
+    related_steps: [BM-EXE-01, BM-POS-02]
+    plain_zh: |
+      当模型/策略/信号失效时，系统逐级降级保命——每一层失效都有硬编码兜底，
+      保证交易系统在最坏情况下仍能"活着"且不爆雷。降级触发由 Kill Switch 熔断 + 数据健康监控驱动。
+      注意：这是系统级横切降级级联，区别于各环节 6 件套里的 ⑥降级/中止（后者是单环节级）。
+    mechanism_zh: |
+      降级是逐级的：L2 信号失效先用硬编码均线信号兜底，L3 策略失效再退到固定比例仓位，
+      L4 风控失效退到硬编码 10% 单票上限，最严重的数据断流则只卖不买（防止基于坏数据下单）。
+      Kill Switch 熔断器 + 数据健康监控是两个触发源，任一触发即进入对应层降级。
+      降级后系统仍受硬上限约束（如 10% 单票上限），不会因降级而失控。
+    degradation_tiers:
+      - trigger: L2 信号失效
+        failed_layer: L2 信号层
+        fallback: 硬编码均线信号
+      - trigger: L3 策略失效
+        failed_layer: L3 策略层
+        fallback: 固定比例仓位
+      - trigger: L4 风控失效
+        failed_layer: L4 风控层
+        fallback: 硬编码 10% 单票上限
+      - trigger: 数据断流
+        failed_layer: L0 数据层
+        fallback: 仅执行卖出（不买入）
+
+  # §四轨并行架构——迁移自 trading_flow_narrative.yaml §cross_cutting.four_tracks（退役迁移 2026-08-02）
+  - category: four_tracks
+    name_zh: 四轨并行架构
+    name_en: Four-Track Parallel Architecture
+    sketch_ref: "—"
+    source_ref: "migrated from trading_flow_narrative.yaml §cross_cutting.four_tracks (retired); tracks structured from decision_graph_model.yaml §tracks"
+    related_steps: [BM-BUY-01, BM-SELL-01, BM-EXE-01]
+    plain_zh: |
+      交易决策不是单条流水线，而是四条轨道同时跑，按优先级接管：
+        ① 模型驱动轨（主力）—— L0数据→L1因子→L2信号→L3策略→L4风控，正常交易走这条
+        ② 数据驱动轨（补充）—— 端到端 DL 信号，模型驱动轨信号不足时补充
+        ③ 人工指令轨（干预）—— 人工买入/卖出/调仓/风控干预，优先级高于自动轨
+        ④ 应急保命轨（兜底）—— 全系统降级到最简规则，仅执行卖出 + 硬编码上限
+      四轨的输出在 L3 策略组合层融合，按优先级仲裁。人工指令 > 模型驱动 > 数据驱动；
+      应急保命轨触发时压制所有其他轨。
+    mechanism_zh: |
+      四轨是"同一套决策架构的四种输入源"，不是四套独立系统——它们共享数据层/因子层/风控层，
+      只在 L2/L3 的信号生成与策略组合层各自贡献信号，再由 L3 按 priority 仲裁融合。
+      优先级总原则：人工指令轨 > 模型驱动轨 > 数据驱动轨；应急保命轨一旦触发即压制全部其他轨
+      （因应急轨含硬编码兜底，不依赖任何模型/策略）。仲裁结果产出唯一 portfolio_target，
+      再交给 L4 风控做最终否决。应急保命轨的降级路径详见"应急保命降级路径"横切段。
+    tracks:
+      - track_id: model_driven
+        role: 模型驱动轨（主力）
+        priority: 1
+        description: L0数据→L1因子→L2信号→L3策略→L4风控，正常交易走这条
+      - track_id: data_driven
+        role: 数据驱动轨（补充）
+        priority: 2
+        description: 端到端 DL 信号，模型驱动轨信号不足时补充
+      - track_id: human_override
+        role: 人工指令轨（干预）
+        priority: 3
+        description: 人工买入/卖出/调仓/风控干预，优先级高于自动轨
+      - track_id: emergency
+        role: 应急保命轨（兜底）
+        priority: 4
+        description: 全系统降级到最简规则，仅执行卖出 + 硬编码上限，触发时压制所有其他轨
+
+  # §共享信号注入层——迁移自 trading_flow_narrative.yaml §cross_cutting.shared_signal_injection（退役迁移 2026-08-02）
+  - category: shared_signal_injection
+    name_zh: 共享信号注入层
+    name_en: Shared Signal Injection Layer
+    sketch_ref: "—"
+    source_ref: "migrated from trading_flow_narrative.yaml §cross_cutting.shared_signal_injection (retired)"
+    related_steps: [BM-SEL-02, BM-BUY-01, BM-SELL-01]
+    plain_zh: |
+      选股、买入、卖出三个流程共享同一批信号源——不重复造信号。
+      信号工厂统一产出 Insight（方向/置信度/时间跨度），注入到：
+        - 选股流：信号作为筛选漏斗的输入
+        - 买入流：信号作为四轨融合的输入
+        - 卖出流：信号反转作为卖出触发之一
+      信号仓位分离铁律：signal 节点不能直接连 order，必须经 portfolio_target 中转。
+    mechanism_zh: |
+      共享信号注入是"一处生产、三处消费"的扇出结构，避免三个流程各自造信号导致不一致。
+      信号工厂是唯一生产者（L2-A 层），产出标准 Insight 契约（direction/confidence/horizon），
+      通过事件总线/共享存储分发到三个消费流。三处消费模式不同：选股把信号当筛选漏斗输入，
+      买入把信号当四轨融合的输入，卖出把信号反转当卖出触发之一。
+      信号仓位分离铁律（DEC-INV-002）刻在 decisiongraph schema 中——signal 节点
+      cannot_directly_connect_to=[order]，必须经 portfolio_target 中转，这是防止信号
+      绕过仓位裁决直接下单的硬约束。
