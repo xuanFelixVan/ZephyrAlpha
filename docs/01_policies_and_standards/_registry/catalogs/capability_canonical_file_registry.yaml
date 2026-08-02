@@ -7453,6 +7453,26 @@ creation_tokens:
     created_by: "session-exsor-p0-batch"
     capability: "optimal_order_router"
 
+  # --- D-EX-SOR 执行路由域 EXT 批次（2026-08-02，XS-EXT-001/003/002 滑点/成本/质量 三模块）---
+  - file: "src/zephyr/ex_sor/services/slippage_analyzer.py"
+    token: "auto-exsor-slippage-analyzer-20260802"
+    created_by: "session-exsor-ext-batch"
+    capability: "slippage_analyzer"
+  - file: "src/zephyr/ex_sor/services/transaction_cost_optimizer.py"
+    token: "auto-exsor-transaction-cost-optimizer-20260802"
+    created_by: "session-exsor-ext-batch"
+    capability: "transaction_cost_optimizer"
+  - file: "src/zephyr/ex_sor/services/execution_quality_scorer.py"
+    token: "auto-exsor-execution-quality-scorer-20260802"
+    created_by: "session-exsor-ext-batch"
+    capability: "execution_quality_scorer"
+
+  # --- D-POSITION 仓位审计记录器（2026-08-02，MOD-POS-009）---
+  - file: "src/zephyr/position/services/position_audit_logger.py"
+    token: "auto-position-audit-logger-20260802"
+    created_by: "session-position-pos009"
+    capability: "position_audit_logger"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
