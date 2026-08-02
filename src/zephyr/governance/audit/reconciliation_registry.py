@@ -213,6 +213,8 @@ __all__ = [
 
     "make_workspace_hygiene_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002
 
+    "make_dead_public_wrapper_reconciler",  # #ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发——死公共 wrapper 持续自动检测（priority=950）
+
     "make_metric_count_drift_reconciler",  # #ARCH-HEALTH-DASHBOARD-001 阶段2 dashboard 指标数描述漂移校验
 
     "make_cross_layer_contract_signature_reconciler",  # 12维度审计自动化 P1-b 跨层契约签名漂移检测
