@@ -7722,14 +7722,14 @@ entries:
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "审计编排器蓝图，定义增量审计的 ScriptRouter 精准路由（15-30 脚本），协调多审计器的执行编排。"
 - module_path: docs/03_modules/_domain_governance/audit_trail/blueprint.md
   domain_id: D_GOV_AUDIT
   name_zh: 蓝图
   name_en: blueprint
   desc_zh: 蓝图（blueprint.md）
   desc_en: ''
-  plain_zh: 蓝图（blueprint.md）
+  plain_zh: "审计追踪蓝图，定义追加式审计条目（JSONL append + 哈希链 + HMAC + Ed25519 + Lamport tick），保证审计记录不可篡改。"
 - module_path: scripts/governance/repair/audit_design_completeness.py
   domain_id: D_GOV_AUDIT
   name_zh: 审计designcompleteness
@@ -7883,7 +7883,7 @@ entries:
   name_en: cli
   desc_zh: 命令行，供End users; CI/CD; MCP tool wra使用
   desc_en: ''
-  plain_zh: 命令行，供End users; CI/CD; MCP tool wra使用
+  plain_zh: "审计 CLI，提供 health/admit/pool_stats/run_audit 子命令，以及 search/verify/stats/trail/query 等查询命令，供终端、CI/CD、MCP 工具调用。"
 - module_path: src/zephyr/gov_audit/code_archaeology.py
   domain_id: D_GOV_AUDIT
   name_zh: 代码archaeology
@@ -7904,7 +7904,7 @@ entries:
   name_en: compliance_map
   desc_zh: 合规map.compliance_map — MOD-INF-020 · 合规框架映射
   desc_en: ''
-  plain_zh: 合规map.compliance_map — MOD-INF-020 · 合规框架映射
+  plain_zh: "合规框架映射器，将审计事件类型映射到 GDPR/HIPAA/EU AI Act/NIST 的具体条款，支持多框架交叉映射。"
 - module_path: src/zephyr/gov_audit/contracts.py
   domain_id: D_GOV_AUDIT
   name_zh: 契约
@@ -7932,14 +7932,14 @@ entries:
   name_en: delegation_bridge
   desc_zh: delegation桥接模块
   desc_en: ''
-  plain_zh: delegation桥接，主要提供报告delegationfailure、报告delegation超时、isavailable等功能，供audit-orchestrator.delegation_使用
+  plain_zh: "委托审计桥接层，报告委托失败与超时事件到审计写入器，通过 __getattr__ 惰性暴露 AuditWriter 供测试 patch。"
 - module_path: src/zephyr/gov_audit/dora_metrics.py
   domain_id: D_GOV_AUDIT
   name_zh: dora指标
   name_en: dora_metrics
   desc_zh: dora指标，供MOD-INF-027;MOD-INF-015;MOD-FE使用
   desc_en: ''
-  plain_zh: dora指标，供MOD-INF-027;MOD-INF-015;MOD-FE使用
+  plain_zh: "DORA 指标采集器，统计部署频率、变更前置时间、变更失败率、平均恢复时间四项研发效能指标并判定是否达标。"
 - module_path: src/zephyr/gov_audit/event_store.py
   domain_id: D_GOV_AUDIT
   name_zh: 事件存储
@@ -7953,14 +7953,14 @@ entries:
   name_en: evidence_pack
   desc_zh: 证据包.evidence_pack — MOD-INF-020 · 证据包导出器
   desc_en: ''
-  plain_zh: 证据包.evidence_pack — MOD-INF-020 · 证据包导出器
+  plain_zh: "审计证据包导出器，把审计记录导出为 JSON/PDF/FCA 三种合规格式，PDF 需 reportlab 支持。"
 - module_path: src/zephyr/gov_audit/external_tool_audit.py
   domain_id: D_GOV_AUDIT
   name_zh: externaltool审计
   name_en: external_tool_audit
   desc_zh: 外部tool审计模块
   desc_en: ''
-  plain_zh: 外部tool审计，主要提供审计tool、审计模块、摘要等功能，供audit-orchestrator.pipeline_ru使用
+  plain_zh: "外部工具审计器，审计外部工具调用与模块，30 秒超时自动降级，记录工具调用状态（成功/失败/超时/待定/重试）。"
 - module_path: src/zephyr/gov_audit/feedback_bridge.py
   domain_id: D_GOV_AUDIT
   name_zh: 反馈桥接
@@ -7981,7 +7981,7 @@ entries:
   name_en: feedback_self_audit
   desc_zh: 反馈自审计.feedback_self_audit — MOD-INF-020 · 反馈自审计
   desc_en: ''
-  plain_zh: 反馈自审计.feedback_self_audit — MOD-INF-020 · 反馈自审计
+  plain_zh: "反馈自审计器，检测 Agent 行为与自身反馈形成的自强化反馈环、模块间循环依赖、以及反馈导致的行为偏差放大。"
 - module_path: src/zephyr/gov_audit/finding_ingest.py
   domain_id: D_GOV_AUDIT
   name_zh: 发现ingest
@@ -8009,21 +8009,21 @@ entries:
   name_en: genesis
   desc_zh: audit-trail.genesis — MOD-INF-020 · 创世块管.genesis — MOD-INF-020 · 创世块管.genesis — MOD-INF-020 · 创世块管理
   desc_en: ''
-  plain_zh: audit-trail.genesis — MOD-INF-020 · 创世块管.genesis — MOD-INF-020 · 创世块管.genesis — MOD-INF-020 · 创世块管理
+  plain_zh: "审计创世块管理器，提供创世块的创建、持久化、验证能力，含见证签名与验证结果数据模型，作为哈希链的信任根。"
 - module_path: src/zephyr/gov_audit/glossary_matrix.py
   domain_id: D_GOV_AUDIT
   name_zh: 词汇表矩阵
   name_en: glossary_matrix
   desc_zh: 词汇表矩阵，供MOD-INF-027;MOD-INF-015;MOD-FE使用
   desc_en: ''
-  plain_zh: 词汇表矩阵，供MOD-INF-027;MOD-INF-015;MOD-FE使用
+  plain_zh: "术语词汇表矩阵，定义量化/架构/交易/风控/运维等领域术语（Alpha/Backtest/DMA/FIX/MDD 等）的中英文定义，支持查询与列举。"
 - module_path: src/zephyr/gov_audit/incremental_review.py
   domain_id: D_GOV_AUDIT
   name_zh: incremental审查
   name_en: incremental_review
   desc_zh: incremental审查，供MOD-INF-027;MOD-INF-015;MOD-FE使用
   desc_en: ''
-  plain_zh: incremental审查，供MOD-INF-027;MOD-INF-015;MOD-FE使用
+  plain_zh: "增量审查器，按一致性（语义割裂）、准确性（数字引用）、可追溯性（正反向链路）、无下降（对比上次）四维度做增量审查。"
 - module_path: src/zephyr/gov_audit/indexer.py
   domain_id: D_GOV_AUDIT
   name_zh: 索引重建结果——治本（裁定#18 G5）：对齐 testa
@@ -8037,7 +8037,7 @@ entries:
   name_en: integrity
   desc_zh: 完整性.integrity — MOD-INF-020 · 密码学完整性验证器
   desc_en: ''
-  plain_zh: 完整性.integrity — MOD-INF-020 · 密码学完整性验证器
+  plain_zh: "密码学完整性验证器，做哈希链逐条验证、HMAC-SHA256 系统签名验证、Ed25519 Agent 签名验证、Merkle 树聚合校验。"
 - module_path: src/zephyr/gov_audit/integrity_verifier.py
   domain_id: D_GOV_AUDIT
   name_zh: 完整性验证器
@@ -8051,7 +8051,7 @@ entries:
   name_en: kb_gate
   desc_zh: 知识库门禁.kb_gate — MOD-INF-020 · KB 审计门控
   desc_en: ''
-  plain_zh: 知识库门禁.kb_gate — MOD-INF-020 · KB 审计门控
+  plain_zh: "知识库审计门控，检测 KB 写入中的投毒尝试、验证写入来源可信度、识别可疑的 KB 修改模式。"
 - module_path: src/zephyr/gov_audit/log_rotation.py
   domain_id: D_GOV_AUDIT
   name_zh: 日志rotation
@@ -8065,7 +8065,7 @@ entries:
   name_en: merkle_audit
   desc_zh: Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.gov_audit (MOD-INF-020).
   desc_en: ''
-  plain_zh: Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.gov_audit (MOD-INF-020).
+  plain_zh: "Merkle 审计兼容别名，SSoT 已迁移到 gov_audit 的 MerkleAggregator + HourlyMerkleAggregator，本模块保留 API 兼容性内部委托。"
 - module_path: src/zephyr/gov_audit/merkle_hourly.py
   domain_id: D_GOV_AUDIT
   name_zh: audit-trail.merkle每小时
@@ -8086,7 +8086,7 @@ entries:
   name_en: observability_dashboard
   desc_zh: 可观测性仪表盘，供MOD-INF-027;MOD-INF-015;MOD-FE使用
   desc_en: ''
-  plain_zh: 可观测性仪表盘，供MOD-INF-027;MOD-INF-015;MOD-FE使用
+  plain_zh: "可观测性仪表盘配置，定义系统健康/成本/订单流/模型漂移等面板与 SLI 指标（内存/磁盘IO/上下文长度/token 消耗等）。"
 - module_path: src/zephyr/gov_audit/pipeline_runner.py
   domain_id: D_GOV_AUDIT
   name_zh: 管线运行器
@@ -8128,7 +8128,7 @@ entries:
   name_en: resource_aware_pool
   desc_zh: 资源感知池，供audit_admission_controller; or使用
   desc_en: ''
-  plain_zh: 资源感知池，供audit_admission_controller; or使用
+  plain_zh: "资源感知池，管理 GPU futures 等计算资源的感知与调度（Stage 4 公共化只读），供审计准入控制器使用。"
 - module_path: src/zephyr/gov_audit/retention.py
   domain_id: D_GOV_AUDIT
   name_zh: 保留策略（补全测试期望接口）。
@@ -8149,7 +8149,7 @@ entries:
   name_en: spec_auditor
   desc_zh: spec审计器，供zephyr.gov_audit使用
   desc_en: ''
-  plain_zh: spec审计器，供zephyr.gov_audit使用
+  plain_zh: "Agent 规格审计器，record_agent_spec 记录 agent 能力声明到审计链，供 gov_audit 内部使用。"
 - module_path: src/zephyr/gov_audit/supply_chain.py
   domain_id: D_GOV_AUDIT
   name_zh: supply链
@@ -8163,7 +8163,7 @@ entries:
   name_en: supply_chain_security
   desc_zh: supplychain安全，供MOD-INF-027;MOD-INF-015;MOD-FE使用
   desc_en: ''
-  plain_zh: supplychain安全，供MOD-INF-027;MOD-INF-015;MOD-FE使用
+  plain_zh: "供应链安全审计器，扫描依赖锁文件、检测厂商锁定风险（WARNING/CRITICAL）、生成 SPDX物料清单。"
 - module_path: src/zephyr/gov_audit/text_to_finding_adapter.py
   domain_id: D_GOV_AUDIT
   name_zh: texttofinding适配器
@@ -8177,28 +8177,28 @@ entries:
   name_en: tiered_storage
   desc_zh: 旧版分层存储（保留以兼容现有调用方）。
   desc_en: ''
-  plain_zh: 旧版分层存储（保留以兼容现有调用方）。
+  plain_zh: "旧版分层存储（兼容保留），按时间分 hot(7天)/warm(30天)/cold 三层，支持分类、迁移、统计与查找报告。"
 - module_path: src/zephyr/gov_audit/tiered_storage_bridge.py
   domain_id: D_GOV_AUDIT
   name_zh: tiered存储桥接
   name_en: tiered_storage_bridge
   desc_zh: tieredstorage桥接模块
   desc_en: ''
-  plain_zh: tieredstorage桥接，主要提供find报告、migrate、stats等功能，供audit-orchestrator.bridge; ret使用
+  plain_zh: "分层存储桥接层，不实现存储逻辑，仅转发到 TieredStorage 的 find_report/migrate/stats，桥接失败返回空结果。"
 - module_path: src/zephyr/gov_audit/trust_bridge.py
   domain_id: D_GOV_AUDIT
   name_zh: 信任桥接
   name_en: trust_bridge
   desc_zh: 信任桥接模块
   desc_en: ''
-  plain_zh: 信任桥接，主要提供评估、记录、获取趋势等功能，供audit-orchestrator.bridge; int使用
+  plain_zh: "信任评估桥接层，不实现信任逻辑，仅转发到 TrustEngine 的 evaluate/record/get_trend，桥接失败返回 UNKNOWN 信任级别。"
 - module_path: src/zephyr/gov_audit/trust_engine.py
   domain_id: D_GOV_AUDIT
   name_zh: 信任评分调整记录（补全测试期望接口）。
   name_en: trust_engine
   desc_zh: 信任评分调整记录（补全测试期望接口）。
   desc_en: ''
-  plain_zh: 信任评分调整记录（补全测试期望接口）。
+  plain_zh: "信任评分引擎，基于历史审计结果和 Merkle 校验计算信任级别（UNKNOWN/UNTRUSTED/MEDIUM/HIGH/VERIFIED 五级），支持评分调整、衰减与趋势查询。"
 - module_path: src/zephyr/gov_audit/trust_ring_manager.py
   domain_id: D_GOV_AUDIT
   name_zh: trustring管理器
@@ -8226,7 +8226,7 @@ entries:
   name_en: ai_code_standards
   desc_zh: ai代码standards（ai_code_standards.py）
   desc_en: ''
-  plain_zh: ai代码standards（ai_code_standards.py）
+  plain_zh: "AI 代码生成标准规则，定义脚手架自动生成、禁止 demo 注释、测试必须 TDD 先 fail 后 pass 等规则。"
 - module_path: src/zephyr/gov_enforcement/behavioral_admission/mcp_result_push.py
   domain_id: D_GOV_AUDIT
   name_zh: MCP结果推送
@@ -8268,7 +8268,7 @@ entries:
   name_en: contracts
   desc_zh: 契约.py — G-CT-002 Audit 契约（re-export）。
   desc_en: ''
-  plain_zh: 契约.py — G-CT-002 Audit 契约（re-export）。
+  plain_zh: "Audit 契约兼容转发层（G-CT-002），把审计契约符号 re-export 到 audit-trail 入口，老导入路径不用改。"
 - module_path: src/zephyr/governance/audit/_git_helpers.py
   domain_id: D_GOV_AUDIT
   name_zh: Git辅助
@@ -8415,14 +8415,14 @@ entries:
   name_en: compliance_map
   desc_zh: 合规map.compliance_map — MOD-INF-020 · 合规框架映射
   desc_en: ''
-  plain_zh: 合规map.compliance_map — MOD-INF-020 · 合规框架映射
+  plain_zh: "语义审计的合规框架映射器（MOD-INF-028），将审计事件映射到 GDPR/HIPAA/EU AI Act/NIST 条款，支持多框架交叉映射。"
 - module_path: src/zephyr/governance/semantic_audit/feedback_self_audit.py
   domain_id: D_GOV_AUDIT
   name_zh: 反馈自审计
   name_en: feedback_self_audit
   desc_zh: 反馈自审计.feedback_self_audit — MOD-INF-020 · 反馈自审计
   desc_en: ''
-  plain_zh: 反馈自审计.feedback_self_audit — MOD-INF-020 · 反馈自审计
+  plain_zh: "语义审计的反馈自审计器（MOD-INF-028），检测自强化反馈环、循环依赖、异常放大，与 gov_audit 版本对齐。"
 - module_path: src/zephyr/governance/semantic_audit/fix_prioritizer.py
   domain_id: D_GOV_AUDIT
   name_zh: 修复prioritizer
@@ -8443,21 +8443,21 @@ entries:
   name_en: issue_aggregator
   desc_zh: 收集各阶段审计结果，去重合并排序输出。
   desc_en: ''
-  plain_zh: 收集各阶段审计结果，去重合并排序输出。
+  plain_zh: "语义审计问题聚合器（Stage 5），收集各阶段审计结果，去重、合并、排序后输出问题清单。"
 - module_path: src/zephyr/governance/semantic_audit/kb_gate.py
   domain_id: D_GOV_AUDIT
   name_zh: 知识库门禁
   name_en: kb_gate
   desc_zh: 知识库门禁.kb_gate — MOD-INF-020 · KB 审计门控
   desc_en: ''
-  plain_zh: 知识库门禁.kb_gate — MOD-INF-020 · KB 审计门控
+  plain_zh: "语义审计的 KB 门控（MOD-INF-028），检测知识库投毒、验证写入来源、识别可疑修改模式，与 gov_audit 版本对齐。"
 - module_path: src/zephyr/governance/semantic_audit/llm_bridge.py
   domain_id: D_GOV_AUDIT
   name_zh: 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成
   name_en: llm_bridge
   desc_zh: 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成。
   desc_en: ''
-  plain_zh: 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时降级为模板生成。
+  plain_zh: "语义审计 LLM 桥接（Stage 6），接收 RED 问题生成修复文本，LLM 只润色不做判断，不可用时降级为模板生成。"
 - module_path: src/zephyr/governance/semantic_audit/models.py
   domain_id: D_GOV_AUDIT
   name_zh: 语义审计管线数据模型 — MOD-INF-028 §4.2
@@ -8485,7 +8485,7 @@ entries:
   name_en: reference_extractor
   desc_zh: AST 解析文件，提取 9 个维度的引用信息。
   desc_en: ''
-  plain_zh: AST 解析文件，提取 9 个维度的引用信息。
+  plain_zh: "语义审计引用提取器（Stage 1），用 AST 解析文件提取 9 个维度的引用信息，为后续一致性检查提供输入。"
 - module_path: src/zephyr/governance/semantic_audit/safety_boundary.py
   domain_id: D_GOV_AUDIT
   name_zh: 安全boundary
@@ -8527,7 +8527,7 @@ entries:
   name_en: trigger_engine
   desc_zh: 监听文件变更，判定是否触发语义审计。
   desc_en: ''
-  plain_zh: 监听文件变更，判定是否触发语义审计。
+  plain_zh: "语义审计触发器引擎（Stage 2），监听文件变更并判定是否需要触发语义审计，控制审计的启动时机。"
 - module_path: tests/governance/audit/test_error_pattern_id_column.py
   domain_id: D_GOV_AUDIT
   name_zh: 测试错误patternidcolumn
