@@ -162,7 +162,7 @@ _ARCH_LAYER_RE = re.compile(r"^L[0-6]")
 # 节点是否在 subgraph 内都显示灰色。_gen_layers_mmd/invariants/cross_domain
 # 已去掉 subgraph（扁平布局），_gen_overview_mmd 保留 track subgraph（需 secondaryColor）。
 # _build_status_color() 保留供测试使用；生成逻辑用文字标注 build_status。
-# 治本（2026-08-01 模板升级）：对齐 visualization_view_template.md V1.2。
+# 治本（2026-08-01 模板升级，2026-08-02 V1.3 增量）：对齐 visualization_view_template.md V1.3。
 #   ① 灰色主题头（§4.1）+ clusterBkg/clusterBorder 透明（§13.3：subgraph 容器背景
 #      默认浅蓝白，VS Code 渲染器不识别 clusterBkg，但 HTML 端 zoomable_html.py 已用
 #      JS `style.fill='transparent'` 后处理 + CSS `.cluster rect` 兜底；此处主题变量
@@ -221,7 +221,7 @@ _DOMAIN_RESPONSIBILITY_ZH: dict[str, str] = get_category_map("domain_responsibil
 
 
 # ---------------------------------------------------------------------------
-# 模板 V1.2 标准辅助函数（照搬 generate_domain_doc.py，禁止自创逻辑）
+# 模板 V1.3 标准辅助函数（照搬 generate_domain_doc.py，禁止自创逻辑）
 # ---------------------------------------------------------------------------
 
 

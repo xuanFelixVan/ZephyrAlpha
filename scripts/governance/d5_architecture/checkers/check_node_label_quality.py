@@ -104,10 +104,14 @@ def _strip_trivial_tail(text: str) -> str:
 def _extract_nodes(text: str) -> list[str]:
     """提取所有域内节点定义的 label：<id>["label"]。
 
-    节点 ID 为小写字母/数字/下划线（跨域外部节点 ID 含大写如 D_FACTOR，
-    其 label 结构不同，不在本审计范围）。
+    节点 ID 覆盖两类生成器产出：
+      - 域文档（generate_domain_doc.py）：小写 ID 如 ``mod_bt_001``
+      - 决策流图（generate_decision_diagram.py）：大写前缀 ID 如 ``N1``/``L2A``
+    跨域外部节点 ID 形如 ``D_RISK``/``D_FACTOR``（D_ 前缀全大写），其 label 结构
+    不同（仅域名无简介），不在本审计范围——用 ``[NL]\\d+`` 前缀精确匹配决策节点，
+    避免误纳入 D_ 前缀的跨域外部节点。
     """
-    return re.findall(r'^\s*[a-z0-9_]+\["([^"]*)"\]', text, re.M)
+    return re.findall(r'^\s*(?:[a-z0-9_]+|[NL]\d+[A-Z0-9_]*)\["([^"]*)"\]', text, re.M)
 
 
 def _rebuild_intro(label: str) -> tuple[str, str]:
