@@ -67,8 +67,8 @@ ttl: permanent
 |------|-----|
 | 域总数 | 72 |
 | 模块总数 | 3173 |
-| 生产态模块 | 2950 |
-| 设计态模块 | 223 |
+| 生产态模块 | 2951 |
+| 设计态模块 | 222 |
 
 ## 域清单（按架构层分组）
 
@@ -106,7 +106,7 @@ ttl: permanent
 | D_MKT_DATA | 行情数据 / Market Data | 15 | 9 | 6 | 15/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
 | D_OPS | 反馈循环 / Feedback Loop | 11 | 11 | 0 | 11/150 (OK) | [📄 24_d_ops.md](24_d_ops.md) |
 | D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 70 | 70 | 0 | 70/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
-| D_REPORTING | 报告 / Reporting | 14 | 7 | 7 | 14/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
+| D_REPORTING | 报告 / Reporting | 14 | 8 | 6 | 14/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
 | D_SECURITY | 对抗验证 / Adversarial Validation | 166 | 166 | 0 | 166/150 (超容) | [📄 27_d_security.md](27_d_security.md) |
 | D_SECURITY_LLM | LLM防御 / LLM Defense | 0 | 0 | 0 | 0/150 (OK) | [📄 28_d_security_llm.md](28_d_security_llm.md) |
 

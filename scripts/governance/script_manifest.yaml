@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-02T11:39:49Z
+# 自动生成于 2026-08-02T11:45:23Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-02T11:39:49Z'
+generated_at: '2026-08-02T11:45:23Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 381
@@ -2001,16 +2001,6 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: d5_architecture/generators/generate_policies.py
-  owner: governance:d5_architecture
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: d5_architecture/generators/generate_trading_flow_diagram.py
   owner: governance:d5_architecture
   dimensions: []
   priority: P2
