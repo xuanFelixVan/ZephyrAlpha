@@ -56,16 +56,16 @@ flowchart TD
     src_zephyr_signal_quality_init_py["zephyr/signal_quality 包入口<br/>信号质量域。负责信号质量评估/信号过滤/信号降级<br/>/信号冲突检测。<br/>D_SIGQC — Signal Quality Domain<br/>文件: signal_quality/__init__.py<br/>(生产态 / production)"]
     src_zephyr_signal_quality_degradation_monitor_base_py["退化监控基类<br/>信号质量降级监视器抽象基类（OCP 扩展点<br/>D_SIGQC-DEG）。<br/>文件: signal_quality/degradation_monitor_base.py<br/>(生产态 / production)"]
     src_zephyr_signal_quality_init_py -->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_TRADING
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_quality_init_py,src_zephyr_signal_quality_degradation_monitor_base_py production
-    class D_TRADING,D_INFRASTRUCTURE external_prod
+    class D_INFRASTRUCTURE,D_TRADING external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
