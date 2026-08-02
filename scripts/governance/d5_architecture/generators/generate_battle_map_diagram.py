@@ -276,14 +276,25 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
 
 
 def _sanitize(text: str) -> str:
-    """转义 Mermaid 节点标签中的特殊字符（模板 §4.9）。
+    """转义 Mermaid 标签中的特殊字符（模板 §4.9）。
 
-    注意：不转义 ``<`` ``>`` —— 节点标签用 ``<br/>`` 折行，转义会破坏折行。
-    旧版把 ``<>`` 替换为全角 ``〈〉`` 是因为旧标签用 ``\\n`` 折行；改用 ``<br/>`` 后
-    必须保留尖括号（模板 §4.10 预折行铁律依赖 ``<br/>``）。
+    治本（2026-08-03，渲染失败修复）：``&`` ``<`` ``>`` 必须转义为 XML 实体——
+    Mermaid 渲染为 SVG（XML-based），未转义的 ``&`` 导致 XML 解析失败（如
+    ``Data Ingestion & Preprocessing``）；未转义的 ``<`` 被误判为 HTML 标签起始
+    （如 ``期<40%直接拦截``）。``<br/>`` 折行标签需保护——先替换为占位符，
+    转义后恢复。
     """
     if not text:
         return ""
+    # 保护 <br/> 折行标签（转义 < > 前先暂存，转义后恢复）
+    text = text.replace("<br/>", "\x00BR\x00")
+    # XML 实体转义（& 必须先转，否则后续 &lt; &gt; 中的 & 会被二次转义）
+    text = text.replace("&", "&amp;")
+    text = text.replace("<", "&lt;")
+    text = text.replace(">", "&gt;")
+    # 恢复 <br/> 折行标签
+    text = text.replace("\x00BR\x00", "<br/>")
+    # Mermaid 语法字符转义
     return (
         text.replace("[", "(")
         .replace("]", ")")
@@ -1225,6 +1236,40 @@ _CROSS_CUTTING_RENDERERS = {
 }
 
 
+def _generate_cross_cutting_mermaid(items: list[dict]) -> str:
+    """横切视图总览 Mermaid 图（9 类横切机制总览，模板合规）。
+
+    每个横切类别一个节点，含 §章节引用 + 中英双语名 + 大白话简介。
+    无 depgraph 锚点（横切机制是架构概念非代码模块），统一标 design 态。
+    """
+    lines = ["```mermaid", _MERMAID_THEME, "%% 横切视图总览", "flowchart TD"]
+    nids: list[str] = []
+    for i, item in enumerate(items, 1):
+        cat = item.get("category", f"cat_{i}")
+        name_zh = item.get("name_zh", cat)
+        name_en = item.get("name_en", "")
+        sketch = item.get("sketch_ref", "")
+        plain = (item.get("plain_zh") or "").strip()
+        nid = f"CC_{i:02d}"
+        nids.append(nid)
+        name_bi = f"{name_zh} / {name_en}" if name_en else name_zh
+        parts = [f"(设计态 / design) {sketch} {name_bi}".strip()]
+        if plain:
+            parts.append(plain)
+        parts.append("横切机制 / cross-cutting")
+        label = "<br/>".join(_wrap_label_text(p) for p in parts if p)
+        label = _sanitize(label)
+        lines.append(f'    {nid}["{label}"]')
+    # 同层 ~~~ 串联（竖排对齐）
+    if len(nids) >= 2:
+        lines.append("    " + " ~~~ ".join(nids))
+    lines.append(_CLASSDEFS)
+    if nids:
+        lines.append(f"    class {','.join(nids)} design")
+    lines.append("```")
+    return "\n".join(lines)
+
+
 def _generate_cross_cutting_md() -> str:
     """横切视图 MD（§13漏斗 + §14盘中事件 + §16冲突矩阵 + 4 退役迁移段，Gap3）。
 
@@ -1234,26 +1279,44 @@ def _generate_cross_cutting_md() -> str:
     2026-08-02 退役迁移：trading_flow_narrative.yaml §cross_cutting 的 4 个系统级横切段
     （four_modes / emergency_degradation / four_tracks / shared_signal_injection）
     迁入本段，由 _format_generic_cross_cutting_md 渲染。
+
+    2026-08-03 模板对齐：补 HTML 链接 + 基本信息表 + 图例 + 横切总览 Mermaid 图，
+    使横切视图文档与其他 battle_map 文档结构一致（模板 §9.1 MD+HTML 双产物）。
     """
     items = get_cross_cutting_all()
     parts = [
         "# 交易决策作战地图（横切视图）",
         "",
+    ]
+    if not items:
+        parts.append("⚠ 未加载到横切视图数据（YAML battle_map_cross_cutting 段缺失或解析失败）。")
+        return "\n".join(parts)
+
+    parts.append(_html_link_line("battle_map_07_cross_cutting"))
+    parts.append("")
+    parts.extend([
         "> 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则",
         ">           + 4 系统级横切（四模式开关 / 应急保命降级 / 四轨并行 / 共享信号注入，迁移自 trading_flow_narrative.yaml）。",
         "> 真源：`module_translation_registry.yaml` §battle_map_cross_cutting 段（规则数据，TRAE-062）。",
         "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。",
         "",
-    ]
-    if not items:
-        parts.append("⚠ 未加载到横切视图数据（YAML battle_map_cross_cutting 段缺失或解析失败）。")
-        return "\n".join(parts)
-    parts.append(
-        f"**横切类别数**：{len(items)}（funnel / intraday_events / conflict_matrix / "
-        f"timeline / distribution_awareness / four_modes / emergency_degradation / "
-        f"four_tracks / shared_signal_injection）"
-    )
-    parts.append("")
+        "## 文档基本信息 / Document Overview",
+        "",
+        "| 字段 | 值 | Field | Value |",
+        "|------|------|-------|-------|",
+        f"| 横切类别数 | {len(items)} | Categories | {len(items)} |",
+        "| 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys |",
+        "| 真源 | module_translation_registry.yaml | Source | YAML registry |",
+        "",
+        _legend_blockquote(),
+        "",
+        "## 横切视图总览 / Cross-Cutting Overview",
+        "",
+        f"> 展示全部 {len(items)} 个横切机制，颜色区分五态。",
+        "",
+        _generate_cross_cutting_mermaid(items),
+        "",
+    ])
     for item in items:
         cat = item.get("category", "")
         renderer = _CROSS_CUTTING_RENDERERS.get(cat)

@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-02
+date: 2026-08-03
 ---
 
 # 作战地图·执行阶段

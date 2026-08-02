@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-02
+date: 2026-08-03
 ---
 
 # 作战地图·选股阶段
@@ -39,17 +39,17 @@ date: 2026-08-02
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 选股阶段图
 flowchart TD
-    BM_SEL_01["(生产态 / production) BM-SEL-01<br/>数据接入与预处理 / Data Ingestion &<br/>Preprocessing<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>作战环节 / battle-step<br/>🟡候选承载"]
-    BM_SEL_02["(生产态 / production) BM-SEL-02<br/>因子计算与信号生成 / Factor Compute & Signal Gen<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_01["(生产态 / production) BM-SEL-01<br/>数据接入与预处理 / Data Ingestion &amp;<br/>Preprocessing<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_02["(生产态 / production) BM-SEL-02<br/>因子计算与信号生成 / Factor Compute &amp; Signal Gen<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_03["(设计态 / design) BM-SEL-03 市场状态感知 /<br/>Market State Sensing<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_04["(设计态 / design) BM-SEL-04 次日8态走势预测 /<br/>Next-Day 8-State Forecast<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_05["(候选态 / candidate) BM-SEL-05 主力行为感知 /<br/>Main-Force Behavior Sensing<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_06["(候选态 / candidate) BM-SEL-06 跨市场传导感知 /<br/>Cross-Market Conduction Sensing<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_07["(候选态 / candidate) BM-SEL-07 体制转换检测 /<br/>Regime Change Detection<br/>盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点<br/>提前预警。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_08["(候选态 / candidate) BM-SEL-08 板块轮动序列追踪<br/>/ Sector Rotation Sequence Tracking<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>作战环节 / battle-step<br/>🟡候选承载"]
-    BM_SEL_09["(候选态 / candidate) BM-SEL-09 调整周期追踪 /<br/>Adjustment Cycle Tracking<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期<40%直接拦截。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_09["(候选态 / candidate) BM-SEL-09 调整周期追踪 /<br/>Adjustment Cycle Tracking<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期&lt;40%直接拦截。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_10["(候选态 / candidate) BM-SEL-10 行情生命周期阶段<br/>/ Market Lifecycle Phase<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>作战环节 / battle-step<br/>🟡候选承载"]
-    BM_SEL_11["(候选态 / candidate) BM-SEL-11<br/>知识图谱与因果推演 / Knowledge Graph & Causal<br/>Inference<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>作战环节 / battle-step<br/>🟡候选承载"]
+    BM_SEL_11["(候选态 / candidate) BM-SEL-11<br/>知识图谱与因果推演 / Knowledge Graph &amp; Causal<br/>Inference<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_12["(候选态 / candidate) BM-SEL-12 分布特征工程 /<br/>Distribution Feature Engineering<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_13["(候选态 / candidate) BM-SEL-13<br/>收益率条件密度预测 / Conditional Density<br/>Prediction<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_SEL_14["(候选态 / candidate) BM-SEL-14 共形预测 /<br/>Conformal Prediction<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>作战环节 / battle-step<br/>🟡候选承载"]

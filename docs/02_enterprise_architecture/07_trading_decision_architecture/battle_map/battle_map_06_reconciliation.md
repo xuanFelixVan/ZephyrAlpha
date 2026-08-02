@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-02
+date: 2026-08-03
 ---
 
 # 作战地图·对账阶段
@@ -39,8 +39,8 @@ date: 2026-08-02
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 对账阶段图
 flowchart TD
-    BM_REC_01["(生产态 / production) BM-REC-01 交易运营清算 /<br/>Trade Ops & Settlement<br/>把成交回报拿去清算、算费率、处理公司行为，变成运<br/>营数据。<br/>作战环节 / battle-step"]
-    BM_REC_02["(生产态 / production) BM-REC-02 报告复盘 /<br/>Reporting & Review<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>作战环节 / battle-step"]
+    BM_REC_01["(生产态 / production) BM-REC-01 交易运营清算 /<br/>Trade Ops &amp; Settlement<br/>把成交回报拿去清算、算费率、处理公司行为，变成运<br/>营数据。<br/>作战环节 / battle-step"]
+    BM_REC_02["(生产态 / production) BM-REC-02 报告复盘 /<br/>Reporting &amp; Review<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>作战环节 / battle-step"]
     BM_REC_03["(生产态 / production) BM-REC-03 闭环优化反馈 /<br/>Closed-Loop Optimization Feedback<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>作战环节 / battle-step<br/>🟡候选承载"]
     BM_REC_01 -->|运营数据 / data_flow| BM_REC_02
     BM_REC_02 -->|复盘报告 / data_flow| BM_REC_03
@@ -84,7 +84,7 @@ L5/运营层。C-017 交易运营：清算/费率/公司行为。是闭环反馈
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-TRADING-003 | primary | planned | generated |
-| depgraph | MOD-RPT-027 | supplement | planned | generated |
+| depgraph | MOD-RPT-027 | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
