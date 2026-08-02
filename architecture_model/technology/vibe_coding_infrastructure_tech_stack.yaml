@@ -1,6 +1,5 @@
-# [A_config] module_id=CFG-vibe-coding-infrastructure-tech-stack | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain-governance/blueprint.md | §
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
@@ -17,6 +16,7 @@
 # 迁移：2026-05-01 从 target_architecture/technology_landscape.yaml 重命名迁移至此，消除同名冲突
 # ============================================================================
 
+module_id: MOD-GOVERNANCE
 meta:
   module_id: GOV-TECH-VC-INFRA-STACK-001
   title: "Vibe Coding 2.0 Infrastructure Tech Stack / 基建技术选型栈"

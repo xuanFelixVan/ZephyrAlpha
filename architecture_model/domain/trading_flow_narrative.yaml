@@ -1,7 +1,6 @@
-# [A_config] module_id=CFG-trading_flow_narrative | layer=config | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # --- 治理锚定 ---
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §trading-flow-panorama
-# module_id: CFG-trading_flow_narrative
+# module_id: MOD-GOVERNANCE
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -24,7 +23,7 @@
 
 schema_version: "1.0.0"
 doc_type: trading_flow_narrative
-module_id: CFG-trading_flow_narrative
+module_id: MOD-GOVERNANCE
 version: "1.0.0"
 title: "交易决策架构视图叙事真源"
 status: active

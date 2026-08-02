@@ -1,4 +1,3 @@
-# [A_config] module_id=CFG-capability-heatmap | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # module_id: MOD-GOVERNANCE

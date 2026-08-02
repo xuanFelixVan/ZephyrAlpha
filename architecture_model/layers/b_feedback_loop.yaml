@@ -1,3 +1,11 @@
+# --- 治理锚定 ---
+# blueprint: MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §1.1
+# module_id: MOD-FEEDBACK_LOOP
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
 # MOD-FEEDBACK_LOOP SSoT (Single Source of Truth) — Architecture Model
 # 同步自 docs/03_modules/_cross_layer/feedback_loop/blueprint.md §1.1
 

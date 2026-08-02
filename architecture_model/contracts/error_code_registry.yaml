@@ -1,6 +1,13 @@
-# [A_config] module_id=CFG-error_code_registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
-# [TTL] permanent
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §error-code-registry
+# module_id: MOD-GOVERNANCE
+# stability: stable
+# safety_level: L
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
 schema_version: '1.0.0'
+module_id: MOD-GOVERNANCE
 doc_type: register
 title: ZephyrAlpha 业务异常 error_code SSoT 注册表
 status: active
