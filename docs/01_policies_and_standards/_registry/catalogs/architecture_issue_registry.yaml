@@ -11006,7 +11006,10 @@ entries:
 
     遗留项（不阻断 C3 闭环）：
     - 告警通道（.env）未配置 ZEPHYR_FEISHU_WEBHOOK / ZEPHYR_SMTP_*，告警仅写 failures/ + 日志。
-      实盘前需配置 .env 凭据以触达飞书/邮件。
+      实盘前需配置 .env 凭据以触达飞书/邮件（二选一即可，代码层面已就绪）。
+    - 企业微信群机器人通道：用户无企业微信账号，延后开发。未来有企业微信时，
+      参照 send_feishu_webhook 模式新增 send_wecom_webhook（URL+payload 格式接近）。
+      Server酱（个人微信）因免费版每天 5 条频率限制，不适合实盘，未采纳。
   related_rules:
   - '#ARCH-CH-031'
   - '#ARCH-DR-BACKUP-001'
