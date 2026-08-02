@@ -20,14 +20,14 @@ from typing import Final
 import pytest
 
 from zephyr.position.core.position_sizing_engine import (
+    MARKET_REGIME_CAPS,
     ConstraintViolationError,
     InvalidPositionInputError,
     KellyEstimationError,
-    MARKET_REGIME_CAPS,
-    SizingMarketRegime,
     PositionSizingConfig,
     PositionSizingEngine,
     PositionSizingInput,
+    SizingMarketRegime,
     SymbolInput,
 )
 from zephyr.shared.contracts.risk_limits import RiskLimits
@@ -90,6 +90,8 @@ def make_input(
     calendar_force_clear_symbols: frozenset[str] | None = None,
     var_95: float | None = None,
     cvar_95: float | None = None,
+    is_event_driven: bool = False,
+    is_sector_rotation: bool = False,
 ) -> PositionSizingInput:
     return PositionSizingInput(
         symbols=symbols or [make_symbol()],
@@ -108,6 +110,8 @@ def make_input(
         calendar_force_clear_symbols=calendar_force_clear_symbols or frozenset(),
         var_95=var_95,
         cvar_95=cvar_95,
+        is_event_driven=is_event_driven,
+        is_sector_rotation=is_sector_rotation,
     )
 
 
@@ -184,8 +188,11 @@ class TestVolatilityCheck:
         """波动率在正常范围 → 不减半。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            current_volatility=0.15, hist_vol_mean=0.15, hist_vol_std=0.03,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            current_volatility=0.15,
+            hist_vol_mean=0.15,
+            hist_vol_std=0.03,
             avg_daily_volume=1e8,
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
@@ -196,8 +203,11 @@ class TestVolatilityCheck:
         """波动率超 μ+2σ → 仓位减半。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            current_volatility=0.25, hist_vol_mean=0.15, hist_vol_std=0.03,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            current_volatility=0.25,
+            hist_vol_mean=0.15,
+            hist_vol_std=0.03,
             avg_daily_volume=1e8,
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
@@ -217,9 +227,13 @@ class TestVarCvarCheck:
         """VaR < 阈值 → 不下调。"""
         engine = PositionSizingEngine()
         sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
-        plan = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, var_95=0.01,
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                var_95=0.01,
+            )
+        )
         c4 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C4"]
         assert len(c4) == 0 or c4[0]["action"] == "pass"
 
@@ -227,9 +241,13 @@ class TestVarCvarCheck:
         """VaR > 2.5% → 下调 ×0.8。"""
         engine = PositionSizingEngine()
         sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
-        plan = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, var_95=0.03,
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                var_95=0.03,
+            )
+        )
         c4 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C4"]
         assert len(c4) > 0 and c4[0]["action"] == "truncate"
 
@@ -237,9 +255,14 @@ class TestVarCvarCheck:
         """CVaR > 4% → 进一步下调 ×0.7。"""
         engine = PositionSizingEngine()
         sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
-        plan = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, var_95=0.03, cvar_95=0.05,
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                var_95=0.03,
+                cvar_95=0.05,
+            )
+        )
         c5 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C5"]
         assert len(c5) > 0 and c5[0]["action"] == "truncate"
 
@@ -247,12 +270,20 @@ class TestVarCvarCheck:
         """VaR + CVaR 同时超限 → 双重下调。"""
         engine = PositionSizingEngine()
         sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
-        plan_no_var = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL,
-        ))
-        plan_with_var = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, var_95=0.03, cvar_95=0.05,
-        ))
+        plan_no_var = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+            )
+        )
+        plan_with_var = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                var_95=0.03,
+                cvar_95=0.05,
+            )
+        )
         # 有 VaR/CVaR 下调的仓位应更小
         w_no = plan_no_var.positions["000001.SZ"].target_weight
         w_yes = plan_with_var.positions["000001.SZ"].target_weight
@@ -271,8 +302,10 @@ class TestParticipationRate:
         """参与率 < 15% → 通过。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            price=10.0, avg_daily_volume=10_000_000.0,  # 高流动性
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            price=10.0,
+            avg_daily_volume=10_000_000.0,  # 高流动性
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         # 单票5% × 1M = 50K 元 / 10元 = 5K 股, 5K/10M = 0.05% < 15%
@@ -285,8 +318,10 @@ class TestParticipationRate:
         # weight=0.05(单票上限), target_qty=0.05*1M/10=5000
         # volume=5M → participation=5000/5M=0.1%, impact=0.1*sqrt(0.001)=0.3% < 0.5%
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            price=10.0, avg_daily_volume=5_000_000.0,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            price=10.0,
+            avg_daily_volume=5_000_000.0,
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         assert "000001.SZ" in plan.positions
@@ -295,8 +330,10 @@ class TestParticipationRate:
         """参与率 > 15% → 否决(不建仓)。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            price=100.0, avg_daily_volume=1000.0,  # 极低流动性
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            price=100.0,
+            avg_daily_volume=1000.0,  # 极低流动性
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         c6 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C6"]
@@ -315,8 +352,10 @@ class TestExitTime:
         """退出时间 < 1天 → 不减仓。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            current_qty=1000, avg_daily_volume=10_000.0,  # 0.1天
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            current_qty=1000,
+            avg_daily_volume=10_000.0,  # 0.1天
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         c7 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C7"]
@@ -327,8 +366,10 @@ class TestExitTime:
         """退出时间 > 1天 → 仓位折扣 ×0.8。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            current_qty=15000, avg_daily_volume=10_000.0,  # 1.5天
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            current_qty=15000,
+            avg_daily_volume=10_000.0,  # 1.5天
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         c8 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C8"]
@@ -338,8 +379,10 @@ class TestExitTime:
         """退出时间 > 3天 → 强制减仓至可退出量。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            current_qty=50_000, avg_daily_volume=10_000.0,  # 5天
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            current_qty=50_000,
+            avg_daily_volume=10_000.0,  # 5天
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         c7 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C7"]
@@ -358,7 +401,8 @@ class TestStrategyCapacity:
         """容量 < 80% AUM → 无预警。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
             strategy_capacity=500_000.0,  # 50% AUM
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
@@ -369,7 +413,8 @@ class TestStrategyCapacity:
         """容量 > 80% AUM → 预警。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
             strategy_capacity=850_000.0,  # 85% AUM
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
@@ -380,7 +425,8 @@ class TestStrategyCapacity:
         """容量 > 100% AUM → 否决新资金。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
             strategy_capacity=1_200_000.0,  # 120% AUM, current_qty=0
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
@@ -401,7 +447,8 @@ class TestImpactCost:
         """冲击成本 < 0.5% → 通过。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
             avg_daily_volume=10_000_000.0,  # 高流动性
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
@@ -415,8 +462,10 @@ class TestImpactCost:
         # participation=500/12500=4% < 15% → C6 通过
         # impact=0.1*sqrt(0.04)=0.02=2% > 0.5% → C11 否决
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            price=100.0, avg_daily_volume=12_500.0,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            price=100.0,
+            avg_daily_volume=12_500.0,
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         c11 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C11"]
@@ -435,7 +484,8 @@ class TestSinglePositionLimit:
         """仓位 < 5% → 不截断。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.52, win_loss_ratio=1.1,  # 半Kelly ≈ 4.2%
+            win_probability=0.52,
+            win_loss_ratio=1.1,  # 半Kelly ≈ 4.2%
             avg_daily_volume=1e8,
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
@@ -445,7 +495,8 @@ class TestSinglePositionLimit:
         """仓位 > 5% → 截断至 5%。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.8, win_loss_ratio=3.0,  # 半Kelly = 36.7%
+            win_probability=0.8,
+            win_loss_ratio=3.0,  # 半Kelly = 36.7%
             avg_daily_volume=1e8,
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
@@ -455,7 +506,8 @@ class TestSinglePositionLimit:
         """RiskLimits.symbol_overrides 覆盖默认单票上限。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.8, win_loss_ratio=3.0,
+            win_probability=0.8,
+            win_loss_ratio=3.0,
             avg_daily_volume=1e8,
         )
         rl = make_risk_limits(max_single=0.1)
@@ -465,9 +517,13 @@ class TestSinglePositionLimit:
             max_single_position=0.1,
             symbol_overrides={"000001.SZ": 0.08},
         )
-        plan = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, risk_limits=rl,
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                risk_limits=rl,
+            )
+        )
         # 被覆盖为 8% 而非默认 5%
         assert plan.positions["000001.SZ"].target_weight <= 0.08
 
@@ -489,11 +545,46 @@ class TestMarketRegime:
     def test_narrow_range_40pct(self) -> None:
         assert MARKET_REGIME_CAPS[SizingMarketRegime.NARROW_RANGE] == 0.40
 
-    def test_event_driven_70pct(self) -> None:
-        assert MARKET_REGIME_CAPS[SizingMarketRegime.EVENT_DRIVEN] == 0.70
+    def test_crisis_5pct(self) -> None:
+        assert MARKET_REGIME_CAPS[SizingMarketRegime.CRISIS] == 0.05
 
-    def test_sector_rotation_base(self) -> None:
-        assert MARKET_REGIME_CAPS[SizingMarketRegime.SECTOR_ROTATION] == 1.0
+    def test_recovery_50pct(self) -> None:
+        assert MARKET_REGIME_CAPS[SizingMarketRegime.RECOVERY] == 0.50
+
+    def test_breakout_70pct(self) -> None:
+        assert MARKET_REGIME_CAPS[SizingMarketRegime.BREAKOUT] == 0.70
+
+    def test_event_driven_overlay_70pct(self) -> None:
+        """overlay: is_event_driven → 基础仓位×70% (§7.3 v8.1)。"""
+        engine = PositionSizingEngine()
+        sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
+        plan_base = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
+        plan_evt = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                is_event_driven=True,
+            )
+        )
+        # CALM_BULL cap=0.80, overlay×0.70 → total_cap=0.56
+        assert plan_evt.constraints_check["total_cap"] <= 0.80 * 0.70 + 1e-6
+        assert plan_evt.total_exposure <= 0.80 * 0.70 + 1e-6
+        # 无overlay时不受×0.70影响
+        assert plan_base.constraints_check["total_cap"] <= 0.80 + 1e-6
+
+    def test_sector_rotation_overlay_no_cap_change(self) -> None:
+        """overlay: is_sector_rotation → POS-001不改cap(透传给POS-010)。"""
+        engine = PositionSizingEngine()
+        sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                is_sector_rotation=True,
+            )
+        )
+        # sector_rotation 不改 cap, 仍为 0.80
+        assert plan.constraints_check["total_cap"] <= 0.80 + 1e-6
 
     def test_degradation_default(self) -> None:
         """D-SIGNAL 缺失 → 默认状态④(40%)。"""
@@ -564,8 +655,10 @@ class TestPreFilter:
         """退出时间 >3天 → 预筛标记 C7。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            current_qty=50_000, avg_daily_volume=10_000.0,  # 5天
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            current_qty=50_000,
+            avg_daily_volume=10_000.0,  # 5天
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         c7 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "C7"]
@@ -575,8 +668,10 @@ class TestPreFilter:
         """低流动性标的 → 预筛标记 warn。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            price=100.0, avg_daily_volume=1000.0,  # 极低流动性
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            price=100.0,
+            avg_daily_volume=1000.0,  # 极低流动性
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         prefilter = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "prefilter"]
@@ -586,8 +681,10 @@ class TestPreFilter:
         """预筛放行但精确检查否决(边界情况)。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.8, win_loss_ratio=3.0,  # 高Kelly
-            price=100.0, avg_daily_volume=500.0,  # 低流动性但预筛可能放行
+            win_probability=0.8,
+            win_loss_ratio=3.0,  # 高Kelly
+            price=100.0,
+            avg_daily_volume=500.0,  # 低流动性但预筛可能放行
         )
         plan = engine.size(make_input(symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL))
         # 预筛 warn + 后续 C6/C11 精确否决
@@ -648,9 +745,13 @@ class TestCalendarConstraint:
         """日历全面否决新开仓 → 新标的不出现在 positions。"""
         engine = PositionSizingEngine()
         sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
-        plan = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, calendar_block_new=True,
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                calendar_block_new=True,
+            )
+        )
         assert plan.calendar_constraint_active is True
         assert "000001.SZ" not in plan.positions
 
@@ -658,13 +759,19 @@ class TestCalendarConstraint:
         """日历强制清仓 → target_qty=0。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            symbol="000002.SZ", win_probability=0.55, win_loss_ratio=1.5,
-            current_qty=5000, avg_daily_volume=1e8,
+            symbol="000002.SZ",
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            current_qty=5000,
+            avg_daily_volume=1e8,
         )
-        plan = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL,
-            calendar_force_clear_symbols=frozenset({"000002.SZ"}),
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                calendar_force_clear_symbols=frozenset({"000002.SZ"}),
+            )
+        )
         tgt = plan.positions["000002.SZ"]
         assert tgt.target_qty == 0
         assert tgt.delta == -5000
@@ -682,12 +789,20 @@ class TestCapitalCurve:
         """资金曲线缩放系数 < 1.0 → 仓位缩小。"""
         engine = PositionSizingEngine()
         sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
-        plan_normal = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, capital_curve_discount=1.0,
-        ))
-        plan_discount = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, capital_curve_discount=0.5,
-        ))
+        plan_normal = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                capital_curve_discount=1.0,
+            )
+        )
+        plan_discount = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                capital_curve_discount=0.5,
+            )
+        )
         w_normal = plan_normal.positions["000001.SZ"].target_weight
         w_discount = plan_discount.positions["000001.SZ"].target_weight
         assert w_discount <= w_normal
@@ -696,12 +811,18 @@ class TestCapitalCurve:
         """defensive_only=True → 禁止新开仓(delta <= 0)。"""
         engine = PositionSizingEngine()
         sym = make_symbol(
-            win_probability=0.55, win_loss_ratio=1.5,
-            current_qty=100, avg_daily_volume=1e8,
+            win_probability=0.55,
+            win_loss_ratio=1.5,
+            current_qty=100,
+            avg_daily_volume=1e8,
         )
-        plan = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, defensive_only=True,
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                defensive_only=True,
+            )
+        )
         tgt = plan.positions["000001.SZ"]
         assert tgt.delta <= 0
 
@@ -721,9 +842,13 @@ class TestCashConstraint:
             make_symbol(symbol=f"00000{i}.SZ", win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
             for i in range(1, 6)
         ]
-        plan = engine.size(make_input(
-            symbols=syms, market_regime=SizingMarketRegime.CALM_BULL, max_investable=200_000.0,
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=syms,
+                market_regime=SizingMarketRegime.CALM_BULL,
+                max_investable=200_000.0,
+            )
+        )
         # max_investable=200K → 仓位上限 20%
         assert plan.total_exposure <= 0.20 + 1e-6
 
@@ -731,9 +856,13 @@ class TestCashConstraint:
         """max_investable=None → 不约束。"""
         engine = PositionSizingEngine()
         sym = make_symbol(win_probability=0.55, win_loss_ratio=1.5, avg_daily_volume=1e8)
-        plan = engine.size(make_input(
-            symbols=[sym], market_regime=SizingMarketRegime.CALM_BULL, max_investable=None,
-        ))
+        plan = engine.size(
+            make_input(
+                symbols=[sym],
+                market_regime=SizingMarketRegime.CALM_BULL,
+                max_investable=None,
+            )
+        )
         pos006 = [c for c in plan.constraints_check["checks"] if c["constraint_id"] == "POS-006"]
         assert len(pos006) == 0
 
@@ -757,7 +886,10 @@ class TestErrorContract:
         engine = PositionSizingEngine()
         # 直接构造空 symbols (make_input 的 or 兜底会替换空列表)
         inp = PositionSizingInput(
-            symbols=[], nav=NAV, strategy_id="strat_001", trade_date=TRADE_DATE,
+            symbols=[],
+            nav=NAV,
+            strategy_id="strat_001",
+            trade_date=TRADE_DATE,
         )
         with pytest.raises(InvalidPositionInputError):
             engine.size(inp)

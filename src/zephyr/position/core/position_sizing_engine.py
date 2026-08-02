@@ -74,23 +74,27 @@ logger = logging.getLogger(__name__)
 
 
 class SizingMarketRegime(str, Enum):
-    """仓位决策市场状态 ①~⑪ (设计真源 §7.3, 11 种 immutable 映射)。
+    """仓位决策市场状态 ①~⑫ (设计真源 §7.3 v8.1, 12 种 immutable 映射)。
+
+    12 态 = 9 基础网格(3×3, 趋势方向×波动率) + 3 特殊态(CRISIS/RECOVERY/BREAKOUT),
+    与 D-SIGNAL-04 定义方对齐。事件驱动/板块轮动为正交 overlay, 由
+    PositionSizingInput.is_event_driven/is_sector_rotation 标志位表达, 不占 enum。
 
     与 feedback_loop/gov_drift 的 MarketRegime 同名不同义——彼处为增益调度/ML 特征
-    (3~4 态), 本处为仓位上限映射 (11 态), 故冠 Sizing 前缀以区分 (ARCH-034)。
+    (3~4 态), 本处为仓位上限映射 (12 态), 故冠 Sizing 前缀以区分 (ARCH-034)。
     """
 
-    CALM_BULL = "CALM_BULL"                # ①平稳牛市
-    MOMENTUM_BULL = "MOMENTUM_BULL"        # ②动量牛市
-    PANIC_BOUNCE = "PANIC_BOUNCE"          # ③恐慌反弹
-    NARROW_RANGE = "NARROW_RANGE"          # ④窄幅盘整
-    WIDE_CHOP = "WIDE_CHOP"                # ⑤宽幅震荡
+    CALM_BULL = "CALM_BULL"  # ①平稳牛市
+    MOMENTUM_BULL = "MOMENTUM_BULL"  # ②动量牛市
+    PANIC_BOUNCE = "PANIC_BOUNCE"  # ③恐慌反弹
+    NARROW_RANGE = "NARROW_RANGE"  # ④窄幅盘整
+    WIDE_CHOP = "WIDE_CHOP"  # ⑤宽幅震荡
     COMPRESS_BREAKOUT = "COMPRESS_BREAKOUT"  # ⑥压缩突破
-    SLOW_DECLINE = "SLOW_DECLINE"          # ⑦阴跌
-    ACCEL_DECLINE = "ACCEL_DECLINE"        # ⑧加速下跌
-    PANIC_CRASH = "PANIC_CRASH"            # ⑨恐慌崩盘
-    EVENT_DRIVEN = "EVENT_DRIVEN"          # ⑩事件驱动(叠加态)
-    SECTOR_ROTATION = "SECTOR_ROTATION"    # ⑪板块轮动(叠加态)
+    SLOW_DECLINE = "SLOW_DECLINE"  # ⑦阴跌
+    ACCEL_DECLINE = "ACCEL_DECLINE"  # ⑧加速下跌
+    PANIC_CRASH = "PANIC_CRASH"  # ⑨恐慌崩盘
+    EVENT_DRIVEN = "EVENT_DRIVEN"  # ⑩事件驱动(叠加态)
+    SECTOR_ROTATION = "SECTOR_ROTATION"  # ⑪板块轮动(叠加态)
 
 
 # 市场状态 → 仓位上限映射 (immutable, 不可 AI 修改, 调整需 Trader 审批)
@@ -104,8 +108,9 @@ MARKET_REGIME_CAPS: Final[dict[SizingMarketRegime, float]] = {
     SizingMarketRegime.SLOW_DECLINE: 0.30,
     SizingMarketRegime.ACCEL_DECLINE: 0.20,
     SizingMarketRegime.PANIC_CRASH: 0.10,
-    SizingMarketRegime.EVENT_DRIVEN: 0.70,   # 叠加态: 基础×70%
-    SizingMarketRegime.SECTOR_ROTATION: 1.0,  # 基础仓位(行业集中度放宽)
+    SizingMarketRegime.CRISIS: 0.05,  # ⑩极端行情, 仅减仓不开新
+    SizingMarketRegime.RECOVERY: 0.50,  # ⑪回撤回补期, 逐步重建
+    SizingMarketRegime.BREAKOUT: 0.70,  # ⑫趋势确立, 加仓
 }
 
 
@@ -144,25 +149,25 @@ class PositionSizingConfig:
     # C1 半Kelly系数
     half_kelly_factor: float = 0.5
     # C3 波动率检查
-    vol_sigma_multiplier: float = 2.0      # 超 μ+2σ → 仓位减半
+    vol_sigma_multiplier: float = 2.0  # 超 μ+2σ → 仓位减半
     vol_halve_factor: float = 0.5
     # C4/C5 VaR/CVaR 下调
-    var_threshold: float = 0.025           # 前瞻95%VaR > 2.5% → 下调
+    var_threshold: float = 0.025  # 前瞻95%VaR > 2.5% → 下调
     var_reduce_factor: float = 0.8
-    cvar_threshold: float = 0.04           # 前瞻95%CVaR > 4% → 进一步下调
+    cvar_threshold: float = 0.04  # 前瞻95%CVaR > 4% → 进一步下调
     cvar_reduce_factor: float = 0.7
     # C6 参与率否决
-    max_participation_rate: float = 0.15   # >15% 日成交量 → 否决
+    max_participation_rate: float = 0.15  # >15% 日成交量 → 否决
     # C7/C8 退出时间减仓
-    exit_days_hard: int = 3                # >3天 → 强制减仓至可退出
-    exit_days_soft: int = 1                # >1天 → 仓位上限折扣
+    exit_days_hard: int = 3  # >3天 → 强制减仓至可退出
+    exit_days_soft: int = 1  # >1天 → 仓位上限折扣
     exit_soft_discount: float = 0.8
     # C9 策略容量预警
-    capacity_warn_ratio: float = 0.80      # >AUM×80% → 预警
-    capacity_veto_ratio: float = 1.00      # >AUM×100% → 否决新资金
+    capacity_warn_ratio: float = 0.80  # >AUM×80% → 预警
+    capacity_veto_ratio: float = 1.00  # >AUM×100% → 否决新资金
     # C11 冲击成本否决
-    max_impact_cost: float = 0.005         # >0.5% → 否决
-    impact_cost_coeff: float = 0.1         # 冲击成本系数 (sqrt模型)
+    max_impact_cost: float = 0.005  # >0.5% → 否决
+    impact_cost_coeff: float = 0.1  # 冲击成本系数 (sqrt模型)
     # C12 单票上限 (默认, 可被 RiskLimits.symbol_overrides 覆盖)
     default_single_position_cap: float = 0.05  # 5% NAV
     # 降级默认市场状态
@@ -170,9 +175,7 @@ class PositionSizingConfig:
 
     def __post_init__(self) -> None:
         if not 0 < self.half_kelly_factor <= 1:
-            raise InvalidPositionInputError(
-                f"half_kelly_factor must be in (0,1], got {self.half_kelly_factor}"
-            )
+            raise InvalidPositionInputError(f"half_kelly_factor must be in (0,1], got {self.half_kelly_factor}")
         if self.vol_sigma_multiplier <= 0:
             raise InvalidPositionInputError("vol_sigma_multiplier must be positive")
         if not 0 < self.vol_halve_factor <= 1:
@@ -205,16 +208,16 @@ class SymbolInput:
     """单标的输入数据。"""
 
     symbol: str
-    price: float                                       # 当前价格
-    current_qty: int = 0                               # 当前持仓量(股)
-    avg_daily_volume: float = 0.0                      # 20日均量(股)
-    target_weight: float | None = None                 # 目标权重(D-PF-CORE, None=降级)
-    win_probability: float | None = None               # 胜率p(密度预测, None=降级)
-    win_loss_ratio: float | None = None                # 盈亏比b(密度预测, None=降级)
-    current_volatility: float | None = None            # 当前波动率σ
-    hist_vol_mean: float | None = None                 # 历史波动率均值
-    hist_vol_std: float | None = None                  # 历史波动率标准差
-    strategy_capacity: float = 0.0                     # 策略历史最大持仓市值
+    price: float  # 当前价格
+    current_qty: int = 0  # 当前持仓量(股)
+    avg_daily_volume: float = 0.0  # 20日均量(股)
+    target_weight: float | None = None  # 目标权重(D-PF-CORE, None=降级)
+    win_probability: float | None = None  # 胜率p(密度预测, None=降级)
+    win_loss_ratio: float | None = None  # 盈亏比b(密度预测, None=降级)
+    current_volatility: float | None = None  # 当前波动率σ
+    hist_vol_mean: float | None = None  # 历史波动率均值
+    hist_vol_std: float | None = None  # 历史波动率标准差
+    strategy_capacity: float = 0.0  # 策略历史最大持仓市值
     is_st: bool = False
     market_cap_yi: float = 0.0
 
@@ -224,21 +227,23 @@ class PositionSizingInput:
     """仓位决策聚合输入。"""
 
     symbols: list[SymbolInput]
-    nav: float                                         # 当前净值(AUM)
+    nav: float  # 当前净值(AUM)
     strategy_id: str
     trade_date: date
-    risk_limits: RiskLimits | None = None              # D-RISK (CTR-003)
-    capital_curve_discount: float = 1.0                # POS-007 资金曲线缩放系数
-    capital_curve_cap: float = 1.0                     # POS-007 仓位上限
-    defensive_only: bool = False                       # POS-007 EMERGENCY 禁止新开仓
-    max_investable: float | None = None                # POS-006 可投资上限
-    calendar_cap_adjustment: float = 1.0               # POS-017 日历仓位上限调整
-    calendar_block_new: bool = False                   # POS-017 全面否决新开仓
+    risk_limits: RiskLimits | None = None  # D-RISK (CTR-003)
+    capital_curve_discount: float = 1.0  # POS-007 资金曲线缩放系数
+    capital_curve_cap: float = 1.0  # POS-007 仓位上限
+    defensive_only: bool = False  # POS-007 EMERGENCY 禁止新开仓
+    max_investable: float | None = None  # POS-006 可投资上限
+    calendar_cap_adjustment: float = 1.0  # POS-017 日历仓位上限调整
+    calendar_block_new: bool = False  # POS-017 全面否决新开仓
     calendar_block_symbols: frozenset[str] = field(default_factory=frozenset)
     calendar_force_clear_symbols: frozenset[str] = field(default_factory=frozenset)
-    var_95: float | None = None                        # 前瞻95%VaR(D-RISK/D-ML-SERVE)
-    cvar_95: float | None = None                       # 前瞻95%CVaR
-    market_regime: SizingMarketRegime | None = None    # D-SIGNAL
+    var_95: float | None = None  # 前瞻95%VaR(D-RISK/D-ML-SERVE)
+    cvar_95: float | None = None  # 前瞻95%CVaR
+    market_regime: SizingMarketRegime | None = None  # D-SIGNAL (12态, §7.3 v8.1)
+    is_event_driven: bool = False  # overlay: 事件驱动→基础仓位×70%
+    is_sector_rotation: bool = False  # overlay: 板块轮动→行业集中度放宽(POS-010消费, POS-001透传)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -253,7 +258,7 @@ class PositionTarget:
     symbol: str
     target_qty: int
     current_qty: int
-    delta: int                                         # target - current
+    delta: int  # target - current
     target_weight: float
     reason: str
 
@@ -264,7 +269,7 @@ class ConstraintCheck:
 
     constraint_id: str
     passed: bool
-    action: str                                        # "pass" / "truncate" / "veto" / "warn" / "degraded"
+    action: str  # "pass" / "truncate" / "veto" / "warn" / "degraded"
     detail: str = ""
 
 
@@ -395,9 +400,7 @@ class PositionSizingEngine:
 
         # 组合级上下文准备: 市场状态 + C13 总仓位上限
         state = _SizingState()
-        state.regime, state.market_cap, state.total_cap, state.degraded = (
-            self._resolve_market_context(inp, cfg, checks)
-        )
+        state.regime, state.market_cap, state.total_cap, state.degraded = self._resolve_market_context(inp, cfg, checks)
         # C12 风控单票上限 + 总杠杆 (RiskLimits.symbol_overrides 覆盖默认)
         single_cap = cfg.default_single_position_cap
         gross_leverage = 1.0
@@ -408,13 +411,19 @@ class PositionSizingEngine:
         var_adjust = 1.0
         if inp.var_95 is not None and inp.var_95 > cfg.var_threshold:
             var_adjust *= cfg.var_reduce_factor
-            checks.append(ConstraintCheck("C4", False, "truncate", f"VaR {inp.var_95:.4f}>{cfg.var_threshold} → ×{cfg.var_reduce_factor}"))
+            checks.append(
+                ConstraintCheck(
+                    "C4", False, "truncate", f"VaR {inp.var_95:.4f}>{cfg.var_threshold} → ×{cfg.var_reduce_factor}"
+                )
+            )
         if inp.cvar_95 is not None and inp.cvar_95 > cfg.cvar_threshold:
             var_adjust *= cfg.cvar_reduce_factor
-            checks.append(ConstraintCheck("C5", False, "truncate", f"CVaR {inp.cvar_95:.4f}>{cfg.cvar_threshold} → ×{cfg.cvar_reduce_factor}"))
-        ctx = _SymbolSizingContext(
-            cfg, single_cap, state.total_cap, var_adjust, gross_leverage, checks
-        )
+            checks.append(
+                ConstraintCheck(
+                    "C5", False, "truncate", f"CVaR {inp.cvar_95:.4f}>{cfg.cvar_threshold} → ×{cfg.cvar_reduce_factor}"
+                )
+            )
+        ctx = _SymbolSizingContext(cfg, single_cap, state.total_cap, var_adjust, gross_leverage, checks)
 
         # 逐标的处理: 预筛+Kelly+约束
         for sym in inp.symbols:
@@ -444,8 +453,12 @@ class PositionSizingEngine:
         if inp.market_regime is None:
             degraded = True
             checks.append(ConstraintCheck("C13", False, "degraded", "D-SIGNAL缺失, 默认状态④(40%)"))
-        market_cap = MARKET_REGIME_CAPS[regime]  # EVENT_DRIVEN 已为 0.70 (基础×70%)
+        market_cap = MARKET_REGIME_CAPS[regime]
         total_cap = min(market_cap, inp.capital_curve_cap, inp.calendar_cap_adjustment)
+        # overlay: 事件驱动叠加态 → 基础仓位×70% (§7.3 v8.1, 正交修饰, 不占 enum)
+        if inp.is_event_driven:
+            total_cap *= 0.70
+            checks.append(ConstraintCheck("overlay", True, "truncate", "事件驱动overlay ×0.70"))
         return regime, market_cap, total_cap, degraded
 
     # ── 逐标的处理 ──
@@ -520,19 +533,21 @@ class PositionSizingEngine:
 
     # ── [0] 预筛阶段 ──
 
-    def _prefilter(
-        self, sym: SymbolInput, inp: PositionSizingInput, ctx: _SymbolSizingContext
-    ) -> bool | None:
+    def _prefilter(self, sym: SymbolInput, inp: PositionSizingInput, ctx: _SymbolSizingContext) -> bool | None:
         """预筛: 退出时间检查 + 流动性上限预筛。返回 True=通过, None=跳过。"""
         cfg = ctx.cfg
         # C7 退出时间硬限 (基于当前持仓)
         if sym.avg_daily_volume > 0 and sym.current_qty > 0:
             exit_days = sym.current_qty / sym.avg_daily_volume
             if exit_days > cfg.exit_days_hard:
-                ctx.checks.append(ConstraintCheck(
-                    "C7", False, "truncate",
-                    f"{sym.symbol} 退出时间 {exit_days:.1f}>{cfg.exit_days_hard}天 → 强制减仓",
-                ))
+                ctx.checks.append(
+                    ConstraintCheck(
+                        "C7",
+                        False,
+                        "truncate",
+                        f"{sym.symbol} 退出时间 {exit_days:.1f}>{cfg.exit_days_hard}天 → 强制减仓",
+                    )
+                )
 
         # 流动性预筛: 最大可能仓位的参与率
         if sym.avg_daily_volume > 0 and sym.price > 0:
@@ -540,10 +555,14 @@ class PositionSizingEngine:
             max_participation = max_qty / sym.avg_daily_volume
             if max_participation > cfg.max_participation_rate:
                 # 低流动性标的: Kelly 后会被精确否决, 但先标记
-                ctx.checks.append(ConstraintCheck(
-                    "prefilter", False, "warn",
-                    f"{sym.symbol} 流动性预筛: max参与率 {max_participation:.4f}>{cfg.max_participation_rate}",
-                ))
+                ctx.checks.append(
+                    ConstraintCheck(
+                        "prefilter",
+                        False,
+                        "warn",
+                        f"{sym.symbol} 流动性预筛: max参与率 {max_participation:.4f}>{cfg.max_participation_rate}",
+                    )
+                )
 
         return True
 
@@ -598,18 +617,26 @@ class PositionSizingEngine:
         ):
             threshold = sym.hist_vol_mean + cfg.vol_sigma_multiplier * sym.hist_vol_std
             if sym.current_volatility > threshold:
-                checks.append(ConstraintCheck(
-                    "C3", False, "truncate",
-                    f"{sym.symbol} 波动率 {sym.current_volatility:.4f}>{threshold:.4f} → ×{cfg.vol_halve_factor}",
-                ))
+                checks.append(
+                    ConstraintCheck(
+                        "C3",
+                        False,
+                        "truncate",
+                        f"{sym.symbol} 波动率 {sym.current_volatility:.4f}>{threshold:.4f} → ×{cfg.vol_halve_factor}",
+                    )
+                )
                 return cfg.vol_halve_factor
         return 1.0
 
     # ── C7/C8 退出时间减仓 ──
 
     def _apply_exit_time_adjust(
-        self, sym: SymbolInput, inp: PositionSizingInput, cfg: PositionSizingConfig,
-        weight: float, checks: list[ConstraintCheck],
+        self,
+        sym: SymbolInput,
+        inp: PositionSizingInput,
+        cfg: PositionSizingConfig,
+        weight: float,
+        checks: list[ConstraintCheck],
     ) -> float:
         """C7/C8: 退出时间>3天强制减仓, >1天折扣。"""
         if sym.avg_daily_volume <= 0 or sym.current_qty <= 0:
@@ -621,18 +648,26 @@ class PositionSizingEngine:
             exitable_weight = exitable_qty * sym.price / inp.nav if inp.nav > 0 else 0.0
             return min(weight, exitable_weight)
         if exit_days > cfg.exit_days_soft:
-            checks.append(ConstraintCheck(
-                "C8", False, "truncate",
-                f"{sym.symbol} 退出时间 {exit_days:.1f}>{cfg.exit_days_soft}天 → ×{cfg.exit_soft_discount}",
-            ))
+            checks.append(
+                ConstraintCheck(
+                    "C8",
+                    False,
+                    "truncate",
+                    f"{sym.symbol} 退出时间 {exit_days:.1f}>{cfg.exit_days_soft}天 → ×{cfg.exit_soft_discount}",
+                )
+            )
             return weight * cfg.exit_soft_discount
         return weight
 
     # ── C6/C9/C11 否决 ──
 
     def _apply_veto_constraints(
-        self, sym: SymbolInput, inp: PositionSizingInput, ctx: _SymbolSizingContext,
-        weight: float, vol_adj: float,
+        self,
+        sym: SymbolInput,
+        inp: PositionSizingInput,
+        ctx: _SymbolSizingContext,
+        weight: float,
+        vol_adj: float,
     ) -> tuple[bool, tuple[PositionTarget, float, float] | None]:
         """C6/C9/C11 否决。返回(vetoed, result)。
 
@@ -646,7 +681,11 @@ class PositionSizingEngine:
 
         # C6 参与率否决 (精确检查, 用实际目标量): 有现仓保持, 无现仓跳过
         if participation > cfg.max_participation_rate:
-            ctx.checks.append(ConstraintCheck("C6", False, "veto", f"{sym.symbol} 参与率 {participation:.4f}>{cfg.max_participation_rate}"))
+            ctx.checks.append(
+                ConstraintCheck(
+                    "C6", False, "veto", f"{sym.symbol} 参与率 {participation:.4f}>{cfg.max_participation_rate}"
+                )
+            )
             if sym.current_qty > 0:
                 return True, (self._make_target(sym, sym.current_qty, "参与率否决, 保持现仓", inp.nav), 0.0, vol_adj)
             return True, None
@@ -658,43 +697,56 @@ class PositionSizingEngine:
         # C11 冲击成本否决 (sqrt模型): 有现仓保持, 无现仓跳过
         impact_cost = cfg.impact_cost_coeff * math.sqrt(participation) if participation > 0 else 0.0
         if impact_cost > cfg.max_impact_cost:
-            ctx.checks.append(ConstraintCheck("C11", False, "veto", f"{sym.symbol} 冲击成本 {impact_cost:.6f}>{cfg.max_impact_cost}"))
+            ctx.checks.append(
+                ConstraintCheck("C11", False, "veto", f"{sym.symbol} 冲击成本 {impact_cost:.6f}>{cfg.max_impact_cost}")
+            )
             if sym.current_qty > 0:
                 return True, (self._make_target(sym, sym.current_qty, "冲击成本否决, 保持现仓", inp.nav), 0.0, vol_adj)
             return True, None
 
         return False, None
 
-    def _check_capacity_veto(
-        self, sym: SymbolInput, inp: PositionSizingInput, ctx: _SymbolSizingContext
-    ) -> bool:
+    def _check_capacity_veto(self, sym: SymbolInput, inp: PositionSizingInput, ctx: _SymbolSizingContext) -> bool:
         """C9: 容量超 veto_ratio 且无持仓 → 跳过。返回 True=跳过(仅当无现仓)。"""
         if sym.strategy_capacity <= 0 or inp.nav <= 0:
             return False
         cfg = ctx.cfg
         cap_ratio = sym.strategy_capacity / inp.nav
         if cap_ratio > cfg.capacity_veto_ratio:
-            ctx.checks.append(ConstraintCheck("C9", False, "veto", f"{sym.symbol} 容量 {cap_ratio:.2f}>{cfg.capacity_veto_ratio} → 否决新资金"))
+            ctx.checks.append(
+                ConstraintCheck(
+                    "C9", False, "veto", f"{sym.symbol} 容量 {cap_ratio:.2f}>{cfg.capacity_veto_ratio} → 否决新资金"
+                )
+            )
             return sym.current_qty == 0  # 仅无现仓时跳过; 有现仓则继续(仅记录)
         if cap_ratio > cfg.capacity_warn_ratio:
-            ctx.checks.append(ConstraintCheck("C9", False, "warn", f"{sym.symbol} 容量 {cap_ratio:.2f}>{cfg.capacity_warn_ratio}"))
+            ctx.checks.append(
+                ConstraintCheck("C9", False, "warn", f"{sym.symbol} 容量 {cap_ratio:.2f}>{cfg.capacity_warn_ratio}")
+            )
         return False
 
     # ── 组合级约束缩放 ──
 
     def _apply_portfolio_scaling(
-        self, inp: PositionSizingInput, state: _SizingState,
-        gross_leverage: float, checks: list[ConstraintCheck],
+        self,
+        inp: PositionSizingInput,
+        state: _SizingState,
+        gross_leverage: float,
+        checks: list[ConstraintCheck],
     ) -> None:
         """组合级约束: C2 风险配额 + POS-007 资金曲线 + POS-006 现金 + defensive_only。"""
         # C2 风险配额 (组合级: total_exposure <= gross_leverage × total_cap)
         max_exposure = min(gross_leverage, state.total_cap)
         if state.total_weight > max_exposure:
             scale = max_exposure / state.total_weight if state.total_weight > 0 else 0.0
-            checks.append(ConstraintCheck(
-                "C2", False, "truncate",
-                f"总仓位 {state.total_weight:.4f}>{max_exposure:.4f} → 等比缩放 ×{scale:.4f}",
-            ))
+            checks.append(
+                ConstraintCheck(
+                    "C2",
+                    False,
+                    "truncate",
+                    f"总仓位 {state.total_weight:.4f}>{max_exposure:.4f} → 等比缩放 ×{scale:.4f}",
+                )
+            )
             state.positions, state.total_weight = self._rescale_positions(state.positions, inp, scale)
 
         # POS-007 资金曲线缩放
@@ -720,10 +772,7 @@ class PositionSizingEngine:
         self, inp: PositionSizingInput, checks: list[ConstraintCheck], state: _SizingState
     ) -> PositionSizingPlan:
         """构造最终 PositionSizingPlan。"""
-        vol_adjustment = (
-            state.vol_product ** (1.0 / state.vol_count)
-            if state.vol_count > 0 else 1.0
-        )
+        vol_adjustment = state.vol_product ** (1.0 / state.vol_count) if state.vol_count > 0 else 1.0
         idempotency_key = self._make_idempotency_key(inp)
         cash_reserve = inp.nav * (1.0 - state.total_weight)
         cc_discount = inp.capital_curve_discount
@@ -813,10 +862,7 @@ class PositionSizingEngine:
 
     def _make_idempotency_key(self, inp: PositionSizingInput) -> str:
         """生成幂等键: strategy_id:trade_date:hash(target_weights)[:8]。"""
-        weights = sorted(
-            (s.symbol, s.target_weight if s.target_weight is not None else 0.0)
-            for s in inp.symbols
-        )
+        weights = sorted((s.symbol, s.target_weight if s.target_weight is not None else 0.0) for s in inp.symbols)
         weights_str = ",".join(f"{sym}:{w:.6f}" for sym, w in weights)
         digest = hashlib.md5(weights_str.encode("utf-8")).hexdigest()[:8]
         return f"{inp.strategy_id}:{inp.trade_date.isoformat()}:{digest}"
