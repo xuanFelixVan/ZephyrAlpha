@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-02T09:36:29Z
+# 自动生成于 2026-08-02T09:47:29Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-02T09:36:29Z'
+generated_at: '2026-08-02T09:47:29Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 378
+total_scripts: 379
 with_manifest: 318
-missing_manifest: 60
+missing_manifest: 61
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -17,7 +17,7 @@ categories:
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
-  governance:d3_metadata: 23
+  governance:d3_metadata: 24
   governance:d4_paths: 4
   governance:d5_architecture: 107
   governance:d6_security: 15
@@ -951,6 +951,16 @@ scripts:
   description: 相对路径引用检测（DOC-004 — 应使用绝对路径）
   tags:
   - Quick
+- name: d3_metadata/add_module_translation.py
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d3_metadata/auto_generate_index.py
   owner: governance:d3_metadata
   dimensions:

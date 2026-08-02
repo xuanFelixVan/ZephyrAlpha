@@ -6,7 +6,7 @@ status: Active
 version: "0.1.0"
 design_maturity: production
 ttl: permanent
-responsibility_domain: D_EX_CORE
+responsibility_domain: 
 ---
 
 # 盘中持仓对账器 (Position Reconciler) — D-EX-CORE-56
