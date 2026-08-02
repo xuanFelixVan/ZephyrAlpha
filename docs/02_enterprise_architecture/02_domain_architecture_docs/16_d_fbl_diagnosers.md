@@ -196,10 +196,10 @@ flowchart TD
     src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py
     src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py
     src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py
-    src_zephyr_feedback_loop_diagnosers_cognitive_init_py["diagnosers/cognitive 包入口<br/>管理diagnosers.cognitive子包的加载和懒导入<br/>文件: cognitive/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["diagnosers/diagnosis 包入口<br/>管理diagnosers.diagnosis子包的加载和懒导入<br/>文件: diagnosis/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_diagnosers_health_init_py["diagnosers/health 包入口<br/>管理diagnosers.health子包的加载和懒导入<br/>文件: health/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_diagnosers_reliability_init_py["diagnosers/reliability 包入口<br/>管理diagnosers.reliability子包的加载和懒导入<br/>文件: reliability/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_init_py["diagnosers/cognitive 包入口<br/>诊断器/认知 包入口，整合认知相关子模块导出<br/>文件: cognitive/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["diagnosers/diagnosis 包入口<br/>diagnosis 包入口，整合diagnosis相关子模块导出<br/>文件: diagnosis/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_diagnosers_health_init_py["diagnosers/health 包入口<br/>诊断器/健康 包入口，整合健康相关子模块导出<br/>文件: health/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_diagnosers_reliability_init_py["diagnosers/reliability 包入口<br/>诊断器/可靠性 包入口，整合可靠性相关子模块导出<br/>文件: reliability/__init__.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_diagnosers_cognitive_init_py ~~~ src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_feedback_loop_diagnosers_diagnosis_init_py ~~~ src_zephyr_feedback_loop_diagnosers_health_init_py
     src_zephyr_feedback_loop_diagnosers_health_init_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_init_py
@@ -213,8 +213,8 @@ flowchart TD
     src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py -->|导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
@@ -377,10 +377,10 @@ flowchart TD
     src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py
     src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py
     src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py
-    src_zephyr_feedback_loop_diagnosers_cognitive_init_py["diagnosers/cognitive 包入口<br/>管理diagnosers.cognitive子包的加载和懒导入<br/>文件: cognitive/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["diagnosers/diagnosis 包入口<br/>管理diagnosers.diagnosis子包的加载和懒导入<br/>文件: diagnosis/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_diagnosers_health_init_py["diagnosers/health 包入口<br/>管理diagnosers.health子包的加载和懒导入<br/>文件: health/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_diagnosers_reliability_init_py["diagnosers/reliability 包入口<br/>管理diagnosers.reliability子包的加载和懒导入<br/>文件: reliability/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_diagnosers_cognitive_init_py["diagnosers/cognitive 包入口<br/>诊断器/认知 包入口，整合认知相关子模块导出<br/>文件: cognitive/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["diagnosers/diagnosis 包入口<br/>diagnosis 包入口，整合diagnosis相关子模块导出<br/>文件: diagnosis/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_diagnosers_health_init_py["diagnosers/health 包入口<br/>诊断器/健康 包入口，整合健康相关子模块导出<br/>文件: health/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_diagnosers_reliability_init_py["diagnosers/reliability 包入口<br/>诊断器/可靠性 包入口，整合可靠性相关子模块导出<br/>文件: reliability/__init__.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_diagnosers_cognitive_init_py ~~~ src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_feedback_loop_diagnosers_diagnosis_init_py ~~~ src_zephyr_feedback_loop_diagnosers_health_init_py
     src_zephyr_feedback_loop_diagnosers_health_init_py ~~~ src_zephyr_feedback_loop_diagnosers_reliability_init_py

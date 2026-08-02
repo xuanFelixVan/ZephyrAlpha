@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>管理zephyr.alt_data子包的加载和懒导入<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>管理alt_data._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>管理alt_data.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>管理alt_data.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_infrastructure_init_py["alt_data/infrastructure 包入口<br/>管理alt_data.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_models_init_py["alt_data/models 包入口<br/>管理alt_data.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_services_init_py["alt_data/services 包入口<br/>管理alt_data.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>另类数据 包入口，整合另类数据相关子模块导出<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>另类数据/扩展 包入口，整合扩展相关子模块导出<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>另类数据/接口 包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>另类数据/核心 包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_infrastructure_init_py["alt_data/infrastructure 包入口<br/>另类数据/基础设施<br/>包入口，整合基础设施相关子模块导出<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_models_init_py["alt_data/models 包入口<br/>另类数据/模型 包入口，整合模型相关子模块导出<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_services_init_py["alt_data/services 包入口<br/>另类数据/服务 包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_init_py ~~~ src_zephyr_alt_data_extensions_init_py
     src_zephyr_alt_data_extensions_init_py ~~~ src_zephyr_alt_data_api_init_py
     src_zephyr_alt_data_api_init_py ~~~ src_zephyr_alt_data_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>管理zephyr.alt_data子包的加载和懒导入<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>管理alt_data._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>管理alt_data.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>管理alt_data.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_infrastructure_init_py["alt_data/infrastructure 包入口<br/>管理alt_data.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_models_init_py["alt_data/models 包入口<br/>管理alt_data.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_alt_data_services_init_py["alt_data/services 包入口<br/>管理alt_data.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_init_py["zephyr/alt_data 包入口<br/>另类数据 包入口，整合另类数据相关子模块导出<br/>文件: alt_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_extensions_init_py["alt_data/_extensions 包入口<br/>另类数据/扩展 包入口，整合扩展相关子模块导出<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_api_init_py["alt_data/api 包入口<br/>另类数据/接口 包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_core_init_py["alt_data/core 包入口<br/>另类数据/核心 包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_infrastructure_init_py["alt_data/infrastructure 包入口<br/>另类数据/基础设施<br/>包入口，整合基础设施相关子模块导出<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_models_init_py["alt_data/models 包入口<br/>另类数据/模型 包入口，整合模型相关子模块导出<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_alt_data_services_init_py["alt_data/services 包入口<br/>另类数据/服务 包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_alt_data_init_py ~~~ src_zephyr_alt_data_extensions_init_py
     src_zephyr_alt_data_extensions_init_py ~~~ src_zephyr_alt_data_api_init_py
     src_zephyr_alt_data_api_init_py ~~~ src_zephyr_alt_data_core_init_py

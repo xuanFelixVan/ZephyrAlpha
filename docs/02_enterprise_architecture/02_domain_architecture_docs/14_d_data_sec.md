@@ -53,13 +53,13 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_security_init_py["zephyr/data_security 包入口<br/>管理zephyr.data_security子包的加载和懒导入<br/>文件: data_security/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_extensions_init_py["data_security/_extensions 包入口<br/>管理data_security._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_api_init_py["data_security/api 包入口<br/>管理data_security.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_core_init_py["data_security/core 包入口<br/>管理data_security.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_infrastructure_init_py["data_security/infrastructure 包入口<br/>管理data_security.infrastructure子包的加载和懒导<br/>入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_models_init_py["data_security/models 包入口<br/>管理data_security.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_services_init_py["data_security/services 包入口<br/>管理data_security.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_init_py["zephyr/data_security 包入口<br/>data security 包入口，整合data<br/>security相关子模块导出<br/>文件: data_security/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_extensions_init_py["data_security/_extensions 包入口<br/>data security 扩展<br/>包入口，整合扩展相关子模块导出<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_api_init_py["data_security/api 包入口<br/>data security 接口<br/>包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_core_init_py["data_security/core 包入口<br/>data security 核心<br/>包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_infrastructure_init_py["data_security/infrastructure 包入口<br/>data security 基础设施<br/>包入口，整合基础设施相关子模块导出<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_models_init_py["data_security/models 包入口<br/>data security 模型<br/>包入口，整合模型相关子模块导出<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_services_init_py["data_security/services 包入口<br/>data security 服务<br/>包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_security_init_py ~~~ src_zephyr_data_security_extensions_init_py
     src_zephyr_data_security_extensions_init_py ~~~ src_zephyr_data_security_api_init_py
     src_zephyr_data_security_api_init_py ~~~ src_zephyr_data_security_core_init_py
@@ -80,13 +80,13 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_data_security_init_py["zephyr/data_security 包入口<br/>管理zephyr.data_security子包的加载和懒导入<br/>文件: data_security/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_extensions_init_py["data_security/_extensions 包入口<br/>管理data_security._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_api_init_py["data_security/api 包入口<br/>管理data_security.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_core_init_py["data_security/core 包入口<br/>管理data_security.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_infrastructure_init_py["data_security/infrastructure 包入口<br/>管理data_security.infrastructure子包的加载和懒导<br/>入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_models_init_py["data_security/models 包入口<br/>管理data_security.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_security_services_init_py["data_security/services 包入口<br/>管理data_security.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_init_py["zephyr/data_security 包入口<br/>data security 包入口，整合data<br/>security相关子模块导出<br/>文件: data_security/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_extensions_init_py["data_security/_extensions 包入口<br/>data security 扩展<br/>包入口，整合扩展相关子模块导出<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_api_init_py["data_security/api 包入口<br/>data security 接口<br/>包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_core_init_py["data_security/core 包入口<br/>data security 核心<br/>包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_infrastructure_init_py["data_security/infrastructure 包入口<br/>data security 基础设施<br/>包入口，整合基础设施相关子模块导出<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_models_init_py["data_security/models 包入口<br/>data security 模型<br/>包入口，整合模型相关子模块导出<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_data_security_services_init_py["data_security/services 包入口<br/>data security 服务<br/>包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_security_init_py ~~~ src_zephyr_data_security_extensions_init_py
     src_zephyr_data_security_extensions_init_py ~~~ src_zephyr_data_security_api_init_py
     src_zephyr_data_security_api_init_py ~~~ src_zephyr_data_security_core_init_py

@@ -428,14 +428,14 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "扩展 包入口，整合扩展相关子模块导出"
+  plain_zh: "signal ashare 扩展 包入口，整合扩展相关子模块导出"
 - module_path: src/zephyr/signal_ashare/api/__init__.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "接口 包入口，整合接口相关子模块导出"
+  plain_zh: "signal ashare 接口 包入口，整合接口相关子模块导出"
 - module_path: src/zephyr/signal_ashare/capital_flow_pattern_analyzer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 资本流模式分析器
@@ -449,7 +449,7 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "核心 包入口，整合核心相关子模块导出"
+  plain_zh: "signal ashare 核心 包入口，整合核心相关子模块导出"
 - module_path: src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 双引擎融合决策引擎
@@ -463,7 +463,7 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "基础设施 包入口，整合基础设施相关子模块导出"
+  plain_zh: "signal ashare 基础设施 包入口，整合基础设施相关子模块导出"
 - module_path: src/zephyr/signal_ashare/institutional_behavior_analyzer.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 机构行为分析器
@@ -491,7 +491,7 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "模型 包入口，整合模型相关子模块导出"
+  plain_zh: "signal ashare 模型 包入口，整合模型相关子模块导出"
 - module_path: src/zephyr/signal_ashare/quant_short_term_strength_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 量化短期强度引擎
@@ -512,7 +512,7 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "signal ashare 服务 包入口，整合服务相关子模块导出"
 - module_path: src/zephyr/signal_ashare/short_term_stock_selector.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 短期股票选择器
@@ -1681,42 +1681,42 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "扩展 包入口，整合扩展相关子模块导出"
+  plain_zh: "cross asset 扩展 包入口，整合扩展相关子模块导出"
 - module_path: src/zephyr/cross_asset/api/__init__.py
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "接口 包入口，整合接口相关子模块导出"
+  plain_zh: "cross asset 接口 包入口，整合接口相关子模块导出"
 - module_path: src/zephyr/cross_asset/core/__init__.py
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "核心 包入口，整合核心相关子模块导出"
+  plain_zh: "cross asset 核心 包入口，整合核心相关子模块导出"
 - module_path: src/zephyr/cross_asset/infrastructure/__init__.py
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "基础设施 包入口，整合基础设施相关子模块导出"
+  plain_zh: "cross asset 基础设施 包入口，整合基础设施相关子模块导出"
 - module_path: src/zephyr/cross_asset/models/__init__.py
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "模型 包入口，整合模型相关子模块导出"
+  plain_zh: "cross asset 模型 包入口，整合模型相关子模块导出"
 - module_path: src/zephyr/cross_asset/services/__init__.py
   domain_id: D_CROSS_ASSET
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "cross asset 服务 包入口，整合服务相关子模块导出"
 - module_path: schemas/categories/cross_validation_log.py
   domain_id: D_DATA
   name_zh: 跨验证日志
@@ -2899,42 +2899,42 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "扩展 包入口，整合扩展相关子模块导出"
+  plain_zh: "data eng 扩展 包入口，整合扩展相关子模块导出"
 - module_path: src/zephyr/data_eng/api/__init__.py
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "接口 包入口，整合接口相关子模块导出"
+  plain_zh: "data eng 接口 包入口，整合接口相关子模块导出"
 - module_path: src/zephyr/data_eng/core/__init__.py
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "核心 包入口，整合核心相关子模块导出"
+  plain_zh: "data eng 核心 包入口，整合核心相关子模块导出"
 - module_path: src/zephyr/data_eng/infrastructure/__init__.py
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "基础设施 包入口，整合基础设施相关子模块导出"
+  plain_zh: "data eng 基础设施 包入口，整合基础设施相关子模块导出"
 - module_path: src/zephyr/data_eng/models/__init__.py
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "模型 包入口，整合模型相关子模块导出"
+  plain_zh: "data eng 模型 包入口，整合模型相关子模块导出"
 - module_path: src/zephyr/data_eng/services/__init__.py
   domain_id: D_DATA_ENG
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "data eng 服务 包入口，整合服务相关子模块导出"
 - module_path: src/zephyr/data_governance/__init__.py
   domain_id: D_DATA_GOV
   name_zh: 包入口
@@ -2948,21 +2948,21 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "扩展 包入口，整合扩展相关子模块导出"
+  plain_zh: "data governance 扩展 包入口，整合扩展相关子模块导出"
 - module_path: src/zephyr/data_governance/api/__init__.py
   domain_id: D_DATA_GOV
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "接口 包入口，整合接口相关子模块导出"
+  plain_zh: "data governance 接口 包入口，整合接口相关子模块导出"
 - module_path: src/zephyr/data_governance/core/__init__.py
   domain_id: D_DATA_GOV
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "核心 包入口，整合核心相关子模块导出"
+  plain_zh: "data governance 核心 包入口，整合核心相关子模块导出"
 - module_path: src/zephyr/data_governance/core/lineage_tracker.py
   domain_id: D_DATA_GOV
   name_zh: lineage追踪器
@@ -2990,21 +2990,21 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "基础设施 包入口，整合基础设施相关子模块导出"
+  plain_zh: "data governance 基础设施 包入口，整合基础设施相关子模块导出"
 - module_path: src/zephyr/data_governance/models/__init__.py
   domain_id: D_DATA_GOV
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "模型 包入口，整合模型相关子模块导出"
+  plain_zh: "data governance 模型 包入口，整合模型相关子模块导出"
 - module_path: src/zephyr/data_governance/services/__init__.py
   domain_id: D_DATA_GOV
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "data governance 服务 包入口，整合服务相关子模块导出"
 - module_path: src/zephyr/data_security/__init__.py
   domain_id: D_DATA_SEC
   name_zh: 包入口
@@ -3018,42 +3018,42 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "扩展 包入口，整合扩展相关子模块导出"
+  plain_zh: "data security 扩展 包入口，整合扩展相关子模块导出"
 - module_path: src/zephyr/data_security/api/__init__.py
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "接口 包入口，整合接口相关子模块导出"
+  plain_zh: "data security 接口 包入口，整合接口相关子模块导出"
 - module_path: src/zephyr/data_security/core/__init__.py
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "核心 包入口，整合核心相关子模块导出"
+  plain_zh: "data security 核心 包入口，整合核心相关子模块导出"
 - module_path: src/zephyr/data_security/infrastructure/__init__.py
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "基础设施 包入口，整合基础设施相关子模块导出"
+  plain_zh: "data security 基础设施 包入口，整合基础设施相关子模块导出"
 - module_path: src/zephyr/data_security/models/__init__.py
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "模型 包入口，整合模型相关子模块导出"
+  plain_zh: "data security 模型 包入口，整合模型相关子模块导出"
 - module_path: src/zephyr/data_security/services/__init__.py
   domain_id: D_DATA_SEC
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "data security 服务 包入口，整合服务相关子模块导出"
 - module_path: src/zephyr/digital_twin/__init__.py
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
@@ -3067,42 +3067,42 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "扩展 包入口，整合扩展相关子模块导出"
+  plain_zh: "digital twin 扩展 包入口，整合扩展相关子模块导出"
 - module_path: src/zephyr/digital_twin/api/__init__.py
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "接口 包入口，整合接口相关子模块导出"
+  plain_zh: "digital twin 接口 包入口，整合接口相关子模块导出"
 - module_path: src/zephyr/digital_twin/core/__init__.py
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "核心 包入口，整合核心相关子模块导出"
+  plain_zh: "digital twin 核心 包入口，整合核心相关子模块导出"
 - module_path: src/zephyr/digital_twin/infrastructure/__init__.py
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "基础设施 包入口，整合基础设施相关子模块导出"
+  plain_zh: "digital twin 基础设施 包入口，整合基础设施相关子模块导出"
 - module_path: src/zephyr/digital_twin/models/__init__.py
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "模型 包入口，整合模型相关子模块导出"
+  plain_zh: "digital twin 模型 包入口，整合模型相关子模块导出"
 - module_path: src/zephyr/digital_twin/services/__init__.py
   domain_id: D_DIGITAL_TWIN
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "digital twin 服务 包入口，整合服务相关子模块导出"
 - module_path: src/zephyr/execution_simulation/__init__.py
   domain_id: D_EXEC_SIM
   name_zh: 包入口
@@ -3116,42 +3116,42 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "扩展 包入口，整合扩展相关子模块导出"
+  plain_zh: "execution simulation 扩展 包入口，整合扩展相关子模块导出"
 - module_path: src/zephyr/execution_simulation/api/__init__.py
   domain_id: D_EXEC_SIM
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "接口 包入口，整合接口相关子模块导出"
+  plain_zh: "execution simulation 接口 包入口，整合接口相关子模块导出"
 - module_path: src/zephyr/execution_simulation/core/__init__.py
   domain_id: D_EXEC_SIM
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "核心 包入口，整合核心相关子模块导出"
+  plain_zh: "execution simulation 核心 包入口，整合核心相关子模块导出"
 - module_path: src/zephyr/execution_simulation/infrastructure/__init__.py
   domain_id: D_EXEC_SIM
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "基础设施 包入口，整合基础设施相关子模块导出"
+  plain_zh: "execution simulation 基础设施 包入口，整合基础设施相关子模块导出"
 - module_path: src/zephyr/execution_simulation/models/__init__.py
   domain_id: D_EXEC_SIM
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "模型 包入口，整合模型相关子模块导出"
+  plain_zh: "execution simulation 模型 包入口，整合模型相关子模块导出"
 - module_path: src/zephyr/execution_simulation/services/__init__.py
   domain_id: D_EXEC_SIM
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "execution simulation 服务 包入口，整合服务相关子模块导出"
 - module_path: src/zephyr/ex_core/adapters/__init__.py
   domain_id: D_EX_CORE
   name_zh: 包入口
@@ -3340,21 +3340,21 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "扩展 包入口，整合扩展相关子模块导出"
+  plain_zh: "ex sor 扩展 包入口，整合扩展相关子模块导出"
 - module_path: src/zephyr/ex_sor/api/__init__.py
   domain_id: D_EX_SOR
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "接口 包入口，整合接口相关子模块导出"
+  plain_zh: "ex sor 接口 包入口，整合接口相关子模块导出"
 - module_path: src/zephyr/ex_sor/core/__init__.py
   domain_id: D_EX_SOR
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "核心 包入口，整合核心相关子模块导出"
+  plain_zh: "ex sor 核心 包入口，整合核心相关子模块导出"
 - module_path: src/zephyr/ex_sor/core/algo_execution_selector.py
   domain_id: D_EX_SOR
   name_zh: 算法执行选择器
@@ -3410,21 +3410,21 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "基础设施 包入口，整合基础设施相关子模块导出"
+  plain_zh: "ex sor 基础设施 包入口，整合基础设施相关子模块导出"
 - module_path: src/zephyr/ex_sor/models/__init__.py
   domain_id: D_EX_SOR
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "模型 包入口，整合模型相关子模块导出"
+  plain_zh: "ex sor 模型 包入口，整合模型相关子模块导出"
 - module_path: src/zephyr/ex_sor/services/__init__.py
   domain_id: D_EX_SOR
   name_zh: 包入口
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "ex sor 服务 包入口，整合服务相关子模块导出"
 - module_path: src/zephyr/ex_sor/services/execution_quality_scorer.py
   domain_id: D_EX_SOR
   name_zh: 执行质量评分器
@@ -7113,7 +7113,7 @@ entries:
   name_en: default_experiment_pipeline
   desc_zh: "实验管线具体实现。实现 ExperimentPipelineBase (OCP 实验-EXP)。"
   desc_en: ''
-  plain_zh: "默认实验管线，implementations相关功能（default experiment pipeline）"
+  plain_zh: "implementations 包入口，整合implementations相关子模块导出"
 - module_path: src/zephyr/governance/implementations/default_security_gateway.py
   domain_id: D_GOVERNANCE
   name_zh: 默认安全网关
@@ -11446,7 +11446,7 @@ entries:
   name_en: list_phase0_tasks
   desc_zh: '[INVARIANTS] 仅查询不修改; 连接失败→exit 1'
   desc_en: ''
-  plain_zh: "listphase0任务，实现业务功能（list phase0 tasks）"
+  plain_zh: " archive one off 包入口，整合one off相关子模块导出"
 - module_path: scripts/governance/_archive/one_off/phase_a_backup.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 阶段a备份
@@ -11607,7 +11607,7 @@ entries:
   name_en: vms_cron_monitor
   desc_zh: "P2 · 运维基础设施收尾——定时 task 封装"
   desc_en: ''
-  plain_zh: "vmscron监控器，实现业务功能（vms cron monitor）"
+  plain_zh: " archive vms ri 包入口，整合vms ri相关子模块导出"
 - module_path: scripts/governance/_archive/vms_ri/vms_cross_file_check.py
   domain_id: D_GOV_SCRIPTS
   name_zh: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF
@@ -11768,7 +11768,7 @@ entries:
   name_en: list_phase0_tasks
   desc_zh: '[INVARIANTS] 仅查询不修改; 连接失败→exit 1'
   desc_en: ''
-  plain_zh: "listphase0任务，实现业务功能（list phase0 tasks）"
+  plain_zh: " tasks 包入口，整合 tasks相关子模块导出"
 - module_path: scripts/governance/_tasks/task_show.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 任务show
@@ -14008,7 +14008,7 @@ entries:
   name_en: vms_cron_monitor
   desc_zh: "P2 · 运维基础设施收尾——定时 task 封装"
   desc_en: ''
-  plain_zh: "vmscron监控器，实现业务功能（vms cron monitor）"
+  plain_zh: "vms 包入口，整合vms相关子模块导出"
 - module_path: scripts/governance/vms/vms_cross_file_check.py
   domain_id: D_GOV_SCRIPTS
   name_zh: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TASK-INF
@@ -16486,7 +16486,7 @@ entries:
   name_en: data_quality_error
   desc_zh: 'CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误'
   desc_en: ''
-  plain_zh: "数据质量错误，错误相关功能（data quality error）"
+  plain_zh: "数据质量错误，定义集成层行情质量门禁不通过异常"
 - module_path: src/zephyr/integration/shared/contracts/errors/execution_rejection_error.py
   domain_id: D_INTEGRATION
   name_zh: 执行拒绝错误
@@ -16500,7 +16500,7 @@ entries:
   name_en: factor_computation_error
   desc_zh: 'CTR-ERR-002: FactorComputationError / 因子计算失败错误'
   desc_en: ''
-  plain_zh: "因子computation错误，错误相关功能（factor computation error）"
+  plain_zh: "因子计算错误，定义集成层因子计算失败异常"
 - module_path: src/zephyr/integration/shared/contracts/errors/risk_limit_violation_error.py
   domain_id: D_INTEGRATION
   name_zh: 风险限制违规错误
@@ -16528,7 +16528,7 @@ entries:
   name_en: event_bus_upgrade
   desc_zh: "支持事件版本化 + 增量升级机制。"
   desc_en: ''
-  plain_zh: "事件总线upgrade，事件相关功能（event bus upgrade）"
+  plain_zh: "事件总线升级，集成层事件总线升级方案与兼容迁移"
 - module_path: src/zephyr/integration/shared/events/event_schemas.py
   domain_id: D_INTEGRATION
   name_zh: 事件模式
@@ -16542,7 +16542,7 @@ entries:
   name_en: upgrade_strategy
   desc_zh: "原始路径保留为 compat shim，新代码应从此处导入。"
   desc_en: ''
-  plain_zh: "upgrade策略，事件相关功能（upgrade strategy）"
+  plain_zh: "升级策略引擎，集成层事件总线升级策略选择与执行"
 - module_path: src/zephyr/integration/vector_memory/bm25_index.py
   domain_id: D_INTEGRATION
   name_zh: bm25索引
@@ -16815,7 +16815,7 @@ entries:
   name_en: D_ML_TRAIN — Default Inference Engine
   desc_zh: "ML 推理引擎具体实现。实现 InferenceEngineBase。"
   desc_en: D_ML_TRAIN — Default Inference Engine
-  plain_zh: "默认推理引擎，implementations相关功能（default inference engine）"
+  plain_zh: "model evaluation implementations 包入口，整合implementations相关子模块导出"
 - module_path: src/zephyr/intelligence/model_evaluation/inference_base.py
   domain_id: D_INTELLIGENCE
   name_zh: 推理基类
@@ -16843,7 +16843,7 @@ entries:
   name_en: benchmark_suite
   desc_zh: BenchmarkSuite — 多维度模型性能测试用例集
   desc_en: ''
-  plain_zh: "基准suite，实现业务功能（benchmark suite）"
+  plain_zh: "基准测试套件，多维度模型性能测试用例集"
 - module_path: src/zephyr/intelligence/model_profiling/capability_passport.py
   domain_id: D_INTELLIGENCE
   name_zh: 能力passport
@@ -16864,7 +16864,7 @@ entries:
   name_en: cli
   desc_zh: 命令行.cli — 模型性能检测命令行入口
   desc_en: ''
-  plain_zh: "model-profiler.cli — 模型性能检测命令行入口"
+  plain_zh: "命令行入口，模型性能检测命令行工具"
 - module_path: src/zephyr/intelligence/model_profiling/deepseek_v4_chat.py
   domain_id: D_INTELLIGENCE
   name_zh: 'DeepSeekV4Chat --- DeepSeek V4 系列模型 API '
@@ -16934,14 +16934,14 @@ entries:
   name_en: benchmark_suite
   desc_zh: BenchmarkSuite — 多维度模型性能测试用例集
   desc_en: ''
-  plain_zh: "基准suite，实现业务功能（benchmark suite）"
+  plain_zh: "基准测试套件，管道路由层的多维度模型性能测试用例集"
 - module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/cli.py
   domain_id: D_INTELLIGENCE
   name_zh: 命令行
   name_en: cli
   desc_zh: 命令行.cli — 模型性能检测命令行入口
   desc_en: ''
-  plain_zh: "model-profiler.cli — 模型性能检测命令行入口"
+  plain_zh: "命令行入口，管道路由层的模型性能检测命令行工具"
 - module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/profiler.py
   domain_id: D_INTELLIGENCE
   name_zh: 性能分析器
@@ -16955,7 +16955,7 @@ entries:
   name_en: results_writer
   desc_zh: Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测）
   desc_en: ''
-  plain_zh: "Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测"
+  plain_zh: "结果写入器，管道路由层的基准测试结果持久化与漂移检测"
 - module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/task_model_learner.py
   domain_id: D_INTELLIGENCE
   name_zh: 任务模型学习器
@@ -16983,7 +16983,7 @@ entries:
   name_en: results_writer
   desc_zh: Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测）
   desc_en: ''
-  plain_zh: "Results Writer — 持久化 benchmark 结果，支持历史对比（漂移检测"
+  plain_zh: "结果写入器，持久化基准测试结果并支持历史对比与漂移检测"
 - module_path: src/zephyr/intelligence/model_profiling/task_model_learner.py
   domain_id: D_INTELLIGENCE
   name_zh: 任务模型学习器
@@ -17109,7 +17109,7 @@ entries:
   name_en: __init__
   desc_zh: 包入口模块
   desc_en: ''
-  plain_zh: "服务 包入口，整合服务相关子模块导出"
+  plain_zh: "服务 包入口，整合服务相关子模块导出（zephyr/ml_serve）"
 - module_path: src/zephyr/ml_serve/_extensions/__init__.py
   domain_id: D_ML_SERVE
   name_zh: 包入口
@@ -17172,7 +17172,7 @@ entries:
   name_en: D_ML_TRAIN — Default Inference Engine
   desc_zh: "ML 推理引擎具体实现。实现 InferenceEngineBase。"
   desc_en: D_ML_TRAIN — Default Inference Engine
-  plain_zh: "默认推理引擎，implementations相关功能（default inference engine）"
+  plain_zh: "ml train implementations 包入口，整合implementations相关子模块导出"
 - module_path: src/zephyr/ml_train/inference_base.py
   domain_id: D_ML_TRAIN
   name_zh: 推理基类
@@ -19804,7 +19804,7 @@ entries:
   name_en: data_quality_error
   desc_zh: 'CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误'
   desc_en: ''
-  plain_zh: "数据质量错误，错误相关功能（data quality error）"
+  plain_zh: "数据质量错误，定义共享层行情质量门禁不通过异常"
 - module_path: src/zephyr/shared/contracts/errors/execution_rejection_error.py
   domain_id: D_SHARED
   name_zh: 执行拒绝错误
@@ -19818,7 +19818,7 @@ entries:
   name_en: factor_computation_error
   desc_zh: 'CTR-ERR-002: FactorComputationError / 因子计算失败错误'
   desc_en: ''
-  plain_zh: "因子computation错误，错误相关功能（factor computation error）"
+  plain_zh: "因子计算错误，定义共享层因子计算失败异常"
 - module_path: src/zephyr/shared/contracts/errors/risk_limit_violation_error.py
   domain_id: D_SHARED
   name_zh: 风险限制违规错误
@@ -20084,7 +20084,7 @@ entries:
   name_en: event_bus_upgrade
   desc_zh: "支持事件版本化 + 增量升级机制。"
   desc_en: ''
-  plain_zh: "事件总线upgrade，事件相关功能（event bus upgrade）"
+  plain_zh: "事件总线升级，共享层事件总线升级方案与兼容迁移"
 - module_path: src/zephyr/shared/events/event_reactor.py
   domain_id: D_SHARED
   name_zh: 事件reactor
@@ -20119,7 +20119,7 @@ entries:
   name_en: upgrade_strategy
   desc_zh: "原始路径保留为 compat shim，新代码应从此处导入。"
   desc_en: ''
-  plain_zh: "upgrade策略，事件相关功能（upgrade strategy）"
+  plain_zh: "升级策略引擎，共享层事件总线升级策略选择与执行"
 - module_path: src/zephyr/shared/foundation/constants.py
   domain_id: D_SHARED
   name_zh: 常量
@@ -20784,7 +20784,7 @@ entries:
   name_en: default_experiment_pipeline
   desc_zh: "实验管线具体实现。实现 ExperimentPipelineBase (OCP 实验-EXP)。"
   desc_en: ''
-  plain_zh: "默认实验管线，implementations相关功能（default experiment pipeline）"
+  plain_zh: "simulation implementations 包入口，整合implementations相关子模块导出"
 - module_path: src/zephyr/simulation/look_ahead_bias_detector.py
   domain_id: D_SIMULATION
   name_zh: lookaheadbias检测器

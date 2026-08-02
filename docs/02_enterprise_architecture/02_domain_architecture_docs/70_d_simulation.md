@@ -53,12 +53,12 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管线<br/>仿真/implementations包的default_experiment_pipel<br/>ine模块<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管线<br/>simulation implementations<br/>包入口，整合implementations相关子模块导出<br/>default_experiment_pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
     src_zephyr_simulation_result_analyzer_py["结果分析器<br/>模拟的分析器，分析数据找出问题或规律<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>result_analyzer<br/>文件: simulation/result_analyzer.py<br/>(设计态 / design)"]
     src_zephyr_simulation_scenario_generator_py["场景生成器<br/>模拟的生成器，按规则生成所需的数据或报告<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>scenario_generator<br/>文件: simulation/scenario_generator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ src_zephyr_simulation_result_analyzer_py
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
-    src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真包的pipeline_base模块<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真相关功能（pipeline base）<br/>pipeline_base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
     src_zephyr_simulation_risk_simulator_py["风险模拟器<br/>模拟仿真（risk simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>risk_simulator<br/>文件: simulation/risk_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>模拟仿真（strategy simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>strategy_simulator<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
@@ -95,8 +95,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管线<br/>仿真/implementations包的default_experiment_pipel<br/>ine模块<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真包的pipeline_base模块<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管线<br/>simulation implementations<br/>包入口，整合implementations相关子模块导出<br/>default_experiment_pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真相关功能（pipeline base）<br/>pipeline_base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
