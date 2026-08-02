@@ -160,6 +160,10 @@ jobs:
         run: python scripts/governance/d5_architecture/validators/validate_b_track_packages.py
         continue-on-error: false
 
+      - name: YAML Anchor Consistency (B_yaml 锚定块↔body vs [A_config] 遗留)
+        run: python scripts/governance/d7_code/check_yaml_anchor_consistency.py
+        continue-on-error: false
+
       - name: G6 CTR Compliance Gate
         run: python scripts/governance/d5_architecture/checkers/check_g6_ctr_compliance.py
         continue-on-error: false
