@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3171 |
-| 生产态模块 | 2946 |
-| 设计态模块 | 225 |
+| 模块总数 | 3173 |
+| 生产态模块 | 2950 |
+| 设计态模块 | 223 |
 
 ## 域清单（按架构层分组）
 
@@ -106,7 +106,7 @@ ttl: permanent
 | D_MKT_DATA | 行情数据 / Market Data | 15 | 9 | 6 | 15/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
 | D_OPS | 反馈循环 / Feedback Loop | 11 | 11 | 0 | 11/150 (OK) | [📄 24_d_ops.md](24_d_ops.md) |
 | D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 70 | 70 | 0 | 70/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
-| D_REPORTING | 报告 / Reporting | 13 | 5 | 8 | 13/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
+| D_REPORTING | 报告 / Reporting | 14 | 7 | 7 | 14/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
 | D_SECURITY | 对抗验证 / Adversarial Validation | 166 | 166 | 0 | 166/150 (超容) | [📄 27_d_security.md](27_d_security.md) |
 | D_SECURITY_LLM | LLM防御 / LLM Defense | 0 | 0 | 0 | 0/150 (OK) | [📄 28_d_security_llm.md](28_d_security_llm.md) |
 
@@ -141,14 +141,14 @@ ttl: permanent
 | D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 42 | 41 | 1 | 42/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 35 | 35 | 0 | 35/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 393 | 392 | 1 | 393/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 394 | 393 | 1 | 394/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 7 | 0 | 7/150 (OK) | [📄 60_d_ml_serve.md](60_d_ml_serve.md) |
 | D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 9 | 5 | 4 | 9/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
-| D_PF_CORE | 组合核心 / Portfolio Core | 18 | 13 | 5 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
+| D_PF_CORE | 组合核心 / Portfolio Core | 18 | 14 | 4 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 15 | 15 | 0 | 15/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
 | D_RISK | 风控 / Risk Control | 25 | 21 | 4 | 25/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
