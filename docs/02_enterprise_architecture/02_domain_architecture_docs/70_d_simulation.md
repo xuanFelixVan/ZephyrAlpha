@@ -27,13 +27,13 @@ ttl: permanent
 | 域ID | D_SIMULATION | Domain ID | D_SIMULATION |
 | 域名称 | 仿真 | Domain Name | Simulation |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 14 | Module Count | 14 |
-| 域内依赖 | 13 | Internal Dependencies | 13 |
+| 模块数 | 15 | Module Count | 15 |
+| 域内依赖 | 14 | Internal Dependencies | 14 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 6 | Cross-domain Outgoing | 6 |
 | 设计态模块 | 3 | Design Modules | 3 |
-| 生产态模块 | 11 | Production Modules | 11 |
-| 容量 | 10/150 (正常) | Capacity | 10/150 (正常) |
+| 生产态模块 | 12 | Production Modules | 12 |
+| 容量 | 12/150 (正常) | Capacity | 12/150 (正常) |
 | 描述 | 仿真，负责市场仿真、模拟撮合和仿真环境管理 | Description | 仿真，负责市场仿真、模拟撮合和仿真环境管理 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 14 个模块（生产态 11 + 设计态 3），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 15 个模块（生产态 12 + 设计态 3），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -59,13 +59,15 @@ flowchart TD
     tests_simulation_test_deflated_sharpe_calculator_py["simulation/test_deflated_sharpe_calculator<br/>MOD-SIM-024 Deflated Sharpe Ratio Calculator<br/>单元测试.<br/>文件: simulation<br/>/test_deflated_sharpe_calculator.py<br/>(生产态 / production)"]
     tests_simulation_test_look_ahead_bias_detector_py["simulation/test_look_ahead_bias_detector<br/>MOD-SIM-022 Look-Ahead Bias Detector 单元测试.<br/>文件: simulation<br/>/test_look_ahead_bias_detector.py<br/>(生产态 / production)"]
     tests_simulation_test_parameter_robustness_tester_py["simulation/test_parameter_robustness_tester<br/>MOD-SIM-021 Parameter Robustness Tester<br/>单元测试.<br/>文件: simulation<br/>/test_parameter_robustness_tester.py<br/>(生产态 / production)"]
+    tests_simulation_test_risk_simulator_py["simulation/test_risk_simulator<br/>MOD-SIM-003 Risk Simulator 单元测试.<br/>文件: simulation/test_risk_simulator.py<br/>(生产态 / production)"]
     tests_simulation_test_sharpe_calculator_fixer_py["simulation/test_sharpe_calculator_fixer<br/>MOD-SIM-023 Sharpe Calculator Fixer 单元测试.<br/>文件: simulation/test_sharpe_calculator_fixer.py<br/>(生产态 / production)"]
     src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ src_zephyr_simulation_result_analyzer_py
     src_zephyr_simulation_result_analyzer_py ~~~ src_zephyr_simulation_scenario_generator_py
     src_zephyr_simulation_scenario_generator_py ~~~ tests_simulation_test_deflated_sharpe_calculator_py
     tests_simulation_test_deflated_sharpe_calculator_py ~~~ tests_simulation_test_look_ahead_bias_detector_py
     tests_simulation_test_look_ahead_bias_detector_py ~~~ tests_simulation_test_parameter_robustness_tester_py
-    tests_simulation_test_parameter_robustness_tester_py ~~~ tests_simulation_test_sharpe_calculator_fixer_py
+    tests_simulation_test_parameter_robustness_tester_py ~~~ tests_simulation_test_risk_simulator_py
+    tests_simulation_test_risk_simulator_py ~~~ tests_simulation_test_sharpe_calculator_fixer_py
     src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真相关功能（pipeline base）<br/>pipeline_base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
     src_zephyr_simulation_risk_simulator_py["风控仿真器<br/>给定一段收益率数据,算出最坏情况下可能亏多少<br/>(VaR)和亏的时候平均亏多少<br/>(CVaR),再模拟最大回撤有多大/多久能恢复<br/>/是否触发熔断阈值。纯数学计算,不决定买卖。<br/>Risk Simulator<br/>文件: simulation/risk_simulator.py<br/>(生产态 / production)"]
     src_zephyr_simulation_strategy_simulator_py["策略模拟器<br/>模拟仿真（strategy simulator）<br/>⛔ 仿真域，设计已就绪，等待开发排期<br/>strategy_simulator<br/>文件: simulation/strategy_simulator.py<br/>(设计态 / design)"]
@@ -77,19 +79,20 @@ flowchart TD
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>模拟的计算器，计算得出结果（deflated sharpe<br/>calculator）<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
+    src_zephyr_simulation_strategy_simulator_py -.->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_scenario_generator_py -.->|data / data| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -.->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
-    src_zephyr_simulation_sharpe_calculator_fixer_py -->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_sharpe_calculator_fixer_py -->|导入依赖 / import_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
+    src_zephyr_simulation_sharpe_calculator_fixer_py -->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     tests_simulation_test_deflated_sharpe_calculator_py -->|测试依赖 / test_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
-    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
     tests_simulation_test_look_ahead_bias_detector_py -->|测试依赖 / test_depends| src_zephyr_simulation_look_ahead_bias_detector_py
+    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
     tests_simulation_test_parameter_robustness_tester_py -->|测试依赖 / test_depends| src_zephyr_simulation_parameter_robustness_tester_py
+    tests_simulation_test_risk_simulator_py -->|测试依赖 / test_depends| src_zephyr_simulation_risk_simulator_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_simulation_risk_simulator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_simulation_deflated_sharpe_calculator_py -->|导入依赖 / import_depends| D_SHARED
@@ -102,49 +105,52 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_pipeline_base_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_sharpe_calculator_fixer_py,tests_simulation_test_deflated_sharpe_calculator_py,tests_simulation_test_look_ahead_bias_detector_py,tests_simulation_test_parameter_robustness_tester_py,tests_simulation_test_sharpe_calculator_fixer_py production
+    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_pipeline_base_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_sharpe_calculator_fixer_py,tests_simulation_test_deflated_sharpe_calculator_py,tests_simulation_test_look_ahead_bias_detector_py,tests_simulation_test_parameter_robustness_tester_py,tests_simulation_test_risk_simulator_py,tests_simulation_test_sharpe_calculator_fixer_py production
     class src_zephyr_simulation_result_analyzer_py,src_zephyr_simulation_scenario_generator_py,src_zephyr_simulation_strategy_simulator_py design
     class D_SHARED,D_INFRASTRUCTURE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 11 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 12 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管线<br/>simulation implementations<br/>包入口，整合implementations相关子模块导出<br/>default_experiment_pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_risk_simulator_py["风控仿真器<br/>给定一段收益率数据,算出最坏情况下可能亏多少<br/>(VaR)和亏的时候平均亏多少<br/>(CVaR),再模拟最大回撤有多大/多久能恢复<br/>/是否触发熔断阈值。纯数学计算,不决定买卖。<br/>Risk Simulator<br/>文件: simulation/risk_simulator.py<br/>(生产态 / production)"]
     tests_simulation_test_deflated_sharpe_calculator_py["simulation/test_deflated_sharpe_calculator<br/>MOD-SIM-024 Deflated Sharpe Ratio Calculator<br/>单元测试.<br/>文件: simulation<br/>/test_deflated_sharpe_calculator.py<br/>(生产态 / production)"]
     tests_simulation_test_look_ahead_bias_detector_py["simulation/test_look_ahead_bias_detector<br/>MOD-SIM-022 Look-Ahead Bias Detector 单元测试.<br/>文件: simulation<br/>/test_look_ahead_bias_detector.py<br/>(生产态 / production)"]
     tests_simulation_test_parameter_robustness_tester_py["simulation/test_parameter_robustness_tester<br/>MOD-SIM-021 Parameter Robustness Tester<br/>单元测试.<br/>文件: simulation<br/>/test_parameter_robustness_tester.py<br/>(生产态 / production)"]
+    tests_simulation_test_risk_simulator_py["simulation/test_risk_simulator<br/>MOD-SIM-003 Risk Simulator 单元测试.<br/>文件: simulation/test_risk_simulator.py<br/>(生产态 / production)"]
     tests_simulation_test_sharpe_calculator_fixer_py["simulation/test_sharpe_calculator_fixer<br/>MOD-SIM-023 Sharpe Calculator Fixer 单元测试.<br/>文件: simulation/test_sharpe_calculator_fixer.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ src_zephyr_simulation_risk_simulator_py
-    src_zephyr_simulation_risk_simulator_py ~~~ tests_simulation_test_deflated_sharpe_calculator_py
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py ~~~ tests_simulation_test_deflated_sharpe_calculator_py
     tests_simulation_test_deflated_sharpe_calculator_py ~~~ tests_simulation_test_look_ahead_bias_detector_py
     tests_simulation_test_look_ahead_bias_detector_py ~~~ tests_simulation_test_parameter_robustness_tester_py
-    tests_simulation_test_parameter_robustness_tester_py ~~~ tests_simulation_test_sharpe_calculator_fixer_py
+    tests_simulation_test_parameter_robustness_tester_py ~~~ tests_simulation_test_risk_simulator_py
+    tests_simulation_test_risk_simulator_py ~~~ tests_simulation_test_sharpe_calculator_fixer_py
     src_zephyr_simulation_look_ahead_bias_detector_py["lookaheadbias检测器<br/>模拟的检测器，检测特定模式或异常情况<br/>look_ahead_bias_detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(生产态 / production)"]
     src_zephyr_simulation_parameter_robustness_tester_py["参数鲁棒性测试器<br/>模拟的测试器，测试验证功能<br/>parameter_robustness_tester<br/>文件: simulation/parameter_robustness_tester.py<br/>(生产态 / production)"]
     src_zephyr_simulation_pipeline_base_py["管线基类<br/>仿真相关功能（pipeline base）<br/>pipeline_base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_risk_simulator_py["风控仿真器<br/>给定一段收益率数据,算出最坏情况下可能亏多少<br/>(VaR)和亏的时候平均亏多少<br/>(CVaR),再模拟最大回撤有多大/多久能恢复<br/>/是否触发熔断阈值。纯数学计算,不决定买卖。<br/>Risk Simulator<br/>文件: simulation/risk_simulator.py<br/>(生产态 / production)"]
     src_zephyr_simulation_sharpe_calculator_fixer_py["夏普计算器修复器<br/>模拟的计算器，计算得出结果（sharpe calculator<br/>fixer）<br/>sharpe_calculator_fixer<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(生产态 / production)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_pipeline_base_py
-    src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
+    src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
+    src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_deflated_sharpe_calculator_py["缩水夏普计算器<br/>模拟的计算器，计算得出结果（deflated sharpe<br/>calculator）<br/>deflated_sharpe_calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py -->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_sharpe_calculator_fixer_py -->|导入依赖 / import_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
+    src_zephyr_simulation_sharpe_calculator_fixer_py -->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     tests_simulation_test_deflated_sharpe_calculator_py -->|测试依赖 / test_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
-    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
     tests_simulation_test_look_ahead_bias_detector_py -->|测试依赖 / test_depends| src_zephyr_simulation_look_ahead_bias_detector_py
+    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
     tests_simulation_test_parameter_robustness_tester_py -->|测试依赖 / test_depends| src_zephyr_simulation_parameter_robustness_tester_py
+    tests_simulation_test_risk_simulator_py -->|测试依赖 / test_depends| src_zephyr_simulation_risk_simulator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_pipeline_base_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_sharpe_calculator_fixer_py,tests_simulation_test_deflated_sharpe_calculator_py,tests_simulation_test_look_ahead_bias_detector_py,tests_simulation_test_parameter_robustness_tester_py,tests_simulation_test_sharpe_calculator_fixer_py production
+    class src_zephyr_simulation_deflated_sharpe_calculator_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_look_ahead_bias_detector_py,src_zephyr_simulation_parameter_robustness_tester_py,src_zephyr_simulation_pipeline_base_py,src_zephyr_simulation_risk_simulator_py,src_zephyr_simulation_sharpe_calculator_fixer_py,tests_simulation_test_deflated_sharpe_calculator_py,tests_simulation_test_look_ahead_bias_detector_py,tests_simulation_test_parameter_robustness_tester_py,tests_simulation_test_risk_simulator_py,tests_simulation_test_sharpe_calculator_fixer_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）

@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3193 |
-| 生产态模块 | 2993 |
-| 设计态模块 | 200 |
+| 模块总数 | 3194 |
+| 生产态模块 | 2995 |
+| 设计态模块 | 199 |
 
 ## 域清单（按架构层分组）
 
@@ -120,7 +120,7 @@ ttl: permanent
 | D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 19 | 9 | 10 | 19/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
 | D_AUDITTEST | 审计测试套件 / Audit Test Suite | 1 | 1 | 0 | 1/150 (OK) | [📄 33_d_audittest.md](33_d_audittest.md) |
 | D_AUTONOMY_PERM | 自治保护 / Autonomy Protection | 2 | 2 | 0 | 2/150 (OK) | [📄 34_d_autonomy_perm.md](34_d_autonomy_perm.md) |
-| D_BACKTEST | 回测 / Backtest | 27 | 19 | 8 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
+| D_BACKTEST | 回测 / Backtest | 27 | 20 | 7 | 27/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
 | D_BEHAVIORAL_AUDIT | 行为审计 / Behavioral Audit | 0 | 0 | 0 | 0/150 (OK) | [📄 36_d_behavioral_audit.md](36_d_behavioral_audit.md) |
 | D_CODE_SCRIPTS | 代码质量脚本 / D_CODE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 37_d_code_scripts.md](37_d_code_scripts.md) |
 | D_COMPLIANCE | 合规 / Compliance | 3 | 2 | 1 | 3/150 (OK) | [📄 38_d_compliance.md](38_d_compliance.md) |
@@ -155,6 +155,6 @@ ttl: permanent
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 23 | 8 | 15 | 23/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
 | D_SIGLEGACY | 信号遗留设计态 / Signal Legacy (Design) | 0 | 0 | 0 | 0/150 (OK) | [📄 68_d_siglegacy.md](68_d_siglegacy.md) |
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
-| D_SIMULATION | 仿真 / Simulation | 14 | 11 | 3 | 14/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
+| D_SIMULATION | 仿真 / Simulation | 15 | 12 | 3 | 15/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
 | D_STRUCT_SCRIPTS | 结构治理脚本 / D_STRUCT_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 71_d_struct_scripts.md](71_d_struct_scripts.md) |
 | D_TRADING | 交易运营 / Trading Operations | 43 | 43 | 0 | 43/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |

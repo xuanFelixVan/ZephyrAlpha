@@ -107,8 +107,8 @@ flowchart TD
     src_zephyr_shared_contracts_target_portfolio_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_shared_contracts_target_portfolio_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     scripts_backup_backup_reconciler_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
