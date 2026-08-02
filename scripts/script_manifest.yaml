@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-02'
-total_scripts: 628
+total_scripts: 631
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -798,6 +798,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/decision_node_plain_zh_backfill.py
+  path: governance/decision_node_plain_zh_backfill.py
+  description: decision_node_plain_zh_backfill.py — 一次性补齐 213 决策节点的 plain_zh 大白话简介。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/extract_decisiongraph.py
   path: governance/extract_decisiongraph.py
   description: extract_decisiongraph - decisiongraph on-demand extraction tool
@@ -1430,6 +1438,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d3_metadata/add_module_translation.py
+  path: governance/d3_metadata/add_module_translation.py
+  description: 把"在哪里更新 / 怎么更新"落地为一条命令：AI 新建或更新模块时，调用本脚本向
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d3_metadata/auto_generate_index.py
   path: governance/d3_metadata/auto_generate_index.py
   description: Eliminates manual index maintenance—the root cause of INDEX-REALITY DRIFT.
@@ -1881,6 +1897,14 @@ scripts:
 - name: governance/d5_architecture/checkers/check_g6_ctr_compliance.py
   path: governance/d5_architecture/checkers/check_g6_ctr_compliance.py
   description: 'Checks:'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/checkers/check_node_label_quality.py
+  path: governance/d5_architecture/checkers/check_node_label_quality.py
+  description: 审计域文档 Mermaid 节点标签的简介质量，检测五类坏简介（治本 2026-08-02）。
   domain: governance
   execution_plane: warm-path
   status: registered
