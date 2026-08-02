@@ -5313,6 +5313,20 @@ capabilities:
       Backlog / 量化 Alpha Idea Pipeline。canonical: scripts/governance/query_candidate_registry.py;
       数据真源: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml。
 
+  # --------------------------------------------------------------------------
+  - capability_id: yaml_anchor_consistency_scanner
+    aliases:
+      - check_yaml_anchor_consistency
+    description: >-
+      YAML 治理锚定一致性 CI 全量扫描器（audit-02 引入，2026-08-02）。检测 config/ 与
+      architecture_model/ 下所有 YAML 文件 B_yaml 治理锚定块 4 类问题：P1 [A_config]
+      旧格式遗留行 / P2 锚定块↔body module_id 不一致 / P3 有 body module_id 缺锚定块 /
+      P4 锚定块缺 blueprint 字段；豁免 grafana/prometheus/docker-compose 第三方配置。
+      CI governance.yml Tier 3 硬阻断（continue-on-error: false）。canonical =
+      scripts/governance/d7_code/check_yaml_anchor_consistency.py（auto 派生：basename
+      check_yaml_anchor_consistency 匹配 alias）。B_yaml 6 字段格式真源 trae_047。
+      解决防重建：新 AI 搜 "yaml anchor/锚定块/B_yaml 一致性" 可定位真源，不另造扫描器。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -5542,6 +5556,12 @@ creation_tokens:
     token: "auto-scan-debt-20260706"
     created_by: "session-sess-29992-20260706143221"
     capability: "architecture_debt_scanner"
+
+  # --- YAML 治理锚定一致性 CI 门禁（audit-02 引入，2026-08-02，防 [A_config] 回退/锚定块漂移）---
+  - file: "scripts/governance/d7_code/check_yaml_anchor_consistency.py"
+    token: "auto-yaml-anchor-consistency-20260802"
+    created_by: "audit-02-yaml-fix"
+    capability: "yaml_anchor_consistency_scanner"
 
   # --- 类型注解 Any 滥用门禁（R70 引入，5.145 维度防复发）---
   - file: "scripts/governance/d7_code/check_any_abuse.py"

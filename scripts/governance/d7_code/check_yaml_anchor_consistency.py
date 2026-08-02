@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] scripts.governance.d7_code.check_yaml_anchor_consistency
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates（B_yaml 锚定块格式真源: trae_047_engineering_file_header.yaml）
-# [CONSUMERS] CI governance.yml（Tier 7 全量回归）; GitCommitGateway; 人工审计
+# [DEPENDENCIES] stdlib(argparse/json/re/sys/pathlib)
+# [CONSUMERS] CI governance.yml（Tier 3 锚定一致性门禁）; 人工审计
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 扫描 config/+architecture_model/ 所有 YAML 检测治理锚定一致性: P1 [A_config]遗留行/P2 锚定块↔body不一致/P3 缺锚定块/P4 锚定块缺blueprint字段; 豁免 grafana/prometheus/docker-compose 第三方配置
