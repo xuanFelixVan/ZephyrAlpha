@@ -56,7 +56,7 @@ flowchart TD
     src_zephyr_backtest_core_data_handler_py["数据处理器<br/>回测数据处理器模块（v1.1.0 扩展：多源化 +<br/>ClickHouse 实现 + Tick 源）<br/>data_handler<br/>文件: core/data_handler.py<br/>(生产态 / production)"]
     src_zephyr_backtest_implementations_event_driven_engine_py["事件driven引擎<br/>事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）<br/>event_driven_engine<br/>文件: implementations/event_driven_engine.py<br/>(生产态 / production)"]
     src_zephyr_backtest_io_init_py["backtest/io 包入口<br/>io · D_BACKTEST 可视化产物 io 子包（v1.3.0<br/>新增，#ARCH-047）<br/>文件: io/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_backtest_services_anomaly_diagnoser_py["异常诊断器<br/>（anomaly_diagnoser.py）<br/>⛔ 暂缓：P2优先级，当前回测失败率低<br/>文件: services/anomaly_diagnoser.py<br/>(设计态 / design)"]
+    src_zephyr_backtest_services_anomaly_diagnoser_py["异常诊断器<br/>回测验证<br/>⛔ 暂缓：P2优先级，当前回测失败率低<br/>anomaly_diagnoser<br/>文件: services/anomaly_diagnoser.py<br/>(设计态 / design)"]
     src_zephyr_backtest_services_decay_monitor_py["decay监控器<br/>decay监控，回测的监控器，持续监视某项指标，异常<br/>时上报。<br/>⛔ 暂缓：因子侧decay_monitor已覆盖IC衰减监控<br/>decay_monitor<br/>文件: services/decay_monitor.py<br/>(设计态 / design)"]
     src_zephyr_backtest_services_nan_processor_py["nan处理器<br/>服务的处理器，处理加工数据<br/>⛔ 暂缓：P2优先级，当前数据缺失率低<br/>nan_processor<br/>文件: services/nan_processor.py<br/>(设计态 / design)"]
     src_zephyr_backtest_services_param_analyzer_py["param分析器<br/>回测的分析器，分析数据找出问题或规律<br/>⛔ 暂缓：scheduler已含best/worst/mean摘要<br/>param_analyzer<br/>文件: services/param_analyzer.py<br/>(设计态 / design)"]
@@ -269,7 +269,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_backtest_services_anomaly_diagnoser_py["异常诊断器<br/>（anomaly_diagnoser.py）<br/>⛔ 暂缓：P2优先级，当前回测失败率低<br/>文件: services/anomaly_diagnoser.py<br/>(设计态 / design)"]
+    src_zephyr_backtest_services_anomaly_diagnoser_py["异常诊断器<br/>回测验证<br/>⛔ 暂缓：P2优先级，当前回测失败率低<br/>anomaly_diagnoser<br/>文件: services/anomaly_diagnoser.py<br/>(设计态 / design)"]
     src_zephyr_backtest_services_decay_monitor_py["decay监控器<br/>decay监控，回测的监控器，持续监视某项指标，异常<br/>时上报。<br/>⛔ 暂缓：因子侧decay_monitor已覆盖IC衰减监控<br/>decay_monitor<br/>文件: services/decay_monitor.py<br/>(设计态 / design)"]
     src_zephyr_backtest_services_nan_processor_py["nan处理器<br/>服务的处理器，处理加工数据<br/>⛔ 暂缓：P2优先级，当前数据缺失率低<br/>nan_processor<br/>文件: services/nan_processor.py<br/>(设计态 / design)"]
     src_zephyr_backtest_services_param_analyzer_py["param分析器<br/>回测的分析器，分析数据找出问题或规律<br/>⛔ 暂缓：scheduler已含best/worst/mean摘要<br/>param_analyzer<br/>文件: services/param_analyzer.py<br/>(设计态 / design)"]

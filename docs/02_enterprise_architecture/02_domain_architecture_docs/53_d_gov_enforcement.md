@@ -60,7 +60,7 @@ flowchart TD
     scripts_governance_session_worktree_cli_py["会话worktreecli<br/>会话工作树管理命令行工具，提供sweep清理过期残留<br/>工作树、list查看现有工作树的命令，方便AI和运维随<br/>时清理临时工作区。<br/>session_worktree_cli<br/>文件: governance/session_worktree_cli.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_init_py["zephyr/gov_enforcement 包入口<br/>域拆分 Phase 2 物理迁移目标包 容量治理）：<br/>文件: gov_enforcement/__init__.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_init_py["gov_enforcement/behavioral_admission 包入口<br/>治理执行的包入口，把这一层的子模块归到一起统一管<br/>理，用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: behavioral_admission/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py["depgraphpreregistration门禁<br/>depgraph planned→production 流转强制门禁<br/>（DEPGRAPH-PRE-REGISTRATION）<br/>⛔ 治理执行域，设计已就绪，等待开发排期<br/>depgraph_pre_registration_gate<br/>文件: commit_gates<br/>/depgraph_pre_registration_gate.py<br/>(设计态 / design)"]
+    src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py["depgraphpreregistration门禁<br/>depgraph planned→production 流转强制门禁<br/>（DEPGRAPH-PRE-REGISTRATION，提交前合规门禁检查<br/>⛔ 治理执行域，设计已就绪，等待开发排期<br/>depgraph_pre_registration_gate<br/>文件: commit_gates<br/>/depgraph_pre_registration_gate.py<br/>(设计态 / design)"]
     src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py["stashaccumulation门禁<br/>提交前数一下git<br/>stash积了多少条，超过阈值就拦住并提示先清理，防<br/>止stash越堆越多撑爆git对象库、还让AI误判有未提交<br/>工作。<br/>stash_accumulation_gate<br/>文件: commit_gates/stash_accumulation_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_approval_py["审批<br/>兼容转发层，真正的审批类型已搬到共享契约层，这里<br/>保留旧入口转发引用，老代码不用改。<br/>approval<br/>G-CT-004 — Backward-compat re-export of<br/>ApprovalRequest from<br/>shared.contracts.approval_types.<br/>文件: rule_enforcement/approval.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py["合规规则<br/>兼容转发层，真正的合规规则定义已搬到共享契约层，<br/>这里保留旧入口转发引用，老代码不用改。<br/>compliance_rule<br/>文件: rule_enforcement/compliance_rule.py<br/>(生产态 / production)"]
@@ -74,7 +74,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["规则监视器<br/>盯住YAML规则文件的修改时间，发现有人改了规则就自<br/>动同步到依赖图并做哈希校验，防止规则文件改了但系<br/>统还在用旧规则。<br/>rule_watcher<br/>文件: rule_engine/rule_watcher.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py["SLO契约<br/>服务等级契约引擎，实时盯住服务质量指标和目标的差<br/>距，按错误预算消耗速度决定是否升级处理，防止服务<br/>质量偷偷下滑没人管。<br/>文件: rule_enforcement/slo_contract.py<br/>(生产态 / production)"]
     tests_governance_commit_gates_test_create_guard_py["测试创建守卫<br/>CREATE-GUARD 门禁单元测试（2026-06-30 治本补全）<br/>test_create_guard<br/>文件: commit_gates/test_create_guard.py<br/>(生产态 / production)"]
-    tests_governance_commit_gates_test_r5_digit_suffix_gate_py["测试r5digitsuffix门禁<br/>覆盖 r5_digit_suffix_gate.check 的核心场景：<br/>test_r5_digit_suffix_gate<br/>文件: commit_gates/test_r5_digit_suffix_gate.py<br/>(生产态 / production)"]
+    tests_governance_commit_gates_test_r5_digit_suffix_gate_py["测试r5digitsuffix门禁<br/>测试隔离——使用 tmp_path 临时 git 仓库，不读<br/>/不写真实仓库<br/>test_r5_digit_suffix_gate<br/>文件: commit_gates/test_r5_digit_suffix_gate.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_claim_files_for_edit_py["测试claimfilesforedit<br/>P2-2 并发 session 文件级原子性测试<br/>test_claim_files_for_edit<br/>文件: rule_bridge/test_claim_files_for_edit.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_emergency_commit_py["测试紧急提交<br/>输入校验（空文件列表、空<br/>session_id、文件不存在）<br/>test_emergency_commit<br/>文件: rule_bridge/test_emergency_commit.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_heartbeat_daemon_py["测试heartbeatdaemon<br/>cleanup_heartbeat_file 清理（文件存在 / 不存在<br/>/ 失败兜底）<br/>test_heartbeat_daemon<br/>文件: rule_bridge/test_heartbeat_daemon.py<br/>(生产态 / production)"]
@@ -119,7 +119,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["准入控制器<br/>用令牌桶限流（每秒50次）加熔断器把控请求进出，请<br/>求太快就排队、连续失败就熔断，防止AI把系统冲垮。<br/>admission_controller<br/>文件: behavioral_admission<br/>/admission_controller.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["裁定引擎<br/>根据审计事件综合判断本次操作该不该放行（红/黄<br/>/绿三态），结合文件保护级别、门禁结果、违规次数<br/>给出升级裁定，是行为审计的最终裁判。<br/>verdict_engine<br/>文件: behavioral_admission/verdict_engine.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["紧急提交<br/>用 ``git commit-tree`` plumbing 命令绕过所有<br/>git hook（pre-commit AND post-commit），<br/>emergency_commit<br/>文件: rule_bridge/emergency_commit.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["紧急提交<br/>规则桥接<br/>emergency_commit<br/>文件: rule_bridge/emergency_commit.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py["心跳守护<br/>会话心跳独立进程，定期刷新session存活标记，跨进<br/>程的会话工作流靠它确认会话还活着，防止正在做的工<br/>作因超时被误当僵尸清理掉。<br/>heartbeat_daemon<br/>文件: rule_bridge/heartbeat_daemon.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_session_claim_py["会话claim<br/>已废弃的会话并发声明工具，原用于AI对话并发控制，<br/>已被session_worktree物理隔离方案完全替代且更强，<br/>零实际调用方，仅generate_session_id函数仍被复用<br/>。<br/>session_claim<br/>文件: rule_bridge/session_claim.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["worktree管理器<br/>给每个AI会话开独立git工作目录实现物理隔离，彻底<br/>解决多会话共享工作区导致的stash冲突循环问题。<br/>worktree_manager<br/>文件: rule_bridge/worktree_manager.py<br/>(生产态 / production)"]
@@ -239,7 +239,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py["规则监视器<br/>盯住YAML规则文件的修改时间，发现有人改了规则就自<br/>动同步到依赖图并做哈希校验，防止规则文件改了但系<br/>统还在用旧规则。<br/>rule_watcher<br/>文件: rule_engine/rule_watcher.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py["SLO契约<br/>服务等级契约引擎，实时盯住服务质量指标和目标的差<br/>距，按错误预算消耗速度决定是否升级处理，防止服务<br/>质量偷偷下滑没人管。<br/>文件: rule_enforcement/slo_contract.py<br/>(生产态 / production)"]
     tests_governance_commit_gates_test_create_guard_py["测试创建守卫<br/>CREATE-GUARD 门禁单元测试（2026-06-30 治本补全）<br/>test_create_guard<br/>文件: commit_gates/test_create_guard.py<br/>(生产态 / production)"]
-    tests_governance_commit_gates_test_r5_digit_suffix_gate_py["测试r5digitsuffix门禁<br/>覆盖 r5_digit_suffix_gate.check 的核心场景：<br/>test_r5_digit_suffix_gate<br/>文件: commit_gates/test_r5_digit_suffix_gate.py<br/>(生产态 / production)"]
+    tests_governance_commit_gates_test_r5_digit_suffix_gate_py["测试r5digitsuffix门禁<br/>测试隔离——使用 tmp_path 临时 git 仓库，不读<br/>/不写真实仓库<br/>test_r5_digit_suffix_gate<br/>文件: commit_gates/test_r5_digit_suffix_gate.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_claim_files_for_edit_py["测试claimfilesforedit<br/>P2-2 并发 session 文件级原子性测试<br/>test_claim_files_for_edit<br/>文件: rule_bridge/test_claim_files_for_edit.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_emergency_commit_py["测试紧急提交<br/>输入校验（空文件列表、空<br/>session_id、文件不存在）<br/>test_emergency_commit<br/>文件: rule_bridge/test_emergency_commit.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_heartbeat_daemon_py["测试heartbeatdaemon<br/>cleanup_heartbeat_file 清理（文件存在 / 不存在<br/>/ 失败兜底）<br/>test_heartbeat_daemon<br/>文件: rule_bridge/test_heartbeat_daemon.py<br/>(生产态 / production)"]
@@ -283,7 +283,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py["准入控制器<br/>用令牌桶限流（每秒50次）加熔断器把控请求进出，请<br/>求太快就排队、连续失败就熔断，防止AI把系统冲垮。<br/>admission_controller<br/>文件: behavioral_admission<br/>/admission_controller.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py["裁定引擎<br/>根据审计事件综合判断本次操作该不该放行（红/黄<br/>/绿三态），结合文件保护级别、门禁结果、违规次数<br/>给出升级裁定，是行为审计的最终裁判。<br/>verdict_engine<br/>文件: behavioral_admission/verdict_engine.py<br/>(生产态 / production)"]
-    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["紧急提交<br/>用 ``git commit-tree`` plumbing 命令绕过所有<br/>git hook（pre-commit AND post-commit），<br/>emergency_commit<br/>文件: rule_bridge/emergency_commit.py<br/>(生产态 / production)"]
+    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py["紧急提交<br/>规则桥接<br/>emergency_commit<br/>文件: rule_bridge/emergency_commit.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py["心跳守护<br/>会话心跳独立进程，定期刷新session存活标记，跨进<br/>程的会话工作流靠它确认会话还活着，防止正在做的工<br/>作因超时被误当僵尸清理掉。<br/>heartbeat_daemon<br/>文件: rule_bridge/heartbeat_daemon.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_session_claim_py["会话claim<br/>已废弃的会话并发声明工具，原用于AI对话并发控制，<br/>已被session_worktree物理隔离方案完全替代且更强，<br/>零实际调用方，仅generate_session_id函数仍被复用<br/>。<br/>session_claim<br/>文件: rule_bridge/session_claim.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py["worktree管理器<br/>给每个AI会话开独立git工作目录实现物理隔离，彻底<br/>解决多会话共享工作区导致的stash冲突循环问题。<br/>worktree_manager<br/>文件: rule_bridge/worktree_manager.py<br/>(生产态 / production)"]
@@ -342,7 +342,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py["depgraphpreregistration门禁<br/>depgraph planned→production 流转强制门禁<br/>（DEPGRAPH-PRE-REGISTRATION）<br/>⛔ 治理执行域，设计已就绪，等待开发排期<br/>depgraph_pre_registration_gate<br/>文件: commit_gates<br/>/depgraph_pre_registration_gate.py<br/>(设计态 / design)"]
+    src_zephyr_gov_enforcement_commit_gates_depgraph_pre_registration_gate_py["depgraphpreregistration门禁<br/>depgraph planned→production 流转强制门禁<br/>（DEPGRAPH-PRE-REGISTRATION，提交前合规门禁检查<br/>⛔ 治理执行域，设计已就绪，等待开发排期<br/>depgraph_pre_registration_gate<br/>文件: commit_gates<br/>/depgraph_pre_registration_gate.py<br/>(设计态 / design)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

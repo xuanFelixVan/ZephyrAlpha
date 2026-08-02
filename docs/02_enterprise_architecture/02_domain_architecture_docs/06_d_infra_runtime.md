@@ -72,7 +72,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["去重提取器<br/>normalize_code 归一化代码后按 min_occurrences<br/>最小出现次数提取可去重的重复代码块<br/>dedup_extractor<br/>文件: auto_fix_engine/dedup_extractor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["dep版本修复器<br/>依赖版本修复器，is_higher<br/>比较版本号，扫描依赖版本不一致并修复到目标版本。<br/>dep_version_fixer<br/>文件: auto_fix_engine/dep_version_fixer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["漂移修复器<br/>配置/结构漂移修复器，scan 检测漂移、fix 修复<br/>（须通过 DriftBudgetLink 预算）、修复后<br/>validate 验证、可 rollback。<br/>drift_fixer<br/>文件: auto_fix_engine/drift_fixer.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["事件钩子<br/>订阅 EventBusBackpressure 的 drift_detected /<br/>validation_result 事件。<br/>event_hooks<br/>文件: auto_fix_engine/event_hooks.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["事件钩子<br/>钩子MUST不阻塞主流程;异常MUST被捕获不传播<br/>event_hooks<br/>文件: auto_fix_engine/event_hooks.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["修复差异<br/>计算器，compute/compute_text 展示 before/after<br/>差异，reverse 生成可逆动作，保证修复可回溯<br/>fix_diff<br/>文件: auto_fix_engine/fix_diff.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["修复调度器<br/>引擎的调度器，按时间或优先级安排任务执行<br/>fix_scheduler<br/>文件: auto_fix_engine/fix_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_import_fixer_py["导入修复器<br/>try_fix_module 尝试修复模块 import<br/>错误，扫描失效导入并修正路径或补缺<br/>import_fixer<br/>文件: auto_fix_engine/import_fixer.py<br/>(生产态 / production)"]
@@ -260,7 +260,7 @@ flowchart TD
     src_zephyr_infrastructure_queue_task_scheduler_py["任务调度器<br/>Task Scheduler — 任务调度器。依据：蓝图<br/>MOD-TASK_SYSTEM §6.13.2 + v0.6.0<br/>task_scheduler<br/>文件: queue/task_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["预算遥测桥接<br/>供预算enforcement使用<br/>_budget_telemetry_bridge<br/>文件: system_telemetry<br/>/_budget_telemetry_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py["契约指标<br/>基础设施的记录器，把发生的事件/结果记下来留档<br/>文件: system_telemetry/contract_metrics.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["蓝图指标<br/>blueprint_metrics — 蓝图使用追踪 instrumentation<br/>文件: metrics/blueprint_metrics.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["蓝图指标<br/>蓝图读取事件MUST通过此模块记录;输出JSONL格式;RUL<br/>E-ONE原子写入<br/>blueprint_metrics<br/>文件: metrics/blueprint_metrics.py<br/>(生产态 / production)"]
     src_zephyr_runtime_intraday_main_py["runtime/intraday_main<br/>盘中运行时编排器——单进程串起 tick_subscriber +<br/>IntradayFactorLoop。<br/>文件: runtime/intraday_main.py<br/>(生产态 / production)"]
     src_zephyr_trading_main_py["主入口<br/>trading — AutoRuntime Core 入口<br/>__main__<br/>文件: trading/__main__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_classifier_py ~~~ src_zephyr_infrastructure_asset_inventory_dashboard_py
@@ -374,7 +374,7 @@ flowchart TD
     src_zephyr_trading_stop_gate_py ~~~ src_zephyr_trading_work_orchestrator_py
     src_zephyr_infrastructure_system_telemetry_trace_bridge_py["追踪桥接<br/>基础设施/system telemetry包的trace_bridge模块<br/>_trace_bridge<br/>文件: system_telemetry/_trace_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_health_probes_py["健康probes<br/>三态健康探针协议（Health Probes —<br/>CT-HEALTH-001）<br/>health_probes<br/>文件: system_telemetry/health_probes.py<br/>(生产态 / production)"]
-    src_zephyr_trading_module_onboarding_scanner_py["moduleonboarding扫描器<br/>借鉴: K8s Controller Manager 主动调和 + K8s<br/>Discovery<br/>module_onboarding_scanner<br/>文件: trading/module_onboarding_scanner.py<br/>(生产态 / production)"]
+    src_zephyr_trading_module_onboarding_scanner_py["moduleonboarding扫描器<br/>借鉴: K8s Controller Manager 主动调和 + K8s<br/>Discovery，支撑基础设施运行时<br/>module_onboarding_scanner<br/>文件: trading/module_onboarding_scanner.py<br/>(生产态 / production)"]
     src_zephyr_trading_resource_optimization_py["资源优化<br/>配置加载/热重载协作者（职责簇：YAML 配置发现<br/>/解析/应用 + mtime 热重载）。<br/>文件: trading/resource_optimization.py<br/>(生产态 / production)"]
     src_zephyr_trading_work_dag_py["WorkDAG + WorkItem — 工作编排数据模型<br/>工作编排数据模型，定义 WorkDAG 与<br/>WorkItem，借鉴 Airflow DAG/Temporal Workflow<br/>/K8s Job 的有向无环工作图结构。<br/>work_dag<br/>文件: trading/work_dag.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_trace_bridge_py ~~~ src_zephyr_infrastructure_system_telemetry_health_probes_py
@@ -621,7 +621,7 @@ flowchart TD
     src_zephyr_infrastructure_auto_fix_engine_dedup_extractor_py["去重提取器<br/>normalize_code 归一化代码后按 min_occurrences<br/>最小出现次数提取可去重的重复代码块<br/>dedup_extractor<br/>文件: auto_fix_engine/dedup_extractor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_dep_version_fixer_py["dep版本修复器<br/>依赖版本修复器，is_higher<br/>比较版本号，扫描依赖版本不一致并修复到目标版本。<br/>dep_version_fixer<br/>文件: auto_fix_engine/dep_version_fixer.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_drift_fixer_py["漂移修复器<br/>配置/结构漂移修复器，scan 检测漂移、fix 修复<br/>（须通过 DriftBudgetLink 预算）、修复后<br/>validate 验证、可 rollback。<br/>drift_fixer<br/>文件: auto_fix_engine/drift_fixer.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["事件钩子<br/>订阅 EventBusBackpressure 的 drift_detected /<br/>validation_result 事件。<br/>event_hooks<br/>文件: auto_fix_engine/event_hooks.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_auto_fix_engine_event_hooks_py["事件钩子<br/>钩子MUST不阻塞主流程;异常MUST被捕获不传播<br/>event_hooks<br/>文件: auto_fix_engine/event_hooks.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_diff_py["修复差异<br/>计算器，compute/compute_text 展示 before/after<br/>差异，reverse 生成可逆动作，保证修复可回溯<br/>fix_diff<br/>文件: auto_fix_engine/fix_diff.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_fix_scheduler_py["修复调度器<br/>引擎的调度器，按时间或优先级安排任务执行<br/>fix_scheduler<br/>文件: auto_fix_engine/fix_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_auto_fix_engine_import_fixer_py["导入修复器<br/>try_fix_module 尝试修复模块 import<br/>错误，扫描失效导入并修正路径或补缺<br/>import_fixer<br/>文件: auto_fix_engine/import_fixer.py<br/>(生产态 / production)"]
@@ -807,7 +807,7 @@ flowchart TD
     src_zephyr_infrastructure_queue_task_scheduler_py["任务调度器<br/>Task Scheduler — 任务调度器。依据：蓝图<br/>MOD-TASK_SYSTEM §6.13.2 + v0.6.0<br/>task_scheduler<br/>文件: queue/task_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_budget_telemetry_bridge_py["预算遥测桥接<br/>供预算enforcement使用<br/>_budget_telemetry_bridge<br/>文件: system_telemetry<br/>/_budget_telemetry_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_contract_metrics_py["契约指标<br/>基础设施的记录器，把发生的事件/结果记下来留档<br/>文件: system_telemetry/contract_metrics.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["蓝图指标<br/>blueprint_metrics — 蓝图使用追踪 instrumentation<br/>文件: metrics/blueprint_metrics.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_system_telemetry_metrics_blueprint_metrics_py["蓝图指标<br/>蓝图读取事件MUST通过此模块记录;输出JSONL格式;RUL<br/>E-ONE原子写入<br/>blueprint_metrics<br/>文件: metrics/blueprint_metrics.py<br/>(生产态 / production)"]
     src_zephyr_runtime_intraday_main_py["runtime/intraday_main<br/>盘中运行时编排器——单进程串起 tick_subscriber +<br/>IntradayFactorLoop。<br/>文件: runtime/intraday_main.py<br/>(生产态 / production)"]
     src_zephyr_trading_main_py["主入口<br/>trading — AutoRuntime Core 入口<br/>__main__<br/>文件: trading/__main__.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_asset_inventory_classifier_py ~~~ src_zephyr_infrastructure_asset_inventory_dashboard_py
@@ -921,7 +921,7 @@ flowchart TD
     src_zephyr_trading_stop_gate_py ~~~ src_zephyr_trading_work_orchestrator_py
     src_zephyr_infrastructure_system_telemetry_trace_bridge_py["追踪桥接<br/>基础设施/system telemetry包的trace_bridge模块<br/>_trace_bridge<br/>文件: system_telemetry/_trace_bridge.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_health_probes_py["健康probes<br/>三态健康探针协议（Health Probes —<br/>CT-HEALTH-001）<br/>health_probes<br/>文件: system_telemetry/health_probes.py<br/>(生产态 / production)"]
-    src_zephyr_trading_module_onboarding_scanner_py["moduleonboarding扫描器<br/>借鉴: K8s Controller Manager 主动调和 + K8s<br/>Discovery<br/>module_onboarding_scanner<br/>文件: trading/module_onboarding_scanner.py<br/>(生产态 / production)"]
+    src_zephyr_trading_module_onboarding_scanner_py["moduleonboarding扫描器<br/>借鉴: K8s Controller Manager 主动调和 + K8s<br/>Discovery，支撑基础设施运行时<br/>module_onboarding_scanner<br/>文件: trading/module_onboarding_scanner.py<br/>(生产态 / production)"]
     src_zephyr_trading_resource_optimization_py["资源优化<br/>配置加载/热重载协作者（职责簇：YAML 配置发现<br/>/解析/应用 + mtime 热重载）。<br/>文件: trading/resource_optimization.py<br/>(生产态 / production)"]
     src_zephyr_trading_work_dag_py["WorkDAG + WorkItem — 工作编排数据模型<br/>工作编排数据模型，定义 WorkDAG 与<br/>WorkItem，借鉴 Airflow DAG/Temporal Workflow<br/>/K8s Job 的有向无环工作图结构。<br/>work_dag<br/>文件: trading/work_dag.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_system_telemetry_trace_bridge_py ~~~ src_zephyr_infrastructure_system_telemetry_health_probes_py

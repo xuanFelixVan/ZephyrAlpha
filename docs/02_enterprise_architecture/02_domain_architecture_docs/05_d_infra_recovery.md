@@ -142,7 +142,7 @@ flowchart TD
     src_zephyr_infrastructure_rollback_venv_sync_py ~~~ src_zephyr_infrastructure_rollback_vulnerability_rescanner_py
     src_zephyr_infrastructure_rollback_vulnerability_rescanner_py ~~~ src_zephyr_infrastructure_rollback_warm_standby_py
     src_zephyr_infrastructure_rollback_warm_standby_py ~~~ tests_rollback_test_rollback_scheduler_py
-    src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["自动回滚触发器<br/>AutoRollbackTrigger — 自动回滚触发器。<br/>auto_rollback_trigger<br/>文件: rollback/auto_rollback_trigger.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["自动回滚触发器<br/>故障恢复与容错<br/>auto_rollback_trigger<br/>文件: rollback/auto_rollback_trigger.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_contracts_py["契约<br/>5.152 #15 Protocol 解耦——rollback(L0) 不再<br/>TYPE_CHECKING 依赖 gov_audit(L2) 具体类型。<br/>contracts<br/>文件: rollback/contracts.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_executor_py["回滚执行器<br/>RollbackExecutor — 回滚执行器核心封装。<br/>rollback_executor<br/>文件: rollback/rollback_executor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_scheduler_py["回滚调度器<br/>回滚系统事件驱动调度器，按事件触发回滚检查点创建<br/>与恢复，Phase 5.3 调度核心。<br/>rollback_scheduler<br/>文件: rollback/rollback_scheduler.py<br/>(生产态 / production)"]
@@ -154,8 +154,8 @@ flowchart TD
     src_zephyr_infrastructure_rollback_contract_py["契约<br/>CT-RBK-GATE-001 集成契约落地——Rollback System<br/>Exit Code 完整定义。<br/>contract<br/>文件: rollback/contract.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_drill_py["回滚drill<br/>RollbackDrill — 定期回滚演练调度器<br/>(DiRT-style)。<br/>rollback_drill<br/>文件: rollback/rollback_drill.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_lock_py["回滚锁<br/>盲点（并发序列化）+（多IDE并发）<br/>rollback_lock<br/>文件: rollback/rollback_lock.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_rollback_wal_py["回滚wal<br/>回滚操作本身的 WAL (Write-Ahead Log):<br/>rollback_wal<br/>文件: rollback/rollback_wal.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py["SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>层：dump / restore / verify<br/>sqlite_dumper<br/>文件: rollback/sqlite_dumper.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_rollback_wal_py["回滚wal<br/>回滚预写日志，记录回滚操作前的状态，保证回滚过程<br/>可恢复不丢数据。<br/>rollback_wal<br/>文件: rollback/rollback_wal.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py["SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>SQLite 双轨检查点数据库层，提供 dump<br/>导出、restore 恢复、verify 校验三件套。<br/>sqlite_dumper<br/>文件: rollback/sqlite_dumper.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_contract_py ~~~ src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback_rollback_drill_py ~~~ src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_lock_py ~~~ src_zephyr_infrastructure_rollback_rollback_wal_py
@@ -314,7 +314,7 @@ flowchart TD
     src_zephyr_infrastructure_rollback_venv_sync_py ~~~ src_zephyr_infrastructure_rollback_vulnerability_rescanner_py
     src_zephyr_infrastructure_rollback_vulnerability_rescanner_py ~~~ src_zephyr_infrastructure_rollback_warm_standby_py
     src_zephyr_infrastructure_rollback_warm_standby_py ~~~ tests_rollback_test_rollback_scheduler_py
-    src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["自动回滚触发器<br/>AutoRollbackTrigger — 自动回滚触发器。<br/>auto_rollback_trigger<br/>文件: rollback/auto_rollback_trigger.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_auto_rollback_trigger_py["自动回滚触发器<br/>故障恢复与容错<br/>auto_rollback_trigger<br/>文件: rollback/auto_rollback_trigger.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_contracts_py["契约<br/>5.152 #15 Protocol 解耦——rollback(L0) 不再<br/>TYPE_CHECKING 依赖 gov_audit(L2) 具体类型。<br/>contracts<br/>文件: rollback/contracts.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_executor_py["回滚执行器<br/>RollbackExecutor — 回滚执行器核心封装。<br/>rollback_executor<br/>文件: rollback/rollback_executor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_scheduler_py["回滚调度器<br/>回滚系统事件驱动调度器，按事件触发回滚检查点创建<br/>与恢复，Phase 5.3 调度核心。<br/>rollback_scheduler<br/>文件: rollback/rollback_scheduler.py<br/>(生产态 / production)"]
@@ -326,8 +326,8 @@ flowchart TD
     src_zephyr_infrastructure_rollback_contract_py["契约<br/>CT-RBK-GATE-001 集成契约落地——Rollback System<br/>Exit Code 完整定义。<br/>contract<br/>文件: rollback/contract.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_drill_py["回滚drill<br/>RollbackDrill — 定期回滚演练调度器<br/>(DiRT-style)。<br/>rollback_drill<br/>文件: rollback/rollback_drill.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_lock_py["回滚锁<br/>盲点（并发序列化）+（多IDE并发）<br/>rollback_lock<br/>文件: rollback/rollback_lock.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_rollback_wal_py["回滚wal<br/>回滚操作本身的 WAL (Write-Ahead Log):<br/>rollback_wal<br/>文件: rollback/rollback_wal.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py["SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>层：dump / restore / verify<br/>sqlite_dumper<br/>文件: rollback/sqlite_dumper.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_rollback_wal_py["回滚wal<br/>回滚预写日志，记录回滚操作前的状态，保证回滚过程<br/>可恢复不丢数据。<br/>rollback_wal<br/>文件: rollback/rollback_wal.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py["SqliteDumper — SQLite 双轨 Checkpoint 的 DB<br/>SQLite 双轨检查点数据库层，提供 dump<br/>导出、restore 恢复、verify 校验三件套。<br/>sqlite_dumper<br/>文件: rollback/sqlite_dumper.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_contract_py ~~~ src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback_rollback_drill_py ~~~ src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_lock_py ~~~ src_zephyr_infrastructure_rollback_rollback_wal_py

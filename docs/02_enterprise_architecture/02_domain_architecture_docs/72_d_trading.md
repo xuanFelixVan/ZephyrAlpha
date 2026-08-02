@@ -63,7 +63,7 @@ flowchart TD
     src_zephyr_trading_ide_health_daemon_py["ide健康daemon<br/>TRAE IDE 幽灵窗口守护线程<br/>ide_health_daemon<br/>文件: trading/ide_health_daemon.py<br/>(生产态 / production)"]
     src_zephyr_trading_pnl_calculator["盈亏计算器<br/>盈亏计算的子目录，归集相关子模块<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: pnl_calculator/<br/>(设计态 / design)"]
     src_zephyr_trading_runtime_async_runtime_py["异步运行时<br/>事件循环引导 + run_in_executor 桥接。<br/>async_runtime<br/>文件: runtime/async_runtime.py<br/>(生产态 / production)"]
-    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>（settlement_reconciliation.py）<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
+    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>交易决策<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>settlement_reconciliation<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
     src_zephyr_trading_speed_baseline_checker_py["测速基线检查器<br/>speed基线检查器，交易的检查器，检查条件是否满足<br/>。<br/>speed_baseline_checker<br/>文件: trading/speed_baseline_checker.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_broker_interface_py["经纪人接口<br/>券商接口抽象基类（OCP-003 OCP 扩展点）<br/>D_EXECUTION_CORE — BrokerInterface<br/>文件: trading_contracts/broker_interface.py<br/>(生产态 / production)"]
     src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py["资本分配结果<br/>资本allocation结果，执行的结果，封装操作结果的数<br/>据结构。<br/>capital_allocation_result<br/>文件: execution/capital_allocation_result.py<br/>(生产态 / production)"]
@@ -300,7 +300,7 @@ flowchart TD
 flowchart TD
     src_zephyr_trading_corporate_action_processor_py["公司行为处理器<br/>交易的处理器，处理加工数据<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>corporate_action_processor<br/>文件: trading/corporate_action_processor.py<br/>(设计态 / design)"]
     src_zephyr_trading_pnl_calculator["盈亏计算器<br/>盈亏计算的子目录，归集相关子模块<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: pnl_calculator/<br/>(设计态 / design)"]
-    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>（settlement_reconciliation.py）<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
+    src_zephyr_trading_settlement_reconciliation_py["结算对账<br/>交易决策<br/>⛔ 交易域，设计已就绪，等待开发排期<br/>settlement_reconciliation<br/>文件: trading/settlement_reconciliation.py<br/>(设计态 / design)"]
     src_zephyr_trading_corporate_action_processor_py ~~~ src_zephyr_trading_pnl_calculator
     src_zephyr_trading_pnl_calculator ~~~ src_zephyr_trading_settlement_reconciliation_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

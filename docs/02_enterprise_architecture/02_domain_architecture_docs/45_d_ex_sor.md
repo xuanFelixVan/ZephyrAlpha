@@ -69,7 +69,7 @@ flowchart TD
     src_zephyr_ex_sor_infrastructure_init_py ~~~ src_zephyr_ex_sor_models_init_py
     src_zephyr_ex_sor_models_init_py ~~~ src_zephyr_ex_sor_services_init_py
     src_zephyr_ex_sor_core_optimal_order_router_py["optimal订单路由器<br/>core的路由器，按规则把请求分发到对应处理方<br/>optimal_order_router<br/>文件: core/optimal_order_router.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_services_execution_quality_scorer_py["执行质量评分器<br/>（execution_quality_scorer.py）<br/>文件: services/execution_quality_scorer.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_services_execution_quality_scorer_py["执行质量评分器<br/>业务服务<br/>execution_quality_scorer<br/>文件: services/execution_quality_scorer.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_services_slippage_analyzer_py["滑点分析器<br/>services的分析器，分析数据找出问题或规律<br/>slippage_analyzer<br/>文件: services/slippage_analyzer.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_services_transaction_cost_optimizer_py["交易成本优化器<br/>服务的优化器，优化参数或配置<br/>transaction_cost_optimizer<br/>文件: services/transaction_cost_optimizer.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_optimal_order_router_py ~~~ src_zephyr_ex_sor_services_execution_quality_scorer_py
@@ -152,7 +152,7 @@ flowchart TD
     src_zephyr_ex_sor_infrastructure_init_py ~~~ src_zephyr_ex_sor_models_init_py
     src_zephyr_ex_sor_models_init_py ~~~ src_zephyr_ex_sor_services_init_py
     src_zephyr_ex_sor_core_optimal_order_router_py["optimal订单路由器<br/>core的路由器，按规则把请求分发到对应处理方<br/>optimal_order_router<br/>文件: core/optimal_order_router.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_services_execution_quality_scorer_py["执行质量评分器<br/>（execution_quality_scorer.py）<br/>文件: services/execution_quality_scorer.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_services_execution_quality_scorer_py["执行质量评分器<br/>业务服务<br/>execution_quality_scorer<br/>文件: services/execution_quality_scorer.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_services_slippage_analyzer_py["滑点分析器<br/>services的分析器，分析数据找出问题或规律<br/>slippage_analyzer<br/>文件: services/slippage_analyzer.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_services_transaction_cost_optimizer_py["交易成本优化器<br/>服务的优化器，优化参数或配置<br/>transaction_cost_optimizer<br/>文件: services/transaction_cost_optimizer.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_optimal_order_router_py ~~~ src_zephyr_ex_sor_services_execution_quality_scorer_py

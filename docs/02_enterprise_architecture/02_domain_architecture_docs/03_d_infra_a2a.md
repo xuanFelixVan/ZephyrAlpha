@@ -54,11 +54,11 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>A2A Card Registry — 全局 Agent Card 注册单例<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py["上下文包<br/>Context Package — A2A 上下文包<br/>context_package<br/>文件: layer2_communication/context_package.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py["handoff管理器<br/>Handoff Manager — Agent 间任务交接<br/>handoff_manager<br/>文件: layer2_communication/handoff_manager.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py["message路由器<br/>Message Router — A2A 消息路由<br/>message_router<br/>文件: layer2_communication/message_router.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_push_notifier_py["push通知器<br/>Push Notifier — A2A 推送通知<br/>push_notifier<br/>文件: layer2_communication/push_notifier.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_streaming_py["流式<br/>Streaming — A2A 流式传输<br/>文件: layer2_communication/streaming.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py["上下文包<br/>A2A 上下文包，封装 Agent<br/>间通信第二层的上下文数据。<br/>context_package<br/>文件: layer2_communication/context_package.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py["handoff管理器<br/>Handoff Manager — Agent 间任务交接，支撑 Agent<br/>间通信<br/>handoff_manager<br/>文件: layer2_communication/handoff_manager.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py["message路由器<br/>Message Router — A2A 消息路由，支撑 Agent 间通信<br/>message_router<br/>文件: layer2_communication/message_router.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_push_notifier_py["push通知器<br/>A2A 推送通知器，向目标 Agent 推送消息通知。<br/>push_notifier<br/>文件: layer2_communication/push_notifier.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_streaming_py["流式<br/>A2A 流式传输模块，支持 Agent 间流式数据传输。<br/>streaming<br/>文件: layer2_communication/streaming.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_trigger_monitor_py["触发监控器<br/>触发条件监控器，注册触发器及其判断条件，check<br/>时按上下文逐个判断是否命中，供 Stage 4<br/>公共化只读访问。<br/>trigger_monitor<br/>文件: layer2_communication/trigger_monitor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py["共识<br/>子域兼容转发层，把 5 个共识模块的 17<br/>个符号聚合成单一入口，老代码 from _consensus<br/>import 不用改<br/>文件: layer3_coordination/_consensus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py["核心coordination<br/>核心协调子域兼容转发层，把 8 个模块的 23<br/>个符号聚合成单一入口，老代码 from<br/>_core_coordination import 不用改。<br/>文件: layer3_coordination/_core_coordination.py<br/>(生产态 / production)"]
@@ -83,7 +83,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_spec_sync_py["spec同步<br/>A2A Living Spec 同步 — 蓝图与实现的双向漂移管理<br/>spec_sync<br/>文件: layer3_coordination/spec_sync.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_local_first_arch_py["本地首架构<br/>本地优先架构策略，定义 LOCAL/CLOUD_BACKFILL<br/>计算位置，唯一远程依赖仅 WebSocket<br/>行情，云端只做灾备<br/>backfill，保证断网可独立运行。<br/>local_first_arch<br/>文件: a2a_protocol/local_first_arch.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["迁移策略<br/>迁移流程状态机，7 阶段<br/>（问题追踪→风险评估→回滚计划→预发布→灰度→全量→复<br/>盘），每阶段带定义与流转规则，防激进迁移翻车。<br/>migration_strategy<br/>文件: a2a_protocol/migration_strategy.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_multi_agent_py["多代理<br/>— Multi-Agent 编排基座（Phase 14 / 盲点<br/>multi_agent<br/>文件: a2a_protocol/multi_agent.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_multi_agent_py["多代理<br/>多 Agent 编排基座，支撑多个 Agent<br/>协作编排与通信。<br/>multi_agent<br/>文件: a2a_protocol/multi_agent.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["多模型共识<br/>基础设施的模型，定义数据结构和字段<br/>multi_model_consensus<br/>文件: a2a_protocol/multi_model_consensus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_autonomy_py["离线autonomy<br/>离线自治状态机，AUTO/半自动/ONLINE<br/>三态，按连接状态切换，断网时缓存命令待重连补发，<br/>保证离线可继续工作。<br/>offline_autonomy<br/>文件: a2a_protocol/offline_autonomy.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["离线韧性<br/>等级定义，定义断网降级的容忍级别与策略，指导离线<br/>场景下的服务降级行为<br/>offline_resilience<br/>文件: a2a_protocol/offline_resilience.py<br/>(生产态 / production)"]
@@ -191,7 +191,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py["代理card<br/>Agent 名片模型入口（A2A 第1层发现层），类型从<br/>shared 协议层转发到这里，本模块只是<br/>infrastructure 层的兼容别名，老导入路径不用改。<br/>agent_card<br/>文件: layer1_discovery/agent_card.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py["A2A状态<br/>A2A Task 状态机 — Layer 2 Communication<br/>a2a_state<br/>文件: layer2_communication/a2a_state.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py["A2A状态<br/>A2A 任务状态机，定义 Agent<br/>间通信第二层任务的状态流转。<br/>a2a_state<br/>文件: layer2_communication/a2a_state.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py
@@ -278,11 +278,11 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py["A2Acard注册表<br/>A2A Card Registry — 全局 Agent Card 注册单例<br/>a2a_card_registry<br/>文件: a2a_protocol/a2a_card_registry.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py["上下文包<br/>Context Package — A2A 上下文包<br/>context_package<br/>文件: layer2_communication/context_package.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py["handoff管理器<br/>Handoff Manager — Agent 间任务交接<br/>handoff_manager<br/>文件: layer2_communication/handoff_manager.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py["message路由器<br/>Message Router — A2A 消息路由<br/>message_router<br/>文件: layer2_communication/message_router.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_push_notifier_py["push通知器<br/>Push Notifier — A2A 推送通知<br/>push_notifier<br/>文件: layer2_communication/push_notifier.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_streaming_py["流式<br/>Streaming — A2A 流式传输<br/>文件: layer2_communication/streaming.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_context_package_py["上下文包<br/>A2A 上下文包，封装 Agent<br/>间通信第二层的上下文数据。<br/>context_package<br/>文件: layer2_communication/context_package.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_handoff_manager_py["handoff管理器<br/>Handoff Manager — Agent 间任务交接，支撑 Agent<br/>间通信<br/>handoff_manager<br/>文件: layer2_communication/handoff_manager.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_message_router_py["message路由器<br/>Message Router — A2A 消息路由，支撑 Agent 间通信<br/>message_router<br/>文件: layer2_communication/message_router.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_push_notifier_py["push通知器<br/>A2A 推送通知器，向目标 Agent 推送消息通知。<br/>push_notifier<br/>文件: layer2_communication/push_notifier.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_streaming_py["流式<br/>A2A 流式传输模块，支持 Agent 间流式数据传输。<br/>streaming<br/>文件: layer2_communication/streaming.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer2_communication_trigger_monitor_py["触发监控器<br/>触发条件监控器，注册触发器及其判断条件，check<br/>时按上下文逐个判断是否命中，供 Stage 4<br/>公共化只读访问。<br/>trigger_monitor<br/>文件: layer2_communication/trigger_monitor.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_consensus_py["共识<br/>子域兼容转发层，把 5 个共识模块的 17<br/>个符号聚合成单一入口，老代码 from _consensus<br/>import 不用改<br/>文件: layer3_coordination/_consensus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_core_coordination_py["核心coordination<br/>核心协调子域兼容转发层，把 8 个模块的 23<br/>个符号聚合成单一入口，老代码 from<br/>_core_coordination import 不用改。<br/>文件: layer3_coordination/_core_coordination.py<br/>(生产态 / production)"]
@@ -307,7 +307,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_spec_sync_py["spec同步<br/>A2A Living Spec 同步 — 蓝图与实现的双向漂移管理<br/>spec_sync<br/>文件: layer3_coordination/spec_sync.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_local_first_arch_py["本地首架构<br/>本地优先架构策略，定义 LOCAL/CLOUD_BACKFILL<br/>计算位置，唯一远程依赖仅 WebSocket<br/>行情，云端只做灾备<br/>backfill，保证断网可独立运行。<br/>local_first_arch<br/>文件: a2a_protocol/local_first_arch.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_migration_strategy_py["迁移策略<br/>迁移流程状态机，7 阶段<br/>（问题追踪→风险评估→回滚计划→预发布→灰度→全量→复<br/>盘），每阶段带定义与流转规则，防激进迁移翻车。<br/>migration_strategy<br/>文件: a2a_protocol/migration_strategy.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_multi_agent_py["多代理<br/>— Multi-Agent 编排基座（Phase 14 / 盲点<br/>multi_agent<br/>文件: a2a_protocol/multi_agent.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_multi_agent_py["多代理<br/>多 Agent 编排基座，支撑多个 Agent<br/>协作编排与通信。<br/>multi_agent<br/>文件: a2a_protocol/multi_agent.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_multi_model_consensus_py["多模型共识<br/>基础设施的模型，定义数据结构和字段<br/>multi_model_consensus<br/>文件: a2a_protocol/multi_model_consensus.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_autonomy_py["离线autonomy<br/>离线自治状态机，AUTO/半自动/ONLINE<br/>三态，按连接状态切换，断网时缓存命令待重连补发，<br/>保证离线可继续工作。<br/>offline_autonomy<br/>文件: a2a_protocol/offline_autonomy.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_offline_resilience_py["离线韧性<br/>等级定义，定义断网降级的容忍级别与策略，指导离线<br/>场景下的服务降级行为<br/>offline_resilience<br/>文件: a2a_protocol/offline_resilience.py<br/>(生产态 / production)"]
@@ -415,7 +415,7 @@ flowchart TD
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_security_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_session_smuggling_defense_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer3_coordination_supervisor_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py["代理card<br/>Agent 名片模型入口（A2A 第1层发现层），类型从<br/>shared 协议层转发到这里，本模块只是<br/>infrastructure 层的兼容别名，老导入路径不用改。<br/>agent_card<br/>文件: layer1_discovery/agent_card.py<br/>(生产态 / production)"]
-    src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py["A2A状态<br/>A2A Task 状态机 — Layer 2 Communication<br/>a2a_state<br/>文件: layer2_communication/a2a_state.py<br/>(生产态 / production)"]
+    src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py["A2A状态<br/>A2A 任务状态机，定义 Agent<br/>间通信第二层任务的状态流转。<br/>a2a_state<br/>文件: layer2_communication/a2a_state.py<br/>(生产态 / production)"]
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py ~~~ src_zephyr_infrastructure_a2a_protocol_layer2_communication_a2a_state_py
     src_zephyr_infrastructure_a2a_protocol_a2a_card_registry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py
     src_zephyr_infrastructure_a2a_protocol_layer1_discovery_a2a_registry_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer1_discovery_agent_card_py

@@ -64,7 +64,7 @@ flowchart TD
     src_zephyr_frontend_implementations_default_approval_gateway_py ~~~ src_zephyr_frontend_implementations_default_notification_manager_py
     src_zephyr_frontend_dashboard_components_backtest_performance_py["回测绩效<br/>backtest_performance ·<br/>掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047）<br/>文件: components/backtest_performance.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_backtest_results_py["回测results<br/>backtest_results · 回测结果可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/backtest_results.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_fitness_functions_py["适应度functions<br/>fitness_functions · Fitness Functions<br/>仪表盘组件（v3.1.0 Panel 迁移, ）<br/>文件: components/fitness_functions.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_fitness_functions_py["适应度functions<br/>提供前端展示与交互<br/>fitness_functions<br/>文件: components/fitness_functions.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_order_book_py["订单book<br/>order_book · 5档盘口实时展示组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/order_book.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_position_monitor_py["持仓监控<br/>position_monitor · 实盘持仓监控组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_tick_replay_py["逐笔replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py<br/>(生产态 / production)"]
@@ -133,7 +133,7 @@ flowchart TD
     src_zephyr_frontend_dashboard_app_panel_py ~~~ src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_dashboard_components_backtest_performance_py["回测绩效<br/>backtest_performance ·<br/>掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047）<br/>文件: components/backtest_performance.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_backtest_results_py["回测results<br/>backtest_results · 回测结果可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/backtest_results.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_fitness_functions_py["适应度functions<br/>fitness_functions · Fitness Functions<br/>仪表盘组件（v3.1.0 Panel 迁移, ）<br/>文件: components/fitness_functions.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_fitness_functions_py["适应度functions<br/>提供前端展示与交互<br/>fitness_functions<br/>文件: components/fitness_functions.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_order_book_py["订单book<br/>order_book · 5档盘口实时展示组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/order_book.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_position_monitor_py["持仓监控<br/>position_monitor · 实盘持仓监控组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_tick_replay_py["逐笔replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py<br/>(生产态 / production)"]
