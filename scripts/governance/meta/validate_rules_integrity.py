@@ -317,8 +317,11 @@ def check() -> dict:
                 }
             )
 
-    db["last_check_at"] = now.isoformat()
-    _save_db(db)
+    # TRAE-082 治本 (2026-08-02): check() 严格只读——禁止 _save_db。
+    # 原实现每次 --check 都写 last_check_at 时间戳 → DB dirty → pre-commit 检测
+    # "files were modified by this hook" → 阻断所有 commit（迫使 --no-verify 绕行）。
+    # last_check_at 仅为信息性元数据，不参与哈希校验逻辑，移除写入不影响完整性检测。
+    # 基线更新（含 last_check_at）由 register() 在 post-commit reconciler 中执行。
 
     return {
         "timestamp": now.isoformat(),
