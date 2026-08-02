@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry
 # [CONSUMERS] zephyr.backtest.core.data_handler; zephyr.backtest.core.pit_manager
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] PIT三公理对齐(as_of_join/embargo/survivorship); announce_date<=query_time; LIMIT 1 BY取查询时点可见最新版本; 仅查白名单财务表
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
