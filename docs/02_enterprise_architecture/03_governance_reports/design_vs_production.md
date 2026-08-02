@@ -20,19 +20,20 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 2939 | 92.7% |
-| design（设计态） | 230 | 7.3% |
+| production（生产态） | 2942 | 92.8% |
+| design（设计态） | 228 | 7.2% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3169** | **100%** |
+| **总计** | **3170** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
 | generated | 4114 | 129.8% |
-| stable | 1728 | 54.5% |
-| planned | 127 | 4.0% |
+| stable | 1729 | 54.5% |
+| planned | 125 | 3.9% |
 | deprecated | 90 | 2.8% |
+| testing | 1 | 0.0% |
 
 ## 各域设计成熟度统计
 
@@ -78,8 +79,8 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | 91 | 91 | 0 | 0 | 100.0% |
 | D_GOV_REPAIR | 治理修复 | 1 | 1 | 0 | 0 | 100.0% |
 | D_GOV_RULE | 规则治理 | 35 | 35 | 0 | 0 | 100.0% |
-| D_GOV_SCRIPTS | 脚本治理 | 394 | 393 | 1 | 0 | 99.7% |
-| D_INFRASTRUCTURE | 跨层契约基础设施 | 25 | 25 | 0 | 0 | 100.0% |
+| D_GOV_SCRIPTS | 脚本治理 | 393 | 392 | 1 | 0 | 99.7% |
+| D_INFRASTRUCTURE | 跨层契约基础设施 | 26 | 26 | 0 | 0 | 100.0% |
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
@@ -98,7 +99,7 @@ ttl: permanent
 | D_PF_ALLOC | 组合分配 | 9 | 5 | 4 | 0 | 55.6% |
 | D_PF_CORE | 组合核心 | 18 | 10 | 8 | 0 | 55.6% |
 | D_POSITION | 仓位管理 | 15 | 15 | 0 | 0 | 100.0% |
-| D_REPORTING | 报告 | 12 | 3 | 9 | 0 | 25.0% |
+| D_REPORTING | 报告 | 12 | 4 | 8 | 0 | 33.3% |
 | D_RISK | 风控 | 25 | 21 | 4 | 0 | 84.0% |
 | D_SECURITY | 对抗验证 | 166 | 166 | 0 | 0 | 100.0% |
 | D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | N/A |
@@ -109,7 +110,7 @@ ttl: permanent
 | D_SIGQC | 信号质量控制 | 2 | 2 | 0 | 0 | 100.0% |
 | D_SIMULATION | 仿真 | 10 | 2 | 8 | 0 | 20.0% |
 | D_STRUCT_SCRIPTS | 结构治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_TRADING | 交易运营 | 40 | 37 | 3 | 0 | 92.5% |
+| D_TRADING | 交易运营 | 41 | 39 | 2 | 0 | 95.1% |
 
 ## 生产化率最低的域（Top 10，需优先推进）
 
@@ -118,7 +119,7 @@ ttl: permanent
 | D_KNOWLEDGE | 知识管理 | 1 | 0 | 0.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 7.4% |
 | D_SIMULATION | 仿真 | 10 | 2 | 20.0% |
-| D_REPORTING | 报告 | 12 | 3 | 25.0% |
+| D_REPORTING | 报告 | 12 | 4 | 33.3% |
 | D_SELL_DECISION | 卖出决策 | 23 | 8 | 34.8% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 35.0% |
 | D_EX_CORE | 执行核心 | 44 | 16 | 36.4% |

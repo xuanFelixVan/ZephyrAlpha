@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共262项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共263项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -23,11 +23,11 @@ ttl: permanent
 | 数据源 API | 124 | data_source_apis_registry.yaml |
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 15 | infrastructure_components.yaml |
-| 契约资产 | 65 | cross_layer_contracts.yaml |
+| 契约资产 | 66 | cross_layer_contracts.yaml |
 | 配置项 | 33 | config/*.yaml |
-| 数据流作业 | 229 | dataflow_graph_registry.yaml |
+| 数据流作业 | 227 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
-| **合计** | **262** | |
+| **合计** | **263** | |
 
 ## 2. 外部数据源资产
 
@@ -100,6 +100,7 @@ ttl: permanent
 | CTR-004 | Order / 委托指令 | cross_layer | D_PF_CORE | design |
 | CTR-005 | Fill / 成交回报 | cross_layer | D_EX_CORE | planned |
 | CTR-006 | PositionSnapshot / 持仓快照 | cross_layer | D_EX_CORE | planned |
+| CTR-007 | TargetPortfolio / 目标组合 | cross_layer | D_PF_CORE | unresolved |
 | CTR-BP-001 | BackpressurePause / 背压暂停信号 | cross_layer | D_FACTOR | unresolved |
 | CTR-BP-002 | BackpressureThrottle / 背压降速信号 | cross_layer | D_FACTOR | unresolved |
 | CTR-BP-003 | BackpressureResume / 背压恢复信号 | cross_layer | D_FACTOR | unresolved |

@@ -142,12 +142,12 @@ ttl: permanent
 | C2 | 因子研究 | 5 | 121 | 57 | 64 | 2.00 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 28 | 23 | 5 | 2.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 53 | 26 | 27 | 2.75 | 🟡 部分覆盖 / Partial |
-| C5 | 执行交易 | 4 | 113 | 82 | 31 | 3.00 | ✅ 完全覆盖 / Full |
+| C5 | 执行交易 | 4 | 113 | 83 | 30 | 3.00 | ✅ 完全覆盖 / Full |
 | C6 | ML平台 | 2 | 13 | 10 | 3 | 2.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 51 | 35 | 16 | 2.50 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 14 | 1010 | 980 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 173 | 173 | 0 | 1.00 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 837 | 820 | 17 | 2.31 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 838 | 822 | 16 | 2.31 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -171,7 +171,7 @@ ttl: permanent
 | D_EX_CORE | 执行核心 | C5 | L2_domain | 43 | 15 | 28 | 11 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 17 | 17 | 0 | 10 | L3 🟢 | ✅ |
 | D_POSITION | 仓位管理 | C5 | L2_domain | 13 | 13 | 0 | 12 | L3 🟢 | ✅ |
-| D_TRADING | 交易运营 | C5 | L2_domain | 40 | 37 | 3 | 20 | L3 🟢 | ✅ |
+| D_TRADING | 交易运营 | C5 | L2_domain | 40 | 38 | 2 | 21 | L3 🟢 | ✅ |
 | D_ML_SERVE | 推理 | C6 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_ML_TRAIN | 训练 | C6 | L2_domain | 6 | 3 | 3 | 0 | L2 🟡 | 🟡 |
 | D_BACKTEST | 回测 | C7 | L2_domain | 27 | 19 | 8 | 11 | L3 🟢 | ✅ |
@@ -199,7 +199,7 @@ ttl: permanent
 | D_SECURITY_LLM | LLM防御 | CC2 | L1_foundation | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_AUTONOMY_CORE | 自治核心 | CC3 | L1_foundation | 126 | 126 | 0 | 125 | L3 🟢 | ✅ |
 | D_FRONTEND | 前端 | CC3 | L2_domain | 15 | 11 | 4 | 9 | L3 🟢 | ✅ |
-| D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L0_infrastructure | 24 | 24 | 0 | 15 | L3 🟢 | ✅ |
+| D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L0_infrastructure | 25 | 25 | 0 | 15 | L3 🟢 | ✅ |
 | D_INFRA_A2A | A2A通信 | CC3 | L0_infrastructure | 72 | 72 | 0 | 28 | L3 🟢 | ✅ |
 | D_INFRA_OPS | 基础设施运维 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L0_infrastructure | 54 | 54 | 0 | 48 | L3 🟢 | ✅ |
@@ -211,7 +211,7 @@ ttl: permanent
 | D_KNOWLEDGE | 知识管理 | CC3 | L2_domain | 1 | 0 | 1 | 0 | L1 🔵 | 🟡 |
 | D_OPS | 反馈循环 | CC3 | L1_foundation | 9 | 9 | 0 | 8 | L3 🟢 | ✅ |
 | D_ORCHESTRATOR | 代理编排器 | CC3 | L1_foundation | 70 | 70 | 0 | 54 | L3 🟢 | ✅ |
-| D_REPORTING | 报告 | CC3 | L1_foundation | 12 | 3 | 9 | 1 | L3 🟢 | ✅ |
+| D_REPORTING | 报告 | CC3 | L1_foundation | 12 | 4 | 8 | 1 | L3 🟢 | ✅ |
 | D_SHARED | 共享服务 | CC3 | L0_infrastructure | 183 | 183 | 0 | 119 | L3 🟢 | ✅ |
 | D_ARCHIVE_SCRIPTS | Archived Scripts | — | L2_domain | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_ARCH_GUARD | 架构守护脚本 | — | L2_domain | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
@@ -300,7 +300,7 @@ ttl: permanent
 | D_SECURITY | 对抗验证 | CC2 | L3 | 166 |
 | D_AUTONOMY_CORE | 自治核心 | CC3 | L3 | 126 |
 | D_FRONTEND | 前端 | CC3 | L3 | 15 |
-| D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L3 | 24 |
+| D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L3 | 25 |
 | D_INFRA_A2A | A2A通信 | CC3 | L3 | 72 |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L3 | 54 |
 | D_INFRA_RUNTIME | 运行时集成 | CC3 | L3 | 171 |

@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-08-02T18:33:06
+> 生成时间: 2026-08-02T19:06:45
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -61,13 +61,13 @@ ttl: permanent
 
 | 类型 | 运营态 (production) | 设计态 (design) | 合计 |
 |------|:---:|:---:|:---:|
-| Dataset | 14 | 62 | 76 |
-| Job | 13 | 62 | 75 |
-| Edge | 28 | 62 | 90 |
+| Dataset | 25 | 51 | 76 |
+| Job | 24 | 51 | 75 |
+| Edge | 39 | 51 | 90 |
 
 ## 数据流全景（运营态 + 设计态）
 
-> 75 个作业 / 76 个数据集 / 90 条边（含设计态 62 jobs / 62 datasets）
+> 75 个作业 / 76 个数据集 / 90 条边（含设计态 51 jobs / 51 datasets）
 
 - [dataflow_panorama.md](dataflow_panorama.md) — 全项目数据流全景图（运营态+设计态）+ Dataset/Job 清单
 - [可缩放 HTML 版](http://localhost:8765/docs/02_enterprise_architecture/05_dataflow_architecture/_zoomable_html/dataflow_panorama.html) — 浏览器打开可 Ctrl+滚轮缩放

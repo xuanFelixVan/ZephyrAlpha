@@ -31,9 +31,9 @@
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
 | 依赖图 depgraph | `nodes` | 6059 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6059 个 |
-| 依赖图 depgraph | `edges` | 9015 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9015 条 |
+| 依赖图 depgraph | `edges` | 9044 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9044 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 76 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 229 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 227 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 90 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），90 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
@@ -42,7 +42,7 @@
 | 决策流图 decisiongraph | `decision_layers` | 550 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
 | 决策流图 decisiongraph | `decision_nodes` | 213 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
 | 决策流图 decisiongraph | `decision_edges` | 211 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），211 条 |
-| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 65 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，65 条 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 66 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，66 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_apis` | 124 | 数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，124 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 15 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，15 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `service_assets` | 10 | 服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，10 个 |
@@ -105,7 +105,7 @@
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
 | PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-03 | 手绘 Mermaid 图（时序/治理） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/application_flows.md) | ✅存在 |
-| PAN-BUILT-21 | 交易决策架构视图 | 决策流 | decisiongraph | depgraph (PostgreSQL) | `generate_trading_flow_diagram.py` | `07_trading_decision_architecture/` | ❌缺失 |
+| PAN-BUILT-21 | 交易决策架构视图（已退役） | 决策流 | decisiongraph | depgraph (PostgreSQL) | `(已退役删除) generate_trading_flow_diagram.py` | `(已退役) 07_trading_decision_architecture/` | ❌缺失 |
 | PAN-BATTLE-MAP-01 | 交易决策作战地图（battle_map 第四全景图） | 作战地图 | battle_map | depgraph (PostgreSQL) (battle_map_* 表) | `generate_battle_map_diagram.py` | [`07_trading_decision_architecture/battle_map`](../07_trading_decision_architecture/battle_map/battle_map_panorama.md) | ✅存在 |
 | PAN-BUILT-16 | 架构债务注册表（已归档） | 治理健康度 | 手工 | 手工 | `(手工维护)` | `_archive/` | ❌缺失 |
 | PAN-BUILT-01 | 架构方法论 + 核心决策（TOGAF/C4/功能域/三棵树/安全红线） | 架构视图 | 手工 | YAML (architecture_model/) + 手工 | `(手工维护)` | `architecture_model/` | ✅存在(4文件) |
@@ -157,7 +157,7 @@
 | GAP-TBL-02 | `dataflow_jobs_metadata` | 空表待填 | 0 | 13 行（每个 job 一行扩展属性） | Job 的 source_code_ref / trigger_type / run_context 未填 | AI 查 job 找不到源码文件，不知道怎么触发（定时/事件/手动），改代码会找错文件 | 从代码扫描派生（解析每个 job 的源码文件和触发配置） | P0 必做 | 代码扫描派生 + DB 缓存 | PAN-ASSET-03 |
 | GAP-TBL-07 | `nodes (build_status 字段)` | 字段值缺失 | 0 | 应有 active 值（production 节点且实际运行中） | build_status 字段只有 planned/stable/generated 三种值，0 个 active。能力热力图算法 require build_status='active' 才判 L3，导致 L3 永远无法触发 | AI 看能力热力图会误判所有域最多 L2（可用未验证），无法区分「已上线验证」和「有代码但没跑过」，决策施工优先级时误判 | 1. 修 generate_capability_heatmap.py 算法：build_status='stable' 也算 L3；2. 排除 D_AUDITTEST/D_GOV_SCRIPTS 等测试/脚本域；3. 补 build_status 字段值 | P0 必做 | DB 直写（数据修复）+ 生成器算法修复 | PAN-BUILT-09 |
 | GAP-TBL-08 | `decision_edges` | 空表待填 | 211 | 200+ 行（214 个 decision_nodes 之间的决策传递边） | decision_nodes 有 214 个节点，但 decision_edges=0。同步脚本只同步了节点，没有同步边。历史曾有 213 条边，现已被清空（数据丢失或重建时遗漏） | AI 写新策略时看决策链路只有孤立节点，看不到 L0→L1→...→L6 的流向，无法判断策略在决策链中的位置和上下游依赖 | 从 decision_graph_model.yaml 的 §edges 段重新同步边到 decision_edges 表 | P0 必做 | YAML 真源 + DB 缓存 | PAN-BUILT-19 |
-| GAP-TBL-09 | `contracts` | 数据污染 | 65 | 30-40 行（真正的 P0/P1 契约，真源 cross_layer_contracts.yaml） | DB contracts 表 294 条是从代码注释正则提取的占位符（schema_definition 只有 description 壳子，promise/actual_consumer/gap/last_reviewed 全 None，fulfillment_status 全 unresolved，contract_type 全 'C'）。真正的契约在 cross_layer_contracts.yaml 里（CTR-001~006 + CTR-ERR + CTR-BP + P1×15 等），未同步到 DB | AI 查 contracts 表会看到 294 条垃圾数据，误以为是真契约，基于占位符做决策（幻觉根源）。真正的契约在 YAML 里 AI 不知道去查 | 1. 清空 contracts 表的占位符数据；2. 从 cross_layer_contracts.yaml 重新同步真契约到 contracts 表 | P0 必做 | YAML 真源 + DB 缓存 | PAN-ASSET-02 |
+| GAP-TBL-09 | `contracts` | 数据污染 | 66 | 30-40 行（真正的 P0/P1 契约，真源 cross_layer_contracts.yaml） | DB contracts 表 294 条是从代码注释正则提取的占位符（schema_definition 只有 description 壳子，promise/actual_consumer/gap/last_reviewed 全 None，fulfillment_status 全 unresolved，contract_type 全 'C'）。真正的契约在 cross_layer_contracts.yaml 里（CTR-001~006 + CTR-ERR + CTR-BP + P1×15 等），未同步到 DB | AI 查 contracts 表会看到 294 条垃圾数据，误以为是真契约，基于占位符做决策（幻觉根源）。真正的契约在 YAML 里 AI 不知道去查 | 1. 清空 contracts 表的占位符数据；2. 从 cross_layer_contracts.yaml 重新同步真契约到 contracts 表 | P0 必做 | YAML 真源 + DB 缓存 | PAN-ASSET-02 |
 | GAP-TBL-04 | `interface_contracts` | 部分缺失 | 5 | 50+ 行（每个暴露接口的模块一行） | 50 个域只登记了 5 个模块接口（MOD-DATA/BACKTEST/TRADING/GOVERNANCE/INF-012B） | AI 调用别的模块时不知道暴露什么函数/参数签名，会瞎编函数名和参数 | 从代码扫描补全 exposed_interfaces / consumed_by_modules | P1 应做 | YAML 真源 + DB 缓存 | PAN-ASSET-02 |
 | GAP-TBL-10 | `domains (layer_id 字段)` | 字段值缺失 | 2 | 0 个 NULL（50 个域都应有 layer_id：L0_infrastructure / L1_foundation / L2_domain） | domains 表 50 行中有 2 行 layer_id 为 NULL，无法归入 L0/L1/L2 分层 | AI 按层级筛选域时会漏掉这 2 个域，导致它们在热力图/容量报告/域文档中缺失或归类错误 | 从 ddd_model.yaml 或 domain 映射表补全这 2 个域的 layer_id | P1 应做 | YAML 真源 + DB 缓存 | PAN-BUILT-20 |
 | GAP-TBL-03 | `dataflow_runs` | 空表待填 | 0 | 运行时动态产生（每个 job 每次执行一行） | 无任何 job 执行记录（status/耗时/参数） | AI 排查问题时看不到运行历史，只看到设计态（应该每天跑），看不到实际态（三天没跑成功了） | 依赖观测系统先建好，再回填 DB | P2 延后 | DB 直写（运行时动态产生） | PAN-RUN-01 |
@@ -308,11 +308,16 @@
 |------|------|:---:|------|------|------|
 | PAN-VIS-01 | 可视化前端架构文档 | ⏳待建 | 待裁定（代码扫描派生 vs 独立表） | 可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 已有 TOGAF 视图，本目录放更细的可视化前端架构 | 规划目录：`13_visualization_architecture/`<br>生成器：`(手工维护 + 部分自动生成)`<br>真源待裁定：待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_frontend/blueprint.md) / [`frontend_architecture.md`](../target_architecture/frontend_architecture.md) |
 
+### (已退役) 07_trading_decision_architecture
+
+| ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
+|------|------|:---:|------|------|------|
+| PAN-BUILT-21 | 交易决策架构视图（已退役） | ✅已建 | decisiongraph | 已退役（2026-08-02）：旧生成器 generate_trading_flow_diagram.py + 旧叙事 trading_flow_narrative.yaml + 9 旧 MD + 7 旧 HTML 全部删除。4 横切叙事段迁移至 module_translation_registry.yaml §battle_map_cross_cutting。被 PAN-BATTLE-MAP-01 完全取代。 | 真源：depgraph (PostgreSQL)<br>生成器：`(已退役删除) generate_trading_flow_diagram.py`<br>产物：`(已退役) 07_trading_decision_architecture/trading_flow_index.md` |
+
 ### 07_trading_decision_architecture
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-BUILT-21 | 交易决策架构视图 | ✅已建 | decisiongraph | decisiongraph 业务流程视图（选股/买入/卖出/仓位/执行/对账6阶段叙事），对标 application_flows.md 先例，不进四图对齐。迁移并行观察期保留，将被 PAN-BATTLE-MAP-01 取代 | 真源：depgraph (PostgreSQL)<br>生成器：`generate_trading_flow_diagram.py`<br>产物：`07_trading_decision_architecture/trading_flow_index.md` |
 | PAN-BATTLE-MAP-01 | 交易决策作战地图（battle_map 第四全景图） | ✅已建 | battle_map | 交易决策作战地图（第四全景图 battle_map），以决策环节为节点串联 depgraph/decisiongraph/候选池/蓝图，6件套标准 + 双向锚点查找；取代 PAN-BUILT-21 旧 trading_flow 视图（battle_map_panorama.md §四 取代声明） | 真源：depgraph (PostgreSQL) (battle_map_* 表)<br>生成器：[`generate_battle_map_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py)<br>产物：[`07_trading_decision_architecture/battle_map/battle_map_panorama.md`](../07_trading_decision_architecture/battle_map/battle_map_panorama.md) |
 
 ### _archive
