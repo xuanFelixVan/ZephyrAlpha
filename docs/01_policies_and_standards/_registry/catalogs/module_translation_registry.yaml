@@ -3238,11 +3238,11 @@ entries:
   plain_zh: 执行报告，ex_core的报告器，汇总数据生成报告。
 - module_path: src/zephyr/ex_core/fill_handler.py
   domain_id: D_EX_CORE
-  name_zh: 成交处理器
-  name_en: fill_handler
-  desc_zh: 成交处理器模块
-  desc_en: ''
-  plain_zh: 成交处理器，ex_core的处理器，处理特定类型的事件或请求。
+  name_zh: "部分成交处理器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "部分成交处理器是成交回报的账房先生——每次券商回报一笔成交Fill它就累加到对应订单上更新已成交数量重新计算加权均价累计佣金判断订单是否已全部成交一笔大单分3次成交它就记3笔最后算总账任何时刻都能回答这单成交了多少还剩多少均价多少"
 - module_path: src/zephyr/ex_core/fill_processor.py
   domain_id: D_EX_CORE
   name_zh: 成交处理器

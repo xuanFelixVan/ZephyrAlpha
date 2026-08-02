@@ -1,0 +1,182 @@
+---
+module_id: MOD-EX-001
+title: "部分成交处理器蓝图 — Fill累积+加权均价+状态转换+查询"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+design_maturity: production
+ttl: permanent
+responsibility_domain: 
+---
+
+# 部分成交处理器 (Fill Handler) — D-EX-CORE-48
+
+> **优先级**: P1 | **成熟度**: production | **建设标记**: ✅可建
+> **设计真源**: `D:\临时工作区\依赖图\08-D-EX-CORE-执行核心域.md` §1 D-EX-CORE-48
+> **depgraph**: MOD-EX-001 (design/planned/can_build=1, node_id=7417177)
+
+## 1. 大白话简介
+
+部分成交处理器是"成交回报的账房先生"——每次券商回报一笔成交（Fill），它就累加到对应
+订单上：更新已成交数量、重新计算加权均价、累计佣金、判断订单是否已全部成交。一笔大单
+分3次成交，它就记3笔，最后算总账。任何时刻都能回答"这单成交了多少、还剩多少、均价多少"。
+
+**为什么从 OrderManager 拆出？** 当前成交处理逻辑内嵌在 `OrderManager._on_fill()` 里
+（lines 264-296），混在订单生命周期管理中。拆成独立模块后，未来 Fill Processor
+（D-EX-CORE-08）可直接复用，不必经过 OrderManager，也便于独立测试成交累积逻辑。
+
+## 2. ID 映射说明
+
+depgraph `blueprint_id=MOD-EX-001` 对应设计文档 `D-EX-CORE-48`（ID 错位：depgraph 前4个
+节点使用顺序编号，与设计文档功能编号不一致）。映射表见 §10。
+
+## 3. 职责（阶段1 scope）
+
+| 职责 | 说明 | 状态 |
+|------|------|------|
+| Fill 累积 | 每笔成交累加到 filled_quantity | ✅阶段1 |
+| 加权均价 | new_avg = (old_avg×old_qty + fill_price×fill_qty) / new_qty | ✅阶段1 |
+| 佣金累计 | 累加每笔 fill.commission | ✅阶段1 |
+| 状态转换 | SUBMITTED→PARTIAL / SUBMITTED→FILLED / PARTIAL→FILLED | ✅阶段1 |
+| 剩余量计算 | remaining = total - filled | ✅阶段1 |
+| Fill 幂等 | 同一 fill_id 重复处理不重复累积 | ✅阶段1 |
+| 成交历史 | 维护 order_id → list[Fill] | ✅阶段1 |
+| 成交汇总查询 | FillSummary（总量/已成交量/剩余/均价/笔数/佣金/是否完成） | ✅阶段1 |
+
+## 4. 阶段2扩展（本次不实现，记录防遗忘）
+
+| 扩展 | 说明 | 依赖 |
+|------|------|------|
+| 成交归因器 | 区分主动成交/被动成交/算法成交 | TCA 基础设施 |
+| 费用计算器 | 佣金/印花税/过户费分项计算 | 佣金费率表数据源 |
+| T+1 结算合规 | 标记成交结算日，T+1 才可卖出 | A股交易规则引擎 |
+| 成交延迟统计 | fill_timestamp - order.submit_timestamp | ExecutionEngine 集成 |
+
+## 5. 依赖关系（depgraph 边）
+
+| 方向 | 对端 | dep_type | 说明 |
+|------|------|----------|------|
+| ← 入 | MOD-TRADING-002 | import | 交易运营域引用 fill_handler |
+| → 出 | shared/contracts/fill.py (CTR-005) | import_depends | 消费 Fill 契约 |
+| → 出 | shared/contracts/order.py (CTR-004) | import_depends | 消费 Order 契约 |
+| → 出 | shared/contracts/enums/order_enums.py | import_depends | 消费 OrderStatus 枚举 |
+
+**跨域契约**:
+- 消费: CTR-005 (Fill) ← D_EXECUTION_CORE
+- 消费: CTR-004 (Order) ← D_PORTFOLIO_CORE
+
+## 6. API 契约
+
+```python
+@dataclass(frozen=True)
+class FillSummary:
+    """成交汇总——不可变快照。"""
+    order_id: str
+    total_quantity: Decimal          # 订单总量
+    filled_quantity: Decimal         # 累计成交量
+    remaining_quantity: Decimal      # 剩余 = total - filled
+    avg_fill_price: Decimal | None   # 加权平均成交价
+    fill_count: int                  # 成交笔数
+    total_commission: Decimal        # 累计佣金
+    is_complete: bool                # filled >= total
+    last_fill_timestamp: datetime | None
+
+class FillHandler:
+    """部分成交处理器——Fill 累积+加权均价+状态转换+查询。"""
+
+    def process_fill(self, fill: Fill, order: Order) -> FillSummary:
+        """处理一笔成交——更新订单成交状态，返回成交汇总。
+
+        幂等: 同一 fill_id 重复调用不会重复累积。
+        状态转换: 根据累积量判断 SUBMITTED→PARTIAL / →FILLED。
+        """
+
+    def get_summary(self, order_id: str) -> FillSummary | None:
+        """获取订单的成交汇总（无成交返回 None）。"""
+
+    def get_fills(self, order_id: str) -> list[Fill]:
+        """获取订单的成交历史（按时间顺序）。"""
+
+    def get_remaining(self, order_id: str) -> Decimal | None:
+        """获取订单的剩余未成交数量。"""
+
+    def register_callback(
+        self, callback: Callable[[Fill, FillSummary], None]
+    ) -> None:
+        """注册成交回调——每次 process_fill 后同步调用。"""
+
+    @property
+    def order_count(self) -> int: ...
+    @property
+    def total_fill_count(self) -> int: ...
+```
+
+## 7. 实现方案（从 OrderManager._on_fill 拆出）
+
+**提取逻辑**（OrderManager._on_fill → FillHandler.process_fill）:
+
+| OrderManager._on_fill | FillHandler.process_fill |
+|----------------------|------------------------|
+| `self._fills[order_id].append(fill)` | `self._fills[order_id].append(fill)` |
+| `order.filled_quantity += fill.filled_quantity` | 同左 |
+| `order.avg_fill_price = weighted_avg(...)` | 同左（提取为 `_compute_avg_price`） |
+| `order.updated_at = now()` | 同左 |
+| `if filled >= qty: →FILLED` | 同左 + 幂等检查 |
+| `elif filled > 0: →PARTIAL` | 同左 |
+| `for cb in self._fill_callbacks: cb(fill)` | `cb(fill, summary)` — 传 FillSummary |
+
+**新增能力**（OrderManager._on_fill 没有的）:
+- `fill_id` 幂等检查（防重复处理同一笔成交）
+- `remaining_quantity` 计算
+- `total_commission` 累计
+- `FillSummary` 不可变快照
+- `fill_count` 统计
+- `last_fill_timestamp` 追踪
+
+**不改动 OrderManager**: 本阶段 FillHandler 作为独立模块存在，OrderManager 保持不变。
+后续 Fill Processor（D-EX-CORE-08）可直接使用 FillHandler。
+
+**加权均价算法**:
+```
+new_avg = (old_avg × old_filled_qty + fill_price × fill_qty) / new_filled_qty
+```
+使用 Decimal 全程计算，禁止 float。
+
+## 8. 测试计划
+
+| 用例 | 覆盖点 |
+|------|--------|
+| 单笔全部成交 | filled=total, status→FILLED, avg=fill_price |
+| 单笔部分成交 | filled<total, status→PARTIAL, remaining>0 |
+| 多笔累积成交 | 3笔累积, avg 加权正确, fill_count=3 |
+| 多笔后全部成交 | 最后1笔补齐, status→FILLED |
+| 幂等：重复 fill_id | 第2次调用不累积, summary 不变 |
+| 佣金累计 | total_commission = sum(各笔 commission) |
+| 剩余量计算 | remaining = total - filled |
+| 成交历史查询 | get_fills 返回按顺序的 Fill 列表 |
+| 汇总查询 | get_summary 返回正确的 FillSummary |
+| 回调通知 | register_callback 后每次 process_fill 触发 |
+| 零数量成交 | raise ValueError |
+| 未知订单 | process_fill 对 order_id 不匹配的 fill raise |
+| over-fill | filled > total → 标记 is_complete=True + 日志警告 |
+
+## 9. 不变量 (INVARIANTS)
+
+- FillSummary 是 frozen dataclass，跨层传递时不可变
+- Decimal 用于所有金额/数量计算，禁止 float
+- fill_id 全局唯一，重复 process_fill 幂等（不重复累积）
+- filled_quantity 单调递增（只增不减）
+- 状态转换遵循 OrderManager.VALID_TRANSITIONS 规则
+- Order 对象就地更新（Order 是 frozen=false 的可变 dataclass）
+
+## 10. ID 映射表 (MOD-EX-XXX ↔ D-EX-CORE-XX)
+
+depgraph 前4个节点使用顺序编号，与设计文档功能编号错位：
+
+| depgraph blueprint_id | 设计文档 ID | 功能 | 说明 |
+|----------------------|------------|------|------|
+| **MOD-EX-001** | **D-EX-CORE-48** | **部分成交处理 (fill_handler)** | **本模块** |
+| MOD-EX-002 | D-EX-CORE-04 | Position Tracker | 顺序编号≠功能编号 |
+| MOD-EX-003 | D-EX-CORE-15 | Execution Auditor (audit_journal) | 顺序编号≠功能编号 |
+| MOD-EX-004 | INV-007 | Redis 幂等性 (redis_idempotency) | 跨模块基础设施 |
+| MOD-EX-008+ | D-EX-CORE-08+ | 对齐 | 从008起编号一致 |
