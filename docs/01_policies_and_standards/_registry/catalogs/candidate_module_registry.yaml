@@ -181247,3 +181247,80 @@ entries:
     next_review_date: '2027-08-02'
     review_frequency: yearly
     last_review_outcome: "rejected,确认重复陈旧登记。真源drawdown_tracker=MOD-RK-011(节点7855094).除非MOD-RK-011出现重大缺口,否则不再评估MOD-RISK-001"
+
+  # ----------------------------------------------------------
+  # CAND-H1FS-001: H1 Factor Source / 信号端因子截面读取适配器（rejected，四问①②挂——功能已实现+无消费者）
+  # 来源: depgraph 幽灵节点审查 (2026-08-02, TRAE-083 双源对比+四问过滤)
+  # ----------------------------------------------------------
+  - id: CAND-H1FS-001
+    name: "H1 Factor Source / H1 因子截面读取适配器"
+    aliases: ["h1_factor_source", "H1FactorSource", "信号端因子读取", "因子截面读取适配层"]
+    domain: D_INFRA_RUNTIME
+    domain_status: active
+    domain_node_count: 8
+    sub_layer: "H1 热缓存读端"
+    panorama_position:
+      depgraph:
+        has_position: true
+        target_module_id: "MOD-H1-REDIS-HOT (勿新增——读端已由 H1RedisReader 覆盖)"
+        target_build_status: deprecated
+        target_neighbors:
+          upstream: ["MOD-H1-REDIS-HOT"]
+          downstream: ["D-SIGNAL (尚未存在)"]
+        insertion_description: "拟作为 H1 读端适配层,但 H1RedisReader.get_online_features + h1_integration.create_h1_reader 已覆盖读功能"
+        target_edges: []
+        note: "四问①②挂:功能已实现+无消费者。depgraph node 7964707 已软删除(deprecated)"
+      dataflowgraph:
+        has_position: true
+        target_node_type: read
+        data_flow_path: "H1 Redis feature:{symbol} → [h1_factor_source] → 信号端"
+        upstream_data: ["factor cross section"]
+        downstream_data: ["signal input factors"]
+        insertion_description: "读端已被 H1RedisReader 承接"
+      decisiongraph:
+        has_position: false
+      blueprint:
+        has_position: true
+        target_ref: "h1_redis_hot.md §9 (D-SIGNAL 读端 = H1RedisReader.get_online_features)"
+        design_maturity: production
+    description: "信号端读 H1 因子截面的适配层,拟封装 H1RedisReader 提供批量截面读"
+    capability: ""
+    problem_it_solves: "(无真实痛点)设想为信号端提供友好因子读取接口,但读端已由 H1RedisReader 覆盖"
+    trigger_signals:
+      - "D_SIGNAL 信号域实际启动且需要批量多 symbol 截面读(PIPELINE)且 get_online_features 单标的不够用"
+    keywords: ["h1_factor_source", "因子截面读取", "信号端适配", "H1 读端"]
+    upstream_deps:
+      - {contract: H1-feature-read, from_domain: D_INFRA_RUNTIME, dep_type: H, availability: available, note: "H1RedisReader.get_online_features"}
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites:
+      - {condition: "D_SIGNAL 信号域启动且有批量读需求", check: "src/zephyr/signal 目录存在且批量读性能不达标", met: false, note: "信号域尚未存在"}
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-H1-reader", "MOD-H1-integration"], evidence: "H1RedisReader.get_online_features + h1_integration.create_h1_reader 已覆盖读端,蓝图 §11 E2E 验证 avg=0.20ms < 5ms SLA"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "src/zephyr/signal 目录不存在,无任何消费者;蓝图/候选文档/注册表均无 h1_factor_source 需求定义"}
+      q3_domain_alive: {result: true, evidence: "D_INFRA_RUNTIME H1 模块 8 节点,活跃"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q2
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-02'
+    last_reviewed_at: '2026-08-02'
+    promoted_to: ""
+    source_draft: "depgraph 幽灵节点 7964707 (上一会话 AI 自行登记,无文档背书)"
+    source_section: "TRAE-083 双源对比审查"
+    original_id: "h1_factor_source"
+    estimated_complexity: S
+    estimated_effort: ""
+    tech_notes: "双源对比:设计文档(h1_redis_hot.md §9 D-SIGNAL读端=H1RedisReader.get_online_features,§11 H1全部完成E2E avg0.20ms;candidate_module_registry 无条目;D_FACTOR.md 零匹配) vs depgraph(node7964707 build_status=planned design_maturity=design 从未施工).四问①功能已实现(H1RedisReader+create_h1_reader覆盖) ②无需求驱动(无消费者).depgraph node 7964707 已软删除→deprecated(附 design_evidence 审计)"
+    risks: ["硬建会导致幽灵节点复活+读端双真源(H1RedisReader 与 h1_factor_source 两处维护)"]
+    alternatives: "信号域直接用 H1RedisReader.get_online_features(蓝图 §9 既定接口)。若未来需批量截面读,在 D_SIGNAL 启动时按需新增,届时过四问过滤"
+    tags: ["幽灵节点", "rejected", "功能已实现", "无消费者", "防过度工程", "防误重新设计"]
+    search_terms: ["h1_factor_source", "H1FactorSource", "信号端因子读取", "因子截面适配"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-02'
+    review_frequency: yearly
+    last_review_outcome: "rejected,q2无需求驱动+q1已由H1RedisReader.get_online_features覆盖。depgraph node7964707已deprecated。除非D_SIGNAL信号域启动且批量截面读性能不达标,否则不再评估"
