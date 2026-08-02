@@ -1,0 +1,287 @@
+# 生成器自动触发注册表（TRAE-062 规则数据真源=YAML）
+# 真源说明：本文件是"生成器→触发源→输入/输出"映射的唯一真源。
+#   - reconcile_generators.py 只读此表，禁止反向写入
+#   - apply_*.py 调 reconcile(source) 时查 trigger_sources 匹配
+#   - boot_hooks 调 reconcile_stale() 时按 input_sources mtime 对比
+# 新增生成器自动化：在本表加一条即可，无需改编排器代码（§3.1 能现成不创造·注册表驱动）
+#
+# 字段说明：
+#   name             — 生成器逻辑名（唯一键）
+#   module_path      — Python 模块路径（reconcile 用 importlib.import_module / python -m 加载）
+#   entry_function   — 可调用入口函数名（无参，返回 dict）。省略→subprocess 回退调 main()
+#   args             — 可选 CLI 参数列表（subprocess 回退时传给 main()，如 domain_doc 需 --all）
+#   trigger_sources  — 触发源列表（apply 调 reconcile(source) 时精确匹配）
+#   input_sources    — 输入真源列表（reconcile_stale 用 mtime 对比）
+#                      db: 前缀=数据库表（stale 扫描跳过，由 apply 实时触发）
+#                      yaml: 前缀=YAML 文件（stale 扫描对比 mtime，#后为段名仅注释用）
+#   output_globs     — 产物 glob 列表（reconcile_stale 取最早 mtime 作为产物基准）
+#                      DB-only 生成器（无 yaml 源）不参与 stale 扫描，output_globs 仅供报告
+#
+# 双路径调用（reconcile_generators.py §双路径调用）：
+#   - entry_function 声明且模块中存在 → in-process importlib（快，如 battle_map）
+#   - 省略 entry_function → subprocess `python -m <module_path>`（隔离，免改造 main()-only 生成器）
+#
+# 触发源命名约定：
+#   <graph>_db    — apply_<graph>.py 写 DB 后实时触发（如 depgraph_db / dataflowgraph_db）
+#   <name>_yaml   — YAML 真源变更，boot_hooks 启动时 mtime 对比兜底触发
+
+generators:
+  # ════════════════════════════════════════════════════════════════════════
+  # 00_overview_entry — 导航索引 + 全景注册表
+  # ════════════════════════════════════════════════════════════════════════
+  - name: navigation_index
+    module_path: scripts.governance.d5_architecture.generators.generate_navigation_index
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/00_overview_entry/navigation_index.md
+
+  - name: panorama_registry
+    module_path: scripts.governance.d5_architecture.generators.generate_panorama_registry
+    trigger_sources:
+      - depgraph_db
+      - dataflowgraph_db
+      - decisiongraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+      - db:dataflowgraph_datasets|jobs|edges
+      - db:decisiongraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/00_overview_entry/panorama_registry.md
+      - docs/02_enterprise_architecture/00_overview_entry/panorama_registry_full.md
+
+  # ════════════════════════════════════════════════════════════════════════
+  # 01_global_architecture_diagram — 全局架构图
+  # ════════════════════════════════════════════════════════════════════════
+  - name: asset_catalog
+    module_path: scripts.governance.d5_architecture.generators.generate_asset_catalog
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md
+
+  - name: capability_heatmap
+    module_path: scripts.governance.d5_architecture.generators.generate_capability_heatmap
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/01_global_architecture_diagram/global_capability_heatmap.md
+
+  - name: contract_catalog
+    module_path: scripts.governance.d5_architecture.generators.generate_contract_catalog
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/01_global_architecture_diagram/contract_catalog.md
+
+  - name: cross_domain_matrix
+    module_path: scripts.governance.d5_architecture.generators.generate_cross_domain_matrix
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges|domain_dependencies
+    output_globs:
+      - docs/02_enterprise_architecture/01_global_architecture_diagram/cross_domain_matrix.md
+
+  - name: integration_topology
+    module_path: scripts.governance.d5_architecture.generators.generate_integration_topology
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/01_global_architecture_diagram/integration_topology*.md
+
+  - name: path_tree
+    module_path: scripts.governance.d5_architecture.generators.generate_path_tree
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|arch_directory_tree
+    output_globs:
+      - docs/02_enterprise_architecture/01_global_architecture_diagram/directory_tree*.md
+
+  # ════════════════════════════════════════════════════════════════════════
+  # 02_domain_architecture_docs — 域架构文档
+  # ════════════════════════════════════════════════════════════════════════
+  - name: domain_doc
+    module_path: scripts.governance.d5_architecture.generators.generate_domain_doc
+    args:
+      - --all
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges|domains
+    output_globs:
+      - docs/02_enterprise_architecture/02_domain_architecture_docs/D_*.md
+
+  - name: domain_index
+    module_path: scripts.governance.d5_architecture.generators.generate_domain_index
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|domains
+    output_globs:
+      - docs/02_enterprise_architecture/02_domain_architecture_docs/domain_index.md
+
+  # ════════════════════════════════════════════════════════════════════════
+  # 03_governance_reports — 治理报告
+  # ════════════════════════════════════════════════════════════════════════
+  - name: candidate_module_report
+    module_path: scripts.governance.d5_architecture.generators.generate_candidate_module_report
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|candidate_module_registry
+    output_globs:
+      - docs/02_enterprise_architecture/03_governance_reports/candidate_modules/*.md
+
+  - name: capacity_report
+    module_path: scripts.governance.d5_architecture.generators.generate_capacity_report
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|domains
+    output_globs:
+      - docs/02_enterprise_architecture/03_governance_reports/capacity_report.md
+
+  - name: constraint_violations
+    module_path: scripts.governance.d5_architecture.generators.generate_constraint_violations
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges|arch_constraints
+    output_globs:
+      - docs/02_enterprise_architecture/03_governance_reports/constraint_violations.md
+
+  - name: design_vs_production
+    module_path: scripts.governance.d5_architecture.generators.generate_design_vs_production
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/03_governance_reports/design_vs_production.md
+
+  # ════════════════════════════════════════════════════════════════════════
+  # 04_architecture_principles_decisions — 架构原则与决策
+  # ════════════════════════════════════════════════════════════════════════
+  - name: code_wiki_stats
+    module_path: scripts.governance.d5_architecture.generators.generate_code_wiki_stats
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/04_architecture_principles_decisions/README.md
+      - project_handbook/*.md
+
+  - name: blueprint_panorama
+    module_path: scripts.governance.d5_architecture.generators.generate_blueprint_panorama
+    args:
+      - --all
+    trigger_sources:
+      - depgraph_db
+      - dataflowgraph_db
+      - decisiongraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+      - db:dataflowgraph_datasets|jobs|edges
+      - db:decisiongraph_nodes|edges
+    output_globs:
+      - docs/03_modules/**/blueprint.md
+
+  # ════════════════════════════════════════════════════════════════════════
+  # 05_dataflow_architecture — 数据流架构
+  # ════════════════════════════════════════════════════════════════════════
+  - name: dataflow_diagram
+    module_path: scripts.governance.d5_architecture.generators.generate_dataflow_diagram
+    trigger_sources:
+      - dataflowgraph_db
+      - depgraph_db
+    input_sources:
+      - db:dataflowgraph_datasets|jobs|edges
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/05_dataflow_architecture/dataflow_*.md
+
+  - name: data_acquisition_flow
+    module_path: scripts.governance.d5_architecture.generators.generate_data_acquisition_flow
+    trigger_sources:
+      - depgraph_db
+    input_sources:
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md
+
+  - name: data_inventory
+    module_path: scripts.governance.d5_architecture.generators.generate_data_inventory
+    trigger_sources:
+      - data_inventory_yaml
+    input_sources:
+      - yaml:docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml
+      - yaml:docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
+    output_globs:
+      - docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md
+
+  # ════════════════════════════════════════════════════════════════════════
+  # 06_decision_architecture — 决策架构
+  # ════════════════════════════════════════════════════════════════════════
+  - name: decision_diagram
+    module_path: scripts.governance.d5_architecture.generators.generate_decision_diagram
+    trigger_sources:
+      - decisiongraph_db
+      - depgraph_db
+    input_sources:
+      - db:decisiongraph_nodes|edges
+      - db:depgraph_nodes|edges
+    output_globs:
+      - docs/02_enterprise_architecture/06_decision_architecture/decision_*.md
+
+  # ════════════════════════════════════════════════════════════════════════
+  # 07_trading_decision_architecture/battle_map — 交易决策作战地图（试点已完成）
+  # ════════════════════════════════════════════════════════════════════════
+  - name: battle_map
+    module_path: scripts.governance.d5_architecture.generators.generate_battle_map_diagram
+    entry_function: regenerate
+    trigger_sources:
+      - battle_map_db        # apply_battle_map 写 DB 后触发（实时）
+      - battle_map_yaml      # YAML 叙事/域策略变更后触发（启动时 mtime 对比）
+    input_sources:
+      - db:battle_map_steps|anchors|edges
+      - yaml:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml#battle_map_steps
+      - yaml:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml#battle_map_cross_cutting
+      - yaml:docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml
+    output_globs:
+      - docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/*.md
+      - docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/*.html
+
+  # ════════════════════════════════════════════════════════════════════════
+  # Codegen 管线（YAML→代码，非文档生成器但同样需自动触发）
+  # ════════════════════════════════════════════════════════════════════════
+  - name: contracts
+    module_path: scripts.governance.d5_architecture.generators.generate_contracts
+    trigger_sources:
+      - contracts_yaml
+    input_sources:
+      - yaml:architecture_model/contracts/cross_layer_contracts.yaml
+    output_globs:
+      - src/zephyr/shared/contracts/market_data.py
+      - src/zephyr/shared/contracts/order.py
+
+  - name: policies
+    module_path: scripts.governance.d5_architecture.generators.generate_policies
+    trigger_sources:
+      - policies_yaml
+    input_sources:
+      - yaml:architecture_model/data/data_sources_registry.yaml
+    output_globs:
+      - src/zephyr/data/config/policies.yaml

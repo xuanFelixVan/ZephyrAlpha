@@ -59018,6 +59018,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "执行域仓储接口是订单和持仓的保险柜——定义一套标准接口让订单Order和持仓快照PositionSnapshot的存取方式与具体存储引擎解耦现在用内存字典存将来可以换成SQLite或PostgreSQL上层代码不用改就像银行柜员窗口不管后面保险箱是铁皮柜还是金库柜员给你的存取接口都一样"
+- module_path: scripts/governance/reconcile_generators.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "生成器自动触发编排器"
+  name_en: "Generator Reconcile Orchestrator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "DB真源变更后自动重生成派生产物（MD/HTML图），YAML变更启动时按文件时间兜底扫描。读注册表调度对应生成器，生成失败不阻断真源写入。"
 
 battle_map_steps:
   - step_id: BM-BUY-04
@@ -59091,6 +59098,58 @@ battle_map_steps:
       L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻辑驱动轨+数据驱动轨(AI Discovery)+人工指令轨+应急保命轨四路信号融合为统一决策流，优先级 应急>人工>自动。
     indicators_zh: |
       ①触发：四路信号就绪；②消费：BM-BUY-01 逻辑轨 + 轨道2/3/4；③参数：priority_order=应急>人工>自动；④数据流：四路信号→MTF优先级仲裁→统一决策流→BM-BUY-03；⑤代码：MTF(v8.0) §1.8；⑥降级：MTF 不可用→逻辑轨单线决策。
+  - step_id: BM-BUY-02-A
+    flow_stage: buy_flow
+    name_zh: 逻辑驱动轨
+    name_en: Logic-Driven Track
+    plain_zh: 四轨融合的第一轨——基于8态预测和策略库算出的自动买入预案，是默认决策来源。
+    mechanism_zh: |
+      BM-BUY-02 四轨融合的子环节（depth=1）。逻辑驱动轨接收 BM-BUY-01 多情景对策生成的买入预案，
+      基于次日 8 态预测匹配价格运动情景，结合 C-006 策略工厂策略库生成结构化买入信号。
+      在四轨中优先级最低（自动档），当无人工指令和应急信号时由本轨主导决策。
+    indicators_zh: |
+      ①触发：BM-BUY-01 买入预案就绪；②消费：BM-BUY-01 多情景对策 + C-006 策略库；
+      ③参数：scenario_count=7、priority=auto（最低）；④数据流：8态+策略库→买入预案→逻辑轨信号→MTF 仲裁；
+      ⑤代码：C-005 L3 层；⑥降级：C-005 失效→固定策略查表。
+  - step_id: BM-BUY-02-B
+    flow_stage: buy_flow
+    name_zh: 数据驱动轨
+    name_en: Data-Driven Track (AI Discovery)
+    plain_zh: 四轨融合的第二轨——AI Discovery 实时从数据中发现机会，补充逻辑轨覆盖不到的信号。
+    mechanism_zh: |
+      BM-BUY-02 四轨融合的子环节（depth=1）。数据驱动轨由 AI Discovery 模块驱动，
+      基于实时量能、因子突变、分布特征工程等数据信号发现交易机会，与逻辑驱动轨并行运行。
+      优先级与逻辑轨同级（自动档），两轨信号在 MTF 中合并去重后输出。
+    indicators_zh: |
+      ①触发：实时数据信号（量能/因子突变）；②消费：BM-SEL-02 因子池 + 量能/分布特征；
+      ③参数：discovery_mode=AI、priority=auto；④数据流：因子+量能→AI Discovery→数据轨信号→MTF 仲裁；
+      ⑤代码：轨道2 AI Discovery；⑥降级：AI Discovery 不可用→仅逻辑轨单线决策。
+  - step_id: BM-BUY-02-C
+    flow_stage: buy_flow
+    name_zh: 人工指令轨
+    name_en: Manual Override Track
+    plain_zh: 四轨融合的第三轨——人工下达的买入指令，优先级高于自动轨（逻辑/数据），低于应急轨。
+    mechanism_zh: |
+      BM-BUY-02 四轨融合的子环节（depth=1）。人工指令轨接收交易员通过前端下达的买入指令，
+      在 MTF 仲裁中优先级高于逻辑轨和数据轨（自动档），低于应急保命轨。
+      人工指令一旦下达即覆盖自动轨决策，但会被应急信号覆盖。用于人工干预和策略微调。
+    indicators_zh: |
+      ①触发：人工下达买入指令；②消费：前端指令输入 + 用户策略配置；
+      ③参数：priority=manual（高于 auto，低于 emergency）；④数据流：前端指令→人工轨信号→MTF 仲裁（覆盖自动轨）；
+      ⑤代码：轨道3 人工指令接口；⑥降级：无降级（人工指令为终态决策，仅被应急覆盖）。
+  - step_id: BM-BUY-02-D
+    flow_stage: buy_flow
+    name_zh: 应急保命轨
+    name_en: Emergency Protection Track
+    plain_zh: 四轨融合的第四轨——应急保命信号，优先级最高，一旦触发立即覆盖所有其他轨的决策。
+    mechanism_zh: |
+      BM-BUY-02 四轨融合的子环节（depth=1）。应急保命轨监听风控止损、极端行情、系统故障等应急信号，
+      在 MTF 仲裁中优先级最高（应急>人工>自动）。一旦触发，立即覆盖逻辑轨/数据轨/人工轨的决策，
+      执行保命操作（如紧急卖出、暂停买入、清仓等）。是资金安全的最后一道防线。
+    indicators_zh: |
+      ①触发：风控止损 / 极端行情 / 系统故障；②消费：风控模块信号 + 极端行情检测；
+      ③参数：priority=emergency（最高）；④数据流：应急信号→应急轨→MTF 仲裁（覆盖所有其他轨）→紧急操作；
+      ⑤代码：轨道4 应急保命模块；⑥降级：无降级（应急为最高优先级终态决策）。
   - step_id: BM-BUY-03
     flow_stage: buy_flow
     name_zh: 决策编排

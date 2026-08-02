@@ -326,6 +326,49 @@ def _subscribe_skill_freshness_events() -> None:
         logger.warning("Failed to subscribe skill.freshness_critical: %s", e, exc_info=True)
 
 
+def _subscribe_governance_regeneration() -> None:
+    """启动时扫描生成器输入源 mtime，YAML 比产物新则重生成（§3.2 事件驱动·启动事件）.
+
+    生成器自动触发机制（generator_auto_trigger_pilot.md）：
+      - DB 真源变更由 apply_*.py commit 后内联调用 reconcile() 实时触发
+      - YAML 真源变更（手编无 apply 调用）由本函数启动时 mtime 对比兜底
+    复用 scripts/governance/reconcile_generators.py 的 reconcile_stale()。
+    """
+    try:
+        import sys as _sys
+        _repo_root = str(Path(__file__).resolve().parents[3])
+        if _repo_root not in _sys.path:
+            _sys.path.insert(0, _repo_root)
+        from scripts.governance.reconcile_generators import reconcile_stale
+        result = reconcile_stale()
+        regenerated = result.get("regenerated", [])
+        if regenerated:
+            for r in regenerated:
+                status = r.get("status", "?")
+                name = r.get("generator", "?")
+                if status == "ok":
+                    logger.info(
+                        "Governance regeneration: %s refreshed (%d outputs, %s, reason=%s)",
+                        name, len(r.get("outputs", [])), r.get("elapsed_ms"),
+                        r.get("stale_reason"),
+                    )
+                else:
+                    logger.warning(
+                        "Governance regeneration: %s FAILED: %s", name, r.get("error")
+                    )
+            logger.info(
+                "Governance regeneration complete: %d regenerated, %d skipped",
+                len(regenerated), len(result.get("skipped", [])),
+            )
+        else:
+            logger.debug(
+                "Governance regeneration: all %d generators up-to-date",
+                result.get("total_scanned", 0),
+            )
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("Governance regeneration scan failed: %s", e, exc_info=True)
+
+
 # ---------------------------------------------------------------------------
 # 5.97.3 修复: 将 register_boot_hooks 内的 13 个闭包提取为模块级私有函数
 # 每个 handler 接受 (event, task_repo=None, budget_engine=None) 参数
@@ -637,6 +680,7 @@ def register_boot_hooks(
 
     _subscribe_eventbus_consumers()
     _subscribe_skill_freshness_events()
+    _subscribe_governance_regeneration()
 
     # 红蓝对抗提交触发消费线程 (MOD-INF-030 事件驱动)：daemon 线程轮询
     # data/red_blue/trigger_queue/，门禁达标时跑 TIER_1 对抗。

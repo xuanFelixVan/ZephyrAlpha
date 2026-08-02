@@ -39,9 +39,9 @@ date: 2026-08-03
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 执行阶段图
 flowchart TD
-    BM_EXE_01["(生产态 / production) BM-EXE-01 自适应风控审批<br/>/ Adaptive Risk Approval<br/>下单前的最后一道闸——风控审批，审不过的订单直接拦<br/>下，是订单拦截器不是事后检查。<br/>作战环节 / battle-step<br/>🟡候选承载"]
-    BM_EXE_02["(生产态 / production) BM-EXE-02 交易执行 /<br/>Trade Execution<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>作战环节 / battle-step<br/>🟡候选承载"]
-    BM_EXE_03["(生产态 / production) BM-EXE-03 执行质量TCA /<br/>Execution Quality TCA<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>作战环节 / battle-step"]
+    BM_EXE_01["【BM-EXE-01 自适应风控审批】<br/>下单前的最后一道闸——风控审批，审不过的订单直接拦<br/>下，是订单拦截器不是事后检查。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>🟡候选承载<br/>【Adaptive Risk Approval】"]
+    BM_EXE_02["【BM-EXE-02 交易执行】<br/>审过的订单真正发出去下单，拿回成交回报和盈亏数据<br/>。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>🟡候选承载<br/>【Trade Execution】"]
+    BM_EXE_03["【BM-EXE-03 执行质量TCA】<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Execution Quality TCA】"]
     BM_EXE_02 ~~~ BM_EXE_03
     BM_EXE_01 -->|审批后订单 / data_flow| BM_EXE_02
     BM_EXE_02 -->|成交回报→TCA分析 / data_flow| BM_EXE_03

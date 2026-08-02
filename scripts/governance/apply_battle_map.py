@@ -85,6 +85,7 @@ warn_only: false
 import argparse
 import contextlib
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -129,7 +130,8 @@ _ALL_OPS = _STEP_OPS | _ANCHOR_OPS | _EDGE_OPS
 # update_step 允许更新的字段白名单（安全约束：禁止改 step_id）
 _STEP_UPDATABLE_FIELDS = {
     "step_name", "flow_stage", "layer", "sort_order",
-    "narrative_ref", "indicators", "source_ref", "design_maturity",
+    "narrative_ref", "indicators", "source_ref",
+    "parent_step_id", "depth", "design_maturity",
 }
 _STEP_JSONB_FIELDS = {"indicators"}
 
@@ -172,6 +174,8 @@ def op_add_step(
     narrative_ref: str | None = None,
     indicators: dict | None = None,
     source_ref: str | None = None,
+    parent_step_id: str | None = None,
+    depth: int = 0,
     design_maturity: str = "production",
     dry_run: bool = False,
 ) -> dict:
@@ -200,6 +204,8 @@ def op_add_step(
         "narrative_ref": narrative_ref or step_id,
         "indicators": json.dumps(indicators, ensure_ascii=False) if indicators else None,
         "source_ref": source_ref,
+        "parent_step_id": parent_step_id,
+        "depth": depth,
         "design_maturity": design_maturity,
     }
 
@@ -208,6 +214,23 @@ def op_add_step(
         if cur.fetchone() is not None:
             raise ValueError(f"step_id '{step_id}' 已存在（PK 约束）")
 
+        # BM-INV-006: 校验父环节存在 + flow_stage 一致（若指定 parent_step_id）
+        if parent_step_id is not None:
+            cur.execute(
+                "SELECT flow_stage FROM battle_map_steps WHERE step_id = %s",
+                (parent_step_id,),
+            )
+            parent_row = cur.fetchone()
+            if parent_row is None:
+                raise ValueError(
+                    f"parent_step_id '{parent_step_id}' 不存在（BM-INV-006）"
+                )
+            if parent_row["flow_stage"] != flow_stage:
+                raise ValueError(
+                    f"子环节 flow_stage '{flow_stage}' 与父 '{parent_row['flow_stage']}' "
+                    f"不一致（BM-INV-006 防跨阶段嵌套）"
+                )
+
         if dry_run:
             print(f"[DRY-RUN] INSERT step {step_id} ({step_name})")
         else:
@@ -215,9 +238,11 @@ def op_add_step(
                 """
                 INSERT INTO battle_map_steps
                     (step_id, step_name, flow_stage, layer, sort_order,
-                     narrative_ref, indicators, source_ref, design_maturity)
+                     narrative_ref, indicators, source_ref, parent_step_id, depth,
+                     design_maturity)
                 VALUES (%(step_id)s, %(step_name)s, %(flow_stage)s, %(layer)s, %(sort_order)s,
-                        %(narrative_ref)s, %(indicators)s, %(source_ref)s, %(design_maturity)s)
+                        %(narrative_ref)s, %(indicators)s, %(source_ref)s,
+                        %(parent_step_id)s, %(depth)s, %(design_maturity)s)
                 RETURNING step_id
                 """,
                 row,
@@ -594,6 +619,23 @@ def _execute_ops(ops: list[dict], dry_run: bool = False) -> int:
             else:
                 conn.commit()
                 print(json.dumps(results, ensure_ascii=False, indent=2, default=str))
+                # 真源写入成功 → 自动派生重生成（编排器查 generator_registry.yaml，§2.3 派生关系）
+                # 生成失败不阻断 apply（apply 是真源，生成是派生）
+                # ZEPHYR_SKIP_REGENERATE=1 逃生通道：批量操作时可跳过（boot_hooks 启动兜底）
+                if os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
+                    try:
+                        from scripts.governance.reconcile_generators import reconcile
+                        regen = reconcile("battle_map_db")
+                        for r in regen.get("regenerated", []):
+                            if r.get("status") == "ok":
+                                out_ct = len(r.get('outputs', []))
+                                print(f"  ↳ 自动重生成: {r['generator']} "
+                                      f"({out_ct} 文件, {r.get('elapsed_ms')}ms)")
+                            else:
+                                print(f"  ⚠ 自动重生成失败（不阻断写入）: "
+                                      f"{r.get('generator')}: {r.get('error')}", file=sys.stderr)
+                    except Exception as e:
+                        print(f"  ⚠ 编排器不可用（不阻断写入）: {e}", file=sys.stderr)
         return 0
     except (ValueError, KeyError) as e:
         conn.rollback()

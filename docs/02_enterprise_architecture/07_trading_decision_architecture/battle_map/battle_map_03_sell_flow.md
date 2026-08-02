@@ -39,12 +39,12 @@ date: 2026-08-03
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 卖出阶段图
 flowchart TD
-    BM_SELL_01["(生产态 / production) BM-SELL-01 突破成败信号 /<br/>Breakout Success/Failure Signal<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>作战环节 / battle-step"]
-    BM_SELL_02["(生产态 / production) BM-SELL-02<br/>卖出信号融合仲裁 / Sell Signal Fusion<br/>Arbitration<br/>把所有卖出信号（含突破成败）汇总仲裁，强制清仓永<br/>远最高优先级，谁的信号最狠听谁的。<br/>作战环节 / battle-step"]
-    BM_SELL_03["(生产态 / production) BM-SELL-03<br/>卖出信号收集评分 / Sell Signal Collection &amp;<br/>Scoring<br/>卖出端的'信号层'——先把持仓分级(Watch/Monitor<br/>/Hold)，再收集7类卖出信号，多时间框架共振加权，<br/>产出卖出信号评分和紧迫度。<br/>作战环节 / battle-step"]
-    BM_SELL_04["(设计态 / design) BM-SELL-04 止盈止损族 /<br/>Take-Profit &amp; Stop-Loss Strategy Family<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式(趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损)，叠加猎杀防护和期权定价<br/>评估。<br/>作战环节 / battle-step<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
-    BM_SELL_05["(生产态 / production) BM-SELL-05 置换再平衡卖出<br/>/ Replacement &amp; Rebalance Sell<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>作战环节 / battle-step"]
-    BM_SELL_06["(生产态 / production) BM-SELL-06 买卖冲突仲裁 /<br/>Buy-Sell Conflict Arbitration<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>(保守原则)；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>作战环节 / battle-step"]
+    BM_SELL_01["【BM-SELL-01 突破成败信号】<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Breakout Success/Failure Signal】"]
+    BM_SELL_02["【BM-SELL-02 卖出信号融合仲裁】<br/>把所有卖出信号（含突破成败）汇总仲裁，强制清仓永<br/>远最高优先级，谁的信号最狠听谁的。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Sell Signal Fusion Arbitration】"]
+    BM_SELL_03["【BM-SELL-03 卖出信号收集评分】<br/>卖出端的'信号层'——先把持仓分级(Watch/Monitor<br/>/Hold)，再收集7类卖出信号，多时间框架共振加权，<br/>产出卖出信号评分和紧迫度。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Sell Signal Collection &amp; Scoring】"]
+    BM_SELL_04["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04 止盈止损族】<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式(趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损)，叠加猎杀防护和期权定价<br/>评估。<br/>作战环节 / battle-step<br/>(设计态 / design)<br/>【Take-Profit &amp; Stop-Loss Strategy Family】"]
+    BM_SELL_05["【BM-SELL-05 置换再平衡卖出】<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Replacement &amp; Rebalance Sell】"]
+    BM_SELL_06["【BM-SELL-06 买卖冲突仲裁】<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>(保守原则)；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Buy-Sell Conflict Arbitration】"]
     BM_SELL_04 ~~~ BM_SELL_05
     BM_SELL_01 -->|突破成败信号 / data_flow| BM_SELL_02
     BM_SELL_01 -->|突破成败信号→收集评分 / data_flow| BM_SELL_03

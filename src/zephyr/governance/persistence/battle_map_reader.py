@@ -361,6 +361,10 @@ class BattleMapReader:
 
         环节无锚点=悬空决策=幻觉风险。返回无锚点的 steps 列表。
         align_battle_map.py 君子协定告警用。
+
+        V0.4.0 父子嵌套豁免：子环节（parent_step_id 非空）若父环节有锚点，
+        则不算孤儿——锚点通过父环节间接覆盖。只有"自身无锚点 AND 父环节也无锚点"
+        的子环节才报孤儿（父子全悬空）。
         """
         conn = self._get_conn()
         cursor = conn.execute(
@@ -368,6 +372,11 @@ class BattleMapReader:
             SELECT s.* FROM battle_map_steps s
             WHERE NOT EXISTS (
                 SELECT 1 FROM battle_map_anchors a WHERE a.step_id = s.step_id
+            )
+            AND NOT EXISTS (
+                -- V0.4.0 子环节豁免：父环节有锚点则子环节不算孤儿
+                SELECT 1 FROM battle_map_anchors a2
+                WHERE a2.step_id = s.parent_step_id
             )
             ORDER BY s.flow_stage, s.sort_order
             """

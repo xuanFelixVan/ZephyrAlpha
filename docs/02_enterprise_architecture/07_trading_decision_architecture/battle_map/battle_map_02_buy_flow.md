@@ -10,7 +10,7 @@ date: 2026-08-03
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_02_buy_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §buy_flow 阶段，6 环节。
+> battle_map §buy_flow 阶段，10 环节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
 ## 文档基本信息 / Document Overview
@@ -18,9 +18,9 @@ date: 2026-08-03
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
-| 环节数 | 6 | Steps | 6 |
+| 环节数 | 10 | Steps | 10 |
 | 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟦 运营态（已建）=4 ｜ 🟧 设计态（待施工）=2 | State Distribution | 🟦 运营态（已建）=4 ｜ 🟧 设计态（待施工）=2 |
+| 状态分布 | 🟦 运营态（已建）=8 ｜ 🟧 设计态（待施工）=2 | State Distribution | 🟦 运营态（已建）=8 ｜ 🟧 设计态（待施工）=2 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -33,19 +33,29 @@ date: 2026-08-03
 
 ## 阶段图 / Stage Diagram
 
-> 展示 买入 阶段全部 6 个环节及流转边，颜色区分五态。
+> 展示 买入 阶段全部 10 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 买入阶段图
 flowchart TD
-    BM_BUY_01["(生产态 / production) BM-BUY-01 多情景对策生成<br/>/ Multi-Scenario Countermeasure<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>作战环节 / battle-step<br/>🟡候选承载"]
-    BM_BUY_02["(生产态 / production) BM-BUY-02 四轨融合 /<br/>Four-Track Fusion (MTF)<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>作战环节 / battle-step"]
-    BM_BUY_03["(生产态 / production) BM-BUY-03 决策编排 /<br/>Decision Orchestration (DO)<br/>把融合后的决策按5条路径（买/卖/做T/人工<br/>/应急）统一出口编排，处理冲突、去重、排时序。<br/>作战环节 / battle-step"]
-    BM_BUY_04["(设计态 / design) BM-BUY-04 分批建仓 / Batched<br/>Position Building<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>作战环节 / battle-step"]
-    BM_BUY_05["(设计态 / design) BM-BUY-05 做T日内套利 /<br/>Intraday T+0 Arbitrage<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>作战环节 / battle-step<br/>⛔ 卖出决策域，设计已就绪，等待开发排期"]
-    BM_BUY_06["(生产态 / production) BM-BUY-06 外部指令盯盘 /<br/>External Order Monitoring<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控检查→执行，是人工干预系统的入口。<br/>作战环节 / battle-step"]
-    BM_BUY_01 ~~~ BM_BUY_04 ~~~ BM_BUY_06
+    BM_BUY_01["【BM-BUY-01 多情景对策生成】<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>🟡候选承载<br/>【Multi-Scenario Countermeasure】"]
+    subgraph sg_BM_BUY_02 ["四轨融合"]
+        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
+        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Logic-Driven Track】"]
+        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Data-Driven Track (AI Discovery)】"]
+        BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Manual Override Track】"]
+        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Emergency Protection Track】"]
+        BM_BUY_02 -.->|嵌套| BM_BUY_02_A
+        BM_BUY_02 -.->|嵌套| BM_BUY_02_B
+        BM_BUY_02 -.->|嵌套| BM_BUY_02_C
+        BM_BUY_02 -.->|嵌套| BM_BUY_02_D
+    end
+    BM_BUY_03["【BM-BUY-03 决策编排】<br/>把融合后的决策按5条路径（买/卖/做T/人工<br/>/应急）统一出口编排，处理冲突、去重、排时序。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Decision Orchestration (DO)】"]
+    BM_BUY_04["【BM-BUY-04 分批建仓】<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>作战环节 / battle-step<br/>(设计态 / design)<br/>【Batched Position Building】"]
+    BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>作战环节 / battle-step<br/>(设计态 / design)<br/>【Intraday T+0 Arbitrage】"]
+    BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控检查→执行，是人工干预系统的入口。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【External Order Monitoring】"]
+    BM_BUY_01 ~~~ BM_BUY_04 ~~~ BM_BUY_06 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D
     BM_BUY_02 ~~~ BM_BUY_05
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
@@ -55,7 +65,7 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06 production
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D production
     class BM_BUY_04,BM_BUY_05 design
 ```
 
@@ -91,7 +101,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | stable |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -277,6 +287,138 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 | depgraph | MOD-L08-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：buy_flow
+
+### BM-BUY-02-A 逻辑驱动轨 / Logic-Driven Track
+
+> **大白话**：四轨融合的第一轨——基于8态预测和策略库算出的自动买入预案，是默认决策来源。
+
+**机制说明**：
+
+BM-BUY-02 四轨融合的子环节（depth=1）。逻辑驱动轨接收 BM-BUY-01 多情景对策生成的买入预案，
+基于次日 8 态预测匹配价格运动情景，结合 C-006 策略工厂策略库生成结构化买入信号。
+在四轨中优先级最低（自动档），当无人工指令和应急信号时由本轨主导决策。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-BUY-01 买入预案就绪；②消费：BM-BUY-01 多情景对策 + C-006 策略库；
+③参数：scenario_count=7、priority=auto（最低）；④数据流：8态+策略库→买入预案→逻辑轨信号→MTF 仲裁；
+⑤代码：C-005 L3 层；⑥降级：C-005 失效→固定策略查表。
+
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
+
+### BM-BUY-02-B 数据驱动轨 / Data-Driven Track (AI Discovery)
+
+> **大白话**：四轨融合的第二轨——AI Discovery 实时从数据中发现机会，补充逻辑轨覆盖不到的信号。
+
+**机制说明**：
+
+BM-BUY-02 四轨融合的子环节（depth=1）。数据驱动轨由 AI Discovery 模块驱动，
+基于实时量能、因子突变、分布特征工程等数据信号发现交易机会，与逻辑驱动轨并行运行。
+优先级与逻辑轨同级（自动档），两轨信号在 MTF 中合并去重后输出。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：实时数据信号（量能/因子突变）；②消费：BM-SEL-02 因子池 + 量能/分布特征；
+③参数：discovery_mode=AI、priority=auto；④数据流：因子+量能→AI Discovery→数据轨信号→MTF 仲裁；
+⑤代码：轨道2 AI Discovery；⑥降级：AI Discovery 不可用→仅逻辑轨单线决策。
+
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+
+### BM-BUY-02-C 人工指令轨 / Manual Override Track
+
+> **大白话**：四轨融合的第三轨——人工下达的买入指令，优先级高于自动轨（逻辑/数据），低于应急轨。
+
+**机制说明**：
+
+BM-BUY-02 四轨融合的子环节（depth=1）。人工指令轨接收交易员通过前端下达的买入指令，
+在 MTF 仲裁中优先级高于逻辑轨和数据轨（自动档），低于应急保命轨。
+人工指令一旦下达即覆盖自动轨决策，但会被应急信号覆盖。用于人工干预和策略微调。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：人工下达买入指令；②消费：前端指令输入 + 用户策略配置；
+③参数：priority=manual（高于 auto，低于 emergency）；④数据流：前端指令→人工轨信号→MTF 仲裁（覆盖自动轨）；
+⑤代码：轨道3 人工指令接口；⑥降级：无降级（人工指令为终态决策，仅被应急覆盖）。
+
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
+
+### BM-BUY-02-D 应急保命轨 / Emergency Protection Track
+
+> **大白话**：四轨融合的第四轨——应急保命信号，优先级最高，一旦触发立即覆盖所有其他轨的决策。
+
+**机制说明**：
+
+BM-BUY-02 四轨融合的子环节（depth=1）。应急保命轨监听风控止损、极端行情、系统故障等应急信号，
+在 MTF 仲裁中优先级最高（应急>人工>自动）。一旦触发，立即覆盖逻辑轨/数据轨/人工轨的决策，
+执行保命操作（如紧急卖出、暂停买入、清仓等）。是资金安全的最后一道防线。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：风控止损 / 极端行情 / 系统故障；②消费：风控模块信号 + 极端行情检测；
+③参数：priority=emergency（最高）；④数据流：应急信号→应急轨→MTF 仲裁（覆盖所有其他轨）→紧急操作；
+⑤代码：轨道4 应急保命模块；⑥降级：无降级（应急为最高优先级终态决策）。
+
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 
 [← 返回总指挥图](battle_map_panorama.md)

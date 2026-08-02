@@ -1,16 +1,16 @@
 ---
 doc_type: architecture_view
 title: 可视化视图模板规范（三视图 + 可缩放 HTML）
-version: "1.4"
+version: "1.5"
 status: active
-date: 2026-08-02
+date: 2026-08-03
 owner: MOD-INF-037
 ttl: permanent
 ---
 
 # 可视化视图模板规范（三视图 + 可缩放 HTML）
 
-> **版本**：V1.4 | 2026-08-02
+> **版本**：V1.5 | 2026-08-03
 > **读者**：项目 Owner + AI 开发 Agent + 架构治理人员
 > **写法**：大白话为主，配完整代码模板和验收清单。变更历史见 git log。
 
@@ -238,6 +238,43 @@ flowchart TD
     D_FACTOR["(生产态 / production) 因子 / Factor<br/>因子，负责因子计算、因子库管理和因子评价<br/>跨域节点 / cross-domain"]
 ```
 
+
+#### 作战地图节点格式（【】包裹 + 成熟度放最后，2026-08-03 V1.5）
+
+作战地图（battle_map）的节点标签格式与域文档**不同**，采用【】包裹中英文名、
+成熟度放最后、⛔受限原因放最前的顺序，便于快速识别环节身份：
+
+```
+    <节点ID>["⛔ 受限原因（仅设计态+gate_reason非空）<br/>【step_id 中文名】<br/>大白话简介<br/>作战环节 / battle-step<br/>(成熟度 / maturity)<br/>标记（⚠无锚点 / 🟡候选承载，可选）<br/>【English Name】"]
+```
+
+**行顺序铁律**（从上到下）：
+
+| 行序 | 内容 | 必填 | 说明 |
+|------|------|------|------|
+| ① | `⛔ 受限原因` | 可选 | 仅设计态+`gate_reason`非空时显示，**放最前面** |
+| ② | `【step_id 中文名】` | 必填 | step_id + 中文名，用【】包裹 |
+| ③ | 大白话简介 | 必填 | 日常语言说"做什么" |
+| ④ | `作战环节 / battle-step` | 必填 | 环节类型标识（区别于域文档的"文件: 路径"） |
+| ⑤ | `(成熟度 / maturity)` | 必填 | **放最后**（与域文档"成熟度在最前"相反） |
+| ⑥ | 标记 | 可选 | `⚠无锚点` / `🟡候选承载` |
+| ⑦ | `【English Name】` | 可选 | 英文名，用【】包裹，**放最后** |
+
+**完整示例**：
+
+```
+    BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
+    BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓...<br/>作战环节 / battle-step<br/>(设计态 / design)<br/>【Intraday T+0 Arbitrage】"]
+```
+
+> **【】括号说明**：中英文名用全角【】包裹，视觉上突出环节身份。Mermaid 节点标签用双引号
+> 包裹时，全角【】是纯文本字符不会与节点语法冲突（§4.9 转义规则仅针对半角 `[]`）。
+> 若【】不显示，可替换为 `〔〕` / `『』` / `「」` / `〖〗` / `《》`。
+
+> **与域文档格式的区别**：域文档节点是"成熟度在最前 + 文件路径在最后"（§4.3 域内节点格式），
+> 作战地图节点是"⛔在最前 + 成熟度在最后 + 英文名在最后"。两者不混用——域文档用域文档格式，
+> 作战地图用作战地图格式。
+
 ### 4.4 节点 ID 规范
 
 节点 ID 由文件路径转换而来（`sanitize_node_id`）：
@@ -443,6 +480,76 @@ label = "<br/>".join(_wrap_label_text(p) for p in parts)
 > **完整规范、正反例、审计脚本、补齐 SOP 见 §十七。**
 
 ---
+
+
+### 4.12 父子嵌套关系（仅作战地图，2026-08-03 V1.5）
+
+> **适用范围铁律**：父子嵌套（subgraph + 嵌套边）**仅适用于作战地图（battle_map）**，
+> 其他四个全景图（依赖全景图、数据流全景图、决策流全景图、域文档三视图）**不使用**此机制。
+> 原因：作战地图的"环节"是复合结构（如"四轨融合"由4个子轨组成），需要父子层级表达；
+> 其他全景图的节点是扁平的模块/实体，无嵌套需求。
+
+#### 4.12.1 数据模型
+
+`battle_map_steps` 表新增两字段（V0.4.0）：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `parent_step_id` | TEXT FK | 父环节 step_id，NULL=根环节 |
+| `depth` | INTEGER | 层级深度，0=根 / 1=子 / 2=孙（上限2，防 subgraph 渲染过深） |
+
+#### 4.12.2 Mermaid 渲染规则
+
+有子环节的父环节用 **subgraph** 包裹，子环节在 subgraph 内渲染，父→子用**虚线嵌套边**连接：
+
+```
+    subgraph sg_<父ID> ["父环节名"]
+        <父ID>["节点标签..."]
+        <子ID_1>["节点标签..."]
+        <子ID_2>["节点标签..."]
+        <父ID> -.->|嵌套| <子ID_1>
+        <父ID> -.->|嵌套| <子ID_2>
+    end
+```
+
+**两类边视觉区分**（图大了也能一眼看出关系类型）：
+
+| 边类型 | 箭头 | 标签 | 含义 | 适用 |
+|--------|------|------|------|------|
+| 数据流边 | `-->` 实线 | `数据流 / data_flow` 等 | 环节间流转 | 所有图 |
+| 嵌套边 | `-.->` 虚线 | `嵌套` | 父子组成关系 | **仅作战地图** |
+
+**完整示例**：
+
+```
+    subgraph sg_BM_BUY_02 ["四轨融合"]
+        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号...<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
+        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动买入预案...<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Logic-Driven Track】"]
+        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery实时从数据中发现机会...<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Data-Driven Track (AI Discovery)】"]
+        BM_BUY_02 -.->|嵌套| BM_BUY_02_A
+        BM_BUY_02 -.->|嵌套| BM_BUY_02_B
+    end
+```
+
+#### 4.12.3 子环节状态继承
+
+子环节通常无独立锚点（锚点挂在父环节上）。生成器对齐器豁免子环节的孤儿检查
+（父环节有锚点则子环节不算孤儿），生成器着色时子环节**继承父环节的 `_effective_status`**
+（如父=production，子也=production，不显示"⚠无锚点"）。父环节状态变化时子环节自动跟随。
+
+#### 4.12.4 不变量 BM-INV-006
+
+| 不变量 | 规则 | 校验点 |
+|--------|------|--------|
+| 父环节存在 | `parent_step_id` 必须指向已存在的 step | `apply_battle_map.py` 写入时校验 |
+| 同阶段嵌套 | 子环节 `flow_stage` 必须与父一致（防跨阶段嵌套） | `apply_battle_map.py` 写入时校验 |
+| depth 上限 | `depth ≤ 2`（根→子→孙，防 subgraph 渲染过深） | `align_battle_map.py` 检测 |
+| 无环 | parent 链不能成环（A→B→A） | `align_battle_map.py` 检测 |
+| depth 一致 | `depth` 值与 parent 链长度一致 | `align_battle_map.py` 检测 |
+
+> **实现真源**：`generate_battle_map_diagram.py` 的 `_build_children_map()` +
+> `_emit_nodes_with_subgraphs()` 函数；`align_battle_map.py` 的
+> `_check_parent_child_consistency()` 函数。
 
 ## 五、完整 Mermaid 代码示例
 
@@ -827,12 +934,27 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 
 ### 9.3 全景图适配示例
 
-以**交易流全景图**为例，节点改为"流程步骤"，但格式遵循本模板：
+#### 9.3.1 域文档 / 依赖全景图（扁平节点，成熟度在最前）
 
 ```
-    step_signal_generation["(生产态 / production) 信号生成 / Signal Generation<br/>从因子计算到可交易信号的生成环节<br/>流程步骤 / process-step"]
-    step_signal_generation -->|数据流 / data_flow| step_risk_check
+    src_zephyr_signal_fundamental_pipeline_py["(生产态 / production) 管线 / Alpha Signal Pipeline<br/>从因子计算到可交易信号的生成环节<br/>文件: signal_fundamental/pipeline.py"]
+    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
 ```
+
+#### 9.3.2 作战地图（【】包裹 + 父子嵌套，见 §4.3 作战地图格式 + §4.12 父子嵌套）
+
+```
+    subgraph sg_BM_BUY_02 ["四轨融合"]
+        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号...<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
+        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动买入预案...<br/>作战环节 / battle-step<br/>(生产态 / production)<br/>【Logic-Driven Track】"]
+        BM_BUY_02 -.->|嵌套| BM_BUY_02_A
+    end
+    BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
+```
+
+> **格式选择铁律**：域文档/依赖全景图用"成熟度在最前"格式（§4.3 域内节点），
+> 作战地图用"【】包裹+成熟度在最后"格式（§4.3 作战地图节点格式）。
+> **不混用**——每种图的节点格式由其生成器决定，模板只定义规范。
 
 ---
 
@@ -1296,6 +1418,7 @@ python scripts/git_commit.py \
 | V1.2 | 2026-08-01 | ①新增 §13 subgraph/cluster 背景与边框陷阱（clusterBkg 不生效、style 命令失效、JS setAttribute 无效 → 必须用 `style.fill` 后处理）；②新增 §14 HTML 链接格式陷阱（http:// 绝对链接 vs 相对路径）；③新增 §15 候选库污染防护（索引附录汇总计数）；④新增 §16 Reconciler 回退应对策略 |
 | V1.3 | 2026-08-02 | ①新增 §4.11 节点标签简介质量铁律（五类坏简介概览 + 指向 §十七）；②新增 §十七 节点标签简介质量规范与审计（三问法标准、正反例对照、五类坏简介详解、生成器兜底链、人工补齐 SOP 含审计脚本、GitCommitGateway 提交注意事项）；③§十 验收清单新增"简介无五类坏值"+"运行审计脚本问题=0"+"name_en 非 docstring 片段"检查项；④§十一 常见问题表新增 12 行（五类坏简介+name_en 片段+desc_zh 未同步+审计误报+LOCK_TIMEOUT+DOC-REF-BROKEN+文档未重生成+提交被回退）；⑤§17.5 审计脚本更新为防误报版（重建完整简介、遇纯英文段停止）；⑥§17.6 提交坑表新增 LOCK_TIMEOUT + DOC-REF-BROKEN 两个坑及应对；⑦起因：D_GOV_ENFORCEMENT 域 42 模块中 21 个 plain_zh 是坏值（模板话/截断片段/消费者引用/术语堆砌/名称重复），用户反馈"看不懂有什么作用" |
 | V1.4 | 2026-08-02 | ①审计脚本从 tmp/（gitignored）提升为 committed 治理脚本 `scripts/governance/d5_architecture/checkers/check_node_label_quality.py`；②新增 GATE-NODE-LABEL-QUALITY pre-commit gate（warn-only 观察期，与 TRANSLATION-COVERAGE 互补——后者管 plain_zh 存在性，本 gate 管质量）；③§17.5 审计脚本引用从 `tmp/_audit_doc_labels.py` 改为 committed 路径；④脚本泛化：无参数扫描全部域文档 + `--warn-only`/`--ci` 双模式 + `__manifest__` 块（script_manifest.yaml 自动登记）；⑤起因：tmp/ 被 gitignore，pre-commit hook 指向 tmp/ 在 fresh checkout/CI 不可用——治本为 committed 脚本 |
+| V1.5 | 2026-08-03 | ①§4.3 新增「作战地图节点格式」子节（【】包裹中英文名 + 行顺序铁律：⛔最前→【step_id中文名】→大白话→作战环节→成熟度→标记→【英文名】最后）；②§4.12 新增父子嵌套关系章节（仅作战地图适用，subgraph+嵌套虚线边，BM-INV-006 不变量，子环节状态继承）；③§9.3 全景图适配示例拆分为域文档格式 vs 作战地图格式两种；④起因：作战地图 V0.4.0 父子嵌套功能落地（BM-BUY-02 四轨融合→4子环节），需同步更新模板规范 |
 
 ---
 

@@ -3,7 +3,8 @@
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__; zephyr.governance.persistence.battle_map_reader (BattleMapReader); scripts.governance._shared.module_translation_loader (get_step_*; get_cross_cutting_*); scripts.governance.d5_architecture.generators.zoomable_html (emit_zoomable_html)
 # [CONSUMERS] AI/人生成交易决策作战地图可视化（Mermaid + 可缩放 HTML）
-# [STARTUP] manual
+# [STARTUP] event_driven
+# [TRIGGER] apply_battle_map commit→reconcile_generators.reconcile('battle_map_db'); boot_hooks启动→reconcile_stale() mtime对比YAML
 # [MATURITY] production
 # [INVARIANTS] 只读 battle_map三表 + 翻译真源 battle_map_steps段（BM-INV-003）+ battle_map_cross_cutting段（Gap3）；颜色按锚点模块 depgraph build_status 推导五态（panorama §九）；Mermaid 分页防 >100 节点渲染失败
 # [MODIFY-GUARD] 对标 generate_trading_flow_diagram.py + zoomable_html.py
@@ -267,6 +268,18 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
                     s["_gate_reason"] = gr
                 break
 
+    # V0.4.0 子环节状态继承：子环节无自身锚点时，继承父环节的状态
+    # （子环节是父环节的内部结构，锚点通过父环节间接获得，不应显示 missing/无锚点）
+    step_by_id = {s["step_id"]: s for s in steps}
+    for s in steps:
+        pid = s.get("parent_step_id")
+        if pid and pid in step_by_id:
+            parent = step_by_id[pid]
+            if not anchors_by_step.get(s["step_id"]):  # 子环节无自身锚点
+                s["_effective_status"] = parent.get("_effective_status", "design")
+                s["_has_candidate"] = parent.get("_has_candidate", False)
+                s["_gate_reason"] = parent.get("_gate_reason", "")
+
     return steps, edges, anchors_by_step
 
 
@@ -374,10 +387,32 @@ def _node_label(step: dict) -> str:
     status = step.get("_effective_status") or "design"
     maturity = _STATE_TO_MATURITY.get(status, "(设计态 / design)")
 
-    parts: list[str] = [f"{maturity} {sid} {name_bi}".strip()]
+    # 拆分中英文名（name_bi 格式："中文名 / English" 或单名）
+    if " / " in name_bi:
+        name_zh, name_en = name_bi.split(" / ", 1)
+    else:
+        name_zh, name_en = name_bi, ""
+
+    parts: list[str] = []
+
+    # ⛔ 受限原因（放最前面，仅 design 态 + gate_reason 非空）
+    gate = (step.get("_gate_reason") or "").strip()
+    if status == "design" and gate:
+        parts.append(f"⛔ {gate}")
+
+    # 环节标识（step_id + 中文名，用【】包裹放最前面）
+    parts.append(f"【{sid} {name_zh}】")
+
+    # 大白话
     parts.append(plain if plain else "—")
+
+    # 作战环节标识
     parts.append("作战环节 / battle-step")
 
+    # 成熟度
+    parts.append(maturity)
+
+    # 标记（⚠无锚点 / 🟡候选承载）
     marks: list[str] = []
     if status == "missing":
         marks.append("⚠无锚点")
@@ -386,9 +421,9 @@ def _node_label(step: dict) -> str:
     if marks:
         parts.append("、".join(marks))
 
-    gate = (step.get("_gate_reason") or "").strip()
-    if status == "design" and gate:
-        parts.append(f"⛔ {gate}")
+    # 英文名（用【】包裹放最后，有英文名时才加）
+    if name_en:
+        parts.append(f"【{name_en}】")
 
     label = "<br/>".join(_wrap_label_text(p) for p in parts if p)
     return _sanitize(label)
@@ -481,22 +516,90 @@ def _class_statements(steps: list[dict]) -> list[str]:
     return out
 
 
+def _build_children_map(steps: list[dict]) -> dict[str, list[dict]]:
+    """构建 parent_step_id → 子环节列表 映射（BM-INV-006 父子嵌套渲染用）。
+
+    只有 parent_step_id 非空且指向的父环节也在 steps 集合内时才建立关系
+    （悬空父引用由 align_battle_map.py BM-INV-006 报告，生成器兜底跳过）。
+    返回的子环节列表按 sort_order 排序。
+    """
+    step_ids = {s["step_id"] for s in steps}
+    children: dict[str, list[dict]] = {}
+    for s in steps:
+        pid = s.get("parent_step_id")
+        if pid and pid in step_ids:
+            children.setdefault(pid, []).append(s)
+    for pid in children:
+        children[pid].sort(key=lambda x: x.get("sort_order", 0))
+    return children
+
+
+def _emit_nodes_with_subgraphs(
+    steps: list[dict],
+    children_map: dict[str, list[dict]],
+    parent_id: str | None = None,
+    indent: int = 4,
+) -> list[str]:
+    """递归输出节点定义，有子环节的父环节用 subgraph 包裹（BM-INV-006）。
+
+    结构：
+      根环节（无 parent）→ 独立节点 or subgraph（若有子）
+      子环节（有 parent）→ 在父的 subgraph 内
+      孙环节（depth=2）→ 嵌套 subgraph
+
+    subgraph 标题用父环节名，父节点本身也在 subgraph 内作为第一个节点
+    （保留完整四要素信息），子环节跟在后面。
+    """
+    lines: list[str] = []
+    pad = " " * indent
+    if parent_id is None:
+        nodes = [s for s in steps if not s.get("parent_step_id")]
+    else:
+        nodes = children_map.get(parent_id, [])
+    nodes = sorted(nodes, key=lambda x: x.get("sort_order", 0))
+
+    for s in nodes:
+        sid = s["step_id"]
+        nid = _mermaid_node_id(sid)
+        label = _node_label(s)
+        children = children_map.get(sid)
+        if children:
+            sg_title = _sanitize(s.get("step_name", sid))
+            lines.append(f'{pad}subgraph sg_{nid} ["{sg_title}"]')
+            lines.append(f'{pad}    {nid}["{label}"]')
+            # 子节点定义（递归处理孙环节）
+            lines.extend(
+                _emit_nodes_with_subgraphs(steps, children_map, sid, indent + 4)
+            )
+            # 父→子嵌套边（虚线表示组成关系，与 data_flow 实线区分）
+            child_pad = " " * (indent + 4)
+            for child in children:
+                child_nid = _mermaid_node_id(child["step_id"])
+                lines.append(f'{child_pad}{nid} -.->|嵌套| {child_nid}')
+            lines.append(f"{pad}end")
+        else:
+            lines.append(f'{pad}{nid}["{label}"]')
+    return lines
+
+
 def _build_mermaid(
     steps: list[dict],
     edges: list[dict],
     anchors_by_step: dict[str, list[dict]],
     title: str,
 ) -> str:
-    """构建一个 Mermaid 流程图块（模板合规：主题头 + TD + 四要素节点 + 拓扑分层 + 状态边 + class）。"""
+    """构建一个 Mermaid 流程图块（模板合规：主题头 + TD + 四要素节点 + 拓扑分层 + 状态边 + class）。
+
+    BM-INV-006 父子嵌套：有子环节的父环节用 subgraph 包裹，子环节在 subgraph 内渲染，
+    支持嵌套（孙环节在子环节的 subgraph 内）。无 parent_step_id 的环节平铺为根节点。
+    """
     lines = ["```mermaid", _MERMAID_THEME, f"%% {title}", "flowchart TD"]
     step_ids = {s["step_id"] for s in steps}
     status_by_id = {s["step_id"]: s.get("_effective_status") or "design" for s in steps}
 
-    # 节点定义（标签含四要素 + 预折行；颜色由末尾 class 语句绑，不内联 :::cls）
-    for s in steps:
-        nid = _mermaid_node_id(s["step_id"])
-        label = _node_label(s)
-        lines.append(f'    {nid}["{label}"]')
+    # 节点定义（BM-INV-006：父子嵌套用 subgraph，无 parent 的为根节点）
+    children_map = _build_children_map(steps)
+    lines.extend(_emit_nodes_with_subgraphs(steps, children_map))
 
     # 拓扑分层 ~~~ 同层串联（模板 §4.6 强制竖排）
     layer_map = _topological_layers(steps, edges)
@@ -1337,6 +1440,76 @@ def _generate_cross_cutting_md() -> str:
 # ---------------------------------------------------------------------------
 
 
+def regenerate(output_dir: Path | None = None) -> dict:
+    """重生成 battle_map 全部 MD + HTML（可调用接口，供 reconcile_generators 编排器调用）。
+
+    不 print，返回结果 dict。main() 包装此函数加 print。
+    apply_battle_map.py 写完 DB 后经 reconcile_generators.reconcile() 调用此函数；
+    boot_hooks 启动时经 reconcile_stale() mtime 对比后调用此函数。
+
+    Args:
+        output_dir: 输出目录，None 时用默认 battle_map 目录
+
+    Returns:
+        {"status": "ok"|"failed", "generator": "battle_map",
+         "outputs": [path, ...], "steps": N, "edges": N, "anchors": N}
+    """
+    try:
+        if output_dir is None:
+            output_dir = REPO_ROOT / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "battle_map"
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        steps, edges, anchors_by_step = _load_all()
+        outputs: list[str] = []
+
+        # 总指挥图
+        panorama_md = _generate_panorama_md(steps, edges, anchors_by_step)
+        panorama_md = f"{_make_frontmatter()}\n{panorama_md}"
+        panorama_path = output_dir / "battle_map_panorama.md"
+        panorama_path.write_text(panorama_md, encoding="utf-8")
+        outputs.append(str(panorama_path))
+        html = emit_zoomable_html(panorama_path, panorama_md)
+        if html:
+            outputs.append(str(html))
+
+        # 6 分阶段图
+        for stage_id, stage_name, num in FLOW_STAGES:
+            stage_md = _generate_stage_md(stage_id, stage_name, num, steps, edges, anchors_by_step)
+            stage_md = f"{_make_frontmatter()}\n{stage_md}"
+            stage_path = output_dir / f"battle_map_{num}_{stage_id}.md"
+            stage_path.write_text(stage_md, encoding="utf-8")
+            outputs.append(str(stage_path))
+            html = emit_zoomable_html(stage_path, stage_md)
+            if html:
+                outputs.append(str(html))
+
+        # 横切视图（Gap3：§13漏斗 / §14盘中事件 / §16冲突矩阵）
+        cross_md = _generate_cross_cutting_md()
+        cross_md = f"{_make_frontmatter()}\n{cross_md}"
+        cross_path = output_dir / "battle_map_07_cross_cutting.md"
+        cross_path.write_text(cross_md, encoding="utf-8")
+        outputs.append(str(cross_path))
+        html = emit_zoomable_html(cross_path, cross_md)
+        if html:
+            outputs.append(str(html))
+
+        return {
+            "status": "ok",
+            "generator": "battle_map",
+            "outputs": outputs,
+            "steps": len(steps),
+            "edges": len(edges),
+            "anchors": sum(len(v) for v in anchors_by_step.values()),
+        }
+    except Exception as e:
+        return {
+            "status": "failed",
+            "generator": "battle_map",
+            "error": f"{type(e).__name__}: {e}",
+        }
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="生成交易决策作战地图可视化")
@@ -1347,40 +1520,15 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    out_dir = Path(args.output_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-
     print("加载 battle_map 三表 + 翻译真源...")
-    steps, edges, anchors_by_step = _load_all()
-    print(f"  steps={len(steps)} edges={len(edges)} anchors={sum(len(v) for v in anchors_by_step.values())}")
-
-    # 总指挥图
-    panorama_md = _generate_panorama_md(steps, edges, anchors_by_step)
-    panorama_md = f"{_make_frontmatter()}\n{panorama_md}"
-    panorama_path = out_dir / "battle_map_panorama.md"
-    panorama_path.write_text(panorama_md, encoding="utf-8")
-    html = emit_zoomable_html(panorama_path, panorama_md)
-    print(f"  总指挥图: {panorama_path}" + (f" + HTML: {html}" if html else ""))
-
-    # 6 分阶段图
-    for stage_id, stage_name, num in FLOW_STAGES:
-        stage_md = _generate_stage_md(stage_id, stage_name, num, steps, edges, anchors_by_step)
-        stage_md = f"{_make_frontmatter()}\n{stage_md}"
-        stage_path = out_dir / f"battle_map_{num}_{stage_id}.md"
-        stage_path.write_text(stage_md, encoding="utf-8")
-        html = emit_zoomable_html(stage_path, stage_md)
-        print(f"  {stage_name}阶段: {stage_path}" + (f" + HTML: {html}" if html else ""))
-
-    # 横切视图（Gap3：§13漏斗 / §14盘中事件 / §16冲突矩阵）
-    cross_md = _generate_cross_cutting_md()
-    cross_md = f"{_make_frontmatter()}\n{cross_md}"
-    cross_path = out_dir / "battle_map_07_cross_cutting.md"
-    cross_path.write_text(cross_md, encoding="utf-8")
-    html = emit_zoomable_html(cross_path, cross_md)
-    print(f"  横切视图: {cross_path}" + (f" + HTML: {html}" if html else ""))
-
-    print(f"\n完成。输出目录: {out_dir}")
-    return 0
+    result = regenerate(Path(args.output_dir))
+    if result["status"] == "ok":
+        print(f"  steps={result['steps']} edges={result['edges']} anchors={result['anchors']}")
+        print(f"\n完成。输出 {len(result['outputs'])} 文件。输出目录: {args.output_dir}")
+        return 0
+    else:
+        print(f"ERROR: {result.get('error')}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ Safety  : M（DDL 定义，init_battle_map_db 幂等验证）
 
 表结构（3 张表）
 ------
-1. battle_map_steps    — 作战环节表（11列，环节定义+indicators JSONB 6件套）
+1. battle_map_steps    — 作战环节表（13列，V0.4.0 新增 parent_step_id + depth 支持父子嵌套）
 2. battle_map_anchors  — 双向对齐关系表（7列，环节↔各图模块/候选/蓝图锚点）
 3. battle_map_edges    — 环节流转表（6列，环节间 data_flow/trigger/degradation 边）
 
@@ -130,10 +130,12 @@ def get_battle_map_pg_connection(*args, **kwargs):
 
 
 # ---------------------------------------------------------------------------
-# DDL — battle_map_steps 表（作战环节，11列）
+# DDL — battle_map_steps 表（作战环节，13列，V0.4.0 新增 parent_step_id + depth）
 # step_id TEXT PK（格式 BM-<阶段缩写>-<序号>，如 BM-BUY-03）
 # indicators JSONB — 6件套结构化数据（trigger/consumes/params/data_flow/code_mapping/degradation）
 # narrative_ref TEXT — 指向翻译真源 battle_map_steps 段的 step_id（叙事真源在 YAML）
+# parent_step_id TEXT — V0.4.0 父子嵌套：自引用 FK 指向父环节（NULL=顶层）
+# depth INTEGER — V0.4.0 层级深度（0=顶层,1=子,2=孙，最大2，BM-INV-006）
 # ---------------------------------------------------------------------------
 
 _DDL_BATTLE_MAP_STEPS = f"""
@@ -149,6 +151,8 @@ CREATE TABLE IF NOT EXISTS battle_map_steps (
     source_ref       TEXT,
     design_maturity  TEXT    DEFAULT 'production'
         CHECK (design_maturity IN ({', '.join(f"'{m}'" for m in _DESIGN_MATURITIES)})),
+    parent_step_id   TEXT    REFERENCES battle_map_steps(step_id) ON DELETE SET NULL,
+    depth            INTEGER NOT NULL DEFAULT 0,
     created_at       TIMESTAMPTZ DEFAULT NOW(),
     updated_at       TIMESTAMPTZ DEFAULT NOW()
 )
@@ -196,12 +200,13 @@ CREATE TABLE IF NOT EXISTS battle_map_edges (
 """
 
 # ---------------------------------------------------------------------------
-# DDL — 索引（6个，对齐 depgraph/decisiongraph 索引命名风格）
+# DDL — 索引（7个，V0.4.0 新增 parent_step_id 索引，对齐 depgraph/decisiongraph 命名风格）
 # ---------------------------------------------------------------------------
 
 _DDL_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_battle_map_steps_flow_stage ON battle_map_steps(flow_stage)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_steps_sort ON battle_map_steps(flow_stage, sort_order)",
+    "CREATE INDEX IF NOT EXISTS idx_battle_map_steps_parent ON battle_map_steps(parent_step_id)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_anchors_step ON battle_map_anchors(step_id)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_anchors_target ON battle_map_anchors(target_graph, target_id)",
     "CREATE INDEX IF NOT EXISTS idx_battle_map_edges_from ON battle_map_edges(from_step_id)",
@@ -210,7 +215,7 @@ _DDL_INDEXES = [
 
 
 # ---------------------------------------------------------------------------
-# 四条承重墙不变量（BM-INV-001~004）DB 约束说明
+# 四条承重墙不变量（BM-INV-001~006）DB 约束说明
 # 实际约束在 SQL 真源文件实现（_DDL_BATTLE_MAP_* 常量作为 Python 侧对比真源）
 # ---------------------------------------------------------------------------
 #
@@ -218,6 +223,7 @@ _DDL_INDEXES = [
 #   约束位置: 应用层（align_battle_map.py 君子协定告警，非 DB 约束）
 #   约束类型: 应用层校验（君子协定，跑顺后升级硬阻断）
 #   说明: 环节无锚点=悬空决策=幻觉风险。align_battle_map.py 查询无锚点的 steps 并告警。
+#         子环节孤儿豁免：子环节可通过父环节间接获得锚点覆盖。
 #
 # BM-INV-002: 锚点 target_id 必须能在 target_graph 找到
 #   约束位置: 应用层（apply_battle_map.py 写入时校验 + align_battle_map.py 批量校验）
@@ -236,6 +242,13 @@ _DDL_INDEXES = [
 #   约束类型: 应用层规约（君子协定）
 #   说明: 全景图模块节点的 battle_map_step_ids 字段由 anchors 表派生，
 #         真源在 anchors，禁止直接写入模块节点该字段（防漂移）。
+#
+# BM-INV-006: 作战地图父子嵌套一致性（V0.4.0）
+#   约束位置: 应用层（align_battle_map.py _check_parent_child_consistency 君子协定告警）
+#   约束类型: 应用层校验（君子协定，5 类检查：悬空父引用/跨阶段嵌套/成环/depth超限/depth不符）
+#   说明: parent_step_id 自引用 FK + depth 字段支持环节父子嵌套（最大深度2）。
+#         子环节 flow_stage 必须与父一致；父环节必须有子环节或自身有锚点；
+#         depth 不能成环。生成器用 Mermaid subgraph 渲染父子关系。
 # ---------------------------------------------------------------------------
 
 
