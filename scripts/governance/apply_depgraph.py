@@ -2086,7 +2086,7 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
     对标 cmd_cleanup_orphan_edges（清理孤儿边）。
     返回：删除的节点数，-1=失败。
 
-    注意：改 depgraph.db 前须 git commit 备份（trae_054 STEP0）。
+    注意：已由 backup_pg_depgraph() 自动 PG 备份（trae_054 v1.6.0 STEP0，写入后事件触发，非 git commit）。
     """
     project_root = REPO_ROOT
     with _db_write_lock(db_path=db_path, task="cleanup_orphan_nodes"):
@@ -3953,7 +3953,7 @@ def cmd_delete_nodes(
     用途：删除测试 mock 数据等噪声节点（如 tests/fixtures/）。
     返回：删除的节点数，-1=失败。
 
-    注意：改 depgraph 前须 git commit 备份（trae_054 STEP0）。
+    注意：已由 backup_pg_depgraph() 自动 PG 备份（trae_054 v1.6.0 STEP0，写入后事件触发，非 git commit）。
     """
     if not node_ids:
         print("ERROR: node_ids 列表为空", file=sys.stderr)
@@ -4741,7 +4741,7 @@ def main() -> None:
         metavar="NODE_IDS_FILE",
         help="按 node_id 列表删除节点（JSON文件: [id1, id2, ...]）。"
         "安全门：有入边（被依赖）则阻断，--force 可跳过。先删关联 edges 再删 nodes。"
-        "改 depgraph 前须 git commit 备份。",
+        "已由 backup_pg_depgraph() 自动 PG 备份（trae_054 v1.6.0 STEP0）。",
     )
     parser.add_argument(
         "--update-domain-ssot-path",
