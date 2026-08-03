@@ -9536,6 +9536,14 @@ entries:
   desc_zh: 基于最新tick快照计算横截面因子（无历史序列依赖）
   desc_en: Cross-sectional factors computed from latest tick snapshot
   plain_zh: 这个模块提供两个盘中实时因子：一个是最新成交价，直接读取当前tick的收盘价作为基准；另一个是累计成交均价，用成交额除以成交量算出当日平均成交价，成交量为零时回退用最新价避免除零报错。专为解决盘中三秒周期只有快照数据、没有历史窗口无法算传统时序因子的问题。
+- module_path: scripts/governance/verify_generator_paths.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "生成器触发路径验证脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "手动或CI运行，验证生成器三条自动触发路径（DB写入实时触发/YAML启动兜底/post-commit提交触发）是否正常工作，不接commit hook避免拖慢每次提交"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
@@ -12187,3 +12195,42 @@ battle_map_cross_cutting:
       name_zh: Batch Factor Pruning（批量裁剪）
       trigger: 全池≥64 时按 IC 从休眠/观察中裁撤
       note: 兜底机制，维护全池≤N_max
+- category: hard_boundary_constraints
+  name_zh: 硬边界约束体系
+  name_en: Hard Boundary Constraint System
+  sketch_ref: 01-跨域交叉点 §硬边界约束总表
+  source_ref: enriched from 01-跨域交叉点与因果链.md (B-001~B-020 + HB-SEC/INT/GOV, 2026-08-03)
+  related_steps:
+  - BM-SEL-02
+  - BM-BUY-01
+  - BM-SELL-01
+  - BM-POS-01
+  - BM-RC-01
+  - BM-EXE-01
+  plain_zh: "硬边界是系统不可逾越的红线——AI 和人类都不能绕过。\n分四类：交易安全（禁超限加仓/禁超杠杆/禁非时段下单）、\n自迭代安全（禁无审批上线/禁超3参数/禁过拟合上线）、\n数据隐私（禁外传持仓/禁自动付费源）、运维安全（禁自动重启核心进程/禁自动升级库）。\n另有安全/集成/治理三类硬边界保障系统不被攻破、不被外部故障传染、不被AI自行扩权。\n"
+  mechanism_zh: "硬边界约束体系贯穿交易决策作战全流程，是所有决策的不可逾越底线。\n四类边界协同：\n  ① B-001~B-020 AI行为安全边界——20条交易+自迭代+数据隐私+运维安全硬约束，\n     禁止AI越权操作（如禁超限加仓/禁无审批上线新策略/禁外传持仓数据/禁自动重启核心进程）。\n  ② HB-SEC-01~13 安全硬边界——13条安全约束，密钥不可硬编码/审计日志不可篡改/\n     Agent不可直接访问生产系统/LLM输出不可直接执行/交易通道熔断必须人工恢复/\n     下单操作不可自动重试/风控调用不可降级(Fail-Closed)。\n  ③ HB-INT-01~13 集成硬边界——13条集成约束，外部系统故障不可传染内部(熔断器+舱壁)/\n     出站流量白名单/API版本不匹配必须拒绝/隔离策略不可被绕过。\n  ④ HB-GOV-01~10 治理硬边界——10条治理约束，治理规则不可被AI自动修改/\n     变更审批链不可被绕过/蓝图-代码-文档三方必须对齐/KillSwitch必须分层且本地评估。\n核心原则：防御永远优先于进攻，硬边界约束不可被AI修改(B-006)、不可被AI自行扩展(HB-GOV-04)、\n不可被绕过(HB-INT-05)。与§16冲突矩阵的关系：冲突矩阵的仲裁优先级（风控>一切）\n正是硬边界约束体系在决策层面的具体体现。\n"
+  boundary_categories:
+  - category: ai_behavior_safety
+    name_zh: AI行为安全边界
+    code_prefix: B
+    count: 20
+    scope: 交易安全(B-001~006)+自迭代安全(B-007~010)+数据隐私(B-011~013.6)+运维安全(B-014~016)+功能边界(B-017~020)
+    key_constraints: 禁超限加仓/禁超杠杆/禁非时段下单/禁绕过风控/禁AI改硬边界/禁无审批上线/禁超3参数自迭代/禁过拟合上线/禁外传持仓/禁自动付费源/禁自动重启核心进程/禁自动升级依赖库/不做HFT/不做纯空头/不做多租户SaaS
+  - category: security
+    name_zh: 安全硬边界
+    code_prefix: HB-SEC
+    count: 13
+    scope: 密钥管理+API网关+审计不可篡改+Agent沙箱+LLM输出审查+交易通道熔断+风控Fail-Closed
+    key_constraints: 密钥不可硬编码/外部API必须经网关脱敏/审计日志append-only哈希链/Agent沙箱执行/LLM输出必须经代码审查+沙箱/交易通道熔断必须人工恢复/下单不可自动重试(幂等Key)/风控调用不可降级(Fail-Closed)
+  - category: integration
+    name_zh: 集成硬边界
+    code_prefix: HB-INT
+    count: 13
+    scope: 外部故障隔离+流量白名单+数据源审批+API版本控制+隔离策略
+    key_constraints: 外部故障不可传染内部(熔断器+舱壁)/出站流量白名单/新增数据源需人工审批/API版本不匹配必须拒绝/隔离策略不可被绕过
+  - category: governance
+    name_zh: 治理硬边界
+    code_prefix: HB-GOV
+    count: 10
+    scope: 治理规则不可篡改+变更审批链+三方对齐+AI自治边界+KillSwitch分层
+    key_constraints: 治理规则不可被AI自动修改/变更审批链不可被绕过/蓝图-代码-文档三方必须对齐/AI自治边界不可被AI自行扩展/KillSwitch必须分层且本地评估/KillSwitch激活后必须受控重入

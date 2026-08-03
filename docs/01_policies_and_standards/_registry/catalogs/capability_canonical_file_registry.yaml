@@ -5577,6 +5577,12 @@ creation_tokens:
     created_by: "session-sess-5332-20260730211359"
     capability: "domain_architecture_generators"
 
+  # --- 生成器触发路径冒烟验证脚本（2026-08-03，generator_auto_trigger_pilot §verify）---
+  - file: "scripts/governance/verify_generator_paths.py"
+    token: "auto-verify-generator-paths-20260803"
+    created_by: "session-gen-verify-0803"
+    capability: "domain_architecture_generators"
+
   # --- DDL-as-Code 真源回写 Wave 1（2026-07-25，#ARCH-CH-025 Schema 真源体系收口；P0-8 八表 DB 已 ReplacingMergeTree 但无真源，补齐 + 治本校验脚本）---
   - file: "scripts/ch/verify_schema_truth.py"
     token: "auto-schema-truth-verifier-20260725"
