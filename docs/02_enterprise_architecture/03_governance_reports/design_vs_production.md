@@ -20,19 +20,19 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 3066 | 94.7% |
-| design（设计态） | 170 | 5.3% |
+| production（生产态） | 3528 | 95.0% |
+| design（设计态） | 185 | 5.0% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3236** | **100%** |
+| **总计** | **3713** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4189 | 129.4% |
-| stable | 1790 | 55.3% |
-| planned | 86 | 2.7% |
-| deprecated | 82 | 2.5% |
+| generated | 4198 | 113.1% |
+| stable | 1794 | 48.3% |
+| planned | 101 | 2.7% |
+| deprecated | 83 | 2.2% |
 
 ## 各域设计成熟度统计
 
@@ -42,7 +42,7 @@ ttl: permanent
 | D_ARCHIVE_SCRIPTS | Archived Scripts | 0 | 0 | 0 | 0 | N/A |
 | D_ARCH_GUARD | 架构守护脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_ARCH_SCRIPTS | 架构治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_ASHARE_SIGNAL | A股特色信号 | 19 | 16 | 3 | 0 | 84.2% |
+| D_ASHARE_SIGNAL | A股特色信号 | 31 | 16 | 15 | 0 | 51.6% |
 | D_AUDITTEST | 审计测试套件 | 1 | 1 | 0 | 0 | 100.0% |
 | D_AUTONOMY_CORE | 自治核心 | 130 | 130 | 0 | 0 | 100.0% |
 | D_AUTONOMY_PERM | 自治保护 | 2 | 2 | 0 | 0 | 100.0% |
@@ -62,28 +62,28 @@ ttl: permanent
 | D_EXEC_SIM | 执行仿真 | 7 | 7 | 0 | 0 | 100.0% |
 | D_EX_CORE | 执行核心 | 44 | 20 | 24 | 0 | 45.5% |
 | D_EX_SOR | 执行路由 | 17 | 17 | 0 | 0 | 100.0% |
-| D_FACTOR | 因子 | 89 | 46 | 43 | 0 | 51.7% |
+| D_FACTOR | 因子 | 109 | 65 | 44 | 0 | 59.6% |
 | D_FBL_DETECTORS | 反馈检测器 | 65 | 65 | 0 | 0 | 100.0% |
 | D_FBL_DIAGNOSERS | 反馈诊断器 | 76 | 76 | 0 | 0 | 100.0% |
 | D_FBL_VERIFICATION | 反馈验证 | 71 | 71 | 0 | 0 | 100.0% |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | 125 | 125 | 0 | 0 | 100.0% |
 | D_FRONTEND | 前端 | 24 | 20 | 4 | 0 | 83.3% |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | 14 | 12 | 2 | 0 | 85.7% |
-| D_GOVERNANCE | 生命周期管理 | 224 | 224 | 0 | 0 | 100.0% |
-| D_GOV_AUDIT | 审计追踪 | 126 | 123 | 3 | 0 | 97.6% |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 175 | 175 | 0 | 0 | 100.0% |
+| D_GOVERNANCE | 生命周期管理 | 455 | 455 | 0 | 0 | 100.0% |
+| D_GOV_AUDIT | 审计追踪 | 193 | 190 | 3 | 0 | 98.4% |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 206 | 206 | 0 | 0 | 100.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 25 | 0 | 7.4% |
 | D_GOV_DRIFT | 漂移检测 | 75 | 74 | 1 | 0 | 98.7% |
-| D_GOV_ENFORCEMENT | 规则执行 | 42 | 42 | 0 | 0 | 100.0% |
-| D_GOV_OPS_RESILIENCE | 运维弹性治理 | 91 | 91 | 0 | 0 | 100.0% |
+| D_GOV_ENFORCEMENT | 规则执行 | 115 | 114 | 1 | 0 | 99.1% |
+| D_GOV_OPS_RESILIENCE | 运维弹性治理 | 115 | 115 | 0 | 0 | 100.0% |
 | D_GOV_REPAIR | 治理修复 | 1 | 1 | 0 | 0 | 100.0% |
 | D_GOV_RULE | 规则治理 | 35 | 35 | 0 | 0 | 100.0% |
-| D_GOV_SCRIPTS | 脚本治理 | 397 | 397 | 0 | 0 | 100.0% |
+| D_GOV_SCRIPTS | 脚本治理 | 411 | 411 | 0 | 0 | 100.0% |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | 26 | 26 | 0 | 0 | 100.0% |
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
-| D_INFRA_RUNTIME | 运行时集成 | 169 | 167 | 2 | 0 | 98.8% |
+| D_INFRA_RUNTIME | 运行时集成 | 173 | 171 | 2 | 0 | 98.8% |
 | D_INFRA_TELEMETRY | 可观测性 | 0 | 0 | 0 | 0 | N/A |
 | D_INTEGRATION | 管线路由 | 71 | 71 | 0 | 0 | 100.0% |
 | D_INTEGRATION_GATEWAY | 集成网关 | 0 | 0 | 0 | 0 | N/A |
@@ -92,7 +92,7 @@ ttl: permanent
 | D_META_SCRIPTS | 元治理脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_MKT_DATA | 行情数据 | 26 | 26 | 0 | 0 | 100.0% |
 | D_ML_SERVE | 推理 | 7 | 7 | 0 | 0 | 100.0% |
-| D_ML_TRAIN | 训练 | 6 | 3 | 3 | 0 | 50.0% |
+| D_ML_TRAIN | 训练 | 7 | 3 | 4 | 0 | 42.9% |
 | D_OPS | 反馈循环 | 11 | 11 | 0 | 0 | 100.0% |
 | D_ORCHESTRATOR | 代理编排器 | 70 | 70 | 0 | 0 | 100.0% |
 | D_PF_ALLOC | 组合分配 | 9 | 5 | 4 | 0 | 55.6% |
@@ -118,10 +118,10 @@ ttl: permanent
 | D_KNOWLEDGE | 知识管理 | 1 | 0 | 0.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 7.4% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 35.0% |
+| D_ML_TRAIN | 训练 | 7 | 3 | 42.9% |
 | D_EX_CORE | 执行核心 | 44 | 20 | 45.5% |
-| D_ML_TRAIN | 训练 | 6 | 3 | 50.0% |
 | D_SELL_DECISION | 卖出决策 | 26 | 13 | 50.0% |
-| D_FACTOR | 因子 | 89 | 46 | 51.7% |
+| D_ASHARE_SIGNAL | A股特色信号 | 31 | 16 | 51.6% |
 | D_PF_ALLOC | 组合分配 | 9 | 5 | 55.6% |
+| D_FACTOR | 因子 | 109 | 65 | 59.6% |
 | D_COMPLIANCE | 合规 | 3 | 2 | 66.7% |
-| D_POSITION | 仓位管理 | 22 | 15 | 68.2% |
