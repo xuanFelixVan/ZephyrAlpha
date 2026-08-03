@@ -11268,3 +11268,32 @@ entries:
   related_adjudication: 'reconciler TOCTOU clobber 止血（advisory lock + skip-if-recent）'
   created: '2026-08-03'
   last_updated: '2026-08-03'
+
+# --- #ARCH-MSG-FILE-RESIDUE-001: --message-file 用完即删契约（方案 A 治本，2026-08-04） ---
+- issue_id: '#ARCH-MSG-FILE-RESIDUE-001'
+  title: CLI --message-file 临时文件残留——用完即删契约（对标 gateway tempfile 范式）
+  severity: P3低
+  category: governance
+  adjudication: |-
+    2026-08-04 方案 A 治本。问题：scripts/git_commit.py --message-file 是给 AI 的
+    PowerShell 中文编码逃生通道，但原契约只规定"读"未规定"删"，导致
+    .runtime/_commit_msg_*.txt 永久残留（治本代码自身成为残留的递归问题，
+    对标 AGENTS.md:747 _cleanup_orphan_draft_scripts 同型病根）。虽被 .gitignore
+    覆盖不污染 git，但违反"永久系统必须全自动"铁律。
+    病根：CLI 层未继承 gateway 内部 tempfile.mkstemp + finally os.remove 范式
+    （git_commit_gateway.py:1642-1666），契约断层。
+    治本：try/finally 覆盖 parse_args 到 commit 返回全流程，确保任何退出路径
+    （含 argparse 失败/early return/成功/失败）都清理临时 message 文件。
+    argparse 失败时 args=None，从 sys.argv 兜底提取 --message-file。
+    新增 --keep-message-file opt-out 诊断参数。
+  fix_phase: |-
+    P1 已执行（方案 A）：
+    - scripts/git_commit.py 新增 _cleanup_message_file helper（args=None 时 sys.argv 兜底）
+    - main() 用 try/finally 包裹 parse_args 到 commit 返回全流程
+    - 新增 --keep-message-file opt-out 参数
+    - 顺手修复 L278 既有 BLE001（session 检查异常降级放行 broad catch）
+    - ruff 通过 + 3 路径功能验证（argparse 失败/early return/keep 保留）PASS
+  status: resolved
+  related_adjudication: '方案 A 治本（--message-file 用完即删），方案 B worktree 反向门禁另行登记'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'

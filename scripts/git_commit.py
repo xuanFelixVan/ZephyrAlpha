@@ -25,6 +25,8 @@
 
     # 含中文/特殊字符的 message——用 --message-file 避免 PowerShell 编码问题（治本）：
     python scripts/git_commit.py --session sess-001 --files src/a.py --message-file .runtime/_commit_msg.txt
+    # --message-file 用完即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）：commit 流程
+    # 结束（无论成功/失败/early return）自动 unlink。诊断场景用 --keep-message-file 保留。
 
 对标: scripts/git_guard.py（git 命令透传封装），区别：
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
@@ -273,7 +275,7 @@ def _validate_reconciler_verify(
                     file=sys.stderr,
                 )
                 return 1, message
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — session 检查异常降级放行，broad catch 合理
             print(f"WARN: --reconciler-verify: session 检查异常（降级放行）: {e}", file=sys.stderr)
     # 条件3：--allow-overlap 与 reconciler-verify 互斥（claim_files 必须全部成功）
     if args.allow_overlap:
@@ -341,6 +343,46 @@ def _parse_message(args) -> tuple[int | None, str, bool]:
     return None, message, False
 
 
+def _cleanup_message_file(args) -> None:
+    """方案 A 治本（#ARCH-MSG-FILE-RESIDUE-001）：--message-file 用完即删。
+
+    对标 gateway 内部 tempfile.mkstemp + finally os.remove 范式
+    （git_commit_gateway.py:1642-1666）。CLI 层 --message-file 是给 AI 的
+    PowerShell 中文编码逃生通道，但原契约只规定"读"未规定"删"，导致
+    .runtime/_commit_msg_*.txt 永久残留（治本代码自身成为残留的递归问题，
+    对标 AGENTS.md:747 _cleanup_orphan_draft_scripts 同型病根）。
+
+    治本：commit 流程结束（无论成功/失败/early return）自动 unlink。
+    删除失败不阻断（warn-only，对标本模块错误契约）。
+    --keep-message-file opt-out 诊断场景保留。
+
+    args=None 兜底：argparse 解析失败（参数格式错误，exit 2）时 args 未定义，
+    从 sys.argv 手动提取 --message-file / --keep-message-file，确保即使参数
+    错误也不残留临时文件（parse_args 移入 try 块后覆盖此场景）。
+    """
+    if args is None:
+        # argparse 失败兜底：从 sys.argv 手动提取（parse_args 抛 SystemExit 时）
+        msg_file: str | None = None
+        keep = False
+        for i, a in enumerate(sys.argv):
+            if a == "--message-file" and i + 1 < len(sys.argv):
+                msg_file = sys.argv[i + 1]
+            elif a.startswith("--message-file="):
+                msg_file = a.split("=", 1)[1]
+            elif a == "--keep-message-file":
+                keep = True
+    else:
+        msg_file = args.message_file
+        keep = args.keep_message_file
+    if keep or not msg_file:
+        return
+    try:
+        Path(msg_file).unlink(missing_ok=True)
+        logger.debug("message-file 已清理: %s", msg_file)
+    except OSError as e:
+        logger.warning("message-file 清理失败（不阻断）: %s — %s", msg_file, e)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="git_commit.py",
@@ -372,7 +414,16 @@ def main() -> int:
     parser.add_argument(
         "--message-file",
         help="从 UTF-8 文件读取 commit message（治本 PowerShell 中文编码问题）。"
-             "提供时优先于 --message。文件内容原样作为 message（不含 GW 标记）",
+             "提供时优先于 --message。文件内容原样作为 message（不含 GW 标记）。"
+             "用完即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）——commit 流程"
+             "结束（无论成功/失败/early return）自动 unlink，消除 .runtime/_commit_msg_*.txt 残留。",
+    )
+    parser.add_argument(
+        "--keep-message-file",
+        action="store_true",
+        default=False,
+        help="保留 --message-file 文件不删除（诊断场景 opt-out）。"
+             "默认 False（用完即删，对标 gateway tempfile + os.remove 范式）。",
     )
     parser.add_argument(
         "--project-root",
@@ -445,71 +496,80 @@ def main() -> int:
         help="reconciler-verify 模式下放行其他活跃 session 检查（逃生通道）。"
              "默认硬阻断——验证前必须无其他活跃 session，确保单 session 诊断场景无搭便车窗口。",
     )
-    args = parser.parse_args()
-
-    # message 解析（claim-only / release-only 时不需要 message）
-    msg_exit, message, is_pure_claim = _parse_message(args)
-    if msg_exit is not None:
-        return msg_exit
-
-    files = _parse_files(args.files)
-    if not files:
-        print("ERROR: --files 不能为空", file=sys.stderr)
-        return 1
-
-    # 校验文件存在性（允许 staged delete 回退——见 _check_staged_delete_fallback）
-    truly_missing, tracked_but_deleted = _check_staged_delete_fallback(
-        files, args.project_root
-    )
-    if truly_missing:
-        print(f"ERROR: 文件不存在且未被 git 跟踪: {truly_missing}", file=sys.stderr)
-        return 1
-    if tracked_but_deleted:
-        logger.info("以下文件已跟踪但工作区已删除（将作为删除提交）: %s", tracked_but_deleted)
-
+    # 方案 A 治本（#ARCH-MSG-FILE-RESIDUE-001）：--message-file 用完即删契约
+    # 对标 gateway 内部 tempfile.mkstemp + finally os.remove 范式
+    # （git_commit_gateway.py:1642-1666）。try/finally 覆盖 parse_args 到
+    # commit 返回的全流程，确保任何退出路径（含 argparse 失败/early return/
+    # 成功/失败）都清理临时 message 文件，消除 .runtime/_commit_msg_*.txt 残留
+    # （治本代码自身成为残留的递归问题，对标 AGENTS.md:747 _cleanup_orphan_draft_scripts）。
+    args = None
     try:
-        gw = GitCommitGateway(project_root=args.project_root)
-    except Exception as e:
-        print(f"ERROR: GitCommitGateway 初始化失败: {e}", file=sys.stderr)
-        return 2
+        args = parser.parse_args()
+        # message 解析（claim-only / release-only 时不需要 message）
+        msg_exit, message, is_pure_claim = _parse_message(args)
+        if msg_exit is not None:
+            return msg_exit
 
-    # reconciler-verify 模式前置校验（豁免 worktree 君子协定的三重防护）
-    rv_exit, message = _validate_reconciler_verify(
-        args, is_pure_claim, message, args.project_root
-    )
-    if rv_exit is not None:
-        return rv_exit
+        files = _parse_files(args.files)
+        if not files:
+            print("ERROR: --files 不能为空", file=sys.stderr)
+            return 1
 
-    # claim-only / release-only 快速路径（claim 前移协议，不进入 commit 流程）
-    pc_exit = _handle_pure_claim(gw, args, files)
-    if pc_exit is not None:
-        return pc_exit
-
-    # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
-    claimed = gw.claim_files(args.session, files, adopt_prior_work=args.adopt_prior_work)
-    # reconciler-verify 模式：claim_files 必须全部成功（无搭便车逃生通道）
-    if args.reconciler_verify and len(claimed) != len(files):
-        conflicts = [f for f in files if f not in claimed]
-        gw.release_files(args.session, claimed)
-        print(
-            f"ERROR: --reconciler-verify: claim_files 部分失败，{len(conflicts)} 个文件被其他 session 持有: {conflicts}\n"
-            "验证场景不允许搭便车窗口，等待对方释放后重试。",
-            file=sys.stderr,
+        # 校验文件存在性（允许 staged delete 回退——见 _check_staged_delete_fallback）
+        truly_missing, tracked_but_deleted = _check_staged_delete_fallback(
+            files, args.project_root
         )
-        return 1
-    try:
-        result = gw.commit(
-            session_id=args.session,
-            files=files,
-            message=message,
-            allow_promote=args.allow_promote,
-            allow_overlap=args.allow_overlap,
-            allow_derived_deletion=args.allow_derived_deletion,
+        if truly_missing:
+            print(f"ERROR: 文件不存在且未被 git 跟踪: {truly_missing}", file=sys.stderr)
+            return 1
+        if tracked_but_deleted:
+            logger.info("以下文件已跟踪但工作区已删除（将作为删除提交）: %s", tracked_but_deleted)
+
+        try:
+            gw = GitCommitGateway(project_root=args.project_root)
+        except Exception as e:  # noqa: BLE001 — 既有初始化失败兜底，保持原有行为
+            print(f"ERROR: GitCommitGateway 初始化失败: {e}", file=sys.stderr)
+            return 2
+
+        # reconciler-verify 模式前置校验（豁免 worktree 君子协定的三重防护）
+        rv_exit, message = _validate_reconciler_verify(
+            args, is_pure_claim, message, args.project_root
         )
+        if rv_exit is not None:
+            return rv_exit
+
+        # claim-only / release-only 快速路径（claim 前移协议，不进入 commit 流程）
+        pc_exit = _handle_pure_claim(gw, args, files)
+        if pc_exit is not None:
+            return pc_exit
+
+        # 标准路径：claim → commit → release（claim 前移协议下 Edit 前已 claim，此处幂等）
+        claimed = gw.claim_files(args.session, files, adopt_prior_work=args.adopt_prior_work)
+        # reconciler-verify 模式：claim_files 必须全部成功（无搭便车逃生通道）
+        if args.reconciler_verify and len(claimed) != len(files):
+            conflicts = [f for f in files if f not in claimed]
+            gw.release_files(args.session, claimed)
+            print(
+                f"ERROR: --reconciler-verify: claim_files 部分失败，{len(conflicts)} 个文件被其他 session 持有: {conflicts}\n"
+                "验证场景不允许搭便车窗口，等待对方释放后重试。",
+                file=sys.stderr,
+            )
+            return 1
+        try:
+            result = gw.commit(
+                session_id=args.session,
+                files=files,
+                message=message,
+                allow_promote=args.allow_promote,
+                allow_overlap=args.allow_overlap,
+                allow_derived_deletion=args.allow_derived_deletion,
+            )
+        finally:
+            gw.release_files(args.session, claimed)
+
+        return _format_commit_result(result)
     finally:
-        gw.release_files(args.session, claimed)
-
-    return _format_commit_result(result)
+        _cleanup_message_file(args)
 
 
 if __name__ == "__main__":
