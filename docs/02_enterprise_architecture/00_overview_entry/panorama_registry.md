@@ -21,7 +21,7 @@
 | 全景图总数 | 37 |
 | 已建覆盖率 | 56.8% |
 
-| 已建产物存在 | 18/21 |
+| 已建产物存在 | 17/21 |
 
 ### 数据库真源健康度
 
@@ -30,10 +30,10 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 6147 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6147 个 |
-| 依赖图 depgraph | `edges` | 9306 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9306 条 |
+| 依赖图 depgraph | `nodes` | 6176 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6176 个 |
+| 依赖图 depgraph | `edges` | 9452 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9452 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 76 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 958 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 195 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 90 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），90 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
@@ -103,7 +103,7 @@
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | 治理健康度 | 手工 | 手工 | `(手工维护)` | `04_architecture_principles_decisions/` | ❌缺失 |
 | PAN-BUILT-18 | 数据流图（dataflowgraph Dataset/Job/Edge） | 数据流 | dataflowgraph | depgraph (PostgreSQL) (dataflow_* 表) | `generate_dataflow_diagram.py` | [`05_dataflow_architecture`](../05_dataflow_architecture/dataflow_index.md) | ✅存在 |
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
-| PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
+| PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | `generated/` | ❌缺失 |
 | PAN-BUILT-03 | 手绘 Mermaid 图（时序/治理） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/application_flows.md) | ✅存在 |
 | PAN-BUILT-21 | 交易决策架构视图（已退役） | 决策流 | decisiongraph | depgraph (PostgreSQL) | `(已退役删除) generate_trading_flow_diagram.py` | `(已退役) 07_trading_decision_architecture/` | ❌缺失 |
 | PAN-BATTLE-MAP-01 | 交易决策作战地图（battle_map 第四全景图） | 作战地图 | battle_map | depgraph (PostgreSQL) (battle_map_* 表) | `generate_battle_map_diagram.py` | [`07_trading_decision_architecture/battle_map`](../07_trading_decision_architecture/battle_map/battle_map_panorama.md) | ✅存在 |
@@ -254,7 +254,7 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | ✅已建 | depgraph | 内置 Tarjan SCC 算法检测循环依赖，输出循环报告 | 真源：depgraph (PostgreSQL)<br>生成器：`内置在生成器（Tarjan SCC）`<br>产物：[`generated/panorama_alignment_report.md`](../generated/panorama_alignment_report.md) |
+| PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | ✅已建 | depgraph | 内置 Tarjan SCC 算法检测循环依赖，输出循环报告 | 真源：depgraph (PostgreSQL)<br>生成器：`内置在生成器（Tarjan SCC）`<br>产物：`generated/panorama_alignment_report.md` |
 
 ### target_architecture TOGAF 目标架构
 

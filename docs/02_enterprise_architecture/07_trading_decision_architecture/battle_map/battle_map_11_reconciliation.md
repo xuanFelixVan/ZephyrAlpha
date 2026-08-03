@@ -451,7 +451,7 @@ BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-006 regulatory_report_
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-006 | primary | — | stable |
+| depgraph | MOD-RPT-006 | primary | — | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 

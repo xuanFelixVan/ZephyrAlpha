@@ -718,7 +718,7 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-16 | primary | production | stable |
+| depgraph | MOD-RK-16 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1219,7 +1219,7 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-RK-08 | primary | production | generated |
-| depgraph | MOD-RK-16 | supplement | production | stable |
+| depgraph | MOD-RK-16 | supplement | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1256,7 +1256,7 @@ RK-12 Stress Test Engine 提供历史情景(2008/2015/2020)+假设情景+反向�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-RK-20 | primary | stable | stable |
-| depgraph | MOD-RK-16 | supplement | stable | stable |
+| depgraph | MOD-RK-16 | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1318,7 +1318,7 @@ Brinson归因+因子贡献+残差+边际风险+成分风险。承载模块: MOD-
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-16 | primary | production | stable |
+| depgraph | MOD-RK-16 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
