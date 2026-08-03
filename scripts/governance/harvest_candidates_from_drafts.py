@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=参数错误/无新候选
 # [TESTS]
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 从场外草稿 CSV 抓取候选模块入候选库（一次性 harvest 脚本，不进 generators/）。

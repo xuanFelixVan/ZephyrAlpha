@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 无异常抛出——变异应用失败记为 SETUP_ERROR 并跳过；阈值不达标返回 1
 # [TESTS] 自身即测试（oracle: tests/governance/shared/test_post_sync_validation.py 36 场景）
+# [A_module] module_id=MOD-DATABASE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 mutation_test_post_sync_validator.py — SSoT 变异测试（独立 oracle）

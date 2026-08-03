@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph无此模块→exit 3;DB异常→exit 4
 # [TESTS] tests/governance/test_sync_panorama_module.py
+# [A_module] module_id=MOD-GOV_SYNC_PANORAMA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-056 #ARCH-058
 """sync_panorama_module.py — 四图模块同步引擎（ARCH-056）

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 违反不变量→exit 1; DB 写入失败→exit 4
 # [TESTS] tests/test_apply_battle_map.py
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 [BLUEPRINT] | scripts/governance/apply_battle_map.py | §battlemap

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph (PostgreSQL)不存在→exit 1
 # [TESTS]
+# [A_module] module_id=MOD-GOV_GENERATE_CONTRACT_CATALOG | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """G12: 从 depgraph (PostgreSQL) 生成契约目录全景图
 

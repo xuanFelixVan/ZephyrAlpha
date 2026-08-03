@@ -15,6 +15,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ServiceUnrecoverableError
 # [TESTS] tests/test_governance_watchdog.py
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: 治理watchdog常驻服务(python scripts/governance/meta/governance_watchdog.py),CLI触发启动,启动后自动运行;非reconciler无需事件触发
 

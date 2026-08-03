@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph不可达→exit 1;depgraph无此模块→exit 3(跳过);蓝图不存在→exit 0(标记缺失跳过);DB异常→exit 4
 # [TESTS] tests/governance/test_generate_blueprint_panorama.py
+# [A_module] module_id=MOD-GOV-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-053 #ARCH-056 #ARCH-MM-001
 # 真源说明：本生成器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取三图节点，

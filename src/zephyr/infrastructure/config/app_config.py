@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INF-config_app_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.infrastructure.config.app_config
 # [DOMAIN] D_INFRASTRUCTURE

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 0=无清理项或清理完成；1=发现待清理项(dry-run)；2=error
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 retire_tmp_artifacts — tmp/ + logs/ 退役区 TTL 执行器（AI-03 审计 P2/P3 治本）

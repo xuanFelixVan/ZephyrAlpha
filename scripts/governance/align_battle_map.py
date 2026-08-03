@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] battle_map 表不存在→exit 2;findings→exit 1(EXIT_FINDINGS);无 findings→exit 0(EXIT_PASS)
 # [TESTS] tests/test_align_battle_map.py (规划中)
+# [A_module] module_id=MOD-GOV_ALIGN_BATTLE_MAP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] battle_map_positioning.md §七 §八
 # 真源说明：本检测器从 battle_map_* 三表（PostgreSQL）读取环节/锚点/流转边，

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 文件读取失败→skip 该文件（不阻断审计）；返回 violations 列表
 # [TESTS] tests/governance/test_audit_return_contract_usage.py
+# [A_module] module_id=MOD-GOV_AUDIT_RETURN_CONTRACT_USAGE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 由 commit 事件触发（非 cron/manual）
 """audit_return_contract_usage.py — 返回契约 ok 键调用方审计（P2-5，2026-07-19）

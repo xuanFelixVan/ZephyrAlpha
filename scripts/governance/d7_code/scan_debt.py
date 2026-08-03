@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=clean/warn-only / 1=--ci violations / 2=src dir missing
 # [TESTS] 手动验证: R67 基线 DEBT-1=0/DEBT-2=13/DEBT-3=0
+# [A_module] module_id=MOD-GOV_SCAN_DEBT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 架构债务扫描器 — 5.96 维度防御门闸（R67 引入）。

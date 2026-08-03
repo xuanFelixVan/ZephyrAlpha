@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """GATE-CONTRACT: CI gate for architecture_contract.yaml internal consistency.
 Prevents internal inconsistencies (regex conflicts, doc_type gaps, VR skew)

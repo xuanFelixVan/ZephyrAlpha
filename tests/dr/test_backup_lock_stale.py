@@ -8,6 +8,7 @@
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [TESTS] tests/dr/test_backup_lock_stale.py
 """僵尸锁接管测试（P4 治本，2026-08-03）。

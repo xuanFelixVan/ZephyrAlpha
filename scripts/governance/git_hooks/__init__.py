@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS]
-# [A_module] module_id=MOD-GOV-git_hooks-pkg | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """git_hooks 包标记——post_commit_regen_yaml 等 git hook 脚本的 Python 包入口。
 

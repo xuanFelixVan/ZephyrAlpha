@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=一致 / exit 1=漂移（stdout 含缺失/多余列表）/ exit 2=错误
 # [TESTS] tests/governance/generators/test_check_gate_inventory_drift.py
-# [A_module] module_id=MOD-GOV-check_gate_inventory_drift | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-055]
 """check_gate_inventory_drift.py — commit_gates 模块清单漂移检测（ARCH-055 治本）

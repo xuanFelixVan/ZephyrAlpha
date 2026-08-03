@@ -14,6 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] registry 文件不存在/损坏降级为格式校验；git log 失败 exit 2
 # [TESTS] tests/governance/test_check_commit_message.py
+# [A_module] module_id=MOD-SCRIPTS-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m07-orphan  M07豁免: 被 .github/workflows/commit_message_guard.yml 调用（非 import 引用，是 CLI 调用）
 # noqa: m11-perm-manual-legitimate  M11豁免: GitHub Actions pull_request 事件自动触发（ubuntu-latest），非 manual 命令行脚本

@@ -10,6 +10,7 @@
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [A_config] module_id=MOD-GOV-ast_import_rewriter | layer=script | stability=stable | safety=H | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF_GOV | layer=module | stability=stable | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AST-based import rewriter for governance directory migration.
 

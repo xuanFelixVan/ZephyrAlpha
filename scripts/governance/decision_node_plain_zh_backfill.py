@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] node_id 不存在→exit 1; DB 写入失败→exit 4
 # [TESTS] 无（一次性迁移脚本，幂等可重跑）
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 decision_node_plain_zh_backfill.py — 一次性补齐 213 决策节点的 plain_zh 大白话简介。

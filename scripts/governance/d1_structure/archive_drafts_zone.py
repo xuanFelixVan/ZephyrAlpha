@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/shared/test_drafts_zone_archiver_unit.py; tests/governance/shared/test_drafts_zone_archiver_governance.py
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """草稿区生命周期归档器——扫描 arbitrated 草稿，按 age 判定 warn/archive/skip。
 

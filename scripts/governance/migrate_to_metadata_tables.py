@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=失败
 # [TESTS]
+# [A_module] module_id=MOD-GOV_MIGRATE_METADATA | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """migrate_to_metadata_tables.py — 裁定#209 Stage 2 一次性迁移脚本
 

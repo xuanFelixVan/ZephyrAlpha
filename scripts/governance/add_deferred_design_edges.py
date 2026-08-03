@@ -5,6 +5,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [SAFETY] L
+# [A_module] module_id=MOD-GOV_DEFERRED_EDGES | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 为暂缓模块添加设计态依赖边（dep_maturity='design'）。

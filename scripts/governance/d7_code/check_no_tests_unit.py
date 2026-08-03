@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 永不抛异常——git 失败/I/O 异常降级为 exit 2 + stderr 提示
 # [TESTS] tests/governance/test_check_no_tests_unit.py
-# [A_module] module_id=MOD-GOV-check_no_tests_unit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """check_no_tests_unit.py — 禁止 tests/unit/ 旧路径重引入检测（local 替代 pygrep）
 

@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=扫描完成（无论是否有违规）/ 1=参数错误或 import 失败
 # [TESTS] 手动验证: baseline-scan 全项目扫描生成报告
+# [A_module] module_id=MOD-GOV_SCAN_CONSUMERS_ACCURACY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """scan_consumers_accuracy.py — CONSUMERS 字段准确性 baseline-scan 脚本
 

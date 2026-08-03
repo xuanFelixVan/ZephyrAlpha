@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=SUCCESS, exit 1=VALIDATION_ERROR(简介不合规/字段缺失), exit 2=IO/YAML_ERROR
 # [TESTS] tests/governance/d3_metadata/test_add_module_translation.py
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """add_module_translation.py — 模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套）。
 

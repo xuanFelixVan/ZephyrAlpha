@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: VMS cron监控daemon(python scripts/governance/vms/vms_cron_monitor.py),CLI触发启动,启动后自动运行;非reconciler无需事件触发
 """

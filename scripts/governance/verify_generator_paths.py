@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单路径失败不阻断其他路径；DB 不可用时路径1 skip 而非 fail
 # [TESTS] 自身即冒烟脚本
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 # [ARCH-REF] generator_auto_trigger_pilot.md
 """verify_generator_paths.py — 生成器三条触发路径冒烟验证（手动/CI，不接 commit hook）。

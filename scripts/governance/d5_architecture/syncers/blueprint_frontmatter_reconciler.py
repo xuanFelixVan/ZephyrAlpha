@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 模块不在depgraph→exit 3;蓝图不存在→exit 0(标记缺失跳过);DB异常→exit 4
 # [TESTS] tests/governance/test_blueprint_frontmatter_reconciler.py
+# [A_module] module_id=MOD-GOV_SYNC_PANORAMA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-056
 """blueprint_frontmatter_reconciler.py — 蓝图 frontmatter 核心字段对齐（ARCH-056 Phase 3）

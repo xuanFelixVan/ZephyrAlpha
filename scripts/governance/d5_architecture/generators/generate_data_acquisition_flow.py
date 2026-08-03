@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] tasks.yaml不存在→exit 1;tasks为空→exit 2
 # [TESTS]
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """G-acqflow: 从 tasks.yaml 生成业务数据采集流图 MD + 可缩放 HTML（模板 V1.2 对齐）
 

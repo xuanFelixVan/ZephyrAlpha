@@ -14,6 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScanError; ResolveError
 # [TESTS] tests/test_scan_ground_truth_deps.py
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """
 

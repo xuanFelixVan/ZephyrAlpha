@@ -23,6 +23,7 @@ Usage:
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 重命名失败 → 回滚并报告
 # [TESTS] python scripts/governance/d3_metadata/check_naming_convention.py --scan --warn-only
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

@@ -5,6 +5,7 @@
 # [STARTUP] manual
 # [MATURITY] production
 # [SAFETY] H
+# [A_module] module_id=MOD-GOV_DEFERRED_REG | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 将42项暂缓模块写入 depgraph 设计态，含3图对齐设计。

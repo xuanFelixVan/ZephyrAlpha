@@ -10,6 +10,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0; EXIT_ERROR=2
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """基于内容关键词的 ttl 精细分类审查脚本。
 

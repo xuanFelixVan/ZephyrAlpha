@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 #!/usr/bin/env python3
 """sync_audit_protocol_numbers.py — 从 SSoT 注册表自动同步审计协议中的硬编码数字。

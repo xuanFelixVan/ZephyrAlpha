@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] dataflowgraph不存在→exit 1;无数据→exit 2
 # [TESTS] tests/test_generate_dataflow_diagram.py
+# [A_module] module_id=MOD-GOV_DATAFLOW_DIAGRAM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051
 """G-dataflow: 从 dataflowgraph (PostgreSQL) 生成数据流图 Markdown 文档（内嵌 Mermaid）

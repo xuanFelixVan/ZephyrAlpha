@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] module_id 不存在时 exit 3；DB 异常时 exit 4
 # [TESTS] tests/governance/test_query_module_panorama.py
+# [A_module] module_id=MOD-D5_ARCH_TOOLS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """query_module_panorama.py — 模块全景查询入口（四图模块对齐 Step 5）
 

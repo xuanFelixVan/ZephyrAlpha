@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 检测失败→exit 1; 无违规→exit 0
 # [TESTS] 无
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-CAP-001 #ARCH-CAP-002
 """G9-Detect: 架构约束违规检测器（对照 depgraph 实际数据检测 6 类违规）

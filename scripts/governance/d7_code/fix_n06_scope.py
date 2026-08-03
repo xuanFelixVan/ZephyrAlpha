@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=部分失败
 # [TESTS] 无
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""N-06 module_id scope 前缀检测修复脚本。
 

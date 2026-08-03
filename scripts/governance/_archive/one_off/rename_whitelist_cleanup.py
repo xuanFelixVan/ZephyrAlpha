@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=有残留
 # [TESTS] 无
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """命名规范白名单清理 - 全文替换脚本。
 

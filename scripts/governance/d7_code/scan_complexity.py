@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=clean/warn-only / 1=--ci 且有违规 / 2=src dir missing
 # [TESTS] 手动验证: 裁定#214 基线 215 暗债函数(复杂度>15), 最高105, 平均3.4
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 全量循环复杂度扫描器 — §5.158 暗债监控（裁定#214 Phase 4 引入）。

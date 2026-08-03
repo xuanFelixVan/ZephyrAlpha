@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_CHECK_CANONICAL_YAML_DRIFT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_check_canonical_yaml_drift.py — GATE-CANONICAL-YAML-DRIFT 单元测试（Phase B，2026-07-24）
 

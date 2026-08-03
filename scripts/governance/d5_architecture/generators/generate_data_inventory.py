@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ClickHouse不可用→exit 1;无业务表→exit 2
 # [TESTS]
+# [A_module] module_id=MOD-L00-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """G-inventory: 扫描 ClickHouse 生成业务数据清单 MD
 

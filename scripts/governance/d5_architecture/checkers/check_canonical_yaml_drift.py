@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 1 (EXIT_FINDINGS) 当 --ci 且有 issue；exit 0 (EXIT_PASS) 当干净或 --warn-only
 # [TESTS] tests/governance/scripts_governance/test_check_canonical_yaml_drift.py
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """check_canonical_yaml_drift.py — GATE-CANONICAL-YAML-DRIFT
 

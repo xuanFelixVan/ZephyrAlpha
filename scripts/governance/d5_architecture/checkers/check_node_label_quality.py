@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=PASS/干净或--warn-only；exit 1=FINDINGS（--ci 且有问题）；exit 2=ERROR（文件不存在/参数错误）
 # [TESTS] (暂无)
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """check_node_label_quality.py — GATE-NODE-LABEL-QUALITY
 

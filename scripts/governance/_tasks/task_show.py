@@ -20,6 +20,7 @@ Usage:
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 任务不存在 → exit 1
 # [TESTS] 手动验证：python scripts/governance/task_show.py <existing_task_id>
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

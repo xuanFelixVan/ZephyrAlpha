@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无错误）；EXIT_FINDINGS=1（有文件异常）；EXIT_ERROR=2（脚本异常）
 # [TESTS] 手动测试：dry-run + 全量回填 + 抽样验证
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """批量回填 frontmatter doc_type 字段（doc_type 存量治理 Stage 2.1）
 

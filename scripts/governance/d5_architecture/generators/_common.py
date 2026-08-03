@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] cleanup_stale_files 永不抛异常（目录不存在→返回空列表）
 # [TESTS]
+# [A_module] module_id=MOD-GOV_COMMON | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """生成器公共工具（向内收：消除重复）。
 

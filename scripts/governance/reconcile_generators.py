@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 生成器失败→返回{"status":"failed"}不阻断调用方；注册表缺失→返回{"status":"error"}跳过
 # [TESTS] tests/governance/test_reconcile_generators.py
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] generator_auto_trigger_pilot.md
 """

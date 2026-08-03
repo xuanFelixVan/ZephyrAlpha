@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（始终，warn-only 基线模式）；单检测器异常降级为 error 字段不中断其余
 # [TESTS] 手动测试：独立运行输出 30 项指标；与手动调研基线 3193 可对账
-# [A_module] module_id=MOD-GOV-architecture_health_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线）
 

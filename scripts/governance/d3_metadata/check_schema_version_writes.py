@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=无违规; exit 1=发现违规; exit 2=加载失败
 # [TESTS] manual --dry-run
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 G_TRAE_059 验证脚本：_schema_version 写入保护 + 版本一致性检查。

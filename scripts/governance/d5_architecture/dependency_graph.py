@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """治理域有向依赖图 — 扫描 governance/ 下所有 import 生成依赖图."""
 

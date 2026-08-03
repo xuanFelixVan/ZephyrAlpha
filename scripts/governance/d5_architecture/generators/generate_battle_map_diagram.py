@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DB 不可用→exit 4; YAML 缺失→降级到 DB step_name
 # [TESTS] tests/test_generate_battle_map_diagram.py (规划中)
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 generate_battle_map_diagram.py — 交易决策作战地图可视化生成器

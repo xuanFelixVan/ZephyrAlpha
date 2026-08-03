@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 任何异常→静默退出 0（post-commit hook 不得阻断 git 操作）
 # [TESTS] tests/governance/test_reconcile_generators.py::TestPostCommitRegenYaml; tests/governance/test_post_commit_oscillation_guard.py
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] generator_auto_trigger_pilot.md §缺口#3
 """post_commit_regen_yaml.py — post-commit YAML 变更触发器（治本缺口#3）

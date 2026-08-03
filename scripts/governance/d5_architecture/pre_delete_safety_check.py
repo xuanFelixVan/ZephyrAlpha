@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] CheckError(检查项失败); RegistryError(注册表读取失败)
 # [TESTS] tests/test_pre_delete_safety_check.py
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=H | ai_autonomy=immutable_core
 # [TTL] permanent
 """安全删除门禁脚本——RULE-THREE 强制执行器。
 

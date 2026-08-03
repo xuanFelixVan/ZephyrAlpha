@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0; EXIT_FINDINGS=1（error 级违规）; EXIT_ERROR=2（脚本异常）
 # [TESTS] none
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """GATE-DIRECTORY-CONTRACT: Directory Contract validation gate.
 

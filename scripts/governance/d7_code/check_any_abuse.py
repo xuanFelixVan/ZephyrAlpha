@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=clean / 1=--ci violations / 2=src dir missing
 # [TESTS] 手动验证: R70 基线 ANY-1=462 / ANY-2=172 / 总计 634；#ARCH-ANY-GOVERNANCE-001 Phase 2 清零至 0
+# [A_module] module_id=MOD-GOV_CHECK_ANY_ABUSE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 类型注解 Any 滥用扫描器 — 5.145 维度防御门闸（R70 引入，#ARCH-ANY-GOVERNANCE-001 Phase 3 升级为 commit 阻断）。

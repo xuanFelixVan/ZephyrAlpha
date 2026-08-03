@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入→返回空字符串;无domain_id→返回空字符串;不抛异常
 # [TESTS] tests/governance/test_panorama_common.py
+# [A_module] module_id=MOD-GOV_SYNC_PANORAMA | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-056
 """panorama_common.py — 四图投票共享工具（ARCH-056 引擎加固）

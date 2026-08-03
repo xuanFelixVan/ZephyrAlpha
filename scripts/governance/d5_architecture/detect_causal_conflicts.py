@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CausalChainBrokenError
 # [TESTS] tests/test_detect_causal_conflicts.py
+# [A_module] module_id=MOD-GOV_DETECT_CAUSAL_CONFLICTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """Module docstring — see module-level docstring for details."""

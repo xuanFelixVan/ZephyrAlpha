@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 校验失败→exit 1+详细报告; 成功→exit 0+摘要
 # [TESTS]
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 sync 完整性校验脚本：验证 YAML→DB 同步的一致性。

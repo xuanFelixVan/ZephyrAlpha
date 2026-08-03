@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PanoramaLoadError
 # [TESTS]
+# [A_module] module_id=MOD-INF-037 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """从磁盘扫描生成路径全景图的tree段（运营态目录结构）。
 

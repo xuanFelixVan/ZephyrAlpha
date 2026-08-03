@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DependencyGraphError
 # [TESTS] tests/test_analyze_change_impact.py
+# [A_module] module_id=MOD-GOV_ANALYZE_CHANGE_IMPACT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """Module docstring — see module-level docstring for details."""

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_GENERATE_CANDIDATE_MODULE_REPORT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """从 candidate_module_registry.yaml 生成候选模块清单报告（分片：索引 + 每域一个文件）
 

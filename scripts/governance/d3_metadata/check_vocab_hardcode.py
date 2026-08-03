@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无违规或 warn-only）；EXIT_FINDINGS=1（--ci 模式有违规）；EXIT_ERROR=2（脚本异常）
 # [TESTS] 手动测试：全量扫描 exit 0；已知违规文件被检出
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile异常降级为warn ReconcileResult，不阻断其他reconciler
 # [TESTS] tests/scripts/backup/test_backup_reconciler.py
-# [A_module] module_id=MOD-GOV-backup_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-043 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）
 

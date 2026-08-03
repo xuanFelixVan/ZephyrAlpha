@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=PASS, exit 1=BLOCK, exit 2=ERROR
 # [TESTS] tests/governance/rule_bridge/test_ssot_gate.py
+# [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。
 

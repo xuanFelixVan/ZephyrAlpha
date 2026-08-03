@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 真源缺失->exit 1; 生成成功->exit 0
 # [TESTS] tests/governance/test_generate_policies.py
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 #183: 从 data_sources_registry.yaml 派生 policies.yaml

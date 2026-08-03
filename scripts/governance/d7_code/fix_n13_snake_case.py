@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=部分失败
 # [TESTS] 无
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """N-13 YAML/JSON/MD 文件名 snake_case 批量修复脚本。
 

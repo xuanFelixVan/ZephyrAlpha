@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] decisiongraph不存在→exit 1;无tracks/layers→exit 2;域集合漂移→exit 3
 # [TESTS] tests/test_generate_decision_diagram.py
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """G-decision: 从 decisiongraph (PostgreSQL) 生成决策流图(.md 文档，Mermaid 内嵌)
 

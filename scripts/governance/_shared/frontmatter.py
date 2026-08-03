@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 解析失败返回 None（不抛异常）；文件不存在返回 None
 # [TESTS] tests/test_frontmatter_ssot.py; tests/governance/scripts_governance/test_validate_ssot_unit.py; tests/governance/shared/test_drafts_zone_archiver_unit.py
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """文件头部格式解析 SSoT（Single Source of Truth）
 

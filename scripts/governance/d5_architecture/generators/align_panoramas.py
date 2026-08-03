@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph不存在→exit 1;三图任一为空→exit 2(blueprint图不参与此检查)
 # [TESTS] tests/test_align_panoramas.py
+# [A_module] module_id=MOD-GOV_ALIGN_PANORAMAS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-053 #ARCH-056 #ARCH-059
 # 真源说明：本检测器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取三图节点，

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """validate_md_yaml_number_drift.py — MD 视图与 YAML SSoT 数字漂移检测闸门（GATE-NUM-DRIFT）
 v1.0.0 — 2026-05-03

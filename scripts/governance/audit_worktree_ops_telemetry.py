@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 文件读取失败→skip 该文件（不阻断审计）；返回 violations 列表
 # [TESTS] tests/governance/test_audit_worktree_ops_telemetry.py
+# [A_module] module_id=MOD-GOV_AUDIT_WORKTREE_OPS_TELEMETRY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 由 commit 事件触发（非 cron/manual）
 """audit_worktree_ops_telemetry.py — 主工作区文件级擦除操作遥测完整性审计（P2-6）

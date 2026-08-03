@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess 异常→该段 failed=True，不阻断其他段；最终汇总 ok=False
 # [TESTS] tests/governance/test_run_silent_failure_regression.py
+# [A_module] module_id=MOD-GOV_SILENT_FAILURE_REGRESSION | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 由 AI 手动/CI 事件触发（非 cron）
 """run_silent_failure_regression.py — silent-failure 回归套件一键执行入口（P3-2，2026-07-19）

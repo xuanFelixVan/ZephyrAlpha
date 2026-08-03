@@ -149,4 +149,37 @@ class TestSimulationValidationTopology:
     def test_step_count_is_7(self, bm_reader):
         """环节总数 = 7（含 BM-SIM-07）。"""
         steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
-        assert
+        assert len(steps) == 7, f"期望 7 环节，实际 {len(steps)} 环节: {[s['step_id'] for s in steps]}"
+
+    def test_no_orphan_steps(self, bm_reader):
+        """无孤儿环节（BM-INV-001）—— 每个环节至少有 1 个锚点。"""
+        steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
+        for s in steps:
+            sid = s["step_id"]
+            anchors = bm_reader.get_anchors_by_step(sid)
+            assert anchors and len(anchors) > 0, f"环节 {sid} 无锚点（孤儿环节 BM-INV-001 违例）"
+
+    def test_edge_count(self, bm_reader):
+        """流转边总数 >= 9（含 BM-SIM-07 的 2 条边）。"""
+        count = bm_reader.get_edge_count()
+        assert count >= 9, f"期望 >= 9 条流转边，实际 {count}"
+
+
+# ── 2. BM-SIM-07 闭环验证（核心测试） ─────────────────────────────────────────
+
+@pytest.mark.e2e
+class TestBMSim07ClosedLoop:
+    """BM-SIM-07 风控仿真器闭环流程验证。
+
+    验证链路：BM-SIM-03 蒙特卡洛 → BM-SIM-07 风控仿真 → BM-SIM-06 结果分析
+    """
+
+    def test_sim07_step_exists(self, bm_reader):
+        """BM-SIM-07 环节存在于 simulation_validation 阶段。"""
+        steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
+        sim07 = [s for s in steps if s["step_id"] == "BM-SIM-07"]
+        assert len(sim07) == 1, "BM-SIM-07 不存在"
+        assert sim07[0]["step_name"] == "风控仿真器"
+        assert sim07[0]["design_maturity"] == "production"
+
+    def test

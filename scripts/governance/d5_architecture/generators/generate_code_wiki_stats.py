@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] depgraph 不存在→exit 1；目标文档不存在→exit 1；标记块缺失→跳过该块并 warning；单块采集失败→跳过并 warning（不阻断其他块）
 # [TESTS]
+# [A_module] module_id=MOD-D_GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: consumers-accuracy  # project_handbook/*.md 是文档路径非模块路径
 # noqa: m11-perm-manual-legitimate  生成器由全景图刷新钩子触发(subprocess, 经 process_pool.run_subprocess_hidden)

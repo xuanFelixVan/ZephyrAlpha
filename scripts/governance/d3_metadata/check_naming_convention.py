@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] exit 0=clean; exit 1=violations found; exit 2=usage error
 # [TESTS] tests/test_gate11_naming_convention.py
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=M | ai_autonomy=human_gated
 # [TTL] permanent
 """GATE-11 命名规范门禁 — 全类型命名检测。
 

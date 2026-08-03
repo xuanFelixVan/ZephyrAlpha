@@ -14,6 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功生成报告 / 1=--ci 模式且发现可推断 Any / 2=src 目录缺失或参数错误
 # [TESTS] tests/governance/scripts_governance/test_any_type_inferrer.py
+# [A_module] module_id=MOD-GOV-008 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 裸 Any 类型推断辅助工具 — #ARCH-ANY-GOVERNANCE-001 Phase 1.

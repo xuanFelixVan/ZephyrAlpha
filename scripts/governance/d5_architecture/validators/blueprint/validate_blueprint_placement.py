@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: while True用于belongs_to链遍历(含break退出),非daemon常驻服务;一次性CLI验证工具
 """蓝图物理位置与归属链完整性校验器 (Blueprint Placement & BelongsTo Validator)
