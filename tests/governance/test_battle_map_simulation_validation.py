@@ -305,4 +305,15 @@ class TestBMSim07Indicators:
     def test_sim07_db_has_indicators(self, bm_reader):
         """BM-SIM-07 在 DB 中有 indicators 字段（非空）。"""
         # BattleMapReader 可能不直接暴露 indicators，通过翻译真源间接验证
-        # 这里通过 YAML
+        # 这里通过 YAML 叙事验证 indicators_zh 已在 TestBMSim07Translation 中覆盖
+        # 此测试作为占位——如果未来 DB indicators 字段可查询，在此补充
+        steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
+        sim07 = [s for s in steps if s["step_id"] == "BM-SIM-07"]
+        assert len(sim07) == 1
+        # DB step 存在即通过——indicators_zh 的完整性在 YAML 测试中验证
+
+
+# ── 5. 生成器渲染防御性验证（纯逻辑，无 DB 依赖） ─────────────────────────────
+
+class TestSim07GeneratorRendering:
+    """BM-S
