@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-021 | tests/rollback/ | §7 Phase 5.3
 # [DOMAIN] D_INFRA_RECOVERY
 # [GOVERNANCE] A_test 6-field: test_id=DM-201911-ADV | type=adversarial | scope=scheduler | gate=G0 | owner=AI-09 | rollback=delete_file
+# [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """
 DM-201911 红蓝对抗极端测试: RollbackScheduler 事件驱动调度.

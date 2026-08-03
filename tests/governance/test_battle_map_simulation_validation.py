@@ -199,3 +199,20 @@ class TestBMSim07ClosedLoop:
         """BM-SIM-07 锚点 MOD-SIM-003 在 depgraph 中存在（非幽灵锚点 BM-INV-002）。"""
         anchors = bm_reader.get_anchors_by_step("BM-SIM-07")
         for a in anchors:
+            if a["target_graph"] == "depgraph":
+                tid = a["target_id"]
+                status_map = dep_reader.get_status_and_gate_map([tid])
+                assert tid in status_map, f"幽灵锚点 BM-INV-002: {tid} 在 depgraph 中不存在"
+
+    def test_sim07_incoming_edge_from_sim03(self, bm_reader):
+        """入边：BM-SIM-03 → BM-SIM-07 (蒙特卡洛→风控仿真)。"""
+        in_edges = bm_reader.get_edges_to_step("BM-SIM-07")
+        assert in_edges and len(in_edges) > 0, "BM-SIM-07 无入边"
+
+        sim03_edge = [e for e in in_edges if e["from_step_id"] == "BM-SIM-03"]
+        assert len(sim03_edge) == 1, f"期望 BM-SIM-03→BM-SIM-07 边，实际入边: {in_edges}"
+        assert sim03_edge[0]["edge_type"] == "data_flow"
+        assert "蒙特卡洛" in sim03_edge[0].get("label", ""), \
+            f"边 label 应含'蒙特卡洛'，实际: {sim03_edge[0].get('label')}"
+
+    def test_sim07_outgoing_edge_to_sim06
