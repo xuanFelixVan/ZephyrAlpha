@@ -11297,24 +11297,21 @@ entries:
   related_adjudication: '方案 A 治本（--message-file 用完即删），方案 B worktree 反向门禁另行登记'
   created: '2026-08-04'
   last_updated: '2026-08-04'
+# --- #ARCH-WORKTREE-GATE-001: worktree 隔离强制门禁（方案 B 治本，2026-08-04）---
 - issue_id: '#ARCH-WORKTREE-GATE-001'
   title: 非 worktree 并发 commit 搭便车——君子协定在 100% AI 场景下系统性失效
   severity: P2中
   category: governance
   adjudication: |-
-    2026-08-04 方案 B 治本。问题：warn_non_worktree_commit 只 WARN 不阻断，
-    AI 把 WARN 当"通过"，在 100% AI 开发场景下系统性失效。治本：新增 WORKTREE-REQUIRED
-    in-process gate（priority=44），将并发非 worktree commit 从 WARN 升级为 fail-closed 阻断。
-    分级阻断：worktree 内放行 / solo session 放行 / 并发非 worktree 阻断。
-    双逃生通道：allow_overlap=True / allow_non_worktree=True。fail-open on infra error。
+    2026-08-04 方案 B 治本. warn_non_worktree_commit 只 WARN 不阻断, AI 把 WARN 当通过.
+    治本: WORKTREE-REQUIRED gate priority=44, 分级阻断 fail-closed.
   fix_phase: |-
-    P1 已执行：worktree_required_gate.py + test(13 PASS) + gateway(WORKTREE_VIOLATION+
-    allow_non_worktree) + CLI(--allow-non-worktree) + in_process_gate_registry +
-    capability_registry + AGENTS.md 四层化。
+    P1: worktree_required_gate.py + test(13 PASS) + gateway + CLI + registries + AGENTS.md.
   status: resolved
-  related_adjudication: '方案 B 治本（WORKTREE-REQUIRED gate），方案 A 见 #ARCH-MSG-FILE-RESIDUE-001'
+  related_adjudication: '方案 B, 方案 A 见 #ARCH-MSG-FILE-RESIDUE-001'
   created: '2026-08-04'
   last_updated: '2026-08-04'
+
 # --- #ARCH-DOC-NODE-ID-RULE-001: 文档引用铁律（2026-08-04）---
 - issue_id: '#ARCH-DOC-NODE-ID-RULE-001'
   title: 文档硬编码 depgraph 物理 ID（node_id/edge_id）——DB 重建后成死引用温床

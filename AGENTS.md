@@ -100,6 +100,12 @@
 > **文件重命名 MUST 先重建 depgraph**（AI-14 审计 S1，2026-07-17）：`git mv old.py new.py` 后、commit 前，MUST 运行 `python scripts/governance/generate_project_depgraph.py --force` 重建 depgraph。RENAME-DEPGRAPH-SYNC commit gate（priority=39）会检测 staged .py 重命名的新路径是否已在 depgraph nodes 表登记，未登记则硬阻断。历史债务扫描：`python scripts/governance/d8_doc_sync/audit_rename_completeness.py --check-file-renames`。
 >
 > **分层契约诊断辅助 .importlinter**（AI-01 P4 治本，2026-08-01）：分层契约主守护 = 上文 depgraph 拓扑验证（`check_blueprint_code_alignment.py`，HIGH drift 已 pre-merge 硬阻断）。[`.importlinter`](file:///d:/ZephyrAlpha/.importlinter) 是**诊断辅助工具**（warn-only，未接 pre-commit），用于本地 `lint-imports` 诊断 shared 层是否误 import 业务层。**不登记 GATE-IMPORT-LAYER 硬阻断**——避免与 depgraph 拓扑验证职责重叠（双真源漂移风险：两套检测逻辑对"shared 能 import 谁"判定不一致时 AI 无所适从）。运行：`lint-imports`（需安装 import-linter，非核心依赖）。
+>
+> ### 文档引用铁律（2026-08-04，独立于设计态准入门槛）
+>
+> 蓝图/文档引用 depgraph 时**只写稳定标识**（`module_id`/`blueprint_id`/`path`），**禁止写易变物理ID**（`node_id`/`edge_id`）。背景：8 个 blueprint.md 曾硬编码 `node_id`，DB 节点重建后成死引用。属命名/引用规范。
+>
+> **二元判定**：文档出现 `node_id=数字` / `edge_id=数字` → **GATE-DOC-NODE-ID 硬阻断**（pre-commit hook `gate-doc-node-id`，脚本 [`check_doc_node_id_hardcode.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/check_doc_node_id_hardcode.py)，检测范围 `docs/**/*.md`）。需要物理 ID 时**查 depgraph DB 获取**，不在文档里固化。
 
 ## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
 
@@ -667,12 +673,11 @@ AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml
   - **豁免区**（DCR-001/002 跳过）：`docs/_working/`（临时区）、`docs/_archive/`（归档区）、`.runtime/`（运行时归档区）、`.trae/`（IDE 工具区）、`docs/01_policies_and_standards/templates/`（模板区 TMP-EX-001——模板是 Class Definition，cookbook template 的 doc_type 取目标类型，不受目标类型的 allowed_directories 约束）。
   - **capability 反查**：已登记 `directory_contract_checker`（canonical = `scripts/governance/d1_structure/check_directory_contract.py`，aliases 含 `DCR_checker`/`directory_contract_validation`）。新 AI 想做"文件目录校验/目录归属检查"前，CapabilityLookup 会反查到本脚本，提示"扩展本脚本（加 DCR 规则），勿新建 checker"。
   - **新 AI 必读**：创建新文件前，先查 doc_type_vocabulary.yaml 的 allowed_directories 确认目标目录合法。违反将被 DCR-001 在 commit 时阻断——不是"建议"，是硬约束。
-- **并发 session 文件冲突防护门禁**（SESSION-REQUIRED + HELD-OVERLAP + CLAIM-REQUIRED + WORKTREE-REQUIRED，2026-06-30 治本 + 2026-07-06 AI-11 三层化 + 2026-08-04 #ARCH-WORKTREE-GATE-001 四层化）→ 多 session 并发开发时，session A 修改的文件可能被 session B 的 commit 覆盖（回退）。四层门禁防护：
+- **并发 session 文件冲突防护门禁**（SESSION-REQUIRED + HELD-OVERLAP + CLAIM-REQUIRED，2026-06-30 治本 + 2026-07-06 AI-11 三层化）→ 多 session 并发开发时，session A 修改的文件可能被 session B 的 commit 覆盖（回退）。三层门禁防护：
   - **SESSION-REQUIRED**（阻断）：[`session_required_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/session_required_gate.py) priority=30。AI 对话启动后第一件事 MUST 调用 `session_worktree_start(sid)` 注册合法 session_id；commit 时若 session_id 未在 SessionRegistry 中登记 → `SESSION_REQUIRED_VIOLATION` 阻断。病根：不 start session 可绕过 CLAIM-REQUIRED/HELD-OVERLAP（无 session_id 则无 claim/held 比对基准）。AI-11 审计 P0-9 修复：补齐 gate 到 GitCommitGateway._gate_registry 注册链路。
   - **CLAIM-REQUIRED**（阻断）：[`claim_required_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/claim_required_gate.py) priority=40。已注册 session commit 前必须先 `claim_files` 声明目标文件，未 claim → `CLAIM_REQUIRED_VIOLATION` 阻断。逃生通道：`--allow-overlap` 参数放行（特殊情况）。病根：不 claim 可绕过 HELD-OVERLAP（未声明 held_files 则无比对基准）。
-  - **WORKTREE-REQUIRED**（阻断，#ARCH-WORKTREE-GATE-001 治本 2026-08-04）：[`worktree_required_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/worktree_required_gate.py) priority=44。非 worktree + 有其他活跃 session → `WORKTREE_VIOLATION` 阻断。病根：`warn_non_worktree_commit` 只 WARN 不阻断，AI 把 WARN 当"通过"，在 100% AI 开发场景下君子协定系统性失效。分级阻断：worktree 内放行 / solo session 放行 / 并发非 worktree 阻断。双逃生通道：`--allow-overlap`（通用）或 `--allow-non-worktree`（专用）。fail-open：`get_current_worktree`/`list_active` 异常时安全降级放行（基础设施故障不应卡死 commit）。
   - **HELD-OVERLAP**（阻断）：[`held_overlap_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py) priority=50。commit 中包含其他 session held（claim）的文件 → 阻断。防搭便车覆盖。
-  - **capability 反查**：四者均已登记 `capability_canonical_file_registry.yaml`（`session_required_gate` + `claim_required_gate` + `worktree_required_gate` + `held_overlap_gate`）。新 AI 想做"文件冲突防护/file claim/session 注册强制/worktree 隔离强制"前，CapabilityLookup 会反查阻止重复造轮子。
+  - **capability 反查**：三者均已登记 `capability_canonical_file_registry.yaml`（`session_required_gate` + `claim_required_gate` + `held_overlap_gate`）。新 AI 想做"文件冲突防护/file claim/session 注册强制"前，CapabilityLookup 会反查阻止重复造轮子。
 
 - **新建 .py/.yaml CapabilityLookup 提示门禁**（CAPABILITY-OVERLAP，warn-only，2026-06-30 治本）→ commit 时 [`capability_overlap_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py) priority=200 自动检测：①新建 .py 文件名是否与 `capability_canonical_file_registry.yaml` 已注册能力 aliases token 重叠 ②`_registry/` 下新增 .yaml/.yml 文件名是否与同目录现有 yaml token 重叠（≥2 token = 高置信度第二真源）。命中则 `logger.warning` 告警（**不阻断**）——文件名匹配是启发式，AI 看到 warning 后自行判断是扩展还是新建。检测范围覆盖 `_registry/` 所有子目录（contracts/vocabularies/catalogs/schemas/ + 未来新增），不硬编码子目录列表。病根：AGENTS.md §7 把"查 CapabilityLookup"列为 step 0，但仅靠文档约定——新 AI 跳过 AGENTS.md 即可重复造轮子，本 gate 补上代码层兜底。**capability 反查**已登记 `capability_overlap_gate`。新 AI 想做"重复造轮子检测/second source yaml"前，CapabilityLookup 会反查阻止重复造轮子。
 
