@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_feedback_loop_imports.py
-# [A_module] module_id=MOD-UNK-guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [GOV-DOC-018] 子包guard: 守卫/自审计/反馈防御族（DW-244分类，原_guard.py聚合迁移而来）
 

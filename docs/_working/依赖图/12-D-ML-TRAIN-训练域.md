@@ -1002,4 +1002,4 @@ Brinson模型是绩效归因的学术标准。分解为配置效应+选择效应
 
 | 模块ID | 模块名称 | 功能简述 | 二元结论 | 蓝图备注 |
 |--------|---------|---------|---------|---------|
-| D-ML-TRAIN-01 | Training Dataset Manager | 训练数据集管理(多源训练数据集+数据版本+数据血缘+数据质量+数据分割) | ✅能建。在Feature Registry中增加training_dataset表，记录每个训练数据集的因子版本+时间范围+分割策略。与§11.2.5版本历史对齐 | 📐项目内有蓝图编号MOD-L11-001已建设(部分) |
+| D-ML-TRAIN-01 | Training Dataset Manager | 训练数据集管理(多源训练数据集+数据版本+数据血缘+数据质量+数据分割) | ✅能建。在Feature Registry中增加training_dataset表，记录每个训练数据集的因子版本+时间范围+分割策略。与§11.2.5版本历史对齐 | 📐已登记设计态节点 MOD-ML-003 (planned)，path=src/zephyr/ml_train/training_dataset_manager/ |
