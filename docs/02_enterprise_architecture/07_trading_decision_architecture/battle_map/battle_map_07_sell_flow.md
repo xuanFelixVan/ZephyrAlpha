@@ -10,7 +10,7 @@ date: 2026-08-03
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_07_sell_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §sell_flow 阶段，9 环节。
+> battle_map §sell_flow 阶段，14 环节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
 ## 文档基本信息 / Document Overview
@@ -18,13 +18,14 @@ date: 2026-08-03
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 卖出（sell_flow） | Stage | 卖出 |
-| 环节数 | 9 | Steps | 9 |
+| 环节数 | 14 | Steps | 14 |
 | 流转边 | 17 | Edges | 17 |
-| 状态分布 | 🟦 运营态（已建）=5 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟦 运营态（已建）=5 ｜ 🟧 设计态（待施工）=4 |
+| 状态分布 | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 | State Distribution | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
 > - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟧**设计态子环节** = 父环节已建但此子环节待施工（特殊标记，易被忽略）
 > - 🟥 **红色 = 弃用态**（deprecated）
 > - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
 > - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
@@ -33,7 +34,7 @@ date: 2026-08-03
 
 ## 阶段图 / Stage Diagram
 
-> 展示 卖出 阶段全部 9 个环节及流转边，颜色区分五态。
+> 展示 卖出 阶段全部 14 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -42,13 +43,25 @@ flowchart TD
     BM_SELL_01["【BM-SELL-01 突破成败信号】<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>（生产态 / production）<br/>【Breakout Success/Failure Signal】"]
     BM_SELL_03["【BM-SELL-03 卖出信号收集评分】<br/>卖出端的'信号层'——先把持仓分级（Watch/Monitor<br/>/Hold），再收集7类卖出信号，多时间框架共振加权，<br/>产出卖出信号评分和紧迫度。<br/>（生产态 / production）<br/>【Sell Signal Collection &amp; Scoring】"]
     BM_SELL_07["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-07 卖出情景预案】<br/>盘前预计算卖出预案——暴跌分级退出/板块联动<br/>/黑天鹅应急/涨跌停排队/异常开盘<br/>/Gap开盘决策，盘中触发时直接执行预案而非实时计算<br/>，对标Citadel PM式预案卖出。<br/>（设计态 / design）<br/>【Exit Scenario Planner】"]
-    BM_SELL_04["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04 止盈止损族】<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式（趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损），叠加猎杀防护和期权定价<br/>评估。<br/>（设计态 / design）<br/>【Take-Profit &amp; Stop-Loss Strategy Family】"]
+    subgraph sg_BM_SELL_04 ["止盈止损族"]
+        BM_SELL_04["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04 止盈止损族】<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式（趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损），叠加猎杀防护和期权定价<br/>评估。<br/>（设计态 / design）<br/>【Take-Profit &amp; Stop-Loss Strategy Family】"]
+        BM_SELL_04_A["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04-A 止盈族】<br/>卖出时怎么止盈——固定止盈/移动止盈/分批止盈<br/>/时间加权止盈四种方式，根据策略类型选合适的止盈<br/>方法锁定利润。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Take-Profit Strategy Family】"]
+        BM_SELL_04_B["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04-B 止损族】<br/>卖出时怎么止损——固定止损/波动率止损（ATR）<br/>/密度感知止损/移动止损，叠加基本面/技术面/事件<br/>/主力出货的逻辑止损，控制亏损。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Stop-Loss Strategy Family】"]
+        BM_SELL_04_C["【BM-SELL-04-C 策略止损范式】<br/>不同策略用不同止损风格——趋势跟踪用宽止损<br/>（防被震出）、均值回归用中止损<br/>（不盈利即论点错误）、套利无传统止损、高频极紧止损<br/>、Carry极宽或无止损。<br/>（生产态 / production）<br/>【Strategy-Specific Stop Framework】"]
+        BM_SELL_04_D["【BM-SELL-04-D 猎杀防护】<br/>防止损位被庄家猎杀——止损位偏移1-2%防猎杀，到止损<br/>位不立即卖而是进入观察期，收盘价确认才执行，把止<br/>损当隐含看跌期权定价评估成本。<br/>（生产态 / production）<br/>【Stop-Hunting Protection】"]
+        BM_SELL_04_E["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04-E 分批退出】<br/>卖出时不一次卖完——等分退出（1/3-1/3-1/3）<br/>/倒金字塔（50-30-20）/混合退出<br/>/风险驱动退出，分批卖降低择时风险，反弹超阈值还<br/>能逆向中止。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Scaling Out】"]
+        BM_SELL_04 -.->|嵌套| BM_SELL_04_A
+        BM_SELL_04 -.->|嵌套| BM_SELL_04_B
+        BM_SELL_04 -.->|嵌套| BM_SELL_04_C
+        BM_SELL_04 -.->|嵌套| BM_SELL_04_D
+        BM_SELL_04 -.->|嵌套| BM_SELL_04_E
+    end
     BM_SELL_05["【BM-SELL-05 置换再平衡卖出】<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>（生产态 / production）<br/>【Replacement &amp; Rebalance Sell】"]
     BM_SELL_08["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-08 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>（设计态 / design）<br/>【Intraday T+0 Arbitrage】"]
     BM_SELL_02["【BM-SELL-02 卖出信号融合仲裁】<br/>把所有卖出信号（含突破成败）汇总加权融合，算出综<br/>合卖出意愿0~1，再按紧迫度匹配执行策略——紧急清仓<br/>市价单、从容退出限价单耐心等。<br/>（生产态 / production）<br/>【Sell Signal Fusion Arbitration】"]
     BM_SELL_06["【BM-SELL-06 买卖冲突仲裁】<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>（保守原则）；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>（生产态 / production）<br/>【Buy-Sell Conflict Arbitration】"]
     BM_SELL_09["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-09 卖出闭环优化】<br/>卖出后复盘——统计信号准确率（假阳性<br/>/假阴性）、做策略A/B测试、追踪执行质量（滑点<br/>/冲击成本/延迟），反馈调整信号权重与策略参数，让<br/>卖出越做越准。<br/>（设计态 / design）<br/>【Sell Closed-loop Optimization】"]
-    BM_SELL_01 ~~~ BM_SELL_07 ~~~ BM_SELL_08
+    BM_SELL_01 ~~~ BM_SELL_07 ~~~ BM_SELL_04_A ~~~ BM_SELL_04_B ~~~ BM_SELL_04_C ~~~ BM_SELL_04_D ~~~ BM_SELL_04_E ~~~ BM_SELL_08
     BM_SELL_04 ~~~ BM_SELL_05
     BM_SELL_01 -->|突破成败信号 / data_flow| BM_SELL_02
     BM_SELL_01 -->|突破成败信号→收集评分 / data_flow| BM_SELL_03
@@ -65,8 +78,8 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_SELL_01,BM_SELL_03,BM_SELL_05,BM_SELL_02,BM_SELL_06 production
-    class BM_SELL_07,BM_SELL_04,BM_SELL_08,BM_SELL_09 design
+    class BM_SELL_01,BM_SELL_03,BM_SELL_04_C,BM_SELL_04_D,BM_SELL_05,BM_SELL_02,BM_SELL_06 production
+    class BM_SELL_07,BM_SELL_04,BM_SELL_04_A,BM_SELL_04_B,BM_SELL_04_E,BM_SELL_08,BM_SELL_09 design
 ```
 
 ## 环节详情
@@ -225,6 +238,161 @@ v6.0分批退出模式(Scaling Out)：等分退出(1/3-1/3-1/3)/倒金字塔(50%
 | depgraph | MOD-SELL-014 | supplement | planned | generated |
 | depgraph | MOD-SELL-015 | supplement | stable | stable |
 | depgraph | MOD-SELL-017 | supplement | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
+
+### BM-SELL-04-A 止盈族 / Take-Profit Strategy Family
+
+> **大白话**：卖出时怎么止盈——固定止盈/移动止盈/分批止盈/时间加权止盈四种方式，根据策略类型选合适的止盈方法锁定利润。
+
+**机制说明**：
+
+BM-SELL-04 止盈止损族的子环节（depth=1）。止盈策略族：固定止盈(到价即卖)/移动止盈(跟踪最高价回撤)/分批止盈(分档卖出)/时间加权止盈(持有越久止盈线越低)。密度感知动态止盈：止盈位=条件PDF的75%分位数(正偏时更高/负偏时更保守)。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 评分输出>止盈阈值 阈值: — |
+| ② 消费数据/因子 | 卖出信号评分（来自 BM-SELL-03）<br>密度PDF分位数（来自 BM-SEL-13） |
+| ③ 参数 | 止盈位=PDF 75%分位数（范围 -，代码当前: 待实现，状态: proposed）<br>止盈范式=固定/移动/分批/时间加权（范围 -，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 评分+密度PDF → 处理: 止盈策略族(固定/移动/分批/时间加权)+密度感知动态止盈 → 输出: 止盈决策(触发条件+止盈比例+止盈紧迫度) → 下游: BM-SELL-02 融合仲裁 |
+| ⑤ 代码映射 | MOD-SELL-004 / 草图§1.4止盈策略族 |
+| ⑥ 降级/中止 | 密度感知未就绪 → 固定止盈 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：评分输出>止盈阈值；②消费：卖出评分(BM-SELL-03)+密度PDF分位数(BM-SEL-13)+策略类型(L3)；③参数：止盈位PDF 75%分位数、固定/移动/分批/时间加权模式(proposed)；④数据流：评分+PDF→止盈位计算→止盈信号→BM-SELL-04汇总→融合仲裁；⑤代码：MOD-SELL-004 止盈(planned)；⑥降级：密度PDF缺失→退化为固定止盈。
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-004 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
+
+### BM-SELL-04-B 止损族 / Stop-Loss Strategy Family
+
+> **大白话**：卖出时怎么止损——固定止损/波动率止损(ATR)/密度感知止损/移动止损，叠加基本面/技术面/事件/主力出货的逻辑止损，控制亏损。
+
+**机制说明**：
+
+BM-SELL-04 止盈止损族的子环节（depth=1）。止损策略族：固定止损(到价即卖)/波动率止损(ATR动态)/密度感知止损/移动止损。逻辑止损族：基本面止损/技术面止损/事件止损/主力出货止损。密度感知动态止损：止损位=条件PDF的5%分位数(厚尾时更宽/薄尾时更紧)。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 评分<止损阈值 / 突破失败信号 阈值: — |
+| ② 消费数据/因子 | 卖出信号评分（来自 BM-SELL-03）<br>ATR波动率（来自 BM-SEL-02）<br>密度PDF分位数（来自 BM-SEL-13）<br>突破成败信号（来自 BM-SELL-01） |
+| ③ 参数 | 止损位=PDF 5%分位数（范围 -，代码当前: 待实现，状态: proposed）<br>ATR倍数k=—（范围 1.5-2日内/3-4波段，代码当前: 待实现，状态: proposed）<br>止损范式=固定/ATR/密度感知/移动（范围 -，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 评分+波动率+突破信号 → 处理: 止损策略族+逻辑止损族+突破成败策略族+密度感知动态止损 → 输出: 止损决策/强制离场(第K次失败K≥3) → 下游: BM-SELL-02 融合仲裁 / 强制清仓 |
+| ⑤ 代码映射 | MOD-SELL-005 / 草图§1.4止损策略族+逻辑止损族+突破成败策略族 |
+| ⑥ 降级/中止 | 密度感知未就绪 → 固定/ATR止损 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：评分输出<止损阈值/逻辑止损信号触发；②消费：卖出评分(BM-SELL-03)+ATR波动率(BM-SEL-02)+密度PDF分位数(BM-SEL-13)+主力出货信号(BM-SEL-05)；③参数：止损位PDF 5%分位数、ATR倍数、固定/波动率/密度/移动模式(proposed)；④数据流：评分+波动率+PDF→止损位计算+逻辑止损检测→止损信号→BM-SELL-04汇总→融合仲裁；⑤代码：MOD-SELL-005 止损(planned)；⑥降级：ATR/PDF缺失→退化为固定止损。
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-005 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
+
+### BM-SELL-04-C 策略止损范式 / Strategy-Specific Stop Framework
+
+> **大白话**：不同策略用不同止损风格——趋势跟踪用宽止损(防被震出)、均值回归用中止损(不盈利即论点错误)、套利无传统止损、高频极紧止损、Carry极宽或无止损。
+
+**机制说明**：
+
+BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0策略类型→止损范式映射层：趋势跟踪→宽止损+移动止损为主；均值回归→中等止损+固定止损为主；统计套利→无传统止损(组合对冲+仓位管理替代)；高频→极紧止损(论点失效立即退出)；Carry→极宽止损或无止损(接受小亏大赚)。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 策略类型确定 阈值: — |
+| ② 消费数据/因子 | 策略类型（来自 L3 CapitalAllocationResult） |
+| ③ 参数 | 趋势策略止损=宽止损+移动为主（范围 -，代码当前: 待实现，状态: proposed）<br>均值回归止损=中等+固定为主（范围 -，代码当前: 待实现，状态: proposed）<br>统计套利止损=无传统止损(组合对冲+仓位管理)（范围 -，代码当前: 待实现，状态: proposed）<br>高频止损=极紧(论点失效立即退出)（范围 -，代码当前: 待实现，状态: proposed）<br>Carry止损=极宽或无(小亏大赚)（范围 -，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 策略类型 → 处理: 策略类型→止损范式映射 → 输出: StopParadigmSelection(范式选择) → 下游: BM-SELL-04-B 止损族参数调整 |
+| ⑤ 代码映射 | MOD-SELL-014 / 草图§1.4 v6.0策略类型→止损范式映射层 |
+| ⑥ 降级/中止 | 策略类型→止损范式映射未就绪 → 退化为固定止损范式 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：策略类型确定后映射止损范式；②消费：策略类型(L3 C-006策略工厂)+ATR波动率(BM-SEL-02)；③参数：趋势宽/均值回归中/高频紧/Carry宽/套利无(proposed)；④数据流：策略类型→止损范式映射→范式参数→BM-SELL-04-B止损族执行；⑤代码：MOD-SELL-014 策略止损范式(planned)；⑥降级：映射未就绪→退化为固定止损范式。
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-014 | primary | planned | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
+
+### BM-SELL-04-D 猎杀防护 / Stop-Hunting Protection
+
+> **大白话**：防止损位被庄家猎杀——止损位偏移1-2%防猎杀，到止损位不立即卖而是进入观察期，收盘价确认才执行，把止损当隐含看跌期权定价评估成本。
+
+**机制说明**：
+
+BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0止损猎杀防护：止损位偏移1-2%防猎杀；软止损模式(到达止损位→不立即执行→进入OBSERVING观察期→收盘价<止损位→执行/收回→解除)。止损期权定价评估：设止损=卖出隐含看跌期权→止损越紧隐含期权费越高→成本过高则换退出方式(时间止损/手动观察退出)。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 止损位临近 阈值: — |
+| ② 消费数据/因子 | 止损位（来自 BM-SELL-04-B） |
+| ③ 参数 | 止损偏移=防猎杀偏移（范围 1-2%，代码当前: 待实现，状态: proposed）<br>OBSERVING观察期=收盘价<止损位确认（范围 -，代码当前: 待实现，状态: proposed）<br>隐含期权费阈值=成本过高则换退出方式（范围 -，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 止损位 → 处理: 偏移+软止损OBSERVING+期权定价评估 → 输出: AdjustedStopLevel(调整后止损位与执行方式) → 下游: BM-SELL-04-B 止损族执行位调整 |
+| ⑤ 代码映射 | MOD-SELL-015 / 草图§1.4 v6.0止损猎杀防护+止损期权定价评估 |
+| ⑥ 降级/中止 | 期权定价未就绪 → 仅用偏移+软止损 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：价格触及止损位±偏移带；②消费：止损位(BM-SELL-04-B)+收盘价(L0行情)；③参数：止损偏移1-2%、软止损观察期、期权费阈值(proposed)；④数据流：止损位+偏移→猎杀防护带→软止损观察→确认执行/收回→BM-SELL-04汇总；⑤代码：MOD-SELL-015 猎杀防护(stable)；⑥降级：猎杀防护失效→硬止损立即执行(无观察期)。
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-015 | primary | stable | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
+
+### BM-SELL-04-E 分批退出 / Scaling Out
+
+> **大白话**：卖出时不一次卖完——等分退出(1/3-1/3-1/3)/倒金字塔(50-30-20)/混合退出/风险驱动退出，分批卖降低择时风险，反弹超阈值还能逆向中止。
+
+**机制说明**：
+
+BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0分批退出模式：等分退出(1/3-1/3-1/3)/倒金字塔(50%-30%-20%)/混合退出(止盈第一批+移动止损第二批)/风险驱动退出(按MRC减仓)/逆向中止(第一批卖出后反弹超X%→暂停剩余批次→重新评估)。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 止盈/止损决策需分批执行 阈值: — |
+| ② 消费数据/因子 | 止盈决策（来自 BM-SELL-04-A）<br>止损决策（来自 BM-SELL-04-B）<br>紧迫度（来自 BM-SELL-02） |
+| ③ 参数 | 分批比例=等分1/3-1/3-1/3/倒金字塔50-30-20/混合/风险驱动（范围 -，代码当前: 待实现，状态: proposed）<br>反弹中止阈值X%=第一批卖出后反弹超X%→暂停（范围 -，代码当前: 待实现，状态: proposed）<br>批次间隔=—（范围 ≥1交易日/紧迫>0.8可盘中，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 止盈/止损决策+紧迫度 → 处理: 分批退出计划(等分/倒金字塔/混合/风险驱动)+逆向中止 → 输出: ScalingOutPlan(分批订单计划) → 下游: D-EX-CORE 分批下单 |
+| ⑤ 代码映射 | MOD-SELL-017 / 草图§1.4 v6.0分批退出模式 |
+| ⑥ 降级/中止 | 分批计划未就绪 → 一次性执行 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：止盈/止损决策需分批执行；②消费：止盈/止损信号(BM-SELL-04-A/B)+仓位(BM-POS-01)+反弹幅度(L0)；③参数：等分/倒金字塔/混合/风险驱动模式、批次比例、逆向中止反弹阈值X%(proposed)；④数据流：止盈止损信号→分批模式选择→批次执行计划→BM-SELL-04汇总→执行；⑤代码：MOD-SELL-017 分批退出(planned)；⑥降级：分批引擎未就绪→一次性全部退出。
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SELL-017 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
 

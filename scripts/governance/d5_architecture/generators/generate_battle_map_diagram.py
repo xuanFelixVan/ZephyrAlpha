@@ -104,26 +104,23 @@ FLOW_STAGES = [
 ]
 
 # flow_stage -> 节点标签第4行"所属阶段"（V1.5：替换原"作战环节 / battle-step"冗余标识）
-FLOW_STAGE_LABELS = {
-    fs_id: f"{zh}阶段 / {fs_id}"
-    for fs_id, zh, _ in FLOW_STAGES
-}
+FLOW_STAGE_LABELS = {fs_id: f"{zh}阶段 / {fs_id}" for fs_id, zh, _ in FLOW_STAGES}
 
 # step_id 前缀（BM-<阶段缩写>）→ 分阶段文档文件名（不含 battle_map_ 前缀和 .md 后缀）
 # 2026-08-03 全生命周期扩展：从 6 阶段扩展到 11 阶段，与 FLOW_STAGES 编号对齐
 # 用于 _related_steps_links() 把横切视图里的 related_steps 渲染为指向分阶段文档的链接
 _STEP_PREFIX_TO_STAGE_FILE = {
-    "BM-RES":  "01_research_incubation",
-    "BM-MT":   "02_model_training",
-    "BM-BT":   "03_backtest_validation",
-    "BM-SIM":  "04_simulation_validation",
-    "BM-SEL":  "05_stock_selection",
-    "BM-BUY":  "06_buy_flow",
+    "BM-RES": "01_research_incubation",
+    "BM-MT": "02_model_training",
+    "BM-BT": "03_backtest_validation",
+    "BM-SIM": "04_simulation_validation",
+    "BM-SEL": "05_stock_selection",
+    "BM-BUY": "06_buy_flow",
     "BM-SELL": "07_sell_flow",
-    "BM-POS":  "08_position_management",
-    "BM-RC":   "09_risk_control",
-    "BM-EXE":  "10_execution",
-    "BM-REC":  "11_reconciliation",
+    "BM-POS": "08_position_management",
+    "BM-RC": "09_risk_control",
+    "BM-EXE": "10_execution",
+    "BM-REC": "11_reconciliation",
 }
 
 # Mermaid 分页大小（防 >100 节点渲染失败，memory lesson）
@@ -302,15 +299,28 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
 
     # V0.4.0 子环节状态继承：子环节无自身锚点时，继承父环节的状态
     # （子环节是父环节的内部结构，锚点通过父环节间接获得，不应显示 missing/无锚点）
+    #
+    # 治本（2026-08-03，设计态子环节渲染修复）：子环节显式声明 design_maturity='design'
+    # 时，即使无自身锚点也不继承父环节的 production 状态——父环节已建不代表所有子环节
+    # 都已实现，部分子环节可能是待施工的设计态（如 BM-RC-04-E 流动性风险监控）。
+    # 继承父的 production 会掩盖这些设计态子环节，让用户误以为全部已实现。
     step_by_id = {s["step_id"]: s for s in steps}
     for s in steps:
         pid = s.get("parent_step_id")
         if pid and pid in step_by_id:
             parent = step_by_id[pid]
             if not anchors_by_step.get(s["step_id"]):  # 子环节无自身锚点
-                s["_effective_status"] = parent.get("_effective_status", "design")
-                s["_has_candidate"] = parent.get("_has_candidate", False)
-                s["_gate_reason"] = parent.get("_gate_reason", "")
+                own_maturity = (s.get("design_maturity") or "").strip()
+                if own_maturity == "design":
+                    # 子环节显式声明设计态——保持 design，不继承父的 production
+                    s["_effective_status"] = "design"
+                    s["_has_candidate"] = False
+                    s["_gate_reason"] = ""
+                else:
+                    # 未声明或声明 production——继承父状态（向后兼容）
+                    s["_effective_status"] = parent.get("_effective_status", "design")
+                    s["_has_candidate"] = parent.get("_has_candidate", False)
+                    s["_gate_reason"] = parent.get("_gate_reason", "")
 
     return steps, edges, anchors_by_step
 
@@ -446,12 +456,16 @@ def _node_label(step: dict) -> str:
     # 成熟度
     parts.append(maturity)
 
-    # 标记（⚠无锚点 / 🟡候选承载）
+    # 标记（⚠无锚点 / 🟡候选承载 / 🟧设计态子环节）
     marks: list[str] = []
     if status == "missing":
         marks.append("⚠无锚点")
     if step.get("_has_candidate"):
         marks.append("🟡候选承载")
+    # 🟧设计态子环节标记（治本 2026-08-03）：子环节（depth>=1）处于设计态时加特殊
+    # 标记，与父环节的 production 状态视觉区分——父已建但此子环节待施工，易被忽略
+    if status == "design" and (step.get("depth") or 0) >= 1:
+        marks.append("🟧设计态子环节")
     if marks:
         parts.append("、".join(marks))
 
@@ -602,14 +616,12 @@ def _emit_nodes_with_subgraphs(
             lines.append(f'{pad}subgraph sg_{nid} ["{sg_title}"]')
             lines.append(f'{pad}    {nid}["{label}"]')
             # 子节点定义（递归处理孙环节）
-            lines.extend(
-                _emit_nodes_with_subgraphs(steps, children_map, sid, indent + 4)
-            )
+            lines.extend(_emit_nodes_with_subgraphs(steps, children_map, sid, indent + 4))
             # 父→子嵌套边（虚线表示组成关系，与 data_flow 实线区分）
             child_pad = " " * (indent + 4)
             for child in children:
                 child_nid = _mermaid_node_id(child["step_id"])
-                lines.append(f'{child_pad}{nid} -.->|嵌套| {child_nid}')
+                lines.append(f"{child_pad}{nid} -.->|嵌套| {child_nid}")
             lines.append(f"{pad}end")
         else:
             lines.append(f'{pad}{nid}["{label}"]')
@@ -704,11 +716,7 @@ def _build_mermaid_paged(
     parts: list[str] = []
     total_pages = len(pages)
     for i, page in enumerate(pages):
-        parts.append(
-            _build_mermaid(
-                page, edges, anchors_by_step, f"{title}（第 {i + 1}/{total_pages} 页）"
-            )
-        )
+        parts.append(_build_mermaid(page, edges, anchors_by_step, f"{title}（第 {i + 1}/{total_pages} 页）"))
     return "\n\n".join(parts)
 
 
@@ -718,8 +726,16 @@ def _build_mermaid_paged(
 
 
 def _format_indicators_table(step: dict) -> str:
-    """把 indicators JSONB 6 件套格式化为 Markdown 表。"""
+    """把 indicators JSONB 6 件套格式化为 Markdown 表。
+
+    防御性渲染（治本 2026-08-03，BM-MT-01-A/B/05-A params 为字符串致全量生成崩溃）：
+    indicators 各字段可能是 dict / list / str / None——历史数据写入不规范时，
+    逐字段降级为纯文本展示，禁止因单环节格式异常崩溃全量生成（259 环节受牵连）。
+    """
     ind = step.get("indicators") or {}
+    if not isinstance(ind, dict):
+        # indicators 整体非 dict（极端情况）——纯文本兜底，不崩溃
+        return f"| 要素 | 内容 |\n|---|---|\n| indicators | {str(ind)[:200]} |"
     rows: list[str] = []
 
     def _kv(items):
@@ -736,35 +752,47 @@ def _format_indicators_table(step: dict) -> str:
             return "<br>".join(f"{k}: {v}" for k, v in items.items())
         return str(items)
 
+    def _as_dict(val) -> dict:
+        """确保字段是 dict，否则返回空 dict（防 .get() 崩溃）。"""
+        return val if isinstance(val, dict) else {}
+
     # ① 触发条件
-    trig = ind.get("trigger") or {}
+    trig = _as_dict(ind.get("trigger"))
     rows.append(f"| ① 触发条件 | {trig.get('condition', '—')} |")
     if trig.get("threshold"):
         rows[-1] = rows[-1].rstrip(" |") + f" 阈值: {trig['threshold']} |"
     # ② 消费数据/因子
     rows.append(f"| ② 消费数据/因子 | {_kv(ind.get('consumes'))} |")
-    # ③ 参数
-    params = ind.get("params") or []
-    if params:
-        p_lines = [
-            f"{p.get('name', '?')}={p.get('default', '?')}（范围 {p.get('range', '—')}，"
-            f"代码当前: {p.get('current_code_value', '—')}，状态: {p.get('status', '—')}）"
-            for p in params
-        ]
+    # ③ 参数（防御：params 可能是 str 而非 list[dict]，降级为纯文本展示）
+    params = ind.get("params")
+    if isinstance(params, str) and params.strip():
+        # 历史脏数据：params 写成了逗号/顿号分隔的纯文本——原样展示
+        rows.append(f"| ③ 参数 | {params} |")
+    elif isinstance(params, list) and params:
+        p_lines = []
+        for p in params:
+            if isinstance(p, dict):
+                p_lines.append(
+                    f"{p.get('name', '?')}={p.get('default', '?')}（范围 {p.get('range', '—')}，"
+                    f"代码当前: {p.get('current_code_value', '—')}，状态: {p.get('status', '—')}）"
+                )
+            else:
+                # 列表元素非 dict（如纯字符串参数名）——原样展示
+                p_lines.append(str(p))
         rows.append(f"| ③ 参数 | {'<br>'.join(p_lines)} |")
     else:
         rows.append("| ③ 参数 | — |")
     # ④ 数据流
-    df = ind.get("data_flow") or {}
+    df = _as_dict(ind.get("data_flow"))
     rows.append(
         f"| ④ 数据流 | 输入: {df.get('input', '—')} → 处理: {df.get('process', '—')} "
         f"→ 输出: {df.get('output', '—')} → 下游: {df.get('downstream', '—')} |"
     )
     # ⑤ 代码映射
-    cm = ind.get("code_mapping") or {}
+    cm = _as_dict(ind.get("code_mapping"))
     rows.append(f"| ⑤ 代码映射 | {cm.get('module_id', '—')} / {cm.get('source_ref', '—')} |")
     # ⑥ 降级/中止
-    deg = ind.get("degradation") or {}
+    deg = _as_dict(ind.get("degradation"))
     deg_text = deg.get("condition", "—")
     if deg.get("action"):
         deg_text += f" → {deg['action']}"
@@ -849,8 +877,7 @@ def _html_link_line(stem: str) -> str:
         f"07_trading_decision_architecture/battle_map/_zoomable_html/{stem}.html"
     )
     return (
-        f"> **[可缩放 HTML 版 / Zoomable HTML]({url})** "
-        "— Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
+        f"> **[可缩放 HTML 版 / Zoomable HTML]({url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式"
     )
 
 
@@ -860,6 +887,7 @@ def _legend_blockquote() -> str:
         "> **图例说明 / Legend**：\n"
         "> - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）\n"
         "> - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）\n"
+        "> - 🟧**设计态子环节** = 父环节已建但此子环节待施工（特殊标记，易被忽略）\n"
         "> - 🟥 **红色 = 弃用态**（deprecated）\n"
         "> - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）\n"
         "> - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）\n"
@@ -868,9 +896,7 @@ def _legend_blockquote() -> str:
     )
 
 
-def _view_subset(
-    steps: list[dict], edges: list[dict], statuses: set[str]
-) -> tuple[list[dict], list[dict]]:
+def _view_subset(steps: list[dict], edges: list[dict], statuses: set[str]) -> tuple[list[dict], list[dict]]:
     """按展示态筛选视图子集（模板 §3.2：运营态=production，设计态=design）。
 
     返回 (筛选后 steps, 两端均在筛选集内且两端状态均在 statuses 内的 edges)。
@@ -878,10 +904,7 @@ def _view_subset(
     """
     sel = [s for s in steps if s.get("_effective_status") in statuses]
     sel_ids = {s["step_id"] for s in sel}
-    sel_edges = [
-        e for e in edges
-        if e["from_step_id"] in sel_ids and e["to_step_id"] in sel_ids
-    ]
+    sel_edges = [e for e in edges if e["from_step_id"] in sel_ids and e["to_step_id"] in sel_ids]
     return sel, sel_edges
 
 
@@ -902,8 +925,7 @@ def _generate_panorama_md(
         st = s.get("_effective_status", "design")
         state_counts[st] = state_counts.get(st, 0) + 1
     dist = " ｜ ".join(
-        f"{_STATE_LABEL.get(st, st)}={cnt}"
-        for st, cnt in sorted(state_counts.items(), key=lambda x: -x[1])
+        f"{_STATE_LABEL.get(st, st)}={cnt}" for st, cnt in sorted(state_counts.items(), key=lambda x: -x[1])
     )
 
     # 三视图子集（模板 §3.2：全景图 → 运营态的图 → 设计态的图）
@@ -975,7 +997,9 @@ def _generate_panorama_md(
     # V1.5：全景图不再展示"全环节详情（6 件套）"——总图看大局全貌，详情在 12 个分阶段文档里
     # 重复输出会让 panorama.md 膨胀到几百 KB 且无信息增量。
     # 各环节 6 件套（触发/消费/参数/数据流/代码映射/降级）见上方对应分阶段文档。
-    parts.append("> **环节详情**：各环节的 6 件套（触发/消费/参数/数据流/代码映射/降级）+ 锚点 + 有效状态，见上方对应分阶段文档。总图聚焦大局全貌，不重复详情。")
+    parts.append(
+        "> **环节详情**：各环节的 6 件套（触发/消费/参数/数据流/代码映射/降级）+ 锚点 + 有效状态，见上方对应分阶段文档。总图聚焦大局全貌，不重复详情。"
+    )
     parts.append("")
     return "\n".join(parts)
 
@@ -996,19 +1020,18 @@ def _generate_stage_md(
     stage_steps = [s for s in steps if s["flow_stage"] == stage_id]
     stage_step_ids = {s["step_id"] for s in stage_steps}
     # 边：任一端在本阶段
-    stage_edges = [
-        e for e in edges
-        if e["from_step_id"] in stage_step_ids or e["to_step_id"] in stage_step_ids
-    ]
+    stage_edges = [e for e in edges if e["from_step_id"] in stage_step_ids or e["to_step_id"] in stage_step_ids]
     # 五态分布统计
     state_counts: dict[str, int] = {}
     for s in stage_steps:
         st = s.get("_effective_status", "design")
         state_counts[st] = state_counts.get(st, 0) + 1
-    dist = " ｜ ".join(
-        f"{_STATE_LABEL.get(st, st)}={cnt}"
-        for st, cnt in sorted(state_counts.items(), key=lambda x: -x[1])
-    ) or "—"
+    dist = (
+        " ｜ ".join(
+            f"{_STATE_LABEL.get(st, st)}={cnt}" for st, cnt in sorted(state_counts.items(), key=lambda x: -x[1])
+        )
+        or "—"
+    )
     stem = f"battle_map_{stage_num}_{stage_id}"
 
     parts: list[str] = [
@@ -1070,9 +1093,7 @@ def _related_steps_links(related_steps: list[str]) -> str:
 
 def _format_funnel_md(item: dict) -> str:
     """渲染 §13 筛选漏斗模型为 Markdown（6层漏斗表 + 机制说明）。"""
-    name_bi = item.get("name_zh", "") + (
-        f" / {item['name_en']}" if item.get("name_en") else ""
-    )
+    name_bi = item.get("name_zh", "") + (f" / {item['name_en']}" if item.get("name_en") else "")
     parts = [
         f"## {name_bi}（{item.get('sketch_ref', '')}）",
         "",
@@ -1111,9 +1132,7 @@ def _format_funnel_md(item: dict) -> str:
 
 def _format_intraday_events_md(item: dict) -> str:
     """渲染 §14 盘中实时事件处理为 Markdown（事件类型表 + 流水线 + 对账）。"""
-    name_bi = item.get("name_zh", "") + (
-        f" / {item['name_en']}" if item.get("name_en") else ""
-    )
+    name_bi = item.get("name_zh", "") + (f" / {item['name_en']}" if item.get("name_en") else "")
     parts = [
         f"## {name_bi}（{item.get('sketch_ref', '')}）",
         "",
@@ -1169,9 +1188,7 @@ def _format_intraday_events_md(item: dict) -> str:
 
 def _format_conflict_matrix_md(item: dict) -> str:
     """渲染 §16 能力冲突矩阵为 Markdown（优先级表 + 31冲突场景表）。"""
-    name_bi = item.get("name_zh", "") + (
-        f" / {item['name_en']}" if item.get("name_en") else ""
-    )
+    name_bi = item.get("name_zh", "") + (f" / {item['name_en']}" if item.get("name_en") else "")
     parts = [
         f"## {name_bi}（{item.get('sketch_ref', '')}）",
         "",
@@ -1196,9 +1213,7 @@ def _format_conflict_matrix_md(item: dict) -> str:
         ]
         for h in hierarchy:
             note = h.get("note") or "—"
-            parts.append(
-                f"| {h.get('rank', '?')} | {h.get('holder', '—')} | {note} |"
-            )
+            parts.append(f"| {h.get('rank', '?')} | {h.get('holder', '—')} | {note} |")
         parts.append("")
     # 冲突场景表
     conflicts = item.get("conflicts") or []
@@ -1220,9 +1235,7 @@ def _format_conflict_matrix_md(item: dict) -> str:
 
 def _format_timeline_md(item: dict) -> str:
     """渲染 §15 计算节奏与时序为 Markdown（三段式时序阶段 + 计算频率表）。"""
-    name_bi = item.get("name_zh", "") + (
-        f" / {item['name_en']}" if item.get("name_en") else ""
-    )
+    name_bi = item.get("name_zh", "") + (f" / {item['name_en']}" if item.get("name_en") else "")
     parts = [
         f"## {name_bi}（{item.get('sketch_ref', '')}）",
         "",
@@ -1248,9 +1261,7 @@ def _format_timeline_md(item: dict) -> str:
         for ph in phases:
             actions = ph.get("actions") or []
             act_text = "<br>".join(actions) if actions else "—"
-            parts.append(
-                f"| {ph.get('name_zh', '—')} | {ph.get('time_range', '—')} | {act_text} |"
-            )
+            parts.append(f"| {ph.get('name_zh', '—')} | {ph.get('time_range', '—')} | {act_text} |")
         parts.append("")
     # 计算频率汇总
     freqs = item.get("compute_frequencies") or []
@@ -1273,9 +1284,7 @@ def _format_timeline_md(item: dict) -> str:
 
 def _format_distribution_awareness_md(item: dict) -> str:
     """渲染 §1.7 分布感知增强体系为 Markdown（四方法论表 + 叠加态模式）。"""
-    name_bi = item.get("name_zh", "") + (
-        f" / {item['name_en']}" if item.get("name_en") else ""
-    )
+    name_bi = item.get("name_zh", "") + (f" / {item['name_en']}" if item.get("name_en") else "")
     parts = [
         f"## {name_bi}（{item.get('sketch_ref', '')}）",
         "",
@@ -1330,9 +1339,7 @@ def _format_generic_cross_cutting_md(item: dict) -> str:
       - four_tracks             → tracks 表
       - shared_signal_injection → 纯叙事（无结构化表）
     """
-    name_bi = item.get("name_zh", "") + (
-        f" / {item['name_en']}" if item.get("name_en") else ""
-    )
+    name_bi = item.get("name_zh", "") + (f" / {item['name_en']}" if item.get("name_en") else "")
     parts = [
         f"## {name_bi}（{item.get('sketch_ref', '—')}）",
         "",
@@ -1371,10 +1378,7 @@ def _format_generic_cross_cutting_md(item: dict) -> str:
             "|---|---|---|",
         ]
         for t in tiers:
-            parts.append(
-                f"| {t.get('trigger', '—')} | {t.get('failed_layer', '—')} "
-                f"| {t.get('fallback', '—')} |"
-            )
+            parts.append(f"| {t.get('trigger', '—')} | {t.get('failed_layer', '—')} | {t.get('fallback', '—')} |")
         parts.append("")
     # 四轨并行：tracks 表
     tracks = item.get("tracks") or []
@@ -1563,30 +1567,32 @@ def _generate_cross_cutting_md() -> str:
 
     parts.append(_html_link_line("battle_map_12_cross_cutting"))
     parts.append("")
-    parts.extend([
-        "> 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则",
-        ">           + 4 系统级横切（四模式开关 / 应急保命降级 / 四轨并行 / 共享信号注入，迁移自 trading_flow_narrative.yaml）",
-        ">           + 3 域来源横切（信号生命周期治理 / 因子治理引擎 / 硬边界约束体系，来源 D-SIGNAL/D-FACTOR/跨域交叉点）。",
-        "> 真源：`module_translation_registry.yaml` §battle_map_cross_cutting 段（规则数据，TRAE-062）。",
-        "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。",
-        "",
-        "## 文档基本信息 / Document Overview",
-        "",
-        "| 字段 | 值 | Field | Value |",
-        "|------|------|-------|-------|",
-        f"| 横切类别数 | {len(items)} | Categories | {len(items)} |",
-        "| 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 + 3 域来源 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys + 3 domain |",
-        "| 真源 | module_translation_registry.yaml | Source | YAML registry |",
-        "",
-        _legend_blockquote(),
-        "",
-        "## 横切视图总览 / Cross-Cutting Overview",
-        "",
-        f"> 展示全部 {len(items)} 个横切机制，颜色区分五态。",
-        "",
-        _generate_cross_cutting_mermaid(items),
-        "",
-    ])
+    parts.extend(
+        [
+            "> 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则",
+            ">           + 4 系统级横切（四模式开关 / 应急保命降级 / 四轨并行 / 共享信号注入，迁移自 trading_flow_narrative.yaml）",
+            ">           + 3 域来源横切（信号生命周期治理 / 因子治理引擎 / 硬边界约束体系，来源 D-SIGNAL/D-FACTOR/跨域交叉点）。",
+            "> 真源：`module_translation_registry.yaml` §battle_map_cross_cutting 段（规则数据，TRAE-062）。",
+            "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。",
+            "",
+            "## 文档基本信息 / Document Overview",
+            "",
+            "| 字段 | 值 | Field | Value |",
+            "|------|------|-------|-------|",
+            f"| 横切类别数 | {len(items)} | Categories | {len(items)} |",
+            "| 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 + 3 域来源 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys + 3 domain |",
+            "| 真源 | module_translation_registry.yaml | Source | YAML registry |",
+            "",
+            _legend_blockquote(),
+            "",
+            "## 横切视图总览 / Cross-Cutting Overview",
+            "",
+            f"> 展示全部 {len(items)} 个横切机制，颜色区分五态。",
+            "",
+            _generate_cross_cutting_mermaid(items),
+            "",
+        ]
+    )
     for item in items:
         cat = item.get("category", "")
         renderer = _CROSS_CUTTING_RENDERERS.get(cat)
@@ -1623,7 +1629,9 @@ def regenerate(output_dir: Path | None = None) -> dict:
     """
     try:
         if output_dir is None:
-            output_dir = REPO_ROOT / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "battle_map"
+            output_dir = (
+                REPO_ROOT / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "battle_map"
+            )
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -1669,7 +1677,10 @@ def regenerate(output_dir: Path | None = None) -> dict:
             "edges": len(edges),
             "anchors": sum(len(v) for v in anchors_by_step.values()),
         }
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - 顶层兜底：生成器不可崩溃，降级返回错误 dict
+        import traceback as _tb
+
+        _tb.print_exc()
         return {
             "status": "failed",
             "generator": "battle_map",
@@ -1682,7 +1693,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="生成交易决策作战地图可视化")
     parser.add_argument(
         "--output-dir",
-        default=str(REPO_ROOT / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "battle_map"),
+        default=str(
+            REPO_ROOT / "docs" / "02_enterprise_architecture" / "07_trading_decision_architecture" / "battle_map"
+        ),
         help="输出目录",
     )
     args = parser.parse_args()

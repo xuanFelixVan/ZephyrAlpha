@@ -620,6 +620,45 @@ def audit_file_check_new(file_path: str | Path) -> tuple[bool, list[str]]:
     return len(new_violations) == 0, sorted(new_violations)
 
 
+def _get_changed_files() -> list[Path]:
+    """获取 git 变更文件列表（staged + 工作区 + untracked），相对于 REPO_ROOT。
+
+    治本背景（2026-08-03）：pre-commit hook 调用 ``audit_broken_links.py --check-new .``
+    传整个仓库根目录，原实现用 ``p.rglob`` 遍历全仓库文件再逐个 ``git show HEAD`` 对比，
+    导致 pre-commit 卡死（12分钟+）。改为只获取 git 变更文件，扫描时间降至秒级。
+
+    语义等价性证明：``--check-new`` 仅报告 "HEAD 中不存在的断链"（新引入的）。
+    未变更文件 ``new_broken == old_broken``，差集为空，扫描它们纯属浪费。
+    因此只扫变更文件不丢失任何检测能力。
+
+    边界：文件被其他文件删除引用导致的断链（极罕见）不在 pre-commit 职责内，
+    由 CI 全量审计（``audit_directory`` 无 ``--check-new``）覆盖。
+    """
+    import subprocess
+    changed: set[Path] = set()
+    # 三类变更文件：staged（pre-commit 主场景）+ 工作区未 staged + untracked 新文件
+    git_cmds = [
+        ["git", "diff", "--cached", "--name-only", "--diff-filter=AMR"],
+        ["git", "diff", "--name-only", "--diff-filter=AMR"],
+        ["git", "ls-files", "--others", "--exclude-standard"],
+    ]
+    for cmd in git_cmds:
+        r = subprocess.run(
+            cmd,
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        if r.returncode != 0:
+            continue
+        for line in r.stdout.splitlines():
+            line = line.strip().replace("\\", "/")
+            if line:
+                changed.add(REPO_ROOT / line)
+    return sorted(changed)
+
+
 def audit_directory(dir_path: str | Path) -> tuple[bool, list[str]]:
     """递归审计目录下所有支持文件的断链。"""
     p = Path(dir_path)

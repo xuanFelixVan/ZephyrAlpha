@@ -236,6 +236,7 @@ class MarketContext:
     wash_trade_detected: bool = False
     sector_weights: dict[str, float] = field(default_factory=dict)
     daily_loss_pct: float = 0.0
+    circuit_breaker_triggered: bool = False
     cancel_rate: float = 0.05
     dwell_time_us: int = 100
     tca_feedback: dict | None = None
@@ -362,10 +363,15 @@ def process_risk_approval(pkt: DataPacket, cfg: RiskConfig, ctx: MarketContext) 
     """④ BM-EXE-01 风控审批：仓位指令 → 审批后订单（HALT 级阻断）。
 
     故障分支：
+      - 市场熔断（行情中断）→ RiskViolationError（HALT，最高优先级）
       - 单标的权重 > max_single_weight → RiskViolationError（HALT）
       - 日内亏损 > max_daily_loss_pct → RiskViolationError（HALT）
     """
     assert pkt.type == "position_order", f"BM-EXE-01 输入应为 position_order，实际 {pkt.type}"
+
+    # 熔断 HALT（行情中断，最高优先级）
+    if ctx.circuit_breaker_triggered:
+        raise RiskViolationError("市场熔断触发（行情中断），禁止开新仓")
 
     # 日内亏损 HALT（最高优先级）
     if ctx.daily_loss_pct > cfg.max_daily_loss_pct:
@@ -993,6 +999,13 @@ class TestRiskApprovalExceptions:
         )
         with pytest.raises(RiskViolationError, match="日内亏损超 HALT"):
             process_risk_approval(pkt, cfg, ctx)
+
+    def test_circuit_breaker_halt_raises(self, default_configs, default_ctx):
+        """行情中断触发熔断 → RiskViolationError（最高优先级阻断）。"""
+        ctx = MarketContext(circuit_breaker_triggered=True)
+        pkt = DataPacket(type="position_order", payload={"symbol": "600519", "weight": 0.1, "qty": 100, "side": "buy"})
+        with pytest.raises(RiskViolationError, match="市场熔断"):
+            process_risk_approval(pkt, default_configs.risk, ctx)
 
     def test_pipeline_fail_fast_at_risk(self, default_configs, default_ctx):
         """pipeline 在 BM-EXE-01 阶段 fail-fast。"""

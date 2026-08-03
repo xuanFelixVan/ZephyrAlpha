@@ -20,11 +20,12 @@ date: 2026-08-03
 | 阶段 | 对账（reconciliation） | Stage | 对账 |
 | 环节数 | 17 | Steps | 17 |
 | 流转边 | 18 | Edges | 18 |
-| 状态分布 | 🟦 运营态（已建）=16 ｜ 🟧 设计态（待施工）=1 | State Distribution | 🟦 运营态（已建）=16 ｜ 🟧 设计态（待施工）=1 |
+| 状态分布 | 🟦 运营态（已建）=14 ｜ 🟧 设计态（待施工）=3 | State Distribution | 🟦 运营态（已建）=14 ｜ 🟧 设计态（待施工）=3 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
 > - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟧**设计态子环节** = 父环节已建但此子环节待施工（特殊标记，易被忽略）
 > - 🟥 **红色 = 弃用态**（deprecated）
 > - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
 > - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
@@ -53,7 +54,7 @@ flowchart TD
         BM_REC_02_E["【BM-REC-02-E 风险报告】<br/>生成日度/周度/事件/月度四类风险报告——VaR/CVaR<br/>/因子暴露/否决统计<br/>/漂移状态，看今天风险敞口怎么样。<br/>（生产态 / production）<br/>【Risk Report】"]
         BM_REC_02_F["【BM-REC-02-F 监管报告】<br/>生成程序化交易报告、异常交易自报、持仓报告、绩效<br/>报告——满足证监会和交易所监管报送要求。<br/>（生产态 / production）<br/>【Regulatory Report】"]
         BM_REC_02_A["【BM-REC-02-A TCA执行质量分析】<br/>算每笔交易的真实成本——滑点、冲击成本、市场影响，<br/>看执行得好不好。<br/>（生产态 / production）<br/>【TCA Execution Quality Analysis】"]
-        BM_REC_02_B["⛔ D-EX-CORE执行报告未就绪（CTR-P1-007<br/>/CTR-ERR-005）,设计文档§1.4标注受限,暂不可建<br/>【BM-REC-02-B 绩效归因】<br/>把盈亏拆开看——赚的钱是选股选对的、还是配比配对的<br/>、还是行业轮动轮对的，找出Alpha来源。<br/>（设计态 / design）<br/>【Performance Attribution】"]
+        BM_REC_02_B["⛔ D-EX-CORE执行报告未就绪（CTR-P1-007<br/>/CTR-ERR-005）,设计文档§1.4标注受限,暂不可建<br/>【BM-REC-02-B 绩效归因】<br/>把盈亏拆开看——赚的钱是选股选对的、还是配比配对的<br/>、还是行业轮动轮对的，找出Alpha来源。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Performance Attribution】"]
         BM_REC_02_C["【BM-REC-02-C A股交易复盘】<br/>针对A股特色做盘前信号验证、盘中异常检测、盘后归<br/>因、大额交易异动检测，生成复盘报告。<br/>（生产态 / production）<br/>【A-Share Trading Review】"]
         BM_REC_02_D["【BM-REC-02-D 报告发布】<br/>把复盘报告归档、发到微信和邮件，留好审计凭证。<br/>（生产态 / production）<br/>【Report Publishing】"]
         BM_REC_02 -.->|嵌套| BM_REC_02_E
@@ -66,8 +67,8 @@ flowchart TD
     subgraph sg_BM_REC_03 ["闭环优化反馈"]
         BM_REC_03["【BM-REC-03 闭环优化反馈】<br/>复盘完把教训反馈回每一层——因子衰减就换、信号不准<br/>就退、模型漂移就重训，形成正向闭环。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Closed-Loop Optimization Feedback】"]
         BM_REC_03_A["【BM-REC-03-A 因子层反馈】<br/>看因子还灵不灵——IC衰减了就换因子，算半衰期，保证<br/>因子池新鲜。<br/>（生产态 / production）<br/>【Factor-Layer Feedback】"]
-        BM_REC_03_B["【BM-REC-03-B 信号层反馈】<br/>看信号准不准——准确率持续下降就退役信号，避免用失<br/>效信号下单。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Signal-Layer Feedback】"]
-        BM_REC_03_C["【BM-REC-03-C 模型层反馈】<br/>看模型飘没飘——检测到漂移就重训练，防止模型用旧数<br/>据预测新市场。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Model-Layer Feedback】"]
+        BM_REC_03_B["【BM-REC-03-B 信号层反馈】<br/>看信号准不准——准确率持续下降就退役信号，避免用失<br/>效信号下单。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Signal-Layer Feedback】"]
+        BM_REC_03_C["【BM-REC-03-C 模型层反馈】<br/>看模型飘没飘——检测到漂移就重训练，防止模型用旧数<br/>据预测新市场。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Model-Layer Feedback】"]
         BM_REC_03 -.->|嵌套| BM_REC_03_A
         BM_REC_03 -.->|嵌套| BM_REC_03_B
         BM_REC_03 -.->|嵌套| BM_REC_03_C
@@ -86,8 +87,8 @@ flowchart TD
     BM_REC_02_A -.->|TCA执行成本→归因输入 / data_flow| BM_REC_02_B
     BM_REC_02_B -.->|归因结果→复盘素材 / data_flow| BM_REC_02_C
     BM_REC_02_C -->|复盘报告→发布 / data_flow| BM_REC_02_D
-    BM_REC_03_A -->|因子反馈→信号反馈 / data_flow| BM_REC_03_B
-    BM_REC_03_B -->|信号反馈→模型反馈 / data_flow| BM_REC_03_C
+    BM_REC_03_A -.->|因子反馈→信号反馈 / data_flow| BM_REC_03_B
+    BM_REC_03_B -.->|信号反馈→模型反馈 / data_flow| BM_REC_03_C
     BM_REC_01_B -->|费率后算PnL / data_flow| BM_REC_01_C
     BM_REC_02_C -->|复盘→风险报告 / data_flow| BM_REC_02_E
     BM_REC_02_E -->|风险报告→监管报告 / data_flow| BM_REC_02_F
@@ -96,8 +97,8 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_01_C,BM_REC_02_E,BM_REC_02_F,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A,BM_REC_03_B,BM_REC_03_C production
-    class BM_REC_02_B design
+    class BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_01_C,BM_REC_02_E,BM_REC_02_F,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A production
+    class BM_REC_02_B,BM_REC_03_B,BM_REC_03_C design
 ```
 
 ## 环节详情
@@ -450,7 +451,7 @@ BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-006 regulatory_report_
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-006 | primary | — | generated |
+| depgraph | MOD-RPT-006 | primary | — | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -661,7 +662,7 @@ L1~L4+L3.5多层架构未完整实现(当前仅单层因子质量反馈)。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 ### BM-REC-03-C 模型层反馈 / Model-Layer Feedback
 
@@ -692,7 +693,7 @@ BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈�
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 
 [← 返回总指挥图](battle_map_panorama.md)

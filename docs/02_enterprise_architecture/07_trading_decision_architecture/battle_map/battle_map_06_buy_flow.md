@@ -20,11 +20,12 @@ date: 2026-08-03
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
 | 环节数 | 16 | Steps | 16 |
 | 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟦 运营态（已建）=8 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=2 ｜ 🟧 设计态（待施工）=1 | State Distribution | 🟦 运营态（已建）=8 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=2 ｜ 🟧 设计态（待施工）=1 |
+| 状态分布 | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 ｜ 🟨 候选态（候选池）=2 | State Distribution | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 ｜ 🟨 候选态（候选池）=2 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
 > - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟧**设计态子环节** = 父环节已建但此子环节待施工（特殊标记，易被忽略）
 > - 🟥 **红色 = 弃用态**（deprecated）
 > - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
 > - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
@@ -45,11 +46,11 @@ flowchart TD
         subgraph sg_BM_BUY_02_A ["逻辑驱动轨"]
             BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Logic-Driven Track】"]
             subgraph sg_BM_BUY_02_A_1 ["市场状态预测"]
-                BM_BUY_02_A_1["【BM-BUY-02-A-1 市场状态预测】<br/>预测大盘接下来走哪种状态——用3×3矩阵分9态+2叠加态<br/>+8态走势预测+体制转换检测，给买入决策提供市场环<br/>境判断。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Market State Prediction】"]
-                BM_BUY_02_A_1_a["【BM-BUY-02-A-1-a 3×3矩阵分类】<br/>把大盘分成9种状态——大盘趋势（上涨/震荡<br/>/下跌）×波动率（高/中<br/>/低）=3×3矩阵，每种状态对应不同的买入策略。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【3x3 Matrix Classification】"]
-                BM_BUY_02_A_1_b["【BM-BUY-02-A-1-b 2叠加态检测】<br/>检测2种极端市场状态——极端牛和极端熊，这俩不走3×3<br/>矩阵，单独标出来触发特殊买入/不买策略。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【2 Superposition States Detection】"]
-                BM_BUY_02_A_1_c["【BM-BUY-02-A-1-c T+1次日8态走势预测】<br/>预测明天大盘走8种走势的哪一种——基于3×3矩阵和叠加<br/>态推算T+1次日的8种走势概率分布，指导次日买入。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【T+1 Next-Day 8-State Prediction】"]
-                BM_BUY_02_A_1_d["【BM-BUY-02-A-1-d 体制转换检测】<br/>检测大盘是不是在变盘——用HMM隐马尔可夫和变点检测<br/>识别市场体制转换（牛转熊<br/>/熊转牛），变盘时调整买入策略。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Regime Shift Detection】"]
+                BM_BUY_02_A_1["【BM-BUY-02-A-1 市场状态预测】<br/>预测大盘接下来走哪种状态——用3×3矩阵分9态+2叠加态<br/>+8态走势预测+体制转换检测，给买入决策提供市场环<br/>境判断。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Market State Prediction】"]
+                BM_BUY_02_A_1_a["【BM-BUY-02-A-1-a 3×3矩阵分类】<br/>把大盘分成9种状态——大盘趋势（上涨/震荡<br/>/下跌）×波动率（高/中<br/>/低）=3×3矩阵，每种状态对应不同的买入策略。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【3x3 Matrix Classification】"]
+                BM_BUY_02_A_1_b["【BM-BUY-02-A-1-b 2叠加态检测】<br/>检测2种极端市场状态——极端牛和极端熊，这俩不走3×3<br/>矩阵，单独标出来触发特殊买入/不买策略。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【2 Superposition States Detection】"]
+                BM_BUY_02_A_1_c["【BM-BUY-02-A-1-c T+1次日8态走势预测】<br/>预测明天大盘走8种走势的哪一种——基于3×3矩阵和叠加<br/>态推算T+1次日的8种走势概率分布，指导次日买入。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【T+1 Next-Day 8-State Prediction】"]
+                BM_BUY_02_A_1_d["【BM-BUY-02-A-1-d 体制转换检测】<br/>检测大盘是不是在变盘——用HMM隐马尔可夫和变点检测<br/>识别市场体制转换（牛转熊<br/>/熊转牛），变盘时调整买入策略。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Regime Shift Detection】"]
                 BM_BUY_02_A_1 -.->|嵌套| BM_BUY_02_A_1_a
                 BM_BUY_02_A_1 -.->|嵌套| BM_BUY_02_A_1_b
                 BM_BUY_02_A_1 -.->|嵌套| BM_BUY_02_A_1_c
@@ -57,7 +58,7 @@ flowchart TD
             end
             BM_BUY_02_A -.->|嵌套| BM_BUY_02_A_1
         end
-        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Data-Driven Track （AI Discovery）】"]
+        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Data-Driven Track （AI Discovery）】"]
         BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Manual Override Track】"]
         BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Emergency Protection Track】"]
         BM_BUY_02 -.->|嵌套| BM_BUY_02_A
@@ -81,9 +82,8 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D production
-    class BM_BUY_04 design
-    class BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d missing
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_C,BM_BUY_02_D production
+    class BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_B design
     class BM_BUY_06,BM_BUY_08 candidate
 ```
 
@@ -119,7 +119,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | stable |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -254,9 +254,13 @@ BM-BUY-02-A 逻辑驱动轨的孙环节（depth=2）。对应决策图L2C层，�
 
 ①触发：盘前全量计算；②消费：L0行情+L1因子+大盘指数；③参数：3×3矩阵维度、叠加态阈值、HMM状态数；④数据流：行情+因子→矩阵分类+叠加态+8态预测→market_state_prediction→BM-BUY-02-A逻辑轨；⑤代码：L2C层(planned)；⑥降级：L2C失效→仅用趋势线判断。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-036 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-A-1-a 3×3矩阵分类 / 3x3 Matrix Classification
 
@@ -281,9 +285,13 @@ BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。3×3矩阵=大盘
 
 ①触发：盘前大盘行情计算；②消费：大盘指数收益率(L0)+波动率(L0)；③参数：趋势分类阈值、波动率分级；④数据流：大盘收益+波动率→3×3矩阵→9态分类→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：矩阵数据缺失→仅用趋势单维判断。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-036 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-A-1-b 2叠加态检测 / 2 Superposition States Detection
 
@@ -308,9 +316,13 @@ BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。检测极端牛/�
 
 ①触发：盘中实时监测；②消费：大盘涨幅(L0)+成交量(L0)；③参数：极端牛/熊阈值；④数据流：大盘涨幅+量能→叠加态检测→极端标签→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：叠加态判定失效→仅用3×3矩阵。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-036 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-A-1-c T+1次日8态走势预测 / T+1 Next-Day 8-State Prediction
 
@@ -335,9 +347,13 @@ BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。基于3×3矩阵+
 
 ①触发：盘前预测；②消费：3×3矩阵分类结果+2叠加态检测结果+历史走势序列(L0)；③参数：8态定义、概率分布模型、预测窗口T+1；④数据流：矩阵+叠加态→8态概率分布→走势预测→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：预测模型失效→等概率8态默认。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-037 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-A-1-d 体制转换检测 / Regime Shift Detection
 
@@ -362,9 +378,13 @@ BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。HMM隐马尔可�
 
 ①触发：每日盘后/盘前；②消费：大盘指数历史序列(L0)；③参数：HMM状态数、变点检测窗口；④数据流：大盘历史序列→HMM+变点检测→体制转换信号→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：HMM失效→仅用变点检测。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-036 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：buy_flow
 
 ### BM-BUY-06 外部指令盯盘 / External Order Monitoring
 
@@ -542,7 +562,7 @@ BM-BUY-02 四轨融合的子环节（depth=1）。数据驱动轨由 AI Discover
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-C 人工指令轨 / Manual Override Track
 

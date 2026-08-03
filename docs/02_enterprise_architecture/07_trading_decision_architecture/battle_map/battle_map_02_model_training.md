@@ -10,7 +10,7 @@ date: 2026-08-03
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_02_model_training.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §model_training 阶段，5 环节。
+> battle_map §model_training 阶段，8 环节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
 ## 文档基本信息 / Document Overview
@@ -18,13 +18,14 @@ date: 2026-08-03
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 模型训练（model_training） | Stage | 模型训练 |
-| 环节数 | 5 | Steps | 5 |
+| 环节数 | 8 | Steps | 8 |
 | 流转边 | 6 | Edges | 6 |
-| 状态分布 | 🟨 候选态（候选池）=4 ｜ 🟧 设计态（待施工）=1 | State Distribution | 🟨 候选态（候选池）=4 ｜ 🟧 设计态（待施工）=1 |
+| 状态分布 | 🟨 候选态（候选池）=5 ｜ 🟧 设计态（待施工）=2 ｜ 🟦 运营态（已建）=1 | State Distribution | 🟨 候选态（候选池）=5 ｜ 🟧 设计态（待施工）=2 ｜ 🟦 运营态（已建）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
 > - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟧**设计态子环节** = 父环节已建但此子环节待施工（特殊标记，易被忽略）
 > - 🟥 **红色 = 弃用态**（deprecated）
 > - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
 > - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
@@ -33,17 +34,28 @@ date: 2026-08-03
 
 ## 阶段图 / Stage Diagram
 
-> 展示 模型训练 阶段全部 5 个环节及流转边，颜色区分五态。
+> 展示 模型训练 阶段全部 8 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 模型训练阶段图
 flowchart TD
-    BM_MT_01["⛔ ML训练域，设计已就绪，等待开发排期<br/>【BM-MT-01 训练流水线】<br/>把研究出的因子和特征喂给模型训练，PyTorch<br/>训完导出 ONNX，全程管 seed 和 config<br/>保证可复现。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Training Pipeline】"]
+    subgraph sg_BM_MT_01 ["训练流水线"]
+        BM_MT_01["⛔ ML训练域，设计已就绪，等待开发排期<br/>【BM-MT-01 训练流水线】<br/>把研究出的因子和特征喂给模型训练，PyTorch<br/>训完导出 ONNX，全程管 seed 和 config<br/>保证可复现。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Training Pipeline】"]
+        BM_MT_01_A["【BM-MT-01-A 训练基座<br/>（训练器ABC+模型注册表+元数据）】<br/>训练域的基座抽象——ModelTrainerBase<br/>训练器接口、ModelRegistry<br/>模型版本注册表、ModelMetadata 元数据，是 MT-01<br/>训练流水线的地基。<br/>（生产态 / production）<br/>【Training Base （Trainer ABC + Model Registry +<br/>Metadata）】"]
+        BM_MT_01_B["⛔ ML训练域，设计已就绪，等待开发排期<br/>【BM-MT-01-B AI辅助代码生成与分析师Agent反馈】<br/>LLM 生成模块代码，Critic Agent<br/>审漏洞，多轮反馈收敛后过 AST<br/>沙箱——把人力调参瓶颈用 AI 填上。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【AI-Assisted Code Generation &amp; Analyst Agent<br/>Feedback】"]
+        BM_MT_01 -.->|嵌套| BM_MT_01_A
+        BM_MT_01 -.->|嵌套| BM_MT_01_B
+    end
     BM_MT_02["【BM-MT-02 实验追踪与自动晋升】<br/>A/B 实验对比新模型和老模型，统计上显著更好才自动<br/>晋升为 Champion，否则留在 Challenger 继续观察。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Experiment Tracking &amp; Auto-Promotion】"]
     BM_MT_03["【BM-MT-03 AutoML与超参优化】<br/>不靠人手调参——贝叶斯优化自动找最佳超参，早停省时<br/>间，还能自动挖因子。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【AutoML &amp; Hyperparameter Optimization】"]
     BM_MT_04["【BM-MT-04 因子发现与因果发现】<br/>不只找相关性强的因子，还要找因果关系——用 PC/GES<br/>/LiNGAM 算因果图，避免'假相关'误导。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Factor Discovery &amp; Causal Discovery】"]
-    BM_MT_05["【BM-MT-05 漂移检测与自适应重训练】<br/>市场变了模型就老了——实时检测概念漂移，触发重训练<br/>，元学习让新模型快速适应不忘旧。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Drift Detection &amp; Adaptive Retraining】"]
+    subgraph sg_BM_MT_05 ["漂移检测与自适应重训练"]
+        BM_MT_05["【BM-MT-05 漂移检测与自适应重训练】<br/>市场变了模型就老了——实时检测概念漂移，触发重训练<br/>，元学习让新模型快速适应不忘旧。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Drift Detection &amp; Adaptive Retraining】"]
+        BM_MT_05_A["【BM-MT-05-A 持续学习防遗忘（EWC+伪回放）】<br/>模型学新市场时不忘旧——Fisher信息矩阵正则化关键参<br/>数，让新模型快速适应新分布又不丢历史知识。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Continual Learning Anti-Forgetting （EWC +<br/>Pseudo-Replay）】"]
+        BM_MT_05 -.->|嵌套| BM_MT_05_A
+    end
+    BM_MT_01 ~~~ BM_MT_01_A ~~~ BM_MT_01_B ~~~ BM_MT_05_A
     BM_MT_01 -.->|训练→实验晋升 / data_flow| BM_MT_02
     BM_MT_02 -.->|晋升→AutoML优化 / trigger| BM_MT_03
     BM_MT_03 -.->|AutoML→因子发现 / data_flow| BM_MT_04
@@ -53,8 +65,9 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_MT_01 design
-    class BM_MT_02,BM_MT_03,BM_MT_04,BM_MT_05 candidate
+    class BM_MT_01_A production
+    class BM_MT_01,BM_MT_01_B design
+    class BM_MT_02,BM_MT_03,BM_MT_04,BM_MT_05,BM_MT_05_A candidate
 ```
 
 ## 环节详情
@@ -92,6 +105,70 @@ MT-01 TrainingPipeline 负责模型训练+验证+可复现性（PyTorch→ONNX�
 |---|---|---|---|---|
 | depgraph | MOD-ML-001 | primary | planned | planned |
 | candidate | CAND-HARVEST-0728 | supplement | planned | — |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：production ｜ **层**：L11 ｜ **阶段**：model_training
+
+### BM-MT-01-A 训练基座（训练器ABC+模型注册表+元数据） / Training Base (Trainer ABC + Model Registry + Metadata)
+
+> **大白话**：训练域的基座抽象——ModelTrainerBase 训练器接口、ModelRegistry 模型版本注册表、ModelMetadata 元数据，是 MT-01 训练流水线的地基。
+
+**机制说明**：
+
+MOD-L11-001 提供 D_ML_TRAIN 域核心抽象基座：ModelTrainerBase（train/validate/save_model ABC）、ModelRegistry（register/get/clear + lineage 管理）、ModelMetadata（model_id/version/framework/features/metrics）。是 MOD-ML-001 TrainingPipeline 的构建基础，已有生产代码。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | MT-01 训练流水线启动时加载基座 |
+| ② 消费数据/因子 | 训练数据+因子特征 |
+| ③ 参数 | model_id=—（范围 —，代码当前: —，状态: proposed）<br>framework=—（范围 —，代码当前: —，状态: proposed）<br>features=—（范围 —，代码当前: —，状态: proposed）<br>target=—（范围 —，代码当前: —，状态: proposed）<br>seed管理=—（范围 —，代码当前: —，状态: proposed）<br>模型版本号=—（范围 —，代码当前: —，状态: proposed） |
+| ④ 数据流 | 输入: 训练数据+因子特征 → 处理: ModelTrainerBase.train()/validate() → 输出: ModelMetadata+训练指标 → 下游: ModelRegistry.register()→MOD-MT-02 |
+| ⑤ 代码映射 | MOD-L11-001 / src/zephyr/ml_train/trainer_base.py |
+| ⑥ 降级/中止 | 基座缺失 → 无法训练（硬依赖） |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：MT-01 训练流水线启动时加载；②消费：训练数据+因子特征；③参数：model_id/framework/features/target、seed管理、模型版本号；④数据流：训练数据→ModelTrainerBase.train()→ModelMetadata→ModelRegistry.register()→MOD-ML-001流水线；⑤代码：MOD-L11-001 trainer_base.py（production, 已有ABC+ModelRegistry）；⑥降级：基座缺失→无法训练（硬依赖）。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L11-001 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L11 ｜ **阶段**：model_training
+
+### BM-MT-01-B AI辅助代码生成与分析师Agent反馈 / AI-Assisted Code Generation & Analyst Agent Feedback
+
+> **大白话**：LLM 生成模块代码，Critic Agent 审漏洞，多轮反馈收敛后过 AST 沙箱——把人力调参瓶颈用 AI 填上。
+
+**机制说明**：
+
+MOD-ML-002 ai_operator 对应设计文档§9.2：Generator(GLM-5.1)生成代码→Critic(DeepSeek V4 Pro)审查→反馈循环→Judge(Claude)综合评估→AST沙箱三层安全→人工审核。含因子DSL约束（6类算子）、三重语义一致性、进化式代码生成、轨迹级进化。是 MT-01 的智能代码生成侧。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | BM-MT-01 训练前/研究员配置新模块需求 |
+| ② 消费数据/因子 | ModuleRequirementSpec+交易流水线架构文档 |
+| ③ 参数 | Generator/Critic/Judge模型=—（范围 —，代码当前: —，状态: proposed）<br>AST沙箱白名单+复杂度+语义三层=—（范围 —，代码当前: —，状态: proposed）<br>DSL 6类算子=—（范围 —，代码当前: —，状态: proposed）<br>进化轮数上限5=—（范围 —，代码当前: —，状态: proposed） |
+| ④ 数据流 | 输入: ModuleRequirementSpec → 处理: LLM生成→Critic审查→反馈收敛→AST沙箱 → 输出: 模块代码+测试+配置 → 下游: 人工审核→注册Module Registry |
+| ⑤ 代码映射 | MOD-ML-002 / src/zephyr/ml_train/ai_operator/ |
+| ⑥ 降级/中止 | AI生成未就绪 → 人工编写代码（效率低） |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-MT-01 训练前/研究员配置新模块需求；②消费：ModuleRequirementSpec+交易流水线架构文档；③参数：Generator/Critic/Judge模型、AST沙箱白名单+复杂度+语义三层、DSL 6类算子、进化轮数上限5；④数据流：需求→LLM生成→Critic审查→反馈收敛→AST沙箱→人工审核→注册Module Registry；⑤代码：MOD-ML-002 ai_operator（planned）；⑥降级：AI生成未就绪→人工编写代码（效率低）。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-ML-002 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：production ｜ **层**：L11 ｜ **阶段**：model_training
 
@@ -232,6 +309,38 @@ MT-05 DriftAdapter 提供概念漂移检测+自适应重训练+元学习（DDM/E
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0732 | primary | planned | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L11 ｜ **阶段**：model_training
+
+### BM-MT-05-A 持续学习防遗忘（EWC+伪回放） / Continual Learning Anti-Forgetting (EWC + Pseudo-Replay)
+
+> **大白话**：模型学新市场时不忘旧——Fisher信息矩阵正则化关键参数，让新模型快速适应新分布又不丢历史知识。
+
+**机制说明**：
+
+CAND-HARVEST-0922 对应设计文档§10.1 维度7：在线EWC防遗忘（ProAdapt 2026）+伪回放。Fisher信息矩阵计算每个参数对历史任务的重要性，更新时对重要参数施加正则化约束，保留历史知识+适应新知识。是 MT-05 DriftAdapter 的防遗忘子能力，EWC正则化强度由Meta-Harness动态调整。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | BM-MT-05 漂移检测触发重训练时 |
+| ② 消费数据/因子 | 历史任务参数Fisher信息+新训练数据 |
+| ③ 参数 | EWC正则化强度=—（范围 —，代码当前: —，状态: proposed）<br>Fisher信息计算方法=—（范围 —，代码当前: —，状态: proposed）<br>伪回放样本数=—（范围 —，代码当前: —，状态: proposed） |
+| ④ 数据流 | 输入: 重训练请求+历史Fisher信息 → 处理: Fisher信息计算→重要参数正则化 → 输出: 适应新分布且不遗忘旧的模型 → 下游: BM-MT-01训练 |
+| ⑤ 代码映射 | CAND-HARVEST-0922 / candidate_module_registry.yaml §CAND-HARVEST-0922 |
+| ⑥ 降级/中止 | EWC未就绪 → 全量重训练（有灾难性遗忘风险） |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-MT-05 漂移检测触发重训练时；②消费：历史任务参数Fisher信息+新训练数据；③参数：EWC正则化强度、Fisher信息计算方法、伪回放样本数；④数据流：重训练→Fisher信息计算→重要参数正则化→新模型适应新分布且不遗忘旧→BM-MT-01训练；⑤代码：CAND-HARVEST-0922 Continual Learning Anti-Forgetting（candidate, 待评估）；⑥降级：EWC未就绪→全量重训练（有灾难性遗忘风险）。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0922 | primary | planned | — |
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L11 ｜ **阶段**：model_training
 

@@ -275,7 +275,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-003 | primary | planned | generated |
+| depgraph | MOD-MKT-003 | primary | planned | stable |
 | depgraph | MOD-INF-002 | supplement | production | stable |
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
@@ -799,7 +799,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-003 连接器管理器维护连接�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-003 | primary | production | generated |
+| depgraph | MOD-MKT-003 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -861,7 +861,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-005 自动加载器支持供应商�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-005 | primary | production | generated |
+| depgraph | MOD-MKT-005 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -1520,7 +1520,7 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 | depgraph | MOD-L02-015 | supplement | production | stable |
 | depgraph | MOD-L02-016 | supplement | production | stable |
 | depgraph | MOD-L02-017 | supplement | production | stable |
-| depgraph | MOD-SIG-006 | supplement | production | generated |
+| depgraph | MOD-SIG-006 | supplement | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
