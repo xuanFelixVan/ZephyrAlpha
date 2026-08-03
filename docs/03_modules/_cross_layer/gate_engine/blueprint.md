@@ -233,6 +233,8 @@ build_status: planned
 | `commit_gates/translation_coverage_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/derived_file_deletion_gate.py` | §0.1 | 派生文件staged删除保护门禁（DERIVED-FILE-DELETION-PROTECTION，#ARCH-BP-REGISTRY-DELETION-001 P1，拦截blueprint_registry.yaml/path_ownership_map.yaml删除，--allow-derived-deletion逃生通道，priority=46） | 已实现 | | 本模块 |
 | `commit_gates/protected_paths_gate.py` | §0.1 | 受保护路径写入检测门禁（PROTECTED-PATHS，#ARCH-MODEL-LIFECYCLE-001 P1，拦截.gitignore/.gitattributes/AGENTS.md等修改，[ARCH-APPROVAL:ISSUE_ID]+env逃生通道，双层防护Layer1，priority=28） | 已实现 | | 本模块 |
+| `commit_gates/blueprint_node_id_hardcode_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/worktree_required_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 

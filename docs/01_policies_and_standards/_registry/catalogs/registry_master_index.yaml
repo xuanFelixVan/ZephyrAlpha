@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-03T17:46:13Z
+# 自动生成于 2026-08-03T18:04:45Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-03T17:46:13Z'
+generated_at: '2026-08-03T18:04:45Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 33
@@ -141,7 +141,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 135
+  entry_count: 136
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
