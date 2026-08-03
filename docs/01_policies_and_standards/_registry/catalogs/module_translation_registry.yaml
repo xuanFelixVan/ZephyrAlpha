@@ -10451,6 +10451,41 @@ battle_map_steps:
   indicators_zh: '①触发：评分输出>阈值/突破成败信号触发；②消费：卖出评分(BM-SELL-03)+策略类型(L3)+ATR波动率(BM-SEL-02)+密度PDF分位数(BM-SEL-13)+压力位/支撑位(BM-SEL-02)+突破成败信号(BM-SELL-01)；③参数：止盈位PDF 75%分位数、止损位PDF 5%分位数、止损偏移1-2%、趋势宽/均值回归中/高频紧/Carry宽(proposed)；④数据流：评分+策略类型+波动率→止盈族+止损族+逻辑止损+猎杀防护+期权定价→止盈/止损决策→融合仲裁/置换再平衡；⑤代码：MOD-SELL-004 止盈(planned)+MOD-SELL-005 止损(planned)+MOD-SELL-014 策略止损范式(planned)+MOD-SELL-015 猎杀防护(stable)+MOD-SELL-017 分批退出(planned)；⑥降级：策略类型→止损范式映射未就绪→退化为固定止损范式。
 
     '
+- step_id: BM-SELL-04-A
+  flow_stage: sell_flow
+  name_zh: 止盈族
+  name_en: Take-Profit Strategy Family
+  plain_zh: 卖出时怎么止盈——固定止盈/移动止盈/分批止盈/时间加权止盈四种方式，根据策略类型选合适的止盈方法锁定利润。
+  mechanism_zh: 'BM-SELL-04 止盈止损族的子环节（depth=1）。止盈策略族：固定止盈(到价即卖)/移动止盈(跟踪最高价回撤)/分批止盈(分档卖出)/时间加权止盈(持有越久止盈线越低)。密度感知动态止盈：止盈位=条件PDF的75%分位数(正偏时更高/负偏时更保守)。'
+  indicators_zh: '①触发：评分输出>止盈阈值；②消费：卖出评分(BM-SELL-03)+密度PDF分位数(BM-SEL-13)+策略类型(L3)；③参数：止盈位PDF 75%分位数、固定/移动/分批/时间加权模式(proposed)；④数据流：评分+PDF→止盈位计算→止盈信号→BM-SELL-04汇总→融合仲裁；⑤代码：MOD-SELL-004 止盈(planned)；⑥降级：密度PDF缺失→退化为固定止盈。'
+- step_id: BM-SELL-04-B
+  flow_stage: sell_flow
+  name_zh: 止损族
+  name_en: Stop-Loss Strategy Family
+  plain_zh: 卖出时怎么止损——固定止损/波动率止损(ATR)/密度感知止损/移动止损，叠加基本面/技术面/事件/主力出货的逻辑止损，控制亏损。
+  mechanism_zh: 'BM-SELL-04 止盈止损族的子环节（depth=1）。止损策略族：固定止损(到价即卖)/波动率止损(ATR动态)/密度感知止损/移动止损。逻辑止损族：基本面止损/技术面止损/事件止损/主力出货止损。密度感知动态止损：止损位=条件PDF的5%分位数(厚尾时更宽/薄尾时更紧)。'
+  indicators_zh: '①触发：评分输出<止损阈值/逻辑止损信号触发；②消费：卖出评分(BM-SELL-03)+ATR波动率(BM-SEL-02)+密度PDF分位数(BM-SEL-13)+主力出货信号(BM-SEL-05)；③参数：止损位PDF 5%分位数、ATR倍数、固定/波动率/密度/移动模式(proposed)；④数据流：评分+波动率+PDF→止损位计算+逻辑止损检测→止损信号→BM-SELL-04汇总→融合仲裁；⑤代码：MOD-SELL-005 止损(planned)；⑥降级：ATR/PDF缺失→退化为固定止损。'
+- step_id: BM-SELL-04-C
+  flow_stage: sell_flow
+  name_zh: 策略止损范式
+  name_en: Strategy-Specific Stop Framework
+  plain_zh: 不同策略用不同止损风格——趋势跟踪用宽止损(防被震出)、均值回归用中止损(不盈利即论点错误)、套利无传统止损、高频极紧止损、Carry极宽或无止损。
+  mechanism_zh: 'BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0策略类型→止损范式映射层：趋势跟踪→宽止损+移动止损为主；均值回归→中等止损+固定止损为主；统计套利→无传统止损(组合对冲+仓位管理替代)；高频→极紧止损(论点失效立即退出)；Carry→极宽止损或无止损(接受小亏大赚)。'
+  indicators_zh: '①触发：策略类型确定后映射止损范式；②消费：策略类型(L3 C-006策略工厂)+ATR波动率(BM-SEL-02)；③参数：趋势宽/均值回归中/高频紧/Carry宽/套利无(proposed)；④数据流：策略类型→止损范式映射→范式参数→BM-SELL-04-B止损族执行；⑤代码：MOD-SELL-014 策略止损范式(planned)；⑥降级：映射未就绪→退化为固定止损范式。'
+- step_id: BM-SELL-04-D
+  flow_stage: sell_flow
+  name_zh: 猎杀防护
+  name_en: Stop-Hunting Protection
+  plain_zh: 防止损位被庄家猎杀——止损位偏移1-2%防猎杀，到止损位不立即卖而是进入观察期，收盘价确认才执行，把止损当隐含看跌期权定价评估成本。
+  mechanism_zh: 'BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0止损猎杀防护：止损位偏移1-2%防猎杀；软止损模式(到达止损位→不立即执行→进入OBSERVING观察期→收盘价<止损位→执行/收回→解除)。止损期权定价评估：设止损=卖出隐含看跌期权→止损越紧隐含期权费越高→成本过高则换退出方式(时间止损/手动观察退出)。'
+  indicators_zh: '①触发：价格触及止损位±偏移带；②消费：止损位(BM-SELL-04-B)+收盘价(L0行情)；③参数：止损偏移1-2%、软止损观察期、期权费阈值(proposed)；④数据流：止损位+偏移→猎杀防护带→软止损观察→确认执行/收回→BM-SELL-04汇总；⑤代码：MOD-SELL-015 猎杀防护(stable)；⑥降级：猎杀防护失效→硬止损立即执行(无观察期)。'
+- step_id: BM-SELL-04-E
+  flow_stage: sell_flow
+  name_zh: 分批退出
+  name_en: Scaling Out
+  plain_zh: 卖出时不一次卖完——等分退出(1/3-1/3-1/3)/倒金字塔(50-30-20)/混合退出/风险驱动退出，分批卖降低择时风险，反弹超阈值还能逆向中止。
+  mechanism_zh: 'BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0分批退出模式：等分退出(1/3-1/3-1/3)/倒金字塔(50%-30%-20%)/混合退出(止盈第一批+移动止损第二批)/风险驱动退出(按MRC减仓)/逆向中止(第一批卖出后反弹超X%→暂停剩余批次→重新评估)。'
+  indicators_zh: '①触发：止盈/止损决策需分批执行；②消费：止盈/止损信号(BM-SELL-04-A/B)+仓位(BM-POS-01)+反弹幅度(L0)；③参数：等分/倒金字塔/混合/风险驱动模式、批次比例、逆向中止反弹阈值X%(proposed)；④数据流：止盈止损信号→分批模式选择→批次执行计划→BM-SELL-04汇总→执行；⑤代码：MOD-SELL-017 分批退出(planned)；⑥降级：分批引擎未就绪→一次性全部退出。'
 - step_id: BM-SELL-05
   flow_stage: sell_flow
   name_zh: 置换再平衡卖出
@@ -10900,6 +10935,33 @@ battle_map_steps:
   indicators_zh: '①触发：盘中漂移检测信号/定时；②消费：实时预测误差+特征分布；③参数：DDM/EDDM/ADWIN检测阈值、MAML快速适应、在线EWC防遗忘、Voyager技能库；④数据流：预测误差→漂移检测→重训练触发→MAML适应→EWC防遗忘→BM-MT-01训练；⑤代码：MT-05 DriftAdapter（planned）；⑥降级：漂移检测未就绪→定时重训练(无自适应)。
 
     '
+- step_id: BM-MT-01-A
+  flow_stage: model_training
+  name_zh: 训练基座（训练器ABC+模型注册表+元数据）
+  name_en: Training Base (Trainer ABC + Model Registry + Metadata)
+  plain_zh: 训练域的基座抽象——ModelTrainerBase 训练器接口、ModelRegistry 模型版本注册表、ModelMetadata 元数据，是 MT-01 训练流水线的地基。
+  mechanism_zh: 'MOD-L11-001 提供 D_ML_TRAIN 域核心抽象基座：ModelTrainerBase（train/validate/save_model ABC）、ModelRegistry（register/get/clear + lineage 管理）、ModelMetadata（model_id/version/framework/features/metrics）。是 MOD-ML-001 TrainingPipeline 的构建基础，已有生产代码。'
+  indicators_zh: '①触发：MT-01 训练流水线启动时加载；②消费：训练数据+因子特征；③参数：model_id/framework/features/target、seed管理、模型版本号；④数据流：训练数据→ModelTrainerBase.train()→ModelMetadata→ModelRegistry.register()→MOD-ML-001流水线；⑤代码：MOD-L11-001 trainer_base.py（production, 已有ABC+ModelRegistry）；⑥降级：基座缺失→无法训练（硬依赖）。
+
+    '
+- step_id: BM-MT-01-B
+  flow_stage: model_training
+  name_zh: AI辅助代码生成与分析师Agent反馈
+  name_en: AI-Assisted Code Generation & Analyst Agent Feedback
+  plain_zh: LLM 生成模块代码，Critic Agent 审漏洞，多轮反馈收敛后过 AST 沙箱——把人力调参瓶颈用 AI 填上。
+  mechanism_zh: 'MOD-ML-002 ai_operator 对应设计文档§9.2：Generator(GLM-5.1)生成代码→Critic(DeepSeek V4 Pro)审查→反馈循环→Judge(Claude)综合评估→AST沙箱三层安全→人工审核。含因子DSL约束（6类算子）、三重语义一致性、进化式代码生成、轨迹级进化。是 MT-01 的智能代码生成侧。'
+  indicators_zh: '①触发：BM-MT-01 训练前/研究员配置新模块需求；②消费：ModuleRequirementSpec+交易流水线架构文档；③参数：Generator/Critic/Judge模型、AST沙箱白名单+复杂度+语义三层、DSL 6类算子、进化轮数上限5；④数据流：需求→LLM生成→Critic审查→反馈收敛→AST沙箱→人工审核→注册Module Registry；⑤代码：MOD-ML-002 ai_operator（planned）；⑥降级：AI生成未就绪→人工编写代码（效率低）。
+
+    '
+- step_id: BM-MT-05-A
+  flow_stage: model_training
+  name_zh: 持续学习防遗忘（EWC+伪回放）
+  name_en: Continual Learning Anti-Forgetting (EWC + Pseudo-Replay)
+  plain_zh: 模型学新市场时不忘旧——Fisher信息矩阵正则化关键参数，让新模型快速适应新分布又不丢历史知识。
+  mechanism_zh: 'CAND-HARVEST-0922 对应设计文档§10.1 维度7：在线EWC防遗忘（ProAdapt 2026）+伪回放。Fisher信息矩阵计算每个参数对历史任务的重要性，更新时对重要参数施加正则化约束，保留历史知识+适应新知识。是 MT-05 DriftAdapter 的防遗忘子能力，EWC正则化强度由Meta-Harness动态调整。'
+  indicators_zh: '①触发：BM-MT-05 漂移检测触发重训练时；②消费：历史任务参数Fisher信息+新训练数据；③参数：EWC正则化强度、Fisher信息计算方法、伪回放样本数；④数据流：重训练→Fisher信息计算→重要参数正则化→新模型适应新分布且不遗忘旧→BM-MT-01训练；⑤代码：CAND-HARVEST-0922 Continual Learning Anti-Forgetting（candidate, 待评估）；⑥降级：EWC未就绪→全量重训练（有灾难性遗忘风险）。
+
+    '
 - step_id: BM-BT-01
   flow_stage: backtest_validation
   name_zh: 回测引擎与撮合
@@ -11015,6 +11077,268 @@ battle_map_steps:
   indicators_zh: '①触发：BM-BT-05/06 检测通过；②消费：过拟合检测+WFO结果+参数稳定性；③参数：IS→WFA→OOS三阶段不可跳级、参数稳定性区域、BacktestRunArtifact持久化；④数据流：检测结果→决策门控→BacktestPassed事件→BM-SIM-01仿真/D-ML-SERVE影子验证；⑤代码：BT-13/14/15/16（stable, production）；⑥降级：决策门控未就绪→人工审批(无自动门禁,风险高)。
 
     '
+- step_id: BM-BT-01-A
+  flow_stage: backtest_validation
+  name_zh: 引擎基座与契约
+  name_en: Engine Base & Contract
+  plain_zh: 回测引擎的"地基"——定义抽象基类和结果契约，所有回测模式都得遵守这套规矩。
+  mechanism_zh: 'BM-BT-01 回测引擎与撮合的子环节（depth=1）。BT-01 core/engine_base.py 定义 BacktestEngineBase
+    ABC + BacktestResult 契约(CTR-P1-016) + FactorDiscovery 接口。
+
+    所有回测引擎（向量化/事件驱动）都继承此基类，保证结果格式一致。
+
+    '
+  indicators_zh: '①触发：BM-BT-01 引擎初始化；②消费：策略代码+配置；③参数：BacktestEngineBase ABC、BacktestResult契约(CTR-P1-016)；④数据流：策略+配置→engine_base初始化→BacktestEngineBase实例→子引擎；⑤代码：BT-01 core/engine_base.py（stable, production）；⑥降级：引擎基座未就绪→回测不可启动(硬阻断)。
+
+    '
+- step_id: BM-BT-01-B
+  flow_stage: backtest_validation
+  name_zh: 向量化回测引擎
+  name_en: Vectorized Backtest Engine
+  plain_zh: 快速回测模式——用矩阵运算批量算，适合大批量因子IC/IR筛选，速度快但忽略细节。
+  mechanism_zh: 'BM-BT-01 子环节（depth=1）。BT-02 implementations/vectorized_engine.py 是 DefaultBacktestEngine
+    向量化回测实现，用 pandas/numpy 矩阵运算批量处理信号→持仓→收益。
+
+    适合快速 IC/IR 筛选和大规模因子测试，不模拟逐笔撮合。
+
+    '
+  indicators_zh: '①触发：策略提交+向量化模式选择；②消费：BM-RES-01 特征(PIT)+策略信号；③参数：向量化模式、批量计算；④数据流：信号矩阵→向量化持仓→收益矩阵→BacktestResult；⑤代码：BT-02 implementations/vectorized_engine.py（stable, production）；⑥降级：向量化引擎不可用→无快速筛选(仅事件驱动,慢10x)。
+
+    '
+- step_id: BM-BT-01-C
+  flow_stage: backtest_validation
+  name_zh: 撮合引擎
+  name_en: Matching Engine
+  plain_zh: 模拟交易所撮合——市价单/限价单/滑点/Tick级5档深度撮合，让回测更接近真实成交。
+  mechanism_zh: 'BM-BT-01 子环节（depth=1）。BT-03 core/matching_engine.py 提供撮合引擎，支持市价/限价/滑点模型/Tick级5档深度撮合。
+
+    是事件驱动回测的核心组件，决定成交价格的真实度。
+
+    '
+  indicators_zh: '①触发：事件驱动回测中订单提交；②消费：Tick数据+订单簿深度；③参数：市价/限价/滑点模型/Tick级5档撮合；④数据流：订单→撮合引擎→成交记录→BacktestResult；⑤代码：BT-03 core/matching_engine.py（stable, production）；⑥降级：撮合引擎不可用→用简单收盘价成交(精度低)。
+
+    '
+- step_id: BM-BT-01-D
+  flow_stage: backtest_validation
+  name_zh: A股交易约束
+  name_en: A-Share Trading Constraints
+  plain_zh: A股回测的"规矩"——T+1交易、万三佣金、5元最低、1bp滑点，让回测符合A股实际。
+  mechanism_zh: 'BM-BT-01 子环节（depth=1）。BT-04 core/matching_logic.py 实现 A股交易约束：T+1交收、佣金万三、最低5元、滑点1bp。
+
+    确保回测结果符合 A 股实际交易成本和规则。
+
+    '
+  indicators_zh: '①触发：撮合引擎执行时自动应用；②消费：交易规则配置；③参数：T+1、佣金万三、最低5元、滑点1bp；④数据流：成交信号→约束应用→实际成交价+费用→BacktestResult；⑤代码：BT-04 core/matching_logic.py（stable, production）；⑥降级：约束模块不可用→无A股约束(回测失真)。
+
+    '
+- step_id: BM-BT-02-A
+  flow_stage: backtest_validation
+  name_zh: 持仓组合管理
+  name_en: Portfolio Management
+  plain_zh: 回测里的"钱包"——管持仓、现金、净值曲线，记录每笔交易对组合的影响。
+  mechanism_zh: 'BM-BT-02 持仓组合与数据接入的子环节（depth=1）。BT-05 core/portfolio.py 管理回测中的持仓/现金/净值曲线。
+
+    记录每笔交易对组合的影响，输出净值曲线供绩效分析。
+
+    '
+  indicators_zh: '①触发：回测引擎每次成交；②消费：成交记录+初始资金；③参数：初始资金、持仓更新逻辑；④数据流：成交→持仓更新→净值曲线→BacktestResult；⑤代码：BT-05 core/portfolio.py（stable, production）；⑥降级：组合管理不可用→无法记录持仓(回测中断)。
+
+    '
+- step_id: BM-BT-02-B
+  flow_stage: backtest_validation
+  name_zh: 多源数据接入
+  name_en: Multi-Source Data Handler
+  plain_zh: 回测的"数据库接口"——把 miniQMT Tick 数据和 ClickHouse 日线数据都接进来，统一供给回测引擎。
+  mechanism_zh: 'BM-BT-02 子环节（depth=1）。BT-06 core/data_handler.py 提供多源数据接入，支持 miniQMT Tick 数据和 ClickHouse 日线数据。
+
+    统一数据接口供向量化/事件驱动引擎消费。
+
+    '
+  indicators_zh: '①触发：回测引擎请求数据；②消费：miniQMT Tick + ClickHouse 日线；③参数：数据源选择、PIT对齐；④数据流：数据源→data_handler→回测引擎→BacktestResult；⑤代码：BT-06 core/data_handler.py（stable, production）；⑥降级：数据源不可用→降级到单一数据源(覆盖度降低)。
+
+    '
+- step_id: BM-BT-03-A
+  flow_stage: backtest_validation
+  name_zh: 绩效指标计算
+  name_en: Performance Metrics
+  plain_zh: 算回测表现——年化收益、夏普、最大回撤、胜率等指标，看策略赚不赚钱、稳不稳。
+  mechanism_zh: 'BM-BT-03 绩效指标与Tick回放的子环节（depth=1）。BT-07 core/metrics.py 计算回测绩效指标：年化收益、夏普、最大回撤、胜率、盈亏比等。
+
+    是回测结果评估的核心输出。
+
+    '
+  indicators_zh: '①触发：回测完成后自动计算；②消费：净值曲线+成交记录；③参数：指标集合(年化/夏普/回撤/胜率)；④数据流：净值曲线→metrics计算→绩效指标→BacktestResult；⑤代码：BT-07 core/metrics.py（generated）；⑥降级：指标计算不可用→仅输出原始净值(无绩效评估)。
+
+    '
+- step_id: BM-BT-03-B
+  flow_stage: backtest_validation
+  name_zh: Tick回放引擎
+  name_en: Tick Replay Engine
+  plain_zh: 把历史 Tick 数据逐笔回放——模拟真实的逐笔行情，让事件驱动回测更逼真。
+  mechanism_zh: 'BM-BT-03 子环节（depth=1）。BT-08 core/tick_replay.py 提供 Tick 数据回放引擎，逐笔回放历史行情。
+
+    供事件驱动回测引擎消费，模拟真实逐笔成交环境。
+
+    '
+  indicators_zh: '①触发：事件驱动回测启动；②消费：miniQMT Tick 历史数据；③参数：回放速度、Tick过滤；④数据流：Tick历史→tick_replay→事件驱动引擎→BacktestResult；⑤代码：BT-08 core/tick_replay.py（stable, production）；⑥降级：Tick回放不可用→用日线数据(精度降低)。
+
+    '
+- step_id: BM-BT-03-C
+  flow_stage: backtest_validation
+  name_zh: 事件驱动回测
+  name_en: Event-Driven Backtest
+  plain_zh: 逐笔事件回测——每个 Tick/订单/成交都按时间顺序处理，精度高但速度慢，适合精细验证。
+  mechanism_zh: 'BM-BT-03 子环节（depth=1）。BT-09 implementations/event_driven_engine.py 是事件驱动回测引擎，按时间顺序逐笔处理事件（Tick/信号/订单/成交）。
+
+    精度高但速度慢，适合最终精细验证。
+
+    '
+  indicators_zh: '①触发：策略提交+事件驱动模式选择；②消费：Tick回放数据+策略信号；③参数：事件驱动模式、撮合精度；④数据流：Tick事件→策略信号→订单→撮合→成交→BacktestResult；⑤代码：BT-09 implementations/event_driven_engine.py（stable, production）；⑥降级：事件驱动引擎不可用→仅向量化回测(精度低)。
+
+    '
+- step_id: BM-BT-04-A
+  flow_stage: backtest_validation
+  name_zh: PIT三公理与AS OF JOIN
+  name_en: PIT Axioms & AS OF JOIN
+  plain_zh: 回测的"时间铁律"——只用当时能知道的数据，不能用未来数据，AS OF JOIN 保证数据对齐到正确时间点。
+  mechanism_zh: 'BM-BT-04 PIT铁律管理的子环节（depth=1）。BT-10 core/pit_manager.py 实现 PIT（Point-in-Time）三公理：①不可用未来数据 ②AS OF JOIN 对齐 ③不可前视。
+
+    是回测结果可信度的根本保障。
+
+    '
+  indicators_zh: '①触发：回测数据加载时自动应用；②消费：特征数据+时间戳；③参数：PIT三公理、AS OF JOIN策略；④数据流：原始数据→pit_manager→PIT对齐数据→回测引擎；⑤代码：BT-10 core/pit_manager.py（generated）；⑥降级：PIT管理不可用→前视偏差风险(回测结果不可信)。
+
+    '
+- step_id: BM-BT-04-B
+  flow_stage: backtest_validation
+  name_zh: Embargo期管理
+  name_en: Embargo Period Management
+  plain_zh: 训练-测试之间的"隔离期"——防止训练集末尾数据泄漏到测试集开头，保证样本外验证干净。
+  mechanism_zh: 'BM-BT-04 子环节（depth=1）。BT-10 core/pit_manager.py 同时管理 Embargo 隔离期，在训练集和测试集之间设置缓冲期。
+
+    防止训练集末尾数据泄漏到测试集开头。
+
+    '
+  indicators_zh: '①触发：Walk-Forward/WFO 样本分割时；②消费：样本分割配置；③参数：Embargo期长度；④数据流：样本分割→Embargo应用→隔离后样本→回测验证；⑤代码：BT-10 core/pit_manager.py（generated）；⑥降级：Embargo管理不可用→无隔离期(数据泄漏风险)。
+
+    '
+- step_id: BM-BT-05-A
+  flow_stage: backtest_validation
+  name_zh: 样本内外对比检测
+  name_en: In-Sample/Out-Sample Detection
+  plain_zh: 看策略是不是"背题"——样本内表现好但样本外差就是过拟合，对比两者差异自动报警。
+  mechanism_zh: 'BM-BT-05 过拟合检测的子环节（depth=1）。BT-11 core/overfitting_detector.py 提供样本内外对比检测，比较 IS 和 OOS 表现差异。
+
+    差异过大→过拟合告警。
+
+    '
+  indicators_zh: '①触发：回测完成后自动检测；②消费：IS绩效+OOS绩效；③参数：过拟合阈值(IS vs OOS差异)；④数据流：IS/OOS绩效→对比检测→过拟合告警→决策门控；⑤代码：BT-11 core/overfitting_detector.py（generated）；⑥降级：检测器不可用→人工判断(漏检风险)。
+
+    '
+- step_id: BM-BT-05-B
+  flow_stage: backtest_validation
+  name_zh: 参数敏感性检测
+  name_en: Parameter Sensitivity Detection
+  plain_zh: 稍微改改参数就天差地别→过拟合信号——检测策略对参数的敏感度，太敏感就是不稳健。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1）。BT-11 core/overfitting_detector.py 提供参数敏感性检测，扫描参数邻域的表现波动。
+
+    波动过大→参数过拟合告警。
+
+    '
+  indicators_zh: '①触发：过拟合检测流程中自动执行；②消费：参数空间+回测结果；③参数：参数扫描范围、敏感度阈值；④数据流：参数扫描→多组回测→敏感度计算→告警→决策门控；⑤代码：BT-11 core/overfitting_detector.py（generated）；⑥降级：检测器不可用→无参数敏感性分析(过拟合漏检)。
+
+    '
+- step_id: BM-BT-05-C
+  flow_stage: backtest_validation
+  name_zh: 多重比较校正
+  name_en: Multiple Comparison Correction
+  plain_zh: 试了100个策略总有几个好看→假阳性——用Bonferroni等校正方法抵消多重测试带来的运气成分。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1）。BT-11 core/overfitting_detector.py 提供多重比较校正（Bonferroni/Holm等），抵消多次测试带来的假阳性。
+
+    防止"试够了总有好看的"运气型过拟合。
+
+    '
+  indicators_zh: '①触发：批量回测后自动校正；②消费：多策略回测结果；③参数：校正方法(Bonferroni/Holm)、显著性水平；④数据流：多策略绩效→多重比较校正→校正后p值→决策门控；⑤代码：BT-11 core/overfitting_detector.py（generated）；⑥降级：校正不可用→未校正p值(假阳性风险)。
+
+    '
+- step_id: BM-BT-06-A
+  flow_stage: backtest_validation
+  name_zh: 滚动窗口回测
+  name_en: Rolling Window Backtest
+  plain_zh: 用滚动窗口一段段测——训练一段预测一段，再往前滚，模拟策略在不同市场环境下的持续表现。
+  mechanism_zh: 'BM-BT-06 Walk-Forward优化的子环节（depth=1）。BT-12 core/walk_forward.py 提供滚动窗口回测，训练-预测-滚动循环。
+
+    模拟策略在不同市场环境下的持续表现。
+
+    '
+  indicators_zh: '①触发：WFO流程启动；②消费：历史数据+窗口配置；③参数：训练窗长度、测试窗长度、滚动步长；④数据流：数据→窗口分割→训练→预测→滚动→汇总绩效；⑤代码：BT-12 core/walk_forward.py（generated）；⑥降级：WFO不可用→单段回测(无滚动验证)。
+
+    '
+- step_id: BM-BT-06-B
+  flow_stage: backtest_validation
+  name_zh: 样本外验证与参数稳定性
+  name_en: OOS Validation & Parameter Stability
+  plain_zh: 看参数在不同窗口稳不稳——参数稳定性区域达标才放行，否则说明策略不可靠。
+  mechanism_zh: 'BM-BT-06 子环节（depth=1）。BT-12 core/walk_forward.py 提供样本外验证和参数稳定性区域分析。
+
+    参数稳定→策略可靠；参数不稳定→过拟合风险。
+
+    '
+  indicators_zh: '①触发：WFO 各窗口完成后；②消费：各窗口OOS绩效+参数；③参数：稳定性区域阈值、OOS通过标准；④数据流：各窗口OOS绩效→稳定性分析→稳定性区域→决策门控；⑤代码：BT-12 core/walk_forward.py（generated）；⑥降级：稳定性分析不可用→无参数稳定性保障(策略可靠性存疑)。
+
+    '
+- step_id: BM-BT-07-A
+  flow_stage: backtest_validation
+  name_zh: 三阶段决策门控
+  name_en: Three-Stage Decision Gate
+  plain_zh: 策略上线三道门——IS→WFA→OOS 不可跳级，每阶段都过了才放行，防止半成品上线。
+  mechanism_zh: 'BM-BT-07 决策门控与上线的子环节（depth=1）。BT-16 core/decision_gate.py 提供3阶段决策门控：IS→WFA→OOS 不可跳级 + 参数稳定性区域达标。
+
+    是策略上线的最后一道门禁。
+
+    '
+  indicators_zh: '①触发：BM-BT-05/06 检测通过；②消费：过拟合检测结果+WFO结果+参数稳定性；③参数：IS→WFA→OOS三阶段不可跳级、参数稳定性区域；④数据流：检测结果→三阶段门控→BacktestPassed事件→BM-SIM-01仿真；⑤代码：BT-16 core/decision_gate.py（generated）；⑥降级：决策门控未就绪→人工审批(无自动门禁,风险高)。
+
+    '
+- step_id: BM-BT-07-B
+  flow_stage: backtest_validation
+  name_zh: 回测结果Sink
+  name_en: Backtest Result Sink
+  plain_zh: 把回测结果导成可视化数据——净值曲线、持仓变化、绩效图表，方便人看。
+  mechanism_zh: 'BM-BT-07 子环节（depth=1）。BT-13 io/backtest_result_sink.py 把 BacktestResult 转换为可视化数据(BacktestSinkData)。
+
+    供前端/报告系统消费。
+
+    '
+  indicators_zh: '①触发：回测完成+决策门控通过；②消费：BacktestResult；③参数：可视化数据格式；④数据流：BacktestResult→result_sink→BacktestSinkData→前端/报告；⑤代码：BT-13 io/backtest_result_sink.py（generated）；⑥降级：Sink不可用→原始结果(无可视化)。
+
+    '
+- step_id: BM-BT-07-C
+  flow_stage: backtest_validation
+  name_zh: 结果持久化
+  name_en: Result Persistence
+  plain_zh: 把回测结果存到数据库——BacktestRunArtifact 持久化，留好审计凭证，可追溯每次回测。
+  mechanism_zh: 'BM-BT-07 子环节（depth=1）。BT-14 io/result_repository.py 持久化 BacktestRunArtifact(CTR-P1-017)。
+
+    留好审计凭证，可追溯每次回测的完整结果。
+
+    '
+  indicators_zh: '①触发：回测完成+决策门控通过；②消费：BacktestResult+BacktestSinkData；③参数：BacktestRunArtifact(CTR-P1-017)、持久化策略；④数据流：BacktestResult→result_repository→BacktestRunArtifact→DB；⑤代码：BT-14 io/result_repository.py（generated）；⑥降级：持久化不可用→结果仅内存(重启丢失)。
+
+    '
+- step_id: BM-BT-07-D
+  flow_stage: backtest_validation
+  name_zh: decisiongraph适配
+  name_en: Decisiongraph Adapter
+  plain_zh: 把回测结果适配到决策图——BacktestResult→decisiongraph L5决策节点，让回测结论进入决策流。
+  mechanism_zh: 'BM-BT-07 子环节（depth=1）。BT-15 io/decisiongraph_adapter.py 把 BacktestResult 适配为 decisiongraph L5 决策节点。
+
+    让回测结论进入决策流程，影响后续仿真/实盘决策。
+
+    '
+  indicators_zh: '①触发：回测完成+决策门控通过；②消费：BacktestResult；③参数：decisiongraph L5节点格式；④数据流：BacktestResult→decisiongraph_adapter→L5决策节点→decisiongraph；⑤代码：BT-15 io/decisiongraph_adapter.py（stable, production）；⑥降级：适配器不可用→回测结论不进入决策流(人工衔接)。
+
+    '
 - step_id: BM-SIM-01
   flow_stage: simulation_validation
   name_zh: 市场仿真器
@@ -11105,6 +11429,21 @@ battle_map_steps:
 
     '
   indicators_zh: '①触发：BM-SIM-01~05 仿真完成；②消费：仿真成交+PnL+场景结果；③参数：统计检验、可视化、报告生成；④数据流：仿真结果→统计检验+可视化→SimulationResult事件→D-RISK风控参数+D-PF-CORE组合参考；⑤代码：D-SIMULATION-12（planned）；⑥降级：结果分析器未就绪→原始仿真数据(无统计检验,人工分析)。
+
+    '
+- step_id: BM-SIM-07
+  flow_stage: simulation_validation
+  name_zh: 风控仿真器
+  name_en: Risk Simulator
+  plain_zh: 把风控放进仿真里跑——VaR模拟+回撤模拟+熔断模拟，看策略在假设市场下的风控边界。
+  mechanism_zh: 'D-SIMULATION-03 Risk Simulator 提供风控仿真器+VaR模拟+回撤模拟+熔断模拟（P1）。
+
+    与 D-RISK 联动——仿真侧造假设场景跑风控，风控侧落地参数。
+
+    已建成 MOD-SIM-003 risk_simulator.py（stable），是仿真验证阶段的风控能力承载。
+
+    '
+  indicators_zh: '①触发：BM-SIM-03 蒙特卡洛完成/风控参数调整；②消费：BM-SIM-01 仿真市场+BM-SIM-03 蒙特卡洛路径；③参数：VaR模拟、回撤模拟、熔断模拟；④数据流：仿真市场+MC路径→风控仿真→VaR/回撤/熔断评估→BM-SIM-06分析+D-RISK风控参数；⑤代码：MOD-SIM-003 risk_simulator.py（stable）；⑥降级：风控仿真器未就绪→仅历史VaR(无蒙特卡洛VaR)。
 
     '
 - step_id: BM-RC-01
