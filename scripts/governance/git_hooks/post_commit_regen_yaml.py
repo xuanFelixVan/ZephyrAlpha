@@ -8,7 +8,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 任何异常→静默退出 0（post-commit hook 不得阻断 git 操作）
-# [TESTS] tests/governance/test_reconcile_generators.py::TestPostCommitRegenYaml
+# [TESTS] tests/governance/test_reconcile_generators.py::TestPostCommitRegenYaml; tests/governance/test_post_commit_oscillation_guard.py
 # [TTL] permanent
 # [ARCH-REF] generator_auto_trigger_pilot.md §缺口#3
 """post_commit_regen_yaml.py — post-commit YAML 变更触发器（治本缺口#3）
@@ -31,6 +31,10 @@ post-commit 检测本次 commit 是否改动生成器的 YAML 输入源，是则
 - **非阻塞**：Popen detached（Windows CREATE_NO_WINDOW），post-commit 立即返回。
 - **逃生通道**：ZEPHYR_SKIP_REGENERATE=1 跳过（批量提交场景）。
 - **绝不阻断**：任何异常静默 exit 0（post-commit hook 不得阻断 git 操作）。
+- **并发去重（#1）**：lockfile TTL 60s，连续 commit 只 spawn 1 次 reconcile_stale，
+  防止产物写冲突/资源争用（批量提交/AI 连续提交场景）。
+- **产物循环阻断（#3）**：commit 命中生成器 yaml 产物时跳过触发，防止
+  产物→输入→产物的循环依赖（如 policies.yaml 既是产物又被误配为输入 → 死循环）。
 
 时序
 ----
@@ -66,6 +70,11 @@ _REGISTRY_YAML = (
     / "catalogs" / "generator_registry.yaml"
 )
 _ORCHESTRATOR = _REPO_ROOT / "scripts" / "governance" / "reconcile_generators.py"
+
+# #1 并发去重：lockfile TTL 机制（防止连续 commit spawn 多个 reconcile_stale）
+# lockfile 存在且 TTL 内视为活跃，跳过 spawn；TTL 过期视为僵尸可覆盖。
+_LOCK_FILE = _REPO_ROOT / ".runtime" / "locks" / "reconcile_stale.pid"
+_LOCK_TTL_SECONDS = 60  # reconcile_stale 通常几秒~几十秒完成，60s TTL 足够覆盖且不长时间阻塞
 
 
 def _committed_yaml_files() -> list[str]:
@@ -112,8 +121,66 @@ def _generator_yaml_inputs() -> set[str]:
     return inputs
 
 
-def _matches_generator_input(committed: list[str], inputs: set[str]) -> bool:
-    """committed 文件是否命中任一生成器 yaml 输入源（精确或前缀匹配）。"""
+def _generator_yaml_outputs() -> set[str]:
+    """从 generator_registry.yaml 收集所有 .yaml/.yml 结尾的 output_globs。
+
+    用于 #3 产物循环阻断：commit 命中生成器 yaml 产物时跳过触发，
+    防止产物→输入→产物的循环依赖（如 policies.yaml 既是产物又被误配为输入）。
+    """
+    outputs: set[str] = set()
+    try:
+        import yaml  # type: ignore[import-untyped]
+        if not _REGISTRY_YAML.is_file():
+            return outputs
+        data = yaml.safe_load(_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
+        for gen in data.get("generators", []):
+            for glob in gen.get("output_globs", []):
+                if isinstance(glob, str) and glob.lower().endswith((".yaml", ".yml")):
+                    outputs.add(glob.replace("\\", "/"))
+    except Exception:  # noqa: BLE001
+        return outputs
+    return outputs
+
+
+def _is_lock_active() -> bool:
+    """检查 lockfile 是否存在且未过期（TTL 内视为活跃，跳过 spawn）。"""
+    if not _LOCK_FILE.is_file():
+        return False
+    try:
+        age = time.time() - _LOCK_FILE.stat().st_mtime
+        return age < _LOCK_TTL_SECONDS
+    except OSError:
+        return False
+
+
+def _acquire_lock() -> None:
+    """创建/更新 lockfile（写入 PID，更新 mtime 供 TTL 检查）。
+
+    lockfile 由 TTL 过期自动失效（reconcile_stale 完成后无需主动删除，
+    60s 内的新 commit 跳过是可接受的——reconcile_stale 幂等，跳过不丢数据）。
+    """
+    try:
+        _LOCK_FILE.parent.mkdir(parents=True, exist_ok=True)
+        _LOCK_FILE.write_text(f"{os.getpid()}\n", encoding="utf-8")
+    except OSError:
+        pass  # lock 创建失败不阻断（降级为无锁，最坏情况是并发 spawn）
+
+
+def _matches_generator_input(
+    committed: list[str], inputs: set[str], outputs: set[str] | None = None
+) -> bool:
+    """committed 文件是否命中任一生成器 yaml 输入源（精确或前缀匹配）。
+
+    产物循环阻断（#3）：若 outputs 提供且 committed 命中任何生成器 yaml 产物，
+    返回 False。防止产物→触发→产物的循环依赖（如 policies.yaml 既是产物
+    又被误配为输入源，commit 它会触发重生成又产生 diff → 死循环）。
+    """
+    # 产物阻断优先：committed 命中生成器产物 → 跳过（防循环）
+    if outputs:
+        for c in committed:
+            for out in outputs:
+                if c == out or c.startswith(out.rstrip("/") + "/"):
+                    return False
     for c in committed:
         for inp in inputs:
             if c == inp or c.startswith(inp.rstrip("/") + "/"):
@@ -138,8 +205,18 @@ def main() -> int:
             return 0
 
         inputs = _generator_yaml_inputs()
-        if not inputs or not _matches_generator_input(committed, inputs):
-            return 0  # 改动的 YAML 不是任何生成器的输入源，跳过
+        if not inputs:
+            return 0  # 无生成器 yaml 输入源，跳过
+        outputs = _generator_yaml_outputs()
+        if not _matches_generator_input(committed, inputs, outputs):
+            return 0  # 非生成器输入源，或命中生成器产物（#3 防循环）
+
+        # #1 并发去重：lockfile 活跃时跳过 spawn（防止连续 commit 并发冲突）
+        if _is_lock_active():
+            sys.stderr.write(
+                "[POST-COMMIT-REGEN] ⏭ 已有重生成任务运行中（lockfile 活跃），跳过本次 spawn\n"
+            )
+            return 0
 
         # 异步 spawn reconcile_stale（非阻塞）
         log_dir = _REPO_ROOT / ".runtime" / "logs"
@@ -158,6 +235,7 @@ def main() -> int:
                 f"[POST-COMMIT-REGEN] 变更文件: {committed}\n"
             )
             log_handle.flush()
+            _acquire_lock()  # #1 创建 lockfile（TTL 60s，防止后续 commit 并发 spawn）
             proc = subprocess.Popen(  # noqa: S603 — 受控 _ORCHESTRATOR
                 [sys.executable, str(_ORCHESTRATOR), "--stale"],
                 cwd=str(_REPO_ROOT),
