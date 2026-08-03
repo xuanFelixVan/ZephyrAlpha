@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] pre-commit: --staged（只查 staged 文件，92s→亚秒）；CI/全量: --dir .；单测: tests/governance/scripts_governance/test_staged_walk.py
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """check_encoding.py — 编码合规校验（INJ-007）
@@ -56,7 +56,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import staged_files
+from _shared.walk import iter_staged_files
 
 ensure_utf8_stdout()
 
@@ -340,7 +340,7 @@ def main() -> None:
         # 只查 staged 文件——未变更文件在历史提交时已校验，语义安全。全量审计由
         # CI（--dir .）或手动 --scan 覆盖。BOM/mojibake 仍硬阻断（除非 --warn-only）。
         _STAGED_ENC_EXT = frozenset({".py", ".md", ".yaml", ".yml", ".json", ".toml", ".ps1"})
-        for fpath in staged_files(extensions=_STAGED_ENC_EXT):
+        for fpath in iter_staged_files(extensions=_STAGED_ENC_EXT):
             f_findings, f_warnings = check_file_encoding(str(fpath))
             all_findings.extend(f_findings)
             all_warnings.extend(f_warnings)

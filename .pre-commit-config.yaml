@@ -90,6 +90,21 @@ repos:
         pass_filenames: false
         always_run: false
         description: "纯 stdlib 检测 staged 文件中 PEM/SSH/PGP 私钥标记，替代 external pre-commit-hooks detect-private-key"
+      # ── PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 双层防护 Layer 2）──
+      # 治本：check_protected_paths.py 原为手动工具，无自动触发源。100% AI 开发场景下
+      # 并发会话曾副作用回退 .gitignore/.gitattributes 排除规则（27 包误忽略）。
+      # 双层防护：Layer 1 (in-process gate PROTECTED-PATHS, priority=28) 走 GitCommitGateway
+      # 拦截（--no-verify 绕不过）；Layer 2 (本 hook) 走 git commit 拦截（--no-verify 可绕过）。
+      # 逃生通道：ZEPHYR_PROTECTED_PATHS_BYPASS=1 env（紧急，落 stderr 审计）。
+      # 审批标记逃生通道 [ARCH-APPROVAL:ISSUE_ID] 在 Layer 1 (in-process gate) 实现，
+      # 因为 pre-commit hook 不能访问 commit message（commit-msg hook 才可以）。
+      - id: gate-protected-paths
+        name: "GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）"
+        entry: python scripts/governance/d6_security/check_protected_paths.py --staged
+        language: system
+        pass_filenames: false
+        always_run: false
+        description: "检测 staged 文件是否含受保护路径（.gitignore/.gitattributes/AGENTS.md 等），双层防护 Layer 2（Layer 1 为 in-process gate PROTECTED-PATHS）"
 
       - id: ruff
         name: "Ruff Lint"

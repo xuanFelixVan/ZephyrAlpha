@@ -406,6 +406,16 @@ def main() -> int:
              "适用于本 session 续作前序 session 已落工作区但未 commit 的合法变更。",
     )
     parser.add_argument(
+        "--allow-derived-deletion",
+        action="store_true",
+        default=False,
+        help="DERIVED_FILE_DELETION_VIOLATION 治本通道（#ARCH-BP-REGISTRY-DELETION-001 P1）——"
+             "派生文件退库等合法删除场景放行 DERIVED-FILE-DELETION-PROTECTION gate。"
+             "受保护派生文件（blueprint_registry.yaml / path_ownership_map.yaml 等）"
+             "删除会导致 20+ 消费方静默降级，默认硬阻断；本旗标显式声明合法删除。"
+             "AI 不得自行使用——须用户终端手动指定（对称 --allow-overlap 治理）。",
+    )
+    parser.add_argument(
         "--claim-only",
         action="store_true",
         default=False,
@@ -494,6 +504,7 @@ def main() -> int:
             message=message,
             allow_promote=args.allow_promote,
             allow_overlap=args.allow_overlap,
+            allow_derived_deletion=args.allow_derived_deletion,
         )
     finally:
         gw.release_files(args.session, claimed)

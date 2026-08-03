@@ -21,6 +21,7 @@
 检测内容：
 - 检查目标路径是否在受保护清单中
 - 受保护路径：.git/、AGENTS.md、meta/*.md、architecture_model/
+- --staged 模式：检查 git staged 文件（pre-commit hook Layer 2，#ARCH-MODEL-LIFECYCLE-001 P1）
 
 exit codes: 0=pass, 1=findings, 2=error
 """
@@ -31,9 +32,11 @@ __manifest__ = """
 args:
 - {flag: --path, type: str, description: "检查指定路径是否受保护"}
 - {flag: --session-log, type: str, description: "检查 Session Log 中的写入记录是否违反受保护路径"}
+- {flag: --staged, type: bool, description: "检查 git staged 文件是否含受保护路径（pre-commit hook 模式）"}
 description: >
   受保护路径写入检查（IRN-010）——检查目标路径是否在受保护清单中。
   对标 GOV-MOD-002 ai-behavior-iron-policy.md IRN-010。
+  --staged 模式为 #ARCH-MODEL-LIFECYCLE-001 P1 双层防护 Layer 2（pre-commit hook）。
 dimensions:
 - D6
 priority: P1
@@ -42,6 +45,8 @@ warn_only: false
 """
 
 import argparse
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -53,6 +58,9 @@ from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
+
+# 紧急逃生 env（与 protected_paths_gate.py _BYPASS_ENV 对齐）
+_BYPASS_ENV = "ZEPHYR_PROTECTED_PATHS_BYPASS"
 
 PROTECTED_PATTERNS = [
     (".git/", "只读——禁止任何操作"),
@@ -72,6 +80,9 @@ def check_path(target_path: str) -> list[str]:
     """Check compliance and report findings."""
     findings = []
     normalized = target_path.replace("\\", "/")
+    # 去除前导 ./（git status 有时输出 ./path）
+    if normalized.startswith("./"):
+        normalized = normalized[2:]
     if not normalized.startswith("/"):
         try:
             normalized = str(Path(target_path).resolve().relative_to(REPO_ROOT)).replace("\\", "/")
@@ -101,11 +112,57 @@ def check_session_log(session_log_path: str) -> list[str]:
     return findings
 
 
+def get_staged_files() -> list[str]:
+    """获取 git staged 文件列表（新增/修改/重命名后）。
+
+    用于 --staged 模式（pre-commit hook Layer 2）。
+    """
+    try:
+        r = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        print(f"[ERR] git diff 失败: {type(e).__name__}: {e}", file=sys.stderr)
+        return []
+    if r.returncode != 0:
+        print(f"[ERR] git diff rc={r.returncode}: {r.stderr}", file=sys.stderr)
+        return []
+    return [f for f in r.stdout.strip().split("\n") if f]
+
+
+def check_staged() -> list[str]:
+    """检查 staged 文件是否含受保护路径（pre-commit hook Layer 2）。
+
+    逃生通道：ZEPHYR_PROTECTED_PATHS_BYPASS=1 env（紧急逃生，落审计到 stderr）。
+    pre-commit hook 不能访问 commit message（commit-msg hook 才可以），
+    所以本层逃生通道只有 env，审批标记逃生通道在 in-process gate (Layer 1) 实现。
+    """
+    # 逃生通道：env
+    if os.environ.get(_BYPASS_ENV) == "1":
+        # 落审计到 stderr（pre-commit hook 无独立审计文件，stderr 可被 pre-commit 日志捕获）
+        print("[WARN] PROTECTED-PATHS: ZEPHYR_PROTECTED_PATHS_BYPASS=1 env set, bypassing staged check", file=sys.stderr)
+        return []
+
+    files = get_staged_files()
+    if not files:
+        return []
+
+    findings: list[str] = []
+    for rel in files:
+        findings.extend(check_path(rel))
+    return findings
+
+
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Protected paths write check (IRN-010)")
     parser.add_argument("--path", type=str, help="Check if a specific path is protected")
     parser.add_argument("--session-log", type=str, help="Check session log for protected path violations")
+    parser.add_argument("--staged", action="store_true", help="Check git staged files for protected path violations (pre-commit hook mode)")
     parser.add_argument("--warn-only", action="store_true", help="Only warn, do not fail")
     args = parser.parse_args()
 
@@ -117,8 +174,11 @@ def main() -> None:
     if args.session_log:
         all_findings.extend(check_session_log(args.session_log))
 
-    if not any([args.path, args.session_log]):
-        print("Usage: check_protected_paths.py --path <target_path> or --session-log <log_path>")
+    if args.staged:
+        all_findings.extend(check_staged())
+
+    if not any([args.path, args.session_log, args.staged]):
+        print("Usage: check_protected_paths.py --path <target_path> | --session-log <log_path> | --staged")
         sys.exit(EXIT_ERROR)
 
     for finding in all_findings:

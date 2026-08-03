@@ -1219,7 +1219,7 @@ entries:
 
 # --- #ARCH-048: 数据库边界裁定（采纳母蓝图硬性边界二元判定，Redis/EventStore降为P2，ClickHouse门禁解除） ---
 - issue_id: '#ARCH-048'
-  title: 数据库边界裁定——采纳MOD-ARCH-BIZDB硬性边界二元判定，Redis/EventStore优先级降为P2，ClickHouse门禁解除
+  title: 数据库边界裁定——采纳MOD-ARCH_BIZDB硬性边界二元判定，Redis/EventStore优先级降为P2，ClickHouse门禁解除
   severity: P1高
   adjudication: |
     ARCH-048 裁定：母蓝图（database/blueprint.md）的"硬性边界二元判定"优先于子蓝图（SH-DB-001 §3）的门禁逻辑。
@@ -11176,5 +11176,39 @@ entries:
     - Task Scheduler 任务已注册并 Running
   status: decided
   related_adjudication: 'CH 健康探针三层守护链（Task Scheduler→guard→probe）'
+  created: '2026-08-03'
+  last_updated: '2026-08-03'
+
+# --- #ARCH-MODEL-LIFECYCLE-001: 模型文件生命周期三阶段治本（2026-08-03）---
+- issue_id: '#ARCH-MODEL-LIFECYCLE-001'
+  title: 模型文件生命周期治本——三阶段清除历史大对象+排除规则+获取脚本（filter-repo/gitignore/download_models.py）
+  severity: P2中
+  category: infrastructure
+  adjudication: |-
+    2026-08-03 治本。问题：嵌入模型文件（bge-m3 2.2GB / bge-small-zh-v1.5 92MB / paraphrase-multilingual-MiniLM-L12-v2 465MB）
+    历史通过 git LFS 入库，导致仓库膨胀；.gitignore 原 `models/` 规则误伤 27 个代码包（src/.../models/__init__.py）；
+    .gitattributes 12 条 LFS 规则在模型目录被 gitignore 后永远无法触发（死规则）；无模型获取脚本，新环境无法部署。
+    治本：三阶段彻底治理——
+    1. Phase 1（历史清除）：git filter-repo 从历史移除大模型对象，仓库瘦身
+    2. Phase 2（排除规则治本）：.gitignore `models/`→`/models/`（仅根目录）+ 新增 `data/models/`；
+       .gitattributes 移除全部 12 条 LFS 死规则（0 条留存）
+    3. Phase 3（获取途径）：scripts/ops/download_models.py 从 HuggingFace Hub 下载，
+       模型清单 SSoT=config/embedding_model_registry.yaml（动态加载，零硬编码）
+    防护层：.gitignore/.gitattributes 纳入 IRN-010 受保护路径 + PROTECTED-PATHS in-process gate
+    （commit message 含 [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001] 逃生通道）+ pre-commit hook 三层防护。
+    纯基础设施治本（infrastructure），无价值判断，AI 直接 decided（铁律#9）。
+  fix_phase: |-
+    已执行（commit 64947e6c29 + 后续 P1-P6 治本）：
+    - Phase 1: git filter-repo 清除历史大模型对象
+    - Phase 2: .gitignore 修复（/models/ + data/models/）+ .gitattributes 移除 12 条 LFS 死规则
+    - Phase 3: scripts/ops/download_models.py（--list/--verify/--dry-run/--force/--model）
+    - 防护: check_protected_paths.py 新增 .gitignore/.gitattributes 受保护路径
+    - P1 治本: 新增 PROTECTED-PATHS in-process gate + pre-commit hook（自动拦截，非手动）
+    - P2 治本: MOD-INF-045 depgraph 登记（设计态→production）
+    - P3 治本: cross_module_dependency_registry 补 DEP-112 MOD-INF-045→MOD-INF-002
+    - P4 治本: 本条 issue 登记（ARCH-MODEL-LIFECYCLE-001）
+    - P5 治本: download_models.py 结构化表头 + capability_canonical_file_registry 注册
+  status: decided
+  related_adjudication: '模型文件生命周期三阶段治本（filter-repo/gitignore/download_models.py）'
   created: '2026-08-03'
   last_updated: '2026-08-03'

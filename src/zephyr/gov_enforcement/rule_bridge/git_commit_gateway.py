@@ -1119,8 +1119,10 @@ class GitCommitGateway:
         message: str,
         allow_promote: bool = False,
         allow_overlap: bool = False,
+        allow_derived_deletion: bool = False,
     ) -> CommitResult:
-        """串行化 commit 入口。allow_overlap 逃生通道放行被其他 session 持有的文件，追加 [GW:<sid>:overlap] 标记。"""
+        """串行化 commit 入口。allow_overlap 逃生通道放行被其他 session 持有的文件，追加 [GW:<sid>:overlap] 标记。
+        allow_derived_deletion 逃生通道放行受保护派生文件删除（#ARCH-BP-REGISTRY-DELETION-001 P1）。"""
         if not files:
             return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list")
         if not session_id:
@@ -1182,6 +1184,7 @@ class GitCommitGateway:
                 gate_results = self._gate_registry.check_all(
                     self, existing, session_id=session_id, allow_overlap=allow_overlap,
                     allow_promote=allow_promote, commit_message=message,
+                    allow_derived_deletion=allow_derived_deletion,
                 )
                 blocked = self._check_gate_results(gate_results)
                 if blocked is not None:
@@ -1203,6 +1206,7 @@ class GitCommitGateway:
             gate_results = self._gate_registry.check_all(
                 self, existing, session_id=session_id, allow_overlap=allow_overlap,
                 allow_promote=allow_promote, commit_message=message,
+                allow_derived_deletion=allow_derived_deletion,
             )
             blocked = self._check_gate_results(gate_results)
             if blocked is not None:

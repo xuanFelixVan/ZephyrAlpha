@@ -67,6 +67,11 @@ _RE_HEADER_MODULE_ID = re.compile(
     r"^#\s*\[A_\w+\]\s*module_id[:=]\s*(\S+)", re.MULTILINE
 )
 
+# [BLUEPRINT] 引用提取——同 blueprint = 同模块，共享 module_id 是预期非碰撞
+# 治本（2026-08-03, #ARCH-GATE-COLLISION-SAME-MODULE）：原 collision check 不区分
+# 同模块/跨模块，MOD-GATE_ENGINE 下 20+ gate 文件共享 module_id 被误判碰撞，阻断新文件入库
+_RE_BLUEPRINT_REF = re.compile(r"^#\s*\[BLUEPRINT\]\s*(\S+)", re.MULTILINE)
+
 
 def _is_tracked_in_head(gateway, rel: str) -> bool:
     """判断文件是否已存在于 HEAD（即 tracked/修改态 M，而非新增 A）。
@@ -154,6 +159,36 @@ def _candidate_declares_mid(candidate_abs: str, mid: str) -> bool:
     return False
 
 
+def _candidate_same_blueprint(candidate_abs: str, bp_id: str | None) -> bool:
+    """验证候选文件是否引用相同 [BLUEPRINT] id（同模块判定）。
+
+    同模块的多个文件共享 module_id 是预期行为（如 MOD-GATE_ENGINE 下 20+ gate
+    文件均声明 module_id=MOD-GATE_ENGINE 且引用 [BLUEPRINT] MOD-GATE_ENGINE），
+    非碰撞。仅当候选文件引用**不同** [BLUEPRINT] 时才算真碰撞。
+
+    治本（2026-08-03, #ARCH-GATE-COLLISION-SAME-MODULE）：原 collision check 不
+    区分同模块/跨模块，误阻断同模块新文件入库。
+
+    Args:
+        candidate_abs: 候选文件绝对路径。
+        bp_id: 新文件的 [BLUEPRINT] id（None 时无法判定 → 返回 False，保守视为碰撞）。
+
+    Returns:
+        True=候选引用相同 [BLUEPRINT]（同模块，非碰撞）；
+        False=引用不同 [BLUEPRINT] / 无 [BLUEPRINT] / 读取失败（潜在碰撞）。
+    """
+    if bp_id is None:
+        return False
+    if not os.path.isfile(candidate_abs):
+        return False
+    try:
+        content = Path(candidate_abs).read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    m = _RE_BLUEPRINT_REF.search(content)
+    return bool(m and m.group(1) == bp_id)
+
+
 def _check_cross_file_collision(gateway, files: list[str], project_root) -> list[str]:
     """校验 staged .py 文件的 module_id 跨文件唯一性（git grep 全仓检测）。
 
@@ -162,6 +197,11 @@ def _check_cross_file_collision(gateway, files: list[str], project_root) -> list
 
     精确性治本：grep 后调用 ``_candidate_declares_mid`` 验证候选文件是否
     真正在 ``[A_*]`` 头声明相同 module_id（排除 ``[BLUEPRINT]`` 引用误报）。
+
+    同模块豁免（治本 2026-08-03, #ARCH-GATE-COLLISION-SAME-MODULE）：候选文件
+    若引用**相同** ``[BLUEPRINT]`` id 则属同模块（如 MOD-GATE_ENGINE 下 20+ gate
+    文件），共享 module_id 是预期行为，不算碰撞。仅引用**不同** ``[BLUEPRINT]``
+    的候选才算真碰撞。
     """
     violations: list[str] = []
     for f in files:
@@ -178,6 +218,9 @@ def _check_cross_file_collision(gateway, files: list[str], project_root) -> list
         if not m:
             continue
         mid = m.group(1)
+        # 提取 [BLUEPRINT] id——同 blueprint = 同模块，共享 module_id 非碰撞
+        bp_match = _RE_BLUEPRINT_REF.search(content)
+        bp_id = bp_match.group(1) if bp_match else None
         try:
             result = gateway.run_git(["git", "grep", "-l", "-F", mid, "--", "*.py"])
         except (subprocess.TimeoutExpired, OSError):
@@ -185,12 +228,16 @@ def _check_cross_file_collision(gateway, files: list[str], project_root) -> list
         if result.returncode != 0:
             continue  # no matches = no collision
         matches = [line.strip() for line in result.stdout.split("\n") if line.strip()]
-        # 精确验证：候选文件必须在 [A_*] 头部声明相同 module_id（非 [BLUEPRINT] 引用）
+        # 精确验证：候选必须在 [A_*] 头声明相同 module_id（非 [BLUEPRINT] 引用），
+        # 且引用不同 [BLUEPRINT]（同 blueprint = 同模块，共享 module_id 非碰撞）
         others = [
             candidate for candidate in matches
             if candidate != rel
             and _candidate_declares_mid(
                 os.path.join(str(project_root), candidate.replace("/", os.sep)), mid
+            )
+            and not _candidate_same_blueprint(
+                os.path.join(str(project_root), candidate.replace("/", os.sep)), bp_id
             )
         ]
         if others:

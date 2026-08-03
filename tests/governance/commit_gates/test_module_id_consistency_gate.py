@@ -275,6 +275,93 @@ class TestCrossFileUniqueness:
         passed, detail = gate.check(gw, [str(target)])
         assert passed, f"[BLUEPRINT] 引用不应触发碰撞，但: {detail}"
 
+    def test_same_blueprint_same_module_id_not_collision(self, tmp_path, monkeypatch):
+        """同 [BLUEPRINT] 的多文件共享 module_id → 非碰撞（同模块预期行为）。
+
+        场景：MOD-GATE_ENGINE 模块下 20+ gate 文件均声明 module_id=MOD-GATE_ENGINE，
+        且均引用 [BLUEPRINT] MOD-GATE_ENGINE。新增文件属于同模块 → 不应阻断。
+        治本（2026-08-03, #ARCH-GATE-COLLISION-SAME-MODULE）：原 collision check
+        不区分同模块/跨模块，误阻断同模块新文件入库。
+        """
+        import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod
+
+        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
+
+        gw = _make_gateway(tmp_path)
+
+        # mock: git grep 返回新文件 + 已有同模块文件
+        class _FakeResult:
+            returncode = 0
+            stdout = (
+                "src/zephyr/gov_enforcement/commit_gates/new_gate.py\n"
+                "src/zephyr/gov_enforcement/commit_gates/existing_gate.py\n"
+            )
+
+        gw.run_git.return_value = _FakeResult()
+        gate = make_module_id_consistency_gate()
+        target = tmp_path / "src/zephyr/gov_enforcement/commit_gates/new_gate.py"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            "# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1\n"
+            "# [A_module] module_id=MOD-GATE_ENGINE | layer=module\n"
+            "x = 1\n",
+            encoding="utf-8",
+        )
+        # 已有文件：同 [BLUEPRINT] + 同 [A_module] module_id → 同模块，非碰撞
+        existing = tmp_path / "src/zephyr/gov_enforcement/commit_gates/existing_gate.py"
+        existing.parent.mkdir(parents=True, exist_ok=True)
+        existing.write_text(
+            "# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1\n"
+            "# [A_module] module_id=MOD-GATE_ENGINE | layer=module\n"
+            "y = 2\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed, f"同 [BLUEPRINT] 同 module_id 应非碰撞，但: {detail}"
+
+    def test_different_blueprint_same_module_id_collision(self, tmp_path, monkeypatch):
+        """不同 [BLUEPRINT] 但相同 module_id → 真碰撞（阻断）。
+
+        场景：文件 A 引用 [BLUEPRINT] MOD-FOO 声明 module_id=MOD-FOO，
+        文件 B 引用 [BLUEPRINT] MOD-BAR 也声明 module_id=MOD-FOO → 真碰撞。
+        """
+        import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod
+
+        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
+
+        gw = _make_gateway(tmp_path)
+
+        class _FakeResult:
+            returncode = 0
+            stdout = (
+                "src/new_file.py\n"
+                "src/colliding_file.py\n"
+            )
+
+        gw.run_git.return_value = _FakeResult()
+        gate = make_module_id_consistency_gate()
+        target = tmp_path / "src/new_file.py"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            "# [BLUEPRINT] MOD-FOO | docs/foo.md | §0.1\n"
+            "# [A_module] module_id=MOD-FOO | layer=module\n"
+            "x = 1\n",
+            encoding="utf-8",
+        )
+        # 碰撞文件：不同 [BLUEPRINT] 但相同 [A_module] module_id → 真碰撞
+        colliding = tmp_path / "src/colliding_file.py"
+        colliding.parent.mkdir(parents=True, exist_ok=True)
+        colliding.write_text(
+            "# [BLUEPRINT] MOD-BAR | docs/bar.md | §0.1\n"
+            "# [A_module] module_id=MOD-FOO | layer=module\n"
+            "y = 2\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert not passed
+        assert "module_id_collision" in detail
+        assert "MOD-FOO" in detail
+
     def test_unique_passes(self, tmp_path, monkeypatch):
         """新增文件（不在 HEAD），module_id 唯一 → 通过。"""
         import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod

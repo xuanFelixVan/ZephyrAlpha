@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance._shared.walk
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.__init__
-# [CONSUMERS]
+# [CONSUMERS] iter_staged_files → check_encoding/detect_direct_llm_calls/scan_debt/check_pure_shim（pre-commit --staged 变更检测）；iter_files → 60+ governance 脚本（全量遍历）
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS]
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/governance/scripts_governance/test_staged_walk.py（iter_staged_files 单元测试）
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
@@ -72,7 +72,7 @@ def iter_files(
     return result
 
 
-def staged_files(
+def iter_staged_files(
     extensions: frozenset[str] | None = None,
     path_prefix: str | None = None,
 ) -> list[Path]:
@@ -82,6 +82,12 @@ def staged_files(
     供 pre-commit 钩子只校验本次变更文件，避免全量扫描 35K 文件仓库。
     对标 audit_broken_links._get_basename_cache 的 git ls-files 优化模式：
     O(1) 读 git 索引 vs os.walk/rglob O(N) 遍历文件系统。
+
+    命名说明：本函数返回 ``list[Path]``（不含变更状态），与
+    ``zephyr.shared.security.ssot_guard.staged_files``（返回 ``dict[str,str]``
+    含 A/M/D/R 状态字符）语义不同——后者服务运行时 SSoT 守卫需要区分变更类型，
+    本函数服务 governance 扫描器只需"扫哪些文件"。命名加 ``iter_`` 前缀与
+    同模块 ``iter_files()`` 对称，消除同名碰撞导致的 AI 误用风险。
 
     语义安全：未变更文件在历史提交时已过 gate；本次提交只会引入已变更
     文件的新违规。全量审计由 CI（不带 --staged）或手动 --scan/--dir 路径覆盖。
