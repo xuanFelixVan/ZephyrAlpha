@@ -7681,6 +7681,26 @@ creation_tokens:
     created_by: "session-ai-fix-gates-0803"
     capability: "generator_auto_trigger"
 
+  # --- CI/CD 灰度发布基建（2026-08-03，簇C EX-021 门禁基建）---
+  - file: "scripts/ops/shadow_canary_deploy.py"
+    token: "auto-shadow-canary-deploy-20260803"
+    created_by: "session-cicd-infra-ex021-0803"
+    capability: "cd_pipeline"
+    blueprint_id: "MOD-CD-001"
+    note: "簇C CI/CD 灰度发布基建——Shadow Canary 部署运行器（满足 EX-021 CI/CD 半）"
+  - file: ".github/workflows/deploy.yml"
+    token: "auto-deploy-workflow-20260803"
+    created_by: "session-cicd-infra-ex021-0803"
+    capability: "cd_pipeline"
+    blueprint_id: "MOD-CD-001"
+    note: "CD 流水线配置——Can-I-Deploy 门禁+构建+Shadow Canary+Promote（满足 EX-021 CI/CD 半）"
+  - file: "docs/03_modules/_cross_layer/cd_pipeline/blueprint.md"
+    token: "auto-cd-pipeline-bp-20260803"
+    created_by: "session-cicd-infra-ex021-0803"
+    capability: "cd_pipeline"
+    blueprint_id: "MOD-CD-001"
+    note: "MOD-CD-001 设计蓝图——Shadow Canary 灰度发布基建架构设计文档"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

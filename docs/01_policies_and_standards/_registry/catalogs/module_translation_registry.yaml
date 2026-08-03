@@ -9634,6 +9634,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "漏斗第四层——从50只筛到30只，看事件影响、事件修正后的概率分布、传导链风险，没事件数据源就跳过。"
+- module_path: scripts/ops/shadow_canary_deploy.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "影子金丝雀部署运行器"
+  name_en: "Shadow Canary Deploy Runner"
+  desc_zh: "Shadow Canary 部署运行器——编排预检/影子部署/比对/状态机流转，满足 EX-021 门禁 CI/CD 灰度半"
+  desc_en: "Shadow Canary deploy runner orchestrating precheck/shadow/compare/state-machine, satisfying EX-021 CI/CD gate half"
+  plain_zh: "把 4 个已有零件串成一条命令，做灰度发布的安全网：先检查能不能上线，再开个影子进程跑同样的输入但不接真券商，然后比对两边输出是否一致，分歧小就放行、分歧大就回滚。专门满足 EX-021 那半 CI/CD 灰度门禁。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
