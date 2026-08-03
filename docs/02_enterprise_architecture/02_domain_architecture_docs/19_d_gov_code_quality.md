@@ -29,11 +29,11 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 205 | Module Count | 205 |
 | 域内依赖 | 52 | Internal Dependencies | 52 |
-| 跨域入边 | 135 | Cross-domain Incoming | 135 |
+| 跨域入边 | 136 | Cross-domain Incoming | 136 |
 | 跨域出边 | 152 | Cross-domain Outgoing | 152 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 205 | Production Modules | 205 |
-| 容量 | 206/150 (超容) | Capacity | 206/150 (超容) |
+| 容量 | 205/150 (超容) | Capacity | 205/150 (超容) |
 | 描述 | 代码去重引擎(code_dedup) | Description | 代码去重引擎(code_dedup) |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -104,7 +104,7 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_symbol_index_py["symbol索引<br/>符号索引 — 全局函数/类/import映射表.<br/>symbol_index<br/>文件: code_dedup/symbol_index.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_thematic_clusterer_py["主题聚类器 — 噪声信号比·告警疲劳缓解.<br/>重复组主题聚类——将50组重复归约到3-5个主题.<br/>thematic_clusterer<br/>文件: code_dedup/thematic_clusterer.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_init_py["code_dedup/trackers 包入口<br/>tracker 族子包 — 风险/盲点/热点跟踪器集合.<br/>文件: trackers/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py["后果追踪——记录每次修复操作对依赖方的影响.<br/>修复后果追踪器，记录每次修复操作对依赖方文件的影<br/>响，支持回滚与汇总。<br/>consequence_tracker<br/>文件: trackers/consequence_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py["盲点关闭追踪器 — 自动验证各轮盲点是否已覆盖.<br/>盲点关闭追踪器 —<br/>自动验证各轮盲点是否已覆盖，追踪器相关功能<br/>（blind spot tracker）<br/>blind_spot_tracker<br/>文件: trackers/blind_spot_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py["热点追踪器 — 90天滑动窗口 + 高频变动检测 +<br/>新项目预热清单.<br/>热点追踪——90天滑动窗口.<br/>hotspot_tracker<br/>文件: trackers/hotspot_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_import_surface_tracker_py["importsurface追踪器<br/>Import表面积 (SBS) 负债追踪，保障代码质量与合规<br/>import_surface_tracker<br/>文件: trackers/import_surface_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_risk_mitigation_tracker_py["风险缓解追踪——捕获哪些克隆报告了但在N次扫描后仍<br/>未fix.<br/>风险缓解追踪器，捕获报告了但在多次扫描后仍未修复<br/>的克隆，标记为 stale 提醒干预。<br/>risk_mitigation_tracker<br/>文件: trackers/risk_mitigation_tracker.py<br/>(生产态 / production)"]
@@ -291,8 +291,8 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_success_validator_py ~~~ src_zephyr_gov_code_quality_code_dedup_symbol_index_py
     src_zephyr_gov_code_quality_code_dedup_symbol_index_py ~~~ src_zephyr_gov_code_quality_code_dedup_thematic_clusterer_py
     src_zephyr_gov_code_quality_code_dedup_thematic_clusterer_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_init_py
-    src_zephyr_gov_code_quality_code_dedup_trackers_init_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py
-    src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py
+    src_zephyr_gov_code_quality_code_dedup_trackers_init_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py
+    src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py
     src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_import_surface_tracker_py
     src_zephyr_gov_code_quality_code_dedup_trackers_import_surface_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_risk_mitigation_tracker_py
     src_zephyr_gov_code_quality_code_dedup_trackers_risk_mitigation_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_verifier_py
@@ -438,7 +438,7 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py["预应用完整性门禁<br/>Pre-Apply 完整性门 — SHA256重新验证.<br/>pre_apply_integrity_gate<br/>文件: code_dedup/pre_apply_integrity_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_report_py["报告<br/>生成器 — YAML/JSON 输出 + 退出码判定 + Health<br/>Score 聚合<br/>report<br/>文件: code_dedup/report.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py["SSoT注册器 — 提取函数自动注册到 shared API清单.<br/>ssot_registrar<br/>文件: code_dedup/ssot_registrar.py<br/>(生产态 / production)"]
-    src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py["盲点关闭追踪器 — 自动验证各轮盲点是否已覆盖.<br/>盲点关闭追踪器 —<br/>自动验证各轮盲点是否已覆盖，追踪器相关功能<br/>（blind spot tracker）<br/>blind_spot_tracker<br/>文件: trackers/blind_spot_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py["后果追踪——记录每次修复操作对依赖方的影响.<br/>修复后果追踪器，记录每次修复操作对依赖方文件的影<br/>响，支持回滚与汇总。<br/>consequence_tracker<br/>文件: trackers/consequence_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py["问题追踪——扫描中发现需要人工处理的问题.<br/>问题追踪器，收集扫描中发现需人工处理的问题，支持<br/>raise/resolve/get_open 生命周期。<br/>question_tracker<br/>文件: trackers/question_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_diff_helpers_py["差异辅助<br/>门禁 共享 diff 解析工具模块<br/>_diff_helpers<br/>文件: commit_gates/_diff_helpers.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_reference_helpers_py["reference辅助<br/>引用检测门禁共享工具函数<br/>_reference_helpers<br/>文件: commit_gates/_reference_helpers.py<br/>(生产态 / production)"]
@@ -453,8 +453,8 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py ~~~ src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py
     src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py ~~~ src_zephyr_gov_code_quality_code_dedup_report_py
     src_zephyr_gov_code_quality_code_dedup_report_py ~~~ src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py
-    src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py
-    src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py
+    src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py
+    src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py
     src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py ~~~ src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_diff_helpers_py ~~~ src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
     src_zephyr_gov_enforcement_commit_gates_reference_helpers_py ~~~ src_zephyr_gov_enforcement_commit_gates_capability_lookup_bypass_policy_py
@@ -464,51 +464,51 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_exit_codes_py
     src_zephyr_gov_code_quality_code_dedup_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_report_py
     src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py -->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_config_py
-    src_zephyr_gov_code_quality_code_dedup_init_py -->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_annotations_py
-    src_zephyr_gov_code_quality_code_dedup_trackers_init_py -->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py
-    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_bare_subprocess_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_blueprint_amodule_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_code_quality_code_dedup_init_py -->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_atomic_fixer_py
+    src_zephyr_gov_code_quality_code_dedup_trackers_init_py -->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py
     src_zephyr_gov_enforcement_commit_gates_asyncio_run_in_context_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_arch_reference_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_blueprint_amodule_cross_check_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_ch_batch_size_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_capability_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_blueprint_format_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_bare_subprocess_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_blueprint_amodule_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_blueprint_amodule_cross_check_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_capability_lookup_required_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_capability_lookup_bypass_policy_py
     src_zephyr_gov_enforcement_commit_gates_consumers_accuracy_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_capability_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_ch_batch_size_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_dangling_reference_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_datetime_now_forbidden_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_depgraph_write_path_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_domain_fk_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_datetime_now_forbidden_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_domain_name_zh_direct_access_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_god_class_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_domain_fk_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_git_call_budget_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_god_class_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_hardcoded_url_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_import_integrity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_high_complexity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_long_param_list_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_manual_only_permanent_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_perm_trigger_gate_py
     src_zephyr_gov_enforcement_commit_gates_issue_resolved_integrity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_import_integrity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_long_param_list_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_high_complexity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_mcp_version_field_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_mutable_const_without_final_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_manual_only_permanent_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_perm_trigger_gate_py
     src_zephyr_gov_enforcement_commit_gates_no_import_side_effect_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_open_without_with_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_relative_path_literal_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_ruling_commit_verified_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
     src_zephyr_gov_enforcement_commit_gates_ruling_reference_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_ruling_commit_verified_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
     src_zephyr_gov_enforcement_commit_gates_schema_file_exists_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_scripts_import_integrity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_table_name_registry_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_test_source_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_undefined_name_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_zephyr_env_direct_access_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_undefined_name_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_unsafe_dict_spread_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    tests_governance_code_dedup_test_grandfather_manager_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_grandfather_manager_py
     tests_governance_code_dedup_test_atomic_fixer_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_atomic_fixer_py
-    tests_governance_code_dedup_test_policy_tree_validator_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py
+    tests_governance_code_dedup_test_grandfather_manager_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_grandfather_manager_py
     tests_governance_code_dedup_test_ssot_registrar_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py
     tests_governance_code_dedup_test_pre_apply_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py
+    tests_governance_code_dedup_test_policy_tree_validator_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py
     tests_governance_governance_misc_test_annotations_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_annotations_py
     tests_governance_governance_misc_test_mock_duplicate_generator_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_mock_duplicate_generator_py
     tests_governance_governance_misc_test_question_tracker_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py
@@ -618,7 +618,7 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_symbol_index_py["symbol索引<br/>符号索引 — 全局函数/类/import映射表.<br/>symbol_index<br/>文件: code_dedup/symbol_index.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_thematic_clusterer_py["主题聚类器 — 噪声信号比·告警疲劳缓解.<br/>重复组主题聚类——将50组重复归约到3-5个主题.<br/>thematic_clusterer<br/>文件: code_dedup/thematic_clusterer.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_init_py["code_dedup/trackers 包入口<br/>tracker 族子包 — 风险/盲点/热点跟踪器集合.<br/>文件: trackers/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py["后果追踪——记录每次修复操作对依赖方的影响.<br/>修复后果追踪器，记录每次修复操作对依赖方文件的影<br/>响，支持回滚与汇总。<br/>consequence_tracker<br/>文件: trackers/consequence_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py["盲点关闭追踪器 — 自动验证各轮盲点是否已覆盖.<br/>盲点关闭追踪器 —<br/>自动验证各轮盲点是否已覆盖，追踪器相关功能<br/>（blind spot tracker）<br/>blind_spot_tracker<br/>文件: trackers/blind_spot_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py["热点追踪器 — 90天滑动窗口 + 高频变动检测 +<br/>新项目预热清单.<br/>热点追踪——90天滑动窗口.<br/>hotspot_tracker<br/>文件: trackers/hotspot_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_import_surface_tracker_py["importsurface追踪器<br/>Import表面积 (SBS) 负债追踪，保障代码质量与合规<br/>import_surface_tracker<br/>文件: trackers/import_surface_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_risk_mitigation_tracker_py["风险缓解追踪——捕获哪些克隆报告了但在N次扫描后仍<br/>未fix.<br/>风险缓解追踪器，捕获报告了但在多次扫描后仍未修复<br/>的克隆，标记为 stale 提醒干预。<br/>risk_mitigation_tracker<br/>文件: trackers/risk_mitigation_tracker.py<br/>(生产态 / production)"]
@@ -805,8 +805,8 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_success_validator_py ~~~ src_zephyr_gov_code_quality_code_dedup_symbol_index_py
     src_zephyr_gov_code_quality_code_dedup_symbol_index_py ~~~ src_zephyr_gov_code_quality_code_dedup_thematic_clusterer_py
     src_zephyr_gov_code_quality_code_dedup_thematic_clusterer_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_init_py
-    src_zephyr_gov_code_quality_code_dedup_trackers_init_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py
-    src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py
+    src_zephyr_gov_code_quality_code_dedup_trackers_init_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py
+    src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py
     src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_import_surface_tracker_py
     src_zephyr_gov_code_quality_code_dedup_trackers_import_surface_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_risk_mitigation_tracker_py
     src_zephyr_gov_code_quality_code_dedup_trackers_risk_mitigation_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_verifier_py
@@ -952,7 +952,7 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py["预应用完整性门禁<br/>Pre-Apply 完整性门 — SHA256重新验证.<br/>pre_apply_integrity_gate<br/>文件: code_dedup/pre_apply_integrity_gate.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_report_py["报告<br/>生成器 — YAML/JSON 输出 + 退出码判定 + Health<br/>Score 聚合<br/>report<br/>文件: code_dedup/report.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py["SSoT注册器 — 提取函数自动注册到 shared API清单.<br/>ssot_registrar<br/>文件: code_dedup/ssot_registrar.py<br/>(生产态 / production)"]
-    src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py["盲点关闭追踪器 — 自动验证各轮盲点是否已覆盖.<br/>盲点关闭追踪器 —<br/>自动验证各轮盲点是否已覆盖，追踪器相关功能<br/>（blind spot tracker）<br/>blind_spot_tracker<br/>文件: trackers/blind_spot_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py["后果追踪——记录每次修复操作对依赖方的影响.<br/>修复后果追踪器，记录每次修复操作对依赖方文件的影<br/>响，支持回滚与汇总。<br/>consequence_tracker<br/>文件: trackers/consequence_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py["问题追踪——扫描中发现需要人工处理的问题.<br/>问题追踪器，收集扫描中发现需人工处理的问题，支持<br/>raise/resolve/get_open 生命周期。<br/>question_tracker<br/>文件: trackers/question_tracker.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_diff_helpers_py["差异辅助<br/>门禁 共享 diff 解析工具模块<br/>_diff_helpers<br/>文件: commit_gates/_diff_helpers.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_commit_gates_reference_helpers_py["reference辅助<br/>引用检测门禁共享工具函数<br/>_reference_helpers<br/>文件: commit_gates/_reference_helpers.py<br/>(生产态 / production)"]
@@ -967,8 +967,8 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py ~~~ src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py
     src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py ~~~ src_zephyr_gov_code_quality_code_dedup_report_py
     src_zephyr_gov_code_quality_code_dedup_report_py ~~~ src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py
-    src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py
-    src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py
+    src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py
+    src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py ~~~ src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py
     src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py ~~~ src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_diff_helpers_py ~~~ src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
     src_zephyr_gov_enforcement_commit_gates_reference_helpers_py ~~~ src_zephyr_gov_enforcement_commit_gates_capability_lookup_bypass_policy_py
@@ -978,51 +978,51 @@ flowchart TD
     src_zephyr_gov_code_quality_code_dedup_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_exit_codes_py
     src_zephyr_gov_code_quality_code_dedup_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_report_py
     src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py -->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_config_py
-    src_zephyr_gov_code_quality_code_dedup_init_py -->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_annotations_py
-    src_zephyr_gov_code_quality_code_dedup_trackers_init_py -->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py
-    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_bare_subprocess_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_blueprint_amodule_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_code_quality_code_dedup_init_py -->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_atomic_fixer_py
+    src_zephyr_gov_code_quality_code_dedup_trackers_init_py -->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_trackers_consequence_tracker_py
     src_zephyr_gov_enforcement_commit_gates_asyncio_run_in_context_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_arch_reference_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_blueprint_amodule_cross_check_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_ch_batch_size_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_capability_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_blueprint_format_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_bare_subprocess_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_blueprint_amodule_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_blueprint_amodule_cross_check_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_capability_lookup_required_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_capability_lookup_bypass_policy_py
     src_zephyr_gov_enforcement_commit_gates_consumers_accuracy_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_capability_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_ch_batch_size_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_dangling_reference_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_datetime_now_forbidden_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_depgraph_write_path_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_domain_fk_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_datetime_now_forbidden_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_domain_name_zh_direct_access_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_god_class_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_domain_fk_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_git_call_budget_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_god_class_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_hardcoded_url_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_import_integrity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_high_complexity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_long_param_list_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_manual_only_permanent_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_perm_trigger_gate_py
     src_zephyr_gov_enforcement_commit_gates_issue_resolved_integrity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_import_integrity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_long_param_list_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_high_complexity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_mcp_version_field_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_mutable_const_without_final_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_manual_only_permanent_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_perm_trigger_gate_py
     src_zephyr_gov_enforcement_commit_gates_no_import_side_effect_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_open_without_with_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_relative_path_literal_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_ruling_commit_verified_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
     src_zephyr_gov_enforcement_commit_gates_ruling_reference_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_ruling_commit_verified_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_reference_helpers_py
     src_zephyr_gov_enforcement_commit_gates_schema_file_exists_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_scripts_import_integrity_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_table_name_registry_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_test_source_consistency_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    src_zephyr_gov_enforcement_commit_gates_undefined_name_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_zephyr_env_direct_access_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_undefined_name_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_unsafe_dict_spread_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_commit_gates_diff_helpers_py
-    tests_governance_code_dedup_test_grandfather_manager_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_grandfather_manager_py
     tests_governance_code_dedup_test_atomic_fixer_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_atomic_fixer_py
-    tests_governance_code_dedup_test_policy_tree_validator_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py
+    tests_governance_code_dedup_test_grandfather_manager_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_grandfather_manager_py
     tests_governance_code_dedup_test_ssot_registrar_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py
     tests_governance_code_dedup_test_pre_apply_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py
+    tests_governance_code_dedup_test_policy_tree_validator_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py
     tests_governance_governance_misc_test_annotations_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_annotations_py
     tests_governance_governance_misc_test_mock_duplicate_generator_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_mock_duplicate_generator_py
     tests_governance_governance_misc_test_question_tracker_py -->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py
@@ -1218,129 +1218,130 @@ flowchart TD
 | 14 | D_GOVERNANCE 生命周期管理: code_quality/test_code_simulator.py | → | 代码模拟器 / code_simulator (code_dedup/code_simulator.py) | 测试依赖 / test_depends |
 | 15 | D_GOVERNANCE 生命周期管理: code_quality/test_function_discovery.py | → | 共享函数主动发现 — 签名+语义双通道从被动到主动. / functi... | 测试依赖 / test_depends |
 | 16 | D_GOVERNANCE 生命周期管理: code_quality/test_simplicity_auditor.py | → | 引擎成本效益自审计器 — SAS 0-100 月度审计 + Tax 报告. / ... | 测试依赖 / test_depends |
-| 17 | D_GOVERNANCE 生命周期管理: compliance/test_thematic_clusterer.py | → | 主题聚类器 — 噪声信号比·告警疲劳缓解. / thematic_cluste... | 测试依赖 / test_depends |
-| 18 | D_GOVERNANCE 生命周期管理: data_layer/test_cache_manager.py | → | 缓存管理器 / cache_manager (code_dedup/cache_manager.py) | 测试依赖 / test_depends |
-| 19 | D_GOVERNANCE 生命周期管理: data_layer/test_symbol_index.py | → | symbol索引 / symbol_index (code_dedup/symbol_index.py) | 测试依赖 / test_depends |
-| 20 | D_GOVERNANCE 生命周期管理: delegation/test_behavioral_sampler.py | → | behavioral采样器 / behavioral_sampler (code_dedup/behavio... | 测试依赖 / test_depends |
-| 21 | D_GOVERNANCE 生命周期管理: delegation/test_behavioral_trust_checker.py | → | 行为信任检查器 — 行为漂移DIVERGED检测. / behavioral_trus... | 测试依赖 / test_depends |
-| 22 | D_GOVERNANCE 生命周期管理: delegation/test_consequence_tracker.py | → | 后果追踪——记录每次修复操作对依赖方的影响. / consequence... | 测试依赖 / test_depends |
-| 23 | D_GOVERNANCE 生命周期管理: delegation/test_shadow_trust_validator.py | → | 影子信任校验器 / shadow_trust_validator (code_dedup/shado... | 测试依赖 / test_depends |
-| 24 | D_GOVERNANCE 生命周期管理: drift/test_dead_module_detector.py | → | deadmodule检测器 / dead_module_detector (code_dedup/dead_... | 测试依赖 / test_depends |
-| 25 | D_GOVERNANCE 生命周期管理: drift/test_diff_detector.py | → | 差异检测器 / diff_detector (code_dedup/diff_detector.py) | 测试依赖 / test_depends |
-| 26 | D_GOVERNANCE 生命周期管理: drift/test_micro_clone_detector.py | → | microclone检测器 / micro_clone_detector (code_dedup/micro... | 测试依赖 / test_depends |
-| 27 | D_GOVERNANCE 生命周期管理: drift/test_stale_shared_detector.py | → | stale共享检测器 / stale_shared_detector (code_dedup/stale... | 测试依赖 / test_depends |
-| 28 | D_GOVERNANCE 生命周期管理: integration/test_integration_hub.py | → | 集成hub / integration_hub (code_dedup/integration_hub.py) | 测试依赖 / test_depends |
-| 29 | D_GOVERNANCE 生命周期管理: integration/test_integrations.py | → | 集成管理——预提交钩子+CI-only 扫描+超时边界. / integrati... | 测试依赖 / test_depends |
-| 30 | D_GOVERNANCE 生命周期管理: observability/test_hotspot_tracker.py | → | 热点追踪器 — 90天滑动窗口 + 高频变动检测 + 新项目预热清... | 测试依赖 / test_depends |
-| 31 | D_GOVERNANCE 生命周期管理: observability/test_report.py | → | 报告 / report (code_dedup/report.py) | 测试依赖 / test_depends |
-| 32 | D_GOVERNANCE 生命周期管理: ops/test_exit_codes.py | → | 退出codes / exit_codes (code_dedup/exit_codes.py) | 测试依赖 / test_depends |
-| 33 | D_GOVERNANCE 生命周期管理: ops/test_health_monitor.py | → | 健康监控 / health_monitor (code_dedup/health_monitor.py) | 测试依赖 / test_depends |
-| 34 | D_GOVERNANCE 生命周期管理: ops/test_success_validator.py | → | 成功验证——判断一次去重操作是否真正消灭了克隆. / success... | 测试依赖 / test_depends |
-| 35 | D_GOVERNANCE 生命周期管理: ops/test_verifier.py | → | 验证器 / verifier (code_dedup/verifier.py) | 测试依赖 / test_depends |
-| 36 | D_GOVERNANCE 生命周期管理: resilience/test_doom_loop_guard.py | → | doom循环守卫 / doom_loop_guard (code_dedup/doom_loop_guar... | 测试依赖 / test_depends |
-| 37 | D_GOVERNANCE 生命周期管理: resilience/test_observation_window_guard.py | → | 提取后稳定观察期守护 — 对标SDP 14天观察. / observation_w... | 测试依赖 / test_depends |
-| 38 | D_GOVERNANCE 生命周期管理: resilience/test_recovery_manifest_writer.py | → | 恢复清单写入器 / recovery_manifest_writer (code_dedup/rec... | 测试依赖 / test_depends |
-| 39 | D_GOVERNANCE 生命周期管理: security/test_extraction_safety.py | → | extraction安全 / extraction_safety (code_dedup/extraction... | 测试依赖 / test_depends |
-| 40 | D_GOVERNANCE 生命周期管理: security/test_import_surface_tracker.py | → | importsurface追踪器 / import_surface_tracker (trackers/im... | 测试依赖 / test_depends |
-| 41 | D_GOVERNANCE 生命周期管理: security/test_monoculture_guard.py | → | monoculture守卫 / monoculture_guard (code_dedup/monocultu... | 测试依赖 / test_depends |
-| 42 | D_GOVERNANCE 生命周期管理: security/test_sensitivity_sweeper.py | → | sensitivity清扫器 / sensitivity_sweeper (code_dedup/sensi... | 测试依赖 / test_depends |
-| 43 | D_GOVERNANCE 生命周期管理: security/test_signature_matcher.py | → | signature匹配器 / signature_matcher (code_dedup/signature... | 测试依赖 / test_depends |
-| 44 | D_GOVERNANCE 生命周期管理: shared/test_app_config_yaml.py | → | 配置 / config (code_dedup/config.py) | 测试依赖 / test_depends |
-| 45 | D_GOVERNANCE 生命周期管理: shared/test_shared_evolver.py | → | 共享函数自我进化引擎 — 自动升降级 + 行为漂移锁定. / shar... | 测试依赖 / test_depends |
-| 46 | D_GOVERNANCE 生命周期管理: shared/test_shared_lifecycle_manager.py | → | 共享生命周期管理器 / shared_lifecycle_manager (code_dedup... | 测试依赖 / test_depends |
-| 47 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | reference辅助 / _reference_helpers (commit_gates/_referen... | 导入依赖 / import_depends |
-| 48 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | capabilitylookup绕过策略 / capability_lookup_bypass_polic... | 导入依赖 / import_depends |
-| 49 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | consumersaccuracy门禁 / consumers_accuracy_gate (commit_g... | 导入依赖 / import_depends |
-| 50 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | scripts_import_integrity_gate.py — _shared.constants 符... | 导入依赖 / import_depends |
-| 51 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 导入依赖 / import_depends |
-| 52 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 导入依赖 / import_depends |
-| 53 | D_GOV_AUDIT 审计追踪: audit/test_false_negative_auditor.py | → | falsenegative审计器 / false_negative_auditor (code_dedup/... | 测试依赖 / test_depends |
-| 54 | D_GOV_AUDIT 审计追踪: audit/test_fifteen_dimension_auditor.py | → | 15维超综合审计首页 — 逐项证明"做过且做对". / fifteen_dim... | 测试依赖 / test_depends |
-| 55 | D_GOV_AUDIT 审计追踪: test_undefined_name_baseline_reconciler.py — GATE-UNDEFI... | → | 包入口 / __init__ (commit_gates/__init__.py) | 测试依赖 / test_depends |
-| 56 | D_GOV_AUDIT 审计追踪: test_undefined_name_baseline_reconciler.py — GATE-UNDEFI... | → | undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 测试依赖 / test_depends |
-| 57 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 导入依赖 / import_depends |
-| 58 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | 包入口 / __init__ (commit_gates/__init__.py) | 导入依赖 / import_depends |
-| 59 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | capabilitylookuprequired门禁 / capability_lookup_required... | 导入依赖 / import_depends |
-| 60 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | test_source_consistency_gate.py — 测试-源码符号一致性门... | 导入依赖 / import_depends |
-| 61 | D_GOV_ENFORCEMENT 规则执行: test_arch_reference_gate.py — #ARCH-NNN 悬空引用检测门禁... | → | reference辅助 / _reference_helpers (commit_gates/_referen... | 测试依赖 / test_depends |
-| 62 | D_GOV_ENFORCEMENT 规则执行: test_arch_reference_gate.py — #ARCH-NNN 悬空引用检测门禁... | → | archreference门禁 / arch_reference_gate (commit_gates/arc... | 测试依赖 / test_depends |
-| 63 | D_GOV_ENFORCEMENT 规则执行: test_asyncio_run_in_context_gate.py — asyncio API 误用硬... | → | asynciorunin上下文门禁 / asyncio_run_in_context_gate (com... | 测试依赖 / test_depends |
-| 64 | D_GOV_ENFORCEMENT 规则执行: test_bare_getenv_gate.py — NO-BARE-GETENV 门禁单测 (comm... | → | baregetenv门禁 / bare_getenv_gate (commit_gates/bare_gete... | 测试依赖 / test_depends |
-| 65 | D_GOV_ENFORCEMENT 规则执行: test_bare_sql_gate.py — NO-BARE-SQL 门禁单测 (commit_gat... | → | baresql门禁 / bare_sql_gate (commit_gates/bare_sql_gate.py) | 测试依赖 / test_depends |
-| 66 | D_GOV_ENFORCEMENT 规则执行: test_bare_subprocess_gate.py — BARE-SUBPROCESS 门禁单测 ... | → | baresubprocess门禁 / bare_subprocess_gate (commit_gates/b... | 测试依赖 / test_depends |
-| 67 | D_GOV_ENFORCEMENT 规则执行: test_blueprint_amodule_consistency_gate.py — BLUEPRINT-A... | → | 蓝图amoduleconsistency门禁 / blueprint_amodule_consistenc... | 测试依赖 / test_depends |
-| 68 | D_GOV_ENFORCEMENT 规则执行: test_blueprint_amodule_cross_check_gate.py — BLUEPRINT-A... | → | 蓝图amodule跨check门禁 / blueprint_amodule_cross_check_ga... | 测试依赖 / test_depends |
-| 69 | D_GOV_ENFORCEMENT 规则执行: test_capability_lookup_audit_log.py — capability_lookup ... | → | capabilitylookuprequired门禁 / capability_lookup_required... | 测试依赖 / test_depends |
-| 70 | D_GOV_ENFORCEMENT 规则执行: test_capability_lookup_bypass_policy.py — CAPABILITY-LOO... | → | 包入口 / __init__ (commit_gates/__init__.py) | 测试依赖 / test_depends |
-| 71 | D_GOV_ENFORCEMENT 规则执行: test_capability_lookup_bypass_policy.py — CAPABILITY-LOO... | → | capabilitylookup绕过策略 / capability_lookup_bypass_polic... | 测试依赖 / test_depends |
-| 72 | D_GOV_ENFORCEMENT 规则执行: test_capability_lookup_required_gate.py — CAPABILITY-LOO... | → | capabilitylookuprequired门禁 / capability_lookup_required... | 测试依赖 / test_depends |
-| 73 | D_GOV_ENFORCEMENT 规则执行: test_capability_overlap_gate.py — CAPABILITY-OVERLAP 门... | → | capabilityoverlap门禁 / capability_overlap_gate (commit_g... | 测试依赖 / test_depends |
-| 74 | D_GOV_ENFORCEMENT 规则执行: test_ch_batch_size_gate.py — CH-BATCH-SIZE 门禁单测 (com... | → | ch批次大小门禁 / ch_batch_size_gate (commit_gates/ch_batc... | 测试依赖 / test_depends |
-| 75 | D_GOV_ENFORCEMENT 规则执行: test_ch_version_col_gate.py — CH-VERSION-COL 门禁单测 (c... | → | ch版本col门禁 / ch_version_col_gate (commit_gates/ch_vers... | 测试依赖 / test_depends |
-| 76 | D_GOV_ENFORCEMENT 规则执行: test_claim_required_gate.py — claim_files 前置检查门禁单... | → | claimrequired门禁 / claim_required_gate (commit_gates/cla... | 测试依赖 / test_depends |
-| 77 | D_GOV_ENFORCEMENT 规则执行: test_consumers_accuracy_gate.py — CONSUMERS-ACCURACY 门... | → | consumersaccuracy门禁 / consumers_accuracy_gate (commit_g... | 测试依赖 / test_depends |
-| 78 | D_GOV_ENFORCEMENT 规则执行: test_create_guard.py — CREATE-GUARD 门禁单元测试（2026-0... | → | 创建守卫 / create_guard (commit_gates/create_guard.py) | 测试依赖 / test_depends |
-| 79 | D_GOV_ENFORCEMENT 规则执行: test_dangling_reference_gate.py — AGENTS.md §X.Y 悬空引... | → | danglingreference门禁 / dangling_reference_gate (commit_g... | 测试依赖 / test_depends |
-| 80 | D_GOV_ENFORCEMENT 规则执行: test_datetime_now_forbidden_gate.py — 生成器代码 datetim... | → | datetimenowforbidden门禁 / datetime_now_forbidden_gate (c... | 测试依赖 / test_depends |
-| 81 | D_GOV_ENFORCEMENT 规则执行: test_depgraph_freshness_gate.py — DEPGRAPH-FRESHNESS 门... | → | depgraphfreshness门禁 / depgraph_freshness_gate (commit_g... | 测试依赖 / test_depends |
-| 82 | D_GOV_ENFORCEMENT 规则执行: test_depgraph_pre_registration_gate.py — DEPGRAPH-PRE-RE... | → | depgraph_pre_registration_gate.py — depgraph planned→pr... | 测试依赖 / test_depends |
-| 83 | D_GOV_ENFORCEMENT 规则执行: test_doc_ref_broken_gate.py — DOC-REF-BROKEN 门禁单测 (c... | → | docrefbroken门禁 / doc_ref_broken_gate (commit_gates/doc_... | 测试依赖 / test_depends |
-| 84 | D_GOV_ENFORCEMENT 规则执行: test_domain_fk_gate.py — GATE-DOMAIN-FK 门禁单测 (commit... | → | 域fk门禁 / domain_fk_gate (commit_gates/domain_fk_gate.py) | 测试依赖 / test_depends |
-| 85 | D_GOV_ENFORCEMENT 规则执行: test_domain_name_zh_direct_access_gate.py — NO-DOMAIN-NA... | → | domainnamezhdirect访问门禁 / domain_name_zh_direct_access... | 测试依赖 / test_depends |
-| 86 | D_GOV_ENFORCEMENT 规则执行: test_empty_handler_gate.py — EMPTY-HANDLER 门禁单测 (com... | → | empty处理器门禁 / empty_handler_gate (commit_gates/empty_... | 测试依赖 / test_depends |
-| 87 | D_GOV_ENFORCEMENT 规则执行: test_exempt_zone_frontmatter_gate.py — EXEMPT-ZONE-FM 门... | → | exemptzonefrontmatter门禁 / exempt_zone_frontmatter_gate ... | 测试依赖 / test_depends |
-| 88 | D_GOV_ENFORCEMENT 规则执行: test_file_copy_gate.py — FILE-COPY 门禁单测 (commit_gate... | → | filecopy门禁 / file_copy_gate (commit_gates/file_copy_gat... | 测试依赖 / test_depends |
-| 89 | D_GOV_ENFORCEMENT 规则执行: test_foreign_change_gate.py — 外来变更检测门禁单测（FORE... | → | foreignchange门禁 / foreign_change_gate (commit_gates/for... | 测试依赖 / test_depends |
-| 90 | D_GOV_ENFORCEMENT 规则执行: test_forged_gw_marker_gate.py — Forged GW Marker 前置检... | → | forgedgwmarker门禁 / forged_gw_marker_gate (commit_gates/... | 测试依赖 / test_depends |
-| 91 | D_GOV_ENFORCEMENT 规则执行: test_function_dup_gate.py — FUNCTION-DUP 门禁单测 (commi... | → | 函数dup门禁 / function_dup_gate (commit_gates/function_du... | 测试依赖 / test_depends |
-| 92 | D_GOV_ENFORCEMENT 规则执行: test_god_class_gate.py — NO-GOD-CLASS 门禁单测 (commit_g... | → | god类门禁 / god_class_gate (commit_gates/god_class_gate.py) | 测试依赖 / test_depends |
-| 93 | D_GOV_ENFORCEMENT 规则执行: test_hardcoded_url_gate.py — NO-HARDCODED-URL 门禁单测 (... | → | hardcodedurl门禁 / hardcoded_url_gate (commit_gates/hardc... | 测试依赖 / test_depends |
-| 94 | D_GOV_ENFORCEMENT 规则执行: test_held_overlap_gate.py — 搭便车防护门禁单测（HELD-OVE... | → | heldoverlap门禁 / held_overlap_gate (commit_gates/held_ov... | 测试依赖 / test_depends |
-| 95 | D_GOV_ENFORCEMENT 规则执行: test_high_complexity_gate.py — NO-HIGH-COMPLEXITY 门禁单... | → | highcomplexity门禁 / high_complexity_gate (commit_gates/h... | 测试依赖 / test_depends |
-| 96 | D_GOV_ENFORCEMENT 规则执行: test_id_uniqueness_gate.py — ID-UNIQUENESS 门禁单测 (com... | → | iduniqueness门禁 / id_uniqueness_gate (commit_gates/id_un... | 测试依赖 / test_depends |
-| 97 | D_GOV_ENFORCEMENT 规则执行: test_import_direction_gate.py — NO-UPWARD-IMPORT 门禁单... | → | importdirection门禁 / import_direction_gate (commit_gates... | 测试依赖 / test_depends |
-| 98 | D_GOV_ENFORCEMENT 规则执行: test_import_integrity_gate.py — IMPORT-INTEGRITY 门禁单... | → | 导入完整性门禁 / import_integrity_gate (commit_gates/impo... | 测试依赖 / test_depends |
-| 99 | D_GOV_ENFORCEMENT 规则执行: test_long_param_list_gate.py — NO-LONG-PARAM-LIST 门禁单... | → | longparamlist门禁 / long_param_list_gate (commit_gates/lo... | 测试依赖 / test_depends |
-| 100 | D_GOV_ENFORCEMENT 规则执行: test_manual_only_permanent_gate_noqa.py — MANUAL-ONLY-PE... | → | 手册onlypermanent门禁 / manual_only_permanent_gate (commi... | 测试依赖 / test_depends |
-| 101 | D_GOV_ENFORCEMENT 规则执行: test_mcp_version_field_gate.py — MCP version 字段缺失硬... | → | MCP版本字段门禁 / mcp_version_field_gate (commit_gates/mc... | 测试依赖 / test_depends |
-| 102 | D_GOV_ENFORCEMENT 规则执行: test_module_id_consistency_gate.py — module_id 三声明轨... | → | 模块id一致性门禁 / module_id_consistency_gate (commit_gat... | 测试依赖 / test_depends |
-| 103 | D_GOV_ENFORCEMENT 规则执行: test_msg_exposure_gate.py — MSG-EXPOSURE 门禁单测 (commi... | → | msg敞口门禁 / msg_exposure_gate (commit_gates/msg_exposur... | 测试依赖 / test_depends |
-| 104 | D_GOV_ENFORCEMENT 规则执行: test_msg_style_gate.py — MSG-STYLE 门禁单测 (commit_gate... | → | msgstyle门禁 / msg_style_gate (commit_gates/msg_style_gat... | 测试依赖 / test_depends |
-| 105 | D_GOV_ENFORCEMENT 规则执行: test_mutable_const_without_final_gate.py — 可变常量缺 Fi... | → | mutableconstwithoutfinal门禁 / mutable_const_without_fina... | 测试依赖 / test_depends |
-| 106 | D_GOV_ENFORCEMENT 规则执行: test_new_file_depgraph_gate.py — NEW-FILE-DEPGRAPH-ENFOR... | → | 新文件依赖图门禁 / new_file_depgraph_gate (commit_gates/n... | 测试依赖 / test_depends |
-| 107 | D_GOV_ENFORCEMENT 规则执行: test_no_import_side_effect_gate.py — NO-IMPORT-SIDE-EFFE... | → | noimportsideeffect门禁 / no_import_side_effect_gate (comm... | 测试依赖 / test_depends |
-| 108 | D_GOV_ENFORCEMENT 规则执行: test_open_without_with_gate.py — open() 未在 with 内硬阻... | → | openwithoutwith门禁 / open_without_with_gate (commit_gate... | 测试依赖 / test_depends |
-| 109 | D_GOV_ENFORCEMENT 规则执行: test_orphan_module_gate.py — ORPHAN-MODULE 门禁单测 (com... | → | 孤儿module门禁 / orphan_module_gate (commit_gates/orphan_... | 测试依赖 / test_depends |
-| 110 | D_GOV_ENFORCEMENT 规则执行: test_panorama_alignment_gate.py — 四图模块对齐门禁单测（... | → | panorama对齐门禁 / panorama_alignment_gate (commit_gates/... | 测试依赖 / test_depends |
-| 111 | D_GOV_ENFORCEMENT 规则执行: test_perm_trigger_gate.py — PERM-TRIGGER 门禁单测 (commi... | → | permtrigger门禁 / perm_trigger_gate (commit_gates/perm_tr... | 测试依赖 / test_depends |
-| 112 | D_GOV_ENFORCEMENT 规则执行: test_precommit_offline_gate.py — GATE-PRECOMMIT-OFFLINE ... | → | precommitoffline门禁 / precommit_offline_gate (commit_gat... | 测试依赖 / test_depends |
-| 113 | D_GOV_ENFORCEMENT 规则执行: test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX 门禁单元... | → | r5digitsuffix门禁 / r5_digit_suffix_gate (commit_gates/r5... | 测试依赖 / test_depends |
-| 114 | D_GOV_ENFORCEMENT 规则执行: test_reconciler_health_gate.py — RECONCILER-HEALTH 门禁... | → | reconciler_health_gate.py — reconciler 健康度门禁（#ARCH... | 测试依赖 / test_depends |
-| 115 | D_GOV_ENFORCEMENT 规则执行: test_rename_depgraph_sync_gate.py — RENAME-DEPGRAPH-SYNC... | → | rename_depgraph_sync_gate.py — 文件重命名后 depgraph 未... | 测试依赖 / test_depends |
-| 116 | D_GOV_ENFORCEMENT 规则执行: Tests for RULE-EXECUTION-PAIRING gate (Phase 3.5). (commi... | → | rule_execution_pairing_gate.py — 规则-执行配对门禁（RULE... | 测试依赖 / test_depends |
-| 117 | D_GOV_ENFORCEMENT 规则执行: test_rule_four_way_alignment_gate.py — RULE-FOUR-WAY-ALI... | → | rule_four_way_alignment_gate.py — 规则四方对齐门禁（RULE... | 测试依赖 / test_depends |
-| 118 | D_GOV_ENFORCEMENT 规则执行: test_ruling_commit_verified_gate.py — RULING-COMMIT-VERI... | → | ruling_commit_verified_gate.py — 文档"已完成"声明 commit... | 测试依赖 / test_depends |
-| 119 | D_GOV_ENFORCEMENT 规则执行: test_ruling_reference_gate.py — 裁定#NNN 悬空引用检测门... | → | ruling_reference_gate.py — 裁定#NNN 悬空引用自动检测门禁... | 测试依赖 / test_depends |
-| 120 | D_GOV_ENFORCEMENT 规则执行: test_schema_file_exists_gate.py — SCHEMA-FILE-EXISTS 门... | → | schema_file_exists_gate.py — SCHEMA-FILE-EXISTS block 门... | 测试依赖 / test_depends |
-| 121 | D_GOV_ENFORCEMENT 规则执行: test_scripts_import_integrity_gate.py — SCRIPTS-IMPORT-I... | → | scripts_import_integrity_gate.py — _shared.constants 符... | 测试依赖 / test_depends |
-| 122 | D_GOV_ENFORCEMENT 规则执行: test_session_required_gate.py — SESSION-REQUIRED 门禁单... | → | session_required_gate.py — session 注册强制门禁（SESSION... | 测试依赖 / test_depends |
-| 123 | D_GOV_ENFORCEMENT 规则执行: test_ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断... | → | ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断门禁 ... | 测试依赖 / test_depends |
-| 124 | D_GOV_ENFORCEMENT 规则执行: test_test_source_consistency_gate.py — TEST-SOURCE-CONSI... | → | test_source_consistency_gate.py — 测试-源码符号一致性门... | 测试依赖 / test_depends |
-| 125 | D_GOV_ENFORCEMENT 规则执行: test_translation_coverage_gate.py — TRANSLATION-COVERAGE... | → | translation_coverage_gate.py — 新建 .py 文件大白话简介覆... | 测试依赖 / test_depends |
-| 126 | D_GOV_ENFORCEMENT 规则执行: test_undefined_name_gate.py — UNDEFINED-NAME 门禁单测 (c... | → | undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 测试依赖 / test_depends |
-| 127 | D_GOV_ENFORCEMENT 规则执行: test_unsafe_dict_spread_gate.py — ``**data`` 直接展开 wa... | → | unsafe_dict_spread_gate.py — ``**data`` 直接展开模式 war... | 测试依赖 / test_depends |
-| 128 | D_GOV_ENFORCEMENT 规则执行: test_vocab_hardcode_gate.py — VOCAB-HARDCODE 门禁单测 (c... | → | vocab_hardcode_gate.py — 新增 .py 文件词表硬编码阻断门禁... | 测试依赖 / test_depends |
-| 129 | D_GOV_ENFORCEMENT 规则执行: test_zephyr_env_direct_access_gate.py — ZEPHYR_ENV 直访... | → | zephyr_env_direct_access_gate.py — ZEPHYR_ENV 直访硬阻断... | 测试依赖 / test_depends |
-| 130 | D_GOV_ENFORCEMENT 规则执行: test_gate_auto_registrar.py — gate_auto_registrar 单元测... | → | gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 测试依赖 / test_depends |
-| 131 | D_GOV_OPS_RESILIENCE 运维弹性治理: budget/test_debt_projector.py | → | debt投影器 / debt_projector (code_dedup/debt_projector.py) | 测试依赖 / test_depends |
-| 132 | D_GOV_OPS_RESILIENCE 运维弹性治理: budget/test_degradation.py | → | 退化 / degradation (code_dedup/degradation.py) | 测试依赖 / test_depends |
-| 133 | D_GOV_OPS_RESILIENCE 运维弹性治理: orchestrator/test_prioritizer.py | → | 修复优先级排序器 — 置信度×Impact×适配性 三因子排序. / ... | 测试依赖 / test_depends |
-| 134 | D_GOV_SCRIPTS 脚本治理: scan_consumers_accuracy.py — CONSUMERS 字段准确性 baseli... | → | 差异辅助 / _diff_helpers (commit_gates/_diff_helpers.py) | 导入依赖 / import_depends |
-| 135 | D_GOV_SCRIPTS 脚本治理: scan_consumers_accuracy.py — CONSUMERS 字段准确性 baseli... | → | consumersaccuracy门禁 / consumers_accuracy_gate (commit_g... | 导入依赖 / import_depends |
+| 17 | D_GOVERNANCE 生命周期管理: test_tests_coverage_gate.py — META-TESTS-COVERAGE meta-g... | → | tests_coverage_gate.py — Gate 测试覆盖率校验 meta-gate（... | 测试依赖 / test_depends |
+| 18 | D_GOVERNANCE 生命周期管理: compliance/test_thematic_clusterer.py | → | 主题聚类器 — 噪声信号比·告警疲劳缓解. / thematic_cluste... | 测试依赖 / test_depends |
+| 19 | D_GOVERNANCE 生命周期管理: data_layer/test_cache_manager.py | → | 缓存管理器 / cache_manager (code_dedup/cache_manager.py) | 测试依赖 / test_depends |
+| 20 | D_GOVERNANCE 生命周期管理: data_layer/test_symbol_index.py | → | symbol索引 / symbol_index (code_dedup/symbol_index.py) | 测试依赖 / test_depends |
+| 21 | D_GOVERNANCE 生命周期管理: delegation/test_behavioral_sampler.py | → | behavioral采样器 / behavioral_sampler (code_dedup/behavio... | 测试依赖 / test_depends |
+| 22 | D_GOVERNANCE 生命周期管理: delegation/test_behavioral_trust_checker.py | → | 行为信任检查器 — 行为漂移DIVERGED检测. / behavioral_trus... | 测试依赖 / test_depends |
+| 23 | D_GOVERNANCE 生命周期管理: delegation/test_consequence_tracker.py | → | 后果追踪——记录每次修复操作对依赖方的影响. / consequence... | 测试依赖 / test_depends |
+| 24 | D_GOVERNANCE 生命周期管理: delegation/test_shadow_trust_validator.py | → | 影子信任校验器 / shadow_trust_validator (code_dedup/shado... | 测试依赖 / test_depends |
+| 25 | D_GOVERNANCE 生命周期管理: drift/test_dead_module_detector.py | → | deadmodule检测器 / dead_module_detector (code_dedup/dead_... | 测试依赖 / test_depends |
+| 26 | D_GOVERNANCE 生命周期管理: drift/test_diff_detector.py | → | 差异检测器 / diff_detector (code_dedup/diff_detector.py) | 测试依赖 / test_depends |
+| 27 | D_GOVERNANCE 生命周期管理: drift/test_micro_clone_detector.py | → | microclone检测器 / micro_clone_detector (code_dedup/micro... | 测试依赖 / test_depends |
+| 28 | D_GOVERNANCE 生命周期管理: drift/test_stale_shared_detector.py | → | stale共享检测器 / stale_shared_detector (code_dedup/stale... | 测试依赖 / test_depends |
+| 29 | D_GOVERNANCE 生命周期管理: integration/test_integration_hub.py | → | 集成hub / integration_hub (code_dedup/integration_hub.py) | 测试依赖 / test_depends |
+| 30 | D_GOVERNANCE 生命周期管理: integration/test_integrations.py | → | 集成管理——预提交钩子+CI-only 扫描+超时边界. / integrati... | 测试依赖 / test_depends |
+| 31 | D_GOVERNANCE 生命周期管理: observability/test_hotspot_tracker.py | → | 热点追踪器 — 90天滑动窗口 + 高频变动检测 + 新项目预热清... | 测试依赖 / test_depends |
+| 32 | D_GOVERNANCE 生命周期管理: observability/test_report.py | → | 报告 / report (code_dedup/report.py) | 测试依赖 / test_depends |
+| 33 | D_GOVERNANCE 生命周期管理: ops/test_exit_codes.py | → | 退出codes / exit_codes (code_dedup/exit_codes.py) | 测试依赖 / test_depends |
+| 34 | D_GOVERNANCE 生命周期管理: ops/test_health_monitor.py | → | 健康监控 / health_monitor (code_dedup/health_monitor.py) | 测试依赖 / test_depends |
+| 35 | D_GOVERNANCE 生命周期管理: ops/test_success_validator.py | → | 成功验证——判断一次去重操作是否真正消灭了克隆. / success... | 测试依赖 / test_depends |
+| 36 | D_GOVERNANCE 生命周期管理: ops/test_verifier.py | → | 验证器 / verifier (code_dedup/verifier.py) | 测试依赖 / test_depends |
+| 37 | D_GOVERNANCE 生命周期管理: resilience/test_doom_loop_guard.py | → | doom循环守卫 / doom_loop_guard (code_dedup/doom_loop_guar... | 测试依赖 / test_depends |
+| 38 | D_GOVERNANCE 生命周期管理: resilience/test_observation_window_guard.py | → | 提取后稳定观察期守护 — 对标SDP 14天观察. / observation_w... | 测试依赖 / test_depends |
+| 39 | D_GOVERNANCE 生命周期管理: resilience/test_recovery_manifest_writer.py | → | 恢复清单写入器 / recovery_manifest_writer (code_dedup/rec... | 测试依赖 / test_depends |
+| 40 | D_GOVERNANCE 生命周期管理: security/test_extraction_safety.py | → | extraction安全 / extraction_safety (code_dedup/extraction... | 测试依赖 / test_depends |
+| 41 | D_GOVERNANCE 生命周期管理: security/test_import_surface_tracker.py | → | importsurface追踪器 / import_surface_tracker (trackers/im... | 测试依赖 / test_depends |
+| 42 | D_GOVERNANCE 生命周期管理: security/test_monoculture_guard.py | → | monoculture守卫 / monoculture_guard (code_dedup/monocultu... | 测试依赖 / test_depends |
+| 43 | D_GOVERNANCE 生命周期管理: security/test_sensitivity_sweeper.py | → | sensitivity清扫器 / sensitivity_sweeper (code_dedup/sensi... | 测试依赖 / test_depends |
+| 44 | D_GOVERNANCE 生命周期管理: security/test_signature_matcher.py | → | signature匹配器 / signature_matcher (code_dedup/signature... | 测试依赖 / test_depends |
+| 45 | D_GOVERNANCE 生命周期管理: shared/test_app_config_yaml.py | → | 配置 / config (code_dedup/config.py) | 测试依赖 / test_depends |
+| 46 | D_GOVERNANCE 生命周期管理: shared/test_shared_evolver.py | → | 共享函数自我进化引擎 — 自动升降级 + 行为漂移锁定. / shar... | 测试依赖 / test_depends |
+| 47 | D_GOVERNANCE 生命周期管理: shared/test_shared_lifecycle_manager.py | → | 共享生命周期管理器 / shared_lifecycle_manager (code_dedup... | 测试依赖 / test_depends |
+| 48 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | reference辅助 / _reference_helpers (commit_gates/_referen... | 导入依赖 / import_depends |
+| 49 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | capabilitylookup绕过策略 / capability_lookup_bypass_polic... | 导入依赖 / import_depends |
+| 50 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | consumersaccuracy门禁 / consumers_accuracy_gate (commit_g... | 导入依赖 / import_depends |
+| 51 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | scripts_import_integrity_gate.py — _shared.constants 符... | 导入依赖 / import_depends |
+| 52 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 导入依赖 / import_depends |
+| 53 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 导入依赖 / import_depends |
+| 54 | D_GOV_AUDIT 审计追踪: audit/test_false_negative_auditor.py | → | falsenegative审计器 / false_negative_auditor (code_dedup/... | 测试依赖 / test_depends |
+| 55 | D_GOV_AUDIT 审计追踪: audit/test_fifteen_dimension_auditor.py | → | 15维超综合审计首页 — 逐项证明"做过且做对". / fifteen_dim... | 测试依赖 / test_depends |
+| 56 | D_GOV_AUDIT 审计追踪: test_undefined_name_baseline_reconciler.py — GATE-UNDEFI... | → | 包入口 / __init__ (commit_gates/__init__.py) | 测试依赖 / test_depends |
+| 57 | D_GOV_AUDIT 审计追踪: test_undefined_name_baseline_reconciler.py — GATE-UNDEFI... | → | undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 测试依赖 / test_depends |
+| 58 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 导入依赖 / import_depends |
+| 59 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | 包入口 / __init__ (commit_gates/__init__.py) | 导入依赖 / import_depends |
+| 60 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | capabilitylookuprequired门禁 / capability_lookup_required... | 导入依赖 / import_depends |
+| 61 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | test_source_consistency_gate.py — 测试-源码符号一致性门... | 导入依赖 / import_depends |
+| 62 | D_GOV_ENFORCEMENT 规则执行: test_arch_reference_gate.py — #ARCH-NNN 悬空引用检测门禁... | → | reference辅助 / _reference_helpers (commit_gates/_referen... | 测试依赖 / test_depends |
+| 63 | D_GOV_ENFORCEMENT 规则执行: test_arch_reference_gate.py — #ARCH-NNN 悬空引用检测门禁... | → | archreference门禁 / arch_reference_gate (commit_gates/arc... | 测试依赖 / test_depends |
+| 64 | D_GOV_ENFORCEMENT 规则执行: test_asyncio_run_in_context_gate.py — asyncio API 误用硬... | → | asynciorunin上下文门禁 / asyncio_run_in_context_gate (com... | 测试依赖 / test_depends |
+| 65 | D_GOV_ENFORCEMENT 规则执行: test_bare_getenv_gate.py — NO-BARE-GETENV 门禁单测 (comm... | → | baregetenv门禁 / bare_getenv_gate (commit_gates/bare_gete... | 测试依赖 / test_depends |
+| 66 | D_GOV_ENFORCEMENT 规则执行: test_bare_sql_gate.py — NO-BARE-SQL 门禁单测 (commit_gat... | → | baresql门禁 / bare_sql_gate (commit_gates/bare_sql_gate.py) | 测试依赖 / test_depends |
+| 67 | D_GOV_ENFORCEMENT 规则执行: test_bare_subprocess_gate.py — BARE-SUBPROCESS 门禁单测 ... | → | baresubprocess门禁 / bare_subprocess_gate (commit_gates/b... | 测试依赖 / test_depends |
+| 68 | D_GOV_ENFORCEMENT 规则执行: test_blueprint_amodule_consistency_gate.py — BLUEPRINT-A... | → | 蓝图amoduleconsistency门禁 / blueprint_amodule_consistenc... | 测试依赖 / test_depends |
+| 69 | D_GOV_ENFORCEMENT 规则执行: test_blueprint_amodule_cross_check_gate.py — BLUEPRINT-A... | → | 蓝图amodule跨check门禁 / blueprint_amodule_cross_check_ga... | 测试依赖 / test_depends |
+| 70 | D_GOV_ENFORCEMENT 规则执行: test_capability_lookup_audit_log.py — capability_lookup ... | → | capabilitylookuprequired门禁 / capability_lookup_required... | 测试依赖 / test_depends |
+| 71 | D_GOV_ENFORCEMENT 规则执行: test_capability_lookup_bypass_policy.py — CAPABILITY-LOO... | → | 包入口 / __init__ (commit_gates/__init__.py) | 测试依赖 / test_depends |
+| 72 | D_GOV_ENFORCEMENT 规则执行: test_capability_lookup_bypass_policy.py — CAPABILITY-LOO... | → | capabilitylookup绕过策略 / capability_lookup_bypass_polic... | 测试依赖 / test_depends |
+| 73 | D_GOV_ENFORCEMENT 规则执行: test_capability_lookup_required_gate.py — CAPABILITY-LOO... | → | capabilitylookuprequired门禁 / capability_lookup_required... | 测试依赖 / test_depends |
+| 74 | D_GOV_ENFORCEMENT 规则执行: test_capability_overlap_gate.py — CAPABILITY-OVERLAP 门... | → | capabilityoverlap门禁 / capability_overlap_gate (commit_g... | 测试依赖 / test_depends |
+| 75 | D_GOV_ENFORCEMENT 规则执行: test_ch_batch_size_gate.py — CH-BATCH-SIZE 门禁单测 (com... | → | ch批次大小门禁 / ch_batch_size_gate (commit_gates/ch_batc... | 测试依赖 / test_depends |
+| 76 | D_GOV_ENFORCEMENT 规则执行: test_ch_version_col_gate.py — CH-VERSION-COL 门禁单测 (c... | → | ch版本col门禁 / ch_version_col_gate (commit_gates/ch_vers... | 测试依赖 / test_depends |
+| 77 | D_GOV_ENFORCEMENT 规则执行: test_claim_required_gate.py — claim_files 前置检查门禁单... | → | claimrequired门禁 / claim_required_gate (commit_gates/cla... | 测试依赖 / test_depends |
+| 78 | D_GOV_ENFORCEMENT 规则执行: test_consumers_accuracy_gate.py — CONSUMERS-ACCURACY 门... | → | consumersaccuracy门禁 / consumers_accuracy_gate (commit_g... | 测试依赖 / test_depends |
+| 79 | D_GOV_ENFORCEMENT 规则执行: test_create_guard.py — CREATE-GUARD 门禁单元测试（2026-0... | → | 创建守卫 / create_guard (commit_gates/create_guard.py) | 测试依赖 / test_depends |
+| 80 | D_GOV_ENFORCEMENT 规则执行: test_dangling_reference_gate.py — AGENTS.md §X.Y 悬空引... | → | danglingreference门禁 / dangling_reference_gate (commit_g... | 测试依赖 / test_depends |
+| 81 | D_GOV_ENFORCEMENT 规则执行: test_datetime_now_forbidden_gate.py — 生成器代码 datetim... | → | datetimenowforbidden门禁 / datetime_now_forbidden_gate (c... | 测试依赖 / test_depends |
+| 82 | D_GOV_ENFORCEMENT 规则执行: test_depgraph_freshness_gate.py — DEPGRAPH-FRESHNESS 门... | → | depgraphfreshness门禁 / depgraph_freshness_gate (commit_g... | 测试依赖 / test_depends |
+| 83 | D_GOV_ENFORCEMENT 规则执行: test_depgraph_pre_registration_gate.py — DEPGRAPH-PRE-RE... | → | depgraph_pre_registration_gate.py — depgraph planned→pr... | 测试依赖 / test_depends |
+| 84 | D_GOV_ENFORCEMENT 规则执行: test_doc_ref_broken_gate.py — DOC-REF-BROKEN 门禁单测 (c... | → | docrefbroken门禁 / doc_ref_broken_gate (commit_gates/doc_... | 测试依赖 / test_depends |
+| 85 | D_GOV_ENFORCEMENT 规则执行: test_domain_fk_gate.py — GATE-DOMAIN-FK 门禁单测 (commit... | → | 域fk门禁 / domain_fk_gate (commit_gates/domain_fk_gate.py) | 测试依赖 / test_depends |
+| 86 | D_GOV_ENFORCEMENT 规则执行: test_domain_name_zh_direct_access_gate.py — NO-DOMAIN-NA... | → | domainnamezhdirect访问门禁 / domain_name_zh_direct_access... | 测试依赖 / test_depends |
+| 87 | D_GOV_ENFORCEMENT 规则执行: test_empty_handler_gate.py — EMPTY-HANDLER 门禁单测 (com... | → | empty处理器门禁 / empty_handler_gate (commit_gates/empty_... | 测试依赖 / test_depends |
+| 88 | D_GOV_ENFORCEMENT 规则执行: test_exempt_zone_frontmatter_gate.py — EXEMPT-ZONE-FM 门... | → | exemptzonefrontmatter门禁 / exempt_zone_frontmatter_gate ... | 测试依赖 / test_depends |
+| 89 | D_GOV_ENFORCEMENT 规则执行: test_file_copy_gate.py — FILE-COPY 门禁单测 (commit_gate... | → | filecopy门禁 / file_copy_gate (commit_gates/file_copy_gat... | 测试依赖 / test_depends |
+| 90 | D_GOV_ENFORCEMENT 规则执行: test_foreign_change_gate.py — 外来变更检测门禁单测（FORE... | → | foreignchange门禁 / foreign_change_gate (commit_gates/for... | 测试依赖 / test_depends |
+| 91 | D_GOV_ENFORCEMENT 规则执行: test_forged_gw_marker_gate.py — Forged GW Marker 前置检... | → | forgedgwmarker门禁 / forged_gw_marker_gate (commit_gates/... | 测试依赖 / test_depends |
+| 92 | D_GOV_ENFORCEMENT 规则执行: test_function_dup_gate.py — FUNCTION-DUP 门禁单测 (commi... | → | 函数dup门禁 / function_dup_gate (commit_gates/function_du... | 测试依赖 / test_depends |
+| 93 | D_GOV_ENFORCEMENT 规则执行: test_god_class_gate.py — NO-GOD-CLASS 门禁单测 (commit_g... | → | god类门禁 / god_class_gate (commit_gates/god_class_gate.py) | 测试依赖 / test_depends |
+| 94 | D_GOV_ENFORCEMENT 规则执行: test_hardcoded_url_gate.py — NO-HARDCODED-URL 门禁单测 (... | → | hardcodedurl门禁 / hardcoded_url_gate (commit_gates/hardc... | 测试依赖 / test_depends |
+| 95 | D_GOV_ENFORCEMENT 规则执行: test_held_overlap_gate.py — 搭便车防护门禁单测（HELD-OVE... | → | heldoverlap门禁 / held_overlap_gate (commit_gates/held_ov... | 测试依赖 / test_depends |
+| 96 | D_GOV_ENFORCEMENT 规则执行: test_high_complexity_gate.py — NO-HIGH-COMPLEXITY 门禁单... | → | highcomplexity门禁 / high_complexity_gate (commit_gates/h... | 测试依赖 / test_depends |
+| 97 | D_GOV_ENFORCEMENT 规则执行: test_id_uniqueness_gate.py — ID-UNIQUENESS 门禁单测 (com... | → | iduniqueness门禁 / id_uniqueness_gate (commit_gates/id_un... | 测试依赖 / test_depends |
+| 98 | D_GOV_ENFORCEMENT 规则执行: test_import_direction_gate.py — NO-UPWARD-IMPORT 门禁单... | → | importdirection门禁 / import_direction_gate (commit_gates... | 测试依赖 / test_depends |
+| 99 | D_GOV_ENFORCEMENT 规则执行: test_import_integrity_gate.py — IMPORT-INTEGRITY 门禁单... | → | 导入完整性门禁 / import_integrity_gate (commit_gates/impo... | 测试依赖 / test_depends |
+| 100 | D_GOV_ENFORCEMENT 规则执行: test_long_param_list_gate.py — NO-LONG-PARAM-LIST 门禁单... | → | longparamlist门禁 / long_param_list_gate (commit_gates/lo... | 测试依赖 / test_depends |
+| 101 | D_GOV_ENFORCEMENT 规则执行: test_manual_only_permanent_gate_noqa.py — MANUAL-ONLY-PE... | → | 手册onlypermanent门禁 / manual_only_permanent_gate (commi... | 测试依赖 / test_depends |
+| 102 | D_GOV_ENFORCEMENT 规则执行: test_mcp_version_field_gate.py — MCP version 字段缺失硬... | → | MCP版本字段门禁 / mcp_version_field_gate (commit_gates/mc... | 测试依赖 / test_depends |
+| 103 | D_GOV_ENFORCEMENT 规则执行: test_module_id_consistency_gate.py — module_id 三声明轨... | → | 模块id一致性门禁 / module_id_consistency_gate (commit_gat... | 测试依赖 / test_depends |
+| 104 | D_GOV_ENFORCEMENT 规则执行: test_msg_exposure_gate.py — MSG-EXPOSURE 门禁单测 (commi... | → | msg敞口门禁 / msg_exposure_gate (commit_gates/msg_exposur... | 测试依赖 / test_depends |
+| 105 | D_GOV_ENFORCEMENT 规则执行: test_msg_style_gate.py — MSG-STYLE 门禁单测 (commit_gate... | → | msgstyle门禁 / msg_style_gate (commit_gates/msg_style_gat... | 测试依赖 / test_depends |
+| 106 | D_GOV_ENFORCEMENT 规则执行: test_mutable_const_without_final_gate.py — 可变常量缺 Fi... | → | mutableconstwithoutfinal门禁 / mutable_const_without_fina... | 测试依赖 / test_depends |
+| 107 | D_GOV_ENFORCEMENT 规则执行: test_new_file_depgraph_gate.py — NEW-FILE-DEPGRAPH-ENFOR... | → | 新文件依赖图门禁 / new_file_depgraph_gate (commit_gates/n... | 测试依赖 / test_depends |
+| 108 | D_GOV_ENFORCEMENT 规则执行: test_no_import_side_effect_gate.py — NO-IMPORT-SIDE-EFFE... | → | noimportsideeffect门禁 / no_import_side_effect_gate (comm... | 测试依赖 / test_depends |
+| 109 | D_GOV_ENFORCEMENT 规则执行: test_open_without_with_gate.py — open() 未在 with 内硬阻... | → | openwithoutwith门禁 / open_without_with_gate (commit_gate... | 测试依赖 / test_depends |
+| 110 | D_GOV_ENFORCEMENT 规则执行: test_orphan_module_gate.py — ORPHAN-MODULE 门禁单测 (com... | → | 孤儿module门禁 / orphan_module_gate (commit_gates/orphan_... | 测试依赖 / test_depends |
+| 111 | D_GOV_ENFORCEMENT 规则执行: test_panorama_alignment_gate.py — 四图模块对齐门禁单测（... | → | panorama对齐门禁 / panorama_alignment_gate (commit_gates/... | 测试依赖 / test_depends |
+| 112 | D_GOV_ENFORCEMENT 规则执行: test_perm_trigger_gate.py — PERM-TRIGGER 门禁单测 (commi... | → | permtrigger门禁 / perm_trigger_gate (commit_gates/perm_tr... | 测试依赖 / test_depends |
+| 113 | D_GOV_ENFORCEMENT 规则执行: test_precommit_offline_gate.py — GATE-PRECOMMIT-OFFLINE ... | → | precommitoffline门禁 / precommit_offline_gate (commit_gat... | 测试依赖 / test_depends |
+| 114 | D_GOV_ENFORCEMENT 规则执行: test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX 门禁单元... | → | r5digitsuffix门禁 / r5_digit_suffix_gate (commit_gates/r5... | 测试依赖 / test_depends |
+| 115 | D_GOV_ENFORCEMENT 规则执行: test_reconciler_health_gate.py — RECONCILER-HEALTH 门禁... | → | reconciler_health_gate.py — reconciler 健康度门禁（#ARCH... | 测试依赖 / test_depends |
+| 116 | D_GOV_ENFORCEMENT 规则执行: test_rename_depgraph_sync_gate.py — RENAME-DEPGRAPH-SYNC... | → | rename_depgraph_sync_gate.py — 文件重命名后 depgraph 未... | 测试依赖 / test_depends |
+| 117 | D_GOV_ENFORCEMENT 规则执行: Tests for RULE-EXECUTION-PAIRING gate (Phase 3.5). (commi... | → | rule_execution_pairing_gate.py — 规则-执行配对门禁（RULE... | 测试依赖 / test_depends |
+| 118 | D_GOV_ENFORCEMENT 规则执行: test_rule_four_way_alignment_gate.py — RULE-FOUR-WAY-ALI... | → | rule_four_way_alignment_gate.py — 规则四方对齐门禁（RULE... | 测试依赖 / test_depends |
+| 119 | D_GOV_ENFORCEMENT 规则执行: test_ruling_commit_verified_gate.py — RULING-COMMIT-VERI... | → | ruling_commit_verified_gate.py — 文档"已完成"声明 commit... | 测试依赖 / test_depends |
+| 120 | D_GOV_ENFORCEMENT 规则执行: test_ruling_reference_gate.py — 裁定#NNN 悬空引用检测门... | → | ruling_reference_gate.py — 裁定#NNN 悬空引用自动检测门禁... | 测试依赖 / test_depends |
+| 121 | D_GOV_ENFORCEMENT 规则执行: test_schema_file_exists_gate.py — SCHEMA-FILE-EXISTS 门... | → | schema_file_exists_gate.py — SCHEMA-FILE-EXISTS block 门... | 测试依赖 / test_depends |
+| 122 | D_GOV_ENFORCEMENT 规则执行: test_scripts_import_integrity_gate.py — SCRIPTS-IMPORT-I... | → | scripts_import_integrity_gate.py — _shared.constants 符... | 测试依赖 / test_depends |
+| 123 | D_GOV_ENFORCEMENT 规则执行: test_session_required_gate.py — SESSION-REQUIRED 门禁单... | → | session_required_gate.py — session 注册强制门禁（SESSION... | 测试依赖 / test_depends |
+| 124 | D_GOV_ENFORCEMENT 规则执行: test_ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断... | → | ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断门禁 ... | 测试依赖 / test_depends |
+| 125 | D_GOV_ENFORCEMENT 规则执行: test_test_source_consistency_gate.py — TEST-SOURCE-CONSI... | → | test_source_consistency_gate.py — 测试-源码符号一致性门... | 测试依赖 / test_depends |
+| 126 | D_GOV_ENFORCEMENT 规则执行: test_translation_coverage_gate.py — TRANSLATION-COVERAGE... | → | translation_coverage_gate.py — 新建 .py 文件大白话简介覆... | 测试依赖 / test_depends |
+| 127 | D_GOV_ENFORCEMENT 规则执行: test_undefined_name_gate.py — UNDEFINED-NAME 门禁单测 (c... | → | undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 测试依赖 / test_depends |
+| 128 | D_GOV_ENFORCEMENT 规则执行: test_unsafe_dict_spread_gate.py — ``**data`` 直接展开 wa... | → | unsafe_dict_spread_gate.py — ``**data`` 直接展开模式 war... | 测试依赖 / test_depends |
+| 129 | D_GOV_ENFORCEMENT 规则执行: test_vocab_hardcode_gate.py — VOCAB-HARDCODE 门禁单测 (c... | → | vocab_hardcode_gate.py — 新增 .py 文件词表硬编码阻断门禁... | 测试依赖 / test_depends |
+| 130 | D_GOV_ENFORCEMENT 规则执行: test_zephyr_env_direct_access_gate.py — ZEPHYR_ENV 直访... | → | zephyr_env_direct_access_gate.py — ZEPHYR_ENV 直访硬阻断... | 测试依赖 / test_depends |
+| 131 | D_GOV_ENFORCEMENT 规则执行: test_gate_auto_registrar.py — gate_auto_registrar 单元测... | → | gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 测试依赖 / test_depends |
+| 132 | D_GOV_OPS_RESILIENCE 运维弹性治理: budget/test_debt_projector.py | → | debt投影器 / debt_projector (code_dedup/debt_projector.py) | 测试依赖 / test_depends |
+| 133 | D_GOV_OPS_RESILIENCE 运维弹性治理: budget/test_degradation.py | → | 退化 / degradation (code_dedup/degradation.py) | 测试依赖 / test_depends |
+| 134 | D_GOV_OPS_RESILIENCE 运维弹性治理: orchestrator/test_prioritizer.py | → | 修复优先级排序器 — 置信度×Impact×适配性 三因子排序. / ... | 测试依赖 / test_depends |
+| 135 | D_GOV_SCRIPTS 脚本治理: scan_consumers_accuracy.py — CONSUMERS 字段准确性 baseli... | → | 差异辅助 / _diff_helpers (commit_gates/_diff_helpers.py) | 导入依赖 / import_depends |
+| 136 | D_GOV_SCRIPTS 脚本治理: scan_consumers_accuracy.py — CONSUMERS 字段准确性 baseli... | → | consumersaccuracy门禁 / consumers_accuracy_gate (commit_g... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 14 个外部域直接连接（出边 152 条 + 入边 135 条 = 287 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 14 个外部域直接连接（出边 152 条 + 入边 136 条 = 288 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -1375,7 +1376,7 @@ graph LR
     D_GOV_CODE_QUALITY -->|1条 导入依赖 / import_depends| D_AUTONOMY_CORE
     D_GOV_CODE_QUALITY -->|1条 测试依赖 / test_depends| D_FBL_VERIFICATION
     D_GOV_ENFORCEMENT -->|74条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_CODE_QUALITY
-    D_GOVERNANCE -->|46条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    D_GOVERNANCE -->|47条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_GOV_AUDIT -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_GOV_OPS_RESILIENCE -->|3条 测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_GOV_SCRIPTS -->|2条 导入依赖 / import_depends| D_GOV_CODE_QUALITY
