@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-GOV-SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """fix_header_module_id.py — 批量修复文件头 module_id 与 depgraph 一致

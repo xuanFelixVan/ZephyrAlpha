@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-GOV-SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """fix_depgraph_module_id.py — 修正 depgraph 中不合规的 blueprint_id（module_id）并同步文件头
@@ -117,6 +117,10 @@ FILE_SYNC_PAIRS: list[tuple[str, str]] = [
 #   - 映射表：记录 old→new 映射关系（fix_depgraph_module_id.py / fix_header_module_id.py）
 #   - 测试夹具：测试旧 ID 兼容性（test_blueprint_id_legacy_reconciler.py）
 #   - 审计追踪：记录重命名历史（audit_rename_completeness.py / test_audit_rename_completeness.py）
+# 治本（2026-08-03）：INTENTIONAL_SKIP 仅跳过 repo_wide_replace 的全文替换（保护映射表
+# old→new 对不被破坏）。但文件自身的 [A_module] module_id 表头不属于映射表引用，
+# MUST 手动维护合规格式（如 MOD-GOV_SCRIPTS 而非 MOD-GOV-SCRIPTS），不能用
+# repo_wide_replace 自动替换（会连带破坏同文件内的映射表条目）。
 INTENTIONAL_SKIP: set[str] = {
     "scripts/governance/fix_depgraph_module_id.py",
     "scripts/governance/fix_header_module_id.py",
