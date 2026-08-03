@@ -204,10 +204,12 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
      {"capability": "kline_futures"}, None, None, None),
 
     # tdx 通达信板块数据
-    ("tdx", "industry_class", _TBL_INDUSTRY_CLASS,
-     {"capability": "industry_class"}, None, None, None),
     ("tdx", "kline_sector", _TBL_KLINE_SECTOR,
      {"capability": "kline_sector"}, ["sh.000001"], None, None),
+
+    # ifind 申万行业分类（#ARCH-CH-INDUSTRY-CLASS-MIGRATE：tdx block() 语义错配，capability 迁至 ifind）
+    ("ifind", "industry_class", _TBL_INDUSTRY_CLASS,
+     {"capability": "industry_class"}, None, None, None),
 
     # ===== 新增能力测速（2026-07-11）=====
     # ETF 分钟K线（数据量大，用 1 只样本）

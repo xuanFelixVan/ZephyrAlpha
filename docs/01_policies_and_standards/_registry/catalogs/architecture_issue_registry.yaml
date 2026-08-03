@@ -11117,3 +11117,64 @@ entries:
   related_adjudication: '#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION; wal_writer; tick_subscriber'
   created: '2026-08-02'
   last_updated: '2026-08-02'
+
+# --- #ARCH-CH-INDUSTRY-CLASS-MIGRATE: industry_class 语义错配 + DDL ORDER BY 塌缩治本（2026-08-03）---
+- issue_id: '#ARCH-CH-INDUSTRY-CLASS-MIGRATE'
+  title: industry_class 表 provider 语义错配治本——tdx 板块成分股→ifind 申万行业分级 + DDL ORDER BY 塌缩丢数据修复
+  severity: P1高
+  category: data_governance
+  adjudication: |-
+    2026-08-03 factual bug fix + 治本。两个并存问题：
+    问题A（语义错配）：tdx_provider._fetch_industry_class 调 mootdx client.block() 产出
+    板块成分股（板块→股票清单），与 c1_market.industry_class 表语义（股票→申万行业分级）
+    错配。列双重错配（tdx 输出 sector_code/level=0，表期望 symbol/industry_sw/level 1-3）。
+    问题B（DDL ORDER BY 塌缩）：DDL ORDER BY (symbol) + ReplacingMergeTree，一只股票多 level
+    行（level 1/2/3）共享排序键 symbol，FINAL 去重时塌缩丢行。实证 000001 raw 有 level 1/2/3，
+    FINAL 仅返回 level 0/1/2（丢 level 3）。
+    治本A：tdx_provider 移除 industry_class capability；ifind_provider 新增 _fetch_industry_class
+    （i问财查询 + "--" split 拆 level 1/2/3 申万分级）；tasks.yaml 源 tdx→ifind。
+    治本B：DDL ORDER BY (symbol)→(symbol, industry_level)。ALTER MODIFY ORDER BY 受 ClickHouse
+    Code 36 限制（不能引用已存在列追加排序键），改 create-copy-rename 原子切换。
+    数据治理：DELETE level=0 tdx 污染 23654 行；level 3 原始数据已在表中（raw 完好），
+    改 ORDER BY 后 FINAL 自动恢复，无需重拉。
+    验证：000001 FINAL 返回 level 1/2/3 三行不丢；ch_writer 可插入列集验证通过；183 tests pass。
+    纯技术修复（bug fix + 重构），无价值判断，AI 直接 decided（铁律#9）。
+  fix_phase: |-
+    已执行（commit 917b727d + CH DDL create-copy-rename）：
+    - ifind_provider 新增 industry_class capability + _fetch_industry_class
+    - tdx_provider 移除 industry_class capability
+    - tasks.yaml 源 tdx→ifind
+    - DDL 真源 ORDER BY→(symbol, industry_level)
+    - CH: DELETE level=0 污染 + create-copy-rename + DROP old
+    - ch_writer get_insertable_columns_set 排除 MATERIALIZED 列
+  status: decided
+  related_adjudication: '#ARCH-CH-024 (schema 真源体系); TRAE-062 (SSoT 分类铁律)'
+  created: '2026-08-03'
+  last_updated: '2026-08-03'
+
+# --- #ARCH-CH-PROBE-GUARD: CH 健康探针三层守护链治本（2026-08-03）---
+- issue_id: '#ARCH-CH-PROBE-GUARD'
+  title: CH 健康探针无 guard 保活——13h 监控空窗治本（Task Scheduler watchdog 三层守护链）
+  severity: P2中
+  category: disaster_recovery
+  adjudication: |-
+    2026-08-03 治本。问题：ch_health_probe 进程（PID 49948）8/2 20:51 启动后 18s 静默退出，
+    未注册到 watchdog 保活机制，导致 CH 监控空窗约 13h，ClickHouse 断连无法触发自动告警。
+    治本：三层守护链确保高可用——
+    1. Task Scheduler (OS级)：ZephyrAlpha_CHHealthProbe 任务，AtLogOn 事件触发 + 5min repeat 兜底
+    2. start_ch_health_probe.ps1 (guard脚本)：单实例锁 + 孤儿进程清理 + while(true) auto-restart
+    3. python ch_health_probe.py (探针进程)：3s 探测 CH TCP+HTTP 双通道
+    guard 脚本跻身 scheduler/tick_subscriber 同级 watchdog 体系（register_guard_tasks.ps1 注册）。
+    就绪探针例外（review 框架）：3s CH 探测属就绪探针，不算时间触发；5min repeat 属兜底。
+    验证：schtasks Status=Running；guard PID 42144 + probe PID 8096 运行中；probe 日志每 3s
+    记录 CH TCP+HTTP 双通道连通。
+    纯基础设施治本（disaster_recovery），无价值判断，AI 直接 decided（铁律#9）。
+  fix_phase: |-
+    已执行（commit 917b727d）：
+    - 新增 scripts/start_ch_health_probe.ps1 guard 脚本（ASCII-only，单实例锁+孤儿清理+auto-restart）
+    - register_guard_tasks.ps1 注册 ZephyrAlpha_CHHealthProbe 到 Task Scheduler
+    - Task Scheduler 任务已注册并 Running
+  status: decided
+  related_adjudication: 'CH 健康探针三层守护链（Task Scheduler→guard→probe）'
+  created: '2026-08-03'
+  last_updated: '2026-08-03'

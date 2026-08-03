@@ -268,6 +268,16 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | 一次性运维/诊断/迁移脚本 | A 类·非永久 | trae_060 §6 not_applies_to |
 | 测试夹具/常量 | A 类·非规则数据 | trae_060 §6 not_applies_to |
 
+> **常驻守护服务（watchdog 三服务，C 类·永久系统）**：三个 Task Scheduler 任务构成数据层 7×24 守护体系，均经 [`register_guard_tasks.ps1`](file:///d:/ZephyrAlpha/scripts/register_guard_tasks.ps1) 一次性注册（AtLogOn 事件触发 + 5min repeat 兜底）。
+>
+> | 服务 | Task Scheduler 任务名 | guard 脚本 | 说明 |
+> |------|----------------------|-----------|------|
+> | 数据调度器 | ZephyrAlpha_DataScheduler | [`start_scheduler.ps1`](file:///d:/ZephyrAlpha/scripts/start_scheduler.ps1) | 数据集成器调度（日频/增量任务编排） |
+> | Tick 订阅器 | ZephyrAlpha_TickSubscriber | [`start_tick_subscriber.ps1`](file:///d:/ZephyrAlpha/scripts/start_tick_subscriber.ps1) | 实时行情订阅（盘中 tick→Redis/WAL） |
+> | CH 健康探针 | ZephyrAlpha_CHHealthProbe | [`start_ch_health_probe.ps1`](file:///d:/ZephyrAlpha/scripts/start_ch_health_probe.ps1) | CH 连通性监控（3s TCP+HTTP 双通道探测） |
+>
+> **CH 健康探针三层守护链（#ARCH-CH-PROBE-GUARD，2026-08-03 治本）**：① Task Scheduler（OS 级，AtLogOn+5min 兜底）→ ② guard 脚本（单实例锁+孤儿清理+while-true auto-restart，启动失败<10s 退避 30s）→ ③ probe 进程（3s 探测 CH TCP+HTTP，断连 6s 告警）。**启动/重启**：`schtasks /run /tn ZephyrAlpha_CHHealthProbe`（禁止从 IDE 终端 Start-Process，会随终端死亡）。**状态查询**：`schtasks /query /tn ZephyrAlpha_CHHealthProbe /fo LIST`。日志：probe→`logs/ch_health_probe.log`，guard→`tmp/ch_health_probe_guard.log`。治本背景：8/2 探针无 guard 保活，死后 13h 监控空窗。
+
 > **reconcile_execution_log 自愈机制（#AUTO-ACK-HEALED-WARN + #RECONCILE-LOG-RETENTION，2026-07-23 治本）**：[`reconciliation_registry.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py) 的 `_log_reconcile_results` 在插入 `clean` 记录时，自动回填同 gate 前置已愈合 `critical_warn` 的 `acknowledged_at`（EXISTS 子查询，与查询时 NOT EXISTS 自愈语义对称），消除"已愈合但永不 ack"的审计假阳性；超 50K 记录自动清理 180 天前旧记录（fail-open）。**datetime→sqlite3 适配器（#SQLITE-DATETIME-ADAPTER，2026-07-24 治本）**：[`time_utils.py`](file:///d:/ZephyrAlpha/src/zephyr/shared/utils/time_utils.py) 模块级注册 `sqlite3.register_adapter(datetime, str)`（Python 3.12 default adapter deprecated 治本），`now_utc()` 传给 sqlite3 自动适配为空格分隔 str（与默认 `isoformat(" ")` 零行为变更）。显式 str 时间戳用 `now_utc_str()`。
 
 > **审查跳过条款真源引用铁律（2026-07-17 治本）**：审查报告 0.5 节跳过条款时，跳过理由 MUST 引用真源文件路径+稳定锚点（section/key/函数名）+原文摘录证明分类正确，禁止"仅 X 类，本次非 X 类"循环论证。合规格式示例：跳过 1.4-1.6（仅 C 类）——依据 [`trae_060` §3 事件驱动全自动](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml) "永久性系统/功能脚本"+ AGENTS.md 代码归类表，commit gate 属 B 类事件触发无状态函数，非 C 类。

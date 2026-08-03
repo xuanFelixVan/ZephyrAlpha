@@ -19,9 +19,9 @@
 封装 mootdx SDK，继承 IngestProviderBase。
 - bestip 自动选最快服务器
 - 单线程串行
-- 板块指数 K 线 + 成分股列表
-- **无板块分笔 Tick**（仅 K 线和成分股）
-- 当前能力：industry_class（板块分类）
+- 板块指数 K 线（880xxx，TCP 直连盘中实时）
+- **无板块分笔 Tick**（仅 K 线）
+- 当前能力：kline_sector（板块指数K线）
 
 关键设计：
 - connect() 用 Quotes.factory(market='std') 创建客户端，bestip 自动选择
@@ -47,7 +47,7 @@ from ..table_registry import get_registry
 log = logging.getLogger(__name__)
 
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
-_TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
+# _TBL_INDUSTRY_CLASS 已弃用（#ARCH-CH-INDUSTRY-CLASS-MIGRATE：tdx block() 语义错配，capability 移至 ifind）
 _TBL_KLINE_SECTOR = get_registry().table("market_sector_kline")
 _TBL_SECTOR_CONSTITUENT = get_registry().table("market_sector_constituent_880")
 
