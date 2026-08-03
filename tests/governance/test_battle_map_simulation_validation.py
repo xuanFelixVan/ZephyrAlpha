@@ -289,4 +289,20 @@ class TestBMSim07Translation:
             assert marker in indicators, f"indicators_zh 缺少 6 件套标记: {marker}"
 
     def test_sim07_indicators_mentions_mod_sim_003(self, translation_registry):
-        """indicators_zh 的 ⑤
+        """indicators_zh 的 ⑤代码 段提及 MOD-SIM-003 / risk_simulator.py。"""
+        t = translation_registry.get("BM-SIM-07", {})
+        indicators = t.get("indicators_zh", "")
+        assert "MOD-SIM-003" in indicators or "risk_simulator" in indicators, \
+            "indicators_zh ⑤代码段应提及 MOD-SIM-003 或 risk_simulator.py"
+
+
+# ── 4. 6 件套指标结构验证 ─────────────────────────────────────────────────────
+
+@pytest.mark.e2e
+class TestBMSim07Indicators:
+    """BM-SIM-07 DB indicators JSONB 结构验证。"""
+
+    def test_sim07_db_has_indicators(self, bm_reader):
+        """BM-SIM-07 在 DB 中有 indicators 字段（非空）。"""
+        # BattleMapReader 可能不直接暴露 indicators，通过翻译真源间接验证
+        # 这里通过 YAML
