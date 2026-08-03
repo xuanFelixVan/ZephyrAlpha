@@ -43,6 +43,7 @@ flow_stage_allowed_domains:
       - D_CROSS_ASSET         # 跨资产
       - D_INFRA_RUNTIME       # 运行时（基础设施）
       - D_SHARED              # 共享服务
+      - D_SIGQC               # 信号质量控制（因子/信号质量门禁，2026-08-03 补入）
     forbidden_rationale:
       D_PF_CORE: "组合核心属仓位管理域，选股阶段不应承载组合决策"
       D_PF_ALLOC: "组合分配属仓位管理域，选股阶段不应承载仓位分配"
@@ -113,6 +114,10 @@ flow_stage_allowed_domains:
       - D_TRADING               # 交易运营（清算/公司行为）
       - D_FACTOR                # 因子（IC 衰减反馈）
       - D_FEEDBACK_LOOP         # 反馈循环引擎
+      - D_FBL_DETECTORS         # 反馈检测器（异常/衰减检测，2026-08-03 补入）
+      - D_FBL_DIAGNOSERS        # 反馈诊断器（根因诊断，2026-08-03 补入）
+      - D_FBL_VERIFICATION      # 反馈验证（修复验证，2026-08-03 补入）
+      - D_OPS                   # 反馈循环运营（反馈闭环运营，2026-08-03 补入）
     forbidden_rationale:
       D_EX_CORE: "执行核心属执行阶段，对账是事后"
       D_SELL_DECISION: "卖出决策属卖出阶段"
@@ -128,6 +133,9 @@ flow_stage_allowed_domains:
       - D_ML_TRAIN             # 训练（研究产出喂训练）
       - D_KNOWLEDGE            # 知识图谱（研究发现沉淀）
       - D_INTELLIGENCE         # D-RESEARCH 候选模块在候选库中注册于 D_INTELLIGENCE 域（2026-08-03 全生命周期扩展）
+      - D_DATA_ENG             # 数据工程（研究数据 ETL/管线，2026-08-03 补入）
+      - D_DATA_GOV             # 数据治理（研究数据质量/血缘/目录，2026-08-03 补入）
+      - D_DATA_SEC             # 数据安全与契约（研究数据安全，2026-08-03 补入）
     forbidden_rationale:
       D_EX_CORE: "执行属执行阶段，研究是盘后离线"
       D_SELL_DECISION: "卖出属卖出阶段"
@@ -156,6 +164,7 @@ flow_stage_allowed_domains:
       - D_SIMULATION           # 仿真（回测与仿真联动）
       - D_RISK                 # 风控（实盘同构铁律：回测必须串入 D_RISK）
       - D_POSITION             # 仓位（实盘同构铁律：回测必须串入 D_POSITION）
+      - D_EXEC_SIM             # 执行仿真（撮合/滑点/冲击成本仿真，2026-08-03 补入）
     forbidden_rationale:
       D_EX_CORE: "执行属执行阶段，回测是离线验证"
       D_SELL_DECISION: "卖出属卖出阶段"
@@ -167,6 +176,7 @@ flow_stage_allowed_domains:
       - D_SIMULATION           # 仿真核心
       - D_BACKTEST             # 回测（仿真与回测联动）
       - D_RISK                 # 风控（压力测试与风控联动）
+      - D_DIGITAL_TWIN         # 数字孪生（市场/策略数字孪生，2026-08-03 补入）
     forbidden_rationale:
       D_EX_CORE: "执行属执行阶段，仿真是离线"
       D_SELL_DECISION: "卖出属卖出阶段"
