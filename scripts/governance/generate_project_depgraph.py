@@ -3352,7 +3352,9 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 替代 Python 端 load_production_state_from_db + apply_production_metadata_protection
         # 语义：新值非空→覆盖 metadata；新值空→保留 metadata 旧值（与 Python 保护一致）
         _now_iso = datetime.now().isoformat()
+        _sp_nm = "sp_nodes_meta_upsert"
         try:
+            cursor.execute(f"SAVEPOINT {_sp_nm}")
             cursor.execute(
                 """
                 INSERT INTO nodes_metadata (
@@ -3388,11 +3390,21 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                 (_now_iso,),
             )
             _nodes_meta_saved = cursor.rowcount
+            cursor.execute(f"RELEASE SAVEPOINT {_sp_nm}")
             print(f"[DEPGRAPH-DB] Stage 2: UPSERT {_nodes_meta_saved} 条 nodes_metadata（保护字段已保存）")
         except Exception as e:
+            # 治本 #ARCH-DEPGRAPH-OPS-TXN-ABORTED: UPSERT 失败时 ROLLBACK TO SAVEPOINT
+            # 恢复事务状态，防止后续 SQL InFailedSqlTransaction
+            try:
+                cursor.execute(f"ROLLBACK TO SAVEPOINT {_sp_nm}")
+            except Exception:
+                conn.rollback()
+                cursor = conn.cursor()
             print(f"[DEPGRAPH-DB] WARNING: nodes_metadata UPSERT 失败（表可能未创建）: {e}")
 
+        _sp_em = "sp_edges_meta_upsert"
         try:
+            cursor.execute(f"SAVEPOINT {_sp_em}")
             cursor.execute(
                 """
                 INSERT INTO edges_metadata (
@@ -3429,8 +3441,15 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                 (_now_iso,),
             )
             _edges_meta_saved = cursor.rowcount
+            cursor.execute(f"RELEASE SAVEPOINT {_sp_em}")
             print(f"[DEPGRAPH-DB] Stage 2: UPSERT {_edges_meta_saved} 条 edges_metadata（保护字段已保存）")
         except Exception as e:
+            # 治本 #ARCH-DEPGRAPH-OPS-TXN-ABORTED: UPSERT 失败时 ROLLBACK TO SAVEPOINT
+            try:
+                cursor.execute(f"ROLLBACK TO SAVEPOINT {_sp_em}")
+            except Exception:
+                conn.rollback()
+                cursor = conn.cursor()
             print(f"[DEPGRAPH-DB] WARNING: edges_metadata UPSERT 失败（表可能未创建）: {e}")
 
         # 裁定#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION:
