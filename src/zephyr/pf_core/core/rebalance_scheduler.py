@@ -46,12 +46,15 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 from zephyr.pf_core.core.portfolio_optimizer import PortfolioOptimizer
 from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.shared.contracts.target_portfolio import TargetPortfolio
 from zephyr.shared.foundation.errors import ZephyrBaseError
+
+if TYPE_CHECKING:
+    import numpy as np
 
 __all__ = [
     "RebalanceTriggerSource",
@@ -245,7 +248,7 @@ class RebalanceScheduler:
         now: datetime | None = None,
         risk_alert: bool = False,
         event_trigger: bool = False,
-        covariance: Any = None,
+        covariance: np.ndarray | None = None,
         risk_limits: RiskLimits | None = None,
         strategy_id: str = "",
         portfolio_id: str = "",
@@ -388,7 +391,7 @@ class RebalanceScheduler:
     def _reoptimize(
         self,
         target_weights: dict[str, float],
-        covariance: Any,
+        covariance: np.ndarray,
         risk_limits: RiskLimits,
         assets: list[str],
         current_weights: dict[str, float],

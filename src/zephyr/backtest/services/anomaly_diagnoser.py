@@ -31,7 +31,6 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
 
 from zephyr.backtest.services.data_quality_checker import Severity
 from zephyr.shared.foundation.errors import ZephyrBaseError
@@ -320,7 +319,7 @@ class AnomalyDiagnoser:
         )
 
 
-def _to_float(value: Any) -> float | None:
+def _to_float(value: object) -> float | None:
     """安全转 float, 失败返回 None。"""
     if value is None:
         return None
@@ -330,7 +329,7 @@ def _to_float(value: Any) -> float | None:
         return None
 
 
-def _to_int(value: Any) -> int | None:
+def _to_int(value: object) -> int | None:
     """安全转 int, 失败返回 None。"""
     if value is None:
         return None

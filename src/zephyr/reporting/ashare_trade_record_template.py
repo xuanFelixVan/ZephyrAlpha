@@ -29,7 +29,6 @@ import logging
 import re
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
-from typing import Any
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -95,7 +94,7 @@ class TradeRecordEntry:
 # ── 校验工具 ──
 
 
-def _to_decimal(value: Any, field_name: str) -> Decimal:
+def _to_decimal(value: object, field_name: str) -> Decimal:
     """将值转为 Decimal, 失败抛异常。"""
     if isinstance(value, Decimal):
         return value
@@ -115,7 +114,7 @@ def _to_decimal(value: Any, field_name: str) -> Decimal:
     )
 
 
-def _require_field(entry: dict, field: str) -> Any:
+def _require_field(entry: dict, field: str) -> object:
     """提取必填字段, 缺失抛异常。"""
     if field not in entry:
         raise InvalidTradeRecordError(
@@ -271,7 +270,7 @@ class AShareTradeRecordTemplate:
         strategy_id = _require_field(entry, "strategy_id")
         if not isinstance(strategy_id, str) or not strategy_id.strip():
             raise InvalidTradeRecordError(
-                f"strategy_id 不能为空",
+                "strategy_id 不能为空",
                 details={"field": "strategy_id"},
             )
 
@@ -279,7 +278,7 @@ class AShareTradeRecordTemplate:
         account_id = _require_field(entry, "account_id")
         if not isinstance(account_id, str) or not account_id.strip():
             raise InvalidTradeRecordError(
-                f"account_id 不能为空",
+                "account_id 不能为空",
                 details={"field": "account_id"},
             )
 

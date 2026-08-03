@@ -51,7 +51,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Final
+from typing import Final
 
 from zephyr.ex_core.audit_journal.auditor import (
     AuditSource,
@@ -78,8 +78,8 @@ except ImportError:
     class BrokerInterface(Protocol):  # type: ignore[no-redef]
         def submit_order(self, order: Order) -> str: ...
         def cancel_order(self, broker_order_id: str) -> bool: ...
-        def register_fill_callback(self, callback: Any) -> None: ...
-        def get_positions(self) -> Any: ...
+        def register_fill_callback(self, callback: Callable[[Fill], None]) -> None: ...
+        def get_positions(self) -> object: ...
         def connect(self) -> None: ...
         def disconnect(self) -> None: ...
 
@@ -431,7 +431,7 @@ class OrderExecutionSaga:
             )
             return ctx.to_result()
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             ctx.error = f"saga exception: {exc}"
             _logger.error("[Saga %s] EXCEPTION: %s", ctx.saga_id[:8], exc, exc_info=True)
             # 尝试补偿
@@ -490,7 +490,7 @@ class OrderExecutionSaga:
             )
             return True
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             ctx.state = SagaState.RISK_REJECTED
             ctx.error = f"risk check error: {exc}"
             return False
@@ -512,7 +512,7 @@ class OrderExecutionSaga:
             ctx.state = SagaState.SIGNAL_CONFIRMED
             ctx.mark_step("signal_confirm")
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             ctx.state = SagaState.SIGNAL_INVALID
             ctx.error = f"signal confirm error: {exc}"
             return False
@@ -553,7 +553,7 @@ class OrderExecutionSaga:
             )
             return True
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             ctx.state = SagaState.ORDER_REJECTED
             ctx.error = f"order submit failed: {exc}"
             self._audit.log(
@@ -599,7 +599,7 @@ class OrderExecutionSaga:
                  "commission": str(ctx.fill.commission)},
             )
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             ctx.error = f"position update failed: {exc}"
             # 补偿: 持仓回滚
             self._compensate_position(ctx)
@@ -613,7 +613,7 @@ class OrderExecutionSaga:
                 ctx.order.status = OrderStatus.FILLED
                 ctx.order.updated_at = datetime.now(UTC)
             ctx.mark_step("report")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             _logger.warning("[Saga %s] report step failed (best-effort): %s", ctx.saga_id[:8], exc)
 
     # ── 补偿操作 ──
@@ -644,7 +644,7 @@ class OrderExecutionSaga:
                 _logger.info(
                     "[Saga %s] skip compensate: order status=%s", ctx.saga_id[:8], ctx.order.status
                 )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             _logger.error("[Saga %s] compensate_order failed: %s", ctx.saga_id[:8], exc, exc_info=True)
 
     def _compensate_position(self, ctx: _SagaContext) -> None:
@@ -675,7 +675,7 @@ class OrderExecutionSaga:
                 {"reason": "position_rollback", "original_fill": ctx.fill.fill_id},
             )
             _logger.info("[Saga %s] COMPENSATED: position rolled back", ctx.saga_id[:8])
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             _logger.error("[Saga %s] compensate_position failed: %s", ctx.saga_id[:8], exc, exc_info=True)
 
     def _audit_timeout(self, ctx: _SagaContext) -> None:

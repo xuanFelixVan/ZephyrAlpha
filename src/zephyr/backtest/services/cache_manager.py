@@ -214,7 +214,7 @@ class BacktestCacheManager:
     # ------------------------------------------------------------------
     # 缓存读写
     # ------------------------------------------------------------------
-    def get(self, key: CacheKey) -> Any | None:
+    def get(self, key: CacheKey) -> object | None:
         """获取缓存值。命中返回值, 未命中返回 None。
 
         Args:
@@ -243,7 +243,7 @@ class BacktestCacheManager:
             _logger.debug("缓存命中: %s (hit_count=%d)", key, updated.hit_count)
             return entry.value
 
-    def put(self, key: CacheKey, value: Any) -> bool:
+    def put(self, key: CacheKey, value: object) -> bool:
         """存入缓存。如果键已存在则覆盖。
 
         Args:

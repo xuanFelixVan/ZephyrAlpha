@@ -44,7 +44,6 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -157,7 +156,7 @@ def _compute_record_hash(
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
-def _require(value: Any, field_name: str) -> Any:
+def _require(value: object, field_name: str) -> object:
     """提取必填字段, 缺失或空抛异常。"""
     if value is None:
         raise InvalidPublishInputError(

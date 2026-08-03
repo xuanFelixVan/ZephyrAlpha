@@ -311,7 +311,7 @@ class StrategySimulator:
             )
             try:
                 signals = list(strategy.signal_fn(ctx))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 logger.warning("signal_fn raised at bar %d: %s", i, e)
                 signals = []
             signal_log.extend(signals)
@@ -393,7 +393,7 @@ class StrategySimulator:
 
     @staticmethod
     def _bar_prices(
-        bars: list[tuple[str, pd.DataFrame]], ts: Any, col: str
+        bars: list[tuple[str, pd.DataFrame]], ts: pd.Timestamp, col: str
     ) -> dict[str, float]:
         """取时间戳 ts 处各标的的指定列价格。"""
         prices: dict[str, float] = {}
@@ -406,7 +406,7 @@ class StrategySimulator:
     def _mark_positions(
         holdings: dict[str, float],
         bars: list[tuple[str, pd.DataFrame]],
-        ts: Any,
+        ts: pd.Timestamp,
     ) -> float:
         """用 ts 处收盘价标记持仓市值。"""
         close = StrategySimulator._bar_prices(bars, ts, "close")
@@ -421,7 +421,7 @@ class StrategySimulator:
         cash: float,
         total_equity: float,
         open_prices: dict[str, float],
-        ts: Any,
+        ts: pd.Timestamp,
     ) -> tuple[list[SimulatedTrade], float]:
         """执行单条信号, 返回 (trades, new_cash)。原地修改 holdings。"""
         cfg = self._config

@@ -17,9 +17,9 @@
 #   - buy_flow: D_SELL_DECISION(1) + D_FRONTEND(1)
 #   - stock_selection: D_PF_CORE(3) + D_PF_ALLOC(2)
 
-policy_version: "1.0.0"
+policy_version: "1.0.1"
 policy_status: active
-last_updated: "2026-08-02"
+last_updated: "2026-08-03"
 decision_basis: "battle_map_positioning.md §3.1 L0-L6 分层架构 + §3.6 作战阶段与架构层对应关系"
 
 # flow_stage → 允许的 domain_id 列表
@@ -191,6 +191,7 @@ flow_stage_allowed_domains:
       - D_REPORTING            # 报告（盘后审计归因）
       - D_POSITION             # 仓位（仓位受风控约束）
       - D_TRADING              # 交易运营（风控联动清算）
+      - D_SECURITY             # 安全（MOD-INF-018 安全基线属风控管控，2026-08-03 补入）
     forbidden_rationale:
       D_FACTOR: "因子属选股阶段，风控不直接算因子"
       D_SIGNAL: "信号属选股阶段"

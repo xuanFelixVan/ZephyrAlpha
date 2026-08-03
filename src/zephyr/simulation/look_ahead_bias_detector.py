@@ -31,9 +31,12 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 _logger = logging.getLogger(__name__)
 
@@ -187,7 +190,7 @@ class LookAheadBiasDetector:
     # ------------------------------------------------------------------
     def scan(
         self,
-        df: Any,
+        df: pd.DataFrame,
         feature_columns: list[str] | None = None,
         label_column: str | None = None,
         timestamp_column: str | None = None,
@@ -318,7 +321,7 @@ class LookAheadBiasDetector:
                         break
         return issues
 
-    def _detect_trailing_nan(self, df: Any, col: str) -> BiasIssue | None:
+    def _detect_trailing_nan(self, df: pd.DataFrame, col: str) -> BiasIssue | None:
         """检测尾部 NaN 模式(前瞻窗口信号)。
 
         NaN 全部集中在序列末尾(前部干净) → shift(-K) 类前瞻窗口。
@@ -351,7 +354,7 @@ class LookAheadBiasDetector:
         )
 
     def _check_timestamp_monotonic(
-        self, df: Any, timestamp_column: str
+        self, df: pd.DataFrame, timestamp_column: str
     ) -> BiasIssue | None:
         """检查时间戳单调递增(含重复检测)。"""
         ts = df[timestamp_column]

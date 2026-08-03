@@ -34,7 +34,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -389,7 +388,7 @@ class BacktestReportGenerator:
     # 格式化辅助
     # ------------------------------------------------------------------
     @staticmethod
-    def _fmt_percent(value: Any) -> str:
+    def _fmt_percent(value: object) -> str:
         """格式化为百分比。"""
         if value is None:
             return "N/A"
@@ -399,7 +398,7 @@ class BacktestReportGenerator:
             return "N/A"
 
     @staticmethod
-    def _fmt_float(value: Any) -> str:
+    def _fmt_float(value: object) -> str:
         """格式化为浮点数。"""
         if value is None:
             return "N/A"
@@ -409,7 +408,7 @@ class BacktestReportGenerator:
             return "N/A"
 
     @staticmethod
-    def _fmt_int(value: Any) -> str:
+    def _fmt_int(value: object) -> str:
         """格式化为整数。"""
         if value is None:
             return "N/A"
@@ -419,7 +418,7 @@ class BacktestReportGenerator:
             return "N/A"
 
     @staticmethod
-    def _fmt_datetime(value: Any) -> str:
+    def _fmt_datetime(value: object) -> str:
         """格式化日期时间。"""
         if value is None:
             return "N/A"
