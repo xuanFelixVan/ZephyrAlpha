@@ -11212,3 +11212,30 @@ entries:
   related_adjudication: '模型文件生命周期三阶段治本（filter-repo/gitignore/download_models.py）'
   created: '2026-08-03'
   last_updated: '2026-08-03'
+
+# --- #ARCH-GATE-COLLISION-SAME-MODULE: MODULE-ID-CONSISTENCY 同模块误碰撞治本（2026-08-03）---
+- issue_id: '#ARCH-GATE-COLLISION-SAME-MODULE'
+  title: MODULE-ID-CONSISTENCY collision check 同模块误碰撞治本——新增 _candidate_same_blueprint 同 [BLUEPRINT] 豁免
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-03 治本。问题：MODULE-ID-CONSISTENCY gate 的 _check_cross_file_collision 不区分
+    同模块/跨模块——MOD-GATE_ENGINE 下 20+ gate 文件（src/zephyr/gov_enforcement/commit_gates/
+    + scripts/governance/d7_code/ + scripts/governance/generators/）均声明 module_id=MOD-GATE_ENGINE
+    且引用 [BLUEPRINT] MOD-GATE_ENGINE，属于同模块多文件共享 module_id 的预期行为。
+    但 collision check git grep 全仓检测相同 module_id 即判碰撞，阻断任何同模块新文件入库。
+    根因：collision check 只比对 [A_*] module_id 字面值，不验证候选文件是否属同模块（同 [BLUEPRINT]）。
+    治本：新增 _candidate_same_blueprint() ——提取新文件 [BLUEPRINT] id，候选引用相同 [BLUEPRINT]
+    则属同模块（非碰撞），仅引用不同 [BLUEPRINT] 才算真碰撞（跨模块 DRY 违规）。
+    向后兼容：无 [BLUEPRINT] 文件保守视为碰撞（bp_id=None → 不豁免）。
+    纯治理工具治本（governance），无价值判断，AI 直接 decided（铁律#9）。
+  fix_phase: |-
+    已执行（commit 41781ffd41）：
+    - 新增 _RE_BLUEPRINT_REF 正则 + _candidate_same_blueprint() helper
+    - _check_cross_file_collision 提取新文件 [BLUEPRINT] id，排除同 blueprint 候选
+    - 新增 2 单测：test_same_blueprint_same_module_id_not_collision + test_different_blueprint_same_module_id_collision
+    - 47 单测全通过（含 14 module_id_consistency + 12 derived_file_deletion + 18 protected_paths）
+  status: decided
+  related_adjudication: 'MODULE-ID-CONSISTENCY collision check 同模块豁免（同 [BLUEPRINT] = 同模块）'
+  created: '2026-08-03'
+  last_updated: '2026-08-03'
