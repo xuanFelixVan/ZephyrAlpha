@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CacheCorruptionError
 # [TESTS] tests/test_gate_cache.py
+# [A_module] module_id=MOD-GOV_GATE_CACHE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: while True用于文件分块读取(f.read+break),非daemon常驻服务;一次性CLI工具
 

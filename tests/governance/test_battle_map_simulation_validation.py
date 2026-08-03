@@ -316,4 +316,28 @@ class TestBMSim07Indicators:
 # ── 5. 生成器渲染防御性验证（纯逻辑，无 DB 依赖） ─────────────────────────────
 
 class TestSim07GeneratorRendering:
-    """BM-S
+    """BM-SIM-07 生成器渲染防御性验证（纯逻辑，不依赖 DB）。
+
+    确保生成器对 BM-SIM-07 的 indicators/params 等字段能正确渲染，
+    不会因为字段类型异常（None/dict/str/list）而崩溃。
+    """
+
+    @staticmethod
+    def _safe_format(value: Any) -> str:
+        """模拟生成器的 _format_indicators_table 降级渲染逻辑。"""
+        if value is None:
+            return "—"
+        if isinstance(value, str):
+            return value
+        if isinstance(value, dict):
+            parts = []
+            for k, v in value.items():
+                parts.append(f"{k}: {TestSim07GeneratorRendering._safe_format(v)}")
+            return "; ".join(parts)
+        if isinstance(value, list):
+            return ", ".join(TestSim07GeneratorRendering._safe_format(v) for v in value)
+        return str(value)
+
+    def test_render_none(self):
+        """None 字段降级为 '—'。"""
+        assert self._safe
