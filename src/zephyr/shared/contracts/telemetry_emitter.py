@@ -22,7 +22,7 @@ from typing import Dict
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -30,7 +30,7 @@ ZephyrAlpha — shared/contracts/telemetry_emitter.py
 
 CTR-P1-013: TelemetryEmitter / 遥测发射器
 
-遥测 -> 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。
+Telemetry → 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-013
 Version: 1.0
@@ -62,6 +62,7 @@ class TelemetryEmitter:
     trace_id: str = ""
 
 # ==== END CODGEN:CTR-P1-013 ====
+
 
 
 

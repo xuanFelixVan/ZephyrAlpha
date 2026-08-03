@@ -231,6 +231,12 @@ def op_add_step(
                     f"不一致（BM-INV-006 防跨阶段嵌套）"
                 )
 
+        # BM-INV-006: depth 上限校验（根→子→孙→曾孙，上限3）
+        if depth is not None and depth > 3:
+            raise ValueError(
+                f"depth={depth} > 3（上限根→子→孙→曾孙，BM-INV-006）"
+            )
+
         if dry_run:
             print(f"[DRY-RUN] INSERT step {step_id} ({step_name})")
         else:

@@ -21,7 +21,7 @@ from typing import Optional
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/factor_monitor_report.py
 
 CTR-P1-001: FactorMonitorReport / 因子有效性监控报告
 
-D_FACTOR -> D_REPORTING 因子有效性监控报告。定期评估已注册因子的预测有效性。
+Factor → Analytics 因子有效性监控报告。定期评估已注册因子的预测有效性。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-001
 Version: 1.0
@@ -57,6 +57,7 @@ class FactorMonitorReport:
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-001 ====
+
 
 
 

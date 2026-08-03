@@ -26,7 +26,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -34,7 +34,7 @@ ZephyrAlpha — shared/contracts/experiment_result.py
 
 CTR-P1-014: ExperimentResult / 实验结论
 
-实验 -> D_RESEARCH/D_ML_TRAIN 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。
+Experimentation → Research/ML Platform 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-014
 Version: 1.0
@@ -43,7 +43,7 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    当 实验 的 Scout Agent 完成一个实验周期后，MUST 产出 ExperimentResult。 每个 ExperimentResult 代表一次完整的对照实验结论——包含实验设计、执行过程、结果指标和可操作建议。 confidence 用于衡量结论的统计可靠性：>0.9 = 高度可信，0.7-0.9 = 中等，<0.7 = 不发布。 D_RESEARCH 研究创新层读取历史实验结论指导研究方向。D_ML_TRAIN ML Platform 读取实验结论调整模型策略。
+    当 Experimentation 的 Scout Agent 完成一个实验周期后，MUST 产出 ExperimentResult。 每个 ExperimentResult 代表一次完整的对照实验结论——包含实验设计、执行过程、结果指标和可操作建议。 confidence 用于衡量结论的统计可靠性：>0.9 = 高度可信，0.7-0.9 = 中等，<0.7 = 不发布。 Research 研究创新层读取历史实验结论指导研究方向。ML Platform 读取实验结论调整模型策略。
 """
 
 @dataclass(frozen=True)
@@ -71,6 +71,7 @@ class ExperimentResult:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-P1-014 ====
+
 
 
 

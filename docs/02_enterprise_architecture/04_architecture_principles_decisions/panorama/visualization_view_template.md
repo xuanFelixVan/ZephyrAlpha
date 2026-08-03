@@ -245,7 +245,7 @@ flowchart TD
 成熟度放最后、⛔受限原因放最前的顺序，便于快速识别环节身份：
 
 ```
-    <节点ID>["⛔ 受限原因（仅设计态+gate_reason非空）<br/>【step_id 中文名】<br/>大白话简介<br/>买入阶段 / buy_flow<br/>(成熟度 / maturity)<br/>标记（⚠无锚点 / 🟡候选承载，可选）<br/>【English Name】"]
+    <节点ID>["⛔ 受限原因（仅设计态+gate_reason非空）<br/>【step_id 中文名】<br/>大白话简介<br/>(成熟度 / maturity)<br/>标记（⚠无锚点 / 🟡候选承载，可选）<br/>【English Name】"]
 ```
 
 **行顺序铁律**（从上到下）：
@@ -255,16 +255,19 @@ flowchart TD
 | ① | `⛔ 受限原因` | 可选 | 仅设计态+`gate_reason`非空时显示，**放最前面** |
 | ② | `【step_id 中文名】` | 必填 | step_id + 中文名，用【】包裹 |
 | ③ | 大白话简介 | 必填 | 日常语言说"做什么" |
-| ④ | `买入阶段 / buy_flow` | 必填 | 环节所属 flow_stage（选股/买入/卖出/仓位/执行/对账），一眼看出阶段归属 |
-| ⑤ | `(成熟度 / maturity)` | 必填 | **放最后**（与域文档"成熟度在最前"相反） |
-| ⑥ | 标记 | 可选 | `⚠无锚点` / `🟡候选承载` |
-| ⑦ | `【English Name】` | 可选 | 英文名，用【】包裹，**放最后** |
+| ④ | `(成熟度 / maturity)` | 必填 | **放最后**（与域文档"成熟度在最前"相反） |
+| ⑤ | 标记 | 可选 | `⚠无锚点` / `🟡候选承载` |
+| ⑥ | `【English Name】` | 可选 | 英文名，用【】包裹，**放最后** |
+
+> **阶段标识说明**：节点标签中**不显示**环节所属 flow_stage（如"买入阶段 / buy_flow"），
+> 因为文档标题已标明阶段（如 `battle_map_02_buy_flow.md`），图内每个节点都属同一阶段，
+> 重复显示无信息量。阶段信息仅在详情表格中保留。
 
 **完整示例**：
 
 ```
-    BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>买入阶段 / buy_flow<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
-    BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓...<br/>买入阶段 / buy_flow<br/>(设计态 / design)<br/>【Intraday T+0 Arbitrage】"]
+    BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
+    BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓...<br/>(设计态 / design)<br/>【Intraday T+0 Arbitrage】"]
 ```
 
 > **【】括号说明**：中英文名用全角【】包裹，视觉上突出环节身份。Mermaid 节点标签用双引号
@@ -498,7 +501,7 @@ label = "<br/>".join(_wrap_label_text(p) for p in parts)
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | `parent_step_id` | TEXT FK | 父环节 step_id，NULL=根环节 |
-| `depth` | INTEGER | 层级深度，0=根 / 1=子 / 2=孙（上限2，防 subgraph 渲染过深） |
+| `depth` | INTEGER | 层级深度，0=根 / 1=子 / 2=孙 / 3=曾孙（上限3，V0.6.0 扩展） |
 
 #### 4.12.2 Mermaid 渲染规则
 
@@ -525,9 +528,9 @@ label = "<br/>".join(_wrap_label_text(p) for p in parts)
 
 ```
     subgraph sg_BM_BUY_02 ["四轨融合"]
-        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号...<br/>买入阶段 / buy_flow<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
-        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动买入预案...<br/>买入阶段 / buy_flow<br/>(生产态 / production)<br/>【Logic-Driven Track】"]
-        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery实时从数据中发现机会...<br/>买入阶段 / buy_flow<br/>(生产态 / production)<br/>【Data-Driven Track (AI Discovery)】"]
+        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号...<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
+        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动买入预案...<br/>(生产态 / production)<br/>【Logic-Driven Track】"]
+        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery实时从数据中发现机会...<br/>(生产态 / production)<br/>【Data-Driven Track (AI Discovery)】"]
         BM_BUY_02 -.->|嵌套| BM_BUY_02_A
         BM_BUY_02 -.->|嵌套| BM_BUY_02_B
     end
@@ -545,7 +548,7 @@ label = "<br/>".join(_wrap_label_text(p) for p in parts)
 |--------|------|--------|
 | 父环节存在 | `parent_step_id` 必须指向已存在的 step | `apply_battle_map.py` 写入时校验 |
 | 同阶段嵌套 | 子环节 `flow_stage` 必须与父一致（防跨阶段嵌套） | `apply_battle_map.py` 写入时校验 |
-| depth 上限 | `depth ≤ 2`（根→子→孙，防 subgraph 渲染过深） | `align_battle_map.py` 检测 |
+| depth 上限 | `depth ≤ 3`（根→子→孙→曾孙） | `align_battle_map.py` 检测 |
 | 无环 | parent 链不能成环（A→B→A） | `align_battle_map.py` 检测 |
 | depth 一致 | `depth` 值与 parent 链长度一致 | `align_battle_map.py` 检测 |
 
@@ -947,8 +950,8 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 
 ```
     subgraph sg_BM_BUY_02 ["四轨融合"]
-        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号...<br/>买入阶段 / buy_flow<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
-        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动买入预案...<br/>买入阶段 / buy_flow<br/>(生产态 / production)<br/>【Logic-Driven Track】"]
+        BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号...<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
+        BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动买入预案...<br/>(生产态 / production)<br/>【Logic-Driven Track】"]
         BM_BUY_02 -.->|嵌套| BM_BUY_02_A
     end
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02

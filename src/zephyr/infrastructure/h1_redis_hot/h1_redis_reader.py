@@ -148,6 +148,48 @@ class H1RedisReader:
 
         return result
 
+    def get_feature_updated_at(self, symbol: str) -> float | None:
+        """读取标的因子截面的 updated_at 时间戳（CP-02 时效判定）。
+
+        读取 feature:{symbol} Hash 的 _updated_at Field（由 H1RedisWriter 写入）。
+        消费者用 time.time() - updated_at 判定数据新鲜度，超阈值则标记 expired
+        触发 CP-02 降级（上一批次兜底 + 限制开仓）。
+
+        典型用法::
+
+            updated_at = reader.get_feature_updated_at("000001.SZ")
+            if updated_at is not None and (time.time() - updated_at) > 10.0:
+                # 数据已过期（>10s 未刷新），标记 expired 触发降级
+                ...
+
+        Args:
+            symbol: 标的代码（如 "000001.SZ"）。
+
+        Returns:
+            updated_at epoch 秒（float）；无数据/未写入返回 None。
+
+        Raises:
+            H1RedisUnavailable: Redis 连接失败或超时——调用方降级（CP-02）。
+        """
+        from zephyr.infrastructure.h1_redis_hot.h1_redis_schema import (
+            feature_key,
+            feature_updated_at_field,
+        )
+
+        try:
+            key = feature_key(symbol)
+            raw = self.conn.hget(key, feature_updated_at_field())
+        except Exception as exc:
+            logger.error(
+                "H1RedisReader get_feature_updated_at 失败: symbol=%s, error=%s",
+                symbol, exc,
+            )
+            raise H1RedisUnavailable(
+                f"Redis updated_at 读取失败（symbol={symbol}）: {exc}"
+            ) from exc
+
+        return _parse_float(raw)
+
     def get_position(self, symbol: str) -> dict[str, Any]:
         """读取当前持仓，<5ms（蓝图 §4.2）。
 

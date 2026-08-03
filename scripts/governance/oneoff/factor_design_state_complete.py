@@ -1,6 +1,6 @@
 # [BLUEPRINT] SH-GOV-001 | scripts/governance/oneoff/
 # [MODULE] scripts.governance.oneoff.factor_design_state_complete
-# [DOMAIN] D_GOV
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] apply_depgraph.py; zephyr.infrastructure
 # [CONSUMERS]
 # [STARTUP] manual

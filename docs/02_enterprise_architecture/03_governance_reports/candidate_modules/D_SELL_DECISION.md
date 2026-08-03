@@ -19,33 +19,33 @@ ttl: permanent
 
 | ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
-| CAND-HARVEST-0057 | Position Triage持仓分级器 | Position Triage持仓分级器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0058 | Sell Signal Collector卖出信号收集器 | Sell Signal Collector卖出信号收集器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0059 | Sell Signal Scorer卖出信号评分器 | Sell Signal Scorer卖出信号评分器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0060 | Breakout Failure Detector突破成败检测器 | Breakout Failure Detector突破成败检测器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0061 | Take Profit Strategy Family止盈策略族 | Take Profit Strategy Family止盈策略族（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0062 | Stop Loss Strategy Family止损策略族 | Stop Loss Strategy Family止损策略族（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0063 | Replacement & Rebalance Sell置换与再平衡卖出 | Replacement & Rebalance Sell置换与再平衡卖出（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0064 | Sell Signal Fusion Engine卖出信号融合引擎 | Sell Signal Fusion Engine卖出信号融合引擎（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0065 | Buy-Sell Conflict Arbitrator买卖冲突仲裁器 | Buy-Sell Conflict Arbitrator买卖冲突仲裁器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0066 | Sell Urgency Scorer卖出紧迫度评分器 | Sell Urgency Scorer卖出紧迫度评分器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0067 | Sell Signal Accuracy Monitor卖出信号准确率监控 | Sell Signal Accuracy Monitor卖出信号准确率监控（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0068 | Sell Strategy A/B Tester卖出策略A/B测试 | Sell Strategy A/B Tester卖出策略A/B测试（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0069 | Sell Execution Quality Tracker卖出执行质量追踪 | Sell Execution Quality Tracker卖出执行质量追踪（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0070 | Exit Scenario Planner卖出情景预案器 | Exit Scenario Planner卖出情景预案器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0071 | Strategy-Specific Stop Framework策略类型→止损范式映射 | Strategy-Specific Stop Framework策略类型→止损范式映射（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0072 | Stop-Hunting Protector止损猎杀防护器 | Stop-Hunting Protector止损猎杀防护器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0073 | Stop Option Pricer止损期权定价器 | Stop Option Pricer止损期权定价器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0074 | Scaling Out Architect分批退出架构师 | Scaling Out Architect分批退出架构师（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0075 | T-Trade Coordinator做T决策协调器 | T-Trade Coordinator做T决策协调器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0889 | Stop-Loss Decision Engine 止损决策引擎 | Stop-Loss Decision Engine 止损决策引擎（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0890 | Take-Profit Decision Engine 止盈决策引擎 | Take-Profit Decision Engine 止盈决策引擎（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0891 | Signal Reversal Detector 信号反转检测器 | Signal Reversal Detector 信号反转检测器（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0892 | Risk-Based Sell Trigger 风险驱动卖出触发器 | Risk-Based Sell Trigger 风险驱动卖出触发器（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0893 | Opportunity Cost Analyzer 机会成本分析器 | Opportunity Cost Analyzer 机会成本分析器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0894 | Sell Execution Optimizer 卖出执行优化器 | Sell Execution Optimizer 卖出执行优化器（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4884 | StopLossTriggerReversalDetector 猎杀止损保护器 | StopLossTriggerReversalDetector 猎杀止损保护器（来源:01-跨域交叉点与因果链.md, likely_planned） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-5081 | Average True Range ATR动态止损 | Average True Range ATR动态止损（来源:31-D-SELL-DECISION-卖出决策域.md, likely_new） | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0057 | Position Triage持仓分级器 | / SELL-00 / Position Triage持仓分级器 / ✅ 能建 / / Watch/Monitor/Hold三级分级，动态升降级 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0058 | Sell Signal Collector卖出信号收集器 | / SELL-01 / Sell Signal Collector卖出信号收集器 / ✅ 能建 / / 汇聚8类卖出信号，输出标准化SellSignal列表 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0059 | Sell Signal Scorer卖出信号评分器 | / SELL-02 / Sell Signal Scorer卖出信号评分器 / ✅ 能建 / / 每类信号独立评分(0~1)+动态权重+多时间框架共振 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0060 | Breakout Failure Detector突破成败检测器 | / SELL-03 / Breakout Failure Detector突破成败检测器 / ✅ 能建 / / 消费L1因子层压力位判定突破成败，第K次失败(K>=3)强制清仓 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0061 | Take Profit Strategy Family止盈策略族 | / SELL-04 / Take Profit Strategy Family止盈策略族 / ✅ 能建 / / 固定/移动/分批/时间加权止盈，密度感知增强 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0062 | Stop Loss Strategy Family止损策略族 | / SELL-05 / Stop Loss Strategy Family止损策略族 / ✅ 能建 / / 固定/ATR/密度感知/移动止损+逻辑止损族 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0063 | Replacement & Rebalance Sell置换与再平衡卖出 | / SELL-06 / Replacement & Rebalance Sell置换与再平衡卖出 / ✅ 能建 / / 机会成本驱动(卖A买B)+组合权重偏离驱动被动卖出 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0064 | Sell Signal Fusion Engine卖出信号融合引擎 | / SELL-07 / Sell Signal Fusion Engine卖出信号融合引擎 / ✅ 能建 / / 多信号加权融合(加权平均/贝叶斯/Dempster-Shafer) / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0065 | Buy-Sell Conflict Arbitrator买卖冲突仲裁器 | / SELL-08 / Buy-Sell Conflict Arbitrator买卖冲突仲裁器 / ✅ 能建 / / 同标的买卖信号冲突时卖出优先(保守原则) / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0066 | Sell Urgency Scorer卖出紧迫度评分器 | SELL 09 Sell Urgency Scorer卖出紧迫度评分器 ✅ 能建 紧急清仓(1.0) | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0067 | Sell Signal Accuracy Monitor卖出信号准确率监控 | / SELL-10 / Sell Signal Accuracy Monitor卖出信号准确率监控 / ✅ 能建 / / 假阳性/假阴性分析，准确率趋势驱动权重调整 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0068 | Sell Strategy A/B Tester卖出策略A/B测试 | / SELL-11 / Sell Strategy A/B Tester卖出策略A/B测试 / ✅ 能建 / / 止盈线/止损方式/分批vs一次性对比 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0069 | Sell Execution Quality Tracker卖出执行质量追踪 | / SELL-12 / Sell Execution Quality Tracker卖出执行质量追踪 / ✅ 能建 / / 滑点/冲击成本/执行延迟/分批执行效果评分 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0070 | Exit Scenario Planner卖出情景预案器 | / SELL-13 / Exit Scenario Planner卖出情景预案器 / ✅ 能建 / / 盘前预计算6类卖出预案，盘中触发直接执行 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0071 | Strategy-Specific Stop Framework策略类型→止损范式映射 | / SELL-14 / Strategy-Specific Stop Framework策略类型→止损范式映射 / ✅ 能建 / / 趋势跟踪→宽止损+移动/均值回归→中等+固定等 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0072 | Stop-Hunting Protector止损猎杀防护器 | / SELL-15 / Stop-Hunting Protector止损猎杀防护器 / ✅ 能建 / / 止损位偏移1-2%防猎杀+软止损OBSERVING观察期 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0073 | Stop Option Pricer止损期权定价器 | / SELL-16 / Stop Option Pricer止损期权定价器 / ✅ 能建 / / 设止损=卖出隐含看跌期权→止损成本=隐含期权费 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0074 | Scaling Out Architect分批退出架构师 | / SELL-17 / Scaling Out Architect分批退出架构师 / ✅ 能建 / / 等分/倒金字塔/混合/风险驱动退出 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0075 | T-Trade Coordinator做T决策协调器 | / SELL-18 / T-Trade Coordinator做T决策协调器 / ✅ 能建 / / A股T+1约束下正T/反T原子协调，做T仓位<=底仓30% / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0889 | Stop-Loss Decision Engine 止损决策引擎 | 止损决策引擎固定比例止损+追踪止损+ATR止损+时间止损+逻辑失效止损+A股特色止损 | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0890 | Take-Profit Decision Engine 止盈决策引擎 | 止盈决策引擎目标价止盈+移动止盈+分批止盈+时间止盈+逻辑兑现止盈 | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0891 | Signal Reversal Detector 信号反转检测器 | 信号反转检测器买入信号失效检测+信号衰减检测+信号反转检测+反转确认 | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0892 | Risk-Based Sell Trigger 风险驱动卖出触发器 | 风险驱动卖出触发器VaR超限+回撤超限+集中度超限+流动性恶化+黑天鹅事件 | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0893 | Opportunity Cost Analyzer 机会成本分析器 | 机会成本分析器持仓机会成本+替代投资机会+资金效率+换仓决策 | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0894 | Sell Execution Optimizer 卖出执行优化器 | 卖出执行优化器卖出时机+卖出节奏+冲击成本控制+滑点控制+卖出算法 | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4884 | StopLossTriggerReversalDetector 猎杀止损保护器 | 止损触发后N分钟价格反转>M%统计显著 | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5081 | Average True Range ATR动态止损 | **核心逻辑**: 固定百分比止损（如-7%）是拍脑门的——高波动股7%只是正常波动，低波动股7%已是重大破位。专业机构用ATR（Average True Range）动态调整止损：Stop = Entry ± k×ATR，k通过Bayes | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
 ## 按四问卡点分组（为什么没开发）
 
@@ -55,33 +55,33 @@ ttl: permanent
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-HARVEST-0057 | Position Triage持仓分级器 | Position Triage持仓分级器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0058 | Sell Signal Collector卖出信号收集器 | Sell Signal Collector卖出信号收集器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0059 | Sell Signal Scorer卖出信号评分器 | Sell Signal Scorer卖出信号评分器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0060 | Breakout Failure Detector突破成败检测器 | Breakout Failure Detector突破成败检测器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0061 | Take Profit Strategy Family止盈策略族 | Take Profit Strategy Family止盈策略族（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0062 | Stop Loss Strategy Family止损策略族 | Stop Loss Strategy Family止损策略族（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0063 | Replacement & Rebalance Sell置换与再平衡卖出 | Replacement & Rebalance Sell置换与再平衡卖出（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0064 | Sell Signal Fusion Engine卖出信号融合引擎 | Sell Signal Fusion Engine卖出信号融合引擎（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0065 | Buy-Sell Conflict Arbitrator买卖冲突仲裁器 | Buy-Sell Conflict Arbitrator买卖冲突仲裁器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0066 | Sell Urgency Scorer卖出紧迫度评分器 | Sell Urgency Scorer卖出紧迫度评分器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0067 | Sell Signal Accuracy Monitor卖出信号准确率监控 | Sell Signal Accuracy Monitor卖出信号准确率监控（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0068 | Sell Strategy A/B Tester卖出策略A/B测试 | Sell Strategy A/B Tester卖出策略A/B测试（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0069 | Sell Execution Quality Tracker卖出执行质量追踪 | Sell Execution Quality Tracker卖出执行质量追踪（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0070 | Exit Scenario Planner卖出情景预案器 | Exit Scenario Planner卖出情景预案器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0071 | Strategy-Specific Stop Framework策略类型→止损范式映射 | Strategy-Specific Stop Framework策略类型→止损范式映射（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0072 | Stop-Hunting Protector止损猎杀防护器 | Stop-Hunting Protector止损猎杀防护器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0073 | Stop Option Pricer止损期权定价器 | Stop Option Pricer止损期权定价器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0074 | Scaling Out Architect分批退出架构师 | Scaling Out Architect分批退出架构师（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0075 | T-Trade Coordinator做T决策协调器 | T-Trade Coordinator做T决策协调器（来源:交易决策架构.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0889 | Stop-Loss Decision Engine 止损决策引擎 | Stop-Loss Decision Engine 止损决策引擎（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0890 | Take-Profit Decision Engine 止盈决策引擎 | Take-Profit Decision Engine 止盈决策引擎（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0891 | Signal Reversal Detector 信号反转检测器 | Signal Reversal Detector 信号反转检测器（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0892 | Risk-Based Sell Trigger 风险驱动卖出触发器 | Risk-Based Sell Trigger 风险驱动卖出触发器（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-0893 | Opportunity Cost Analyzer 机会成本分析器 | Opportunity Cost Analyzer 机会成本分析器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_SELL_DECISION | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0894 | Sell Execution Optimizer 卖出执行优化器 | Sell Execution Optimizer 卖出执行优化器（来源:ZephyrAlpha全系统模块清单.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-4884 | StopLossTriggerReversalDetector 猎杀止损保护器 | StopLossTriggerReversalDetector 猎杀止损保护器（来源:01-跨域交叉点与因果链.md, likely_planned） | D_SELL_DECISION | harvest待评估（likely_planned） |  |
-| CAND-HARVEST-5081 | Average True Range ATR动态止损 | Average True Range ATR动态止损（来源:31-D-SELL-DECISION-卖出决策域.md, likely_new） | D_SELL_DECISION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0057 | Position Triage持仓分级器 | / SELL-00 / Position Triage持仓分级器 / ✅ 能建 / / Watch/Monitor/Hold三级分级，动态升降级 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0058 | Sell Signal Collector卖出信号收集器 | / SELL-01 / Sell Signal Collector卖出信号收集器 / ✅ 能建 / / 汇聚8类卖出信号，输出标准化SellSignal列表 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0059 | Sell Signal Scorer卖出信号评分器 | / SELL-02 / Sell Signal Scorer卖出信号评分器 / ✅ 能建 / / 每类信号独立评分(0~1)+动态权重+多时间框架共振 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0060 | Breakout Failure Detector突破成败检测器 | / SELL-03 / Breakout Failure Detector突破成败检测器 / ✅ 能建 / / 消费L1因子层压力位判定突破成败，第K次失败(K>=3)强制清仓 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0061 | Take Profit Strategy Family止盈策略族 | / SELL-04 / Take Profit Strategy Family止盈策略族 / ✅ 能建 / / 固定/移动/分批/时间加权止盈，密度感知增强 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0062 | Stop Loss Strategy Family止损策略族 | / SELL-05 / Stop Loss Strategy Family止损策略族 / ✅ 能建 / / 固定/ATR/密度感知/移动止损+逻辑止损族 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0063 | Replacement & Rebalance Sell置换与再平衡卖出 | / SELL-06 / Replacement & Rebalance Sell置换与再平衡卖出 / ✅ 能建 / / 机会成本驱动(卖A买B)+组合权重偏离驱动被动卖出 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0064 | Sell Signal Fusion Engine卖出信号融合引擎 | / SELL-07 / Sell Signal Fusion Engine卖出信号融合引擎 / ✅ 能建 / / 多信号加权融合(加权平均/贝叶斯/Dempster-Shafer) / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0065 | Buy-Sell Conflict Arbitrator买卖冲突仲裁器 | / SELL-08 / Buy-Sell Conflict Arbitrator买卖冲突仲裁器 / ✅ 能建 / / 同标的买卖信号冲突时卖出优先(保守原则) / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0066 | Sell Urgency Scorer卖出紧迫度评分器 | SELL 09 Sell Urgency Scorer卖出紧迫度评分器 ✅ 能建 紧急清仓(1.0) | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0067 | Sell Signal Accuracy Monitor卖出信号准确率监控 | / SELL-10 / Sell Signal Accuracy Monitor卖出信号准确率监控 / ✅ 能建 / / 假阳性/假阴性分析，准确率趋势驱动权重调整 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0068 | Sell Strategy A/B Tester卖出策略A/B测试 | / SELL-11 / Sell Strategy A/B Tester卖出策略A/B测试 / ✅ 能建 / / 止盈线/止损方式/分批vs一次性对比 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0069 | Sell Execution Quality Tracker卖出执行质量追踪 | / SELL-12 / Sell Execution Quality Tracker卖出执行质量追踪 / ✅ 能建 / / 滑点/冲击成本/执行延迟/分批执行效果评分 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0070 | Exit Scenario Planner卖出情景预案器 | / SELL-13 / Exit Scenario Planner卖出情景预案器 / ✅ 能建 / / 盘前预计算6类卖出预案，盘中触发直接执行 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0071 | Strategy-Specific Stop Framework策略类型→止损范式映射 | / SELL-14 / Strategy-Specific Stop Framework策略类型→止损范式映射 / ✅ 能建 / / 趋势跟踪→宽止损+移动/均值回归→中等+固定等 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0072 | Stop-Hunting Protector止损猎杀防护器 | / SELL-15 / Stop-Hunting Protector止损猎杀防护器 / ✅ 能建 / / 止损位偏移1-2%防猎杀+软止损OBSERVING观察期 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0073 | Stop Option Pricer止损期权定价器 | / SELL-16 / Stop Option Pricer止损期权定价器 / ✅ 能建 / / 设止损=卖出隐含看跌期权→止损成本=隐含期权费 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0074 | Scaling Out Architect分批退出架构师 | / SELL-17 / Scaling Out Architect分批退出架构师 / ✅ 能建 / / 等分/倒金字塔/混合/风险驱动退出 / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0075 | T-Trade Coordinator做T决策协调器 | / SELL-18 / T-Trade Coordinator做T决策协调器 / ✅ 能建 / / A股T+1约束下正T/反T原子协调，做T仓位<=底仓30% / | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0889 | Stop-Loss Decision Engine 止损决策引擎 | 止损决策引擎固定比例止损+追踪止损+ATR止损+时间止损+逻辑失效止损+A股特色止损 | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0890 | Take-Profit Decision Engine 止盈决策引擎 | 止盈决策引擎目标价止盈+移动止盈+分批止盈+时间止盈+逻辑兑现止盈 | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0891 | Signal Reversal Detector 信号反转检测器 | 信号反转检测器买入信号失效检测+信号衰减检测+信号反转检测+反转确认 | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0892 | Risk-Based Sell Trigger 风险驱动卖出触发器 | 风险驱动卖出触发器VaR超限+回撤超限+集中度超限+流动性恶化+黑天鹅事件 | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-0893 | Opportunity Cost Analyzer 机会成本分析器 | 机会成本分析器持仓机会成本+替代投资机会+资金效率+换仓决策 | D_SELL_DECISION | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0894 | Sell Execution Optimizer 卖出执行优化器 | 卖出执行优化器卖出时机+卖出节奏+冲击成本控制+滑点控制+卖出算法 | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-4884 | StopLossTriggerReversalDetector 猎杀止损保护器 | 止损触发后N分钟价格反转>M%统计显著 | D_SELL_DECISION | harvest待评估（likely_planned） |  |
+| CAND-HARVEST-5081 | Average True Range ATR动态止损 | **核心逻辑**: 固定百分比止损（如-7%）是拍脑门的——高波动股7%只是正常波动，低波动股7%已是重大破位。专业机构用ATR（Average True Range）动态调整止损：Stop = Entry ± k×ATR，k通过Bayes | D_SELL_DECISION | harvest待评估（likely_new） |  |
 
 ## 复查时间表
 

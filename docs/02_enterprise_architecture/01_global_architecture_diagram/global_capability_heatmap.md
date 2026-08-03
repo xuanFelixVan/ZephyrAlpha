@@ -138,27 +138,27 @@ ttl: permanent
 
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
-| C1 | 数据接入 | 4 | 206 | 176 | 30 | 2.50 | 🟡 部分覆盖 / Partial |
-| C2 | 因子研究 | 5 | 122 | 68 | 54 | 2.20 | 🟡 部分覆盖 / Partial |
+| C1 | 数据接入 | 4 | 206 | 180 | 26 | 2.50 | 🟡 部分覆盖 / Partial |
+| C2 | 因子研究 | 5 | 123 | 75 | 48 | 2.20 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 28 | 23 | 5 | 2.50 | 🟡 部分覆盖 / Partial |
-| C4 | 策略决策 | 4 | 56 | 31 | 25 | 2.75 | 🟡 部分覆盖 / Partial |
+| C4 | 策略决策 | 4 | 56 | 37 | 19 | 2.75 | 🟡 部分覆盖 / Partial |
 | C5 | 执行交易 | 4 | 120 | 89 | 31 | 3.00 | ✅ 完全覆盖 / Full |
 | C6 | ML平台 | 2 | 13 | 10 | 3 | 2.00 | 🟡 部分覆盖 / Partial |
-| C7 | 回测仿真 | 4 | 49 | 46 | 3 | 2.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 14 | 1010 | 980 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
+| C7 | 回测仿真 | 4 | 50 | 49 | 1 | 2.50 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 14 | 1010 | 981 | 29 | 2.86 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 173 | 173 | 0 | 1.00 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 838 | 829 | 9 | 2.31 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 842 | 834 | 8 | 2.31 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | active | 成熟度 / Maturity | 覆盖度 / Coverage |
 |--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | C1 | L1_foundation | 8 | 7 | 1 | 0 | L2 🟡 | 🟡 |
-| D_DATA | 数据接入层 | C1 | L1_foundation | 159 | 143 | 16 | 18 | L3 🟢 | ✅ |
+| D_DATA | 数据接入层 | C1 | L1_foundation | 159 | 147 | 12 | 18 | L3 🟢 | ✅ |
 | D_DATA_ENG | 数据工程 | C1 | L1_foundation | 20 | 7 | 13 | 0 | L2 🟡 | 🟡 |
 | D_MKT_DATA | 行情数据 | C1 | L1_foundation | 19 | 19 | 0 | 7 | L3 🟢 | ✅ |
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L2_domain | 19 | 16 | 3 | 10 | L3 🟢 | ✅ |
-| D_FACTOR | 因子 | C2 | L2_domain | 87 | 38 | 49 | 19 | L3 🟢 | ✅ |
+| D_FACTOR | 因子 | C2 | L2_domain | 88 | 45 | 43 | 21 | L3 🟢 | ✅ |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L2_domain | 14 | 12 | 2 | 6 | L3 🟢 | ✅ |
 | D_SIGLEGACY | 信号遗留设计态 | C2 | L2_domain | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_SIGQC | 信号质量控制 | C2 | L2_domain | 2 | 2 | 0 | 0 | L2 🟡 | 🟡 |
@@ -166,15 +166,15 @@ ttl: permanent
 | D_RISK | 风控 | C3 | L2_domain | 25 | 21 | 4 | 19 | L3 🟢 | ✅ |
 | D_CROSS_ASSET | 跨资产 | C4 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_PF_ALLOC | 组合分配 | C4 | L2_domain | 9 | 5 | 4 | 4 | L3 🟢 | ✅ |
-| D_PF_CORE | 组合核心 | C4 | L2_domain | 14 | 11 | 3 | 10 | L3 🟢 | ✅ |
-| D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 26 | 8 | 18 | 2 | L3 🟢 | ✅ |
+| D_PF_CORE | 组合核心 | C4 | L2_domain | 14 | 12 | 2 | 11 | L3 🟢 | ✅ |
+| D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 26 | 13 | 13 | 7 | L3 🟢 | ✅ |
 | D_EX_CORE | 执行核心 | C5 | L2_domain | 43 | 19 | 24 | 15 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 17 | 17 | 0 | 10 | L3 🟢 | ✅ |
 | D_POSITION | 仓位管理 | C5 | L2_domain | 20 | 13 | 7 | 12 | L3 🟢 | ✅ |
 | D_TRADING | 交易运营 | C5 | L2_domain | 40 | 40 | 0 | 23 | L3 🟢 | ✅ |
 | D_ML_SERVE | 推理 | C6 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_ML_TRAIN | 训练 | C6 | L2_domain | 6 | 3 | 3 | 0 | L2 🟡 | 🟡 |
-| D_BACKTEST | 回测 | C7 | L2_domain | 25 | 22 | 3 | 16 | L3 🟢 | ✅ |
+| D_BACKTEST | 回测 | C7 | L2_domain | 26 | 25 | 1 | 18 | L3 🟢 | ✅ |
 | D_DIGITAL_TWIN | 数字孪生 | C7 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_EXEC_SIM | 执行仿真 | C7 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_SIMULATION | 仿真 | C7 | L2_domain | 10 | 10 | 0 | 10 | L3 🟢 | ✅ |
@@ -185,10 +185,10 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L1_foundation | 125 | 125 | 0 | 111 | L3 🟢 | ✅ |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L2_domain | 136 | 136 | 0 | 101 | L3 🟢 | ✅ |
 | D_GOV_AUDIT | 审计追踪 | CC1 | L2_domain | 115 | 112 | 3 | 77 | L3 🟢 | ✅ |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 157 | 157 | 0 | 140 | L3 🟢 | ✅ |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 158 | 158 | 0 | 141 | L3 🟢 | ✅ |
 | D_GOV_DOCS | 架构文档治理 | CC1 | L2_domain | 25 | 0 | 25 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L2_domain | 71 | 70 | 1 | 65 | L3 🟢 | ✅ |
-| D_GOV_ENFORCEMENT | 规则执行 | CC1 | L2_domain | 33 | 32 | 1 | 18 | L3 🟢 | ✅ |
+| D_GOV_ENFORCEMENT | 规则执行 | CC1 | L2_domain | 32 | 32 | 0 | 18 | L3 🟢 | ✅ |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | CC1 | L1_foundation | 91 | 91 | 0 | 81 | L3 🟢 | ✅ |
 | D_GOV_REPAIR | 治理修复 | CC1 | L2_domain | 1 | 1 | 0 | 1 | L3 🟢 | ✅ |
 | D_GOV_RULE | 规则治理 | CC1 | L2_domain | 34 | 34 | 0 | 31 | L3 🟢 | ✅ |
@@ -198,12 +198,12 @@ ttl: permanent
 | D_SECURITY | 对抗验证 | CC2 | L1_foundation | 166 | 166 | 0 | 100 | L3 🟢 | ✅ |
 | D_SECURITY_LLM | LLM防御 | CC2 | L1_foundation | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_AUTONOMY_CORE | 自治核心 | CC3 | L1_foundation | 126 | 126 | 0 | 125 | L3 🟢 | ✅ |
-| D_FRONTEND | 前端 | CC3 | L2_domain | 15 | 11 | 4 | 9 | L3 🟢 | ✅ |
+| D_FRONTEND | 前端 | CC3 | L2_domain | 19 | 15 | 4 | 13 | L3 🟢 | ✅ |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L0_infrastructure | 25 | 25 | 0 | 15 | L3 🟢 | ✅ |
 | D_INFRA_A2A | A2A通信 | CC3 | L0_infrastructure | 72 | 72 | 0 | 28 | L3 🟢 | ✅ |
 | D_INFRA_OPS | 基础设施运维 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L0_infrastructure | 54 | 54 | 0 | 48 | L3 🟢 | ✅ |
-| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 171 | 168 | 3 | 122 | L3 🟢 | ✅ |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 171 | 169 | 2 | 126 | L3 🟢 | ✅ |
 | D_INFRA_TELEMETRY | 可观测性 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INTEGRATION | 管线路由 | CC3 | L1_foundation | 71 | 71 | 0 | 39 | L3 🟢 | ✅ |
 | D_INTEGRATION_GATEWAY | 集成网关 | CC3 | L1_foundation | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
@@ -272,7 +272,7 @@ ttl: permanent
 | D_DATA | 数据接入层 | C1 | L3 | 159 |
 | D_MKT_DATA | 行情数据 | C1 | L3 | 19 |
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L3 | 19 |
-| D_FACTOR | 因子 | C2 | L3 | 87 |
+| D_FACTOR | 因子 | C2 | L3 | 88 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L3 | 14 |
 | D_RISK | 风控 | C3 | L3 | 25 |
 | D_PF_ALLOC | 组合分配 | C4 | L3 | 9 |
@@ -282,7 +282,7 @@ ttl: permanent
 | D_EX_SOR | 执行路由 | C5 | L3 | 17 |
 | D_POSITION | 仓位管理 | C5 | L3 | 20 |
 | D_TRADING | 交易运营 | C5 | L3 | 40 |
-| D_BACKTEST | 回测 | C7 | L3 | 25 |
+| D_BACKTEST | 回测 | C7 | L3 | 26 |
 | D_SIMULATION | 仿真 | C7 | L3 | 10 |
 | D_DATA_GOV | 数据治理 | CC1 | L3 | 10 |
 | D_FBL_DETECTORS | 反馈检测器 | CC1 | L3 | 65 |
@@ -291,15 +291,15 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L3 | 125 |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L3 | 136 |
 | D_GOV_AUDIT | 审计追踪 | CC1 | L3 | 115 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 157 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 158 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L3 | 71 |
-| D_GOV_ENFORCEMENT | 规则执行 | CC1 | L3 | 33 |
+| D_GOV_ENFORCEMENT | 规则执行 | CC1 | L3 | 32 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | CC1 | L3 | 91 |
 | D_GOV_REPAIR | 治理修复 | CC1 | L3 | 1 |
 | D_GOV_RULE | 规则治理 | CC1 | L3 | 34 |
 | D_SECURITY | 对抗验证 | CC2 | L3 | 166 |
 | D_AUTONOMY_CORE | 自治核心 | CC3 | L3 | 126 |
-| D_FRONTEND | 前端 | CC3 | L3 | 15 |
+| D_FRONTEND | 前端 | CC3 | L3 | 19 |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L3 | 25 |
 | D_INFRA_A2A | A2A通信 | CC3 | L3 | 72 |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L3 | 54 |

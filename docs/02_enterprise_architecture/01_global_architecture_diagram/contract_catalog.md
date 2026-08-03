@@ -10,7 +10,7 @@ ttl: permanent
 
 # 契约目录全景图 / Contract Catalog
 
-> **文档作用 / Purpose**: 以表格形式展示65个跨层数据契约,用于AI接入新模块时查询"消费了谁的契约、产出什么契约"。
+> **文档作用 / Purpose**: 以表格形式展示66个跨层数据契约,用于AI接入新模块时查询"消费了谁的契约、产出什么契约"。
 
 > 本文档由 generate_contract_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: architecture_model/contracts/cross_layer_contracts.yaml
@@ -20,10 +20,10 @@ ttl: permanent
 
 | 指标 | 数量 |
 |------|------|
-| 契约总数 | 65 |
+| 契约总数 | 66 |
 | P0(核心数据/错误/背压契约) | 0 |
 | P1(蓝图签名契约) | 0 |
-| 其他 | 65 |
+| 其他 | 66 |
 | 已冻结(planned) | 8 |
 | 设计中(design) | 1 |
 
@@ -320,6 +320,31 @@ ttl: permanent
 | schema_version | str | — | 契约版本 |
 
 - **物理路径**: `src/zephyr/shared/contracts/position.py`
+
+### CTR-007 — TargetPortfolio / 目标组合
+
+- **类型**: cross_layer
+- **版本**: 1.0
+- **提供方**: D_PF_CORE
+- **消费方**: —
+- **状态**: unresolved
+- **描述**: Portfolio Construction → Execution/Position/Reporting
+
+| 字段 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| portfolio_id | str | ✅ | 组合 ID |
+| strategy_id | str | ✅ | 来源策略 ID |
+| target_weights | Dict[str, float] | ✅ | 目标权重 {symbol: weight} |
+| current_weights | Dict[str, float] | ✅ | 当前权重 {symbol: weight} |
+| drift_pct | float | ✅ | 加权权重漂移百分比 |
+| risk_limits | RiskLimits | ✅ | 本次优化遵循的风险限额（CTR-003 引用） |
+| rebalance_reason | str | ✅ | 再平衡触发原因：drift_threshold/calendar/event/risk_breach |
+| created_at | datetime | ✅ | 目标组合创建时间（UTC） |
+| idempotency_key | str | ✅ | 幂等键（UUID），防止重复处理 |
+| trace_context | Optional[TraceContext] | — | 全链路追踪上下文（CTR-TRACE-001） |
+| schema_version | str | — | 契约版本 |
+
+- **物理路径**: `src/zephyr/shared/contracts/target_portfolio.py`
 
 ### CTR-BP-001 — BackpressurePause / 背压暂停信号
 

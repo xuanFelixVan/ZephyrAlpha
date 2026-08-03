@@ -19,42 +19,42 @@ ttl: permanent
 
 | ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
-| CAND-HARVEST-0008 | Market Prediction & Next-Day Trend Forecast 大盘预测与次日走势预判 | Market Prediction & Next-Day Trend Forecast 大盘预测与次日走势预判（来源:交易决策架构.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0249 | D-ML-02 | D-ML-02（来源:交易决策架构.md, uncertain） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0250 | MS-01 | MS-01（来源:交易决策架构.md, uncertain） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0251 | D-ML-03 | D-ML-03（来源:交易决策架构.md, uncertain） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0252 | MS-02 | MS-02（来源:交易决策架构.md, uncertain） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0253 | Model Validator 模型验证器 | Model Validator 模型验证器（来源:交易决策架构.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0254 | Model Drift Monitor 模型漂移监控器 | Model Drift Monitor 模型漂移监控器（来源:交易决策架构.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0255 | Model Serving Manager 模型服务管理器 | Model Serving Manager 模型服务管理器（来源:交易决策架构.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0442 | §30.4.2 D-ML-SERVE 推理域（46个模块，P0=5） | §30.4.2 D-ML-SERVE 推理域（46个模块，P0=5）（来源:交易决策架构.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0733 | DriftMonitor 漂移监控器 | DriftMonitor 漂移监控器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0734 | ServingManager 服务管理器 | ServingManager 服务管理器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0735 | LLMGateway LLM网关 | LLMGateway LLM网关（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0917 | Model Compression & Inference Acceleration 模型压缩与推理加速 | Model Compression & Inference Acceleration 模型压缩与推理加速（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0989 | ModelRiskGovernor 模型风险治理器 | ModelRiskGovernor 模型风险治理器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0990 | Model Adversarial Attack Detector 模型对抗攻击检测器 | Model Adversarial Attack Detector 模型对抗攻击检测器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1778 | LLM API Integration LLM API集成 | LLM API Integration LLM API集成（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1779 | KB Embedding BGE-M3-ONNX KB嵌入BGE-M3-ONNX | KB Embedding BGE-M3-ONNX KB嵌入BGE-M3-ONNX（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1875 | ModelABTester 模型A/B测试器 | ModelABTester 模型A/B测试器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1878 | ModelPerformanceMonitor 模型性能监控器 | ModelPerformanceMonitor 模型性能监控器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1880 | TSFM 时间序列基础模型 | TSFM 时间序列基础模型（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1881 | Quantizer 量化器 | Quantizer 量化器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1882 | Fairness 公平性 | Fairness 公平性（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1883 | Explanation 解释器 | Explanation 解释器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1884 | Impact 影响分析 | Impact 影响分析（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1885 | Adversarial 对抗 | Adversarial 对抗（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1886 | Version 版本 | Version 版本（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1891 | ModelDeploymentPipeline 模型部署管线 | ModelDeploymentPipeline 模型部署管线（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1892 | ModelPerformanceDriftMonitor 模型性能漂移监控器 | ModelPerformanceDriftMonitor 模型性能漂移监控器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4232 | Model Drift Monitor 模型漂移监控 | Model Drift Monitor 模型漂移监控（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4790 | KB Embedding BGE-M3-ONNX 知识库嵌入(旧) | KB Embedding BGE-M3-ONNX 知识库嵌入(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4791 | MLflow Model Update MLflow模型更新(旧) | MLflow Model Update MLflow模型更新(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4792 | AI Model A/B Tester AI模型A/B测试器(旧) | AI Model A/B Tester AI模型A/B测试器(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4793 | AI Decision Explanation AI决策解释(旧) | AI Decision Explanation AI决策解释(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4794 | Hybrid Deployment AI Manager 混合部署AI管理器(旧) | Hybrid Deployment AI Manager 混合部署AI管理器(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4795 | Model Lifecycle Manager 模型生命周期管理器(旧) | Model Lifecycle Manager 模型生命周期管理器(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4799 | AI Construction Governor AI构建治理器 | AI Construction Governor AI构建治理器（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0008 | Market Prediction & Next-Day Trend Forecast 大盘预测与次日走势预判 | C 014：大盘预测与次日走势预判 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0249 | D-ML-02 | D ML 02/MS 01 Model Registry ✅ 能建 📋 项目内有蓝图编号ML EXP | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0250 | MS-01 | D ML 02/MS 01 Model Registry ✅ 能建 📋 项目内有蓝图编号ML EXP | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0251 | D-ML-03 | D ML 03/MS 02 Inference Engine ✅ 能建 📋 项目内有蓝图编号ML E | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0252 | MS-02 | D ML 03/MS 02 Inference Engine ✅ 能建 📋 项目内有蓝图编号ML E | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0253 | Model Validator 模型验证器 | / D-ML-05 / Model Validator / ✅ 能建 / / 回测引擎+压力测试+稳定性检验 / | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0254 | Model Drift Monitor 模型漂移监控器 | / D-ML-08 / Model Drift Monitor / ✅ 能建 / / PSI+性能衰减+JS散度+IC衰减 / | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0255 | Model Serving Manager 模型服务管理器 | / D-ML-10 / Model Serving Manager / ✅ 能建 / / 模型路由+负载均衡+版本切换 / | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0442 | §30.4.2 D-ML-SERVE 推理域（46个模块，P0=5） | §30.4.2 D ML SERVE 推理域（46个模块，P0=5） | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0733 | DriftMonitor 漂移监控器 | 四维漂移监控PSI输入特征漂移性能衰减JS散度输出分布漂移IC衰减概念漂移共形漂移检测 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0734 | ServingManager 服务管理器 | 模型路由版本切换回滚健康检查蓝绿部署金丝雀发布自动回滚策略生命周期管理7状态 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0735 | LLMGateway LLM网关 | LLM API统一集成降级成本管理DeepSeek V4 Pro GLM-5.1 Claude Opus三API降级策略 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0917 | Model Compression & Inference Acceleration 模型压缩与推理加速 | INT8/INT4量化+量化后C-003完整验证 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0989 | ModelRiskGovernor 模型风险治理器 | 缩写映射:D-ML-21=ModelRiskGovernor→归入MS-04 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0990 | Model Adversarial Attack Detector 模型对抗攻击检测器 | 模型对抗攻击检测器 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1778 | LLM API Integration LLM API集成 | LLM API集成，D-ML-39 / MS-14，归属D-ML-SERVE | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1779 | KB Embedding BGE-M3-ONNX KB嵌入BGE-M3-ONNX | KB嵌入BGE-M3-ONNX，D-ML-38 / MS-15，归属D-ML-SERVE | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1875 | ModelABTester 模型A/B测试器 | 缩写映射:D-ML-09=ModelABTester→归入MS-04(内嵌) | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1878 | ModelPerformanceMonitor 模型性能监控器 | 缩写映射:D-ML-14=ModelPerformanceMonitor→归入MS-03(内嵌) | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1880 | TSFM 时间序列基础模型 | 缩写映射:D-ML-22=TSFM→归入MS-02 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1881 | Quantizer 量化器 | 缩写映射:D-ML-23=Quantizer→归入MS-02 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1882 | Fairness 公平性 | 缩写映射:D-ML-24=Fairness→归入MS-04 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1883 | Explanation 解释器 | 缩写映射:D-ML-25=Explanation→归入MS-03 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1884 | Impact 影响分析 | 缩写映射:D-ML-26=Impact→归入MS-01 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1885 | Adversarial 对抗 | 缩写映射:D-ML-27=Adversarial→归入MS-04 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1886 | Version 版本 | 缩写映射:D-ML-28=Version→归入MS-01 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1891 | ModelDeploymentPipeline 模型部署管线 | 缩写映射:D-ML-126=ModelDeploymentPipeline→归入MS-05(内嵌) | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1892 | ModelPerformanceDriftMonitor 模型性能漂移监控器 | 缩写映射:D-ML-127=ModelPerformanceDriftMonitor→归入MS-03(内嵌) | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4232 | Model Drift Monitor 模型漂移监控 | 跨域混居应迁出GOV属于D-ML-SERVE模型漂移是推理域 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4790 | KB Embedding BGE-M3-ONNX 知识库嵌入(旧) | 旧子模块归并映射至MS-02内嵌 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4791 | MLflow Model Update MLflow模型更新(旧) | 旧子模块归并映射至MS-01内嵌 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4792 | AI Model A/B Tester AI模型A/B测试器(旧) | 旧子模块归并映射至MS-04内嵌 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4793 | AI Decision Explanation AI决策解释(旧) | 旧子模块归并映射至MS-03内嵌 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4794 | Hybrid Deployment AI Manager 混合部署AI管理器(旧) | 旧子模块归并映射至MS-05内嵌 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4795 | Model Lifecycle Manager 模型生命周期管理器(旧) | 旧子模块归并映射至MS-05内嵌 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4799 | AI Construction Governor AI构建治理器 | 公式Hash+回归截断+值域偏差验证内嵌MS-04 | D_ML_SERVE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
 ## 按四问卡点分组（为什么没开发）
 
@@ -64,42 +64,42 @@ ttl: permanent
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-HARVEST-0008 | Market Prediction & Next-Day Trend Forecast 大盘预测与次日走势预判 | Market Prediction & Next-Day Trend Forecast 大盘预测与次日走势预判（来源:交易决策架构.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0249 | D-ML-02 | D-ML-02（来源:交易决策架构.md, uncertain） | D_ML_SERVE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-0250 | MS-01 | MS-01（来源:交易决策架构.md, uncertain） | D_ML_SERVE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-0251 | D-ML-03 | D-ML-03（来源:交易决策架构.md, uncertain） | D_ML_SERVE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-0252 | MS-02 | MS-02（来源:交易决策架构.md, uncertain） | D_ML_SERVE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-0253 | Model Validator 模型验证器 | Model Validator 模型验证器（来源:交易决策架构.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0254 | Model Drift Monitor 模型漂移监控器 | Model Drift Monitor 模型漂移监控器（来源:交易决策架构.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0255 | Model Serving Manager 模型服务管理器 | Model Serving Manager 模型服务管理器（来源:交易决策架构.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0442 | §30.4.2 D-ML-SERVE 推理域（46个模块，P0=5） | §30.4.2 D-ML-SERVE 推理域（46个模块，P0=5）（来源:交易决策架构.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0733 | DriftMonitor 漂移监控器 | DriftMonitor 漂移监控器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0734 | ServingManager 服务管理器 | ServingManager 服务管理器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0735 | LLMGateway LLM网关 | LLMGateway LLM网关（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0917 | Model Compression & Inference Acceleration 模型压缩与推理加速 | Model Compression & Inference Acceleration 模型压缩与推理加速（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0989 | ModelRiskGovernor 模型风险治理器 | ModelRiskGovernor 模型风险治理器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0990 | Model Adversarial Attack Detector 模型对抗攻击检测器 | Model Adversarial Attack Detector 模型对抗攻击检测器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1778 | LLM API Integration LLM API集成 | LLM API Integration LLM API集成（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1779 | KB Embedding BGE-M3-ONNX KB嵌入BGE-M3-ONNX | KB Embedding BGE-M3-ONNX KB嵌入BGE-M3-ONNX（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1875 | ModelABTester 模型A/B测试器 | ModelABTester 模型A/B测试器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1878 | ModelPerformanceMonitor 模型性能监控器 | ModelPerformanceMonitor 模型性能监控器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1880 | TSFM 时间序列基础模型 | TSFM 时间序列基础模型（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1881 | Quantizer 量化器 | Quantizer 量化器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1882 | Fairness 公平性 | Fairness 公平性（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1883 | Explanation 解释器 | Explanation 解释器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1884 | Impact 影响分析 | Impact 影响分析（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1885 | Adversarial 对抗 | Adversarial 对抗（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1886 | Version 版本 | Version 版本（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1891 | ModelDeploymentPipeline 模型部署管线 | ModelDeploymentPipeline 模型部署管线（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1892 | ModelPerformanceDriftMonitor 模型性能漂移监控器 | ModelPerformanceDriftMonitor 模型性能漂移监控器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4232 | Model Drift Monitor 模型漂移监控 | Model Drift Monitor 模型漂移监控（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4790 | KB Embedding BGE-M3-ONNX 知识库嵌入(旧) | KB Embedding BGE-M3-ONNX 知识库嵌入(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4791 | MLflow Model Update MLflow模型更新(旧) | MLflow Model Update MLflow模型更新(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4792 | AI Model A/B Tester AI模型A/B测试器(旧) | AI Model A/B Tester AI模型A/B测试器(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4793 | AI Decision Explanation AI决策解释(旧) | AI Decision Explanation AI决策解释(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4794 | Hybrid Deployment AI Manager 混合部署AI管理器(旧) | Hybrid Deployment AI Manager 混合部署AI管理器(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4795 | Model Lifecycle Manager 模型生命周期管理器(旧) | Model Lifecycle Manager 模型生命周期管理器(旧)（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4799 | AI Construction Governor AI构建治理器 | AI Construction Governor AI构建治理器（来源:13-D-ML-SERVE-推理域.md, likely_new） | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0008 | Market Prediction & Next-Day Trend Forecast 大盘预测与次日走势预判 | C 014：大盘预测与次日走势预判 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0249 | D-ML-02 | D ML 02/MS 01 Model Registry ✅ 能建 📋 项目内有蓝图编号ML EXP | D_ML_SERVE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0250 | MS-01 | D ML 02/MS 01 Model Registry ✅ 能建 📋 项目内有蓝图编号ML EXP | D_ML_SERVE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0251 | D-ML-03 | D ML 03/MS 02 Inference Engine ✅ 能建 📋 项目内有蓝图编号ML E | D_ML_SERVE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0252 | MS-02 | D ML 03/MS 02 Inference Engine ✅ 能建 📋 项目内有蓝图编号ML E | D_ML_SERVE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-0253 | Model Validator 模型验证器 | / D-ML-05 / Model Validator / ✅ 能建 / / 回测引擎+压力测试+稳定性检验 / | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0254 | Model Drift Monitor 模型漂移监控器 | / D-ML-08 / Model Drift Monitor / ✅ 能建 / / PSI+性能衰减+JS散度+IC衰减 / | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0255 | Model Serving Manager 模型服务管理器 | / D-ML-10 / Model Serving Manager / ✅ 能建 / / 模型路由+负载均衡+版本切换 / | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0442 | §30.4.2 D-ML-SERVE 推理域（46个模块，P0=5） | §30.4.2 D ML SERVE 推理域（46个模块，P0=5） | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0733 | DriftMonitor 漂移监控器 | 四维漂移监控PSI输入特征漂移性能衰减JS散度输出分布漂移IC衰减概念漂移共形漂移检测 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0734 | ServingManager 服务管理器 | 模型路由版本切换回滚健康检查蓝绿部署金丝雀发布自动回滚策略生命周期管理7状态 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0735 | LLMGateway LLM网关 | LLM API统一集成降级成本管理DeepSeek V4 Pro GLM-5.1 Claude Opus三API降级策略 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0917 | Model Compression & Inference Acceleration 模型压缩与推理加速 | INT8/INT4量化+量化后C-003完整验证 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0989 | ModelRiskGovernor 模型风险治理器 | 缩写映射:D-ML-21=ModelRiskGovernor→归入MS-04 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0990 | Model Adversarial Attack Detector 模型对抗攻击检测器 | 模型对抗攻击检测器 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1778 | LLM API Integration LLM API集成 | LLM API集成，D-ML-39 / MS-14，归属D-ML-SERVE | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1779 | KB Embedding BGE-M3-ONNX KB嵌入BGE-M3-ONNX | KB嵌入BGE-M3-ONNX，D-ML-38 / MS-15，归属D-ML-SERVE | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1875 | ModelABTester 模型A/B测试器 | 缩写映射:D-ML-09=ModelABTester→归入MS-04(内嵌) | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1878 | ModelPerformanceMonitor 模型性能监控器 | 缩写映射:D-ML-14=ModelPerformanceMonitor→归入MS-03(内嵌) | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1880 | TSFM 时间序列基础模型 | 缩写映射:D-ML-22=TSFM→归入MS-02 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1881 | Quantizer 量化器 | 缩写映射:D-ML-23=Quantizer→归入MS-02 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1882 | Fairness 公平性 | 缩写映射:D-ML-24=Fairness→归入MS-04 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1883 | Explanation 解释器 | 缩写映射:D-ML-25=Explanation→归入MS-03 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1884 | Impact 影响分析 | 缩写映射:D-ML-26=Impact→归入MS-01 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1885 | Adversarial 对抗 | 缩写映射:D-ML-27=Adversarial→归入MS-04 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1886 | Version 版本 | 缩写映射:D-ML-28=Version→归入MS-01 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1891 | ModelDeploymentPipeline 模型部署管线 | 缩写映射:D-ML-126=ModelDeploymentPipeline→归入MS-05(内嵌) | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1892 | ModelPerformanceDriftMonitor 模型性能漂移监控器 | 缩写映射:D-ML-127=ModelPerformanceDriftMonitor→归入MS-03(内嵌) | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4232 | Model Drift Monitor 模型漂移监控 | 跨域混居应迁出GOV属于D-ML-SERVE模型漂移是推理域 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4790 | KB Embedding BGE-M3-ONNX 知识库嵌入(旧) | 旧子模块归并映射至MS-02内嵌 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4791 | MLflow Model Update MLflow模型更新(旧) | 旧子模块归并映射至MS-01内嵌 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4792 | AI Model A/B Tester AI模型A/B测试器(旧) | 旧子模块归并映射至MS-04内嵌 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4793 | AI Decision Explanation AI决策解释(旧) | 旧子模块归并映射至MS-03内嵌 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4794 | Hybrid Deployment AI Manager 混合部署AI管理器(旧) | 旧子模块归并映射至MS-05内嵌 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4795 | Model Lifecycle Manager 模型生命周期管理器(旧) | 旧子模块归并映射至MS-05内嵌 | D_ML_SERVE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4799 | AI Construction Governor AI构建治理器 | 公式Hash+回归截断+值域偏差验证内嵌MS-04 | D_ML_SERVE | harvest待评估（likely_new） |  |
 
 ## 复查时间表
 

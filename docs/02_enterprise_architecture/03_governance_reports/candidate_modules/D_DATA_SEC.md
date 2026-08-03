@@ -19,9 +19,9 @@ ttl: permanent
 
 | ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
-| CAND-HARVEST-0610 | Data Access Auditor 数据访问审计器 | Data Access Auditor 数据访问审计器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_DATA_SEC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1312 | Data Masking Engine 数据脱敏引擎 | Data Masking Engine 数据脱敏引擎（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_DATA_SEC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2653 | Data Security Compliance Constraint 数据安全与合规约束 | Data Security Compliance Constraint 数据安全与合规约束（来源:00-架构图总览与索引.md, likely_new） | D_DATA_SEC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0610 | Data Access Auditor 数据访问审计器 | 细粒度访问日志+查询模式分析+异常访问检测+敏感数据追踪+合规报告 | D_DATA_SEC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1312 | Data Masking Engine 数据脱敏引擎 | 静态/动态脱敏+格式保留加密+差分隐私噪声注入+脱敏策略路由 | D_DATA_SEC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2653 | Data Security Compliance Constraint 数据安全与合规约束 | 4级分类+RBAC+AES-256-GCM+AI脱敏 | D_DATA_SEC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
 ## 按四问卡点分组（为什么没开发）
 
@@ -31,9 +31,9 @@ ttl: permanent
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-HARVEST-0610 | Data Access Auditor 数据访问审计器 | Data Access Auditor 数据访问审计器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_DATA_SEC | harvest待评估（likely_new） |  |
-| CAND-HARVEST-1312 | Data Masking Engine 数据脱敏引擎 | Data Masking Engine 数据脱敏引擎（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_DATA_SEC | harvest待评估（likely_new） |  |
-| CAND-HARVEST-2653 | Data Security Compliance Constraint 数据安全与合规约束 | Data Security Compliance Constraint 数据安全与合规约束（来源:00-架构图总览与索引.md, likely_new） | D_DATA_SEC | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0610 | Data Access Auditor 数据访问审计器 | 细粒度访问日志+查询模式分析+异常访问检测+敏感数据追踪+合规报告 | D_DATA_SEC | harvest待评估（likely_new） |  |
+| CAND-HARVEST-1312 | Data Masking Engine 数据脱敏引擎 | 静态/动态脱敏+格式保留加密+差分隐私噪声注入+脱敏策略路由 | D_DATA_SEC | harvest待评估（likely_new） |  |
+| CAND-HARVEST-2653 | Data Security Compliance Constraint 数据安全与合规约束 | 4级分类+RBAC+AES-256-GCM+AI脱敏 | D_DATA_SEC | harvest待评估（likely_new） |  |
 
 ## 复查时间表
 

@@ -130,12 +130,25 @@ def load_redis_config() -> dict[str, str | int | bool]:
         "REDIS_DECODE_RESPONSES", _REDIS_ENV_PATH, "true"
     )
     decode_responses = decode_raw.strip().lower() in ("1", "true", "yes")
+    # 操作超时（治本 CP-02 软故障，2026-08-03 实地演练发现）：
+    # 无 socket_timeout 时 Redis 暂停/卡顿 → redis-py 无限阻塞 → try/except 永不触发
+    # → CP-02 优雅降级失效。设超时后软故障抛 TimeoutError → 触发降级（跳过+兜底+标过期）。
+    socket_timeout = float(
+        os.environ.get("REDIS_SOCKET_TIMEOUT")
+        or get_secret_from_file_or_default("REDIS_SOCKET_TIMEOUT", _REDIS_ENV_PATH, "2")
+    )
+    socket_connect_timeout = float(
+        os.environ.get("REDIS_SOCKET_CONNECT_TIMEOUT")
+        or get_secret_from_file_or_default("REDIS_SOCKET_CONNECT_TIMEOUT", _REDIS_ENV_PATH, "2")
+    )
     return {
         "host": host,
         "port": port,
         "password": password,
         "db": db,
         "decode_responses": decode_responses,
+        "socket_timeout": socket_timeout,
+        "socket_connect_timeout": socket_connect_timeout,
     }
 
 

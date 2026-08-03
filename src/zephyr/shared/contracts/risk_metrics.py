@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/risk_metrics.py
 
 CTR-P1-011: RiskMetricsReport / 风险指标报告
 
-D_RISK -> 下游风险指标报告契约。包含VaR、CVaR、回撤等风险指标的计算结果。
+Risk → 下游风险指标报告契约。包含VaR、CVaR、回撤等风险指标的计算结果。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-011
 Version: 1.0
@@ -63,6 +63,7 @@ class RiskMetricsReport:
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-011 ====
+
 
 
 

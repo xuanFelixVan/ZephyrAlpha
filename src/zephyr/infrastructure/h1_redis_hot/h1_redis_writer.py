@@ -54,6 +54,7 @@ from zephyr.infrastructure.h1_redis_hot.h1_redis_schema import (
     MAXMEMORY_EXPANSION_TRIGGER_RATIO,
     factor_field,
     feature_key,
+    feature_updated_at_field,
 )
 
 if TYPE_CHECKING:
@@ -112,12 +113,21 @@ class H1RedisWriter:
         pipe = self.conn.pipeline(transaction=False)  # 非原子，性能优先
         written = 0
 
+        # CP-02 过期检测（治本，2026-08-03 实地演练发现）：
+        # 整批截面共享同一写入时戳——同一 3 秒周期内所有 symbol 的 updated_at 一致，
+        # 消费者读 time.time() - updated_at 判定新鲜度（>阈值标 expired → 降级）。
+        # 用 epoch 秒（repr(float)）便于消费者直接 float() 做差值，无 ISO 解析开销。
+        updated_at = repr(time.time())
+        updated_at_field = feature_updated_at_field()
+
         for symbol, factors in cross_section.items():
             if not factors:
                 continue
             key = feature_key(symbol)
-            # 构造 {factor_name:ver: str(value)} mapping，一次 HSET 写入所有因子
+            # 构造 {factor_name:ver: str(value), _updated_at: epoch} mapping
+            # _updated_at 与因子 Field（name:ver）前缀区分，不会冲突
             mapping = {factor_field(name, factor_version): repr(val) for name, val in factors.items()}
+            mapping[updated_at_field] = updated_at
             pipe.hset(key, mapping=mapping)
             written += 1
 

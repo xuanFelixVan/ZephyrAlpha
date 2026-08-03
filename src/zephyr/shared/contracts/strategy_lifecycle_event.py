@@ -22,7 +22,7 @@ from typing import Optional
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -30,7 +30,7 @@ ZephyrAlpha — shared/contracts/strategy_lifecycle_event.py
 
 CTR-P1-006: StrategyLifecycleEvent / 策略生命周期事件
 
-D_PORTFOLIO_CORE -> D_REPORTING/D_COMPLIANCE 策略生命周期事件契约。
+Portfolio → Analytics/Compliance 策略生命周期事件契约。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-006
 Version: 1.0
@@ -56,6 +56,7 @@ class StrategyLifecycleEvent:
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-006 ====
+
 
 
 

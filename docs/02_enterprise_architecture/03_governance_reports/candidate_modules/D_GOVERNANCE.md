@@ -19,343 +19,343 @@ ttl: permanent
 
 | ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
-| CAND-HARVEST-0013 | Audit & Compliance Traceability 审计与合规追溯 | Audit & Compliance Traceability 审计与合规追溯（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0029 | Reporting/Review/Attribution 报告/复盘/归因 | Reporting/Review/Attribution 报告/复盘/归因（来源:交易决策架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0037 | 成本治理与优化 Governance | 成本治理与优化 Governance（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0046 | 渐进式全球扩展 Progressive Global Expansion | 渐进式全球扩展 Progressive Global Expansion（来源:交易决策架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0352 | Policy Manager 策略管理器 | Policy Manager 策略管理器（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0353 | Audit Engine 审计引擎 | Audit Engine 审计引擎（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0354 | Registration Engine 注册引擎 | Registration Engine 注册引擎（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0355 | AI Construction Governor AI施工治理器 | AI Construction Governor AI施工治理器（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0613 | Orphan Judge 孤儿判定器 | Orphan Judge 孤儿判定器（来源:数据架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0614 | DepMap Engine 分层存储AST依赖扫描引擎 | DepMap Engine 分层存储AST依赖扫描引擎（来源:数据架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0877 | AI Autonomy Boundary Manager AI自治边界管理器 | AI Autonomy Boundary Manager AI自治边界管理器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0878 | Governance Automation Engine 治理自动化引擎 | Governance Automation Engine 治理自动化引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0879 | Kill Switch (Governance Layer) 治理层Kill Switch | Kill Switch (Governance Layer) 治理层Kill Switch（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0880 | Maturity Assessment Engine 成熟度评估引擎 | Maturity Assessment Engine 成熟度评估引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0881 | Regulatory Mapping Engine 监管映射引擎 | Regulatory Mapping Engine 监管映射引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0882 | Governance Degradation Manager 治理降级管理器 | Governance Degradation Manager 治理降级管理器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0930 | Vibe Coding Governance Vibe Coding治理 | Vibe Coding Governance Vibe Coding治理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0931 | Dependency Semantics Layer 依赖语义层 | Dependency Semantics Layer 依赖语义层（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0932 | Dependency Amplification Analyzer 依赖放大效应分析器 | Dependency Amplification Analyzer 依赖放大效应分析器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0933 | Architecture as Code Engine 架构即代码引擎 | Architecture as Code Engine 架构即代码引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0934 | Business Capability-Module Mapper 业务能力-模块映射器 | Business Capability-Module Mapper 业务能力-模块映射器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0935 | Org-System Dependency Mapper 组织-系统依赖映射器 | Org-System Dependency Mapper 组织-系统依赖映射器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0936 | Fine-Grained Dependency Analyzer 函数级依赖图分析器 | Fine-Grained Dependency Analyzer 函数级依赖图分析器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0937 | Coupling Strength Metrics 耦合度量计算器 | Coupling Strength Metrics 耦合度量计算器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0938 | AST Call Graph Generator AST调用图生成器 | AST Call Graph Generator AST调用图生成器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0939 | Architecture Test Suite 架构测试套件 | Architecture Test Suite 架构测试套件（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0940 | Policy Impact Analyzer 策略影响分析器 | Policy Impact Analyzer 策略影响分析器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0941 | Governance Dashboard 治理可视化仪表盘 | Governance Dashboard 治理可视化仪表盘（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0942 | Contract Version Management 契约版本管理 | Contract Version Management 契约版本管理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0943 | AST Call Graph AST调用图 | AST Call Graph AST调用图（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0944 | Coupling Metrics 耦合度量 | Coupling Metrics 耦合度量（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0945 | Blueprint-Code Traceability 蓝图-代码追溯 | Blueprint-Code Traceability 蓝图-代码追溯（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0946 | Architecture as Code 架构即代码 | Architecture as Code 架构即代码（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0947 | GraphRAG Query GraphRAG查询 | GraphRAG Query GraphRAG查询（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0948 | ADR Decision Tracking ADR决策追踪 | ADR Decision Tracking ADR决策追踪（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0949 | Developer Portal 开发者门户 | Developer Portal 开发者门户（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0950 | Org Topology 组织拓扑 | Org Topology 组织拓扑（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0951 | CQRS/ES Modeling CQRS/ES建模 | CQRS/ES Modeling CQRS/ES建模（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0952 | API Dependency API依赖 | API Dependency API依赖（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0953 | Team Topology 团队拓扑 | Team Topology 团队拓扑（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0954 | Cycle Detection 环路检测 | Cycle Detection 环路检测（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0955 | Implicit Dependency Discovery 隐式依赖发现 | Implicit Dependency Discovery 隐式依赖发现（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0956 | Knowledge Graph Reasoning 知识图谱推理 | Knowledge Graph Reasoning 知识图谱推理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0957 | Dependency Amplification Mitigation 依赖放大缓解 | Dependency Amplification Mitigation 依赖放大缓解（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0958 | AaC Compiler AaC编译器 | AaC Compiler AaC编译器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0959 | GraphRAG Reasoning GraphRAG推理 | GraphRAG Reasoning GraphRAG推理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0960 | ADR Simulation ADR仿真 | ADR Simulation ADR仿真（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0962 | Code Dedup Engine 代码去重引擎 | Code Dedup Engine 代码去重引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0964 | Audit Orchestrator 审计编排器 | Audit Orchestrator 审计编排器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0965 | Semantic Auditor 语义审计器 | Semantic Auditor 语义审计器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0969 | Registry Governance 注册治理 | Registry Governance 注册治理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-0970 | State Machine Engine 状态机引擎 | State Machine Engine 状态机引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1050 | Decision Audit Trail 决策审计追踪 | Decision Audit Trail 决策审计追踪（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-1767 | Incident Response 事件响应 | Incident Response 事件响应（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2041 | AI治理框架 AI Governance Framework | AI治理框架 AI Governance Framework（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2043 | 知识来源追溯 Knowledge Source Tracing | 知识来源追溯 Knowledge Source Tracing（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2044 | 模块变更审计 Module Change Audit | 模块变更审计 Module Change Audit（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2069 | Rust/Go延迟分层 Rust/Go Latency Tiering | Rust/Go延迟分层 Rust/Go Latency Tiering（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2070 | Agent集群 Agent Cluster MARL | Agent集群 Agent Cluster MARL（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2071 | 平台化基础设施 Platform Infrastructure | 平台化基础设施 Platform Infrastructure（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2072 | EU AI Act字面合规 EU AI Act Literal Compliance | EU AI Act字面合规 EU AI Act Literal Compliance（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2074 | 多管线并行架构 Multi-Pipeline Parallel Architecture | 多管线并行架构 Multi-Pipeline Parallel Architecture（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2078 | Micro-Agent微Agent架构 Micro-Agent Architecture | Micro-Agent微Agent架构 Micro-Agent Architecture（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2080 | SEC AI Trading Advisor注册 SEC AI Trading Advisor Registration | SEC AI Trading Advisor注册 SEC AI Trading Advisor Registration（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2136 | OPA Rego Policy Engine OPA Rego策略引擎 | OPA Rego Policy Engine OPA Rego策略引擎（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2147 | A2A Gateway Policy Engine A2A检查网关策略引擎 | A2A Gateway Policy Engine A2A检查网关策略引擎（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2148 | Global Policy Layer 全局策略层 | Global Policy Layer 全局策略层（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2185 | GAAT Governance-Aware Agent Telemetry 治理感知遥测 | GAAT Governance-Aware Agent Telemetry 治理感知遥测（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2186 | Microsoft Agent Governance Toolkit 治理 | Microsoft Agent Governance Toolkit 治理（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2187 | Agent OS Policy Engine Agent OS策略引擎 | Agent OS Policy Engine Agent OS策略引擎（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2190 | Governance Enforcement Bus GEB 治理执行总线 | Governance Enforcement Bus GEB 治理执行总线（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2191 | Trusted Telemetry Plane 可信遥测平面 | Trusted Telemetry Plane 可信遥测平面（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2245 | ADR Generation ADR生成 | ADR Generation ADR生成（来源:10-D-REPORTING-报告域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2246 | Dependency Change Log 依赖变更日志 | Dependency Change Log 依赖变更日志（来源:10-D-REPORTING-报告域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2288 | OPA Rego OPA Rego策略语言 | OPA Rego OPA Rego策略语言（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2289 | Cedar Cedar策略语言 | Cedar Cedar策略语言（来源:Agent架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2348 | GAAT Governance-Aware Telemetry GAAT治理感知遥测 | GAAT Governance-Aware Telemetry GAAT治理感知遥测（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2349 | Microsoft AGT Microsoft AGT治理栈 | Microsoft AGT Microsoft AGT治理栈（来源:Agent架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2375 | ADR Generation ADR架构决策记录自动生成 | ADR Generation ADR架构决策记录自动生成（来源:10-D-REPORTING-报告域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2376 | Dependency Change Log 模块依赖变更日志 | Dependency Change Log 模块依赖变更日志（来源:10-D-REPORTING-报告域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2562 | Governance Domain 治理域 | Governance Domain 治理域（来源:17-D-COMPLIANCE-合规监管域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2563 | Behavioral Auditor 行为审计器 | Behavioral Auditor 行为审计器（来源:17-D-COMPLIANCE-合规监管域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2589 | EU AI Act Article 14 Compliance Mapping EU AI Act Article 14合规映射 | EU AI Act Article 14 Compliance Mapping EU AI Act Article 14合规映射（来源:17-D-COMPLIANCE-合规监管域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2596 | 45 Capability List 45项能力清单 | 45 Capability List 45项能力清单（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2597 | Five Quadrant Capability Architecture 五象限能力架构 | Five Quadrant Capability Architecture 五象限能力架构（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2599 | Governance Domain Module Mapping 治理域模块映射 | Governance Domain Module Mapping 治理域模块映射（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2646 | Kill Switch Layered Kill Switch分层 | Kill Switch Layered Kill Switch分层（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2647 | Governance Degradation Mode 治理降级模式 | Governance Degradation Mode 治理降级模式（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2648 | Governance Automation 治理自动化 | Governance Automation 治理自动化（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2649 | Blueprint Code Document Three Way Alignment 蓝图-代码-文档三方对齐机制 | Blueprint Code Document Three Way Alignment 蓝图-代码-文档三方对齐机制（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2650 | Architecture Drift Detection 架构漂移检测与纠正闭环 | Architecture Drift Detection 架构漂移检测与纠正闭环（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2651 | AI Autonomy Boundary AI自治边界 | AI Autonomy Boundary AI自治边界（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2652 | Change Approval Flow 变更审批流 | Change Approval Flow 变更审批流（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2969 | Orchestration Agent 编排代理 | Orchestration Agent 编排代理（来源:07-D-POSITION-仓位管理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2972 | Policy层 Policy Layer | Policy层 Policy Layer（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2973 | Factory层 Factory Layer | Factory层 Factory Layer（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2974 | Runtime层 Runtime Layer | Runtime层 Runtime Layer（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2980 | 规则生命周期 Rule Lifecycle | 规则生命周期 Rule Lifecycle（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2981 | 编译验证 Compile Validation | 编译验证 Compile Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2982 | 预发布测试 Pre-release Testing | 预发布测试 Pre-release Testing（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2983 | 灰度发布 Canary Release | 灰度发布 Canary Release（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2984 | 回滚机制 Rollback Mechanism | 回滚机制 Rollback Mechanism（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2985 | 实时执行 Real-time Execution | 实时执行 Real-time Execution（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2986 | 漂移检测 Drift Detection | 漂移检测 Drift Detection（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2987 | 反馈闭环 Feedback Loop | 反馈闭环 Feedback Loop（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2994 | 数据漂移 Data Drift | 数据漂移 Data Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2995 | 概念漂移 Concept Drift | 概念漂移 Concept Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2996 | 架构漂移 Architecture Drift | 架构漂移 Architecture Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2997 | 配置漂移 Config Drift | 配置漂移 Config Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2998 | 治理漂移 Governance Drift | 治理漂移 Governance Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-2999 | KS检验 KS Test | KS检验 KS Test（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3000 | Wasserstein距离 Wasserstein Distance | Wasserstein距离 Wasserstein Distance（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3001 | PELT变点检测 PELT Change Point Detection | PELT变点检测 PELT Change Point Detection（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3002 | 蓝图-代码哈希对比 Blueprint-Code Hash Comparison | 蓝图-代码哈希对比 Blueprint-Code Hash Comparison（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3006 | 轻微漂移自动纠正 Minor Drift Auto Correction | 轻微漂移自动纠正 Minor Drift Auto Correction（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3007 | 中度漂移确认纠正 Moderate Drift Confirmed Correction | 中度漂移确认纠正 Moderate Drift Confirmed Correction（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3008 | 严重漂移人工决策 Severe Drift Human Decision | 严重漂移人工决策 Severe Drift Human Decision（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3019 | M1 初始 Ad Hoc | M1 初始 Ad Hoc（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3020 | M2 发展中 Developing | M2 发展中 Developing（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3021 | M3 已定义 Defined | M3 已定义 Defined（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3022 | M4 已管理 Managed | M4 已管理 Managed（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3023 | M5 优化 Optimizing | M5 优化 Optimizing（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3024 | Phase 0 审计日志激活 | Phase 0 审计日志激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3025 | Phase 1 变更审批L1-L3激活 | Phase 1 变更审批L1-L3激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3026 | Phase 2 漂移检测统计层激活 | Phase 2 漂移检测统计层激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3027 | Phase 3 变更审批L4-L5激活 | Phase 3 变更审批L4-L5激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3028 | Phase 4 治理自动化激活 | Phase 4 治理自动化激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3030 | 蓝图 Blueprint | 蓝图 Blueprint（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3031 | 代码 Code | 代码 Code（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3032 | 文档 Documentation | 文档 Documentation（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3033 | 组件存在性校验 Component Existence Validation | 组件存在性校验 Component Existence Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3034 | 配置一致性校验 Config Consistency Validation | 配置一致性校验 Config Consistency Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3035 | 文档完整性校验 Documentation Completeness Validation | 文档完整性校验 Documentation Completeness Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3036 | 依赖方向校验 Dependency Direction Validation | 依赖方向校验 Dependency Direction Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3037 | 数据血缘校验 Data Lineage Validation | 数据血缘校验 Data Lineage Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3038 | 规则编译检查器 Rule Compile Checker | 规则编译检查器 Rule Compile Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3039 | 审批门禁检查器 Approval Gate Checker | 审批门禁检查器 Approval Gate Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3040 | 三方对齐检查器 Three-party Alignment Checker | 三方对齐检查器 Three-party Alignment Checker（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3042 | 漂移检测检查器 Drift Detection Checker | 漂移检测检查器 Drift Detection Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3043 | 审计完整性检查器 Audit Integrity Checker | 审计完整性检查器 Audit Integrity Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3044 | 依赖方向检查器 Dependency Direction Checker | 依赖方向检查器 Dependency Direction Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3046 | 配置漂移检查器 Config Drift Checker | 配置漂移检查器 Config Drift Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3048 | governance_report.py 治理状态报告 | governance_report.py 治理状态报告（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3049 | drift_scan.py 漂移扫描 | drift_scan.py 漂移扫描（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3050 | alignment_check.py 三方对齐检查 | alignment_check.py 三方对齐检查（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3051 | audit_integrity.py 审计完整性 | audit_integrity.py 审计完整性（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3053 | rule_lifecycle.py 规则生命周期 | rule_lifecycle.py 规则生命周期（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3056 | Administrator 管理员角色 | Administrator 管理员角色（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3058 | 漂移检测覆盖率 Drift Detection Coverage | 漂移检测覆盖率 Drift Detection Coverage（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3059 | 变更审批合规率 Change Approval Compliance Rate | 变更审批合规率 Change Approval Compliance Rate（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3060 | 三方对齐一致率 Three-party Alignment Rate | 三方对齐一致率 Three-party Alignment Rate（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3061 | 治理自动化覆盖率 Governance Automation Coverage | 治理自动化覆盖率 Governance Automation Coverage（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3062 | 治理告警响应时间 Governance Alert Response Time | 治理告警响应时间 Governance Alert Response Time（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3064 | NIST AI RMF NIST AI风险管理框架 | NIST AI RMF NIST AI风险管理框架（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3068 | OWASP AIMA v1.0 | OWASP AIMA v1.0（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3070 | SR 26-2 模型风险管理新指引 | SR 26-2 模型风险管理新指引（来源:治理架构.md, uncertain） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3079 | IIA Three Lines Model 模型 | IIA Three Lines Model 模型（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3086 | Minimum Viable Governance MVG 治理 | Minimum Viable Governance MVG 治理（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3091 | Agentic Regulator四层治理框架 | Agentic Regulator四层治理框架（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3092 | Santander机械执行vs文本治理 | Santander机械执行vs文本治理（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3094 | ICFDT AI治理报告 | ICFDT AI治理报告（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3095 | CFA Institute两层治理框架 | CFA Institute两层治理框架（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3096 | Gartner Agentic AI失败率预测 | Gartner Agentic AI失败率预测（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3098 | 治理-任务解耦 Santander | 治理-任务解耦 Santander（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3116 | 不透明性 Opacity | 不透明性 Opacity（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3120 | 关联性 Interconnectedness | 关联性 Interconnectedness（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3122 | 监控挑战 Monitoring Challenges | 监控挑战 Monitoring Challenges（来源:治理架构.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3123 | 系统复杂性 System Complexity | 系统复杂性 System Complexity（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3142 | GOV-FSTR-001 File Structure Governance 治理文件 | GOV-FSTR-001 File Structure Governance 治理文件（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3143 | DOM-GOV-CAP-001 容量升级 | DOM-GOV-CAP-001 容量升级（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3146 | M6 业务-模块映射 | M6 业务-模块映射（来源:治理架构.md, uncertain） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3147 | M7 价值流分析 | M7 价值流分析（来源:治理架构.md, uncertain） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3148 | M9 变更影响分析 | M9 变更影响分析（来源:治理架构.md, uncertain） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3149 | D1~D84 独立研究模块 | D1~D84 独立研究模块（来源:治理架构.md, uncertain） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3526 | compliance_matrix.py 合规矩阵 | compliance_matrix.py 合规矩阵（来源:24-D-SECURITY-安全域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3527 | decision_registry.py 决策注册表 | decision_registry.py 决策注册表（来源:24-D-SECURITY-安全域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3528 | decision_explainer.py 决策解释器 | decision_explainer.py 决策解释器（来源:24-D-SECURITY-安全域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3780 | Dw150 Update Blueprints dw150更新入 | Dw150 Update Blueprints dw150更新入（来源:场内模块清单.csv, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3781 | Check Threeway Alignment 检查三对齐 | Check Threeway Alignment 检查三对齐（来源:场内模块清单.csv, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3782 | Dw151 Full Verify dw151满验证 | Dw151 Full Verify dw151满验证（来源:场内模块清单.csv, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3784 | AuditLedger 审计账本 | AuditLedger 审计账本（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3785 | DDDRuleEnforcer DDD铁律执行器 | DDDRuleEnforcer DDD铁律执行器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3786 | DecisionProvenance 决策溯源链 | DecisionProvenance 决策溯源链（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3787 | PhaseGateManager 阶段门禁管理 | PhaseGateManager 阶段门禁管理（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3788 | ConstitutionalGuard 宪法守卫 | ConstitutionalGuard 宪法守卫（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3789 | ComplianceAuditor 合规审计器 | ComplianceAuditor 合规审计器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3790 | IncidentResponse 事件响应与升级 | IncidentResponse 事件响应与升级（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3791 | SystemTopologyAuditor 系统拓扑审计 | SystemTopologyAuditor 系统拓扑审计（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3792 | 关系类型分类器 RelationTypeClassifier | 关系类型分类器 RelationTypeClassifier（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3793 | 语义注解引擎 SemanticAnnotationEngine | 语义注解引擎 SemanticAnnotationEngine（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3794 | 条件依赖求解器 ConditionalDependencySolverer | 条件依赖求解器 ConditionalDependencySolverer（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3795 | 依赖强度量化器 DependencyStrengthQuantifier | 依赖强度量化器 DependencyStrengthQuantifier（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3796 | 语义变更检测器 SemanticChangeDetector | 语义变更检测器 SemanticChangeDetector（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3797 | Monoidal Dependency Composer 单子依赖组合器 | Monoidal Dependency Composer 单子依赖组合器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3798 | Dependent Type Verifier 依赖类型验证器 | Dependent Type Verifier 依赖类型验证器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3799 | Semantic Similarity Scorer 语义相似度评分器 | Semantic Similarity Scorer 语义相似度评分器（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3800 | Event-Driven Dependency Tracer 事件驱动依赖追踪器 | Event-Driven Dependency Tracer 事件驱动依赖追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3801 | UML/SysML Stereotype Mapper UML构造型映射器 | UML/SysML Stereotype Mapper UML构造型映射器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3802 | Temporal Dependency Validator 时序依赖验证器 | Temporal Dependency Validator 时序依赖验证器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3803 | 传递依赖解析器 TransitiveDependencyResolver | 传递依赖解析器 TransitiveDependencyResolver（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3804 | 放大倍数计算器 AmplificationFactorCalculator | 放大倍数计算器 AmplificationFactorCalculator（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3805 | 放大热点识别器 AmplificationHotspotIdentifier | 放大热点识别器 AmplificationHotspotIdentifier（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3806 | 扁平化建议器 FlatteningAdvisor | 扁平化建议器 FlatteningAdvisor（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3807 | 放大趋势追踪器 AmplificationTrendTracker | 放大趋势追踪器 AmplificationTrendTracker（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3808 | Fan-In/Fan-Out Analyzer 扇入扇出分析器 | Fan-In/Fan-Out Analyzer 扇入扇出分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3809 | Dependency Bloat Meter 依赖膨胀度量器 | Dependency Bloat Meter 依赖膨胀度量器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3810 | MTTU_dep/MTTR_dep Tracker 依赖MTTU/MTTR追踪器 | MTTU_dep/MTTR_dep Tracker 依赖MTTU/MTTR追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3811 | Critical Path Analyzer 关键路径分析器 | Critical Path Analyzer 关键路径分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3812 | Dependency Entropy Calculator 依赖熵计算器 | Dependency Entropy Calculator 依赖熵计算器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3813 | Change Shock Radius Predictor 变更冲击半径预测器 | Change Shock Radius Predictor 变更冲击半径预测器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3814 | Dependency Health Scorecard 依赖健康评分卡 | Dependency Health Scorecard 依赖健康评分卡（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3815 | Adoption Curve Modeler 采纳曲线建模器 | Adoption Curve Modeler 采纳曲线建模器（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3816 | Dependency Deduplication Advisor 依赖去重顾问 | Dependency Deduplication Advisor 依赖去重顾问（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3817 | Ecosystem Risk Diversification Analyzer 生态风险分散分析器 | Ecosystem Risk Diversification Analyzer 生态风险分散分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3818 | 图数据模型/导入/存储/查询/提取/推理/同步 GraphStorage | 图数据模型/导入/存储/查询/提取/推理/同步 GraphStorage（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3819 | 本体层/多边存储/查询优化/时序图/语义检测/GraphRAG等 | 本体层/多边存储/查询优化/时序图/语义检测/GraphRAG等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3820 | 业务域解析/技术模块解析/映射规则/发现/覆盖率/孤立检测 Business Domain Parsing/Technical Module Parsing/Mapping Rules/Discovery/Coverage/Orphan Detection | 业务域解析/技术模块解析/映射规则/发现/覆盖率/孤立检测 Business Domain Parsing/Technical Module Parsing/Mapping Rules/Discovery/Coverage/Orphan Detection（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3821 | TOGAF自动化/ArchiMate/DDD映射/流程映射等 | TOGAF自动化/ArchiMate/DDD映射/流程映射等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3822 | 价值流定义/流依赖/瓶颈/延迟/健康评分等 Latency | 价值流定义/流依赖/瓶颈/延迟/健康评分等 Latency（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3823 | 变更传播/影响范围/严重度/修复建议等 Change Propagation/Impact Scope/Severity/Repair Suggestions | 变更传播/影响范围/严重度/修复建议等 Change Propagation/Impact Scope/Severity/Repair Suggestions（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3824 | 契约版本注册/兼容性矩阵/升级路径等 Contract Path | 契约版本注册/兼容性矩阵/升级路径等 Contract Path（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3825 | AST解析/调用图/膨胀检测/清理/可视化等 | AST解析/调用图/膨胀检测/清理/可视化等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3826 | RMS计算/热力图/趋势/解耦建议等 | RMS计算/热力图/趋势/解耦建议等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3827 | 蓝图解析/代码解析/追溯链/漂移检测等 Blueprint Parsing/Code Parsing/Traceability Chain/Drift Detection | 蓝图解析/代码解析/追溯链/漂移检测等 Blueprint Parsing/Code Parsing/Traceability Chain/Drift Detection（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3828 | AaC DSL/约束定义/漂移检测/修复/CI集成等 | AaC DSL/约束定义/漂移检测/修复/CI集成等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3829 | NL解析/图查询转换/社区发现/摘要等 | NL解析/图查询转换/社区发现/摘要等（来源:29-D-GOVERNANCE-治理域.md, uncertain） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3830 | ADR解析/约束提取/双向关联/校验/推演等 | ADR解析/约束提取/双向关联/校验/推演等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3831 | 服务目录/Golden Path/技术雷达/自助服务 | 服务目录/Golden Path/技术雷达/自助服务（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3832 | 组织拓扑/Conway映射/认知负载/团队边界 | 组织拓扑/Conway映射/认知负载/团队边界（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3833 | 命令侧/查询侧/冲突检测/聚合边界验证 Aggregator Command Query | 命令侧/查询侧/冲突检测/聚合边界验证 Aggregator Command Query（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3834 | OpenAPI提取/版本兼容/废弃追踪等 | OpenAPI提取/版本兼容/废弃追踪等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3835 | 变更频率/团队边界/认知负载/Bus Factor等 | 变更频率/团队边界/认知负载/Bus Factor等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3836 | 环路检测/死锁预测/循环消除/条件求解等 Loop Detection/Deadlock Prediction/Cycle Elimination/Condition Solving | 环路检测/死锁预测/循环消除/条件求解等 Loop Detection/Deadlock Prediction/Cycle Elimination/Condition Solving（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3837 | 静态分析/动态采集/AI推断/配置发现等 | 静态分析/动态采集/AI推断/配置发现等（来源:29-D-GOVERNANCE-治理域.md, uncertain） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3838 | 路径索引/子图同构/GNN/传播概率等 | 路径索引/子图同构/GNN/传播概率等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3839 | 扁平化/锁定/拆分/替代/评估/策略等 Strategy | 扁平化/锁定/拆分/替代/评估/策略等 Strategy（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3840 | AaC DSL编译/CI门禁/漂移/修复/报告等 | AaC DSL编译/CI门禁/漂移/修复/报告等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3841 | 索引/多跳/RAG增强/摘要/验证/增量更新等 | 索引/多跳/RAG增强/摘要/验证/增量更新等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3842 | ADR传播/多ADR交互/回溯/变更仿真等 | ADR传播/多ADR交互/回溯/变更仿真等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3843 | Dependency Update Latency Predictor 依赖更新延迟预测器 | Dependency Update Latency Predictor 依赖更新延迟预测器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3844 | Dependency Adoption Pattern Analyzer 依赖采纳模式分析器 | Dependency Adoption Pattern Analyzer 依赖采纳模式分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3845 | Architecture Tech Debt Tracker 架构技术债追踪器 | Architecture Tech Debt Tracker 架构技术债追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3846 | Dependency Temporal Evolution Analyzer 依赖时序演化分析器 | Dependency Temporal Evolution Analyzer 依赖时序演化分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3847 | Tech Debt Compound Effect Modeler 技术债复合效应建模器 | Tech Debt Compound Effect Modeler 技术债复合效应建模器（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3848 | Homomorphic Dependency Calculator 同态依赖计算器 | Homomorphic Dependency Calculator 同态依赖计算器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3849 | QPDG Engine QPDG引擎 | QPDG Engine QPDG引擎（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3850 | Entanglement-Aware Scheduler 纠缠感知调度器 | Entanglement-Aware Scheduler 纠缠感知调度器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3851 | Hybrid Classical-Quantum Bridge 混合经典量子桥 | Hybrid Classical-Quantum Bridge 混合经典量子桥（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3852 | Quantum Error Propagation Tracer 量子错误传播追踪器 | Quantum Error Propagation Tracer 量子错误传播追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3853 | Kleisli Effect Engine Kleisli效果引擎 | Kleisli Effect Engine Kleisli效果引擎（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3854 | 左Kan扩展依赖解析器 LeftKanExtensionDependencyResolver | 左Kan扩展依赖解析器 LeftKanExtensionDependencyResolver（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3855 | 光学双向依赖同步器 OpticalBidirectionalDependencySynchronizer | 光学双向依赖同步器 OpticalBidirectionalDependencySynchronizer（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3856 | 依赖效果类型检查器 DependencyEffectTypeChecker | 依赖效果类型检查器 DependencyEffectTypeChecker（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3857 | Indexed Graded Monad Tracker 索引分级单子追踪器 | Indexed Graded Monad Tracker 索引分级单子追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3858 | 依赖会话类型验证器 DependencySessionTypeValidator | 依赖会话类型验证器 DependencySessionTypeValidator（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3859 | 需求-代码双向追溯引擎 RequirementCodeBidirectionalTraceabilityEngine | 需求-代码双向追溯引擎 RequirementCodeBidirectionalTraceabilityEngine（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3860 | 数字线程完整性评分器 DigitalThreadIntegrityScorer | 数字线程完整性评分器 DigitalThreadIntegrityScorer（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3861 | 依赖地狱5维检测器 DependencyHell5DDetector | 依赖地狱5维检测器 DependencyHell5DDetector（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3862 | Migration Dependency Graph Manager 迁移依赖图管理器 | Migration Dependency Graph Manager 迁移依赖图管理器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3863 | 依赖漂移距离度量器 DependencyDriftDistanceMeter | 依赖漂移距离度量器 DependencyDriftDistanceMeter（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3864 | GAT变更影响预测器 GATChangeImpactPredictor | GAT变更影响预测器 GATChangeImpactPredictor（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3865 | 隐式依赖GNN发现器 ImplicitDependencyGNNFinder | 隐式依赖GNN发现器 ImplicitDependencyGNNFinder（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3866 | ACO多路径依赖搜索器 ACOMultiPathDependencySearcher | ACO多路径依赖搜索器 ACOMultiPathDependencySearcher（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3867 | GA Multi-Objective Refactoring 遗传算法多目标重构 | GA Multi-Objective Refactoring 遗传算法多目标重构（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3868 | PSO隐式依赖发现器 PSOImplicitDependencyFinder | PSO隐式依赖发现器 PSOImplicitDependencyFinder（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3869 | HW-SW Unified DAG 软硬件统一DAG | HW-SW Unified DAG 软硬件统一DAG（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3870 | 反馈依赖环检测器 FeedbackDependencyLoopDetector | 反馈依赖环检测器 FeedbackDependencyLoopDetector（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3871 | 文档漂移反模式检测器 DocumentationDriftAntipatternDetector | 文档漂移反模式检测器 DocumentationDriftAntipatternDetector（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4170 | Provenance Tracker 溯源追踪器 | Provenance Tracker 溯源追踪器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4171 | Audit Integrity Verifier 审计完整性验证器 | Audit Integrity Verifier 审计完整性验证器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4172 | Rollback Governance Auditor 回滚治理审计器 | Rollback Governance Auditor 回滚治理审计器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4173 | A2A Protocol Governance Auditor A2A协议治理审计器 | A2A Protocol Governance Auditor A2A协议治理审计器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4174 | Durable Execution 持久化执行 | Durable Execution 持久化执行（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4175 | Architecture Principles 架构原则定义 | Architecture Principles 架构原则定义（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4176 | Cross Environment Consistency 跨环境一致性校验 | Cross Environment Consistency 跨环境一致性校验（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4177 | D5 Architecture Validators D5架构验证器 | D5 Architecture Validators D5架构验证器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4178 | Downstream Anchors Verifier 下游锚点验证器 | Downstream Anchors Verifier 下游锚点验证器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4179 | Version Negotiation 版本协商 | Version Negotiation 版本协商（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4180 | Decision Fatigue Detector 决策疲劳检测器 | Decision Fatigue Detector 决策疲劳检测器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4181 | Decision Fatigue CLI 决策疲劳CLI | Decision Fatigue CLI 决策疲劳CLI（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4182 | Consequence Manager 后果管理器 | Consequence Manager 后果管理器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4183 | Multi Model Consensus 多模型共识归档 | Multi Model Consensus 多模型共识归档（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4184 | Agent Debate Agent辩论机制 | Agent Debate Agent辩论机制（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4185 | Phase Check Registry 阶段检查注册表 | Phase Check Registry 阶段检查注册表（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4186 | Phase Manager 阶段管理器 | Phase Manager 阶段管理器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4187 | Admission Response 准入响应 | Admission Response 准入响应（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4188 | Pre Operation Check 操作前检查 | Pre Operation Check 操作前检查（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4189 | A2A Protocol Phase Hold A2A协议阶段保持 | A2A Protocol Phase Hold A2A协议阶段保持（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4190 | Agent RBAC Approver Check Agent RBAC审批人检查 | Agent RBAC Approver Check Agent RBAC审批人检查（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4191 | Constitutional Update 宪法更新 | Constitutional Update 宪法更新（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4192 | AI Code Standards AI代码标准 | AI Code Standards AI代码标准（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4193 | Vibe Coding Enforcer Vibe Coding执行器 | Vibe Coding Enforcer Vibe Coding执行器（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4194 | AI Code Review AI代码审查 | AI Code Review AI代码审查（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4195 | Prompt Lifecycle Prompt生命周期 | Prompt Lifecycle Prompt生命周期（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4196 | AI Self Diagnosis AI自诊断监督 | AI Self Diagnosis AI自诊断监督（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4197 | AI Hallucination Detection AI幻觉检测 | AI Hallucination Detection AI幻觉检测（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4198 | Financial Compliance 金融合规 | Financial Compliance 金融合规（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4199 | Data Classification 数据分类 | Data Classification 数据分类（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4200 | Data Lifecycle 数据生命周期 | Data Lifecycle 数据生命周期（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4201 | Data Quality 数据质量 | Data Quality 数据质量（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4202 | Data Source Reliability 数据源可靠性 | Data Source Reliability 数据源可靠性（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4203 | Benchmark Integrity 基准完整性 | Benchmark Integrity 基准完整性（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4204 | Compliance Scripts 合规脚本 | Compliance Scripts 合规脚本（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4205 | Evals Evaluation Framework 评估框架 | Evals Evaluation Framework 评估框架（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4206 | Fault Tolerance 容错 | Fault Tolerance 容错（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4207 | Broker Resilience Broker韧性 | Broker Resilience Broker韧性（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4208 | Offline Resilience 离线韧性 | Offline Resilience 离线韧性（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4209 | A2A Failure Escalation A2A失败升级 | A2A Failure Escalation A2A失败升级（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4210 | Approval Escalation 审批升级 | Approval Escalation 审批升级（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4211 | Budget Handler 预算处理 | Budget Handler 预算处理（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4212 | Drift Fix 漂移修复 | Drift Fix 漂移修复（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4213 | Budget Tracker 预算追踪 | Budget Tracker 预算追踪（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4214 | System Topology 系统拓扑 | System Topology 系统拓扑（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4215 | Dependency Manager 依赖管理 | Dependency Manager 依赖管理（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4216 | SPOF Checker 单点故障检测器 | SPOF Checker 单点故障检测器（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4217 | Observability Dashboard 可观测性仪表盘 | Observability Dashboard 可观测性仪表盘（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4218 | Change Impact Analyzer 变更影响分析器 | Change Impact Analyzer 变更影响分析器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4219 | Causal Conflict Detector 因果冲突检测器 | Causal Conflict Detector 因果冲突检测器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4220 | Governance Watchdog 治理看门狗 | Governance Watchdog 治理看门狗（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4221 | MCP Governance Server MCP治理服务 | MCP Governance Server MCP治理服务（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4256 | Rollback Result Types 回滚结果类型 | Rollback Result Types 回滚结果类型（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4836 | 审计链6W模型 Audit Chain 6W Model | 审计链6W模型 Audit Chain 6W Model（来源:22-D-AUT-CORE-自治核心域.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4984 | PolicyManager 规则管理器 | PolicyManager 规则管理器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4985 | DriftGovernance 漂移治理 | DriftGovernance 漂移治理（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4986 | AIConstructionGovernor AI建设治理器 | AIConstructionGovernor AI建设治理器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4987 | LifecycleManager 生命周期管理器 | LifecycleManager 生命周期管理器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4988 | StandardsManager 标准管理器 | StandardsManager 标准管理器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4989 | ComplianceChecker 合规检查器 | ComplianceChecker 合规检查器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4990 | ArchitectureGovernance 架构治理 | ArchitectureGovernance 架构治理（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4991 | DependencySemantics 依赖语义 | DependencySemantics 依赖语义（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4992 | DependencyAmplification 依赖放大效应 | DependencyAmplification 依赖放大效应（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4993 | BusinessCapabilityMapper 业务能力映射器 | BusinessCapabilityMapper 业务能力映射器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4994 | OrgSystemDependencyMapper 组织系统映射器 | OrgSystemDependencyMapper 组织系统映射器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4995 | FineGrainedDependencyAnalyzer 细粒度依赖分析器 | FineGrainedDependencyAnalyzer 细粒度依赖分析器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-4996 | CouplingStrengthMetrics 耦合度量 | CouplingStrengthMetrics 耦合度量（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-5058 | D-GOV-16~26 Dependency Semantic Series 依赖语义系列 | D-GOV-16~26 Dependency Semantic Series 依赖语义系列（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-5059 | Off-site Planning Modules 场外规划模块 | Off-site Planning Modules 场外规划模块（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0013 | Audit & Compliance Traceability 审计与合规追溯 | C 043：审计与合规追溯（阶段一P1/阶段二P2）（→A6合规🔒） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0029 | Reporting/Review/Attribution 报告/复盘/归因 | C 010：报告/复盘/归因 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0037 | 成本治理与优化 Governance | C 044：成本治理与优化 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0046 | 渐进式全球扩展 Progressive Global Expansion | C 020：渐进式全球扩展 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0352 | Policy Manager 策略管理器 | / D-GOVERNANCE-01 / Policy Manager / ✅ 能建 / 📋 项目内有蓝图编号DOM-GOV-001已建设 / 治理策略CRUD+版本管理 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0353 | Audit Engine 审计引擎 | / D-GOVERNANCE-03 / Audit Engine / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-027已建设 / 4审计模块+Merkle哈希链 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0354 | Registration Engine 注册引擎 | / D-GOVERNANCE-13 / Registration Engine / ✅ 能建 / 📋 项目内有蓝图编号MOD-MASTER-001已建设 / scaffold+manifest+registry / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0355 | AI Construction Governor AI施工治理器 | / D-GOVERNANCE-15 / AI Construction Governor / ✅ 能建 / / AI施工门禁+公式Hash+回归截断 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0613 | Orphan Judge 孤儿判定器 | 三决策树处置：无主数据/僵尸因子/废弃Schema | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0614 | DepMap Engine 分层存储AST依赖扫描引擎 | Python AST解析器扫描代码数据依赖构建依赖图谱 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0877 | AI Autonomy Boundary Manager AI自治边界管理器 | AI自治边界管理器ai_modifiable/human_gated/immutable+Agentic Drift防护+边界审计 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0878 | Governance Automation Engine 治理自动化引擎 | 治理自动化引擎10类检查器+6类脚本+自动巡检+自动修复+治理报告 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0879 | Kill Switch (Governance Layer) 治理层Kill Switch | 治理层Kill Switch分层制动+多路径触发+Owner确认+制动审计+制动恢复 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0880 | Maturity Assessment Engine 成熟度评估引擎 | 成熟度评估引擎5级成熟度(M1~M5)+评估指标+评估报告+改进建议+成熟度路线图 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0881 | Regulatory Mapping Engine 监管映射引擎 | 监管映射引擎中国A股程序化交易+ESRB系统性风险+EU AI Act预留+法规自动解析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0882 | Governance Degradation Manager 治理降级管理器 | 治理降级管理器降级策略+降级触发+降级恢复+降级审计+AI自治熔断模式 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0930 | Vibe Coding Governance Vibe Coding治理 | Session治理+Vibe Coding治理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0931 | Dependency Semantics Layer 依赖语义层 | 依赖语义漂移检测 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0932 | Dependency Amplification Analyzer 依赖放大效应分析器 | 依赖放大效应分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0933 | Architecture as Code Engine 架构即代码引擎 | 架构即代码引擎 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0934 | Business Capability-Module Mapper 业务能力-模块映射器 | 业务能力-模块映射 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0935 | Org-System Dependency Mapper 组织-系统依赖映射器 | 组织-系统依赖映射 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0936 | Fine-Grained Dependency Analyzer 函数级依赖图分析器 | 函数级依赖图分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0937 | Coupling Strength Metrics 耦合度量计算器 | 耦合度量计算 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0938 | AST Call Graph Generator AST调用图生成器 | AST调用图生成 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0939 | Architecture Test Suite 架构测试套件 | 架构测试套件 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0940 | Policy Impact Analyzer 策略影响分析器 | 策略影响分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0941 | Governance Dashboard 治理可视化仪表盘 | 治理可视化仪表盘 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0942 | Contract Version Management 契约版本管理 | 治理域-规则版本(10子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0943 | AST Call Graph AST调用图 | 治理域-结构检测(11子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0944 | Coupling Metrics 耦合度量 | 治理域-漂移检测(9子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0945 | Blueprint-Code Traceability 蓝图-代码追溯 | 治理域-三方对齐(8子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0946 | Architecture as Code 架构即代码 | 治理域-三方对齐(8子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0947 | GraphRAG Query GraphRAG查询 | 治理域-治理自动化(7子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0948 | ADR Decision Tracking ADR决策追踪 | 治理域-方法论约束(8子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0949 | Developer Portal 开发者门户 | 治理域-角色交互(5子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0950 | Org Topology 组织拓扑 | 治理域-角色交互(4子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0951 | CQRS/ES Modeling CQRS/ES建模 | 治理域-Runtime层(4子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0952 | API Dependency API依赖 | 治理域-功能域映射(8子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0953 | Team Topology 团队拓扑 | 治理域-角色交互(7子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0954 | Cycle Detection 环路检测 | 治理域-漂移检测(10子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0955 | Implicit Dependency Discovery 隐式依赖发现 | 治理域-漂移检测(9子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0956 | Knowledge Graph Reasoning 知识图谱推理 | 治理域-治理自动化(12子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0957 | Dependency Amplification Mitigation 依赖放大缓解 | 治理域-架构漂移(11子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0958 | AaC Compiler AaC编译器 | 治理域-三方对齐(11子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0959 | GraphRAG Reasoning GraphRAG推理 | 治理域-治理自动化(12子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0960 | ADR Simulation ADR仿真 | 治理域-方法论约束(7子模块) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0962 | Code Dedup Engine 代码去重引擎 | 代码去重引擎 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0964 | Audit Orchestrator 审计编排器 | 审计编排器 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0965 | Semantic Auditor 语义审计器 | 三方对齐 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0969 | Registry Governance 注册治理 | 规则注册 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-0970 | State Machine Engine 状态机引擎 | 变更审批 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1050 | Decision Audit Trail 决策审计追踪 | 每个AI决策的输入/输出/模型版本/参数必须记录 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-1767 | Incident Response 事件响应 | / incident_response.py / governance/ (DOM-GOV-001) / ✅ 核心映射——事件响应 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2041 | AI治理框架 AI Governance Framework | EU AI Act合规治理框架:透明度/人类监督/准确性/问责(❌) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2043 | 知识来源追溯 Knowledge Source Tracing | 每条知识可追溯到原始来源(作者/时间/URL) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2044 | 模块变更审计 Module Change Audit | 所有模块创建/更新/退役操作记录审计日志不可篡改 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2069 | Rust/Go延迟分层 Rust/Go Latency Tiering | / R-31 / Rust/Go延迟分层 / ❌ / 硬边界约束二（单机Windows+Python） / GPU集群+Linux+多语言编译链就绪 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2070 | Agent集群 Agent Cluster MARL | ❌硬边界约束一单人+约束二单机需多机集群+MARL训练框架 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2071 | 平台化基础设施 Platform Infrastructure | / R-33 / 平台化基础设施 / ❌ / 硬边界约束一（单人）+约束三（50万AUM） / 多团队+多账户+AUM>1000万 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2072 | EU AI Act字面合规 EU AI Act Literal Compliance | ❌硬边界约束三个人使用不对外服务需对外提供服务或管理他人资金 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2074 | 多管线并行架构 Multi-Pipeline Parallel Architecture | / R-36 / 多管线并行架构(独立资金池) / ❌ / 硬边界约束三（50万AUM单一账户） / 多账户+AUM>500万+独立资金池 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2078 | Micro-Agent微Agent架构 Micro-Agent Architecture | / R-40 / Micro-Agent微Agent架构 / ❌ / 硬边界约束一（单人）+约束二（单机） / 多机集群+微Agent编排框架就绪 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2080 | SEC AI Trading Advisor注册 SEC AI Trading Advisor Registration | ❌硬边界约束三个人使用不对外服务需对外提供服务或管理他人资金 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2136 | OPA Rego Policy Engine OPA Rego策略引擎 | / LP-001 / OPA Rego策略引擎 / 🔴 暂缓(不能建) / ①Agent数量≥8且规则≥20条；②有第二位开发人员加入 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2147 | A2A Gateway Policy Engine A2A检查网关策略引擎 | A2A检查网关策略引擎Microsoft Agent Governance Toolkit对标 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2148 | Global Policy Layer 全局策略层 | 全局策略层OPA Rego目标架构MVP替代YAML配置 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2185 | GAAT Governance-Aware Agent Telemetry 治理感知遥测 | > GAAT (Governance-Aware Agent Telemetry, arXiv 2026) 在标准OpenTelemetry上扩展治理属性，实现'遥测→检测→执行'闭环。本系统适配其核心思想。 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2186 | Microsoft Agent Governance Toolkit 治理 | Microsoft Agent Governance Toolkit七包治理栈Agent OS Agent Mesh Agent SRE | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2187 | Agent OS Policy Engine Agent OS策略引擎 | Agent OS策略引擎A2A检查网关内嵌策略层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2190 | Governance Enforcement Bus GEB 治理执行总线 | / Governance Enforcement Bus (GEB) / Redis Pub/Sub治理执行总线 / 分级干预：告警→限流→阻断→熔断 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2191 | Trusted Telemetry Plane 可信遥测平面 | / Trusted Telemetry Plane / 审计日志哈希链 / 每条Trace附加前条哈希，防篡改 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2245 | ADR Generation ADR生成 | 架构决策记录自动生成需协作平台 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2246 | Dependency Change Log 依赖变更日志 | 模块依赖变更日志需协作平台 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2288 | OPA Rego OPA Rego策略语言 | OPA Rego策略语言目标架构全局策略层嵌入式策略引擎 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2289 | Cedar Cedar策略语言 | > **设计哲学**：Microsoft Agent Governance Toolkit (2026年4月, MIT开源)提供了7包治理工具栈，其中Agent OS是无状态策略引擎，在Agent动作执行前拦截，延迟<0.1ms p99，支 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2348 | GAAT Governance-Aware Telemetry GAAT治理感知遥测 | > GAAT (Governance-Aware Agent Telemetry, arXiv 2026) 在标准OpenTelemetry上扩展治理属性，实现'遥测→检测→执行'闭环。本系统适配其核心思想。 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2349 | Microsoft AGT Microsoft AGT治理栈 | Microsoft AGT Agent Governance Toolkit概念映射Agent OS策略引擎+Agent Mesh密码学身份+Agent SRE可靠性工程+Agent Runtime执行环 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2375 | ADR Generation ADR架构决策记录自动生成 | ADR架构决策记录自动生成需协作平台受限模块 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2376 | Dependency Change Log 模块依赖变更日志 | 模块依赖变更日志需协作平台受限模块 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2562 | Governance Domain 治理域 | 场内项目部分实现治理域 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2563 | Behavioral Auditor 行为审计器 | 场内项目行为审计器 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2589 | EU AI Act Article 14 Compliance Mapping EU AI Act Article 14合规映射 | ### 来自Agent架构(A7) §4.6.3 EU AI Act Article 14合规映射 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2596 | 45 Capability List 45项能力清单 | 能力定位书定义45项能力清单C-001~C-047 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2597 | Five Quadrant Capability Architecture 五象限能力架构 | A1交易能力+A8进化能力+A9运维能力 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2599 | Governance Domain Module Mapping 治理域模块映射 | 遗留问题裁定+治理域模块映射265模块 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2646 | Kill Switch Layered Kill Switch分层 | Kill Switch分层+本地评估 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2647 | Governance Degradation Mode 治理降级模式 | 治理降级模式+AI自治熔断模式 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2648 | Governance Automation 治理自动化 | 10类检查器+6类脚本 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2649 | Blueprint Code Document Three Way Alignment 蓝图-代码-文档三方对齐机制 | 6维校验+一致性规则 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2650 | Architecture Drift Detection 架构漂移检测与纠正闭环 | 5类漂移数据/概念/架构/配置/治理+3级纠正 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2651 | AI Autonomy Boundary AI自治边界 | / AI自治边界（ai_modifiable/human_gated/immutable+Agentic Drift防护） / 安全技术实现（→A5） / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2652 | Change Approval Flow 变更审批流 | 5级L1~L5+审批链+门禁GATE-01~07触发规则 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2969 | Orchestration Agent 编排代理 | 设定决策约束仓位上限/风险预算 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2972 | Policy层 Policy Layer | 治理三层边界定义应该怎样 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2973 | Factory层 Factory Layer | 治理三层边界定义怎么做到 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2974 | Runtime层 Runtime Layer | 治理三层边界定义实际怎样 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2980 | 规则生命周期 Rule Lifecycle | 草稿审核发布生效退役 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2981 | 编译验证 Compile Validation | 语法语义可执行性校验 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2982 | 预发布测试 Pre-release Testing | 沙箱环境验证规则正确性 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2983 | 灰度发布 Canary Release | 低风险域灰度运行验证 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2984 | 回滚机制 Rollback Mechanism | 一键回滚到上一版本 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2985 | 实时执行 Real-time Execution | 关键路径执行治理规则 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2986 | 漂移检测 Drift Detection | Policy层与Runtime层对比 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2987 | 反馈闭环 Feedback Loop | 执行结果反馈到Policy层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2994 | 数据漂移 Data Drift | 输入特征分布变化KS检验 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2995 | 概念漂移 Concept Drift | 特征目标映射改变PELT检测 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2996 | 架构漂移 Architecture Drift | 实际架构偏离蓝图定义 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2997 | 配置漂移 Config Drift | 运行时配置偏离声明式定义 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2998 | 治理漂移 Governance Drift | AI自治范围逐渐扩展超边界 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-2999 | KS检验 KS Test | 单变量分布变化检测 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3000 | Wasserstein距离 Wasserstein Distance | 多变量分布变化检测 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3001 | PELT变点检测 PELT Change Point Detection | 时序结构变化检测 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3002 | 蓝图-代码哈希对比 Blueprint-Code Hash Comparison | 关键代码SHA-256哈希对比 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3006 | 轻微漂移自动纠正 Minor Drift Auto Correction | 策略偏差<10%自动纠正 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3007 | 中度漂移确认纠正 Moderate Drift Confirmed Correction | 配置偏差10-30%需确认 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3008 | 严重漂移人工决策 Severe Drift Human Decision | 架构偏离人工决策 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3019 | M1 初始 Ad Hoc | 治理缺失或完全反应式 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3020 | M2 发展中 Developing | 初步意识和临时策略出现 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3021 | M3 已定义 Defined | 正式治理框架文档化 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3022 | M4 已管理 Managed | 治理量化管理KPI跟踪 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3023 | M5 优化 Optimizing | 治理持续改进融入业务战略 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3024 | Phase 0 审计日志激活 | 系统启动时激活审计日志 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3025 | Phase 1 变更审批L1-L3激活 | P0第1批完成后激活 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3026 | Phase 2 漂移检测统计层激活 | P0第3批完成后激活 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3027 | Phase 3 变更审批L4-L5激活 | P0全部完成后激活 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3028 | Phase 4 治理自动化激活 | P1第2轮完成后激活 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3030 | 蓝图 Blueprint | 定义系统应该是什么样 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3031 | 代码 Code | 定义系统实际是什么样 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3032 | 文档 Documentation | 定义系统被描述成什么样 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3033 | 组件存在性校验 Component Existence Validation | 蓝图组件vs代码模块清单 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3034 | 配置一致性校验 Config Consistency Validation | 声明式配置vs运行时配置 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3035 | 文档完整性校验 Documentation Completeness Validation | 代码公共接口vs API文档 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3036 | 依赖方向校验 Dependency Direction Validation | 代码import vs架构分层约束 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3037 | 数据血缘校验 Data Lineage Validation | 因子计算逻辑vs因子文档定义 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3038 | 规则编译检查器 Rule Compile Checker | Policy层→Factory层一致性 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3039 | 审批门禁检查器 Approval Gate Checker | 变更是否经过正确审批 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3040 | 三方对齐检查器 Three-party Alignment Checker | 蓝图-代码-文档一致性 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3042 | 漂移检测检查器 Drift Detection Checker | 统计漂移+结构漂移检测 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3043 | 审计完整性检查器 Audit Integrity Checker | 审计日志完整未被篡改 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3044 | 依赖方向检查器 Dependency Direction Checker | 代码import违反分层约束 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3046 | 配置漂移检查器 Config Drift Checker | 运行时配置vs声明式基线 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3048 | governance_report.py 治理状态报告 | 生成治理状态日报周报 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3049 | drift_scan.py 漂移扫描 | 执行全量漂移扫描 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3050 | alignment_check.py 三方对齐检查 | 执行三方对齐检查 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3051 | audit_integrity.py 审计完整性 | 校验审计日志完整性 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3053 | rule_lifecycle.py 规则生命周期 | 管理治理规则生命周期 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3056 | Administrator 管理员角色 | 处理治理告警与漂移纠正 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3058 | 漂移检测覆盖率 Drift Detection Coverage | 关键组件被覆盖率 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3059 | 变更审批合规率 Change Approval Compliance Rate | 变更经过正确审批流程率 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3060 | 三方对齐一致率 Three-party Alignment Rate | 蓝图-代码-文档一致率 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3061 | 治理自动化覆盖率 Governance Automation Coverage | 治理检查自动化覆盖率 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3062 | 治理告警响应时间 Governance Alert Response Time | 告警时间戳vs人工处理时间 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3064 | NIST AI RMF NIST AI风险管理框架 | GOVERN/MAP/MEASURE/MANAGE四函数 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3068 | OWASP AIMA v1.0 | AI治理成熟度模型行业基准 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3070 | SR 26-2 模型风险管理新指引 | 美国银行模型风险管理新指引 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3079 | IIA Three Lines Model 模型 | 三道防线模型2020更新 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3086 | Minimum Viable Governance MVG 治理 | 最小可行治理MIT CISR | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3091 | Agentic Regulator四层治理框架 | Kurshan四层治理框架 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3092 | Santander机械执行vs文本治理 | 机械执行降73%空转延迟 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3094 | ICFDT AI治理报告 | 72%机构部署AI但<30%有治理框架 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3095 | CFA Institute两层治理框架 | 程序级+用例级双层治理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3096 | Gartner Agentic AI失败率预测 | >40%项目因治理失败被取消 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3098 | 治理-任务解耦 Santander | 治理质量与任务性能独立维度 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3116 | 不透明性 Opacity | ESRB系统性风险规则可读性 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3120 | 关联性 Interconnectedness | ESRB系统性风险依赖方向检查 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3122 | 监控挑战 Monitoring Challenges | ESRB系统性风险10检查器 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3123 | 系统复杂性 System Complexity | ESRB系统性风险三方对齐 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3142 | GOV-FSTR-001 File Structure Governance 治理文件 | 三方对齐文件结构治理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3143 | DOM-GOV-CAP-001 容量升级 | 激活时序容量升级 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3146 | M6 业务-模块映射 | 功能域映射业务能力映射15模块 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3147 | M7 价值流分析 | 激活时序价值流分析9模块 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3148 | M9 变更影响分析 | 变更审批流变更影响分析10模块 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3149 | D1~D84 独立研究模块 | 各对应章节27模块 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3526 | compliance_matrix.py 合规矩阵 | DD-SEC-002归入GOV合规矩阵是治理职责 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3527 | decision_registry.py 决策注册表 | DD-SEC-002归入GOV决策注册与解释是治理职责 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3528 | decision_explainer.py 决策解释器 | DD-SEC-002归入GOV决策注册与解释是治理职责 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3780 | Dw150 Update Blueprints dw150更新入 | scripts/governance/dw150_update_blueprints.py,script,'' | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3781 | Check Threeway Alignment 检查三对齐 | scripts/governance/d5_architecture/checkers/check_threeway_alignment.py,script,'' | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3782 | Dw151 Full Verify dw151满验证 | scripts/governance/d5_architecture/checkers/dw151_full_verify.py,script,'' | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3784 | AuditLedger 审计账本 | 审计日志账本append-only写入+Merkle哈希链 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3785 | DDDRuleEnforcer DDD铁律执行器 | SSoT唯一权威来源校验+限界上下文边界检查 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3786 | DecisionProvenance 决策溯源链 | 决策上下文记录+因果链追踪+多模型共识归档 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3787 | PhaseGateManager 阶段门禁管理 | 73门禁注册+46门控检查+Pass/Fail裁决 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3788 | ConstitutionalGuard 宪法守卫 | AI代码标准执行+宪法更新审批+Vibe Coding治理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3789 | ComplianceAuditor 合规审计器 | 金融合规检查+数据分类审计+数据生命周期审计 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3790 | IncidentResponse 事件响应与升级 | 事件分级P0/P1/P2+自动处置+升级链+容错 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3791 | SystemTopologyAuditor 系统拓扑审计 | 依赖拓扑审计+单点故障检测+变更影响分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3792 | 关系类型分类器 RelationTypeClassifier | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3793 | 语义注解引擎 SemanticAnnotationEngine | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3794 | 条件依赖求解器 ConditionalDependencySolverer | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3795 | 依赖强度量化器 DependencyStrengthQuantifier | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3796 | 语义变更检测器 SemanticChangeDetector | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3797 | Monoidal Dependency Composer 单子依赖组合器 | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3798 | Dependent Type Verifier 依赖类型验证器 | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3799 | Semantic Similarity Scorer 语义相似度评分器 | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3800 | Event-Driven Dependency Tracer 事件驱动依赖追踪器 | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3801 | UML/SysML Stereotype Mapper UML构造型映射器 | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3802 | Temporal Dependency Validator 时序依赖验证器 | M1依赖语义层 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3803 | 传递依赖解析器 TransitiveDependencyResolver | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3804 | 放大倍数计算器 AmplificationFactorCalculator | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3805 | 放大热点识别器 AmplificationHotspotIdentifier | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3806 | 扁平化建议器 FlatteningAdvisor | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3807 | 放大趋势追踪器 AmplificationTrendTracker | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3808 | Fan-In/Fan-Out Analyzer 扇入扇出分析器 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3809 | Dependency Bloat Meter 依赖膨胀度量器 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3810 | MTTU_dep/MTTR_dep Tracker 依赖MTTU/MTTR追踪器 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3811 | Critical Path Analyzer 关键路径分析器 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3812 | Dependency Entropy Calculator 依赖熵计算器 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3813 | Change Shock Radius Predictor 变更冲击半径预测器 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3814 | Dependency Health Scorecard 依赖健康评分卡 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3815 | Adoption Curve Modeler 采纳曲线建模器 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3816 | Dependency Deduplication Advisor 依赖去重顾问 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3817 | Ecosystem Risk Diversification Analyzer 生态风险分散分析器 | M4放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3818 | 图数据模型/导入/存储/查询/提取/推理/同步 GraphStorage | M5图存储 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3819 | 本体层/多边存储/查询优化/时序图/语义检测/GraphRAG等 | M5图存储 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3820 | 业务域解析/技术模块解析/映射规则/发现/覆盖率/孤立检测 Business Domain Parsing/Technical Module Parsing/Mapping Rules/Discovery/Coverage/Orphan Detection | M6业务映射 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3821 | TOGAF自动化/ArchiMate/DDD映射/流程映射等 | M6业务映射 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3822 | 价值流定义/流依赖/瓶颈/延迟/健康评分等 Latency | M7价值流 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3823 | 变更传播/影响范围/严重度/修复建议等 Change Propagation/Impact Scope/Severity/Repair Suggestions | M9影响分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3824 | 契约版本注册/兼容性矩阵/升级路径等 Contract Path | M11契约版本 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3825 | AST解析/调用图/膨胀检测/清理/可视化等 | M17 AST分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3826 | RMS计算/热力图/趋势/解耦建议等 | M18耦合度量 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3827 | 蓝图解析/代码解析/追溯链/漂移检测等 Blueprint Parsing/Code Parsing/Traceability Chain/Drift Detection | M19蓝图追溯 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3828 | AaC DSL/约束定义/漂移检测/修复/CI集成等 | M23架构即代码 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3829 | NL解析/图查询转换/社区发现/摘要等 | M25 GraphRAG | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3830 | ADR解析/约束提取/双向关联/校验/推演等 | M26 ADR | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3831 | 服务目录/Golden Path/技术雷达/自助服务 | M33开发者门户 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3832 | 组织拓扑/Conway映射/认知负载/团队边界 | M34组织拓扑 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3833 | 命令侧/查询侧/冲突检测/聚合边界验证 Aggregator Command Query | M37 CQRS | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3834 | OpenAPI提取/版本兼容/废弃追踪等 | M43 API依赖 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3835 | 变更频率/团队边界/认知负载/Bus Factor等 | M54团队拓扑 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3836 | 环路检测/死锁预测/循环消除/条件求解等 Loop Detection/Deadlock Prediction/Cycle Elimination/Condition Solving | M61环路检测 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3837 | 静态分析/动态采集/AI推断/配置发现等 | M63隐式发现 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3838 | 路径索引/子图同构/GNN/传播概率等 | M68图推理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3839 | 扁平化/锁定/拆分/替代/评估/策略等 Strategy | M69放大缓解 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3840 | AaC DSL编译/CI门禁/漂移/修复/报告等 | M73 AaC编译 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3841 | 索引/多跳/RAG增强/摘要/验证/增量更新等 | M75 GraphRAG推理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3842 | ADR传播/多ADR交互/回溯/变更仿真等 | M76 ADR仿真 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3843 | Dependency Update Latency Predictor 依赖更新延迟预测器 | 放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3844 | Dependency Adoption Pattern Analyzer 依赖采纳模式分析器 | 放大分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3845 | Architecture Tech Debt Tracker 架构技术债追踪器 | 影响分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3846 | Dependency Temporal Evolution Analyzer 依赖时序演化分析器 | 图存储 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3847 | Tech Debt Compound Effect Modeler 技术债复合效应建模器 | 影响分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3848 | Homomorphic Dependency Calculator 同态依赖计算器 | 图存储 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3849 | QPDG Engine QPDG引擎 | 量子依赖 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3850 | Entanglement-Aware Scheduler 纠缠感知调度器 | 量子依赖 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3851 | Hybrid Classical-Quantum Bridge 混合经典量子桥 | 量子依赖 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3852 | Quantum Error Propagation Tracer 量子错误传播追踪器 | 量子依赖 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3853 | Kleisli Effect Engine Kleisli效果引擎 | 范畴论 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3854 | 左Kan扩展依赖解析器 LeftKanExtensionDependencyResolver | 范畴论 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3855 | 光学双向依赖同步器 OpticalBidirectionalDependencySynchronizer | 范畴论 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3856 | 依赖效果类型检查器 DependencyEffectTypeChecker | 范畴论 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3857 | Indexed Graded Monad Tracker 索引分级单子追踪器 | 范畴论 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3858 | 依赖会话类型验证器 DependencySessionTypeValidator | 范畴论 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3859 | 需求-代码双向追溯引擎 RequirementCodeBidirectionalTraceabilityEngine | 架构追溯 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3860 | 数字线程完整性评分器 DigitalThreadIntegrityScorer | 架构追溯 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3861 | 依赖地狱5维检测器 DependencyHell5DDetector | 语义分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3862 | Migration Dependency Graph Manager 迁移依赖图管理器 | 影响分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3863 | 依赖漂移距离度量器 DependencyDriftDistanceMeter | 语义分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3864 | GAT变更影响预测器 GATChangeImpactPredictor | 图推理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3865 | 隐式依赖GNN发现器 ImplicitDependencyGNNFinder | 语义分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3866 | ACO多路径依赖搜索器 ACOMultiPathDependencySearcher | 图推理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3867 | GA Multi-Objective Refactoring 遗传算法多目标重构 | 影响分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3868 | PSO隐式依赖发现器 PSOImplicitDependencyFinder | 语义分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3869 | HW-SW Unified DAG 软硬件统一DAG | 量子依赖 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3870 | 反馈依赖环检测器 FeedbackDependencyLoopDetector | 语义分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-3871 | 文档漂移反模式检测器 DocumentationDriftAntipatternDetector | 语义分析 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4170 | Provenance Tracker 溯源追踪器 | / provenance_tracker.py / governance/ (DOM-GOV-001) / ✅ 核心映射——溯源追踪器 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4171 | Audit Integrity Verifier 审计完整性验证器 | / verify_audit_integrity.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——审计完整性验证 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4172 | Rollback Governance Auditor 回滚治理审计器 | / rollback/governance/auditor.py / rollback/ (MOD-INF-021) / ✅ 核心映射——回滚审计 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4173 | A2A Protocol Governance Auditor A2A协议治理审计器 | / l01_infrastructure/a2a_protocol/governance/auditor.py / l01_infrastructure/ (MOD-INF-025) / ✅ 核心映射——A2A协议审计 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4174 | Durable Execution 持久化执行 | / shared/durable_execution.py / shared/ (DOM-GOV-001) / ✅ 辅助映射——持久化执行保证审计不丢失 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4175 | Architecture Principles 架构原则定义 | / architecture_principles.py / governance/ (DOM-GOV-001) / ✅ 核心映射——架构原则定义 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4176 | Cross Environment Consistency 跨环境一致性校验 | / cross_env_consistency.py / governance/ (DOM-GOV-001) / ✅ 核心映射——跨环境一致性校验 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4177 | D5 Architecture Validators D5架构验证器 | / scripts/governance/d5_architecture/validators/ / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——架构验证器 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4178 | Downstream Anchors Verifier 下游锚点验证器 | / scripts/governance/verify_downstream_anchors.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——下游锚点验证(SSoT) / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4179 | Version Negotiation 版本协商 | / shared/version_negotiation.py / shared/ (DOM-GOV-001) / ✅ 辅助映射——版本协商(SSoT) / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4180 | Decision Fatigue Detector 决策疲劳检测器 | / decision_fatigue.py / governance/ (DOM-GOV-001) / ✅ 核心映射——决策疲劳检测 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4181 | Decision Fatigue CLI 决策疲劳CLI | / decision_fatigue_cli.py / governance/ (DOM-GOV-001) / ✅ 核心映射——决策疲劳CLI / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4182 | Consequence Manager 后果管理器 | / consequence_manager.py / governance/ (DOM-GOV-001) / ✅ 核心映射——后果管理器(决策因果) / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4183 | Multi Model Consensus 多模型共识归档 | / multi_model_consensus.py / governance/ (DOM-GOV-001) / ✅ 核心映射——多模型共识归档 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4184 | Agent Debate Agent辩论机制 | / agent_debate.py / governance/ (DOM-GOV-001) / ⚠️ 部分映射——Agent辩论机制，核心归属D-AUTONOMY-CORE，决策归档部分归本模块 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4185 | Phase Check Registry 阶段检查注册表 | / phase_check_registry.py / governance/ (DOM-GOV-001) / ✅ 核心映射——阶段检查注册表 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4186 | Phase Manager 阶段管理器 | / phase_manager.py / governance/ (DOM-GOV-001) / ✅ 核心映射——阶段管理器 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4187 | Admission Response 准入响应 | / admission_response.py / governance/ (DOM-GOV-001) / ✅ 核心映射——准入响应 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4188 | Pre Operation Check 操作前检查 | / scripts/governance/pre_op_check.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——操作前检查 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4189 | A2A Protocol Phase Hold A2A协议阶段保持 | / l01_infrastructure/a2a_protocol/governance/phase_hold.py / l01_infrastructure/ (MOD-INF-025) / ✅ 核心映射——A2A阶段保持 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4190 | Agent RBAC Approver Check Agent RBAC审批人检查 | / agent_rbac/governance_bridges/approver_check.py / agent_rbac/ (MOD-INF-018) / ✅ 辅助映射——审批人检查 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4191 | Constitutional Update 宪法更新 | / constitutional_update.py / governance/ (DOM-GOV-001) / ✅ 核心映射——宪法更新 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4192 | AI Code Standards AI代码标准 | / ai_code_standards.py / governance/ (DOM-GOV-001) / ✅ 核心映射——AI代码标准 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4193 | Vibe Coding Enforcer Vibe Coding执行器 | / vibe_coding_enforcer.py / governance/ (DOM-GOV-001) / ✅ 核心映射——Vibe Coding执行器 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4194 | AI Code Review AI代码审查 | / code_review_ai.py / governance/ (DOM-GOV-001) / ✅ 核心映射——AI代码审查 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4195 | Prompt Lifecycle Prompt生命周期 | / prompt_lifecycle.py / governance/ (DOM-GOV-001) / ✅ 核心映射——Prompt生命周期 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4196 | AI Self Diagnosis AI自诊断监督 | / ai_self_diagnosis.py / governance/ (DOM-GOV-001) / ✅ 核心映射——AI自诊断监督 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4197 | AI Hallucination Detection AI幻觉检测 | / scripts/governance/d12_ai_hallucination/ / scripts/governance/ (MOD-INF-005) / ✅ 辅助映射——AI幻觉检测 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4198 | Financial Compliance 金融合规 | / financial_compliance.py / governance/ (DOM-GOV-001) / ✅ 核心映射——金融合规 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4199 | Data Classification 数据分类 | / data_classification.py / governance/ (DOM-GOV-001) / ✅ 核心映射——数据分类 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4200 | Data Lifecycle 数据生命周期 | / data_lifecycle.py / governance/ (DOM-GOV-001) / ✅ 核心映射——数据生命周期 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4201 | Data Quality 数据质量 | / data_quality.py / governance/ (DOM-GOV-001) / ✅ 核心映射——数据质量 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4202 | Data Source Reliability 数据源可靠性 | / data_source_reliability.py / governance/ (DOM-GOV-001) / ✅ 核心映射——数据源可靠性 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4203 | Benchmark Integrity 基准完整性 | / benchmark_integrity.py / governance/ (DOM-GOV-001) / ✅ 核心映射——基准完整性 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4204 | Compliance Scripts 合规脚本 | / scripts/governance/d11_compliance/ / scripts/governance/ (MOD-INF-005) / ✅ 辅助映射——合规脚本 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4205 | Evals Evaluation Framework 评估框架 | / shared/evals.py / shared/ (DOM-GOV-001) / ✅ 辅助映射——评估框架 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4206 | Fault Tolerance 容错 | / fault_tolerance.py / governance/ (DOM-GOV-001) / ✅ 核心映射——容错 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4207 | Broker Resilience Broker韧性 | / broker_resilience.py / governance/ (DOM-GOV-001) / ⚠️ 部分映射——Broker韧性，核心归属D-EX-CORE，治理视角归本模块 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4208 | Offline Resilience 离线韧性 | / offline_resilience.py / governance/ (DOM-GOV-001) / ✅ 核心映射——离线韧性 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4209 | A2A Failure Escalation A2A失败升级 | / escalation_engine/governance/a2a_failure.py / escalation_engine/ (MOD-INF-022) / ✅ 核心映射——A2A失败升级 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4210 | Approval Escalation 审批升级 | / escalation_engine/governance/approval.py / escalation_engine/ (MOD-INF-022) / ✅ 核心映射——审批升级 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4211 | Budget Handler 预算处理 | / escalation_engine/governance/budget_handler.py / escalation_engine/ (MOD-INF-022) / ✅ 辅助映射——预算处理 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4212 | Drift Fix 漂移修复 | / rollback/governance/drift_fix.py / rollback/ (MOD-INF-021) / ✅ 辅助映射——漂移修复 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4213 | Budget Tracker 预算追踪 | / rollback/governance/budget_tracker.py / rollback/ (MOD-INF-021) / ✅ 辅助映射——预算追踪 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4214 | System Topology 系统拓扑 | / system_topology.py / governance/ (DOM-GOV-001) / ✅ 核心映射——系统拓扑 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4215 | Dependency Manager 依赖管理 | / dependency_manager.py / governance/ (DOM-GOV-001) / ✅ 核心映射——依赖管理 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4216 | SPOF Checker 单点故障检测器 | GOV-008 SystemTopologyAuditor已有代码核心映射单点故障检测governance DOM-GOV-001 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4217 | Observability Dashboard 可观测性仪表盘 | / observability_dashboard.py / governance/ (DOM-GOV-001) / ✅ 核心映射——可观测性仪表盘 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4218 | Change Impact Analyzer 变更影响分析器 | / scripts/governance/analyze_change_impact.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——变更影响分析 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4219 | Causal Conflict Detector 因果冲突检测器 | / scripts/governance/detect_causal_conflicts.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——因果冲突检测 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4220 | Governance Watchdog 治理看门狗 | / scripts/governance/governance_watchdog.py / scripts/governance/ (MOD-INF-005) / ✅ 辅助映射——治理看门狗 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4221 | MCP Governance Server MCP治理服务 | / mcp/governance_server.py / mcp/ (MOD-INF-013) / ✅ 辅助映射——MCP治理服务 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4256 | Rollback Result Types 回滚结果类型 | / rollback/governance/result_types.py / rollback/ (MOD-INF-021) / 结果类型 / ✅ 可归入GOV-007——回滚结果类型是事件响应的一部分 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4836 | 审计链6W模型 Audit Chain 6W Model | 安全架构-A5§5审计链6W模型(WHO/WHERE/WHEN/WHAT/WHY/RESULT) | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4984 | PolicyManager 规则管理器 | 规则目录+生命周期管理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4985 | DriftGovernance 漂移治理 | 5类漂移检测数据/概念/架构/配置/治理+3层检测+3级纠正 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4986 | AIConstructionGovernor AI建设治理器 | AgenticDrift防护+HB-GOV-10 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4987 | LifecycleManager 生命周期管理器 | 规则生命周期管理 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4988 | StandardsManager 标准管理器 | 方法论约束+硬边界 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4989 | ComplianceChecker 合规检查器 | 监管合规映射 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4990 | ArchitectureGovernance 架构治理 | 三方对齐+架构漂移 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4991 | DependencySemantics 依赖语义 | 依赖语义漂移 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4992 | DependencyAmplification 依赖放大效应 | 依赖放大效应 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4993 | BusinessCapabilityMapper 业务能力映射器 | 业务能力映射 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4994 | OrgSystemDependencyMapper 组织系统映射器 | 组织-系统映射 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4995 | FineGrainedDependencyAnalyzer 细粒度依赖分析器 | 函数级依赖图验证 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-4996 | CouplingStrengthMetrics 耦合度量 | 耦合度量 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5058 | D-GOV-16~26 Dependency Semantic Series 依赖语义系列 | / D-GOV-16~26 依赖语义系列 / Szpruch能力分解/FPGA资源未就绪 / GATE-SZP/GATE-FPGA门禁满足 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-HARVEST-5059 | Off-site Planning Modules 场外规划模块 | / 场外规划模块(265个) / 门禁未满足 / GATE-FPGA(86个)/GATE-SZP(152个)/GATE-RES(27个) / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
 ## 按四问卡点分组（为什么没开发）
 
@@ -365,343 +365,343 @@ ttl: permanent
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-HARVEST-0013 | Audit & Compliance Traceability 审计与合规追溯 | Audit & Compliance Traceability 审计与合规追溯（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0029 | Reporting/Review/Attribution 报告/复盘/归因 | Reporting/Review/Attribution 报告/复盘/归因（来源:交易决策架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0037 | 成本治理与优化 Governance | 成本治理与优化 Governance（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0046 | 渐进式全球扩展 Progressive Global Expansion | 渐进式全球扩展 Progressive Global Expansion（来源:交易决策架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0352 | Policy Manager 策略管理器 | Policy Manager 策略管理器（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0353 | Audit Engine 审计引擎 | Audit Engine 审计引擎（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0354 | Registration Engine 注册引擎 | Registration Engine 注册引擎（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0355 | AI Construction Governor AI施工治理器 | AI Construction Governor AI施工治理器（来源:交易决策架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0613 | Orphan Judge 孤儿判定器 | Orphan Judge 孤儿判定器（来源:数据架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0614 | DepMap Engine 分层存储AST依赖扫描引擎 | DepMap Engine 分层存储AST依赖扫描引擎（来源:数据架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0877 | AI Autonomy Boundary Manager AI自治边界管理器 | AI Autonomy Boundary Manager AI自治边界管理器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0878 | Governance Automation Engine 治理自动化引擎 | Governance Automation Engine 治理自动化引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0879 | Kill Switch (Governance Layer) 治理层Kill Switch | Kill Switch (Governance Layer) 治理层Kill Switch（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0880 | Maturity Assessment Engine 成熟度评估引擎 | Maturity Assessment Engine 成熟度评估引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0881 | Regulatory Mapping Engine 监管映射引擎 | Regulatory Mapping Engine 监管映射引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0882 | Governance Degradation Manager 治理降级管理器 | Governance Degradation Manager 治理降级管理器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0930 | Vibe Coding Governance Vibe Coding治理 | Vibe Coding Governance Vibe Coding治理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0931 | Dependency Semantics Layer 依赖语义层 | Dependency Semantics Layer 依赖语义层（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0932 | Dependency Amplification Analyzer 依赖放大效应分析器 | Dependency Amplification Analyzer 依赖放大效应分析器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0933 | Architecture as Code Engine 架构即代码引擎 | Architecture as Code Engine 架构即代码引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0934 | Business Capability-Module Mapper 业务能力-模块映射器 | Business Capability-Module Mapper 业务能力-模块映射器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0935 | Org-System Dependency Mapper 组织-系统依赖映射器 | Org-System Dependency Mapper 组织-系统依赖映射器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0936 | Fine-Grained Dependency Analyzer 函数级依赖图分析器 | Fine-Grained Dependency Analyzer 函数级依赖图分析器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0937 | Coupling Strength Metrics 耦合度量计算器 | Coupling Strength Metrics 耦合度量计算器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0938 | AST Call Graph Generator AST调用图生成器 | AST Call Graph Generator AST调用图生成器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0939 | Architecture Test Suite 架构测试套件 | Architecture Test Suite 架构测试套件（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0940 | Policy Impact Analyzer 策略影响分析器 | Policy Impact Analyzer 策略影响分析器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0941 | Governance Dashboard 治理可视化仪表盘 | Governance Dashboard 治理可视化仪表盘（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0942 | Contract Version Management 契约版本管理 | Contract Version Management 契约版本管理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0943 | AST Call Graph AST调用图 | AST Call Graph AST调用图（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0944 | Coupling Metrics 耦合度量 | Coupling Metrics 耦合度量（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0945 | Blueprint-Code Traceability 蓝图-代码追溯 | Blueprint-Code Traceability 蓝图-代码追溯（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0946 | Architecture as Code 架构即代码 | Architecture as Code 架构即代码（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0947 | GraphRAG Query GraphRAG查询 | GraphRAG Query GraphRAG查询（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0948 | ADR Decision Tracking ADR决策追踪 | ADR Decision Tracking ADR决策追踪（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0949 | Developer Portal 开发者门户 | Developer Portal 开发者门户（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0950 | Org Topology 组织拓扑 | Org Topology 组织拓扑（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0951 | CQRS/ES Modeling CQRS/ES建模 | CQRS/ES Modeling CQRS/ES建模（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0952 | API Dependency API依赖 | API Dependency API依赖（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0953 | Team Topology 团队拓扑 | Team Topology 团队拓扑（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0954 | Cycle Detection 环路检测 | Cycle Detection 环路检测（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0955 | Implicit Dependency Discovery 隐式依赖发现 | Implicit Dependency Discovery 隐式依赖发现（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0956 | Knowledge Graph Reasoning 知识图谱推理 | Knowledge Graph Reasoning 知识图谱推理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0957 | Dependency Amplification Mitigation 依赖放大缓解 | Dependency Amplification Mitigation 依赖放大缓解（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0958 | AaC Compiler AaC编译器 | AaC Compiler AaC编译器（来源:ZephyrAlpha全系统模块清单.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-0959 | GraphRAG Reasoning GraphRAG推理 | GraphRAG Reasoning GraphRAG推理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0960 | ADR Simulation ADR仿真 | ADR Simulation ADR仿真（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0962 | Code Dedup Engine 代码去重引擎 | Code Dedup Engine 代码去重引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0964 | Audit Orchestrator 审计编排器 | Audit Orchestrator 审计编排器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0965 | Semantic Auditor 语义审计器 | Semantic Auditor 语义审计器（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0969 | Registry Governance 注册治理 | Registry Governance 注册治理（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-0970 | State Machine Engine 状态机引擎 | State Machine Engine 状态机引擎（来源:ZephyrAlpha全系统模块清单.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-1050 | Decision Audit Trail 决策审计追踪 | Decision Audit Trail 决策审计追踪（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-1767 | Incident Response 事件响应 | Incident Response 事件响应（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-2041 | AI治理框架 AI Governance Framework | AI治理框架 AI Governance Framework（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2043 | 知识来源追溯 Knowledge Source Tracing | 知识来源追溯 Knowledge Source Tracing（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2044 | 模块变更审计 Module Change Audit | 模块变更审计 Module Change Audit（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2069 | Rust/Go延迟分层 Rust/Go Latency Tiering | Rust/Go延迟分层 Rust/Go Latency Tiering（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2070 | Agent集群 Agent Cluster MARL | Agent集群 Agent Cluster MARL（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2071 | 平台化基础设施 Platform Infrastructure | 平台化基础设施 Platform Infrastructure（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2072 | EU AI Act字面合规 EU AI Act Literal Compliance | EU AI Act字面合规 EU AI Act Literal Compliance（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2074 | 多管线并行架构 Multi-Pipeline Parallel Architecture | 多管线并行架构 Multi-Pipeline Parallel Architecture（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2078 | Micro-Agent微Agent架构 Micro-Agent Architecture | Micro-Agent微Agent架构 Micro-Agent Architecture（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2080 | SEC AI Trading Advisor注册 SEC AI Trading Advisor Registration | SEC AI Trading Advisor注册 SEC AI Trading Advisor Registration（来源:学习系统架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2136 | OPA Rego Policy Engine OPA Rego策略引擎 | OPA Rego Policy Engine OPA Rego策略引擎（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2147 | A2A Gateway Policy Engine A2A检查网关策略引擎 | A2A Gateway Policy Engine A2A检查网关策略引擎（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2148 | Global Policy Layer 全局策略层 | Global Policy Layer 全局策略层（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2185 | GAAT Governance-Aware Agent Telemetry 治理感知遥测 | GAAT Governance-Aware Agent Telemetry 治理感知遥测（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2186 | Microsoft Agent Governance Toolkit 治理 | Microsoft Agent Governance Toolkit 治理（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2187 | Agent OS Policy Engine Agent OS策略引擎 | Agent OS Policy Engine Agent OS策略引擎（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2190 | Governance Enforcement Bus GEB 治理执行总线 | Governance Enforcement Bus GEB 治理执行总线（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2191 | Trusted Telemetry Plane 可信遥测平面 | Trusted Telemetry Plane 可信遥测平面（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2245 | ADR Generation ADR生成 | ADR Generation ADR生成（来源:10-D-REPORTING-报告域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-2246 | Dependency Change Log 依赖变更日志 | Dependency Change Log 依赖变更日志（来源:10-D-REPORTING-报告域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2288 | OPA Rego OPA Rego策略语言 | OPA Rego OPA Rego策略语言（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2289 | Cedar Cedar策略语言 | Cedar Cedar策略语言（来源:Agent架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-2348 | GAAT Governance-Aware Telemetry GAAT治理感知遥测 | GAAT Governance-Aware Telemetry GAAT治理感知遥测（来源:Agent架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2349 | Microsoft AGT Microsoft AGT治理栈 | Microsoft AGT Microsoft AGT治理栈（来源:Agent架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-2375 | ADR Generation ADR架构决策记录自动生成 | ADR Generation ADR架构决策记录自动生成（来源:10-D-REPORTING-报告域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-2376 | Dependency Change Log 模块依赖变更日志 | Dependency Change Log 模块依赖变更日志（来源:10-D-REPORTING-报告域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2562 | Governance Domain 治理域 | Governance Domain 治理域（来源:17-D-COMPLIANCE-合规监管域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2563 | Behavioral Auditor 行为审计器 | Behavioral Auditor 行为审计器（来源:17-D-COMPLIANCE-合规监管域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2589 | EU AI Act Article 14 Compliance Mapping EU AI Act Article 14合规映射 | EU AI Act Article 14 Compliance Mapping EU AI Act Article 14合规映射（来源:17-D-COMPLIANCE-合规监管域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2596 | 45 Capability List 45项能力清单 | 45 Capability List 45项能力清单（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2597 | Five Quadrant Capability Architecture 五象限能力架构 | Five Quadrant Capability Architecture 五象限能力架构（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2599 | Governance Domain Module Mapping 治理域模块映射 | Governance Domain Module Mapping 治理域模块映射（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2646 | Kill Switch Layered Kill Switch分层 | Kill Switch Layered Kill Switch分层（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2647 | Governance Degradation Mode 治理降级模式 | Governance Degradation Mode 治理降级模式（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2648 | Governance Automation 治理自动化 | Governance Automation 治理自动化（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2649 | Blueprint Code Document Three Way Alignment 蓝图-代码-文档三方对齐机制 | Blueprint Code Document Three Way Alignment 蓝图-代码-文档三方对齐机制（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2650 | Architecture Drift Detection 架构漂移检测与纠正闭环 | Architecture Drift Detection 架构漂移检测与纠正闭环（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2651 | AI Autonomy Boundary AI自治边界 | AI Autonomy Boundary AI自治边界（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2652 | Change Approval Flow 变更审批流 | Change Approval Flow 变更审批流（来源:00-架构图总览与索引.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2969 | Orchestration Agent 编排代理 | Orchestration Agent 编排代理（来源:07-D-POSITION-仓位管理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2972 | Policy层 Policy Layer | Policy层 Policy Layer（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2973 | Factory层 Factory Layer | Factory层 Factory Layer（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2974 | Runtime层 Runtime Layer | Runtime层 Runtime Layer（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2980 | 规则生命周期 Rule Lifecycle | 规则生命周期 Rule Lifecycle（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2981 | 编译验证 Compile Validation | 编译验证 Compile Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2982 | 预发布测试 Pre-release Testing | 预发布测试 Pre-release Testing（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2983 | 灰度发布 Canary Release | 灰度发布 Canary Release（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-2984 | 回滚机制 Rollback Mechanism | 回滚机制 Rollback Mechanism（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2985 | 实时执行 Real-time Execution | 实时执行 Real-time Execution（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2986 | 漂移检测 Drift Detection | 漂移检测 Drift Detection（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2987 | 反馈闭环 Feedback Loop | 反馈闭环 Feedback Loop（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2994 | 数据漂移 Data Drift | 数据漂移 Data Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2995 | 概念漂移 Concept Drift | 概念漂移 Concept Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2996 | 架构漂移 Architecture Drift | 架构漂移 Architecture Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2997 | 配置漂移 Config Drift | 配置漂移 Config Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2998 | 治理漂移 Governance Drift | 治理漂移 Governance Drift（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-2999 | KS检验 KS Test | KS检验 KS Test（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3000 | Wasserstein距离 Wasserstein Distance | Wasserstein距离 Wasserstein Distance（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3001 | PELT变点检测 PELT Change Point Detection | PELT变点检测 PELT Change Point Detection（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3002 | 蓝图-代码哈希对比 Blueprint-Code Hash Comparison | 蓝图-代码哈希对比 Blueprint-Code Hash Comparison（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3006 | 轻微漂移自动纠正 Minor Drift Auto Correction | 轻微漂移自动纠正 Minor Drift Auto Correction（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3007 | 中度漂移确认纠正 Moderate Drift Confirmed Correction | 中度漂移确认纠正 Moderate Drift Confirmed Correction（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3008 | 严重漂移人工决策 Severe Drift Human Decision | 严重漂移人工决策 Severe Drift Human Decision（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3019 | M1 初始 Ad Hoc | M1 初始 Ad Hoc（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3020 | M2 发展中 Developing | M2 发展中 Developing（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3021 | M3 已定义 Defined | M3 已定义 Defined（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3022 | M4 已管理 Managed | M4 已管理 Managed（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3023 | M5 优化 Optimizing | M5 优化 Optimizing（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3024 | Phase 0 审计日志激活 | Phase 0 审计日志激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3025 | Phase 1 变更审批L1-L3激活 | Phase 1 变更审批L1-L3激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3026 | Phase 2 漂移检测统计层激活 | Phase 2 漂移检测统计层激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3027 | Phase 3 变更审批L4-L5激活 | Phase 3 变更审批L4-L5激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3028 | Phase 4 治理自动化激活 | Phase 4 治理自动化激活（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3030 | 蓝图 Blueprint | 蓝图 Blueprint（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3031 | 代码 Code | 代码 Code（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3032 | 文档 Documentation | 文档 Documentation（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3033 | 组件存在性校验 Component Existence Validation | 组件存在性校验 Component Existence Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3034 | 配置一致性校验 Config Consistency Validation | 配置一致性校验 Config Consistency Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3035 | 文档完整性校验 Documentation Completeness Validation | 文档完整性校验 Documentation Completeness Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3036 | 依赖方向校验 Dependency Direction Validation | 依赖方向校验 Dependency Direction Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3037 | 数据血缘校验 Data Lineage Validation | 数据血缘校验 Data Lineage Validation（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3038 | 规则编译检查器 Rule Compile Checker | 规则编译检查器 Rule Compile Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3039 | 审批门禁检查器 Approval Gate Checker | 审批门禁检查器 Approval Gate Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3040 | 三方对齐检查器 Three-party Alignment Checker | 三方对齐检查器 Three-party Alignment Checker（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3042 | 漂移检测检查器 Drift Detection Checker | 漂移检测检查器 Drift Detection Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3043 | 审计完整性检查器 Audit Integrity Checker | 审计完整性检查器 Audit Integrity Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3044 | 依赖方向检查器 Dependency Direction Checker | 依赖方向检查器 Dependency Direction Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3046 | 配置漂移检查器 Config Drift Checker | 配置漂移检查器 Config Drift Checker（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3048 | governance_report.py 治理状态报告 | governance_report.py 治理状态报告（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3049 | drift_scan.py 漂移扫描 | drift_scan.py 漂移扫描（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3050 | alignment_check.py 三方对齐检查 | alignment_check.py 三方对齐检查（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3051 | audit_integrity.py 审计完整性 | audit_integrity.py 审计完整性（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3053 | rule_lifecycle.py 规则生命周期 | rule_lifecycle.py 规则生命周期（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3056 | Administrator 管理员角色 | Administrator 管理员角色（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3058 | 漂移检测覆盖率 Drift Detection Coverage | 漂移检测覆盖率 Drift Detection Coverage（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3059 | 变更审批合规率 Change Approval Compliance Rate | 变更审批合规率 Change Approval Compliance Rate（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3060 | 三方对齐一致率 Three-party Alignment Rate | 三方对齐一致率 Three-party Alignment Rate（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3061 | 治理自动化覆盖率 Governance Automation Coverage | 治理自动化覆盖率 Governance Automation Coverage（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3062 | 治理告警响应时间 Governance Alert Response Time | 治理告警响应时间 Governance Alert Response Time（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3064 | NIST AI RMF NIST AI风险管理框架 | NIST AI RMF NIST AI风险管理框架（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3068 | OWASP AIMA v1.0 | OWASP AIMA v1.0（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3070 | SR 26-2 模型风险管理新指引 | SR 26-2 模型风险管理新指引（来源:治理架构.md, uncertain） | D_GOVERNANCE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-3079 | IIA Three Lines Model 模型 | IIA Three Lines Model 模型（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3086 | Minimum Viable Governance MVG 治理 | Minimum Viable Governance MVG 治理（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3091 | Agentic Regulator四层治理框架 | Agentic Regulator四层治理框架（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3092 | Santander机械执行vs文本治理 | Santander机械执行vs文本治理（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3094 | ICFDT AI治理报告 | ICFDT AI治理报告（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3095 | CFA Institute两层治理框架 | CFA Institute两层治理框架（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3096 | Gartner Agentic AI失败率预测 | Gartner Agentic AI失败率预测（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3098 | 治理-任务解耦 Santander | 治理-任务解耦 Santander（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3116 | 不透明性 Opacity | 不透明性 Opacity（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3120 | 关联性 Interconnectedness | 关联性 Interconnectedness（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3122 | 监控挑战 Monitoring Challenges | 监控挑战 Monitoring Challenges（来源:治理架构.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3123 | 系统复杂性 System Complexity | 系统复杂性 System Complexity（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3142 | GOV-FSTR-001 File Structure Governance 治理文件 | GOV-FSTR-001 File Structure Governance 治理文件（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3143 | DOM-GOV-CAP-001 容量升级 | DOM-GOV-CAP-001 容量升级（来源:治理架构.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3146 | M6 业务-模块映射 | M6 业务-模块映射（来源:治理架构.md, uncertain） | D_GOVERNANCE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-3147 | M7 价值流分析 | M7 价值流分析（来源:治理架构.md, uncertain） | D_GOVERNANCE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-3148 | M9 变更影响分析 | M9 变更影响分析（来源:治理架构.md, uncertain） | D_GOVERNANCE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-3149 | D1~D84 独立研究模块 | D1~D84 独立研究模块（来源:治理架构.md, uncertain） | D_GOVERNANCE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-3526 | compliance_matrix.py 合规矩阵 | compliance_matrix.py 合规矩阵（来源:24-D-SECURITY-安全域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3527 | decision_registry.py 决策注册表 | decision_registry.py 决策注册表（来源:24-D-SECURITY-安全域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3528 | decision_explainer.py 决策解释器 | decision_explainer.py 决策解释器（来源:24-D-SECURITY-安全域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3780 | Dw150 Update Blueprints dw150更新入 | Dw150 Update Blueprints dw150更新入（来源:场内模块清单.csv, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3781 | Check Threeway Alignment 检查三对齐 | Check Threeway Alignment 检查三对齐（来源:场内模块清单.csv, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3782 | Dw151 Full Verify dw151满验证 | Dw151 Full Verify dw151满验证（来源:场内模块清单.csv, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3784 | AuditLedger 审计账本 | AuditLedger 审计账本（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3785 | DDDRuleEnforcer DDD铁律执行器 | DDDRuleEnforcer DDD铁律执行器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3786 | DecisionProvenance 决策溯源链 | DecisionProvenance 决策溯源链（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3787 | PhaseGateManager 阶段门禁管理 | PhaseGateManager 阶段门禁管理（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3788 | ConstitutionalGuard 宪法守卫 | ConstitutionalGuard 宪法守卫（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3789 | ComplianceAuditor 合规审计器 | ComplianceAuditor 合规审计器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3790 | IncidentResponse 事件响应与升级 | IncidentResponse 事件响应与升级（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3791 | SystemTopologyAuditor 系统拓扑审计 | SystemTopologyAuditor 系统拓扑审计（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3792 | 关系类型分类器 RelationTypeClassifier | 关系类型分类器 RelationTypeClassifier（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3793 | 语义注解引擎 SemanticAnnotationEngine | 语义注解引擎 SemanticAnnotationEngine（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3794 | 条件依赖求解器 ConditionalDependencySolverer | 条件依赖求解器 ConditionalDependencySolverer（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3795 | 依赖强度量化器 DependencyStrengthQuantifier | 依赖强度量化器 DependencyStrengthQuantifier（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3796 | 语义变更检测器 SemanticChangeDetector | 语义变更检测器 SemanticChangeDetector（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3797 | Monoidal Dependency Composer 单子依赖组合器 | Monoidal Dependency Composer 单子依赖组合器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3798 | Dependent Type Verifier 依赖类型验证器 | Dependent Type Verifier 依赖类型验证器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3799 | Semantic Similarity Scorer 语义相似度评分器 | Semantic Similarity Scorer 语义相似度评分器（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3800 | Event-Driven Dependency Tracer 事件驱动依赖追踪器 | Event-Driven Dependency Tracer 事件驱动依赖追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3801 | UML/SysML Stereotype Mapper UML构造型映射器 | UML/SysML Stereotype Mapper UML构造型映射器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3802 | Temporal Dependency Validator 时序依赖验证器 | Temporal Dependency Validator 时序依赖验证器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3803 | 传递依赖解析器 TransitiveDependencyResolver | 传递依赖解析器 TransitiveDependencyResolver（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3804 | 放大倍数计算器 AmplificationFactorCalculator | 放大倍数计算器 AmplificationFactorCalculator（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3805 | 放大热点识别器 AmplificationHotspotIdentifier | 放大热点识别器 AmplificationHotspotIdentifier（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3806 | 扁平化建议器 FlatteningAdvisor | 扁平化建议器 FlatteningAdvisor（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3807 | 放大趋势追踪器 AmplificationTrendTracker | 放大趋势追踪器 AmplificationTrendTracker（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3808 | Fan-In/Fan-Out Analyzer 扇入扇出分析器 | Fan-In/Fan-Out Analyzer 扇入扇出分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3809 | Dependency Bloat Meter 依赖膨胀度量器 | Dependency Bloat Meter 依赖膨胀度量器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3810 | MTTU_dep/MTTR_dep Tracker 依赖MTTU/MTTR追踪器 | MTTU_dep/MTTR_dep Tracker 依赖MTTU/MTTR追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3811 | Critical Path Analyzer 关键路径分析器 | Critical Path Analyzer 关键路径分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3812 | Dependency Entropy Calculator 依赖熵计算器 | Dependency Entropy Calculator 依赖熵计算器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3813 | Change Shock Radius Predictor 变更冲击半径预测器 | Change Shock Radius Predictor 变更冲击半径预测器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3814 | Dependency Health Scorecard 依赖健康评分卡 | Dependency Health Scorecard 依赖健康评分卡（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3815 | Adoption Curve Modeler 采纳曲线建模器 | Adoption Curve Modeler 采纳曲线建模器（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3816 | Dependency Deduplication Advisor 依赖去重顾问 | Dependency Deduplication Advisor 依赖去重顾问（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3817 | Ecosystem Risk Diversification Analyzer 生态风险分散分析器 | Ecosystem Risk Diversification Analyzer 生态风险分散分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3818 | 图数据模型/导入/存储/查询/提取/推理/同步 GraphStorage | 图数据模型/导入/存储/查询/提取/推理/同步 GraphStorage（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3819 | 本体层/多边存储/查询优化/时序图/语义检测/GraphRAG等 | 本体层/多边存储/查询优化/时序图/语义检测/GraphRAG等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3820 | 业务域解析/技术模块解析/映射规则/发现/覆盖率/孤立检测 Business Domain Parsing/Technical Module Parsing/Mapping Rules/Discovery/Coverage/Orphan Detection | 业务域解析/技术模块解析/映射规则/发现/覆盖率/孤立检测 Business Domain Parsing/Technical Module Parsing/Mapping Rules/Discovery/Coverage/Orphan Detection（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3821 | TOGAF自动化/ArchiMate/DDD映射/流程映射等 | TOGAF自动化/ArchiMate/DDD映射/流程映射等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3822 | 价值流定义/流依赖/瓶颈/延迟/健康评分等 Latency | 价值流定义/流依赖/瓶颈/延迟/健康评分等 Latency（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3823 | 变更传播/影响范围/严重度/修复建议等 Change Propagation/Impact Scope/Severity/Repair Suggestions | 变更传播/影响范围/严重度/修复建议等 Change Propagation/Impact Scope/Severity/Repair Suggestions（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3824 | 契约版本注册/兼容性矩阵/升级路径等 Contract Path | 契约版本注册/兼容性矩阵/升级路径等 Contract Path（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3825 | AST解析/调用图/膨胀检测/清理/可视化等 | AST解析/调用图/膨胀检测/清理/可视化等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3826 | RMS计算/热力图/趋势/解耦建议等 | RMS计算/热力图/趋势/解耦建议等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3827 | 蓝图解析/代码解析/追溯链/漂移检测等 Blueprint Parsing/Code Parsing/Traceability Chain/Drift Detection | 蓝图解析/代码解析/追溯链/漂移检测等 Blueprint Parsing/Code Parsing/Traceability Chain/Drift Detection（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3828 | AaC DSL/约束定义/漂移检测/修复/CI集成等 | AaC DSL/约束定义/漂移检测/修复/CI集成等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3829 | NL解析/图查询转换/社区发现/摘要等 | NL解析/图查询转换/社区发现/摘要等（来源:29-D-GOVERNANCE-治理域.md, uncertain） | D_GOVERNANCE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-3830 | ADR解析/约束提取/双向关联/校验/推演等 | ADR解析/约束提取/双向关联/校验/推演等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3831 | 服务目录/Golden Path/技术雷达/自助服务 | 服务目录/Golden Path/技术雷达/自助服务（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3832 | 组织拓扑/Conway映射/认知负载/团队边界 | 组织拓扑/Conway映射/认知负载/团队边界（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3833 | 命令侧/查询侧/冲突检测/聚合边界验证 Aggregator Command Query | 命令侧/查询侧/冲突检测/聚合边界验证 Aggregator Command Query（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3834 | OpenAPI提取/版本兼容/废弃追踪等 | OpenAPI提取/版本兼容/废弃追踪等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3835 | 变更频率/团队边界/认知负载/Bus Factor等 | 变更频率/团队边界/认知负载/Bus Factor等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3836 | 环路检测/死锁预测/循环消除/条件求解等 Loop Detection/Deadlock Prediction/Cycle Elimination/Condition Solving | 环路检测/死锁预测/循环消除/条件求解等 Loop Detection/Deadlock Prediction/Cycle Elimination/Condition Solving（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3837 | 静态分析/动态采集/AI推断/配置发现等 | 静态分析/动态采集/AI推断/配置发现等（来源:29-D-GOVERNANCE-治理域.md, uncertain） | D_GOVERNANCE | harvest待评估（uncertain） |  |
-| CAND-HARVEST-3838 | 路径索引/子图同构/GNN/传播概率等 | 路径索引/子图同构/GNN/传播概率等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3839 | 扁平化/锁定/拆分/替代/评估/策略等 Strategy | 扁平化/锁定/拆分/替代/评估/策略等 Strategy（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3840 | AaC DSL编译/CI门禁/漂移/修复/报告等 | AaC DSL编译/CI门禁/漂移/修复/报告等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3841 | 索引/多跳/RAG增强/摘要/验证/增量更新等 | 索引/多跳/RAG增强/摘要/验证/增量更新等（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3842 | ADR传播/多ADR交互/回溯/变更仿真等 | ADR传播/多ADR交互/回溯/变更仿真等（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3843 | Dependency Update Latency Predictor 依赖更新延迟预测器 | Dependency Update Latency Predictor 依赖更新延迟预测器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3844 | Dependency Adoption Pattern Analyzer 依赖采纳模式分析器 | Dependency Adoption Pattern Analyzer 依赖采纳模式分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3845 | Architecture Tech Debt Tracker 架构技术债追踪器 | Architecture Tech Debt Tracker 架构技术债追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3846 | Dependency Temporal Evolution Analyzer 依赖时序演化分析器 | Dependency Temporal Evolution Analyzer 依赖时序演化分析器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3847 | Tech Debt Compound Effect Modeler 技术债复合效应建模器 | Tech Debt Compound Effect Modeler 技术债复合效应建模器（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3848 | Homomorphic Dependency Calculator 同态依赖计算器 | Homomorphic Dependency Calculator 同态依赖计算器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3849 | QPDG Engine QPDG引擎 | QPDG Engine QPDG引擎（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3850 | Entanglement-Aware Scheduler 纠缠感知调度器 | Entanglement-Aware Scheduler 纠缠感知调度器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3851 | Hybrid Classical-Quantum Bridge 混合经典量子桥 | Hybrid Classical-Quantum Bridge 混合经典量子桥（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3852 | Quantum Error Propagation Tracer 量子错误传播追踪器 | Quantum Error Propagation Tracer 量子错误传播追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3853 | Kleisli Effect Engine Kleisli效果引擎 | Kleisli Effect Engine Kleisli效果引擎（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3854 | 左Kan扩展依赖解析器 LeftKanExtensionDependencyResolver | 左Kan扩展依赖解析器 LeftKanExtensionDependencyResolver（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3855 | 光学双向依赖同步器 OpticalBidirectionalDependencySynchronizer | 光学双向依赖同步器 OpticalBidirectionalDependencySynchronizer（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3856 | 依赖效果类型检查器 DependencyEffectTypeChecker | 依赖效果类型检查器 DependencyEffectTypeChecker（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3857 | Indexed Graded Monad Tracker 索引分级单子追踪器 | Indexed Graded Monad Tracker 索引分级单子追踪器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3858 | 依赖会话类型验证器 DependencySessionTypeValidator | 依赖会话类型验证器 DependencySessionTypeValidator（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3859 | 需求-代码双向追溯引擎 RequirementCodeBidirectionalTraceabilityEngine | 需求-代码双向追溯引擎 RequirementCodeBidirectionalTraceabilityEngine（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3860 | 数字线程完整性评分器 DigitalThreadIntegrityScorer | 数字线程完整性评分器 DigitalThreadIntegrityScorer（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3861 | 依赖地狱5维检测器 DependencyHell5DDetector | 依赖地狱5维检测器 DependencyHell5DDetector（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3862 | Migration Dependency Graph Manager 迁移依赖图管理器 | Migration Dependency Graph Manager 迁移依赖图管理器（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3863 | 依赖漂移距离度量器 DependencyDriftDistanceMeter | 依赖漂移距离度量器 DependencyDriftDistanceMeter（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3864 | GAT变更影响预测器 GATChangeImpactPredictor | GAT变更影响预测器 GATChangeImpactPredictor（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3865 | 隐式依赖GNN发现器 ImplicitDependencyGNNFinder | 隐式依赖GNN发现器 ImplicitDependencyGNNFinder（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3866 | ACO多路径依赖搜索器 ACOMultiPathDependencySearcher | ACO多路径依赖搜索器 ACOMultiPathDependencySearcher（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3867 | GA Multi-Objective Refactoring 遗传算法多目标重构 | GA Multi-Objective Refactoring 遗传算法多目标重构（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3868 | PSO隐式依赖发现器 PSOImplicitDependencyFinder | PSO隐式依赖发现器 PSOImplicitDependencyFinder（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3869 | HW-SW Unified DAG 软硬件统一DAG | HW-SW Unified DAG 软硬件统一DAG（来源:29-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3870 | 反馈依赖环检测器 FeedbackDependencyLoopDetector | 反馈依赖环检测器 FeedbackDependencyLoopDetector（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-3871 | 文档漂移反模式检测器 DocumentationDriftAntipatternDetector | 文档漂移反模式检测器 DocumentationDriftAntipatternDetector（来源:29-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4170 | Provenance Tracker 溯源追踪器 | Provenance Tracker 溯源追踪器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4171 | Audit Integrity Verifier 审计完整性验证器 | Audit Integrity Verifier 审计完整性验证器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4172 | Rollback Governance Auditor 回滚治理审计器 | Rollback Governance Auditor 回滚治理审计器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4173 | A2A Protocol Governance Auditor A2A协议治理审计器 | A2A Protocol Governance Auditor A2A协议治理审计器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4174 | Durable Execution 持久化执行 | Durable Execution 持久化执行（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4175 | Architecture Principles 架构原则定义 | Architecture Principles 架构原则定义（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4176 | Cross Environment Consistency 跨环境一致性校验 | Cross Environment Consistency 跨环境一致性校验（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4177 | D5 Architecture Validators D5架构验证器 | D5 Architecture Validators D5架构验证器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4178 | Downstream Anchors Verifier 下游锚点验证器 | Downstream Anchors Verifier 下游锚点验证器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4179 | Version Negotiation 版本协商 | Version Negotiation 版本协商（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4180 | Decision Fatigue Detector 决策疲劳检测器 | Decision Fatigue Detector 决策疲劳检测器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4181 | Decision Fatigue CLI 决策疲劳CLI | Decision Fatigue CLI 决策疲劳CLI（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4182 | Consequence Manager 后果管理器 | Consequence Manager 后果管理器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4183 | Multi Model Consensus 多模型共识归档 | Multi Model Consensus 多模型共识归档（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4184 | Agent Debate Agent辩论机制 | Agent Debate Agent辩论机制（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4185 | Phase Check Registry 阶段检查注册表 | Phase Check Registry 阶段检查注册表（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4186 | Phase Manager 阶段管理器 | Phase Manager 阶段管理器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4187 | Admission Response 准入响应 | Admission Response 准入响应（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4188 | Pre Operation Check 操作前检查 | Pre Operation Check 操作前检查（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4189 | A2A Protocol Phase Hold A2A协议阶段保持 | A2A Protocol Phase Hold A2A协议阶段保持（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4190 | Agent RBAC Approver Check Agent RBAC审批人检查 | Agent RBAC Approver Check Agent RBAC审批人检查（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4191 | Constitutional Update 宪法更新 | Constitutional Update 宪法更新（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4192 | AI Code Standards AI代码标准 | AI Code Standards AI代码标准（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4193 | Vibe Coding Enforcer Vibe Coding执行器 | Vibe Coding Enforcer Vibe Coding执行器（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4194 | AI Code Review AI代码审查 | AI Code Review AI代码审查（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4195 | Prompt Lifecycle Prompt生命周期 | Prompt Lifecycle Prompt生命周期（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4196 | AI Self Diagnosis AI自诊断监督 | AI Self Diagnosis AI自诊断监督（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4197 | AI Hallucination Detection AI幻觉检测 | AI Hallucination Detection AI幻觉检测（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4198 | Financial Compliance 金融合规 | Financial Compliance 金融合规（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4199 | Data Classification 数据分类 | Data Classification 数据分类（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4200 | Data Lifecycle 数据生命周期 | Data Lifecycle 数据生命周期（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4201 | Data Quality 数据质量 | Data Quality 数据质量（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4202 | Data Source Reliability 数据源可靠性 | Data Source Reliability 数据源可靠性（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4203 | Benchmark Integrity 基准完整性 | Benchmark Integrity 基准完整性（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4204 | Compliance Scripts 合规脚本 | Compliance Scripts 合规脚本（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4205 | Evals Evaluation Framework 评估框架 | Evals Evaluation Framework 评估框架（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4206 | Fault Tolerance 容错 | Fault Tolerance 容错（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4207 | Broker Resilience Broker韧性 | Broker Resilience Broker韧性（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4208 | Offline Resilience 离线韧性 | Offline Resilience 离线韧性（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4209 | A2A Failure Escalation A2A失败升级 | A2A Failure Escalation A2A失败升级（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4210 | Approval Escalation 审批升级 | Approval Escalation 审批升级（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4211 | Budget Handler 预算处理 | Budget Handler 预算处理（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4212 | Drift Fix 漂移修复 | Drift Fix 漂移修复（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4213 | Budget Tracker 预算追踪 | Budget Tracker 预算追踪（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4214 | System Topology 系统拓扑 | System Topology 系统拓扑（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4215 | Dependency Manager 依赖管理 | Dependency Manager 依赖管理（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4216 | SPOF Checker 单点故障检测器 | SPOF Checker 单点故障检测器（来源:27-D-GOVERNANCE-治理域.md, likely_new） | D_GOVERNANCE | harvest待评估（likely_new） |  |
-| CAND-HARVEST-4217 | Observability Dashboard 可观测性仪表盘 | Observability Dashboard 可观测性仪表盘（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4218 | Change Impact Analyzer 变更影响分析器 | Change Impact Analyzer 变更影响分析器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4219 | Causal Conflict Detector 因果冲突检测器 | Causal Conflict Detector 因果冲突检测器（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4220 | Governance Watchdog 治理看门狗 | Governance Watchdog 治理看门狗（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4221 | MCP Governance Server MCP治理服务 | MCP Governance Server MCP治理服务（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4256 | Rollback Result Types 回滚结果类型 | Rollback Result Types 回滚结果类型（来源:27-D-GOVERNANCE-治理域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4836 | 审计链6W模型 Audit Chain 6W Model | 审计链6W模型 Audit Chain 6W Model（来源:22-D-AUT-CORE-自治核心域.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4984 | PolicyManager 规则管理器 | PolicyManager 规则管理器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4985 | DriftGovernance 漂移治理 | DriftGovernance 漂移治理（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4986 | AIConstructionGovernor AI建设治理器 | AIConstructionGovernor AI建设治理器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4987 | LifecycleManager 生命周期管理器 | LifecycleManager 生命周期管理器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4988 | StandardsManager 标准管理器 | StandardsManager 标准管理器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4989 | ComplianceChecker 合规检查器 | ComplianceChecker 合规检查器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4990 | ArchitectureGovernance 架构治理 | ArchitectureGovernance 架构治理（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4991 | DependencySemantics 依赖语义 | DependencySemantics 依赖语义（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4992 | DependencyAmplification 依赖放大效应 | DependencyAmplification 依赖放大效应（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4993 | BusinessCapabilityMapper 业务能力映射器 | BusinessCapabilityMapper 业务能力映射器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4994 | OrgSystemDependencyMapper 组织系统映射器 | OrgSystemDependencyMapper 组织系统映射器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4995 | FineGrainedDependencyAnalyzer 细粒度依赖分析器 | FineGrainedDependencyAnalyzer 细粒度依赖分析器（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-4996 | CouplingStrengthMetrics 耦合度量 | CouplingStrengthMetrics 耦合度量（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-5058 | D-GOV-16~26 Dependency Semantic Series 依赖语义系列 | D-GOV-16~26 Dependency Semantic Series 依赖语义系列（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
-| CAND-HARVEST-5059 | Off-site Planning Modules 场外规划模块 | Off-site Planning Modules 场外规划模块（来源:01-跨域交叉点与因果链.md, likely_implemented） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0013 | Audit & Compliance Traceability 审计与合规追溯 | C 043：审计与合规追溯（阶段一P1/阶段二P2）（→A6合规🔒） | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0029 | Reporting/Review/Attribution 报告/复盘/归因 | C 010：报告/复盘/归因 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0037 | 成本治理与优化 Governance | C 044：成本治理与优化 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0046 | 渐进式全球扩展 Progressive Global Expansion | C 020：渐进式全球扩展 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0352 | Policy Manager 策略管理器 | / D-GOVERNANCE-01 / Policy Manager / ✅ 能建 / 📋 项目内有蓝图编号DOM-GOV-001已建设 / 治理策略CRUD+版本管理 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0353 | Audit Engine 审计引擎 | / D-GOVERNANCE-03 / Audit Engine / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-027已建设 / 4审计模块+Merkle哈希链 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0354 | Registration Engine 注册引擎 | / D-GOVERNANCE-13 / Registration Engine / ✅ 能建 / 📋 项目内有蓝图编号MOD-MASTER-001已建设 / scaffold+manifest+registry / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0355 | AI Construction Governor AI施工治理器 | / D-GOVERNANCE-15 / AI Construction Governor / ✅ 能建 / / AI施工门禁+公式Hash+回归截断 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0613 | Orphan Judge 孤儿判定器 | 三决策树处置：无主数据/僵尸因子/废弃Schema | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0614 | DepMap Engine 分层存储AST依赖扫描引擎 | Python AST解析器扫描代码数据依赖构建依赖图谱 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0877 | AI Autonomy Boundary Manager AI自治边界管理器 | AI自治边界管理器ai_modifiable/human_gated/immutable+Agentic Drift防护+边界审计 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0878 | Governance Automation Engine 治理自动化引擎 | 治理自动化引擎10类检查器+6类脚本+自动巡检+自动修复+治理报告 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0879 | Kill Switch (Governance Layer) 治理层Kill Switch | 治理层Kill Switch分层制动+多路径触发+Owner确认+制动审计+制动恢复 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0880 | Maturity Assessment Engine 成熟度评估引擎 | 成熟度评估引擎5级成熟度(M1~M5)+评估指标+评估报告+改进建议+成熟度路线图 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0881 | Regulatory Mapping Engine 监管映射引擎 | 监管映射引擎中国A股程序化交易+ESRB系统性风险+EU AI Act预留+法规自动解析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0882 | Governance Degradation Manager 治理降级管理器 | 治理降级管理器降级策略+降级触发+降级恢复+降级审计+AI自治熔断模式 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0930 | Vibe Coding Governance Vibe Coding治理 | Session治理+Vibe Coding治理 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0931 | Dependency Semantics Layer 依赖语义层 | 依赖语义漂移检测 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0932 | Dependency Amplification Analyzer 依赖放大效应分析器 | 依赖放大效应分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0933 | Architecture as Code Engine 架构即代码引擎 | 架构即代码引擎 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0934 | Business Capability-Module Mapper 业务能力-模块映射器 | 业务能力-模块映射 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0935 | Org-System Dependency Mapper 组织-系统依赖映射器 | 组织-系统依赖映射 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0936 | Fine-Grained Dependency Analyzer 函数级依赖图分析器 | 函数级依赖图分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0937 | Coupling Strength Metrics 耦合度量计算器 | 耦合度量计算 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0938 | AST Call Graph Generator AST调用图生成器 | AST调用图生成 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0939 | Architecture Test Suite 架构测试套件 | 架构测试套件 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0940 | Policy Impact Analyzer 策略影响分析器 | 策略影响分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0941 | Governance Dashboard 治理可视化仪表盘 | 治理可视化仪表盘 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0942 | Contract Version Management 契约版本管理 | 治理域-规则版本(10子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0943 | AST Call Graph AST调用图 | 治理域-结构检测(11子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0944 | Coupling Metrics 耦合度量 | 治理域-漂移检测(9子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0945 | Blueprint-Code Traceability 蓝图-代码追溯 | 治理域-三方对齐(8子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0946 | Architecture as Code 架构即代码 | 治理域-三方对齐(8子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0947 | GraphRAG Query GraphRAG查询 | 治理域-治理自动化(7子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0948 | ADR Decision Tracking ADR决策追踪 | 治理域-方法论约束(8子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0949 | Developer Portal 开发者门户 | 治理域-角色交互(5子模块) | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0950 | Org Topology 组织拓扑 | 治理域-角色交互(4子模块) | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0951 | CQRS/ES Modeling CQRS/ES建模 | 治理域-Runtime层(4子模块) | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0952 | API Dependency API依赖 | 治理域-功能域映射(8子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0953 | Team Topology 团队拓扑 | 治理域-角色交互(7子模块) | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0954 | Cycle Detection 环路检测 | 治理域-漂移检测(10子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0955 | Implicit Dependency Discovery 隐式依赖发现 | 治理域-漂移检测(9子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0956 | Knowledge Graph Reasoning 知识图谱推理 | 治理域-治理自动化(12子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0957 | Dependency Amplification Mitigation 依赖放大缓解 | 治理域-架构漂移(11子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0958 | AaC Compiler AaC编译器 | 治理域-三方对齐(11子模块) | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-0959 | GraphRAG Reasoning GraphRAG推理 | 治理域-治理自动化(12子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0960 | ADR Simulation ADR仿真 | 治理域-方法论约束(7子模块) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0962 | Code Dedup Engine 代码去重引擎 | 代码去重引擎 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0964 | Audit Orchestrator 审计编排器 | 审计编排器 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0965 | Semantic Auditor 语义审计器 | 三方对齐 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0969 | Registry Governance 注册治理 | 规则注册 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-0970 | State Machine Engine 状态机引擎 | 变更审批 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1050 | Decision Audit Trail 决策审计追踪 | 每个AI决策的输入/输出/模型版本/参数必须记录 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-1767 | Incident Response 事件响应 | / incident_response.py / governance/ (DOM-GOV-001) / ✅ 核心映射——事件响应 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-2041 | AI治理框架 AI Governance Framework | EU AI Act合规治理框架:透明度/人类监督/准确性/问责(❌) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2043 | 知识来源追溯 Knowledge Source Tracing | 每条知识可追溯到原始来源(作者/时间/URL) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2044 | 模块变更审计 Module Change Audit | 所有模块创建/更新/退役操作记录审计日志不可篡改 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2069 | Rust/Go延迟分层 Rust/Go Latency Tiering | / R-31 / Rust/Go延迟分层 / ❌ / 硬边界约束二（单机Windows+Python） / GPU集群+Linux+多语言编译链就绪 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2070 | Agent集群 Agent Cluster MARL | ❌硬边界约束一单人+约束二单机需多机集群+MARL训练框架 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2071 | 平台化基础设施 Platform Infrastructure | / R-33 / 平台化基础设施 / ❌ / 硬边界约束一（单人）+约束三（50万AUM） / 多团队+多账户+AUM>1000万 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2072 | EU AI Act字面合规 EU AI Act Literal Compliance | ❌硬边界约束三个人使用不对外服务需对外提供服务或管理他人资金 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2074 | 多管线并行架构 Multi-Pipeline Parallel Architecture | / R-36 / 多管线并行架构(独立资金池) / ❌ / 硬边界约束三（50万AUM单一账户） / 多账户+AUM>500万+独立资金池 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2078 | Micro-Agent微Agent架构 Micro-Agent Architecture | / R-40 / Micro-Agent微Agent架构 / ❌ / 硬边界约束一（单人）+约束二（单机） / 多机集群+微Agent编排框架就绪 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2080 | SEC AI Trading Advisor注册 SEC AI Trading Advisor Registration | ❌硬边界约束三个人使用不对外服务需对外提供服务或管理他人资金 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2136 | OPA Rego Policy Engine OPA Rego策略引擎 | / LP-001 / OPA Rego策略引擎 / 🔴 暂缓(不能建) / ①Agent数量≥8且规则≥20条；②有第二位开发人员加入 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2147 | A2A Gateway Policy Engine A2A检查网关策略引擎 | A2A检查网关策略引擎Microsoft Agent Governance Toolkit对标 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2148 | Global Policy Layer 全局策略层 | 全局策略层OPA Rego目标架构MVP替代YAML配置 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2185 | GAAT Governance-Aware Agent Telemetry 治理感知遥测 | > GAAT (Governance-Aware Agent Telemetry, arXiv 2026) 在标准OpenTelemetry上扩展治理属性，实现'遥测→检测→执行'闭环。本系统适配其核心思想。 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2186 | Microsoft Agent Governance Toolkit 治理 | Microsoft Agent Governance Toolkit七包治理栈Agent OS Agent Mesh Agent SRE | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2187 | Agent OS Policy Engine Agent OS策略引擎 | Agent OS策略引擎A2A检查网关内嵌策略层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2190 | Governance Enforcement Bus GEB 治理执行总线 | / Governance Enforcement Bus (GEB) / Redis Pub/Sub治理执行总线 / 分级干预：告警→限流→阻断→熔断 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2191 | Trusted Telemetry Plane 可信遥测平面 | / Trusted Telemetry Plane / 审计日志哈希链 / 每条Trace附加前条哈希，防篡改 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2245 | ADR Generation ADR生成 | 架构决策记录自动生成需协作平台 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-2246 | Dependency Change Log 依赖变更日志 | 模块依赖变更日志需协作平台 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2288 | OPA Rego OPA Rego策略语言 | OPA Rego策略语言目标架构全局策略层嵌入式策略引擎 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2289 | Cedar Cedar策略语言 | > **设计哲学**：Microsoft Agent Governance Toolkit (2026年4月, MIT开源)提供了7包治理工具栈，其中Agent OS是无状态策略引擎，在Agent动作执行前拦截，延迟<0.1ms p99，支 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-2348 | GAAT Governance-Aware Telemetry GAAT治理感知遥测 | > GAAT (Governance-Aware Agent Telemetry, arXiv 2026) 在标准OpenTelemetry上扩展治理属性，实现'遥测→检测→执行'闭环。本系统适配其核心思想。 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2349 | Microsoft AGT Microsoft AGT治理栈 | Microsoft AGT Agent Governance Toolkit概念映射Agent OS策略引擎+Agent Mesh密码学身份+Agent SRE可靠性工程+Agent Runtime执行环 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-2375 | ADR Generation ADR架构决策记录自动生成 | ADR架构决策记录自动生成需协作平台受限模块 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-2376 | Dependency Change Log 模块依赖变更日志 | 模块依赖变更日志需协作平台受限模块 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2562 | Governance Domain 治理域 | 场内项目部分实现治理域 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2563 | Behavioral Auditor 行为审计器 | 场内项目行为审计器 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2589 | EU AI Act Article 14 Compliance Mapping EU AI Act Article 14合规映射 | ### 来自Agent架构(A7) §4.6.3 EU AI Act Article 14合规映射 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2596 | 45 Capability List 45项能力清单 | 能力定位书定义45项能力清单C-001~C-047 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2597 | Five Quadrant Capability Architecture 五象限能力架构 | A1交易能力+A8进化能力+A9运维能力 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2599 | Governance Domain Module Mapping 治理域模块映射 | 遗留问题裁定+治理域模块映射265模块 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2646 | Kill Switch Layered Kill Switch分层 | Kill Switch分层+本地评估 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2647 | Governance Degradation Mode 治理降级模式 | 治理降级模式+AI自治熔断模式 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2648 | Governance Automation 治理自动化 | 10类检查器+6类脚本 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2649 | Blueprint Code Document Three Way Alignment 蓝图-代码-文档三方对齐机制 | 6维校验+一致性规则 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2650 | Architecture Drift Detection 架构漂移检测与纠正闭环 | 5类漂移数据/概念/架构/配置/治理+3级纠正 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2651 | AI Autonomy Boundary AI自治边界 | / AI自治边界（ai_modifiable/human_gated/immutable+Agentic Drift防护） / 安全技术实现（→A5） / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2652 | Change Approval Flow 变更审批流 | 5级L1~L5+审批链+门禁GATE-01~07触发规则 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2969 | Orchestration Agent 编排代理 | 设定决策约束仓位上限/风险预算 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2972 | Policy层 Policy Layer | 治理三层边界定义应该怎样 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2973 | Factory层 Factory Layer | 治理三层边界定义怎么做到 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2974 | Runtime层 Runtime Layer | 治理三层边界定义实际怎样 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2980 | 规则生命周期 Rule Lifecycle | 草稿审核发布生效退役 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2981 | 编译验证 Compile Validation | 语法语义可执行性校验 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2982 | 预发布测试 Pre-release Testing | 沙箱环境验证规则正确性 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2983 | 灰度发布 Canary Release | 低风险域灰度运行验证 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-2984 | 回滚机制 Rollback Mechanism | 一键回滚到上一版本 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2985 | 实时执行 Real-time Execution | 关键路径执行治理规则 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2986 | 漂移检测 Drift Detection | Policy层与Runtime层对比 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2987 | 反馈闭环 Feedback Loop | 执行结果反馈到Policy层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2994 | 数据漂移 Data Drift | 输入特征分布变化KS检验 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2995 | 概念漂移 Concept Drift | 特征目标映射改变PELT检测 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2996 | 架构漂移 Architecture Drift | 实际架构偏离蓝图定义 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2997 | 配置漂移 Config Drift | 运行时配置偏离声明式定义 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2998 | 治理漂移 Governance Drift | AI自治范围逐渐扩展超边界 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-2999 | KS检验 KS Test | 单变量分布变化检测 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3000 | Wasserstein距离 Wasserstein Distance | 多变量分布变化检测 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3001 | PELT变点检测 PELT Change Point Detection | 时序结构变化检测 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3002 | 蓝图-代码哈希对比 Blueprint-Code Hash Comparison | 关键代码SHA-256哈希对比 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3006 | 轻微漂移自动纠正 Minor Drift Auto Correction | 策略偏差<10%自动纠正 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3007 | 中度漂移确认纠正 Moderate Drift Confirmed Correction | 配置偏差10-30%需确认 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3008 | 严重漂移人工决策 Severe Drift Human Decision | 架构偏离人工决策 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3019 | M1 初始 Ad Hoc | 治理缺失或完全反应式 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3020 | M2 发展中 Developing | 初步意识和临时策略出现 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3021 | M3 已定义 Defined | 正式治理框架文档化 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3022 | M4 已管理 Managed | 治理量化管理KPI跟踪 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3023 | M5 优化 Optimizing | 治理持续改进融入业务战略 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3024 | Phase 0 审计日志激活 | 系统启动时激活审计日志 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3025 | Phase 1 变更审批L1-L3激活 | P0第1批完成后激活 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3026 | Phase 2 漂移检测统计层激活 | P0第3批完成后激活 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3027 | Phase 3 变更审批L4-L5激活 | P0全部完成后激活 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3028 | Phase 4 治理自动化激活 | P1第2轮完成后激活 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3030 | 蓝图 Blueprint | 定义系统应该是什么样 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3031 | 代码 Code | 定义系统实际是什么样 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3032 | 文档 Documentation | 定义系统被描述成什么样 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3033 | 组件存在性校验 Component Existence Validation | 蓝图组件vs代码模块清单 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3034 | 配置一致性校验 Config Consistency Validation | 声明式配置vs运行时配置 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3035 | 文档完整性校验 Documentation Completeness Validation | 代码公共接口vs API文档 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3036 | 依赖方向校验 Dependency Direction Validation | 代码import vs架构分层约束 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3037 | 数据血缘校验 Data Lineage Validation | 因子计算逻辑vs因子文档定义 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3038 | 规则编译检查器 Rule Compile Checker | Policy层→Factory层一致性 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3039 | 审批门禁检查器 Approval Gate Checker | 变更是否经过正确审批 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3040 | 三方对齐检查器 Three-party Alignment Checker | 蓝图-代码-文档一致性 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3042 | 漂移检测检查器 Drift Detection Checker | 统计漂移+结构漂移检测 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3043 | 审计完整性检查器 Audit Integrity Checker | 审计日志完整未被篡改 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3044 | 依赖方向检查器 Dependency Direction Checker | 代码import违反分层约束 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3046 | 配置漂移检查器 Config Drift Checker | 运行时配置vs声明式基线 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3048 | governance_report.py 治理状态报告 | 生成治理状态日报周报 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3049 | drift_scan.py 漂移扫描 | 执行全量漂移扫描 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3050 | alignment_check.py 三方对齐检查 | 执行三方对齐检查 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3051 | audit_integrity.py 审计完整性 | 校验审计日志完整性 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3053 | rule_lifecycle.py 规则生命周期 | 管理治理规则生命周期 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3056 | Administrator 管理员角色 | 处理治理告警与漂移纠正 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3058 | 漂移检测覆盖率 Drift Detection Coverage | 关键组件被覆盖率 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3059 | 变更审批合规率 Change Approval Compliance Rate | 变更经过正确审批流程率 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3060 | 三方对齐一致率 Three-party Alignment Rate | 蓝图-代码-文档一致率 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3061 | 治理自动化覆盖率 Governance Automation Coverage | 治理检查自动化覆盖率 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3062 | 治理告警响应时间 Governance Alert Response Time | 告警时间戳vs人工处理时间 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3064 | NIST AI RMF NIST AI风险管理框架 | GOVERN/MAP/MEASURE/MANAGE四函数 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3068 | OWASP AIMA v1.0 | AI治理成熟度模型行业基准 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3070 | SR 26-2 模型风险管理新指引 | 美国银行模型风险管理新指引 | D_GOVERNANCE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-3079 | IIA Three Lines Model 模型 | 三道防线模型2020更新 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3086 | Minimum Viable Governance MVG 治理 | 最小可行治理MIT CISR | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3091 | Agentic Regulator四层治理框架 | Kurshan四层治理框架 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3092 | Santander机械执行vs文本治理 | 机械执行降73%空转延迟 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3094 | ICFDT AI治理报告 | 72%机构部署AI但<30%有治理框架 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3095 | CFA Institute两层治理框架 | 程序级+用例级双层治理 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3096 | Gartner Agentic AI失败率预测 | >40%项目因治理失败被取消 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3098 | 治理-任务解耦 Santander | 治理质量与任务性能独立维度 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3116 | 不透明性 Opacity | ESRB系统性风险规则可读性 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3120 | 关联性 Interconnectedness | ESRB系统性风险依赖方向检查 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3122 | 监控挑战 Monitoring Challenges | ESRB系统性风险10检查器 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3123 | 系统复杂性 System Complexity | ESRB系统性风险三方对齐 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3142 | GOV-FSTR-001 File Structure Governance 治理文件 | 三方对齐文件结构治理 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3143 | DOM-GOV-CAP-001 容量升级 | 激活时序容量升级 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3146 | M6 业务-模块映射 | 功能域映射业务能力映射15模块 | D_GOVERNANCE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-3147 | M7 价值流分析 | 激活时序价值流分析9模块 | D_GOVERNANCE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-3148 | M9 变更影响分析 | 变更审批流变更影响分析10模块 | D_GOVERNANCE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-3149 | D1~D84 独立研究模块 | 各对应章节27模块 | D_GOVERNANCE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-3526 | compliance_matrix.py 合规矩阵 | DD-SEC-002归入GOV合规矩阵是治理职责 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3527 | decision_registry.py 决策注册表 | DD-SEC-002归入GOV决策注册与解释是治理职责 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3528 | decision_explainer.py 决策解释器 | DD-SEC-002归入GOV决策注册与解释是治理职责 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3780 | Dw150 Update Blueprints dw150更新入 | scripts/governance/dw150_update_blueprints.py,script,'' | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3781 | Check Threeway Alignment 检查三对齐 | scripts/governance/d5_architecture/checkers/check_threeway_alignment.py,script,'' | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3782 | Dw151 Full Verify dw151满验证 | scripts/governance/d5_architecture/checkers/dw151_full_verify.py,script,'' | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3784 | AuditLedger 审计账本 | 审计日志账本append-only写入+Merkle哈希链 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3785 | DDDRuleEnforcer DDD铁律执行器 | SSoT唯一权威来源校验+限界上下文边界检查 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3786 | DecisionProvenance 决策溯源链 | 决策上下文记录+因果链追踪+多模型共识归档 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3787 | PhaseGateManager 阶段门禁管理 | 73门禁注册+46门控检查+Pass/Fail裁决 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3788 | ConstitutionalGuard 宪法守卫 | AI代码标准执行+宪法更新审批+Vibe Coding治理 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3789 | ComplianceAuditor 合规审计器 | 金融合规检查+数据分类审计+数据生命周期审计 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3790 | IncidentResponse 事件响应与升级 | 事件分级P0/P1/P2+自动处置+升级链+容错 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3791 | SystemTopologyAuditor 系统拓扑审计 | 依赖拓扑审计+单点故障检测+变更影响分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3792 | 关系类型分类器 RelationTypeClassifier | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3793 | 语义注解引擎 SemanticAnnotationEngine | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3794 | 条件依赖求解器 ConditionalDependencySolverer | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3795 | 依赖强度量化器 DependencyStrengthQuantifier | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3796 | 语义变更检测器 SemanticChangeDetector | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3797 | Monoidal Dependency Composer 单子依赖组合器 | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3798 | Dependent Type Verifier 依赖类型验证器 | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3799 | Semantic Similarity Scorer 语义相似度评分器 | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3800 | Event-Driven Dependency Tracer 事件驱动依赖追踪器 | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3801 | UML/SysML Stereotype Mapper UML构造型映射器 | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3802 | Temporal Dependency Validator 时序依赖验证器 | M1依赖语义层 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3803 | 传递依赖解析器 TransitiveDependencyResolver | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3804 | 放大倍数计算器 AmplificationFactorCalculator | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3805 | 放大热点识别器 AmplificationHotspotIdentifier | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3806 | 扁平化建议器 FlatteningAdvisor | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3807 | 放大趋势追踪器 AmplificationTrendTracker | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3808 | Fan-In/Fan-Out Analyzer 扇入扇出分析器 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3809 | Dependency Bloat Meter 依赖膨胀度量器 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3810 | MTTU_dep/MTTR_dep Tracker 依赖MTTU/MTTR追踪器 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3811 | Critical Path Analyzer 关键路径分析器 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3812 | Dependency Entropy Calculator 依赖熵计算器 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3813 | Change Shock Radius Predictor 变更冲击半径预测器 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3814 | Dependency Health Scorecard 依赖健康评分卡 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3815 | Adoption Curve Modeler 采纳曲线建模器 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3816 | Dependency Deduplication Advisor 依赖去重顾问 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3817 | Ecosystem Risk Diversification Analyzer 生态风险分散分析器 | M4放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3818 | 图数据模型/导入/存储/查询/提取/推理/同步 GraphStorage | M5图存储 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3819 | 本体层/多边存储/查询优化/时序图/语义检测/GraphRAG等 | M5图存储 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3820 | 业务域解析/技术模块解析/映射规则/发现/覆盖率/孤立检测 Business Domain Parsing/Technical Module Parsing/Mapping Rules/Discovery/Coverage/Orphan Detection | M6业务映射 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3821 | TOGAF自动化/ArchiMate/DDD映射/流程映射等 | M6业务映射 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3822 | 价值流定义/流依赖/瓶颈/延迟/健康评分等 Latency | M7价值流 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3823 | 变更传播/影响范围/严重度/修复建议等 Change Propagation/Impact Scope/Severity/Repair Suggestions | M9影响分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3824 | 契约版本注册/兼容性矩阵/升级路径等 Contract Path | M11契约版本 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3825 | AST解析/调用图/膨胀检测/清理/可视化等 | M17 AST分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3826 | RMS计算/热力图/趋势/解耦建议等 | M18耦合度量 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3827 | 蓝图解析/代码解析/追溯链/漂移检测等 Blueprint Parsing/Code Parsing/Traceability Chain/Drift Detection | M19蓝图追溯 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3828 | AaC DSL/约束定义/漂移检测/修复/CI集成等 | M23架构即代码 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3829 | NL解析/图查询转换/社区发现/摘要等 | M25 GraphRAG | D_GOVERNANCE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-3830 | ADR解析/约束提取/双向关联/校验/推演等 | M26 ADR | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3831 | 服务目录/Golden Path/技术雷达/自助服务 | M33开发者门户 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3832 | 组织拓扑/Conway映射/认知负载/团队边界 | M34组织拓扑 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3833 | 命令侧/查询侧/冲突检测/聚合边界验证 Aggregator Command Query | M37 CQRS | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3834 | OpenAPI提取/版本兼容/废弃追踪等 | M43 API依赖 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3835 | 变更频率/团队边界/认知负载/Bus Factor等 | M54团队拓扑 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3836 | 环路检测/死锁预测/循环消除/条件求解等 Loop Detection/Deadlock Prediction/Cycle Elimination/Condition Solving | M61环路检测 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3837 | 静态分析/动态采集/AI推断/配置发现等 | M63隐式发现 | D_GOVERNANCE | harvest待评估（uncertain） |  |
+| CAND-HARVEST-3838 | 路径索引/子图同构/GNN/传播概率等 | M68图推理 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3839 | 扁平化/锁定/拆分/替代/评估/策略等 Strategy | M69放大缓解 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3840 | AaC DSL编译/CI门禁/漂移/修复/报告等 | M73 AaC编译 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3841 | 索引/多跳/RAG增强/摘要/验证/增量更新等 | M75 GraphRAG推理 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3842 | ADR传播/多ADR交互/回溯/变更仿真等 | M76 ADR仿真 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3843 | Dependency Update Latency Predictor 依赖更新延迟预测器 | 放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3844 | Dependency Adoption Pattern Analyzer 依赖采纳模式分析器 | 放大分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3845 | Architecture Tech Debt Tracker 架构技术债追踪器 | 影响分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3846 | Dependency Temporal Evolution Analyzer 依赖时序演化分析器 | 图存储 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3847 | Tech Debt Compound Effect Modeler 技术债复合效应建模器 | 影响分析 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3848 | Homomorphic Dependency Calculator 同态依赖计算器 | 图存储 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3849 | QPDG Engine QPDG引擎 | 量子依赖 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3850 | Entanglement-Aware Scheduler 纠缠感知调度器 | 量子依赖 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3851 | Hybrid Classical-Quantum Bridge 混合经典量子桥 | 量子依赖 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3852 | Quantum Error Propagation Tracer 量子错误传播追踪器 | 量子依赖 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3853 | Kleisli Effect Engine Kleisli效果引擎 | 范畴论 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3854 | 左Kan扩展依赖解析器 LeftKanExtensionDependencyResolver | 范畴论 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3855 | 光学双向依赖同步器 OpticalBidirectionalDependencySynchronizer | 范畴论 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3856 | 依赖效果类型检查器 DependencyEffectTypeChecker | 范畴论 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3857 | Indexed Graded Monad Tracker 索引分级单子追踪器 | 范畴论 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3858 | 依赖会话类型验证器 DependencySessionTypeValidator | 范畴论 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3859 | 需求-代码双向追溯引擎 RequirementCodeBidirectionalTraceabilityEngine | 架构追溯 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3860 | 数字线程完整性评分器 DigitalThreadIntegrityScorer | 架构追溯 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3861 | 依赖地狱5维检测器 DependencyHell5DDetector | 语义分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3862 | Migration Dependency Graph Manager 迁移依赖图管理器 | 影响分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3863 | 依赖漂移距离度量器 DependencyDriftDistanceMeter | 语义分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3864 | GAT变更影响预测器 GATChangeImpactPredictor | 图推理 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3865 | 隐式依赖GNN发现器 ImplicitDependencyGNNFinder | 语义分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3866 | ACO多路径依赖搜索器 ACOMultiPathDependencySearcher | 图推理 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3867 | GA Multi-Objective Refactoring 遗传算法多目标重构 | 影响分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3868 | PSO隐式依赖发现器 PSOImplicitDependencyFinder | 语义分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3869 | HW-SW Unified DAG 软硬件统一DAG | 量子依赖 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-3870 | 反馈依赖环检测器 FeedbackDependencyLoopDetector | 语义分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-3871 | 文档漂移反模式检测器 DocumentationDriftAntipatternDetector | 语义分析 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4170 | Provenance Tracker 溯源追踪器 | / provenance_tracker.py / governance/ (DOM-GOV-001) / ✅ 核心映射——溯源追踪器 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4171 | Audit Integrity Verifier 审计完整性验证器 | / verify_audit_integrity.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——审计完整性验证 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4172 | Rollback Governance Auditor 回滚治理审计器 | / rollback/governance/auditor.py / rollback/ (MOD-INF-021) / ✅ 核心映射——回滚审计 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4173 | A2A Protocol Governance Auditor A2A协议治理审计器 | / l01_infrastructure/a2a_protocol/governance/auditor.py / l01_infrastructure/ (MOD-INF-025) / ✅ 核心映射——A2A协议审计 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4174 | Durable Execution 持久化执行 | / shared/durable_execution.py / shared/ (DOM-GOV-001) / ✅ 辅助映射——持久化执行保证审计不丢失 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4175 | Architecture Principles 架构原则定义 | / architecture_principles.py / governance/ (DOM-GOV-001) / ✅ 核心映射——架构原则定义 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4176 | Cross Environment Consistency 跨环境一致性校验 | / cross_env_consistency.py / governance/ (DOM-GOV-001) / ✅ 核心映射——跨环境一致性校验 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4177 | D5 Architecture Validators D5架构验证器 | / scripts/governance/d5_architecture/validators/ / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——架构验证器 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4178 | Downstream Anchors Verifier 下游锚点验证器 | / scripts/governance/verify_downstream_anchors.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——下游锚点验证(SSoT) / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4179 | Version Negotiation 版本协商 | / shared/version_negotiation.py / shared/ (DOM-GOV-001) / ✅ 辅助映射——版本协商(SSoT) / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4180 | Decision Fatigue Detector 决策疲劳检测器 | / decision_fatigue.py / governance/ (DOM-GOV-001) / ✅ 核心映射——决策疲劳检测 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4181 | Decision Fatigue CLI 决策疲劳CLI | / decision_fatigue_cli.py / governance/ (DOM-GOV-001) / ✅ 核心映射——决策疲劳CLI / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4182 | Consequence Manager 后果管理器 | / consequence_manager.py / governance/ (DOM-GOV-001) / ✅ 核心映射——后果管理器(决策因果) / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4183 | Multi Model Consensus 多模型共识归档 | / multi_model_consensus.py / governance/ (DOM-GOV-001) / ✅ 核心映射——多模型共识归档 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4184 | Agent Debate Agent辩论机制 | / agent_debate.py / governance/ (DOM-GOV-001) / ⚠️ 部分映射——Agent辩论机制，核心归属D-AUTONOMY-CORE，决策归档部分归本模块 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4185 | Phase Check Registry 阶段检查注册表 | / phase_check_registry.py / governance/ (DOM-GOV-001) / ✅ 核心映射——阶段检查注册表 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4186 | Phase Manager 阶段管理器 | / phase_manager.py / governance/ (DOM-GOV-001) / ✅ 核心映射——阶段管理器 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4187 | Admission Response 准入响应 | / admission_response.py / governance/ (DOM-GOV-001) / ✅ 核心映射——准入响应 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4188 | Pre Operation Check 操作前检查 | / scripts/governance/pre_op_check.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——操作前检查 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4189 | A2A Protocol Phase Hold A2A协议阶段保持 | / l01_infrastructure/a2a_protocol/governance/phase_hold.py / l01_infrastructure/ (MOD-INF-025) / ✅ 核心映射——A2A阶段保持 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4190 | Agent RBAC Approver Check Agent RBAC审批人检查 | / agent_rbac/governance_bridges/approver_check.py / agent_rbac/ (MOD-INF-018) / ✅ 辅助映射——审批人检查 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4191 | Constitutional Update 宪法更新 | / constitutional_update.py / governance/ (DOM-GOV-001) / ✅ 核心映射——宪法更新 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4192 | AI Code Standards AI代码标准 | / ai_code_standards.py / governance/ (DOM-GOV-001) / ✅ 核心映射——AI代码标准 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4193 | Vibe Coding Enforcer Vibe Coding执行器 | / vibe_coding_enforcer.py / governance/ (DOM-GOV-001) / ✅ 核心映射——Vibe Coding执行器 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4194 | AI Code Review AI代码审查 | / code_review_ai.py / governance/ (DOM-GOV-001) / ✅ 核心映射——AI代码审查 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4195 | Prompt Lifecycle Prompt生命周期 | / prompt_lifecycle.py / governance/ (DOM-GOV-001) / ✅ 核心映射——Prompt生命周期 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4196 | AI Self Diagnosis AI自诊断监督 | / ai_self_diagnosis.py / governance/ (DOM-GOV-001) / ✅ 核心映射——AI自诊断监督 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4197 | AI Hallucination Detection AI幻觉检测 | / scripts/governance/d12_ai_hallucination/ / scripts/governance/ (MOD-INF-005) / ✅ 辅助映射——AI幻觉检测 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4198 | Financial Compliance 金融合规 | / financial_compliance.py / governance/ (DOM-GOV-001) / ✅ 核心映射——金融合规 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4199 | Data Classification 数据分类 | / data_classification.py / governance/ (DOM-GOV-001) / ✅ 核心映射——数据分类 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4200 | Data Lifecycle 数据生命周期 | / data_lifecycle.py / governance/ (DOM-GOV-001) / ✅ 核心映射——数据生命周期 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4201 | Data Quality 数据质量 | / data_quality.py / governance/ (DOM-GOV-001) / ✅ 核心映射——数据质量 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4202 | Data Source Reliability 数据源可靠性 | / data_source_reliability.py / governance/ (DOM-GOV-001) / ✅ 核心映射——数据源可靠性 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4203 | Benchmark Integrity 基准完整性 | / benchmark_integrity.py / governance/ (DOM-GOV-001) / ✅ 核心映射——基准完整性 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4204 | Compliance Scripts 合规脚本 | / scripts/governance/d11_compliance/ / scripts/governance/ (MOD-INF-005) / ✅ 辅助映射——合规脚本 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4205 | Evals Evaluation Framework 评估框架 | / shared/evals.py / shared/ (DOM-GOV-001) / ✅ 辅助映射——评估框架 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4206 | Fault Tolerance 容错 | / fault_tolerance.py / governance/ (DOM-GOV-001) / ✅ 核心映射——容错 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4207 | Broker Resilience Broker韧性 | / broker_resilience.py / governance/ (DOM-GOV-001) / ⚠️ 部分映射——Broker韧性，核心归属D-EX-CORE，治理视角归本模块 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4208 | Offline Resilience 离线韧性 | / offline_resilience.py / governance/ (DOM-GOV-001) / ✅ 核心映射——离线韧性 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4209 | A2A Failure Escalation A2A失败升级 | / escalation_engine/governance/a2a_failure.py / escalation_engine/ (MOD-INF-022) / ✅ 核心映射——A2A失败升级 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4210 | Approval Escalation 审批升级 | / escalation_engine/governance/approval.py / escalation_engine/ (MOD-INF-022) / ✅ 核心映射——审批升级 / | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4211 | Budget Handler 预算处理 | / escalation_engine/governance/budget_handler.py / escalation_engine/ (MOD-INF-022) / ✅ 辅助映射——预算处理 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4212 | Drift Fix 漂移修复 | / rollback/governance/drift_fix.py / rollback/ (MOD-INF-021) / ✅ 辅助映射——漂移修复 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4213 | Budget Tracker 预算追踪 | / rollback/governance/budget_tracker.py / rollback/ (MOD-INF-021) / ✅ 辅助映射——预算追踪 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4214 | System Topology 系统拓扑 | / system_topology.py / governance/ (DOM-GOV-001) / ✅ 核心映射——系统拓扑 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4215 | Dependency Manager 依赖管理 | / dependency_manager.py / governance/ (DOM-GOV-001) / ✅ 核心映射——依赖管理 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4216 | SPOF Checker 单点故障检测器 | GOV-008 SystemTopologyAuditor已有代码核心映射单点故障检测governance DOM-GOV-001 | D_GOVERNANCE | harvest待评估（likely_new） |  |
+| CAND-HARVEST-4217 | Observability Dashboard 可观测性仪表盘 | / observability_dashboard.py / governance/ (DOM-GOV-001) / ✅ 核心映射——可观测性仪表盘 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4218 | Change Impact Analyzer 变更影响分析器 | / scripts/governance/analyze_change_impact.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——变更影响分析 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4219 | Causal Conflict Detector 因果冲突检测器 | / scripts/governance/detect_causal_conflicts.py / scripts/governance/ (MOD-INF-005) / ✅ 核心映射——因果冲突检测 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4220 | Governance Watchdog 治理看门狗 | / scripts/governance/governance_watchdog.py / scripts/governance/ (MOD-INF-005) / ✅ 辅助映射——治理看门狗 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4221 | MCP Governance Server MCP治理服务 | / mcp/governance_server.py / mcp/ (MOD-INF-013) / ✅ 辅助映射——MCP治理服务 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4256 | Rollback Result Types 回滚结果类型 | / rollback/governance/result_types.py / rollback/ (MOD-INF-021) / 结果类型 / ✅ 可归入GOV-007——回滚结果类型是事件响应的一部分 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4836 | 审计链6W模型 Audit Chain 6W Model | 安全架构-A5§5审计链6W模型(WHO/WHERE/WHEN/WHAT/WHY/RESULT) | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4984 | PolicyManager 规则管理器 | 规则目录+生命周期管理 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4985 | DriftGovernance 漂移治理 | 5类漂移检测数据/概念/架构/配置/治理+3层检测+3级纠正 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4986 | AIConstructionGovernor AI建设治理器 | AgenticDrift防护+HB-GOV-10 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4987 | LifecycleManager 生命周期管理器 | 规则生命周期管理 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4988 | StandardsManager 标准管理器 | 方法论约束+硬边界 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4989 | ComplianceChecker 合规检查器 | 监管合规映射 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4990 | ArchitectureGovernance 架构治理 | 三方对齐+架构漂移 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4991 | DependencySemantics 依赖语义 | 依赖语义漂移 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4992 | DependencyAmplification 依赖放大效应 | 依赖放大效应 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4993 | BusinessCapabilityMapper 业务能力映射器 | 业务能力映射 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4994 | OrgSystemDependencyMapper 组织系统映射器 | 组织-系统映射 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4995 | FineGrainedDependencyAnalyzer 细粒度依赖分析器 | 函数级依赖图验证 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-4996 | CouplingStrengthMetrics 耦合度量 | 耦合度量 | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5058 | D-GOV-16~26 Dependency Semantic Series 依赖语义系列 | / D-GOV-16~26 依赖语义系列 / Szpruch能力分解/FPGA资源未就绪 / GATE-SZP/GATE-FPGA门禁满足 / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
+| CAND-HARVEST-5059 | Off-site Planning Modules 场外规划模块 | / 场外规划模块(265个) / 门禁未满足 / GATE-FPGA(86个)/GATE-SZP(152个)/GATE-RES(27个) / | D_GOVERNANCE | harvest待评估（likely_implemented） |  |
 
 ## 复查时间表
 

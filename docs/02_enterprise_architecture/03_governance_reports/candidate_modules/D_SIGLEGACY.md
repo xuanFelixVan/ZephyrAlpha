@@ -18,7 +18,7 @@ ttl: permanent
 
 | ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
-| CAND-SIGLEGACY-001 | D_SIGLEGACY 多策略引擎 | 本来想做个'多策略总调度'，但这活儿已经被 D_PF_CORE 的 MOD-L05-001 干了。域也死了，留档只为防止以后有人重复设计。 | D_SIGLEGACY | 否决（rejected） | q3 域已死 | P2 | — | 2027-07-31 |
+| CAND-SIGLEGACY-001 | D_SIGLEGACY 多策略引擎 | (已解决)多策略编排已由 D_PF_CORE PC-01 承担 | D_SIGLEGACY | 否决（rejected） | q3 域已死 | P2 | — | 2027-07-31 |
 
 ## 按四问卡点分组（为什么没开发）
 
@@ -28,7 +28,7 @@ ttl: permanent
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-SIGLEGACY-001 | D_SIGLEGACY 多策略引擎 | 本来想做个'多策略总调度'，但这活儿已经被 D_PF_CORE 的 MOD-L05-001 干了。域也死了，留档只为防止以后有人重复设计。 | D_SIGLEGACY | rejected,确认死域。除非D_PF_CORE多策略出现重大缺口,否则不再评估 | 已由 D_PF_CORE MOD-L05-001 承担 |
+| CAND-SIGLEGACY-001 | D_SIGLEGACY 多策略引擎 | (已解决)多策略编排已由 D_PF_CORE PC-01 承担 | D_SIGLEGACY | rejected,确认死域。除非D_PF_CORE多策略出现重大缺口,否则不再评估 | 已由 D_PF_CORE MOD-L05-001 承担 |
 
 ## 复查时间表
 

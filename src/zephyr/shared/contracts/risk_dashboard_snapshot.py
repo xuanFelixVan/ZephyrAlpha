@@ -22,7 +22,7 @@ from typing import List
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -30,7 +30,7 @@ ZephyrAlpha — shared/contracts/risk_dashboard_snapshot.py
 
 CTR-P1-008: RiskDashboardSnapshot / 风险仪表板快照
 
-D_RISK -> D_FRONTEND 风险仪表板实时快照契约。
+Risk → Frontend 风险仪表板实时快照契约。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-008
 Version: 1.0
@@ -57,6 +57,7 @@ class RiskDashboardSnapshot:
     sector_concentrations: Dict[str, float] = field(default_factory=dict)
 
 # ==== END CODGEN:CTR-P1-008 ====
+
 
 
 

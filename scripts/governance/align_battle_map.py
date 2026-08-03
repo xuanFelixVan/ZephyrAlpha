@@ -49,6 +49,7 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -76,6 +77,14 @@ from _shared.module_translation_loader import (  # noqa: E402
 )  # noqa: E402
 from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # noqa: E402
 from _common import DB_DISPLAY_NAME  # noqa: E402
+
+# 日志配置：INFO 级别输出，带时间戳，便于后续监控运行情况（CI/人工触发均可观测）
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger("align_battle_map")
 
 # 候选池 YAML 真源（target_graph=candidate 的合法 id 来源）
 _CANDIDATE_YAML = (
@@ -250,7 +259,7 @@ class BattleMapAlignmentReport:
         lines.append("## 6. 父子嵌套问题（BM-INV-006：父不存在/跨阶段/成环/depth超限）")
         lines.append("")
         lines.append("> 君子协定：parent_step_id 必须指向同 flow_stage 的已存在环节，"
-                     "depth≤2，parent 链不能成环。规则真源：battle_map_positioning.md §8.4。")
+                     "depth≤3，parent 链不能成环。规则真源：battle_map_positioning.md §8.4。")
         lines.append("")
         if not self.parent_child_issues:
             lines.append("> ✅ 无父子嵌套问题。")
@@ -587,6 +596,7 @@ def run_alignment(
 
     # 预加载翻译真源
     preload_battle_map_steps()
+    logger.info("开始作战地图对齐检测...")
 
     reader = BattleMapReader()
     try:
@@ -596,6 +606,7 @@ def run_alignment(
         orphan_steps = reader.find_steps_without_anchors()
     finally:
         reader.close()
+    logger.info("数据加载完成：环节=%d 锚点=%d 流转边=%d", len(steps), len(anchors), len(edges))
 
     # BM-INV-002 幽灵锚点：按 target_graph 分组校验
     ghost_anchors: list[dict] = []
@@ -707,14 +718,15 @@ def run_alignment(
     if write_report:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(report.to_markdown(), encoding="utf-8")
-        print(f"OK: 作战地图对齐报告已写入 {output_path}")
-        print(f"    问题总数: {report.issues_total} "
-              f"(孤儿环节={len(orphan_steps)}, 幽灵锚点={len(ghost_anchors)}, "
-              f"缺失叙事={len(missing_narratives)}, 悬空边={len(dangling_edges)}, "
-              f"域漂移={len(domain_drifts)}, "
-              f"父子嵌套={len(parent_child_issues)})")
+        logger.info("作战地图对齐报告已写入 %s", output_path)
+        logger.info(
+            "问题总数: %d (孤儿环节=%d, 幽灵锚点=%d, 缺失叙事=%d, 悬空边=%d, 域漂移=%d, 父子嵌套=%d)",
+            report.issues_total, len(orphan_steps), len(ghost_anchors),
+            len(missing_narratives), len(dangling_edges),
+            len(domain_drifts), len(parent_child_issues),
+        )
         if source_unavailable:
-            print(f"    ⚠ 目标图源不可用（跳过校验）: {', '.join(source_unavailable)}")
+            logger.warning("目标图源不可用（跳过校验）: %s", ", ".join(source_unavailable))
 
     return report
 
@@ -727,7 +739,7 @@ def _check_parent_child_consistency(steps: list[dict]) -> list[dict]:
       1. 悬空父引用：parent_step_id 指向不存在的 step
       2. 跨阶段嵌套：子 flow_stage 与父不一致
       3. 成环：parent 链 A→B→A
-      4. depth 超限：depth > 2
+      4. depth 超限：depth > 3
       5. depth 不符：depth 值与 parent 链长度不一致
     """
     issues: list[dict] = []
@@ -760,12 +772,12 @@ def _check_parent_child_consistency(steps: list[dict]) -> list[dict]:
 
         # depth 上限校验
         depth = s.get("depth", 0)
-        if depth > 2:
+        if depth > 3:
             issues.append({
                 "step_id": sid,
                 "step_name": s.get("step_name", "—"),
                 "issue_type": "depth超限",
-                "detail": f"depth={depth} > 2（上限根→子→孙）",
+                "detail": f"depth={depth} > 3（上限根→子→孙→曾孙）",
             })
 
         # depth 与 parent 链长度一致性
@@ -815,7 +827,7 @@ def main() -> int:
     try:
         report = run_alignment(output_path=args.output)
     except Exception as e:
-        print(f"ERROR: {e}", file=sys.stderr)
+        logger.error("检测失败: %s", e, exc_info=True)
         return EXIT_ERROR
     # 君子协定：有 findings 返回 EXIT_FINDINGS（调用方决定是否阻断），无 findings 返回 EXIT_PASS
     return EXIT_FINDINGS if report.issues_total > 0 else EXIT_PASS

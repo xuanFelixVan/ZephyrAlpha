@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -27,7 +27,7 @@ ZephyrAlpha — shared/contracts/macro_factor_signal.py
 
 CTR-P1-002: MacroFactorSignal / 宏观因子信号
 
-D_FACTOR 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。
+Factor 宏观因子信号契约。扩展 FactorSignal 以支持宏观经济维度。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-002
 Version: 1.0
@@ -52,6 +52,7 @@ class MacroFactorSignal:
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-002 ====
+
 
 
 

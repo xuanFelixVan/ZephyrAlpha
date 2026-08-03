@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-TEST-001 | tests/governance/rule_bridge/test_gate_auto_registrar.py | §
 # [MODULE] tests.governance.rule_bridge.test_gate_auto_registrar
-# [DOMAIN] D_GOV_TEST
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.gate_auto_registrar, zephyr.gov_enforcement.rule_bridge.commit_gate_registry
 # [CONSUMERS] pytest
 # [STARTUP] manual

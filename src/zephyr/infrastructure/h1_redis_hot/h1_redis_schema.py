@@ -91,6 +91,30 @@ def factor_field(factor_name: str, version: str = "v1") -> str:
     return f"{factor_name}:{version}"
 
 
+# §3.1 元数据 Field（非因子，下划线前缀避免与 factor_name:version 冲突）
+# 治本 CP-02 过期检测（2026-08-03 实地演练发现）：
+# 原方案仅靠 TTL/不存在判定新鲜度——Redis 故障期间 feature:* 冻结但仍可读，
+# 消费者无法区分"新鲜数据"vs"故障冻结数据"。Writer 写入时戳 updated_at，
+# 消费者读 time.time() - updated_at 判定时效（>阈值标 expired，触发降级）。
+FEATURE_FIELD_UPDATED_AT: Final[str] = "_updated_at"
+
+
+def feature_updated_at_field() -> str:
+    """因子截面 Hash 的 updated_at 元数据 Field 名。
+
+    与 factor_field（{factor_name}:{version}）区分：下划线前缀避免与任何因子名冲突。
+    Value: repr(time.time()) → epoch 秒（float 字符串），消费者 float() 反序列化。
+
+    用途：CP-02 优雅降级——Redis 故障期间 feature:* 冻结但可读，
+    消费者读 updated_at 判定新鲜度（now - updated_at > 阈值 → 标记 expired）。
+
+    Example:
+        >>> feature_updated_at_field()
+        '_updated_at'
+    """
+    return FEATURE_FIELD_UPDATED_AT
+
+
 # ============================================================================
 # §3.2 CQRS 读端物化视图 Key
 # ============================================================================

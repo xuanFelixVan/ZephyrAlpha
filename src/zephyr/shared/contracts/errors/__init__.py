@@ -9,7 +9,6 @@ from .data_quality_error import DataQualityError
 from .execution_rejection_error import ExecutionRejectionError
 from .factor_computation_error import FactorComputationError
 from .risk_limit_violation_error import RiskLimitViolationError
-from .signal_degradation_warning import SignalDegradationWarning
 
 __all__ = [
     "contract_violation_error",
@@ -17,5 +16,4 @@ __all__ = [
     "execution_rejection_error",
     "factor_computation_error",
     "risk_limit_violation_error",
-    "signal_degradation_warning",
 ]

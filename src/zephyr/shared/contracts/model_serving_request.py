@@ -21,7 +21,7 @@ from typing import Dict
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/model_serving_request.py
 
 CTR-P1-004: ModelServingRequest / 模型推理请求
 
-跨层模型推理请求契约。D_ML_TRAIN ML Platform 提供推理服务，D_SIGNAL/D_PORTFOLIO_CORE 消费。
+跨层模型推理请求契约。ML Platform 提供推理服务，Signal/Portfolio 消费。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-004
 Version: 1.0
@@ -50,6 +50,7 @@ class ModelServingRequest:
     input_features: Dict[str, float] = field(default_factory=dict)
 
 # ==== END CODGEN:CTR-P1-004 ====
+
 
 
 

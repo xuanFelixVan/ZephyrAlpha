@@ -26,7 +26,7 @@ doc_type: register
 title: QMT 终端环境显化登记表
 version: "1.0.0"
 created: "2026-07-31"
-last_updated: "2026-07-31"
+last_updated: "2026-08-03"
 
 environments:
   - env: sim
@@ -67,12 +67,28 @@ environments:
 disambiguation:
   rule: |
     两个终端 exe 同名（XtMiniQmt.exe），进程名无法区分。
-    AI MUST 比对运行进程的 Path（即 exe_path）来判断环境：
+    环境分类按 exe_path（即运行进程的 Path）：
       含"模拟" → sim（安全）
       含"证券"且无"模拟" → live（高危，禁止测试下单）
+    "模拟"后缀更具体，路径同时含两者时认 sim。
+
+  tcp_pair_authority: |
+    【权威辨识法——双终端同时在线时唯一可靠的方法】
+    实测两个终端的 miniquote.exe 都 LISTEN 0.0.0.0:58610（Windows SO_REUSEADDR
+    允许重复绑定），OS 只把新连接路由给其中一个进程。因此：
+      ❌ 靠"谁 LISTEN 58610"判断 = 二义，可能把实盘误报成模拟盘（误报根源）
+      ❌ 靠 get_data_dir() 字符串匹配 = 可能与实际 TCP 对端不符
+      ✅ 靠"已建立连接配对"锁定真正服务的数据进程（ground truth）
+    配对方法（tick_subscriber._identify_qmt_peer_via_tcp 已实现）：
+      本进程侧:  ESTABLISHED laddr=(127.0.0.1, my_eph)  raddr=(127.0.0.1, 58610)
+      对端进程侧: ESTABLISHED laddr=(127.0.0.1, 58610)  raddr=(127.0.0.1, my_eph)
+    配对命中的对端 pid → psutil.Process(pid).exe() → 按 rule 分类 sim/live。
+    不硬编码端口：对端端口从本进程已建立连接动态发现（兼容非 58610 场景）。
+    实测验证（2026-08-03，双终端在线）：xtdata 实际连实盘 miniquote(pid 52744)，
+      TCP 配对法判 live；LISTEN 端口法二义（52744 与 47052 都监听 58610）。
 
   quick_check_command: |
-    # PowerShell：查运行中 QMT 终端的安装目录
+    # PowerShell：查运行中 QMT 终端的安装目录（单终端场景够用）
     Get-Process XtMiniQmt -ErrorAction SilentlyContinue | Select-Object Id, Path
 
   common_mistake: |
@@ -80,9 +96,16 @@ disambiguation:
     两个终端 GUI 几乎相同，用户易点错。
     AI 收到"已启动终端"后 MUST 先跑 quick_check_command 确认是 sim 再继续，
     不可直接连接下单。
+    ⚠ 双终端同时在线时，quick_check_command 看到两个进程都不足为据——
+    xtdata 实际连哪个由 OS 对 58610 的路由决定（通常路由给后绑的进程），
+    MUST 改用 tcp_pair_authority 的 TCP 配对法辨识实际对端。
 
   smoke_test_guard: |
+    tick_subscriber._verify_qmt_instance 启动时（_wait_for_qmt_ready 之后）自动执行：
+      1. [主] TCP 配对辨识（见 tcp_pair_authority）——锁定 xtdata 真正交换数据的 OS 进程
+      2. [兜底] get_data_dir() 字符串匹配——psutil 不可用 / TCP 未建立时
+    判定 live → 记 ERROR 告警（不阻断：行情全市场共享、只读订阅、不触 xttrader）。
     smoke_test_qmt_broker.py / smoke_test_tick_data.py 启动时 MUST：
       1. 读本文件辨识目标环境（sim）
-      2. 跑 quick_check_command 确认运行进程是 sim 的 exe_path
+      2. 双终端在线时用 TCP 配对法确认实际对端是 sim
       3. 不匹配则拒绝继续（防止在真实资金盘上跑测试下单）

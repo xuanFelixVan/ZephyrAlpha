@@ -974,23 +974,18 @@ if __name__ == "__main__":
         if has_write_cmd and not is_dry_run and _os.environ.get("ZEPHYR_SKIP_REGENERATE") != "1":
             try:
                 try:
-                    from scripts.governance.reconcile_generators import reconcile
+                    from scripts.governance.reconcile_generators import reconcile_async
                 except ImportError:
-                    from reconcile_generators import reconcile
-                regen = reconcile("decisiongraph_db")
-                ok_ct = sum(1 for r in regen.get("regenerated", []) if r.get("status") == "ok")
-                fail_ct = regen.get("total", 0) - ok_ct
-                if fail_ct:
+                    from reconcile_generators import reconcile_async
+                regen = reconcile_async("decisiongraph_db")
+                if regen.get("status") == "spawned":
                     print(
-                        f"[REGENERATE] ⚠ {ok_ct}/{regen['total']} 生成器成功, "
-                        f"{fail_ct} 失败（不阻断写入）",
+                        f"[REGENERATE] 🔄 后台启动 PID={regen['pid']} "
+                        f"日志: {regen['log_file']}",
                         file=_sys.stderr,
                     )
-                    for r in regen.get("regenerated", []):
-                        if r.get("status") != "ok":
-                            print(f"  ❌ {r.get('generator')}: {r.get('error')}", file=_sys.stderr)
                 else:
-                    print(f"[REGENERATE] ✅ {ok_ct}/{regen['total']} 生成器已自动重生成", file=_sys.stderr)
+                    print(f"[REGENERATE] WARNING: 后台启动失败（不阻断写入）: {regen.get('error')}", file=_sys.stderr)
             except Exception as _e:  # noqa: BLE001 — 编排器不可用不阻断主流程
                 print(f"[REGENERATE] WARNING: 编排器不可用（不阻断写入）: {_e}", file=_sys.stderr)
 

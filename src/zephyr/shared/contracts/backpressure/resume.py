@@ -34,6 +34,7 @@ __all__ = ["BackpressureResume"]
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] permanent
 from dataclasses import dataclass, field
 
 from typing import Optional
@@ -43,7 +44,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -74,6 +75,7 @@ class BackpressureResume:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-BP-003 ====
+
 
 
 

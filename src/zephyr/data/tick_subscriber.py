@@ -489,13 +489,57 @@ class TickSubscriber:
         return False
 
     def _subscribe_all_symbols(self, symbols: list[str]) -> int:
-        """订阅全市场标的，返回成功订阅数。"""
-        for symbol in symbols:
+        """订阅全市场标的，返回成功订阅数。
+
+        治本（2026-08-03 实地演练发现 28 分钟订阅卡死）：
+        原 subscribe_quote 逐只订阅 ~8400 只标的，串行 RTT 累积约 28 分钟
+        才完成开盘前订阅，错过开盘数据窗口。
+        改用 subscribe_whole_quote 批量订阅——单次 RTT 订阅整批标的，
+        callback 接收 {stock_code: tick_data} dict 快照，_on_tick 已兼容该格式
+        （见 _on_tick docstring 的 subscribe_whole_quote 回调分支）。
+
+        批量大小 1000：兼顾 xtquant 单次订阅上限与超时风险，整批订阅
+        ~8400 只仅需 ~9 次 RTT（vs 原 8400 次）。
+
+        兼容性：若 xtquant 版本无 subscribe_whole_quote（AttributeError），
+        自动回退到逐只 subscribe_quote（旧路径，保证不破坏老环境）。
+        """
+        if not symbols:
+            return 0
+
+        whole_quote = getattr(self._xtdata, "subscribe_whole_quote", None)
+        if whole_quote is None:
+            # 兼容回退：旧版 xtquant 无 subscribe_whole_quote
+            log.warning(
+                "xtquant 无 subscribe_whole_quote，回退逐只订阅 %d 只（慢路径）",
+                len(symbols),
+            )
+            for symbol in symbols:
+                try:
+                    self._xtdata.subscribe_quote(symbol, period="tick", callback=self._on_tick)
+                    self._subscribed.add(symbol)
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    log.error("订阅失败 %s: %s", symbol, e)
+            return len(self._subscribed)
+
+        BATCH_SIZE = 1000
+        total = len(symbols)
+        for i in range(0, total, BATCH_SIZE):
+            batch = symbols[i:i + BATCH_SIZE]
             try:
-                self._xtdata.subscribe_quote(symbol, period="tick", callback=self._on_tick)
-                self._subscribed.add(symbol)
+                # subscribe_whole_quote(code_list, callback=None) → list[成功订阅的 stock_code]
+                subscribed_codes = whole_quote(batch, callback=self._on_tick)
+                if isinstance(subscribed_codes, list) and subscribed_codes:
+                    self._subscribed.update(subscribed_codes)
+                else:
+                    # 某些版本返回 None/空——best-effort 标记本批全部已订阅
+                    self._subscribed.update(batch)
+                log.info(
+                    "批量订阅 %d-%d/%d 成功（累计 %d）",
+                    i + 1, min(i + BATCH_SIZE, total), total, len(self._subscribed),
+                )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                log.error("订阅失败 %s: %s", symbol, e)
+                log.error("批量订阅失败 %d-%d: %s", i + 1, min(i + BATCH_SIZE, total), e)
         return len(self._subscribed)
 
     def _wait_for_first_tick(self, symbols: list[str], timeout: float = 30.0) -> bool:
@@ -524,6 +568,154 @@ class TickSubscriber:
         log.warning("重新订阅后仍未收到 tick，继续运行（可能存在数据缺口）")
         return False
 
+    @staticmethod
+    def _classify_qmt_path(path: str) -> str:
+        """按路径特征分类 QMT 实例（config/qmt_environments.yaml identification_hints）。
+
+        "模拟" → sim；"证券" 且无 "模拟" → live；否则 unknown。
+        "模拟"后缀更具体，优先判定（路径同时含两者时认 sim）。
+        """
+        if "模拟" in path:
+            return "sim"
+        if "证券" in path:
+            return "live"
+        return "unknown"
+
+    def _log_qmt_env(self, env: str, path: str, source: str) -> None:
+        """按辨识结果输出审计日志（sim=info / live=error / unknown=warning）。
+
+        不 fail-closed（行情全市场共享、只读订阅，阻断会影响合法数据采集）——
+        ERROR 级日志保证实盘连接的审计可见性。
+        """
+        if env == "sim":
+            log.info("QMT 实例辨识[%s]：模拟盘（%s）✓ 符合预期", source, path)
+        elif env == "live":
+            log.error(
+                "⚠ QMT 实例辨识[%s]：实盘（%s）——xtdata 正与真实资金盘终端交换数据！\n"
+                "  本项目处于模拟盘阶段，tick_subscriber 应连模拟盘。\n"
+                "  风险评估：tick_subscriber 仅订阅只读行情，不调用 xttrader 下单，"
+                "无交易风险；但违反 #ARCH-QMT-ENV-DISAMBIG-001 辨识协议。\n"
+                "  修复：关闭实盘 QMT 终端，或先启动模拟盘终端使其占据 xtdata 服务端口。",
+                source, path,
+            )
+        else:
+            log.warning("QMT 实例辨识[%s]：未知实例（%s）", source, path)
+
+    def _identify_qmt_peer_via_tcp(self) -> str | None:
+        """TCP 主路径：通过已建立的本地连接对端进程辨识 xtdata 实际连接的 QMT 实例。
+
+        治本（2026-08-03，避免靠 get_data_dir 字符串匹配误报）：
+        实测两个 QMT 终端的 miniquote.exe 都 LISTEN 0.0.0.0:58610（Windows
+        SO_REUSEADDR 允许重复绑定），靠"谁监听 58610"无法区分。但 OS 只把新连接
+        路由给其中一个进程——靠"已建立连接配对"能唯一锁定真正服务的数据进程：
+          本进程侧: ESTABLISHED laddr=(127.0.0.1, my_eph) raddr=(127.0.0.1, 58610)
+          对端进程侧: ESTABLISHED laddr=(127.0.0.1, 58610) raddr=(127.0.0.1, my_eph)
+        对端进程的 exe_path 含"模拟"→sim / "证券"→live。
+
+        不硬编码端口：对端端口从本进程已建立连接动态发现（兼容非 58610 场景）。
+
+        Returns:
+            "sim"/"live" 辨识成功；None 表示无 TCP 对端（调用方走兜底）。
+        """
+        try:
+            import os
+            import psutil
+        except ImportError:
+            log.debug("psutil 不可用，跳过 TCP 实例辨识")
+            return None
+
+        localhost = {"127.0.0.1", "::1"}
+
+        def _scan_peer_exe() -> str | None:
+            """返回首个匹配的 QMT 对端进程 exe_path，无则 None。"""
+            try:
+                conns = psutil.net_connections(kind="inet")
+            except (psutil.AccessDenied, psutil.NoSuchProcess) as e:
+                log.debug("net_connections 不可用: %s", e)
+                return None
+            my_pid = os.getpid()
+            # 1. 本进程到 localhost 的已建立连接：收集 (本端ephemeral, 对端port)
+            my_pairs: list[tuple[int, int]] = []
+            for c in conns:
+                if (c.status == "ESTABLISHED" and c.pid == my_pid
+                        and c.laddr and c.laddr.ip in localhost
+                        and c.raddr and c.raddr.ip in localhost):
+                    my_pairs.append((c.laddr.port, c.raddr.port))
+            if not my_pairs:
+                return None
+            # 2. 按 (my_eph, peer_port) 配对定位对端进程 pid——唯一锁定服务进程
+            #    （即使两个进程都 LISTEN 同一端口，只有真正接收连接的那个有此 ESTABLISHED）
+            peer_pids: set[int] = set()
+            for my_eph, peer_port in my_pairs:
+                for c in conns:
+                    if (c.status == "ESTABLISHED" and c.pid and c.pid != my_pid
+                            and c.laddr and c.laddr.ip in localhost and c.laddr.port == peer_port
+                            and c.raddr and c.raddr.ip in localhost and c.raddr.port == my_eph):
+                        peer_pids.add(c.pid)
+            # 3. 按对端进程 exe_path 分类（取首个命中 sim/live 的）
+            for pid in peer_pids:
+                try:
+                    exe = psutil.Process(pid).exe()
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+                if exe and self._classify_qmt_path(exe) in ("sim", "live"):
+                    return exe
+            return None
+
+        exe = _scan_peer_exe()
+        if exe is None:
+            # 连接可能尚未建立——触发轻量探活强制 xtdata 建连，再扫一次
+            # （正常启动流中 _wait_for_qmt_ready 已建连，此处为直接调用守卫兜底）
+            try:
+                self._xtdata.get_market_data_ex([], ["000001.SZ"], period="1m", count=1)
+            except Exception:  # noqa: BLE001 — 探活副作用即可，返回值忽略
+                pass
+            exe = _scan_peer_exe()
+        if exe is None:
+            log.debug("TCP 辨识：未发现 xtdata 到 localhost 的 QMT 对端连接")
+            return None
+        env = self._classify_qmt_path(exe)
+        self._log_qmt_env(env, exe, source="TCP")
+        return env
+
+    def _identify_qmt_via_datadir(self) -> str:
+        """兜底辨识：读 xtdata.get_data_dir() 路径分类。
+
+        兼容 TCP 辨识无果的场景（psutil 不可用 / xtdata 连接尚未建立 / 非 TCP 模式）。
+        """
+        try:
+            datadir = self._xtdata.get_data_dir()
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            log.warning("TCP 辨识无果且 get_data_dir 失败: %s", e)
+            return "unknown"
+        env = self._classify_qmt_path(datadir)
+        self._log_qmt_env(env, datadir, source="datadir 兜底")
+        return env
+
+    def _verify_qmt_instance(self) -> str:
+        """启动守卫：辨识 xtdata 实际连接的 QMT 实例（治本 #ARCH-QMT-ENV-DISAMBIG-001）。
+
+        两个 QMT 终端（sim/live）都在线时，xtdata 默认连哪个由 xtquant 决定，
+        可能连到实盘实例。本方法优先通过 TCP 连接对端进程辨识（ground truth——
+        xtdata 真正交换数据的 OS 进程），失败则回退 get_data_dir() 字符串匹配，
+        避免 datadir 字符串匹配在两终端并存时的误报。
+
+        辨识优先级：
+          1. [主] TCP 对端进程 exe_path（按已建立连接配对锁定，两终端都 LISTEN
+             58610 也能区分真正服务的数据进程）
+          2. [兜底] get_data_dir() 路径（psutil 不可用 / TCP 未建立时）
+
+        风险评估：tick_subscriber 仅订阅只读行情，不调用 xttrader 下单，无交易风险；
+        不 fail-closed（行情全市场共享），ERROR 级日志保证审计可见性。
+
+        Returns:
+            "sim" / "live" / "unknown"
+        """
+        tcp = self._identify_qmt_peer_via_tcp()
+        if tcp is not None:
+            return tcp
+        return self._identify_qmt_via_datadir()
+
     def start(self) -> bool:
         """启动订阅服务。"""
         try:
@@ -532,6 +724,8 @@ class TickSubscriber:
             log.error("无法导入 xtquant，请确保 miniQMT 已安装且 xtquant 可用")
             return False
         self._xtdata = xtdata
+        # 启动守卫延后到 _wait_for_qmt_ready 之后：此时 xtdata TCP 连接已建立，
+        # TCP 对端进程辨识才能拿到 ground truth（见 _verify_qmt_instance）
 
         from zephyr.data.wal_writer import WalWriter
         self._writer = WalWriter(
@@ -562,6 +756,11 @@ class TickSubscriber:
         # ① 等待 QMT 连通性就绪（最长 120s 轮询重试，治标 7-30 启动顺序问题）
         if not self._wait_for_qmt_ready(timeout=120.0, interval=5.0):
             log.warning("QMT 未就绪，继续尝试订阅（best-effort）")
+
+        # 启动守卫：辨识 xtdata 实际连接的 QMT 实例（治本 #ARCH-QMT-ENV-DISAMBIG-001）
+        # 此时 xtdata TCP 连接已建立——通过"已建立连接配对"锁定真正服务的数据进程，
+        # 两终端都 LISTEN 58610 也能区分（避免靠 get_data_dir 字符串匹配误报）
+        self._verify_qmt_instance()
 
         # ② 订阅全市场标的
         symbols = self._get_all_symbols()
@@ -608,13 +807,37 @@ class TickSubscriber:
         # WalWriter.stop: flush 残留段 + 停止 drain 线程
         if self._writer:
             self._writer.stop()
-        # 取消订阅（unsubscribe_quote 不接受 period 参数，与 subscribe_quote 签名不一致）
-        if self._xtdata:
-            for symbol in self._subscribed:
-                try:
-                    self._xtdata.unsubscribe_quote(symbol, callback=self._on_tick)
-                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    pass
+        # 取消订阅（治本 2026-08-03 实盘验证发现并修正）：
+        # 实测本 xtquant 版本：unsubscribe_quote 签名为 (int seq)，需 subscribe_quote
+        # 返回的序列号；subscribe_whole_quote 返回成功码 1（非 seq）。原代码
+        # unsubscribe_quote(symbol, callback=...) 签名错误，被 try/except 吞掉从未真正退订。
+        # 治本策略：
+        #   1. 若 xtquant 版本提供 unsubscribe_whole_quote → 批量退订（future-proof）
+        #   2. 否则 → 订阅随进程退出由 xtquant 自动释放（daemon 生命周期保证：
+        #      tick_subscriber 是常驻进程，stop() 后进程退出即释放全部订阅，无累积泄漏）
+        # 不再调用签名错误的 unsubscribe_quote(symbol, callback=...)（消除假退订）
+        if self._xtdata and self._subscribed:
+            unsub_whole = getattr(self._xtdata, "unsubscribe_whole_quote", None)
+            subscribed_list = list(self._subscribed)
+            if unsub_whole is not None:
+                BATCH_SIZE = 1000
+                for i in range(0, len(subscribed_list), BATCH_SIZE):
+                    batch = subscribed_list[i:i + BATCH_SIZE]
+                    try:
+                        unsub_whole(batch)
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                        log.warning(
+                            "unsubscribe_whole_quote 批次失败 %d-%d（best-effort，进程退出兜底释放）",
+                            i + 1, min(i + BATCH_SIZE, len(subscribed_list)),
+                        )
+            else:
+                # 本版本无批量退订 API：daemon stop 后进程退出由 xtquant 释放订阅。
+                # 不调签名错误的 unsubscribe_quote(symbol, callback=...)（治本：消除假退订）。
+                log.info(
+                    "本 xtquant 版本无 unsubscribe_whole_quote；%d 只订阅将随进程退出"
+                    "由 xtquant 自动释放（daemon 生命周期保证，无累积泄漏）",
+                    len(subscribed_list),
+                )
         log.info("TickSubscriber 已停止: stats=%s", self.stats())
 
     def stats(self) -> dict:

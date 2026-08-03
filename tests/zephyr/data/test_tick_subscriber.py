@@ -12,9 +12,27 @@ import queue
 import threading
 from datetime import datetime
 from decimal import Decimal
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-from zephyr.data.tick_subscriber import tick_to_row, infer_market_type
+import psutil
+
+from zephyr.data.tick_subscriber import TickSubscriber, tick_to_row, infer_market_type
+
+
+def _conn(status, lip, lport, rip, rport, pid):
+    """构造类 psutil.sconn 的测试桩（status/laddr/raddr/pid）。"""
+    return SimpleNamespace(
+        status=status,
+        laddr=SimpleNamespace(ip=lip, port=lport) if lip is not None else None,
+        raddr=SimpleNamespace(ip=rip, port=rport) if rip is not None else None,
+        pid=pid,
+    )
+
+
+def _proc_with_exe(exe_path):
+    """构造类 psutil.Process 的测试桩（仅 .exe()）。"""
+    return SimpleNamespace(exe=lambda: exe_path)
 
 
 class TestTickToRow:
@@ -393,3 +411,308 @@ class TestMain:
 
         exit_code = ts_module.main()
         assert exit_code == 1
+
+
+class _OldXtdata:
+    """模拟旧版 xtquant：只有 subscribe_quote/unsubscribe_quote，无批量 API。
+
+    注：unsubscribe_quote 签名为 (int seq)，此处模拟旧版逐只退订接口（已被实测
+    证明签名错误、从未真正退订——治本 stop() 不再调用它）。
+    """
+
+    def __init__(self):
+        self.subscribed: list[str] = []
+        self.unsubscribe_quote_calls: list = []
+
+    def subscribe_quote(self, stock_code, period="tick", callback=None):
+        self.subscribed.append(stock_code)
+
+    def unsubscribe_quote(self, seq, callback=None):
+        self.unsubscribe_quote_calls.append(seq)
+
+
+class TestSubscribeAllSymbols:
+    """_subscribe_all_symbols 批量订阅逻辑（治本 2026-08-03：28分钟卡死→批量订阅）。"""
+
+    def test_uses_subscribe_whole_quote_batch(self):
+        """优先用 subscribe_whole_quote 批量订阅（vs 逐只 subscribe_quote）。"""
+        sub = _make_sub()
+        mock_xtdata = MagicMock()
+        # subscribe_whole_quote 返回成功订阅的 stock_code 列表
+        mock_xtdata.subscribe_whole_quote.return_value = ["000001.SZ", "600000.SH"]
+        sub._xtdata = mock_xtdata  # type: ignore[attr-defined]
+
+        count = sub._subscribe_all_symbols(["000001.SZ", "600000.SH"])
+
+        assert count == 2
+        assert "000001.SZ" in sub.subscribed_symbols
+        assert "600000.SH" in sub.subscribed_symbols
+        mock_xtdata.subscribe_whole_quote.assert_called_once()
+        # 不应回退到逐只
+        mock_xtdata.subscribe_quote.assert_not_called()
+
+    def test_batch_size_1000_chunks(self):
+        """2500 只标的 → 3 批（1000+1000+500），3 次 subscribe_whole_quote 调用。"""
+        sub = _make_sub()
+        mock_xtdata = MagicMock()
+        mock_xtdata.subscribe_whole_quote.return_value = []  # 返回空 → best-effort 全标
+        sub._xtdata = mock_xtdata
+
+        symbols = [f"{i:06d}.SZ" for i in range(2500)]
+        sub._subscribe_all_symbols(symbols)
+
+        assert mock_xtdata.subscribe_whole_quote.call_count == 3
+        assert len(sub.subscribed_symbols) == 2500
+
+    def test_fallback_to_per_symbol_when_no_batch_api(self):
+        """无 subscribe_whole_quote（旧版 xtquant）→ 回退逐只 subscribe_quote。"""
+        sub = _make_sub()
+        old_xtdata = _OldXtdata()  # 无 subscribe_whole_quote 属性
+        sub._xtdata = old_xtdata  # type: ignore[attr-defined]
+
+        count = sub._subscribe_all_symbols(["000001.SZ", "600000.SH"])
+
+        assert count == 2
+        assert old_xtdata.subscribed == ["000001.SZ", "600000.SH"]
+
+    def test_empty_symbols_returns_zero(self):
+        """空标的列表 → 直接返回 0，不调用任何订阅 API。"""
+        sub = _make_sub()
+        mock_xtdata = MagicMock()
+        sub._xtdata = mock_xtdata
+
+        count = sub._subscribe_all_symbols([])
+
+        assert count == 0
+        mock_xtdata.subscribe_whole_quote.assert_not_called()
+
+    def test_batch_failure_continues(self):
+        """某批订阅抛异常 → 记录错误继续后续批次（不中断）。"""
+        sub = _make_sub()
+        mock_xtdata = MagicMock()
+        mock_xtdata.subscribe_whole_quote.side_effect = [
+            RuntimeError("batch 1 timeout"),  # 第1批失败
+            ["600000.SH"],  # 第2批成功
+        ]
+        sub._xtdata = mock_xtdata
+
+        # 2 批（每批 1000）
+        symbols = [f"{i:06d}.SZ" for i in range(1500)]
+        sub._subscribe_all_symbols(symbols)
+
+        # 第1批失败不中断，第2批仍被调用
+        assert mock_xtdata.subscribe_whole_quote.call_count == 2
+        # 第2批成功标的进入订阅集
+        assert "600000.SH" in sub.subscribed_symbols
+
+    def test_stop_uses_unsubscribe_whole_quote(self):
+        """stop() 用 unsubscribe_whole_quote 批量取消（与订阅对齐）。"""
+        sub = _make_sub()
+        mock_xtdata = MagicMock()
+        sub._xtdata = mock_xtdata
+        sub._subscribed.update(["000001.SZ", "600000.SH"])
+
+        sub.stop()
+
+        mock_xtdata.unsubscribe_whole_quote.assert_called_once()
+        # 不应调用签名错误的逐只 unsubscribe_quote
+        mock_xtdata.unsubscribe_quote.assert_not_called()
+
+    def test_stop_handles_missing_batch_unsubscribe(self):
+        """无 unsubscribe_whole_quote（实测本版本）→ stop() 不崩溃、不调签名错误的
+        unsubscribe_quote(symbol, callback=...)（治本：消除假退订）。
+
+        订阅随进程退出由 xtquant 自动释放（daemon 生命周期保证）。
+        """
+        sub = _make_sub()
+        old_xtdata = _OldXtdata()  # 无 unsubscribe_whole_quote 属性
+        sub._xtdata = old_xtdata
+        sub._subscribed.update(["000001.SZ", "600000.SH"])
+
+        # stop() 不应抛异常
+        sub.stop()
+
+        # 不应调用签名错误的 unsubscribe_quote（治本：消除假退订）
+        assert old_xtdata.unsubscribe_quote_calls == []
+
+
+class TestQmtInstanceGuard:
+    """启动守卫：辨识 xtdata 实际连接的 QMT 实例（治本 #ARCH-QMT-ENV-DISAMBIG-001）。
+
+    主路径 TCP 对端进程辨识（ground truth），兜底 get_data_dir() 字符串匹配。
+    两终端都 LISTEN 58610 时靠"已建立连接配对"唯一锁定真正服务的数据进程。
+    """
+
+    # ------------------------------------------------------------------
+    # 路径分类工具
+    # ------------------------------------------------------------------
+    def test_classify_sim_path(self):
+        """exe/datadir 含"模拟" → sim。"""
+        assert TickSubscriber._classify_qmt_path(
+            r"E:\国金QMT交易端模拟\bin.x64\miniquote.exe"
+        ) == "sim"
+
+    def test_classify_live_path(self):
+        """exe/datadir 含"证券"且无"模拟" → live。"""
+        assert TickSubscriber._classify_qmt_path(
+            r"E:\国金证券QMT交易端\bin.x64\miniquote.exe"
+        ) == "live"
+
+    def test_classify_sim_priority_when_both_present(self):
+        """路径同时含"模拟"和"证券" → 优先 sim（"模拟"后缀更具体）。"""
+        assert TickSubscriber._classify_qmt_path(r"E:\证券模拟\x") == "sim"
+
+    def test_classify_unknown_path(self):
+        """路径既无"模拟"也无"证券" → unknown。"""
+        assert TickSubscriber._classify_qmt_path(r"D:\other\bin\app.exe") == "unknown"
+
+    # ------------------------------------------------------------------
+    # TCP 主路径
+    # ------------------------------------------------------------------
+    def test_tcp_identifies_sim_peer(self, monkeypatch):
+        """本进程连到模拟盘 miniquote（对端 exe 含"模拟"）→ sim。"""
+        my_pid = os.getpid()
+        conns = [
+            # 本进程侧：ephemeral 41001 → 58610
+            _conn("ESTABLISHED", "127.0.0.1", 41001, "127.0.0.1", 58610, my_pid),
+            # 对端（模拟盘 miniquote）侧：58610 → 41001
+            _conn("ESTABLISHED", "127.0.0.1", 58610, "127.0.0.1", 41001, 47052),
+        ]
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": conns)
+        monkeypatch.setattr(
+            psutil, "Process",
+            lambda pid: _proc_with_exe(r"E:\国金QMT交易端模拟\bin.x64\miniquote.exe"),
+        )
+        sub = _make_sub()
+        sub._xtdata = MagicMock()  # 探活不会触发（首次扫描即命中）
+
+        env = sub._verify_qmt_instance()
+
+        assert env == "sim"
+
+    def test_tcp_identifies_live_peer(self, monkeypatch):
+        """本进程连到实盘 miniquote（对端 exe 含"证券"）→ live。"""
+        my_pid = os.getpid()
+        conns = [
+            _conn("ESTABLISHED", "127.0.0.1", 41002, "127.0.0.1", 58610, my_pid),
+            _conn("ESTABLISHED", "127.0.0.1", 58610, "127.0.0.1", 41002, 52744),
+        ]
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": conns)
+        monkeypatch.setattr(
+            psutil, "Process",
+            lambda pid: _proc_with_exe(r"E:\国金证券QMT交易端\bin.x64\miniquote.exe"),
+        )
+        sub = _make_sub()
+        sub._xtdata = MagicMock()
+
+        env = sub._verify_qmt_instance()
+
+        assert env == "live"
+
+    def test_tcp_disambiguates_two_listeners_on_same_port(self, monkeypatch):
+        """两终端都 LISTEN 58610 时，靠 ESTABLISHED 配对锁定真正服务的进程。
+
+        场景复现实测拓扑：sim miniquote(pid 47052) 与 live miniquote(pid 52744)
+        都 LISTEN 0.0.0.0:58610，但 OS 只把本进程的连接路由给 live(52744)。
+        若按 LISTEN 端口匹配会二义；按 ESTABLISHED 配对唯一锁定 52744→live。
+        """
+        my_pid = os.getpid()
+        conns = [
+            # 本进程侧：ephemeral 41682 → 58610
+            _conn("ESTABLISHED", "127.0.0.1", 41682, "127.0.0.1", 58610, my_pid),
+            # 实盘 miniquote 是真正服务端：58610 ↔ 41682
+            _conn("ESTABLISHED", "127.0.0.1", 58610, "127.0.0.1", 41682, 52744),
+            # 模拟盘 miniquote 也 LISTEN 58610（干扰项，但无匹配 ESTABLISHED）
+            _conn("LISTEN", "0.0.0.0", 58610, None, None, 47052),
+            # 模拟盘内部 IPC（与自己的 XtMiniQmt），不应被误判为 xtdata 对端
+            _conn("ESTABLISHED", "127.0.0.1", 58342, "127.0.0.1", 3772, 47052),
+        ]
+        exe_map = {
+            52744: r"E:\国金证券QMT交易端\bin.x64\miniquote.exe",   # live
+            47052: r"E:\国金QMT交易端模拟\bin.x64\miniquote.exe",   # sim
+        }
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": conns)
+        monkeypatch.setattr(psutil, "Process", lambda pid: _proc_with_exe(exe_map[pid]))
+        sub = _make_sub()
+        sub._xtdata = MagicMock()
+
+        env = sub._verify_qmt_instance()
+
+        # 必须锁定真正服务端 52744(live)，而非 LISTEN 同端口的 47052(sim)
+        assert env == "live"
+
+    def test_tcp_no_peer_falls_back_to_datadir(self, monkeypatch):
+        """无 TCP 对端连接（psutil 未发现）→ 回退 get_data_dir 字符串匹配。"""
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": [])
+        sub = _make_sub()
+        mock_xtdata = MagicMock()
+        mock_xtdata.get_data_dir.return_value = (
+            r"E:\国金QMT交易端模拟\userdata_mini\datadir"
+        )
+        sub._xtdata = mock_xtdata
+
+        env = sub._verify_qmt_instance()
+
+        assert env == "sim"
+        # 探活触发一次（首次扫描无连接→探活→再扫仍无→走兜底）
+        mock_xtdata.get_market_data_ex.assert_called()
+
+    def test_tcp_peer_not_qmt_path_falls_back_to_datadir(self, monkeypatch):
+        """对端进程 exe 非 QMT 路径（无模拟/证券）→ TCP 无果，回退 get_data_dir。"""
+        my_pid = os.getpid()
+        conns = [
+            _conn("ESTABLISHED", "127.0.0.1", 41003, "127.0.0.1", 58610, my_pid),
+            _conn("ESTABLISHED", "127.0.0.1", 58610, "127.0.0.1", 41003, 9999),
+        ]
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": conns)
+        monkeypatch.setattr(
+            psutil, "Process", lambda pid: _proc_with_exe(r"C:\Windows\System32\other.exe"),
+        )
+        sub = _make_sub()
+        mock_xtdata = MagicMock()
+        mock_xtdata.get_data_dir.return_value = r"E:\国金证券QMT交易端\datadir"
+        sub._xtdata = mock_xtdata
+
+        env = sub._verify_qmt_instance()
+
+        assert env == "live"
+
+    # ------------------------------------------------------------------
+    # datadir 兜底路径（TCP 无果时的分类）
+    # ------------------------------------------------------------------
+    def test_datadir_sim(self, monkeypatch):
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": [])
+        sub = _make_sub()
+        sub._xtdata = MagicMock()
+        sub._xtdata.get_data_dir.return_value = (
+            r"E:\国金QMT交易端模拟\userdata_mini\datadir"
+        )
+
+        assert sub._verify_qmt_instance() == "sim"
+
+    def test_datadir_live(self, monkeypatch):
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": [])
+        sub = _make_sub()
+        sub._xtdata = MagicMock()
+        sub._xtdata.get_data_dir.return_value = (
+            r"E:\国金证券QMT交易端\userdata_mini\datadir"
+        )
+
+        assert sub._verify_qmt_instance() == "live"
+
+    def test_datadir_unknown(self, monkeypatch):
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": [])
+        sub = _make_sub()
+        sub._xtdata = MagicMock()
+        sub._xtdata.get_data_dir.return_value = r"D:\其他路径\datadir"
+
+        assert sub._verify_qmt_instance() == "unknown"
+
+    def test_datadir_failure_returns_unknown(self, monkeypatch):
+        """TCP 无果且 get_data_dir 抛异常 → 不崩溃，返回 unknown。"""
+        monkeypatch.setattr(psutil, "net_connections", lambda kind="inet": [])
+        sub = _make_sub()
+        sub._xtdata = MagicMock()
+        sub._xtdata.get_data_dir.side_effect = RuntimeError("not connected")
+
+        assert sub._verify_qmt_instance() == "unknown"

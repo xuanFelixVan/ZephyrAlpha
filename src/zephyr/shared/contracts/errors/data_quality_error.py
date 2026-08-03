@@ -45,6 +45,7 @@ AI Prompt
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] permanent
 from dataclasses import dataclass, field
 
 from typing import Optional
@@ -54,7 +55,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -62,7 +63,7 @@ ZephyrAlpha — shared/contracts/data_quality_error.py
 
 CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误
 
-D_DATA 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。
+Data Source 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。
 
 SSoT: cross_layer_contracts.yaml -> CTR-ERR-001
 Version: 1.0
@@ -71,7 +72,7 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    当 D_DATA 的质量门禁检测到行情数据异常时，MUST 抛出 DataQualityError 而非普通 Exception。 每个 DataQualityError 携带 failure_reason（具体原因枚举）和 recovery_hint（恢复建议）。 禁止静默丢弃——必须显式抛出，让 D_FACTOR 和 遥测 Telemetry 感知。
+    当 Data Source 的质量门禁检测到行情数据异常时，MUST 抛出 DataQualityError 而非普通 Exception。 每个 DataQualityError 携带 failure_reason（具体原因枚举）和 recovery_hint（恢复建议）。 禁止静默丢弃——必须显式抛出，让 Factor 和 Telemetry 感知。
 """
 
 @dataclass(frozen=True)
@@ -88,6 +89,7 @@ class DataQualityError:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-ERR-001 ====
+
 
 
 

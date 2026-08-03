@@ -3,14 +3,14 @@ doc_type: architecture_view
 title: signal（信号）决策流图
 version: "1.0"
 status: active
-date: 2026-08-01
+date: 2026-08-02
 owner: auto-generator
 ttl: permanent
 ---
 
 # Decision Flow · L2A Functional Domain signal（信号）
 
-> 生成时间: 2026-08-01T22:45:17
+> 生成时间: 2026-08-02T22:07:21
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → signal

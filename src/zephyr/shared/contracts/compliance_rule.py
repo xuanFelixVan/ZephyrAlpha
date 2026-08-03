@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/compliance_rule.py
 
 CTR-P1-012: ComplianceRule / 合规规则
 
-D_COMPLIANCE -> 合规规则定义契约。包含规则注册、评估接口和规则元数据。
+Compliance → 合规规则定义契约。包含规则注册、评估接口和规则元数据。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-012
 Version: 1.0
@@ -59,6 +59,7 @@ class ComplianceRule:
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-012 ====
+
 
 
 

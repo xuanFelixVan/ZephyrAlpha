@@ -34,6 +34,7 @@ __all__ = ["BackpressurePause"]
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] permanent
 from dataclasses import dataclass, field
 
 from typing import Optional
@@ -43,7 +44,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -51,7 +52,7 @@ ZephyrAlpha — shared/contracts/pause.py
 
 CTR-BP-001: BackpressurePause / 背压暂停信号
 
-下游（D_FACTOR/D_SIGNAL）处理能力不足时，向上游（D_DATA）发出暂停信号。D_DATA 暂停该标的的数据下发。
+下游（Factor/Signal）处理能力不足时，向上游（Data Source）发出暂停信号。Data Source 暂停该标的的数据下发。
 
 SSoT: cross_layer_contracts.yaml -> CTR-BP-001
 Version: 1.0
@@ -75,6 +76,7 @@ class BackpressurePause:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-BP-001 ====
+
 
 
 

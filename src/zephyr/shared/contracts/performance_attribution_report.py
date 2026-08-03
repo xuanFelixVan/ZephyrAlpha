@@ -21,7 +21,7 @@ from typing import Dict
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/performance_attribution_report.py
 
 CTR-P1-009: PerformanceAttributionReport / 绩效归因报告
 
-D_REPORTING -> D_FRONTEND/D_COMPLIANCE 绩效归因报告契约。
+Analytics → Frontend/Compliance 绩效归因报告契约。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-009
 Version: 1.0
@@ -56,6 +56,7 @@ class PerformanceAttributionReport:
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-009 ====
+
 
 
 

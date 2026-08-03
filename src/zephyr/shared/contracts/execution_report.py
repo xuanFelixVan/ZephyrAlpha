@@ -21,7 +21,7 @@ from decimal import Decimal
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/execution_report.py
 
 CTR-P1-007: ExecutionReport / 执行分析报告
 
-D_EXECUTION_CORE -> D_REPORTING 执行分析报告契约（TCA 输入）。
+Execution → Analytics 执行分析报告契约（TCA 输入）。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-007
 Version: 1.0
@@ -60,6 +60,7 @@ class ExecutionReport:
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-007 ====
+
 
 
 

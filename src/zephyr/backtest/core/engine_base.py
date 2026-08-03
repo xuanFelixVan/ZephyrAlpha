@@ -47,14 +47,13 @@ from typing import Any, ClassVar
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] frozen dataclass; SSoT=cross_layer_contracts.yaml; DO NOT EDIT (codegen)
-# [TTL] permanent
-# [TTL] permanent
 # [MODIFY-GUARD] cross_layer_contracts.yaml; generate_contracts.py
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [TTL] permanent
 from dataclasses import dataclass, field
 
 from datetime import datetime, timezone
@@ -65,7 +64,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -73,7 +72,7 @@ ZephyrAlpha — shared/contracts/engine_base.py
 
 CTR-P1-016: BacktestResult / 回测结果
 
-D_BACKTEST域产出的标准化回测结果契约。包含绩效指标、交易统计、净值曲线引用。下游D_PORTFOLIO_CORE组合构建层用于策略遴选,D_RISK风控层用于风险预算校准,遥测运维层用于回测任务监控。
+D_BACKTEST域产出的标准化回测结果契约。包含绩效指标、交易统计、净值曲线引用。下游Portfolio组合构建层用于策略遴选,Risk风控层用于风险预算校准,Telemetry运维层用于回测任务监控。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-016
 Version: 1.0
@@ -82,7 +81,7 @@ Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
 
 AI Prompt
 ---------
-    当回测引擎完成一次运行后,MUST 产出 BacktestResult。 strategy_id 必须对应策略注册表中已注册的策略 key。 所有收益率指标(total_return/annual_return/sharpe_ratio/max_drawdown)使用 float 类型——这些是聚合指标,非逐笔价格,允许 float。 trades_count 是总交易笔数,win_rate 是胜率(0.0-1.0)。 D_PORTFOLIO_CORE 组合构建层使用此结果做策略遴选(sharpe_ratio > 阈值才纳入候选池)。 D_RISK 风控层使用 max_drawdown 做风险预算校准。 若 overfitting_flag = True,下游应降低该策略权重或拒绝采纳。
+    当回测引擎完成一次运行后,MUST 产出 BacktestResult。 strategy_id 必须对应策略注册表中已注册的策略 key。 所有收益率指标(total_return/annual_return/sharpe_ratio/max_drawdown)使用 float 类型——这些是聚合指标,非逐笔价格,允许 float。 trades_count 是总交易笔数,win_rate 是胜率(0.0-1.0)。 Portfolio 组合构建层使用此结果做策略遴选(sharpe_ratio > 阈值才纳入候选池)。 Risk 风控层使用 max_drawdown 做风险预算校准。 若 overfitting_flag = True,下游应降低该策略权重或拒绝采纳。
 """
 
 @dataclass(frozen=True)
@@ -104,6 +103,7 @@ class BacktestResult:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-P1-016 ====
+
 
 
 @dataclass(frozen=True)

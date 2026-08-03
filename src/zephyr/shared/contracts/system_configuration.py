@@ -24,7 +24,7 @@ from typing import List
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -32,7 +32,7 @@ ZephyrAlpha — shared/contracts/system_configuration.py
 
 CTR-P1-010: SystemConfiguration / 系统配置
 
-基础设施 -> 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。
+Config → 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-010
 Version: 1.0
@@ -62,6 +62,7 @@ class SystemConfiguration:
     timeout_ms: int = 1000
 
 # ==== END CODGEN:CTR-P1-010 ====
+
 
 
 

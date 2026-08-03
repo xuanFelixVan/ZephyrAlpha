@@ -21,7 +21,7 @@ from typing import Dict
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-07-02"
+# created: "2026-08-02"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -29,7 +29,7 @@ ZephyrAlpha — shared/contracts/capital_allocation_result.py
 
 CTR-P1-003: CapitalAllocationResult / 资本配置结果
 
-D_SIGNAL -> D_PORTFOLIO_CORE 资本配置结果契约。多策略资本分配的中间产物。
+Signal → Portfolio 资本配置结果契约。多策略资本分配的中间产物。
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-003
 Version: 1.0
@@ -52,6 +52,7 @@ class CapitalAllocationResult:
     strategy_allocations: Dict[str, float] = field(default_factory=dict)
 
 # ==== END CODGEN:CTR-P1-003 ====
+
 
 
 
