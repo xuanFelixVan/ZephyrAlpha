@@ -20,17 +20,17 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 3530 | 95.0% |
+| production（生产态） | 3521 | 95.0% |
 | design（设计态） | 185 | 5.0% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3715** | **100%** |
+| **总计** | **3706** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4205 | 113.2% |
-| stable | 1792 | 48.2% |
+| generated | 4196 | 113.2% |
+| stable | 1788 | 48.2% |
 | planned | 101 | 2.7% |
 | deprecated | 83 | 2.2% |
 
@@ -60,7 +60,7 @@ ttl: permanent
 | D_DATA_SEC | 数据安全与契约 | 7 | 7 | 0 | 0 | 100.0% |
 | D_DIGITAL_TWIN | 数字孪生 | 7 | 7 | 0 | 0 | 100.0% |
 | D_EXEC_SIM | 执行仿真 | 7 | 7 | 0 | 0 | 100.0% |
-| D_EX_CORE | 执行核心 | 44 | 20 | 24 | 0 | 45.5% |
+| D_EX_CORE | 执行核心 | 42 | 18 | 24 | 0 | 42.9% |
 | D_EX_SOR | 执行路由 | 17 | 17 | 0 | 0 | 100.0% |
 | D_FACTOR | 因子 | 109 | 65 | 44 | 0 | 59.6% |
 | D_FBL_DETECTORS | 反馈检测器 | 65 | 65 | 0 | 0 | 100.0% |
@@ -69,19 +69,19 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | 125 | 125 | 0 | 0 | 100.0% |
 | D_FRONTEND | 前端 | 24 | 20 | 4 | 0 | 83.3% |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | 14 | 12 | 2 | 0 | 85.7% |
-| D_GOVERNANCE | 生命周期管理 | 455 | 455 | 0 | 0 | 100.0% |
+| D_GOVERNANCE | 生命周期管理 | 450 | 450 | 0 | 0 | 100.0% |
 | D_GOV_AUDIT | 审计追踪 | 193 | 190 | 3 | 0 | 98.4% |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 209 | 209 | 0 | 0 | 100.0% |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 208 | 208 | 0 | 0 | 100.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 25 | 0 | 7.4% |
 | D_GOV_DRIFT | 漂移检测 | 73 | 72 | 1 | 0 | 98.6% |
 | D_GOV_ENFORCEMENT | 规则执行 | 118 | 117 | 1 | 0 | 99.2% |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | 115 | 115 | 0 | 0 | 100.0% |
 | D_GOV_REPAIR | 治理修复 | 1 | 1 | 0 | 0 | 100.0% |
-| D_GOV_RULE | 规则治理 | 35 | 35 | 0 | 0 | 100.0% |
-| D_GOV_SCRIPTS | 脚本治理 | 411 | 411 | 0 | 0 | 100.0% |
+| D_GOV_RULE | 规则治理 | 36 | 36 | 0 | 0 | 100.0% |
+| D_GOV_SCRIPTS | 脚本治理 | 413 | 413 | 0 | 0 | 100.0% |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | 26 | 26 | 0 | 0 | 100.0% |
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
-| D_INFRA_OPS | 基础设施运维 | 2 | 2 | 0 | 0 | 100.0% |
+| D_INFRA_OPS | 基础设施运维 | 1 | 1 | 0 | 0 | 100.0% |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
 | D_INFRA_RUNTIME | 运行时集成 | 169 | 167 | 2 | 0 | 98.8% |
 | D_INFRA_TELEMETRY | 可观测性 | 0 | 0 | 0 | 0 | N/A |
@@ -100,16 +100,16 @@ ttl: permanent
 | D_POSITION | 仓位管理 | 22 | 15 | 7 | 0 | 68.2% |
 | D_REPORTING | 报告 | 20 | 19 | 1 | 0 | 95.0% |
 | D_RISK | 风控 | 25 | 21 | 4 | 0 | 84.0% |
-| D_SECURITY | 对抗验证 | 166 | 166 | 0 | 0 | 100.0% |
+| D_SECURITY | 对抗验证 | 171 | 171 | 0 | 0 | 100.0% |
 | D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | N/A |
 | D_SEC_SCRIPTS | 安全治理脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_SELL_DECISION | 卖出决策 | 26 | 13 | 13 | 0 | 50.0% |
-| D_SHARED | 共享服务 | 184 | 184 | 0 | 0 | 100.0% |
+| D_SHARED | 共享服务 | 177 | 177 | 0 | 0 | 100.0% |
 | D_SIGLEGACY | 信号遗留设计态 | 0 | 0 | 0 | 0 | N/A |
 | D_SIGQC | 信号质量控制 | 2 | 2 | 0 | 0 | 100.0% |
 | D_SIMULATION | 仿真 | 15 | 15 | 0 | 0 | 100.0% |
 | D_STRUCT_SCRIPTS | 结构治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_TRADING | 交易运营 | 43 | 43 | 0 | 0 | 100.0% |
+| D_TRADING | 交易运营 | 42 | 42 | 0 | 0 | 100.0% |
 
 ## 生产化率最低的域（Top 10，需优先推进）
 
@@ -118,8 +118,8 @@ ttl: permanent
 | D_KNOWLEDGE | 知识管理 | 1 | 0 | 0.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 7.4% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 35.0% |
+| D_EX_CORE | 执行核心 | 42 | 18 | 42.9% |
 | D_ML_TRAIN | 训练 | 7 | 3 | 42.9% |
-| D_EX_CORE | 执行核心 | 44 | 20 | 45.5% |
 | D_SELL_DECISION | 卖出决策 | 26 | 13 | 50.0% |
 | D_ASHARE_SIGNAL | A股特色信号 | 31 | 16 | 51.6% |
 | D_PF_ALLOC | 组合分配 | 9 | 5 | 55.6% |

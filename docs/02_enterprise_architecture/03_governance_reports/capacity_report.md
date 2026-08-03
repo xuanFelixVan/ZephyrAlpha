@@ -30,12 +30,12 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
 | D_DATA | 数据接入层 | 168 | 150 | +18 |
-| D_GOVERNANCE | 生命周期管理 | 455 | 150 | +305 |
+| D_GOVERNANCE | 生命周期管理 | 450 | 150 | +300 |
 | D_GOV_AUDIT | 审计追踪 | 190 | 150 | +40 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 209 | 150 | +59 |
-| D_GOV_SCRIPTS | 脚本治理 | 411 | 150 | +261 |
-| D_INFRA_RUNTIME | 运行时集成 | 167 | 150 | +17 |
-| D_SECURITY | 对抗验证 | 166 | 150 | +16 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 208 | 150 | +58 |
+| D_GOV_SCRIPTS | 脚本治理 | 413 | 150 | +263 |
+| D_INFRA_RUNTIME | 运行时集成 | 171 | 150 | +21 |
+| D_SECURITY | 对抗验证 | 171 | 150 | +21 |
 | D_SHARED | 共享服务 | 184 | 150 | +34 |
 
 ## 接近超容域清单（>80%，需关注）
@@ -101,21 +101,21 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | L1_foundation | 125 | 150 | 83.3% | 接近超容 |
 | D_FRONTEND | 前端 | L2_domain | 20 | 150 | 13.3% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 12 | 150 | 8.0% | 正常 |
-| D_GOVERNANCE | 生命周期管理 | L2_domain | 455 | 150 | 303.3% | 超容 |
+| D_GOVERNANCE | 生命周期管理 | L2_domain | 450 | 150 | 300.0% | 超容 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 190 | 150 | 126.7% | 超容 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 209 | 150 | 139.3% | 超容 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 208 | 150 | 138.7% | 超容 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | 漂移检测 | L2_domain | 72 | 150 | 48.0% | 正常 |
 | D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 117 | 150 | 78.0% | 正常 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | L1_foundation | 115 | 150 | 76.7% | 正常 |
 | D_GOV_REPAIR | 治理修复 | L2_domain | 1 | 150 | 0.7% | 正常 |
-| D_GOV_RULE | 规则治理 | L2_domain | 35 | 150 | 23.3% | 正常 |
-| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 411 | 150 | 274.0% | 超容 |
+| D_GOV_RULE | 规则治理 | L2_domain | 36 | 150 | 24.0% | 正常 |
+| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 413 | 150 | 275.3% | 超容 |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | L0_infrastructure | 26 | 150 | 17.3% | 正常 |
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 1 | 150 | 0.7% | 正常 |
 | D_INFRA_RECOVERY | 回滚恢复 | L0_infrastructure | 55 | 150 | 36.7% | 正常 |
-| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 167 | 150 | 111.3% | 超容 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 171 | 150 | 114.0% | 超容 |
 | D_INFRA_TELEMETRY | 可观测性 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INTEGRATION | 管线路由 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_INTEGRATION_GATEWAY | 集成网关 | L1_foundation | 0 | 150 | 0.0% | 空 |
@@ -132,7 +132,7 @@ ttl: permanent
 | D_POSITION | 仓位管理 | L2_domain | 15 | 150 | 10.0% | 正常 |
 | D_REPORTING | 报告 | L1_foundation | 19 | 150 | 12.7% | 正常 |
 | D_RISK | 风控 | L2_domain | 21 | 150 | 14.0% | 正常 |
-| D_SECURITY | 对抗验证 | L1_foundation | 166 | 150 | 110.7% | 超容 |
+| D_SECURITY | 对抗验证 | L1_foundation | 171 | 150 | 114.0% | 超容 |
 | D_SECURITY_LLM | LLM防御 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_SEC_SCRIPTS | 安全治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_SELL_DECISION | 卖出决策 | L2_domain | 13 | 150 | 8.7% | 正常 |
