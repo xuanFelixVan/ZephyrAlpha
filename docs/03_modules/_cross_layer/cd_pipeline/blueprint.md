@@ -35,7 +35,7 @@ depends_on:
   - {target: "MOD-INF-018", at: "canary_rollout_manager.py", why: "灰度状态机 DRAFT→SAMPLING→ROLLOUT/ROLLED_BACK"}
   - {target: "MOD-CONTEXT_ENGINE", at: "shadow_canary.py", why: "影子生成+promote 语义复用（CT-CANARY-001 输出一致性比对）"}
   - {target: "MOD-L06-001", at: "simulation_broker.py", why: "影子进程走模拟券商不下真单（实盘安全硬底线）"}
-  - {target: "MOD-L00-004", at: "ch_health_probe.py", why: "GATE-CDC-1 health 检查复用 + ops 脚本注册范式"}
+  - {target: "MOD-INF-016", at: "process_pool.py", why: "子进程隐藏启动+管道管理（run_subprocess_hidden/spawn_python_hidden），影子进程 spawn 基建"}
   - {target: "MOD-EX-021", at: "deployment_consistency_manager.py", why: "本基建满足其门禁的 CI/CD 半（实盘环境半仍待 Owner 决策）"}
 references:
   - {path: "d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint_baseline.md", section: "§16 CT-CDC-001", why: "GATE-CDC-1 Can-I-Deploy 预部署门禁 + CDC 设计契约真源"}

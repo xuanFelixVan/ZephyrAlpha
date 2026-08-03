@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=promote(预检通过+分歧<threshold); exit 1=rollback(预检通过+分歧>=threshold); exit 2=预检失败(CanIDeploy blocker 或异常); 子进程异常降级 fail-closed exit 2; 比对/读文件异常不抛,记入 report 后按分歧语义裁决
-# [TESTS] tests/ops/test_shadow_canary_deploy.py（待建）
+# [TESTS] tests/ops/test_shadow_canary_deploy.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  合法 manual CI/CD 灰度发布运行器（簇C EX-021 门禁基建）：GitHub Actions workflow_dispatch / 人工按需调用，非常驻服务/cron/daemon，对齐 apply_depgraph.py 的 manual permanent CLI 写入模式
 """shadow_canary_deploy.py — Shadow Canary 部署运行器（簇C CI/CD 灰度发布基建）
