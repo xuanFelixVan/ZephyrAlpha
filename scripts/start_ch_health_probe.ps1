@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-045 | disaster_recovery
+# [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] scripts.start_ch_health_probe
-# [DOMAIN] D_INF
+# [DOMAIN] D_DATA
 # [TTL] permanent
 # start_ch_health_probe.ps1 - CH health probe guard process (auto-restart on crash)
 #
