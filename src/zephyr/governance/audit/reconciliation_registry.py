@@ -8676,6 +8676,98 @@ def make_index_generator_reconciler(gateway: object) -> ReconcilerSpec:
 
 # 事件触发（post-commit），非 cron/manual，满足项目约束"reconciler 必须事件触发"。
 
+# 治本 #ARCH-TEST-RESIDUE-CLEANUP-001（2026-08-04）：.runtime/tmp/ 测试残留目录自动
+# 回收共享判定逻辑。pytest_<PID>/（tests/conftest.py:67 PID-unique basetemp，治本
+# #ARCH-XDIST-WORKER-CRASH-001）+ git_guard_test_*/tmp*/conc_mv_* 等测试框架残留，
+# 因 make_runtime_cleanup_reconciler 原 os.rmdir 只删空目录 bug（pytest_<PID>/ 内
+# fixture 子目录如 test_conftest_py_exempted0/ 永远非空）积压 10 万+ 文件。
+# 本组模块级函数供 make_runtime_cleanup_reconciler 与 scripts/ops/cleanup_runtime_tmp_residue.py
+# oneoff 脚本复用——判定真源唯一。事件驱动（post-commit），符合 trae_071 LAW-4。
+
+_TEST_RESIDUE_DIR_PREFIXES = (
+    "pytest_", "git_guard_test_", "conc_mv_", "rb1_", "p4-1b-test",
+    "probe_test", "xhs_ocr",
+)
+_TEST_RESIDUE_EXACT_NAMES = frozenset({"b1", "g1", "fx1", "rc1"})
+_TEST_RESIDUE_TTL_SECONDS = 2 * 3600  # 2h——测试产物短生命周期
+_FRESH_PROTECT_SECONDS = 600  # 10min 防误删正在写入
+
+
+def _match_test_residue(name: str) -> bool:
+    """判断 .runtime/tmp/ 下目录名是否属于测试残留（应纳入清理范围）。"""
+    if name in _TEST_RESIDUE_EXACT_NAMES:
+        return True
+    if name.startswith("tmp"):  # tmp*, tmp31n6tt7n 等 tempfile 残留
+        return True
+    return any(name.startswith(p) for p in _TEST_RESIDUE_DIR_PREFIXES)
+
+
+def _parse_pid_from_name(name: str) -> int | None:
+    """从 pytest_<PID> 目录名解析 PID；非 pytest_ 前缀返回 None。"""
+    if not name.startswith("pytest_"):
+        return None
+    try:
+        return int(name[len("pytest_"):])
+    except ValueError:
+        return None
+
+
+def _pid_exists(pid: int) -> bool:
+    """检查 PID 是否存活。优先 psutil（已装 7.2.2），fallback ctypes(os.win32)/os.kill。
+
+    lazy import psutil 以保持本模块 ``# [DEPENDENCIES] (none — pure stdlib)`` 声明
+    （psutil 为可选依赖，不可达时降级为标准库方案）。
+    """
+    try:
+        import psutil  # noqa: PLC0415 — lazy import 保持模块 pure-stdlib 声明
+        return bool(psutil.pid_exists(pid))
+    except ImportError:
+        pass
+    import os  # noqa: PLC0415
+    import sys  # noqa: PLC0415
+    if sys.platform == "win32":
+        import ctypes  # noqa: PLC0415
+        kernel32 = ctypes.windll.kernel32
+        handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+        if not handle:
+            return False
+        kernel32.CloseHandle(handle)
+        return True
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def _should_remove_test_dir(
+    dirpath, now: float, ttl: float = _TEST_RESIDUE_TTL_SECONDS
+) -> bool:
+    """判定 .runtime/tmp/ 下测试残留目录是否应删除（PID 存活 + TTL 双保险）。
+
+    - mtime < 10min → False（防误删正在写入）
+    - mtime < ttl → False（TTL 内保留）
+    - pytest_<PID>：PID 存活 → False（测试还在跑）
+    - 其余 → True
+
+    供 make_runtime_cleanup_reconciler 与 oneoff 脚本复用（判定真源唯一）。
+    """
+    import os  # noqa: PLC0415
+    try:
+        mtime = os.path.getmtime(str(dirpath))
+    except OSError:
+        return False
+    age = now - mtime
+    if age < _FRESH_PROTECT_SECONDS:
+        return False
+    if age < ttl:
+        return False
+    pid = _parse_pid_from_name(os.path.basename(str(dirpath)))
+    if pid is not None and _pid_exists(pid):
+        return False
+    return True
+
+
 def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-RUNTIME-CLEANUP post-commit .runtime/ TTL 清理 reconciler。
@@ -8767,11 +8859,21 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
                     errors += 1
 
-        # 治本 #ARCH-XDIST-WORKER-CRASH-001: 清理空 pytest_* 目录（PID-unique basetemp
+        # 治本 #ARCH-XDIST-WORKER-CRASH-001 + #ARCH-TEST-RESIDUE-CLEANUP-001:
 
-        # 的防复发——conftest.py 每个 PID 创建 .runtime/tmp/pytest_{pid}/，文件被上方
+        # 回收 .runtime/tmp/ 下测试残留目录（pytest_<PID>/ PID-unique basetemp +
 
-        # TTL 循环清理后空目录残留，此循环回收空目录，防止目录线性膨胀）。
+        # git_guard_test_*/tmp*/conc_mv_*/b1/g1/... 等测试框架残留）。
+
+        # 原版 os.rmdir 只删空目录——pytest_<PID>/ 内 fixture 子目录
+
+        # （test_conftest_py_exempted0/...）永远非空 → 永远删不掉 → 10 万+ 文件积压。
+
+        # 升级：PID 存活 + TTL 双判定 → shutil.rmtree 整目录（含残留子目录/文件）。
+
+        # 判定真源 = 模块级 _should_remove_test_dir（与 oneoff 脚本复用同一真源）。
+
+        import shutil  # noqa: PLC0415
 
         _tmp_dir = runtime_dir / "tmp"
 
@@ -8779,7 +8881,7 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
             for _name in os.listdir(_tmp_dir):
 
-                if not _name.startswith("pytest_"):
+                if not _match_test_residue(_name):
 
                     continue
 
@@ -8789,15 +8891,19 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
                     continue
 
+                if not _should_remove_test_dir(_dirpath, now):
+
+                    continue  # TTL 内 / PID 存活 / 正在写入，跳过
+
                 try:
 
-                    os.rmdir(str(_dirpath))  # 仅删空目录（非空抛 OSError 自动跳过）
+                    shutil.rmtree(str(_dirpath))
 
                     deleted += 1
 
                 except OSError:
 
-                    pass  # 非空或锁定，跳过
+                    pass  # 锁定/权限，跳过
 
         return ReconcileResult(
 

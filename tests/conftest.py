@@ -35,6 +35,7 @@ if str(_src_path) not in sys.path:
 # can import zephyr regardless of their cwd. PYTHONPATH=src (relative) fails when
 # subprocess cwd != project root; conftest sets absolute path so subprocesses inherit it.
 import os as _os
+
 _src_abs = str(_src_path)
 _existing_pp = _os.environ.get("PYTHONPATH", "")
 if _src_abs not in _existing_pp.split(_os.pathsep):
@@ -74,6 +75,32 @@ def pytest_configure(config):
         config.option.xmlpath = str(_rt_tmp / "junit.xml")
 
 
+def pytest_sessionfinish(session, exitstatus):
+    """治本 #ARCH-TEST-RESIDUE-CLEANUP-001: pytest 正常退出时清自己 basetemp。
+
+    tests/conftest.py:67 为每个 PID 创建 .runtime/tmp/pytest_<PID>/ basetemp
+    （治本 #ARCH-XDIST-WORKER-CRASH-001）。原设计无退出清理 → 残留靠
+    GATE-RUNTIME-CLEANUP reconciler 兜底，但 reconciler 的 os.rmdir bug
+    导致 10 万+ 文件积压。本钩子在 pytest 正常退出时源头清自己 basetemp，
+    异常退出/crash 仍由 reconciler 兜底（现已修复为 shutil.rmtree + PID 存活判定）。
+
+    双层覆盖：正常退出→本钩子源头清；异常退出→reconciler post-commit 兜底。
+    安全：ignore_errors=True，清理失败绝不阻断测试退出；只清 pytest_ 前缀目录。
+    """
+    import os
+    import shutil
+    bt = getattr(session.config.option, "basetemp", None)
+    if not bt:
+        return
+    try:
+        bt_name = os.path.basename(os.path.normpath(str(bt)))
+        if not bt_name.startswith("pytest_"):
+            return  # 非自动 basetemp（用户自定义），不动
+        shutil.rmtree(str(bt), ignore_errors=True)
+    except Exception:  # noqa: BLE001 — 清理失败绝不阻断测试退出
+        pass
+
+
 # MOD-INF-017: code_dedup_engine 裸名注入——部分 red_team 测试以 ``code_dedup_engine``
 # 裸名引用本引擎（无 import 语句，仅在测试函数体内运行时通过 builtins 解析）。
 # 治本(2026-07-22): 原 tests/code_dedup_engine/ 在 pytest prepend 模式下作为裸包
@@ -88,7 +115,7 @@ try:
     _cde = _importlib_cde.import_module("zephyr.gov_code_quality.code_dedup")
     _sys.modules["code_dedup_engine"] = _cde
     if not hasattr(_builtins, "code_dedup_engine"):
-        setattr(_builtins, "code_dedup_engine", _cde)
+        _builtins.code_dedup_engine = _cde
 except Exception as _exc:  # noqa: BLE001 — conftest 初始化阶段必须永不阻断测试收集
     import sys as _sys
 
@@ -116,7 +143,7 @@ try:
         _testing_pkg.__path__ = []  # 标记为包
         _testing_pkg.__package__ = _testing_pkg_name
         _sys_td.modules[_testing_pkg_name] = _testing_pkg
-        setattr(_zephyr_root, "testing", _testing_pkg)
+        _zephyr_root.testing = _testing_pkg
     else:
         _testing_pkg = _sys_td.modules[_testing_pkg_name]
 
@@ -126,7 +153,7 @@ try:
         _code_dedup_pkg.__path__ = []
         _code_dedup_pkg.__package__ = _code_dedup_pkg_name
         _sys_td.modules[_code_dedup_pkg_name] = _code_dedup_pkg
-        setattr(_testing_pkg, "code_dedup", _code_dedup_pkg)
+        _testing_pkg.code_dedup = _code_dedup_pkg
     else:
         _code_dedup_pkg = _sys_td.modules[_code_dedup_pkg_name]
 
@@ -155,7 +182,7 @@ try:
     if _atg_full not in _sys_td.modules:
         _atg_stub = _types_td.ModuleType(_atg_full)
         _sys_td.modules[_atg_full] = _atg_stub
-        setattr(_code_dedup_pkg, "auto_test_generator", _atg_stub)
+        _code_dedup_pkg.auto_test_generator = _atg_stub
 except Exception as _exc:  # noqa: BLE001 — conftest 初始化阶段必须永不阻断测试收集
     import sys as _sys
 
@@ -198,7 +225,7 @@ try:
         _sys_dfr.modules["governance.d7_code.detect_forward_reference"] = _dfr_mod
         if _dfr_spec.loader and hasattr(_dfr_spec.loader, "exec_module"):
             _dfr_spec.loader.exec_module(_dfr_mod)
-        setattr(_d7_mod, "detect_forward_reference", _dfr_mod)
+        _d7_mod.detect_forward_reference = _dfr_mod
 except Exception as _exc:  # noqa: BLE001 — conftest 初始化阶段必须永不阻断测试收集
     import sys as _sys
 

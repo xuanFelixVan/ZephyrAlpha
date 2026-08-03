@@ -1556,6 +1556,47 @@ capabilities:
       - make_pure_shim_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: blueprint_node_id_hardcode_gate
+    aliases:
+      - BLUEPRINT-NODE-ID-HARDCODE
+      - blueprint-node-id-hardcode
+      - make_blueprint_node_id_hardcode_gate
+      - node_id_hardcode_blocker
+      - GATE-DOC-NODE-ID-inprocess
+    description: >-
+      blueprint.md node_id/edge_id 硬编码阻断门禁（BLUEPRINT-NODE-ID-HARDCODE，
+      priority=57，2026-08-04 文档引用铁律补齐）。弥补 --no-verify 绕过
+      GATE-DOC-NODE-ID pre-commit hook 的缺口——check_doc_node_id_hardcode.py 是
+      pre-commit hook（GATE-DOC-NODE-ID），git commit --no-verify 绕过所有
+      pre-commit hooks。本 gate 在 GitCommitGateway pre-commit 阶段（in-process）
+      注册，--no-verify 绕不过。检测 staged 新增+修改的 blueprint.md（--diff-filter=AM）。
+      subprocess 调 check_doc_node_id_hardcode.py --ci --files（检测逻辑 SSoT 在
+      check_doc_node_id_hardcode.py，本 gate 是 thin wrapper 不重复检测逻辑——
+      2026-08-04 三源→单源治本：原内联正则与 validate_blueprint_provenance.py 形成三源，
+      已漂移，治本改为 subprocess 调用专门检测器）。fail-open：脚本故障（exit 2/超时/
+      缺失）时不阻断（环境异常非违规）；fail-closed：检出违规（exit 1）时硬阻断。
+      priority=57（在 HELD-OVERLAP=50 之后、NEW-FILE-DEPGRAPH=58 之前）。
+    integrity_anchors:
+      - make_blueprint_node_id_hardcode_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: doc_node_id_hardcode_detector
+    canonical_override: scripts/governance/d3_metadata/check_doc_node_id_hardcode.py
+    aliases:
+      - GATE-DOC-NODE-ID
+      - check_doc_node_id_hardcode
+      - doc_node_id_hardcode_detector
+      - gate_doc_node_id
+    description: >-
+      GATE-DOC-NODE-ID 文档物理 ID 硬编码检测器（文档引用铁律，2026-08-04 治本）。
+      pre-commit hook（gate-doc-node-id）自动触发：docs/*.md 变更时扫描
+      node_id=N / edge_id=N 硬编码（PostgreSQL 自增主键，DB 重建后易变成死引用）。
+      --ci 模式硬阻断（exit 1）。检测逻辑 SSoT 在此脚本，in-process gate 包装
+      （blueprint_node_id_hardcode_gate.py）是独立 capability，subprocess 调用
+      本检测器（--ci --files）。canonical 在 scripts/ 下（非 src/zephyr/），
+      无法 auto 派生，故用 canonical_override 显式声明。
+
+  # --------------------------------------------------------------------------
   - capability_id: pure_assertion_gate
     aliases:
       - PURE-ASSERTION
@@ -1691,6 +1732,17 @@ capabilities:
       解决防重建：check_file_canonical() 反查阻止重建同类 session 注册强制脚本。
     integrity_anchors:
       - make_session_required_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: worktree_required_gate
+    aliases:
+      - WORKTREE-REQUIRED
+      - make_worktree_required_gate
+      - worktree_isolation_enforcer
+    description: >-
+      worktree 隔离强制门禁 (WORKTREE-REQUIRED, #ARCH-WORKTREE-GATE-001). priority=44.
+    integrity_anchors:
+      - make_worktree_required_gate
 
   # --------------------------------------------------------------------------
   - capability_id: vocab_hardcode_gate
@@ -5609,6 +5661,11 @@ creation_tokens:
     token: "auto-blueprint-node-id-hardcode-gate-20260804"
     created_by: "session-p1-node-id-hardcode"
     capability: "blueprint_node_id_hardcode_gate"
+  # --- GATE-DOC-NODE-ID pre-commit hook（2026-08-04，文档引用铁律治本检测器）---
+  - file: "scripts/governance/d3_metadata/check_doc_node_id_hardcode.py"
+    token: "auto-check-doc-node-id-hardcode-20260804"
+    created_by: "session-doc-node-id-gate"
+    capability: "doc_node_id_hardcode_detector"
   - file: "src/zephyr/governance/audit/translation_coverage_reconciler.py"
     token: "auto-translation-coverage-reconciler-20260802"
     created_by: "session-translation-coverage-gate"
@@ -7800,6 +7857,14 @@ creation_tokens:
     blueprint_id: "MOD-CD-001"
     note: "MOD-CD-001 设计蓝图——Shadow Canary 灰度发布基建架构设计文档"
 
+  # --- .runtime/tmp 测试残留自动清理（2026-08-04，#ARCH-TEST-RESIDUE-CLEANUP-001）---
+  - file: "scripts/ops/cleanup_runtime_tmp_residue.py"
+    token: "auto-runtime-tmp-residue-cleanup-20260804"
+    created_by: "sess-86620-20260804012658"
+    capability: "runtime_tmp_residue_cleanup"
+    blueprint_id: "MOD-INF-046"
+    note: ".runtime/tmp/ 测试残留目录一次性清理脚本（dry-run/--execute），复用 reconciler PID存活+TTL双判定"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
@@ -7943,22 +8008,3 @@ di_seam_exemptions:
 #   - 修正 5 个 stale comment/description 路径引用（market_schema + kb 描述）
 #   - 验证：0 stale paths（Type 1/2/3 + Unknown 全部为 0），YAML 语法合法
 #   - session: stale-path-cleanup-20260722
-  - capability_id: worktree_required_gate
-    aliases:
-      - WORKTREE-REQUIRED
-      - worktree-required
-      - make_worktree_required_gate
-      - non_worktree_commit_blocker
-      - worktree_isolation_enforcer
-    description: >-
-      worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001 治本 2026-08-04）。
-      治本"君子协定在 100% AI 场景下系统性失效"——warn_non_worktree_commit 只 WARN 不阻断，
-      AI 把 WARN 当"通过"。本 gate 将并发非 worktree commit 从 WARN 升级为 fail-closed 阻断。
-      分级阻断：worktree 内放行 / solo session 放行 / 并发非 worktree 阻断。
-      priority=44 在 CLAIM-REQUIRED(40) 之后、HELD-OVERLAP(50) 之前。
-      双逃生通道：allow_overlap=True（通用）或 allow_non_worktree=True（专用）。
-      get_current_worktree/list_active 异常→安全降级放行（基础设施故障不应卡死 commit）。
-      canonical basename worktree_required_gate 匹配 capability_id，可 auto 派生。
-    integrity_anchors:
-      - make_worktree_required_gate  # gate 工厂(删则 gate 不注册)
-

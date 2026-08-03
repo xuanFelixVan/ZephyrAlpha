@@ -9649,6 +9649,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "检查准备提交的蓝图文件里有没有写死数据库自增ID（node_id/edge_id）。这些ID是数据库自动生成的序号，删了重建就变，写死在文档里会变成找不到的死链接。本门禁在提交时拦截，强制改用稳定的模块编号。"
+- module_path: scripts/ops/cleanup_runtime_tmp_residue.py
+  domain_id: D_INFRA_OPS
+  name_zh: "测试残留目录一次性清理工具"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一次性清理 .runtime/tmp/ 下积压的 pytest 等测试残留目录（10万+文件），复用 reconciler 的 PID存活+TTL双判定逻辑，dry-run 默认安全"
 
 battle_map_steps:
 - step_id: BM-BUY-04

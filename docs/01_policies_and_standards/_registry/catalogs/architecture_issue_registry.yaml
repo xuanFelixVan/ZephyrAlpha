@@ -11348,7 +11348,47 @@ entries:
       （blueprint_node_id_hardcode_gate.py，priority=57，检测 staged blueprint.md 中 node_id/edge_id
       硬编码）——补齐 GitCommitGateway --no-verify 绕过 pre-commit hook 的覆盖缺口，双层防御闭环
     - AGENTS.md P2 同步（本次提交）：文档引用铁律条目从单层（GATE-DOC-NODE-ID）更新为双层防御描述
+    - P3 三源→单源治本（2026-08-04）：审查发现 node_id/edge_id 硬编码检测正则存在于三处（非双源）——
+      ① check_doc_node_id_hardcode.py（专门检测器，\d+ 无尾\b）② validate_blueprint_provenance.py
+      （GATE-12 内嵌，\d+\b 有尾\b）③ blueprint_node_id_hardcode_gate.py（in-process 内联，\d+\b 有尾\b）。
+      三源正则已漂移（尾\b 差异致 node_id=123abc 检出不一致）。治本：真源=check_doc_node_id_hardcode.py
+      （专门检测器，已有 --ci --files 接口）；gate 改为 subprocess 调用（对标 pure_shim_gate.py 模式，
+      thin wrapper 不重复检测逻辑）；validate_blueprint_provenance.py 移除 _check_node_id_hardcode /
+      _NODE_ID_HARDCODE_RE（冗余于 GATE-DOC-NODE-ID，scope 子集，GATE-12 回归纯 provenance 校验）
+    - capability_id 补登记（P3 修复，2026-08-04）：capability_canonical_file_registry.yaml capabilities:
+      段补登记 blueprint_node_id_hardcode_gate 条目（capability_id + aliases + description +
+      integrity_anchors），消除 CAPABILITY-OVERLAP gate 覆盖缺口（原仅 creation_token 无 capability_id，
+      致该能力对重叠检测器不可见）
   status: decided
-  related_adjudication: '文档引用铁律（文档禁写物理ID，GATE-DOC-NODE-ID pre-commit + BLUEPRINT-NODE-ID-HARDCODE in-process 双层硬阻断）'
+  related_adjudication: '文档引用铁律（文档禁写物理ID，检测逻辑 SSoT=check_doc_node_id_hardcode.py，GATE-DOC-NODE-ID pre-commit + BLUEPRINT-NODE-ID-HARDCODE in-process subprocess 双层硬阻断）'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'
+
+# --- #ARCH-TEST-RESIDUE-CLEANUP-001: .runtime/tmp 测试残留自动清理（2026-08-04）---
+- issue_id: '#ARCH-TEST-RESIDUE-CLEANUP-001'
+  title: .runtime/tmp 测试残留目录积压（os.rmdir 只删空目录致 10万+文件堆积）
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-04 治本。问题：GATE-RUNTIME-CLEANUP reconciler 用 os.rmdir 只删空目录，但
+    pytest_<PID>/ 内 fixture 子目录（test_conftest_py_exempted0/...）永远非空 → 永远删不掉，
+    .runtime/tmp/ 积压 10万+ 文件。治本三层闭环——
+    1. 源头清理：tests/conftest.py pytest_sessionfinish 钩子，pytest 正常退出时清自己 basetemp
+    2. 兜底清理：reconciliation_registry.make_runtime_cleanup_reconciler 升级 os.rmdir→shutil.rmtree
+       + PID 存活 + TTL 双判定（_should_remove_test_dir）
+    3. 一次性清理：scripts/ops/cleanup_runtime_tmp_residue.py（dry-run/--execute）
+    规则同步：trae_071_temporary_file_lifecycle.yaml 新增 test_residue_reclaim 段。
+    事件驱动（post-commit reconciler），禁止 cron/Timer（trae_071 LAW-4）。
+  fix_phase: |-
+    本次提交执行（4 文件协同 + 3 门禁配套注册表）：
+    - reconciliation_registry.py: os.rmdir→shutil.rmtree + PID存活+TTL双判定
+    - conftest.py: pytest_sessionfinish 钩子源头清 basetemp
+    - cleanup_runtime_tmp_residue.py: 一次性清理脚本（dry-run/--execute）
+    - trae_071 yaml: 新增 test_residue_reclaim 规则段
+    - module_translation_registry.yaml: 新模块翻译条目（TRANSLATION-COVERAGE 门禁）
+    - capability_canonical_file_registry.yaml: 新脚本 creation_token 登记（CREATE-GUARD 门禁）
+    - architecture_issue_registry.yaml: 本条 issue 登记（ARCH-REFERENCE 门禁）
+  status: decided
+  related_adjudication: 'trae_071 临时文件生命周期（LAW-4 事件驱动禁 cron/Timer）'
   created: '2026-08-04'
   last_updated: '2026-08-04'
