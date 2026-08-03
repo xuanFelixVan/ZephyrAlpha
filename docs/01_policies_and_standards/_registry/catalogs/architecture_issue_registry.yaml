@@ -11303,12 +11303,17 @@ entries:
   severity: P2中
   category: governance
   adjudication: |-
-    2026-08-04 方案 B 治本. warn_non_worktree_commit 只 WARN 不阻断, AI 把 WARN 当通过.
-    治本: WORKTREE-REQUIRED gate priority=44, 分级阻断 fail-closed.
+    2026-08-04 方案 B 治本。问题：warn_non_worktree_commit 只 WARN 不阻断，
+    AI 把 WARN 当"通过"，在 100% AI 开发场景下系统性失效。治本：新增 WORKTREE-REQUIRED
+    in-process gate（priority=44），将并发非 worktree commit 从 WARN 升级为 fail-closed 阻断。
+    分级阻断：worktree 内放行 / solo session 放行 / 并发非 worktree 阻断。
+    双逃生通道：allow_overlap=True / allow_non_worktree=True。fail-open on infra error。
   fix_phase: |-
-    P1: worktree_required_gate.py + test(13 PASS) + gateway + CLI + registries + AGENTS.md.
+    P1 已执行：worktree_required_gate.py + test(13 PASS) + gateway(WORKTREE_VIOLATION+
+    allow_non_worktree) + CLI(--allow-non-worktree) + in_process_gate_registry +
+    capability_registry + AGENTS.md 四层化。
   status: resolved
-  related_adjudication: '方案 B, 方案 A 见 #ARCH-MSG-FILE-RESIDUE-001'
+  related_adjudication: '方案 B 治本（WORKTREE-REQUIRED gate），方案 A 见 #ARCH-MSG-FILE-RESIDUE-001'
   created: '2026-08-04'
   last_updated: '2026-08-04'
 
