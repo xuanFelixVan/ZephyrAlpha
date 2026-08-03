@@ -142,27 +142,27 @@ flowchart TD
     src_zephyr_ex_core_batch_take_profit_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_auction_deviation_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_miniqmt_broker_py
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_simulation_broker_py
+    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_miniqmt_broker_py
     src_zephyr_ex_core_conditional_order_manager_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_mcp_server_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_rl_optimal_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_splitter_py
     src_zephyr_ex_core_microstructure_modeler_py -.->|data / data| src_zephyr_ex_core_order_splitter_py
     src_zephyr_ex_core_microstructure_modeler_py -.->|data / data| src_zephyr_ex_core_rl_optimal_executor_py
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_fill_handler_py
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_repository_interface_py
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_fill_handler_py
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_repository_interface_py
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
+    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_repository_interface_py -->|runtime / runtime| src_zephyr_ex_core_position_tracker_init_py
-    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
+    src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_position_tracker_init_py -.->|runtime / runtime| src_zephyr_ex_core_fill_processor_py
     src_zephyr_ex_core_position_tracker_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
     tests_ex_core_test_position_reconciler_py -->|测试依赖 / test_depends| src_zephyr_ex_core_position_reconciler_py
@@ -181,14 +181,14 @@ flowchart TD
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     D_TRADING -->|runtime / runtime| src_zephyr_ex_core_order_manager_py
@@ -251,20 +251,20 @@ flowchart TD
     src_zephyr_ex_core_position_tracker_init_py["ex_core/position_tracker 包入口<br/>D_EXECUTION_CORE — Position Tracker 包<br/>文件: position_tracker/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_order_manager_py ~~~ src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_position_tracker_tracker_py["position_tracker/tracker<br/>D_EXECUTION_CORE — Position Tracker (持仓跟踪器)<br/>文件: position_tracker/tracker.py<br/>(生产态 / production)"]
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_fill_handler_py
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_repository_interface_py
-    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_fill_handler_py
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_repository_interface_py
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
+    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_repository_interface_py -->|runtime / runtime| src_zephyr_ex_core_position_tracker_init_py
-    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
+    src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_position_tracker_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
     tests_ex_core_test_position_reconciler_py -->|测试依赖 / test_depends| src_zephyr_ex_core_position_reconciler_py
     tests_ex_core_test_position_reconciler_py -->|测试依赖 / test_depends| src_zephyr_ex_core_position_tracker_tracker_py
@@ -353,8 +353,8 @@ flowchart TD
 | 10 | 模拟经纪人 / simulation_broker (adapters/simulation_broke... | → | D_GOVERNANCE 生命周期管理: 仿真经纪人 / D_EXECUTION_CORE — Simulation Broker Adapte... | 导入依赖 / import_depends |
 | 11 | 执行引擎 / D_EXECUTION_CORE — Execution Engine (ex_core/... | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
 | 12 | Order Execution Saga — 下单执行 Saga 编排器 (MOD-EX-057 ... | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
-| 13 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | contract / contract |
-| 14 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
+| 13 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
+| 14 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | contract / contract |
 | 15 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
 | 16 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | contract / contract |
 | 17 | D_EX_CORE — Aggregate Root Manager (执行域聚合根管理器) ... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
@@ -409,8 +409,8 @@ flowchart TD
 | 66 | 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
 | 67 | 实时组合 / live_portfolio (services/live_portfolio.py) | → | D_TRADING 交易运营: Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.... | 导入依赖 / import_depends |
 | 68 | 实时组合 / live_portfolio (services/live_portfolio.py) | → | D_TRADING 交易运营: risk/risk_limits.py | 导入依赖 / import_depends |
-| 69 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 70 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
+| 69 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
+| 70 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
