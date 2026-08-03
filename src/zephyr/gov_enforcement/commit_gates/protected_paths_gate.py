@@ -132,7 +132,7 @@ def _audit_bypass(gateway: object, files: list[str], reason: str, issue_id: str 
         audit_dir = root / ".runtime" / "gate_audit"
         audit_dir.mkdir(parents=True, exist_ok=True)
         record = {
-            "timestamp": int(time.time()),  # noqa: m46-time — 审计事件时间戳
+            "timestamp": int(time.time()),  # 审计事件时间戳（m46-time 豁免：gate 审计需 epoch 秒）
             "gate": "PROTECTED-PATHS",
             "reason": reason,
             "issue_id": issue_id,
@@ -141,7 +141,7 @@ def _audit_bypass(gateway: object, files: list[str], reason: str, issue_id: str 
         }
         with (audit_dir / "protected_paths_bypass.jsonl").open("a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
-    except Exception:
+    except Exception:  # noqa: BLE001
         # 审计写入失败不阻断 commit
         pass
 
@@ -164,7 +164,7 @@ def _is_protected(file_path: str) -> bool:
             if pattern in normalized or normalized.startswith(pattern):
                 return True
         return False
-    except Exception:
+    except Exception:  # noqa: BLE001
         return False
 
 
@@ -188,7 +188,7 @@ def _find_protected_hits(files: list[str]) -> list[tuple[str, str]]:
                 if pattern in normalized or normalized.startswith(pattern):
                     hits.append((f, reason))
                     break
-        except Exception:
+        except Exception:  # noqa: BLE001
             continue
     return hits
 

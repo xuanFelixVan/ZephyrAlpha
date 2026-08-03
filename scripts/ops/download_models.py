@@ -195,12 +195,12 @@ def download_model(model: dict, force: bool = False) -> bool:
             repo_id=model["hf_repo_id"],
             local_dir=str(local_path),
         )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"  ✗ Download failed: {exc}")
-        print(f"    Troubleshooting:")
-        print(f"    - Check network connectivity")
-        print(f"    - If behind proxy: set HTTPS_PROXY env var")
-        print(f"    - If private model: set HF_TOKEN env var")
+        print("    Troubleshooting:")
+        print("    - Check network connectivity")
+        print("    - If behind proxy: set HTTPS_PROXY env var")
+        print("    - If private model: set HF_TOKEN env var")
         return False
 
     # Verify after download
