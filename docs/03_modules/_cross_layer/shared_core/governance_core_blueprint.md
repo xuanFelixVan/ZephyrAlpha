@@ -31,7 +31,7 @@ depends_on:
   - {target: "MOD-INF-016-SHARED", at: "全篇", why: "Shared Infra — core/ 消费 event_bus/lifecycle/observer 等共享组件"}
 responsibility_domain: 
 design_maturity: design
-build_status: planned
+build_status: generated
 ---
 
 # Governance Core 蓝图 — 治理核心模块

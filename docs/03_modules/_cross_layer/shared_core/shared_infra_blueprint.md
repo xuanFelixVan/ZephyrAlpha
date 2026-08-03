@@ -30,7 +30,7 @@ depends_on:
   - {target: "MOD-INF-016-CONTRACTS", at: "全篇", why: "Contracts — 所有 shared 组件消费 contracts 数据模型"}
 responsibility_domain: 
 design_maturity: design
-build_status: planned
+build_status: generated
 ---
 
 # Shared Infrastructure 蓝图 — 跨层共享基础设施

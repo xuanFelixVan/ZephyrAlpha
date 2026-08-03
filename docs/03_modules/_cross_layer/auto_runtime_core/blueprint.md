@@ -2198,3 +2198,66 @@ Boot Sequence（20步，含 WorkOrchestrator 初始化）：
 | **ModuleOnboardingScanner** | **新建** | **自动扫描** |
 | **AutoIntegrator** | **新建** | **自动接入** |
 | **OrphanDetector** | **新建** | **孤儿检测** |
+
+---
+
+## §reset-gateway ResetGateway 统一危险命令入口（L3.3，2026-08-04）
+
+### B.10.1 治本动机
+
+#ARCH-GIT-SELF-HARM-GUARD L3.3 终极形态。对标 GitCommitGateway 对 commit 的统一治理，
+ResetGateway 为 `git reset`/`restore`/`checkout --` 提供统一入口，封装三段式治理：
+
+1. **自伤检测**（L1/L2.1）：工作区有 tracked 未提交修改 + 未授权 → fail-closed 阻断
+2. **锁冲突检测**（原有）：目标文件与其他 session 的 `.ailocks/` 冲突 → 阻断
+3. **执行+审计**：透传 git 执行 + 审计落盘到 `.runtime/gate_audit/git_guard_self_harm.jsonl`
+
+### B.10.2 设计裁定
+
+| 决策 | 裁定 | 理由 |
+|------|------|------|
+| 重新实现 vs 复用 | **复用** git_guard.check_and_execute | L1+L2 已实现并测试全部保护逻辑，重复造轮子违反原则①能现成不创造 |
+| git_guard alias 去/留 | **保留** | alias 是运行时拦截层，ResetGateway 是程序化 API 层，两者互补 |
+| 迁移策略 | **渐进** | AI 可逐步从 `git reset --hard` 迁移到 `ResetGateway().reset_hard()` |
+| 逃生通道 | **复用** ZEPHYR_FORCE_STASH | 不引入新真源，与 git_guard/session_worktree 对齐 |
+
+### B.10.3 公共 API
+
+```python
+from zephyr.gov_enforcement.rule_bridge.reset_gateway import ResetGateway, ResetResult
+
+gw = ResetGateway()
+result = gw.reset_hard("HEAD")           # git reset --hard HEAD
+result = gw.checkout_files(["file.py"])   # git checkout -- file.py
+result = gw.restore_files(["file.py"])    # git restore file.py
+
+if result.blocked:
+    print(f"被阻断: {result.message}")
+```
+
+ResetResult 结构:
+- `exit_code`: 0=放行, 1=阻断, 2=内部错误
+- `message`: 人类可读描述
+- `action`: "reset" / "checkout" / "restore"
+- `blocked`: bool（exit_code == 1）
+
+### B.10.4 依赖关系
+
+| 依赖 | 模块 | 用途 |
+|------|------|------|
+| scripts.git_guard | check_and_execute | 三段式治理核心逻辑（自伤检测+锁冲突+审计） |
+| zephyr.infrastructure.runtime.concurrency_guard | check_rollback_conflict | .ailocks/ 跨 session 锁冲突检测 |
+| zephyr.gov_enforcement.rule_bridge.session_worktree | _trusted_git_env | fast-path 可信调用方 env 隔离 |
+
+### B.10.5 验证
+
+- 单测: `tests/governance/rule_bridge/test_reset_gateway.py`（8 场景：阻断/放行/授权/空列表/异常）
+- depgraph 登记: node_id=8427561, module_id=MOD-GOV-RESET_GATEWAY, build_status=planned
+- 翻译: 已登记 plain_zh 大白话简介
+
+### B.10.6 落地状态
+
+L3.3 是 L1+L2 的架构封装层。L1+L2 已覆盖全部威胁面（reset --hard / checkout -- / restore
+自伤检测 + alias 绕过 reconciler + fast-path 隔离）。ResetGateway 提供程序化 API 供 AI
+显式调用，避免依赖可被绕过的 git alias。当前 git_guard alias 保持不变，ResetGateway
+作为可选的更强入口渐进推广。
