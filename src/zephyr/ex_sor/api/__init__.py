@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/ex_sor/test_api_rate_limiter.py; tests/ex_sor/test_broker_api_connector.py
-# [A_module] module_id=MOD-EX_SOR_api | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-EX_SOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ex_sor/api — 券商API层 (限速器/连接器)

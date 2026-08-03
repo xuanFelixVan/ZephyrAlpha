@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/ex_sor/test_slippage_analyzer.py; tests/ex_sor/test_transaction_cost_optimizer.py; tests/ex_sor/test_execution_quality_scorer.py
-# [A_module] module_id=MOD-EX_SOR_services | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-EX_SOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ex_sor/services — 滑点分析 / 成本优化 / 质量评分

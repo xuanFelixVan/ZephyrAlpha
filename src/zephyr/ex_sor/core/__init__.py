@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/ex_sor/test_broker_adapter_manager.py; tests/ex_sor/test_optimal_order_router.py
-# [A_module] module_id=MOD-EX_SOR_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-EX_SOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ex_sor/core — 路由核心 (适配器/路由/调度/算法)
