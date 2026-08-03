@@ -141,60 +141,60 @@ flowchart TD
     src_zephyr_factor_factor_base_py["因子基类<br/>锁定文件（🔒）：任何修改必须先建 KB 决策记录。<br/>文件: factor/factor_base.py<br/>(生产态 / production)"]
     src_zephyr_factor_core_evaluation_metrics_py ~~~ src_zephyr_factor_factor_base_py
     src_zephyr_factor_alpha_signal_pipeline_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_intraday_snapshot_factors_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_value_factor_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_intraday_snapshot_factors_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_analysis_correlation_dedup_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_correlation_analyzer_py
     src_zephyr_factor_momentum_factor_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_analysis_ic_ir_evaluator_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
+    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
+    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_analysis_factor_attribution_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_decay_monitor_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_ic_decay_py
     src_zephyr_factor_analysis_decay_monitor_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
-    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_analysis_layered_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_factor_attribution_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
+    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_analysis_ic_ir_calc_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_analysis_three_level_judgment_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_three_level_judgment_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_analysis_layered_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_core_intraday_factor_loop_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_core_intraday_factor_loop_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dag_manager_executor_py
     src_zephyr_factor_core_intraday_factor_loop_py -->|导入依赖 / import_depends| src_zephyr_factor_core_factor_dag_init_py
-    src_zephyr_factor_analysis_ic_ir_evaluator_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_core_backpressure_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_backpressure_limiter_py
-    src_zephyr_factor_core_config_manager_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_config_manager_loader_py
     src_zephyr_factor_core_batch_output_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_batch_output_buffer_py
+    src_zephyr_factor_core_config_manager_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_config_manager_loader_py
+    src_zephyr_factor_core_backpressure_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_backpressure_limiter_py
     src_zephyr_factor_core_ctr001_consumer_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_ctr001_consumer_converter_py
     src_zephyr_factor_core_ctr002_producer_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_ctr002_producer_converter_py
-    src_zephyr_factor_core_dag_manager_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dag_manager_executor_py
     src_zephyr_factor_core_dag_manager_executor_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_core_dag_manager_executor_py -->|导入依赖 / import_depends| src_zephyr_factor_core_backpressure_limiter_py
     src_zephyr_factor_core_dag_manager_executor_py -->|导入依赖 / import_depends| src_zephyr_factor_core_factor_dag_dag_py
+    src_zephyr_factor_core_dist_feature_eng_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dist_feature_eng_engine_py
+    src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_core_dag_manager_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dag_manager_executor_py
     src_zephyr_factor_core_dist_feature_eng_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_core_dist_feature_eng_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_core_backpressure_limiter_py
     src_zephyr_factor_core_dist_feature_eng_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_core_factor_dag_dag_py
-    src_zephyr_factor_core_dist_feature_eng_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dist_feature_eng_engine_py
-    src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_core_factor_dag_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_factor_dag_dag_py
-    src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
-    src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
-    src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
-    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_grayscale_rollout_py
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_six_step_flow_py
-    src_zephyr_factor_governance_factor_pool_manager_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
+    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
+    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
     src_zephyr_factor_governance_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
+    src_zephyr_factor_governance_factor_pool_manager_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
+    src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
     src_zephyr_factor_core_factor_dag_dag_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
     src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
+    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
     tests_factor_test_intraday_factor_loop_py -->|测试依赖 / test_depends| src_zephyr_factor_core_intraday_factor_loop_py
     D_FUNDAMENTAL_SIGNAL["基本面信号<br/>基本面信号，负责基于财务数据的基本面信号生成<br/>Fundamental Signal<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_factor_alpha_signal_pipeline_py -->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
@@ -206,8 +206,8 @@ flowchart TD
     src_zephyr_factor_core_batch_output_buffer_py -->|导入依赖 / import_depends| D_DATA
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_factor_core_batch_output_buffer_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_factor_core_ctr002_producer_converter_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_factor_core_ctr001_consumer_converter_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_factor_core_ctr002_producer_converter_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| D_DATA
@@ -338,60 +338,60 @@ flowchart TD
     src_zephyr_factor_factor_base_py["因子基类<br/>锁定文件（🔒）：任何修改必须先建 KB 决策记录。<br/>文件: factor/factor_base.py<br/>(生产态 / production)"]
     src_zephyr_factor_core_evaluation_metrics_py ~~~ src_zephyr_factor_factor_base_py
     src_zephyr_factor_alpha_signal_pipeline_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_intraday_snapshot_factors_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_value_factor_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_intraday_snapshot_factors_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_analysis_correlation_dedup_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_correlation_analyzer_py
     src_zephyr_factor_momentum_factor_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_analysis_ic_ir_evaluator_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
+    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
+    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_analysis_factor_attribution_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_decay_monitor_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_ic_decay_py
     src_zephyr_factor_analysis_decay_monitor_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_multifactor_synthesis_py
-    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_factor_optimization_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_analysis_layered_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
-    src_zephyr_factor_analysis_factor_attribution_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
+    src_zephyr_factor_analysis_ic_decay_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_analysis_ic_ir_calc_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_analysis_three_level_judgment_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_analysis_three_level_judgment_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_analysis_layered_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_analysis_init_py
     src_zephyr_factor_core_intraday_factor_loop_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_core_intraday_factor_loop_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dag_manager_executor_py
     src_zephyr_factor_core_intraday_factor_loop_py -->|导入依赖 / import_depends| src_zephyr_factor_core_factor_dag_init_py
-    src_zephyr_factor_analysis_ic_ir_evaluator_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_core_backpressure_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_backpressure_limiter_py
-    src_zephyr_factor_core_config_manager_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_config_manager_loader_py
     src_zephyr_factor_core_batch_output_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_batch_output_buffer_py
+    src_zephyr_factor_core_config_manager_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_config_manager_loader_py
+    src_zephyr_factor_core_backpressure_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_backpressure_limiter_py
     src_zephyr_factor_core_ctr001_consumer_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_ctr001_consumer_converter_py
     src_zephyr_factor_core_ctr002_producer_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_ctr002_producer_converter_py
-    src_zephyr_factor_core_dag_manager_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dag_manager_executor_py
     src_zephyr_factor_core_dag_manager_executor_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_core_dag_manager_executor_py -->|导入依赖 / import_depends| src_zephyr_factor_core_backpressure_limiter_py
     src_zephyr_factor_core_dag_manager_executor_py -->|导入依赖 / import_depends| src_zephyr_factor_core_factor_dag_dag_py
+    src_zephyr_factor_core_dist_feature_eng_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dist_feature_eng_engine_py
+    src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
+    src_zephyr_factor_core_dag_manager_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dag_manager_executor_py
     src_zephyr_factor_core_dist_feature_eng_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_core_dist_feature_eng_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_core_backpressure_limiter_py
     src_zephyr_factor_core_dist_feature_eng_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_core_factor_dag_dag_py
-    src_zephyr_factor_core_dist_feature_eng_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_dist_feature_eng_engine_py
-    src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    src_zephyr_factor_core_evaluation_backtest_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
     src_zephyr_factor_core_factor_dag_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_factor_dag_dag_py
-    src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
-    src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_metrics_py
-    src_zephyr_factor_core_evaluation_init_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
-    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_grayscale_rollout_py
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
     src_zephyr_factor_governance_engine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_six_step_flow_py
-    src_zephyr_factor_governance_factor_pool_manager_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
+    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
+    src_zephyr_factor_governance_grayscale_rollout_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
     src_zephyr_factor_governance_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
+    src_zephyr_factor_governance_factor_pool_manager_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
+    src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
+    src_zephyr_factor_governance_abs001_gate_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_init_py
     src_zephyr_factor_core_factor_dag_dag_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_core_evaluation_backtest_py
-    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
     src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_lifecycle_state_machine_py
+    src_zephyr_factor_governance_six_step_flow_py -->|导入依赖 / import_depends| src_zephyr_factor_governance_abs001_gate_py
     tests_factor_test_intraday_factor_loop_py -->|测试依赖 / test_depends| src_zephyr_factor_core_intraday_factor_loop_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
