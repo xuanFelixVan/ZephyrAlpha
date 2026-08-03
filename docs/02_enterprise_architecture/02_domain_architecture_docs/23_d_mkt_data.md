@@ -53,14 +53,14 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_market_data_init_py["zephyr/market_data 包入口<br/>行情数据 包入口，整合行情数据相关子模块导出<br/>文件: market_data/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_extensions_init_py["market_data/_extensions 包入口<br/>行情数据/扩展 包入口，整合扩展相关子模块导出<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_api_init_py["market_data/api 包入口<br/>行情数据/接口 包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_core_init_py["market_data/core 包入口<br/>行情数据/核心 包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_infrastructure_init_py["market_data/infrastructure 包入口<br/>行情数据/基础设施<br/>包入口，整合基础设施相关子模块导出<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_models_init_py["market_data/models 包入口<br/>行情数据/模型 包入口，整合模型相关子模块导出<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_init_py["zephyr/market_data 包入口<br/>管理zephyr.market_data子包的加载和懒导入<br/>文件: market_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_extensions_init_py["market_data/_extensions 包入口<br/>管理market_data._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_api_init_py["market_data/api 包入口<br/>管理market_data.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_core_init_py["market_data/core 包入口<br/>管理market_data.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_infrastructure_init_py["market_data/infrastructure 包入口<br/>管理market_data.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_models_init_py["market_data/models 包入口<br/>管理market_data.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_normalized_market_data_producer_init_py["market_data/normalized_market_data_producer<br/>包入口<br/>NormalizedMarketData<br/>生产者包——D_MKT_DATA→D_FACTOR 数据供给。<br/>文件: normalized_market_data_producer<br/>/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_services_init_py["market_data/services 包入口<br/>行情数据/服务 包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_services_init_py["market_data/services 包入口<br/>管理market_data.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     tests_market_data_connectors_test_connector_base_py["connectors/test_connector_base<br/>MOD-MKT-003 Connector Base 单元测试.<br/>文件: connectors/test_connector_base.py<br/>(生产态 / production)"]
     tests_market_data_connectors_test_connector_manager_py["connectors/test_connector_manager<br/>MOD-MKT-003 Connector Manager 单元测试.<br/>文件: connectors/test_connector_manager.py<br/>(生产态 / production)"]
     tests_market_data_failover_test_failover_manager_py["failover/test_failover_manager<br/>MOD-MKT-004 Failover Manager 单元测试.<br/>文件: failover/test_failover_manager.py<br/>(生产态 / production)"]
@@ -82,10 +82,10 @@ flowchart TD
     tests_market_data_raw_data_cache_test_raw_data_cache_py ~~~ tests_market_data_test_autoload_py
     tests_market_data_test_autoload_py ~~~ tests_market_data_test_vendor_base_py
     tests_market_data_test_vendor_base_py ~~~ tests_market_data_test_vendor_registry_py
-    src_zephyr_market_data_autoload_py["自动加载<br/>数据的加载器，读取并加载配置/数据到内存<br/>autoload<br/>文件: market_data/autoload.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_autoload_py["market_data/autoload<br/>D_MKT_DATA — Autoload (自动加载器)<br/>文件: market_data/autoload.py<br/>(生产态 / production)"]
     src_zephyr_market_data_connectors_init_py["market_data/connectors 包入口<br/>D_MKT_DATA — Connectors (行情数据连接器)<br/>文件: connectors/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_failover_init_py["market_data/failover 包入口<br/>D_MKT_DATA — Failover (故障切换)<br/>文件: failover/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>从 ClickHouse c1_market.kline_daily<br/>加载日K行情，转为 CTR-001 NormalizedMarketData<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["normalized_market_data_producer/producer<br/>NormalizedMarketData<br/>生产者——D_MKT_DATA→D_FACTOR 数据供给。<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
     src_zephyr_market_data_raw_data_cache_init_py["market_data/raw_data_cache 包入口<br/>D_MKT_DATA — Raw Data Cache (原始数据缓存)<br/>文件: raw_data_cache/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_autoload_py ~~~ src_zephyr_market_data_connectors_init_py
     src_zephyr_market_data_connectors_init_py ~~~ src_zephyr_market_data_failover_init_py
@@ -97,38 +97,38 @@ flowchart TD
     src_zephyr_market_data_connectors_manager_py ~~~ src_zephyr_market_data_failover_manager_py
     src_zephyr_market_data_failover_manager_py ~~~ src_zephyr_market_data_raw_data_cache_cache_py
     src_zephyr_market_data_connectors_base_py["connectors/base<br/>D_MKT_DATA — Connector Base (行情数据连接器基类)<br/>文件: connectors/base.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_vendor_registry_py["vendor注册表<br/>数据的注册表，登记和查询已注册的条目<br/>vendor_registry<br/>文件: market_data/vendor_registry.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_vendor_registry_py["market_data/vendor_registry<br/>D_MKT_DATA — Vendor Registry (行情数据源注册表)<br/>文件: market_data/vendor_registry.py<br/>(生产态 / production)"]
     src_zephyr_market_data_connectors_base_py ~~~ src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_vendor_base_py["vendor基类<br/>数据的基类，定义抽象接口供子类实现<br/>vendor_base<br/>文件: market_data/vendor_base.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_vendor_base_py["market_data/vendor_base<br/>D_MKT_DATA — Vendor Base (行情数据源基类)<br/>文件: market_data/vendor_base.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_autoload_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
+    src_zephyr_market_data_autoload_py -->|runtime / runtime| src_zephyr_market_data_vendor_registry_py
+    src_zephyr_market_data_autoload_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_registry_py
     src_zephyr_market_data_vendor_registry_py -->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_vendor_registry_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
+    src_zephyr_market_data_connectors_base_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_connectors_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_connectors_base_py
     src_zephyr_market_data_connectors_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_connectors_manager_py
-    src_zephyr_market_data_connectors_base_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
-    src_zephyr_market_data_connectors_manager_py -->|导入依赖 / import_depends| src_zephyr_market_data_connectors_base_py
-    src_zephyr_market_data_autoload_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
-    src_zephyr_market_data_autoload_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_autoload_py -->|runtime / runtime| src_zephyr_market_data_vendor_registry_py
     src_zephyr_market_data_failover_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_failover_manager_py
+    src_zephyr_market_data_connectors_manager_py -->|导入依赖 / import_depends| src_zephyr_market_data_connectors_base_py
     src_zephyr_market_data_failover_manager_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_failover_manager_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     src_zephyr_market_data_raw_data_cache_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_raw_data_cache_cache_py
-    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
-    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_registry_py
-    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_autoload_py
-    tests_market_data_connectors_test_connector_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
-    tests_market_data_connectors_test_connector_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_init_py
+    src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     tests_market_data_test_vendor_registry_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
     tests_market_data_test_vendor_registry_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_registry_py
-    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
-    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_init_py
-    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_manager_py
     tests_market_data_test_vendor_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
-    tests_market_data_raw_data_cache_test_raw_data_cache_py -->|测试依赖 / test_depends| src_zephyr_market_data_raw_data_cache_init_py
+    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_autoload_py
+    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
+    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_registry_py
+    tests_market_data_connectors_test_connector_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
+    tests_market_data_connectors_test_connector_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_init_py
     tests_market_data_failover_test_failover_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
     tests_market_data_failover_test_failover_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_registry_py
     tests_market_data_failover_test_failover_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_failover_init_py
+    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
+    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_init_py
+    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_manager_py
+    tests_market_data_raw_data_cache_test_raw_data_cache_py -->|测试依赖 / test_depends| src_zephyr_market_data_raw_data_cache_init_py
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_market_data_autoload_py -->|runtime / runtime| D_DATA
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -162,14 +162,14 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_market_data_init_py["zephyr/market_data 包入口<br/>行情数据 包入口，整合行情数据相关子模块导出<br/>文件: market_data/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_extensions_init_py["market_data/_extensions 包入口<br/>行情数据/扩展 包入口，整合扩展相关子模块导出<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_api_init_py["market_data/api 包入口<br/>行情数据/接口 包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_core_init_py["market_data/core 包入口<br/>行情数据/核心 包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_infrastructure_init_py["market_data/infrastructure 包入口<br/>行情数据/基础设施<br/>包入口，整合基础设施相关子模块导出<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_models_init_py["market_data/models 包入口<br/>行情数据/模型 包入口，整合模型相关子模块导出<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_init_py["zephyr/market_data 包入口<br/>管理zephyr.market_data子包的加载和懒导入<br/>文件: market_data/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_extensions_init_py["market_data/_extensions 包入口<br/>管理market_data._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_api_init_py["market_data/api 包入口<br/>管理market_data.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_core_init_py["market_data/core 包入口<br/>管理market_data.core子包的加载和懒导入<br/>文件: core/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_infrastructure_init_py["market_data/infrastructure 包入口<br/>管理market_data.infrastructure子包的加载和懒导入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_models_init_py["market_data/models 包入口<br/>管理market_data.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_normalized_market_data_producer_init_py["market_data/normalized_market_data_producer<br/>包入口<br/>NormalizedMarketData<br/>生产者包——D_MKT_DATA→D_FACTOR 数据供给。<br/>文件: normalized_market_data_producer<br/>/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_services_init_py["market_data/services 包入口<br/>行情数据/服务 包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_services_init_py["market_data/services 包入口<br/>管理market_data.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     tests_market_data_connectors_test_connector_base_py["connectors/test_connector_base<br/>MOD-MKT-003 Connector Base 单元测试.<br/>文件: connectors/test_connector_base.py<br/>(生产态 / production)"]
     tests_market_data_connectors_test_connector_manager_py["connectors/test_connector_manager<br/>MOD-MKT-003 Connector Manager 单元测试.<br/>文件: connectors/test_connector_manager.py<br/>(生产态 / production)"]
     tests_market_data_failover_test_failover_manager_py["failover/test_failover_manager<br/>MOD-MKT-004 Failover Manager 单元测试.<br/>文件: failover/test_failover_manager.py<br/>(生产态 / production)"]
@@ -191,10 +191,10 @@ flowchart TD
     tests_market_data_raw_data_cache_test_raw_data_cache_py ~~~ tests_market_data_test_autoload_py
     tests_market_data_test_autoload_py ~~~ tests_market_data_test_vendor_base_py
     tests_market_data_test_vendor_base_py ~~~ tests_market_data_test_vendor_registry_py
-    src_zephyr_market_data_autoload_py["自动加载<br/>数据的加载器，读取并加载配置/数据到内存<br/>autoload<br/>文件: market_data/autoload.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_autoload_py["market_data/autoload<br/>D_MKT_DATA — Autoload (自动加载器)<br/>文件: market_data/autoload.py<br/>(生产态 / production)"]
     src_zephyr_market_data_connectors_init_py["market_data/connectors 包入口<br/>D_MKT_DATA — Connectors (行情数据连接器)<br/>文件: connectors/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_failover_init_py["market_data/failover 包入口<br/>D_MKT_DATA — Failover (故障切换)<br/>文件: failover/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_normalized_market_data_producer_producer_py["生产者<br/>从 ClickHouse c1_market.kline_daily<br/>加载日K行情，转为 CTR-001 NormalizedMarketData<br/>producer<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_normalized_market_data_producer_producer_py["normalized_market_data_producer/producer<br/>NormalizedMarketData<br/>生产者——D_MKT_DATA→D_FACTOR 数据供给。<br/>文件: normalized_market_data_producer<br/>/producer.py<br/>(生产态 / production)"]
     src_zephyr_market_data_raw_data_cache_init_py["market_data/raw_data_cache 包入口<br/>D_MKT_DATA — Raw Data Cache (原始数据缓存)<br/>文件: raw_data_cache/__init__.py<br/>(生产态 / production)"]
     src_zephyr_market_data_autoload_py ~~~ src_zephyr_market_data_connectors_init_py
     src_zephyr_market_data_connectors_init_py ~~~ src_zephyr_market_data_failover_init_py
@@ -206,38 +206,38 @@ flowchart TD
     src_zephyr_market_data_connectors_manager_py ~~~ src_zephyr_market_data_failover_manager_py
     src_zephyr_market_data_failover_manager_py ~~~ src_zephyr_market_data_raw_data_cache_cache_py
     src_zephyr_market_data_connectors_base_py["connectors/base<br/>D_MKT_DATA — Connector Base (行情数据连接器基类)<br/>文件: connectors/base.py<br/>(生产态 / production)"]
-    src_zephyr_market_data_vendor_registry_py["vendor注册表<br/>数据的注册表，登记和查询已注册的条目<br/>vendor_registry<br/>文件: market_data/vendor_registry.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_vendor_registry_py["market_data/vendor_registry<br/>D_MKT_DATA — Vendor Registry (行情数据源注册表)<br/>文件: market_data/vendor_registry.py<br/>(生产态 / production)"]
     src_zephyr_market_data_connectors_base_py ~~~ src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_vendor_base_py["vendor基类<br/>数据的基类，定义抽象接口供子类实现<br/>vendor_base<br/>文件: market_data/vendor_base.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_vendor_base_py["market_data/vendor_base<br/>D_MKT_DATA — Vendor Base (行情数据源基类)<br/>文件: market_data/vendor_base.py<br/>(生产态 / production)"]
+    src_zephyr_market_data_autoload_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
+    src_zephyr_market_data_autoload_py -->|runtime / runtime| src_zephyr_market_data_vendor_registry_py
+    src_zephyr_market_data_autoload_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_registry_py
     src_zephyr_market_data_vendor_registry_py -->|import / import| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_vendor_registry_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
+    src_zephyr_market_data_connectors_base_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_connectors_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_connectors_base_py
     src_zephyr_market_data_connectors_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_connectors_manager_py
-    src_zephyr_market_data_connectors_base_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
-    src_zephyr_market_data_connectors_manager_py -->|导入依赖 / import_depends| src_zephyr_market_data_connectors_base_py
-    src_zephyr_market_data_autoload_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
-    src_zephyr_market_data_autoload_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_autoload_py -->|runtime / runtime| src_zephyr_market_data_vendor_registry_py
     src_zephyr_market_data_failover_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_failover_manager_py
+    src_zephyr_market_data_connectors_manager_py -->|导入依赖 / import_depends| src_zephyr_market_data_connectors_base_py
     src_zephyr_market_data_failover_manager_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_base_py
     src_zephyr_market_data_failover_manager_py -->|导入依赖 / import_depends| src_zephyr_market_data_vendor_registry_py
-    src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     src_zephyr_market_data_raw_data_cache_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_raw_data_cache_cache_py
-    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
-    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_registry_py
-    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_autoload_py
-    tests_market_data_connectors_test_connector_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
-    tests_market_data_connectors_test_connector_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_init_py
+    src_zephyr_market_data_normalized_market_data_producer_init_py -->|导入依赖 / import_depends| src_zephyr_market_data_normalized_market_data_producer_producer_py
     tests_market_data_test_vendor_registry_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
     tests_market_data_test_vendor_registry_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_registry_py
-    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
-    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_init_py
-    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_manager_py
     tests_market_data_test_vendor_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
-    tests_market_data_raw_data_cache_test_raw_data_cache_py -->|测试依赖 / test_depends| src_zephyr_market_data_raw_data_cache_init_py
+    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_autoload_py
+    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
+    tests_market_data_test_autoload_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_registry_py
+    tests_market_data_connectors_test_connector_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
+    tests_market_data_connectors_test_connector_base_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_init_py
     tests_market_data_failover_test_failover_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
     tests_market_data_failover_test_failover_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_registry_py
     tests_market_data_failover_test_failover_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_failover_init_py
+    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_vendor_base_py
+    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_init_py
+    tests_market_data_connectors_test_connector_manager_py -->|测试依赖 / test_depends| src_zephyr_market_data_connectors_manager_py
+    tests_market_data_raw_data_cache_test_raw_data_cache_py -->|测试依赖 / test_depends| src_zephyr_market_data_raw_data_cache_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -257,22 +257,22 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 自动加载 / autoload (market_data/autoload.py) | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | runtime / runtime |
-| 2 | 生产者 / producer (normalized_market_data_producer/produc... | → | D_DATA 数据接入层: 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
-| 3 | 生产者 / producer (normalized_market_data_producer/produc... | → | D_DATA 数据接入层: ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
-| 4 | 生产者 / producer (normalized_market_data_producer/produc... | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
-| 5 | 包入口 / __init__ (market_data/__init__.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
-| 6 | D_MKT_DATA — Connector Base (行情数据连接器基类) (connec... | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
-| 7 | 生产者 / producer (normalized_market_data_producer/produc... | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
-| 8 | vendor基类 / vendor_base (market_data/vendor_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / market_data (contracts/market_data.py) | 导入依赖 / import_depends |
-| 9 | MOD-MKT-002 Vendor Base 单元测试. (market_data/test_vendo... | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / market_data (contracts/market_data.py) | 测试依赖 / test_depends |
-| 10 | 自动加载 / autoload (market_data/autoload.py) | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 11 | D_MKT_DATA — Connector Base (行情数据连接器基类) (connec... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 12 | D_MKT_DATA — Connector Manager (连接器管理器) (connector... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 13 | D_MKT_DATA — Failover Manager (故障切换管理器) (failover... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 14 | D_MKT_DATA — Raw Data Cache 实现 (原始数据缓存) (raw_dat... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 15 | vendor基类 / vendor_base (market_data/vendor_base.py) | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 16 | vendor注册表 / vendor_registry (market_data/vendor_regist... | → | D_SHARED 共享服务: 错误 / errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 1 | D_MKT_DATA — Autoload (自动加载器) (market_data/autoload.py) | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | runtime / runtime |
+| 2 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
+| 3 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
+| 4 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
+| 5 | market_data/__init__.py | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | 导入依赖 / import_depends |
+| 6 | D_MKT_DATA — Connector Base (行情数据连接器基类) (connec... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | 导入依赖 / import_depends |
+| 7 | NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | 导入依赖 / import_depends |
+| 8 | D_MKT_DATA — Vendor Base (行情数据源基类) (market_data/v... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | 导入依赖 / import_depends |
+| 9 | MOD-MKT-002 Vendor Base 单元测试. (market_data/test_vendo... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | 测试依赖 / test_depends |
+| 10 | D_MKT_DATA — Autoload (自动加载器) (market_data/autoload.py) | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 11 | D_MKT_DATA — Connector Base (行情数据连接器基类) (connec... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 12 | D_MKT_DATA — Connector Manager (连接器管理器) (connector... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 13 | D_MKT_DATA — Failover Manager (故障切换管理器) (failover... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 14 | D_MKT_DATA — Raw Data Cache 实现 (原始数据缓存) (raw_dat... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 15 | D_MKT_DATA — Vendor Base (行情数据源基类) (market_data/v... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 16 | D_MKT_DATA — Vendor Registry (行情数据源注册表) (market_... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
