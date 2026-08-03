@@ -21,8 +21,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 超容域 | 7 |
-| 接近超容域（>80%） | 3 |
+| 超容域 | 8 |
+| 接近超容域（>80%） | 2 |
 | 空域（0模块） | 17 |
 
 ## 超容域清单（需拆分）
@@ -30,10 +30,11 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
 | D_DATA | 数据接入层 | 168 | 150 | +18 |
-| D_GOVERNANCE | 生命周期管理 | 224 | 150 | +74 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 175 | 150 | +25 |
-| D_GOV_SCRIPTS | 脚本治理 | 397 | 150 | +247 |
-| D_INFRA_RUNTIME | 运行时集成 | 167 | 150 | +17 |
+| D_GOVERNANCE | 生命周期管理 | 455 | 150 | +305 |
+| D_GOV_AUDIT | 审计追踪 | 190 | 150 | +40 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 206 | 150 | +56 |
+| D_GOV_SCRIPTS | 脚本治理 | 411 | 150 | +261 |
+| D_INFRA_RUNTIME | 运行时集成 | 171 | 150 | +21 |
 | D_SECURITY | 对抗验证 | 166 | 150 | +16 |
 | D_SHARED | 共享服务 | 184 | 150 | +34 |
 
@@ -43,7 +44,6 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|
 | D_AUTONOMY_CORE | 自治核心 | 130 | 150 | 86.7% |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | 125 | 150 | 83.3% |
-| D_GOV_AUDIT | 审计追踪 | 123 | 150 | 82.0% |
 
 ## 空域清单（0模块，待开发）
 
@@ -95,28 +95,28 @@ ttl: permanent
 | D_EXEC_SIM | 执行仿真 | L2_domain | 7 | 150 | 4.7% | 正常 |
 | D_EX_CORE | 执行核心 | L2_domain | 20 | 150 | 13.3% | 正常 |
 | D_EX_SOR | 执行路由 | L2_domain | 17 | 150 | 11.3% | 正常 |
-| D_FACTOR | 因子 | L2_domain | 46 | 150 | 30.7% | 正常 |
+| D_FACTOR | 因子 | L2_domain | 65 | 150 | 43.3% | 正常 |
 | D_FBL_DETECTORS | 反馈检测器 | L1_foundation | 65 | 150 | 43.3% | 正常 |
 | D_FBL_DIAGNOSERS | 反馈诊断器 | L1_foundation | 76 | 150 | 50.7% | 正常 |
 | D_FBL_VERIFICATION | 反馈验证 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | L1_foundation | 125 | 150 | 83.3% | 接近超容 |
 | D_FRONTEND | 前端 | L2_domain | 20 | 150 | 13.3% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 12 | 150 | 8.0% | 正常 |
-| D_GOVERNANCE | 生命周期管理 | L2_domain | 224 | 150 | 149.3% | 超容 |
-| D_GOV_AUDIT | 审计追踪 | L2_domain | 123 | 150 | 82.0% | 接近超容 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 175 | 150 | 116.7% | 超容 |
+| D_GOVERNANCE | 生命周期管理 | L2_domain | 455 | 150 | 303.3% | 超容 |
+| D_GOV_AUDIT | 审计追踪 | L2_domain | 190 | 150 | 126.7% | 超容 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 206 | 150 | 137.3% | 超容 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | 漂移检测 | L2_domain | 74 | 150 | 49.3% | 正常 |
-| D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 42 | 150 | 28.0% | 正常 |
-| D_GOV_OPS_RESILIENCE | 运维弹性治理 | L1_foundation | 91 | 150 | 60.7% | 正常 |
+| D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 114 | 150 | 76.0% | 正常 |
+| D_GOV_OPS_RESILIENCE | 运维弹性治理 | L1_foundation | 115 | 150 | 76.7% | 正常 |
 | D_GOV_REPAIR | 治理修复 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_GOV_RULE | 规则治理 | L2_domain | 35 | 150 | 23.3% | 正常 |
-| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 397 | 150 | 264.7% | 超容 |
+| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 411 | 150 | 274.0% | 超容 |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | L0_infrastructure | 26 | 150 | 17.3% | 正常 |
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | 回滚恢复 | L0_infrastructure | 55 | 150 | 36.7% | 正常 |
-| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 167 | 150 | 111.3% | 超容 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 171 | 150 | 114.0% | 超容 |
 | D_INFRA_TELEMETRY | 可观测性 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INTEGRATION | 管线路由 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_INTEGRATION_GATEWAY | 集成网关 | L1_foundation | 0 | 150 | 0.0% | 空 |
