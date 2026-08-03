@@ -151,6 +151,21 @@ repos:
         files: "^.*"
         description: "命名规范门禁合并簇——GATE-11（全库命名规范 --warn-only --scan）+ GATE-11-SSOT（N-16 fallback 与 YAML 一致性），run_gate_chain 顺序执行"
 
+      # ── GATE-DOC-NODE-ID: 文档物理ID硬编码门禁（文档引用铁律，2026-08-04）──
+      # 防止 blueprint.md/文档硬编码 depgraph 物理 ID（node_id/edge_id）。
+      # 物理 ID 是 PG 自增主键，删除重建即变；文档硬编码=死引用温床。
+      # 文档只写稳定标识（module_id/blueprint_id/path），需要 ID 时查 depgraph。
+      # 二元判定：文档出现 node_id=数字 / edge_id=数字 → 违规 hard block。
+      # 背景：8个 blueprint.md 曾硬编码 node_id，DB 节点消失后成死引用（2026-08-04 审查）。
+      - id: gate-doc-node-id
+        name: "GATE-DOC-NODE-ID: 文档物理ID硬编码检测（文档引用铁律）"
+        entry: python scripts/governance/d3_metadata/check_doc_node_id_hardcode.py --ci
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^docs/.*\\.md$"
+        description: "检测 docs/ 下 .md 文件硬编码 node_id/edge_id 物理ID（自增易变，文档禁写，查DB获取）"
+
       # ── GATE-ID-UNIQ: pre-commit hook id 唯一性门禁 ──
       # 权威依据：commit a09e510ec 历史教训（两个 SSoT 门禁同用 id: gate-ssot，后者覆盖前者）
       # 真源声明：本任务治本——加自动化门禁，防止未来 AI 再造一对重复 id

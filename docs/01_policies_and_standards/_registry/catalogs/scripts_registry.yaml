@@ -539,6 +539,10 @@ items:
   name: check_blueprint_compliance.py
   node_type: script
   status: active
+- file: scripts/governance/d3_metadata/check_doc_node_id_hardcode.py
+  name: check_doc_node_id_hardcode.py
+  node_type: script
+  status: active
 - file: scripts/governance/d3_metadata/check_frontmatter_metadata.py
   name: check_frontmatter_metadata.py
   node_type: script
