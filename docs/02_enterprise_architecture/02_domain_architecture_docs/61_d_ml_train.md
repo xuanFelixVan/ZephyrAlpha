@@ -66,8 +66,10 @@ flowchart TD
     src_zephyr_ml_train_trainer_base_py["ml_train/trainer_base<br/>D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_GOV_ENFORCEMENT
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_pipeline -.->|data / data| D_DATA
     D_ORCHESTRATOR["代理编排器<br/>代理编排器，负责 Agent<br/>任务全生命周期：任务入队、调度、沙箱执行、幻觉检<br/>测和收尾归档<br/>Agent Orchestrator<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -76,7 +78,6 @@ flowchart TD
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_DATA
     D_DATA_GOV["数据治理<br/>数据治理，负责数据标准、元数据管理和数据生命周期<br/>治理<br/>Data Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_DATA_GOV
-    src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_DATA
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -96,7 +97,7 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py production
     class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_training_dataset_manager,src_zephyr_ml_train_training_pipeline design
-    class D_DATA,D_ORCHESTRATOR,D_DATA_GOV,D_SHARED,D_TRADING,D_INTELLIGENCE external_prod
+    class D_GOV_ENFORCEMENT,D_DATA,D_ORCHESTRATOR,D_DATA_GOV,D_SHARED,D_TRADING,D_INTELLIGENCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -110,8 +111,8 @@ flowchart TD
     src_zephyr_ml_train_inference_base_py["ml_train/inference_base<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_trainer_base_py["ml_train/trainer_base<br/>D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -147,10 +148,10 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | training_dataset_manager/ | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
-| 2 | training_dataset_manager/ | → | D_DATA 数据接入层: 质量门禁 / quality_gate (data/quality_gate.py) | data / data |
-| 3 | training_dataset_manager/ | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | data / data |
-| 4 | training_pipeline/ | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
-| 5 | training_dataset_manager/ | → | D_DATA_GOV 数据治理: lineage追踪器 / lineage_tracker (core/lineage_tracker.py) | data / data |
+| 2 | training_dataset_manager/ | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | data / data |
+| 3 | training_pipeline/ | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
+| 4 | training_dataset_manager/ | → | D_DATA_GOV 数据治理: lineage追踪器 / lineage_tracker (core/lineage_tracker.py) | data / data |
+| 5 | training_dataset_manager/ | → | D_GOV_ENFORCEMENT 规则执行: D_DATA — Data Quality Gate (rule_enforcement/quality_gat... | data / data |
 | 6 | training_pipeline/ | → | D_ORCHESTRATOR 代理编排器: governance/model_registry.py | runtime / runtime |
 | 7 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: experiment/model_serving_response.py | 导入依赖 / import_depends |
 | 8 | D_ML_TRAIN — Default Inference Engine (implementations/d... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
@@ -170,7 +171,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 6 个外部域直接连接（出边 11 条 + 入边 5 条 = 16 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 7 个外部域直接连接（出边 11 条 + 入边 5 条 = 16 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -180,12 +181,14 @@ graph LR
     D_SHARED["D_SHARED<br/>共享服务"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_DATA_GOV["D_DATA_GOV<br/>数据治理"]
+    D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
-    D_ML_TRAIN -->|4条 data / data| D_DATA
+    D_ML_TRAIN -->|3条 data / data| D_DATA
     D_ML_TRAIN -->|3条 导入依赖 / import_depends| D_SHARED
     D_ML_TRAIN -->|2条 导入依赖 / import_depends| D_TRADING
     D_ML_TRAIN -->|1条 data / data| D_DATA_GOV
+    D_ML_TRAIN -->|1条 data / data| D_GOV_ENFORCEMENT
     D_ML_TRAIN -->|1条 runtime / runtime| D_ORCHESTRATOR
     D_INTELLIGENCE -->|4条 导入依赖 / import_depends| D_ML_TRAIN
     D_SHARED -->|1条 导入依赖 / import_depends| D_ML_TRAIN

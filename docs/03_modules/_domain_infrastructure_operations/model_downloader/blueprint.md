@@ -37,7 +37,7 @@ references:
   - "AGENTS.md §6.1 data/models/ 目录生命周期"
 codification_level: L2
 codification_at: "2026-08-03"
-responsibility_domain: D_INFRA_OPS
+responsibility_domain: 
 build_status: generated
 design_maturity: production
 ---
@@ -101,3 +101,30 @@ python scripts/ops/download_models.py --dry-run     # 预览（不下载）
 | 下载失败 | exit 1 | 提示网络/代理/Token 排查 |
 | 验证失败（文件缺失/大小异常） | exit 1 | 提示 --force 重下 |
 | 全部成功 | exit 0 | — |
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-045`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-045` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-045` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-045 | MOD-INF-045 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | generated | generated | ✅ |
+| file_count | 1 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
