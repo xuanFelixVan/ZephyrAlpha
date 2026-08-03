@@ -20,7 +20,7 @@ date: 2026-08-03
 | 阶段 | 选股（stock_selection） | Stage | 选股 |
 | 环节数 | 83 | Steps | 83 |
 | 流转边 | 17 | Edges | 17 |
-| 状态分布 | 🟦 运营态（已建）=64 ｜ 🟨 候选态（候选池）=13 ｜ 🟥 弃用态=3 ｜ 🟧 设计态（待施工）=3 | State Distribution | 🟦 运营态（已建）=64 ｜ 🟨 候选态（候选池）=13 ｜ 🟥 弃用态=3 ｜ 🟧 设计态（待施工）=3 |
+| 状态分布 | 🟦 运营态（已建）=67 ｜ 🟨 候选态（候选池）=13 ｜ 🟧 设计态（待施工）=3 | State Distribution | 🟦 运营态（已建）=67 ｜ 🟨 候选态（候选池）=13 ｜ 🟧 设计态（待施工）=3 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -40,13 +40,13 @@ date: 2026-08-03
 %% 选股阶段图（第 1/2 页）
 flowchart TD
     subgraph sg_BM_SEL_01 ["数据接入与预处理"]
-        BM_SEL_01["【BM-SEL-01 数据接入与预处理】<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Data Ingestion &amp; Preprocessing】"]
-        BM_SEL_01_A["【BM-SEL-01-A 供应商注册与适配器】<br/>把所有数据源（miniQMT/iFind<br/>/tushare）登记成统一供应商清单，每个源配一个适配<br/>器把方言翻译成标准格式。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Provider Registry &amp; Adapter】"]
-        BM_SEL_01_B["【BM-SEL-01-B 行情连接器管理】<br/>管所有行情连接的生命周期——建连、保活、断线重连、<br/>优雅关闭，别让连接漏血。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Market Data Connector Manager】"]
-        BM_SEL_01_C["【BM-SEL-01-C 故障切换与Failover】<br/>主数据源挂了自动切到备用源，切换过程对下游透明，<br/>不让行情断流。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Failover &amp; Fault Tolerance】"]
-        BM_SEL_01_D["【BM-SEL-01-D 自动加载与热切换】<br/>新数据源上线不用重启服务——热插拔注册即生效，老源<br/>下线平滑迁移。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Auto-loading &amp; Hot-swap】"]
-        BM_SEL_01_E["【BM-SEL-01-E 原始数据缓存】<br/>收进来的原始行情先存一份缓存，后面要回放或补数时<br/>不用重新拉。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Raw Data Cache】"]
-        BM_SEL_01_F["【BM-SEL-01-F 标准化行情产出】<br/>把各源方言翻译成统一标准格式（OHLCV/快照<br/>/Tick），下游不用关心数据从哪来。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Standardized Market Data Output】"]
+        BM_SEL_01["【BM-SEL-01 数据接入与预处理】<br/>把外面来的行情、新闻、另类数据收进来洗干净，按热<br/>度分层存好，供后面所有环节使用。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Data Ingestion &amp; Preprocessing】"]
+        BM_SEL_01_A["【BM-SEL-01-A 供应商注册与适配器】<br/>把所有数据源（miniQMT/iFind<br/>/tushare）登记成统一供应商清单，每个源配一个适配<br/>器把方言翻译成标准格式。<br/>（生产态 / production）<br/>【Provider Registry &amp; Adapter】"]
+        BM_SEL_01_B["【BM-SEL-01-B 行情连接器管理】<br/>管所有行情连接的生命周期——建连、保活、断线重连、<br/>优雅关闭，别让连接漏血。<br/>（生产态 / production）<br/>【Market Data Connector Manager】"]
+        BM_SEL_01_C["【BM-SEL-01-C 故障切换与Failover】<br/>主数据源挂了自动切到备用源，切换过程对下游透明，<br/>不让行情断流。<br/>（生产态 / production）<br/>【Failover &amp; Fault Tolerance】"]
+        BM_SEL_01_D["【BM-SEL-01-D 自动加载与热切换】<br/>新数据源上线不用重启服务——热插拔注册即生效，老源<br/>下线平滑迁移。<br/>（生产态 / production）<br/>【Auto-loading &amp; Hot-swap】"]
+        BM_SEL_01_E["【BM-SEL-01-E 原始数据缓存】<br/>收进来的原始行情先存一份缓存，后面要回放或补数时<br/>不用重新拉。<br/>（生产态 / production）<br/>【Raw Data Cache】"]
+        BM_SEL_01_F["【BM-SEL-01-F 标准化行情产出】<br/>把各源方言翻译成统一标准格式（OHLCV/快照<br/>/Tick），下游不用关心数据从哪来。<br/>（生产态 / production）<br/>【Standardized Market Data Output】"]
         BM_SEL_01 -.->|嵌套| BM_SEL_01_A
         BM_SEL_01 -.->|嵌套| BM_SEL_01_B
         BM_SEL_01 -.->|嵌套| BM_SEL_01_C
@@ -55,16 +55,16 @@ flowchart TD
         BM_SEL_01 -.->|嵌套| BM_SEL_01_F
     end
     subgraph sg_BM_SEL_02 ["因子计算与信号生成"]
-        BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>选股阶段 / stock_selection<br/>（弃用态 / deprecated）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
-        BM_SEL_02_A["【BM-SEL-02-A 因子计算引擎】<br/>真正算因子的发动机——盘前批量算全量、盘中增量补，<br/>把行情变成可用的因子值。<br/>选股阶段 / stock_selection<br/>（弃用态 / deprecated）<br/>【Factor Compute Engine】"]
-        BM_SEL_02_B["【BM-SEL-02-B 因子注册表与池管理】<br/>所有因子登记造册——名字、公式、依赖、版本都在注册<br/>表里，池子满64个自动淘汰最差的。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Factor Registry &amp; Pool Management】"]
-        BM_SEL_02_C["【BM-SEL-02-C 因子管线双模调度】<br/>安排因子什么时候算——盘前一次性全算、盘中只补变化<br/>的部分，省算力又不丢新鲜度。<br/>选股阶段 / stock_selection<br/>（弃用态 / deprecated）<br/>【Factor Pipeline Dual-mode Scheduling】"]
-        BM_SEL_02_D["【BM-SEL-02-D 因子评估-IC/IR体系】<br/>给每个因子打分——IC（信息系数）看预测能力，IR<br/>（信息比率）看稳定性，分高留分低砍。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Factor Evaluation - IC/IR System】"]
-        BM_SEL_02_E["【BM-SEL-02-E 因子评估-相关性与语义去重】<br/>两个因子长得太像就留一个——算相关性砍冗余，再看语<br/>义描述防重复造轮子。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Factor Evaluation - Correlation &amp; Semantic<br/>Dedup】"]
-        BM_SEL_02_F["【BM-SEL-02-F 因子评估-分层回测与三级判断】<br/>把股票按因子值分5层看各层收益差——分层单调才说明<br/>因子有效，三级判断定去留。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Factor Evaluation - Stratified Backtest &amp;<br/>3-tier Judgment】"]
-        BM_SEL_02_G["【BM-SEL-02-G 因子衰减监控与归因】<br/>盯着因子别失效——IC<br/>持续下滑就报警，找出是市场变了还是因子本身坏了。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Factor Decay Monitoring &amp; Attribution】"]
-        BM_SEL_02_H["【BM-SEL-02-H 多因子合成与优化】<br/>把好因子揉成一个综合得分——不是简单加权，是用优化<br/>方法找最优组合权重。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Multi-factor Synthesis &amp; Optimization】"]
-        BM_SEL_02_I["【BM-SEL-02-I 因子治理-生命周期与门禁】<br/>管因子一辈子——从注册、评估、上线、观察到下线，每<br/>个阶段有门禁卡着，不让坏因子混进去。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Factor Governance - Lifecycle &amp; Gates】"]
+        BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
+        BM_SEL_02_A["【BM-SEL-02-A 因子计算引擎】<br/>真正算因子的发动机——盘前批量算全量、盘中增量补，<br/>把行情变成可用的因子值。<br/>（生产态 / production）<br/>【Factor Compute Engine】"]
+        BM_SEL_02_B["【BM-SEL-02-B 因子注册表与池管理】<br/>所有因子登记造册——名字、公式、依赖、版本都在注册<br/>表里，池子满64个自动淘汰最差的。<br/>（生产态 / production）<br/>【Factor Registry &amp; Pool Management】"]
+        BM_SEL_02_C["【BM-SEL-02-C 因子管线双模调度】<br/>安排因子什么时候算——盘前一次性全算、盘中只补变化<br/>的部分，省算力又不丢新鲜度。<br/>（生产态 / production）<br/>【Factor Pipeline Dual-mode Scheduling】"]
+        BM_SEL_02_D["【BM-SEL-02-D 因子评估-IC/IR体系】<br/>给每个因子打分——IC（信息系数）看预测能力，IR<br/>（信息比率）看稳定性，分高留分低砍。<br/>（生产态 / production）<br/>【Factor Evaluation - IC/IR System】"]
+        BM_SEL_02_E["【BM-SEL-02-E 因子评估-相关性与语义去重】<br/>两个因子长得太像就留一个——算相关性砍冗余，再看语<br/>义描述防重复造轮子。<br/>（生产态 / production）<br/>【Factor Evaluation - Correlation &amp; Semantic<br/>Dedup】"]
+        BM_SEL_02_F["【BM-SEL-02-F 因子评估-分层回测与三级判断】<br/>把股票按因子值分5层看各层收益差——分层单调才说明<br/>因子有效，三级判断定去留。<br/>（生产态 / production）<br/>【Factor Evaluation - Stratified Backtest &amp;<br/>3-tier Judgment】"]
+        BM_SEL_02_G["【BM-SEL-02-G 因子衰减监控与归因】<br/>盯着因子别失效——IC<br/>持续下滑就报警，找出是市场变了还是因子本身坏了。<br/>（生产态 / production）<br/>【Factor Decay Monitoring &amp; Attribution】"]
+        BM_SEL_02_H["【BM-SEL-02-H 多因子合成与优化】<br/>把好因子揉成一个综合得分——不是简单加权，是用优化<br/>方法找最优组合权重。<br/>（生产态 / production）<br/>【Multi-factor Synthesis &amp; Optimization】"]
+        BM_SEL_02_I["【BM-SEL-02-I 因子治理-生命周期与门禁】<br/>管因子一辈子——从注册、评估、上线、观察到下线，每<br/>个阶段有门禁卡着，不让坏因子混进去。<br/>（生产态 / production）<br/>【Factor Governance - Lifecycle &amp; Gates】"]
         BM_SEL_02 -.->|嵌套| BM_SEL_02_A
         BM_SEL_02 -.->|嵌套| BM_SEL_02_B
         BM_SEL_02 -.->|嵌套| BM_SEL_02_C
@@ -76,18 +76,18 @@ flowchart TD
         BM_SEL_02 -.->|嵌套| BM_SEL_02_I
     end
     subgraph sg_BM_SEL_22 ["短线选股评分卡"]
-        BM_SEL_22["【BM-SEL-22 短线选股评分卡】<br/>给短线标的打分——7个维度100分制评分（连板高度<br/>/封单强度/板块效应/分歧程度/市值流动性/封板时间<br/>/催化强度），再识别强庄股，专门服务短线和打板选<br/>股。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Short-Term Stock Selection Scorecard】"]
-        BM_SEL_22_A["【BM-SEL-22-A 机构选股评分器】<br/>从机构视角给股票打分——目标价空间40%+基本面30%+技<br/>术趋势20%+流动性10%，机构看好的票加分。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Institutional Stock Scorer】"]
-        BM_SEL_22_B["【BM-SEL-22-B 强庄股识别器】<br/>识别有没有强庄——看走势独立性、换手率异常、盘口神<br/>秘大单，三个特征同时出现大概率有庄。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Strong Dealer Detector】"]
+        BM_SEL_22["【BM-SEL-22 短线选股评分卡】<br/>给短线标的打分——7个维度100分制评分（连板高度<br/>/封单强度/板块效应/分歧程度/市值流动性/封板时间<br/>/催化强度），再识别强庄股，专门服务短线和打板选<br/>股。<br/>（生产态 / production）<br/>【Short-Term Stock Selection Scorecard】"]
+        BM_SEL_22_A["【BM-SEL-22-A 机构选股评分器】<br/>从机构视角给股票打分——目标价空间40%+基本面30%+技<br/>术趋势20%+流动性10%，机构看好的票加分。<br/>（生产态 / production）<br/>【Institutional Stock Scorer】"]
+        BM_SEL_22_B["【BM-SEL-22-B 强庄股识别器】<br/>识别有没有强庄——看走势独立性、换手率异常、盘口神<br/>秘大单，三个特征同时出现大概率有庄。<br/>（生产态 / production）<br/>【Strong Dealer Detector】"]
         subgraph sg_BM_SEL_22_C ["连板潜力评分卡"]
-            BM_SEL_22_C["【BM-SEL-22-C 连板潜力评分卡】<br/>给打板标的打分——7个维度100分制（连板高度<br/>/封单强度/板块效应/分歧程度/市值流动性/封板时间<br/>/催化强度），分高大概率连板。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Limit-up Potential Scorecard】"]
-            BM_SEL_22_C_1["【BM-SEL-22-C-1 连板高度维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_22_C_2["【BM-SEL-22-C-2 封单强度维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_22_C_3["【BM-SEL-22-C-3 板块效应维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_22_C_4["【BM-SEL-22-C-4 分歧程度维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_22_C_5["【BM-SEL-22-C-5 市值流动性维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_22_C_6["【BM-SEL-22-C-6 封板时间维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_22_C_7["【BM-SEL-22-C-7 催化强度维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
+            BM_SEL_22_C["【BM-SEL-22-C 连板潜力评分卡】<br/>给打板标的打分——7个维度100分制（连板高度<br/>/封单强度/板块效应/分歧程度/市值流动性/封板时间<br/>/催化强度），分高大概率连板。<br/>（生产态 / production）<br/>【Limit-up Potential Scorecard】"]
+            BM_SEL_22_C_1["【BM-SEL-22-C-1 连板高度维度】<br/>看标的现在第几个连板——连板越高越强，首板5分、2板<br/>12分、3板20分、4板以上满分25分。<br/>（生产态 / production）<br/>【Limit-up Height Dimension】"]
+            BM_SEL_22_C_2["【BM-SEL-22-C-2 封单强度维度】<br/>看封单有多大、撤不撤——封单占流通市值越大越稳，超<br/>过3%满分20分，频繁撤单要扣分。<br/>（生产态 / production）<br/>【Seal Order Strength Dimension】"]
+            BM_SEL_22_C_3["【BM-SEL-22-C-3 板块效应维度】<br/>看标的所属板块涨停多少——板块涨停家越多、涨幅越靠<br/>前，板块效应越强，满分15分。<br/>（生产态 / production）<br/>【Sector Effect Dimension】"]
+            BM_SEL_22_C_4["【BM-SEL-22-C-4 分歧程度维度】<br/>看封板时大家有没有分歧——缩量一致涨停满分15分，放<br/>量+多次炸板说明分歧大只给3分。<br/>（生产态 / production）<br/>【Divergence Degree Dimension】"]
+            BM_SEL_22_C_5["【BM-SEL-22-C-5 市值流动性维度】<br/>看市值大小和成交活不活——中小盘<br/>（30-150亿）流动性好满分10分，大盘折价，微盘有风险<br/>扣分。<br/>（生产态 / production）<br/>【Market Cap Liquidity Dimension】"]
+            BM_SEL_22_C_6["【BM-SEL-22-C-6 封板时间维度】<br/>看几点封的板——早盘10点前封板满分10分，午盘6分，<br/>尾盘才封只有3分。<br/>（生产态 / production）<br/>【Seal Time Dimension】"]
+            BM_SEL_22_C_7["【BM-SEL-22-C-7 催化强度维度】<br/>看有没有题材或消息刺激——强题材龙头+政策催化满分5<br/>分，没明确催化只给1分。<br/>（生产态 / production）<br/>【Catalyst Strength Dimension】"]
             BM_SEL_22_C -.->|嵌套| BM_SEL_22_C_1
             BM_SEL_22_C -.->|嵌套| BM_SEL_22_C_2
             BM_SEL_22_C -.->|嵌套| BM_SEL_22_C_3
@@ -96,22 +96,22 @@ flowchart TD
             BM_SEL_22_C -.->|嵌套| BM_SEL_22_C_6
             BM_SEL_22_C -.->|嵌套| BM_SEL_22_C_7
         end
-        BM_SEL_22_D["【BM-SEL-22-D 连板分歧程度评估器】<br/>判断连板能不能继续——分歧越大越危险，一致性越高越<br/>可能继续涨。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Limit-up Divergence Assessor】"]
+        BM_SEL_22_D["【BM-SEL-22-D 连板分歧程度评估器】<br/>判断连板能不能继续——分歧越大越危险，一致性越高越<br/>可能继续涨。<br/>（生产态 / production）<br/>【Limit-up Divergence Assessor】"]
         BM_SEL_22 -.->|嵌套| BM_SEL_22_A
         BM_SEL_22 -.->|嵌套| BM_SEL_22_B
         BM_SEL_22 -.->|嵌套| BM_SEL_22_C
         BM_SEL_22 -.->|嵌套| BM_SEL_22_D
     end
     subgraph sg_BM_SEL_23 ["游资接力情绪周期"]
-        BM_SEL_23["【BM-SEL-23 游资接力情绪周期】<br/>测游资接力情绪——6个因子打0-100分（连板高度<br/>/封单质量/涨停时间/开板次数/竞价强度<br/>/助攻梯队），再定位情绪周期4+1阶段（冰点/反核<br/>/主升/疯狂/退潮），不同阶段用不同策略。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Youzi Relay Emotion Cycle】"]
+        BM_SEL_23["【BM-SEL-23 游资接力情绪周期】<br/>测游资接力情绪——6个因子打0-100分（连板高度<br/>/封单质量/涨停时间/开板次数/竞价强度<br/>/助攻梯队），再定位情绪周期4+1阶段（冰点/反核<br/>/主升/疯狂/退潮），不同阶段用不同策略。<br/>（生产态 / production）<br/>【Youzi Relay Emotion Cycle】"]
         subgraph sg_BM_SEL_23_A ["6因子游资接力评分"]
-            BM_SEL_23_A["【BM-SEL-23-A 6因子游资接力评分】<br/>用6个因子给游资接力打0-100分——连板高度25分+封单<br/>质量20分+涨停时间15分+开板次数15分+竞价强度10分+<br/>助攻梯队10分。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【6-factor Hot Money Relay Score】"]
-            BM_SEL_23_A_1["【BM-SEL-23-A-1 连板高度因子】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_23_A_2["【BM-SEL-23-A-2 封单质量因子】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_23_A_3["【BM-SEL-23-A-3 涨停时间因子】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_23_A_4["【BM-SEL-23-A-4 开板次数因子】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_23_A_5["【BM-SEL-23-A-5 竞价强度因子】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_23_A_6["【BM-SEL-23-A-6 助攻梯队因子】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
+            BM_SEL_23_A["【BM-SEL-23-A 6因子游资接力评分】<br/>用6个因子给游资接力打0-100分——连板高度25分+封单<br/>质量20分+涨停时间15分+开板次数15分+竞价强度10分+<br/>助攻梯队10分。<br/>（生产态 / production）<br/>【6-factor Hot Money Relay Score】"]
+            BM_SEL_23_A_1["【BM-SEL-23-A-1 连板高度因子】<br/>看接力候选现在第几板——板数越高接力价值越大，3板<br/>以上满分25分，叠加晋级率修正。<br/>（生产态 / production）<br/>【Limit-up Height Factor】"]
+            BM_SEL_23_A_2["【BM-SEL-23-A-2 封单质量因子】<br/>看封单大不大、稳不稳——大封单且不撤单满分20分，小<br/>封单或频繁撤单低分。<br/>（生产态 / production）<br/>【Seal Order Quality Factor】"]
+            BM_SEL_23_A_3["【BM-SEL-23-A-3 涨停时间因子】<br/>看几点涨停——开盘秒板满分15分，早盘12分，午盘8分<br/>，尾盘才涨只有4分。<br/>（生产态 / production）<br/>【Limit-up Time Factor】"]
+            BM_SEL_23_A_4["【BM-SEL-23-A-4 开板次数因子】<br/>看封板期间开了几次板——0次开板满分15分，1次快速回<br/>封10分，多次开板只给3分。<br/>（生产态 / production）<br/>【Reopen Count Factor】"]
+            BM_SEL_23_A_5["【BM-SEL-23-A-5 竞价强度因子】<br/>看集合竞价表现——高开+放量竞价满分10分，平开低量<br/>只给2分。<br/>（生产态 / production）<br/>【Auction Strength Factor】"]
+            BM_SEL_23_A_6["【BM-SEL-23-A-6 助攻梯队因子】<br/>看同题材同梯队有没有一起涨停——梯队多涨停+领涨位<br/>次满分10分，孤板无梯队只给2分。<br/>（生产态 / production）<br/>【Support Echelon Factor】"]
             BM_SEL_23_A -.->|嵌套| BM_SEL_23_A_1
             BM_SEL_23_A -.->|嵌套| BM_SEL_23_A_2
             BM_SEL_23_A -.->|嵌套| BM_SEL_23_A_3
@@ -119,22 +119,22 @@ flowchart TD
             BM_SEL_23_A -.->|嵌套| BM_SEL_23_A_5
             BM_SEL_23_A -.->|嵌套| BM_SEL_23_A_6
         end
-        BM_SEL_23_B["【BM-SEL-23-B 情绪周期4+1阶段定位】<br/>判断当前情绪在哪个阶段——冰点/反核/主升/疯狂<br/>/退潮，不同阶段策略完全不同。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Sentiment Cycle 4+1 Phase Locator】"]
-        BM_SEL_23_C["【BM-SEL-23-C 情绪周期策略映射】<br/>不同情绪阶段用不同策略——冰点保守低吸、主升追龙头<br/>、退潮止损，把阶段映射到具体操作。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Sentiment Cycle Strategy Mapping】"]
+        BM_SEL_23_B["【BM-SEL-23-B 情绪周期4+1阶段定位】<br/>判断当前情绪在哪个阶段——冰点/反核/主升/疯狂<br/>/退潮，不同阶段策略完全不同。<br/>（生产态 / production）<br/>【Sentiment Cycle 4+1 Phase Locator】"]
+        BM_SEL_23_C["【BM-SEL-23-C 情绪周期策略映射】<br/>不同情绪阶段用不同策略——冰点保守低吸、主升追龙头<br/>、退潮止损，把阶段映射到具体操作。<br/>（生产态 / production）<br/>【Sentiment Cycle Strategy Mapping】"]
         BM_SEL_23 -.->|嵌套| BM_SEL_23_A
         BM_SEL_23 -.->|嵌套| BM_SEL_23_B
         BM_SEL_23 -.->|嵌套| BM_SEL_23_C
     end
     subgraph sg_BM_SEL_24 ["量化短线强度评级"]
-        BM_SEL_24["【BM-SEL-24 量化短线强度评级】<br/>量化角度评短线强度——6个维度打0-100分（价格动量<br/>/行业强度/相对强度/资金/技术<br/>/风险），评出A到E五级，作为双引擎融合的量化引擎<br/>输入。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Quant Short-Term Strength Rating】"]
+        BM_SEL_24["【BM-SEL-24 量化短线强度评级】<br/>量化角度评短线强度——6个维度打0-100分（价格动量<br/>/行业强度/相对强度/资金/技术<br/>/风险），评出A到E五级，作为双引擎融合的量化引擎<br/>输入。<br/>（生产态 / production）<br/>【Quant Short-Term Strength Rating】"]
         subgraph sg_BM_SEL_24_A ["6维度量化强度评分"]
-            BM_SEL_24_A["【BM-SEL-24-A 6维度量化强度评分】<br/>用6个维度给短线强度打0-100分——价格动量/行业强度<br/>/相对强度/资金/技术/风险，全面量化评估。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【6-dimension Quant Strength Score】"]
-            BM_SEL_24_A_1["【BM-SEL-24-A-1 价格动量Z-score维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_24_A_2["【BM-SEL-24-A-2 行业强度维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_24_A_3["【BM-SEL-24-A-3 相对强度维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_24_A_4["【BM-SEL-24-A-4 资金维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_24_A_5["【BM-SEL-24-A-5 技术维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_24_A_6["【BM-SEL-24-A-6 风险维度】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
+            BM_SEL_24_A["【BM-SEL-24-A 6维度量化强度评分】<br/>用6个维度给短线强度打0-100分——价格动量/行业强度<br/>/相对强度/资金/技术/风险，全面量化评估。<br/>（生产态 / production）<br/>【6-dimension Quant Strength Score】"]
+            BM_SEL_24_A_1["【BM-SEL-24-A-1 价格动量Z-score维度】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_24_A_2["【BM-SEL-24-A-2 行业强度维度】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_24_A_3["【BM-SEL-24-A-3 相对强度维度】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_24_A_4["【BM-SEL-24-A-4 资金维度】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_24_A_5["【BM-SEL-24-A-5 技术维度】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_24_A_6["【BM-SEL-24-A-6 风险维度】<br/>—<br/>（生产态 / production）"]
             BM_SEL_24_A -.->|嵌套| BM_SEL_24_A_1
             BM_SEL_24_A -.->|嵌套| BM_SEL_24_A_2
             BM_SEL_24_A -.->|嵌套| BM_SEL_24_A_3
@@ -142,24 +142,24 @@ flowchart TD
             BM_SEL_24_A -.->|嵌套| BM_SEL_24_A_5
             BM_SEL_24_A -.->|嵌套| BM_SEL_24_A_6
         end
-        BM_SEL_24_B["【BM-SEL-24-B A~E五级评级】<br/>把0-100分转成A到E五个等级——A级最强直接追，E级最<br/>弱直接弃，简单直观。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【A~E Five-tier Rating】"]
-        BM_SEL_24_C["【BM-SEL-24-C 双引擎基准权重配置】<br/>设定游资和量化的基准权重——默认游资60%+量化40%，<br/>这是融合的起点，后面情绪周期还会动态调。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Dual-engine Baseline Weight Config】"]
+        BM_SEL_24_B["【BM-SEL-24-B A~E五级评级】<br/>把0-100分转成A到E五个等级——A级最强直接追，E级最<br/>弱直接弃，简单直观。<br/>（生产态 / production）<br/>【A~E Five-tier Rating】"]
+        BM_SEL_24_C["【BM-SEL-24-C 双引擎基准权重配置】<br/>设定游资和量化的基准权重——默认游资60%+量化40%，<br/>这是融合的起点，后面情绪周期还会动态调。<br/>（生产态 / production）<br/>【Dual-engine Baseline Weight Config】"]
         BM_SEL_24 -.->|嵌套| BM_SEL_24_A
         BM_SEL_24 -.->|嵌套| BM_SEL_24_B
         BM_SEL_24 -.->|嵌套| BM_SEL_24_C
     end
     subgraph sg_BM_SEL_25 ["双引擎融合决策"]
-        BM_SEL_25["【BM-SEL-25 双引擎融合决策】<br/>把游资情绪引擎和量化强度引擎的信号融合起来——基准<br/>是游资60%+量化40%，但情绪周期会自动调权重<br/>（冰点时量化占70%，主升时游资占70%），输出6类决<br/>策（主升龙头/二进三/跟风/复苏/伪强/地天反包）。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Dual-Engine Fusion Decision】"]
-        BM_SEL_25_A["【BM-SEL-25-A 双引擎信号融合】<br/>把游资引擎和量化引擎的信号按权重揉在一起——不是简<br/>单平均，是加权融合产出综合决策信号。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Dual-engine Signal Fusion】"]
-        BM_SEL_25_B["【BM-SEL-25-B 情绪周期自适应权重】<br/>根据情绪周期自动调权重——冰点时量化占70%<br/>（保守），主升时游资占70%<br/>（激进），退潮时量化占60%（防守）。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Sentiment Cycle Adaptive Weight】"]
+        BM_SEL_25["【BM-SEL-25 双引擎融合决策】<br/>把游资情绪引擎和量化强度引擎的信号融合起来——基准<br/>是游资60%+量化40%，但情绪周期会自动调权重<br/>（冰点时量化占70%，主升时游资占70%），输出6类决<br/>策（主升龙头/二进三/跟风/复苏/伪强/地天反包）。<br/>（生产态 / production）<br/>【Dual-Engine Fusion Decision】"]
+        BM_SEL_25_A["【BM-SEL-25-A 双引擎信号融合】<br/>把游资引擎和量化引擎的信号按权重揉在一起——不是简<br/>单平均，是加权融合产出综合决策信号。<br/>（生产态 / production）<br/>【Dual-engine Signal Fusion】"]
+        BM_SEL_25_B["【BM-SEL-25-B 情绪周期自适应权重】<br/>根据情绪周期自动调权重——冰点时量化占70%<br/>（保守），主升时游资占70%<br/>（激进），退潮时量化占60%（防守）。<br/>（生产态 / production）<br/>【Sentiment Cycle Adaptive Weight】"]
         subgraph sg_BM_SEL_25_C ["6类决策输出"]
-            BM_SEL_25_C["【BM-SEL-25-C 6类决策输出】<br/>把融合信号分成6类决策——主升龙头/二进三/跟风<br/>/复苏/伪强/地天反包，每类对应不同操作。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【6-type Decision Output】"]
-            BM_SEL_25_C_1["【BM-SEL-25-C-1 主升龙头决策类】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_25_C_2["【BM-SEL-25-C-2 二进三决策类】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_25_C_3["【BM-SEL-25-C-3 跟风决策类】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_25_C_4["【BM-SEL-25-C-4 复苏决策类】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_25_C_5["【BM-SEL-25-C-5 伪强决策类】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
-            BM_SEL_25_C_6["【BM-SEL-25-C-6 地天反包决策类】<br/>—<br/>选股阶段 / stock_selection<br/>（生产态 / production）"]
+            BM_SEL_25_C["【BM-SEL-25-C 6类决策输出】<br/>把融合信号分成6类决策——主升龙头/二进三/跟风<br/>/复苏/伪强/地天反包，每类对应不同操作。<br/>（生产态 / production）<br/>【6-type Decision Output】"]
+            BM_SEL_25_C_1["【BM-SEL-25-C-1 主升龙头决策类】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_25_C_2["【BM-SEL-25-C-2 二进三决策类】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_25_C_3["【BM-SEL-25-C-3 跟风决策类】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_25_C_4["【BM-SEL-25-C-4 复苏决策类】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_25_C_5["【BM-SEL-25-C-5 伪强决策类】<br/>—<br/>（生产态 / production）"]
+            BM_SEL_25_C_6["【BM-SEL-25-C-6 地天反包决策类】<br/>—<br/>（生产态 / production）"]
             BM_SEL_25_C -.->|嵌套| BM_SEL_25_C_1
             BM_SEL_25_C -.->|嵌套| BM_SEL_25_C_2
             BM_SEL_25_C -.->|嵌套| BM_SEL_25_C_3
@@ -167,7 +167,7 @@ flowchart TD
             BM_SEL_25_C -.->|嵌套| BM_SEL_25_C_5
             BM_SEL_25_C -.->|嵌套| BM_SEL_25_C_6
         end
-        BM_SEL_25_D["【BM-SEL-25-D PDF分布信号提取】<br/>从决策信号中提取概率分布——方向、置信度、尾部风险<br/>、相对价值，不只给结论还给不确定性。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【PDF Distribution Signal Extraction】"]
+        BM_SEL_25_D["【BM-SEL-25-D PDF分布信号提取】<br/>从决策信号中提取概率分布——方向、置信度、尾部风险<br/>、相对价值，不只给结论还给不确定性。<br/>（生产态 / production）<br/>【PDF Distribution Signal Extraction】"]
         BM_SEL_25 -.->|嵌套| BM_SEL_25_A
         BM_SEL_25 -.->|嵌套| BM_SEL_25_B
         BM_SEL_25 -.->|嵌套| BM_SEL_25_C
@@ -175,7 +175,7 @@ flowchart TD
     end
     BM_SEL_01 ~~~ BM_SEL_01_A ~~~ BM_SEL_01_B ~~~ BM_SEL_01_C ~~~ BM_SEL_01_D ~~~ BM_SEL_01_E ~~~ BM_SEL_01_F ~~~ BM_SEL_02_A ~~~ BM_SEL_02_B ~~~ BM_SEL_02_C ~~~ BM_SEL_02_D ~~~ BM_SEL_02_E ~~~ BM_SEL_02_F ~~~ BM_SEL_02_G ~~~ BM_SEL_02_H ~~~ BM_SEL_02_I ~~~ BM_SEL_22 ~~~ BM_SEL_22_A ~~~ BM_SEL_22_B ~~~ BM_SEL_22_C ~~~ BM_SEL_22_C_1 ~~~ BM_SEL_22_C_2 ~~~ BM_SEL_22_C_3 ~~~ BM_SEL_22_C_4 ~~~ BM_SEL_22_C_5 ~~~ BM_SEL_22_C_6 ~~~ BM_SEL_22_C_7 ~~~ BM_SEL_22_D ~~~ BM_SEL_23 ~~~ BM_SEL_23_A ~~~ BM_SEL_23_A_1 ~~~ BM_SEL_23_A_2 ~~~ BM_SEL_23_A_3 ~~~ BM_SEL_23_A_4 ~~~ BM_SEL_23_A_5 ~~~ BM_SEL_23_A_6 ~~~ BM_SEL_23_B ~~~ BM_SEL_23_C ~~~ BM_SEL_24 ~~~ BM_SEL_24_A ~~~ BM_SEL_24_A_1 ~~~ BM_SEL_24_A_2 ~~~ BM_SEL_24_A_3 ~~~ BM_SEL_24_A_4 ~~~ BM_SEL_24_A_5 ~~~ BM_SEL_24_A_6 ~~~ BM_SEL_24_B ~~~ BM_SEL_24_C ~~~ BM_SEL_25_A ~~~ BM_SEL_25_B ~~~ BM_SEL_25_C ~~~ BM_SEL_25_C_1 ~~~ BM_SEL_25_C_2 ~~~ BM_SEL_25_C_3 ~~~ BM_SEL_25_C_4 ~~~ BM_SEL_25_C_5 ~~~ BM_SEL_25_C_6 ~~~ BM_SEL_25_D
     BM_SEL_02 ~~~ BM_SEL_25
-    BM_SEL_01 -.->|标准化行情 / data_flow| BM_SEL_02
+    BM_SEL_01 -->|标准化行情 / data_flow| BM_SEL_02
     BM_SEL_22 -->|短线选股评分→双引擎融合 / data_flow| BM_SEL_25
     BM_SEL_23 -->|游资情绪→双引擎融合 / data_flow| BM_SEL_25
     BM_SEL_24 -->|量化强度→双引擎融合 / data_flow| BM_SEL_25
@@ -184,8 +184,7 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_SEL_01,BM_SEL_01_A,BM_SEL_01_B,BM_SEL_01_C,BM_SEL_01_D,BM_SEL_01_E,BM_SEL_01_F,BM_SEL_02_B,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_22,BM_SEL_22_A,BM_SEL_22_B,BM_SEL_22_C,BM_SEL_22_C_1,BM_SEL_22_C_2,BM_SEL_22_C_3,BM_SEL_22_C_4,BM_SEL_22_C_5,BM_SEL_22_C_6,BM_SEL_22_C_7,BM_SEL_22_D,BM_SEL_23,BM_SEL_23_A,BM_SEL_23_A_1,BM_SEL_23_A_2,BM_SEL_23_A_3,BM_SEL_23_A_4,BM_SEL_23_A_5,BM_SEL_23_A_6,BM_SEL_23_B,BM_SEL_23_C,BM_SEL_24,BM_SEL_24_A,BM_SEL_24_A_1,BM_SEL_24_A_2,BM_SEL_24_A_3,BM_SEL_24_A_4,BM_SEL_24_A_5,BM_SEL_24_A_6,BM_SEL_24_B,BM_SEL_24_C,BM_SEL_25,BM_SEL_25_A,BM_SEL_25_B,BM_SEL_25_C,BM_SEL_25_C_1,BM_SEL_25_C_2,BM_SEL_25_C_3,BM_SEL_25_C_4,BM_SEL_25_C_5,BM_SEL_25_C_6,BM_SEL_25_D production
-    class BM_SEL_02,BM_SEL_02_A,BM_SEL_02_C deprecated
+    class BM_SEL_01,BM_SEL_01_A,BM_SEL_01_B,BM_SEL_01_C,BM_SEL_01_D,BM_SEL_01_E,BM_SEL_01_F,BM_SEL_02,BM_SEL_02_A,BM_SEL_02_B,BM_SEL_02_C,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_22,BM_SEL_22_A,BM_SEL_22_B,BM_SEL_22_C,BM_SEL_22_C_1,BM_SEL_22_C_2,BM_SEL_22_C_3,BM_SEL_22_C_4,BM_SEL_22_C_5,BM_SEL_22_C_6,BM_SEL_22_C_7,BM_SEL_22_D,BM_SEL_23,BM_SEL_23_A,BM_SEL_23_A_1,BM_SEL_23_A_2,BM_SEL_23_A_3,BM_SEL_23_A_4,BM_SEL_23_A_5,BM_SEL_23_A_6,BM_SEL_23_B,BM_SEL_23_C,BM_SEL_24,BM_SEL_24_A,BM_SEL_24_A_1,BM_SEL_24_A_2,BM_SEL_24_A_3,BM_SEL_24_A_4,BM_SEL_24_A_5,BM_SEL_24_A_6,BM_SEL_24_B,BM_SEL_24_C,BM_SEL_25,BM_SEL_25_A,BM_SEL_25_B,BM_SEL_25_C,BM_SEL_25_C_1,BM_SEL_25_C_2,BM_SEL_25_C_3,BM_SEL_25_C_4,BM_SEL_25_C_5,BM_SEL_25_C_6,BM_SEL_25_D production
 ```
 
 ```mermaid
@@ -193,40 +192,40 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 %% 选股阶段图（第 2/2 页）
 flowchart TD
     subgraph sg_BM_SEL_03 ["市场状态感知"]
-        BM_SEL_03["【BM-SEL-03 市场状态感知】<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>🟡候选承载<br/>【Market State Sensing】"]
-        BM_SEL_03_A["【BM-SEL-03-A 市场情绪分析】<br/>量化市场的恐惧贪婪程度——用涨跌家数、换手率、连板<br/>高度等指标合成情绪温度计。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Market Sentiment Analysis】"]
-        BM_SEL_03_B["【BM-SEL-03-B 市场状态传感器】<br/>综合趋势/波动/量能<br/>/情绪给出市场当前状态的最终判定——是什么市、什么<br/>阶段。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>【Market State Sensor】"]
+        BM_SEL_03["【BM-SEL-03 市场状态感知】<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Market State Sensing】"]
+        BM_SEL_03_A["【BM-SEL-03-A 市场情绪分析】<br/>量化市场的恐惧贪婪程度——用涨跌家数、换手率、连板<br/>高度等指标合成情绪温度计。<br/>（生产态 / production）<br/>【Market Sentiment Analysis】"]
+        BM_SEL_03_B["【BM-SEL-03-B 市场状态传感器】<br/>综合趋势/波动/量能<br/>/情绪给出市场当前状态的最终判定——是什么市、什么<br/>阶段。<br/>（设计态 / design）<br/>【Market State Sensor】"]
         BM_SEL_03 -.->|嵌套| BM_SEL_03_A
         BM_SEL_03 -.->|嵌套| BM_SEL_03_B
     end
-    BM_SEL_04["【BM-SEL-04 次日8态走势预测】<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>选股阶段 / stock_selection<br/>（设计态 / design）<br/>🟡候选承载<br/>【Next-Day 8-State Forecast】"]
+    BM_SEL_04["【BM-SEL-04 次日8态走势预测】<br/>预测明天大盘和个股会走成哪种样子，8<br/>种走势各占多少概率——A股T+1制度下这是核心决策依据<br/>。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Next-Day 8-State Forecast】"]
     subgraph sg_BM_SEL_05 ["主力行为感知"]
-        BM_SEL_05["【BM-SEL-05 主力行为感知】<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Main-Force Behavior Sensing】"]
-        BM_SEL_05_A["【BM-SEL-05-A 机构行为分析】<br/>从龙虎榜和大单数据看机构在买什么卖什么——机构扎堆<br/>的票跟着走概率大。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Institutional Behavior Analysis】"]
-        BM_SEL_05_B["【BM-SEL-05-B 资金流模式分析】<br/>追踪钱往哪流——主力净流入持续为正说明在吸筹，持续<br/>为负说明在出货。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Capital Flow Pattern Analysis】"]
-        BM_SEL_05_C["【BM-SEL-05-C 盘中买卖点分析】<br/>结合主力阶段和资金流，判断当下是该买、该卖还是该<br/>等——给出盘中买卖点信号。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Intraday Buy/Sell Point Analysis】"]
+        BM_SEL_05["【BM-SEL-05 主力行为感知】<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Main-Force Behavior Sensing】"]
+        BM_SEL_05_A["【BM-SEL-05-A 机构行为分析】<br/>从龙虎榜和大单数据看机构在买什么卖什么——机构扎堆<br/>的票跟着走概率大。<br/>（生产态 / production）<br/>【Institutional Behavior Analysis】"]
+        BM_SEL_05_B["【BM-SEL-05-B 资金流模式分析】<br/>追踪钱往哪流——主力净流入持续为正说明在吸筹，持续<br/>为负说明在出货。<br/>（生产态 / production）<br/>【Capital Flow Pattern Analysis】"]
+        BM_SEL_05_C["【BM-SEL-05-C 盘中买卖点分析】<br/>结合主力阶段和资金流，判断当下是该买、该卖还是该<br/>等——给出盘中买卖点信号。<br/>（生产态 / production）<br/>【Intraday Buy/Sell Point Analysis】"]
         BM_SEL_05 -.->|嵌套| BM_SEL_05_A
         BM_SEL_05 -.->|嵌套| BM_SEL_05_B
         BM_SEL_05 -.->|嵌套| BM_SEL_05_C
     end
-    BM_SEL_06["【BM-SEL-06 跨市场传导感知】<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Cross-Market Conduction Sensing】"]
-    BM_SEL_07["【BM-SEL-07 体制转换检测】<br/>盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点<br/>提前预警。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Regime Change Detection】"]
+    BM_SEL_06["【BM-SEL-06 跨市场传导感知】<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Cross-Market Conduction Sensing】"]
+    BM_SEL_07["【BM-SEL-07 体制转换检测】<br/>盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点<br/>提前预警。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Regime Change Detection】"]
     subgraph sg_BM_SEL_08 ["板块轮动序列追踪"]
-        BM_SEL_08["【BM-SEL-08 板块轮动序列追踪】<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>🟡候选承载<br/>【Sector Rotation Sequence Tracking】"]
-        BM_SEL_08_A["【BM-SEL-08-A 板块分析器】<br/>给每个板块算强度分并排名，追踪谁在领涨谁在补涨，<br/>输出板块轮动序列。<br/>选股阶段 / stock_selection<br/>（生产态 / production）<br/>【Sector Analyzer】"]
+        BM_SEL_08["【BM-SEL-08 板块轮动序列追踪】<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Sector Rotation Sequence Tracking】"]
+        BM_SEL_08_A["【BM-SEL-08-A 板块分析器】<br/>给每个板块算强度分并排名，追踪谁在领涨谁在补涨，<br/>输出板块轮动序列。<br/>（生产态 / production）<br/>【Sector Analyzer】"]
         BM_SEL_08 -.->|嵌套| BM_SEL_08_A
     end
-    BM_SEL_09["【BM-SEL-09 调整周期追踪】<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期&lt;40%直接拦截。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Adjustment Cycle Tracking】"]
-    BM_SEL_10["【BM-SEL-10 行情生命周期阶段】<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Market Lifecycle Phase】"]
-    BM_SEL_11["【BM-SEL-11 知识图谱与因果推演】<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Knowledge Graph &amp; Causal Inference】"]
-    BM_SEL_12["【BM-SEL-12 分布特征工程】<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Distribution Feature Engineering】"]
-    BM_SEL_13["【BM-SEL-13 收益率条件密度预测】<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conditional Density Prediction】"]
-    BM_SEL_14["【BM-SEL-14 共形预测】<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conformal Prediction】"]
-    BM_SEL_15["【BM-SEL-15 Survival止盈止损时间预测】<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Survival Stop-Time Prediction】"]
-    BM_SEL_16["【BM-SEL-16 分级指标过滤】<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Tiered Screening Filter】"]
-    BM_SEL_17["【BM-SEL-17 初筛漏斗】<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Coarse Screening Funnel】"]
-    BM_SEL_18["【BM-SEL-18 精筛评分】<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Fine Scoring】"]
-    BM_SEL_19["【BM-SEL-19 事件驱动分布筛选】<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>选股阶段 / stock_selection<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Event-Driven Distribution Screening】"]
+    BM_SEL_09["【BM-SEL-09 调整周期追踪】<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期&lt;40%直接拦截。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Adjustment Cycle Tracking】"]
+    BM_SEL_10["【BM-SEL-10 行情生命周期阶段】<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Market Lifecycle Phase】"]
+    BM_SEL_11["【BM-SEL-11 知识图谱与因果推演】<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Knowledge Graph &amp; Causal Inference】"]
+    BM_SEL_12["【BM-SEL-12 分布特征工程】<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Distribution Feature Engineering】"]
+    BM_SEL_13["【BM-SEL-13 收益率条件密度预测】<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conditional Density Prediction】"]
+    BM_SEL_14["【BM-SEL-14 共形预测】<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conformal Prediction】"]
+    BM_SEL_15["【BM-SEL-15 Survival止盈止损时间预测】<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Survival Stop-Time Prediction】"]
+    BM_SEL_16["【BM-SEL-16 分级指标过滤】<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Tiered Screening Filter】"]
+    BM_SEL_17["【BM-SEL-17 初筛漏斗】<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Coarse Screening Funnel】"]
+    BM_SEL_18["【BM-SEL-18 精筛评分】<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Fine Scoring】"]
+    BM_SEL_19["【BM-SEL-19 事件驱动分布筛选】<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Event-Driven Distribution Screening】"]
     BM_SEL_03 ~~~ BM_SEL_03_A ~~~ BM_SEL_03_B ~~~ BM_SEL_05 ~~~ BM_SEL_05_A ~~~ BM_SEL_05_B ~~~ BM_SEL_05_C ~~~ BM_SEL_06 ~~~ BM_SEL_07 ~~~ BM_SEL_08 ~~~ BM_SEL_08_A ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16
     BM_SEL_04 ~~~ BM_SEL_17
     BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
@@ -311,14 +310,14 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-001 | primary | production | stable |
 | candidate | CAND-SIG-002 | supplement | deferred | — |
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
-| depgraph | MOD-L03-001 | supplement | production | generated |
+| depgraph | MOD-L03-001 | supplement | production | stable |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-22 短线选股评分卡 / Short-Term Stock Selection Scorecard
 
@@ -764,7 +763,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-001 管供应商注册表（源名/
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-001 | primary | production | generated |
-| depgraph | MOD-MKT-002 | supplement | production | generated |
+| depgraph | MOD-MKT-002 | supplement | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -857,7 +856,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-005 自动加载器支持供应商�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-005 | primary | production | generated |
+| depgraph | MOD-MKT-005 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -1247,9 +1246,9 @@ BM-SEL-02 因子计算的子环节。MOD-L02-001 因子计算引擎执行盘前�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-001 | primary | production | stable |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-02-B 因子注册表与池管理 / Factor Registry & Pool Management
 
@@ -1309,9 +1308,9 @@ BM-SEL-02 因子计算的子环节。MOD-L02-001 复用引擎执行双模调度�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-001 | primary | production | stable |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-02-D 因子评估-IC/IR体系 / Factor Evaluation - IC/IR System
 
@@ -2131,9 +2130,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：stock_selection
 
-### BM-SEL-22-C-1 连板高度维度
+### BM-SEL-22-C-1 连板高度维度 / Limit-up Height Dimension
 
+> **大白话**：看标的现在第几个连板——连板越高越强，首板5分、2板12分、3板20分、4板以上满分25分。
 
+**机制说明**：
+
+BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的连板高度评分子模块，连板数分级评分(首板5分/2板12分/3板20分/4板+25分)，叠加连板高度市场排名加权。产出连板高度维度分(0-25)供评分卡汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2146,6 +2149,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-023 / D-SIGNAL §1 D-SIGNAL-23 连板潜力评分卡 / MOD-SIG-023 short_term_stock_selector.py |
 | ⑥ 降级/中止 | 历史K线不足5日无法统计连板 → 该维度记0分，仅靠其余6维评分 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：标的已封板，统计当前连板数，权重25分；②消费：当前连板数(L0行情日K封板统计)+历史连板能力(L0历史K线)+连板梯队位次(全市场连板排序)；③参数：连板数分级评分(首板5/2板12/3板20/4板+25)、市场排名加权；④数据流：日K封板序列+历史连板分布→连板数分级评分→连板高度维度分(0-25)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：历史K线不足5日无法统计连板→该维度记0分，仅靠其余6维评分。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2154,9 +2161,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2B ｜ **阶段**：stock_selection
 
-### BM-SEL-22-C-2 封单强度维度
+### BM-SEL-22-C-2 封单强度维度 / Seal Order Strength Dimension
 
+> **大白话**：看封单有多大、撤不撤——封单占流通市值越大越稳，超过3%满分20分，频繁撤单要扣分。
 
+**机制说明**：
+
+BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的封单强度评分子模块，封单量/流通市值比评分(>3%满分，逐档递减)，叠加封单撤单率惩罚。产出封单强度维度分(0-20)供评分卡汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2169,6 +2180,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-023 / D-SIGNAL §1 D-SIGNAL-23 连板潜力评分卡 / MOD-SIG-023 short_term_stock_selector.py |
 | ⑥ 降级/中止 | 盘中盘口数据缺失 → 用收盘涨停判定近似(封死=15分/尾盘封=8分) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：封板时段实时计算，权重20分；②消费：封单量(L0盘口封单)+流通市值(L1基本面)+封单持续性(L0封单变化序列)；③参数：封单/流通市值比阈值(>3%满分)、撤单率惩罚系数；④数据流：盘口封单量+流通市值→封单/市值比评分→封单强度维度分(0-20)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：盘中盘口数据缺失→用收盘涨停判定近似(封死=15分/尾盘封=8分)。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2177,9 +2192,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2B ｜ **阶段**：stock_selection
 
-### BM-SEL-22-C-3 板块效应维度
+### BM-SEL-22-C-3 板块效应维度 / Sector Effect Dimension
 
+> **大白话**：看标的所属板块涨停多少——板块涨停家越多、涨幅越靠前，板块效应越强，满分15分。
 
+**机制说明**：
+
+BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的板块效应评分子模块，板块涨停家数分级(≥5家满分/3-4家10分/1-2家5分)，板块涨幅排名加权。产出板块效应维度分(0-15)供评分卡汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2192,6 +2211,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-023 / D-SIGNAL §1 D-SIGNAL-23 连板潜力评分卡 / MOD-SIG-023 short_term_stock_selector.py |
 | ⑥ 降级/中止 | 板块归属数据缺失 → 记中性分8分 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：标的封板后查所属板块，权重15分；②消费：所属板块涨停数(L0全市场涨停板块统计)+板块涨幅排名(L0板块行情)+板块内领涨位次(L0板块成分股排序)；③参数：涨停家数分级(≥5家满分/3-4家10分/1-2家5分)、板块涨幅加权；④数据流：板块涨停统计+板块涨幅→涨停家数分级评分→板块效应维度分(0-15)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：板块归属数据缺失→记中性分8分。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2200,9 +2223,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2B ｜ **阶段**：stock_selection
 
-### BM-SEL-22-C-4 分歧程度维度
+### BM-SEL-22-C-4 分歧程度维度 / Divergence Degree Dimension
 
+> **大白话**：看封板时大家有没有分歧——缩量一致涨停满分15分，放量+多次炸板说明分歧大只给3分。
 
+**机制说明**：
+
+BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的分歧程度评分子模块，低换手+无炸板=满分(缩量一致15分)，高换手+多次炸板=低分(放量分歧3分)。产出分歧程度维度分(0-15)供评分卡汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2215,6 +2242,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-023 / D-SIGNAL §1 D-SIGNAL-23 连板潜力评分卡 / MOD-SIG-023 short_term_stock_selector.py |
 | ⑥ 降级/中止 | 分时量能数据缺失 → 记中性分8分 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：封板后量能分析，权重15分；②消费：换手率(L0日内成交)+量能分歧(L0分时量能)+炸板回封次数(L0盘口事件)；③参数：换手率分级阈值、炸板次数扣分规则；④数据流：换手率+分时量能+炸板事件→分歧度计算→分歧程度维度分(0-15)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：分时量能数据缺失→记中性分8分。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2223,9 +2254,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2B ｜ **阶段**：stock_selection
 
-### BM-SEL-22-C-5 市值流动性维度
+### BM-SEL-22-C-5 市值流动性维度 / Market Cap Liquidity Dimension
 
+> **大白话**：看市值大小和成交活不活——中小盘(30-150亿)流动性好满分10分，大盘折价，微盘有风险扣分。
 
+**机制说明**：
+
+BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的市值流动性评分子模块，中小市值(30-150亿)+充足流动性=满分，过大市值流动性折价，微盘股流动性风险扣分。产出市值流动性维度分(0-10)供评分卡汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2238,6 +2273,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-023 / D-SIGNAL §1 D-SIGNAL-23 连板潜力评分卡 / MOD-SIG-023 short_term_stock_selector.py |
 | ⑥ 降级/中止 | 基本面快照缺失 → 记中性分5分 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：盘前基本面快照，权重10分；②消费：流通市值(L1基本面)+日均成交额(L0行情)；③参数：市值分级(30-150亿满分)、流动性折价/扣分规则；④数据流：流通市值+日均成交额→市值/流动性匹配评分→市值流动性维度分(0-10)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：基本面快照缺失→记中性分5分。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2246,9 +2285,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2B ｜ **阶段**：stock_selection
 
-### BM-SEL-22-C-6 封板时间维度
+### BM-SEL-22-C-6 封板时间维度 / Seal Time Dimension
 
+> **大白话**：看几点封的板——早盘10点前封板满分10分，午盘6分，尾盘才封只有3分。
 
+**机制说明**：
+
+BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的封板时间评分子模块，早盘封板(10:00前)=满分10分，午盘封板=6分，尾盘封板(14:30后)=3分。产出封板时间维度分(0-10)供评分卡汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2261,6 +2304,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-023 / D-SIGNAL §1 D-SIGNAL-23 连板潜力评分卡 / MOD-SIG-023 short_term_stock_selector.py |
 | ⑥ 降级/中止 | 盘中封板事件缺失 → 用日K是否涨停近似(涨停=6分) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：封板事件触发记录，权重10分；②消费：首次封板时间(L0盘口事件)+封板持续时间(L0盘口封单序列)；③参数：封板时段分级(早盘10:00前满分/午盘6分/尾盘14:30后3分)；④数据流：首次封板时间戳+封板持续时长→时段分级评分→封板时间维度分(0-10)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：盘中封板事件缺失→用日K是否涨停近似(涨停=6分)。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2269,9 +2316,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2B ｜ **阶段**：stock_selection
 
-### BM-SEL-22-C-7 催化强度维度
+### BM-SEL-22-C-7 催化强度维度 / Catalyst Strength Dimension
 
+> **大白话**：看有没有题材或消息刺激——强题材龙头+政策催化满分5分，没明确催化只给1分。
 
+**机制说明**：
+
+BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的催化强度评分子模块，强题材龙头+政策消息催化=满分5分，无明确催化=1分。产出催化强度维度分(0-5)供评分卡汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2284,6 +2335,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-023 / D-SIGNAL §1 D-SIGNAL-23 连板潜力评分卡 / MOD-SIG-023 short_term_stock_selector.py |
 | ⑥ 降级/中止 | 资讯/题材数据缺失 → 记中性分2分 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：盘前题材/消息扫描，权重5分；②消费：题材热度(L0题材板块涨幅)+消息面催化(外部资讯)；③参数：题材热度分级、消息面催化判定规则；④数据流：题材涨幅+消息面事件→催化强度判定→催化强度维度分(0-5)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：资讯/题材数据缺失→记中性分2分。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2292,9 +2347,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2B ｜ **阶段**：stock_selection
 
-### BM-SEL-23-A-1 连板高度因子
+### BM-SEL-23-A-1 连板高度因子 / Limit-up Height Factor
 
+> **大白话**：看接力候选现在第几板——板数越高接力价值越大，3板以上满分25分，叠加晋级率修正。
 
+**机制说明**：
+
+BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的连板高度因子模块，连板数越高得分越高(3板+25分/2板15分/1板8分)，叠加连板晋级率修正。产出连板高度因子分(0-25)供接力评分汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2307,6 +2366,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-033 / D-SIGNAL §1 D-SIGNAL-33 游资接力情绪引擎 / MOD-SIG-033 youzi_relay_emotion_engine.py |
 | ⑥ 降级/中止 | 连板数据缺失 → 记0分剔除接力候选 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：标的进入接力候选池，权重25分；②消费：当前连板数(L0行情)+连板晋级率(L0历史连板统计)；③参数：连板数分级评分(3板+25/2板15/1板8)、晋级率修正系数；④数据流：连板数+晋级率→连板数分级评分→连板高度因子分(0-25)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：连板数据缺失→记0分剔除接力候选。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2315,9 +2378,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2C ｜ **阶段**：stock_selection
 
-### BM-SEL-23-A-2 封单质量因子
+### BM-SEL-23-A-2 封单质量因子 / Seal Order Quality Factor
 
+> **大白话**：看封单大不大、稳不稳——大封单且不撤单满分20分，小封单或频繁撤单低分。
 
+**机制说明**：
+
+BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的封单质量因子模块，大封单+稳定不撤=满分20分，小封单或频繁撤单=低分。产出封单质量因子分(0-20)供接力评分汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2330,6 +2397,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-033 / D-SIGNAL §1 D-SIGNAL-33 游资接力情绪引擎 / MOD-SIG-033 youzi_relay_emotion_engine.py |
 | ⑥ 降级/中止 | 盘口封单数据缺失 → 用涨停封死判定近似(封死=15分) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：封板后盘口分析，权重20分；②消费：封单金额(L0盘口)+封单稳定性(L0封单变化)；③参数：封单金额分级、撤单率扣分规则；④数据流：封单金额+封单稳定性→封单质量评分→封单质量因子分(0-20)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：盘口封单数据缺失→用涨停封死判定近似(封死=15分)。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2338,9 +2409,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2C ｜ **阶段**：stock_selection
 
-### BM-SEL-23-A-3 涨停时间因子
+### BM-SEL-23-A-3 涨停时间因子 / Limit-up Time Factor
 
+> **大白话**：看几点涨停——开盘秒板满分15分，早盘12分，午盘8分，尾盘才涨只有4分。
 
+**机制说明**：
+
+BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的涨停时间因子模块，开盘秒板=15分，早盘涨停=12分，午盘=8分，尾盘=4分。产出涨停时间因子分(0-15)供接力评分汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2353,6 +2428,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-033 / D-SIGNAL §1 D-SIGNAL-33 游资接力情绪引擎 / MOD-SIG-033 youzi_relay_emotion_engine.py |
 | ⑥ 降级/中止 | 涨停时间事件缺失 → 记中性分8分 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：涨停事件触发，权重15分；②消费：首次涨停时间(L0盘口事件)；③参数：涨停时段分级(秒板15/早盘12/午盘8/尾盘4)；④数据流：首次涨停时间戳→时段分级评分→涨停时间因子分(0-15)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：涨停时间事件缺失→记中性分8分。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2361,9 +2440,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2C ｜ **阶段**：stock_selection
 
-### BM-SEL-23-A-4 开板次数因子
+### BM-SEL-23-A-4 开板次数因子 / Reopen Count Factor
 
+> **大白话**：看封板期间开了几次板——0次开板满分15分，1次快速回封10分，多次开板只给3分。
 
+**机制说明**：
+
+BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的开板次数因子模块，0次开板=15分，1次快速回封=10分，多次开板=3分。产出开板次数因子分(0-15)供接力评分汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2376,6 +2459,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-033 / D-SIGNAL §1 D-SIGNAL-33 游资接力情绪引擎 / MOD-SIG-033 youzi_relay_emotion_engine.py |
 | ⑥ 降级/中止 | 盘口开板事件缺失 → 记中性分8分 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：封板期间盘口监控，权重15分；②消费：开板次数(L0盘口事件)+回封速度(L0盘口)；③参数：开板次数分级(0次15/1次10/多次3)、回封速度修正；④数据流：开板次数+回封耗时→开板次数分级评分→开板次数因子分(0-15)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：盘口开板事件缺失→记中性分8分。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2384,9 +2471,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2C ｜ **阶段**：stock_selection
 
-### BM-SEL-23-A-5 竞价强度因子
+### BM-SEL-23-A-5 竞价强度因子 / Auction Strength Factor
 
+> **大白话**：看集合竞价表现——高开+放量竞价满分10分，平开低量只给2分。
 
+**机制说明**：
+
+BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的竞价强度因子模块，高开+放量竞价=10分，平开低量=2分。产出竞价强度因子分(0-10)供接力评分汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2399,6 +2490,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ⑤ 代码映射 | MOD-SIG-033 / D-SIGNAL §1 D-SIGNAL-33 游资接力情绪引擎 / MOD-SIG-033 youzi_relay_emotion_engine.py |
 | ⑥ 降级/中止 | 集合竞价数据缺失 → 记中性分5分 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：集合竞价数据，权重10分；②消费：竞价涨幅(L0集合竞价)+竞价量比(L0集合竞价)；③参数：竞价涨幅分级、竞价量比阈值；④数据流：竞价涨幅+竞价量比→竞价强度评分→竞价强度因子分(0-10)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：集合竞价数据缺失→记中性分5分。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -2407,9 +2502,13 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L2C ｜ **阶段**：stock_selection
 
-### BM-SEL-23-A-6 助攻梯队因子
+### BM-SEL-23-A-6 助攻梯队因子 / Support Echelon Factor
 
+> **大白话**：看同题材同梯队有没有一起涨停——梯队多涨停+领涨位次满分10分，孤板无梯队只给2分。
 
+**机制说明**：
+
+BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的助攻梯队因子模块，梯队多涨停+领涨位次=10分，孤板无梯队=2分。产出助攻梯队因子分(0-10)供接力评分汇总。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -2421,6 +2520,10 @@ BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_dec
 | ④ 数据流 | 输入: 同梯队涨停数+梯队位次 → 处理: 梯队多涨停+领涨位次=10分；孤板无梯队=2分 → 输出: 助攻梯队因子分(0-10) → 下游: BM-SEL-23-A 6因子游资接力评分汇总 |
 | ⑤ 代码映射 | MOD-SIG-033 / D-SIGNAL §1 D-SIGNAL-33 游资接力情绪引擎 / MOD-SIG-033 youzi_relay_emotion_engine.py |
 | ⑥ 降级/中止 | 梯队联动数据缺失 → 记中性分5分 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：同题材/同梯队联动分析，权重10分；②消费：同梯队涨停数(L0全市场涨停)+梯队位次(L0涨停排序)；③参数：梯队涨停数分级、梯队位次加权；④数据流：同梯队涨停数+梯队位次→梯队联动评分→助攻梯队因子分(0-10)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：梯队联动数据缺失→记中性分5分。
 
 **锚点（环节↔模块双向关联）**：
 

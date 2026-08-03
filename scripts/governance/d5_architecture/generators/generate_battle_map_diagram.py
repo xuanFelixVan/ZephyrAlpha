@@ -443,12 +443,6 @@ def _node_label(step: dict) -> str:
     # 大白话
     parts.append(plain if plain else "—")
 
-    # 作战环节标识
-    # 所属阶段（V1.5：替换原"作战环节 / battle-step"——所有节点都是作战环节，无信息量；
-    #               改为环节所属 flow_stage，如"买入阶段 / buy_flow"，一眼看出阶段归属）
-    flow_stage = step.get("flow_stage", "")
-    parts.append(FLOW_STAGE_LABELS.get(flow_stage, "作战环节 / battle-step"))
-
     # 成熟度
     parts.append(maturity)
 
@@ -666,16 +660,53 @@ def _build_mermaid_paged(
     anchors_by_step: dict[str, list[dict]],
     title: str,
 ) -> str:
-    """构建分页 Mermaid（每页 PAGE_SIZE 个节点，防 >100 节点渲染失败）。"""
+    """构建分页 Mermaid（每页 PAGE_SIZE 个节点，防 >100 节点渲染失败）。
+
+    家族式分页（治本 2026-08-03，depth=2 孙环节跨页丢失修复）：
+    旧逻辑按扁平 sort_order 切片 steps[i*PAGE_SIZE:(i+1)*PAGE_SIZE]，会切断父子树——
+    跨页的子/孙环节因父环节不在同页，_build_children_map 的 ``pid in step_ids``
+    判定为 False 无法建立父子关系，且有 parent_step_id 不被当根节点 → 完全丢失不渲染。
+
+    修复：遍历排序后的环节，遇到未分配的环节时连同其所有后代（子+孙）整体收集为一个
+    "家族"，保证家族不拆分到不同页。当前页剩余空间放不下整个家族时换新页。
+    极端情况（单家族 > PAGE_SIZE）该页超限但完整，优于丢失节点。
+    """
     if len(steps) <= PAGE_SIZE:
         return _build_mermaid(steps, edges, anchors_by_step, title)
+    children_map = _build_children_map(steps)
+    step_by_id = {s["step_id"]: s for s in steps}
+    sorted_steps = sorted(steps, key=lambda x: x.get("sort_order", 0))
+
+    def _collect_family(step_id: str, acc: list[dict]) -> None:
+        acc.append(step_by_id[step_id])
+        for child in children_map.get(step_id, []):
+            _collect_family(child["step_id"], acc)
+
+    assigned: set[str] = set()
+    pages: list[list[dict]] = []
+    current: list[dict] = []
+    for s in sorted_steps:
+        sid = s["step_id"]
+        if sid in assigned:
+            continue  # 已被某家族收集
+        family: list[dict] = []
+        _collect_family(sid, family)
+        # 当前页非空且放不下整个家族 → 换页（保证家族不拆分）
+        if current and len(current) + len(family) > PAGE_SIZE:
+            pages.append(current)
+            current = []
+        current.extend(family)
+        for f in family:
+            assigned.add(f["step_id"])
+    if current:
+        pages.append(current)
+
     parts: list[str] = []
-    total_pages = (len(steps) + PAGE_SIZE - 1) // PAGE_SIZE
-    for i in range(total_pages):
-        chunk = steps[i * PAGE_SIZE : (i + 1) * PAGE_SIZE]
+    total_pages = len(pages)
+    for i, page in enumerate(pages):
         parts.append(
             _build_mermaid(
-                chunk, edges, anchors_by_step, f"{title}（第 {i + 1}/{total_pages} 页）"
+                page, edges, anchors_by_step, f"{title}（第 {i + 1}/{total_pages} 页）"
             )
         )
     return "\n\n".join(parts)
@@ -1430,6 +1461,22 @@ def _format_generic_cross_cutting_md(item: dict) -> str:
                     f"| {m.get('trigger', '—')} | {m.get('note', '—')} |"
                 )
             parts.append("")
+    # 硬边界约束体系：boundary_categories 表（来源 01-跨域交叉点，2026-08-03）
+    boundary_cats = item.get("boundary_categories") or []
+    if boundary_cats:
+        parts += [
+            "### 硬边界分类（4类 56条约束）",
+            "",
+            "| 类别 | 名称 | 前缀 | 条数 | 范围 | 关键约束 |",
+            "|---|---|---|---|---|---|",
+        ]
+        for bc in boundary_cats:
+            parts.append(
+                f"| {bc.get('category', '—')} | {bc.get('name_zh', '—')} "
+                f"| {bc.get('code_prefix', '—')} | {bc.get('count', '—')} "
+                f"| {bc.get('scope', '—')} | {bc.get('key_constraints', '—')} |"
+            )
+        parts.append("")
     return "\n".join(parts)
 
 
@@ -1448,6 +1495,8 @@ _CROSS_CUTTING_RENDERERS = {
     # 以下 2 项来源 D-SIGNAL/D-FACTOR 域依赖图文档（选股流程丰富，2026-08-03）
     "signal_lifecycle": _format_generic_cross_cutting_md,
     "factor_governance": _format_generic_cross_cutting_md,
+    # 以下 1 项来源 01-跨域交叉点与因果链.md（硬边界约束体系，2026-08-03）
+    "hard_boundary_constraints": _format_generic_cross_cutting_md,
 }
 
 
@@ -1511,7 +1560,8 @@ def _generate_cross_cutting_md() -> str:
     parts.append("")
     parts.extend([
         "> 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则",
-        ">           + 4 系统级横切（四模式开关 / 应急保命降级 / 四轨并行 / 共享信号注入，迁移自 trading_flow_narrative.yaml）。",
+        ">           + 4 系统级横切（四模式开关 / 应急保命降级 / 四轨并行 / 共享信号注入，迁移自 trading_flow_narrative.yaml）",
+        ">           + 3 域来源横切（信号生命周期治理 / 因子治理引擎 / 硬边界约束体系，来源 D-SIGNAL/D-FACTOR/跨域交叉点）。",
         "> 真源：`module_translation_registry.yaml` §battle_map_cross_cutting 段（规则数据，TRAE-062）。",
         "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。",
         "",
@@ -1520,7 +1570,7 @@ def _generate_cross_cutting_md() -> str:
         "| 字段 | 值 | Field | Value |",
         "|------|------|-------|-------|",
         f"| 横切类别数 | {len(items)} | Categories | {len(items)} |",
-        "| 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys |",
+        "| 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 + 3 域来源 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys + 3 domain |",
         "| 真源 | module_translation_registry.yaml | Source | YAML registry |",
         "",
         _legend_blockquote(),
