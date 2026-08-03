@@ -525,6 +525,19 @@ def preload_battle_map_steps() -> dict[str, dict[str, str]]:
 def all_battle_map_step_ids() -> list[str]:
     """返回所有已登记环节的 step_id 列表（用于对齐校验/生成器遍历）。
 
+    数据来源：``module_translation_registry.yaml`` 的 ``battle_map_steps`` 段
+    （翻译真源，规则数据，TRAE-062），非 depgraph.nodes 列。
+
+    .. warning::
+        本函数名含 "battle_map_step_ids"，易与 BM-INV-005 设想的
+        ``depgraph.nodes.battle_map_step_ids`` 派生缓存列混淆。两者完全不同：
+
+        - **本函数**：读 YAML 翻译真源的 step_id 集合（活代码，BM-INV-003
+          缺失叙事检测用，对比 DB step_id 与 YAML step_id）
+        - **nodes.battle_map_step_ids 列**：BM-INV-005 设想的 depgraph 派生缓存，
+          **未落地**（depgraph.nodes 无此列，2026-08-03 核实，详见
+          ``battlemap_schema.py`` BM-INV-005 注释 + battle_map_positioning.md §8.4）
+
     Returns:
         step_id 字符串列表（已登记顺序），YAML 不可用时返回空列表
     """
