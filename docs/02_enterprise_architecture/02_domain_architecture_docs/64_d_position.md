@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_POSITION | Domain ID | D_POSITION |
 | 域名称 | 仓位管理 | Domain Name | Position Management |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 15 | Module Count | 15 |
-| 域内依赖 | 19 | Internal Dependencies | 19 |
+| 模块数 | 22 | Module Count | 22 |
+| 域内依赖 | 26 | Internal Dependencies | 26 |
 | 跨域入边 | 6 | Cross-domain Incoming | 6 |
 | 跨域出边 | 15 | Cross-domain Outgoing | 15 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 7 | Design Modules | 7 |
 | 生产态模块 | 15 | Production Modules | 15 |
 | 容量 | 15/150 (正常) | Capacity | 15/150 (正常) |
 | 描述 | 仓位管理，负责持仓跟踪、仓位计算和盈亏分析 | Description | 仓位管理，负责持仓跟踪、仓位计算和盈亏分析 |
@@ -48,23 +48,37 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 15 个模块（生产态 15 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 22 个模块（生产态 15 + 设计态 7），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_position_core_position_limit_enforcer_py["限仓执行器<br/>仓位方案硬约束检查器: 单票/行业/总仓位/亏损加仓<br/>/压力测试, 产出 5 级否决裁决+违规告警<br/>Position Limit Enforcer<br/>文件: core/position_limit_enforcer.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_covariance_estimator_py["协方差估计器<br/>用历史收益率序列算股票间的协方差矩阵——收缩估计Le<br/>doit-Wolf/因子模型/Copula-GARCH三选一<br/>（持仓≤50只才用Copula），产出协方差矩阵+边际风险<br/>贡献MRC+成分风险贡献CRC，喂给风险预算层做标级风<br/>险分配。<br/>Covariance Estimator<br/>POS-11 Covariance Estimator: historical returns<br/>-> CovarianceMatrix+MRC+CRC. Gate GATE-POS-11<br/>(D-ML-SERVE density forecast ready +<br/>holdings<=50).<br/>文件: core/covariance_estimator.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_cross_strategy_position_merger_py["跨策略仓位合并<br/>多策略同时给同一只票下仓位指令时把各策略仓位合并<br/>成最终仓位——多头相加但不超单票上限，买卖冲突时卖<br/>出信号优先级高于买入，超限按策略优先级截断。解决<br/>多策略同标仓位打架没人裁决的问题。<br/>Cross-Strategy Position Merger<br/>POS-05 Cross-Strategy Position Merger:<br/>multi-strategy per-symbol positions -> merged<br/>final position. Gate GATE-POS-05 (GATE-001<br/>multi-strategy framework + C-018 multi-account<br/>ready).<br/>文件: core/cross_strategy_position_merger.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_intraday_position_constraint_py["日内做T仓位约束<br/>做T指令来了先过仓位约束检查——单次日内交易≤底仓30<br/>%，净收益<1.5%禁止执行，失误止损1.5%，不得超底仓<br/>范围不得违反T+1规则。防做T把底仓玩飞。注意区别于<br/>MOD-SELL-018<br/>(D_SELL_DECISION做T协调器)——本模块是仓位域约束执<br/>行。<br/>Intraday Position Constraint<br/>POS-18 Intraday Position Constraint: T-trade<br/>instruction + base position -> T-trade<br/>constraint check result. Gate GATE-POS-18<br/>(C-012 T-trade capability ready). Distinct from<br/>MOD-SELL-018 (D_SELL_DECISION T-trade<br/>coordinator).<br/>文件: core/intraday_position_constraint.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_behavior_classifier_py["仓位行为分类器<br/>用大单净流向+仓位变化率+板块资金流把持仓行为分成<br/>五类——减仓(仓位减+底部筹码缩短+大单流出)/持仓<br/>(不变+大单均衡)/换仓(板块A净流出B净流入)/加仓<br/>(仓位加+底部筹码加长+大单流入)/观望<br/>(不变+量能萎缩)，帮仓位决策看懂资金在干什么。<br/>Position Behavior Classifier<br/>POS-19 Position Behavior Classifier:<br/>large-order net flow + position change rate +<br/>sector fund flow -> position behavior class.<br/>Gate GATE-POS-19 (Level-2 large-order +<br/>chip-distribution data ready).<br/>文件: core/position_behavior_classifier.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_time_budget_py["仓位时间预算<br/>给每笔持仓算时间预算——趋势策略超30天<br/>/均值回归超10天就超时，超时后信号评分器自动提升<br/>卖出信号权重，逼着老仓位让位给新机会。产出TimeBu<br/>dgetAlert防止持仓长期占用资金不流动。<br/>Position Time Budget<br/>POS-15 Position Time Budget: holding time +<br/>strategy type -> TimeBudgetAlert. Gate<br/>GATE-POS-15 (strategy-type taxonomy + signal<br/>scorer ready).<br/>文件: core/position_time_budget.py<br/>(设计态 / design)"]
     src_zephyr_position_core_sell_position_link_py["卖出持仓链接<br/>Sell-Position Bidirectional Link —<br/>卖出-仓位双向链接 (MOD-POS-016)<br/>sell_position_link<br/>文件: core/sell_position_link.py<br/>(生产态 / production)"]
     src_zephyr_position_position_reconciler_py["持仓协调器<br/>Position Reconciler — v0.10.1 持仓对账:<br/>execution report+book<br/>record+counterparty三方对账。<br/>position_reconciler<br/>文件: position/position_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_position_services_init_py["position/services 包入口<br/>管理position.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     tests_position_test_position_audit_logger_py["position/test_position_audit_logger<br/>Position Audit Logger 测试 — MOD-POS-009<br/>文件: position/test_position_audit_logger.py<br/>(生产态 / production)"]
     tests_position_test_position_sizing_engine_py["position/test_position_sizing_engine<br/>Position Sizing Engine 测试 (MOD-POS-001<br/>阶段1)。<br/>文件: position/test_position_sizing_engine.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_position_limit_enforcer_py ~~~ src_zephyr_position_core_sell_position_link_py
+    src_zephyr_position_core_covariance_estimator_py ~~~ src_zephyr_position_core_cross_strategy_position_merger_py
+    src_zephyr_position_core_cross_strategy_position_merger_py ~~~ src_zephyr_position_core_intraday_position_constraint_py
+    src_zephyr_position_core_intraday_position_constraint_py ~~~ src_zephyr_position_core_position_behavior_classifier_py
+    src_zephyr_position_core_position_behavior_classifier_py ~~~ src_zephyr_position_core_position_time_budget_py
+    src_zephyr_position_core_position_time_budget_py ~~~ src_zephyr_position_core_sell_position_link_py
     src_zephyr_position_core_sell_position_link_py ~~~ src_zephyr_position_position_reconciler_py
     src_zephyr_position_position_reconciler_py ~~~ src_zephyr_position_services_init_py
     src_zephyr_position_services_init_py ~~~ tests_position_test_position_audit_logger_py
     tests_position_test_position_audit_logger_py ~~~ tests_position_test_position_sizing_engine_py
+    src_zephyr_position_core_correlation_regime_monitor_py["相关性状态监控<br/>盯着协方差矩阵里的相关性飙升——相关性趋同就动态降<br/>仓上限，分散化比率<0.3否决集中持仓，尾部相关性触<br/>发压力测试仓位折扣，牛市相关性趋同预警分散化失效<br/>。产出CorrelationRegimeAlert喂仓位裁决。<br/>Correlation Regime Monitor<br/>POS-12 Correlation Regime Monitor: covariance<br/>matrix + market regime -><br/>CorrelationRegimeAlert. Gate GATE-POS-12<br/>(POS-11 ready + extreme-event samples>=N).<br/>文件: core/correlation_regime_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_limit_enforcer_py["限仓执行器<br/>仓位方案硬约束检查器: 单票/行业/总仓位/亏损加仓<br/>/压力测试, 产出 5 级否决裁决+违规告警<br/>Position Limit Enforcer<br/>文件: core/position_limit_enforcer.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_position_risk_budget_allocator_py["仓位风险预算分配器<br/>把组合总风险预算按协方差矩阵拆分到每只票上，产出<br/>标级风险预算RiskBudgetPerSymbol，约束POS-01的Kel<br/>ly必须在风险配额内决策<br/>（先预算后决策，而非先决策后截断）。解决Kelly超<br/>配风险。注意区别于MOD-RK-08<br/>(D_RISK组合层风险预算)——本模块是仓位域标级预算。<br/>Position Risk Budget Allocator<br/>POS-13 Position Risk Budget Allocator:<br/>portfolio risk budget + covariance -><br/>RiskBudgetPerSymbol constraining POS-01 Kelly.<br/>Gate GATE-POS-13 (POS-11 + D-PF-ALLOC ready).<br/>Distinct from MOD-RK-08 (D_RISK portfolio-level<br/>budget).<br/>文件: core/position_risk_budget_allocator.py<br/>(设计态 / design)"]
     src_zephyr_position_services_position_audit_logger_py["持仓审计日志器<br/>持仓的日志器，记录运行日志<br/>position_audit_logger<br/>文件: services/position_audit_logger.py<br/>(生产态 / production)"]
+    src_zephyr_position_core_correlation_regime_monitor_py ~~~ src_zephyr_position_core_position_limit_enforcer_py
+    src_zephyr_position_core_position_limit_enforcer_py ~~~ src_zephyr_position_core_position_risk_budget_allocator_py
+    src_zephyr_position_core_position_risk_budget_allocator_py ~~~ src_zephyr_position_services_position_audit_logger_py
     src_zephyr_position_core_rebalance_engine_py["rebalance引擎<br/>持仓的引擎，执行核心逻辑的处理引擎（rebalance）<br/>rebalance_engine<br/>文件: core/rebalance_engine.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_drift_monitor_py["持仓漂移监控<br/>持仓的监控器，持续监视某项指标，异常时上报<br/>position_drift_monitor<br/>文件: core/position_drift_monitor.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_state_machine_py["持仓状态machine<br/>持仓的状态机，管理状态流转<br/>position_state_machine<br/>文件: core/position_state_machine.py<br/>(生产态 / production)"]
@@ -94,6 +108,13 @@ flowchart TD
     tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_state_machine_py
     tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_services_position_audit_logger_py
     tests_position_test_position_sizing_engine_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_sizing_engine_py
+    src_zephyr_position_core_cross_strategy_position_merger_py -.->|data / data| src_zephyr_position_core_position_sizing_engine_py
+    src_zephyr_position_core_covariance_estimator_py -.->|data / data| src_zephyr_position_core_correlation_regime_monitor_py
+    src_zephyr_position_core_covariance_estimator_py -.->|data / data| src_zephyr_position_core_position_risk_budget_allocator_py
+    src_zephyr_position_core_correlation_regime_monitor_py -.->|data / data| src_zephyr_position_core_position_sizing_engine_py
+    src_zephyr_position_core_position_risk_budget_allocator_py -.->|data / data| src_zephyr_position_core_position_sizing_engine_py
+    src_zephyr_position_core_intraday_position_constraint_py -.->|data / data| src_zephyr_position_core_position_limit_enforcer_py
+    src_zephyr_position_core_position_behavior_classifier_py -.->|data / data| src_zephyr_position_core_position_sizing_engine_py
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| D_RISK
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -126,6 +147,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_position_core_calendar_position_constraint_py,src_zephyr_position_core_capital_curve_manager_py,src_zephyr_position_core_cash_manager_py,src_zephyr_position_core_drawdown_controller_py,src_zephyr_position_core_position_drift_monitor_py,src_zephyr_position_core_position_limit_enforcer_py,src_zephyr_position_core_position_sizing_engine_py,src_zephyr_position_core_position_state_machine_py,src_zephyr_position_core_rebalance_engine_py,src_zephyr_position_core_sell_position_link_py,src_zephyr_position_position_reconciler_py,src_zephyr_position_services_init_py,src_zephyr_position_services_position_audit_logger_py,tests_position_test_position_audit_logger_py,tests_position_test_position_sizing_engine_py production
+    class src_zephyr_position_core_correlation_regime_monitor_py,src_zephyr_position_core_covariance_estimator_py,src_zephyr_position_core_cross_strategy_position_merger_py,src_zephyr_position_core_intraday_position_constraint_py,src_zephyr_position_core_position_behavior_classifier_py,src_zephyr_position_core_position_risk_budget_allocator_py,src_zephyr_position_core_position_time_budget_py design
     class D_RISK,D_SHARED,D_INFRASTRUCTURE,D_TRADING,D_PF_CORE external_prod
     class D_SELL_DECISION external_design
 ```
@@ -187,9 +209,31 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 7 个），不含跨域外部节点。
 
-> （无模块 / No modules）
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_position_core_covariance_estimator_py["协方差估计器<br/>用历史收益率序列算股票间的协方差矩阵——收缩估计Le<br/>doit-Wolf/因子模型/Copula-GARCH三选一<br/>（持仓≤50只才用Copula），产出协方差矩阵+边际风险<br/>贡献MRC+成分风险贡献CRC，喂给风险预算层做标级风<br/>险分配。<br/>Covariance Estimator<br/>POS-11 Covariance Estimator: historical returns<br/>-> CovarianceMatrix+MRC+CRC. Gate GATE-POS-11<br/>(D-ML-SERVE density forecast ready +<br/>holdings<=50).<br/>文件: core/covariance_estimator.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_cross_strategy_position_merger_py["跨策略仓位合并<br/>多策略同时给同一只票下仓位指令时把各策略仓位合并<br/>成最终仓位——多头相加但不超单票上限，买卖冲突时卖<br/>出信号优先级高于买入，超限按策略优先级截断。解决<br/>多策略同标仓位打架没人裁决的问题。<br/>Cross-Strategy Position Merger<br/>POS-05 Cross-Strategy Position Merger:<br/>multi-strategy per-symbol positions -> merged<br/>final position. Gate GATE-POS-05 (GATE-001<br/>multi-strategy framework + C-018 multi-account<br/>ready).<br/>文件: core/cross_strategy_position_merger.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_intraday_position_constraint_py["日内做T仓位约束<br/>做T指令来了先过仓位约束检查——单次日内交易≤底仓30<br/>%，净收益<1.5%禁止执行，失误止损1.5%，不得超底仓<br/>范围不得违反T+1规则。防做T把底仓玩飞。注意区别于<br/>MOD-SELL-018<br/>(D_SELL_DECISION做T协调器)——本模块是仓位域约束执<br/>行。<br/>Intraday Position Constraint<br/>POS-18 Intraday Position Constraint: T-trade<br/>instruction + base position -> T-trade<br/>constraint check result. Gate GATE-POS-18<br/>(C-012 T-trade capability ready). Distinct from<br/>MOD-SELL-018 (D_SELL_DECISION T-trade<br/>coordinator).<br/>文件: core/intraday_position_constraint.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_behavior_classifier_py["仓位行为分类器<br/>用大单净流向+仓位变化率+板块资金流把持仓行为分成<br/>五类——减仓(仓位减+底部筹码缩短+大单流出)/持仓<br/>(不变+大单均衡)/换仓(板块A净流出B净流入)/加仓<br/>(仓位加+底部筹码加长+大单流入)/观望<br/>(不变+量能萎缩)，帮仓位决策看懂资金在干什么。<br/>Position Behavior Classifier<br/>POS-19 Position Behavior Classifier:<br/>large-order net flow + position change rate +<br/>sector fund flow -> position behavior class.<br/>Gate GATE-POS-19 (Level-2 large-order +<br/>chip-distribution data ready).<br/>文件: core/position_behavior_classifier.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_time_budget_py["仓位时间预算<br/>给每笔持仓算时间预算——趋势策略超30天<br/>/均值回归超10天就超时，超时后信号评分器自动提升<br/>卖出信号权重，逼着老仓位让位给新机会。产出TimeBu<br/>dgetAlert防止持仓长期占用资金不流动。<br/>Position Time Budget<br/>POS-15 Position Time Budget: holding time +<br/>strategy type -> TimeBudgetAlert. Gate<br/>GATE-POS-15 (strategy-type taxonomy + signal<br/>scorer ready).<br/>文件: core/position_time_budget.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_covariance_estimator_py ~~~ src_zephyr_position_core_cross_strategy_position_merger_py
+    src_zephyr_position_core_cross_strategy_position_merger_py ~~~ src_zephyr_position_core_intraday_position_constraint_py
+    src_zephyr_position_core_intraday_position_constraint_py ~~~ src_zephyr_position_core_position_behavior_classifier_py
+    src_zephyr_position_core_position_behavior_classifier_py ~~~ src_zephyr_position_core_position_time_budget_py
+    src_zephyr_position_core_correlation_regime_monitor_py["相关性状态监控<br/>盯着协方差矩阵里的相关性飙升——相关性趋同就动态降<br/>仓上限，分散化比率<0.3否决集中持仓，尾部相关性触<br/>发压力测试仓位折扣，牛市相关性趋同预警分散化失效<br/>。产出CorrelationRegimeAlert喂仓位裁决。<br/>Correlation Regime Monitor<br/>POS-12 Correlation Regime Monitor: covariance<br/>matrix + market regime -><br/>CorrelationRegimeAlert. Gate GATE-POS-12<br/>(POS-11 ready + extreme-event samples>=N).<br/>文件: core/correlation_regime_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_risk_budget_allocator_py["仓位风险预算分配器<br/>把组合总风险预算按协方差矩阵拆分到每只票上，产出<br/>标级风险预算RiskBudgetPerSymbol，约束POS-01的Kel<br/>ly必须在风险配额内决策<br/>（先预算后决策，而非先决策后截断）。解决Kelly超<br/>配风险。注意区别于MOD-RK-08<br/>(D_RISK组合层风险预算)——本模块是仓位域标级预算。<br/>Position Risk Budget Allocator<br/>POS-13 Position Risk Budget Allocator:<br/>portfolio risk budget + covariance -><br/>RiskBudgetPerSymbol constraining POS-01 Kelly.<br/>Gate GATE-POS-13 (POS-11 + D-PF-ALLOC ready).<br/>Distinct from MOD-RK-08 (D_RISK portfolio-level<br/>budget).<br/>文件: core/position_risk_budget_allocator.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_correlation_regime_monitor_py ~~~ src_zephyr_position_core_position_risk_budget_allocator_py
+    src_zephyr_position_core_covariance_estimator_py -.->|data / data| src_zephyr_position_core_correlation_regime_monitor_py
+    src_zephyr_position_core_covariance_estimator_py -.->|data / data| src_zephyr_position_core_position_risk_budget_allocator_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_position_core_correlation_regime_monitor_py,src_zephyr_position_core_covariance_estimator_py,src_zephyr_position_core_cross_strategy_position_merger_py,src_zephyr_position_core_intraday_position_constraint_py,src_zephyr_position_core_position_behavior_classifier_py,src_zephyr_position_core_position_risk_budget_allocator_py,src_zephyr_position_core_position_time_budget_py design
+```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
