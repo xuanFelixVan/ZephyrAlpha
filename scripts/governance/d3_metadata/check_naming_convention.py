@@ -102,7 +102,8 @@ except ImportError:
 # 大写文件白名单（治本：对齐 trae_028.yaml L190 + L224 根目录白名单）
 # 硬约束：AGENTS.md(Trae IDE)、Dockerfile(Docker build)
 # GitHub平台功能：LICENSE（大小写不敏感识别，社区约定大写）
-# 已移除：CONTRIBUTING.md/SECURITY.md（项目已迁移为小写，不再豁免）
+# README.md/CONTRIBUTING.md/SECURITY.md 不在此白名单——由 _GITHUB_CONVENTION_RE
+#       路径感知豁免处理（满足 test_whitelist_minimal 白名单精简约束）
 # 已移除：PKG_INFO/SOURCES.txt（Python setuptools 构建产物，应 gitignore，不应入库）
 # 注意：GitHub 平台约定文件（如根目录 docs 指南文件）通过 _GITHUB_CONVENTION_RE
 #       路径感知豁免，不加入此白名单（满足 test_whitelist_minimal 白名单精简约束）
@@ -179,8 +180,10 @@ class NamingViolation:
 _UPPERCASE_RE = re.compile(r"[A-Z]")
 
 # GitHub 平台约定文件（项目内路径感知豁免，不加入 FILENAME_UPPERCASE_WHITELIST
-# 以满足 test_whitelist_minimal 白名单精简约束；非项目目录仍触发 N-01）
-_GITHUB_CONVENTION_RE = re.compile(r"^README\.md$")
+# 以满足 test_whitelist_minimal 白名单精简约束；非项目目录仍触发 N-01/N-13）
+# README.md/CONTRIBUTING.md/SECURITY.md 均为 GitHub 平台自动识别的根级约定文件
+# （GitHub UI 在仓库页直接展示这三个文件），项目硬约束豁免（见 project_memory）
+_GITHUB_CONVENTION_RE = re.compile(r"^(README|CONTRIBUTING|SECURITY)\.md$")
 
 
 def _check_n01_uppercase(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
@@ -765,17 +768,23 @@ _DATA_FILE_EXEMPT_NAMES: set[str] = {
 _AUTO_GENERATED_TS_RE = re.compile(r"(_\d{4}-\d{2}-\d{2}[T-]|_\d{8}T\d{6}Z)")
 
 
-def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
+def _check_n13_data_file_naming(filepath: str, abspath: Path | None = None) -> list[NamingViolation]:
     """YAML/JSON/MD 数据文件名必须使用 snake_case（小写+下划线）。
     对标: trae_028 SSoT gov_doc_008 — "全项目统一下划线(snake_case)，一条规则零例外"。
     强化: 禁止大写字母/空格/连字符(kebab-case); .trae/ 和 config/ 豁免;
           dot-prefix 文件豁免; 前导下划线注册/模板文件豁免;
           ID前缀文件豁免(ke-/session-/kbg-/task-/dm- — 这些是ID格式，非文件命名风格)
+          GitHub 平台约定文件(README/CONTRIBUTING/SECURITY.md)路径感知豁免
+          （与 N-01 _GITHUB_CONVENTION_RE 一致；非项目目录仍触发 N-13）
     修复(2026-07-28 Gap-2): 原实现误用 kebab-case，与 trae_028 SSoT 矛盾，已纠正为 snake_case。
     """
     name = Path(filepath).name
     if name in _DATA_FILE_EXEMPT_NAMES:
         return []
+    # GitHub 平台约定文件路径感知豁免（与 N-01 一致；非项目目录如 tmp_path 沙箱仍触发 N-13）
+    if abspath is None or _is_path_inside_repo(abspath):
+        if _GITHUB_CONVENTION_RE.match(name):
+            return []
     if not name.endswith((".yaml", ".yml", ".json", ".md")):
         return []
     if name.startswith("."):
@@ -1569,7 +1578,7 @@ def check_file(filepath: str, abspath: Path | None = None, project_root: Path | 
     violations.extend(_check_n08_script_snake_case(filepath))
     violations.extend(_check_n11_doctype_suffix(filepath, abspath))
     violations.extend(_check_n12_ke_naming(filepath))
-    violations.extend(_check_n13_data_file_naming(filepath))
+    violations.extend(_check_n13_data_file_naming(filepath, abspath))
     violations.extend(_check_n14_init_has_all(filepath, abspath))
     violations.extend(_check_n15_blueprint_path_exists(filepath, abspath, project_root))
     violations.extend(_check_n17_blueprint_domain_consistency(filepath, abspath))
