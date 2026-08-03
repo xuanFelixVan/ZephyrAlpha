@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_evaluation_metrics | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md | §test
 # [MODULE] tests.factor.test_evaluation_metrics
+# [DOMAIN] D_FACTOR
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

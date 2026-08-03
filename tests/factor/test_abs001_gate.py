@@ -2,6 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_abs001_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_abs001_gate
+# [DOMAIN] D_FACTOR
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

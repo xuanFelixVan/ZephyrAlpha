@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-L02-024 | layer=test | stability=volatile | safety=L
 # [BLUEPRINT] MOD-L02-024 | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-04
 # [MODULE] tests.factor.test_dag_executor_dual_mode
+# [DOMAIN] D_FACTOR
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline
