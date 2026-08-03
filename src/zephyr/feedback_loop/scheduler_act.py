@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] _escalate_on_failure 不抛异常; _auto_rollback_on_escalation 不抛异常; run_act 返回 ActResult
 # [TESTS]
-# [A_module] module_id=MOD-UNK-scheduler_act | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] dispatch 失败不抛异常——捕获后返回 DispatchResult.error（RULE-THREE 裁定：原 DispatchError 全库无 raise，死异常类已删除）
 # [TESTS] scripts/connect/fle_orc.py --trigger
-# [A_module] module_id=MOD-FBL-alert_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """FLE->Orc 告警分派器 — dispatch() 生产者
 

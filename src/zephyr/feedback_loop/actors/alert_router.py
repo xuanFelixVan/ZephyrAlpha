@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] route() returns empty channel list on unknown severity
 # [TESTS] tests/feedback/test_actors_init.py
-# [A_module] module_id=MOD-FBL-alert_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """alert_router.py — Severity-based alert channel router.
 

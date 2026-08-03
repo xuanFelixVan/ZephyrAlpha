@@ -14,7 +14,7 @@ from typing import Final
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FeedbackLoopError
 # [TESTS] tests/feedback-loop/
-# [A_module] module_id=MOD-UNK-validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """[BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md | §3-§9
