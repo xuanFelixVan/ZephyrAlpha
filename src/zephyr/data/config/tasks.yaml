@@ -805,20 +805,16 @@ tasks:
     capability: main_business
 - task_id: industry_class_refresh
   table: c1_market.industry_class
-  source: tdx
+  source: ifind            # #ARCH-CH-INDUSTRY-CLASS-MIGRATE: tdx block() 产出板块成分股语义错配，改 ifind i问财
   schedule: weekend_calibration
   incremental: false    # 全量重建
   dependencies: []
   capability: industry_class
   symbols:
   extra:
-    description: "板块分类全量刷新（mootdx get_stock_list_in_sector）"
+    description: "申万行业分类全量刷新（ifind i问财 + -- split level 1/2/3）"
 
-  fallback_sources:
-  - source: akshare
-    capability: industry_class
-  - source: ifind
-    capability: industry_class
+  fallback_sources: []   # akshare 无 industry_class capability；tdx block() 已弃用
 - task_id: kline_sector_incremental
   table: c1_market.kline_sector
   source: tdx

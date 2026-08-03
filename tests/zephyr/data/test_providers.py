@@ -1320,3 +1320,123 @@ class TestMiniQMTSmoke:
         assert len(results[0].rows) == 3
         ex_idx = results[0].columns.index("exchange")
         assert all(row[ex_idx] == "CFFEX" for row in results[0].rows)
+
+
+# ============== IFindProvider industry_class 测试（#ARCH-CH-INDUSTRY-CLASS-MIGRATE） ==============
+
+class TestIFindIndustryClass:
+    """ifind_provider._fetch_industry_class 单测。
+
+    治本背景：tdx block() 板块成分股与 industry_class 表（股票→申万行业）语义错配，
+    改由 ifind i问财查询 + "--" split level 1/2/3 拆分填充。
+    测试不依赖真实 iFind（mock _call_with_policy + _check_ifind_error + iFinDPy 模块）。
+    """
+
+    @staticmethod
+    def _make_raw(codes, sw_list):
+        """构造 i问财返回（tables[0].table 含股票代码 + 所属申万行业）。"""
+        return {"tables": [{"table": {
+            "股票代码": codes,
+            "所属申万行业": sw_list,
+        }}]}
+
+    @staticmethod
+    def _make_provider(monkeypatch, raw, error=None):
+        """构造已 mock i问财的 IFindProvider。
+
+        mock iFinDPy 模块（避免真实 import）+ _call_with_policy 返回 raw +
+        _check_ifind_error 返回 error 或无错误 + _handle_auth_error 返回 False。
+        """
+        import sys as _sys
+        from unittest.mock import MagicMock as _MM
+        monkeypatch.setitem(_sys.modules, "iFinDPy", _MM())
+        p = IFindProvider()
+        monkeypatch.setattr(p, "_call_with_policy", lambda *a, **k: raw)
+        monkeypatch.setattr(
+            p, "_check_ifind_error",
+            lambda r: error if error else (False, 0, "", False))
+        monkeypatch.setattr(p, "_handle_auth_error", lambda code: False)
+        return p
+
+    @staticmethod
+    def _payload():
+        return FetchPayload(
+            table="c1_market.industry_class", symbols=None,
+            start=datetime.date(2025, 7, 1), end=datetime.date(2025, 7, 1),
+            extra={"capability": "industry_class"},
+        )
+
+    def test_split_three_levels(self, monkeypatch):
+        """'银行--股份制银行Ⅱ--股份制银行Ⅲ' → 3 行 level 1/2/3。"""
+        p = self._make_provider(monkeypatch, self._make_raw(
+            ["000001.SZ"], ["银行--股份制银行Ⅱ--股份制银行Ⅲ"]))
+        results = list(p.fetch(self._payload(), SourcePolicy()))
+        assert len(results) == 1
+        rows = results[0].rows
+        assert len(rows) == 3
+        assert rows[0] == ("000001", "银行", None, 1, None)
+        assert rows[1] == ("000001", "股份制银行Ⅱ", None, 2, None)
+        assert rows[2] == ("000001", "股份制银行Ⅲ", None, 3, None)
+
+    def test_columns_match_ddl(self, monkeypatch):
+        """列对齐 DDL INSERT_COLUMNS (symbol, industry_sw, industry_zsi, industry_level, valid_to)。"""
+        p = self._make_provider(monkeypatch, self._make_raw(
+            ["000001.SZ"], ["银行"]))
+        results = list(p.fetch(self._payload(), SourcePolicy()))
+        assert results[0].columns == [
+            "symbol", "industry_sw", "industry_zsi", "industry_level", "valid_to"]
+
+    def test_single_level_no_split(self, monkeypatch):
+        """单级行业（无 --）→ 1 行 level 1。"""
+        p = self._make_provider(monkeypatch, self._make_raw(
+            ["600000.SH"], ["银行"]))
+        results = list(p.fetch(self._payload(), SourcePolicy()))
+        rows = results[0].rows
+        assert len(rows) == 1
+        assert rows[0] == ("600000", "银行", None, 1, None)
+
+    def test_empty_sw_skipped(self, monkeypatch):
+        """空 industry_sw → 跳过该股票（不产出行）。"""
+        p = self._make_provider(monkeypatch, self._make_raw(
+            ["000001.SZ", "000002.SZ"], ["", "房地产--房地产开发"]))
+        results = list(p.fetch(self._payload(), SourcePolicy()))
+        rows = results[0].rows
+        assert len(rows) == 2  # 只 000002 的 2 行
+        assert all(r[0] == "000002" for r in rows)
+
+    def test_error_propagation(self, monkeypatch):
+        """i问财配额耗尽 → FetchResult.error 含错误码。"""
+        p = self._make_provider(
+            monkeypatch, self._make_raw([], []),
+            error=(True, -4318, "配额耗尽", False))
+        results = list(p.fetch(self._payload(), SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is not None
+        assert "4318" in results[0].error
+        assert results[0].rows == []
+
+    def test_multi_stock_batch(self, monkeypatch):
+        """多只股票 → 所有行正确拆分（000001 两级 + 000002 三级 = 5 行）。"""
+        p = self._make_provider(monkeypatch, self._make_raw(
+            ["000001.SZ", "000002.SZ"],
+            ["银行--股份制银行Ⅱ", "房地产--房地产开发--住宅开发"]))
+        results = list(p.fetch(self._payload(), SourcePolicy()))
+        all_rows = []
+        for r in results:
+            all_rows.extend(r.rows)
+        assert len(all_rows) == 5
+        symbols = [r[0] for r in all_rows]
+        assert symbols.count("000001") == 2
+        assert symbols.count("000002") == 3
+
+    def test_auth_error_propagation(self, monkeypatch):
+        """iFind 登录过期 → FetchResult.error 含登录过期。"""
+        p = self._make_provider(
+            monkeypatch, self._make_raw([], []),
+            error=(True, -1001, "登录过期", True))
+        # _handle_auth_error 默认 mock 返回 False，这里改 True 模拟 auth error
+        monkeypatch.setattr(p, "_handle_auth_error", lambda code: True)
+        results = list(p.fetch(self._payload(), SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is not None
+        assert "登录过期" in results[0].error or "重连" in results[0].error

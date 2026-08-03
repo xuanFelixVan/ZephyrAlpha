@@ -127,10 +127,12 @@ class BufferedWriter:
     def _init_columns(self, result: "FetchResult") -> None:
         """从首个 FetchResult 确定列子句（含列过滤）。
 
-        复用 ch_writer._get_table_columns_set 做列过滤：
-        只插入表中存在的列，忽略多余列。
+        复用 ch_writer.get_insertable_columns_set 做列过滤：
+        只插入表中可插入的列（排除 MATERIALIZED/ALIAS），忽略多余列。
+        #ARCH-CH-MATERIALIZED-INSERT：原用 _get_table_columns_set 含 MATERIALIZED 列，
+        导致 exchange 等被保留进 cols_clause，INSERT 报 Code 44。
         """
-        table_cols = ch_writer._get_table_columns_set(result.table)
+        table_cols = ch_writer.get_insertable_columns_set(result.table)
         if table_cols and result.columns:
             common_cols = [c for c in result.columns if c in table_cols]
             if common_cols:

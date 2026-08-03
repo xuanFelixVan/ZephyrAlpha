@@ -51,7 +51,10 @@ CREATE TABLE IF NOT EXISTS c1_market.industry_class
     symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree
-ORDER BY (symbol)
+-- ORDER BY 含 industry_level：一只股票有多级行业分类（level 1/2/3），
+-- 单独以 symbol 为排序键会导致 ReplacingMergeTree merge 时同 symbol 多行塌缩丢数据
+-- （#ARCH-CH-INDUSTRY-CLASS-MIGRATE 治本，2026-08-03，FINAL 实证 000001 丢 level=3）
+ORDER BY (symbol, industry_level)
 """
 
 # 表元数据
@@ -61,7 +64,7 @@ CATEGORY_ID = "fundamental_industry_class"
 CALC_MODE = "lazy"
 ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = ""
-ORDER_BY = "(symbol)"
+ORDER_BY = "(symbol, industry_level)"  # 含 industry_level 防止 merge 塌缩多级分类行
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
 INSERT_COLUMNS = (

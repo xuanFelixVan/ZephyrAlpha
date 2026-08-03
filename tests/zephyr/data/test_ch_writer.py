@@ -203,6 +203,7 @@ class TestWriteResult:
         """清理模块级缓存，防止跨用例污染。"""
         from src.zephyr.data import ch_writer
         ch_writer.table_cols_cache.clear()
+        ch_writer.table_insertable_cols_cache.clear()
 
     def test_write_result_success(self):
         """成功写入 FetchResult。"""
@@ -214,7 +215,7 @@ class TestWriteResult:
             elapsed_sec=1.0,
         )
         with patch("src.zephyr.data.ch_writer.http_insert", return_value=True) as mock_http, \
-             patch("src.zephyr.data.ch_writer.get_table_columns_set",
+             patch("src.zephyr.data.ch_writer.get_insertable_columns_set",
                    return_value={"code", "date", "close"}):
             ok = write_result(result)
         assert ok is True

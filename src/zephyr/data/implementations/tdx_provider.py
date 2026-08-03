@@ -181,7 +181,9 @@ class TDXProvider(IngestProviderBase):
         thread_safety="single_thread",
         rate_limit_default=0,
         capabilities=[
-            "industry_class",
+            # "industry_class" 已弃用（#ARCH-CH-INDUSTRY-CLASS-MIGRATE）：
+            # tdx block() 产出板块成分股，与 industry_class 表（股票→申万行业）语义错配，
+            # 该 capability 改由 ifind_provider 承担（i问财 + "--" split level 1/2/3）。
             CapabilityContract("kline_sector", supports_symbols_null=True),
         ],
         known_issues=["单线程串行", "无板块分笔Tick", "需bestip选最快服务器"],
@@ -254,9 +256,7 @@ class TDXProvider(IngestProviderBase):
             return
 
         capability = (payload.extra or {}).get("capability")
-        if capability == "industry_class":
-            yield from self._fetch_industry_class(payload, policy)
-        elif capability == "kline_sector":
+        if capability == "kline_sector":
             yield from self._fetch_kline_sector(payload, policy)
         else:
             yield FetchResult(
@@ -265,41 +265,10 @@ class TDXProvider(IngestProviderBase):
                 error=f"unsupported capability: {capability}",
             )
 
-    # ---- 板块分类 ----
-
-    def _fetch_industry_class(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
-        """获取板块分类列表（client.block）。
-
-        mootdx block() 返回 DataFrame: [blockname, block_type, code_index, code]。
-        """
-        table = payload.table or _TBL_INDUSTRY_CLASS
-        columns = ["sector_code", "sector_name", "stock_code", "stock_name"]
-        t0 = time.time()
-        try:
-            df = self._call_with_policy(self._client.block, policy)
-            rows: list[tuple] = []
-            if df is not None and not df.empty:
-                # 列提取替代 iterrows（38万行性能）
-                blocknames = df["blockname"].astype(str).tolist()
-                codes = df["code"].astype(str).str.replace("\x00", "", regex=False).tolist()
-                rows = list(zip([""] * len(df), blocknames, codes, [""] * len(df)))
-
-            self._log.info(f"板块分类获取完成，{len(rows)} 行")
-            yield FetchResult(
-                table=table, columns=columns, rows=rows,
-                last_key=datetime.date.today().isoformat(),
-                elapsed_sec=time.time() - t0,
-            )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._log.warning(f"板块分类获取失败: {e}")
-            yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=time.time() - t0, error=str(e),
-            )
-
     # ---- 板块指数K线 ----
+    # 注：原 _fetch_industry_class（板块分类，client.block）已弃用
+    # （#ARCH-CH-INDUSTRY-CLASS-MIGRATE）——tdx block() 产出板块成分股与
+    # industry_class 表语义错配，该 capability 改由 ifind_provider 承担。
 
     @staticmethod
     def _resolve_frequency(extra) -> tuple[int, str]:

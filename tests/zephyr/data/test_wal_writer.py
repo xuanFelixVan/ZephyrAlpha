@@ -45,9 +45,9 @@ def _setup_fallback_dir(tmp_path, monkeypatch):
 
 
 def _mock_table_cols(cols):
-    """返回 mock _get_table_columns_set 的 patcher（避免查真实 CH）。"""
+    """返回 mock get_insertable_columns_set 的 patcher（避免查真实 CH）。"""
     return patch(
-        "src.zephyr.data.ch_writer.get_table_columns_set",
+        "src.zephyr.data.ch_writer.get_insertable_columns_set",
         return_value=set(cols),
     )
 

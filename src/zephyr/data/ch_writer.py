@@ -507,6 +507,61 @@ def _get_table_columns_set(table: str) -> set[str]:
     return get_table_columns_set(table)
 
 
+# 可插入列缓存（排除 MATERIALIZED/ALIAS，#ARCH-CH-MATERIALIZED-INSERT）
+table_insertable_cols_cache: dict[str, set[str]] = {}
+
+
+def get_insertable_columns_set(table: str) -> set[str]:
+    """查询表的可插入列名集合（排除 MATERIALIZED/ALIAS，保留 DEFAULT 和普通列）。
+
+    用于 write_result / buffered_writer / wal_writer 的列过滤（替代 get_table_columns_set）：
+    - MATERIALIZED/ALIAS 列由 CH 自动计算或不存储，CH 禁止 INSERT，必须排除
+    - DEFAULT 列可 INSERT（显式提供值覆盖默认值），保留以支持 provider 提供值
+    - 修复 #ARCH-CH-MATERIALIZED-INSERT（2026-08-03）：原 write_result 用
+      get_table_columns_set（含 MATERIALIZED 列）做交集，导致 provider 返回的
+      MATERIALIZED 列（如 stock_list.exchange / industry_class.exchange）被保留在
+      cols_clause，INSERT 时 CH 报 Code 44 "Cannot insert column X, because it is
+      MATERIALIZED column"，数据落 fallback 后回灌永久失败（8/1 起积压 6 个坏文件）。
+
+    与 get_table_columns_set 的区别：后者返回全部列（含 MATERIALIZED/ALIAS），仅用于
+    "列是否存在"判断；本函数返回可 INSERT 的列，用于构造 cols_clause。
+
+    线程安全：double-check locking（防 TOCTOU 竞态）。
+
+    Returns:
+        可插入列名集合。查询失败返回空集合（调用方将降级到 None cols_clause）。
+    """
+    # 快速路径（无锁读）
+    if table in table_insertable_cols_cache:
+        return table_insertable_cols_cache[table]
+    with _cache_lock:
+        # double-check
+        if table in table_insertable_cols_cache:
+            return table_insertable_cols_cache[table]
+        out = query(f"DESCRIBE TABLE {table}")
+        if not out.strip():
+            return set()
+        cols = set()
+        for line in out.split("\n"):
+            if not line.strip():
+                continue
+            parts = line.split("\t")
+            if not parts:
+                continue
+            name = parts[0]
+            default_type = parts[2] if len(parts) > 2 else ""
+            if default_type in ("MATERIALIZED", "ALIAS"):
+                continue  # CH 禁止 INSERT MATERIALIZED/ALIAS 列
+            cols.add(name)
+        table_insertable_cols_cache[table] = cols
+        return cols
+
+
+def _get_insertable_columns_set(table: str) -> set[str]:
+    """向后兼容 thin wrapper。"""
+    return get_insertable_columns_set(table)
+
+
 # 表引擎缓存（避免每次都查 system.tables）
 table_engine_cache: dict[str, str] = {}
 _table_engine_cache = table_engine_cache  # 向后兼容别名（R5 公共化）
@@ -657,8 +712,10 @@ def write_result(
         else:
             eff_cols = _parse_cols_clause(columns)
     elif result.columns:
-        # 自动列过滤：只插入表中存在的列
-        table_cols = get_table_columns_set(result.table)
+        # 自动列过滤：只插入表中可插入的列（排除 MATERIALIZED/ALIAS）
+        # #ARCH-CH-MATERIALIZED-INSERT：原用 get_table_columns_set 含 MATERIALIZED 列，
+        # 导致 exchange/symbol_canonical 等被保留进 cols_clause，INSERT 报 Code 44
+        table_cols = get_insertable_columns_set(result.table)
         if table_cols:
             common_cols = [c for c in result.columns if c in table_cols]
             if not common_cols:

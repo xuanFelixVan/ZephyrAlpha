@@ -53,6 +53,7 @@ _TBL_INDUSTRY_CLASS_SUPPL = get_registry().table("fund_industry_class_suppl")
 _TBL_CONCEPT_SECTOR = get_registry().table("market_concept_sector")
 _TBL_REALTIME_SNAPSHOT = get_registry().table("market_realtime_snapshot")
 _TBL_SECTOR_META = get_registry().table("market_sector_meta")
+_TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
 
 
 def _money_flow_col_val(col_data, key, idx, safe_float):
@@ -118,6 +119,9 @@ class IFindProvider(IngestProviderBase):
             CapabilityContract("concept_sector", supports_symbols_null=True),
             CapabilityContract("realtime_snapshot", supports_symbols_null=True),
             CapabilityContract("sector_meta", supports_symbols_null=True),
+            # #ARCH-CH-INDUSTRY-CLASS-MIGRATE：tdx block() 板块成分股与 industry_class 表
+            # （股票→申万行业）语义错配，改由 ifind i问财查询 + "--" split level 1/2/3 拆分填充
+            CapabilityContract("industry_class", supports_symbols_null=True),
         ],
         known_issues=["月度配额-4318", "试用账号不支持沪深港通"],
     )
@@ -302,6 +306,8 @@ class IFindProvider(IngestProviderBase):
             yield from self._fetch_realtime_snapshot(payload, policy)
         elif capability == "sector_meta":
             yield from self._fetch_sector_meta(payload, policy)
+        elif capability == "industry_class":
+            yield from self._fetch_industry_class(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table,
@@ -1361,6 +1367,123 @@ class IFindProvider(IngestProviderBase):
                 sw = str(sw_list[i]) if i < len(sw_list) else ""
                 ths = str(ths_list[i]) if i < len(ths_list) else ""
                 batch_rows.append((symbol, sw, ths, 0, "ifind"))
+
+                if len(batch_rows) >= self._BATCH_SIZE:
+                    yield FetchResult(
+                        table=table, columns=columns,
+                        rows=batch_rows[:], last_key=last_key,
+                        elapsed_sec=time.time() - start_ts,
+                    )
+                    batch_rows.clear()
+                    start_ts = time.time()
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - start_ts,
+                error=f"i问财结果解析失败: {e}",
+            )
+            return
+
+        if batch_rows:
+            yield FetchResult(
+                table=table, columns=columns,
+                rows=batch_rows[:], last_key=last_key,
+                elapsed_sec=time.time() - start_ts,
+            )
+
+    def _fetch_industry_class(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """拉取申万行业分类，写入 c1_market.industry_class（level 1/2/3 拆分）。
+
+        复用 _fetch_industry_class_suppl 的 i问财查询（"全部A股 申万行业 同花顺行业"），
+        但目标表是 c1_market.industry_class（非 suppl），且把 industry_sw="银行--股份制银行Ⅱ--股份制银行Ⅲ"
+        按 "--" 拆分成 level 1/2/3 多行（与 CH 现有 40254 行数据格式一致）。
+
+        列对齐 DDL INSERT_COLUMNS (symbol, industry_sw, industry_zsi, industry_level, valid_to)：
+        - symbol ← _ts_code_to_symbol(ts_code)
+        - industry_sw ← 拆分后的单级行业名（如 "银行" / "股份制银行Ⅱ"）
+        - industry_zsi ← None（DDL 语义为"中证行业"，暂不填同花顺行业，保持 NULL）
+        - industry_level ← 1/2/3（按 "--" split 索引）
+        - valid_to ← None（当前有效，SCD-2 开区间）
+
+        与 _fetch_industry_class_suppl 的区别：
+        - suppl 写 c3_fundamental.industry_class_suppl，level 固定=0，industry_sw 存完整 "A--B--C"
+        - 本方法写 c1_market.industry_class，level 1/2/3 拆分，每级行业名单独一行
+
+        治本背景（#ARCH-CH-INDUSTRY-CLASS-MIGRATE，2026-08-03）：
+        原 tdx_provider._fetch_industry_class 调 mootdx block() 产出板块成分股，与 industry_class
+        表（股票→申万行业）语义+列双重错配（列零交集→写入失败积压）。改由 ifind 正规产出。
+        """
+        from iFinDPy import THS_iwencai
+
+        table = payload.table or _TBL_INDUSTRY_CLASS
+        columns = ["symbol", "industry_sw", "industry_zsi", "industry_level", "valid_to"]
+
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        last_key = today_str
+        start_ts = time.time()
+
+        # 单次 i问财查询获取全部 A 股申万行业（与 _fetch_industry_class_suppl 同源）
+        try:
+            raw = self._call_with_policy(
+                THS_iwencai, policy,
+                "全部A股 申万行业 同花顺行业", "stock",
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - start_ts,
+                error=f"THS_iwencai 调用失败: {e}",
+            )
+            return
+
+        is_error, code, msg, is_auth_error = self._check_ifind_error(raw)
+        if is_error:
+            if self._handle_auth_error(code):
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                    error=f"iFind登录过期({code})，已标记重连",
+                )
+                return
+            elif code in (-4318, -4309):
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                    error=f"iFind配额耗尽: {code}",
+                )
+                return
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.time() - start_ts,
+                error=f"i问财错误: {code} {msg}",
+            )
+            return
+
+        batch_rows: list[tuple] = []
+        try:
+            tables = raw.get("tables", []) if isinstance(raw, dict) else []
+            if not tables:
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key="",
+                    elapsed_sec=time.time() - start_ts,
+                    error="i问财返回空表格",
+                )
+                return
+            tbl_data = tables[0].get("table", {})
+            codes = tbl_data.get("股票代码", [])
+            sw_list = tbl_data.get("所属申万行业", [])
+
+            for i, ts_code in enumerate(codes):
+                symbol = self._ts_code_to_symbol(ts_code)
+                sw = str(sw_list[i]) if i < len(sw_list) else ""
+                if not sw:
+                    continue
+                # 按 "--" 拆分申万行业（如 "银行--股份制银行Ⅱ--股份制银行Ⅲ" → 3 行 level 1/2/3）
+                parts = [p.strip() for p in sw.split("--") if p.strip()]
+                for lvl, name in enumerate(parts, start=1):
+                    batch_rows.append((symbol, name, None, lvl, None))
 
                 if len(batch_rows) >= self._BATCH_SIZE:
                     yield FetchResult(

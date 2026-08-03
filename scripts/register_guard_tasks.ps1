@@ -27,7 +27,8 @@ $CurrentUser = "$env:USERDOMAIN\$env:USERNAME"
 
 $services = @(
     @{ TaskName = "ZephyrAlpha_DataScheduler";  Script = "start_scheduler.ps1" },
-    @{ TaskName = "ZephyrAlpha_TickSubscriber"; Script = "start_tick_subscriber.ps1" }
+    @{ TaskName = "ZephyrAlpha_TickSubscriber"; Script = "start_tick_subscriber.ps1" },
+    @{ TaskName = "ZephyrAlpha_CHHealthProbe"; Script = "start_ch_health_probe.ps1" }
 )
 
 # Settings: ExecutionTimeLimit=0 (unlimited; default 3 days would kill the guard every 3 days!)

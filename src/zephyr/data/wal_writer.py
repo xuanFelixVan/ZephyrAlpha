@@ -175,7 +175,8 @@ class WalWriter:
 
     def _init_columns(self, result: "FetchResult") -> None:
         """从首个 FetchResult 确定列子句（含列过滤，参照 BufferedWriter）。"""
-        table_cols = ch_writer._get_table_columns_set(result.table)
+        # #ARCH-CH-MATERIALIZED-INSERT：用可插入列集合（排除 MATERIALIZED/ALIAS）
+        table_cols = ch_writer.get_insertable_columns_set(result.table)
         if table_cols and result.columns:
             common_cols = [c for c in result.columns if c in table_cols]
             if common_cols:
