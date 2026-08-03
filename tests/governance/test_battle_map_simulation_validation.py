@@ -361,4 +361,21 @@ class TestSim07GeneratorRendering:
         indicators = (
             "①触发：BM-SIM-03 蒙特卡洛完成/风控参数调整；"
             "②消费：BM-SIM-01 仿真市场+BM-SIM-03 蒙特卡洛路径；"
-            "③参数
+            "③参数：VaR模拟、回撤模拟、熔断模拟；"
+            "④数据流：仿真市场+MC路径→风控仿真→VaR/回撤/熔断评估→BM-SIM-06分析+D-RISK风控参数；"
+            "⑤代码：MOD-SIM-003 risk_simulator.py（stable）；"
+            "⑥降级：风控仿真器未就绪→仅历史VaR(无蒙特卡洛VaR)。"
+        )
+        result = self._safe_format(indicators)
+        assert "①触发" in result and "⑥降级" in result
+        assert "MOD-SIM-003" in result
+
+    def test_render_sim07_params_as_list_dict(self):
+        """params 为 list[dict] 时安全渲染（回归测试：防字符串 params 崩溃）。"""
+        params = [
+            {"name": "VaR模拟", "type": "float"},
+            {"name": "回撤模拟", "type": "float"},
+            {"name": "熔断模拟", "type": "bool"},
+        ]
+        result = self._safe_format(params)
+        assert "VaR模拟" in result and "熔断模拟" in result
