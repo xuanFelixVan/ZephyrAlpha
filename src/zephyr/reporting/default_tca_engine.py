@@ -37,7 +37,7 @@ SSoT: cross_layer_contracts.yaml -> CTR-005 + CTR-P1-007
 from __future__ import annotations
 
 import logging
-from decimal import Decimal, ROUND_HALF_EVEN
+from decimal import ROUND_HALF_EVEN, Decimal
 
 from zephyr.reporting.analytics_base import TCAEngineBase
 from zephyr.shared.contracts.execution_report import ExecutionReport
