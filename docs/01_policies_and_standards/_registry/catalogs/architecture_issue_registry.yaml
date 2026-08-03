@@ -11344,7 +11344,11 @@ entries:
     - gate_registry.yaml：登记 GATE-DOC-NODE-ID 门禁元数据
     - AGENTS.md：RULE-DEPGRAPH 章节末尾追加"文档引用铁律"子节（本次提交）
     - architecture_issue_registry.yaml：本条 issue 登记（本次提交）
+    - in-process gate 补齐（P1 修复，commit 7891efb8d4，2026-08-04）：BLUEPRINT-NODE-ID-HARDCODE
+      （blueprint_node_id_hardcode_gate.py，priority=57，检测 staged blueprint.md 中 node_id/edge_id
+      硬编码）——补齐 GitCommitGateway --no-verify 绕过 pre-commit hook 的覆盖缺口，双层防御闭环
+    - AGENTS.md P2 同步（本次提交）：文档引用铁律条目从单层（GATE-DOC-NODE-ID）更新为双层防御描述
   status: decided
-  related_adjudication: '文档引用铁律（文档禁写物理ID，GATE-DOC-NODE-ID 硬阻断）'
+  related_adjudication: '文档引用铁律（文档禁写物理ID，GATE-DOC-NODE-ID pre-commit + BLUEPRINT-NODE-ID-HARDCODE in-process 双层硬阻断）'
   created: '2026-08-04'
   last_updated: '2026-08-04'

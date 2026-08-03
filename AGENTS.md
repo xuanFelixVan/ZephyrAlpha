@@ -105,7 +105,7 @@
 >
 > 蓝图/文档引用 depgraph 时**只写稳定标识**（`module_id`/`blueprint_id`/`path`），**禁止写易变物理ID**（`node_id`/`edge_id`）。背景：8 个 blueprint.md 曾硬编码 `node_id`，DB 节点重建后成死引用。属命名/引用规范。
 >
-> **二元判定**：文档出现 `node_id=数字` / `edge_id=数字` → **GATE-DOC-NODE-ID 硬阻断**（pre-commit hook `gate-doc-node-id`，脚本 [`check_doc_node_id_hardcode.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/check_doc_node_id_hardcode.py)，检测范围 `docs/**/*.md`）。需要物理 ID 时**查 depgraph DB 获取**，不在文档里固化。
+> **二元判定**：文档出现 `node_id=数字` / `edge_id=数字` → 硬阻断。**双层防御**：① pre-commit hook **GATE-DOC-NODE-ID**（`gate-doc-node-id`，脚本 [`check_doc_node_id_hardcode.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/check_doc_node_id_hardcode.py)，检测范围 `docs/**/*.md`）；② in-process gate **BLUEPRINT-NODE-ID-HARDCODE**（[`blueprint_node_id_hardcode_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py)，priority=57，检测 staged blueprint.md 中 `node_id=数字`/`edge_id=数字`）——GitCommitGateway 用 `--no-verify` 绕过 pre-commit hook，in-process gate 在 `check_all()` 阶段执行补齐覆盖缺口（#ARCH-DOC-NODE-ID-RULE-001 P1 补齐，2026-08-04）。需要物理 ID 时**查 depgraph DB 获取**，不在文档里固化。
 
 ## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
 
