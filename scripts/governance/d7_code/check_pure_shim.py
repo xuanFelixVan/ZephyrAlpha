@@ -14,6 +14,7 @@
 # [TESTS] python scripts/governance/d7_code/check_pure_shim.py --ci <staged_files>
 # [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  合法 manual CLI 检测器：pre-commit hook (GATE-NO-PURE-SHIM) + GitCommitGateway._check_pure_shim 按需调用，非常驻服务
 """
 check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1 2026-06-29）
 
@@ -64,7 +65,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
-from _shared.walk import staged_files
+from _shared.walk import iter_staged_files
 
 __manifest__ = """
 args:
@@ -170,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
             # gateway 路径必传显式 files，不会走到这里——语义安全
             files = [
                 str(p.relative_to(REPO_ROOT))
-                for p in staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/")
+                for p in iter_staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/")
             ]
         else:
             # 无文件传入时全量扫描 src/zephyr/ 下 .py（手动全量审计 / CI）
@@ -195,12 +196,8 @@ def main(argv: list[str] | None = None) -> int:
         is_shim, reason = is_pure_reexport_shim(filepath, content)
         if is_shim:
             findings.append(f"  BLOCKED: {f}\n    原因: {reason}")
-            findings.append(
-                "    治本: 删除此文件，消费者改引 canonical 路径"
-            )
-            findings.append(
-                "    规则: AGENTS.md「禁止纯 re-export shim」"
-            )
+            findings.append("    治本: 删除此文件，消费者改引 canonical 路径")
+            findings.append("    规则: AGENTS.md「禁止纯 re-export shim」")
 
     if findings:
         print("GATE-NO-PURE-SHIM: 检测到纯 re-export shim 文件", file=sys.stderr)

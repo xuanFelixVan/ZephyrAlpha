@@ -35,13 +35,11 @@ from pathlib import Path
 import pytest
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_GOV_DIR = str(Path(__file__).resolve().parents[3] / "scripts" / "governance")
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
+_SCRIPTS_DIR = _PROJECT_ROOT / "scripts" / "governance" / "d3_metadata"
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
 
-from d3_metadata.add_module_translation import (  # noqa: E402
+from add_module_translation import (  # noqa: E402
     EXIT_SUCCESS,
     EXIT_VALIDATION,
     _normalize_path,
@@ -79,7 +77,7 @@ class TestValidatePlain:
 
     def test_generic_plain(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """通用模板 → ok=False。"""
-        import d3_metadata.add_module_translation as mod
+        import add_module_translation as mod
         monkeypatch.setattr(mod, "is_generic_plain_zh", lambda s: True)
         ok, reason = _validate_plain("这是一个通用模板的大白话简介测试", "测试模块")
         assert ok is False
@@ -87,7 +85,7 @@ class TestValidatePlain:
 
     def test_generic_suffix(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """通用后缀 → ok=False。"""
-        import d3_metadata.add_module_translation as mod
+        import add_module_translation as mod
         monkeypatch.setattr(mod, "is_generic_plain_zh", lambda s: False)
         monkeypatch.setattr(mod, "is_generic_plain_suffix", lambda s, n: True)
         ok, reason = _validate_plain("测试模块的实现相关功能", "测试模块")
@@ -201,7 +199,7 @@ class TestAddTranslationDryRun:
 
     def test_dry_run_valid(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """校验通过 → exit 0（不写盘）。"""
-        import d3_metadata.add_module_translation as mod
+        import add_module_translation as mod
         # is_generic 返回 False（合格简介）
         monkeypatch.setattr(mod, "is_generic_plain_zh", lambda s: False)
         monkeypatch.setattr(mod, "is_generic_plain_suffix", lambda s, n: False)
