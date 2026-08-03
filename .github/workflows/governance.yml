@@ -264,6 +264,10 @@ jobs:
       - name: Test Collection Gate (GATE-18)
         run: python -m pytest tests/ --collect-only -q --tb=line
 
+      - name: Battle Map Validation Tests (BM-SIM-07 闭环验证)
+        run: python -m pytest tests/governance/test_battle_map_simulation_validation.py -v --tb=short
+        continue-on-error: true
+
       - name: GitCommitGateway Guard Tests (CI 兜底：gateway.py 篡改检测)
         run: python -m pytest tests/test_git_commit_gateway.py::TestRunGitCommitGuard -v --tb=short
         continue-on-error: false
