@@ -11,7 +11,8 @@ date: 2026-08-03
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_12_cross_cutting.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 > 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则
->           + 4 系统级横切（四模式开关 / 应急保命降级 / 四轨并行 / 共享信号注入，迁移自 trading_flow_narrative.yaml）。
+>           + 4 系统级横切（四模式开关 / 应急保命降级 / 四轨并行 / 共享信号注入，迁移自 trading_flow_narrative.yaml）
+>           + 3 域来源横切（信号生命周期治理 / 因子治理引擎 / 硬边界约束体系，来源 D-SIGNAL/D-FACTOR/跨域交叉点）。
 > 真源：`module_translation_registry.yaml` §battle_map_cross_cutting 段（规则数据，TRAE-062）。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,8 +20,8 @@ date: 2026-08-03
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 横切类别数 | 11 | Categories | 11 |
-| 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys |
+| 横切类别数 | 12 | Categories | 12 |
+| 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 + 3 域来源 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys + 3 domain |
 | 真源 | module_translation_registry.yaml | Source | YAML registry |
 
 > **图例说明 / Legend**：
@@ -34,7 +35,7 @@ date: 2026-08-03
 
 ## 横切视图总览 / Cross-Cutting Overview
 
-> 展示全部 11 个横切机制，颜色区分五态。
+> 展示全部 12 个横切机制，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -51,13 +52,14 @@ flowchart TD
     CC_09["（设计态 / design） — 共享信号注入层 / Shared<br/>Signal Injection Layer<br/>选股、买入、卖出三个流程共享同一批信号源——不重复<br/>造信号。 信号工厂统一产出 Insight（方向/置信度<br/>/时间跨度），注入到：   -<br/>选股流：信号作为筛选漏斗的输入   -<br/>买入流：信号作为四轨融合的输入   -<br/>卖出流：信号反转作为卖出触发之一 信号仓位分离铁<br/>律：signal 节点不能直接连 order，必须经<br/>portfolio_target 中转。<br/>横切机制 / cross-cutting"]
     CC_10["（设计态 / design） D-SIGNAL §3 信号生命周期治理<br/>/ Signal Lifecycle Governance<br/>信号不是'产生即用完'的一次性产物，而是有完整生命<br/>周期：生成→校准→降级监控→ 衰减追踪→绩效追踪→版本<br/>管理→审计→废弃。每个阶段都有对应能力保障信号质量<br/> 和可追溯性，避免'信号失效了还在用'。<br/>横切机制 / cross-cutting"]
     CC_11["（设计态 / design） D-FACTOR §7 因子治理引擎 /<br/>Factor Governance Engine<br/>因子不是'算出来就用'的，而是要经过完整治理：注册<br/>→评估→治理门禁→衰减监控→ 相关性分析→废弃审批。因<br/>子池有容量上限（活跃池≤60，设计容量≥150），通过<br/>末位淘汰+批量裁剪维持因子池健康。<br/>横切机制 / cross-cutting"]
-    CC_01 ~~~ CC_02 ~~~ CC_03 ~~~ CC_04 ~~~ CC_05 ~~~ CC_06 ~~~ CC_07 ~~~ CC_08 ~~~ CC_09 ~~~ CC_10 ~~~ CC_11
+    CC_12["（设计态 / design） 01-跨域交叉点 §硬边界约束总表<br/>硬边界约束体系 / Hard Boundary Constraint System<br/>硬边界是系统不可逾越的红线——AI<br/>和人类都不能绕过。 分四类：交易安全（禁超限加仓<br/>/禁超杠杆/禁非时段下单）、 自迭代安全<br/>（禁无审批上线/禁超3参数<br/>/禁过拟合上线）、 数据隐私（禁外传持仓<br/>/禁自动付费源）、运维安全（禁自动重启核心进程<br/>/禁自动升级库）。 另有安全/集成<br/>/治理三类硬边界保障系统不被攻破、不被外部故障传<br/>染、不被AI自行扩权。<br/>横切机制 / cross-cutting"]
+    CC_01 ~~~ CC_02 ~~~ CC_03 ~~~ CC_04 ~~~ CC_05 ~~~ CC_06 ~~~ CC_07 ~~~ CC_08 ~~~ CC_09 ~~~ CC_10 ~~~ CC_11 ~~~ CC_12
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class CC_01,CC_02,CC_03,CC_04,CC_05,CC_06,CC_07,CC_08,CC_09,CC_10,CC_11 design
+    class CC_01,CC_02,CC_03,CC_04,CC_05,CC_06,CC_07,CC_08,CC_09,CC_10,CC_11,CC_12 design
 ```
 
 ## 筛选漏斗模型 / Screening Funnel Model（§13）
@@ -458,5 +460,41 @@ SEVERE 降级→立即撤销所有相关信号（E-SG-02）→通知 D-PORTFOLIO
 |---|---|---|---|
 | ic_replacement | IC-Based Factor Replacement（末位淘汰） | 活跃池满 N_max-4 时新因子逐个对比池内 IC 最低者 | 核心因子标记不参与末位淘汰 |
 | batch_pruning | Batch Factor Pruning（批量裁剪） | 全池≥64 时按 IC 从休眠/观察中裁撤 | 兜底机制，维护全池≤N_max |
+
+## 硬边界约束体系 / Hard Boundary Constraint System（01-跨域交叉点 §硬边界约束总表）
+
+> **大白话**：硬边界是系统不可逾越的红线——AI 和人类都不能绕过。
+分四类：交易安全（禁超限加仓/禁超杠杆/禁非时段下单）、
+自迭代安全（禁无审批上线/禁超3参数/禁过拟合上线）、
+数据隐私（禁外传持仓/禁自动付费源）、运维安全（禁自动重启核心进程/禁自动升级库）。
+另有安全/集成/治理三类硬边界保障系统不被攻破、不被外部故障传染、不被AI自行扩权。
+
+**机制说明**：
+
+硬边界约束体系贯穿交易决策作战全流程，是所有决策的不可逾越底线。
+四类边界协同：
+  ① B-001~B-020 AI行为安全边界——20条交易+自迭代+数据隐私+运维安全硬约束，
+     禁止AI越权操作（如禁超限加仓/禁无审批上线新策略/禁外传持仓数据/禁自动重启核心进程）。
+  ② HB-SEC-01~13 安全硬边界——13条安全约束，密钥不可硬编码/审计日志不可篡改/
+     Agent不可直接访问生产系统/LLM输出不可直接执行/交易通道熔断必须人工恢复/
+     下单操作不可自动重试/风控调用不可降级(Fail-Closed)。
+  ③ HB-INT-01~13 集成硬边界——13条集成约束，外部系统故障不可传染内部(熔断器+舱壁)/
+     出站流量白名单/API版本不匹配必须拒绝/隔离策略不可被绕过。
+  ④ HB-GOV-01~10 治理硬边界——10条治理约束，治理规则不可被AI自动修改/
+     变更审批链不可被绕过/蓝图-代码-文档三方必须对齐/KillSwitch必须分层且本地评估。
+核心原则：防御永远优先于进攻，硬边界约束不可被AI修改(B-006)、不可被AI自行扩展(HB-GOV-04)、
+不可被绕过(HB-INT-05)。与§16冲突矩阵的关系：冲突矩阵的仲裁优先级（风控>一切）
+正是硬边界约束体系在决策层面的具体体现。
+
+**关联环节**：[BM-SEL-02](battle_map_05_stock_selection.md)、[BM-BUY-01](battle_map_06_buy_flow.md)、[BM-SELL-01](battle_map_07_sell_flow.md)、[BM-POS-01](battle_map_08_position_management.md)、[BM-RC-01](battle_map_09_risk_control.md)、[BM-EXE-01](battle_map_10_execution.md)
+
+### 硬边界分类（4类 56条约束）
+
+| 类别 | 名称 | 前缀 | 条数 | 范围 | 关键约束 |
+|---|---|---|---|---|---|
+| ai_behavior_safety | AI行为安全边界 | B | 20 | 交易安全(B-001~006)+自迭代安全(B-007~010)+数据隐私(B-011~013.6)+运维安全(B-014~016)+功能边界(B-017~020) | 禁超限加仓/禁超杠杆/禁非时段下单/禁绕过风控/禁AI改硬边界/禁无审批上线/禁超3参数自迭代/禁过拟合上线/禁外传持仓/禁自动付费源/禁自动重启核心进程/禁自动升级依赖库/不做HFT/不做纯空头/不做多租户SaaS |
+| security | 安全硬边界 | HB-SEC | 13 | 密钥管理+API网关+审计不可篡改+Agent沙箱+LLM输出审查+交易通道熔断+风控Fail-Closed | 密钥不可硬编码/外部API必须经网关脱敏/审计日志append-only哈希链/Agent沙箱执行/LLM输出必须经代码审查+沙箱/交易通道熔断必须人工恢复/下单不可自动重试(幂等Key)/风控调用不可降级(Fail-Closed) |
+| integration | 集成硬边界 | HB-INT | 13 | 外部故障隔离+流量白名单+数据源审批+API版本控制+隔离策略 | 外部故障不可传染内部(熔断器+舱壁)/出站流量白名单/新增数据源需人工审批/API版本不匹配必须拒绝/隔离策略不可被绕过 |
+| governance | 治理硬边界 | HB-GOV | 10 | 治理规则不可篡改+变更审批链+三方对齐+AI自治边界+KillSwitch分层 | 治理规则不可被AI自动修改/变更审批链不可被绕过/蓝图-代码-文档三方必须对齐/AI自治边界不可被AI自行扩展/KillSwitch必须分层且本地评估/KillSwitch激活后必须受控重入 |
 
 [← 返回总指挥图](battle_map_panorama.md)

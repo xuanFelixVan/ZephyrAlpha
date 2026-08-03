@@ -335,7 +335,7 @@ BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-004 | primary | production | generated |
+| depgraph | MOD-TRADING-004 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
