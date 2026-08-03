@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-1068 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_governance_auditor
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] RollbackAuditor.log_rollback must delegate to AuditWriter.write
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

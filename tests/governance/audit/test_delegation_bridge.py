@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-0730 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] tests.test_delegation_bridge
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] AuditDelegationBridge depth anomaly detection; chain integrity
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

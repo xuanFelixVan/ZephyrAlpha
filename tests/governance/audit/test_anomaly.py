@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-0316 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §5
 # [MODULE] tests.test_anomaly
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] AnomalyDetector.scan returns list; AnomalyResult.to_dict serializable
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

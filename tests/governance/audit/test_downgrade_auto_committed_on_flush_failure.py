@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-2712 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_ASSET_INDEX_RECONCILER | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001
 # [MODULE] tests.governance.audit.test_downgrade_auto_committed_on_flush_failure
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

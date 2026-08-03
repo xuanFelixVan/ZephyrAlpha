@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-1540 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §6.12
 # [MODULE] tests.test_secret_rotation_aware
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] exit code 15 when stale secrets found; rotatable secrets auto-rotate
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

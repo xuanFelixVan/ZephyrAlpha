@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.audit.test_blueprint_id_legacy_reconciler
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

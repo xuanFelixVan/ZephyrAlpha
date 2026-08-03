@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-DEAD-WRAPPER | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_DEAD_PUBLIC_WRAPPER_RECONCILER | docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml | §#ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001
 # [MODULE] tests.governance.audit.test_dead_public_wrapper_reconciler
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
