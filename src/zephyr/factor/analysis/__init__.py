@@ -1,10 +1,10 @@
-# [BLUEPRINT] MOD-L02-ANA | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-ANA
+# [BLUEPRINT] MOD-L02_ANA | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-ANA
 # [MODULE] zephyr.factor.analysis
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.core.evaluation
 # [STARTUP] imported
 # [MATURITY] production
-# [A_module] module_id=MOD-L02-ANA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02_ANA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR analysis 子包——因子分析与评估工具链。
 

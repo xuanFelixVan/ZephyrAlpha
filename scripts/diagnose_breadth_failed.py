@@ -4,6 +4,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
+# [A_module] module_id=MOD-GOV_DIAGNOSE_BREADTH | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 诊断 breadth_failed 能力的根因。

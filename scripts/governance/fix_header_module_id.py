@@ -37,7 +37,7 @@ from pathlib import Path
 
 # 治本（2026-08-03）：module_id 格式校验改用权威真源 is_valid_module_id（裁定#208 三轨制）。
 # 旧 validate_module_id_format 仅认 MOD- 前缀 → 误判 27 个 SH-* 跨域共享轨为「不合规」(假阳性)，
-# 同时漏报 13 个以 MOD- 开头但格式非法的 ID（如 MOD-H1-REDIS-HOT，假阴性）。
+# 同时漏报 13 个以 MOD- 开头但格式非法的 ID（如 MOD-H1_REDIS_HOT，假阴性）。
 # 权威真源：scripts/governance/d3_metadata/validate_module_id_naming.py
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
@@ -162,7 +162,7 @@ def validate_module_id_format(mid: str) -> bool:
       - 跨域共享轨:    SH-{ABBR}-{NNN}（如 SH-DB-001）
 
     旧实现仅认 MOD- 前缀，产生假阳性（SH-* 被误判不合规）与假阴性
-    （MOD-H1-REDIS-HOT 等漏网）。现统一委托权威校验器。
+    （MOD-H1_REDIS_HOT 等漏网）。现统一委托权威校验器。
     """
     if not mid:
         return False

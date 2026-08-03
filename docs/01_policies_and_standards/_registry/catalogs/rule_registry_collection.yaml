@@ -1,4 +1,4 @@
-module_id: CFG-rule-registry-collection
+module_id: MOD-CFG_RULE_REGISTRY
 ttl: permanent
 collection_id: RULE_REGISTRY_COLLECTION
 collection_name: 规则注册表集 / Rule Registry Collection

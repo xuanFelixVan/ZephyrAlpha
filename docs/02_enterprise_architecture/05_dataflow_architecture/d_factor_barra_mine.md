@@ -10,7 +10,7 @@ ttl: permanent
 
 # 因子域-Barra风险模型与因子挖掘
 
-> 生成时间: 2026-08-03T19:12:47
+> 生成时间: 2026-08-03T21:21:09
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -67,16 +67,16 @@ flowchart TD
     JOB757606 -.->|produces / 产出| DS11242
     JOB757607 -.->|produces / 产出| DS11243
     JOB757608 -.->|produces / 产出| DS11244
-    JOB757606 ~~~ JOB757607
-    JOB757607 ~~~ JOB757604
-    JOB757604 ~~~ JOB757605
-    JOB757605 ~~~ JOB757608
-    JOB757608 ~~~ JOB757603
-    DS11242 ~~~ DS11243
-    DS11243 ~~~ DS11240
-    DS11240 ~~~ DS11241
-    DS11241 ~~~ DS11244
-    DS11244 ~~~ DS11239
+    JOB757608 ~~~ JOB757606
+    JOB757606 ~~~ JOB757604
+    JOB757604 ~~~ JOB757607
+    JOB757607 ~~~ JOB757603
+    JOB757603 ~~~ JOB757605
+    DS11244 ~~~ DS11242
+    DS11242 ~~~ DS11240
+    DS11240 ~~~ DS11243
+    DS11243 ~~~ DS11239
+    DS11239 ~~~ DS11241
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -113,16 +113,16 @@ flowchart TD
     JOB757606 -.->|produces / 产出| DS11242
     JOB757607 -.->|produces / 产出| DS11243
     JOB757608 -.->|produces / 产出| DS11244
-    JOB757606 ~~~ JOB757607
-    JOB757607 ~~~ JOB757604
-    JOB757604 ~~~ JOB757605
-    JOB757605 ~~~ JOB757608
-    JOB757608 ~~~ JOB757603
-    DS11242 ~~~ DS11243
-    DS11243 ~~~ DS11240
-    DS11240 ~~~ DS11241
-    DS11241 ~~~ DS11244
-    DS11244 ~~~ DS11239
+    JOB757608 ~~~ JOB757606
+    JOB757606 ~~~ JOB757604
+    JOB757604 ~~~ JOB757607
+    JOB757607 ~~~ JOB757603
+    JOB757603 ~~~ JOB757605
+    DS11244 ~~~ DS11242
+    DS11242 ~~~ DS11240
+    DS11240 ~~~ DS11243
+    DS11243 ~~~ DS11239
+    DS11239 ~~~ DS11241
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

@@ -1415,7 +1415,7 @@ dependencies:
 - dep_id: DEP-111
   source: MOD-GOV_GENERATE_DOMAIN_DOC
   source_name: generate-domain-doc
-  target: SH-MODULE-TRANSLATION-001
+  target: SH-MODULE_TRANSLATION-001
   target_name: module-translation-loader
   type: runtime
   strength: hard

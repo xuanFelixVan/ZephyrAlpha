@@ -181330,10 +181330,10 @@ entries:
     panorama_position:
       depgraph:
         has_position: true
-        target_module_id: "MOD-H1-REDIS-HOT (勿新增——读端已由 H1RedisReader 覆盖)"
+        target_module_id: "MOD-H1_REDIS_HOT (勿新增——读端已由 H1RedisReader 覆盖)"
         target_build_status: deprecated
         target_neighbors:
-          upstream: ["MOD-H1-REDIS-HOT"]
+          upstream: ["MOD-H1_REDIS_HOT"]
           downstream: ["D-SIGNAL (尚未存在)"]
         insertion_description: "拟作为 H1 读端适配层,但 H1RedisReader.get_online_features + h1_integration.create_h1_reader 已覆盖读功能"
         target_edges: []

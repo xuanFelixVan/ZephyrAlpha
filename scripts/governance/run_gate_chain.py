@@ -6,6 +6,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
+# [A_module] module_id=MOD-GOV_GATE_CHAIN | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """run_gate_chain.py — 顺序运行多个门禁脚本，任一失败即整体失败。
 

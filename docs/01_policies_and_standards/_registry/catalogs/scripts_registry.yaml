@@ -1,4 +1,4 @@
-module_id: CFG-scripts-registry
+module_id: MOD-CFG_SCRIPTS
 ttl: permanent
 collection_id: SCRIPT_COLLECTION
 collection_name: 脚本集 / Script Collection

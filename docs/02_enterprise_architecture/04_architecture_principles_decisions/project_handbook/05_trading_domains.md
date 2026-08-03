@@ -65,21 +65,21 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 455 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 456 |
 | `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 411 |
-| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 206 |
+| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 207 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 193 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 184 |
 | `D_DATA` | 数据接入层 | L1_foundation | 180 |
-| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 173 |
+| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 169 |
 | `D_SECURITY` | 对抗验证 | L1_foundation | 166 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 130 |
 | `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 125 |
-| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 115 |
+| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 116 |
 | `D_GOV_OPS_RESILIENCE` | 运维弹性治理 | L1_foundation | 115 |
 | `D_FACTOR` | 因子 | L2_domain | 109 |
 | `D_FBL_DIAGNOSERS` | 反馈诊断器 | L1_foundation | 76 |
-| `D_GOV_DRIFT` | 漂移检测 | L2_domain | 75 |
+| `D_GOV_DRIFT` | 漂移检测 | L2_domain | 73 |
 | `D_INFRA_A2A` | A2A通信 | L0_infrastructure | 72 |
 | `D_FBL_VERIFICATION` | 反馈验证 | L1_foundation | 71 |
 | `D_INTEGRATION` | 管线路由 | L1_foundation | 71 |
@@ -120,6 +120,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_SIGQC` | 信号质量控制 | L2_domain | 2 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 1 |
 | `D_GOV_REPAIR` | 治理修复 | L2_domain | 1 |
+| `D_INFRA_OPS` | 基础设施运维 | L0_infrastructure | 1 |
 | `D_KNOWLEDGE` | 知识管理 | L2_domain | 1 |
 | `D_ARCHIVE_SCRIPTS` | Archived Scripts | L2_domain | 0 |
 | `D_ARCH_GUARD` | 架构守护脚本 | L2_domain | 0 |
@@ -129,7 +130,6 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_COMPLIANCE_SCRIPTS` | 合规治理脚本 | L2_domain | 0 |
 | `D_CONTRACTS` | 共享契约 | L0_infrastructure | 0 |
 | `D_DATA_SCRIPTS` | 数据治理脚本 | L2_domain | 0 |
-| `D_INFRA_OPS` | 基础设施运维 | L0_infrastructure | 0 |
 | `D_INFRA_TELEMETRY` | 可观测性 | L0_infrastructure | 0 |
 | `D_INTEGRATION_GATEWAY` | 集成网关 | L1_foundation | 0 |
 | `D_META_SCRIPTS` | 元治理脚本 | L2_domain | 0 |

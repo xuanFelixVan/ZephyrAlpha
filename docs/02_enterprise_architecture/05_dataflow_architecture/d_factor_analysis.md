@@ -10,7 +10,7 @@ ttl: permanent
 
 # 因子域-因子分析
 
-> 生成时间: 2026-08-03T19:12:46
+> 生成时间: 2026-08-03T21:21:09
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -49,69 +49,69 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS26351["(生产态 / production) factor_<br/>analysis.correlation_analyzer /<br/>因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
-    DS26352["(生产态 / production) factor_<br/>analysis.correlation_dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
-    DS26353["(生产态 / production) factor_analysis.decay_<br/>monitor / 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
-    DS26354["(生产态 / production) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
-    DS26355["(生产态 / production) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
-    DS26356["(生产态 / production) factor_analysis.ic_decay<br/>/ IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
-    DS26357["(生产态 / production) factor_analysis.ic_ir_<br/>calc / IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
-    DS26358["(生产态 / production) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
-    DS26359["(生产态 / production) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
-    DS26360["(生产态 / production) factor_<br/>analysis.multifactor_synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
-    DS26361["(生产态 / production) factor_analysis.three_<br/>level_judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
+    DS26883["(生产态 / production) factor_<br/>analysis.correlation_analyzer /<br/>因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
+    DS26884["(生产态 / production) factor_<br/>analysis.correlation_dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
+    DS26885["(生产态 / production) factor_analysis.decay_<br/>monitor / 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
+    DS26886["(生产态 / production) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
+    DS26887["(生产态 / production) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
+    DS26888["(生产态 / production) factor_analysis.ic_decay<br/>/ IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
+    DS26889["(生产态 / production) factor_analysis.ic_ir_<br/>calc / IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
+    DS26890["(生产态 / production) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
+    DS26891["(生产态 / production) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
+    DS26892["(生产态 / production) factor_<br/>analysis.multifactor_synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
+    DS26893["(生产态 / production) factor_analysis.three_<br/>level_judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
     DS11238["(设计态 / design) factor_analysis.turnover_<br/>analyzer / 换手率分析报告<br/>（因子换手成本评估）<br/>契约: - · 域: 因子"]
-    JOB1064902("(生产态 / production) analyze.correlation_<br/>analyzer / 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_analyzer.py")
-    JOB1064903("(生产态 / production) analyze.correlation_dedup<br/>/ 因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_dedup.py")
-    JOB1064904("(生产态 / production) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/decay_monitor.py")
-    JOB1064905("(生产态 / production) analyze.factor_<br/>attribution / 因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_attribution.py")
-    JOB1064906("(生产态 / production) analyze.factor_<br/>optimization / 因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_optimization.py")
-    JOB1064907("(生产态 / production) analyze.ic_decay /<br/>IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_decay.py")
-    JOB1064908("(生产态 / production) analyze.ic_ir_calc / IC<br/>/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_calc.py")
-    JOB1064909("(生产态 / production) analyze.ic_ir_evaluator /<br/>IC/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_evaluator.py")
-    JOB1064910("(生产态 / production) analyze.layered_backtest<br/>/ 分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/layered_backtest.py")
-    JOB1064911("(生产态 / production) analyze.multifactor_<br/>synthesis / 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/multifactor_synthesis.py")
-    JOB1064912("(生产态 / production) analyze.three_level_<br/>judgment / 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/three_level_judgment.py")
+    JOB1071748("(生产态 / production) analyze.correlation_<br/>analyzer / 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_analyzer.py")
+    JOB1071749("(生产态 / production) analyze.correlation_dedup<br/>/ 因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_dedup.py")
+    JOB1071750("(生产态 / production) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/decay_monitor.py")
+    JOB1071751("(生产态 / production) analyze.factor_<br/>attribution / 因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_attribution.py")
+    JOB1071752("(生产态 / production) analyze.factor_<br/>optimization / 因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_optimization.py")
+    JOB1071753("(生产态 / production) analyze.ic_decay /<br/>IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_decay.py")
+    JOB1071754("(生产态 / production) analyze.ic_ir_calc / IC<br/>/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_calc.py")
+    JOB1071755("(生产态 / production) analyze.ic_ir_evaluator /<br/>IC/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_evaluator.py")
+    JOB1071756("(生产态 / production) analyze.layered_backtest<br/>/ 分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/layered_backtest.py")
+    JOB1071757("(生产态 / production) analyze.multifactor_<br/>synthesis / 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/multifactor_synthesis.py")
+    JOB1071758("(生产态 / production) analyze.three_level_<br/>judgment / 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/three_level_judgment.py")
     JOB757602("(设计态 / design) analyze.turnover_analyzer /<br/>换手率分析<br/>（消费因子信号，产出分析结果）<br/>文件: turnover_analyzer/")
+    JOB1071748 -->|produces / 产出| DS26883
+    JOB1071749 -->|produces / 产出| DS26884
+    JOB1071750 -->|produces / 产出| DS26885
+    JOB1071751 -->|produces / 产出| DS26886
+    JOB1071752 -->|produces / 产出| DS26887
+    JOB1071753 -->|produces / 产出| DS26888
+    JOB1071754 -->|produces / 产出| DS26889
+    JOB1071755 -->|produces / 产出| DS26890
+    JOB1071756 -->|produces / 产出| DS26891
     JOB757602 -.->|produces / 产出| DS11238
-    JOB1064902 -->|produces / 产出| DS26351
-    JOB1064903 -->|produces / 产出| DS26352
-    JOB1064904 -->|produces / 产出| DS26353
-    JOB1064905 -->|produces / 产出| DS26354
-    JOB1064906 -->|produces / 产出| DS26355
-    JOB1064907 -->|produces / 产出| DS26356
-    JOB1064908 -->|produces / 产出| DS26357
-    JOB1064909 -->|produces / 产出| DS26358
-    JOB1064910 -->|produces / 产出| DS26359
-    JOB1064911 -->|produces / 产出| DS26360
-    JOB1064912 -->|produces / 产出| DS26361
-    JOB1064909 ~~~ JOB1064910
-    JOB1064910 ~~~ JOB1064902
-    JOB1064902 ~~~ JOB1064907
-    JOB1064907 ~~~ JOB1064912
-    JOB1064912 ~~~ JOB1064903
-    JOB1064903 ~~~ JOB1064911
-    JOB1064911 ~~~ JOB1064905
-    JOB1064905 ~~~ JOB1064908
-    JOB1064908 ~~~ JOB1064906
-    JOB1064906 ~~~ JOB757602
-    JOB757602 ~~~ JOB1064904
-    DS26358 ~~~ DS26359
-    DS26359 ~~~ DS26351
-    DS26351 ~~~ DS26356
-    DS26356 ~~~ DS26361
-    DS26361 ~~~ DS26352
-    DS26352 ~~~ DS26360
-    DS26360 ~~~ DS26354
-    DS26354 ~~~ DS26357
-    DS26357 ~~~ DS26355
-    DS26355 ~~~ DS11238
-    DS11238 ~~~ DS26353
+    JOB1071757 -->|produces / 产出| DS26892
+    JOB1071758 -->|produces / 产出| DS26893
+    JOB1071752 ~~~ JOB1071758
+    JOB1071758 ~~~ JOB1071748
+    JOB1071748 ~~~ JOB1071753
+    JOB1071753 ~~~ JOB1071757
+    JOB1071757 ~~~ JOB1071756
+    JOB1071756 ~~~ JOB1071755
+    JOB1071755 ~~~ JOB1071751
+    JOB1071751 ~~~ JOB1071754
+    JOB1071754 ~~~ JOB757602
+    JOB757602 ~~~ JOB1071750
+    JOB1071750 ~~~ JOB1071749
+    DS26887 ~~~ DS26893
+    DS26893 ~~~ DS26883
+    DS26883 ~~~ DS26888
+    DS26888 ~~~ DS26892
+    DS26892 ~~~ DS26891
+    DS26891 ~~~ DS26890
+    DS26890 ~~~ DS26886
+    DS26886 ~~~ DS26889
+    DS26889 ~~~ DS11238
+    DS11238 ~~~ DS26885
+    DS26885 ~~~ DS26884
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS26351,DS26352,DS26353,DS26354,DS26355,DS26356,DS26357,DS26358,DS26359,DS26360,DS26361,JOB1064902,JOB1064903,JOB1064904,JOB1064905,JOB1064906,JOB1064907,JOB1064908,JOB1064909,JOB1064910,JOB1064911,JOB1064912 production
+    class DS26883,DS26884,DS26885,DS26886,DS26887,DS26888,DS26889,DS26890,DS26891,DS26892,DS26893,JOB1071748,JOB1071749,JOB1071750,JOB1071751,JOB1071752,JOB1071753,JOB1071754,JOB1071755,JOB1071756,JOB1071757,JOB1071758 production
     class DS11238,JOB757602 design
 ```
 
@@ -122,64 +122,64 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 flowchart TD
-    DS26351["(生产态 / production) factor_<br/>analysis.correlation_analyzer /<br/>因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
-    DS26352["(生产态 / production) factor_<br/>analysis.correlation_dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
-    DS26353["(生产态 / production) factor_analysis.decay_<br/>monitor / 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
-    DS26354["(生产态 / production) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
-    DS26355["(生产态 / production) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
-    DS26356["(生产态 / production) factor_analysis.ic_decay<br/>/ IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
-    DS26357["(生产态 / production) factor_analysis.ic_ir_<br/>calc / IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
-    DS26358["(生产态 / production) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
-    DS26359["(生产态 / production) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
-    DS26360["(生产态 / production) factor_<br/>analysis.multifactor_synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
-    DS26361["(生产态 / production) factor_analysis.three_<br/>level_judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
-    JOB1064902("(生产态 / production) analyze.correlation_<br/>analyzer / 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_analyzer.py")
-    JOB1064903("(生产态 / production) analyze.correlation_dedup<br/>/ 因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_dedup.py")
-    JOB1064904("(生产态 / production) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/decay_monitor.py")
-    JOB1064905("(生产态 / production) analyze.factor_<br/>attribution / 因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_attribution.py")
-    JOB1064906("(生产态 / production) analyze.factor_<br/>optimization / 因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_optimization.py")
-    JOB1064907("(生产态 / production) analyze.ic_decay /<br/>IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_decay.py")
-    JOB1064908("(生产态 / production) analyze.ic_ir_calc / IC<br/>/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_calc.py")
-    JOB1064909("(生产态 / production) analyze.ic_ir_evaluator /<br/>IC/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_evaluator.py")
-    JOB1064910("(生产态 / production) analyze.layered_backtest<br/>/ 分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/layered_backtest.py")
-    JOB1064911("(生产态 / production) analyze.multifactor_<br/>synthesis / 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/multifactor_synthesis.py")
-    JOB1064912("(生产态 / production) analyze.three_level_<br/>judgment / 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/three_level_judgment.py")
-    JOB1064902 -->|produces / 产出| DS26351
-    JOB1064903 -->|produces / 产出| DS26352
-    JOB1064904 -->|produces / 产出| DS26353
-    JOB1064905 -->|produces / 产出| DS26354
-    JOB1064906 -->|produces / 产出| DS26355
-    JOB1064907 -->|produces / 产出| DS26356
-    JOB1064908 -->|produces / 产出| DS26357
-    JOB1064909 -->|produces / 产出| DS26358
-    JOB1064910 -->|produces / 产出| DS26359
-    JOB1064911 -->|produces / 产出| DS26360
-    JOB1064912 -->|produces / 产出| DS26361
-    JOB1064909 ~~~ JOB1064910
-    JOB1064910 ~~~ JOB1064902
-    JOB1064902 ~~~ JOB1064907
-    JOB1064907 ~~~ JOB1064912
-    JOB1064912 ~~~ JOB1064903
-    JOB1064903 ~~~ JOB1064911
-    JOB1064911 ~~~ JOB1064905
-    JOB1064905 ~~~ JOB1064908
-    JOB1064908 ~~~ JOB1064906
-    JOB1064906 ~~~ JOB1064904
-    DS26358 ~~~ DS26359
-    DS26359 ~~~ DS26351
-    DS26351 ~~~ DS26356
-    DS26356 ~~~ DS26361
-    DS26361 ~~~ DS26352
-    DS26352 ~~~ DS26360
-    DS26360 ~~~ DS26354
-    DS26354 ~~~ DS26357
-    DS26357 ~~~ DS26355
-    DS26355 ~~~ DS26353
+    DS26883["(生产态 / production) factor_<br/>analysis.correlation_analyzer /<br/>因子间相关系数矩阵<br/>（识别冗余因子）<br/>契约: - · 域: 因子"]
+    DS26884["(生产态 / production) factor_<br/>analysis.correlation_dedup / 去重后的因子集合<br/>（移除高相关冗余因子）<br/>契约: - · 域: 因子"]
+    DS26885["(生产态 / production) factor_analysis.decay_<br/>monitor / 因子衰减报告<br/>（IC随时间衰减趋势）<br/>契约: - · 域: 因子"]
+    DS26886["(生产态 / production) factor_analysis.factor_<br/>attribution / 因子归因报告<br/>（各因子对收益的贡献分解）<br/>契约: - · 域: 因子"]
+    DS26887["(生产态 / production) factor_analysis.factor_<br/>optimization / 优化后的因子权重<br/>（最大化IC/最小化相关性）<br/>契约: - · 域: 因子"]
+    DS26888["(生产态 / production) factor_analysis.ic_decay<br/>/ IC衰减曲线<br/>（因子预测力随滞后的变化）<br/>契约: - · 域: 因子"]
+    DS26889["(生产态 / production) factor_analysis.ic_ir_<br/>calc / IC/IR指标序列<br/>（因子信息系数/信息比率）<br/>契约: - · 域: 因子"]
+    DS26890["(生产态 / production) factor_analysis.ic_ir_<br/>evaluator / IC/IR评估报告<br/>（因子有效性评级）<br/>契约: - · 域: 因子"]
+    DS26891["(生产态 / production) factor_analysis.layered_<br/>backtest / 分层回测结果<br/>（按因子分层的收益统计）<br/>契约: - · 域: 因子"]
+    DS26892["(生产态 / production) factor_<br/>analysis.multifactor_synthesis / 合成因子信号<br/>（多因子加权/截面排名/置信度）<br/>契约: - · 域: 因子"]
+    DS26893["(生产态 / production) factor_analysis.three_<br/>level_judgment / 三级研判结果<br/>（因子有效性/稳定性/贡献度评级）<br/>契约: - · 域: 因子"]
+    JOB1071748("(生产态 / production) analyze.correlation_<br/>analyzer / 因子相关性分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_analyzer.py")
+    JOB1071749("(生产态 / production) analyze.correlation_dedup<br/>/ 因子去重<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/correlation_dedup.py")
+    JOB1071750("(生产态 / production) analyze.decay_monitor /<br/>因子衰减监控<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/decay_monitor.py")
+    JOB1071751("(生产态 / production) analyze.factor_<br/>attribution / 因子归因<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_attribution.py")
+    JOB1071752("(生产态 / production) analyze.factor_<br/>optimization / 因子优化<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/factor_optimization.py")
+    JOB1071753("(生产态 / production) analyze.ic_decay /<br/>IC衰减分析<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_decay.py")
+    JOB1071754("(生产态 / production) analyze.ic_ir_calc / IC<br/>/IR计算<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_calc.py")
+    JOB1071755("(生产态 / production) analyze.ic_ir_evaluator /<br/>IC/IR评估<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/ic_ir_evaluator.py")
+    JOB1071756("(生产态 / production) analyze.layered_backtest<br/>/ 分层回测<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/layered_backtest.py")
+    JOB1071757("(生产态 / production) analyze.multifactor_<br/>synthesis / 多因子合成<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/multifactor_synthesis.py")
+    JOB1071758("(生产态 / production) analyze.three_level_<br/>judgment / 三级研判<br/>（消费因子信号，产出分析结果）<br/>文件: analysis/three_level_judgment.py")
+    JOB1071748 -->|produces / 产出| DS26883
+    JOB1071749 -->|produces / 产出| DS26884
+    JOB1071750 -->|produces / 产出| DS26885
+    JOB1071751 -->|produces / 产出| DS26886
+    JOB1071752 -->|produces / 产出| DS26887
+    JOB1071753 -->|produces / 产出| DS26888
+    JOB1071754 -->|produces / 产出| DS26889
+    JOB1071755 -->|produces / 产出| DS26890
+    JOB1071756 -->|produces / 产出| DS26891
+    JOB1071757 -->|produces / 产出| DS26892
+    JOB1071758 -->|produces / 产出| DS26893
+    JOB1071752 ~~~ JOB1071758
+    JOB1071758 ~~~ JOB1071748
+    JOB1071748 ~~~ JOB1071753
+    JOB1071753 ~~~ JOB1071757
+    JOB1071757 ~~~ JOB1071756
+    JOB1071756 ~~~ JOB1071755
+    JOB1071755 ~~~ JOB1071751
+    JOB1071751 ~~~ JOB1071754
+    JOB1071754 ~~~ JOB1071750
+    JOB1071750 ~~~ JOB1071749
+    DS26887 ~~~ DS26893
+    DS26893 ~~~ DS26883
+    DS26883 ~~~ DS26888
+    DS26888 ~~~ DS26892
+    DS26892 ~~~ DS26891
+    DS26891 ~~~ DS26890
+    DS26890 ~~~ DS26886
+    DS26886 ~~~ DS26889
+    DS26889 ~~~ DS26885
+    DS26885 ~~~ DS26884
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class DS26351,DS26352,DS26353,DS26354,DS26355,DS26356,DS26357,DS26358,DS26359,DS26360,DS26361,JOB1064902,JOB1064903,JOB1064904,JOB1064905,JOB1064906,JOB1064907,JOB1064908,JOB1064909,JOB1064910,JOB1064911,JOB1064912 production
+    class DS26883,DS26884,DS26885,DS26886,DS26887,DS26888,DS26889,DS26890,DS26891,DS26892,DS26893,JOB1071748,JOB1071749,JOB1071750,JOB1071751,JOB1071752,JOB1071753,JOB1071754,JOB1071755,JOB1071756,JOB1071757,JOB1071758 production
 ```
 
 ### 设计态的图（仅 design_maturity=design）
@@ -203,34 +203,34 @@ flowchart TD
 
 | ID | entity_name / 实体名 | scope / 范围 | domain / 域 | design_maturity / 设计成熟度 | module_id / 蓝图 | 功能简述 |
 |----|----------------------|--------------|------------|------------------------------|------------------|----------|
-| DS-26351 | factor_analysis.correlation_analyzer | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-005 | 因子间相关系数矩阵（识别冗余因子） |
-| DS-26352 | factor_analysis.correlation_dedup | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-006 | 去重后的因子集合（移除高相关冗余因子） |
-| DS-26353 | factor_analysis.decay_monitor | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-009 | 因子衰减报告（IC随时间衰减趋势） |
-| DS-26354 | factor_analysis.factor_attribution | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-010 | 因子归因报告（各因子对收益的贡献分解） |
-| DS-26355 | factor_analysis.factor_optimization | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-012 | 优化后的因子权重（最大化IC/最小化相关性） |
-| DS-26356 | factor_analysis.ic_decay | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-004 | IC衰减曲线（因子预测力随滞后的变化） |
-| DS-26357 | factor_analysis.ic_ir_calc | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-002 | IC/IR指标序列（因子信息系数/信息比率） |
-| DS-26358 | factor_analysis.ic_ir_evaluator | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-003 | IC/IR评估报告（因子有效性评级） |
-| DS-26359 | factor_analysis.layered_backtest | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-007 | 分层回测结果（按因子分层的收益统计） |
-| DS-26360 | factor_analysis.multifactor_synthesis | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-011 | 合成因子信号（多因子加权/截面排名/置信度） |
-| DS-26361 | factor_analysis.three_level_judgment | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-008 | 三级研判结果（因子有效性/稳定性/贡献度评级） |
+| DS-26883 | factor_analysis.correlation_analyzer | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-005 | 因子间相关系数矩阵（识别冗余因子） |
+| DS-26884 | factor_analysis.correlation_dedup | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-006 | 去重后的因子集合（移除高相关冗余因子） |
+| DS-26885 | factor_analysis.decay_monitor | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-009 | 因子衰减报告（IC随时间衰减趋势） |
+| DS-26886 | factor_analysis.factor_attribution | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-010 | 因子归因报告（各因子对收益的贡献分解） |
+| DS-26887 | factor_analysis.factor_optimization | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-012 | 优化后的因子权重（最大化IC/最小化相关性） |
+| DS-26888 | factor_analysis.ic_decay | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-004 | IC衰减曲线（因子预测力随滞后的变化） |
+| DS-26889 | factor_analysis.ic_ir_calc | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-002 | IC/IR指标序列（因子信息系数/信息比率） |
+| DS-26890 | factor_analysis.ic_ir_evaluator | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-003 | IC/IR评估报告（因子有效性评级） |
+| DS-26891 | factor_analysis.layered_backtest | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-007 | 分层回测结果（按因子分层的收益统计） |
+| DS-26892 | factor_analysis.multifactor_synthesis | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-011 | 合成因子信号（多因子加权/截面排名/置信度） |
+| DS-26893 | factor_analysis.three_level_judgment | production / 生产 | D_FACTOR / 因子 | production / 生产 | MOD-L02-008 | 三级研判结果（因子有效性/稳定性/贡献度评级） |
 | DS-11238 | factor_analysis.turnover_analyzer | production / 生产 | D_FACTOR / 因子 | design / 设计 | MOD-L02-001 | 换手率分析报告（因子换手成本评估） |
 
 ## Job 清单
 
 | ID | job_name / 作业名 | trigger_type / 触发类型 | design_maturity / 设计成熟度 | module_id / 蓝图 | 功能简述 |
 |----|-------------------|----------------------------|------------------------------|------------------|----------|
-| JOB-1064902 | analyze.correlation_analyzer | manual / 手动 | production / 生产 | MOD-L02-005 | 因子相关性分析（消费因子信号，产出分析结果） |
-| JOB-1064903 | analyze.correlation_dedup | manual / 手动 | production / 生产 | MOD-L02-006 | 因子去重（消费因子信号，产出分析结果） |
-| JOB-1064904 | analyze.decay_monitor | manual / 手动 | production / 生产 | MOD-L02-009 | 因子衰减监控（消费因子信号，产出分析结果） |
-| JOB-1064905 | analyze.factor_attribution | manual / 手动 | production / 生产 | MOD-L02-010 | 因子归因（消费因子信号，产出分析结果） |
-| JOB-1064906 | analyze.factor_optimization | manual / 手动 | production / 生产 | MOD-L02-012 | 因子优化（消费因子信号，产出分析结果） |
-| JOB-1064907 | analyze.ic_decay | manual / 手动 | production / 生产 | MOD-L02-004 | IC衰减分析（消费因子信号，产出分析结果） |
-| JOB-1064908 | analyze.ic_ir_calc | manual / 手动 | production / 生产 | MOD-L02-002 | IC/IR计算（消费因子信号，产出分析结果） |
-| JOB-1064909 | analyze.ic_ir_evaluator | manual / 手动 | production / 生产 | MOD-L02-003 | IC/IR评估（消费因子信号，产出分析结果） |
-| JOB-1064910 | analyze.layered_backtest | manual / 手动 | production / 生产 | MOD-L02-007 | 分层回测（消费因子信号，产出分析结果） |
-| JOB-1064911 | analyze.multifactor_synthesis | manual / 手动 | production / 生产 | MOD-L02-011 | 多因子合成（消费因子信号，产出分析结果） |
-| JOB-1064912 | analyze.three_level_judgment | manual / 手动 | production / 生产 | MOD-L02-008 | 三级研判（消费因子信号，产出分析结果） |
+| JOB-1071748 | analyze.correlation_analyzer | manual / 手动 | production / 生产 | MOD-L02-005 | 因子相关性分析（消费因子信号，产出分析结果） |
+| JOB-1071749 | analyze.correlation_dedup | manual / 手动 | production / 生产 | MOD-L02-006 | 因子去重（消费因子信号，产出分析结果） |
+| JOB-1071750 | analyze.decay_monitor | manual / 手动 | production / 生产 | MOD-L02-009 | 因子衰减监控（消费因子信号，产出分析结果） |
+| JOB-1071751 | analyze.factor_attribution | manual / 手动 | production / 生产 | MOD-L02-010 | 因子归因（消费因子信号，产出分析结果） |
+| JOB-1071752 | analyze.factor_optimization | manual / 手动 | production / 生产 | MOD-L02-012 | 因子优化（消费因子信号，产出分析结果） |
+| JOB-1071753 | analyze.ic_decay | manual / 手动 | production / 生产 | MOD-L02-004 | IC衰减分析（消费因子信号，产出分析结果） |
+| JOB-1071754 | analyze.ic_ir_calc | manual / 手动 | production / 生产 | MOD-L02-002 | IC/IR计算（消费因子信号，产出分析结果） |
+| JOB-1071755 | analyze.ic_ir_evaluator | manual / 手动 | production / 生产 | MOD-L02-003 | IC/IR评估（消费因子信号，产出分析结果） |
+| JOB-1071756 | analyze.layered_backtest | manual / 手动 | production / 生产 | MOD-L02-007 | 分层回测（消费因子信号，产出分析结果） |
+| JOB-1071757 | analyze.multifactor_synthesis | manual / 手动 | production / 生产 | MOD-L02-011 | 多因子合成（消费因子信号，产出分析结果） |
+| JOB-1071758 | analyze.three_level_judgment | manual / 手动 | production / 生产 | MOD-L02-008 | 三级研判（消费因子信号，产出分析结果） |
 | JOB-757602 | analyze.turnover_analyzer | manual / 手动 | design / 设计 | MOD-L02-001 | 换手率分析（消费因子信号，产出分析结果） |
 
 [← 返回索引](dataflow_index.md)

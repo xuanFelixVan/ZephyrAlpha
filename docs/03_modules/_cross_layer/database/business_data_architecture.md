@@ -35,7 +35,7 @@ child_modules:
   - {module_id: "C4-BACKTEST-CH", title: "C4 backtest_clickhouse 回测结果仓库施工蓝图", status: "Pending", construction_progress: "not_started", path: "sub_blueprints/c4_backtest_clickhouse.md"}
   - {module_id: "G2-KNOWLEDGE-NEO4J", title: "G2 knowledge_graph Neo4j知识图谱施工蓝图", status: "Pending", construction_progress: "not_started", path: "sub_blueprints/g2_knowledge_graph_neo4j.md"}
   - {module_id: "L4-TRADING-SQLITE", title: "L4 trading.db SQLite交易事务施工蓝图", status: "Pending", construction_progress: "not_started", path: "sub_blueprints/l4_trading_sqlite.md"}
-  - {module_id: "MOD-H1-REDIS-HOT", title: "H1 redis_hot 实盘热缓存施工蓝图", status: "Active", construction_progress: "not_started", path: "sub_blueprints/h1_redis_hot.md"}
+  - {module_id: "MOD-H1_REDIS_HOT", title: "H1 redis_hot 实盘热缓存施工蓝图", status: "Active", construction_progress: "not_started", path: "sub_blueprints/h1_redis_hot.md"}
 depends_on:
   - {target: "SH-DB-001", at: "§三库职责划分", why: "现有三库(governance.db+depgraph+market.duckdb)为本架构基线，market.duckdb将重构"}
   - {target: "数据架构.md", at: "§1~§17", why: "数据品类清单/SLA/L0→L1流水线/CTR契约体系的设计输入"}

@@ -1,10 +1,10 @@
-# [BLUEPRINT] MOD-L02-GOV | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-GOV
+# [BLUEPRINT] MOD-L02_GOV | docs/03_modules/_domain_factor/blueprint.md | §D-FACTOR-GOV
 # [MODULE] zephyr.factor.governance
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.shared.lifecycle.state_machine; zephyr.gov_enforcement.rule_bridge.commit_gate_registry
 # [STARTUP] imported
 # [MATURITY] production
-# [A_module] module_id=MOD-L02-GOV | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02_GOV | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR governance 子包——因子生命周期治理工具链。
 

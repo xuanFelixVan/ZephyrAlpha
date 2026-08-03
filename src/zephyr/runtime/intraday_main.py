@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RUNTIME-INTRADAY | self-contained (runtime entry) | §
+# [BLUEPRINT] MOD-RUNTIME_INTRADAY | self-contained (runtime entry) | §
 # [MODULE] zephyr.runtime.intraday_main
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.data.tick_subscriber; zephyr.data.tick_redis_cache; zephyr.factor.core.intraday_factor_loop; zephyr.infrastructure.database_service; zephyr.data.trading_calendar; zephyr.data.redundant_source.heartbeat_monitor; zephyr.data.alerter
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] tick_subscriber启动失败->退出码1; factor_loop启动失败->停subscriber退出码1; SIGINT/SIGTERM->优雅停止退出码0
 # [TESTS] tests/zephyr/runtime/test_intraday_main.py
-# [A_module] module_id=MOD-RUNTIME-INTRADAY | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-RUNTIME_INTRADAY | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """盘中运行时编排器——单进程串起 tick_subscriber + IntradayFactorLoop。
 

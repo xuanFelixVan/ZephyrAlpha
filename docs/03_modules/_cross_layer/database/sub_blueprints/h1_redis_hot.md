@@ -1,5 +1,5 @@
 ---
-module_id: MOD-H1-REDIS-HOT
+module_id: MOD-H1_REDIS_HOT
 submodule_path: src/zephyr/infrastructure/h1_redis_hot
 title: "H1 redis_hot 实盘热缓存施工蓝图 — Redis <5ms 因子截面在线存储"
 doc_type: blueprint
@@ -71,7 +71,7 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 
 <!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py, reconciler=blueprint_frontmatter_reconciler.py -->
 > **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
-> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-H1-REDIS-HOT`
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-H1_REDIS_HOT`
 > 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
@@ -94,7 +94,7 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 | actual_disk_path = §11 产出物路径 | 路径比对 | ☑ |
 | get_redis_conn() 已实现 | `grep "get_redis_conn" src/zephyr/infrastructure/database_service.py` | ☑ |
 | E2E 读取延迟 <5ms | test_h1_writer_reader_projectors.py（avg=0.20ms/max=0.38ms） | ☑ |
-| depgraph build_status=stable | `extract_depgraph.py --modules MOD-H1-REDIS-HOT` | ☑ |
+| depgraph build_status=stable | `extract_depgraph.py --modules MOD-H1_REDIS_HOT` | ☑ |
 
 ### §0.3 版本-代码映射
 
@@ -107,14 +107,14 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
 > **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-H1-REDIS-HOT`
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-H1_REDIS_HOT`
 
 #### 四图位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-H1-REDIS-HOT` 的 9 个 file 节点 | design | `extract_depgraph.py --modules MOD-H1-REDIS-HOT` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-H1_REDIS_HOT` 的 9 个 file 节点 | design | `extract_depgraph.py --modules MOD-H1_REDIS_HOT` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -122,7 +122,7 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 
 | 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
 |------|-------------------|--------------------------|:-------:|
-| module_id | MOD-H1-REDIS-HOT | MOD-H1-REDIS-HOT | ✅ |
+| module_id | MOD-H1_REDIS_HOT | MOD-H1_REDIS_HOT | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
 | file_count | 9 文件 | 6 文件（§0.1） | ❌ |
@@ -461,7 +461,7 @@ def get_redis_conn(self):
 | # | 验收项 | 验证方法 | 结果 |
 |---|--------|---------|:---:|
 | 1 | 蓝图 frontmatter 合法 | PS-STD-001 字段校验 | ☑ |
-| 2 | depgraph H1 节点已登记（build_status=stable） | `extract_depgraph.py --modules MOD-H1-REDIS-HOT` | ☑ |
+| 2 | depgraph H1 节点已登记（build_status=stable） | `extract_depgraph.py --modules MOD-H1_REDIS_HOT` | ☑ |
 | 3 | 四图对齐干净 | `align_panoramas.py` domain_mismatches=0 | ☑ |
 | 4 | Redis Key 设计与数据架构.md 一致 | 路径比对 §3 | ☑ |
 | 5 | get_redis_conn() 已实现 | grep database_service.py | ☑ |

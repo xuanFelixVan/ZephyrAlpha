@@ -1,7 +1,7 @@
-# [A_config] module_id=CFG-rule-enforcement-registry | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_config] module_id=MOD-CFG_RULE_ENFORCEMENT | layer=config | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # --- 治理锚定 ---
 # blueprint: MOD-GATE_ENGINE
-# module_id: CFG-rule-enforcement-registry
+# module_id: MOD-CFG_RULE_ENFORCEMENT
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -20,7 +20,7 @@
 # 生成脚本: tmp_gen_registry.py（task_bound，生成后退役）
 # ============================================================================
 
-module_id: CFG-rule-enforcement-registry
+module_id: MOD-CFG_RULE_ENFORCEMENT
 schema_version: 1.0.0
 doc_type: register
 title: 门禁规则集登记表

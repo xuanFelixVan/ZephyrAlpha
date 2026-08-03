@@ -3,14 +3,14 @@ doc_type: architecture_view
 title: frontend（前端）决策流图
 version: "1.0"
 status: active
-date: 2026-08-02
+date: 2026-08-03
 owner: auto-generator
 ttl: permanent
 ---
 
 # Decision Flow · L2A Functional Domain frontend（前端）
 
-> 生成时间: 2026-08-02T22:07:21
+> 生成时间: 2026-08-03T19:13:48
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → frontend

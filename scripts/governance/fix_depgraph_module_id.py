@@ -4,7 +4,7 @@
 """fix_depgraph_module_id.py — 修正 depgraph 中不合规的 blueprint_id（module_id）并同步文件头
 
 针对权威校验器 is_valid_module_id（裁定#208 三轨制）判定 BAD 的 28 个 production 节点：
-  - 18 rename（blueprint_id 非空但不合规）：CFG-* / MOD-H1-REDIS-HOT / MOD-L02-ANA 等
+  - 18 rename（blueprint_id 非空但不合规）：CFG-* / MOD-H1_REDIS_HOT / MOD-L02_ANA 等
   - 10 set（blueprint_id 为空/NULL）：散落的 test/script 文件
 
 SSoT 正确顺序（关键）：
@@ -69,18 +69,18 @@ DEFAULT_REPORT = BASE_DIR / ".runtime" / "tmp" / "depgraph_module_id_fix_report.
 #   new_bp_id 均已通过 is_valid_module_id 校验（脚本启动时再校验一次）
 RENAMES: list[tuple[str, str, str]] = [
     # 4 个 CFG-* 注册表 YAML → MOD-CFG_* 派生轨（用户确认）
-    ("CFG-rule-enforcement-registry", "MOD-CFG_RULE_ENFORCEMENT", "yaml"),
-    ("CFG-rule-registry-collection", "MOD-CFG_RULE_REGISTRY", "yaml"),
-    ("CFG-scripts-registry", "MOD-CFG_SCRIPTS", "yaml"),
-    ("CFG-test-suite-registry", "MOD-CFG_TEST_SUITE", "yaml"),
+    ("MOD-CFG_RULE_ENFORCEMENT", "MOD-CFG_RULE_ENFORCEMENT", "yaml"),
+    ("MOD-CFG_RULE_REGISTRY", "MOD-CFG_RULE_REGISTRY", "yaml"),
+    ("MOD-CFG_SCRIPTS", "MOD-CFG_SCRIPTS", "yaml"),
+    ("MOD-CFG_TEST_SUITE", "MOD-CFG_TEST_SUITE", "yaml"),
     # 5 组 MOD-* 派生轨格式非法（连字符应为下划线）→ 修正为合规派生轨
-    ("MOD-H1-REDIS-HOT", "MOD-H1_REDIS_HOT", "py"),        # 8 文件
-    ("MOD-L02-ANA", "MOD-L02_ANA", "py"),                  # 1 文件
-    ("MOD-L02-GOV", "MOD-L02_GOV", "py"),                  # 1 文件
-    ("MOD-POS-009-services", "MOD-POS_SERVICES", "py"),    # 1 文件
-    ("MOD-RUNTIME-INTRADAY", "MOD-RUNTIME_INTRADAY", "py"),  # 2 文件
+    ("MOD-H1_REDIS_HOT", "MOD-H1_REDIS_HOT", "py"),        # 8 文件
+    ("MOD-L02_ANA", "MOD-L02_ANA", "py"),                  # 1 文件
+    ("MOD-L02_GOV", "MOD-L02_GOV", "py"),                  # 1 文件
+    ("MOD-POS_SERVICES", "MOD-POS_SERVICES", "py"),    # 1 文件
+    ("MOD-RUNTIME_INTRADAY", "MOD-RUNTIME_INTRADAY", "py"),  # 2 文件
     # 1 个 SH-* 格式非法（ABBR 段间连字符应为下划线）
-    ("SH-MODULE-TRANSLATION-001", "SH-MODULE_TRANSLATION-001", "py"),  # 1 文件
+    ("SH-MODULE_TRANSLATION-001", "SH-MODULE_TRANSLATION-001", "py"),  # 1 文件
 ]
 
 # SET: (path, new_bp_id, note)

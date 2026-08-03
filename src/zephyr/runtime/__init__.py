@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RUNTIME-INTRADAY | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-RUNTIME_INTRADAY | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """ZephyrAlpha 交易运行时入口层。
 

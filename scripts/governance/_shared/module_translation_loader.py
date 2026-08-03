@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-MODULE-TRANSLATION-001 | scripts/governance/_shared/module_translation_loader.py | §
+# [BLUEPRINT] SH-MODULE_TRANSLATION-001 | scripts/governance/_shared/module_translation_loader.py | §
 # [MODULE] scripts.governance._shared.module_translation_loader
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.constants (REPO_ROOT); docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml (模块翻译真源)

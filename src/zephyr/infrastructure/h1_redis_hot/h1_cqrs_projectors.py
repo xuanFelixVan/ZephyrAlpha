@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-H1-REDIS-HOT | docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md | §4.3
+# [BLUEPRINT] MOD-H1_REDIS_HOT | docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md | §4.3
 # [MODULE] zephyr.infrastructure.h1_redis_hot.h1_cqrs_projectors
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.h1_redis_hot.h1_redis_schema
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] redis.RedisError(投影失败)->log+不阻断事件流; ProjectorError(致命错误)
 # [TESTS] tests/zephyr/infrastructure/h1_redis_hot/test_h1_cqrs_projectors.py
-# [A_module] module_id=MOD-H1-REDIS-HOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-H1_REDIS_HOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # M03豁免: AI趋同演化,非复制粘贴（项目内部标注，非 ruff code）
 

@@ -8,7 +8,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [A_module] module_id=MOD-GOV_test_generate_gate_registry | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-TEST_GATE_REGISTRY_GEN | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_generate_gate_registry.py — generate_gate_registry.py 单元测试（CommitGate 同步治本 2026-07-17）
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RUNTIME-INTRADAY | tests/zephyr/runtime/test_intraday_main.py
+# [BLUEPRINT] MOD-RUNTIME_INTRADAY | tests/zephyr/runtime/test_intraday_main.py
 # [MODULE] tests.zephyr.runtime.test_intraday_main
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.runtime.intraday_main
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-RUNTIME-INTRADAY | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-RUNTIME_INTRADAY | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """IntradayRuntime 盘中编排器单元测试。
 

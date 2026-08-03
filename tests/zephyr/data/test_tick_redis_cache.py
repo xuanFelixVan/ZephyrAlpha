@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-H1-REDIS-HOT | tests/zephyr/data/test_tick_redis_cache.py
+# [BLUEPRINT] MOD-H1_REDIS_HOT | tests/zephyr/data/test_tick_redis_cache.py
 # [MODULE] tests.zephyr.data.test_tick_redis_cache
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.data.tick_redis_cache; zephyr.infrastructure.h1_redis_hot.h1_redis_schema
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-H1-REDIS-HOT | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-H1_REDIS_HOT | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """TickRedisCache 单元测试——tick→Redis tick:{symbol}:latest 双写器。
 

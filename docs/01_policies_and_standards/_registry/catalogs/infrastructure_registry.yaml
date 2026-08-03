@@ -332,11 +332,11 @@ infrastructure:
     access_method: "入口: zephyr.infrastructure.database_service.DatabaseService.get_redis_conn()（已实现，2026-08-02）；配置: zephyr.infrastructure.redis_config.load_redis_config()（真源 config/.env.redis）；蓝图: docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md"
     health_check: ping
     dependency_of:
-      - "MOD-H1-REDIS-HOT"
+      - "MOD-H1_REDIS_HOT"
     sla: "99.99% uptime, <5ms GET p99（CP-02 因子值→信号≤5秒）"
     status: connected
     provisioned_at: "2026-08-02"
-    note: "H1 redis_hot 实盘热缓存——三层冷热架构 Hot 平面。触发条件已命中（实盘交易启动前开发，2026-07-13 裁定）。模拟盘=国金QMT模拟端(8886156677)。持久化: AOF appendfsync everysec + RDB 每日快照。容量: ~200MB（1年~500MB/3年~1GB），maxmemory=512mb（VM实际1.8GB RAM,部署时从蓝图1gb降为512mb留余量给CH）。D3 决策(2026-08-02): 单实例 + DB 号隔离(db0 模拟盘/db1 实盘/db2 治理预留), 升级触发条件见蓝图 §8.3(T1-T4)。部署: Redis 7.0.15, requirepass+protected-mode, allkeys-lru。根因修复: needrestart status-logger hook SIGPIPE→禁用。depgraph 节点 MOD-H1-REDIS-HOT（node_id=7826555, D_INFRA_RUNTIME, build_status=stable, design_maturity=production）已登记，依赖边 edge_id=10068005 → MOD-INF-002。四图对齐通过（2026-08-01）。步骤1-7全链路完成: Redis部署→get_redis_conn实现→schema→writer/reader/projectors→D-FACTOR/SIGNAL/RISK集成(h1_integration.py)→E2E联调(读取延迟avg=0.20ms/max=0.38ms,远低于<5ms SLA)→build_status=stable/design_maturity=production。待真实QMT盘中联调(需交易日,代码级E2E已通过)。"
+    note: "H1 redis_hot 实盘热缓存——三层冷热架构 Hot 平面。触发条件已命中（实盘交易启动前开发，2026-07-13 裁定）。模拟盘=国金QMT模拟端(8886156677)。持久化: AOF appendfsync everysec + RDB 每日快照。容量: ~200MB（1年~500MB/3年~1GB），maxmemory=512mb（VM实际1.8GB RAM,部署时从蓝图1gb降为512mb留余量给CH）。D3 决策(2026-08-02): 单实例 + DB 号隔离(db0 模拟盘/db1 实盘/db2 治理预留), 升级触发条件见蓝图 §8.3(T1-T4)。部署: Redis 7.0.15, requirepass+protected-mode, allkeys-lru。根因修复: needrestart status-logger hook SIGPIPE→禁用。depgraph 节点 MOD-H1_REDIS_HOT（node_id=7826555, D_INFRA_RUNTIME, build_status=stable, design_maturity=production）已登记，依赖边 edge_id=10068005 → MOD-INF-002。四图对齐通过（2026-08-01）。步骤1-7全链路完成: Redis部署→get_redis_conn实现→schema→writer/reader/projectors→D-FACTOR/SIGNAL/RISK集成(h1_integration.py)→E2E联调(读取延迟avg=0.20ms/max=0.38ms,远低于<5ms SLA)→build_status=stable/design_maturity=production。待真实QMT盘中联调(需交易日,代码级E2E已通过)。"
 
 # ============================================================================
 # 汇总统计
@@ -386,7 +386,7 @@ summary:
     MOD-RESOURCE_OPTIMIZATION_ENGINE:
       - INFRA-PROC-001
       - INFRA-CACHE-002
-    MOD-H1-REDIS-HOT: [INFRA-DB-007]
+    MOD-H1_REDIS_HOT: [INFRA-DB-007]
 
 # ============================================================================
 # 变更记录
@@ -409,9 +409,9 @@ changelog:
     date: "2026-08-01"
     author: "AI-GLM-5.2"
     changes:
-      - "新增 INFRA-DB-007：zephyr-redis-h1-hot（cache）——H1 redis_hot 实盘热缓存，三层冷热架构 Hot 平面。承载 D-FACTOR 每3秒因子截面写入、D-SIGNAL/D-RISK <5ms 读取（DD-11-01）。与 INFRA-CACHE-001 治理缓存分离实例。蓝图: docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md。统一入口: DatabaseService.get_redis_conn()（已预留）。触发条件已命中（实盘交易启动前开发）。depgraph 节点 MOD-H1-REDIS-HOT 已登记（node_id=7826555, D_INFRA_RUNTIME, planned），依赖边 edge_id=10068005 → MOD-INF-002。四图对齐通过"
+      - "新增 INFRA-DB-007：zephyr-redis-h1-hot（cache）——H1 redis_hot 实盘热缓存，三层冷热架构 Hot 平面。承载 D-FACTOR 每3秒因子截面写入、D-SIGNAL/D-RISK <5ms 读取（DD-11-01）。与 INFRA-CACHE-001 治理缓存分离实例。蓝图: docs/03_modules/_cross_layer/database/sub_blueprints/h1_redis_hot.md。统一入口: DatabaseService.get_redis_conn()（已预留）。触发条件已命中（实盘交易启动前开发）。depgraph 节点 MOD-H1_REDIS_HOT 已登记（node_id=7826555, D_INFRA_RUNTIME, planned），依赖边 edge_id=10068005 → MOD-INF-002。四图对齐通过"
       - "更新 summary：total 14→15, by_type.cache 4→5, by_plane.hot 6→7, by_status.planned 8→9"
-      - "更新 dependency_map：新增 MOD-H1-REDIS-HOT: [INFRA-DB-007]"
+      - "更新 dependency_map：新增 MOD-H1_REDIS_HOT: [INFRA-DB-007]"
   - version: "1.0.9"
     date: "2026-07-04"
     author: "AI-GLM-5.2"

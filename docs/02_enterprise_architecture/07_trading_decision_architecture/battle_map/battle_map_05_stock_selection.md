@@ -1356,7 +1356,7 @@ BM-SEL-02 因子评估的子环节。MOD-L02-002 计算 IC（信息系数）评�
 | depgraph | MOD-L02-002 | primary | production | stable |
 | depgraph | MOD-L02-003 | supplement | production | stable |
 | depgraph | MOD-L02-004 | supplement | production | stable |
-| depgraph | MOD-L02-ANA | supplement | production | stable |
+| depgraph | MOD-L02_ANA | supplement | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 

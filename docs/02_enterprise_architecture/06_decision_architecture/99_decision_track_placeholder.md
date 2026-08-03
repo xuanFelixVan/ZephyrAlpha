@@ -3,14 +3,14 @@ doc_type: architecture_view
 title: 决策流图 占位轨（Placeholder Track）
 version: "1.0"
 status: active
-date: 2026-08-02
+date: 2026-08-03
 owner: auto-generator
 ttl: permanent
 ---
 
 # 决策流图 · 占位轨（Placeholder Track）
 
-> 生成时间: 2026-08-02T22:07:21
+> 生成时间: 2026-08-03T19:13:48
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 99
@@ -37,10 +37,10 @@ ttl: permanent
 
 | layer_id / 层ID | 名称 / name | 英文名 / name_en | 所属轨 / track | 蓝图(module_id) | 蓝图名 / bp | 代码引用 / ref | 功能简述 / desc | 决策频率 / freq | maturity / 成熟度 | build_status / 构建状态 |
 |----------|------|--------|--------|-----------------|--------------|----------|----------|----------|--------|--------------|
-| CFG-rule-enforcement-registry | CFG-rule-enforcement-registry | CFG-rule-enforcement-registry | placeholder | CFG-rule-enforcement-registry | 门禁规则集 / Gate Rule Set — ARCH-052 聚合节点 production | - | - | - | production / 生产 | stable / 稳定 |
-| CFG-rule-registry-collection | CFG-rule-registry-collection | CFG-rule-registry-collection | placeholder | CFG-rule-registry-collection | 规则注册表集 / Rule Registry Collection — ARCH-052 聚合节点 production | - | - | - | production / 生产 | stable / 稳定 |
-| CFG-scripts-registry | CFG-scripts-registry | CFG-scripts-registry | placeholder | CFG-scripts-registry | 脚本集 / Script Collection — ARCH-052 聚合节点 production | - | - | - | production / 生产 | stable / 稳定 |
-| CFG-test-suite-registry | CFG-test-suite-registry | CFG-test-suite-registry | placeholder | CFG-test-suite-registry | 测试集 / Test Suite — ARCH-052 聚合节点 production | - | - | - | production / 生产 | stable / 稳定 |
+| CFG-rule-enforcement-registry | CFG-rule-enforcement-registry | CFG-rule-enforcement-registry | placeholder | CFG-rule-enforcement-registry | - | - | - | - | production / 生产 | stable / 稳定 |
+| CFG-rule-registry-collection | CFG-rule-registry-collection | CFG-rule-registry-collection | placeholder | CFG-rule-registry-collection | - | - | - | - | production / 生产 | stable / 稳定 |
+| CFG-scripts-registry | CFG-scripts-registry | CFG-scripts-registry | placeholder | CFG-scripts-registry | - | - | - | - | production / 生产 | stable / 稳定 |
+| CFG-test-suite-registry | CFG-test-suite-registry | CFG-test-suite-registry | placeholder | CFG-test-suite-registry | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-ALT_DATA | MOD-ALT_DATA | MOD-ALT_DATA | placeholder | MOD-ALT_DATA | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-AUTONOMY_CORE | MOD-AUTONOMY_CORE | MOD-AUTONOMY_CORE | placeholder | MOD-AUTONOMY_CORE | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-BT-001 | MOD-BT-001 | MOD-BT-001 | placeholder | MOD-BT-001 | - | - | - | - | design / 设计 | stable / 稳定 |

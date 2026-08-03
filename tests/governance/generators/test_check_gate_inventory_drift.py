@@ -8,7 +8,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [A_module] module_id=MOD-GOV_test_check_gate_inventory_drift | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-TEST_GATE_INV_DRIFT | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-055]
 """test_check_gate_inventory_drift.py — commit_gates 模块清单漂移检测脚本单元测试（ARCH-055）

@@ -43,7 +43,7 @@ dependencies = [
     # ClickHouse native protocol 驱动：核心基础设施 database_service(MOD-INF-002) lazy-import
     # 原误判为 demo 可选——CH 是主行情库(c1_market)，pip install . 后应能直连 (#ARCH-REQ-CLASSIFY-001)
     "clickhouse-driver>=0.2.6,<1.0.0",
-    # H1 Redis 业务热缓存驱动 (MOD-H1-REDIS-HOT, INFRA-DB-007)
+    # H1 Redis 业务热缓存驱动 (MOD-H1_REDIS_HOT, INFRA-DB-007)
     # Redis 7.x 连接——database_service.get_redis_conn() lazy-import；仿 clickhouse-driver 核心依赖定位
     "redis>=5.0.0,<6.0.0",
     "plotly>=6.0.0,<7.0.0",

@@ -357,7 +357,7 @@ config/.env.ch_backup
 # Contains connection credentials; never commit to repository
 # (原仅由全局 .env.qmt 隐式忽略，现与其他 config/.env.* 显式对齐)
 config/.env.qmt
-# H1 Redis 业务热缓存凭据 (INFRA-DB-007, MOD-H1-REDIS-HOT)
+# H1 Redis 业务热缓存凭据 (INFRA-DB-007, MOD-H1_REDIS_HOT)
 # Contains connection credentials; never commit to repository
 config/.env.redis
 # Backup runtime state (MOD-INF-043; pure runtime artifact — a tracked state file

@@ -4,6 +4,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
+# [A_module] module_id=MOD-TEST_STRATEGY_RUNNER_TICK | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """StrategyRunner.run_tick_backtest 单元测试（路径 A：日频信号 × tick 撮合）。
 

@@ -15,7 +15,7 @@
 # 版本：2.0.0
 # 创建日期：2026-07-10
 # 最后更新：2026-07-31 — 批量豁免174个 depgraph-only 模块（GATE-PANORAMA-ALIGNMENT warn 治本）
-# 2026-08-01 — 增补 SH-MODULE-TRANSLATION-001（module_translation_loader，SH-TERM-001 sibling，同类工具脚本）
+# 2026-08-01 — 增补 SH-MODULE_TRANSLATION-001（module_translation_loader，SH-TERM-001 sibling，同类工具脚本）
 
 exempt_module_ids:
   # --- 历史豁免 ---
@@ -118,7 +118,7 @@ exempt_module_ids:
   - MOD-SCRIPTS-006
   - MOD-metric_count_drift
   - SH-TERM-001
-  - SH-MODULE-TRANSLATION-001  # module_translation_loader.py，SH-TERM-001 sibling（模块级翻译加载器，同类工具脚本）
+  - SH-MODULE_TRANSLATION-001  # module_translation_loader.py，SH-TERM-001 sibling（模块级翻译加载器，同类工具脚本）
   # --- 归档脚本（5个）：scripts/_archive 历史归档 ---
   - MOD-GOV_ANALYZE_ORPHAN_CONSUMERS
   - MOD-GOV_CHECK_RULE_COVERAGE
@@ -182,8 +182,8 @@ exempt_module_ids:
   - MOD-L02-018
   - MOD-L02-024
   - MOD-L02-025
-  - MOD-L02-ANA
-  - MOD-L02-GOV
+  - MOD-L02_ANA
+  - MOD-L02_GOV
   # --- 数据治理基础设施（3个）：schema/lineage/metadata registry ---
   - MOD-DATA_GOV-001
   - MOD-DATA_GOV-002

@@ -1,4 +1,4 @@
-module_id: CFG-test-suite-registry
+module_id: MOD-CFG_TEST_SUITE
 ttl: permanent
 collection_id: TEST_SUITE
 collection_name: 测试集 / Test Suite
