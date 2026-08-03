@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_SELL_DECISION | Domain ID | D_SELL_DECISION |
 | 域名称 | 卖出决策 | Domain Name | Sell Decision |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 26 | Module Count | 26 |
+| 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 13 | Internal Dependencies | 13 |
 | 跨域入边 | 4 | Cross-domain Incoming | 4 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
-| 设计态模块 | 13 | Design Modules | 13 |
+| 设计态模块 | 12 | Design Modules | 12 |
 | 生产态模块 | 13 | Production Modules | 13 |
 | 容量 | 13/150 (正常) | Capacity | 13/150 (正常) |
 | 描述 | 卖出决策，负责卖出信号生成、卖出时机判断和退出策略 | Description | 卖出决策，负责卖出信号生成、卖出时机判断和退出策略 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 26 个模块（生产态 13 + 设计态 13），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 25 个模块（生产态 13 + 设计态 12），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -57,7 +57,6 @@ flowchart TD
     src_zephyr_sell_decision_extensions_init_py["sell_decision/_extensions 包入口<br/>管理sell_decision._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_api_init_py["sell_decision/api 包入口<br/>管理sell_decision.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_breakout_failure_detector_py["core/breakout_failure_detector<br/>Breakout Failure Detector — 突破成败检测器<br/>(MOD-SELL-003)<br/>文件: core/breakout_failure_detector.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py["core/buy_sell_conflict_arbitrator<br/>卖出决策/核心包的buy_sell_conflict_arbitrator模<br/>块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/buy_sell_conflict_arbitrator.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_position_triage_py["core/position_triage<br/>卖出决策/核心包的position_triage模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/position_triage.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_replacement_rebalance_sell_py["core/replacement_rebalance_sell<br/>卖出决策/核心包的replacement_rebalance_sell模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/replacement_rebalance_sell.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_replacement_rebalance_seller_py["core/replacement_rebalance_seller<br/>Replacement & Rebalance Seller —<br/>置换与再平衡卖出 (MOD-SELL-006)<br/>文件: core/replacement_rebalance_seller.py<br/>(生产态 / production)"]
@@ -75,8 +74,7 @@ flowchart TD
     src_zephyr_sell_decision_init_py ~~~ src_zephyr_sell_decision_extensions_init_py
     src_zephyr_sell_decision_extensions_init_py ~~~ src_zephyr_sell_decision_api_init_py
     src_zephyr_sell_decision_api_init_py ~~~ src_zephyr_sell_decision_core_breakout_failure_detector_py
-    src_zephyr_sell_decision_core_breakout_failure_detector_py ~~~ src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py
-    src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py ~~~ src_zephyr_sell_decision_core_position_triage_py
+    src_zephyr_sell_decision_core_breakout_failure_detector_py ~~~ src_zephyr_sell_decision_core_position_triage_py
     src_zephyr_sell_decision_core_position_triage_py ~~~ src_zephyr_sell_decision_core_replacement_rebalance_sell_py
     src_zephyr_sell_decision_core_replacement_rebalance_sell_py ~~~ src_zephyr_sell_decision_core_replacement_rebalance_seller_py
     src_zephyr_sell_decision_core_replacement_rebalance_seller_py ~~~ src_zephyr_sell_decision_core_scaling_out_architect_py
@@ -140,7 +138,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_sell_decision_init_py,src_zephyr_sell_decision_extensions_init_py,src_zephyr_sell_decision_api_init_py,src_zephyr_sell_decision_core_breakout_failure_detector_py,src_zephyr_sell_decision_core_replacement_rebalance_seller_py,src_zephyr_sell_decision_core_sell_conflict_arbitrator_py,src_zephyr_sell_decision_core_sell_signal_collector_py,src_zephyr_sell_decision_core_sell_signal_fusion_engine_py,src_zephyr_sell_decision_core_sell_urgency_scorer_py,src_zephyr_sell_decision_core_stop_hunting_protector_py,src_zephyr_sell_decision_infrastructure_init_py,src_zephyr_sell_decision_models_init_py,src_zephyr_sell_decision_services_init_py production
-    class src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py,src_zephyr_sell_decision_core_exit_scenario_planner_py,src_zephyr_sell_decision_core_position_triage_py,src_zephyr_sell_decision_core_replacement_rebalance_sell_py,src_zephyr_sell_decision_core_scaling_out_architect_py,src_zephyr_sell_decision_core_sell_execution_quality_tracker_py,src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py,src_zephyr_sell_decision_core_sell_signal_scorer_py,src_zephyr_sell_decision_core_sell_strategy_ab_tester_py,src_zephyr_sell_decision_core_stop_loss_strategy_py,src_zephyr_sell_decision_core_strategy_specific_stop_framework_py,src_zephyr_sell_decision_core_t_trade_coordinator_py,src_zephyr_sell_decision_core_take_profit_strategy_py design
+    class src_zephyr_sell_decision_core_exit_scenario_planner_py,src_zephyr_sell_decision_core_position_triage_py,src_zephyr_sell_decision_core_replacement_rebalance_sell_py,src_zephyr_sell_decision_core_scaling_out_architect_py,src_zephyr_sell_decision_core_sell_execution_quality_tracker_py,src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py,src_zephyr_sell_decision_core_sell_signal_scorer_py,src_zephyr_sell_decision_core_sell_strategy_ab_tester_py,src_zephyr_sell_decision_core_stop_loss_strategy_py,src_zephyr_sell_decision_core_strategy_specific_stop_framework_py,src_zephyr_sell_decision_core_t_trade_coordinator_py,src_zephyr_sell_decision_core_take_profit_strategy_py design
     class D_POSITION,D_FACTOR,D_ASHARE_SIGNAL,D_SHARED external_prod
     class D_EX_CORE external_design
 ```
@@ -191,12 +189,11 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 13 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 12 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py["core/buy_sell_conflict_arbitrator<br/>卖出决策/核心包的buy_sell_conflict_arbitrator模<br/>块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/buy_sell_conflict_arbitrator.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_position_triage_py["core/position_triage<br/>卖出决策/核心包的position_triage模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/position_triage.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_replacement_rebalance_sell_py["core/replacement_rebalance_sell<br/>卖出决策/核心包的replacement_rebalance_sell模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/replacement_rebalance_sell.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_scaling_out_architect_py["core/scaling_out_architect<br/>卖出决策/核心包的scaling_out_architect模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/scaling_out_architect.py<br/>(设计态 / design)"]
@@ -204,7 +201,6 @@ flowchart TD
     src_zephyr_sell_decision_core_strategy_specific_stop_framework_py["core/strategy_specific_stop_framework<br/>卖出决策/核心包的strategy_specific_stop_framewor<br/>k模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/strategy_specific_stop_framework.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py["core/t_trade_coordinator<br/>卖出决策/核心包的t_trade_coordinator模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/t_trade_coordinator.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_take_profit_strategy_py["core/take_profit_strategy<br/>卖出决策/核心包的take_profit_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/take_profit_strategy.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py ~~~ src_zephyr_sell_decision_core_position_triage_py
     src_zephyr_sell_decision_core_position_triage_py ~~~ src_zephyr_sell_decision_core_replacement_rebalance_sell_py
     src_zephyr_sell_decision_core_replacement_rebalance_sell_py ~~~ src_zephyr_sell_decision_core_scaling_out_architect_py
     src_zephyr_sell_decision_core_scaling_out_architect_py ~~~ src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py
@@ -229,7 +225,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_sell_decision_core_buy_sell_conflict_arbitrator_py,src_zephyr_sell_decision_core_exit_scenario_planner_py,src_zephyr_sell_decision_core_position_triage_py,src_zephyr_sell_decision_core_replacement_rebalance_sell_py,src_zephyr_sell_decision_core_scaling_out_architect_py,src_zephyr_sell_decision_core_sell_execution_quality_tracker_py,src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py,src_zephyr_sell_decision_core_sell_signal_scorer_py,src_zephyr_sell_decision_core_sell_strategy_ab_tester_py,src_zephyr_sell_decision_core_stop_loss_strategy_py,src_zephyr_sell_decision_core_strategy_specific_stop_framework_py,src_zephyr_sell_decision_core_t_trade_coordinator_py,src_zephyr_sell_decision_core_take_profit_strategy_py design
+    class src_zephyr_sell_decision_core_exit_scenario_planner_py,src_zephyr_sell_decision_core_position_triage_py,src_zephyr_sell_decision_core_replacement_rebalance_sell_py,src_zephyr_sell_decision_core_scaling_out_architect_py,src_zephyr_sell_decision_core_sell_execution_quality_tracker_py,src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py,src_zephyr_sell_decision_core_sell_signal_scorer_py,src_zephyr_sell_decision_core_sell_strategy_ab_tester_py,src_zephyr_sell_decision_core_stop_loss_strategy_py,src_zephyr_sell_decision_core_strategy_specific_stop_framework_py,src_zephyr_sell_decision_core_t_trade_coordinator_py,src_zephyr_sell_decision_core_take_profit_strategy_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
