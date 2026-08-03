@@ -710,16 +710,25 @@ def main() -> int:
         p = Path(path_str)
         if p.is_dir():
             if args.check_new:
-                # 目录模式 + 历史豁免：逐文件 check-new
-                for ext in SUPPORTED_EXTENSIONS:
-                    for fp in p.rglob(f"*{ext}"):
-                        if any(
-                            part in (".git", "node_modules", "__pycache__", ".runtime", ".venv")
-                            for part in fp.parts
-                        ):
-                            continue
-                        ok, broken = audit_file_check_new(fp)
-                        all_broken.extend(broken)
+                # 目录模式 + 历史豁免：只扫 git 变更文件（治本 pre-commit 卡死）
+                # 语义等价：未变更文件 new_broken==old_broken 差集为空，不丢失检测能力
+                changed_files = _get_changed_files()
+                dir_resolved = p.resolve()
+                for fp in changed_files:
+                    # 过滤到指定目录下（p="." 时 dir_resolved=REPO_ROOT，全部包含）
+                    try:
+                        fp.relative_to(dir_resolved)
+                    except ValueError:
+                        continue
+                    if fp.suffix.lower() not in SUPPORTED_EXTENSIONS:
+                        continue
+                    if any(
+                        part in (".git", "node_modules", "__pycache__", ".runtime", ".venv")
+                        for part in fp.parts
+                    ):
+                        continue
+                    ok, broken = audit_file_check_new(fp)
+                    all_broken.extend(broken)
             else:
                 ok, broken = audit_directory(p)
                 all_broken.extend(broken)
