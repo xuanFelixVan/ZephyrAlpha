@@ -200,7 +200,7 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L04-001 | primary | stable | generated |
-| depgraph | MOD-RK-011 | supplement | stable | stable |
+| depgraph | MOD-RK-011 | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 

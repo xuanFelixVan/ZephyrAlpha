@@ -20,7 +20,7 @@ date: 2026-08-03
 | 阶段 | 仓位（position_management） | Stage | 仓位 |
 | 环节数 | 21 | Steps | 21 |
 | 流转边 | 30 | Edges | 30 |
-| 状态分布 | 🟦 运营态（已建）=18 ｜ 🟥 弃用态=2 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=18 ｜ 🟥 弃用态=2 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=20 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=20 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -51,8 +51,8 @@ flowchart TD
     BM_POS_10["【BM-POS-10 仓位审计追溯】<br/>仓位变动的'黑匣子'——每次仓位变更全记录+审批链+哈<br/>希链防篡改，可追溯到报告域和治理域，是仓位决策合<br/>规追溯的唯一真源。<br/>（生产态 / production）<br/>【Position Audit Trail】"]
     subgraph sg_BM_SEL_20 ["多策略交叉投票"]
         BM_SEL_20["【BM-SEL-20 多策略交叉投票】<br/>漏斗第五层——多策略对每只票投YES<br/>/NO，加上主力合力和市场状态否决，少数服从多数。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Multi-Strategy Cross Voting】"]
-        BM_SEL_20_A["【BM-SEL-20-A 信号合成与决策去重】<br/>把多策略的YES<br/>/NO投票合成最终决策，重复信号去重，别让同一只票<br/>被投好几遍。<br/>（弃用态 / deprecated）<br/>【Signal Synthesis &amp; Decision Dedup】"]
-        BM_SEL_20_B["【BM-SEL-20-B 多策略资金分配】<br/>给每个策略分多少钱——按策略历史表现和风险预算分配<br/>资金额度，好策略多给。<br/>（弃用态 / deprecated）<br/>【Multi-strategy Capital Allocation】"]
+        BM_SEL_20_A["【BM-SEL-20-A 信号合成与决策去重】<br/>把多策略的YES<br/>/NO投票合成最终决策，重复信号去重，别让同一只票<br/>被投好几遍。<br/>（生产态 / production）<br/>【Signal Synthesis &amp; Decision Dedup】"]
+        BM_SEL_20_B["【BM-SEL-20-B 多策略资金分配】<br/>给每个策略分多少钱——按策略历史表现和风险预算分配<br/>资金额度，好策略多给。<br/>（生产态 / production）<br/>【Multi-strategy Capital Allocation】"]
         BM_SEL_20_C["【BM-SEL-20-C 策略相关性门禁】<br/>两个策略太相关就别同时上重仓——算策略间相关性，超<br/>阈值砍掉一个防集中风险。<br/>（生产态 / production）<br/>【Strategy Correlation Gate】"]
         BM_SEL_20 -.->|嵌套| BM_SEL_20_A
         BM_SEL_20 -.->|嵌套| BM_SEL_20_B
@@ -97,8 +97,7 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_POS_01,BM_POS_06,BM_POS_08,BM_POS_02,BM_POS_03,BM_POS_07,BM_POS_09,BM_POS_04,BM_POS_05,BM_POS_10,BM_SEL_21,BM_SEL_20_C,BM_SEL_21_A,BM_SEL_21_B,BM_SEL_21_C,BM_SEL_21_D,BM_SEL_21_E,BM_SEL_21_F production
-    class BM_SEL_20_A,BM_SEL_20_B deprecated
+    class BM_POS_01,BM_POS_06,BM_POS_08,BM_POS_02,BM_POS_03,BM_POS_07,BM_POS_09,BM_POS_04,BM_POS_05,BM_POS_10,BM_SEL_21,BM_SEL_20_A,BM_SEL_20_B,BM_SEL_20_C,BM_SEL_21_A,BM_SEL_21_B,BM_SEL_21_C,BM_SEL_21_D,BM_SEL_21_E,BM_SEL_21_F production
     class BM_SEL_20 candidate
 ```
 
@@ -134,7 +133,7 @@ L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0019 | supplement | candidate | — |
-| depgraph | MOD-POS-001 | primary | stable | stable |
+| depgraph | MOD-POS-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -262,7 +261,7 @@ Kelly仓位与原优化仓位取较小值(防御性原则: Kelly只减不增)。
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | stable | stable |
+| depgraph | MOD-POS-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -604,9 +603,9 @@ BM-SEL-20 多策略交叉投票的子环节。MOD-PA-002 信号合成器把策�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PA-002 | primary | production | deprecated |
+| depgraph | MOD-PA-002 | primary | production | stable |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
 ### BM-SEL-20-B 多策略资金分配 / Multi-strategy Capital Allocation
 
@@ -635,9 +634,9 @@ BM-SEL-20 多策略交叉投票的子环节。MOD-PA-003 资金分配器按策�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PA-003 | primary | production | deprecated |
+| depgraph | MOD-PA-003 | primary | production | stable |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
 ### BM-SEL-20-C 策略相关性门禁 / Strategy Correlation Gate
 

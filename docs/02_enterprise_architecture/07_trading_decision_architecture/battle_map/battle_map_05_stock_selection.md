@@ -763,7 +763,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-001 管供应商注册表（源名/
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-001 | primary | production | stable |
+| depgraph | MOD-MKT-001 | primary | production | generated |
 | depgraph | MOD-MKT-002 | supplement | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection

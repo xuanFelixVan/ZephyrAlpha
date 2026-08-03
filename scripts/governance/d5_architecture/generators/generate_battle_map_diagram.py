@@ -890,7 +890,11 @@ def _generate_panorama_md(
     edges: list[dict],
     anchors_by_step: dict[str, list[dict]],
 ) -> str:
-    """总指挥图 MD（三视图 + 每环节详情，模板 §3.1/§3.2 铁律）。"""
+    """总指挥图 MD（三视图 + 分阶段导航，模板 §3.1/§3.2 铁律）。
+
+    V1.5（2026-08-03）：移除"全环节详情（6 件套）"——总图聚焦大局全貌，
+    各环节 6 件套详情由 12 个分阶段文档承载，避免 panorama.md 膨胀且信息重复。
+    """
     no_anchor_count = sum(1 for s in steps if s.get("_effective_status") == "missing")
     # 五态分布统计（Gap1）
     state_counts: dict[str, int] = {}
@@ -968,10 +972,11 @@ def _generate_panorama_md(
         parts.append(f"- [{stage_name}阶段（{len(stage_steps)} 环节）](battle_map_{num}_{stage_id}.md)")
     parts.append("- [横切视图（§13漏斗 / §14盘中事件 / §16冲突矩阵）](battle_map_12_cross_cutting.md)")
     parts.append("")
-    parts.append("## 全环节详情（6 件套）")
+    # V1.5：全景图不再展示"全环节详情（6 件套）"——总图看大局全貌，详情在 12 个分阶段文档里
+    # 重复输出会让 panorama.md 膨胀到几百 KB 且无信息增量。
+    # 各环节 6 件套（触发/消费/参数/数据流/代码映射/降级）见上方对应分阶段文档。
+    parts.append("> **环节详情**：各环节的 6 件套（触发/消费/参数/数据流/代码映射/降级）+ 锚点 + 有效状态，见上方对应分阶段文档。总图聚焦大局全貌，不重复详情。")
     parts.append("")
-    for s in sorted(steps, key=lambda x: (x["flow_stage"], x.get("sort_order", 0))):
-        parts.append(_format_step_detail(s, anchors_by_step.get(s["step_id"], [])))
     return "\n".join(parts)
 
 
