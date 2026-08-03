@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/ex_core/test_execution_auditor.py
+# [A_module] module_id=MOD-EX-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_EXECUTION_CORE — Execution Audit Journal 包
 

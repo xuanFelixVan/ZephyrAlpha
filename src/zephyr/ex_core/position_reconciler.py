@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/ex_core/test_position_reconciler.py
+# [A_module] module_id=MOD-EX-056 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_EXECUTION_CORE — 盘中持仓对账器 (Position Reconciler)
 
