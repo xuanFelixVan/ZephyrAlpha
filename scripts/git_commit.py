@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过)
+# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过); exit 8=worktree隔离阻断(WORKTREE_VIOLATION)
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-INF-005 | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -32,7 +32,7 @@
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
 - git_commit.py 强制走 GitCommitGateway（串行锁+stash 隔离+GW 标记）
 
-exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突
+exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突, 8=worktree隔离阻断
 """
 
 from __future__ import annotations
@@ -92,6 +92,14 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         "  session 已注册但目标文件未 claim_files（红蓝对抗红攻1治本）。"
         "  commit 前 MUST 调 claim_files 声明工作范围（AGENTS.md §8 L284）。"
         "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
+        False,
+    ),
+    CommitStatus.WORKTREE_VIOLATION: (
+        8,
+        "WORKTREE_VIOLATION: {message}",
+        "  非 worktree 并发 commit 被阻断（#ARCH-WORKTREE-GATE-001 治本）。"
+        "  治本：使用 session_worktree_start() 创建物理隔离 worktree。"
+        "  如确认需提交，请在终端手动添加 --allow-non-worktree 重新执行。",
         False,
     ),
 }
@@ -467,6 +475,17 @@ def main() -> int:
              "AI 不得自行使用——须用户终端手动指定（对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
+        "--allow-non-worktree",
+        action="store_true",
+        default=False,
+        help="WORKTREE_VIOLATION 治本通道（#ARCH-WORKTREE-GATE-001）——"
+             "非 worktree 并发 commit 场景放行 WORKTREE-REQUIRED gate。"
+             "君子协定在 100% AI 场景下系统性失效，gate 默认硬阻断并发非 worktree commit；"
+             "本旗标显式声明合法的共享工作区 commit（如 solo session 误判、"
+             "reconciler auto-commit 兜底）。AI 不得自行使用——须用户终端手动指定"
+             "（对称 --allow-overlap 治理）。",
+    )
+    parser.add_argument(
         "--claim-only",
         action="store_true",
         default=False,
@@ -563,6 +582,7 @@ def main() -> int:
                 allow_promote=args.allow_promote,
                 allow_overlap=args.allow_overlap,
                 allow_derived_deletion=args.allow_derived_deletion,
+                allow_non_worktree=args.allow_non_worktree,
             )
         finally:
             gw.release_files(args.session, claimed)

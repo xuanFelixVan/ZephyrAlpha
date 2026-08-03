@@ -5604,6 +5604,11 @@ creation_tokens:
     token: "auto-translation-coverage-gate-20260802"
     created_by: "session-translation-coverage-gate"
     capability: "translation_coverage_gate"
+  # --- BLUEPRINT-NODE-ID-HARDCODE in-process gate（2026-08-04，文档引用铁律补齐）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py"
+    token: "auto-blueprint-node-id-hardcode-gate-20260804"
+    created_by: "session-p1-node-id-hardcode"
+    capability: "blueprint_node_id_hardcode_gate"
   - file: "src/zephyr/governance/audit/translation_coverage_reconciler.py"
     token: "auto-translation-coverage-reconciler-20260802"
     created_by: "session-translation-coverage-gate"
@@ -7938,3 +7943,22 @@ di_seam_exemptions:
 #   - 修正 5 个 stale comment/description 路径引用（market_schema + kb 描述）
 #   - 验证：0 stale paths（Type 1/2/3 + Unknown 全部为 0），YAML 语法合法
 #   - session: stale-path-cleanup-20260722
+  - capability_id: worktree_required_gate
+    aliases:
+      - WORKTREE-REQUIRED
+      - worktree-required
+      - make_worktree_required_gate
+      - non_worktree_commit_blocker
+      - worktree_isolation_enforcer
+    description: >-
+      worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001 治本 2026-08-04）。
+      治本"君子协定在 100% AI 场景下系统性失效"——warn_non_worktree_commit 只 WARN 不阻断，
+      AI 把 WARN 当"通过"。本 gate 将并发非 worktree commit 从 WARN 升级为 fail-closed 阻断。
+      分级阻断：worktree 内放行 / solo session 放行 / 并发非 worktree 阻断。
+      priority=44 在 CLAIM-REQUIRED(40) 之后、HELD-OVERLAP(50) 之前。
+      双逃生通道：allow_overlap=True（通用）或 allow_non_worktree=True（专用）。
+      get_current_worktree/list_active 异常→安全降级放行（基础设施故障不应卡死 commit）。
+      canonical basename worktree_required_gate 匹配 capability_id，可 auto 派生。
+    integrity_anchors:
+      - make_worktree_required_gate  # gate 工厂(删则 gate 不注册)
+

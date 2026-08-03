@@ -37,9 +37,9 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 85
+total_gates: 87
 gates:
-# --- 85 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1）---
+# --- 86 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐）---
 - gate_id: HELD-OVERLAP
   module_path: zephyr.gov_enforcement.commit_gates.held_overlap_gate
   factory_function: make_held_overlap_gate
@@ -553,4 +553,15 @@ gates:
   factory_function: make_protected_paths_gate
   source: in_process
   register_line: 0
+  enabled: true
+# --- BLUEPRINT-NODE-ID-HARDCODE: 文档引用铁律 in-process gate（2026-08-04，补齐 GitCommitGateway --no-verify 绕过缺口）---
+# 治本 GATE-12（pre-commit hook）被 GitCommitGateway --no-verify 绕过——AI 通过 gateway
+# 提交含 node_id 硬编码的 blueprint.md 不被 GATE-12 拦截。本 gate 在 check_all() 阶段
+# 执行，--no-verify 无法绕过。检测 staged blueprint.md 中 node_id=数字/edge_id=数字 硬编码。
+# priority=57（HELD-OVERLAP 50 之后、NEW-FILE-DEPGRAPH 58 之前）
+- gate_id: BLUEPRINT-NODE-ID-HARDCODE
+  module_path: zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate
+  factory_function: make_blueprint_node_id_hardcode_gate
+  source: in_process
+  register_line: 0  # priority=57（in-process 新增；HELD-OVERLAP 50 之后、NEW-FILE-DEPGRAPH 58 之前）
   enabled: true

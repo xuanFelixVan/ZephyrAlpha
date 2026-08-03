@@ -11297,3 +11297,52 @@ entries:
   related_adjudication: '方案 A 治本（--message-file 用完即删），方案 B worktree 反向门禁另行登记'
   created: '2026-08-04'
   last_updated: '2026-08-04'
+- issue_id: '#ARCH-WORKTREE-GATE-001'
+  title: 非 worktree 并发 commit 搭便车——君子协定在 100% AI 场景下系统性失效
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-04 方案 B 治本。问题：warn_non_worktree_commit 只 WARN 不阻断，
+    AI 把 WARN 当"通过"，在 100% AI 开发场景下系统性失效。治本：新增 WORKTREE-REQUIRED
+    in-process gate（priority=44），将并发非 worktree commit 从 WARN 升级为 fail-closed 阻断。
+    分级阻断：worktree 内放行 / solo session 放行 / 并发非 worktree 阻断。
+    双逃生通道：allow_overlap=True / allow_non_worktree=True。fail-open on infra error。
+  fix_phase: |-
+    P1 已执行：worktree_required_gate.py + test(13 PASS) + gateway(WORKTREE_VIOLATION+
+    allow_non_worktree) + CLI(--allow-non-worktree) + in_process_gate_registry +
+    capability_registry + AGENTS.md 四层化。
+  status: resolved
+  related_adjudication: '方案 B 治本（WORKTREE-REQUIRED gate），方案 A 见 #ARCH-MSG-FILE-RESIDUE-001'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'
+# --- #ARCH-DOC-NODE-ID-RULE-001: 文档引用铁律（2026-08-04）---
+- issue_id: '#ARCH-DOC-NODE-ID-RULE-001'
+  title: 文档硬编码 depgraph 物理 ID（node_id/edge_id）——DB 重建后成死引用温床
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-04 治本。问题：blueprint.md 等 docs/ 文档曾硬编码 depgraph 物理 ID（node_id=N / edge_id=N）。
+    node_id 是 PostgreSQL nodes 表自增主键，每次 regenerate 重建 nodes_metadata 表都会重分配，
+    导致文档引用成死引用（指向不存在或错位的节点）。审查发现 8 个 blueprint.md 硬编码 node_id。
+    治本：三层闭环——
+    1. 历史清理：清理 14 处历史硬编码（8 个 blueprint.md + 6 处额外发现），改用 module_id/path
+    2. 检测脚本：scripts/governance/d3_metadata/check_doc_node_id_hardcode.py
+       二元判定：文档出现 `node_id=数字` / `edge_id=数字` → 违规（自包含 os.walk，无 _shared 依赖）
+    3. 门禁落地：GATE-DOC-NODE-ID pre-commit hook（gate-doc-node-id），files: ^docs/.*\.md$，硬阻断
+    规则定位：独立于"进全景图设计态标准 v0.1"——属命名/引用规范，非设计态准入门槛。
+    铁律二元化元规则应用：判定"是/否"清晰（正则匹配数字），无灰度。
+    纯技术治本+命名规范（governance），无价值判断，AI 直接 decided（铁律#9）。
+    受保护路径 AGENTS.md 同步更新本铁律需走 [ARCH-APPROVAL:ARCH-DOC-NODE-ID-RULE-001] 逃生通道。
+  fix_phase: |-
+    已执行（commit 7d89394348 + 本次提交）：
+    - 历史清理：14 处硬编码（8 blueprint.md + 6 处额外）改为稳定标识
+    - 检测脚本：check_doc_node_id_hardcode.py（自包含 _iter_md_files，无 _shared.walk 依赖）
+    - pre-commit：.pre-commit-config.yaml 注册 gate-doc-node-id hook（gate-naming 与 gate-id-uniq 之间）
+    - scripts_registry.yaml：登记新脚本条目（active）
+    - gate_registry.yaml：登记 GATE-DOC-NODE-ID 门禁元数据
+    - AGENTS.md：RULE-DEPGRAPH 章节末尾追加"文档引用铁律"子节（本次提交）
+    - architecture_issue_registry.yaml：本条 issue 登记（本次提交）
+  status: decided
+  related_adjudication: '文档引用铁律（文档禁写物理ID，GATE-DOC-NODE-ID 硬阻断）'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'
