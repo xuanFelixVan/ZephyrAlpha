@@ -3,17 +3,27 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-03T18:24:57Z'
+generated_at: '2026-08-03T19:09:04Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 136
+total_gates: 137
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
   entry: python scripts/governance/d6_security/check_protected_paths.py --staged
   description: 检测 staged 文件是否含受保护路径（.gitignore/.gitattributes/AGENTS.md 等），双层防护 Layer
     2（Layer 1 为 in-process gate PROTECTED-PATHS）
+  files_trigger: ''
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-WORKTREE-REQUIRED
+  name: 'GATE-WORKTREE-REQUIRED: 主工作区 commit 渐进式软门禁（#ARCH-GIT-SELF-HARM-GUARD L3.1）'
+  entry: python scripts/governance/d11_compliance/validate_worktree_required.py
+  description: 检测 commit 是否在 session worktree 内——主工作区 commit warn+计数，累计>=5次升级阻断（Layer
+    2 pre-commit；Layer 1 in-process gate WORKTREE-REQUIRED 管 gateway 路径）
   files_trigger: ''
   always_run: false
   category: unknown
@@ -70,8 +80,7 @@ gates:
 - gate_id: GATE-12
   name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）'
   entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
-  description: 蓝图真源 Provenance 三件套校验 + node_id/edge_id 硬编码 lint（文档引用铁律，禁止易变物理ID硬编码，改用
-    module_id/blueprint_id/path）
+  description: 蓝图真源 Provenance 三件套校验（node_id/edge_id 硬编码 lint 已移至 GATE-DOC-NODE-ID）
   files_trigger: ^docs/(03_modules/.*blueprint\.md|04_construction_plans/.*\.md|01_policies_and_standards/.*\.md)$
   always_run: false
   category: blueprint_truth_source
