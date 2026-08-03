@@ -47,7 +47,7 @@ tags: [redis, hot-cache, online-store, feature-store, cqrs, realtime, factor-cro
 priority: P1
 runtime_plane: hot
 responsibility_domain: 
-build_status: generated
+build_status: stable
 design_maturity: design
 ---
 
@@ -124,7 +124,7 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-H1-REDIS-HOT | MOD-H1-REDIS-HOT | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 9 文件 | 6 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

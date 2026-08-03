@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 43 | Module Count | 43 |
 | 域内依赖 | 33 | Internal Dependencies | 33 |
-| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域入边 | 8 | Cross-domain Incoming | 8 |
 | 跨域出边 | 70 | Cross-domain Outgoing | 70 |
 | 设计态模块 | 23 | Design Modules | 23 |
 | 生产态模块 | 20 | Production Modules | 20 |
@@ -142,25 +142,25 @@ flowchart TD
     src_zephyr_ex_core_batch_take_profit_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_auction_deviation_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_simulation_broker_py
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_miniqmt_broker_py
+    src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| src_zephyr_ex_core_adapters_simulation_broker_py
     src_zephyr_ex_core_conditional_order_manager_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_mcp_server_py -.->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_rl_optimal_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_splitter_py
     src_zephyr_ex_core_microstructure_modeler_py -.->|data / data| src_zephyr_ex_core_order_splitter_py
     src_zephyr_ex_core_microstructure_modeler_py -.->|data / data| src_zephyr_ex_core_rl_optimal_executor_py
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_fill_handler_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_repository_interface_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_repository_interface_py -->|runtime / runtime| src_zephyr_ex_core_position_tracker_init_py
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_position_tracker_init_py -.->|runtime / runtime| src_zephyr_ex_core_fill_processor_py
@@ -181,16 +181,17 @@ flowchart TD
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
+    D_SELL_DECISION -.->|导入依赖 / import_depends| src_zephyr_ex_core_services_live_portfolio_py
     D_TRADING -->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_ex_core_execution_engine_py
@@ -251,18 +252,18 @@ flowchart TD
     src_zephyr_ex_core_position_tracker_init_py["ex_core/position_tracker 包入口<br/>D_EXECUTION_CORE — Position Tracker 包<br/>文件: position_tracker/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_order_manager_py ~~~ src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_position_tracker_tracker_py["position_tracker/tracker<br/>D_EXECUTION_CORE — Position Tracker (持仓跟踪器)<br/>文件: position_tracker/tracker.py<br/>(生产态 / production)"]
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_fill_handler_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_repository_interface_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_repository_interface_py -->|runtime / runtime| src_zephyr_ex_core_position_tracker_init_py
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_position_tracker_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
@@ -353,8 +354,8 @@ flowchart TD
 | 10 | 模拟经纪人 / simulation_broker (adapters/simulation_broke... | → | D_GOVERNANCE 生命周期管理: 仿真经纪人 / D_EXECUTION_CORE — Simulation Broker Adapte... | 导入依赖 / import_depends |
 | 11 | 执行引擎 / D_EXECUTION_CORE — Execution Engine (ex_core/... | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
 | 12 | Order Execution Saga — 下单执行 Saga 编排器 (MOD-EX-057 ... | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
-| 13 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
-| 14 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | contract / contract |
+| 13 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | contract / contract |
+| 14 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 风险验证桥接 / D_EXECUTION_CORE — Risk Validation Bridge... | 导入依赖 / import_depends |
 | 15 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
 | 16 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | contract / contract |
 | 17 | D_EX_CORE — Aggregate Root Manager (执行域聚合根管理器) ... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
@@ -409,8 +410,8 @@ flowchart TD
 | 66 | 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
 | 67 | 实时组合 / live_portfolio (services/live_portfolio.py) | → | D_TRADING 交易运营: Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.... | 导入依赖 / import_depends |
 | 68 | 实时组合 / live_portfolio (services/live_portfolio.py) | → | D_TRADING 交易运营: risk/risk_limits.py | 导入依赖 / import_depends |
-| 69 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
-| 70 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
+| 69 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
+| 70 | 交易会话 / trading_session (ex_core/trading_session.py) | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -421,12 +422,13 @@ flowchart TD
 | 3 | D_EX_SOR 执行路由: 经纪人适配器管理器 / broker_adapter_manager (core/broker_... | → | 执行引擎 / D_EXECUTION_CORE — Execution Engine (ex_core/... | 导入依赖 / import_depends |
 | 4 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | D_EXECUTION_CORE — Position Tracker (持仓跟踪器) (positi... | 导入依赖 / import_depends |
 | 5 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | D_EXECUTION_CORE — Position Tracker (持仓跟踪器) (positi... | 测试依赖 / test_depends |
-| 6 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | 部分成交处理器 (ex_core/fill_handler.py) | import / import |
-| 7 | D_TRADING 交易运营: D_TRADING — Settlement & Reconciliation Engine (结算对账... | → | 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | runtime / runtime |
+| 6 | D_SELL_DECISION 卖出决策: core/t_trade_coordinator.py | → | 实时组合 / live_portfolio (services/live_portfolio.py) | 导入依赖 / import_depends |
+| 7 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | 部分成交处理器 (ex_core/fill_handler.py) | import / import |
+| 8 | D_TRADING 交易运营: D_TRADING — Settlement & Reconciliation Engine (结算对账... | → | 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 11 个外部域直接连接（出边 70 条 + 入边 7 条 = 77 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 11 个外部域直接连接（出边 70 条 + 入边 8 条 = 78 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -456,6 +458,7 @@ graph LR
     D_REPORTING -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_EX_CORE
     D_TRADING -->|2条 import / import, runtime / runtime| D_EX_CORE
     D_EX_SOR -->|1条 导入依赖 / import_depends| D_EX_CORE
+    D_SELL_DECISION -->|1条 导入依赖 / import_depends| D_EX_CORE
 ```
 
 ## 说明 / Notes

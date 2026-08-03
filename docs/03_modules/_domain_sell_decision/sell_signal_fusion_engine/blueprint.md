@@ -4,7 +4,7 @@ title: "卖出信号融合引擎蓝图 — 多信号加权融合+多时间框架
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
+design_maturity: production
 build_status: stable
 ttl: permanent
 layer: L03_sell_decision
@@ -157,8 +157,8 @@ class FusedSellDecision:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-SELL-007` 的 1 个 file 节点 | design | `extract_depgraph.py --modules MOD-SELL-007` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-SELL-007` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-SELL-007` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

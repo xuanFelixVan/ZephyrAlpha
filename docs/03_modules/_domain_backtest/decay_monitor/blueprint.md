@@ -4,7 +4,7 @@ title: "策略衰减监控告警器蓝图 — 短期/长期均值对比+趋势�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
+design_maturity: production
 build_status: stable
 ttl: permanent
 layer: L_BACKTEST
@@ -87,7 +87,7 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-BT-018` 的 2 个 file 节点 | design | `extract_depgraph.py --modules MOD-BT-018` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-BT-018` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-018` |
 | 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |

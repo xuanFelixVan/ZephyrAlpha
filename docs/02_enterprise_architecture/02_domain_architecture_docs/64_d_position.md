@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 22 | Module Count | 22 |
 | 域内依赖 | 26 | Internal Dependencies | 26 |
-| 跨域入边 | 5 | Cross-domain Incoming | 5 |
+| 跨域入边 | 6 | Cross-domain Incoming | 6 |
 | 跨域出边 | 15 | Cross-domain Outgoing | 15 |
 | 设计态模块 | 7 | Design Modules | 7 |
 | 生产态模块 | 15 | Production Modules | 15 |
@@ -97,42 +97,44 @@ flowchart TD
     src_zephyr_position_core_intraday_position_constraint_py -.->|data / data| src_zephyr_position_core_position_limit_enforcer_py
     src_zephyr_position_core_position_behavior_classifier_py -.->|data / data| src_zephyr_position_core_position_sizing_engine_py
     src_zephyr_position_core_capital_curve_manager_py -->|runtime / runtime| src_zephyr_position_core_drawdown_controller_py
-    src_zephyr_position_core_position_drift_monitor_py -->|runtime / runtime| src_zephyr_position_core_position_state_machine_py
-    src_zephyr_position_core_position_state_machine_py -->|runtime / runtime| src_zephyr_position_core_position_sizing_engine_py
-    src_zephyr_position_core_rebalance_engine_py -->|event / event| src_zephyr_position_core_position_drift_monitor_py
-    src_zephyr_position_core_rebalance_engine_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_drift_monitor_py
-    src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| src_zephyr_position_core_calendar_position_constraint_py
     src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| src_zephyr_position_core_capital_curve_manager_py
     src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| src_zephyr_position_core_cash_manager_py
+    src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| src_zephyr_position_core_calendar_position_constraint_py
+    src_zephyr_position_core_rebalance_engine_py -->|event / event| src_zephyr_position_core_position_drift_monitor_py
+    src_zephyr_position_core_rebalance_engine_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_drift_monitor_py
+    src_zephyr_position_core_position_drift_monitor_py -->|runtime / runtime| src_zephyr_position_core_position_state_machine_py
+    src_zephyr_position_core_position_state_machine_py -->|runtime / runtime| src_zephyr_position_core_position_sizing_engine_py
     src_zephyr_position_services_init_py -->|导入依赖 / import_depends| src_zephyr_position_services_position_audit_logger_py
+    src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_sizing_engine_py
+    src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_rebalance_engine_py
     src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_drift_monitor_py
     src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_state_machine_py
-    src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_rebalance_engine_py
-    src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_sizing_engine_py
+    tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_sizing_engine_py
+    tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_rebalance_engine_py
     tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_drift_monitor_py
     tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_state_machine_py
-    tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_rebalance_engine_py
-    tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_sizing_engine_py
     tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_services_position_audit_logger_py
     tests_position_test_position_sizing_engine_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_sizing_engine_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_position_core_calendar_position_constraint_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_capital_curve_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_cash_manager_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_position_core_sell_position_link_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_position_core_drawdown_controller_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_position_core_position_drift_monitor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_core_position_limit_enforcer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_position_core_position_state_machine_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_position_core_position_state_machine_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_position_core_rebalance_engine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_drawdown_controller_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_calendar_position_constraint_py -->|导入依赖 / import_depends| D_SHARED
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| D_RISK
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_position_core_position_sizing_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_position_core_position_sizing_engine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_rebalance_engine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_position_drift_monitor_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_position_state_machine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_position_state_machine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_position_core_sell_position_link_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| D_SHARED
     tests_position_test_position_sizing_engine_py -->|测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_SELL_DECISION["卖出决策<br/>卖出决策，负责卖出信号生成、卖出时机判断和退出策<br/>略<br/>Sell Decision<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    D_SELL_DECISION -.->|导入依赖 / import_depends| src_zephyr_position_core_position_sizing_engine_py
     D_RISK -->|runtime / runtime| src_zephyr_position_core_drawdown_controller_py
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_position_position_reconciler_py
@@ -147,6 +149,7 @@ flowchart TD
     class src_zephyr_position_core_calendar_position_constraint_py,src_zephyr_position_core_capital_curve_manager_py,src_zephyr_position_core_cash_manager_py,src_zephyr_position_core_drawdown_controller_py,src_zephyr_position_core_position_drift_monitor_py,src_zephyr_position_core_position_limit_enforcer_py,src_zephyr_position_core_position_sizing_engine_py,src_zephyr_position_core_position_state_machine_py,src_zephyr_position_core_rebalance_engine_py,src_zephyr_position_core_sell_position_link_py,src_zephyr_position_position_reconciler_py,src_zephyr_position_services_init_py,src_zephyr_position_services_position_audit_logger_py,tests_position_test_position_audit_logger_py,tests_position_test_position_sizing_engine_py production
     class src_zephyr_position_core_correlation_regime_monitor_py,src_zephyr_position_core_covariance_estimator_py,src_zephyr_position_core_cross_strategy_position_merger_py,src_zephyr_position_core_intraday_position_constraint_py,src_zephyr_position_core_position_behavior_classifier_py,src_zephyr_position_core_position_risk_budget_allocator_py,src_zephyr_position_core_position_time_budget_py design
     class D_SHARED,D_RISK,D_INFRASTRUCTURE,D_TRADING,D_PF_CORE external_prod
+    class D_SELL_DECISION external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -179,22 +182,22 @@ flowchart TD
     src_zephyr_position_core_capital_curve_manager_py ~~~ src_zephyr_position_core_cash_manager_py
     src_zephyr_position_core_drawdown_controller_py["core/drawdown_controller<br/>Drawdown Controller — 回撤控制器 (MOD-POS-008)<br/>文件: core/drawdown_controller.py<br/>(生产态 / production)"]
     src_zephyr_position_core_capital_curve_manager_py -->|runtime / runtime| src_zephyr_position_core_drawdown_controller_py
-    src_zephyr_position_core_position_drift_monitor_py -->|runtime / runtime| src_zephyr_position_core_position_state_machine_py
-    src_zephyr_position_core_position_state_machine_py -->|runtime / runtime| src_zephyr_position_core_position_sizing_engine_py
-    src_zephyr_position_core_rebalance_engine_py -->|event / event| src_zephyr_position_core_position_drift_monitor_py
-    src_zephyr_position_core_rebalance_engine_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_drift_monitor_py
-    src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| src_zephyr_position_core_calendar_position_constraint_py
     src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| src_zephyr_position_core_capital_curve_manager_py
     src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| src_zephyr_position_core_cash_manager_py
+    src_zephyr_position_core_position_sizing_engine_py -->|runtime / runtime| src_zephyr_position_core_calendar_position_constraint_py
+    src_zephyr_position_core_rebalance_engine_py -->|event / event| src_zephyr_position_core_position_drift_monitor_py
+    src_zephyr_position_core_rebalance_engine_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_drift_monitor_py
+    src_zephyr_position_core_position_drift_monitor_py -->|runtime / runtime| src_zephyr_position_core_position_state_machine_py
+    src_zephyr_position_core_position_state_machine_py -->|runtime / runtime| src_zephyr_position_core_position_sizing_engine_py
     src_zephyr_position_services_init_py -->|导入依赖 / import_depends| src_zephyr_position_services_position_audit_logger_py
+    src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_sizing_engine_py
+    src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_rebalance_engine_py
     src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_drift_monitor_py
     src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_state_machine_py
-    src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_rebalance_engine_py
-    src_zephyr_position_services_position_audit_logger_py -->|导入依赖 / import_depends| src_zephyr_position_core_position_sizing_engine_py
+    tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_sizing_engine_py
+    tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_rebalance_engine_py
     tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_drift_monitor_py
     tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_state_machine_py
-    tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_rebalance_engine_py
-    tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_sizing_engine_py
     tests_position_test_position_audit_logger_py -->|测试依赖 / test_depends| src_zephyr_position_services_position_audit_logger_py
     tests_position_test_position_sizing_engine_py -->|测试依赖 / test_depends| src_zephyr_position_core_position_sizing_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -262,11 +265,12 @@ flowchart TD
 | 2 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | Rebalance Engine — 再平衡引擎 (MOD-POS-004) (core/rebala... | 导入依赖 / import_depends |
 | 3 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | Position Reconciler — v0.10.1 持仓对账: execution report... | 导入依赖 / import_depends |
 | 4 | D_RISK 风控: D_RISK — Risk Limits Calculator (risk/risk_limits.py) | → | Drawdown Controller — 回撤控制器 (MOD-POS-008) (core/dra... | runtime / runtime |
-| 5 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | Position Reconciler — v0.10.1 持仓对账: execution report... | 导入依赖 / import_depends |
+| 5 | D_SELL_DECISION 卖出决策: core/t_trade_coordinator.py | → | Position Sizing Engine — 仓位决策引擎 (MOD-POS-001) (cor... | 导入依赖 / import_depends |
+| 6 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | Position Reconciler — v0.10.1 持仓对账: execution report... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 5 个外部域直接连接（出边 15 条 + 入边 5 条 = 20 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 6 个外部域直接连接（出边 15 条 + 入边 6 条 = 21 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -276,12 +280,14 @@ graph LR
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_RISK["D_RISK<br/>风控"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
+    D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_POSITION -->|12条 导入依赖 / import_depends| D_SHARED
     D_POSITION -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_POSITION -->|1条 runtime / runtime| D_RISK
     D_PF_CORE -->|3条 导入依赖 / import_depends| D_POSITION
     D_RISK -->|1条 runtime / runtime| D_POSITION
+    D_SELL_DECISION -->|1条 导入依赖 / import_depends| D_POSITION
     D_TRADING -->|1条 导入依赖 / import_depends| D_POSITION
 ```
 
