@@ -42,6 +42,7 @@ Exit codes:
     1 = VIOLATION（受保护文件名出现在非 SSoT 路径下）
     2 = ERROR（脚本异常）
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -59,12 +60,14 @@ import argparse
 import sys
 from pathlib import Path
 
-# 一次性 bootstrap sys.path（N 值对本文件固定且仅用一次）
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
+# bootstrap sys.path —— 动态定位含 _shared 的祖先目录（与其他 governance 脚本一致）
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 # ── 配置：受保护文件名 → 声明 SSoT 路径 ──────────────────────────────
@@ -113,11 +116,13 @@ def scan_violations() -> list[dict]:
         except ValueError:
             # 不在 SSoT 路径下 → 违规
             rel_path = py_file.relative_to(REPO_ROOT)
-            violations.append({
-                "filename": py_file.name,
-                "path": str(rel_path).replace("\\", "/"),
-                "ssot_path": SSOT_PATH,
-            })
+            violations.append(
+                {
+                    "filename": py_file.name,
+                    "path": str(rel_path).replace("\\", "/"),
+                    "ssot_path": SSOT_PATH,
+                }
+            )
 
     return violations
 
@@ -132,16 +137,20 @@ def format_report(violations: list[dict]) -> str:
         "",
     ]
     for v in violations:
-        lines.extend([
-            f"  File: {v['filename']}",
-            f"  Path: {v['path']}",
-            f"  Expected SSoT: {v['ssot_path']}/",
-            "",
-        ])
-    lines.extend([
-        "Fix: Delete the violating file or move it to the SSoT path.",
-        f"SSoT path: {SSOT_PATH}/",
-    ])
+        lines.extend(
+            [
+                f"  File: {v['filename']}",
+                f"  Path: {v['path']}",
+                f"  Expected SSoT: {v['ssot_path']}/",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "Fix: Delete the violating file or move it to the SSoT path.",
+            f"SSoT path: {SSOT_PATH}/",
+        ]
+    )
     return "\n".join(lines)
 
 
@@ -159,7 +168,7 @@ def main() -> int:
 
     try:
         violations = scan_violations()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"[ERROR] scan failed: {e}", file=sys.stderr)
         return EXIT_ERROR
     report = format_report(violations)
@@ -168,5 +177,7 @@ def main() -> int:
     if violations and args.check:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

@@ -98,33 +98,69 @@ def check_orphan_shell(filepath: Path) -> dict | None:
 
 
 def check_stale_imports(filepath: Path, src_dir: Path) -> list[dict]:
-    """check orphan shell."""
+    """检测 .py 文件中 import 路径指向已不存在的模块（STALE_IMPORT）。
+
+    治本（2026-08-03，修 ZR-006 误判）：原逻辑用 ``parts[1:]`` 路径拼接判断模块存在性，
+    不理解包 ``__init__.py`` 的 re-export / ``sys.modules`` 重定向机制——例如
+    ``feedback_loop/detectors/__init__.py`` 将 ``correlation.agent_trajectory_anomaly_detector``
+    re-export 为 ``detectors.agent_trajectory_anomaly_detector``，原逻辑找不到平铺 .py 文件
+    误报 stale。改用 ``importlib.util.find_spec`` 实际解析模块，正确识别 re-export。
+
+    同时跳过 ``if TYPE_CHECKING:`` 块和 ``try/except`` 块内的 import——前者仅在类型检查器
+    中执行，后者是可选依赖降级模式（模块不存在时由 except 捕获），均不影响运行。
+    """
+    import importlib.util
+
     findings = []
     try:
         source = filepath.read_text(encoding="utf-8", errors="replace")
-        "检查并返回违规列表."
         tree = ast.parse(source, filename=str(filepath))
     except (SyntaxError, OSError, UnicodeDecodeError):
         return findings
+
+    # 收集 TYPE_CHECKING 块内的 ImportFrom 行号——运行时不执行，跳过 stale 检测
+    skip_lines: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.If):
+            test = node.test
+            is_tc = (isinstance(test, ast.Name) and test.id == "TYPE_CHECKING") or (
+                isinstance(test, ast.Attribute) and test.attr == "TYPE_CHECKING"
+            )
+            if is_tc:
+                for child in ast.walk(node):
+                    if isinstance(child, ast.ImportFrom):
+                        skip_lines.add(child.lineno)
+        elif isinstance(node, ast.Try):
+            # try/except 块内的 import 是可选依赖（如 event_bus.py 的 contract_bus），
+            # 模块不存在时由 except 捕获降级，是预期行为，不算 stale。
+            for child in ast.walk(node):
+                if isinstance(child, ast.ImportFrom):
+                    skip_lines.add(child.lineno)
+
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom):
+            if node.lineno in skip_lines:
+                continue
             if node.module and node.module.startswith("zephyr."):
-                parts = node.module.split(".")
-                if len(parts) >= 2:
-                    module_path = src_dir / Path("/".join(parts[1:]))
-                    if module_path.is_dir() and (not (module_path / "__init__.py").exists()):
-                        pass
-                    elif not module_path.with_suffix(".py").exists() and (not module_path.is_dir()):
-                        rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-                        findings.append(
-                            {
-                                "file": rel,
-                                "line": node.lineno,
-                                "type": "STALE_IMPORT",
-                                "detail": f"import {node.module} — 模块不存在",
-                                "severity": "HIGH",
-                            }
-                        )
+                # 用 importlib.find_spec 实际解析模块（理解包 __init__.py re-export），
+                # 替代原 parts[1:] 路径拼接的朴素判断。find_spec 返回 None 才算 stale。
+                # 注意：re-export/alias 模块的 spec.origin 可能为 None（动态注册），
+                # 但 spec 本身非 None——所以判 None 而非 spec.origin。
+                try:
+                    spec = importlib.util.find_spec(node.module)
+                except (ValueError, ModuleNotFoundError, ImportError):
+                    spec = None
+                if spec is None:
+                    rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
+                    findings.append(
+                        {
+                            "file": rel,
+                            "line": node.lineno,
+                            "type": "STALE_IMPORT",
+                            "detail": f"import {node.module} — 模块不存在",
+                            "severity": "HIGH",
+                        }
+                    )
     return findings
     "check stale imports."
 

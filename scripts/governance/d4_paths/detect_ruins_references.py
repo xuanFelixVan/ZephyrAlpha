@@ -99,11 +99,15 @@ def scan_file(filepath: Path) -> list[dict]:
         content = filepath.read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeDecodeError):
         return findings
-    is_py = filepath.suffix == ".py"
+    # .py/.ps1 文件中的 `\\\\` 是合法字符串转义/正则模式，不是"路径双重嵌套"bug。
+    # .py: Python 字符串/正则转义；.ps1: PowerShell -replace '\\\\','\' 正则转义。
+    # 该检测针对旧脚本生成的 JSON/YAML 错误路径，跳过 .py/.ps1 避免假阳性。
+    skip_double_nested = filepath.suffix in (".py", ".ps1")
+    # 已登记 deprecated 的文件（头部 stability=deprecated / [DEPRECATED）含"本文件已废弃"
+    # 是正常的废弃声明，不是未清理的跳转桩——obsolete_markers 检测时跳过避免误报。
+    is_deprecated = bool(re.search(r"stability\s*[:=]\s*deprecated", content[:2000]) or "[DEPRECATED" in content[:2000])
     for pattern, label in _get_ruins_patterns():
-        # .py 文件中的 `\\\\` 是合法字符串转义/正则模式，不是"路径双重嵌套"bug。
-        # 该检测针对旧脚本生成的 JSON/YAML 错误路径，跳过 .py 避免假阳性。
-        if is_py and "路径双重嵌套" in label:
+        if skip_double_nested and "路径双重嵌套" in label:
             continue
         for match in re.finditer(pattern, content, re.IGNORECASE):
             line_num = content[: match.start()].count("\n") + 1
@@ -123,6 +127,8 @@ def scan_file(filepath: Path) -> list[dict]:
                 }
             )
     for pattern in _get_obsolete_markers():
+        if is_deprecated:
+            break
         if re.search(pattern, content, re.IGNORECASE):
             findings.append(
                 {
@@ -168,6 +174,8 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
             "docs/01_policies_and_standards/_registry/catalogs/",
             "docs/08_knowledge/",
             "docs/_working/",
+            "docs/_archive/",
+            "logs/",
             "scripts/governance/",
             "tests/",
         )
