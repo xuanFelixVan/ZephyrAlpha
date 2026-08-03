@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空队列run_all返回空列表; 无结果get_summary返回空摘要
 # [TESTS] tests/backtest/test_scheduler.py
+# [A_module] module_id=MOD-BT-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。
 

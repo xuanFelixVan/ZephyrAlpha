@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-BT-017 | (auto-injected by S4 reconciler) | §D-BACKTEST BT-17
+# [A_module] module_id=MOD-BT-017 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [A_test] module_id: MOD-BT-017 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.backtest.test_scheduler

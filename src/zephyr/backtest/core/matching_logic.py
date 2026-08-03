@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MatchingLogicError
 # [TESTS]
-# [A_module] module_id=MOD-GOV-matching_logic | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """共享撮合逻辑模块（回测=实盘一致性核心）
 

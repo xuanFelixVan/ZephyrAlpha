@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] WalkForwardError
 # [TESTS]
 # [TTL] permanent
-# [A_module] module_id=MOD-GOV-walk_forward | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """Walk-Forward分析与多重比较偏差校正模块
 
 职责:

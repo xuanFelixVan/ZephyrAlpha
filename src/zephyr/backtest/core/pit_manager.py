@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] PITError
 # [TESTS]
 # [TTL] permanent
-# [A_module] module_id=MOD-GOV-pit_manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """PIT(Point-In-Time)铁律管理器模块
 
 职责:

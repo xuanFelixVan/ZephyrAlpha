@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3708 |
-| 生产态模块 | 3525 |
-| 设计态模块 | 183 |
+| 模块总数 | 3713 |
+| 生产态模块 | 3528 |
+| 设计态模块 | 185 |
 
 ## 域清单（按架构层分组）
 
@@ -99,7 +99,7 @@ ttl: permanent
 | D_FBL_DIAGNOSERS | 反馈诊断器 / Feedback Diagnosers | 76 | 76 | 0 | 76/150 (OK) | [📄 16_d_fbl_diagnosers.md](16_d_fbl_diagnosers.md) |
 | D_FBL_VERIFICATION | 反馈验证 / Feedback Verification | 71 | 71 | 0 | 71/150 (OK) | [📄 17_d_fbl_verification.md](17_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | 反馈循环引擎 / Feedback Loop Engine | 125 | 125 | 0 | 125/150 (OK) | [📄 18_d_feedback_loop.md](18_d_feedback_loop.md) |
-| D_GOV_CODE_QUALITY | 代码质量治理 / Code Quality Governance | 205 | 205 | 0 | 205/150 (超容) | [📄 19_d_gov_code_quality.md](19_d_gov_code_quality.md) |
+| D_GOV_CODE_QUALITY | 代码质量治理 / Code Quality Governance | 206 | 206 | 0 | 206/150 (超容) | [📄 19_d_gov_code_quality.md](19_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 / Ops Resilience Governance | 115 | 115 | 0 | 115/150 (OK) | [📄 20_d_gov_ops_resilience.md](20_d_gov_ops_resilience.md) |
 | D_INTEGRATION | 管线路由 / Pipeline Routing | 71 | 71 | 0 | 71/150 (OK) | [📄 21_d_integration.md](21_d_integration.md) |
 | D_INTEGRATION_GATEWAY | 集成网关 / Integration Gateway | 0 | 0 | 0 | 0/150 (OK) | [📄 22_d_integration_gateway.md](22_d_integration_gateway.md) |
@@ -138,15 +138,15 @@ ttl: permanent
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 193 | 190 | 3 | 193/150 (超容) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |
 | D_GOV_DOCS | 架构文档治理 / Architecture Docs Governance | 27 | 2 | 25 | 27/150 (OK) | [📄 51_d_gov_docs.md](51_d_gov_docs.md) |
 | D_GOV_DRIFT | 漂移检测 / Drift Detection | 75 | 74 | 1 | 75/150 (OK) | [📄 52_d_gov_drift.md](52_d_gov_drift.md) |
-| D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 114 | 114 | 0 | 114/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
+| D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 115 | 114 | 1 | 115/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 35 | 35 | 0 | 35/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 409 | 409 | 0 | 409/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 411 | 411 | 0 | 411/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 7 | 0 | 7/150 (OK) | [📄 60_d_ml_serve.md](60_d_ml_serve.md) |
-| D_ML_TRAIN | 训练 / Training | 6 | 3 | 3 | 6/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
+| D_ML_TRAIN | 训练 / Training | 7 | 3 | 4 | 7/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 9 | 5 | 4 | 9/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
 | D_PF_CORE | 组合核心 / Portfolio Core | 18 | 16 | 2 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 22 | 15 | 7 | 22/150 (OK) | [📄 64_d_position.md](64_d_position.md) |

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] OverfittingError
 # [TESTS]
 # [TTL] permanent
-# [A_module] module_id=MOD-GOV-overfitting_detector | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """过拟合检测模块(三维度 + 三层)
 
 职责:

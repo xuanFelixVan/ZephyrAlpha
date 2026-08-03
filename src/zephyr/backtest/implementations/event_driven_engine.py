@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EventDrivenEngineError
 # [TESTS]
-# [A_module] module_id=MOD-GOV-event_driven_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心）
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] BacktestResultSinkError
 # [TESTS]
-# [A_module] module_id=MOD-GOV-backtest_result_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """backtest_result_sink · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047）
 

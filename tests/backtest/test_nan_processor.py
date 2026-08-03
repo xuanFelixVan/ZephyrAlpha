@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-BT-026 | docs/03_modules/_domain_backtest/nan_processor/blueprint.md | §D-BACKTEST BT-26
+# [A_module] module_id=MOD-BT-026 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [A_test] module_id: MOD-BT-026 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.backtest.test_nan_processor

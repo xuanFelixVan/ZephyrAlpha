@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ParamAnalysisError(ZA-BT-0021)
 # [TESTS] tests/backtest/test_param_analyzer.py
+# [A_module] module_id=MOD-BT-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_BACKTEST — Parameter Analyzer (参数优化结果分析器)
 

@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-BT-022 | docs/03_modules/_domain_backtest/data_quality_checker/blueprint.md | §D-BACKTEST BT-22
+# [A_module] module_id=MOD-BT-022 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [A_test] module_id: MOD-BT-022 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.backtest.test_data_quality_checker

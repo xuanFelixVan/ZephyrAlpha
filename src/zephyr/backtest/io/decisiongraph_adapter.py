@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] BacktestResultValidationError; DecisionGraphWriteError
 # [TESTS] tests/test_backtest_decisiongraph_adapter.py
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 BacktestResult -> decisiongraph 适配器（TRAE-061 Phase 5）

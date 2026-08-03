@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ResultComparisonError(ZA-BT-0024)
 # [TESTS] tests/backtest/test_result_comparator.py
+# [A_module] module_id=MOD-BT-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_BACKTEST — Result Comparator (回测结果比较器)
 

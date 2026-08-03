@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DataHandlerError
 # [TESTS]
-# [A_module] module_id=MOD-GOV-data_handler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """回测数据处理器模块（v1.1.0 扩展：多源化 + ClickHouse 实现 + Tick 源）
 

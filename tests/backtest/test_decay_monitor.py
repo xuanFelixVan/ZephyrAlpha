@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-BT-018 | docs/03_modules/_domain_backtest/decay_monitor/blueprint.md | §D-BACKTEST BT-18
+# [A_module] module_id=MOD-BT-018 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [A_test] module_id: MOD-BT-018 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.backtest.test_decay_monitor

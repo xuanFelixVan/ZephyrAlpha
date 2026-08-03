@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] DecisionGateError
 # [TESTS]
 # [TTL] permanent
-# [A_module] module_id=MOD-GOV-decision_gate | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 """3阶段决策门控模块(IS->WFA->OOS)
 
 职责:

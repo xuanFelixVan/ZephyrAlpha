@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ReportError(ZA-BT-0019)
 # [TESTS] tests/backtest/test_report_generator.py
+# [A_module] module_id=MOD-BT-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_BACKTEST — Backtest Report Generator (回测报告生成器)
 

@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-BT-017 | (auto-injected by S4 reconciler) | §
 # [MODULE] tests.backtest.test_data_handler_pit
 # [DOMAIN] D_BACKTEST
+# [A_module] module_id=MOD-BT-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [TESTS] tests/backtest/test_data_handler_pit.py
 # [TTL] permanent

@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/factor/test_backtest_factor_e2e.py
+# [A_module] module_id=MOD-E2E-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """T7 跨域端到端集成测试——D-FACTOR → D-BACKTEST 数据流验证。
 

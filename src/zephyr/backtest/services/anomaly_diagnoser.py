@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DiagnosisError(ZA-BT-0023)
 # [TESTS] tests/backtest/test_anomaly_diagnoser.py
+# [A_module] module_id=MOD-BT-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_BACKTEST — Anomaly Diagnoser (回测异常诊断器)
 

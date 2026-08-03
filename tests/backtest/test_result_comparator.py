@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-BT-024 | docs/03_modules/_domain_backtest/result_comparator/blueprint.md | §
 # [MODULE] tests.backtest.test_result_comparator
 # [DOMAIN] D_BACKTEST
+# [A_module] module_id=MOD-BT-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-BT-024 Result Comparator — 回测结果比较器单元测试。
 

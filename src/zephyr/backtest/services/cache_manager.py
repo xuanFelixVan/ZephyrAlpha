@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CacheError(ZA-BT-0020)
 # [TESTS] tests/backtest/test_cache_manager.py
+# [A_module] module_id=MOD-BT-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_BACKTEST — Backtest Cache Manager (回测缓存管理器)
 
