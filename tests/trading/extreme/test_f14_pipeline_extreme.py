@@ -1,5 +1,5 @@
 # [A_test] module_id=MOD-GOV_f14_pipeline_extreme | layer=test | stability=evolving | safety=L
-# [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/pipeline/blueprint.md
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # [MODULE] tests.red_blue.test_f14_pipeline_extreme
 # [INVARIANTS] 红蓝对抗测试隔离外部依赖(LLM/ollama/VMS); 每个测试类覆盖一个极端场景
@@ -10,6 +10,7 @@
 # [ERROR_CONTRACT] 测试失败=发现极端场景漏洞
 # [TESTS] self
 # [DOMAIN] D_AUTONOMY_CORE
+# [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 """F14 管线编排/反馈环 — 红蓝对抗端到端极端测试
