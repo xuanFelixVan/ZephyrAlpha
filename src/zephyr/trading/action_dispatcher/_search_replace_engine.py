@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] search_replace_file 返回 ActionReport(status=skipped|search_replaced|error)；文件不存在/无匹配→skipped；dry_run 模式不写盘
 # [TESTS] tests/action/test_action_dispatcher.py (TestActionDispatcherSearchReplace + TestActionDispatcherSearchReplacePaths)
+# [A_module] module_id=MOD-INF-035 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """搜索替换引擎（从 ActionDispatcher._search_replace_file 及两个底层方法提取）。
 

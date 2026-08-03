@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] write_triage_log 始终返回 ActionReport(status=modified)；needs_human=True→detail 含 ALERT，否则 CLEAR
 # [TESTS] tests/action/test_action_dispatcher.py (TestActionDispatcherWriteTriageLog)
+# [A_module] module_id=MOD-INF-035 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """审计日志写入器（从 ActionDispatcher._write_triage_log 提取）。
 

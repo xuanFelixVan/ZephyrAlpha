@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-PRT-money | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L00-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [DEPRECATED] 5.99.22/23 克隆收敛——canonical 真源已收敛至 zephyr.shared.contracts.portfolio.money；本文件为向后兼容过渡 re-export 层，全量消费者改指真源后删除
 # [TTL] task_bound
 """

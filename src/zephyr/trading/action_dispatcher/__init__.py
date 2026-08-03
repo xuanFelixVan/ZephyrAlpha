@@ -3,6 +3,7 @@
 # [DOMAIN] D_TRADING | trading
 # [CAPABILITY] action_dispatcher_system
 # [SAFETY] M
+# [A_module] module_id=MOD-INF-035 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [CREATED] 2026-05-04
 # [UPDATED] 2026-07-20 | Task 5.150.7: God Class 拆分 — ActionDispatcher 分解为 1 外观 + 4 worker

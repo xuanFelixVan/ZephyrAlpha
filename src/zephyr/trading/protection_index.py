@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] query: BloomFilterError->fallback to Trie-only; rebuild: IOError->return partial stats
 # [TESTS] tests/test_behavioral_audit/test_protection_index.py
-# [A_module] module_id=MOD-ORC-protection_index | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-033 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

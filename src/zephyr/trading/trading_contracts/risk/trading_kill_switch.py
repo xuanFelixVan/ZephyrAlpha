@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError;RuntimeError
 # [TESTS] tests/test_rollback/
-# [A_module] module_id=MOD-INF-trading_kill_switch | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # SRC-0041: Copy file -- keep independent implementation, pending future review

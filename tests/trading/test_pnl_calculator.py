@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidPnlInputError(ZA-TR-0001)
 # [TESTS] self
+# [A_module] module_id=MOD-TRADING-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-TRADING-002 PnL Calculator 单元测试.
 

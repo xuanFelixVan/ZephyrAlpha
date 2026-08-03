@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidSettlementInputError(ZA-TR-0003)
 # [TESTS] tests/trading/test_settlement_reconciliation.py
+# [A_module] module_id=MOD-TRADING-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_TRADING — Settlement & Reconciliation Engine (结算对账器)
 

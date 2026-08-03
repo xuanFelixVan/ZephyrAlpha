@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidCorporateActionError(ZA-TR-0004)
 # [TESTS] tests/trading/test_corporate_action_processor.py
+# [A_module] module_id=MOD-TRADING-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_TRADING — Corporate Action & Fee Processor (公司行动处理器)
 

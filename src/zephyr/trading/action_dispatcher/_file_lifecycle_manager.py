@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] create_file 路径逃逸 REPO_ROOT→error；空 file_path/empty content/already exists→skipped；delete_file 文件不存在→skipped；version_backup 失败返回 None
 # [TESTS] tests/action/test_action_dispatcher.py (TestActionDispatcherCreateFile + TestActionDispatcherDeleteFile)
+# [A_module] module_id=MOD-INF-035 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """文件生命周期管理器（从 ActionDispatcher._create_file / _delete_file / _version_backup 提取）。
 

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 文件不存在/无法读取→skipped/error；dry_run 模式不写盘；yaml.safe_load 失败降级为空 dict
 # [TESTS] tests/action/test_action_dispatcher.py (TestActionDispatcherAnnotatePyFile + TestActionDispatcherTagModule)
+# [A_module] module_id=MOD-INF-035 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """注释注解写入器（从 ActionDispatcher._annotate_py_file/_tag_module/_annotate_blueprint 提取）。
 

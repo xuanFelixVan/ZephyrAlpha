@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidPnlInputError(ZA-TR-0001)
 # [TESTS] tests/trading/test_pnl_calculator.py
+# [A_module] module_id=MOD-TRADING-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_TRADING — PnL Calculator (盈亏计算器)
 
