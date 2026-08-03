@@ -19,7 +19,7 @@ belongs_to: "SYS-MASTER-001"
 generation: 2
 functional_domain: operations
 summary: "系统大脑：三层运行时编排+MAPE-K调和循环+节律调度+健康监控+工作编排+自动接入"
-last_updated: "2026-05-14"
+last_updated: "2026-08-04"
 last_verified: "2026-05-13"
 parent_module: ""
 rule_form: structural
@@ -2208,3 +2208,52 @@ Boot Sequence（20步，含 WorkOrchestrator 初始化）：
 > 威胁面，ResetGateway 作为薄壳调用 `check_and_execute` 无独立价值，违反"能删除/合并的绝不保留"。
 > 代码 `reset_gateway.py` + `test_reset_gateway.py` 已删除（从未提交）。弃用理由登记于
 > `candidate_module_registry.yaml`（rejected）。**禁止重新设计此模块。**
+
+---
+
+## §git-guard-bypass-reconciler（L2.3 alias 绕过检测，2026-08-04）
+
+> **module_id**: `MOD-GOV_GIT_GUARD_BYPASS_RECONCILER`
+> **文件**: [`src/zephyr/governance/audit/git_guard_bypass_reconciler.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/git_guard_bypass_reconciler.py)
+> **gate_id**: `GATE-GIT-GUARD-BYPASS`（priority=810，post-commit warn-only）
+> **#ARCH-GIT-SELF-HARM-GUARD L2.3**
+
+### 设计意图
+
+`git_guard.py` 通过 git alias 拦截危险命令（`reset --hard` / `checkout --` / `restore`），但 `git -c alias.reset= reset --hard` 可静默绕过 alias（`setup_git_guard_aliases.py` 自述）。L1+L2 自伤检测只覆盖走 alias 的调用，绕过 alias 的调用完全不受监控。
+
+本 reconciler 是 L2.3 治本——post-commit 事件驱动对比 `git reflog` 的 reset 记录与 `.runtime/gate_audit/git_guard_self_harm.jsonl` 审计日志：reflog 有 reset 但审计日志无对应记录 = 疑似绕过 alias。
+
+### 检测原理
+
+1. **时间窗口**: 取本次 commit（HEAD）与上次 commit（HEAD~1）之间的时间段
+2. **reflog 侧**: `git reflog --format=%ct|%gs` 筛选 `reset: moving to` 条目，时间戳落在窗口内
+3. **审计侧**: 读 `.runtime/gate_audit/git_guard_self_harm.jsonl`，筛选 timestamp 落在窗口内的记录
+4. **对比**: `reflog_resets > audited_resets` → 疑似绕过（warn，不阻断 commit）
+
+### 接口契约
+
+| 项 | 值 |
+|----|-----|
+| 工厂函数 | `make_git_guard_bypass_reconciler(gateway: object) -> ReconcilerSpec` |
+| gate_id | `GATE-GIT-GUARD-BYPASS` |
+| priority | 810（stash_lifecycle=801 之后，gate_inventory_sync=820 之前） |
+| 触发条件 | 任何非空 `committed_files`（`_trigger` 返回 `bool(committed_files)`） |
+| 行为 | warn-only——`ReconcileResult(action="warn")`，永不阻断 commit |
+| 依赖 | `zephyr.governance.audit.reconciliation_registry`（`ReconcileResult`, `ReconcilerSpec`） |
+| 消费者 | `zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway`（`_register_default_reconcilers` 注册） |
+| 错误契约 | reconciler 永不抛异常——reflog/审计日志读取失败降级为 `ReconcileResult(action="skip")` |
+
+### 已知局限（warn-only 设计依据）
+
+- `reset --soft` / `reset --mixed` 也产生 `reset: moving to` reflog 条目，但不触发自伤检测（非危险），因此 `reflog_resets ≥ audited_resets` 是常态。本 reconciler 报告差值供 AI/人工研判，不阻断 commit。
+- `restore` / `checkout -- <file>` 不产生 reflog 条目（只动工作区不动 HEAD），本 reconciler 无法检测这两类命令的绕过。完整检测需 shell 级审计，超出 L2.3 范围。
+- 首次 commit（无 HEAD~1）无时间窗口，跳过。
+
+### 关联
+
+- **L1+L2**: [`scripts/git_guard.py`](file:///d:/ZephyrAlpha/scripts/git_guard.py)——`_check_self_harm_reset_hard`(L1) + `_check_self_harm_files`(L2)，alias 路径自伤检测
+- **L3.1**: [`scripts/governance/d11_compliance/validate_worktree_required.py`](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/validate_worktree_required.py)——worktree 软门禁 pre-commit hook
+- **L3.3**: §reset-gateway（已弃用，死代码 B 轨已删）
+- **裁定真源**: [`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) `#ARCH-GIT-SELF-HARM-GUARD`
+- **测试**: [`tests/governance/audit/test_git_guard_bypass_reconciler.py`](file:///d:/ZephyrAlpha/tests/governance/audit/test_git_guard_bypass_reconciler.py)（7 场景）
