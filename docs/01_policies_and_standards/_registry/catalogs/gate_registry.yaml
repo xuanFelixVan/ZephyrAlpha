@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-03T16:31:15Z'
+generated_at: '2026-08-03T16:51:08Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 133
+total_gates: 134
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -395,6 +395,16 @@ gates:
   entry: python scripts/governance/d11_compliance/validate_commit_gateway.py
   description: 裸 commit 检测——强制所有 commit 走 GitCommitGateway（串行锁+stash隔离），根治幽灵提交。经 gateway
     的 commit 用 --no-verify 绕过本门禁
+  files_trigger: ''
+  always_run: true
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-WORKTREE-REQUIRED
+  name: 'GATE-WORKTREE-REQUIRED: 主工作区 commit 软门禁（L3.1）'
+  entry: python scripts/governance/d11_compliance/validate_worktree_required.py
+  description: session_worktree 使用率软门禁——主工作区 commit warn+计数，累计 >= 5 次升级阻断。豁免：合并/reconciler
+    auto-commit
   files_trigger: ''
   always_run: true
   category: unknown
