@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 6 | Module Count | 6 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域入边 | 5 | Cross-domain Incoming | 5 |
 | 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 5 | Production Modules | 5 |
@@ -64,12 +64,12 @@ flowchart TD
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py ~~~ src_zephyr_pf_alloc_strategy_lifecycle_event_py
     src_zephyr_pf_alloc_strategy_lifecycle_event_py ~~~ src_zephyr_pf_core_default_equity_strategy_py
-    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
@@ -77,6 +77,8 @@ flowchart TD
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_pf_core_default_equity_strategy_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_pf_core_default_equity_strategy_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -84,7 +86,7 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py,src_zephyr_pf_alloc_core_signal_synthesis_combiner_py,src_zephyr_pf_alloc_core_strategy_correlation_gate_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py,src_zephyr_pf_core_default_equity_strategy_py production
     class src_zephyr_pf_alloc_batched_position_builder_py design
-    class D_SHARED,D_INFRASTRUCTURE,D_GOVERNANCE,D_PF_CORE external_prod
+    class D_INFRASTRUCTURE,D_SHARED,D_GOVERNANCE,D_PF_CORE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -143,13 +145,15 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
-| 2 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
-| 3 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — Portfolio Construction Strategies (st... | → | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 导入依赖 / import_depends |
+| 1 | D_GOVERNANCE 生命周期管理: E2E 集成测试：全流水线贯通测试 (trading/test_e2e_pipeline... | → | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 测试依赖 / test_depends |
+| 2 | D_GOVERNANCE 生命周期管理: Phase E — Main Data Flow End-to-End Test (trading/test_p... | → | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 测试依赖 / test_depends |
+| 3 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
+| 4 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
+| 5 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — Portfolio Construction Strategies (st... | → | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 7 条 + 入边 3 条 = 10 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 7 条 + 入边 5 条 = 12 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -163,6 +167,7 @@ graph LR
     D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE -->|3条 导入依赖 / import_depends| D_PF_ALLOC
+    D_GOVERNANCE -->|2条 测试依赖 / test_depends| D_PF_ALLOC
 ```
 
 ## 说明 / Notes

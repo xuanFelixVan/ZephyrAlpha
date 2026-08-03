@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 43 | Module Count | 43 |
 | 域内依赖 | 15 | Internal Dependencies | 15 |
-| 跨域入边 | 30 | Cross-domain Incoming | 30 |
+| 跨域入边 | 40 | Cross-domain Incoming | 40 |
 | 跨域出边 | 66 | Cross-domain Outgoing | 66 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 43 | Production Modules | 43 |
@@ -136,17 +136,17 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_limits_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py ~~~ src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_protection_index_py["trading/protection_index<br/>交易包的protection_index模块<br/>文件: trading/protection_index.py<br/>(生产态 / production)"]
-    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
+    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     tests_trading_test_corporate_action_processor_py -->|测试依赖 / test_depends| src_zephyr_trading_corporate_action_processor_py
     tests_trading_test_pnl_calculator_py -->|测试依赖 / test_depends| src_zephyr_trading_pnl_calculator_py
@@ -158,11 +158,11 @@ flowchart TD
     src_zephyr_trading_pnl_calculator_py -->|import / import| D_EX_CORE
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
@@ -289,17 +289,17 @@ flowchart TD
     src_zephyr_trading_trading_contracts_risk_risk_limits_py ~~~ src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts_risk_risk_metrics_py ~~~ src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_protection_index_py["trading/protection_index<br/>交易包的protection_index模块<br/>文件: trading/protection_index.py<br/>(生产态 / production)"]
-    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
+    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     tests_trading_test_corporate_action_processor_py -->|测试依赖 / test_depends| src_zephyr_trading_corporate_action_processor_py
     tests_trading_test_pnl_calculator_py -->|测试依赖 / test_depends| src_zephyr_trading_pnl_calculator_py
@@ -412,22 +412,32 @@ flowchart TD
 | 16 | D_FUNDAMENTAL_SIGNAL 基本面信号: 策略资本分配器 / Strategy Capital Allocator (strategy/cap... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
 | 17 | D_FUNDAMENTAL_SIGNAL 基本面信号: 策略默认资本分配器 / Strategy Default Capital Allocator (... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
 | 18 | D_GOVERNANCE 生命周期管理: 仿真经纪人 / D_EXECUTION_CORE — Simulation Broker Adapte... | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
-| 19 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
-| 20 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | 导入依赖 / import_depends |
-| 21 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
-| 22 | D_INTEGRATION 管线路由: behavioral_admission/admission_response.py | → | trading/admission_controller.py | 导入依赖 / import_depends |
-| 23 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | execution/model_serving_request.py | 导入依赖 / import_depends |
-| 24 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | execution/model_serving_request.py | 导入依赖 / import_depends |
-| 25 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | execution/model_serving_request.py | 导入依赖 / import_depends |
-| 26 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | 导入依赖 / import_depends |
-| 27 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | risk/risk_dashboard_snapshot.py | 导入依赖 / import_depends |
-| 28 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | risk/risk_limit_violation_error.py | 导入依赖 / import_depends |
-| 29 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | risk/risk_metrics.py | 导入依赖 / import_depends |
-| 30 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor Base (signa... | → | market/signal_degradation_warning.py | 导入依赖 / import_depends |
+| 19 | D_GOVERNANCE 生命周期管理: test_autopilot.py — AutoPilot 端到端测试 (integration/te... | → | AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | 测试依赖 / test_depends |
+| 20 | D_GOVERNANCE 生命周期管理: E2E 集成测试：全流水线贯通测试 (trading/test_e2e_pipeline... | → | execution/capital_allocation_result.py | 测试依赖 / test_depends |
+| 21 | D_GOVERNANCE 生命周期管理: E2E 集成测试：全流水线贯通测试 (trading/test_e2e_pipeline... | → | Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fi... | 测试依赖 / test_depends |
+| 22 | D_GOVERNANCE 生命周期管理: E2E 集成测试：全流水线贯通测试 (trading/test_e2e_pipeline... | → | execution/model_serving_request.py | 测试依赖 / test_depends |
+| 23 | D_GOVERNANCE 生命周期管理: E2E 集成测试：全流水线贯通测试 (trading/test_e2e_pipeline... | → | Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | 测试依赖 / test_depends |
+| 24 | D_GOVERNANCE 生命周期管理: Phase E — Main Data Flow End-to-End Test (trading/test_p... | → | Re-export wrapper: ExecutionReport 真源在 zephyr.shared.c... | 测试依赖 / test_depends |
+| 25 | D_GOVERNANCE 生命周期管理: Phase E — Main Data Flow End-to-End Test (trading/test_p... | → | Re-export wrapper: Fill 真源在 zephyr.shared.contracts.fi... | 测试依赖 / test_depends |
+| 26 | D_GOVERNANCE 生命周期管理: Phase E — Main Data Flow End-to-End Test (trading/test_p... | → | Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | 测试依赖 / test_depends |
+| 27 | D_GOVERNANCE 生命周期管理: Phase E — Main Data Flow End-to-End Test (trading/test_p... | → | Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.... | 测试依赖 / test_depends |
+| 28 | D_GOV_AUDIT 审计追踪: audit/test_verdict_engine.py | → | trading/verdict_engine.py | 测试依赖 / test_depends |
+| 29 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
+| 30 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | 导入依赖 / import_depends |
+| 31 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | 导入依赖 / import_depends |
+| 32 | D_INTEGRATION 管线路由: behavioral_admission/admission_response.py | → | trading/admission_controller.py | 导入依赖 / import_depends |
+| 33 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | execution/model_serving_request.py | 导入依赖 / import_depends |
+| 34 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | execution/model_serving_request.py | 导入依赖 / import_depends |
+| 35 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | execution/model_serving_request.py | 导入依赖 / import_depends |
+| 36 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | 导入依赖 / import_depends |
+| 37 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | risk/risk_dashboard_snapshot.py | 导入依赖 / import_depends |
+| 38 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | risk/risk_limit_violation_error.py | 导入依赖 / import_depends |
+| 39 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — 风控管理器... | → | risk/risk_metrics.py | 导入依赖 / import_depends |
+| 40 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor Base (signa... | → | market/signal_degradation_warning.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 16 个外部域直接连接（出边 66 条 + 入边 30 条 = 96 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 16 个外部域直接连接（出边 66 条 + 入边 40 条 = 106 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -445,10 +455,10 @@ graph LR
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_RISK["D_RISK<br/>风控"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
-    D_REPORTING["D_REPORTING<br/>报告"]
     D_SIGQC["D_SIGQC<br/>信号质量控制"]
     D_FRONTEND["D_FRONTEND<br/>前端"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
+    D_REPORTING["D_REPORTING<br/>报告"]
     D_TRADING -->|29条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
     D_TRADING -->|19条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_TRADING -->|6条 导入依赖 / import_depends| D_INFRA_RUNTIME
@@ -459,16 +469,17 @@ graph LR
     D_TRADING -->|1条 导入依赖 / import_depends| D_INTEGRATION
     D_TRADING -->|1条 导入依赖 / import_depends| D_POSITION
     D_EX_CORE -->|11条 contract / contract, 导入依赖 / import_depends| D_TRADING
+    D_GOVERNANCE -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_TRADING
     D_FUNDAMENTAL_SIGNAL -->|5条 导入依赖 / import_depends| D_TRADING
     D_INFRA_RUNTIME -->|3条 导入依赖 / import_depends| D_TRADING
     D_RISK -->|3条 导入依赖 / import_depends| D_TRADING
     D_ML_TRAIN -->|2条 导入依赖 / import_depends| D_TRADING
-    D_REPORTING -->|1条 导入依赖 / import_depends| D_TRADING
     D_SIGQC -->|1条 导入依赖 / import_depends| D_TRADING
     D_FRONTEND -->|1条 导入依赖 / import_depends| D_TRADING
-    D_GOVERNANCE -->|1条 导入依赖 / import_depends| D_TRADING
+    D_GOV_AUDIT -->|1条 测试依赖 / test_depends| D_TRADING
     D_INTEGRATION -->|1条 导入依赖 / import_depends| D_TRADING
     D_INTELLIGENCE -->|1条 导入依赖 / import_depends| D_TRADING
+    D_REPORTING -->|1条 导入依赖 / import_depends| D_TRADING
 ```
 
 ## 说明 / Notes
