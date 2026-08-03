@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidPublishInputError(ZA-RPT-0003)
 # [TESTS] self
+# [A_module] module_id=MOD-RPT-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-RPT-003 Report Publisher 单元测试.
 

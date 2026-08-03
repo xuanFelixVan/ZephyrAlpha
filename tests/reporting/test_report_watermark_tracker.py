@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidWatermarkInputError(ZA-RPT-0004)
 # [TESTS] self
+# [A_module] module_id=MOD-RPT-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-RPT-017 Report Watermark Tracker 单元测试.
 

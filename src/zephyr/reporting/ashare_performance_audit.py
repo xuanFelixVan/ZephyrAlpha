@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidAuditInputError(ZA-RPT-0026)
 # [TESTS] tests/reporting/test_ashare_performance_audit.py
+# [A_module] module_id=MOD-RPT-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_REPORTING — A-Share Performance Audit & Optimization Trigger
 

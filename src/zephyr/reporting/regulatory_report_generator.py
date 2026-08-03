@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidRegulatoryReportError(ZA-RPT-0006)
 # [TESTS] tests/reporting/test_regulatory_report_generator.py
+# [A_module] module_id=MOD-RPT-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_REPORTING — Regulatory Report Generator (监管报告生成器)
 

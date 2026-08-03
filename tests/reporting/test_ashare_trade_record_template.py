@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidTradeRecordError(ZA-RPT-0005)
 # [TESTS] self
+# [A_module] module_id=MOD-RPT-027 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-RPT-027 A股交易记录模板引擎 单元测试.
 

@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidRiskReportInputError(ZA-RPT-0003)
 # [TESTS] self
+# [A_module] module_id=MOD-RPT-008 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-RPT-008 Risk Report Engine 单元测试.
 

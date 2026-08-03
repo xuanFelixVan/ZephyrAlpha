@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidWatermarkInputError(ZA-RPT-0004)
 # [TESTS] tests/reporting/test_report_watermark_tracker.py
+# [A_module] module_id=MOD-RPT-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_REPORTING — Report Watermark Tracker (报告水印追踪器)
 

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidRiskReportInputError(ZA-RPT-0003)
 # [TESTS] tests/reporting/test_risk_report_engine.py
+# [A_module] module_id=MOD-RPT-008 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_REPORTING — Risk Report Engine (风险报告引擎)
 

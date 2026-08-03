@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidVersionInputError(ZA-RPT-0002)
 # [TESTS] tests/reporting/test_report_version_manager.py
+# [A_module] module_id=MOD-RPT-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_REPORTING — Report Version Manager (报告版本管理器)
 

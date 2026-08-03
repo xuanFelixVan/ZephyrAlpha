@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidDashboardInputError(ZA-RPT-0001)
 # [TESTS] self
+# [A_module] module_id=MOD-RPT-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-RPT-004 Real-time P&L Dashboard 单元测试.
 

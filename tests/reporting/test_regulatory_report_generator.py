@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidRegulatoryReportError(ZA-RPT-0006)
 # [TESTS] self
+# [A_module] module_id=MOD-RPT-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MOD-RPT-006 Regulatory Report Generator 单元测试.
 

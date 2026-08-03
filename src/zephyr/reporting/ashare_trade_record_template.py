@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidTradeRecordError(ZA-RPT-0005)
 # [TESTS] tests/reporting/test_ashare_trade_record_template.py
+# [A_module] module_id=MOD-RPT-027 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_REPORTING — A股交易记录模板引擎 (ASHare Trade Record Template)
 

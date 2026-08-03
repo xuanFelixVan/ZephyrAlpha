@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidDashboardInputError(ZA-RPT-0001)
 # [TESTS] tests/reporting/test_realtime_pnl_dashboard.py
+# [A_module] module_id=MOD-RPT-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘)
 
