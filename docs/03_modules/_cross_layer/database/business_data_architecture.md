@@ -1,5 +1,5 @@
 ---
-module_id: MOD-ARCH-BIZDB
+module_id: MOD-ARCH_BIZDB
 submodule_path: docs/03_modules/_cross_layer/database
 title: "业务数据库顶层架构设计书 — 回测引擎数据仓库 + 实盘分析数据中台（ClickHouse目标 / SQLite事务 / Neo4j图谱）"
 doc_type: blueprint
@@ -54,7 +54,7 @@ build_status: planned
 
 # 业务数据库顶层架构设计书 — 回测引擎数据仓库 + 实盘分析数据中台
 
-> module_id: MOD-ARCH-BIZDB | version: 1.0.0 | status: Active | layer: cross_layer | blueprint_level: architecture
+> module_id: MOD-ARCH_BIZDB | version: 1.0.0 | status: Active | layer: cross_layer | blueprint_level: architecture
 > 本文档为**母蓝图**，指导 C1~C4 / G2 / L4 各子施工蓝图。表级细化，不到字段级（字段级见各子蓝图 DDL-as-Code）。
 > **推导过程完整记录**：[业务数据库架构_讨论记录.md](file:///D:/ZephyrAlpha/docs/_working/业务数据库架构_讨论记录.md)（11章）
 
@@ -97,13 +97,13 @@ build_status: planned
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
 > **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-ARCH-BIZDB`
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-ARCH_BIZDB`
 
 #### 四图位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-ARCH-BIZDB` 的 1 个 file 节点 | design | `extract_depgraph.py --modules MOD-ARCH-BIZDB` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-ARCH_BIZDB` 的 1 个 file 节点 | design | `extract_depgraph.py --modules MOD-ARCH_BIZDB` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -112,7 +112,7 @@ build_status: planned
 
 | 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
 |------|-------------------|--------------------------|:-------:|
-| module_id | MOD-ARCH-BIZDB | MOD-ARCH-BIZDB | ✅ |
+| module_id | MOD-ARCH_BIZDB | MOD-ARCH_BIZDB | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
 | file_count | 1 文件 | N/A | — |

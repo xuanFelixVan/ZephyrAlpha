@@ -1,5 +1,5 @@
 # [A_module] module_id=SH-GOV-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-CG | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOV_CG | docs/03_modules/_domain_governance/blueprint.md
 # [TTL] permanent
 """公共模块别名（R5 公共化）— 从 _diff_helpers 重新导出所有公共符号。
 

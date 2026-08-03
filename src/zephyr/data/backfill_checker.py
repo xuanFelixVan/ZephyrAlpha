@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH查询失败->返回None; CH写入失败->重试3次后返回False; xtquant不可用->返回0
 # [TESTS]
-# [A_module] module_id=MOD-GOV-backfill_checker | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_BACKFILL_CHECKER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """L10 周末补下载检测器——检测过去N天缺失数据并精准补下载。
 

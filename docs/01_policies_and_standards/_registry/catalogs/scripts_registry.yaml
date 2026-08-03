@@ -3,7 +3,7 @@ ttl: permanent
 collection_id: SCRIPT_COLLECTION
 collection_name: 脚本集 / Script Collection
 collection_path: scripts/governance/
-owner_module: MOD-GOV-SCRIPTS
+owner_module: MOD-GOV_SCRIPTS
 node_type: script_collection
 total_registered: 434
 items:

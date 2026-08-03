@@ -1,5 +1,5 @@
 # [A_module] module_id=SH-GOV-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-SCRIPTS | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/03_modules/_domain_governance/blueprint.md
 # [TTL] permanent
 """公共模块别名（R5 公共化）— 从 _shared.frontmatter 重新导出。
 

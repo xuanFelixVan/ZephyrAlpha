@@ -1,5 +1,5 @@
 # [A_module] module_id=SH-GOV-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV-SCRIPTS | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/03_modules/_domain_governance/blueprint.md
 # [TTL] permanent
 """公共包别名（R5 公共化）— 从 _shared 重新导出所有公共符号。
 

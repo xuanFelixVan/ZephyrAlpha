@@ -21,7 +21,7 @@ archive_reason: ARCH-057 四图孤儿治理已完成（问题总数=0），spec 
 |---|---|---|---|
 | MOD-004 | blueprint | FLE 接口规范文档（有价值） | ID 三重分裂：MOD-004 / AI-ENG-FLE-001 / MOD-FEEDBACK_LOOP（canonical） |
 | MOD-BIZ-002 | decision | 纯占位空记录（无价值） | sync_panorama_module.py 只 UPSERT 不 DELETE，depgraph 删模块后 decision_layers 残留 |
-| MOD-GOV_SCRIPTS-001 | depgraph | 复杂度扫描脚本（有价值） | 命名不规范，应复用已有 MOD-GOV-SCRIPTS |
+| MOD-GOV_SCRIPTS-001 | depgraph | 复杂度扫描脚本（有价值） | 命名不规范，应复用已有 MOD-GOV_SCRIPTS |
 
 ### 1.2 状态漂移
 
@@ -51,7 +51,7 @@ MOD-004 blueprint 缺 `design_maturity` 字段（同目录兄弟文件均有此�
 |---|---|---|---|
 | A1 | MOD-004 | frontmatter `module_id: MOD-004` → `MOD-FEEDBACK_LOOP` + 补 `design_maturity`/`build_status`/`responsibility_domain` | canonical ID 已在 100+ 测试文件使用；接口规范是派生文档不应占独立 module_id；MOD-FEEDBACK_LOOP 已在 depgraph 四图登记 |
 | A2 | MOD-BIZ-002 | 由 sync_panorama_module.py `--prune-orphans` 自动删除 | 纯占位空记录，无 blueprint/源码/depgraph 节点 |
-| A3 | MOD-GOV_SCRIPTS-001 | 文件头 `[BLUEPRINT] MOD-GOV_SCRIPTS-001` → `MOD-GOV-SCRIPTS` + depgraph 节点合并 | 同目录 36 个脚本已有 MOD-GOV-SCRIPTS 作为合法归属模块 |
+| A3 | MOD-GOV_SCRIPTS-001 | 文件头 `[BLUEPRINT] MOD-GOV_SCRIPTS-001` → `MOD-GOV_SCRIPTS` + depgraph 节点合并 | 同目录 36 个脚本已有 MOD-GOV_SCRIPTS 作为合法归属模块 |
 
 ### B. 系统治本
 

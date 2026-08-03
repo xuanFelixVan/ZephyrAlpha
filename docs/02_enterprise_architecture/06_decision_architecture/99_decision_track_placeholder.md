@@ -58,8 +58,8 @@ ttl: permanent
 | MOD-GOV-019 | MOD-GOV-019 | MOD-GOV-019 | placeholder | MOD-GOV-019 | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-GOV-029 | MOD-GOV-029 | MOD-GOV-029 | placeholder | MOD-GOV-029 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV-041 | MOD-GOV-041 | MOD-GOV-041 | placeholder | MOD-GOV-041 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-DOCS | MOD-GOV-DOCS | MOD-GOV-DOCS | placeholder | MOD-GOV-DOCS | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | placeholder | MOD-GOV-SCRIPTS | - | - | - | - | production / 生产 | generated / 已生成 |
+| MOD-GOV_DOCS | MOD-GOV_DOCS | MOD-GOV_DOCS | placeholder | MOD-GOV_DOCS | - | - | - | - | production / 生产 | generated / 已生成 |
+| MOD-GOV_SCRIPTS | MOD-GOV_SCRIPTS | MOD-GOV_SCRIPTS | placeholder | MOD-GOV_SCRIPTS | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOVERNANCE | MOD-GOVERNANCE | MOD-GOVERNANCE | placeholder | MOD-GOVERNANCE | docs__03_modules___domain_governance__blueprint_md | - | - | - | design / 设计 | generated / 已生成 |
 | MOD-GOV_COMMON | MOD-GOV_COMMON | MOD-GOV_COMMON | placeholder | MOD-GOV_COMMON | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_DATAFLOW_DIAGRAM | MOD-GOV_DATAFLOW_DIAGRAM | MOD-GOV_DATAFLOW_DIAGRAM | placeholder | MOD-GOV_DATAFLOW_DIAGRAM | - | - | - | - | production / 生产 | generated / 已生成 |

@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-GOV-backfill_checker | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
-# module_id: MOD-GOV-backfill_checker
+# blueprint: MOD-GOV_BACKFILL_CHECKER | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# module_id: MOD-GOV_BACKFILL_CHECKER
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable

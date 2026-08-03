@@ -126,8 +126,8 @@ exempt_module_ids:
   - MOD-GOV_PERF_DEPGRAPH_BASELINE
   - MOD-GOV_SCRIPTS
   # --- 治理基础设施源码（36个）：gov_enforcement/governance 非业务模块 ---
-  - MOD-GOV-AUDIT
-  - MOD-GOV-CG
+  - MOD-GOV_AUDIT
+  - MOD-GOV_CG
   - MOD-GOV_AGENT_RBAC
   - MOD-GOV_AUDIT_TRAIL
   - MOD-GOV_BATCHED_AUTO_COMMITTER
@@ -194,7 +194,7 @@ exempt_module_ids:
   # --- 其他基础设施源码（4个）：backtest/feedback/data 支撑模块 ---
   - MOD-BT-017
   - MOD-FEEDBACK-014
-  - MOD-GOV-backfill_checker
+  - MOD-GOV_BACKFILL_CHECKER
   - MOD-L00-007
   # --- INFRA-DB 基础设施层定义（4个）：infrastructure_registry 条目，非模块 ---
   - INFRA-DB-001
