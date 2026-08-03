@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_default_tca_engine_py["reporting/default_tca_engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_default_tca_engine_py["reporting/default_tca_engine<br/>报告包的default_tca_engine模块<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
     src_zephyr_reporting_performance_attribution_report_py["reporting/performance_attribution_report<br/>报告包的performance_attribution_report模块<br/>⛔ D-EX-CORE执行报告未就绪(CTR-P1-007<br/>/CTR-ERR-005),设计文档§1.4标注受限,暂不可建<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
     tests_reporting_test_ashare_performance_audit_py["reporting/test_ashare_performance_audit<br/>MOD-RPT-026 A-Share Performance Audit 单元测试.<br/>文件: reporting/test_ashare_performance_audit.py<br/>(生产态 / production)"]
     tests_reporting_test_ashare_trade_record_template_py["reporting/test_ashare_trade_record_template<br/>MOD-RPT-027 A股交易记录模板引擎 单元测试.<br/>文件: reporting<br/>/test_ashare_trade_record_template.py<br/>(生产态 / production)"]
@@ -149,7 +149,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_default_tca_engine_py["reporting/default_tca_engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_default_tca_engine_py["reporting/default_tca_engine<br/>报告包的default_tca_engine模块<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
     tests_reporting_test_ashare_performance_audit_py["reporting/test_ashare_performance_audit<br/>MOD-RPT-026 A-Share Performance Audit 单元测试.<br/>文件: reporting/test_ashare_performance_audit.py<br/>(生产态 / production)"]
     tests_reporting_test_ashare_trade_record_template_py["reporting/test_ashare_trade_record_template<br/>MOD-RPT-027 A股交易记录模板引擎 单元测试.<br/>文件: reporting<br/>/test_ashare_trade_record_template.py<br/>(生产态 / production)"]
     tests_reporting_test_realtime_pnl_dashboard_py["reporting/test_realtime_pnl_dashboard<br/>MOD-RPT-004 Real-time P&L Dashboard 单元测试.<br/>文件: reporting/test_realtime_pnl_dashboard.py<br/>(生产态 / production)"]
@@ -235,9 +235,9 @@ flowchart TD
 | 5 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
 | 6 | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
 | 7 | D_REPORTING — Default Attribution Engine (reporting/defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/performance_attribution_report.py | 导入依赖 / import_depends |
-| 8 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/execution_report.py | 导入依赖 / import_depends |
-| 9 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
-| 10 | D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
+| 8 | reporting/default_tca_engine.py | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/execution_report.py | 导入依赖 / import_depends |
+| 9 | reporting/default_tca_engine.py | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
+| 10 | reporting/default_tca_engine.py | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
 | 11 | D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 导入依赖 / import_depends |
 | 12 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | 测试依赖 / test_depends |
 | 13 | D_REPORTING — A-Share Performance Audit & Optimization T... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
@@ -264,7 +264,7 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | D_GOVERNANCE 生命周期管理: analytics基类 / Re-export wrapper: analytics_base canonic... | → | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | 导入依赖 / import_depends |
 | 2 | D_GOV_AUDIT 审计追踪: 默认attribution引擎 / Re-export wrapper: default_attribut... | → | D_REPORTING — Default Attribution Engine (reporting/defa... | 导入依赖 / import_depends |
-| 3 | D_GOV_AUDIT 审计追踪: 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | D_REPORTING — Default TCA Engine (reporting/default_tca_... | 导入依赖 / import_depends |
+| 3 | D_GOV_AUDIT 审计追踪: 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | reporting/default_tca_engine.py | 导入依赖 / import_depends |
 | 4 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram

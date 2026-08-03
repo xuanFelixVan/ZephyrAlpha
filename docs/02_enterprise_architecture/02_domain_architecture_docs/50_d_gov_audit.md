@@ -1304,7 +1304,7 @@ flowchart TD
 | 65 | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | → | D_INFRA_RUNTIME 运行时集成: git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGE... | 导入依赖 / import_depends |
 | 66 | G-CT-006 — Budget → Escalation 集成测试. (audit/test_gc... | → | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | 测试依赖 / test_depends |
 | 67 | 默认attribution引擎 / Re-export wrapper: default_attribut... | → | D_REPORTING 报告: D_REPORTING — Default Attribution Engine (reporting/defa... | 导入依赖 / import_depends |
-| 68 | 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | 导入依赖 / import_depends |
+| 68 | 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | D_REPORTING 报告: reporting/default_tca_engine.py | 导入依赖 / import_depends |
 | 69 | 命令行 / cli (gov_audit/cli.py) | → | D_SECURITY 对抗验证: orphan_judge/judge.py | 导入依赖 / import_depends |
 | 70 | 命令行 / cli (gov_audit/cli.py) | → | D_SECURITY 对抗验证: adversarial_validation/validator.py | 导入依赖 / import_depends |
 | 71 | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |

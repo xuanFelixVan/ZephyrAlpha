@@ -322,9 +322,9 @@ flowchart TD
 | 78 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | contracts/order.py | 导入依赖 / import_depends |
 | 79 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
 | 80 | D_REPORTING 报告: D_REPORTING — Default Attribution Engine (reporting/defa... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
-| 81 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | contracts/execution_report.py | 导入依赖 / import_depends |
-| 82 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | contracts/fill.py | 导入依赖 / import_depends |
-| 83 | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | → | contracts/order.py | 导入依赖 / import_depends |
+| 81 | D_REPORTING 报告: reporting/default_tca_engine.py | → | contracts/execution_report.py | 导入依赖 / import_depends |
+| 82 | D_REPORTING 报告: reporting/default_tca_engine.py | → | contracts/fill.py | 导入依赖 / import_depends |
+| 83 | D_REPORTING 报告: reporting/default_tca_engine.py | → | contracts/order.py | 导入依赖 / import_depends |
 | 84 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | contracts/fill.py | 导入依赖 / import_depends |
 | 85 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | contracts/fill.py | 测试依赖 / test_depends |
 | 86 | D_RISK 风控: D_RISK — Risk Limits Calculator (risk/risk_limits.py) | → | contracts/risk_limits.py | 导入依赖 / import_depends |
