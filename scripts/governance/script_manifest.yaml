@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-03T14:28:44Z
+# 自动生成于 2026-08-03T15:08:47Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-03T14:28:44Z'
+generated_at: '2026-08-03T15:08:47Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 386
@@ -3816,7 +3816,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: true
-  description: 运行时状态备份 — PG depgraph + .runtime/handoffs 物理备份（灾备 §33）
+  description: 运行时状态备份 — PG 架构库 + .runtime/handoffs 物理备份（灾备 §33）
   tags:
   - Quick
 - name: meta/compute_sla_metrics.py
