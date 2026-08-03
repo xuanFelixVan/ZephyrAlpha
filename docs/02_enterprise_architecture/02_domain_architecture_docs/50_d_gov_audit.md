@@ -1466,7 +1466,7 @@ flowchart TD
 | 68 | D_GOV_SCRIPTS 脚本治理: architecture_health_dashboard.py — 架构健康度仪表盘（自... | → | 运行时违规快照 / runtime_violation_snapshot (audit/runtim... | 导入依赖 / import_depends |
 | 69 | D_GOV_SCRIPTS 脚本治理: session_startup_health_check.py — AI session 启动健康度... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
 | 70 | D_INFRASTRUCTURE 跨层契约基础设施: backup_reconciler.py — 灾备备份系统事件触发器（post-comm... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 71 | D_INFRA_OPS 基础设施运维: cleanup_runtime_tmp_residue.py — 一次性清理 .runtime/tmp... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 71 | D_INFRA_OPS 基础设施运维: 测试残留目录一次性清理工具 (ops/cleanup_runtime_tmp_resid... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
 | 72 | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. (rollback/... | → | 契约 / contracts (gov_audit/contracts.py) | 导入依赖 / import_depends |
 | 73 | D_INFRA_RECOVERY 回滚恢复: RollbackAbuseDetector — 回滚滥用检测。 (rollback/rollbac... | → | 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | 导入依赖 / import_depends |
 | 74 | D_INFRA_RECOVERY 回滚恢复: RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog. ... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
