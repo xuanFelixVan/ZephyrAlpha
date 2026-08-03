@@ -128,3 +128,187 @@ def download_model(model: dict, force: bool = False) -> bool:
     local_path = _model_local_path(model)
 
     # Skip if already downloaded and not forced
+    if is_model_downloaded(model) and not force:
+        size = get_model_size_mb(model)
+        print(f"  ✓ Already downloaded ({size:.1f} MB) — use --force to re-download")
+        return True
+
+    # Clean existing directory if force-download
+    if force and local_path.exists():
+        print(f"  Removing existing {local_path} ...")
+        shutil.rmtree(local_path)
+
+    print(f"  Source:   {model['hf_repo_id']}")
+    print(f"  Target:   {local_path}")
+    print(f"  Expected: ~{model['size_mb']} MB")
+
+    try:
+        snapshot_download(
+            repo_id=model["hf_repo_id"],
+            local_dir=str(local_path),
+        )
+    except Exception as exc:
+        print(f"  ✗ Download failed: {exc}")
+        print(f"    Troubleshooting:")
+        print(f"    - Check network connectivity")
+        print(f"    - If behind proxy: set HTTPS_PROXY env var")
+        print(f"    - If private model: set HF_TOKEN env var")
+        return False
+
+    # Verify after download
+    if not is_model_downloaded(model):
+        missing = [f for f in model["required_files"] if not (local_path / f).is_file()]
+        print(f"  ✗ Download incomplete — missing files: {missing}")
+        return False
+
+    actual_size = get_model_size_mb(model)
+    print(f"  ✓ Downloaded successfully ({actual_size:.1f} MB)")
+    return True
+
+
+def verify_model(model: dict) -> bool:
+    """Verify a model's integrity (required files present, size reasonable)."""
+    local_path = _model_local_path(model)
+
+    if not local_path.is_dir():
+        print(f"  ✗ NOT DOWNLOADED — run: python scripts/ops/download_models.py --model {model['name']}")
+        return False
+
+    missing = [f for f in model["required_files"] if not (local_path / f).is_file()]
+    if missing:
+        print(f"  ✗ MISSING files: {missing} — re-download with --force")
+        return False
+
+    actual_mb = get_model_size_mb(model)
+    expected_mb = model["size_mb"]
+    # Warn if size is less than 50% of expected (possible truncated download)
+    if actual_mb < expected_mb * 0.5:
+        print(f"  ⚠ Size mismatch: expected ~{expected_mb} MB, got {actual_mb:.1f} MB — re-download with --force")
+        return False
+
+    print(f"  ✓ OK ({actual_mb:.1f} MB)")
+    return True
+
+
+# ---------------------------------------------------------------------------
+# CLI commands
+# ---------------------------------------------------------------------------
+
+def cmd_list() -> None:
+    """List all models and their download status."""
+    print("=" * 78)
+    print("Embedding Model Registry — config/embedding_model_registry.yaml")
+    print("=" * 78)
+    for m in MODELS:
+        downloaded = is_model_downloaded(m)
+        status = "✓ DOWNLOADED" if downloaded else "✗ MISSING"
+        size = f"{get_model_size_mb(m):.1f} MB" if downloaded else f"~{m['size_mb']} MB (not downloaded)"
+        print(f"\n  {m['name']}")
+        print(f"    Status:    {status}")
+        print(f"    Size:      {size}")
+        print(f"    Desc:      {m['description']}")
+        print(f"    HF Source: {m['hf_repo_id']}")
+        print(f"    Local:     {m['local_path']}")
+    print()
+
+
+def cmd_verify(models: list[dict]) -> int:
+    """Verify downloaded models."""
+    print("=" * 78)
+    print("Model Verification")
+    print("=" * 78)
+    all_ok = True
+    for m in models:
+        print(f"\n  {m['name']}:")
+        if not verify_model(m):
+            all_ok = False
+    print()
+    if all_ok:
+        print("✓ All models verified successfully.")
+        return 0
+    print("✗ Some models failed verification. Run download to fix.")
+    return 1
+
+
+def cmd_download(models: list[dict], force: bool, dry_run: bool) -> int:
+    """Download models."""
+    print("=" * 78)
+    print("Model Download — ARCH-MODEL-LIFECYCLE-001 Phase 3")
+    print("=" * 78)
+
+    # Determine which models need downloading
+    to_download = []
+    for m in models:
+        if force or not is_model_downloaded(m):
+            to_download.append(m)
+
+    if not to_download:
+        print("\n  All requested models are already downloaded. Use --force to re-download.")
+        return 0
+
+    total_mb = sum(m["size_mb"] for m in to_download)
+    print(f"\n  Models to download: {len(to_download)}")
+    print(f"  Estimated total:    ~{total_mb} MB ({total_mb / 1024:.1f} GB)")
+    for m in to_download:
+        print(f"    • {m['name']:50s} ~{m['size_mb']} MB")
+
+    if dry_run:
+        print("\n  DRY RUN — no files will be downloaded.\n")
+        return 0
+
+    # Disk space check
+    print()
+    if not check_disk_space(total_mb):
+        return 1
+
+    # Download each model
+    print()
+    success = 0
+    for i, m in enumerate(to_download, 1):
+        print(f"\n[{i}/{len(to_download)}] {m['name']}")
+        if download_model(m, force=force):
+            success += 1
+
+    # Summary
+    print("\n" + "=" * 78)
+    print(f"Download complete: {success}/{len(to_download)} models successful")
+
+    if success < len(to_download):
+        print("✗ Some models failed. Check errors above.")
+        return 1
+
+    # Verify all
+    print("\nVerifying downloads ...")
+    all_ok = True
+    for m in to_download:
+        print(f"  {m['name']}:", end=" ")
+        if not verify_model(m):
+            all_ok = False
+
+    if all_ok:
+        print("\n✓ All models verified. Ready for use.")
+        return 0
+    print("\n✗ Some models failed verification. Try --force to re-download.")
+    return 1
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Download embedding models from HuggingFace (ARCH-MODEL-LIFECYCLE-001 Phase 3)",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "Models are stored in data/models/local_model/ (git-ignored, never committed).\n"
+            "Registry SSoT: config/embedding_model_registry.yaml\n"
+            "\n"
+            "Examples:\n"
+            "  python scripts/ops/download_models.py              # Download all missing\n"
+            "  python scripts/ops/download_models.py --model bge-m3\n"
+            "  python scripts/ops/download_models.py --list\n"
+            "  python scripts/ops/download_models.py --verify\n"
+        ),
+    )
+    parser.add_argument
