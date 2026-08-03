@@ -159,7 +159,7 @@ def main() -> None:
     # 漂移
     missing = expected_vals - disk_vals
     stale = disk_vals - expected_vals
-    print(f"DRIFT: .importlinter forbidden_modules 与 src/zephyr/ 实际包结构不一致")
+    print("DRIFT: .importlinter forbidden_modules 与 src/zephyr/ 实际包结构不一致")
     print(f"  期望 {len(expected_vals)} 个包，磁盘 {len(disk_vals)} 个包")
     if missing:
         print(f"  缺失（包已存在但未登记）: {sorted(missing)}")
