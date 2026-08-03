@@ -10,7 +10,7 @@ date: 2026-08-03
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_11_reconciliation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §reconciliation 阶段，14 环节。
+> battle_map §reconciliation 阶段，17 环节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
 ## 文档基本信息 / Document Overview
@@ -18,9 +18,9 @@ date: 2026-08-03
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 对账（reconciliation） | Stage | 对账 |
-| 环节数 | 14 | Steps | 14 |
-| 流转边 | 15 | Edges | 15 |
-| 状态分布 | 🟦 运营态（已建）=13 ｜ 🟧 设计态（待施工）=1 | State Distribution | 🟦 运营态（已建）=13 ｜ 🟧 设计态（待施工）=1 |
+| 环节数 | 17 | Steps | 17 |
+| 流转边 | 18 | Edges | 18 |
+| 状态分布 | 🟦 运营态（已建）=16 ｜ 🟧 设计态（待施工）=1 | State Distribution | 🟦 运营态（已建）=16 ｜ 🟧 设计态（待施工）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -33,7 +33,7 @@ date: 2026-08-03
 
 ## 阶段图 / Stage Diagram
 
-> 展示 对账 阶段全部 14 个环节及流转边，颜色区分五态。
+> 展示 对账 阶段全部 17 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -43,15 +43,21 @@ flowchart TD
         BM_REC_01["【BM-REC-01 交易运营清算】<br/>把成交回报拿去结算对账、算费率、处理除权除息和公<br/>司行为、监控保证金，变成运营数据。<br/>（生产态 / production）<br/>【Trade Ops &amp; Settlement】"]
         BM_REC_01_A["【BM-REC-01-A 结算对账】<br/>每日盘后把系统记录和券商结算单逐笔核对，发现差异<br/>立刻告警，是T+1对账的核心。<br/>（生产态 / production）<br/>【Settlement &amp; Reconciliation】"]
         BM_REC_01_B["【BM-REC-01-B 公司行为与费率】<br/>处理除权除息自动调持仓成本、算佣金印花税过户费、<br/>监控分红配股拆股，是运营数据准确性的保障。<br/>（生产态 / production）<br/>【Corporate Action &amp; Fee】"]
+        BM_REC_01_C["【BM-REC-01-C PnL计算】<br/>基于结算对账和费率数据算出每笔交易和持仓的盈亏——<br/>已实现PnL和未实现PnL，是后续归因分析和风险报告的<br/>基础。<br/>（生产态 / production）<br/>【PnL Calculation】"]
         BM_REC_01 -.->|嵌套| BM_REC_01_A
         BM_REC_01 -.->|嵌套| BM_REC_01_B
+        BM_REC_01 -.->|嵌套| BM_REC_01_C
     end
     subgraph sg_BM_REC_02 ["报告复盘"]
         BM_REC_02["【BM-REC-02 报告复盘】<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>（生产态 / production）<br/>【Reporting &amp; Review】"]
+        BM_REC_02_E["【BM-REC-02-E 风险报告】<br/>生成日度/周度/事件/月度四类风险报告——VaR/CVaR<br/>/因子暴露/否决统计<br/>/漂移状态，看今天风险敞口怎么样。<br/>（生产态 / production）<br/>【Risk Report】"]
+        BM_REC_02_F["【BM-REC-02-F 监管报告】<br/>生成程序化交易报告、异常交易自报、持仓报告、绩效<br/>报告——满足证监会和交易所监管报送要求。<br/>（生产态 / production）<br/>【Regulatory Report】"]
         BM_REC_02_A["【BM-REC-02-A TCA执行质量分析】<br/>算每笔交易的真实成本——滑点、冲击成本、市场影响，<br/>看执行得好不好。<br/>（生产态 / production）<br/>【TCA Execution Quality Analysis】"]
         BM_REC_02_B["⛔ D-EX-CORE执行报告未就绪（CTR-P1-007<br/>/CTR-ERR-005）,设计文档§1.4标注受限,暂不可建<br/>【BM-REC-02-B 绩效归因】<br/>把盈亏拆开看——赚的钱是选股选对的、还是配比配对的<br/>、还是行业轮动轮对的，找出Alpha来源。<br/>（设计态 / design）<br/>【Performance Attribution】"]
         BM_REC_02_C["【BM-REC-02-C A股交易复盘】<br/>针对A股特色做盘前信号验证、盘中异常检测、盘后归<br/>因、大额交易异动检测，生成复盘报告。<br/>（生产态 / production）<br/>【A-Share Trading Review】"]
         BM_REC_02_D["【BM-REC-02-D 报告发布】<br/>把复盘报告归档、发到微信和邮件，留好审计凭证。<br/>（生产态 / production）<br/>【Report Publishing】"]
+        BM_REC_02 -.->|嵌套| BM_REC_02_E
+        BM_REC_02 -.->|嵌套| BM_REC_02_F
         BM_REC_02 -.->|嵌套| BM_REC_02_A
         BM_REC_02 -.->|嵌套| BM_REC_02_B
         BM_REC_02 -.->|嵌套| BM_REC_02_C
@@ -70,7 +76,8 @@ flowchart TD
     BM_REC_05["【BM-REC-05 多账户分仓管理】<br/>一个策略同时管多个账户，按各账户AUM分仓，每个账<br/>户独立风控、独立PnL、独立报告。多账户≠多租户SaaS<br/>，所有账户属于同一信任域。<br/>（生产态 / production）<br/>【Multi-Account Manager】"]
     BM_REC_01 ~~~ BM_REC_01_A ~~~ BM_REC_02_A ~~~ BM_REC_03_A
     BM_REC_02 ~~~ BM_REC_04 ~~~ BM_REC_05 ~~~ BM_REC_01_B ~~~ BM_REC_02_B ~~~ BM_REC_03_B
-    BM_REC_03 ~~~ BM_REC_02_C ~~~ BM_REC_03_C
+    BM_REC_03 ~~~ BM_REC_01_C ~~~ BM_REC_02_C ~~~ BM_REC_03_C
+    BM_REC_02_E ~~~ BM_REC_02_D
     BM_REC_01 -->|运营数据 / data_flow| BM_REC_02
     BM_REC_02 -->|复盘报告 / data_flow| BM_REC_03
     BM_REC_01 -->|保证金监控消费清算数据 / data_flow| BM_REC_04
@@ -81,12 +88,15 @@ flowchart TD
     BM_REC_02_C -->|复盘报告→发布 / data_flow| BM_REC_02_D
     BM_REC_03_A -->|因子反馈→信号反馈 / data_flow| BM_REC_03_B
     BM_REC_03_B -->|信号反馈→模型反馈 / data_flow| BM_REC_03_C
+    BM_REC_01_B -->|费率后算PnL / data_flow| BM_REC_01_C
+    BM_REC_02_C -->|复盘→风险报告 / data_flow| BM_REC_02_E
+    BM_REC_02_E -->|风险报告→监管报告 / data_flow| BM_REC_02_F
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A,BM_REC_03_B,BM_REC_03_C production
+    class BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_01_C,BM_REC_02_E,BM_REC_02_F,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A,BM_REC_03_B,BM_REC_03_C production
     class BM_REC_02_B design
 ```
 
@@ -339,6 +349,111 @@ BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力�
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
+### BM-REC-01-C PnL计算 / PnL Calculation
+
+> **大白话**：基于结算对账和费率数据算出每笔交易和持仓的盈亏——已实现PnL和未实现PnL，是后续归因分析和风险报告的基础。
+
+**机制说明**：
+
+BM-REC-01 交易运营清算的子环节（depth=1）。MOD-TRADING-002 pnl_calculator.py(stable)。
+消费结算对账(BM-REC-01-A)和公司行为与费率(BM-REC-01-B)数据，计算已实现PnL(卖出-买入-费率)和未实现PnL(市价-成本)。
+产出PnL数据→CTR-TRD-01→D-REPORTING(C-010)供归因分析使用。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：结算对账+费率计算完成后；②消费：BM-REC-01-A清算数据+BM-REC-01-B费率数据；③参数：pnl_type=realized/unrealized；④数据流：清算+费率→MOD-TRADING-002 PnL计算→PnL数据→BM-REC-02归因；⑤代码：MOD-TRADING-002 pnl_calculator.py(stable)、CTR-TRD-01；⑥降级：PnL计算失败→手动计算兜底。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-TRADING-002 | primary | — | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-E 风险报告 / Risk Report
+
+> **大白话**：生成日度/周度/事件/月度四类风险报告——VaR/CVaR/因子暴露/否决统计/漂移状态，看今天风险敞口怎么样。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-008 risk_report_engine.py(stable)。
+消费D-RISK诊断结果(CTR-P1-008 RiskDashboardSnapshot + CTR-P1-011 RiskMetricsReport)，生成4类风险报告：日度风险摘要(VaR/CVaR/因子暴露/否决统计/漂移状态/Amihud非流动性)、周度风险深度(压力测试+漂移趋势+策略拥挤度+模型健康度)、事件风险快报(触发事件+影响评估+处置建议)、月度风险治理(风控参数变更审计+否决规则有效性+合规检查)。
+产出风险报告→BM-REC-02-D报告发布。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：每日收盘后+事件触发；②消费：D-RISK诊断结果(CTR-P1-008/011)+BM-REC-02-C复盘数据；③参数：report_freq=日/周/事件/月；④数据流：D-RISK诊断→MOD-RPT-008风险报告→4类报告→BM-REC-02-D发布；⑤代码：MOD-RPT-008 risk_report_engine.py(stable)、D-REPORTING-08；⑥降级：D-RISK不可用→基础风险摘要。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-008 | primary | — | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
+### BM-REC-02-F 监管报告 / Regulatory Report
+
+> **大白话**：生成程序化交易报告、异常交易自报、持仓报告、绩效报告——满足证监会和交易所监管报送要求。
+
+**机制说明**：
+
+BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-006 regulatory_report_generator.py(stable)。
+生成4类监管报告：程序化交易报告(交易运营数据)、异常交易自报(保证金异常/结算差异事件)、持仓报告(持仓结构/集中度/行业偏离)、绩效报告(收益/风险/归因)。
+当前手动填报，GATE-002(AUM≥1000万)或GATE-003(跨市场)激活后自动化接口。产出监管报告→BM-REC-02-D报告发布。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | — |
+| ② 消费数据/因子 | — |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
+| ⑤ 代码映射 | — / — |
+| ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：月/季+事件驱动；②消费：BM-REC-01运营数据+BM-REC-02-E风险报告+BM-REC-02-C复盘数据；③参数：report_type=程序化交易/异常交易/持仓/绩效；④数据流：运营+风险+复盘数据→MOD-RPT-006监管报告→4类报告→BM-REC-02-D发布；⑤代码：MOD-RPT-006 regulatory_report_generator.py(stable)、D-REPORTING-06；⑥降级：自动化接口不可用→手动填报。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RPT-006 | primary | — | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
+
 ### BM-REC-02-A TCA执行质量分析 / TCA Execution Quality Analysis
 
 > **大白话**：算每笔交易的真实成本——滑点、冲击成本、市场影响，看执行得好不好。
@@ -512,6 +627,8 @@ MOD-L02-004 ic_decay.py(stable)已production。反馈信号反向回到BM-SEL-02
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L02-004 | primary | production | stable |
+| depgraph | MOD-L02-002 | supplement | — | stable |
+| depgraph | MOD-L02-003 | supplement | — | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
