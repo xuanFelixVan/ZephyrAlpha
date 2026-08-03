@@ -220,8 +220,8 @@ flowchart TD
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
