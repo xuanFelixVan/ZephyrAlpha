@@ -11339,6 +11339,136 @@ battle_map_steps:
   indicators_zh: '①触发：回测完成+决策门控通过；②消费：BacktestResult；③参数：decisiongraph L5节点格式；④数据流：BacktestResult→decisiongraph_adapter→L5决策节点→decisiongraph；⑤代码：BT-15 io/decisiongraph_adapter.py（stable, production）；⑥降级：适配器不可用→回测结论不进入决策流(人工衔接)。
 
     '
+- step_id: BM-BT-01-E
+  flow_stage: backtest_validation
+  name_zh: 自动回测调度器
+  name_en: Auto Backtest Scheduler
+  plain_zh: 回测的"自动排队机"——批量参数网格回测+队列管理+结果聚合，不用手动一个个跑。
+  mechanism_zh: 'BM-BT-01 子环节（depth=1, design）。BT-17 services/scheduler.py（planned, 源自SIM-26）提供自动回测调度器：批量+参数网格+队列管理+回测结果聚合+性能监控。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：批量回测请求/定时调度；②消费：策略参数网格+回测配置；③参数：批量大小、参数网格、队列策略；④数据流：参数网格→调度器→批量回测→结果聚合；⑤代码：BT-17 services/scheduler.py（planned）；⑥降级：调度器未就绪→手动逐个回测(效率低)。
+
+    '
+- step_id: BM-BT-02-C
+  flow_stage: backtest_validation
+  name_zh: 回测缓存管理器
+  name_en: Backtest Cache Manager
+  plain_zh: 回测结果的"复用器"——缓存回测结果避免重复计算，相同参数直接取缓存。
+  mechanism_zh: 'BM-BT-02 子环节（depth=1, design, P2）。BT-20 services/cache_manager.py（planned, 源自SIM-49）提供回测缓存管理器：结果缓存与复用。
+
+    v2.0 备忘模块，P2优先级，按需开发。
+
+    '
+  indicators_zh: '①触发：回测请求时检查缓存；②消费：回测参数+历史结果；③参数：缓存策略、过期时间；④数据流：回测请求→缓存检查→命中/未命中→结果；⑤代码：BT-20 services/cache_manager.py（planned, P2）；⑥降级：缓存不可用→每次重新计算(慢但正确)。
+
+    '
+- step_id: BM-BT-02-D
+  flow_stage: backtest_validation
+  name_zh: 回测数据质量检查器
+  name_en: Backtest Data Quality Checker
+  plain_zh: 回测前的"数据体检"——检测数据缺失和异常，脏数据先洗再跑回测。
+  mechanism_zh: 'BM-BT-02 子环节（depth=1, design）。BT-22 services/data_quality_checker.py（planned, 源自SIM-51）提供回测数据质量检查器：缺失检测+异常检测。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：回测数据加载后自动检查；②消费：原始市场数据；③参数：缺失阈值、异常检测规则；④数据流：原始数据→质量检查→清洗后数据→回测引擎；⑤代码：BT-22 services/data_quality_checker.py（planned）；⑥降级：检查器不可用→跳过检查(数据质量风险)。
+
+    '
+- step_id: BM-BT-03-D
+  flow_stage: backtest_validation
+  name_zh: 指标NaN处理器
+  name_en: Metrics NaN Processor
+  plain_zh: 算指标时的"清洁工"——智能填充和清洗NaN值，防止指标计算崩溃。
+  mechanism_zh: 'BM-BT-03 子环节（depth=1, design）。BT-26 services/nan_processor.py（planned, 源自SIM-55）提供指标计算NaN处理器：智能填充+清洗。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：指标计算遇到NaN时；②消费：原始指标计算结果；③参数：NaN填充策略（前值/均值/插值）；④数据流：指标计算→NaN检测→填充/清洗→清洁指标；⑤代码：BT-26 services/nan_processor.py（planned）；⑥降级：处理器不可用→跳过NaN(指标可能异常)。
+
+    '
+- step_id: BM-BT-05-D
+  flow_stage: backtest_validation
+  name_zh: 策略衰减监控
+  name_en: Strategy Decay Monitor
+  plain_zh: 策略的"健康手环"——持续监控策略表现衰减，发现策略失效及时告警。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。BT-18 services/decay_monitor.py（planned, 源自SIM-27）提供策略衰减监控告警器。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：策略上线后持续监控；②消费：实盘/回测绩效时序；③参数：衰减检测阈值、监控频率；④数据流：绩效时序→衰减检测→告警→策略退役流程；⑤代码：BT-18 services/decay_monitor.py（planned）；⑥降级：监控不可用→人工定期检查(漏检风险)。
+
+    '
+- step_id: BM-BT-05-E
+  flow_stage: backtest_validation
+  name_zh: 参数优化分析器
+  name_en: Parameter Optimization Analyzer
+  plain_zh: 参数调优的"分析师"——分析参数优化结果的显著性和过拟合风险，找出真正好的参数。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。BT-21 services/param_analyzer.py（planned, 源自SIM-50）提供参数优化结果分析器：显著性检验+过拟合评估。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：参数优化完成后；②消费：参数网格回测结果；③参数：显著性水平、过拟合阈值；④数据流：参数网格结果→显著性检验→过拟合评估→最优参数；⑤代码：BT-21 services/param_analyzer.py（planned）；⑥降级：分析器不可用→人工选择参数(过拟合风险)。
+
+    '
+- step_id: BM-BT-07-E
+  flow_stage: backtest_validation
+  name_zh: 回测报告生成
+  name_en: Backtest Report Generator
+  plain_zh: 回测的"自动报告员"——把回测结果自动生成PDF/HTML报告，不用手动截图。
+  mechanism_zh: 'BM-BT-07 子环节（depth=1, design, P2）。BT-19 services/report_generator.py（planned, 源自SIM-48）提供回测报告自动生成：PDF/HTML。
+
+    v2.0 备忘模块，P2优先级，按需开发。
+
+    '
+  indicators_zh: '①触发：回测完成+决策门控通过；②消费：BacktestResult+BacktestSinkData；③参数：报告格式(PDF/HTML)、模板；④数据流：BacktestResult→报告生成→PDF/HTML报告；⑤代码：BT-19 services/report_generator.py（planned, P2）；⑥降级：生成器不可用→手动导出数据(无格式化报告)。
+
+    '
+- step_id: BM-BT-07-F
+  flow_stage: backtest_validation
+  name_zh: 回测异常诊断
+  name_en: Backtest Anomaly Diagnoser
+  plain_zh: 回测出错的"医生"——回测失败时自动诊断错误原因，给出修复建议。
+  mechanism_zh: 'BM-BT-07 子环节（depth=1, design, P2）。BT-23 services/anomaly_diagnoser.py（planned, 源自SIM-52）提供回测异常诊断：错误诊断+修复建议。
+
+    v2.0 备忘模块，P2优先级，按需开发。
+
+    '
+  indicators_zh: '①触发：回测异常/失败时；②消费：错误日志+回测上下文；③参数：诊断规则、修复建议库；④数据流：错误日志→异常诊断→修复建议→用户；⑤代码：BT-23 services/anomaly_diagnoser.py（planned, P2）；⑥降级：诊断器不可用→人工排查(效率低)。
+
+    '
+- step_id: BM-BT-07-G
+  flow_stage: backtest_validation
+  name_zh: 回测结果对比
+  name_en: Backtest Result Comparator
+  plain_zh: 多次回测的"裁判"——对比多次回测结果差异，看参数调整或策略改动的影响。
+  mechanism_zh: 'BM-BT-07 子环节（depth=1, design, P2）。BT-24 services/result_comparator.py（planned, 源自SIM-53）提供回测结果对比：多次回测差异分析。
+
+    v2.0 备忘模块，P2优先级，按需开发。
+
+    '
+  indicators_zh: '①触发：多次回测完成后；②消费：多组BacktestResult；③参数：对比维度、差异阈值；④数据流：多组结果→差异分析→对比报告；⑤代码：BT-24 services/result_comparator.py（planned, P2）；⑥降级：对比器不可用→人工对比(耗时)。
+
+    '
+- step_id: BM-BT-07-H
+  flow_stage: backtest_validation
+  name_zh: 回测结果部署
+  name_en: Backtest Result Deployer
+  plain_zh: 策略上线的"最后一公里"——把通过验证的回测策略一键部署到实盘。
+  mechanism_zh: 'BM-BT-07 子环节（depth=1, design）。BT-25 services/result_deployer.py（planned, 源自SIM-54）提供回测结果一键部署：策略部署到实盘。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：决策门控通过+用户确认；②消费：BacktestRunArtifact+策略代码；③参数：部署目标、配置；④数据流：验证通过策略→部署器→实盘环境；⑤代码：BT-25 services/result_deployer.py（planned）；⑥降级：部署器不可用→手动部署(操作风险)。
+
+    '
 - step_id: BM-SIM-01
   flow_stage: simulation_validation
   name_zh: 市场仿真器
