@@ -59025,6 +59025,76 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "DB真源变更后自动重生成派生产物（MD/HTML图），YAML变更启动时按文件时间兜底扫描。读注册表调度对应生成器，生成失败不阻断真源写入。"
+- module_path: src/zephyr/sell_decision/core/sell_signal_accuracy_monitor.py
+  domain_id: D_SELL_DECISION
+  name_zh: "卖出信号准确率监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "统计每类卖出信号触发后N天的准确率，分析假阳性(卖了又涨=止损过紧)和假阴性(没卖继续跌=信号漏判)，按信号类型和策略类型分组，动态调整信号权重让准的信号更重、不准的更轻。"
+- module_path: src/zephyr/sell_decision/core/sell_strategy_ab_tester.py
+  domain_id: D_SELL_DECISION
+  name_zh: "卖出策略A/B测试器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把不同止盈线(8%vs10%)、止损范式(移动vs固定)、退出方式(分批vs一次性)做A/B对照实验，统计显著性检验后产出参数调整建议，让卖出策略参数靠数据说话而非拍脑袋。"
+- module_path: src/zephyr/sell_decision/core/sell_execution_quality_tracker.py
+  domain_id: D_SELL_DECISION
+  name_zh: "卖出执行质量追踪器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "追踪每笔卖出执行的滑点、冲击成本、执行延迟、分批执行效果，计算执行质量评分反馈给卖出执行策略，让下次卖得更便宜更快。"
+- module_path: src/zephyr/position/core/cross_strategy_position_merger.py
+  domain_id: D_POSITION
+  name_zh: "跨策略仓位合并"
+  name_en: "Cross-Strategy Position Merger"
+  desc_zh: "POS-05 跨策略仓位合并器：多策略同标仓位 → 合并后标的最终仓位。门禁 GATE-POS-05（GATE-001多策略框架+C-018多账户扩展就绪）。"
+  desc_en: "POS-05 Cross-Strategy Position Merger: multi-strategy per-symbol positions -> merged final position. Gate GATE-POS-05 (GATE-001 multi-strategy framework + C-018 multi-account ready)."
+  plain_zh: "多策略同时给同一只票下仓位指令时把各策略仓位合并成最终仓位——多头相加但不超单票上限，买卖冲突时卖出信号优先级高于买入，超限按策略优先级截断。解决多策略同标仓位打架没人裁决的问题。"
+- module_path: src/zephyr/position/core/covariance_estimator.py
+  domain_id: D_POSITION
+  name_zh: "协方差估计器"
+  name_en: "Covariance Estimator"
+  desc_zh: "POS-11 协方差估计器：历史收益率 → CovarianceMatrix+MRC+CRC。门禁 GATE-POS-11（D-ML-SERVE密度预测就绪+持仓≤50只）。"
+  desc_en: "POS-11 Covariance Estimator: historical returns -> CovarianceMatrix+MRC+CRC. Gate GATE-POS-11 (D-ML-SERVE density forecast ready + holdings<=50)."
+  plain_zh: "用历史收益率序列算股票间的协方差矩阵——收缩估计Ledoit-Wolf/因子模型/Copula-GARCH三选一（持仓≤50只才用Copula），产出协方差矩阵+边际风险贡献MRC+成分风险贡献CRC，喂给风险预算层做标级风险分配。"
+- module_path: src/zephyr/position/core/correlation_regime_monitor.py
+  domain_id: D_POSITION
+  name_zh: "相关性状态监控"
+  name_en: "Correlation Regime Monitor"
+  desc_zh: "POS-12 相关性状态监控：协方差矩阵+市场状态 → CorrelationRegimeAlert。门禁 GATE-POS-12（POS-11就绪+极端事件历史样本≥N）。"
+  desc_en: "POS-12 Correlation Regime Monitor: covariance matrix + market regime -> CorrelationRegimeAlert. Gate GATE-POS-12 (POS-11 ready + extreme-event samples>=N)."
+  plain_zh: "盯着协方差矩阵里的相关性飙升——相关性趋同就动态降仓上限，分散化比率<0.3否决集中持仓，尾部相关性触发压力测试仓位折扣，牛市相关性趋同预警分散化失效。产出CorrelationRegimeAlert喂仓位裁决。"
+- module_path: src/zephyr/position/core/position_risk_budget_allocator.py
+  domain_id: D_POSITION
+  name_zh: "仓位风险预算分配器"
+  name_en: "Position Risk Budget Allocator"
+  desc_zh: "POS-13 仓位风险预算分配器：组合总风险预算+协方差矩阵 → RiskBudgetPerSymbol→约束POS-01 Kelly。门禁 GATE-POS-13（POS-11+D-PF-ALLOC就绪）。"
+  desc_en: "POS-13 Position Risk Budget Allocator: portfolio risk budget + covariance -> RiskBudgetPerSymbol constraining POS-01 Kelly. Gate GATE-POS-13 (POS-11 + D-PF-ALLOC ready). Distinct from MOD-RK-08 (D_RISK portfolio-level budget)."
+  plain_zh: "把组合总风险预算按协方差矩阵拆分到每只票上，产出标级风险预算RiskBudgetPerSymbol，约束POS-01的Kelly必须在风险配额内决策（先预算后决策，而非先决策后截断）。解决Kelly超配风险。注意区别于MOD-RK-08(D_RISK组合层风险预算)——本模块是仓位域标级预算。"
+- module_path: src/zephyr/position/core/position_time_budget.py
+  domain_id: D_POSITION
+  name_zh: "仓位时间预算"
+  name_en: "Position Time Budget"
+  desc_zh: "POS-15 仓位时间预算：持仓时间+策略类型 → TimeBudgetAlert。门禁 GATE-POS-15（策略类型分类体系+信号评分器就绪）。"
+  desc_en: "POS-15 Position Time Budget: holding time + strategy type -> TimeBudgetAlert. Gate GATE-POS-15 (strategy-type taxonomy + signal scorer ready)."
+  plain_zh: "给每笔持仓算时间预算——趋势策略超30天/均值回归超10天就超时，超时后信号评分器自动提升卖出信号权重，逼着老仓位让位给新机会。产出TimeBudgetAlert防止持仓长期占用资金不流动。"
+- module_path: src/zephyr/position/core/intraday_position_constraint.py
+  domain_id: D_POSITION
+  name_zh: "日内做T仓位约束"
+  name_en: "Intraday Position Constraint"
+  desc_zh: "POS-18 日内做T仓位约束：做T指令+底仓信息 → 做T仓位约束检查结果。门禁 GATE-POS-18（C-012做T能力就绪）。"
+  desc_en: "POS-18 Intraday Position Constraint: T-trade instruction + base position -> T-trade constraint check result. Gate GATE-POS-18 (C-012 T-trade capability ready). Distinct from MOD-SELL-018 (D_SELL_DECISION T-trade coordinator)."
+  plain_zh: "做T指令来了先过仓位约束检查——单次日内交易≤底仓30%，净收益<1.5%禁止执行，失误止损1.5%，不得超底仓范围不得违反T+1规则。防做T把底仓玩飞。注意区别于MOD-SELL-018(D_SELL_DECISION做T协调器)——本模块是仓位域约束执行。"
+- module_path: src/zephyr/position/core/position_behavior_classifier.py
+  domain_id: D_POSITION
+  name_zh: "仓位行为分类器"
+  name_en: "Position Behavior Classifier"
+  desc_zh: "POS-19 仓位行为分类器：大单净流向+仓位变化率+板块资金流 → 持仓行为分类。门禁 GATE-POS-19（Level-2大单+筹码数据源就绪）。"
+  desc_en: "POS-19 Position Behavior Classifier: large-order net flow + position change rate + sector fund flow -> position behavior class. Gate GATE-POS-19 (Level-2 large-order + chip-distribution data ready)."
+  plain_zh: "用大单净流向+仓位变化率+板块资金流把持仓行为分成五类——减仓(仓位减+底部筹码缩短+大单流出)/持仓(不变+大单均衡)/换仓(板块A净流出B净流入)/加仓(仓位加+底部筹码加长+大单流入)/观望(不变+量能萎缩)，帮仓位决策看懂资金在干什么。"
 
 battle_map_steps:
   - step_id: BM-BUY-04
@@ -59567,8 +59637,11 @@ battle_map_steps:
     indicators_zh: |
       ①触发：游资+量化双引擎就绪，6类决策输出；②消费：游资引擎信号60%基准(BM-SEL-23)+量化引擎信号40%基准(BM-SEL-24)+情绪周期自适应权重(冰点→量化70%/主升→游资70%/退潮→量化60%)(BM-SEL-23)；③参数：基准权重60%游资+40%量化(implemented)、自适应权重切换=情绪周期驱动(implemented)、决策输出类型数=6类(implemented)；④数据流：双引擎信号+情绪周期→融合+自适应权重+PDF分布信号提取→6类决策输出+PDF分布信号→BM-SEL-21 组合优化；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：融合引擎未就绪→两引擎独立输出不做融合。
   # ===== 买入阶段 +2 环节（草图迁移第二批，2026-08-02）=====
-  - step_id: BM-BUY-05
-    flow_stage: buy_flow
+  # ===== 做T协调迁移 buy_flow→sell_flow（2026-08-03，修正 D_SELL_DECISION 域漂移）=====
+  # 原 BM-BUY-05 迁移为 BM-SELL-08：D-SELL-DECISION §1.5 将做T归入卖出域，
+  # battle_map_domain_policy.yaml sell_flow 允许 D_SELL_DECISION，buy_flow 禁止（域漂移修正）。
+  - step_id: BM-SELL-08
+    flow_stage: sell_flow
     name_zh: 做T日内套利
     name_en: Intraday T+0 Arbitrage
     plain_zh: A股T+1约束下的日内套利——每天扫全部持仓，找有日内T+0空间的票，先买后卖或先卖后买赚差价，底仓净数量不变。
@@ -59689,7 +59762,7 @@ battle_map_steps:
         密度预测偏度 vs C-031置信度→PDF偏度与信号方向相反→置信度下调15%→可能降级执行模式。
       跨域 Hard Block 与卖出约束（D-RISK §7.2/§7.x，SURV-005）：跌停板不卖出——当前价=跌停价时不提交卖出订单（无法成交，RK-02 Pre-Trade Checker Hard Block），卖出决策标记"跌停待执行"排队次日集合竞价；尾盘操纵检测——收盘前N分钟异常交易（C-004/RK-03）影响卖出信号可信度；假拉升真出货——拉升段主动卖单占比>60%判定为假拉升（对倒/卖单主导），触发主力出货卖出信号加权（SELL-01④主力出货）+仓位上限下调拒绝追高买入。
     indicators_zh: |
-      ①触发：同标的同时有买入+卖出信号/C-012做T vs 风控庄家/C-013 vs 风控/跌停板卖出约束；②消费：买入信号(BM-BUY-04)+卖出信号(BM-SELL-03/04/05)+做T信号(BM-BUY-05)+风控状态(BM-EXE-01)+庄家阶段(BM-SEL-05)+外部指令(BM-BUY-06)+跌停板价格状态(D-RISK SURV-005)；③参数：买卖冲突→卖出优先、C-012 vs C-004→风控优先、C-012 vs C-035出货弃庄→做T丢弃、C-013 vs C-004→风控优先、流动性不足 vs C-012→做T丢弃、跌停板→不提交卖单排队次日(proposed)；④数据流：买卖信号+做T+外部指令+风控+庄家+跌停约束→冲突检测+优先级仲裁(§16权威)→统一决策→仓位裁决→风控→执行；⑤代码：MOD-SELL-008 buy_sell_conflict_arbitrator(stable)；⑥降级：仲裁器未就绪→按硬规则(卖出优先/风控优先)兜底。
+      ①触发：同标的同时有买入+卖出信号/C-012做T vs 风控庄家/C-013 vs 风控/跌停板卖出约束；②消费：买入信号(BM-BUY-04)+卖出信号(BM-SELL-03/04/05)+做T信号(BM-SELL-08)+风控状态(BM-EXE-01)+庄家阶段(BM-SEL-05)+外部指令(BM-BUY-06)+跌停板价格状态(D-RISK SURV-005)；③参数：买卖冲突→卖出优先、C-012 vs C-004→风控优先、C-012 vs C-035出货弃庄→做T丢弃、C-013 vs C-004→风控优先、流动性不足 vs C-012→做T丢弃、跌停板→不提交卖单排队次日(proposed)；④数据流：买卖信号+做T+外部指令+风控+庄家+跌停约束→冲突检测+优先级仲裁(§16权威)→统一决策→仓位裁决→风控→执行；⑤代码：MOD-SELL-008 buy_sell_conflict_arbitrator(stable)；⑥降级：仲裁器未就绪→按硬规则(卖出优先/风控优先)兜底。
   # ===== 卖出阶段扩展（sell_flow 富化，2026-08-03）=====
   - step_id: BM-SELL-07
     flow_stage: sell_flow
@@ -59707,6 +59780,19 @@ battle_map_steps:
       预案执行：盘前加载→盘中触发时直接执行预案。与BM-SELL-03收集评分联动（预案触发→信号源加权）。
     indicators_zh: |
       ①触发：盘前预计算/盘中情景触发(暴跌>3%/黑天鹅/涨跌停/异常开盘/Gap)；②消费：大盘指数+板块持仓+个股利空事件(BM-SEL-11)+开盘数据+流动性(BM-EXE-01)；③参数：暴跌阈值3%、Gap放量阈值140%均量、Gap跌幅阈值5%、回补比例50%(proposed)；④数据流：盘前大盘/板块/事件→6类预案生成→盘中情景匹配→预案执行(分批/市价/排队/集合竞价)→BM-SELL-02融合仲裁；⑤代码：MOD-SELL-013 exit_scenario_planner(planned)；⑥降级：预案器未就绪→退化为实时逐只卖出决策（跳过预案直接走BM-SELL-03收集评分）。
+  - step_id: BM-SELL-09
+    flow_stage: sell_flow
+    name_zh: 卖出闭环优化
+    name_en: Sell Closed-loop Optimization
+    plain_zh: 卖出后复盘——统计信号准确率(假阳性/假阴性)、做策略A/B测试、追踪执行质量(滑点/冲击成本/延迟)，反馈调整信号权重与策略参数，让卖出越做越准。
+    mechanism_zh: |
+      §1.4 卖出闭环优化层（SELL-10/11/12）+ §7第四层。卖出后N天复盘三维度。
+      SELL-10 卖出信号准确率监控：卖出后N天内是否继续下跌？→准确率统计(按信号类型/策略类型分组)+假阳性分析(卖了又涨→止损过紧?)+假阴性分析(没卖继续跌→信号漏判?)+准确率趋势→动态调整信号权重。
+      SELL-11 卖出策略A/B测试：止盈线8% vs 10%/移动止损vs固定止损/分批止盈vs一次性止盈→统计显著性检验→参数调整建议。
+      SELL-12 卖出执行质量追踪：滑点/冲击成本/执行延迟/分批执行效果→执行质量评分→反馈至卖出执行策略优化。
+      产出 E-SELL-04 SellLoopFeedback → D-REPORTING → C-010/C-007/C-033 → 学习系统，闭环反馈给 BM-SELL-03 信号权重 + BM-SELL-04 策略参数 + BM-EXE 执行策略。
+    indicators_zh: |
+      ①触发：卖出执行完成后N天复盘；②消费：卖出执行回报(BM-EXE-02)+卖出决策记录(BM-SELL-02)+卖出后N天价格(BM-SEL-01)；③参数：复盘窗口N天、准确率分组维度(信号类型/策略类型)、A/B显著性阈值(proposed)；④数据流：卖出执行+决策记录+卖出后价格→准确率统计+A/B检验+执行质量评分→信号权重/策略参数调整建议→E-SELL-04 SellLoopFeedback→D-REPORTING→学习系统；⑤代码：MOD-SELL-010 准确率监控(planned)+MOD-SELL-011 A/B测试(planned)+MOD-SELL-012 执行质量追踪(planned)；⑥降级：闭环优化未就绪→跳过复盘，卖出策略参数保持静态不动态调整。
   # ===== 仓位阶段 +4 环节（草图迁移第二批，2026-08-02）=====
   - step_id: BM-POS-02
     flow_stage: position_management
@@ -59931,6 +60017,419 @@ battle_map_steps:
     indicators_zh: |
       ①触发：成交回报到达(BM-EXE-02)；②消费：BM-EXE-02 成交回报 + 订单状态；③参数：订单7状态机(PENDING→SUBMITTED→PARTIAL/FILLED/CANCELLED/REJECTED/EXPIRED)、部分成交聚合、费用计算=佣金/印花税/过户费、T+1结算、持仓对账周期=5min、Saga超时≤5s；④数据流：成交回报→Fill解析+部分成交聚合+费用计算+持仓更新+订单状态机流转→持仓快照+PnL→BM-EXE-03(TCA)+BM-POS-03(持仓状态机)+BM-REC-01(清算)；⑤代码：MOD-EX-008 fill_processor(planned)+MOD-EX-002 tracker(stable)+MOD-EX-057 saga(stable)+MOD-EX-056 reconciler(stable) / 草图§9 L4层+§13 Saga；⑥降级：Fill Processor未就绪→仅原始成交记录(持仓更新延迟，依赖盘后对账)。
 
+  # ==========================================================================
+  # 2026-08-03 全生命周期扩展：+5 新阶段 33 环节
+  # 生命周期序：研究孵化(01)→模型训练(02)→回测验证(03)→仿真验证(04)→选股(05)→买入(06)→卖出(07)→仓位(08)→风控管控(09)→执行(10)→对账(11)
+  # 真源：依赖图 D-RESEARCH/D-ML-TRAIN/D-BACKTEST/D-SIMULATION/D-RISK 域文档
+  # ==========================================================================
+
+  # ===== 研究孵化阶段 (research_incubation) — 7 环节 =====
+  - step_id: BM-RES-01
+    flow_stage: research_incubation
+    name_zh: 研究数据与特征存储
+    name_en: Research Data & Feature Store
+    plain_zh: 研究员的数据底盘——把数据集版本化管起来、追踪血缘、打质量分；特征分在线离线两套存，保证 PIT 正确不偷看未来。
+    mechanism_zh: |
+      研究孵化阶段的数据入口。D-RESEARCH-01 Research Data Manager 负责 Git-like 数据集版本管理+血缘追踪+质量评分+生命周期管理+元数据采集；
+      D-RESEARCH-02 Feature Store 提供离线训练+在线推理双套特征存储，强制 PIT（Point-in-Time）正确性避免 look-ahead bias，
+      含特征注册表+特征血缘。对标 Uber Michelangelo/Tecton/Feast。
+      是整个研究→训练→回测→仿真链路的数据基石，PIT 正确性是回测可信性的硬约束。
+    indicators_zh: |
+      ①触发：研究员提交实验/训练拉特征；②消费：D-DATA-03 Storage 标准化数据；③参数：PIT铁律(只返回当时已知值)、离线批量+在线实时双模、特征注册表、血缘追踪；④数据流：标准化数据→版本化+血缘+特征存储(PIT)→训练/推理；⑤代码：D-RESEARCH-01/02（depgraph 0模块，候选池承载）；⑥降级：特征存储不可用→回退原始数据直算(无PIT保证，仅探索用)。
+
+  - step_id: BM-RES-02
+    flow_stage: research_incubation
+    name_zh: 实验追踪与可复现性
+    name_en: Experiment Tracking & Reproducibility
+    plain_zh: 每次实验都把超参、数据版本、代码版本、结果全部记下来，事后能一键复现，不让"我跑出来过但复现不了"发生。
+    mechanism_zh: |
+      D-RESEARCH-03 Experiment Tracker 记录超参→数据版本→代码版本→结果→全链路复现；
+      D-RESEARCH-05 Reproducibility Manager 管环境快照+依赖锁定+种子管理+结果校验+复现报告。
+      与 D-ML-TRAIN MT-02 ExperimentTracker 联动（研究侧追踪 vs 训练侧晋升），共同保证"可复现"是策略上线的硬门禁。
+    indicators_zh: |
+      ①触发：实验提交/完成；②消费：BM-RES-01 数据版本+特征版本；③参数：环境快照、依赖锁定、种子管理、结果校验；④数据流：实验提交→超参+数据+代码+结果记录→复现包→BM-RES-04工作流；⑤代码：D-RESEARCH-03/05（planned）；⑥降级：复现管理器未就绪→仅记录基础元数据(无环境锁定，复现性降级)。
+
+  - step_id: BM-RES-03
+    flow_stage: research_incubation
+    name_zh: 假设管理与研究发现沉淀
+    name_en: Hypothesis Management & Finding Distillation
+    plain_zh: 研究不是瞎试——每个想法写成假设挂证据，验证后接受/拒绝都留痕；好的发现沉淀成知识库，不让经验流失。
+    mechanism_zh: |
+      D-RESEARCH-08 Hypothesis Manager 管假设CRUD/证据关联/状态机(提出→验证→接受/拒绝)/优先级；
+      D-RESEARCH-14 Research Discovery Knowledge Base 沉淀研究发现+知识抽取+知识关联+知识检索+知识报告，
+      与 D-KNOWLEDGE 知识图谱联动。防止"研究员离职带走经验"和"重复造轮子"。
+    indicators_zh: |
+      ①触发：研究员提出假设/实验产出证据；②消费：BM-RES-02 实验结果+证据；③参数：假设状态机、证据关联、优先级排序；④数据流：假设→实验证据→状态判定→接受/拒绝→知识库沉淀→D-KNOWLEDGE；⑤代码：D-RESEARCH-08/14（planned）；⑥降级：知识库未就绪→假设仅本地记录(无跨项目复用)。
+
+  - step_id: BM-RES-04
+    flow_stage: research_incubation
+    name_zh: 研究工作流编排
+    name_en: Research Workflow Orchestration
+    plain_zh: 把研究步骤串成 DAG 自动跑——数据准备→特征计算→训练→评估，依赖管好、失败重试、并行加速。
+    mechanism_zh: |
+      D-RESEARCH-09 Research Workflow Engine 提供 DAG编排器+任务调度+依赖管理+重试+并行+通知；
+      D-RESEARCH-15 Reproducibility Pack Generator 一键生成复现包(环境锁定+依赖锁定+代码快照+数据快照+复现验证)。
+      是研究孵化的"流水线"，把零散的 Notebook 探索转化为可重复执行的生产级管线。
+    indicators_zh: |
+      ①触发：研究员提交工作流/定时调度；②消费：BM-RES-01/02/03 数据+实验+假设；③参数：DAG编排、依赖管理、重试策略、并行度；④数据流：工作流DAG→任务调度→依赖解析→并行执行→结果聚合→复现包；⑤代码：D-RESEARCH-09/15（planned）；⑥降级：工作流引擎未就绪→手动串行执行(无并行无重试)。
+
+  - step_id: BM-RES-05
+    flow_stage: research_incubation
+    name_zh: Notebook与协作
+    name_en: Notebook & Collaboration
+    plain_zh: 研究员在 Jupyter 里探索因子，一键转生产管线；团队讨论、评审、知识库都在一个地方。
+    mechanism_zh: |
+      D-RESEARCH-04 Notebook Integration 提供 Jupyter→因子探索→可视化→一键转生产管线；
+      D-RESEARCH-10 Research Collaboration Hub 提供讨论区+评审系统+知识库+权限管理+活动流。
+      是研究员的日常入口，降低"探索→生产"的转化摩擦。
+    indicators_zh: |
+      ①触发：研究员打开Notebook/提交评审；②消费：BM-RES-01 数据+特征；③参数：Notebook→管线转换、评审流程、权限管理；④数据流：Notebook探索→因子原型→评审→一键转管线→BM-RES-04工作流；⑤代码：D-RESEARCH-04/10（planned）；⑥降级：Notebook集成未就绪→纯脚本开发(无一键转管线)。
+
+  - step_id: BM-RES-06
+    flow_stage: research_incubation
+    name_zh: LLM研究Agent与论文追踪
+    name_en: LLM Research Agent & Paper Tracking
+    plain_zh: 让 LLM 当研究助手——自动读论文、跑工具、反思纠错；同时追踪最新论文别漏掉行业前沿。
+    mechanism_zh: |
+      D-RESEARCH-11 LLM Research Agent 提供规划器/工具调用/反思循环/记忆管理/多Agent协作；
+      D-RESEARCH-07 Paper Tracker 提供论文爬取器+去重+摘要生成+引用分析+趋势检测。
+      是研究孵化的"AI 加速器"，对标 GitHub Copilot for quant research。
+    indicators_zh: |
+      ①触发：研究员提问/定时论文爬取；②消费：BM-RES-03 知识库+外部论文源；③参数：LLM规划器、工具调用、反思循环、论文去重/摘要；④数据流：提问/论文→LLM规划→工具调用→反思→结论→知识库；⑤代码：D-RESEARCH-07/11（planned）；⑥降级：LLM Agent未就绪→纯人工读论文+探索(效率低)。
+
+  - step_id: BM-RES-07
+    flow_stage: research_incubation
+    name_zh: 策略迭代升级
+    name_en: Strategy Iteration & Upgrade
+    plain_zh: 基于归因结果调整权重、挖新因子、学错误模式，让策略自己进化——不是一锤子买卖。
+    mechanism_zh: |
+      D-RESEARCH-17 Strategy Iteration Upgrader 基于归因结果的权重调整+新因子挖掘+策略迭代升级+错误模式学习+系统进化方向建议；
+      D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模型/策略)的版本化管理与跨项目复用。
+      是研究孵化的"闭环出口"，把盘后归因反馈回研究侧形成进化循环。与 BM-REC 反馈循环环节联动。
+    indicators_zh: |
+      ①触发：盘后归因产出(BM-REC-05)/策略衰减告警；②消费：归因报告+错误模式+衰减信号；③参数：权重调整规则、新因子挖掘、错误模式学习、资产版本化；④数据流：归因→权重调整+新因子+错误学习→迭代策略→BM-MT-01训练；⑤代码：D-RESEARCH-17/18（planned）；⑥降级：迭代器未就绪→人工定期review调整(无自动进化)。
+
+  # ===== 模型训练阶段 (model_training) — 5 环节 =====
+  - step_id: BM-MT-01
+    flow_stage: model_training
+    name_zh: 训练流水线
+    name_en: Training Pipeline
+    plain_zh: 把研究出的因子和特征喂给模型训练，PyTorch 训完导出 ONNX，全程管 seed 和 config 保证可复现。
+    mechanism_zh: |
+      MT-01 TrainingPipeline 负责模型训练+验证+可复现性（PyTorch→ONNX导出、seed管理、config快照、
+      进化式代码生成 S4 DSL+AST沙箱、分析师Agent反馈循环）。是 D-ML-TRAIN 域的核心入口，
+      盘后 20:00-23:59 模型重训练的核心承载。产出 ModelTrained 事件喂 D-ML-SERVE 推理域。
+    indicators_zh: |
+      ①触发：盘后定时/研究员手动/漂移触发(BM-MT-05)；②消费：BM-RES-01 特征存储(PIT)+BM-RES-02 实验追踪；③参数：PyTorch→ONNX、seed管理、config快照、S4 DSL代码生成、AST沙箱；④数据流：特征(PIT)→训练→验证→ONNX模型→BM-MT-02晋升→D-ML-SERVE；⑤代码：MT-01 TrainingPipeline（stable, 已有ABC）；⑥降级：训练失败→回退上一版模型+告警(不阻塞推理)。
+
+  - step_id: BM-MT-02
+    flow_stage: model_training
+    name_zh: 实验追踪与自动晋升
+    name_en: Experiment Tracking & Auto-Promotion
+    plain_zh: A/B 实验对比新模型和老模型，统计上显著更好才自动晋升为 Champion，否则留在 Challenger 继续观察。
+    mechanism_zh: |
+      MT-02 ExperimentTracker 提供 A/B实验+Champion-Challenger+统计验证+自动晋升（wandb集成、实验血缘追踪、
+      DSR/CPCV v2/White's Reality/Probabilistic BT）。是模型上线的"裁判"，防止过拟合模型混入生产。
+      与 D-ML-SERVE INV-011 影子验证联动——晋升前必须影子验证通过。
+    indicators_zh: |
+      ①触发：BM-MT-01 训练完成；②消费：新模型+现役Champion模型+回测指标；③参数：A/B实验、Champion-Challenger、DSR/CPCV v2/White's Reality/Probabilistic BT、统计显著性阈值；④数据流：新模型→A/B对比→统计验证→晋升/留观→D-ML-SERVE影子验证；⑤代码：MT-02 ExperimentTracker（stable, 已有）；⑥降级：统计验证未就绪→人工review决定晋升(无自动门禁)。
+
+  - step_id: BM-MT-03
+    flow_stage: model_training
+    name_zh: AutoML与超参优化
+    name_en: AutoML & Hyperparameter Optimization
+    plain_zh: 不靠人手调参——贝叶斯优化自动找最佳超参，早停省时间，还能自动挖因子。
+    mechanism_zh: |
+      MT-03 AutoMLEngine 提供自动模型选择+超参优化+因子挖掘（Optuna贝叶斯优化、早停、Qlib因子挖掘、
+      辩论式因子精炼 FactorMAD、质量-多样性优化 QuantEvolve）。是研究孵化的"加速器"，
+      把人力调参的瓶颈用算力填上。
+    indicators_zh: |
+      ①触发：BM-MT-01 训练前/研究员配置；②消费：BM-RES-01 特征+搜索空间定义；③参数：Optuna贝叶斯优化、早停、Qlib因子挖掘、FactorMAD辩论精炼、QuantEvolve质量-多样性；④数据流：搜索空间→贝叶斯优化→试验→早停→最佳超参→BM-MT-01训练；⑤代码：MT-03 AutoMLEngine（planned）；⑥降级：AutoML未就绪→人工网格搜索(效率低)。
+
+  - step_id: BM-MT-04
+    flow_stage: model_training
+    name_zh: 因子发现与因果发现
+    name_en: Factor Discovery & Causal Discovery
+    plain_zh: 不只找相关性强的因子，还要找因果关系——用 PC/GES/LiNGAM 算因果图，避免"假相关"误导。
+    mechanism_zh: |
+      MT-04 FeatureDiscovery 提供因子发现+因果发现+特征工程（PC/GES/LiNGAM因果发现、AutoML因子挖掘、
+      特征交叉、辩论式因子精炼、三重语义一致性）。产出 NewFactorDiscovered 事件喂 D-FACTOR 因子域入池。
+      是"因子工厂"的智能上游，区别于纯统计因子挖掘。
+    indicators_zh: |
+      ①触发：BM-MT-01 训练中/研究员触发；②消费：BM-RES-01 特征+BM-RES-03 假设；③参数：PC/GES/LiNGAM因果发现、特征交叉、FactorMAD辩论精炼、三重语义一致性；④数据流：特征→因果发现→新因子→语义一致性校验→D-FACTOR入池；⑤代码：MT-04 FeatureDiscovery（planned）；⑥降级：因果发现未就绪→纯统计因子挖掘(无因果保证)。
+
+  - step_id: BM-MT-05
+    flow_stage: model_training
+    name_zh: 漂移检测与自适应重训练
+    name_en: Drift Detection & Adaptive Retraining
+    plain_zh: 市场变了模型就老了——实时检测概念漂移，触发重训练，元学习让新模型快速适应不忘旧。
+    mechanism_zh: |
+      MT-05 DriftAdapter 提供概念漂移检测+自适应重训练+元学习（DDM/EDDM/ADWIN检测、MAML快速适应、
+      在线EWC防遗忘、技能库 Voyager、元反思、AutoSkill）。是模型"保鲜"的关键，
+      防止"上线时好用，三个月后失效"。
+    indicators_zh: |
+      ①触发：盘中漂移检测信号/定时；②消费：实时预测误差+特征分布；③参数：DDM/EDDM/ADWIN检测阈值、MAML快速适应、在线EWC防遗忘、Voyager技能库；④数据流：预测误差→漂移检测→重训练触发→MAML适应→EWC防遗忘→BM-MT-01训练；⑤代码：MT-05 DriftAdapter（planned）；⑥降级：漂移检测未就绪→定时重训练(无自适应)。
+
+  # ===== 回测验证阶段 (backtest_validation) — 7 环节 =====
+  - step_id: BM-BT-01
+    flow_stage: backtest_validation
+    name_zh: 回测引擎与撮合
+    name_en: Backtest Engine & Matching
+    plain_zh: 把策略放到历史数据上跑一遍看表现——向量化回测快但粗，事件驱动慢但细，两种模式都支持。
+    mechanism_zh: |
+      BT-01 core/engine_base.py 定义 BacktestEngineBase ABC + BacktestResult契约(CTR-P1-016) + FactorDiscovery；
+      BT-02 implementations/vectorized_engine.py 是 DefaultBacktestEngine 向量化回测（快速IC/IR筛选）；
+      BT-03 core/matching_engine.py 是撮合引擎（市价/限价/滑点/Tick级5档撮合）；
+      BT-04 core/matching_logic.py 是 A股约束（T+1/万三/5元/1bp滑点）。
+      是回测验证的核心引擎，决定回测结果可信度。
+    indicators_zh: |
+      ①触发：研究员提交策略/自动调度(BM-BT-07)；②消费：BM-RES-01 特征(PIT)+策略代码；③参数：向量化vs事件驱动、市价/限价/滑点/Tick级5档撮合、A股T+1/万三/5元/1bp滑点；④数据流：策略+历史数据→撮合引擎→成交记录→BacktestResult→BM-BT-02；⑤代码：BT-01~BT-04（stable, production）；⑥降级：事件驱动引擎未就绪→仅向量化回测(精度低)。
+
+  - step_id: BM-BT-02
+    flow_stage: backtest_validation
+    name_zh: 持仓组合与数据接入
+    name_en: Portfolio & Data Handler
+    plain_zh: 回测里的"钱包和数据库"——管持仓现金净值曲线，把 miniQMT Tick 和 ClickHouse 日线都接进来。
+    mechanism_zh: |
+      BT-05 core/portfolio.py 管持仓/现金/PnL/净值曲线；
+      BT-06 core/data_handler.py 接多源数据（D_DATA MiniQMT Provider Tick+5档 + ClickHouse 日线批量）。
+      是回测引擎的"数据底盘"，决定回测能跑多真实。
+    indicators_zh: |
+      ①触发：BM-BT-01 引擎启动；②消费：D-DATA MiniQMT Provider + ClickHouse c1_market；③参数：持仓/现金/PnL/净值曲线计算、多源数据切换；④数据流：多源数据→data_handler→portfolio→BacktestResult；⑤代码：BT-05/06（stable, production）；⑥降级：Tick数据缺失→降级日线回测(精度低)。
+
+  - step_id: BM-BT-03
+    flow_stage: backtest_validation
+    name_zh: 绩效指标与Tick回放
+    name_en: Metrics & Tick Replay
+    plain_zh: 算 Sharpe/Sortino/最大回撤/IC/IR/胜率这些硬指标；还能把历史 Tick 逐笔回放做秒级策略验证。
+    mechanism_zh: |
+      BT-07 core/metrics.py 算 Sharpe/Sortino/MaxDD/IC/IR/胜率；
+      BT-08 core/tick_replay.py 是 Tick回放引擎（秒级做T，30秒/5秒级）；
+      BT-09 implementations/event_driven_engine.py 是事件驱动回测（Tick级，与 tick_replay 协同）。
+      是回测"出分"环节，决定策略评估的全面性。
+    indicators_zh: |
+      ①触发：BM-BT-01 回测完成；②消费：BacktestResult 净值曲线+成交记录；③参数：Sharpe/Sortino/MaxDD/IC/IR/胜率、Tick回放秒级/30秒/5秒；④数据流：BacktestResult→metrics计算+Tick回放→绩效报告→BM-BT-05过拟合检测；⑤代码：BT-07/08/09（stable, production）；⑥降级：Tick回放未就绪→仅日线指标(无秒级验证)。
+
+  - step_id: BM-BT-04
+    flow_stage: backtest_validation
+    name_zh: PIT铁律管理
+    name_en: Point-in-Time Integrity
+    plain_zh: 回测绝不能偷看未来——PIT 铁律管 AS OF JOIN 和 Embargo 期，保证当时只能用当时已知的数据。
+    mechanism_zh: |
+      BT-10 core/pit_manager.py 是 PIT铁律管理器（三公理+AS OF JOIN+Embargo期）。
+      是回测可信性的"守门员"，与 BM-RES-01 Feature Store 的 PIT 正确性形成双保险。
+      违反 PIT = 回测结果无效，是硬约束。
+    indicators_zh: |
+      ①触发：BM-BT-01 数据接入时；②消费：BM-RES-01 特征存储(PIT)；③参数：PIT三公理、AS OF JOIN、Embargo期；④数据流：特征请求→PIT校验→AS OF JOIN→当时已知值→回测引擎；⑤代码：BT-10 pit_manager（stable, production）；⑥降级：PIT管理器未就绪→回测不可信(硬阻断,禁止上线)。
+
+  - step_id: BM-BT-05
+    flow_stage: backtest_validation
+    name_zh: 过拟合检测
+    name_en: Overfitting Detection
+    plain_zh: 回测好不等于真能赚——三维度三层检测过拟合，防止"历史完美未来崩盘"。
+    mechanism_zh: |
+      BT-11 core/overfitting_detector.py 提供过拟合检测（三维度+三层：SIM-18/38/56）。
+      三维度=样本内vs样本外/参数敏感性/多重比较；三层=统计层/经济层/稳健层。
+      是策略上线的"防伪门"，过拟合检测不过=禁止晋升。
+    indicators_zh: |
+      ①触发：BM-BT-03 绩效产出后；②消费：BacktestResult+样本内外对比；③参数：三维度(样本内外/参数敏感性/多重比较)+三层(统计/经济/稳健)；④数据流：BacktestResult→过拟合检测→OverfittingDetected事件→BM-BT-07决策门控；⑤代码：BT-11 overfitting_detector（stable, production）；⑥降级：过拟合检测未就绪→人工review(无自动门禁,风险高)。
+
+  - step_id: BM-BT-06
+    flow_stage: backtest_validation
+    name_zh: Walk-Forward优化
+    name_en: Walk-Forward Optimization
+    plain_zh: 滚动窗口跑样本外验证——不是一次回测定终身，而是多段验证看策略稳不稳。
+    mechanism_zh: |
+      BT-12 core/walk_forward.py 提供 Walk-Forward优化（滚动窗口+样本外验证）。
+      与 D-SIMULATION SIM-19 Walk-Forward Analyzer 联动（回测侧执行 vs 仿真侧分析）。
+      产出参数稳定性区域，喂 BM-BT-07 决策门控。
+    indicators_zh: |
+      ①触发：BM-BT-05 过拟合检测后；②消费：BacktestResult+参数空间；③参数：滚动窗口大小、样本外验证、参数稳定性区域；④数据流：参数空间→滚动窗口回测→样本外验证→参数稳定性区域→BM-BT-07；⑤代码：BT-12 walk_forward（stable, production）；⑥降级：WFO未就绪→单次回测(无稳健性验证)。
+
+  - step_id: BM-BT-07
+    flow_stage: backtest_validation
+    name_zh: 决策门控与上线
+    name_en: Decision Gate & Go-Live
+    plain_zh: 策略上线三道门——IS→WFA→OOS 不可跳级，参数稳定性区域达标才放行，结果持久化供审计。
+    mechanism_zh: |
+      BT-16 core/decision_gate.py 提供3阶段决策门控（IS→WFA→OOS不可跳级+参数稳定性区域）；
+      BT-13 io/backtest_result_sink.py 把 BacktestResult→可视化数据(BacktestSinkData)；
+      BT-14 io/result_repository.py 持久化 BacktestRunArtifact(CTR-P1-017)；
+      BT-15 io/decisiongraph_adapter.py 把 BacktestResult→decisiongraph L5决策节点适配。
+      是回测验证的"出口门禁"，决定策略能否进入仿真/实盘。
+    indicators_zh: |
+      ①触发：BM-BT-05/06 检测通过；②消费：过拟合检测+WFO结果+参数稳定性；③参数：IS→WFA→OOS三阶段不可跳级、参数稳定性区域、BacktestRunArtifact持久化；④数据流：检测结果→决策门控→BacktestPassed事件→BM-SIM-01仿真/D-ML-SERVE影子验证；⑤代码：BT-13/14/15/16（stable, production）；⑥降级：决策门控未就绪→人工审批(无自动门禁,风险高)。
+
+  # ===== 仿真验证阶段 (simulation_validation) — 6 环节 =====
+  - step_id: BM-SIM-01
+    flow_stage: simulation_validation
+    name_zh: 市场仿真器
+    name_en: Market Simulator
+    plain_zh: 造一个假市场跑策略——订单簿仿真+价格生成+微观结构模拟，看策略在"如果怎样"下会怎样。
+    mechanism_zh: |
+      D-SIMULATION-01 Market Simulator 提供市场仿真器+订单簿仿真+价格生成+微观结构模拟（P0）；
+      D-SIMULATION-07 History Replay Engine 提供历史重放引擎+逐Tick回放+时间压缩。
+      与 D-BACKTEST 的区别：回测=过去怎样(真实历史)，仿真=如果怎样(假设场景)。
+      是仿真验证的核心入口，P0 模块。
+    indicators_zh: |
+      ①触发：BM-BT-07 回测通过/研究员配置；②消费：BM-BT-01 回测引擎+策略代码；③参数：订单簿仿真、价格生成、微观结构模拟、逐Tick回放、时间压缩；④数据流：策略+仿真市场→撮合仿真→仿真成交→仿真结果→BM-SIM-06分析；⑤代码：D-SIMULATION-01/07（planned）；⑥降级：市场仿真器未就绪→仅历史回测(无what-if能力)。
+
+  - step_id: BM-SIM-02
+    flow_stage: simulation_validation
+    name_zh: 策略仿真器
+    name_en: Strategy Simulator
+    plain_zh: 把策略放进沙箱里跑——模拟信号、模拟组合，看策略在各种假设市场下的表现。
+    mechanism_zh: |
+      D-SIMULATION-02 Strategy Simulator 提供策略仿真器+策略沙箱+信号模拟+组合模拟（P0）。
+      与 BM-SIM-01 市场仿真器配合——市场仿真器造环境，策略仿真器跑策略。
+      是"策略压力测试"的核心承载。
+    indicators_zh: |
+      ①触发：BM-SIM-01 市场仿真就绪；②消费：策略代码+BM-SIM-01 仿真市场；③参数：策略沙箱、信号模拟、组合模拟；④数据流：策略+仿真市场→策略沙箱→信号模拟+组合模拟→仿真PnL→BM-SIM-06；⑤代码：D-SIMULATION-02（planned）；⑥降级：策略仿真器未就绪→仅回测(无沙箱隔离)。
+
+  - step_id: BM-SIM-03
+    flow_stage: simulation_validation
+    name_zh: 场景生成与蒙特卡洛
+    name_en: Scenario Generation & Monte Carlo
+    plain_zh: 蒙特卡洛跑百万条路径找策略边界——还能自定义极端场景，看策略在最坏情况下能不能活。
+    mechanism_zh: |
+      D-SIMULATION-05 Scenario Generator 提供场景生成器+蒙特卡洛+历史场景+自定义场景；
+      D-SIMULATION-06 Monte Carlo Engine 提供蒙特卡洛模拟+GPU加速+百万路径。
+      是"如果怎样"的批量版本，产出策略在各种场景下的表现分布。
+    indicators_zh: |
+      ①触发：BM-SIM-02 策略仿真后/研究员配置；②消费：BM-SIM-02 仿真结果+场景定义；③参数：蒙特卡洛路径数、GPU加速、历史场景库、自定义场景；④数据流：场景定义→蒙特卡洛百万路径→仿真结果分布→BM-SIM-06分析；⑤代码：D-SIMULATION-05/06（planned）；⑥降级：蒙特卡洛未就绪→少量场景手动跑(无统计意义)。
+
+  - step_id: BM-SIM-04
+    flow_stage: simulation_validation
+    name_zh: 压力测试引擎
+    name_en: Stress Test Engine
+    plain_zh: 把 2008/2015/2020 这些极端行情重放一遍，再加假设情景和反向压力测试，看策略会不会爆。
+    mechanism_zh: |
+      D-SIMULATION-04 Stress Test Engine 提供压力测试引擎+极端场景+历史重放（testing, 部分在D-RISK-05）；
+      D-SIMULATION-10 Extreme Event Simulator 提供极端事件仿真+黑天鹅+闪崩+熔断（P2）。
+      与 D-RISK RK-12 Stress Test Engine 联动——仿真侧造场景，风控侧评估影响。
+    indicators_zh: |
+      ①触发：BM-SIM-03 场景生成后/定时压力测试；②消费：BM-SIM-03 极端场景+历史极端事件库；③参数：历史情景(2008/2015/2020)、假设情景、反向压力测试、敏感性分析、传染效应；④数据流：极端场景→压力测试→策略表现→BM-SIM-06分析+D-RISK风控参数调整；⑤代码：D-SIMULATION-04（testing）+D-SIMULATION-10（planned）；⑥降级：极端事件仿真器未就绪→仅历史重放(无黑天鹅模拟)。
+
+  - step_id: BM-SIM-05
+    flow_stage: simulation_validation
+    name_zh: 依赖图数字孪生
+    name_en: Dependency Graph Digital Twin
+    plain_zh: 把整个系统的依赖图复制一份做数字孪生——改任何模块前先在孪生上 what-if 一遍，预测变更影响。
+    mechanism_zh: |
+      D-SIMULATION-13 Dependency Graph Digital Twin 提供依赖图数字孪生+what-if仿真+批量/流式/实时三种模式+依赖拓扑实时映射（P2）；
+      D-SIMULATION-14 Real-time DT Synchronizer 提供实时数字孪生同步器+依赖图实时同步+预测仿真+变更预演（P2）。
+      是"架构变更"的仿真验证，防止"改一个模块炸一片"。
+    indicators_zh: |
+      ①触发：架构变更前/混沌实验；②消费：depgraph 依赖图+模块状态；③参数：what-if仿真、批量/流式/实时三模式、依赖拓扑实时映射、变更预演；④数据流：depgraph→数字孪生→what-if仿真→变更影响预测→ADR决策；⑤代码：D-SIMULATION-13/14（planned）；⑥降级：数字孪生未就绪→人工评估变更影响(精度低)。
+
+  - step_id: BM-SIM-06
+    flow_stage: simulation_validation
+    name_zh: 仿真结果分析
+    name_en: Simulation Result Analysis
+    plain_zh: 跑完仿真不算完——统计检验看结果显著不显著，可视化看分布，出报告给风控和组合参考。
+    mechanism_zh: |
+      D-SIMULATION-12 Simulation Result Analyzer 提供仿真结果分析+统计检验+可视化。
+      汇总 BM-SIM-01~05 的仿真产出，产出 SimulationResult 事件喂 D-RISK 和 D-PF-CORE。
+      是仿真验证的"出口"，决定仿真结论能否影响实盘决策。
+    indicators_zh: |
+      ①触发：BM-SIM-01~05 仿真完成；②消费：仿真成交+PnL+场景结果；③参数：统计检验、可视化、报告生成；④数据流：仿真结果→统计检验+可视化→SimulationResult事件→D-RISK风控参数+D-PF-CORE组合参考；⑤代码：D-SIMULATION-12（planned）；⑥降级：结果分析器未就绪→原始仿真数据(无统计检验,人工分析)。
+
+  # ===== 风控管控阶段 (risk_control) — 8 环节 =====
+  - step_id: BM-RC-01
+    flow_stage: risk_control
+    name_zh: 风控策略与限额管理
+    name_en: Risk Policy & Limit Management
+    plain_zh: 风控的"宪法"——策略 CRUD+版本管理+9种限额类型+消耗追踪+预警分级+审批流。
+    mechanism_zh: |
+      RK-01 Risk Policy Manager 提供风控策略CRUD+版本管理+AGG-007聚合根+CTR-003生产+策略状态机(DRAFT→ACTIVE→DEPRECATED)+冲突检测；
+      RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTOR_EXPOSURE/GROSS_NOTIONAL/NET_NOTIONAL/VAR_95/VAR_99/MAX_DRAWDOWN/LEVERAGE/FACTOR_EXPOSURE)+消耗追踪+预警分级+审批流。
+      是风控管控的"规则真源"，所有风控检查都基于此。
+    indicators_zh: |
+      ①触发：风控官配置策略/定时review；②消费：D-EX-CORE 持仓快照+D-FACTOR 因子暴露；③参数：策略状态机、9种限额类型、消耗追踪、预警分级、审批流；④数据流：策略配置→限额管理→CTR-003 RiskLimits→BM-RC-02盘前检查+BM-RC-04盘中监控；⑤代码：RK-01 risk_manager（stable, production）+RK-06 default_position_limit_checker（stable, production）；⑥降级：限额管理器未就绪→硬编码保守限额(无动态调整)。
+
+  - step_id: BM-RC-02
+    flow_stage: risk_control
+    name_zh: 盘前风控检查
+    name_en: Pre-Trade Risk Check
+    plain_zh: 下单前过五关——仓位限额→行业集中度→杠杆率→合规规则→Kill Switch 状态，任一不过就拒单。
+    mechanism_zh: |
+      RK-02 Pre-Trade Checker 提供5步检查链(仓位限额→行业集中度→杠杆率→合规规则→Kill Switch状态)+幂等+Fail-Closed(50ms SLA)+E-RK-04。
+      是风控的"门卫"，硬阻断不合格订单。Fail-Closed=检查超时即拒单(保守)。
+    indicators_zh: |
+      ①触发：BM-BUY/BM-SELL 下单请求；②消费：BM-RC-01 RiskLimits+持仓+Kill Switch状态；③参数：5步检查链、幂等、Fail-Closed、50ms SLA；④数据流：下单请求→5步检查→通过/拒绝(E-RK-04 PreTradeRejected)→BM-EXE执行/拦截；⑤代码：RK-02 risk_validator（stable, production）；⑥降级：检查超时→Fail-Closed拒单(保守,不放过)。
+
+  - step_id: BM-RC-03
+    flow_stage: risk_control
+    name_zh: Kill Switch熔断
+    name_en: Kill Switch Circuit Breaker
+    plain_zh: 系统的"急停按钮"——回撤超 Emergency/VaR超限且无法减仓/Owner手动，任一触发即熔断，冷却 30 分钟。
+    mechanism_zh: |
+      RK-17 Kill Switch Integration 提供状态机(OPEN/CLOSED)+触发条件3种(回撤>EMERGENCY/VaR超限+无法减仓/Owner手动)+冷却期30min+多域通知+Owner确认重置。
+      是风控的"最后一道防线"，触发即停止一切新开仓。
+    indicators_zh: |
+      ①触发：回撤>EMERGENCY/VaR超限+无法减仓/Owner手动；②消费：BM-RC-04 盘中监控信号+Owner指令；③参数：状态机(OPEN/CLOSED)、3种触发条件、冷却期30min、Owner确认重置；④数据流：触发条件→Kill Switch CLOSED→停止新开仓+多域通知→冷却30min→Owner确认→重置；⑤代码：RK-17 kill_switch（stable, production）；⑥降级：Kill Switch未就绪→人工紧急停盘(响应慢)。
+
+  - step_id: BM-RC-04
+    flow_stage: risk_control
+    name_zh: 盘中持仓风控监控
+    name_en: Real-Time Portfolio Risk Monitoring
+    plain_zh: 盘中盯着持仓——实时算 VaR、回撤、因子暴露、相关性矩阵，超阈值就告警。
+    mechanism_zh: |
+      RK-03 Portfolio Risk Monitor 提供持仓实时监控+VaR+回撤+告警+因子暴露计算+相关性矩阵+CTR-P1-008 RiskDashboardSnapshot；
+      RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三级阈值(-5%WARNING/-10%CRITICAL/-15%EMERGENCY)+回撤恢复检测+资金曲线诊断。
+      是盘中风控的"眼睛"，产出 RiskLimitBreached/DrawdownAlerted 事件。
+    indicators_zh: |
+      ①触发：盘中实时(每Tick/定时)；②消费：D-EX-CORE 持仓快照+D-MKT-DATA 行情；③参数：VaR计算、回撤三级阈值(-5%/-10%/-15%)、因子暴露、相关性矩阵、CTR-P1-008；④数据流：持仓+行情→VaR+回撤+因子暴露→告警(E-RK-01/E-RK-03)→BM-RC-03 Kill Switch判定；⑤代码：RK-03 risk_limits（stable, production）+RK-11（planned）；⑥降级：回撤追踪器未就绪→仅VaR监控(无回撤分级)。
+
+  - step_id: BM-RC-05
+    flow_stage: risk_control
+    name_zh: A股特色止损
+    name_en: A-Share Stop-Loss
+    plain_zh: A股专用的 6 种止损——固定比例-7%/关键支撑破位/逻辑失效/竞价不及预期/分时破位/板块退潮，加日2%周5%月10%亏损限额强制停盘。
+    mechanism_zh: |
+      RK-04 Stop Loss Engine 提供4种止损(固定/追踪/ATR/时间)+Kill Switch触发/重置+A股特色止损(6种模式)；
+      RK-09 A-Share Stop-Loss Rule Engine 提供6种A股止损(固定比例-7%/关键支撑破位/逻辑失效/竞价不及预期/分时破位/板块退潮)+亏损限额(日2%/周5%/月10%)+强制停盘+强制复盘。
+      是 A股策略的"逃生舱"，与卖出决策联动（止损触发走 BM-SELL 流程）。
+    indicators_zh: |
+      ①触发：持仓跌破止损条件/亏损限额触达；②消费：BM-RC-04 盘中监控+个股行情；③参数：6种A股止损模式、亏损限额(日2%/周5%/月10%)、强制停盘/复盘；④数据流：止损条件→止损引擎→止损单→BM-SELL卖出流程+Kill Switch联动；⑤代码：RK-04 stop_loss（stable, production）+RK-09（planned）；⑥降级：A股止损引擎未就绪→仅通用止损(无A股特色)。
+
+  - step_id: BM-RC-06
+    flow_stage: risk_control
+    name_zh: 系统性风险检测
+    name_en: Systemic Risk Detection
+    plain_zh: 盯着融资盘平仓潮/量化踩踏/流动性危机/政策转向/外围冲击 5 大信号，≥3 个就清仓。
+    mechanism_zh: |
+      RK-10 A-Share Systemic Risk Detector 提供5大信号(融资盘平仓潮/量化踩踏/流动性危机/政策转向/外围冲击)+5信号扫描+三级警报(1因子停开仓/2因子降30%/≥3因子清仓)+情绪断路器+逃生执行器；
+      RK-15 Tail Risk Monitor 提供EVT/POT模型+尾部依赖矩阵(Copula)+跳跃检测+极值预警+FRTB尾部风险加价。
+      是"黑天鹅预警"的核心，防止系统性踩踏。
+    indicators_zh: |
+      ①触发：盘中5信号扫描/尾部异常；②消费：融资余额+流动性+政策新闻+外围指数+尾部数据；③参数：5大信号、三级警报(1停/2降30%/≥3清仓)、EVT/POT模型、Copula尾部依赖、FRTB加价；④数据流：5信号+尾部数据→系统性风险检测→三级警报→BM-RC-03 Kill Switch+清仓执行；⑤代码：RK-10/RK-15（planned）；⑥降级：系统性风险检测未就绪→仅个股止损(无系统性预警)。
+
+  - step_id: BM-RC-07
+    flow_stage: risk_control
+    name_zh: 风险预算与VaR
+    name_en: Risk Budget & VaR
+    plain_zh: 把风险当预算分给各资产——VaR 三阶段演进：参数法→蒙特卡洛→Basel III 三角验证，风险预算优化求解器分配。
+    mechanism_zh: |
+      RK-05 VaR Calculator 提供三阶段演进——Phase1参数法+历史模拟并发(取max)→Phase2加蒙特卡洛(GPU CuPy/RTX3090)→Phase3 Basel III三角验证+乘数因子+压力VaR；
+      RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡献计算器+再平衡触发+约束处理器。
+      是风控的"量化核心"，把"风险"从定性变定量。
+    indicators_zh: |
+      ①触发：盘前预算分配/盘中VaR重算；②消费：BM-RC-04 持仓+BM-RC-01 限额；③参数：VaR三阶段(参数法/蒙特卡洛/Basel III三角)、GPU CuPy/RTX3090、风险预算优化求解器、风险贡献计算；④数据流：持仓+限额→VaR计算+风险预算分配→再平衡触发→BM-POS仓位调整；⑤代码：RK-05/RK-08（planned）；⑥降级：VaR计算器未就绪→仅限额检查(无概率性风控)。
+
+  - step_id: BM-RC-08
+    flow_stage: risk_control
+    name_zh: 盘后审计与压力测试
+    name_en: Post-Trade Audit & Stress Test
+    plain_zh: 收盘后做两件事——日终 PnL 对账+归因偏差检测+合规报告；再加压力测试(历史情景/假设情景/反向压力测试)看策略韧性。
+    mechanism_zh: |
+      RK-16 Risk Decomposition Engine 提供因子贡献分析器+残差分析器+边际风险计算器+成分风险器+Brinson风险归因；
+      RK-20 Post-Trade Daily Auditor 提供日终PnL对账+归因偏差检测+合规报告生成+日终检查清单+问题追溯修正+CTR-P1-011 RiskMetricsReport；
+      RK-12 Stress Test Engine 提供历史情景(2008/2015/2020)+假设情景+反向压力测试+敏感性分析+传染效应+压力报告。
+      是风控的"事后复盘+前瞻压力"，与 BM-REC 对账环节联动（归因反馈）。
+    indicators_zh: |
+      ①触发：盘后定时/合规要求；②消费：D-EX-CORE 成交记录+BM-RC-04 盘中监控+持仓快照；③参数：Brinson归因、日终PnL对账、合规报告、历史情景(2008/2015/2020)、反向压力测试、敏感性分析、传染效应；④数据流：成交+持仓→PnL对账+归因+合规报告(CTR-P1-011)→BM-RES-07策略迭代+BM-REC对账；⑤代码：RK-16/RK-20（planned）+RK-12（planned）；⑥降级：盘后审计器未就绪→人工Excel对账(效率低,易错)。
+
 # ============================================================================
 # battle_map_cross_cutting 段——作战地图横切视图真源（Gap3，2026-08-01）
 # ============================================================================
@@ -59939,7 +60438,7 @@ battle_map_steps:
 #
 # 来源：草图 v9.0 §13筛选漏斗 / §14盘中实时事件处理 / §16能力冲突矩阵。
 # 这些内容不属任何单一阶段，而是横跨选股→买入→卖出→仓位→执行→对账全流程，
-# 故单列横切视图，由 generate_battle_map_diagram.py 渲染为 battle_map_07_cross_cutting.md。
+# 故单列横切视图，由 generate_battle_map_diagram.py 渲染为 battle_map_12_cross_cutting.md。
 #
 # 与 DB 的分工：横切内容目前是纯规则/叙事数据（TRAE-062 规则数据分类），
 # 真源在 YAML；未来若需结构化查询可再建 DB 表，当前 YAML 足够。
