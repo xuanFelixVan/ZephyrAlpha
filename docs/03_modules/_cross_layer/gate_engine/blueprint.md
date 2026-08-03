@@ -231,6 +231,8 @@ build_status: planned
 | `commit_gates/zephyr_env_direct_access_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/diff_helpers.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/translation_coverage_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/derived_file_deletion_gate.py` | §0.1 | 派生文件staged删除保护门禁（DERIVED-FILE-DELETION-PROTECTION，#ARCH-BP-REGISTRY-DELETION-001 P1，拦截blueprint_registry.yaml/path_ownership_map.yaml删除，--allow-derived-deletion逃生通道，priority=46） | 已实现 | | 本模块 |
+| `commit_gates/protected_paths_gate.py` | §0.1 | 受保护路径写入检测门禁（PROTECTED-PATHS，#ARCH-MODEL-LIFECYCLE-001 P1，拦截.gitignore/.gitattributes/AGENTS.md等修改，[ARCH-APPROVAL:ISSUE_ID]+env逃生通道，双层防护Layer1，priority=28） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
@@ -285,7 +287,7 @@ build_status: planned
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 286 个 file 节点 | design | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 290 个 file 节点 | design | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -297,7 +299,7 @@ build_status: planned
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 286 文件 | 28 文件（§0.1） | ❌ |
+| file_count | 290 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
