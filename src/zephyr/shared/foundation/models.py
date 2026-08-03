@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_schemas.py; tests/db/test_task_repo.py; tests/gate/test_gate_engine.py
-# [A_module] module_id=MOD-INF-models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

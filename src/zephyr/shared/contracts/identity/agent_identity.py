@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_agent_rbac.py
-# [A_module] module_id=MOD-SHR-agent_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from typing import Final

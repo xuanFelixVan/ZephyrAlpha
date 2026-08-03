@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 端口冲突->log warning+返回None; 正常请求->200+Prometheus文本; 未知路径->404
 # [TESTS] tests/zephyr/shared/observability/test_metrics_server.py
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Prometheus /metrics HTTP 端点（P1-5 可观测性改造）。
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] KeyError on unregistered service; TypeError on factory returning wrong type
 # [TESTS] tests/utils/test_shared_core.py
-# [A_module] module_id=MOD-INF-registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHARED-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

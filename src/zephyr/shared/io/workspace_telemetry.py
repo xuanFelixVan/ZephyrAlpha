@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] log_workspace_op 永不抛异常（降级为 debug 日志）；compute_content_hash 文件不存在/读取失败返回空字符串
 # [TESTS] tests/governance/test_workspace_telemetry_shared.py
-# [A_module] module_id=MOD-SHR-workspace_telemetry | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """workspace_telemetry.py — 主工作区文件操作遥测公共 API（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 A，2026-07-19）
 

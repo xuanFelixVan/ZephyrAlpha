@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-SHARED-sqlite_factory | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHARED-002 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SHARED-002 | docs/03_modules/_domain_shared_services/io_layer/blueprint.md
 # [MODULE] zephyr.shared.io.sqlite_factory
 # [DOMAIN] D_SHARED

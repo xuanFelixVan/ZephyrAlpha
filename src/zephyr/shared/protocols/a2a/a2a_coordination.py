@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Protocol violations caught at type-check time
 # [TESTS] tests/test_shared_protocols.py
-# [A_module] module_id=MOD-GOV-a2a_coordination | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHARED-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """A2A Coordination — shared interface definitions for multi-agent coordination.
