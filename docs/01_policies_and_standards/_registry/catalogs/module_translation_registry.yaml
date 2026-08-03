@@ -1,3 +1,4 @@
+# pre-commit speed benchmark temporary comment
 module_id: REG-MODULE-TRANSLATION-001
 ttl: permanent
 title: 模块级翻译注册表（中英对照真源）

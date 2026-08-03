@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-03'
-total_scripts: 641
+total_scripts: 637
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -822,14 +822,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/fix_header_module_id.py
-  path: governance/fix_header_module_id.py
-  description: "\uFEFF# [A_module] module_id=MOD-GOV-SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable"
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/generate_decision_graph.py
   path: governance/generate_decision_graph.py
   description: '[BLUEPRINT] | scripts/governance/generate_decision_graph.py | §decisiongraph'
@@ -1569,14 +1561,6 @@ scripts:
 - name: governance/d3_metadata/deep_content_scanner.py
   path: governance/d3_metadata/deep_content_scanner.py
   description: deep_content_scanner.py — 深度内容扫描器
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/d3_metadata/domain_header_maint.py
-  path: governance/d3_metadata/domain_header_maint.py
-  description: 整合三个维护功能（源自 2026-08-03 批量补全 382 个 [DOMAIN] header 的实践）：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -3342,14 +3326,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/git_hooks/__init__.py
-  path: governance/git_hooks/__init__.py
-  description: 新建于 2026-08-03（IMPORT-INTEGRITY 治本）：verify_generator_paths.py 将动态
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: governance/git_hooks/post_commit_regen_yaml.py
   path: governance/git_hooks/post_commit_regen_yaml.py
   description: '----'
@@ -4577,14 +4553,6 @@ scripts:
 - name: ops/r6_restore_via_vm.py
   path: ops/r6_restore_via_vm.py
   description: 在 VM 上以 clickhouse OS 用户运行 clickhouse-client，拥有完整 DB 权限。
-  domain: ops
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: ops/shadow_canary_deploy.py
-  path: ops/shadow_canary_deploy.py
-  description: 把 4 个已有原语编排成一条命令，满足 EX-021 门禁的「CI/CD 灰度发布基础设施」半：
   domain: ops
   execution_plane: warm-path
   status: registered

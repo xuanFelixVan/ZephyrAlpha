@@ -1,4 +1,4 @@
-﻿# [A_module] module_id=MOD-GOV-SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """fix_header_module_id.py — 批量修复文件头 module_id 与 depgraph 一致
@@ -450,6 +450,7 @@ def main() -> None:
     parser.add_argument("--fail-fast", action="store_true", help="第一个失败就停止")
     parser.add_argument("--output", type=Path, default=DEFAULT_REPORT, help="JSON 报告路径")
     parser.add_argument("--verbose", action="store_true", help="详细输出")
+    parser.add_argument("--skip-git-check", action="store_true", help="跳过 git 干净检查 (批处理用)")
     args = parser.parse_args()
 
     mode = "confirm" if args.confirm else "dry-run"
@@ -464,12 +465,15 @@ def main() -> None:
     print(f"Run ID: {report.run_id}")
     print()
 
-    if args.confirm:
+    if args.confirm and not args.skip_git_check:
         if not check_git_clean():
             print("ERROR: git 工作区不干净, 请先 commit 或 stash 当前改动。", file=sys.stderr)
             print("       (安全机制: 确保 --confirm 模式下有干净的回滚点)", file=sys.stderr)
+            print("       (批处理可用 --skip-git-check 跳过)", file=sys.stderr)
             sys.exit(1)
         print("✅ Pre-flight: git 工作区干净")
+    elif args.confirm and args.skip_git_check:
+        print("⚠️  Pre-flight: 跳过 git 干净检查 (--skip-git-check)")
 
     # 加载 depgraph
     print("加载 depgraph 路径数据...")

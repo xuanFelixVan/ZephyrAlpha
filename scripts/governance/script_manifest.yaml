@@ -1,23 +1,23 @@
-# 自动生成于 2026-08-03T10:21:15Z
+# 自动生成于 2026-08-03T07:43:18Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-03T10:21:15Z'
+generated_at: '2026-08-03T07:43:18Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 385
+total_scripts: 383
 with_manifest: 321
-missing_manifest: 64
+missing_manifest: 62
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 36
+  governance: 35
   governance:d10_performance: 1
   governance:d11_compliance: 21
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
-  governance:d3_metadata: 25
+  governance:d3_metadata: 24
   governance:d4_paths: 4
   governance:d5_architecture: 107
   governance:d6_security: 15
@@ -1111,16 +1111,6 @@ scripts:
   description: 深度内容扫描器（PS-STD-012 §7.3 — doc_type与内容启发式匹配）
   tags:
   - Quick
-- name: d3_metadata/domain_header_maint.py
-  owner: governance:d3_metadata
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: d3_metadata/generate_derived_files.py
   owner: governance:d3_metadata
   dimensions:
@@ -3500,16 +3490,6 @@ scripts:
   description: depgraph 巨型文件按需提取工具（RULE-SIXTEEN 强制配套）
   tags:
   - Quick
-- name: fix_header_module_id.py
-  owner: governance
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: generate_decision_graph.py
   owner: governance
   dimensions:

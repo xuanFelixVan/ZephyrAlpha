@@ -324,13 +324,7 @@ data/asset_index/archive/
 data/backups/depgraph_pre_variant_patch_*.sql
 
 # ML model files (4GB+, Trae indexing OOM risk)
-# 治本 2026-08-03 (ARCH-MODEL-LIFECYCLE-001 Phase 2):
-# 原 `models/` 规则匹配任意层级的 models/ 目录，误伤 src/zephyr/*/models/
-# 下27个代码包（Pydantic models 等），导致代码未被git跟踪。
-# 修复：`/models/` 仅匹配根目录（旧已删除的ML模型目录），
-# `data/models/` 显式忽略实际模型文件目录。
-/models/
-data/models/
+models/
 
 # Runtime cache (walk_cache.json 400MB+, regenerate on demand)
 data/cache/

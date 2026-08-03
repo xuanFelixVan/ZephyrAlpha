@@ -52,8 +52,19 @@
 *.dll binary
 *.exe binary
 
-# Git LFS - Large model files (DM-100197) — REMOVED 2026-08-03 (ARCH-MODEL-LIFECYCLE-001 Phase 2)
-# 治本：原 LFS 规则覆盖 data/models/local_model/** 下12种模型格式，
-# 但 .gitignore 的 `data/models/` 规则已排除这些路径，LFS 规则永远无法触发（死代码）。
-# 模型文件管理策略改为：永不入库（.gitignore 排除）+ download_models.py 脚本获取（Phase 3）。
-# 历史 LFS 对象已通过 git filter-repo 从所有分支清除（Phase 1）。
+# Git LFS - Large model files (DM-100197)
+# Model weights and binaries in data/models/local_model/ are tracked via LFS
+# to avoid bloating the git repository with GB-scale files.
+data/models/local_model/**/*.safetensors filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.bin filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.onnx filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.pt filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.pth filter=lfs diff=lfs merge=lfs -text
+# 5.29.4 修复：扩展 LFS 覆盖的模型格式（原仅5种，补7种）
+data/models/local_model/**/*.gguf filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.ot filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.msgpack filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.npz filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.h5 filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.tflite filter=lfs diff=lfs merge=lfs -text
+data/models/local_model/**/*.ckpt filter=lfs diff=lfs merge=lfs -text
