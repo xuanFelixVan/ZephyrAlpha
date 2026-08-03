@@ -9655,6 +9655,41 @@ battle_map_steps:
     ⑤代码：C-005 L3 层；⑥降级：C-005 失效→固定策略查表。
 
     '
+- step_id: BM-BUY-02-A-1
+  flow_stage: buy_flow
+  name_zh: 市场状态预测
+  name_en: Market State Prediction
+  plain_zh: 预测大盘接下来走哪种状态——用3×3矩阵分9态+2叠加态+8态走势预测+体制转换检测，给买入决策提供市场环境判断。
+  mechanism_zh: BM-BUY-02-A 逻辑驱动轨的孙环节（depth=2）。对应决策图L2C层，整合3×3矩阵+2叠加态+三层大盘预测+T+1次日8态走势预测+体制转换检测(HMM/变点)。产出market_state_prediction供逻辑轨买入预案使用。
+  indicators_zh: ①触发：盘前全量计算；②消费：L0行情+L1因子+大盘指数；③参数：3×3矩阵维度、叠加态阈值、HMM状态数；④数据流：行情+因子→矩阵分类+叠加态+8态预测→market_state_prediction→BM-BUY-02-A逻辑轨；⑤代码：L2C层(planned)；⑥降级：L2C失效→仅用趋势线判断。
+- step_id: BM-BUY-02-A-1-a
+  flow_stage: buy_flow
+  name_zh: 3×3矩阵分类
+  name_en: 3x3 Matrix Classification
+  plain_zh: 把大盘分成9种状态——大盘趋势(上涨/震荡/下跌)×波动率(高/中/低)=3×3矩阵，每种状态对应不同的买入策略。
+  mechanism_zh: BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。3×3矩阵=大盘趋势(3)×波动率(3)=9态分类，每态对应不同买入策略权重。
+  indicators_zh: ①触发：盘前大盘行情计算；②消费：大盘指数收益率(L0)+波动率(L0)；③参数：趋势分类阈值、波动率分级；④数据流：大盘收益+波动率→3×3矩阵→9态分类→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：矩阵数据缺失→仅用趋势单维判断。
+- step_id: BM-BUY-02-A-1-b
+  flow_stage: buy_flow
+  name_zh: 2叠加态检测
+  name_en: 2 Superposition States Detection
+  plain_zh: 检测2种极端市场状态——极端牛和极端熊，这俩不走3×3矩阵，单独标出来触发特殊买入/不买策略。
+  mechanism_zh: BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。检测极端牛/极端熊2种叠加态，覆盖3×3矩阵分类，触发特殊策略。
+  indicators_zh: ①触发：盘中实时监测；②消费：大盘涨幅(L0)+成交量(L0)；③参数：极端牛/熊阈值；④数据流：大盘涨幅+量能→叠加态检测→极端标签→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：叠加态判定失效→仅用3×3矩阵。
+- step_id: BM-BUY-02-A-1-c
+  flow_stage: buy_flow
+  name_zh: T+1次日8态走势预测
+  name_en: T+1 Next-Day 8-State Prediction
+  plain_zh: 预测明天大盘走8种走势的哪一种——基于3×3矩阵和叠加态推算T+1次日的8种走势概率分布，指导次日买入。
+  mechanism_zh: BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。基于3×3矩阵+2叠加态推算T+1次日8种走势概率分布，输出走势预测供买入时机判断。8态=3×3矩阵9态合并1对不可能态=8，或基于历史聚类8态分类。
+  indicators_zh: ①触发：盘前预测；②消费：3×3矩阵分类结果+2叠加态检测结果+历史走势序列(L0)；③参数：8态定义、概率分布模型、预测窗口T+1；④数据流：矩阵+叠加态→8态概率分布→走势预测→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：预测模型失效→等概率8态默认。
+- step_id: BM-BUY-02-A-1-d
+  flow_stage: buy_flow
+  name_zh: 体制转换检测
+  name_en: Regime Shift Detection
+  plain_zh: 检测大盘是不是在变盘——用HMM隐马尔可夫和变点检测识别市场体制转换（牛转熊/熊转牛），变盘时调整买入策略。
+  mechanism_zh: BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。HMM隐马尔可夫+变点检测识别市场体制转换，输出体制转换信号供策略调整。
+  indicators_zh: ①触发：每日盘后/盘前；②消费：大盘指数历史序列(L0)；③参数：HMM状态数、变点检测窗口；④数据流：大盘历史序列→HMM+变点检测→体制转换信号→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：HMM失效→仅用变点检测。
 - step_id: BM-BUY-02-B
   flow_stage: buy_flow
   name_zh: 数据驱动轨
@@ -9883,6 +9918,21 @@ battle_map_steps:
   indicators_zh: '①触发：除权除息日+公司行为公告；②消费：BM-REC-01-A清算数据+公告；③参数：fee_types=佣金/印花税/过户费、corporate_action_types=分红/配股/拆股；④数据流：清算数据→D-TRADING-03除权除息/费率/公司行为→调整后持仓+费率→C-010 PnL；⑤代码：MOD-TRADING-004 corporate_action_processor.py(stable)、C-017③④⑤；⑥降级：D-TRADING-03不可用→手动调整持仓成本。
 
     '
+- step_id: BM-REC-01-C
+  flow_stage: reconciliation
+  name_zh: PnL计算
+  name_en: PnL Calculation
+  plain_zh: 基于结算对账和费率数据算出每笔交易和持仓的盈亏——已实现PnL和未实现PnL，是后续归因分析和风险报告的基础。
+  mechanism_zh: 'BM-REC-01 交易运营清算的子环节（depth=1）。MOD-TRADING-002 pnl_calculator.py(stable)。
+
+    消费结算对账(BM-REC-01-A)和公司行为与费率(BM-REC-01-B)数据，计算已实现PnL(卖出-买入-费率)和未实现PnL(市价-成本)。
+
+    产出PnL数据→CTR-TRD-01→D-REPORTING(C-010)供归因分析使用。
+
+    '
+  indicators_zh: '①触发：结算对账+费率计算完成后；②消费：BM-REC-01-A清算数据+BM-REC-01-B费率数据；③参数：pnl_type=realized/unrealized；④数据流：清算+费率→MOD-TRADING-002 PnL计算→PnL数据→BM-REC-02归因；⑤代码：MOD-TRADING-002 pnl_calculator.py(stable)、CTR-TRD-01；⑥降级：PnL计算失败→手动计算兜底。
+
+    '
 - step_id: BM-REC-02-A
   flow_stage: reconciliation
   name_zh: TCA执行质量分析
@@ -9939,6 +9989,36 @@ battle_map_steps:
 
     '
   indicators_zh: '①触发：复盘报告就绪；②消费：BM-REC-02-C复盘报告；③参数：channels=微信/邮件、archive=SQLite+Parquet；④数据流：复盘报告→D-REPORTING-03发布→微信/邮件推送+归档→BM-REC-03闭环优化；⑤代码：MOD-RPT-003 report_publisher.py(stable)、D-REPORTING-03；⑥降级：发布不可用→本地归档不推送。
+
+    '
+- step_id: BM-REC-02-E
+  flow_stage: reconciliation
+  name_zh: 风险报告
+  name_en: Risk Report
+  plain_zh: 生成日度/周度/事件/月度四类风险报告——VaR/CVaR/因子暴露/否决统计/漂移状态，看今天风险敞口怎么样。
+  mechanism_zh: 'BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-008 risk_report_engine.py(stable)。
+
+    消费D-RISK诊断结果(CTR-P1-008 RiskDashboardSnapshot + CTR-P1-011 RiskMetricsReport)，生成4类风险报告：日度风险摘要(VaR/CVaR/因子暴露/否决统计/漂移状态/Amihud非流动性)、周度风险深度(压力测试+漂移趋势+策略拥挤度+模型健康度)、事件风险快报(触发事件+影响评估+处置建议)、月度风险治理(风控参数变更审计+否决规则有效性+合规检查)。
+
+    产出风险报告→BM-REC-02-D报告发布。
+
+    '
+  indicators_zh: '①触发：每日收盘后+事件触发；②消费：D-RISK诊断结果(CTR-P1-008/011)+BM-REC-02-C复盘数据；③参数：report_freq=日/周/事件/月；④数据流：D-RISK诊断→MOD-RPT-008风险报告→4类报告→BM-REC-02-D发布；⑤代码：MOD-RPT-008 risk_report_engine.py(stable)、D-REPORTING-08；⑥降级：D-RISK不可用→基础风险摘要。
+
+    '
+- step_id: BM-REC-02-F
+  flow_stage: reconciliation
+  name_zh: 监管报告
+  name_en: Regulatory Report
+  plain_zh: 生成程序化交易报告、异常交易自报、持仓报告、绩效报告——满足证监会和交易所监管报送要求。
+  mechanism_zh: 'BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-006 regulatory_report_generator.py(stable)。
+
+    生成4类监管报告：程序化交易报告(交易运营数据)、异常交易自报(保证金异常/结算差异事件)、持仓报告(持仓结构/集中度/行业偏离)、绩效报告(收益/风险/归因)。
+
+    当前手动填报，GATE-002(AUM≥1000万)或GATE-003(跨市场)激活后自动化接口。产出监管报告→BM-REC-02-D报告发布。
+
+    '
+  indicators_zh: '①触发：月/季+事件驱动；②消费：BM-REC-01运营数据+BM-REC-02-E风险报告+BM-REC-02-C复盘数据；③参数：report_type=程序化交易/异常交易/持仓/绩效；④数据流：运营+风险+复盘数据→MOD-RPT-006监管报告→4类报告→BM-REC-02-D发布；⑤代码：MOD-RPT-006 regulatory_report_generator.py(stable)、D-REPORTING-06；⑥降级：自动化接口不可用→手动填报。
 
     '
 - step_id: BM-REC-03-A
@@ -10199,14 +10279,14 @@ battle_map_steps:
   plain_zh: 测游资接力情绪——6个因子打0-100分（连板高度/封单质量/涨停时间/开板次数/竞价强度/助攻梯队），再定位情绪周期4+1阶段（冰点/反核/主升/疯狂/退潮），不同阶段用不同策略。
   mechanism_zh: 'L2-C 层 A股特色信号。MOD-SIG-033 youzi_relay_emotion_engine.py（stable）。
 
-    6因子0-100分评分（连板高度25分+封单质量20分+涨停时间15分+开板次数15分+竞价强度10分+助攻梯队10分）+
+    6因子0-100分评分（连板高度25分+封单质量20分+涨停时间15分+开板次数15分+竞价强度10分+助攻梯队15分）+
 
     情绪周期4+1阶段定位（冰点/反核/主升/疯狂/退潮）+ 各阶段策略映射。
 
     产出游资接力情绪评分和周期阶段，作为双引擎融合的游资引擎输入。
 
     '
-  indicators_zh: '①触发：盘中实时（涨停数据到达），6因子0-100分；②消费：连板高度+封单质量+涨停时间+开板次数+竞价强度+助攻梯队(L0涨停数据)+情绪周期4+1阶段(L2-C)；③参数：6因子权重25/20/15/15/10/10(implemented)、情绪周期阶段数=4+1(冰点/反核/主升/疯狂/退潮)(implemented)；④数据流：涨停数据+竞价+梯队→6因子评分→情绪周期定位→策略映射→BM-SEL-25 双引擎融合；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：情绪引擎未就绪→仅量化强度单引擎决策。
+  indicators_zh: '①触发：盘中实时（涨停数据到达），6因子0-100分；②消费：连板高度+封单质量+涨停时间+开板次数+竞价强度+助攻梯队(L0涨停数据)+情绪周期4+1阶段(L2-C)；③参数：6因子权重25/20/15/15/10/15(implemented)、情绪周期阶段数=4+1(冰点/反核/主升/疯狂/退潮)(implemented)；④数据流：涨停数据+竞价+梯队→6因子评分→情绪周期定位→策略映射→BM-SEL-25 双引擎融合；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：情绪引擎未就绪→仅量化强度单引擎决策。
 
     '
 - step_id: BM-SEL-24
@@ -11436,9 +11516,9 @@ battle_map_steps:
   flow_stage: stock_selection
   name_zh: 6因子游资接力评分
   name_en: 6-factor Hot Money Relay Score
-  plain_zh: 用6个因子给游资接力打0-100分——连板高度25分+封单质量20分+涨停时间15分+开板次数15分+竞价强度10分+助攻梯队10分。
-  mechanism_zh: BM-SEL-23 游资接力情绪周期的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的6因子评分模块，按连板高度(25分)+封单质量(20分)+涨停时间(15分)+开板次数(15分)+竞价强度(10分)+助攻梯队(10分)加权计算游资接力评分(0-100)。是游资情绪引擎的核心评分出口。
-  indicators_zh: ①触发：盘中实时（涨停数据到达）；②消费：连板高度+封单+涨停时间+开板次数+竞价+助攻梯队(L0涨停数据)；③参数：6因子权重25/20/15/15/10/10(implemented)；④数据流：涨停数据→6因子独立评分→加权合成→游资接力分(0-100)→BM-SEL-23-B周期定位；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：竞价/梯队数据缺失→仅用4因子(连板+封单+时间+开板)评分。
+  plain_zh: 用6个因子给游资接力打0-100分——连板高度25分+封单质量20分+涨停时间15分+开板次数15分+竞价强度10分+助攻梯队15分。
+  mechanism_zh: BM-SEL-23 游资接力情绪周期的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的6因子评分模块，按连板高度(25分)+封单质量(20分)+涨停时间(15分)+开板次数(15分)+竞价强度(10分)+助攻梯队(15分)加权计算游资接力评分(0-100)。是游资情绪引擎的核心评分出口。
+  indicators_zh: ①触发：盘中实时（涨停数据到达）；②消费：连板高度+封单+涨停时间+开板次数+竞价+助攻梯队(L0涨停数据)；③参数：6因子权重25/20/15/15/10/15(implemented)；④数据流：涨停数据→6因子独立评分→加权合成→游资接力分(0-100)→BM-SEL-23-B周期定位；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：竞价/梯队数据缺失→仅用4因子(连板+封单+时间+开板)评分。
 - step_id: BM-SEL-23-A-1
   flow_stage: stock_selection
   name_zh: 连板高度因子
@@ -11478,9 +11558,9 @@ battle_map_steps:
   flow_stage: stock_selection
   name_zh: 助攻梯队因子
   name_en: Support Echelon Factor
-  plain_zh: 看同题材同梯队有没有一起涨停——梯队多涨停+领涨位次满分10分，孤板无梯队只给2分。
-  mechanism_zh: BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的助攻梯队因子模块，梯队多涨停+领涨位次=10分，孤板无梯队=2分。产出助攻梯队因子分(0-10)供接力评分汇总。
-  indicators_zh: ①触发：同题材/同梯队联动分析，权重10分；②消费：同梯队涨停数(L0全市场涨停)+梯队位次(L0涨停排序)；③参数：梯队涨停数分级、梯队位次加权；④数据流：同梯队涨停数+梯队位次→梯队联动评分→助攻梯队因子分(0-10)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：梯队联动数据缺失→记中性分5分。
+  plain_zh: 看同题材同梯队有没有一起涨停——梯队多涨停+领涨位次满分15分，孤板无梯队只给3分。
+  mechanism_zh: BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的助攻梯队因子模块，梯队多涨停+领涨位次=15分，孤板无梯队=3分。产出助攻梯队因子分(0-15)供接力评分汇总。
+  indicators_zh: ①触发：同题材/同梯队联动分析，权重15分；②消费：同梯队涨停数(L0全市场涨停)+梯队位次(L0涨停排序)；③参数：梯队涨停数分级、梯队位次加权；④数据流：同梯队涨停数+梯队位次→梯队联动评分→助攻梯队因子分(0-15)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：梯队联动数据缺失→记中性分5分。
 - step_id: BM-SEL-23-B
   flow_stage: stock_selection
   name_zh: 情绪周期4+1阶段定位
