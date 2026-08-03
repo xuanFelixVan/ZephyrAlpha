@@ -5,7 +5,7 @@ collection_name: 测试集 / Test Suite
 collection_path: tests/
 owner_module: MOD-AUDIT-TEST
 node_type: test_suite
-total_registered: 1617
+total_registered: 1618
 items:
 - file: tests/a2a/test_a2a_anomaly_detector.py
   name: test_a2a_anomaly_detector.py
@@ -3751,8 +3751,8 @@ items:
   name: test_command_chain_length_gate.py
   node_type: test
   status: active
-- file: tests/governance/data_layer/test_cache_manager.py
-  name: test_cache_manager.py
+- file: tests/governance/data_layer/test_dedup_cache_manager.py
+  name: test_dedup_cache_manager.py
   node_type: test
   status: active
 - file: tests/governance/data_layer/test_s3_snapshot_lifecycle.py
@@ -5061,6 +5061,10 @@ items:
   status: active
 - file: tests/orchestrator/test_orchestrator_wave_generator.py
   name: test_orchestrator_wave_generator.py
+  node_type: test
+  status: active
+- file: tests/ops/test_shadow_canary_deploy.py
+  name: test_shadow_canary_deploy.py
   node_type: test
   status: active
 - file: tests/path/test_path_guard.py

@@ -11568,6 +11568,149 @@ battle_map_steps:
   indicators_zh: '①触发：决策门控通过+用户确认；②消费：BacktestRunArtifact+策略代码；③参数：部署目标、配置；④数据流：验证通过策略→部署器→实盘环境；⑤代码：BT-25 services/result_deployer.py（planned）；⑥降级：部署器不可用→手动部署(操作风险)。
 
     '
+- step_id: BM-BT-01-F
+  flow_stage: backtest_validation
+  name_zh: 回测加速架构
+  name_en: Backtest Acceleration Architecture
+  plain_zh: 回测的"加速器"——用并行计算+向量化+缓存复用让大批量参数网格回测跑得更快。
+  mechanism_zh: 'BM-BT-01 子环节（depth=1, design）。回测加速架构：并行回测调度+向量化引擎复用+结果缓存命中优化+内存映射数据加载，支撑万级参数网格批量回测。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：大批量参数网格回测请求；②消费：策略参数网格+历史数据缓存；③参数：并行度、缓存策略、数据预加载；④数据流：参数网格→并行调度→向量化回测→缓存命中检查→结果聚合；⑤代码：BT-01~BT-20 加速层（planned）；⑥降级：加速层未就绪→串行回测(慢但正确)。
+
+    '
+- step_id: BM-BT-02-E
+  flow_stage: backtest_validation
+  name_zh: 幸存者偏差防护
+  name_en: Survivorship Bias Protection
+  plain_zh: 回测的"防作弊器"——把退市股票也纳入回测，避免只看活下来的股票导致收益虚高。
+  mechanism_zh: 'BM-BT-02 子环节（depth=1, design）。幸存者偏差防护：退市股票数据保留+PIT全样本回测+历史成分股还原，防止只用当前指数成分股回测导致收益虚高。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：回测数据加载时；②消费：历史成分股数据+退市股票数据；③参数：成分股还原时点、退市数据处理；④数据流：当前成分股→历史还原→全样本(含退市)→回测引擎；⑤代码：BT-06 data_handler 扩展（planned）；⑥降级：退市数据缺失→仅用存活股票(收益虚高风险)。
+
+    '
+- step_id: BM-BT-03-E
+  flow_stage: backtest_validation
+  name_zh: 密度预测模型回测验证
+  name_en: Density Prediction Model Backtest Validation
+  plain_zh: 把密度预测模型放到回测里验——看概率预测准不准，不是只看点预测。
+  mechanism_zh: 'BM-BT-03 子环节（depth=1, design）。密度预测模型回测验证：概率预测评估+CRPS/校准度+密度回测框架，评估模型不只看点预测准不准，还看概率分布对不对。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：密度预测模型训练完成后；②消费：模型概率预测+真实收益分布；③参数：CRPS阈值、校准度指标；④数据流：模型预测分布→密度回测→CRPS/校准度→评估报告；⑤代码：BT-07 metrics 扩展（planned）；⑥降级：密度回测未就绪→仅点预测回测(概率评估缺失)。
+
+    '
+- step_id: BM-BT-04-C
+  flow_stage: backtest_validation
+  name_zh: Purged K-Fold交叉验证
+  name_en: Purged K-Fold Cross Validation
+  plain_zh: 交叉验证的"隔离版"——训练测试之间砍掉重叠期，防止数据泄漏导致虚高。
+  mechanism_zh: 'BM-BT-04 子环节（depth=1, design）。Purged K-Fold交叉验证：训练测试折叠间清除重叠期+Embargo隔离，防止时序数据在K-Fold折叠间泄漏，比普通K-Fold更适合金融时序数据。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：模型交叉验证阶段；②消费：PIT特征+标签序列；③参数：K折叠数、Purge窗口、Embargo期；④数据流：时序数据→Purged K-Fold分割→训练/验证折叠→评估；⑤代码：BT-04 PIT管理扩展（planned）；⑥降级：Purged K-Fold未就绪→普通K-Fold(泄漏风险)。
+
+    '
+- step_id: BM-BT-05-F
+  flow_stage: backtest_validation
+  name_zh: Permutation Test置换检验
+  name_en: Permutation Test
+  plain_zh: 策略的"打假器"——把收益序列打乱重排，看策略收益是不是真有信号还是纯运气。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。Permutation Test置换检验：收益序列打乱重排+显著性检验，通过对比真实收益与置换分布判断策略是否真有预测能力，而非纯靠运气。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：策略过拟合检测阶段；②消费：策略收益序列；③参数：置换次数、显著性水平；④数据流：真实收益→置换重排→经验分布→p值→显著性判定；⑤代码：BT-07 metrics 扩展（planned）；⑥降级：置换检验未就绪→仅样本内外对比(假阳性风险)。
+
+    '
+- step_id: BM-BT-05-G
+  flow_stage: backtest_validation
+  name_zh: Deflated Sharpe Ratio
+  name_en: Deflated Sharpe Ratio
+  plain_zh: 夏普比率的"去水器"——考虑试验次数后调整夏普比率，试得越多越要打折。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。Deflated Sharpe Ratio：多重试验校正后的夏普比率，考虑尝试的策略数量对夏普比率的影响，试得越多越要打折，防止"试100个总有几个好看"的假阳性。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：策略评估阶段；②消费：策略夏普比率+试验次数；③参数：试验次数、相关性结构；④数据流：原始夏普→试验次数校正→Deflated Sharpe→显著性判定；⑤代码：BT-07 metrics 扩展（planned）；⑥降级：DSR未就绪→仅原始夏普(多重比较假阳性风险)。
+
+    '
+- step_id: BM-BT-05-H
+  flow_stage: backtest_validation
+  name_zh: 回测-实盘偏差监控
+  name_en: Backtest-Live Bias Monitor
+  plain_zh: 回测和实盘的"对账员"——持续监控回测预期和实盘实际的偏差，偏差大就报警。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。回测-实盘偏差监控：回测预期vs实盘实际收益/风险偏差持续监控+告警，发现策略上线后表现与回测预期背离时及时告警，防止"回测美好实盘崩盘"。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：策略上线后持续监控；②消费：回测预期绩效+实盘实际绩效；③参数：偏差阈值、监控频率；④数据流：回测预期+实盘实际→偏差计算→阈值判定→告警；⑤代码：BT-18 decay_monitor 扩展（planned）；⑥降级：监控未就绪→人工对账(漏检风险)。
+
+    '
+- step_id: BM-BT-05-I
+  flow_stage: backtest_validation
+  name_zh: 组合级过拟合检测
+  name_en: Portfolio-Level Overfitting Detection
+  plain_zh: 不光看单个策略——从组合层面检测整体过拟合，防止单策略过拟合被分散掩盖。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。组合级过拟合检测：从组合层面而非单策略层面检测过拟合+相关性结构稳定性检验，防止单策略过拟合被组合分散效应掩盖。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：组合策略评估阶段；②消费：组合收益+单策略收益+相关性矩阵；③参数：组合过拟合阈值、相关性稳定性窗口；④数据流：组合+单策略收益→组合级检验→相关性稳定性→过拟合判定；⑤代码：BT-07 metrics 扩展（planned）；⑥降级：组合级检测未就绪→仅单策略检测(组合过拟合漏检)。
+
+    '
+- step_id: BM-BT-05-J
+  flow_stage: backtest_validation
+  name_zh: p-hacking追踪
+  name_en: P-hacking Tracker
+  plain_zh: 数据挖掘的"审计员"——追踪试验次数和参数调整，防止反复试到好看的结果（p-hacking）。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。p-hacking追踪：试验次数追踪+参数调整审计+选择性报告检测，记录每次参数调整和试验，防止反复试到好看结果后只报告好的（p-hacking）。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：策略研发全过程；②消费：试验日志+参数调整记录；③参数：试验追踪粒度、报告阈值；④数据流：试验/参数调整→日志记录→p-hacking检测→审计报告；⑤代码：BT-21 param_analyzer 扩展（planned）；⑥降级：追踪未就绪→无审计(选择性报告风险)。
+
+    '
+- step_id: BM-BT-06-C
+  flow_stage: backtest_validation
+  name_zh: 自适应Walk-Forward
+  name_en: Adaptive Walk-Forward
+  plain_zh: Walk-Forward的"智能版"——窗口大小和参数自动适应市场状态，不是死固定。
+  mechanism_zh: 'BM-BT-06 子环节（depth=1, design）。自适应Walk-Forward：窗口大小+参数自动适应市场状态（牛/熊/震荡），比固定窗口Walk-Forward更能适应市场风格切换。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：Walk-Forward优化阶段；②消费：市场状态识别+策略参数；③参数：自适应窗口规则、市场状态分类；④数据流：市场状态→窗口自适应→Walk-Forward回测→参数稳定性；⑤代码：BT-01~BT-09 扩展（planned）；⑥降级：自适应未就绪→固定窗口WFO(市场切换适应差)。
+
+    '
+- step_id: BM-BT-07-I
+  flow_stage: backtest_validation
+  name_zh: 分层验证门控V1-V6
+  name_en: Layered Validation Gate V1-V6
+  plain_zh: 策略上线的"六道关"——V1到V6逐层验证，每层过了才进下一层，层层递进不能跳。
+  mechanism_zh: 'BM-BT-07 子环节（depth=1, design）。分层验证门控V1-V6：从基础统计检验到实盘小仓位验证的六层递进门控，每层通过才进下一层，层层递进不可跳级，比三阶段门控更精细。
+
+    v2.0 备忘模块，按需开发。
+
+    '
+  indicators_zh: '①触发：策略逐层验证阶段；②消费：各层验证指标+策略绩效；③参数：V1-V6各层阈值；④数据流：策略→V1基础检验→V2样本外→V3稳健性→V4压力测试→V5模拟盘→V6小仓位实盘→上线；⑤代码：BT-07 门控扩展（planned）；⑥降级：分层门控未就绪→三阶段门控(粒度粗)。
+
+    '
 - step_id: BM-SIM-01
   flow_stage: simulation_validation
   name_zh: 市场仿真器

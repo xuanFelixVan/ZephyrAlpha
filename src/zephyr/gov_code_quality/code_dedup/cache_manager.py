@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_code_quality.code_dedup.cache_manager
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] tests/governance/data_layer/test_cache_manager.py
+# [CONSUMERS] tests/governance/data_layer/test_dedup_cache_manager.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
