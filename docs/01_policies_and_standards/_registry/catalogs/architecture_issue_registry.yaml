@@ -11239,3 +11239,26 @@ entries:
   related_adjudication: 'MODULE-ID-CONSISTENCY collision check 同模块豁免（同 [BLUEPRINT] = 同模块）'
   created: '2026-08-03'
   last_updated: '2026-08-03'
+# --- #ARCH-RECONCILER-TOCTOU-CLOBBER-001: reconciler 并发写 blueprint.md clobber P0 止血（2026-08-03） ---
+- issue_id: '#ARCH-RECONCILER-TOCTOU-CLOBBER-001'
+  title: reconciler 并发写 blueprint.md TOCTOU clobber P0 止血——advisory lock + skip-if-recent + 超时升级
+  severity: P0紧急
+  category: governance
+  adjudication: |-
+    2026-08-03 P0 止血。问题：多个 reconciler（frontmatter_sync/code_index/inventory）对同一 blueprint.md
+    无锁整文件 READ-MODIFY-WRITE，跨 commit/session 并发时后写者覆盖前写者内容（clobber），
+    导致 blueprint.md 内容被覆盖、§0.1 gate 表新增行丢失。FRONTMATTER-SYNC 全量扫描 616 模块
+    需 208-296s，原 300s 超时余量不足（~4% 超时率）。
+    止血方案：advisory lock + skip-if-recent + 超时 300->600s。
+  fix_phase: |-
+    P0 止血已执行：
+    - 新增 _shared/file_lock.py（blueprint_write_lock，fail-open 设计，.runtime/locks/ 锁文件）
+    - reconciliation_registry.py：FRONTMATTER-SYNC 超时 300->600s + skip-if-recent 600s 冷却
+      （.runtime/frontmatter_sync_last_attempt 标记）；_auto_fix_gate_inventory 加锁；
+      time.time()->now_utc().timestamp()（DATETIME-NOW 合规）
+    - blueprint_frontmatter_reconciler.py：_write_frontmatter_updates 加锁
+    - sync_blueprint_code_index.py：_process_blueprint 加锁
+  status: decided
+  related_adjudication: 'reconciler TOCTOU clobber 止血（advisory lock + skip-if-recent）'
+  created: '2026-08-03'
+  last_updated: '2026-08-03'

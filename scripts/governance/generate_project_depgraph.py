@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7
 """# [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_project_depgraph.py | §7
 # [MODULE] scripts.governance.generate_project_depgraph
 # [DOMAIN] D_GOV_SCRIPTS
