@@ -536,7 +536,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="修正 depgraph 不合规 blueprint_id 并同步文件头（28 节点 + 6 节点文件同步补漏）",
     )
-    mode = parser.add_mutually_exclusive_group(required=True)
+    mode = parser.add_mutually_exclusive_group(required=False)
     mode.add_argument("--dry-run", action="store_true", help="只分析, 不修改")
     mode.add_argument("--confirm", action="store_true", help="实际执行（DB 修改经 apply_depgraph 自动 PG 备份，trae_054 v1.6.0；建议先 git commit 保持工作树干净）")
     parser.add_argument("--file-sync-only", action="store_true", help="治本（2026-08-03）：仅补文件同步（DB 已改），用于 6 节点 rename 后文件未同步的修复。配 --confirm 执行，单独使用为 dry-run。")
@@ -544,9 +544,14 @@ def main() -> None:
     parser.add_argument("--output", type=str, default=str(DEFAULT_REPORT), help="报告 JSON 输出路径")
     args = parser.parse_args()
 
-    # --file-sync-only 与 --dry-run 互斥（--confirm 可与 --file-sync-only 组合）
-    if args.file_sync_only and args.dry_run:
-        parser.error("--file-sync-only 与 --dry-run 互斥（--file-sync-only 单独使用即为 dry-run）")
+    # 治本（2026-08-03）：argparse 死锁修复——required=True 互斥组强制 --dry-run/--confirm，
+    # 但 --file-sync-only 与 --dry-run 互斥，导致 --file-sync-only 单独使用时无满足条件的必选参数。
+    # 改为 required=False + 自定义校验：--file-sync-only 单独=dry-run，配 --confirm=执行。
+    if args.file_sync_only:
+        if args.dry_run:
+            parser.error("--file-sync-only 与 --dry-run 互斥（--file-sync-only 单独使用即为 dry-run）")
+    elif not args.dry_run and not args.confirm:
+        parser.error("one of the arguments --dry-run --confirm --file-sync-only is required")
 
     # ── file-sync-only 模式：跳过 RENAMES/SETS 校验，仅处理 FILE_SYNC_PAIRS ──
     if args.file_sync_only:
