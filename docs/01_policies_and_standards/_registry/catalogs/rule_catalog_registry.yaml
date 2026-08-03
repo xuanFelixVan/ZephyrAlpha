@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-03T17:21:45Z'
+generated_at: '2026-08-03T17:48:16Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 191
@@ -1461,7 +1461,7 @@ files:
   title: 临时文件放置规范
   doc_type: ''
   status: ''
-  version: 1.0.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: stable
@@ -1476,7 +1476,7 @@ files:
   title: 临时文件生命周期管理
   doc_type: ''
   status: ''
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: stable

@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-03T17:21:48Z'
+generated_at: '2026-08-03T17:48:19Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 134
+total_gates: 136
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -35,6 +35,15 @@ gates:
   description: 命名规范门禁合并簇——GATE-11（全库命名规范 --warn-only --scan）+ GATE-11-SSOT（N-16 fallback
     与 YAML 一致性），run_gate_chain 顺序执行
   files_trigger: ^.*
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-DOC-NODE-ID
+  name: 'GATE-DOC-NODE-ID: 文档物理ID硬编码检测（文档引用铁律）'
+  entry: python scripts/governance/d3_metadata/check_doc_node_id_hardcode.py --ci
+  description: 检测 docs/ 下 .md 文件硬编码 node_id/edge_id 物理ID（自增易变，文档禁写，查DB获取）
+  files_trigger: ^docs/.*\.md$
   always_run: false
   category: unknown
   status: active
@@ -522,6 +531,16 @@ gates:
     Phase 0 防蔓延）（CommitGate, priority=77）'
   entry: in-process (GitCommitGateway)
   description: '[BLUEPRINT] 头部 module_id 格式阻断门禁（BLUEPRINT-FORMAT，裁定#214 Phase 0 防蔓延）'
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: BLUEPRINT-NODE-ID-HARDCODE
+  name: 'BLUEPRINT-NODE-ID-HARDCODE: blueprint.md node_id/edge_id 硬编码阻断门禁（CommitGate,
+    priority=57）'
+  entry: in-process (GitCommitGateway)
+  description: blueprint.md node_id/edge_id 硬编码阻断门禁
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1307,9 +1326,9 @@ gates:
   source: commit-gate
 - gate_id: WORKTREE-REQUIRED
   name: 'WORKTREE-REQUIRED: worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001
-    治本）（CommitGate, priority=44）'
+    治本 2026-08-04）（CommitGate, priority=44）'
   entry: in-process (GitCommitGateway)
-  description: worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001 治本）
+  description: worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001 治本 2026-08-04）
   files_trigger: ''
   always_run: false
   category: commit_gate

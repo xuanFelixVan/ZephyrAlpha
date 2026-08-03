@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-03T17:19:49Z
+# 自动生成于 2026-08-03T17:46:13Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-03T17:19:49Z'
+generated_at: '2026-08-03T17:46:13Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 33
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 298
+  entry_count: 299
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -141,7 +141,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 134
+  entry_count: 135
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
@@ -165,7 +165,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 86
+  entry_count: 87
   status: active
 - registry_id: CFG-infrastructure-registry
   name: 运行时基础设施登记表
@@ -237,7 +237,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 189
+  entry_count: 191
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表

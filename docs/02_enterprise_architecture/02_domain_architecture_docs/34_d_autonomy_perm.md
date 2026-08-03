@@ -57,8 +57,8 @@ flowchart TD
     scripts_governance_meta_manage_kill_switch_py["管理终止开关<br/>提供 CLI 命令禁用<br/>/启用脚本、查看状态、设置全局冻结。<br/>manage_kill_switch<br/>文件: meta/manage_kill_switch.py<br/>(生产态 / production)"]
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py ~~~ scripts_governance_meta_manage_kill_switch_py
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
+    scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     scripts_governance_meta_manage_kill_switch_py -->|导入依赖 / import_depends| D_GOV_SCRIPTS
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

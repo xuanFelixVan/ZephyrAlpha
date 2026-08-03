@@ -1,12 +1,12 @@
-# 自动生成于 2026-08-03T17:21:33Z
+# 自动生成于 2026-08-03T17:48:04Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-03T17:21:33Z'
+generated_at: '2026-08-03T17:48:04Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 387
-with_manifest: 322
+total_scripts: 388
+with_manifest: 323
 missing_manifest: 65
 categories:
   governance:_sync: 4
@@ -17,7 +17,7 @@ categories:
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
-  governance:d3_metadata: 25
+  governance:d3_metadata: 26
   governance:d4_paths: 4
   governance:d5_architecture: 107
   governance:d6_security: 15
@@ -1018,6 +1018,17 @@ scripts:
   warn_only: false
   description: '[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md
     | §3'
+  tags:
+  - Quick
+- name: d3_metadata/check_doc_node_id_hardcode.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'GATE-DOC-NODE-ID: 文档物理ID硬编码检测（文档引用铁律）'
   tags:
   - Quick
 - name: d3_metadata/check_frontmatter_metadata.py

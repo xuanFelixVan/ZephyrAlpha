@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3722 |
-| 生产态模块 | 3537 |
+| 模块总数 | 3726 |
+| 生产态模块 | 3541 |
 | 设计态模块 | 185 |
 
 ## 域清单（按架构层分组）
@@ -79,7 +79,7 @@ ttl: permanent
 | D_CONTRACTS | 共享契约 / D_CONTRACTS | 0 | 0 | 0 | 0/150 (OK) | [📄 01_d_contracts.md](01_d_contracts.md) |
 | D_INFRASTRUCTURE | 跨层契约基础设施 / Cross-Layer Contract Infrastructure | 26 | 26 | 0 | 26/150 (OK) | [📄 02_d_infrastructure.md](02_d_infrastructure.md) |
 | D_INFRA_A2A | A2A通信 / A2A Communication | 72 | 72 | 0 | 72/150 (OK) | [📄 03_d_infra_a2a.md](03_d_infra_a2a.md) |
-| D_INFRA_OPS | 基础设施运维 / Asset Inventory | 1 | 1 | 0 | 1/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
+| D_INFRA_OPS | 基础设施运维 / Asset Inventory | 2 | 2 | 0 | 2/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 55 | 55 | 0 | 55/150 (OK) | [📄 05_d_infra_recovery.md](05_d_infra_recovery.md) |
 | D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 173 | 171 | 2 | 173/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | 可观测性 / Observability | 0 | 0 | 0 | 0/150 (OK) | [📄 07_d_infra_telemetry.md](07_d_infra_telemetry.md) |
@@ -99,7 +99,7 @@ ttl: permanent
 | D_FBL_DIAGNOSERS | 反馈诊断器 / Feedback Diagnosers | 76 | 76 | 0 | 76/150 (OK) | [📄 16_d_fbl_diagnosers.md](16_d_fbl_diagnosers.md) |
 | D_FBL_VERIFICATION | 反馈验证 / Feedback Verification | 71 | 71 | 0 | 71/150 (OK) | [📄 17_d_fbl_verification.md](17_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | 反馈循环引擎 / Feedback Loop Engine | 125 | 125 | 0 | 125/150 (OK) | [📄 18_d_feedback_loop.md](18_d_feedback_loop.md) |
-| D_GOV_CODE_QUALITY | 代码质量治理 / Code Quality Governance | 209 | 209 | 0 | 209/150 (超容) | [📄 19_d_gov_code_quality.md](19_d_gov_code_quality.md) |
+| D_GOV_CODE_QUALITY | 代码质量治理 / Code Quality Governance | 211 | 211 | 0 | 211/150 (超容) | [📄 19_d_gov_code_quality.md](19_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 / Ops Resilience Governance | 115 | 115 | 0 | 115/150 (OK) | [📄 20_d_gov_ops_resilience.md](20_d_gov_ops_resilience.md) |
 | D_INTEGRATION | 管线路由 / Pipeline Routing | 71 | 71 | 0 | 71/150 (OK) | [📄 21_d_integration.md](21_d_integration.md) |
 | D_INTEGRATION_GATEWAY | 集成网关 / Integration Gateway | 0 | 0 | 0 | 0/150 (OK) | [📄 22_d_integration_gateway.md](22_d_integration_gateway.md) |
@@ -141,7 +141,7 @@ ttl: permanent
 | D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 122 | 121 | 1 | 122/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 36 | 36 | 0 | 36/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 417 | 417 | 0 | 417/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 418 | 418 | 0 | 418/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |

@@ -69,9 +69,9 @@ flowchart TD
     D_GOV_OPS_RESILIENCE -->|测试依赖 / test_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
-    D_GOV_OPS_RESILIENCE -->|测试依赖 / test_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
     D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
+    D_GOV_OPS_RESILIENCE -->|测试依赖 / test_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
