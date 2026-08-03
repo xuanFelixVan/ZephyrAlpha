@@ -145,7 +145,6 @@ CD 流水线 (.github/workflows/deploy.yml)
 | ShadowCanary / CanaryResult | `src/zephyr/autonomy_core/context/shadow_canary.py` | 影子→promote 语义复用 |
 | SimulationBroker | `src/zephyr/governance/adapters/simulation_broker.py` | shadow 不下真单（依赖可加载性预检） |
 | run_subprocess_hidden / spawn_python_hidden | `src/zephyr/shared/infra/process_pool.py` | 无窗口 subprocess（预检 + 影子进程） |
-| ch_health_probe | `scripts/ops/ch_health_probe.py` | health 检查复用 + ops 脚本范式 |
 
 ## §13 已知风险与缓解
 
@@ -196,6 +195,6 @@ CD 流水线 (.github/workflows/deploy.yml)
 ## 治理信息
 
 - **设计态登记**：depgraph 节点 MOD-CD-001（build_status=planned, domain=D_GOV_ENFORCEMENT, can_build=1）
-- **依赖边**：5 条 import_depends 出边（can_i_deploy / simulation_broker / shadow_canary / canary_rollout_manager / ch_health_probe）
+- **依赖边**：5 条 import_depends 出边（can_i_deploy / simulation_broker / shadow_canary / canary_rollout_manager / process_pool）
 - **门禁关联**：满足 MOD-EX-021 门禁的 CI/CD 半（实盘环境半待 Owner 决策）
 - **post-activation**：容器化部署（#ARCH-065）激活 `ContainerDeployer` + `container-deploy` job
