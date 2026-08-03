@@ -1300,3 +1300,129 @@ class TestClassifyGitTimeout:
         finally:
             gw.in_commit_flow = False
 
+# ---------------------------------------------------------------------------
+# #ARCH-RECONCILER-INDEXLOCK-RETRY 治本测试（2026-08-03）：
+# _git_add_with_index_lock_retry —— git add 阶段 index.lock 暂时性竞争重试。
+# 区别于 reconciliation_registry.py:3897 反模式（确定性错误盲重试）。
+# ---------------------------------------------------------------------------
+
+
+class TestGitAddIndexLockRetry:
+    """_git_add_with_index_lock_retry 重试逻辑测试。
+
+    根因：外部裸 git commit 持有 .git/index.lock → reconciler auto-commit 的
+    git add 失败。git add 阶段 commit 未执行，重试安全（不产生重复 commit）。
+    区别于 commit 阶段失败的确定性错误盲重试（reconciliation_registry.py:3897 反模式）。
+
+    覆盖：
+    - git add 成功 → None（不重试）
+    - index.lock 错误 → 重试 → 成功 → None
+    - index.lock 错误 → 重试耗尽（3次）→ COMMIT_FAILED
+    - 非 index.lock 错误 → 不重试 → 立即 COMMIT_FAILED
+    """
+
+    _LOCK_ERR = (
+        "fatal: Unable to create 'D:/ZephyrAlpha/.git/index.lock': File exists."
+    )
+    _OTHER_ERR = "fatal: pathspec 'foo' did not match any files"
+
+    def _mock_result(
+        self, returncode: int, stderr: str = ""
+    ) -> subprocess.CompletedProcess:
+        return subprocess.CompletedProcess(
+            args=[], returncode=returncode, stderr=stderr, stdout=""
+        )
+
+    def test_add_success_no_retry(self, tmp_path: Path, monkeypatch) -> None:
+        """git add 成功 → 返回 None，不调用 sleep。"""
+        _init_git_repo(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        monkeypatch.setattr(gw, "run_git", lambda cmd: self._mock_result(0))
+        sleep_calls: list[float] = []
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.time.sleep",
+            lambda s: sleep_calls.append(s),
+        )
+        result = gw._git_add_with_index_lock_retry(
+            "/tmp/fake_pathspec", "test-session"
+        )
+        assert result is None, "成功应返回 None"
+        assert sleep_calls == [], "成功时不应调用 sleep"
+
+    def test_index_lock_retry_then_success(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        """index.lock 错误 → 重试 → 成功 → None。"""
+        _init_git_repo(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        results = iter([
+            self._mock_result(1, self._LOCK_ERR),
+            self._mock_result(0),
+        ])
+        monkeypatch.setattr(gw, "run_git", lambda cmd: next(results))
+        sleep_calls: list[float] = []
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.time.sleep",
+            lambda s: sleep_calls.append(s),
+        )
+        result = gw._git_add_with_index_lock_retry(
+            "/tmp/fake_pathspec", "test-session"
+        )
+        assert result is None, "重试后成功应返回 None"
+        assert len(sleep_calls) == 1, (
+            f"应重试1次（sleep 1次），实际 {len(sleep_calls)}"
+        )
+        assert sleep_calls[0] == 2.0, f"首次退避应为 2s，实际 {sleep_calls[0]}"
+
+    def test_index_lock_exhaust_retries(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        """index.lock 错误 → 重试耗尽（3次）→ COMMIT_FAILED。"""
+        _init_git_repo(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        monkeypatch.setattr(
+            gw, "run_git", lambda cmd: self._mock_result(1, self._LOCK_ERR)
+        )
+        sleep_calls: list[float] = []
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.time.sleep",
+            lambda s: sleep_calls.append(s),
+        )
+        result = gw._git_add_with_index_lock_retry(
+            "/tmp/fake_pathspec", "test-session"
+        )
+        assert result is not None, "重试耗尽应返回 CommitResult"
+        assert result.status == CommitStatus.COMMIT_FAILED, (
+            f"应返回 COMMIT_FAILED，实际 {result.status}"
+        )
+        assert "3 retries" in result.message or "index.lock" in result.message, (
+            f"失败消息应含重试次数或 index.lock: {result.message}"
+        )
+        # 3次尝试 = 2次退避（第3次失败后不 sleep，因 attempt < max_retries-1 为 False）
+        assert len(sleep_calls) == 2, (
+            f"3次尝试应有2次退避 sleep，实际 {len(sleep_calls)}"
+        )
+        assert sleep_calls == [2.0, 4.0], f"退避应为 2s/4s，实际 {sleep_calls}"
+
+    def test_non_index_lock_error_no_retry(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        """非 index.lock 错误 → 不重试 → 立即 COMMIT_FAILED。"""
+        _init_git_repo(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        monkeypatch.setattr(
+            gw, "run_git", lambda cmd: self._mock_result(1, self._OTHER_ERR)
+        )
+        sleep_calls: list[float] = []
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.rule_bridge.git_commit_gateway.time.sleep",
+            lambda s: sleep_calls.append(s),
+        )
+        result = gw._git_add_with_index_lock_retry(
+            "/tmp/fake_pathspec", "test-session"
+        )
+        assert result is not None, "非 index.lock 错误应返回 CommitResult"
+        assert result.status == CommitStatus.COMMIT_FAILED, (
+            f"应返回 COMMIT_FAILED，实际 {result.status}"
+        )
+        assert sleep_calls == [], "非 index.lock 错误不应重试（不应 sleep）"
