@@ -23,6 +23,8 @@
   - pytest_<PID>/（tests/conftest.py:67 PID-unique basetemp，#ARCH-XDIST-WORKER-CRASH-001）
   - git_guard_test_*/（concurrency guard 测试残留）
   - tmp*/conc_mv_*/b1/g1/rb1_/fx1/rc1/p4-1b-test*/probe_test/xhs_ocr 等
+  （覆盖前缀/精确名/TTL/防误删阈值的 authoritative 真源 =
+   trae_071 §test_residue_reclaim，本脚本动态加载，禁止本地硬编码）
 
 GATE-RUNTIME-CLEANUP reconciler 原用 os.rmdir 只删空目录，但 pytest_<PID>/ 内 fixture
 子目录（test_conftest_py_exempted0/...）永远非空 → 永远删不掉。Part 2 已修 reconciler
@@ -59,10 +61,11 @@ _RUNTIME_TMP = _PROJECT_ROOT / ".runtime" / "tmp"
 
 
 def _load_shared_predicates():
-    """从 reconciliation_registry 加载共享判定函数（判定真源唯一）。
+    """从 reconciliation_registry 加载共享判定函数 + config 加载器（判定真源唯一）。
 
-    失败时 fail-loud 退出——清理脚本依赖与 reconciler 一致的判定逻辑，
-    不可降级为内联实现（会形成双源漂移）。
+    失败时 fail-loud 退出——清理脚本依赖与 reconciler 一致的判定逻辑 + YAML config，
+    不可降级为内联实现（会形成双源漂移）。trae_071 §test_residue_reclaim.failure_handling:
+    oneoff 脚本 config 不可达时 fail-loud 退出（手动工具必须有配置才能安全清理）。
     """
     src = _PROJECT_ROOT / "src"
     if str(src) not in sys.path:
@@ -71,6 +74,7 @@ def _load_shared_predicates():
         from zephyr.governance.audit.reconciliation_registry import (
             _match_test_residue,
             _should_remove_test_dir,
+            _load_test_residue_config,
         )
     except ImportError as exc:
         print(
@@ -79,7 +83,23 @@ def _load_shared_predicates():
             file=sys.stderr,
         )
         sys.exit(2)
+    # config 可达性 fail-loud 校验（trae_071 failure_handling）。
+    # oneoff 手动工具必须有配置才能安全清理，config 不可达不降级。
+    global _config_loader
+    _config_loader = _load_test_residue_config
+    if _load_test_residue_config() is None:
+        print(
+            "[FATAL] trae_071 test_residue_reclaim config 不可达，"
+            "拒绝降级为内联实现（手动工具必须有配置才能安全清理）。",
+            file=sys.stderr,
+        )
+        sys.exit(2)
     return _match_test_residue, _should_remove_test_dir
+
+
+# 共享 config 加载器（_load_shared_predicates 注入；供 _categorize/_classify_keep_reason
+# 动态读取 trae_071 YAML 真源，禁止本地硬编码前缀/阈值——trae_062 SSoT）。
+_config_loader = None
 
 
 def _count_files_in_tree(dirpath: str) -> int:
@@ -91,32 +111,40 @@ def _count_files_in_tree(dirpath: str) -> int:
 
 
 def _categorize(name: str) -> str:
-    """把目录名归类用于统计展示。"""
-    if name.startswith("pytest_"):
-        return "pytest_<PID>"
-    if name.startswith("git_guard_test_"):
-        return "git_guard_test_*"
-    if name.startswith("conc_mv_"):
-        return "conc_mv_*"
-    if name.startswith("tmp"):
-        return "tmp*"
-    if name in {"b1", "g1", "fx1", "rc1"}:
+    """把目录名归类用于统计展示（前缀/精确名真源 = trae_071 YAML，动态加载）。
+
+    数据驱动：遍历 config.dir_prefixes 命中即归类，config.exact_names 命中返回原名，
+    tmp_prefix 命中返回 "tmp*"。禁止本地硬编码前缀（trae_062 SSoT）。
+    """
+    cfg = _config_loader() if _config_loader is not None else None
+    if cfg is None:
+        return "other"
+    if name in cfg["exact_names"]:
         return name
-    if name.startswith(("rb1_", "p4-1b-test", "probe_test", "xhs_ocr")):
-        return f"{name.split('_')[0]}_*" if "_" in name else name
+    for prefix in cfg["dir_prefixes"]:
+        if name.startswith(prefix):
+            # pytest_ 是 PID-unique basetemp，特例展示为 pytest_<PID>；其余展示 prefix*
+            return "pytest_<PID>" if prefix == "pytest_" else f"{prefix}*"
+    if name.startswith(cfg["tmp_prefix"]):
+        return "tmp*"
     return "other"
 
 
 def _classify_keep_reason(full: Path, now: float) -> str:
-    """归类目录保留原因（活跃测试/TTL内/PID存活）。"""
+    """归类目录保留原因（活跃测试/TTL内/PID存活）。阈值真源 = trae_071 YAML。"""
+    cfg = _config_loader() if _config_loader is not None else None
+    if cfg is None:
+        return "config不可达"
     try:
         age = now - os.path.getmtime(str(full))
     except OSError:
         age = 0.0
-    if age < 600:
-        return "正在写入(<10min)"
-    if age < 7200:
-        return "TTL内(<2h)"
+    fresh = cfg["fresh_protect_seconds"]
+    ttl = cfg["ttl_seconds"]
+    if age < fresh:
+        return f"正在写入(<{int(fresh // 60)}min)"
+    if age < ttl:
+        return f"TTL内(<{int(ttl // 3600)}h)"
     return "PID存活"
 
 

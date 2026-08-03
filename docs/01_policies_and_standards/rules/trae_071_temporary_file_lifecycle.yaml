@@ -398,6 +398,59 @@ reconciler_spec:
   # session_staging=802，在 workspace_hygiene=890 之前（避免 git restore 误恢复被移走文件）。
 
 # ============================================================
+# 7b. 测试残留回收规格（Test Residue Reclaim Spec）
+# ============================================================
+# 治本 #ARCH-TEST-RESIDUE-CLEANUP-001（2026-08-04）：.runtime/tmp/ 下测试框架残留目录
+# （pytest_<PID>/ PID-unique basetemp + git_guard_test_*/tmp*/conc_mv_*/... 等）自动回收。
+# 病根：make_runtime_cleanup_reconciler 原 os.rmdir 只删空目录，pytest_<PID>/ 内 fixture
+# 子目录永远非空 → 10万+文件积压。治本：shutil.rmtree + PID存活+TTL双判定。
+# 真源：本段 covered_patterns/params 是前缀/精确名/阈值的唯一真源，
+# reconciliation_registry._load_test_residue_config() 与 scripts/ops/cleanup_runtime_tmp_residue.py
+# 动态加载本段，禁止代码内硬编码（trae_062 SSoT：规则数据→YAML 真源）。
+
+test_residue_reclaim:
+  arch_issue: "#ARCH-TEST-RESIDUE-CLEANUP-001"
+  reclaim_reconciler: "make_runtime_cleanup_reconciler"
+  reclaim_gate_id: "GATE-RUNTIME-CLEANUP"
+  reclaim_priority: 50
+  cleanup_trigger_type: "event_driven"  # post-commit，禁止 cron/Timer（LAW-4）
+  trigger_events:
+    - "post_commit"
+  prohibitions:
+    - "cron"
+    - "Timer"
+    - "sleep_loop"
+    - "periodic"
+  incremental_hook: "tests/conftest.py:pytest_sessionfinish"  # 源头清理：pytest 退出清自己 basetemp
+  params:
+    ttl_seconds: 7200            # 2h——测试产物短生命周期（mtime 超 TTL 才可删）
+    fresh_protect_seconds: 600   # 10min 防误删正在写入（mtime < 10min 跳过）
+    pid_alive_check: true        # pytest_<PID> 进程存活时跳过
+  covered_patterns:
+    dir_prefixes:                # 目录名前缀匹配（startswith）
+      - "pytest_"          # pytest PID-unique basetemp（tests/conftest.py:67，#ARCH-XDIST-WORKER-CRASH-001）
+      - "git_guard_test_"  # concurrency guard 测试残留
+      - "conc_mv_"
+      - "rb1_"
+      - "p4-1b-test"
+      - "probe_test"
+      - "xhs_ocr"
+    exact_names:                 # 目录名精确匹配
+      - "b1"
+      - "g1"
+      - "fx1"
+      - "rc1"
+    tmp_prefix: "tmp"            # tmp* tempfile 残留（startswith）
+  failure_handling:
+    - "reconciler fail-open（rmtree 失败不阻塞 commit，跳过该目录）"
+    - "config YAML 不可达时 reconciler 跳过测试残留清理（其余 .runtime/ TTL 清理仍执行）"
+    - "oneoff 脚本 config 不可达时 fail-loud 退出（手动工具必须有配置才能安全清理）"
+    - "conftest 钩子 ignore_errors=True（清理失败绝不阻断测试退出）"
+  dual_layer_coverage:
+    normal_exit: "tests/conftest.py pytest_sessionfinish 源头清 basetemp"
+    crash_exit: "GATE-RUNTIME-CLEANUP post-commit reconciler 兜底（shutil.rmtree + PID/TTL 双判定）"
+
+# ============================================================
 # 8. 判定流程（Decision Flow）
 # ============================================================
 # AI 创建临时文件前的判定流程：

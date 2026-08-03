@@ -8684,22 +8684,94 @@ def make_index_generator_reconciler(gateway: object) -> ReconcilerSpec:
 # 本组模块级函数供 make_runtime_cleanup_reconciler 与 scripts/ops/cleanup_runtime_tmp_residue.py
 # oneoff 脚本复用——判定真源唯一。事件驱动（post-commit），符合 trae_071 LAW-4。
 
-_TEST_RESIDUE_DIR_PREFIXES = (
-    "pytest_", "git_guard_test_", "conc_mv_", "rb1_", "p4-1b-test",
-    "probe_test", "xhs_ocr",
+# trae_071 YAML 真源路径（§test_residue_reclaim 段——测试残留清理配置 SSoT）。
+# 基于 __file__ 解析（worktree 安全——读运行代码同 checkout 的 YAML，非主仓库）。
+# trae_062 SSoT：规则数据真源是 YAML 文件，代码动态加载，禁止硬编码前缀/TTL。
+_TRAE_071_YAML_PATH = (
+    Path(__file__).resolve().parents[4]
+    / "docs" / "01_policies_and_standards" / "rules"
+    / "trae_071_temporary_file_lifecycle.yaml"
 )
-_TEST_RESIDUE_EXACT_NAMES = frozenset({"b1", "g1", "fx1", "rc1"})
-_TEST_RESIDUE_TTL_SECONDS = 2 * 3600  # 2h——测试产物短生命周期
-_FRESH_PROTECT_SECONDS = 600  # 10min 防误删正在写入
+# 配置缓存（首次 _load_test_residue_config() 读 YAML+解析，后续 O(1) 返回）。
+# 会话期内 YAML 不变；reconciler 每 commit 触发、脚本一次性运行，无需失效策略。
+# _TEST_RESIDUE_CONFIG_LOADED 标记"已尝试加载"——失败也缓存（None），避免 reconciler
+# 遍历 .runtime/tmp/ 多目录时重复 open() 缺失文件 + 重复 warn（log spam）。
+_TEST_RESIDUE_CONFIG_CACHE: dict | None = None
+_TEST_RESIDUE_CONFIG_LOADED = False
+
+
+def _load_test_residue_config() -> dict | None:
+    """从 trae_071 YAML §test_residue_reclaim 加载测试残留清理配置（SSoT 真源）。
+
+    真源：docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
+    §test_residue_reclaim.covered_patterns（dir_prefixes/exact_names/tmp_prefix）
+    + §test_residue_reclaim.params（ttl_seconds/fresh_protect_seconds/pid_alive_check）。
+
+    trae_062 SSoT：规则数据真源是 YAML 文件。本函数是代码侧唯一加载入口，
+    make_runtime_cleanup_reconciler 与 scripts/ops/cleanup_runtime_tmp_residue.py
+    共享本函数，禁止代码内硬编码前缀/TTL（会形成多源漂移）。
+
+    缓存：首次调用读 YAML+解析（成功存 dict / 失败存 None），后续直接返回缓存。
+    失败也缓存——避免 reconciler 遍历多目录时重复 open 缺失文件 + 重复 warn。
+    reconciler 每 commit 是新进程，脚本一次性运行，无需进程内失效/恢复。
+
+    失败处理（fail-open，返回 None）：
+      - YAML 缺失/损坏/段缺失 → 返回 None（warn 一次）
+      - 调用方决定降级行为（trae_071 §test_residue_reclaim.failure_handling）：
+        * reconciler → 跳过测试残留清理（其余 .runtime/ TTL 清理仍执行）
+        * oneoff 脚本 → fail-loud 退出（手动工具必须有配置才能安全清理）
+
+    Returns:
+        配置 dict（对齐 YAML 段结构）；YAML 不可达/段缺失 → None。
+    """
+    global _TEST_RESIDUE_CONFIG_CACHE, _TEST_RESIDUE_CONFIG_LOADED
+    if _TEST_RESIDUE_CONFIG_LOADED:
+        return _TEST_RESIDUE_CONFIG_CACHE
+    _TEST_RESIDUE_CONFIG_LOADED = True  # 标记已尝试（成功或失败均不再重试）
+    try:
+        import yaml  # noqa: PLC0415 — lazy import 保持模块顶层依赖最小
+        with open(_TRAE_071_YAML_PATH, "r", encoding="utf-8") as fh:
+            doc = yaml.safe_load(fh)
+    except (OSError, ImportError, ValueError) as exc:
+        logger.warning(
+            "test_residue_reclaim config 不可达(%s: %s)，reconciler 将跳过测试残留清理。",
+            type(exc).__name__, exc,
+        )
+        return None  # _TEST_RESIDUE_CONFIG_CACHE 保持 None
+    if not isinstance(doc, dict):
+        logger.warning("test_residue_reclaim: YAML 顶层非 dict，跳过测试残留清理。")
+        return None
+    section = doc.get("test_residue_reclaim")
+    if not isinstance(section, dict):
+        logger.warning("test_residue_reclaim 段缺失/非 dict，跳过测试残留清理。")
+        return None
+    covered = section.get("covered_patterns") or {}
+    params = section.get("params") or {}
+    _TEST_RESIDUE_CONFIG_CACHE = {
+        "dir_prefixes": tuple(covered.get("dir_prefixes") or ()),
+        "exact_names": frozenset(covered.get("exact_names") or ()),
+        "tmp_prefix": covered.get("tmp_prefix") or "tmp",
+        "ttl_seconds": float(params.get("ttl_seconds") or 7200),
+        "fresh_protect_seconds": float(params.get("fresh_protect_seconds") or 600),
+        "pid_alive_check": bool(params.get("pid_alive_check", True)),
+    }
+    return _TEST_RESIDUE_CONFIG_CACHE
 
 
 def _match_test_residue(name: str) -> bool:
-    """判断 .runtime/tmp/ 下目录名是否属于测试残留（应纳入清理范围）。"""
-    if name in _TEST_RESIDUE_EXACT_NAMES:
+    """判断 .runtime/tmp/ 下目录名是否属于测试残留（应纳入清理范围）。
+
+    判定真源：trae_071 YAML §test_residue_reclaim.covered_patterns（动态加载）。
+    config 不可达 → 返回 False（reconciler fail-open 跳过，不误匹配非测试目录）。
+    """
+    cfg = _load_test_residue_config()
+    if cfg is None:
+        return False
+    if name in cfg["exact_names"]:
         return True
-    if name.startswith("tmp"):  # tmp*, tmp31n6tt7n 等 tempfile 残留
+    if name.startswith(cfg["tmp_prefix"]):  # tmp*, tmp31n6tt7n 等 tempfile 残留
         return True
-    return any(name.startswith(p) for p in _TEST_RESIDUE_DIR_PREFIXES)
+    return any(name.startswith(p) for p in cfg["dir_prefixes"])
 
 
 def _parse_pid_from_name(name: str) -> int | None:
@@ -8741,30 +8813,40 @@ def _pid_exists(pid: int) -> bool:
 
 
 def _should_remove_test_dir(
-    dirpath, now: float, ttl: float = _TEST_RESIDUE_TTL_SECONDS
+    dirpath, now: float, ttl: float | None = None
 ) -> bool:
     """判定 .runtime/tmp/ 下测试残留目录是否应删除（PID 存活 + TTL 双保险）。
 
-    - mtime < 10min → False（防误删正在写入）
+    - mtime < fresh_protect_seconds → False（防误删正在写入）
     - mtime < ttl → False（TTL 内保留）
     - pytest_<PID>：PID 存活 → False（测试还在跑）
     - 其余 → True
 
+    阈值真源：trae_071 YAML §test_residue_reclaim.params（动态加载）。
+    config 不可达 → 返回 False（reconciler fail-open 跳过，不删）。
+    ttl 参数保留兼容性（显式传入优先），默认从 config 加载。
+
     供 make_runtime_cleanup_reconciler 与 oneoff 脚本复用（判定真源唯一）。
     """
+    cfg = _load_test_residue_config()
+    if cfg is None:
+        return False
+    if ttl is None:
+        ttl = cfg["ttl_seconds"]
     import os  # noqa: PLC0415
     try:
         mtime = os.path.getmtime(str(dirpath))
     except OSError:
         return False
     age = now - mtime
-    if age < _FRESH_PROTECT_SECONDS:
+    if age < cfg["fresh_protect_seconds"]:
         return False
     if age < ttl:
         return False
-    pid = _parse_pid_from_name(os.path.basename(str(dirpath)))
-    if pid is not None and _pid_exists(pid):
-        return False
+    if cfg["pid_alive_check"]:
+        pid = _parse_pid_from_name(os.path.basename(str(dirpath)))
+        if pid is not None and _pid_exists(pid):
+            return False
     return True
 
 
