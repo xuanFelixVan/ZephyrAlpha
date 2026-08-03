@@ -30,7 +30,7 @@ ttl: permanent
 | 模块数 | 1 | Module Count | 1 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
+| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
@@ -54,14 +54,11 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_ops_download_models_py["ops/download_models<br/>download_models.py — ARCH-MODEL-LIFECYCLE-001<br/>Phase 3<br/>文件: ops/download_models.py<br/>(生产态 / production)"]
-    D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    scripts_ops_download_models_py -->|config_depends / config_depends| D_DATA
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_ops_download_models_py production
-    class D_DATA external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -89,9 +86,7 @@ flowchart TD
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
-|:--:|---------|:--:|---------|---------|
-| 1 | download_models.py — ARCH-MODEL-LIFECYCLE-001 Phase 3 (o... | → | D_DATA 数据接入层: 7×24 CH 健康探针守护进程（R4b，#ARCH-DR-CH-RESTART-001）... | config_depends / config_depends |
+无跨域出边依赖 / No cross-domain outgoing dependencies
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -99,15 +94,9 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 1 个外部域直接连接（出边 1 条 + 入边 0 条 = 1 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
-graph LR
-    D_INFRA_OPS["D_INFRA_OPS<br/>基础设施运维"]
-    D_DATA["D_DATA<br/>数据接入层"]
-    D_INFRA_OPS -->|1条 config_depends / config_depends| D_DATA
-```
+> （无跨域依赖 / No cross-domain dependencies）
 
 ## 说明 / Notes
 

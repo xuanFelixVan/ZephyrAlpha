@@ -310,8 +310,8 @@ flowchart TD
 | 65 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
 | 66 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
 | 67 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
-| 68 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
-| 69 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | contract / contract |
+| 68 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | contract / contract |
+| 69 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
 | 70 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
 | 71 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
 | 72 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | contracts/strategy_lifecycle_event.py | 导入依赖 / import_depends |
