@@ -99,6 +99,32 @@ SETS: list[tuple[str, str, str]] = [
     ("tests/zephyr/shared/observability/test_metrics_server.py", "MOD-TEST_METRICS_SERVER", "新 ID"),
 ]
 
+# ─── 文件同步补漏（跟进批次：6 对 old→new，DB 已改仅文件未同步）──────────────
+# 治本（2026-08-03）：6 节点 DB rename 已完成（report OK），但 repo_wide_replace
+# 因执行时工作区 stash 隔离导致 git grep 返回 0 文件，27 个文件的旧 ID 引用未替换。
+# 本节用于 --file-sync-only 模式：仅做文件精确替换，不触碰 DB（DB 已是最终状态）。
+FILE_SYNC_PAIRS: list[tuple[str, str]] = [
+    ("MOD-ARCH-BIZDB", "MOD-ARCH_BIZDB"),
+    ("MOD-GOV-AUDIT", "MOD-GOV_AUDIT"),
+    ("MOD-GOV-CG", "MOD-GOV_CG"),
+    ("MOD-GOV-DOCS", "MOD-GOV_DOCS"),
+    ("MOD-GOV-SCRIPTS", "MOD-GOV_SCRIPTS"),
+    ("MOD-GOV-backfill_checker", "MOD-GOV_BACKFILL_CHECKER"),
+]
+
+# 文件同步时跳过的「合理保留」文件（映射表 / 测试夹具 / 审计追踪 / 脚本自身）
+# 这些文件引用旧 ID 是有意为之：
+#   - 映射表：记录 old→new 映射关系（fix_depgraph_module_id.py / fix_header_module_id.py）
+#   - 测试夹具：测试旧 ID 兼容性（test_blueprint_id_legacy_reconciler.py）
+#   - 审计追踪：记录重命名历史（audit_rename_completeness.py / test_audit_rename_completeness.py）
+INTENTIONAL_SKIP: set[str] = {
+    "scripts/governance/fix_depgraph_module_id.py",
+    "scripts/governance/fix_header_module_id.py",
+    "tests/governance/audit/test_blueprint_id_legacy_reconciler.py",
+    "scripts/governance/d8_doc_sync/audit_rename_completeness.py",
+    "tests/infrastructure/test_audit_rename_completeness.py",
+}
+
 
 # ─── Data Classes ─────────────────────────────────────────────────────────────
 
@@ -231,11 +257,19 @@ def replace_id_in_file(path: Path, old: str, new: str) -> tuple[bool, int, str |
 
 
 def repo_wide_replace(old: str, new: str, dry_run: bool) -> tuple[list[str], list[str], list[str]]:
-    """repo-wide 精确替换 old→new。返回 (ok_files, skipped_files, failed_files)。"""
+    """repo-wide 精确替换 old→new。返回 (ok_files, skipped_files, failed_files)。
+
+    跳过 INTENTIONAL_SKIP 中的文件（映射表/测试夹具/审计追踪/脚本自身）——这些文件
+    引用旧 ID 是有意为之，替换会破坏映射表或审计记录。
+    """
     hits = git_grep_files_containing(old)
     ok, skipped, failed = [], [], []
     for rel in hits:
         if rel.endswith((".png", ".jpg", ".jpeg", ".gif", ".pdf", ".db", ".lock")):
+            skipped.append(rel)
+            continue
+        # 治本（2026-08-03）：跳过合理保留文件（映射表/测试夹具/审计追踪/脚本自身）
+        if rel in INTENTIONAL_SKIP:
             skipped.append(rel)
             continue
         path = BASE_DIR / rel
@@ -435,19 +469,111 @@ def execute_confirm() -> dict:
     return report
 
 
+# ─── File-Sync-Only 模式（DB 已改，仅补文件同步）────────────────────────────────
+
+
+def print_file_sync_dry_run():
+    """Dry-run: 展示 FILE_SYNC_PAIRS 的文件同步计划（仅文件，不触碰 DB）。"""
+    print("=" * 100)
+    print(f"DRY-RUN: 文件同步补漏（{len(FILE_SYNC_PAIRS)} 对 old→new，DB 已是最终状态）")
+    print("=" * 100)
+    print(f"\n跳过合理保留文件（INTENTIONAL_SKIP）: {len(INTENTIONAL_SKIP)} 个")
+    for f in sorted(INTENTIONAL_SKIP):
+        print(f"  ✓ SKIP  {f}")
+
+    print(f"\n{'old_bp_id':34s} {'new_bp_id':34s} {'需修复文件':>10s}")
+    print("-" * 100)
+    total = 0
+    for old, new in FILE_SYNC_PAIRS:
+        hits = git_grep_files_containing(old)
+        stale = [h for h in hits
+                 if h not in INTENTIONAL_SKIP
+                 and not h.endswith((".png", ".jpg", ".jpeg", ".gif", ".pdf", ".db", ".lock"))
+                 and (BASE_DIR / h).is_file()]
+        total += len(stale)
+        print(f"{old:34s} {new:34s} {len(stale):>10d}")
+        for f in stale[:5]:
+            print(f"    ✗ {f}")
+        if len(stale) > 5:
+            print(f"    ... +{len(stale)-5} more")
+    print(f"\n  合计需修复文件: {total}")
+    print("\n确认无误后用 --file-sync-only --confirm 执行。")
+    print("=" * 100)
+
+
+def execute_file_sync() -> dict:
+    """执行文件同步补漏（仅文件替换，不触碰 DB）。"""
+    report = {
+        "run_id": time.strftime("%Y%m%d_%H%M%S"),
+        "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "mode": "file-sync-only",
+        "pairs": [],
+        "errors": [],
+    }
+    for old, new in FILE_SYNC_PAIRS:
+        print(f"\n[FILE-SYNC] {old} -> {new}")
+        ok, skipped, failed = repo_wide_replace(old, new, dry_run=False)
+        entry = {
+            "old": old,
+            "new": new,
+            "replaced_files": ok,
+            "skipped_files": skipped,
+            "failed_files": failed,
+            "status": "OK" if not failed else "PARTIAL",
+        }
+        print(f"  替换 {len(ok)} 文件, 跳过 {len(skipped)}, 失败 {len(failed)}")
+        if failed:
+            report["errors"].extend(failed)
+        report["pairs"].append(entry)
+    report["finished_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    return report
+
+
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="修正 depgraph 不合规 blueprint_id 并同步文件头（28 节点）",
+        description="修正 depgraph 不合规 blueprint_id 并同步文件头（28 节点 + 6 节点文件同步补漏）",
     )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true", help="只分析, 不修改")
     mode.add_argument("--confirm", action="store_true", help="实际执行（DB 修改经 apply_depgraph 自动 PG 备份，trae_054 v1.6.0；建议先 git commit 保持工作树干净）")
+    parser.add_argument("--file-sync-only", action="store_true", help="治本（2026-08-03）：仅补文件同步（DB 已改），用于 6 节点 rename 后文件未同步的修复。配 --confirm 执行，单独使用为 dry-run。")
     parser.add_argument("--skip-git-check", action="store_true", help="跳过 git 干净检查（批处理用）")
     parser.add_argument("--output", type=str, default=str(DEFAULT_REPORT), help="报告 JSON 输出路径")
     args = parser.parse_args()
+
+    # --file-sync-only 与 --dry-run 互斥（--confirm 可与 --file-sync-only 组合）
+    if args.file_sync_only and args.dry_run:
+        parser.error("--file-sync-only 与 --dry-run 互斥（--file-sync-only 单独使用即为 dry-run）")
+
+    # ── file-sync-only 模式：跳过 RENAMES/SETS 校验，仅处理 FILE_SYNC_PAIRS ──
+    if args.file_sync_only:
+        if not args.confirm:
+            # 无 --confirm 时为 dry-run
+            print_file_sync_dry_run()
+            return
+        # confirm: git 干净检查
+        if not args.skip_git_check:
+            if not check_git_clean():
+                print("ERROR: git 工作区不干净，请先 commit 或 stash。", file=sys.stderr)
+                print("       (安全机制: 确保 --file-sync-only --confirm 有干净回滚点)", file=sys.stderr)
+                sys.exit(1)
+            print("✅ Pre-flight: git 工作区干净")
+        report = execute_file_sync()
+        DEFAULT_REPORT.parent.mkdir(parents=True, exist_ok=True)
+        Path(args.output).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        n_fail = len(report["errors"])
+        n_ok = sum(len(p["replaced_files"]) for p in report["pairs"])
+        print(f"\n{'='*100}")
+        print(f"DONE: {n_ok} 文件已替换, {n_fail} 失败. 报告: {args.output}")
+        if report["errors"]:
+            print("\n错误清单:")
+            for e in report["errors"]:
+                print(f"  - {e}")
+        print(f"{'='*100}")
+        sys.exit(0 if n_fail == 0 else 1)
 
     # Pre-flight: 校验映射表
     existing_ids = db_existing_blueprint_ids()

@@ -444,6 +444,15 @@ SQL_UPDATE_NODES_METADATA_BP_BY_PATH = (
 SQL_CLEAR_BLUEPRINT_ID_INVALID_BY_PATH = (
     "UPDATE nodes SET blueprint_id_invalid=0 WHERE path=%s"
 )
+# 治本（2026-08-03）：按 blueprint_id 清除 invalid 标志（inverse of mark_blueprint_invalid）
+SQL_CLEAR_INVALID_FLAG_BY_BP = (
+    "UPDATE nodes SET blueprint_id_invalid=0, gate_reason=NULL WHERE blueprint_id=%s"
+)
+# 治本（2026-08-03）：按 path 清空 blueprint_id（infra_id 误存为 blueprint_id 的治本清理）
+SQL_CLEAR_BLUEPRINT_ID_BY_PATH = (
+    "UPDATE nodes SET blueprint_id=NULL, belongs_to=NULL, blueprint_id_invalid=0 "
+    "WHERE path=%s"
+)
 
 
 
@@ -1944,6 +1953,102 @@ def mark_blueprint_invalid(blueprint_id: str, reason: str, db_path: str = None) 
             conn.rollback()
             logger.error("mark_blueprint_invalid失败: %s", e)
             return False
+        finally:
+            conn.close()
+
+
+def cmd_clear_invalid_flag(blueprint_id: str, dry_run: bool = False, db_path: str = None) -> int:
+    """清除指定 blueprint_id 的 blueprint_id_invalid 标志（inverse of mark_blueprint_invalid）。
+
+    治本（2026-08-03）：4 个 MOD-CFG_* 节点 blueprint_id 格式合规（is_valid_module_id pass），
+    但 blueprint_id_invalid=1 是旧校验规则残留。本函数用权威真源 is_valid_module_id 复核后清标志。
+
+    安全保证：
+    - blueprint_id 必须通过 is_valid_module_id（若仍不合规则拒绝清标志，防止误清真正无效的 ID）
+    - _db_write_lock 互斥保护
+    - dry_run 只读不写
+
+    返回受影响行数，-1=失败。
+    """
+    ok, reason = _validate_bp_id_format(blueprint_id)
+    if not ok:
+        print(
+            f"ERROR: blueprint_id '{blueprint_id}' 格式不合规：{reason}\n"
+            f"拒绝清标志——invalid 标志存在是有理由的。请先 rename 为合规 ID。",
+            file=sys.stderr,
+        )
+        return -1
+    own_conn = True
+    with _db_write_lock(db_path=db_path, task="clear_invalid_flag"):
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
+        try:
+            row = conn.execute(
+                "SELECT COUNT(*) AS c FROM nodes WHERE blueprint_id=%s", (blueprint_id,)
+            ).fetchone()
+            cnt = row["c"] if row else 0
+            mode = "[DRY RUN]" if dry_run else "[OK]"
+            print(f"{mode} clear_invalid_flag: blueprint_id={blueprint_id} ({cnt} 节点)", file=sys.stderr)
+            if cnt == 0:
+                print(f"  WARNING: blueprint_id={blueprint_id} 未匹配任何节点", file=sys.stderr)
+                return 0
+            if dry_run:
+                return cnt
+            conn.execute(SQL_CLEAR_INVALID_FLAG_BY_BP, (blueprint_id,))
+            conn.commit()
+            print(f"  [OK] {cnt} 节点 blueprint_id_invalid 已清除 (0)", file=sys.stderr)
+            return cnt
+        except Exception as e:
+            conn.rollback()
+            logger.error("cmd_clear_invalid_flag失败: %s", e)
+            return -1
+        finally:
+            conn.close()
+
+
+def cmd_clear_blueprint_id(path: str, dry_run: bool = False, db_path: str = None) -> int:
+    """按 path 清空 blueprint_id（设 NULL），用于 infra_id 误存为 blueprint_id 的治本清理。
+
+    治本（2026-08-03）：4 个 INFRA-DB-* 节点的 blueprint_id 存的是 infra_id（基础设施资源
+    目录 ID，INFRA-{TYPE}-{NNN}），不是 module_id（裁定#208 仅接受 MOD-/SH-）。这些是物理
+    数据库资源，不是软件模块，没有 module_id。清空 blueprint_id 后，节点仍由 path 唯一标识
+    （裁定#209 Stage 2: path 是稳定 PK）。belongs_to 同步清空（这些节点无归属模块）。
+
+    安全保证：
+    - path 必须命中一个节点
+    - _db_write_lock 互斥保护
+    - dry_run 只读不写
+
+    返回受影响行数，-1=失败。
+    """
+    own_conn = True
+    with _db_write_lock(db_path=db_path, task="clear_blueprint_id"):
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
+        try:
+            row = conn.execute(
+                "SELECT node_id, blueprint_id FROM nodes WHERE path=%s", (path,)
+            ).fetchone()
+            if not row:
+                print(f"ERROR: path='{path}' 在 nodes 表中不存在", file=sys.stderr)
+                return -1
+            old_bp = row["blueprint_id"] or "(空)"
+            mode = "[DRY RUN]" if dry_run else "[OK]"
+            print(f"{mode} clear_blueprint_id: path={path}", file=sys.stderr)
+            print(f"  blueprint_id: '{old_bp}' -> NULL", file=sys.stderr)
+            if dry_run:
+                return 1
+            conn.execute(SQL_CLEAR_BLUEPRINT_ID_BY_PATH, (path,))
+            # 同步清 nodes_metadata.blueprint_id
+            conn.execute(
+                "UPDATE nodes_metadata SET blueprint_id=NULL, last_updated=%s WHERE path=%s",
+                (datetime.datetime.now().isoformat(), path),
+            )
+            conn.commit()
+            print(f"  [OK] nodes + nodes_metadata blueprint_id 已清空", file=sys.stderr)
+            return 1
+        except Exception as e:
+            conn.rollback()
+            logger.error("cmd_clear_blueprint_id失败: %s", e)
+            return -1
         finally:
             conn.close()
 
@@ -4891,6 +4996,23 @@ def main() -> None:
         "同步更新 nodes.belongs_to + nodes_metadata.blueprint_id + 清除 blueprint_id_invalid。"
         "配 --dry-run 预览。",
     )
+    parser.add_argument(
+        "--clear-invalid-flag",
+        type=str,
+        metavar="BLUEPRINT_ID",
+        help="治本（2026-08-03）：清除指定 blueprint_id 的 blueprint_id_invalid 标志（设 0）。"
+        "用于标志与权威真源 is_valid_module_id 不一致的过期残留（如 MOD-CFG_* 旧校验误标）。"
+        "安全保证：blueprint_id 必须先通过 is_valid_module_id 复核——仍不合规则拒绝清标志。"
+        "配 --dry-run 预览。",
+    )
+    parser.add_argument(
+        "--clear-blueprint-id",
+        type=str,
+        metavar="PATH",
+        help="治本（2026-08-03）：按 path 清空 blueprint_id（设 NULL）+ belongs_to + invalid 标志。"
+        "用于 infra_id 误存为 blueprint_id 的清理（INFRA-DB-* 是基础设施资源 ID，非 module_id）。"
+        "节点仍由 path 唯一标识（裁定#209 Stage 2: path 是稳定 PK）。配 --dry-run 预览。",
+    )
     # 四图模块对齐 Step 3 Task 3.4：模块全景字段写入入口
     parser.add_argument(
         "--mark-entry",
@@ -5297,6 +5419,22 @@ def main() -> None:
     if args.set_blueprint_id:
         path_arg, new_bp = args.set_blueprint_id
         n = cmd_set_blueprint_id(path_arg, new_bp, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    # 治本（2026-08-03）：清除过期 invalid 标志（MOD-CFG_* 旧校验残留）——dispatch
+    if args.clear_invalid_flag:
+        n = cmd_clear_invalid_flag(args.clear_invalid_flag, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    # 治本（2026-08-03）：清空 blueprint_id（INFRA-DB-* infra_id 误存清理）——dispatch
+    if args.clear_blueprint_id:
+        n = cmd_clear_blueprint_id(args.clear_blueprint_id, dry_run=args.dry_run)
         if n < 0:
             sys.exit(4)
         print(f"affected={n}")

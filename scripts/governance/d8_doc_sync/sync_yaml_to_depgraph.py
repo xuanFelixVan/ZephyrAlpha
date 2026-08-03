@@ -1645,7 +1645,7 @@ def sync_dataflow_registry(cur):
 # 但 nodes 表需要 domain_id（FK 到 domains 表），此处显式映射。
 _AGGREGATE_OWNER_TO_DOMAIN = {
     "MOD-GATE_ENGINE": "D_GOV_ENFORCEMENT",
-    "MOD-GOV-SCRIPTS": "D_GOV_SCRIPTS",
+    "MOD-GOV_SCRIPTS": "D_GOV_SCRIPTS",
     "MOD-AUDIT-TEST": "D_AUDITTEST",
     "MOD-GOVERNANCE": "D_GOVERNANCE",
 }
@@ -1878,7 +1878,11 @@ def sync_database_nodes(cur):
             continue
 
         # 构造 nodes 表字段
-        # blueprint_id 用 infra_id（如 INFRA-DB-003），符合裁定#208 的 SYS-* 前缀扩展
+        # 治本（2026-08-03）：blueprint_id 不再用 infra_id——infra_id 是基础设施资源目录 ID
+        # （INFRA-{TYPE}-{NNN}），不是 module_id（裁定#208 仅接受 MOD-/SH- 前缀）。
+        # 旧代码误将 infra_id 存为 blueprint_id 并标 blueprint_id_invalid=1，导致合规扫描
+        # 持续报 4 个 BAD。现在 blueprint_id 设 NULL（path 是稳定 PK，裁定#209 Stage 2，
+        # 足以唯一标识节点），infra_id 仅保留在 YAML 真源 + path 锚点中。
         # path 指向 infrastructure_registry.yaml（SSoT 指针）
         # 每个 database 节点加 #infra_id 锚点区分，避免 idx_nodes_path 唯一约束冲突
         # （infrastructure_registry.yaml 含多个 database 条目，共用同一 path 会违反唯一约束）
@@ -1889,10 +1893,10 @@ def sync_database_nodes(cur):
         # 修复 ARCH-053 FK 违反：D_INFRA 不存在于 domains 表，nodes_domain_id_fkey 阻断
         domain_id = "D_INFRA_RUNTIME"
 
-        # 查询是否已存在（按 blueprint_id + node_type='database' 匹配）
+        # 查询是否已存在（按 path + node_type='database' 匹配，path 是稳定 PK 裁定#209）
         cur.execute(
-            "SELECT node_id FROM nodes WHERE blueprint_id = %s AND node_type = 'database' LIMIT 1",
-            (infra_id,),
+            "SELECT node_id FROM nodes WHERE path = %s AND node_type = 'database' LIMIT 1",
+            (node_path,),
         )
         existing = cur.fetchone()
 
@@ -1900,6 +1904,7 @@ def sync_database_nodes(cur):
             cur.execute(
                 """
                 UPDATE nodes SET
+                    blueprint_id = NULL,
                     path = %s,
                     node_name = %s,
                     domain_id = %s,
@@ -1908,7 +1913,7 @@ def sync_database_nodes(cur):
                     architecture_layer = 'L1_foundation',
                     granularity = 'aggregated',
                     tags = 'ARCH-053,database_node',
-                    blueprint_id_invalid = 1
+                    blueprint_id_invalid = 0
                 WHERE node_id = %s
                 """,
                 (node_path, node_name, domain_id, existing["node_id"]),
@@ -1920,10 +1925,10 @@ def sync_database_nodes(cur):
                     blueprint_id, node_type, path, node_name, domain_id,
                     design_maturity, build_status, architecture_layer,
                     granularity, tags, blueprint_id_invalid
-                ) VALUES (%s, 'database', %s, %s, %s, 'production', 'stable',
-                          'L1_foundation', 'aggregated', 'ARCH-053,database_node', 1)
+                ) VALUES (NULL, 'database', %s, %s, %s, 'production', 'stable',
+                          'L1_foundation', 'aggregated', 'ARCH-053,database_node', 0)
                 """,
-                (infra_id, node_path, node_name, domain_id),
+                (node_path, node_name, domain_id),
             )
         synced += 1
         print(f"  UPSERT database 节点: {infra_id} ({comp_type}) — {name}")
