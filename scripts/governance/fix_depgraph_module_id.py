@@ -247,7 +247,7 @@ def replace_id_in_file(path: Path, old: str, new: str) -> tuple[bool, int, str |
         # 验证读取失败 → 回滚
         try:
             atomic_write(path, content, encoding, newline)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 回滚路径，禁止异常掩盖原始错误
             pass
         return False, 0, f"验证读取失败: {e}"
     if old in vc:
@@ -256,7 +256,7 @@ def replace_id_in_file(path: Path, old: str, new: str) -> tuple[bool, int, str |
             atomic_write(path, content, encoding, newline)
         except Exception as e:  # noqa: BLE001
             return False, 0, f"回滚失败: {e}"
-        return False, 0, f"替换后仍含 old（已回滚）"
+        return False, 0, "替换后仍含 old（已回滚）"
     return True, count, None
 
 
