@@ -2121,9 +2121,15 @@ entries:
   - id: CAND-HARVEST-0017
     name: "External Instruction Monitoring 外部指令盯盘"
     aliases: [C-013]
-    domain: D_INFRA_OPS
-    domain_status: skeleton
-    domain_node_count: 0
+    # 2026-08-03 域修正: 原 D_INFRA_OPS 系 harvest 路径解析误标（"monitoring" 关键词→ops 误匹配）。
+    # 实际承载域 D_TRADING——设计文档 18-D-TRADING-交易运营域.md L7 核心职责流明确：
+    #   "外部指令接收(C-013) → 风控检查 → 执行 → 结算对账 → ... → 多账户分仓(C-018)"
+    # L25 进一步明确 D-TRADING-01 External Order Watcher = "C-013●核心：外部指令盯盘/指令解析/目标跟踪/最优建仓点寻找/自动建仓/仓位管理"
+    # L200 "C-013与C-004/C-047/C-031交互规则" 与 BM-BUY-06 ⑥降级/中止完全吻合。
+    # 裁定依据: buy_flow 允许 D_TRADING(battle_map_domain_policy.yaml V1.0.0)，拒 D_INFRA_OPS
+    domain: D_TRADING
+    domain_status: active
+    domain_node_count: 43
     panorama_position:
       depgraph:
         has_position: false
@@ -2146,7 +2152,7 @@ entries:
     source_section: 'LL8475'
     original_id: "C-013"
     estimated_complexity: M
-    tech_notes: "harvest来源:交易决策架构.md; 类型=能力; likely_status=likely_new; depgraph该域节点数=0; 该域无运营态/设计态path命中, 疑真候选;"
+    tech_notes: "harvest来源:交易决策架构.md; 类型=能力; likely_status=likely_new; 原 domain=D_INFRA_OPS 系 harvest 误标（monitoring→ops 关键词误匹配），2026-08-03 依据设计文档 18-D-TRADING L7/L25/L200 修正为 D_TRADING（D-TRADING-01 External Order Watcher 为 C-013 核心承载模块，域内已有 43 个运营态节点）。"
     tags: ['harvest', 'likely_new', '能力']
     alternatives: ''
     next_review_date: '2026-11-30'
@@ -14055,9 +14061,12 @@ entries:
   - id: CAND-HARVEST-0368
     name: "模块19 市场体制转换模型（Regime-Switching Model）"
     aliases: [MOD-PF-CORE-011]
-    domain: D_PF_CORE
+    # 2026-08-03 域修正: 原 D_PF_CORE 系 harvest 路径解析误标(MOD-PF-CORE-011 alias 在 depgraph 不存在)。
+    # 实际承载域 D_ASHARE_SIGNAL(MOD-SIG-036 market_state_sensor.py 同属此域)。
+    # 裁定依据: stock_selection 允许 D_ASHARE_SIGNAL, 拒 D_PF_CORE(battle_map_domain_policy.yaml Owner 严格模式 V1.0.0)
+    domain: D_ASHARE_SIGNAL
     domain_status: active
-    domain_node_count: 16
+    domain_node_count: 18
     panorama_position:
       depgraph:
         has_position: false
@@ -14293,9 +14302,12 @@ entries:
   - id: CAND-HARVEST-0375
     name: "模块39 多因子选股评分模型（Multi-Factor Stock Selection Scoring Model）"
     aliases: [MOD-PF-CORE-018]
-    domain: D_PF_CORE
+    # 2026-08-03 域修正: 原 D_PF_CORE 系 harvest 路径解析误标(MOD-PF-CORE-018 alias 在 depgraph 不存在)。
+    # 实际承载域 D_FACTOR(MOD-L02-011 multifactor_synthesis.py 同属此域; 多因子选股评分属因子计算)。
+    # 裁定依据: stock_selection 允许 D_FACTOR, 拒 D_PF_CORE(battle_map_domain_policy.yaml Owner 严格模式 V1.0.0)
+    domain: D_FACTOR
     domain_status: active
-    domain_node_count: 16
+    domain_node_count: 45
     panorama_position:
       depgraph:
         has_position: false
