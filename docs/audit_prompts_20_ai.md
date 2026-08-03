@@ -178,7 +178,7 @@ d:\ZephyrAlpha\.traeignore
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -200,7 +200,7 @@ d:\ZephyrAlpha\.traeignore
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -366,7 +366,7 @@ d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -388,7 +388,7 @@ d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -554,7 +554,7 @@ d:\ZephyrAlpha\_journals\
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -576,7 +576,7 @@ d:\ZephyrAlpha\_journals\
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -743,7 +743,7 @@ d:\ZephyrAlpha\src\zephyr\alt_data\
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -765,7 +765,7 @@ d:\ZephyrAlpha\src\zephyr\alt_data\
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -933,7 +933,7 @@ d:\ZephyrAlpha\src\zephyr\digital_twin\
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -955,7 +955,7 @@ d:\ZephyrAlpha\src\zephyr\digital_twin\
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -1123,7 +1123,7 @@ d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -1145,7 +1145,7 @@ d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -1312,7 +1312,7 @@ d:\ZephyrAlpha\src\zephyr\intelligence\
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -1334,7 +1334,7 @@ d:\ZephyrAlpha\src\zephyr\intelligence\
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -1500,7 +1500,7 @@ d:\ZephyrAlpha\src\zephyr\signal_quality\
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -1522,7 +1522,7 @@ d:\ZephyrAlpha\src\zephyr\signal_quality\
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -1687,7 +1687,7 @@ d:\ZephyrAlpha\src\zephyr\security\             （含 access_control/adversaria
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -1709,7 +1709,7 @@ d:\ZephyrAlpha\src\zephyr\security\             （含 access_control/adversaria
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -1876,7 +1876,7 @@ d:\ZephyrAlpha\src\zephyr\reporting\
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -1898,7 +1898,7 @@ d:\ZephyrAlpha\src\zephyr\reporting\
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -2065,7 +2065,7 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -2087,7 +2087,7 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -2257,7 +2257,7 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -2279,7 +2279,7 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -2450,7 +2450,7 @@ d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -2472,7 +2472,7 @@ d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -2646,7 +2646,7 @@ d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -2668,7 +2668,7 @@ d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -2838,7 +2838,7 @@ d:\ZephyrAlpha\src\zephyr\shared\                （全部子目录）
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -2860,7 +2860,7 @@ d:\ZephyrAlpha\src\zephyr\shared\                （全部子目录）
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -3029,7 +3029,7 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -3051,7 +3051,7 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -3218,7 +3218,7 @@ d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_d
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -3240,7 +3240,7 @@ d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_d
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -3408,7 +3408,7 @@ d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + mod
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -3430,7 +3430,7 @@ d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + mod
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -3606,7 +3606,7 @@ d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ �
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -3628,7 +3628,7 @@ d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ �
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 
@@ -3802,7 +3802,7 @@ d:\ZephyrAlpha\scripts\                          （全部子目录）
  9.1 全部变更是否已 git commit。
  9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
  9.3 是否经过 pre-commit 门禁全量通过。
- 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_depgraph 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
+ 9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
@@ -3824,7 +3824,7 @@ d:\ZephyrAlpha\scripts\                          （全部子目录）
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
- 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_depgraph）；oneoff 脚本是否先 git commit。
+ 11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
 
  非C/D类一行声明 N/A。
 

@@ -3227,7 +3227,7 @@ def _warn_uncommitted_governance_scripts() -> None:
     - 硬阻断误报风险高（scripts/governance/ 下常有无关未提交变更）
     - 与项目其他 fail-open + 审计可见的 gate/reconciler 设计一致
 
-    对标 trae_054 STEP0："修改 depgraph 前置备份"——backup_pg_depgraph() 覆盖数据备份
+    对标 trae_054 STEP0："修改 depgraph 前置备份"——backup_pg_architecture() 覆盖数据备份
     （pg_dump），本函数覆盖脚本备份（git commit），形成"数据备份+脚本备份"双层防线。
     """
     import subprocess as _sp

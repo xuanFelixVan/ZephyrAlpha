@@ -5888,9 +5888,9 @@ def _backup_depgraph_for_autoclean(project_root: object, session_id: str) -> tup
 
     治本（2026-07-08，ARCH-DEBT-BACKUP-CLEANUP）：备份路径统一到 tmp/pg_backups/（.gitignored，
 
-    与 backup_runtime_state.py 的 backup_pg_depgraph 标杆机制对齐），并新增保留策略——保留最近
+    与 backup_runtime_state.py 的 backup_pg_architecture 标杆机制对齐），并新增保留策略——保留最近
 
-    max_backups 个 ghost_autoclean_* 目录，超出部分自动清理（对标 backup_pg_depgraph 的保留 10 个）。
+    max_backups 个 ghost_autoclean_* 目录，超出部分自动清理（对标 backup_pg_architecture 的保留 10 个）。
 
     消除"备份目录只增不减"的技术债务。详见 trae_081_audit_dimensions_framework.yaml 维度 5.1.3。
 
@@ -5937,7 +5937,7 @@ def _backup_depgraph_for_autoclean(project_root: object, session_id: str) -> tup
 
                     cur.copy_expert(f"COPY {table} TO STDOUT WITH CSV HEADER", f)
 
-        # 治本（2026-07-08）：保留策略——清理过期 ghost_autoclean 备份（对标 backup_pg_depgraph）
+        # 治本（2026-07-08）：保留策略——清理过期 ghost_autoclean 备份（对标 backup_pg_architecture）
 
         _cleanup_old_ghost_backups(project_root, max_backups=10)
 
@@ -5957,7 +5957,7 @@ def _cleanup_old_ghost_backups(project_root: object, max_backups: int = 10) -> i
 
     治本（2026-07-08，ARCH-DEBT-BACKUP-CLEANUP）：对标 backup_runtime_state.py 的
 
-    backup_pg_depgraph 保留策略（保留最近 10 个），消除"备份目录只增不减"的技术债务。
+    backup_pg_architecture 保留策略（保留最近 10 个），消除"备份目录只增不减"的技术债务。
 
     备份目录命名：ghost_autoclean_{unix_timestamp}（按时间戳排序 = 按创建时间排序）。
 

@@ -3127,7 +3127,7 @@ capabilities:
       - --delete-constraint
     description: >-
       约束删除（apply_depgraph.py delete_constraint）。删除 arch_constraints 表单条约束记录,
-      自动触发 PG 备份（backup_pg_depgraph）。用于清理过时约束（如域删除后遗留的 constraint_id，
+      自动触发 PG 备份（backup_pg_architecture）。用于清理过时约束（如域删除后遗留的 constraint_id，
       或旧格式连字符命名的过时约束）。CLI 入口 --delete-constraint <CONSTRAINT_ID>。解决发现性:
       新 AI 搜 "删除约束/delete constraint/约束残留" 可定位真源。解决防重建：阻止新 AI 写 SQL
       直接 DELETE FROM arch_constraints（违反 depgraph 硬约束）。对标 DM-100255 D_GOV_RULE
@@ -3356,7 +3356,7 @@ capabilities:
     description: >-
       按 node_id 列表批量删除节点（apply_depgraph.py cmd_delete_nodes）。JSON 文件格式
       [id1, id2, ...]。安全门：有入边（被依赖）则阻断，--force 可跳过。先删关联 edges
-      再删 nodes。已由 backup_pg_depgraph 自动 PG 备份（trae_054 v1.6.0 STEP0）。CLI 入口 --delete-nodes NODE_IDS_FILE
+      再删 nodes。已由 backup_pg_architecture 自动 PG 备份（trae_054 v1.6.0 STEP0）。CLI 入口 --delete-nodes NODE_IDS_FILE
       [--force]。解决发现性：新 AI 搜 "批量删节点/delete nodes/node_id 列表删除" 可定位
       真源。解决防重建：阻止新 AI 写 SQL 直接 DELETE FROM nodes（违反入边安全门 + depgraph
       硬约束）。
