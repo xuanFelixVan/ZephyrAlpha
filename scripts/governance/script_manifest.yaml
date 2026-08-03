@@ -1,19 +1,19 @@
-# 自动生成于 2026-08-03T16:35:41Z
+# 自动生成于 2026-08-03T16:53:07Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-03T16:35:41Z'
+generated_at: '2026-08-03T16:53:07Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 386
-with_manifest: 321
+total_scripts: 387
+with_manifest: 322
 missing_manifest: 65
 categories:
   governance:_sync: 4
   governance:_tasks: 3
   governance: 37
   governance:d10_performance: 1
-  governance:d11_compliance: 21
+  governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
@@ -486,6 +486,17 @@ scripts:
     原则）。
 
     '
+  tags:
+  - Security
+- name: d11_compliance/validate_worktree_required.py
+  owner: governance:d11_compliance
+  dimensions:
+  - D11
+  priority: P2
+  timeout_seconds: 5
+  args: []
+  warn_only: true
+  description: GATE-WORKTREE-REQUIRED门禁——主工作区commit warn+计数，累计>=5次升级阻断
   tags:
   - Security
 - name: d11_compliance/verify_audit_integrity.py
