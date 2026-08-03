@@ -90,4 +90,40 @@ EXPECTED_SIM07_ANCHORS = [
 
 # BM-SIM-07 期望的翻译字段
 EXPECTED_SIM07_TRANSLATION = {
-    "name_zh": "风控仿真器
+    "name_zh": "风控仿真器",
+    "name_en": "Risk Simulator",
+    "plain_zh": "把风控放进仿真里跑",
+    "mechanism_zh": "D-SIMULATION-03",
+    "indicators_zh": "VaR模拟",
+}
+
+
+# ── DB fixture ────────────────────────────────────────────────────────────────
+
+@pytest.fixture(scope="module")
+def bm_reader():
+    """BattleMapReader fixture — DB 不可达时 skip 整个 module。"""
+    try:
+        from zephyr.governance.persistence.battle_map_reader import BattleMapReader
+        reader = BattleMapReader()
+        # 验证连接可用
+        _ = reader.get_edge_count()
+        return reader
+    except Exception as e:
+        pytest.skip(f"DB 不可达，跳过 e2e 测试: {e}")
+
+
+@pytest.fixture(scope="module")
+def dep_reader():
+    """DepgraphReader fixture — DB 不可达时 skip。"""
+    try:
+        from zephyr.governance.persistence.depgraph_reader import DepgraphReader
+        return DepgraphReader()
+    except Exception as e:
+        pytest.skip(f"DepgraphReader 不可达: {e}")
+
+
+@pytest.fixture(scope="module")
+def translation_registry():
+    """加载 module_translation_registry.yaml 的 battle_map_steps 段。"""
+    import yaml
