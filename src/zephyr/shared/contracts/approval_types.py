@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
 # [TESTS] tests/governance/test_gct_004_escalation_to_rbac.py; tests/governance/test_p0_u1_contract_smoke.py
-# [A_module] module_id=MOD-INT-approval_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 G-CT-004 — ApprovalRequest Pydantic V2 BaseModel 审批请求数据结构.

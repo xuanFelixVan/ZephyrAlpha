@@ -234,4 +234,20 @@ class TestBMSim07ClosedLoop:
         """
         # 入边：BM-SIM-03 → BM-SIM-07
         in_edges = bm_reader.get_edges_to_step("BM-SIM-07")
-        sim03_in = [e for e in in_edges
+        sim03_in = [e for e in in_edges if e["from_step_id"] == "BM-SIM-03"]
+        assert len(sim03_in) == 1, "缺少入边 BM-SIM-03→BM-SIM-07"
+
+        # 出边：BM-SIM-07 → BM-SIM-06
+        out_edges = bm_reader.get_edges_from_step("BM-SIM-07")
+        sim06_out = [e for e in out_edges if e["to_step_id"] == "BM-SIM-06"]
+        assert len(sim06_out) == 1, "缺少出边 BM-SIM-07→BM-SIM-06"
+
+        # 验证边类型都是 data_flow（非 trigger）
+        assert sim03_in[0]["edge_type"] == "data_flow", "入边类型应为 data_flow"
+        assert sim06_out[0]["edge_type"] == "data_flow", "出边类型应为 data_flow"
+
+        # 验证闭环语义：蒙特卡洛→风控仿真→结果分析
+        in_label = sim03_in[0].get("label", "")
+        out_label = sim06_out[0].get("label", "")
+        assert "蒙特卡洛" in in_label, f"入边 label 应含'蒙特卡洛': {in_label}"
+        assert "风控仿真" in out_label, f"出边 label 应含'风控仿真
