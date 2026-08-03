@@ -81,14 +81,21 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 # 受控词表（V0.2 先内联 CHECK，后续抽 battle_map_model.yaml 动态加载——VOCAB-HARDCODE 治本渐进路径）
 # ---------------------------------------------------------------------------
 
-# flow_stage 6值（与 decision_nodes.flow_stage 对齐）
+# flow_stage 11值（与 decision_nodes.flow_stage 对齐）
+# 2026-08-03 全生命周期扩展：+5 新阶段（研究孵化/模型训练/回测验证/仿真验证/风控管控）
+# 生命周期序：研究孵化→模型训练→回测验证→仿真验证→选股→买入→卖出→仓位→风控管控→执行→对账
 _FLOW_STAGES = (
-    "stock_selection",
-    "buy_flow",
-    "sell_flow",
-    "position_management",
-    "execution",
-    "reconciliation",
+    "research_incubation",     # 研究孵化（D-RESEARCH）
+    "model_training",          # 模型训练（D-ML-TRAIN）
+    "backtest_validation",     # 回测验证（D-BACKTEST）
+    "simulation_validation",   # 仿真验证（D-SIMULATION）
+    "stock_selection",         # 选股
+    "buy_flow",                # 买入
+    "sell_flow",               # 卖出
+    "position_management",     # 仓位
+    "risk_control",            # 风控管控（D-RISK）
+    "execution",               # 执行
+    "reconciliation",          # 对账
 )
 
 # target_graph 5值（锚点指向的图/仓库）

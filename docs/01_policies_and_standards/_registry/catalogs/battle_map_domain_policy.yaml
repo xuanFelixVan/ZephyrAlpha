@@ -118,6 +118,74 @@ flow_stage_allowed_domains:
       D_SELL_DECISION: "卖出决策属卖出阶段"
       D_FRONTEND: "前端不属于作战决策"
 
+  # ===== 2026-08-03 全生命周期扩展：+5 新阶段（研究孵化/模型训练/回测验证/仿真验证/风控管控）=====
+
+  research_incubation:
+    description: "研究孵化——策略/因子 R&D、实验追踪、假设管理、Notebook、可复现性。盘后研究迭代入口，策略诞生地"
+    allowed:
+      - D_RESEARCH             # 研究基础设施核心
+      - D_DATA                 # 研究数据
+      - D_ML_TRAIN             # 训练（研究产出喂训练）
+      - D_KNOWLEDGE            # 知识图谱（研究发现沉淀）
+      - D_INTELLIGENCE         # D-RESEARCH 候选模块在候选库中注册于 D_INTELLIGENCE 域（2026-08-03 全生命周期扩展）
+    forbidden_rationale:
+      D_EX_CORE: "执行属执行阶段，研究是盘后离线"
+      D_SELL_DECISION: "卖出属卖出阶段"
+      D_POSITION: "仓位属仓位阶段，研究不直接管仓位"
+      D_FRONTEND: "前端不属于作战决策"
+
+  model_training:
+    description: "模型训练——训练流水线、AutoML、因子发现、实验追踪晋升、漂移自适应。盘后 20:00-23:59 模型重训练核心"
+    allowed:
+      - D_ML_TRAIN             # 训练核心
+      - D_FACTOR               # 因子（训练产出新因子）
+      - D_DATA                 # 训练数据
+      - D_RESEARCH             # 研究（实验追踪联动）
+    forbidden_rationale:
+      D_EX_CORE: "执行属执行阶段，训练是盘后离线"
+      D_SELL_DECISION: "卖出属卖出阶段"
+      D_POSITION: "仓位属仓位阶段"
+      D_FRONTEND: "前端不属于作战决策"
+
+  backtest_validation:
+    description: "回测验证——回测引擎、撮合、PIT铁律、过拟合检测、Walk-Forward、决策门控（策略上线门禁）。C-003回测 P0"
+    allowed:
+      - D_BACKTEST             # 回测核心
+      - D_DATA                 # 回测数据
+      - D_FACTOR               # 因子（IC/IR 评估）
+      - D_SIMULATION           # 仿真（回测与仿真联动）
+      - D_RISK                 # 风控（实盘同构铁律：回测必须串入 D_RISK）
+      - D_POSITION             # 仓位（实盘同构铁律：回测必须串入 D_POSITION）
+    forbidden_rationale:
+      D_EX_CORE: "执行属执行阶段，回测是离线验证"
+      D_SELL_DECISION: "卖出属卖出阶段"
+      D_FRONTEND: "前端不属于作战决策"
+
+  simulation_validation:
+    description: "仿真验证——市场仿真、策略仿真、蒙特卡洛、场景生成、压力测试、依赖图数字孪生。what-if/如果怎样"
+    allowed:
+      - D_SIMULATION           # 仿真核心
+      - D_BACKTEST             # 回测（仿真与回测联动）
+      - D_RISK                 # 风控（压力测试与风控联动）
+    forbidden_rationale:
+      D_EX_CORE: "执行属执行阶段，仿真是离线"
+      D_SELL_DECISION: "卖出属卖出阶段"
+      D_POSITION: "仓位属仓位阶段"
+      D_FRONTEND: "前端不属于作战决策"
+
+  risk_control:
+    description: "风控管控——风控策略/限额/实时监控/Kill Switch熔断/A股止损/系统性风险/盘后审计/压力测试黑天鹅。D-RISK 20模块 P0"
+    allowed:
+      - D_RISK                 # 风控核心
+      - D_REPORTING            # 报告（盘后审计归因）
+      - D_POSITION             # 仓位（仓位受风控约束）
+      - D_TRADING              # 交易运营（风控联动清算）
+    forbidden_rationale:
+      D_FACTOR: "因子属选股阶段，风控不直接算因子"
+      D_SIGNAL: "信号属选股阶段"
+      D_FRONTEND: "前端不属于作战决策"
+      D_SELL_DECISION: "卖出决策属卖出阶段（止损触发走卖出，但风控策略本身不属卖出）"
+
 # 校验规则元数据
 validation:
   check_id: "BM-INV-004"

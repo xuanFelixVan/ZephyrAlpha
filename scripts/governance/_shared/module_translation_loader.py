@@ -536,7 +536,7 @@ def all_battle_map_step_ids() -> list[str]:
 # ============================================================================
 # 与 battle_map_steps（环节级，按流程阶段线性串联）并列的第三个真源段：
 # 横切级叙事——贯穿所有阶段的全局机制（§13漏斗/§14盘中事件/§16冲突矩阵）。
-# 这些内容不属任何单一阶段，由生成器渲染为 battle_map_07_cross_cutting.md。
+# 这些内容不属任何单一阶段，由生成器渲染为 battle_map_12_cross_cutting.md。
 #
 # 与 battle_map_steps 的区别：steps 是流程环节（线性串联），cross_cutting 是
 # 横切机制（全局适用）。两者均属规则数据（TRAE-062），真源在 YAML。

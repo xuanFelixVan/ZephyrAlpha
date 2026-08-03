@@ -28,7 +28,7 @@ generate_battle_map_diagram.py — 交易决策作战地图可视化生成器
 
 从 battle_map 三表（steps/anchors/edges）+ 翻译真源（battle_map_steps + battle_map_cross_cutting 段）生成作战地图：
   - 总指挥图（全部环节 + 流转边，Mermaid 分页）
-  - 6 分阶段图（选股/买入/卖出/仓位/执行/对账）
+  - 11 分阶段图（研究孵化/模型训练/回测验证/仿真验证/选股/买入/卖出/仓位/风控管控/执行/对账）
   - 横切视图（Gap3：§13漏斗 / §14盘中事件 / §16冲突矩阵，来自 battle_map_cross_cutting 段）
   - 每环节 6 件套详情表（trigger/consumes/params/data_flow/code_mapping/degradation）
   - 可缩放 HTML（复用 zoomable_html.emit_zoomable_html）
@@ -85,20 +85,45 @@ from zephyr.governance.persistence.depgraph_reader import DepgraphReader  # noqa
 # 常量
 # ---------------------------------------------------------------------------
 
-# 6 阶段定义（与 battle_map_steps.flow_stage 对齐）
+# 11 阶段定义（与 battle_map_steps.flow_stage 对齐）
+# 2026-08-03 全生命周期扩展：+5 新阶段 + 生命周期重排号
+# 生命周期序：研究孵化→模型训练→回测验证→仿真验证→选股→买入→卖出→仓位→风控管控→执行→对账
+# 横切视图（cross_cutting）单独处理，编号 12（非 flow_stage，来自 YAML battle_map_cross_cutting 段）
 FLOW_STAGES = [
-    ("stock_selection", "选股", "01"),
-    ("buy_flow", "买入", "02"),
-    ("sell_flow", "卖出", "03"),
-    ("position_management", "仓位", "04"),
-    ("execution", "执行", "05"),
-    ("reconciliation", "对账", "06"),
+    ("research_incubation", "研究孵化", "01"),
+    ("model_training", "模型训练", "02"),
+    ("backtest_validation", "回测验证", "03"),
+    ("simulation_validation", "仿真验证", "04"),
+    ("stock_selection", "选股", "05"),
+    ("buy_flow", "买入", "06"),
+    ("sell_flow", "卖出", "07"),
+    ("position_management", "仓位", "08"),
+    ("risk_control", "风控管控", "09"),
+    ("execution", "执行", "10"),
+    ("reconciliation", "对账", "11"),
 ]
 
 # flow_stage -> 节点标签第4行"所属阶段"（V1.5：替换原"作战环节 / battle-step"冗余标识）
 FLOW_STAGE_LABELS = {
     fs_id: f"{zh}阶段 / {fs_id}"
     for fs_id, zh, _ in FLOW_STAGES
+}
+
+# step_id 前缀（BM-<阶段缩写>）→ 分阶段文档文件名（不含 battle_map_ 前缀和 .md 后缀）
+# 2026-08-03 全生命周期扩展：从 6 阶段扩展到 11 阶段，与 FLOW_STAGES 编号对齐
+# 用于 _related_steps_links() 把横切视图里的 related_steps 渲染为指向分阶段文档的链接
+_STEP_PREFIX_TO_STAGE_FILE = {
+    "BM-RES":  "01_research_incubation",
+    "BM-MT":   "02_model_training",
+    "BM-BT":   "03_backtest_validation",
+    "BM-SIM":  "04_simulation_validation",
+    "BM-SEL":  "05_stock_selection",
+    "BM-BUY":  "06_buy_flow",
+    "BM-SELL": "07_sell_flow",
+    "BM-POS":  "08_position_management",
+    "BM-RC":   "09_risk_control",
+    "BM-EXE":  "10_execution",
+    "BM-REC":  "11_reconciliation",
 }
 
 # Mermaid 分页大小（防 >100 节点渲染失败，memory lesson）
@@ -910,7 +935,7 @@ def _generate_panorama_md(
     for stage_id, stage_name, num in FLOW_STAGES:
         stage_steps = [s for s in steps if s["flow_stage"] == stage_id]
         parts.append(f"- [{stage_name}阶段（{len(stage_steps)} 环节）](battle_map_{num}_{stage_id}.md)")
-    parts.append("- [横切视图（§13漏斗 / §14盘中事件 / §16冲突矩阵）](battle_map_07_cross_cutting.md)")
+    parts.append("- [横切视图（§13漏斗 / §14盘中事件 / §16冲突矩阵）](battle_map_12_cross_cutting.md)")
     parts.append("")
     parts.append("## 全环节详情（6 件套）")
     parts.append("")
@@ -994,19 +1019,12 @@ def _related_steps_links(related_steps: list[str]) -> str:
     """把 related_steps 列表渲染为指向分阶段文档的链接串（找不到则纯文本）。"""
     if not related_steps:
         return "—"
-    # step_id → 所在分阶段文档（BM-SEL-* → 01_stock_selection，依此类推）
-    stage_prefix = {
-        "BM-SEL": "01_stock_selection",
-        "BM-BUY": "02_buy_flow",
-        "BM-SELL": "03_sell_flow",
-        "BM-POS": "04_position_management",
-        "BM-EXE": "05_execution",
-        "BM-REC": "06_reconciliation",
-    }
+    # step_id → 所在分阶段文档（BM-SEL-* → 05_stock_selection，依此类推）
+    # 2026-08-03 全生命周期扩展：11 阶段映射（_STEP_PREFIX_TO_STAGE_FILE），禁止手编回退旧编号
     links: list[str] = []
     for sid in related_steps:
         prefix = "-".join(sid.split("-")[:2])
-        doc = stage_prefix.get(prefix)
+        doc = _STEP_PREFIX_TO_STAGE_FILE.get(prefix)
         if doc:
             links.append(f"[{sid}](battle_map_{doc}.md)")
         else:
@@ -1337,6 +1355,81 @@ def _format_generic_cross_cutting_md(item: dict) -> str:
                 f"| {tr.get('priority', '—')} | {tr.get('description', '—')} |"
             )
         parts.append("")
+    # 信号生命周期：lifecycle_stages 表（来源 D-SIGNAL 域，2026-08-03）
+    lifecycle_stages = item.get("lifecycle_stages") or []
+    if lifecycle_stages:
+        parts += [
+            "### 生命周期阶段",
+            "",
+            "| 阶段 | 名称 | 能力 | 说明 |",
+            "|---|---|---|---|",
+        ]
+        for s in lifecycle_stages:
+            parts.append(
+                f"| {s.get('stage', '—')} | {s.get('name_zh', '—')} "
+                f"| {s.get('capability', '—')} | {s.get('note', '—')} |"
+            )
+        parts.append("")
+    # 信号生命周期：degradation_levels 表
+    degradation_levels = item.get("degradation_levels") or []
+    if degradation_levels:
+        parts += [
+            "### 降级级别",
+            "",
+            "| 级别 | 触发条件 | 动作 | 下游影响 |",
+            "|---|---|---|---|",
+        ]
+        for d in degradation_levels:
+            parts.append(
+                f"| {d.get('level', '—')} | {d.get('trigger', '—')} "
+                f"| {d.get('action', '—')} | {d.get('downstream', '—')} |"
+            )
+        parts.append("")
+    # 因子治理：governance_stages 表（来源 D-FACTOR 域，2026-08-03）
+    governance_stages = item.get("governance_stages") or []
+    if governance_stages:
+        parts += [
+            "### 治理阶段",
+            "",
+            "| 阶段 | 名称 | 能力 | 说明 |",
+            "|---|---|---|---|",
+        ]
+        for g in governance_stages:
+            parts.append(
+                f"| {g.get('stage', '—')} | {g.get('name_zh', '—')} "
+                f"| {g.get('capability', '—')} | {g.get('note', '—')} |"
+            )
+        parts.append("")
+    # 因子治理：pool_management 表
+    pool_mgmt = item.get("pool_management") or {}
+    if pool_mgmt:
+        cap = pool_mgmt.get("capacity") or {}
+        if cap:
+            parts += [
+                "### 因子池容量",
+                "",
+                "| 参数 | 值 |",
+                "|---|---|",
+                f"| 运行上限 N_max | {cap.get('n_max', '—')} |",
+                f"| 活跃池上限 | {cap.get('active_pool_limit', '—')} |",
+                f"| 休眠上限 | {cap.get('dormant_limit', '—')} |",
+                f"| 设计容量 | {cap.get('design_capacity', '—')} |",
+                "",
+            ]
+        mechs = pool_mgmt.get("mechanisms") or []
+        if mechs:
+            parts += [
+                "### 因子池管理机制",
+                "",
+                "| 机制 | 名称 | 触发条件 | 说明 |",
+                "|---|---|---|---|",
+            ]
+            for m in mechs:
+                parts.append(
+                    f"| {m.get('mechanism', '—')} | {m.get('name_zh', '—')} "
+                    f"| {m.get('trigger', '—')} | {m.get('note', '—')} |"
+                )
+            parts.append("")
     return "\n".join(parts)
 
 
@@ -1352,6 +1445,9 @@ _CROSS_CUTTING_RENDERERS = {
     "emergency_degradation": _format_generic_cross_cutting_md,
     "four_tracks": _format_generic_cross_cutting_md,
     "shared_signal_injection": _format_generic_cross_cutting_md,
+    # 以下 2 项来源 D-SIGNAL/D-FACTOR 域依赖图文档（选股流程丰富，2026-08-03）
+    "signal_lifecycle": _format_generic_cross_cutting_md,
+    "factor_governance": _format_generic_cross_cutting_md,
 }
 
 
@@ -1411,7 +1507,7 @@ def _generate_cross_cutting_md() -> str:
         parts.append("⚠ 未加载到横切视图数据（YAML battle_map_cross_cutting 段缺失或解析失败）。")
         return "\n".join(parts)
 
-    parts.append(_html_link_line("battle_map_07_cross_cutting"))
+    parts.append(_html_link_line("battle_map_12_cross_cutting"))
     parts.append("")
     parts.extend([
         "> 横切贯穿全流程的全局机制：§13 筛选漏斗 / §14 盘中实时事件处理 / §16 能力冲突矩阵与仲裁规则",
@@ -1503,7 +1599,7 @@ def regenerate(output_dir: Path | None = None) -> dict:
         # 横切视图（Gap3：§13漏斗 / §14盘中事件 / §16冲突矩阵）
         cross_md = _generate_cross_cutting_md()
         cross_md = f"{_make_frontmatter()}\n{cross_md}"
-        cross_path = output_dir / "battle_map_07_cross_cutting.md"
+        cross_path = output_dir / "battle_map_12_cross_cutting.md"
         cross_path.write_text(cross_md, encoding="utf-8")
         outputs.append(str(cross_path))
         html = emit_zoomable_html(cross_path, cross_md)

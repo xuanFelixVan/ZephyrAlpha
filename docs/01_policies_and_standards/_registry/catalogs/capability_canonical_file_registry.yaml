@@ -7540,7 +7540,7 @@ creation_tokens:
     capability: "candidate_registry_query"
 
   # --- 作战地图横切视图（2026-08-01，Gap3：§13漏斗/§14盘中事件/§16冲突矩阵迁入翻译真源并渲染）---
-  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/battle_map_07_cross_cutting.md"
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/battle_map_12_cross_cutting.md"
     token: "auto-battle-map-cross-cutting-20260801"
     created_by: "session-battle-map-gaps"
     capability: "battle_map_cross_cutting_view"

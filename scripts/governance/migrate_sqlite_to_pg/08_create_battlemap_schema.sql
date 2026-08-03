@@ -32,8 +32,10 @@ CREATE TABLE IF NOT EXISTS battle_map_steps (
     step_id          TEXT    PRIMARY KEY,
     step_name        TEXT    NOT NULL,
     flow_stage       TEXT    NOT NULL
-        CHECK (flow_stage IN ('stock_selection', 'buy_flow', 'sell_flow',
-                              'position_management', 'execution', 'reconciliation')),
+        -- 2026-08-03 全生命周期扩展：11 阶段（研究孵化→模型训练→回测验证→仿真验证→选股→买入→卖出→仓位→风控管控→执行→对账）
+        CHECK (flow_stage IN ('research_incubation', 'model_training', 'backtest_validation',
+                              'simulation_validation', 'stock_selection', 'buy_flow', 'sell_flow',
+                              'position_management', 'risk_control', 'execution', 'reconciliation')),
     layer            TEXT,
     sort_order       INTEGER NOT NULL DEFAULT 0,
     narrative_ref    TEXT,
@@ -51,6 +53,16 @@ CREATE TABLE IF NOT EXISTS battle_map_steps (
 ALTER TABLE battle_map_steps ADD COLUMN IF NOT EXISTS parent_step_id TEXT
     REFERENCES battle_map_steps(step_id) ON DELETE SET NULL;
 ALTER TABLE battle_map_steps ADD COLUMN IF NOT EXISTS depth INTEGER NOT NULL DEFAULT 0;
+
+-- 2026-08-03 全生命周期扩展：flow_stage CHECK 约束从 6 值升级到 11 值（幂等）
+-- 已存在的库需 DROP 旧约束 + ADD 新约束；新库由 CREATE TABLE 直接建对
+ALTER TABLE battle_map_steps DROP CONSTRAINT IF EXISTS battle_map_steps_flow_stage_check;
+ALTER TABLE battle_map_steps DROP CONSTRAINT IF EXISTS battle_map_steps_flow_stage_check1;
+ALTER TABLE battle_map_steps
+    ADD CONSTRAINT battle_map_steps_flow_stage_check
+    CHECK (flow_stage IN ('research_incubation', 'model_training', 'backtest_validation',
+                          'simulation_validation', 'stock_selection', 'buy_flow', 'sell_flow',
+                          'position_management', 'risk_control', 'execution', 'reconciliation'));
 
 COMMENT ON TABLE battle_map_steps IS '作战地图环节表——第四全景图 battlemap 真源。每行一个作战环节（如四轨融合/流动性过滤），indicators 存6件套结构化数据。';
 
