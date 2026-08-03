@@ -448,6 +448,11 @@ def main(argv: list[str] | None = None) -> int:
         help="静默模式：只输出违规，不输出摘要",
     )
     parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="变更检测：只扫 staged .py（pre-commit，替代全量 3.8s→亚秒）",
+    )
+    parser.add_argument(
         "files",
         nargs="*",
         help="增量扫描：只检查指定文件（pre-commit 传入 staged 文件）",
@@ -467,6 +472,30 @@ def main(argv: list[str] | None = None) -> int:
         ]
         if not file_list:
             print("[check_any_abuse] 无 src/zephyr/ 下的 .py 文件，跳过")
+            return EXIT_PASS
+    elif args.staged:
+        # 变更检测：内联读取 staged .py（保持纯 stdlib，不 import _shared.walk → psycopg2 链）
+        import subprocess
+        _repo_root = Path(__file__).resolve().parents[3]
+        r = subprocess.run(
+            ["git", "diff", "--cached", "--diff-filter=d", "--name-only"],
+            cwd=str(_repo_root),
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        src_prefix = str(args.src.resolve()).replace("\\", "/")
+        file_list = []
+        if r.returncode == 0:
+            for line in r.stdout.splitlines():
+                rel = line.strip().replace("\\", "/")
+                if not rel or not rel.endswith(".py"):
+                    continue
+                fp = (_repo_root / rel).resolve()
+                if str(fp).replace("\\", "/").startswith(src_prefix) and fp.exists():
+                    file_list.append(fp)
+        if not file_list:
+            print("[check_any_abuse] 无 staged src/zephyr/ .py 文件，跳过")
             return EXIT_PASS
     if not args.src.exists() and not file_list:
         print(f"[check_any_abuse] 错误：src 目录不存在: {args.src}", file=sys.stderr)

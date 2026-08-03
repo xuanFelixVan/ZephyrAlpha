@@ -3321,7 +3321,7 @@ capabilities:
     description: >-
       按 node_id 列表批量删除节点（apply_depgraph.py cmd_delete_nodes）。JSON 文件格式
       [id1, id2, ...]。安全门：有入边（被依赖）则阻断，--force 可跳过。先删关联 edges
-      再删 nodes。改 depgraph 前须 git commit 备份。CLI 入口 --delete-nodes NODE_IDS_FILE
+      再删 nodes。已由 backup_pg_depgraph 自动 PG 备份（trae_054 v1.6.0 STEP0）。CLI 入口 --delete-nodes NODE_IDS_FILE
       [--force]。解决发现性：新 AI 搜 "批量删节点/delete nodes/node_id 列表删除" 可定位
       真源。解决防重建：阻止新 AI 写 SQL 直接 DELETE FROM nodes（违反入边安全门 + depgraph
       硬约束）。

@@ -428,6 +428,23 @@ SQL_UPDATE_NODE_ENTRY_POINT = "UPDATE nodes SET entry_point=%s WHERE path=%s"
 SQL_SELECT_NODE_BP_BY_PATH = "SELECT node_id, blueprint_id FROM nodes WHERE path=%s"
 SQL_SELECT_NODES_METADATA_BY_PATH = "SELECT path FROM nodes_metadata WHERE path=%s"
 
+# --- cmd_set_blueprint_id (path-targeted blueprint_id 赋值，专为空值节点) ---
+# 裁定#209 Stage 2: path 为稳定 PK。old='' 的节点无法用 --rename-blueprint-id
+# （old='' 会误伤全库所有空值节点），故提供按 path 精确赋值的 sanctioned 入口。
+SQL_SELECT_NODE_FULL_BY_PATH = (
+    "SELECT node_id, blueprint_id, belongs_to, build_status, design_maturity, domain_id "
+    "FROM nodes WHERE path=%s"
+)
+SQL_UPDATE_NODE_BLUEPRINT_ID_BY_PATH = (
+    "UPDATE nodes SET blueprint_id=%s, belongs_to=%s WHERE path=%s"
+)
+SQL_UPDATE_NODES_METADATA_BP_BY_PATH = (
+    "UPDATE nodes_metadata SET blueprint_id=%s, last_updated=%s WHERE path=%s"
+)
+SQL_CLEAR_BLUEPRINT_ID_INVALID_BY_PATH = (
+    "UPDATE nodes SET blueprint_id_invalid=0 WHERE path=%s"
+)
+
 
 
 @contextlib.contextmanager
@@ -3618,6 +3635,93 @@ def cmd_rename_blueprint_id(
                     c.close()
 
 
+def cmd_set_blueprint_id(
+    path: str,
+    new_bp_id: str,
+    dry_run: bool = False,
+    db_path: str = None,
+    conn=None,
+) -> int:
+    """按 path 给节点赋值 blueprint_id（裁定#209 Stage 2 path 为稳定 PK）。
+
+    专为 blueprint_id 为空/NULL 的节点设计——这类节点无法用 --rename-blueprint-id
+    （old_bp_id='' 会匹配全库所有空值节点，误伤 385 个 production 空值节点）。
+    本函数按 path 精确赋值，是唯一的 sanctioned 路径赋值入口。
+
+    与 --rename-blueprint-id 的区别：
+    - rename: 按 old_bp_id 值映射（old→new），处理 4 类传播表
+    - set:    按 path 精确赋值（空→new），传播仅限 nodes.blueprint_id + belongs_to
+              + nodes_metadata.blueprint_id（这类节点 type_specific_data 无 module_id
+              字段、blueprint_path 为 NULL，无需 4 类传播）
+
+    安全保证：
+    - new_bp_id 必须通过 is_valid_module_id（裁定#208 双轨制三轨）
+    - path 必须命中一个节点（path 是稳定 PK）
+    - _db_write_lock 互斥保护（与 generate_project_depgraph 共享 lock key 424242）
+    - dry_run 只读不写
+    - belongs_to 同步设为 new_bp_id（与 file-module 惯例 blueprint_id==belongs_to 对齐）
+
+    返回受影响 nodes 行数，-1=失败。
+    """
+    # 校验 new_bp_id 格式（权威真源 is_valid_module_id，裁定#208 R2）
+    ok, reason = _validate_bp_id_format(new_bp_id)
+    if not ok:
+        print(
+            f"ERROR: new_bp_id '{new_bp_id}' 格式不合规：{reason}\n"
+            f"裁定#208 双轨制：MOD-{{LAYER}}-NNN / MOD-{{DOMAIN}}[-NNN] / SH-{{ABBR}}-NNN",
+            file=sys.stderr,
+        )
+        return -1
+
+    own_conn = conn is None
+
+    def _run(c) -> int:
+        """_run implementation."""
+        row = c.execute(SQL_SELECT_NODE_FULL_BY_PATH, (path,)).fetchone()
+        if not row:
+            print(f"ERROR: path='{path}' 在 nodes 表中不存在", file=sys.stderr)
+            return -1
+        old_bp = row["blueprint_id"] or ""
+        old_bt = row["belongs_to"] or ""
+        mode = "[DRY RUN]" if dry_run else "[OK]"
+        print(f"{mode} set_blueprint_id: path={path}", file=sys.stderr)
+        print(f"  blueprint_id: '{old_bp}' -> '{new_bp_id}'", file=sys.stderr)
+        print(f"  belongs_to:   '{old_bt}' -> '{new_bp_id}'  (与 blueprint_id 对齐)", file=sys.stderr)
+        if dry_run:
+            return 1
+        c.execute(SQL_UPDATE_NODE_BLUEPRINT_ID_BY_PATH, (new_bp_id, new_bp_id, path))
+        c.execute(SQL_CLEAR_BLUEPRINT_ID_INVALID_BY_PATH, (path,))
+        c.execute(
+            SQL_UPDATE_NODES_METADATA_BP_BY_PATH,
+            (new_bp_id, datetime.datetime.now().isoformat(), path),
+        )
+        if own_conn:
+            c.commit()
+        print(f"  [OK] nodes + nodes_metadata 已更新，blueprint_id_invalid 已清除", file=sys.stderr)
+        return 1
+
+    if dry_run:
+        c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+        try:
+            return _run(c)
+        finally:
+            if own_conn:
+                c.close()
+    else:
+        with _optional_db_lock(own_conn, task="set_blueprint_id", db_path=db_path):
+            c = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True) if own_conn else conn
+            try:
+                return _run(c)
+            except Exception as e:
+                if own_conn:
+                    c.rollback()
+                logger.error("cmd_set_blueprint_id失败: %s", e)
+                return -1
+            finally:
+                if own_conn:
+                    c.close()
+
+
 def cmd_propagate_node_paths(
     path_mapping: dict[str, str],
     bl_mapping: dict[str, str] | None = None,
@@ -4776,6 +4880,17 @@ def main() -> None:
         "改名后自动扫描 docs/ 下 YAML 真源引用并输出 [YAML SYNC WARNING]（无需手动 grep）。"
         "配 --dry-run 预览。",
     )
+    parser.add_argument(
+        "--set-blueprint-id",
+        type=str,
+        nargs=2,
+        metavar=("PATH", "NEW_BLUEPRINT_ID"),
+        help="按 path 给 blueprint_id 为空/NULL 的节点赋值（sanctioned 路径赋值入口）。"
+        "专为 old_bp_id='' 的节点——--rename-blueprint-id 的 old='' 会误伤全库空值节点，"
+        "故用本参数按 path 精确赋值。校验 new_bp_id 符合裁定#208 双轨制。"
+        "同步更新 nodes.belongs_to + nodes_metadata.blueprint_id + 清除 blueprint_id_invalid。"
+        "配 --dry-run 预览。",
+    )
     # 四图模块对齐 Step 3 Task 3.4：模块全景字段写入入口
     parser.add_argument(
         "--mark-entry",
@@ -5173,6 +5288,15 @@ def main() -> None:
     if args.rename_blueprint_id:
         old_bp, new_bp = args.rename_blueprint_id
         n = cmd_rename_blueprint_id(old_bp, new_bp, dry_run=args.dry_run)
+        if n < 0:
+            sys.exit(4)
+        print(f"affected={n}")
+        return
+
+    # 路径赋值 blueprint_id（空值节点专用 sanctioned 入口）——dispatch
+    if args.set_blueprint_id:
+        path_arg, new_bp = args.set_blueprint_id
+        n = cmd_set_blueprint_id(path_arg, new_bp, dry_run=args.dry_run)
         if n < 0:
             sys.exit(4)
         print(f"affected={n}")

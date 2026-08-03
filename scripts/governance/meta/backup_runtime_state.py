@@ -214,7 +214,7 @@ def backup_pg_depgraph(max_backups: int = 10, throttle_seconds: int = 0) -> str 
 
     Obs2 治本（节流）：连续 apply_depgraph 调用会在数秒内产生大量冗余快照
     （实测 14 秒 8 份）。DR 备份无需如此细粒度——depgraph 变更已由 git commit
-    追溯（trae_054 STEP0 铁律：改 depgraph 前必须 git commit 备份），throttle_seconds
+    追溯（depgraph_dirty.flag 标记；DB 数据备份由 backup_pg_depgraph 自动，trae_054 v1.6.0 STEP0），throttle_seconds
     窗口内的多次变更合并为下一次备份即可，RPO 损失可接受（中间态可由 git 历史重放）。
     默认 0 = 不节流（向后兼容测试）；apply_depgraph 事件触发入口传 60。
 

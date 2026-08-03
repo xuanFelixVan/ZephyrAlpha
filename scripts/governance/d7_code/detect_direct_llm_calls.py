@@ -61,7 +61,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_PASS, EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import iter_files
+from _shared.walk import iter_files, staged_files
 
 ensure_utf8_stdout()
 import argparse
@@ -327,16 +327,29 @@ def scan_file(file_path: Path) -> list[str]:
     return [f"{rel}:{lineno}: {desc}" for lineno, desc in violations]
 
 
-def scan_all(warn_only: bool = False) -> tuple[int, list[str]]:
-    """扫描 src/zephyr/ 下所有 Python 文件（RULE-LSG-001 全量），返回 (exit_code, violations)."""
+def scan_all(warn_only: bool = False, files: list[Path] | None = None) -> tuple[int, list[str]]:
+    """扫描 src/zephyr/ 下所有 Python 文件（RULE-LSG-001 全量），返回 (exit_code, violations).
+
+    Args:
+        warn_only: True 时违规仅警告（exit 0），False 时硬阻断（exit 1）。
+        files: 显式文件列表（变更检测模式）。None 时全量 rglob src/zephyr/。
+            pre-commit 传入 staged 文件避免全量 AST 扫描（6.5s→亚秒）。
+    """
     all_violations: list[str] = []
     src_dir = REPO_ROOT / "src" / "zephyr"
 
-    if not src_dir.exists():
-        print(f"ERROR: src/zephyr/ not found at {src_dir}", file=sys.stderr)
-        return 2, []
+    if files is not None:
+        py_files = sorted(f for f in files if f.exists() and f.suffix == ".py")
+        if not py_files:
+            # 变更检测模式无 staged .py 文件——无事可做（不打印误导性 PASS）
+            return 0, []
+    else:
+        if not src_dir.exists():
+            print(f"ERROR: src/zephyr/ not found at {src_dir}", file=sys.stderr)
+            return 2, []
+        py_files = sorted(src_dir.rglob("*.py"))
 
-    for py_file in sorted(src_dir.rglob("*.py")):
+    for py_file in py_files:
         violations = scan_file(py_file)
         all_violations.extend(violations)
 
@@ -366,6 +379,11 @@ def main() -> int:
     parser.add_argument("--ci", action="store_true", help="硬阻断模式（pre-commit），发现裸调 exit(1)")
     parser.add_argument("--warn-only", action="store_true", help="仅警告，不阻断")
     parser.add_argument("--cond30", action="store_true", help="仅运行 COND-30 导入检测（存量模式）")
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="变更检测：只扫描 staged .py 文件（pre-commit，替代全量 6.5s→亚秒）",
+    )
     args = parser.parse_args()
 
     # COND-30 模式：仅检测业务层 LLM SDK 导入
@@ -392,7 +410,8 @@ def main() -> int:
         return EXIT_PASS if (args.warn_only or not all_findings) else 1
 
     # RULE-LSG-001 模式：全量 API 调用检测
-    exit_code, violations = scan_all(warn_only=args.warn_only)
+    staged = staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/") if args.staged else None
+    exit_code, violations = scan_all(warn_only=args.warn_only, files=staged)
     if violations and not (args.warn_only or args.ci):
         return EXIT_FINDINGS
     return exit_code

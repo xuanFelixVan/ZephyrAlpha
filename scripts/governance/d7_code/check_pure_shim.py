@@ -64,6 +64,7 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.walk import staged_files
 
 __manifest__ = """
 args:
@@ -158,13 +159,22 @@ def main(argv: list[str] | None = None) -> int:
 
     warn_only = "--warn-only" in args
     ci_mode = "--ci" in args or not warn_only
+    staged_mode = "--staged" in args
 
-    # pre-commit 传入 staged 文件列表（过滤出 .py 文件）
+    # pre-commit 传入 staged 文件列表（过滤出 .py 文件）；gateway 路径传 --ci <files>
     files = [a for a in args if not a.startswith("--")]
 
     if not files:
-        # 无文件传入时全量扫描 src/zephyr/ 下 .py（run_gate_chain 合并模式 / 手动全量审计）
-        files = [str(p.relative_to(REPO_ROOT)) for p in (REPO_ROOT / "src" / "zephyr").rglob("*.py")]
+        if staged_mode:
+            # 变更检测：只扫 staged .py（pre-commit run_gate_chain 路径，替代全量 3.5s→亚秒）
+            # gateway 路径必传显式 files，不会走到这里——语义安全
+            files = [
+                str(p.relative_to(REPO_ROOT))
+                for p in staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/")
+            ]
+        else:
+            # 无文件传入时全量扫描 src/zephyr/ 下 .py（手动全量审计 / CI）
+            files = [str(p.relative_to(REPO_ROOT)) for p in (REPO_ROOT / "src" / "zephyr").rglob("*.py")]
         if not files:
             return EXIT_PASS
 

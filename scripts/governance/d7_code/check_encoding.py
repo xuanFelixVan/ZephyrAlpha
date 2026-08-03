@@ -56,6 +56,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
+from _shared.walk import staged_files
 
 ensure_utf8_stdout()
 
@@ -317,6 +318,11 @@ def main() -> None:
     parser.add_argument("--file", type=str, help="Check encoding of a specific file")
     parser.add_argument("--dir", type=str, help="Check encoding of all files in directory")
     parser.add_argument("--scan", action="store_true", help="Scan entire project for mojibake")
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="只校验 staged 文件（pre-commit 变更检测，替代 --dir . 全量 92s→亚秒）",
+    )
     parser.add_argument("--warn-only", action="store_true", help="Only warn, do not fail")
     args = parser.parse_args()
 
@@ -327,6 +333,17 @@ def main() -> None:
         f_findings, f_warnings = check_file_encoding(args.file)
         all_findings.extend(f_findings)
         all_warnings.extend(f_warnings)
+
+    if args.staged:
+        # 变更检测（治本 2026-08-03）：--dir . 全量扫 7355 文件需 92s（逐文件
+        # read_bytes+mojibake 正则占绝大头，git_ls_files 救不了）。pre-commit 改为
+        # 只查 staged 文件——未变更文件在历史提交时已校验，语义安全。全量审计由
+        # CI（--dir .）或手动 --scan 覆盖。BOM/mojibake 仍硬阻断（除非 --warn-only）。
+        _STAGED_ENC_EXT = frozenset({".py", ".md", ".yaml", ".yml", ".json", ".toml", ".ps1"})
+        for fpath in staged_files(extensions=_STAGED_ENC_EXT):
+            f_findings, f_warnings = check_file_encoding(str(fpath))
+            all_findings.extend(f_findings)
+            all_warnings.extend(f_warnings)
 
     if args.dir:
         d_findings, d_warnings = check_dir_encoding(args.dir)
@@ -351,8 +368,8 @@ def main() -> None:
         if mojibake_count > 0:
             print(f"\nTotal mojibake files: {mojibake_count}")
 
-    if not any([args.file, args.dir, args.scan]):
-        print("Usage: check_encoding.py --file <path> | --dir <path> | --scan")
+    if not any([args.file, args.dir, args.scan, args.staged]):
+        print("Usage: check_encoding.py --file <path> | --dir <path> | --scan | --staged")
         sys.exit(EXIT_ERROR)
 
     for finding in all_findings:

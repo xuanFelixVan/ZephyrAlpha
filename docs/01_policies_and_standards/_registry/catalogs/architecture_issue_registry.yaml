@@ -9326,7 +9326,7 @@ entries:
   created: '2026-07-24'
   last_updated: '2026-07-24'
 # --- #ARCH-DEPGRAPH-BACKUP-FIRST-CHECK: 备份先行门禁治本（2026-07-24）---
-# 关联裁定：trae_054 STEP0（改 depgraph 前必须 git commit 备份）
+# 关联裁定：trae_054 STEP0 两层备份——DB数据备份由 backup_pg_depgraph 自动；脚本代码备份（git commit 脚本）无技术强制（本 issue 关注点）
 - issue_id: '#ARCH-DEPGRAPH-BACKUP-FIRST-CHECK'
   title: 备份先行规则无技术强制——执行 DB 修改前未先 git commit 脚本
   category: governance_mechanism_gap

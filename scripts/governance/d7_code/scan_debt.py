@@ -56,6 +56,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.walk import staged_files
 
 # ── 阈值（可调）──────────────────────────────────────────────────────────
 MAX_BOOL_PARAMS = 3  # DEBT-2: 函数含 ≥3 个 bool 参数即报警
@@ -240,9 +241,15 @@ def scan_file(path: Path) -> list[DebtViolation]:
     return scanner.violations
 
 
-def scan_dir(root: Path) -> Iterable[DebtViolation]:
-    """scan_dir implementation."""
-    for py in root.rglob("*.py"):
+def scan_dir(root: Path, files: list[Path] | None = None) -> Iterable[DebtViolation]:
+    """扫描目录全量或显式文件列表（变更检测模式）。
+
+    Args:
+        root: 全量扫描的根目录（files=None 时用）。
+        files: 显式文件列表（pre-commit staged）。None 时 rglob root 下所有 .py。
+    """
+    py_iter = files if files is not None else root.rglob("*.py")
+    for py in py_iter:
         # 跳过 __pycache__ / 测试 / 临时文件
         if "__pycache__" in py.parts:
             continue
@@ -258,14 +265,24 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="架构债务扫描器（5.96 维度防御）")
     parser.add_argument("--src", default="src/zephyr", help="扫描根目录")
     parser.add_argument("--ci", action="store_true", help="CI 模式：违规即 exit 1（hard block）")
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="变更检测：只扫描 staged .py 文件（pre-commit，替代全量 5.1s→亚秒）",
+    )
     parser.add_argument("--quiet", action="store_true", help="仅打印违规数，不打印详情")
     args = parser.parse_args(argv)
 
     root = Path(args.src)
-    if not root.exists():
-        print(f"ERROR: 扫描根目录不存在: {root}", file=sys.stderr)
-        return EXIT_ERROR
-    all_violations: list[DebtViolation] = list(scan_dir(root))
+    if args.staged:
+        # 变更检测模式：只扫 staged .py，跳过全量 rglob（CI 用 --ci 全量，pre-commit 用 --staged）
+        staged = staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/")
+        all_violations: list[DebtViolation] = list(scan_dir(root, files=staged))
+    else:
+        if not root.exists():
+            print(f"ERROR: 扫描根目录不存在: {root}", file=sys.stderr)
+            return EXIT_ERROR
+        all_violations = list(scan_dir(root))
 
     # 按类别统计
     by_code: dict[str, int] = {}

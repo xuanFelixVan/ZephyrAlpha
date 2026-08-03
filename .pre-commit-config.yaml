@@ -443,7 +443,7 @@ repos:
       #           原 GATE-SSOT/SINGLESOURCE 均 pass_filenames=false 自扫描，合并后等价。
       - id: gate-ssot-code
         name: "GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）"
-        entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py scripts/governance/d3_metadata/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py scripts/governance/d3_metadata/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci,--staged
         language: system
         pass_filenames: false
         always_run: false
@@ -565,12 +565,12 @@ repos:
       - id: gate-20-llm-security-gateway
         name: "GATE-20: 裸调 LLM API 检测（RULE-LSG-001 + COND-30）"
         entry: python scripts/governance/d7_code/detect_direct_llm_calls.py
-        args: ["--ci"]
+        args: ["--ci", "--staged"]
         language: system
         pass_filenames: false
         always_run: false
         files: "^src/zephyr/.*\\.py$"
-        description: "AST 扫描裸调 LLM API——强制所有 LLM 调用必须经过 LSGSecurityGateway。已导入 LSG 的放行，裸调阻断。对标 RULE-LSG-001 + COND-30"
+        description: "AST 扫描裸调 LLM API——强制所有 LLM 调用必须经过 LSGSecurityGateway。已导入 LSG 的放行，裸调阻断。--staged 变更检测：pre-commit 只扫 staged .py（6.5s→亚秒），CI 全量用 --ci 无 --staged。对标 RULE-LSG-001 + COND-30"
 
       # ── GATE-GENERATE 已合并到 GATE-VOCAB（见上 gate-vocab）──
 
@@ -759,12 +759,12 @@ repos:
       - id: gate-encoding-safety
         name: "GATE-ENCODING: 编码安全+mojibake+BOM检测"
         entry: python scripts/governance/d7_code/check_encoding.py
-        args: ["--dir", "."]
+        args: ["--staged"]
         language: system
         pass_filenames: false
         always_run: false
         files: "\\.(py|md|yaml|yml|json|toml)$"
-        description: "编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）。已合并 GATE-BOM（--dir . 全项目覆盖）"
+        description: "编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）。--staged 变更检测：pre-commit 只查 staged 文件（92s→亚秒），全量审计由 CI --dir . 覆盖"
 
       # ── GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513 治本，RB-6 修复 2026-06-29）──
       # 权威依据：OPS-2026062513——多 AI session 共享 git index 导致幽灵提交
@@ -855,12 +855,12 @@ repos:
       # 设计原则：误报优先（宁可放过，不可误伤 commit）；纯 stdlib（不依赖 ruff 是否安装）
       - id: gate-debt-bridge
         name: "GATE-DEBT-BRIDGE: 架构债务防御（5.96 维度防复发）"
-        entry: python scripts/governance/d7_code/scan_debt.py --ci
+        entry: python scripts/governance/d7_code/scan_debt.py --ci --staged
         language: system
         pass_filenames: false
         always_run: false
         files: "^src/zephyr/.*\\.py$"
-        description: "5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。阶段2 已转硬阻断（R68 存量清零）"
+        description: "5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。--staged 变更检测：pre-commit 只扫 staged .py（5.1s→亚秒），CI 全量用 --ci 无 --staged。阶段2 已转硬阻断（R68 存量清零）"
 
       # ── GATE-ANY-ABUSE: 类型注解 Any 滥用门禁（5.145 维度防复发，R70 引入）──
       # 权威依据：docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml 5.145 维度
@@ -881,12 +881,12 @@ repos:
       # 设计原则：误报优先（宁可放过，不可误伤 commit）；纯 stdlib（不依赖 ruff/mypy 是否安装）
       - id: gate-any-abuse
         name: "GATE-ANY-ABUSE: 类型注解 Any 滥用（5.145 维度防复发，Phase 3 commit 阻断）"
-        entry: python scripts/governance/d7_code/check_any_abuse.py --ci
+        entry: python scripts/governance/d7_code/check_any_abuse.py --ci --staged
         language: system
         pass_filenames: false
         always_run: false
         files: "^src/zephyr/.*\\.py$"
-        description: "5.145 维度防复发——检测函数签名裸 Any 滥用（ANY-1 参数 / ANY-2 返回值）。Phase 3 commit 阻断（存量已清零 e494c72623），`# noqa: any-abuse` 行级豁免合理 Any"
+        description: "5.145 维度防复发——检测函数签名裸 Any 滥用（ANY-1 参数 / ANY-2 返回值）。--staged 变更检测：pre-commit 只扫 staged .py（3.8s→亚秒），CI 全量用 --ci 无 --staged。Phase 3 commit 阻断（存量已清零 e494c72623），`# noqa: any-abuse` 行级豁免合理 Any"
 
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage

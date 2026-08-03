@@ -25,9 +25,10 @@ from __future__ import annotations
 
 import fnmatch
 import os
+import subprocess
 from pathlib import Path
 
-from _shared.constants import EXCLUDE_DIRS
+from _shared.constants import EXCLUDE_DIRS, REPO_ROOT
 
 
 def iter_files(
@@ -69,3 +70,49 @@ def iter_files(
             result.append(filepath)
 
     return result
+
+
+def staged_files(
+    extensions: frozenset[str] | None = None,
+    path_prefix: str | None = None,
+) -> list[Path]:
+    """返回当前 staged（新增/修改，排除删除）文件列表（变更检测优化）。
+
+    用 ``git diff --cached --diff-filter=d --name-only`` 从 git 索引读取，
+    供 pre-commit 钩子只校验本次变更文件，避免全量扫描 35K 文件仓库。
+    对标 audit_broken_links._get_basename_cache 的 git ls-files 优化模式：
+    O(1) 读 git 索引 vs os.walk/rglob O(N) 遍历文件系统。
+
+    语义安全：未变更文件在历史提交时已过 gate；本次提交只会引入已变更
+    文件的新违规。全量审计由 CI（不带 --staged）或手动 --scan/--dir 路径覆盖。
+
+    Args:
+        extensions: 允许的扩展名集合（含点号，如 frozenset({'.py'})），None 不限。
+        path_prefix: 仅保留以该前缀开头的仓库相对路径（如 'src/zephyr/'），None 不限。
+
+    Returns:
+        已排序去重的绝对 Path 列表（仅含仍存在于工作区的文件）。
+        git 不可用或无 staged 文件时返回空列表（pre-commit 无变更 = 无事可做）。
+    """
+    r = subprocess.run(
+        ["git", "diff", "--cached", "--diff-filter=d", "--name-only"],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    if r.returncode != 0:
+        return []
+    result: list[Path] = []
+    for line in r.stdout.splitlines():
+        rel = line.strip().replace("\\", "/")
+        if not rel:
+            continue
+        if path_prefix and not rel.startswith(path_prefix):
+            continue
+        fp = REPO_ROOT / rel
+        if extensions and fp.suffix.lower() not in extensions:
+            continue
+        if fp.exists():
+            result.append(fp)
+    return sorted(set(result))
