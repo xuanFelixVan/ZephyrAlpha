@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/market_data/test_normalized_market_data_producer.py
+# [A_module] module_id=MOD-MKT_DATA | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """NormalizedMarketData 生产者包——D_MKT_DATA→D_FACTOR 数据供给。
 

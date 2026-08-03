@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AutoloadError(ZA-MKT-0005)
 # [TESTS] tests/market_data/test_autoload.py
+# [A_module] module_id=MOD-MKT-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_MKT_DATA — Autoload (自动加载器)
 

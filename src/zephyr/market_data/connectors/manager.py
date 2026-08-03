@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConnectorAlreadyRegisteredError(ZA-MKT-0003); ConnectorNotFoundError(ZA-MKT-0003)
 # [TESTS] tests/market_data/connectors/test_connector_manager.py
+# [A_module] module_id=MOD-MKT-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_MKT_DATA — Connector Manager (连接器管理器)
 

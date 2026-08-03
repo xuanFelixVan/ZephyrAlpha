@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] FailoverError(ZA-MKT-0004)
 # [TESTS] tests/market_data/failover/test_failover_manager.py
+# [A_module] module_id=MOD-MKT-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_MKT_DATA — Failover (故障切换)
 

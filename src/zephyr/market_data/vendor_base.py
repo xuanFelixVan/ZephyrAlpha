@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] VendorError(ZA-MKT-0002)
 # [TESTS] tests/market_data/test_vendor_base.py
+# [A_module] module_id=MOD-MKT-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_MKT_DATA — Vendor Base (行情数据源基类)
 

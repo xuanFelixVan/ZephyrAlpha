@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CacheError(ZA-MKT-0006)
 # [TESTS] tests/market_data/raw_data_cache/test_raw_data_cache.py
+# [A_module] module_id=MOD-MKT-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_MKT_DATA — Raw Data Cache 实现 (原始数据缓存)
 

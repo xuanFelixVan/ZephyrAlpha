@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConnectorError(ZA-MKT-0003)
 # [TESTS] tests/market_data/connectors/test_connector_base.py; tests/market_data/connectors/test_connector_manager.py
+# [A_module] module_id=MOD-MKT-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_MKT_DATA — Connectors (行情数据连接器)
 

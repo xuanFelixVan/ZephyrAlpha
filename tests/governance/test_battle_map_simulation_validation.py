@@ -272,4 +272,21 @@ class TestBMSim07Translation:
             assert t[field], f"翻译条目字段为空: {field}"
 
     def test_sim07_translation_content(self, translation_registry):
-        """BM
+        """BM-SIM-07 翻译内容正确。"""
+        t = translation_registry.get("BM-SIM-07", {})
+        assert t.get("name_zh") == EXPECTED_SIM07_TRANSLATION["name_zh"]
+        assert t.get("name_en") == EXPECTED_SIM07_TRANSLATION["name_en"]
+        assert EXPECTED_SIM07_TRANSLATION["plain_zh"] in t.get("plain_zh", "")
+        assert EXPECTED_SIM07_TRANSLATION["mechanism_zh"] in t.get("mechanism_zh", "")
+        assert EXPECTED_SIM07_TRANSLATION["indicators_zh"] in t.get("indicators_zh", "")
+
+    def test_sim07_indicators_has_6_pieces(self, translation_registry):
+        """BM-SIM-07 的 indicators_zh 含 6 件套（①触发②消费③参数④数据流⑤代码⑥降级）。"""
+        t = translation_registry.get("BM-SIM-07", {})
+        indicators = t.get("indicators_zh", "")
+        markers = ["①触发", "②消费", "③参数", "④数据流", "⑤代码", "⑥降级"]
+        for marker in markers:
+            assert marker in indicators, f"indicators_zh 缺少 6 件套标记: {marker}"
+
+    def test_sim07_indicators_mentions_mod_sim_003(self, translation_registry):
+        """indicators_zh 的 ⑤

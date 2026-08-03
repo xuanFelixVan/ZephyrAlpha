@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] VendorAlreadyRegisteredError(ZA-MKT-0001); VendorNotFoundError(ZA-MKT-0001)
 # [TESTS] tests/market_data/test_vendor_registry.py
+# [A_module] module_id=MOD-MKT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_MKT_DATA — Vendor Registry (行情数据源注册表)
 
