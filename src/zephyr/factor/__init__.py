@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor
+# [DOMAIN] D_FACTOR
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
