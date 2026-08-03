@@ -6,3 +6,6 @@ pytest>=8.0.0
 pytest-asyncio>=0.23.0
 pytest-cov>=5.0.0
 pre-commit>=4.0.0
+# .importlinter 层依赖契约校验（shared 禁止 import 业务层，AI-01 S1 治本 2026-08-01）
+# 镜像 pyproject.toml [project.optional-dependencies].dev
+import-linter>=2.0,<3.0

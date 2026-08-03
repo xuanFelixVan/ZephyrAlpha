@@ -94,6 +94,14 @@ CHECKS = [
         "name": "blueprint_registry.yaml",
         "cmd": [sys.executable, str(SYNCERS_DIR / "sync_registry_from_blueprints.py")],
     },
+    {
+        # AI-01 S1-2 治本（2026-08-01）：.importlinter forbidden_modules 手工维护曾漂移失效
+        # （2026-07-05 引用 capacity_assurance/risk_engine 等不存在包名，配置完全失效）。
+        # 现由 generate_importlinter.py 从 src/zephyr/ 顶层包扫描派生，接入 GATE-21 防手工
+        # 清单与实际包结构漂移。--check 比对值集合（忽略顺序），drift 时 exit 1。
+        "name": ".importlinter forbidden_modules",
+        "cmd": [sys.executable, str(GENERATORS_DIR / "generate_importlinter.py"), "--check"],
+    },
 ]
 
 

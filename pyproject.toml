@@ -78,6 +78,10 @@ dev = [
     "pytest-asyncio>=0.23.0",
     "pytest-cov>=5.0.0",
     "pre-commit>=4.0.0",
+    # .importlinter 层依赖契约校验能力落地（AI-01 S1 治本 2026-08-01）：
+    # 原仅在 capacity_assurance blueprint 标"✅ 已实现"但依赖未声明，能力不可运行。
+    # import-linter 2.13（2026-07-03），Python>=3.10，BSD-2-Clause。
+    "import-linter>=2.0,<3.0",
 ]
 demo = [
     "akshare>=1.12.0",
