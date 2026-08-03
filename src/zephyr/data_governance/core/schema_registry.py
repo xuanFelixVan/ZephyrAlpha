@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 未注册表->KeyError; 列不存在->KeyError
 # [TESTS] tests/data_governance/test_schema_registry.py
+# [A_module] module_id=MOD-DATA_GOV-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-DATA-GOV Schema Registry——表结构注册与查询。
 

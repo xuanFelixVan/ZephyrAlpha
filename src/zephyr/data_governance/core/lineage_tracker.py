@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 环检测->ValueError; 节点不存在->返回空列表
 # [TESTS] tests/data_governance/test_lineage_tracker.py
+# [A_module] module_id=MOD-DATA_GOV-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-DATA-GOV Lineage Tracker——数据血缘追踪。
 

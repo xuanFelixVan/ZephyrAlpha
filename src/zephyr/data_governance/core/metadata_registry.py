@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] key不存在->KeyError; 前缀搜索无匹配->返回空列表
 # [TESTS] tests/data_governance/test_metadata_registry.py
+# [A_module] module_id=MOD-DATA_GOV-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-DATA-GOV Metadata Registry——元数据管理。
 

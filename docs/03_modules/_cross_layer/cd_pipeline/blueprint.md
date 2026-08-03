@@ -81,7 +81,7 @@ build_status: planned
 | 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CD-001 | MOD-CD-001 | ✅ |
-| domain_id | N/A | D_GOV_ENFORCEMENT | — |
+| domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
 | file_count | 1 文件 | N/A | — |
 
