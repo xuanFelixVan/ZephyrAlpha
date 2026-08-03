@@ -9642,6 +9642,13 @@ entries:
   desc_zh: "Shadow Canary 部署运行器——编排预检/影子部署/比对/状态机流转，满足 EX-021 门禁 CI/CD 灰度半"
   desc_en: "Shadow Canary deploy runner orchestrating precheck/shadow/compare/state-machine, satisfying EX-021 CI/CD gate half"
   plain_zh: "把 4 个已有零件串成一条命令，做灰度发布的安全网：先检查能不能上线，再开个影子进程跑同样的输入但不接真券商，然后比对两边输出是否一致，分歧小就放行、分歧大就回滚。专门满足 EX-021 那半 CI/CD 灰度门禁。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "蓝图物理ID硬编码阻断门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查准备提交的蓝图文件里有没有写死数据库自增ID（node_id/edge_id）。这些ID是数据库自动生成的序号，删了重建就变，写死在文档里会变成找不到的死链接。本门禁在提交时拦截，强制改用稳定的模块编号。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

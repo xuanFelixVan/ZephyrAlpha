@@ -39,7 +39,7 @@ entry_schema:
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
 total_gates: 87
 gates:
-# --- 86 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐）---
+# --- 87 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001）---
 - gate_id: HELD-OVERLAP
   module_path: zephyr.gov_enforcement.commit_gates.held_overlap_gate
   factory_function: make_held_overlap_gate
@@ -564,4 +564,11 @@ gates:
   factory_function: make_blueprint_node_id_hardcode_gate
   source: in_process
   register_line: 0  # priority=57（in-process 新增；HELD-OVERLAP 50 之后、NEW-FILE-DEPGRAPH 58 之前）
+  enabled: true
+
+- gate_id: WORKTREE-REQUIRED
+  module_path: zephyr.gov_enforcement.commit_gates.worktree_required_gate
+  factory_function: make_worktree_required_gate
+  source: in_process
+  register_line: 0  # priority=44
   enabled: true
