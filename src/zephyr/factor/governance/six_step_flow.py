@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 非法推进->拒绝; 门禁未过->拒绝+detail
 # [TESTS] tests/factor/test_six_step_flow.py
+# [A_module] module_id=MOD-L02-016 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流程。
 

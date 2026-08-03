@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 数据不足->返回0.0; 空输入->返回0.0; 不抛异常
 # [TESTS] tests/factor/test_evaluation_metrics.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-03 因子评估指标——纯函数模块（无 IO 依赖）。
 

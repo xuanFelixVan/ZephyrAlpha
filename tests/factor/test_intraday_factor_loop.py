@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-L02-intraday-loop-test | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02-001 | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """IntradayFactorLoop 单元测试——盘中3秒因子调度循环。
 

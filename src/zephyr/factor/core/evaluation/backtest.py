@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH查询失败->返回空DataFrame(同ch_reader); 因子未注册->KeyError向上抛; 数据不足->EvaluationResult字段为0
 # [TESTS] tests/factor/test_evaluation_backtest.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-03 因子评估回测运行器——端到端因子评估。
 

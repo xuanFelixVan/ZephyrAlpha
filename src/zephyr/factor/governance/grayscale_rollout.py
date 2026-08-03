@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 已到100%->无法推进; 门禁未过->拒绝推进
 # [TESTS] tests/factor/test_grayscale_rollout.py
+# [A_module] module_id=MOD-L02-015 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-GOV-03 灰度发布——管理因子从 10% → 30% → 100% 的放量阶梯。
 

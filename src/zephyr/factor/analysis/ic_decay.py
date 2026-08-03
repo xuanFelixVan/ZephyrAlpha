@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 数据不足->返回空Series; 半衰期无法计算->返回0.0
 # [TESTS] tests/factor/test_ic_decay.py
+# [A_module] module_id=MOD-L02-004 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-03 IC 衰减分析——不同 lag 的 IC 衰减曲线与半衰期。
 

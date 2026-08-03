@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入->空DataFrame; 单因子->1x1矩阵; 数据不足->NaN
 # [TESTS] tests/factor/test_correlation_analyzer.py
+# [A_module] module_id=MOD-L02-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-04 因子相关性分析——计算因子间相关性矩阵。
 

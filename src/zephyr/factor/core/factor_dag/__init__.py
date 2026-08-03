@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] validate 返回错误列表（不抛）；topological_layers 检测到环抛 ValueError
 # [TESTS] tests/factor/test_factor_dag.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR core factor_dag 子包——因子 DAG 数据结构 + Kahn 拓扑分层。
 

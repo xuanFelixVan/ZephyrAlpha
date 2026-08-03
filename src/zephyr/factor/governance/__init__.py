@@ -4,6 +4,7 @@
 # [DEPENDENCIES] zephyr.shared.lifecycle.state_machine; zephyr.gov_enforcement.rule_bridge.commit_gate_registry
 # [STARTUP] imported
 # [MATURITY] production
+# [A_module] module_id=MOD-L02-GOV | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR governance 子包——因子生命周期治理工具链。
 

@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 未提交因子->拒绝; 门禁未过->拒绝+detail
 # [TESTS] tests/factor/test_governance_engine.py
+# [A_module] module_id=MOD-L02-017 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-GOV-05 因子治理引擎——顶层编排六步流程+灰度发布。
 

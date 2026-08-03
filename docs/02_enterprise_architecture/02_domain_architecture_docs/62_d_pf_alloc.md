@@ -74,11 +74,11 @@ flowchart TD
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_pf_core_default_equity_strategy_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_pf_core_default_equity_strategy_py
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_pf_core_default_equity_strategy_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_pf_core_default_equity_strategy_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5

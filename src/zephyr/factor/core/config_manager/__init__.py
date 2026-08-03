@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] yaml 不存在->返回空 dict（开发友好）；子节缺失->返回 {}
 # [TESTS] tests/factor/test_config_manager.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR core config_manager 子包——core 基础设施模块策略参数加载器。
 

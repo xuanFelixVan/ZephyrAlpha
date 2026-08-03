@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单因子失败不阻断同层其他因子；下游因子标记 upstream failed: <id>；超时标记 timeout
 # [TESTS] tests/factor/test_dag_manager.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR core dag_manager.executor——DAG 调度执行器。
 

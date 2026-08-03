@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单标的失败不阻断其他标的；子进程入口 compute_factor_for_symbol 必须可 pickle
 # [TESTS] tests/factor/test_dist_feature_eng.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR core dist_feature_eng 子包——分布式特征工程引擎。
 

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] acquire 在 PAUSED 或超时返回 False（不抛）；release 不抛
 # [TESTS] tests/factor/test_backpressure.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR core backpressure 子包——进程内在途并发限流器。
 

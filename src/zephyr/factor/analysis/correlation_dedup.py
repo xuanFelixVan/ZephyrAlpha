@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入->空列表; 阈值无效->默认0.7
 # [TESTS] tests/factor/test_correlation_dedup.py
+# [A_module] module_id=MOD-L02-006 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。
 

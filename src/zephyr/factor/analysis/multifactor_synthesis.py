@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入->空Series; 权重不匹配->等权兜底; 回归失败->等权兜底
 # [TESTS] tests/factor/test_multifactor_synthesis.py
+# [A_module] module_id=MOD-L02-011 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号。
 

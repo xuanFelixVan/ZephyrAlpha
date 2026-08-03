@@ -4,6 +4,7 @@
 # [DEPENDENCIES] zephyr.factor.core.evaluation
 # [STARTUP] imported
 # [MATURITY] production
+# [A_module] module_id=MOD-L02-ANA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR analysis 子包——因子分析与评估工具链。
 

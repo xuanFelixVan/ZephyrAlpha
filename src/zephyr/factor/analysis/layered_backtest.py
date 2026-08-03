@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入->空DataFrame; 数据不足->空结果
 # [TESTS] tests/factor/test_layered_backtest.py
+# [A_module] module_id=MOD-L02-007 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-06 分层回测——按因子值分组计算各层收益与多空收益差。
 

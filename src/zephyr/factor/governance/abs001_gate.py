@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 评估结果为None->fail; 任一指标不达标->fail+detail说明
 # [TESTS] tests/factor/test_abs001_gate.py
+# [A_module] module_id=MOD-L02-014 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-GOV-02 ABS001 上线门禁——因子进入灰度前的质量检查。
 

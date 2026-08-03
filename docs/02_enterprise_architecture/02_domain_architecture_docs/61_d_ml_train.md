@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_ML_TRAIN | Domain ID | D_ML_TRAIN |
 | 域名称 | 训练 | Domain Name | Training |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 6 | Module Count | 6 |
+| 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 4 | Internal Dependencies | 4 |
 | 跨域入边 | 5 | Cross-domain Incoming | 5 |
 | 跨域出边 | 7 | Cross-domain Outgoing | 7 |
-| 设计态模块 | 3 | Design Modules | 3 |
+| 设计态模块 | 4 | Design Modules | 4 |
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
 | 描述 | 模型能力考试 | Description | 模型能力考试 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 6 个模块（生产态 3 + 设计态 3），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 7 个模块（生产态 3 + 设计态 4），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -56,20 +56,18 @@ flowchart TD
     docs_03_modules_cross_layer_model_profiler_blueprint_md["model_profiler/blueprint<br/>model_profiler模块蓝图文档，描述该模块的设计意图<br/>和架构决策<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
     src_zephyr_ml_train_ai_operator["ml_train/ai_operator<br/>机器学习训练包的ai_operator模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
     src_zephyr_ml_train_implementations_default_inference_engine_py["implementations/default_inference_engine<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations<br/>/default_inference_engine.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_training_dataset_manager["ml_train/training_dataset_manager<br/>机器学习训练包的training_dataset_manager模块<br/>文件: training_dataset_manager/<br/>(设计态 / design)"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_ai_operator
     src_zephyr_ml_train_ai_operator ~~~ src_zephyr_ml_train_implementations_default_inference_engine_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py ~~~ src_zephyr_ml_train_training_dataset_manager
     src_zephyr_ml_train_inference_base_py["ml_train/inference_base<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_pipeline["ml_train/training_pipeline<br/>机器学习训练包的training_pipeline模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: training_pipeline/<br/>(设计态 / design)"]
     src_zephyr_ml_train_inference_base_py ~~~ src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_trainer_base_py["ml_train/trainer_base<br/>D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
-    D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ml_train_training_pipeline -.->|data / data| D_DATA
-    D_ORCHESTRATOR["代理编排器<br/>代理编排器，负责 Agent<br/>任务全生命周期：任务入队、调度、沙箱执行、幻觉检<br/>测和收尾归档<br/>Agent Orchestrator<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ml_train_training_pipeline -.->|runtime / runtime| D_ORCHESTRATOR
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -77,10 +75,14 @@ flowchart TD
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
+    D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_ml_train_training_pipeline -.->|data / data| D_DATA
+    D_ORCHESTRATOR["代理编排器<br/>代理编排器，负责 Agent<br/>任务全生命周期：任务入队、调度、沙箱执行、幻觉检<br/>测和收尾归档<br/>Agent Orchestrator<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_ml_train_training_pipeline -.->|runtime / runtime| D_ORCHESTRATOR
     D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
-    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -88,8 +90,8 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py production
-    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_training_pipeline design
-    class D_DATA,D_ORCHESTRATOR,D_SHARED,D_TRADING,D_INTELLIGENCE external_prod
+    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_training_dataset_manager,src_zephyr_ml_train_training_pipeline design
+    class D_SHARED,D_TRADING,D_DATA,D_ORCHESTRATOR,D_INTELLIGENCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -103,8 +105,8 @@ flowchart TD
     src_zephyr_ml_train_inference_base_py["ml_train/inference_base<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_trainer_base_py["ml_train/trainer_base<br/>D_ML_TRAIN — ML Training Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -114,21 +116,23 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 3 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 4 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     docs_03_modules_cross_layer_model_profiler_blueprint_md["model_profiler/blueprint<br/>model_profiler模块蓝图文档，描述该模块的设计意图<br/>和架构决策<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: model_profiler/blueprint.md<br/>(设计态 / design)"]
     src_zephyr_ml_train_ai_operator["ml_train/ai_operator<br/>机器学习训练包的ai_operator模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
+    src_zephyr_ml_train_training_dataset_manager["ml_train/training_dataset_manager<br/>机器学习训练包的training_dataset_manager模块<br/>文件: training_dataset_manager/<br/>(设计态 / design)"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_ai_operator
+    src_zephyr_ml_train_ai_operator ~~~ src_zephyr_ml_train_training_dataset_manager
     src_zephyr_ml_train_training_pipeline["ml_train/training_pipeline<br/>机器学习训练包的training_pipeline模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: training_pipeline/<br/>(设计态 / design)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_training_pipeline design
+    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_training_dataset_manager,src_zephyr_ml_train_training_pipeline design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

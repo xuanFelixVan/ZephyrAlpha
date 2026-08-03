@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] compute 失败返回 NaN Series（DagExecutor 容错）; 输入缺列抛 KeyError（调用方保证列存在）
 # [TESTS] tests/factor/test_intraday_snapshot_factors.py
-# [A_module] module_id=MOD-L02-intraday-snapshot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """盘中横截面因子——基于最新 tick 快照计算（无历史序列依赖）。
 

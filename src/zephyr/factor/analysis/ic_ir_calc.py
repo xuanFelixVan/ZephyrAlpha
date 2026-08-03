@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单因子评估失败->该行指标为0，不阻断其他因子; 空输入->空DataFrame
 # [TESTS] tests/factor/test_ic_ir_calc.py
+# [A_module] module_id=MOD-L02-002 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/IR 指标汇总表。
 

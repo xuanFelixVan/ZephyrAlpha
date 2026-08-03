@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] writer 失败由调用方处理（FlushOutcome.outcome 携带 WriteOutcome）；空 payload 跳过写入
 # [TESTS] tests/factor/test_batch_output.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_FACTOR core batch_output 子包——FactorSignal 批量缓冲写入器。
 

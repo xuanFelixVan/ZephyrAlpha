@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单周期失败->log+继续; Redis故障->空DataFrame+skip; DAG构建失败->start返回False
 # [TESTS] tests/factor/test_intraday_factor_loop.py
-# [A_module] module_id=MOD-L02-intraday-loop | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """盘中因子调度循环——3秒拉 tick → DataFrame → DagExecutor → H1 Redis。
 

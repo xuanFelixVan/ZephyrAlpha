@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入->"淘汰"; 阈值从配置读取
 # [TESTS] tests/factor/test_three_level_judgment.py
+# [A_module] module_id=MOD-L02-008 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-07 三级判定——按 IC 均值将因子分为优秀/合格/淘汰。
 

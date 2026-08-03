@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 非法转换->InvalidTransitionError; 未注册->StateMachineRegistryError
 # [TESTS] tests/factor/test_lifecycle_state_machine.py
+# [A_module] module_id=MOD-L02-013 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-GOV-01 因子生命周期状态机——复用项目级 StateMachine 泛型基类。
 

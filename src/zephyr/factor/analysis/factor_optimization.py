@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 数据不足->等权兜底; 优化失败->等权兜底
 # [TESTS] tests/factor/test_factor_optimization.py
+# [A_module] module_id=MOD-L02-012 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-11 因子优化——优化多因子合成权重以最大化目标函数。
 

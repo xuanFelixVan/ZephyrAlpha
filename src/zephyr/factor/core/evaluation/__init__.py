@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/factor/test_evaluation_metrics.py; tests/factor/test_evaluation_backtest.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-03 因子评估包——IC/IR/OOS 正率/过拟合检测。
 

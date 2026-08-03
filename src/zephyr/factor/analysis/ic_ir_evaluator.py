@@ -11,6 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单因子失败->该因子结果缺失，不阻断其他因子; 空输入->空dict
 # [TESTS] tests/factor/test_ic_ir_evaluator.py
+# [A_module] module_id=MOD-L02-003 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。
 

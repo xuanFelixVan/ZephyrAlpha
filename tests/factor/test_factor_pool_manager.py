@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-L02-018 | (auto-injected by S4 reconciler) | §D-FACTOR-08
+# [A_module] module_id=MOD-L02-018 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [A_test] module_id: MOD-L02-018 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_factor_pool_manager

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] IC不足->拒绝入池; 活跃池满且IC更低->拒绝替换; 全池满->触发批量裁剪
 # [TESTS] tests/factor/test_factor_pool_manager.py
+# [A_module] module_id=MOD-L02-018 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D-FACTOR-08 因子池容量管理——活跃池/休眠池 + IC末位淘汰 + 批量裁剪。
 
