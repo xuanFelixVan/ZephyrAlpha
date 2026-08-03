@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.gate_statistics
+# [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] zephyr.frontend.dashboard.components.chart_factory
 # [CONSUMERS] zephyr.frontend.dashboard.app_panel
 # [STARTUP] imported
