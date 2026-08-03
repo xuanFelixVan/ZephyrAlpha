@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3709 |
-| 生产态模块 | 3524 |
+| 模块总数 | 3720 |
+| 生产态模块 | 3535 |
 | 设计态模块 | 185 |
 
 ## 域清单（按架构层分组）
@@ -83,7 +83,7 @@ ttl: permanent
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 55 | 55 | 0 | 55/150 (OK) | [📄 05_d_infra_recovery.md](05_d_infra_recovery.md) |
 | D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 173 | 171 | 2 | 173/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | 可观测性 / Observability | 0 | 0 | 0 | 0/150 (OK) | [📄 07_d_infra_telemetry.md](07_d_infra_telemetry.md) |
-| D_SHARED | 共享服务 / Shared Services | 177 | 177 | 0 | 177/150 (超容) | [📄 08_d_shared.md](08_d_shared.md) |
+| D_SHARED | 共享服务 / Shared Services | 184 | 184 | 0 | 184/150 (超容) | [📄 08_d_shared.md](08_d_shared.md) |
 
 ### L1 基础平台层 / L1 Foundation (20 个域 / 20 domains)
 
@@ -99,7 +99,7 @@ ttl: permanent
 | D_FBL_DIAGNOSERS | 反馈诊断器 / Feedback Diagnosers | 76 | 76 | 0 | 76/150 (OK) | [📄 16_d_fbl_diagnosers.md](16_d_fbl_diagnosers.md) |
 | D_FBL_VERIFICATION | 反馈验证 / Feedback Verification | 71 | 71 | 0 | 71/150 (OK) | [📄 17_d_fbl_verification.md](17_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | 反馈循环引擎 / Feedback Loop Engine | 125 | 125 | 0 | 125/150 (OK) | [📄 18_d_feedback_loop.md](18_d_feedback_loop.md) |
-| D_GOV_CODE_QUALITY | 代码质量治理 / Code Quality Governance | 209 | 209 | 0 | 209/150 (超容) | [📄 19_d_gov_code_quality.md](19_d_gov_code_quality.md) |
+| D_GOV_CODE_QUALITY | 代码质量治理 / Code Quality Governance | 208 | 208 | 0 | 208/150 (超容) | [📄 19_d_gov_code_quality.md](19_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 / Ops Resilience Governance | 115 | 115 | 0 | 115/150 (OK) | [📄 20_d_gov_ops_resilience.md](20_d_gov_ops_resilience.md) |
 | D_INTEGRATION | 管线路由 / Pipeline Routing | 71 | 71 | 0 | 71/150 (OK) | [📄 21_d_integration.md](21_d_integration.md) |
 | D_INTEGRATION_GATEWAY | 集成网关 / Integration Gateway | 0 | 0 | 0 | 0/150 (OK) | [📄 22_d_integration_gateway.md](22_d_integration_gateway.md) |
@@ -107,7 +107,7 @@ ttl: permanent
 | D_OPS | 反馈循环 / Feedback Loop | 11 | 11 | 0 | 11/150 (OK) | [📄 24_d_ops.md](24_d_ops.md) |
 | D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 70 | 70 | 0 | 70/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 20 | 19 | 1 | 20/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
-| D_SECURITY | 对抗验证 / Adversarial Validation | 166 | 166 | 0 | 166/150 (超容) | [📄 27_d_security.md](27_d_security.md) |
+| D_SECURITY | 对抗验证 / Adversarial Validation | 171 | 171 | 0 | 171/150 (超容) | [📄 27_d_security.md](27_d_security.md) |
 | D_SECURITY_LLM | LLM防御 / LLM Defense | 0 | 0 | 0 | 0/150 (OK) | [📄 28_d_security_llm.md](28_d_security_llm.md) |
 
 ### L2 业务域层 / L2 Domain (44 个域 / 44 domains)
@@ -129,19 +129,19 @@ ttl: permanent
 | D_DATA_SCRIPTS | 数据治理脚本 / D_DATA_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 41_d_data_scripts.md](41_d_data_scripts.md) |
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 7 | 7 | 0 | 7/150 (OK) | [📄 42_d_digital_twin.md](42_d_digital_twin.md) |
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 7 | 0 | 7/150 (OK) | [📄 43_d_exec_sim.md](43_d_exec_sim.md) |
-| D_EX_CORE | 执行核心 / Execution Core | 42 | 18 | 24 | 42/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
+| D_EX_CORE | 执行核心 / Execution Core | 44 | 20 | 24 | 44/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 17 | 0 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 109 | 65 | 44 | 109/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
 | D_FRONTEND | 前端 / Frontend | 24 | 20 | 4 | 24/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 14 | 12 | 2 | 14/150 (OK) | [📄 48_d_fundamental_signal.md](48_d_fundamental_signal.md) |
-| D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 455 | 455 | 0 | 455/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
+| D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 450 | 450 | 0 | 450/150 (超容) | [📄 49_d_governance.md](49_d_governance.md) |
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 193 | 190 | 3 | 193/150 (超容) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |
 | D_GOV_DOCS | 架构文档治理 / Architecture Docs Governance | 27 | 2 | 25 | 27/150 (OK) | [📄 51_d_gov_docs.md](51_d_gov_docs.md) |
 | D_GOV_DRIFT | 漂移检测 / Drift Detection | 73 | 72 | 1 | 73/150 (OK) | [📄 52_d_gov_drift.md](52_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 118 | 117 | 1 | 118/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
-| D_GOV_RULE | 规则治理 / Rule Governance | 35 | 35 | 0 | 35/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 412 | 412 | 0 | 412/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
+| D_GOV_RULE | 规则治理 / Rule Governance | 36 | 36 | 0 | 36/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 413 | 413 | 0 | 413/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
@@ -157,4 +157,4 @@ ttl: permanent
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 15 | 15 | 0 | 15/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
 | D_STRUCT_SCRIPTS | 结构治理脚本 / D_STRUCT_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 71_d_struct_scripts.md](71_d_struct_scripts.md) |
-| D_TRADING | 交易运营 / Trading Operations | 42 | 42 | 0 | 42/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 43 | 43 | 0 | 43/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |

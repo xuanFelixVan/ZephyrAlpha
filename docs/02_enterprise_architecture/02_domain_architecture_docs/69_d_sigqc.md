@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_SIGQC 信号质量控制架构文档
 version: "1.0"
 status: active
-date: 2026-08-03
+date: 2026-08-04
 owner: auto-generator
 ttl: permanent
 ---
