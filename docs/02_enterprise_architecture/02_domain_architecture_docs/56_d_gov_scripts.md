@@ -3485,55 +3485,54 @@ flowchart TD
 | 34 | D_GOVERNANCE 生命周期管理: 检查pureshim / check_pure_shim (d7_code/check_pure_shim.py) | → | encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
 | 35 | D_GOVERNANCE 生命周期管理: generate规则aiperception索引 / generate_rule_ai_perceptio... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
 | 36 | D_GOVERNANCE 生命周期管理: 自动handoff日志 / auto_handoff_log (hooks/auto_handoff_lo... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 37 | D_GOVERNANCE 生命周期管理: protect_unstaged_changes.py — Pre-commit stash 安全网 (h... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 38 | D_GOVERNANCE 生命周期管理: 生成ide配置 / generate_ide_config (mcp/generate_ide_confi... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 39 | D_GOVERNANCE 生命周期管理: MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + Pro / lau... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 40 | D_GOVERNANCE 生命周期管理: 启动all / start_all (mcp/start_all.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 41 | D_GOVERNANCE 生命周期管理: 停止all / stop_all (mcp/stop_all.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 42 | D_GOVERNANCE 生命周期管理: dm311autonomy核心split / dm311_autonomy_core_split (migra... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 43 | D_GOVERNANCE 生命周期管理: dm314基础设施运维拆分 / dm314_infra_ops_split (migration/... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 44 | D_GOVERNANCE 生命周期管理: 文件头部完整性校验（6 格式统一入口） / verify_header_comp... | → | 文件头部格式解析 SSoT（Single Source of Truth） (_shared/... | 导入依赖 / import_depends |
-| 45 | D_GOVERNANCE 生命周期管理: verify去重 / verify_dedup (pre_commit/verify_dedup.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 46 | D_GOVERNANCE 生命周期管理: scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TW / scaffo... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 47 | D_GOVERNANCE 生命周期管理: scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TW / scaffo... | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
-| 48 | D_GOVERNANCE 生命周期管理: scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TW / scaffo... | → | GATE-11 命名规范门禁 — 全类型命名检测。 (d3_metadata/che... | 导入依赖 / import_depends |
-| 49 | D_GOVERNANCE 生命周期管理: 单元测试：scripts/governance/d3_metadata/check_frontmatte... | → | GATE-15: Frontmatter metadata validation（ttl + doc_type ... | 测试依赖 / test_depends |
-| 50 | D_GOVERNANCE 生命周期管理: 测试生成门禁注册表 / test_generate_gate_registry (generat... | → | generate_gate_registry.py — 门禁登记表自动生成器 (genera... | 测试依赖 / test_depends |
-| 51 | D_GOVERNANCE 生命周期管理: shared/test_drafts_zone_archiver_governance.py | → | 草稿区生命周期归档器——扫描 arbitrated 草稿，按 age 判定... | 测试依赖 / test_depends |
-| 52 | D_GOVERNANCE 生命周期管理: shared/test_drafts_zone_archiver_unit.py | → | 草稿区生命周期归档器——扫描 arbitrated 草稿，按 age 判定... | 测试依赖 / test_depends |
-| 53 | D_GOVERNANCE 生命周期管理: 端到端验证 JSONL 管道 — BaseAuditScript → stdout → run... | → | run_all.py — 脚本系统统一入口脚本 (governance/run_all.py) | 测试依赖 / test_depends |
-| 54 | D_GOVERNANCE 生命周期管理: test_architecture_health_dashboard_metrics.py — P1 防复... | → | architecture_health_dashboard.py — 架构健康度仪表盘（自... | 测试依赖 / test_depends |
-| 55 | D_GOVERNANCE 生命周期管理: test_architecture_health_dashboard_metrics_p2.py — P2 防... | → | architecture_health_dashboard.py — 架构健康度仪表盘（自... | 测试依赖 / test_depends |
-| 56 | D_GOVERNANCE 生命周期管理: test_blueprint_frontmatter_reconciler.py — 蓝图 frontmat... | → | blueprint_frontmatter_reconciler.py — 蓝图 frontmatter ... | 测试依赖 / test_depends |
-| 57 | D_GOVERNANCE 生命周期管理: test_generate_blueprint_panorama.py — 蓝图 §0.6 生成器... | → | G-panorama-gen: 蓝图 §0.6 四图对齐视图生成器（ARCH-053 +... | 测试依赖 / test_depends |
-| 58 | D_GOVERNANCE 生命周期管理: test_sync_panorama_module.py — 四图模块同步引擎单测（ARC... | → | sync_panorama_module.py — 四图模块同步引擎（ARCH-056） (... | 测试依赖 / test_depends |
-| 59 | D_GOV_AUDIT 审计追踪: 审计designcompleteness / audit_design_completeness (repai... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 60 | D_GOV_AUDIT 审计追踪: [INVARIANTS] 20项红蓝对抗测试 / red_blue_test (repair/red... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 61 | D_GOV_AUDIT 审计追踪: 回滚依赖图 / rollback_depgraph (repair/rollback_depgraph.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 62 | D_GOV_AUDIT 审计追踪: 测试修复进度smoke / test_remediation_progress_smoke (gove... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 63 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | module_id / domain_id / submodule_id 格式校验真源... | 导入依赖 / import_depends |
-| 64 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | check_gate_inventory_drift.py — commit_gates 模块清单漂... | 导入依赖 / import_depends |
-| 65 | D_GOV_AUDIT 审计追踪: translation_coverage_reconciler.py — 翻译覆盖率存量对账 ... | → | module_translation_loader.py — 模块级翻译共享加载器（SSo... | 导入依赖 / import_depends |
-| 66 | D_GOV_AUDIT 审计追踪: test_depgraph_dirty_flag.py — DM-90974 Phase 2: depgraph... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
-| 67 | D_GOV_CODE_QUALITY 代码质量治理: 检查模块id一致性 / check_module_id_consistency (d7_code/c... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 68 | D_GOV_CODE_QUALITY 代码质量治理: translation_coverage_gate.py — 新建 .py 文件大白话简介覆... | → | module_translation_loader.py — 模块级翻译共享加载器（SSo... | 导入依赖 / import_depends |
-| 69 | D_GOV_DOCS 架构文档治理: test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smo... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
-| 70 | D_GOV_DOCS 架构文档治理: test_sync_savepoint_isolation.py — sync_all() 级联失败隔... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
-| 71 | D_GOV_DRIFT 漂移检测: validate_truth_source_cascade.py — 真源级联一致性校验 (d... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 72 | D_GOV_DRIFT 漂移检测: validate_truth_source_cascade.py — 真源级联一致性校验 (d... | → | 文件头部格式解析 SSoT（Single Source of Truth） (_shared/... | 导入依赖 / import_depends |
-| 73 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 74 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
-| 75 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | 文件头部格式解析 SSoT（Single Source of Truth） (_shared/... | 导入依赖 / import_depends |
-| 76 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
-| 77 | D_GOV_ENFORCEMENT 规则执行: metric_count_drift_reconciler.py — dashboard 指标数描述... | → | architecture_health_dashboard.py — 架构健康度仪表盘（自... | 导入依赖 / import_depends |
-| 78 | D_GOV_ENFORCEMENT 规则执行: session_worktree_cli.py — session worktree 管理 CLI（治... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 79 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 80 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
-| 81 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
-| 82 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
-| 83 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | reconcile_generators.py — 生成器自动触发统一编排器 (gove... | 导入依赖 / import_depends |
-| 84 | D_OPS 反馈循环: Module docstring — see module-level docstring for detail... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 85 | D_OPS 反馈循环: Module docstring — see module-level docstring for detail... | → | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
+| 37 | D_GOVERNANCE 生命周期管理: 生成ide配置 / generate_ide_config (mcp/generate_ide_confi... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 38 | D_GOVERNANCE 生命周期管理: MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + Pro / lau... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 39 | D_GOVERNANCE 生命周期管理: 启动all / start_all (mcp/start_all.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 40 | D_GOVERNANCE 生命周期管理: 停止all / stop_all (mcp/stop_all.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 41 | D_GOVERNANCE 生命周期管理: dm311autonomy核心split / dm311_autonomy_core_split (migra... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 42 | D_GOVERNANCE 生命周期管理: dm314基础设施运维拆分 / dm314_infra_ops_split (migration/... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 43 | D_GOVERNANCE 生命周期管理: 文件头部完整性校验（6 格式统一入口） / verify_header_comp... | → | 文件头部格式解析 SSoT（Single Source of Truth） (_shared/... | 导入依赖 / import_depends |
+| 44 | D_GOVERNANCE 生命周期管理: verify去重 / verify_dedup (pre_commit/verify_dedup.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 45 | D_GOVERNANCE 生命周期管理: scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TW / scaffo... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 46 | D_GOVERNANCE 生命周期管理: scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TW / scaffo... | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
+| 47 | D_GOVERNANCE 生命周期管理: scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TW / scaffo... | → | GATE-11 命名规范门禁 — 全类型命名检测。 (d3_metadata/che... | 导入依赖 / import_depends |
+| 48 | D_GOVERNANCE 生命周期管理: 单元测试：scripts/governance/d3_metadata/check_frontmatte... | → | GATE-15: Frontmatter metadata validation（ttl + doc_type ... | 测试依赖 / test_depends |
+| 49 | D_GOVERNANCE 生命周期管理: 测试生成门禁注册表 / test_generate_gate_registry (generat... | → | generate_gate_registry.py — 门禁登记表自动生成器 (genera... | 测试依赖 / test_depends |
+| 50 | D_GOVERNANCE 生命周期管理: shared/test_drafts_zone_archiver_governance.py | → | 草稿区生命周期归档器——扫描 arbitrated 草稿，按 age 判定... | 测试依赖 / test_depends |
+| 51 | D_GOVERNANCE 生命周期管理: shared/test_drafts_zone_archiver_unit.py | → | 草稿区生命周期归档器——扫描 arbitrated 草稿，按 age 判定... | 测试依赖 / test_depends |
+| 52 | D_GOVERNANCE 生命周期管理: 端到端验证 JSONL 管道 — BaseAuditScript → stdout → run... | → | run_all.py — 脚本系统统一入口脚本 (governance/run_all.py) | 测试依赖 / test_depends |
+| 53 | D_GOVERNANCE 生命周期管理: test_architecture_health_dashboard_metrics.py — P1 防复... | → | architecture_health_dashboard.py — 架构健康度仪表盘（自... | 测试依赖 / test_depends |
+| 54 | D_GOVERNANCE 生命周期管理: test_architecture_health_dashboard_metrics_p2.py — P2 防... | → | architecture_health_dashboard.py — 架构健康度仪表盘（自... | 测试依赖 / test_depends |
+| 55 | D_GOVERNANCE 生命周期管理: test_blueprint_frontmatter_reconciler.py — 蓝图 frontmat... | → | blueprint_frontmatter_reconciler.py — 蓝图 frontmatter ... | 测试依赖 / test_depends |
+| 56 | D_GOVERNANCE 生命周期管理: test_generate_blueprint_panorama.py — 蓝图 §0.6 生成器... | → | G-panorama-gen: 蓝图 §0.6 四图对齐视图生成器（ARCH-053 +... | 测试依赖 / test_depends |
+| 57 | D_GOVERNANCE 生命周期管理: test_sync_panorama_module.py — 四图模块同步引擎单测（ARC... | → | sync_panorama_module.py — 四图模块同步引擎（ARCH-056） (... | 测试依赖 / test_depends |
+| 58 | D_GOV_AUDIT 审计追踪: 审计designcompleteness / audit_design_completeness (repai... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 59 | D_GOV_AUDIT 审计追踪: [INVARIANTS] 20项红蓝对抗测试 / red_blue_test (repair/red... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 60 | D_GOV_AUDIT 审计追踪: 回滚依赖图 / rollback_depgraph (repair/rollback_depgraph.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 61 | D_GOV_AUDIT 审计追踪: 测试修复进度smoke / test_remediation_progress_smoke (gove... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 62 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | module_id / domain_id / submodule_id 格式校验真源... | 导入依赖 / import_depends |
+| 63 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | check_gate_inventory_drift.py — commit_gates 模块清单漂... | 导入依赖 / import_depends |
+| 64 | D_GOV_AUDIT 审计追踪: translation_coverage_reconciler.py — 翻译覆盖率存量对账 ... | → | module_translation_loader.py — 模块级翻译共享加载器（SSo... | 导入依赖 / import_depends |
+| 65 | D_GOV_AUDIT 审计追踪: test_depgraph_dirty_flag.py — DM-90974 Phase 2: depgraph... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
+| 66 | D_GOV_CODE_QUALITY 代码质量治理: 检查模块id一致性 / check_module_id_consistency (d7_code/c... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 67 | D_GOV_CODE_QUALITY 代码质量治理: translation_coverage_gate.py — 新建 .py 文件大白话简介覆... | → | module_translation_loader.py — 模块级翻译共享加载器（SSo... | 导入依赖 / import_depends |
+| 68 | D_GOV_DOCS 架构文档治理: test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smo... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
+| 69 | D_GOV_DOCS 架构文档治理: test_sync_savepoint_isolation.py — sync_all() 级联失败隔... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
+| 70 | D_GOV_DRIFT 漂移检测: validate_truth_source_cascade.py — 真源级联一致性校验 (d... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 71 | D_GOV_DRIFT 漂移检测: validate_truth_source_cascade.py — 真源级联一致性校验 (d... | → | 文件头部格式解析 SSoT（Single Source of Truth） (_shared/... | 导入依赖 / import_depends |
+| 72 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 73 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
+| 74 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | 文件头部格式解析 SSoT（Single Source of Truth） (_shared/... | 导入依赖 / import_depends |
+| 75 | D_GOV_DRIFT 漂移检测: SSoT 文件头一致性校验器. (validators/validate_ssot.py) | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
+| 76 | D_GOV_ENFORCEMENT 规则执行: metric_count_drift_reconciler.py — dashboard 指标数描述... | → | architecture_health_dashboard.py — 架构健康度仪表盘（自... | 导入依赖 / import_depends |
+| 77 | D_GOV_ENFORCEMENT 规则执行: session_worktree_cli.py — session worktree 管理 CLI（治... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 78 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 79 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | encoding.py — UTF-8 编码安全工具 (_shared/encoding.py) | 导入依赖 / import_depends |
+| 80 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
+| 81 | D_GOV_RULE 规则治理: 脚本清单自动生成器 / Script Manifest Generator (generator... | → | _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | 导入依赖 / import_depends |
+| 82 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | reconcile_generators.py — 生成器自动触发统一编排器 (gove... | 导入依赖 / import_depends |
+| 83 | D_OPS 反馈循环: Module docstring — see module-level docstring for detail... | → | constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
+| 84 | D_OPS 反馈循环: Module docstring — see module-level docstring for detail... | → | _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
