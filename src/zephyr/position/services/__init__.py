@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/position/test_position_audit_logger.py
-# [A_module] module_id=MOD-POSITION | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-POS-009-services | layer=infrastructure | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # position/services — 仓位审计记录

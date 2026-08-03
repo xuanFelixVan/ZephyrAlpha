@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-POS-017 | (auto-injected by S4 reconciler) | §
+# [A_module] module_id=MOD-POS-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [TESTS] tests/position/test_position_sizing_engine.py
 # [MODULE] tests.position.test_position_sizing_engine

@@ -2,6 +2,7 @@
 # [MODULE] tests.position.test_position_audit_logger
 # [DOMAIN] D_POSITION
 # [TESTS] tests/position/test_position_audit_logger.py
+# [A_module] module_id=MOD-POS-009 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """Position Audit Logger 测试 — MOD-POS-009
