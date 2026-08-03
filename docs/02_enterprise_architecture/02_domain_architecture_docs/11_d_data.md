@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 172 | Module Count | 172 |
 | 域内依赖 | 271 | Internal Dependencies | 271 |
-| 跨域入边 | 31 | Cross-domain Incoming | 31 |
+| 跨域入边 | 34 | Cross-domain Incoming | 34 |
 | 跨域出边 | 23 | Cross-domain Outgoing | 23 |
 | 设计态模块 | 4 | Design Modules | 4 |
 | 生产态模块 | 168 | Production Modules | 168 |
@@ -684,6 +684,9 @@ flowchart TD
     D_MKT_DATA -->|runtime / runtime| src_zephyr_data_table_registry_py
     D_ML_TRAIN["训练<br/>训练，负责模型训练、特征工程和模型评估<br/>Training<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_ML_TRAIN -.->|data / data| src_zephyr_data_pit_query_py
+    D_ML_TRAIN -.->|data / data| src_zephyr_data_pit_query_py
+    D_ML_TRAIN -.->|data / data| src_zephyr_data_table_registry_py
+    D_ML_TRAIN -.->|data / data| src_zephyr_data_quality_gate_py
     D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| scripts_ops_ch_health_probe_py
     D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_data_capability_validator_py
@@ -698,9 +701,6 @@ flowchart TD
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_data_trading_calendar_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_data_alerter_py
-    D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    D_FACTOR -->|导入依赖 / import_depends| src_zephyr_data_table_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -1409,11 +1409,14 @@ flowchart TD
 | 28 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
 | 29 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
 | 30 | D_MKT_DATA 行情数据: NormalizedMarketData 生产者——D_MKT_DATA→D_FACTOR 数据... | → | table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
-| 31 | D_ML_TRAIN 训练: training_pipeline/ | → | pit查询 / pit_query (data/pit_query.py) | data / data |
+| 31 | D_ML_TRAIN 训练: training_dataset_manager/ | → | pit查询 / pit_query (data/pit_query.py) | data / data |
+| 32 | D_ML_TRAIN 训练: training_dataset_manager/ | → | 质量门禁 / quality_gate (data/quality_gate.py) | data / data |
+| 33 | D_ML_TRAIN 训练: training_dataset_manager/ | → | table注册表 / table_registry (data/table_registry.py) | data / data |
+| 34 | D_ML_TRAIN 训练: training_pipeline/ | → | pit查询 / pit_query (data/pit_query.py) | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 10 个外部域直接连接（出边 23 条 + 入边 31 条 = 54 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 10 个外部域直接连接（出边 23 条 + 入边 34 条 = 57 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -1421,24 +1424,24 @@ graph LR
     D_DATA["D_DATA<br/>数据接入层"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
-    D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_FACTOR["D_FACTOR<br/>因子"]
-    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
-    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
-    D_BACKTEST["D_BACKTEST<br/>回测"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
+    D_BACKTEST["D_BACKTEST<br/>回测"]
+    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_DATA -->|20条 导入依赖 / import_depends| D_SHARED
     D_DATA -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
-    D_GOV_SCRIPTS -->|5条 导入依赖 / import_depends| D_DATA
     D_INFRA_RUNTIME -->|5条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
     D_FACTOR -->|5条 导入依赖 / import_depends| D_DATA
-    D_GOVERNANCE -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
+    D_GOV_SCRIPTS -->|5条 导入依赖 / import_depends| D_DATA
     D_MKT_DATA -->|4条 导入依赖 / import_depends, runtime / runtime| D_DATA
-    D_GOV_CODE_QUALITY -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
+    D_GOVERNANCE -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
+    D_ML_TRAIN -->|4条 data / data| D_DATA
     D_BACKTEST -->|3条 导入依赖 / import_depends| D_DATA
-    D_ML_TRAIN -->|1条 data / data| D_DATA
+    D_GOV_CODE_QUALITY -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_DATA
     D_GOV_ENFORCEMENT -->|1条 导入依赖 / import_depends| D_DATA
 ```
 
