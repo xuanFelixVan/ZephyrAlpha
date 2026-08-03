@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_module] module_id=MOD-GOV_SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -117,6 +119,7 @@ FILE_SYNC_PAIRS: list[tuple[str, str]] = [
 #   - 映射表：记录 old→new 映射关系（fix_depgraph_module_id.py / fix_header_module_id.py）
 #   - 测试夹具：测试旧 ID 兼容性（test_blueprint_id_legacy_reconciler.py）
 #   - 审计追踪：记录重命名历史（audit_rename_completeness.py / test_audit_rename_completeness.py）
+#   - 审计注释：reconciliation_registry.py 注释中引用旧 ID 描述 legacy 基线债务（历史记录，替换会歪曲事实）
 # 治本（2026-08-03）：INTENTIONAL_SKIP 仅跳过 repo_wide_replace 的全文替换（保护映射表
 # old→new 对不被破坏）。但文件自身的 [A_module] module_id 表头不属于映射表引用，
 # MUST 手动维护合规格式（如 MOD-GOV_SCRIPTS 而非 MOD-GOV-SCRIPTS），不能用
@@ -127,6 +130,7 @@ INTENTIONAL_SKIP: set[str] = {
     "tests/governance/audit/test_blueprint_id_legacy_reconciler.py",
     "scripts/governance/d8_doc_sync/audit_rename_completeness.py",
     "tests/infrastructure/test_audit_rename_completeness.py",
+    "src/zephyr/governance/audit/reconciliation_registry.py",
 }
 
 
