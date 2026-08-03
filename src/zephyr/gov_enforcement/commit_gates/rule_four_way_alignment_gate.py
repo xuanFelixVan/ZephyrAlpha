@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——subprocess异常降级为 fail-open(passed=True); 违规阻断(passed=False)
 # [TESTS] tests/governance/commit_gates/test_rule_four_way_alignment_gate.py
-# [A_module] module_id=MOD-GOV-rule_four_way_alignment_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """rule_four_way_alignment_gate.py — 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）
 

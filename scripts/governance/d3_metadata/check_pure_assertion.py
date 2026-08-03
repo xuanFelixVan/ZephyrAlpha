@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_CLEAN=0（无违规）；EXIT_FINDINGS=1（--ci 模式检出违规）；EXIT_ERROR=2（脚本异常）；gate 调用时 exit 2 fail-open
 # [TESTS] tests/governance/d3_metadata/test_check_pure_assertion.py
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """check_pure_assertion.py — GOV-DOC-016 纯陈述原则检测真源（SSoT）。
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-UNK-spec_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """G-CT-007 — Audit.record_agent_spec() 记录 Agent Spec 注册与变更."""

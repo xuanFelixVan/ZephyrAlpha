@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0=pass; 1=fail
 # [TESTS] self
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_check_yaml_anchor_consistency.py — YAML 治理锚定一致性扫描 smoke test.
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/governance/code_dedup/test_ssot_registrar.py
-# [A_module] module_id=MOD-GCQ-ssot_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """SSoT注册器 — 提取函数自动注册到 shared API清单."""

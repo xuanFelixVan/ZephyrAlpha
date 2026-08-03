@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_ch_version_col_gate.py
-# [A_module] module_id=MOD-GOV-ch_version_col_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ch_version_col_gate.py — CH version 列语义误用阻断门禁（CH-VERSION-COL，裁定 #ARCH-CH-009）
 

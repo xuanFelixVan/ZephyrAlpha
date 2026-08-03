@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest_exit_0_on_pass
 # [TESTS] tests/test_silence_detector.py
+# [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

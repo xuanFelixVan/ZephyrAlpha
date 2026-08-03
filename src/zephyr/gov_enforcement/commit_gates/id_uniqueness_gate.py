@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] (True, msg)=通过；False=阻断（exit 1 violations）；exit 2 script error->(True, warn) fail-open
 # [TESTS] tests/governance/commit_gates/test_id_uniqueness_gate.py
-# [A_module] module_id=MOD-GOV-id_uniqueness_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """id_uniqueness_gate.py — pre-commit hook ID 唯一性门禁（Phase 3 reconciler->gate 收敛）
 

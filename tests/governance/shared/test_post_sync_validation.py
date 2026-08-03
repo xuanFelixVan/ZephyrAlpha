@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-DATABASE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """
 36-scenario permanent regression test for post_sync_validator (SSoT).

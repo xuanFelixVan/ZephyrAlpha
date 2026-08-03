@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/test_execution_tuner.py
+# [A_module] module_id=MOD-TEST-383 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

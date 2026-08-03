@@ -10,6 +10,7 @@
 # [ERROR_CONTRACT] 测试失败=发现 session 隔离 stash 漏洞
 # [TESTS] self
 # [INVARIANTS] 红蓝对抗隔离——使用 tmp_path 临时 git 仓库，禁止污染生产库；每个测试类覆盖一类攻击向量
+# [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """session 隔离 stash 红蓝对抗极限测试。
 

@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-TEST-282 | (auto-injected by S4 reconciler) | §
+# [A_module] module_id=MOD-TEST-282 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_TRANSLATION_COVERAGE_RECONCILER | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.governance.audit.test_translation_coverage_reconciler

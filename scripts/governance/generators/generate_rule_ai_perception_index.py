@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 1 on --check drift；exit 2 on source YAML parse error
 # [TESTS] tests/test_generate_rule_ai_perception_index.py
-# [A_module] module_id=MOD-GOV-generate_rule_ai_perception_index | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-041 | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 无时间触发
 """generate_rule_ai_perception_index.py — 规则AI感知索引生成器（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）

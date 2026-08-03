@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess error->skip_test
 # [TESTS] tests/governance/test_audit_return_contract_usage.py
+# [A_module] module_id=MOD-TEST-279 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_audit_return_contract_usage.py — 返回契约 ok 键审计脚本单元测试
 

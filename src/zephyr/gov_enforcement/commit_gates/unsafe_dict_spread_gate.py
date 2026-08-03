@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（不阻断、不告警、logger.warning 记录检测器失效）
 # [TESTS] tests/governance/commit_gates/test_unsafe_dict_spread_gate.py
-# [A_module] module_id=MOD-GOV-unsafe_dict_spread_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_COMMIT_GATES | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """unsafe_dict_spread_gate.py — ``**data`` 直接展开模式 warn 级门禁
 

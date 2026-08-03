@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_COMMIT_GATEWAY_ABUSE_MONITOR | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_commit_gateway_abuse_monitor_reconciler.py — reconciler 单测
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——AST/IO/git 异常降级为 fail-open（passed=True，logger.warning）; 检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_ch_final_gate.py
-# [A_module] module_id=MOD-GOV-ch_final_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ch_final_gate.py — ch_writer.query() 直接调用阻断门禁（CH-FINAL-GATE，裁定 #ARCH-CH-007 B5）
 

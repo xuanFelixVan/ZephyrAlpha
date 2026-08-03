@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML 解析失败/git 异常降级为 fail-open（passed=True + warning detail）
 # [TESTS] tests/governance/commit_gates/test_precommit_offline_gate.py
-# [A_module] module_id=MOD-GOV-precommit_offline_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """precommit_offline_gate.py — pre-commit 配置离线可运行检测门禁（GATE-PRECOMMIT-OFFLINE）
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；文件系统扫描异常降级为 fail-open；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_folder_capacity_hard_limit_gate.py
-# [A_module] module_id=MOD-GOV-folder_capacity_hard_limit_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """folder_capacity_hard_limit_gate.py — 文件夹容量硬上限门禁（FOLDER-CAPACITY-HARD-LIMIT）
 

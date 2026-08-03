@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if canonical source missing; ValueError on invalid enum
 # [TESTS] tests/test_governance_result_types.py
+# [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

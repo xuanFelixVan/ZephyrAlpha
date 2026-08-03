@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 索引构建失败返回None
 # [TESTS] tests/audit-orchestrator/test_indexer.py
-# [A_module] module_id=MOD-GOV-indexer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # 治本（裁定#18 G5）：本文件原为桩实现——__init__(index_dir) + build_index/lookup/
 # add_entry/persist/cold_start_cache，与测试契约 (db_path/events_path + rebuild/

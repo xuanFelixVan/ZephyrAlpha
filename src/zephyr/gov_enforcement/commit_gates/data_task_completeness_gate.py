@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 始终返回passed=True（warn级）; git diff失败->跳过检测; tasks.yaml解析失败->跳过检测
 # [TESTS] tests/governance/commit_gates/test_data_task_completeness_gate.py
-# [A_module] module_id=MOD-GOV-data_task_completeness_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """data_task_completeness_gate.py — 数据任务完整性门禁（warn 级，提醒型）
 

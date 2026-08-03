@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-GCQ-extraction_safety | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """安全提取适配性评估器 — Suitability Score 0-100 + 不安全提取模式检测.

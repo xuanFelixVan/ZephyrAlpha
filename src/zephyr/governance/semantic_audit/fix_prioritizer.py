@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空列表返回空排序结果
 # [TESTS] tests/semantic-auditor/test_fix_prioritizer.py
-# [A_module] module_id=MOD-GOV-fix_prioritizer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-028 — 修复优先级排序 Stage 8

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ImportError if source module missing
 # [TESTS] python -c "import zephyr.infrastructure.a2a_protocol.layer3_coordination"
-# [A_module] module_id=MOD-GOV-governance_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Re-export bridge for layer3_coordination governance integration symbols.
 

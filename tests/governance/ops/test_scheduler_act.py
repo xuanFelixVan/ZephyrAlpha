@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_scheduler_act.py
+# [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from unittest.mock import MagicMock

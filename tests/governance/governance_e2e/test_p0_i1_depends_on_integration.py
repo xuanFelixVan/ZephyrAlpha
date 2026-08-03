@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-TEST-293 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """P0-I1 depends_on 集成测试 — DOM-GOV-001 §8.3."""
 

@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-TEST-273 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """治理脚本测试 — pytest 共享 Fixture"""
 

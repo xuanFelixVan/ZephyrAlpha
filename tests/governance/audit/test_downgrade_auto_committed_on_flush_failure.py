@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_ASSET_INDEX_RECONCILER | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_downgrade_auto_committed_on_flush_failure.py — flush 失败降级单测。
 

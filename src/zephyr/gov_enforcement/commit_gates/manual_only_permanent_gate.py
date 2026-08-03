@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——AST/IO 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_manual_only_permanent_gate.py
-# [A_module] module_id=MOD-GOV-manual_only_permanent_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual-trigger  M02豁免: 本文件是MANUAL-ONLY-PERMANENT检测器自身,源码含检测模式字符串(argparse/input/sys.argv)用于AST匹配,非实际manual触发
 """manual_only_permanent_gate.py — 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc4 enforceability）

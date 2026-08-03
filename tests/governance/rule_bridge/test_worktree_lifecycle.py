@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测试失败→pytest assert error
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_ENFORCEMENT_WORKTREE_LIFECYCLE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_worktree_lifecycle.py — #ARCH-WORKTREE-LIFECYCLE-001 状态机测试
 

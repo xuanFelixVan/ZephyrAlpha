@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ValidationError on invalid severity/SafetyDecision
 # [TESTS] tests/semantic-auditor/test_models.py
-# [A_module] module_id=MOD-GOV-models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """语义审计管线数据模型 — MOD-INF-028 §4.2
 

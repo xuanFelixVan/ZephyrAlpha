@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——AST/IO 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_vocab_chain_gate.py
-# [A_module] module_id=MOD-GOV-vocab_chain_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m01-vocab-hardcode  M01豁免: 本文件是VOCAB-CHAIN检测器自身,源码含SSoT路径模式字符串用于AST匹配,非实际硬编码
 """vocab_chain_gate.py — SSoT 引用硬编码阻断门禁（VOCAB-CHAIN，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc2 enforceability）

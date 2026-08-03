@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
 # [TESTS] tests/test_delegation_engine.py
+# [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from unittest.mock import patch

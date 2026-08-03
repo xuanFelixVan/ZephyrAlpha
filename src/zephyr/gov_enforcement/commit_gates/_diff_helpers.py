@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 所有函数永不抛异常——异常降级为空返回值（set()/[]/None）
 # [TESTS] tests/governance/commit_gates/test_diff_helpers.py（直接测试）；tests/governance/commit_gates/test_unsafe_dict_spread_gate.py（间接覆盖）
-# [A_module] module_id=MOD-GOV-diff_helpers | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """_diff_helpers.py — gate 共享 diff 解析工具模块
 

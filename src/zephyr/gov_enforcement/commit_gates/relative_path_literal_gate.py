@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_relative_path_literal_gate.py
-# [A_module] module_id=MOD-GOV-relative_path_literal_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""relative_path_literal_gate.py — 相对路径字面量硬阻断门禁（RELATIVE-PATH-LITERAL）
 

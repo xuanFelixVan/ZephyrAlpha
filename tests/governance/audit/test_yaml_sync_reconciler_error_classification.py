@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_YAML_SYNC_ERROR_CLASS | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_yaml_sync_reconciler_error_classification.py — reconciler 错误分类与重试策略测试
 

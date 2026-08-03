@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——ast.parse/git diff 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_mutable_const_without_final_gate.py
-# [A_module] module_id=MOD-GOV-mutable_const_without_final_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """mutable_const_without_final_gate.py — 可变常量缺 Final 标注硬阻断门禁（MUTABLE-CONST-WITHOUT-FINAL）
 

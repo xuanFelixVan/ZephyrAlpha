@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_git_commit_concurrent.py — 幽灵提交红蓝对抗测试（OPS-2026062514）
 

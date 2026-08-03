@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError on invalid event; TypeError on wrong types
 # [TESTS] tests/test_governance_drift_fix.py
+# [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=通过；exit 1=有违规（阻断 commit）；exit 2=脚本异常（阻断 commit，fail-closed）
 # [TESTS] tests/governance/commit_gates/test_ttl_gate.py
-# [A_module] module_id=MOD-GOV-ttl_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ttl_gate.py — ttl 字段校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-15 的缺口）
 

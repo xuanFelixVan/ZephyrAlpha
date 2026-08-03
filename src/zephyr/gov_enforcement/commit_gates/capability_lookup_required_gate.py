@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——audit log 读取异常降级为 fail-closed 阻断（passed=False，detail 含修复指引）；session_id 缺失降级为放行（其他 gate 已检查）
 # [TESTS] tests/governance/commit_gates/test_capability_lookup_required_gate.py
-# [A_module] module_id=MOD-GOV-capability_lookup_required_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [RELATED_ARCH] #ARCH-066 (bypass 策略共享模块 + gate-time 白名单检查), #ARCH-GOV-CONVERGENCE-META Phase 3.4a
 # noqa: m10-time-trigger  M10豁免: 无时间触发

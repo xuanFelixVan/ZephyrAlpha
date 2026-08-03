@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/data/test_symbol_normalizer.py
+# [A_module] module_id=MOD-TEST-278 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-DATA-SYMBOL-001 TRAE-082
 """test_symbol_normalizer.py — TRAE-082 symbol 标准化模块测试。

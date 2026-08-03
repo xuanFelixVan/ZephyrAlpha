@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] git 异常抛 OSError 让调用方 fail-closed；文件读取失败返回 None/空集
 # [TESTS] tests/governance/commit_gates/test_ruling_reference_gate.py
-# [A_module] module_id=MOD-GOV-reference_helpers | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """_reference_helpers.py — 引用检测门禁共享工具函数（ARCH-REFERENCE / RULING-REFERENCE / DANGLING-REFERENCE）
 

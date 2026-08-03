@@ -5,6 +5,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_stash_lifecycle.py — stash 生命周期治本单测（裁定 #ARCH-STASH-LIFECYCLE-GAP-001 / #ARCH-STASH-LIFECYCLE-FIX-001）
 

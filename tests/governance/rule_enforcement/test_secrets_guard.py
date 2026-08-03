@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sanitize_log:raises-TypeError-on-None-input
 # [TESTS] self
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 import pytest

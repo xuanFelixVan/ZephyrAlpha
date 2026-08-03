@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_security_config_scanner.py
+# [A_module] module_id=MOD-INF-022 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 import pytest

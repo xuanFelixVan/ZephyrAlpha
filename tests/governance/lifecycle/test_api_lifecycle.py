@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] None
 # [TESTS] tests/test_api_lifecycle.py
+# [A_module] module_id=MOD-TEST-348 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

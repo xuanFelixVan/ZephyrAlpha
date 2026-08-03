@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True）；ast.parse 失败 fail-open；检出违规则 warn-only（passed=True + detail）
 # [TESTS] tests/governance/commit_gates/test_git_call_budget_gate.py
-# [A_module] module_id=MOD-GOV-git_call_budget_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """git_call_budget_gate.py — Git 调用预算 warn-only 门禁（GIT-CALL-BUDGET，§ARCH-GIT-CALL-BUDGET P2.2）
 

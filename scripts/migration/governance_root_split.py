@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] registry missing -> exit 1; source missing -> record failure continue; target exists -> skip (unless --force)
 # [TESTS] tests/governance/test_governance_root_split.py
+# [A_module] module_id=MOD-INF_GOV | layer=module | stability=volatile | safety=H | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """ARCH-031: governance/ root flat-files split migration orchestrator.
 

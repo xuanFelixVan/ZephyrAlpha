@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] governance.db 缺失/查询异常 -> 放行(True, detail)；block_next 记录存在 -> 阻断(False, detail)；critical_warn 记录存在 -> 放行(True) + 打印 WARNING
 # [TESTS] tests/governance/commit_gates/test_reconciler_health_gate.py
-# [A_module] module_id=MOD-GOV-reconciler_health_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """reconciler_health_gate.py — reconciler 健康度门禁（#ARCH-DATAQUALITY-V1.7）
 

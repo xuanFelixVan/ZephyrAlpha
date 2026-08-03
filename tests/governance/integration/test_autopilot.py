@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest assertions; test_claim_and_execute_cycle MUST verify status transitions
 # [TESTS] self
+# [A_module] module_id=MOD-TEST-350 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_autopilot.py — AutoPilot 端到端测试
 

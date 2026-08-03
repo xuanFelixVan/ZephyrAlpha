@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/test_gov_data_source_reliability.py
+# [A_module] module_id=MOD-TEST-388 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

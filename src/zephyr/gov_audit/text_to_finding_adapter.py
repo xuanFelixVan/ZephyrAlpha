@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] parse() never raises; individual line parse failures are silently skipped
 # [TESTS] tests/test_audit_full_pipeline_e2e.py
-# [A_module] module_id=MOD-GOV-text_to_finding_adapter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 budget_context 和 operation_id
 # [TESTS] tests/test_budget_enforcer.py
-# [A_module] module_id=MOD-RES-rbac_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget-enforcer/blueprint.md | §12

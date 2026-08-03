@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_SYNC_SAVEPOINT_TEST | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_sync_savepoint_isolation.py — sync_all() 级联失败隔离验证（#ARCH-GUC-TRIGGER-FIX-001 裁定 B / P1）
 

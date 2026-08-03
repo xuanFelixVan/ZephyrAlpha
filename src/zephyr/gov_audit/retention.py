@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 清理失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_retention.py
-# [A_module] module_id=MOD-GOV-retention | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
 from datetime import UTC, datetime, timedelta

@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DB不可达->skip_test; 拓扑断裂->AssertionError
 # [TESTS] tests/governance/test_battle_map_execution_flow.py
+# [A_module] module_id=MOD-TEST-278 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_battle_map_execution_flow.py — 执行阶段 6 环节数据流转闭环验证
 

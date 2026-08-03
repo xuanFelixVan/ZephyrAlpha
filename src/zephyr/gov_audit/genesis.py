@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 创世块损坏返回恢复失败
 # [TESTS] tests/audit-orchestrator/test_genesis.py
-# [A_module] module_id=MOD-GOV-genesis | layer=module | stability=frozen | safety=H | ai_autonomy=human_gated
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=frozen | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """audit-trail.genesis — MOD-INF-020 · 创世块管理
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] audit() never raises; individual stage failures are logged and skipped; returns partial report
 # [TESTS] tests/test_semantic_auditor.py
-# [A_module] module_id=MOD-GOV-semantic_audit_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """SemanticAuditor 编排器——9阶段管道统一调度.
 

@@ -19,6 +19,7 @@
 # [ERROR_CONTRACT] SchemaRegistryError
 
 # [TESTS] pytest tests/test_schema_schema_registry.py -q
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 import pytest

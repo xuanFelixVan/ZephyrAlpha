@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_SYNC_PANORAMA | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_blueprint_frontmatter_reconciler.py — 蓝图 frontmatter 对齐单测（ARCH-056 Phase 3）"""
 from __future__ import annotations

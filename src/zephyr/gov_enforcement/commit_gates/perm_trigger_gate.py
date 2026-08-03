@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——AST/IO 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_perm_trigger_gate.py
-# [A_module] module_id=MOD-GOV-perm_trigger_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本文件是PERM-TRIGGER检测器自身,源码含检测模式字符串(while True/time.sleep/APScheduler等)用于AST匹配,非实际时间触发
 """perm_trigger_gate.py — 永久系统脚本时间触发模式无事件订阅阻断门禁（PERM-TRIGGER）

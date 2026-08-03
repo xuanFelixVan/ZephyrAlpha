@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_WORKSPACE_HYGIENE_RECONCILER | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_workspace_hygiene_reconciler.py — 工作区卫生自动清理 reconciler 单测。
 

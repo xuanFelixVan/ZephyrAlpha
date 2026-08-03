@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-DAT-instrument | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from dataclasses import dataclass
 from datetime import date

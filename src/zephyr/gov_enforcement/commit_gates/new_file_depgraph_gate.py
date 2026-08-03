@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——DB/git 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_new_file_depgraph_gate.py
-# [A_module] module_id=MOD-GOV-new_file_depgraph_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """new_file_depgraph_gate.py — 新建 .py 文件 depgraph 未登记硬阻断门禁（NEW-FILE-DEPGRAPH-ENFORCEMENT）
 

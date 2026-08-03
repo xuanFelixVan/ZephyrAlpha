@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] YAML 缺失/解析失败->fail；常量不一致->fail
 # [TESTS] tests/governance/audit/test_trae_069_threshold_sync_smoke.py
+# [A_module] module_id=MOD-TEST-280 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_trae_069_threshold_sync_smoke.py — trae_069 YAML 真源→代码常量同步 smoke test
 

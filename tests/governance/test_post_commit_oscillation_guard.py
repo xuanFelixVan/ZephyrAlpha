@@ -9,6 +9,7 @@
 # [INVARIANTS] 测试不污染真实 .runtime/locks（mock _LOCK_FILE 到 tmp_path）
 # [ERROR_CONTRACT] 测试失败 = 防振荡机制缺失/回归
 # [MATURITY] evolving
+# [A_module] module_id=MOD-D5_ARCH_TOOLS | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_post_commit_oscillation_guard.py — post_commit_regen_yaml.py 防振荡强化机制测试。
 

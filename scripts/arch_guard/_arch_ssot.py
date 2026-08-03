@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """arch_guard 共享：仓库根路径、capacity_slo / invariants / contracts 装载。"""
 

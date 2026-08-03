@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——IO/JSON/git 异常降级为 fail-open（passed=True，logger.warning），结构校验失败 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_snapshot_drift_gate.py
-# [A_module] module_id=MOD-GOV-snapshot_drift_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m20-snapshot-drift  M20豁免: 本文件是SNAPSHOT-DRIFT检测器自身,源码引用snapshot路径用于校验,非实际drift
 """snapshot_drift_gate.py — 运行时违规快照漂移阻断门禁（SNAPSHOT-DRIFT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐 rc1 enforceability）

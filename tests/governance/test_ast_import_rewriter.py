@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [A_module] module_id=MOD-D5_ARCH_TOOLS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [MODULE] tests.governance.test_ast_import_rewriter
 # [DOMAIN] D_GOVERNANCE

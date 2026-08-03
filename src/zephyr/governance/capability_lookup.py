@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises FileNotFoundError if YAML 真源缺失; returns empty list on scan errors; git 派生失败降级为空列表（不阻断查询）
 # [TESTS] tests/test_capability_lookup.py
-# [A_module] module_id=MOD-GOV-capability_lookup | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-037 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

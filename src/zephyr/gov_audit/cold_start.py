@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 缓存未命中返回空字典
 # [TESTS] none
-# [A_module] module_id=MOD-GOV-cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 BootstrapCache — 审计冷启动共享单例缓存。

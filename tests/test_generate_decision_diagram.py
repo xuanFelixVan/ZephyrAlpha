@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_generate_decision_diagram.py
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #TRAE-061
 """test_generate_decision_diagram.py — generate_decision_diagram.py 单元测试

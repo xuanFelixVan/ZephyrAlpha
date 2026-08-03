@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML/git/loader 异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 硬阻断（passed=False，_OBSERVATION_PERIOD=False 2026-08-02 转硬阻断）
 # [TESTS] tests/governance/commit_gates/test_translation_coverage_gate.py
-# [A_module] module_id=MOD-GOV-translation_coverage_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """translation_coverage_gate.py — 新建 .py 文件大白话简介覆盖率门禁（TRANSLATION-COVERAGE）
 

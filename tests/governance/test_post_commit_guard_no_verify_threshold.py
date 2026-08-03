@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess error->skip_test
 # [TESTS] tests/governance/test_post_commit_guard_no_verify_threshold.py
+# [A_module] module_id=MOD-TEST-277 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_post_commit_guard_no_verify_threshold.py — 高基数 --no-verify 阈值阻断 e2e 测试
 

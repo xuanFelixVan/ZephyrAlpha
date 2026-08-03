@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——_claim_snapshots 读取异常降级为无快照（passed=True）
 # [TESTS] tests/governance/commit_gates/test_foreign_change_gate.py
-# [A_module] module_id=MOD-GOV-foreign_change_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-054]
 """foreign_change_gate.py — 外来变更检测门禁（FOREIGN-CHANGE-DETECTION，ARCH-054 治本）

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=无问题; exit 1=发现问题; exit 2=参数错误
 # [TESTS] tests/governance/commit_gates/test_check_yaml_anchor_consistency.py
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """check_yaml_anchor_consistency.py — YAML 治理锚定一致性扫描.
 

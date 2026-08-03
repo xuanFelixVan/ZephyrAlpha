@@ -26,7 +26,7 @@
 
 # [TESTS] tests/test_reconciliation_registry.py (P3-T1)
 
-# [A_module] module_id=MOD-GOV-reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_RECONCILIATION_REGISTRY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 # [TTL] permanent
 

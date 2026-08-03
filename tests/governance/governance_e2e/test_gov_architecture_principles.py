@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/test_gov_architecture_principles.py
+# [A_module] module_id=MOD-TEST-386 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

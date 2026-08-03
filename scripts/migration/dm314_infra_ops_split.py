@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] registry缺失->exit1; 源文件缺失->记录失败继续; 目标已存在->跳过
 # [TESTS] tests/test_dm314_migration.py
+# [A_module] module_id=MOD-INF-037 | layer=module | stability=volatile | safety=H | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """DM-314: infra_ops/ 拆分迁移执行脚本。
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile 永不抛异常——读取/解析失败降级为 ReconcileResult(action="warn")
 # [TESTS] tests/governance/audit/test_error_pattern_consumer.py
-# [A_module] module_id=MOD-GOV-error_pattern_consumer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_ERROR_PATTERN_CONSUMER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 """error_pattern_consumer_reconciler.py — AI 行为遥测 JSONL 错误事件聚合 consumer。

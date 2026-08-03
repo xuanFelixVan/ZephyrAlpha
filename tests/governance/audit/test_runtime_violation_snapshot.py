@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_RUNTIME_VIOLATION_SNAPSHOT | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_runtime_violation_snapshot.py — runtime_violation_snapshot 模块单测
 

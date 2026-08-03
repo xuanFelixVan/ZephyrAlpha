@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
 # [TESTS] test_bare_repo_scanner.py
+# [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 import os

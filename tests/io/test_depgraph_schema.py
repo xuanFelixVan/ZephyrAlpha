@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] python -m pytest tests/test_depgraph_schema.py -q
+# [A_module] module_id=MOD-DATABASE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """
 test_depgraph_schema.py — depgraph_schema.py DDL 真源与迁移框架单元测试

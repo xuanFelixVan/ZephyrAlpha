@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_RECONCILIATION_REGISTRY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_reconcile_commit_message_audit.py — Phase 3.4 commit_message 审计链 e2e smoke test
 

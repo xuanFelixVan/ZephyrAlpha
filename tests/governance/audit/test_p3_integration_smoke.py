@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module; 断言失败->fail
 # [TESTS] tests/governance/audit/test_p3_integration_smoke.py
+# [A_module] module_id=MOD-TEST-280 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_p3_integration_smoke.py — Phase 3 全链路集成 smoke test（P3-5）
 

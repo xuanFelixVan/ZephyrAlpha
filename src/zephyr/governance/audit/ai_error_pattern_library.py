@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 加载/解析失败降级为空库（is_empty=True），所有查询返回 None 或空列表
 # [TESTS] tests/governance/audit/test_ai_error_pattern_library.py
-# [A_module] module_id=MOD-GOV-error_pattern_library | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_ERROR_PATTERN_LIBRARY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ai_error_pattern_library.py — AI 错误模式库（只读查询接口）。
 

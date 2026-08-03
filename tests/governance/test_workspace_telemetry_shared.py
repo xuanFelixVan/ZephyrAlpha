@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] tests/governance/test_workspace_telemetry_shared.py
+# [A_module] module_id=MOD-WORKSPACE_TELEMETRY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_workspace_telemetry_shared.py — shared workspace_telemetry 公共 API 单测
 

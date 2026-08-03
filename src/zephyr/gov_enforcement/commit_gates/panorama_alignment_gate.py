@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——run_alignment/DB 异常降级为 fail-open + logger.error + log_gate_failure 持久化（不阻断 commit，但失败可见可追踪）；PanoramaEmptyError 为合法跳过（不持久化）；domain_mismatches>0 为确定性阻断（非异常路径）
 # [TESTS] tests/governance/commit_gates/test_panorama_alignment_gate.py
-# [A_module] module_id=MOD-GOV-panorama_alignment_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """panorama_alignment_gate.py — 三图模块对齐门禁（四图模块对齐 Step 4，ARCH-056 升级）
 

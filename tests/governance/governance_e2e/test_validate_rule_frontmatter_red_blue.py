@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=所有攻击被拦截;exit 1=有攻击突破
 # [TESTS] self-contained
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """
 GATE-RULE-FM 红蓝极端对抗测试。

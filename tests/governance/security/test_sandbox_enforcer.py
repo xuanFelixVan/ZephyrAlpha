@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exit 0 = all pass
 # [TESTS] this file
+# [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

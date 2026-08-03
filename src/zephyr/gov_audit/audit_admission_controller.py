@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AdmissionResult.allowed=False on any check failure; ImportError->module marked unavailable
 # [TESTS] tests/audit-orchestrator/
-# [A_module] module_id=MOD-GOV-audit_admission_controller | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

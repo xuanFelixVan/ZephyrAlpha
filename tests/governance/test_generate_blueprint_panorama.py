@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/governance/test_generate_blueprint_panorama.py
+# [A_module] module_id=MOD-GOV-029 | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 # [ARCH-REF] #ARCH-053 #ARCH-056
 """test_generate_blueprint_panorama.py — 蓝图 §0.6 生成器单测（ARCH-053 + ARCH-056）

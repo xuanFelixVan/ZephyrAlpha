@@ -19,6 +19,7 @@
 # [ERROR_CONTRACT] Pydantic ValidationError
 
 # [TESTS] pytest tests/test_schema_schemas.py -q
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
 # [TTL] task_bound
 
 from datetime import UTC, datetime

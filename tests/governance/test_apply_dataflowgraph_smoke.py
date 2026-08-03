@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module; DB 不可达->skip_test
 # [TESTS] tests/governance/test_apply_dataflowgraph_smoke.py
+# [A_module] module_id=MOD-TEST-279 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_apply_dataflowgraph_smoke.py — apply_dataflowgraph.py end-to-end smoke test
 

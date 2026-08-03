@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回None
 # [TESTS] tests/governance/audit/test_p0_i2_construction_order.py
-# [A_module] module_id=MOD-GOV-audit_trail_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_AUDIT_TRAIL | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """audit-trail/contracts.py — G-CT-002 Audit 契约（re-export）。"""
 

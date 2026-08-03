@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True）；ast.parse 失败 fail-open；检出违规则 warn-only（passed=True + detail）
 # [TESTS] tests/governance/commit_gates/test_consumers_accuracy_gate.py
-# [A_module] module_id=MOD-GOV-consumers_accuracy_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """consumers_accuracy_gate.py — CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
 

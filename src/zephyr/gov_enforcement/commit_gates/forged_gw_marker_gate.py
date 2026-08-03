@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——SessionRegistry 读取异常降级为放行（避免 registry 损坏阻断所有 commit）；正则解析异常降级为放行（保守不阻断）
 # [TESTS] tests/governance/commit_gates/test_forged_gw_marker_gate.py
-# [A_module] module_id=MOD-GOV-forged_gw_marker_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 无时间触发
 """forged_gw_marker_gate.py — Forged GW Marker 前置检测门禁（FORGED-GW-MARKER，#ARCH-PREVENTABILITY-LAYER-001 Phase 2）

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git 异常降级为 fail-closed 阻断（passed=False，detail 含修复指引）
 # [TESTS] tests/governance/commit_gates/test_ruling_commit_verified_gate.py
-# [A_module] module_id=MOD-GOV-ruling_commit_verified_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001
 """ruling_commit_verified_gate.py — 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）

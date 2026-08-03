@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True，logger.warning）；ast.parse 失败 fail-open；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_ch_batch_size_gate.py
-# [A_module] module_id=MOD-GOV-ch_batch_size_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ch_batch_size_gate.py — CH 批量写入防回退门禁（CH-BATCH-SIZE，§18.4 防复发）
 

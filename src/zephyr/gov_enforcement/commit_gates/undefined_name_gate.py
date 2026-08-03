@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 返回 (False, detail) 阻断 | (True, "") 放行
 # [TESTS] tests/governance/commit_gates/test_undefined_name_gate.py
-# [A_module] module_id=MOD-GOV-undefined_name_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）
 

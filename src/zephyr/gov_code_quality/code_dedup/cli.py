@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sys.exit with ExitCode enum values only
 # [TESTS] tests/test_code_dedup_engine.py
-# [A_module] module_id=MOD-GCQ-cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """code-dedup-engine CLI——子命令映射+退出码+扫描入口."""

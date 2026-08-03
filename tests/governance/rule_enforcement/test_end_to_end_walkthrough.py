@@ -19,6 +19,7 @@
 # [ERROR_CONTRACT] run_all returns list[ScenarioResult]; pass_rate returns float >= 0.0 and <= 1.0
 
 # [TESTS] tests/test_end_to_end_walkthrough.py
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

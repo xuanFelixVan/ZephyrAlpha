@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_generate_dataflow_diagram.py
+# [A_module] module_id=MOD-GOV_GENERATE_DATAFLOW_DIAGRAM | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051
 """test_generate_dataflow_diagram.py — generate_dataflow_diagram.py 单元测试

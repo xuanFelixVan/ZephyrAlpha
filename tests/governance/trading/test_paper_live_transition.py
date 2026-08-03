@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError on invalid phase;IndexError on out-of-range
 # [TESTS] self
+# [A_module] module_id=MOD-INF-021 | layer=module | stability=stable | safety=H | ai_autonomy=human_gated
 # [TTL] task_bound
 
 from __future__ import annotations

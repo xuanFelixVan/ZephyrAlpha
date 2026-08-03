@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] (True, msg)=通过；False=阻断（新引入 _NN 目录或 git 异常 fail-closed）
 # [TESTS] tests/governance/commit_gates/test_r5_digit_suffix_gate.py
-# [A_module] module_id=MOD-GOV-r5_digit_suffix_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """r5_digit_suffix_gate.py — R5 数字后缀目录禁止门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）
 

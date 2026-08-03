@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git/ast/find_spec 失败降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_import_integrity_gate.py
-# [A_module] module_id=MOD-GOV-import_integrity_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本模块由 commit 事件触发（非 cron/manual）
 """import_integrity_gate.py — IMPORT-INTEGRITY 门禁（悬空 import 硬阻断）

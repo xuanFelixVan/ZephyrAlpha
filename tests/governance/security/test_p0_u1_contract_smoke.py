@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-TEST-295 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """
 DOM-GOV-001 P0 测试用例 — P0-U1 冒烟测试 + P0-U2 输入校验 + P0-I1 集成测试 + P0-I2 施工顺序验证.

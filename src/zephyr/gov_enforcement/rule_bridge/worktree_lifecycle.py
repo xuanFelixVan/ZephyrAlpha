@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] session_not_found->WorktreeLifecycleError; invalid_transition->WorktreeTransitionError(->WorktreeLifecycleError)
 # [TESTS] tests/governance/rule_bridge/test_worktree_lifecycle.py
-# [A_module] module_id=MOD-GOV_ENFORCEMENT_worktree_lifecycle | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_ENFORCEMENT_WORKTREE_LIFECYCLE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换）
 

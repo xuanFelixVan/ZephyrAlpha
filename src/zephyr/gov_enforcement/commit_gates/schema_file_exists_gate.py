@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML/git/文件系统异常降级为 fail-open（passed=True）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_schema_file_exists_gate.py
-# [A_module] module_id=MOD-GOV-schema_file_exists_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH] ARCH-SSOT-REFERENCE-INTEGRITY-001
 """schema_file_exists_gate.py — SCHEMA-FILE-EXISTS block 门禁

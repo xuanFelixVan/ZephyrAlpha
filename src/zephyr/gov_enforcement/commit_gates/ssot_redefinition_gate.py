@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——registry 缺失/解析失败降级为 fail-closed(阻断,除非 registry 在 staged 中);git diff 异常降级为 fail-open(不阻断,logger.warning 告警);check_all 兜底 fail-closed
 # [TESTS] tests/governance/commit_gates/test_ssot_redefinition_gate.py
-# [A_module] module_id=MOD-GOV-ssot_redefinition_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断门禁
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ingest_file() never raises; individual finding parse failures are logged and skipped
 # [TESTS] tests/test_audit_finding_ingest.py
-# [A_module] module_id=MOD-UNK-finding_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_DEAD_PUBLIC_WRAPPER_RECONCILER | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_dead_public_wrapper_reconciler.py — 死公共 wrapper 自动检测 reconciler 单测。
 

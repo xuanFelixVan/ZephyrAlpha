@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-migrate_sqlite_to_pg | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_migrate_sqlite_to_pg.py — SQLite→PG 迁移脚本测试（5.32.3 治本：零测试）
 

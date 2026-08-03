@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_align_panoramas.py
+# [A_module] module_id=MOD-GOV_ALIGN_PANORAMAS | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-053 #ARCH-056 #ARCH-059
 """test_align_panoramas.py — align_panoramas.py 单元测试

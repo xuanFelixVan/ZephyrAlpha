@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Generate complete script_manifest.yaml from scripts/ tree scan."""
 # 双 manifest 体系说明（P1-T4 校正，2026-06-26）

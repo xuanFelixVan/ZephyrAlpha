@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile 永不抛异常——DB 查询失败降级为 ReconcileResult(action="warn")
 # [TESTS] scripts/governance/test_remediation_progress_smoke.py
-# [A_module] module_id=MOD-GOV-remediation_progress_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-REMEDIATION_PROGRESS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 """remediation_progress_reconciler.py — 治本进度持久化 + 新鲜度对账（#ARCH-GOV-CONVERGENCE-META Phase 3.1）。

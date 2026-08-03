@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=通过；exit 1=有违规（阻断 commit）；exit 2=脚本异常（fail-open，不阻断）
 # [TESTS] tests/governance/commit_gates/test_encoding_gate.py
-# [A_module] module_id=MOD-GOV-encoding_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """encoding_gate.py — 编码安全校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口）
 

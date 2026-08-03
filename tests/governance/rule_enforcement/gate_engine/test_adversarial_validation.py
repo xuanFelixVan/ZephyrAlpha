@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] this file
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——registry/IO 异常降级为 fail-open；检出违规则 fail-closed
 # [TESTS] tests/governance/commit_gates/test_noqa_validation_gate.py
-# [A_module] module_id=MOD-GOV-noqa_validation_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """noqa_validation_gate.py — 自定义 noqa 标记合规性门禁（NOQA-VALIDATION，ARCH-NOQA-GOV-001 治本）
 

@@ -19,6 +19,7 @@
 # [ERROR_CONTRACT] none
 
 # [TESTS] pytest tests/test_breaking_change_detector.py
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

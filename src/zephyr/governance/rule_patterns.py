@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-GOV_RULE_PATTERNS | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+# [A_module] module_id=MOD-GOV_RULE_PATTERNS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
 
 

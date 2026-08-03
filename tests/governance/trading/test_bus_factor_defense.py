@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] None
 # [TESTS] tests/test_bus_factor_defense.py
+# [A_module] module_id=MOD-TEST-356 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

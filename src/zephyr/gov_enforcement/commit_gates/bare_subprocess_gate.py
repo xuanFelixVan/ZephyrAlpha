@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True）；ast.parse 失败 fail-open；检出违规则 fail-closed 阻断（passed=False + detail）
 # [TESTS] tests/governance/commit_gates/test_bare_subprocess_gate.py
-# [A_module] module_id=MOD-GOV-bare_subprocess_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: bare-subprocess  自身豁免: 本文件是BARE-SUBPROCESS检测器,源码含检测模式字符串(subprocess.run/Popen)用于AST匹配,非实际调用
 """bare_subprocess_gate.py — 裸 subprocess 调用硬阻断门禁（BARE-SUBPROCESS）

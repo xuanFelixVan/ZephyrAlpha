@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] (True, msg)=通过；False=阻断（三声明轨道不一致或 count_mismatch 或 module_id 跨文件撞车）；OSError/git grep 超时跳过单文件不阻断
 # [TESTS] tests/governance/commit_gates/test_module_id_consistency_gate.py
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """module_id_consistency_gate.py — module_id 三声明轨道一致性 + count 派生 + 跨文件唯一性门禁（Phase 3 reconciler->gate 收敛）
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-# [A_module] module_id=MOD-GOV-base_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 import logging
 
 logger = logging.getLogger(__name__)

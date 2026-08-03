@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] N/A
 # [TESTS] N/A
-# [A_module] module_id=MOD-GOV_test_session_worktree_async_reconcile | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_TEST_SESSION_WORKTREE_ASYNC_RECONCILE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_session_worktree_async_reconcile.py — _run_reconcilers_after_merge 异步化测试。
 

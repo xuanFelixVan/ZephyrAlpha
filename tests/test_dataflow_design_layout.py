@@ -9,6 +9,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_dataflow_design_layout.py
+# [A_module] module_id=MOD-GOV_DATAFLOW_DIAGRAM | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-051
 """test_dataflow_design_layout.py — 设计态数据流文档视觉风格测试（V1.2 模板对齐）

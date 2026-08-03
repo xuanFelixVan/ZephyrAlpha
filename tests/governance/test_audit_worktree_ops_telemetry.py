@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess error->skip_test
 # [TESTS] tests/governance/test_audit_worktree_ops_telemetry.py
+# [A_module] module_id=MOD-TEST-280 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_audit_worktree_ops_telemetry.py — worktree_ops_log 遥测完整性审计测试
 

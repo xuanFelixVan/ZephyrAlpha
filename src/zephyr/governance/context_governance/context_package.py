@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
 # [TESTS] tests/context/test_context_package.py; tests/e/test_e_context_package.py
-# [A_module] module_id=MOD-RES-context_package | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 

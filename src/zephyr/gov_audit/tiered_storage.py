@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 存储失败返回False
 # [TESTS] tests/audit-orchestrator/test_tiered_storage.py
-# [A_module] module_id=MOD-GOV-tiered_storage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import gzip
 import logging

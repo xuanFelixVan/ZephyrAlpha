@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] python -m pytest tests/test_protocol_self_context.py -q
+# [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 from zephyr.governance.context_governance.protocol_self_context import ProtocolSelfContext
 

@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module; DB 不可达->skip_test
 # [TESTS] tests/governance/test_generate_project_depgraph_smoke.py
+# [A_module] module_id=MOD-TEST-281 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_generate_project_depgraph_smoke.py — generate_project_depgraph.py e2e smoke test
 

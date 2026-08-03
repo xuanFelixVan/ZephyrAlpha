@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 无
 # [TESTS] tests/test_post_doc_review.py
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 import json

@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [DEPRECATED] trae_053 v2.0.0: 常驻 while 循环模式已废除。仅保留 --once 单次执行模式。
+# [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # 原声明"已迁移到 zephyr.autonomy_core.runtime"——该目标模块实际不存在，声明作废。
 # 如需 AutoRuntime Core，直接使用 src/zephyr/trading/auto_runtime_core.py。

@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess error->skip_test
 # [TESTS] tests/governance/test_run_silent_failure_regression.py
+# [A_module] module_id=MOD-TEST-281 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_run_silent_failure_regression.py — silent-failure 回归 runner 单元测试（P3-2）
 

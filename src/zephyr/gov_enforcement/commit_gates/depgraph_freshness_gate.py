@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 文件缺失/JSON 解析失败/saved_at 缺失 -> 放行(True, detail)；>24h -> 阻断(False, detail)；>30min -> 放行(True) + 打印 WARNING；时钟漂移(saved_at 在未来) -> 视为 fresh 放行
 # [TESTS] tests/governance/commit_gates/test_depgraph_freshness_gate.py
-# [A_module] module_id=MOD-GOV-depgraph_freshness_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """depgraph_freshness_gate.py — depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1）
 

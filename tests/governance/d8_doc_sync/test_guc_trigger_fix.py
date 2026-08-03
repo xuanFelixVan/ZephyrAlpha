@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_GUC_TRIGGER_FIX | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_guc_trigger_fix.py — GUC 触发器缺陷修复的端到端 smoke test（#ARCH-GUC-TRIGGER-FIX-001）
 

@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module; 断言失败->fail
 # [TESTS] tests/governance/audit/test_error_pattern_id_column.py
+# [A_module] module_id=MOD-TEST-280 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_error_pattern_id_column.py — reconcile_execution_log.error_pattern_id 列幂等迁移单测（P4-1a）
 

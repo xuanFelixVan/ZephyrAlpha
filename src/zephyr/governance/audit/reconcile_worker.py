@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] payload 不存在/JSON 解析失败→status=failed 立即退出；gateway 构造失败→status=failed；reconcile_for 内部异常已在 registry 层捕获
 # [TESTS] tests/governance/audit/test_reconcile_async.py
-# [A_module] module_id=MOD-GOV-reconcile_worker | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_RECONCILE_WORKER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本模块由 launch_reconcile_async 事件触发（非 cron/manual）
 """reconcile_worker.py — 异步 reconciler worker（Ruling:100PCT-AI-GOVERNANCE P2-3，2026-07-19）

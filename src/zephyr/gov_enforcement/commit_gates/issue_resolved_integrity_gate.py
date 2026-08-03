@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——YAML 解析失败降级为 fail-open（passed=True）
 # [TESTS] tests/governance/commit_gates/test_issue_resolved_integrity_gate.py
-# [A_module] module_id=MOD-GOV-issue_resolved_integrity_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """issue_resolved_integrity_gate.py — ISSUE-RESOLVED-INTEGRITY warn-only 门禁
 

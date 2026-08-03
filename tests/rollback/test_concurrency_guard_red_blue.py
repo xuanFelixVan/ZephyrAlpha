@@ -6,6 +6,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 # [DOMAIN] D_GOVERNANCE
+# [A_module] module_id=MOD-INF-021 | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """
 红蓝对抗极端测试 — git_guard + concurrency_guard 端到端防护能力验证。

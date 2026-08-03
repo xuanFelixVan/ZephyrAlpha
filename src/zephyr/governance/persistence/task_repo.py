@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValueError on template validation failure; GateViolationError on invalid state transitions; StaleClaimError on timeout recovery
 # [TESTS] tests/test_mcp_task_claim.py; tests/test_boot_hooks_unlock.py
-# [A_module] module_id=MOD-DAT-task_repo | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-TASK_SYSTEM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

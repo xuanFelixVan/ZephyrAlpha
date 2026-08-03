@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] python -m pytest tests/test_verify_schema_health.py -q
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """
 test_verify_schema_health.py — verify_schema_health.py 门禁可靠性单元测试

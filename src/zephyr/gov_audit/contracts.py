@@ -26,7 +26,7 @@
 
 # [TESTS] tests/audit-orchestrator/test_contracts.py
 
-# [A_module] module_id=MOD-GOV-contracts | layer=module | stability=frozen | safety=H | ai_autonomy=immutable_core
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=frozen | safety=H | ai_autonomy=immutable_core
 
 # [TTL] permanent
 

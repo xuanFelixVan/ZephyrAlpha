@@ -14,7 +14,7 @@
 # [ERROR_CONTRACT] main() 返回 0=ALL PASSED 1=FAILED；不抛异常（failures 列表收集）
 # [TESTS] —
 # [TTL] permanent
-# [A_module] module_id=MOD-GOV-remediation_progress_smoke | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-REMEDIATION_PROGRESS_SMOKE | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 """test_remediation_progress_smoke.py — Phase 3.1 治本进度 reconciler end-to-end smoke test。
 
 真实调用 record_remediation_progress / query_all_dimensions / query_stale_dimensions /

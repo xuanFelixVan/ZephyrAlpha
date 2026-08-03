@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 轮转失败返回空结果
 # [TESTS] tests/audit-orchestrator/test_log_rotation.py
-# [A_module] module_id=MOD-GOV-log_rotation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
 

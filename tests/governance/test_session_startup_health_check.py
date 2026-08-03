@@ -8,6 +8,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] subprocess error->skip_test
 # [TESTS] tests/governance/test_session_startup_health_check.py
+# [A_module] module_id=MOD-TEST-278 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_session_startup_health_check.py — AI session 启动健康度自检单元测试
 

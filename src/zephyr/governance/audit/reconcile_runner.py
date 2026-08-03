@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] launch_reconcile_async 失败→ok=False 含 error，不抛异常；query_reconcile_status 失败→status=unknown 不抛异常
 # [TESTS] tests/governance/audit/test_reconcile_async.py
-# [A_module] module_id=MOD-GOV-reconcile_runner | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_RECONCILE_RUNNER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本模块由 commit 事件触发（非 cron/manual）
 """reconcile_runner.py — Reconciler 链路异步化（Ruling:100PCT-AI-GOVERNANCE P2-3，2026-07-19）

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] auto_register_gates 永不抛异常——YAML/import/getattr 异常降级为 fail-open（logger.warning + 返回失败列表）
 # [TESTS] tests/governance/rule_bridge/test_gate_auto_registrar.py
-# [A_module] module_id=MOD-GOV-gate_auto_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """gate_auto_registrar.py — YAML 驱动的 in-process gate 自动注册器（#ARCH-GATE-REGISTRY-AUTO-001 Phase 3）
 

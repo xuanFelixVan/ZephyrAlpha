@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_REPAIR | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""
 [BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/audit_design_completeness.py | §5.2.4 MIG-4

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——_shared.constants 导入失败/ast.parse 失败/文件不可读降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
 # [TESTS] tests/governance/commit_gates/test_scripts_import_integrity_gate.py
-# [A_module] module_id=MOD-GOV-scripts_import_integrity_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """scripts_import_integrity_gate.py — _shared.constants 符号导入完整性门禁
 

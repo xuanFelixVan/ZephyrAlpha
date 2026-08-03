@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测试失败→pytest assert error
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_AUDIT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_reconcile_worker_selfheal.py — #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1 测试
 
