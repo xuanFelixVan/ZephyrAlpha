@@ -98,6 +98,12 @@ def _backup_lock(lock_path: Path, *, label: str):
       本锁 = try-skip 语义——获取失败立即让步（并发备份应跳过而非排队，
       避免在节流窗口内堆积冗余快照）。原子性由 os.O_CREAT|os.O_EXCL 保证
       （与 _concurrency.ProcessLock._try_write_lock 同一原语）。
+
+    P4 治本（2026-08-03，僵尸锁根因修复）：原实现用 O_CREAT|O_EXCL 创建 lock，
+    若持有进程异常退出（崩溃/kill）未走 finally unlink，lock 永久残留，
+    后续所有备份全 SKIP（实测 .backup_pg.lock 自 8/2 残留至 8/3，12 次备份全失效）。
+    修复：FileExistsError 时读 lock 内容的 pid，若该 pid 已不存在则视为僵尸锁，
+    删除后重新创建（接管）。仍存活则正常让步跳过。
     """
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     fd: int | None = None
@@ -109,6 +115,31 @@ def _backup_lock(lock_path: Path, *, label: str):
         acquired = True
         yield True
     except FileExistsError:
+        # P4 治本：检测僵尸锁——读持有者 pid，若已死则接管
+        holder_pid = _read_lock_holder_pid(lock_path)
+        if holder_pid is not None and not _is_pid_alive(holder_pid):
+            # 僵尸锁：持有进程已死，安全接管
+            print(
+                f"[BACKUP-LOCK] 检测到僵尸锁 (pid={holder_pid} 已死)，删除残留 lock 后接管: {lock_path.name}",
+                file=sys.stderr,
+            )
+            try:
+                lock_path.unlink()
+            except OSError:
+                pass  # 竞态：可能已被其他进程清理，继续尝试创建
+            # 重试创建 lock（O_EXCL 保证原子性，若被其他接管进程抢先则让步）
+            try:
+                fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+                payload = json.dumps({"pid": os.getpid(), "label": label, "acquired_at": datetime.now(UTC).isoformat()})
+                os.write(fd, payload.encode("utf-8"))
+                acquired = True
+                yield True
+                return
+            except FileExistsError:
+                # 被其他进程抢先接管，让步
+                yield False
+                return
+        # 持有进程仍存活，正常让步
         yield False  # 另一进程持有锁 → 调用方跳过
     finally:
         if fd is not None:
@@ -121,6 +152,50 @@ def _backup_lock(lock_path: Path, *, label: str):
                 lock_path.unlink()
             except OSError:
                 pass
+
+
+def _read_lock_holder_pid(lock_path: Path) -> int | None:
+    """读取 lock 文件内容，解析 holder pid。失败返回 None（保守：不接管）。
+
+    P4 治本辅助函数：lock 文件由 _backup_lock 写入 JSON payload（pid/label/
+    acquired_at）。损坏文件（非 JSON / 缺 pid 字段 / pid 类型异常）一律返回 None，
+    调用方据此跳过接管，避免误删未知状态 lock。
+    """
+    try:
+        data = json.loads(lock_path.read_text(encoding="utf-8"))
+        pid = data.get("pid")
+        return int(pid) if isinstance(pid, int) else None
+    except (OSError, ValueError, TypeError):
+        return None
+
+
+def _is_pid_alive(pid: int) -> bool:
+    """跨平台检测 pid 是否存活。Windows 用 OpenProcess，POSIX 用 os.kill(pid, 0)。
+
+    P4 治本辅助函数：保守语义——检测失败时返回 True（认为存活，不接管，不误删
+    活锁）。仅在明确确认进程已死时返回 False。Windows OpenProcess 返回 0 表示
+    进程不存在（实测 999999 等不存在的 PID 返回 0）。
+    """
+    if os.name == "nt":
+        # Windows: OpenProcess 检测进程是否存在
+        try:
+            import ctypes
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            kernel32 = ctypes.windll.kernel32
+            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+            if handle:
+                kernel32.CloseHandle(handle)
+                return True
+            return False  # OpenProcess 返回 0 = 进程不存在
+        except Exception:
+            return True  # 检测失败保守认为存活（不误删活锁，宁可让步不接管）
+    else:
+        # POSIX: signal 0 不实际发信号，仅检测进程是否存在
+        try:
+            os.kill(pid, 0)
+            return True
+        except OSError:
+            return False
 
 
 # ── PG depgraph 备份（ARCH-041 §5.33.1 治本）──────────────────────────────
