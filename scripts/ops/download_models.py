@@ -311,4 +311,31 @@ def main() -> None:
             "  python scripts/ops/download_models.py --verify\n"
         ),
     )
-    parser.add_argument
+    parser.add_argument("--force", action="store_true", help="Force re-download even if already present")
+    parser.add_argument("--model", type=str, metavar="NAME", help="Download/verify specific model by name")
+    parser.add_argument("--list", action="store_true", help="List all models and their download status")
+    parser.add_argument("--verify", action="store_true", help="Verify downloaded model integrity")
+    parser.add_argument("--dry-run", action="store_true", help="Show what would be downloaded without downloading")
+    args = parser.parse_args()
+
+    # Filter models if --model specified
+    models = MODELS
+    if args.model:
+        models = [m for m in MODELS if m["name"] == args.model]
+        if not models:
+            available = ", ".join(m["name"] for m in MODELS)
+            print(f"ERROR: Unknown model '{args.model}'. Available: {available}")
+            sys.exit(2)
+
+    if args.list:
+        cmd_list()
+        return
+
+    if args.verify:
+        sys.exit(cmd_verify(models))
+
+    sys.exit(cmd_download(models, force=args.force, dry_run=args.dry_run))
+
+
+if __name__ == "__main__":
+    main()
