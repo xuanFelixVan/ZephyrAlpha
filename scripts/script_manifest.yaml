@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-04'
-total_scripts: 646
+total_scripts: 649
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -114,6 +114,14 @@ scripts:
   path: lock_files.py
   description: lock_files.py —— AI 对话文件锁协议（硬规则执行工具）
   domain: lock_files.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: oneoff_commit_audit02.py
+  path: oneoff_commit_audit02.py
+  description: User authorized the allow_non_worktree escape hatch (WORKTREE-REQUIRED gate blocks
+  domain: audit
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -1513,6 +1521,14 @@ scripts:
 - name: governance/d3_metadata/check_blueprint_compliance.py
   path: governance/d3_metadata/check_blueprint_compliance.py
   description: '[BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md | §3'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d3_metadata/check_doc_node_id_hardcode.py
+  path: governance/d3_metadata/check_doc_node_id_hardcode.py
+  description: 检测 docs/ 下 .md 文件中硬编码的 depgraph 物理 ID（node_id/edge_id）。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4586,6 +4602,14 @@ scripts:
   path: ops/ch_health_probe.py
   description: 独立于调度器运行，覆盖盘后/周末/节假日等调度器不运行的时段。
   domain: health
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ops/cleanup_runtime_tmp_residue.py
+  path: ops/cleanup_runtime_tmp_residue.py
+  description: '治本 #ARCH-TEST-RESIDUE-CLEANUP-001（2026-08-04）Part 1：'
+  domain: ops
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60

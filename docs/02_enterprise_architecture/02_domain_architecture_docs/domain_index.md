@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3726 |
-| 生产态模块 | 3541 |
+| 模块总数 | 3724 |
+| 生产态模块 | 3539 |
 | 设计态模块 | 185 |
 
 ## 域清单（按架构层分组）
@@ -138,7 +138,7 @@ ttl: permanent
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 195 | 192 | 3 | 195/150 (超容) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |
 | D_GOV_DOCS | 架构文档治理 / Architecture Docs Governance | 27 | 2 | 25 | 27/150 (OK) | [📄 51_d_gov_docs.md](51_d_gov_docs.md) |
 | D_GOV_DRIFT | 漂移检测 / Drift Detection | 73 | 72 | 1 | 73/150 (OK) | [📄 52_d_gov_drift.md](52_d_gov_drift.md) |
-| D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 122 | 121 | 1 | 122/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
+| D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 120 | 119 | 1 | 120/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 36 | 36 | 0 | 36/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
 | D_GOV_SCRIPTS | 脚本治理 / Script Governance | 418 | 418 | 0 | 418/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
