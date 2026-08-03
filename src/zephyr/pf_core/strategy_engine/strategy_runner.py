@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 因子/策略未注册->KeyError(autodiscover后仍失败才抛)；数据为空->返回空面板/空结果
 # [TESTS] tests/pf_core/test_strategy_runner_mvp.py
-# [A_module] module_id=MOD-PRT-strategy_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L05-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """D_PORTFOLIO_CORE — StrategyRunner 策略运行器（胶水层）

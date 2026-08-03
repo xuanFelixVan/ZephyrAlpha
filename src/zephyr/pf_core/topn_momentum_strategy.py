@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空 universe/signals->返回空 dict（不抛异常）；信号全 NaN->返回空 dict
 # [TESTS] tests/pf_core/test_strategy_runner_mvp.py
-# [A_module] module_id=MOD-PRT-topn_momentum_strategy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L05-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ---

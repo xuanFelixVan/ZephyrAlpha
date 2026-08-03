@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] volume<=0/VWAP<=0→返回空（不抛异常，EDE 跳过该 tick）
 # [TESTS] tests/pf_core/test_vwap_reversion_strategy.py
-# [A_module] module_id=MOD-PRT-vwap_reversion | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L05-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ---

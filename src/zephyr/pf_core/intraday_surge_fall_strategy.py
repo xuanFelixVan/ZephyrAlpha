@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] last_price<=0/窗口不足→返回空（不抛异常，EDE 跳过该 tick）
 # [TESTS] tests/pf_core/test_intraday_surge_fall_strategy.py
-# [A_module] module_id=MOD-PRT-intraday_surge_fall | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L05-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ---

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] on_tick 抛异常时 EDE 捕获并跳过该 tick（不中断回测）
 # [TESTS] tests/pf_core/test_tick_strategy.py
-# [A_module] module_id=MOD-PRT-tick_strategy_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L05-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_PORTFOLIO_CORE — TickStrategyBase + TickStrategyRegistry（路径 B：tick 级策略/做T）
 

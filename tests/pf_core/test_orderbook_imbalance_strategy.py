@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [A_module] module_id=MOD-L05-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [MODULE] tests.pf_core.test_orderbook_imbalance_strategy
 # [DOMAIN] D_PF_CORE
