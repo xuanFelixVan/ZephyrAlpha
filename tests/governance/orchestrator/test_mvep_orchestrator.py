@@ -19,6 +19,7 @@
 # [ERROR_CONTRACT] 测试异常必须包含 context 和 rule_id
 
 # [TESTS] tests/test_mvep_orchestrator.py
+# [A_module] module_id=MOD-INF-022 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from __future__ import annotations

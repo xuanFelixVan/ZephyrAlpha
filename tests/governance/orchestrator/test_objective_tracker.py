@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest exceptions on assertion failure
 # [TESTS] tests/test_objective_tracker.py
+# [A_module] module_id=MOD-INF-022 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 from zephyr.governance.observability_governance.objective_tracker import ObjectiveTracker

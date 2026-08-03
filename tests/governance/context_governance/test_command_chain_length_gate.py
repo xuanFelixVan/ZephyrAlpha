@@ -10,6 +10,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.Exception
 # [TESTS] tests/test_command_chain_length_gate.py
+# [A_module] module_id=MOD-INF-022 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 
 

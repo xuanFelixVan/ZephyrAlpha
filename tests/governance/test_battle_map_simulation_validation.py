@@ -65,4 +65,29 @@ if str(_SRC_PATH) not in sys.path:
     sys.path.insert(0, str(_SRC_PATH))
 
 
-# ── 期望数据（真源：battle_map
+# ── 期望数据（真源：battle_map_04_simulation_validation.md + DB） ──────────────
+
+EXPECTED_STEPS = {
+    "BM-SIM-01": {"name": "市场仿真器", "maturity": "production"},
+    "BM-SIM-02": {"name": "策略仿真器", "maturity": "production"},
+    "BM-SIM-03": {"name": "场景生成与蒙特卡洛", "maturity": "production"},
+    "BM-SIM-07": {"name": "风控仿真器", "maturity": "production"},
+    "BM-SIM-04": {"name": "压力测试引擎", "maturity": "production"},
+    "BM-SIM-05": {"name": "依赖图数字孪生", "maturity": "production"},
+    "BM-SIM-06": {"name": "仿真结果分析", "maturity": "production"},
+}
+
+# BM-SIM-07 期望的流转边
+EXPECTED_SIM07_EDGES = [
+    {"from": "BM-SIM-03", "to": "BM-SIM-07", "type": "data_flow", "label": "蒙特卡洛→风控仿真"},
+    {"from": "BM-SIM-07", "to": "BM-SIM-06", "type": "data_flow", "label": "风控仿真→结果分析"},
+]
+
+# BM-SIM-07 期望的锚点
+EXPECTED_SIM07_ANCHORS = [
+    {"target_graph": "depgraph", "target_id": "MOD-SIM-003", "role": "primary", "status": "stable"},
+]
+
+# BM-SIM-07 期望的翻译字段
+EXPECTED_SIM07_TRANSLATION = {
+    "name_zh": "风控仿真器
