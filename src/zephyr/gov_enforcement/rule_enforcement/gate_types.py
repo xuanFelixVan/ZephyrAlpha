@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-GOV-gate_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """门禁类型定义——GateType 枚举与 gate 相关 dataclass（GateContext/GateResult 等）。
 

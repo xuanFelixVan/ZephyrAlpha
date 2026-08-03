@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 违规 -> GateResult(passed=False, violations=[...])
 # [TESTS] tests/zephyr/gates/invariants/test_en_process_lifecycle_gateway.py
-# [A_module] module_id=MOD-GOV-en_process_lifecycle_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

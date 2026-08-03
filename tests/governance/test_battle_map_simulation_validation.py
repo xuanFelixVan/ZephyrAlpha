@@ -127,3 +127,26 @@ def dep_reader():
 def translation_registry():
     """加载 module_translation_registry.yaml 的 battle_map_steps 段。"""
     import yaml
+    yaml_path = _REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"
+    with open(yaml_path, "r", encoding="utf-8") as f:
+        registry = yaml.safe_load(f)
+    return {s["step_id"]: s for s in registry.get("battle_map_steps", [])}
+
+
+# ── 1. 拓扑验证 ───────────────────────────────────────────────────────────────
+
+@pytest.mark.e2e
+class TestSimulationValidationTopology:
+    """仿真验证阶段 7 环节拓扑验证。"""
+
+    def test_all_7_steps_exist(self, bm_reader):
+        """7 环节全部存在且 flow_stage=simulation_validation。"""
+        steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
+        step_ids = {s["step_id"] for s in steps}
+        for expected_id in EXPECTED_STEPS:
+            assert expected_id in step_ids, f"环节 {expected_id} 不在 simulation_validation 阶段"
+
+    def test_step_count_is_7(self, bm_reader):
+        """环节总数 = 7（含 BM-SIM-07）。"""
+        steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
+        assert

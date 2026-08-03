@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ValidationError on invalid task_id format or field constraint violation
 # [TESTS] tests/task/test_task_types.py
-# [A_module] module_id=MOD-GOV-task_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """任务类型定义——Task model 是任务卡字段的 SSoT（SQLite tasks 表对齐）。
 

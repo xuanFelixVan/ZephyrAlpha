@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] observe/observe_count 不抛异常——outcome 非法时返回当前阈值不变（fail-safe）；ewma 空历史返回当前阈值
 # [TESTS] tests/governance/rule_enforcement/test_adaptive_threshold.py
-# [A_module] module_id=MOD-GOV-adaptive_threshold | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """自适应阈值——双模式：概率型（PASS/FAIL outcome 调节）+ 次数型（EWMA 基线 × factor）。

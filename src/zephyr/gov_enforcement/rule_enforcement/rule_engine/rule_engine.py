@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Returns empty list on missing rules; never raises for missing data
 # [TESTS] tests/test_rule_e2e.py
+# [A_module] module_id=MOD-GOV-019 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
