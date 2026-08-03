@@ -79,32 +79,32 @@ flowchart TD
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_deflated_sharpe_calculator_py["simulation/deflated_sharpe_calculator<br/>D_SIMULATION — Deflated Sharpe Ratio Calculator<br/>(DSR 计算器)<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_result_analyzer_py -->|导入依赖 / import_depends| src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
-    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
-    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
-    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
+    src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
+    src_zephyr_simulation_result_analyzer_py -->|导入依赖 / import_depends| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_scenario_generator_py -->|data / data| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_sharpe_calculator_fixer_py -->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_sharpe_calculator_fixer_py -->|导入依赖 / import_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
+    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
+    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
+    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
-    tests_simulation_test_parameter_robustness_tester_py -->|测试依赖 / test_depends| src_zephyr_simulation_parameter_robustness_tester_py
-    tests_simulation_test_deflated_sharpe_calculator_py -->|测试依赖 / test_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
-    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
     tests_simulation_test_look_ahead_bias_detector_py -->|测试依赖 / test_depends| src_zephyr_simulation_look_ahead_bias_detector_py
+    tests_simulation_test_deflated_sharpe_calculator_py -->|测试依赖 / test_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
+    tests_simulation_test_parameter_robustness_tester_py -->|测试依赖 / test_depends| src_zephyr_simulation_parameter_robustness_tester_py
+    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
     tests_simulation_test_risk_simulator_py -->|测试依赖 / test_depends| src_zephyr_simulation_risk_simulator_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_simulation_parameter_robustness_tester_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_simulation_deflated_sharpe_calculator_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_simulation_look_ahead_bias_detector_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_simulation_result_analyzer_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_simulation_parameter_robustness_tester_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_simulation_result_analyzer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_simulation_strategy_simulator_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_simulation_risk_simulator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_simulation_scenario_generator_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_simulation_look_ahead_bias_detector_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_simulation_risk_simulator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_simulation_sharpe_calculator_fixer_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_simulation_strategy_simulator_py -->|导入依赖 / import_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -146,20 +146,20 @@ flowchart TD
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_deflated_sharpe_calculator_py["simulation/deflated_sharpe_calculator<br/>D_SIMULATION — Deflated Sharpe Ratio Calculator<br/>(DSR 计算器)<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_result_analyzer_py -->|导入依赖 / import_depends| src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
-    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
-    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
-    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
+    src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
+    src_zephyr_simulation_result_analyzer_py -->|导入依赖 / import_depends| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_scenario_generator_py -->|data / data| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_sharpe_calculator_fixer_py -->|data / data| src_zephyr_simulation_deflated_sharpe_calculator_py
     src_zephyr_simulation_sharpe_calculator_fixer_py -->|导入依赖 / import_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
+    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_parameter_robustness_tester_py
+    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_look_ahead_bias_detector_py
+    src_zephyr_simulation_strategy_simulator_py -->|data / data| src_zephyr_simulation_sharpe_calculator_fixer_py
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
-    tests_simulation_test_parameter_robustness_tester_py -->|测试依赖 / test_depends| src_zephyr_simulation_parameter_robustness_tester_py
-    tests_simulation_test_deflated_sharpe_calculator_py -->|测试依赖 / test_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
-    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
     tests_simulation_test_look_ahead_bias_detector_py -->|测试依赖 / test_depends| src_zephyr_simulation_look_ahead_bias_detector_py
+    tests_simulation_test_deflated_sharpe_calculator_py -->|测试依赖 / test_depends| src_zephyr_simulation_deflated_sharpe_calculator_py
+    tests_simulation_test_parameter_robustness_tester_py -->|测试依赖 / test_depends| src_zephyr_simulation_parameter_robustness_tester_py
+    tests_simulation_test_sharpe_calculator_fixer_py -->|测试依赖 / test_depends| src_zephyr_simulation_sharpe_calculator_fixer_py
     tests_simulation_test_risk_simulator_py -->|测试依赖 / test_depends| src_zephyr_simulation_risk_simulator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
