@@ -5,7 +5,7 @@ doc_type: blueprint
 status: Active
 version: "0.1.0"
 design_maturity: design
-build_status: stable
+build_status: deprecated
 ttl: permanent
 layer: L03_sell_decision
 layer_name: sell_decision
