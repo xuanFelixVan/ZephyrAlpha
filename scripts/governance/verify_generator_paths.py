@@ -57,10 +57,8 @@ warn_only: true
 """
 
 import argparse
-import importlib
 import os
 import re
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -68,6 +66,8 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
 # 临时环节 ID 前缀（带时间戳保证唯一，避免与现存 step 冲突）
 _VERIFY_STEP_PREFIX = "BM-VERIFY-"
@@ -89,13 +89,12 @@ def verify_path1_db_realtime() -> dict:
 
     # add_step：应触发 [REGENERATE] 🔄 后台启动
     try:
-        proc = subprocess.run(  # noqa: bare-subprocess  冒烟脚本非生产路径需捕获输出
+        proc = run_subprocess_hidden(
             [sys.executable, str(apply_script), "--add-step",
              "--step-id", step_id, "--step-name", "冒烟验证临时环节",
              "--flow-stage", "buy_flow", "--layer", "L2A",
              "--sort-order", "999", "--source-ref", "verify_generator_paths"],
-            cwd=str(_REPO_ROOT), capture_output=True, text=True,
-            encoding="utf-8", errors="replace", timeout=120,
+            cwd=str(_REPO_ROOT), encoding="utf-8", timeout=120,
         )
     except Exception as e:  # noqa: BLE001
         result["status"] = "skip"
@@ -140,10 +139,9 @@ def verify_path1_db_realtime() -> dict:
 
     # 清理：remove_step（无论上面是否 failed 都要清理，恢复 DB 真源）
     try:
-        subprocess.run(  # noqa: bare-subprocess  冒烟脚本清理路径非生产
+        run_subprocess_hidden(
             [sys.executable, str(apply_script), "--remove-step", "--step-id", step_id],
-            cwd=str(_REPO_ROOT), capture_output=True, text=True,
-            encoding="utf-8", errors="replace", timeout=120,
+            cwd=str(_REPO_ROOT), encoding="utf-8", timeout=120,
         )
         result["detail"] += "; 已清理临时环节"
     except Exception as e:  # noqa: BLE001
@@ -213,8 +211,7 @@ def verify_path3_postcommit_yaml() -> dict:
     """
     result = {"path": "3-postcommit-yaml", "status": "ok", "detail": ""}
     try:
-        sys.path.insert(0, str(_REPO_ROOT / "scripts" / "governance" / "git_hooks"))
-        pcm = importlib.import_module("post_commit_regen_yaml")
+        from scripts.governance.git_hooks import post_commit_regen_yaml as pcm
     except Exception as e:  # noqa: BLE001
         result["status"] = "failed"
         result["detail"] = f"import post_commit_regen_yaml 失败: {e}"

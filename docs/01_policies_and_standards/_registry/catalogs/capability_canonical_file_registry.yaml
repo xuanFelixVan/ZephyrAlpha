@@ -7676,6 +7676,10 @@ creation_tokens:
     token: "auto-generator-registry-20260803"
     created_by: "session-generator-auto-trigger"
     capability: "generator_auto_trigger"
+  - file: "scripts/governance/git_hooks/__init__.py"
+    token: "auto-git-hooks-pkg-20260803"
+    created_by: "session-ai-fix-gates-0803"
+    capability: "generator_auto_trigger"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
