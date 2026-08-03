@@ -25,7 +25,7 @@ ttl: permanent
 | 基础设施组件 | 15 | infrastructure_components.yaml |
 | 契约资产 | 66 | cross_layer_contracts.yaml |
 | 配置项 | 33 | config/*.yaml |
-| 数据流作业 | 962 | dataflow_graph_registry.yaml |
+| 数据流作业 | 231 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
 | **合计** | **263** | |
 
@@ -185,7 +185,7 @@ ttl: permanent
 | `config/model_pricing.yaml` | 1.3 | 2026-08-01 |
 | `config/nav_table_mapping.yaml` | 20.1 | 2026-07-01 |
 | `config/owner_offline_protocol.yaml` | 1.4 | 2026-08-02 |
-| `config/qmt_environments.yaml` | 4.2 | 2026-08-02 |
+| `config/qmt_environments.yaml` | 6.1 | 2026-08-03 |
 | `config/rbac_roles.yaml` | 1.1 | 2026-07-04 |
 | `config/resource_optimization.yaml` | 1.5 | 2026-08-01 |
 | `config/risk_params.yaml` | 1.3 | 2026-08-01 |

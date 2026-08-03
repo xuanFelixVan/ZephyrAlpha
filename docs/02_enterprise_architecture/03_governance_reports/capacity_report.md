@@ -31,7 +31,7 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|
 | D_DATA | 数据接入层 | 168 | 150 | +18 |
 | D_GOVERNANCE | 生命周期管理 | 224 | 150 | +74 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 174 | 150 | +24 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 175 | 150 | +25 |
 | D_GOV_SCRIPTS | 脚本治理 | 397 | 150 | +247 |
 | D_INFRA_RUNTIME | 运行时集成 | 171 | 150 | +21 |
 | D_SECURITY | 对抗验证 | 166 | 150 | +16 |
@@ -79,7 +79,7 @@ ttl: permanent
 | D_AUDITTEST | 审计测试套件 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_AUTONOMY_CORE | 自治核心 | L1_foundation | 130 | 150 | 86.7% | 接近超容 |
 | D_AUTONOMY_PERM | 自治保护 | L2_domain | 2 | 150 | 1.3% | 正常 |
-| D_BACKTEST | 回测 | L2_domain | 29 | 150 | 19.3% | 正常 |
+| D_BACKTEST | 回测 | L2_domain | 41 | 150 | 27.3% | 正常 |
 | D_BEHAVIORAL_AUDIT | 行为审计 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_CODE_SCRIPTS | 代码质量脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_COMPLIANCE | 合规 | L2_domain | 2 | 150 | 1.3% | 正常 |
@@ -100,11 +100,11 @@ ttl: permanent
 | D_FBL_DIAGNOSERS | 反馈诊断器 | L1_foundation | 76 | 150 | 50.7% | 正常 |
 | D_FBL_VERIFICATION | 反馈验证 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | L1_foundation | 125 | 150 | 83.3% | 接近超容 |
-| D_FRONTEND | 前端 | L2_domain | 16 | 150 | 10.7% | 正常 |
+| D_FRONTEND | 前端 | L2_domain | 20 | 150 | 13.3% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 12 | 150 | 8.0% | 正常 |
 | D_GOVERNANCE | 生命周期管理 | L2_domain | 224 | 150 | 149.3% | 超容 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 123 | 150 | 82.0% | 接近超容 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 174 | 150 | 116.0% | 超容 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 175 | 150 | 116.7% | 超容 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | 漂移检测 | L2_domain | 74 | 150 | 49.3% | 正常 |
 | D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 42 | 150 | 28.0% | 正常 |

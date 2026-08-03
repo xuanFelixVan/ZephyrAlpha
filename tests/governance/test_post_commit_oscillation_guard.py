@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """test_post_commit_oscillation_guard.py — post_commit_regen_yaml.py 防振荡强化机制测试。
 
 本测试验证两个待实施的强化机制（TDD Red phase → Green phase）：

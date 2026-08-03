@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-E2E-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """盘中横截面因子单元测试——验证 IntradayClose / IntradayVwap 计算。
 
 测试范围：

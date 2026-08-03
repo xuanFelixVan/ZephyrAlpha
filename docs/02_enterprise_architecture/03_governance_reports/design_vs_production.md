@@ -20,17 +20,17 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 3053 | 94.7% |
+| production（生产态） | 3066 | 94.7% |
 | design（设计态） | 170 | 5.3% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3223** | **100%** |
+| **总计** | **3236** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4188 | 129.9% |
-| stable | 1793 | 55.6% |
+| generated | 4189 | 129.4% |
+| stable | 1790 | 55.3% |
 | planned | 86 | 2.7% |
 | deprecated | 82 | 2.5% |
 
@@ -46,7 +46,7 @@ ttl: permanent
 | D_AUDITTEST | 审计测试套件 | 1 | 1 | 0 | 0 | 100.0% |
 | D_AUTONOMY_CORE | 自治核心 | 130 | 130 | 0 | 0 | 100.0% |
 | D_AUTONOMY_PERM | 自治保护 | 2 | 2 | 0 | 0 | 100.0% |
-| D_BACKTEST | 回测 | 30 | 29 | 1 | 0 | 96.7% |
+| D_BACKTEST | 回测 | 42 | 41 | 1 | 0 | 97.6% |
 | D_BEHAVIORAL_AUDIT | 行为审计 | 0 | 0 | 0 | 0 | N/A |
 | D_CODE_SCRIPTS | 代码质量脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_COMPLIANCE | 合规 | 3 | 2 | 1 | 0 | 66.7% |
@@ -67,11 +67,11 @@ ttl: permanent
 | D_FBL_DIAGNOSERS | 反馈诊断器 | 76 | 76 | 0 | 0 | 100.0% |
 | D_FBL_VERIFICATION | 反馈验证 | 71 | 71 | 0 | 0 | 100.0% |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | 125 | 125 | 0 | 0 | 100.0% |
-| D_FRONTEND | 前端 | 20 | 16 | 4 | 0 | 80.0% |
+| D_FRONTEND | 前端 | 24 | 20 | 4 | 0 | 83.3% |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | 14 | 12 | 2 | 0 | 85.7% |
 | D_GOVERNANCE | 生命周期管理 | 224 | 224 | 0 | 0 | 100.0% |
 | D_GOV_AUDIT | 审计追踪 | 126 | 123 | 3 | 0 | 97.6% |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 174 | 174 | 0 | 0 | 100.0% |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 175 | 175 | 0 | 0 | 100.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 25 | 0 | 7.4% |
 | D_GOV_DRIFT | 漂移检测 | 75 | 74 | 1 | 0 | 98.7% |
 | D_GOV_ENFORCEMENT | 规则执行 | 42 | 42 | 0 | 0 | 100.0% |
@@ -83,7 +83,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 0 | 0 | 0 | 0 | N/A |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
-| D_INFRA_RUNTIME | 运行时集成 | 173 | 171 | 2 | 0 | 98.8% |
+| D_INFRA_RUNTIME | 运行时集成 | 169 | 167 | 2 | 0 | 98.8% |
 | D_INFRA_TELEMETRY | 可观测性 | 0 | 0 | 0 | 0 | N/A |
 | D_INTEGRATION | 管线路由 | 71 | 71 | 0 | 0 | 100.0% |
 | D_INTEGRATION_GATEWAY | 集成网关 | 0 | 0 | 0 | 0 | N/A |
