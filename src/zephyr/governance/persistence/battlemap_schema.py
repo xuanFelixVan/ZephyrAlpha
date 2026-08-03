@@ -45,7 +45,7 @@ design_maturity 受控词表（与 depgraph/decisiongraph 节点表对齐）
 - BM-INV-001: 每个作战环节至少有一个锚点（环节无锚点=悬空决策，君子协定告警）
 - BM-INV-002: 锚点 target_id 必须能在 target_graph 对应图/仓库找到（防幽灵锚点）
 - BM-INV-003: 环节叙事必须来自翻译真源 battle_map_steps 段，禁止生成器硬编码
-- BM-INV-005: 全景图模块的 battle_map_step_ids 是派生只读缓存，禁止直接写入
+- BM-INV-005（未落地/规划中）: 全景图模块的 battle_map_step_ids 派生只读缓存——机制未建设，当前通过 anchors 反查（详见 §8.4）
 
 PG schema 真源
 --------------
@@ -244,11 +244,13 @@ _DDL_INDEXES = [
 #   说明: 叙事真源是 module_translation_registry.yaml 的 battle_map_steps 段，
 #         生成器禁止在代码里硬编码环节叙事。
 #
-# BM-INV-005: 全景图模块的 battle_map_step_ids 是派生只读缓存
-#   约束位置: 应用层（apply_battle_map.py 单向 sync：anchors→各图字段，禁止反向写入）
-#   约束类型: 应用层规约（君子协定）
-#   说明: 全景图模块节点的 battle_map_step_ids 字段由 anchors 表派生，
-#         真源在 anchors，禁止直接写入模块节点该字段（防漂移）。
+# BM-INV-005（未落地/规划中，2026-08-03 核实）: 全景图模块的 battle_map_step_ids 派生只读缓存
+#   现状: 机制未建设——depgraph.nodes 无 battle_map_step_ids 列（information_schema 核实 0 列）、
+#         apply_battle_map.py 无 sync 逻辑、align_battle_map.py 不检测、无 trigger。
+#         原注释"apply_battle_map.py 单向 sync：anchors→各图字段"为虚假描述，已删除（方案B 降级）。
+#   当前方案: 通过 battle_map_anchors 反查（target_graph=depgraph, target_id=blueprint_id），
+#             idx_battle_map_anchors_target 索引支撑，无需派生缓存。详见 battle_map_positioning.md §8.4。
+#   未来规划: 若出现高频 nodes→battle_map 环节查询性能需求，再评估建缓存+sync+检测。
 #
 # BM-INV-006: 作战地图父子嵌套一致性（V0.4.0）
 #   约束位置: 应用层（align_battle_map.py _check_parent_child_consistency 君子协定告警）
