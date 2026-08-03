@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] add_node/detect_cycles never raise; detect_cycles returns list
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
-# [A_module] module_id=MOD-SEC-cross_cutting | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """CrossCutting — 横切面权限组件.
 

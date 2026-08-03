@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_and_log 不抛异常——AuditWriter 不可用时回退到 plain dict
 # [TESTS] tests/governance/security/test_governance_contracts.py; tests/governance/security/test_gct_001_rbac_to_audit.py; tests/governance/security/test_adversarial_contract_attacks.py; tests/governance/security/test_p0_u1_contract_smoke.py
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge.
 

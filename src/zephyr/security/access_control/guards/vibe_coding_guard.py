@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan never raises; returns VibeCodingAudit
 # [TESTS] tests/agent_rbac/test_vibe_coding.py
-# [A_module] module_id=MOD-SEC-vibe_coding_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """VibeCodingGuard — Vibe Coding 攻击面检测.
 

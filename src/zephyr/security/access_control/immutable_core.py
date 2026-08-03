@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] verify_immutable_core_integrity() never raises; returns IntegrityResult with intact flag
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
-# [A_module] module_id=MOD-SEC_IMMUTABLE_CORE | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """ImmutableCore — 不可变核心验证器.
 

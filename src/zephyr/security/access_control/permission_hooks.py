@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] register_defaults never raises; run returns list of dicts
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
-# [A_module] module_id=MOD-SEC-permission_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """PermissionHooks — 权限钩子注册表.
 

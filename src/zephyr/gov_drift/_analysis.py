@@ -23,7 +23,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] AttributeError: 模块无此属性
 # [TESTS] tests/test_behavioral_auditor_imports.py
-# [A_module] module_id=MOD-GOV-analysis | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from zephyr.gov_drift.correlation_engine import CorrelationEngine, CorrelationReport
 from zephyr.gov_drift.credibility_engine import CredibilityEngine, CredibilityScore

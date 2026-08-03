@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sign/verify never raise; verify returns {"verified": False} on tampered data or missing hmac_hash
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py; tests/agent_rbac/test_forensic_a.py
-# [A_module] module_id=MOD-SEC-non_repudiation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """NonRepudiation — 不可抵赖性审计签名.
 

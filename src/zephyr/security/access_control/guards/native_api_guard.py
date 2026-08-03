@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan never raises; returns {"allowed": bool, "matched": list}
 # [TESTS] tests/agent_rbac/test_crosscut_d.py
-# [A_module] module_id=MOD-SEC-native_api_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """NativeApiGuard — 原生 API 守卫.
 

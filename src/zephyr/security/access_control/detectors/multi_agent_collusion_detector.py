@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check never raises; returns CollusionResult(risk_level="low") for unknown pair
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
-# [A_module] module_id=MOD-SEC-multi_agent_collusion_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MultiAgentCollusionDetector — 多 agent 合谋检测.
 

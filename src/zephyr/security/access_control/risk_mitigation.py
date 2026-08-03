@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] assess/get_mitigation_playbook never raise
 # [TESTS] tests/agent_rbac/test_risk_mitigation_agent_rbac.py
-# [A_module] module_id=MOD-SEC-risk_mitigation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """RiskMitigation — 风险评估与缓解策略.
 

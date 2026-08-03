@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] get_dashboard() never raises; returns OwnerDashboard with non-negative counts
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py
-# [A_module] module_id=MOD-SEC-auto_maintenance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """AutoMaintenance — 自动维护与规则健康仪表盘.
 

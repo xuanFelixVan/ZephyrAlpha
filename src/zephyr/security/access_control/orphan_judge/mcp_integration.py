@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 注册失败返回空dict
 # [TESTS] tests/orphan-judge/test_mcp_integration.py
-# [A_module] module_id=MOD-SEC-mcp_integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
 from pathlib import Path

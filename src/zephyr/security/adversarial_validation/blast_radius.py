@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] AbortThresholdError when bypass_count >= threshold at SYSTEM level
 # [TESTS] tests/red_blue/test_blast_radius.py
-# [A_module] module_id=MOD-SEC-blast_radius | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

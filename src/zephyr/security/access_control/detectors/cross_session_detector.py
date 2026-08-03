@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] sign_token/verify_token never raise; verify_token returns {"valid": False, "reason": ...} on invalid input
 # [TESTS] tests/agent_rbac/test_redteam_adversarial.py; tests/test_cross_session_detector.py
-# [A_module] module_id=MOD-SEC-cross_session_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """CrossSessionDetector — 跨 Session 检测器.
 

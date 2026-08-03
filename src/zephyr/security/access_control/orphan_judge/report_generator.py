@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] TypeError on unsupported format
 # [TESTS] tests/orphan-judge/test_report_generator.py
-# [A_module] module_id=MOD-SEC-report_generator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from zephyr.shared.io.serialization import dumps
 import logging

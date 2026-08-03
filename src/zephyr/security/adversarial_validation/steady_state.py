@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] SteadyStateDriftError if drift_rate > 50% after attack
 # [TESTS] tests/red_blue/test_steady_state.py
-# [A_module] module_id=MOD-SEC-steady_state | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

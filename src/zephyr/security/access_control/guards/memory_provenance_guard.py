@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] record_provenance/verify never raise
 # [TESTS] tests/agent_rbac/test_permissions.py
-# [A_module] module_id=MOD-SEC-memory_provenance_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """MemoryProvenanceGuard — 记忆来源溯源守卫.
 

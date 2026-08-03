@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回None
 # [TESTS] tests/governance/audit/test_p0_i2_construction_order.py
-# [A_module] module_id=MOD-GOV-agent_rbac_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_AGENT_RBAC | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """agent-rbac/contracts.py — G-CT-001 RBAC 契约（re-export）。"""
 

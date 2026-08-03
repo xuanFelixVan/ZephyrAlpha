@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SystemExit(1) on FileNotFound/invalid subcommand; exit 0 on success
 # [TESTS] tests/orphan-judge/test_main.py
-# [A_module] module_id=MOD-GOV-main | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-029 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

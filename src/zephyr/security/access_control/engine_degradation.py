@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] trigger_degradation()/recover() never raise; return dict with success flag
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
-# [A_module] module_id=MOD-SEC-engine_degradation | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
+# [A_module] module_id=MOD-INF-018 | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """EngineDegradation — 引擎降级管理.
 
