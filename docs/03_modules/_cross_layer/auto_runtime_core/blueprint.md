@@ -972,10 +972,10 @@ STEP 3: 拆分后验证
 | 内容 | 真源 | 非真源 |
 |------|------|--------|
 | 大脑核心架构设计 | **本文档 §1-§10** | 已取代的旧蓝图 |
-| 大脑施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
+| 大脑施工步骤 | **本文档 §16** | 旧施工图 |
 | 大脑接口契约 | **本文档 §4** | — |
 | 代码文件清单与对齐状态 | **本文档 §0** | blueprint_registry.yaml（派生） |
-| 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
+| 容量升级方案 | **本文档 §17** | 独立升级文档 |
 | 详细规范 | 见本蓝图附录A | — |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
@@ -1368,7 +1368,7 @@ STEP 3: 拆分后验证
 | 职责 | 对改契约文件/大范围重构等高风险任务，AI 可选择 `WorktreeManager.create_session_worktree()` 创建 worktree，在 worktree 内操作后 merge 回主目录 |
 | 使用场景 | ① 修改 GitCommitGateway/WorktreeManager 等契约文件本身；② 大范围重构（>10 文件）；③ 实验性改动（不确定是否保留） |
 | 非强制原因 | Trae 模式下 AI 默认在主目录用 Trae 工具操作，强制 worktree 会破坏 IDE 工作流；worktree 内 AI 需手动用完整路径，增加认知负担 |
-| 与件1/件2关系 | ~~worktree 内 AI 仍须 session_claim_start~~（**已废弃 2026-07-04**：session_claim_start 零调用方，claim 语义已被 session_worktree_commit 的 HELD-OVERLAP 硬阻断替代）；worktree commit 时 GitCommitGateway 仍校验 claim |
+| 与件1/件2关系 | ~~worktree 内 AI 仍须 session_claim_start~~（session_claim_start 零调用方，claim 语义已被 session_worktree_commit 的 HELD-OVERLAP 硬阻断替代）；worktree commit 时 GitCommitGateway 仍校验 claim |
 | 验收 | `WorktreeManager.create_session_worktree()` 返回 worktree 路径；AI 在 worktree 内 commit 通过；merge 回主目录成功 |
 
 #### FP-ISO.4C 治本方案：worktree 物理隔离（当前采用）
@@ -2201,7 +2201,7 @@ Boot Sequence（20步，含 WorkOrchestrator 初始化）：
 
 ---
 
-## §reset-gateway（L3.3 已弃用，2026-08-04）
+## §reset-gateway（L3.3，2026-08-04 删除）
 
 > **已删除死代码 B 轨（option a）**：L3.3 ResetGateway 经审查判定为死代码——L1+L2
 > （`scripts/git_guard.py` 自伤检测）已完整覆盖 `reset --hard` / `checkout --` / `restore`
@@ -2254,6 +2254,6 @@ Boot Sequence（20步，含 WorkOrchestrator 初始化）：
 
 - **L1+L2**: [`scripts/git_guard.py`](file:///d:/ZephyrAlpha/scripts/git_guard.py)——`_check_self_harm_reset_hard`(L1) + `_check_self_harm_files`(L2)，alias 路径自伤检测
 - **L3.1**: [`scripts/governance/d11_compliance/validate_worktree_required.py`](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/validate_worktree_required.py)——worktree 软门禁 pre-commit hook
-- **L3.3**: §reset-gateway（已弃用，死代码 B 轨已删）
+- **L3.3**: §reset-gateway（死代码 B 轨已删）
 - **裁定真源**: [`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) `#ARCH-GIT-SELF-HARM-GUARD`
 - **测试**: [`tests/governance/audit/test_git_guard_bypass_reconciler.py`](file:///d:/ZephyrAlpha/tests/governance/audit/test_git_guard_bypass_reconciler.py)（7 场景）

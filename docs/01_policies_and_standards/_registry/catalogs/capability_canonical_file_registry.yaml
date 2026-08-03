@@ -1580,6 +1580,29 @@ capabilities:
       - make_blueprint_node_id_hardcode_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: test_residue_ssot_gate
+    aliases:
+      - TEST-RESIDUE-SSOT
+      - test-residue-ssot
+      - make_test_residue_ssot_gate
+      - test_residue_prefix_hardcode_blocker
+    description: >-
+      测试残留目录前缀硬编码阻断门禁（TEST-RESIDUE-SSOT，priority=56，2026-08-04
+      #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）。项目 100% AI 开发，AI 新建脚本时可能
+      "重复造轮子"——硬编码 _PREFIXES=("pytest_","git_guard_test_",...) 而不从 YAML
+      加载，形成与 trae_071 §test_residue_reclaim.covered_patterns.dir_prefixes 的多真源
+      漂移（trae_062 SSoT 违规）。本 gate 在 GitCommitGateway pre-commit 阶段（in-process）
+      注册，--no-verify 绕不过。AST 检测 staged 新增+修改的 .py（--diff-filter=AM）中
+      Assign/AnnAssign 的 Tuple/List/Set 字符串集合含 ≥2 个 dir_prefix 精确匹配 → 硬阻断。
+      前缀真源 = trae_071 YAML（lazy import reconciliation_registry._load_test_residue_config
+      加载，禁止本 gate 硬编码前缀——复用 SSoT 单一加载器）。fail-open：config 不可达/
+      import 失败/AST 语法错误时不阻断（环境异常非违规）；fail-closed：检出违规时硬阻断。
+      priority=56（DERIVED-FILE-DELETION-PROTECTION=46/HELD-OVERLAP=50 之后、
+      BLUEPRINT-NODE-ID-HARDCODE=57 之前——同 hardcode 检测族）。
+    integrity_anchors:
+      - make_test_residue_ssot_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: doc_node_id_hardcode_detector
     canonical_override: scripts/governance/d3_metadata/check_doc_node_id_hardcode.py
     aliases:
@@ -5702,7 +5725,11 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
-
+  # --- Kimi3 整合指令文档（2026-08-04，battle_map_anchors 显化 + 循环审查指令）---
+  - file: "docs/_working/kimi3_battle_map_merge_instructions.md"
+    token: "auto-kimi3-battle-map-merge-20260804"
+    created_by: "session-anchor-hub"
+    capability: "kimi3_battle_map_merge_instructions"
   # --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
   - file: "scripts/governance/_shared/module_translation_loader.py"
     token: "auto-module-translation-loader-20260801"
@@ -5728,6 +5755,11 @@ creation_tokens:
     token: "auto-blueprint-node-id-hardcode-gate-20260804"
     created_by: "session-p1-node-id-hardcode"
     capability: "blueprint_node_id_hardcode_gate"
+  # --- TEST-RESIDUE-SSOT in-process gate（2026-08-04，#ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py"
+    token: "auto-test-residue-ssot-gate-20260804"
+    created_by: "session-test-residue-ssot-gate"
+    capability: "test_residue_ssot_gate"
   # --- GATE-DOC-NODE-ID pre-commit hook（2026-08-04，文档引用铁律治本检测器）---
   - file: "scripts/governance/d3_metadata/check_doc_node_id_hardcode.py"
     token: "auto-check-doc-node-id-hardcode-20260804"

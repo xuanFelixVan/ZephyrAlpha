@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-03
+date: 2026-08-04
 ---
 
 # 交易决策作战地图（横切视图）

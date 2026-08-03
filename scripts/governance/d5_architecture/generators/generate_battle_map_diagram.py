@@ -920,6 +920,8 @@ def _generate_panorama_md(
     各环节 6 件套详情由 12 个分阶段文档承载，避免 panorama.md 膨胀且信息重复。
     """
     no_anchor_count = sum(1 for s in steps if s.get("_effective_status") == "missing")
+    # 锚点总数（双向对齐枢纽显化，BM-INV-005）：battle_map_anchors 是 step↔module 唯一双向查找真源
+    anchor_count = sum(len(v) for v in anchors_by_step.values())
     # 五态分布统计（Gap1）
     state_counts: dict[str, int] = {}
     for s in steps:
@@ -939,6 +941,7 @@ def _generate_panorama_md(
         _html_link_line("battle_map_panorama"),
         "",
         "> 第四全景图 battle_map 真源：`battle_map_steps` / `battle_map_anchors` / `battle_map_edges` 三表 + 翻译真源 `module_translation_registry.yaml` §battle_map_steps 段。",
+        "> 🔑 **双向对齐枢纽**：`battle_map_anchors` 表是作战环节 ↔ 全景图模块/候选池的**唯一双向查找真源**（方向A: step→modules / 方向B: module→step 均从此表查），是连接作战地图与 depgraph/dataflowgraph/decisiongraph 三大全景图的桥梁。禁止在其他全景图表反向加 battle_map 字段（BM-INV-005）。",
         "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编（改环节→改 DB/YAML 真源→重跑生成器）。",
         "",
         "## 文档基本信息 / Document Overview",
@@ -947,6 +950,7 @@ def _generate_panorama_md(
         "|------|------|-------|-------|",
         f"| 环节总数 | {len(steps)} | Steps | {len(steps)} |",
         f"| 流转边 | {len(edges)} | Edges | {len(edges)} |",
+        f"| 锚点总数（双向对齐枢纽） | {anchor_count} | Anchors (Bidirectional Hub) | {anchor_count} |",
         f"| 无锚点环节（BM-INV-001） | {no_anchor_count} | No-Anchor Steps | {no_anchor_count} |",
         f"| 运营态环节 | {len(prod_steps)} | Production Steps | {len(prod_steps)} |",
         f"| 设计态环节 | {len(design_steps)} | Design Steps | {len(design_steps)} |",
@@ -1022,6 +1026,10 @@ def _generate_stage_md(
     stage_step_ids = {s["step_id"] for s in stage_steps}
     # 边：任一端在本阶段
     stage_edges = [e for e in edges if e["from_step_id"] in stage_step_ids or e["to_step_id"] in stage_step_ids]
+    # 本阶段锚点数（双向对齐枢纽显化，BM-INV-005）
+    stage_anchor_count = sum(
+        len(anchors_by_step.get(s["step_id"], [])) for s in stage_steps
+    )
     # 五态分布统计
     state_counts: dict[str, int] = {}
     for s in stage_steps:
@@ -1040,7 +1048,8 @@ def _generate_stage_md(
         "",
         _html_link_line(stem),
         "",
-        f"> battle_map §{stage_id} 阶段，{len(stage_steps)} 环节。",
+        f"> battle_map §{stage_id} 阶段，{len(stage_steps)} 环节（{stage_anchor_count} 锚点）。",
+        "> 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。",
         "> 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。",
         "",
         "## 文档基本信息 / Document Overview",
@@ -1049,6 +1058,7 @@ def _generate_stage_md(
         "|------|------|-------|-------|",
         f"| 阶段 | {stage_name}（{stage_id}） | Stage | {stage_name} |",
         f"| 环节数 | {len(stage_steps)} | Steps | {len(stage_steps)} |",
+        f"| 锚点数（双向对齐） | {stage_anchor_count} | Anchors (Bidirectional) | {stage_anchor_count} |",
         f"| 流转边 | {len(stage_edges)} | Edges | {len(stage_edges)} |",
         f"| 状态分布 | {dist} | State Distribution | {dist} |",
         "",

@@ -3,14 +3,15 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-03
+date: 2026-08-04
 ---
 
 # 作战地图·研究孵化阶段
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_01_research_incubation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §research_incubation 阶段，25 环节。
+> battle_map §research_incubation 阶段，25 环节（32 锚点）。
+> 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
 ## 文档基本信息 / Document Overview
@@ -19,6 +20,7 @@ date: 2026-08-03
 |------|------|-------|-------|
 | 阶段 | 研究孵化（research_incubation） | Stage | 研究孵化 |
 | 环节数 | 25 | Steps | 25 |
+| 锚点数（双向对齐） | 32 | Anchors (Bidirectional) | 32 |
 | 流转边 | 8 | Edges | 8 |
 | 状态分布 | 🟨 候选态（候选池）=25 | State Distribution | 🟨 候选态（候选池）=25 |
 

@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-03
+date: 2026-08-04
 ---
 
 # 交易决策作战地图（总指挥图）
@@ -11,6 +11,7 @@ date: 2026-08-03
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_panorama.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 > 第四全景图 battle_map 真源：`battle_map_steps` / `battle_map_anchors` / `battle_map_edges` 三表 + 翻译真源 `module_translation_registry.yaml` §battle_map_steps 段。
+> 🔑 **双向对齐枢纽**：`battle_map_anchors` 表是作战环节 ↔ 全景图模块/候选池的**唯一双向查找真源**（方向A: step→modules / 方向B: module→step 均从此表查），是连接作战地图与 depgraph/dataflowgraph/decisiongraph 三大全景图的桥梁。禁止在其他全景图表反向加 battle_map 字段（BM-INV-005）。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编（改环节→改 DB/YAML 真源→重跑生成器）。
 
 ## 文档基本信息 / Document Overview
@@ -19,6 +20,7 @@ date: 2026-08-03
 |------|------|-------|-------|
 | 环节总数 | 285 | Steps | 285 |
 | 流转边 | 119 | Edges | 119 |
+| 锚点总数（双向对齐枢纽） | 381 | Anchors (Bidirectional Hub) | 381 |
 | 无锚点环节（BM-INV-001） | 0 | No-Anchor Steps | 0 |
 | 运营态环节 | 203 | Production Steps | 203 |
 | 设计态环节 | 43 | Design Steps | 43 |
