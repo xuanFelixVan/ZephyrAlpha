@@ -109,15 +109,13 @@ Usage::
 from __future__ import annotations
 
 import logging
-
 import subprocess
-
 from dataclasses import dataclass, field
-
+from pathlib import Path
 from typing import Callable
 
-from zephyr.shared.utils.time_utils import now_utc
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -720,7 +718,7 @@ class ReconciliationRegistry:
 
         commit_message: str = "",
 
-        heartbeat: "Callable[[str], None] | None" = None,
+        heartbeat: Callable[[str], None] | None = None,
 
     ) -> list[ReconcileResult]:
 
@@ -888,7 +886,7 @@ class ReconciliationRegistry:
 
         return [s.gate_id for s in self._specs]
 
-def _governance_db_path(project_root: "object") -> str:
+def _governance_db_path(project_root: object) -> str:
 
     """governance.db 绝对路径，锚定主仓库根（GATE-DEPGRAPH-OPS 治本 Phase 3）。
 
@@ -901,7 +899,6 @@ def _governance_db_path(project_root: "object") -> str:
     """
 
     import os
-
     from pathlib import Path
 
     from zephyr.shared.io.paths import strip_session_worktree
@@ -910,7 +907,7 @@ def _governance_db_path(project_root: "object") -> str:
 
     return os.path.join(str(root), "data", "databases", "governance.db")
 
-def _ensure_ack_column(conn: "object") -> None:
+def _ensure_ack_column(conn: object) -> None:
 
     """老库幂等补 acknowledged_at 列（GATE-DEPGRAPH-OPS 治本 Phase 2）。
 
@@ -926,7 +923,7 @@ def _ensure_ack_column(conn: "object") -> None:
 
         conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_ACK)
 
-def _ensure_commit_message_column(conn: "object") -> None:
+def _ensure_commit_message_column(conn: object) -> None:
 
     """老库幂等补 commit_message 列（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点7）。
 
@@ -944,7 +941,7 @@ def _ensure_commit_message_column(conn: "object") -> None:
 
         conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_COMMIT_MESSAGE)
 
-def _ensure_error_pattern_id_column(conn: "object") -> None:
+def _ensure_error_pattern_id_column(conn: object) -> None:
 
     """老库幂等补 error_pattern_id 列（#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1a）。
 
@@ -963,8 +960,8 @@ def _ensure_error_pattern_id_column(conn: "object") -> None:
         conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_ERROR_PATTERN_ID)
 
 def _downgrade_auto_committed_on_flush_failure(
-    results: "list[ReconcileResult]",
-    flush_result: "object | None",
+    results: list[ReconcileResult],
+    flush_result: object | None,
 ) -> None:
     """治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001（2026-07-30）：
     flush() 失败时降级 auto_committed → warn，防止日志误报"已自动提交"。
@@ -1011,15 +1008,15 @@ def _downgrade_auto_committed_on_flush_failure(
 
 def _log_reconcile_results(
 
-    project_root: "object",
+    project_root: object,
 
-    results: "list[ReconcileResult]",
+    results: list[ReconcileResult],
 
     session_id: str,
 
     trigger_source: str,
 
-    committed_files: "list[str] | None" = None,
+    committed_files: list[str] | None = None,
 
     commit_message: str = "",
 
@@ -1076,9 +1073,7 @@ def _log_reconcile_results(
     """
 
     import os
-
     import sqlite3
-
     import uuid
 
     try:
@@ -1178,7 +1173,7 @@ def _log_reconcile_results(
 
 def log_gate_failure(
 
-    project_root: "object",
+    project_root: object,
 
     gate_id: str,
 
@@ -1239,9 +1234,7 @@ def log_gate_failure(
     """
 
     import os
-
     import sqlite3
-
     import uuid
 
     try:
@@ -1296,7 +1289,7 @@ def log_gate_failure(
 
 def log_emergency_commit(
 
-    project_root: "object",
+    project_root: object,
 
     session_id: str,
 
@@ -1304,7 +1297,7 @@ def log_emergency_commit(
 
     branch: str,
 
-    files: "list[str]",
+    files: list[str],
 
     reason: str,
 
@@ -1355,13 +1348,9 @@ def log_emergency_commit(
     """
 
     import json
-
     import os
-
     import sqlite3
-
     import uuid
-
     from pathlib import Path
 
     try:
@@ -1504,9 +1493,9 @@ def log_emergency_commit(
 
 def _check_recent_critical_warns(
 
-    project_root: "object", hours: int = 24
+    project_root: object, hours: int = 24
 
-) -> "list[dict]":
+) -> list[dict]:
 
     """查询 governance.db 最近 N 小时内的【活跃】critical_warn 记录。
 
@@ -1537,7 +1526,6 @@ def _check_recent_critical_warns(
     """
 
     import sqlite3
-
     from datetime import datetime, timedelta, timezone
 
     try:
@@ -1575,7 +1563,7 @@ def _check_recent_critical_warns(
 
         return []
 
-def _print_critical_warn_banner(project_root: "object", context: str) -> None:
+def _print_critical_warn_banner(project_root: object, context: str) -> None:
 
     """打印 critical_warn 告警横幅（如有近期记录）。
 
@@ -1623,9 +1611,9 @@ def _print_critical_warn_banner(project_root: "object", context: str) -> None:
 
 def _check_recent_blocks(
 
-    project_root: "object", hours: int = 24
+    project_root: object, hours: int = 24
 
-) -> "list[dict]":
+) -> list[dict]:
 
     """查询 governance.db 最近 N 小时内的 block_next 记录。
 
@@ -1656,7 +1644,6 @@ def _check_recent_blocks(
     """
 
     import sqlite3
-
     from datetime import datetime, timedelta, timezone
 
     try:
@@ -1686,7 +1673,7 @@ def _check_recent_blocks(
 
         return []
 
-def _print_block_banner(project_root: "object", context: str) -> "str | None":
+def _print_block_banner(project_root: object, context: str) -> str | None:
 
     """打印 block_next 阻断横幅并返回 error 字符串（如有 block_next 记录）。
 
@@ -1762,9 +1749,9 @@ def _print_block_banner(project_root: "object", context: str) -> "str | None":
 
 def resolve_blocks(
 
-    project_root: "object", hours: int = 24
+    project_root: object, hours: int = 24
 
-) -> "dict":
+) -> dict:
 
     """清除 governance.db 中近 N 小时的 block_next 阻断记录。
 
@@ -1799,9 +1786,7 @@ def resolve_blocks(
     """
 
     import os
-
     import sqlite3
-
     from datetime import datetime, timedelta, timezone
 
     try:
@@ -1839,9 +1824,9 @@ def resolve_blocks(
 
 def acknowledge_critical_warns(
 
-    project_root: "object", gate_id: "str | None" = None, hours: int = 24
+    project_root: object, gate_id: str | None = None, hours: int = 24
 
-) -> "dict":
+) -> dict:
 
     """手动确认（ack）近 N 小时的 critical_warn 告警，使其从告警横幅消音。
 
@@ -1870,9 +1855,7 @@ def acknowledge_critical_warns(
     """
 
     import sqlite3
-
     from datetime import datetime, timedelta, timezone
-
     from pathlib import Path
 
     try:
@@ -1933,7 +1916,7 @@ def acknowledge_critical_warns(
         return {"acknowledged": 0, "gate_id": gate_id, "error": str(e)}
 
 
-def backfill_auto_ack_healed(project_root: "object") -> "dict":
+def backfill_auto_ack_healed(project_root: object) -> dict:
     """一次性回填：自动确认所有已自愈（有后续 clean 记录）的 critical_warn。
 
     治本 #AUTO-ACK-HEALED-WARN (2026-07-23)：
@@ -1973,8 +1956,8 @@ def backfill_auto_ack_healed(project_root: "object") -> "dict":
 
 
 def cleanup_reconcile_log(
-    project_root: "object", retention_days: int = DEFAULT_RETENTION_DAYS
-) -> "dict":
+    project_root: object, retention_days: int = DEFAULT_RETENTION_DAYS
+) -> dict:
     """删除 retention_days 天前的 reconcile_execution_log 记录。
 
     治本 #RECONCILE-LOG-RETENTION (2026-07-23)：
@@ -2017,9 +2000,9 @@ def cleanup_reconcile_log(
 
 def _write_reconcile_report(
 
-    project_root: "object", prefix: str, report: dict
+    project_root: object, prefix: str, report: dict
 
-) -> "tuple[object, str]":
+) -> tuple[object, str]:
 
     """写 reconciler 报告到 ``.runtime/reconcile_reports/{prefix}_{ts}.json``。
 
@@ -2042,7 +2025,6 @@ def _write_reconcile_report(
     """
 
     import json
-
     import time
 
     reports_dir = project_root / ".runtime" / "reconcile_reports"
@@ -2071,7 +2053,7 @@ def _write_reconcile_report(
 
         return None, "internal error"
 
-def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_manifest_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-19 manifest post-commit 对账 reconciler（P2-T2）。
 
@@ -2112,9 +2094,7 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -2229,7 +2209,7 @@ def make_manifest_reconciler(gateway: "object") -> ReconcilerSpec:
 
     )
 
-def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_path_tree_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 arch_directory_tree post-commit 自动同步 reconciler。
 
@@ -2256,9 +2236,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -2423,7 +2401,7 @@ def make_path_tree_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # trae_060-reviewed: 合规——新增 reconciler（无法合并进已有：path_tree 触发 .py/.yaml，path_ownership 触发 blueprint.md，生成器不同；治本：path_ownership_map.yaml 自动同步消除手工维护漂移）
 
-def make_path_ownership_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_path_ownership_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 path_ownership_map.yaml post-commit 自动同步 reconciler。
 
@@ -2446,9 +2424,7 @@ def make_path_ownership_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -2555,7 +2531,7 @@ def make_path_ownership_reconciler(gateway: "object") -> ReconcilerSpec:
 
     )
 
-def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_depgraph_ops_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 depgraph nodes/edges 运营态 post-commit 自动同步 reconciler（裁定#209）。
 
@@ -2594,9 +2570,7 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -2649,7 +2623,7 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
 
                 _last = float(_marker.read_text(encoding="utf-8").strip())
 
-                _elapsed = time.time() - _last
+                _elapsed = now_utc().timestamp() - _last
 
                 if _elapsed < _SKIP_WINDOW:
 
@@ -2671,7 +2645,7 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
 
             _marker.parent.mkdir(parents=True, exist_ok=True)
 
-            _marker.write_text(str(time.time()), encoding="utf-8")
+            _marker.write_text(str(now_utc().timestamp()), encoding="utf-8")
 
         except OSError:  # noqa: BLE001 — marker 写失败不阻断 sync
 
@@ -2765,7 +2739,7 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # trae_060-reviewed: 通过§4元问题审查。①该存在：ARCH-FRONTMATTER-STATE-001 Link B 断链（frontmatter 无 post-commit 自动写路径，generate_project_depgraph.py:4139 try/except 静默调用失败即漂移）。②无法合并进 make_depgraph_ops_reconciler@130（职责不同：DB 同步 vs .md frontmatter 同步；且需 priority=135>130 读最新 depgraph）。③治本：修复根因（缓存层无自动写路径），非治标。
 
-def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_blueprint_frontmatter_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 blueprint frontmatter post-commit 自动同步 reconciler
 
@@ -2818,9 +2792,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import sys
-
     import time
 
     project_root = gateway.project_root
@@ -2887,7 +2859,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
 
             try:
 
-                with open(f, 'r', encoding='utf-8', errors='replace') as fh:
+                with open(f, encoding='utf-8', errors='replace') as fh:
 
                     head = ''.join(fh.readline() for _ in range(30))
 
@@ -2931,7 +2903,10 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
 
         )
 
-        default_timeout = 300 if (has_py_changes or not module_ids) else 120
+        # #ARCH-RECONCILER-TOCTOU-CLOBBER-001 P0 止血（2026-08-03）：
+        # timeout 300→600s（2x 余量），对标 #ARCH-DEPGRAPH-OPS-TIMEOUT-001。
+        # 根因同源：sync_panorama_module.py --all 全量扫描 208-296s，原 300s 仅 4s 余量→~4% 超时率。
+        default_timeout = 600 if (has_py_changes or not module_ids) else 120
 
         timeout = int(_env.get("ZEPHYR_FRONTMATTER_SYNC_TIMEOUT", str(default_timeout)))
 
@@ -2950,6 +2925,34 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
             cmd = [sys.executable, "scripts/governance/sync_panorama_module.py", "--all"]
 
             mode = "full (--all)"
+
+        # #ARCH-RECONCILER-TOCTOU-CLOBBER-001 P0 止血（2026-08-03）：
+        # skip-if-recent marker，对标 #ARCH-DEPGRAPH-OPS-TIMEOUT-001。
+        # 仅全量模式（has_py_changes or not module_ids）应用——增量模式 <5s 无需 skip。
+        # 根因：每次 .py commit 都重跑 208-296s 全量扫描，100% AI 高频 commit 下浪费严重
+        # 且 300s+ 窗口是 TOCTOU clobber 的放大因。600s cooldown 收窄 race 窗口。
+        # marker 在 sync 开始前写入（非结束），故失败也有 cooldown——合理：
+        # 超时=系统过载，立即重试大概率再超时。
+        if has_py_changes or not module_ids:
+            _SKIP_WINDOW = 600  # 10 min cooldown after any attempt（success or failure）
+            _marker = project_root / ".runtime" / "frontmatter_sync_last_attempt"
+            try:
+                if _marker.exists():
+                    _last = float(_marker.read_text(encoding="utf-8").strip())
+                    _elapsed = now_utc().timestamp() - _last
+                    if _elapsed < _SKIP_WINDOW:
+                        return ReconcileResult(
+                            action="skip",
+                            detail=f"skip frontmatter sync: last attempt {_elapsed:.0f}s ago < {_SKIP_WINDOW}s cooldown (#ARCH-RECONCILER-TOCTOU-CLOBBER-001)",
+                        )
+            except (ValueError, OSError):  # noqa: BLE001 — corrupt marker, proceed
+                pass
+            # 写 marker 在 sync 开始前（防并发 commit 触发多个 5 分钟全量扫描）
+            try:
+                _marker.parent.mkdir(parents=True, exist_ok=True)
+                _marker.write_text(str(now_utc().timestamp()), encoding="utf-8")
+            except OSError:  # noqa: BLE001 — marker 写失败不阻断 sync
+                pass
 
         sync_result = _run_subprocess(
 
@@ -3035,9 +3038,9 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
 
         auto_msg = (
 
-            f"chore(frontmatter): auto-sync by GATE-BLUEPRINT-FRONTMATTER-SYNC "
+            "chore(frontmatter): auto-sync by GATE-BLUEPRINT-FRONTMATTER-SYNC "
 
-            f"post-commit (ARCH-FRONTMATTER-STATE-001 Phase 2)"
+            "post-commit (ARCH-FRONTMATTER-STATE-001 Phase 2)"
 
         )
 
@@ -3085,7 +3088,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
 
     )
 
-def make_drift_scan_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_drift_scan_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 merge/commit 事件触发的全量 drift 扫描 reconciler（MOD-GOV-ALIGNMENT-LOOP §4.S1）。
 
@@ -3114,15 +3117,10 @@ def make_drift_scan_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import json
-
     import os
-
     import sqlite3
-
     import sys
-
     import time
-
     import uuid
 
     project_root = gateway.project_root
@@ -3329,19 +3327,18 @@ def _drift_fix_find_module(file_rel: str) -> str | None:
 
     return None
 
-def _drift_fix_header(project_root: "Path", file_rel: str, old_modid: str, new_modid: str) -> bool:
+def _drift_fix_header(project_root: Path, file_rel: str, old_modid: str, new_modid: str) -> bool:
 
     """修复 .py 文件 [BLUEPRINT] 头部的 module_id。"""
 
     import os
-
     import re
 
     abs_path = os.path.join(str(project_root), file_rel)
 
     try:
 
-        with open(abs_path, "r", encoding="utf-8") as f:
+        with open(abs_path, encoding="utf-8") as f:
 
             content = f.read()
 
@@ -3363,14 +3360,12 @@ def _drift_fix_header(project_root: "Path", file_rel: str, old_modid: str, new_m
 
     return True
 
-def _drift_fix_log_audit(project_root: "Path", finding: dict) -> None:
+def _drift_fix_log_audit(project_root: Path, finding: dict) -> None:
 
     """不可修复的 drift 写入 governance.db drift_audit_findings 表。"""
 
     import os
-
     import sqlite3
-
     import uuid
 
     db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
@@ -3405,7 +3400,7 @@ def _drift_fix_log_audit(project_root: "Path", finding: dict) -> None:
 
 def _classify_orphan_drifts(
 
-    findings: list[dict], project_root: "Path",
+    findings: list[dict], project_root: Path,
 
 ) -> tuple[list[tuple[str, str, str]], list[dict]]:
 
@@ -3459,9 +3454,9 @@ def _finalize_drift_fixes(
 
     start: float,
 
-    gateway: "object",
+    gateway: object,
 
-    project_root: "Path",
+    project_root: Path,
 
 ) -> ReconcileResult:
 
@@ -3517,7 +3512,7 @@ def _finalize_drift_fixes(
 
     )
 
-def make_drift_fix_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_drift_fix_reconciler(gateway: object) -> ReconcilerSpec:
 
     """S2: 分级自治 drift 自动修复 pipeline（MOD-GOV-ALIGNMENT-LOOP §4.S2）。
 
@@ -3542,9 +3537,7 @@ def make_drift_fix_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import json
-
     import os
-
     import sys
 
     project_root = gateway.project_root
@@ -3667,7 +3660,7 @@ def _module_id_infer_from_dir(file_rel: str) -> str | None:
 
     return None
 
-def _module_id_inject_header(project_root: "Path", file_rel: str, module_id: str) -> bool:
+def _module_id_inject_header(project_root: Path, file_rel: str, module_id: str) -> bool:
 
     """在 .py 文件头部注入 [BLUEPRINT] + [TTL] 完整头部。
 
@@ -3691,7 +3684,7 @@ def _module_id_inject_header(project_root: "Path", file_rel: str, module_id: str
 
     try:
 
-        with open(abs_path, "r", encoding="utf-8") as f:
+        with open(abs_path, encoding="utf-8") as f:
 
             content = f.read()
 
@@ -3719,14 +3712,13 @@ def _module_id_inject_header(project_root: "Path", file_rel: str, module_id: str
 
 def _classify_headerless_files(
 
-    committed_files: list[str], project_root: "Path",
+    committed_files: list[str], project_root: Path,
 
 ) -> tuple[list[tuple[str, str]], list[str]]:
 
     """遍历 committed .py 文件，分类：无 [BLUEPRINT] 头部且可推断→injected，不可推断→skipped。"""
 
     import os
-
     import re
 
     bp_re = re.compile(r"\[BLUEPRINT\]\s+(\S+)")
@@ -3745,7 +3737,7 @@ def _classify_headerless_files(
 
         try:
 
-            with open(abs_path, "r", encoding="utf-8") as f:
+            with open(abs_path, encoding="utf-8") as f:
 
                 head = f.read(500)
 
@@ -3769,7 +3761,7 @@ def _classify_headerless_files(
 
     return injected, skipped
 
-def make_module_id_recommend_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_module_id_recommend_reconciler(gateway: object) -> ReconcilerSpec:
 
     """S4: 新建文件 module_id 自动推荐（MOD-GOV-ALIGNMENT-LOOP §4.S4）。
 
@@ -3971,7 +3963,7 @@ def _classify_sync_failure(error_text: str) -> str:
 
     return "unknown"
 
-def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_yaml_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 YAML->depgraph 规则同步 post-commit reconciler。
 
@@ -4004,15 +3996,10 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import json
-
     import os
-
     import subprocess
-
     import sys
-
     from datetime import UTC, datetime
-
     from pathlib import Path
 
     project_root = gateway.project_root
@@ -4299,7 +4286,7 @@ def _collect_csv_refs(content: str, is_path_fn) -> list[str]:
 
     return refs
 
-def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False) -> dict:
+def scan_and_archive_working_docs(project_root: object, dry_run: bool = False) -> dict:
 
     """递归扫描 docs/_working/ 下工作文档的幽灵引用并归档有幽灵引用的文档。
 
@@ -4364,13 +4351,9 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
     """
 
     import csv
-
     import re
-
     import shutil
-
     import time
-
     from pathlib import Path
 
     project_root = Path(project_root)
@@ -4661,7 +4644,7 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
 
     }
 
-def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_precommit_id_uniqueness_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-ID-UNIQ post-commit 兜底 reconciler（治本改进点2）。
 
@@ -4714,13 +4697,9 @@ def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec
     """
 
     import json
-
     import os
-
     import subprocess
-
     import sys
-
     import time
 
     project_root = gateway.project_root
@@ -4827,7 +4806,7 @@ def make_precommit_id_uniqueness_reconciler(gateway: "object") -> ReconcilerSpec
 
     )
 
-def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_vocab_change_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-VOCAB-CHANGE post-commit reconciler（词表变更自动纠偏）。
 
@@ -4862,9 +4841,7 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -4981,9 +4958,9 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
 
         auto_msg = (
 
-            f"chore(ttl): auto-rejudge by GATE-VOCAB-CHANGE post-commit "
+            "chore(ttl): auto-rejudge by GATE-VOCAB-CHANGE post-commit "
 
-            f"(decision_tree changed)"
+            "(decision_tree changed)"
 
         )
 
@@ -5033,7 +5010,7 @@ def make_vocab_change_reconciler(gateway: "object") -> ReconcilerSpec:
 
 def _audit_commit_history(
 
-    project_root: "object",
+    project_root: object,
 
     audit_window: int,
 
@@ -5041,7 +5018,7 @@ def _audit_commit_history(
 
     rv_marker: str = "",
 
-) -> "tuple[list[dict], str | None]":
+) -> tuple[list[dict], str | None]:
 
     """扫描最近 N 个 commit，返回 (裸commit违规, error)。
 
@@ -5196,7 +5173,6 @@ def _migrate_deprecated_files(items, dep_path, target_base, project_root) -> lis
 def _remove_empty_subdirs(dep_path, project_root) -> list[str]:
 
     import os
-
     from pathlib import Path
 
     removed_dirs: list[str] = []
@@ -5221,7 +5197,7 @@ def _remove_empty_subdirs(dep_path, project_root) -> list[str]:
 
     return removed_dirs
 
-def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_deprecated_directory_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-DEPRECATED-DIR post-commit reconciler（09_audit 治本加固）。
 
@@ -5631,7 +5607,7 @@ def _extract_doc_type(content: str, is_markdown: bool) -> str:
 
     return ""
 
-def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_exempt_zone_frontmatter_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-EXEMPT-ZONE-FM post-commit reconciler（缺口2：豁免区 frontmatter 检测）。
 
@@ -5652,11 +5628,8 @@ def make_exempt_zone_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec
     """
 
     import json
-
     import os
-
     from datetime import datetime
-
     from pathlib import Path
 
     project_root = gateway.project_root
@@ -5901,7 +5874,7 @@ def _compose_reconcilers(
 
     )
 
-def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "tuple":
+def _backup_depgraph_for_autoclean(project_root: object, session_id: str) -> tuple:
 
     """ghost auto-clean 前的逻辑备份（nodes + edges 表 CSV）。
 
@@ -5934,7 +5907,6 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
     """
 
     import time
-
     from pathlib import Path
 
     try:
@@ -5979,7 +5951,7 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
 
         conn.close()
 
-def _cleanup_old_ghost_backups(project_root: "object", max_backups: int = 10) -> int:
+def _cleanup_old_ghost_backups(project_root: object, max_backups: int = 10) -> int:
 
     """清理过期的 ghost_autoclean_* 备份目录，保留最近 max_backups 个。
 
@@ -6002,9 +5974,7 @@ def _cleanup_old_ghost_backups(project_root: "object", max_backups: int = 10) ->
     """
 
     import os
-
     import shutil
-
     from pathlib import Path
 
     try:
@@ -6063,7 +6033,7 @@ def _cleanup_old_ghost_backups(project_root: "object", max_backups: int = 10) ->
 
         return 0  # fail-open，保留策略失败不阻断主备份流程
 
-def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_delete_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-DELETE-AUDIT post-commit 对账 reconciler（AD-GOV-001 合并）。
 
@@ -6092,11 +6062,8 @@ def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import re
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -6459,7 +6426,7 @@ def make_delete_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
     return _compose_reconcilers("GATE-DELETE-AUDIT", spec_ghost, spec_working)
 
-def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_regenerate_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-REGENERATE post-commit 自动重生 reconciler（AD-GOV-001 合并）。
 
@@ -6492,9 +6459,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -6963,7 +6928,7 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
 
     return _compose_reconcilers("GATE-REGENERATE", spec_domain_doc, spec_arch_model, spec_manifest)
 
-def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-RULE-AUDIT post-commit 规则同步+审计+ARCH引用检测 reconciler（AD-GOV-001 合并）。
 
@@ -7014,15 +6979,10 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import json
-
     import os
-
     import re
-
     import subprocess
-
     import sys
-
     from datetime import datetime
 
     project_root = gateway.project_root
@@ -7437,7 +7397,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
     return _compose_reconcilers("GATE-RULE-AUDIT", spec_catalog, spec_rule_file_audit, spec_arch_refs)
 
-def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_registry_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-REGISTRY-SYNC post-commit 注册表同步+基线对账 reconciler（AD-GOV-001 合并）。
 
@@ -7468,9 +7428,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -7727,7 +7685,7 @@ def make_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
     return _compose_reconcilers("GATE-REGISTRY-SYNC", spec_index, spec_baseline)
 
-def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_integrity_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-INTEGRITY-AUDIT post-commit 完整性+网关审计+引用检测 reconciler（AD-GOV-001 合并）。
 
@@ -7776,9 +7734,7 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -8146,7 +8102,6 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     def _reconcile_agents_md_refs(committed_files: list[str], session_id: str) -> ReconcileResult:
 
         import re
-
         from pathlib import Path
 
         agents_md = Path(project_root) / "AGENTS.md"
@@ -8225,7 +8180,7 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
 
 #   能否合并：是——扩展本 reconciler 职责，不新建 count_reconciler（向内收）。
 
-def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_module_id_consistency_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-MODULE-ID-CONSISTENCY post-commit 注册表一致性校验 reconciler（P8-FIX-S0 + S1）。
 
@@ -8282,7 +8237,6 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import re
 
     project_root = gateway.project_root
@@ -8325,9 +8279,9 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
 
             rel = _rel_path(f, str(project_root))
 
-            if (rel == _REGISTRY_REL or rel == _TEMPLATE_REGISTRY_REL
+            if (rel in (_REGISTRY_REL, _TEMPLATE_REGISTRY_REL, _DEP_REGISTRY_REL)
 
-                    or rel == _DEP_REGISTRY_REL or rel.startswith(_CONTRACTS_DIR)):
+                    or rel.startswith(_CONTRACTS_DIR)):
 
                 return True
 
@@ -8337,9 +8291,9 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
 
         """判断文件是否为本 reconciler 的目标治理文件。"""
 
-        return (rel == _REGISTRY_REL or rel == _TEMPLATE_REGISTRY_REL
+        return (rel in (_REGISTRY_REL, _TEMPLATE_REGISTRY_REL, _DEP_REGISTRY_REL)
 
-                or rel == _DEP_REGISTRY_REL or rel.startswith(_CONTRACTS_DIR))
+                or rel.startswith(_CONTRACTS_DIR))
 
     def _check_track_consistency(content: str, rel: str, violations: list) -> None:
 
@@ -8527,7 +8481,7 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # 价值审判：index_generator 是 production 资产索引真源，unified-asset-index.yaml 漂移需自动修复。
 
-def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_index_generator_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-ASSET-INDEX post-commit 资产索引重生 reconciler（P3 生成器触发接入）。
 
@@ -8576,9 +8530,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -8724,7 +8676,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # 事件触发（post-commit），非 cron/manual，满足项目约束"reconciler 必须事件触发"。
 
-def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-RUNTIME-CLEANUP post-commit .runtime/ TTL 清理 reconciler。
 
@@ -8757,7 +8709,6 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import time
 
     project_root = gateway.project_root
@@ -8878,7 +8829,7 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # 第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四 第1期
 
-def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_architecture_health_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造架构健康度仪表盘 post-commit 基线记录 reconciler（第0期 warn-only）。
 
@@ -8911,9 +8862,7 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -9018,7 +8967,7 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # 派生逻辑真源唯一：validate_session_log_index_integrity.py --generate（本 reconciler 仅调用，不复制逻辑）。
 
-def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_session_log_index_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-SESSION-LOG-INDEX post-commit session_logs/index.yaml 派生 reconciler。
 
@@ -9063,9 +9012,7 @@ def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -9232,7 +9179,7 @@ def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
 
 #   输出目标不同——9 个架构图 MD 是独立输出，需独立 reconciler），治本（事件触发+auto-commit）。
 
-def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_arch_diagram_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-ARCH-DIAGRAM post-commit 架构图自动重生 reconciler（议题3）。
 
@@ -9333,9 +9280,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -9608,7 +9553,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # trae_060-reviewed: 该存在（检测器是独立职责，不能合并进生成器），治本（事件触发+写PG）
 
-def make_constraint_detect_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_constraint_detect_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-CONSTRAINT-DETECT post-commit 架构违规检测 reconciler。
 
@@ -9655,9 +9600,7 @@ def make_constraint_detect_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import subprocess
-
     import sys
 
     project_root = gateway.project_root
@@ -9798,37 +9741,34 @@ def _auto_fix_gate_inventory(project_root) -> dict:
 
         return {"fixed": False, "detail": "blueprint.md not found"}
 
-    text = blueprint_path.read_text(encoding="utf-8", errors="replace")
+    # #ARCH-RECONCILER-TOCTOU-CLOBBER-001 P0 止血：整文件 READ-MODIFY-WRITE 加 advisory lock，
+    # 防止跨 commit/session 并发写导致 clobber（读旧→写新覆盖并发编辑）。
+    import contextlib  # noqa: E402 — nullcontext fallback for fail-open
 
-    lines = text.splitlines(keepends=True)
+    try:
+        from scripts.governance._shared.file_lock import blueprint_write_lock
+        _lock = blueprint_write_lock(blueprint_path)
+    except ImportError:  # pragma: no cover — filelock 是项目依赖
+        _lock = contextlib.nullcontext()
 
-    last_gate_idx = -1
+    with _lock:
+        text = blueprint_path.read_text(encoding="utf-8", errors="replace")
+        lines = text.splitlines(keepends=True)
+        last_gate_idx = -1
+        for i, line in enumerate(lines):
+            if line.startswith("| `commit_gates/"):
+                last_gate_idx = i
+        if last_gate_idx < 0:
+            return {"fixed": False, "detail": "cannot locate §0.1 gate table"}
+        new_rows = [
+            f"| `commit_gates/{f}` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |\n"
+            for f in missing
+        ]
+        lines[last_gate_idx + 1:last_gate_idx + 1] = new_rows
+        blueprint_path.write_text("".join(lines), encoding="utf-8")
+        return {"fixed": True, "detail": f"added {len(missing)} missing gate(s): {', '.join(missing)}"}
 
-    for i, line in enumerate(lines):
-
-        if line.startswith("| `commit_gates/"):
-
-            last_gate_idx = i
-
-    if last_gate_idx < 0:
-
-        return {"fixed": False, "detail": "cannot locate §0.1 gate table"}
-
-    new_rows = [
-
-        f"| `commit_gates/{f}` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |\n"
-
-        for f in missing
-
-    ]
-
-    lines[last_gate_idx + 1:last_gate_idx + 1] = new_rows
-
-    blueprint_path.write_text("".join(lines), encoding="utf-8")
-
-    return {"fixed": True, "detail": f"added {len(missing)} missing gate(s): {', '.join(missing)}"}
-
-def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_gate_inventory_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 commit_gates 模块清单漂移检测 post-commit reconciler（ARCH-055 + ADP-4 治本）。
 
@@ -9859,7 +9799,6 @@ def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import sys
 
     project_root = gateway.project_root
@@ -9986,7 +9925,7 @@ def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # make_manifest_reconciler，trigger 覆盖三源，auto_commit 修复（ARCH-GATE-REGISTRY-SYNC-001）。
 
-def make_gate_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_gate_registry_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 gate_registry.yaml 自动重生成 post-commit reconciler（ARCH-GATE-REGISTRY-SYNC-001 治本）。
 
@@ -10033,7 +9972,6 @@ def make_gate_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import sys
 
     project_root = gateway.project_root
@@ -10166,7 +10104,7 @@ def make_gate_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——in_process_gate_registry.yaml ↔ 内存注册表双向校验
 
-def make_in_process_gate_registry_drift_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_in_process_gate_registry_drift_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 in_process_gate_registry.yaml ↔ 内存注册表双向漂移检测 reconciler。
 
@@ -10227,13 +10165,9 @@ def make_in_process_gate_registry_drift_reconciler(gateway: "object") -> Reconci
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
 
         from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
-
         from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
-
             auto_register_gates,
-
             load_gate_entries,
-
         )
 
         entries = load_gate_entries(project_root)
@@ -10320,7 +10254,7 @@ def make_in_process_gate_registry_drift_reconciler(gateway: "object") -> Reconci
 
 # 依赖 AI 自觉=反模式。治本：post-commit 事件触发 TTL 清理（对标 runtime_cleanup）。
 
-def make_tmp_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_tmp_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-TMP-CLEANUP post-commit tmp/ TTL 清理 reconciler。
 
@@ -10353,7 +10287,6 @@ def make_tmp_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import time
 
     project_root = gateway.project_root
@@ -10458,7 +10391,7 @@ def make_tmp_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # 事件触发 session_worktree_sweep（P1 已落地公开 API），事件驱动自动清理。
 
-def make_worktree_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_worktree_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-WORKTREE-LIFECYCLE post-commit worktree 残留事件驱动清理 reconciler。
 
@@ -10594,7 +10527,7 @@ def make_worktree_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # scan_all_scripts_for_import_violations（与 gate 共享 _scan_file_content helper，DRY）。
 
-def make_scripts_import_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_scripts_import_integrity_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-SCRIPTS-IMPORT-BASELINE post-commit baseline 全扫 reconciler。
 
@@ -10653,9 +10586,7 @@ def make_scripts_import_integrity_reconciler(gateway: "object") -> ReconcilerSpe
         # 依赖 gov_enforcement.commit_gates.scripts_import_integrity_gate）
 
         from zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate import (
-
             scan_all_scripts_for_import_violations,
-
         )
 
         try:
@@ -10746,7 +10677,7 @@ def make_scripts_import_integrity_reconciler(gateway: "object") -> ReconcilerSpe
 
 # （检测逻辑变更应重跑 baseline）。其他 commit 不触发（避免无谓全扫开销）。
 
-def make_undefined_name_baseline_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_undefined_name_baseline_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-UNDEFINED-NAME-BASELINE post-commit baseline 全扫 reconciler。
 
@@ -10811,9 +10742,7 @@ def make_undefined_name_baseline_reconciler(gateway: "object") -> ReconcilerSpec
         # 依赖 gov_enforcement.commit_gates.undefined_name_gate）
 
         from zephyr.gov_enforcement.commit_gates.undefined_name_gate import (
-
             scan_all_for_undefined_names,
-
         )
 
         try:
@@ -10896,7 +10825,7 @@ def make_undefined_name_baseline_reconciler(gateway: "object") -> ReconcilerSpec
 
 # 是 CONSUMERS-ACCURACY gate 的 post-commit 补强（对标 undefined-name gate + reconciler 模式）。
 
-def make_consumers_accuracy_baseline_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_consumers_accuracy_baseline_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-CONSUMERS-ACCURACY-BASELINE post-commit baseline 全扫 reconciler。
 
@@ -10953,9 +10882,7 @@ def make_consumers_accuracy_baseline_reconciler(gateway: "object") -> Reconciler
         # lazy import 避免 import-time 耦合
 
         from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (
-
             scan_all_for_consumers_accuracy,
-
         )
 
         try:
@@ -11062,7 +10989,7 @@ def _strip_stash_branch_prefix(message: str) -> str:
 
     return message
 
-def make_stash_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-STASH-LIFECYCLE post-commit stash 过期清理 reconciler.
 
@@ -11125,7 +11052,6 @@ def make_stash_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import time
 
     project_root = gateway.project_root
@@ -11366,19 +11292,19 @@ def make_stash_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # BLUEPRINT-FORMAT gate（priority=77）只检测 staged added 行的新违规，存量 64 条
 
-# legacy blueprint_id（MOD-GOV-SCRIPTS / ARCHITECTURE-DIAGRAM-PLAN / 空头 / SRC-XXX
+# legacy blueprint_id（MOD-GOV_SCRIPTS / ARCHITECTURE-DIAGRAM-PLAN / 空头 / SRC-XXX
 
 # 残留等）grandfathered 不检测。治本：post-commit baseline 全扫，报告存量债务，
 
 # warn-only（commit 已入库不可阻断；warn 供 AI/人工修复追踪）。
 
-def make_blueprint_id_legacy_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_blueprint_id_legacy_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-BLUEPRINT-ID-LEGACY post-commit baseline 全扫 reconciler（#ARCH-DATAQUALITY-V1.8 Task I）。
 
     病根（第一性原理）：pre-commit BLUEPRINT-FORMAT gate 有两个盲区：
 
-    1. **gate 上线前的基线债务**：64 条 legacy blueprint_id 头部（MOD-GOV-SCRIPTS /
+    1. **gate 上线前的基线债务**：64 条 legacy blueprint_id 头部（MOD-GOV_SCRIPTS /
 
        ARCHITECTURE-DIAGRAM-PLAN / 空头 / (migrated...) / SRC-XXX 残留等）在 gate
 
@@ -11431,9 +11357,7 @@ def make_blueprint_id_legacy_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import re
-
     import sys
 
     project_root = gateway.project_root
@@ -11722,9 +11646,9 @@ def make_blueprint_id_legacy_reconciler(gateway: "object") -> ReconcilerSpec:
 
             + f"\n  report={report_path.name}"
 
-            + f"\n  Action: fix [BLUEPRINT] header to use valid MOD-/SH- prefix "
+            + "\n  Action: fix [BLUEPRINT] header to use valid MOD-/SH- prefix "
 
-            f"(see裁定#208 three-track: MOD-{{LAYER}}-NNN / MOD-{{DOMAIN}}[-NNN] / SH-{{ABBR}}-NNN)"
+            "(see裁定#208 three-track: MOD-{LAYER}-NNN / MOD-{DOMAIN}[-NNN] / SH-{ABBR}-NNN)"
 
         )
 
@@ -11752,7 +11676,7 @@ def make_blueprint_id_legacy_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # ③治本——事件触发检测 bypass 频率 + audit log 存在性，非时间触发。
 
-def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_capability_lookup_health_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 CAPABILITY-LOOKUP-REQUIRED gate 健康度监控 reconciler。
 
@@ -11785,9 +11709,7 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
     """
 
     import json
-
     import os
-
     import time
 
     project_root = gateway.project_root
@@ -11801,8 +11723,14 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
     # 真源是 trae_077 YAML（fail-open 加载），共享模块模块初始化时加载。
     from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
         BYPASS_MARKER_PREFIX as _BYPASS_MARKER_PREFIX,
+    )
+    from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
         ESCALATION_THRESHOLD as BYPASS_ESCALATION_THRESHOLD,
+    )
+    from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
         WINDOW as BYPASS_WINDOW,
+    )
+    from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import (
         is_exempt_reason as _is_exempt_reason_fn,
     )
 
@@ -11993,13 +11921,13 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
 
             detail = (
 
-                f"CAPABILITY-LOOKUP-HEALTH: .runtime/lookup_audit/ 无 session 级 audit log "
+                "CAPABILITY-LOOKUP-HEALTH: .runtime/lookup_audit/ 无 session 级 audit log "
 
-                f"且本次 commit 未使用 bypass——CAPABILITY-LOOKUP-REQUIRED gate 可能静默失效 "
+                "且本次 commit 未使用 bypass——CAPABILITY-LOOKUP-REQUIRED gate 可能静默失效 "
 
-                f"(AI 未调用能力反查但 gate 未阻断)。对标 G6 铁证（曾长期为空）。"
+                "(AI 未调用能力反查但 gate 未阻断)。对标 G6 铁证（曾长期为空）。"
 
-                f"MUST 检查 gate 是否正常工作 + AI 是否遵循 RULE-CAPABILITY-LOOKUP 铁律。"
+                "MUST 检查 gate 是否正常工作 + AI 是否遵循 RULE-CAPABILITY-LOOKUP 铁律。"
 
             )
 
@@ -12067,7 +11995,7 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
 
 # 仅扫平铺文件不删目录（目录删除风险高——tmp/ 含 pg_backups 175MB，已实证）。
 
-def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_root_temp_sweep_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-ROOT-TEMP-SWEEP post-commit 根目录临时文件清扫 reconciler.
 
@@ -12106,11 +12034,8 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
     """
 
     import os
-
     import re
-
     import shutil
-
     import time
 
     project_root = gateway.project_root
@@ -12213,7 +12138,7 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
             return frozenset(tracked)
 
-        except Exception:
+        except Exception:  # noqa: BLE001
 
             return None
 
@@ -12559,7 +12484,7 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
 # post-commit TTL 清理（>24h），两者正交互补。
 
-def make_session_staging_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_session_staging_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
 
     """构造 GATE-SESSION-STAGING-LIFECYCLE post-commit 暂存层 TTL 清理 reconciler.
 
@@ -12588,7 +12513,6 @@ def make_session_staging_lifecycle_reconciler(gateway: "object") -> ReconcilerSp
     """
 
     import os
-
     import time
 
     project_root = gateway.project_root
