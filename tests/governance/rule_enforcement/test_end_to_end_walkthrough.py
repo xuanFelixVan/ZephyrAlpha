@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.end_to_end_walkthrough
-# [DOMAIN] D_GOV_CODE_QUALITY
+# [DOMAIN] D_GOV_RULE
 
 # [INVARIANTS] WalkthroughScenario has 7 members; ScenarioResult.failures defaults to empty list; pass_rate returns 0.0 when no results
 
