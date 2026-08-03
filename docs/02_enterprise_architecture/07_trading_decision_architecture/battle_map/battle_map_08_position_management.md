@@ -10,7 +10,7 @@ date: 2026-08-03
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_08_position_management.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §position_management 阶段，10 环节。
+> battle_map §position_management 阶段，21 环节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
 ## 文档基本信息 / Document Overview
@@ -18,9 +18,9 @@ date: 2026-08-03
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 仓位（position_management） | Stage | 仓位 |
-| 环节数 | 10 | Steps | 10 |
-| 流转边 | 26 | Edges | 26 |
-| 状态分布 | 🟦 运营态（已建）=10 | State Distribution | 🟦 运营态（已建）=10 |
+| 环节数 | 21 | Steps | 21 |
+| 流转边 | 30 | Edges | 30 |
+| 状态分布 | 🟦 运营态（已建）=20 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=20 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -33,7 +33,7 @@ date: 2026-08-03
 
 ## 阶段图 / Stage Diagram
 
-> 展示 仓位 阶段全部 10 个环节及流转边，颜色区分五态。
+> 展示 仓位 阶段全部 21 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -49,9 +49,34 @@ flowchart TD
     BM_POS_04["【BM-POS-04 跨策略仓位硬限制】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
     BM_POS_05["【BM-POS-05 资金曲线回撤缩放】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
     BM_POS_10["【BM-POS-10 仓位审计追溯】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
-    BM_POS_08 ~~~ BM_POS_09 ~~~ BM_POS_05
-    BM_POS_01 ~~~ BM_POS_03
+    subgraph sg_BM_SEL_20 ["多策略交叉投票"]
+        BM_SEL_20["【BM-SEL-20 多策略交叉投票】<br/>—<br/>仓位阶段 / position_management<br/>（候选态 / candidate）<br/>🟡候选承载"]
+        BM_SEL_20_A["【BM-SEL-20-A 信号合成与决策去重】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
+        BM_SEL_20_B["【BM-SEL-20-B 多策略资金分配】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
+        BM_SEL_20_C["【BM-SEL-20-C 策略相关性门禁】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
+        BM_SEL_20 -.->|嵌套| BM_SEL_20_A
+        BM_SEL_20 -.->|嵌套| BM_SEL_20_B
+        BM_SEL_20 -.->|嵌套| BM_SEL_20_C
+    end
+    subgraph sg_BM_SEL_21 ["组合优化"]
+        BM_SEL_21["【BM-SEL-21 组合优化】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>🟡候选承载"]
+        BM_SEL_21_A["【BM-SEL-21-A 策略引擎】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
+        BM_SEL_21_B["【BM-SEL-21-B 组合优化器】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
+        BM_SEL_21_C["【BM-SEL-21-C 再平衡调度】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
+        BM_SEL_21_D["【BM-SEL-21-D 约束求解器】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
+        BM_SEL_21_E["【BM-SEL-21-E 绩效归因引擎】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）"]
+        BM_SEL_21_F["【BM-SEL-21-F 量化策略集】<br/>—<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>🟡候选承载"]
+        BM_SEL_21 -.->|嵌套| BM_SEL_21_A
+        BM_SEL_21 -.->|嵌套| BM_SEL_21_B
+        BM_SEL_21 -.->|嵌套| BM_SEL_21_C
+        BM_SEL_21 -.->|嵌套| BM_SEL_21_D
+        BM_SEL_21 -.->|嵌套| BM_SEL_21_E
+        BM_SEL_21 -.->|嵌套| BM_SEL_21_F
+    end
+    BM_POS_08 ~~~ BM_POS_09 ~~~ BM_POS_05 ~~~ BM_SEL_20 ~~~ BM_SEL_20_A ~~~ BM_SEL_20_B ~~~ BM_SEL_20_C ~~~ BM_SEL_21_A ~~~ BM_SEL_21_B ~~~ BM_SEL_21_C ~~~ BM_SEL_21_D ~~~ BM_SEL_21_E ~~~ BM_SEL_21_F
+    BM_POS_01 ~~~ BM_POS_03 ~~~ BM_SEL_21
     BM_POS_06 ~~~ BM_POS_07
+    BM_SEL_20 -.->|漏斗L5→L6 / data_flow| BM_SEL_21
     BM_POS_01 -->|风险配额→标级Kelly / data_flow| BM_POS_02
     BM_POS_02 -->|标级仓位→跨策略硬限制 / data_flow| BM_POS_04
     BM_POS_03 -->|漂移触发→标级仓位调整 / trigger| BM_POS_02
@@ -72,7 +97,8 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_POS_01,BM_POS_06,BM_POS_08,BM_POS_02,BM_POS_03,BM_POS_07,BM_POS_09,BM_POS_04,BM_POS_05,BM_POS_10 production
+    class BM_POS_01,BM_POS_06,BM_POS_08,BM_POS_02,BM_POS_03,BM_POS_07,BM_POS_09,BM_POS_04,BM_POS_05,BM_POS_10,BM_SEL_21,BM_SEL_20_A,BM_SEL_20_B,BM_SEL_20_C,BM_SEL_21_A,BM_SEL_21_B,BM_SEL_21_C,BM_SEL_21_D,BM_SEL_21_E,BM_SEL_21_F production
+    class BM_SEL_20 candidate
 ```
 
 ## 环节详情
@@ -96,8 +122,8 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | planned | generated |
 | candidate | CAND-HARVEST-0019 | supplement | candidate | — |
+| depgraph | MOD-POS-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -166,7 +192,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-POS-001 | primary | planned | generated |
+| depgraph | MOD-POS-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -283,7 +309,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-POS-007 | primary | stable | stable |
-| depgraph | MOD-POS-008 | supplement | planned | stable |
+| depgraph | MOD-POS-008 | supplement | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -309,6 +335,256 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | depgraph | MOD-POS-009 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
+
+### BM-SEL-20 多策略交叉投票
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 60秒级 阈值: 30→30只 |
+| ② 消费数据/因子 | 策略A价值反转（来自 L3）<br>策略B动量趋势（来自 L3）<br>策略C事件驱动（来自 L3）<br>C-034/C-036主力合力（来自 BM-SEL-05）<br>C-021状态否决（来自 BM-SEL-03） |
+| ③ 参数 | 策略权重=A30%/B25%/C20%（范围 -，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 事件筛选输出~30只 → 处理: 多策略YES/NO+主力+合力+状态否决 → 输出: ~30只 → 下游: BM-SEL-21 组合优化 |
+| ⑤ 代码映射 | 缺失态-未实现 / 草图§13 漏斗L5 |
+| ⑥ 降级/中止 | 投票未就绪 → 单策略决定 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-3225 | primary | candidate | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-21 组合优化
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 60秒级 阈值: 30→N≤10只 |
+| ② 消费数据/因子 | 候选标的+得分（来自 BM-SEL-18）<br>仓位上限（来自 BM-SEL-03）<br>C-042策略容量（来自 L3）<br>C-045拥挤度（来自 L4）<br>密度PDF参数（来自 BM-SEL-13） |
+| ③ 参数 | 行业偏离=±10%/叠加态±15%/绝对30%（范围 -，代码当前: 待实现，状态: proposed）<br>相关性上限=corr<0.7（范围 -，代码当前: 待实现，状态: proposed）<br>Kelly=半Kelly硬上限（范围 -，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 投票输出~30只 → 处理: maxΣ(w×score) s.t.仓位/容量/行业/风格/相关性/拥挤 → 输出: N只下单清单+权重 → 下游: BM-BUY-01 多情景对策 |
+| ⑤ 代码映射 | MOD-PF-002 / 草图§8.5 组合优化引擎（部分建设） |
+| ⑥ 降级/中止 | 组合优化未就绪 → 等权配置 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-002 | primary | planned | generated |
+| candidate | CAND-PFALLOC-001 | supplement | deferred | — |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-20-A 信号合成与决策去重
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 多策略信号→重合加权重→合成信号+信号冲突检测+决策去重 阈值: 同标的同方向多策略重复信号→合并为一条指令 |
+| ② 消费数据/因子 | 多策略信号（来自 BM-SEL-18 精筛评分）<br>因子信号（来自 BM-SEL-02-H 合成优化） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: 多策略信号集 → 处理: 信号叠加→冲突检测→权重重分配→决策去重 → 输出: 合成信号(CTR-007前驱) → 下游: BM-SEL-20-B 资金分配 |
+| ⑤ 代码映射 | MOD-PA-002 / 06-D-PF-ALLOC PA-02 |
+| ⑥ 降级/中止 | 信号合成器异常 → 降级等权合成 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PA-002 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-20-B 多策略资金分配
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 多策略资金分配+风险预算分配+MaxDDLimit+策略容量约束 阈值: 策略权重之和=1.0 + MaxDD≤15% |
+| ② 消费数据/因子 | 合成信号（来自 BM-SEL-20-A）<br>风险预算（来自 D-RISK） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: 合成信号+风险预算 → 处理: 风险预算分解→Kelly约束→容量约束→权重分配 → 输出: 策略资金分配方案 → 下游: BM-SEL-20-C 相关性门禁 |
+| ⑤ 代码映射 | MOD-PA-003 / 06-D-PF-ALLOC PA-03 |
+| ⑥ 降级/中止 | 资金分配求解失败 → 降级等权分配 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PA-003 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-20-C 策略相关性门禁
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | G12策略相关性门禁: ρ>0.85拒绝/因子重叠>60%警告/股票池重叠>70%警告 阈值: 6个月滚动窗口+尾部相关EVT |
+| ② 消费数据/因子 | 资金分配方案（来自 BM-SEL-20-B） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: 策略组合+历史收益 → 处理: 相关性计算→因子重叠检测→股票池重叠检测→门禁裁决 → 输出: 门禁通过/拒绝/警告决策 → 下游: BM-SEL-21 组合优化 |
+| ⑤ 代码映射 | MOD-PA-004 / 06-D-PF-ALLOC PA-04 |
+| ⑥ 降级/中止 | 相关性数据不足 → 降级警告模式 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PA-004 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-21-A 策略引擎
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 策略注册+选择+信号生成+生命周期+版本控制(OCP-002) 阈值: 新策略冷启动仓位上限=正常×30% |
+| ② 消费数据/因子 | 门禁通过信号（来自 BM-SEL-20-C） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: 门禁通过策略信号 → 处理: 策略注册→选择→信号生成→四维决策(选股/买入/卖出/仓位) → 输出: target_weights → 下游: BM-SEL-21-B 组合优化器 |
+| ⑤ 代码映射 | MOD-PF-001 / 05-D-PF-CORE PC-01 |
+| ⑥ 降级/中止 | 策略引擎异常 → 降级到上一交易日权重 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-001 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-21-B 组合优化器
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 均值方差+风险平价+约束求解→TargetPortfolio(CTR-007) 阈值: Kelly仓位与优化仓位取min(Kelly只减不增) |
+| ② 消费数据/因子 | target_weights（来自 BM-SEL-21-A） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: target_weights+风险预算 → 处理: 均值方差优化→风险预算→Kelly约束→约束求解 → 输出: TargetPortfolio CTR-007 → 下游: BM-SEL-21-C 再平衡调度 |
+| ⑤ 代码映射 | MOD-PF-002 / 05-D-PF-CORE PC-02 |
+| ⑥ 降级/中止 | 优化求解失败 → 降级等权+风险预算 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-002 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-21-C 再平衡调度
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 阈值触发(±2%/±3%)+日历触发(每周五)+事件触发+风控触发 阈值: 收益改善>2×成本才执行；市场状态⑦⑧⑨成本系数×1.5 |
+| ② 消费数据/因子 | TargetPortfolio（来自 BM-SEL-21-B） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: TargetPortfolio+当前持仓 → 处理: 漂移检测→触发判定→成本感知→再平衡决策 → 输出: 再平衡指令 → 下游: BM-SEL-21-D 约束求解 |
+| ⑤ 代码映射 | MOD-PF-003 / 05-D-PF-CORE PC-03 |
+| ⑥ 降级/中止 | 再平衡调度异常 → 延后到下一交易日 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-003 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-21-D 约束求解器
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 行业集中度≤30%+偏离基准±10%+MDD≤5%+相关性对冲≤0.7+风格暴露≤±0.3σ 阈值: 拥挤度约束(策略相关性ρ>0.8降权) |
+| ② 消费数据/因子 | 再平衡指令（来自 BM-SEL-21-C） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: 再平衡指令+约束集 → 处理: 约束建模→求解器优化→可行性检验→权重调整 → 输出: 约束满足的最终权重 → 下游: 执行域 BM-EXE |
+| ⑤ 代码映射 | MOD-PF-006 / 05-D-PF-CORE PC-04 |
+| ⑥ 降级/中止 | 约束求解不可行 → 放宽软约束+告警 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-006 | primary | production | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-21-E 绩效归因引擎
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | Brinson归因+因子归因+风险归因+策略退化检测(IC衰减>50%降权至0) 阈值: 拥挤度检测(策略相关性ρ>0.8/0.9) |
+| ② 消费数据/因子 | 组合收益（来自 BM-SEL-21-B）<br>因子衰减（来自 BM-SEL-02-G） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: 组合收益+因子表现 → 处理: Brinson分解→因子归因→风险归因→退化检测 → 输出: 归因报告+退化告警 → 下游: 反馈循环 / BM-SEL-02-I 因子治理 |
+| ⑤ 代码映射 | MOD-PF-007 / 05-D-PF-CORE PC-10 |
+| ⑥ 降级/中止 | 归因数据不足 → 降级粗粒度归因 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PF-007 | primary | production | stable |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-SEL-21-F 量化策略集
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | TopN动量+盘口失衡+VWAP回归+盘中冲高回落策略 阈值: 多策略并行+策略引擎统一管理 |
+| ② 消费数据/因子 | 因子信号（来自 BM-SEL-02-H）<br>行情数据（来自 BM-SEL-01） |
+| ③ 参数 | — |
+| ④ 数据流 | 输入: 因子+行情 → 处理: 策略信号生成→权重计算→风险调整 → 输出: 各策略target_weights → 下游: BM-SEL-21-A 策略引擎 |
+| ⑤ 代码映射 | MOD-L05-001 / 05-D-PF-CORE strategies |
+| ⑥ 降级/中止 | 策略集体异常 → 降级到TopN动量单策略 |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
 
 [← 返回总指挥图](battle_map_panorama.md)

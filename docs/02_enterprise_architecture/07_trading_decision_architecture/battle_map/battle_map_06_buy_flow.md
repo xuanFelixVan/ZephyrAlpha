@@ -20,7 +20,7 @@ date: 2026-08-03
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
 | 环节数 | 11 | Steps | 11 |
 | 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=1 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=1 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=8 ｜ 🟧 设计态（待施工）=1 ｜ ⬜ 缺失态（无锚点）=1 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=8 ｜ 🟧 设计态（待施工）=1 ｜ ⬜ 缺失态（无锚点）=1 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -53,22 +53,23 @@ flowchart TD
     end
     BM_BUY_03["【BM-BUY-03 决策编排】<br/>—<br/>买入阶段 / buy_flow<br/>（生产态 / production）"]
     BM_BUY_04["【BM-BUY-04 分批建仓】<br/>—<br/>买入阶段 / buy_flow<br/>（设计态 / design）"]
-    BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>—<br/>买入阶段 / buy_flow<br/>（生产态 / production）"]
+    BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>—<br/>买入阶段 / buy_flow<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>—<br/>买入阶段 / buy_flow<br/>（生产态 / production）"]
     BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>—<br/>买入阶段 / buy_flow<br/>（候选态 / candidate）<br/>🟡候选承载"]
     BM_BUY_01 ~~~ BM_BUY_04 ~~~ BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D
     BM_BUY_02 ~~~ BM_BUY_06
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
-    BM_BUY_07 -->|微信指令→外部指令盯盘 / data_flow| BM_BUY_06
+    BM_BUY_07 -.->|微信指令→外部指令盯盘 / data_flow| BM_BUY_06
     BM_BUY_03 -.->|编排后决策→纪律合规闸 / trigger| BM_BUY_08
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_06,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D production
+    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D production
     class BM_BUY_04 design
+    class BM_BUY_06 missing
     class BM_BUY_08 candidate
 ```
 
@@ -184,13 +185,9 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ⑤ 代码映射 | MOD-L08-001 trade_panel / D-TRADING-01/05/06 / §8.4 C-013 外部指令盯盘 |
 | ⑥ 降级/中止 | 风控拦截建仓 或 C-047未就绪 → 风控拦截→通知用户拦截原因(C-004优先级>用户指令)；C-047未就绪→跳过仓位裁决按原始目标执行 |
 
-**锚点（环节↔模块双向关联）**：
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
-| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
-|---|---|---|---|---|
-| depgraph | MOD-L08-001 | primary | stable | generated |
-
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：buy_flow
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：buy_flow
 
 ### BM-BUY-07 微信互动中心
 

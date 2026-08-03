@@ -81,7 +81,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-BT-001 | primary | stable | stable |
+| depgraph | MOD-BT-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -104,7 +104,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-BT-001 | primary | stable | stable |
+| depgraph | MOD-BT-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -127,7 +127,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-BT-001 | primary | stable | stable |
+| depgraph | MOD-BT-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -150,7 +150,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-BT-001 | primary | generated | stable |
+| depgraph | MOD-BT-001 | primary | generated | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -173,7 +173,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-BT-001 | primary | generated | stable |
+| depgraph | MOD-BT-001 | primary | generated | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -196,7 +196,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-BT-001 | primary | generated | stable |
+| depgraph | MOD-BT-001 | primary | generated | generated |
 | candidate | CAND-WFO-001 | supplement | deferred | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
@@ -220,7 +220,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-BT-001 | primary | generated | stable |
+| depgraph | MOD-BT-001 | primary | generated | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
