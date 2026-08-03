@@ -33,7 +33,7 @@ ttl: permanent
 | D_GOVERNANCE | 生命周期管理 | 224 | 150 | +74 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 175 | 150 | +25 |
 | D_GOV_SCRIPTS | 脚本治理 | 397 | 150 | +247 |
-| D_INFRA_RUNTIME | 运行时集成 | 171 | 150 | +21 |
+| D_INFRA_RUNTIME | 运行时集成 | 167 | 150 | +17 |
 | D_SECURITY | 对抗验证 | 166 | 150 | +16 |
 | D_SHARED | 共享服务 | 184 | 150 | +34 |
 
@@ -116,7 +116,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | 回滚恢复 | L0_infrastructure | 55 | 150 | 36.7% | 正常 |
-| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 171 | 150 | 114.0% | 超容 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 167 | 150 | 111.3% | 超容 |
 | D_INFRA_TELEMETRY | 可观测性 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INTEGRATION | 管线路由 | L1_foundation | 71 | 150 | 47.3% | 正常 |
 | D_INTEGRATION_GATEWAY | 集成网关 | L1_foundation | 0 | 150 | 0.0% | 空 |
