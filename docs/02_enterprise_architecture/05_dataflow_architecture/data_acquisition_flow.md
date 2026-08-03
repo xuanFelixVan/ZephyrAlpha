@@ -34,8 +34,8 @@ ttl: permanent
 |--------|--------|-----------|
 | **miniqmt**（迅投QMT） | 60 | K线行情、财务报表、股东数据、期权可转债 |
 | **akshare**（AKShare） | 54 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
-| **ifind**（同花顺iFind） | 9 | 资金流向、股权质押、行业分类 |
-| **tdx**（通达信） | 7 | 板块分类、板块K线、板块成分股 |
+| **ifind**（同花顺iFind） | 10 | 资金流向、股权质押、行业分类 |
+| **tdx**（通达信） | 6 | 板块分类、板块K线、板块成分股 |
 | **tickflow**（TickFlow） | 4 | 美股K线、美股指数 |
 | **tqcenter**（通达信tqcenter） | 4 | 板块K线、板块实时快照、板块成分股映射 |
 | **rss**（RSS） | 2 | 财经新闻 |
@@ -189,7 +189,7 @@ ttl: permanent
 
 ---
 
-### 3. ifind（同花顺iFind）— 9 个任务
+### 3. ifind（同花顺iFind）— 10 个任务
 
 **一句话**：付费数据源，采资金流向、股权质押、行业分类等 iFind 独有数据。
 
@@ -204,6 +204,7 @@ ttl: permanent
 | industry_class_suppl_refresh | c3_fundamental.industry_class_suppl | 月初 09:00 | 申万/中证行业分类全量刷新 |
 | daily_valuation_full_refresh | c1_market.daily_valuation | weekend_calibration | 估值数据全量刷新 |
 | edb_data_incremental | c1_market.edb_data | event_driven | EDB宏观数据增量（**已禁用**） |
+| industry_class_refresh | c1_market.industry_class | weekend_calibration | 申万行业分类全量刷新 |
 | money_flow_full_refresh | c1_market.money_flow | weekend_calibration | 资金流向全量刷新 |
 | realtime_snapshot_incremental | c1_market.realtime_snapshot | intraday_realtime | 实时行情快照增量 |
 
@@ -212,7 +213,7 @@ ttl: permanent
 
 ---
 
-### 4. tdx（通达信）— 7 个任务
+### 4. tdx（通达信）— 6 个任务
 
 **一句话**：板块数据源，采通达信板块分类、板块K线、板块成分股。
 
@@ -221,7 +222,6 @@ ttl: permanent
 | 任务 | 灌到哪张表 | 什么时候采 | 说明 |
 |------|-----------|-----------|------|
 | kline_sector_incremental | c1_market.kline_sector | 盘后 16:30 | 板块指数日K线增量（依赖industry_class_refresh） |
-| industry_class_refresh | c1_market.industry_class | weekend_calibration | 板块分类全量刷新 |
 | kline_sector_15min_incremental | c1_market.kline_sector_intraday | intraday_sector | 880xxx板块15分钟K线增量 |
 | kline_sector_1min_incremental | c1_market.kline_sector_intraday | intraday_sector | 880xxx板块1分钟K线增量 |
 | kline_sector_30min_incremental | c1_market.kline_sector_intraday | intraday_sector | 880xxx板块30分钟K线增量 |
@@ -378,8 +378,8 @@ flowchart TD
     subgraph ext_sources["外部数据源 / External Data Sources"]
         S0["(生产态 / production) miniqmt / 迅投QMT<br/>主力数据源，采 A股/港股/期货的 K线行情（日/周<br/>/月/分钟级）和财务报表、股东数据、期权可转债等。<br/>数据源 / data-source（60任务）"]
         S1["(生产态 / production) akshare / AKShare<br/>开源数据源，采估值、融资融券、龙虎榜、大宗交易、<br/>宏观数据、限售解禁等事件类数据。<br/>数据源 / data-source（54任务）"]
-        S2["(生产态 / production) ifind / 同花顺iFind<br/>付费数据源，采资金流向、股权质押、行业分类等<br/>iFind 独有数据。<br/>数据源 / data-source（9任务）"]
-        S3["(生产态 / production) tdx / 通达信<br/>板块数据源，采通达信板块分类、板块K线、板块成分<br/>股。<br/>数据源 / data-source（7任务）"]
+        S2["(生产态 / production) ifind / 同花顺iFind<br/>付费数据源，采资金流向、股权质押、行业分类等<br/>iFind 独有数据。<br/>数据源 / data-source（10任务）"]
+        S3["(生产态 / production) tdx / 通达信<br/>板块数据源，采通达信板块分类、板块K线、板块成分<br/>股。<br/>数据源 / data-source（6任务）"]
         S4["(生产态 / production) tickflow / TickFlow<br/>美股数据源，采美股日K线和美股指数（ETF替代）。<br/>数据源 / data-source（4任务）"]
         S5["(生产态 / production) tqcenter / 通达信tqcenter<br/>880xxx板块数据源，采板块K线、板块实时快照、板块<br/>成分股映射；99只推送+584只轮询混合模式，动态5因<br/>子排名调整推送池。<br/>数据源 / data-source（4任务）"]
         S6["(生产态 / production) rss / RSS<br/>RSS爬虫，采财经新闻。<br/>数据源 / data-source（2任务）"]

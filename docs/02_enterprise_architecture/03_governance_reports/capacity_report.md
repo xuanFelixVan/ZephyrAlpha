@@ -31,8 +31,8 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|
 | D_DATA | 数据接入层 | 162 | 150 | +12 |
 | D_GOVERNANCE | 生命周期管理 | 224 | 150 | +74 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 172 | 150 | +22 |
-| D_GOV_SCRIPTS | 脚本治理 | 393 | 150 | +243 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 173 | 150 | +23 |
+| D_GOV_SCRIPTS | 脚本治理 | 394 | 150 | +244 |
 | D_INFRA_RUNTIME | 运行时集成 | 170 | 150 | +20 |
 | D_SECURITY | 对抗验证 | 166 | 150 | +16 |
 | D_SHARED | 共享服务 | 184 | 150 | +34 |
@@ -104,14 +104,14 @@ ttl: permanent
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 12 | 150 | 8.0% | 正常 |
 | D_GOVERNANCE | 生命周期管理 | L2_domain | 224 | 150 | 149.3% | 超容 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 123 | 150 | 82.0% | 接近超容 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 172 | 150 | 114.7% | 超容 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 173 | 150 | 115.3% | 超容 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_GOV_DRIFT | 漂移检测 | L2_domain | 74 | 150 | 49.3% | 正常 |
 | D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 41 | 150 | 27.3% | 正常 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | L1_foundation | 91 | 150 | 60.7% | 正常 |
 | D_GOV_REPAIR | 治理修复 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_GOV_RULE | 规则治理 | L2_domain | 35 | 150 | 23.3% | 正常 |
-| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 393 | 150 | 262.0% | 超容 |
+| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 394 | 150 | 262.7% | 超容 |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | L0_infrastructure | 26 | 150 | 17.3% | 正常 |
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |

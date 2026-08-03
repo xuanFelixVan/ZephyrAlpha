@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-08-03 02:51:26
+> 自动生成时间: 2026-08-03 11:07:12
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 > 跨域依赖对数: 287
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-08-03 02:51:26
+%% 生成时间: 2026-08-03 11:07:12
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 %% 跨域依赖对数: 287
 
@@ -37,7 +37,7 @@ graph LR
         D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>反馈诊断器<br/>(76模块)"]
         D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证<br/>(71模块)"]
         D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎<br/>(125模块)"]
-        D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理<br/>(172模块)"]
+        D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理<br/>(173模块)"]
         D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理<br/>(91模块)"]
         D_INTEGRATION["D_INTEGRATION<br/>管线路由<br/>(71模块)"]
         D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY<br/>集成网关<br/>(0模块)"]
@@ -76,7 +76,7 @@ graph LR
         D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行<br/>(42模块)"]
         D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复<br/>(1模块)"]
         D_GOV_RULE["D_GOV_RULE<br/>规则治理<br/>(35模块)"]
-        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理<br/>(394模块)"]
+        D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理<br/>(395模块)"]
         D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理<br/>(31模块)"]
         D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理<br/>(1模块)"]
         D_META_SCRIPTS["D_META_SCRIPTS<br/>元治理脚本<br/>(0模块)"]
@@ -84,10 +84,10 @@ graph LR
         D_ML_TRAIN["D_ML_TRAIN<br/>训练<br/>(6模块)"]
         D_PF_ALLOC["D_PF_ALLOC<br/>组合分配<br/>(9模块)"]
         D_PF_CORE["D_PF_CORE<br/>组合核心<br/>(18模块)"]
-        D_POSITION["D_POSITION<br/>仓位管理<br/>(15模块)"]
+        D_POSITION["D_POSITION<br/>仓位管理<br/>(22模块)"]
         D_RISK["D_RISK<br/>风控<br/>(25模块)"]
         D_SEC_SCRIPTS["D_SEC_SCRIPTS<br/>安全治理脚本<br/>(0模块)"]
-        D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策<br/>(23模块)"]
+        D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策<br/>(26模块)"]
         D_SIGLEGACY["D_SIGLEGACY<br/>信号遗留设计态<br/>(0模块)"]
         D_SIGQC["D_SIGQC<br/>信号质量控制<br/>(2模块)"]
         D_SIMULATION["D_SIMULATION<br/>仿真<br/>(15模块)"]

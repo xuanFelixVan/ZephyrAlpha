@@ -141,8 +141,8 @@ ttl: permanent
 | C1 | 数据接入 | 4 | 206 | 176 | 30 | 2.50 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 122 | 68 | 54 | 2.20 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 28 | 23 | 5 | 2.50 | 🟡 部分覆盖 / Partial |
-| C4 | 策略决策 | 4 | 53 | 31 | 22 | 2.75 | 🟡 部分覆盖 / Partial |
-| C5 | 执行交易 | 4 | 113 | 89 | 24 | 3.00 | ✅ 完全覆盖 / Full |
+| C4 | 策略决策 | 4 | 56 | 31 | 25 | 2.75 | 🟡 部分覆盖 / Partial |
+| C5 | 执行交易 | 4 | 120 | 89 | 31 | 3.00 | ✅ 完全覆盖 / Full |
 | C6 | ML平台 | 2 | 13 | 10 | 3 | 2.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 49 | 46 | 3 | 2.50 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 14 | 1010 | 980 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
@@ -167,10 +167,10 @@ ttl: permanent
 | D_CROSS_ASSET | 跨资产 | C4 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_PF_ALLOC | 组合分配 | C4 | L2_domain | 9 | 5 | 4 | 4 | L3 🟢 | ✅ |
 | D_PF_CORE | 组合核心 | C4 | L2_domain | 14 | 11 | 3 | 10 | L3 🟢 | ✅ |
-| D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 23 | 8 | 15 | 2 | L3 🟢 | ✅ |
+| D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 26 | 8 | 18 | 2 | L3 🟢 | ✅ |
 | D_EX_CORE | 执行核心 | C5 | L2_domain | 43 | 19 | 24 | 15 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 17 | 17 | 0 | 10 | L3 🟢 | ✅ |
-| D_POSITION | 仓位管理 | C5 | L2_domain | 13 | 13 | 0 | 12 | L3 🟢 | ✅ |
+| D_POSITION | 仓位管理 | C5 | L2_domain | 20 | 13 | 7 | 12 | L3 🟢 | ✅ |
 | D_TRADING | 交易运营 | C5 | L2_domain | 40 | 40 | 0 | 23 | L3 🟢 | ✅ |
 | D_ML_SERVE | 推理 | C6 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_ML_TRAIN | 训练 | C6 | L2_domain | 6 | 3 | 3 | 0 | L2 🟡 | 🟡 |
@@ -277,10 +277,10 @@ ttl: permanent
 | D_RISK | 风控 | C3 | L3 | 25 |
 | D_PF_ALLOC | 组合分配 | C4 | L3 | 9 |
 | D_PF_CORE | 组合核心 | C4 | L3 | 14 |
-| D_SELL_DECISION | 卖出决策 | C4 | L3 | 23 |
+| D_SELL_DECISION | 卖出决策 | C4 | L3 | 26 |
 | D_EX_CORE | 执行核心 | C5 | L3 | 43 |
 | D_EX_SOR | 执行路由 | C5 | L3 | 17 |
-| D_POSITION | 仓位管理 | C5 | L3 | 13 |
+| D_POSITION | 仓位管理 | C5 | L3 | 20 |
 | D_TRADING | 交易运营 | C5 | L3 | 40 |
 | D_BACKTEST | 回测 | C7 | L3 | 25 |
 | D_SIMULATION | 仿真 | C7 | L3 | 10 |
