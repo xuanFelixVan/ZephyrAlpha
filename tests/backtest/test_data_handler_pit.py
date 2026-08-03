@@ -1,4 +1,6 @@
 # [BLUEPRINT] MOD-BT-017 | (auto-injected by S4 reconciler) | §
+# [MODULE] tests.backtest.test_data_handler_pit
+# [DOMAIN] D_BACKTEST
 # [TTL] permanent
 # [TESTS] tests/backtest/test_data_handler_pit.py
 # [TTL] permanent

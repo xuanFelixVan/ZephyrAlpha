@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-E2E-001 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-E2E-001 | docs/_working/2026-07-28-three_systems_upgrade_plan.md | §T7
 # [MODULE] tests.factor.test_backtest_factor_e2e
+# [DOMAIN] D_BACKTEST
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

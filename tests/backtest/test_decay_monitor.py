@@ -2,6 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-BT-018 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.backtest.test_decay_monitor
+# [DOMAIN] D_BACKTEST
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

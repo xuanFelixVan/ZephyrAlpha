@@ -1,3 +1,7 @@
+# [BLUEPRINT] MOD-BT-024 | docs/03_modules/_domain_backtest/result_comparator/blueprint.md | §
+# [MODULE] tests.backtest.test_result_comparator
+# [DOMAIN] D_BACKTEST
+# [TTL] permanent
 """MOD-BT-024 Result Comparator — 回测结果比较器单元测试。
 
 覆盖: 配置校验、指标比较(better/worse/中性)、相对差异、
