@@ -59,6 +59,12 @@ PROTECTED_PATTERNS = [
     ("AGENTS.md", "重大修改须 Owner 审批"),
     ("docs/01_policies_and_standards/rules/", "重大修改须 Owner 审批（rules/ 下所有 .yaml）"),
     ("architecture_model/", "重大修改须 Owner 审批"),
+    # 治本 2026-08-03 (ARCH-MODEL-LIFECYCLE-001 P1)：并发会话批量重写文件时
+    # 曾副作用回退 .gitignore/.gitattributes 的模型排除规则修复，导致 27 个代码包
+    # 重新被误忽略。加入受保护清单后，AI 会话写入这两个文件前会被 IRN-010 拦截，
+    # 强制走 ARCH-MODEL-LIFECYCLE-001 流程显式审批，防止静默回退。
+    (".gitignore", "模型排除规则（ARCH-MODEL-LIFECYCLE-001），修改须通过该流程审批"),
+    (".gitattributes", "LFS 规则已移除（ARCH-MODEL-LIFECYCLE-001），修改须通过该流程审批"),
 ]
 
 

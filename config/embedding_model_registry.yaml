@@ -41,6 +41,8 @@ models:
     runtime_plane: cold
     latency_budget_ms: 50
     local_path: "data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2"
+    hf_repo_id: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    required_files: ["model.safetensors", "config.json", "tokenizer.json"]
     tags: [multilingual, retrieval, lightweight, cold-path]
 
   - name: bge-small-zh
@@ -55,6 +57,8 @@ models:
     runtime_plane: cold
     latency_budget_ms: 50
     local_path: "data/models/local_model/bge-small-zh-v1.5"
+    hf_repo_id: "BAAI/bge-small-zh-v1.5"
+    required_files: ["model.safetensors", "config.json", "tokenizer.json"]
     tags: [chinese, retrieval, lightweight]
 
   - name: bge-m3
@@ -69,6 +73,8 @@ models:
     runtime_plane: cold
     latency_budget_ms: 100
     local_path: "data/models/local_model/bge-m3"
+    hf_repo_id: "BAAI/bge-m3"
+    required_files: ["model.safetensors", "config.json", "tokenizer.json"]
     tags: [multilingual, retrieval, dense-sparse, hot-path]
 
   - name: text2vec-base-chinese

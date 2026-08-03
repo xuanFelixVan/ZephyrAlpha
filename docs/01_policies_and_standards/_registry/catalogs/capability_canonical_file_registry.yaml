@@ -5462,6 +5462,26 @@ capabilities:
       自动触发/文档自动重生成/派生产物同步"前，CapabilityLookup 会反查到本文件，
       提示"扩展现有编排器，勿新建"。
 
+  # --------------------------------------------------------------------------
+  - capability_id: model_downloader
+    canonical_override: scripts/ops/download_models.py
+    aliases:
+      - download_models
+      - embedding_model_download
+      - 模型下载
+    description: >-
+      嵌入模型文件下载器（ARCH-MODEL-LIFECYCLE-001 Phase 3）。从 HuggingFace Hub
+      下载嵌入模型到 data/models/local_model/（git-ignored，永不入库）。模型清单
+      SSoT = config/embedding_model_registry.yaml——脚本启动时动态加载，零硬编码，
+      新增/移除模型只改 YAML。仅 local_path + hf_repo_id 均存在的模型需手动下载
+      （bge-m3 / bge-small-zh / paraphrase-multilingual-MiniLM-L12-v2）；无 local_path
+      的模型（all-MiniLM-L6-v2 / text2vec-base-chinese）由 sentence-transformers 首次
+      使用时自动下载，不经本脚本。canonical = scripts/ops/download_models.py
+      （scripts/ 下，需 canonical_override）。CLI：--list 看状态 / --verify 验完整性
+      / --dry-run 预览 / --force 重下 / --model <name> 单模型。新 AI 想做"下载模型
+      / 获取 embedding 模型 / 补齐模型文件"前，CapabilityLookup 会反查到本脚本，
+      提示"运行 download_models.py，勿另写下载逻辑"。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

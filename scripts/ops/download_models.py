@@ -1,4 +1,21 @@
 #!/usr/bin/env python
+# [BLUEPRINT] MOD-INF-045 | docs/03_modules/_domain_infrastructure_operations/model_downloader/blueprint.md | §
+# [MODULE] scripts.ops.download_models
+# [DOMAIN] D_INFRA_OPS
+# [DEPENDENCIES] config/embedding_model_registry.yaml; huggingface_hub; PyYAML
+# [CONSUMERS] manual; CI setup; onboarding
+# [STARTUP] manual
+# [MATURITY] production
+# [INVARIANTS] 模型文件永不入库(.gitignore排除); MODELS从embedding_model_registry.yaml动态加载(SSoT,零硬编码)
+# [MODIFY-GUARD] ARCH-MODEL-LIFECYCLE-001
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] YAML缺失→exit 2; huggingface_hub未安装→exit 1; 下载失败→exit 1
+# [TESTS] manual: --list/--verify/--dry-run
+# [A_module] module_id=MOD-INF-045 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+# [ARCH-REF] #ARCH-MODEL-LIFECYCLE-001
 """
 download_models.py — ARCH-MODEL-LIFECYCLE-001 Phase 3
 =====================================================
@@ -15,6 +32,13 @@ download_models.py — ARCH-MODEL-LIFECYCLE-001 Phase 3
   - sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
                                           → data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2/ (465MB, DEFAULT)
 
+真源说明 (P2 治本 2026-08-03):
+  模型清单（name/hf_repo_id/local_path/file_size_mb/required_files）的唯一真源是
+  config/embedding_model_registry.yaml。本脚本启动时从该 YAML 动态加载，零硬编码——
+  新增/移除模型只需改 YAML，无需同步脚本，消除多真源漂移风险。
+  仅 local_path + hf_repo_id 均存在的模型需要手动下载；其余（all-MiniLM-L6-v2、
+  text2vec-base-chinese）由 sentence-transformers 首次使用时自动下载。
+
 用法:
   python scripts/ops/download_models.py              # 下载所有缺失模型
   python scripts/ops/download_models.py --force       # 强制重新下载所有模型
@@ -25,7 +49,8 @@ download_models.py — ARCH-MODEL-LIFECYCLE-001 Phase 3
 
 依赖:
   huggingface_hub (sentence-transformers>=3.0.0 的传递依赖，已在 requirements.txt)
-  如缺失: pip install huggingface_hub
+  PyYAML (项目通用依赖)
+  如缺失: pip install huggingface_hub pyyaml
 """
 
 from __future__ import annotations
@@ -35,41 +60,64 @@ import shutil
 import sys
 from pathlib import Path
 
-# ---------------------------------------------------------------------------
-# Model Registry — MUST stay in sync with config/embedding_model_registry.yaml
-# Only models with `local_path` in the YAML need downloading here.
-# Models without local_path (all-MiniLM-L6-v2, text2vec-base-chinese) are
-# auto-downloaded by sentence-transformers on first use — no manual action needed.
-# ---------------------------------------------------------------------------
-MODELS: list[dict] = [
-    {
-        "name": "bge-m3",
-        "hf_repo_id": "BAAI/bge-m3",
-        "local_path": "data/models/local_model/bge-m3",
-        "size_mb": 2182,
-        "description": "BGE M3 multilingual (dense/sparse/colbert), HOT collections",
-        "required_files": ["model.safetensors", "config.json", "tokenizer.json"],
-    },
-    {
-        "name": "bge-small-zh-v1.5",
-        "hf_repo_id": "BAAI/bge-small-zh-v1.5",
-        "local_path": "data/models/local_model/bge-small-zh-v1.5",
-        "size_mb": 92,
-        "description": "BGE small Chinese model, lightweight retrieval",
-        "required_files": ["model.safetensors", "config.json", "tokenizer.json"],
-    },
-    {
-        "name": "paraphrase-multilingual-MiniLM-L12-v2",
-        "hf_repo_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-        "local_path": "data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2",
-        "size_mb": 465,
-        "description": "Multilingual 50+ language model, COLD collections (DEFAULT)",
-        "required_files": ["model.safetensors", "config.json", "tokenizer.json"],
-    },
-]
+try:
+    import yaml
+except ImportError:  # pragma: no cover — PyYAML 是项目通用依赖
+    yaml = None
 
 # Repo root = 3 levels up from scripts/ops/download_models.py
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
+# SSoT: 模型注册表 YAML（唯一真源，禁止在本脚本硬编码模型清单）
+REGISTRY_PATH = REPO_ROOT / "config" / "embedding_model_registry.yaml"
+
+# 下载验证默认必需文件（YAML 未声明 required_files 时兜底）
+DEFAULT_REQUIRED_FILES = ["model.safetensors", "config.json", "tokenizer.json"]
+
+
+# ---------------------------------------------------------------------------
+# Model Registry Loader — 从 YAML 动态加载（SSoT，消除多真源）
+# ---------------------------------------------------------------------------
+
+def _load_models_from_registry() -> list[dict]:
+    """从 config/embedding_model_registry.yaml 加载需手动下载的模型清单。
+
+    仅返回 local_path AND hf_repo_id 均存在的模型——这些需要通过本脚本下载。
+    无 local_path 的模型（all-MiniLM-L6-v2、text2vec-base-chinese）由
+    sentence-transformers 首次使用时自动下载，不在此处理。
+    """
+    if yaml is None:
+        print(f"ERROR: PyYAML not installed — cannot load {REGISTRY_PATH}")
+        print("  Install with: pip install pyyaml")
+        sys.exit(2)
+
+    if not REGISTRY_PATH.is_file():
+        print(f"ERROR: Model registry not found: {REGISTRY_PATH}")
+        print("  This file is the SSoT for model download info. Cannot proceed.")
+        sys.exit(2)
+
+    with open(REGISTRY_PATH, encoding="utf-8") as f:
+        registry = yaml.safe_load(f)
+
+    models: list[dict] = []
+    for entry in registry.get("models", []):
+        local_path = entry.get("local_path")
+        hf_repo_id = entry.get("hf_repo_id")
+        if not local_path or not hf_repo_id:
+            continue  # 自动下载模型，跳过
+        models.append({
+            "name": entry["name"],
+            "hf_repo_id": hf_repo_id,
+            "local_path": local_path,
+            "size_mb": entry.get("file_size_mb") or 0,
+            "description": entry.get("description", ""),
+            "required_files": entry.get("required_files", DEFAULT_REQUIRED_FILES),
+        })
+    return models
+
+
+# 启动时从 SSoT YAML 加载（零硬编码）
+MODELS: list[dict] = _load_models_from_registry()
 
 
 # ---------------------------------------------------------------------------
