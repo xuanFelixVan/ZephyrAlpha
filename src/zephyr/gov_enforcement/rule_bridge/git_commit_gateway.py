@@ -1707,6 +1707,56 @@ class GitCommitGateway:
             )
         return None
 
+    def _git_add_with_index_lock_retry(
+        self, pathspec_file: str, session_id: str,
+    ) -> "CommitResult | None":
+        """git add 带 index.lock 暂时性竞争重试（#ARCH-RECONCILER-INDEXLOCK-RETRY）。
+
+        根因：外部裸 git commit（绕过 GitCommitGateway）可能持有 .git/index.lock，
+        导致 reconciler auto-commit 的 git add 失败。index.lock 是暂时性竞争
+        （持有进程完成后释放），且 git add 阶段 commit 未执行，重试不会产生
+        重复 commit——区别于 commit 阶段失败的确定性错误盲重试
+        （reconciliation_registry.py:3897 反模式，项目明确反对盲重试）。
+
+        策略：只对 "index.lock" + "File exists" 模式重试，最多 3 次，退避 2s/4s。
+        其他错误立即返回 COMMIT_FAILED（不重试）。gate-commit-gw 阻止裸 commit
+        是根因治本，本方法是防御层（兜底外部绕过路径）。
+
+        Returns:
+            None=git add 成功；CommitResult(COMMIT_FAILED)=失败（重试耗尽或非 index.lock）。
+        """
+        max_retries = 3
+        add_result = None
+        for attempt in range(max_retries):
+            add_result = self.run_git(
+                ["git", "add", f"--pathspec-from-file={pathspec_file}"]
+            )
+            if add_result.returncode == 0:
+                return None  # 成功
+            stderr = add_result.stderr.strip()
+            if "index.lock" in stderr and "File exists" in stderr and attempt < max_retries - 1:
+                backoff = 2.0 * (attempt + 1)  # 2s, 4s 退避
+                logger.warning(
+                    "_commit_auto: git add index.lock 竞争，%.0fs 后重试 "
+                    "(attempt=%d/%d, session=%s) —— #ARCH-RECONCILER-INDEXLOCK-RETRY "
+                    "(暂时性竞争，commit 未执行，重试安全)",
+                    backoff, attempt + 1, max_retries, session_id,
+                )
+                time.sleep(backoff)  # noqa: m10-time-trigger — 锁等待退避，非周期触发
+                continue
+            return CommitResult(
+                status=CommitStatus.COMMIT_FAILED,
+                message=f"git add failed (auto-commit): {stderr}",
+            )
+        return CommitResult(
+            status=CommitStatus.COMMIT_FAILED,
+            message=(
+                f"git add failed (auto-commit) after {max_retries} retries"
+                f" (index.lock held by external git process): "
+                f"{add_result.stderr.strip() if add_result else 'unknown'}"
+            ),
+        )
+
     def _commit_auto(
         self, session_id: str, files: list[str], message: str,
     ) -> CommitResult:
@@ -1788,14 +1838,11 @@ class GitCommitGateway:
             with _GlobalCommitLock(self.project_root):
                 pathspec_file = self._write_pathspec_file(existing)
                 try:
-                    add_result = self.run_git(
-                        ["git", "add", f"--pathspec-from-file={pathspec_file}"]
+                    add_fail = self._git_add_with_index_lock_retry(
+                        pathspec_file, session_id,
                     )
-                    if add_result.returncode != 0:
-                        return CommitResult(
-                            status=CommitStatus.COMMIT_FAILED,
-                            message=f"git add failed (auto-commit): {add_result.stderr.strip()}",
-                        )
+                    if add_fail is not None:
+                        return add_fail
                     diff_result = self.run_git(["git", "diff", "--cached", "--quiet"])
                     if diff_result.returncode == 0:
                         return CommitResult(
@@ -1838,14 +1885,11 @@ class GitCommitGateway:
             # 无锁降级：直接执行 auto-commit（不串行化，但 gate 仍在）
             pathspec_file = self._write_pathspec_file(existing)
             try:
-                add_result = self.run_git(
-                    ["git", "add", f"--pathspec-from-file={pathspec_file}"]
+                add_fail = self._git_add_with_index_lock_retry(
+                    pathspec_file, session_id,
                 )
-                if add_result.returncode != 0:
-                    return CommitResult(
-                        status=CommitStatus.COMMIT_FAILED,
-                        message=f"git add failed (auto-commit): {add_result.stderr.strip()}",
-                    )
+                if add_fail is not None:
+                    return add_fail
                 diff_result = self.run_git(["git", "diff", "--cached", "--quiet"])
                 if diff_result.returncode == 0:
                     return CommitResult(
