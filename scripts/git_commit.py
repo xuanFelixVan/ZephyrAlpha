@@ -454,6 +454,15 @@ def main() -> int:
              "供审计追踪。AI 不得自行使用——须用户终端手动指定。",
     )
     parser.add_argument(
+        "--allow-non-worktree",
+        action="store_true",
+        default=False,
+        help="worktree 阻断逃生通道（#ARCH-WORKTREE-GATE-001 治本）——非 worktree commit "
+             "且有其他活跃 session 时放行 WORKTREE-REQUIRED gate。commit message 追加 "
+             "[GW:<sid>:non-worktree] 标记供审计追踪。AI 不得自行使用——须用户终端手动指定"
+             "（对称 --allow-overlap 治理）。",
+    )
+    parser.add_argument(
         "--adopt-prior-work",
         action="store_true",
         default=False,
@@ -473,17 +482,6 @@ def main() -> int:
              "受保护派生文件（blueprint_registry.yaml / path_ownership_map.yaml 等）"
              "删除会导致 20+ 消费方静默降级，默认硬阻断；本旗标显式声明合法删除。"
              "AI 不得自行使用——须用户终端手动指定（对称 --allow-overlap 治理）。",
-    )
-    parser.add_argument(
-        "--allow-non-worktree",
-        action="store_true",
-        default=False,
-        help="WORKTREE_VIOLATION 治本通道（#ARCH-WORKTREE-GATE-001）——"
-             "非 worktree 并发 commit 场景放行 WORKTREE-REQUIRED gate。"
-             "君子协定在 100% AI 场景下系统性失效，gate 默认硬阻断并发非 worktree commit；"
-             "本旗标显式声明合法的共享工作区 commit（如 solo session 误判、"
-             "reconciler auto-commit 兜底）。AI 不得自行使用——须用户终端手动指定"
-             "（对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
         "--claim-only",
