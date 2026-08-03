@@ -245,6 +245,10 @@ def verify_path3_postcommit_yaml() -> dict:
             spawned_calls.append(args)
             self.pid = 99999
 
+    # mock _is_lock_active 返回 False（防残留 lockfile 干扰路径3 验证）
+    # 场景：真实 commit 后 60s 内运行本脚本，lockfile 仍活跃 → main() 会 skip spawn → 验证失败
+    if hasattr(pcm, "_is_lock_active"):
+        pcm._is_lock_active = lambda: False
     pcm.subprocess.Popen = _FakePopen  # type: ignore
     try:
         ret = pcm.main()

@@ -1,4 +1,14 @@
-# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [A_test] module_id: MOD-GOV_post_commit_oscillation_guard | layer=test | stability=volatile | safety=L | ai_modifiable
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/generator_auto_trigger_pilot.md | §防振荡强化
+# [MODULE] tests.governance.test_post_commit_oscillation_guard
+# [DOMAIN] D_GOV_CODE_QUALITY
+# [CONSUMERS] pytest
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [INVARIANTS] 测试不污染真实 .runtime/locks（mock _LOCK_FILE 到 tmp_path）
+# [ERROR_CONTRACT] 测试失败 = 防振荡机制缺失/回归
+# [MATURITY] evolving
 # [TTL] permanent
 """test_post_commit_oscillation_guard.py — post_commit_regen_yaml.py 防振荡强化机制测试。
 
