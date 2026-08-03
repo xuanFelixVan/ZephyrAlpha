@@ -67,9 +67,9 @@ flowchart TD
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_pf_alloc_core_strategy_correlation_gate_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_pf_alloc_core_strategy_correlation_gate_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
