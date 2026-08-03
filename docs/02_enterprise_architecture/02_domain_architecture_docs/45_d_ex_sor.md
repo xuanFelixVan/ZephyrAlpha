@@ -85,21 +85,21 @@ flowchart TD
     src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_api_broker_api_connector_py -->|runtime / runtime| src_zephyr_ex_sor_api_api_rate_limiter_py
     src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_execution_scheduler_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
+    src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
+    src_zephyr_ex_sor_core_algo_trading_engine_py -->|runtime / runtime| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
     src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
-    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_optimal_order_router_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|runtime / runtime| src_zephyr_ex_sor_core_execution_scheduler_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
-    src_zephyr_ex_sor_core_algo_trading_engine_py -->|runtime / runtime| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_slippage_analyzer_py
+    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
+    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_optimal_order_router_py
     src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_execution_quality_scorer_py
+    src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_slippage_analyzer_py
     src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_transaction_cost_optimizer_py
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_EX_CORE
@@ -109,13 +109,13 @@ flowchart TD
     src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_sor_api_api_rate_limiter_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_services_transaction_cost_optimizer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_sor_core_algo_trading_engine_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_core_algo_trading_engine_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_sor_services_slippage_analyzer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_services_execution_quality_scorer_py -->|导入依赖 / import_depends| D_SHARED
@@ -166,21 +166,21 @@ flowchart TD
     src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_api_broker_api_connector_py -->|runtime / runtime| src_zephyr_ex_sor_api_api_rate_limiter_py
     src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_execution_scheduler_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
+    src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
+    src_zephyr_ex_sor_core_algo_trading_engine_py -->|runtime / runtime| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
     src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
-    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_optimal_order_router_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|runtime / runtime| src_zephyr_ex_sor_core_execution_scheduler_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
-    src_zephyr_ex_sor_core_algo_trading_engine_py -->|runtime / runtime| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_slippage_analyzer_py
+    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
+    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_optimal_order_router_py
     src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_execution_quality_scorer_py
+    src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_slippage_analyzer_py
     src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_transaction_cost_optimizer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
