@@ -3,12 +3,22 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-02T12:59:21Z'
+generated_at: '2026-08-03T14:07:47Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 130
+total_gates: 133
 gates:
+- gate_id: GATE-PROTECTED-PATHS
+  name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
+  entry: python scripts/governance/d6_security/check_protected_paths.py --staged
+  description: 检测 staged 文件是否含受保护路径（.gitignore/.gitattributes/AGENTS.md 等），双层防护 Layer
+    2（Layer 1 为 in-process gate PROTECTED-PATHS）
+  files_trigger: ''
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
   entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
@@ -207,7 +217,7 @@ gates:
 - gate_id: GATE-SSOT-CODE
   name: 'GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py
-    scripts/governance/d3_metadata/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
+    scripts/governance/d3_metadata/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci,--staged
   description: 代码 SSoT 合并门禁——GATE-SSOT(module_path冲突) + SINGLESOURCE(文件名级) + NO-PURE-SHIM(纯re-export
     shim，无参数全量扫描src/zephyr/)，run_gate_chain 顺序执行
   files_trigger: ^(src/zephyr/|scripts/).*\.py$
@@ -280,8 +290,9 @@ gates:
 - gate_id: GATE-20
   name: 'GATE-20: 裸调 LLM API 检测（RULE-LSG-001 + COND-30）'
   entry: python scripts/governance/d7_code/detect_direct_llm_calls.py
-  description: AST 扫描裸调 LLM API——强制所有 LLM 调用必须经过 LSGSecurityGateway。已导入 LSG 的放行，裸调阻断。对标
-    RULE-LSG-001 + COND-30
+  description: AST 扫描裸调 LLM API——强制所有 LLM 调用必须经过 LSGSecurityGateway。已导入 LSG 的放行，裸调阻断。--staged
+    变更检测：pre-commit 只扫 staged .py（6.5s→亚秒），CI 全量用 --ci 无 --staged。对标 RULE-LSG-001
+    + COND-30
   files_trigger: ^src/zephyr/.*\.py$
   always_run: false
   category: unknown
@@ -372,8 +383,8 @@ gates:
 - gate_id: GATE-ENCODING
   name: 'GATE-ENCODING: 编码安全+mojibake+BOM检测'
   entry: python scripts/governance/d7_code/check_encoding.py
-  description: 编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）。已合并
-    GATE-BOM（--dir . 全项目覆盖）
+  description: 编码安全门禁——BOM/autoGuessEncoding/mojibake硬阻断，CRLF为WARNING不阻断（OPS-2026062501修复）。--staged
+    变更检测：pre-commit 只查 staged 文件（92s→亚秒），全量审计由 CI --dir . 覆盖
   files_trigger: \.(py|md|yaml|yml|json|toml)$
   always_run: false
   category: unknown
@@ -419,9 +430,9 @@ gates:
   source: pre-commit
 - gate_id: GATE-DEBT-BRIDGE
   name: 'GATE-DEBT-BRIDGE: 架构债务防御（5.96 维度防复发）'
-  entry: python scripts/governance/d7_code/scan_debt.py --ci
-  description: 5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。阶段2 已转硬阻断（R68
-    存量清零）
+  entry: python scripts/governance/d7_code/scan_debt.py --ci --staged
+  description: 5.96 维度防复发——检测 dataclass 布尔冗余/bool参数蔓延/action+bool共存。--staged 变更检测：pre-commit
+    只扫 staged .py（5.1s→亚秒），CI 全量用 --ci 无 --staged。阶段2 已转硬阻断（R68 存量清零）
   files_trigger: ^src/zephyr/.*\.py$
   always_run: false
   category: unknown
@@ -429,9 +440,10 @@ gates:
   source: pre-commit
 - gate_id: GATE-ANY-ABUSE
   name: 'GATE-ANY-ABUSE: 类型注解 Any 滥用（5.145 维度防复发，Phase 3 commit 阻断）'
-  entry: python scripts/governance/d7_code/check_any_abuse.py --ci
-  description: '5.145 维度防复发——检测函数签名裸 Any 滥用（ANY-1 参数 / ANY-2 返回值）。Phase 3 commit 阻断（存量已清零
-    e494c72623），`# noqa: any-abuse` 行级豁免合理 Any'
+  entry: python scripts/governance/d7_code/check_any_abuse.py --ci --staged
+  description: '5.145 维度防复发——检测函数签名裸 Any 滥用（ANY-1 参数 / ANY-2 返回值）。--staged 变更检测：pre-commit
+    只扫 staged .py（3.8s→亚秒），CI 全量用 --ci 无 --staged。Phase 3 commit 阻断（存量已清零 e494c72623），`#
+    noqa: any-abuse` 行级豁免合理 Any'
   files_trigger: ^src/zephyr/.*\.py$
   always_run: false
   category: unknown
@@ -669,6 +681,16 @@ gates:
   name: 'DERIVATION-ANNOTATION: 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）（CommitGate, priority=65）'
   entry: in-process (GitCommitGateway)
   description: 派生关系声明真实性校验门禁（DERIVATION-ANNOTATION）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: DERIVED-FILE-DELETION-PROTECTION
+  name: 'DERIVED-FILE-DELETION-PROTECTION: 派生文件删除保护门禁（DERIVED-FILE-DELETION-PROTECTION）（CommitGate,
+    priority=46）'
+  entry: in-process (GitCommitGateway)
+  description: 派生文件删除保护门禁（DERIVED-FILE-DELETION-PROTECTION）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1028,6 +1050,16 @@ gates:
     priority=111）'
   entry: in-process (GitCommitGateway)
   description: pre-commit 配置离线可运行检测门禁（GATE-PRECOMMIT-OFFLINE）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: PROTECTED-PATHS
+  name: 'PROTECTED-PATHS: 受保护路径写入检测门禁（PROTECTED-PATHS，#ARCH-MODEL-LIFECYCLE-001 P1
+    治本）（CommitGate, priority=28）'
+  entry: in-process (GitCommitGateway)
+  description: 受保护路径写入检测门禁（PROTECTED-PATHS，#ARCH-MODEL-LIFECYCLE-001 P1 治本）
   files_trigger: ''
   always_run: false
   category: commit_gate

@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3715 |
-| 生产态模块 | 3530 |
+| 模块总数 | 3709 |
+| 生产态模块 | 3524 |
 | 设计态模块 | 185 |
 
 ## 域清单（按架构层分组）
@@ -79,11 +79,11 @@ ttl: permanent
 | D_CONTRACTS | 共享契约 / D_CONTRACTS | 0 | 0 | 0 | 0/150 (OK) | [📄 01_d_contracts.md](01_d_contracts.md) |
 | D_INFRASTRUCTURE | 跨层契约基础设施 / Cross-Layer Contract Infrastructure | 26 | 26 | 0 | 26/150 (OK) | [📄 02_d_infrastructure.md](02_d_infrastructure.md) |
 | D_INFRA_A2A | A2A通信 / A2A Communication | 72 | 72 | 0 | 72/150 (OK) | [📄 03_d_infra_a2a.md](03_d_infra_a2a.md) |
-| D_INFRA_OPS | 基础设施运维 / Asset Inventory | 2 | 2 | 0 | 2/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
+| D_INFRA_OPS | 基础设施运维 / Asset Inventory | 1 | 1 | 0 | 1/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 55 | 55 | 0 | 55/150 (OK) | [📄 05_d_infra_recovery.md](05_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 169 | 167 | 2 | 169/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 173 | 171 | 2 | 173/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | 可观测性 / Observability | 0 | 0 | 0 | 0/150 (OK) | [📄 07_d_infra_telemetry.md](07_d_infra_telemetry.md) |
-| D_SHARED | 共享服务 / Shared Services | 184 | 184 | 0 | 184/150 (超容) | [📄 08_d_shared.md](08_d_shared.md) |
+| D_SHARED | 共享服务 / Shared Services | 177 | 177 | 0 | 177/150 (超容) | [📄 08_d_shared.md](08_d_shared.md) |
 
 ### L1 基础平台层 / L1 Foundation (20 个域 / 20 domains)
 
@@ -129,7 +129,7 @@ ttl: permanent
 | D_DATA_SCRIPTS | 数据治理脚本 / D_DATA_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 41_d_data_scripts.md](41_d_data_scripts.md) |
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 7 | 7 | 0 | 7/150 (OK) | [📄 42_d_digital_twin.md](42_d_digital_twin.md) |
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 7 | 0 | 7/150 (OK) | [📄 43_d_exec_sim.md](43_d_exec_sim.md) |
-| D_EX_CORE | 执行核心 / Execution Core | 44 | 20 | 24 | 44/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
+| D_EX_CORE | 执行核心 / Execution Core | 42 | 18 | 24 | 42/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 17 | 0 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 109 | 65 | 44 | 109/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
 | D_FRONTEND | 前端 / Frontend | 24 | 20 | 4 | 24/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
@@ -141,7 +141,7 @@ ttl: permanent
 | D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 118 | 117 | 1 | 118/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 35 | 35 | 0 | 35/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 411 | 411 | 0 | 411/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 412 | 412 | 0 | 412/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
@@ -157,4 +157,4 @@ ttl: permanent
 | D_SIGQC | 信号质量控制 / Signal Quality Control | 2 | 2 | 0 | 2/150 (OK) | [📄 69_d_sigqc.md](69_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 15 | 15 | 0 | 15/150 (OK) | [📄 70_d_simulation.md](70_d_simulation.md) |
 | D_STRUCT_SCRIPTS | 结构治理脚本 / D_STRUCT_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 71_d_struct_scripts.md](71_d_struct_scripts.md) |
-| D_TRADING | 交易运营 / Trading Operations | 43 | 43 | 0 | 43/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 42 | 42 | 0 | 42/150 (OK) | [📄 72_d_trading.md](72_d_trading.md) |

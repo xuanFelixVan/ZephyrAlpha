@@ -28,12 +28,12 @@ ttl: permanent
 | 域名称 | 共享服务 | Domain Name | Shared Services |
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 177 | Module Count | 177 |
-| 域内依赖 | 92 | Internal Dependencies | 92 |
+| 域内依赖 | 93 | Internal Dependencies | 93 |
 | 跨域入边 | 914 | Cross-domain Incoming | 914 |
-| 跨域出边 | 8 | Cross-domain Outgoing | 8 |
+| 跨域出边 | 7 | Cross-domain Outgoing | 7 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 177 | Production Modules | 177 |
-| 容量 | 184/150 (超容) | Capacity | 184/150 (超容) |
+| 容量 | 177/150 (超容) | Capacity | 177/150 (超容) |
 | 描述 | 事件总线(event_bus) | Description | 事件总线(event_bus) |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -404,97 +404,98 @@ flowchart TD
     src_zephyr_shared_foundation_errors_py ~~~ src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_paths_py ~~~ src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_alerts_alert_escalation_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_idempotency_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_idempotency_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_circuit_breaker_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_retry_py
+    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
     src_zephyr_shared_contracts_backpressure_resume_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_backpressure_throttle_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_pause_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_throttle_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_types_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
-    src_zephyr_shared_contracts_backpressure_types_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_core_timestamp_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_contract_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_data_quality_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_contracts_errors_signal_degradation_warning_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_factor_computation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_experiment_experiment_result_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_database_init_py -->|config_depends / config_depends| src_zephyr_shared_database_database_crud_mixin_py
     src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
     src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
-    src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
-    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_io_sqlite_factory_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_workspace_telemetry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_sqlite_factory_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_yaml_utils_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_events_upgrade_strategy_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_maintenance_zero_config_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_observability_metrics_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_observability_metrics_server_py -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
     src_zephyr_shared_observability_tracing_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_observability_metrics_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_protocols_a2a_a2a_coordination_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
     src_zephyr_shared_protocols_ports_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     src_zephyr_shared_protocols_a2a_a2a_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    src_zephyr_shared_resilience_fallback_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_degradation_chain_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_resilience_fallback_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_retry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
-    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
     src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_version_py
     src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_security_capability_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_security_capability_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_registry_py
-    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_utils_logging_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_utils_testing_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_utils_zephyr_logger_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
     tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_server_py
+    tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
     D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_io_io_cache_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
@@ -506,6 +507,8 @@ flowchart TD
     src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     D_ML_TRAIN["训练<br/>训练，负责模型训练、特征工程和模型评估<br/>Training<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| D_ML_TRAIN
+    D_INTEGRATION["管线路由<br/>管线路由，负责跨域数据流路由、管道编排和集成适配<br/>Pipeline Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
@@ -524,13 +527,12 @@ flowchart TD
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_shared_io_paths_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_version_py,src_zephyr_shared_cross_layer_ml_experiment_pipeline_py,src_zephyr_shared_adaptation_execution_tuner_py,src_zephyr_shared_adaptation_prompt_version_manager_py,src_zephyr_shared_ai_guards_ai_audit_guard_py,src_zephyr_shared_ai_guards_combinatorial_gate_py,src_zephyr_shared_ai_guards_core_integrity_guard_py,src_zephyr_shared_alerts_alert_escalation_py,src_zephyr_shared_alerts_alert_manager_py,src_zephyr_shared_alerts_alert_precision_tracker_py,src_zephyr_shared_alerts_dual_channel_alert_py,src_zephyr_shared_alerts_heartbeat_server_py,src_zephyr_shared_api_api_client_py,src_zephyr_shared_api_api_index_py,src_zephyr_shared_api_dos_launcher_py,src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py,src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py,src_zephyr_shared_blueprint_tools_blueprint_decomposer_py,src_zephyr_shared_blueprint_tools_blueprint_scorer_py,src_zephyr_shared_capacity_governance_adaptive_sampler_py,src_zephyr_shared_capacity_governance_budget_aware_prompt_py,src_zephyr_shared_capacity_governance_capacity_calibrator_py,src_zephyr_shared_capacity_governance_capacity_digital_twin_py,src_zephyr_shared_capacity_governance_capacity_fingerprint_py,src_zephyr_shared_capacity_governance_capacity_runbook_generator_py,src_zephyr_shared_capacity_governance_cost_estimator_py,src_zephyr_shared_capacity_governance_dependency_capacity_guard_py,src_zephyr_shared_capacity_governance_model_capacity_probe_py,src_zephyr_shared_compensation_saga_compensator_py,src_zephyr_shared_context_context_engine_py,src_zephyr_shared_contracts_backpressure_types_py,src_zephyr_shared_contracts_backpressure_pause_py,src_zephyr_shared_contracts_backpressure_resume_py,src_zephyr_shared_contracts_backpressure_throttle_py,src_zephyr_shared_contracts_contract_bus_py,src_zephyr_shared_contracts_core_base_event_py,src_zephyr_shared_contracts_core_enforcer_py,src_zephyr_shared_contracts_core_factories_py,src_zephyr_shared_contracts_core_gate_types_py,src_zephyr_shared_contracts_core_registry_py,src_zephyr_shared_contracts_core_runtime_plane_tag_py,src_zephyr_shared_contracts_core_system_configuration_py,src_zephyr_shared_contracts_core_timestamp_py,src_zephyr_shared_contracts_core_trace_context_py,src_zephyr_shared_contracts_enums_init_py,src_zephyr_shared_contracts_enums_order_enums_py,src_zephyr_shared_contracts_errors_contract_violation_error_py,src_zephyr_shared_contracts_errors_data_quality_error_py,src_zephyr_shared_contracts_errors_execution_rejection_error_py,src_zephyr_shared_contracts_errors_factor_computation_error_py,src_zephyr_shared_contracts_errors_risk_limit_violation_error_py,src_zephyr_shared_contracts_errors_signal_degradation_warning_py,src_zephyr_shared_contracts_escalation_budget_alert_py,src_zephyr_shared_contracts_execution_capital_allocation_result_py,src_zephyr_shared_contracts_execution_execution_report_py,src_zephyr_shared_contracts_execution_fill_py,src_zephyr_shared_contracts_execution_model_serving_request_py,src_zephyr_shared_contracts_execution_order_py,src_zephyr_shared_contracts_experiment_experiment_result_py,src_zephyr_shared_contracts_experiment_model_serving_response_py,src_zephyr_shared_contracts_external_ext_001_py,src_zephyr_shared_contracts_external_ext_002_py,src_zephyr_shared_contracts_external_ext_003_py,src_zephyr_shared_contracts_external_ext_004_py,src_zephyr_shared_contracts_identity_agent_identity_py,src_zephyr_shared_contracts_identity_permission_py,src_zephyr_shared_contracts_llm_gateway_protocol_py,src_zephyr_shared_contracts_market_instrument_py,src_zephyr_shared_contracts_orchestration_protocol_py,src_zephyr_shared_contracts_portfolio_money_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_database_init_py,src_zephyr_shared_database_database_crud_mixin_py,src_zephyr_shared_dependency_dependency_graph_py,src_zephyr_shared_draft_draft_assistant_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_models_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_limiter_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py,src_zephyr_shared_infra_process_lifecycle_gateway_py,src_zephyr_shared_infra_process_pool_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py,src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_sqlite_factory_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_io_workspace_telemetry_py,src_zephyr_shared_io_yaml_utils_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_healthcheck_service_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_state_machine_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py,src_zephyr_shared_maintenance_autonomy_monitor_py,src_zephyr_shared_maintenance_code_economy_analyzer_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_owner_trust_gauge_py,src_zephyr_shared_maintenance_slo_review_assistant_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_observability_dashboard_init_py,src_zephyr_shared_observability_metrics_py,src_zephyr_shared_observability_metrics_server_py,src_zephyr_shared_observability_reasoning_spans_py,src_zephyr_shared_observability_tracing_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py,src_zephyr_shared_protocols_module_birth_registry_py,src_zephyr_shared_protocols_ports_py,src_zephyr_shared_protocols_registry_py,src_zephyr_shared_reliability_diff_planner_py,src_zephyr_shared_reliability_retry_handler_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_degradation_chain_py,src_zephyr_shared_resilience_error_budget_tracker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_fault_isolator_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_schema_base_config_py,src_zephyr_shared_schema_execution_model_py,src_zephyr_shared_schema_schema_registry_py,src_zephyr_shared_schema_schemas_py,src_zephyr_shared_schema_severity_types_py,src_zephyr_shared_schema_task_types_py,src_zephyr_shared_security_capability_py,src_zephyr_shared_security_sandbox_executor_py,src_zephyr_shared_security_secrets_py,src_zephyr_shared_security_ssot_guard_py,src_zephyr_shared_session_session_audit_py,src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_session_continuity_py,src_zephyr_shared_utils_async_utils_py,src_zephyr_shared_utils_cli_summary_py,src_zephyr_shared_utils_context_py,src_zephyr_shared_utils_converters_py,src_zephyr_shared_utils_db_utils_py,src_zephyr_shared_utils_diff_utils_py,src_zephyr_shared_utils_logging_py,src_zephyr_shared_utils_migration_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py,src_zephyr_shared_utils_zephyr_logger_py,src_zephyr_shared_versioning_vibe_experiment_tracker_py,tests_zephyr_shared_observability_test_metrics_server_py production
-    class D_INFRA_RUNTIME,D_GOV_RULE,D_FEEDBACK_LOOP,D_ML_TRAIN,D_GOV_CODE_QUALITY,D_GOVERNANCE,D_ORCHESTRATOR,D_GOV_AUDIT external_prod
+    class D_INFRA_RUNTIME,D_GOV_RULE,D_FEEDBACK_LOOP,D_ML_TRAIN,D_INTEGRATION,D_GOV_CODE_QUALITY,D_GOVERNANCE,D_ORCHESTRATOR,D_GOV_AUDIT external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -891,97 +893,98 @@ flowchart TD
     src_zephyr_shared_foundation_errors_py ~~~ src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_paths_py ~~~ src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_alerts_alert_escalation_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_idempotency_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_idempotency_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_circuit_breaker_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_retry_py
+    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
     src_zephyr_shared_contracts_backpressure_resume_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_backpressure_throttle_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_pause_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_throttle_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_types_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
-    src_zephyr_shared_contracts_backpressure_types_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_core_timestamp_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_contract_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_data_quality_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_contracts_errors_signal_degradation_warning_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_factor_computation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_experiment_experiment_result_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_database_init_py -->|config_depends / config_depends| src_zephyr_shared_database_database_crud_mixin_py
     src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
     src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
-    src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
-    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_io_sqlite_factory_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_workspace_telemetry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_sqlite_factory_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_yaml_utils_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_events_upgrade_strategy_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_maintenance_zero_config_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_observability_metrics_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_observability_metrics_server_py -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
     src_zephyr_shared_observability_tracing_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_observability_metrics_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_protocols_a2a_a2a_coordination_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
     src_zephyr_shared_protocols_ports_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     src_zephyr_shared_protocols_a2a_a2a_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    src_zephyr_shared_resilience_fallback_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_degradation_chain_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_resilience_fallback_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_retry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
-    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
     src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_version_py
     src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_security_capability_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_security_capability_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_registry_py
-    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_utils_logging_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_utils_testing_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_utils_zephyr_logger_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
     tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_server_py
+    tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -1704,232 +1707,233 @@ flowchart TD
 | 689 | D_INTEGRATION 管线路由: CT-DLQ-001: DeadLetterQueue -> System Event Bus integrati... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
 | 690 | D_INTEGRATION 管线路由: event_schemas.py —— Observer 事件体 Pydantic V2 Schema... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
 | 691 | D_INTEGRATION 管线路由: event_schemas.py —— Observer 事件体 Pydantic V2 Schema... | → | schema/base_config.py | 导入依赖 / import_depends |
-| 692 | D_INTEGRATION 管线路由: ChunkStrategyRouter — MOD-INF-011 分块策略调度 (vector_m... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 693 | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collection 全生命周... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 694 | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collection 全生命周... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 695 | D_INTEGRATION 管线路由: vector_memory/collection_schemas.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 696 | D_INTEGRATION 管线路由: vector_memory/collection_schemas.py | → | schema/schemas.py | 导入依赖 / import_depends |
-| 697 | D_INTEGRATION 管线路由: HybridRetriever — MOD-INF-011 混合检索架构 (vector_memor... | → | ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
-| 698 | D_INTEGRATION 管线路由: HybridRetriever — MOD-INF-011 混合检索架构 (vector_memor... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 699 | D_INTEGRATION 管线路由: IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复 ... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 700 | D_INTEGRATION 管线路由: ChromDB -> FAISS + SQLite WAL 数据迁移脚本 (vector_memory... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 701 | D_INTEGRATION 管线路由: RetrievalFeedback — MOD-INF-011 FLE 检索质量消费 (vector... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 702 | D_INTEGRATION 管线路由: SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 ... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 703 | D_INTEGRATION 管线路由: VectorBridge — MOD-INF-011 CE/KB 外部集成适配器 (vector_... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 704 | D_INTEGRATION 管线路由: VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 (v... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 705 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 706 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 707 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | schema/base_config.py | 导入依赖 / import_depends |
-| 708 | D_INTELLIGENCE 上下文管理: ModelDriftDetector — LLM 模型行为漂移检测。 (intelligenc... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 709 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
-| 710 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 711 | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装） (... | → | CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
-| 712 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 713 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 714 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 715 | D_INTELLIGENCE 上下文管理: 真实多文件注入装配器（Phase 3 极限深度）。 (model_profili... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 716 | D_INTELLIGENCE 上下文管理: DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 717 | D_INTELLIGENCE 上下文管理: DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 718 | D_INTELLIGENCE 上下文管理: ExamExecutor --- 执行式代码评测（HumanEval pass@1 风格，v... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 719 | D_INTELLIGENCE 上下文管理: JobMatcher --- 模型岗位匹配器 (model_profiling/job_matche... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 720 | D_INTELLIGENCE 上下文管理: ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 721 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 722 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 723 | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 724 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 725 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 726 | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 727 | D_MKT_DATA 行情数据: D_MKT_DATA — Autoload (自动加载器) (market_data/autoload.py) | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 728 | D_MKT_DATA 行情数据: D_MKT_DATA — Connector Base (行情数据连接器基类) (connec... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 729 | D_MKT_DATA 行情数据: D_MKT_DATA — Connector Manager (连接器管理器) (connector... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 730 | D_MKT_DATA 行情数据: D_MKT_DATA — Failover Manager (故障切换管理器) (failover... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 731 | D_MKT_DATA 行情数据: D_MKT_DATA — Raw Data Cache 实现 (原始数据缓存) (raw_dat... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 732 | D_MKT_DATA 行情数据: D_MKT_DATA — Vendor Base (行情数据源基类) (market_data/v... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 733 | D_MKT_DATA 行情数据: D_MKT_DATA — Vendor Registry (行情数据源注册表) (market_... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 734 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
-| 735 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 736 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
-| 737 | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 738 | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | escalation/budget_alert.py | 导入依赖 / import_depends |
-| 739 | D_OPS 反馈循环: cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 740 | D_OPS 反馈循环: cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 741 | D_ORCHESTRATOR 代理编排器: AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 742 | D_ORCHESTRATOR 代理编排器: AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 743 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 744 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 745 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 746 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 747 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 748 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 749 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 750 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/base_config.py | 导入依赖 / import_depends |
-| 751 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/execution_model.py | 导入依赖 / import_depends |
-| 752 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/severity_types.py | 导入依赖 / import_depends |
-| 753 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 754 | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 (contracts/finding_bridge.py) | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 755 | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 (contracts/finding_bridge.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 756 | D_ORCHESTRATOR 代理编排器: ActiveTaskQueue — 后台任务轮询与自动分发 (core/task_queu... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 757 | D_ORCHESTRATOR 代理编排器: DeferredQueue: WAITING -> READY task scheduler. (orchestr... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
-| 758 | D_ORCHESTRATOR 代理编排器: DeferredQueue: WAITING -> READY task scheduler. (orchestr... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 759 | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-01... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 760 | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-01... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 761 | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器 (execution/memory_writer.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 762 | D_ORCHESTRATOR 代理编排器: Orc->Script 脚本执行器 — run_audit() 生产者 (execution/s... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 763 | D_ORCHESTRATOR 代理编排器: CE 任务上下文构建器 — build_from_task() 消费者 (executio... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 764 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 765 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 766 | D_ORCHESTRATOR 代理编排器: WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） ... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 767 | D_ORCHESTRATOR 代理编排器: WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） ... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 768 | D_ORCHESTRATOR 代理编排器: ChaosHook — integrates ChaosEngine with the orchestrator... | → | contracts/orchestration_protocol.py | 导入依赖 / import_depends |
-| 769 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 770 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 771 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 772 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 773 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 774 | D_ORCHESTRATOR 代理编排器: HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 775 | D_ORCHESTRATOR 代理编排器: HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 776 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 777 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 778 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 779 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 780 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 781 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 782 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 783 | D_PF_ALLOC 组合分配: Multi-Strategy Capital Allocator — 多策略资金分配器 (MOD... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 784 | D_PF_ALLOC 组合分配: Signal Synthesis Combiner — 信号合成器 (MOD-PA-002) (cor... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 785 | D_PF_ALLOC 组合分配: Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 786 | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 787 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 788 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 789 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 790 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 791 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 792 | D_POSITION 仓位管理: Calendar Position Constraint — 日历仓位约束 (MOD-POS-017... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 793 | D_POSITION 仓位管理: Capital Curve Manager — 资金曲线管理器 (MOD-POS-007) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 794 | D_POSITION 仓位管理: Cash Manager — 资金管理器 (MOD-POS-006) (core/cash_manag... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 795 | D_POSITION 仓位管理: Drawdown Controller — 回撤控制器 (MOD-POS-008) (core/dra... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 796 | D_POSITION 仓位管理: Position Drift Monitor — 仓位漂移监控器 (MOD-POS-003) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 797 | D_POSITION 仓位管理: Position Limit Enforcer — 限仓执行器 (MOD-POS-010) (core... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 798 | D_POSITION 仓位管理: Position Sizing Engine — 仓位决策引擎 (MOD-POS-001) (cor... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 799 | D_POSITION 仓位管理: Position State Machine — 仓位状态机 (MOD-POS-002) (core/... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 800 | D_POSITION 仓位管理: Position State Machine — 仓位状态机 (MOD-POS-002) (core/... | → | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) (life... | 导入依赖 / import_depends |
-| 801 | D_POSITION 仓位管理: Rebalance Engine — 再平衡引擎 (MOD-POS-004) (core/rebala... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 802 | D_POSITION 仓位管理: Sell-Position Bidirectional Link — 卖出-仓位双向链接 (MO... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 803 | D_POSITION 仓位管理: Position Audit Logger — 仓位审计记录器 (MOD-POS-009) (se... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 804 | D_REPORTING 报告: D_REPORTING — A-Share Performance Audit & Optimization T... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 805 | D_REPORTING 报告: D_REPORTING — A股交易记录模板引擎 (ASHare Trade Record T... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 806 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 807 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | Backward-compat shim — canonical location is zephyr.trad... | 导入依赖 / import_depends |
-| 808 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 809 | D_REPORTING 报告: D_REPORTING — Regulatory Report Generator (监管报告生成... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 810 | D_REPORTING 报告: D_REPORTING — Report Publisher (报告发布器) (reporting/r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 811 | D_REPORTING 报告: D_REPORTING — Report Version Manager (报告版本管理器) (r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 812 | D_REPORTING 报告: D_REPORTING — Report Watermark Tracker (报告水印追踪器) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 813 | D_REPORTING 报告: D_REPORTING — Risk Report Engine (风险报告引擎) (reporti... | → | Backward-compat shim — canonical location is zephyr.trad... | 导入依赖 / import_depends |
+| 692 | D_INTEGRATION 管线路由: EventBus 升级策略引擎 (events/upgrade_strategy.py) | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
+| 693 | D_INTEGRATION 管线路由: ChunkStrategyRouter — MOD-INF-011 分块策略调度 (vector_m... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 694 | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collection 全生命周... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 695 | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collection 全生命周... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 696 | D_INTEGRATION 管线路由: vector_memory/collection_schemas.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 697 | D_INTEGRATION 管线路由: vector_memory/collection_schemas.py | → | schema/schemas.py | 导入依赖 / import_depends |
+| 698 | D_INTEGRATION 管线路由: HybridRetriever — MOD-INF-011 混合检索架构 (vector_memor... | → | ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
+| 699 | D_INTEGRATION 管线路由: HybridRetriever — MOD-INF-011 混合检索架构 (vector_memor... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 700 | D_INTEGRATION 管线路由: IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复 ... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 701 | D_INTEGRATION 管线路由: ChromDB -> FAISS + SQLite WAL 数据迁移脚本 (vector_memory... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 702 | D_INTEGRATION 管线路由: RetrievalFeedback — MOD-INF-011 FLE 检索质量消费 (vector... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 703 | D_INTEGRATION 管线路由: SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 ... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
+| 704 | D_INTEGRATION 管线路由: VectorBridge — MOD-INF-011 CE/KB 外部集成适配器 (vector_... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 705 | D_INTEGRATION 管线路由: VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 (v... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 706 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 707 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 708 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | schema/base_config.py | 导入依赖 / import_depends |
+| 709 | D_INTELLIGENCE 上下文管理: ModelDriftDetector — LLM 模型行为漂移检测。 (intelligenc... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 710 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
+| 711 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 712 | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装） (... | → | CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
+| 713 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 714 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 715 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
+| 716 | D_INTELLIGENCE 上下文管理: 真实多文件注入装配器（Phase 3 极限深度）。 (model_profili... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 717 | D_INTELLIGENCE 上下文管理: DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 718 | D_INTELLIGENCE 上下文管理: DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
+| 719 | D_INTELLIGENCE 上下文管理: ExamExecutor --- 执行式代码评测（HumanEval pass@1 风格，v... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 720 | D_INTELLIGENCE 上下文管理: JobMatcher --- 模型岗位匹配器 (model_profiling/job_matche... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 721 | D_INTELLIGENCE 上下文管理: ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 722 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 723 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 724 | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 725 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 726 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 727 | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 728 | D_MKT_DATA 行情数据: D_MKT_DATA — Autoload (自动加载器) (market_data/autoload.py) | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 729 | D_MKT_DATA 行情数据: D_MKT_DATA — Connector Base (行情数据连接器基类) (connec... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 730 | D_MKT_DATA 行情数据: D_MKT_DATA — Connector Manager (连接器管理器) (connector... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 731 | D_MKT_DATA 行情数据: D_MKT_DATA — Failover Manager (故障切换管理器) (failover... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 732 | D_MKT_DATA 行情数据: D_MKT_DATA — Raw Data Cache 实现 (原始数据缓存) (raw_dat... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 733 | D_MKT_DATA 行情数据: D_MKT_DATA — Vendor Base (行情数据源基类) (market_data/v... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 734 | D_MKT_DATA 行情数据: D_MKT_DATA — Vendor Registry (行情数据源注册表) (market_... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 735 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
+| 736 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 737 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
+| 738 | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 739 | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | escalation/budget_alert.py | 导入依赖 / import_depends |
+| 740 | D_OPS 反馈循环: cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 741 | D_OPS 反馈循环: cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
+| 742 | D_ORCHESTRATOR 代理编排器: AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 743 | D_ORCHESTRATOR 代理编排器: AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 744 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 745 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 746 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 747 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
+| 748 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 749 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
+| 750 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
+| 751 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/base_config.py | 导入依赖 / import_depends |
+| 752 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/execution_model.py | 导入依赖 / import_depends |
+| 753 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/severity_types.py | 导入依赖 / import_depends |
+| 754 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
+| 755 | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 (contracts/finding_bridge.py) | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
+| 756 | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 (contracts/finding_bridge.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 757 | D_ORCHESTRATOR 代理编排器: ActiveTaskQueue — 后台任务轮询与自动分发 (core/task_queu... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
+| 758 | D_ORCHESTRATOR 代理编排器: DeferredQueue: WAITING -> READY task scheduler. (orchestr... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
+| 759 | D_ORCHESTRATOR 代理编排器: DeferredQueue: WAITING -> READY task scheduler. (orchestr... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
+| 760 | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-01... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
+| 761 | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-01... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
+| 762 | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器 (execution/memory_writer.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 763 | D_ORCHESTRATOR 代理编排器: Orc->Script 脚本执行器 — run_audit() 生产者 (execution/s... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 764 | D_ORCHESTRATOR 代理编排器: CE 任务上下文构建器 — build_from_task() 消费者 (executio... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 765 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 766 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 767 | D_ORCHESTRATOR 代理编排器: WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） ... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 768 | D_ORCHESTRATOR 代理编排器: WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） ... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
+| 769 | D_ORCHESTRATOR 代理编排器: ChaosHook — integrates ChaosEngine with the orchestrator... | → | contracts/orchestration_protocol.py | 导入依赖 / import_depends |
+| 770 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 771 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
+| 772 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
+| 773 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
+| 774 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 775 | D_ORCHESTRATOR 代理编排器: HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | schema/schemas.py | 导入依赖 / import_depends |
+| 776 | D_ORCHESTRATOR 代理编排器: HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 777 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 778 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
+| 779 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
+| 780 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 781 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 782 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
+| 783 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 784 | D_PF_ALLOC 组合分配: Multi-Strategy Capital Allocator — 多策略资金分配器 (MOD... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 785 | D_PF_ALLOC 组合分配: Signal Synthesis Combiner — 信号合成器 (MOD-PA-002) (cor... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 786 | D_PF_ALLOC 组合分配: Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 787 | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
+| 788 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 789 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 790 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 791 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 792 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 793 | D_POSITION 仓位管理: Calendar Position Constraint — 日历仓位约束 (MOD-POS-017... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 794 | D_POSITION 仓位管理: Capital Curve Manager — 资金曲线管理器 (MOD-POS-007) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 795 | D_POSITION 仓位管理: Cash Manager — 资金管理器 (MOD-POS-006) (core/cash_manag... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 796 | D_POSITION 仓位管理: Drawdown Controller — 回撤控制器 (MOD-POS-008) (core/dra... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 797 | D_POSITION 仓位管理: Position Drift Monitor — 仓位漂移监控器 (MOD-POS-003) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 798 | D_POSITION 仓位管理: Position Limit Enforcer — 限仓执行器 (MOD-POS-010) (core... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 799 | D_POSITION 仓位管理: Position Sizing Engine — 仓位决策引擎 (MOD-POS-001) (cor... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 800 | D_POSITION 仓位管理: Position State Machine — 仓位状态机 (MOD-POS-002) (core/... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 801 | D_POSITION 仓位管理: Position State Machine — 仓位状态机 (MOD-POS-002) (core/... | → | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) (life... | 导入依赖 / import_depends |
+| 802 | D_POSITION 仓位管理: Rebalance Engine — 再平衡引擎 (MOD-POS-004) (core/rebala... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 803 | D_POSITION 仓位管理: Sell-Position Bidirectional Link — 卖出-仓位双向链接 (MO... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 804 | D_POSITION 仓位管理: Position Audit Logger — 仓位审计记录器 (MOD-POS-009) (se... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 805 | D_REPORTING 报告: D_REPORTING — A-Share Performance Audit & Optimization T... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 806 | D_REPORTING 报告: D_REPORTING — A股交易记录模板引擎 (ASHare Trade Record T... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 807 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
+| 808 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | Backward-compat shim — canonical location is zephyr.trad... | 导入依赖 / import_depends |
+| 809 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 810 | D_REPORTING 报告: D_REPORTING — Regulatory Report Generator (监管报告生成... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 811 | D_REPORTING 报告: D_REPORTING — Report Publisher (报告发布器) (reporting/r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 812 | D_REPORTING 报告: D_REPORTING — Report Version Manager (报告版本管理器) (r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 813 | D_REPORTING 报告: D_REPORTING — Report Watermark Tracker (报告水印追踪器) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
 | 814 | D_REPORTING 报告: D_REPORTING — Risk Report Engine (风险报告引擎) (reporti... | → | Backward-compat shim — canonical location is zephyr.trad... | 导入依赖 / import_depends |
-| 815 | D_REPORTING 报告: D_REPORTING — Risk Report Engine (风险报告引擎) (reporti... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 816 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 测试依赖 / test_depends |
-| 817 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | Backward-compat shim — canonical location is zephyr.trad... | 测试依赖 / test_depends |
-| 818 | D_REPORTING 报告: MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | Backward-compat shim — canonical location is zephyr.trad... | 测试依赖 / test_depends |
+| 815 | D_REPORTING 报告: D_REPORTING — Risk Report Engine (风险报告引擎) (reporti... | → | Backward-compat shim — canonical location is zephyr.trad... | 导入依赖 / import_depends |
+| 816 | D_REPORTING 报告: D_REPORTING — Risk Report Engine (风险报告引擎) (reporti... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 817 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 测试依赖 / test_depends |
+| 818 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | Backward-compat shim — canonical location is zephyr.trad... | 测试依赖 / test_depends |
 | 819 | D_REPORTING 报告: MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | Backward-compat shim — canonical location is zephyr.trad... | 测试依赖 / test_depends |
-| 820 | D_RISK 风控: A-Share Stop-Loss Rule Engine — A股止损规则引擎 (MOD-RK-... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 821 | D_RISK 风控: A-Share Systemic Risk Detector — A股系统性风险检测器 (MO... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 822 | D_RISK 风控: Concentration Risk Monitor — 集中度风险监控器 (MOD-RK-07... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 823 | D_RISK 风控: Post-Trade Daily Auditor — 日终审计器 (MOD-RK-20) (core/... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 824 | D_RISK 风控: Drawdown Real-Time Tracker — 回撤实时追踪器 (MOD-RK-011)... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 825 | D_RISK 风控: Risk Budget Allocator — 风险预算分配器 (MOD-RK-08) (core... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 826 | D_RISK 风控: Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 827 | D_RISK 风控: Stress Test Engine — 压力测试引擎 (MOD-RK-12) (core/stre... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 828 | D_RISK 风控: Tail Risk Monitor — 尾部风险监控器 (MOD-RK-15) (core/tai... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 829 | D_RISK 风控: VaR Calculator — 风险价值计算器 (MOD-RK-05, Phase 1) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 830 | D_RISK 风控: cross_market_data_adapter/ml_experiment_pipeline.py | → | MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 (_cross... | 导入依赖 / import_depends |
-| 831 | D_SECURITY 对抗验证: Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 (gov_dri... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 832 | D_SECURITY 对抗验证: Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 833 | D_SECURITY 对抗验证: Auto Reconciler — reconciler.py (gov_drift/reconciler.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 834 | D_SECURITY 对抗验证: ABACGuard — 基于属性的权限守卫. (guards/abac_guard.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 835 | D_SECURITY 对抗验证: Agent identity — 角色与成熟度定义. (access_control/ident... | → | identity/agent_identity.py | 导入依赖 / import_depends |
-| 836 | D_SECURITY 对抗验证: ImmutableCore — 不可变核心验证器. (access_control/immuta... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 837 | D_SECURITY 对抗验证: orphan_judge/__main__.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 838 | D_SECURITY 对抗验证: orphan_judge/config_loader.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 839 | D_SECURITY 对抗验证: orphan_judge/feedback_bridge.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 840 | D_SECURITY 对抗验证: orphan_judge/report_generator.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 841 | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 842 | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 843 | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 844 | D_SECURITY 对抗验证: adversarial_validation/defense_runner.py | → | schema/execution_model.py | 导入依赖 / import_depends |
-| 845 | D_SECURITY 对抗验证: adversarial_validation/defense_runner.py | → | schema/severity_types.py | 导入依赖 / import_depends |
-| 846 | D_SECURITY 对抗验证: adversarial_validation/steady_state.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 847 | D_SECURITY 对抗验证: adversarial_validation/validator.py | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 848 | D_SECURITY 对抗验证: ValidatorEventBridge — 红蓝验证器事件桥接 (MOD-SEC-030).... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 849 | D_SECURITY 对抗验证: llm_security/behavior_audit_logger.py | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 850 | D_SECURITY 对抗验证: LLM Security Gateway - Streamlit Dashboard. (dashboard/ap... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 851 | D_SECURITY 对抗验证: layers/l0_supply_chain.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 852 | D_SECURITY 对抗验证: layers/l0_supply_chain.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 853 | D_SECURITY 对抗验证: layers/l1_input.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 854 | D_SECURITY 对抗验证: layers/l2_prompt_protection.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 855 | D_SECURITY 对抗验证: layers/l2a_process_sandbox.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 856 | D_SECURITY 对抗验证: layers/l2a_process_sandbox.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 857 | D_SECURITY 对抗验证: layers/l3_output.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 858 | D_SECURITY 对抗验证: layers/l4_agent.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 859 | D_SECURITY 对抗验证: layers/l4_agent.py | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 860 | D_SECURITY 对抗验证: layers/l5_resource_protection.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 861 | D_SECURITY 对抗验证: L6 Observability Layer — security event logging, alertin... | → | security/security_decision.py | 导入依赖 / import_depends |
-| 862 | D_SECURITY 对抗验证: layers/l8_multi_agent.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 863 | D_SECURITY 对抗验证: patterns/secrets.py | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 864 | D_SECURITY 对抗验证: L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 865 | D_SECURITY 对抗验证: L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 866 | D_SECURITY 对抗验证: llm_security/protocol.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 867 | D_SECURITY 对抗验证: self_protection/adversarial_mutator.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 868 | D_SECURITY 对抗验证: self_protection/l7_validation.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 869 | D_SECURITY 对抗验证: self_protection/red_team_scanner.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 870 | D_SELL_DECISION 卖出决策: Breakout Failure Detector — 突破成败检测器 (MOD-SELL-003... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 871 | D_SELL_DECISION 卖出决策: Replacement & Rebalance Seller — 置换与再平衡卖出 (MOD-S... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 872 | D_SELL_DECISION 卖出决策: Sell Conflict Arbitrator — 买卖冲突仲裁器 (MOD-SELL-008)... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 873 | D_SELL_DECISION 卖出决策: Sell Signal Collector — 卖出信号收集器 (MOD-SELL-001) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 874 | D_SELL_DECISION 卖出决策: Sell Signal Fusion Engine — 卖出信号融合引擎 (MOD-SELL-0... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 875 | D_SELL_DECISION 卖出决策: Sell Urgency Scorer — 卖出紧迫度评分器 (MOD-SELL-009) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 876 | D_SELL_DECISION 卖出决策: Stop-Hunting Protector — 止损猎杀防护器 (MOD-SELL-015) (... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 877 | D_SIMULATION 仿真: D_SIMULATION — Deflated Sharpe Ratio Calculator (DSR 计... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 878 | D_SIMULATION 仿真: D_SIMULATION — Look-Ahead Bias Detector (未来函数风险检... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 879 | D_SIMULATION 仿真: D_SIMULATION — Parameter Robustness Tester (参数鲁棒性测... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 880 | D_SIMULATION 仿真: D_SIMULATION — Simulation Result Analyzer (仿真结果分析... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 881 | D_SIMULATION 仿真: D_SIMULATION — Risk Simulator (风控仿真器) (simulation/r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 882 | D_SIMULATION 仿真: D_SIMULATION — Scenario Generator (场景生成器) (simulati... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 883 | D_SIMULATION 仿真: D_SIMULATION — Sharpe Calculator Fixer (Sharpe 计算修正... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 884 | D_SIMULATION 仿真: D_SIMULATION — Strategy Simulator (策略仿真器/策略沙箱) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 885 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 886 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 887 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 888 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 889 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 890 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 891 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 892 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 893 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 894 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 895 | D_TRADING 交易运营: Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 896 | D_TRADING 交易运营: Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 897 | D_TRADING 交易运营: D_TRADING — Corporate Action & Fee Processor (公司行动处... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 898 | D_TRADING 交易运营: trading/gpu_consensus_scheduler.py | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 899 | D_TRADING 交易运营: gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 900 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 901 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 902 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 903 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 904 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 905 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 906 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 907 | D_TRADING 交易运营: runtime/async_runtime.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 908 | D_TRADING 交易运营: D_TRADING — Settlement & Reconciliation Engine (结算对账... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 909 | D_TRADING 交易运营: trading/speed_baseline_checker.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 910 | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 911 | D_TRADING 交易运营: market/signal_degradation_warning.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 912 | D_TRADING 交易运营: 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真源已... | → | portfolio/money.py | 导入依赖 / import_depends |
-| 913 | D_TRADING 交易运营: MOD-TRADING-002 PnL Calculator 单元测试. (trading/test_pn... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 测试依赖 / test_depends |
+| 820 | D_REPORTING 报告: MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | Backward-compat shim — canonical location is zephyr.trad... | 测试依赖 / test_depends |
+| 821 | D_RISK 风控: A-Share Stop-Loss Rule Engine — A股止损规则引擎 (MOD-RK-... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 822 | D_RISK 风控: A-Share Systemic Risk Detector — A股系统性风险检测器 (MO... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 823 | D_RISK 风控: Concentration Risk Monitor — 集中度风险监控器 (MOD-RK-07... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 824 | D_RISK 风控: Post-Trade Daily Auditor — 日终审计器 (MOD-RK-20) (core/... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 825 | D_RISK 风控: Drawdown Real-Time Tracker — 回撤实时追踪器 (MOD-RK-011)... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 826 | D_RISK 风控: Risk Budget Allocator — 风险预算分配器 (MOD-RK-08) (core... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 827 | D_RISK 风控: Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 828 | D_RISK 风控: Stress Test Engine — 压力测试引擎 (MOD-RK-12) (core/stre... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 829 | D_RISK 风控: Tail Risk Monitor — 尾部风险监控器 (MOD-RK-15) (core/tai... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 830 | D_RISK 风控: VaR Calculator — 风险价值计算器 (MOD-RK-05, Phase 1) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 831 | D_RISK 风控: cross_market_data_adapter/ml_experiment_pipeline.py | → | MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 (_cross... | 导入依赖 / import_depends |
+| 832 | D_SECURITY 对抗验证: Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 (gov_dri... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
+| 833 | D_SECURITY 对抗验证: Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
+| 834 | D_SECURITY 对抗验证: Auto Reconciler — reconciler.py (gov_drift/reconciler.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 835 | D_SECURITY 对抗验证: ABACGuard — 基于属性的权限守卫. (guards/abac_guard.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 836 | D_SECURITY 对抗验证: Agent identity — 角色与成熟度定义. (access_control/ident... | → | identity/agent_identity.py | 导入依赖 / import_depends |
+| 837 | D_SECURITY 对抗验证: ImmutableCore — 不可变核心验证器. (access_control/immuta... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 838 | D_SECURITY 对抗验证: orphan_judge/__main__.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 839 | D_SECURITY 对抗验证: orphan_judge/config_loader.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 840 | D_SECURITY 对抗验证: orphan_judge/feedback_bridge.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 841 | D_SECURITY 对抗验证: orphan_judge/report_generator.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 842 | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 843 | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 844 | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 845 | D_SECURITY 对抗验证: adversarial_validation/defense_runner.py | → | schema/execution_model.py | 导入依赖 / import_depends |
+| 846 | D_SECURITY 对抗验证: adversarial_validation/defense_runner.py | → | schema/severity_types.py | 导入依赖 / import_depends |
+| 847 | D_SECURITY 对抗验证: adversarial_validation/steady_state.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 848 | D_SECURITY 对抗验证: adversarial_validation/validator.py | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 849 | D_SECURITY 对抗验证: ValidatorEventBridge — 红蓝验证器事件桥接 (MOD-SEC-030).... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 850 | D_SECURITY 对抗验证: llm_security/behavior_audit_logger.py | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 851 | D_SECURITY 对抗验证: LLM Security Gateway - Streamlit Dashboard. (dashboard/ap... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 852 | D_SECURITY 对抗验证: layers/l0_supply_chain.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 853 | D_SECURITY 对抗验证: layers/l0_supply_chain.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 854 | D_SECURITY 对抗验证: layers/l1_input.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 855 | D_SECURITY 对抗验证: layers/l2_prompt_protection.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 856 | D_SECURITY 对抗验证: layers/l2a_process_sandbox.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 857 | D_SECURITY 对抗验证: layers/l2a_process_sandbox.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 858 | D_SECURITY 对抗验证: layers/l3_output.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 859 | D_SECURITY 对抗验证: layers/l4_agent.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 860 | D_SECURITY 对抗验证: layers/l4_agent.py | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
+| 861 | D_SECURITY 对抗验证: layers/l5_resource_protection.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 862 | D_SECURITY 对抗验证: L6 Observability Layer — security event logging, alertin... | → | security/security_decision.py | 导入依赖 / import_depends |
+| 863 | D_SECURITY 对抗验证: layers/l8_multi_agent.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 864 | D_SECURITY 对抗验证: patterns/secrets.py | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
+| 865 | D_SECURITY 对抗验证: L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 866 | D_SECURITY 对抗验证: L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 867 | D_SECURITY 对抗验证: llm_security/protocol.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 868 | D_SECURITY 对抗验证: self_protection/adversarial_mutator.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
+| 869 | D_SECURITY 对抗验证: self_protection/l7_validation.py | → | security/security_decision.py | 导入依赖 / import_depends |
+| 870 | D_SECURITY 对抗验证: self_protection/red_team_scanner.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
+| 871 | D_SELL_DECISION 卖出决策: Breakout Failure Detector — 突破成败检测器 (MOD-SELL-003... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 872 | D_SELL_DECISION 卖出决策: Replacement & Rebalance Seller — 置换与再平衡卖出 (MOD-S... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 873 | D_SELL_DECISION 卖出决策: Sell Conflict Arbitrator — 买卖冲突仲裁器 (MOD-SELL-008)... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 874 | D_SELL_DECISION 卖出决策: Sell Signal Collector — 卖出信号收集器 (MOD-SELL-001) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 875 | D_SELL_DECISION 卖出决策: Sell Signal Fusion Engine — 卖出信号融合引擎 (MOD-SELL-0... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 876 | D_SELL_DECISION 卖出决策: Sell Urgency Scorer — 卖出紧迫度评分器 (MOD-SELL-009) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 877 | D_SELL_DECISION 卖出决策: Stop-Hunting Protector — 止损猎杀防护器 (MOD-SELL-015) (... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 878 | D_SIMULATION 仿真: D_SIMULATION — Deflated Sharpe Ratio Calculator (DSR 计... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 879 | D_SIMULATION 仿真: D_SIMULATION — Look-Ahead Bias Detector (未来函数风险检... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 880 | D_SIMULATION 仿真: D_SIMULATION — Parameter Robustness Tester (参数鲁棒性测... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 881 | D_SIMULATION 仿真: D_SIMULATION — Simulation Result Analyzer (仿真结果分析... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 882 | D_SIMULATION 仿真: D_SIMULATION — Risk Simulator (风控仿真器) (simulation/r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 883 | D_SIMULATION 仿真: D_SIMULATION — Scenario Generator (场景生成器) (simulati... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 884 | D_SIMULATION 仿真: D_SIMULATION — Sharpe Calculator Fixer (Sharpe 计算修正... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 885 | D_SIMULATION 仿真: D_SIMULATION — Strategy Simulator (策略仿真器/策略沙箱) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 886 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 887 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 888 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
+| 889 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
+| 890 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
+| 891 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 892 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
+| 893 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 894 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 895 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
+| 896 | D_TRADING 交易运营: Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 897 | D_TRADING 交易运营: Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
+| 898 | D_TRADING 交易运营: D_TRADING — Corporate Action & Fee Processor (公司行动处... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 899 | D_TRADING 交易运营: trading/gpu_consensus_scheduler.py | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 900 | D_TRADING 交易运营: gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 901 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
+| 902 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
+| 903 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
+| 904 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
+| 905 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
+| 906 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
+| 907 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 908 | D_TRADING 交易运营: runtime/async_runtime.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
+| 909 | D_TRADING 交易运营: D_TRADING — Settlement & Reconciliation Engine (结算对账... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
+| 910 | D_TRADING 交易运营: trading/speed_baseline_checker.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
+| 911 | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
+| 912 | D_TRADING 交易运营: market/signal_degradation_warning.py | → | core/trace_context.py | 导入依赖 / import_depends |
+| 913 | D_TRADING 交易运营: 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真源已... | → | portfolio/money.py | 导入依赖 / import_depends |
+| 914 | D_TRADING 交易运营: MOD-TRADING-002 PnL Calculator 单元测试. (trading/test_pn... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 37 个外部域直接连接（出边 8 条 + 入边 914 条 = 922 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 37 个外部域直接连接（出边 7 条 + 入边 914 条 = 921 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -1938,7 +1942,6 @@ graph LR
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
@@ -1961,6 +1964,7 @@ graph LR
     D_POSITION["D_POSITION<br/>仓位管理"]
     D_RISK["D_RISK<br/>风控"]
     D_BACKTEST["D_BACKTEST<br/>回测"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信"]
     D_SIMULATION["D_SIMULATION<br/>仿真"]
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
@@ -1975,7 +1979,6 @@ graph LR
     D_SHARED -->|4条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SHARED -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
     D_SHARED -->|1条 导入依赖 / import_depends| D_GOV_RULE
-    D_SHARED -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED -->|1条 导入依赖 / import_depends| D_ML_TRAIN
     D_INFRA_RUNTIME -->|165条 导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -->|93条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED

@@ -30,10 +30,10 @@ ttl: permanent
 | 模块数 | 42 | Module Count | 42 |
 | 域内依赖 | 15 | Internal Dependencies | 15 |
 | 跨域入边 | 40 | Cross-domain Incoming | 40 |
-| 跨域出边 | 66 | Cross-domain Outgoing | 66 |
+| 跨域出边 | 65 | Cross-domain Outgoing | 65 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 42 | Production Modules | 42 |
-| 容量 | 43/150 (正常) | Capacity | 43/150 (正常) |
+| 容量 | 42/150 (正常) | Capacity | 42/150 (正常) |
 | 描述 | 交易运营，负责交易生命周期管理、订单状态和成交处理 | Description | 交易运营，负责交易生命周期管理、订单状态和成交处理 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -139,12 +139,12 @@ flowchart TD
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
+    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     tests_trading_test_corporate_action_processor_py -->|测试依赖 / test_depends| src_zephyr_trading_corporate_action_processor_py
     tests_trading_test_pnl_calculator_py -->|测试依赖 / test_depends| src_zephyr_trading_pnl_calculator_py
@@ -289,12 +289,12 @@ flowchart TD
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_audit_log_writer_py
+    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_annotation_writer_py
     src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_search_replace_engine_py
-    src_zephyr_trading_action_dispatcher_init_py -->|导入依赖 / import_depends| src_zephyr_trading_action_dispatcher_file_lifecycle_manager_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
+    src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_factories_py -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     tests_trading_test_corporate_action_processor_py -->|测试依赖 / test_depends| src_zephyr_trading_corporate_action_processor_py
     tests_trading_test_pnl_calculator_py -->|测试依赖 / test_depends| src_zephyr_trading_pnl_calculator_py
@@ -397,8 +397,8 @@ flowchart TD
 | 7 | D_EX_CORE 执行核心: 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
 | 8 | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | → | Re-export wrapper: PositionSnapshot 真源在 zephyr.shared.... | 导入依赖 / import_depends |
 | 9 | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | → | risk/risk_limits.py | 导入依赖 / import_depends |
-| 10 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
-| 11 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
+| 10 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | 导入依赖 / import_depends |
+| 11 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | D_EXECUTION_CORE — BrokerInterface (trading_contracts/br... | contract / contract |
 | 12 | D_FRONTEND 前端: 交易面板 / trade_panel (components/trade_panel.py) | → | Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | 导入依赖 / import_depends |
 | 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: 资本分配结果（兼容导出） / Capital Allocation Result (com... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
 | 14 | D_FUNDAMENTAL_SIGNAL 基本面信号: 信号生成聚合基类 / Signal Generation Aggregator Base (gen... | → | execution/capital_allocation_result.py | 导入依赖 / import_depends |
@@ -431,7 +431,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 16 个外部域直接连接（出边 66 条 + 入边 40 条 = 106 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 16 个外部域直接连接（出边 65 条 + 入边 40 条 = 105 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -454,7 +454,7 @@ graph LR
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_REPORTING["D_REPORTING<br/>报告"]
     D_TRADING -->|29条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
-    D_TRADING -->|19条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_TRADING -->|18条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_TRADING -->|6条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_TRADING -->|4条 导入依赖 / import_depends| D_GOVERNANCE
     D_TRADING -->|3条 导入依赖 / import_depends| D_ORCHESTRATOR

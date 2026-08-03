@@ -107,20 +107,20 @@ flowchart TD
     src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py -.->|import / import| src_zephyr_sell_decision_core_sell_strategy_ab_tester_py
     src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py -.->|import / import| src_zephyr_sell_decision_core_sell_execution_quality_tracker_py
     src_zephyr_sell_decision_core_replacement_rebalance_seller_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_sell_conflict_arbitrator_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_breakout_failure_detector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_stop_hunting_protector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_sell_signal_fusion_engine_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
+    src_zephyr_sell_decision_core_stop_hunting_protector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
+    src_zephyr_sell_decision_core_sell_conflict_arbitrator_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
+    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
+    D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_EX_CORE
     D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_POSITION
     D_FACTOR["因子<br/>因子，负责因子计算、因子库管理和因子评价<br/>Factor<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_FACTOR
     D_ASHARE_SIGNAL["A股特色信号<br/>A 股特色信号，负责 A<br/>股市场特色交易信号的生成和管理<br/>A-Share Signal<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_ASHARE_SIGNAL
-    D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_EX_CORE
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_sell_signal_fusion_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| D_SHARED
@@ -174,12 +174,12 @@ flowchart TD
     src_zephyr_sell_decision_core_sell_conflict_arbitrator_py["core/sell_conflict_arbitrator<br/>Sell Conflict Arbitrator — 买卖冲突仲裁器<br/>(MOD-SELL-008)<br/>文件: core/sell_conflict_arbitrator.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_sell_signal_collector_py["core/sell_signal_collector<br/>Sell Signal Collector — 卖出信号收集器<br/>(MOD-SELL-001)<br/>文件: core/sell_signal_collector.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_replacement_rebalance_seller_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_sell_conflict_arbitrator_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_breakout_failure_detector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_stop_hunting_protector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_sell_signal_fusion_engine_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
+    src_zephyr_sell_decision_core_stop_hunting_protector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
+    src_zephyr_sell_decision_core_sell_conflict_arbitrator_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
+    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

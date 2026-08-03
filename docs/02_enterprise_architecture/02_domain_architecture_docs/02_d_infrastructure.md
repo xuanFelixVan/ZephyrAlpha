@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 26 | Module Count | 26 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
-| 跨域入边 | 109 | Cross-domain Incoming | 109 |
+| 跨域入边 | 107 | Cross-domain Incoming | 107 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 26 | Production Modules | 26 |
@@ -125,6 +125,8 @@ flowchart TD
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_FACTOR["因子<br/>因子，负责因子计算、因子库管理和因子评价<br/>Factor<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
+    D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_EX_CORE -->|测试依赖 / test_depends| src_zephyr_shared_contracts_fill_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_target_portfolio_py
@@ -138,14 +140,12 @@ flowchart TD
     D_MKT_DATA -->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_data_py
     D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_POSITION -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
-    D_REPORTING["报告<br/>报告，负责投资报告、风险报告和合规报告的生成与分<br/>发<br/>Reporting<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_REPORTING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_target_portfolio_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
-    class D_SHARED,D_GOV_AUDIT,D_PF_CORE,D_GOVERNANCE,D_FACTOR,D_MKT_DATA,D_INFRA_RUNTIME,D_POSITION,D_REPORTING external_prod
+    class D_SHARED,D_GOV_AUDIT,D_PF_CORE,D_GOVERNANCE,D_FACTOR,D_EX_CORE,D_MKT_DATA,D_INFRA_RUNTIME,D_POSITION external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -309,12 +309,12 @@ flowchart TD
 | 65 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
 | 66 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | contracts/performance_attribution_report.py | 导入依赖 / import_depends |
 | 67 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
-| 68 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
-| 69 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | contract / contract |
+| 68 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | contract / contract |
+| 69 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
 | 70 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
 | 71 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | contracts/target_portfolio.py | 导入依赖 / import_depends |
-| 72 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | contracts/strategy_lifecycle_event.py | contract / contract |
-| 73 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | contracts/strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 72 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | contracts/strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 73 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | contracts/strategy_lifecycle_event.py | contract / contract |
 | 74 | D_POSITION 仓位管理: Position Sizing Engine — 仓位决策引擎 (MOD-POS-001) (cor... | → | contracts/risk_limits.py | 导入依赖 / import_depends |
 | 75 | D_POSITION 仓位管理: Position Sizing Engine 测试 (MOD-POS-001 阶段1)。 (positi... | → | contracts/risk_limits.py | 测试依赖 / test_depends |
 | 76 | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (reporting/anal... | → | contracts/execution_report.py | 导入依赖 / import_depends |
@@ -352,7 +352,7 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 19 个外部域直接连接（出边 11 条 + 入边 109 条 = 120 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 19 个外部域直接连接（出边 11 条 + 入边 107 条 = 118 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -367,36 +367,35 @@ graph LR
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_EX_SOR["D_EX_SOR<br/>执行路由"]
-    D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_FACTOR["D_FACTOR<br/>因子"]
-    D_RISK["D_RISK<br/>风控"]
-    D_POSITION["D_POSITION<br/>仓位管理"]
+    D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_PF_ALLOC["D_PF_ALLOC<br/>组合分配"]
-    D_SIMULATION["D_SIMULATION<br/>仿真"]
-    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
+    D_POSITION["D_POSITION<br/>仓位管理"]
+    D_RISK["D_RISK<br/>风控"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
+    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_SIGQC["D_SIGQC<br/>信号质量控制"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
+    D_SIMULATION["D_SIMULATION<br/>仿真"]
     D_INFRASTRUCTURE -->|10条 导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
     D_EX_CORE -->|23条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
-    D_TRADING -->|19条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_TRADING -->|18条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_GOVERNANCE -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_REPORTING -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_PF_CORE -->|9条 contract / contract, 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_FUNDAMENTAL_SIGNAL -->|9条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_EX_SOR -->|7条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_MKT_DATA -->|5条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_FACTOR -->|5条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
-    D_RISK -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_POSITION -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_MKT_DATA -->|5条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
     D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_SIMULATION -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_GOV_CODE_QUALITY -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_POSITION -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_RISK -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_ENFORCEMENT -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_INFRA_RUNTIME -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_SHARED -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_GOV_CODE_QUALITY -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SIGQC -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_INFRA_RUNTIME -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SIMULATION -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
 ```
 
 ## 说明 / Notes
