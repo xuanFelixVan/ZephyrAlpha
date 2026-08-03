@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_dashboard_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-622 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_dashboard
+# [DOMAIN] D_FRONTEND
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

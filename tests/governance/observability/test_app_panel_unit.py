@@ -1,3 +1,11 @@
+# [A_test] module_id: MOD-GOV_app_panel_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md | §16.7
+# [MODULE] tests.governance.observability.test_app_panel_unit
+# [DOMAIN] D_FRONTEND
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
 # [TTL] task_bound
 """test_app_panel_unit · app_panel.py 单元测试（v3.1.0, #ARCH-047）
 
