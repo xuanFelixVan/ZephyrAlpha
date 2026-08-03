@@ -65,7 +65,7 @@ flowchart TD
         BM_SEL_21_C["【BM-SEL-21-C 再平衡调度】<br/>决定什么时候该调仓——偏离阈值触发、定期检查、或事<br/>件驱动，别频繁交易浪费成本。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Rebalancing Scheduler】"]
         BM_SEL_21_D["【BM-SEL-21-D 约束求解器】<br/>把所有约束（行业/市值/风险<br/>/相关性）翻译成数学不等式，交给求解器算出可行最<br/>优解。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Constraint Solver】"]
         BM_SEL_21_E["【BM-SEL-21-E 绩效归因引擎】<br/>拆解组合收益来自哪——选股贡献多少、择时贡献多少、<br/>行业配置贡献多少，知道钱怎么赚的。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Performance Attribution Engine】"]
-        BM_SEL_21_F["【BM-SEL-21-F 量化策略集】<br/>把所有已上线的量化策略打包成一个策略集——价值反转<br/>、动量趋势、事件驱动等，统一管理统一调度。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>🟡候选承载<br/>【Quantitative Strategy Set】"]
+        BM_SEL_21_F["【BM-SEL-21-F 量化策略集】<br/>把所有已上线的量化策略打包成一个策略集——价值反转<br/>、动量趋势、事件驱动等，统一管理统一调度。<br/>仓位阶段 / position_management<br/>（生产态 / production）<br/>【Quantitative Strategy Set】"]
         BM_SEL_21 -.->|嵌套| BM_SEL_21_A
         BM_SEL_21 -.->|嵌套| BM_SEL_21_B
         BM_SEL_21 -.->|嵌套| BM_SEL_21_C
@@ -847,7 +847,11 @@ BM-SEL-21 组合优化的子环节。量化策略集是所有已上线量化策�
 
 ①触发：策略上线/下线；②消费：各策略信号产出；③参数：策略集成员、权重分配(A30%/B25%/C20%)、准入门禁；④数据流：策略集→引擎调度→策略信号→BM-SEL-20投票→BM-SEL-21-B优化；⑤代码：策略集定义在BM-SEL-21-A策略引擎(MOD-PF-001)中管理；⑥降级：策略集为空→仅执行卖出指令（保护性降级）。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L05-001 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 

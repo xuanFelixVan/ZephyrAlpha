@@ -168,14 +168,19 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 
 ### 3.6 作战地图与架构层的对应关系
 
-作战地图的 6 个阶段对应架构层如下（环节→架构层映射）：
+作战地图的 11 个阶段对应架构层如下（环节→架构层映射，2026-08-03 全生命周期扩展：+5 新阶段）：
 
 | 作战阶段 | 主要落点架构层 | 数据流主动脉位置 |
 |---|---|---|
+| 研究孵化（research_incubation） | L0 研究基础设施（D-RESEARCH） | 研究数据→特征存储(PIT)→实验追踪→假设管理→策略迭代 |
+| 模型训练（model_training） | L0/L1 训练（D-ML-TRAIN） | 训练数据→模型训练→AutoML→实验晋升→漂移自适应 |
+| 回测验证（backtest_validation） | L5 回测验证（D-BACKTEST） | 回测引擎→PIT撮合→过拟合检测→Walk-Forward→上线门禁 |
+| 仿真验证（simulation_validation） | L5 仿真验证（D-SIMULATION） | 仿真引擎→蒙特卡洛→场景生成→压力测试→数字孪生 |
 | 选股（stock_selection） | L1 因子 + L2 信号 + L3 策略工厂 + 筛选漏斗 | C-009 → C-005 前段 |
 | 买入（buy_flow） | L3 策略决策 + MTF 四轨融合 + DO 决策编排 | C-005 → MTF → DO |
 | 卖出（sell_flow） | L3 卖出决策引擎 + DO 决策编排 | C-005（卖出路径）→ DO |
 | 仓位（position_management） | L3.5 仓位管理 | DO → C-047 |
+| 风控管控（risk_control） | L4 风控核心（D-RISK） | 风控策略→限额管理→Kill Switch熔断→盘后审计→压力测试 |
 | 执行（execution） | L4 风控 + 交易执行 | C-047 → C-004 → C-002 |
 | 对账（reconciliation） | L5 闭环优化 + C-017 交易运营 | C-002 → C-017 → C-010 → C-007 |
 
@@ -218,7 +223,7 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 |---|---|---|
 | `step_id` | TEXT PK | 环节主键，格式 `BM-<阶段缩写>-<序号>`，如 `BM-BUY-03` |
 | `step_name` | TEXT | 环节中文名（如"四轨融合"），与翻译真源 `name_zh` 一致 |
-| `flow_stage` | TEXT | 所属阶段（stock_selection/buy_flow/sell_flow/position_management/execution/reconciliation） |
+| `flow_stage` | TEXT | 所属阶段（research_incubation/model_training/backtest_validation/simulation_validation/stock_selection/buy_flow/sell_flow/position_management/risk_control/execution/reconciliation，2026-08-03 扩展至 11 阶段） |
 | `layer` | TEXT | 映射层（L0/L1/L2A/.../横切），与 decisiongraph layer 对齐 |
 | `sort_order` | INT | 环节在流程中的顺序（同 flow_stage 内排序） |
 | `narrative_ref` | TEXT | 指向翻译真源 `battle_map_steps` 段的 step_id（叙事真源在外部 YAML） |
@@ -680,10 +685,15 @@ battle_map 是项目第四全景图。前三图是横向切片（按 module/deci
 
 | flow_stage | 允许的域（节选） | 禁止典型 |
 |---|---|---|
-| stock_selection（选股） | D_FACTOR / D_ASHARE_SIGNAL / D_FUNDAMENTAL_SIGNAL / D_SIGNAL / D_INTELLIGENCE / D_KNOWLEDGE / D_INTEGRATION / D_MKT_DATA / D_DATA / D_ML_SERVE / D_ML_TRAIN / D_ALT_DATA / D_CROSS_ASSET / D_INFRA_RUNTIME / D_SHARED | D_PF_CORE / D_PF_ALLOC / D_SELL_DECISION / D_EX_CORE / D_POSITION |
-| buy_flow（买入） | D_PF_CORE / D_PF_ALLOC / D_TRADING / D_RISK / D_INTEGRATION / D_ORCHESTRATOR / D_INTELLIGENCE | D_SELL_DECISION / D_FRONTEND / D_EX_CORE / D_POSITION |
+| research_incubation（研究孵化） | D_RESEARCH / D_DATA / D_ML_TRAIN / D_KNOWLEDGE / D_INTELLIGENCE | D_EX_CORE / D_SELL_DECISION / D_POSITION / D_FRONTEND |
+| model_training（模型训练） | D_ML_TRAIN / D_FACTOR / D_DATA / D_RESEARCH | D_EX_CORE / D_SELL_DECISION / D_POSITION / D_FRONTEND |
+| backtest_validation（回测验证） | D_BACKTEST / D_DATA / D_FACTOR / D_SIMULATION / D_RISK / D_POSITION | D_EX_CORE / D_SELL_DECISION / D_FRONTEND |
+| simulation_validation（仿真验证） | D_SIMULATION / D_BACKTEST / D_RISK / D_DIGITAL_TWIN | D_EX_CORE / D_SELL_DECISION / D_POSITION / D_FRONTEND |
+| stock_selection（选股） | D_FACTOR / D_ASHARE_SIGNAL / D_FUNDAMENTAL_SIGNAL / D_SIGNAL / D_INTELLIGENCE / D_KNOWLEDGE / D_INTEGRATION / D_MKT_DATA / D_DATA / D_ML_SERVE / D_ML_TRAIN / D_ALT_DATA / D_CROSS_ASSET / D_INFRA_RUNTIME / D_SHARED / D_SIGQC | D_PF_CORE / D_PF_ALLOC / D_SELL_DECISION / D_EX_CORE / D_POSITION |
+| buy_flow（买入） | D_PF_CORE / D_PF_ALLOC / D_TRADING / D_RISK / D_INTEGRATION / D_ORCHESTRATOR / D_INTELLIGENCE / D_COMPLIANCE | D_SELL_DECISION / D_FRONTEND / D_EX_CORE / D_POSITION |
 | sell_flow（卖出） | D_SELL_DECISION / D_TRADING / D_RISK / D_POSITION | D_PF_CORE / D_FRONTEND |
 | position_management（仓位） | D_POSITION / D_PF_CORE / D_PF_ALLOC / D_RISK | D_SELL_DECISION / D_EX_CORE / D_FRONTEND |
+| risk_control（风控管控） | D_RISK / D_REPORTING / D_POSITION / D_TRADING | D_FACTOR / D_SIGNAL / D_FRONTEND / D_SELL_DECISION |
 | execution（执行） | D_EX_CORE / D_EX_SOR / D_TRADING / D_RISK / D_REPORTING | D_FACTOR / D_SIGNAL / D_FRONTEND / D_SELL_DECISION |
 | reconciliation（对账） | D_REPORTING / D_BACKTEST / D_SIMULATION / D_TRADING / D_FACTOR / D_FEEDBACK_LOOP | D_EX_CORE / D_SELL_DECISION / D_FRONTEND |
 
@@ -757,6 +767,7 @@ battle_map 是项目第四全景图。前三图是横向切片（按 module/deci
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
+| V0.5.0 | 2026-08-03 | 全生命周期扩展 +5 新阶段：①§3.6 阶段对应表从 6→11 阶段（+研究孵化/模型训练/回测验证/仿真验证/风控管控），按生命周期重排（研究→训练→回测→仿真→选股→买入→卖出→仓位→风控→执行→对账）；②§6.1 `flow_stage` 字段合法值扩展至 11 阶段；③§17.3.4 域策略表补入 5 新阶段的允许域/禁止域（与 `battle_map_domain_policy.yaml` V1.0.0 对齐）；④`battle_map_domain_policy.yaml` 同步补入 5 新阶段 `flow_stage_allowed_domains`；⑤`module_translation_registry.yaml` §battle_map_steps 补入 33 条新阶段环节叙事 + 44 条子环节叙事（含 BM-SEL-22~25 短线选股/游资接力/量化强度/双引擎融合子环节）；⑥生成器重新生成 12 阶段文档 + panorama 总图；⑦对齐报告 0 问题（steps=152/anchors=214/edges=114/叙事真源=152）。 |
 | V0.4.0 | 2026-08-03 | 父子嵌套机制落地：①§6.1 `battle_map_steps` 表新增 `parent_step_id`（FK 自引用）+ `depth`（层级深度，上限2）两字段；②§8.4 新增 BM-INV-006 不变量（父存在+同阶段+无环+depth≤2+depth一致），写入校验在 `apply_battle_map.py` op_add_step，对齐检测在 `align_battle_map.py` `_check_parent_child_consistency()`；③生成器 `generate_battle_map_diagram.py` 支持 subgraph 渲染父子嵌套 + `-.->｜嵌套｜` 虚线边 + 子环节状态继承父环节 + 【】节点格式（⛔最前/成熟度最后/英文名最后）；④首批拆子落地：BM-BUY-02 四轨融合→4子环节（A逻辑驱动/B数据驱动/C人工指令/D应急保命）；⑤可视化模板 `visualization_view_template.md` V1.5 同步更新（§4.3 作战地图节点格式 + §4.12 父子嵌套关系） |
 | V0.3.2 | 2026-08-03 | 新增 §十七「运作机制速查总览（一页纸看懂）」：把 §一~§十五 的核心机制浓缩成导读速查版，含①四图定位速查表②三表结构简表③五类 target_graph 对齐路径详表④四条承重墙不变量 BM-INV-001~004⑤域漂移规则与当前已知 7 漂移点⑥运作机制数据流 ASCII 图⑦写入流程决策表⑧与 align_panoramas 正交关系。补充文档此前分散/缺失的"一页纸总览"视角，方便 Owner 快速确认机制与 AI 写决策前定位。重复部分以"详见 §X"引用，不破坏现有设计章节。 |
 | V0.1.0 | 2026-08-01 | 草案：第四全景图 battle_map 设计。三表数据模型 + 翻译真源 battle_map_steps 段 + 双向查找机制 + 取代 trading_flow_panorama.md V1.0.0。 |
