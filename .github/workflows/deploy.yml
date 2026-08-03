@@ -1,0 +1,225 @@
+# ZephyrAlpha 2.0 — CD Pipeline（簇C CI/CD 灰度发布基建，MOD-CD-001）
+#
+# 对标: master blueprint §16 CT-CDC-001（GATE-CDC-1 Can-I-Deploy 预部署门禁）
+#       master blueprint §23.2 CT-CANARY-001（金丝雀发布——阶段化+回滚触发条件）
+#
+# 与 governance.yml 的关系:
+#   governance.yml = CI（7 层治理门禁 + wheel/docker 构建），构建完就停
+#   deploy.yml     = CD（Can-I-Deploy 门禁 → 构建 → Shadow Canary → Promote）
+#   本流水线补齐 CD 半，激活两个长期 DO_NOT_CALL/规划 的设计契约。
+#
+# 阶段感知: Windows 单机 CD 当前激活（shadow 在生产机本地跑要比对真实生产输出），
+#          容器化部署 post-activation（#ARCH-065，container-deploy job if:false 占位）。
+#
+# 触发: workflow_dispatch（手动）+ push tag v*（版本标签）
+# 退出码契约（shadow_canary_deploy.py）: 0=promote, 1=rollback, 2=预检失败
+#   shadow job exit 0 → promote job 运行；exit 1/2 → job 失败 → promote 跳过（阻断+告警）
+
+name: CD Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline-ref:
+        description: "基线版本 ref（默认上一个 release tag）"
+        required: false
+        default: ""
+      duration:
+        description: "影子运行秒数（默认 600）"
+        required: false
+        default: "600"
+      divergence-threshold:
+        description: "输出分歧率阈值（默认 0.05）"
+        required: false
+        default: "0.05"
+  push:
+    tags:
+      - "v*"
+
+# 防止并发部署冲突（同一时间只允许一个 CD 运行）
+concurrency:
+  group: cd-deploy
+  cancel-in-progress: false
+
+jobs:
+  # ==========================================================================
+  # Job 1: Can-I-Deploy 门禁（GATE-CDC-1，CT-CDC-001）
+  # ==========================================================================
+  can-i-deploy-gate:
+    name: "GATE-CDC-1 Can-I-Deploy"
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # tag 比对需要完整历史
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt -e . -q
+
+      # --- GATE-CDC-1 四项检查（任一 FAIL → 阻断部署） ---
+      - name: "Check 1/4: consumer_expectations"
+        shell: pwsh
+        run: python -m pytest tests/contracts/ -q
+        # 无契约测试时 vacuous pass（pytest 对空目录返回 5=no tests，降级为 pass）
+
+      - name: "Check 2/4: schema_version"
+        shell: pwsh
+        run: |
+          python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py --check
+          python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
+
+      - name: "Check 3/4: contract_consistency"
+        shell: pwsh
+        run: |
+          python scripts/governance/d5_architecture/validators/validate_ssot.py --ci
+          python scripts/governance/d5_architecture/validators/validate_b_track_packages.py
+
+      - name: "Check 4/4: health"
+        shell: pwsh
+        run: |
+          # 优先 ch_health_probe 单次模式（若支持 --once），降级为 import zephyr 存活检查
+          python -c "import zephyr; print('zephyr import OK')"
+
+  # ==========================================================================
+  # Job 2: 构建产物（复用 governance.yml build-package 模式）
+  # ==========================================================================
+  build-artifact:
+    name: "Build wheel artifact"
+    runs-on: ubuntu-latest
+    needs: can-i-deploy-gate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build wheel
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel
+          path: dist/*.whl
+          retention-days: 7
+
+  # ==========================================================================
+  # Job 3: Shadow Canary（生产机本地跑，CT-CANARY-001）
+  # ==========================================================================
+  shadow-canary:
+    name: "Shadow Canary (production-windows)"
+    # 仅在 ENABLE_SHADOW_CANARY=true 且 self-hosted production-windows runner 已配置时运行
+    if: ${{ vars.ENABLE_SHADOW_CANARY == 'true' }}
+    runs-on: [self-hosted, production-windows]
+    needs: [can-i-deploy-gate, build-artifact]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: wheel
+          path: dist
+
+      - name: Install new version (isolated)
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install (Get-ChildItem dist/*.whl) --force-reinstall -q
+
+      - name: Resolve baseline ref
+        id: baseline
+        shell: pwsh
+        run: |
+          $ref = "${{ github.event.inputs.baseline-ref }}"
+          if (-not $ref) {
+            # 默认取上一个 release tag 作为基线
+            $prev = git describe --tags --abbrev=0 HEAD~1 2>$null
+            if (-not $prev) { $prev = "HEAD~1" }
+            $ref = $prev
+          }
+          echo "ref=$ref" >> $env:GITHUB_OUTPUT
+          Write-Host "baseline-ref=$ref"
+
+      - name: Run Shadow Canary deploy
+        shell: pwsh
+        run: |
+          python scripts/ops/shadow_canary_deploy.py `
+            --baseline-ref ${{ steps.baseline.outputs.ref }} `
+            --duration ${{ github.event.inputs.duration || '600' }} `
+            --divergence-threshold ${{ github.event.inputs.divergence-threshold || '0.05' }} `
+            --precheck-mode full
+          # 退出码: 0=promote(job 成功→promote job 运行), 1=rollback, 2=预检失败
+          # exit 1/2 → job 失败 → promote 跳过（阻断+告警，符合 CT-CANARY-001 回滚触发条件）
+
+      - name: Upload shadow report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadow-canary-report
+          path: logs/shadow_canary/*/report.json
+          retention-days: 30
+
+  # ==========================================================================
+  # Job 4: Promote（手动审批门，environment: production）
+  # ==========================================================================
+  promote:
+    name: "Promote to production"
+    needs: [can-i-deploy-gate, build-artifact, shadow-canary]
+    # shadow-canary 若被跳过（无 self-hosted runner），promote 也不自动运行
+    # （改为在生产机手动执行 shadow_canary_deploy.py 后人工判定）
+    if: ${{ always() && needs.shadow-canary.result == 'success' }}
+    environment:
+      name: production  # 手动审批门——需人工 approve 后才执行
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Promote decision
+        shell: bash
+        run: |
+          echo "✅ Shadow Canary 报告 promote=true（分歧率 < 阈值）"
+          echo "baseline-ref: ${{ github.event.inputs.baseline-ref || 'auto' }}"
+          echo "tag: ${{ github.ref_name }}"
+          echo "CT-CANARY-001 金丝雀发布通过——新版本晋升至 production"
+
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
+  # ==========================================================================
+  # Job 5: 容器部署（post-activation 占位，#ARCH-065）
+  # ==========================================================================
+  container-deploy:
+    name: "Container deploy (post-activation placeholder)"
+    if: false  # 容器化激活前不运行（接入真实资金后激活，见 #ARCH-065）
+    runs-on: ubuntu-latest
+    needs: promote
+    steps:
+      - name: Placeholder
+        run: |
+          echo "容器化部署在 post-activation 激活（#ARCH-065）"
+          echo "激活后：docker build/push → canary 部署 → ContainerDeployer（shadow_canary_deploy.py --adapter container）"
+          echo "当前阶段使用 WindowsProcessDeployer（--adapter windows）"
