@@ -402,7 +402,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P0
-  version: 0.8.8
+  version: 0.8.9
   generation: 1
   last_updated: '2026-05-18'
   file_path: 03_modules/_cross_layer/gate_engine/blueprint.md
@@ -1980,6 +1980,12 @@ summary:
     已于 2026-07-18 退役）
   last_recomputed: '2026-08-03'
 changelog:
+- version: 2.7.12
+  date: '2026-08-03'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 139 份 blueprint.md；登记项相对上一版有
+    1 条差异摘要'
+  - 'MOD-GATE_ENGINE.version: [0.8.8] → [0.8.9]'
 - version: 2.7.11
   date: '2026-07-31'
   changes:
