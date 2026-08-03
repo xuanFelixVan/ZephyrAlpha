@@ -189,10 +189,11 @@ repos:
       # ── GATE-DOC-REF 已合并到 GATE-FRONTMATTER（见上 gate-frontmatter）──
 
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
-      # 权威依据：metadata_registry.md §10.3（provenance 字段格式）
+      # 权威依据：metadata_registry.md §10.3（provenance 字段格式）+ 文档引用铁律（2026-08-04）
       # 真源声明：rationale-log R73 兜底缺口 V-12 / Claude-Opus-4.7 终审
-      # 校验范围：docs/04_construction_plans/ + 01_policies_and_standards/
-      # 校验内容：frontmatter.provenance 三件套（origin_drafts + audit_chain≥3 + arbitration）+ 物理路径存在性
+      # 校验范围：docs/03_modules/**/blueprint.md + docs/04_construction_plans/ + 01_policies_and_standards/
+      # 校验内容：① frontmatter.provenance 三件套（origin_drafts + audit_chain≥3 + arbitration）
+      #           ② node_id/edge_id 硬编码 lint（文档引用铁律——蓝图引用 depgraph 禁用易变物理ID，改用 module_id/blueprint_id/path）
       # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-12-blueprint-provenance
         name: "GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）"
@@ -201,8 +202,8 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
-        files: "^docs/(04_construction_plans|01_policies_and_standards)/.*\\.md$"
-        description: "蓝图真源 Provenance 三件套校验（origin_drafts / audit_chain≥3 / arbitration），骨架阶段 warn-only"
+        files: "^docs/(03_modules/.*blueprint\\.md|04_construction_plans/.*\\.md|01_policies_and_standards/.*\\.md)$"
+        description: "蓝图真源 Provenance 三件套校验 + node_id/edge_id 硬编码 lint（文档引用铁律，禁止易变物理ID硬编码，改用 module_id/blueprint_id/path）"
 
       # ── GATE-14: AI 自治权限注册表自校验（Wave 0 终审 R74 · V-11）──
       # 权威依据：docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.md
