@@ -39,12 +39,12 @@ date: 2026-08-03
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 仿真验证阶段图
 flowchart TD
-    BM_SIM_01["【BM-SIM-01 市场仿真器】<br/>—<br/>仿真验证阶段 / simulation_validation<br/>（候选态 / candidate）<br/>🟡候选承载"]
-    BM_SIM_02["【BM-SIM-02 策略仿真器】<br/>—<br/>仿真验证阶段 / simulation_validation<br/>（生产态 / production）<br/>🟡候选承载"]
-    BM_SIM_03["【BM-SIM-03 场景生成与蒙特卡洛】<br/>—<br/>仿真验证阶段 / simulation_validation<br/>（生产态 / production）<br/>🟡候选承载"]
-    BM_SIM_04["【BM-SIM-04 压力测试引擎】<br/>—<br/>仿真验证阶段 / simulation_validation<br/>（生产态 / production）<br/>🟡候选承载"]
-    BM_SIM_05["【BM-SIM-05 依赖图数字孪生】<br/>—<br/>仿真验证阶段 / simulation_validation<br/>（候选态 / candidate）<br/>🟡候选承载"]
-    BM_SIM_06["【BM-SIM-06 仿真结果分析】<br/>—<br/>仿真验证阶段 / simulation_validation<br/>（生产态 / production）<br/>🟡候选承载"]
+    BM_SIM_01["【BM-SIM-01 市场仿真器】<br/>造一个假市场跑策略——订单簿仿真+价格生成+微观结构<br/>模拟，看策略在'如果怎样'下会怎样。<br/>仿真验证阶段 / simulation_validation<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Market Simulator】"]
+    BM_SIM_02["【BM-SIM-02 策略仿真器】<br/>把策略放进沙箱里跑——模拟信号、模拟组合，看策略在<br/>各种假设市场下的表现。<br/>仿真验证阶段 / simulation_validation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Strategy Simulator】"]
+    BM_SIM_03["【BM-SIM-03 场景生成与蒙特卡洛】<br/>蒙特卡洛跑百万条路径找策略边界——还能自定义极端场<br/>景，看策略在最坏情况下能不能活。<br/>仿真验证阶段 / simulation_validation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Scenario Generation &amp; Monte Carlo】"]
+    BM_SIM_04["【BM-SIM-04 压力测试引擎】<br/>把 2008/2015/2020<br/>这些极端行情重放一遍，再加假设情景和反向压力测试<br/>，看策略会不会爆。<br/>仿真验证阶段 / simulation_validation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Stress Test Engine】"]
+    BM_SIM_05["【BM-SIM-05 依赖图数字孪生】<br/>把整个系统的依赖图复制一份做数字孪生——改任何模块<br/>前先在孪生上 what-if 一遍，预测变更影响。<br/>仿真验证阶段 / simulation_validation<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Dependency Graph Digital Twin】"]
+    BM_SIM_06["【BM-SIM-06 仿真结果分析】<br/>跑完仿真不算完——统计检验看结果显著不显著，可视化<br/>看分布，出报告给风控和组合参考。<br/>仿真验证阶段 / simulation_validation<br/>（生产态 / production）<br/>🟡候选承载<br/>【Simulation Result Analysis】"]
     BM_SIM_01 -.->|市场仿真→策略仿真 / data_flow| BM_SIM_02
     BM_SIM_02 -->|策略仿真→场景生成 / data_flow| BM_SIM_03
     BM_SIM_03 -->|场景→压力测试 / trigger| BM_SIM_04
@@ -61,8 +61,16 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 ## 环节详情
 
-### BM-SIM-01 市场仿真器
+### BM-SIM-01 市场仿真器 / Market Simulator
 
+> **大白话**：造一个假市场跑策略——订单簿仿真+价格生成+微观结构模拟，看策略在"如果怎样"下会怎样。
+
+**机制说明**：
+
+D-SIMULATION-01 Market Simulator 提供市场仿真器+订单簿仿真+价格生成+微观结构模拟（P0）；
+D-SIMULATION-07 History Replay Engine 提供历史重放引擎+逐Tick回放+时间压缩。
+与 D-BACKTEST 的区别：回测=过去怎样(真实历史)，仿真=如果怎样(假设场景)。
+是仿真验证的核心入口，P0 模块。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -75,6 +83,11 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-BT-07 回测通过/研究员配置；②消费：BM-BT-01 回测引擎+策略代码；③参数：订单簿仿真、价格生成、微观结构模拟、逐Tick回放、时间压缩；④数据流：策略+仿真市场→撮合仿真→仿真成交→仿真结果→BM-SIM-06分析；⑤代码：D-SIMULATION-01/07（planned）；⑥降级：市场仿真器未就绪→仅历史回测(无what-if能力)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -85,8 +98,15 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
-### BM-SIM-02 策略仿真器
+### BM-SIM-02 策略仿真器 / Strategy Simulator
 
+> **大白话**：把策略放进沙箱里跑——模拟信号、模拟组合，看策略在各种假设市场下的表现。
+
+**机制说明**：
+
+D-SIMULATION-02 Strategy Simulator 提供策略仿真器+策略沙箱+信号模拟+组合模拟（P0）。
+与 BM-SIM-01 市场仿真器配合——市场仿真器造环境，策略仿真器跑策略。
+是"策略压力测试"的核心承载。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -99,6 +119,11 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-SIM-01 市场仿真就绪；②消费：策略代码+BM-SIM-01 仿真市场；③参数：策略沙箱、信号模拟、组合模拟；④数据流：策略+仿真市场→策略沙箱→信号模拟+组合模拟→仿真PnL→BM-SIM-06；⑤代码：D-SIMULATION-02（planned）；⑥降级：策略仿真器未就绪→仅回测(无沙箱隔离)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -109,8 +134,15 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
-### BM-SIM-03 场景生成与蒙特卡洛
+### BM-SIM-03 场景生成与蒙特卡洛 / Scenario Generation & Monte Carlo
 
+> **大白话**：蒙特卡洛跑百万条路径找策略边界——还能自定义极端场景，看策略在最坏情况下能不能活。
+
+**机制说明**：
+
+D-SIMULATION-05 Scenario Generator 提供场景生成器+蒙特卡洛+历史场景+自定义场景；
+D-SIMULATION-06 Monte Carlo Engine 提供蒙特卡洛模拟+GPU加速+百万路径。
+是"如果怎样"的批量版本，产出策略在各种场景下的表现分布。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -123,6 +155,11 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-SIM-02 策略仿真后/研究员配置；②消费：BM-SIM-02 仿真结果+场景定义；③参数：蒙特卡洛路径数、GPU加速、历史场景库、自定义场景；④数据流：场景定义→蒙特卡洛百万路径→仿真结果分布→BM-SIM-06分析；⑤代码：D-SIMULATION-05/06（planned）；⑥降级：蒙特卡洛未就绪→少量场景手动跑(无统计意义)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -133,8 +170,15 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
-### BM-SIM-04 压力测试引擎
+### BM-SIM-04 压力测试引擎 / Stress Test Engine
 
+> **大白话**：把 2008/2015/2020 这些极端行情重放一遍，再加假设情景和反向压力测试，看策略会不会爆。
+
+**机制说明**：
+
+D-SIMULATION-04 Stress Test Engine 提供压力测试引擎+极端场景+历史重放（testing, 部分在D-RISK-05）；
+D-SIMULATION-10 Extreme Event Simulator 提供极端事件仿真+黑天鹅+闪崩+熔断（P2）。
+与 D-RISK RK-12 Stress Test Engine 联动——仿真侧造场景，风控侧评估影响。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -147,6 +191,11 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-SIM-03 场景生成后/定时压力测试；②消费：BM-SIM-03 极端场景+历史极端事件库；③参数：历史情景(2008/2015/2020)、假设情景、反向压力测试、敏感性分析、传染效应；④数据流：极端场景→压力测试→策略表现→BM-SIM-06分析+D-RISK风控参数调整；⑤代码：D-SIMULATION-04（testing）+D-SIMULATION-10（planned）；⑥降级：极端事件仿真器未就绪→仅历史重放(无黑天鹅模拟)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -157,8 +206,15 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
-### BM-SIM-05 依赖图数字孪生
+### BM-SIM-05 依赖图数字孪生 / Dependency Graph Digital Twin
 
+> **大白话**：把整个系统的依赖图复制一份做数字孪生——改任何模块前先在孪生上 what-if 一遍，预测变更影响。
+
+**机制说明**：
+
+D-SIMULATION-13 Dependency Graph Digital Twin 提供依赖图数字孪生+what-if仿真+批量/流式/实时三种模式+依赖拓扑实时映射（P2）；
+D-SIMULATION-14 Real-time DT Synchronizer 提供实时数字孪生同步器+依赖图实时同步+预测仿真+变更预演（P2）。
+是"架构变更"的仿真验证，防止"改一个模块炸一片"。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -171,6 +227,11 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：架构变更前/混沌实验；②消费：depgraph 依赖图+模块状态；③参数：what-if仿真、批量/流式/实时三模式、依赖拓扑实时映射、变更预演；④数据流：depgraph→数字孪生→what-if仿真→变更影响预测→ADR决策；⑤代码：D-SIMULATION-13/14（planned）；⑥降级：数字孪生未就绪→人工评估变更影响(精度低)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -181,8 +242,15 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
-### BM-SIM-06 仿真结果分析
+### BM-SIM-06 仿真结果分析 / Simulation Result Analysis
 
+> **大白话**：跑完仿真不算完——统计检验看结果显著不显著，可视化看分布，出报告给风控和组合参考。
+
+**机制说明**：
+
+D-SIMULATION-12 Simulation Result Analyzer 提供仿真结果分析+统计检验+可视化。
+汇总 BM-SIM-01~05 的仿真产出，产出 SimulationResult 事件喂 D-RISK 和 D-PF-CORE。
+是仿真验证的"出口"，决定仿真结论能否影响实盘决策。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -195,6 +263,11 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-SIM-01~05 仿真完成；②消费：仿真成交+PnL+场景结果；③参数：统计检验、可视化、报告生成；④数据流：仿真结果→统计检验+可视化→SimulationResult事件→D-RISK风控参数+D-PF-CORE组合参考；⑤代码：D-SIMULATION-12（planned）；⑥降级：结果分析器未就绪→原始仿真数据(无统计检验,人工分析)。
+
 
 **锚点（环节↔模块双向关联）**：
 
