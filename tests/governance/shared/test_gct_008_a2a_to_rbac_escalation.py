@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gct_a2a_to_rbac_escalation | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-288 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_008_a2a_to_rbac_escalation
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

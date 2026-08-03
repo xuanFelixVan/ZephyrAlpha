@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_post_sync_validation | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §task-system
 # [MODULE] tests.unit.test_post_sync_validation
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

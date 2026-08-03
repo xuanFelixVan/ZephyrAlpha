@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_timeout_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_timeout_guard
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS]

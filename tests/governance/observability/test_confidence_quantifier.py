@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_confidence_quantifier | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §7
 # [MODULE] tests.test_confidence_quantifier
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 连续5次低置信→exit37
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

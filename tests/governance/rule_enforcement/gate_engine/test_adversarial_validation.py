@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_adversarial_validation | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_adversarial_validation
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [INVARIANTS] Challenge output must question the input claim
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

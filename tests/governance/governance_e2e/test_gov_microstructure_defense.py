@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gov_microstructure_defense | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-389 | docs/03_modules/_domain_governance/blueprint.md | §test
 # [MODULE] tests.test_gov_microstructure_defense
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] DEFENSE_STRATEGIES覆盖所有DefenseType;FidelityFactor.composite_ff正确
 # [MODIFY-GUARD] src/zephyr/governance/microstructure_defense.py
 # [CONSUMERS] pytest

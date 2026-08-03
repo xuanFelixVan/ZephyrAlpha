@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_autopilot | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-350 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
 # [MODULE] tests.test_autopilot
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] All tests use temp DB files; concurrent tests use ThreadPoolExecutor; claim_next verified via Event Sourcing atomicity
 # [MODIFY-GUARD] If AutoPilot.scan() or claim_next() changes API, MUST update these tests
 # [CONSUMERS] CI pipeline (pytest)

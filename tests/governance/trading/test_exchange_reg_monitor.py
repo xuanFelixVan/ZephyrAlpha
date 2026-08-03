@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_exchange_reg_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_exchange_reg_monitor
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

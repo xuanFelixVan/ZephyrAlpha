@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_validate_authority_registry_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-701 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_validate_authority_registry
+# [DOMAIN] D_GOV_SCRIPTS
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

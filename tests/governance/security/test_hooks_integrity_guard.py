@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 
 # [MODULE] tests.test_hooks_integrity_guard
+# [DOMAIN] D_GOVERNANCE
 
 # [INVARIANTS] 测试必须覆盖register和verify的边界条件
 

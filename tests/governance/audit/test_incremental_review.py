@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-1117 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-397 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_incremental_review
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] REVIEW_DIMENSIONS has 6 entries; ReviewChunk defaults time_budget to 30
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

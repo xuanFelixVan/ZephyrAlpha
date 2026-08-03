@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_commit_gate_registry | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_COMMIT_GATE_REGISTRY | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §commit-gate-registry
 # [MODULE] tests.test_commit_gate_registry
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

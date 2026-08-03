@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-3000 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_HEALTH_SCORE_CALCULATOR | docs/03_modules/_domain_governance/blueprint.md | §ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-2
 # [MODULE] tests.governance.audit.test_health_score_calculator
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gov_consequence_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-387 | docs/03_modules/_domain_governance/blueprint.md | §test
 # [MODULE] tests.test_gov_consequence_manager
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] CONSEQUENCE_REGISTRY覆盖关键场景;is_active逻辑正确
 # [MODIFY-GUARD] src/zephyr/governance/consequence_manager.py
 # [CONSUMERS] pytest

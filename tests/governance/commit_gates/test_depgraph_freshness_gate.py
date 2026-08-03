@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] tests.governance.commit_gates.test_depgraph_freshness_gate
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

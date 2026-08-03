@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_WORKTREE_POOL | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_ENFORCEMENT_WORKTREE_POOL | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ARCH-GIT-CALL-BUDGET-P3.3
 # [MODULE] tests.governance.rule_bridge.test_worktree_pool
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

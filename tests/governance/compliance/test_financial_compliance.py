@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_financial_compliance | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-385 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_financial_compliance
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] FRAMEWORK_DIMENSIONS counts match enum sizes
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

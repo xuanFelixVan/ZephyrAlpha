@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §test
 
 # [MODULE] tests.test_slo_contract
+# [DOMAIN] D_GOVERNANCE
 
 # [INVARIANTS] test_slo_contract covers SLOContractEngine+BudgetTier+SLIName+ContractPriority
 

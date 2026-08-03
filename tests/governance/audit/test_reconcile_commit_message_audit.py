@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_RECONCILE_COMMIT_MESSAGE_AUDIT_TEST | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_RECONCILIATION_REGISTRY | docs/03_modules/_domain_governance/blueprint.md | §P3.4
 # [MODULE] tests.governance.audit.test_reconcile_commit_message_audit
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV-asyncio_run_in_context_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_COMMIT_GATES | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] tests.governance.commit_gates.test_asyncio_run_in_context_gate
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

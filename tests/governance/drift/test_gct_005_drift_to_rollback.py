@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gct_drift_to_rollback | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-285 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_005_drift_to_rollback
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

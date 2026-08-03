@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 
 # [MODULE] tests.test_breaking_change_detector
+# [DOMAIN] D_GOV_CODE_QUALITY
 
 # [INVARIANTS] none
 

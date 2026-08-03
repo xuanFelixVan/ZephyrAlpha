@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_verify_b54_b56_b59_deep | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-336 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.integration.test_verify_b54_b56_b59_deep
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

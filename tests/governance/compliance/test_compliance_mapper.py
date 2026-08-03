@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 
 # [MODULE] tests.test_compliance_mapper
+# [DOMAIN] D_GOVERNANCE
 
 # [INVARIANTS] 合规映射必须同步法律变更;blocked操作必须同步确认
 

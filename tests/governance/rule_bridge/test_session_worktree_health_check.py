@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_session_worktree_health_check_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_SESSION_WORKTREE | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 # [MODULE] tests.governance.rule_bridge.test_session_worktree_health_check
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

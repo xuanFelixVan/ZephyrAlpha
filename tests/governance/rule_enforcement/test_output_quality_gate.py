@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_output_quality_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_output_quality_gate
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [INVARIANTS] evaluate returns QualityVerdict; hard violations block
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_base_repo | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §test
 # [MODULE] tests.test_base_repo
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] _ALLOWED_TRANSITIONS不可变;异常类层次稳定
 # [MODIFY-GUARD] src/zephyr/db/base_repo.py
 # [CONSUMERS] pytest

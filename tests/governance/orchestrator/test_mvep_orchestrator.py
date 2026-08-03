@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 
 # [MODULE] tests.test_mvep_orchestrator
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 
 # [INVARIANTS] MVEP Phase Gate不可跳过;Phase 0→5顺序不可逆
 

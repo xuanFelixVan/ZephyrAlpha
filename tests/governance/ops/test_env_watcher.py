@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 
 # [MODULE] tests.test_env_watcher
+# [DOMAIN] D_GOVERNANCE
 
 # [INVARIANTS] EnvWatcher detects .env changes and produces EnvChangeAlert
 

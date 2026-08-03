@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_sync_panorama_module | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_SYNC_PANORAMA | docs/_working/2026-07-09-panorama_module_sync_engine.md | §Phase2
 # [MODULE] tests.governance.test_sync_panorama_module
+# [DOMAIN] D_GOVERNANCE
 # [CONSUMERS] pytest
 # [STABILITY] volatile
 # [SAFETY] L

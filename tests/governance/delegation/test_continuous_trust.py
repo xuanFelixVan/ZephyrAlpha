@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_continuous_trust | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_continuous_trust
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] ContinuousTrust ledger_dir must be temp; score clamped [-1.0, 1.0]; tier 0/1/2
 # [MODIFY-GUARD] blueprint.md §4
 # [CONSUMERS] pytest

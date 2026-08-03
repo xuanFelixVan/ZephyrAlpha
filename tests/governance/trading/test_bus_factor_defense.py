@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_bus_factor_defense | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-356 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_bus_factor_defense
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] evaluate_bus_factor sets risk based on owner count; onboarding_complete requires all 3 flags
 # [MODIFY-GUARD] Changes must sync with bus_factor_defense.py
 # [CONSUMERS] CI pipeline

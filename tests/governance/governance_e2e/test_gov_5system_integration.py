@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gov_integration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-291 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_gov_5system_integration
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

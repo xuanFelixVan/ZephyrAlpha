@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_schema_schemas
+# [DOMAIN] D_GOVERNANCE
 
 # [INVARIANTS] AuditReport.sync_counts自动同步;KnowledgeEntry.ke_id格式KE-NNN;HandoffPackage无重叠
 

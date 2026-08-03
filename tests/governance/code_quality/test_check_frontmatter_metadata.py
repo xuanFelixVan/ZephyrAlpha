@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_check_frontmatter_metadata | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_frontmatter_metadata.py | §gate-15
 # [MODULE] tests.unit.governance.test_check_frontmatter_metadata
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

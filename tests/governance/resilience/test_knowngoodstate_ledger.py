@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_knowngoodstate_ledger | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_knowngoodstate_ledger
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] signature is SHA256 of "commit_sha|verified_at|method|file_count|db_integrity"
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

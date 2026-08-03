@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_triage_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-697 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_triage
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_held_overlap_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_HELD_OVERLAP_GATE | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §held-overlap-gate
 # [MODULE] tests.test_held_overlap_gate
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

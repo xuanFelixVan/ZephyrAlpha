@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_schema_schema_registry
+# [DOMAIN] D_GOVERNANCE
 
 # [INVARIANTS] 重复注册同版本抛SchemaRegistryError;latest返回最高版本;compatible_versions_for同MAJOR
 

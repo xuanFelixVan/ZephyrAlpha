@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_trust_ring_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_trust_ring_manager
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] R0 has grant_trust/revoke_trust; R3 has view_summary only
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

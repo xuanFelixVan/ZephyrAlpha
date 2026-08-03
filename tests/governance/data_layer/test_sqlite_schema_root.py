@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_sqlite_schema_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md | §test
 # [MODULE] tests.test_sqlite_schema
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] init_db幂等;migration只向前;PRAGMA基线一致
 # [MODIFY-GUARD] src/zephyr/db/sqlite_schema.py
 # [CONSUMERS] pytest

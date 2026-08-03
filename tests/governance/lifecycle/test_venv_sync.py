@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_venv_sync | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_venv_sync
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

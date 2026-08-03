@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_submodule_sync | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_submodule_sync
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] SubmoduleSync layout detection;sync report generation;exit code 16 on out-of-sync
 # [MODIFY-GUARD] src/zephyr/rollback/submodule_sync.py
 # [CONSUMERS] CI

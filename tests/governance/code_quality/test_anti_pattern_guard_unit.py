@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_anti_pattern_guard_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-590 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_anti_pattern_guard
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

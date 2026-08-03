@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_scheduler_act | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_scheduler_act
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] ActPhaseHandler.run_act returns ActResult; run_verify returns verification
 # [MODIFY-GUARD] none
 # [CONSUMERS] CI pipeline

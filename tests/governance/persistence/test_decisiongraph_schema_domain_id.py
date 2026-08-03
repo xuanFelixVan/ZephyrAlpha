@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_decisiongraph_schema_domain_id | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SH-DB-002 | docs/03_modules/_cross_layer/database/blueprint.md | §decisiongraph
 # [MODULE] tests.governance.persistence.test_decisiongraph_schema_domain_id
+# [DOMAIN] D_GOVERNANCE
 # [CONSUMERS] pytest
 # [STABILITY] volatile
 # [SAFETY] L

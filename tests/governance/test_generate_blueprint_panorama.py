@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV-029 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-029 | docs/03_modules/_domain_governance/panorama_alignment_engine/blueprint.md | §FP-panorama-gen
 # [MODULE] tests.governance.test_generate_blueprint_panorama
+# [DOMAIN] D_GOVERNANCE
 # [CONSUMERS] pytest
 # [STABILITY] volatile
 # [SAFETY] L

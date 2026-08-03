@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ruling_reference_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_RULING_REFERENCE_GATE | docs/03_modules/_domain_governance/commit_gate_catalog/blueprint.md | §ruling-ref-gate
 # [MODULE] tests.test_ruling_reference_gate
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

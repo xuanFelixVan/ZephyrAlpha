@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_cache_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md | §
 # [MODULE] tests.test_cache_manager
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS]

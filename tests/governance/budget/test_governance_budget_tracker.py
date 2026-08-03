@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_governance_budget_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_governance_budget_tracker
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [INVARIANTS] track_cost must return dict with budget_consumed=True
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

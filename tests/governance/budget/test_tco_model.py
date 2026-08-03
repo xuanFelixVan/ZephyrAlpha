@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_tco_model | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-infra_ops/budget-enforcer/blueprint.md
 # [MODULE] tests.test_tco_model
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_secrets_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_secrets_guard
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [INVARIANTS] SecretsGuard.REQUIRED_KEYS=["OPENAI_API_KEY","ANTHROPIC_API_KEY","DEEPSEEK_API_KEY"]
 # [MODIFY-GUARD] source-change:re-read-secrets_guard
 # [CONSUMERS] pytest

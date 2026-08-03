@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_result_types | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_result_types
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] RollbackResult字段不可删;status/validation_result枚举不可改值
 # [MODIFY-GUARD] contracts_blueprint.md §4;src/zephyr/rollback/__init__.py
 # [CONSUMERS] CI;pytest

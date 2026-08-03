@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_sbom_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_sbom_guard
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] SBOM必须完整;幽灵依赖必须检测
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md
 # [CONSUMERS] CI pipeline

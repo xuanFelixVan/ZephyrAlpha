@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gct_hard_checks | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-289 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_024_hard_checks
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

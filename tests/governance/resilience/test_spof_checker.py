@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_spof_checker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-434 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_spof_checker
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

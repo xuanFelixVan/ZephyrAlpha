@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_drafts_zone_archiver_governance | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-508 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.governance.test_drafts_zone_archiver
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

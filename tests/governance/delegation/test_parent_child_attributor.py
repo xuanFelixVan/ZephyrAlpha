@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_parent_child_attributor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_parent_child_attributor
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] analyze returns DelegationReport; children_of returns list
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_sqlite_dumper | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_sqlite_dumper
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] SqliteDumper dump/restore/verify roundtrip;Merkle root integrity;HMAC integrity
 # [MODIFY-GUARD] src/zephyr/rollback/sqlite_dumper.py
 # [CONSUMERS] CI

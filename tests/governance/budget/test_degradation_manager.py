@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_degradation_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_degradation_manager
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [INVARIANTS] DegradationLevel progression is monotonic; HALT at usage>=1.0
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

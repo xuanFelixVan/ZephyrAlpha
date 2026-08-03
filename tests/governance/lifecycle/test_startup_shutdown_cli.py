@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_startup_shutdown_cli | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-infra_ops/rollback-system/blueprint.md
 # [MODULE] tests.test_startup_shutdown_cli
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] CLI argparser build;phase range parsing;command dispatch
 # [MODIFY-GUARD] src/zephyr/rollback/startup_shutdown_cli.py
 # [CONSUMERS] CI

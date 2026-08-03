@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_blueprint_frontmatter_reconciler | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_SYNC_PANORAMA | docs/_working/2026-07-09-panorama_module_sync_engine.md | §Phase3
 # [MODULE] tests.governance.test_blueprint_frontmatter_reconciler
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-2711 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_WORKSPACE_HYGIENE_RECONCILER | docs/01_policies_and_standards/policies/workspace_governance_policy.md | §ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002
 # [MODULE] tests.governance.audit.test_workspace_hygiene_reconciler
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

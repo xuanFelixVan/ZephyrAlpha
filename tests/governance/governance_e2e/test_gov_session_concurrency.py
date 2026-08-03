@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gov_session_concurrency | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-390 | docs/03_modules/_domain_governance/blueprint.md | §test
 # [MODULE] tests.test_gov_session_concurrency
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] ZephyrLock状态机正确;ConcurrencyManager冲突检测完整
 # [MODIFY-GUARD] src/zephyr/governance/session_concurrency.py
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-2082 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-699 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_truth_source_validator
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

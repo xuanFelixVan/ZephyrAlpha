@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-0630 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_cost_attributor
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -2,6 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_apply_depgraph_transition_sync | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.governance.test_apply_depgraph_transition_sync
+# [DOMAIN] D_GOVERNANCE
 # [CONSUMERS] pytest
 # [STABILITY] volatile
 # [SAFETY] L

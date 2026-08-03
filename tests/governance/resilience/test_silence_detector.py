@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_silence_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_silence_detector
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] test_coverage>=2_public_methods;boundary_tests_included
 # [MODIFY-GUARD] sync_with_source_on_refactor
 # [CONSUMERS] pytest

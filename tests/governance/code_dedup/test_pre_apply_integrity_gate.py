@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_pre_apply_integrity_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md | §
 # [MODULE] tests.test_pre_apply_integrity_gate
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS]

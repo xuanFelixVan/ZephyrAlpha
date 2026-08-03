@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_security_config_scanner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_security_config_scanner
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 安全配置扫描不可跳过;数据库/云/API配置必须检查
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md
 # [CONSUMERS] CI pipeline

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_coldstart_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_coldstart_manager
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] Imprint期不可跳过;渐进校准速率不可加速
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md
 # [CONSUMERS] pytest

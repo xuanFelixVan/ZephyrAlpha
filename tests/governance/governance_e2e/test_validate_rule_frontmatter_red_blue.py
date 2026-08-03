@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | tests/test_validate_rule_frontmatter_red_blue.py | §
 # [MODULE] tests.test_validate_rule_frontmatter_red_blue
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 红蓝对抗13项攻击向量必须全部PASS
 # [MODIFY-GUARD] 修改前MUST确认与validate_rule_frontmatter.py的检测维度一致
 # [CONSUMERS] pytest;pre_commit

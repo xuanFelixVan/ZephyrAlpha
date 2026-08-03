@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_validate_ssot_governance | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-513 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.governance.test_validate_ssot
+# [DOMAIN] D_GOV_SCRIPTS
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

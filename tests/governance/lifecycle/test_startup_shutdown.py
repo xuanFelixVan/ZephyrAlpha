@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_startup_shutdown | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-infra_ops/rollback-system/blueprint.md
 # [MODULE] tests.test_startup_shutdown
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] StartupOrchestrator sequential phase run;ShutdownOrchestrator reverse order;DAG dependency check
 # [MODIFY-GUARD] src/zephyr/rollback/startup_shutdown.py
 # [CONSUMERS] CI

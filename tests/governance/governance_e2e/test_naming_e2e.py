@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_naming_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-005 | tests/governance/governance_e2e/test_naming_e2e.py | §
 # [MODULE] tests.e2e.test_naming_e2e
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] E2E tests verify the full enforcement chain: create file → check_naming_convention → scaffold
 # [STABILITY] evolving
 # [SAFETY] L

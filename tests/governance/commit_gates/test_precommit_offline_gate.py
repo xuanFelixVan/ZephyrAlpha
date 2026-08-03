@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_precommit_offline_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §ARCH-PRECOMMIT-OFFLINE-001
 # [MODULE] tests.governance.commit_gates.test_precommit_offline_gate
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

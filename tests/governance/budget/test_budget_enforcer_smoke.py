@@ -1,6 +1,7 @@
 # [A_test] module_id: SRC-TST-0120 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-277 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_budget_enforcer_smoke
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

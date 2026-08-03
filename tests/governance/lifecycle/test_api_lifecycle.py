@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_api_lifecycle | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-348 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_api_lifecycle
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] REJECTED status must include rejection_reason; deprecate_api sets DEPRECATED state
 # [MODIFY-GUARD] Changes must sync with api_lifecycle.py
 # [CONSUMERS] CI pipeline

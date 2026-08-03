@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_query_module_panorama | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-D5_ARCH_TOOLS | docs/03_modules/d5_architecture/blueprint.md | §query_tools
 # [MODULE] tests.governance.test_query_module_panorama
+# [DOMAIN] D_GOVERNANCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_mcp_result_push | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-406 | docs/03_modules/_domain_governance/blueprint.md | §3.11
 # [MODULE] tests.test_mcp_result_push
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] PushError carries task_id; ResultPushManager state persists via JSON
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

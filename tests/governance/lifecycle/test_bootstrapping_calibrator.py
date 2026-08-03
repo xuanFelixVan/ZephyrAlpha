@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_bootstrapping_calibrator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_bootstrapping_calibrator
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] correction_factor >= 0; is_calibrated only True after min_data_points
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

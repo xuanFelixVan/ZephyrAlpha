@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_en_enforcement_validator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_en_002_enforcement_validator
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] CI pipeline
