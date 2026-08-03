@@ -94,7 +94,11 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-zephyr_admin}
+      # AI-01 W2 治本（2026-08-01）：原 ${GRAFANA_ADMIN_PASSWORD:-zephyr_admin} 是静默弱口令兜底——
+      # env_file=.env.example 不含该变量 → 默认 zephyr_admin 必生效，SECURITY.md 的"仅本地开发"是文档治理，
+      # AI 不会先读 SECURITY.md 再 compose。改 fail-fast：unset/空值均报错退出，强制环境变量注入。
+      # 详见 SECURITY.md 开发侧约定 + .env.example 可观测性栈段。
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD 未设置——见 SECURITY.md 开发侧约定（本地开发自设强口令，生产必须环境变量注入）}
       - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-clickhouse-datasource
       - GF_AUTH_ANONYMOUS_ENABLED=false
     volumes:
