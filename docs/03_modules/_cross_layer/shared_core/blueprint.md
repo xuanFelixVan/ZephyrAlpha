@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.3"
+version: "0.19.4"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -385,6 +385,7 @@ build_status: planned
 | `src/zephyr/shared/api/api_index.py` | ✅ 已实现 | |
 | `src/zephyr/shared/blueprint_tools/blueprint_scorer.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/backpressure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/_types.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/pause.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/backpressure/resume.py` | ✅ 已实现 | |
@@ -393,6 +394,7 @@ build_status: planned
 | `src/zephyr/shared/contracts/compliance_rule.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/contract_bus.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/enums/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/errors/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/contract_violation_error.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/data_quality_error.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/errors/execution_rejection_error.py` | ✅ 已实现 | |
@@ -415,29 +417,26 @@ build_status: planned
 | `src/zephyr/shared/contracts/external/ext_002.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/ext_003.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/ext_004.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/fill.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/identity/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/llm_gateway_protocol.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/market/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/market/instrument.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/model_serving_request.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/orchestration_protocol.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/order.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/portfolio/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/portfolio/performance_attribution_report.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/portfolio/position.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/protocols.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk/compliance_rule.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/risk/risk_dashboard_snapshot.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/risk/risk_limits.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/risk/risk_metrics.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/risk/risk_validator_protocol.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/risk_dashboard_snapshot.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/risk_metrics.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/security/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/skill_protocol.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/system_configuration.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/target_portfolio.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/task_repository_protocol.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/trace_context.py` | ✅ 已实现 | |
 | `src/zephyr/shared/events/__init__.py` | ✅ 已实现 | |
@@ -460,7 +459,7 @@ build_status: planned
 | `src/zephyr/trading/trading_contracts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/execution/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/execution/execution_rejection_error.py` | ✅ 已实现 | |
-| `src/zephyr/trading/trading_contracts/market/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/market/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/trading/trading_contracts/market/instrument.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/market/signal_degradation_warning.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/risk/__init__.py` | ✅ 已实现 | |

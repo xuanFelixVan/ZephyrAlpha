@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
 doc_type: blueprint
 status: Active
-version: 6.1.5
+version: 6.1.6
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -2015,7 +2015,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/database_service.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/hooks/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/hooks/event_hook.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/redis_config.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime/gate_coordinator.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/orchestrator/core/task_queue.py` | ✅ 已实现 | |

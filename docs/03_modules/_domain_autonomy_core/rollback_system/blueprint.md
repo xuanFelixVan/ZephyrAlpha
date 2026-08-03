@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.2
+version: 9.0.3
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -1784,7 +1784,6 @@ STEP 3: 拆分后验证
 | `tests/rollback/test_concurrency_guard.py` | ✅ 已实现 | |
 | `tests/rollback/test_concurrency_guard_red_blue.py` | ✅ 已实现 | |
 | `tests/rollback/test_concurrent_mv_guard.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_position_reconciler.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_abuse_detector.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_audit_nexus.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_bootstrap.py` | ✅ 已实现 | |
@@ -1798,6 +1797,7 @@ STEP 3: 拆分后验证
 | `tests/rollback/test_rollback_lock.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_loop_detector.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_partial_extreme.py` | ✅ 已实现 | |
+| `tests/rollback/test_rollback_position_reconciler.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_scheduler.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_simulator.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_state_machine.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.6"
+version: "2.2.7"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.6 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.7 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -958,6 +958,9 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_hk_kline.py` | ✅ 已实现 | |
 | `schemas/categories/market_hk_stock_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_hk_trade_calendar.py` | ✅ 已实现 | |
+| `schemas/categories/market_hog_futures_core.py` | ✅ 已实现 | |
+| `schemas/categories/market_hog_province_spot.py` | ✅ 已实现 | |
+| `schemas/categories/market_hog_spot_index.py` | ✅ 已实现 | |
 | `schemas/categories/market_index.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_constituent.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_list.py` | ✅ 已实现 | |
@@ -976,6 +979,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_kline_etf_30min.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_etf_5min.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_etf_60min.py` | ✅ 已实现 | |
+| `schemas/categories/market_kline_etf_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_futures.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_hk_daily.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_index.py` | ✅ 已实现 | |

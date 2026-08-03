@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.4
+version: 5.5.5
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -1458,6 +1458,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/dr/test_backup_lock_stale.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f18_automation.py` | ✅ 已实现 | |
 | `tests/f_lifecycle/test_f18_redblue.py` | ✅ 已实现 | |
 | `tests/git/test_git_commit_concurrent.py` | ✅ 已实现 | |

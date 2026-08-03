@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_sor/services/transaction_cost_optimizer.py
 title: "交易成本优化器蓝图 — A股全成本分解+优化建议"
 doc_type: blueprint
 status: Active
-version: "0.1.0"
+version: "0.1.1"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -205,3 +205,32 @@ class TransactionCostOptimizer:
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
+---
+
+## 13. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 13.1 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/ex_sor/test_transaction_cost_optimizer.py` | ✅ 已实现 | |
+
+### 13.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §13（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
