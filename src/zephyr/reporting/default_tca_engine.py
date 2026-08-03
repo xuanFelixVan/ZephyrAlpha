@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-UNK-default_tca_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L07-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # ---
@@ -37,7 +37,7 @@ SSoT: cross_layer_contracts.yaml -> CTR-005 + CTR-P1-007
 from __future__ import annotations
 
 import logging
-from decimal import Decimal, ROUND_HALF_EVEN
+from decimal import ROUND_HALF_EVEN, Decimal
 
 from zephyr.reporting.analytics_base import TCAEngineBase
 from zephyr.shared.contracts.execution_report import ExecutionReport

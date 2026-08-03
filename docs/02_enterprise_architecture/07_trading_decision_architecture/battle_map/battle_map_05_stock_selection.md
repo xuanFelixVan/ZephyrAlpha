@@ -20,11 +20,12 @@ date: 2026-08-03
 | 阶段 | 选股（stock_selection） | Stage | 选股 |
 | 环节数 | 83 | Steps | 83 |
 | 流转边 | 17 | Edges | 17 |
-| 状态分布 | 🟦 运营态（已建）=64 ｜ 🟨 候选态（候选池）=13 ｜ 🟥 弃用态=3 ｜ 🟧 设计态（待施工）=3 | State Distribution | 🟦 运营态（已建）=64 ｜ 🟨 候选态（候选池）=13 ｜ 🟥 弃用态=3 ｜ 🟧 设计态（待施工）=3 |
+| 状态分布 | 🟦 运营态（已建）=64 ｜ 🟧 设计态（待施工）=16 ｜ 🟥 弃用态=3 | State Distribution | 🟦 运营态（已建）=64 ｜ 🟧 设计态（待施工）=16 ｜ 🟥 弃用态=3 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
 > - 🟧 **橙色虚线 = 设计态环节**（design，锚点模块待施工）
+> - 🟧**设计态子环节** = 父环节已建但此子环节待施工（特殊标记，易被忽略）
 > - 🟥 **红色 = 弃用态**（deprecated）
 > - ⬜ **灰色 = 缺失态**（missing，环节无锚点，BM-INV-001 违例）
 > - 🟨 **黄色虚线 = 候选态**（candidate，承载模块在候选池）
@@ -195,7 +196,7 @@ flowchart TD
     subgraph sg_BM_SEL_03 ["市场状态感知"]
         BM_SEL_03["【BM-SEL-03 市场状态感知】<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Market State Sensing】"]
         BM_SEL_03_A["【BM-SEL-03-A 市场情绪分析】<br/>量化市场的恐惧贪婪程度——用涨跌家数、换手率、连板<br/>高度等指标合成情绪温度计。<br/>（生产态 / production）<br/>【Market Sentiment Analysis】"]
-        BM_SEL_03_B["【BM-SEL-03-B 市场状态传感器】<br/>综合趋势/波动/量能<br/>/情绪给出市场当前状态的最终判定——是什么市、什么<br/>阶段。<br/>（设计态 / design）<br/>【Market State Sensor】"]
+        BM_SEL_03_B["【BM-SEL-03-B 市场状态传感器】<br/>综合趋势/波动/量能<br/>/情绪给出市场当前状态的最终判定——是什么市、什么<br/>阶段。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Market State Sensor】"]
         BM_SEL_03 -.->|嵌套| BM_SEL_03_A
         BM_SEL_03 -.->|嵌套| BM_SEL_03_B
     end
@@ -209,24 +210,24 @@ flowchart TD
         BM_SEL_05 -.->|嵌套| BM_SEL_05_B
         BM_SEL_05 -.->|嵌套| BM_SEL_05_C
     end
-    BM_SEL_06["【BM-SEL-06 跨市场传导感知】<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Cross-Market Conduction Sensing】"]
-    BM_SEL_07["【BM-SEL-07 体制转换检测】<br/>盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点<br/>提前预警。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Regime Change Detection】"]
+    BM_SEL_06["【BM-SEL-06 跨市场传导感知】<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Cross-Market Conduction Sensing】"]
+    BM_SEL_07["【BM-SEL-07 体制转换检测】<br/>盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点<br/>提前预警。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Regime Change Detection】"]
     subgraph sg_BM_SEL_08 ["板块轮动序列追踪"]
         BM_SEL_08["【BM-SEL-08 板块轮动序列追踪】<br/>追踪板块强弱的轮动顺序，给回踩质量打A/B<br/>/C级，决定买入优先级。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Sector Rotation Sequence Tracking】"]
         BM_SEL_08_A["【BM-SEL-08-A 板块分析器】<br/>给每个板块算强度分并排名，追踪谁在领涨谁在补涨，<br/>输出板块轮动序列。<br/>（生产态 / production）<br/>【Sector Analyzer】"]
         BM_SEL_08 -.->|嵌套| BM_SEL_08_A
     end
-    BM_SEL_09["【BM-SEL-09 调整周期追踪】<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期&lt;40%直接拦截。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Adjustment Cycle Tracking】"]
-    BM_SEL_10["【BM-SEL-10 行情生命周期阶段】<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Market Lifecycle Phase】"]
-    BM_SEL_11["【BM-SEL-11 知识图谱与因果推演】<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Knowledge Graph &amp; Causal Inference】"]
-    BM_SEL_12["【BM-SEL-12 分布特征工程】<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Distribution Feature Engineering】"]
-    BM_SEL_13["【BM-SEL-13 收益率条件密度预测】<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conditional Density Prediction】"]
-    BM_SEL_14["【BM-SEL-14 共形预测】<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Conformal Prediction】"]
-    BM_SEL_15["【BM-SEL-15 Survival止盈止损时间预测】<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Survival Stop-Time Prediction】"]
-    BM_SEL_16["【BM-SEL-16 分级指标过滤】<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Tiered Screening Filter】"]
-    BM_SEL_17["【BM-SEL-17 初筛漏斗】<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Coarse Screening Funnel】"]
-    BM_SEL_18["【BM-SEL-18 精筛评分】<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Fine Scoring】"]
-    BM_SEL_19["【BM-SEL-19 事件驱动分布筛选】<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Event-Driven Distribution Screening】"]
+    BM_SEL_09["【BM-SEL-09 调整周期追踪】<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期&lt;40%直接拦截。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Adjustment Cycle Tracking】"]
+    BM_SEL_10["【BM-SEL-10 行情生命周期阶段】<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Market Lifecycle Phase】"]
+    BM_SEL_11["【BM-SEL-11 知识图谱与因果推演】<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Knowledge Graph &amp; Causal Inference】"]
+    BM_SEL_12["【BM-SEL-12 分布特征工程】<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Distribution Feature Engineering】"]
+    BM_SEL_13["【BM-SEL-13 收益率条件密度预测】<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Conditional Density Prediction】"]
+    BM_SEL_14["【BM-SEL-14 共形预测】<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Conformal Prediction】"]
+    BM_SEL_15["【BM-SEL-15 Survival止盈止损时间预测】<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Survival Stop-Time Prediction】"]
+    BM_SEL_16["【BM-SEL-16 分级指标过滤】<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Tiered Screening Filter】"]
+    BM_SEL_17["【BM-SEL-17 初筛漏斗】<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Coarse Screening Funnel】"]
+    BM_SEL_18["【BM-SEL-18 精筛评分】<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Fine Scoring】"]
+    BM_SEL_19["【BM-SEL-19 事件驱动分布筛选】<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Event-Driven Distribution Screening】"]
     BM_SEL_03 ~~~ BM_SEL_03_A ~~~ BM_SEL_03_B ~~~ BM_SEL_05 ~~~ BM_SEL_05_A ~~~ BM_SEL_05_B ~~~ BM_SEL_05_C ~~~ BM_SEL_06 ~~~ BM_SEL_07 ~~~ BM_SEL_08 ~~~ BM_SEL_08_A ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16
     BM_SEL_04 ~~~ BM_SEL_17
     BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
@@ -240,8 +241,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_SEL_03_A,BM_SEL_05,BM_SEL_05_A,BM_SEL_05_B,BM_SEL_05_C,BM_SEL_08,BM_SEL_08_A production
-    class BM_SEL_03,BM_SEL_03_B,BM_SEL_04 design
-    class BM_SEL_06,BM_SEL_07,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19 candidate
+    class BM_SEL_03,BM_SEL_03_B,BM_SEL_04,BM_SEL_06,BM_SEL_07,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19 design
 ```
 
 ## 环节详情
@@ -587,7 +587,7 @@ L2-C 层。C-039 跨市场传导量化模型，消费全球市场异动事件，
 | ② 消费数据/因子 | 全球市场数据（来自 L0）<br>传导路径图（来自 L2-D知识图谱） |
 | ③ 参数 | 传导系数模型=—（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 全球异动 → 处理: C-039传导系数计算 → 输出: A股影响幅度预测 → 下游: 全量/板块重算 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§6.3 C-039 |
+| ⑤ 代码映射 | MOD-SIG-038 / 草图§6.3 C-039 |
 | ⑥ 降级/中止 | C-039未就绪 → 异动仅告警不量化传导 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -600,8 +600,9 @@ L2-C 层。C-039 跨市场传导量化模型，消费全球市场异动事件，
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0009 | primary | candidate | — |
+| depgraph | MOD-SIG-038 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-07 体制转换检测 / Regime Change Detection
 
@@ -620,7 +621,7 @@ L2-C 层。市场状态连续评分偏离 + HMM/变点检测，识别体制切�
 | ② 消费数据/因子 | 市场状态评分（来自 BM-SEL-03） |
 | ③ 参数 | 检测方法=HMM+变点（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 状态评分 → 处理: 体制检测 → 输出: regime切换信号 → 下游: 前瞻性预警 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§6.4 |
+| ⑤ 代码映射 | MOD-SIG-039 / 草图§6.4 |
 | ⑥ 降级/中止 | 体制检测未就绪 → 仅用当前状态不预警切换 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -633,8 +634,9 @@ L2-C 层。市场状态连续评分偏离 + HMM/变点检测，识别体制切�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0368 | primary | candidate | — |
+| depgraph | MOD-SIG-039 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-08 板块轮动序列追踪 / Sector Rotation Sequence Tracking
 
@@ -687,7 +689,7 @@ L2-C 层 v4.1。调整周期进度追踪，进度≥80%激活分批建仓条件�
 | ② 消费数据/因子 | 板块新高占比（来自 L0） |
 | ③ 参数 | 进度阈值=80%（范围 -，代码当前: 待实现，状态: proposed）<br>初期拦截线=40%（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 新高占比 → 处理: 调整周期进度计算 → 输出: 进度百分比 → 下游: BM-BUY-04 分批条件①/初期拦截 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§6.6 v4.1 |
+| ⑤ 代码映射 | MOD-SIG-040 / 草图§6.6 v4.1 |
 | ⑥ 降级/中止 | 调整周期未就绪 → 分批条件①缺位（2/3→1/2） |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -700,8 +702,9 @@ L2-C 层 v4.1。调整周期进度追踪，进度≥80%激活分批建仓条件�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-1651 | primary | candidate | — |
+| depgraph | MOD-SIG-040 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-10 行情生命周期阶段 / Market Lifecycle Phase
 
@@ -720,7 +723,7 @@ L2-C 层 v4.1。行情生命周期阶段（春夏秋冬），驱动季节性硬�
 | ② 消费数据/因子 | 板块新高占比趋势（来自 L0） |
 | ③ 参数 | 阶段数=4（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 新高占比趋势 → 处理: 生命周期阶段判定 → 输出: 春夏秋冬标签 → 下游: 冬季禁抄底/秋季强制离场 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§6.7 v4.1 |
+| ⑤ 代码映射 | MOD-SIG-041 / 草图§6.7 v4.1 |
 | ⑥ 降级/中止 | 生命周期未就绪 → 不加季节性约束 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -733,8 +736,9 @@ L2-C 层 v4.1。行情生命周期阶段（春夏秋冬），驱动季节性硬�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-1642 | primary | candidate | — |
+| depgraph | MOD-SIG-041 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-01-A 供应商注册与适配器 / Provider Registry & Adapter
 
@@ -940,7 +944,7 @@ L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML
 | ② 消费数据/因子 | 事件流（来自 L0）<br>因子池（来自 BM-SEL-02） |
 | ③ 参数 | 图谱类型数=6（范围 -，代码当前: 待实现，状态: proposed）<br>因果方法=DML/CausalForest/DoWhy（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 事件 → 处理: C-016图谱匹配+Causal ML筛选 → 输出: 传导链+因果因子集 → 下游: BM-SEL-19 漏斗第四层 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§7 L2-D |
+| ⑤ 代码映射 | MOD-SIG-042 / 草图§7 L2-D |
 | ⑥ 降级/中止 | L2-D未就绪 → 漏斗第四层跳过 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -953,8 +957,9 @@ L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0462 | primary | candidate | — |
+| depgraph | MOD-SIG-042 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
 
 ### BM-SEL-12 分布特征工程 / Distribution Feature Engineering
 
@@ -973,7 +978,7 @@ L1 层。分布特征工程（§3.5），产出滞后项/交互项/滚动统计�
 | ② 消费数据/因子 | 基础因子（来自 BM-SEL-02） |
 | ③ 参数 | 特征族=滞后/交互/滚动统计/签名（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 基础因子 → 处理: 分布特征工程 → 输出: 滞后/交互/滚动/签名特征 → 下游: BM-SEL-13 密度预测输入 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§3.5 |
+| ⑤ 代码映射 | MOD-L02-026 / 草图§3.5 |
 | ⑥ 降级/中止 | 分布特征未就绪 → 密度预测退化为点估计 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -986,8 +991,9 @@ L1 层。分布特征工程（§3.5），产出滞后项/交互项/滚动统计�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-1371 | primary | candidate | — |
+| depgraph | MOD-L02-026 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-13 收益率条件密度预测 / Conditional Density Prediction
 
@@ -1006,7 +1012,7 @@ L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数
 | ② 消费数据/因子 | 分布特征（来自 BM-SEL-12）<br>因子池（来自 BM-SEL-02） |
 | ③ 参数 | Phase路径=参数化→混合→非参数化（范围 -，代码当前: 待实现，状态: proposed）<br>派生量=偏度/峰度/前瞻VaR/CVaR/P1~P8（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 分布特征+因子 → 处理: 密度预测模型 → 输出: 条件PDF+派生统计量 → 下游: BM-SEL-04 8态积分/BM-SEL-21 组合优化/BM-EXE-01 共形VaR |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§4.5 |
+| ⑤ 代码映射 | MOD-SIG-043 / 草图§4.5 |
 | ⑥ 降级/中止 | 密度预测未就绪 → 8态用离散估计无分布增强 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -1019,8 +1025,9 @@ L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-4924 | primary | candidate | — |
+| depgraph | MOD-SIG-043 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
 ### BM-SEL-14 共形预测 / Conformal Prediction
 
@@ -1039,7 +1046,7 @@ L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率
 | ② 消费数据/因子 | 密度预测PDF（来自 BM-SEL-13） |
 | ③ 参数 | 覆盖率=95%（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 密度PDF → 处理: 共形预测 → 输出: 覆盖率保证区间 → 下游: BM-EXE-01 共形VaR/信号置信区间 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§1.7 |
+| ⑤ 代码映射 | MOD-SIG-044 / 草图§1.7 |
 | ⑥ 降级/中止 | 共形预测未就绪 → 区间无数学覆盖率保证 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -1052,8 +1059,9 @@ L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-1428 | primary | candidate | — |
+| depgraph | MOD-SIG-044 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
 ### BM-SEL-15 Survival止盈止损时间预测 / Survival Stop-Time Prediction
 
@@ -1072,7 +1080,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | ② 消费数据/因子 | 市场状态（来自 BM-SEL-03） |
 | ③ 参数 | 预测目标=止盈/止损发生时间（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 市场状态 → 处理: Survival分析 → 输出: 止盈止损时间分布 → 下游: BM-POS-01 仓位时间预算/止盈止损时点 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§1.7 |
+| ⑤ 代码映射 | MOD-SIG-045 / 草图§1.7 |
 | ⑥ 降级/中止 | Survival未就绪 → 止盈止损用固定规则 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -1085,8 +1093,9 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-1429 | primary | candidate | — |
+| depgraph | MOD-SIG-045 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
 ### BM-SEL-16 分级指标过滤 / Tiered Screening Filter
 
@@ -1105,7 +1114,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | ② 消费数据/因子 | 涨跌停/停牌/ST标记（来自 L0）<br>AUM分级（来自 配置）<br>上市天数（来自 L0）<br>庄家弃庄概率（来自 BM-SEL-05） |
 | ③ 参数 | 成交额门槛(AUM≤100万)=≥500万（范围 -，代码当前: 待实现，状态: proposed）<br>次新上市<30天=绝对排除（范围 -，代码当前: 待实现，状态: proposed）<br>弃庄概率>95%=排除（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 全市场~7000只 → 处理: 物理/门禁/分级/概率排除 → 输出: ~1200只 → 下游: BM-SEL-17 初筛漏斗 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§13 漏斗L1 |
+| ⑤ 代码映射 | MOD-SIG-046 / 草图§13 漏斗L1 |
 | ⑥ 降级/中止 | 过滤模块未就绪 → 仅排除涨跌停/停牌，其余放行 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -1118,8 +1127,9 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-4377 | primary | candidate | — |
+| depgraph | MOD-SIG-046 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
 ### BM-SEL-17 初筛漏斗 / Coarse Screening Funnel
 
@@ -1138,7 +1148,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | ② 消费数据/因子 | 技术形态(均线/KDJ/MACD)（来自 BM-SEL-02）<br>量价(量比/换手)（来自 L0）<br>板块强度（来自 L0）<br>C-011主力阶段（来自 BM-SEL-05）<br>C-021市场状态（来自 BM-SEL-03） |
 | ③ 参数 | 量比阈值=>1.5（范围 -，代码当前: 待实现，状态: proposed）<br>板块排名=前30%（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 分级过滤输出~1200只 → 处理: 技术+量价+板块+主力+状态 → 输出: ~300只 → 下游: BM-SEL-18 精筛评分 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§13 漏斗L2 |
+| ⑤ 代码映射 | MOD-SIG-047 / 草图§13 漏斗L2 |
 | ⑥ 降级/中止 | 初筛未就绪 → 直接全量进精筛（算力风险） |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -1151,8 +1161,9 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-1648 | primary | candidate | — |
+| depgraph | MOD-SIG-047 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
 ### BM-SEL-18 精筛评分 / Fine Scoring
 
@@ -1171,7 +1182,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | ② 消费数据/因子 | 多维因子（来自 BM-SEL-02）<br>C-021状态偏移（来自 BM-SEL-03）<br>C-034/C-035主力评分（来自 BM-SEL-05）<br>C-014 8态修正（来自 BM-SEL-04）<br>C-045拥挤度（来自 L4）<br>密度偏度/峰度/VaR（来自 BM-SEL-13） |
 | ③ 参数 | 基础权重=价值40%/动量30%/质量20%/情绪10%（范围 -，代码当前: 待实现，状态: proposed）<br>状态偏移=±10%（范围 -，代码当前: 待实现，状态: proposed）<br>前瞻VaR扣分=15%（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 初筛输出~300只 → 处理: 综合评分(基础+偏移+主力+8态+拥挤+密度) → 输出: Z-score排名~50只 → 下游: BM-SEL-19 事件驱动筛选 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§13 漏斗L3 |
+| ⑤ 代码映射 | MOD-SIG-048 / 草图§13 漏斗L3 |
 | ⑥ 降级/中止 | 精筛未就绪 → 等权综合评分 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -1184,8 +1195,9 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0375 | primary | candidate | — |
+| depgraph | MOD-SIG-048 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
 ### BM-SEL-19 事件驱动分布筛选 / Event-Driven Distribution Screening
 
@@ -1204,7 +1216,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | ② 消费数据/因子 | L2-D事件影响链（来自 BM-SEL-11）<br>事件驱动密度修正（来自 BM-SEL-13）<br>传导链路径（来自 BM-SEL-11） |
 | ③ 参数 | 上涨概率下降门槛=>15%淘汰（范围 -，代码当前: 待实现，状态: proposed）<br>开通条件=事件数据源+知识图谱+NLP（范围 -，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 精筛输出~50只 → 处理: 事件影响+条件PDF修正+传导链 → 输出: ~30只 → 下游: BM-SEL-20 多策略投票 |
-| ⑤ 代码映射 | 缺失态-未实现 / 草图§13 漏斗L4 v3.4 |
+| ⑤ 代码映射 | MOD-SIG-049 / 草图§13 漏斗L4 v3.4 |
 | ⑥ 降级/中止 | 未开通 → 跳过本层，第三层直接进第五层 |
 
 **指标文案（翻译真源 indicators_zh）**：
@@ -1217,8 +1229,9 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-4937 | primary | candidate | — |
+| depgraph | MOD-SIG-049 | primary | planned | planned |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
 
 ### BM-SEL-02-A 因子计算引擎 / Factor Compute Engine
 
