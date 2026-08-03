@@ -182,4 +182,20 @@ class TestBMSim07ClosedLoop:
         assert sim07[0]["step_name"] == "风控仿真器"
         assert sim07[0]["design_maturity"] == "production"
 
-    def test
+    def test_sim07_has_primary_anchor(self, bm_reader):
+        """BM-SIM-07 有 primary 锚点指向 MOD-SIM-003。"""
+        anchors = bm_reader.get_anchors_by_step("BM-SIM-07")
+        assert anchors and len(anchors) > 0, "BM-SIM-07 无锚点"
+
+        primary_anchors = [a for a in anchors if a.get("target_role") == "primary"]
+        assert len(primary_anchors) > 0, "BM-SIM-07 无 primary 锚点"
+
+        mod_sim_003 = [a for a in primary_anchors if a.get("target_id") == "MOD-SIM-003"]
+        assert len(mod_sim_003) == 1, f"期望 primary 锚点 MOD-SIM-003，实际: {primary_anchors}"
+        assert mod_sim_003[0]["target_graph"] == "depgraph"
+        assert mod_sim_003[0]["status_snapshot"] == "stable"
+
+    def test_sim07_anchor_target_exists_in_depgraph(self, bm_reader, dep_reader):
+        """BM-SIM-07 锚点 MOD-SIM-003 在 depgraph 中存在（非幽灵锚点 BM-INV-002）。"""
+        anchors = bm_reader.get_anchors_by_step("BM-SIM-07")
+        for a in anchors:
