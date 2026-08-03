@@ -128,3 +128,7 @@ enforcement:
   - commit_gate_lint
   bypass_allowed: false
   pairing_note: '配套硬阻断 commit gate GATE-SYMBOL-CONVENTION（校验 symbol 列裸码纯净+exchange 非空+新表 DDL 含 exchange 列）在阶段3 落地，届时 paired_gate_id 从 null→GATE-SYMBOL-CONVENTION。当前阶段0-2 为君子协定，由 verify_schema_truth.py 增量校验兜底'
+
+provenance:
+  extracted_at: '2026-08-04T00:00:00'
+  extracted_by: AI-assistant

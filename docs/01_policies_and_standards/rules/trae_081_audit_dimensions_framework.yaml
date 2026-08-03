@@ -252,3 +252,7 @@ dimensions:
   name: AI-11 审计遗留专项工程
   core_problem: gate_engine 硬编码双真源 + check_types 死代码 + subprocess 绕过 _run_git
   root_cause: '1/5'
+
+provenance:
+  extracted_at: '2026-08-04T00:00:00'
+  extracted_by: AI-assistant

@@ -30,6 +30,18 @@
 #   - 必须更新 version 字段（语义化版本）
 #   - 必须在 changelog 记录修改原因 + 裁定编号
 
+rule_id: TRAE-069
+title: Commit Gateway 滥用监控阈值配置
+version: 1.3.0
+layer: L1_foundation
+module_id: TRAE-069
+depends_on: []
+tags: [TRAE, commit_gateway, abuse_monitoring, thresholds]
+ttl: permanent
+stability: stable
+safety_level: M
+ai_autonomy: ai_modifiable
+
 meta:
   rule_id: trae_069
   rule_name: commit_gateway_abuse_thresholds
@@ -285,3 +297,7 @@ changelog:
     notes: >-
       阈值与 P1 治本后的代码常量值一致（无值变更，仅提取到 YAML）：
       warn_only=50, emergency=5, allow_overlap=30, forged=3, non_gw=10
+
+provenance:
+  extracted_at: '2026-08-04T00:00:00'
+  extracted_by: AI-assistant

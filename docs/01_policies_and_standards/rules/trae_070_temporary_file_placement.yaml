@@ -28,6 +28,18 @@
 #   - 修改后必须运行 sync_yaml_to_depgraph.py 同步到 DB（缓存）
 #   - 必须更新 version 字段（语义化版本）
 
+rule_id: TRAE-070
+title: 临时文件放置规范
+version: 1.0.0
+layer: L1_foundation
+module_id: TRAE-070
+depends_on: []
+tags: [TRAE, temporary_file, placement]
+ttl: permanent
+stability: stable
+safety_level: M
+ai_autonomy: ai_modifiable
+
 meta:
   rule_id: trae_070
   rule_name: temporary_file_placement
@@ -256,3 +268,7 @@ invariants:
   - ".runtime/tmp/ 下禁止 .md 任务文档（本规则 LAW-1 约束）"
   - ".aidrafts/{session_id}/ 是唯一合法 AI session worktree 位置"
   - "AI 创建临时文件前 MUST 查本规则（禁止凭记忆/方便选择目录）"
+
+provenance:
+  extracted_at: '2026-08-04T00:00:00'
+  extracted_by: AI-assistant

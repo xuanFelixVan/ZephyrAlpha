@@ -15,6 +15,9 @@ tags:
 - local_hooks
 - network_single_point_failure
 - offline_first
+stability: stable
+safety_level: M
+ai_autonomy: ai_modifiable
 ttl: permanent
 severity: high
 scope: precommit_offline_discipline

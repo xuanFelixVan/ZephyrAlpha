@@ -148,3 +148,7 @@ enforcement:
   - ai_pre_action_check
   bypass_allowed: false  # stash 累积阻断无逃生通道——必须清理后才能 commit
   bypass_markers: []
+
+provenance:
+  extracted_at: '2026-08-04T00:00:00'
+  extracted_by: AI-assistant

@@ -60,7 +60,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 
+# bootstrap sys.path for _shared.staged_files import（轻量模块，无 psycopg2 传递依赖）
+# 治本（2026-08-03）：替代原 23 行内联 git diff 重复代码，统一使用 iter_staged_files SSoT
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
 import yaml
+from _shared.staged_files import iter_staged_files
 
 # ── EXIT 常量（对标 _shared/constants.py，避免 import 链引入 psycopg2）─────
 # check_any_abuse.py 是 commit-time gate，必须零重依赖（仅 stdlib + PyYAML），
@@ -474,29 +481,15 @@ def main(argv: list[str] | None = None) -> int:
             print("[check_any_abuse] 无 src/zephyr/ 下的 .py 文件，跳过")
             return EXIT_PASS
     elif args.staged:
-        # 变更检测：内联读取 staged .py（保持纯 stdlib，不 import _shared.walk → psycopg2 链）
-        import subprocess
-        _repo_root = Path(__file__).resolve().parents[3]
-        r = subprocess.run(
-            ["git", "diff", "--cached", "--diff-filter=d", "--name-only"],
-            cwd=str(_repo_root),
-            capture_output=True,
-            encoding="utf-8",
-            errors="replace",
-        )
-        src_prefix = str(args.src.resolve()).replace("\\", "/")
-        file_list = []
-        if r.returncode == 0:
-            for line in r.stdout.splitlines():
-                rel = line.strip().replace("\\", "/")
-                if not rel or not rel.endswith(".py"):
-                    continue
-                fp = (_repo_root / rel).resolve()
-                if str(fp).replace("\\", "/").startswith(src_prefix) and fp.exists():
-                    file_list.append(fp)
-        if not file_list:
-            print("[check_any_abuse] 无 staged src/zephyr/ .py 文件，跳过")
-            return EXIT_PASS
+            # 变更检测：使用共享 iter_staged_files（真源 _shared/staged_files.py，轻量模块无 psycopg2）
+            # 治本（2026-08-03）：消除 23 行内联 git diff 重复代码，统一 SSoT
+            file_list = iter_staged_files(
+                extensions=frozenset({".py"}),
+                path_prefix="src/zephyr/",
+            )
+            if not file_list:
+                print("[check_any_abuse] 无 staged src/zephyr/ .py 文件，跳过")
+                return EXIT_PASS
     if not args.src.exists() and not file_list:
         print(f"[check_any_abuse] 错误：src 目录不存在: {args.src}", file=sys.stderr)
         return EXIT_ERROR

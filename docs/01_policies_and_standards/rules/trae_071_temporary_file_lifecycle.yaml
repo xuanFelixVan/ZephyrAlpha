@@ -36,6 +36,18 @@
 #   - 修改后必须运行 sync_yaml_to_depgraph.py 同步到 DB（缓存）
 #   - 必须更新 version 字段（语义化版本）
 
+rule_id: TRAE-071
+title: 临时文件生命周期管理
+version: 1.0.0
+layer: L1_foundation
+module_id: TRAE-071
+depends_on: []
+tags: [TRAE, temporary_file, lifecycle]
+ttl: permanent
+stability: stable
+safety_level: M
+ai_autonomy: ai_modifiable
+
 meta:
   rule_id: trae_071
   rule_name: temporary_file_lifecycle
@@ -62,6 +74,38 @@ meta:
 #      清理对应 .runtime/sessions/<sid>/staging/ 目录（事件驱动，非时间触发）
 #   3. promote 通道：成果文件通过 shutil.copy 显式复制到 docs/_working/ 并加 front-matter
 #      才算正式交付；留在 .runtime/sessions/<sid>/staging/ 的成果视为草稿、可被清理
+
+# ============================================================
+# 12. 引用（References）
+# ============================================================
+
+references:
+  rule_ids:
+    - TRAE-070  # 空间维度
+    - TRAE-060  # 向内收三原则
+    - TRAE-062  # SSoT 真源分类
+    - TRAE-054  # depgraph 程序化访问
+  arch_issues:
+    - "#ARCH-TEMP-FILE-PLACEMENT-001"  # trae_070 相关裁定
+    - "#ARCH-TEMP-FILE-LIFECYCLE-001"  # 本规则相关裁定（前向引用，Owner 需登记）
+    - "#ARCH-HEARTBEAT-001"  # .runtime/sessions/<sid>/ 路径约定来源
+  scripts:
+    - "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py"  # 本文件同步到 DB
+    - "scripts/governance/apply_depgraph.py"  # reconciler 实现时登记设计态节点
+  modules:
+    - "src/zephyr/governance/audit/reconciliation_registry.py"  # reconciler 范本 + 落地点
+    - "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"  # session 生命周期钩子
+    - "src/zephyr/trading/boot_hooks.py"  # reconciler 注册点
+  yaml_sources:
+    - "docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml"  # 空间维度
+    - "docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml"  # 目录契约
+    - "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"  # ARCH 登记
+
+# ============================================================
+# 13. 元数据（Metadata）
+# ============================================================
+
+
 enforcement:
   paired_gate_id: null  # 指引类规则，无对应 pre-commit gate（.runtime/ 排除门禁）
   post_commit_reconciler: 'make_session_staging_lifecycle_reconciler'  # priority=802
@@ -476,37 +520,6 @@ cross_rule_relation:
   not_applies_to:
     - "docs/_working/ 内部生命周期（由 trae_070 + auto_archive reconciler 管）"
     - "系统层文件生命周期（由各系统自管）"
-
-# ============================================================
-# 12. 引用（References）
-# ============================================================
-
-references:
-  rule_ids:
-    - TRAE-070  # 空间维度
-    - TRAE-060  # 向内收三原则
-    - TRAE-062  # SSoT 真源分类
-    - TRAE-054  # depgraph 程序化访问
-  arch_issues:
-    - "#ARCH-TEMP-FILE-PLACEMENT-001"  # trae_070 相关裁定
-    - "#ARCH-TEMP-FILE-LIFECYCLE-001"  # 本规则相关裁定（前向引用，Owner 需登记）
-    - "#ARCH-HEARTBEAT-001"  # .runtime/sessions/<sid>/ 路径约定来源
-  scripts:
-    - "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py"  # 本文件同步到 DB
-    - "scripts/governance/apply_depgraph.py"  # reconciler 实现时登记设计态节点
-  modules:
-    - "src/zephyr/governance/audit/reconciliation_registry.py"  # reconciler 范本 + 落地点
-    - "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"  # session 生命周期钩子
-    - "src/zephyr/trading/boot_hooks.py"  # reconciler 注册点
-  yaml_sources:
-    - "docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml"  # 空间维度
-    - "docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml"  # 目录契约
-    - "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"  # ARCH 登记
-
-# ============================================================
-# 13. 元数据（Metadata）
-# ============================================================
-
 metadata:
   change_policy: evolving
   impact_level: M  # 中等影响（新增规则，不修改既有功能）

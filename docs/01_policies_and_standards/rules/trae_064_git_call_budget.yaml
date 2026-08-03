@@ -186,3 +186,7 @@ sections:
         date: "2026-07-20"
 enforcement:
   paired_gate_id: "GIT-CALL-BUDGET"  # Phase 3.5 规则-执行配对
+
+provenance:
+  extracted_at: '2026-08-04T00:00:00'
+  extracted_by: AI-assistant
