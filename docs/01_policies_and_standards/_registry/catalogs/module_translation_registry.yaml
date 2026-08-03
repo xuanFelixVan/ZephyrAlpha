@@ -11376,6 +11376,55 @@ battle_map_steps:
   plain_zh: 给打板标的打分——7个维度100分制（连板高度/封单强度/板块效应/分歧程度/市值流动性/封板时间/催化强度），分高大概率连板。
   mechanism_zh: BM-SEL-22 短线选股评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的连板潜力评分模块，7维度100分制评分：连板高度+封单强度+板块效应+分歧程度+市值流动性+封板时间+催化强度。产出连板潜力评分(0-100)供打板选股使用。
   indicators_zh: ①触发：盘前全量+盘中增量，7维100分评分；②消费：连板数据+封单+板块+分歧+市值+封板时间+催化事件；③参数：7维度权重分配、评分量程0-100；④数据流：7维数据→独立评分→加权合成→连板潜力分→BM-SEL-22综合；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：封单/盘口数据缺失→跳过封单维度(6维评分)。
+- step_id: BM-SEL-22-C-1
+  flow_stage: stock_selection
+  name_zh: 连板高度维度
+  name_en: Limit-up Height Dimension
+  plain_zh: 看标的现在第几个连板——连板越高越强，首板5分、2板12分、3板20分、4板以上满分25分。
+  mechanism_zh: BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的连板高度评分子模块，连板数分级评分(首板5分/2板12分/3板20分/4板+25分)，叠加连板高度市场排名加权。产出连板高度维度分(0-25)供评分卡汇总。
+  indicators_zh: ①触发：标的已封板，统计当前连板数，权重25分；②消费：当前连板数(L0行情日K封板统计)+历史连板能力(L0历史K线)+连板梯队位次(全市场连板排序)；③参数：连板数分级评分(首板5/2板12/3板20/4板+25)、市场排名加权；④数据流：日K封板序列+历史连板分布→连板数分级评分→连板高度维度分(0-25)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：历史K线不足5日无法统计连板→该维度记0分，仅靠其余6维评分。
+- step_id: BM-SEL-22-C-2
+  flow_stage: stock_selection
+  name_zh: 封单强度维度
+  name_en: Seal Order Strength Dimension
+  plain_zh: 看封单有多大、撤不撤——封单占流通市值越大越稳，超过3%满分20分，频繁撤单要扣分。
+  mechanism_zh: BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的封单强度评分子模块，封单量/流通市值比评分(>3%满分，逐档递减)，叠加封单撤单率惩罚。产出封单强度维度分(0-20)供评分卡汇总。
+  indicators_zh: ①触发：封板时段实时计算，权重20分；②消费：封单量(L0盘口封单)+流通市值(L1基本面)+封单持续性(L0封单变化序列)；③参数：封单/流通市值比阈值(>3%满分)、撤单率惩罚系数；④数据流：盘口封单量+流通市值→封单/市值比评分→封单强度维度分(0-20)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：盘中盘口数据缺失→用收盘涨停判定近似(封死=15分/尾盘封=8分)。
+- step_id: BM-SEL-22-C-3
+  flow_stage: stock_selection
+  name_zh: 板块效应维度
+  name_en: Sector Effect Dimension
+  plain_zh: 看标的所属板块涨停多少——板块涨停家越多、涨幅越靠前，板块效应越强，满分15分。
+  mechanism_zh: BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的板块效应评分子模块，板块涨停家数分级(≥5家满分/3-4家10分/1-2家5分)，板块涨幅排名加权。产出板块效应维度分(0-15)供评分卡汇总。
+  indicators_zh: ①触发：标的封板后查所属板块，权重15分；②消费：所属板块涨停数(L0全市场涨停板块统计)+板块涨幅排名(L0板块行情)+板块内领涨位次(L0板块成分股排序)；③参数：涨停家数分级(≥5家满分/3-4家10分/1-2家5分)、板块涨幅加权；④数据流：板块涨停统计+板块涨幅→涨停家数分级评分→板块效应维度分(0-15)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：板块归属数据缺失→记中性分8分。
+- step_id: BM-SEL-22-C-4
+  flow_stage: stock_selection
+  name_zh: 分歧程度维度
+  name_en: Divergence Degree Dimension
+  plain_zh: 看封板时大家有没有分歧——缩量一致涨停满分15分，放量+多次炸板说明分歧大只给3分。
+  mechanism_zh: BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的分歧程度评分子模块，低换手+无炸板=满分(缩量一致15分)，高换手+多次炸板=低分(放量分歧3分)。产出分歧程度维度分(0-15)供评分卡汇总。
+  indicators_zh: ①触发：封板后量能分析，权重15分；②消费：换手率(L0日内成交)+量能分歧(L0分时量能)+炸板回封次数(L0盘口事件)；③参数：换手率分级阈值、炸板次数扣分规则；④数据流：换手率+分时量能+炸板事件→分歧度计算→分歧程度维度分(0-15)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：分时量能数据缺失→记中性分8分。
+- step_id: BM-SEL-22-C-5
+  flow_stage: stock_selection
+  name_zh: 市值流动性维度
+  name_en: Market Cap Liquidity Dimension
+  plain_zh: 看市值大小和成交活不活——中小盘(30-150亿)流动性好满分10分，大盘折价，微盘有风险扣分。
+  mechanism_zh: BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的市值流动性评分子模块，中小市值(30-150亿)+充足流动性=满分，过大市值流动性折价，微盘股流动性风险扣分。产出市值流动性维度分(0-10)供评分卡汇总。
+  indicators_zh: ①触发：盘前基本面快照，权重10分；②消费：流通市值(L1基本面)+日均成交额(L0行情)；③参数：市值分级(30-150亿满分)、流动性折价/扣分规则；④数据流：流通市值+日均成交额→市值/流动性匹配评分→市值流动性维度分(0-10)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：基本面快照缺失→记中性分5分。
+- step_id: BM-SEL-22-C-6
+  flow_stage: stock_selection
+  name_zh: 封板时间维度
+  name_en: Seal Time Dimension
+  plain_zh: 看几点封的板——早盘10点前封板满分10分，午盘6分，尾盘才封只有3分。
+  mechanism_zh: BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的封板时间评分子模块，早盘封板(10:00前)=满分10分，午盘封板=6分，尾盘封板(14:30后)=3分。产出封板时间维度分(0-10)供评分卡汇总。
+  indicators_zh: ①触发：封板事件触发记录，权重10分；②消费：首次封板时间(L0盘口事件)+封板持续时间(L0盘口封单序列)；③参数：封板时段分级(早盘10:00前满分/午盘6分/尾盘14:30后3分)；④数据流：首次封板时间戳+封板持续时长→时段分级评分→封板时间维度分(0-10)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：盘中封板事件缺失→用日K是否涨停近似(涨停=6分)。
+- step_id: BM-SEL-22-C-7
+  flow_stage: stock_selection
+  name_zh: 催化强度维度
+  name_en: Catalyst Strength Dimension
+  plain_zh: 看有没有题材或消息刺激——强题材龙头+政策催化满分5分，没明确催化只给1分。
+  mechanism_zh: BM-SEL-22-C 连板潜力评分卡的子环节。MOD-SIG-023 short_term_stock_selector.py 中的催化强度评分子模块，强题材龙头+政策消息催化=满分5分，无明确催化=1分。产出催化强度维度分(0-5)供评分卡汇总。
+  indicators_zh: ①触发：盘前题材/消息扫描，权重5分；②消费：题材热度(L0题材板块涨幅)+消息面催化(外部资讯)；③参数：题材热度分级、消息面催化判定规则；④数据流：题材涨幅+消息面事件→催化强度判定→催化强度维度分(0-5)→BM-SEL-22-C汇总；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：资讯/题材数据缺失→记中性分2分。
 - step_id: BM-SEL-22-D
   flow_stage: stock_selection
   name_zh: 连板分歧程度评估器
@@ -11390,6 +11439,48 @@ battle_map_steps:
   plain_zh: 用6个因子给游资接力打0-100分——连板高度25分+封单质量20分+涨停时间15分+开板次数15分+竞价强度10分+助攻梯队10分。
   mechanism_zh: BM-SEL-23 游资接力情绪周期的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的6因子评分模块，按连板高度(25分)+封单质量(20分)+涨停时间(15分)+开板次数(15分)+竞价强度(10分)+助攻梯队(10分)加权计算游资接力评分(0-100)。是游资情绪引擎的核心评分出口。
   indicators_zh: ①触发：盘中实时（涨停数据到达）；②消费：连板高度+封单+涨停时间+开板次数+竞价+助攻梯队(L0涨停数据)；③参数：6因子权重25/20/15/15/10/10(implemented)；④数据流：涨停数据→6因子独立评分→加权合成→游资接力分(0-100)→BM-SEL-23-B周期定位；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：竞价/梯队数据缺失→仅用4因子(连板+封单+时间+开板)评分。
+- step_id: BM-SEL-23-A-1
+  flow_stage: stock_selection
+  name_zh: 连板高度因子
+  name_en: Limit-up Height Factor
+  plain_zh: 看接力候选现在第几板——板数越高接力价值越大，3板以上满分25分，叠加晋级率修正。
+  mechanism_zh: BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的连板高度因子模块，连板数越高得分越高(3板+25分/2板15分/1板8分)，叠加连板晋级率修正。产出连板高度因子分(0-25)供接力评分汇总。
+  indicators_zh: ①触发：标的进入接力候选池，权重25分；②消费：当前连板数(L0行情)+连板晋级率(L0历史连板统计)；③参数：连板数分级评分(3板+25/2板15/1板8)、晋级率修正系数；④数据流：连板数+晋级率→连板数分级评分→连板高度因子分(0-25)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：连板数据缺失→记0分剔除接力候选。
+- step_id: BM-SEL-23-A-2
+  flow_stage: stock_selection
+  name_zh: 封单质量因子
+  name_en: Seal Order Quality Factor
+  plain_zh: 看封单大不大、稳不稳——大封单且不撤单满分20分，小封单或频繁撤单低分。
+  mechanism_zh: BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的封单质量因子模块，大封单+稳定不撤=满分20分，小封单或频繁撤单=低分。产出封单质量因子分(0-20)供接力评分汇总。
+  indicators_zh: ①触发：封板后盘口分析，权重20分；②消费：封单金额(L0盘口)+封单稳定性(L0封单变化)；③参数：封单金额分级、撤单率扣分规则；④数据流：封单金额+封单稳定性→封单质量评分→封单质量因子分(0-20)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：盘口封单数据缺失→用涨停封死判定近似(封死=15分)。
+- step_id: BM-SEL-23-A-3
+  flow_stage: stock_selection
+  name_zh: 涨停时间因子
+  name_en: Limit-up Time Factor
+  plain_zh: 看几点涨停——开盘秒板满分15分，早盘12分，午盘8分，尾盘才涨只有4分。
+  mechanism_zh: BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的涨停时间因子模块，开盘秒板=15分，早盘涨停=12分，午盘=8分，尾盘=4分。产出涨停时间因子分(0-15)供接力评分汇总。
+  indicators_zh: ①触发：涨停事件触发，权重15分；②消费：首次涨停时间(L0盘口事件)；③参数：涨停时段分级(秒板15/早盘12/午盘8/尾盘4)；④数据流：首次涨停时间戳→时段分级评分→涨停时间因子分(0-15)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：涨停时间事件缺失→记中性分8分。
+- step_id: BM-SEL-23-A-4
+  flow_stage: stock_selection
+  name_zh: 开板次数因子
+  name_en: Reopen Count Factor
+  plain_zh: 看封板期间开了几次板——0次开板满分15分，1次快速回封10分，多次开板只给3分。
+  mechanism_zh: BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的开板次数因子模块，0次开板=15分，1次快速回封=10分，多次开板=3分。产出开板次数因子分(0-15)供接力评分汇总。
+  indicators_zh: ①触发：封板期间盘口监控，权重15分；②消费：开板次数(L0盘口事件)+回封速度(L0盘口)；③参数：开板次数分级(0次15/1次10/多次3)、回封速度修正；④数据流：开板次数+回封耗时→开板次数分级评分→开板次数因子分(0-15)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：盘口开板事件缺失→记中性分8分。
+- step_id: BM-SEL-23-A-5
+  flow_stage: stock_selection
+  name_zh: 竞价强度因子
+  name_en: Auction Strength Factor
+  plain_zh: 看集合竞价表现——高开+放量竞价满分10分，平开低量只给2分。
+  mechanism_zh: BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的竞价强度因子模块，高开+放量竞价=10分，平开低量=2分。产出竞价强度因子分(0-10)供接力评分汇总。
+  indicators_zh: ①触发：集合竞价数据，权重10分；②消费：竞价涨幅(L0集合竞价)+竞价量比(L0集合竞价)；③参数：竞价涨幅分级、竞价量比阈值；④数据流：竞价涨幅+竞价量比→竞价强度评分→竞价强度因子分(0-10)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：集合竞价数据缺失→记中性分5分。
+- step_id: BM-SEL-23-A-6
+  flow_stage: stock_selection
+  name_zh: 助攻梯队因子
+  name_en: Support Echelon Factor
+  plain_zh: 看同题材同梯队有没有一起涨停——梯队多涨停+领涨位次满分10分，孤板无梯队只给2分。
+  mechanism_zh: BM-SEL-23-A 6因子游资接力评分的子环节。MOD-SIG-033 youzi_relay_emotion_engine.py 中的助攻梯队因子模块，梯队多涨停+领涨位次=10分，孤板无梯队=2分。产出助攻梯队因子分(0-10)供接力评分汇总。
+  indicators_zh: ①触发：同题材/同梯队联动分析，权重10分；②消费：同梯队涨停数(L0全市场涨停)+梯队位次(L0涨停排序)；③参数：梯队涨停数分级、梯队位次加权；④数据流：同梯队涨停数+梯队位次→梯队联动评分→助攻梯队因子分(0-10)→BM-SEL-23-A汇总；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：梯队联动数据缺失→记中性分5分。
 - step_id: BM-SEL-23-B
   flow_stage: stock_selection
   name_zh: 情绪周期4+1阶段定位
@@ -11411,6 +11502,48 @@ battle_map_steps:
   plain_zh: 用6个维度给短线强度打0-100分——价格动量/行业强度/相对强度/资金/技术/风险，全面量化评估。
   mechanism_zh: BM-SEL-24 量化短线强度评级的子环节。MOD-SIG-034 quant_short_term_strength_engine.py 中的6维度评分模块，按价格动量Z-score+行业强度+相对强度+资金+技术+风险六维度加权计算量化强度评分(0-100)。是量化强度引擎的核心评分出口。
   indicators_zh: ①触发：盘前+盘中增量；②消费：价格动量Z-score+行业强度+相对强度+资金流向+技术指标+风险指标(L1/L2)；③参数：6维度权重分配、评分量程0-100；④数据流：6维数据→独立评分→加权合成→量化强度分(0-100)→BM-SEL-24-B评级；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：部分维度数据缺失→用可用维度归一化评分(标注降级)。
+- step_id: BM-SEL-24-A-1
+  flow_stage: stock_selection
+  name_zh: 价格动量Z-score维度
+  name_en: Price Momentum Z-score Dimension
+  plain_zh: 把标的近期涨幅跟全市场比——算Z-score看它涨得比平均强多少，越强分越高。
+  mechanism_zh: BM-SEL-24-A 6维度量化强度评分的子环节。MOD-SIG-034 quant_short_term_strength_engine.py 中的价格动量Z-score子模块，计算标的近期收益率相对全市场的Z-score，标准化为0-100分。产出价格动量Z-score分供6维度评分汇总。
+  indicators_zh: ①触发：盘前全量标的计算，Z-score标准化；②消费：近期收益率序列(L0行情)+全市场收益率分布(L0全市场行情)；③参数：收益率窗口、Z-score标准化方法；④数据流：标的收益率+全市场分布→Z-score计算→价格动量Z-score分(0-100)→BM-SEL-24-A汇总；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：全市场分布数据不足→记中性分50。
+- step_id: BM-SEL-24-A-2
+  flow_stage: stock_selection
+  name_zh: 行业强度维度
+  name_en: Industry Strength Dimension
+  plain_zh: 看标的所属行业强不强——行业涨幅排名前10%满分，弱势行业扣分。
+  mechanism_zh: BM-SEL-24-A 6维度量化强度评分的子环节。MOD-SIG-034 quant_short_term_strength_engine.py 中的行业强度子模块，所属行业涨幅排名前10%=满分，逐档递减，弱势行业扣分。产出行业强度维度分供6维度评分汇总。
+  indicators_zh: ①触发：盘前行业行情计算，行业涨幅排名；②消费：所属行业指数涨幅(L0行业行情)+行业涨幅排名(L0全行业排序)；③参数：行业涨幅排名分级(前10%满分)、弱势行业扣分阈值；④数据流：行业涨幅+行业排名→行业强度评分→行业强度维度分(0-100)→BM-SEL-24-A汇总；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：行业归属数据缺失→记中性分50。
+- step_id: BM-SEL-24-A-3
+  flow_stage: stock_selection
+  name_zh: 相对强度维度
+  name_en: Relative Strength Dimension
+  plain_zh: 看标的比大盘强多少——跑赢大盘越多分越高，跑输大盘扣分。
+  mechanism_zh: BM-SEL-24-A 6维度量化强度评分的子环节。MOD-SIG-034 quant_short_term_strength_engine.py 中的相对强度子模块，计算标的相对大盘的超额收益，超额越多得分越高。产出相对强度维度分供6维度评分汇总。
+  indicators_zh: ①触发：盘前相对大盘强度计算，相对收益；②消费：标的收益率(L0行情)+大盘指数收益率(L0指数行情)；③参数：超额收益计算窗口、相对强度分级；④数据流：标的收益+大盘收益→超额收益计算→相对强度维度分(0-100)→BM-SEL-24-A汇总；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：大盘指数数据缺失→记中性分50。
+- step_id: BM-SEL-24-A-4
+  flow_stage: stock_selection
+  name_zh: 资金维度
+  name_en: Capital Flow Dimension
+  plain_zh: 看资金是流入还是流出——主力净流入+大单买入占比高满分，净流出扣分。
+  mechanism_zh: BM-SEL-24-A 6维度量化强度评分的子环节。MOD-SIG-034 quant_short_term_strength_engine.py 中的资金维度子模块，主力净流入为正且大单买入占比高=满分，净流出扣分。产出资金维度分供6维度评分汇总。
+  indicators_zh: ①触发：盘前资金流向计算，主力净流入；②消费：主力净流入(L0资金流向)+大单买入占比(L0成交明细)；③参数：净流入分级阈值、大单占比权重；④数据流：主力净流入+大单占比→资金强度评分→资金维度分(0-100)→BM-SEL-24-A汇总；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：资金流向数据缺失→记中性分50。
+- step_id: BM-SEL-24-A-5
+  flow_stage: stock_selection
+  name_zh: 技术维度
+  name_en: Technical Dimension
+  plain_zh: 看技术指标好不好——MACD金叉+均线多头排列+强势K线满分，死叉空头排列低分。
+  mechanism_zh: BM-SEL-24-A 6维度量化强度评分的子环节。MOD-SIG-034 quant_short_term_strength_engine.py 中的技术维度子模块，MACD金叉+均线多头排列+强势K线=满分，死叉空头排列=低分。产出技术维度分供6维度评分汇总。
+  indicators_zh: ①触发：盘前技术指标计算，MACD/均线多头；②消费：MACD(L0技术指标)+均线排列(L0均线)+K线形态(L0日K)；③参数：MACD金叉判定、均线多头排列规则、K线形态分类；④数据流：MACD+均线+K线形态→技术形态评分→技术维度分(0-100)→BM-SEL-24-A汇总；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：技术指标计算数据不足→记中性分50。
+- step_id: BM-SEL-24-A-6
+  flow_stage: stock_selection
+  name_zh: 风险维度
+  name_en: Risk Dimension
+  plain_zh: 看风险大不大——低波动+小回撤+适中Beta满分(风险可控)，高波动大回撤低分。
+  mechanism_zh: BM-SEL-24-A 6维度量化强度评分的子环节。MOD-SIG-034 quant_short_term_strength_engine.py 中的风险维度子模块，低波动+小回撤+适中Beta=满分(风险可控)，高波动大回撤=低分。产出风险维度分供6维度评分汇总。
+  indicators_zh: ①触发：盘前风险指标计算，波动率/最大回撤；②消费：波动率(L0行情)+最大回撤(L0历史K线)+Beta(L0行情)；③参数：波动率分级、回撤阈值、Beta适配区间；④数据流：波动率+最大回撤+Beta→风险综合评分→风险维度分(0-100)→BM-SEL-24-A汇总；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：历史K线不足以计算风险指标→记中性分50。
 - step_id: BM-SEL-24-B
   flow_stage: stock_selection
   name_zh: A~E五级评级
@@ -11446,6 +11579,48 @@ battle_map_steps:
   plain_zh: 把融合信号分成6类决策——主升龙头/二进三/跟风/复苏/伪强/地天反包，每类对应不同操作。
   mechanism_zh: BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_decision_engine.py 中的决策分类模块，将融合后的综合信号分类为6类决策输出（主升龙头/二进三/跟风/复苏/伪强/地天反包）。每类决策对应不同的操作策略和风险特征。
   indicators_zh: ①触发：融合信号产出；②消费：BM-SEL-25-A 融合信号；③参数：6类分类规则、各类决策阈值(implemented)；④数据流：融合信号→分类判定→6类决策标签→BM-SEL-21组合优化；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：分类规则未配置→输出原始融合分(不分类)。
+- step_id: BM-SEL-25-C-1
+  flow_stage: stock_selection
+  name_zh: 主升龙头决策类
+  name_en: Main-uptrend Leader Decision
+  plain_zh: 三引擎共振的最强标的——连板高度高+游资接力强+量化强度高，标记最高优先级P0。
+  mechanism_zh: BM-SEL-25-C 6类决策输出的子环节。MOD-SIG-035 dual_engine_fusion_decision_engine.py 中的主升龙头判定子模块，连板高度≥3板+游资接力≥80+量化强度≥80→判定主升龙头，标记最高优先级P0。产出主升龙头决策标签供买入流程使用。
+  indicators_zh: ①触发：连板高度高+游资接力强+量化强度高，三引擎共振；②消费：连板潜力评分(BM-SEL-22-C)+游资接力评分(BM-SEL-23-A)+量化强度评分(BM-SEL-24-A)；③参数：连板高度≥3板、游资接力≥80、量化强度≥80；④数据流：三引擎评分+连板位次→三引擎共振判定→主升龙头决策标签(优先级P0)→BM-SEL-25-C汇总→买入流程；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：三引擎评分不全无法共振判定→降级为跟风决策类。
+- step_id: BM-SEL-25-C-2
+  flow_stage: stock_selection
+  name_zh: 二进三决策类
+  name_en: 2-to-3 Board Decision
+  plain_zh: 2板标的准备进3板——接力情绪中上+量化强度中上，标记次高优先级P1。
+  mechanism_zh: BM-SEL-25-C 6类决策输出的子环节。MOD-SIG-035 dual_engine_fusion_decision_engine.py 中的二进三判定子模块，2板+游资接力≥70+量化强度≥70→判定二进三候选，标记次高优先级P1。产出二进三决策标签供买入流程使用。
+  indicators_zh: ①触发：2板标的+接力情绪+量化强度中上，2板晋级3板判定；②消费：当前连板数=2(L0行情)+游资接力评分(BM-SEL-23-A)+量化强度评分(BM-SEL-24-A)；③参数：连板数=2、游资接力≥70、量化强度≥70；④数据流：2板状态+接力+量化评分→晋级3板判定→二进三决策标签(优先级P1)→BM-SEL-25-C汇总→买入流程；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：接力/量化评分缺失→降级为跟风决策类。
+- step_id: BM-SEL-25-C-3
+  flow_stage: stock_selection
+  name_zh: 跟风决策类
+  name_en: Following Decision
+  plain_zh: 板块龙头封板后的跟风标的——板块联动跟风，标记中优先级P2。
+  mechanism_zh: BM-SEL-25-C 6类决策输出的子环节。MOD-SIG-035 dual_engine_fusion_decision_engine.py 中的跟风判定子模块，板块龙头封板+标的为2-3位跟风+量化强度≥60→判定跟风，标记中优先级P2。产出跟风决策标签供买入流程使用。
+  indicators_zh: ①触发：板块龙头已封板+标的为板块内跟风，板块联动跟风；②消费：板块龙头状态(L0全市场涨停)+标的板块位次(L0板块成分排序)+量化强度评分(BM-SEL-24-A)；③参数：板块龙头封板确认、标的位次2-3位、量化强度≥60；④数据流：板块龙头+标的位次+量化评分→板块联动跟风判定→跟风决策标签(优先级P2)→BM-SEL-25-C汇总→买入流程；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：板块龙头数据缺失→剔除候选。
+- step_id: BM-SEL-25-C-4
+  flow_stage: stock_selection
+  name_zh: 复苏决策类
+  name_en: Recovery Decision
+  plain_zh: 超跌后放量反弹+技术反转——标记中低优先级P3，搏反转机会。
+  mechanism_zh: BM-SEL-25-C 6类决策输出的子环节。MOD-SIG-035 dual_engine_fusion_decision_engine.py 中的复苏判定子模块，近期超跌+放量+技术反转信号→判定复苏，标记中低优先级P3。产出复苏决策标签供买入流程使用。
+  indicators_zh: ①触发：超跌反弹+量能放大+技术反转，超跌复苏；②消费：近期跌幅(L0行情)+量能放大(L0成交量)+技术反转信号(BM-SEL-24-A技术维度)；③参数：超跌跌幅阈值、放量倍数、反转信号判定；④数据流：跌幅+量能+技术反转→超跌复苏判定→复苏决策标签(优先级P3)→BM-SEL-25-C汇总→买入流程；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：量能/技术数据缺失→剔除候选。
+- step_id: BM-SEL-25-C-5
+  flow_stage: stock_selection
+  name_zh: 伪强决策类
+  name_en: Fake-strength Decision
+  plain_zh: 表面涨停但资金流出+分歧大——伪强识别，标记风险预警剔除候选池。
+  mechanism_zh: BM-SEL-25-C 6类决策输出的子环节。MOD-SIG-035 dual_engine_fusion_decision_engine.py 中的伪强识别子模块，涨停但资金净流出+分歧高→判定伪强，标记风险预警剔除。产出伪强决策标签(剔除标记)供候选池过滤使用。
+  indicators_zh: ①触发：表面强势但资金/分歧异常，伪强识别；②消费：涨停状态(L0行情)+资金维度评分(BM-SEL-24-A资金维度)+分歧程度评分(BM-SEL-22-C分歧维度)；③参数：资金净流出阈值、分歧度判定阈值；④数据流：涨停+资金+分歧评分→伪强识别判定→伪强决策标签(剔除标记)→BM-SEL-25-C汇总→剔除候选池；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：资金/分歧数据缺失→无法识别则保守不放行。
+- step_id: BM-SEL-25-C-6
+  flow_stage: stock_selection
+  name_zh: 地天反包决策类
+  name_en: Ground-to-sky Reversal Decision
+  plain_zh: 日内深跌后大幅反包收涨——地天板特殊机会，标记特殊优先级P2-特殊通道。
+  mechanism_zh: BM-SEL-25-C 6类决策输出的子环节。MOD-SIG-035 dual_engine_fusion_decision_engine.py 中的地天反包判定子模块，日内跌≥5%后收涨≥5%+放量反包→判定地天反包，标记特殊机会。产出地天反包决策标签供买入流程特殊通道使用。
+  indicators_zh: ①触发：深跌后大幅反转收涨，地天板反包；②消费：日内最低价跌幅(L0盘口)+收盘涨幅(L0日K)+反包量能(L0成交量)；③参数：日内跌幅≥5%、收盘涨幅≥5%、反包放量倍数；④数据流：日内深跌+收盘大涨+反包量能→地天反包判定→地天反包决策标签(优先级P2-特殊)→BM-SEL-25-C汇总→买入流程(特殊通道)；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：盘中分时数据缺失无法判定反包→剔除候选。
 - step_id: BM-SEL-25-D
   flow_stage: stock_selection
   name_zh: PDF分布信号提取
