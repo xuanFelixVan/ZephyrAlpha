@@ -21,7 +21,6 @@ Task: T-V2-001 (Wave 0 final review R73)
 
 from __future__ import annotations
 
-import re
 import sys
 from pathlib import Path
 
@@ -37,7 +36,7 @@ from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 __manifest__ = """
 args: []
-description: Blueprint provenance triple validation (origin_drafts + audit_chain + arbitration) + node_id/edge_id hardcode lint
+description: Blueprint provenance triple validation (origin_drafts + audit_chain + arbitration). node_id/edge_id hardcode lint moved to check_doc_node_id_hardcode.py (GATE-DOC-NODE-ID, SSoT).
 dimensions:
 - D3
 - D4
@@ -46,34 +45,16 @@ timeout_seconds: 30
 warn_only: false
 """
 
-# 文档引用铁律（2026-08-04）：禁止蓝图/文档硬编码 node_id/edge_id（PostgreSQL 自增主键，删除重建即变）
-# 蓝图引用 depgraph 时只写稳定逻辑标识（module_id/blueprint_id/path）
-_NODE_ID_HARDCODE_RE = re.compile(r"\b(node_id|edge_id)\s*=\s*(\d+)\b")
-
-
-def _check_node_id_hardcode(fpath: Path, text: str) -> int:
-    """检查蓝图正文中是否硬编码 node_id/edge_id（文档引用铁律）。
-
-    违规示例：``> **depgraph**: MOD-EX-049 (node_id=8005442)`` → 应改为仅 module_id。
-    合法引用标识：module_id / blueprint_id / path（稳定逻辑标识）。
-    """
-    matches = _NODE_ID_HARDCODE_RE.findall(text)
-    if not matches:
-        return 0
-    try:
-        rel = fpath.relative_to(REPO_ROOT)
-    except ValueError:
-        rel = fpath
-    for kind, num in matches:
-        print(
-            f"  ERROR: {rel} 硬编码 {kind}={num}"
-            f"（文档引用铁律：禁止 node_id/edge_id 硬编码，改用 module_id/blueprint_id/path）"
-        )
-    return len(matches)
+# 文档引用铁律（2026-08-04）：node_id/edge_id 硬编码检测已移至 check_doc_node_id_hardcode.py
+# （GATE-DOC-NODE-ID，专门检测器，检测逻辑 SSoT）。本脚本回归纯 provenance 三件套校验。
+# 蓝图引用 depgraph 时只写稳定逻辑标识（module_id/blueprint_id/path）——由 GATE-DOC-NODE-ID 强制。
 
 
 def main() -> int:
-    """Validate provenance fields + node_id/edge_id hardcode in blueprint files."""
+    """Validate provenance triples in blueprint files (origin_drafts + audit_chain + arbitration).
+
+    node_id/edge_id 硬编码检测已移至 check_doc_node_id_hardcode.py（GATE-DOC-NODE-ID，SSoT）。
+    """
 
     errors = 0
     # 扫描范围：docs/03_modules（仅 blueprint.md）+ docs/04_construction_plans + docs/01_policies_and_standards
@@ -96,10 +77,8 @@ def main() -> int:
             except (OSError, UnicodeDecodeError):
                 continue
 
-            # ── 文档引用铁律（2026-08-04）：禁止 node_id/edge_id 硬编码 ──
-            errors += _check_node_id_hardcode(fpath, text)
-
-            # ── provenance 三件套校验（原逻辑）──
+            # ── provenance 三件套校验 ──
+            # node_id/edge_id 硬编码检测已移至 check_doc_node_id_hardcode.py（GATE-DOC-NODE-ID，SSoT）
             in_frontmatter = False
             provenance = {}
             for line in text.split("\n"):
@@ -127,10 +106,10 @@ def main() -> int:
                 errors += 1
 
     if errors:
-        print(f"\nFAIL: {errors} blueprint issue(s) [provenance + node_id hardcode]")
+        print(f"\nFAIL: {errors} blueprint provenance issue(s)")
         return EXIT_FINDINGS
 
-    print("OK: Blueprint provenance + node_id hardcode validation passed")
+    print("OK: Blueprint provenance validation passed")
     return EXIT_PASS
 
 

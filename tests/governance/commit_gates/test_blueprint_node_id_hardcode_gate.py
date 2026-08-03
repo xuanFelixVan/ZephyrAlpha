@@ -11,20 +11,24 @@
 """test_blueprint_node_id_hardcode_gate.py — BLUEPRINT-NODE-ID-HARDCODE 门禁单测
 
 权威依据：blueprint_node_id_hardcode_gate.py（make_blueprint_node_id_hardcode_gate）
+SSoT 治本（2026-08-04）：检测逻辑真源 = check_doc_node_id_hardcode.py，本 gate 是
+subprocess thin wrapper（对标 pure_shim_gate.py → check_pure_shim.py 模式）。
 
 测试组：
 - TestGateSpecFields: gate_id / priority / isinstance(GateSpec)
-- TestHelpers: _NODE_ID_HARDCODE_RE 正则匹配（node_id=数字 / edge_id=数字）
-- TestGatewayIntegration: mock gateway 流程
+- TestGatewayIntegration: 真实 subprocess 调用 check_doc_node_id_hardcode.py --ci --files
   - staged blueprint.md 含 node_id 硬编码 → 阻断 (passed=False)
   - staged blueprint.md 含 edge_id 硬编码 → 阻断 (passed=False)
   - staged blueprint.md 仅含 module_id（稳定标识）→ 放行 (passed=True)
   - 非 blueprint.md 文件含 node_id → 忽略（放行）
-  - 多违规去重
+  - 多违规聚合
   - fail-open on git diff 失败/异常
+  - fail-open on 脚本缺失（monkeypatch _CHECKER_SCRIPT）
   - 无 staged 文件 → 放行
+  - Windows 反斜杠路径归一化
 
-测试隔离：MagicMock 模拟 gateway.run_git + tmp_path 真实文件，不读/不写真实仓库。
+测试隔离：MagicMock 模拟 gateway.run_git + tmp_path 真实文件 + 真实 subprocess 调用
+check_doc_node_id_hardcode.py（检测真源），不 mock subprocess（集成测试价值 > 速度）。
 """
 from __future__ import annotations
 
@@ -40,7 +44,6 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate import (  # noqa: E402
-    _NODE_ID_HARDCODE_RE,
     make_blueprint_node_id_hardcode_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
@@ -92,48 +95,11 @@ class TestGateSpecFields:
 
 
 # ---------------------------------------------------------------------------
-# TestHelpers — 正则匹配
-# ---------------------------------------------------------------------------
-class TestHelpers:
-    def test_matches_node_id_numeric(self):
-        m = _NODE_ID_HARDCODE_RE.search("depgraph: MOD-EX-049 (node_id=8005442)")
-        assert m is not None
-        assert m.group(1) == "node_id"
-        assert m.group(2) == "8005442"
-
-    def test_matches_edge_id_numeric(self):
-        m = _NODE_ID_HARDCODE_RE.search("edge_id=12345")
-        assert m is not None
-        assert m.group(1) == "edge_id"
-        assert m.group(2) == "12345"
-
-    def test_matches_with_spaces(self):
-        m = _NODE_ID_HARDCODE_RE.search("node_id = 99")
-        assert m is not None
-        assert m.group(2) == "99"
-
-    def test_no_match_module_id(self):
-        """module_id=MOD-XXX 是稳定标识，不应匹配（非数字）。"""
-        assert _NODE_ID_HARDCODE_RE.search("module_id=MOD-EX-049") is None
-
-    def test_no_match_non_numeric(self):
-        """node_id=abc（非数字）不匹配。"""
-        assert _NODE_ID_HARDCODE_RE.search("node_id=abc") is None
-
-    def test_no_match_bare_keyword(self):
-        """单独 node_id 无 = 不匹配。"""
-        assert _NODE_ID_HARDCODE_RE.search("the node_id field") is None
-
-    def test_no_match_blueprint_id(self):
-        """blueprint_id=BP-XXX 是稳定标识，不应匹配。"""
-        assert _NODE_ID_HARDCODE_RE.search("blueprint_id=BP-001") is None
-
-
-# ---------------------------------------------------------------------------
-# TestGatewayIntegration — mock gateway 流程
+# TestGatewayIntegration — 真实 subprocess 调用 check_doc_node_id_hardcode.py
 # ---------------------------------------------------------------------------
 class TestGatewayIntegration:
     def test_blueprint_with_node_id_blocked(self, tmp_path):
+        """staged blueprint.md 含 node_id=数字 → 阻断。"""
         mods = tmp_path / "docs" / "03_modules" / "foo"
         mods.mkdir(parents=True)
         (mods / "blueprint.md").write_text(
@@ -143,9 +109,10 @@ class TestGatewayIntegration:
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_blueprint_node_id_hardcode_gate().check(gw, [])
         assert not passed
-        assert "node_id=8005442" in msg
+        assert "node_id" in msg
 
     def test_blueprint_with_edge_id_blocked(self, tmp_path):
+        """staged blueprint.md 含 edge_id=数字 → 阻断。"""
         mods = tmp_path / "docs" / "03_modules" / "bar"
         mods.mkdir(parents=True)
         (mods / "blueprint.md").write_text("edge_id=12345", encoding="utf-8")
@@ -153,7 +120,7 @@ class TestGatewayIntegration:
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_blueprint_node_id_hardcode_gate().check(gw, [])
         assert not passed
-        assert "edge_id=12345" in msg
+        assert "edge_id" in msg
 
     def test_blueprint_with_module_id_only_passes(self, tmp_path):
         """module_id/blueprint_id/path 是稳定标识，应放行。"""
@@ -180,19 +147,18 @@ class TestGatewayIntegration:
         assert passed
         assert msg == ""
 
-    def test_multiple_violations_dedup(self, tmp_path):
+    def test_multiple_violations_reported(self, tmp_path):
+        """多个 node_id/edge_id 硬编码 → 多条 WARN 汇报。"""
         mods = tmp_path / "docs" / "03_modules" / "multi"
         mods.mkdir(parents=True)
-        content = "node_id=1\nnode_id=1\nnode_id=2\nedge_id=3"
+        content = "node_id=1\nnode_id=2\nedge_id=3"
         (mods / "blueprint.md").write_text(content, encoding="utf-8")
         rel = "docs/03_modules/multi/blueprint.md"
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_blueprint_node_id_hardcode_gate().check(gw, [])
         assert not passed
-        # 去重后 node_id=1 只出现一次
-        assert msg.count("node_id=1") == 1
-        assert "node_id=2" in msg
-        assert "edge_id=3" in msg
+        # 脚本按行汇报，3 行各含一个违规 → 至少 3 条 WARN
+        assert msg.count("WARN") >= 3
 
     def test_multiple_files_aggregated(self, tmp_path):
         """多个 staged blueprint.md 都违规 → 聚合报错。"""
@@ -208,8 +174,8 @@ class TestGatewayIntegration:
         )
         passed, msg = make_blueprint_node_id_hardcode_gate().check(gw, [])
         assert not passed
-        assert "node_id=100" in msg
-        assert "node_id=200" in msg
+        # 两个文件各至少一条 WARN
+        assert msg.count("WARN") >= 2
 
     def test_no_staged_files_passes(self, tmp_path):
         gw = _make_gateway(staged_files=[], project_root=str(tmp_path))
@@ -237,6 +203,20 @@ class TestGatewayIntegration:
         assert passed
         assert msg == ""
 
+    def test_fail_open_on_script_missing(self, tmp_path, monkeypatch):
+        """check_doc_node_id_hardcode.py 不存在 → fail-open（放行）。"""
+        mods = tmp_path / "docs" / "03_modules" / "noscript"
+        mods.mkdir(parents=True)
+        (mods / "blueprint.md").write_text("node_id=42", encoding="utf-8")
+        rel = "docs/03_modules/noscript/blueprint.md"
+        gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
+        # monkeypatch 脚本路径为不存在的文件
+        from zephyr.gov_enforcement.commit_gates import blueprint_node_id_hardcode_gate as gate_mod
+        monkeypatch.setattr(gate_mod, "_CHECKER_SCRIPT", str(tmp_path / "nonexistent.py"))
+        passed, msg = make_blueprint_node_id_hardcode_gate().check(gw, [])
+        assert passed
+        assert msg == ""
+
     def test_backslash_path_normalized(self, tmp_path):
         """Windows 反斜杠路径归一化后正确检测。"""
         mods = tmp_path / "docs" / "03_modules" / "win"
@@ -247,4 +227,4 @@ class TestGatewayIntegration:
         gw = _make_gateway(staged_files=[rel], project_root=str(tmp_path))
         passed, msg = make_blueprint_node_id_hardcode_gate().check(gw, [])
         assert not passed
-        assert "node_id=42" in msg
+        assert "node_id" in msg

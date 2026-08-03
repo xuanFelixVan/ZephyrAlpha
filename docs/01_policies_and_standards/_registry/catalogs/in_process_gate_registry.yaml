@@ -555,9 +555,11 @@ gates:
   register_line: 0
   enabled: true
 # --- BLUEPRINT-NODE-ID-HARDCODE: 文档引用铁律 in-process gate（2026-08-04，补齐 GitCommitGateway --no-verify 绕过缺口）---
-# 治本 GATE-12（pre-commit hook）被 GitCommitGateway --no-verify 绕过——AI 通过 gateway
-# 提交含 node_id 硬编码的 blueprint.md 不被 GATE-12 拦截。本 gate 在 check_all() 阶段
-# 执行，--no-verify 无法绕过。检测 staged blueprint.md 中 node_id=数字/edge_id=数字 硬编码。
+# 治本 GATE-DOC-NODE-ID（pre-commit hook）被 GitCommitGateway --no-verify 绕过——AI 通过 gateway
+# 提交含 node_id 硬编码的 blueprint.md 不被 GATE-DOC-NODE-ID 拦截。本 gate 在 check_all() 阶段
+# 执行，--no-verify 无法绕过。subprocess 调 check_doc_node_id_hardcode.py --ci --files 检测 staged
+# blueprint.md 中 node_id=数字/edge_id=数字 硬编码（检测逻辑 SSoT=check_doc_node_id_hardcode.py，
+# P3 三源→单源治本 2026-08-04：原内联正则已移除，对标 pure_shim_gate.py 模式改为 subprocess thin wrapper）。
 # priority=57（HELD-OVERLAP 50 之后、NEW-FILE-DEPGRAPH 58 之前）
 - gate_id: BLUEPRINT-NODE-ID-HARDCODE
   module_path: zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate
