@@ -63,6 +63,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, get_depgraph_pg_connection
 from _shared.encoding import ensure_utf8_stdout
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+from _shared.file_lock import blueprint_write_lock  # noqa: E402  #ARCH-RECONCILER-TOCTOU-CLOBBER-001 P0 止血
 
 ensure_utf8_stdout()
 
@@ -685,49 +686,53 @@ def _update_existing_section(
 
 def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, list[str]]:
     """_process_blueprint implementation."""
-    content = bp_path.read_text(encoding="utf-8")
-    rel_bp = bp_path.relative_to(REPO_ROOT)
-    actions: list[str] = []
+    # #ARCH-RECONCILER-TOCTOU-CLOBBER-001 P0 止血：整文件 READ-MODIFY-WRITE 加 advisory lock，
+    # 防止跨 commit/session 并发写导致 clobber（读旧→写新覆盖并发编辑）。
+    # 锁覆盖 read(688) → _update_existing_section write(681) / direct write(728) 全程。
+    with blueprint_write_lock(bp_path):
+        content = bp_path.read_text(encoding="utf-8")
+        rel_bp = bp_path.relative_to(REPO_ROOT)
+        actions: list[str] = []
 
-    if SECTION_PATTERN.search(content):
-        changed, _ = _update_existing_section(bp_path, content, rel_bp, check_only, actions)
-        return changed, actions
+        if SECTION_PATTERN.search(content):
+            changed, _ = _update_existing_section(bp_path, content, rel_bp, check_only, actions)
+            return changed, actions
 
-    module_name = bp_path.parent.name
-    module_id = _read_frontmatter_module_id(content)
-    if module_name not in BLUEPRINT_MODULE_MAP:
-        # depgraph 驱动扩展：map 无条目（如 _domain_* 域蓝图）但 frontmatter 有
-        # module_id 且 depgraph 有运营态节点 → 从真源生成；无节点 → 生成
-        # "尚无已实现代码"空表（诚实声称 + 满足验证器章节存在要求，后续 depgraph
-        # 登记后重跑本脚本自动填充，幂等）。
-        if not module_id:
-            actions.append(f"⚠️ {rel_bp}: 模块名 '{module_name}' 不在映射表中且无 frontmatter module_id，跳过")
-            return False, actions
+        module_name = bp_path.parent.name
+        module_id = _read_frontmatter_module_id(content)
+        if module_name not in BLUEPRINT_MODULE_MAP:
+            # depgraph 驱动扩展：map 无条目（如 _domain_* 域蓝图）但 frontmatter 有
+            # module_id 且 depgraph 有运营态节点 → 从真源生成；无节点 → 生成
+            # "尚无已实现代码"空表（诚实声称 + 满足验证器章节存在要求，后续 depgraph
+            # 登记后重跑本脚本自动填充，幂等）。
+            if not module_id:
+                actions.append(f"⚠️ {rel_bp}: 模块名 '{module_name}' 不在映射表中且无 frontmatter module_id，跳过")
+                return False, actions
 
-    if check_only:
-        actions.append(f"🔴 {rel_bp}: 缺少路径索引章节（需同步）")
+        if check_only:
+            actions.append(f"🔴 {rel_bp}: 缺少路径索引章节（需同步）")
+            return True, actions
+
+        max_section = _find_max_section_number(content)
+        next_section = max_section + 1
+
+        section_content = _generate_path_index_section(next_section, module_name, module_id)
+
+        changelog_pattern = re.compile(r"^##\s+变更记录", re.MULTILINE)
+        governance_pattern = re.compile(r"^##\s+治理信息", re.MULTILINE)
+
+        insert_match = changelog_pattern.search(content) or governance_pattern.search(content)
+        if insert_match:
+            insert_pos = insert_match.start()
+            content = content[:insert_pos] + section_content + "\n---\n\n" + content[insert_pos:]
+        else:
+            content = content.rstrip() + "\n\n---\n\n" + section_content
+
+        content = _bump_version_in_content(content, actions)
+
+        atomic_write_safe(bp_path, content)
+        actions.append(f"✅ {rel_bp}: 已添加 §{next_section} 已实现代码完整路径索引")
         return True, actions
-
-    max_section = _find_max_section_number(content)
-    next_section = max_section + 1
-
-    section_content = _generate_path_index_section(next_section, module_name, module_id)
-
-    changelog_pattern = re.compile(r"^##\s+变更记录", re.MULTILINE)
-    governance_pattern = re.compile(r"^##\s+治理信息", re.MULTILINE)
-
-    insert_match = changelog_pattern.search(content) or governance_pattern.search(content)
-    if insert_match:
-        insert_pos = insert_match.start()
-        content = content[:insert_pos] + section_content + "\n---\n\n" + content[insert_pos:]
-    else:
-        content = content.rstrip() + "\n\n---\n\n" + section_content
-
-    content = _bump_version_in_content(content, actions)
-
-    atomic_write_safe(bp_path, content)
-    actions.append(f"✅ {rel_bp}: 已添加 §{next_section} 已实现代码完整路径索引")
-    return True, actions
 
 
 def sync(check_only: bool = False) -> int:

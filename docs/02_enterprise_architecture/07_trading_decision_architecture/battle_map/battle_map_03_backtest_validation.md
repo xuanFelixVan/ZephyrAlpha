@@ -47,7 +47,7 @@ flowchart TD
         BM_BT_01_C["【BM-BT-01-C 撮合引擎】<br/>模拟交易所撮合——市价单/限价单/滑点<br/>/Tick级5档深度撮合，让回测更接近真实成交。<br/>（生产态 / production）<br/>【Matching Engine】"]
         BM_BT_01_D["【BM-BT-01-D A股交易约束】<br/>A股回测的'规矩'——T+1交易、万三佣金、5元最低、1bp<br/>滑点，让回测符合A股实际。<br/>（生产态 / production）<br/>【A-Share Trading Constraints】"]
         BM_BT_01_E["【BM-BT-01-E 自动回测调度器】<br/>回测的'自动排队机'——批量参数网格回测+队列管理+结<br/>果聚合，不用手动一个个跑。<br/>（生产态 / production）<br/>【Auto Backtest Scheduler】"]
-        BM_BT_01_F["【BM-BT-01-F 回测加速架构】<br/>—<br/>（生产态 / production）"]
+        BM_BT_01_F["【BM-BT-01-F 回测加速架构】<br/>回测的'加速器'——用并行计算+向量化+缓存复用让大批<br/>量参数网格回测跑得更快。<br/>（生产态 / production）<br/>【Backtest Acceleration Architecture】"]
         BM_BT_01 -.->|嵌套| BM_BT_01_A
         BM_BT_01 -.->|嵌套| BM_BT_01_B
         BM_BT_01 -.->|嵌套| BM_BT_01_C
@@ -61,7 +61,7 @@ flowchart TD
         BM_BT_02_B["【BM-BT-02-B 多源数据接入】<br/>回测的'数据库接口'——把 miniQMT Tick 数据和<br/>ClickHouse 日线数据都接进来，统一供给回测引擎。<br/>（生产态 / production）<br/>【Multi-Source Data Handler】"]
         BM_BT_02_C["【BM-BT-02-C 回测缓存管理器】<br/>回测结果的'复用器'——缓存回测结果避免重复计算，相<br/>同参数直接取缓存。<br/>（生产态 / production）<br/>【Backtest Cache Manager】"]
         BM_BT_02_D["【BM-BT-02-D 回测数据质量检查器】<br/>回测前的'数据体检'——检测数据缺失和异常，脏数据先<br/>洗再跑回测。<br/>（生产态 / production）<br/>【Backtest Data Quality Checker】"]
-        BM_BT_02_E["【BM-BT-02-E 幸存者偏差防护】<br/>—<br/>（生产态 / production）"]
+        BM_BT_02_E["【BM-BT-02-E 幸存者偏差防护】<br/>回测的'防作弊器'——把退市股票也纳入回测，避免只看<br/>活下来的股票导致收益虚高。<br/>（生产态 / production）<br/>【Survivorship Bias Protection】"]
         BM_BT_02 -.->|嵌套| BM_BT_02_A
         BM_BT_02 -.->|嵌套| BM_BT_02_B
         BM_BT_02 -.->|嵌套| BM_BT_02_C
@@ -74,7 +74,7 @@ flowchart TD
         BM_BT_03_B["【BM-BT-03-B Tick回放引擎】<br/>把历史 Tick<br/>数据逐笔回放——模拟真实的逐笔行情，让事件驱动回测<br/>更逼真。<br/>（生产态 / production）<br/>【Tick Replay Engine】"]
         BM_BT_03_C["【BM-BT-03-C 事件驱动回测】<br/>逐笔事件回测——每个 Tick/订单<br/>/成交都按时间顺序处理，精度高但速度慢，适合精细<br/>验证。<br/>（生产态 / production）<br/>【Event-Driven Backtest】"]
         BM_BT_03_D["【BM-BT-03-D 指标NaN处理器】<br/>算指标时的'清洁工'——智能填充和清洗NaN值，防止指<br/>标计算崩溃。<br/>（生产态 / production）<br/>【Metrics NaN Processor】"]
-        BM_BT_03_E["【BM-BT-03-E 密度预测模型回测验证】<br/>—<br/>（生产态 / production）"]
+        BM_BT_03_E["【BM-BT-03-E 密度预测模型回测验证】<br/>把密度预测模型放到回测里验——看概率预测准不准，不<br/>是只看点预测。<br/>（生产态 / production）<br/>【Density Prediction Model Backtest Validation】"]
         BM_BT_03 -.->|嵌套| BM_BT_03_A
         BM_BT_03 -.->|嵌套| BM_BT_03_B
         BM_BT_03 -.->|嵌套| BM_BT_03_C
@@ -85,7 +85,7 @@ flowchart TD
         BM_BT_04["【BM-BT-04 PIT铁律管理】<br/>回测绝不能偷看未来——PIT 铁律管 AS OF JOIN 和<br/>Embargo 期，保证当时只能用当时已知的数据。<br/>（生产态 / production）<br/>【Point-in-Time Integrity】"]
         BM_BT_04_A["【BM-BT-04-A PIT三公理与AS OF JOIN】<br/>回测的'时间铁律'——只用当时能知道的数据，不能用未<br/>来数据，AS OF JOIN 保证数据对齐到正确时间点。<br/>（生产态 / production）<br/>【PIT Axioms &amp; AS OF JOIN】"]
         BM_BT_04_B["【BM-BT-04-B Embargo期管理】<br/>训练-测试之间的'隔离期'——防止训练集末尾数据泄漏<br/>到测试集开头，保证样本外验证干净。<br/>（生产态 / production）<br/>【Embargo Period Management】"]
-        BM_BT_04_C["【BM-BT-04-C Purged K-Fold交叉验证】<br/>—<br/>（生产态 / production）"]
+        BM_BT_04_C["【BM-BT-04-C Purged K-Fold交叉验证】<br/>交叉验证的'隔离版'——训练测试之间砍掉重叠期，防止<br/>数据泄漏导致虚高。<br/>（生产态 / production）<br/>【Purged K-Fold Cross Validation】"]
         BM_BT_04 -.->|嵌套| BM_BT_04_A
         BM_BT_04 -.->|嵌套| BM_BT_04_B
         BM_BT_04 -.->|嵌套| BM_BT_04_C
@@ -97,11 +97,11 @@ flowchart TD
         BM_BT_05_C["【BM-BT-05-C 多重比较校正】<br/>试了100个策略总有几个好看→假阳性——用Bonferroni等<br/>校正方法抵消多重测试带来的运气成分。<br/>（生产态 / production）<br/>【Multiple Comparison Correction】"]
         BM_BT_05_D["【BM-BT-05-D 策略衰减监控】<br/>策略的'健康手环'——持续监控策略表现衰减，发现策略<br/>失效及时告警。<br/>（生产态 / production）<br/>【Strategy Decay Monitor】"]
         BM_BT_05_E["【BM-BT-05-E 参数优化分析器】<br/>参数调优的'分析师'——分析参数优化结果的显著性和过<br/>拟合风险，找出真正好的参数。<br/>（生产态 / production）<br/>【Parameter Optimization Analyzer】"]
-        BM_BT_05_F["【BM-BT-05-F Permutation Test置换检验】<br/>—<br/>（生产态 / production）"]
-        BM_BT_05_G["【BM-BT-05-G Deflated Sharpe Ratio】<br/>—<br/>（生产态 / production）"]
-        BM_BT_05_H["【BM-BT-05-H 回测-实盘偏差监控】<br/>—<br/>（生产态 / production）"]
-        BM_BT_05_I["【BM-BT-05-I 组合级过拟合检测】<br/>—<br/>（生产态 / production）"]
-        BM_BT_05_J["【BM-BT-05-J p-hacking追踪】<br/>—<br/>（生产态 / production）"]
+        BM_BT_05_F["【BM-BT-05-F Permutation Test置换检验】<br/>策略的'打假器'——把收益序列打乱重排，看策略收益是<br/>不是真有信号还是纯运气。<br/>（生产态 / production）<br/>【Permutation Test】"]
+        BM_BT_05_G["【BM-BT-05-G Deflated Sharpe Ratio】<br/>夏普比率的'去水器'——考虑试验次数后调整夏普比率，<br/>试得越多越要打折。<br/>（生产态 / production）<br/>【Deflated Sharpe Ratio】"]
+        BM_BT_05_H["【BM-BT-05-H 回测-实盘偏差监控】<br/>回测和实盘的'对账员'——持续监控回测预期和实盘实际<br/>的偏差，偏差大就报警。<br/>（生产态 / production）<br/>【Backtest-Live Bias Monitor】"]
+        BM_BT_05_I["【BM-BT-05-I 组合级过拟合检测】<br/>不光看单个策略——从组合层面检测整体过拟合，防止单<br/>策略过拟合被分散掩盖。<br/>（生产态 / production）<br/>【Portfolio-Level Overfitting Detection】"]
+        BM_BT_05_J["【BM-BT-05-J p-hacking追踪】<br/>数据挖掘的'审计员'——追踪试验次数和参数调整，防止<br/>反复试到好看的结果（p-hacking）。<br/>（生产态 / production）<br/>【P-hacking Tracker】"]
         BM_BT_05 -.->|嵌套| BM_BT_05_A
         BM_BT_05 -.->|嵌套| BM_BT_05_B
         BM_BT_05 -.->|嵌套| BM_BT_05_C
@@ -117,7 +117,7 @@ flowchart TD
         BM_BT_06["【BM-BT-06 Walk-Forward优化】<br/>滚动窗口跑样本外验证——不是一次回测定终身，而是多<br/>段验证看策略稳不稳。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Walk-Forward Optimization】"]
         BM_BT_06_A["【BM-BT-06-A 滚动窗口回测】<br/>用滚动窗口一段段测——训练一段预测一段，再往前滚，<br/>模拟策略在不同市场环境下的持续表现。<br/>（生产态 / production）<br/>【Rolling Window Backtest】"]
         BM_BT_06_B["【BM-BT-06-B 样本外验证与参数稳定性】<br/>看参数在不同窗口稳不稳——参数稳定性区域达标才放行<br/>，否则说明策略不可靠。<br/>（生产态 / production）<br/>【OOS Validation &amp; Parameter Stability】"]
-        BM_BT_06_C["【BM-BT-06-C 自适应Walk-Forward】<br/>—<br/>（生产态 / production）"]
+        BM_BT_06_C["【BM-BT-06-C 自适应Walk-Forward】<br/>Walk-Forward的'智能版'——窗口大小和参数自动适应市<br/>场状态，不是死固定。<br/>（生产态 / production）<br/>【Adaptive Walk-Forward】"]
         BM_BT_06 -.->|嵌套| BM_BT_06_A
         BM_BT_06 -.->|嵌套| BM_BT_06_B
         BM_BT_06 -.->|嵌套| BM_BT_06_C
@@ -132,7 +132,7 @@ flowchart TD
         BM_BT_07_F["【BM-BT-07-F 回测异常诊断】<br/>回测出错的'医生'——回测失败时自动诊断错误原因，给<br/>出修复建议。<br/>（生产态 / production）<br/>【Backtest Anomaly Diagnoser】"]
         BM_BT_07_G["【BM-BT-07-G 回测结果对比】<br/>多次回测的'裁判'——对比多次回测结果差异，看参数调<br/>整或策略改动的影响。<br/>（生产态 / production）<br/>【Backtest Result Comparator】"]
         BM_BT_07_H["【BM-BT-07-H 回测结果部署】<br/>策略上线的'最后一公里'——把通过验证的回测策略一键<br/>部署到实盘。<br/>（生产态 / production）<br/>【Backtest Result Deployer】"]
-        BM_BT_07_I["【BM-BT-07-I 分层验证门控V1-V6】<br/>—<br/>（生产态 / production）"]
+        BM_BT_07_I["【BM-BT-07-I 分层验证门控V1-V6】<br/>策略上线的'六道关'——V1到V6逐层验证，每层过了才进<br/>下一层，层层递进不能跳。<br/>（生产态 / production）<br/>【Layered Validation Gate V1-V6】"]
         BM_BT_07 -.->|嵌套| BM_BT_07_A
         BM_BT_07 -.->|嵌套| BM_BT_07_B
         BM_BT_07 -.->|嵌套| BM_BT_07_C
@@ -581,8 +581,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-01-F 回测加速架构
+### BM-BT-01-F 回测加速架构 / Backtest Acceleration Architecture
 
+> **大白话**：回测的"加速器"——用并行计算+向量化+缓存复用让大批量参数网格回测跑得更快。
+
+**机制说明**：
+
+BM-BT-01 子环节（depth=1, design）。回测加速架构：并行回测调度+向量化引擎复用+结果缓存命中优化+内存映射数据加载，支撑万级参数网格批量回测。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -595,6 +601,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：大批量参数网格回测请求；②消费：策略参数网格+历史数据缓存；③参数：并行度、缓存策略、数据预加载；④数据流：参数网格→并行调度→向量化回测→缓存命中检查→结果聚合；⑤代码：BT-01~BT-20 加速层（planned）；⑥降级：加速层未就绪→串行回测(慢但正确)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -740,8 +751,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-02-E 幸存者偏差防护
+### BM-BT-02-E 幸存者偏差防护 / Survivorship Bias Protection
 
+> **大白话**：回测的"防作弊器"——把退市股票也纳入回测，避免只看活下来的股票导致收益虚高。
+
+**机制说明**：
+
+BM-BT-02 子环节（depth=1, design）。幸存者偏差防护：退市股票数据保留+PIT全样本回测+历史成分股还原，防止只用当前指数成分股回测导致收益虚高。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -754,6 +771,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：回测数据加载时；②消费：历史成分股数据+退市股票数据；③参数：成分股还原时点、退市数据处理；④数据流：当前成分股→历史还原→全样本(含退市)→回测引擎；⑤代码：BT-06 data_handler 扩展（planned）；⑥降级：退市数据缺失→仅用存活股票(收益虚高风险)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -899,8 +921,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-03-E 密度预测模型回测验证
+### BM-BT-03-E 密度预测模型回测验证 / Density Prediction Model Backtest Validation
 
+> **大白话**：把密度预测模型放到回测里验——看概率预测准不准，不是只看点预测。
+
+**机制说明**：
+
+BM-BT-03 子环节（depth=1, design）。密度预测模型回测验证：概率预测评估+CRPS/校准度+密度回测框架，评估模型不只看点预测准不准，还看概率分布对不对。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -913,6 +941,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：密度预测模型训练完成后；②消费：模型概率预测+真实收益分布；③参数：CRPS阈值、校准度指标；④数据流：模型预测分布→密度回测→CRPS/校准度→评估报告；⑤代码：BT-07 metrics 扩展（planned）；⑥降级：密度回测未就绪→仅点预测回测(概率评估缺失)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -990,8 +1023,14 @@ BM-BT-04 子环节（depth=1）。BT-10 core/pit_manager.py 同时管理 Embargo
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-04-C Purged K-Fold交叉验证
+### BM-BT-04-C Purged K-Fold交叉验证 / Purged K-Fold Cross Validation
 
+> **大白话**：交叉验证的"隔离版"——训练测试之间砍掉重叠期，防止数据泄漏导致虚高。
+
+**机制说明**：
+
+BM-BT-04 子环节（depth=1, design）。Purged K-Fold交叉验证：训练测试折叠间清除重叠期+Embargo隔离，防止时序数据在K-Fold折叠间泄漏，比普通K-Fold更适合金融时序数据。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1004,6 +1043,11 @@ BM-BT-04 子环节（depth=1）。BT-10 core/pit_manager.py 同时管理 Embargo
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：模型交叉验证阶段；②消费：PIT特征+标签序列；③参数：K折叠数、Purge窗口、Embargo期；④数据流：时序数据→Purged K-Fold分割→训练/验证折叠→评估；⑤代码：BT-04 PIT管理扩展（planned）；⑥降级：Purged K-Fold未就绪→普通K-Fold(泄漏风险)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1183,8 +1227,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-05-F Permutation Test置换检验
+### BM-BT-05-F Permutation Test置换检验 / Permutation Test
 
+> **大白话**：策略的"打假器"——把收益序列打乱重排，看策略收益是不是真有信号还是纯运气。
+
+**机制说明**：
+
+BM-BT-05 子环节（depth=1, design）。Permutation Test置换检验：收益序列打乱重排+显著性检验，通过对比真实收益与置换分布判断策略是否真有预测能力，而非纯靠运气。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1197,6 +1247,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：策略过拟合检测阶段；②消费：策略收益序列；③参数：置换次数、显著性水平；④数据流：真实收益→置换重排→经验分布→p值→显著性判定；⑤代码：BT-07 metrics 扩展（planned）；⑥降级：置换检验未就绪→仅样本内外对比(假阳性风险)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1206,8 +1261,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-05-G Deflated Sharpe Ratio
+### BM-BT-05-G Deflated Sharpe Ratio / Deflated Sharpe Ratio
 
+> **大白话**：夏普比率的"去水器"——考虑试验次数后调整夏普比率，试得越多越要打折。
+
+**机制说明**：
+
+BM-BT-05 子环节（depth=1, design）。Deflated Sharpe Ratio：多重试验校正后的夏普比率，考虑尝试的策略数量对夏普比率的影响，试得越多越要打折，防止"试100个总有几个好看"的假阳性。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1220,6 +1281,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：策略评估阶段；②消费：策略夏普比率+试验次数；③参数：试验次数、相关性结构；④数据流：原始夏普→试验次数校正→Deflated Sharpe→显著性判定；⑤代码：BT-07 metrics 扩展（planned）；⑥降级：DSR未就绪→仅原始夏普(多重比较假阳性风险)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1229,8 +1295,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-05-H 回测-实盘偏差监控
+### BM-BT-05-H 回测-实盘偏差监控 / Backtest-Live Bias Monitor
 
+> **大白话**：回测和实盘的"对账员"——持续监控回测预期和实盘实际的偏差，偏差大就报警。
+
+**机制说明**：
+
+BM-BT-05 子环节（depth=1, design）。回测-实盘偏差监控：回测预期vs实盘实际收益/风险偏差持续监控+告警，发现策略上线后表现与回测预期背离时及时告警，防止"回测美好实盘崩盘"。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1243,6 +1315,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：策略上线后持续监控；②消费：回测预期绩效+实盘实际绩效；③参数：偏差阈值、监控频率；④数据流：回测预期+实盘实际→偏差计算→阈值判定→告警；⑤代码：BT-18 decay_monitor 扩展（planned）；⑥降级：监控未就绪→人工对账(漏检风险)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1252,8 +1329,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-05-I 组合级过拟合检测
+### BM-BT-05-I 组合级过拟合检测 / Portfolio-Level Overfitting Detection
 
+> **大白话**：不光看单个策略——从组合层面检测整体过拟合，防止单策略过拟合被分散掩盖。
+
+**机制说明**：
+
+BM-BT-05 子环节（depth=1, design）。组合级过拟合检测：从组合层面而非单策略层面检测过拟合+相关性结构稳定性检验，防止单策略过拟合被组合分散效应掩盖。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1266,6 +1349,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：组合策略评估阶段；②消费：组合收益+单策略收益+相关性矩阵；③参数：组合过拟合阈值、相关性稳定性窗口；④数据流：组合+单策略收益→组合级检验→相关性稳定性→过拟合判定；⑤代码：BT-07 metrics 扩展（planned）；⑥降级：组合级检测未就绪→仅单策略检测(组合过拟合漏检)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1275,8 +1363,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-05-J p-hacking追踪
+### BM-BT-05-J p-hacking追踪 / P-hacking Tracker
 
+> **大白话**：数据挖掘的"审计员"——追踪试验次数和参数调整，防止反复试到好看的结果（p-hacking）。
+
+**机制说明**：
+
+BM-BT-05 子环节（depth=1, design）。p-hacking追踪：试验次数追踪+参数调整审计+选择性报告检测，记录每次参数调整和试验，防止反复试到好看结果后只报告好的（p-hacking）。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1289,6 +1383,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：策略研发全过程；②消费：试验日志+参数调整记录；③参数：试验追踪粒度、报告阈值；④数据流：试验/参数调整→日志记录→p-hacking检测→审计报告；⑤代码：BT-21 param_analyzer 扩展（planned）；⑥降级：追踪未就绪→无审计(选择性报告风险)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1366,8 +1465,14 @@ BM-BT-06 子环节（depth=1）。BT-12 core/walk_forward.py 提供样本外验�
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-06-C 自适应Walk-Forward
+### BM-BT-06-C 自适应Walk-Forward / Adaptive Walk-Forward
 
+> **大白话**：Walk-Forward的"智能版"——窗口大小和参数自动适应市场状态，不是死固定。
+
+**机制说明**：
+
+BM-BT-06 子环节（depth=1, design）。自适应Walk-Forward：窗口大小+参数自动适应市场状态（牛/熊/震荡），比固定窗口Walk-Forward更能适应市场风格切换。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1380,6 +1485,11 @@ BM-BT-06 子环节（depth=1）。BT-12 core/walk_forward.py 提供样本外验�
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：Walk-Forward优化阶段；②消费：市场状态识别+策略参数；③参数：自适应窗口规则、市场状态分类；④数据流：市场状态→窗口自适应→Walk-Forward回测→参数稳定性；⑤代码：BT-01~BT-09 扩展（planned）；⑥降级：自适应未就绪→固定窗口WFO(市场切换适应差)。
+
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1661,8 +1771,14 @@ v2.0 备忘模块，按需开发。
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
-### BM-BT-07-I 分层验证门控V1-V6
+### BM-BT-07-I 分层验证门控V1-V6 / Layered Validation Gate V1-V6
 
+> **大白话**：策略上线的"六道关"——V1到V6逐层验证，每层过了才进下一层，层层递进不能跳。
+
+**机制说明**：
+
+BM-BT-07 子环节（depth=1, design）。分层验证门控V1-V6：从基础统计检验到实盘小仓位验证的六层递进门控，每层通过才进下一层，层层递进不可跳级，比三阶段门控更精细。
+v2.0 备忘模块，按需开发。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1675,6 +1791,11 @@ v2.0 备忘模块，按需开发。
 | ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
 | ⑤ 代码映射 | — / — |
 | ⑥ 降级/中止 | — |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：策略逐层验证阶段；②消费：各层验证指标+策略绩效；③参数：V1-V6各层阈值；④数据流：策略→V1基础检验→V2样本外→V3稳健性→V4压力测试→V5模拟盘→V6小仓位实盘→上线；⑤代码：BT-07 门控扩展（planned）；⑥降级：分层门控未就绪→三阶段门控(粒度粗)。
+
 
 **锚点（环节↔模块双向关联）**：
 

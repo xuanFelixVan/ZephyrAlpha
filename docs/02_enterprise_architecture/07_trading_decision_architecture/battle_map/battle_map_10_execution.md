@@ -207,7 +207,7 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-XS-002 | primary | planned | generated |
+| depgraph | MOD-XS-002 | primary | planned | stable |
 | depgraph | MOD-EX-030 | supplement | planned | planned |
 | candidate | CAND-HARVEST-0021 | supplement | candidate | — |
 | candidate | CAND-EX-001 | supplement | deferred | — |

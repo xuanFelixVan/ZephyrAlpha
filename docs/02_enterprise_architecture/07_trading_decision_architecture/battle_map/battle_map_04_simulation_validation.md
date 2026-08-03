@@ -324,43 +324,4 @@ D-SIMULATION-12 Simulation Result Analyzer 提供仿真结果分析+统计检验
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
 
-## 测试验证 / Test Validation
-
-> **BM-SIM-07 风控仿真器闭环验证** — 验证"蒙特卡洛→风控仿真→结果分析"完整链路。
->
-> 测试真源：[test_battle_map_simulation_validation.py](file:///d:/ZephyrAlpha/tests/governance/test_battle_map_simulation_validation.py)（22 个测试用例，全部通过 ✅）
-
-### 闭环验证矩阵
-
-| 验证项 | 期望 | 实际 | 状态 |
-|--------|------|------|------|
-| 环节存在 | BM-SIM-07 在 simulation_validation 阶段 | step_name=风控仿真器, maturity=production | ✅ |
-| Primary 锚点 | MOD-SIM-003 (risk_simulator.py) | target_graph=depgraph, status_snapshot=stable | ✅ |
-| 锚点非幽灵 | MOD-SIM-003 在 depgraph 中存在 | build_status=generated | ✅ |
-| 入边 | BM-SIM-03 → BM-SIM-07 (蒙特卡洛→风控仿真) | edge_type=data_flow, label=蒙特卡洛→风控仿真 | ✅ |
-| 出边 | BM-SIM-07 → BM-SIM-06 (风控仿真→结果分析) | edge_type=data_flow, label=风控仿真→结果分析 | ✅ |
-| 闭环完整 | SIM-03→SIM-07→SIM-06 三段链路 | 入边✅ + 出边✅, 均为 data_flow | ✅ |
-| 翻译 5 字段 | name_zh/name_en/plain_zh/mechanism_zh/indicators_zh | 全部非空 | ✅ |
-| 6 件套标记 | ①触发②消费③参数④数据流⑤代码⑥降级 | 全部存在 | ✅ |
-| 代码映射 | indicators_zh ⑤代码段含 MOD-SIM-003 | "MOD-SIM-003 risk_simulator.py（stable）" | ✅ |
-| 无孤儿 | BM-INV-001 不违例 | 锚点数=1 > 0 | ✅ |
-| 无幽灵 | BM-INV-002 不违例 | depgraph 中 MOD-SIM-003 存在 | ✅ |
-| 无域漂移 | BM-INV-004 不违例 | D_SIMULATION 在允许列表 | ✅ |
-
-### 运行方式
-
-```bash
-# 全量运行（含 DB e2e 测试）
-py -3.12 -m pytest tests/governance/test_battle_map_simulation_validation.py -v
-
-# 仅运行 BM-SIM-07 闭环验证
-py -3.12 -m pytest tests/governance/test_battle_map_simulation_validation.py::TestBMSim07ClosedLoop -v
-
-# 跳过 DB 测试（纯逻辑验证）
-py -3.12 -m pytest tests/governance/test_battle_map_simulation_validation.py -k "not e2e" -v
-```
-
-> ⚠️ **注意**：本段落为手动添加的测试验证段，生成器（`generate_battle_map_diagram.py`）重新运行时可能覆盖。
-> 测试代码本身持久化在 `tests/governance/test_battle_map_simulation_validation.py`，不受生成器影响。
-
 [← 返回总指挥图](battle_map_panorama.md)

@@ -316,7 +316,7 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
-| depgraph | MOD-L03-001 | supplement | production | generated |
+| depgraph | MOD-L03-001 | supplement | production | stable |
 
 **有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -1356,7 +1356,6 @@ BM-SEL-02 因子评估的子环节。MOD-L02-002 计算 IC（信息系数）评�
 | depgraph | MOD-L02-002 | primary | production | stable |
 | depgraph | MOD-L02-003 | supplement | production | stable |
 | depgraph | MOD-L02-004 | supplement | production | stable |
-| depgraph | MOD-L02_ANA | supplement | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -1520,7 +1519,7 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 | depgraph | MOD-L02-015 | supplement | production | stable |
 | depgraph | MOD-L02-016 | supplement | production | stable |
 | depgraph | MOD-L02-017 | supplement | production | stable |
-| depgraph | MOD-SIG-006 | supplement | production | stable |
+| depgraph | MOD-SIG-006 | supplement | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 

@@ -39,6 +39,7 @@ for _p in (str(_REPO_ROOT), str(_SRC_DIR)):
         sys.path.insert(0, _p)
 
 from _shared.constants import EXIT_PASS
+from _shared.file_lock import blueprint_write_lock  # noqa: E402  #ARCH-RECONCILER-TOCTOU-CLOBBER-001 P0 止血
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 
 try:
@@ -157,23 +158,26 @@ def _write_frontmatter_updates(bp_file: Path, module_id: str,
     module_id / responsibility_domain 总是写入（depgraph 为真源）。
     design_maturity / build_status 仅在 frontmatter 已存在该字段时更新（不追加）。
     """
-    content = bp_file.read_text(encoding="utf-8")
-    updates = {
-        "module_id": module_id,
-        "responsibility_domain": domain_id,
-    }
-    # design_maturity / build_status 仅在已存在时更新（不追加新字段）
-    fm_match = _FRONTMATTER_RE.match(content)
-    if fm_match:
-        fm_text = fm_match.group(1)
-        if re.search(rf"^design_maturity:[ \t]*", fm_text, re.MULTILINE):
-            updates["design_maturity"] = dm
-        if re.search(rf"^build_status:[ \t]*", fm_text, re.MULTILINE):
-            updates["build_status"] = bs
-    new_content = _update_frontmatter(content, updates)
-    if new_content != content:
-        bp_file.write_text(new_content, encoding="utf-8")
-    return EXIT_PASS
+    # #ARCH-RECONCILER-TOCTOU-CLOBBER-001 P0 止血：整文件 READ-MODIFY-WRITE 加 advisory lock，
+    # 防止跨 commit/session 并发写导致 clobber（读旧→写新覆盖并发编辑）。
+    with blueprint_write_lock(bp_file):
+        content = bp_file.read_text(encoding="utf-8")
+        updates = {
+            "module_id": module_id,
+            "responsibility_domain": domain_id,
+        }
+        # design_maturity / build_status 仅在已存在时更新（不追加新字段）
+        fm_match = _FRONTMATTER_RE.match(content)
+        if fm_match:
+            fm_text = fm_match.group(1)
+            if re.search(rf"^design_maturity:[ \t]*", fm_text, re.MULTILINE):
+                updates["design_maturity"] = dm
+            if re.search(rf"^build_status:[ \t]*", fm_text, re.MULTILINE):
+                updates["build_status"] = bs
+        new_content = _update_frontmatter(content, updates)
+        if new_content != content:
+            bp_file.write_text(new_content, encoding="utf-8")
+        return EXIT_PASS
 # 蓝图扫描根目录（fallback：bp_path 找不到文件时扫描匹配 module_id）
 _BP_SCAN_ROOT = _REPO_ROOT / "docs" / "03_modules"
 _BP_SCAN_FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
