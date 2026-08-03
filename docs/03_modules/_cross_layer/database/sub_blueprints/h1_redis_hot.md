@@ -42,7 +42,7 @@ depends_on:
     why: "母蓝图定义 H1 为实盘热缓存，能造现在就造"
   - target: MOD-INF-002
     at: "database_service.py:176"
-    why: "DatabaseService.get_redis_conn() 已实现（2026-08-02，D2 决策归属 MOD-INF-002）；redis_config.py 配置加载器同模块（真源 config/.env.redis）；edge_id=10068005"
+    why: "DatabaseService.get_redis_conn() 已实现（2026-08-02，D2 决策归属 MOD-INF-002）；redis_config.py 配置加载器同模块（真源 config/.env.redis）"
 tags: [redis, hot-cache, online-store, feature-store, cqrs, realtime, factor-cross-section, h1, sub-blueprint, dd-11-01]
 priority: P1
 runtime_plane: hot

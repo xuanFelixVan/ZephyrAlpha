@@ -71,6 +71,6 @@ ttl: task_bound
       "MOD-ML-003" "D_ML_TRAIN" "planned" \
       --granularity directory \
       --design-evidence "docs/_working/依赖图/12-D-ML-TRAIN-训练域.md §14 §17.5"
-结果: node_id=8373652, build_status=planned, design_maturity=design
+结果: build_status=planned, design_maturity=design（node_id 略，查 depgraph 获取）
 备份: tmp/pg_backups/depgraph_20260803_111235.json
 ```

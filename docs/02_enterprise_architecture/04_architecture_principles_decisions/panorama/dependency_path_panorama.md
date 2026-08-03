@@ -404,9 +404,9 @@ blueprint_path = docs/03_modules/{domain_id}/{module_name}/blueprint.md
 
 **关联规则**：
 ```
-设计态节点（1行）：node_id=1001, blueprint_id=bp-trading-order-center, path=src/zephyr/trading/order_center/, design_maturity=design
-运营态节点（N行）：node_id=1002, blueprint_id=bp-trading-order-center, path=src/zephyr/trading/order_center/main.py, design_maturity=production
-运营态节点（N行）：node_id=1003, blueprint_id=bp-trading-order-center, path=src/zephyr/trading/order_center/validator.py, design_maturity=production
+设计态节点（1行）：node_id=<自增ID，查DB获取>, blueprint_id=bp-trading-order-center, path=src/zephyr/trading/order_center/, design_maturity=design
+运营态节点（N行）：node_id=<自增ID，查DB获取>, blueprint_id=bp-trading-order-center, path=src/zephyr/trading/order_center/main.py, design_maturity=production
+运营态节点（N行）：node_id=<自增ID，查DB获取>, blueprint_id=bp-trading-order-center, path=src/zephyr/trading/order_center/validator.py, design_maturity=production
 
 关联规则：运营态节点和设计态节点共享相同 blueprint_id → 自动关联（一对多）
 ```
@@ -662,7 +662,7 @@ SELECT * FROM arch_constraints WHERE violation_status = 'open';
 ```sql
 -- 单一判定信号：design_maturity 字段
 SELECT node_id, path, design_maturity, build_status
-FROM nodes WHERE node_id = 1001;
+FROM nodes WHERE blueprint_id = 'bp-trading-order-center';
 -- design_maturity='design' → 设计态（可改蓝图）
 -- design_maturity='production' → 运营态（只能改代码）
 -- design_maturity='design' → 运营态草稿（无 blueprint_id）
@@ -673,7 +673,7 @@ FROM nodes WHERE node_id = 1001;
 ```sql
 -- 改了这个模块，下游哪些模块会受影响（递归查询）
 WITH RECURSIVE downstream(node_id, path, depth) AS (
-  SELECT node_id, path, 0 FROM nodes WHERE node_id = 1001
+  SELECT node_id, path, 0 FROM nodes WHERE blueprint_id = 'bp-trading-order-center'
   UNION ALL
   SELECT n.node_id, n.path, d.depth + 1
   FROM downstream d JOIN edges e ON e.from_node_id = d.node_id
