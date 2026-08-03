@@ -14,7 +14,7 @@ from typing import Final
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-ORC-model_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """LLM 模型注册表（CT-MODEL-REGISTRY）——deepseek/opus/gpt等模型版本+性能基线。"""

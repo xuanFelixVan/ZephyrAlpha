@@ -340,4 +340,25 @@ class TestSim07GeneratorRendering:
 
     def test_render_none(self):
         """None 字段降级为 '—'。"""
-        assert self._safe
+        assert self._safe_format(None) == "—"
+
+    def test_render_string(self):
+        """字符串原样返回。"""
+        assert self._safe_format("风控仿真器") == "风控仿真器"
+
+    def test_render_dict(self):
+        """dict 降级为 'k: v' 拼接。"""
+        result = self._safe_format({"VaR": "模拟", "回撤": "模拟"})
+        assert "VaR" in result and "回撤" in result
+
+    def test_render_list(self):
+        """list 降级为逗号拼接。"""
+        result = self._safe_format(["VaR模拟", "回撤模拟", "熔断模拟"])
+        assert "VaR模拟" in result and "熔断模拟" in result
+
+    def test_render_sim07_indicators(self):
+        """BM-SIM-07 indicators_zh 6 件套文本可安全渲染。"""
+        indicators = (
+            "①触发：BM-SIM-03 蒙特卡洛完成/风控参数调整；"
+            "②消费：BM-SIM-01 仿真市场+BM-SIM-03 蒙特卡洛路径；"
+            "③参数

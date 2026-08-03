@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 脚本路径不存在返回RunResult(error=FILE_NOT_FOUND); 超时返回error=TIMEOUT
 # [TESTS] scripts/connect/orc_script.py --trigger
-# [A_module] module_id=MOD-ORC-script_runner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Orc->Script 脚本执行器 — run_audit() 生产者
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 蓝图文件缺失返回status=partial; ContextAssembler不可用返回status=degraded
 # [TESTS] scripts/connect/orc_ce.py --trigger
-# [A_module] module_id=MOD-ORC-task_context_builder | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """CE 任务上下文构建器 — build_from_task() 消费者
 

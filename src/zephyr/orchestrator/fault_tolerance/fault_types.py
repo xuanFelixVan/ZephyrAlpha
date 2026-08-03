@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] FaultTypeNotFoundError on unknown type lookup
 # [TESTS] tests/test_fault_types.py
-# [A_module] module_id=MOD-ORC-fault_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """Fault type registry and preset templates for chaos engineering."""

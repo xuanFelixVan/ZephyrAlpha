@@ -1,5 +1,5 @@
 # [DOMAIN] D_ORCHESTRATOR
-# [A_module] module_id=MOD-ORC-orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from zephyr.orchestrator.contracts.alert_handler import AlertHandler
 from zephyr.orchestrator.execution.context_bridge import ContextBridge
 from zephyr.orchestrator.execution.script_runner import ScriptRunner

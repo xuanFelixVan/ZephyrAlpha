@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError CE不可用返回degraded; 空task返回None
 # [TESTS] scripts/connect/orc_ce.py --trigger
-# [A_module] module_id=MOD-ORC-context_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Orc->CE 上下文桥接 — request_context() 生产者
 
