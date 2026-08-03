@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SimulationAnalysisError(ZA-SIM-0012)
 # [TESTS] tests/simulation/test_result_analyzer.py
+# [A_module] module_id=MOD-SIM-012 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_SIMULATION — Simulation Result Analyzer (仿真结果分析器)
 

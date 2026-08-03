@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SimulationError(ZA-SIM-0021)
 # [TESTS] tests/simulation/test_parameter_robustness_tester.py
+# [A_module] module_id=MOD-SIM-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_SIMULATION — Parameter Robustness Tester (参数鲁棒性测试器)
 

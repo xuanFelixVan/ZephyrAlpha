@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SimulationError(ZA-SIM-0023)
 # [TESTS] tests/simulation/test_sharpe_calculator_fixer.py
+# [A_module] module_id=MOD-SIM-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_SIMULATION — Sharpe Calculator Fixer (Sharpe 计算修正器)
 

@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SimulationError(ZA-SIM-0024)
 # [TESTS] tests/simulation/test_deflated_sharpe_calculator.py
+# [A_module] module_id=MOD-SIM-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_SIMULATION — Deflated Sharpe Ratio Calculator (DSR 计算器)
 

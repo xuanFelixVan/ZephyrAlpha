@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SimulationError(ZA-SIM-0003)
 # [TESTS] tests/simulation/test_risk_simulator.py
+# [A_module] module_id=MOD-SIM-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_SIMULATION — Risk Simulator (风控仿真器)
 

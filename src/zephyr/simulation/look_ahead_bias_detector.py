@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] SimulationError(ZA-SIM-0022)
 # [TESTS] tests/simulation/test_look_ahead_bias_detector.py
+# [A_module] module_id=MOD-SIM-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_SIMULATION — Look-Ahead Bias Detector (未来函数风险检测器)
 

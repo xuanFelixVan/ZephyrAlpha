@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] StrategySimulationError(ZA-SIM-0002)
 # [TESTS] tests/simulation/test_strategy_simulator.py
+# [A_module] module_id=MOD-SIM-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_SIMULATION — Strategy Simulator (策略仿真器/策略沙箱)
 

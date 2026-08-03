@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScenarioGenerationError(ZA-SIM-0005)
 # [TESTS] tests/simulation/test_scenario_generator.py
+# [A_module] module_id=MOD-SIM-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """D_SIMULATION — Scenario Generator (场景生成器)
 
