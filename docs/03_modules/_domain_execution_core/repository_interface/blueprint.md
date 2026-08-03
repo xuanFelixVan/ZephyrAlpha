@@ -13,7 +13,7 @@ responsibility_domain:
 
 > **优先级**: P2 | **成熟度**: production | **建设标记**: ✅可建
 > **设计真源**: `D:\临时工作区\依赖图\08-D-EX-CORE-执行核心域.md` §1 D-EX-CORE-50
-> **depgraph**: MOD-EX-050 (design/planned/can_build=1, node_id=8005443)
+> **depgraph**: MOD-EX-050 (design/planned/can_build=1)
 
 ## 1. 大白话简介
 

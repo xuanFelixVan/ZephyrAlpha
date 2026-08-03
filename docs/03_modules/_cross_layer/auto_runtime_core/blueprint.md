@@ -2252,7 +2252,7 @@ ResetResult 结构:
 ### B.10.5 验证
 
 - 单测: `tests/governance/rule_bridge/test_reset_gateway.py`（8 场景：阻断/放行/授权/空列表/异常）
-- depgraph 登记: node_id=8427561, module_id=MOD-GOV-RESET_GATEWAY, build_status=planned
+- depgraph 登记: module_id=MOD-GOV-RESET_GATEWAY, build_status=planned
 - 翻译: 已登记 plain_zh 大白话简介
 
 ### B.10.6 落地状态

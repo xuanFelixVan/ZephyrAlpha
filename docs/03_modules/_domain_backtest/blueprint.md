@@ -77,7 +77,7 @@ D_BACKTEST域是ZephyrAlpha量化系统的策略验证引擎。本蓝图定义�
 **v1.3.0新增决策(2026-07-04)**:
 12. **io/子目录新增(#ARCH-047)**: 配合前端可视化技术栈从 Streamlit 到 Panel+HoloViz 第一性原理重构(#ARCH-047),在 D_BACKTEST 域新增 io/ 子目录,包含 `backtest_result_sink.py`(从 BacktestResult 提取可视化数据)与 `result_repository.py`(持久化/检索 BacktestRunArtifact)
 13. **新契约 CTR-P1-017 BacktestRunArtifact**: 持久化回测运行产物(source=D_BACKTEST, target=[D_FRONTEND]),供前端 backtest_results/tick_replay 组件消费
-14. **depgraph 设计态节点登记**: node_id=475126(sink) + node_id=475127(repo),build_status=planned;3条依赖边:sink→engine_base(470295), repo→sink(475126), frontend(311219)→repo(475127)
+14. **depgraph 设计态节点登记**: sink + repo, build_status=planned; 3条依赖边: sink→engine_base, repo→sink, frontend→repo
 
 <!-- temporal_type: construction_temporary -->
 ## §0 代码对齐验证
