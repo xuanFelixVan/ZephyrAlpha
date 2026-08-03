@@ -1413,6 +1413,10 @@ entries:
       depgraph:
         has_position: true
         target_module_id: MOD-L05-001
+        # 2026-08-03 架构事实: node_id 是 depgraph DB 自增主键, 每次 generate_project_depgraph
+        # 或 apply_depgraph 触发的 regenerate 会重建 nodes_metadata 并重新分配 node_id,
+        # 因此 node_id 易变(本会话内已漂移 7714457→8315813→8339715), 不可作长期引用键.
+        # 定位节点 MUST 以 target_node_path 为准(path 稳定), target_node_id 仅供参考且可能过期.
         target_node_id: 7714457
         target_node_path: src/zephyr/pf_core/default_equity_strategy.py
         target_build_status: production
