@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-03T16:51:08Z'
+generated_at: '2026-08-03T17:21:48Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -61,9 +61,9 @@ gates:
 - gate_id: GATE-12
   name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）'
   entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
-  description: 蓝图真源 Provenance 三件套校验（origin_drafts / audit_chain≥3 / arbitration），骨架阶段
-    warn-only
-  files_trigger: ^docs/(04_construction_plans|01_policies_and_standards)/.*\.md$
+  description: 蓝图真源 Provenance 三件套校验 + node_id/edge_id 硬编码 lint（文档引用铁律，禁止易变物理ID硬编码，改用
+    module_id/blueprint_id/path）
+  files_trigger: ^docs/(03_modules/.*blueprint\.md|04_construction_plans/.*\.md|01_policies_and_standards/.*\.md)$
   always_run: false
   category: blueprint_truth_source
   status: active
@@ -395,16 +395,6 @@ gates:
   entry: python scripts/governance/d11_compliance/validate_commit_gateway.py
   description: 裸 commit 检测——强制所有 commit 走 GitCommitGateway（串行锁+stash隔离），根治幽灵提交。经 gateway
     的 commit 用 --no-verify 绕过本门禁
-  files_trigger: ''
-  always_run: true
-  category: unknown
-  status: active
-  source: pre-commit
-- gate_id: GATE-WORKTREE-REQUIRED
-  name: 'GATE-WORKTREE-REQUIRED: 主工作区 commit 软门禁（L3.1）'
-  entry: python scripts/governance/d11_compliance/validate_worktree_required.py
-  description: session_worktree 使用率软门禁——主工作区 commit warn+计数，累计 >= 5 次升级阻断。豁免：合并/reconciler
-    auto-commit
   files_trigger: ''
   always_run: true
   category: unknown
@@ -1310,6 +1300,16 @@ gates:
     priority=80）'
   entry: in-process (GitCommitGateway)
   description: 新增 .py 文件词表硬编码阻断门禁（VOCAB-HARDCODE，2026-07-03 Phase 1）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: WORKTREE-REQUIRED
+  name: 'WORKTREE-REQUIRED: worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001
+    治本）（CommitGate, priority=44）'
+  entry: in-process (GitCommitGateway)
+  description: worktree 隔离强制门禁（WORKTREE-REQUIRED，#ARCH-WORKTREE-GATE-001 治本）
   files_trigger: ''
   always_run: false
   category: commit_gate
