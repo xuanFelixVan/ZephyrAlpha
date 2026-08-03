@@ -4306,7 +4306,7 @@ capabilities:
       - record_rpo
     description: >-
       SLA RTO/RPO 监控器（永久系统四要素：自动测量）。canonical =
-      src/zephyr/infrastructure/sla/sla_monitor.py（MOD-INF_sla_monitor）。
+      src/zephyr/infrastructure/sla/sla_monitor.py（MOD-INF-016）。
       P1-9 已接入 EventBus：pipeline_failed/kill_switch_triggered 启动 RTO 计时，
       rollback_completed 记录 RTO/RPO。P3-24 SLA 目标从 config/sla_targets.yaml 加载（SSoT）。
       解决发现性：新 AI 搜 "SLA/RTO/RPO/恢复时间" 可定位真源。

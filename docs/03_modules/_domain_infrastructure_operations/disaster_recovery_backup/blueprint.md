@@ -598,7 +598,7 @@ robocopy /MIR 每次执行覆盖镜像——始终保留最新一份，无历史
 | 消费者 | 用途 |
 |--------|------|
 | 运维人员（手动） | 灾难恢复时使用restore.ps1 |
-| SLAMonitor (MOD-INF_sla_monitor) | RTO/RPO达标验证（RTO目标300s，RPO目标1任务） |
+| SLAMonitor (MOD-INF-016) | RTO/RPO达标验证（RTO目标300s，RPO目标1任务） |
 
 ---
 
