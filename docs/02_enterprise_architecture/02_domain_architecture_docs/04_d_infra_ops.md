@@ -27,12 +27,12 @@ ttl: permanent
 | 域ID | D_INFRA_OPS | Domain ID | D_INFRA_OPS |
 | 域名称 | 基础设施运维 | Domain Name | Asset Inventory |
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
-| 模块数 | 1 | Module Count | 1 |
-| 域内依赖 | 0 | Internal Dependencies | 0 |
+| 模块数 | 2 | Module Count | 2 |
+| 域内依赖 | 1 | Internal Dependencies | 1 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 生产态模块 | 1 | Production Modules | 1 |
+| 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 资产扫描器(scanner) | Description | 资产扫描器(scanner) |
 
@@ -48,35 +48,39 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 1 个模块（生产态 1 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 2 个模块（生产态 2 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_ops_download_models_py["ops/download_models<br/>download_models.py — ARCH-MODEL-LIFECYCLE-001<br/>Phase 3<br/>文件: ops/download_models.py<br/>(生产态 / production)"]
+    config_embedding_model_registry_yaml["config/embedding_model_registry<br/>config包的embedding_model_registry模块<br/>文件: config/embedding_model_registry.yaml<br/>(生产态 / production)"]
+    scripts_ops_download_models_py -->|config_depends / config_depends| config_embedding_model_registry_yaml
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     scripts_ops_download_models_py -->|config_depends / config_depends| D_DATA
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_ops_download_models_py production
+    class config_embedding_model_registry_yaml,scripts_ops_download_models_py production
     class D_DATA external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 1 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 2 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_ops_download_models_py["ops/download_models<br/>download_models.py — ARCH-MODEL-LIFECYCLE-001<br/>Phase 3<br/>文件: ops/download_models.py<br/>(生产态 / production)"]
+    config_embedding_model_registry_yaml["config/embedding_model_registry<br/>config包的embedding_model_registry模块<br/>文件: config/embedding_model_registry.yaml<br/>(生产态 / production)"]
+    scripts_ops_download_models_py -->|config_depends / config_depends| config_embedding_model_registry_yaml
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_ops_download_models_py production
+    class config_embedding_model_registry_yaml,scripts_ops_download_models_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）

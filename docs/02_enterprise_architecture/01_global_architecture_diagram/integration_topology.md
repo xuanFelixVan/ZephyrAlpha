@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-08-03 21:20:42
+> 自动生成时间: 2026-08-03 21:53:03
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 > 跨域依赖对数: 318
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-08-03 21:20:42
+%% 生成时间: 2026-08-03 21:53:03
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 %% 跨域依赖对数: 318
 
@@ -22,7 +22,7 @@ graph LR
         D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信<br/>(72模块)"]
         D_INFRA_OPS["D_INFRA_OPS<br/>基础设施运维<br/>(1模块)"]
         D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复<br/>(55模块)"]
-        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成<br/>(173模块)"]
+        D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成<br/>(169模块)"]
         D_INFRA_TELEMETRY["D_INFRA_TELEMETRY<br/>可观测性<br/>(0模块)"]
         D_SHARED["D_SHARED<br/>共享服务<br/>(184模块)"]
     end
@@ -37,7 +37,7 @@ graph LR
         D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>反馈诊断器<br/>(76模块)"]
         D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证<br/>(71模块)"]
         D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎<br/>(125模块)"]
-        D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理<br/>(207模块)"]
+        D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理<br/>(209模块)"]
         D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理<br/>(115模块)"]
         D_INTEGRATION["D_INTEGRATION<br/>管线路由<br/>(71模块)"]
         D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY<br/>集成网关<br/>(0模块)"]
@@ -69,11 +69,11 @@ graph LR
         D_FACTOR["D_FACTOR<br/>因子<br/>(109模块)"]
         D_FRONTEND["D_FRONTEND<br/>前端<br/>(24模块)"]
         D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号<br/>(14模块)"]
-        D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理<br/>(456模块)"]
+        D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理<br/>(455模块)"]
         D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪<br/>(193模块)"]
         D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理<br/>(27模块)"]
         D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测<br/>(73模块)"]
-        D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行<br/>(116模块)"]
+        D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行<br/>(118模块)"]
         D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复<br/>(1模块)"]
         D_GOV_RULE["D_GOV_RULE<br/>规则治理<br/>(35模块)"]
         D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理<br/>(411模块)"]
@@ -98,8 +98,8 @@ graph LR
     %% 跨域依赖（按依赖数排序，最多显示 100 条）
     D_INFRA_RUNTIME -->|165条 import_depends| D_SHARED
     D_GOVERNANCE -->|93条 import_depends| D_SHARED
-    D_GOV_CODE_QUALITY -->|90条 import_depends| D_GOV_ENFORCEMENT
-    D_GOV_ENFORCEMENT -->|74条 import_depends| D_GOV_CODE_QUALITY
+    D_GOV_CODE_QUALITY -->|92条 import_depends| D_GOV_ENFORCEMENT
+    D_GOV_ENFORCEMENT -->|76条 import_depends| D_GOV_CODE_QUALITY
     D_GOVERNANCE -->|69条 import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_AUDIT -->|63条 import_depends| D_SHARED
     D_INTEGRATION -->|61条 import_depends| D_SHARED
@@ -117,27 +117,27 @@ graph LR
     D_INFRA_RECOVERY -->|34条 import_depends| D_SHARED
     D_GOVERNANCE -->|32条 import_depends| D_SECURITY
     D_TRADING -->|29条 import_depends| D_SHARED
-    D_GOV_ENFORCEMENT -->|25条 import_depends| D_SHARED
-    D_AUTONOMY_CORE -->|25条 import_depends| D_SHARED
     D_GOV_ENFORCEMENT -->|25条 import_depends| D_GOV_AUDIT
+    D_AUTONOMY_CORE -->|25条 import_depends| D_SHARED
+    D_GOV_ENFORCEMENT -->|25条 import_depends| D_SHARED
     D_EX_CORE -->|23条 import_depends| D_INFRASTRUCTURE
     D_FEEDBACK_LOOP -->|22条 import_depends| D_SHARED
     D_AUTONOMY_CORE -->|22条 import_depends| D_INFRA_RUNTIME
     D_GOV_RULE -->|22条 import_depends| D_SHARED
+    D_GOV_CODE_QUALITY -->|21条 import_depends| D_SHARED
     D_GOVERNANCE -->|21条 import_depends| D_INFRA_RECOVERY
-    D_GOV_CODE_QUALITY -->|20条 import_depends| D_SHARED
     D_DATA -->|20条 import_depends| D_SHARED
     D_TRADING -->|19条 import_depends| D_INFRASTRUCTURE
-    D_GOVERNANCE -->|19条 import_depends| D_GOV_AUDIT
     D_INTELLIGENCE -->|19条 import_depends| D_SHARED
+    D_GOVERNANCE -->|19条 import_depends| D_GOV_AUDIT
     D_GOV_OPS_RESILIENCE -->|18条 import_depends| D_GOVERNANCE
     D_GOVERNANCE -->|17条 import_depends| D_GOV_RULE
     D_GOV_OPS_RESILIENCE -->|17条 import_depends| D_OPS
+    D_GOV_OPS_RESILIENCE -->|16条 import_depends| D_SHARED
+    D_EX_SOR -->|16条 import_depends| D_SHARED
     D_REPORTING -->|16条 import_depends| D_SHARED
     D_GOVERNANCE -->|16条 import_depends| D_GOV_ENFORCEMENT
     D_GOV_AUDIT -->|16条 import_depends| D_GOVERNANCE
-    D_EX_SOR -->|16条 import_depends| D_SHARED
-    D_GOV_OPS_RESILIENCE -->|16条 import_depends| D_SHARED
     D_GOV_SCRIPTS -->|14条 import_depends| D_INTEGRATION
     D_EX_CORE -->|14条 import_depends| D_SHARED
     D_GOVERNANCE -->|14条 import_depends| D_INFRA_RUNTIME
@@ -201,13 +201,13 @@ graph LR
     %% 统计
     %% 域总数: 72
     %% 跨域依赖对数: 318
-    %% 跨域依赖边总数: 2544
+    %% 跨域依赖边总数: 2549
 
     %% Top 10 依赖对
     %% 1. D_INFRA_RUNTIME -> D_SHARED: 165 条
     %% 2. D_GOVERNANCE -> D_SHARED: 93 条
-    %% 3. D_GOV_CODE_QUALITY -> D_GOV_ENFORCEMENT: 90 条
-    %% 4. D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY: 74 条
+    %% 3. D_GOV_CODE_QUALITY -> D_GOV_ENFORCEMENT: 92 条
+    %% 4. D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY: 76 条
     %% 5. D_GOVERNANCE -> D_GOV_OPS_RESILIENCE: 69 条
     %% 6. D_GOV_AUDIT -> D_SHARED: 63 条
     %% 7. D_INTEGRATION -> D_SHARED: 61 条

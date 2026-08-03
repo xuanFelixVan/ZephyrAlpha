@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-03T13:19:15Z
+# 自动生成于 2026-08-03T13:51:43Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-03T13:19:15Z'
+generated_at: '2026-08-03T13:51:43Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 386
@@ -2607,9 +2607,12 @@ scripts:
   - flag: --session-log
     type: str
     description: 检查 Session Log 中的写入记录是否违反受保护路径
+  - flag: --staged
+    type: bool
+    description: 检查 git staged 文件是否含受保护路径（pre-commit hook 模式）
   warn_only: false
   description: '受保护路径写入检查（IRN-010）——检查目标路径是否在受保护清单中。 对标 GOV-MOD-002 ai-behavior-iron-policy.md
-    IRN-010。
+    IRN-010。 --staged 模式为 #ARCH-MODEL-LIFECYCLE-001 P1 双层防护 Layer 2（pre-commit hook）。
 
     '
   tags:

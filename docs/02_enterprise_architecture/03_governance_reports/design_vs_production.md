@@ -20,17 +20,17 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 3526 | 95.0% |
+| production（生产态） | 3530 | 95.0% |
 | design（设计态） | 185 | 5.0% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3711** | **100%** |
+| **总计** | **3715** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4203 | 113.3% |
-| stable | 1790 | 48.2% |
+| generated | 4205 | 113.2% |
+| stable | 1792 | 48.2% |
 | planned | 101 | 2.7% |
 | deprecated | 83 | 2.2% |
 
@@ -69,19 +69,19 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | 125 | 125 | 0 | 0 | 100.0% |
 | D_FRONTEND | 前端 | 24 | 20 | 4 | 0 | 83.3% |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | 14 | 12 | 2 | 0 | 85.7% |
-| D_GOVERNANCE | 生命周期管理 | 456 | 456 | 0 | 0 | 100.0% |
+| D_GOVERNANCE | 生命周期管理 | 455 | 455 | 0 | 0 | 100.0% |
 | D_GOV_AUDIT | 审计追踪 | 193 | 190 | 3 | 0 | 98.4% |
-| D_GOV_CODE_QUALITY | 代码质量治理 | 207 | 207 | 0 | 0 | 100.0% |
+| D_GOV_CODE_QUALITY | 代码质量治理 | 209 | 209 | 0 | 0 | 100.0% |
 | D_GOV_DOCS | 架构文档治理 | 27 | 2 | 25 | 0 | 7.4% |
 | D_GOV_DRIFT | 漂移检测 | 73 | 72 | 1 | 0 | 98.6% |
-| D_GOV_ENFORCEMENT | 规则执行 | 116 | 115 | 1 | 0 | 99.1% |
+| D_GOV_ENFORCEMENT | 规则执行 | 118 | 117 | 1 | 0 | 99.2% |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | 115 | 115 | 0 | 0 | 100.0% |
 | D_GOV_REPAIR | 治理修复 | 1 | 1 | 0 | 0 | 100.0% |
 | D_GOV_RULE | 规则治理 | 35 | 35 | 0 | 0 | 100.0% |
 | D_GOV_SCRIPTS | 脚本治理 | 411 | 411 | 0 | 0 | 100.0% |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | 26 | 26 | 0 | 0 | 100.0% |
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
-| D_INFRA_OPS | 基础设施运维 | 1 | 1 | 0 | 0 | 100.0% |
+| D_INFRA_OPS | 基础设施运维 | 2 | 2 | 0 | 0 | 100.0% |
 | D_INFRA_RECOVERY | 回滚恢复 | 55 | 55 | 0 | 0 | 100.0% |
 | D_INFRA_RUNTIME | 运行时集成 | 169 | 167 | 2 | 0 | 98.8% |
 | D_INFRA_TELEMETRY | 可观测性 | 0 | 0 | 0 | 0 | N/A |

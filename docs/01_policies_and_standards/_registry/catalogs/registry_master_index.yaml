@@ -1,305 +1,273 @@
-# 自动生成于 2026-08-03T12:28:55Z
-# 来源: _registry/catalogs/*.yaml frontmatter
-# 手工编辑无效——修改请通过各登记表的 frontmatter
-
-generated_at: '2026-08-03T12:28:55Z'
-generated_by: scripts/governance/generators/generate_registry_master_index.py
-source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 37
-registries:
-- registry_id: GOV-AI-001
-  name: AI 自治权限登记表（全模块权限终表）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
-- registry_id: CFG-ai-risk-register
-  name: AI 风险登记簿
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 11
-  status: active
-- registry_id: CFG-ai-session-registry
-  name: AI Session/Agent 登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: draft
-- registry_id: REG-ARCH-ISSUE-001
-  name: 架构议题注册表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 293
-  status: active
-- registry_id: CFG-business-streams
-  name: 业务流定义登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
-- registry_id: REG-CAND-001
-  name: 候选模块登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 5304
-  status: active
-- registry_id: PS-REG-021
-  name: 能力→真源文件反查注册表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
-- registry_id: PS-REG-007
-  name: 跨模块依赖登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 132
-  status: active
-- registry_id: PS-REG-019
-  name: 声明式契约跟踪登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 11
-  status: active
-- registry_id: REG-DERIVED-ID-001
-  name: 派生标识符关系表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/derived_identifier_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 4
-  status: active
-- registry_id: CFG-directory-registry
-  name: 项目目录登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 86
-  status: active
-- registry_id: REG-DOMAIN-NAMING-001
-  name: 域命名规则表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 5
-  status: active
-- registry_id: REG-EXT-CONTRACT-001
-  name: 外部契约验证登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/external_contract_verification_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 2
-  status: active
-- registry_id: GOV-001
-  name: 前沿大模型综合能力排名登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
-- registry_id: PS-REG-012
-  name: Frontmatter 字段定义登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 58
-  status: active
-- registry_id: REG-FUNC-DOMAIN-001
-  name: 功能域注册表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 81
-  status: active
-- registry_id: PS-REG-014
-  name: GATE 门禁登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
-  format: yaml
-  maintenance: auto
-  entry_count: 130
-  status: active
-- registry_id: CFG-governance-convergence-map
-  name: governance_convergence_map
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/governance_convergence_map.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: unknown
-- registry_id: CFG-hard-boundaries
-  name: 硬边界登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/hard_boundaries_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
-- registry_id: CFG-IN-PROCESS-GATE-REGISTRY-001
-  name: In-Process Gate 注册真源（YAML 驱动自动注册）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 83
-  status: active
-- registry_id: CFG-infrastructure-registry
-  name: 运行时基础设施登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 15
-  status: active
-- registry_id: CFG-interface-contract-registry
-  name: 接口契约注册表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 5
-  status: active
-- registry_id: CFG-knowledge-article-registry
-  name: 知识条目登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: draft
-- registry_id: REG-MODULE-TRANSLATION-001
-  name: 模块级翻译注册表（中英对照真源）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 1373
-  status: active
-- registry_id: CFG-noqa-exempt-registry
-  name: noqa_exempt_registry
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: unknown
-- registry_id: CFG-panorama-exempt-list
-  name: panorama_exempt_list
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/panorama_exempt_list.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: unknown
-- registry_id: PS-REG-016
-  name: 登记表的登记表 — 跨登记表一致性契约
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 21
-  status: active
-- registry_id: PS-REG-020
-  name: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
-  format: yaml
-  maintenance: auto
-  entry_count: 0
-  status: active
-- registry_id: PS-REG-018
-  name: 规则路径目录（唯一真源 SSoT）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
-  format: yaml
-  maintenance: auto
-  entry_count: 191
-  status: active
-- registry_id: MOD-CFG_RULE_ENFORCEMENT
-  name: 门禁规则集登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
-- registry_id: MOD-CFG_RULE_REGISTRY
-  name: rule_registry_collection
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: unknown
-- registry_id: REG-RULING-001
-  name: 裁定中央登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 56
-  status: active
-- registry_id: MOD-CFG_SCRIPTS
-  name: scripts_registry
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: unknown
-- registry_id: PS-REG-017
-  name: 任务卡元层登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
-- registry_id: REG-TERMINOLOGY-001
-  name: 架构文档术语词汇表（中英对照真源）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 226
-  status: active
-- registry_id: MOD-CFG_TEST_SUITE
-  name: test_suite_registry
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/test_suite_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: unknown
-- registry_id: CFG-TRUST-BOUNDARY-001
-  name: 信任边界 surface 登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/trust_boundary_surface_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
+# 自动生成于 2026-08-03T13:47:45Z
+# 来源: _registry/catalogs/*.yaml frontmatter
+# 手工编辑无效——修改请通过各登记表的 frontmatter
+
+generated_at: '2026-08-03T13:47:45Z'
+generated_by: scripts/governance/generators/generate_registry_master_index.py
+source: _registry/catalogs/*.yaml → frontmatter
+total_registries: 33
+registries:
+- registry_id: GOV-AI-001
+  name: AI 自治权限登记表（全模块权限终表）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: CFG-ai-risk-register
+  name: AI 风险登记簿
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 11
+  status: active
+- registry_id: CFG-ai-session-registry
+  name: AI Session/Agent 登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: draft
+- registry_id: REG-ARCH-ISSUE-001
+  name: 架构议题注册表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 294
+  status: active
+- registry_id: CFG-business-streams
+  name: 业务流定义登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/business_streams_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: REG-CAND-001
+  name: 候选模块登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 5304
+  status: active
+- registry_id: PS-REG-021
+  name: 能力→真源文件反查注册表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: PS-REG-007
+  name: 跨模块依赖登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 133
+  status: active
+- registry_id: PS-REG-019
+  name: 声明式契约跟踪登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 11
+  status: active
+- registry_id: REG-DERIVED-ID-001
+  name: 派生标识符关系表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/derived_identifier_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 4
+  status: active
+- registry_id: CFG-directory-registry
+  name: 项目目录登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 86
+  status: active
+- registry_id: REG-DOMAIN-NAMING-001
+  name: 域命名规则表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/domain_naming_rules.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 5
+  status: active
+- registry_id: REG-EXT-CONTRACT-001
+  name: 外部契约验证登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/external_contract_verification_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 2
+  status: active
+- registry_id: GOV-001
+  name: 前沿大模型综合能力排名登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: PS-REG-012
+  name: Frontmatter 字段定义登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 58
+  status: active
+- registry_id: REG-FUNC-DOMAIN-001
+  name: 功能域注册表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 81
+  status: active
+- registry_id: PS-REG-014
+  name: GATE 门禁登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+  format: yaml
+  maintenance: auto
+  entry_count: 130
+  status: active
+- registry_id: CFG-governance-convergence-map
+  name: governance_convergence_map
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/governance_convergence_map.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
+- registry_id: CFG-hard-boundaries
+  name: 硬边界登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/hard_boundaries_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: CFG-IN-PROCESS-GATE-REGISTRY-001
+  name: In-Process Gate 注册真源（YAML 驱动自动注册）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 85
+  status: active
+- registry_id: CFG-infrastructure-registry
+  name: 运行时基础设施登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 15
+  status: active
+- registry_id: CFG-interface-contract-registry
+  name: 接口契约注册表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 5
+  status: active
+- registry_id: CFG-knowledge-article-registry
+  name: 知识条目登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: draft
+- registry_id: REG-MODULE-TRANSLATION-001
+  name: 模块级翻译注册表（中英对照真源）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 1373
+  status: active
+- registry_id: CFG-noqa-exempt-registry
+  name: noqa_exempt_registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
+- registry_id: CFG-panorama-exempt-list
+  name: panorama_exempt_list
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/panorama_exempt_list.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: unknown
+- registry_id: PS-REG-016
+  name: 登记表的登记表 — 跨登记表一致性契约
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 21
+  status: active
+- registry_id: PS-REG-020
+  name: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  format: yaml
+  maintenance: auto
+  entry_count: 0
+  status: active
+- registry_id: PS-REG-018
+  name: 规则路径目录（唯一真源 SSoT）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  format: yaml
+  maintenance: auto
+  entry_count: 189
+  status: active
+- registry_id: REG-RULING-001
+  name: 裁定中央登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 56
+  status: active
+- registry_id: PS-REG-017
+  name: 任务卡元层登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: REG-TERMINOLOGY-001
+  name: 架构文档术语词汇表（中英对照真源）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 226
+  status: active
+- registry_id: CFG-TRUST-BOUNDARY-001
+  name: 信任边界 surface 登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/trust_boundary_surface_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active

@@ -22,7 +22,7 @@ ttl: permanent
 |------|-----|
 | 域总数 | 72 |
 | 跨域依赖对数 | 318 |
-| 跨域依赖边总数 | 2544 |
+| 跨域依赖边总数 | 2549 |
 
 ## 跨域依赖 Top 20（按边数降序）
 
@@ -30,8 +30,8 @@ ttl: permanent
 |------|--------|:---:|---------|
 | D_INFRA_RUNTIME | D_SHARED | 165 | import_depends |
 | D_GOVERNANCE | D_SHARED | 93 | import_depends,test_depends |
-| D_GOV_CODE_QUALITY | D_GOV_ENFORCEMENT | 90 | import_depends,test_depends |
-| D_GOV_ENFORCEMENT | D_GOV_CODE_QUALITY | 74 | import_depends,test_depends |
+| D_GOV_CODE_QUALITY | D_GOV_ENFORCEMENT | 92 | import_depends,test_depends |
+| D_GOV_ENFORCEMENT | D_GOV_CODE_QUALITY | 76 | import_depends,test_depends |
 | D_GOVERNANCE | D_GOV_OPS_RESILIENCE | 69 | import_depends,test_depends |
 | D_GOV_AUDIT | D_SHARED | 63 | import_depends,test_depends |
 | D_INTEGRATION | D_SHARED | 61 | import_depends |
@@ -55,8 +55,8 @@ ttl: permanent
 |:---:|------|--------|:---:|---------|
 | 1 | D_INFRA_RUNTIME | D_SHARED | 165 | import_depends |
 | 2 | D_GOVERNANCE | D_SHARED | 93 | import_depends,test_depends |
-| 3 | D_GOV_CODE_QUALITY | D_GOV_ENFORCEMENT | 90 | import_depends,test_depends |
-| 4 | D_GOV_ENFORCEMENT | D_GOV_CODE_QUALITY | 74 | import_depends,test_depends |
+| 3 | D_GOV_CODE_QUALITY | D_GOV_ENFORCEMENT | 92 | import_depends,test_depends |
+| 4 | D_GOV_ENFORCEMENT | D_GOV_CODE_QUALITY | 76 | import_depends,test_depends |
 | 5 | D_GOVERNANCE | D_GOV_OPS_RESILIENCE | 69 | import_depends,test_depends |
 | 6 | D_GOV_AUDIT | D_SHARED | 63 | import_depends,test_depends |
 | 7 | D_INTEGRATION | D_SHARED | 61 | import_depends |
@@ -74,27 +74,27 @@ ttl: permanent
 | 19 | D_INFRA_RECOVERY | D_SHARED | 34 | import_depends |
 | 20 | D_GOVERNANCE | D_SECURITY | 32 | import_depends,test_depends |
 | 21 | D_TRADING | D_SHARED | 29 | import_depends,test_depends |
-| 22 | D_GOV_ENFORCEMENT | D_SHARED | 25 | import_depends,test_depends |
+| 22 | D_GOV_ENFORCEMENT | D_GOV_AUDIT | 25 | import_depends |
 | 23 | D_AUTONOMY_CORE | D_SHARED | 25 | import_depends,test_depends |
-| 24 | D_GOV_ENFORCEMENT | D_GOV_AUDIT | 25 | import_depends |
+| 24 | D_GOV_ENFORCEMENT | D_SHARED | 25 | import_depends,test_depends |
 | 25 | D_EX_CORE | D_INFRASTRUCTURE | 23 | import_depends,test_depends |
 | 26 | D_FEEDBACK_LOOP | D_SHARED | 22 | import_depends |
 | 27 | D_AUTONOMY_CORE | D_INFRA_RUNTIME | 22 | import_depends,test_depends |
 | 28 | D_GOV_RULE | D_SHARED | 22 | import_depends |
-| 29 | D_GOVERNANCE | D_INFRA_RECOVERY | 21 | import_depends,test_depends |
-| 30 | D_GOV_CODE_QUALITY | D_SHARED | 20 | import_depends |
+| 29 | D_GOV_CODE_QUALITY | D_SHARED | 21 | import_depends |
+| 30 | D_GOVERNANCE | D_INFRA_RECOVERY | 21 | import_depends,test_depends |
 | 31 | D_DATA | D_SHARED | 20 | import_depends |
 | 32 | D_TRADING | D_INFRASTRUCTURE | 19 | import_depends,test_depends |
-| 33 | D_GOVERNANCE | D_GOV_AUDIT | 19 | import_depends,test_depends |
-| 34 | D_INTELLIGENCE | D_SHARED | 19 | import_depends |
+| 33 | D_INTELLIGENCE | D_SHARED | 19 | import_depends |
+| 34 | D_GOVERNANCE | D_GOV_AUDIT | 19 | import_depends,test_depends |
 | 35 | D_GOV_OPS_RESILIENCE | D_GOVERNANCE | 18 | import_depends,test_depends |
 | 36 | D_GOVERNANCE | D_GOV_RULE | 17 | import_depends,test_depends |
 | 37 | D_GOV_OPS_RESILIENCE | D_OPS | 17 | import_depends,test_depends |
-| 38 | D_REPORTING | D_SHARED | 16 | import_depends,test_depends |
-| 39 | D_GOVERNANCE | D_GOV_ENFORCEMENT | 16 | import_depends,test_depends |
-| 40 | D_GOV_AUDIT | D_GOVERNANCE | 16 | import_depends,test_depends |
-| 41 | D_EX_SOR | D_SHARED | 16 | import_depends |
-| 42 | D_GOV_OPS_RESILIENCE | D_SHARED | 16 | import_depends,test_depends |
+| 38 | D_GOV_OPS_RESILIENCE | D_SHARED | 16 | import_depends,test_depends |
+| 39 | D_EX_SOR | D_SHARED | 16 | import_depends |
+| 40 | D_REPORTING | D_SHARED | 16 | import_depends,test_depends |
+| 41 | D_GOVERNANCE | D_GOV_ENFORCEMENT | 16 | import_depends,test_depends |
+| 42 | D_GOV_AUDIT | D_GOVERNANCE | 16 | import_depends,test_depends |
 | 43 | D_GOV_SCRIPTS | D_INTEGRATION | 14 | import_depends |
 | 44 | D_EX_CORE | D_SHARED | 14 | import_depends,test_depends |
 | 45 | D_GOVERNANCE | D_INFRA_RUNTIME | 14 | import_depends,test_depends |
