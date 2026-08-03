@@ -79,13 +79,15 @@ flowchart TD
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_gen_aggregator_base_py["信号生成聚合基类<br/>信号生成层的基类。把多因子信号聚合成可交易的合成<br/>信号，再分配资金，顺带检测信号质量有没有退化。是<br/>这块的抽象地基，具体做法由子类填。<br/>Signal Generation Aggregator Base<br/>Signal generation layer base class, synthesizes<br/>factor signals into tradeable signals;<br/>multi-factor aggregation, synthesis, capital<br/>allocation, degradation detection<br/>文件: gen/aggregator_base.py<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_router_signal_priority_router_py -.->|runtime / runtime| src_zephyr_signal_fundamental_router_signal_conflict_resolver_py
-    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_audit_init_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_audit_signal_audit_logger_py
-    src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
-    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
-    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
+    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    D_ASHARE_SIGNAL["A股特色信号<br/>A 股特色信号，负责 A<br/>股市场特色交易信号的生成和管理<br/>A-Share Signal<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_signal_fundamental_router_signal_conflict_resolver_py -.->|event / event| D_ASHARE_SIGNAL
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -103,13 +105,12 @@ flowchart TD
     src_zephyr_signal_fundamental_gen_aggregator_base_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_signal_fundamental_capital_capital_allocation_result_py -->|导入依赖 / import_depends| D_TRADING
-    D_FACTOR["因子<br/>因子，负责因子计算、因子库管理和因子评价<br/>Factor<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_FACTOR
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_init_py
+    D_FACTOR["因子<br/>因子，负责因子计算、因子库管理和因子评价<br/>Factor<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_FACTOR -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_pipeline_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -117,7 +118,7 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_audit_init_py,src_zephyr_signal_fundamental_audit_signal_audit_logger_py,src_zephyr_signal_fundamental_capital_capital_allocation_result_py,src_zephyr_signal_fundamental_capital_capital_allocator_py,src_zephyr_signal_fundamental_capital_default_capital_allocator_py,src_zephyr_signal_fundamental_gen_aggregator_base_py,src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py,src_zephyr_signal_fundamental_pipeline_py,src_zephyr_signal_fundamental_strategy_capital_allocator_py,src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py,src_zephyr_signal_fundamental_synth_signal_synthesizer_py production
     class src_zephyr_signal_fundamental_router_signal_conflict_resolver_py,src_zephyr_signal_fundamental_router_signal_priority_router_py design
-    class D_SHARED,D_INFRASTRUCTURE,D_TRADING,D_FACTOR,D_GOVERNANCE external_prod
+    class D_ASHARE_SIGNAL,D_SHARED,D_INFRASTRUCTURE,D_TRADING,D_GOVERNANCE,D_FACTOR external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -148,13 +149,13 @@ flowchart TD
     src_zephyr_signal_fundamental_strategy_capital_allocator_py ~~~ src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py ~~~ src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_gen_aggregator_base_py["信号生成聚合基类<br/>信号生成层的基类。把多因子信号聚合成可交易的合成<br/>信号，再分配资金，顺带检测信号质量有没有退化。是<br/>这块的抽象地基，具体做法由子类填。<br/>Signal Generation Aggregator Base<br/>Signal generation layer base class, synthesizes<br/>factor signals into tradeable signals;<br/>multi-factor aggregation, synthesis, capital<br/>allocation, degradation detection<br/>文件: gen/aggregator_base.py<br/>(生产态 / production)"]
-    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_audit_init_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_audit_signal_audit_logger_py
-    src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
-    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
     src_zephyr_signal_fundamental_gen_implementations_default_signal_aggregator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
-    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_capital_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py
+    src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     src_zephyr_signal_fundamental_strategy_implementations_default_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
+    src_zephyr_signal_fundamental_capital_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
+    src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|导入依赖 / import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
