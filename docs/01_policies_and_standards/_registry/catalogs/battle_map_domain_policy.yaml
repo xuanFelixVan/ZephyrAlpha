@@ -62,6 +62,7 @@ flow_stage_allowed_domains:
       - D_ORCHESTRATOR         # 决策编排器
       - D_INTELLIGENCE         # 上下文管理
       - D_COMPLIANCE           # 合规（A股交易纪律四项严禁合规闸，BM-BUY-08，2026-08-03 增补）
+      - D_ASHARE_SIGNAL        # A股特色信号（BM-BUY-02-A-1 次日8态走势预测/体制转换检测消费 MOD-SIG-036/037，买入时机预判需读取 A股信号，2026-08-03 增补）
     forbidden_rationale:
       D_SELL_DECISION: "卖出决策不应在买入流程承载——语义正交"
       D_FRONTEND: "前端域是 UI 层，不属于作战决策流程"
