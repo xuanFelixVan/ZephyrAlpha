@@ -9543,6 +9543,97 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "手动或CI运行，验证生成器三条自动触发路径（DB写入实时触发/YAML启动兜底/post-commit提交触发）是否正常工作，不接commit hook避免拖慢每次提交"
+- module_path: src/zephyr/signal_ashare/cross_market_conduction_sensor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "跨市场传导感知"
+  name_en: "Cross-Market Conduction Sensing"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "美股、港股、汇率、商品一异动，立刻算出对A股的传导系数和影响幅度，触发全量或板块重算。"
+- module_path: src/zephyr/signal_ashare/regime_change_detector.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "体制转换检测"
+  name_en: "Regime Change Detection"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点提前预警。"
+- module_path: src/zephyr/signal_ashare/adjustment_cycle_tracker.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "调整周期追踪"
+  name_en: "Adjustment Cycle Tracking"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "追踪板块调整走到哪了——进度≥80%才允许分批低吸，初期<40%直接拦截。"
+- module_path: src/zephyr/signal_ashare/market_lifecycle_phase.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "行情生命周期阶段"
+  name_en: "Market Lifecycle Phase"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破失败更倾向强制离场。"
+- module_path: src/zephyr/signal_ashare/causal_inference_engine.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "知识图谱与因果推演"
+  name_en: "Knowledge Graph & Causal Inference"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把事件、公司、行业的关联织成图谱，事件一来就推演传导路径，并区分关联因子和因果因子。"
+- module_path: src/zephyr/factor/core/distribution_feature_engineer.py
+  domain_id: D_FACTOR
+  name_zh: "分布特征工程"
+  name_en: "Distribution Feature Engineering"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给因子加料——滞后项、交互项、滚动统计量、签名方法，专门喂给密度预测模型。"
+- module_path: src/zephyr/signal_ashare/conditional_density_predictor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "收益率条件密度预测"
+  name_en: "Conditional Density Prediction"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "不只预测明天涨多少，而是预测明天收益率的完整概率分布——偏多少、尾巴多厚、极端情况多罕见。"
+- module_path: src/zephyr/signal_ashare/conformal_predictor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "共形预测"
+  name_en: "Conformal Prediction"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给预测区间加数学保证——不管分布长什么样，区间覆盖率有数学证明。"
+- module_path: src/zephyr/signal_ashare/survival_time_predictor.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "Survival止盈止损时间预测"
+  name_en: "Survival Stop-Time Prediction"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "预测止盈止损还有多久发生——不是固定N天，而是时间概率分布。"
+- module_path: src/zephyr/signal_ashare/tiered_screening_filter.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "分级指标过滤"
+  name_en: "Tiered Screening Filter"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "选股漏斗第一层——3秒级把全市场7000只砍到1200只，涨停跌停停牌ST次新弃庄统统按规则排除。"
+- module_path: src/zephyr/signal_ashare/coarse_screening_funnel.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "初筛漏斗"
+  name_en: "Coarse Screening Funnel"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "漏斗第二层——60秒级从1200只筛到300只，看技术形态、量价配合、板块强度、主力阶段、市场状态适配。"
+- module_path: src/zephyr/signal_ashare/fine_scoring_engine.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "精筛评分"
+  name_en: "Fine Scoring"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "漏斗第三层——60秒级从300只评到50只，多维因子打分+市场状态动态偏移+主力+8态+拥挤度+密度分布全用上。"
+- module_path: src/zephyr/signal_ashare/event_driven_screener.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "事件驱动分布筛选"
+  name_en: "Event-Driven Distribution Screening"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "漏斗第四层——从50只筛到30只，看事件影响、事件修正后的概率分布、传导链风险，没事件数据源就跳过。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
@@ -12177,6 +12268,406 @@ battle_map_steps:
   plain_zh: 从决策信号中提取概率分布——方向、置信度、尾部风险、相对价值，不只给结论还给不确定性。
   mechanism_zh: BM-SEL-25 双引擎融合决策的子环节。MOD-SIG-035 dual_engine_fusion_decision_engine.py 中的PDF分布模块，从融合信号中提取概率分布特征：方向（多/空/中性）、置信度（0-100%）、尾部风险（极端情况概率）、相对价值（标的相对吸引力）。为组合优化提供不确定性度量。
   indicators_zh: ①触发：融合信号产出；②消费：BM-SEL-25-A 融合信号+历史分布；③参数：分布模型、置信度计算方法、尾部风险阈值；④数据流：融合信号→分布拟合→PDF特征提取(方向/置信度/尾部/相对价值)→BM-SEL-21组合优化；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：分布数据不足→仅输出方向和置信度(无尾部风险)。
+- step_id: BM-RES-01-A
+  flow_stage: research_incubation
+  name_zh: 数据集版本化与血缘追踪
+  name_en: Dataset Versioning & Lineage
+  plain_zh: 把数据集像 Git 一样管版本——每次改动留快照、记血缘，知道数据从哪来、经过什么变换、去了哪。
+  mechanism_zh: 'Git-like版本管理→数据快照→回滚→血缘追踪(来源→变换→去向)→质量评分→生命周期管理。承载模块: D-RESEARCH-01。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：数据集变更/版本提交；②消费：原始数据（来自 D-DATA-03 Storage）；③参数：versioning_mode=git-like（范围 git-like/snapshot）；④数据流：原始数据→Git-like版本管理→数据快照→回滚→血缘追踪(来源→变换→去向)→质量评分→生命周期管理→版本化数据集+血缘图→BM-RES-01-B 特征存储；⑤代码：D-RESEARCH-01 / 20-D-RESEARCH §1；⑥降级：版本管理器未就绪→手动版本控制(无自动血缘)。'
+
+- step_id: BM-RES-01-B
+  flow_stage: research_incubation
+  name_zh: 特征存储与PIT正确性
+  name_en: Feature Store & PIT Correctness
+  plain_zh: 特征分在线离线两套存，拉特征时只返回当时已知的值（PIT），绝不偷看未来——回测可信的硬底线。
+  mechanism_zh: '离线特征(批量→历史) + 在线特征(实时→最新) + PIT AS OF JOIN + 特征注册表 + 特征血缘。承载模块: D-RESEARCH-02。出处: 20-D-RESEARCH §1 + §12.0 R-68/R-69'
+  indicators_zh: '①触发：训练/推理拉特征请求（阈值: PIT AS OF JOIN校验通过）；②消费：版本化数据集（来自 BM-RES-01-A）；③参数：pit_mode=strict（范围 strict/relaxed）、offline_backend=DuckDB（范围 DuckDB/Parquet）、online_backend=Redis（范围 Redis/DuckDB）；④数据流：版本化数据集→离线特征(批量→历史) + 在线特征(实时→最新) + PIT AS OF JOIN + 特征注册表 + 特征血缘→PIT正确特征(训练/推理共享)→BM-RES-02 实验追踪；⑤代码：D-RESEARCH-02 / 20-D-RESEARCH §1 + §12.0 R-68/R-69；⑥降级：Feature Store不可用→回退原始数据直算(无PIT,仅探索)。'
+
+- step_id: BM-RES-01-C
+  flow_stage: research_incubation
+  name_zh: 研究数据沙箱
+  name_en: Research Data Sandbox
+  plain_zh: 给研究员一个隔离的沙箱环境，随便折腾不影响生产数据，实验完了一键清理。
+  mechanism_zh: '隔离研究环境→数据隔离+代码隔离+资源隔离→沙箱生命周期管理→审计。承载模块: D-RESEARCH-12。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：研究员请求隔离环境；②消费：研究数据（来自 D-DATA-03）；③参数：isolation_level=container（范围 container/vm/process）；④数据流：研究数据→隔离研究环境→数据隔离+代码隔离+资源隔离→沙箱生命周期管理→审计→隔离研究环境实例→BM-RES-02 实验追踪；⑤代码：D-RESEARCH-12 / 20-D-RESEARCH §1；⑥降级：沙箱不可用→降级共享环境(无隔离,风险高)。'
+
+- step_id: BM-RES-01-D
+  flow_stage: research_incubation
+  name_zh: 研究资产版本化
+  name_en: Research Asset Versioning
+  plain_zh: 因子、模型、策略这些研究资产统一打版本号，跨项目复用时知道用的是哪一版。
+  mechanism_zh: '版本化管理→跨项目复用→变更追踪→回滚。承载模块: D-RESEARCH-18。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：因子/模型/策略变更；②消费：研究资产(因子/模型/策略)（来自 BM-RES-02/BM-RES-06/BM-RES-07）；③参数：asset_versioning=git-like（范围 git-like/registry）；④数据流：研究资产→版本化管理→跨项目复用→变更追踪→回滚→版本化研究资产库→BM-RES-07 策略迭代；⑤代码：D-RESEARCH-18 / 20-D-RESEARCH §1；⑥降级：版本化系统不可用→手动版本管理(无复用)。'
+
+- step_id: BM-RES-02-A
+  flow_stage: research_incubation
+  name_zh: 实验记录与对比
+  name_en: Experiment Logging & Comparison
+  plain_zh: 每次实验的超参、数据版本、代码版本、结果全部记下来，多组实验横向对比看哪个好。
+  mechanism_zh: '完整快照→结果对比→排行榜→自动关联(Model Registry)。承载模块: D-RESEARCH-03。出处: 20-D-RESEARCH §1 + §12.0 R-92'
+  indicators_zh: '①触发：实验启动/完成（阈值: 四要素(超参/数据版本/代码commit/种子)完整）；②消费：版本化数据+特征（来自 BM-RES-01）；③参数：tracker_backend=MLflow（范围 MLflow/wandb）；④数据流：训练数据+超参→完整快照→结果对比→排行榜→自动关联(Model Registry)→实验记录+排行榜→BM-RES-02-B 可复现性；⑤代码：D-RESEARCH-03 / 20-D-RESEARCH §1 + §12.0 R-92；⑥降级：Tracker不可用→手动YAML记录(无自动对比)。'
+
+- step_id: BM-RES-02-B
+  flow_stage: research_incubation
+  name_zh: 可复现性管理
+  name_en: Reproducibility Management
+  plain_zh: 锁环境、锁依赖、锁随机种子——保证别人拿你的实验配置能跑出一模一样的结果。
+  mechanism_zh: '环境快照→依赖锁定→种子管理→结果校验→复现报告。承载模块: D-RESEARCH-05。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：复现请求（阈值: 环境快照+依赖锁定+种子管理就绪）；②消费：实验记录（来自 BM-RES-02-A）；③参数：env_snapshot=container（范围 container/wasm/conda）；④数据流：实验记录→环境快照→依赖锁定→种子管理→结果校验→复现报告→复现报告(合规审计)→BM-RES-03 假设管理；⑤代码：D-RESEARCH-05 / 20-D-RESEARCH §1；⑥降级：环境快照不可用→降级conda环境记录(无容器隔离)。'
+
+- step_id: BM-RES-02-C
+  flow_stage: research_incubation
+  name_zh: 实验异常检测
+  name_en: Experiment Anomaly Detection
+  plain_zh: 自动盯实验——loss 爆了、指标异常偏移、跑得比预期慢太多，主动报警别浪费算力。
+  mechanism_zh: '异常检测→异常分类→异常响应→实验暂停→异常报告。承载模块: D-RESEARCH-13。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：实验运行中异常指标超限（阈值: Isolation Forest/SPC阈值）；②消费：实验运行指标（来自 BM-RES-02-A）；③参数：detection_method=isolation_forest（范围 isolation_forest/SPC/hybrid）；④数据流：实验运行指标→异常检测→异常分类→异常响应→实验暂停→异常报告→异常报告(E-RS-05 ExperimentAnomaly)→BM-RES-04 工作流编排；⑤代码：D-RESEARCH-13 / 20-D-RESEARCH §1；⑥降级：异常检测不可用→人工巡检(无实时检测)。'
+
+- step_id: BM-RES-02-D
+  flow_stage: research_incubation
+  name_zh: 复现包生成
+  name_en: Reproducibility Pack Generation
+  plain_zh: 一键打包实验的全部依赖（环境+代码+数据+配置），别人拿到包就能复现，不用再问'你环境是什么'。
+  mechanism_zh: '一键复现包→环境锁定+依赖锁定+代码快照+数据快照→复现验证。承载模块: D-RESEARCH-15。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：实验通过需归档/合规审计；②消费：实验记录+环境（来自 BM-RES-02-A/B）；③参数：pack_format=docker+conda（范围 docker/conda/wasm）；④数据流：实验记录+环境→一键复现包→环境锁定+依赖锁定+代码快照+数据快照→复现验证→复现包(可分享/审计)→合规审计；⑤代码：D-RESEARCH-15 / 20-D-RESEARCH §1；⑥降级：打包工具不可用→手动导出环境(无自动验证)。'
+
+- step_id: BM-RES-03-A
+  flow_stage: research_incubation
+  name_zh: 假设生命周期管理
+  name_en: Hypothesis Lifecycle Management
+  plain_zh: 每个研究想法写成假设挂证据，状态从提出→验证→接受/拒绝全程留痕，不让灵感流失。
+  mechanism_zh: '假设CRUD→证据关联→状态机(提出→验证→接受/拒绝)→优先级排序。承载模块: D-RESEARCH-08。出处: 20-D-RESEARCH §1 + §12.0 R-85'
+  indicators_zh: '①触发：研究员提出假设 / 实验结果回流（阈值: 假设状态机流转）；②消费：实验结果（来自 BM-RES-02）；③参数：state_machine=propose→verify→accept/reject（范围 standard/custom）；④数据流：实验结果→假设CRUD→证据关联→状态机(提出→验证→接受/拒绝)→优先级排序→已验证假设(E-RS-04 HypothesisAccepted)→BM-RES-04 工作流编排；⑤代码：D-RESEARCH-08 / 20-D-RESEARCH §1 + §12.0 R-85；⑥降级：假设管理不可用→Markdown记录(无状态机)。'
+
+- step_id: BM-RES-03-B
+  flow_stage: research_incubation
+  name_zh: 研究发现知识库
+  name_en: Research Finding Knowledge Base
+  plain_zh: 把验证过的发现沉淀成知识库，带检索和关联，团队所有人都能查——防止重复造轮子。
+  mechanism_zh: '研究发现沉淀→知识抽取→知识关联→知识检索→知识报告。承载模块: D-RESEARCH-14。出处: 20-D-RESEARCH §1 + §12.0 R-124'
+  indicators_zh: '①触发：假设被接受/研究发现产出；②消费：已验证假设（来自 BM-RES-03-A）；③参数：kb_backend=SQLite+ChromaDB（范围 SQLite/Neo4j/ChromaDB）；④数据流：已验证假设+研究发现→研究发现沉淀→知识抽取→知识关联→知识检索→知识报告→结构化知识库(→D-KNOWLEDGE)→D-KNOWLEDGE 知识沉淀；⑤代码：D-RESEARCH-14 / 20-D-RESEARCH §1 + §12.0 R-124；⑥降级：知识库不可用→Markdown文档(无检索)。'
+
+- step_id: BM-RES-03-C
+  flow_stage: research_incubation
+  name_zh: 研究目录与搜索引擎
+  name_en: Research Catalog & Search Engine
+  plain_zh: 给所有研究资产建目录和搜索引擎，输入关键词就能找到相关的因子/模型/实验/论文。
+  mechanism_zh: '搜索引擎→标签系统→引用图谱→推荐器→访问控制。承载模块: D-RESEARCH-06。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：研究员搜索研究资产；②消费：研究资产元数据（来自 BM-RES-01-D/BM-RES-03-B）；③参数：search_engine=semantic（范围 keyword/semantic/hybrid）；④数据流：研究资产元数据→搜索引擎→标签系统→引用图谱→推荐器→访问控制→研究目录(可搜索/可引用)→BM-RES-05 协作；⑤代码：D-RESEARCH-06 / 20-D-RESEARCH §1；⑥降级：搜索引擎不可用→文件系统目录(无语义搜索)。'
+
+- step_id: BM-RES-04-A
+  flow_stage: research_incubation
+  name_zh: DAG编排与任务调度
+  name_en: DAG Orchestration & Task Scheduling
+  plain_zh: 把研究步骤串成 DAG 自动跑——数据准备→特征计算→训练→评估，依赖管好、失败重试、并行加速。
+  mechanism_zh: 'DAG编排器→任务调度(依赖解析→执行)→重试+并行+通知。承载模块: D-RESEARCH-09。出处: 20-D-RESEARCH §1 + §12.0 R-89'
+  indicators_zh: '①触发：假设被接受触发工作流 / 定时调度（阈值: DAG依赖解析成功）；②消费：已验证假设（来自 BM-RES-03）；③参数：dag_engine=Prefect（范围 Airflow/Prefect/custom）、retry_strategy=exponential_backoff（范围 fixed/exponential）、max_parallelism=4（范围 1-16）；④数据流：已验证假设+数据/特征/模型→DAG编排器→任务调度(依赖解析→执行)→重试+并行+通知→工作流执行结果(E-RS-01/R-03)→BM-RES-05 Notebook协作；⑤代码：D-RESEARCH-09 / 20-D-RESEARCH §1 + §12.0 R-89；⑥降级：Workflow Engine不可用→手动串行脚本(无DAG/无重试)。'
+
+- step_id: BM-RES-05-A
+  flow_stage: research_incubation
+  name_zh: Notebook集成与一键转生产
+  name_en: Notebook Integration & One-Click to Production
+  plain_zh: 研究员在 Jupyter 里探索因子，探索完了一键转成生产管线，不用手动搬代码。
+  mechanism_zh: 'Jupyter因子探索+可视化→papermill参数化执行→一键转生产(→Python模块)→结果持久化。承载模块: D-RESEARCH-04。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：研究员打开Notebook（阈值: 环境就绪）；②消费：工作流结果+版本化数据（来自 BM-RES-04/BM-RES-01）；③参数：notebook_backend=JupyterLab（范围 JupyterLab/VSCode）、param_execution=papermill（范围 papermill/manual）；④数据流：数据+特征→Jupyter因子探索+可视化→papermill参数化执行→一键转生产(→Python模块)→结果持久化→生产管线代码+Notebook输出→D-FACTOR Pipeline + BM-RES-02 实验追踪；⑤代码：D-RESEARCH-04 / 20-D-RESEARCH §1；⑥降级：Notebook服务不可用→纯Python脚本(无交互探索)。'
+
+- step_id: BM-RES-05-B
+  flow_stage: research_incubation
+  name_zh: 研究协作中心
+  name_en: Research Collaboration Hub
+  plain_zh: 团队讨论、代码评审、知识库都在一个地方，谁改了什么、谁提了什么意见全留痕。
+  mechanism_zh: '讨论区→评审系统→知识库→权限管理→活动流。承载模块: D-RESEARCH-10。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：团队评审请求 / 讨论发起（阈值: 权限校验通过）；②消费：研究目录+Notebook输出（来自 BM-RES-03-C/BM-RES-05-A）；③参数：collaboration_mode=async（范围 realtime/async/hybrid）；④数据流：研究产出→讨论区→评审系统→知识库→权限管理→活动流→评审结果+协作记录→BM-RES-06 LLM研究Agent；⑤代码：D-RESEARCH-10 / 20-D-RESEARCH §1；⑥降级：协作平台不可用→邮件/即时通讯(无结构化评审)。'
+
+- step_id: BM-RES-05-C
+  flow_stage: research_incubation
+  name_zh: 研究信息隔离墙
+  name_en: Research Information Barrier
+  plain_zh: 在研究员和生产交易之间立一道隔离墙——敏感信息（MNPI）不能从研究侧泄漏到交易侧，合规要求。
+  mechanism_zh: '信息隔离→跨墙审批→信息访问控制→隔离审计→合规报告。承载模块: D-RESEARCH-16。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：跨域信息访问请求（阈值: MNPI合规检查）；②消费：研究信息+交易信息（来自 D-RESEARCH/D-TRADING）；③参数：barrier_mode=chinese_wall（范围 chinese_wall/mnpi/hybrid）；④数据流：跨域信息访问请求→信息隔离→跨墙审批→信息访问控制→隔离审计→合规报告→合规审批记录→合规审计；⑤代码：D-RESEARCH-16 / 20-D-RESEARCH §1；⑥降级：隔离墙系统不可用→手动审批(无自动隔离)。'
+
+- step_id: BM-RES-06-A
+  flow_stage: research_incubation
+  name_zh: LLM研究助手
+  name_en: LLM Research Assistant
+  plain_zh: 让 LLM 当研究助手——自动读论文、跑工具、反思纠错，研究员提问它就去查资料给结论。
+  mechanism_zh: '规划器→工具调用→反思循环→记忆管理→多Agent协作。承载模块: D-RESEARCH-11。出处: 20-D-RESEARCH §1 + A7 §1.2'
+  indicators_zh: '①触发：研究员请求LLM辅助（阈值: LLM Agent就绪）；②消费：知识图谱+协作产出（来自 D-KNOWLEDGE/BM-RES-05）；③参数：llm_model=qwen3:8b（范围 qwen3:8b/glm-5.1/deepseek）、autonomy_level=Level2（范围 Level1/Level2/Level3）；④数据流：知识图谱+协作产出→规划器→工具调用→反思循环→记忆管理→多Agent协作→新因子提案+策略代码草稿+知识更新→BM-RES-07 策略迭代；⑤代码：D-RESEARCH-11 / 20-D-RESEARCH §1 + A7 §1.2；⑥降级：LLM服务不可用→人工假设生成(无自动工具调用)。'
+
+- step_id: BM-RES-06-B
+  flow_stage: research_incubation
+  name_zh: 论文追踪
+  name_en: Paper Tracking
+  plain_zh: 自动爬取最新论文、去重、生成摘要、做引用分析——别漏掉行业前沿。
+  mechanism_zh: '爬取器→去重(标题/DOI)→摘要生成→引用分析→趋势检测。承载模块: D-RESEARCH-07。出处: 20-D-RESEARCH §1'
+  indicators_zh: '①触发：新论文发布 / 定时爬取（阈值: 论文源可达）；②消费：学术数据库（来自 arXiv/SSRN）；③参数：paper_sources=arXiv+SSRN（范围 arXiv/SSRN/学术数据库）；④数据流：学术数据库→爬取器→去重(标题/DOI)→摘要生成→引用分析→趋势检测→论文追踪报告+趋势信号→BM-RES-06-A LLM研究助手；⑤代码：D-RESEARCH-07 / 20-D-RESEARCH §1；⑥降级：爬取器不可用→人工阅读(无自动追踪)。'
+
+- step_id: BM-RES-07-A
+  flow_stage: research_incubation
+  name_zh: 策略进化与因子挖掘
+  name_en: Strategy Evolution & Factor Mining
+  plain_zh: 基于归因结果调整权重、挖新因子、学错误模式，让策略自己进化——不是一锤子买卖。
+  mechanism_zh: '权重调整→新因子挖掘→策略迭代升级→错误模式学习→系统进化方向建议。承载模块: D-RESEARCH-17。出处: 20-D-RESEARCH §1 + §12.0 R-97'
+  indicators_zh: '①触发：归因结果回流 / 漂移检测触发（阈值: 归因报告就绪）；②消费：研究发现+归因报告（来自 BM-RES-06/D-REPORTING）；③参数：iteration_mode=weight_adjust+factor_mining（范围 weight_only/factor_only/full）、error_learning=enabled（范围 enabled/disabled）、upgrade_approval=required（范围 required/auto）；④数据流：研究发现+归因报告→权重调整→新因子挖掘→策略迭代升级→错误模式学习→系统进化方向建议→策略升级方案(需审批)+迭代审计→D-FACTOR+D-ML+D-AUTONOMY；⑤代码：D-RESEARCH-17 / 20-D-RESEARCH §1 + §12.0 R-97；⑥降级：归因报告缺失→人工经验调参(无数据驱动)。'
+
+- step_id: BM-RC-01-A
+  flow_stage: risk_control
+  name_zh: 风控策略CRUD与版本管理
+  name_en: Risk Strategy CRUD & Versioning
+  plain_zh: 风控规则的增删改查带版本管理——改了规则能追溯历史版本，出问题能回滚。
+  mechanism_zh: 'C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发即停)+B-001~B-006硬边界约束。承载模块: MOD-L04-001。出处: 依赖图/01-跨域交叉点与因果链.md L244 D-RISK C-004 自适应风控'
+  indicators_zh: '①触发：C-004自适应风控三层体系（阈值: 预判层+监控层+熔断层+B-001~B-006硬边界）；②消费：持仓快照+因子暴露+市场状态（来自 D-EX-CORE / D-FACTOR）；③参数：—；④数据流：策略配置+持仓+市场→C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发即停)+B-001~B-006硬边界约束→Active策略集+风险预判报告→BM-RC-01-B 限额管理；⑤代码：MOD-L04-001 / 依赖图/01-跨域交叉点与因果链.md L244 D-RISK C-004 自适应风控；⑥降级：策略管理器未就绪→硬编码保守限额(无动态调整)。'
+
+- step_id: BM-RC-01-B
+  flow_stage: risk_control
+  name_zh: 九种限额类型与消耗追踪
+  name_en: Nine Limit Types & Usage Tracking
+  plain_zh: 九种限额（仓位/行业/杠杆/亏损/集中度等）各管各的，实时追踪每个限额还剩多少额度。
+  mechanism_zh: '限额定义+消耗追踪(notional 占用)。承载模块: MOD-L04-001。出处: risk/risk_limits.py'
+  indicators_zh: '①触发：策略激活后配置限额（阈值: 9种: SINGLE_INSTRUMENT/SECTOR/GROSS/NET/VAR_95/VAR_99/MAX_DD/LEVERAGE/FACTOR）；②消费：持仓敞口（来自 D-EX-CORE）；③参数：—；④数据流：策略+持仓→限额定义+消耗追踪(notional 占用)→RiskLimits(CTR-003)→BM-RC-02 盘前检查 + BM-RC-04 盘中监控；⑤代码：MOD-L04-001 / risk/risk_limits.py；⑥降级：限额管理器未就绪→硬编码保守限额。'
+
+- step_id: BM-RC-01-C
+  flow_stage: risk_control
+  name_zh: 预警分级与审批流
+  name_en: Alert Tiering & Approval Flow
+  plain_zh: 风控告警分级别——黄色提醒、橙色警告、红色紧急，各级别走不同的审批和处置流程。
+  mechanism_zh: '分级预警+审批流(合规官放行)。承载模块: MOD-L04-001。出处: risk/risk_manager.py'
+  indicators_zh: '①触发：限额消耗达阈值（阈值: 预警分级(WARNING/CRITICAL/EMERGENCY)）；②消费：限额消耗（来自 BM-RC-01-B）；③参数：—；④数据流：限额消耗→分级预警+审批流(合规官放行)→审批结果+预警事件→BM-RC-04 盘中监控告警；⑤代码：MOD-L04-001 / risk/risk_manager.py；⑥降级：审批流不可用→保守拒单待人工。'
+
+- step_id: BM-RC-02-A
+  flow_stage: risk_control
+  name_zh: 仓位限额检查
+  name_en: Position Limit Check
+  plain_zh: 盘前查仓位有没有超限额——单票超了、总仓位超了，在下单前就拦住。
+  mechanism_zh: '5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P2否决新开仓: VaR>3%/集中度>5%NAV。承载模块: MOD-L04-001。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界'
+  indicators_zh: '①触发：盘前/下单前同步拦截（阈值: 5级否决体系: P2否决新开仓: VaR>3%/集中度>5%NAV）；②消费：持仓快照+风险指标（来自 D-EX-CORE / D-RISK）；③参数：—；④数据流：持仓+风险指标→5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P2否决新开仓: VaR>3%/集中度>5%NAV→PASS/FAIL+否决指令→BM-EXE 执行域；⑤代码：MOD-L04-001 / 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界；⑥降级：风控引擎未就绪→Fail-Closed(HB-SEC-09): 拒绝所有下单。'
+
+- step_id: BM-RC-02-B
+  flow_stage: risk_control
+  name_zh: 行业集中度检查
+  name_en: Industry Concentration Check
+  plain_zh: 查行业集中度——单个行业持仓占比不能太高，防止行业暴雷时全军覆没。
+  mechanism_zh: '5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P2否决: 行业偏离>基准±10%, 绝对30%上限。承载模块: MOD-L04-001。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界'
+  indicators_zh: '①触发：盘前/下单前同步拦截（阈值: 5级否决体系: P2否决: 行业偏离>基准±10%, 绝对30%上限）；②消费：持仓快照+风险指标（来自 D-EX-CORE / D-RISK）；③参数：—；④数据流：持仓+风险指标→5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P2否决: 行业偏离>基准±10%, 绝对30%上限→PASS/FAIL+否决指令→BM-EXE 执行域；⑤代码：MOD-L04-001 / 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界；⑥降级：风控引擎未就绪→Fail-Closed(HB-SEC-09): 拒绝所有下单。'
+
+- step_id: BM-RC-02-C
+  flow_stage: risk_control
+  name_zh: 杠杆率检查
+  name_en: Leverage Ratio Check
+  plain_zh: 查杠杆率——融资融券的杠杆不能超监管和自营设定的红线。
+  mechanism_zh: '5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P1强制减仓: 日亏损>2%NAV/回撤>10%。承载模块: MOD-L04-001。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界'
+  indicators_zh: '①触发：盘前/下单前同步拦截（阈值: 5级否决体系: P1强制减仓: 日亏损>2%NAV/回撤>10%）；②消费：持仓快照+风险指标（来自 D-EX-CORE / D-RISK）；③参数：—；④数据流：持仓+风险指标→5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P1强制减仓: 日亏损>2%NAV/回撤>10%→PASS/FAIL+否决指令→BM-EXE 执行域；⑤代码：MOD-L04-001 / 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界；⑥降级：风控引擎未就绪→Fail-Closed(HB-SEC-09): 拒绝所有下单。'
+
+- step_id: BM-RC-02-D
+  flow_stage: risk_control
+  name_zh: 合规规则检查
+  name_en: Compliance Rule Check
+  plain_zh: 查合规规则——T+1 约束、涨跌停板限制、禁买池等A股特色合规要求，盘前全过一遍。
+  mechanism_zh: '5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P3否决单笔: 涨跌停买入/持仓超限 + A股合规代管(不操纵市场/持仓限额/涨跌停约束)。承载模块: MOD-L04-001。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界'
+  indicators_zh: '①触发：盘前/下单前同步拦截（阈值: 5级否决体系: P3否决单笔: 涨跌停买入/持仓超限 + A股合规代管(不操纵市场/持仓限额/涨跌停约束)）；②消费：持仓快照+风险指标（来自 D-EX-CORE / D-RISK）；③参数：—；④数据流：持仓+风险指标→5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P3否决单笔: 涨跌停买入/持仓超限 + A股合规代管(不操纵市场/持仓限额/涨跌停约束)→PASS/FAIL+否决指令→BM-EXE 执行域；⑤代码：MOD-L04-001 / 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界；⑥降级：风控引擎未就绪→Fail-Closed(HB-SEC-09): 拒绝所有下单。'
+
+- step_id: BM-RC-02-E
+  flow_stage: risk_control
+  name_zh: Kill Switch状态检查
+  name_en: Kill Switch Status Check
+  plain_zh: 查 Kill Switch 开关状态——如果熔断开关被拉下了，任何新下单都得拦住。
+  mechanism_zh: '5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P0 Kill Switch: 系统性风险/风控崩溃/AI自治熔断5条件。承载模块: MOD-L04-001。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界'
+  indicators_zh: '①触发：盘前/下单前同步拦截（阈值: 5级否决体系: P0 Kill Switch: 系统性风险/风控崩溃/AI自治熔断5条件）；②消费：持仓快照+风险指标（来自 D-EX-CORE / D-RISK）；③参数：—；④数据流：持仓+风险指标→5级否决规则引擎同步拦截(延迟<50ms P99, HC-RISK-03不可绕过, HC-RISK-02不可人工否决): P0 Kill Switch: 系统性风险/风控崩溃/AI自治熔断5条件→PASS/FAIL+否决指令→BM-EXE 执行域；⑤代码：MOD-L04-001 / 依赖图/05-D-PF-CORE-组合核心域.md §8.1-8.2 5级否决+硬边界；⑥降级：风控引擎未就绪→Fail-Closed(HB-SEC-09): 拒绝所有下单。'
+
+- step_id: BM-RC-03-A
+  flow_stage: risk_control
+  name_zh: 触发条件判定
+  name_en: Trigger Condition Evaluation
+  plain_zh: Kill Switch 的触发条件判定——哪些指标破了红线就该拉闸，逻辑集中管理不散落各处。
+  mechanism_zh: 'VR-009 5条件评估+4路径激活(同步<1ms/人工<100ms/定时<1ms/外部<1s)。承载模块: MOD-INF-018。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1 VR-009+多路径激活'
+  indicators_zh: '①触发：VR-009 AI自治熔断5条件任一: ①Agent越界>0 ②模型漂移PSI>0.5 ③自治等级异常跳变(跨≥2级) ④资源消耗超限(CPU>90%持续60s) ⑤连续否决5min>10次（阈值: 多路径激活: AI自动<1ms | 人工一键<100ms(CLI/Web/微信) | 定时熔断<1ms(核心进程无心跳>5s) | 外部信号<1s(A9运维告警)）；②消费：盘中监控信号+Owner指令+Agent行为+心跳（来自 BM-RC-04 / 人工 / D-AUTONOMY）；③参数：—；④数据流：回撤+VaR+Owner+Agent行为+心跳→VR-009 5条件评估+4路径激活(同步<1ms/人工<100ms/定时<1ms/外部<1s)→KillSwitch触发/不触发→BM-RC-03-B 状态机；⑤代码：MOD-INF-018 / 依赖图/05-D-PF-CORE-组合核心域.md §8.1 VR-009+多路径激活；⑥降级：信号缺失→保守熔断(停止新开仓), HB-SEC-09 Fail-Closed。'
+
+- step_id: BM-RC-03-B
+  flow_stage: risk_control
+  name_zh: 状态机与冷却期
+  name_en: State Machine & Cooldown Period
+  plain_zh: Kill Switch 触发后进入冷却期——状态机管'触发→冷却→恢复'全过程，冷却期内禁止重开。
+  mechanism_zh: '状态机迁移(OPEN/CLOSED)+冷却计时30min+分层本地评估+受控重入门控。承载模块: MOD-INF-018。出处: 依赖图/01-跨域交叉点与因果链.md L86,124-125 硬边界'
+  indicators_zh: '①触发：触发条件命中（阈值: 状态 OPEN→CLOSED; 冷却期30min; HB-SEC-06交易通道熔断必须人工恢复; HB-GOV-08 KS必须分层且本地评估; HB-GOV-09 KS激活后必须受控重入）；②消费：触发信号（来自 BM-RC-03-A）；③参数：—；④数据流：触发信号→状态机迁移(OPEN/CLOSED)+冷却计时30min+分层本地评估+受控重入门控→KillSwitch=CLOSED(拒新单+撤未成交+暂停再平衡)→BM-RC-03-C Owner确认重置；⑤代码：MOD-INF-018 / 依赖图/01-跨域交叉点与因果链.md L86,124-125 硬边界；⑥降级：状态机异常→保守保持CLOSED, HB-SEC-06人工恢复。'
+
+- step_id: BM-RC-03-C
+  flow_stage: risk_control
+  name_zh: Owner确认重置与多域通知
+  name_en: Owner Confirm & Multi-Domain Notify
+  plain_zh: Kill Switch 恢复需要 Owner 确认，同时通知交易/风控/合规多个域，不能偷偷重开。
+  mechanism_zh: 'Owner确认→状态重置OPEN+多域通知(D-AUTONOMY→D-EXECUTION→D-PORTFOLIO Saga无补偿)+因果链2: ManualResetGate→CooldownPeriodMinutes→Deactivated。承载模块: MOD-INF-018。出处: 依赖图/01-跨域交叉点与因果链.md L568 因果链2 + L725 Saga'
+  indicators_zh: '①触发：冷却期结束+Owner确认（阈值: ManualResetGate: Owner确认重置）；②消费：冷却完成信号（来自 BM-RC-03-B）；③参数：—；④数据流：冷却完成→Owner确认→状态重置OPEN+多域通知(D-AUTONOMY→D-EXECUTION→D-PORTFOLIO Saga无补偿)+因果链2: ManualResetGate→CooldownPeriodMinutes→Deactivated→KillSwitch=OPEN(恢复开仓)→BM-RC-02-E 盘前检查放行；⑤代码：MOD-INF-018 / 依赖图/01-跨域交叉点与因果链.md L568 因果链2 + L725 Saga；⑥降级：Owner未确认→保持CLOSED不恢复。'
+
+- step_id: BM-RC-04-A
+  flow_stage: risk_control
+  name_zh: VaR实时计算
+  name_en: Real-Time VaR Calculation
+  plain_zh: 盘中实时算 VaR（风险价值）——当前持仓在给定置信度下最大可能亏多少，秒级更新。
+  mechanism_zh: '参数法VaR实时计算+5级分级预警(绿/黄/橙/红/黑)。承载模块: MOD-RK-05。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1 L221-229 VaR 5级分级'
+  indicators_zh: '①触发：盘中实时(每Tick/定时)（阈值: VaR 5级分级: 绿VaR_95<2%正常 / 黄2-4%新开仓减半 / 橙4-6%禁止新开+减仓30% / 红>6%减仓50%+只平不开 / 黑CVaR>10%全部清仓）；②消费：持仓快照+行情（来自 D-EX-CORE / D-MKT-DATA）；③参数：—；④数据流：持仓+行情→参数法VaR实时计算+5级分级预警(绿/黄/橙/红/黑)→实时VaR值+分级预警→BM-RC-04-D 告警判定；⑤代码：MOD-RK-05 / 依赖图/05-D-PF-CORE-组合核心域.md §8.1 L221-229 VaR 5级分级；⑥降级：VaR计算器未就绪→仅限额检查(无概率性风控), HB-SEC-09 Fail-Closed。'
+
+- step_id: BM-RC-04-B
+  flow_stage: risk_control
+  name_zh: 回撤实时追踪
+  name_en: Real-Time Drawdown Tracking
+  plain_zh: 盘中实时追踪回撤——从净值高点回撤了多少，逼近预警线就报警。
+  mechanism_zh: '峰值谷值追踪+系统性风险5级分级(绿/黄/橙/红/黑)+Pod级止损(Soft/Hard/全系统)+回撤恢复检测。承载模块: MOD-RK-011。出处: 依赖图/07-D-POSITION-仓位管理域.md §1.3 POS-08 Drawdown Controller'
+  indicators_zh: '①触发：盘中实时（阈值: 系统性风险5级: 绿VaR<2% / 黄2-4% / 橙4-6% / 红>6% / 黑CVaR>10% + Pod止损: Soft Stop单策略回撤>5% / Hard Stop>10%关闭策略 / 全系统>10%触发KillSwitch）；②消费：资金曲线+VaR（来自 D-EX-CORE / BM-RC-04-A）；③参数：—；④数据流：资金曲线+VaR→峰值谷值追踪+系统性风险5级分级(绿/黄/橙/红/黑)+Pod级止损(Soft/Hard/全系统)+回撤恢复检测→DrawdownAlerted+Pod止损指令→BM-RC-03 Kill Switch判定；⑤代码：MOD-RK-011 / 依赖图/07-D-POSITION-仓位管理域.md §1.3 POS-08 Drawdown Controller；⑥降级：回撤追踪器未就绪→仅VaR监控(无回撤分级)。'
+
+- step_id: BM-RC-04-C
+  flow_stage: risk_control
+  name_zh: 因子暴露与相关性矩阵
+  name_en: Factor Exposure & Correlation Matrix
+  plain_zh: 实时算因子暴露和持仓相关性矩阵——防止看似分散的持仓其实押注了同一个因子。
+  mechanism_zh: '因子暴露计算+相关性矩阵。承载模块: MOD-RK-16。出处: core/risk_decomposition.py'
+  indicators_zh: '①触发：盘中定时（阈值: FACTOR_EXPOSURE 限额）；②消费：因子暴露（来自 D-FACTOR）、持仓（来自 D-EX-CORE）；③参数：—；④数据流：持仓+因子→因子暴露计算+相关性矩阵→暴露矩阵(CTR-P1-008)→BM-RC-04-D 告警；⑤代码：MOD-RK-16 / core/risk_decomposition.py；⑥降级：因子数据缺失→跳过因子暴露检查。'
+
+- step_id: BM-RC-04-D
+  flow_stage: risk_control
+  name_zh: 告警生成
+  name_en: Alert Generation
+  plain_zh: 把风控监控的异常信号转成结构化告警——分级、去重、路由到对应的处置人。
+  mechanism_zh: '阈值比对→告警事件生成。承载模块: MOD-L04-001。出处: risk/risk_limits.py'
+  indicators_zh: '①触发：VaR/回撤/因子超阈值（阈值: RiskLimitBreached / DrawdownAlerted）；②消费：VaR+回撤+因子暴露（来自 BM-RC-04-A/B/C）；③参数：—；④数据流：监控指标→阈值比对→告警事件生成→E-RK-01/E-RK-03 告警事件→BM-RC-03 Kill Switch 判定；⑤代码：MOD-L04-001 / risk/risk_limits.py；⑥降级：告警通道异常→日志兜底+保守熔断。'
+
+- step_id: BM-RC-04-E
+  flow_stage: risk_control
+  name_zh: 流动性风险监控
+  name_en: Liquidity Risk Monitoring
+  plain_zh: 监控持仓流动性——单票成交量能不能承载当前仓位，跌停时卖不出去怎么办。
+  mechanism_zh: '参与率计算+LVaR+Amihud illiquidity+Kyle lambda+退出时间估计+流动性螺旋检测。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L251'
+  indicators_zh: '①触发：盘中实时（阈值: 参与率/LVaR/Amihud/Kyle/退出时间/流动性螺旋）；②消费：成交量+持仓+行情（来自 D-MKT-DATA / D-EX-CORE）；③参数：—；④数据流：成交量+持仓→参与率计算+LVaR+Amihud illiquidity+Kyle lambda+退出时间估计+流动性螺旋检测→流动性风险评分→BM-RC-04-D 告警判定；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L251；⑥降级：流动性监控未就绪→跳过流动性检查。'
+
+- step_id: BM-RC-04-F
+  flow_stage: risk_control
+  name_zh: AI/Agent风险监控
+  name_en: AI/Agent Risk Monitoring
+  plain_zh: 盯 AI/Agent 自己的行为——防止 LLM 幻觉导致异常下单、Agent 死循环狂交易等新型风险。
+  mechanism_zh: 'OWASP Agentic Security Top10扫描+AST对抗测试+MCP协议安全映射。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L253'
+  indicators_zh: '①触发：盘中持续（阈值: OWASP ASI+AST+MCP完整映射）；②消费：Agent行为日志+调用链（来自 D-AUTONOMY）；③参数：—；④数据流：Agent行为+调用链→OWASP Agentic Security Top10扫描+AST对抗测试+MCP协议安全映射→AI风险告警→BM-RC-03 Kill Switch(AI自治熔断VR-009)；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L253；⑥降级：AI风险监控未就绪→限制Agent自治等级。'
+
+- step_id: BM-RC-05-A
+  flow_stage: risk_control
+  name_zh: 六种A股止损模式
+  name_en: Six A-Share Stop-Loss Patterns
+  plain_zh: 六种A股特色止损模式——涨停板打开止损、连板断板止损、龙头退位止损等，按场景匹配。
+  mechanism_zh: '6种止损模式扫描。承载模块: MOD-RK-09。出处: core/ashare_stop_loss_engine.py'
+  indicators_zh: '①触发：持仓跌破止损条件（阈值: 固定-7% / 支撑破位 / 逻辑失效 / 竞价不及预期 / 分时破位 / 板块退潮）；②消费：个股行情+盘中监控（来自 D-MKT-DATA / BM-RC-04）；③参数：—；④数据流：个股行情+持仓→6种止损模式扫描→止损单→BM-SELL 卖出流程；⑤代码：MOD-RK-09 / core/ashare_stop_loss_engine.py；⑥降级：A股止损引擎未就绪→仅通用止损(无A股特色)。'
+
+- step_id: BM-RC-05-B
+  flow_stage: risk_control
+  name_zh: 通用止损引擎
+  name_en: Universal Stop-Loss Engine
+  plain_zh: 通用止损引擎——固定百分比止损、移动止损、ATR 止损等标准模式，所有策略共用。
+  mechanism_zh: '4种通用止损评估+Kill Switch 触发/重置联动。承载模块: MOD-L04-001。出处: implementations/default_stop_loss_engine.py'
+  indicators_zh: '①触发：止损条件触发（阈值: 固定/追踪/ATR/时间 4种模式）；②消费：持仓+行情（来自 D-EX-CORE / D-MKT-DATA）；③参数：—；④数据流：止损信号→4种通用止损评估+Kill Switch 触发/重置联动→止损单→BM-SELL 卖出流程；⑤代码：MOD-L04-001 / implementations/default_stop_loss_engine.py；⑥降级：止损引擎异常→人工紧急停盘。'
+
+- step_id: BM-RC-05-C
+  flow_stage: risk_control
+  name_zh: 亏损限额强制停盘
+  name_en: Loss Limit Forced Halt
+  plain_zh: 亏损到限额强制停盘——日内亏 X% 或周内亏 Y% 直接关交易权限，防止上头硬扛。
+  mechanism_zh: '三级限额判定→强制停盘1-3天+强制复盘。承载模块: CAND-HARVEST-0135。出处: 候选 D-RISK-27 A-Share Stop-Loss'
+  indicators_zh: '①触发：亏损限额触达（阈值: 日2% / 周5% / 月10%）；②消费：累计盈亏（来自 D-EX-CORE）；③参数：—；④数据流：日/周/月盈亏→三级限额判定→强制停盘1-3天+强制复盘→停盘指令→BM-POS 仓位调整；⑤代码：CAND-HARVEST-0135 / 候选 D-RISK-27 A-Share Stop-Loss；⑥降级：限额引擎未就绪→人工监控停盘。'
+
+- step_id: BM-RC-06-A
+  flow_stage: risk_control
+  name_zh: 五大信号扫描
+  name_en: Five Signal Scanning
+  plain_zh: 扫描五大系统性风险信号——大盘破位、流动性枯竭、波动率飙升、跨市场传导异常、政策黑天鹅。
+  mechanism_zh: '5信号扫描+情绪断路器。承载模块: MOD-RK-10。出处: core/ashare_systemic_risk_detector.py'
+  indicators_zh: '①触发：盘中5信号扫描（阈值: 融资盘平仓潮/量化踩踏/流动性危机/政策转向/外围冲击）；②消费：融资余额+流动性+政策新闻+外围指数（来自 D-MKT-DATA / D-DATA）；③参数：—；④数据流：5类市场信号→5信号扫描+情绪断路器→命中信号数→BM-RC-06-C 三级警报；⑤代码：MOD-RK-10 / core/ashare_systemic_risk_detector.py；⑥降级：系统性风险检测未就绪→仅个股止损(无系统性预警)。'
+
+- step_id: BM-RC-06-B
+  flow_stage: risk_control
+  name_zh: 尾部风险监控
+  name_en: Tail Risk Monitoring
+  plain_zh: 监控尾部风险——小概率大亏损的事件，用 EVT（极值理论）估算极端情况下的损失。
+  mechanism_zh: 'EVT/POT模型+Copula尾部依赖+跳跃检测+FRTB加价。承载模块: MOD-RK-15。出处: core/tail_risk_monitor.py'
+  indicators_zh: '①触发：尾部异常检测（阈值: EVT/POT 极值预警）；②消费：尾部数据+跳跃检测（来自 D-MKT-DATA）；③参数：—；④数据流：收益分布尾部→EVT/POT模型+Copula尾部依赖+跳跃检测+FRTB加价→极值预警→BM-RC-06-C 三级警报；⑤代码：MOD-RK-15 / core/tail_risk_monitor.py；⑥降级：尾部监控未就绪→跳过尾部加价。'
+
+- step_id: BM-RC-06-C
+  flow_stage: risk_control
+  name_zh: 三级警报与清仓执行
+  name_en: Three-Tier Alert & Liquidation
+  plain_zh: 系统性风险三级警报——黄/橙/红，红色级别直接清仓保命，不等确认先跑。
+  mechanism_zh: '三级警报判定+逃生执行器。承载模块: MOD-RK-10。出处: core/ashare_systemic_risk_detector.py'
+  indicators_zh: '①触发：信号数≥1（阈值: 1因子停开仓 / 2因子降30% / ≥3因子清仓）；②消费：信号数+尾部预警（来自 BM-RC-06-A/B）；③参数：—；④数据流：命中信号数→三级警报判定+逃生执行器→清仓/降仓指令→BM-RC-03 Kill Switch + BM-POS；⑤代码：MOD-RK-10 / core/ashare_systemic_risk_detector.py；⑥降级：警报器异常→保守清仓。'
+
+- step_id: BM-RC-06-D
+  flow_stage: risk_control
+  name_zh: 拥挤度检测
+  name_en: Crowding Detection
+  plain_zh: 检测交易拥挤度——同一个策略太多人用会导致踩踏，拥挤度高时提前减仓。
+  mechanism_zh: '拥挤度计算(因子拥挤+策略逻辑相似度)+去杠杆+悖论防护。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L248'
+  indicators_zh: '①触发：盘中定时/盘后（阈值: 因子/策略拥挤度+深度增强(策略逻辑相似度+去杠杆+悖论防护)）；②消费：因子暴露+策略持仓（来自 D-FACTOR / D-PF-CORE）；③参数：—；④数据流：因子+策略持仓→拥挤度计算(因子拥挤+策略逻辑相似度)+去杠杆+悖论防护→拥挤度预警→BM-RC-06-C 三级警报；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L248；⑥降级：拥挤度检测未就绪→跳过拥挤度检查。'
+
+- step_id: BM-RC-07-A
+  flow_stage: risk_control
+  name_zh: VaR三阶段演进
+  name_en: VaR Three-Stage Evolution
+  plain_zh: VaR 计算三阶段演进——历史模拟→参数法→蒙特卡洛，精度逐步提升。
+  mechanism_zh: '三阶段VaR(参数法→蒙特卡洛→Basel III三角验证)。承载模块: MOD-RK-05。出处: core/var_calculator.py'
+  indicators_zh: '①触发：盘前预算/盘中VaR重算（阈值: Phase1参数法+历史模拟 → Phase2蒙特卡洛(GPU) → Phase3 Basel III三角）；②消费：持仓+限额（来自 BM-RC-04 / BM-RC-01）；③参数：—；④数据流：持仓+收益分布→三阶段VaR(参数法→蒙特卡洛→Basel III三角验证)→VaR值+乘数因子→BM-RC-07-B 风险预算；⑤代码：MOD-RK-05 / core/var_calculator.py；⑥降级：VaR计算器未就绪→仅限额检查(无概率性风控)。'
+
+- step_id: BM-RC-07-B
+  flow_stage: risk_control
+  name_zh: 风险预算优化求解
+  name_en: Risk Budget Optimization
+  plain_zh: 风险预算优化求解——给定总风险预算，怎么分配到各资产/策略使收益最大化。
+  mechanism_zh: '风险预算优化求解器分配+风险贡献计算器。承载模块: MOD-RK-08。出处: core/risk_budget_allocator.py'
+  indicators_zh: '①触发：VaR产出后分配预算（阈值: 风险预算优化求解器）；②消费：VaR值+限额（来自 BM-RC-07-A / BM-RC-01）；③参数：—；④数据流：VaR+资产协方差→风险预算优化求解器分配+风险贡献计算器→各资产风险预算→BM-RC-07-C 再平衡；⑤代码：MOD-RK-08 / core/risk_budget_allocator.py；⑥降级：求解器未收敛→等比例预算(保守)。'
+
+- step_id: BM-RC-07-C
+  flow_stage: risk_control
+  name_zh: 风险贡献与再平衡
+  name_en: Risk Contribution & Rebalancing
+  plain_zh: 算每个持仓的风险贡献占比，超预算的减仓、低于预算的加仓，定期再平衡。
+  mechanism_zh: '风险贡献计算+再平衡触发+约束处理器。承载模块: MOD-RK-08。出处: core/risk_budget_allocator.py'
+  indicators_zh: '①触发：预算偏离阈值（阈值: 再平衡触发阈值）；②消费：风险预算+实际暴露（来自 BM-RC-07-B / BM-RC-04）；③参数：—；④数据流：预算 vs 实际→风险贡献计算+再平衡触发+约束处理器→再平衡信号→BM-POS 仓位调整；⑤代码：MOD-RK-08 / core/risk_budget_allocator.py；⑥降级：再平衡器异常→人工再平衡。'
+
+- step_id: BM-RC-08-A
+  flow_stage: risk_control
+  name_zh: 日终PnL对账与合规报告
+  name_en: Daily PnL Reconciliation & Compliance Report
+  plain_zh: 日终对账——实际盈亏和系统记录对不上就查原因，同时生成合规报告留档。
+  mechanism_zh: '日终PnL对账+归因偏差检测+合规报告(CTR-P1-011)。承载模块: MOD-RK-20。出处: core/daily_auditor.py'
+  indicators_zh: '①触发：盘后定时/合规要求（阈值: 日终检查清单）；②消费：成交记录+持仓快照（来自 D-EX-CORE）；③参数：—；④数据流：成交+持仓→日终PnL对账+归因偏差检测+合规报告(CTR-P1-011)→RiskMetricsReport→BM-RES-07 策略迭代 / BM-REC 对账；⑤代码：MOD-RK-20 / core/daily_auditor.py；⑥降级：盘后审计器未就绪→人工Excel对账(效率低)。'
+
+- step_id: BM-RC-08-B
+  flow_stage: risk_control
+  name_zh: 风险归因分解
+  name_en: Risk Attribution Decomposition
+  plain_zh: 把盈亏拆解到风险因子——今天赚的钱是哪个因子贡献的、哪个因子拖后腿，归因清楚。
+  mechanism_zh: 'Brinson归因+因子贡献+残差+边际风险+成分风险。承载模块: MOD-RK-16。出处: core/risk_decomposition.py'
+  indicators_zh: '①触发：盘后归因（阈值: Brinson 归因偏差）；②消费：成交+持仓+因子（来自 D-EX-CORE / D-FACTOR）；③参数：—；④数据流：PnL+因子暴露→Brinson归因+因子贡献+残差+边际风险+成分风险→归因报告→BM-RES-07 策略迭代；⑤代码：MOD-RK-16 / core/risk_decomposition.py；⑥降级：归因引擎未就绪→跳过归因(仅PnL对账)。'
+
+- step_id: BM-RC-08-C
+  flow_stage: risk_control
+  name_zh: 压力测试
+  name_en: Stress Testing
+  plain_zh: 压力测试——模拟极端场景（2015股灾/2020疫情）下持仓会亏多少，确保扛得住。
+  mechanism_zh: '历史情景+假设情景+反向压力测试+敏感性+传染效应。承载模块: MOD-RK-12。出处: core/stress_test_engine.py'
+  indicators_zh: '①触发：盘后/合规要求（阈值: 历史情景 2008/2015/2020）；②消费：持仓+情景数据（来自 D-EX-CORE / D-DATA）；③参数：—；④数据流：持仓+情景→历史情景+假设情景+反向压力测试+敏感性+传染效应→压力报告→BM-RES-07 策略迭代；⑤代码：MOD-RK-12 / core/stress_test_engine.py；⑥降级：压力测试引擎未就绪→跳过压力测试。'
+
+- step_id: BM-RC-08-D
+  flow_stage: risk_control
+  name_zh: 模型风险审计
+  name_en: Model Risk Audit
+  plain_zh: 审计模型风险——模型有没有过拟合、有没有数据泄漏、上线后有没有衰减，定期检查。
+  mechanism_zh: 'SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+CUSUM变点+过拟合检测+训练-服务一致性验证。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L250'
+  indicators_zh: '①触发：盘后/定时（阈值: SR 26-2/5类漂移检测/CUSUM/过拟合防护/训练-服务一致性）；②消费：模型预测+实际收益（来自 D-ML-SERVE / D-REPORTING）；③参数：—；④数据流：模型预测+实际→SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+CUSUM变点+过拟合检测+训练-服务一致性验证→模型风险报告→BM-RES 策略迭代 / 因果链3 模型漂移→降级；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L250；⑥降级：模型风险审计未就绪→人工抽检。'
+
+- step_id: BM-RC-08-E
+  flow_stage: risk_control
+  name_zh: 操作风险审计
+  name_en: Operational Risk Audit
+  plain_zh: 审计操作风险——下单有没有写错代码、权限有没有滥用、系统有没有故障导致异常交易。
+  mechanism_zh: '系统故障检测+人为错误识别+Agent失控检测+级联失败分析。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L252'
+  indicators_zh: '①触发：盘后/事件驱动（阈值: 系统故障/人为错误/Agent失控/级联失败）；②消费：系统日志+操作记录+Agent行为（来自 D-INFRA / D-AUTONOMY）；③参数：—；④数据流：系统日志+操作记录→系统故障检测+人为错误识别+Agent失控检测+级联失败分析→操作风险报告→BM-RES 策略迭代；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L252；⑥降级：操作风险审计未就绪→人工巡检。'
+
 battle_map_cross_cutting:
 - category: funnel
   name_zh: 筛选漏斗模型
