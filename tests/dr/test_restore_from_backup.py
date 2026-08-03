@@ -9,7 +9,7 @@
 """test_restore_from_backup.py — 备份恢复演练测试（5.33.9 治本：无恢复演练测试）
 
 覆盖：
-- backup_pg_depgraph 导出 JSON 格式可被解析恢复（表名完整性/行数一致性/行字段集合一致）
+- backup_pg_architecture 导出 JSON 格式可被解析恢复（19表完整性/行数一致性/字段集合一致）
 - 旧备份自动清理（保留最近 max_backups 份）
 - backup_runtime_handoffs 备份 .runtime/ handoffs+reconcile_reports 可回读恢复（5.33.7 配套）
 
@@ -35,11 +35,18 @@ import backup_runtime_state as brs  # noqa: E402
 
 # ── Fake PG（内存模拟，不连真实 PostgreSQL） ─────────────────────────────
 
-def _install_fake_pg(monkeypatch, tmp_path, nodes_rows, edges_rows):
-    """替换 backup_pg_depgraph 的 PG 依赖：连接 + DSN + REPO_ROOT。"""
+def _install_fake_pg(monkeypatch, tmp_path, table_rows: dict[str, list] | None = None):
+    """替换 backup_pg_architecture 的 PG 依赖：连接 + DSN + REPO_ROOT。
+
+    Args:
+        table_rows: {table_name: [row_tuples, ...]} 字典。
+                    未提供的表返回空结果（模拟空表）。
+    """
     import psycopg2
 
     import zephyr.governance.depgraph_schema as depgraph_schema
+
+    _table_rows = table_rows or {}
 
     class _FakeCursor:
         def __init__(self) -> None:
@@ -47,14 +54,18 @@ def _install_fake_pg(monkeypatch, tmp_path, nodes_rows, edges_rows):
             self._rows: list = []
 
         def execute(self, sql: str) -> None:
-            if "FROM nodes" in sql:
-                self.description = [("node_id",), ("path",), ("domain_id",)]
-                self._rows = nodes_rows
-            elif "FROM edges" in sql:
-                self.description = [("edge_id",), ("from_node_id",), ("to_node_id",)]
-                self._rows = edges_rows
-            else:
-                raise AssertionError(f"FakePG 未预期的 SQL: {sql}")
+            # 解析 "SELECT * FROM <table>" 提取 table name
+            table = None
+            upper = sql.upper()
+            if "FROM " in upper:
+                idx = upper.index("FROM ") + 5
+                table = sql[idx:].strip().split()[0].strip(";").strip()
+            if table is None:
+                raise AssertionError(f"FakePG 无法解析 SQL: {sql}")
+            self._rows = list(_table_rows.get(table, []))
+            # 简单 description：根据行数生成占位列名
+            ncols = len(self._rows[0]) if self._rows else 1
+            self.description = [(f"col{i}",) for i in range(ncols)]
 
         def fetchall(self):
             return list(self._rows)
@@ -71,21 +82,34 @@ def _install_fake_pg(monkeypatch, tmp_path, nodes_rows, edges_rows):
     monkeypatch.setattr(brs, "REPO_ROOT", tmp_path)
 
 
-# ── 5.33.9 恢复演练：backup_pg_depgraph JSON 可解析恢复 ──────────────────
+# ── 5.33.9 恢复演练：backup_pg_architecture JSON 可解析恢复 ──────────────
 
 def test_pg_backup_json_format_restorable(monkeypatch, tmp_path):
-    """导出的备份 JSON 可被解析并逐行恢复（表名完整/行数一致/字段集合一致）。"""
-    nodes_rows = [(1, "src/a.py", "D_GOV"), (2, "src/b.py", "D_GOV"), (3, "src/c.py", "D_DATA")]
-    edges_rows = [(10, 1, 2), (11, 2, 3)]
-    _install_fake_pg(monkeypatch, tmp_path, nodes_rows, edges_rows)
+    """导出的备份 JSON 可被解析并逐行恢复（19表完整/行数一致/字段集合一致）。"""
+    # 为部分表提供数据，其余表默认空列表（验证空表也被备份）
+    table_rows = {
+        "nodes": [(1, "src/a.py", "D_GOV"), (2, "src/b.py", "D_GOV"), (3, "src/c.py", "D_DATA")],
+        "edges": [(10, 1, 2), (11, 2, 3)],
+        "battle_map_steps": [(1, "BM-BUY-01", "买入流程")],
+        "decision_nodes": [(1, "signal", "decision/signal/alpha_v1")],
+        "dataflow_datasets": [(1, "market_data.tick", "production")],
+    }
+    _install_fake_pg(monkeypatch, tmp_path, table_rows)
 
-    backup_path = brs.backup_pg_depgraph(max_backups=10)
+    backup_path = brs.backup_pg_architecture(max_backups=10)
     assert backup_path is not None
 
     data = json.loads(Path(backup_path).read_text(encoding="utf-8"))
-    # 结构完整性：顶层字段 + 两张核心表
+    # 结构完整性：顶层字段
     assert set(data) >= {"timestamp", "source", "tables"}
-    assert set(data["tables"]) == {"nodes", "edges"}
+
+    # 19 表完整性：所有 _ARCHITECTURE_TABLES 表都必须出现在备份中
+    expected_tables = set(brs._ARCHITECTURE_TABLES)
+    actual_tables = set(data["tables"])
+    assert actual_tables == expected_tables, (
+        f"备份表不完整：缺失={expected_tables - actual_tables}, "
+        f"多余={actual_tables - expected_tables}"
+    )
 
     # 恢复演练：逐表重建行，行数与 count 字段一致
     restored: dict[str, list[dict]] = {}
@@ -93,27 +117,29 @@ def test_pg_backup_json_format_restorable(monkeypatch, tmp_path):
         assert payload["count"] == len(payload["rows"])
         restored[tbl] = payload["rows"]
 
-    assert [r["path"] for r in restored["nodes"]] == ["src/a.py", "src/b.py", "src/c.py"]
+    # 有数据的表验证内容
+    assert [r["col0"] for r in restored["nodes"]] == [1, 2, 3]
     assert len(restored["edges"]) == 2
-    # 每行字段集合一致（可据此重建 INSERT 列清单）
-    node_keysets = {tuple(sorted(r)) for r in restored["nodes"]}
-    assert len(node_keysets) == 1
-    edge_keysets = {tuple(sorted(r)) for r in restored["edges"]}
-    assert len(edge_keysets) == 1
+    assert len(restored["battle_map_steps"]) == 1
+    assert len(restored["decision_nodes"]) == 1
+    assert len(restored["dataflow_datasets"]) == 1
+    # 空表验证（count=0, rows=[]）
+    assert data["tables"]["domains"]["count"] == 0
+    assert data["tables"]["domains"]["rows"] == []
 
 
 def test_pg_backup_prunes_old_snapshots(monkeypatch, tmp_path):
     """旧备份自动清理：仅保留最近 max_backups 份。"""
-    _install_fake_pg(monkeypatch, tmp_path, [(1, "x.py", "D_GOV")], [])
+    _install_fake_pg(monkeypatch, tmp_path, {"nodes": [(1, "x.py", "D_GOV")]})
     backup_dir = tmp_path / "tmp" / "pg_backups"
     backup_dir.mkdir(parents=True)
     for i in range(12):
-        (backup_dir / f"depgraph_2026010{i:02d}_000000.json").write_text("{}", encoding="utf-8")
+        (backup_dir / f"architecture_2026010{i:02d}_000000.json").write_text("{}", encoding="utf-8")
 
-    path = brs.backup_pg_depgraph(max_backups=10)
+    path = brs.backup_pg_architecture(max_backups=10)
     assert path is not None
 
-    remaining = sorted(backup_dir.glob("depgraph_*.json"))
+    remaining = sorted(backup_dir.glob("architecture_*.json"))
     assert len(remaining) == 10
     assert remaining[-1] == Path(path)  # 最新备份保留
 
@@ -121,24 +147,24 @@ def test_pg_backup_prunes_old_snapshots(monkeypatch, tmp_path):
 def test_pg_backup_throttle_skips_recent(monkeypatch, tmp_path):
     """Obs2 治本：throttle_seconds 窗口内跳过冗余快照，返回上次备份路径。
 
-    模拟 apply_depgraph 连续调用：首次备份成功，60s 内第二次被节流跳过。
+    模拟 apply 连续调用：首次备份成功，60s 内第二次被节流跳过。
     """
-    _install_fake_pg(monkeypatch, tmp_path, [(1, "a.py", "D_GOV")], [])
+    _install_fake_pg(monkeypatch, tmp_path, {"nodes": [(1, "a.py", "D_GOV")]})
     backup_dir = tmp_path / "tmp" / "pg_backups"
     backup_dir.mkdir(parents=True)
 
-    # 首次备份（throttle_seconds=0 不节流，模拟 apply_depgraph 首次调用前的状态）
-    first = brs.backup_pg_depgraph(max_backups=10, throttle_seconds=0)
+    # 首次备份（throttle_seconds=0 不节流，模拟 apply 首次调用前的状态）
+    first = brs.backup_pg_architecture(max_backups=10, throttle_seconds=0)
     assert first is not None
     first_path = Path(first)
     assert first_path.is_file()
 
     # 60s 内再次调用（throttle_seconds=60）——应跳过并返回上次路径
-    skipped = brs.backup_pg_depgraph(max_backups=10, throttle_seconds=60)
+    skipped = brs.backup_pg_architecture(max_backups=10, throttle_seconds=60)
     assert skipped == first  # 返回上次备份路径，不创建新文件
 
     # 仅 1 份备份（节流生效，未产生第 2 份）
-    remaining = sorted(backup_dir.glob("depgraph_*.json"))
+    remaining = sorted(backup_dir.glob("architecture_*.json"))
     assert len(remaining) == 1
     assert remaining[0] == first_path
 
