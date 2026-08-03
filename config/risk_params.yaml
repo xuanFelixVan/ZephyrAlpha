@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # 风控参数真源（INV-002 / INV-003 / INV-013）— 三平面须引用本文件，禁止漂移
 module_id: MOD-INF-002

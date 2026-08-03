@@ -1,9 +1,10 @@
 # --- 治理锚定 ---
-# blueprint: GOV-DOC-011 | docs/01_policies_and_standards/rules/compression_workflow_standard.md | §
-# module_id: GOV-DOC-011
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §
+# module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ZephyrAlpha 2.0 — DocCompressor 压缩策略（experimental 最小版）
 # ============================================================
@@ -33,7 +34,7 @@
 # ____________________
 # 当压缩失败率 > 5% 时由 Owner 发起策略审查。
 
-module_id: GOV-DOC-011
+module_id: MOD-INF-002
 version: "1.0.1"
 schema_version: "1.0.0"
 doc_type: register

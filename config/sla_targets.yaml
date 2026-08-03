@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: SRC-142 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
-# module_id: MOD-INF_sla_monitor
+# blueprint: MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# module_id: MOD-INF-016
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -12,7 +12,8 @@
 
 schema_version: "1.0"
 doc_type: register
-module_ref: MOD-INF_sla_monitor
+module_id: MOD-INF-016
+module_ref: MOD-INF-016
 last_updated: "2026-07-06"
 
 targets:

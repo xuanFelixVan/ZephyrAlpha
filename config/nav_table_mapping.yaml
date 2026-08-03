@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # nav_table_mapping.yaml — 全流程导航表映射配置 v1.0.0
 # 本文件是 AGENTS.md §5.2 的 SSoT。

@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # resource_optimization.yaml — 资源优化引擎配置
 # SSoT: mod_inf_032 resource_optimization_engine/blueprint.md §18

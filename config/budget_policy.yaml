@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: human_gated
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ZephyrAlpha — Budget Policy as Code SSoT
 # 模块：MOD-INF-024 Budget Enforcer v0.7.0
