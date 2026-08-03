@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_CLAIM_REQUIRED_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_claim_required_gate.py — claim_files 前置检查门禁单测（CLAIM-REQUIRED，2026-06-30 治本）
 

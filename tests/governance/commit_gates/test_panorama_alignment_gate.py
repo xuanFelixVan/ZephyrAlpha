@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_PANORAMA_ALIGNMENT_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_panorama_alignment_gate.py — 四图模块对齐门禁单测（GATE-PANORAMA-ALIGNMENT，ARCH-056 四图升级）
 

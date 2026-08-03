@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测试失败→pytest assert error
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_TEST_EMERGENCY_COMMIT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_emergency_commit.py — emergency_commit API 测试（Ruling:100PCT-AI-GOVERNANCE P2-1）
 

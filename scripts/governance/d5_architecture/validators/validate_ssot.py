@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_SCRIPTS_ARCH | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """SSoT 文件头一致性校验器.
 

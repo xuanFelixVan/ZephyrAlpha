@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_EXEMPT_ZONE_FRONTMATTER_GATE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_exempt_zone_frontmatter_gate.py — EXEMPT-ZONE-FM 门禁单测
 

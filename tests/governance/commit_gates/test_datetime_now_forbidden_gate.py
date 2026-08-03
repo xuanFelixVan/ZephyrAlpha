@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_COMMIT_GATES | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_datetime_now_forbidden_gate.py — 生成器代码 datetime.now() 硬阻断门禁单测（DATETIME-NOW-FORBIDDEN）
 

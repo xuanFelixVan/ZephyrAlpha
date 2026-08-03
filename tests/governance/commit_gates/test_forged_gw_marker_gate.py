@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_forged_gw_marker_gate.py — Forged GW Marker 前置检测门禁单测（#ARCH-PREVENTABILITY-LAYER-001 Phase 2）
 

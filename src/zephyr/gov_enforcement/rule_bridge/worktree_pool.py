@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 所有方法不抛异常，失败返回 None/False/0；lease 失败调用方 fall back 到直接创建
 # [TESTS] tests/governance/rule_bridge/test_worktree_pool.py
-# [A_module] module_id=MOD-GOV_ENFORCEMENT_worktree_pool | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_ENFORCEMENT_WORKTREE_POOL | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: prefetch_async 用 daemon 线程一次性触发非周期触发
 """worktree_pool.py — Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）

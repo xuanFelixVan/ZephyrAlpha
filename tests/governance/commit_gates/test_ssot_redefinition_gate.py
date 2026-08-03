@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_SSOT_REDEFINITION_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_ssot_redefinition_gate.py — SSoT 符号重复定义硬阻断门禁单测（SSOT-REDEFINITION）
 

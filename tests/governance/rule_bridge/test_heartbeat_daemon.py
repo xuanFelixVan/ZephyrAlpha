@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测试失败→pytest assert error
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_HEARTBEAT_DAEMON_TEST | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_heartbeat_daemon.py — heartbeat daemon + 成本递增 smoke test（Ruling:100PCT-AI-GOVERNANCE P3-1）
 

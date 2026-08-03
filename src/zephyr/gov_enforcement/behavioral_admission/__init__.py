@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_BEHAVIORAL_ADMISSION | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.gov_enforcement.behavioral_admission
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [A_module] module_id=MOD-GOV-behavioral_admission | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_BEHAVIORAL_ADMISSION | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # Existing governance/behavioral-admission imports
 from zephyr.gov_enforcement.behavioral_admission.admission_controller import (

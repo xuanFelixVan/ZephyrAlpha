@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 文件不存在/空列表→ok=False 不抛异常；git 命令失败→ok=False 含 stderr；DB 日志失败→warn 不阻断
 # [TESTS] tests/governance/rule_bridge/test_emergency_commit.py
-# [A_module] module_id=MOD-GOV-emergency_commit | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_EMERGENCY_COMMIT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本模块无周期触发
 """emergency_commit.py — 紧急提交通道（Ruling:100PCT-AI-GOVERNANCE P2-1，2026-07-19）

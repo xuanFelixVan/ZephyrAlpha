@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_SESSION_WORKTREE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_session_worktree.py — worktree 物理隔离端到端测试（FP-ISO.4C，2026-07-01 治本）
 

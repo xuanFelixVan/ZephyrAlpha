@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-GOV_COMMIT_GATES | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §ARCH-SSOT-REFERENCE-INTEGRITY-001
 # [MODULE] tests.governance.commit_gates.test_schema_file_exists_gate
 # [DOMAIN] D_GOV_ENFORCEMENT
+# [A_module] module_id=MOD-GOV_COMMIT_GATES | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # -*- coding: utf-8 -*-
 """test_schema_file_exists_gate.py — SCHEMA-FILE-EXISTS 门禁单测

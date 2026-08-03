@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_R5_DIGIT_SUFFIX_GATE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_r5_digit_suffix_gate.py — R5-DIGIT-SUFFIX 门禁单元测试
 

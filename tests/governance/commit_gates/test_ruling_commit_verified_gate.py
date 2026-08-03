@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_ENFORCEMENT | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_ruling_commit_verified_gate.py — RULING-COMMIT-VERIFIED 门禁单测。
 

@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_consumers_accuracy_gate.py — CONSUMERS-ACCURACY 门禁单测（#ARCH-CONSUMERS-ACCURACY-001 治本）
 

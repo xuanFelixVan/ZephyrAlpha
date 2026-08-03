@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测试失败→pytest assert error
 # [TESTS] self
+# [A_module] module_id=MOD-GOV_TEST_CLAIM_FILES_FOR_EDIT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_claim_files_for_edit.py — P2-2 并发 session 文件级原子性测试
 

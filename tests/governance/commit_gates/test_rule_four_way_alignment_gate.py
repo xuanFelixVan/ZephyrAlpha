@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_RULE_FOUR_WAY_ALIGNMENT_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_rule_four_way_alignment_gate.py — RULE-FOUR-WAY-ALIGN 门禁单测
 

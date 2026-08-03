@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_COMMIT_GATES | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_mutable_const_without_final_gate.py — 可变常量缺 Final 标注硬阻断门禁单测（MUTABLE-CONST-WITHOUT-FINAL）
 

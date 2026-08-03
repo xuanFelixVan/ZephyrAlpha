@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_HELD_OVERLAP_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_held_overlap_gate.py — 搭便车防护门禁单测（HELD-OVERLAP，2026-06-30 治本）
 

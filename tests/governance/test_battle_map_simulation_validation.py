@@ -31,4 +31,38 @@
 BM-SIM-07 闭环验证（核心测试目标）：
   入边: BM-SIM-03 → BM-SIM-07  (蒙特卡洛→风控仿真)
   出边: BM-SIM-07 → BM-SIM-06  (风控仿真→结果分析)
-  锚点: MOD-SIM-003 (risk_simulator.py
+  锚点: MOD-SIM-003 (risk_simulator.py, primary, stable)
+  翻译: name_zh/name_en/plain_zh/mechanism_zh/indicators_zh 五字段齐全
+
+五类测试：
+  1. **拓扑验证（e2e，需 DB）**：7 环节存在、每环节有锚点（BM-INV-001）、9 条流转边。
+  2. **BM-SIM-07 闭环验证（e2e）**：入边/出边/锚点/depgraph build_status 完整。
+  3. **YAML 叙事验证（e2e）**：BM-SIM-07 在 module_translation_registry.yaml 有 5 字段叙事。
+  4. **6 件套指标验证（e2e）**：BM-SIM-07 的 indicators_zh 含 6 件套全字段。
+  5. **生成器渲染防御性验证（纯逻辑）**：indicators 字段类型降级渲染不崩溃。
+
+设计原则（对标 test_battle_map_research_incubation.py）：
+  - 真实 DB 连接做拓扑验证（@pytest.mark.e2e）；DB 不可达则 skip
+  - 不写入生产库——全部只读
+
+Usage::
+
+    py -3.12 -m pytest tests/governance/test_battle_map_simulation_validation.py -v
+    py -3.12 -m pytest tests/governance/test_battle_map_simulation_validation.py -k "not e2e"  # 跳过 DB
+    py -3.12 -m pytest tests/governance/test_battle_map_simulation_validation.py::TestBMSim07ClosedLoop -v
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+_SRC_PATH = _REPO_ROOT / "src"
+if str(_SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(_SRC_PATH))
+
+
+# ── 期望数据（真源：battle_map

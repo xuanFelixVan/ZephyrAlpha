@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 # [ARCH-054]
 """test_foreign_change_gate.py — 外来变更检测门禁单测（FOREIGN-CHANGE-DETECTION，ARCH-054 治本）

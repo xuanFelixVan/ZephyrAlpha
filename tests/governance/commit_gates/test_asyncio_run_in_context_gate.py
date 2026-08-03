@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_COMMIT_GATES | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_asyncio_run_in_context_gate.py — asyncio API 误用硬阻断门禁单测（ASYNCIO-RUN-IN-CONTEXT）
 

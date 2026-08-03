@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
+# [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
 validate_truth_source_cascade.py — 真源级联一致性校验

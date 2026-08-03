@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GOV_RULE_EXECUTION_PAIRING_GATE | docs/03_modules/_domain_governance/blueprint.md | §rule-execution-pairing-gate
 # [MODULE] tests.governance.commit_gates.test_rule_execution_pairing_gate
 # [DOMAIN] D_GOV_ENFORCEMENT
+# [A_module] module_id=MOD-GOV_RULE_EXECUTION_PAIRING_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """Tests for RULE-EXECUTION-PAIRING gate (Phase 3.5)."""
 

@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_ARCH_REFERENCE_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_arch_reference_gate.py — #ARCH-NNN 悬空引用检测门禁单测（ARCH-REFERENCE）
 

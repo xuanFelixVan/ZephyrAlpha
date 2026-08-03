@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GOV_BLUEPRINT_AMODULE_CONSISTENCY_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_blueprint_amodule_consistency_gate.py — BLUEPRINT-AMODULE-CONSISTENCY 门禁单测
 

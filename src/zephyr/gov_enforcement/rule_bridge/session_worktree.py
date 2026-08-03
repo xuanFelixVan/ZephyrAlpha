@@ -26,7 +26,7 @@
 
 # [TESTS] tests/governance/rule_bridge/test_session_worktree.py
 
-# [A_module] module_id=MOD-GOV_session_worktree | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_SESSION_WORKTREE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 
 # [TTL] permanent
 

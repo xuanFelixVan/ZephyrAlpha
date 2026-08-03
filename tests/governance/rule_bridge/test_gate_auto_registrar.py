@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测试永不抛未捕获异常
 # [TESTS] self
-# [A_module] module_id=MOD-TEST_gate_auto_registrar | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-TEST-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """test_gate_auto_registrar.py — gate_auto_registrar 单元测试（#ARCH-GATE-REGISTRY-AUTO-001 Phase 3）
 

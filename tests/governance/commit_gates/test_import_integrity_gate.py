@@ -6,6 +6,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 """test_import_integrity_gate.py — IMPORT-INTEGRITY 门禁单测（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）
 
