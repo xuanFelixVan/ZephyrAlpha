@@ -47,7 +47,6 @@ from zephyr.shared.contracts.core.runtime_plane_tag import (
     RuntimePlane,
 )
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
-from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
 from zephyr.shared.contracts.core.timestamp import (
     NaiveDatetimeError,
     Timestamp,
@@ -84,21 +83,22 @@ from zephyr.shared.contracts.orchestration_protocol import (
     ChaosEngineProtocol,
     ShadowCanaryProtocol,
 )
+from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
 from zephyr.shared.contracts.portfolio.money import (
     Money,
     MoneyCurrencyMismatchError,
     MoneyPrecisionError,
 )
-from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
-from zephyr.shared.contracts.target_portfolio import TargetPortfolio
-from zephyr.shared.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
 from zephyr.shared.contracts.skill_protocol import (
     SkillLoaderProtocol,
     SkillRouterProtocol,
 )
+from zephyr.shared.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
+from zephyr.shared.contracts.target_portfolio import TargetPortfolio
 from zephyr.shared.contracts.task_repository_protocol import (
     TaskRepositoryProtocol,
 )
+from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
 
 # DM-367: re-export module names for audit registration
 from . import llm_gateway_protocol, orchestration_protocol, skill_protocol

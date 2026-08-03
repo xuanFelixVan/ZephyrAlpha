@@ -15,7 +15,7 @@
 
 from __future__ import annotations
 
-from zephyr.gov_audit.orchestrator_compat import (
+from zephyr.gov_audit._orchestrator_compat import (
     AuditEntryV1,
     AuditEventType,
     AuditIndexer,

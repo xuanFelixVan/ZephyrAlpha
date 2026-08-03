@@ -15,9 +15,9 @@ from decimal import Decimal
 
 import pytest
 
-from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
 from zephyr.ex_core.execution_engine import AlgoType, ExecutionEngine
 from zephyr.ex_core.order_manager import OrderManager
+from zephyr.governance.adapters.simulation_broker import SimulationBroker
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
 from zephyr.trading.trading_contracts.execution.order import OrderSide, OrderType
 

@@ -242,7 +242,7 @@ class EventBusUpgrade:
             result["issues"].append("EventStore 不可用——升级未完成")
 
         try:
-            from zephyr.shared.events.observer import Observer as ObserverAlias
+            from zephyr.shared.infra.observer import Observer as ObserverAlias
 
             result["event_bus_available"] = True
         except ImportError:

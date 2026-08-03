@@ -24,7 +24,7 @@ import asyncio
 
 import pytest
 
-from zephyr.shared.resilience.limiter import (
+from zephyr.shared.infra.limiter import (
     RateLimitError,
     RateLimiterStats,
     TokenBucketLimiter,
