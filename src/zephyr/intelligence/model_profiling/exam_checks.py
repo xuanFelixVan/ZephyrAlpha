@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 无异常抛出——所有函数对非法输入返回 False/0.0/空值
 # [TESTS] tests/model/test_exam_orchestrator.py
-# [A_module] module_id=MOD-INTELLIGENCE-exam_checks | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-034 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """exam_checks.py — 考试检测纯函数模块（Stage 4 试点：从 exam_orchestrator 提取）
 

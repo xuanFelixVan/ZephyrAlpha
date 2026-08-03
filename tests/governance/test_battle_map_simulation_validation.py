@@ -250,4 +250,26 @@ class TestBMSim07ClosedLoop:
         in_label = sim03_in[0].get("label", "")
         out_label = sim06_out[0].get("label", "")
         assert "蒙特卡洛" in in_label, f"入边 label 应含'蒙特卡洛': {in_label}"
-        assert "风控仿真" in out_label, f"出边 label 应含'风控仿真
+        assert "风控仿真" in out_label, f"出边 label 应含'风控仿真': {out_label}"
+
+
+# ── 3. YAML 叙事验证 ──────────────────────────────────────────────────────────
+
+@pytest.mark.e2e
+class TestBMSim07Translation:
+    """BM-SIM-07 翻译真源验证（module_translation_registry.yaml）。"""
+
+    def test_sim07_translation_exists(self, translation_registry):
+        """BM-SIM-07 在翻译真源中有条目。"""
+        assert "BM-SIM-07" in translation_registry, "BM-SIM-07 不在 module_translation_registry.yaml"
+
+    def test_sim07_translation_5_fields(self, translation_registry):
+        """BM-SIM-07 翻译条目含 5 个必需字段。"""
+        t = translation_registry.get("BM-SIM-07", {})
+        required = ["name_zh", "name_en", "plain_zh", "mechanism_zh", "indicators_zh"]
+        for field in required:
+            assert field in t, f"翻译条目缺字段: {field}"
+            assert t[field], f"翻译条目字段为空: {field}"
+
+    def test_sim07_translation_content(self, translation_registry):
+        """BM

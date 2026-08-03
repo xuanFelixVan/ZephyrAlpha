@@ -148,7 +148,7 @@ class ArbitrationResult:
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SELL-008 | MOD-SELL-008 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | stable | ✅ |
+| build_status | deprecated | deprecated | ✅ |
 | file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
