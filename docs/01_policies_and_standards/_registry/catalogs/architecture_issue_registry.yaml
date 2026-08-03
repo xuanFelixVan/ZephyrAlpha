@@ -11392,3 +11392,43 @@ entries:
   related_adjudication: 'trae_071 临时文件生命周期（LAW-4 事件驱动禁 cron/Timer）'
   created: '2026-08-04'
   last_updated: '2026-08-04'
+
+# --- #ARCH-GIT-SELF-HARM-GUARD: git reset --hard 工作区自伤防护（L1+L2+L3.1，2026-08-04）---
+- issue_id: '#ARCH-GIT-SELF-HARM-GUARD'
+  title: git reset --hard / checkout -- / restore 覆盖未提交 AI 编辑（自伤防护）
+  severity: P1高
+  category: governance
+  adjudication: |-
+    2026-08-04 治本。问题：100% AI 开发下多 session 共享主工作区 git index，git reflog
+    近 50 条含 19 次 `reset: moving to HEAD`，AI 未提交修改被覆盖 3+ 次。根因（第一性原理）：
+    git_guard.py git alias 威胁模型只防"跨 session 锁冲突"（扫描 .ailocks/registry.json），
+    漏了"自伤"场景——reset 覆盖自己/他人未提交未持锁的修改；registry.json locks 为空时全部放行。
+    治本三层（L1+L2+L3.1，不含 L3.3 ResetGateway——经审查判定为死代码 B 轨已删除，L1+L2
+    已覆盖威胁面）：
+    1. L1 止血：git_guard.py _check_self_harm_reset_hard——reset --hard 前检测 tracked 未提交
+       修改，非授权（ZEPHYR_FORCE_STASH/ZEPHYR_COMMIT_GATEWAY）则 fail-closed 阻断 exit 1。
+    2. L2.1 治本：_check_self_harm_files 通用函数覆盖 checkout --/restore 同类自伤。
+    3. L2.3 绕过监控：git_guard_bypass_reconciler post-commit 对比 reflog reset 与审计日志，
+       检测 `git -c alias.reset=` 绕过（priority=810，warn-only）。
+    4. L3.1 worktree 软门禁：validate_worktree_required.py pre-commit hook 将 RULE-WORKTREE
+       君子协定升级为渐进式软门禁（warn+计数，单 session >=5 次升级阻断）。
+    逃生通道：复用 ZEPHYR_FORCE_STASH env（self_healer 已用），授权放行并记审计，不引入新真源。
+    L3.3 ResetGateway 统一危险命令入口经审查为死代码 B 轨（薄壳调用 check_and_execute 无独立
+    价值，L1+L2 已覆盖威胁面），方案 (a) 删除——reset_gateway.py + test_reset_gateway.py 已删。
+  fix_phase: |-
+    本次提交执行（L1+L2+L3.1 全量，L3.3 死代码 B 轨已删）：
+    - scripts/git_guard.py: _check_self_harm_reset_hard(L1) + _check_self_harm_files(L2.1)
+      + check_and_execute 自伤检测分支 + 审计落盘 .runtime/gate_audit/git_guard_self_harm.jsonl
+    - src/zephyr/governance/audit/git_guard_bypass_reconciler.py: L2.3 alias 绕过检测 reconciler
+    - scripts/governance/d11_compliance/validate_worktree_required.py: L3.1 pre-commit 软门禁
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py: 注册 git_guard_bypass_reconciler
+    - .pre-commit-config.yaml: 注册 gate-worktree-required hook
+    - capability_canonical_file_registry.yaml: 3 capability 条目登记（发现性+防重建）
+    - architecture_issue_registry.yaml: 本条 issue 登记（ARCH-REFERENCE 门禁）
+    测试：tests/scripts/test_git_guard_self_harm.py（11 场景）+
+    tests/governance/audit/test_git_guard_bypass_reconciler.py +
+    tests/scripts/test_validate_worktree_required.py
+  status: decided
+  related_adjudication: '用户裁定：逃生通道复用 ZEPHYR_FORCE_STASH；范围 L1+L2+L3 全量；L3.3 死代码 B 轨方案(a)删除'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'

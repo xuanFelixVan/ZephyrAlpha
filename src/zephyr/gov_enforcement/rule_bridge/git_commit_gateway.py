@@ -87,6 +87,9 @@ from zephyr.governance.audit.reconciliation_registry import (
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
     _print_block_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2
 )
+from zephyr.governance.audit.git_guard_bypass_reconciler import (  # #ARCH-GIT-SELF-HARM-GUARD L2.3 alias 绕过检测（priority=810，post-commit warn-only）
+    make_git_guard_bypass_reconciler,
+)
 from zephyr.governance.audit.remediation_progress_reconciler import (  # #ARCH-GOV-CONVERGENCE-META Phase 3.1
     make_remediation_progress_reconciler,
 )
@@ -777,6 +780,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_stash_lifecycle_reconciler(self))  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理（priority=801，清理 >24h 的 session_worktree 临时 stash）
         self._reconciliation_registry.register(make_session_staging_lifecycle_reconciler(self))  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 staging TTL 清理（priority=802，清理 .runtime/sessions/*/staging/ 下 >24h 文件）
         self._reconciliation_registry.register(make_root_temp_sweep_reconciler(self))  # #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 根目录临时文件清扫（priority=803，FS-scan 补强 DCR-007 commit gate 看不到 gitignored 文件的盲区）
+        self._reconciliation_registry.register(make_git_guard_bypass_reconciler(self))  # #ARCH-GIT-SELF-HARM-GUARD L2.3 alias 绕过检测（priority=810，post-commit warn-only，对比 reflog reset 与审计日志）
         self._reconciliation_registry.register(make_scripts_import_integrity_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 3 scripts import baseline 全扫（priority=210，post-commit 补强 pre-commit gate 只扫 staged 的盲区）
         self._reconciliation_registry.register(make_undefined_name_baseline_reconciler(self))  # GATE-DEPGRAPH-OPS 治本 Phase 1 undefined-name baseline 全扫（priority=211，post-commit 补强 UNDEFINED-NAME gate 只扫 staged + --no-verify 绕过盲区）
         self._reconciliation_registry.register(make_consumers_accuracy_baseline_reconciler(self))  # #ARCH-CONSUMERS-ACCURACY-001/003 治本 Phase 2 CONSUMERS baseline 全扫（priority=212，post-commit 补强 CONSUMERS-ACCURACY gate 只扫 staged 的盲区）

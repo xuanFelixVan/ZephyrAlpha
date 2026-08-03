@@ -1,0 +1,288 @@
+# [BLUEPRINT] MOD-GOV_GIT_GUARD_BYPASS_RECONCILER | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §git-guard-bypass-reconciler
+# [MODULE] zephyr.governance.audit.git_guard_bypass_reconciler
+# [DOMAIN] D_GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
+# [STARTUP] imported
+# [MATURITY] production
+# [INVARIANTS] post-commit 事件触发（任何非空 committed_files）；reconciler 永不抛异常（异常降级为 warn）；warn-only 不阻断 commit
+# [MODIFY-GUARD] _PRIORITY 优先级；_WINDOW 回溯窗口
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] reconcile 永不抛异常——git reflog/审计日志读取失败降级为 ReconcileResult(action="warn")
+# [TESTS] tests/governance/audit/test_git_guard_bypass_reconciler.py
+# [A_module] module_id=MOD-GOV_GIT_GUARD_BYPASS_RECONCILER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
+"""git_guard_bypass_reconciler.py — git_guard alias 绕过检测 post-commit reconciler。
+
+#ARCH-GIT-SELF-HARM-GUARD L2.3（2026-08-04）
+
+治本动机
+--------
+git_guard.py 通过 git alias 拦截危险命令（reset --hard / checkout -- / restore），
+但 ``git -c alias.reset= reset --hard`` 可静默绕过 alias（setup_git_guard_aliases.py:129
+自述）。L1+L2 的自伤检测只覆盖走 alias 的调用，绕过 alias 的调用完全不受监控。
+
+本 reconciler 是 L2.3 治本——post-commit 事件驱动对比 ``git reflog`` 的 reset 记录
+与 ``.runtime/gate_audit/git_guard_self_harm.jsonl`` 审计日志：
+
+    reflog 有 reset 但审计日志无对应记录 = 绕过 alias（疑似）
+
+检测原理
+--------
+1. **时间窗口**: 取本次 commit（HEAD）与上次 commit（HEAD~1）之间的时间段
+2. **reflog 侧**: ``git reflog --format=%ct|%gs`` 筛选 ``reset: moving to`` 条目，
+   时间戳落在窗口内的 = 该窗口内发生的 reset 操作
+3. **审计侧**: 读 ``.runtime/gate_audit/git_guard_self_harm.jsonl``，筛选 timestamp
+   落在窗口内的记录 = 被 git_guard 审计的 reset 操作
+4. **对比**: reflog_resets > audited_resets → 疑似绕过
+
+已知局限（warn-only 设计依据）
+-----------------------------
+- ``reset --soft`` / ``reset --mixed`` 也产生 ``reset: moving to`` reflog 条目，但不
+  触发自伤检测（非危险），因此 reflog_resets ≥ audited_resets 是常态。本 reconciler
+  报告差值供 AI/人工研判，不阻断 commit（避免误伤合法的 --soft/--mixed）。
+- ``restore`` / ``checkout -- <file>`` 不产生 reflog 条目（只动工作区不动 HEAD），
+  因此本 reconciler 无法检测这两类命令的绕过。完整检测需 shell 级审计，超出 L2.3 范围。
+- 首次 commit（无 HEAD~1）无时间窗口，跳过。
+
+priority: 810（stash_lifecycle=801 之后，gate_inventory_sync=820 之前——与基础设施
+清理 reconciler 同组，紧跟 stash lifecycle）
+
+Usage
+-----
+::
+
+    from zephyr.governance.audit.git_guard_bypass_reconciler import (
+        make_git_guard_bypass_reconciler,
+    )
+
+    registry.register(make_git_guard_bypass_reconciler(gateway))
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import subprocess
+from pathlib import Path
+
+from zephyr.governance.audit.reconciliation_registry import (
+    ReconcileResult,
+    ReconcilerSpec,
+)
+
+logger = logging.getLogger(__name__)
+
+_GATE_ID = "GATE-GIT-GUARD-BYPASS"
+_PRIORITY = 810
+
+# 审计日志路径（相对 project_root，与 git_guard._audit_self_harm 落盘路径一致）
+_AUDIT_LOG_REL = Path(".runtime") / "gate_audit" / "git_guard_self_harm.jsonl"
+
+
+def _get_commit_timestamp(project_root: Path, ref: str) -> float | None:
+    """获取指定 ref 的 commit 时间戳（Unix epoch 秒）。
+
+    Args:
+        project_root: 仓库根目录。
+        ref: git ref，如 "HEAD" 或 "HEAD~1"。
+
+    Returns:
+        时间戳（float）；ref 不存在或 git 失败返回 None。
+    """
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%ct", ref],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            errors="replace",
+            timeout=15,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return float(result.stdout.strip())
+    except Exception:  # noqa: BLE001 — reconciler 永不抛异常
+        pass
+    return None
+
+
+def _get_reflog_resets_in_window(
+    project_root: Path, window_start: float, window_end: float
+) -> list[tuple[float, str]]:
+    """获取时间窗口内的 reflog reset 条目。
+
+    Returns:
+        [(timestamp, subject), ...] 列表，按时间升序。
+    """
+    try:
+        result = subprocess.run(
+            ["git", "reflog", "--format=%ct|%gs"],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            errors="replace",
+            timeout=15,
+        )
+    except Exception:  # noqa: BLE001 — reconciler 永不抛异常
+        return []
+
+    if result.returncode != 0:
+        return []
+
+    entries: list[tuple[float, str]] = []
+    for line in result.stdout.splitlines():
+        line = line.strip()
+        if not line or "|" not in line:
+            continue
+        ts_str, _, subject = line.partition("|")
+        # 只关心 reset 操作（checkout/commit/stash 等不属本 reconciler 范围）
+        if not subject.startswith("reset:"):
+            continue
+        try:
+            ts = float(ts_str)
+        except ValueError:
+            continue
+        # 窗口: [window_start, window_end]——含两端。reset 可能与上次 commit 同秒
+        # （git log --format=%ct 秒级精度），用 >= 避免漏检（warn-only 容忍少量误报）
+        if window_start <= ts <= window_end:
+            entries.append((ts, subject))
+    return entries
+
+
+def _get_audited_resets_in_window(
+    audit_log: Path, window_start: float, window_end: float
+) -> list[dict]:
+    """读取审计日志，筛选时间窗口内的记录。
+
+    Returns:
+        [record_dict, ...] 列表。
+    """
+    if not audit_log.exists():
+        return []
+    records: list[dict] = []
+    try:
+        with audit_log.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rec = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                ts = rec.get("timestamp", 0)
+                if isinstance(ts, (int, float)) and window_start <= ts <= window_end:
+                    records.append(rec)
+    except OSError:  # noqa: BLE001 — 文件读取失败不阻断
+        pass
+    return records
+
+
+def make_git_guard_bypass_reconciler(gateway: object) -> ReconcilerSpec:
+    """构造 GATE-GIT-GUARD-BYPASS post-commit alias 绕过检测 reconciler。
+
+    Args:
+        gateway: GitCommitGateway 实例（仅用其 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id=_GATE_ID, priority=_PRIORITY)。
+    """
+    project_root: Path = gateway.project_root
+    audit_log = project_root / _AUDIT_LOG_REL
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 任何非空 commit 都触发——绕过检测与 commit 频率正相关
+        return bool(committed_files)
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        try:
+            # 1. 确定时间窗口 [HEAD~1 commit 时间, HEAD commit 时间]
+            head_ts = _get_commit_timestamp(project_root, "HEAD")
+            if head_ts is None:
+                return ReconcileResult(
+                    action="skip",
+                    detail="git-guard-bypass: 无法获取 HEAD 时间戳（空仓库？）",
+                    gate_id=_GATE_ID,
+                )
+            prev_ts = _get_commit_timestamp(project_root, "HEAD~1")
+            if prev_ts is None:
+                # 首次 commit，无前序窗口可对比
+                return ReconcileResult(
+                    action="skip",
+                    detail="git-guard-bypass: 首次 commit（无 HEAD~1），跳过绕过检测",
+                    gate_id=_GATE_ID,
+                )
+
+            # 2. 获取窗口内的 reflog reset 条目
+            reflog_resets = _get_reflog_resets_in_window(project_root, prev_ts, head_ts)
+
+            # 3. 获取窗口内的审计记录
+            audited = _get_audited_resets_in_window(audit_log, prev_ts, head_ts)
+
+            reflog_count = len(reflog_resets)
+            audit_count = len(audited)
+
+            # 4. 对比判定
+            if reflog_count == 0:
+                return ReconcileResult(
+                    action="skip",
+                    detail="git-guard-bypass: 窗口内无 reset 操作",
+                    gate_id=_GATE_ID,
+                )
+
+            # reflog 有 reset 但审计日志完全空白 → 强信号：疑似绕过
+            if audit_count == 0:
+                # 区分: 审计文件不存在（git_guard 从未运行）vs 存在但窗口内无记录
+                file_status = "审计文件不存在" if not audit_log.exists() else "审计文件存在但窗口内无记录"
+                detail = (
+                    f"git-guard-bypass: 窗口内 {reflog_count} 次 reset 但 0 条审计记录"
+                    f"（{file_status}）——疑似 alias 绕过"
+                    f"（如 `git -c alias.reset= reset --hard`）"
+                )
+                logger.warning("GATE-GIT-GUARD-BYPASS: %s", detail)
+                return ReconcileResult(
+                    action="warn",
+                    detail=detail,
+                    gate_id=_GATE_ID,
+                )
+
+            # reflog 多于审计 → 弱信号：部分绕过（也可能是 --soft/--mixed 合法不触发审计）
+            diff = reflog_count - audit_count
+            if diff > 0:
+                detail = (
+                    f"git-guard-bypass: reflog reset={reflog_count} > 审计记录={audit_count}"
+                    f"（差值 {diff} 可能是 --soft/--mixed 合法操作，也可能是绕过）"
+                )
+                logger.info("GATE-GIT-GUARD-BYPASS: %s", detail)
+                return ReconcileResult(
+                    action="warn",
+                    detail=detail,
+                    gate_id=_GATE_ID,
+                )
+
+            # reflog ≤ 审计 → 正常（每次 reset --hard 都被审计）
+            return ReconcileResult(
+                action="clean",
+                detail=(
+                    f"git-guard-bypass: 窗口内 {reflog_count} 次 reset 全部被审计"
+                    f"（audit={audit_count}），无绕过迹象"
+                ),
+                gate_id=_GATE_ID,
+            )
+        except Exception as e:  # noqa: BLE001 — reconciler 永不抛异常
+            logger.warning("git_guard_bypass reconciler failed: %s", e)
+            return ReconcileResult(
+                action="warn",
+                detail=f"git-guard-bypass 检测失败: {e}",
+                gate_id=_GATE_ID,
+            )
+
+    return ReconcilerSpec(
+        gate_id=_GATE_ID,
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=_PRIORITY,
+    )

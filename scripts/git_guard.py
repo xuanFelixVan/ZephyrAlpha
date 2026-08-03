@@ -286,8 +286,214 @@ def _check_conflict_or_passthrough(git_args: list[str], files_in_scope: list[str
     return passthrough(git_args)
 
 
+# ============================================================================
+# 自伤检测（L1+L2，#ARCH-GIT-SELF-HARM-GUARD，2026-08-04）
+# 根因：git reset --hard / checkout -- / restore 覆盖工作区未提交修改，
+# 而 .ailocks/ 为空时锁冲突检测全部放行。自伤检测补上"有未提交修改 + 未授权 → 阻断"。
+# 逃生通道：ZEPHYR_FORCE_STASH / ZEPHYR_COMMIT_GATEWAY（与 stash 阻断对齐）
+# ============================================================================
+
+
+def _get_dirty_tracked_files() -> set[str] | None:
+    """获取有未提交修改的 tracked 文件集合（忽略 untracked）。
+
+    Returns:
+        set[str] = 有修改的文件集合（可能为空集）
+        None = git status 失败（fail-open，调用方应跳过自伤检测）
+    """
+    try:
+        dirty_r = subprocess.run(
+            ["git", "status", "--porcelain"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except Exception:  # noqa: BLE001 — fail-open
+        print("[GIT-GUARD] git status 失败，自伤检测跳过（fail-open）", file=sys.stderr)
+        return None
+    if dirty_r.returncode != 0:
+        return None
+    dirty: set[str] = set()
+    for line in dirty_r.stdout.splitlines():
+        # porcelain 格式: "XY filename"（X/Y 各1字符 + 空格 + 文件名）
+        # 不用 .strip()——会去掉行首空格导致 line[3:] 切片错位
+        line = line.rstrip()
+        if len(line) < 4 or line.startswith("??"):
+            continue
+        fname = line[3:]
+        if fname:
+            dirty.add(fname)
+    return dirty
+
+
+def _audit_self_harm(
+    action: str,
+    had_uncommitted: bool,
+    forced: bool,
+    file_count: int,
+    dirty_files: list[str],
+) -> None:
+    """自伤检测审计写入（非阻断，jsonl 追加）。
+
+    审计文件: .runtime/gate_audit/git_guard_self_harm.jsonl
+    """
+    import time  # 局部 import 避免修改顶部 import 区
+
+    audit_dir = get_project_root() / ".runtime" / "gate_audit"
+    try:
+        audit_dir.mkdir(parents=True, exist_ok=True)
+    except Exception:  # noqa: BLE001 — 审计不阻断
+        return
+    record = {
+        "timestamp": time.time(),
+        "session_id": get_session_id(),
+        "action": action,
+        "had_uncommitted": had_uncommitted,
+        "forced": forced,
+        "file_count": file_count,
+        "files": dirty_files,
+    }
+    audit_file = audit_dir / "git_guard_self_harm.jsonl"
+    try:
+        with open(audit_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计不阻断
+        pass
+
+
+def _check_self_harm_reset_hard(git_args: list[str]) -> int | None:
+    """reset --hard 自伤检测（L1 止血，#ARCH-GIT-SELF-HARM-GUARD，2026-08-04）。
+
+    工作区有 tracked 未提交修改 + 未授权 → fail-closed 阻断。
+    授权（ZEPHYR_FORCE_STASH / ZEPHYR_COMMIT_GATEWAY）或无未提交修改 → 放行（return None）。
+
+    Returns:
+        None = 放行，继续后续流程（锁冲突检查）
+        1 = 阻断
+    """
+    if "--hard" not in git_args:
+        return None  # --soft/--mixed 不覆盖工作区，不触发自伤检测
+
+    dirty_files = _get_dirty_tracked_files()
+    if dirty_files is None:
+        return None  # fail-open
+
+    had_uncommitted = len(dirty_files) > 0
+    authorized = _is_gateway_authorized()
+
+    if authorized or not had_uncommitted:
+        _audit_self_harm(
+            action="reset --hard",
+            had_uncommitted=had_uncommitted,
+            forced=authorized,
+            file_count=len(dirty_files),
+            dirty_files=sorted(dirty_files)[:10],
+        )
+        if authorized and had_uncommitted:
+            print(
+                f"[GIT-GUARD] reset --hard 授权放行（{FORCE_STASH_ENV}|{GATEWAY_ENV}），"
+                f"将丢弃 {len(dirty_files)} 个未提交文件",
+                file=sys.stderr,
+            )
+        return None  # 继续锁冲突检查
+
+    # 阻断
+    print("", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+    print("[GIT-GUARD] git reset --hard 被阻断——会丢弃未提交的 AI 编辑（自伤防护）", file=sys.stderr)
+    print(f"  未提交文件 ({len(dirty_files)}):", file=sys.stderr)
+    for f in sorted(dirty_files)[:10]:
+        print(f"    {f}", file=sys.stderr)
+    if len(dirty_files) > 10:
+        print(f"    ... 及其他 {len(dirty_files) - 10} 个文件", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("  解决方案:", file=sys.stderr)
+    print("    1. 先 commit 你的修改（经 GitCommitGateway）", file=sys.stderr)
+    print(f"    2. 强制 reset（确认丢弃未提交修改）：{FORCE_STASH_ENV}=1 git reset --hard", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+
+    _audit_self_harm(
+        action="reset --hard",
+        had_uncommitted=True,
+        forced=False,
+        file_count=len(dirty_files),
+        dirty_files=sorted(dirty_files)[:10],
+    )
+    return 1
+
+
+def _check_self_harm_files(
+    git_args: list[str],
+    files_in_scope: list[str],
+    action: str,
+) -> int | None:
+    """checkout -- / restore 自伤检测（L2.1，#ARCH-GIT-SELF-HARM-GUARD，2026-08-04）。
+
+    目标文件有未提交修改 + 未授权 → fail-closed 阻断。
+    checkout <branch>（无 --）不触发（切分支的修改处理由 git 本身负责）。
+
+    Returns:
+        None = 放行，继续后续流程（锁冲突检查）
+        1 = 阻断
+    """
+    # checkout <branch>（无 --）不触发自伤检测
+    if action == "checkout" and "--" not in git_args:
+        return None
+
+    if not files_in_scope:
+        return None
+
+    dirty_files = _get_dirty_tracked_files()
+    if dirty_files is None:
+        return None  # fail-open
+
+    # 交集：目标文件中有未提交修改的
+    at_risk = [f for f in files_in_scope if f in dirty_files]
+    authorized = _is_gateway_authorized()
+
+    if authorized or not at_risk:
+        _audit_self_harm(
+            action=f"{action} --",
+            had_uncommitted=bool(at_risk),
+            forced=authorized,
+            file_count=len(at_risk),
+            dirty_files=at_risk[:10],
+        )
+        if authorized and at_risk:
+            print(
+                f"[GIT-GUARD] {action} 授权放行（{FORCE_STASH_ENV}|{GATEWAY_ENV}），"
+                f"将丢弃 {len(at_risk)} 个未提交文件",
+                file=sys.stderr,
+            )
+        return None  # 继续锁冲突检查
+
+    # 阻断
+    print("", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+    print(f"[GIT-GUARD] git {action} 被阻断——会丢弃未提交的 AI 编辑（自伤防护）", file=sys.stderr)
+    print(f"  at-risk 文件 ({len(at_risk)}):", file=sys.stderr)
+    for f in at_risk[:10]:
+        print(f"    {f}", file=sys.stderr)
+    if len(at_risk) > 10:
+        print(f"    ... 及其他 {len(at_risk) - 10} 个文件", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("  解决方案:", file=sys.stderr)
+    print("    1. 先 commit 你的修改（经 GitCommitGateway）", file=sys.stderr)
+    print(f"    2. 强制执行（确认丢弃）：{FORCE_STASH_ENV}=1 git {action} ...", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+
+    _audit_self_harm(
+        action=f"{action} --",
+        had_uncommitted=True,
+        forced=False,
+        file_count=len(at_risk),
+        dirty_files=at_risk[:10],
+    )
+    return 1
+
+
 def _handle_stash(git_args: list[str]) -> int:
-    """stash 特殊处理：push 移走修改，pop/apply 覆盖工作区。"""
+    """stash 特殊处理：push 移走修改，pop/apply 覆盖工作区，list/show 只读。"""
     args = git_args[1:]  # 去掉 'stash'
     if args and args[0] in STASH_READONLY:
         return _passthrough(git_args)
@@ -563,6 +769,13 @@ def check_and_execute(git_args: list[str]) -> int:
     if _is_fast_path_authorized() and subcommand in {"checkout", "reset", "restore", "revert"}:
         return _passthrough(git_args)
 
+    # L1 止血：reset --hard 自伤检测（#ARCH-GIT-SELF-HARM-GUARD，2026-08-04）
+    # fast-path 命中时已在上面透传；此处对非 fast-path 的 reset --hard 检测未提交修改
+    if subcommand == "reset":
+        rc = _check_self_harm_reset_hard(git_args)
+        if rc is not None:
+            return rc
+
     # stash 特殊处理：push 移走修改，pop/apply 覆盖工作区，list/show 只读
     if subcommand == "stash":
         return _handle_stash(git_args)
@@ -581,6 +794,12 @@ def check_and_execute(git_args: list[str]) -> int:
     except Exception as e:
         print(f"[GIT-GUARD] 内部错误（文件提取失败）: {e}", file=sys.stderr)
         return _passthrough(git_args)
+
+    # L2.1：checkout -- / restore 自伤检测（#ARCH-GIT-SELF-HARM-GUARD，2026-08-04）
+    if subcommand in {"checkout", "restore"}:
+        rc = _check_self_harm_files(git_args, files_in_scope, subcommand)
+        if rc is not None:
+            return rc
 
     # 检查 .ailocks/ 冲突，无冲突则透传
     return _check_conflict_or_passthrough(git_args, files_in_scope)

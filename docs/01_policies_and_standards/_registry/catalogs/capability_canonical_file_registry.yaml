@@ -1745,6 +1745,73 @@ capabilities:
       - make_worktree_required_gate
 
   # --------------------------------------------------------------------------
+  - capability_id: git_guard_self_harm_detection
+    canonical_override: scripts/git_guard.py
+    aliases:
+      - GATE-GIT-SELF-HARM
+      - git_guard_self_harm
+      - _check_self_harm_reset_hard
+      - _check_self_harm_files
+      - reset_hard_self_harm_guard
+    description: >-
+      git reset --hard / checkout -- / restore 自伤检测（#ARCH-GIT-SELF-HARM-GUARD L1+L2，
+      2026-08-04）。治本 100% AI 开发下并发 session `git reset --hard` 覆盖未提交 AI 编辑
+      （reflog 19 次 reset --hard）。git_guard.py git alias 在 check_and_execute 中插入
+      自伤检测分支：reset --hard（L1，fast-path 后）+ checkout --/restore（L2.1，文件提取后）
+      若工作区有 tracked 未提交修改且非授权（ZEPHYR_FORCE_STASH/ZEPHYR_COMMIT_GATEWAY）→
+      fail-closed 阻断 exit 1；无未提交修改或授权 → 放行并记审计到
+      .runtime/gate_audit/git_guard_self_harm.jsonl。fast-path（ZEPHYR_GIT_GUARD_FAST_PATH=1，
+      session_worktree 可信调用方）passthrough 不重复检测。canonical basename git_guard 不匹配
+      capability_id，故用 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "reset --hard 阻断/自伤检测/git reset 覆盖防护" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类自伤检测脚本。
+    integrity_anchors:
+      - _check_self_harm_reset_hard  # L1 reset --hard 自伤检测(删则 reset 不阻断)
+      - _check_self_harm_files       # L2.1 checkout--/restore 自伤检测(删则覆盖不阻断)
+
+  # --------------------------------------------------------------------------
+  - capability_id: git_guard_bypass_detector
+    canonical_override: src/zephyr/governance/audit/git_guard_bypass_reconciler.py
+    aliases:
+      - GATE-GIT-GUARD-BYPASS
+      - git_guard_bypass_reconciler
+      - make_git_guard_bypass_reconciler
+      - alias_bypass_detector
+    description: >-
+      git_guard alias 绕过检测 post-commit reconciler（#ARCH-GIT-SELF-HARM-GUARD L2.3，
+      2026-08-04）。治本 `git -c alias.reset= reset --hard` 静默绕过 git_guard alias 的缺口：
+      对比 git reflog 的 reset 记录与 .runtime/gate_audit/git_guard_self_harm.jsonl 审计日志——
+      reflog 有 reset 但审计日志无对应记录 = 绕过。priority=810，post-commit 事件触发，
+      warn-only（先观察不阻断，避免误伤合法紧急场景）。reconciler 永不抛异常（异常降级为 warn）。
+      注册点：git_commit_gateway.py:783 self._reconciliation_registry.register()。
+      解决发现性：新 AI 搜 "alias 绕过/git_guard bypass/reset 绕过检测" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类绕过检测 reconciler。
+    integrity_anchors:
+      - make_git_guard_bypass_reconciler  # reconciler 工厂(删则 reconciler 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: worktree_required_precommit_hook
+    canonical_override: scripts/governance/d11_compliance/validate_worktree_required.py
+    aliases:
+      - GATE-WORKTREE-REQUIRED
+      - gate-worktree-required
+      - validate_worktree_required
+      - worktree_skip_counter
+    description: >-
+      主工作区 commit 渐进式软门禁 pre-commit hook（#ARCH-GIT-SELF-HARM-GUARD L3.1，
+      2026-08-04）。将 AGENTS.md RULE-WORKTREE 君子协定升级为软门禁：worktree 内 /
+      reconciler auto-commit / 合并提交放行；主工作区 commit warn（exit 0）+ 计数到
+      .runtime/gate_audit/worktree_skip.jsonl，单 session 累计 >=5 次升级阻断（exit 1）。
+      双层防护 Layer 2（Layer 1 = in-process gate WORKTREE-REQUIRED priority=44 管
+      GitCommitGateway --no-verify 路径，见 worktree_required_gate 条目）。canonical
+      basename validate_worktree_required 不匹配 capability_id，故用 canonical_override
+      显式声明。注册点：.pre-commit-config.yaml gate-worktree-required hook。
+      解决发现性：新 AI 搜 "worktree 门禁/主工作区 commit 阻断/RULE-WORKTREE 强制" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 worktree 软门禁 hook。
+    integrity_anchors:
+      - main  # 编排函数(exit code 语义: EXIT_PASS/EXIT_FINDINGS/EXIT_ERROR)
+
+  # --------------------------------------------------------------------------
   - capability_id: vocab_hardcode_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/vocab_hardcode_gate.py
     aliases:
@@ -7864,6 +7931,18 @@ creation_tokens:
     capability: "runtime_tmp_residue_cleanup"
     blueprint_id: "MOD-INF-046"
     note: ".runtime/tmp/ 测试残留目录一次性清理脚本（dry-run/--execute），复用 reconciler PID存活+TTL双判定"
+
+  # --- git reset --hard 自伤防护（2026-08-04，#ARCH-GIT-SELF-HARM-GUARD）---
+  - file: "src/zephyr/governance/audit/git_guard_bypass_reconciler.py"
+    token: "auto-git-guard-bypass-reconciler-20260804"
+    created_by: "sess-arch-git-self-harm-20260804"
+    capability: "git_guard_bypass_detector"
+    note: "L2.3 git_guard alias 绕过检测 post-commit reconciler（priority=810，warn-only，对比 reflog reset 与审计日志）"
+  - file: "scripts/governance/d11_compliance/validate_worktree_required.py"
+    token: "auto-validate-worktree-required-20260804"
+    created_by: "sess-arch-git-self-harm-20260804"
+    capability: "worktree_required_precommit_hook"
+    note: "L3.1 主工作区 commit 渐进式软门禁 pre-commit hook（warn+计数，>=5次升级阻断）"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
