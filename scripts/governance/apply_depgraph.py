@@ -58,8 +58,8 @@ GIT 备份门禁（P2 迁移后治本 2026-06-27）：
   事务失败时 conn.rollback() 自动回滚（已实现）。
 
 PG depgraph 备份（ARCH-041 §5.33.1 治本，2026-07-03）：
-  写入命令（非 --dry-run）执行后自动调用 backup_pg_depgraph()（事件触发），
-  导出 nodes+edges 表为 JSON 到 tmp/pg_backups/，自动清理旧备份（保留 10 个）。
+  写入命令（非 --dry-run）执行后自动调用 backup_pg_architecture()（事件触发），
+  导出四图 19 张 DB 真源表为 JSON 到 tmp/pg_backups/，自动清理旧备份（保留 10 个）。
   备份失败不阻断主流程（main 已成功）。定义：backup_runtime_state.py。
 """
 
@@ -376,7 +376,7 @@ SQL_CREATE_READONLY_TRIGGER = (
 SQL_SELECT_DISTINCT_TBL_COL_LIKE = "SELECT DISTINCT {col} FROM {tbl} WHERE {col} LIKE %s"
 
 # --- _propagate_bp_id_in_db ---
-SQL_COUNT_NODES_BY_BLUEPRINT_ID = "SELECT COUNT(*) FROM nodes WHERE blueprint_id=%s"
+SQL_COUNT_NODES_BY_BLUEPRINT_ID = "SELECT COUNT(*) AS c FROM nodes WHERE blueprint_id=%s"
 SQL_UPDATE_NODE_BLUEPRINT_ID = "UPDATE nodes SET blueprint_id=%s WHERE blueprint_id=%s"
 SQL_COUNT_BLUEPRINT_LINKS_BY_ID = "SELECT COUNT(*) FROM blueprint_links WHERE blueprint_id=%s"
 SQL_UPDATE_BLUEPRINT_LINK_ID = "UPDATE blueprint_links SET blueprint_id=%s WHERE blueprint_id=%s"
@@ -452,6 +452,9 @@ SQL_CLEAR_INVALID_FLAG_BY_BP = (
 SQL_CLEAR_BLUEPRINT_ID_BY_PATH = (
     "UPDATE nodes SET blueprint_id=NULL, belongs_to=NULL, blueprint_id_invalid=0 "
     "WHERE path=%s"
+)
+SQL_CLEAR_NODES_METADATA_BP_BY_PATH = (
+    "UPDATE nodes_metadata SET blueprint_id=NULL, last_updated=%s WHERE path=%s"
 )
 
 
@@ -1983,7 +1986,7 @@ def cmd_clear_invalid_flag(blueprint_id: str, dry_run: bool = False, db_path: st
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
-                "SELECT COUNT(*) AS c FROM nodes WHERE blueprint_id=%s", (blueprint_id,)
+                SQL_COUNT_NODES_BY_BLUEPRINT_ID, (blueprint_id,)
             ).fetchone()
             cnt = row["c"] if row else 0
             mode = "[DRY RUN]" if dry_run else "[OK]"
@@ -2025,7 +2028,7 @@ def cmd_clear_blueprint_id(path: str, dry_run: bool = False, db_path: str = None
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
         try:
             row = conn.execute(
-                "SELECT node_id, blueprint_id FROM nodes WHERE path=%s", (path,)
+                SQL_SELECT_NODE_BP_BY_PATH, (path,)
             ).fetchone()
             if not row:
                 print(f"ERROR: path='{path}' 在 nodes 表中不存在", file=sys.stderr)
@@ -2039,7 +2042,7 @@ def cmd_clear_blueprint_id(path: str, dry_run: bool = False, db_path: str = None
             conn.execute(SQL_CLEAR_BLUEPRINT_ID_BY_PATH, (path,))
             # 同步清 nodes_metadata.blueprint_id
             conn.execute(
-                "UPDATE nodes_metadata SET blueprint_id=NULL, last_updated=%s WHERE path=%s",
+                SQL_CLEAR_NODES_METADATA_BP_BY_PATH,
                 (datetime.datetime.now().isoformat(), path),
             )
             conn.commit()
@@ -2191,7 +2194,7 @@ def cmd_cleanup_orphan_nodes(dry_run: bool = False, db_path: str = None) -> int:
     对标 cmd_cleanup_orphan_edges（清理孤儿边）。
     返回：删除的节点数，-1=失败。
 
-    注意：已由 backup_pg_depgraph() 自动 PG 备份（trae_054 v1.6.0 STEP0，写入后事件触发，非 git commit）。
+    注意：已由 backup_pg_architecture() 自动 PG 备份（trae_054 v1.6.0 STEP0，写入后事件触发，非 git commit）。
     """
     project_root = REPO_ROOT
     with _db_write_lock(db_path=db_path, task="cleanup_orphan_nodes"):
@@ -4058,7 +4061,7 @@ def cmd_delete_nodes(
     用途：删除测试 mock 数据等噪声节点（如 tests/fixtures/）。
     返回：删除的节点数，-1=失败。
 
-    注意：已由 backup_pg_depgraph() 自动 PG 备份（trae_054 v1.6.0 STEP0，写入后事件触发，非 git commit）。
+    注意：已由 backup_pg_architecture() 自动 PG 备份（trae_054 v1.6.0 STEP0，写入后事件触发，非 git commit）。
     """
     if not node_ids:
         print("ERROR: node_ids 列表为空", file=sys.stderr)
@@ -4846,7 +4849,7 @@ def main() -> None:
         metavar="NODE_IDS_FILE",
         help="按 node_id 列表删除节点（JSON文件: [id1, id2, ...]）。"
         "安全门：有入边（被依赖）则阻断，--force 可跳过。先删关联 edges 再删 nodes。"
-        "已由 backup_pg_depgraph() 自动 PG 备份（trae_054 v1.6.0 STEP0）。",
+        "已由 backup_pg_architecture() 自动 PG 备份（trae_054 v1.6.0 STEP0）。",
     )
     parser.add_argument(
         "--update-domain-ssot-path",
@@ -5602,14 +5605,15 @@ if __name__ == "__main__":
             # 导致 ImportError。参照 line 121-128 模式加 fallback。
             try:
                 try:
-                    from scripts.governance.meta.backup_runtime_state import backup_pg_depgraph
+                    from scripts.governance.meta.backup_runtime_state import backup_pg_architecture
                 except ImportError:
-                    from meta.backup_runtime_state import backup_pg_depgraph
-                # Obs2 治本：传 throttle_seconds=60 节流——连续 apply_depgraph 调用
+                    from meta.backup_runtime_state import backup_pg_architecture
+                # Obs2 治本：传 throttle_seconds=60 节流——连续 apply 调用
                 # 在数秒内产生冗余快照（实测 14 秒 8 份），DR 备份无需细粒度
-                # （git commit 已追溯 depgraph 变更，trae_054 STEP0 铁律）。
-                backup_pg_depgraph(throttle_seconds=60)
-            except Exception as _e:
+                # （git commit 已追溯架构变更，trae_054 STEP0 铁律）。
+                # v2 扩展（2026-08-03）：backup_pg_architecture 覆盖四图 19 张 DB 真源表。
+                backup_pg_architecture(throttle_seconds=60)
+            except Exception as _e:  # noqa: BLE001  # 备份失败不阻断主流程（DR 安全网）
                 # 备份失败不阻断主流程（main 已成功），仅记录到 stderr
                 print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
             # DM-90974 Phase 2: 落 depgraph_dirty.flag，让 GATE-DOMAIN-DOC reconciler
