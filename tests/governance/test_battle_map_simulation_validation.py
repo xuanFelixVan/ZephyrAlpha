@@ -215,4 +215,23 @@ class TestBMSim07ClosedLoop:
         assert "蒙特卡洛" in sim03_edge[0].get("label", ""), \
             f"边 label 应含'蒙特卡洛'，实际: {sim03_edge[0].get('label')}"
 
-    def test_sim07_outgoing_edge_to_sim06
+    def test_sim07_outgoing_edge_to_sim06(self, bm_reader):
+        """出边：BM-SIM-07 → BM-SIM-06 (风控仿真→结果分析)。"""
+        out_edges = bm_reader.get_edges_from_step("BM-SIM-07")
+        assert out_edges and len(out_edges) > 0, "BM-SIM-07 无出边"
+
+        sim06_edge = [e for e in out_edges if e["to_step_id"] == "BM-SIM-06"]
+        assert len(sim06_edge) == 1, f"期望 BM-SIM-07→BM-SIM-06 边，实际出边: {out_edges}"
+        assert sim06_edge[0]["edge_type"] == "data_flow"
+        assert "风控仿真" in sim06_edge[0].get("label", ""), \
+            f"边 label 应含'风控仿真'，实际: {sim06_edge[0].get('label')}"
+
+    def test_sim07_closed_loop_flow(self, bm_reader):
+        """闭环验证：BM-SIM-03 → BM-SIM-07 → BM-SIM-06 完整链路。
+
+        这是 BM-SIM-07 的核心价值——将蒙特卡洛路径导入风控仿真，
+        再将风控仿真结果导入结果分析，形成"蒙特卡洛→风控→分析"闭环。
+        """
+        # 入边：BM-SIM-03 → BM-SIM-07
+        in_edges = bm_reader.get_edges_to_step("BM-SIM-07")
+        sim03_in = [e for e in in_edges

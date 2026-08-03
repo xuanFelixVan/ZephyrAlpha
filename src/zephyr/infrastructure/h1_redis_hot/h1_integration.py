@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] H1WriteBatchFailed(写入失败,调用方决定重试/降级); H1RedisUnavailable(读取失败,调用方降级 CP-02)
 # [TESTS] tests/zephyr/infrastructure/h1_redis_hot/test_h1_integration.py
-# [A_module] module_id=MOD-H1-integration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-H1-REDIS-HOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """H1 Redis 集成适配器——连接 D-FACTOR/SIGNAL/RISK 与 H1 热缓存。
 

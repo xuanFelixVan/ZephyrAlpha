@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] StagingError on all failures; CONFLICT raised when file modified by another session
 # [TESTS] tests/test_staging_area.py
-# [A_module] module_id=MOD-ORC-staging_area | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: _CrossProcessLock.__enter__的while True+time.sleep是跨进程文件锁获取等待循环,非周期触发(与_GlobalCommitLock同类)
 """

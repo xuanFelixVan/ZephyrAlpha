@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] tick_subscriber启动失败->退出码1; factor_loop启动失败->停subscriber退出码1; SIGINT/SIGTERM->优雅停止退出码0
 # [TESTS] tests/zephyr/runtime/test_intraday_main.py
+# [A_module] module_id=MOD-RUNTIME-INTRADAY | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """盘中运行时编排器——单进程串起 tick_subscriber + IntradayFactorLoop。
 

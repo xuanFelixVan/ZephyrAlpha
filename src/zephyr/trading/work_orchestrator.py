@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/trading/test_work_orchestrator.py; tests/trading/extreme/test_f1_extreme.py; tests/automation/test_auto_runtime_e2e.py; tests/trading/test_lifecycle_manager.py; tests/trading/test_status_dashboard.py
-# [A_module] module_id=MOD-ORC-work_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 __all__ = [

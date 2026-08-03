@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-H1-tick-cache-test | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-H1-REDIS-HOT | layer=test | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """TickRedisCache 单元测试——tick→Redis tick:{symbol}:latest 双写器。
 

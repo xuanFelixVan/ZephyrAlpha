@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] tests/budget/test_budget_forecaster.py
-# [A_module] module_id=MOD-GOV-budget_forecaster | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # SRC-0041 (P3 迁移恢复, 2026-07-02): 文件从 autonomy_core/budget_forecaster.py 迁移至
 #   infrastructure/capacity_assurance/budget_forecaster.py（blueprint actual_disk_path 真源）。

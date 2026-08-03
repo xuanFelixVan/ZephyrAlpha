@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError; RuntimeError
 # [TESTS] tests/system-telemetry/test_auto_bootstrap.py
-# [A_module] module_id=MOD-INF-auto_bootstrap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0）

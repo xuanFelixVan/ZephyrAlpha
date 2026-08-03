@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 采样决策由TraceSampler控制;span结束自动flush到logs
 # [TESTS] tests/infrastructure/
-# [A_module] module_id=MOD-INF-span_stub | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """遥测 · traces/span_stub — W3C TraceContext 分布式追踪管道。

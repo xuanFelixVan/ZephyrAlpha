@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 budget_context 和 operation_id
 # [TESTS] tests/governance/shared/test_phase4_gate_check.py
-# [A_module] module_id=MOD-INF-budget_rbac_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """budget_enforcement.rbac_bridge — 基础设施层 RBAC 桥接适配器。
 

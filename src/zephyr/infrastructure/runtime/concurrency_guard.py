@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ConcurrencyConflictError on blocked; ConflictResult/StashPlan on check
 # [TESTS] tests/rollback/test_concurrency_guard.py
+# [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ensure_redis_env_loaded 文件不存在->log warning+不抛; load_redis_config 配置缺失->抛 RedisConfigError
 # [TESTS] tests/zephyr/infrastructure/test_redis_config.py
-# [A_module] module_id=MOD-INF-redis_config | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """Redis 连接配置单真源加载器（H1 业务热缓存 INFRA-DB-007）。
 

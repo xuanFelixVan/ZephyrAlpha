@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] redis.RedisError->log+返回0(不raise,不阻断WAL); 空tick->skip
 # [TESTS] tests/zephyr/data/test_tick_redis_cache.py
-# [A_module] module_id=MOD-H1-tick-cache | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-H1-REDIS-HOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """tick → Redis tick:{symbol}:latest 双写器（D-DATA → H1 集成适配器）。
 
