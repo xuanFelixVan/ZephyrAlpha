@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 空输入→空输出；未知前缀→exchange=None（不擅自推断）
 # [TESTS] tests/data/test_symbol_normalizer.py
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-DATA-SYMBOL-001 TRAE-082 #ARCH-SYMBOL-NORMALIZE-001
 """symbol 标准化核心实现——TRAE-082 symbol 约定铁律。

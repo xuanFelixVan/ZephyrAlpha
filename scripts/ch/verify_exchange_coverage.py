@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH不可达->退出码2; 覆盖率不足->退出码1(可--ci降级为WARN); 全部通过->退出码0
 # [TESTS] python scripts/ch/verify_exchange_coverage.py (smoke: 全量覆盖率报告)
+# [A_module] module_id=MOD-L04-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-DATA-SYMBOL-002 TRAE-082
 """exchange+symbol_canonical 数据覆盖率校验器（TRAE-082 1.1.0 阶段2 配套）。

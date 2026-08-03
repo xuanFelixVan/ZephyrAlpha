@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] tqcenter初始化失败->RuntimeError; 单批下载失败->log+继续; ClickHouse写入失败->log+继续
 # [TESTS] tests/zephyr/data/test_providers.py::TestTQCenterHelpers::TestTQCenterFetchRoute
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """tqcenter 数据源 Provider 实现。
 

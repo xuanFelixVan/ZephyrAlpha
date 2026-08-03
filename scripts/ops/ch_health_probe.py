@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.ops.ch_health_probe
 # [DOMAIN] D_DATA
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """7×24 CH 健康探针守护进程（R4b，#ARCH-DR-CH-RESTART-001）。
 

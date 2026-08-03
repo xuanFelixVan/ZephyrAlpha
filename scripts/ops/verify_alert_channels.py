@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=通道验证通过(或单测已覆盖+live不可达); exit 1=通道代码路径故障
 # [TESTS] 手动验证：python scripts/ops/verify_alert_channels.py
+# [A_module] module_id=MOD-L00-004 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """告警通道端到端验证（B2，#ARCH-CH-023，2026-07-25）。
 

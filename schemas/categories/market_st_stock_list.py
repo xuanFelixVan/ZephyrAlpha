@@ -10,6 +10,7 @@
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_only
+# [A_module] module_id=MOD-L04-001 | layer=module | stability=stable | safety=L | ai_autonomy=human_only
 # [TTL] permanent
 """st_stock_list 表 DDL-as-Code（category_id: market_st_stock_list, calc_mode: preload）.
 

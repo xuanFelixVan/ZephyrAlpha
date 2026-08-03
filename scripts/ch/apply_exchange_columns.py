@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH不可达->打印错误+退出码2; 列校验失败->列出差异+退出码1; 全部匹配->退出码0
 # [TESTS] scripts/ch/apply_exchange_columns.py --verify (smoke test: 所有证券表含exchange+symbol_canonical列+碰撞消歧验证)
+# [A_module] module_id=MOD-L04-001 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-DATA-SYMBOL-002 TRAE-082
 """ClickHouse exchange+symbol_canonical 列部署脚本（TRAE-082 1.1.0 治本 #ARCH-DATA-SYMBOL-002）。

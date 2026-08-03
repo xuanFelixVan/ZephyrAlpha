@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] human_only
 # [ERROR_CONTRACT] DDL与DB不一致->verify_schema_truth.py 报漂移+apply_fundamental_tables_ddl.py --verify退出码1
 # [TESTS] python scripts/ch/verify_schema_truth.py --table analyst_forecast
+# [A_module] module_id=MOD-L04-001 | layer=module | stability=stable | safety=L | ai_autonomy=human_only
 # [TTL] permanent
 """analyst_forecast（分析师预测）DDL-as-Code（category_id: fundamental_analyst_forecast, calc_mode: preload）。
 

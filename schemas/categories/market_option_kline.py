@@ -10,6 +10,7 @@
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_only
+# [A_module] module_id=MOD-L04-001 | layer=module | stability=stable | safety=L | ai_autonomy=human_only
 # [TTL] permanent
 """option_kline 表 DDL-as-Code（category_id: market_option_kline, calc_mode: lazy）。
 

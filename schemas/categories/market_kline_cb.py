@@ -10,6 +10,7 @@
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_only
+# [A_module] module_id=MOD-L04-001 | layer=module | stability=stable | safety=L | ai_autonomy=human_only
 # [TTL] permanent
 """kline_cb 表 DDL-as-Code（category_id: market_kline_cb, calc_mode: lazy）。
 

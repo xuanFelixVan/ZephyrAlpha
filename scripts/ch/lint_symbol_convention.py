@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 真源文件import失败->WARN跳过; 发现违规->退出码1; 全部通过->退出码0
 # [TESTS] python scripts/ch/lint_symbol_convention.py (smoke: 全量 schema 文件 lint)
+# [A_module] module_id=MOD-L04-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-DATA-SYMBOL-002 TRAE-082
 """Symbol 约定 lint 门禁（TRAE-082 GATE-SYMBOL-CONVENTION）。

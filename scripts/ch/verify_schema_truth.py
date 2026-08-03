@@ -12,6 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CH不可达->退出码2; 真源文件import失败->WARN跳过; 发现漂移->退出码1; 零漂移->退出码0
 # [TESTS] python scripts/ch/verify_schema_truth.py (smoke: 全量真源 vs DB 漂移报告)
+# [A_module] module_id=MOD-L04-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """DDL-as-Code 真源 vs ClickHouse 实际表结构 漂移校验器（治本工具）。
 
