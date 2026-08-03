@@ -123,6 +123,23 @@ SQL_DELETE_EDGES_BY_ENTITY = (
 SQL_DELETE_JOB_BY_ID = "DELETE FROM dataflow_jobs WHERE job_id = %s"
 
 
+def _backup_after_write(rc: int) -> None:
+    """写操作成功后自动触发架构库备份（trae_054 v1.6.0 STEP0）。失败不阻断主流程。
+
+    v2 扩展（2026-08-03）：backup_pg_architecture 覆盖四图 19 张 DB 真源表
+    （depgraph+battle_map+decisiongraph+dataflowgraph），非仅 dataflowgraph。
+    """
+    if rc == EXIT_PASS:
+        try:
+            try:
+                from scripts.governance.meta.backup_runtime_state import backup_pg_architecture
+            except ImportError:
+                from meta.backup_runtime_state import backup_pg_architecture
+            backup_pg_architecture(throttle_seconds=60)
+        except Exception as _e:  # noqa: BLE001
+            print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
+
+
 # ---------------------------------------------------------------------------
 # 命令实现
 # ---------------------------------------------------------------------------
@@ -489,19 +506,27 @@ def main() -> None:
         if not args.entity_name:
             print("ERROR: --add-design-dataset 需要 --entity-name", file=sys.stderr)
             sys.exit(EXIT_ERROR)
-        sys.exit(cmd_add_design_dataset(args))
+        rc = cmd_add_design_dataset(args)
+        _backup_after_write(rc)
+        sys.exit(rc)
     if args.add_design_job:
         if not args.job_name:
             print("ERROR: --add-design-job 需要 --job-name", file=sys.stderr)
             sys.exit(EXIT_ERROR)
-        sys.exit(cmd_add_design_job(args))
+        rc = cmd_add_design_job(args)
+        _backup_after_write(rc)
+        sys.exit(rc)
     if args.add_design_edge:
         if not all([args.from_id, args.to_id, args.from_type, args.to_type]):
             print("ERROR: --add-design-edge 需要 --from-id --to-id --from-type --to-type", file=sys.stderr)
             sys.exit(EXIT_ERROR)
-        sys.exit(cmd_add_design_edge(args))
+        rc = cmd_add_design_edge(args)
+        _backup_after_write(rc)
+        sys.exit(rc)
     if args.delete_design_job:
-        sys.exit(cmd_delete_design_job(args))
+        rc = cmd_delete_design_job(args)
+        _backup_after_write(rc)
+        sys.exit(rc)
     if args.transition_build_status:
         entity_type, entity_ref, new_status = args.transition_build_status
         if entity_type not in ("dataset", "job"):
@@ -510,7 +535,9 @@ def main() -> None:
         args.entity_type = entity_type
         args.entity_ref = entity_ref
         args.new_status = new_status
-        sys.exit(cmd_transition_build_status(args))
+        rc = cmd_transition_build_status(args)
+        _backup_after_write(rc)
+        sys.exit(rc)
 
     # 无命令时显示帮助
     parser.print_help()

@@ -59,9 +59,9 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_PY
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import iter_files, staged_files
+from _shared.walk import iter_files, iter_staged_files
 
 ensure_utf8_stdout()
 import argparse
@@ -299,7 +299,7 @@ def _check_llm_imports(filepath: Path) -> list[dict]:
 
 def scan_file(file_path: Path) -> list[str]:
     """扫描单个 Python 文件（RULE-LSG-001 门禁），返回违规描述列表."""
-    if not file_path.suffix == ".py":
+    if file_path.suffix != ".py":
         return []
     if _is_test_file(file_path):
         return []
@@ -310,7 +310,7 @@ def scan_file(file_path: Path) -> list[str]:
 
     try:
         source = file_path.read_text(encoding="utf-8")
-    except Exception:
+    except (OSError, UnicodeDecodeError):
         return []
 
     try:
@@ -410,7 +410,7 @@ def main() -> int:
         return EXIT_PASS if (args.warn_only or not all_findings) else 1
 
     # RULE-LSG-001 模式：全量 API 调用检测
-    staged = staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/") if args.staged else None
+    staged = iter_staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/") if args.staged else None
     exit_code, violations = scan_all(warn_only=args.warn_only, files=staged)
     if violations and not (args.warn_only or args.ci):
         return EXIT_FINDINGS

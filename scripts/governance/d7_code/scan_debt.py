@@ -56,7 +56,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
-from _shared.walk import staged_files
+from _shared.walk import iter_staged_files
 
 # ── 阈值（可调）──────────────────────────────────────────────────────────
 MAX_BOOL_PARAMS = 3  # DEBT-2: 函数含 ≥3 个 bool 参数即报警
@@ -276,7 +276,7 @@ def main(argv: list[str] | None = None) -> int:
     root = Path(args.src)
     if args.staged:
         # 变更检测模式：只扫 staged .py，跳过全量 rglob（CI 用 --ci 全量，pre-commit 用 --staged）
-        staged = staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/")
+        staged = iter_staged_files(extensions=frozenset({".py"}), path_prefix="src/zephyr/")
         all_violations: list[DebtViolation] = list(scan_dir(root, files=staged))
     else:
         if not root.exists():

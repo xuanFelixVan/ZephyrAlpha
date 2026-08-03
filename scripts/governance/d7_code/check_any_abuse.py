@@ -81,7 +81,7 @@ _CALLABLE_TYPES = {"Callable", "callable"}
 # **kwargs: Any 兼容旧 API
 _KWARGS_ANY_OK = True
 
-# noqa_exempt_registry.yaml SSoT 路径（真源唯一，禁止硬编码 marker 字符串）
+# 参考 noqa_exempt_registry.yaml SSoT 路径（真源唯一，禁止硬编码 marker 字符串）
 _NOQA_REGISTRY = (
     Path(__file__).resolve().parents[3]
     / "docs"
@@ -99,7 +99,7 @@ def _load_yaml_safe(path: Path) -> dict:
         with path.open(encoding="utf-8") as f:
             data = yaml.safe_load(f)
         return data if isinstance(data, dict) else {}
-    except Exception:
+    except Exception:  # noqa: BLE001
         return {}
 
 
@@ -130,7 +130,7 @@ def _annotation_to_str(node: ast.expr | None) -> str:
         return ""
     try:
         return ast.unparse(node)
-    except Exception:
+    except Exception:  # noqa: BLE001
         return ast.dump(node)
 
 
@@ -348,8 +348,8 @@ def scan_file(filepath: Path) -> list[AnyViolation]:
     scanner.visit(tree)
     violations = scanner.violations
 
-    # noqa: any-abuse 行级豁免过滤（#ARCH-ANY-GOVERNANCE-001 Phase 3）
-    # 标记所在行的违规被豁免，需附理由（格式：`# noqa: any-abuse  any-abuse豁免: <理由>`）
+    # "noqa: any-abuse" 行级豁免过滤（#ARCH-ANY-GOVERNANCE-001 Phase 3）
+    # 标记所在行的违规被豁免，需附理由（格式：noqa: any-abuse + 豁免理由，详见 noqa_exempt_registry.yaml）
     if violations:
         noqa_lines = _collect_noqa_any_abuse_lines(content)
         if noqa_lines:
@@ -379,7 +379,7 @@ def _get_noqa_any_abuse_re() -> re.Pattern[str] | None:
                 return _NOQA_ANY_ABUSE_RE
         # marker 未登记在 registry
         return None
-    except Exception:
+    except Exception:  # noqa: BLE001
         return None
 
 

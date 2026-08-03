@@ -746,6 +746,15 @@ def cmd_batch(
             print(f"[DRY-RUN] {len(results)} ops previewed, transaction rolled back")
         else:
             conn.commit()
+            # trae_054 v1.6.0 STEP0: 写入后自动 PG 备份（backup_pg_architecture 事件触发）
+            try:
+                try:
+                    from scripts.governance.meta.backup_runtime_state import backup_pg_architecture
+                except ImportError:
+                    from meta.backup_runtime_state import backup_pg_architecture
+                backup_pg_architecture(throttle_seconds=60)
+            except Exception as _e:  # noqa: BLE001
+                print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
     except Exception:
         conn.rollback()
         raise
@@ -943,6 +952,15 @@ build_status 状态机（单调推进，禁止跳态）：
             conn.commit()
             if result:
                 print(json.dumps(result, ensure_ascii=False, indent=2))
+            # trae_054 v1.6.0 STEP0: 写入后自动 PG 备份（backup_pg_architecture 事件触发）
+            try:
+                try:
+                    from scripts.governance.meta.backup_runtime_state import backup_pg_architecture
+                except ImportError:
+                    from meta.backup_runtime_state import backup_pg_architecture
+                backup_pg_architecture(throttle_seconds=60)
+            except Exception as _e:  # noqa: BLE001
+                print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
     except ValueError as e:
         conn.rollback()
         print(f"ERROR: {e}", file=sys.stderr)

@@ -292,7 +292,7 @@ GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcemen
 # keep-N 退役计数——独立保留最新若干份，避免被自动保留策略挤出丢失回滚安全快照。
 # 消费方：backup_runtime_state._is_protected_backup + retire_tmp_artifacts._is_protected_pg_backup
 # 真源唯一收敛点（原两文件各定义一份副本，漂移风险——治本收敛至此，禁止他处重定义）。
-PROTECTED_PG_BACKUP_PREFIXES: tuple[str, ...] = ("depgraph_pre_", "depgraph_pinned_")
+PROTECTED_PG_BACKUP_PREFIXES: tuple[str, ...] = ("architecture_pre_", "architecture_pinned_", "depgraph_pre_", "depgraph_pinned_")
 
 EXIT_PASS: int = 0
 EXIT_FINDINGS: int = 1

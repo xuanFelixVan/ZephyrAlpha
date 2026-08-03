@@ -626,6 +626,15 @@ def _execute_ops(ops: list[dict], dry_run: bool = False) -> int:
             else:
                 conn.commit()
                 print(json.dumps(results, ensure_ascii=False, indent=2, default=str))
+                # trae_054 v1.6.0 STEP0: 写入后自动 PG 备份（backup_pg_architecture 事件触发）
+                try:
+                    try:
+                        from scripts.governance.meta.backup_runtime_state import backup_pg_architecture
+                    except ImportError:
+                        from meta.backup_runtime_state import backup_pg_architecture
+                    backup_pg_architecture(throttle_seconds=60)
+                except Exception as _e:  # noqa: BLE001
+                    print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
                 # 真源写入成功 → 自动派生重生成（编排器查 generator_registry.yaml，§2.3 派生关系）
                 # 生成失败不阻断 apply（apply 是真源，生成是派生）
                 # 生成器自动重生成（reconcile_generators §reconcile_async 非阻塞）：

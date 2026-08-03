@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/meta/backup_runtime_state.py | §
 # [MODULE] scripts.governance.meta.backup_runtime_state
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance.meta.__init__; zephyr.governance.depgraph_schema (_build_pg_dsn, backup_pg_depgraph 函数)
-# [CONSUMERS] scripts.governance.apply_depgraph (backup_pg_depgraph 事件触发入口); tests/dr/test_restore_from_backup.py
+# [DEPENDENCIES] scripts.governance.meta.__init__; zephyr.governance.depgraph_schema (_build_pg_dsn, backup_pg_architecture 函数)
+# [CONSUMERS] scripts.governance.apply_depgraph/apply_battle_map/apply_decisiongraph/apply_dataflowgraph (backup_pg_architecture 事件触发入口); tests/dr/test_restore_from_backup.py
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS]
@@ -21,12 +21,14 @@ DEPRECATED（ARCH-041）：git history 已是 yaml/jsonl 文件真源（director
 物理快照违反真源唯一原则。本脚本默认输出路径已从 meta/_backups/（deprecated）改为
 tmp/runtime_backups/（临时目录，不进 git）。
 
-PG depgraph 备份已实现（ARCH-041 §5.33.1 治本）：backup_pg_depgraph() 函数。
-触发方式：apply_depgraph.py 成功修改 depgraph 后自动调用（事件触发）。
+PG 架构库备份已实现（ARCH-041 §5.33.1 治本 v2 扩展）：backup_pg_architecture() 函数，
+覆盖四图 19 张 DB 真源表（depgraph 11 + battle_map 3 + decisiongraph 2 + dataflowgraph 3）。
+触发方式：apply_depgraph/apply_battle_map/apply_decisiongraph/apply_dataflowgraph
+成功修改架构数据后自动调用（事件触发）。
 
 .runtime/ handoffs+reconcile_reports 备份已实现（5.33.7 治本）：backup_runtime_handoffs()
 函数。.runtime/ 被 .gitignore 整目录忽略（git 非真源），需独立物理备份；
-保留最近 10 份（对齐 backup_pg_depgraph 标杆），RPO/RTO 真源见 config/dr_policy.yaml。
+保留最近 10 份（对齐 backup_pg_architecture 标杆），RPO/RTO 真源见 config/dr_policy.yaml。
 
 YAML/JSONL 物理快照已删除（ARCH-041 + AI-03 P5 治本）：git history 是 yaml/jsonl
 文件真源（directory_contract L740），物理快照违反真源唯一原则且无清理机制导致无限累积。
@@ -41,7 +43,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 运行时状态备份 — PG depgraph + .runtime/handoffs 物理备份（灾备 §33）
+description: 运行时状态备份 — PG 架构库（四图19表）+ .runtime/handoffs 物理备份（灾备 §33）
 dimensions:
 - D1
 priority: P1
@@ -77,9 +79,30 @@ DEFAULT_BACKUP_DIR = REPO_ROOT / "tmp" / "runtime_backups"
 # 保留计数，独立保留最新 _PROTECTED_KEEP 份，避免被自动保留策略挤出丢失安全快照。
 _PROTECTED_KEEP = 5
 
-# §5.160.2 SQL 集中化：depgraph 备份导出 SQL（提取到模块级常量，禁裸 SQL 字面量）
-_SQL_DUMP_NODES = "SELECT * FROM nodes ORDER BY node_id"
-_SQL_DUMP_EDGES = "SELECT * FROM edges ORDER BY edge_id"
+# §5.160.2 SQL 集中化：架构库备份导出 SQL（提取到模块级常量，禁裸 SQL 字面量）
+# ARCH-041 §5.33.1 治本 v2 扩展（2026-08-03）：从 depgraph 2 表扩展到四图 19 张 DB 真源表。
+#   - depgraph (11 表)：nodes/edges/nodes_metadata/edges_metadata/domains/domain_dependencies/
+#       domain_mapping/rule_bindings/blueprint_links/nodes_archive_module_lifecycle/domain_events
+#   - battle_map (3 表)：battle_map_steps/battle_map_anchors/battle_map_edges
+#   - decisiongraph (2 表，DB 真源；decision_layers/tracks 是 YAML 派生不备份)
+#   - dataflowgraph (3 表，DB 真源；dataflow_runs 空表/metadata 派生不备份)
+# 排除原则：仅备份 DB 真源表，YAML 缓存表/视图/空表不备份（真源收敛原则）。
+_ARCHITECTURE_TABLES: list[str] = [
+    # depgraph (11 表)
+    "nodes", "edges", "nodes_metadata", "edges_metadata",
+    "domains", "domain_dependencies", "domain_mapping",
+    "rule_bindings", "blueprint_links", "nodes_archive_module_lifecycle",
+    "domain_events",
+    # battle_map (3 表)
+    "battle_map_steps", "battle_map_anchors", "battle_map_edges",
+    # decisiongraph (2 表，DB 真源；decision_layers/tracks 是 YAML 派生不备份)
+    "decision_nodes", "decision_edges",
+    # dataflowgraph (3 表，DB 真源；dataflow_runs 空表/metadata 派生不备份)
+    "dataflow_datasets", "dataflow_edges", "dataflow_jobs",
+]
+
+# §5.160.2 SQL 集中化：预生成各表的 SELECT SQL（table 是 _ARCHITECTURE_TABLES 硬编码常量，无注入风险）
+_SQL_DUMP_TABLES: dict[str, str] = {t: f"SELECT * FROM {t}" for t in _ARCHITECTURE_TABLES}
 
 
 def _is_protected_backup(name: str) -> bool:
@@ -91,8 +114,8 @@ def _is_protected_backup(name: str) -> bool:
 def _backup_lock(lock_path: Path, *, label: str):
     """非阻塞跨进程 try-lock——序列化备份临界区，防并发冗余快照（AI-03 W1 治本）。
 
-    病根：backup_pg_depgraph 的 throttle 仅检查 existing[-1] mtime，无文件锁，
-    并发 apply_depgraph 调用竞态绕过节流（实测 71s 内产生 5 份冗余 depgraph 快照）。
+    病根：backup_pg_architecture 的 throttle 仅检查 existing[-1] mtime，无文件锁，
+    并发 apply 调用竞态绕过节流（实测 71s 内产生 5 份冗余 architecture 快照）。
 
     与 _concurrency.FileLock 的区别（非重复造轮子）：
       FileLock = 阻塞轮询锁（等待获取，适合同文件读写互斥）；
@@ -199,24 +222,75 @@ def _is_pid_alive(pid: int) -> bool:
             return False
 
 
-# ── PG depgraph 备份（ARCH-041 §5.33.1 治本）──────────────────────────────
+# ── PG 架构库备份（ARCH-041 §5.33.1 治本 v2 扩展）─────────────────────────
 # pg_dump 不可用时的 fallback：用 psycopg2 查询导出为 JSON。
-# 触发方式：apply_depgraph.py 成功修改 depgraph 后自动调用（事件触发，非时间触发）。
+# 触发方式：apply_depgraph/apply_battle_map/apply_decisiongraph/apply_dataflowgraph
+#   成功修改架构数据后自动调用（事件触发，非时间触发）。
 # 自动清理：保留最近 max_backups 个备份。
+# v2 扩展（2026-08-03）：从 depgraph 2 表（nodes/edges）扩展到四图 19 张 DB 真源表。
 
 
-def backup_pg_depgraph(max_backups: int = 10, throttle_seconds: int = 0) -> str | None:
-    """备份 PG depgraph 数据（nodes + edges 表）到 tmp/pg_backups/。
+def _export_architecture_tables(cur) -> dict[str, dict]:
+    """导出四图架构真源表（_ARCHITECTURE_TABLES，19 表）为 dict。
 
-    ARCH-041 §5.33.1 治本：PG depgraph 无备份脚本，此处补强。
+    从 backup_pg_architecture 提取（§5.158 NO-HIGH-COMPLEXITY 治本：降低主函数复杂度）。
+    缺失表优雅跳过（psycopg2.UndefinedTable），不阻断整体备份。
+
+    Args:
+        cur: psycopg2 cursor（已连接）
+
+    Returns:
+        {table_name: {"count": N, "rows": [...]}} 字典
+    """
+    from psycopg2.errors import UndefinedTable
+
+    tables_data: dict[str, dict] = {}
+    for table in _ARCHITECTURE_TABLES:
+        try:
+            cur.execute(_SQL_DUMP_TABLES[table])
+            columns = [desc[0] for desc in cur.description]
+            rows = [dict(zip(columns, row, strict=False)) for row in cur.fetchall()]
+            tables_data[table] = {"count": len(rows), "rows": rows}
+        except UndefinedTable:
+            # 表不存在（如新装环境未初始化某图 schema）——跳过，不阻断整体备份
+            print(f"[BACKUP-PG] WARN: 表 {table} 不存在，跳过", file=sys.stderr)
+    return tables_data
+
+
+def _prune_old_backups(backup_dir: Path, max_backups: int) -> None:
+    """清理旧备份：常规备份保留最近 max_backups 份，受保护备份独立保留 _PROTECTED_KEEP 份。
+
+    从 backup_pg_architecture 提取（§5.158 NO-HIGH-COMPLEXITY 治本：降低主函数复杂度）。
+    S3：受保护备份（architecture_pre_*/architecture_pinned_*）不占常规 keep-N 配额。
+    """
+    all_backups = sorted(backup_dir.glob("architecture_*.json"))
+    regular = [p for p in all_backups if not _is_protected_backup(p.name)]
+    protected = [p for p in all_backups if _is_protected_backup(p.name)]
+    for old in regular[:-max_backups]:
+        try:
+            old.unlink()
+        except OSError:
+            pass
+    for old in protected[:-_PROTECTED_KEEP]:
+        try:
+            old.unlink()
+        except OSError:
+            pass
+
+
+def backup_pg_architecture(max_backups: int = 10, throttle_seconds: int = 0) -> str | None:
+    """备份 PG 架构库数据（四图 19 张 DB 真源表）到 tmp/pg_backups/。
+
+    ARCH-041 §5.33.1 治本 v2 扩展：原 backup_pg_depgraph 仅备份 nodes/edges，
+    扩展为 backup_pg_architecture 覆盖四图架构真源表（depgraph+battle_map+decisiongraph+dataflowgraph）。
     使用 psycopg2 查询导出为 JSON（pg_dump 不可用时的 fallback）。
     自动清理旧备份（保留最近 max_backups 个）。
 
-    Obs2 治本（节流）：连续 apply_depgraph 调用会在数秒内产生大量冗余快照
-    （实测 14 秒 8 份）。DR 备份无需如此细粒度——depgraph 变更已由 git commit
-    追溯（depgraph_dirty.flag 标记；DB 数据备份由 backup_pg_depgraph 自动，trae_054 v1.6.0 STEP0），throttle_seconds
+    Obs2 治本（节流）：连续 apply 调用会在数秒内产生大量冗余快照
+    （实测 14 秒 8 份）。DR 备份无需如此细粒度——架构变更已由 git commit
+    追溯（depgraph_dirty.flag 标记；DB 数据备份由 backup_pg_architecture 自动，trae_054 v1.6.0 STEP0），throttle_seconds
     窗口内的多次变更合并为下一次备份即可，RPO 损失可接受（中间态可由 git 历史重放）。
-    默认 0 = 不节流（向后兼容测试）；apply_depgraph 事件触发入口传 60。
+    默认 0 = 不节流（向后兼容测试）；apply 事件触发入口传 60。
 
     Args:
         max_backups: 保留的备份数量
@@ -237,24 +311,28 @@ def backup_pg_depgraph(max_backups: int = 10, throttle_seconds: int = 0) -> str 
     backup_dir = REPO_ROOT / "tmp" / "pg_backups"
     backup_dir.mkdir(parents=True, exist_ok=True)
 
-    # AI-03 W1 治本：throttle+备份临界区加非阻塞跨进程锁，防并发 apply_depgraph
+    # AI-03 W1 治本：throttle+备份临界区加非阻塞跨进程锁，防并发 apply
     # 调用竞态绕过节流（原仅 mtime 检查无锁，实测 71s 产生 5 份冗余快照）。
     # 锁内完成 throttle 检查+备份写入+保留清理，确保节流判断基于已提交的最新快照。
     lock_path = backup_dir / ".backup_pg.lock"
-    with _backup_lock(lock_path, label="pg_depgraph") as got_lock:
+    with _backup_lock(lock_path, label="pg_architecture") as got_lock:
         if not got_lock:
             print(
-                "[BACKUP-PG] SKIP: 另一进程正在备份 depgraph，跳过并发冗余快照",
+                "[BACKUP-PG] SKIP: 另一进程正在备份架构库，跳过并发冗余快照",
                 file=sys.stderr,
             )
-            existing = sorted(p for p in backup_dir.glob("depgraph_*.json") if not _is_protected_backup(p.name))
+            existing = sorted(
+                p for p in backup_dir.glob("architecture_*.json") if not _is_protected_backup(p.name)
+            )
             return str(existing[-1]) if existing else None
 
         # Obs2 治本节流：距上次备份不足 throttle_seconds 则跳过冗余快照。
         # DR 备份目的=灾难恢复（非版本控制），git commit 已提供变更追溯。
-        # S3：排除受保护人工备份（depgraph_pre_*/depgraph_pinned_*），其不应抑制常规备份节流。
+        # S3：排除受保护人工备份（architecture_pre_*/architecture_pinned_*），其不应抑制常规备份节流。
         if throttle_seconds > 0:
-            existing = sorted(p for p in backup_dir.glob("depgraph_*.json") if not _is_protected_backup(p.name))
+            existing = sorted(
+                p for p in backup_dir.glob("architecture_*.json") if not _is_protected_backup(p.name)
+            )
             if existing:
                 try:
                     import time as _time
@@ -272,31 +350,20 @@ def backup_pg_depgraph(max_backups: int = 10, throttle_seconds: int = 0) -> str 
                     pass  # stat 失败则不节流，继续备份（保守：宁可多备不漏）
 
         timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-        backup_path = backup_dir / f"depgraph_{timestamp}.json"
+        backup_path = backup_dir / f"architecture_{timestamp}.json"
 
         try:
             conn = psycopg2.connect(**_build_pg_dsn())
             cur = conn.cursor()
 
-            # 导出 nodes 表
-            cur.execute(_SQL_DUMP_NODES)
-            columns = [desc[0] for desc in cur.description]
-            nodes = [dict(zip(columns, row, strict=False)) for row in cur.fetchall()]
-
-            # 导出 edges 表
-            cur.execute(_SQL_DUMP_EDGES)
-            columns = [desc[0] for desc in cur.description]
-            edges = [dict(zip(columns, row, strict=False)) for row in cur.fetchall()]
+            tables_data = _export_architecture_tables(cur)
 
             conn.close()
 
             backup_data = {
                 "timestamp": timestamp,
-                "source": "depgraph (PostgreSQL)",
-                "tables": {
-                    "nodes": {"count": len(nodes), "rows": nodes},
-                    "edges": {"count": len(edges), "rows": edges},
-                },
+                "source": "architecture (PostgreSQL) — depgraph+battle_map+decisiongraph+dataflowgraph",
+                "tables": tables_data,
             }
 
             backup_path.write_text(
@@ -304,36 +371,28 @@ def backup_pg_depgraph(max_backups: int = 10, throttle_seconds: int = 0) -> str 
                 encoding="utf-8",
             )
 
-            # 自动清理旧备份（S3：受保护备份独立保留，不占常规 keep-N 配额）
-            all_backups = sorted(backup_dir.glob("depgraph_*.json"))
-            regular = [p for p in all_backups if not _is_protected_backup(p.name)]
-            protected = [p for p in all_backups if _is_protected_backup(p.name)]
-            for old in regular[:-max_backups]:
-                try:
-                    old.unlink()
-                except OSError:
-                    pass
-            for old in protected[:-_PROTECTED_KEEP]:
-                try:
-                    old.unlink()
-                except OSError:
-                    pass
+            _prune_old_backups(backup_dir, max_backups)
 
+            table_counts = ", ".join(f"{t}={d['count']}" for t, d in tables_data.items())
             print(
-                f"[BACKUP-PG] depgraph 备份完成: {backup_path.relative_to(REPO_ROOT)} "
-                f"(nodes={len(nodes)}, edges={len(edges)})",
+                f"[BACKUP-PG] 架构库备份完成: {backup_path.relative_to(REPO_ROOT)} "
+                f"({len(tables_data)}/{len(_ARCHITECTURE_TABLES)} 表: {table_counts})",
                 file=sys.stderr,
             )
             return str(backup_path)
-        except Exception as e:  # noqa: BLE001  # DR 安全网：备份失败须降级为日志+返回 None，绝不中断 apply_depgraph 主流程
+        except Exception as e:  # noqa: BLE001  # DR 安全网：备份失败须降级为日志+返回 None，绝不中断 apply 主流程
             print(f"[BACKUP-PG] ERROR: {e}", file=sys.stderr)
             return None
+
+
+# 向后兼容别名（deprecated）：旧代码可能 import backup_pg_depgraph
+backup_pg_depgraph = backup_pg_architecture
 
 
 # ── .runtime/ 状态备份（5.33.7 治本）──────────────────────────────────────
 # .runtime/ 被 .gitignore 整目录忽略（git 非真源），handoffs/reconcile_reports
 # 丢失无法从 git 恢复。此处补强物理备份：tmp/runtime_backups/runtime_handoffs_<ts>/，
-# 保留最近 max_backups 份（对齐 backup_pg_depgraph 标杆）。
+# 保留最近 max_backups 份（对齐 backup_pg_architecture 标杆）。
 # RPO/RTO 量化目标唯一真源：config/dr_policy.yaml（runtime_state 条目）。
 
 RUNTIME_STATE_DIRS = (".runtime/handoffs", ".runtime/reconcile_reports")
@@ -348,10 +407,10 @@ def backup_runtime_handoffs(
     """备份 .runtime/handoffs/ + .runtime/reconcile_reports/ 到 tmp/runtime_backups/。
 
     5.33.7 治本：.runtime/ 无备份路径（git 忽略 + 无物理快照）。
-    自动清理旧备份（保留最近 max_backups 份，对齐 backup_pg_depgraph 标杆）。
+    自动清理旧备份（保留最近 max_backups 份，对齐 backup_pg_architecture 标杆）。
 
     AI-03 W2 治本：增加 throttle_seconds 节流 + 非阻塞跨进程锁，对齐
-    backup_pg_depgraph 的 Obs2 节流设计（原 runtime_handoffs 完全无节流，
+    backup_pg_architecture 的 Obs2 节流设计（原 runtime_handoffs 完全无节流，
     实测 4 分钟内连续手动调用产生 3 份×2204 文件的冗余快照）。
 
     Args:
@@ -370,7 +429,7 @@ def backup_runtime_handoffs(
         print("[BACKUP-RUNTIME] .runtime/ 源目录均不存在，跳过", file=sys.stderr)
         return None
 
-    # AI-03 W2 治本：throttle+备份临界区加非阻塞跨进程锁（对齐 backup_pg_depgraph）
+    # AI-03 W2 治本：throttle+备份临界区加非阻塞跨进程锁（对齐 backup_pg_architecture）
     lock_path = Path(backup_root) / ".backup_runtime.lock"
     with _backup_lock(lock_path, label="runtime_handoffs") as got_lock:
         if not got_lock:

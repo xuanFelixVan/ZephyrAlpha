@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] --ci 模式发现纯 shim 返回 EXIT_FINDINGS(2)；--warn-only 模式返回 EXIT_PASS(0)+告警
-# [TESTS] python scripts/governance/d7_code/check_pure_shim.py --ci <staged_files>
+# [TESTS] python scripts/governance/d7_code/check_pure_shim.py --ci --staged <staged_files>; tests/governance/scripts_governance/test_staged_walk.py
 # [A_module] module_id=MOD-GOV_SCRIPTS | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  合法 manual CLI 检测器：pre-commit hook (GATE-NO-PURE-SHIM) + GitCommitGateway._check_pure_shim 按需调用，非常驻服务
