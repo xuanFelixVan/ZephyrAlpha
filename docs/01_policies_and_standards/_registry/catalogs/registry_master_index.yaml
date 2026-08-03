@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-03T14:03:59Z
+# 自动生成于 2026-08-03T15:55:29Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-03T14:03:59Z'
+generated_at: '2026-08-03T15:55:29Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 33
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 294
+  entry_count: 295
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -69,7 +69,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 133
+  entry_count: 132
   status: active
 - registry_id: PS-REG-019
   name: 声明式契约跟踪登记表
@@ -141,7 +141,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 130
+  entry_count: 133
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map

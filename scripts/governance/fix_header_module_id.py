@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_module] module_id=MOD-GOV_SCRIPTS | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 

@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-03'
-total_scripts: 643
+total_scripts: 644
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -824,7 +824,7 @@ scripts:
   dimensions: []
 - name: governance/fix_depgraph_module_id.py
   path: governance/fix_depgraph_module_id.py
-  description: 针对权威校验器 is_valid_module_id（裁定#208 三轨制）判定 BAD 的 blueprint_id 节点。
+  description: 针对权威校验器 is_valid_module_id（裁定#208 三轨制）判定 BAD 的 28 个 production 节点：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4345,6 +4345,14 @@ scripts:
 - name: governance/_shared/encoding.py
   path: governance/_shared/encoding.py
   description: encoding.py — UTF-8 编码安全工具
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_shared/file_lock.py
+  path: governance/_shared/file_lock.py
+  description: 问题：多个 reconciler（frontmatter_sync、code_index_sync、inventory_sync）对同一
   domain: governance
   execution_plane: warm-path
   status: registered
