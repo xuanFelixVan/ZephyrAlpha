@@ -20,19 +20,19 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 3547 | 95.0% |
-| design（设计态） | 185 | 5.0% |
+| production（生产态） | 3549 | 95.0% |
+| design（设计态） | 186 | 5.0% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3732** | **100%** |
+| **总计** | **3735** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4211 | 112.8% |
+| generated | 4214 | 112.8% |
 | stable | 1800 | 48.2% |
 | planned | 101 | 2.7% |
-| deprecated | 84 | 2.3% |
+| deprecated | 84 | 2.2% |
 
 ## 各域设计成熟度统计
 
@@ -53,7 +53,7 @@ ttl: permanent
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_CONTRACTS | 共享契约 | 0 | 0 | 0 | 0 | N/A |
 | D_CROSS_ASSET | 跨资产 | 7 | 7 | 0 | 0 | 100.0% |
-| D_DATA | 数据接入层 | 182 | 170 | 12 | 0 | 93.4% |
+| D_DATA | 数据接入层 | 183 | 170 | 13 | 0 | 92.9% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 13 | 0 | 35.0% |
 | D_DATA_GOV | 数据治理 | 10 | 10 | 0 | 0 | 100.0% |
 | D_DATA_SCRIPTS | 数据治理脚本 | 0 | 0 | 0 | 0 | N/A |
@@ -78,7 +78,7 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | 115 | 115 | 0 | 0 | 100.0% |
 | D_GOV_REPAIR | 治理修复 | 1 | 1 | 0 | 0 | 100.0% |
 | D_GOV_RULE | 规则治理 | 36 | 36 | 0 | 0 | 100.0% |
-| D_GOV_SCRIPTS | 脚本治理 | 418 | 418 | 0 | 0 | 100.0% |
+| D_GOV_SCRIPTS | 脚本治理 | 420 | 420 | 0 | 0 | 100.0% |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | 26 | 26 | 0 | 0 | 100.0% |
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 2 | 2 | 0 | 0 | 100.0% |

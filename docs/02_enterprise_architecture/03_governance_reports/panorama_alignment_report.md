@@ -10,9 +10,9 @@ ttl: permanent
 
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-08-04 11:16:45
+- 生成时间: 2026-08-04 12:37:42
 - 数据源: depgraph (PostgreSQL)
-- 四图节点数: depgraph=909 / dataflow=270 / decision=693 / blueprint=164
+- 四图节点数: depgraph=910 / dataflow=271 / decision=693 / blueprint=164
 - 问题总数: 52
   - 孤儿（仅一图）: 51
   - 状态漂移（blueprint 缺 design_maturity）: 0

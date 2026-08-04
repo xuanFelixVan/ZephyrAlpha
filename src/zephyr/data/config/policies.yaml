@@ -164,7 +164,6 @@ tqcenter:
     requires_process: tdx client
     note: tqcenter 非 pip 安装，需 sys.path.insert 注入；由 sector_kline_downloader.py 独立脚本触发
 fred:
-  # #ARCH-EDB-EXPAND（2026-08-04）：FRED + 世界银行免费宏观数据
   rpm: 60
   concurrency: 1
   max_retries: 3
@@ -183,4 +182,21 @@ fred:
     requires_vpn: true
     fred_api_key_optional: true
     worldbank_no_key: true
-    note: 海外站点国内访问可能需 VPN；FRED key 免费注册；与 akshare macro_data 共表，indicator_name 前缀 FRED_/WB_ 区分
+    note: 海外站点，国内访问可能需 VPN；FRED key 免费注册；与 akshare macro_data 共表 c1_market.macro_data，indicator_name
+      前缀 FRED_/WB_ 区分
+eia:
+  rpm: 500
+  concurrency: 1
+  max_retries: 2
+  backoff: exponential
+  initial_wait_sec: 2.0
+  retry_on:
+  - ConnectionError
+  - TimeoutError
+  session_ttl_sec: 0
+  relogin_on_auth_error: false
+  extra:
+    eia_api_version: v2
+    requires_vpn: true
+    note: 海外站点，国内访问可能需 VPN；EIA key 免费注册；与 akshare/FRED macro_data 共表 c1_market.macro_data，indicator_name
+      前缀 EIA_ 区分

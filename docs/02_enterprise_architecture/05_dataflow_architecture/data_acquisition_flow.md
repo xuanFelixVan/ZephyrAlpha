@@ -21,7 +21,7 @@ ttl: permanent
 
 ## 一句话说清楚（自动生成 · 生成器: generate_data_acquisition_flow.py）
 
-系统每天从 **12 个数据源**采集 **146 个任务**，灌进 ClickHouse 的 **2 个库**：
+系统每天从 **14 个数据源**采集 **151 个任务**，灌进 ClickHouse 的 **2 个库**：
 
 - `c1_market` — 行情库（K线、指数、期货、资金、估值等）
 - `c3_fundamental` — 基本面库（财务报表、新闻、股东、分红等）
@@ -38,13 +38,15 @@ ttl: permanent
 | **tickflow**（TickFlow） | 4 | 美股K线、美股指数 |
 | **tqcenter**（通达信tqcenter） | 4 | 板块K线、板块实时快照、板块成分股映射 |
 | **tushare**（Tushare） | 3 | 新闻快讯、证券新闻 |
+| fred | 3 | - |
 | **rss**（RSS） | 2 | 财经新闻 |
 | **baostock**（BaoStock） | 2 | 交易日历、沪深300成分股 |
+| eia | 2 | - |
 | **ifind**（同花顺iFind） | 1 | 资金流向、股权质押、行业分类 |
 | cls | 1 | - |
 | eastmoney_news | 1 | - |
 | backfill | 1 | - |
-| **合计** | **146** | |
+| **合计** | **151** | |
 
 ---
 
@@ -266,7 +268,21 @@ ttl: permanent
 
 ---
 
-### 7. rss（RSS）— 2 个任务
+### 7. fred（fred）— 3 个任务
+
+**一句话**：（待补充）
+
+**采集明细**：
+
+| 任务 | 灌到哪张表 | 什么时候采 | 说明 |
+|------|-----------|-----------|------|
+| macro_fred_full_refresh | c1_market.macro_data | weekend_calibration | FRED宏观数据全量刷新 |
+| macro_fred_incremental | c1_market.macro_data | event_driven | FRED宏观数据增量 |
+| macro_worldbank_full_refresh | c1_market.macro_data | weekend_calibration | 世界银行国际宏观数据全量刷新 |
+
+---
+
+### 8. rss（RSS）— 2 个任务
 
 **一句话**：RSS爬虫，采财经新闻。
 
@@ -279,7 +295,7 @@ ttl: permanent
 
 ---
 
-### 8. baostock（BaoStock）— 2 个任务
+### 9. baostock（BaoStock）— 2 个任务
 
 **一句话**：开源数据源，采交易日历和沪深300成分股。
 
@@ -292,7 +308,20 @@ ttl: permanent
 
 ---
 
-### 9. ifind（同花顺iFind）— 1 个任务
+### 10. eia（eia）— 2 个任务
+
+**一句话**：（待补充）
+
+**采集明细**：
+
+| 任务 | 灌到哪张表 | 什么时候采 | 说明 |
+|------|-----------|-----------|------|
+| eia_full_refresh | c1_market.macro_data | weekend_calibration | EIA能源数据全量刷新 |
+| eia_petroleum_incremental | c1_market.macro_data | daily_calibration | EIA石油数据增量 |
+
+---
+
+### 11. ifind（同花顺iFind）— 1 个任务
 
 **一句话**：付费数据源，采资金流向、股权质押、行业分类等 iFind 独有数据。
 
@@ -304,7 +333,7 @@ ttl: permanent
 
 ---
 
-### 10. cls（cls）— 1 个任务
+### 12. cls（cls）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -316,7 +345,7 @@ ttl: permanent
 
 ---
 
-### 11. eastmoney_news（eastmoney_news）— 1 个任务
+### 13. eastmoney_news（eastmoney_news）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -328,7 +357,7 @@ ttl: permanent
 
 ---
 
-### 12. backfill（backfill）— 1 个任务
+### 14. backfill（backfill）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -352,14 +381,15 @@ ttl: permanent
 | 月初 09:00 | 月初 09:00 | 17 | 交易日历、股票列表、行业分类、全量刷新 |
 | nightly_financial | nightly_financial | 8 | - |
 | intraday_realtime | intraday_realtime | 13 | - |
-| event_driven | event_driven | 11 | - |
+| event_driven | event_driven | 12 | - |
 | intraday_minute | intraday_minute | 15 | - |
-| weekend_calibration | weekend_calibration | 21 | - |
+| weekend_calibration | weekend_calibration | 24 | - |
+| daily_calibration | daily_calibration | 1 | - |
 | news_slow | news_slow | 2 | - |
 | auction_highfreq | auction_highfreq | 2 | - |
 | weekend_backfill | weekend_backfill | 1 | - |
 | intraday_sector | intraday_sector | 5 | - |
-| **合计** | | **146** | |
+| **合计** | | **151** | |
 
 ---
 
@@ -382,12 +412,14 @@ flowchart TD
         S3["(生产态 / production) tickflow / TickFlow<br/>美股数据源，采美股日K线和美股指数（ETF替代）。<br/>数据源 / data-source（4任务）"]
         S4["(生产态 / production) tqcenter / 通达信tqcenter<br/>880xxx板块数据源，采板块K线、板块实时快照、板块<br/>成分股映射；99只推送+584只轮询混合模式，动态5因<br/>子排名调整推送池。<br/>数据源 / data-source（4任务）"]
         S5["(生产态 / production) tushare / Tushare<br/>付费数据源，采新闻快讯和证券新闻。<br/>数据源 / data-source（3任务）"]
-        S6["(生产态 / production) rss / RSS<br/>RSS爬虫，采财经新闻。<br/>数据源 / data-source（2任务）"]
-        S7["(生产态 / production) baostock / BaoStock<br/>开源数据源，采交易日历和沪深300成分股。<br/>数据源 / data-source（2任务）"]
-        S8["(生产态 / production) ifind / 同花顺iFind<br/>付费数据源，采资金流向、股权质押、行业分类等<br/>iFind 独有数据。<br/>数据源 / data-source（1任务）"]
-        S9["(生产态 / production) cls<br/>数据源 / data-source（1任务）"]
-        S10["(生产态 / production) eastmoney_news<br/>数据源 / data-source（1任务）"]
-        S11["(生产态 / production) backfill<br/>数据源 / data-source（1任务）"]
+        S6["(生产态 / production) fred<br/>数据源 / data-source（3任务）"]
+        S7["(生产态 / production) rss / RSS<br/>RSS爬虫，采财经新闻。<br/>数据源 / data-source（2任务）"]
+        S8["(生产态 / production) baostock / BaoStock<br/>开源数据源，采交易日历和沪深300成分股。<br/>数据源 / data-source（2任务）"]
+        S9["(生产态 / production) eia<br/>数据源 / data-source（2任务）"]
+        S10["(生产态 / production) ifind / 同花顺iFind<br/>付费数据源，采资金流向、股权质押、行业分类等<br/>iFind 独有数据。<br/>数据源 / data-source（1任务）"]
+        S11["(生产态 / production) cls<br/>数据源 / data-source（1任务）"]
+        S12["(生产态 / production) eastmoney_news<br/>数据源 / data-source（1任务）"]
+        S13["(生产态 / production) backfill<br/>数据源 / data-source（1任务）"]
     end
 
     subgraph clickhouse["ClickHouse 数据库 / Databases"]
@@ -397,14 +429,16 @@ flowchart TD
 
     S1 -->|采集 / ingests| D0
     S1 -->|采集 / ingests| D1
-    S11 -->|采集 / ingests| D0
-    S7 -->|采集 / ingests| D0
-    S9 -->|采集 / ingests| D1
-    S10 -->|采集 / ingests| D1
+    S13 -->|采集 / ingests| D0
     S8 -->|采集 / ingests| D0
+    S11 -->|采集 / ingests| D1
+    S12 -->|采集 / ingests| D1
+    S9 -->|采集 / ingests| D0
+    S6 -->|采集 / ingests| D0
+    S10 -->|采集 / ingests| D0
     S0 -->|采集 / ingests| D0
     S0 -->|采集 / ingests| D1
-    S6 -->|采集 / ingests| D1
+    S7 -->|采集 / ingests| D1
     S2 -->|采集 / ingests| D0
     S3 -->|采集 / ingests| D0
     S4 -->|采集 / ingests| D0
@@ -414,7 +448,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11 external_prod
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13 external_prod
     class D0,D1 production
 ```
 

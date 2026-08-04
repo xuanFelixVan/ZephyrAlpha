@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共264项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共265项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -19,15 +19,15 @@ ttl: permanent
 
 | 资产类型 | 数量 | 真源 |
 |----------|------|------|
-| 外部数据源 | 15 | data_sources_registry.yaml |
+| 外部数据源 | 16 | data_sources_registry.yaml |
 | 数据源 API | 124 | data_source_apis_registry.yaml |
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 15 | infrastructure_components.yaml |
 | 契约资产 | 66 | cross_layer_contracts.yaml |
 | 配置项 | 34 | config/*.yaml |
-| 数据流作业 | 196 | dataflow_graph_registry.yaml |
+| 数据流作业 | 197 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
-| **合计** | **264** | |
+| **合计** | **265** | |
 
 ## 2. 外部数据源资产
 
@@ -39,6 +39,7 @@ ttl: permanent
 | DS-TQCENTER | tqcenter | commercial | market_data | 通达信 | active | 10 | 880xxx板块指数K线/板块成分股/板块实时快照(subscribe_hq推送独有) |
 | DS-TUSHARE | Tushare | commercial | market_data | Tushare | active | 0 | A股K线/财务/板块/基金/期货 |
 | DS-NEWSAPI | NewsAPI | commercial | news | NewsAPI.org | planned | 0 | 全球财经新闻 |
+| DS-FRED | FRED/世界银行 宏观数据 | open_source | macro_data | 美联储/世界银行 | active | 38 | 国际宏观经济指标（美国GDP/CPI/失业率/国债收益率/美元汇率/原油WTI/黄金/VIX；各国GDP/人口/进出口/通胀/FDI/外汇储备） |
 | DS-AKSHARE | AKShare | open_source | market_data | 开源社区 | active | 0 | A股/港股/美股/期货/宏观/新闻(部分接口被反爬) |
 | DS-BAOSTOCK | Baostock | open_source | market_data | 开源社区 | active | 0 | A股K线/财务/宏观(数据有延迟) |
 | DS-STOOQ | Stooq | open_source | market_data | Stooq.com | deprecated | 0 | 全球历史K线(已废弃) |
@@ -191,7 +192,7 @@ ttl: permanent
 | `config/risk_params.yaml` | 1.3 | 2026-08-04 |
 | `config/risk_register.yaml` | 9.1 | 2026-08-03 |
 | `config/sandbox_policy.yaml` | 1.5 | 2026-08-03 |
-| `config/secret_registry.yaml` | 22.8 | 2026-08-04 |
+| `config/secret_registry.yaml` | 23.1 | 2026-08-04 |
 | `config/sla_targets.yaml` | 0.9 | 2026-08-04 |
 | `config/sli_registry.yaml` | 2.8 | 2026-08-03 |
 | `config/tech_stack_manifest.yaml` | 5.9 | 2026-08-03 |
