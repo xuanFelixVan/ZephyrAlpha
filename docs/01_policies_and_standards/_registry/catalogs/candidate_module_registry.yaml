@@ -166004,6 +166004,202 @@ entries:
     last_review_outcome: "rejected,确认测试触发器误登记。test_trigger_B无blueprint_id+文件不存在,非业务模块,不应为depgraph业务节点.与CAND-TESTA-001同类,除非有明确测试需求,否则不再评估"
 
   # ----------------------------------------------------------
+  # CAND-EX004-001: MOD-EX-004 redis幂等性 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-05 | 幂等机制已由 MOD-INF-016 shared/infra/idempotency.py 承接（上移至基础设施层）
+  # ----------------------------------------------------------
+  - id: CAND-EX004-001
+    name: "MOD-EX-004 redis幂等性(重复幽灵节点)"
+    aliases: ["MOD-EX-004", "redis_idempotency", "redis幂等性"]
+    domain: D_EX_CORE
+    domain_status: active
+    domain_node_count: 17
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7451165,path=src/zephyr/ex_core/redis_idempotency/文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-004/不存在"}
+    description: "depgraph中blueprint_id=MOD-EX-004、path=src/zephyr/ex_core/redis_idempotency/的设计态节点,该目录不存在(幽灵)。幂等机制已由shared/infra/idempotency.py(MOD-INF-016,291行,RedisIdempotencyGateway+IdempotencyKey)上移至基础设施层通用承接。"
+    capability: ""
+    problem_it_solves: "(已解决)订单幂等性去重已由shared/infra/idempotency.py承接"
+    trigger_signals: []
+    keywords: ["redis_idempotency", "MOD-EX-004", "重复幽灵", "deprecated", "功能上移"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    design_admission:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-INF-016(节点8640073)"], evidence: "shared/infra/idempotency.py 291行,RedisIdempotencyGateway类+is_already_processed/handle_execution方法,stable,有测试tests/infrastructure/test_infra_idempotency.py.幂等机制已上移至基础设施层"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-05'
+    promoted_to: ""
+    source_draft: "depgraph 节点7451165(path=src/zephyr/ex_core/redis_idempotency/)"
+    source_section: "孤儿模块排查[B-补充]"
+    original_id: "MOD-EX-004"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点7451165 blueprint_id=MOD-EX-004 path=src/zephyr/ex_core/redis_idempotency/目录不存在=幽灵,build_status=deprecated) vs depgraph正确实现(MOD-INF-016 节点8640073 src/zephyr/shared/infra/idempotency.py stable 291行+RedisIdempotencyGateway).D_EX_CORE早期架构骨架模块,功能演进中上移至基础设施层.软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "MOD-INF-016(节点8640073,src/zephyr/shared/infra/idempotency.py,stable,291行)"
+    tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "功能上移"]
+    search_terms: ["mod-ex-004", "redis_idempotency", "重复幽灵节点"]
+    related_candidates: ["CAND-EX037-001", "CAND-EX051-001", "CAND-EX052-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-05'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认重复幽灵节点。幂等机制已由shared/infra/idempotency.py(MOD-INF-016)承接.文件不存在+功能已上移基础设施层.软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-EX037-001: MOD-EX-037 蓝图Implementer 概念错误节点（rejected，四问①④挂——功能无需求+幽灵）
+  # 弃用时间: 2026-08-05 | D_EX_CORE 做订单执行，不需要"把蓝图转代码"功能（概念错误）
+  # ----------------------------------------------------------
+  - id: CAND-EX037-001
+    name: "MOD-EX-037 蓝图Implementer(概念错误节点)"
+    aliases: ["MOD-EX-037", "blueprint_implementer", "BlueprintImplementer", "蓝图Implementer"]
+    domain: D_EX_CORE
+    domain_status: active
+    domain_node_count: 17
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点8005455,path=src/zephyr/ex_core/blueprint_implementer.py文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-037/不存在"}
+    description: "depgraph中blueprint_id=MOD-EX-037、path=src/zephyr/ex_core/blueprint_implementer.py的设计态节点,该文件不存在(幽灵)。D_EX_CORE(执行核心域)承载订单执行决策,不需要把设计蓝图自动转代码的BlueprintImplementer功能——概念错误。rg全项目搜blueprint_implementer/BlueprintImplementer 0结果,execute_blueprint/implement_blueprint动词 0结果。"
+    capability: ""
+    problem_it_solves: "(无真实痛点)D_EX_CORE做订单执行,不存在把蓝图转代码的需求"
+    trigger_signals: []
+    keywords: ["blueprint_implementer", "MOD-EX-037", "概念错误", "deprecated", "幽灵节点"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    design_admission:
+      q1_implemented: {result: true, equivalent_nodes: [], evidence: "rg全项目搜blueprint_implementer/BlueprintImplementer 0结果,execute_blueprint/implement_blueprint动词 0结果。该功能无任何实现也无任何消费者,属概念错误非功能缺失"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-05'
+    promoted_to: ""
+    source_draft: "depgraph 节点8005455(path=src/zephyr/ex_core/blueprint_implementer.py)"
+    source_section: "孤儿模块排查[B-补充]"
+    original_id: "MOD-EX-037"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点8005455 blueprint_id=MOD-EX-037 path=src/zephyr/ex_core/blueprint_implementer.py文件不存在=幽灵,build_status=deprecated) vs 全项目搜索(rg blueprint_implementer 0结果,rg execute_blueprint 0结果)。gate_reason标注依赖OMS+引擎+路由+报告,但D_EX_CORE做订单执行不需要蓝图转代码功能——早期架构骨架设想残留,概念错误。软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "无(D_EX_CORE不需要蓝图转代码功能)"
+    tags: ["概念错误", "deprecated", "rejected", "防误重新设计", "幽灵节点", "架构骨架残留"]
+    search_terms: ["mod-ex-037", "blueprint_implementer", "蓝图implementer"]
+    related_candidates: ["CAND-EX004-001", "CAND-EX051-001", "CAND-EX052-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-05'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认概念错误节点。D_EX_CORE做订单执行不需要蓝图转代码功能,全项目0引用,文件不存在=幽灵。软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-EX051-001: MOD-EX-051 值对象 分散实现幽灵节点（rejected，四问①挂——功能已分散实现）
+  # 弃用时间: 2026-08-05 | 值对象模式已分散在 trading_contracts dataclass 内联实现
+  # ----------------------------------------------------------
+  - id: CAND-EX051-001
+    name: "MOD-EX-051 值对象(分散实现幽灵节点)"
+    aliases: ["MOD-EX-051", "value_objects", "ValueObjects", "值对象"]
+    domain: D_EX_CORE
+    domain_status: active
+    domain_node_count: 17
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点8005444,path=src/zephyr/ex_core/value_objects.py文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-051/不存在"}
+    description: "depgraph中blueprint_id=MOD-EX-051、path=src/zephyr/ex_core/value_objects.py的设计态节点,该文件不存在(幽灵)。值对象(Value Object,不可变数据对象)模式已分散在trading_contracts各dataclass内联实现(如trading_contracts/order.py的OrderId/Order),无需独立模块集中管理。"
+    capability: ""
+    problem_it_solves: "(已解决)值对象已分散在trading_contracts的dataclass实现"
+    trigger_signals: []
+    keywords: ["value_objects", "MOD-EX-051", "分散实现", "deprecated", "幽灵节点"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    design_admission:
+      q1_implemented: {result: true, equivalent_nodes: ["trading_contracts/order.py"], evidence: "trading_contracts/order.py有OrderId/Order等dataclass(frozen=True不可变值对象),shared/contracts/下亦有大量dataclass/Pydantic BaseModel.值对象模式已分散在各contracts内联实现,无集中模块需求"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-05'
+    promoted_to: ""
+    source_draft: "depgraph 节点8005444(path=src/zephyr/ex_core/value_objects.py)"
+    source_section: "孤儿模块排查[B-补充]"
+    original_id: "MOD-EX-051"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点8005444 blueprint_id=MOD-EX-051 path=src/zephyr/ex_core/value_objects.py文件不存在=幽灵,build_status=deprecated) vs 现有实现(trading_contracts/order.py的OrderId/Order dataclass+shared/contracts/下大量dataclass)。值对象是DDD概念,但项目实际演进中已在各contracts内联实现,无需独立集中模块。D_EX_CORE早期架构骨架残留。软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "trading_contracts/order.py(OrderId/Order等)+shared/contracts/下dataclass(分散实现)"
+    tags: ["分散实现", "deprecated", "rejected", "防误重新设计", "幽灵节点", "架构骨架残留"]
+    search_terms: ["mod-ex-051", "value_objects", "值对象"]
+    related_candidates: ["CAND-EX004-001", "CAND-EX037-001", "CAND-EX052-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-05'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认分散实现。值对象已分散在trading_contracts/shared/contracts的dataclass内联实现,文件不存在=幽灵。软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-EX052-001: MOD-EX-052 工厂 分散实现幽灵节点（rejected，四问①挂——功能已分散实现）
+  # 弃用时间: 2026-08-05 | 工厂模式已分散在 shared/contracts/core/factories.py + trading_contracts/factories.py 实现
+  # ----------------------------------------------------------
+  - id: CAND-EX052-001
+    name: "MOD-EX-052 工厂(分散实现幽灵节点)"
+    aliases: ["MOD-EX-052", "factory", "Factory", "工厂"]
+    domain: D_EX_CORE
+    domain_status: active
+    domain_node_count: 17
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点8005445,path=src/zephyr/ex_core/factory.py文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-052/不存在"}
+    description: "depgraph中blueprint_id=MOD-EX-052、path=src/zephyr/ex_core/factory.py的设计态节点,该文件不存在(幽灵)。工厂模式(对象创建解耦)已分散在shared/contracts/core/factories.py(248行,OrderFactory/ExecutionReportFactory)和trading_contracts/factories.py(252行)实现,无需D_EX_CORE下独立工厂模块。"
+    capability: ""
+    problem_it_solves: "(已解决)工厂模式已分散在shared/contracts/core/factories.py和trading_contracts/factories.py实现"
+    trigger_signals: []
+    keywords: ["factory", "MOD-EX-052", "分散实现", "deprecated", "幽灵节点"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    design_admission:
+      q1_implemented: {result: true, equivalent_nodes: ["shared/contracts/core/factories.py", "trading_contracts/factories.py"], evidence: "shared/contracts/core/factories.py 248行有OrderFactory/ExecutionReportFactory,trading_contracts/factories.py 252行有ModelFactory等.工厂模式已分散在各模块内联实现,module_onboarding_scanner.py亦有factory_create逻辑.无集中D_EX_CORE工厂需求"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-05'
+    promoted_to: ""
+    source_draft: "depgraph 节点8005445(path=src/zephyr/ex_core/factory.py)"
+    source_section: "孤儿模块排查[B-补充]"
+    original_id: "MOD-EX-052"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点8005445 blueprint_id=MOD-EX-052 path=src/zephyr/ex_core/factory.py文件不存在=幽灵,build_status=deprecated) vs 现有实现(shared/contracts/core/factories.py 248行+trading_contracts/factories.py 252行+module_onboarding_scanner.py factory_create)。工厂模式是通用架构模式,项目实际演进中已分散在各模块内联实现,无需D_EX_CORE下独立集中工厂。D_EX_CORE早期架构骨架残留。软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "shared/contracts/core/factories.py(248行,OrderFactory/ExecutionReportFactory)+trading_contracts/factories.py(252行,分散实现)"
+    tags: ["分散实现", "deprecated", "rejected", "防误重新设计", "幽灵节点", "架构骨架残留"]
+    search_terms: ["mod-ex-052", "factory", "工厂"]
+    related_candidates: ["CAND-EX004-001", "CAND-EX037-001", "CAND-EX051-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-05'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认分散实现。工厂已由shared/contracts/core/factories.py(248行)+trading_contracts/factories.py(252行)分散实现,文件不存在=幽灵。软删除防误恢复"
+
+  # ----------------------------------------------------------
   # CAND-H1FS-001: H1 Factor Source / 信号端因子截面读取适配器（rejected，四问①②挂——功能已实现+无消费者）
   # 来源: depgraph 幽灵节点审查 (2026-08-02, TRAE-083 双源对比+四问过滤)
   # ----------------------------------------------------------
