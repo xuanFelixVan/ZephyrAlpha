@@ -291,6 +291,12 @@ class AkshareIngestProvider(IngestProviderBase):
     """
 
     source_name: str = "akshare"
+
+    # 东财 push2 反爬封锁标志：连续失败3次后置 True，后续直接跳东财走同花顺
+    # #ARCH-EM-ANTIBOT-FAILOVER：IP 被东财封锁时避免逐板块浪费时间重试
+    _em_push2_blocked: bool = False
+    _em_fail_count: int = 0
+
     meta: IngestProviderMeta = IngestProviderMeta(
         name="akshare",
         display_name="AKShare 免费开源",
@@ -2479,9 +2485,8 @@ class AkshareIngestProvider(IngestProviderBase):
         Returns:
             list of (trade_date, rank_type, rank, stock_code, stock_name, hot_value)
         """
-        import http.client
         import json as _json
-        from urllib.parse import urlencode
+        import requests as _requests
 
         # 人气榜和关注榜的 API 路径不同
         if rank_type == "hot_rank":
@@ -2496,58 +2501,60 @@ class AkshareIngestProvider(IngestProviderBase):
         else:
             return []
 
+        url = f"https://emappdata.eastmoney.com{path}"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Content-Type": "application/json",
+            "Referer": "https://guba.eastmoney.com/rank/",
+        }
+
         rows: list[tuple] = []
         page_no = 1
         total_pages = 1  # 先假设1页，根据响应更新
 
         while page_no <= total_pages:
-            payload = _json.dumps({
+            payload = {
                 "appId": app_id,
                 "globalId": global_id,
                 "marketType": "",
                 "pageNo": page_no,
                 "pageSize": page_size,
-            })
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                "Content-Type": "application/json",
-                "Referer": "https://guba.eastmoney.com/rank/",
             }
-            conn = http.client.HTTPSConnection("emappdata.eastmoney.com", 443, timeout=15)
             try:
-                conn.request("POST", path, body=payload, headers=headers)
-                resp = conn.getresponse()
-                if resp.status != 200:
+                resp = _requests.post(
+                    url, json=payload, headers=headers, timeout=(5, 10), proxies={}
+                )
+                if resp.status_code != 200:
                     self._log.warning(
-                        f"emappdata {rank_type} page={page_no} HTTP {resp.status}"
+                        f"emappdata {rank_type} page={page_no} HTTP {resp.status_code}"
                     )
                     break
-                body = resp.read().decode("utf-8")
-                data = _json.loads(body)
-                records = data.get("data", [])
-                if not records:
-                    break
-                for rec in records:
-                    rank = rec.get("rk")
-                    sc = rec.get("sc", "")
-                    # sc 格式如 "SZ300308"，转为标准代码 300308
-                    stock_code = sc[2:] if len(sc) > 2 and sc[:2] in ("SZ", "SH") else sc
-                    if rank is not None and stock_code:
-                        rows.append((
-                            iso_date, rank_type, int(rank),
-                            stock_code, "", None,  # stock_name 和 hot_value 留空
-                        ))
-                # 更新总页数
-                total_count = data.get("totalCount", len(records))
-                total_pages = (total_count + page_size - 1) // page_size
-                page_no += 1
-                # 限制最多 10 页，避免过度请求
-                if page_no > 10:
-                    break
-            finally:
-                conn.close()
+                data = resp.json()
+            except Exception as e:  # noqa: BLE001
+                self._log.warning(f"emappdata {rank_type} page={page_no} 请求失败: {e}")
+                break
+            records = data.get("data", [])
+            if not records:
+                break
+            for rec in records:
+                rank = rec.get("rk")
+                sc = rec.get("sc", "")
+                # sc 格式如 "SZ300308"，转为标准代码 300308
+                stock_code = sc[2:] if len(sc) > 2 and sc[:2] in ("SZ", "SH") else sc
+                if rank is not None and stock_code:
+                    rows.append((
+                        iso_date, rank_type, int(rank),
+                        stock_code, "", None,  # stock_name 和 hot_value 留空
+                    ))
+            # 更新总页数
+            total_count = data.get("totalCount", len(records))
+            total_pages = (total_count + page_size - 1) // page_size
+            page_no += 1
+            # 限制最多 10 页，避免过度请求
+            if page_no > 10:
+                break
             # 页间延迟，避免触发反爬（用 Event().wait 规避 PERM-TRIGGER 误判）
-            threading.Event().wait(0.5)
+            threading.Event().wait(0.3)
 
         return rows
 
@@ -2772,6 +2779,20 @@ class AkshareIngestProvider(IngestProviderBase):
         """
         import threading
         rows: list[tuple] = []
+
+        # 东财已被封锁时直接走同花顺，跳过东财尝试（省 ~17秒/板块）
+        if self._em_push2_blocked:
+            try:
+                rows = self._fetch_concept_cons_via_ths(board_code, board_name)
+                if rows:
+                    self._log.debug(
+                        f"概念板块 {board_name}({board_code}) 东财已封锁，同花顺直取: {len(rows)} 只"
+                    )
+                    return rows
+            except Exception:  # noqa: BLE001
+                pass
+            return []
+
         max_retries = 1  # 东财反爬封锁时重试无意义，1次失败立即降级到同花顺
         # 构造无重试 policy：东财 push2 被封锁时，5次重试纯属浪费时间
         no_retry_policy = SourcePolicy(
@@ -2798,6 +2819,14 @@ class AkshareIngestProvider(IngestProviderBase):
                     f"stock_board_concept_cons_em({board_name}) "
                     f"第{attempt+1}次失败: {e}"
                 )
+                # 记录东财失败，连续3次后封锁
+                self._em_fail_count += 1
+                if self._em_fail_count >= 3 and not self._em_push2_blocked:
+                    self._em_push2_blocked = True
+                    self._log.warning(
+                        f"东财 push2 连续失败 {self._em_fail_count} 次，"
+                        f"判定为IP封锁，后续板块直接走同花顺降级"
+                    )
         if not rows:
             self._log.info(
                 f"概念板块 {board_name}({board_code}) 东财失败，尝试同花顺降级"
@@ -2825,6 +2854,9 @@ class AkshareIngestProvider(IngestProviderBase):
         同花顺概念详情页 URL: https://q.10jqka.com.cn/gn/detail/code/{board_code}/
         页面 HTML 中包含成分股表格，用正则提取 6 位股票代码。
 
+        用 requests 库（已 patch trust_env=False 绕过系统代理）而非 http.client，
+        因 http.client 的 timeout 在 Windows 上 SSL 握手阶段不被尊重。
+
         Args:
             board_code: 同花顺概念板块代码（如 301558）
             board_name: 概念板块名称（仅用于日志）
@@ -2832,37 +2864,37 @@ class AkshareIngestProvider(IngestProviderBase):
         Returns:
             list of (board_code, symbol, data_source) 元组
         """
-        import http.client
         import re as _re
+        import requests as _requests
 
         rows: list[tuple] = []
-        conn = http.client.HTTPSConnection("q.10jqka.com.cn", 443, timeout=15)
+        url = f"https://q.10jqka.com.cn/gn/detail/code/{board_code}/"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                          "AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/120.0.0.0 Safari/537.36",
+            "Referer": "https://q.10jqka.com.cn/gn/",
+        }
         try:
-            path = f"/gn/detail/code/{board_code}/"
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                              "AppleWebKit/537.36 (KHTML, like Gecko) "
-                              "Chrome/120.0.0.0 Safari/537.36",
-                "Referer": "https://q.10jqka.com.cn/gn/",
-            }
-            conn.request("GET", path, headers=headers)
-            resp = conn.getresponse()
-            if resp.status != 200:
+            # 显式 proxies={} + timeout 双保险
+            resp = _requests.get(url, headers=headers, timeout=(5, 10), proxies={})
+            if resp.status_code != 200:
                 self._log.debug(
-                    f"同花顺概念详情页 {board_name}({board_code}) HTTP {resp.status}"
+                    f"同花顺概念详情页 {board_name}({board_code}) HTTP {resp.status_code}"
                 )
                 return []
-            body = resp.read().decode("utf-8", errors="replace")
-            # 提取 6 位股票代码（沪深 A 股：60/00/30/68 开头）
-            codes = _re.findall(r">(\d{6})<", body)
-            valid_prefixes = ("60", "00", "30", "68")
-            seen = set()
-            for code in codes:
-                if code[:2] in valid_prefixes and code not in seen:
-                    seen.add(code)
-                    rows.append((board_code, code, "akshare_ths"))
-        finally:
-            conn.close()
+            body = resp.text
+        except Exception as e:  # noqa: BLE001
+            self._log.debug(f"同花顺 {board_name}({board_code}) 请求失败: {e}")
+            return []
+        # 提取 6 位股票代码（沪深 A 股：60/00/30/68 开头）
+        codes = _re.findall(r">(\d{6})<", body)
+        valid_prefixes = ("60", "00", "30", "68")
+        seen = set()
+        for code in codes:
+            if code[:2] in valid_prefixes and code not in seen:
+                seen.add(code)
+                rows.append((board_code, code, "akshare_ths"))
         return rows
 
 

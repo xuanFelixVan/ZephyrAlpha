@@ -1451,8 +1451,33 @@ class IntegratorScheduler:
 
                 result = dedup_news_result(result)
 
-            # 攒批写入 ClickHouse（达 50000 行或 buffer_max_seconds 自动 flush）
-            if not writer.add(result):
+            # 多表写入支持：
+            # Provider 可在 FetchResult.table 中指定不同的目标表（如概念板块列表+成分股
+            # 写入两张表）。当 result.table 与 writer 绑定的表不同时，先 flush 当前
+            # 缓冲区，再用 ch_writer 直接写入该批数据到 result.table。
+            if result.table and result.table != writer._table:
+                # 先 flush 当前缓冲区到原表
+                if not writer.flush():
+                    last_error = f"ClickHouse 写入失败: {writer._table}"
+                    log.error("任务 %s CH写入失败(多表flush)", task_id)
+                    break
+                # 直接写入 result.table（用临时 BufferedWriter 满足 #ARCH-CH-003 批量写入裁定）
+                if result.rows:
+                    try:
+                        tmp_writer = BufferedWriter(result.table, max_seconds=5)
+                        if not tmp_writer.add(result) or not tmp_writer.flush():
+                            last_error = f"ClickHouse 写入失败: {result.table}"
+                            log.error("任务 %s 多表写入失败 %s", task_id, result.table)
+                            break
+                        log.info(
+                            "任务 %s 多表写入: %s %d 行（主表 %s）",
+                            task_id, result.table, len(result.rows), writer._table,
+                        )
+                    except Exception as e:  # noqa: BLE001
+                        last_error = f"ClickHouse 写入失败: {result.table}"
+                        log.error("任务 %s 多表写入失败 %s: %s", task_id, result.table, e)
+                        break
+            elif not writer.add(result):
                 last_error = f"ClickHouse 写入失败: {result.table}"
                 log.error("任务 %s CH写入失败", task_id)
                 break
