@@ -138,23 +138,23 @@ ttl: permanent
 
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
-| C1 | 数据接入 | 4 | 206 | 180 | 26 | 2.50 | 🟡 部分覆盖 / Partial |
+| C1 | 数据接入 | 4 | 207 | 181 | 26 | 2.50 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 137 | 76 | 61 | 2.20 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 28 | 23 | 5 | 2.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 56 | 37 | 19 | 2.75 | 🟡 部分覆盖 / Partial |
 | C5 | 执行交易 | 4 | 117 | 86 | 31 | 3.00 | ✅ 完全覆盖 / Full |
 | C6 | ML平台 | 2 | 14 | 10 | 4 | 2.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 50 | 49 | 1 | 2.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 14 | 1013 | 983 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 14 | 1019 | 989 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 173 | 173 | 0 | 1.00 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 831 | 823 | 8 | 2.31 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 835 | 827 | 8 | 2.31 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | active | 成熟度 / Maturity | 覆盖度 / Coverage |
 |--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | C1 | L1_foundation | 8 | 7 | 1 | 0 | L2 🟡 | 🟡 |
-| D_DATA | 数据接入层 | C1 | L1_foundation | 159 | 147 | 12 | 18 | L3 🟢 | ✅ |
+| D_DATA | 数据接入层 | C1 | L1_foundation | 160 | 148 | 12 | 19 | L3 🟢 | ✅ |
 | D_DATA_ENG | 数据工程 | C1 | L1_foundation | 20 | 7 | 13 | 0 | L2 🟡 | 🟡 |
 | D_MKT_DATA | 行情数据 | C1 | L1_foundation | 19 | 19 | 0 | 7 | L3 🟢 | ✅ |
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L2_domain | 31 | 16 | 15 | 10 | L3 🟢 | ✅ |
@@ -184,8 +184,8 @@ ttl: permanent
 | D_FBL_VERIFICATION | 反馈验证 | CC1 | L1_foundation | 71 | 71 | 0 | 67 | L3 🟢 | ✅ |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L1_foundation | 125 | 125 | 0 | 111 | L3 🟢 | ✅ |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L2_domain | 136 | 136 | 0 | 103 | L3 🟢 | ✅ |
-| D_GOV_AUDIT | 审计追踪 | CC1 | L2_domain | 115 | 112 | 3 | 77 | L3 🟢 | ✅ |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 160 | 160 | 0 | 143 | L3 🟢 | ✅ |
+| D_GOV_AUDIT | 审计追踪 | CC1 | L2_domain | 116 | 113 | 3 | 78 | L3 🟢 | ✅ |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 165 | 165 | 0 | 148 | L3 🟢 | ✅ |
 | D_GOV_DOCS | 架构文档治理 | CC1 | L2_domain | 25 | 0 | 25 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L2_domain | 71 | 70 | 1 | 65 | L3 🟢 | ✅ |
 | D_GOV_ENFORCEMENT | 规则执行 | CC1 | L2_domain | 33 | 32 | 1 | 18 | L3 🟢 | ✅ |
@@ -203,7 +203,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | CC3 | L0_infrastructure | 72 | 72 | 0 | 28 | L3 🟢 | ✅ |
 | D_INFRA_OPS | 基础设施运维 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L0_infrastructure | 54 | 54 | 0 | 48 | L3 🟢 | ✅ |
-| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 167 | 165 | 2 | 122 | L3 🟢 | ✅ |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 171 | 169 | 2 | 126 | L3 🟢 | ✅ |
 | D_INFRA_TELEMETRY | 可观测性 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INTEGRATION | 管线路由 | CC3 | L1_foundation | 71 | 71 | 0 | 39 | L3 🟢 | ✅ |
 | D_INTEGRATION_GATEWAY | 集成网关 | CC3 | L1_foundation | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
@@ -269,7 +269,7 @@ ttl: permanent
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_DATA | 数据接入层 | C1 | L3 | 159 |
+| D_DATA | 数据接入层 | C1 | L3 | 160 |
 | D_MKT_DATA | 行情数据 | C1 | L3 | 19 |
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L3 | 31 |
 | D_FACTOR | 因子 | C2 | L3 | 90 |
@@ -290,8 +290,8 @@ ttl: permanent
 | D_FBL_VERIFICATION | 反馈验证 | CC1 | L3 | 71 |
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L3 | 125 |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L3 | 136 |
-| D_GOV_AUDIT | 审计追踪 | CC1 | L3 | 115 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 160 |
+| D_GOV_AUDIT | 审计追踪 | CC1 | L3 | 116 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 165 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L3 | 71 |
 | D_GOV_ENFORCEMENT | 规则执行 | CC1 | L3 | 33 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | CC1 | L3 | 91 |
@@ -303,7 +303,7 @@ ttl: permanent
 | D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L3 | 25 |
 | D_INFRA_A2A | A2A通信 | CC3 | L3 | 72 |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L3 | 54 |
-| D_INFRA_RUNTIME | 运行时集成 | CC3 | L3 | 167 |
+| D_INFRA_RUNTIME | 运行时集成 | CC3 | L3 | 171 |
 | D_INTEGRATION | 管线路由 | CC3 | L3 | 71 |
 | D_INTELLIGENCE | 上下文管理 | CC3 | L3 | 29 |
 | D_OPS | 反馈循环 | CC3 | L3 | 9 |

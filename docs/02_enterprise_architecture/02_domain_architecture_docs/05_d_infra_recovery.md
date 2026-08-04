@@ -162,47 +162,40 @@ flowchart TD
     src_zephyr_infrastructure_rollback_rollback_wal_py ~~~ src_zephyr_infrastructure_rollback_sqlite_dumper_py
     src_zephyr_governance_rollback_contracts_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contracts_py
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_scheduler_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
+    src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_drill_py
+    src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
-    src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_drill_py
-    src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     tests_rollback_test_rollback_scheduler_py -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_rollback_scheduler_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_forward_fix_runner_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_auditor_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_warm_standby_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_rollback_topology_change_log_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_vulnerability_rescanner_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_target_staleness_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_drill_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_verifier_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_venv_sync_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_warm_standby_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_forensic_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_lock_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contracts_py
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_runbook_generator_py
-    D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
-    D_GOV_DRIFT["漂移检测<br/>漂移检测，负责架构漂移检测和漂移告警<br/>Drift Detection<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_GOV_DRIFT -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_drift_fix_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_kill_switch_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_contract_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_checkpoint_gc_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
     D_OPS["反馈循环<br/>反馈循环，负责系统运行反馈、性能监控和自动调优闭<br/>环<br/>Feedback Loop<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -212,12 +205,19 @@ flowchart TD
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_right_to_be_forgotten_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_env_watcher_py
+    D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
+    D_GOV_DRIFT["漂移检测<br/>漂移检测，负责架构漂移检测和漂移告警<br/>Drift Detection<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_GOV_DRIFT -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_drift_fix_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_warm_standby_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_rollback_contracts_py,src_zephyr_infrastructure_rollback_manifest_py,src_zephyr_infrastructure_rollback_agent_cooldown_py,src_zephyr_infrastructure_rollback_auditor_py,src_zephyr_infrastructure_rollback_auto_rollback_trigger_py,src_zephyr_infrastructure_rollback_budget_tracker_py,src_zephyr_infrastructure_rollback_checkpoint_gc_py,src_zephyr_infrastructure_rollback_commit_quality_gate_py,src_zephyr_infrastructure_rollback_complexity_budget_py,src_zephyr_infrastructure_rollback_contract_py,src_zephyr_infrastructure_rollback_contracts_py,src_zephyr_infrastructure_rollback_credential_rotation_trigger_py,src_zephyr_infrastructure_rollback_cross_platform_shell_py,src_zephyr_infrastructure_rollback_drift_fix_py,src_zephyr_infrastructure_rollback_env_watcher_py,src_zephyr_infrastructure_rollback_external_merkle_proof_py,src_zephyr_infrastructure_rollback_forensic_py,src_zephyr_infrastructure_rollback_forward_fix_runner_py,src_zephyr_infrastructure_rollback_git_infra_snapshot_py,src_zephyr_infrastructure_rollback_hallucination_guard_py,src_zephyr_infrastructure_rollback_intent_archiver_py,src_zephyr_infrastructure_rollback_kill_switch_py,src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py,src_zephyr_infrastructure_rollback_right_to_be_forgotten_py,src_zephyr_infrastructure_rollback_rollback_abuse_detector_py,src_zephyr_infrastructure_rollback_rollback_audit_nexus_py,src_zephyr_infrastructure_rollback_rollback_boot_integration_py,src_zephyr_infrastructure_rollback_rollback_bootstrap_py,src_zephyr_infrastructure_rollback_rollback_budget_py,src_zephyr_infrastructure_rollback_rollback_context_restorer_py,src_zephyr_infrastructure_rollback_rollback_dashboard_py,src_zephyr_infrastructure_rollback_rollback_drill_py,src_zephyr_infrastructure_rollback_rollback_executor_py,src_zephyr_infrastructure_rollback_rollback_integration_py,src_zephyr_infrastructure_rollback_rollback_lock_py,src_zephyr_infrastructure_rollback_rollback_loop_detector_py,src_zephyr_infrastructure_rollback_rollback_scheduler_py,src_zephyr_infrastructure_rollback_rollback_simulator_py,src_zephyr_infrastructure_rollback_rollback_state_machine_py,src_zephyr_infrastructure_rollback_rollback_target_staleness_py,src_zephyr_infrastructure_rollback_rollback_verifier_py,src_zephyr_infrastructure_rollback_rollback_wal_py,src_zephyr_infrastructure_rollback_runbook_generator_py,src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py,src_zephyr_infrastructure_rollback_secret_rotation_aware_py,src_zephyr_infrastructure_rollback_semantic_rollback_tag_py,src_zephyr_infrastructure_rollback_semantic_similar_detector_py,src_zephyr_infrastructure_rollback_sqlite_dumper_py,src_zephyr_infrastructure_rollback_submodule_sync_py,src_zephyr_infrastructure_rollback_temporal_context_adapter_py,src_zephyr_infrastructure_rollback_topology_change_log_py,src_zephyr_infrastructure_rollback_venv_sync_py,src_zephyr_infrastructure_rollback_vulnerability_rescanner_py,src_zephyr_infrastructure_rollback_warm_standby_py,tests_rollback_test_rollback_scheduler_py production
-    class D_SHARED,D_GOV_AUDIT,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_FEEDBACK_LOOP,D_GOV_DRIFT,D_OPS external_prod
+    class D_SHARED,D_GOV_AUDIT,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_OPS,D_FEEDBACK_LOOP,D_GOV_DRIFT external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -336,17 +336,17 @@ flowchart TD
     src_zephyr_infrastructure_rollback_rollback_wal_py ~~~ src_zephyr_infrastructure_rollback_sqlite_dumper_py
     src_zephyr_governance_rollback_contracts_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contracts_py
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_scheduler_py
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_verifier_py
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
+    src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_drill_py
+    src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
-    src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_drill_py
-    src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     tests_rollback_test_rollback_scheduler_py -->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_rollback_scheduler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -367,36 +367,36 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Auditor / Auditor (rollback/auditor.py) | → | D_GOV_AUDIT 审计追踪: 契约 / contracts (gov_audit/contracts.py) | 导入依赖 / import_depends |
+| 1 | Auditor (rollback/auditor.py) | → | D_GOV_AUDIT 审计追踪: 契约 / contracts (gov_audit/contracts.py) | 导入依赖 / import_depends |
 | 2 | 只读：project_root / Rollback Abuse Detector (rollback/ro... | → | D_GOV_AUDIT 审计追踪: 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | 导入依赖 / import_depends |
 | 3 | 只读：core_writer / Rollback Audit Nexus (rollback/rollba... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 4 | Rollback Executor / Rollback Executor (rollback/rollback_... | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 4 | Rollback Executor (rollback/rollback_executor.py) | → | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
 | 5 | 启动/关闭结果 / Rollback Boot Integration (rollback/rollb... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 声明式事件钩子注册表 / Event Hook (ops_governance/event_h... | 导入依赖 / import_depends |
-| 6 | Rollback Executor / Rollback Executor (rollback/rollback_... | → | D_INFRA_RUNTIME 运行时集成: 单个文件锁信息 / Concurrency Guard (runtime/concurrency_g... | 导入依赖 / import_depends |
-| 7 | G-CT-005 消费端.""" / Drift Fix (rollback/drift_fix.py) | → | D_SECURITY 对抗验证: ManagedDriftEvent Pydantic V2 BaseModel 漂移事件定义. / E... | 导入依赖 / import_depends |
-| 8 | Runbook Generator / Runbook Generator (rollback/runbook_g... | → | D_SECURITY 对抗验证: 构造 YAML frontmatter / Runbook Generator (gov_drift/runb... | 导入依赖 / import_depends |
+| 6 | Rollback Executor (rollback/rollback_executor.py) | → | D_INFRA_RUNTIME 运行时集成: 单个文件锁信息 / Concurrency Guard (runtime/concurrency_g... | 导入依赖 / import_depends |
+| 7 | G-CT-005 消费端. / Drift Fix (rollback/drift_fix.py) | → | D_SECURITY 对抗验证: ManagedDriftEvent Pydantic V2 BaseModel 漂移事件定义. / E... | 导入依赖 / import_depends |
+| 8 | Runbook Generator (rollback/runbook_generator.py) | → | D_SECURITY 对抗验证: 构造 YAML frontmatter / Runbook Generator (gov_drift/runb... | 导入依赖 / import_depends |
 | 9 | 只读：project_root / Agent Cooldown (rollback/agent_coold... | → | D_SHARED 共享服务: 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
 | 10 | 只读：project_root / External Merkle Proof (rollback/exte... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
-| 11 | Forensic / Forensic (rollback/forensic.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
-| 12 | Forensic / Forensic (rollback/forensic.py) | → | D_SHARED 共享服务: —统一3处漂移实现 / File Utils (io/file_utils.py) | 导入依赖 / import_depends |
+| 11 | Forensic (rollback/forensic.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 12 | Forensic (rollback/forensic.py) | → | D_SHARED 共享服务: —统一3处漂移实现 / File Utils (io/file_utils.py) | 导入依赖 / import_depends |
 | 13 | 只读：project_root / Forward Fix Runner (rollback/forward... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 14 | 只读：project_root / Forward Fix Runner (rollback/forward... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 15 | 只读：registry_dir / Right To Be Forgotten (rollback/righ... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 16 | 启动/关闭结果 / Rollback Boot Integration (rollback/rollb... | → | D_SHARED 共享服务: 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
-| 17 | func:`git`.""" / Rollback Bootstrap (rollback/rollback_bo... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 17 | Rollback Bootstrap (rollback/rollback_bootstrap.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 18 | 只读：project_root / Rollback Drill (rollback/rollback_dr... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 19 | 只读：project_root / Rollback Drill (rollback/rollback_dr... | → | D_SHARED 共享服务: 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
-| 20 | Rollback Executor / Rollback Executor (rollback/rollback_... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
-| 21 | Rollback Executor / Rollback Executor (rollback/rollback_... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
-| 22 | Rollback Executor / Rollback Executor (rollback/rollback_... | → | D_SHARED 共享服务: async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
-| 23 | Rollback Integration / Rollback Integration (rollback/rol... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
-| 24 | Rollback Integration / Rollback Integration (rollback/rol... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
-| 25 | Rollback Integration / Rollback Integration (rollback/rol... | → | D_SHARED 共享服务: 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
-| 26 | Rollback Integration / Rollback Integration (rollback/rol... | → | D_SHARED 共享服务: Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 20 | Rollback Executor (rollback/rollback_executor.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 21 | Rollback Executor (rollback/rollback_executor.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 22 | Rollback Executor (rollback/rollback_executor.py) | → | D_SHARED 共享服务: async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 23 | Rollback Integration (rollback/rollback_integration.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 24 | Rollback Integration (rollback/rollback_integration.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 25 | Rollback Integration (rollback/rollback_integration.py) | → | D_SHARED 共享服务: 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 26 | Rollback Integration (rollback/rollback_integration.py) | → | D_SHARED 共享服务: Secrets (security/secrets.py) | 导入依赖 / import_depends |
 | 27 | 锁目录路径 / Rollback Lock (rollback/rollback_lock.py) | → | D_SHARED 共享服务: 读取并递增持久化 fencing 计数器，返回新的单调递增 token /... | 导入依赖 / import_depends |
 | 28 | 公共接口：run_git / Rollback Simulator (rollback/rollback... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 29 | 只读：project_root / Rollback Target Staleness (rollback/... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
-| 30 | 5] and "'''" not in source[:5]: / Rollback Verifier (roll... | → | D_SHARED 共享服务: 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 30 | Rollback Verifier (rollback/rollback_verifier.py) | → | D_SHARED 共享服务: 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
 | 31 | 只读：snapshot_dir / S3 Snapshot Lifecycle (rollback/s3_s... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 32 | 只读：project_root / Semantic Rollback Tag (rollback/sema... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 33 | —表名无法参数化，用白名单替代） / Sqlite Dumper (rollbac... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
@@ -414,39 +414,39 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | Rollback Executor / Rollback Executor (rollback/rollback_... | 导入依赖 / import_depends |
-| 2 | D_GOVERNANCE 生命周期管理: 回滚 / rollback (scripts/rollback.py) | → | Rollback Executor / Rollback Executor (rollback/rollback_... | 导入依赖 / import_depends |
-| 3 | D_GOVERNANCE 生命周期管理: 回滚 / rollback (scripts/rollback.py) | → | 5] and "'''" not in source[:5]: / Rollback Verifier (roll... | 导入依赖 / import_depends |
-| 4 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | Rollback Executor / Rollback Executor (rollback/rollback_... | 导入依赖 / import_depends |
-| 5 | D_GOVERNANCE 生命周期管理: Test Credential Rotation Trigger / Test Credential Rotati... | → | —5.62.5 治本名实分离） / Credential Rotation Trigger (ro... | 测试依赖 / test_depends |
-| 6 | D_GOVERNANCE 生命周期管理: Test Secret Rotation Aware / Test Secret Rotation Aware (... | → | 只读：project_root / Secret Rotation Aware (rollback/secr... | 测试依赖 / test_depends |
-| 7 | D_GOVERNANCE 生命周期管理: Test Hallucination Guard / Test Hallucination Guard (adve... | → | 只读：project_root / Hallucination Guard (rollback/halluc... | 测试依赖 / test_depends |
-| 8 | D_GOVERNANCE 生命周期管理: Test Right To Be Forgotten / Test Right To Be Forgotten (... | → | 只读：registry_dir / Right To Be Forgotten (rollback/righ... | 测试依赖 / test_depends |
-| 9 | D_GOVERNANCE 生命周期管理: Test S3 Snapshot Lifecycle / Test S3 Snapshot Lifecycle (... | → | 只读：snapshot_dir / S3 Snapshot Lifecycle (rollback/s3_s... | 测试依赖 / test_depends |
-| 10 | D_GOVERNANCE 生命周期管理: Test Sqlite Dumper / Test Sqlite Dumper (data_layer/test_... | → | —表名无法参数化，用白名单替代） / Sqlite Dumper (rollbac... | 测试依赖 / test_depends |
-| 11 | D_GOVERNANCE 生命周期管理: Test Governance Drift Fix / Test Governance Drift Fix (dr... | → | G-CT-005 消费端.""" / Drift Fix (rollback/drift_fix.py) | 测试依赖 / test_depends |
-| 12 | D_GOVERNANCE 生命周期管理: Test Contract / Test Contract (integration/test_contract.py) | → | Contract / Contract (rollback/contract.py) | 测试依赖 / test_depends |
-| 13 | D_GOVERNANCE 生命周期管理: Test Submodule Sync / Test Submodule Sync (integration/te... | → | 只读：project_root / Submodule Sync (rollback/submodule_s... | 测试依赖 / test_depends |
-| 14 | D_GOVERNANCE 生命周期管理: Test Checkpoint Gc / Test Checkpoint Gc (lifecycle/test_c... | → | Checkpoint Gc / Checkpoint Gc (rollback/checkpoint_gc.py) | 测试依赖 / test_depends |
-| 15 | D_GOVERNANCE 生命周期管理: Test Venv Sync / Test Venv Sync (lifecycle/test_venv_sync... | → | 公共接口：compute_diff / Venv Sync (rollback/venv_sync.py) | 测试依赖 / test_depends |
-| 16 | D_GOVERNANCE 生命周期管理: Test Env Watcher / Test Env Watcher (ops/test_env_watcher... | → | 只读：project_root / Env Watcher (rollback/env_watcher.py) | 测试依赖 / test_depends |
-| 17 | D_GOVERNANCE 生命周期管理: Test Runbook Generator / Test Runbook Generator (ops/test... | → | Runbook Generator / Runbook Generator (rollback/runbook_g... | 测试依赖 / test_depends |
-| 18 | D_GOVERNANCE 生命周期管理: Test Knowngoodstate Ledger / Test Knowngoodstate Ledger (... | → | 只读：ledger_path / Knowngoodstate Ledger (rollback/known... | 测试依赖 / test_depends |
-| 19 | D_GOVERNANCE 生命周期管理: Test Warm Standby / Test Warm Standby (resilience/test_wa... | → | 公共接口：read_state / Warm Standby (rollback/warm_standb... | 测试依赖 / test_depends |
-| 20 | D_GOVERNANCE 生命周期管理: 治理域八件套红白对抗测试 / Test Adversarial Contract Atta... | → | G-CT-005 消费端.""" / Drift Fix (rollback/drift_fix.py) | 测试依赖 / test_depends |
-| 21 | D_GOVERNANCE 生命周期管理: G-CT-001~008 每条契约的端到端数据流通断言""" / Test P0 U1... | → | G-CT-005 消费端.""" / Drift Fix (rollback/drift_fix.py) | 测试依赖 / test_depends |
-| 22 | D_GOVERNANCE 生命周期管理: Test Vulnerability Rescanner / Test Vulnerability Rescann... | → | 公共接口：try_upgrade / Vulnerability Rescanner (rollback... | 测试依赖 / test_depends |
-| 23 | D_GOV_AUDIT 审计追踪: Test Auditor / Test Auditor (audit/test_auditor.py) | → | Auditor / Auditor (rollback/auditor.py) | 测试依赖 / test_depends |
-| 24 | D_GOV_AUDIT 审计追踪: Test Forensic / Test Forensic (audit/test_forensic.py) | → | Forensic / Forensic (rollback/forensic.py) | 测试依赖 / test_depends |
-| 25 | D_GOV_AUDIT 审计追踪: Test Governance Auditor / Test Governance Auditor (audit/... | → | Auditor / Auditor (rollback/auditor.py) | 测试依赖 / test_depends |
-| 26 | D_GOV_DRIFT 漂移检测: ``drift_detected`` 触发器恢复入口 / Drift Detector (rule_... | → | G-CT-005 消费端.""" / Drift Fix (rollback/drift_fix.py) | 导入依赖 / import_depends |
-| 27 | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003/004/006/008 消费端.""" / Contracts (escalation/c... | → | Contracts / Contracts (rollback/contracts.py) | 导入依赖 / import_depends |
-| 28 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | Kill Switch / Kill Switch (rollback/kill_switch.py) | 导入依赖 / import_depends |
-| 29 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | Rollback Executor / Rollback Executor (rollback/rollback_... | 导入依赖 / import_depends |
-| 30 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | Contract / Contract (rollback/contract.py) | 导入依赖 / import_depends |
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | Rollback Executor (rollback/rollback_executor.py) | 导入依赖 / import_depends |
+| 2 | D_GOVERNANCE 生命周期管理: 回滚 / rollback (scripts/rollback.py) | → | Rollback Executor (rollback/rollback_executor.py) | 导入依赖 / import_depends |
+| 3 | D_GOVERNANCE 生命周期管理: 回滚 / rollback (scripts/rollback.py) | → | Rollback Verifier (rollback/rollback_verifier.py) | 导入依赖 / import_depends |
+| 4 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | Rollback Executor (rollback/rollback_executor.py) | 导入依赖 / import_depends |
+| 5 | D_GOVERNANCE 生命周期管理: Test Credential Rotation Trigger (access_control/test_cre... | → | —5.62.5 治本名实分离） / Credential Rotation Trigger (ro... | 测试依赖 / test_depends |
+| 6 | D_GOVERNANCE 生命周期管理: Test Secret Rotation Aware (access_control/test_secret_ro... | → | 只读：project_root / Secret Rotation Aware (rollback/secr... | 测试依赖 / test_depends |
+| 7 | D_GOVERNANCE 生命周期管理: Test Hallucination Guard (adversarial/test_hallucination_... | → | 只读：project_root / Hallucination Guard (rollback/halluc... | 测试依赖 / test_depends |
+| 8 | D_GOVERNANCE 生命周期管理: Test Right To Be Forgotten (compliance/test_right_to_be_f... | → | 只读：registry_dir / Right To Be Forgotten (rollback/righ... | 测试依赖 / test_depends |
+| 9 | D_GOVERNANCE 生命周期管理: Test S3 Snapshot Lifecycle (data_layer/test_s3_snapshot_l... | → | 只读：snapshot_dir / S3 Snapshot Lifecycle (rollback/s3_s... | 测试依赖 / test_depends |
+| 10 | D_GOVERNANCE 生命周期管理: Test Sqlite Dumper (data_layer/test_sqlite_dumper.py) | → | —表名无法参数化，用白名单替代） / Sqlite Dumper (rollbac... | 测试依赖 / test_depends |
+| 11 | D_GOVERNANCE 生命周期管理: Test Governance Drift Fix (drift/test_governance_drift_fi... | → | G-CT-005 消费端. / Drift Fix (rollback/drift_fix.py) | 测试依赖 / test_depends |
+| 12 | D_GOVERNANCE 生命周期管理: Test Contract (integration/test_contract.py) | → | Contract (rollback/contract.py) | 测试依赖 / test_depends |
+| 13 | D_GOVERNANCE 生命周期管理: Test Submodule Sync (integration/test_submodule_sync.py) | → | 只读：project_root / Submodule Sync (rollback/submodule_s... | 测试依赖 / test_depends |
+| 14 | D_GOVERNANCE 生命周期管理: Test Checkpoint Gc (lifecycle/test_checkpoint_gc.py) | → | Checkpoint Gc (rollback/checkpoint_gc.py) | 测试依赖 / test_depends |
+| 15 | D_GOVERNANCE 生命周期管理: Test Venv Sync (lifecycle/test_venv_sync.py) | → | 公共接口：compute_diff / Venv Sync (rollback/venv_sync.py) | 测试依赖 / test_depends |
+| 16 | D_GOVERNANCE 生命周期管理: Test Env Watcher (ops/test_env_watcher.py) | → | 只读：project_root / Env Watcher (rollback/env_watcher.py) | 测试依赖 / test_depends |
+| 17 | D_GOVERNANCE 生命周期管理: Test Runbook Generator (ops/test_runbook_generator.py) | → | Runbook Generator (rollback/runbook_generator.py) | 测试依赖 / test_depends |
+| 18 | D_GOVERNANCE 生命周期管理: Test Knowngoodstate Ledger (resilience/test_knowngoodstat... | → | 只读：ledger_path / Knowngoodstate Ledger (rollback/known... | 测试依赖 / test_depends |
+| 19 | D_GOVERNANCE 生命周期管理: Test Warm Standby (resilience/test_warm_standby.py) | → | 公共接口：read_state / Warm Standby (rollback/warm_standb... | 测试依赖 / test_depends |
+| 20 | D_GOVERNANCE 生命周期管理: 治理域八件套红白对抗测试 / Test Adversarial Contract Atta... | → | G-CT-005 消费端. / Drift Fix (rollback/drift_fix.py) | 测试依赖 / test_depends |
+| 21 | D_GOVERNANCE 生命周期管理: G-CT-001~008 每条契约的端到端数据流通断言 / Test P0 U1 Co... | → | G-CT-005 消费端. / Drift Fix (rollback/drift_fix.py) | 测试依赖 / test_depends |
+| 22 | D_GOVERNANCE 生命周期管理: Test Vulnerability Rescanner (security/test_vulnerability... | → | 公共接口：try_upgrade / Vulnerability Rescanner (rollback... | 测试依赖 / test_depends |
+| 23 | D_GOV_AUDIT 审计追踪: Test Auditor (audit/test_auditor.py) | → | Auditor (rollback/auditor.py) | 测试依赖 / test_depends |
+| 24 | D_GOV_AUDIT 审计追踪: Test Forensic (audit/test_forensic.py) | → | Forensic (rollback/forensic.py) | 测试依赖 / test_depends |
+| 25 | D_GOV_AUDIT 审计追踪: Test Governance Auditor (audit/test_governance_auditor.py) | → | Auditor (rollback/auditor.py) | 测试依赖 / test_depends |
+| 26 | D_GOV_DRIFT 漂移检测: ``drift_detected`` 触发器恢复入口 / Drift Detector (rule_... | → | G-CT-005 消费端. / Drift Fix (rollback/drift_fix.py) | 导入依赖 / import_depends |
+| 27 | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003/004/006/008 消费端. / Contracts (escalation/cont... | → | Contracts (rollback/contracts.py) | 导入依赖 / import_depends |
+| 28 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | Kill Switch (rollback/kill_switch.py) | 导入依赖 / import_depends |
+| 29 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | Rollback Executor (rollback/rollback_executor.py) | 导入依赖 / import_depends |
+| 30 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | Contract (rollback/contract.py) | 导入依赖 / import_depends |
 | 31 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | 启动/关闭结果 / Rollback Boot Integration (rollback/rollb... | 导入依赖 / import_depends |
-| 32 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | Contract / Contract (rollback/contract.py) | 导入依赖 / import_depends |
-| 33 | D_OPS 反馈循环: Budget Tracker / Budget Tracker (ops_governance/budget_tr... | → | Budget Tracker / Budget Tracker (rollback/budget_tracker.py) | 导入依赖 / import_depends |
+| 32 | D_INTEGRATION 管线路由: Pipeline Orchestrator (integration/pipeline_orchestrator.py) | → | Contract (rollback/contract.py) | 导入依赖 / import_depends |
+| 33 | D_OPS 反馈循环: Budget Tracker (ops_governance/budget_tracker.py) | → | Budget Tracker (rollback/budget_tracker.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

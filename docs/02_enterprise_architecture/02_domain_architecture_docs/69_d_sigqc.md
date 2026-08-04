@@ -97,8 +97,8 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Signal Quality Degradation Monitor Base / Degradation Mon... | → | D_INFRASTRUCTURE 跨层契约基础设施: Synthesized Signal / Synthesized Signal (contracts/synthe... | 导入依赖 / import_depends |
-| 2 | Signal Quality Degradation Monitor Base / Degradation Mon... | → | D_TRADING 交易运营: Signal Degradation Warning / Signal Degradation Warning (... | 导入依赖 / import_depends |
+| 1 | Degradation Monitor Base (signal_quality/degradation_moni... | → | D_INFRASTRUCTURE 跨层契约基础设施: Synthesized Signal (contracts/synthesized_signal.py) | 导入依赖 / import_depends |
+| 2 | Degradation Monitor Base (signal_quality/degradation_moni... | → | D_TRADING 交易运营: Signal Degradation Warning (market/signal_degradation_war... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

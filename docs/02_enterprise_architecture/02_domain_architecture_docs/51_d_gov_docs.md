@@ -197,7 +197,7 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | GUC 触发器缺陷修复的端到端 smoke test / Test Guc Trigger ... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 测试依赖 / test_depends |
-| 2 | sync_all / Test Sync Savepoint Isolation (d8_doc_sync/tes... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 测试依赖 / test_depends |
+| 2 | Test Sync Savepoint Isolation (d8_doc_sync/test_sync_save... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

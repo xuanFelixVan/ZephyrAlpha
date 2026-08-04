@@ -65,10 +65,10 @@ flowchart TD
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py ~~~ src_zephyr_pf_alloc_strategy_lifecycle_event_py
     src_zephyr_pf_alloc_strategy_lifecycle_event_py ~~~ src_zephyr_pf_core_default_equity_strategy_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -133,23 +133,23 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Default Equity Long-Only Strategy / Default Equity Strate... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 2 | Strategy Lifecycle Event / Strategy Lifecycle Event (pf_a... | → | D_INFRASTRUCTURE 跨层契约基础设施: Strategy Lifecycle Event / Strategy Lifecycle Event (cont... | 导入依赖 / import_depends |
-| 3 | Default Equity Long-Only Strategy / Default Equity Strate... | → | D_INFRASTRUCTURE 跨层契约基础设施: Order / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 1 | Default Equity Strategy (pf_core/default_equity_strategy.py) | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
+| 2 | Strategy Lifecycle Event (pf_alloc/strategy_lifecycle_eve... | → | D_INFRASTRUCTURE 跨层契约基础设施: Strategy Lifecycle Event (contracts/strategy_lifecycle_ev... | 导入依赖 / import_depends |
+| 3 | Default Equity Strategy (pf_core/default_equity_strategy.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Order (contracts/order.py) | 导入依赖 / import_depends |
 | 4 | 资金分配输入非法 / Multi Strategy Capital Allocator (core... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 5 | 策略信号方向 / Signal Synthesis Combiner (core/signal_syn... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 6 | 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 7 | Default Equity Long-Only Strategy / Default Equity Strate... | → | D_SHARED 共享服务: 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 7 | Default Equity Strategy (pf_core/default_equity_strategy.py) | → | D_SHARED 共享服务: 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOVERNANCE 生命周期管理: Test E2e Pipeline / Test E2e Pipeline (trading/test_e2e_p... | → | Default Equity Long-Only Strategy / Default Equity Strate... | 测试依赖 / test_depends |
-| 2 | D_GOVERNANCE 生命周期管理: Main Data Flow End-to-End Test / Test Phase E Main Flow (... | → | Default Equity Long-Only Strategy / Default Equity Strate... | 测试依赖 / test_depends |
+| 1 | D_GOVERNANCE 生命周期管理: Test E2e Pipeline (trading/test_e2e_pipeline.py) | → | Default Equity Strategy (pf_core/default_equity_strategy.py) | 测试依赖 / test_depends |
+| 2 | D_GOVERNANCE 生命周期管理: Test Phase E Main Flow (trading/test_phase_e_main_flow.py) | → | Default Equity Strategy (pf_core/default_equity_strategy.py) | 测试依赖 / test_depends |
 | 3 | D_PF_CORE 组合核心: 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | 导入依赖 / import_depends |
-| 4 | D_PF_CORE 组合核心: Performance Attribution Engine / Performance Attribution ... | → | 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | 导入依赖 / import_depends |
-| 5 | D_PF_CORE 组合核心: Portfolio Construction Strategies / Init (strategy_engine... | → | Default Equity Long-Only Strategy / Default Equity Strate... | 导入依赖 / import_depends |
+| 4 | D_PF_CORE 组合核心: Performance Attribution Engine (core/performance_attribut... | → | 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | 导入依赖 / import_depends |
+| 5 | D_PF_CORE 组合核心: Init (strategy_engine/__init__.py) | → | Default Equity Strategy (pf_core/default_equity_strategy.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

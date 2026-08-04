@@ -30,8 +30,8 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 6168 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6168 个 |
-| 依赖图 depgraph | `edges` | 9471 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9471 条 |
+| 依赖图 depgraph | `nodes` | 6196 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6196 个 |
+| 依赖图 depgraph | `edges` | 9533 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9533 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 76 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 196 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 90 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），90 条 |
@@ -46,7 +46,7 @@
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_apis` | 124 | 数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，124 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 15 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，15 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `service_assets` | 10 | 服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，10 个 |
-| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `config_assets` | 33 | 配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），33 项 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `config_assets` | 34 | 配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），34 项 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `infrastructure_components` | 15 | 基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，15 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `interface_contracts` | 5 | 接口级契约——模块对外 API（函数名/参数签名/返回值/消费方），5 行（仅 5=大部分模块接口未登记，AI 会幻觉函数名） |
 
@@ -100,10 +100,10 @@
 | PAN-BUILT-12 | 容量报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capacity_report.py` | [`03_governance_reports`](../03_governance_reports/capacity_report.md) | ✅存在 |
 | PAN-BUILT-13 | 约束违规报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_constraint_violations.py` | [`03_governance_reports`](../03_governance_reports/constraint_violations.md) | ✅存在 |
 | PAN-BUILT-14 | 设计态 vs 运营态 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_design_vs_production.py` | [`03_governance_reports`](../03_governance_reports/design_vs_production.md) | ✅存在 |
+| PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`03_governance_reports`](../03_governance_reports/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-17 | 依赖与路径全景图能力定位书 | 治理健康度 | 手工 | 手工 | `(手工维护)` | `04_architecture_principles_decisions/` | ❌缺失 |
 | PAN-BUILT-18 | 数据流图（dataflowgraph Dataset/Job/Edge） | 数据流 | dataflowgraph | depgraph (PostgreSQL) (dataflow_* 表) | `generate_dataflow_diagram.py` | [`05_dataflow_architecture`](../05_dataflow_architecture/dataflow_index.md) | ✅存在 |
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | 决策流 | decisiongraph | depgraph (PostgreSQL) (decision_* 表) | `generate_decision_diagram.py` | [`06_decision_architecture`](../06_decision_architecture/decision_index.md) | ✅存在 |
-| PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | 依赖关系 | depgraph | depgraph (PostgreSQL) | `内置在生成器（Tarjan SCC）` | [`generated`](../generated/panorama_alignment_report.md) | ✅存在 |
 | PAN-BUILT-03 | 手绘 Mermaid 图（时序/治理） | 架构视图 | 手工 | 手工 | `(手工维护)` | [`target_architecture`](../target_architecture/application_flows.md) | ✅存在 |
 | PAN-BUILT-21 | 交易决策架构视图（已退役） | 决策流 | decisiongraph | depgraph (PostgreSQL) | `(已退役删除) generate_trading_flow_diagram.py` | `(已退役) 07_trading_decision_architecture/` | ❌缺失 |
 | PAN-BATTLE-MAP-01 | 交易决策作战地图（battle_map 第四全景图） | 作战地图 | battle_map | depgraph (PostgreSQL) (battle_map_* 表) | `generate_battle_map_diagram.py` | [`07_trading_decision_architecture/battle_map`](../07_trading_decision_architecture/battle_map/battle_map_panorama.md) | ✅存在 |
@@ -231,6 +231,7 @@
 | PAN-BUILT-12 | 容量报告 | ✅已建 | depgraph | 各功能域的模块数量与容量上限对比，识别超容域和接近超容域 | 真源：depgraph (PostgreSQL)<br>生成器：[`generate_capacity_report.py`](../../../scripts/governance/d5_architecture/generators/generate_capacity_report.py)<br>产物：[`03_governance_reports/capacity_report.md`](../03_governance_reports/capacity_report.md) |
 | PAN-BUILT-13 | 约束违规报告 | ✅已建 | depgraph | 架构约束违规报告 | 真源：depgraph (PostgreSQL)<br>生成器：[`generate_constraint_violations.py`](../../../scripts/governance/d5_architecture/generators/generate_constraint_violations.py)<br>产物：[`03_governance_reports/constraint_violations.md`](../03_governance_reports/constraint_violations.md) |
 | PAN-BUILT-14 | 设计态 vs 运营态 | ✅已建 | depgraph | 设计态到运营态的迁移进度对比 | 真源：depgraph (PostgreSQL)<br>生成器：[`generate_design_vs_production.py`](../../../scripts/governance/d5_architecture/generators/generate_design_vs_production.py)<br>产物：[`03_governance_reports/design_vs_production.md`](../03_governance_reports/design_vs_production.md) |
+| PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | ✅已建 | depgraph | 内置 Tarjan SCC 算法检测循环依赖，输出循环报告 | 真源：depgraph (PostgreSQL)<br>生成器：`内置在生成器（Tarjan SCC）`<br>产物：[`03_governance_reports/panorama_alignment_report.md`](../03_governance_reports/panorama_alignment_report.md) |
 
 ### 04 架构原则与决策
 
@@ -249,12 +250,6 @@
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
 | PAN-BUILT-19 | 决策流图（decisiongraph L0-L6 四轨） | ✅已建 | decisiongraph | 决策流图 decisiongraph（L0-L6 四轨），三图正交第三维度 | 真源：depgraph (PostgreSQL) (decision_* 表)<br>生成器：[`generate_decision_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_decision_diagram.py)<br>产物：[`06_decision_architecture/decision_index.md`](../06_decision_architecture/decision_index.md) |
-
-### generated 自动生成中间产物
-
-| ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
-|------|------|:---:|------|------|------|
-| PAN-BUILT-07 | 循环依赖检测（Tarjan SCC） | ✅已建 | depgraph | 内置 Tarjan SCC 算法检测循环依赖，输出循环报告 | 真源：depgraph (PostgreSQL)<br>生成器：`内置在生成器（Tarjan SCC）`<br>产物：[`generated/panorama_alignment_report.md`](../generated/panorama_alignment_report.md) |
 
 ### target_architecture TOGAF 目标架构
 

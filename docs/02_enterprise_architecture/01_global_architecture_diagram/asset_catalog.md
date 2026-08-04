@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共263项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共264项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -24,10 +24,10 @@ ttl: permanent
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 15 | infrastructure_components.yaml |
 | 契约资产 | 66 | cross_layer_contracts.yaml |
-| 配置项 | 33 | config/*.yaml |
+| 配置项 | 34 | config/*.yaml |
 | 数据流作业 | 196 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
-| **合计** | **263** | |
+| **合计** | **264** | |
 
 ## 2. 外部数据源资产
 
@@ -168,30 +168,31 @@ ttl: permanent
 | `config/alert_rules.yaml` | 2.3 | 2026-08-03 |
 | `config/asset_inventory.yaml` | 2.3 | 2026-08-03 |
 | `config/blueprint_routing.yaml` | 22.4 | 2026-08-03 |
-| `config/budget_policy.yaml` | 3.0 | 2026-08-01 |
-| `config/capabilities.yaml` | 0.9 | 2026-08-01 |
+| `config/budget_policy.yaml` | 3.0 | 2026-08-04 |
+| `config/capabilities.yaml` | 0.9 | 2026-08-04 |
 | `config/capacity_params.yaml` | 7.1 | 2026-08-03 |
 | `config/capacity_slo.yaml` | 4.6 | 2026-08-03 |
-| `config/compression_policy.yaml` | 2.5 | 2026-07-04 |
+| `config/compression_policy.yaml` | 2.6 | 2026-08-04 |
 | `config/context_rules.yaml` | 5.6 | 2026-07-17 |
 | `config/degradation_chain.yaml` | 1.3 | 2026-08-03 |
 | `config/dr_policy.yaml` | 4.5 | 2026-08-03 |
-| `config/embedding_model_registry.yaml` | 3.9 | 2026-08-03 |
+| `config/embedding_model_registry.yaml` | 3.9 | 2026-08-04 |
 | `config/error_budget_config.yaml` | 1.7 | 2026-08-03 |
 | `config/external_watchdog.yaml` | 0.9 | 2026-08-03 |
 | `config/flags.yaml` | 1.9 | 2026-08-03 |
 | `config/immutable_core.yaml` | 2.8 | 2026-08-03 |
 | `config/metrics_schema.yaml` | 2.6 | 2026-08-03 |
-| `config/model_pricing.yaml` | 1.3 | 2026-08-01 |
-| `config/nav_table_mapping.yaml` | 20.1 | 2026-07-01 |
+| `config/model_pricing.yaml` | 1.3 | 2026-08-04 |
+| `config/nav_table_mapping.yaml` | 20.1 | 2026-08-04 |
 | `config/owner_offline_protocol.yaml` | 1.4 | 2026-08-03 |
 | `config/qmt_environments.yaml` | 6.1 | 2026-08-03 |
 | `config/rbac_roles.yaml` | 1.1 | 2026-07-04 |
-| `config/resource_optimization.yaml` | 1.5 | 2026-08-01 |
-| `config/risk_params.yaml` | 1.3 | 2026-08-01 |
+| `config/resource_optimization.yaml` | 1.5 | 2026-08-04 |
+| `config/risk_params.yaml` | 1.3 | 2026-08-04 |
 | `config/risk_register.yaml` | 9.1 | 2026-08-03 |
 | `config/sandbox_policy.yaml` | 1.5 | 2026-08-03 |
-| `config/sla_targets.yaml` | 0.9 | 2026-07-22 |
+| `config/secret_registry.yaml` | 22.8 | 2026-08-04 |
+| `config/sla_targets.yaml` | 0.9 | 2026-08-04 |
 | `config/sli_registry.yaml` | 2.8 | 2026-08-03 |
 | `config/tech_stack_manifest.yaml` | 5.9 | 2026-08-03 |
 | `config/trigger_router.yaml` | 4.9 | 2026-08-01 |

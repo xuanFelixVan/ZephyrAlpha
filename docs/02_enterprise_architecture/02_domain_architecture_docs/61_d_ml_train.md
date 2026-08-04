@@ -66,8 +66,8 @@ flowchart TD
     src_zephyr_ml_train_trainer_base_py["模型注册元数据'''<br/>D_ML_TRAIN — ML Training Base<br/>Trainer Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_GOV_ENFORCEMENT
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -80,9 +80,9 @@ flowchart TD
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_DATA_GOV
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
     D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -111,8 +111,8 @@ flowchart TD
     src_zephyr_ml_train_inference_base_py["模型推理：请求 -> 响应'''<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_trainer_base_py["模型注册元数据'''<br/>D_ML_TRAIN — ML Training Base<br/>Trainer Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -147,27 +147,27 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Training Dataset Manager / Training Dataset Manager (trai... | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
-| 2 | Training Dataset Manager / Training Dataset Manager (trai... | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | data / data |
-| 3 | Training Pipeline / Training Pipeline (training_pipeline/) | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
-| 4 | Training Dataset Manager / Training Dataset Manager (trai... | → | D_DATA_GOV 数据治理: lineage追踪器 / lineage_tracker (core/lineage_tracker.py) | data / data |
-| 5 | Training Dataset Manager / Training Dataset Manager (trai... | → | D_GOV_ENFORCEMENT 规则执行: Data Quality Gate / Quality Gate (rule_enforcement/qualit... | data / data |
-| 6 | Training Pipeline / Training Pipeline (training_pipeline/) | → | D_ORCHESTRATOR 代理编排器: —deepseek/opus/gpt等模型版本+性能基线 / Model Registry (... | runtime / runtime |
-| 7 | Default Inference Engine / Default Inference Engine (impl... | → | D_SHARED 共享服务: Model Serving Response / Model Serving Response (experime... | 导入依赖 / import_depends |
-| 8 | Default Inference Engine / Default Inference Engine (impl... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
-| 9 | 模型推理：请求 -> 响应""" / Inference Base (ml_train/infe... | → | D_SHARED 共享服务: Model Serving Response / Model Serving Response (experime... | 导入依赖 / import_depends |
-| 10 | Default Inference Engine / Default Inference Engine (impl... | → | D_TRADING 交易运营: Model Serving Request / Model Serving Request (execution/... | 导入依赖 / import_depends |
-| 11 | 模型推理：请求 -> 响应""" / Inference Base (ml_train/infe... | → | D_TRADING 交易运营: Model Serving Request / Model Serving Request (execution/... | 导入依赖 / import_depends |
+| 1 | Training Dataset Manager (training_dataset_manager/) | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
+| 2 | Training Dataset Manager (training_dataset_manager/) | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | data / data |
+| 3 | Training Pipeline (training_pipeline/) | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
+| 4 | Training Dataset Manager (training_dataset_manager/) | → | D_DATA_GOV 数据治理: lineage追踪器 / lineage_tracker (core/lineage_tracker.py) | data / data |
+| 5 | Training Dataset Manager (training_dataset_manager/) | → | D_GOV_ENFORCEMENT 规则执行: Quality Gate (rule_enforcement/quality_gate.py) | data / data |
+| 6 | Training Pipeline (training_pipeline/) | → | D_ORCHESTRATOR 代理编排器: —deepseek/opus/gpt等模型版本+性能基线 / Model Registry (... | runtime / runtime |
+| 7 | Default Inference Engine (implementations/default_inferen... | → | D_SHARED 共享服务: Model Serving Response (experiment/model_serving_response... | 导入依赖 / import_depends |
+| 8 | Default Inference Engine (implementations/default_inferen... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 9 | 模型推理：请求 -> 响应 / Inference Base (ml_train/inferen... | → | D_SHARED 共享服务: Model Serving Response (experiment/model_serving_response... | 导入依赖 / import_depends |
+| 10 | Default Inference Engine (implementations/default_inferen... | → | D_TRADING 交易运营: Model Serving Request (execution/model_serving_request.py) | 导入依赖 / import_depends |
+| 11 | 模型推理：请求 -> 响应 / Inference Base (ml_train/inferen... | → | D_TRADING 交易运营: Model Serving Request (execution/model_serving_request.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_INTELLIGENCE 上下文管理: Default Inference Engine / Default Inference Engine (impl... | → | 模型推理：请求 -> 响应""" / Inference Base (ml_train/infe... | 导入依赖 / import_depends |
-| 2 | D_INTELLIGENCE 上下文管理: Default Inference Engine / Default Inference Engine (impl... | → | 模型注册元数据""" / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
-| 3 | D_INTELLIGENCE 上下文管理: Inference Base / Inference Base (model_evaluation/inferen... | → | 模型推理：请求 -> 响应""" / Inference Base (ml_train/infe... | 导入依赖 / import_depends |
-| 4 | D_INTELLIGENCE 上下文管理: Inference Base / Inference Base (model_evaluation/inferen... | → | 模型注册元数据""" / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
-| 5 | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 / Ml Ex... | → | 模型注册元数据""" / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 1 | D_INTELLIGENCE 上下文管理: Default Inference Engine (implementations/default_inferen... | → | 模型推理：请求 -> 响应 / Inference Base (ml_train/inferen... | 导入依赖 / import_depends |
+| 2 | D_INTELLIGENCE 上下文管理: Default Inference Engine (implementations/default_inferen... | → | 模型注册元数据 / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 3 | D_INTELLIGENCE 上下文管理: Inference Base (model_evaluation/inference_base.py) | → | 模型推理：请求 -> 响应 / Inference Base (ml_train/inferen... | 导入依赖 / import_depends |
+| 4 | D_INTELLIGENCE 上下文管理: Inference Base (model_evaluation/inference_base.py) | → | 模型注册元数据 / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 5 | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 / Ml Ex... | → | 模型注册元数据 / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
