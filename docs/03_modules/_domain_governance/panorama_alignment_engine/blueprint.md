@@ -183,7 +183,7 @@ depgraph.nodes 中同一个 `blueprint_id` 可有多行——这是**跨域模�
 python scripts/governance/d5_architecture/generators/align_panoramas.py
 ```
 
-输出：`docs/02_enterprise_architecture/generated/panorama_alignment_report.md`
+输出：`docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md`
 
 报告检测 4 类对齐问题：
 

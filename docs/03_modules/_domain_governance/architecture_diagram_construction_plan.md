@@ -72,7 +72,7 @@ description: |
 
 ### 输出
 
-`docs/02_enterprise_architecture/generated/panorama_alignment_report.md`
+`docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md`
 
 ### 触发方式
 
