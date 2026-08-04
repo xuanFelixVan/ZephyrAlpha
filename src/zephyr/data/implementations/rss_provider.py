@@ -27,6 +27,7 @@
 - fetch() 用 requests.get 拉取 RSS XML，feedparser.parse 解析
 - respect_robots_txt=True 时先检查 robots.txt 是否允许抓取
 """
+
 from __future__ import annotations
 
 import datetime
@@ -37,14 +38,14 @@ from typing import Iterator
 from urllib.parse import urlparse
 from urllib.robotparser import RobotFileParser
 
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
+from ..policy_registry import SourcePolicy
 from ..provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
     FetchPayload,
     FetchResult,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
-from ..policy_registry import SourcePolicy
-from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from ..table_registry import get_registry
 
 log = logging.getLogger(__name__)
@@ -58,33 +59,66 @@ _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 # 海外源：Yahoo Finance 经 RSSHub 代理走 V2rayN SOCKS5(10808)；统一走代理，无直连异类
 # 依赖本地 RSSHub 实例（D:\RSSHub，pm2 守护，监听 localhost:1200，ecosystem.config.cjs 配 PROXY_URI）
 from zephyr.shared.foundation.constants import DEFAULT_HTTP_UA, DEFAULT_RSSHUB_URL
+
 _DEFAULT_RSS_FEEDS = [
     # ---- 国内源：直连 RSS ----
-    "https://36kr.com/feed",                              # 36氪（直连）
-    "https://www.tmtpost.com/feed",                       # 钛媒体（直连）
+    "https://36kr.com/feed",  # 36氪（直连）
+    "https://www.tmtpost.com/feed",  # 钛媒体（直连）
     # ---- 国内源：本地 RSSHub 路由 ----
-    f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",            # 华尔街见闻
+    f"{DEFAULT_RSSHUB_URL}/wallstreetcn/news",  # 华尔街见闻
     f"{DEFAULT_RSSHUB_URL}/eastmoney/report/strategyreport",  # 东方财富-策略报告
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/macresearch",     # 东方财富-宏观研究
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/brokerreport",    # 东方财富-券商晨报
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/industry",        # 东方财富-行业研报
-    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/stock",           # 东方财富-个股研报
-    f"{DEFAULT_RSSHUB_URL}/yicai/news",                   # 第一财经
-    f"{DEFAULT_RSSHUB_URL}/caixin/latest",                # 财新网
-    f"{DEFAULT_RSSHUB_URL}/36kr/newsflashes",             # 36氪快讯
-    f"{DEFAULT_RSSHUB_URL}/jin10/index",                  # 金十数据
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/macresearch",  # 东方财富-宏观研究
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/brokerreport",  # 东方财富-券商晨报
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/industry",  # 东方财富-行业研报
+    f"{DEFAULT_RSSHUB_URL}/eastmoney/report/stock",  # 东方财富-个股研报
+    f"{DEFAULT_RSSHUB_URL}/yicai/news",  # 第一财经
+    f"{DEFAULT_RSSHUB_URL}/caixin/latest",  # 财新网
+    f"{DEFAULT_RSSHUB_URL}/36kr/newsflashes",  # 36氪快讯
+    f"{DEFAULT_RSSHUB_URL}/jin10/index",  # 金十数据
     # ---- 海外源：Yahoo Finance（RSSHub 路由，出站走 SOCKS5 代理）----
     # 路由 /yahoo/news/:region/:category，财经类 category：hk=business / tw=finance / us=business
-    f"{DEFAULT_RSSHUB_URL}/yahoo/news/us/business",       # Yahoo Finance 美国-商业（英文，全球财经）
-    f"{DEFAULT_RSSHUB_URL}/yahoo/news/hk/business",       # Yahoo 財經 香港（中文，港股/全球）
-    f"{DEFAULT_RSSHUB_URL}/yahoo/news/tw/finance",        # Yahoo 財經 台湾（中文，台股/全球）
+    f"{DEFAULT_RSSHUB_URL}/yahoo/news/us/business",  # Yahoo Finance 美国-商业（英文，全球财经）
+    f"{DEFAULT_RSSHUB_URL}/yahoo/news/hk/business",  # Yahoo 財經 香港（中文，港股/全球）
+    f"{DEFAULT_RSSHUB_URL}/yahoo/news/tw/finance",  # Yahoo 財經 台湾（中文，台股/全球）
     # 注：Investing.com 直连源已移除（#ARCH-RSS-INVESTING-403-001）——bot UA 触发 WAF 间歇 403，
     # 内容与 Yahoo Finance 重叠，海外源统一走 RSSHub+SOCKS5 代理架构。
+    # ---- 海外源：直连 RSS（#ARCH-EDB-EXPAND，2026-08-04）----
+    # 国际主流财经媒体原生 RSS，直连（非 RSSHub 中转），走 V2rayN SOCKS5 代理。
+    # 比 Yahoo RSSHub 中转更稳定（无 RSSHub 单点），内容更权威（BBC/CNBC/NYT/Guardian/Bloomberg）。
+    # 注：Reuters RSS 已移除（#ARCH-RSS-REUTERS-404-001）——reutersagency.com/feed 返回 404，
+    # Reuters 2020 年后大幅削减 RSS 支持，URL 不稳定。
+    "https://feeds.bbci.co.uk/news/business/rss.xml",  # BBC Business（英国，英文）
+    "https://www.cnbc.com/id/100003114/device/rss/rss.html",  # CNBC Business（美国，英文）
+    "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",  # NYT Business（美国，英文）
+    "https://www.theguardian.com/business/rss",  # Guardian Business（英国，英文）
+    "https://feeds.bloomberg.com/markets/news.rss",  # Bloomberg Markets（美国，英文）
 ]
 
-# 海外源 URL 特征——所有海外源统一经 RSSHub 走 SOCKS5 代理，
-# 依赖 V2rayN VPN（127.0.0.1:10808）开启。新增海外源时需同步更新此列表。
-_OVERSEAS_FEED_PATTERNS = ("/yahoo/",)
+# 海外直连 RSS 域名 → (region, language) 映射（#ARCH-EDB-EXPAND）
+# _extract_region_language 按域名查此表；Yahoo RSSHub 路由仍按路径段解析。
+_OVERSEAS_DIRECT_REGION_MAP: dict[str, tuple[str, str]] = {
+    "feeds.bbci.co.uk": ("UK", "en"),
+    "www.cnbc.com": ("US", "en"),
+    "rss.nytimes.com": ("US", "en"),
+    "www.theguardian.com": ("UK", "en"),
+    "feeds.bloomberg.com": ("US", "en"),
+}
+
+# 海外源 URL 特征——含 Yahoo RSSHub 路由 + 直连域名。
+# VPN 关闭时（SOCKS5 10808 未监听）跳过所有海外源，国内源正常拉取。
+# 新增海外源时需同步更新此列表。
+_OVERSEAS_FEED_PATTERNS = (
+    "/yahoo/",
+    "feeds.bbci.co.uk",
+    "www.cnbc.com",
+    "rss.nytimes.com",
+    "www.theguardian.com",
+    "feeds.bloomberg.com",
+)
+
+# 海外直连域名（需 requests 走 SOCKS5 代理，区别于 Yahoo 经 RSSHub localhost）
+# _http_get 重写时按此列表判断是否注入 proxies。
+_OVERSEAS_DIRECT_DOMAINS = tuple(_OVERSEAS_DIRECT_REGION_MAP.keys())
 
 # V2rayN SOCKS5 代理监听端口（RSSHub PROXY_URI 指向此端口）
 _VPN_SOCKS5_PORT = 10808
@@ -135,6 +169,10 @@ def _extract_region_language(feed_url: str) -> tuple[str, str]:
         parts = feed_url.split("/yahoo/news/", 1)[1].split("/", 1)
         if parts:
             return _YAHOO_REGION_MAP.get(parts[0], ("CN", "zh"))
+    # 海外直连源（#ARCH-EDB-EXPAND）：按域名查 _OVERSEAS_DIRECT_REGION_MAP
+    host = urlparse(feed_url).netloc.lower()
+    if host in _OVERSEAS_DIRECT_REGION_MAP:
+        return _OVERSEAS_DIRECT_REGION_MAP[host]
     return ("CN", "zh")
 
 
@@ -165,12 +203,44 @@ class RSSProvider(IngestProviderBase):
         """公共接口（R5 公共化）：robots.txt 是否允许抓取该 URL。委托 _is_allowed。"""
         return self._is_allowed(url)
 
-
     # ---- 生命周期 ----
+
+    def _http_get(
+        self,
+        url: str,
+        timeout: float = 30,
+        headers: dict | None = None,
+        params: dict | None = None,
+    ):
+        """HTTP GET + raise_for_status（重写基类，#ARCH-EDB-EXPAND 海外直连源走 SOCKS5）。
+
+        海外直连源（BBC/CNBC/NYT/Guardian/Bloomberg/Reuters）需 V2rayN SOCKS5 代理；
+        国内源 + Yahoo 经 RSSHub（localhost:1200）不走代理（RSSHub 内部处理代理）。
+        VPN 关闭时海外源已在 _fetch_news_data 循环外跳过，此处不重复探测。
+        """
+        import requests
+
+        proxies = None
+        host = urlparse(url).netloc.lower()
+        if host in _OVERSEAS_DIRECT_DOMAINS:
+            proxies = {
+                "https": f"socks5h://127.0.0.1:{_VPN_SOCKS5_PORT}",
+                "http": f"socks5h://127.0.0.1:{_VPN_SOCKS5_PORT}",
+            }
+        resp = requests.get(
+            url,
+            timeout=timeout,
+            headers=headers or {},
+            params=params,
+            proxies=proxies,
+        )
+        resp.raise_for_status()
+        return resp
 
     def connect(self) -> None:
         """建立连接：验证 feedparser 可导入。"""
         import feedparser  # noqa: F401
+
         self._connected = True
         self._log.info("RSS 已连接（匿名访问）")
 
@@ -178,6 +248,7 @@ class RSSProvider(IngestProviderBase):
         """探活：尝试 import feedparser。"""
         try:
             import feedparser  # noqa: F401
+
             return True
         except ImportError as e:
             self._log.warning(f"RSS 探活失败（feedparser 未安装）: {e}")
@@ -190,25 +261,24 @@ class RSSProvider(IngestProviderBase):
 
     # ---- 拉取入口 ----
 
-    def fetch(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def fetch(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """按 payload.extra["capability"] 路由到具体获取方法。"""
-        cap = (payload.extra or {}).get("capability")
-        if cap == "news_data":
+        capability = (payload.extra or {}).get("capability")
+        if capability == "news_data":
             yield from self._fetch_news_data(payload, policy)
         else:
             yield FetchResult(
-                table=payload.table, columns=[], rows=[],
-                last_key="", elapsed_sec=0.0,
-                error=f"unsupported capability: {cap}",
+                table=payload.table,
+                columns=[],
+                rows=[],
+                last_key="",
+                elapsed_sec=0.0,
+                error=f"unsupported capability: {capability}",
             )
 
     # ---- 财经新闻 ----
 
-    def _fetch_news_data(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
+    def _fetch_news_data(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取财经新闻（feedparser.parse）。
 
         每个 RSS 源作为一批 yield FetchResult。
@@ -267,15 +337,25 @@ class RSSProvider(IngestProviderBase):
                     title = entry.get("title", "")
                     link = entry.get("link", "")
                     summary = entry.get("summary", entry.get("description", ""))
-                    rows.append(build_news_row(
-                        pub_date, title, link, summary, source_name, "rss",
-                        region=region, language=language,
-                    ))
+                    rows.append(
+                        build_news_row(
+                            pub_date,
+                            title,
+                            link,
+                            summary,
+                            source_name,
+                            "rss",
+                            region=region,
+                            language=language,
+                        )
+                    )
 
                 self._log.info(f"RSS {source_name}: {len(rows)} 行")
                 if rows:
                     yield FetchResult(
-                        table=table, columns=columns, rows=rows,
+                        table=table,
+                        columns=columns,
+                        rows=rows,
                         last_key=datetime.date.today().isoformat(),
                         elapsed_sec=time.time() - t0,
                     )

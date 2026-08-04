@@ -10362,6 +10362,30 @@ entries:
   created: '2026-07-31'
   last_updated: '2026-07-31'
 
+# --- #ARCH-RSS-REUTERS-404-001: Reuters RSS 源 404 治本（移除失效源）---
+- issue_id: '#ARCH-RSS-REUTERS-404-001'
+  title: 'Reuters RSS 源 reutersagency.com/feed 返回 404——移除失效源'
+  category: data_source
+  severity: P2中
+  adjudication: |-
+    病根（2026-08-04 调研）：rss_provider.py 海外新闻源扩展时新增 Reuters RSS 源
+    （reutersagency.com/feed），但该 URL 返回 404——Reuters 已变更 RSS 分发方式，
+    原 feed 地址不再可用。
+
+    治本裁定：移除 Reuters RSS 源。否决备选：①寻找新 Reuters feed 地址
+    （Reuters 官网未提供稳定 RSS，且内容与 BBC/CNBC/Guardian/NYT 重叠）；
+    ②走 RSSHub 路由（RSSHub 无稳定 reuters 路由）。
+
+    裁定依据：①内容重叠（已有 BBC/CNBC/Guardian/NYT/Bloomberg 5 个海外源覆盖全球财经）；
+    ②稳定性（404 = 源已死，保留只会持续报错）；③100% AI 维护性（少一个失效源 = 少一个排查点）。
+  impact:
+    - 'src/zephyr/data/implementations/rss_provider.py（移除 Reuters RSS 源，保留注释说明移除原因）'
+  fix_phase: '已落地。移除 Reuters RSS 源，在代码中保留注释说明移除原因。'
+  status: resolved
+  related_rules: '#ARCH-RSS-INVESTING-403-001'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'
+
 # --- #ARCH-SSOT-SURVIVORSHIP-CLEANUP-001: survivorship_policy.yaml 迁移残留清理（audit 2026-07-31 议题3）---
 - issue_id: '#ARCH-SSOT-SURVIVORSHIP-CLEANUP-001'
   title: 'survivorship_policy.yaml 迁移残留清理——删除 redirect stub + 重生成陈旧文档引用'

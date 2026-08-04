@@ -22,7 +22,8 @@
 提供实时天气 + 7天预报拉取能力。
 
 数据源：
-- 和风天气免费开发版: https://devapi.qweather.com/v7（免费，需注册 API key）
+- 和风天气: https://{QWEATHER_API_HOST}/v7（免费，需注册 API key + 专属 API Host）
+- 2026 年起公共地址 devapi.qweather.com 已弃用，必须用控制台分配的专属 API Host
 - 免费版 1000 次/天，40 城市 × 2 种数据 = 80 次/天，远低于限制
 
 支持的能力（capability，通过 payload.extra["capability"] 路由）：
@@ -35,6 +36,8 @@
 
 设计要点：
 - QWEATHER_API_KEY 从环境变量读取（必填，免费注册 https://dev.qweather.com）
+- QWEATHER_API_HOST 从环境变量读取（必填，控制台-设置中查看专属 API Host）
+- 认证方式：X-QW-Api-Key 请求头（2026 年起公共 key 查询参数已弃用）
 - 40 个主要城市（直辖市+省会+重点城市），用经纬度作为 location 参数
 - 国内服务，不需要 VPN
 - 每个城市实时天气 1 行 + 7 天预报 7 行 = 8 行/城市/天
@@ -79,8 +82,8 @@ _WEATHER_COLUMNS: Final = [
     "cloud", "dew_point",
 ]
 
-# 和风天气免费开发版 API 基址
-_QWEATHER_API_URL = "https://devapi.qweather.com/v7"
+# 和风天气 API 基址前缀（host 从环境变量读取，2026 年起公共地址已弃用）
+_QWEATHER_API_PATH = "/v7"
 
 # HTTP 请求超时（秒）
 _QWEATHER_TIMEOUT = 15
@@ -175,14 +178,17 @@ class QWeatherProvider(IngestProviderBase):
         ],
         known_issues=[
             "QWEATHER_API_KEY必填（免费注册）",
+            "QWEATHER_API_HOST必填（控制台-设置中查看专属API Host）",
             "免费版无历史数据API——必须每日积累，错过无法回填",
             "免费版1000次/天限制",
+            "2026年起公共地址devapi.qweather.com已弃用",
         ],
     )
 
     def __init__(self):
         super().__init__()
         self._qweather_key: str | None = None
+        self._api_host: str | None = None
         # 代理配置：国内服务，通常不需要代理
         self._proxies: dict | None = None
         proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
@@ -192,21 +198,29 @@ class QWeatherProvider(IngestProviderBase):
     # ---- 生命周期 ----
 
     def connect(self) -> None:
-        """建立连接：读取 QWEATHER_API_KEY（必填）。"""
+        """建立连接：读取 QWEATHER_API_KEY + QWEATHER_API_HOST（均必填）。"""
         self._qweather_key = get_secret_or_default("QWEATHER_API_KEY")
-        if self._qweather_key:
-            log.info("和风天气已配置 API key")
+        self._api_host = get_secret_or_default("QWEATHER_API_HOST")
+        if self._qweather_key and self._api_host:
+            log.info("和风天气已配置 API key + API Host (%s)", self._api_host)
         else:
-            log.warning(
-                "和风天气未配置 API key（免费注册 https://dev.qweather.com）"
-            )
+            if not self._qweather_key:
+                log.warning(
+                    "和风天气未配置 API key（免费注册 https://dev.qweather.com）"
+                )
+            if not self._api_host:
+                log.warning(
+                    "和风天气未配置 API Host"
+                    "（控制台-设置 中查看专属 API Host，"
+                    "格式如 abc1234xyz.def.qweatherapi.com）"
+                )
         self._connected = True
 
     def health_check(self) -> bool:
-        """探活：验证 QWEATHER_API_KEY 配置 + 网络可达。
+        """探活：验证 QWEATHER_API_KEY + QWEATHER_API_HOST 配置 + 网络可达。
 
-        和风天气 API v7 强制要求 key。无 key 时返回 False——
-        scheduler 会跳过本源。
+        和风天气 API v7 强制要求 key + 专属 API Host。
+        无 key 或无 host 时返回 False——scheduler 会跳过本源。
         """
         if not self._connected:
             return False
@@ -216,12 +230,19 @@ class QWeatherProvider(IngestProviderBase):
                 "（免费注册 https://dev.qweather.com）"
             )
             return False
+        if not self._api_host:
+            log.warning(
+                "和风天气探活失败：未配置 QWEATHER_API_HOST"
+                "（控制台-设置 中查看专属 API Host）"
+            )
+            return False
         try:
             # 用北京实时天气验证 key 有效性 + 网络连通
-            url = f"{_QWEATHER_API_URL}/weather/now"
-            params = {"location": "116.41,39.92", "key": self._qweather_key}
+            url = f"https://{self._api_host}{_QWEATHER_API_PATH}/weather/now"
+            headers = {"X-QW-Api-Key": self._qweather_key}
             resp = requests.get(
-                url, params=params, timeout=10, proxies=self._proxies
+                url, params={"location": "116.41,39.92"},
+                headers=headers, timeout=10, proxies=self._proxies,
             )
             if resp.status_code == 200:
                 data = resp.json()
@@ -281,14 +302,14 @@ class QWeatherProvider(IngestProviderBase):
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """获取 40 个城市的实时天气，每城市一行。"""
-        if not self._qweather_key:
+        if not self._qweather_key or not self._api_host:
             yield FetchResult(
                 table=_TBL_WEATHER_DATA,
                 columns=_WEATHER_COLUMNS,
                 rows=[],
                 last_key="",
                 elapsed_sec=0.0,
-                error="QWEATHER_API_KEY 未配置（免费注册: https://dev.qweather.com）",
+                error="QWEATHER_API_KEY 或 QWEATHER_API_HOST 未配置",
             )
             return
 
@@ -340,14 +361,14 @@ class QWeatherProvider(IngestProviderBase):
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """获取 40 个城市的 7 天预报，每城市每天一行。"""
-        if not self._qweather_key:
+        if not self._qweather_key or not self._api_host:
             yield FetchResult(
                 table=_TBL_WEATHER_DATA,
                 columns=_WEATHER_COLUMNS,
                 rows=[],
                 last_key="",
                 elapsed_sec=0.0,
-                error="QWEATHER_API_KEY 未配置（免费注册: https://dev.qweather.com）",
+                error="QWEATHER_API_KEY 或 QWEATHER_API_HOST 未配置",
             )
             return
 
@@ -407,6 +428,9 @@ class QWeatherProvider(IngestProviderBase):
     ) -> dict:
         """调用和风天气 API，返回 JSON 响应的 dict。
 
+        认证方式：X-QW-Api-Key 请求头（2026 年起公共 key 查询参数已弃用）。
+        API Host 从 QWEATHER_API_HOST 环境变量读取（专属 API Host）。
+
         和风天气 API 返回 HTTP 200 + JSON code 字段：
         - code=200: 成功
         - 其他: API 错误（401=鉴权失败, 402=超配额, 404=找不到位置...）
@@ -414,14 +438,16 @@ class QWeatherProvider(IngestProviderBase):
         Raises:
             RuntimeError: API 返回非 200 code
         """
-        url = f"{_QWEATHER_API_URL}{endpoint}"
-        params = {"location": location, "key": self._qweather_key}
+        url = f"https://{self._api_host}{_QWEATHER_API_PATH}{endpoint}"
+        headers = {"X-QW-Api-Key": self._qweather_key}
+        params = {"location": location}
 
         resp = self._call_with_policy(
             requests.get,
             policy,
             url,
             params=params,
+            headers=headers,
             timeout=_QWEATHER_TIMEOUT,
             proxies=self._proxies,
         )
