@@ -66,8 +66,8 @@ flowchart TD
     src_zephyr_ml_train_trainer_base_py["模型注册元数据'''<br/>D_ML_TRAIN — ML Training Base<br/>Trainer Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_GOV_ENFORCEMENT
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -79,10 +79,10 @@ flowchart TD
     D_DATA_GOV["数据治理<br/>数据治理，负责数据标准、元数据管理和数据生命周期<br/>治理<br/>Data Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_DATA_GOV
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
     D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -111,8 +111,8 @@ flowchart TD
     src_zephyr_ml_train_inference_base_py["模型推理：请求 -> 响应'''<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_trainer_base_py["模型注册元数据'''<br/>D_ML_TRAIN — ML Training Base<br/>Trainer Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -152,7 +152,7 @@ flowchart TD
 | 3 | 训练管道 / Training Pipeline (training_pipeline/) | → | D_DATA 数据接入层: pit查询 / pit_query (data/pit_query.py) | data / data |
 | 4 | 训练数据集管理器 / Training Dataset Manager (training_dat... | → | D_DATA_GOV 数据治理: lineage追踪器 / lineage_tracker (core/lineage_tracker.py) | data / data |
 | 5 | 训练数据集管理器 / Training Dataset Manager (training_dat... | → | D_GOV_ENFORCEMENT 规则执行: Quality门禁 / Quality Gate (rule_enforcement/quality_gate... | data / data |
-| 6 | 训练管道 / Training Pipeline (training_pipeline/) | → | D_ORCHESTRATOR 代理编排器: —deepseek/opus/gpt等模型版本+性能基线 / Model Registry (... | runtime / runtime |
+| 6 | 训练管道 / Training Pipeline (training_pipeline/) | → | D_ORCHESTRATOR 代理编排器: deepseek/opus/gpt等模型版本+性能基线 / Model Registry (go... | runtime / runtime |
 | 7 | 默认推理引擎 / Default Inference Engine (implementations/... | → | D_SHARED 共享服务: 模型Serving响应 / Model Serving Response (experiment/mode... | 导入依赖 / import_depends |
 | 8 | 默认推理引擎 / Default Inference Engine (implementations/... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 9 | 模型推理：请求 -> 响应 / Inference Base (ml_train/inferen... | → | D_SHARED 共享服务: 模型Serving响应 / Model Serving Response (experiment/mode... | 导入依赖 / import_depends |

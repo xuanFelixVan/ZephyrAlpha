@@ -112,7 +112,7 @@ flowchart TD
 | 3 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 公共接口：wasserstein_1d / Burn Rate Monitor (ops_governa... | 导入依赖 / import_depends |
 | 4 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Degradation管理器 / Degradation Manager (ops_governance/d... | 导入依赖 / import_depends |
 | 5 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 只读：timeouts / Timeout Guard (ops_governance/timeout_gu... | 导入依赖 / import_depends |
-| 6 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: —5.133.2 DI 注入契约 / Budget Engine (ops_governance/bud... | 导入依赖 / import_depends |
+| 6 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: 5.133.2 DI 注入契约 / Budget Engine (ops_governance/budge... | 导入依赖 / import_depends |
 | 7 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: 预算模型 / Budget Models (ops_governance/budget_models.py) | 导入依赖 / import_depends |
 | 8 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: 预算跟踪器 / Budget Tracker (ops_governance/budget_tracke... | 导入依赖 / import_depends |
 
