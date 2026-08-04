@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_03_backtest_validation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §backtest_validation 阶段，48 环节（58 锚点）。
+> battle_map §backtest_validation 阶段，49 环节（58 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-04
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 回测验证（backtest_validation） | Stage | 回测验证 |
-| 环节数 | 48 | Steps | 48 |
+| 环节数 | 49 | Steps | 49 |
 | 锚点数（双向对齐） | 58 | Anchors (Bidirectional) | 58 |
 | 流转边 | 8 | Edges | 8 |
-| 状态分布 | 🟦 运营态（已建）=48 | State Distribution | 🟦 运营态（已建）=48 |
+| 状态分布 | 🟦 运营态（已建）=48 ｜ ⬜ 缺失态（无锚点）=1 | State Distribution | 🟦 运营态（已建）=48 ｜ ⬜ 缺失态（无锚点）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-04
 
 ## 阶段图 / Stage Diagram
 
-> 展示 回测验证 阶段全部 48 个环节及流转边，颜色区分五态。
+> 展示 回测验证 阶段全部 49 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -145,7 +145,8 @@ flowchart TD
         BM_BT_07 -.->|嵌套| BM_BT_07_H
         BM_BT_07 -.->|嵌套| BM_BT_07_I
     end
-    BM_BT_01 ~~~ BM_BT_01_A ~~~ BM_BT_01_B ~~~ BM_BT_01_C ~~~ BM_BT_01_D ~~~ BM_BT_01_E ~~~ BM_BT_01_F ~~~ BM_BT_02_A ~~~ BM_BT_02_B ~~~ BM_BT_02_C ~~~ BM_BT_02_D ~~~ BM_BT_02_E ~~~ BM_BT_03_A ~~~ BM_BT_03_B ~~~ BM_BT_03_C ~~~ BM_BT_03_D ~~~ BM_BT_03_E ~~~ BM_BT_04_A ~~~ BM_BT_04_B ~~~ BM_BT_04_C ~~~ BM_BT_05_A ~~~ BM_BT_05_B ~~~ BM_BT_05_C ~~~ BM_BT_05_D ~~~ BM_BT_05_E ~~~ BM_BT_05_F ~~~ BM_BT_05_G ~~~ BM_BT_05_H ~~~ BM_BT_05_I ~~~ BM_BT_05_J ~~~ BM_BT_06_A ~~~ BM_BT_06_B ~~~ BM_BT_06_C ~~~ BM_BT_07_A ~~~ BM_BT_07_B ~~~ BM_BT_07_C ~~~ BM_BT_07_D ~~~ BM_BT_07_E ~~~ BM_BT_07_F ~~~ BM_BT_07_G ~~~ BM_BT_07_H ~~~ BM_BT_07_I
+    BM_BT_08["【BM-BT-08 试运行与验证】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_BT_01 ~~~ BM_BT_01_A ~~~ BM_BT_01_B ~~~ BM_BT_01_C ~~~ BM_BT_01_D ~~~ BM_BT_01_E ~~~ BM_BT_01_F ~~~ BM_BT_02_A ~~~ BM_BT_02_B ~~~ BM_BT_02_C ~~~ BM_BT_02_D ~~~ BM_BT_02_E ~~~ BM_BT_03_A ~~~ BM_BT_03_B ~~~ BM_BT_03_C ~~~ BM_BT_03_D ~~~ BM_BT_03_E ~~~ BM_BT_04_A ~~~ BM_BT_04_B ~~~ BM_BT_04_C ~~~ BM_BT_05_A ~~~ BM_BT_05_B ~~~ BM_BT_05_C ~~~ BM_BT_05_D ~~~ BM_BT_05_E ~~~ BM_BT_05_F ~~~ BM_BT_05_G ~~~ BM_BT_05_H ~~~ BM_BT_05_I ~~~ BM_BT_05_J ~~~ BM_BT_06_A ~~~ BM_BT_06_B ~~~ BM_BT_06_C ~~~ BM_BT_07_A ~~~ BM_BT_07_B ~~~ BM_BT_07_C ~~~ BM_BT_07_D ~~~ BM_BT_07_E ~~~ BM_BT_07_F ~~~ BM_BT_07_G ~~~ BM_BT_07_H ~~~ BM_BT_07_I ~~~ BM_BT_08
     BM_BT_01 -->|引擎→持仓数据 / data_flow| BM_BT_02
     BM_BT_02 -->|持仓→绩效指标 / data_flow| BM_BT_03
     BM_BT_03 -->|指标→PIT校验 / trigger| BM_BT_04
@@ -158,6 +159,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_BT_01,BM_BT_02,BM_BT_03,BM_BT_04,BM_BT_05,BM_BT_06,BM_BT_07,BM_BT_01_A,BM_BT_01_B,BM_BT_01_C,BM_BT_01_D,BM_BT_01_E,BM_BT_01_F,BM_BT_02_A,BM_BT_02_B,BM_BT_02_C,BM_BT_02_D,BM_BT_02_E,BM_BT_03_A,BM_BT_03_B,BM_BT_03_C,BM_BT_03_D,BM_BT_03_E,BM_BT_04_A,BM_BT_04_B,BM_BT_04_C,BM_BT_05_A,BM_BT_05_B,BM_BT_05_C,BM_BT_05_D,BM_BT_05_E,BM_BT_05_F,BM_BT_05_G,BM_BT_05_H,BM_BT_05_I,BM_BT_05_J,BM_BT_06_A,BM_BT_06_B,BM_BT_06_C,BM_BT_07_A,BM_BT_07_B,BM_BT_07_C,BM_BT_07_D,BM_BT_07_E,BM_BT_07_F,BM_BT_07_G,BM_BT_07_H,BM_BT_07_I production
+    class BM_BT_08 missing
 ```
 
 ## 环节详情
@@ -1815,6 +1817,25 @@ v2.0 备忘模块，按需开发。
 | depgraph | MOD-BT-001 | primary | planned | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
+
+### BM-BT-08 试运行与验证
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | BM-BT-07 回测验证通过后、策略全量上线前 |
+| ② 消费数据/因子 | 回测通过策略 + 实盘环境配置 + BM-BT-07-I 分层验证门控(V3+V4)结果 |
+| ③ 参数 | 试运行流水线、影子运行(shadow)、小仓位实盘验证、输出契约、灰度切换门禁 |
+| ④ 数据流 | 回测通过→影子运行→小仓位实盘验证→门禁评估→全量上线 / 回退迭代 |
+| ⑤ 代码映射 | 待开发（planned，D_BACKTEST/D_SIMULATION 域） |
+| ⑥ 降级/中止 | 试运行失败→回退 BM-BT-07 继续回测迭代（不上线） |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
 
 [← 返回总指挥图](battle_map_panorama.md)

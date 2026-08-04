@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_06_buy_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §buy_flow 阶段，19 环节（15 锚点）。
+> battle_map §buy_flow 阶段，21 环节（15 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-04
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
-| 环节数 | 19 | Steps | 19 |
+| 环节数 | 21 | Steps | 21 |
 | 锚点数（双向对齐） | 15 | Anchors (Bidirectional) | 15 |
 | 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=2 | State Distribution | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=2 |
+| 状态分布 | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=2 | State Distribution | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=2 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-04
 
 ## 阶段图 / Stage Diagram
 
-> 展示 买入 阶段全部 19 个环节及流转边，颜色区分五态。
+> 展示 买入 阶段全部 21 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -46,6 +46,8 @@ flowchart TD
     BM_BUY_10["【BM-BUY-10 合规技术深度】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_BUY_01["【BM-BUY-01 多情景对策生成】<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Multi-Scenario Countermeasure】"]
     BM_BUY_11["【BM-BUY-11 合规持续运营】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_BUY_12["【BM-BUY-12 硬边界裁定】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_BUY_13["【BM-BUY-13 合规裁定扩展-EU AI Act】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     subgraph sg_BM_BUY_02 ["四轨融合"]
         BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Four-Track Fusion （MTF）】"]
         subgraph sg_BM_BUY_02_A ["逻辑驱动轨"]
@@ -76,7 +78,7 @@ flowchart TD
     BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控→仓位裁决→置信度分层→执行四级优先级，是人工<br/>干预系统的入口。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【External Order Monitoring】"]
     BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>（生产态 / production）<br/>【WeChat Interaction Hub】"]
     BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
-    BM_BUY_09 ~~~ BM_BUY_10 ~~~ BM_BUY_01 ~~~ BM_BUY_11 ~~~ BM_BUY_04 ~~~ BM_BUY_02_A_1 ~~~ BM_BUY_02_A_1_a ~~~ BM_BUY_02_A_1_b ~~~ BM_BUY_02_A_1_c ~~~ BM_BUY_02_A_1_d ~~~ BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D
+    BM_BUY_09 ~~~ BM_BUY_10 ~~~ BM_BUY_01 ~~~ BM_BUY_11 ~~~ BM_BUY_12 ~~~ BM_BUY_13 ~~~ BM_BUY_04 ~~~ BM_BUY_02_A_1 ~~~ BM_BUY_02_A_1_a ~~~ BM_BUY_02_A_1_b ~~~ BM_BUY_02_A_1_c ~~~ BM_BUY_02_A_1_d ~~~ BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D
     BM_BUY_02 ~~~ BM_BUY_06
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
@@ -89,7 +91,7 @@ classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_C,BM_BUY_02_D production
     class BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_B design
-    class BM_BUY_09,BM_BUY_10,BM_BUY_11 missing
+    class BM_BUY_09,BM_BUY_10,BM_BUY_11,BM_BUY_12,BM_BUY_13 missing
     class BM_BUY_06,BM_BUY_08 candidate
 ```
 
@@ -182,6 +184,44 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | ④ 数据流 | 交易/客户数据→AML/KYC检测→合规证据归档→监管报告→知识积累 |
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
 | ⑥ 降级/中止 | AML引擎失效→人工审查+延迟报告(合规风险) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+
+### BM-BUY-12 硬边界裁定
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 新功能设计时/功能上线门禁 |
+| ② 消费数据/因子 | 功能设计规格+合规规则库+BM-BUY-10合规技术配置 |
+| ③ 参数 | 裁定原则、47项功能二元裁定、能建功能实施顺序、门禁激活后扩展顺序 |
+| ④ 数据流 | 功能规格→二元裁定(能建/禁建)→门禁记录→上线/拒绝 |
+| ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
+| ⑥ 降级/中止 | 裁定未决→暂缓功能上线(安全优先) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+
+### BM-BUY-13 合规裁定扩展-EU AI Act
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | EU AI Act合规要求/跨境AI业务 |
+| ② 消费数据/因子 | AI系统清单+EU AI Act法规+风险分级标准 |
+| ③ 参数 | 新增功能二元裁定、EU AI Act合规架构增强、AI系统风险分级 |
+| ④ 数据流 | AI系统→风险分级→合规裁定→监管报告→功能限制/放行 |
+| ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
+| ⑥ 降级/中止 | EU AI Act未就绪→限制跨境AI功能(合规优先) |
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 

@@ -103,7 +103,7 @@ flowchart TD
         BM_RES_07_A["【BM-RES-07-A 策略进化与因子挖掘】<br/>基于归因结果调整权重、挖新因子、学错误模式，让策<br/>略自己进化——不是一锤子买卖。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Strategy Evolution &amp; Factor Mining】"]
         BM_RES_07 -.->|嵌套| BM_RES_07_A
     end
-    BM_RES_08 ~~~ BM_RES_09 ~~~ BM_RES_10 ~~~ BM_RES_01 ~~~ BM_RES_11 ~~~ BM_RES_01_A ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RES_04_A ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RES_07_A
+    BM_RES_08 ~~~ BM_RES_09 ~~~ BM_RES_10 ~~~ BM_RES_01 ~~~ BM_RES_01_A ~~~ BM_RES_11 ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RES_04_A ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RES_07_A
     BM_RES_01 -.->|研究数据→实验追踪 / data_flow| BM_RES_02
     BM_RES_02 -.->|实验结果→假设验证 / data_flow| BM_RES_03
     BM_RES_03 -.->|假设→工作流编排 / trigger| BM_RES_04
@@ -215,25 +215,6 @@ D-RESEARCH-02 Feature Store 提供离线训练+在线推理双套特征存储，
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
 
-### BM-RES-11 多模态知识采集
-
-
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | 定时采集/研究员触发/事件驱动 |
-| ② 消费数据/因子 | 外部数据源(论文库/新闻/研报/财报/另类数据) |
-| ③ 参数 | 采集源分类、采集调度、采集增强能力(v4.0)、输出契约 |
-| ④ 数据流 | 外部源→采集→分类→调度→BM-RES-06 LLM研究Agent/论文追踪 |
-| ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_INTELLIGENCE域） |
-| ⑥ 降级/中止 | 采集源故障→降级缓存数据+告警 |
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
-
 ### BM-RES-01-A 数据集版本化与血缘追踪 / Dataset Versioning & Lineage
 
 > **大白话**：把数据集像 Git 一样管版本——每次改动留快照、记血缘，知道数据从哪来、经过什么变换、去了哪。
@@ -264,6 +245,25 @@ Git-like版本管理→数据快照→回滚→血缘追踪(来源→变换→�
 | candidate | CAND-HARVEST-0643 | primary | planned | — |
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：research_incubation
+
+### BM-RES-11 多模态知识采集
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 定时采集/研究员触发/事件驱动 |
+| ② 消费数据/因子 | 外部数据源(论文库/新闻/研报/财报/另类数据) |
+| ③ 参数 | 采集源分类、采集调度、采集增强能力(v4.0)、输出契约 |
+| ④ 数据流 | 外部源→采集→分类→调度→BM-RES-06 LLM研究Agent/论文追踪 |
+| ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_INTELLIGENCE域） |
+| ⑥ 降级/中止 | 采集源故障→降级缓存数据+告警 |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
 
 ### BM-RES-01-B 特征存储与PIT正确性 / Feature Store & PIT Correctness
 

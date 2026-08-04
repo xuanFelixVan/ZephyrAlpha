@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_09_risk_control.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §risk_control 阶段，43 环节（43 锚点）。
+> battle_map §risk_control 阶段，44 环节（43 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-04
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 风控管控（risk_control） | Stage | 风控管控 |
-| 环节数 | 43 | Steps | 43 |
+| 环节数 | 44 | Steps | 44 |
 | 锚点数（双向对齐） | 43 | Anchors (Bidirectional) | 43 |
 | 流转边 | 10 | Edges | 10 |
-| 状态分布 | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=5 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=5 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=5 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=5 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-04
 
 ## 阶段图 / Stage Diagram
 
-> 展示 风控管控 阶段全部 43 个环节及流转边，颜色区分五态。
+> 展示 风控管控 阶段全部 44 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -54,6 +54,7 @@ flowchart TD
     end
     BM_RC_10["【BM-RC-10 风险否决权】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_RC_12["【BM-RC-12 极端事件与黑天鹅】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     subgraph sg_BM_RC_02 ["盘前风控检查"]
         BM_RC_02["【BM-RC-02 盘前风控检查】<br/>下单前过五关——仓位限额→行业集中度→杠杆率→合规规<br/>则→Kill Switch 状态，任一不过就拒单。<br/>（生产态 / production）<br/>【Pre-Trade Risk Check】"]
         BM_RC_02_A["【BM-RC-02-A 仓位限额检查】<br/>盘前查仓位有没有超限额——单票超了、总仓位超了，在<br/>下单前就拦住。<br/>（生产态 / production）<br/>【Position Limit Check】"]
@@ -133,7 +134,7 @@ flowchart TD
         BM_RC_08 -.->|嵌套| BM_RC_08_D
         BM_RC_08 -.->|嵌套| BM_RC_08_E
     end
-    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E
+    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_01_B ~~~ BM_RC_12 ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E
     BM_RC_01 -->|策略→盘前检查 / data_flow| BM_RC_02
     BM_RC_02 -->|检查→Kill Switch / trigger| BM_RC_03
     BM_RC_03 -->|熔断→盘中监控 / data_flow| BM_RC_04
@@ -148,7 +149,7 @@ classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C production
     class BM_RC_04_E,BM_RC_04_F,BM_RC_06_D,BM_RC_08_D,BM_RC_08_E design
-    class BM_RC_09,BM_RC_10,BM_RC_11 missing
+    class BM_RC_09,BM_RC_10,BM_RC_11,BM_RC_12 missing
     class BM_RC_05_C candidate
 ```
 
@@ -307,6 +308,25 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 | depgraph | MOD-L04-001 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-12 极端事件与黑天鹅
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 极端市场事件发生时 / 盘后黑天鹅压力测试 |
+| ② 消费数据/因子 | 历史极端事件数据 + BM-RC-08-C 压力测试结果 + 跨市场行情数据 |
+| ③ 参数 | 黑天鹅模式库、跨市场传导模型、流动性危机模拟、二阶效应与传染模型、反向压力测试 |
+| ④ 数据流 | 极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch |
+| ⑤ 代码映射 | 待开发（planned，D_RISK 域） |
+| ⑥ 降级/中止 | 极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先） |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-01-C 预警分级与审批流 / Alert Tiering & Approval Flow
 
