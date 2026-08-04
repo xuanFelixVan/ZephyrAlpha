@@ -53,8 +53,8 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_default_tca_engine_py["Default TCA Engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_performance_attribution_report_py["Performance Attribution Report<br/>报告包的performance_attribution_report模块<br/>⛔ D-EX-CORE执行报告未就绪(CTR-P1-007<br/>/CTR-ERR-005),设计文档§1.4标注受限,暂不可建<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_default_tca_engine_py["默认交易成本分析引擎<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_performance_attribution_report_py["性能Attribution报告<br/>报告包的performance_attribution_report模块<br/>⛔ D-EX-CORE执行报告未就绪(CTR-P1-007<br/>/CTR-ERR-005),设计文档§1.4标注受限,暂不可建<br/>Performance Attribution Report<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
     tests_reporting_test_ashare_performance_audit_py["MOD-RPT-026 A-Share Performance Audit 单元测试.<br/>报告包的test_ashare_performance_audit模块<br/>Test Ashare Performance Audit<br/>文件: reporting/test_ashare_performance_audit.py<br/>(生产态 / production)"]
     tests_reporting_test_ashare_trade_record_template_py["MOD-RPT-027 A股交易记录模板引擎 单元测试.<br/>报告包的test_ashare_trade_record_template模块<br/>Test Ashare Trade Record Template<br/>文件: reporting<br/>/test_ashare_trade_record_template.py<br/>(生产态 / production)"]
     tests_reporting_test_realtime_pnl_dashboard_py["MOD-RPT-004 Real-time P&L Dashboard 单元测试.<br/>报告包的test_realtime_pnl_dashboard模块<br/>Test Realtime Pnl Dashboard<br/>文件: reporting/test_realtime_pnl_dashboard.py<br/>(生产态 / production)"]
@@ -72,21 +72,21 @@ flowchart TD
     tests_reporting_test_report_publisher_py ~~~ tests_reporting_test_report_version_manager_py
     tests_reporting_test_report_version_manager_py ~~~ tests_reporting_test_report_watermark_tracker_py
     tests_reporting_test_report_watermark_tracker_py ~~~ tests_reporting_test_risk_report_engine_py
-    src_zephyr_reporting_ashare_performance_audit_py["A-Share Performance Audit & Optimization Trigger<br/>D_REPORTING — A-Share Performance Audit &<br/>Optimization Trigger<br/>Ashare Performance Audit<br/>文件: reporting/ashare_performance_audit.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_ashare_performance_audit_py["A股性能审计<br/>D_REPORTING — A-Share Performance Audit &<br/>Optimization Trigger<br/>Ashare Performance Audit<br/>文件: reporting/ashare_performance_audit.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_trade_record_template_py["A股交易记录模板引擎<br/>D_REPORTING — A股交易记录模板引擎 (ASHare Trade<br/>Record Template)<br/>文件: reporting/ashare_trade_record_template.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_realtime_pnl_dashboard_py["Real-time P&L Dashboard<br/>D_REPORTING — Real-time P&L Dashboard<br/>(实时盈亏仪表盘)<br/>Realtime Pnl Dashboard<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_regulatory_report_generator_py["Regulatory Report Generator<br/>D_REPORTING — Regulatory Report Generator<br/>(监管报告生成器)<br/>文件: reporting/regulatory_report_generator.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_report_version_manager_py["Report Version Manager<br/>D_REPORTING — Report Version Manager<br/>(报告版本管理器)<br/>文件: reporting/report_version_manager.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_report_watermark_tracker_py["Report Watermark Tracker<br/>D_REPORTING — Report Watermark Tracker<br/>(报告水印追踪器)<br/>文件: reporting/report_watermark_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_risk_report_engine_py["Risk Report Engine<br/>D_REPORTING — Risk Report Engine (风险报告引擎)<br/>文件: reporting/risk_report_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_realtime_pnl_dashboard_py["RealtimePnl仪表盘<br/>D_REPORTING — Real-time P&L Dashboard<br/>(实时盈亏仪表盘)<br/>Realtime Pnl Dashboard<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_regulatory_report_generator_py["Regulatory报告生成器<br/>D_REPORTING — Regulatory Report Generator<br/>(监管报告生成器)<br/>文件: reporting/regulatory_report_generator.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>D_REPORTING — Report Version Manager<br/>(报告版本管理器)<br/>文件: reporting/report_version_manager.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_report_watermark_tracker_py["报告Watermark跟踪器<br/>D_REPORTING — Report Watermark Tracker<br/>(报告水印追踪器)<br/>文件: reporting/report_watermark_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>D_REPORTING — Risk Report Engine (风险报告引擎)<br/>文件: reporting/risk_report_engine.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
     src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_realtime_pnl_dashboard_py
     src_zephyr_reporting_realtime_pnl_dashboard_py ~~~ src_zephyr_reporting_regulatory_report_generator_py
     src_zephyr_reporting_regulatory_report_generator_py ~~~ src_zephyr_reporting_report_version_manager_py
     src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
     src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
-    src_zephyr_reporting_default_attribution_engine_py["Default Attribution Engine<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_report_publisher_py["Report Publisher<br/>D_REPORTING — Report Publisher (报告发布器)<br/>文件: reporting/report_publisher.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_default_attribution_engine_py["默认Attribution引擎<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_report_publisher_py["报告Publisher<br/>D_REPORTING — Report Publisher (报告发布器)<br/>文件: reporting/report_publisher.py<br/>(生产态 / production)"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_analytics_base_py["单笔成交的 TCA 分析，返回执行报告'''<br/>D_REPORTING — Post-Trade Analytics Layer<br/>Analytics Base<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_reporting_performance_attribution_report_py -.->|data / data| src_zephyr_reporting_report_publisher_py
@@ -148,7 +148,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_default_tca_engine_py["Default TCA Engine<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_default_tca_engine_py["默认交易成本分析引擎<br/>D_REPORTING — Default TCA Engine<br/>文件: reporting/default_tca_engine.py<br/>(生产态 / production)"]
     tests_reporting_test_ashare_performance_audit_py["MOD-RPT-026 A-Share Performance Audit 单元测试.<br/>报告包的test_ashare_performance_audit模块<br/>Test Ashare Performance Audit<br/>文件: reporting/test_ashare_performance_audit.py<br/>(生产态 / production)"]
     tests_reporting_test_ashare_trade_record_template_py["MOD-RPT-027 A股交易记录模板引擎 单元测试.<br/>报告包的test_ashare_trade_record_template模块<br/>Test Ashare Trade Record Template<br/>文件: reporting<br/>/test_ashare_trade_record_template.py<br/>(生产态 / production)"]
     tests_reporting_test_realtime_pnl_dashboard_py["MOD-RPT-004 Real-time P&L Dashboard 单元测试.<br/>报告包的test_realtime_pnl_dashboard模块<br/>Test Realtime Pnl Dashboard<br/>文件: reporting/test_realtime_pnl_dashboard.py<br/>(生产态 / production)"]
@@ -165,21 +165,21 @@ flowchart TD
     tests_reporting_test_report_publisher_py ~~~ tests_reporting_test_report_version_manager_py
     tests_reporting_test_report_version_manager_py ~~~ tests_reporting_test_report_watermark_tracker_py
     tests_reporting_test_report_watermark_tracker_py ~~~ tests_reporting_test_risk_report_engine_py
-    src_zephyr_reporting_ashare_performance_audit_py["A-Share Performance Audit & Optimization Trigger<br/>D_REPORTING — A-Share Performance Audit &<br/>Optimization Trigger<br/>Ashare Performance Audit<br/>文件: reporting/ashare_performance_audit.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_ashare_performance_audit_py["A股性能审计<br/>D_REPORTING — A-Share Performance Audit &<br/>Optimization Trigger<br/>Ashare Performance Audit<br/>文件: reporting/ashare_performance_audit.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_trade_record_template_py["A股交易记录模板引擎<br/>D_REPORTING — A股交易记录模板引擎 (ASHare Trade<br/>Record Template)<br/>文件: reporting/ashare_trade_record_template.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_realtime_pnl_dashboard_py["Real-time P&L Dashboard<br/>D_REPORTING — Real-time P&L Dashboard<br/>(实时盈亏仪表盘)<br/>Realtime Pnl Dashboard<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_regulatory_report_generator_py["Regulatory Report Generator<br/>D_REPORTING — Regulatory Report Generator<br/>(监管报告生成器)<br/>文件: reporting/regulatory_report_generator.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_report_version_manager_py["Report Version Manager<br/>D_REPORTING — Report Version Manager<br/>(报告版本管理器)<br/>文件: reporting/report_version_manager.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_report_watermark_tracker_py["Report Watermark Tracker<br/>D_REPORTING — Report Watermark Tracker<br/>(报告水印追踪器)<br/>文件: reporting/report_watermark_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_risk_report_engine_py["Risk Report Engine<br/>D_REPORTING — Risk Report Engine (风险报告引擎)<br/>文件: reporting/risk_report_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_realtime_pnl_dashboard_py["RealtimePnl仪表盘<br/>D_REPORTING — Real-time P&L Dashboard<br/>(实时盈亏仪表盘)<br/>Realtime Pnl Dashboard<br/>文件: reporting/realtime_pnl_dashboard.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_regulatory_report_generator_py["Regulatory报告生成器<br/>D_REPORTING — Regulatory Report Generator<br/>(监管报告生成器)<br/>文件: reporting/regulatory_report_generator.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_report_version_manager_py["报告版本管理器<br/>D_REPORTING — Report Version Manager<br/>(报告版本管理器)<br/>文件: reporting/report_version_manager.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_report_watermark_tracker_py["报告Watermark跟踪器<br/>D_REPORTING — Report Watermark Tracker<br/>(报告水印追踪器)<br/>文件: reporting/report_watermark_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_risk_report_engine_py["风险报告引擎<br/>D_REPORTING — Risk Report Engine (风险报告引擎)<br/>文件: reporting/risk_report_engine.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_performance_audit_py ~~~ src_zephyr_reporting_ashare_trade_record_template_py
     src_zephyr_reporting_ashare_trade_record_template_py ~~~ src_zephyr_reporting_realtime_pnl_dashboard_py
     src_zephyr_reporting_realtime_pnl_dashboard_py ~~~ src_zephyr_reporting_regulatory_report_generator_py
     src_zephyr_reporting_regulatory_report_generator_py ~~~ src_zephyr_reporting_report_version_manager_py
     src_zephyr_reporting_report_version_manager_py ~~~ src_zephyr_reporting_report_watermark_tracker_py
     src_zephyr_reporting_report_watermark_tracker_py ~~~ src_zephyr_reporting_risk_report_engine_py
-    src_zephyr_reporting_default_attribution_engine_py["Default Attribution Engine<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py<br/>(生产态 / production)"]
-    src_zephyr_reporting_report_publisher_py["Report Publisher<br/>D_REPORTING — Report Publisher (报告发布器)<br/>文件: reporting/report_publisher.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_default_attribution_engine_py["默认Attribution引擎<br/>D_REPORTING — Default Attribution Engine<br/>文件: reporting/default_attribution_engine.py<br/>(生产态 / production)"]
+    src_zephyr_reporting_report_publisher_py["报告Publisher<br/>D_REPORTING — Report Publisher (报告发布器)<br/>文件: reporting/report_publisher.py<br/>(生产态 / production)"]
     src_zephyr_reporting_default_attribution_engine_py ~~~ src_zephyr_reporting_report_publisher_py
     src_zephyr_reporting_analytics_base_py["单笔成交的 TCA 分析，返回执行报告'''<br/>D_REPORTING — Post-Trade Analytics Layer<br/>Analytics Base<br/>文件: reporting/analytics_base.py<br/>(生产态 / production)"]
     src_zephyr_reporting_ashare_performance_audit_py -->|data / data| src_zephyr_reporting_default_attribution_engine_py
@@ -213,7 +213,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_reporting_performance_attribution_report_py["Performance Attribution Report<br/>报告包的performance_attribution_report模块<br/>⛔ D-EX-CORE执行报告未就绪(CTR-P1-007<br/>/CTR-ERR-005),设计文档§1.4标注受限,暂不可建<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
+    src_zephyr_reporting_performance_attribution_report_py["性能Attribution报告<br/>报告包的performance_attribution_report模块<br/>⛔ D-EX-CORE执行报告未就绪(CTR-P1-007<br/>/CTR-ERR-005),设计文档§1.4标注受限,暂不可建<br/>Performance Attribution Report<br/>文件: reporting<br/>/performance_attribution_report.py<br/>(设计态 / design)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -227,44 +227,44 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Realtime Pnl Dashboard (reporting/realtime_pnl_dashboard.py) | → | D_EX_CORE 执行核心: Tracker (position_tracker/tracker.py) | 导入依赖 / import_depends |
-| 2 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. / Test Real... | → | D_EX_CORE 执行核心: Tracker (position_tracker/tracker.py) | 测试依赖 / test_depends |
-| 3 | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | → | D_INFRASTRUCTURE 跨层契约基础设施: Execution Report (contracts/execution_report.py) | 导入依赖 / import_depends |
+| 1 | RealtimePnl仪表盘 / Realtime Pnl Dashboard (reporting/rea... | → | D_EX_CORE 执行核心: 跟踪器 / Tracker (position_tracker/tracker.py) | 导入依赖 / import_depends |
+| 2 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. / Test Real... | → | D_EX_CORE 执行核心: 跟踪器 / Tracker (position_tracker/tracker.py) | 测试依赖 / test_depends |
+| 3 | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | → | D_INFRASTRUCTURE 跨层契约基础设施: 执行报告 / Execution Report (contracts/execution_report.py) | 导入依赖 / import_depends |
 | 4 | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | → | D_INFRASTRUCTURE 跨层契约基础设施: Fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 5 | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | → | D_INFRASTRUCTURE 跨层契约基础设施: Order (contracts/order.py) | 导入依赖 / import_depends |
-| 6 | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | → | D_INFRASTRUCTURE 跨层契约基础设施: Performance Attribution Report (contracts/performance_att... | 导入依赖 / import_depends |
-| 7 | Default Attribution Engine (reporting/default_attribution... | → | D_INFRASTRUCTURE 跨层契约基础设施: Performance Attribution Report (contracts/performance_att... | 导入依赖 / import_depends |
-| 8 | Default Tca Engine (reporting/default_tca_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Execution Report (contracts/execution_report.py) | 导入依赖 / import_depends |
-| 9 | Default Tca Engine (reporting/default_tca_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 10 | Default Tca Engine (reporting/default_tca_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Order (contracts/order.py) | 导入依赖 / import_depends |
-| 11 | Realtime Pnl Dashboard (reporting/realtime_pnl_dashboard.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 5 | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 6 | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | → | D_INFRASTRUCTURE 跨层契约基础设施: 性能Attribution报告 / Performance Attribution Report (con... | 导入依赖 / import_depends |
+| 7 | 默认Attribution引擎 / Default Attribution Engine (reporti... | → | D_INFRASTRUCTURE 跨层契约基础设施: 性能Attribution报告 / Performance Attribution Report (con... | 导入依赖 / import_depends |
+| 8 | 默认交易成本分析引擎 / Default Tca Engine (reporting/defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: 执行报告 / Execution Report (contracts/execution_report.py) | 导入依赖 / import_depends |
+| 9 | 默认交易成本分析引擎 / Default Tca Engine (reporting/defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: Fill (contracts/fill.py) | 导入依赖 / import_depends |
+| 10 | 默认交易成本分析引擎 / Default Tca Engine (reporting/defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 11 | RealtimePnl仪表盘 / Realtime Pnl Dashboard (reporting/rea... | → | D_INFRASTRUCTURE 跨层契约基础设施: Fill (contracts/fill.py) | 导入依赖 / import_depends |
 | 12 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. / Test Real... | → | D_INFRASTRUCTURE 跨层契约基础设施: Fill (contracts/fill.py) | 测试依赖 / test_depends |
-| 13 | Ashare Performance Audit (reporting/ashare_performance_au... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 13 | A股性能审计 / Ashare Performance Audit (reporting/ashare_... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 14 | A股交易记录模板引擎 / Ashare Trade Record Template (repor... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 15 | Realtime Pnl Dashboard (reporting/realtime_pnl_dashboard.py) | → | D_SHARED 共享服务: 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
-| 16 | Realtime Pnl Dashboard (reporting/realtime_pnl_dashboard.py) | → | D_SHARED 共享服务: Risk Dashboard Snapshot (risk/risk_dashboard_snapshot.py) | 导入依赖 / import_depends |
-| 17 | Realtime Pnl Dashboard (reporting/realtime_pnl_dashboard.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 18 | Regulatory Report Generator (reporting/regulatory_report_... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 19 | Report Publisher (reporting/report_publisher.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 20 | Report Version Manager (reporting/report_version_manager.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 21 | Report Watermark Tracker (reporting/report_watermark_trac... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 22 | Risk Report Engine (reporting/risk_report_engine.py) | → | D_SHARED 共享服务: Risk Dashboard Snapshot (risk/risk_dashboard_snapshot.py) | 导入依赖 / import_depends |
-| 23 | Risk Report Engine (reporting/risk_report_engine.py) | → | D_SHARED 共享服务: Risk Metrics (risk/risk_metrics.py) | 导入依赖 / import_depends |
-| 24 | Risk Report Engine (reporting/risk_report_engine.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 15 | RealtimePnl仪表盘 / Realtime Pnl Dashboard (reporting/rea... | → | D_SHARED 共享服务: 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 16 | RealtimePnl仪表盘 / Realtime Pnl Dashboard (reporting/rea... | → | D_SHARED 共享服务: 风险仪表盘快照 / Risk Dashboard Snapshot (risk/risk_dashb... | 导入依赖 / import_depends |
+| 17 | RealtimePnl仪表盘 / Realtime Pnl Dashboard (reporting/rea... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 18 | Regulatory报告生成器 / Regulatory Report Generator (repor... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 19 | 报告Publisher / Report Publisher (reporting/report_publis... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 20 | 报告版本管理器 / Report Version Manager (reporting/report... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 21 | 报告Watermark跟踪器 / Report Watermark Tracker (reporting... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 22 | 风险报告引擎 / Risk Report Engine (reporting/risk_report_... | → | D_SHARED 共享服务: 风险仪表盘快照 / Risk Dashboard Snapshot (risk/risk_dashb... | 导入依赖 / import_depends |
+| 23 | 风险报告引擎 / Risk Report Engine (reporting/risk_report_... | → | D_SHARED 共享服务: 风险指标 / Risk Metrics (risk/risk_metrics.py) | 导入依赖 / import_depends |
+| 24 | 风险报告引擎 / Risk Report Engine (reporting/risk_report_... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 25 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. / Test Real... | → | D_SHARED 共享服务: 交易枚举真源 / Order Enums (enums/order_enums.py) | 测试依赖 / test_depends |
-| 26 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. / Test Real... | → | D_SHARED 共享服务: Risk Dashboard Snapshot (risk/risk_dashboard_snapshot.py) | 测试依赖 / test_depends |
-| 27 | MOD-RPT-008 Risk Report Engine 单元测试. / Test Risk Repo... | → | D_SHARED 共享服务: Risk Dashboard Snapshot (risk/risk_dashboard_snapshot.py) | 测试依赖 / test_depends |
-| 28 | MOD-RPT-008 Risk Report Engine 单元测试. / Test Risk Repo... | → | D_SHARED 共享服务: Risk Metrics (risk/risk_metrics.py) | 测试依赖 / test_depends |
-| 29 | Realtime Pnl Dashboard (reporting/realtime_pnl_dashboard.py) | → | D_TRADING 交易运营: Pnl Calculator (trading/pnl_calculator.py) | 导入依赖 / import_depends |
+| 26 | MOD-RPT-004 Real-time P&L Dashboard 单元测试. / Test Real... | → | D_SHARED 共享服务: 风险仪表盘快照 / Risk Dashboard Snapshot (risk/risk_dashb... | 测试依赖 / test_depends |
+| 27 | MOD-RPT-008 Risk Report Engine 单元测试. / Test Risk Repo... | → | D_SHARED 共享服务: 风险仪表盘快照 / Risk Dashboard Snapshot (risk/risk_dashb... | 测试依赖 / test_depends |
+| 28 | MOD-RPT-008 Risk Report Engine 单元测试. / Test Risk Repo... | → | D_SHARED 共享服务: 风险指标 / Risk Metrics (risk/risk_metrics.py) | 测试依赖 / test_depends |
+| 29 | RealtimePnl仪表盘 / Realtime Pnl Dashboard (reporting/rea... | → | D_TRADING 交易运营: Pnl计算器 / Pnl Calculator (trading/pnl_calculator.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | D_GOVERNANCE 生命周期管理: analytics基类 / Re-export wrapper: analytics_base canonic... | → | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | 导入依赖 / import_depends |
-| 2 | D_GOV_AUDIT 审计追踪: 默认attribution引擎 / Re-export wrapper: default_attribut... | → | Default Attribution Engine (reporting/default_attribution... | 导入依赖 / import_depends |
-| 3 | D_GOV_AUDIT 审计追踪: 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | Default Tca Engine (reporting/default_tca_engine.py) | 导入依赖 / import_depends |
-| 4 | D_PF_CORE 组合核心: Performance Attribution Engine (core/performance_attribut... | → | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | 导入依赖 / import_depends |
+| 2 | D_GOV_AUDIT 审计追踪: 默认attribution引擎 / Re-export wrapper: default_attribut... | → | 默认Attribution引擎 / Default Attribution Engine (reporti... | 导入依赖 / import_depends |
+| 3 | D_GOV_AUDIT 审计追踪: 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | 默认交易成本分析引擎 / Default Tca Engine (reporting/defa... | 导入依赖 / import_depends |
+| 4 | D_PF_CORE 组合核心: 性能Attribution引擎 / Performance Attribution Engine (cor... | → | 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

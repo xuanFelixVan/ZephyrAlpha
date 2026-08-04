@@ -203,12 +203,12 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | 经纪人适配器管理器 / broker_adapter_manager (core/broker_... | → | D_EX_CORE 执行核心: 执行引擎 / D_EXECUTION_CORE — Execution Engine (ex_core/... | 导入依赖 / import_depends |
 | 2 | 连接失败、断线、状态机非法跳转 / Broker Api Connector (ap... | → | D_INFRASTRUCTURE 跨层契约基础设施: Fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 3 | 连接失败、断线、状态机非法跳转 / Broker Api Connector (ap... | → | D_INFRASTRUCTURE 跨层契约基础设施: Order (contracts/order.py) | 导入依赖 / import_depends |
-| 4 | 算法执行选择器 / algo_execution_selector (core/algo_execu... | → | D_INFRASTRUCTURE 跨层契约基础设施: Order (contracts/order.py) | 导入依赖 / import_depends |
-| 5 | 算法交易引擎 / algo_trading_engine (core/algo_trading_eng... | → | D_INFRASTRUCTURE 跨层契约基础设施: Order (contracts/order.py) | 导入依赖 / import_depends |
+| 3 | 连接失败、断线、状态机非法跳转 / Broker Api Connector (ap... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 4 | 算法执行选择器 / algo_execution_selector (core/algo_execu... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 5 | 算法交易引擎 / algo_trading_engine (core/algo_trading_eng... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / Order (contracts/order.py) | 导入依赖 / import_depends |
 | 6 | 经纪人适配器管理器 / broker_adapter_manager (core/broker_... | → | D_INFRASTRUCTURE 跨层契约基础设施: Fill (contracts/fill.py) | 导入依赖 / import_depends |
-| 7 | 经纪人适配器管理器 / broker_adapter_manager (core/broker_... | → | D_INFRASTRUCTURE 跨层契约基础设施: Order (contracts/order.py) | 导入依赖 / import_depends |
-| 8 | optimal订单路由器 / optimal_order_router (core/optimal_or... | → | D_INFRASTRUCTURE 跨层契约基础设施: Order (contracts/order.py) | 导入依赖 / import_depends |
+| 7 | 经纪人适配器管理器 / broker_adapter_manager (core/broker_... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 8 | optimal订单路由器 / optimal_order_router (core/optimal_or... | → | D_INFRASTRUCTURE 跨层契约基础设施: 订单 / Order (contracts/order.py) | 导入依赖 / import_depends |
 | 9 | 限速器配置非法 / Api Rate Limiter (api/api_rate_limiter.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 10 | 连接失败、断线、状态机非法跳转 / Broker Api Connector (ap... | → | D_SHARED 共享服务: 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
 | 11 | 连接失败、断线、状态机非法跳转 / Broker Api Connector (ap... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |

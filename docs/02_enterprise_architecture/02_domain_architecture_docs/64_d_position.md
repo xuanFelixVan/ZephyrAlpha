@@ -53,15 +53,15 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_position_core_covariance_estimator_py["Covariance Estimator<br/>仓位/核心包的covariance_estimator模块<br/>文件: core/covariance_estimator.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_cross_strategy_position_merger_py["Cross Strategy Position Merger<br/>仓位/核心包的cross_strategy_position_merger模块<br/>文件: core/cross_strategy_position_merger.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_intraday_position_constraint_py["Intraday Position Constraint<br/>仓位/核心包的intraday_position_constraint模块<br/>文件: core/intraday_position_constraint.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_behavior_classifier_py["Position Behavior Classifier<br/>仓位/核心包的position_behavior_classifier模块<br/>文件: core/position_behavior_classifier.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_time_budget_py["Position Time Budget<br/>仓位/核心包的position_time_budget模块<br/>文件: core/position_time_budget.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_covariance_estimator_py["协方差估计器<br/>仓位/核心包的covariance_estimator模块<br/>Covariance Estimator<br/>文件: core/covariance_estimator.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_cross_strategy_position_merger_py["跨策略持仓合并器<br/>仓位/核心包的cross_strategy_position_merger模块<br/>Cross Strategy Position Merger<br/>文件: core/cross_strategy_position_merger.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_intraday_position_constraint_py["日内持仓约束<br/>仓位/核心包的intraday_position_constraint模块<br/>Intraday Position Constraint<br/>文件: core/intraday_position_constraint.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_behavior_classifier_py["持仓行为分类器<br/>仓位/核心包的position_behavior_classifier模块<br/>Position Behavior Classifier<br/>文件: core/position_behavior_classifier.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_time_budget_py["持仓时间预算<br/>仓位/核心包的position_time_budget模块<br/>Position Time Budget<br/>文件: core/position_time_budget.py<br/>(设计态 / design)"]
     src_zephyr_position_core_sell_position_link_py["仓位盈亏状态<br/>Sell-Position Bidirectional Link —<br/>卖出-仓位双向链接 (MOD-POS-016)<br/>Sell Position Link<br/>文件: core/sell_position_link.py<br/>(生产态 / production)"]
     src_zephyr_position_position_reconciler_py["—事件驱动<br/>Position Reconciler — v0.10.1 持仓对账:<br/>execution report+book record+counter...<br/>文件: position/position_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_position_services_init_py["Init<br/>管理position.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
-    tests_position_test_position_audit_logger_py["MOD-POS-009<br/>Position Audit Logger 测试 — MOD-POS-009<br/>Test Position Audit Logger<br/>文件: position/test_position_audit_logger.py<br/>(生产态 / production)"]
+    src_zephyr_position_services_init_py["position/services 包入口<br/>管理position.services子包的加载和懒导入<br/>Init<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    tests_position_test_position_audit_logger_py["持仓审计日志器测试<br/>Position Audit Logger 测试 — MOD-POS-009<br/>Test Position Audit Logger<br/>文件: position/test_position_audit_logger.py<br/>(生产态 / production)"]
     tests_position_test_position_sizing_engine_py["Position Sizing Engine 测试<br/>(MOD-POS-001 阶段1)<br/>Test Position Sizing Engine<br/>文件: position/test_position_sizing_engine.py<br/>(生产态 / production)"]
     src_zephyr_position_core_covariance_estimator_py ~~~ src_zephyr_position_core_cross_strategy_position_merger_py
     src_zephyr_position_core_cross_strategy_position_merger_py ~~~ src_zephyr_position_core_intraday_position_constraint_py
@@ -72,9 +72,9 @@ flowchart TD
     src_zephyr_position_position_reconciler_py ~~~ src_zephyr_position_services_init_py
     src_zephyr_position_services_init_py ~~~ tests_position_test_position_audit_logger_py
     tests_position_test_position_audit_logger_py ~~~ tests_position_test_position_sizing_engine_py
-    src_zephyr_position_core_correlation_regime_monitor_py["Correlation Regime Monitor<br/>仓位/核心包的correlation_regime_monitor模块<br/>文件: core/correlation_regime_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_correlation_regime_monitor_py["相关性状态监控器<br/>仓位/核心包的correlation_regime_monitor模块<br/>Correlation Regime Monitor<br/>文件: core/correlation_regime_monitor.py<br/>(设计态 / design)"]
     src_zephyr_position_core_position_limit_enforcer_py["持仓动作<br/>Position Limit Enforcer — 限仓执行器<br/>(MOD-POS-010)<br/>文件: core/position_limit_enforcer.py<br/>(生产态 / production)"]
-    src_zephyr_position_core_position_risk_budget_allocator_py["Position Risk Budget Allocator<br/>仓位/核心包的position_risk_budget_allocator模块<br/>文件: core/position_risk_budget_allocator.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_risk_budget_allocator_py["持仓风险预算分配器<br/>仓位/核心包的position_risk_budget_allocator模块<br/>Position Risk Budget Allocator<br/>文件: core/position_risk_budget_allocator.py<br/>(设计态 / design)"]
     src_zephyr_position_services_position_audit_logger_py["仓位审计记录器<br/>Position Audit Logger — 仓位审计记录器<br/>(MOD-POS-009)<br/>文件: services/position_audit_logger.py<br/>(生产态 / production)"]
     src_zephyr_position_core_correlation_regime_monitor_py ~~~ src_zephyr_position_core_position_limit_enforcer_py
     src_zephyr_position_core_position_limit_enforcer_py ~~~ src_zephyr_position_core_position_risk_budget_allocator_py
@@ -162,8 +162,8 @@ flowchart TD
     src_zephyr_position_core_position_limit_enforcer_py["持仓动作<br/>Position Limit Enforcer — 限仓执行器<br/>(MOD-POS-010)<br/>文件: core/position_limit_enforcer.py<br/>(生产态 / production)"]
     src_zephyr_position_core_sell_position_link_py["仓位盈亏状态<br/>Sell-Position Bidirectional Link —<br/>卖出-仓位双向链接 (MOD-POS-016)<br/>Sell Position Link<br/>文件: core/sell_position_link.py<br/>(生产态 / production)"]
     src_zephyr_position_position_reconciler_py["—事件驱动<br/>Position Reconciler — v0.10.1 持仓对账:<br/>execution report+book record+counter...<br/>文件: position/position_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_position_services_init_py["Init<br/>管理position.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
-    tests_position_test_position_audit_logger_py["MOD-POS-009<br/>Position Audit Logger 测试 — MOD-POS-009<br/>Test Position Audit Logger<br/>文件: position/test_position_audit_logger.py<br/>(生产态 / production)"]
+    src_zephyr_position_services_init_py["position/services 包入口<br/>管理position.services子包的加载和懒导入<br/>Init<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    tests_position_test_position_audit_logger_py["持仓审计日志器测试<br/>Position Audit Logger 测试 — MOD-POS-009<br/>Test Position Audit Logger<br/>文件: position/test_position_audit_logger.py<br/>(生产态 / production)"]
     tests_position_test_position_sizing_engine_py["Position Sizing Engine 测试<br/>(MOD-POS-001 阶段1)<br/>Test Position Sizing Engine<br/>文件: position/test_position_sizing_engine.py<br/>(生产态 / production)"]
     src_zephyr_position_core_position_limit_enforcer_py ~~~ src_zephyr_position_core_sell_position_link_py
     src_zephyr_position_core_sell_position_link_py ~~~ src_zephyr_position_position_reconciler_py
@@ -214,17 +214,17 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_position_core_covariance_estimator_py["Covariance Estimator<br/>仓位/核心包的covariance_estimator模块<br/>文件: core/covariance_estimator.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_cross_strategy_position_merger_py["Cross Strategy Position Merger<br/>仓位/核心包的cross_strategy_position_merger模块<br/>文件: core/cross_strategy_position_merger.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_intraday_position_constraint_py["Intraday Position Constraint<br/>仓位/核心包的intraday_position_constraint模块<br/>文件: core/intraday_position_constraint.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_behavior_classifier_py["Position Behavior Classifier<br/>仓位/核心包的position_behavior_classifier模块<br/>文件: core/position_behavior_classifier.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_time_budget_py["Position Time Budget<br/>仓位/核心包的position_time_budget模块<br/>文件: core/position_time_budget.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_covariance_estimator_py["协方差估计器<br/>仓位/核心包的covariance_estimator模块<br/>Covariance Estimator<br/>文件: core/covariance_estimator.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_cross_strategy_position_merger_py["跨策略持仓合并器<br/>仓位/核心包的cross_strategy_position_merger模块<br/>Cross Strategy Position Merger<br/>文件: core/cross_strategy_position_merger.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_intraday_position_constraint_py["日内持仓约束<br/>仓位/核心包的intraday_position_constraint模块<br/>Intraday Position Constraint<br/>文件: core/intraday_position_constraint.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_behavior_classifier_py["持仓行为分类器<br/>仓位/核心包的position_behavior_classifier模块<br/>Position Behavior Classifier<br/>文件: core/position_behavior_classifier.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_time_budget_py["持仓时间预算<br/>仓位/核心包的position_time_budget模块<br/>Position Time Budget<br/>文件: core/position_time_budget.py<br/>(设计态 / design)"]
     src_zephyr_position_core_covariance_estimator_py ~~~ src_zephyr_position_core_cross_strategy_position_merger_py
     src_zephyr_position_core_cross_strategy_position_merger_py ~~~ src_zephyr_position_core_intraday_position_constraint_py
     src_zephyr_position_core_intraday_position_constraint_py ~~~ src_zephyr_position_core_position_behavior_classifier_py
     src_zephyr_position_core_position_behavior_classifier_py ~~~ src_zephyr_position_core_position_time_budget_py
-    src_zephyr_position_core_correlation_regime_monitor_py["Correlation Regime Monitor<br/>仓位/核心包的correlation_regime_monitor模块<br/>文件: core/correlation_regime_monitor.py<br/>(设计态 / design)"]
-    src_zephyr_position_core_position_risk_budget_allocator_py["Position Risk Budget Allocator<br/>仓位/核心包的position_risk_budget_allocator模块<br/>文件: core/position_risk_budget_allocator.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_correlation_regime_monitor_py["相关性状态监控器<br/>仓位/核心包的correlation_regime_monitor模块<br/>Correlation Regime Monitor<br/>文件: core/correlation_regime_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_position_core_position_risk_budget_allocator_py["持仓风险预算分配器<br/>仓位/核心包的position_risk_budget_allocator模块<br/>Position Risk Budget Allocator<br/>文件: core/position_risk_budget_allocator.py<br/>(设计态 / design)"]
     src_zephyr_position_core_correlation_regime_monitor_py ~~~ src_zephyr_position_core_position_risk_budget_allocator_py
     src_zephyr_position_core_covariance_estimator_py -.->|data / data| src_zephyr_position_core_correlation_regime_monitor_py
     src_zephyr_position_core_covariance_estimator_py -.->|data / data| src_zephyr_position_core_position_risk_budget_allocator_py
@@ -241,9 +241,9 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | → | D_INFRASTRUCTURE 跨层契约基础设施: Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 2 | Position Sizing Engine 测试 / Test Position Sizing Engine... | → | D_INFRASTRUCTURE 跨层契约基础设施: Risk Limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
-| 3 | 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | → | D_RISK 风控: Risk Limits (risk/risk_limits.py) | runtime / runtime |
+| 1 | 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 2 | Position Sizing Engine 测试 / Test Position Sizing Engine... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
+| 3 | 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | → | D_RISK 风控: 风险Limits / Risk Limits (risk/risk_limits.py) | runtime / runtime |
 | 4 | A股风险日历事件类型 / Calendar Position Constraint (core/... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 5 | 回撤分级 / Capital Curve Manager (core/capital_curve_mana... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 6 | 资金流水类型 / Cash Manager (core/cash_manager.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
@@ -252,7 +252,7 @@ flowchart TD
 | 9 | 持仓动作 / Position Limit Enforcer (core/position_limit_e... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 10 | 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 11 | 仓位生命周期状态 / Position State Machine (core/position_... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 12 | 仓位生命周期状态 / Position State Machine (core/position_... | → | D_SHARED 共享服务: State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
+| 12 | 仓位生命周期状态 / Position State Machine (core/position_... | → | D_SHARED 共享服务: 状态Machine / State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
 | 13 | 再平衡触发类型 / Rebalance Engine (core/rebalance_engine.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 14 | 仓位盈亏状态 / Sell Position Link (core/sell_position_lin... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 15 | 仓位审计记录器 / Position Audit Logger (services/position... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
@@ -261,12 +261,12 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_PF_CORE 组合核心: Rebalance Scheduler (core/rebalance_scheduler.py) | → | 漂移检测范围 / Position Drift Monitor (core/position_drif... | 导入依赖 / import_depends |
-| 2 | D_PF_CORE 组合核心: Rebalance Scheduler (core/rebalance_scheduler.py) | → | 再平衡触发类型 / Rebalance Engine (core/rebalance_engine.py) | 导入依赖 / import_depends |
-| 3 | D_PF_CORE 组合核心: Rebalance Scheduler (core/rebalance_scheduler.py) | → | 事件驱动 / Position Reconciler (position/position_reconci... | 导入依赖 / import_depends |
-| 4 | D_RISK 风控: Risk Limits (risk/risk_limits.py) | → | 系统性风险 5 级 / Drawdown Controller (core/drawdown_cont... | runtime / runtime |
-| 5 | D_SELL_DECISION 卖出决策: T Trade Coordinator (core/t_trade_coordinator.py) | → | 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | 导入依赖 / import_depends |
-| 6 | D_TRADING 交易运营: Pnl Calculator (trading/pnl_calculator.py) | → | 事件驱动 / Position Reconciler (position/position_reconci... | 导入依赖 / import_depends |
+| 1 | D_PF_CORE 组合核心: Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | 漂移检测范围 / Position Drift Monitor (core/position_drif... | 导入依赖 / import_depends |
+| 2 | D_PF_CORE 组合核心: Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | 再平衡触发类型 / Rebalance Engine (core/rebalance_engine.py) | 导入依赖 / import_depends |
+| 3 | D_PF_CORE 组合核心: Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | 事件驱动 / Position Reconciler (position/position_reconci... | 导入依赖 / import_depends |
+| 4 | D_RISK 风控: 风险Limits / Risk Limits (risk/risk_limits.py) | → | 系统性风险 5 级 / Drawdown Controller (core/drawdown_cont... | runtime / runtime |
+| 5 | D_SELL_DECISION 卖出决策: T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | 导入依赖 / import_depends |
+| 6 | D_TRADING 交易运营: Pnl计算器 / Pnl Calculator (trading/pnl_calculator.py) | → | 事件驱动 / Position Reconciler (position/position_reconci... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

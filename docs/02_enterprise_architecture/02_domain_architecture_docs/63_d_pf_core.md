@@ -53,8 +53,8 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_core_core_performance_attribution_engine_py["Performance Attribution Engine<br/>绩效归因引擎 (MOD-PF-007 / PC-10)<br/>文件: core/performance_attribution_engine.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_core_rebalance_scheduler_py["risk_breach > drift > event > calendar)<br/>Rebalance Scheduler — 再平衡调度器 (MOD-PF-003)<br/>文件: core/rebalance_scheduler.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_core_performance_attribution_engine_py["性能Attribution引擎<br/>Performance Attribution Engine — 绩效归因引擎<br/>(MOD-PF-007 / PC-10)<br/>文件: core/performance_attribution_engine.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_core_rebalance_scheduler_py["Rebalance调度器<br/>Rebalance Scheduler — 再平衡调度器 (MOD-PF-003)<br/>文件: core/rebalance_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_topn_momentum_strategy_py["TopN 动量等权策略<br/>D_PORTFOLIO_CORE — TopN 动量等权策略<br/>Topn Momentum Strategy<br/>文件: pf_core/topn_momentum_strategy.py<br/>(生产态 / production)"]
     tests_pf_core_test_intraday_surge_fall_strategy_py["IntradaySurgeFallStrategy 单元测试<br/>（路径 B 示例策略）<br/>Test Intraday Surge Fall Strategy<br/>文件: pf_core<br/>/test_intraday_surge_fall_strategy.py<br/>(生产态 / production)"]
     tests_pf_core_test_orderbook_imbalance_strategy_py["OrderBookImbalanceStrategy 单元测试<br/>（路径 B 盘口失衡反转策略）<br/>Test Orderbook Imbalance Strategy<br/>文件: pf_core<br/>/test_orderbook_imbalance_strategy.py<br/>(生产态 / production)"]
@@ -69,7 +69,7 @@ flowchart TD
     src_zephyr_pf_core_core_portfolio_optimizer_py["组合优化方法<br/>Portfolio Optimizer — 组合优化器 (MOD-PF-002)<br/>文件: core/portfolio_optimizer.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_constraint_solver_py["约束不可满足<br/>Constraint Solver — 约束求解器 (MOD-PF-006)<br/>文件: core/constraint_solver.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_strategy_engine_py["策略生命周期状态<br/>Strategy Engine — 策略引擎 (MOD-PF-001)<br/>文件: core/strategy_engine.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_strategy_engine_init_py["Portfolio Construction Strategies<br/>D_PORTFOLIO_CORE — Portfolio Construction<br/>Strategies<br/>Init<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>D_PORTFOLIO_CORE — Portfolio Construction<br/>Strategies<br/>Init<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_constraint_solver_py ~~~ src_zephyr_pf_core_core_strategy_engine_py
     src_zephyr_pf_core_core_strategy_engine_py ~~~ src_zephyr_pf_core_strategy_engine_init_py
     src_zephyr_pf_core_strategy_engine_strategy_runner_py["StrategyRunner 策略运行器<br/>D_PORTFOLIO_CORE — StrategyRunner 策略运行器<br/>（胶水层）<br/>Strategy Runner<br/>文件: strategy_engine/strategy_runner.py<br/>(生产态 / production)"]
@@ -78,7 +78,7 @@ flowchart TD
     src_zephyr_pf_core_vwap_reversion_strategy_py["VWAP 回归做T策略<br/>D_PORTFOLIO_CORE — VWAP 回归做T策略（路径 B<br/>策略）<br/>Vwap Reversion Strategy<br/>文件: pf_core/vwap_reversion_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_intraday_surge_fall_strategy_py ~~~ src_zephyr_pf_core_orderbook_imbalance_strategy_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py ~~~ src_zephyr_pf_core_vwap_reversion_strategy_py
-    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["TickStrategyBase + TickStrategyRegistry<br/>D_PORTFOLIO_CORE — TickStrategyBase +<br/>TickStrategyRegistry（路径 B：tick 级...<br/>Tick Strategy Base<br/>文件: strategy_engine/tick_strategy_base.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["Tick策略基础<br/>D_PORTFOLIO_CORE — TickStrategyBase +<br/>TickStrategyRegistry（路径 B：tick 级...<br/>Tick Strategy Base<br/>文件: strategy_engine/tick_strategy_base.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_vwap_reversion_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
@@ -140,8 +140,8 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_core_core_performance_attribution_engine_py["Performance Attribution Engine<br/>绩效归因引擎 (MOD-PF-007 / PC-10)<br/>文件: core/performance_attribution_engine.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_core_rebalance_scheduler_py["risk_breach > drift > event > calendar)<br/>Rebalance Scheduler — 再平衡调度器 (MOD-PF-003)<br/>文件: core/rebalance_scheduler.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_core_performance_attribution_engine_py["性能Attribution引擎<br/>Performance Attribution Engine — 绩效归因引擎<br/>(MOD-PF-007 / PC-10)<br/>文件: core/performance_attribution_engine.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_core_rebalance_scheduler_py["Rebalance调度器<br/>Rebalance Scheduler — 再平衡调度器 (MOD-PF-003)<br/>文件: core/rebalance_scheduler.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_topn_momentum_strategy_py["TopN 动量等权策略<br/>D_PORTFOLIO_CORE — TopN 动量等权策略<br/>Topn Momentum Strategy<br/>文件: pf_core/topn_momentum_strategy.py<br/>(生产态 / production)"]
     tests_pf_core_test_intraday_surge_fall_strategy_py["IntradaySurgeFallStrategy 单元测试<br/>（路径 B 示例策略）<br/>Test Intraday Surge Fall Strategy<br/>文件: pf_core<br/>/test_intraday_surge_fall_strategy.py<br/>(生产态 / production)"]
     tests_pf_core_test_orderbook_imbalance_strategy_py["OrderBookImbalanceStrategy 单元测试<br/>（路径 B 盘口失衡反转策略）<br/>Test Orderbook Imbalance Strategy<br/>文件: pf_core<br/>/test_orderbook_imbalance_strategy.py<br/>(生产态 / production)"]
@@ -156,7 +156,7 @@ flowchart TD
     src_zephyr_pf_core_core_portfolio_optimizer_py["组合优化方法<br/>Portfolio Optimizer — 组合优化器 (MOD-PF-002)<br/>文件: core/portfolio_optimizer.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_constraint_solver_py["约束不可满足<br/>Constraint Solver — 约束求解器 (MOD-PF-006)<br/>文件: core/constraint_solver.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_strategy_engine_py["策略生命周期状态<br/>Strategy Engine — 策略引擎 (MOD-PF-001)<br/>文件: core/strategy_engine.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_strategy_engine_init_py["Portfolio Construction Strategies<br/>D_PORTFOLIO_CORE — Portfolio Construction<br/>Strategies<br/>Init<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_strategy_engine_init_py["pf_core/strategy_engine 包入口<br/>D_PORTFOLIO_CORE — Portfolio Construction<br/>Strategies<br/>Init<br/>文件: strategy_engine/__init__.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_core_constraint_solver_py ~~~ src_zephyr_pf_core_core_strategy_engine_py
     src_zephyr_pf_core_core_strategy_engine_py ~~~ src_zephyr_pf_core_strategy_engine_init_py
     src_zephyr_pf_core_strategy_engine_strategy_runner_py["StrategyRunner 策略运行器<br/>D_PORTFOLIO_CORE — StrategyRunner 策略运行器<br/>（胶水层）<br/>Strategy Runner<br/>文件: strategy_engine/strategy_runner.py<br/>(生产态 / production)"]
@@ -165,7 +165,7 @@ flowchart TD
     src_zephyr_pf_core_vwap_reversion_strategy_py["VWAP 回归做T策略<br/>D_PORTFOLIO_CORE — VWAP 回归做T策略（路径 B<br/>策略）<br/>Vwap Reversion Strategy<br/>文件: pf_core/vwap_reversion_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_intraday_surge_fall_strategy_py ~~~ src_zephyr_pf_core_orderbook_imbalance_strategy_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py ~~~ src_zephyr_pf_core_vwap_reversion_strategy_py
-    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["TickStrategyBase + TickStrategyRegistry<br/>D_PORTFOLIO_CORE — TickStrategyBase +<br/>TickStrategyRegistry（路径 B：tick 级...<br/>Tick Strategy Base<br/>文件: strategy_engine/tick_strategy_base.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_strategy_engine_tick_strategy_base_py["Tick策略基础<br/>D_PORTFOLIO_CORE — TickStrategyBase +<br/>TickStrategyRegistry（路径 B：tick 级...<br/>Tick Strategy Base<br/>文件: strategy_engine/tick_strategy_base.py<br/>(生产态 / production)"]
     src_zephyr_pf_core_vwap_reversion_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     src_zephyr_pf_core_orderbook_imbalance_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
     src_zephyr_pf_core_intraday_surge_fall_strategy_py -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_tick_strategy_base_py
@@ -212,7 +212,7 @@ flowchart TD
 | 3 | StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | D_BACKTEST 回测: 引擎基类 / L_BACKTEST — Backtest Engine Layer (core/engi... | 导入依赖 / import_depends |
 | 4 | StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | D_BACKTEST 回测: 事件driven引擎 / event_driven_engine (implementations/eve... | 导入依赖 / import_depends |
 | 5 | StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | D_BACKTEST 回测: vectorized引擎 / L_BACKTEST — Vectorized Backtest Engine... | 导入依赖 / import_depends |
-| 6 | Tick Strategy Base (strategy_engine/tick_strategy_base.py) | → | D_BACKTEST 回测: 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
+| 6 | Tick策略基础 / Tick Strategy Base (strategy_engine/tick_s... | → | D_BACKTEST 回测: 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
 | 7 | VWAP 回归做T策略 / Vwap Reversion Strategy (pf_core/vwap_... | → | D_BACKTEST 回测: 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
 | 8 | IntradaySurgeFallStrategy 单元测试 / Test Intraday Surge ... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
 | 9 | OrderBookImbalanceStrategy 单元测试 / Test Orderbook Imba... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
@@ -224,32 +224,32 @@ flowchart TD
 | 15 | 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
 | 16 | StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
 | 17 | TopN 动量等权策略 / Topn Momentum Strategy (pf_core/topn_... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 18 | 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 19 | Performance Attribution Engine (core/performance_attribut... | → | D_INFRASTRUCTURE 跨层契约基础设施: Performance Attribution Report (contracts/performance_att... | 导入依赖 / import_depends |
-| 20 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_INFRASTRUCTURE 跨层契约基础设施: Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 21 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_INFRASTRUCTURE 跨层契约基础设施: Target Portfolio (contracts/target_portfolio.py) | 导入依赖 / import_depends |
-| 22 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_INFRASTRUCTURE 跨层契约基础设施: Target Portfolio (contracts/target_portfolio.py) | contract / contract |
-| 23 | Rebalance Scheduler (core/rebalance_scheduler.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 24 | Rebalance Scheduler (core/rebalance_scheduler.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Target Portfolio (contracts/target_portfolio.py) | 导入依赖 / import_depends |
-| 25 | 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Strategy Lifecycle Event (contracts/strategy_lifecycle_ev... | 导入依赖 / import_depends |
-| 26 | 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Strategy Lifecycle Event (contracts/strategy_lifecycle_ev... | contract / contract |
+| 18 | 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 19 | 性能Attribution引擎 / Performance Attribution Engine (cor... | → | D_INFRASTRUCTURE 跨层契约基础设施: 性能Attribution报告 / Performance Attribution Report (con... | 导入依赖 / import_depends |
+| 20 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 21 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_INFRASTRUCTURE 跨层契约基础设施: 目标投资组合 / Target Portfolio (contracts/target_portfol... | 导入依赖 / import_depends |
+| 22 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_INFRASTRUCTURE 跨层契约基础设施: 目标投资组合 / Target Portfolio (contracts/target_portfol... | contract / contract |
+| 23 | Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 24 | Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | D_INFRASTRUCTURE 跨层契约基础设施: 目标投资组合 / Target Portfolio (contracts/target_portfol... | 导入依赖 / import_depends |
+| 25 | 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | 导入依赖 / import_depends |
+| 26 | 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | contract / contract |
 | 27 | 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | D_PF_ALLOC 组合分配: 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | 导入依赖 / import_depends |
-| 28 | Performance Attribution Engine (core/performance_attribut... | → | D_PF_ALLOC 组合分配: 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | 导入依赖 / import_depends |
-| 29 | Init (strategy_engine/__init__.py) | → | D_PF_ALLOC 组合分配: Default Equity Strategy (pf_core/default_equity_strategy.py) | 导入依赖 / import_depends |
-| 30 | Rebalance Scheduler (core/rebalance_scheduler.py) | → | D_POSITION 仓位管理: 漂移检测范围 / Position Drift Monitor (core/position_drif... | 导入依赖 / import_depends |
-| 31 | Rebalance Scheduler (core/rebalance_scheduler.py) | → | D_POSITION 仓位管理: 再平衡触发类型 / Rebalance Engine (core/rebalance_engine.py) | 导入依赖 / import_depends |
-| 32 | Rebalance Scheduler (core/rebalance_scheduler.py) | → | D_POSITION 仓位管理: 事件驱动 / Position Reconciler (position/position_reconci... | 导入依赖 / import_depends |
-| 33 | Performance Attribution Engine (core/performance_attribut... | → | D_REPORTING 报告: 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | 导入依赖 / import_depends |
-| 34 | 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | D_RISK 风控: Risk Limits (risk/risk_limits.py) | contract / contract |
-| 35 | Performance Attribution Engine (core/performance_attribut... | → | D_RISK 风控: 风险分解输入数据非法 / Risk Decomposition (core/risk_deco... | 导入依赖 / import_depends |
+| 28 | 性能Attribution引擎 / Performance Attribution Engine (cor... | → | D_PF_ALLOC 组合分配: 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | 导入依赖 / import_depends |
+| 29 | 包入口 / Init (strategy_engine/__init__.py) | → | D_PF_ALLOC 组合分配: 默认Equity策略 / Default Equity Strategy (pf_core/default... | 导入依赖 / import_depends |
+| 30 | Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | D_POSITION 仓位管理: 漂移检测范围 / Position Drift Monitor (core/position_drif... | 导入依赖 / import_depends |
+| 31 | Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | D_POSITION 仓位管理: 再平衡触发类型 / Rebalance Engine (core/rebalance_engine.py) | 导入依赖 / import_depends |
+| 32 | Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | D_POSITION 仓位管理: 事件驱动 / Position Reconciler (position/position_reconci... | 导入依赖 / import_depends |
+| 33 | 性能Attribution引擎 / Performance Attribution Engine (cor... | → | D_REPORTING 报告: 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | 导入依赖 / import_depends |
+| 34 | 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | D_RISK 风控: 风险Limits / Risk Limits (risk/risk_limits.py) | contract / contract |
+| 35 | 性能Attribution引擎 / Performance Attribution Engine (cor... | → | D_RISK 风控: 风险分解输入数据非法 / Risk Decomposition (core/risk_deco... | 导入依赖 / import_depends |
 | 36 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_RISK 风控: 风险预算输入数据非法 / Risk Budget Allocator (core/risk_b... | 导入依赖 / import_depends |
 | 37 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_RISK 风控: 风险预算输入数据非法 / Risk Budget Allocator (core/risk_b... | 导入依赖 / import_depends |
 | 38 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_RISK 风控: 风险分解输入数据非法 / Risk Decomposition (core/risk_deco... | 导入依赖 / import_depends |
-| 39 | 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | D_RISK 风控: Risk Limits (risk/risk_limits.py) | 导入依赖 / import_depends |
+| 39 | 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | D_RISK 风控: 风险Limits / Risk Limits (risk/risk_limits.py) | 导入依赖 / import_depends |
 | 40 | 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 41 | Performance Attribution Engine (core/performance_attribut... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 41 | 性能Attribution引擎 / Performance Attribution Engine (cor... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 42 | 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 43 | Rebalance Scheduler (core/rebalance_scheduler.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 43 | Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 44 | 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

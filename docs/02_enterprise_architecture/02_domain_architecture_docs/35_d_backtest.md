@@ -58,15 +58,15 @@ flowchart TD
     tests_backtest_test_anomaly_diagnoser_py["MOD-BT-023 Anomaly Diagnoser 单元测试.<br/>backtest包的test_anomaly_diagnoser模块<br/>Test Anomaly Diagnoser<br/>文件: backtest/test_anomaly_diagnoser.py<br/>(生产态 / production)"]
     tests_backtest_test_cache_manager_py["MOD-BT-020 Backtest Cache Manager 单元测试.<br/>backtest包的test_cache_manager模块<br/>文件: backtest/test_cache_manager.py<br/>(生产态 / production)"]
     tests_backtest_test_data_handler_pit_py["BacktestDataHandler PIT 财务数据合并测试<br/>（#ARCH-CH-021 P0-5）<br/>Test Data Handler Pit<br/>文件: backtest/test_data_handler_pit.py<br/>(生产态 / production)"]
-    tests_backtest_test_data_quality_checker_py["DataQualityChecker<br/>(MOD-BT-022) 测试套件<br/>Test Data Quality Checker<br/>文件: backtest/test_data_quality_checker.py<br/>(生产态 / production)"]
-    tests_backtest_test_decay_monitor_py["DecayMonitor<br/>(MOD-BT-018) 测试套件<br/>Test Decay Monitor<br/>文件: backtest/test_decay_monitor.py<br/>(生产态 / production)"]
-    tests_backtest_test_nan_processor_py["NaNProcessor<br/>(MOD-BT-026) 测试套件<br/>Test Nan Processor<br/>文件: backtest/test_nan_processor.py<br/>(生产态 / production)"]
+    tests_backtest_test_data_quality_checker_py["数据Quality检查器测试<br/>DataQualityChecker (MOD-BT-022) 测试套件。<br/>Test Data Quality Checker<br/>文件: backtest/test_data_quality_checker.py<br/>(生产态 / production)"]
+    tests_backtest_test_decay_monitor_py["Decay监控器测试<br/>DecayMonitor (MOD-BT-018) 测试套件。<br/>Test Decay Monitor<br/>文件: backtest/test_decay_monitor.py<br/>(生产态 / production)"]
+    tests_backtest_test_nan_processor_py["Nan处理器测试<br/>NaNProcessor (MOD-BT-026) 测试套件。<br/>Test Nan Processor<br/>文件: backtest/test_nan_processor.py<br/>(生产态 / production)"]
     tests_backtest_test_param_analyzer_py["MOD-BT-021 Parameter Analyzer 单元测试.<br/>backtest包的test_param_analyzer模块<br/>Test Param Analyzer<br/>文件: backtest/test_param_analyzer.py<br/>(生产态 / production)"]
     tests_backtest_test_report_generator_py["MOD-BT-019 Backtest Report Generator 单元测试.<br/>backtest包的test_report_generator模块<br/>文件: backtest/test_report_generator.py<br/>(生产态 / production)"]
     tests_backtest_test_result_comparator_py["回测结果比较器单元测试<br/>MOD-BT-024 Result Comparator —<br/>回测结果比较器单元测试。<br/>Test Result Comparator<br/>文件: backtest/test_result_comparator.py<br/>(生产态 / production)"]
     tests_backtest_test_scheduler_py["—使用 Mock 引擎<br/>D-BACKTEST BT-17 回测自动调度器测试——使用 Mock<br/>引擎（无 IO 依赖）。<br/>Test Scheduler<br/>文件: backtest/test_scheduler.py<br/>(生产态 / production)"]
     tests_factor_test_backtest_factor_e2e_py["—D-FACTOR → D-BACKTEST 数据流验证<br/>T7 跨域端到端集成测试——D-FACTOR → D-BACKTEST<br/>数据流验证。<br/>Test Backtest Factor E2e<br/>文件: factor/test_backtest_factor_e2e.py<br/>(生产态 / production)"]
-    tests_factor_test_evaluation_backtest_py["—backtest.py<br/>D-FACTOR-03<br/>因子评估回测运行器测试——backtest.py。<br/>Test Evaluation Backtest<br/>文件: factor/test_evaluation_backtest.py<br/>(生产态 / production)"]
+    tests_factor_test_evaluation_backtest_py["Evaluation回测测试<br/>D-FACTOR-03<br/>因子评估回测运行器测试——backtest.py。<br/>Test Evaluation Backtest<br/>文件: factor/test_evaluation_backtest.py<br/>(生产态 / production)"]
     tests_test_backtest_decisiongraph_adapter_py["BacktestResult→decisiongraph 适配器单元测试<br/>test_backtest_decisiongraph_adapter —<br/>BacktestResult→decisiongraph 适配器单...<br/>Test Backtest Decisiongraph Adapter<br/>文件: tests<br/>/test_backtest_decisiongraph_adapter.py<br/>(生产态 / production)"]
     tests_test_event_driven_engine_py["event_driven_engine 正式测试<br/>（原 scripts/tests/ 临时验证脚本转正）<br/>Test Event Driven Engine<br/>文件: tests/test_event_driven_engine.py<br/>(生产态 / production)"]
     tests_test_matching_engine_py["matching_engine + matching_logic + portfolio<br/>正式测试<br/>（原 scripts/tests/ 临时<br/>Test Matching Engine<br/>文件: tests/test_matching_engine.py<br/>(生产态 / production)"]
@@ -246,15 +246,15 @@ flowchart TD
     tests_backtest_test_anomaly_diagnoser_py["MOD-BT-023 Anomaly Diagnoser 单元测试.<br/>backtest包的test_anomaly_diagnoser模块<br/>Test Anomaly Diagnoser<br/>文件: backtest/test_anomaly_diagnoser.py<br/>(生产态 / production)"]
     tests_backtest_test_cache_manager_py["MOD-BT-020 Backtest Cache Manager 单元测试.<br/>backtest包的test_cache_manager模块<br/>文件: backtest/test_cache_manager.py<br/>(生产态 / production)"]
     tests_backtest_test_data_handler_pit_py["BacktestDataHandler PIT 财务数据合并测试<br/>（#ARCH-CH-021 P0-5）<br/>Test Data Handler Pit<br/>文件: backtest/test_data_handler_pit.py<br/>(生产态 / production)"]
-    tests_backtest_test_data_quality_checker_py["DataQualityChecker<br/>(MOD-BT-022) 测试套件<br/>Test Data Quality Checker<br/>文件: backtest/test_data_quality_checker.py<br/>(生产态 / production)"]
-    tests_backtest_test_decay_monitor_py["DecayMonitor<br/>(MOD-BT-018) 测试套件<br/>Test Decay Monitor<br/>文件: backtest/test_decay_monitor.py<br/>(生产态 / production)"]
-    tests_backtest_test_nan_processor_py["NaNProcessor<br/>(MOD-BT-026) 测试套件<br/>Test Nan Processor<br/>文件: backtest/test_nan_processor.py<br/>(生产态 / production)"]
+    tests_backtest_test_data_quality_checker_py["数据Quality检查器测试<br/>DataQualityChecker (MOD-BT-022) 测试套件。<br/>Test Data Quality Checker<br/>文件: backtest/test_data_quality_checker.py<br/>(生产态 / production)"]
+    tests_backtest_test_decay_monitor_py["Decay监控器测试<br/>DecayMonitor (MOD-BT-018) 测试套件。<br/>Test Decay Monitor<br/>文件: backtest/test_decay_monitor.py<br/>(生产态 / production)"]
+    tests_backtest_test_nan_processor_py["Nan处理器测试<br/>NaNProcessor (MOD-BT-026) 测试套件。<br/>Test Nan Processor<br/>文件: backtest/test_nan_processor.py<br/>(生产态 / production)"]
     tests_backtest_test_param_analyzer_py["MOD-BT-021 Parameter Analyzer 单元测试.<br/>backtest包的test_param_analyzer模块<br/>Test Param Analyzer<br/>文件: backtest/test_param_analyzer.py<br/>(生产态 / production)"]
     tests_backtest_test_report_generator_py["MOD-BT-019 Backtest Report Generator 单元测试.<br/>backtest包的test_report_generator模块<br/>文件: backtest/test_report_generator.py<br/>(生产态 / production)"]
     tests_backtest_test_result_comparator_py["回测结果比较器单元测试<br/>MOD-BT-024 Result Comparator —<br/>回测结果比较器单元测试。<br/>Test Result Comparator<br/>文件: backtest/test_result_comparator.py<br/>(生产态 / production)"]
     tests_backtest_test_scheduler_py["—使用 Mock 引擎<br/>D-BACKTEST BT-17 回测自动调度器测试——使用 Mock<br/>引擎（无 IO 依赖）。<br/>Test Scheduler<br/>文件: backtest/test_scheduler.py<br/>(生产态 / production)"]
     tests_factor_test_backtest_factor_e2e_py["—D-FACTOR → D-BACKTEST 数据流验证<br/>T7 跨域端到端集成测试——D-FACTOR → D-BACKTEST<br/>数据流验证。<br/>Test Backtest Factor E2e<br/>文件: factor/test_backtest_factor_e2e.py<br/>(生产态 / production)"]
-    tests_factor_test_evaluation_backtest_py["—backtest.py<br/>D-FACTOR-03<br/>因子评估回测运行器测试——backtest.py。<br/>Test Evaluation Backtest<br/>文件: factor/test_evaluation_backtest.py<br/>(生产态 / production)"]
+    tests_factor_test_evaluation_backtest_py["Evaluation回测测试<br/>D-FACTOR-03<br/>因子评估回测运行器测试——backtest.py。<br/>Test Evaluation Backtest<br/>文件: factor/test_evaluation_backtest.py<br/>(生产态 / production)"]
     tests_test_backtest_decisiongraph_adapter_py["BacktestResult→decisiongraph 适配器单元测试<br/>test_backtest_decisiongraph_adapter —<br/>BacktestResult→decisiongraph 适配器单...<br/>Test Backtest Decisiongraph Adapter<br/>文件: tests<br/>/test_backtest_decisiongraph_adapter.py<br/>(生产态 / production)"]
     tests_test_event_driven_engine_py["event_driven_engine 正式测试<br/>（原 scripts/tests/ 临时验证脚本转正）<br/>Test Event Driven Engine<br/>文件: tests/test_event_driven_engine.py<br/>(生产态 / production)"]
     tests_test_matching_engine_py["matching_engine + matching_logic + portfolio<br/>正式测试<br/>（原 scripts/tests/ 临时<br/>Test Matching Engine<br/>文件: tests/test_matching_engine.py<br/>(生产态 / production)"]
@@ -414,7 +414,7 @@ flowchart TD
 | 7 | D-FACTOR → D-BACKTEST 数据流验证 / Test Backtest Factor ... | → | D_FACTOR 因子: 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 测试依赖 / test_depends |
 | 8 | decisiongraph适配器 / decisiongraph_adapter (io/decisiong... | → | D_GOVERNANCE 生命周期管理: decisiongraph结构 / decisiongraph_schema (persistence/dec... | 导入依赖 / import_depends |
 | 9 | 数据处理器 / data_handler (core/data_handler.py) | → | D_INFRA_RUNTIME 运行时集成: 从 config/.env.clickhouse 加载 ClickHouse 只读连接参数 / ... | 导入依赖 / import_depends |
-| 10 | 引擎基类 / L_BACKTEST — Backtest Engine Layer (core/engi... | → | D_SHARED 共享服务: Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 10 | 引擎基类 / L_BACKTEST — Backtest Engine Layer (core/engi... | → | D_SHARED 共享服务: 链路上下文 / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
 | 11 | 结果仓库 / result_repository (io/result_repository.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 12 | 结果仓库 / result_repository (io/result_repository.py) | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
 | 13 | 回测异常诊断器 / Anomaly Diagnoser (services/anomaly_diag... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
@@ -433,13 +433,13 @@ flowchart TD
 | 1 | D_EX_CORE 执行核心: miniqmt券商 / miniqmt_broker (adapters/miniqmt_broker.py) | → | 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 导入依赖 / import_depends |
 | 2 | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | → | 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 导入依赖 / import_depends |
 | 3 | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | → | 回测持仓管理模块 / portfolio (core/portfolio.py) | 导入依赖 / import_depends |
-| 4 | D_GOVERNANCE 生命周期管理: Test E2e Pipeline (trading/test_e2e_pipeline.py) | → | vectorized引擎 / L_BACKTEST — Vectorized Backtest Engine... | 测试依赖 / test_depends |
+| 4 | D_GOVERNANCE 生命周期管理: 端到端管道测试 / Test E2e Pipeline (trading/test_e2e_pipe... | → | vectorized引擎 / L_BACKTEST — Vectorized Backtest Engine... | 测试依赖 / test_depends |
 | 5 | D_PF_CORE 组合核心: 30秒冲高回落做T策略 / Intraday Surge Fall Strategy (pf_co... | → | 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
 | 6 | D_PF_CORE 组合核心: 盘口失衡反转做T策略 / Orderbook Imbalance Strategy (pf_co... | → | 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
 | 7 | D_PF_CORE 组合核心: StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | 引擎基类 / L_BACKTEST — Backtest Engine Layer (core/engi... | 导入依赖 / import_depends |
 | 8 | D_PF_CORE 组合核心: StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | 事件driven引擎 / event_driven_engine (implementations/eve... | 导入依赖 / import_depends |
 | 9 | D_PF_CORE 组合核心: StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | vectorized引擎 / L_BACKTEST — Vectorized Backtest Engine... | 导入依赖 / import_depends |
-| 10 | D_PF_CORE 组合核心: Tick Strategy Base (strategy_engine/tick_strategy_base.py) | → | 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
+| 10 | D_PF_CORE 组合核心: Tick策略基础 / Tick Strategy Base (strategy_engine/tick_s... | → | 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
 | 11 | D_PF_CORE 组合核心: VWAP 回归做T策略 / Vwap Reversion Strategy (pf_core/vwap_... | → | 逐笔replay / tick_replay (core/tick_replay.py) | 导入依赖 / import_depends |
 | 12 | D_PF_CORE 组合核心: IntradaySurgeFallStrategy 单元测试 / Test Intraday Surge ... | → | 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |
 | 13 | D_PF_CORE 组合核心: OrderBookImbalanceStrategy 单元测试 / Test Orderbook Imba... | → | 共享撮合逻辑模块（回测=实盘一致性核心） / matching_logic ... | 测试依赖 / test_depends |

@@ -917,18 +917,18 @@ flowchart TD
 | 51 | 数据库桥接 / db_bridge (feedback_loop/db_bridge.py) | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
 | 52 | db写入器 / db_writer (feedback_loop/db_writer.py) | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
 | 53 | 指标收集器 / MetricsCollector: append-only metrics record... | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
-| 54 | 调度器 / scheduler (feedback_loop/scheduler.py) | → | D_GOV_DRIFT 漂移检测: Drift Engine (gov_drift/drift_engine.py) | 导入依赖 / import_depends |
-| 55 | 调度器 / scheduler (feedback_loop/scheduler.py) | → | D_GOV_DRIFT 漂移检测: Integrity (governance/integrity.py) | 导入依赖 / import_depends |
+| 54 | 调度器 / scheduler (feedback_loop/scheduler.py) | → | D_GOV_DRIFT 漂移检测: 漂移引擎 / Drift Engine (gov_drift/drift_engine.py) | 导入依赖 / import_depends |
+| 55 | 调度器 / scheduler (feedback_loop/scheduler.py) | → | D_GOV_DRIFT 漂移检测: 完整性 / Integrity (governance/integrity.py) | 导入依赖 / import_depends |
 | 56 | 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 空 Protocol 作为 12 个异构 detector 类的鸭子类型标记 / Es... | 导入依赖 / import_depends |
-| 57 | 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Models (escalation/escalation_models.py) | 导入依赖 / import_depends |
-| 58 | 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | D_INFRA_RECOVERY 回滚恢复: Rollback Executor (rollback/rollback_executor.py) | 导入依赖 / import_depends |
-| 59 | 背压桥接 / backpressure_bridge (feedback_loop/backpressur... | → | D_INFRA_RUNTIME 运行时集成: Backpressure Manager (pipeline/backpressure_manager.py) | 导入依赖 / import_depends |
-| 60 | db写入器 / db_writer (feedback_loop/db_writer.py) | → | D_INFRA_RUNTIME 运行时集成: Metrics Bridge (system_telemetry/metrics_bridge.py) | 导入依赖 / import_depends |
-| 61 | 调度器 / scheduler (feedback_loop/scheduler.py) | → | D_INFRA_RUNTIME 运行时集成: Metrics Bridge (system_telemetry/metrics_bridge.py) | 导入依赖 / import_depends |
+| 57 | 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation模型 / Escalation Models (escalation/escalation... | 导入依赖 / import_depends |
+| 58 | 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | D_INFRA_RECOVERY 回滚恢复: 回滚执行器 / Rollback Executor (rollback/rollback_executo... | 导入依赖 / import_depends |
+| 59 | 背压桥接 / backpressure_bridge (feedback_loop/backpressur... | → | D_INFRA_RUNTIME 运行时集成: Backpressure管理器 / Backpressure Manager (pipeline/backp... | 导入依赖 / import_depends |
+| 60 | db写入器 / db_writer (feedback_loop/db_writer.py) | → | D_INFRA_RUNTIME 运行时集成: 指标桥接器 / Metrics Bridge (system_telemetry/metrics_bri... | 导入依赖 / import_depends |
+| 61 | 调度器 / scheduler (feedback_loop/scheduler.py) | → | D_INFRA_RUNTIME 运行时集成: 指标桥接器 / Metrics Bridge (system_telemetry/metrics_bri... | 导入依赖 / import_depends |
 | 62 | 协议 / protocols (feedback_loop/protocols.py) | → | D_INTEGRATION 管线路由: 协议 / Protocols (contracts/protocols.py) | 导入依赖 / import_depends |
-| 63 | 调度器 / scheduler (feedback_loop/scheduler.py) | → | D_INTEGRATION 管线路由: In Process Vector Memory (vector_memory/in_process_vector... | 导入依赖 / import_depends |
-| 64 | alert分发器 / alert_dispatcher (feedback_loop/alert_dispa... | → | D_ORCHESTRATOR 代理编排器: Alert Handler (contracts/alert_handler.py) | 导入依赖 / import_depends |
-| 65 | 进化引擎 / evolution_engine (feedback_loop/evolution_engi... | → | D_SECURITY 对抗验证: Gateway (llm_security/gateway.py) | 导入依赖 / import_depends |
+| 63 | 调度器 / scheduler (feedback_loop/scheduler.py) | → | D_INTEGRATION 管线路由: In流程向量记忆 / In Process Vector Memory (vector_memory/... | 导入依赖 / import_depends |
+| 64 | alert分发器 / alert_dispatcher (feedback_loop/alert_dispa... | → | D_ORCHESTRATOR 代理编排器: Alert处理器 / Alert Handler (contracts/alert_handler.py) | 导入依赖 / import_depends |
+| 65 | 进化引擎 / evolution_engine (feedback_loop/evolution_engi... | → | D_SECURITY 对抗验证: 网关 / Gateway (llm_security/gateway.py) | 导入依赖 / import_depends |
 | 66 | API版本契约 / API Version Contract — v0.14.0 R188 (actor... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
 | 67 | 核心 / core (feedback_loop/core.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
 | 68 | 核心 / core (feedback_loop/core.py) | → | D_SHARED 共享服务: 模式定义 / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
@@ -962,22 +962,22 @@ flowchart TD
 | 4 | D_FBL_DETECTORS 反馈检测器: 异常检测器 / anomaly_detector (anomaly/anomaly_detector.py) | → | 指标收集器 / metrics_collector (collectors/metrics_collec... | 导入依赖 / import_depends |
 | 5 | D_FBL_DETECTORS 反馈检测器: 异常检测器 / anomaly_detector (anomaly/anomaly_detector.py) | → | 协议 / protocols (feedback_loop/protocols.py) | 导入依赖 / import_depends |
 | 6 | D_FRONTEND 前端: 适应度functions / fitness_functions (components/fitness_f... | → | 适应度functions / fitness_functions (feedback_loop/fitnes... | 导入依赖 / import_depends |
-| 7 | D_FRONTEND 前端: Test Dashboard Unit (observability/test_dashboard_unit.py) | → | 适应度functions / fitness_functions (feedback_loop/fitnes... | 测试依赖 / test_depends |
-| 8 | D_GOVERNANCE 生命周期管理: Test Eval Harness Unit (code_quality/test_eval_harness_un... | → | 评估harness / eval_harness (feedback_loop/eval_harness.py) | 测试依赖 / test_depends |
+| 7 | D_FRONTEND 前端: 仪表盘单元测试 / Test Dashboard Unit (observability/test_... | → | 适应度functions / fitness_functions (feedback_loop/fitnes... | 测试依赖 / test_depends |
+| 8 | D_GOVERNANCE 生命周期管理: EvalHarness单元测试 / Test Eval Harness Unit (code_qualit... | → | 评估harness / eval_harness (feedback_loop/eval_harness.py) | 测试依赖 / test_depends |
 | 9 | D_GOVERNANCE 生命周期管理: 使用默认阈值的框架实例 / Test Fitness Functions Unit (cod... | → | 适应度functions / fitness_functions (feedback_loop/fitnes... | 测试依赖 / test_depends |
 | 10 | D_GOVERNANCE 生命周期管理: SLO 管理器单元测试 / Test Slo Manager Unit (observability... | → | SLO管理器 / slo_manager (feedback_loop/slo_manager.py) | 测试依赖 / test_depends |
-| 11 | D_GOVERNANCE 生命周期管理: Test Scheduler Act (ops/test_scheduler_act.py) | → | selfmodification速率限制器 / R522: SelfModificationRateLi... | 测试依赖 / test_depends |
-| 12 | D_GOVERNANCE 生命周期管理: Test Scheduler Act (ops/test_scheduler_act.py) | → | gracefuldegradation规划器 / Graceful Degradation Planner ... | 测试依赖 / test_depends |
-| 13 | D_GOVERNANCE 生命周期管理: Test Scheduler Act (ops/test_scheduler_act.py) | → | 自API限流器防御 / Self API Throttle Defense — v0.39.0 R4... | 测试依赖 / test_depends |
-| 14 | D_GOVERNANCE 生命周期管理: Test Scheduler Act (ops/test_scheduler_act.py) | → | 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | 测试依赖 / test_depends |
-| 15 | D_GOVERNANCE 生命周期管理: Test Feedback Collector Unit (shared/test_feedback_collec... | → | 反馈收集器 / FeedbackCollector: collect task execution fe... | 测试依赖 / test_depends |
+| 11 | D_GOVERNANCE 生命周期管理: 调度器Act测试 / Test Scheduler Act (ops/test_scheduler_ac... | → | selfmodification速率限制器 / R522: SelfModificationRateLi... | 测试依赖 / test_depends |
+| 12 | D_GOVERNANCE 生命周期管理: 调度器Act测试 / Test Scheduler Act (ops/test_scheduler_ac... | → | gracefuldegradation规划器 / Graceful Degradation Planner ... | 测试依赖 / test_depends |
+| 13 | D_GOVERNANCE 生命周期管理: 调度器Act测试 / Test Scheduler Act (ops/test_scheduler_ac... | → | 自API限流器防御 / Self API Throttle Defense — v0.39.0 R4... | 测试依赖 / test_depends |
+| 14 | D_GOVERNANCE 生命周期管理: 调度器Act测试 / Test Scheduler Act (ops/test_scheduler_ac... | → | 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | 测试依赖 / test_depends |
+| 15 | D_GOVERNANCE 生命周期管理: 反馈收集器单元测试 / Test Feedback Collector Unit (shared... | → | 反馈收集器 / FeedbackCollector: collect task execution fe... | 测试依赖 / test_depends |
 | 16 | D_GOV_AUDIT 审计追踪: 反馈桥接 / feedback_bridge (gov_audit/feedback_bridge.py) | → | 包入口 / Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feed... | 导入依赖 / import_depends |
-| 17 | D_GOV_AUDIT 审计追踪: Test Spec Auditor (audit/test_spec_auditor.py) | → | 协议 / protocols (feedback_loop/protocols.py) | 测试依赖 / test_depends |
-| 18 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core (trading/auto_runtime_core.py) | → | 包入口 / Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feed... | 导入依赖 / import_depends |
-| 19 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core (trading/auto_runtime_core.py) | → | 调度器 / scheduler (feedback_loop/scheduler.py) | 导入依赖 / import_depends |
-| 20 | D_INFRA_RUNTIME 运行时集成: Lifecycle Manager (trading/lifecycle_manager.py) | → | 包入口 / Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feed... | 导入依赖 / import_depends |
+| 17 | D_GOV_AUDIT 审计追踪: Spec审计器测试 / Test Spec Auditor (audit/test_spec_audit... | → | 协议 / protocols (feedback_loop/protocols.py) | 测试依赖 / test_depends |
+| 18 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / Auto Runtime Core (trading/auto_runtime_... | → | 包入口 / Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feed... | 导入依赖 / import_depends |
+| 19 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / Auto Runtime Core (trading/auto_runtime_... | → | 调度器 / scheduler (feedback_loop/scheduler.py) | 导入依赖 / import_depends |
+| 20 | D_INFRA_RUNTIME 运行时集成: 生命周期管理器 / Lifecycle Manager (trading/lifecycle_man... | → | 包入口 / Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feed... | 导入依赖 / import_depends |
 | 21 | D_ORCHESTRATOR 代理编排器: 触发路由审计日志 duck-typed 接口 / Trigger Router (execut... | → | 决策引擎 / Feedback Loop Decision Engine (feedback_loop/d... | 导入依赖 / import_depends |
-| 22 | D_SECURITY 对抗验证: Feedback Bridge (orphan_judge/feedback_bridge.py) | → | 包入口 / Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feed... | 导入依赖 / import_depends |
+| 22 | D_SECURITY 对抗验证: 反馈桥接器 / Feedback Bridge (orphan_judge/feedback_bridg... | → | 包入口 / Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feed... | 导入依赖 / import_depends |
 | 23 | D_SHARED 共享服务: 密钥 / Secrets (security/secrets.py) | → | 密钥rotation / Secret Rotation — v0.14.0 R189 (security/... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram

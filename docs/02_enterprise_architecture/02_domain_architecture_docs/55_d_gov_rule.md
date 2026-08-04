@@ -77,7 +77,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py["三方对齐门禁<br/>守三方对齐的门禁：检查蓝图、代码、依赖图三样对不<br/>对得上。防止蓝图写了没做、依赖图登记了但代码没有<br/>这类脱节。<br/>Triple Alignment<br/>Blueprint-code-dependency graph triple<br/>alignment gate<br/>文件: rule_enforcement/triple_alignment.py<br/>(生产态 / production)"]
     src_zephyr_gov_rule_init_py["规则治理域包<br/>规则治理域的文件夹入口，标记这个域的边界。本身不<br/>含逻辑，给域内模块一个归属。<br/>Gov Rule Package<br/>gov_rule domain package - rule governance<br/>文件: gov_rule/__init__.py<br/>(生产态 / production)"]
     src_zephyr_gov_rule_constitutional_update_constitutional_update_py["宪法自愈<br/>让项目宪法自我进化。从历史错误里提取经验，提议更<br/>新，经人审查后再安全写入。解决宪法是静态的、AI<br/>犯错学不到的问题。<br/>Constitutional Update<br/>Constitutional self-healing - Phase 14 blind<br/>spot B27 fix<br/>文件: constitutional_update<br/>/constitutional_update.py<br/>(生产态 / production)"]
-    tests_governance_rule_enforcement_test_end_to_end_walkthrough_py["Test End To End Walkthrough<br/>rule enforcement包的test_end_to_end_walkthrough<br/>模块<br/>文件: rule_enforcement<br/>/test_end_to_end_walkthrough.py<br/>(生产态 / production)"]
+    tests_governance_rule_enforcement_test_end_to_end_walkthrough_py["End To End Walkthrough测试<br/>rule enforcement包的test_end_to_end_walkthrough<br/>模块<br/>Test End To End Walkthrough<br/>文件: rule_enforcement<br/>/test_end_to_end_walkthrough.py<br/>(生产态 / production)"]
     scripts_governance_generators_generate_script_manifest_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py
     src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py
     src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py
@@ -215,7 +215,7 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_enforcement_triple_alignment_py["三方对齐门禁<br/>守三方对齐的门禁：检查蓝图、代码、依赖图三样对不<br/>对得上。防止蓝图写了没做、依赖图登记了但代码没有<br/>这类脱节。<br/>Triple Alignment<br/>Blueprint-code-dependency graph triple<br/>alignment gate<br/>文件: rule_enforcement/triple_alignment.py<br/>(生产态 / production)"]
     src_zephyr_gov_rule_init_py["规则治理域包<br/>规则治理域的文件夹入口，标记这个域的边界。本身不<br/>含逻辑，给域内模块一个归属。<br/>Gov Rule Package<br/>gov_rule domain package - rule governance<br/>文件: gov_rule/__init__.py<br/>(生产态 / production)"]
     src_zephyr_gov_rule_constitutional_update_constitutional_update_py["宪法自愈<br/>让项目宪法自我进化。从历史错误里提取经验，提议更<br/>新，经人审查后再安全写入。解决宪法是静态的、AI<br/>犯错学不到的问题。<br/>Constitutional Update<br/>Constitutional self-healing - Phase 14 blind<br/>spot B27 fix<br/>文件: constitutional_update<br/>/constitutional_update.py<br/>(生产态 / production)"]
-    tests_governance_rule_enforcement_test_end_to_end_walkthrough_py["Test End To End Walkthrough<br/>rule enforcement包的test_end_to_end_walkthrough<br/>模块<br/>文件: rule_enforcement<br/>/test_end_to_end_walkthrough.py<br/>(生产态 / production)"]
+    tests_governance_rule_enforcement_test_end_to_end_walkthrough_py["End To End Walkthrough测试<br/>rule enforcement包的test_end_to_end_walkthrough<br/>模块<br/>Test End To End Walkthrough<br/>文件: rule_enforcement<br/>/test_end_to_end_walkthrough.py<br/>(生产态 / production)"]
     scripts_governance_generators_generate_script_manifest_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py
     src_zephyr_gov_enforcement_rule_enforcement_adaptive_threshold_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py
     src_zephyr_gov_enforcement_rule_enforcement_adversarial_strategies_py ~~~ src_zephyr_gov_enforcement_rule_enforcement_ai_capability_guard_py
@@ -297,22 +297,22 @@ flowchart TD
 | 3 | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
 | 4 | 能力检查器 / Capability Checker (rule_enforcement/capabil... | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
 | 5 | 门禁紧急旁路 / Gate Override (gate_engine/gate_override.py) | → | D_GOV_AUDIT 审计追踪: 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
-| 6 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_GOV_DRIFT 漂移检测: Drift Infrastructure (gov_drift/drift_infrastructure.py) | 导入依赖 / import_depends |
+| 6 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_GOV_DRIFT 漂移检测: 漂移基础设施 / Drift Infrastructure (gov_drift/drift_infr... | 导入依赖 / import_depends |
 | 7 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_GOV_DRIFT 漂移检测: 从 YAML 真源加载契约文件路径 / En 002 Enforcement Validat... | 导入依赖 / import_depends |
 | 8 | 规则引擎模块集 / Rule Engine Package (rule_engine/__init_... | → | D_GOV_ENFORCEMENT 规则执行: 只读：baseline_metrics / Rule Canary Manager (rule_engine... | config_depends / config_depends |
 | 9 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 导入依赖 / import_depends |
 | 10 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: 强制 stdout/stderr 使用 UTF-8 编码 / Encoding (_shared/en... | 导入依赖 / import_depends |
 | 11 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: graceful 变体：写入失败时返回 False 而非 raise / File Uti... | 导入依赖 / import_depends |
 | 12 | 脚本清单自动生成器 / Script Manifest Generator (generator... | → | D_GOV_SCRIPTS 脚本治理: 加载 YAML 文件，返回解析后的任意类型对象 / Yaml Utils (_s... | 导入依赖 / import_depends |
-| 13 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_INFRA_RECOVERY 回滚恢复: Contract (rollback/contract.py) | 导入依赖 / import_depends |
-| 14 | 任务完成门禁 / Task Completion Gate (rule_enforcement/tas... | → | D_INFRA_RUNTIME 运行时集成: Task Lifecycle Manager (lifecycle/task_lifecycle_manager.py) | 导入依赖 / import_depends |
+| 13 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_INFRA_RECOVERY 回滚恢复: 契约 / Contract (rollback/contract.py) | 导入依赖 / import_depends |
+| 14 | 任务完成门禁 / Task Completion Gate (rule_enforcement/tas... | → | D_INFRA_RUNTIME 运行时集成: 任务生命周期管理器 / Task Lifecycle Manager (lifecycle/ta... | 导入依赖 / import_depends |
 | 15 | AI 能力边界守卫 / AI Capability Guard (rule_enforcement/a... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 16 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
-| 17 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: Capability (security/capability.py) | 导入依赖 / import_depends |
+| 17 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: 能力 / Capability (security/capability.py) | 导入依赖 / import_depends |
 | 18 | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | D_SHARED 共享服务: 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
 | 19 | 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
 | 20 | 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | D_SHARED 共享服务: 模式定义 / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 21 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_SHARED 共享服务: Io Cache (io/io_cache.py) | 导入依赖 / import_depends |
+| 21 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_SHARED 共享服务: Io缓存 / Io Cache (io/io_cache.py) | 导入依赖 / import_depends |
 | 22 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 23 | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | D_SHARED 共享服务: 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
 | 24 | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | → | D_SHARED 共享服务: 模式定义 / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
@@ -322,9 +322,9 @@ flowchart TD
 | 28 | 进程生命周期网关 / Process Lifecycle Gateway (invariants/... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 29 | 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 30 | 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
-| 31 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: Base Config (schema/base_config.py) | 导入依赖 / import_depends |
-| 32 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: Execution Model (schema/execution_model.py) | 导入依赖 / import_depends |
-| 33 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: Severity Types (schema/severity_types.py) | 导入依赖 / import_depends |
+| 31 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: 基础配置 / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 32 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: 执行模型 / Execution Model (schema/execution_model.py) | 导入依赖 / import_depends |
+| 33 | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | D_SHARED 共享服务: Severity类型定义 / Severity Types (schema/severity_types.py) | 导入依赖 / import_depends |
 | 34 | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 35 | 宪法自愈 / Constitutional Update (constitutional_update/c... | → | D_SHARED 共享服务: 统一3处漂移实现 / File Utils (io/file_utils.py) | 导入依赖 / import_depends |
 | 36 | 宪法自愈 / Constitutional Update (constitutional_update/c... | → | D_SHARED 共享服务: 全局审计写入器协议 / Session Audit (session/session_audit... | 导入依赖 / import_depends |
@@ -341,57 +341,57 @@ flowchart TD
 | 6 | D_GOVERNANCE 生命周期管理: 15条capability + checksum防篡改 / Test Cbac Matrix (acces... | → | 能力检查器 / Capability Checker (rule_enforcement/capabil... | 测试依赖 / test_depends |
 | 7 | D_GOVERNANCE 生命周期管理: 15条capability + checksum防篡改 / Test Cbac Matrix (acces... | → | CBAC 能力矩阵 / CBAC Matrix (rule_enforcement/cbac_matrix... | 测试依赖 / test_depends |
 | 8 | D_GOVERNANCE 生命周期管理: 逐条验证 AP1~AP8 / Test Anti Pattern Guard Unit (code_qua... | → | 反模式防护引擎 / Anti-Pattern Guard (rule_enforcement/ant... | 测试依赖 / test_depends |
-| 9 | D_GOVERNANCE 生命周期管理: Test Constitutional Update Unit (compliance/test_constitu... | → | 宪法自愈 / Constitutional Update (constitutional_update/c... | 测试依赖 / test_depends |
+| 9 | D_GOVERNANCE 生命周期管理: ConstitutionalUpdate单元测试 / Test Constitutional Update... | → | 宪法自愈 / Constitutional Update (constitutional_update/c... | 测试依赖 / test_depends |
 | 10 | D_GOVERNANCE 生命周期管理: Can-I-Deploy 预部署门禁单元测试 / Test Can I Deploy (gove... | → | 预部署门禁 / Can-I-Deploy (rule_enforcement/can_i_deploy.py) | 测试依赖 / test_depends |
 | 11 | D_GOVERNANCE 生命周期管理: AutoPilot 端到端测试 / Test Autopilot (integration/test_a... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 测试依赖 / test_depends |
 | 12 | D_GOVERNANCE 生命周期管理: CDC 经纪人单元测试 / Test Cdc Broker (integration/test_cd... | → | CDC 契约经纪人 / CDC Broker (rule_enforcement/cdc_broker.py) | 测试依赖 / test_depends |
-| 13 | D_GOVERNANCE 生命周期管理: Test Contract Template Manager Unit (integration/test_con... | → | 契约模板管理器 / Contract Template Manager (rule_enforcem... | 测试依赖 / test_depends |
-| 14 | D_GOVERNANCE 生命周期管理: Test Task Completion Gate Unit (lifecycle/test_task_compl... | → | 任务完成门禁 / Task Completion Gate (rule_enforcement/tas... | 测试依赖 / test_depends |
-| 15 | D_GOVERNANCE 生命周期管理: Test Base Repo (persistence/test_base_repo.py) | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 测试依赖 / test_depends |
+| 13 | D_GOVERNANCE 生命周期管理: 契约Template管理器单元测试 / Test Contract Template Manag... | → | 契约模板管理器 / Contract Template Manager (rule_enforcem... | 测试依赖 / test_depends |
+| 14 | D_GOVERNANCE 生命周期管理: 任务Completion门禁单元测试 / Test Task Completion Gate Un... | → | 任务完成门禁 / Task Completion Gate (rule_enforcement/tas... | 测试依赖 / test_depends |
+| 15 | D_GOVERNANCE 生命周期管理: 基础Repo测试 / Test Base Repo (persistence/test_base_repo... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 测试依赖 / test_depends |
 | 16 | D_GOVERNANCE 生命周期管理: 返回已初始化的 SQLite 数据库路径 / Test Circuit Breaker U... | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 测试依赖 / test_depends |
 | 17 | D_GOVERNANCE 生命周期管理: capability_check + checksum校验 + 离线更新 T / Test Capab... | → | 能力检查器 / Capability Checker (rule_enforcement/capabil... | 测试依赖 / test_depends |
 | 18 | D_GOVERNANCE 生命周期管理: capability_check + checksum校验 + 离线更新 T / Test Capab... | → | CBAC 能力矩阵 / CBAC Matrix (rule_enforcement/cbac_matrix... | 测试依赖 / test_depends |
 | 19 | D_GOV_AUDIT 审计追踪: 审计链验证器 / audit_chain_verifier (rule_enforcement/aud... | → | 门禁上下文传播 / Gate Context (gate_engine/gate_context.py) | 导入依赖 / import_depends |
 | 20 | D_GOV_AUDIT 审计追踪: commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | → | 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 导入依赖 / import_depends |
 | 21 | D_GOV_AUDIT 审计追踪: 测试p3集成smoke / test_p3_integration_smoke (audit/test_p... | → | 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 测试依赖 / test_depends |
-| 22 | D_GOV_CODE_QUALITY 代码质量治理: Test Adversarial Gate Integration (gate_engine/test_adver... | → | 对抗样本生成器 / Adversarial Strategies (rule_enforcement... | 测试依赖 / test_depends |
-| 23 | D_GOV_CODE_QUALITY 代码质量治理: Test Adversarial Gate Integration (gate_engine/test_adver... | → | 对抗验证门禁 / Adversarial Validation (gate_engine/advers... | 测试依赖 / test_depends |
-| 24 | D_GOV_CODE_QUALITY 代码质量治理: Test Adversarial Validation Gate (gate_engine/test_advers... | → | 对抗验证门禁 / Adversarial Validation (gate_engine/advers... | 测试依赖 / test_depends |
-| 25 | D_GOV_CODE_QUALITY 代码质量治理: Test En 001 Circular Dependency (invariants/test_en_001_c... | → | 循环依赖扫描器 / Circular Dependency Scanner (invariants/... | 测试依赖 / test_depends |
-| 26 | D_GOV_CODE_QUALITY 代码质量治理: Test En 003 Contract Compatibility (invariants/test_en_00... | → | 契约兼容性检查器 / Contract Compatibility Checker (invari... | 测试依赖 / test_depends |
-| 27 | D_GOV_CODE_QUALITY 代码质量治理: Test En Process Lifecycle Gateway (invariants/test_en_pro... | → | 进程生命周期网关 / Process Lifecycle Gateway (invariants/... | 测试依赖 / test_depends |
-| 28 | D_GOV_CODE_QUALITY 代码质量治理: Test Zero Residue Check (invariants/test_zero_residue_che... | → | 零残留检查器 / Zero Residue Check (invariants/zero_residu... | 测试依赖 / test_depends |
-| 29 | D_GOV_CODE_QUALITY 代码质量治理: Test Adaptive Threshold (rule_enforcement/test_adaptive_t... | → | 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 测试依赖 / test_depends |
-| 30 | D_GOV_CODE_QUALITY 代码质量治理: Test Adversarial Strategies (rule_enforcement/test_advers... | → | 对抗样本生成器 / Adversarial Strategies (rule_enforcement... | 测试依赖 / test_depends |
-| 31 | D_GOV_CODE_QUALITY 代码质量治理: Test Integration Test Runner (rule_enforcement/test_integ... | → | 集成测试运行器 / Integration Test Runner (rule_enforcemen... | 测试依赖 / test_depends |
-| 32 | D_GOV_CODE_QUALITY 代码质量治理: Test Kiss Enforcer (rule_enforcement/test_kiss_enforcer.py) | → | KISS 约束执行器 / KISS Enforcer (rule_enforcement/kiss_en... | 测试依赖 / test_depends |
-| 33 | D_GOV_CODE_QUALITY 代码质量治理: Test Secrets Guard (rule_enforcement/test_secrets_guard.py) | → | 密钥守卫 / Secrets Guard (rule_enforcement/secrets_guard.py) | 测试依赖 / test_depends |
-| 34 | D_GOV_CODE_QUALITY 代码质量治理: Test Triple Alignment (rule_enforcement/test_triple_align... | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 测试依赖 / test_depends |
+| 22 | D_GOV_CODE_QUALITY 代码质量治理: 对抗门禁集成测试 / Test Adversarial Gate Integration (gat... | → | 对抗样本生成器 / Adversarial Strategies (rule_enforcement... | 测试依赖 / test_depends |
+| 23 | D_GOV_CODE_QUALITY 代码质量治理: 对抗门禁集成测试 / Test Adversarial Gate Integration (gat... | → | 对抗验证门禁 / Adversarial Validation (gate_engine/advers... | 测试依赖 / test_depends |
+| 24 | D_GOV_CODE_QUALITY 代码质量治理: 对抗验证门禁测试 / Test Adversarial Validation Gate (gate... | → | 对抗验证门禁 / Adversarial Validation (gate_engine/advers... | 测试依赖 / test_depends |
+| 25 | D_GOV_CODE_QUALITY 代码质量治理: En 001 Circular Dependency测试 / Test En 001 Circular Dep... | → | 循环依赖扫描器 / Circular Dependency Scanner (invariants/... | 测试依赖 / test_depends |
+| 26 | D_GOV_CODE_QUALITY 代码质量治理: En003契约Compatibility测试 / Test En 003 Contract Compati... | → | 契约兼容性检查器 / Contract Compatibility Checker (invari... | 测试依赖 / test_depends |
+| 27 | D_GOV_CODE_QUALITY 代码质量治理: En流程生命周期网关测试 / Test En Process Lifecycle Gatewa... | → | 进程生命周期网关 / Process Lifecycle Gateway (invariants/... | 测试依赖 / test_depends |
+| 28 | D_GOV_CODE_QUALITY 代码质量治理: Zero残留检查测试 / Test Zero Residue Check (invariants/te... | → | 零残留检查器 / Zero Residue Check (invariants/zero_residu... | 测试依赖 / test_depends |
+| 29 | D_GOV_CODE_QUALITY 代码质量治理: Adaptive Threshold测试 / Test Adaptive Threshold (rule_en... | → | 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 测试依赖 / test_depends |
+| 30 | D_GOV_CODE_QUALITY 代码质量治理: 对抗策略测试 / Test Adversarial Strategies (rule_enforcem... | → | 对抗样本生成器 / Adversarial Strategies (rule_enforcement... | 测试依赖 / test_depends |
+| 31 | D_GOV_CODE_QUALITY 代码质量治理: 集成测试运行器测试 / Test Integration Test Runner (rule_e... | → | 集成测试运行器 / Integration Test Runner (rule_enforcemen... | 测试依赖 / test_depends |
+| 32 | D_GOV_CODE_QUALITY 代码质量治理: Kiss Enforcer测试 / Test Kiss Enforcer (rule_enforcement/... | → | KISS 约束执行器 / KISS Enforcer (rule_enforcement/kiss_en... | 测试依赖 / test_depends |
+| 33 | D_GOV_CODE_QUALITY 代码质量治理: Secrets守卫测试 / Test Secrets Guard (rule_enforcement/te... | → | 密钥守卫 / Secrets Guard (rule_enforcement/secrets_guard.py) | 测试依赖 / test_depends |
+| 34 | D_GOV_CODE_QUALITY 代码质量治理: Triple对齐测试 / Test Triple Alignment (rule_enforcement/... | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 测试依赖 / test_depends |
 | 35 | D_GOV_ENFORCEMENT 规则执行: 影子金丝雀部署运行器 / Shadow Canary Deploy Runner (ops/s... | → | 预部署门禁 / Can-I-Deploy (rule_enforcement/can_i_deploy.py) | 导入依赖 / import_depends |
 | 36 | D_GOV_ENFORCEMENT 规则执行: Shadow Canary 部署运行器单元测试 / Test Shadow Canary Dep... | → | 预部署门禁 / Can-I-Deploy (rule_enforcement/can_i_deploy.py) | 测试依赖 / test_depends |
 | 37 | D_GOV_OPS_RESILIENCE 运维弹性治理: Triage (escalation/triage.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
 | 38 | D_GOV_OPS_RESILIENCE 运维弹性治理: Triage (escalation/triage.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
 | 39 | D_GOV_OPS_RESILIENCE 运维弹性治理: 从 _registry.yaml 动态计算期望的 gate_id 集合 / Test Gate... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 测试依赖 / test_depends |
 | 40 | D_GOV_OPS_RESILIENCE 运维弹性治理: 从 _registry.yaml 动态计算期望的 gate_id 集合 / Test Gate... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 测试依赖 / test_depends |
-| 41 | D_GOV_OPS_RESILIENCE 运维弹性治理: Test Verify B54 B56 B59 Deep (orchestrator/test_verify_b5... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 测试依赖 / test_depends |
+| 41 | D_GOV_OPS_RESILIENCE 运维弹性治理: Verify B54 B56 B59 Deep测试 / Test Verify B54 B56 B59 Dee... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 测试依赖 / test_depends |
 | 42 | D_GOV_SCRIPTS 脚本治理: 入口函数. / Cbg Reset (d1_structure/cbg_reset.py) | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
 | 43 | D_GOV_SCRIPTS 脚本治理: 入口函数. / Reset Cbg (d1_structure/reset_cbg.py) | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
-| 44 | D_GOV_SCRIPTS 脚本治理: Create Task From Finding (meta/create_task_from_finding.py) | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 45 | D_GOV_SCRIPTS 脚本治理: Gate Engine Selfcheck (meta/gate_engine_selfcheck.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 46 | D_GOV_SCRIPTS 脚本治理: Validate Gate Engine External (meta/validate_gate_engine_... | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
-| 47 | D_GOV_SCRIPTS 脚本治理: Validate Gate Engine External (meta/validate_gate_engine_... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 48 | D_INFRA_RUNTIME 运行时集成: Task Lifecycle Manager (lifecycle/task_lifecycle_manager.py) | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 49 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core (trading/auto_runtime_core.py) | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
+| 44 | D_GOV_SCRIPTS 脚本治理: Create任务FromFinding / Create Task From Finding (meta/cr... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 45 | D_GOV_SCRIPTS 脚本治理: 门禁引擎Selfcheck / Gate Engine Selfcheck (meta/gate_engi... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 46 | D_GOV_SCRIPTS 脚本治理: 验证门禁引擎External / Validate Gate Engine External (met... | → | 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | 导入依赖 / import_depends |
+| 47 | D_GOV_SCRIPTS 脚本治理: 验证门禁引擎External / Validate Gate Engine External (met... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 48 | D_INFRA_RUNTIME 运行时集成: 任务生命周期管理器 / Task Lifecycle Manager (lifecycle/ta... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 49 | D_INFRA_RUNTIME 运行时集成: 自动运行时核心 / Auto Runtime Core (trading/auto_runtime_... | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
 | 50 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | 导入依赖 / import_depends |
 | 51 | D_INFRA_RUNTIME 运行时集成: 决定什么工作、什么时候、用什么模型、什么顺序 / Work Orche... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 52 | D_INTEGRATION 管线路由: Task Manager Server (mcp/task_manager_server.py) | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 52 | D_INTEGRATION 管线路由: 任务管理器服务端 / Task Manager Server (mcp/task_manager_... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 | 53 | D_INTEGRATION 管线路由: 协议 / Protocols (contracts/protocols.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
-| 54 | D_INTELLIGENCE 上下文管理: Activate (model_evaluation/activate.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 55 | D_INTELLIGENCE 上下文管理: Activate (model_evaluation/activate.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
+| 54 | D_INTELLIGENCE 上下文管理: 激活 / Activate (model_evaluation/activate.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 55 | D_INTELLIGENCE 上下文管理: 激活 / Activate (model_evaluation/activate.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
 | 56 | D_SECURITY 对抗验证: OrphanJudge 模块基础异常 / Judge (orphan_judge/judge.py) | → | 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | 导入依赖 / import_depends |
-| 57 | D_SECURITY 对抗验证: Constitution Guard (adversarial_validation/constitution_g... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 58 | D_SECURITY 对抗验证: Defense Runner (adversarial_validation/defense_runner.py) | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
-| 59 | D_SECURITY 对抗验证: Defense Runner (adversarial_validation/defense_runner.py) | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 57 | D_SECURITY 对抗验证: Constitution守卫 / Constitution Guard (adversarial_valida... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 58 | D_SECURITY 对抗验证: Defense运行器 / Defense Runner (adversarial_validation/de... | → | 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | 导入依赖 / import_depends |
+| 59 | D_SECURITY 对抗验证: Defense运行器 / Defense Runner (adversarial_validation/de... | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 | 60 | D_SHARED 共享服务: A2A协调 / A2a Coordination (a2a/a2a_coordination.py) | → | 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram

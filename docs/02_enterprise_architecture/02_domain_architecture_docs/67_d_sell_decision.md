@@ -53,24 +53,24 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_sell_decision_init_py["Init<br/>管理zephyr.sell_decision子包的加载和懒导入<br/>文件: sell_decision/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_extensions_init_py["Init<br/>管理sell_decision._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_api_init_py["Init<br/>管理sell_decision.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_init_py["zephyr/sell_decision 包入口<br/>管理zephyr.sell_decision子包的加载和懒导入<br/>Init<br/>文件: sell_decision/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_extensions_init_py["sell_decision/_extensions 包入口<br/>管理sell_decision._extensions子包的加载和懒导入<br/>Init<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_api_init_py["sell_decision/api 包入口<br/>管理sell_decision.api子包的加载和懒导入<br/>Init<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_breakout_failure_detector_py["突破成败状态<br/>Breakout Failure Detector — 突破成败检测器<br/>(MOD-SELL-003)<br/>文件: core/breakout_failure_detector.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_core_position_triage_py["Position Triage<br/>卖出决策/核心包的position_triage模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/position_triage.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_replacement_rebalance_sell_py["Replacement Rebalance Sell<br/>卖出决策/核心包的replacement_rebalance_sell模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/replacement_rebalance_sell.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_position_triage_py["持仓Triage<br/>卖出决策/核心包的position_triage模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Position Triage<br/>文件: core/position_triage.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_replacement_rebalance_sell_py["ReplacementRebalance卖<br/>卖出决策/核心包的replacement_rebalance_sell模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Replacement Rebalance Sell<br/>文件: core/replacement_rebalance_sell.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_replacement_rebalance_seller_py["置换/再平衡卖出类型<br/>Replacement & Rebalance Seller —<br/>置换与再平衡卖出 (MOD-SELL-006)<br/>Replacement Rebalance Seller<br/>文件: core/replacement_rebalance_seller.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_core_scaling_out_architect_py["Scaling Out Architect<br/>卖出决策/核心包的scaling_out_architect模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/scaling_out_architect.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py["Sell Signal Accuracy Monitor<br/>卖出决策/核心包的sell_signal_accuracy_monitor模<br/>块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_signal_accuracy_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_scaling_out_architect_py["缩放出架构师<br/>卖出决策/核心包的scaling_out_architect模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Scaling Out Architect<br/>文件: core/scaling_out_architect.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py["卖信号Accuracy监控器<br/>卖出决策/核心包的sell_signal_accuracy_monitor模<br/>块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Sell Signal Accuracy Monitor<br/>文件: core/sell_signal_accuracy_monitor.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_sell_signal_fusion_engine_py["融合算法<br/>Sell Signal Fusion Engine — 卖出信号融合引擎<br/>(MOD-SELL-007)<br/>文件: core/sell_signal_fusion_engine.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_sell_urgency_scorer_py["紧迫度等级<br/>Sell Urgency Scorer — 卖出紧迫度评分器<br/>(MOD-SELL-009)<br/>文件: core/sell_urgency_scorer.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_stop_hunting_protector_py["止损位偏移方向<br/>Stop-Hunting Protector — 止损猎杀防护器<br/>(MOD-SELL-015)<br/>Stop Hunting Protector<br/>文件: core/stop_hunting_protector.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_core_strategy_specific_stop_framework_py["Strategy Specific Stop Framework<br/>卖出决策/核心包的strategy_specific_stop_framewor<br/>k模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/strategy_specific_stop_framework.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_t_trade_coordinator_py["T Trade Coordinator<br/>卖出决策/核心包的t_trade_coordinator模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/t_trade_coordinator.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_take_profit_strategy_py["Take Profit Strategy<br/>卖出决策/核心包的take_profit_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/take_profit_strategy.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_infrastructure_init_py["Init<br/>管理sell_decision.infrastructure子包的加载和懒导<br/>入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_models_init_py["Init<br/>管理sell_decision.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_services_init_py["Init<br/>管理sell_decision.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_core_strategy_specific_stop_framework_py["策略Specific止损Framework<br/>卖出决策/核心包的strategy_specific_stop_framewor<br/>k模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Strategy Specific Stop Framework<br/>文件: core/strategy_specific_stop_framework.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_t_trade_coordinator_py["T交易协调器<br/>卖出决策/核心包的t_trade_coordinator模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>T Trade Coordinator<br/>文件: core/t_trade_coordinator.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_take_profit_strategy_py["止盈止盈策略<br/>卖出决策/核心包的take_profit_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Take Profit Strategy<br/>文件: core/take_profit_strategy.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_infrastructure_init_py["sell_decision/infrastructure 包入口<br/>管理sell_decision.infrastructure子包的加载和懒导<br/>入<br/>Init<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_models_init_py["sell_decision/models 包入口<br/>管理sell_decision.models子包的加载和懒导入<br/>Init<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_services_init_py["sell_decision/services 包入口<br/>管理sell_decision.services子包的加载和懒导入<br/>Init<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_init_py ~~~ src_zephyr_sell_decision_extensions_init_py
     src_zephyr_sell_decision_extensions_init_py ~~~ src_zephyr_sell_decision_api_init_py
     src_zephyr_sell_decision_api_init_py ~~~ src_zephyr_sell_decision_core_breakout_failure_detector_py
@@ -88,17 +88,17 @@ flowchart TD
     src_zephyr_sell_decision_core_take_profit_strategy_py ~~~ src_zephyr_sell_decision_infrastructure_init_py
     src_zephyr_sell_decision_infrastructure_init_py ~~~ src_zephyr_sell_decision_models_init_py
     src_zephyr_sell_decision_models_init_py ~~~ src_zephyr_sell_decision_services_init_py
-    src_zephyr_sell_decision_core_exit_scenario_planner_py["Exit Scenario Planner<br/>卖出决策/核心包的exit_scenario_planner模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/exit_scenario_planner.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_exit_scenario_planner_py["Exit场景Planner<br/>卖出决策/核心包的exit_scenario_planner模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Exit Scenario Planner<br/>文件: core/exit_scenario_planner.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_sell_conflict_arbitrator_py["冲突等级<br/>Sell Conflict Arbitrator — 买卖冲突仲裁器<br/>(MOD-SELL-008)<br/>文件: core/sell_conflict_arbitrator.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_core_sell_execution_quality_tracker_py["Sell Execution Quality Tracker<br/>卖出决策/核心包的sell_execution_quality_tracker<br/>模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_execution_quality_tracker.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_sell_strategy_ab_tester_py["Sell Strategy Ab Tester<br/>卖出决策/核心包的sell_strategy_ab_tester模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_strategy_ab_tester.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_stop_loss_strategy_py["Stop Loss Strategy<br/>卖出决策/核心包的stop_loss_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/stop_loss_strategy.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_execution_quality_tracker_py["卖执行Quality跟踪器<br/>卖出决策/核心包的sell_execution_quality_tracker<br/>模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Sell Execution Quality Tracker<br/>文件: core/sell_execution_quality_tracker.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_strategy_ab_tester_py["卖策略Ab测试器<br/>卖出决策/核心包的sell_strategy_ab_tester模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Sell Strategy Ab Tester<br/>文件: core/sell_strategy_ab_tester.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_stop_loss_strategy_py["止损亏损策略<br/>卖出决策/核心包的stop_loss_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Stop Loss Strategy<br/>文件: core/stop_loss_strategy.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_exit_scenario_planner_py ~~~ src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
     src_zephyr_sell_decision_core_sell_conflict_arbitrator_py ~~~ src_zephyr_sell_decision_core_sell_execution_quality_tracker_py
     src_zephyr_sell_decision_core_sell_execution_quality_tracker_py ~~~ src_zephyr_sell_decision_core_sell_strategy_ab_tester_py
     src_zephyr_sell_decision_core_sell_strategy_ab_tester_py ~~~ src_zephyr_sell_decision_core_stop_loss_strategy_py
     src_zephyr_sell_decision_core_sell_signal_collector_py["—不可扩展)<br/>Sell Signal Collector — 卖出信号收集器<br/>(MOD-SELL-001)<br/>文件: core/sell_signal_collector.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_core_sell_signal_scorer_py["Sell Signal Scorer<br/>卖出决策/核心包的sell_signal_scorer模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_signal_scorer.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_signal_scorer_py["卖信号Scorer<br/>卖出决策/核心包的sell_signal_scorer模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Sell Signal Scorer<br/>文件: core/sell_signal_scorer.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_sell_signal_collector_py ~~~ src_zephyr_sell_decision_core_sell_signal_scorer_py
     src_zephyr_sell_decision_core_position_triage_py -.->|data / data| src_zephyr_sell_decision_core_exit_scenario_planner_py
     src_zephyr_sell_decision_core_take_profit_strategy_py -.->|runtime / runtime| src_zephyr_sell_decision_core_sell_signal_scorer_py
@@ -150,17 +150,17 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_sell_decision_init_py["Init<br/>管理zephyr.sell_decision子包的加载和懒导入<br/>文件: sell_decision/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_extensions_init_py["Init<br/>管理sell_decision._extensions子包的加载和懒导入<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_api_init_py["Init<br/>管理sell_decision.api子包的加载和懒导入<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_init_py["zephyr/sell_decision 包入口<br/>管理zephyr.sell_decision子包的加载和懒导入<br/>Init<br/>文件: sell_decision/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_extensions_init_py["sell_decision/_extensions 包入口<br/>管理sell_decision._extensions子包的加载和懒导入<br/>Init<br/>文件: _extensions/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_api_init_py["sell_decision/api 包入口<br/>管理sell_decision.api子包的加载和懒导入<br/>Init<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_breakout_failure_detector_py["突破成败状态<br/>Breakout Failure Detector — 突破成败检测器<br/>(MOD-SELL-003)<br/>文件: core/breakout_failure_detector.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_replacement_rebalance_seller_py["置换/再平衡卖出类型<br/>Replacement & Rebalance Seller —<br/>置换与再平衡卖出 (MOD-SELL-006)<br/>Replacement Rebalance Seller<br/>文件: core/replacement_rebalance_seller.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_sell_signal_fusion_engine_py["融合算法<br/>Sell Signal Fusion Engine — 卖出信号融合引擎<br/>(MOD-SELL-007)<br/>文件: core/sell_signal_fusion_engine.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_sell_urgency_scorer_py["紧迫度等级<br/>Sell Urgency Scorer — 卖出紧迫度评分器<br/>(MOD-SELL-009)<br/>文件: core/sell_urgency_scorer.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_stop_hunting_protector_py["止损位偏移方向<br/>Stop-Hunting Protector — 止损猎杀防护器<br/>(MOD-SELL-015)<br/>Stop Hunting Protector<br/>文件: core/stop_hunting_protector.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_infrastructure_init_py["Init<br/>管理sell_decision.infrastructure子包的加载和懒导<br/>入<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_models_init_py["Init<br/>管理sell_decision.models子包的加载和懒导入<br/>文件: models/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_services_init_py["Init<br/>管理sell_decision.services子包的加载和懒导入<br/>文件: services/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_infrastructure_init_py["sell_decision/infrastructure 包入口<br/>管理sell_decision.infrastructure子包的加载和懒导<br/>入<br/>Init<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_models_init_py["sell_decision/models 包入口<br/>管理sell_decision.models子包的加载和懒导入<br/>Init<br/>文件: models/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_sell_decision_services_init_py["sell_decision/services 包入口<br/>管理sell_decision.services子包的加载和懒导入<br/>Init<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_init_py ~~~ src_zephyr_sell_decision_extensions_init_py
     src_zephyr_sell_decision_extensions_init_py ~~~ src_zephyr_sell_decision_api_init_py
     src_zephyr_sell_decision_api_init_py ~~~ src_zephyr_sell_decision_core_breakout_failure_detector_py
@@ -194,27 +194,27 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_sell_decision_core_position_triage_py["Position Triage<br/>卖出决策/核心包的position_triage模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/position_triage.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_replacement_rebalance_sell_py["Replacement Rebalance Sell<br/>卖出决策/核心包的replacement_rebalance_sell模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/replacement_rebalance_sell.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_scaling_out_architect_py["Scaling Out Architect<br/>卖出决策/核心包的scaling_out_architect模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/scaling_out_architect.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py["Sell Signal Accuracy Monitor<br/>卖出决策/核心包的sell_signal_accuracy_monitor模<br/>块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_signal_accuracy_monitor.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_strategy_specific_stop_framework_py["Strategy Specific Stop Framework<br/>卖出决策/核心包的strategy_specific_stop_framewor<br/>k模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/strategy_specific_stop_framework.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_t_trade_coordinator_py["T Trade Coordinator<br/>卖出决策/核心包的t_trade_coordinator模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/t_trade_coordinator.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_take_profit_strategy_py["Take Profit Strategy<br/>卖出决策/核心包的take_profit_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/take_profit_strategy.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_position_triage_py["持仓Triage<br/>卖出决策/核心包的position_triage模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Position Triage<br/>文件: core/position_triage.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_replacement_rebalance_sell_py["ReplacementRebalance卖<br/>卖出决策/核心包的replacement_rebalance_sell模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Replacement Rebalance Sell<br/>文件: core/replacement_rebalance_sell.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_scaling_out_architect_py["缩放出架构师<br/>卖出决策/核心包的scaling_out_architect模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Scaling Out Architect<br/>文件: core/scaling_out_architect.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py["卖信号Accuracy监控器<br/>卖出决策/核心包的sell_signal_accuracy_monitor模<br/>块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Sell Signal Accuracy Monitor<br/>文件: core/sell_signal_accuracy_monitor.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_strategy_specific_stop_framework_py["策略Specific止损Framework<br/>卖出决策/核心包的strategy_specific_stop_framewor<br/>k模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Strategy Specific Stop Framework<br/>文件: core/strategy_specific_stop_framework.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_t_trade_coordinator_py["T交易协调器<br/>卖出决策/核心包的t_trade_coordinator模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>T Trade Coordinator<br/>文件: core/t_trade_coordinator.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_take_profit_strategy_py["止盈止盈策略<br/>卖出决策/核心包的take_profit_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Take Profit Strategy<br/>文件: core/take_profit_strategy.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_position_triage_py ~~~ src_zephyr_sell_decision_core_replacement_rebalance_sell_py
     src_zephyr_sell_decision_core_replacement_rebalance_sell_py ~~~ src_zephyr_sell_decision_core_scaling_out_architect_py
     src_zephyr_sell_decision_core_scaling_out_architect_py ~~~ src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py
     src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py ~~~ src_zephyr_sell_decision_core_strategy_specific_stop_framework_py
     src_zephyr_sell_decision_core_strategy_specific_stop_framework_py ~~~ src_zephyr_sell_decision_core_t_trade_coordinator_py
     src_zephyr_sell_decision_core_t_trade_coordinator_py ~~~ src_zephyr_sell_decision_core_take_profit_strategy_py
-    src_zephyr_sell_decision_core_exit_scenario_planner_py["Exit Scenario Planner<br/>卖出决策/核心包的exit_scenario_planner模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/exit_scenario_planner.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_sell_execution_quality_tracker_py["Sell Execution Quality Tracker<br/>卖出决策/核心包的sell_execution_quality_tracker<br/>模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_execution_quality_tracker.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_sell_strategy_ab_tester_py["Sell Strategy Ab Tester<br/>卖出决策/核心包的sell_strategy_ab_tester模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_strategy_ab_tester.py<br/>(设计态 / design)"]
-    src_zephyr_sell_decision_core_stop_loss_strategy_py["Stop Loss Strategy<br/>卖出决策/核心包的stop_loss_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/stop_loss_strategy.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_exit_scenario_planner_py["Exit场景Planner<br/>卖出决策/核心包的exit_scenario_planner模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Exit Scenario Planner<br/>文件: core/exit_scenario_planner.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_execution_quality_tracker_py["卖执行Quality跟踪器<br/>卖出决策/核心包的sell_execution_quality_tracker<br/>模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Sell Execution Quality Tracker<br/>文件: core/sell_execution_quality_tracker.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_strategy_ab_tester_py["卖策略Ab测试器<br/>卖出决策/核心包的sell_strategy_ab_tester模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Sell Strategy Ab Tester<br/>文件: core/sell_strategy_ab_tester.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_stop_loss_strategy_py["止损亏损策略<br/>卖出决策/核心包的stop_loss_strategy模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Stop Loss Strategy<br/>文件: core/stop_loss_strategy.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_exit_scenario_planner_py ~~~ src_zephyr_sell_decision_core_sell_execution_quality_tracker_py
     src_zephyr_sell_decision_core_sell_execution_quality_tracker_py ~~~ src_zephyr_sell_decision_core_sell_strategy_ab_tester_py
     src_zephyr_sell_decision_core_sell_strategy_ab_tester_py ~~~ src_zephyr_sell_decision_core_stop_loss_strategy_py
-    src_zephyr_sell_decision_core_sell_signal_scorer_py["Sell Signal Scorer<br/>卖出决策/核心包的sell_signal_scorer模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>文件: core/sell_signal_scorer.py<br/>(设计态 / design)"]
+    src_zephyr_sell_decision_core_sell_signal_scorer_py["卖信号Scorer<br/>卖出决策/核心包的sell_signal_scorer模块<br/>⛔ 卖出决策域，设计已就绪，等待开发排期<br/>Sell Signal Scorer<br/>文件: core/sell_signal_scorer.py<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_position_triage_py -.->|data / data| src_zephyr_sell_decision_core_exit_scenario_planner_py
     src_zephyr_sell_decision_core_take_profit_strategy_py -.->|runtime / runtime| src_zephyr_sell_decision_core_sell_signal_scorer_py
     src_zephyr_sell_decision_core_stop_loss_strategy_py -.->|runtime / runtime| src_zephyr_sell_decision_core_sell_signal_scorer_py
@@ -234,10 +234,10 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_ASHARE_SIGNAL A股特色信号: 机构行为分析器 / institutional_behavior_analyzer (signal_... | 导入依赖 / import_depends |
-| 2 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | 导入依赖 / import_depends |
-| 3 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_FACTOR 因子: 3秒拉 tick → DataFrame → DagExecutor → H1 Redis / Intr... | 导入依赖 / import_depends |
-| 4 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_POSITION 仓位管理: 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | 导入依赖 / import_depends |
+| 1 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_ASHARE_SIGNAL A股特色信号: 机构行为分析器 / institutional_behavior_analyzer (signal_... | 导入依赖 / import_depends |
+| 2 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | 导入依赖 / import_depends |
+| 3 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_FACTOR 因子: 3秒拉 tick → DataFrame → DagExecutor → H1 Redis / Intr... | 导入依赖 / import_depends |
+| 4 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_POSITION 仓位管理: 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | 导入依赖 / import_depends |
 | 5 | 突破成败状态 / Breakout Failure Detector (core/breakout_f... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 6 | 置换/再平衡卖出类型 / Replacement Rebalance Seller (core/... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 7 | 冲突等级 / Sell Conflict Arbitrator (core/sell_conflict_a... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
@@ -250,10 +250,10 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_EX_CORE 执行核心: 卖出优先级调度器 / sell_priority_scheduler (ex_core/sell_... | → | Position Triage (core/position_triage.py) | runtime / runtime |
-| 2 | D_EX_CORE 执行核心: 卖出优先级调度器 / sell_priority_scheduler (ex_core/sell_... | → | Position Triage (core/position_triage.py) | runtime / runtime |
-| 3 | D_EX_CORE 执行核心: 停止亏损止盈利润执行器 / stop_loss_take_profit_executor (... | → | Position Triage (core/position_triage.py) | runtime / runtime |
-| 4 | D_EX_CORE 执行核心: 停止亏损止盈利润执行器 / stop_loss_take_profit_executor (... | → | Position Triage (core/position_triage.py) | runtime / runtime |
+| 1 | D_EX_CORE 执行核心: 卖出优先级调度器 / sell_priority_scheduler (ex_core/sell_... | → | 持仓Triage / Position Triage (core/position_triage.py) | runtime / runtime |
+| 2 | D_EX_CORE 执行核心: 卖出优先级调度器 / sell_priority_scheduler (ex_core/sell_... | → | 持仓Triage / Position Triage (core/position_triage.py) | runtime / runtime |
+| 3 | D_EX_CORE 执行核心: 停止亏损止盈利润执行器 / stop_loss_take_profit_executor (... | → | 持仓Triage / Position Triage (core/position_triage.py) | runtime / runtime |
+| 4 | D_EX_CORE 执行核心: 停止亏损止盈利润执行器 / stop_loss_take_profit_executor (... | → | 持仓Triage / Position Triage (core/position_triage.py) | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
