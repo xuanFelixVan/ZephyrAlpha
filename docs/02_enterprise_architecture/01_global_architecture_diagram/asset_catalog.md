@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共265项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共266项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -19,7 +19,7 @@ ttl: permanent
 
 | 资产类型 | 数量 | 真源 |
 |----------|------|------|
-| 外部数据源 | 16 | data_sources_registry.yaml |
+| 外部数据源 | 17 | data_sources_registry.yaml |
 | 数据源 API | 124 | data_source_apis_registry.yaml |
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 15 | infrastructure_components.yaml |
@@ -27,7 +27,7 @@ ttl: permanent
 | 配置项 | 34 | config/*.yaml |
 | 数据流作业 | 197 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
-| **合计** | **265** | |
+| **合计** | **266** | |
 
 ## 2. 外部数据源资产
 
@@ -39,6 +39,7 @@ ttl: permanent
 | DS-TQCENTER | tqcenter | commercial | market_data | 通达信 | active | 10 | 880xxx板块指数K线/板块成分股/板块实时快照(subscribe_hq推送独有) |
 | DS-TUSHARE | Tushare | commercial | market_data | Tushare | active | 0 | A股K线/财务/板块/基金/期货 |
 | DS-NEWSAPI | NewsAPI | commercial | news | NewsAPI.org | planned | 0 | 全球财经新闻 |
+| DS-EIA | EIA 能源数据 | open_source | macro_data | 美国能源信息署 | active | 7 | 石油库存（原油/汽油/馏分油/丙烷，周度）、石油现货价格（WTI/Brent，日度）、天然气库存（周度） |
 | DS-FRED | FRED/世界银行 宏观数据 | open_source | macro_data | 美联储/世界银行 | active | 38 | 国际宏观经济指标（美国GDP/CPI/失业率/国债收益率/美元汇率/原油WTI/黄金/VIX；各国GDP/人口/进出口/通胀/FDI/外汇储备） |
 | DS-AKSHARE | AKShare | open_source | market_data | 开源社区 | active | 0 | A股/港股/美股/期货/宏观/新闻(部分接口被反爬) |
 | DS-BAOSTOCK | Baostock | open_source | market_data | 开源社区 | active | 0 | A股K线/财务/宏观(数据有延迟) |

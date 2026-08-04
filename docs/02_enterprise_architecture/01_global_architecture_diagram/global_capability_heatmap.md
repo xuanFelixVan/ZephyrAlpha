@@ -138,7 +138,7 @@ ttl: permanent
 
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
-| C1 | 数据接入 | 4 | 208 | 181 | 27 | 2.50 | 🟡 部分覆盖 / Partial |
+| C1 | 数据接入 | 4 | 209 | 182 | 27 | 2.50 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 137 | 76 | 61 | 2.20 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 28 | 23 | 5 | 2.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 56 | 37 | 19 | 2.75 | 🟡 部分覆盖 / Partial |
@@ -154,7 +154,7 @@ ttl: permanent
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | active | 成熟度 / Maturity | 覆盖度 / Coverage |
 |--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | C1 | L1_foundation | 8 | 7 | 1 | 0 | L2 🟡 | 🟡 |
-| D_DATA | 数据接入层 | C1 | L1_foundation | 161 | 148 | 13 | 19 | L3 🟢 | ✅ |
+| D_DATA | 数据接入层 | C1 | L1_foundation | 162 | 149 | 13 | 19 | L3 🟢 | ✅ |
 | D_DATA_ENG | 数据工程 | C1 | L1_foundation | 20 | 7 | 13 | 0 | L2 🟡 | 🟡 |
 | D_MKT_DATA | 行情数据 | C1 | L1_foundation | 19 | 19 | 0 | 7 | L3 🟢 | ✅ |
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L2_domain | 31 | 16 | 15 | 10 | L3 🟢 | ✅ |
@@ -269,7 +269,7 @@ ttl: permanent
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_DATA | 数据接入层 | C1 | L3 | 161 |
+| D_DATA | 数据接入层 | C1 | L3 | 162 |
 | D_MKT_DATA | 行情数据 | C1 | L3 | 19 |
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L3 | 31 |
 | D_FACTOR | 因子 | C2 | L3 | 90 |
