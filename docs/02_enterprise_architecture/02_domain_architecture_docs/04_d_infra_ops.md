@@ -54,18 +54,18 @@ ttl: permanent
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_ops_cleanup_runtime_tmp_residue_py["测试残留目录一次性清理工具<br/>一次性清理 .runtime/tmp/ 下积压的 pytest<br/>等测试残留目录（10万+文件），复用 reconciler 的<br/>PID存活+TTL双判定逻辑，dry-run 默认安全<br/>文件: ops/cleanup_runtime_tmp_residue.py<br/>(生产态 / production)"]
-    scripts_ops_download_models_py["Download Models<br/>download_models.py — ARCH-MODEL-LIFECYCLE-001<br/>Phase 3<br/>文件: ops/download_models.py<br/>(生产态 / production)"]
+    scripts_ops_download_models_py["Download模型<br/>download_models.py — ARCH-MODEL-LIFECYCLE-001<br/>Phase 3<br/>Download Models<br/>文件: ops/download_models.py<br/>(生产态 / production)"]
     scripts_ops_cleanup_runtime_tmp_residue_py ~~~ scripts_ops_download_models_py
-    D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    scripts_ops_download_models_py -->|config_depends / config_depends| D_DATA
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     scripts_ops_cleanup_runtime_tmp_residue_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    scripts_ops_download_models_py -->|config_depends / config_depends| D_DATA
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_ops_cleanup_runtime_tmp_residue_py,scripts_ops_download_models_py production
-    class D_DATA,D_GOV_AUDIT external_prod
+    class D_GOV_AUDIT,D_DATA external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -76,7 +76,7 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_ops_cleanup_runtime_tmp_residue_py["测试残留目录一次性清理工具<br/>一次性清理 .runtime/tmp/ 下积压的 pytest<br/>等测试残留目录（10万+文件），复用 reconciler 的<br/>PID存活+TTL双判定逻辑，dry-run 默认安全<br/>文件: ops/cleanup_runtime_tmp_residue.py<br/>(生产态 / production)"]
-    scripts_ops_download_models_py["Download Models<br/>download_models.py — ARCH-MODEL-LIFECYCLE-001<br/>Phase 3<br/>文件: ops/download_models.py<br/>(生产态 / production)"]
+    scripts_ops_download_models_py["Download模型<br/>download_models.py — ARCH-MODEL-LIFECYCLE-001<br/>Phase 3<br/>Download Models<br/>文件: ops/download_models.py<br/>(生产态 / production)"]
     scripts_ops_cleanup_runtime_tmp_residue_py ~~~ scripts_ops_download_models_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -97,7 +97,7 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Download Models (ops/download_models.py) | → | D_DATA 数据接入层: 7×24 CH 健康探针守护进程 / Ch Health Probe (ops/ch_healt... | config_depends / config_depends |
+| 1 | Download模型 / Download Models (ops/download_models.py) | → | D_DATA 数据接入层: 7×24 CH 健康探针守护进程 / Ch Health Probe (ops/ch_healt... | config_depends / config_depends |
 | 2 | 测试残留目录一次性清理工具 (ops/cleanup_runtime_tmp_resid... | → | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By

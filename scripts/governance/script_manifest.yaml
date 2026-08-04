@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-04T09:43:50Z
+# 自动生成于 2026-08-04T09:55:28Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-04T09:43:50Z'
+generated_at: '2026-08-04T09:55:28Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 388
+total_scripts: 389
 with_manifest: 323
-missing_manifest: 65
+missing_manifest: 66
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -30,7 +30,7 @@ categories:
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 2
   governance:observability: 1
-  governance:oneoff: 3
+  governance:oneoff: 4
   governance:repair: 7
   governance:shared: 1
   governance:vms: 9
@@ -4479,6 +4479,16 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: oneoff/factor_design_state_complete.py
+  owner: governance:oneoff
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: oneoff/fix_module_translation_zh.py
   owner: governance:oneoff
   dimensions: []
   priority: P2
