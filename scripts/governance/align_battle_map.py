@@ -78,6 +78,7 @@ from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 from _shared.module_translation_loader import (  # noqa: E402
     all_battle_map_step_ids,
+    derive_name_from_path,
     get_module_name_bilingual,
     preload,
     preload_battle_map_steps,
@@ -865,7 +866,11 @@ def run_alignment(
                 # blueprint_id 或 path 任一命中已锚定集合 → 已挂载，非孤儿
                 if bp not in anchored_depgraph_ids and pth not in anchored_depgraph_ids:
                     # 双语名称（翻译真源 module_translation_registry.yaml，中文在前 / English）
-                    m["name_bi"] = get_module_name_bilingual(pth) if pth else ""
+                    # fallback：翻译真源无翻译时从路径派生英文名，避免显示 "—"
+                    name_bi = get_module_name_bilingual(pth) if pth else ""
+                    if not name_bi and pth:
+                        name_bi = derive_name_from_path(pth)
+                    m["name_bi"] = name_bi
                     orphan_modules.append(m)
 
     report = BattleMapAlignmentReport(

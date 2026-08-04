@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 环节总数 | 285 | Steps | 285 |
 | 流转边 | 119 | Edges | 119 |
-| 锚点总数（双向对齐枢纽） | 381 | Anchors (Bidirectional Hub) | 381 |
+| 锚点总数（双向对齐枢纽） | 392 | Anchors (Bidirectional Hub) | 392 |
 | 无锚点环节（BM-INV-001） | 0 | No-Anchor Steps | 0 |
 | 运营态环节 | 203 | Production Steps | 203 |
 | 设计态环节 | 43 | Design Steps | 43 |

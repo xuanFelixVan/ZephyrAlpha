@@ -160,11 +160,48 @@ def get_module_translation(module_path: str) -> dict[str, str] | None:
     return cache.get(norm)
 
 
+def _has_chinese(text: str) -> bool:
+    """检测字符串是否包含中文字符（CJK Unified Ideographs）。"""
+    if not text:
+        return False
+    return any("\u4e00" <= ch <= "\u9fff" for ch in text)
+
+
+# 匹配 name_zh 中常见的 docstring 碎片垃圾（auto-extract 产物）
+# _DOCSTRING_GARBAGE_RE 已内联到 _clean_name_zh 的 str.replace（更简单可靠）
+
+
+def _clean_name_zh(raw: str) -> str:
+    """清洗 name_zh 字段中的 docstring 碎片垃圾。
+
+    翻译真源 auto-extract 时从 docstring 首行提取名称，残留三引号
+    定界符、模块路径前缀等垃圾。本函数做轻量清洗：
+      - 去除三引号 docstring 定界符残留
+      - 去除首尾成对引号
+      - strip 空白
+
+    不含中文字符的 name_zh 由调用方（get_module_name_bilingual）过滤。
+    """
+    if not raw:
+        return ""
+    s = raw.strip()
+    # 去除 docstring 定界符残留 """
+    s = s.replace('"""', "").strip()
+    # 去除首尾成对引号
+    if len(s) >= 2 and s[0] in "\"'" and s[-1] == s[0]:
+        s = s[1:-1].strip()
+    return s
+
+
 def get_module_name_bilingual(module_path: str, sep: str = " / ") -> str:
     """返回模块双语名称（中文在前 / English）。
 
     遵循"中文在前英文在后"约定（用户偏好，便于阅读）。
     仅有中文返回中文；仅有英文返回英文；都无返回空串。
+
+    数据质量守护：``name_zh`` 不含中文字符时视为无效（英文/垃圾/docstring
+    碎片），不当中文名显示，避免 "English / English" 重复。``name_zh`` 中的
+    三引号等 docstring 残留会被清洗。
 
     Args:
         module_path: 模块相对路径
@@ -176,8 +213,11 @@ def get_module_name_bilingual(module_path: str, sep: str = " / ") -> str:
     trans = get_module_translation(module_path)
     if not trans:
         return ""
-    name_zh = trans.get("name_zh", "")
-    name_en = trans.get("name_en", "")
+    name_zh = _clean_name_zh(trans.get("name_zh", ""))
+    name_en = (trans.get("name_en", "") or "").strip()
+    # name_zh 不含中文字符 → 视为无效（英文/垃圾），不当中文显示
+    if name_zh and not _has_chinese(name_zh):
+        name_zh = ""
     if name_zh and name_en:
         return f"{name_zh}{sep}{name_en}"
     return name_zh or name_en
@@ -212,6 +252,44 @@ def preload() -> dict[str, dict[str, str]]:
     安全调用：YAML 不可用时静默返回空 dict。
     """
     return _ensure_loaded()
+
+
+def derive_name_from_path(module_path: str) -> str:
+    """从模块路径派生显示名称（fallback，当翻译真源无翻译时使用）。
+
+    纯路径推断，零 IO 开销。从文件名/路径末段派生英文名
+    （snake_case → Title Case）。处理目录路径、``layer:`` 前缀、
+    模块 ID（如 ``MOD-H1-REDIS-HOT``）等非标准路径。
+
+    用途：对齐报告等生成器在翻译真源无翻译时避免显示 "—"，
+    至少提供从路径派生的名称。
+
+    Args:
+        module_path: 模块路径或标识符（如
+            ``"src/zephyr/ex_core/value_objects.py"``、
+            ``"layer:CFG-rule-enforcement-registry"``、
+            ``"MOD-H1-REDIS-HOT"``）
+
+    Returns:
+        派生的英文名（如 ``"Value Objects"``），或空串
+    """
+    if not module_path:
+        return ""
+    norm = _normalize_path(module_path)
+    # 处理 "layer:XXX" 格式（decision 图层标识）
+    if norm.startswith("layer:"):
+        norm = norm[6:]
+    # 处理目录路径（以 / 结尾）
+    norm = norm.rstrip("/")
+    # 取最后一段
+    name = norm.rsplit("/", 1)[-1]
+    # 去掉扩展名
+    if "." in name:
+        name = name.rsplit(".", 1)[0]
+    # snake_case → Title Case
+    words = name.replace("-", "_").split("_")
+    words = [w.capitalize() for w in words if w]
+    return " ".join(words) if words else name
 
 
 def get_module_plain(module_path: str) -> str:

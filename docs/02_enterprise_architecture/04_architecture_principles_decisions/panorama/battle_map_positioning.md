@@ -2,13 +2,13 @@
 ttl: permanent
 doc_type: architecture_view
 status: draft
-version: "0.3.2"
-date: 2026-08-03
+version: "0.7.0"
+date: 2026-08-04
 ---
 
 # 交易决策作战地图能力定位书（第四全景图 / battle_map）
 
-> 版本：V0.4.0（父子嵌套机制落地）| 2026-08-03
+> 版本：V0.7.0（BM-INV-007 孤儿模块反向检测）| 2026-08-04
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
 > 写法：大白话为主，配表格和 ASCII 图。变更历史见文末。
 > **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目第四全景图——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
@@ -402,6 +402,7 @@ Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_positi
 - **BM-INV-004**：anchor 的 target module/candidate 的 domain 必须在 step.flow_stage 对应的允许域列表里（防域漂移=语义错位，如把卖出决策挂在买入流程）。规则真源：`docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`，检测器：`align_battle_map.py` §5
 - **BM-INV-005（未落地/规划中，2026-08-03 降级）**：全景图模块的 `battle_map_step_ids` 派生只读缓存——机制未建设（depgraph.nodes 无此列、apply_battle_map.py 无 sync、align_battle_map.py 不检测），当前通过 `battle_map_anchors` 反查（target_graph=depgraph + target_id=blueprint_id，idx_battle_map_anchors_target 索引支撑），无需派生缓存。未来若出现高频查询性能需求再评估建设。
 - **BM-INV-006**（V0.4.0 新增）：父子嵌套一致性——① `parent_step_id` 必须指向同 flow_stage 的已存在环节（防悬空父引用+防跨阶段嵌套）；② `depth ≤ 3`（根→子→孙→曾孙，V0.6.0 扩展上限）；③ parent 链不能成环（A→B→A）；④ `depth` 值与 parent 链长度一致。写入校验：`apply_battle_map.py` op_add_step；对齐检测：`align_battle_map.py` `_check_parent_child_consistency()`
+- **BM-INV-007**（V0.7.0 新增）：孤儿模块——业务域（`battle_map_domain_policy.yaml` 所有 flow_stage 的 allowed 域并集）内的 depgraph 节点，必须至少有一个 `battle_map_anchors` 指向它（target_graph=depgraph，target_id 命中其 blueprint_id 或 path）。无任何锚点指向 = 没有作战使命 = 造出来没用上 = 幻觉/浪费风险。非业务域（D_GOVERNANCE/D_GOV_SCRIPTS/D_GOV_RULE/D_FRONTEND 等基础设施/治理/工具）天然排除，不在此扫。对齐检测：`align_battle_map.py` `_business_modules_depgraph()` + 已锚定集合反查。君子协定告警，不硬阻断。这是 BM-INV-001 的对偶——001 查"功能没模块"，007 查"模块没功能"，两个方向都显化落单。
 
 ---
 
@@ -677,9 +678,9 @@ battle_map 是项目第四全景图。前三图是横向切片（按 module/deci
 
 `battle_map_steps.narrative_ref` 字段是 **DB → YAML 的指针**：DB 只存 step_id，叙事内容去 YAML 取。生成器 `generate_battle_map_diagram.py` 读取 YAML 渲染文档，**禁止在代码里硬编码叙事**（BM-INV-003）。详见 §七。
 
-#### 17.3.3 四条承重墙不变量（BM-INV-001~004）
+#### 17.3.3 承重墙不变量（BM-INV-001~004/007）
 
-定义在 `battlemap_schema.py` §四条承重墙不变量段，由 `align_battle_map.py` 检测，输出到 `docs/02_enterprise_architecture/generated/battle_map_alignment_report.md`：
+定义在 `battlemap_schema.py` §四条承重墙不变量段，由 `align_battle_map.py` 检测，输出到 `docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md`：
 
 | 编号 | 检查项 | 含义 | 触发条件 |
 |---|---|---|---|
@@ -687,6 +688,7 @@ battle_map 是项目第四全景图。前三图是横向切片（按 module/deci
 | BM-INV-002 | 幽灵锚点 | anchor.target_id 在 target_graph 对应图/仓库找不到 | target_id 不在 depgraph/dataflowgraph/decisiongraph/candidate/blueprint 的合法 id 集合里 |
 | BM-INV-003 | 缺失叙事 | DB 有 step 但 YAML `battle_map_steps` 段无对应叙事 | 生成器降级到 DB step_name，文档质量受损 |
 | BM-INV-004 | 域漂移 | anchor 的 target module/candidate 的 domain 不在 step.flow_stage 允许列表 | 如把 `D_SELL_DECISION`（卖出域）挂在 `buy_flow`（买入阶段）环节上 |
+| BM-INV-007 | 孤儿模块 | 业务域 depgraph 模块无任何 anchor 指向 = 造出来没用上 = 幻觉/浪费风险 | `nodes`（domain_id ∈ 业务域白名单）的 blueprint_id/path 不在 `battle_map_anchors`（target_graph=depgraph）的 target_id 集合里 |
 
 > BM-INV-005（派生只读字段禁令，未落地/规划中）属于派生展示层约束，不在对齐检测系列，详见 §8.4。当前通过 anchors 反查，无派生缓存字段（2026-08-03 核实：depgraph.nodes 无 battle_map_step_ids 列）。
 
@@ -778,6 +780,7 @@ battle_map 是项目第四全景图。前三图是横向切片（按 module/deci
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
+| V0.7.0 | 2026-08-04 | 新增 BM-INV-007 孤儿模块反向检测：①§8.4 不变量列表加 BM-INV-007（业务域 depgraph 模块无任何锚点指向=造出来没用上）；②`align_battle_map.py` 加 `_business_domain_whitelist()`（业务域白名单=所有 flow_stage 的 allowed 域并集，运行时从 YAML 取，零硬编码）+ `_business_modules_depgraph()`（采集业务域节点）+ 已锚定集合反查（target_graph=depgraph 的 target_id，blueprint_id/path 宽松匹配）；③报告加第 7 节孤儿模块 + 业务域模块统计行 + 处置建议顺移第 8 节；④§17.3.3 表加 BM-INV-007 行；⑤AGENTS.md/battlemap_schema.py 同步。这是 BM-INV-001 的对偶——001 查"功能没模块"，007 查"模块没功能"。君子协定 warn-only，不硬阻断。非业务域（D_GOVERNANCE/D_GOV_SCRIPTS/D_GOV_RULE/D_FRONTEND 等）天然排除。 |
 | V0.6.0 | 2026-08-03 | 四层嵌套上限放开：①§6.1 `depth` 字段上限从2→3（根→子→孙→曾孙）；②§8.4 BM-INV-006 `depth≤2`→`depth≤3`；③§6.1.1 新增 step_id 四层命名约定表（根-子字母-孙数字-曾孙小写字母）；④`align_battle_map.py` L763 depth上限 2→3 + 文案；⑤`apply_battle_map.py` op_add_step 加 depth≤3 写入校验（前置防线）；⑥生成器递归函数无需改（已支持任意深度）。全自动化：写入时设 parent_step_id+depth → 生成器自动渲染嵌套 subgraph。 |
 | V0.5.1 | 2026-08-03 | BM-INV-005 降级为未落地规划（方案B）：①核实 depgraph.nodes 无 `battle_map_step_ids` 列（information_schema 0 列）、apply_battle_map.py 无 sync、align_battle_map.py 不检测、无 trigger——原"派生只读缓存"机制四要素全缺；②删除 battlemap_schema.py 注释虚假描述"apply_battle_map.py 单向 sync：anchors→各图字段"（代码无此逻辑）；③§8.4 BM-INV-005 标注"未落地/规划中"，当前通过 `battle_map_anchors` 反查（target_graph=depgraph+target_id=blueprint_id，idx_battle_map_anchors_target 索引）；④AGENTS.md 同步：七类问题→六类问题（align 实检 001/002/003/004/006+悬空边），BM-INV-005 单列标注未落地。治本依据：反查路径已通（抽样5模块各7锚点），派生缓存冗余违反 SSoT+向内收。 |
 | V0.5.0 | 2026-08-03 | 全生命周期扩展 +5 新阶段：①§3.6 阶段对应表从 6→11 阶段（+研究孵化/模型训练/回测验证/仿真验证/风控管控），按生命周期重排（研究→训练→回测→仿真→选股→买入→卖出→仓位→风控→执行→对账）；②§6.1 `flow_stage` 字段合法值扩展至 11 阶段；③§17.3.4 域策略表补入 5 新阶段的允许域/禁止域（与 `battle_map_domain_policy.yaml` V1.0.0 对齐）；④`battle_map_domain_policy.yaml` 同步补入 5 新阶段 `flow_stage_allowed_domains`；⑤`module_translation_registry.yaml` §battle_map_steps 补入 33 条新阶段环节叙事 + 44 条子环节叙事（含 BM-SEL-22~25 短线选股/游资接力/量化强度/双引擎融合子环节）；⑥生成器重新生成 12 阶段文档 + panorama 总图；⑦对齐报告 0 问题（steps=152/anchors=214/edges=114/叙事真源=152）。 |
