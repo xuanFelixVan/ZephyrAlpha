@@ -809,6 +809,7 @@ root_directory_whitelist:
     - "CONTRIBUTING.md"
     - "README.md"
     - "SECURITY.md"
+    - "SECRETS.md"
     - "LICENSE"
 
 # ============================================================
