@@ -7987,6 +7987,23 @@ creation_tokens:
     capability: "worktree_required_precommit_hook"
     note: "L3.1 主工作区 commit 渐进式软门禁 pre-commit hook（warn+计数，>=5次升级阻断）"
 
+  # --- 密钥治理 Phase 1 显性化（2026-08-04，#ARCH-SECRETS-GOV-001 裁定 S-1）---
+  - file: "docs/_archive/ruling_secrets_governance_100pct_ai.md"
+    token: "auto-secrets-gov-ruling-20260804"
+    created_by: "session-secrets-gov-phase1"
+    capability: "secrets_governance_ruling"
+    note: "密钥治理架构裁定文档（100% AI 开发场景下的密钥可知性/可达性/可审计性分析）"
+  - file: "config/SECRETS.md"
+    token: "auto-secrets-doc-20260804"
+    created_by: "session-secrets-gov-phase1"
+    capability: "secrets_management_doc"
+    note: "显性密钥管理文档（6 文件/72 KEY/读取规范/新增流程，AI 冷启动入口）"
+  - file: "config/secret_registry.yaml"
+    token: "auto-secret-registry-20260804"
+    created_by: "session-secrets-gov-phase1"
+    capability: "secret_registry"
+    note: "结构化密钥声明注册表（72 KEY 真源，与 .env.example 双源对齐）"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
