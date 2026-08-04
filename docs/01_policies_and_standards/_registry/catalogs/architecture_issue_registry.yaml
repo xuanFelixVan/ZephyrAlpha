@@ -11485,3 +11485,34 @@ entries:
   related_adjudication: 'trae_080 四图对齐铁律, 规则二元化元规则（2026-08-04）, NEW-FILE-DEPGRAPH-ENFORCEMENT gate'
   created: '2026-08-04'
   last_updated: '2026-08-04'
+
+# --- #ARCH-SECRETS-GOV-001: 100% AI 开发场景下的密钥治理加固（2026-08-04）---
+- issue_id: '#ARCH-SECRETS-GOV-001'
+  title: '100% AI 开发场景下的密钥治理加固——可知性/可达性/可审计性三层缺口'
+  severity: medium
+  category: governance
+  domain: D_GOV_CODE_QUALITY
+  description: |-
+    项目密钥管理基础设施已具备 80% 能力（secrets.py + bare_getenv_gate + scan_secret_leak
+    + TRAE-031 + 7 个分服务 .env），但在 100% AI 开发场景下存在三个系统性缺口：
+    L1 可知性缺口（无显性密钥文档/注册表）、L2 可达性缺口（缺 config/.env.{service}
+    便捷函数）、L3 可审计性缺口（bare_getenv_gate 只检测新增文件+字符串字面量参数）。
+    核心矛盾：为人类设计的体系在 100% AI 场景下需要加固。
+  root_cause: |-
+    密钥体系隐含假设人类工程师会主动文档化新密钥、主动判断变量是否为密钥、主动 code review。
+    在 100% AI 开发场景下这三个假设全部失效：AI 不做元工作、靠模式匹配判断密钥、高频操作无人工 review。
+  impact: |-
+    AI 冷启动不知道项目有哪些密钥（如 TUSHARE_TOKEN 已用但未进 .env.example）；
+    9 处密钥类裸 getenv 存量违规长期逍遥法外（IFIND_PASSWORD/DEEPSEEK_API_KEY/CLICKHOUSE_PASSWORD 等）；
+    新增密钥无标准流程，容易遗漏文档化。
+  fix_phase: |-
+    4 个子裁定分 3 个 Phase 实施：
+    - S-1（Phase 1 本周）显性化：新增 SECRETS.md + secret_registry.yaml + 补全 .env.example
+    - S-2（Phase 2 本月）便捷化：secrets.py 新增 get_service_secret() + 整改 9 处违规
+    - S-3（Phase 2 本月）硬化检测：bare_getenv_gate 支持修改文件 + 新增一致性 gate
+    - S-4（Phase 3 长期）密钥扫描前移：scan_secret_leak 轻量版集成 pre-commit
+    详见 docs/_archive/ruling_secrets_governance_100pct_ai.md
+  status: open
+  related_adjudication: 'TRAE-031 SEC-001~SEC-006, #ARCH-GUC-TRIGGER-FIX-001, ruling_100pct_ai_governance_hardening.md'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'
