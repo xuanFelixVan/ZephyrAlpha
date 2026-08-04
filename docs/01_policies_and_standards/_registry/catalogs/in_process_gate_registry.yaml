@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 89
+total_gates: 90
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -598,4 +598,18 @@ gates:
   factory_function: make_secret_registry_consistency_gate
   source: in_process
   register_line: 0  # priority=127
+  enabled: true
+# --- NO-SECRET-HARDCODE: 密钥值硬编码阻断（#ARCH-SECRETS-GOV-001 Phase 3，2026-08-04）---
+# 治本：scan_secret_leak.py 是周扫描，AI 硬编码密钥提交后要等周扫描才发现（已泄漏）。
+# 本 gate 前移到 commit 阶段硬阻断——与 NO-BARE-GETENV(81) 互补：
+# bare_getenv 检测"读密钥方式违规"，本 gate 检测"密钥值硬编码"（sk-/AKIA/ghp_/KEY="value"）。
+# P0+P1 全阻断（100% AI 场景 warn-only 不构成闭环 + 二元化元规则），误报靠豁免处理。
+# 复用 scan_secret_leak.py 的 SECRET_PATTERNS_DEEP 正则（SSoT 标注）。
+# priority=128（SECRET-REGISTRY-CONSISTENCY=127 之后、CAPABILITY-OVERLAP=200 之前）。
+# 三密钥治理 gate 聚簇：81(读违规)/127(一致性)/128(值硬编码)。
+- gate_id: NO-SECRET-HARDCODE
+  module_path: zephyr.gov_enforcement.commit_gates.secret_hardcode_gate
+  factory_function: make_secret_hardcode_gate
+  source: in_process
+  register_line: 0  # priority=128
   enabled: true

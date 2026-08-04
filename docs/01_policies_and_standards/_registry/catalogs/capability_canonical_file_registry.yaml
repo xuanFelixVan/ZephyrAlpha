@@ -2148,6 +2148,26 @@ capabilities:
     integrity_anchors:
       - make_secret_registry_consistency_gate  # gate 工厂(删则 gate 不注册)
 
+  # --- #ARCH-SECRETS-GOV-001 Phase 3 密钥治理纵深防御（2026-08-04）---
+  - capability_id: secret_hardcode_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py
+    aliases:
+      - NO-SECRET-HARDCODE
+      - no-secret-hardcode
+      - make_secret_hardcode_gate
+      - secret_hardcode_blocker
+      - hardcoded_secret_gate
+    description: >-
+      NO-SECRET-HARDCODE in-process 门禁（#ARCH-SECRETS-GOV-001 Phase 3，2026-08-04）。
+      检测 staged .py/.yaml/.yml/.json/.toml 文件 added 行中的硬编码密钥/Token/凭证
+      （sk-/AKIA/ghp_/API_KEY="value" 等），commit 阶段硬阻断。与 NO-BARE-GETENV(81)
+      互补：bare_getenv 检测"读密钥方式违规"，本 gate 检测"密钥值硬编码"。P0+P1 全阻断
+      （100% AI 场景 warn-only 不构成闭环 + 二元化元规则），误报靠豁免（tests/.env.example/
+      扫描脚本自身/docstring/注释/import）处理。复用 scan_secret_leak.py 的 SECRET_PATTERNS_DEEP
+      正则（SSoT 标注）。priority=128。fail-open on git 异常；fail-closed on 命中。
+    integrity_anchors:
+      - make_secret_hardcode_gate  # gate 工厂(删则 gate 不注册)
+
   # --------------------------------------------------------------------------
   - capability_id: bare_subprocess_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/bare_subprocess_gate.py
@@ -6931,6 +6951,12 @@ creation_tokens:
     token: "auto-secret-registry-consistency-gate-20260804"
     created_by: "session-secrets-gov-s3"
     capability: "secret_registry_consistency_gate"
+
+  # --- #ARCH-SECRETS-GOV-001 Phase 3 密钥治理纵深防御（2026-08-04）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py"
+    token: "auto-secret-hardcode-gate-20260804"
+    created_by: "session-secrets-gov-s4"
+    capability: "secret_hardcode_gate"
 
   # --- #ARCH-DRIFT-PREVENTION-001 depgraph drift 防御体系（2026-07-17）---
   # domain_fk_gate.py: GATE-DOMAIN-FK [DOMAIN]头部域注册表FK校验（ADP-1, priority=78）

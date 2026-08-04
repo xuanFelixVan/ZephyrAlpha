@@ -9670,6 +9670,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "提交代码时校验 .env.example 与 secret_registry.yaml 中的密钥 KEY 是否一致，强制新增密钥必须同时完成加 KEY 到 .env、更新 .env.example、更新 registry 三步，防止 AI 新增密钥时遗漏文档化或注册登记。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "密钥值硬编码阻断门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交代码时扫描新增/修改的代码和配置文件（.py/.yaml/.yml/.json/.toml）的新增行，检测是否硬编码了密钥、Token、凭证（如 sk-、AKIA、ghp_、API_KEY='值' 等），命中则阻断提交，防止 AI 把密钥明文写进代码导致泄漏；与裸 getenv 门禁互补——一个管读密钥方式违规，一个管密钥值硬编码。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

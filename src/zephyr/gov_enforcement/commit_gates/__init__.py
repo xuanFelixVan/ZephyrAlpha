@@ -45,5 +45,8 @@ from zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate import (  # noqa
 from zephyr.gov_enforcement.commit_gates.secret_registry_consistency_gate import (  # noqa: F401  #ARCH-SECRETS-GOV-001 Phase 2-S3
     make_secret_registry_consistency_gate as _make_secret_registry_consistency_gate,
 )
+from zephyr.gov_enforcement.commit_gates.secret_hardcode_gate import (  # noqa: F401  #ARCH-SECRETS-GOV-001 Phase 3
+    make_secret_hardcode_gate as _make_secret_hardcode_gate,
+)
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export
