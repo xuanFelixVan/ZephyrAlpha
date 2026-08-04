@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-04T16:36:43Z'
+generated_at: '2026-08-04T17:29:39Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 191
@@ -1727,7 +1727,7 @@ files:
   - RULE-DESIGN-INTENT-SOURCE
   - 设计意图真源
   - 查询源映射
-  - 四问前置读设计
+  - 设计准入前置读设计
   - read_source_discipline
   section_count: 2
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md

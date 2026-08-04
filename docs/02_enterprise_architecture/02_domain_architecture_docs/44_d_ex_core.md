@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_EX_CORE | Domain ID | D_EX_CORE |
 | 域名称 | 执行核心 | Domain Name | Execution Core |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 41 | Module Count | 41 |
+| 模块数 | 37 | Module Count | 37 |
 | 域内依赖 | 32 | Internal Dependencies | 32 |
 | 跨域入边 | 10 | Cross-domain Incoming | 10 |
 | 跨域出边 | 68 | Cross-domain Outgoing | 68 |
-| 设计态模块 | 23 | Design Modules | 23 |
+| 设计态模块 | 19 | Design Modules | 19 |
 | 生产态模块 | 18 | Production Modules | 18 |
 | 容量 | 18/150 (正常) | Capacity | 18/150 (正常) |
 | 描述 | 执行核心，负责订单执行引擎、执行策略和执行管理 | Description | 执行核心，负责订单执行引擎、执行策略和执行管理 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 41 个模块（生产态 18 + 设计态 23），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 37 个模块（生产态 18 + 设计态 19），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -59,14 +59,12 @@ flowchart TD
     src_zephyr_ex_core_audit_journal_init_py["Execution Audit Journal 包<br/>D_EXECUTION_CORE — Execution Audit Journal 包<br/>Init<br/>文件: audit_journal/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_batch_executor_py["批次执行器<br/>执行核心的执行器，执行具体操作（batch executor）<br/>⛔ 门禁:实盘交易环境+A股Tick数据源+miniQMT实盘API<br/>(D-EX-CORE-30)<br/>batch_executor<br/>文件: ex_core/batch_executor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_batch_take_profit_executor_py["批次止盈利润执行器<br/>执行核心的执行器，执行具体操作（batch take<br/>profit executor）<br/>⛔ 门禁:实盘交易环境+A股Tick数据源+miniQMT实盘API<br/>(D-EX-CORE-31)<br/>batch_take_profit_executor<br/>文件: ex_core/batch_take_profit_executor.py<br/>(设计态 / design)"]
-    src_zephyr_ex_core_blueprint_implementer_py["蓝图Implementer<br/>ex core包的blueprint_implementer模块<br/>⛔ 门禁:依赖模块(OMS+引擎+路由+报告)全部就绪<br/>(D-EX-CORE-37)<br/>Blueprint Implementer<br/>文件: ex_core/blueprint_implementer.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_conditional_order_manager_py["conditional订单管理器<br/>ex_core的管理器，统一管理一类资源的生命周期<br/>⛔ 门禁:EX-SOR算法路由就绪(D-EX-CORE-42)<br/>conditional_order_manager<br/>文件: ex_core/conditional_order_manager.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_deployment_consistency_manager_py["部署一致性管理器<br/>ex core包的deployment_consistency_manager模块<br/>⛔ 门禁:CI/CD灰度发布基础设施✅已就绪(MOD-CD-001<br/>shadow_canary_deploy,2026-08-03);实盘环境⏳待Owne<br/>r决策开通实盘账户+选定券商通道(D-EX-CORE-21)<br/>Deployment Consistency Manager<br/>文件: ex_core/deployment_consistency_manager.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_engine_py["执行引擎<br/>本模块内 ``ExecutionEngineRunRecord``<br/>为引擎内部聚合快照，非 CTR-P1-007；<br/>D_EXECUTION_CORE — Execution Engine<br/>文件: ex_core/execution_engine.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_execution_mcp_server_py["执行MCP服务端<br/>ex_core的服务端，接收并处理请求<br/>⛔ 门禁:MCP协议安全生态未成熟;开通需OAuth+RBAC+审<br/>计+沙箱+AI置信度>=95%稳定6月+渗透测试<br/>(D-EX-CORE-59)<br/>execution_mcp_server<br/>文件: ex_core/execution_mcp_server.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_risk_gate_py["执行风险门禁<br/>ex core包的execution_risk_gate模块<br/>⛔ 门禁:D-RISK域L04-limits就绪+风控规则引擎可调用<br/>(D-EX-CORE-07)<br/>Execution Risk Gate<br/>文件: ex_core/execution_risk_gate.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_tca_py["执行交易成本分析<br/>ex core包的execution_tca模块<br/>⛔ 门禁:历史执行数据>=30天+滑点模型参数可获取<br/>(D-EX-CORE-12)<br/>Execution Tca<br/>文件: ex_core/execution_tca.py<br/>(设计态 / design)"]
-    src_zephyr_ex_core_factory_py["工厂<br/>ex core包的factory模块<br/>文件: ex_core/factory.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_live_simulation_switcher_py["实盘仿真切换器<br/>支撑交易核心流程（live simulation switcher）<br/>⛔ 门禁:实盘券商连接(OKX/XTP/CTP)就绪<br/>(D-EX-CORE-35)<br/>live_simulation_switcher<br/>文件: ex_core/live_simulation_switcher.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_microstructure_modeler_py["微观结构建模器<br/>ex core包的microstructure_modeler模块<br/>⛔ 门禁:订单簿Level-2数据可获取+VPIN计算引擎就绪+<br/>LOB快照频率>=1秒(D-EX-CORE-61)<br/>Microstructure Modeler<br/>文件: ex_core/microstructure_modeler.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_miniqmt_channel_manager_py["MiniqmtChannel管理器<br/>ex core包的miniqmt_channel_manager模块<br/>Miniqmt Channel Manager<br/>文件: ex_core/miniqmt_channel_manager.py<br/>(设计态 / design)"]
@@ -74,13 +72,11 @@ flowchart TD
     src_zephyr_ex_core_order_execution_saga_py["下单执行 Saga 编排器<br/>Order Execution Saga — 下单执行 Saga 编排器<br/>(MOD-EX-057 / D-EX-CORE-57)<br/>文件: ex_core/order_execution_saga.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_performance_monitor_py["性能监控器<br/>ex core包的performance_monitor模块<br/>⛔ 门禁:生产环境APM基础设施(D-EX-CORE-36)<br/>Performance Monitor<br/>文件: ex_core/performance_monitor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_pre_execution_checker_py["Pre执行检查器<br/>ex core包的pre_execution_checker模块<br/>⛔ 门禁:D-RISK风控参数就绪+市场状态实时数据源<br/>(D-EX-CORE-24)<br/>Pre Execution Checker<br/>文件: ex_core/pre_execution_checker.py<br/>(设计态 / design)"]
-    src_zephyr_ex_core_redis_idempotency["redis幂等性<br/>执行核心的子目录，归集相关子模块<br/>⛔ 交易执行核心域，设计已就绪，等待开发排期<br/>文件: redis_idempotency/<br/>(设计态 / design)"]
     src_zephyr_ex_core_sell_priority_scheduler_py["卖出优先级调度器<br/>卖priority调度器，ex_core的调度器，按时间或优先<br/>级安排任务执行。<br/>⛔ 门禁:实盘交易环境+miniQMT实盘API(D-EX-CORE-33)<br/>sell_priority_scheduler<br/>文件: ex_core/sell_priority_scheduler.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_services_live_portfolio_py["实时组合<br/>支撑交易核心流程（live portfolio）<br/>⛔ 交易执行核心域，设计已就绪，等待开发排期<br/>live_portfolio<br/>文件: services/live_portfolio.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_signal_providers_py["信号提供器<br/>D_EXECUTION_CORE — 信号源 / 价格源 callable 工厂<br/>signal_providers<br/>文件: ex_core/signal_providers.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_stop_loss_take_profit_executor_py["停止亏损止盈利润执行器<br/>执行核心的执行器，执行具体操作（stop loss take<br/>profit executor）<br/>⛔ 门禁:实盘交易环境+A股Tick数据源+miniQMT实盘API<br/>(D-EX-CORE-29)<br/>stop_loss_take_profit_executor<br/>文件: ex_core/stop_loss_take_profit_executor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_trading_session_py["交易会话<br/>D_EXECUTION_CORE — TradingSession<br/>盘中实时调仓编排器<br/>trading_session<br/>文件: ex_core/trading_session.py<br/>(生产态 / production)"]
-    src_zephyr_ex_core_value_objects_py["值对象<br/>ex core包的value_objects模块<br/>Value Objects<br/>文件: ex_core/value_objects.py<br/>(设计态 / design)"]
     src_zephyr_governance_escalation_order_state_escalator_py["订单状态escalator<br/>Order State Escalator — v0.10.0<br/>订单状态机升级器。<br/>order_state_escalator<br/>文件: escalation/order_state_escalator.py<br/>(生产态 / production)"]
     tests_ex_core_test_position_reconciler_py["D-EX-CORE-56 盘中持仓对账器<br/>PositionReconciler 单元测试 — D-EX-CORE-56<br/>盘中持仓对账器。<br/>Test Position Reconciler<br/>文件: ex_core/test_position_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_adapters_init_py ~~~ src_zephyr_ex_core_aggregate_root_manager_py
@@ -88,29 +84,25 @@ flowchart TD
     src_zephyr_ex_core_auction_deviation_executor_py ~~~ src_zephyr_ex_core_audit_journal_init_py
     src_zephyr_ex_core_audit_journal_init_py ~~~ src_zephyr_ex_core_batch_executor_py
     src_zephyr_ex_core_batch_executor_py ~~~ src_zephyr_ex_core_batch_take_profit_executor_py
-    src_zephyr_ex_core_batch_take_profit_executor_py ~~~ src_zephyr_ex_core_blueprint_implementer_py
-    src_zephyr_ex_core_blueprint_implementer_py ~~~ src_zephyr_ex_core_conditional_order_manager_py
+    src_zephyr_ex_core_batch_take_profit_executor_py ~~~ src_zephyr_ex_core_conditional_order_manager_py
     src_zephyr_ex_core_conditional_order_manager_py ~~~ src_zephyr_ex_core_deployment_consistency_manager_py
     src_zephyr_ex_core_deployment_consistency_manager_py ~~~ src_zephyr_ex_core_execution_engine_py
     src_zephyr_ex_core_execution_engine_py ~~~ src_zephyr_ex_core_execution_mcp_server_py
     src_zephyr_ex_core_execution_mcp_server_py ~~~ src_zephyr_ex_core_execution_risk_gate_py
     src_zephyr_ex_core_execution_risk_gate_py ~~~ src_zephyr_ex_core_execution_tca_py
-    src_zephyr_ex_core_execution_tca_py ~~~ src_zephyr_ex_core_factory_py
-    src_zephyr_ex_core_factory_py ~~~ src_zephyr_ex_core_live_simulation_switcher_py
+    src_zephyr_ex_core_execution_tca_py ~~~ src_zephyr_ex_core_live_simulation_switcher_py
     src_zephyr_ex_core_live_simulation_switcher_py ~~~ src_zephyr_ex_core_microstructure_modeler_py
     src_zephyr_ex_core_microstructure_modeler_py ~~~ src_zephyr_ex_core_miniqmt_channel_manager_py
     src_zephyr_ex_core_miniqmt_channel_manager_py ~~~ src_zephyr_ex_core_multi_contract_adapter_py
     src_zephyr_ex_core_multi_contract_adapter_py ~~~ src_zephyr_ex_core_order_execution_saga_py
     src_zephyr_ex_core_order_execution_saga_py ~~~ src_zephyr_ex_core_performance_monitor_py
     src_zephyr_ex_core_performance_monitor_py ~~~ src_zephyr_ex_core_pre_execution_checker_py
-    src_zephyr_ex_core_pre_execution_checker_py ~~~ src_zephyr_ex_core_redis_idempotency
-    src_zephyr_ex_core_redis_idempotency ~~~ src_zephyr_ex_core_sell_priority_scheduler_py
+    src_zephyr_ex_core_pre_execution_checker_py ~~~ src_zephyr_ex_core_sell_priority_scheduler_py
     src_zephyr_ex_core_sell_priority_scheduler_py ~~~ src_zephyr_ex_core_services_live_portfolio_py
     src_zephyr_ex_core_services_live_portfolio_py ~~~ src_zephyr_ex_core_signal_providers_py
     src_zephyr_ex_core_signal_providers_py ~~~ src_zephyr_ex_core_stop_loss_take_profit_executor_py
     src_zephyr_ex_core_stop_loss_take_profit_executor_py ~~~ src_zephyr_ex_core_trading_session_py
-    src_zephyr_ex_core_trading_session_py ~~~ src_zephyr_ex_core_value_objects_py
-    src_zephyr_ex_core_value_objects_py ~~~ src_zephyr_governance_escalation_order_state_escalator_py
+    src_zephyr_ex_core_trading_session_py ~~~ src_zephyr_governance_escalation_order_state_escalator_py
     src_zephyr_governance_escalation_order_state_escalator_py ~~~ tests_ex_core_test_position_reconciler_py
     src_zephyr_ex_core_adapters_miniqmt_broker_py["miniqmt券商<br/>MiniQMT 实盘券商适配器（对接<br/>xttrader，A股实盘交易）<br/>miniqmt_broker<br/>文件: adapters/miniqmt_broker.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_audit_journal_auditor_py["执行审计记录器<br/>Execution Audit Logger — 执行审计记录器<br/>(MOD-EX-003 / D-EX-CORE-15)<br/>Auditor<br/>文件: audit_journal/auditor.py<br/>(生产态 / production)"]
@@ -144,27 +136,24 @@ flowchart TD
     src_zephyr_ex_core_rl_optimal_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_splitter_py
     src_zephyr_ex_core_microstructure_modeler_py -.->|data / data| src_zephyr_ex_core_order_splitter_py
     src_zephyr_ex_core_microstructure_modeler_py -.->|data / data| src_zephyr_ex_core_rl_optimal_executor_py
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_fill_handler_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_repository_interface_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
-    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_repository_interface_py -->|runtime / runtime| src_zephyr_ex_core_position_tracker_init_py
+    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
+    src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     src_zephyr_ex_core_position_tracker_init_py -.->|runtime / runtime| src_zephyr_ex_core_fill_processor_py
     src_zephyr_ex_core_position_tracker_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     tests_ex_core_test_position_reconciler_py -->|测试依赖 / test_depends| src_zephyr_ex_core_position_reconciler_py
     tests_ex_core_test_position_reconciler_py -->|测试依赖 / test_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    D_SELL_DECISION["卖出决策<br/>卖出决策，负责卖出信号生成、卖出时机判断和退出策<br/>略<br/>Sell Decision<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
-    src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
-    src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
     D_BACKTEST["回测<br/>回测，负责历史数据回测、回测引擎和回测报告<br/>Backtest<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_services_live_portfolio_py -.->|导入依赖 / import_depends| D_BACKTEST
     D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -172,6 +161,8 @@ flowchart TD
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| D_PF_CORE
     src_zephyr_ex_core_services_live_portfolio_py -.->|导入依赖 / import_depends| D_BACKTEST
+    D_SELL_DECISION["卖出决策<br/>卖出决策，负责卖出信号生成、卖出时机判断和退出策<br/>略<br/>Sell Decision<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_services_live_portfolio_py -.->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ex_core_trading_session_py -->|contract / contract| D_TRADING
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -179,17 +170,18 @@ flowchart TD
     src_zephyr_ex_core_trading_session_py -->|contract / contract| D_GOVERNANCE
     D_RISK["风控<br/>风控，负责风险指标计算、风险限额管理和风险预警<br/>Risk Control<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_core_live_simulation_switcher_py -.->|runtime / runtime| D_RISK
+    src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_stop_loss_take_profit_executor_py -.->|runtime / runtime| D_SELL_DECISION
     src_zephyr_ex_core_sell_priority_scheduler_py -.->|runtime / runtime| D_SELL_DECISION
     D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_core_order_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_core_adapters_miniqmt_broker_py -->|导入依赖 / import_depends| D_TRADING
-    D_SELL_DECISION -.->|导入依赖 / import_depends| src_zephyr_ex_core_services_live_portfolio_py
     D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     D_TRADING -->|runtime / runtime| src_zephyr_ex_core_order_manager_py
     D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_ex_core_execution_engine_py
     D_TRADING -->|import / import| src_zephyr_ex_core_fill_handler_py
+    D_SELL_DECISION -.->|导入依赖 / import_depends| src_zephyr_ex_core_services_live_portfolio_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_ex_core_order_manager_py
     D_REPORTING["报告<br/>报告，负责投资报告、风险报告和合规报告的生成与分<br/>发<br/>Reporting<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_REPORTING -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
@@ -201,7 +193,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_miniqmt_broker_py,src_zephyr_ex_core_aggregate_root_manager_py,src_zephyr_ex_core_audit_journal_init_py,src_zephyr_ex_core_audit_journal_auditor_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_fill_handler_py,src_zephyr_ex_core_multi_contract_adapter_py,src_zephyr_ex_core_order_execution_saga_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_position_reconciler_py,src_zephyr_ex_core_position_tracker_init_py,src_zephyr_ex_core_position_tracker_tracker_py,src_zephyr_ex_core_repository_interface_py,src_zephyr_ex_core_signal_providers_py,src_zephyr_ex_core_trading_session_py,src_zephyr_governance_escalation_order_state_escalator_py,tests_ex_core_test_position_reconciler_py production
-    class src_zephyr_ex_core_auction_deviation_executor_py,src_zephyr_ex_core_batch_executor_py,src_zephyr_ex_core_batch_take_profit_executor_py,src_zephyr_ex_core_blueprint_implementer_py,src_zephyr_ex_core_conditional_order_manager_py,src_zephyr_ex_core_deployment_consistency_manager_py,src_zephyr_ex_core_execution_mcp_server_py,src_zephyr_ex_core_execution_risk_gate_py,src_zephyr_ex_core_execution_tca_py,src_zephyr_ex_core_factory_py,src_zephyr_ex_core_fill_processor_py,src_zephyr_ex_core_live_simulation_switcher_py,src_zephyr_ex_core_microstructure_modeler_py,src_zephyr_ex_core_miniqmt_channel_manager_py,src_zephyr_ex_core_order_splitter_py,src_zephyr_ex_core_performance_monitor_py,src_zephyr_ex_core_pre_execution_checker_py,src_zephyr_ex_core_redis_idempotency,src_zephyr_ex_core_rl_optimal_executor_py,src_zephyr_ex_core_sell_priority_scheduler_py,src_zephyr_ex_core_services_live_portfolio_py,src_zephyr_ex_core_stop_loss_take_profit_executor_py,src_zephyr_ex_core_value_objects_py design
+    class src_zephyr_ex_core_auction_deviation_executor_py,src_zephyr_ex_core_batch_executor_py,src_zephyr_ex_core_batch_take_profit_executor_py,src_zephyr_ex_core_conditional_order_manager_py,src_zephyr_ex_core_deployment_consistency_manager_py,src_zephyr_ex_core_execution_mcp_server_py,src_zephyr_ex_core_execution_risk_gate_py,src_zephyr_ex_core_execution_tca_py,src_zephyr_ex_core_fill_processor_py,src_zephyr_ex_core_live_simulation_switcher_py,src_zephyr_ex_core_microstructure_modeler_py,src_zephyr_ex_core_miniqmt_channel_manager_py,src_zephyr_ex_core_order_splitter_py,src_zephyr_ex_core_performance_monitor_py,src_zephyr_ex_core_pre_execution_checker_py,src_zephyr_ex_core_rl_optimal_executor_py,src_zephyr_ex_core_sell_priority_scheduler_py,src_zephyr_ex_core_services_live_portfolio_py,src_zephyr_ex_core_stop_loss_take_profit_executor_py design
     class D_BACKTEST,D_TRADING,D_PF_CORE,D_GOVERNANCE,D_RISK,D_INFRASTRUCTURE,D_EX_SOR,D_REPORTING external_prod
     class D_SELL_DECISION external_design
 ```
@@ -245,21 +237,21 @@ flowchart TD
     src_zephyr_ex_core_position_tracker_init_py["Position Tracker 包<br/>D_EXECUTION_CORE — Position Tracker 包<br/>Init<br/>文件: position_tracker/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_order_manager_py ~~~ src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_position_tracker_tracker_py["跟踪器<br/>D_EXECUTION_CORE — Position Tracker (持仓跟踪器)<br/>文件: position_tracker/tracker.py<br/>(生产态 / production)"]
-    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_fill_handler_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_repository_interface_py
     src_zephyr_ex_core_aggregate_root_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
-    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_fill_handler_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_execution_engine_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
     src_zephyr_ex_core_repository_interface_py -->|runtime / runtime| src_zephyr_ex_core_position_tracker_init_py
+    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_trading_session_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
+    src_zephyr_ex_core_position_reconciler_py -->|data / data| src_zephyr_ex_core_position_tracker_init_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_order_manager_py
-    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
     src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
+    src_zephyr_ex_core_order_execution_saga_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
+    src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     src_zephyr_ex_core_adapters_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
     src_zephyr_ex_core_position_tracker_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_position_tracker_tracker_py
-    src_zephyr_ex_core_audit_journal_init_py -->|导入依赖 / import_depends| src_zephyr_ex_core_audit_journal_auditor_py
     tests_ex_core_test_position_reconciler_py -->|测试依赖 / test_depends| src_zephyr_ex_core_position_reconciler_py
     tests_ex_core_test_position_reconciler_py -->|测试依赖 / test_depends| src_zephyr_ex_core_position_tracker_tracker_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -271,7 +263,7 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 23 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 19 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -279,44 +271,36 @@ flowchart TD
     src_zephyr_ex_core_auction_deviation_executor_py["拍卖偏差执行器<br/>执行核心的执行器，执行具体操作（auction<br/>deviation executor）<br/>⛔ 门禁:实盘交易环境+集合竞价数据源+miniQMT实盘AP<br/>I(D-EX-CORE-32)<br/>auction_deviation_executor<br/>文件: ex_core/auction_deviation_executor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_batch_executor_py["批次执行器<br/>执行核心的执行器，执行具体操作（batch executor）<br/>⛔ 门禁:实盘交易环境+A股Tick数据源+miniQMT实盘API<br/>(D-EX-CORE-30)<br/>batch_executor<br/>文件: ex_core/batch_executor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_batch_take_profit_executor_py["批次止盈利润执行器<br/>执行核心的执行器，执行具体操作（batch take<br/>profit executor）<br/>⛔ 门禁:实盘交易环境+A股Tick数据源+miniQMT实盘API<br/>(D-EX-CORE-31)<br/>batch_take_profit_executor<br/>文件: ex_core/batch_take_profit_executor.py<br/>(设计态 / design)"]
-    src_zephyr_ex_core_blueprint_implementer_py["蓝图Implementer<br/>ex core包的blueprint_implementer模块<br/>⛔ 门禁:依赖模块(OMS+引擎+路由+报告)全部就绪<br/>(D-EX-CORE-37)<br/>Blueprint Implementer<br/>文件: ex_core/blueprint_implementer.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_conditional_order_manager_py["conditional订单管理器<br/>ex_core的管理器，统一管理一类资源的生命周期<br/>⛔ 门禁:EX-SOR算法路由就绪(D-EX-CORE-42)<br/>conditional_order_manager<br/>文件: ex_core/conditional_order_manager.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_deployment_consistency_manager_py["部署一致性管理器<br/>ex core包的deployment_consistency_manager模块<br/>⛔ 门禁:CI/CD灰度发布基础设施✅已就绪(MOD-CD-001<br/>shadow_canary_deploy,2026-08-03);实盘环境⏳待Owne<br/>r决策开通实盘账户+选定券商通道(D-EX-CORE-21)<br/>Deployment Consistency Manager<br/>文件: ex_core/deployment_consistency_manager.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_mcp_server_py["执行MCP服务端<br/>ex_core的服务端，接收并处理请求<br/>⛔ 门禁:MCP协议安全生态未成熟;开通需OAuth+RBAC+审<br/>计+沙箱+AI置信度>=95%稳定6月+渗透测试<br/>(D-EX-CORE-59)<br/>execution_mcp_server<br/>文件: ex_core/execution_mcp_server.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_risk_gate_py["执行风险门禁<br/>ex core包的execution_risk_gate模块<br/>⛔ 门禁:D-RISK域L04-limits就绪+风控规则引擎可调用<br/>(D-EX-CORE-07)<br/>Execution Risk Gate<br/>文件: ex_core/execution_risk_gate.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_tca_py["执行交易成本分析<br/>ex core包的execution_tca模块<br/>⛔ 门禁:历史执行数据>=30天+滑点模型参数可获取<br/>(D-EX-CORE-12)<br/>Execution Tca<br/>文件: ex_core/execution_tca.py<br/>(设计态 / design)"]
-    src_zephyr_ex_core_factory_py["工厂<br/>ex core包的factory模块<br/>文件: ex_core/factory.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_fill_processor_py["成交处理器<br/>执行核心的处理器，处理加工数据<br/>⛔ 门禁:Broker<br/>Adapter回报回调稳定+佣金费率表数据源就绪<br/>(D-EX-CORE-08)<br/>fill_processor<br/>文件: ex_core/fill_processor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_live_simulation_switcher_py["实盘仿真切换器<br/>支撑交易核心流程（live simulation switcher）<br/>⛔ 门禁:实盘券商连接(OKX/XTP/CTP)就绪<br/>(D-EX-CORE-35)<br/>live_simulation_switcher<br/>文件: ex_core/live_simulation_switcher.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_microstructure_modeler_py["微观结构建模器<br/>ex core包的microstructure_modeler模块<br/>⛔ 门禁:订单簿Level-2数据可获取+VPIN计算引擎就绪+<br/>LOB快照频率>=1秒(D-EX-CORE-61)<br/>Microstructure Modeler<br/>文件: ex_core/microstructure_modeler.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_miniqmt_channel_manager_py["MiniqmtChannel管理器<br/>ex core包的miniqmt_channel_manager模块<br/>Miniqmt Channel Manager<br/>文件: ex_core/miniqmt_channel_manager.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_performance_monitor_py["性能监控器<br/>ex core包的performance_monitor模块<br/>⛔ 门禁:生产环境APM基础设施(D-EX-CORE-36)<br/>Performance Monitor<br/>文件: ex_core/performance_monitor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_pre_execution_checker_py["Pre执行检查器<br/>ex core包的pre_execution_checker模块<br/>⛔ 门禁:D-RISK风控参数就绪+市场状态实时数据源<br/>(D-EX-CORE-24)<br/>Pre Execution Checker<br/>文件: ex_core/pre_execution_checker.py<br/>(设计态 / design)"]
-    src_zephyr_ex_core_redis_idempotency["redis幂等性<br/>执行核心的子目录，归集相关子模块<br/>⛔ 交易执行核心域，设计已就绪，等待开发排期<br/>文件: redis_idempotency/<br/>(设计态 / design)"]
     src_zephyr_ex_core_sell_priority_scheduler_py["卖出优先级调度器<br/>卖priority调度器，ex_core的调度器，按时间或优先<br/>级安排任务执行。<br/>⛔ 门禁:实盘交易环境+miniQMT实盘API(D-EX-CORE-33)<br/>sell_priority_scheduler<br/>文件: ex_core/sell_priority_scheduler.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_services_live_portfolio_py["实时组合<br/>支撑交易核心流程（live portfolio）<br/>⛔ 交易执行核心域，设计已就绪，等待开发排期<br/>live_portfolio<br/>文件: services/live_portfolio.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_stop_loss_take_profit_executor_py["停止亏损止盈利润执行器<br/>执行核心的执行器，执行具体操作（stop loss take<br/>profit executor）<br/>⛔ 门禁:实盘交易环境+A股Tick数据源+miniQMT实盘API<br/>(D-EX-CORE-29)<br/>stop_loss_take_profit_executor<br/>文件: ex_core/stop_loss_take_profit_executor.py<br/>(设计态 / design)"]
-    src_zephyr_ex_core_value_objects_py["值对象<br/>ex core包的value_objects模块<br/>Value Objects<br/>文件: ex_core/value_objects.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_auction_deviation_executor_py ~~~ src_zephyr_ex_core_batch_executor_py
     src_zephyr_ex_core_batch_executor_py ~~~ src_zephyr_ex_core_batch_take_profit_executor_py
-    src_zephyr_ex_core_batch_take_profit_executor_py ~~~ src_zephyr_ex_core_blueprint_implementer_py
-    src_zephyr_ex_core_blueprint_implementer_py ~~~ src_zephyr_ex_core_conditional_order_manager_py
+    src_zephyr_ex_core_batch_take_profit_executor_py ~~~ src_zephyr_ex_core_conditional_order_manager_py
     src_zephyr_ex_core_conditional_order_manager_py ~~~ src_zephyr_ex_core_deployment_consistency_manager_py
     src_zephyr_ex_core_deployment_consistency_manager_py ~~~ src_zephyr_ex_core_execution_mcp_server_py
     src_zephyr_ex_core_execution_mcp_server_py ~~~ src_zephyr_ex_core_execution_risk_gate_py
     src_zephyr_ex_core_execution_risk_gate_py ~~~ src_zephyr_ex_core_execution_tca_py
-    src_zephyr_ex_core_execution_tca_py ~~~ src_zephyr_ex_core_factory_py
-    src_zephyr_ex_core_factory_py ~~~ src_zephyr_ex_core_fill_processor_py
+    src_zephyr_ex_core_execution_tca_py ~~~ src_zephyr_ex_core_fill_processor_py
     src_zephyr_ex_core_fill_processor_py ~~~ src_zephyr_ex_core_live_simulation_switcher_py
     src_zephyr_ex_core_live_simulation_switcher_py ~~~ src_zephyr_ex_core_microstructure_modeler_py
     src_zephyr_ex_core_microstructure_modeler_py ~~~ src_zephyr_ex_core_miniqmt_channel_manager_py
     src_zephyr_ex_core_miniqmt_channel_manager_py ~~~ src_zephyr_ex_core_performance_monitor_py
     src_zephyr_ex_core_performance_monitor_py ~~~ src_zephyr_ex_core_pre_execution_checker_py
-    src_zephyr_ex_core_pre_execution_checker_py ~~~ src_zephyr_ex_core_redis_idempotency
-    src_zephyr_ex_core_redis_idempotency ~~~ src_zephyr_ex_core_sell_priority_scheduler_py
+    src_zephyr_ex_core_pre_execution_checker_py ~~~ src_zephyr_ex_core_sell_priority_scheduler_py
     src_zephyr_ex_core_sell_priority_scheduler_py ~~~ src_zephyr_ex_core_services_live_portfolio_py
     src_zephyr_ex_core_services_live_portfolio_py ~~~ src_zephyr_ex_core_stop_loss_take_profit_executor_py
-    src_zephyr_ex_core_stop_loss_take_profit_executor_py ~~~ src_zephyr_ex_core_value_objects_py
     src_zephyr_ex_core_rl_optimal_executor_py["Rl最优执行器<br/>ex core包的rl_optimal_executor模块<br/>⛔ 门禁:RL训练基础设施+历史执行数据>=90天+Almgren<br/>-Chriss基线可运行+RL偏差阈值可配置(D-EX-CORE-60)<br/>Rl Optimal Executor<br/>文件: ex_core/rl_optimal_executor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_order_splitter_py["订单拆分器<br/>支撑交易核心流程（order splitter）<br/>⛔ 门禁:TCA<br/>(D-EX-CORE-12)就绪+订单簿深度数据可获取<br/>(D-EX-CORE-14)<br/>order_splitter<br/>文件: ex_core/order_splitter.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_rl_optimal_executor_py -.->|runtime / runtime| src_zephyr_ex_core_order_splitter_py
@@ -326,7 +310,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_ex_core_auction_deviation_executor_py,src_zephyr_ex_core_batch_executor_py,src_zephyr_ex_core_batch_take_profit_executor_py,src_zephyr_ex_core_blueprint_implementer_py,src_zephyr_ex_core_conditional_order_manager_py,src_zephyr_ex_core_deployment_consistency_manager_py,src_zephyr_ex_core_execution_mcp_server_py,src_zephyr_ex_core_execution_risk_gate_py,src_zephyr_ex_core_execution_tca_py,src_zephyr_ex_core_factory_py,src_zephyr_ex_core_fill_processor_py,src_zephyr_ex_core_live_simulation_switcher_py,src_zephyr_ex_core_microstructure_modeler_py,src_zephyr_ex_core_miniqmt_channel_manager_py,src_zephyr_ex_core_order_splitter_py,src_zephyr_ex_core_performance_monitor_py,src_zephyr_ex_core_pre_execution_checker_py,src_zephyr_ex_core_redis_idempotency,src_zephyr_ex_core_rl_optimal_executor_py,src_zephyr_ex_core_sell_priority_scheduler_py,src_zephyr_ex_core_services_live_portfolio_py,src_zephyr_ex_core_stop_loss_take_profit_executor_py,src_zephyr_ex_core_value_objects_py design
+    class src_zephyr_ex_core_auction_deviation_executor_py,src_zephyr_ex_core_batch_executor_py,src_zephyr_ex_core_batch_take_profit_executor_py,src_zephyr_ex_core_conditional_order_manager_py,src_zephyr_ex_core_deployment_consistency_manager_py,src_zephyr_ex_core_execution_mcp_server_py,src_zephyr_ex_core_execution_risk_gate_py,src_zephyr_ex_core_execution_tca_py,src_zephyr_ex_core_fill_processor_py,src_zephyr_ex_core_live_simulation_switcher_py,src_zephyr_ex_core_microstructure_modeler_py,src_zephyr_ex_core_miniqmt_channel_manager_py,src_zephyr_ex_core_order_splitter_py,src_zephyr_ex_core_performance_monitor_py,src_zephyr_ex_core_pre_execution_checker_py,src_zephyr_ex_core_rl_optimal_executor_py,src_zephyr_ex_core_sell_priority_scheduler_py,src_zephyr_ex_core_services_live_portfolio_py,src_zephyr_ex_core_stop_loss_take_profit_executor_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-04T16:36:30Z
+# 自动生成于 2026-08-04T17:29:25Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-04T16:36:30Z'
+generated_at: '2026-08-04T17:29:25Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 393
+total_scripts: 390
 with_manifest: 323
-missing_manifest: 70
+missing_manifest: 67
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -30,7 +30,7 @@ categories:
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 2
   governance:observability: 1
-  governance:oneoff: 8
+  governance:oneoff: 5
   governance:repair: 7
   governance:shared: 1
   governance:vms: 9
@@ -4458,37 +4458,7 @@ scripts:
   description: ⚠ 请补充 description
   tags:
   - Quick
-- name: oneoff/_extract_missing_narratives.py
-  owner: governance:oneoff
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: oneoff/_fix_remaining_en.py
-  owner: governance:oneoff
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: oneoff/_query_inf013_014.py
-  owner: governance:oneoff
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: oneoff/_verify_39_narratives.py
   owner: governance:oneoff
   dimensions: []
   priority: P2
