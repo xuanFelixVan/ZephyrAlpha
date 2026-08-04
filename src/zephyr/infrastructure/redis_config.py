@@ -41,7 +41,7 @@ import threading
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.shared.security.secrets import get_secret_from_file_or_default
+from zephyr.shared.security.secrets import get_service_secret
 
 log = logging.getLogger(__name__)
 
@@ -110,37 +110,27 @@ def load_redis_config() -> dict[str, str | int | bool]:
     """
     ensure_redis_env_loaded()
     # host 是必须的，缺失则 fail-closed（禁止默认 localhost/172.24.30.100）
-    host = os.environ.get("REDIS_HOST") or get_secret_from_file_or_default("REDIS_HOST", _REDIS_ENV_PATH, "")
+    host = get_service_secret("REDIS_HOST", "redis", required=False)
     if not host:
         raise RedisConfigError(
             f"REDIS_HOST 未配置：os.environ 未设置且 {_REDIS_ENV_PATH} 不含该键。"
             f"请创建 config/.env.redis 并填写 REDIS_HOST=<Hyper-V VM IP>。"
         )
-    password = os.environ.get("REDIS_PASSWORD") or get_secret_from_file_or_default(
-        "REDIS_PASSWORD", _REDIS_ENV_PATH, ""
-    )
+    password = get_service_secret("REDIS_PASSWORD", "redis", required=False)
     if not password:
         raise RedisConfigError(
             "REDIS_PASSWORD 未配置：Redis 已启用 requirepass（蓝图 §7.1 安全考量），"
             "禁止无密码连接。请在 config/.env.redis 填写 REDIS_PASSWORD。"
         )
-    port = int(os.environ.get("REDIS_PORT") or get_secret_from_file_or_default("REDIS_PORT", _REDIS_ENV_PATH, "6379"))
-    db = int(os.environ.get("REDIS_DB") or get_secret_from_file_or_default("REDIS_DB", _REDIS_ENV_PATH, "0"))
-    decode_raw = os.environ.get("REDIS_DECODE_RESPONSES") or get_secret_from_file_or_default(
-        "REDIS_DECODE_RESPONSES", _REDIS_ENV_PATH, "true"
-    )
+    port = int(get_service_secret("REDIS_PORT", "redis", required=False) or "6379")
+    db = int(get_service_secret("REDIS_DB", "redis", required=False) or "0")
+    decode_raw = get_service_secret("REDIS_DECODE_RESPONSES", "redis", required=False) or "true"
     decode_responses = decode_raw.strip().lower() in ("1", "true", "yes")
     # 操作超时（治本 CP-02 软故障，2026-08-03 实地演练发现）：
     # 无 socket_timeout 时 Redis 暂停/卡顿 → redis-py 无限阻塞 → try/except 永不触发
     # → CP-02 优雅降级失效。设超时后软故障抛 TimeoutError → 触发降级（跳过+兜底+标过期）。
-    socket_timeout = float(
-        os.environ.get("REDIS_SOCKET_TIMEOUT")
-        or get_secret_from_file_or_default("REDIS_SOCKET_TIMEOUT", _REDIS_ENV_PATH, "2")
-    )
-    socket_connect_timeout = float(
-        os.environ.get("REDIS_SOCKET_CONNECT_TIMEOUT")
-        or get_secret_from_file_or_default("REDIS_SOCKET_CONNECT_TIMEOUT", _REDIS_ENV_PATH, "2")
-    )
+    socket_timeout = float(get_service_secret("REDIS_SOCKET_TIMEOUT", "redis", required=False) or "2")
+    socket_connect_timeout = float(get_service_secret("REDIS_SOCKET_CONNECT_TIMEOUT", "redis", required=False) or "2")
     return {
         "host": host,
         "port": port,
