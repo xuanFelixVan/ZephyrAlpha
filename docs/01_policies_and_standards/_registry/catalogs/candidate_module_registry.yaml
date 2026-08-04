@@ -181316,6 +181316,381 @@ entries:
     review_frequency: yearly
     last_review_outcome: "rejected,确认重复幽灵节点。真源drawdown_tracker=MOD-RK-011(节点7855094).与CAND-RISK001-001同类(第3个drawdown重复),除非MOD-RK-011出现重大缺口,否则不再评估MOD-RSK-011"
 
+  # ==========================================================
+  # 弃用流程第②步批量补登（2026-08-04，孤儿模块排查 [B] 处置）
+  # 来源: orphan_module_checklist.md [B] deprecated 弃用（9 个）
+  # 已完成第①步(apply_depgraph.py 软删除 build_status→deprecated)的 9 个节点中，
+  # MOD-RISK-001/MOD-RSK-011 已有 rejected 条目（见上 CAND-RISK001-001/CAND-RSK011-001），
+  # 以下补登其余 7 个的 rejected 条目（防未来误重新设计）。
+  # node_id 为查询时快照，可能漂移；稳定引用以 path/blueprint_id 为准。
+  # ==========================================================
+
+  # ----------------------------------------------------------
+  # CAND-EX015-001: MOD-EX-015 execution_report 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-04 | execution_report 已由 MOD-INF-016 承接
+  # ----------------------------------------------------------
+  - id: CAND-EX015-001
+    name: "MOD-EX-015 execution_report(重复幽灵节点)"
+    aliases: ["MOD-EX-015", "execution_report", "执行报告"]
+    domain: D_EX_CORE
+    domain_status: active
+    domain_node_count: 17
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7678370,path文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-EX-015/不存在"}
+    description: "depgraph中blueprint_id=MOD-EX-015、path=src/zephyr/ex_core/execution_report.py的设计态节点,该文件不存在(幽灵),execution_report已由MOD-INF-016(trading_contracts/execution/execution_report.py)实现"
+    capability: ""
+    problem_it_solves: "(已解决)执行报告已由MOD-INF-016正确承接,3处实现(trading/shared/contracts)"
+    trigger_signals: []
+    keywords: ["execution_report", "MOD-EX-015", "重复幽灵", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-INF-016(trading_contracts/execution/execution_report.py,节点8616268 stable)"], evidence: "execution_report已由MOD-INF-016实现,3处:trading/trading_contracts/execution/execution_report.py(stable)+shared/contracts/execution/execution_report.py(generated)+shared/contracts/execution_report.py(generated)"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "功能已被MOD-INF-016正确承接,该节点为重复幽灵登记,无独立需求"}
+      q3_domain_alive: {result: true, evidence: "D_EX_CORE活跃(17节点),但该具体节点为重复幽灵登记"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-04'
+    promoted_to: ""
+    source_draft: "depgraph 节点7678370(path=src/zephyr/ex_core/execution_report.py)"
+    source_section: "孤儿模块排查[B]"
+    original_id: "MOD-EX-015"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点7678370 blueprint_id=MOD-EX-015 path=src/zephyr/ex_core/execution_report.py文件不存在=幽灵) vs depgraph正确实现(MOD-INF-016 节点8616268 src/zephyr/trading/trading_contracts/execution/execution_report.py stable).execution_report应在trading/shared contracts层,非ex_core独立模块.软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "MOD-INF-016(节点8616268,src/zephyr/trading/trading_contracts/execution/execution_report.py,stable)"
+    tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点"]
+    search_terms: ["mod-ex-015", "execution_report", "执行报告幽灵节点"]
+    related_candidates: []
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-04'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认重复幽灵节点。真源execution_report=MOD-INF-016(节点8616268 trading_contracts/execution/execution_report.py stable).除非MOD-INF-016出现重大缺口,否则不再评估MOD-EX-015"
+
+  # ----------------------------------------------------------
+  # CAND-PF004-001: MOD-PF-004 min_variance_strategy 错误形态登记（rejected，非独立模块）
+  # 弃用时间: 2026-08-04 | min_variance 是 RebalanceMode 枚举值，应为 DefaultEquityStrategy 方法
+  # 关联: 真正 gap 已录 CAND-PFALLOC-001(deferred,补_min_variance_alloc方法)
+  # ----------------------------------------------------------
+  - id: CAND-PF004-001
+    name: "MOD-PF-004 min_variance_strategy(错误形态登记)"
+    aliases: ["MOD-PF-004", "min_variance_strategy", "最小方差策略"]
+    domain: D_PF_CORE
+    domain_status: active
+    domain_node_count: 5
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7684068,path文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "错误形态,无独立数据流位置"}
+      decisiongraph: {has_position: false, note: "错误形态,无独立决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-PF-004/不存在"}
+    description: "depgraph中blueprint_id=MOD-PF-004、path=src/zephyr/pf_core/strategies/min_variance_strategy.py的节点,经源码验证为错误形态——min_variance是DefaultEquityStrategy.RebalanceMode枚举值(L60-61),应为_min_variance_alloc方法(L151同级),非独立策略模块"
+    capability: ""
+    problem_it_solves: "(错误形态)min_variance分配逻辑应为DefaultEquityStrategy._min_variance_alloc方法,真正gap见CAND-PFALLOC-001(deferred)"
+    trigger_signals: []
+    keywords: ["min_variance_strategy", "MOD-PF-004", "错误形态", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: ["MOD-L05-001(default_equity_strategy.py)"], evidence: "min_variance是RebalanceMode枚举值(L60-61)非独立模块,_alloc方法缺失(L127 else fallback equal_weight).节点为错误形态登记,文件不存在(幽灵).真正gap=补_min_variance_alloc方法,已录CAND-PFALLOC-001(deferred)"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "gap本身有需求(实盘需min-variance分配),但不应建独立模块——应为DefaultEquityStrategy方法.该节点为错误形态登记,无独立需求"}
+      q3_domain_alive: {result: true, evidence: "D_PF_CORE活跃(5节点),default_equity_strategy.py=production"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决(错误形态)"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-04'
+    promoted_to: ""
+    source_draft: "depgraph 节点7684068(path=src/zephyr/pf_core/strategies/min_variance_strategy.py)"
+    source_section: "孤儿模块排查[B]+源码实证default_equity_strategy.py L57-127"
+    original_id: "MOD-PF-004"
+    estimated_complexity: ""
+    tech_notes: "源码实证:DefaultEquityStrategy.RebalanceMode枚举(L60-61)含MIN_VARIANCE值,generate_target_weights(L122-127)按RebalanceMode分发,当前else fallback到equal_weight(L127).min_variance应是_min_variance_alloc方法(L151同级),非独立策略文件.原误登记为独立模块MOD-PF-004已软删除(deprecated).真正gap见CAND-PFALLOC-001(deferred,补方法到既有production节点).软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "CAND-PFALLOC-001(deferred,补_min_variance_alloc方法到DefaultEquityStrategy)+MOD-L05-001(default_equity_strategy.py,production)"
+    tags: ["错误形态", "deprecated", "rejected", "防误重新设计", "幽灵节点", "枚举值误登记为模块"]
+    search_terms: ["mod-pf-004", "min_variance_strategy", "错误形态登记"]
+    related_candidates: ["CAND-PFALLOC-001", "CAND-PF005-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-04'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认错误形态登记。min_variance是RebalanceMode枚举值非独立模块,应为DefaultEquityStrategy._min_variance_alloc方法.真正gap见CAND-PFALLOC-001(deferred).除非CAND-PFALLOC-001方案变更,否则不再评估MOD-PF-004为独立模块"
+
+  # ----------------------------------------------------------
+  # CAND-PF005-001: MOD-PF-005 risk_parity_strategy 错误形态登记（rejected，非独立模块）
+  # 弃用时间: 2026-08-04 | risk_parity 是 RebalanceMode 枚举值，应为 DefaultEquityStrategy 方法
+  # 关联: 真正 gap 已录 CAND-PFALLOC-001(deferred,补_risk_parity_alloc方法)
+  # ----------------------------------------------------------
+  - id: CAND-PF005-001
+    name: "MOD-PF-005 risk_parity_strategy(错误形态登记)"
+    aliases: ["MOD-PF-005", "risk_parity_strategy", "风险平价策略"]
+    domain: D_PF_CORE
+    domain_status: active
+    domain_node_count: 5
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7684069,path文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "错误形态,无独立数据流位置"}
+      decisiongraph: {has_position: false, note: "错误形态,无独立决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-PF-005/不存在"}
+    description: "depgraph中blueprint_id=MOD-PF-005、path=src/zephyr/pf_core/strategies/risk_parity_strategy.py的节点,经源码验证为错误形态——risk_parity是DefaultEquityStrategy.RebalanceMode枚举值(L60-61),应为_risk_parity_alloc方法(L162同级),非独立策略模块"
+    capability: ""
+    problem_it_solves: "(错误形态)risk_parity分配逻辑应为DefaultEquityStrategy._risk_parity_alloc方法,真正gap见CAND-PFALLOC-001(deferred)"
+    trigger_signals: []
+    keywords: ["risk_parity_strategy", "MOD-PF-005", "错误形态", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: false, equivalent_nodes: ["MOD-L05-001(default_equity_strategy.py)"], evidence: "risk_parity是RebalanceMode枚举值(L60-61)非独立模块,_alloc方法缺失(L127 else fallback equal_weight).节点为错误形态登记,文件不存在(幽灵).真正gap=补_risk_parity_alloc方法,已录CAND-PFALLOC-001(deferred)"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "gap本身有需求(实盘需risk-parity分配),但不应建独立模块——应为DefaultEquityStrategy方法.该节点为错误形态登记,无独立需求"}
+      q3_domain_alive: {result: true, evidence: "D_PF_CORE活跃(5节点),default_equity_strategy.py=production"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决(错误形态)"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-04'
+    promoted_to: ""
+    source_draft: "depgraph 节点7684069(path=src/zephyr/pf_core/strategies/risk_parity_strategy.py)"
+    source_section: "孤儿模块排查[B]+源码实证default_equity_strategy.py L57-127"
+    original_id: "MOD-PF-005"
+    estimated_complexity: ""
+    tech_notes: "源码实证:DefaultEquityStrategy.RebalanceMode枚举(L60-61)含RISK_PARITY值,generate_target_weights(L122-127)按RebalanceMode分发,当前else fallback到equal_weight(L127).risk_parity应是_risk_parity_alloc方法(L162同级),非独立策略文件.原误登记为独立模块MOD-PF-005已软删除(deprecated).真正gap见CAND-PFALLOC-001(deferred,补方法到既有production节点).与CAND-PF004-001同类.软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "CAND-PFALLOC-001(deferred,补_risk_parity_alloc方法到DefaultEquityStrategy)+MOD-L05-001(default_equity_strategy.py,production)"
+    tags: ["错误形态", "deprecated", "rejected", "防误重新设计", "幽灵节点", "枚举值误登记为模块"]
+    search_terms: ["mod-pf-005", "risk_parity_strategy", "错误形态登记"]
+    related_candidates: ["CAND-PFALLOC-001", "CAND-PF004-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-04'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认错误形态登记。risk_parity是RebalanceMode枚举值非独立模块,应为DefaultEquityStrategy._risk_parity_alloc方法.真正gap见CAND-PFALLOC-001(deferred).与CAND-PF004-001同类,除非CAND-PFALLOC-001方案变更,否则不再评估MOD-PF-005为独立模块"
+
+  # ----------------------------------------------------------
+  # CAND-RSK009-001: MOD-RSK-009 ashare_stop_loss_rule_engine 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-04 | A股止损规则引擎已由 MOD-RK-09 承接（前缀 RSK 非规范 RK）
+  # ----------------------------------------------------------
+  - id: CAND-RSK009-001
+    name: "MOD-RSK-009 ashare_stop_loss_rule_engine(重复幽灵节点)"
+    aliases: ["MOD-RSK-009", "ashare_stop_loss_rule_engine", "A股止损亏损规则引擎"]
+    domain: D_RISK
+    domain_status: active
+    domain_node_count: 8
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7741058,path文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-RSK-009/不存在"}
+    description: "depgraph中blueprint_id=MOD-RSK-009、path=src/zephyr/risk/ashare_stop_loss_rule_engine.py的设计态节点,该文件不存在(幽灵),与正确的MOD-RK-09(core/ashare_stop_loss_engine.py)重复。前缀RSK非规范RK。"
+    capability: ""
+    problem_it_solves: "(已解决)A股止损规则引擎已由MOD-RK-09(节点8615658 stable)正确承担"
+    trigger_signals: []
+    keywords: ["ashare_stop_loss", "MOD-RSK-009", "重复幽灵", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-RK-09(节点8615658)"], evidence: "ashare_stop_loss_engine已由core/ashare_stop_loss_engine.py实现,depgraph节点8615658 stable,有测试tests/risk/test_ashare_stop_loss_engine.py"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "功能已被MOD-RK-09正确承接,该节点为重复幽灵登记,无独立需求"}
+      q3_domain_alive: {result: true, evidence: "D_RISK活跃(8节点),但该具体节点为重复幽灵登记"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-04'
+    promoted_to: ""
+    source_draft: "depgraph 节点7741058(path=src/zephyr/risk/ashare_stop_loss_rule_engine.py)"
+    source_section: "孤儿模块排查[B]"
+    original_id: "MOD-RSK-009"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点7741058 blueprint_id=MOD-RSK-009 path=src/zephyr/risk/ashare_stop_loss_rule_engine.py文件不存在=幽灵,前缀RSK非规范RK,无blueprint无代码) vs depgraph正确实现(MOD-RK-09 节点8615658 src/zephyr/risk/core/ashare_stop_loss_engine.py stable+tests/risk/test_ashare_stop_loss_engine.py).commit 4a943705bf新增RK-09/RK-10.与CAND-RSK011-001同类(RSK前缀幽灵).软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "MOD-RK-09(节点8615658,src/zephyr/risk/core/ashare_stop_loss_engine.py,stable)"
+    tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "前缀错误"]
+    search_terms: ["mod-rsk-009", "ashare_stop_loss_rule_engine", "重复幽灵节点"]
+    related_candidates: ["CAND-RSK011-001", "CAND-RSK010-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-04'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认重复幽灵节点。真源ashare_stop_loss_engine=MOD-RK-09(节点8615658 core/ashare_stop_loss_engine.py stable).与CAND-RSK011-001同类(RSK前缀幽灵),除非MOD-RK-09出现重大缺口,否则不再评估MOD-RSK-009"
+
+  # ----------------------------------------------------------
+  # CAND-RSK010-001: MOD-RSK-010 ashare_systemic_risk_detector 重复幽灵节点（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-04 | A股系统性风险检测器已由 MOD-RK-10 承接（前缀 RSK 非规范 RK）
+  # ----------------------------------------------------------
+  - id: CAND-RSK010-001
+    name: "MOD-RSK-010 ashare_systemic_risk_detector(重复幽灵节点)"
+    aliases: ["MOD-RSK-010", "ashare_systemic_risk_detector", "A股Systemic风险检测器"]
+    domain: D_RISK
+    domain_status: active
+    domain_node_count: 8
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7741059,path文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/MOD-RSK-010/不存在"}
+    description: "depgraph中blueprint_id=MOD-RSK-010、path=src/zephyr/risk/ashare_systemic_risk_detector.py的设计态节点,该文件不存在(幽灵),与正确的MOD-RK-10(core/ashare_systemic_risk_detector.py)重复。前缀RSK非规范RK。"
+    capability: ""
+    problem_it_solves: "(已解决)A股系统性风险检测器已由MOD-RK-10(节点8615660 stable)正确承担"
+    trigger_signals: []
+    keywords: ["ashare_systemic_risk", "MOD-RSK-010", "重复幽灵", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-RK-10(节点8615660)"], evidence: "ashare_systemic_risk_detector已由core/ashare_systemic_risk_detector.py实现,depgraph节点8615660 stable,有测试tests/risk/test_ashare_systemic_risk_detector.py"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "功能已被MOD-RK-10正确承接,该节点为重复幽灵登记,无独立需求"}
+      q3_domain_alive: {result: true, evidence: "D_RISK活跃(8节点),但该具体节点为重复幽灵登记"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-04'
+    promoted_to: ""
+    source_draft: "depgraph 节点7741059(path=src/zephyr/risk/ashare_systemic_risk_detector.py)"
+    source_section: "孤儿模块排查[B]"
+    original_id: "MOD-RSK-010"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点7741059 blueprint_id=MOD-RSK-010 path=src/zephyr/risk/ashare_systemic_risk_detector.py文件不存在=幽灵,前缀RSK非规范RK,无blueprint无代码) vs depgraph正确实现(MOD-RK-10 节点8615660 src/zephyr/risk/core/ashare_systemic_risk_detector.py stable+tests/risk/test_ashare_systemic_risk_detector.py).commit 4a943705bf新增RK-09/RK-10.与CAND-RSK011-001同类(RSK前缀幽灵).软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "MOD-RK-10(节点8615660,src/zephyr/risk/core/ashare_systemic_risk_detector.py,stable)"
+    tags: ["重复登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "前缀错误"]
+    search_terms: ["mod-rsk-010", "ashare_systemic_risk_detector", "重复幽灵节点"]
+    related_candidates: ["CAND-RSK011-001", "CAND-RSK009-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-04'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认重复幽灵节点。真源ashare_systemic_risk_detector=MOD-RK-10(节点8615660 core/ashare_systemic_risk_detector.py stable).与CAND-RSK011-001同类(RSK前缀幽灵),除非MOD-RK-10出现重大缺口,否则不再评估MOD-RSK-010"
+
+  # ----------------------------------------------------------
+  # CAND-TESTA-001: test_trigger_A 测试触发器误登记（rejected，非业务模块）
+  # 弃用时间: 2026-08-04 | 无 blueprint_id，文件不存在，错误登记为 test_module 节点
+  # ----------------------------------------------------------
+  - id: CAND-TESTA-001
+    name: "test_trigger_A(测试触发器误登记)"
+    aliases: ["test_trigger_A", "测试触发器A"]
+    domain: D_ALT_DATA
+    domain_status: active
+    domain_node_count: 3
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7073601,node_type=test_module,无blueprint_id,path文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "测试触发器,无数据流位置"}
+      decisiongraph: {has_position: false, note: "测试触发器,无决策位置"}
+      blueprint: {has_position: false, note: "无blueprint_id,非业务模块"}
+    description: "depgraph中path=test_trigger_A.py的test_module节点(节点7073601),无blueprint_id,文件不存在(幽灵),错误登记为模块节点。gate_reason='另类数据域设计模块已废弃'。"
+    capability: ""
+    problem_it_solves: "(无)测试触发器,非业务决策模块,无实际功能"
+    trigger_signals: []
+    keywords: ["test_trigger_A", "测试触发器", "误登记", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: [], evidence: "测试触发器非业务功能,无需实现。该节点为错误登记(无blueprint_id+文件不存在)"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "测试触发器无业务需求,无消费者"}
+      q3_domain_alive: {result: true, evidence: "D_ALT_DATA活跃,但该具体节点为测试触发器误登记"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-04'
+    promoted_to: ""
+    source_draft: "depgraph 节点7073601(path=test_trigger_A.py)"
+    source_section: "孤儿模块排查[B]"
+    original_id: "test_trigger_A"
+    estimated_complexity: ""
+    tech_notes: "depgraph节点7073601,node_type=test_module,path=test_trigger_A.py文件不存在(幽灵),无blueprint_id,无blueprint_path.错误登记为模块节点(test_module非业务模块).gate_reason='另类数据域设计模块已废弃'.软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "无(测试触发器不应为depgraph业务节点)"
+    tags: ["误登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "测试触发器", "无blueprint_id"]
+    search_terms: ["test_trigger_a", "测试触发器a", "误登记节点"]
+    related_candidates: ["CAND-TESTB-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-04'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认测试触发器误登记。test_trigger_A无blueprint_id+文件不存在,非业务模块,不应为depgraph业务节点.除非有明确测试需求,否则不再评估"
+
+  # ----------------------------------------------------------
+  # CAND-TESTB-001: test_trigger_B 测试触发器误登记（rejected，非业务模块）
+  # 弃用时间: 2026-08-04 | 无 blueprint_id，文件不存在，错误登记为 test_module 节点
+  # ----------------------------------------------------------
+  - id: CAND-TESTB-001
+    name: "test_trigger_B(测试触发器误登记)"
+    aliases: ["test_trigger_B", "测试触发器B"]
+    domain: D_ASHARE_SIGNAL
+    domain_status: active
+    domain_node_count: 3
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),节点7073602,node_type=test_module,无blueprint_id,path文件不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "测试触发器,无数据流位置"}
+      decisiongraph: {has_position: false, note: "测试触发器,无决策位置"}
+      blueprint: {has_position: false, note: "无blueprint_id,非业务模块"}
+    description: "depgraph中path=test_trigger_B.py的test_module节点(节点7073602),无blueprint_id,文件不存在(幽灵),错误登记为模块节点。gate_reason='A股信号域设计模块已废弃'。"
+    capability: ""
+    problem_it_solves: "(无)测试触发器,非业务决策模块,无实际功能"
+    trigger_signals: []
+    keywords: ["test_trigger_B", "测试触发器", "误登记", "deprecated"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    four_question:
+      q1_implemented: {result: true, equivalent_nodes: [], evidence: "测试触发器非业务功能,无需实现。该节点为错误登记(无blueprint_id+文件不存在)"}
+      q2_demand_driven: {result: false, trigger_pain_point: "", evidence: "测试触发器无业务需求,无消费者"}
+      q3_domain_alive: {result: true, evidence: "D_ASHARE_SIGNAL活跃,但该具体节点为测试触发器误登记"}
+      q4_ai_replaceable: {result: false, evidence: "N/A,前序问题已否决"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-04'
+    promoted_to: ""
+    source_draft: "depgraph 节点7073602(path=test_trigger_B.py)"
+    source_section: "孤儿模块排查[B]"
+    original_id: "test_trigger_B"
+    estimated_complexity: ""
+    tech_notes: "depgraph节点7073602,node_type=test_module,path=test_trigger_B.py文件不存在(幽灵),无blueprint_id,无blueprint_path.错误登记为模块节点(test_module非业务模块).gate_reason='A股信号域设计模块已废弃'.与CAND-TESTA-001同类.软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "无(测试触发器不应为depgraph业务节点)"
+    tags: ["误登记", "deprecated", "rejected", "防误重新设计", "幽灵节点", "测试触发器", "无blueprint_id"]
+    search_terms: ["test_trigger_b", "测试触发器b", "误登记节点"]
+    related_candidates: ["CAND-TESTA-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-04'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认测试触发器误登记。test_trigger_B无blueprint_id+文件不存在,非业务模块,不应为depgraph业务节点.与CAND-TESTA-001同类,除非有明确测试需求,否则不再评估"
+
   # ----------------------------------------------------------
   # CAND-H1FS-001: H1 Factor Source / 信号端因子截面读取适配器（rejected，四问①②挂——功能已实现+无消费者）
   # 来源: depgraph 幽灵节点审查 (2026-08-02, TRAE-083 双源对比+四问过滤)
