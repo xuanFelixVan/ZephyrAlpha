@@ -26,7 +26,14 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT  # noqa: E402
 
-# 加载 .env
+# 加载 .env（通过 zephyr 包的 secrets 接口读取，合规 #ARCH-SECRETS-GOV-001）
+import sys as _sys
+_SRC_DIR = str(REPO_ROOT / "src")
+if _SRC_DIR not in _sys.path:
+    _sys.path.insert(0, _SRC_DIR)
+from zephyr.shared.security.secrets import get_secret_or_default  # noqa: E402
+
+# 手动加载 .env 到 os.environ（测试脚本独立运行，不走 zephyr 包导入）
 env_path = REPO_ROOT / ".env"
 if env_path.exists():
     for line in env_path.read_text(encoding="utf-8").splitlines():
@@ -35,8 +42,8 @@ if env_path.exists():
             k, v = line.split("=", 1)
             os.environ.setdefault(k.strip(), v.strip())
 
-api_key = os.getenv("DEEPSEEK_API_KEY", "")
-base_url = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+api_key = get_secret_or_default("DEEPSEEK_API_KEY", "")
+base_url = get_secret_or_default("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
 
 print(f"API Key: {api_key[:8]}...{api_key[-4:]}")
 print(f"Base URL: {base_url}")
