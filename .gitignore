@@ -228,7 +228,7 @@ docs/_working/analysis/
 
 # 忽略根目录全部直接子项（文件+目录）
 /*
-# --- 合法根文件（git tracked，22 项）---
+# --- 合法根文件（git tracked，23 项）---
 !.dockerignore
 !.editorconfig
 !.env.example
@@ -250,6 +250,7 @@ docs/_working/analysis/
 !requirements-demo.txt
 !requirements-dev.txt
 !SECURITY.md
+!SECRETS.md
 !sitecustomize.py
 # --- 合法根目录（git tracked，12 项）---
 !.github/
