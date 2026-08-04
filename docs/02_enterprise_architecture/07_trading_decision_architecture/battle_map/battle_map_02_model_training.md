@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_02_model_training.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §model_training 阶段，9 环节（9 锚点）。
+> battle_map §model_training 阶段，11 环节（9 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-04
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 模型训练（model_training） | Stage | 模型训练 |
-| 环节数 | 9 | Steps | 9 |
+| 环节数 | 11 | Steps | 11 |
 | 锚点数（双向对齐） | 9 | Anchors (Bidirectional) | 9 |
 | 流转边 | 6 | Edges | 6 |
-| 状态分布 | 🟨 候选态（候选池）=5 ｜ 🟧 设计态（待施工）=2 ｜ 🟦 运营态（已建）=1 ｜ ⬜ 缺失态（无锚点）=1 | State Distribution | 🟨 候选态（候选池）=5 ｜ 🟧 设计态（待施工）=2 ｜ 🟦 运营态（已建）=1 ｜ ⬜ 缺失态（无锚点）=1 |
+| 状态分布 | 🟨 候选态（候选池）=5 ｜ 🟧 设计态（待施工）=4 ｜ 🟦 运营态（已建）=1 ｜ ⬜ 缺失态（无锚点）=1 | State Distribution | 🟨 候选态（候选池）=5 ｜ 🟧 设计态（待施工）=4 ｜ 🟦 运营态（已建）=1 ｜ ⬜ 缺失态（无锚点）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-04
 
 ## 阶段图 / Stage Diagram
 
-> 展示 模型训练 阶段全部 9 个环节及流转边，颜色区分五态。
+> 展示 模型训练 阶段全部 11 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -57,8 +57,14 @@ flowchart TD
         BM_MT_05_A["【BM-MT-05-A 持续学习防遗忘（EWC+伪回放）】<br/>模型学新市场时不忘旧——Fisher信息矩阵正则化关键参<br/>数，让新模型快速适应新分布又不丢历史知识。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Continual Learning Anti-Forgetting （EWC +<br/>Pseudo-Replay）】"]
         BM_MT_05 -.->|嵌套| BM_MT_05_A
     end
-    BM_MT_06["【BM-MT-06 元学习与自我进化】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-    BM_MT_01 ~~~ BM_MT_01_A ~~~ BM_MT_01_B ~~~ BM_MT_05_A ~~~ BM_MT_06
+    subgraph sg_BM_MT_06 ["元学习与自我进化"]
+        BM_MT_06["【BM-MT-06 元学习与自我进化】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+        BM_MT_06_A["【BM-MT-06-A 元学习RSI四维度】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_MT_06_B["【BM-MT-06-B 学习效果反馈闭环】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_MT_06 -.->|嵌套| BM_MT_06_A
+        BM_MT_06 -.->|嵌套| BM_MT_06_B
+    end
+    BM_MT_01 ~~~ BM_MT_01_A ~~~ BM_MT_01_B ~~~ BM_MT_05_A ~~~ BM_MT_06 ~~~ BM_MT_06_A ~~~ BM_MT_06_B
     BM_MT_01 -.->|训练→实验晋升 / data_flow| BM_MT_02
     BM_MT_02 -.->|晋升→AutoML优化 / trigger| BM_MT_03
     BM_MT_03 -.->|AutoML→因子发现 / data_flow| BM_MT_04
@@ -69,7 +75,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_MT_01_A production
-    class BM_MT_01,BM_MT_01_B design
+    class BM_MT_01,BM_MT_01_B,BM_MT_06_A,BM_MT_06_B design
     class BM_MT_06 missing
     class BM_MT_02,BM_MT_03,BM_MT_04,BM_MT_05,BM_MT_05_A candidate
 ```
@@ -366,6 +372,44 @@ CAND-HARVEST-0922 对应设计文档§10.1 维度7：在线EWC防遗忘（ProAda
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L11 ｜ **阶段**：model_training
+
+### BM-MT-06-A 元学习RSI四维度
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | BM-MT-04因子发现/BM-MT-05漂移重训触发后，需跨任务积累经验加速学习 |
+| ② 消费数据/因子 | 历史训练轨迹 + 技能库 + BM-MT-02实验追踪数据 |
+| ③ 参数 | RSI架构4维度：技能(Skill)抽象/记忆(Memory)积累/推理(Reasoning)迁移/迁移(Transfer)加速 + 技能库 + 在线EWC(Elastic Weight Consolidation)防遗忘 + 轻量Agent化 |
+| ④ 数据流 | 训练轨迹→技能抽象→技能库→新任务迁移加速→反馈闭环优化元学习策略 |
+| ⑤ 代码映射 | 待开发（planned，D_ML_TRAIN域） |
+| ⑥ 降级/中止 | 元学习失效→回退BM-MT-01标准训练(按任务独立训练) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L11 ｜ **阶段**：model_training
+
+### BM-MT-06-B 学习效果反馈闭环
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 元学习产出迁移策略后，需反馈闭环评估学习效果以持续优化元学习策略 |
+| ② 消费数据/因子 | 迁移后任务表现 + 对比基线(无迁移训练) + BM-REC-03闭环反馈 |
+| ③ 参数 | 效果评估指标(迁移加速比/最终表现提升/负迁移检测) + 反馈路由(优化RSI四维度权重) + 闭环频率 |
+| ④ 数据流 | 迁移任务表现→效果评估→反馈→RSI权重调整→下一轮元学习 |
+| ⑤ 代码映射 | 待开发（planned，D_ML_TRAIN域） |
+| ⑥ 降级/中止 | 反馈闭环失效→固定RSI权重，不动态调整 |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L11 ｜ **阶段**：model_training
 
 
 [← 返回总指挥图](battle_map_panorama.md)

@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_09_risk_control.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §risk_control 阶段，44 环节（43 锚点）。
+> battle_map §risk_control 阶段，47 环节（43 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-04
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 风控管控（risk_control） | Stage | 风控管控 |
-| 环节数 | 44 | Steps | 44 |
+| 环节数 | 47 | Steps | 47 |
 | 锚点数（双向对齐） | 43 | Anchors (Bidirectional) | 43 |
 | 流转边 | 10 | Edges | 10 |
-| 状态分布 | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=5 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=5 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=8 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=8 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-04
 
 ## 阶段图 / Stage Diagram
 
-> 展示 风控管控 阶段全部 44 个环节及流转边，颜色区分五态。
+> 展示 风控管控 阶段全部 47 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -54,7 +54,15 @@ flowchart TD
     end
     BM_RC_10["【BM-RC-10 风险否决权】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-    BM_RC_12["【BM-RC-12 极端事件与黑天鹅】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    subgraph sg_BM_RC_12 ["极端事件与黑天鹅"]
+        BM_RC_12["【BM-RC-12 极端事件与黑天鹅】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+        BM_RC_12_A["【BM-RC-12-A 黑天鹅模式库】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_12_B["【BM-RC-12-B 跨市场传导与传染模型】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_12_C["【BM-RC-12-C 流动性危机模拟】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_12 -.->|嵌套| BM_RC_12_A
+        BM_RC_12 -.->|嵌套| BM_RC_12_B
+        BM_RC_12 -.->|嵌套| BM_RC_12_C
+    end
     subgraph sg_BM_RC_02 ["盘前风控检查"]
         BM_RC_02["【BM-RC-02 盘前风控检查】<br/>下单前过五关——仓位限额→行业集中度→杠杆率→合规规<br/>则→Kill Switch 状态，任一不过就拒单。<br/>（生产态 / production）<br/>【Pre-Trade Risk Check】"]
         BM_RC_02_A["【BM-RC-02-A 仓位限额检查】<br/>盘前查仓位有没有超限额——单票超了、总仓位超了，在<br/>下单前就拦住。<br/>（生产态 / production）<br/>【Position Limit Check】"]
@@ -134,7 +142,7 @@ flowchart TD
         BM_RC_08 -.->|嵌套| BM_RC_08_D
         BM_RC_08 -.->|嵌套| BM_RC_08_E
     end
-    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_01_B ~~~ BM_RC_12 ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E
+    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_12 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
     BM_RC_01 -->|策略→盘前检查 / data_flow| BM_RC_02
     BM_RC_02 -->|检查→Kill Switch / trigger| BM_RC_03
     BM_RC_03 -->|熔断→盘中监控 / data_flow| BM_RC_04
@@ -148,7 +156,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C production
-    class BM_RC_04_E,BM_RC_04_F,BM_RC_06_D,BM_RC_08_D,BM_RC_08_E design
+    class BM_RC_04_E,BM_RC_04_F,BM_RC_06_D,BM_RC_08_D,BM_RC_08_E,BM_RC_12_A,BM_RC_12_B,BM_RC_12_C design
     class BM_RC_09,BM_RC_10,BM_RC_11,BM_RC_12 missing
     class BM_RC_05_C candidate
 ```
@@ -278,6 +286,25 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
+### BM-RC-12 极端事件与黑天鹅
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 极端市场事件发生时 / 盘后黑天鹅压力测试 |
+| ② 消费数据/因子 | 历史极端事件数据 + BM-RC-08-C 压力测试结果 + 跨市场行情数据 |
+| ③ 参数 | 黑天鹅模式库、跨市场传导模型、流动性危机模拟、二阶效应与传染模型、反向压力测试 |
+| ④ 数据流 | 极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch |
+| ⑤ 代码映射 | 待开发（planned，D_RISK 域） |
+| ⑥ 降级/中止 | 极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先） |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
 ### BM-RC-01-B 九种限额类型与消耗追踪 / Nine Limit Types & Usage Tracking
 
 > **大白话**：九种限额（仓位/行业/杠杆/亏损/集中度等）各管各的，实时追踪每个限额还剩多少额度。
@@ -308,25 +335,6 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 | depgraph | MOD-L04-001 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
-
-### BM-RC-12 极端事件与黑天鹅
-
-
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | 极端市场事件发生时 / 盘后黑天鹅压力测试 |
-| ② 消费数据/因子 | 历史极端事件数据 + BM-RC-08-C 压力测试结果 + 跨市场行情数据 |
-| ③ 参数 | 黑天鹅模式库、跨市场传导模型、流动性危机模拟、二阶效应与传染模型、反向压力测试 |
-| ④ 数据流 | 极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch |
-| ⑤ 代码映射 | 待开发（planned，D_RISK 域） |
-| ⑥ 降级/中止 | 极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先） |
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-01-C 预警分级与审批流 / Alert Tiering & Approval Flow
 
@@ -1485,6 +1493,63 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘后/事件驱动（阈值: 系统故障/人为错误/Agent失控/级联失败）；②消费：系统日志+操作记录+Agent行为（来自 D-INFRA / D-AUTONOMY）；③参数：—；④数据流：系统日志+操作记录→系统故障检测+人为错误识别+Agent失控检测+级联失败分析→操作风险报告→BM-RES 策略迭代；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L252；⑥降级：操作风险审计未就绪→人工巡检。
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-12-A 黑天鹅模式库
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 需预置历史黑天鹅模式(股灾/熔断/流动性危机/政策突变)以快速识别极端事件 |
+| ② 消费数据/因子 | 历史极端事件样本 + 实时市场异常信号(波动率/相关性/流动性突变) |
+| ③ 参数 | 黑天鹅模式库：历史事件特征化(2015股灾/2016熔断/2020疫情/2024政策) + 模式匹配(波动率体制转换+跨市场相关性突变+流动性枯竭) + 触发阈值 |
+| ④ 数据流 | 实时异常信号→模式匹配→黑天鹅概率→触发RC-12-C流动性危机模拟/RC-03 Kill Switch |
+| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
+| ⑥ 降级/中止 | 模式库未命中→按通用极端事件处理(降仓+Kill Switch待命) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-12-B 跨市场传导与传染模型
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 黑天鹅事件发生后需预测跨市场传导(股/债/汇/商品)与二阶效应以提前防御 |
+| ② 消费数据/因子 | 黑天鹅事件信号(来自RC-12-A) + 跨市场持仓 + 历史传染路径样本 |
+| ③ 参数 | 跨市场传导模型(一阶:股市→债市/汇率/商品) + 二阶效应(流动性挤兑/信用利差走阔/波动率反馈循环) + 传染强度与时滞估计 |
+| ④ 数据流 | 黑天鹅事件→传导路径预测→二阶效应评估→防御建议(对冲/降仓)→RC-12-C流动性模拟 |
+| ⑤ 代码映射 | 待开发（planned，D_RISK/D_CROSS_ASSET域） |
+| ⑥ 降级/中止 | 传染模型失效→按最坏情况假设(全市场同向下跌) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-12-C 流动性危机模拟
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 黑天鹅事件+跨市场传导后需模拟流动性危机以评估出场能力 |
+| ② 消费数据/因子 | 传导预测(来自RC-12-B) + 持仓流动性 profile + 历史流动性危机样本 |
+| ③ 参数 | 流动性危机模拟：买卖价差扩大 + 成交量萎缩 + 涨跌停封板概率 + 出场滑点估计 + 极端情景(全员出逃)压力测试 |
+| ④ 数据流 | 传导预测→流动性危机模拟→出场能力评估→Kill Switch触发建议/分批出场 |
+| ⑤ 代码映射 | 待开发（planned，D_RISK/D_SIMULATION域） |
+| ⑥ 降级/中止 | 模拟失效→按最保守流动性假设(全额无法出场，立即Kill Switch) |
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
