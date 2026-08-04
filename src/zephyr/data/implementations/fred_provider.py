@@ -197,15 +197,33 @@ class FredProvider(IngestProviderBase):
         """探活：验证 FRED API key 配置 + 网络可达。
 
         FRED API 自 2015 起强制要求 api_key（免费注册）。
-        无 key 时返回 False——scheduler 会跳过本源并降级到 fallback。
+        无 key 时降级为验证世界银行 API 可达性——世界银行无需 key，
+        无 FRED key 时仍可拉取世界银行数据（macro_worldbank capability）。
         """
         if not self._connected:
             return False
         if not self._fred_key:
             log.warning(
-                "FRED 探活失败：未配置 FRED_API_KEY（免费注册 https://fred.stlouisfed.org/docs/api/api_key.html）"
+                "FRED_API_KEY 未配置——FRED 数据将跳过"
+                "（免费注册 https://fred.stlouisfed.org/docs/api/api_key.html），"
+                "世界银行数据仍可正常拉取"
             )
-            return False
+            # 无 FRED key 时，验证世界银行 API 可达性
+            try:
+                resp = requests.get(
+                    f"{_WB_API_URL}/country/all/indicator/NY.GDP.MKTP.CD",
+                    params={"format": "json", "per_page": 1},
+                    timeout=15,
+                    proxies=self._proxies,
+                )
+                if resp.status_code == 200:
+                    log.info("FRED_API_KEY 未配置，世界银行 API 可达——macro_worldbank 可用")
+                    return True
+                log.warning(f"世界银行探活失败（status={resp.status_code}）")
+                return False
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.warning(f"世界银行探活失败（网络不可达，可能需 VPN）: {e}")
+                return False
         try:
             # 用一个轻量序列验证 key 有效性 + 网络连通
             params = {
