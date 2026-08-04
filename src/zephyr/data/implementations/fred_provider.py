@@ -399,8 +399,12 @@ class FredProvider(IngestProviderBase):
         所有国家的指标值，转换为 macro_data 表格式。
         indicator_name 中编码 country code（如 WB_GDP_USD/CN）以便区分国家。
         """
-        start_year = (payload.start or datetime.date.today() - datetime.timedelta(days=365 * 10)).year
-        end_year = (payload.end or datetime.date.today()).year
+        # 世界银行数据是年度数据且有 1-2 年滞后，scheduler 传递的日级日期范围
+        # （如 start=2026-08-01 end=2026-08-04）会导致 date_range="2026:2026"
+        # 而最新数据可能尚未发布。始终使用 10 年范围确保获取历史数据。
+        today = datetime.date.today()
+        start_year = (today - datetime.timedelta(days=365 * 10)).year
+        end_year = today.year
         date_range = f"{start_year}:{end_year}"
 
         for display_name, indicator_code, indicator_name, unit, freq in _WORLD_BANK_INDICATORS:
@@ -529,7 +533,14 @@ class FredProvider(IngestProviderBase):
                 value_float = float(value)
             except (ValueError, TypeError):
                 continue
-            report_date = str(rec.get("date", ""))
+            # 世界银行 date 字段：年度数据返回年份字符串（如 "2024"），
+            # macro_data 表 report_date 列是 Date 类型，需要 "YYYY-MM-DD" 格式。
+            # 将年份转为 "YYYY-01-01"；已是完整日期的保持不变。
+            raw_date = str(rec.get("date", ""))
+            if len(raw_date) == 4 and raw_date.isdigit():
+                report_date = f"{raw_date}-01-01"
+            else:
+                report_date = raw_date
             # 用 countryiso3code 过滤区域聚合（#ARCH-EDB-EXPAND 数据质量优化）：
             # 世界银行 country/all 返回含区域聚合（AFE/AFW/ARB/CEB/EMU 等），
             # 其 countryiso3code 可能为空或非标准3位代码。
