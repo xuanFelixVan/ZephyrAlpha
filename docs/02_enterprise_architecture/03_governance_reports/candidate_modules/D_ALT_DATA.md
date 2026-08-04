@@ -12,12 +12,12 @@ ttl: permanent
 
 > [← 返回索引](index.md)
 
-> 本域候选 **49** 条（原有 0 + harvest 49）。
+> 本域候选 **50** 条（原有 1 + harvest 49）。
 > harvest 去重四态: likely_new=49
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0450 | Whisper ASR语音识别 | 主播音频流舆情音频本地ASR | D_ALT_DATA | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0600 | Sentiment Engine 情绪信号引擎 | / D-ALT-DATA-02 / Sentiment Engine / 情绪信号引擎(新闻情绪finBERT+社交媒体情绪+管理层语调+Bayesian聚合) / ✅能建。当前iFind舆情+Whisper ASR已覆盖部分情绪数据，增量 | D_ALT_DATA | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -68,10 +68,17 @@ ttl: permanent
 | CAND-HARVEST-5281 | FilingNLP 监管文件NLP(骨架) | 骨架子模块 ALT-03 FilingNLP LLM推理可用 | D_ALT_DATA | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5282 | SupplyChainGraph 产业链图谱(骨架) | / ALT-04 SupplyChainGraph / ALT-01就绪 + 图数据库可用 / 产业链原始数据可消费；Neo4j/NetworkX可用 / | D_ALT_DATA | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5283 | SignalExtractor 信号提取器(骨架) | / ALT-05 SignalExtractor / ALT-02/03/04就绪 / 至少一个上游信号源可用 / | D_ALT_DATA | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-TESTA-001 | test_trigger_A(测试触发器误登记) | (无)测试触发器,非业务决策模块,无实际功能 | D_ALT_DATA | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-04 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
+
+### q1 已实现/重复（1 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-TESTA-001 | test_trigger_A(测试触发器误登记) | (无)测试触发器,非业务决策模块,无实际功能 | D_ALT_DATA | 测试触发器非业务功能,无需实现。该节点为错误登记(无blueprint_id+文件不存在) | 无(测试触发器不应为depgraph业务节点) |
 
 ### 待评估（49 条）
 
@@ -129,7 +136,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|
@@ -182,3 +189,4 @@ ttl: permanent
 | 2026-11-30 | quarterly | CAND-HARVEST-5281 | FilingNLP 监管文件NLP(骨架) | D_ALT_DATA | 候选待评（candidate） | harvest待评估（likely_new） |
 | 2026-11-30 | quarterly | CAND-HARVEST-5282 | SupplyChainGraph 产业链图谱(骨架) | D_ALT_DATA | 候选待评（candidate） | harvest待评估（likely_new） |
 | 2026-11-30 | quarterly | CAND-HARVEST-5283 | SignalExtractor 信号提取器(骨架) | D_ALT_DATA | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2027-08-04 | yearly | CAND-TESTA-001 | test_trigger_A(测试触发器误登记) | D_ALT_DATA | 否决（rejected） | rejected,确认测试触发器误登记。test_trigger_A无blueprint_id+文件不存在,非业务模块,不应为depgraph业务节点.除非有明确测试需求,否则不再评估 |

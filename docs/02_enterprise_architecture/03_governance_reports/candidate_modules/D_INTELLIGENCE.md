@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-AISA-001 | AI Sentiment Analyzer / AI 舆情分析器 | A 股受政策与舆情驱动性强,缺乏结构化舆情信号导致政策行情响应滞后 | D_INTELLIGENCE | 候选待评（candidate） | 待评估 | P1 | 实盘出现政策驱动的板块异动但信号系统未捕获 等3条 | 2026-10-31 |
 | CAND-HARVEST-0009 | Cross-Market Transmission Quantitative Model 跨市场传导量化模型 | C 039：跨市场传导量化模型 | D_INTELLIGENCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -208,9 +208,9 @@ ttl: permanent
 | CAND-HARVEST-5044 | Research Information Isolation 研究信息隔离 | 研究域与交易域信息隔离+合规约束 | D_INTELLIGENCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5094 | FeatureStore PIT Feature Feed FeatureStore PIT特征供给 | / SIM-RES-01 / D-RESEARCH→SIM / — / D-RESEARCH / FeatureStore PIT特征→回测数据输入 / P1 / | D_INTELLIGENCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（188 条）
 
@@ -407,7 +407,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

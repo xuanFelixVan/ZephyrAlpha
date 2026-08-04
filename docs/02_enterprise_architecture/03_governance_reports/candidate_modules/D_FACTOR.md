@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0002 | Factor Factory 因子工厂 | C 027：因子工厂（P0） | D_FACTOR | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0003 | Pipeline 因子与信号生产管线 | C 009：因子与信号生产管线 | D_FACTOR | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -217,19 +217,12 @@ ttl: permanent
 | CAND-HARVEST-4921 | Causal Factor Validation Layer 因果因子验证层 | DoWhy/DML→区分相关vs因果→因果因子加权提升 | D_FACTOR | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-4922 | KAN Explainable Function Approximator KAN可解释函数逼近 | 替代QNN中MLP层参数更少 | D_FACTOR | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-4923 | UFL Deterministic Fact Layer UFL确定性事实层 | / — / UFL确定性事实层 / FeatureStore子集，is_deterministic=True / ✅ / | D_FACTOR | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-FAC-001 | Factor Cache / 因子缓存 | 因子数量增长后,每日全量重算导致计算延迟>50ms | D_FACTOR | 延后（deferred） | q2 无需求驱动 | P2 | 因子数量>10(当前不足) 等3条 | 2027-07-31 |
-| CAND-FAC-002 | FactorMeta Pydantic Migration / FactorMeta Pydantic迁移 | FactorMeta 使用 @dataclass 违反 KBG-0040 全局 Pydantic 强制约束,与系统其余 Pydantic 数据模型不一致,序列化/校验行为不统一 | D_FACTOR | 延后（deferred） | q2 无需求驱动 | P1 | KBG-0040 Pydantic 强制门禁启用(当前君子协定) 等3条 | 2026-11-30 |
+| CAND-FAC-001 | Factor Cache / 因子缓存 | 因子数量增长后,每日全量重算导致计算延迟>50ms | D_FACTOR | 延后（deferred） | 一问通过 | P2 | 因子数量>10(当前不足) 等3条 | 2027-07-31 |
+| CAND-FAC-002 | FactorMeta Pydantic Migration / FactorMeta Pydantic迁移 | FactorMeta 使用 @dataclass 违反 KBG-0040 全局 Pydantic 强制约束,与系统其余 Pydantic 数据模型不一致,序列化/校验行为不统一 | D_FACTOR | 延后（deferred） | 一问通过 | P1 | KBG-0040 Pydantic 强制门禁启用(当前君子协定) 等3条 | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
-
-### q2 无需求驱动（2 条）
-
-| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
-|------|------|------|------|------|------|
-| CAND-FAC-001 | Factor Cache / 因子缓存 | 因子数量增长后,每日全量重算导致计算延迟>50ms | D_FACTOR | 首次登记,待因子>10或计算延迟>50ms时重新评估 | 每次重算(当前实现)。代价:因子多时延迟增加 |
-| CAND-FAC-002 | FactorMeta Pydantic Migration / FactorMeta Pydantic迁移 | FactorMeta 使用 @dataclass 违反 KBG-0040 全局 Pydantic 强制约束,与系统其余 Pydantic 数据模型不一致,序列化/校验行为不统一 | D_FACTOR | 首次登记。待 KBG-0040 强制启用或 FactorMeta 序列化出现兼容问题时晋升为 factor_base.py refactor 补丁(非新 depgraph 节点) | 维持 @dataclass。代价:违反 KBG-0040,与系统 Pydantic 统一性不一致 |
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（198 条）
 
@@ -434,9 +427,16 @@ ttl: permanent
 | CAND-HARVEST-4922 | KAN Explainable Function Approximator KAN可解释函数逼近 | 替代QNN中MLP层参数更少 | D_FACTOR | harvest待评估（likely_new） |  |
 | CAND-HARVEST-4923 | UFL Deterministic Fact Layer UFL确定性事实层 | / — / UFL确定性事实层 / FeatureStore子集，is_deterministic=True / ✅ / | D_FACTOR | harvest待评估（likely_implemented） |  |
 
+### 一问通过（2 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-FAC-001 | Factor Cache / 因子缓存 | 因子数量增长后,每日全量重算导致计算延迟>50ms | D_FACTOR | 首次登记,待因子>10或计算延迟>50ms时重新评估 | 每次重算(当前实现)。代价:因子多时延迟增加 |
+| CAND-FAC-002 | FactorMeta Pydantic Migration / FactorMeta Pydantic迁移 | FactorMeta 使用 @dataclass 违反 KBG-0040 全局 Pydantic 强制约束,与系统其余 Pydantic 数据模型不一致,序列化/校验行为不统一 | D_FACTOR | 首次登记。待 KBG-0040 强制启用或 FactorMeta 序列化出现兼容问题时晋升为 factor_base.py refactor 补丁(非新 depgraph 节点) | 维持 @dataclass。代价:违反 KBG-0040,与系统 Pydantic 统一性不一致 |
+
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

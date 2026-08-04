@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0005 | Capital Flow Behavior Analysis 资金行为分析 | C 011：资金行为分析 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0048 | 微信多人互动 WeChat Multi-Person Interaction | C 019：微信多人互动 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -182,19 +182,12 @@ ttl: permanent
 | CAND-HARVEST-5051 | API Routing Service Discovery API路由与服务发现 | 约束二单机约束二修改为多机部署 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5053 | Cross-Market Data Integrator 跨市场数据集成器 | 约束三+约束二约束三修改为跨境 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5055 | MCP Trading Execution Server MCP交易执行Server | HB-SEC-08+HB-SEC-07+HB-SEC-05 | D_INTEGRATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-INT-001 | ONNX Inference Optimization / ONNX推理优化 | PyTorch推理延迟高,实盘盘中推理成为瓶颈 | D_INTEGRATION | 延后（deferred） | q2 无需求驱动 | P2 | PyTorch推理延迟>50ms(盘中) 等3条 | 2027-07-31 |
-| CAND-BACL-001 | Broker ACL 三层架构重构 / 经纪商访问控制分层 | 多经纪商接入时权限管理散乱,理论上有分层重构价值 | D_INTEGRATION | 否决（rejected） | q2 无需求驱动 | P2 | 经纪商数量超过5个且权限规则出现冲突 等2条 | 2027-07-31 |
+| CAND-INT-001 | ONNX Inference Optimization / ONNX推理优化 | PyTorch推理延迟高,实盘盘中推理成为瓶颈 | D_INTEGRATION | 延后（deferred） | 一问通过 | P2 | PyTorch推理延迟>50ms(盘中) 等3条 | 2027-07-31 |
+| CAND-BACL-001 | Broker ACL 三层架构重构 / 经纪商访问控制分层 | 多经纪商接入时权限管理散乱,理论上有分层重构价值 | D_INTEGRATION | 否决（rejected） | 一问通过 | P2 | 经纪商数量超过5个且权限规则出现冲突 等2条 | 2027-07-31 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
-
-### q2 无需求驱动（2 条）
-
-| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
-|------|------|------|------|------|------|
-| CAND-BACL-001 | Broker ACL 三层架构重构 / 经纪商访问控制分层 | 多经纪商接入时权限管理散乱,理论上有分层重构价值 | D_INTEGRATION | rejected,q2无重构驱动。除非经纪商数量超5个且权限规则冲突,否则不再评估 | 维持现有2 adapter平铺。代价:无,已满足需求 |
-| CAND-INT-001 | ONNX Inference Optimization / ONNX推理优化 | PyTorch推理延迟高,实盘盘中推理成为瓶颈 | D_INTEGRATION | 首次登记,待PyTorch推理延迟>50ms或ML模型稳定部署时重新评估 | PyTorch后端(当前实现)。代价:推理延迟较高 |
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（163 条）
 
@@ -364,9 +357,16 @@ ttl: permanent
 | CAND-HARVEST-5053 | Cross-Market Data Integrator 跨市场数据集成器 | 约束三+约束二约束三修改为跨境 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
 | CAND-HARVEST-5055 | MCP Trading Execution Server MCP交易执行Server | HB-SEC-08+HB-SEC-07+HB-SEC-05 | D_INTEGRATION | harvest待评估（likely_implemented） |  |
 
+### 一问通过（2 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-BACL-001 | Broker ACL 三层架构重构 / 经纪商访问控制分层 | 多经纪商接入时权限管理散乱,理论上有分层重构价值 | D_INTEGRATION | rejected,q2无重构驱动。除非经纪商数量超5个且权限规则冲突,否则不再评估 | 维持现有2 adapter平铺。代价:无,已满足需求 |
+| CAND-INT-001 | ONNX Inference Optimization / ONNX推理优化 | PyTorch推理延迟高,实盘盘中推理成为瓶颈 | D_INTEGRATION | 首次登记,待PyTorch推理延迟>50ms或ML模型稳定部署时重新评估 | PyTorch后端(当前实现)。代价:推理延迟较高 |
+
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

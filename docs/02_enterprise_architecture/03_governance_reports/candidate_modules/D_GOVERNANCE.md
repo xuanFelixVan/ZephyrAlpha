@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0013 | Audit & Compliance Traceability 审计与合规追溯 | C 043：审计与合规追溯（阶段一P1/阶段二P2）（→A6合规🔒） | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0029 | Reporting/Review/Attribution 报告/复盘/归因 | C 010：报告/复盘/归因 | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -357,9 +357,9 @@ ttl: permanent
 | CAND-HARVEST-5058 | D-GOV-16~26 Dependency Semantic Series 依赖语义系列 | / D-GOV-16~26 依赖语义系列 / Szpruch能力分解/FPGA资源未就绪 / GATE-SZP/GATE-FPGA门禁满足 / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5059 | Off-site Planning Modules 场外规划模块 | / 场外规划模块(265个) / 门禁未满足 / GATE-FPGA(86个)/GATE-SZP(152个)/GATE-RES(27个) / | D_GOVERNANCE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（337 条）
 
@@ -705,7 +705,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

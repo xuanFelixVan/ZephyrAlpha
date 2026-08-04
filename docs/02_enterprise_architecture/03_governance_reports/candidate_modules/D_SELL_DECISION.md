@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0057 | Position Triage持仓分级器 | / SELL-00 / Position Triage持仓分级器 / ✅ 能建 / / Watch/Monitor/Hold三级分级，动态升降级 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0058 | Sell Signal Collector卖出信号收集器 | / SELL-01 / Sell Signal Collector卖出信号收集器 / ✅ 能建 / / 汇聚8类卖出信号，输出标准化SellSignal列表 / | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -47,9 +47,9 @@ ttl: permanent
 | CAND-HARVEST-4884 | StopLossTriggerReversalDetector 猎杀止损保护器 | 止损触发后N分钟价格反转>M%统计显著 | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5081 | Average True Range ATR动态止损 | **核心逻辑**: 固定百分比止损（如-7%）是拍脑门的——高波动股7%只是正常波动，低波动股7%已是重大破位。专业机构用ATR（Average True Range）动态调整止损：Stop = Entry ± k×ATR，k通过Bayes | D_SELL_DECISION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（27 条）
 
@@ -85,7 +85,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

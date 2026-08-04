@@ -12,12 +12,12 @@ ttl: permanent
 
 > [← 返回索引](index.md)
 
-> 本域候选 **501** 条（原有 4 + harvest 497）。
+> 本域候选 **503** 条（原有 6 + harvest 497）。
 > harvest 去重四态: likely_new=241 / likely_implemented=224 / likely_planned=30 / uncertain=2
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0020 | Risk Control 自适应风控 | C 004：自适应风控 | D_RISK | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0022 | Systematic Stress Testing 系统性压力测试 | C 040：系统性压力测试 | D_RISK | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -516,28 +516,26 @@ ttl: permanent
 | CAND-HARVEST-4943 | Counterparty Risk 交易对手风险 | 需衍生品业务 | D_RISK | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-4944 | Credit Risk 信用风险 | 需债券持仓 | D_RISK | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-4945 | ESG Risk ESG风险 | 需ESG数据源 | D_RISK | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-RSK-014 | Black Swan Pattern Library / 黑天鹅模式库 | 实盘遭遇极端行情(如2015股灾/2020疫情底)时,现有VaR/止损无法应对尾部风险 | D_RISK | 延后（deferred） | q2 无需求驱动 | P1 | 实盘出现单日跌幅>5%的极端行情 等3条 | 2027-01-31 |
+| CAND-RSK-014 | Black Swan Pattern Library / 黑天鹅模式库 | 实盘遭遇极端行情(如2015股灾/2020疫情底)时,现有VaR/止损无法应对尾部风险 | D_RISK | 延后（deferred） | 一问通过 | P1 | 实盘出现单日跌幅>5%的极端行情 等3条 | 2027-01-31 |
 | CAND-PTC-001 | Pre-Trade Checker / 盘前统一检查器 | 下单前需统一校验风控约束,避免违规下单 | D_RISK | 否决（rejected） | q1 已实现/重复 | P2 | risk_validation_bridge 出现性能瓶颈或校验漏项 等2条 | 2027-07-31 |
 | CAND-RISK001-001 | MOD-RISK-001 drawdown_tracker(重复陈旧登记) | (已解决)drawdown_tracker回撤追踪已由MOD-RK-011(节点7855094 stable)正确承担 | D_RISK | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-02 |
+| CAND-RSK009-001 | MOD-RSK-009 ashare_stop_loss_rule_engine(重复幽灵节点) | (已解决)A股止损规则引擎已由MOD-RK-09(节点8615658 stable)正确承担 | D_RISK | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-04 |
+| CAND-RSK010-001 | MOD-RSK-010 ashare_systemic_risk_detector(重复幽灵节点) | (已解决)A股系统性风险检测器已由MOD-RK-10(节点8615660 stable)正确承担 | D_RISK | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-04 |
 | CAND-RSK011-001 | MOD-RSK-011 drawdown_realtime_tracker(重复幽灵节点) | (已解决)回撤实时追踪已由MOD-RK-011(节点7855094 stable+production)正确承担,20个单元测试通过 | D_RISK | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-02 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
-### q1 已实现/重复（3 条）
-
-| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
-|------|------|------|------|------|------|
-| CAND-PTC-001 | Pre-Trade Checker / 盘前统一检查器 | 下单前需统一校验风控约束,避免违规下单 | D_RISK | rejected,q1已实现。除非 risk_validation_bridge 组合出现重大缺口,否则不再评估 | 维持现有 risk_validation_bridge 组合。代价:无,组合已完整 |
-| CAND-RISK001-001 | MOD-RISK-001 drawdown_tracker(重复陈旧登记) | (已解决)drawdown_tracker回撤追踪已由MOD-RK-011(节点7855094 stable)正确承担 | D_RISK | rejected,确认重复陈旧登记。真源drawdown_tracker=MOD-RK-011(节点7855094).除非MOD-RK-011出现重大缺口,否则不再评估MOD-RISK-001 | MOD-RK-011(节点7855094,src/zephyr/risk/core/drawdown_tracker.py,stable/production) |
-| CAND-RSK011-001 | MOD-RSK-011 drawdown_realtime_tracker(重复幽灵节点) | (已解决)回撤实时追踪已由MOD-RK-011(节点7855094 stable+production)正确承担,20个单元测试通过 | D_RISK | rejected,确认重复幽灵节点。真源drawdown_tracker=MOD-RK-011(节点7855094).与CAND-RISK001-001同类(第3个drawdown重复),除非MOD-RK-011出现重大缺口,否则不再评估MOD-RSK-011 | MOD-RK-011(节点7855094,src/zephyr/risk/core/drawdown_tracker.py,stable/production,20测试通过) |
-
-### q2 无需求驱动（1 条）
+### q1 已实现/重复（5 条）
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-RSK-014 | Black Swan Pattern Library / 黑天鹅模式库 | 实盘遭遇极端行情(如2015股灾/2020疫情底)时,现有VaR/止损无法应对尾部风险 | D_RISK | 首次登记,待VaR Phase2就绪或实盘极端行情时重新评估 | 靠 RK-05 VaR 压力测试 + 人工判断。代价:极端行情响应慢 |
+| CAND-PTC-001 | Pre-Trade Checker / 盘前统一检查器 | 下单前需统一校验风控约束,避免违规下单 | D_RISK | 三件组合已完整实现盘前校验链路,grep 确认覆盖持仓/资金/合规/黑名单 | 维持现有 risk_validation_bridge 组合。代价:无,组合已完整 |
+| CAND-RISK001-001 | MOD-RISK-001 drawdown_tracker(重复陈旧登记) | (已解决)drawdown_tracker回撤追踪已由MOD-RK-011(节点7855094 stable)正确承担 | D_RISK | drawdown_tracker已由core/drawdown_tracker.py(MATURITY production)实现,depgraph节点7855094 stable | MOD-RK-011(节点7855094,src/zephyr/risk/core/drawdown_tracker.py,stable/production) |
+| CAND-RSK009-001 | MOD-RSK-009 ashare_stop_loss_rule_engine(重复幽灵节点) | (已解决)A股止损规则引擎已由MOD-RK-09(节点8615658 stable)正确承担 | D_RISK | ashare_stop_loss_engine已由core/ashare_stop_loss_engine.py实现,depgraph节点8615658 stable,有测试tests/risk/test_ashare_stop_loss_engine.py | MOD-RK-09(节点8615658,src/zephyr/risk/core/ashare_stop_loss_engine.py,stable) |
+| CAND-RSK010-001 | MOD-RSK-010 ashare_systemic_risk_detector(重复幽灵节点) | (已解决)A股系统性风险检测器已由MOD-RK-10(节点8615660 stable)正确承担 | D_RISK | ashare_systemic_risk_detector已由core/ashare_systemic_risk_detector.py实现,depgraph节点8615660 stable,有测试tests/risk/test_ashare_systemic_risk_detector.py | MOD-RK-10(节点8615660,src/zephyr/risk/core/ashare_systemic_risk_detector.py,stable) |
+| CAND-RSK011-001 | MOD-RSK-011 drawdown_realtime_tracker(重复幽灵节点) | (已解决)回撤实时追踪已由MOD-RK-011(节点7855094 stable+production)正确承担,20个单元测试通过 | D_RISK | drawdown_tracker已由core/drawdown_tracker.py(MATURITY production)实现,depgraph节点7855094 stable+production,20测试通过(tests/risk/test_drawdown_tracker.py) | MOD-RK-011(节点7855094,src/zephyr/risk/core/drawdown_tracker.py,stable/production,20测试通过) |
 
 ### 待评估（497 条）
 
@@ -1041,9 +1039,15 @@ ttl: permanent
 | CAND-HARVEST-4944 | Credit Risk 信用风险 | 需债券持仓 | D_RISK | harvest待评估（likely_implemented） |  |
 | CAND-HARVEST-4945 | ESG Risk ESG风险 | 需ESG数据源 | D_RISK | harvest待评估（likely_implemented） |  |
 
+### 一问通过（1 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-RSK-014 | Black Swan Pattern Library / 黑天鹅模式库 | 实盘遭遇极端行情(如2015股灾/2020疫情底)时,现有VaR/止损无法应对尾部风险 | D_RISK | 首次登记,待VaR Phase2就绪或实盘极端行情时重新评估 | 靠 RK-05 VaR 压力测试 + 人工判断。代价:极端行情响应慢 |
+
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|
@@ -1548,3 +1552,5 @@ ttl: permanent
 | 2027-07-31 | yearly | CAND-PTC-001 | Pre-Trade Checker / 盘前统一检查器 | D_RISK | 否决（rejected） | rejected,q1已实现。除非 risk_validation_bridge 组合出现重大缺口,否则不再评估 |
 | 2027-08-02 | yearly | CAND-RISK001-001 | MOD-RISK-001 drawdown_tracker(重复陈旧登记) | D_RISK | 否决（rejected） | rejected,确认重复陈旧登记。真源drawdown_tracker=MOD-RK-011(节点7855094).除非MOD-RK-011出现重大缺口,否则不再评估MOD-RISK-001 |
 | 2027-08-02 | yearly | CAND-RSK011-001 | MOD-RSK-011 drawdown_realtime_tracker(重复幽灵节点) | D_RISK | 否决（rejected） | rejected,确认重复幽灵节点。真源drawdown_tracker=MOD-RK-011(节点7855094).与CAND-RISK001-001同类(第3个drawdown重复),除非MOD-RK-011出现重大缺口,否则不再评估MOD-RSK-011 |
+| 2027-08-04 | yearly | CAND-RSK009-001 | MOD-RSK-009 ashare_stop_loss_rule_engine(重复幽灵节点) | D_RISK | 否决（rejected） | rejected,确认重复幽灵节点。真源ashare_stop_loss_engine=MOD-RK-09(节点8615658 core/ashare_stop_loss_engine.py stable).与CAND-RSK011-001同类(RSK前缀幽灵),除非MOD-RK-09出现重大缺口,否则不再评估MOD-RSK-009 |
+| 2027-08-04 | yearly | CAND-RSK010-001 | MOD-RSK-010 ashare_systemic_risk_detector(重复幽灵节点) | D_RISK | 否决（rejected） | rejected,确认重复幽灵节点。真源ashare_systemic_risk_detector=MOD-RK-10(节点8615660 core/ashare_systemic_risk_detector.py stable).与CAND-RSK011-001同类(RSK前缀幽灵),除非MOD-RK-10出现重大缺口,否则不再评估MOD-RSK-010 |

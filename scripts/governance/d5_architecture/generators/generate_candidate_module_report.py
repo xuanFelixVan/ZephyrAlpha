@@ -19,7 +19,7 @@
 治本(2026-08-01): 单文件 5301 条/3.57MB 卡死 IDE → 按功能域分文件输出。
 输出目录: 03_governance_reports/candidate_modules/
   - index.md          索引页（总览统计 + 全景图 + harvest 概览 + 域索引表）
-  - {domain}.md       各域候选清单（完整清单表 + 四问卡点分组 + 复查时间表）
+  - {domain}.md       各域候选清单（完整清单表 + 一问卡点分组 + 复查时间表）
 
 [BLUEPRINT] candidate_module_report_generator | .trae/documents/candidate_module_report_generator.md
 [MODULE] scripts.governance.d5_architecture.generators.generate_candidate_module_report
@@ -85,13 +85,13 @@ STATUS_LABEL = {
 
 BLOCKING_LABEL = {
     "q1": "q1 已实现/重复",
-    "q2": "q2 无需求驱动",
-    "q3": "q3 域已死",
-    "q4": "q4 AI 可替代",
     "pending": "待评估",
-    "none": "四问全过",
+    "none": "一问通过",
+    "case_review": "逐案论证",
     "": "未标注",
 }
+# 裁定 2026-08-04：原四问（q1/q2/q3/q4）收敛为一问标准（仅 q1 已实现/重复）。
+# q2(需求驱动)/q3(域活着)/q4(AI替代) 因灰度无法二元化已废，不再作为卡点。
 
 # Mermaid 状态着色（classDef 名 = 状态）
 STATUS_CLASS = {
@@ -107,7 +107,7 @@ def load_candidates() -> list[dict]:
     """从 candidate_module_registry.yaml 加载候选条目。
 
     Returns:
-        list[dict]: entries 列表（每条含 id/name/domain/status/four_question 等字段）
+        list[dict]: entries 列表（每条含 id/name/domain/status/design_admission 等字段）
 
     Raises:
         SystemExit(1): 真源 YAML 不存在
@@ -159,10 +159,19 @@ def _node_id(cand_id: str) -> str:
 
 
 def _blocking_question(entry: dict) -> str:
-    """取四问卡点（blocking_question 字段，空则 '未标注'）。"""
-    fq = entry.get("four_question") or {}
+    """取一问卡点（design_admission.blocking_question 字段，空则 ''）。
+
+    裁定 2026-08-04：原 four_question 收敛为 design_admission（仅 q1）。
+    兼容历史 four_question 字段名（旧数据未迁移时兜底）。
+    """
+    fq = entry.get("design_admission") or entry.get("four_question") or {}
     bq = fq.get("blocking_question") or ""
     return bq if bq else ""
+
+
+def entry_admission(entry: dict) -> dict:
+    """取设计准入块（design_admission，兼容历史 four_question 字段名兜底）。"""
+    return entry.get("design_admission") or entry.get("four_question") or {}
 
 
 def _trigger_summary(entry: dict) -> str:
@@ -199,9 +208,9 @@ def render_header(entries: list[dict]) -> list[str]:
     lines.append("")
     lines.append(
         "> **文档作用 / Purpose**: 展示候选模块登记表中储备的未开发/过度工程候选模块清单，"
-        "按状态、四问卡点、优先级、域分类，使其可检索、可定位、可追溯。"
+        "按状态、一问卡点、优先级、域分类，使其可检索、可定位、可追溯。"
         "与 design_vs_production 互补——后者看已进 depgraph 设计态的待开发模块，本报告看"
-        "四问未全过、尚未进入设计态的储备点子。"
+        "一问未过、尚未进入设计态的储备点子。"
     )
     lines.append("")
     lines.append("> 本索引由 generate_candidate_module_report.py 从 candidate_module_registry.yaml 自动生成")
@@ -231,7 +240,7 @@ def _count_by(entries: list[dict], key_fn) -> dict[str, int]:
 
 
 def render_stats(entries: list[dict]) -> list[str]:
-    """统计概览：总数 + 按状态/四问卡点/优先级分布。"""
+    """统计概览：总数 + 按状态/一问卡点/优先级分布。"""
     lines = []
     lines.append("## 统计概览")
     lines.append("")
@@ -259,11 +268,11 @@ def render_stats(entries: list[dict]) -> list[str]:
         lines.append(f"| {STATUS_LABEL.get(s, s)} | {cnt} | {ratio:.1f}% |")
     lines.append("")
 
-    lines.append("### 按四问卡点分布")
+    lines.append("### 按一问卡点分布")
     lines.append("")
     lines.append("| 卡点 / Blocking | 数量 / Count | 占比 / Ratio |")
     lines.append("|------|:---:|:---:|")
-    for bq in ("q1", "q2", "q3", "q4", "pending", "none", "未标注"):
+    for bq in ("q1", "pending", "none", "case_review", "未标注"):
         cnt = by_bq.get(bq, 0)
         if cnt == 0:
             continue
@@ -305,10 +314,10 @@ def render_status_legend(entries: list[dict]) -> list[str]:
     lines.append("| 状态 | 含义 | 数量 |")
     lines.append("|------|------|:---:|")
     lines.append(
-        f"| deferred（延后） | 四问未全过但域活着、功能有价值——等触发信号命中再重新过四问晋升到 depgraph 设计态 | {by_status.get('deferred', 0)} |"
+        f"| deferred（延后） | 一问未过但域活着、功能有价值——等触发信号命中再重新过一问晋升到 depgraph 设计态 | {by_status.get('deferred', 0)} |"
     )
-    lines.append(f"| rejected（否决） | 四问否决或用户推翻，登记仅为防误重新设计 | {by_status.get('rejected', 0)} |")
-    lines.append(f"| candidate（候选待评） | 四问仍在 pending，未拍板 | {by_status.get('candidate', 0)} |")
+    lines.append(f"| rejected（否决） | 一问否决或用户推翻，登记仅为防误重新设计 | {by_status.get('rejected', 0)} |")
+    lines.append(f"| candidate（候选待评） | 一问仍在 pending，未拍板 | {by_status.get('candidate', 0)} |")
     lines.append("")
     return lines
 
@@ -338,27 +347,27 @@ def render_mermaid_pie(entries: list[dict]) -> list[str]:
 
 
 def render_mermaid_flowchart(entries: list[dict]) -> list[str]:
-    """Mermaid flowchart：按四问卡点（受限原因）分组，节点含大白话简述。
+    """Mermaid flowchart：按一问卡点（受限原因）分组，节点含大白话简述。
 
     响应需求:全景图一眼看到"每个候选卡在哪问(受限原因)+ 它是干什么的(大白话)"。
     节点文本: 候选ID 中文名 + 大白话简述(截断30字)；颜色=状态。
     """
-    # harvest 候选四问全 pending 且数量大，单独在 harvest概览展示；全景图只画原有候选
+    # harvest 候选一问全 pending 且数量大，单独在 harvest概览展示；全景图只画原有候选
     non_harvest = [e for e in entries if not str(e.get("id", "")).startswith("CAND-HARVEST")]
-    # 按四问卡点分组（受限原因）
+    # 按一问卡点分组（受限原因）
     by_bq: dict[str, list[dict]] = {}
     for e in non_harvest:
         bq = _blocking_question(e) or "未标注"
         by_bq.setdefault(bq, []).append(e)
 
     lines = []
-    lines.append("### 按四问卡点分布（受限原因 · 颜色=状态，节点含大白话简述）")
+    lines.append("### 按一问卡点分布（受限原因 · 颜色=状态，节点含大白话简述）")
     lines.append("")
     lines.append(f"> 仅展示原有候选 {len(non_harvest)} 条；harvest 候选见下方「Harvest 候选概览」。")
     lines.append("")
     lines.append("```mermaid")
     lines.append("flowchart LR")
-    for bq in ("q2", "q1", "q3", "q4", "pending", "none", "未标注"):
+    for bq in ("q1", "pending", "none", "case_review", "未标注"):
         items = by_bq.get(bq, [])
         if not items:
             continue
@@ -414,7 +423,7 @@ def render_harvest_overview(entries: list[dict]) -> list[str]:
     lines = []
     lines.append("## Harvest 候选概览（场外草稿抓取）")
     lines.append("")
-    lines.append(f"> 从场外草稿 CSV 抓取的候选，共 {len(harvest)} 条，status=candidate，四问 pending 待评估。")
+    lines.append(f"> 从场外草稿 CSV 抓取的候选，共 {len(harvest)} 条，status=candidate，一问 pending 待评估。")
     lines.append(
         "> 去重四态（区分运营态/设计态）：likely_new(真候选) / likely_implemented(运营态已有) / likely_planned(设计态已有) / likely_misplaced(域错标已校准)。"
     )
@@ -474,7 +483,7 @@ def render_full_table(entries: list[dict]) -> list[str]:
     lines = []
     lines.append("## 完整清单")
     lines.append("")
-    lines.append("| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |")
+    lines.append("| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |")
     lines.append("|------|------|------|------|------|------|:---:|------|------|")
     # 按状态（deferred→candidate→rejected）再按 id 排序，让"可能开发"的排前面
     status_order = {"candidate": 0, "deferred": 1, "approved": 2, "promoted": 3, "rejected": 4}
@@ -500,12 +509,13 @@ def render_full_table(entries: list[dict]) -> list[str]:
 
 
 def render_by_blocking(entries: list[dict]) -> list[str]:
-    """按四问卡点分组，列条目 + 卡点理由（让读者明白为什么没开发）。"""
+    """按一问卡点分组，列条目 + 卡点理由（让读者明白为什么没开发）。"""
     lines = []
-    lines.append("## 按四问卡点分组（为什么没开发）")
+    lines.append("## 按一问卡点分组（为什么没开发）")
     lines.append("")
     lines.append(
-        "> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。"
+        "> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。"
+        "原 q2/q3/q4 灰度已废。"
     )
     lines.append("")
 
@@ -514,7 +524,7 @@ def render_by_blocking(entries: list[dict]) -> list[str]:
         bq = _blocking_question(e) or "未标注"
         groups.setdefault(bq, []).append(e)
 
-    for bq in ("q1", "q2", "q3", "q4", "pending", "none", "未标注"):
+    for bq in ("q1", "pending", "none", "case_review", "未标注"):
         items = groups.get(bq, [])
         if not items:
             continue
@@ -528,12 +538,11 @@ def render_by_blocking(entries: list[dict]) -> list[str]:
             name = (e.get("name", "") or "").replace("|", "/")
             plain = _plain_zh(e).replace("|", "/")
             domain = e.get("domain", "")
-            fq = e.get("four_question") or {}
-            # 卡点理由：取 blocking_question 对应 q 的 evidence，无则 last_review_outcome
+            fq = entry_admission(e)
+            # 卡点理由：取 q1_implemented 的 evidence，无则 last_review_outcome
             bq_evidence = ""
-            if bq in ("q1", "q2", "q3", "q4"):
-                qkey = f"q{bq[-1]}" if bq.startswith("q") else bq
-                qobj = fq.get(qkey, {}) or {}
+            if bq == "q1":
+                qobj = fq.get("q1_implemented", {}) or {}
                 bq_evidence = (qobj.get("evidence") or "").replace("|", "/")
             if not bq_evidence:
                 bq_evidence = (e.get("last_review_outcome") or "").replace("|", "/")
@@ -548,7 +557,7 @@ def render_review_schedule(entries: list[dict]) -> list[str]:
     lines = []
     lines.append("## 复查时间表")
     lines.append("")
-    lines.append("> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。")
+    lines.append("> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。")
     lines.append("")
     lines.append("| 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |")
     lines.append("|------|------|------|------|------|------|------|")

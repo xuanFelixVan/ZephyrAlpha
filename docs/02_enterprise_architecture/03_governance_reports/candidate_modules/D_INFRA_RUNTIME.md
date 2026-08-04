@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0094 | Rebalance Scheduler再平衡调度器 | / PC-03 / Rebalance Scheduler再平衡调度器 / ✅ 能建 / / 阈值+日历+事件触发+税收感知+成本感知 / | D_INFRA_RUNTIME | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0225 | Signal Audit Logger 信号审计 | / D-SIGNAL-06 / Signal Audit Logger / ✅ / / 信号审计日志+WORM写入 / | D_INFRA_RUNTIME | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -367,17 +367,11 @@ ttl: permanent
 | CAND-HARVEST-5079 | System Master Infrastructure 系统总蓝图基础设施支撑 | D-INFRA-01~D-INFRA-17 整体基础设施 | D_INFRA_RUNTIME | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5256 | Carbon-Aware Scheduler Optimizer 碳感知调度优化器 | §6设计决策 碳感知调度优化器 | D_INFRA_RUNTIME | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5277 | Data Change Audit 数据变更审计 | §13.4数据指纹与血缘合规 数据变更审计 | D_INFRA_RUNTIME | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-H1FS-001 | H1 Factor Source / H1 因子截面读取适配器 | (无真实痛点)设想为信号端提供友好因子读取接口,但读端已由 H1RedisReader 覆盖 | D_INFRA_RUNTIME | 否决（rejected） | q2 无需求驱动 | P2 | D_SIGNAL 信号域实际启动且需要批量多 symbol 截面读(PIPELINE)且 get_online_features 单标的不够用 | 2027-08-02 |
+| CAND-H1FS-001 | H1 Factor Source / H1 因子截面读取适配器 | (无真实痛点)设想为信号端提供友好因子读取接口,但读端已由 H1RedisReader 覆盖 | D_INFRA_RUNTIME | 否决（rejected） | 一问通过 | P2 | D_SIGNAL 信号域实际启动且需要批量多 symbol 截面读(PIPELINE)且 get_online_features 单标的不够用 | 2027-08-02 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
-
-### q2 无需求驱动（1 条）
-
-| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
-|------|------|------|------|------|------|
-| CAND-H1FS-001 | H1 Factor Source / H1 因子截面读取适配器 | (无真实痛点)设想为信号端提供友好因子读取接口,但读端已由 H1RedisReader 覆盖 | D_INFRA_RUNTIME | rejected,q2无需求驱动+q1已由H1RedisReader.get_online_features覆盖。depgraph node7964707已deprecated。除非D_SIGNAL信号域启动且批量截面读性能不达标,否则不再评估 | 信号域直接用 H1RedisReader.get_online_features(蓝图 §9 既定接口)。若未来需批量截面读,在 D_SIGNAL 启动时按需新增,届时过四问过滤 |
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（348 条）
 
@@ -732,9 +726,15 @@ ttl: permanent
 | CAND-HARVEST-5256 | Carbon-Aware Scheduler Optimizer 碳感知调度优化器 | §6设计决策 碳感知调度优化器 | D_INFRA_RUNTIME | harvest待评估（likely_misplaced） |  |
 | CAND-HARVEST-5277 | Data Change Audit 数据变更审计 | §13.4数据指纹与血缘合规 数据变更审计 | D_INFRA_RUNTIME | harvest待评估（likely_misplaced） |  |
 
+### 一问通过（1 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-H1FS-001 | H1 Factor Source / H1 因子截面读取适配器 | (无真实痛点)设想为信号端提供友好因子读取接口,但读端已由 H1RedisReader 覆盖 | D_INFRA_RUNTIME | rejected,q2无需求驱动+q1已由H1RedisReader.get_online_features覆盖。depgraph node7964707已deprecated。除非D_SIGNAL信号域启动且批量截面读性能不达标,否则不再评估 | 信号域直接用 H1RedisReader.get_online_features(蓝图 §9 既定接口)。若未来需批量截面读,在 D_SIGNAL 启动时按需新增,届时过四问过滤 |
+
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

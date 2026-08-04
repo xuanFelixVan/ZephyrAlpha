@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0011 | Capital Group Ecology & Multi-Party Game Simulation 资金群体生态与多方博弈模拟 | C 036：资金群体生态与多方博弈模拟 | D_SIMULATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0143 | Market Simulator市场仿真器 | / D-SIMULATION-01 / Market Simulator市场仿真器 / ✅ 能建 / / 订单簿仿真+价格生成+微观结构模拟 / | D_SIMULATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -112,17 +112,11 @@ ttl: permanent
 | CAND-HARVEST-5267 | Autoencoder Reconstruction Error Autoencoder重构误差 | / Autoencoder重构误差 / 训练正常市场数据，极端事件导致重构误差飙升 / 已知+未知异常；2015股灾/2020 COVID回测中提前1-3天预警 / 误报率高；需大量正常数据训练 / D-RISK-11尾部风险监控器扩展 / | D_SIMULATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5268 | GAN Adversarial Detection GAN对抗检测 | §12.2深度学习异常检测 GAN对抗检测方法 | D_SIMULATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5269 | Transformer Time Series Anomaly Transformer时序异常 | / Transformer时序异常 / 注意力机制捕捉多变量时序中的异常模式转换 / 跨市场传导早期信号；多变量联合异常 / 计算成本高；需GPU推理 / §14.2跨市场传导模型增强 / | D_SIMULATION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-SIM-002 | Experiment Queue Scheduler / 实验队列调度 | 并发实验>10时,顺序执行导致等待时间长 | D_SIMULATION | 延后（deferred） | q2 无需求驱动 | P2 | 并发实验数>10 等3条 | 2027-07-31 |
+| CAND-SIM-002 | Experiment Queue Scheduler / 实验队列调度 | 并发实验>10时,顺序执行导致等待时间长 | D_SIMULATION | 延后（deferred） | 一问通过 | P2 | 并发实验数>10 等3条 | 2027-07-31 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
-
-### q2 无需求驱动（1 条）
-
-| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
-|------|------|------|------|------|------|
-| CAND-SIM-002 | Experiment Queue Scheduler / 实验队列调度 | 并发实验>10时,顺序执行导致等待时间长 | D_SIMULATION | 首次登记,待并发实验>10时重新评估 | 顺序执行(当前实现)。代价:并发实验>10时等待时间长 |
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（93 条）
 
@@ -222,9 +216,15 @@ ttl: permanent
 | CAND-HARVEST-5268 | GAN Adversarial Detection GAN对抗检测 | §12.2深度学习异常检测 GAN对抗检测方法 | D_SIMULATION | harvest待评估（likely_new） |  |
 | CAND-HARVEST-5269 | Transformer Time Series Anomaly Transformer时序异常 | / Transformer时序异常 / 注意力机制捕捉多变量时序中的异常模式转换 / 跨市场传导早期信号；多变量联合异常 / 计算成本高；需GPU推理 / §14.2跨市场传导模型增强 / | D_SIMULATION | harvest待评估（likely_new） |  |
 
+### 一问通过（1 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-SIM-002 | Experiment Queue Scheduler / 实验队列调度 | 并发实验>10时,顺序执行导致等待时间长 | D_SIMULATION | 首次登记,待并发实验>10时重新评估 | 顺序执行(当前实现)。代价:并发实验>10时等待时间长 |
+
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

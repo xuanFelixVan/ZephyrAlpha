@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0287 | Non-AI Boundary Guard 非AI边界守卫 | / D-AUTONOMY-33 / Non-AI Boundary Guard / ✅ 能建 / / AI/non-AI边界守卫+权重≤30% / | D_AUTONOMY_PERM | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0654 | Model Registry 模型注册表 | 注册AI/ML模型及其依赖(对标MLflow) | D_AUTONOMY_PERM | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -118,9 +118,9 @@ ttl: permanent
 | CAND-HARVEST-5064 | Agent Capability Assessment Agent能力评估协议 | 每季度评估Agent能力边界评估结果纳入漂移检测基线METR/UK AISI 2025 | D_AUTONOMY_PERM | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5065 | Cluster Behavior Risk Protection 群集行为风险防护 | 相关性>0.7自动差异化+市场压力时降仓防止AI版闪崩 | D_AUTONOMY_PERM | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（98 条）
 
@@ -227,7 +227,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

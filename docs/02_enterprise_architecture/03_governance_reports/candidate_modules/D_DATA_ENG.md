@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0245 | Model Training Pipeline 管线 | / D-ML-01 / Model Training Pipeline / ✅ 能建 / 📋 项目内有蓝图编号ML-EXPERIMENT-DOMAIN-001已建设 / 模型训练+验证+超参搜索(PyTorch+RTX3090) / | D_DATA_ENG | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0485 | 清洗去重 Clean & Deduplicate | L0→L1流水线清洗去重缺口填补 | D_DATA_ENG | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -113,9 +113,9 @@ ttl: permanent
 | CAND-HARVEST-3956 | 质量SLA违约预测器 Quality SLA Breach Predictor | 质量SLA违约预测器 | D_DATA_ENG | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-4229 | Realtime Streaming 实时流处理 | / realtime_streaming.py / governance/ / 实时流处理 / ❌ 属于D-DATA-ENG——流处理是数据工程域 / | D_DATA_ENG | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（93 条）
 
@@ -217,7 +217,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

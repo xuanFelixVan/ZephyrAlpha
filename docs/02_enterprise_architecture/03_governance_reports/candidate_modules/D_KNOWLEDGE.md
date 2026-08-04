@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0012 | Knowledge Graph 知识图谱引擎 | C 016：知识图谱引擎 | D_KNOWLEDGE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0170 | Knowledge Graph知识图谱 | / D-KNOWLEDGE-01 / Knowledge Graph知识图谱 / ✅ 能建 / / Neo4j/NetworkX+实体关系+图查询 / | D_KNOWLEDGE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -111,9 +111,9 @@ ttl: permanent
 | CAND-HARVEST-5084 | Causal Reasoner 因果推理器 | A9运维视角——根因因果图更新(Neo4j/NetworkX图) | D_KNOWLEDGE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5085 | Statistical Analyzer 统计分析器 | A9运维视角——MTTR统计(Prometheus指标) | D_KNOWLEDGE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（91 条）
 
@@ -213,7 +213,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

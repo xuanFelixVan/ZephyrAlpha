@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0302 | Identity & Access Manager 身份与访问管理器 | / D-SECURITY-02 / Identity & Access Manager / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-018已建设 / OAuth2+JWT+MFA / | D_SECURITY | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0303 | Secret Manager 密钥管理器 | / D-SECURITY-03 / Secret Manager / ❌ 不能建 / / 门禁: 需Vault/HSM硬件 / 密钥管理+轮换 / | D_SECURITY | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -414,9 +414,9 @@ ttl: permanent
 | CAND-HARVEST-5031 | eBPF Kernel Monitoring eBPF内核监控 | Windows不支持+驱动风险 | D_SECURITY | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5032 | WASM Sandbox WASM沙箱 | 单机架构不需要 | D_SECURITY | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（394 条）
 
@@ -819,7 +819,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

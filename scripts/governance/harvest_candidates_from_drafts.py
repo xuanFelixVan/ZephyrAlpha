@@ -23,7 +23,7 @@
   - depgraph (extract_depgraph 拉各域 path 做去重/域校准)
 
 输出:
-  - candidate_module_registry.yaml 追加候选条目 (status=candidate, four_question=pending)
+  - candidate_module_registry.yaml 追加候选条目 (status=candidate, design_admission=pending)
   - module_translation_registry.yaml 追加 plain_zh 条目 (key=候选ID)
 
 策略: 分域批处理 + 启发式四态去重 (likely_new/likely_implemented/likely_planned/likely_misplaced) + 跨域校准
@@ -364,11 +364,8 @@ def build_candidate_entry(
     cand.append(f"  problem_it_solves: {yaml_str(ctx[:120] if ctx else 'harvest待评估')}")
     cand.append("  trigger_signals: []")
     cand.append(f"  keywords: {kws}")
-    cand.append("  four_question:")
-    cand.append("    q1: pending")
-    cand.append("    q2: pending")
-    cand.append("    q3: pending")
-    cand.append("    q4: pending")
+    cand.append("  design_admission:")
+    cand.append("    q1_implemented: pending")
     cand.append("    blocking_question: pending")
     cand.append("  status: candidate")
     cand.append("  priority: P2")

@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0356 | Telemetry Engine 遥测引擎 | / D-OPS-01 / Telemetry Engine / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-015已建设 / 系统遥测+指标+链路追踪 / | D_OPS | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0357 | Script System 脚本系统 | / D-OPS-04 / Script System / ✅ 能建 / 📋 项目内有蓝图编号MOD-INF-005已建设 / 10000脚本+健康检查 / | D_OPS | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -253,9 +253,9 @@ ttl: permanent
 | CAND-HARVEST-5251 | Low-Carbon Window Detection Enhancer 低碳窗口检测增强器 | 多区域低碳窗口联合优化+预测性调度 | D_OPS | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5252 | Carbon Budget Tracking Enhancer 碳预算追踪增强器 | Scope 3碳排放估算+供应链碳足迹追踪 | D_OPS | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（233 条）
 
@@ -497,7 +497,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

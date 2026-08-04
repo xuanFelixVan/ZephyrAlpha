@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0036 | 通知与告警 Alerting Notification | C 015：通知与告警 | D_INFRA_OPS | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0049 | MOD-INF-034 | **与ZephyrAlpha上岗测试系统的对接**：本系统的LLM路由消费ZephyrAlpha项目ModelProfiler(MOD-INF-034)的7维benchmark基线+ModelCapabilityExam(MOD-INF-0 | D_INFRA_OPS | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -372,9 +372,9 @@ ttl: permanent
 | CAND-HARVEST-4797 | Prometheus+Grafana监控栈 Prometheus Grafana Monitor Stack | / Prometheus + Grafana监控栈 / 本地单实例 / Prometheus采集Agent Metrics（Agent延迟、协作成功率、成本、反思有效率）；Grafana仪表盘展示Agent健康度/协作效率/自治质量/记忆效 | D_INFRA_OPS | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-4798 | Loki日志聚合 Loki Log Aggregation | 本地单实例接收JSON结构化日志+LogQL查询支持 | D_INFRA_OPS | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（352 条）
 
@@ -735,7 +735,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

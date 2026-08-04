@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0019 | Position Management 仓位管理唯一裁决中心 | C 047：仓位管理唯一裁决中心 | D_POSITION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0076 | Position Sizing Engine标级仓位决策引擎 | / POS-01 / Position Sizing Engine标级仓位决策引擎 / ✅ 能建 / / Kelly准则/风险预算/分布感知决策，半Kelly硬上限 / | D_POSITION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -44,9 +44,9 @@ ttl: permanent
 | CAND-HARVEST-1377 | Intraday Position Constraint 日内仓位约束 | 做T指令+底仓信息→做T仓位约束检查结果 | D_POSITION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-1378 | Position Behavior Classifier 持仓行为分类器 | 大单净流向+仓位变化率→持仓行为分类 | D_POSITION | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（24 条）
 
@@ -79,7 +79,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

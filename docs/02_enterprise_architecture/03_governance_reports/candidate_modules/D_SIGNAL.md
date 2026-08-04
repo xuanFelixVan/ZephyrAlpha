@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0004 | Signal Factory 信号工厂 | C 028：信号工厂（P0） | D_SIGNAL | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0007 | Market State Determination 市场状态判定 | C 021：市场状态判定 | D_SIGNAL | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -341,17 +341,11 @@ ttl: permanent
 | CAND-HARVEST-4935 | Opening Auction Microstructure Analysis 开盘竞价微结构分析模型 | 竞价信息提取/行为分类/信号生成 | D_SIGNAL | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-4936 | Unified Technical Pattern Recognition Engine 统一技术图形识别引擎 | DTW/CNN/Transformer图形识别 | D_SIGNAL | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-4937 | Event-Driven Distribution Filter 事件驱动分布筛选 | 知识图谱事件影响+传导链风险≤100只 | D_SIGNAL | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-SIG-002 | ML-driven Signal Synthesizer / ML驱动信号合成 | 因子数增多后,等权/固定IC加权无法捕捉因子间非线性关系 | D_SIGNAL | 延后（deferred） | q2 无需求驱动 | P2 | 因子数量>50(当前不足,需D_FACTOR扩展) 等3条 | 2027-07-31 |
+| CAND-SIG-002 | ML-driven Signal Synthesizer / ML驱动信号合成 | 因子数增多后,等权/固定IC加权无法捕捉因子间非线性关系 | D_SIGNAL | 延后（deferred） | 一问通过 | P2 | 因子数量>50(当前不足,需D_FACTOR扩展) 等3条 | 2027-07-31 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
-
-### q2 无需求驱动（1 条）
-
-| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
-|------|------|------|------|------|------|
-| CAND-SIG-002 | ML-driven Signal Synthesizer / ML驱动信号合成 | 因子数增多后,等权/固定IC加权无法捕捉因子间非线性关系 | D_SIGNAL | 首次登记,待因子数>50或IC加权信号质量不达标时重新评估 | IC加权占位(当前实现)。代价:无法捕捉因子非线性关系 |
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（322 条）
 
@@ -680,9 +674,15 @@ ttl: permanent
 | CAND-HARVEST-4936 | Unified Technical Pattern Recognition Engine 统一技术图形识别引擎 | DTW/CNN/Transformer图形识别 | D_SIGNAL | harvest待评估（likely_new） |  |
 | CAND-HARVEST-4937 | Event-Driven Distribution Filter 事件驱动分布筛选 | 知识图谱事件影响+传导链风险≤100只 | D_SIGNAL | harvest待评估（likely_new） |  |
 
+### 一问通过（1 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-SIG-002 | ML-driven Signal Synthesizer / ML驱动信号合成 | 因子数增多后,等权/固定IC加权无法捕捉因子间非线性关系 | D_SIGNAL | 首次登记,待因子数>50或IC加权信号质量不达标时重新评估 | IC加权占位(当前实现)。代价:无法捕捉因子非线性关系 |
+
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|

@@ -12,12 +12,12 @@ ttl: permanent
 
 > [← 返回索引](index.md)
 
-> 本域候选 **137** 条（原有 0 + harvest 137）。
+> 本域候选 **139** 条（原有 2 + harvest 137）。
 > harvest 去重四态: likely_new=70 / likely_implemented=33 / likely_planned=10 / uncertain=24
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0014 | Strategy Factory 策略工厂 | C 006：策略工厂 | D_PF_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0015 | Multi-Scenario Response & Contingency 多情景对策与预案 | C 005：多情景对策与预案 | D_PF_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -156,10 +156,19 @@ ttl: permanent
 | CAND-HARVEST-5253 | Liquidity Estimator 流动性估算器 | / 合并→PC-08 / Liquidity Estimator / 流动性是容量约束的子功能 / | D_PF_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5254 | Benchmark Manager 基准管理器 | / 合并→PC-10 / Benchmark Manager / 基准管理是绩效归因的子功能 / | D_PF_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5255 | Carbon Footprint 碳足迹 | / 移除 / Carbon Footprint / P2远期ESG / | D_PF_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
+| CAND-PF004-001 | MOD-PF-004 min_variance_strategy(错误形态登记) | (错误形态)min_variance分配逻辑应为DefaultEquityStrategy._min_variance_alloc方法,真正gap见CAND-PFALLOC-001(deferred) | D_PF_CORE | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-04 |
+| CAND-PF005-001 | MOD-PF-005 risk_parity_strategy(错误形态登记) | (错误形态)risk_parity分配逻辑应为DefaultEquityStrategy._risk_parity_alloc方法,真正gap见CAND-PFALLOC-001(deferred) | D_PF_CORE | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-04 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
+
+### q1 已实现/重复（2 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-PF004-001 | MOD-PF-004 min_variance_strategy(错误形态登记) | (错误形态)min_variance分配逻辑应为DefaultEquityStrategy._min_variance_alloc方法,真正gap见CAND-PFALLOC-001(deferred) | D_PF_CORE | min_variance是RebalanceMode枚举值(L60-61)非独立模块,_alloc方法缺失(L127 else fallback equal_weight).节点为错误形态登记,文件不存在(幽灵).真正gap=补_min_variance_alloc方法,已录CAND-PFALLOC-001(deferred) | CAND-PFALLOC-001(deferred,补_min_variance_alloc方法到DefaultEquityStrategy)+MOD-L05-001(default_equity_strategy.py,production) |
+| CAND-PF005-001 | MOD-PF-005 risk_parity_strategy(错误形态登记) | (错误形态)risk_parity分配逻辑应为DefaultEquityStrategy._risk_parity_alloc方法,真正gap见CAND-PFALLOC-001(deferred) | D_PF_CORE | risk_parity是RebalanceMode枚举值(L60-61)非独立模块,_alloc方法缺失(L127 else fallback equal_weight).节点为错误形态登记,文件不存在(幽灵).真正gap=补_risk_parity_alloc方法,已录CAND-PFALLOC-001(deferred) | CAND-PFALLOC-001(deferred,补_risk_parity_alloc方法到DefaultEquityStrategy)+MOD-L05-001(default_equity_strategy.py,production) |
 
 ### 待评估（137 条）
 
@@ -305,7 +314,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|
@@ -446,3 +455,5 @@ ttl: permanent
 | 2026-11-30 | quarterly | CAND-HARVEST-5253 | Liquidity Estimator 流动性估算器 | D_PF_CORE | 候选待评（candidate） | harvest待评估（likely_new） |
 | 2026-11-30 | quarterly | CAND-HARVEST-5254 | Benchmark Manager 基准管理器 | D_PF_CORE | 候选待评（candidate） | harvest待评估（likely_new） |
 | 2026-11-30 | quarterly | CAND-HARVEST-5255 | Carbon Footprint 碳足迹 | D_PF_CORE | 候选待评（candidate） | harvest待评估（likely_new） |
+| 2027-08-04 | yearly | CAND-PF004-001 | MOD-PF-004 min_variance_strategy(错误形态登记) | D_PF_CORE | 否决（rejected） | rejected,确认错误形态登记。min_variance是RebalanceMode枚举值非独立模块,应为DefaultEquityStrategy._min_variance_alloc方法.真正gap见CAND-PFALLOC-001(deferred).除非CAND-PFALLOC-001方案变更,否则不再评估MOD-PF-004为独立模块 |
+| 2027-08-04 | yearly | CAND-PF005-001 | MOD-PF-005 risk_parity_strategy(错误形态登记) | D_PF_CORE | 否决（rejected） | rejected,确认错误形态登记。risk_parity是RebalanceMode枚举值非独立模块,应为DefaultEquityStrategy._risk_parity_alloc方法.真正gap见CAND-PFALLOC-001(deferred).与CAND-PF004-001同类,除非CAND-PFALLOC-001方案变更,否则不再评估MOD-PF-005为独立模块 |

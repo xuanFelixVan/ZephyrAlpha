@@ -12,12 +12,12 @@ ttl: permanent
 
 > [← 返回索引](index.md)
 
-> 本域候选 **63** 条（原有 2 + harvest 61）。
+> 本域候选 **68** 条（原有 7 + harvest 61）。
 > harvest 去重四态: likely_new=12 / likely_implemented=34 / likely_planned=14 / uncertain=1
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0016 | 做T日内套利 | C 012：做T日内套利 | D_EX_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0021 | Trade Execution 交易执行与订单管理 | C 002：交易执行与订单管理 | D_EX_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -80,19 +80,26 @@ ttl: permanent
 | CAND-HARVEST-5050 | Nanosecond Critical Path Analyzer 纳秒级关键路径分析器 | / 纳秒级关键路径分析器 / Python运行时+miniQMT 3秒Tick / FPGA/内核旁路+交易通道延迟<1ms / | D_EX_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5054 | Trading Channel Auto Recovery 交易通道熔断自动恢复 | HB-SEC-06+HB-SEC-07双重锁定 | D_EX_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-5080 | Emergency Execution 紧急执行 | 风控强制卖出链——EX-CORE-02紧急执行 | D_EX_CORE | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-EX-001 | Futu/IB Broker Adapters / 富途IB券商适配器 | 实盘需要非MiniQMT渠道(如港股/美股/期货)下单时,无对应券商适配器 | D_EX_CORE | 延后（deferred） | q2 无需求驱动 | P1 | 实盘扩展到港股/美股/期货市场(MiniQMT仅覆盖A股) 等3条 | 2027-01-31 |
-| CAND-EX-002 | Multi-threaded Order Processing / 多线程订单处理 | 高频/批量下单时单线程订单处理成为瓶颈(并发>10) | D_EX_CORE | 延后（deferred） | q2 无需求驱动 | P1 | 并发订单数持续>10 等3条 | 2027-01-31 |
+| CAND-EX-001 | Futu/IB Broker Adapters / 富途IB券商适配器 | 实盘需要非MiniQMT渠道(如港股/美股/期货)下单时,无对应券商适配器 | D_EX_CORE | 延后（deferred） | 一问通过 | P1 | 实盘扩展到港股/美股/期货市场(MiniQMT仅覆盖A股) 等3条 | 2027-01-31 |
+| CAND-EX-002 | Multi-threaded Order Processing / 多线程订单处理 | 高频/批量下单时单线程订单处理成为瓶颈(并发>10) | D_EX_CORE | 延后（deferred） | 一问通过 | P1 | 并发订单数持续>10 等3条 | 2027-01-31 |
+| CAND-EX-003 | Redis幂等性存储 / Redis Idempotency Store | 下单幂等性(INV-007),防重复扣减/重复创建 | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P3 | MOD-INF-016 出现跨进程去重缺口且 SQLite 后端不足以支撑 | 2027-08-05 |
+| CAND-EX-004 | 蓝图Implementer / Blueprint Implementer | (无具体业务问题——自我指涉元概念) | D_EX_CORE | 否决（rejected） | 逐案论证 | P3 | — | 2027-08-05 |
+| CAND-EX-005 | 执行域值对象 / Execution Value Objects | (无——Pydantic BaseModel原生提供值对象语义) | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P3 | — | 2027-08-05 |
+| CAND-EX-006 | 执行域工厂 / Execution Factory | (无——aggregate_root_manager已是Facade构建入口) | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P3 | — | 2027-08-05 |
+| CAND-EX015-001 | MOD-EX-015 execution_report(重复幽灵节点) | (已解决)执行报告已由MOD-INF-016正确承接,3处实现(trading/shared/contracts) | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-04 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
-### q2 无需求驱动（2 条）
+### q1 已实现/重复（4 条）
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-EX-001 | Futu/IB Broker Adapters / 富途IB券商适配器 | 实盘需要非MiniQMT渠道(如港股/美股/期货)下单时,无对应券商适配器 | D_EX_CORE | 首次登记,待非MiniQMT渠道需求或实盘扩展时重新评估 | MiniQMT渠道(已施工,覆盖A股实盘)。代价:无法接入港股/美股/期货 |
-| CAND-EX-002 | Multi-threaded Order Processing / 多线程订单处理 | 高频/批量下单时单线程订单处理成为瓶颈(并发>10) | D_EX_CORE | 首次登记,待并发订单>10或提交延迟>100ms时重新评估 | 单线程顺序提交(当前实现)。代价:并发>10时延迟增加 |
+| CAND-EX-003 | Redis幂等性存储 / Redis Idempotency Store | 下单幂等性(INV-007),防重复扣减/重复创建 | D_EX_CORE | IdempotencyStore/SQLiteIdempotencyStore/build_idempotency_key 已production;repository_interface INVARIANT save幂等;idempotency_key 已内联5处 | 维持 MOD-INF-016 + repository_interface save幂等。代价:无,已完整覆盖 |
+| CAND-EX-005 | 执行域值对象 / Execution Value Objects | (无——Pydantic BaseModel原生提供值对象语义) | D_EX_CORE | 项目全局强制Pydantic V2;值对象语义原生支持,无需独立模块 | 维持 shared.contracts Pydantic 模型。代价:无 |
+| CAND-EX-006 | 执行域工厂 / Execution Factory | (无——aggregate_root_manager已是Facade构建入口) | D_EX_CORE | aggregate_root_manager已承担Facade/构建入口('把订单仓储/成交处理/持仓跟踪拧成一股绳');Python用__init__/classmethod构造 | 维持 aggregate_root_manager。代价:无 |
+| CAND-EX015-001 | MOD-EX-015 execution_report(重复幽灵节点) | (已解决)执行报告已由MOD-INF-016正确承接,3处实现(trading/shared/contracts) | D_EX_CORE | execution_report已由MOD-INF-016实现,3处:trading/trading_contracts/execution/execution_report.py(stable)+shared/contracts/execution/execution_report.py(generated)+shared/contracts/execution_report.py(generated) | MOD-INF-016(节点8616268,src/zephyr/trading/trading_contracts/execution/execution_report.py,stable) |
 
 ### 待评估（61 条）
 
@@ -160,9 +167,22 @@ ttl: permanent
 | CAND-HARVEST-5054 | Trading Channel Auto Recovery 交易通道熔断自动恢复 | HB-SEC-06+HB-SEC-07双重锁定 | D_EX_CORE | harvest待评估（likely_implemented） |  |
 | CAND-HARVEST-5080 | Emergency Execution 紧急执行 | 风控强制卖出链——EX-CORE-02紧急执行 | D_EX_CORE | harvest待评估（likely_implemented） |  |
 
+### 一问通过（2 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-EX-001 | Futu/IB Broker Adapters / 富途IB券商适配器 | 实盘需要非MiniQMT渠道(如港股/美股/期货)下单时,无对应券商适配器 | D_EX_CORE | 首次登记,待非MiniQMT渠道需求或实盘扩展时重新评估 | MiniQMT渠道(已施工,覆盖A股实盘)。代价:无法接入港股/美股/期货 |
+| CAND-EX-002 | Multi-threaded Order Processing / 多线程订单处理 | 高频/批量下单时单线程订单处理成为瓶颈(并发>10) | D_EX_CORE | 首次登记,待并发订单>10或提交延迟>100ms时重新评估 | 单线程顺序提交(当前实现)。代价:并发>10时延迟增加 |
+
+### 逐案论证（1 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-EX-004 | 蓝图Implementer / Blueprint Implementer | (无具体业务问题——自我指涉元概念) | D_EX_CORE | rejected,q2无驱动(自我指涉元模块)。除非出现明确的'蓝图→代码'自动化需求且无现有工具,否则不再评估 | 不实现。代价:无,无任何模块需要它 |
+
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|
@@ -229,3 +249,8 @@ ttl: permanent
 | 2026-11-30 | quarterly | CAND-HARVEST-5080 | Emergency Execution 紧急执行 | D_EX_CORE | 候选待评（candidate） | harvest待评估（likely_implemented） |
 | 2027-01-31 | half_yearly | CAND-EX-001 | Futu/IB Broker Adapters / 富途IB券商适配器 | D_EX_CORE | 延后（deferred） | 首次登记,待非MiniQMT渠道需求或实盘扩展时重新评估 |
 | 2027-01-31 | half_yearly | CAND-EX-002 | Multi-threaded Order Processing / 多线程订单处理 | D_EX_CORE | 延后（deferred） | 首次登记,待并发订单>10或提交延迟>100ms时重新评估 |
+| 2027-08-04 | yearly | CAND-EX015-001 | MOD-EX-015 execution_report(重复幽灵节点) | D_EX_CORE | 否决（rejected） | rejected,确认重复幽灵节点。真源execution_report=MOD-INF-016(节点8616268 trading_contracts/execution/execution_report.py stable).除非MOD-INF-016出现重大缺口,否则不再评估MOD-EX-015 |
+| 2027-08-05 | yearly | CAND-EX-003 | Redis幂等性存储 / Redis Idempotency Store | D_EX_CORE | 否决（rejected） | rejected,q1已实现(MOD-INF-016)。除非 shared/infra/idempotency 出现跨进程去重缺口需Redis后端,否则不再评估 |
+| 2027-08-05 | yearly | CAND-EX-004 | 蓝图Implementer / Blueprint Implementer | D_EX_CORE | 否决（rejected） | rejected,q2无驱动(自我指涉元模块)。除非出现明确的'蓝图→代码'自动化需求且无现有工具,否则不再评估 |
+| 2027-08-05 | yearly | CAND-EX-005 | 执行域值对象 / Execution Value Objects | D_EX_CORE | 否决（rejected） | rejected,q1已实现(Pydantic V2强制)。除非放弃Pydantic转纯dataclass,否则不再评估 |
+| 2027-08-05 | yearly | CAND-EX-006 | 执行域工厂 / Execution Factory | D_EX_CORE | 否决（rejected） | rejected,q1已实现(aggregate_root_manager)。除非aggregate_root_manager重构移除Facade职责,否则不再评估 |

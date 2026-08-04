@@ -17,7 +17,7 @@ ttl: permanent
 
 ## 完整清单
 
-| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 四问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
+| ID | 名称 / Name | 大白话（干什么用） | 域 | 状态 | 一问卡点 | 优先级 | 触发信号摘要 | 下次复查 |
 |------|------|------|------|------|------|:---:|------|------|
 | CAND-HARVEST-0039 | A-Share Dynamic Position Coefficient Calculator A股动态仓位系数 | / PA-06 / A-Share Dynamic Position Coefficient Calculator A股动态仓位系数 / ✅ 能建 / / K=E(R)/sigma^2凯利变体+市场环境系数+个股确定性系数 / | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-0110 | Meta-Strategy Router元策略路由 | / PA-01 / Meta-Strategy Router元策略路由 / ✅ 能建 / / 根据Regime选择策略组合+权重分配+多样性守门 / | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -100,11 +100,11 @@ ttl: permanent
 | CAND-HARVEST-3295 | 解耦保证 Decoupling Guarantee | 学习系统与执行层完全解耦学习系统崩溃不影响已有仓位 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-3296 | ESRB系统性风险向量 ESRB Systemic Risk Vector | 顺周期性+模型同质性+互联性PA缓解措施 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-3297 | 仲裁规则 Arbitration Rules | 冷启动vs风险预算/跨策略仓位合并vs单票仓位上限/风险预算仓位vs市场状态仓位上限 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-PFALLOC-001 | Min-Variance & Risk-Parity Rebalance Modes / 最小方差与风险平价再平衡模式 | 实盘组合分配只能用 equal_weight/signal_weight,无法执行最小方差/风险平价这两种基础量化分配方法——当前 min_variance/risk_parity 模式静默 fallback 到 equal_weight,实盘分配与预期不符 | D_PF_ALLOC | 延后（deferred） | 四问全过 | P1 | 实盘需启用 min_variance/risk_parity 分配模式 等3条 | 2026-11-30 |
+| CAND-PFALLOC-001 | Min-Variance & Risk-Parity Rebalance Modes / 最小方差与风险平价再平衡模式 | 实盘组合分配只能用 equal_weight/signal_weight,无法执行最小方差/风险平价这两种基础量化分配方法——当前 min_variance/risk_parity 模式静默 fallback 到 equal_weight,实盘分配与预期不符 | D_PF_ALLOC | 延后（deferred） | 一问通过 | P1 | 实盘需启用 min_variance/risk_parity 分配模式 等3条 | 2026-11-30 |
 
-## 按四问卡点分组（为什么没开发）
+## 按一问卡点分组（为什么没开发）
 
-> 四问过滤：q1已实现 / q2需求驱动 / q3域活着 / q4 AI替代。任一问「否」即不进 depgraph 设计态，登记在候选库。
+> 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
 ### 待评估（81 条）
 
@@ -192,7 +192,7 @@ ttl: permanent
 | CAND-HARVEST-3296 | ESRB系统性风险向量 ESRB Systemic Risk Vector | 顺周期性+模型同质性+互联性PA缓解措施 | D_PF_ALLOC | harvest待评估（likely_new） |  |
 | CAND-HARVEST-3297 | 仲裁规则 Arbitration Rules | 冷启动vs风险预算/跨策略仓位合并vs单票仓位上限/风险预算仓位vs市场状态仓位上限 | D_PF_ALLOC | harvest待评估（likely_new） |  |
 
-### 四问全过（1 条）
+### 一问通过（1 条）
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
@@ -200,7 +200,7 @@ ttl: permanent
 
 ## 复查时间表
 
-> 按 next_review_date 升序。复查时重新过四问，触发信号命中则晋升到 depgraph 设计态。
+> 按 next_review_date 升序。复查时重新过一问，触发信号命中则晋升到 depgraph 设计态。
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|
