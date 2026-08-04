@@ -16,9 +16,9 @@ description: '每个 .py 模块的中英文名+功能简介中英文+大白话�
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.8.1
+version: 1.8.2
 created: '2026-07-31'
-last_updated: 2026-08-02
+last_updated: 2026-08-04
 unique_key:
 - module_path
 entry_schema:
@@ -40829,6 +40829,104 @@ entries:
   desc_en: ""
   plain_zh: "从美联储经济数据库(FRED)和世界银行API免费获取国际宏观经济指标，包括美国GDP/CPI/失业率/国债收益率/汇率/大宗商品，以及各国GDP/人口/进出口等，补充国内数据源覆盖不到的国际对比数据"
 
+- module_path: MOD-H1-REDIS-HOT
+  domain_id: D_INFRA_RUNTIME
+  name_zh: H1 Redis 热缓存
+  name_en: H1 Redis Hot Cache
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: "layer:CFG-rule-enforcement-registry"
+  domain_id: D_GOV_RULE
+  name_zh: 规则执行注册表层
+  name_en: Rule Enforcement Registry Layer
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: "layer:CFG-rule-registry-collection"
+  domain_id: D_GOV_RULE
+  name_zh: 规则注册表收集层
+  name_en: Rule Registry Collection Layer
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: "layer:CFG-scripts-registry"
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 脚本注册表层
+  name_en: Scripts Registry Layer
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: "layer:CFG-test-suite-registry"
+  domain_id: D_GOV_RULE
+  name_zh: 测试套件注册表层
+  name_en: Test Suite Registry Layer
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: scripts/governance/oneoff/_fix_remaining_en.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 剩余英文翻译修复器
+  name_en: Fix Remaining English Translations
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: scripts/governance/oneoff/fix_module_translation_zh.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 模块中文翻译批量修复器
+  name_en: Fix Module Translation Chinese
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: test_trigger_A.py
+  domain_id: D_ALT_DATA
+  name_zh: 测试触发器A
+  name_en: Test Trigger A
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: test_trigger_B.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 测试触发器B
+  name_en: Test Trigger B
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: tests/data/test_source_health_check.py
+  domain_id: D_DATA
+  name_zh: 数据源健康检查测试
+  name_en: Test Source Health Check
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml#INFRA-DB-001"
+  domain_id: D_INFRA_RUNTIME
+  name_zh: SQLite 任务库
+  name_en: SQLite Task DB
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml#INFRA-DB-002"
+  domain_id: D_INFRA_RUNTIME
+  name_zh: ChromaDB 向量数据库
+  name_en: ChromaDB Vector DB
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml#INFRA-DB-003"
+  domain_id: D_INFRA_RUNTIME
+  name_zh: 依赖架构图库
+  name_en: Depgraph PostgreSQL DB
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml#INFRA-DB-006"
+  domain_id: D_INFRA_RUNTIME
+  name_zh: ClickHouse 业务行情仓库
+  name_en: ClickHouse Market Warehouse
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

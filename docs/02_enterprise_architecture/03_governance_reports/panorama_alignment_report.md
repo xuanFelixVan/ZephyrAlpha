@@ -10,7 +10,7 @@ ttl: permanent
 
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-08-04 13:06:24
+- 生成时间: 2026-08-04 13:16:21
 - 数据源: depgraph (PostgreSQL)
 - 四图节点数: depgraph=910 / dataflow=271 / decision=693 / blueprint=164
 - 问题总数: 52
@@ -23,11 +23,11 @@ ttl: permanent
 
 | module_id | graph | 名称 / Name | entity_name |
 |---|---|---|---|
-| MOD-H1-REDIS-HOT | dataflow | — | MOD-H1-REDIS-HOT |
-| CFG-rule-enforcement-registry | decision | — | layer:CFG-rule-enforcement-registry |
-| CFG-rule-registry-collection | decision | — | layer:CFG-rule-registry-collection |
-| CFG-scripts-registry | decision | — | layer:CFG-scripts-registry |
-| CFG-test-suite-registry | decision | — | layer:CFG-test-suite-registry |
+| MOD-H1-REDIS-HOT | dataflow | H1 Redis 热缓存 / H1 Redis Hot Cache | MOD-H1-REDIS-HOT |
+| CFG-rule-enforcement-registry | decision | 规则执行注册表层 / Rule Enforcement Registry Layer | layer:CFG-rule-enforcement-registry |
+| CFG-rule-registry-collection | decision | 规则注册表收集层 / Rule Registry Collection Layer | layer:CFG-rule-registry-collection |
+| CFG-scripts-registry | decision | 脚本注册表层 / Scripts Registry Layer | layer:CFG-scripts-registry |
+| CFG-test-suite-registry | decision | 测试套件注册表层 / Test Suite Registry Layer | layer:CFG-test-suite-registry |
 | MOD-CFG_RULE_ENFORCEMENT | depgraph | 规则执行注册表 / Rule Enforcement Registry | docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml |
 | MOD-CFG_RULE_REGISTRY | depgraph | 规则注册表收集 / rule_registry_collection | docs/01_policies_and_standards/_registry/catalogs/rule_registry_collection.yaml |
 | MOD-CFG_SCRIPTS | depgraph | 脚本注册表 / Scripts Registry | docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml |
@@ -36,8 +36,8 @@ ttl: permanent
 | MOD-GOV_DEAD_PUBLIC_WRAPPER_RECONCILER | depgraph | 死公共 wrapper 自动检测 reconciler. / Dead Public Wrapper Reconciler | src/zephyr/governance/audit/dead_public_wrapper_reconciler.py |
 | MOD-GOV_DIAGNOSE_BREADTH | depgraph | diagnosebreadth失败 / diagnose_breadth_failed | scripts/diagnose_breadth_failed.py |
 | MOD-GOV_DIAGNOSE_DEPGRAPH | depgraph | 诊断依赖图 / Diagnose Depgraph | scripts/governance/d5_architecture/diagnose_depgraph.py |
-| MOD-GOV_FIX_REM_EN | depgraph | — | scripts/governance/oneoff/_fix_remaining_en.py |
-| MOD-GOV_FIX_TRANS_ZH | depgraph | — | scripts/governance/oneoff/fix_module_translation_zh.py |
+| MOD-GOV_FIX_REM_EN | depgraph | 剩余英文翻译修复器 / Fix Remaining English Translations | scripts/governance/oneoff/_fix_remaining_en.py |
+| MOD-GOV_FIX_TRANS_ZH | depgraph | 模块中文翻译批量修复器 / Fix Module Translation Chinese | scripts/governance/oneoff/fix_module_translation_zh.py |
 | MOD-GOV_GATE_CHAIN | depgraph | 顺序运行多个门禁脚本，任一失败即整体失败 / Run Gate Chain | scripts/governance/run_gate_chain.py |
 | MOD-GOV_GENERATE_CANDIDATE_MODULE_REPORT | depgraph | 从 candidate_module_registry.yaml 生成候选模块清单报告 / Generate Candidate Module Report | scripts/governance/d5_architecture/generators/generate_candidate_module_report.py |
 | MOD-GOV_GIT_GUARD_BYPASS_RECONCILER | depgraph | git_guard alias 绕过检测 post-commit reconciler / Git Guard Bypass Reconciler | src/zephyr/governance/audit/git_guard_bypass_reconciler.py |
@@ -87,7 +87,7 @@ ttl: permanent
 
 | module_id | graph | 名称 / Name | entity_name |
 |---|---|---|---|
-| MOD-H1-REDIS-HOT | dataflow | — | MOD-H1-REDIS-HOT |
+| MOD-H1-REDIS-HOT | dataflow | H1 Redis 热缓存 / H1 Redis Hot Cache | MOD-H1-REDIS-HOT |
 
 ## 5. 处置建议
 
