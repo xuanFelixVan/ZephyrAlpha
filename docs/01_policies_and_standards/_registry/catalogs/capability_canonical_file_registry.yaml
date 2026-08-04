@@ -7993,7 +7993,7 @@ creation_tokens:
     created_by: "session-secrets-gov-phase1"
     capability: "secrets_governance_ruling"
     note: "密钥治理架构裁定文档（100% AI 开发场景下的密钥可知性/可达性/可审计性分析）"
-  - file: "config/SECRETS.md"
+  - file: "SECRETS.md"
     token: "auto-secrets-doc-20260804"
     created_by: "session-secrets-gov-phase1"
     capability: "secrets_management_doc"
