@@ -44,6 +44,7 @@ from ..provider_base import (
 from ..policy_registry import SourcePolicy
 from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from ..table_registry import get_registry
+from zephyr.shared.utils.time_utils import now_utc, seconds_since
 
 log = logging.getLogger(__name__)
 
@@ -54,6 +55,10 @@ _TBL_BLOCK_TRADE = get_registry().table("market_block_trade")
 _TBL_BLOCK_TRADE_DETAIL = get_registry().table("market_block_trade_detail")
 _TBL_CONCEPT_BOARD = get_registry().table("market_concept_board")
 _TBL_CONCEPT_BOARD_CONSTITUENT = get_registry().table("market_concept_board_constituent")
+# #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
+_TBL_CONCEPT_SECTOR = get_registry().table("market_concept_sector")
+_TBL_REALTIME_SNAPSHOT = get_registry().table("market_realtime_snapshot")
+_TBL_SECTOR_META = get_registry().table("market_sector_meta")
 _TBL_CONVERTIBLE_BOND_LIST = get_registry().table("market_cb_list")
 _TBL_DAILY_VALUATION = get_registry().table("market_daily_valuation")
 _TBL_DISCLOSURE_PLAN = get_registry().table("fund_disclosure_plan")
@@ -113,6 +118,10 @@ _AKSHARE_CAPABILITIES = frozenset({
     "hog_province_spot",  # 分省生猪现价（akshare spot_hog_soozhu）
     "stock_list_delisted",  # #ARCH-CH-021 P0-1: 退市股票列表（SH+SZ delist）
     "futures_position",  # #ARCH-FUTURES-POSITION: 替代 QMT（QMT get_instrument_detail 返回全0）
+    # #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
+    "concept_sector",      # 替代 iFind i问财概念板块（akshare stock_board_concept_name_ths）
+    "realtime_snapshot",   # 替代 iFind THS_RealtimeQuotes（akshare stock_zh_a_spot_em，注意反爬）
+    "sector_meta",         # 替代 iFind 881板块汇总（akshare 从成分股聚合计算）
 })
 
 
@@ -298,6 +307,10 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("hog_spot_index", supports_symbols_null=True),
             CapabilityContract("hog_futures_core", supports_symbols_null=True),
             CapabilityContract("hog_province_spot", supports_symbols_null=True),
+            # #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
+            CapabilityContract("concept_sector", supports_symbols_null=True),
+            CapabilityContract("realtime_snapshot", supports_symbols_null=True),
+            CapabilityContract("sector_meta", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -350,9 +363,14 @@ class AkshareIngestProvider(IngestProviderBase):
     def _fetch_macro_data(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """获取宏观经济数据：GDP / CPI / PMI / 货币供应量。
+        """获取宏观经济数据（扩展版 #ARCH-IFIND-FAILOVER）。
 
-        每个指标函数作为一批，yield 一个 FetchResult（共 4 批）。
+        原 4 指标：GDP / CPI / PMI / 货币供应量（M0/M1/M2）。
+        新增 8 类利率/宏观指标（替代 iFind EDB）：
+        Shibor(8期限) / 回购定盘利率(FR/FDR) / 中国国债收益率(多曲线) /
+        中美国债收益率 / LPR(1年/5年) / 社融增量 / 美联储利率 / 央行资产负债表。
+
+        每个指标函数作为一批，yield 一个 FetchResult。
         异常时 yield FetchResult(error=str(e))，不抛出。
         """
         import akshare as ak
@@ -361,7 +379,7 @@ class AkshareIngestProvider(IngestProviderBase):
         columns = ["report_date", "indicator_name", "indicator_value", "unit", "frequency"]
         last_key = datetime.date.today().isoformat()
 
-        # (批次名, akshare 函数, 行转换器)
+        # ---- 原 4 指标（月频/季频）----
         jobs = [
             ("GDP", ak.macro_china_gdp, self._transform_gdp),
             ("CPI", ak.macro_china_cpi, self._transform_monthly),
@@ -370,7 +388,7 @@ class AkshareIngestProvider(IngestProviderBase):
         ]
 
         for name, fn, transform in jobs:
-            t0 = time.time()
+            t0 = now_utc()
             try:
                 # 用 _call_with_policy 包裹，自动限流+重试
                 df = self._call_with_policy(fn, policy)
@@ -381,7 +399,7 @@ class AkshareIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=rows,
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=seconds_since(t0),
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"{name} 获取失败: {e}")
@@ -390,7 +408,49 @@ class AkshareIngestProvider(IngestProviderBase):
                     columns=columns,
                     rows=[],
                     last_key=last_key,
-                    elapsed_sec=time.time() - t0,
+                    elapsed_sec=seconds_since(t0),
+                    error=str(e),
+                )
+
+        # ---- 新增：利率类指标（#ARCH-IFIND-FAILOVER EDB 替代）----
+        # 每个 job: (name, fetch_fn(policy)->DataFrame, transform_fn(df)->list[tuple])
+        new_jobs = [
+            ("Shibor", self._fetch_shibor_rates, self._transform_shibor),
+            ("RepoRate", self._fetch_repo_rates, self._transform_repo),
+            ("CNYield", self._fetch_cn_bond_yield, self._transform_cn_yield),
+            ("USCNYield", self._fetch_us_cn_bond_yield, self._transform_us_cn_yield),
+            ("LPR", lambda p: self._call_with_policy(ak.macro_china_lpr, p),
+             self._transform_lpr),
+            ("SocialFinancing", lambda p: self._call_with_policy(ak.macro_china_shrzgm, p),
+             self._transform_social_financing),
+            ("FedRate", lambda p: self._call_with_policy(ak.macro_bank_usa_interest_rate, p),
+             self._transform_fed_rate),
+            ("CentralBankBalance",
+             lambda p: self._call_with_policy(ak.macro_china_central_bank_balance, p),
+             self._transform_cb_balance),
+        ]
+
+        for name, fetch_fn, transform in new_jobs:
+            t0 = now_utc()
+            try:
+                df = fetch_fn(policy)
+                rows = transform(df)
+                self._log.info(f"{name} 获取完成，{len(rows)} 行（EDB替代）")
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=last_key,
+                    elapsed_sec=seconds_since(t0),
+                )
+            except Exception as e:  # noqa: BLE001
+                self._log.warning(f"{name} 获取失败: {e}")
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=last_key,
+                    elapsed_sec=seconds_since(t0),
                     error=str(e),
                 )
 
@@ -438,6 +498,280 @@ class AkshareIngestProvider(IngestProviderBase):
                 if val is not None:
                     rows.append((report_date, col, val, "", "月度"))
         return rows
+
+    # ---- EDB 替代：利率类指标 fetch wrappers（#ARCH-IFIND-FAILOVER）----
+
+    def _fetch_shibor_rates(self, policy) -> "pd.DataFrame":
+        """获取 Shibor 全期限利率（8 个期限，日频）。
+
+        调用 ak.rate_interbank 8 次（每个期限一次），合并为单 DataFrame，
+        只取最近 30 天避免数据量过大。
+        """
+        import akshare as ak
+        import pandas as pd
+        tenors = ["隔夜", "1周", "2周", "1月", "3月", "6月", "9月", "1年"]
+        dfs = []
+        for tenor in tenors:
+            df = self._call_with_policy(
+                ak.rate_interbank, policy,
+                market="上海银行同业拆借市场",
+                symbol="Shibor人民币",
+                indicator=tenor,
+            )
+            if df is not None and len(df) > 0:
+                df = df.tail(30).copy()
+                df["tenor"] = tenor
+                dfs.append(df)
+        if not dfs:
+            return pd.DataFrame()
+        return pd.concat(dfs, ignore_index=True)
+
+    def _fetch_repo_rates(self, policy) -> "pd.DataFrame":
+        """获取回购定盘利率（FR001/FR007/FR014/FDR001/FDR007/FDR014，日频）。"""
+        import akshare as ak
+        end = datetime.date.today()
+        start = end - datetime.timedelta(days=30)
+        return self._call_with_policy(
+            ak.repo_rate_hist, policy,
+            start_date=start.strftime("%Y-%m-%d"),
+            end_date=end.strftime("%Y-%m-%d"),
+        )
+
+    def _fetch_cn_bond_yield(self, policy) -> "pd.DataFrame":
+        """获取中国国债/国开债/AAA 商业银行债收益率曲线（日频）。
+
+        返回多条曲线，transform 阶段按曲线名称过滤。
+        """
+        import akshare as ak
+        end = datetime.date.today()
+        start = end - datetime.timedelta(days=30)
+        return self._call_with_policy(
+            ak.bond_china_yield, policy,
+            start_date=start.strftime("%Y%m%d"),
+            end_date=end.strftime("%Y%m%d"),
+        )
+
+    def _fetch_us_cn_bond_yield(self, policy) -> "pd.DataFrame":
+        """获取中美国债收益率（日频）。"""
+        import akshare as ak
+        start = (datetime.date.today() - datetime.timedelta(days=30)).strftime("%Y%m%d")
+        return self._call_with_policy(
+            ak.bond_zh_us_rate, policy,
+            start_date=start,
+        )
+
+    # ---- EDB 替代：利率类指标 transform 方法 ----
+
+    def _transform_shibor(self, df) -> list[tuple]:
+        """转换 Shibor DataFrame。
+
+        输入: 报告日/利率/涨跌/tenor（8 个期限合并）
+        输出: (报告日, "Shibor_{tenor}", 利率, "%", "日频")
+        """
+        if df is None or len(df) == 0:
+            return []
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            date = str(row.get("报告日", ""))
+            tenor = str(row.get("tenor", ""))
+            val = safe_float(row.get("利率"))
+            if val is not None and date and tenor:
+                rows.append((date, f"Shibor_{tenor}", val, "%", "日频"))
+        return rows
+
+    def _transform_repo(self, df) -> list[tuple]:
+        """转换回购定盘利率 DataFrame。
+
+        输入: date/FR001/FR007/FR014/FDR001/FDR007/FDR014
+        输出: (date, "回购_{col}", val, "%", "日频")
+        """
+        if df is None or len(df) == 0:
+            return []
+        rows: list[tuple] = []
+        rate_cols = ["FR001", "FR007", "FR014", "FDR001", "FDR007", "FDR014"]
+        for _, row in df.iterrows():
+            date = str(row.get("date", ""))
+            if not date:
+                continue
+            for col in rate_cols:
+                val = safe_float(row.get(col))
+                if val is not None:
+                    rows.append((date, f"回购_{col}", val, "%", "日频"))
+        return rows
+
+    def _transform_cn_yield(self, df) -> list[tuple]:
+        """转换中国债券收益率 DataFrame。
+
+        输入: 曲线名称/日期/3月/6月/1年/3年/5年/7年/10年/30年
+        过滤: 中债国债 + 中债国开债 + 中债中短期票据(AAA) + 中债商业银行普通债(AAA)
+        输出: (日期, "{曲线简称}_{期限}", val, "%", "日频")
+        """
+        if df is None or len(df) == 0:
+            return []
+        target_curves = {
+            "中债国债收益率曲线": "国债",
+            "中债国开债收益率曲线": "国开债",
+            "中债中短期票据收益率曲线(AAA)": "中短票据AAA",
+            "中债商业银行普通债收益率曲线(AAA)": "商业银行债AAA",
+        }
+        rows: list[tuple] = []
+        tenor_cols = ["3月", "6月", "1年", "3年", "5年", "7年", "10年", "30年"]
+        for _, row in df.iterrows():
+            curve = str(row.get("曲线名称", ""))
+            short = target_curves.get(curve)
+            if not short:
+                continue
+            date = str(row.get("日期", ""))
+            if not date:
+                continue
+            for col in tenor_cols:
+                val = safe_float(row.get(col))
+                if val is not None:
+                    rows.append((date, f"{short}_{col}", val, "%", "日频"))
+        return rows
+
+    def _transform_us_cn_yield(self, df) -> list[tuple]:
+        """转换中美国债收益率 DataFrame。
+
+        输入: 日期/中国国债收益率2年/5年/10年/30年/美国国债收益率2年/5年/10年/30年
+        输出: (日期, col_name, val, "%", "日频")
+        跳过 GDP 和利差列（10年-2年）。
+        """
+        if df is None or len(df) == 0:
+            return []
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            date = str(row.get("日期", ""))
+            if not date:
+                continue
+            for col in df.columns:
+                if col == "日期" or "GDP" in col or "10年-2年" in col:
+                    continue
+                val = safe_float(row.get(col))
+                if val is not None:
+                    rows.append((date, col, val, "%", "日频"))
+        return rows
+
+    def _transform_lpr(self, df) -> list[tuple]:
+        """转换 LPR DataFrame。
+
+        输入: TRADE_DATE/LPR1Y/LPR5Y/RATE_1/RATE_2
+        输出: (TRADE_DATE, "LPR_1年"/"LPR_5年", val, "%", "月频")
+        只取最近 90 天避免数据量过大。
+        """
+        if df is None or len(df) == 0:
+            return []
+        df = df.tail(90)
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            date = str(row.get("TRADE_DATE", ""))
+            if not date:
+                continue
+            lpr1y = safe_float(row.get("LPR1Y"))
+            if lpr1y is not None:
+                rows.append((date, "LPR_1年", lpr1y, "%", "月频"))
+            lpr5y = safe_float(row.get("LPR5Y"))
+            if lpr5y is not None:
+                rows.append((date, "LPR_5年", lpr5y, "%", "月频"))
+        return rows
+
+    def _transform_social_financing(self, df) -> list[tuple]:
+        """转换社会融资规模 DataFrame。
+
+        输入: 月份(YYYYMM)/社会融资规模增量/其中-人民币贷款/...
+        输出: (月末日期, indicator_name, val, "亿元", "月频")
+        """
+        if df is None or len(df) == 0:
+            return []
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            yyyymm = str(row.iloc[0])
+            report_date = self._yyyymm_to_date(yyyymm)
+            if not report_date:
+                continue
+            for col in df.columns[1:]:
+                val = safe_float(row.get(col))
+                if val is not None:
+                    rows.append((report_date, col, val, "亿元", "月频"))
+        return rows
+
+    def _transform_fed_rate(self, df) -> list[tuple]:
+        """转换美联储利率 DataFrame。
+
+        输入: 商品/日期/今值/预测值/前值
+        输出: (日期, "美联储利率", 今值, "%", "事件")
+        只取最近 20 条（事件驱动，频率低）。
+        """
+        if df is None or len(df) == 0:
+            return []
+        df = df.tail(20)
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            date = str(row.get("日期", ""))
+            val = safe_float(row.get("今值"))
+            if val is not None and date:
+                rows.append((date, "美联储利率", val, "%", "事件"))
+        return rows
+
+    def _transform_cb_balance(self, df) -> list[tuple]:
+        """转换央行资产负债表 DataFrame。
+
+        输入: 统计时间(YYYY.M)/国外资产/外汇/对其他存款性公司债权/储备货币/政府存款/...
+        输出: (月末日期, indicator_name, val, "亿元", "月频")
+        只取最近 12 个月。
+        """
+        if df is None or len(df) == 0:
+            return []
+        df = df.tail(12)
+        field_map = {
+            "外汇": "央行_外汇占款",
+            "对其他存款性公司债权": "央行_对银行债权",
+            "储备货币": "央行_储备货币",
+            "政府存款": "央行_政府存款",
+            "发行货币": "央行_货币发行",
+            "非金融性公司存款": "央行_非金融存款",
+            "总资产": "央行_总资产",
+            "总负债": "央行_总负债",
+        }
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            time_str = str(row.get("统计时间", ""))
+            report_date = self._yyyy_dot_m_to_date(time_str)
+            if not report_date:
+                continue
+            for src_col, indicator in field_map.items():
+                val = safe_float(row.get(src_col))
+                if val is not None:
+                    rows.append((report_date, indicator, val, "亿元", "月频"))
+        return rows
+
+    @staticmethod
+    def _yyyymm_to_date(s: str) -> str | None:
+        """'202604' -> '2026-04-30'（月末日期）。"""
+        import calendar
+        s = s.strip()
+        if len(s) == 6 and s.isdigit():
+            y, m = int(s[:4]), int(s[4:])
+            if 1 <= m <= 12:
+                last_day = calendar.monthrange(y, m)[1]
+                return f"{y:04d}-{m:02d}-{last_day:02d}"
+        return None
+
+    @staticmethod
+    def _yyyy_dot_m_to_date(s: str) -> str | None:
+        """'2026.6' -> '2026-06-30'（月末日期）。"""
+        import calendar
+        s = s.strip()
+        parts = s.split(".")
+        if len(parts) == 2:
+            try:
+                y, m = int(parts[0]), int(parts[1])
+                if 1 <= m <= 12:
+                    last_day = calendar.monthrange(y, m)[1]
+                    return f"{y:04d}-{m:02d}-{last_day:02d}"
+            except (ValueError, IndexError):
+                pass
+        return None
 
     # ---- 日期解析辅助 ----
 
@@ -2259,6 +2593,229 @@ class AkshareIngestProvider(IngestProviderBase):
             table=cons_table, columns=cons_cols, rows=cons_rows,
             last_key=iso_date, elapsed_sec=time.time() - t0,
         )
+
+    # ---- 26b. 概念板块列表（concept_sector, #ARCH-IFIND-FAILOVER） ----
+
+    def _fetch_concept_sector(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取概念板块列表，写入 c1_market.concept_sector。
+
+        #ARCH-IFIND-FAILOVER: 替代 iFind i问财概念板块（试用账号不可用时自动切换）。
+        使用 ak.stock_board_concept_name_ths() 获取同花顺概念板块列表。
+        相比 iFind（用名称当 sector_code），akshare 提供正式板块代码，更规范。
+
+        表 schema: (sector_code, sector_name, data_source)
+        """
+        import akshare as ak
+
+        table = _TBL_CONCEPT_SECTOR
+        columns = ["sector_code", "sector_name", "data_source"]
+        iso_date = datetime.date.today().isoformat()
+        t0 = now_utc()
+
+        try:
+            df = self._call_with_policy(ak.stock_board_concept_name_ths, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key=iso_date, elapsed_sec=seconds_since(t0), error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sector_code = str(row.get("code") or "")
+                sector_name = str(row.get("name") or "")
+                if not sector_code:
+                    continue
+                rows.append((sector_code, sector_name, "akshare"))
+
+        self._log.info(f"concept_sector: {len(rows)} 个概念板块（akshare 替代 iFind）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=iso_date, elapsed_sec=seconds_since(t0),
+        )
+
+    # ---- 26c. 实时行情快照（realtime_snapshot, #ARCH-IFIND-FAILOVER） ----
+
+    @staticmethod
+    def _code_to_ts_code(code: str) -> str:
+        """6位股票代码转 ts_code 格式（000001 -> 000001.SZ）。"""
+        s = str(code).zfill(6)
+        if s.startswith(("60", "68", "90")):
+            return f"{s}.SH"
+        if s.startswith(("83", "87", "43", "92", "88")):
+            return f"{s}.BJ"
+        return f"{s}.SZ"
+
+    def _fetch_realtime_snapshot(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取实时行情快照，写入 c1_market.realtime_snapshot。
+
+        #ARCH-IFIND-FAILOVER: 替代 iFind THS_RealtimeQuotes（试用账号不可用时自动切换）。
+        使用 ak.stock_zh_a_spot() 一次获取全部 A 股实时行情（新浪源，非东财）。
+        相比 iFind 分批50个标的，akshare 一次返回全市场，更高效。
+
+        接口选型（#ARCH-AKSHARE-ANTICRAWLER-001）：原 stock_zh_a_spot_em 为东财接口，
+        高频调用触发 IP 级 TCP RST 封锁；改用 stock_zh_a_spot（新浪源）规避反爬。
+        新浪代码格式为 "sh600000"/"sz000001"/"bj920000"，需 strip 字母前缀取6位数字。
+
+        表 schema: (snapshot_time, symbol, open, high, low, close, volume, amount, data_source)
+        """
+        import akshare as ak
+
+        table = _TBL_REALTIME_SNAPSHOT
+        columns = [
+            "snapshot_time", "symbol", "open", "high", "low",
+            "close", "volume", "amount", "data_source",
+        ]
+        now_str = now_utc().strftime("%Y-%m-%d %H:%M:%S")
+        t0 = now_utc()
+
+        try:
+            df = self._call_with_policy(ak.stock_zh_a_spot, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key=now_str, elapsed_sec=seconds_since(t0), error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                # 新浪代码格式 "sh600000"/"sz000001"/"bj920000"，strip 字母前缀取6位数字
+                code = ''.join(ch for ch in str(row.get("代码") or "") if ch.isdigit())
+                if not code:
+                    continue
+                symbol = self._code_to_ts_code(code)
+                rows.append((
+                    now_str,
+                    symbol,
+                    safe_float(row.get("今开")),
+                    safe_float(row.get("最高")),
+                    safe_float(row.get("最低")),
+                    safe_float(row.get("最新价")),
+                    int(safe_float(row.get("成交量")) or 0),   # CH volume=UInt64，需 int
+                    safe_float(row.get("成交额")),
+                    "akshare",
+                ))
+
+        self._log.info(f"realtime_snapshot: {len(rows)} 行（akshare 替代 iFind）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=now_str, elapsed_sec=seconds_since(t0),
+        )
+
+    # ---- 26d. 行业板块汇总（sector_meta, #ARCH-IFIND-FAILOVER 方案B） ----
+
+    def _fetch_sector_meta(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取行业板块汇总信息，写入 c1_market.sector_meta。
+
+        #ARCH-IFIND-FAILOVER 方案B: 替代 iFind 881板块问财汇总（试用账号不可用时切换）。
+        使用同花顺行业板块双接口合并：
+          1. stock_board_industry_name_ths()  -> 90个行业板块 (name, code)
+          2. stock_board_industry_summary_ths() -> 板块汇总 (板块名, 上涨家数, 下跌家数)
+        合并后 constituent_num = 上涨家数 + 下跌家数。
+
+        接口选型（#ARCH-AKSHARE-ANTICRAWLER-001）：
+        - 原 stock_board_industry_name_em（东财）IP 级反爬封锁，不可用
+        - sw_index_first_info/second_info（legulegu.com）503 服务不可用，不稳定
+        - stock_board_industry_*_ths（同花顺）稳定可用，且与 iFind 881 体系同源
+
+        与 iFind 的差异（降级）：
+        - 板块体系：同花顺行业(90)，sector_type="同花顺行业"，与 iFind 881 同源更贴近
+        - constituent_num：从 summary 的上涨+下跌家数计算
+        - total_mv/float_mv/float_share：ths 汇总不提供，留 NULL
+
+        表 schema: (sector_code, trade_date, sector_name, sector_type,
+                    constituent_num, float_share, total_mv, float_mv)
+        """
+        import akshare as ak
+
+        table = _TBL_SECTOR_META
+        columns = [
+            "sector_code", "trade_date", "sector_name", "sector_type",
+            "constituent_num", "float_share", "total_mv", "float_mv",
+        ]
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        t0 = now_utc()
+
+        rows: list[tuple] = []
+
+        # 1. 同花顺行业板块列表（name + code，90个板块）
+        try:
+            name_df = self._call_with_policy(
+                ak.stock_board_industry_name_ths, policy,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key=today_str, elapsed_sec=seconds_since(t0),
+                error=f"同花顺行业板块列表获取失败: {e}",
+            )
+            return
+
+        if name_df is None or len(name_df) == 0:
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key=today_str, elapsed_sec=seconds_since(t0),
+                error="同花顺行业板块列表为空",
+            )
+            return
+
+        # 2. 同花顺行业板块汇总（板块名 + 上涨/下跌家数，用于 constituent_num）
+        summary_map = self._build_sector_summary_map(policy)
+
+        # 3. 合并：code(来自name_ths) + name + constituent_num(来自summary_ths)
+        for _, row in name_df.iterrows():
+            sector_code = str(row.get("code") or "")
+            sector_name = str(row.get("name") or "")
+            if not sector_code or not sector_name:
+                continue
+            constituent_num = summary_map.get(sector_name)
+            # ths 不提供总市值/流通市值/流通股本，留 NULL
+            rows.append((
+                sector_code, today_str, sector_name, "同花顺行业",
+                constituent_num, None, None, None,
+            ))
+
+        self._log.info(
+            f"sector_meta: {len(rows)} 个板块（同花顺行业，替代 iFind 881）"
+        )
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=today_str, elapsed_sec=seconds_since(t0),
+        )
+
+    def _build_sector_summary_map(self, policy: SourcePolicy) -> dict[str, int]:
+        """构建 板块名 -> constituent_num(上涨+下跌家数) 映射（从 _fetch_sector_meta 抽取降复杂度）。
+
+        #ARCH-IFIND-FAILOVER: 同花顺行业板块汇总。汇总失败返回空 dict（不阻断主流程）。
+        列名: ['序号', '板块', '涨跌幅', '总成交量', '总成交额', '净流入',
+               '上涨家数', '下跌家数', '均价', '领涨股', ...]
+        """
+        import akshare as ak
+        summary_map: dict[str, int] = {}
+        try:
+            sum_df = self._call_with_policy(
+                ak.stock_board_industry_summary_ths, policy,
+            )
+            if sum_df is not None and len(sum_df) > 0:
+                for _, row in sum_df.iterrows():
+                    name = str(row.get("板块") or "")
+                    up = safe_float(row.get("上涨家数")) or 0
+                    down = safe_float(row.get("下跌家数")) or 0
+                    if name:
+                        summary_map[name] = int(up + down)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"sector_meta: 行业汇总获取失败: {e}")
+        return summary_map
 
     # ---- 27. 指标数据（stock_indicator） ----
 

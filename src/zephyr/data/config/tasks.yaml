@@ -70,7 +70,7 @@ tasks:
 
 - task_id: daily_valuation_incremental
   table: c1_market.daily_valuation
-  source: ifind
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
   schedule: daily_kline
   incremental: true
   date_col: trade_date
@@ -78,6 +78,8 @@ tasks:
   capability: daily_valuation
   symbols:
   fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: daily_valuation
   - source: akshare
     capability: daily_valuation
   extra:
@@ -192,7 +194,7 @@ tasks:
     capability: macro_data
 - task_id: money_flow_incremental
   table: c1_market.money_flow
-  source: ifind
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
   schedule: daily_capital
   incremental: true
   date_col: trade_date
@@ -200,6 +202,8 @@ tasks:
   capability: money_flow
   symbols:
   fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: money_flow
   - source: akshare
     capability: money_flow
   extra:
@@ -805,7 +809,7 @@ tasks:
     capability: main_business
 - task_id: industry_class_refresh
   table: c1_market.industry_class
-  source: ifind            # #ARCH-CH-INDUSTRY-CLASS-MIGRATE: tdx block() 产出板块成分股语义错配，改 ifind i问财
+  source: tushare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，tushare升为主源
   schedule: weekend_calibration
   incremental: false    # 全量重建
   dependencies: []
@@ -814,7 +818,11 @@ tasks:
   extra:
     description: "申万行业分类全量刷新（ifind i问财 + -- split level 1/2/3）"
 
-  fallback_sources: []   # akshare 无 industry_class capability；tdx block() 已弃用
+  fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: industry_class
+  - source: tushare          # #ARCH-IFIND-FAILOVER: iFind 不可用时切换（index_classify + index_member）
+    capability: industry_class
 - task_id: kline_sector_incremental
   table: c1_market.kline_sector
   source: tdx
@@ -912,6 +920,7 @@ tasks:
 - task_id: edb_data_incremental
   table: c1_market.edb_data
   source: ifind
+  disabled: true    # ifind到期且无fallback，暂时禁用
   schedule: event_driven
   incremental: true
   date_col: report_date
@@ -925,7 +934,7 @@ tasks:
   # ============== iFind 新增能力（concept_sector / realtime_snapshot，2026-07-11）==============
 - task_id: concept_sector_refresh
   table: c1_market.concept_sector
-  source: ifind
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
   schedule: monthly_static    # 概念板块列表低频变化，月初刷新
   incremental: false    # 全量重建
   dependencies: []
@@ -934,9 +943,15 @@ tasks:
   extra:
     description: "概念板块列表全量刷新（iFind THS_iwencai 查询'概念板块'，解析'所属概念'字段提取唯一板块名）"
 
+  fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: concept_sector
+  - source: akshare           # #ARCH-IFIND-FAILOVER: iFind 不可用时切换（stock_board_concept_name_ths）
+    capability: concept_sector
+
 - task_id: realtime_snapshot_incremental
   table: c1_market.realtime_snapshot
-  source: ifind
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
   schedule: intraday_realtime    # 盘中每5分钟抓取实时快照（9:00-15:59），盘后/非交易日返回-4001自动跳过
   incremental: true
   date_col: snapshot_time
@@ -945,6 +960,12 @@ tasks:
   symbols:         # null=全A股（THS_DataPool），也可指定标的列表
   extra:
     description: "实时行情快照增量（iFind THS_RealtimeQuotes，OHLCV+成交额，分批50个标的；非交易时段返回-4001属正常）"
+
+  fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: realtime_snapshot
+  - source: akshare           # #ARCH-IFIND-FAILOVER: iFind 不可用时切换（stock_zh_a_spot 新浪源，非东财）
+    capability: realtime_snapshot
 
   # ============== 静态数据月初刷新（每月1日 09:00）==============
 - task_id: trade_calendar_refresh
@@ -1013,7 +1034,7 @@ tasks:
     capability: index_constituent
 - task_id: industry_class_suppl_refresh
   table: c3_fundamental.industry_class_suppl
-  source: ifind
+  source: tushare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，tushare升为主源
   schedule: monthly_static
   incremental: false
   dependencies: []
@@ -1021,6 +1042,12 @@ tasks:
   symbols:
   extra:
     description: "申万/中证行业分类全量刷新（iFind THS_DataPool）"
+
+  fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: industry_class_suppl
+  - source: tushare          # #ARCH-IFIND-FAILOVER: iFind 不可用时切换（index_classify + index_member）
+    capability: industry_class_suppl
 
 - task_id: kline_daily_full_refresh
   table: c1_market.kline_daily
@@ -1082,7 +1109,7 @@ tasks:
     capability: us_index
 - task_id: money_flow_full_refresh
   table: c1_market.money_flow
-  source: ifind
+  source: miniqmt          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，miniqmt升为主源
   schedule: weekend_calibration
   incremental: false
   dependencies: []
@@ -1092,11 +1119,13 @@ tasks:
     description: "资金流向全量刷新（AKShare stock_individual_fund_flow）"
 
   fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: money_flow
   - source: miniqmt
     capability: money_flow
 - task_id: daily_valuation_full_refresh
   table: c1_market.daily_valuation
-  source: ifind
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
   schedule: weekend_calibration
   incremental: false
   dependencies: []
@@ -1106,6 +1135,8 @@ tasks:
     description: "估值数据全量刷新（iFind 批量主源 THS_BasicData 200只/次；akshare 并行 fallback）"
 
   fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: daily_valuation
   - source: akshare
     capability: daily_valuation
   - source: miniqmt
@@ -1814,7 +1845,7 @@ tasks:
     capability: etf_benchmark
 - task_id: sector_meta_refresh
   table: c1_market.sector_meta
-  source: ifind
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
   schedule: daily_kline
   incremental: true
   date_col: trade_date
@@ -1823,6 +1854,12 @@ tasks:
   symbols:
   extra:
     description: "通达信板块信息持续更新（iFind THS_WC问财接口获取881二级行业板块总市值/流通市值/成分股数量/总股本）"
+
+  fallback_sources:
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+    capability: sector_meta
+  - source: akshare           # #ARCH-IFIND-FAILOVER 方案B: iFind 不可用时切换（同花顺行业双接口 name_ths+summary_ths）
+    capability: sector_meta
 
   # ============== L10 周末补下载层（周日 02:00）==============
   # 不依赖 last_key，直接查 ClickHouse 实际行数检测缺失，精准补下载

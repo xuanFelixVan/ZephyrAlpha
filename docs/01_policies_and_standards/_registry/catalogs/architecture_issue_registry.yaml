@@ -11516,3 +11516,44 @@ entries:
   related_adjudication: 'TRAE-031 SEC-001~SEC-006, #ARCH-GUC-TRIGGER-FIX-001, ruling_100pct_ai_governance_hardening.md'
   created: '2026-08-04'
   last_updated: '2026-08-04'
+# --- #ARCH-IFIND-FAILOVER: iFind 数据源退役 + 免费源替代（2026-08-04 立项，用户指令驱动） ---
+- issue_id: '#ARCH-IFIND-FAILOVER'
+  title: iFind 数据源正式退役——akshare/tushare 免费源全量替代 EDB 宏观指标
+  severity: P1高
+  adjudication: |-
+    背景（第一性原理）：
+    iFind（同花顺 iFinDPy）为商用数据源，受月度配额（-4318/-4309）+ 试用账号限制
+    （不支持沪深港通）+ license 依赖约束。100% AI 开发场景下，试用账号到期即全线停摆，
+    无人工续费窗口。EDB 宏观指标（Shibor/LPR/国债收益率/社融等）原依赖 iFind EDB 接口，
+    iFind 不可用时这些指标全空，导致宏观面分析断供。
+
+    治本方案（2026-08-04，用户指令驱动）：
+    1. 扩展 akshare_provider 的 macro_data 能力，新增 8 类利率/宏观指标免费替代：
+       Shibor(8期限) / 回购定盘利率(FR/FDR) / 中国国债收益率(多曲线) /
+       中美国债收益率 / LPR(1年/5年) / 社融增量 / 美联储利率 / 央行资产负债表。
+       端到端测试 12 批次（原 4 + 新增 8）全部成功，总计 8020 行。
+    2. 通过 apply_depgraph.py --deprecate-node 正式退役 ifind_provider
+       （node_id=8535748，build_status: generated -> deprecated），
+       经 #ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION 机制确认 regenerate 后状态保留。
+    3. tasks.yaml 已将 ifind 相关任务降级为 fallback，主源切换为 tushare/akshare/miniqmt。
+
+    退役范围：
+    - ifind_provider.py 物理文件保留（仍作为 fallback 代码，license 可用时降级回退），
+      但 depgraph build_status=deprecated，不再作为主源维护/扩展。
+    - EDB 宏观指标已由 akshare 全量替代，iFind EDB 接口不再需要。
+
+    用户显式指令驱动（"把 ifind_provider 标记为 deprecated，走 apply_depgraph 正式退役流程"
+    + "通过免费的尽量把所有能补的全补全"），非 AI 自主裁定，按铁律#9 可直接标 decided。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（macro_data 扩展：8 类利率指标 fetch+transform）'
+    - 'src/zephyr/data/implementations/ifind_provider.py（depgraph build_status=deprecated，物理文件保留作 fallback，docstring 标注 DEPRECATED）'
+    - 'src/zephyr/data/config/tasks.yaml（ifind 任务降级为 fallback，主源切换 tushare/akshare/miniqmt）'
+  fix_phase: |-
+    已完成施工+验证（2026-08-04）：
+      - akshare_provider macro_data 扩展 8 类利率指标，端到端测试 12 批次 8020 行
+      - apply_depgraph --deprecate-node 8535748 退役 ifind_provider，regenerate 后状态保留验证通过
+      - #ARCH-IFIND-FAILOVER 登记满足铁律#6（akshare_provider.py 5 处引用必须登记）
+  status: decided
+  related_rules: 'AGENTS.md 弃用模块处理流程（apply_depgraph 软删除）；#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION（regenerate 状态保留）'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'

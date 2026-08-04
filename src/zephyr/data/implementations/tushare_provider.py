@@ -43,11 +43,15 @@ from ..policy_registry import SourcePolicy
 from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from zephyr.shared.security.secrets import get_required_secret, get_secret_or_default
 from ..table_registry import get_registry
+from zephyr.shared.utils.time_utils import now_utc, seconds_since
 
 log = logging.getLogger(__name__)
 
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
 _TBL_NEWS_DATA = get_registry().table("fund_news_data")
+# #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
+_TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
+_TBL_INDUSTRY_CLASS_SUPPL = get_registry().table("fund_industry_class_suppl")
 
 
 class TushareProvider(IngestProviderBase):
@@ -65,7 +69,7 @@ class TushareProvider(IngestProviderBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=200,
-        capabilities=["news_data"],
+        capabilities=["news_data", "industry_class", "industry_class_suppl"],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
     )
 
@@ -113,15 +117,19 @@ class TushareProvider(IngestProviderBase):
             )
             return
 
-        cap = (payload.extra or {}).get("capability")
-        if cap == "news_data":
+        capability = (payload.extra or {}).get("capability")
+        if capability == "news_data":
             yield from self._fetch_news_news_info(payload, policy)
             yield from self._fetch_news_security(payload, policy)
+        elif capability == "industry_class":
+            yield from self._fetch_industry_class(payload, policy)
+        elif capability == "industry_class_suppl":
+            yield from self._fetch_industry_class_suppl(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
                 last_key="", elapsed_sec=0.0,
-                error=f"unsupported capability: {cap}",
+                error=f"unsupported capability: {capability}",
             )
 
     # ---- 新闻快讯 ----
@@ -225,3 +233,181 @@ class TushareProvider(IngestProviderBase):
                     error=str(e),
                 )
             current += datetime.timedelta(days=1)
+
+    # ---- 申万行业分类（industry_class / industry_class_suppl, #ARCH-IFIND-FAILOVER） ----
+
+    def _build_sw_industry_map(self, policy: SourcePolicy) -> dict:
+        """构建 股票→申万行业(L1/L2/L3) 映射（industry_class 与 suppl 共享）。
+
+        #ARCH-IFIND-FAILOVER: 替代 iFind i问财"全部A股 申万行业"查询。
+        通过 tushare index_classify 获取 L1/L2/L3 行业列表，遍历 L3 成分股反推 L1/L2。
+
+        与 iFind 的差异：industry_zsi（同花顺行业）无替代源，留 NULL。
+
+        Returns:
+            {ts_code: {"L1": name, "L2": name, "L3": name}}
+        """
+        # 1. 获取 L1/L2/L3 行业列表
+        l1_df = self._call_with_policy(
+            self._pro.index_classify, policy, level='L1', src='SW2021',
+        )
+        l2_df = self._call_with_policy(
+            self._pro.index_classify, policy, level='L2', src='SW2021',
+        )
+        l3_df = self._call_with_policy(
+            self._pro.index_classify, policy, level='L3', src='SW2021',
+        )
+
+        # index_code/name 与 L3→L2→L1 parent 关系映射（抽取降复杂度）
+        l1_names, l2_names, l3_names, l3_to_l2, l2_to_l1 = self._build_industry_lookups(
+            l1_df, l2_df, l3_df,
+        )
+
+        # 2. 遍历 L3 行业，获取成分股
+        stock_map: dict[str, dict] = {}
+        api_count = 0
+        for l3_code, l3_name in l3_names.items():
+            try:
+                members_df = self._call_with_policy(
+                    self._pro.index_member, policy, index_code=l3_code, is_new='Y',
+                )
+                api_count += 1
+                # tushare 频率控制：每 200 次暂停 60s（2000 积分限制 200次/分钟）
+                if api_count % 200 == 0:
+                    self._log.info(f"申万行业映射: 已调用 {api_count} 次，暂停 60s")
+                    time.sleep(60)
+
+                if members_df is None or members_df.empty:
+                    continue
+
+                # is_new='Y' 已在 API 层过滤，无需再过滤
+
+                # 反推 L2/L1
+                l2_code = l3_to_l2.get(l3_code)
+                l2_name = l2_names.get(l2_code, '') if l2_code else ''
+                l1_code = l2_to_l1.get(l2_code) if l2_code else None
+                l1_name = l1_names.get(l1_code, '') if l1_code else ''
+
+                for _, m in members_df.iterrows():
+                    ts_code = str(m.get('con_code') or '')
+                    if not ts_code:
+                        continue
+                    stock_map[ts_code] = {
+                        "L1": l1_name, "L2": l2_name, "L3": l3_name,
+                    }
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.debug(f"index_member({l3_code}) 失败: {e}")
+                continue
+
+        self._log.info(
+            f"申万行业映射: {len(stock_map)} 只股票（{api_count} 次 API 调用）"
+        )
+        return stock_map
+
+    def _build_industry_lookups(
+        self, l1_df, l2_df, l3_df,
+    ) -> tuple[dict, dict, dict, dict, dict]:
+        """构建申万行业查找表（从 _build_sw_industry_map 抽取降复杂度）。
+
+        #ARCH-IFIND-FAILOVER: L1/L2/L3 index_code→name + L3→L2→L1 parent 关系映射。
+        parent_code 是 industry_code，需经 industry_code→index_code 中转。
+        Returns:
+            (l1_names, l2_names, l3_names, l3_to_l2, l2_to_l1)
+        """
+        l1_names = {r['index_code']: r['industry_name'] for _, r in l1_df.iterrows()}
+        l2_names = {r['index_code']: r['industry_name'] for _, r in l2_df.iterrows()}
+        l3_names = {r['index_code']: r['industry_name'] for _, r in l3_df.iterrows()}
+
+        # industry_code → index_code 映射（parent_code 是 industry_code，需转换为 index_code）
+        l1_code_to_idx = {str(r['industry_code']): r['index_code'] for _, r in l1_df.iterrows()}
+        l2_code_to_idx = {str(r['industry_code']): r['index_code'] for _, r in l2_df.iterrows()}
+
+        # L3→L2→L1 parent 关系（index_code → index_code，经 industry_code 中转）
+        l3_to_l2: dict[str, str | None] = {}
+        for _, r in l3_df.iterrows():
+            pc = str(r.get('parent_code') or '')
+            l3_to_l2[r['index_code']] = l2_code_to_idx.get(pc) if pc else None
+        l2_to_l1: dict[str, str | None] = {}
+        for _, r in l2_df.iterrows():
+            pc = str(r.get('parent_code') or '')
+            l2_to_l1[r['index_code']] = l1_code_to_idx.get(pc) if pc else None
+        return l1_names, l2_names, l3_names, l3_to_l2, l2_to_l1
+
+    def _fetch_industry_class(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取申万行业分类（L1/L2/L3 拆分），写入 c1_market.industry_class。
+
+        #ARCH-IFIND-FAILOVER: 替代 iFind i问财申万行业（试用账号不可用时切换）。
+        使用 tushare index_classify + index_member 构建 股票→申万行业 映射，
+        按 L1/L2/L3 拆分为 3 行/股（与 CH 现有数据格式一致）。
+
+        表 schema: (symbol, industry_sw, industry_zsi, industry_level, valid_to)
+        """
+        table = _TBL_INDUSTRY_CLASS
+        columns = ["symbol", "industry_sw", "industry_zsi", "industry_level", "valid_to"]
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        t0 = now_utc()
+
+        try:
+            stock_map = self._build_sw_industry_map(policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key=today_str, elapsed_sec=seconds_since(t0),
+                error=f"申万行业映射构建失败: {e}",
+            )
+            return
+
+        # 生成 L1/L2/L3 拆分行（每只股票 3 行）
+        rows: list[tuple] = []
+        for symbol, levels in stock_map.items():
+            for level_num, level_key in enumerate(("L1", "L2", "L3"), 1):
+                name = levels.get(level_key)
+                if name:
+                    rows.append((symbol, name, None, level_num, None))
+
+        self._log.info(f"industry_class: {len(rows)} 行（tushare 替代 iFind）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=today_str, elapsed_sec=seconds_since(t0),
+        )
+
+    def _fetch_industry_class_suppl(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取申万行业分类（完整路径），写入 c3_fundamental.industry_class_suppl。
+
+        #ARCH-IFIND-FAILOVER: 替代 iFind i问财行业分类（试用账号不可用时切换）。
+        复用 _build_sw_industry_map 的映射，拼接 "L1--L2--L3" 完整路径。
+
+        表 schema: (symbol, industry_sw, industry_zsi, industry_level, data_source)
+        """
+        table = _TBL_INDUSTRY_CLASS_SUPPL
+        columns = ["symbol", "industry_sw", "industry_zsi", "industry_level", "data_source"]
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        t0 = now_utc()
+
+        try:
+            stock_map = self._build_sw_industry_map(policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key=today_str, elapsed_sec=seconds_since(t0),
+                error=f"申万行业映射构建失败: {e}",
+            )
+            return
+
+        # 生成完整路径行（每只股票 1 行）
+        rows: list[tuple] = []
+        for symbol, levels in stock_map.items():
+            parts = [levels.get(k) for k in ("L1", "L2", "L3")]
+            full_path = "--".join(p for p in parts if p)
+            if full_path:
+                rows.append((symbol, full_path, None, 0, "tushare"))
+
+        self._log.info(f"industry_class_suppl: {len(rows)} 行（tushare 替代 iFind）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=today_str, elapsed_sec=seconds_since(t0),
+        )

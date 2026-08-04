@@ -1065,11 +1065,34 @@ class IntegratorScheduler:
         last_error: str | None = None
         for i, (source, capability) in enumerate(sources_to_try):
             is_fallback = i > 0
+
+            # 健康检查前置：如果源在启动时健康检查失败，直接跳过不等超时
+            # 避免对已知不可用的源（如 ifind 已到期、RSSHub 挂了）浪费时间等连接超时
+            health_status = "unchecked"
+            try:
+                from zephyr.data.source_health_check import get_source_health
+                health = get_source_health(source)
+                if health:
+                    health_status = health.get("status", "unknown")
+                    if health_status in (
+                        "connect_fail", "test_fail", "env_missing",
+                        "import_fail", "empty_data",
+                    ):
+                        log.info(
+                            "任务 %s 跳过源 %s（健康检查: %s, %s）",
+                            task_id, source, health_status,
+                            (health.get("error") or "")[:80],
+                        )
+                        last_error = f"健康检查失败: {health.get('error', health_status)}"
+                        continue
+            except Exception:
+                pass  # 健康检查模块异常不影响正常调度
+            # 健康检查通过/未检查——记录即将执行（主源或 fallback，含健康状态便于排查）
+            log.info(
+                "任务 %s %s源 %s 健康检查=%s，开始执行",
+                task_id, "fallback " if is_fallback else "主", source, health_status,
+            )
             if is_fallback:
-                log.info(
-                    "任务 %s fallback 到副源 %s (主源失败: %s)",
-                    task_id, source, last_error,
-                )
                 self._alerter.notify(
                     task_id, f"主源失败({last_error}), fallback到 {source}",
                     level=LEVEL_ERROR, source=source,
@@ -1487,6 +1510,13 @@ class IntegratorScheduler:
 
             self._scheduler.start()
             self._started = True
+            # 数据源健康检查（每日启动时执行，扫描所有数据源连接+下载能力）
+            # 结果写入 logs/source_health_YYYYMMDD.log，异常源记录但不自动禁用
+            try:
+                from zephyr.data.source_health_check import run_source_health_check
+                run_source_health_check()
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                log.warning("数据源健康检查失败（不影响调度器启动）: %s", e)
             # 启动 ClickHouse 健康探活后台线程（裁定 #ARCH-CH-011）
             self._start_ch_health_probe()
             # 启动卡死任务定期清理线程（Phase 3-B 治本修复 v2）

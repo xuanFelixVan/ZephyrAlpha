@@ -16,6 +16,13 @@
 # [TTL] permanent
 """IFindProvider 实现（MOD-L00-004 §4.3 数据源集成器）。
 
+⚠️ DEPRECATED（#ARCH-IFIND-FAILOVER，2026-08-04）：
+    depgraph build_status=deprecated——本数据源已正式退役，不再作为主源维护/扩展。
+    EDB 宏观指标（Shibor/LPR/国债收益率/社融等）已由 akshare_provider.macro_data
+    全量免费替代（详见 akshare_provider #ARCH-IFIND-FAILOVER）。tasks.yaml 已将
+    ifind 任务降级为 fallback，主源切换为 tushare/akshare/miniqmt。
+    本物理文件保留仅作 fallback 代码（license 可用时降级回退），请勿新增能力。
+
 封装同花顺 iFinDPy SDK，继承 IngestProviderBase，提供日频估值等数据拉取能力。
 
 支持的能力（capability，通过 payload.extra["capability"] 路由）：
