@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_04_simulation_validation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §simulation_validation 阶段，7 环节（18 锚点）。
+> battle_map §simulation_validation 阶段，7 环节（24 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,9 +20,9 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 仿真验证（simulation_validation） | Stage | 仿真验证 |
 | 环节数 | 7 | Steps | 7 |
-| 锚点数（双向对齐） | 18 | Anchors (Bidirectional) | 18 |
+| 锚点数（双向对齐） | 24 | Anchors (Bidirectional) | 24 |
 | 流转边 | 9 | Edges | 9 |
-| 状态分布 | 🟦 运营态（已建）=5 ｜ 🟨 候选态（候选池）=2 | State Distribution | 🟦 运营态（已建）=5 ｜ 🟨 候选态（候选池）=2 |
+| 状态分布 | 🟦 运营态（已建）=6 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=6 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -47,14 +47,14 @@ flowchart TD
     BM_SIM_03["【BM-SIM-03 场景生成与蒙特卡洛】<br/>蒙特卡洛跑百万条路径找策略边界——还能自定义极端场<br/>景，看策略在最坏情况下能不能活。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Scenario Generation &amp; Monte Carlo】"]
     BM_SIM_07["【BM-SIM-07 风控仿真器】<br/>把风控放进仿真里跑——VaR模拟+回撤模拟+熔断模拟，<br/>看策略在假设市场下的风控边界。<br/>（生产态 / production）<br/>【Risk Simulator】"]
     BM_SIM_04["【BM-SIM-04 压力测试引擎】<br/>把 2008/2015/2020<br/>这些极端行情重放一遍，再加假设情景和反向压力测试<br/>，看策略会不会爆。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Stress Test Engine】"]
-    BM_SIM_05["【BM-SIM-05 依赖图数字孪生】<br/>把整个系统的依赖图复制一份做数字孪生——改任何模块<br/>前先在孪生上 what-if 一遍，预测变更影响。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Dependency Graph Digital Twin】"]
+    BM_SIM_05["【BM-SIM-05 依赖图数字孪生】<br/>把整个系统的依赖图复制一份做数字孪生——改任何模块<br/>前先在孪生上 what-if 一遍，预测变更影响。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Dependency Graph Digital Twin】"]
     BM_SIM_06["【BM-SIM-06 仿真结果分析】<br/>跑完仿真不算完——统计检验看结果显著不显著，可视化<br/>看分布，出报告给风控和组合参考。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Simulation Result Analysis】"]
     BM_SIM_07 ~~~ BM_SIM_04
     BM_SIM_01 -.->|市场仿真→策略仿真 / data_flow| BM_SIM_02
     BM_SIM_02 -->|策略仿真→场景生成 / data_flow| BM_SIM_03
     BM_SIM_03 -->|场景→压力测试 / trigger| BM_SIM_04
-    BM_SIM_04 -.->|压力→数字孪生 / trigger| BM_SIM_05
-    BM_SIM_05 -.->|孪生→结果分析 / data_flow| BM_SIM_06
+    BM_SIM_04 -->|压力→数字孪生 / trigger| BM_SIM_05
+    BM_SIM_05 -->|孪生→结果分析 / data_flow| BM_SIM_06
     BM_SIM_03 -->|蒙特卡洛→风控仿真 / data_flow| BM_SIM_07
     BM_SIM_07 -->|风控仿真→结果分析 / data_flow| BM_SIM_06
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -62,8 +62,8 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_SIM_02,BM_SIM_03,BM_SIM_07,BM_SIM_04,BM_SIM_06 production
-    class BM_SIM_01,BM_SIM_05 candidate
+    class BM_SIM_02,BM_SIM_03,BM_SIM_07,BM_SIM_04,BM_SIM_05,BM_SIM_06 production
+    class BM_SIM_01 candidate
 ```
 
 ## 环节详情
@@ -140,6 +140,7 @@ D-SIMULATION-02 Strategy Simulator 提供策略仿真器+策略沙箱+信号模�
 |---|---|---|---|---|
 | depgraph | MOD-SIM-002 | primary | stable | stable |
 | candidate | CAND-HARVEST-0144 | supplement | planned | — |
+| depgraph | MOD-L13-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
@@ -286,8 +287,9 @@ D-SIMULATION-14 Real-time DT Synchronizer 提供实时数字孪生同步器+依�
 | candidate | CAND-HARVEST-0797 | supplement | planned | — |
 | candidate | CAND-HARVEST-0798 | supplement | planned | — |
 | candidate | CAND-HARVEST-0799 | supplement | planned | — |
+| depgraph | MOD-DIGITAL_TWIN | primary | stable | generated |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
 ### BM-SIM-06 仿真结果分析 / Simulation Result Analysis
 
@@ -322,6 +324,10 @@ D-SIMULATION-12 Simulation Result Analyzer 提供仿真结果分析+统计检验
 |---|---|---|---|---|
 | depgraph | MOD-SIM-012 | primary | stable | stable |
 | candidate | CAND-HARVEST-0794 | supplement | planned | — |
+| depgraph | MOD-SIM-021 | primary | stable | generated |
+| depgraph | MOD-SIM-022 | primary | stable | generated |
+| depgraph | MOD-SIM-023 | primary | stable | generated |
+| depgraph | MOD-SIM-024 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 

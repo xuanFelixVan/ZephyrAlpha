@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_11_reconciliation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §reconciliation 阶段，18 环节（24 锚点）。
+> battle_map §reconciliation 阶段，18 环节（30 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 对账（reconciliation） | Stage | 对账 |
 | 环节数 | 18 | Steps | 18 |
-| 锚点数（双向对齐） | 24 | Anchors (Bidirectional) | 24 |
+| 锚点数（双向对齐） | 30 | Anchors (Bidirectional) | 30 |
 | 流转边 | 18 | Edges | 18 |
 | 状态分布 | 🟦 运营态（已建）=14 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟦 运营态（已建）=14 ｜ 🟧 设计态（待施工）=4 |
 
@@ -210,6 +210,10 @@ L5 层。C-007 闭环优化：反馈到 L1~L4+L3.5 每层（IC衰减→因子替
 | candidate | CAND-WFO-001 | supplement | deferred | — |
 | candidate | CAND-SIM-002 | supplement | deferred | — |
 | candidate | CAND-BT-001 | supplement | deferred | — |
+| depgraph | MOD-GOVERNANCE | primary | planned | generated |
+| depgraph | MOD-GOV_GATE_CACHE | primary | planned | generated |
+| depgraph | MOD-INF-024 | primary | planned | generated |
+| depgraph | MOD-GATE_ENGINE | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -597,6 +601,8 @@ BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-03 Report Publishe
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-RPT-003 | primary | production | generated |
+| depgraph | MOD-RPT-013 | primary | stable | generated |
+| depgraph | MOD-RPT-017 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 

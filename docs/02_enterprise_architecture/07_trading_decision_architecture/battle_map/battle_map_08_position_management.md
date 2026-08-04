@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_08_position_management.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §position_management 阶段，21 环节（25 锚点）。
+> battle_map §position_management 阶段，21 环节（27 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 仓位（position_management） | Stage | 仓位 |
 | 环节数 | 21 | Steps | 21 |
-| 锚点数（双向对齐） | 25 | Anchors (Bidirectional) | 25 |
+| 锚点数（双向对齐） | 27 | Anchors (Bidirectional) | 27 |
 | 流转边 | 30 | Edges | 30 |
 | 状态分布 | 🟦 运营态（已建）=20 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=20 ｜ 🟨 候选态（候选池）=1 |
 
@@ -137,6 +137,7 @@ L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0019 | supplement | candidate | — |
 | depgraph | MOD-POS-001 | primary | stable | generated |
+| depgraph | MOD-POS_SERVICES | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -509,6 +510,7 @@ D-POSITION §1.3 POS-09 Position Audit Logger。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-POS-009 | primary | stable | stable |
+| depgraph | MOD-INF-022 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 

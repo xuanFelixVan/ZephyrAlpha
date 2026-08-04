@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_05_stock_selection.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §stock_selection 阶段，91 环节（122 锚点）。
+> battle_map §stock_selection 阶段，91 环节（144 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 选股（stock_selection） | Stage | 选股 |
 | 环节数 | 91 | Steps | 91 |
-| 锚点数（双向对齐） | 122 | Anchors (Bidirectional) | 122 |
+| 锚点数（双向对齐） | 144 | Anchors (Bidirectional) | 144 |
 | 流转边 | 17 | Edges | 17 |
 | 状态分布 | 🟦 运营态（已建）=64 ｜ 🟧 设计态（待施工）=22 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=2 | State Distribution | 🟦 运营态（已建）=64 ｜ 🟧 设计态（待施工）=22 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=2 |
 
@@ -293,6 +293,10 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | depgraph | MOD-INF-002 | supplement | production | stable |
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
+| depgraph | MOD-INF-043 | primary | stable | generated |
+| depgraph | MOD-L00-004 | primary | stable | deprecated |
+| depgraph | MOD-ALT_DATA | primary | stable | generated |
+| depgraph | MOD-INTEGRATION | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -331,6 +335,9 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
 | depgraph | MOD-L03-001 | supplement | production | stable |
+| depgraph | MOD-INF-038 | primary | stable | stable |
+| depgraph | MOD-SIGNAL_ASHARE | primary | stable | generated |
+| depgraph | MOD-ML_SERVE | primary | stable | generated |
 
 **有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -653,6 +660,7 @@ L2-C 层。C-039 跨市场传导量化模型，消费全球市场异动事件，
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0009 | primary | candidate | — |
 | depgraph | MOD-SIG-038 | primary | planned | planned |
+| depgraph | MOD-CROSS_ASSET | primary | stable | generated |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2C ｜ **阶段**：stock_selection
 
@@ -852,6 +860,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-003 连接器管理器维护连接�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-003 | primary | production | generated |
+| depgraph | MOD-L00-001 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -883,6 +892,8 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-004 Failover 引擎监控主源健�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-004 | primary | production | generated |
+| depgraph | MOD-L00-005 | primary | stable | generated |
+| depgraph | MOD-INF-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -945,6 +956,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-006 原始数据缓存把适配器�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-006 | primary | production | generated |
+| depgraph | MOD-L00-006 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -976,6 +988,7 @@ BM-SEL-01 数据接入的出口子环节。MOD-MKT_DATA 标准化引擎把缓存
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT_DATA | primary | production | generated |
+| depgraph | MOD-L04-002 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -1010,6 +1023,8 @@ L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0462 | primary | candidate | — |
 | depgraph | MOD-SIG-042 | primary | planned | planned |
+| depgraph | MOD-INF-028 | primary | stable | generated |
+| depgraph | MOD-INF-042 | primary | stable | generated |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
 
@@ -1313,6 +1328,7 @@ BM-SEL-02 因子计算的子环节。MOD-L02-001 因子计算引擎执行盘前�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-025 | primary | stable | generated |
 
 **有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -1375,6 +1391,8 @@ BM-SEL-02 因子计算的子环节。MOD-L02-001 复用引擎执行双模调度�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-024 | primary | stable | generated |
+| depgraph | MOD-INF-009 | primary | stable | generated |
 
 **有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -1408,6 +1426,7 @@ BM-SEL-02 因子评估的子环节。MOD-L02-002 计算 IC（信息系数）评�
 | depgraph | MOD-L02-002 | primary | production | stable |
 | depgraph | MOD-L02-003 | supplement | production | stable |
 | depgraph | MOD-L02-004 | supplement | production | stable |
+| depgraph | MOD-L02_ANA | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -1504,6 +1523,7 @@ BM-SEL-02 因子治理的子环节。MOD-L02-009 衰减监控持续跟踪因子 
 |---|---|---|---|---|
 | depgraph | MOD-L02-009 | primary | production | generated |
 | depgraph | MOD-L02-010 | supplement | production | generated |
+| depgraph | MOD-SIGQC-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -1572,6 +1592,8 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 | depgraph | MOD-L02-016 | supplement | production | stable |
 | depgraph | MOD-L02-017 | supplement | production | stable |
 | depgraph | MOD-SIG-006 | supplement | production | generated |
+| depgraph | MOD-L02_GOV | primary | stable | generated |
+| depgraph | MOD-INF-040 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 

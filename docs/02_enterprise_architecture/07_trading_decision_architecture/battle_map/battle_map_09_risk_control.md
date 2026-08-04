@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_09_risk_control.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §risk_control 阶段，50 环节（43 锚点）。
+> battle_map §risk_control 阶段，50 环节（50 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,9 +20,9 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 风控管控（risk_control） | Stage | 风控管控 |
 | 环节数 | 50 | Steps | 50 |
-| 锚点数（双向对齐） | 43 | Anchors (Bidirectional) | 43 |
+| 锚点数（双向对齐） | 50 | Anchors (Bidirectional) | 50 |
 | 流转边 | 10 | Edges | 10 |
-| 状态分布 | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=11 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=11 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=37 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=37 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -42,7 +42,7 @@ date: 2026-08-04
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 风控管控阶段图
 flowchart TD
-    BM_RC_09["【BM-RC-09 AI/Agent风险治理】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_RC_09["【BM-RC-09 AI/Agent风险治理】<br/>—<br/>（生产态 / production）"]
     subgraph sg_BM_RC_10 ["风险否决权"]
         BM_RC_10["【BM-RC-10 风险否决权】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
         BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
@@ -144,8 +144,8 @@ flowchart TD
         BM_RC_08_A["【BM-RC-08-A 日终PnL对账与合规报告】<br/>日终对账——实际盈亏和系统记录对不上就查原因，同时<br/>生成合规报告留档。<br/>（生产态 / production）<br/>【Daily PnL Reconciliation &amp; Compliance Report】"]
         BM_RC_08_B["【BM-RC-08-B 风险归因分解】<br/>把盈亏拆解到风险因子——今天赚的钱是哪个因子贡献的<br/>、哪个因子拖后腿，归因清楚。<br/>（生产态 / production）<br/>【Risk Attribution Decomposition】"]
         BM_RC_08_C["【BM-RC-08-C 压力测试】<br/>压力测试——模拟极端场景（2015股灾<br/>/2020疫情）下持仓会亏多少，确保扛得住。<br/>（生产态 / production）<br/>【Stress Testing】"]
-        BM_RC_08_D["【BM-RC-08-D 模型风险审计】<br/>审计模型风险——模型有没有过拟合、有没有数据泄漏、<br/>上线后有没有衰减，定期检查。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Model Risk Audit】"]
-        BM_RC_08_E["【BM-RC-08-E 操作风险审计】<br/>审计操作风险——下单有没有写错代码、权限有没有滥用<br/>、系统有没有故障导致异常交易。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Operational Risk Audit】"]
+        BM_RC_08_D["【BM-RC-08-D 模型风险审计】<br/>审计模型风险——模型有没有过拟合、有没有数据泄漏、<br/>上线后有没有衰减，定期检查。<br/>（生产态 / production）<br/>【Model Risk Audit】"]
+        BM_RC_08_E["【BM-RC-08-E 操作风险审计】<br/>审计操作风险——下单有没有写错代码、权限有没有滥用<br/>、系统有没有故障导致异常交易。<br/>（生产态 / production）<br/>【Operational Risk Audit】"]
         BM_RC_08 -.->|嵌套| BM_RC_08_A
         BM_RC_08 -.->|嵌套| BM_RC_08_B
         BM_RC_08 -.->|嵌套| BM_RC_08_C
@@ -165,9 +165,9 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C production
-    class BM_RC_04_E,BM_RC_04_F,BM_RC_06_D,BM_RC_08_D,BM_RC_08_E,BM_RC_10_A,BM_RC_11_A,BM_RC_11_B,BM_RC_12_A,BM_RC_12_B,BM_RC_12_C design
-    class BM_RC_09,BM_RC_10,BM_RC_11,BM_RC_12 missing
+    class BM_RC_09,BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C,BM_RC_08_D,BM_RC_08_E production
+    class BM_RC_04_E,BM_RC_04_F,BM_RC_06_D,BM_RC_10_A,BM_RC_11_A,BM_RC_11_B,BM_RC_12_A,BM_RC_12_B,BM_RC_12_C design
+    class BM_RC_10,BM_RC_11,BM_RC_12 missing
     class BM_RC_05_C candidate
 ```
 
@@ -188,9 +188,14 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ⑤ 代码映射 | 待开发（planned，D_RISK域） |
 | ⑥ 降级/中止 | 漂移超限→触发BM-RC-03 Kill Switch熔断 |
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-GOV_AGENT_RBAC | primary | stable | generated |
+| depgraph | MOD-LLM_SECURITY | primary | stable | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-10 风险否决权
 
@@ -727,6 +732,7 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 |---|---|---|---|---|
 | depgraph | MOD-L04-001 | primary | stable | generated |
 | depgraph | MOD-RK-011 | supplement | stable | generated |
+| depgraph | MOD-RPT-004 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1477,9 +1483,14 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 ①触发：盘后/定时（阈值: SR 26-2/5类漂移检测/CUSUM/过拟合防护/训练-服务一致性）；②消费：模型预测+实际收益（来自 D-ML-SERVE / D-REPORTING）；③参数：—；④数据流：模型预测+实际→SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+CUSUM变点+过拟合检测+训练-服务一致性验证→模型风险报告→BM-RES 策略迭代 / 因果链3 模型漂移→降级；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L250；⑥降级：模型风险审计未就绪→人工抽检。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-INF-030 | primary | stable | generated |
+| depgraph | MOD-SEC-030 | primary | stable | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-08-E 操作风险审计 / Operational Risk Audit
 
@@ -1504,9 +1515,14 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 ①触发：盘后/事件驱动（阈值: 系统故障/人为错误/Agent失控/级联失败）；②消费：系统日志+操作记录+Agent行为（来自 D-INFRA / D-AUTONOMY）；③参数：—；④数据流：系统日志+操作记录→系统故障检测+人为错误识别+Agent失控检测+级联失败分析→操作风险报告→BM-RES 策略迭代；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L252；⑥降级：操作风险审计未就绪→人工巡检。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-INF-023 | primary | stable | generated |
+| depgraph | MOD-INF-029 | primary | stable | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-10-A 否决执行引擎
 

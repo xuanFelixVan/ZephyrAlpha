@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_01_research_incubation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §research_incubation 阶段，33 环节（32 锚点）。
+> battle_map §research_incubation 阶段，33 环节（41 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,9 +20,9 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 研究孵化（research_incubation） | Stage | 研究孵化 |
 | 环节数 | 33 | Steps | 33 |
-| 锚点数（双向对齐） | 32 | Anchors (Bidirectional) | 32 |
+| 锚点数（双向对齐） | 41 | Anchors (Bidirectional) | 41 |
 | 流转边 | 8 | Edges | 8 |
-| 状态分布 | 🟨 候选态（候选池）=25 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟨 候选态（候选池）=25 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 |
+| 状态分布 | 🟨 候选态（候选池）=20 ｜ 🟦 运营态（已建）=5 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟨 候选态（候选池）=20 ｜ 🟦 运营态（已建）=5 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -53,8 +53,8 @@ flowchart TD
         BM_RES_09 -.->|嵌套| BM_RES_09_A
     end
     subgraph sg_BM_RES_01 ["研究数据与特征存储"]
-        BM_RES_01["【BM-RES-01 研究数据与特征存储】<br/>研究员的数据底盘——把数据集版本化管起来、追踪血缘<br/>、打质量分；特征分在线离线两套存，保证 PIT<br/>正确不偷看未来。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Data &amp; Feature Store】"]
-        BM_RES_01_A["【BM-RES-01-A 数据集版本化与血缘追踪】<br/>把数据集像 Git<br/>一样管版本——每次改动留快照、记血缘，知道数据从哪<br/>来、经过什么变换、去了哪。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Dataset Versioning &amp; Lineage】"]
+        BM_RES_01["【BM-RES-01 研究数据与特征存储】<br/>研究员的数据底盘——把数据集版本化管起来、追踪血缘<br/>、打质量分；特征分在线离线两套存，保证 PIT<br/>正确不偷看未来。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Research Data &amp; Feature Store】"]
+        BM_RES_01_A["【BM-RES-01-A 数据集版本化与血缘追踪】<br/>把数据集像 Git<br/>一样管版本——每次改动留快照、记血缘，知道数据从哪<br/>来、经过什么变换、去了哪。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Dataset Versioning &amp; Lineage】"]
         BM_RES_01_B["【BM-RES-01-B 特征存储与PIT正确性】<br/>特征分在线离线两套存，拉特征时只返回当时已知的值<br/>（PIT），绝不偷看未来——回测可信的硬底线。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Feature Store &amp; PIT Correctness】"]
         BM_RES_01_C["【BM-RES-01-C 研究数据沙箱】<br/>给研究员一个隔离的沙箱环境，随便折腾不影响生产数<br/>据，实验完了一键清理。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Data Sandbox】"]
         BM_RES_01_D["【BM-RES-01-D 研究资产版本化】<br/>因子、模型、策略这些研究资产统一打版本号，跨项目<br/>复用时知道用的是哪一版。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Asset Versioning】"]
@@ -74,7 +74,7 @@ flowchart TD
         BM_RES_11 -.->|嵌套| BM_RES_11_A
     end
     subgraph sg_BM_RES_02 ["实验追踪与可复现性"]
-        BM_RES_02["【BM-RES-02 实验追踪与可复现性】<br/>每次实验都把超参、数据版本、代码版本、结果全部记<br/>下来，事后能一键复现，不让'我跑出来过但复现不了'<br/>发生。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Experiment Tracking &amp; Reproducibility】"]
+        BM_RES_02["【BM-RES-02 实验追踪与可复现性】<br/>每次实验都把超参、数据版本、代码版本、结果全部记<br/>下来，事后能一键复现，不让'我跑出来过但复现不了'<br/>发生。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Experiment Tracking &amp; Reproducibility】"]
         BM_RES_02_A["【BM-RES-02-A 实验记录与对比】<br/>每次实验的超参、数据版本、代码版本、结果全部记下<br/>来，多组实验横向对比看哪个好。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Experiment Logging &amp; Comparison】"]
         BM_RES_02_B["【BM-RES-02-B 可复现性管理】<br/>锁环境、锁依赖、锁随机种子——保证别人拿你的实验配<br/>置能跑出一模一样的结果。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Reproducibility Management】"]
         BM_RES_02_C["【BM-RES-02-C 实验异常检测】<br/>自动盯实验——loss<br/>爆了、指标异常偏移、跑得比预期慢太多，主动报警别<br/>浪费算力。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Experiment Anomaly Detection】"]
@@ -108,32 +108,33 @@ flowchart TD
         BM_RES_05 -.->|嵌套| BM_RES_05_C
     end
     subgraph sg_BM_RES_06 ["LLM研究Agent与论文追踪"]
-        BM_RES_06["【BM-RES-06 LLM研究Agent与论文追踪】<br/>让 LLM 当研究助手——自动读论文、跑工具、反思纠错<br/>；同时追踪最新论文别漏掉行业前沿。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【LLM Research Agent &amp; Paper Tracking】"]
+        BM_RES_06["【BM-RES-06 LLM研究Agent与论文追踪】<br/>让 LLM 当研究助手——自动读论文、跑工具、反思纠错<br/>；同时追踪最新论文别漏掉行业前沿。<br/>（生产态 / production）<br/>🟡候选承载<br/>【LLM Research Agent &amp; Paper Tracking】"]
         BM_RES_06_A["【BM-RES-06-A LLM研究助手】<br/>让 LLM 当研究助手——自动读论文、跑工具、反思纠错<br/>，研究员提问它就去查资料给结论。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【LLM Research Assistant】"]
         BM_RES_06_B["【BM-RES-06-B 论文追踪】<br/>自动爬取最新论文、去重、生成摘要、做引用分析——别<br/>漏掉行业前沿。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Paper Tracking】"]
         BM_RES_06 -.->|嵌套| BM_RES_06_A
         BM_RES_06 -.->|嵌套| BM_RES_06_B
     end
     subgraph sg_BM_RES_07 ["策略迭代升级"]
-        BM_RES_07["【BM-RES-07 策略迭代升级】<br/>基于归因结果调整权重、挖新因子、学错误模式，让策<br/>略自己进化——不是一锤子买卖。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Strategy Iteration &amp; Upgrade】"]
+        BM_RES_07["【BM-RES-07 策略迭代升级】<br/>基于归因结果调整权重、挖新因子、学错误模式，让策<br/>略自己进化——不是一锤子买卖。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Strategy Iteration &amp; Upgrade】"]
         BM_RES_07_A["【BM-RES-07-A 策略进化与因子挖掘】<br/>基于归因结果调整权重、挖新因子、学错误模式，让策<br/>略自己进化——不是一锤子买卖。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Strategy Evolution &amp; Factor Mining】"]
         BM_RES_07 -.->|嵌套| BM_RES_07_A
     end
     BM_RES_08 ~~~ BM_RES_09 ~~~ BM_RES_01 ~~~ BM_RES_10 ~~~ BM_RES_01_A ~~~ BM_RES_11 ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RES_04_A ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RES_07_A ~~~ BM_RES_08_A ~~~ BM_RES_09_A ~~~ BM_RES_10_A ~~~ BM_RES_11_A
-    BM_RES_01 -.->|研究数据→实验追踪 / data_flow| BM_RES_02
+    BM_RES_01 -->|研究数据→实验追踪 / data_flow| BM_RES_02
     BM_RES_02 -.->|实验结果→假设验证 / data_flow| BM_RES_03
     BM_RES_03 -.->|假设→工作流编排 / trigger| BM_RES_04
     BM_RES_04 -.->|工作流→Notebook协作 / data_flow| BM_RES_05
     BM_RES_05 -.->|协作→LLM/论文追踪 / trigger| BM_RES_06
-    BM_RES_06 -.->|研究发现→策略迭代 / data_flow| BM_RES_07
+    BM_RES_06 -->|研究发现→策略迭代 / data_flow| BM_RES_07
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_RES_01,BM_RES_01_A,BM_RES_02,BM_RES_06,BM_RES_07 production
     class BM_RES_08_A,BM_RES_09_A,BM_RES_10_A,BM_RES_11_A design
     class BM_RES_08,BM_RES_09,BM_RES_10,BM_RES_11 missing
-    class BM_RES_01,BM_RES_01_A,BM_RES_01_B,BM_RES_01_C,BM_RES_01_D,BM_RES_02,BM_RES_02_A,BM_RES_02_B,BM_RES_02_C,BM_RES_02_D,BM_RES_03,BM_RES_03_A,BM_RES_03_B,BM_RES_03_C,BM_RES_04,BM_RES_04_A,BM_RES_05,BM_RES_05_A,BM_RES_05_B,BM_RES_05_C,BM_RES_06,BM_RES_06_A,BM_RES_06_B,BM_RES_07,BM_RES_07_A candidate
+    class BM_RES_01_B,BM_RES_01_C,BM_RES_01_D,BM_RES_02_A,BM_RES_02_B,BM_RES_02_C,BM_RES_02_D,BM_RES_03,BM_RES_03_A,BM_RES_03_B,BM_RES_03_C,BM_RES_04,BM_RES_04_A,BM_RES_05,BM_RES_05_A,BM_RES_05_B,BM_RES_05_C,BM_RES_06_A,BM_RES_06_B,BM_RES_07_A candidate
 ```
 
 ## 环节详情
@@ -210,8 +211,13 @@ D-RESEARCH-02 Feature Store 提供离线训练+在线推理双套特征存储，
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0643 | primary | planned | — |
 | candidate | CAND-HARVEST-0193 | supplement | planned | — |
+| depgraph | MOD-DATA_GOV | primary | stable | generated |
+| depgraph | MOD-DATA_GOV-001 | primary | stable | generated |
+| depgraph | MOD-DATA_GOV-003 | primary | stable | generated |
+| depgraph | MOD-DATA_ENG | primary | stable | deprecated |
+| depgraph | MOD-DATA_SEC | primary | stable | generated |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
 
 ### BM-RES-10 模块映射与工厂匹配
 
@@ -260,8 +266,9 @@ Git-like版本管理→数据快照→回滚→血缘追踪(来源→变换→�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0643 | primary | planned | — |
+| depgraph | MOD-DATA_GOV-002 | primary | stable | generated |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：research_incubation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：research_incubation
 
 ### BM-RES-11 多模态知识采集
 
@@ -408,8 +415,9 @@ D-RESEARCH-05 Reproducibility Manager 管环境快照+依赖锁定+种子管理+
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0194 | primary | planned | — |
 | candidate | CAND-HARVEST-0196 | supplement | planned | — |
+| depgraph | MOD-INF-034 | primary | stable | generated |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
 
 ### BM-RES-02-A 实验记录与对比 / Experiment Logging & Comparison
 
@@ -893,8 +901,9 @@ D-RESEARCH-07 Paper Tracker 提供论文爬取器+去重+摘要生成+引用分�
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0198 | primary | planned | — |
 | candidate | CAND-HARVEST-0848 | supplement | planned | — |
+| depgraph | MOD-INF-036 | primary | stable | generated |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
 
 ### BM-RES-06-A LLM研究助手 / LLM Research Assistant
 
@@ -991,8 +1000,9 @@ D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0199 | primary | planned | — |
 | candidate | CAND-HARVEST-0646 | supplement | planned | — |
+| depgraph | MOD-INF-021 | primary | stable | generated |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
 
 ### BM-RES-07-A 策略进化与因子挖掘 / Strategy Evolution & Factor Mining
 

@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_06_buy_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §buy_flow 阶段，24 环节（15 锚点）。
+> battle_map §buy_flow 阶段，24 环节（19 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,9 +20,9 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
 | 环节数 | 24 | Steps | 24 |
-| 锚点数（双向对齐） | 15 | Anchors (Bidirectional) | 15 |
+| 锚点数（双向对齐） | 19 | Anchors (Bidirectional) | 19 |
 | 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟧 设计态（待施工）=9 ｜ 🟦 运营态（已建）=7 ｜ ⬜ 缺失态（无锚点）=6 ｜ 🟨 候选态（候选池）=2 | State Distribution | 🟧 设计态（待施工）=9 ｜ 🟦 运营态（已建）=7 ｜ ⬜ 缺失态（无锚点）=6 ｜ 🟨 候选态（候选池）=2 |
+| 状态分布 | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -42,7 +42,7 @@ date: 2026-08-04
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 买入阶段图
 flowchart TD
-    BM_BUY_09["【BM-BUY-09 信息合规】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_BUY_09["【BM-BUY-09 信息合规】<br/>—<br/>（生产态 / production）"]
     BM_BUY_10["【BM-BUY-10 合规技术深度】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_BUY_01["【BM-BUY-01 多情景对策生成】<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Multi-Scenario Countermeasure】"]
     BM_BUY_11["【BM-BUY-11 合规持续运营】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
@@ -79,7 +79,7 @@ flowchart TD
     BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控→仓位裁决→置信度分层→执行四级优先级，是人工<br/>干预系统的入口。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【External Order Monitoring】"]
     BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>（生产态 / production）<br/>【WeChat Interaction Hub】"]
     subgraph sg_BM_BUY_08 ["交易纪律合规闸"]
-        BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
+        BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
         BM_BUY_08_A["【BM-BUY-08-A 四项必做清单自动化检测】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
         BM_BUY_08_B["【BM-BUY-08-B 四项严禁自动化检测】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
         BM_BUY_08 -.->|嵌套| BM_BUY_08_A
@@ -90,16 +90,16 @@ flowchart TD
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
     BM_BUY_07 -.->|微信指令→外部指令盯盘 / data_flow| BM_BUY_06
-    BM_BUY_03 -.->|编排后决策→纪律合规闸 / trigger| BM_BUY_08
+    BM_BUY_03 -->|编排后决策→纪律合规闸 / trigger| BM_BUY_08
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_C,BM_BUY_02_D production
+    class BM_BUY_09,BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_08,BM_BUY_02_A,BM_BUY_02_C,BM_BUY_02_D production
     class BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_B,BM_BUY_08_A,BM_BUY_08_B design
-    class BM_BUY_09,BM_BUY_10,BM_BUY_11,BM_BUY_12,BM_BUY_13,BM_BUY_15 missing
-    class BM_BUY_06,BM_BUY_08 candidate
+    class BM_BUY_10,BM_BUY_11,BM_BUY_12,BM_BUY_13,BM_BUY_15 missing
+    class BM_BUY_06 candidate
 ```
 
 ## 环节详情
@@ -119,9 +119,13 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
 | ⑥ 降级/中止 | 检测失效→人工合规复核+延迟交易 |
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-L10-001 | primary | stable | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-10 合规技术深度
 
@@ -317,6 +321,8 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-007 | primary | planned | stable |
+| depgraph | MOD-FEEDBACK_LOOP | primary | planned | stable |
+| depgraph | SH-DB-001 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -624,8 +630,9 @@ L3/决策层。C-019●核心微信多人互动(D-TRADING-06)。微信机器人�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0169 | primary | candidate | — |
+| depgraph | MOD-INF-033 | primary | stable | generated |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-A 逻辑驱动轨 / Logic-Driven Track
 
