@@ -414,3 +414,70 @@ data_sources:
         requires_path: "E:\\tdx\\PYPlugins\\user"
         requires_process: "tdx client"
         note: "tqcenter 非 pip 安装，需 sys.path.insert 注入；由 sector_kline_downloader.py 独立脚本触发"
+
+  - id: DS-FRED
+    # #ARCH-EDB-EXPAND（2026-08-04）：FRED + 世界银行免费宏观数据，扩展 EDB 国际对比数据
+    runtime_id: fred
+    name: "FRED/世界银行 宏观数据"
+    name_en: "FRED & World Bank Macro Data"
+    type: open_source
+    account_type: free
+    category: macro_data
+    vendor: "美联储/世界银行"
+    interface_types: ["HTTP REST API"]
+    api_count: 38
+    auth_required: false
+    auth_method: "FRED_API_KEY 可选（无 key 限额120/min，有 key 提升）；世界银行无需 key"
+    rate_limit: "FRED 120次/min；世界银行无明确限制"
+    status: active
+    coverage: "国际宏观经济指标（美国GDP/CPI/失业率/国债收益率/美元汇率/原油WTI/黄金/VIX；各国GDP/人口/进出口/通胀/FDI/外汇储备）"
+    coverage_reason: "国内数据源（akshare/tushare）覆盖不到的国际宏观对比数据；FRED 是美国官方宏观数据源，世界银行覆盖全球经济体"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "https://fred.stlouisfed.org/docs/api/api_key.html ; https://api.worldbank.org/v2"
+    policy:
+      rpm: 60
+      concurrency: 1
+      max_retries: 3
+      backoff: exponential
+      initial_wait_sec: 3.0
+      retry_on: ["ConnectionError", "TimeoutError", "500", "502", "503", "504"]
+      session_ttl_sec: 0
+      relogin_on_auth_error: false
+      extra:
+        requires_vpn: true
+        fred_api_key_optional: true
+        worldbank_no_key: true
+        note: "海外站点，国内访问可能需 VPN；FRED key 免费注册；与 akshare macro_data 共表 c1_market.macro_data，indicator_name 前缀 FRED_/WB_ 区分"
+
+  - id: DS-EIA
+    # #ARCH-EDB-EXPAND（2026-08-04）：EIA 能源数据，石油/天然气库存与价格
+    runtime_id: eia
+    name: "EIA 能源数据"
+    name_en: "U.S. Energy Information Administration"
+    type: open_source
+    account_type: free
+    category: macro_data
+    vendor: "美国能源信息署"
+    interface_types: ["HTTP REST API"]
+    api_count: 7
+    auth_required: true
+    auth_method: "EIA_API_KEY 必填（免费注册 https://www.eia.gov/opendata/register.php）"
+    rate_limit: "500次/h（v2）"
+    status: active
+    coverage: "石油库存（原油/汽油/馏分油/丙烷，周度）、石油现货价格（WTI/Brent，日度）、天然气库存（周度）"
+    coverage_reason: "能源数据是通胀/周期分析的重要先行指标；EIA 是美国官方能源数据源，国内数据源无法覆盖"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "https://www.eia.gov/opendata/register.php"
+    policy:
+      rpm: 500
+      concurrency: 1
+      max_retries: 2
+      backoff: exponential
+      initial_wait_sec: 2.0
+      retry_on: ["ConnectionError", "TimeoutError"]
+      session_ttl_sec: 0
+      relogin_on_auth_error: false
+      extra:
+        eia_api_version: v2
+        requires_vpn: true
+        note: "海外站点，国内访问可能需 VPN；EIA key 免费注册；与 akshare/FRED macro_data 共表 c1_market.macro_data，indicator_name 前缀 EIA_ 区分"

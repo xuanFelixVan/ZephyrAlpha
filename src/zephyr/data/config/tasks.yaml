@@ -1079,6 +1079,36 @@ tasks:
   fallback_sources:
   - source: ifind
     capability: macro_data
+
+  # --- EIA 能源数据（2026-08-04 新增，#ARCH-EDB-EXPAND）---
+  # EIA API v2：免费需注册 key，石油库存/价格/天然气库存
+- task_id: eia_petroleum_incremental
+  table: c1_market.macro_data
+  source: eia
+  schedule: daily_calibration
+  incremental: true
+  date_col: report_date
+  dependencies: []
+  capability: eia_petroleum
+  symbols:
+  extra:
+    description: "EIA石油数据增量（原油/汽油/馏分油库存+WTI/Brent现货价格，需EIA_API_KEY）"
+    start_days_back: 30
+
+  fallback_sources: []
+- task_id: eia_full_refresh
+  table: c1_market.macro_data
+  source: eia
+  schedule: weekend_calibration
+  incremental: false
+  dependencies: []
+  capability: eia_full
+  symbols:
+  extra:
+    description: "EIA能源数据全量刷新（5年历史回填，石油+天然气，需EIA_API_KEY）"
+    start_days_back: 1825
+
+  fallback_sources: []
 - task_id: kline_us_daily_full_refresh
   table: c1_market.kline_us_daily
   source: tickflow

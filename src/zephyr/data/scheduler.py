@@ -1036,6 +1036,10 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.fred_provider import FredProvider
 
                 return FredProvider()
+            elif source == "eia":
+                from zephyr.data.implementations.eia_provider import EiaProvider
+
+                return EiaProvider()
             else:
                 log.warning("未知数据源: %s", source)
                 return None

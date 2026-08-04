@@ -8066,6 +8066,13 @@ creation_tokens:
     capability: "fred_macro_data"
     note: "FRED+WorldBank 免费宏观数据获取（美国GDP/CPI/国债收益率 + 各国GDP/人口/进出口）"
 
+  # --- EIA 能源数据 provider（2026-08-04，#ARCH-EDB-EXPAND）---
+  - file: "src/zephyr/data/implementations/eia_provider.py"
+    token: "auto-eia-provider-20260804"
+    created_by: "session-eia-provider-impl"
+    capability: "eia_energy_data"
+    note: "EIA v2 API 能源数据获取（石油库存/WTI/Brent现货价格/天然气库存）"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
