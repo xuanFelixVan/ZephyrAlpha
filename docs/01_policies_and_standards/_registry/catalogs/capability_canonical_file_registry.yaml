@@ -654,7 +654,7 @@ capabilities:
       作为对齐 key（depgraph 用 blueprint_id 派生），检测 4 类问题：
       孤儿（仅一图存在）/ 状态漂移（design_maturity 不一致）/
       域不一致（domain_id 不一致）/ 设计态孤立（design 仅一图）。
-      输出报告到 docs/02_enterprise_architecture/generated/panorama_alignment_report.md。
+      输出报告到 docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md。
       定位：只读检测器（不自动修复），由人工或后续工具根据报告处理。
       canonical = scripts/governance/d5_architecture/generators/align_panoramas.py。
       注意区别：本能力是"三图间 module_id 对齐检测"（depgraph/dataflow/decision
@@ -5730,6 +5730,7 @@ creation_tokens:
     token: "auto-kimi3-battle-map-merge-20260804"
     created_by: "session-anchor-hub"
     capability: "kimi3_battle_map_merge_instructions"
+
   # --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
   - file: "scripts/governance/_shared/module_translation_loader.py"
     token: "auto-module-translation-loader-20260801"
@@ -5769,6 +5770,16 @@ creation_tokens:
     token: "auto-translation-coverage-reconciler-20260802"
     created_by: "session-translation-coverage-gate"
     capability: "translation_coverage_reconciler"
+
+  # --- 对齐报告迁移至 governance_reports（2026-08-04，双语名称 + BM-INV-007 孤儿模块检测）---
+  - file: "docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md"
+    token: "auto-battle-map-alignment-report-20260804"
+    created_by: "session-align-report-bilingual"
+    capability: "align_battle_map"
+  - file: "docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md"
+    token: "auto-panorama-alignment-report-20260804"
+    created_by: "session-align-report-bilingual"
+    capability: "align_panoramas"
 
   # --- 决策节点 plain_zh 回填脚本（2026-08-02，V1.3 §4.11 治本）---
   - file: "scripts/governance/decision_node_plain_zh_backfill.py"

@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV_ALIGN_BATTLE_MAP | docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md | §8.3
 # [MODULE] scripts.governance.align_battle_map
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] zephyr.governance.persistence.battle_map_reader (BattleMapReader); zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.persistence.dataflowgraph_schema (get_dataflowgraph_pg_connection); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); scripts.governance._shared.module_translation_loader (all_battle_map_step_ids, preload_battle_map_steps); scripts.governance._shared.constants (EXIT_*)
+# [DEPENDENCIES] zephyr.governance.persistence.battle_map_reader (BattleMapReader); zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.persistence.dataflowgraph_schema (get_dataflowgraph_pg_connection); zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); scripts.governance._shared.module_translation_loader (all_battle_map_step_ids, preload_battle_map_steps, get_module_name_bilingual, preload); scripts.governance._shared.constants (EXIT_*)
 # [CONSUMERS] CI自动触发;人工审查作战地图对齐报告
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读PG（零写入）;只读YAML/文件系统（零写入）;输出幂等(相同输入→相同输出);输出到generated/battle_map_alignment_report.md
+# [INVARIANTS] 只读PG（零写入）;只读YAML/文件系统（零写入）;输出幂等(相同输入→相同输出);输出到03_governance_reports/battle_map_alignment_report.md
 # [MODIFY-GUARD] 修改需通过 battle_map_positioning.md §8.3 任务或后续维护任务
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,6 +14,7 @@
 # [TESTS] tests/test_align_battle_map.py (规划中)
 # [A_module] module_id=MOD-GOV_ALIGN_BATTLE_MAP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  合法 manual 对齐检测器：CI/人工按需调用，只读检测不做自动修复
 # [ARCH-REF] battle_map_positioning.md §七 §八
 # 真源说明：本检测器从 battle_map_* 三表（PostgreSQL）读取环节/锚点/流转边，
 # 从翻译真源 module_translation_registry.yaml §battle_map_steps 段读取环节叙事，
@@ -29,13 +30,15 @@
   - 从 battle_map_steps / battle_map_anchors / battle_map_edges 读取作战地图三表（DB 真源）
   - 从翻译真源 module_translation_registry.yaml §battle_map_steps 段读取环节叙事
   - 从 depgraph/dataflowgraph/decisiongraph/candidate/blueprint 读取锚点目标合法 id
-  - 检测五类问题：
+  - 检测七类问题：
       (1) 孤儿环节（BM-INV-001）：环节无任何锚点 = 悬空决策 = 幻觉风险
       (2) 幽灵锚点（BM-INV-002）：anchor.target_id 在 target_graph 对应图/仓库找不到
       (3) 缺失叙事（BM-INV-003）：DB 环节在翻译真源 battle_map_steps 段无对应叙事
       (4) 悬空边：edge.from_step_id / to_step_id 指向不存在的环节
       (5) 域漂移（BM-INV-004）：anchor.target 的 domain 不在 step.flow_stage 允许列表
-  - 输出 MD 报告到 docs/02_enterprise_architecture/generated/battle_map_alignment_report.md
+      (6) 父子嵌套（BM-INV-006）：父不存在/跨阶段/成环/depth超限
+      (7) 孤儿模块（BM-INV-007）：业务域 depgraph 模块无任何锚点指向 = 造出来没用上
+  - 输出 MD 报告到 docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md
 
 定位：只读检测器（君子协定告警，不做自动修复，不硬阻断 commit），由人工或后续工具根据报告处理。
 与 align_panoramas.py 正交：align_panoramas 管 module_id 轴（四图模块一致性），
@@ -71,13 +74,16 @@ _GENERATORS_DIR = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" 
 if _GENERATORS_DIR not in sys.path:
     sys.path.insert(0, _GENERATORS_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR  # noqa: E402
+from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 from _shared.module_translation_loader import (  # noqa: E402
     all_battle_map_step_ids,
+    get_module_name_bilingual,
+    preload,
     preload_battle_map_steps,
 )  # noqa: E402
+
 from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # noqa: E402
-from _common import DB_DISPLAY_NAME  # noqa: E402
 
 # 日志配置：INFO 级别输出，带时间戳，便于后续监控运行情况（CI/人工触发均可观测）
 logging.basicConfig(
@@ -89,30 +95,62 @@ logger = logging.getLogger("align_battle_map")
 
 # 候选池 YAML 真源（target_graph=candidate 的合法 id 来源）
 _CANDIDATE_YAML = (
-    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-    / "catalogs" / "candidate_module_registry.yaml"
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "candidate_module_registry.yaml"
 )
 
 # blueprint 扫描根（target_graph=blueprint 的合法 id 来源）
 _BP_SCAN_ROOT = _REPO_ROOT / "docs" / "03_modules"
 
-# 默认报告输出路径
+# 默认报告输出路径（03_governance_reports/ = 自动生成审计报告约定区，同 capacity_report.md）
 _DEFAULT_REPORT = (
-    _REPO_ROOT / "docs" / "02_enterprise_architecture" / "generated"
-    / "battle_map_alignment_report.md"
+    _REPO_ROOT / "docs" / "02_enterprise_architecture" / "03_governance_reports" / "battle_map_alignment_report.md"
 )
 
 # 域漂移检查规则真源（battle_map_positioning.md §8.3 第三项）
 # TRAE-062 规则数据真源——YAML 文件，禁止 DB 反向写入
 _DOMAIN_POLICY_YAML = (
-    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-    / "catalogs" / "battle_map_domain_policy.yaml"
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "battle_map_domain_policy.yaml"
 )
+
+# depgraph SQL 常量（NO-BARE-SQL 集中化，§5.160.2）
+SQL_SELECT_DEPGRAPH_VALID_IDS = (
+    "SELECT blueprint_id, path FROM nodes WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
+)
+SQL_SELECT_DEPGRAPH_DOMAIN_MAP = (
+    "SELECT blueprint_id, path, domain_id FROM nodes WHERE domain_id IS NOT NULL AND domain_id <> ''"
+)
+SQL_SELECT_BUSINESS_MODULES = """
+SELECT blueprint_id, path, node_name, domain_id, build_status
+FROM nodes
+WHERE domain_id = ANY(%s)
+  AND (blueprint_id IS NOT NULL AND blueprint_id <> ''
+       OR path IS NOT NULL AND path <> '')
+"""
 
 
 # ---------------------------------------------------------------------------
 # 数据模型
 # ---------------------------------------------------------------------------
+
+
+def _make_frontmatter(generated_at: str) -> str:
+    """生成 YAML frontmatter（03_governance_reports/ 属 permanent zone，
+    GATE-TTL-METADATA 要求 audit_report 带 ttl+doc_type，范本对齐 capacity_report.md）。
+
+    :param generated_at: 生成时间字符串（与报告体 generated_at 一致）
+    """
+    date_str = generated_at.split(" ")[0] if generated_at else datetime.now().strftime("%Y-%m-%d")
+    return (
+        "---\n"
+        "doc_type: audit_report\n"
+        "title: 作战地图对齐报告\n"
+        'version: "1.0"\n'
+        "status: active\n"
+        f"date: {date_str}\n"
+        "owner: auto-generator\n"
+        "ttl: permanent\n"
+        "---\n\n"
+    )
 
 
 @dataclass
@@ -133,6 +171,8 @@ class BattleMapAlignmentReport:
     dangling_edges: list[dict] = field(default_factory=list)  # 悬空边
     domain_drifts: list[dict] = field(default_factory=list)  # BM-INV-004 域漂移
     parent_child_issues: list[dict] = field(default_factory=list)  # BM-INV-006 父子嵌套
+    orphan_modules: list[dict] = field(default_factory=list)  # BM-INV-007 孤儿模块
+    business_module_count: int = 0  # 业务域 depgraph 模块总数（BM-INV-007 扫描范围）
     # 降级告警（目标图源不可用时记录，非对齐问题）
     source_unavailable: list[str] = field(default_factory=list)
     # 汇总
@@ -145,27 +185,32 @@ class BattleMapAlignmentReport:
         lines.append("")
         lines.append(f"- 生成时间: {self.generated_at}")
         lines.append(f"- 数据源: {self.db_name}")
-        lines.append(f"- 三表统计: steps={self.step_count} / "
-                     f"anchors={self.anchor_count} / edges={self.edge_count} / "
-                     f"叙事真源={self.narrative_count}")
+        lines.append(
+            f"- 三表统计: steps={self.step_count} / "
+            f"anchors={self.anchor_count} / edges={self.edge_count} / "
+            f"叙事真源={self.narrative_count}"
+        )
+        lines.append(f"- 业务域模块: {self.business_module_count}（BM-INV-007 扫描范围，业务域白名单内 depgraph 节点）")
         lines.append(f"- 问题总数: {self.issues_total}")
-        lines.append("  - 孤儿环节（BM-INV-001，无锚点=悬空决策）: {}".format(len(self.orphan_steps)))
-        lines.append("  - 幽灵锚点（BM-INV-002，target_id 找不到）: {}".format(len(self.ghost_anchors)))
-        lines.append("  - 缺失叙事（BM-INV-003，翻译真源无环节）: {}".format(len(self.missing_narratives)))
-        lines.append("  - 悬空边（edge 指向不存在环节）: {}".format(len(self.dangling_edges)))
-        lines.append("  - 域漂移（BM-INV-004，target domain 不在 flow_stage 允许列表）: {}".format(len(self.domain_drifts)))
-        lines.append("  - 父子嵌套问题（BM-INV-006，父不存在/跨阶段/成环/depth超限）: {}".format(len(self.parent_child_issues)))
+        lines.append(f"  - 孤儿环节（BM-INV-001，无锚点=悬空决策）: {len(self.orphan_steps)}")
+        lines.append(f"  - 幽灵锚点（BM-INV-002，target_id 找不到）: {len(self.ghost_anchors)}")
+        lines.append(f"  - 缺失叙事（BM-INV-003，翻译真源无环节）: {len(self.missing_narratives)}")
+        lines.append(f"  - 悬空边（edge 指向不存在环节）: {len(self.dangling_edges)}")
+        lines.append(f"  - 域漂移（BM-INV-004，target domain 不在 flow_stage 允许列表）: {len(self.domain_drifts)}")
+        lines.append(f"  - 父子嵌套问题（BM-INV-006，父不存在/跨阶段/成环/depth超限）: {len(self.parent_child_issues)}")
+        lines.append(f"  - 孤儿模块（BM-INV-007，业务域模块无作战锚点=造出来没用上）: {len(self.orphan_modules)}")
         if self.source_unavailable:
             lines.append("")
-            lines.append("> ⚠ 目标图源不可用（已跳过该图 BM-INV-002 校验）: "
-                         + ", ".join(self.source_unavailable))
+            lines.append("> ⚠ 目标图源不可用（已跳过该图 BM-INV-002 校验）: " + ", ".join(self.source_unavailable))
         lines.append("")
 
         # 1. 孤儿环节
         lines.append("## 1. 孤儿环节（BM-INV-001：环节无锚点 = 悬空决策）")
         lines.append("")
-        lines.append("> 君子协定：每个 battle_map_steps 必须至少有一个 battle_map_anchors。"
-                     "无锚点环节 = 没有模块承载 = AI 写决策时凭记忆推断 = 幻觉风险。")
+        lines.append(
+            "> 君子协定：每个 battle_map_steps 必须至少有一个 battle_map_anchors。"
+            "无锚点环节 = 没有模块承载 = AI 写决策时凭记忆推断 = 幻觉风险。"
+        )
         lines.append("")
         if not self.orphan_steps:
             lines.append("> ✅ 无孤儿环节，所有环节均已挂载锚点。")
@@ -182,8 +227,10 @@ class BattleMapAlignmentReport:
         # 2. 幽灵锚点
         lines.append("## 2. 幽灵锚点（BM-INV-002：target_id 在目标图找不到）")
         lines.append("")
-        lines.append("> 君子协定：anchor.target_id 必须能在 target_graph 对应的图/仓库里找到。"
-                     "找不到 = 幽灵锚点 = 指向不存在的模块/候选/蓝图。")
+        lines.append(
+            "> 君子协定：anchor.target_id 必须能在 target_graph 对应的图/仓库里找到。"
+            "找不到 = 幽灵锚点 = 指向不存在的模块/候选/蓝图。"
+        )
         lines.append("")
         if not self.ghost_anchors:
             lines.append("> ✅ 无幽灵锚点（或锚点表为空，无对象校验）。")
@@ -201,8 +248,10 @@ class BattleMapAlignmentReport:
         # 3. 缺失叙事
         lines.append("## 3. 缺失叙事（BM-INV-003：翻译真源无对应环节）")
         lines.append("")
-        lines.append("> 君子协定：DB 每个环节必须在翻译真源 `battle_map_steps` 段有叙事"
-                     "（name_zh/plain_zh/mechanism_zh/indicators_zh）。缺失 = 生成器降级到 DB step_name。")
+        lines.append(
+            "> 君子协定：DB 每个环节必须在翻译真源 `battle_map_steps` 段有叙事"
+            "（name_zh/plain_zh/mechanism_zh/indicators_zh）。缺失 = 生成器降级到 DB step_name。"
+        )
         lines.append("")
         if not self.missing_narratives:
             lines.append("> ✅ 无缺失叙事，所有环节在翻译真源均已登记。")
@@ -210,10 +259,7 @@ class BattleMapAlignmentReport:
             lines.append("| step_id | 环节名 | 阶段 |")
             lines.append("|---|---|---|")
             for s in self.missing_narratives:
-                lines.append(
-                    f"| {s['step_id']} | {s.get('step_name', '—')} | "
-                    f"{s.get('flow_stage', '—')} |"
-                )
+                lines.append(f"| {s['step_id']} | {s.get('step_name', '—')} | {s.get('flow_stage', '—')} |")
         lines.append("")
 
         # 4. 悬空边
@@ -235,15 +281,16 @@ class BattleMapAlignmentReport:
         # 5. 域漂移
         lines.append("## 5. 域漂移（BM-INV-004：target domain 不在 flow_stage 允许列表）")
         lines.append("")
-        lines.append("> 君子协定：anchor 的 target module/candidate 的 domain 必须在 step.flow_stage "
-                     "对应的允许域列表里。不在 = 域漂移 = 语义错位（如把卖出决策挂在买入流程）。"
-                     "规则真源：`docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`。")
+        lines.append(
+            "> 君子协定：anchor 的 target module/candidate 的 domain 必须在 step.flow_stage "
+            "对应的允许域列表里。不在 = 域漂移 = 语义错位（如把卖出决策挂在买入流程）。"
+            "规则真源：`docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`。"
+        )
         lines.append("")
         if not self.domain_drifts:
             lines.append("> ✅ 无域漂移，所有锚点 target domain 都在对应 flow_stage 允许列表里。")
         else:
-            lines.append("| anchor_id | step_id | flow_stage | target_graph | target_id | "
-                         "target_domains | 角色 |")
+            lines.append("| anchor_id | step_id | flow_stage | target_graph | target_id | target_domains | 角色 |")
             lines.append("|---|---|---|---|---|---|---|")
             for a in self.domain_drifts:
                 domains = a.get("domains")
@@ -259,8 +306,10 @@ class BattleMapAlignmentReport:
         # 6. 父子嵌套问题
         lines.append("## 6. 父子嵌套问题（BM-INV-006：父不存在/跨阶段/成环/depth超限）")
         lines.append("")
-        lines.append("> 君子协定：parent_step_id 必须指向同 flow_stage 的已存在环节，"
-                     "depth≤3，parent 链不能成环。规则真源：battle_map_positioning.md §8.4。")
+        lines.append(
+            "> 君子协定：parent_step_id 必须指向同 flow_stage 的已存在环节，"
+            "depth≤3，parent 链不能成环。规则真源：battle_map_positioning.md §8.4。"
+        )
         lines.append("")
         if not self.parent_child_issues:
             lines.append("> ✅ 无父子嵌套问题。")
@@ -274,20 +323,62 @@ class BattleMapAlignmentReport:
                 )
         lines.append("")
 
-        # 处置建议
-        lines.append("## 7. 处置建议")
+        # 7. 孤儿模块（BM-INV-007）
+        lines.append("## 7. 孤儿模块（BM-INV-007：业务域模块无作战锚点 = 造出来没用上）")
         lines.append("")
-        lines.append("- 孤儿环节：用 `apply_battle_map.py --add-anchor` 为环节挂载承载模块/候选/蓝图"
-                     "（草图 §12 迁移第二批「锚点」）")
+        lines.append(
+            "> 君子协定：业务域（battle_map_domain_policy.yaml 所有 flow_stage 的 allowed 域并集）"
+            "内的 depgraph 模块，必须至少有一个 battle_map_anchors 指向它（target_graph=depgraph，"
+            "target_id 命中其 blueprint_id 或 path）。无任何锚点指向 = 没有作战使命 = "
+            "造出来没用上 = 幻觉/浪费风险。非业务域（D_GOVERNANCE/D_GOV_SCRIPTS/D_FRONTEND 等"
+            "基础设施/治理/工具）天然排除，不在此扫。"
+        )
+        lines.append("")
+        if not self.orphan_modules:
+            lines.append("> ✅ 无孤儿模块，所有业务域模块均已挂载到作战环节。")
+        else:
+            lines.append("| blueprint_id | 名称 / Name | domain_id | build_status | path |")
+            lines.append("|---|---|---|---|---|")
+            for m in self.orphan_modules:
+                # 双语名称优先（翻译真源），无翻译时回退到 DB node_name，都无则 —
+                name_bi = m.get("name_bi") or ""
+                node_name = str(m.get("node_name") or "").strip()
+                display = name_bi or node_name or "—"
+                lines.append(
+                    f"| {m.get('blueprint_id', '—')} | {display} | "
+                    f"{m.get('domain_id', '—')} | {m.get('build_status', '—')} | "
+                    f"{m.get('path', '—')} |"
+                )
+        lines.append("")
+
+        # 处置建议
+        lines.append("## 8. 处置建议")
+        lines.append("")
+        lines.append(
+            "- 孤儿环节：用 `apply_battle_map.py --add-anchor` 为环节挂载承载模块/候选/蓝图"
+            "（草图 §12 迁移第二批「锚点」）"
+        )
         lines.append("- 幽灵锚点：修正 target_id 指向真实存在的模块/候选，或删除该锚点")
-        lines.append("- 缺失叙事：在 `module_translation_registry.yaml` §battle_map_steps 段补齐环节叙事"
-                     "（name_zh/plain_zh/mechanism_zh/indicators_zh）")
+        lines.append(
+            "- 缺失叙事：在 `module_translation_registry.yaml` §battle_map_steps 段补齐环节叙事"
+            "（name_zh/plain_zh/mechanism_zh/indicators_zh）"
+        )
         lines.append("- 悬空边：修正 edge 的 from/to step_id，或删除孤立边")
-        lines.append("- 域漂移：① 确认锚点是否挂错环节（如 D_SELL_DECISION 不应在 buy_flow）；"
-                     "② 若挂错，迁移到正确环节或删除；③ 若认为该 domain 应被允许，"
-                     "修改 `battle_map_domain_policy.yaml` 的 `flow_stage_allowed_domains` 段"
-                     "（真源在 YAML，禁止改代码）；④ target_domains 含多个 domain 时，"
-                     "任一在允许列表即通过（跨域蓝图如 MOD-INF-002 含 80+ 子模块跨 8 domain）")
+        lines.append(
+            "- 域漂移：① 确认锚点是否挂错环节（如 D_SELL_DECISION 不应在 buy_flow）；"
+            "② 若挂错，迁移到正确环节或删除；③ 若认为该 domain 应被允许，"
+            "修改 `battle_map_domain_policy.yaml` 的 `flow_stage_allowed_domains` 段"
+            "（真源在 YAML，禁止改代码）；④ target_domains 含多个 domain 时，"
+            "任一在允许列表即通过（跨域蓝图如 MOD-INF-002 含 80+ 子模块跨 8 domain）"
+        )
+        lines.append(
+            "- 孤儿模块：① 确认该模块是否该挂到某作战环节——若是，用 "
+            "`apply_battle_map.py --add-anchor --target-graph depgraph --target-id <blueprint_id>` "
+            "挂到对应 step；② 若确无作战使命（造出来用不上），走弃用流程——"
+            "`apply_depgraph.py` 软删除（build_status→deprecated）+ 在 "
+            "`candidate_module_registry.yaml` 记 rejected 条目（含否决理由，防未来误重设）；"
+            "③ build_status=planned 的孤儿 = 设计了却没想好挂哪，优先评审其作战归属再决定建/弃"
+        )
         lines.append("")
 
         return "\n".join(lines)
@@ -306,17 +397,15 @@ def _valid_ids_depgraph() -> tuple[set[str], bool]:
     """
     try:
         from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
         valid: set[str] = set()
         conn = get_depgraph_pg_connection()
         try:
             with conn.cursor() as cur:
-                cur.execute(
-                    "SELECT blueprint_id, path FROM nodes "
-                    "WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
-                )
+                cur.execute(SQL_SELECT_DEPGRAPH_VALID_IDS)
                 cols = [d[0] for d in cur.description]
                 for row in cur.fetchall():
-                    r = dict(zip(cols, row))
+                    r = dict(zip(cols, row, strict=False))
                     bp = r.get("blueprint_id")
                     path = r.get("path")
                     if bp:
@@ -326,7 +415,7 @@ def _valid_ids_depgraph() -> tuple[set[str], bool]:
         finally:
             conn.close()
         return valid, True
-    except Exception:
+    except Exception:  # noqa: BLE001
         return set(), False
 
 
@@ -336,6 +425,7 @@ def _valid_ids_dataflowgraph() -> tuple[set[str], bool]:
         from zephyr.governance.persistence.dataflowgraph_schema import (
             get_dataflowgraph_pg_connection,
         )
+
         valid: set[str] = set()
         conn = get_dataflowgraph_pg_connection()
         try:
@@ -343,7 +433,7 @@ def _valid_ids_dataflowgraph() -> tuple[set[str], bool]:
                 cur.execute("SELECT entity_name, module_id FROM dataflow_datasets")
                 cols = [d[0] for d in cur.description]
                 for row in cur.fetchall():
-                    r = dict(zip(cols, row))
+                    r = dict(zip(cols, row, strict=False))
                     for k in ("entity_name", "module_id"):
                         v = r.get(k)
                         if v:
@@ -351,7 +441,7 @@ def _valid_ids_dataflowgraph() -> tuple[set[str], bool]:
                 cur.execute("SELECT job_name, module_id FROM dataflow_jobs")
                 cols = [d[0] for d in cur.description]
                 for row in cur.fetchall():
-                    r = dict(zip(cols, row))
+                    r = dict(zip(cols, row, strict=False))
                     for k in ("job_name", "module_id"):
                         v = r.get(k)
                         if v:
@@ -359,7 +449,7 @@ def _valid_ids_dataflowgraph() -> tuple[set[str], bool]:
         finally:
             conn.close()
         return valid, True
-    except Exception:
+    except Exception:  # noqa: BLE001
         return set(), False
 
 
@@ -369,6 +459,7 @@ def _valid_ids_decisiongraph() -> tuple[set[str], bool]:
         from zephyr.governance.persistence.decisiongraph_schema import (
             get_decisiongraph_pg_connection,
         )
+
         valid: set[str] = set()
         conn = get_decisiongraph_pg_connection()
         try:
@@ -376,7 +467,7 @@ def _valid_ids_decisiongraph() -> tuple[set[str], bool]:
                 cur.execute("SELECT path, module_id FROM decision_nodes")
                 cols = [d[0] for d in cur.description]
                 for row in cur.fetchall():
-                    r = dict(zip(cols, row))
+                    r = dict(zip(cols, row, strict=False))
                     for k in ("path", "module_id"):
                         v = r.get(k)
                         if v:
@@ -384,7 +475,7 @@ def _valid_ids_decisiongraph() -> tuple[set[str], bool]:
                 cur.execute("SELECT layer_id, module_id FROM decision_layers")
                 cols = [d[0] for d in cur.description]
                 for row in cur.fetchall():
-                    r = dict(zip(cols, row))
+                    r = dict(zip(cols, row, strict=False))
                     for k in ("layer_id", "module_id"):
                         v = r.get(k)
                         if v:
@@ -392,7 +483,7 @@ def _valid_ids_decisiongraph() -> tuple[set[str], bool]:
         finally:
             conn.close()
         return valid, True
-    except Exception:
+    except Exception:  # noqa: BLE001
         return set(), False
 
 
@@ -400,6 +491,7 @@ def _valid_ids_candidate() -> tuple[set[str], bool]:
     """采集候选池合法 target_id（candidate_module_registry.yaml 条目 id）。"""
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _CANDIDATE_YAML.exists():
             return set(), False
         data = yaml.safe_load(_CANDIDATE_YAML.read_text(encoding="utf-8")) or {}
@@ -422,7 +514,7 @@ def _valid_ids_candidate() -> tuple[set[str], bool]:
                 if v:
                     valid.add(str(v))
         return valid, True
-    except Exception:
+    except Exception:  # noqa: BLE001
         return set(), False
 
 
@@ -430,6 +522,7 @@ def _valid_ids_blueprint() -> tuple[set[str], bool]:
     """采集蓝图合法 target_id（docs/03_modules/ frontmatter module_id）。"""
     try:
         import re
+
         if not _BP_SCAN_ROOT.exists():
             return set(), False
         fm_re = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
@@ -453,7 +546,7 @@ def _valid_ids_blueprint() -> tuple[set[str], bool]:
                     if v and not v.startswith("[") and not v.startswith("{"):
                         valid.add(v)
         return valid, True
-    except Exception:
+    except Exception:  # noqa: BLE001
         return set(), False
 
 
@@ -480,6 +573,7 @@ def _load_domain_policy() -> dict[str, set[str]] | None:
     """
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _DOMAIN_POLICY_YAML.exists():
             return None
         data = yaml.safe_load(_DOMAIN_POLICY_YAML.read_text(encoding="utf-8")) or {}
@@ -490,7 +584,7 @@ def _load_domain_policy() -> dict[str, set[str]] | None:
             if isinstance(allowed, list):
                 result[stage] = {str(d) for d in allowed}
         return result if result else None
-    except Exception:
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -506,17 +600,15 @@ def _anchor_domain_map_depgraph() -> tuple[dict[str, set[str]], bool]:
     """
     try:
         from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
         domain_map: dict[str, set[str]] = {}
         conn = get_depgraph_pg_connection()
         try:
             with conn.cursor() as cur:
-                cur.execute(
-                    "SELECT blueprint_id, path, domain_id FROM nodes "
-                    "WHERE domain_id IS NOT NULL AND domain_id <> ''"
-                )
+                cur.execute(SQL_SELECT_DEPGRAPH_DOMAIN_MAP)
                 cols = [d[0] for d in cur.description]
                 for row in cur.fetchall():
-                    r = dict(zip(cols, row))
+                    r = dict(zip(cols, row, strict=False))
                     domain_id = r.get("domain_id")
                     if not domain_id:
                         continue
@@ -527,7 +619,7 @@ def _anchor_domain_map_depgraph() -> tuple[dict[str, set[str]], bool]:
         finally:
             conn.close()
         return domain_map, True
-    except Exception:
+    except Exception:  # noqa: BLE001
         return {}, False
 
 
@@ -539,6 +631,7 @@ def _anchor_domain_map_candidate() -> tuple[dict[str, set[str]], bool]:
     """
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _CANDIDATE_YAML.exists():
             return {}, False
         data = yaml.safe_load(_CANDIDATE_YAML.read_text(encoding="utf-8")) or {}
@@ -564,7 +657,7 @@ def _anchor_domain_map_candidate() -> tuple[dict[str, set[str]], bool]:
                     domain_map.setdefault(str(v), set()).add(str(domain))
                     break
         return domain_map, True
-    except Exception:
+    except Exception:  # noqa: BLE001
         return {}, False
 
 
@@ -573,6 +666,57 @@ _DOMAIN_COLLECTORS = {
     "depgraph": _anchor_domain_map_depgraph,
     "candidate": _anchor_domain_map_candidate,
 }
+
+
+# ---------------------------------------------------------------------------
+# BM-INV-007 孤儿模块：业务域白名单 + 业务模块采集
+# ---------------------------------------------------------------------------
+
+
+def _business_domain_whitelist(policy: dict[str, set[str]] | None) -> set[str]:
+    """业务域白名单 = 所有 flow_stage 的 allowed 域并集。
+
+    用于 BM-INV-007 孤儿模块扫描范围。基础设施/治理/工具脚本域
+    （D_GOVERNANCE/D_GOV_SCRIPTS/D_GOV_RULE/D_FRONTEND 等）不在任何 flow_stage 的
+    allowed 列表里，天然排除，避免"治理脚本没挂作战地图"的假孤儿误报。
+
+    :param policy: _load_domain_policy() 返回的 {flow_stage: set(allowed_domain_ids)}
+    :return: 业务域 id 并集；policy 为 None 时返回空集（跳过孤儿模块扫描）
+    """
+    if not policy:
+        return set()
+    return set().union(*policy.values())
+
+
+def _business_modules_depgraph(whitelist: set[str]) -> tuple[list[dict], bool]:
+    """采集业务域 depgraph 节点（domain_id ∈ 白名单）—— BM-INV-007 扫描对象。
+
+    与 _anchor_domain_map_depgraph 互补：后者采集 domain 映射（BM-INV-004 域漂移用），
+    本方法采集完整节点信息（blueprint_id/path/node_name/domain_id/build_status）供孤儿判定。
+
+    :return: (modules, available) — available=False 表示 depgraph 不可用（跳过孤儿扫描）
+    """
+    if not whitelist:
+        return [], False
+    try:
+        from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+        modules: list[dict] = []
+        conn = get_depgraph_pg_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    SQL_SELECT_BUSINESS_MODULES,
+                    (list(whitelist),),
+                )
+                cols = [d[0] for d in cur.description]
+                for row in cur.fetchall():
+                    modules.append(dict(zip(cols, row, strict=False)))
+        finally:
+            conn.close()
+        return modules, True
+    except Exception:  # noqa: BLE001
+        return [], False
 
 
 # ---------------------------------------------------------------------------
@@ -589,14 +733,15 @@ def run_alignment(
 
     Args:
         output_path: 报告输出路径。None 时使用默认路径
-            docs/02_enterprise_architecture/generated/battle_map_alignment_report.md
+            docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md
         write_report: True 写入文件（默认）；False 仅返回 report 不写文件
     """
     if output_path is None:
         output_path = _DEFAULT_REPORT
 
-    # 预加载翻译真源
+    # 预加载翻译真源（环节叙事 + 模块级双语名称）
     preload_battle_map_steps()
+    preload()  # 模块级翻译（BM-INV-007 孤儿模块表双语名称）
     logger.info("开始作战地图对齐检测...")
 
     reader = BattleMapReader()
@@ -685,15 +830,43 @@ def run_alignment(
                 continue  # 查不到 domain（可能 depgraph 该节点无 domain_id）
             # 跨域蓝图任一 domain 在允许列表即通过（防误报）
             if not (domains & policy[stage]):
-                domain_drifts.append({
-                    **a,
-                    "flow_stage": stage,
-                    "domains": sorted(domains),
-                    "reason": "domain_not_in_allowed_list",
-                })
+                domain_drifts.append(
+                    {
+                        **a,
+                        "flow_stage": stage,
+                        "domains": sorted(domains),
+                        "reason": "domain_not_in_allowed_list",
+                    }
+                )
 
     # BM-INV-006 父子嵌套一致性：父存在/同阶段/无环/depth≤2
     parent_child_issues = _check_parent_child_consistency(steps)
+
+    # BM-INV-007 孤儿模块：业务域 depgraph 节点无任何锚点指向
+    orphan_modules: list[dict] = []
+    business_module_count = 0
+    whitelist = _business_domain_whitelist(policy)
+    if not whitelist:
+        # policy 不可用时 source_unavailable 已在域漂移块记录 domain_policy_yaml
+        logger.warning("业务域白名单为空（policy 不可用），跳过 BM-INV-007 孤儿模块扫描")
+    else:
+        business_modules, bm_available = _business_modules_depgraph(whitelist)
+        if not bm_available:
+            source_unavailable.append("business_modules:depgraph")
+        else:
+            business_module_count = len(business_modules)
+            # 已锚定集合 = target_graph=depgraph 的所有 target_id（blueprint_id ∪ path 宽松匹配）
+            anchored_depgraph_ids = {
+                str(a["target_id"]) for a in anchors if a.get("target_graph") == "depgraph" and a.get("target_id")
+            }
+            for m in business_modules:
+                bp = str(m.get("blueprint_id")) if m.get("blueprint_id") else ""
+                pth = str(m.get("path")) if m.get("path") else ""
+                # blueprint_id 或 path 任一命中已锚定集合 → 已挂载，非孤儿
+                if bp not in anchored_depgraph_ids and pth not in anchored_depgraph_ids:
+                    # 双语名称（翻译真源 module_translation_registry.yaml，中文在前 / English）
+                    m["name_bi"] = get_module_name_bilingual(pth) if pth else ""
+                    orphan_modules.append(m)
 
     report = BattleMapAlignmentReport(
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -707,30 +880,48 @@ def run_alignment(
         dangling_edges=dangling_edges,
         domain_drifts=domain_drifts,
         parent_child_issues=parent_child_issues,
+        orphan_modules=orphan_modules,
+        business_module_count=business_module_count,
         source_unavailable=source_unavailable,
         issues_total=(
-            len(orphan_steps) + len(ghost_anchors)
-            + len(missing_narratives) + len(dangling_edges)
+            len(orphan_steps)
+            + len(ghost_anchors)
+            + len(missing_narratives)
+            + len(dangling_edges)
             + len(domain_drifts)
             + len(parent_child_issues)
+            + len(orphan_modules)
         ),
     )
 
     if write_report:
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(report.to_markdown(), encoding="utf-8")
+        output_path.write_text(
+            _make_frontmatter(report.generated_at) + report.to_markdown(),
+            encoding="utf-8",
+        )
         logger.info("作战地图对齐报告已写入 %s", output_path)
         logger.info(
-            "问题总数: %d (孤儿环节=%d, 幽灵锚点=%d, 缺失叙事=%d, 悬空边=%d, 域漂移=%d, 父子嵌套=%d)",
-            report.issues_total, len(orphan_steps), len(ghost_anchors),
-            len(missing_narratives), len(dangling_edges),
-            len(domain_drifts), len(parent_child_issues),
+            "问题总数: %d (孤儿环节=%d, 幽灵锚点=%d, 缺失叙事=%d, 悬空边=%d, 域漂移=%d, 父子嵌套=%d, 孤儿模块=%d)",
+            report.issues_total,
+            len(orphan_steps),
+            len(ghost_anchors),
+            len(missing_narratives),
+            len(dangling_edges),
+            len(domain_drifts),
+            len(parent_child_issues),
+            len(orphan_modules),
+        )
+        logger.info(
+            "BM-INV-007 孤儿模块扫描: 业务域模块=%d, 已锚定=%d, 孤儿=%d",
+            business_module_count,
+            business_module_count - len(orphan_modules),
+            len(orphan_modules),
         )
         if source_unavailable:
             logger.warning("目标图源不可用（跳过校验）: %s", ", ".join(source_unavailable))
 
     return report
-
 
 
 def _check_parent_child_consistency(steps: list[dict]) -> list[dict]:
@@ -754,32 +945,38 @@ def _check_parent_child_consistency(steps: list[dict]) -> list[dict]:
 
         parent = step_map.get(pid)
         if parent is None:
-            issues.append({
-                "step_id": sid,
-                "step_name": s.get("step_name", "—"),
-                "issue_type": "悬空父引用",
-                "detail": f"parent_step_id='{pid}' 不存在",
-            })
+            issues.append(
+                {
+                    "step_id": sid,
+                    "step_name": s.get("step_name", "—"),
+                    "issue_type": "悬空父引用",
+                    "detail": f"parent_step_id='{pid}' 不存在",
+                }
+            )
             continue
 
         # 同阶段校验
         if s.get("flow_stage") != parent.get("flow_stage"):
-            issues.append({
-                "step_id": sid,
-                "step_name": s.get("step_name", "—"),
-                "issue_type": "跨阶段嵌套",
-                "detail": f"子 flow_stage='{s.get('flow_stage')}' 与父='{parent.get('flow_stage')}' 不一致",
-            })
+            issues.append(
+                {
+                    "step_id": sid,
+                    "step_name": s.get("step_name", "—"),
+                    "issue_type": "跨阶段嵌套",
+                    "detail": f"子 flow_stage='{s.get('flow_stage')}' 与父='{parent.get('flow_stage')}' 不一致",
+                }
+            )
 
         # depth 上限校验
         depth = s.get("depth", 0)
         if depth > 3:
-            issues.append({
-                "step_id": sid,
-                "step_name": s.get("step_name", "—"),
-                "issue_type": "depth超限",
-                "detail": f"depth={depth} > 3（上限根→子→孙→曾孙）",
-            })
+            issues.append(
+                {
+                    "step_id": sid,
+                    "step_name": s.get("step_name", "—"),
+                    "issue_type": "depth超限",
+                    "detail": f"depth={depth} > 3（上限根→子→孙→曾孙）",
+                }
+            )
 
         # depth 与 parent 链长度一致性
         chain_depth = 0
@@ -788,12 +985,14 @@ def _check_parent_child_consistency(steps: list[dict]) -> list[dict]:
         while cursor.get("parent_step_id"):
             pid2 = cursor["parent_step_id"]
             if pid2 in seen:
-                issues.append({
-                    "step_id": sid,
-                    "step_name": s.get("step_name", "—"),
-                    "issue_type": "成环",
-                    "detail": f"parent 链成环: {' → '.join(seen)} → {pid2}",
-                })
+                issues.append(
+                    {
+                        "step_id": sid,
+                        "step_name": s.get("step_name", "—"),
+                        "issue_type": "成环",
+                        "detail": f"parent 链成环: {' → '.join(seen)} → {pid2}",
+                    }
+                )
                 break
             seen.add(pid2)
             cursor = step_map.get(pid2)
@@ -802,26 +1001,26 @@ def _check_parent_child_consistency(steps: list[dict]) -> list[dict]:
             chain_depth += 1
         else:
             if depth != chain_depth:
-                issues.append({
-                    "step_id": sid,
-                    "step_name": s.get("step_name", "—"),
-                    "issue_type": "depth不符",
-                    "detail": f"depth={depth} 但 parent 链长度={chain_depth}",
-                })
+                issues.append(
+                    {
+                        "step_id": sid,
+                        "step_name": s.get("step_name", "—"),
+                        "issue_type": "depth不符",
+                        "detail": f"depth={depth} 但 parent 链长度={chain_depth}",
+                    }
+                )
 
     return issues
 
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="作战地图对齐检测器（battle_map_positioning.md §8.3，君子协定）"
-    )
+    parser = argparse.ArgumentParser(description="作战地图对齐检测器（battle_map_positioning.md §8.3，君子协定）")
     parser.add_argument(
         "--output",
         type=Path,
         default=None,
-        help="报告输出路径（默认 docs/02_enterprise_architecture/generated/battle_map_alignment_report.md）",
+        help="报告输出路径（默认 docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md）",
     )
     args = parser.parse_args()
 

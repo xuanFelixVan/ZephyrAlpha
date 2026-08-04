@@ -9407,7 +9407,9 @@ def make_arch_diagram_reconciler(gateway: object) -> ReconcilerSpec:
 
      10. generate_panorama_registry.py        -> 00_overview_entry/panorama_registry.md
 
-     11. align_panoramas.py                   -> generated/panorama_alignment_report.md（ARCH-053 三图对齐检测器）
+     11. align_panoramas.py                   -> 03_governance_reports/panorama_alignment_report.md（ARCH-053 四图对齐检测器）
+
+     11b. align_battle_map.py                 -> 03_governance_reports/battle_map_alignment_report.md（作战地图对齐检测器，BM-INV-001~007）
 
      12. generate_asset_catalog.py            -> 01_global_architecture_diagram/asset_catalog.md（#179/#180/#181/#182 资产清单）
 
@@ -9577,7 +9579,9 @@ def make_arch_diagram_reconciler(gateway: object) -> ReconcilerSpec:
 
         "docs/02_enterprise_architecture/00_overview_entry/panorama_registry.md",
 
-        "docs/02_enterprise_architecture/generated/panorama_alignment_report.md",  # ARCH-053
+        "docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md",  # ARCH-053 四图对齐检测器
+
+        "docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md",  # 作战地图对齐检测器（BM-INV-001~007）
 
         "docs/02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md",  # #179/#180/#181/#182
 

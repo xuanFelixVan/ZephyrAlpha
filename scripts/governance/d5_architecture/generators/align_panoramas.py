@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV_ALIGN_PANORAMAS | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §panorama-alignment
 # [MODULE] scripts.governance.d5_architecture.generators.align_panoramas
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] zephyr.governance.depgraph_schema; zephyr.governance.persistence.dataflowgraph_schema; zephyr.governance.persistence.decisiongraph_schema; _common (DB_DISPLAY_NAME)
+# [DEPENDENCIES] zephyr.governance.depgraph_schema; zephyr.governance.persistence.dataflowgraph_schema; zephyr.governance.persistence.decisiongraph_schema; _common (DB_DISPLAY_NAME); _shared.module_translation_loader (get_module_name_bilingual, preload)
 # [CONSUMERS] CI自动触发;人工审查四图对齐报告
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读PG（零写入）;只读blueprint.md文件（零写入）;输出幂等(相同输入→相同输出);输出到generated/panorama_alignment_report.md
+# [INVARIANTS] 只读PG（零写入）;只读blueprint.md文件（零写入）;输出幂等(相同输入→相同输出);输出到03_governance_reports/panorama_alignment_report.md
 # [MODIFY-GUARD] 修改需通过ARCH-053任务或后续维护任务
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,6 +14,7 @@
 # [TESTS] tests/test_align_panoramas.py
 # [A_module] module_id=MOD-GOV_ALIGN_PANORAMAS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  合法 manual 对齐检测器：CI/人工按需调用，只读检测不做自动修复
 # [ARCH-REF] #ARCH-053 #ARCH-056 #ARCH-059
 # 真源说明：本检测器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取三图节点，
 # 并从 docs/03_modules/ 下的 blueprint.md / 模块文件 frontmatter 采集第四张图（blueprint），
@@ -33,7 +34,7 @@
       (2) 状态漂移：同一 module_id 在不同图 design_maturity 不一致
       (3) 域不一致：同一 module_id 在不同图 domain_id 不一致
       (4) 设计态孤立：design 状态仅出现在一图，其它三图无对应
-  - 输出 MD 报告到 docs/02_enterprise_architecture/generated/panorama_alignment_report.md
+  - 输出 MD 报告到 docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md
 
 定位：只读检测器（不做自动修复），由人工或后续工具根据报告处理。
 
@@ -50,7 +51,6 @@ import re
 import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime
 from pathlib import Path
 
 # 添加项目根到 sys.path
@@ -63,9 +63,11 @@ _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.module_translation_loader import get_module_name_bilingual, preload
+
 try:
-    from _common import DB_DISPLAY_NAME  # noqa: E402
+    from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
 except ImportError:
     DB_DISPLAY_NAME = "PostgreSQL depgraph"
 
@@ -78,18 +80,21 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
 )
 
 try:
-    from d5_architecture.panorama_common import weighted_domain_vote, min_maturity as _min_mat
+    from d5_architecture.panorama_common import min_maturity as _min_mat
+    from d5_architecture.panorama_common import weighted_domain_vote
 except ImportError:
     import sys as _sys
+
     _pc_path = str(Path(__file__).resolve().parents[1])  # d5_architecture/
     if _pc_path not in _sys.path:
         _sys.path.insert(0, _pc_path)
-    from panorama_common import weighted_domain_vote, min_maturity as _min_mat
+    from panorama_common import min_maturity as _min_mat  # noqa: import-integrity  sys.path 动态加载的本地模块
+    from panorama_common import weighted_domain_vote  # noqa: import-integrity  sys.path 动态加载的本地模块
 
 # Ruling:100PCT-AI-GOVERNANCE P1-1 (2026-07-19) 治本：
 # 统一用 normalize_to_none() 替代 `or None` 模式（类型安全，不误转 falsy 值）。
 from zephyr.shared.utils.converters import normalize_to_none
-
+from zephyr.shared.utils.time_utils import now_utc
 
 # ---------------------------------------------------------------------------
 # 数据模型
@@ -113,6 +118,26 @@ class PanoramaNode:
     design_maturity: str | None
     build_status: str | None
     domain_id: str | None
+
+
+def _make_frontmatter(generated_at: str) -> str:
+    """生成 YAML frontmatter（03_governance_reports/ 属 permanent zone，
+    GATE-TTL-METADATA 要求 audit_report 带 ttl+doc_type，范本对齐 capacity_report.md）。
+
+    :param generated_at: 生成时间字符串（与报告体 generated_at 一致）
+    """
+    date_str = generated_at.split(" ")[0] if generated_at else now_utc().strftime("%Y-%m-%d")
+    return (
+        "---\n"
+        "doc_type: audit_report\n"
+        "title: 四图对齐报告\n"
+        'version: "1.0"\n'
+        "status: active\n"
+        f"date: {date_str}\n"
+        "owner: auto-generator\n"
+        "ttl: permanent\n"
+        "---\n\n"
+    )
 
 
 @dataclass
@@ -141,14 +166,16 @@ class PanoramaAlignmentReport:
         lines.append("")
         lines.append(f"- 生成时间: {self.generated_at}")
         lines.append(f"- 数据源: {self.db_name}")
-        lines.append(f"- 四图节点数: depgraph={self.depgraph_count} / "
-                     f"dataflow={self.dataflow_count} / decision={self.decision_count} / "
-                     f"blueprint={self.blueprint_count}")
+        lines.append(
+            f"- 四图节点数: depgraph={self.depgraph_count} / "
+            f"dataflow={self.dataflow_count} / decision={self.decision_count} / "
+            f"blueprint={self.blueprint_count}"
+        )
         lines.append(f"- 问题总数: {self.issues_total}")
-        lines.append("  - 孤儿（仅一图）: {}".format(len(self.orphans)))
-        lines.append("  - 状态漂移（blueprint 缺 design_maturity）: {}".format(len(self.state_drifts)))
-        lines.append("  - 域不一致（domain_id 不一致）: {}".format(len(self.domain_mismatches)))
-        lines.append("  - 设计态孤立（design 仅一图）: {}".format(len(self.design_only_in_one)))
+        lines.append(f"  - 孤儿（仅一图）: {len(self.orphans)}")
+        lines.append(f"  - 状态漂移（blueprint 缺 design_maturity）: {len(self.state_drifts)}")
+        lines.append(f"  - 域不一致（domain_id 不一致）: {len(self.domain_mismatches)}")
+        lines.append(f"  - 设计态孤立（design 仅一图）: {len(self.design_only_in_one)}")
         lines.append("")
 
         # 孤儿
@@ -157,10 +184,11 @@ class PanoramaAlignmentReport:
         if not self.orphans:
             lines.append("> 无孤儿节点，四图在 module_id 维度对齐。")
         else:
-            lines.append("| module_id | graph | entity_name |")
-            lines.append("|---|---|---|")
+            lines.append("| module_id | graph | 名称 / Name | entity_name |")
+            lines.append("|---|---|---|---|")
             for o in self.orphans[:200]:  # 最多展示 200 行
-                lines.append(f"| {o['module_id']} | {o['graph']} | {o['entity_name']} |")
+                name_bi = o.get("name_bi") or "—"
+                lines.append(f"| {o['module_id']} | {o['graph']} | {name_bi} | {o['entity_name']} |")
             if len(self.orphans) > 200:
                 lines.append(f"... 共 {len(self.orphans)} 行（仅展示前 200 行）")
         lines.append("")
@@ -174,8 +202,9 @@ class PanoramaAlignmentReport:
             lines.append("| module_id | depgraph | dataflow | decision | blueprint |")
             lines.append("|---|---|---|---|---|")
             for d in self.state_drifts:
-                lines.append(f"| {d['module_id']} | {d['depgraph']} | {d['dataflow']} | "
-                             f"{d['decision']} | {d['blueprint']} |")
+                lines.append(
+                    f"| {d['module_id']} | {d['depgraph']} | {d['dataflow']} | {d['decision']} | {d['blueprint']} |"
+                )
         lines.append("")
 
         # 域不一致
@@ -187,8 +216,9 @@ class PanoramaAlignmentReport:
             lines.append("| module_id | depgraph | dataflow | decision | blueprint |")
             lines.append("|---|---|---|---|---|")
             for d in self.domain_mismatches:
-                lines.append(f"| {d['module_id']} | {d['depgraph']} | {d['dataflow']} | "
-                             f"{d['decision']} | {d['blueprint']} |")
+                lines.append(
+                    f"| {d['module_id']} | {d['depgraph']} | {d['dataflow']} | {d['decision']} | {d['blueprint']} |"
+                )
         lines.append("")
 
         # 设计态孤立
@@ -197,10 +227,11 @@ class PanoramaAlignmentReport:
         if not self.design_only_in_one:
             lines.append("> 无设计态孤立。")
         else:
-            lines.append("| module_id | graph | entity_name |")
-            lines.append("|---|---|---|")
+            lines.append("| module_id | graph | 名称 / Name | entity_name |")
+            lines.append("|---|---|---|---|")
             for d in self.design_only_in_one[:200]:
-                lines.append(f"| {d['module_id']} | {d['graph']} | {d['entity_name']} |")
+                name_bi = d.get("name_bi") or "—"
+                lines.append(f"| {d['module_id']} | {d['graph']} | {name_bi} | {d['entity_name']} |")
             if len(self.design_only_in_one) > 200:
                 lines.append(f"... 共 {len(self.design_only_in_one)} 行（仅展示前 200 行）")
         lines.append("")
@@ -260,12 +291,14 @@ def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
                 dom = row[4] if len(row) > 4 else None
             if not bp:
                 continue
-            grouped.setdefault(bp, []).append({
-                "path": path,
-                "design_maturity": dm,
-                "build_status": bs,
-                "domain_id": dom,
-            })
+            grouped.setdefault(bp, []).append(
+                {
+                    "path": path,
+                    "design_maturity": dm,
+                    "build_status": bs,
+                    "domain_id": dom,
+                }
+            )
 
     nodes: list[PanoramaNode] = []
     for bp, rows in grouped.items():
@@ -280,14 +313,16 @@ def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
         # entity_name: 取第一个非空 path
         entity_name = next((r["path"] for r in rows if r["path"]), bp)
 
-        nodes.append(PanoramaNode(
-            module_id=bp,
-            graph="depgraph",
-            entity_name=entity_name,
-            design_maturity=design_maturity,
-            build_status=build_status,
-            domain_id=domain_id,
-        ))
+        nodes.append(
+            PanoramaNode(
+                module_id=bp,
+                graph="depgraph",
+                entity_name=entity_name,
+                design_maturity=design_maturity,
+                build_status=build_status,
+                domain_id=domain_id,
+            )
+        )
     return nodes
 
 
@@ -323,14 +358,16 @@ def _fetch_dataflow_nodes(conn) -> list[PanoramaNode]:
                 dom = row[4] if len(row) > 4 else None
             if not mid:
                 continue
-            nodes.append(PanoramaNode(
-                module_id=mid,
-                graph="dataflow",
-                entity_name=name or mid,
-                design_maturity=dm,
-                build_status=bs,
-                domain_id=dom,
-            ))
+            nodes.append(
+                PanoramaNode(
+                    module_id=mid,
+                    graph="dataflow",
+                    entity_name=name or mid,
+                    design_maturity=dm,
+                    build_status=bs,
+                    domain_id=dom,
+                )
+            )
         # jobs
         cur.execute(
             """
@@ -354,14 +391,16 @@ def _fetch_dataflow_nodes(conn) -> list[PanoramaNode]:
                 dom = row[4] if len(row) > 4 else None
             if not mid:
                 continue
-            nodes.append(PanoramaNode(
-                module_id=mid,
-                graph="dataflow",
-                entity_name=name or mid,
-                design_maturity=dm,
-                build_status=bs,
-                domain_id=dom,
-            ))
+            nodes.append(
+                PanoramaNode(
+                    module_id=mid,
+                    graph="dataflow",
+                    entity_name=name or mid,
+                    design_maturity=dm,
+                    build_status=bs,
+                    domain_id=dom,
+                )
+            )
     return nodes
 
 
@@ -392,14 +431,16 @@ def _fetch_decision_nodes(conn) -> list[PanoramaNode]:
                 dom = row[4] if len(row) > 4 else None
             if not mid:
                 continue
-            nodes.append(PanoramaNode(
-                module_id=mid,
-                graph="decision",
-                entity_name=path or mid,
-                design_maturity=dm,
-                build_status=bs,
-                domain_id=dom,
-            ))
+            nodes.append(
+                PanoramaNode(
+                    module_id=mid,
+                    graph="decision",
+                    entity_name=path or mid,
+                    design_maturity=dm,
+                    build_status=bs,
+                    domain_id=dom,
+                )
+            )
         # decision_layers（module_id 可能为空，过滤掉）
         cur.execute(
             """
@@ -423,14 +464,16 @@ def _fetch_decision_nodes(conn) -> list[PanoramaNode]:
                 dom = row[4] if len(row) > 4 else None
             if not mid:
                 continue
-            nodes.append(PanoramaNode(
-                module_id=mid,
-                graph="decision",
-                entity_name=f"layer:{layer_id}" if layer_id else mid,
-                design_maturity=dm,
-                build_status=bs,
-                domain_id=dom,
-            ))
+            nodes.append(
+                PanoramaNode(
+                    module_id=mid,
+                    graph="decision",
+                    entity_name=f"layer:{layer_id}" if layer_id else mid,
+                    design_maturity=dm,
+                    build_status=bs,
+                    domain_id=dom,
+                )
+            )
     return nodes
 
 
@@ -445,8 +488,7 @@ _BP_SKIP_NAMES = {"index.md"}
 
 # exempt_list 配置文件（历史归档豁免，Task 8 创建）
 _EXEMPT_LIST_PATH = (
-    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
-    / "panorama_exempt_list.yaml"
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "panorama_exempt_list.yaml"
 )
 
 
@@ -456,10 +498,11 @@ def _load_exempt_list() -> set[str]:
         return set()
     try:
         import yaml
+
         data = yaml.safe_load(_EXEMPT_LIST_PATH.read_text(encoding="utf-8"))
         ids = data.get("exempt_module_ids", []) if data else []
         return {str(i) for i in ids if i}
-    except Exception:
+    except Exception:  # noqa: BLE001
         return set()
 
 
@@ -519,15 +562,17 @@ def _fetch_blueprint_nodes(scan_root: Path | None = None) -> list[PanoramaNode]:
             rel = str(fpath.relative_to(root)).replace("\\", "/")
         except ValueError:
             rel = str(fpath)
-        nodes.append(PanoramaNode(
-            module_id=mid,
-            graph="blueprint",
-            entity_name=rel,
-            # Ruling:100PCT-AI-GOVERNANCE P1-1: normalize_to_none 替代 `or None`
-            design_maturity=normalize_to_none(fm.get("design_maturity")),
-            build_status=normalize_to_none(fm.get("build_status")),
-            domain_id=normalize_to_none(fm.get("responsibility_domain")),
-        ))
+        nodes.append(
+            PanoramaNode(
+                module_id=mid,
+                graph="blueprint",
+                entity_name=rel,
+                # Ruling:100PCT-AI-GOVERNANCE P1-1: normalize_to_none 替代 `or None`
+                design_maturity=normalize_to_none(fm.get("design_maturity")),
+                build_status=normalize_to_none(fm.get("build_status")),
+                domain_id=normalize_to_none(fm.get("responsibility_domain")),
+            )
+        )
     return nodes
 
 
@@ -561,8 +606,7 @@ def _is_blueprint_not_started(nodes: list[PanoramaNode]) -> bool:
     return graphs == {"blueprint"}
 
 
-def _detect_orphans(all_nodes: list[PanoramaNode],
-                    exempt_list: set[str] | None = None) -> list[dict]:
+def _detect_orphans(all_nodes: list[PanoramaNode], exempt_list: set[str] | None = None) -> list[dict]:
     """孤儿：仅在一图存在的 module_id。
 
     exempt_list 中的 module_id 跳过检测（历史归档豁免）。
@@ -577,15 +621,17 @@ def _detect_orphans(all_nodes: list[PanoramaNode],
         graphs = {n.graph for n in nodes}
         if len(graphs) == 1:
             g = next(iter(graphs))
-            #ARCH-059: 蓝图先行模块自动豁免
+            # ARCH-059: 蓝图先行模块自动豁免
             if g == "blueprint" and _is_blueprint_not_started(nodes):
                 continue
             for n in nodes:
-                orphans.append({
-                    "module_id": mid,
-                    "graph": g,
-                    "entity_name": n.entity_name,
-                })
+                orphans.append(
+                    {
+                        "module_id": mid,
+                        "graph": g,
+                        "entity_name": n.entity_name,
+                    }
+                )
     # 按图分组后按 module_id 排序
     orphans.sort(key=lambda x: (x["graph"], x["module_id"]))
     return orphans
@@ -606,14 +652,16 @@ def _detect_state_drifts(all_nodes: list[PanoramaNode]) -> list[dict]:
         bp_nodes = [n for n in nodes if n.graph == "blueprint"]
         for n in bp_nodes:
             if not n.design_maturity:
-                drifts.append({
-                    "module_id": mid,
-                    "depgraph": next((x.design_maturity or "-" for x in nodes if x.graph == "depgraph"), "-"),
-                    "dataflow": next((x.design_maturity or "-" for x in nodes if x.graph == "dataflow"), "-"),
-                    "decision": next((x.design_maturity or "-" for x in nodes if x.graph == "decision"), "-"),
-                    "blueprint": "-",
-                    "issue": "missing_design_maturity",
-                })
+                drifts.append(
+                    {
+                        "module_id": mid,
+                        "depgraph": next((x.design_maturity or "-" for x in nodes if x.graph == "depgraph"), "-"),
+                        "dataflow": next((x.design_maturity or "-" for x in nodes if x.graph == "dataflow"), "-"),
+                        "decision": next((x.design_maturity or "-" for x in nodes if x.graph == "decision"), "-"),
+                        "blueprint": "-",
+                        "issue": "missing_design_maturity",
+                    }
+                )
                 break  # 一个 blueprint 节点缺字段就够了
     drifts.sort(key=lambda x: x["module_id"])
     return drifts
@@ -640,13 +688,15 @@ def _detect_domain_mismatches(all_nodes: list[PanoramaNode]) -> list[dict]:
                 per_graph[n.graph] = n.domain_id
         mismatched = {g: d for g, d in per_graph.items() if d != bp_domain}
         if mismatched:
-            mismatches.append({
-                "module_id": mid,
-                "depgraph": "-",
-                "dataflow": mismatched.get("dataflow", "-"),
-                "decision": mismatched.get("decision", "-"),
-                "blueprint": bp_domain,
-            })
+            mismatches.append(
+                {
+                    "module_id": mid,
+                    "depgraph": "-",
+                    "dataflow": mismatched.get("dataflow", "-"),
+                    "decision": mismatched.get("decision", "-"),
+                    "blueprint": bp_domain,
+                }
+            )
     mismatches.sort(key=lambda x: x["module_id"])
     return mismatches
 
@@ -663,7 +713,7 @@ def _detect_design_only_in_one(all_nodes: list[PanoramaNode]) -> list[dict]:
         if len(graphs) != 1:
             continue  # 多图存在就不算孤立
         g = next(iter(graphs))
-        #ARCH-059: 蓝图先行模块自动豁免
+        # ARCH-059: 蓝图先行模块自动豁免
         if g == "blueprint" and _is_blueprint_not_started(nodes):
             continue
         # 检查是否有 design 状态节点
@@ -672,11 +722,13 @@ def _detect_design_only_in_one(all_nodes: list[PanoramaNode]) -> list[dict]:
             continue
         for n in nodes:
             if n.design_maturity == "design":
-                design_only.append({
-                    "module_id": mid,
-                    "graph": g,
-                    "entity_name": n.entity_name,
-                })
+                design_only.append(
+                    {
+                        "module_id": mid,
+                        "graph": g,
+                        "entity_name": n.entity_name,
+                    }
+                )
     design_only.sort(key=lambda x: (x["graph"], x["module_id"]))
     return design_only
 
@@ -695,7 +747,7 @@ def run_alignment(
 
     Args:
         output_path: 报告输出路径。None 时使用默认路径
-            docs/02_enterprise_architecture/generated/panorama_alignment_report.md
+            docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md
         write_report: True 写入文件（默认）；False 仅返回 report 不写文件
             （门禁场景使用，避免污染 docs/）
     """
@@ -704,7 +756,7 @@ def run_alignment(
             _REPO_ROOT
             / "docs"
             / "02_enterprise_architecture"
-            / "generated"
+            / "03_governance_reports"
             / "panorama_alignment_report.md"
         )
 
@@ -743,8 +795,7 @@ def run_alignment(
         empty_graphs.append("decision")
     if empty_graphs:
         raise PanoramaEmptyError(
-            f"三图（depgraph/dataflow/decision）任一为空（exit 2）: "
-            f"{','.join(empty_graphs)} 无节点；检测无意义"
+            f"三图（depgraph/dataflow/decision）任一为空（exit 2）: {','.join(empty_graphs)} 无节点；检测无意义"
         )
 
     # 检测四类问题
@@ -754,8 +805,17 @@ def run_alignment(
     domain_mismatches = _detect_domain_mismatches(all_nodes)
     design_only_in_one = _detect_design_only_in_one(all_nodes)
 
+    # 双语名称（翻译真源 module_translation_registry.yaml，中文在前 / English）
+    # depgraph 节点的 entity_name 是文件路径，可直接查询；dataflow/decision 节点
+    # 的 entity_name 非 path 时查不到翻译，显示 — 使缺口可见
+    preload()
+    for o in orphans:
+        o["name_bi"] = get_module_name_bilingual(o.get("entity_name", "")) or ""
+    for d in design_only_in_one:
+        d["name_bi"] = get_module_name_bilingual(d.get("entity_name", "")) or ""
+
     report = PanoramaAlignmentReport(
-        generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        generated_at=now_utc().strftime("%Y-%m-%d %H:%M:%S"),
         depgraph_count=len(depgraph_nodes),
         dataflow_count=len(dataflow_nodes),
         decision_count=len(decision_nodes),
@@ -770,25 +830,28 @@ def run_alignment(
     # 写入文件（门禁场景 write_report=False 跳过）
     if write_report:
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(report.to_markdown(), encoding="utf-8")
+        output_path.write_text(
+            _make_frontmatter(report.generated_at) + report.to_markdown(),
+            encoding="utf-8",
+        )
         print(f"OK: 四图对齐报告已写入 {output_path}")
-        print(f"    问题总数: {report.issues_total} "
-              f"(孤儿={len(orphans)}, 状态漂移={len(state_drifts)}, "
-              f"域不一致={len(domain_mismatches)}, 设计态孤立={len(design_only_in_one)})")
+        print(
+            f"    问题总数: {report.issues_total} "
+            f"(孤儿={len(orphans)}, 状态漂移={len(state_drifts)}, "
+            f"域不一致={len(domain_mismatches)}, 设计态孤立={len(design_only_in_one)})"
+        )
 
     return report
 
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="四图对齐检测器（ARCH-053 + ARCH-056）"
-    )
+    parser = argparse.ArgumentParser(description="四图对齐检测器（ARCH-053 + ARCH-056）")
     parser.add_argument(
         "--output",
         type=Path,
         default=None,
-        help="报告输出路径（默认 docs/02_enterprise_architecture/generated/panorama_alignment_report.md）",
+        help="报告输出路径（默认 docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md）",
     )
     args = parser.parse_args()
 
@@ -798,9 +861,11 @@ def main() -> int:
         # ERROR_CONTRACT: 三图（depgraph/dataflow/decision）任一为空 → exit 2
         print(f"ERROR: {e}", file=sys.stderr)
         return EXIT_ERROR
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"ERROR: {e}", file=sys.stderr)
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())
