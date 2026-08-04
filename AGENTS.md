@@ -223,7 +223,7 @@
 
 ## RULE-SECRETS：第十件事（密钥管理可发现性，#ARCH-SECRETS-GOV-001，2026-08-04 治本）
 
-> **密钥放 `.env` 文件（已 gitignore），用 `secrets.py` 接口读取，禁止裸 `os.getenv`。** 新 AI 冷启动**第一件事先读 [`SECRETS.md`](file:///d:/ZephyrAlpha/SECRETS.md)（密钥管理显性入口）**——它列出全部密钥文件分布、读取接口决策树、新增密钥三步流程。
+> **密钥放 `.env` 文件（已 gitignore），用 `secrets.py` 接口读取，禁止裸 `os.getenv`。** 新 AI 冷启动**务必先读 [`SECRETS.md`](file:///d:/ZephyrAlpha/SECRETS.md)（密钥管理显性入口）**——它列出全部密钥文件分布、读取接口决策树、新增密钥三步流程。
 >
 > **病根（第一性原理）**：100% AI 开发场景下，AI 每次会话冷启动，无法像人类工程师记住"项目有哪些密钥、放哪里、怎么读"。原体系靠 `bare_getenv_gate` 事后拦截违规——AI 写错代码被拦才知道规则，是"事后惩罚"而非"事前引导"。治本三阶段（裁定 S-1/S-2/S-3/S-4）：
 > - **可知性**（Phase 1）：[`SECRETS.md`](file:///d:/ZephyrAlpha/SECRETS.md) 显性文档 + [`config/secret_registry.yaml`](file:///d:/ZephyrAlpha/config/secret_registry.yaml) 结构化注册表 + `.env.example` 模板

@@ -56,7 +56,7 @@ ZephyrAlpha/
 
 | 文件 | 状态 | 说明 |
 |---|---|---|
-| `config/.env.restic` | 已废弃 | restic 替换为 robocopy /MIR，无 restic 依赖。应删除此文件 + `F:\restic-zephyr` 目录 |
+| `config/.env.restic` | 已废弃 | restic 替换为 robocopy /MIR，无 restic 依赖。此文件已删除；`F:\restic-zephyr` 目录待清理 |
 
 ---
 
