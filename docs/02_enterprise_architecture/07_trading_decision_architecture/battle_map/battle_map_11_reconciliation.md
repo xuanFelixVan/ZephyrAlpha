@@ -297,12 +297,12 @@ BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力�
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 成交回报就绪+每日15:30自动触发(A股T+1) |
 | ② 消费数据/因子 | BM-EXE-02成交回报+券商结算单 |
 | ③ 参数 | settle_cycle=T+1、settles_at=15:30 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 成交回报→D-TRADING-02结算对账→运营数据→BM-REC-02 |
+| ⑤ 代码映射 | MOD-TRADING-003 settlement_reconciliation.py(stable)、C-017② |
+| ⑥ 降级/中止 | D-TRADING-02不可用→手动清算兜底 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -332,12 +332,12 @@ BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力�
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 除权除息日+公司行为公告 |
 | ② 消费数据/因子 | BM-REC-01-A清算数据+公告 |
 | ③ 参数 | fee_types=佣金/印花税/过户费、corporate_action_types=分红/配股/拆股 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 清算数据→D-TRADING-03除权除息/费率/公司行为→调整后持仓+费率→C-010 PnL |
+| ⑤ 代码映射 | MOD-TRADING-004 corporate_action_processor.py(stable)、C-017③④⑤ |
+| ⑥ 降级/中止 | D-TRADING-03不可用→手动调整持仓成本 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -367,12 +367,12 @@ BM-REC-01 交易运营清算的子环节（depth=1）。MOD-TRADING-002 pnl_calc
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 结算对账+费率计算完成后 |
 | ② 消费数据/因子 | BM-REC-01-A清算数据+BM-REC-01-B费率数据 |
 | ③ 参数 | pnl_type=realized/unrealized |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 清算+费率→MOD-TRADING-002 PnL计算→PnL数据→BM-REC-02归因 |
+| ⑤ 代码映射 | MOD-TRADING-002 pnl_calculator.py(stable)、CTR-TRD-01 |
+| ⑥ 降级/中止 | PnL计算失败→手动计算兜底 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -402,12 +402,12 @@ BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-008 risk_report_engine
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 每日收盘后+事件触发 |
 | ② 消费数据/因子 | D-RISK诊断结果(CTR-P1-008/011)+BM-REC-02-C复盘数据 |
 | ③ 参数 | report_freq=日/周/事件/月 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | D-RISK诊断→MOD-RPT-008风险报告→4类报告→BM-REC-02-D发布 |
+| ⑤ 代码映射 | MOD-RPT-008 risk_report_engine.py(stable)、D-REPORTING-08 |
+| ⑥ 降级/中止 | D-RISK不可用→基础风险摘要 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -437,12 +437,12 @@ BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-006 regulatory_report_
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 月/季+事件驱动 |
 | ② 消费数据/因子 | BM-REC-01运营数据+BM-REC-02-E风险报告+BM-REC-02-C复盘数据 |
 | ③ 参数 | report_type=程序化交易/异常交易/持仓/绩效 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 运营+风险+复盘数据→MOD-RPT-006监管报告→4类报告→BM-REC-02-D发布 |
+| ⑤ 代码映射 | MOD-RPT-006 regulatory_report_generator.py(stable)、D-REPORTING-06 |
+| ⑥ 降级/中止 | 自动化接口不可用→手动填报 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -471,12 +471,12 @@ BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-01 TCA Engine：�
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
-| ② 消费数据/因子 | BM-EXE-0 |
+| ① 触发条件 | 成交回报就绪 |
+| ② 消费数据/因子 | BM-EXE-03执行质量+CTR-005成交+CTR-006持仓 |
 | ③ 参数 | tca_metrics=滑点/冲击成本/市场影响 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 成交→D-REPORTING-01 TCA→TCA报告→BM-REC-02-B绩效归因 |
+| ⑤ 代码映射 | MOD-L07-001 default_tca_engine.py(generated)、D-REPORTING-01 |
+| ⑥ 降级/中止 | TCA不可用→仅名义成本统计 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -506,12 +506,12 @@ Brinson归因(配置效应+选择效应+交互效应)+因子归因+风险归因+
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | TCA报告就绪 |
 | ② 消费数据/因子 | BM-REC-02-A TCA报告+CTR-005/006/P1-001 |
 | ③ 参数 | attribution_method=Brinson+多因子、decay_threshold=IC衰减50% |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | TCA→D-REPORTING-02归因→归因报告→BM-REC-02-C复盘 |
+| ⑤ 代码映射 | MOD-RPT-015 performance_attribution_report.py(planned)、MOD-L07-001 default_attribution_engine.py(generated)、D-REPORTING-02 |
+| ⑥ 降级/中止 | 归因不可用→基础PnL报表 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -542,12 +542,12 @@ MOD-RPT-026 ashare_performance_audit.py(stable)+MOD-RPT-027 ashare_trade_record_
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 归因报告就绪 |
 | ② 消费数据/因子 | BM-REC-02-B归因报告+CTR-005/006/P1-001 |
 | ③ 参数 | ic_threshold=因子IC阈值、volume_anomaly=3倍均值 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 归因→D-REPORTING-15 A股复盘→复盘报告→BM-REC-02-D发布 |
+| ⑤ 代码映射 | MOD-RPT-026 ashare_performance_audit.py(stable)、MOD-RPT-027 ashare_trade_record_template.py(stable)、D-REPORTING-15、C-010 |
+| ⑥ 降级/中止 | 复盘不可用→基础PnL报表 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -578,12 +578,12 @@ BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-03 Report Publishe
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 复盘报告就绪 |
 | ② 消费数据/因子 | BM-REC-02-C复盘报告 |
 | ③ 参数 | channels=微信/邮件、archive=SQLite+Parquet |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 复盘报告→D-REPORTING-03发布→微信/邮件推送+归档→BM-REC-03闭环优化 |
+| ⑤ 代码映射 | MOD-RPT-003 report_publisher.py(stable)、D-REPORTING-03 |
+| ⑥ 降级/中止 | 发布不可用→本地归档不推送 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -613,12 +613,12 @@ MOD-L02-004 ic_decay.py(stable)已production。反馈信号反向回到BM-SEL-02
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 复盘报告就绪 |
 | ② 消费数据/因子 | BM-REC-02-D复盘报告 |
 | ③ 参数 | ic_decay_lag=1~20期(max_lag=20)、half_life=compute_half_life |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 复盘报告→MOD-L02-004 IC衰减分析→因子替代信号→BM-SEL-02(反向闭环) |
+| ⑤ 代码映射 | MOD-L02-004 ic_decay.py(stable)、C-007因子层反馈 |
+| ⑥ 降级/中止 | IC衰减不可用→人工评估因子质量 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -650,12 +650,12 @@ L1~L4+L3.5多层架构未完整实现(当前仅单层因子质量反馈)。
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
-| ② 消费数据/因子 | BM-REC-0 |
+| ① 触发条件 | 复盘报告就绪 |
+| ② 消费数据/因子 | BM-REC-03-A因子反馈+BM-REC-02-D复盘报告 |
 | ③ 参数 | accuracy_threshold=信号准确率阈值、retire_window=退役观察窗口 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 复盘报告→准确率监控→信号退役信号→BM-SEL-02(反向闭环) |
+| ⑤ 代码映射 | C-007信号层反馈(未完整实现) |
+| ⑥ 降级/中止 | 准确率监控不可用→人工评估信号质量 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -681,12 +681,12 @@ BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈�
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
-| ② 消费数据/因子 | BM-REC-0 |
+| ① 触发条件 | 复盘报告就绪 |
+| ② 消费数据/因子 | BM-REC-03-B信号反馈+BM-REC-02-D复盘报告 |
 | ③ 参数 | drift_threshold=PSI>0.2、retrain_gate=C-003回测门禁 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 复盘报告→漂移检测→模型重训练信号→C-003回测门禁→BM-SEL-02(反向闭环) |
+| ⑤ 代码映射 | C-007模型层反馈(未完整实现)、C-003回测门禁 |
+| ⑥ 降级/中止 | 漂移检测不可用→人工评估模型质量 |
 
 **指标文案（翻译真源 indicators_zh）**：
 

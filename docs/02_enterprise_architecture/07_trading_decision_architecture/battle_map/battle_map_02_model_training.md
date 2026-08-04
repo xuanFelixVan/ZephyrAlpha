@@ -89,12 +89,12 @@ MT-01 TrainingPipeline 负责模型训练+验证+可复现性（PyTorch→ONNX�
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 盘后定时/研究员手动/漂移触发(BM-MT-05) |
 | ② 消费数据/因子 | BM-RES-01 特征存储(PIT)+BM-RES-02 实验追踪 |
-| ③ 参数 | PyTorch→ONNX、seed管理、config快照、S |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ③ 参数 | PyTorch→ONNX、seed管理、config快照、S4 DSL代码生成、AST沙箱 |
+| ④ 数据流 | 特征(PIT)→训练→验证→ONNX模型→BM-MT-02晋升→D-ML-SERVE |
+| ⑤ 代码映射 | MT-01 TrainingPipeline（stable, 已有ABC） |
+| ⑥ 降级/中止 | 训练失败→回退上一版模型+告警(不阻塞推理) |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -189,13 +189,12 @@ DSR/CPCV v2/White's Reality/Probabilistic BT）。是模型上线的"裁判"，�
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | BM-MT-01 训练完成 |
 | ② 消费数据/因子 | 新模型+现役Champion模型+回测指标 |
-| ③ 参数 | A/B实验、Champion-Challenger、DSR/CPCV v2/White''s Reality/Probabilistic
-BT、统计显著性阈值 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ③ 参数 | A/B实验、Champion-Challenger、DSR/CPCV v2/White's Reality/Probabilistic BT、统计显著性阈值 |
+| ④ 数据流 | 新模型→A/B对比→统计验证→晋升/留观→D-ML-SERVE影子验证 |
+| ⑤ 代码映射 | MT-02 ExperimentTracker（stable, 已有） |
+| ⑥ 降级/中止 | 统计验证未就绪→人工review决定晋升(无自动门禁) |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -225,12 +224,12 @@ MT-03 AutoMLEngine 提供自动模型选择+超参优化+因子挖掘（Optuna�
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | BM-MT-01 训练前/研究员配置 |
 | ② 消费数据/因子 | BM-RES-01 特征+搜索空间定义 |
 | ③ 参数 | Optuna贝叶斯优化、早停、Qlib因子挖掘、FactorMAD辩论精炼、QuantEvolve质量-多样性 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 搜索空间→贝叶斯优化→试验→早停→最佳超参→BM-MT-01训练 |
+| ⑤ 代码映射 | MT-03 AutoMLEngine（planned） |
+| ⑥ 降级/中止 | AutoML未就绪→人工网格搜索(效率低) |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -260,12 +259,12 @@ MT-04 FeatureDiscovery 提供因子发现+因果发现+特征工程（PC/GES/LiN
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
-| ② 消费数据/因子 | BM-RES-01 特征+BM-RES-0 |
+| ① 触发条件 | BM-MT-01 训练中/研究员触发 |
+| ② 消费数据/因子 | BM-RES-01 特征+BM-RES-03 假设 |
 | ③ 参数 | PC/GES/LiNGAM因果发现、特征交叉、FactorMAD辩论精炼、三重语义一致性 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 特征→因果发现→新因子→语义一致性校验→D-FACTOR入池 |
+| ⑤ 代码映射 | MT-04 FeatureDiscovery（planned） |
+| ⑥ 降级/中止 | 因果发现未就绪→纯统计因子挖掘(无因果保证) |
 
 **指标文案（翻译真源 indicators_zh）**：
 
@@ -295,12 +294,12 @@ MT-05 DriftAdapter 提供概念漂移检测+自适应重训练+元学习（DDM/E
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | — |
+| ① 触发条件 | 盘中漂移检测信号/定时 |
 | ② 消费数据/因子 | 实时预测误差+特征分布 |
 | ③ 参数 | DDM/EDDM/ADWIN检测阈值、MAML快速适应、在线EWC防遗忘、Voyager技能库 |
-| ④ 数据流 | 输入: — → 处理: — → 输出: — → 下游: — |
-| ⑤ 代码映射 | — / — |
-| ⑥ 降级/中止 | — |
+| ④ 数据流 | 预测误差→漂移检测→重训练触发→MAML适应→EWC防遗忘→BM-MT-01训练 |
+| ⑤ 代码映射 | MT-05 DriftAdapter（planned） |
+| ⑥ 降级/中止 | 漂移检测未就绪→定时重训练(无自适应) |
 
 **指标文案（翻译真源 indicators_zh）**：
 

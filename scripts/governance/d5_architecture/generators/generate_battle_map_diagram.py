@@ -753,17 +753,23 @@ def _format_indicators_table(step: dict) -> str:
             return "<br>".join(f"{k}: {v}" for k, v in items.items())
         return str(items)
 
-    def _as_dict(val) -> dict:
-        """确保字段是 dict，否则返回空 dict（防 .get() 崩溃）。"""
-        return val if isinstance(val, dict) else {}
-
-    # ① 触发条件
-    trig = _as_dict(ind.get("trigger"))
-    rows.append(f"| ① 触发条件 | {trig.get('condition', '—')} |")
-    if trig.get("threshold"):
-        rows[-1] = rows[-1].rstrip(" |") + f" 阈值: {trig['threshold']} |"
-    # ② 消费数据/因子
-    rows.append(f"| ② 消费数据/因子 | {_kv(ind.get('consumes'))} |")
+    # ① 触发条件（防御：trigger 可能是 str 而非 dict，降级为纯文本展示）
+    trig = ind.get("trigger")
+    if isinstance(trig, str) and trig.strip():
+        # 字符串格式——原样展示（批量补填场景）
+        rows.append(f"| ① 触发条件 | {trig} |")
+    elif isinstance(trig, dict):
+        rows.append(f"| ① 触发条件 | {trig.get('condition', '—')} |")
+        if trig.get("threshold"):
+            rows[-1] = rows[-1].rstrip(" |") + f" 阈值: {trig['threshold']} |"
+    else:
+        rows.append("| ① 触发条件 | — |")
+    # ② 消费数据/因子（防御：consumes 可能是 str 而非 list[dict]）
+    consumes = ind.get("consumes")
+    if isinstance(consumes, str) and consumes.strip():
+        rows.append(f"| ② 消费数据/因子 | {consumes} |")
+    else:
+        rows.append(f"| ② 消费数据/因子 | {_kv(consumes)} |")
     # ③ 参数（防御：params 可能是 str 而非 list[dict]，降级为纯文本展示）
     params = ind.get("params")
     if isinstance(params, str) and params.strip():
@@ -783,21 +789,36 @@ def _format_indicators_table(step: dict) -> str:
         rows.append(f"| ③ 参数 | {'<br>'.join(p_lines)} |")
     else:
         rows.append("| ③ 参数 | — |")
-    # ④ 数据流
-    df = _as_dict(ind.get("data_flow"))
-    rows.append(
-        f"| ④ 数据流 | 输入: {df.get('input', '—')} → 处理: {df.get('process', '—')} "
-        f"→ 输出: {df.get('output', '—')} → 下游: {df.get('downstream', '—')} |"
-    )
-    # ⑤ 代码映射
-    cm = _as_dict(ind.get("code_mapping"))
-    rows.append(f"| ⑤ 代码映射 | {cm.get('module_id', '—')} / {cm.get('source_ref', '—')} |")
-    # ⑥ 降级/中止
-    deg = _as_dict(ind.get("degradation"))
-    deg_text = deg.get("condition", "—")
-    if deg.get("action"):
-        deg_text += f" → {deg['action']}"
-    rows.append(f"| ⑥ 降级/中止 | {deg_text} |")
+    # ④ 数据流（防御：data_flow 可能是 str 而非 dict）
+    df = ind.get("data_flow")
+    if isinstance(df, str) and df.strip():
+        rows.append(f"| ④ 数据流 | {df} |")
+    elif isinstance(df, dict):
+        rows.append(
+            f"| ④ 数据流 | 输入: {df.get('input', '—')} → 处理: {df.get('process', '—')} "
+            f"→ 输出: {df.get('output', '—')} → 下游: {df.get('downstream', '—')} |"
+        )
+    else:
+        rows.append("| ④ 数据流 | — |")
+    # ⑤ 代码映射（防御：code_mapping 可能是 str 而非 dict）
+    cm = ind.get("code_mapping")
+    if isinstance(cm, str) and cm.strip():
+        rows.append(f"| ⑤ 代码映射 | {cm} |")
+    elif isinstance(cm, dict):
+        rows.append(f"| ⑤ 代码映射 | {cm.get('module_id', '—')} / {cm.get('source_ref', '—')} |")
+    else:
+        rows.append("| ⑤ 代码映射 | — |")
+    # ⑥ 降级/中止（防御：degradation 可能是 str 而非 dict）
+    deg = ind.get("degradation")
+    if isinstance(deg, str) and deg.strip():
+        rows.append(f"| ⑥ 降级/中止 | {deg} |")
+    elif isinstance(deg, dict):
+        deg_text = deg.get("condition", "—")
+        if deg.get("action"):
+            deg_text += f" → {deg['action']}"
+        rows.append(f"| ⑥ 降级/中止 | {deg_text} |")
+    else:
+        rows.append("| ⑥ 降级/中止 | — |")
 
     return "| 要素 | 内容 |\n|---|---|\n" + "\n".join(rows)
 
