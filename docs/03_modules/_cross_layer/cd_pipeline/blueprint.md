@@ -46,7 +46,7 @@ ssot_claims:
   - {claim: "CD 流水线 job 依赖图SSoT", scope: "module"}
 responsibility_domain: 
 design_maturity: design
-build_status: planned
+build_status: generated
 ---
 
 # CD Pipeline 蓝图 — Shadow Canary 灰度发布基建（MOD-CD-001）
