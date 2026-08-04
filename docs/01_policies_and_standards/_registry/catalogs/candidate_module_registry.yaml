@@ -166200,6 +166200,110 @@ entries:
     last_review_outcome: "rejected,确认分散实现。工厂已由shared/contracts/core/factories.py(248行)+trading_contracts/factories.py(252行)分散实现,文件不存在=幽灵。软删除防误恢复"
 
   # ----------------------------------------------------------
+  # CAND-L00007-001: MOD-L00-007 存储 功能已由buffered_writer承接（rejected，四问①挂——功能已实现）
+  # 弃用时间: 2026-08-05 | 第一性原理裁定: 存储抽象功能已由 MOD-L00-004 buffered_writer 承接
+  # 裁定依据: docs/03_modules/_domain_data/blueprint.md L145 storage列为C轨占位,C轨占位代码已清理(2026-07-01);
+  #          buffered_writer.py(MOD-L00-004裁定#ARCH-CH-003攒批写入层即存储抽象)在Provider和ch_writer之间插入缓冲层;
+  #          ch_writer.py/ch_reader.py/wal_codec/已分层实现存储后端读写;YAGNI原则+100%AI开发减抽象层原则
+  # ----------------------------------------------------------
+  - id: CAND-L00007-001
+    name: "MOD-L00-007 存储(功能已由buffered_writer承接)"
+    aliases: ["MOD-L00-007", "storage", "Storage", "存储层", "统一存储抽象层"]
+    domain: D_DATA
+    domain_status: active
+    domain_node_count: 30
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),node_id=7684066,path=src/zephyr/data/storage/目录不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,blueprint_path=docs/03_modules/_domain_data/blueprint.md L145 storage列为C轨占位"}
+    description: "depgraph中blueprint_id=MOD-L00-007、path=src/zephyr/data/storage/的设计态节点,该目录不存在(幽灵)。存储抽象功能已由buffered_writer.py(MOD-L00-004,裁定#ARCH-CH-003攒批写入层即存储抽象)在Provider和ch_writer之间承接。ch_writer/ch_reader/wal_codec/已分层实现存储后端读写。蓝图自身已将storage列为C轨占位(代码已清理2026-07-01)。第一性原理裁定:YAGNI(当前只用ClickHouse无换后端需求)+100%AI开发减抽象层原则(每层抽象都是AI认知负担,planned节点是幻觉温床)。"
+    capability: ""
+    problem_it_solves: "(已解决)存储抽象已由buffered_writer(MOD-L00-004)承接,后端读写已由ch_writer/ch_reader分层实现"
+    trigger_signals: []
+    keywords: ["storage", "MOD-L00-007", "C轨占位", "deprecated", "功能已承接", "YAGNI", "第一性原理"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    design_admission:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-L00-004(buffered_writer.py)"], evidence: "buffered_writer.py(MOD-L00-004)在Provider和ch_writer之间插入缓冲层(裁定#ARCH-CH-003攒批写入层即存储抽象)。ch_writer.py(36990字节)+ch_reader.py+wal_codec/已分层实现存储后端。蓝图L145 storage列为C轨占位,代码已清理(2026-07-01)。17处调用ch_writer但多经buffered_writer解耦。"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-05'
+    promoted_to: ""
+    source_draft: "depgraph 节点7684066(path=src/zephyr/data/storage/)"
+    source_section: "孤儿模块排查[C-裁定] 第一性原理架构裁定"
+    original_id: "MOD-L00-007"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点7684066 blueprint_id=MOD-L00-007 path=src/zephyr/data/storage/目录不存在=幽灵,build_status=deprecated 2026-08-05软删除) vs 现有实现(buffered_writer.py MOD-L00-004 #ARCH-CH-003 + ch_writer/ch_reader/wal_codec 分层存储)。第一性原理:存储抽象层理论价值=解耦后端,但当前只用CH无换后端需求(YAGNI);100%AI开发下每层抽象=认知负担+幻觉温床;未来真要换后端应基于MOD-L00-004扩展而非复活MOD-L00-007。注意:MOD-L00-007 blueprint_id下另有backup_tick_poller.py(generated/production)节点未动。软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "MOD-L00-004(buffered_writer.py,裁定#ARCH-CH-003攒批写入层即存储抽象)+ch_writer.py/ch_reader.py(分层存储后端读写)"
+    tags: ["功能已承接", "deprecated", "rejected", "防误重新设计", "幽灵节点", "C轨占位", "YAGNI", "第一性原理裁定", "AI开发减抽象层"]
+    search_terms: ["mod-l00-007", "storage", "存储层", "统一存储抽象层"]
+    related_candidates: ["CAND-L00008-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-05'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认功能已承接。存储抽象已由buffered_writer(MOD-L00-004裁定#ARCH-CH-003)承接,后端读写已由ch_writer/ch_reader分层实现。蓝图L145 storage列为C轨占位代码已清理。第一性原理裁定:YAGNI+AI开发减抽象层。软删除防误恢复"
+
+  # ----------------------------------------------------------
+  # CAND-L00008-001: MOD-L00-008 缓存 功能已上移至H1_REDIS_HOT（rejected，四问①挂——功能已实现+功能上移）
+  # 弃用时间: 2026-08-05 | 第一性原理裁定: 缓存功能已由 MOD-H1_REDIS_HOT 承接,属"功能上移至基础设施层"案例
+  # 裁定依据: tick_redis_cache.py blueprint_id=MOD-H1_REDIS_HOT domain=D_INFRA_RUNTIME(production);
+  #          h1_redis_hot.md(27972字节)在_cross_layer/database/sub_blueprints/下=跨层基础设施;
+  #          功能上移至基础设施层(与MOD-EX-004幂等性上移shared/infra同类);保留=双真源风险
+  # ----------------------------------------------------------
+  - id: CAND-L00008-001
+    name: "MOD-L00-008 缓存(功能已上移至H1_REDIS_HOT)"
+    aliases: ["MOD-L00-008", "cache", "Cache", "缓存层", "D_DATA缓存"]
+    domain: D_DATA
+    domain_status: active
+    domain_node_count: 30
+    sub_layer: ""
+    panorama_position:
+      depgraph: {has_position: false, note: "已软删除(deprecated),node_id=7684067,path=src/zephyr/data/cache/目录不存在=幽灵"}
+      dataflowgraph: {has_position: false, note: "幽灵节点,无数据流位置"}
+      decisiongraph: {has_position: false, note: "幽灵节点,无决策位置"}
+      blueprint: {has_position: false, note: "无独立蓝图,功能已由MOD-H1_REDIS_HOT承接(D_INFRA_RUNTIME)"}
+    description: "depgraph中blueprint_id=MOD-L00-008、path=src/zephyr/data/cache/的设计态节点,该目录不存在(幽灵)。缓存功能已由tick_redis_cache.py(MOD-H1_REDIS_HOT,D_INFRA_RUNTIME,production)承接——blueprint_id=MOD-H1_REDIS_HOT,domain=D_INFRA_RUNTIME,蓝图h1_redis_hot.md(27972字节)在_cross_layer/database/sub_blueprints/下=跨层基础设施。功能已从D_DATA业务域上移至D_INFRA_RUNTIME基础设施层(与MOD-EX-004幂等性上移shared/infra同类)。保留MOD-L00-008=双真源风险(AI不确定用哪个)。第一性原理裁定:功能上移是正确架构演进方向,保留旧域规划=幻觉温床。"
+    capability: ""
+    problem_it_solves: "(已解决)缓存已由MOD-H1_REDIS_HOT(D_INFRA_RUNTIME)承接,是CP-01 SLO<10ms和CP-02降级的核心基础设施"
+    trigger_signals: []
+    keywords: ["cache", "MOD-L00-008", "功能上移", "deprecated", "H1_REDIS_HOT", "双真源风险", "第一性原理"]
+    upstream_deps: []
+    downstream_consumers: []
+    contracts_to_produce: []
+    contracts_to_consume: []
+    prerequisites: []
+    design_admission:
+      q1_implemented: {result: true, equivalent_nodes: ["MOD-H1_REDIS_HOT(tick_redis_cache.py)"], evidence: "tick_redis_cache.py blueprint_id=MOD-H1_REDIS_HOT domain=D_INFRA_RUNTIME production。h1_redis_hot.md(27972字节)在_cross_layer/database/sub_blueprints/。PIPELINE批量写入tick:{symbol}:latest,best-effort(Redis故障不阻断WAL主路径)。功能从D_DATA上移至D_INFRA_RUNTIME基础设施层(与MOD-EX-004幂等性上移shared/infra同类)。"}
+      blocking_question: q1
+      result: rejected
+    status: rejected
+    priority: P2
+    created_at: '2026-08-05'
+    promoted_to: ""
+    source_draft: "depgraph 节点7684067(path=src/zephyr/data/cache/)"
+    source_section: "孤儿模块排查[C-裁定] 第一性原理架构裁定"
+    original_id: "MOD-L00-008"
+    estimated_complexity: ""
+    tech_notes: "双源对比:depgraph(节点7684067 blueprint_id=MOD-L00-008 path=src/zephyr/data/cache/目录不存在=幽灵,build_status=deprecated 2026-08-05软删除) vs 现有实现(tick_redis_cache.py blueprint_id=MOD-H1_REDIS_HOT domain=D_INFRA_RUNTIME production,功能已上移至基础设施层)。第一性原理:缓存功能上移至D_INFRA_RUNTIME是正确架构演进(H1热缓存是CP-01 SLO<10ms和CP-02降级核心基础设施);保留MOD-L00-008(D_DATA缓存层)=双真源(AI不确定用MOD-L00-008还是MOD-H1_REDIS_HOT);与MOD-EX-004幂等性上移shared/infra同类。tick_redis_cache.py blueprint_id不改(它从来不是MOD-L00-008的实现,属H1_REDIS_HOT体系)。软删除非硬删,保留deprecated状态防误恢复"
+    alternatives: "MOD-H1_REDIS_HOT(tick_redis_cache.py,D_INFRA_RUNTIME,production,PIPELINE批量写入+best-effort降级)"
+    tags: ["功能上移", "deprecated", "rejected", "防误重新设计", "幽灵节点", "双真源风险", "第一性原理裁定", "功能上移至基础设施层"]
+    search_terms: ["mod-l00-008", "cache", "缓存层", "d_data缓存"]
+    related_candidates: ["CAND-L00007-001", "CAND-EX004-001"]
+    enables: []
+    blocked_by: []
+    next_review_date: '2027-08-05'
+    review_frequency: yearly
+    last_review_outcome: "rejected,确认功能已上移。缓存已由MOD-H1_REDIS_HOT(tick_redis_cache.py D_INFRA_RUNTIME production)承接,功能上移至基础设施层(与MOD-EX-004同类)。保留=双真源风险。tick_redis_cache.py blueprint_id不改(从来属H1_REDIS_HOT体系)。软删除防误恢复"
+
+  # ----------------------------------------------------------
   # CAND-H1FS-001: H1 Factor Source / 信号端因子截面读取适配器（rejected，四问①②挂——功能已实现+无消费者）
   # 来源: depgraph 幽灵节点审查 (2026-08-02, TRAE-083 双源对比+四问过滤)
   # ----------------------------------------------------------
