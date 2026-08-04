@@ -60,6 +60,17 @@
 7. **放行 deprecated 状态**：deprecated 表示"已废弃但历史存在"，仍属 depgraph 已登记。
    若废弃文件被重新加入 commit，由 ORPHAN-MODULE 等其他 gate 检测，本 gate 不重复。
 
+L1 铁律分层裁定（#ARCH-L1-RULE-ENFORCEMENT-GAP，2026-08-04 二元化）：
+  L1 铁律文本（trae_080）要求"施工前 MUST 登记 planned"，但 99% 节点为 generated
+  （先施工后登记），灰度规则已形同虚设。裁定拆为两层——
+  - **铁律（gate-enforced，本 gate）**：commit 前在 depgraph 有记录（any status）。
+    二元判定：registered before commit = yes/no。gate 硬阻断 unregistered。
+  - **建议（best practice，非铁律）**：施工前先登记 planned 设计态，供 AI 查询依赖。
+    非技术强制，文档引导。不适用"规则二元化元规则"（非铁律）。
+  理由：100% AI 项目中，当前 AI session 有对话上下文（不严格依赖 depgraph 查询），
+  未来 AI session 依赖 depgraph（satisfied by "generated before commit"）。
+  "planned before code"的增量价值可通过 capability lookup / rule discovery 补偿。
+
 bootstrap 证据（depgraph DB 查询，2026-07-21）：
   - 整个项目：planned=41, generated=3811, stable=1584, deprecated=2
   - d8_doc_sync 目录：planned=0, generated=12, stable=0

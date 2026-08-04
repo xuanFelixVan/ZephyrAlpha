@@ -4060,6 +4060,21 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         else:
             print("[DEPGRAPH-DB] 步骤10: 跳过（audit_domain_nodes.py 已归档到 _archive/prototype/，4类检测职责待恢复）")
 
+        # 治本 #ARCH-DEPGRAPH-BACKUP-FIRST-CHECK：post-write DR 快照
+        # 匹配 apply_depgraph.py 模式——写入成功后 backup_pg_architecture()
+        # 导出四图 19 张 DB 真源表到 tmp/pg_backups/，备份失败不阻断主流程（DR 安全网）
+        # 根因：generate_project_depgraph.py --force 做 DELETE all + INSERT from scan，
+        # 设计态节点（planned）和保护字段不可从文件系统重建，需 DB 快照兜底。
+        try:
+            try:
+                from scripts.governance.meta.backup_runtime_state import backup_pg_architecture
+            except ImportError:
+                from meta.backup_runtime_state import backup_pg_architecture
+            backup_pg_architecture(throttle_seconds=60)
+            print("[DEPGRAPH-DB] Post-write DR backup completed (backup_pg_architecture)")
+        except Exception as _e:  # noqa: BLE001  # 备份失败不阻断主流程
+            print(f"[DEPGRAPH-DB] WARNING: post-write backup failed (non-blocking): {_e}")
+
     except Exception as e:
         if conn is not None:  # DM-3004: is not None守卫
             conn.rollback()

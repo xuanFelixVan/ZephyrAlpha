@@ -1536,7 +1536,7 @@ entries:
         allow_design_delete 参数；apply_dataflowgraph.py / apply_decisiongraph.py
         设计态写入命令显式传 allow_design_delete=True
     (e) 新建 align_panoramas.py 三图对齐检测器，输出报告到
-        docs/02_enterprise_architecture/generated/panorama_alignment_report.md
+        docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md
         检测四类问题：孤儿（仅一图）/状态漂移（design_maturity 不一致）/
         域不一致（domain_id 不一致）/设计态孤立（design 仅一图）
     设计原则：
@@ -11446,5 +11446,42 @@ entries:
     tests/scripts/test_validate_worktree_required.py
   status: decided
   related_adjudication: '用户裁定：逃生通道复用 ZEPHYR_FORCE_STASH；范围 L1+L2+L3 全量；L3.3 死代码 B 轨方案(a)删除'
+  created: '2026-08-04'
+  last_updated: '2026-08-04'
+# --- #ARCH-L1-RULE-ENFORCEMENT-GAP: L1 铁律文本与门禁强制力不一致（2026-08-04 二元化）---
+- issue_id: '#ARCH-L1-RULE-ENFORCEMENT-GAP'
+  title: L1 铁律要求"施工前 planned"但门禁只强制"commit前 registered"——灰度规则 99% 不合规
+  severity: P3低
+  category: governance_mechanism_gap
+  adjudication: |-
+    2026-08-04 裁定。问题：trae_080 L1 铁律文本要求"施工前 MUST apply_depgraph.py
+    --add-design-node ... planned"，但 NEW-FILE-DEPGRAPH-ENFORCEMENT gate 接受
+    any status（generated/planned/stable/deprecated）。项目 3811 generated vs 41 planned
+    （99% 非合规），灰度规则已形同虚设。违反"规则二元化元规则"（铁律必须二元可判）。
+    根因分析（第一性原理）：
+    1. L1 铁律 intent = "depgraph 有依赖信息可供 AI 查询=零幻觉空间可达"。
+    2. "planned before code"确保信息在施工期间可用（当前 AI session）。
+    3. "generated before commit"确保信息在施工后可用（未来 AI session）。
+    4. 100% AI 项目中，当前 AI session 有对话上下文（不严格依赖 depgraph 查询），
+       未来 AI session 依赖 depgraph（satisfied by "generated before commit"）。
+    5. "planned before code"的增量价值可通过 capability lookup / rule discovery 补偿。
+    裁定（二元化拆层）：
+    - 铁律（gate-enforced）：commit 前在 depgraph 有记录（any status）。二元判定：
+      registered before commit = yes/no。NEW-FILE-DEPGRAPH-ENFORCEMENT 硬阻断 unregistered。
+    - 建议（best practice，非铁律）：施工前先登记 planned 设计态，供 AI 查询依赖。
+      非技术强制，文档引导。不适用"规则二元化元规则"（非铁律）。
+    不选"收紧门禁只接受 planned"的理由：
+    - 不追溯（bootstrap 豁免），但未来新文件必须 planned 先行 → 工作流剧变
+    - AI 常先写代码后注册（generate_project_depgraph.py → generated），收紧后需改用
+      apply_depgraph.py --add-design-node（需手动指定 module_id/blueprint_id/domain_id）→ 摩擦大
+    - "planned before code"对 AI 的增量价值有限（对话上下文已覆盖）
+  fix_phase: |-
+    本次提交执行：
+    - new_file_depgraph_gate.py docstring: 追加"L1 铁律分层裁定"段落，明确铁律与建议的分层
+    - architecture_issue_registry.yaml: 本条 issue 登记（ARCH-REFERENCE 门禁）
+    后续（非本次）：trae_080 yaml 可追加 enforcement_note 字段标注分层关系（PROTECTED-PATH，
+    需 Owner 审批）。
+  status: decided
+  related_adjudication: 'trae_080 四图对齐铁律, 规则二元化元规则（2026-08-04）, NEW-FILE-DEPGRAPH-ENFORCEMENT gate'
   created: '2026-08-04'
   last_updated: '2026-08-04'
