@@ -10666,8 +10666,9 @@ entries:
     设计意图与实现差异记录：§2域内依赖画 RK-10/RK-11→RK-17(Kill Switch Integration)，但 D_RISK 域
       无独立 RK-17 节点——§0决策"Kill Switch归属基础设施层(D-AUTONOMY)拥有，D-RISK执行触发动作"，
       实际 kill_switch 触发逻辑由 risk_validator.py(RK-02)承担（代码证据：risk_validator.py:119
-      is_kill_switch_triggered()/:85 kill_switch触发后阻断所有订单）。按四问过滤①(功能已实现)不新建
+      is_kill_switch_triggered()/:85 kill_switch触发后阻断所有订单）。按设计准入一问标准 q1(功能已实现)不新建
       RK-17节点（会与risk_validator重复），依赖边指向 risk_validator 如实记录实现现状。
+      [术语更新 2026-08-04：原"四问过滤①"随四问收敛为一问标准，q1 语义不变]
 
     前置审计（避免遗漏）：回滚前全面审计85个deprecated节点（双源验证），确认除D_RISK 3个外无其他误删
       （48有gate_reason暂缓/6有明确处置重登候选库路径迁移/~20 D_FACTOR目录占位符P1P2因子族/schema测试文档节点）；
@@ -10740,6 +10741,11 @@ entries:
   related_adjudication: 'TRAE-083 v1.1.0(铁律6孤儿/孤立信号禁单源弃用), TRAE-062(SSoT分类), #ARCH-RSK-ROLLBACK-001(同根因治本)'
   created: '2026-08-01'
   last_updated: '2026-08-01'
+  superseded_criteria_note: |
+    [历史标注 2026-08-04] 本条目 adjudication 中引用的"四问②需求驱动"判定标准已于 2026-08-04
+    废弃（TRAE-083 收敛为设计准入一问标准，q2/q3/q4 因灰度无法二元化而废）。本历史决策仍有效，
+    因其结论基于双源对比法（设计文档定义 vs depgraph 结构状态），该法不受四问→一问收敛影响。
+    弃用 MOD-TEST 的核心证据（path=test_dry_run 非真实路径+全库零引用）属结构事实，不依赖 q2 灰度判断。
 # --- #ARCH-BPID-STALE-039: blueprint_id 重命名传播遗漏（auto_runtime_core MOD-INF-030→MOD-INF-035）---
 - issue_id: '#ARCH-BPID-STALE-039'
   title: MOD-INF-030 blueprint_id 碰撞调查：auto_runtime_core 蓝图锚点[39]残留旧bp_id（2.7.0重命名未传播）
@@ -10955,6 +10961,10 @@ entries:
   related_adjudication: 'Stage4公共化（run_subprocess/log_reconcile_results/bridge.get_writer/contracts.get_writer/run_dashboard 共5个死wrapper删除；commit_auto公共本不存在已纠正）'
   created: '2026-08-02'
   last_updated: '2026-08-02'
+  superseded_criteria_note: |
+    [历史标注 2026-08-04] adjudication 理由⑤引用的"需求驱动铁律（四问过滤 q2）"中 q2 已于 2026-08-04
+    废弃（收敛为设计准入一问标准）。本历史决策仍有效，因核心证据为"5 wrapper 零外部调用方"
+    （结构事实，非 q2 灰度判断），且理由①②③④⑥均不依赖 q2。
 
 # --- #ARCH-DR-CH-RESTART-001: CH 服务自愈+远程可启——灾备演练 RTO 风险发现（C3，2026-08-02）---
 - issue_id: '#ARCH-DR-CH-RESTART-001'
