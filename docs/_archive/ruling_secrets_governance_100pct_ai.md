@@ -200,7 +200,7 @@ ZephyrAlpha 的密钥管理体系最初隐含假设人类工程师会：
 
 **治本方案**：
 
-1. **新增 `config/SECRETS.md`**（显性密钥管理文档）：
+1. **新增 `SECRETS.md`**（根目录，显性密钥管理文档）：
    - 7 个密钥文件清单（路径/用途/KEY数/加载方式）
    - 密钥读取规范（MUST 用 secrets.py 接口，禁止裸 getenv）
    - 新增密钥流程（3 步：加 KEY 到 .env → 更新 .env.example → 更新 secret_registry.yaml）
@@ -390,7 +390,7 @@ ZephyrAlpha 的密钥管理体系最初隐含假设人类工程师会：
 ## 8. 验收标准
 
 ### Phase 1 验收
-- [ ] config/SECRETS.md 存在且包含 7 个文件清单 + 读取规范 + 新增流程
+- [ ] SECRETS.md（根目录）存在且包含 7 个文件清单 + 读取规范 + 新增流程
 - [ ] config/secret_registry.yaml 存在且覆盖全部 ~30 个 KEY
 - [ ] .env.example 包含 TUSHARE_TOKEN
 - [ ] AI 冷启动读 SECRETS.md 能回答"项目有哪些密钥、放哪里、怎么读"
