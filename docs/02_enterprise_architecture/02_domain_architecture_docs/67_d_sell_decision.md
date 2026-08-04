@@ -106,12 +106,12 @@ flowchart TD
     src_zephyr_sell_decision_core_strategy_specific_stop_framework_py -.->|data / data| src_zephyr_sell_decision_core_stop_loss_strategy_py
     src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py -.->|import / import| src_zephyr_sell_decision_core_sell_strategy_ab_tester_py
     src_zephyr_sell_decision_core_sell_signal_accuracy_monitor_py -.->|import / import| src_zephyr_sell_decision_core_sell_execution_quality_tracker_py
-    src_zephyr_sell_decision_core_replacement_rebalance_seller_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_sell_signal_fusion_engine_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_sell_conflict_arbitrator_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
     src_zephyr_sell_decision_core_stop_hunting_protector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
+    src_zephyr_sell_decision_core_replacement_rebalance_seller_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
+    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
+    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_breakout_failure_detector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_POSITION
@@ -122,9 +122,9 @@ flowchart TD
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_EX_CORE
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_core_sell_signal_fusion_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_sell_decision_core_replacement_rebalance_seller_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_sell_decision_core_sell_signal_collector_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_sell_decision_core_sell_signal_fusion_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_sell_decision_core_breakout_failure_detector_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_sell_decision_core_stop_hunting_protector_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_sell_decision_core_sell_conflict_arbitrator_py -->|导入依赖 / import_depends| D_SHARED
@@ -173,12 +173,12 @@ flowchart TD
     src_zephyr_sell_decision_models_init_py ~~~ src_zephyr_sell_decision_services_init_py
     src_zephyr_sell_decision_core_sell_conflict_arbitrator_py["冲突等级<br/>Sell Conflict Arbitrator — 买卖冲突仲裁器<br/>(MOD-SELL-008)<br/>文件: core/sell_conflict_arbitrator.py<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_sell_signal_collector_py["—不可扩展)<br/>Sell Signal Collector — 卖出信号收集器<br/>(MOD-SELL-001)<br/>文件: core/sell_signal_collector.py<br/>(生产态 / production)"]
-    src_zephyr_sell_decision_core_replacement_rebalance_seller_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_sell_signal_fusion_engine_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_sell_conflict_arbitrator_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
-    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
     src_zephyr_sell_decision_core_stop_hunting_protector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
+    src_zephyr_sell_decision_core_replacement_rebalance_seller_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
+    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_conflict_arbitrator_py
+    src_zephyr_sell_decision_core_sell_urgency_scorer_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     src_zephyr_sell_decision_core_breakout_failure_detector_py -->|导入依赖 / import_depends| src_zephyr_sell_decision_core_sell_signal_collector_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -236,12 +236,12 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_ASHARE_SIGNAL A股特色信号: 机构行为分析器 / institutional_behavior_analyzer (signal_... | 导入依赖 / import_depends |
 | 2 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | 导入依赖 / import_depends |
-| 3 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_FACTOR 因子: —3秒拉 tick → DataFrame → DagExecutor → H1 Redis / In... | 导入依赖 / import_depends |
+| 3 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_FACTOR 因子: 3秒拉 tick → DataFrame → DagExecutor → H1 Redis / Intr... | 导入依赖 / import_depends |
 | 4 | T Trade Coordinator (core/t_trade_coordinator.py) | → | D_POSITION 仓位管理: 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | 导入依赖 / import_depends |
 | 5 | 突破成败状态 / Breakout Failure Detector (core/breakout_f... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 6 | 置换/再平衡卖出类型 / Replacement Rebalance Seller (core/... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 7 | 冲突等级 / Sell Conflict Arbitrator (core/sell_conflict_a... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 8 | —不可扩展) / Sell Signal Collector (core/sell_signal_col... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 8 | 不可扩展) / Sell Signal Collector (core/sell_signal_colle... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 9 | 融合算法 / Sell Signal Fusion Engine (core/sell_signal_fu... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 10 | 紧迫度等级 / Sell Urgency Scorer (core/sell_urgency_score... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 | 11 | 止损位偏移方向 / Stop Hunting Protector (core/stop_huntin... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |

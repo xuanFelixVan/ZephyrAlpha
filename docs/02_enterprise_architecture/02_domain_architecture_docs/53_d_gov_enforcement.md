@@ -27,13 +27,13 @@ ttl: permanent
 | 域ID | D_GOV_ENFORCEMENT | Domain ID | D_GOV_ENFORCEMENT |
 | 域名称 | 规则执行 | Domain Name | Rule Enforcement |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 122 | Module Count | 122 |
-| 域内依赖 | 104 | Internal Dependencies | 104 |
-| 跨域入边 | 134 | Cross-domain Incoming | 134 |
+| 模块数 | 121 | Module Count | 121 |
+| 域内依赖 | 103 | Internal Dependencies | 103 |
+| 跨域入边 | 135 | Cross-domain Incoming | 135 |
 | 跨域出边 | 161 | Cross-domain Outgoing | 161 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 生产态模块 | 121 | Production Modules | 121 |
-| 容量 | 121/150 (正常) | Capacity | 121/150 (正常) |
+| 生产态模块 | 120 | Production Modules | 120 |
+| 容量 | 120/150 (正常) | Capacity | 120/150 (正常) |
 | 描述 | 门禁引擎流程编排(GatePipeline/GateEngine) | Description | 门禁引擎流程编排(GatePipeline/GateEngine) |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 122 个模块（生产态 121 + 设计态 1），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 121 个模块（生产态 120 + 设计态 1），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -154,7 +154,6 @@ flowchart TD
     tests_governance_rule_bridge_test_session_worktree_py["worktree 物理隔离端到端测试<br/>test_session_worktree.py — worktree<br/>物理隔离端到端测试（FP-ISO.4C，2026-07-0...<br/>Test Session Worktree<br/>文件: rule_bridge/test_session_worktree.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_session_worktree_cli_py["session_worktree_cli CLI 测试<br/>test_session_worktree_cli.py —<br/>session_worktree_cli CLI 测试（治本遗留项#2, ...<br/>Test Session Worktree Cli<br/>文件: rule_bridge/test_session_worktree_cli.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_session_worktree_health_check_py["session_worktree_start 启动健康度自检测试<br/>test_session_worktree_health_check.py —<br/>session_worktree_start 启动健康度自...<br/>Test Session Worktree Health Check<br/>文件: rule_bridge<br/>/test_session_worktree_health_check.py<br/>(生产态 / production)"]
-    tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py["_trusted_git_env 进程级隔离单测<br/>test_session_worktree_trusted_git_env.py —<br/>_trusted_git_env 进程级隔离单测（...<br/>Test Session Worktree Trusted Git Env<br/>文件: rule_bridge<br/>/test_session_worktree_trusted_git_env.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_session_worktree_workspace_clean_py["session lifecycle 工作区 clean 检查单测<br/>test_session_worktree_workspace_clean.py —<br/>session lifecycle 工作区 clean 检...<br/>Test Session Worktree Workspace Clean<br/>文件: rule_bridge<br/>/test_session_worktree_workspace_clean.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_worktree_pool_py["WorktreePool 端到端 smoke test<br/>test_worktree_pool.py — WorktreePool 端到端<br/>smoke test（ARCH-GIT-CALL-BUDGET...<br/>Test Worktree Pool<br/>文件: rule_bridge/test_worktree_pool.py<br/>(生产态 / production)"]
     tests_ops_test_shadow_canary_deploy_py["Shadow Canary 部署运行器单元测试<br/>test_shadow_canary_deploy.py — Shadow Canary<br/>部署运行器单元测试<br/>Test Shadow Canary Deploy<br/>文件: ops/test_shadow_canary_deploy.py<br/>(生产态 / production)"]
@@ -258,8 +257,7 @@ flowchart TD
     tests_governance_rule_bridge_test_heartbeat_daemon_py ~~~ tests_governance_rule_bridge_test_session_worktree_py
     tests_governance_rule_bridge_test_session_worktree_py ~~~ tests_governance_rule_bridge_test_session_worktree_cli_py
     tests_governance_rule_bridge_test_session_worktree_cli_py ~~~ tests_governance_rule_bridge_test_session_worktree_health_check_py
-    tests_governance_rule_bridge_test_session_worktree_health_check_py ~~~ tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py
-    tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py ~~~ tests_governance_rule_bridge_test_session_worktree_workspace_clean_py
+    tests_governance_rule_bridge_test_session_worktree_health_check_py ~~~ tests_governance_rule_bridge_test_session_worktree_workspace_clean_py
     tests_governance_rule_bridge_test_session_worktree_workspace_clean_py ~~~ tests_governance_rule_bridge_test_worktree_pool_py
     tests_governance_rule_bridge_test_worktree_pool_py ~~~ tests_ops_test_shadow_canary_deploy_py
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py["Admission Response<br/>behavioral admission包的admission_response模块<br/>文件: behavioral_admission/admission_response.py<br/>(生产态 / production)"]
@@ -293,109 +291,108 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["全项目唯一合法 git commit 入口<br/>GitCommitGateway — 全项目唯一合法 git commit<br/>入口（OPS-2026062512 治本）<br/>Git Commit Gateway<br/>文件: rule_bridge/git_commit_gateway.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["Reconciler 批量化 auto-commit 拦截器<br/>batched_auto_committer.py — Reconciler 批量化<br/>auto-commit 拦截器（ARCH-GIT-C...<br/>Batched Auto Committer<br/>文件: rule_bridge/batched_auto_committer.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_response_py
+    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_response_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
-    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py
+    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_claim_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
     src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     tests_governance_commit_gates_test_asyncio_run_in_context_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_blueprint_amodule_cross_check_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_bare_getenv_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_bare_subprocess_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_blueprint_amodule_consistency_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_blueprint_amodule_cross_check_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_bare_sql_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_ch_batch_size_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_capability_overlap_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_capability_lookup_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_ch_version_col_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_consumers_accuracy_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_claim_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_derived_file_deletion_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_ch_version_col_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_create_guard_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    tests_governance_commit_gates_test_datetime_now_forbidden_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_ch_batch_size_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_claim_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_capability_overlap_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_depgraph_freshness_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_doc_ref_broken_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_depgraph_pre_registration_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_doc_ref_broken_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_datetime_now_forbidden_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_derived_file_deletion_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_domain_name_zh_direct_access_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_domain_fk_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_file_copy_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_foreign_change_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_foreign_change_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    tests_governance_commit_gates_test_forged_gw_marker_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_exempt_zone_frontmatter_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_function_dup_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_god_class_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_file_copy_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_domain_fk_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_empty_handler_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_forged_gw_marker_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_function_dup_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_exempt_zone_frontmatter_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_god_class_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_held_overlap_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_hardcoded_url_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_high_complexity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_held_overlap_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_id_uniqueness_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_import_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_long_param_list_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_import_direction_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_manual_only_permanent_gate_noqa_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_msg_exposure_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_long_param_list_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_mcp_version_field_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_import_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_msg_style_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_msg_exposure_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_no_import_side_effect_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_new_file_depgraph_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_msg_style_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_orphan_module_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_open_without_with_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_mutable_const_without_final_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_protected_paths_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_perm_trigger_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_open_without_with_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_protected_paths_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_precommit_offline_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_r5_digit_suffix_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_reconciler_health_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_schema_file_exists_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_rename_depgraph_sync_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_secret_hardcode_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_rule_four_way_alignment_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_schema_file_exists_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_scripts_import_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_session_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_secret_hardcode_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_ssot_redefinition_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_secret_registry_consistency_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_test_source_consistency_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_scripts_import_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_ssot_redefinition_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_translation_coverage_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_undefined_name_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_zephyr_env_direct_access_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_unsafe_dict_spread_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_vocab_hardcode_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_worktree_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_unsafe_dict_spread_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_zephyr_env_direct_access_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_rule_bridge_test_claim_files_for_edit_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_commit_gate_registry_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_rule_bridge_test_emergency_commit_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
+    tests_governance_rule_bridge_test_commit_gate_registry_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_rule_bridge_test_claim_files_for_edit_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     tests_governance_rule_bridge_test_gate_auto_registrar_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_rule_bridge_test_gate_auto_registrar_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     tests_governance_rule_bridge_test_session_worktree_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     tests_governance_rule_bridge_test_session_worktree_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    tests_governance_rule_bridge_test_session_worktree_health_check_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_session_worktree_health_check_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_session_worktree_workspace_clean_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_worktree_pool_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
     tests_governance_rule_bridge_test_worktree_pool_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
+    tests_governance_rule_bridge_test_worktree_pool_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
+    tests_governance_rule_bridge_test_session_worktree_workspace_clean_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     D_GOV_RULE["规则治理<br/>规则治理，负责规则注册、规则版本和规则依赖管理<br/>Rule Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     scripts_ops_shadow_canary_deploy_py -.->|导入依赖 / import_depends| D_GOV_RULE
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -404,49 +401,49 @@ flowchart TD
     scripts_ops_shadow_canary_deploy_py -.->|导入依赖 / import_depends| D_AUTONOMY_CORE
     D_SECURITY["对抗验证<br/>对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验<br/>证<br/>Adversarial Validation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     scripts_ops_shadow_canary_deploy_py -.->|导入依赖 / import_depends| D_SECURITY
-    D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    tests_governance_commit_gates_test_worktree_required_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| D_SHARED
+    tests_ops_test_shadow_canary_deploy_py -->|测试依赖 / test_depends| D_GOV_RULE
+    D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    tests_governance_commit_gates_test_msg_exposure_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    tests_governance_commit_gates_test_secret_hardcode_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    tests_governance_commit_gates_test_worktree_required_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     tests_governance_commit_gates_test_secret_registry_consistency_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    tests_ops_test_shadow_canary_deploy_py -->|测试依赖 / test_depends| D_GOV_RULE
-    tests_governance_commit_gates_test_msg_exposure_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
-    tests_governance_commit_gates_test_secret_hardcode_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    tests_governance_commit_gates_test_unsafe_dict_spread_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     tests_governance_commit_gates_test_domain_name_zh_direct_access_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    tests_governance_commit_gates_test_bare_subprocess_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     tests_governance_rule_bridge_test_session_worktree_py -->|测试依赖 / test_depends| D_SECURITY
-    tests_governance_commit_gates_test_ch_version_col_gate_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
-    tests_governance_commit_gates_test_capability_lookup_audit_log_py -->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_ML_TRAIN["训练<br/>训练，负责模型训练、特征工程和模型评估<br/>Training<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_ML_TRAIN -.->|data / data| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    D_GOV_AUDIT -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    D_GOV_AUDIT -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py,scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py,scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py,scripts_governance_session_worktree_cli_py,src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_admission_response_py,src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py,src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py,src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py,src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py,src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py,src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py,src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_bridge_session_worktree_py,src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py,src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py,src_zephyr_gov_enforcement_rule_enforcement_approval_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py,src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py,src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py,tests_governance_commit_gates_test_arch_reference_gate_py,tests_governance_commit_gates_test_asyncio_run_in_context_gate_py,tests_governance_commit_gates_test_bare_getenv_gate_py,tests_governance_commit_gates_test_bare_sql_gate_py,tests_governance_commit_gates_test_bare_subprocess_gate_py,tests_governance_commit_gates_test_blueprint_amodule_consistency_gate_py,tests_governance_commit_gates_test_blueprint_amodule_cross_check_gate_py,tests_governance_commit_gates_test_capability_lookup_audit_log_py,tests_governance_commit_gates_test_capability_lookup_bypass_policy_py,tests_governance_commit_gates_test_capability_lookup_required_gate_py,tests_governance_commit_gates_test_capability_overlap_gate_py,tests_governance_commit_gates_test_ch_batch_size_gate_py,tests_governance_commit_gates_test_ch_version_col_gate_py,tests_governance_commit_gates_test_claim_required_gate_py,tests_governance_commit_gates_test_consumers_accuracy_gate_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_dangling_reference_gate_py,tests_governance_commit_gates_test_datetime_now_forbidden_gate_py,tests_governance_commit_gates_test_depgraph_freshness_gate_py,tests_governance_commit_gates_test_depgraph_pre_registration_gate_py,tests_governance_commit_gates_test_derived_file_deletion_gate_py,tests_governance_commit_gates_test_diff_helpers_py,tests_governance_commit_gates_test_doc_ref_broken_gate_py,tests_governance_commit_gates_test_domain_fk_gate_py,tests_governance_commit_gates_test_domain_name_zh_direct_access_gate_py,tests_governance_commit_gates_test_empty_handler_gate_py,tests_governance_commit_gates_test_exempt_zone_frontmatter_gate_py,tests_governance_commit_gates_test_file_copy_gate_py,tests_governance_commit_gates_test_foreign_change_gate_py,tests_governance_commit_gates_test_forged_gw_marker_gate_py,tests_governance_commit_gates_test_function_dup_gate_py,tests_governance_commit_gates_test_god_class_gate_py,tests_governance_commit_gates_test_hardcoded_url_gate_py,tests_governance_commit_gates_test_held_overlap_gate_py,tests_governance_commit_gates_test_high_complexity_gate_py,tests_governance_commit_gates_test_id_uniqueness_gate_py,tests_governance_commit_gates_test_import_direction_gate_py,tests_governance_commit_gates_test_import_integrity_gate_py,tests_governance_commit_gates_test_long_param_list_gate_py,tests_governance_commit_gates_test_manual_only_permanent_gate_noqa_py,tests_governance_commit_gates_test_mcp_version_field_gate_py,tests_governance_commit_gates_test_module_id_consistency_gate_py,tests_governance_commit_gates_test_msg_exposure_gate_py,tests_governance_commit_gates_test_msg_style_gate_py,tests_governance_commit_gates_test_mutable_const_without_final_gate_py,tests_governance_commit_gates_test_new_file_depgraph_gate_py,tests_governance_commit_gates_test_no_import_side_effect_gate_py,tests_governance_commit_gates_test_open_without_with_gate_py,tests_governance_commit_gates_test_orphan_module_gate_py,tests_governance_commit_gates_test_panorama_alignment_gate_py,tests_governance_commit_gates_test_perm_trigger_gate_py,tests_governance_commit_gates_test_precommit_offline_gate_py,tests_governance_commit_gates_test_protected_paths_gate_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py,tests_governance_commit_gates_test_reconciler_health_gate_py,tests_governance_commit_gates_test_rename_depgraph_sync_gate_py,tests_governance_commit_gates_test_rule_execution_pairing_gate_py,tests_governance_commit_gates_test_rule_four_way_alignment_gate_py,tests_governance_commit_gates_test_ruling_commit_verified_gate_py,tests_governance_commit_gates_test_ruling_reference_gate_py,tests_governance_commit_gates_test_schema_file_exists_gate_py,tests_governance_commit_gates_test_scripts_import_integrity_gate_py,tests_governance_commit_gates_test_secret_hardcode_gate_py,tests_governance_commit_gates_test_secret_registry_consistency_gate_py,tests_governance_commit_gates_test_session_required_gate_py,tests_governance_commit_gates_test_ssot_redefinition_gate_py,tests_governance_commit_gates_test_test_source_consistency_gate_py,tests_governance_commit_gates_test_translation_coverage_gate_py,tests_governance_commit_gates_test_undefined_name_gate_py,tests_governance_commit_gates_test_unsafe_dict_spread_gate_py,tests_governance_commit_gates_test_vocab_hardcode_gate_py,tests_governance_commit_gates_test_worktree_required_gate_py,tests_governance_commit_gates_test_zephyr_env_direct_access_gate_py,tests_governance_rule_bridge_test_claim_files_for_edit_py,tests_governance_rule_bridge_test_commit_gate_registry_py,tests_governance_rule_bridge_test_emergency_commit_py,tests_governance_rule_bridge_test_gate_auto_registrar_py,tests_governance_rule_bridge_test_heartbeat_daemon_py,tests_governance_rule_bridge_test_session_worktree_py,tests_governance_rule_bridge_test_session_worktree_cli_py,tests_governance_rule_bridge_test_session_worktree_health_check_py,tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py,tests_governance_rule_bridge_test_session_worktree_workspace_clean_py,tests_governance_rule_bridge_test_worktree_pool_py,tests_ops_test_shadow_canary_deploy_py production
+    class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py,scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py,scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py,scripts_governance_session_worktree_cli_py,src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_admission_response_py,src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py,src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py,src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py,src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py,src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py,src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py,src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_bridge_session_worktree_py,src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py,src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py,src_zephyr_gov_enforcement_rule_enforcement_approval_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py,src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py,src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py,tests_governance_commit_gates_test_arch_reference_gate_py,tests_governance_commit_gates_test_asyncio_run_in_context_gate_py,tests_governance_commit_gates_test_bare_getenv_gate_py,tests_governance_commit_gates_test_bare_sql_gate_py,tests_governance_commit_gates_test_bare_subprocess_gate_py,tests_governance_commit_gates_test_blueprint_amodule_consistency_gate_py,tests_governance_commit_gates_test_blueprint_amodule_cross_check_gate_py,tests_governance_commit_gates_test_capability_lookup_audit_log_py,tests_governance_commit_gates_test_capability_lookup_bypass_policy_py,tests_governance_commit_gates_test_capability_lookup_required_gate_py,tests_governance_commit_gates_test_capability_overlap_gate_py,tests_governance_commit_gates_test_ch_batch_size_gate_py,tests_governance_commit_gates_test_ch_version_col_gate_py,tests_governance_commit_gates_test_claim_required_gate_py,tests_governance_commit_gates_test_consumers_accuracy_gate_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_dangling_reference_gate_py,tests_governance_commit_gates_test_datetime_now_forbidden_gate_py,tests_governance_commit_gates_test_depgraph_freshness_gate_py,tests_governance_commit_gates_test_depgraph_pre_registration_gate_py,tests_governance_commit_gates_test_derived_file_deletion_gate_py,tests_governance_commit_gates_test_diff_helpers_py,tests_governance_commit_gates_test_doc_ref_broken_gate_py,tests_governance_commit_gates_test_domain_fk_gate_py,tests_governance_commit_gates_test_domain_name_zh_direct_access_gate_py,tests_governance_commit_gates_test_empty_handler_gate_py,tests_governance_commit_gates_test_exempt_zone_frontmatter_gate_py,tests_governance_commit_gates_test_file_copy_gate_py,tests_governance_commit_gates_test_foreign_change_gate_py,tests_governance_commit_gates_test_forged_gw_marker_gate_py,tests_governance_commit_gates_test_function_dup_gate_py,tests_governance_commit_gates_test_god_class_gate_py,tests_governance_commit_gates_test_hardcoded_url_gate_py,tests_governance_commit_gates_test_held_overlap_gate_py,tests_governance_commit_gates_test_high_complexity_gate_py,tests_governance_commit_gates_test_id_uniqueness_gate_py,tests_governance_commit_gates_test_import_direction_gate_py,tests_governance_commit_gates_test_import_integrity_gate_py,tests_governance_commit_gates_test_long_param_list_gate_py,tests_governance_commit_gates_test_manual_only_permanent_gate_noqa_py,tests_governance_commit_gates_test_mcp_version_field_gate_py,tests_governance_commit_gates_test_module_id_consistency_gate_py,tests_governance_commit_gates_test_msg_exposure_gate_py,tests_governance_commit_gates_test_msg_style_gate_py,tests_governance_commit_gates_test_mutable_const_without_final_gate_py,tests_governance_commit_gates_test_new_file_depgraph_gate_py,tests_governance_commit_gates_test_no_import_side_effect_gate_py,tests_governance_commit_gates_test_open_without_with_gate_py,tests_governance_commit_gates_test_orphan_module_gate_py,tests_governance_commit_gates_test_panorama_alignment_gate_py,tests_governance_commit_gates_test_perm_trigger_gate_py,tests_governance_commit_gates_test_precommit_offline_gate_py,tests_governance_commit_gates_test_protected_paths_gate_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py,tests_governance_commit_gates_test_reconciler_health_gate_py,tests_governance_commit_gates_test_rename_depgraph_sync_gate_py,tests_governance_commit_gates_test_rule_execution_pairing_gate_py,tests_governance_commit_gates_test_rule_four_way_alignment_gate_py,tests_governance_commit_gates_test_ruling_commit_verified_gate_py,tests_governance_commit_gates_test_ruling_reference_gate_py,tests_governance_commit_gates_test_schema_file_exists_gate_py,tests_governance_commit_gates_test_scripts_import_integrity_gate_py,tests_governance_commit_gates_test_secret_hardcode_gate_py,tests_governance_commit_gates_test_secret_registry_consistency_gate_py,tests_governance_commit_gates_test_session_required_gate_py,tests_governance_commit_gates_test_ssot_redefinition_gate_py,tests_governance_commit_gates_test_test_source_consistency_gate_py,tests_governance_commit_gates_test_translation_coverage_gate_py,tests_governance_commit_gates_test_undefined_name_gate_py,tests_governance_commit_gates_test_unsafe_dict_spread_gate_py,tests_governance_commit_gates_test_vocab_hardcode_gate_py,tests_governance_commit_gates_test_worktree_required_gate_py,tests_governance_commit_gates_test_zephyr_env_direct_access_gate_py,tests_governance_rule_bridge_test_claim_files_for_edit_py,tests_governance_rule_bridge_test_commit_gate_registry_py,tests_governance_rule_bridge_test_emergency_commit_py,tests_governance_rule_bridge_test_gate_auto_registrar_py,tests_governance_rule_bridge_test_heartbeat_daemon_py,tests_governance_rule_bridge_test_session_worktree_py,tests_governance_rule_bridge_test_session_worktree_cli_py,tests_governance_rule_bridge_test_session_worktree_health_check_py,tests_governance_rule_bridge_test_session_worktree_workspace_clean_py,tests_governance_rule_bridge_test_worktree_pool_py,tests_ops_test_shadow_canary_deploy_py production
     class scripts_ops_shadow_canary_deploy_py design
-    class D_GOV_RULE,D_GOVERNANCE,D_AUTONOMY_CORE,D_SECURITY,D_GOV_CODE_QUALITY,D_SHARED,D_GOV_AUDIT external_prod
+    class D_GOV_RULE,D_GOVERNANCE,D_AUTONOMY_CORE,D_SECURITY,D_SHARED,D_GOV_CODE_QUALITY,D_GOV_AUDIT external_prod
     class D_ML_TRAIN external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 121 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 120 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -551,7 +548,6 @@ flowchart TD
     tests_governance_rule_bridge_test_session_worktree_py["worktree 物理隔离端到端测试<br/>test_session_worktree.py — worktree<br/>物理隔离端到端测试（FP-ISO.4C，2026-07-0...<br/>Test Session Worktree<br/>文件: rule_bridge/test_session_worktree.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_session_worktree_cli_py["session_worktree_cli CLI 测试<br/>test_session_worktree_cli.py —<br/>session_worktree_cli CLI 测试（治本遗留项#2, ...<br/>Test Session Worktree Cli<br/>文件: rule_bridge/test_session_worktree_cli.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_session_worktree_health_check_py["session_worktree_start 启动健康度自检测试<br/>test_session_worktree_health_check.py —<br/>session_worktree_start 启动健康度自...<br/>Test Session Worktree Health Check<br/>文件: rule_bridge<br/>/test_session_worktree_health_check.py<br/>(生产态 / production)"]
-    tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py["_trusted_git_env 进程级隔离单测<br/>test_session_worktree_trusted_git_env.py —<br/>_trusted_git_env 进程级隔离单测（...<br/>Test Session Worktree Trusted Git Env<br/>文件: rule_bridge<br/>/test_session_worktree_trusted_git_env.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_session_worktree_workspace_clean_py["session lifecycle 工作区 clean 检查单测<br/>test_session_worktree_workspace_clean.py —<br/>session lifecycle 工作区 clean 检...<br/>Test Session Worktree Workspace Clean<br/>文件: rule_bridge<br/>/test_session_worktree_workspace_clean.py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_worktree_pool_py["WorktreePool 端到端 smoke test<br/>test_worktree_pool.py — WorktreePool 端到端<br/>smoke test（ARCH-GIT-CALL-BUDGET...<br/>Test Worktree Pool<br/>文件: rule_bridge/test_worktree_pool.py<br/>(生产态 / production)"]
     tests_ops_test_shadow_canary_deploy_py["Shadow Canary 部署运行器单元测试<br/>test_shadow_canary_deploy.py — Shadow Canary<br/>部署运行器单元测试<br/>Test Shadow Canary Deploy<br/>文件: ops/test_shadow_canary_deploy.py<br/>(生产态 / production)"]
@@ -654,8 +650,7 @@ flowchart TD
     tests_governance_rule_bridge_test_heartbeat_daemon_py ~~~ tests_governance_rule_bridge_test_session_worktree_py
     tests_governance_rule_bridge_test_session_worktree_py ~~~ tests_governance_rule_bridge_test_session_worktree_cli_py
     tests_governance_rule_bridge_test_session_worktree_cli_py ~~~ tests_governance_rule_bridge_test_session_worktree_health_check_py
-    tests_governance_rule_bridge_test_session_worktree_health_check_py ~~~ tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py
-    tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py ~~~ tests_governance_rule_bridge_test_session_worktree_workspace_clean_py
+    tests_governance_rule_bridge_test_session_worktree_health_check_py ~~~ tests_governance_rule_bridge_test_session_worktree_workspace_clean_py
     tests_governance_rule_bridge_test_session_worktree_workspace_clean_py ~~~ tests_governance_rule_bridge_test_worktree_pool_py
     tests_governance_rule_bridge_test_worktree_pool_py ~~~ tests_ops_test_shadow_canary_deploy_py
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py["Admission Response<br/>behavioral admission包的admission_response模块<br/>文件: behavioral_admission/admission_response.py<br/>(生产态 / production)"]
@@ -689,114 +684,113 @@ flowchart TD
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py["全项目唯一合法 git commit 入口<br/>GitCommitGateway — 全项目唯一合法 git commit<br/>入口（OPS-2026062512 治本）<br/>Git Commit Gateway<br/>文件: rule_bridge/git_commit_gateway.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py["Reconciler 批量化 auto-commit 拦截器<br/>batched_auto_committer.py — Reconciler 批量化<br/>auto-commit 拦截器（ARCH-GIT-C...<br/>Batched Auto Committer<br/>文件: rule_bridge/batched_auto_committer.py<br/>(生产态 / production)"]
     src_zephyr_gov_enforcement_behavioral_admission_admission_response_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_response_py
+    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_admission_response_py
+    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_protection_index_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py
-    src_zephyr_gov_enforcement_behavioral_admission_init_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py
     src_zephyr_gov_enforcement_behavioral_admission_protection_index_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
-    src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py
     src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py
+    src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_claim_py
-    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
     src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py
     scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     scripts_governance_session_worktree_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
     tests_governance_commit_gates_test_asyncio_run_in_context_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_blueprint_amodule_cross_check_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_bare_getenv_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_bare_subprocess_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_blueprint_amodule_consistency_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_blueprint_amodule_cross_check_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_bare_sql_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_ch_batch_size_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_capability_overlap_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_capability_lookup_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_ch_version_col_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_consumers_accuracy_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_claim_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_derived_file_deletion_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_ch_version_col_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_create_guard_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    tests_governance_commit_gates_test_datetime_now_forbidden_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_ch_batch_size_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_claim_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_capability_overlap_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_depgraph_freshness_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_doc_ref_broken_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_depgraph_pre_registration_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_doc_ref_broken_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_datetime_now_forbidden_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_derived_file_deletion_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_domain_name_zh_direct_access_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_domain_fk_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_file_copy_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_foreign_change_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_foreign_change_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
-    tests_governance_commit_gates_test_forged_gw_marker_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_exempt_zone_frontmatter_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_function_dup_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_god_class_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_file_copy_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_domain_fk_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_empty_handler_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_forged_gw_marker_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_function_dup_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_exempt_zone_frontmatter_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_god_class_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_held_overlap_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_hardcoded_url_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_high_complexity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_held_overlap_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_id_uniqueness_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_import_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_long_param_list_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_import_direction_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_manual_only_permanent_gate_noqa_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_msg_exposure_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_long_param_list_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_mcp_version_field_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_import_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_msg_style_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_msg_exposure_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_no_import_side_effect_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_new_file_depgraph_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_msg_style_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_orphan_module_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_open_without_with_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_mutable_const_without_final_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_protected_paths_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_perm_trigger_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_open_without_with_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_protected_paths_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_precommit_offline_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_r5_digit_suffix_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_reconciler_health_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_schema_file_exists_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_rename_depgraph_sync_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_secret_hardcode_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_rule_four_way_alignment_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_schema_file_exists_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_scripts_import_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_session_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_secret_hardcode_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_ssot_redefinition_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_secret_registry_consistency_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_test_source_consistency_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_scripts_import_integrity_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_ssot_redefinition_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_translation_coverage_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_undefined_name_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_zephyr_env_direct_access_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_commit_gates_test_unsafe_dict_spread_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_vocab_hardcode_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_commit_gates_test_worktree_required_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_unsafe_dict_spread_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_commit_gates_test_zephyr_env_direct_access_gate_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
-    tests_governance_rule_bridge_test_claim_files_for_edit_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_commit_gate_registry_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_rule_bridge_test_emergency_commit_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
+    tests_governance_rule_bridge_test_commit_gate_registry_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
+    tests_governance_rule_bridge_test_claim_files_for_edit_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     tests_governance_rule_bridge_test_gate_auto_registrar_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py
     tests_governance_rule_bridge_test_gate_auto_registrar_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
     tests_governance_rule_bridge_test_session_worktree_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     tests_governance_rule_bridge_test_session_worktree_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py
+    tests_governance_rule_bridge_test_session_worktree_health_check_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py
     tests_governance_rule_bridge_test_heartbeat_daemon_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_session_worktree_health_check_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_session_worktree_workspace_clean_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
-    tests_governance_rule_bridge_test_worktree_pool_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
     tests_governance_rule_bridge_test_worktree_pool_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
+    tests_governance_rule_bridge_test_worktree_pool_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py
+    tests_governance_rule_bridge_test_session_worktree_workspace_clean_py -->|测试依赖 / test_depends| src_zephyr_gov_enforcement_rule_bridge_session_worktree_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py,scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py,scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py,scripts_governance_session_worktree_cli_py,src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_admission_response_py,src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py,src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py,src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py,src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py,src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py,src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py,src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_bridge_session_worktree_py,src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py,src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py,src_zephyr_gov_enforcement_rule_enforcement_approval_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py,src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py,src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py,tests_governance_commit_gates_test_arch_reference_gate_py,tests_governance_commit_gates_test_asyncio_run_in_context_gate_py,tests_governance_commit_gates_test_bare_getenv_gate_py,tests_governance_commit_gates_test_bare_sql_gate_py,tests_governance_commit_gates_test_bare_subprocess_gate_py,tests_governance_commit_gates_test_blueprint_amodule_consistency_gate_py,tests_governance_commit_gates_test_blueprint_amodule_cross_check_gate_py,tests_governance_commit_gates_test_capability_lookup_audit_log_py,tests_governance_commit_gates_test_capability_lookup_bypass_policy_py,tests_governance_commit_gates_test_capability_lookup_required_gate_py,tests_governance_commit_gates_test_capability_overlap_gate_py,tests_governance_commit_gates_test_ch_batch_size_gate_py,tests_governance_commit_gates_test_ch_version_col_gate_py,tests_governance_commit_gates_test_claim_required_gate_py,tests_governance_commit_gates_test_consumers_accuracy_gate_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_dangling_reference_gate_py,tests_governance_commit_gates_test_datetime_now_forbidden_gate_py,tests_governance_commit_gates_test_depgraph_freshness_gate_py,tests_governance_commit_gates_test_depgraph_pre_registration_gate_py,tests_governance_commit_gates_test_derived_file_deletion_gate_py,tests_governance_commit_gates_test_diff_helpers_py,tests_governance_commit_gates_test_doc_ref_broken_gate_py,tests_governance_commit_gates_test_domain_fk_gate_py,tests_governance_commit_gates_test_domain_name_zh_direct_access_gate_py,tests_governance_commit_gates_test_empty_handler_gate_py,tests_governance_commit_gates_test_exempt_zone_frontmatter_gate_py,tests_governance_commit_gates_test_file_copy_gate_py,tests_governance_commit_gates_test_foreign_change_gate_py,tests_governance_commit_gates_test_forged_gw_marker_gate_py,tests_governance_commit_gates_test_function_dup_gate_py,tests_governance_commit_gates_test_god_class_gate_py,tests_governance_commit_gates_test_hardcoded_url_gate_py,tests_governance_commit_gates_test_held_overlap_gate_py,tests_governance_commit_gates_test_high_complexity_gate_py,tests_governance_commit_gates_test_id_uniqueness_gate_py,tests_governance_commit_gates_test_import_direction_gate_py,tests_governance_commit_gates_test_import_integrity_gate_py,tests_governance_commit_gates_test_long_param_list_gate_py,tests_governance_commit_gates_test_manual_only_permanent_gate_noqa_py,tests_governance_commit_gates_test_mcp_version_field_gate_py,tests_governance_commit_gates_test_module_id_consistency_gate_py,tests_governance_commit_gates_test_msg_exposure_gate_py,tests_governance_commit_gates_test_msg_style_gate_py,tests_governance_commit_gates_test_mutable_const_without_final_gate_py,tests_governance_commit_gates_test_new_file_depgraph_gate_py,tests_governance_commit_gates_test_no_import_side_effect_gate_py,tests_governance_commit_gates_test_open_without_with_gate_py,tests_governance_commit_gates_test_orphan_module_gate_py,tests_governance_commit_gates_test_panorama_alignment_gate_py,tests_governance_commit_gates_test_perm_trigger_gate_py,tests_governance_commit_gates_test_precommit_offline_gate_py,tests_governance_commit_gates_test_protected_paths_gate_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py,tests_governance_commit_gates_test_reconciler_health_gate_py,tests_governance_commit_gates_test_rename_depgraph_sync_gate_py,tests_governance_commit_gates_test_rule_execution_pairing_gate_py,tests_governance_commit_gates_test_rule_four_way_alignment_gate_py,tests_governance_commit_gates_test_ruling_commit_verified_gate_py,tests_governance_commit_gates_test_ruling_reference_gate_py,tests_governance_commit_gates_test_schema_file_exists_gate_py,tests_governance_commit_gates_test_scripts_import_integrity_gate_py,tests_governance_commit_gates_test_secret_hardcode_gate_py,tests_governance_commit_gates_test_secret_registry_consistency_gate_py,tests_governance_commit_gates_test_session_required_gate_py,tests_governance_commit_gates_test_ssot_redefinition_gate_py,tests_governance_commit_gates_test_test_source_consistency_gate_py,tests_governance_commit_gates_test_translation_coverage_gate_py,tests_governance_commit_gates_test_undefined_name_gate_py,tests_governance_commit_gates_test_unsafe_dict_spread_gate_py,tests_governance_commit_gates_test_vocab_hardcode_gate_py,tests_governance_commit_gates_test_worktree_required_gate_py,tests_governance_commit_gates_test_zephyr_env_direct_access_gate_py,tests_governance_rule_bridge_test_claim_files_for_edit_py,tests_governance_rule_bridge_test_commit_gate_registry_py,tests_governance_rule_bridge_test_emergency_commit_py,tests_governance_rule_bridge_test_gate_auto_registrar_py,tests_governance_rule_bridge_test_heartbeat_daemon_py,tests_governance_rule_bridge_test_session_worktree_py,tests_governance_rule_bridge_test_session_worktree_cli_py,tests_governance_rule_bridge_test_session_worktree_health_check_py,tests_governance_rule_bridge_test_session_worktree_trusted_git_env_py,tests_governance_rule_bridge_test_session_worktree_workspace_clean_py,tests_governance_rule_bridge_test_worktree_pool_py,tests_ops_test_shadow_canary_deploy_py production
+    class docs_01_policies_and_standards_registry_catalogs_rule_enforcement_registry_yaml,scripts_governance_d8_doc_sync_metric_count_drift_reconciler_py,scripts_governance_d8_doc_sync_readme_version_sync_reconciler_py,scripts_governance_d8_doc_sync_requirements_version_sync_reconciler_py,scripts_governance_session_worktree_cli_py,src_zephyr_gov_enforcement_init_py,src_zephyr_gov_enforcement_behavioral_admission_init_py,src_zephyr_gov_enforcement_behavioral_admission_admission_controller_py,src_zephyr_gov_enforcement_behavioral_admission_admission_response_py,src_zephyr_gov_enforcement_behavioral_admission_code_review_ai_py,src_zephyr_gov_enforcement_behavioral_admission_gate_event_adapter_py,src_zephyr_gov_enforcement_behavioral_admission_gpu_consensus_scheduler_py,src_zephyr_gov_enforcement_behavioral_admission_protection_index_py,src_zephyr_gov_enforcement_behavioral_admission_verdict_engine_py,src_zephyr_gov_enforcement_commit_gates_stash_accumulation_gate_py,src_zephyr_gov_enforcement_rule_bridge_batched_auto_committer_py,src_zephyr_gov_enforcement_rule_bridge_commit_gate_registry_py,src_zephyr_gov_enforcement_rule_bridge_emergency_commit_py,src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py,src_zephyr_gov_enforcement_rule_bridge_heartbeat_daemon_py,src_zephyr_gov_enforcement_rule_bridge_session_claim_py,src_zephyr_gov_enforcement_rule_bridge_session_worktree_py,src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py,src_zephyr_gov_enforcement_rule_bridge_worktree_pool_py,src_zephyr_gov_enforcement_rule_enforcement_approval_py,src_zephyr_gov_enforcement_rule_enforcement_compliance_rule_py,src_zephyr_gov_enforcement_rule_enforcement_default_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_dlq_retry_policy_py,src_zephyr_gov_enforcement_rule_enforcement_output_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_pre_flight_gate_py,src_zephyr_gov_enforcement_rule_enforcement_quality_gate_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_canary_manager_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_debt_auditor_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_shadow_runner_py,src_zephyr_gov_enforcement_rule_enforcement_rule_engine_rule_watcher_py,src_zephyr_gov_enforcement_rule_enforcement_slo_contract_py,tests_governance_commit_gates_test_arch_reference_gate_py,tests_governance_commit_gates_test_asyncio_run_in_context_gate_py,tests_governance_commit_gates_test_bare_getenv_gate_py,tests_governance_commit_gates_test_bare_sql_gate_py,tests_governance_commit_gates_test_bare_subprocess_gate_py,tests_governance_commit_gates_test_blueprint_amodule_consistency_gate_py,tests_governance_commit_gates_test_blueprint_amodule_cross_check_gate_py,tests_governance_commit_gates_test_capability_lookup_audit_log_py,tests_governance_commit_gates_test_capability_lookup_bypass_policy_py,tests_governance_commit_gates_test_capability_lookup_required_gate_py,tests_governance_commit_gates_test_capability_overlap_gate_py,tests_governance_commit_gates_test_ch_batch_size_gate_py,tests_governance_commit_gates_test_ch_version_col_gate_py,tests_governance_commit_gates_test_claim_required_gate_py,tests_governance_commit_gates_test_consumers_accuracy_gate_py,tests_governance_commit_gates_test_create_guard_py,tests_governance_commit_gates_test_dangling_reference_gate_py,tests_governance_commit_gates_test_datetime_now_forbidden_gate_py,tests_governance_commit_gates_test_depgraph_freshness_gate_py,tests_governance_commit_gates_test_depgraph_pre_registration_gate_py,tests_governance_commit_gates_test_derived_file_deletion_gate_py,tests_governance_commit_gates_test_diff_helpers_py,tests_governance_commit_gates_test_doc_ref_broken_gate_py,tests_governance_commit_gates_test_domain_fk_gate_py,tests_governance_commit_gates_test_domain_name_zh_direct_access_gate_py,tests_governance_commit_gates_test_empty_handler_gate_py,tests_governance_commit_gates_test_exempt_zone_frontmatter_gate_py,tests_governance_commit_gates_test_file_copy_gate_py,tests_governance_commit_gates_test_foreign_change_gate_py,tests_governance_commit_gates_test_forged_gw_marker_gate_py,tests_governance_commit_gates_test_function_dup_gate_py,tests_governance_commit_gates_test_god_class_gate_py,tests_governance_commit_gates_test_hardcoded_url_gate_py,tests_governance_commit_gates_test_held_overlap_gate_py,tests_governance_commit_gates_test_high_complexity_gate_py,tests_governance_commit_gates_test_id_uniqueness_gate_py,tests_governance_commit_gates_test_import_direction_gate_py,tests_governance_commit_gates_test_import_integrity_gate_py,tests_governance_commit_gates_test_long_param_list_gate_py,tests_governance_commit_gates_test_manual_only_permanent_gate_noqa_py,tests_governance_commit_gates_test_mcp_version_field_gate_py,tests_governance_commit_gates_test_module_id_consistency_gate_py,tests_governance_commit_gates_test_msg_exposure_gate_py,tests_governance_commit_gates_test_msg_style_gate_py,tests_governance_commit_gates_test_mutable_const_without_final_gate_py,tests_governance_commit_gates_test_new_file_depgraph_gate_py,tests_governance_commit_gates_test_no_import_side_effect_gate_py,tests_governance_commit_gates_test_open_without_with_gate_py,tests_governance_commit_gates_test_orphan_module_gate_py,tests_governance_commit_gates_test_panorama_alignment_gate_py,tests_governance_commit_gates_test_perm_trigger_gate_py,tests_governance_commit_gates_test_precommit_offline_gate_py,tests_governance_commit_gates_test_protected_paths_gate_py,tests_governance_commit_gates_test_r5_digit_suffix_gate_py,tests_governance_commit_gates_test_reconciler_health_gate_py,tests_governance_commit_gates_test_rename_depgraph_sync_gate_py,tests_governance_commit_gates_test_rule_execution_pairing_gate_py,tests_governance_commit_gates_test_rule_four_way_alignment_gate_py,tests_governance_commit_gates_test_ruling_commit_verified_gate_py,tests_governance_commit_gates_test_ruling_reference_gate_py,tests_governance_commit_gates_test_schema_file_exists_gate_py,tests_governance_commit_gates_test_scripts_import_integrity_gate_py,tests_governance_commit_gates_test_secret_hardcode_gate_py,tests_governance_commit_gates_test_secret_registry_consistency_gate_py,tests_governance_commit_gates_test_session_required_gate_py,tests_governance_commit_gates_test_ssot_redefinition_gate_py,tests_governance_commit_gates_test_test_source_consistency_gate_py,tests_governance_commit_gates_test_translation_coverage_gate_py,tests_governance_commit_gates_test_undefined_name_gate_py,tests_governance_commit_gates_test_unsafe_dict_spread_gate_py,tests_governance_commit_gates_test_vocab_hardcode_gate_py,tests_governance_commit_gates_test_worktree_required_gate_py,tests_governance_commit_gates_test_zephyr_env_direct_access_gate_py,tests_governance_rule_bridge_test_claim_files_for_edit_py,tests_governance_rule_bridge_test_commit_gate_registry_py,tests_governance_rule_bridge_test_emergency_commit_py,tests_governance_rule_bridge_test_gate_auto_registrar_py,tests_governance_rule_bridge_test_heartbeat_daemon_py,tests_governance_rule_bridge_test_session_worktree_py,tests_governance_rule_bridge_test_session_worktree_cli_py,tests_governance_rule_bridge_test_session_worktree_health_check_py,tests_governance_rule_bridge_test_session_worktree_workspace_clean_py,tests_governance_rule_bridge_test_worktree_pool_py,tests_ops_test_shadow_canary_deploy_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
@@ -835,7 +829,7 @@ flowchart TD
 | 13 | Init (behavioral_admission/__init__.py) | → | D_GOV_AUDIT 审计追踪: MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | 导入依赖 / import_depends |
 | 14 | Init (behavioral_admission/__init__.py) | → | D_GOV_AUDIT 审计追踪: 提交进程 / post_process (behavioral_admission/post_proces... | 导入依赖 / import_depends |
 | 15 | Init (behavioral_admission/__init__.py) | → | D_GOV_AUDIT 审计追踪: vibecoding执行器 / vibe_coding_enforcer (behavioral_admis... | 导入依赖 / import_depends |
-| 16 | —将 gate 结果写入 task_events / Gate Event Adapter (beha... | → | D_GOV_AUDIT 审计追踪: 事件存储 / event_store (gov_audit/event_store.py) | 导入依赖 / import_depends |
+| 16 | 将 gate 结果写入 task_events / Gate Event Adapter (behavi... | → | D_GOV_AUDIT 审计追踪: 事件存储 / event_store (gov_audit/event_store.py) | 导入依赖 / import_depends |
 | 17 | Verdict Engine (behavioral_admission/verdict_engine.py) | → | D_GOV_AUDIT 审计追踪: 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
 | 18 | 紧急提交通道 / Emergency Commit (rule_bridge/emergency_co... | → | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
 | 19 | 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | D_GOV_AUDIT 审计追踪: 蓝图状态转换协调器 / blueprint_status_transition_reconcil... | 导入依赖 / import_depends |
@@ -945,7 +939,7 @@ flowchart TD
 | 123 | Session Worktree (rule_bridge/session_worktree.py) | → | D_INFRA_RUNTIME 运行时集成: Git 命令批量化工具 / Git Batcher (infrastructure/git_batc... | 导入依赖 / import_depends |
 | 124 | Approval (rule_enforcement/approval.py) | → | D_INTEGRATION 管线路由: Approval Types (contracts/approval_types.py) | 导入依赖 / import_depends |
 | 125 | CAPABILITY-LOOKUP-REQUIRED 门禁单测 / Test Capability Loo... | → | D_INTEGRATION 管线路由: Rule Discovery Server (mcp/rule_discovery_server.py) | 测试依赖 / test_depends |
-| 126 | 只读：engine / Pre Flight Gate (rule_enforcement/pre_flig... | → | D_OPS 反馈循环: —5.133.2 DI 注入契约 / Budget Engine (ops_governance/bud... | 导入依赖 / import_depends |
+| 126 | 只读：engine / Pre Flight Gate (rule_enforcement/pre_flig... | → | D_OPS 反馈循环: 5.133.2 DI 注入契约 / Budget Engine (ops_governance/budge... | 导入依赖 / import_depends |
 | 127 | 只读：engine / Pre Flight Gate (rule_enforcement/pre_flig... | → | D_OPS 反馈循环: Budget Models (ops_governance/budget_models.py) | 导入依赖 / import_depends |
 | 128 | 影子金丝雀部署运行器 / Shadow Canary Deploy Runner (ops/s... | → | D_SECURITY 对抗验证: 灰度发布管理器. / Canary Rollout Manager (access_control/... | 导入依赖 / import_depends |
 | 129 | 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | D_SECURITY 对抗验证: Session 级并发协调模块 / Session Concurrency (access_cont... | 导入依赖 / import_depends |
@@ -957,7 +951,7 @@ flowchart TD
 | 135 | P2-2 并发 session 文件级原子性测试 / Test Claim Files For... | → | D_SECURITY 对抗验证: Session 级并发协调模块 / Session Concurrency (access_cont... | 测试依赖 / test_depends |
 | 136 | worktree 物理隔离端到端测试 / Test Session Worktree (rule... | → | D_SECURITY 对抗验证: Session 级并发协调模块 / Session Concurrency (access_cont... | 测试依赖 / test_depends |
 | 137 | session worktree 管理 CLI / Session Worktree Cli (governa... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
-| 138 | —将 gate 结果写入 task_events / Gate Event Adapter (beha... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 138 | 将 gate 结果写入 task_events / Gate Event Adapter (behavi... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 139 | Gpu Consensus Scheduler (behavioral_admission/gpu_consens... | → | D_SHARED 共享服务: Constants (foundation/constants.py) | 导入依赖 / import_depends |
 | 140 | GitCommitGateway pre-commit 门禁注册表 / Commit Gate Regi... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 141 | 紧急提交通道 / Emergency Commit (rule_bridge/emergency_co... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
@@ -974,7 +968,7 @@ flowchart TD
 | 152 | Worktree 预创建池 / Worktree Pool (rule_bridge/worktree_p... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 153 | Worktree 预创建池 / Worktree Pool (rule_bridge/worktree_p... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 154 | 对接 shared/events/dlq.DeadLetterQueue 的真重试 / Dlq Ret... | → | D_SHARED 共享服务: 5.63.2 修复：对 traceback / error 字符串脱敏，防止敏感信... | 导入依赖 / import_depends |
-| 155 | 对接 shared/events/dlq.DeadLetterQueue 的真重试 / Dlq Ret... | → | D_SHARED 共享服务: Observer (infra/observer.py) | 导入依赖 / import_depends |
+| 155 | 对接 shared/events/dlq.DeadLetterQueue 的真重试 / Dlq Ret... | → | D_SHARED 共享服务: 观察者 / Observer (infra/observer.py) | 导入依赖 / import_depends |
 | 156 | 对接 shared/events/dlq.DeadLetterQueue 的真重试 / Dlq Ret... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 157 | mtime 轮询 + 自动同步 + 验证 / Rule Watcher (rule_engine/... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
 | 158 | mtime 轮询 + 自动同步 + 验证 / Rule Watcher (rule_engine/... | → | D_SHARED 共享服务: 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
@@ -1118,12 +1112,13 @@ flowchart TD
 | 130 | D_GOV_DRIFT 漂移检测: Tamper Proof Audit (gov_drift/tamper_proof_audit.py) | → | 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | 导入依赖 / import_depends |
 | 131 | D_GOV_OPS_RESILIENCE 运维弹性治理: 审计动作类型 / Security Gateway Base (security_governance... | → | ComplianceRule 真源已合并至 zephyr.shared.contracts.compl... | 导入依赖 / import_depends |
 | 132 | D_GOV_OPS_RESILIENCE 运维弹性治理: Test Pre Flight Gate (budget/test_pre_flight_gate.py) | → | 只读：engine / Pre Flight Gate (rule_enforcement/pre_flig... | 测试依赖 / test_depends |
-| 133 | D_GOV_SCRIPTS 脚本治理: 幽灵提交红蓝对抗脚本 / Concurrent Commit Test (repair/con... | → | 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | 导入依赖 / import_depends |
-| 134 | D_ML_TRAIN 训练: Training Dataset Manager (training_dataset_manager/) | → | Quality Gate (rule_enforcement/quality_gate.py) | data / data |
+| 133 | D_GOV_RULE 规则治理: 规则引擎模块集 / Rule Engine Package (rule_engine/__init_... | → | 只读：baseline_metrics / Rule Canary Manager (rule_engine... | config_depends / config_depends |
+| 134 | D_GOV_SCRIPTS 脚本治理: 幽灵提交红蓝对抗脚本 / Concurrent Commit Test (repair/con... | → | 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | 导入依赖 / import_depends |
+| 135 | D_ML_TRAIN 训练: Training Dataset Manager (training_dataset_manager/) | → | Quality Gate (rule_enforcement/quality_gate.py) | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 16 个外部域直接连接（出边 161 条 + 入边 134 条 = 295 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 16 个外部域直接连接（出边 161 条 + 入边 135 条 = 296 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -1165,6 +1160,7 @@ graph LR
     D_GOV_OPS_RESILIENCE -->|2条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_ML_TRAIN -->|1条 data / data| D_GOV_ENFORCEMENT
     D_GOV_DRIFT -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_GOV_RULE -->|1条 config_depends / config_depends| D_GOV_ENFORCEMENT
     D_GOV_SCRIPTS -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
 ```
 

@@ -78,8 +78,8 @@ flowchart TD
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_pf_core_default_equity_strategy_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_pf_core_default_equity_strategy_py
-    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

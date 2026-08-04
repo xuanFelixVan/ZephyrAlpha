@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3731 |
-| 生产态模块 | 3545 |
+| 模块总数 | 3733 |
+| 生产态模块 | 3547 |
 | 设计态模块 | 186 |
 
 ## 域清单（按架构层分组）
@@ -81,7 +81,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 / A2A Communication | 72 | 72 | 0 | 72/150 (OK) | [📄 03_d_infra_a2a.md](03_d_infra_a2a.md) |
 | D_INFRA_OPS | 基础设施运维 / Asset Inventory | 2 | 2 | 0 | 2/150 (OK) | [📄 04_d_infra_ops.md](04_d_infra_ops.md) |
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 55 | 55 | 0 | 55/150 (OK) | [📄 05_d_infra_recovery.md](05_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 169 | 167 | 2 | 169/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 173 | 171 | 2 | 173/150 (超容) | [📄 06_d_infra_runtime.md](06_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | 可观测性 / Observability | 0 | 0 | 0 | 0/150 (OK) | [📄 07_d_infra_telemetry.md](07_d_infra_telemetry.md) |
 | D_SHARED | 共享服务 / Shared Services | 177 | 177 | 0 | 177/150 (超容) | [📄 08_d_shared.md](08_d_shared.md) |
 
@@ -138,10 +138,10 @@ ttl: permanent
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 195 | 192 | 3 | 195/150 (超容) | [📄 50_d_gov_audit.md](50_d_gov_audit.md) |
 | D_GOV_DOCS | 架构文档治理 / Architecture Docs Governance | 27 | 2 | 25 | 27/150 (OK) | [📄 51_d_gov_docs.md](51_d_gov_docs.md) |
 | D_GOV_DRIFT | 漂移检测 / Drift Detection | 73 | 72 | 1 | 73/150 (OK) | [📄 52_d_gov_drift.md](52_d_gov_drift.md) |
-| D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 122 | 121 | 1 | 122/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
+| D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 121 | 120 | 1 | 121/150 (OK) | [📄 53_d_gov_enforcement.md](53_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 36 | 36 | 0 | 36/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 420 | 420 | 0 | 420/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 419 | 419 | 0 | 419/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
