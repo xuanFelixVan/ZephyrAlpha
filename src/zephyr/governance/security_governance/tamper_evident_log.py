@@ -27,6 +27,8 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from zephyr.shared.security.secrets import get_secret_or_default
+
 
 def _resolve_hmac_key() -> bytes:
     """5.17.5 修复：解析 HMAC 密钥（env > 兜底默认）。
@@ -34,7 +36,7 @@ def _resolve_hmac_key() -> bytes:
     生产环境 MUST 设置 ZEPHYR_TAMPER_HMAC_SECRET 环境变量。
     缺失时回退到派生密钥（仅 dev/test 用，启动时 WARN）。
     """
-    key = os.environ.get("ZEPHYR_TAMPER_HMAC_SECRET", "")
+    key = get_secret_or_default("ZEPHYR_TAMPER_HMAC_SECRET", "")
     if key:
         return key.encode("utf-8")
     # 兜底：仅用于 dev/test，启动告警（禁止用于生产）
