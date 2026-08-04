@@ -126,6 +126,13 @@ FROM nodes
 WHERE domain_id = ANY(%s)
   AND (blueprint_id IS NOT NULL AND blueprint_id <> ''
        OR path IS NOT NULL AND path <> '')
+  -- 排除 docs/03_modules/ 下的 blueprint.md 设计文档节点（误报治本，2026-08-04）：
+  -- 这些 .md 是模块的"设计蓝图文档"，非可执行业务模块；项目约定它们登记为
+  -- node_type=module（与 30+ 其他 blueprint.md 一致），但实际代码模块是 src/ 下的
+  -- 独立节点。若不排除，设计文档节点会因无作战锚点而误报为"孤儿模块"。
+  -- 例：MOD-INF-011 vector_memory/blueprint.md（D_KNOWLEDGE）、
+  --     MOD-INF-039 agent_orchestrator/blueprint.md（D_INFRA_RUNTIME）。
+  AND NOT (path LIKE 'docs/03_modules/%%' AND path LIKE '%%.md')
 """
 
 

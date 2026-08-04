@@ -195,11 +195,19 @@ ttl: permanent
 | MOD-EX-037 | 蓝图Implementer | D_EX_CORE | module | file | CODE不存在 | D_EX_CORE执行核心待建,不在8个gated-on-live列表 | 统一评估D_EX_CORE planned去留(实盘门禁阻塞?是→保留;否→弃用) |
 | MOD-EX-051 | 值对象 | D_EX_CORE | module | file | CODE不存在 | D_EX_CORE值对象待建 | 同MOD-EX-037 |
 | MOD-EX-052 | 工厂 | D_EX_CORE | module | file | CODE不存在 | D_EX_CORE工厂待建 | 同MOD-EX-037 |
-| MOD-INF-011 | docs__03_modules___domain_knowledge__vector_memory__blueprint_md | D_KNOWLEDGE | module | file | DOC(blueprint.md) | vector_memory蓝图文档误登记为module节点 | 重分类node_type=doc(或从扫描排除doc节点) |
+| MOD-INF-011 | docs__03_modules___domain_knowledge__vector_memory__blueprint_md | D_KNOWLEDGE | module | file | DOC(blueprint.md) | ✅已处置(扫描排除) | 设计文档非可执行模块,scan排除docs/03_modules/*.md(见下) |
 | MOD-ML-003 | 训练数据集管理器 | D_ML_TRAIN | blueprint | directory | 目录(planned) | 训练数据集管理器待建 | D_ML_TRAIN待建模块,确认是否挂model_training锚点 |
 
+> **MOD-INF-011 处置记录（2026-08-04，已实施）**：
+> 经调查推翻原"DB重分类"方案——`doc`非合法node_type,且30+其他blueprint.md均用
+> `node_type=module`(项目约定,非误登记)。真因是 BM-INV-007 扫描SQL未排除设计文档路径。
+> 治本：`align_battle_map.py` SQL_SELECT_BUSINESS_MODULES 增加
+> `AND NOT (path LIKE 'docs/03_modules/%' AND path LIKE '%.md')`，
+> 排除业务域内的 blueprint.md 设计文档节点(共3个:MOD-INF-011/MOD-INF-039/MOD-INF-034)。
+> 孤儿模块数 135→134,业务域模块 1770→1767。无需 DB 写入,无需 backup_pg_architecture。
+
 > **决策优先级**：
-> 1. MOD-INF-011（蓝图 doc 误判）→ 重分类，最明确
+> 1. ~~MOD-INF-011（蓝图 doc 误判）→ 重分类~~ ✅已处置(扫描排除,见上)
 > 2. MOD-EX-037/051/052/004（D_EX_CORE planned 未建）→ Owner 决策实盘门禁阻塞与否
 > 3. MOD-ML-003/L00-007/L00-008（D_ML_TRAIN/D_DATA planned 目录）→ 确认是否入作战图
 
