@@ -28,6 +28,7 @@ from typing import Any, Final
 from zephyr.gov_audit.contracts import AuditWriter as AuditWriterABC  # 5.104.15 修复: 继承ABC契约
 from zephyr.gov_audit.models import AuditEventType, AuditIssue, GlobalAuditReport
 from zephyr.shared.io.serialization import dumps
+from zephyr.shared.security.secrets import get_secret_or_default
 from zephyr.shared.session.session_audit import (
     register_audit_writer_provider as _register_audit_writer_provider,
 )
@@ -385,7 +386,7 @@ def _resolve_hmac_key(config=None) -> bytes:
     """
     if config and isinstance(config, str) and config.strip():
         return config.strip().encode("utf-8")
-    key = os.environ.get("ZEPHYR_AUDIT_HMAC_SECRET", "")
+    key = get_secret_or_default("ZEPHYR_AUDIT_HMAC_SECRET", "")
     if key:
         return key.encode("utf-8")
     # 兜底默认（测试兼容 + 开发环境可用，生产应设置 env var）
