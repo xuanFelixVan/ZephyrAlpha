@@ -1473,39 +1473,45 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 
 ## §灾备备份系统（MOD-INF-043）
 
+> v2.0（2026-07-28）：restic → robocopy /MIR + CH 增量。详见 [README.md](file:///d:/ZephyrAlpha/scripts/backup/README.md)。
+
 ### 位置与组成
 - 蓝图: `docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md`
-- 代码: `scripts/backup/`（backup_config.yaml + backup_reconciler.py + backup.ps1 + backup_manual.ps1 + restore.ps1 + README.md）
-- 配置: `config/.env.restic`（Restic密码，不进git，新克隆者需手动创建）
-- 备份目标: `F:\restic-zephyr`（SanDisk 2TB NTFS外置盘）
+- 代码: `scripts/backup/`（backup_config.yaml + backup.ps1 + backup_reconciler.py + backup_manual.ps1 + backup_daily_trigger.ps1 + backup_ch_vm.ps1 + restore.ps1 + ch_vm_ssh.py + README.md）
+- 配置 SSoT: `scripts/backup/backup_config.yaml`（路径/排除/CH base+inc/触发条件）
+- 外部依赖（不进 git）: `config/.env.ch_backup`（VM SSH 凭据）+ `config/.env.postgres` + `config/.env.clickhouse` + `F:\ch_backup_disk.vhdx`（1TB 动态 VHDX，附加到 Hyper-V VM `zephyr-ch`）
+- 备份目标: `F:\`（外置盘；代码 robocopy 镜像 + PG/SQLite dump + CH base/inc + VM VHDX）
 - 状态文件: `data/databases/backup_state.json`（运行时状态，派生非真源）
 
 ### 触发机制
-- **自动（主路径）**: post-commit reconciler，注册在GitCommitGateway中（BACKUP-RECONCILER，第24个reconciler）
-  - 双条件触发：committed_files含重要文件（src/config/docs/scripts/tests/data/databases） + 距上次备份≥8小时
-  - 日均1-2次，状态持久化到backup_state.json
-- **手动（兜底）**: `scripts/backup/backup_manual.ps1`（-Force跳过8h间隔保护）
+- **每日保底**: Windows 计划任务 `ZephyrAlpha-DailyBackup`，每日 06:00（+StartWhenAvailable 补跑），运行 `backup.ps1 -Mode all -Force`
+- **post-commit 补充**: reconciler 注册在 GitCommitGateway（BACKUP-RECONCILER，第24个reconciler），双条件触发：committed_files 含重要文件 + 距上次备份≥8h
+- **每周 VM**: Windows 计划任务 `ZephyrAlpha-WeeklyVMBackup`，每周六 06:00，`backup_ch_vm.ps1 -AutoCheck`（CH 无变化则零停机跳过）
+- **手动（兜底）**: `scripts/backup/backup_manual.ps1`（-Force 跳过节奏保护）
 
-### 备份内容裁定
-- 必须备份: src/config/docs/scripts/tests/.git/data/databases/data/raw/bdpan/data/vector_db + 数据库dump
+### 备份内容
+- 代码+配置: robocopy /MIR 镜像（~10-100 MB/日，仅复制变化文件，删除目标多余文件）
+- PG 数据: pg_dump -Fc（~1.5 MB/日）+ PG 配置每日同步到 `config/system_configs/pg/`
+- SQLite: sqlite3 .backup（不可用时 Python sqlite3.connect().backup() fallback）
+- CH 数据: CH BACKUP 增量（base `market.zip` + inc `inc.zip`，~1-5 GiB/日；inc 每日覆盖重写，inc≥50% base 时自动重建基线）
+- CH 配置: SSH sync → `config/system_configs/ch/`
+- CH VM (OS+程序): 每周 AutoCheck，仅 CH 升级/配置变更时全量备份（Stop-VM → robocopy → Start-VM）
 - 必须排除: __pycache__/.pytest_cache/.mypy_cache/.ruff_cache/.aidrafts/.runtime/tmp/(除_db_dumps)/logs/*.log/.venv/node_modules
-- 建议包含: data/models（可重新下载但Restic去重后增量成本近零）
-
-### 数据库dump
-- PostgreSQL: pg_dump -Fc（用户zephyr，密码从config/.env.postgres读取）
-- SQLite: sqlite3 .backup（不可用时Python sqlite3.connect().backup() fallback）
-- ClickHouse: 服务运行才dump，否则warn跳过
 
 ### 保留策略
-- keep-daily 7 + keep-weekly 4 + keep-monthly 3 + prune
-- 约14份快照，Restic去重后增量极小
+- robocopy /MIR 镜像语义——不累积版本，目标始终是源的最新镜像
+- CH 增量 inc.zip 每日覆盖重写（非链式累积）；inc ≥ 50% base 时自动重建基线
+- 日写入量从 restic 时代 ~209 GB 降至 ~1-5 GB（降 98%）
 
 ### 恢复
-- `scripts/backup/restore.ps1 list` — 列出快照
-- `scripts/backup/restore.ps1 verify <id>` — 恢复到D:\restore_test\验证
-- `scripts/backup/restore.ps1 latest` — 灾难恢复到D:\ZephyrAlpha\
+详见 `docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/dr_runbook.md`。快速入口：
+- `scripts/backup/restore.ps1 inventory` — 查看 F: 盘备份清单
+- `scripts/backup/restore.ps1 verify` — 验证备份完整性（只读，安全）
+- `scripts/backup/restore.ps1 all` — 完整恢复：vm → ch → pg → sqlite → code
+- 单项: `restore.ps1 vm|ch|pg|sqlite|code`（pg 支持 -drop 重建）
 
 ### 注意事项
-- Restic密码是加密密钥，忘记=数据无法恢复，无后门
-- config/.env.restic未进git（directory_contract门禁拒绝.restic扩展名），新克隆者需手动创建
-- backup_reconciler运行时从config/.env.restic读取RESTIC_PASSWORD设置环境变量
+- 无 restic 依赖，无加密密码（`config/.env.restic` 已删除，`F:\restic-zephyr` 405GB 已删除）
+- 并发防护: `.runtime/backup.lock`（4h TTL 自动过期）防止每日任务与 post-commit 同时运行
+- CH 24h 节奏门: last_ch_backup_time 仅成功时推进；-Force 旁路（每日任务用 -Force）
+- CH BACKUP/RESTORE 异步执行，脚本轮询 system.backups（max 3h）
