@@ -150,7 +150,7 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L00-004` 的 73 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-004` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L00-004` 的 74 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-004` |
 | 数据流图 (dataflow) | 5 个 Dataset / 6 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -162,6 +162,6 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber
 | module_id | MOD-L00-004 | MOD-L00-004 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | N/A | — |
-| file_count | 73 文件 | N/A | — |
+| file_count | 74 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

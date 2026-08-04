@@ -86,8 +86,8 @@ flowchart TD
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
     D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py

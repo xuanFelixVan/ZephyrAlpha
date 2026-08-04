@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-04T02:38:10Z'
+generated_at: '2026-08-04T07:05:05Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 138
+total_gates: 139
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -1201,6 +1201,16 @@ gates:
   name: 'SCRIPTS-IMPORT-INTEGRITY: _shared.constants 符号导入完整性门禁（CommitGate, priority=104）'
   entry: in-process (GitCommitGateway)
   description: _shared.constants 符号导入完整性门禁
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: SECRET-REGISTRY-CONSISTENCY
+  name: 'SECRET-REGISTRY-CONSISTENCY: .env.example 与 secret_registry.yaml 一致性门禁（CommitGate,
+    priority=127）'
+  entry: in-process (GitCommitGateway)
+  description: .env.example 与 secret_registry.yaml 一致性门禁
   files_trigger: ''
   always_run: false
   category: commit_gate
