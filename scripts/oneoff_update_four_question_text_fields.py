@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 """ONEOFF: 更新 candidate_module_registry.yaml 非注释数据字段中的"四问"引用。
 

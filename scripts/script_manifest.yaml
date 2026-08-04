@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-05'
-total_scripts: 652
+total_scripts: 653
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -130,6 +130,14 @@ scripts:
   path: oneoff_migrate_four_question_to_design_admission.py
   description: 'ONEOFF: 四问 -> 一问标准 真源迁移（裁定 2026-08-04）'
   domain: oneoff_migrate_four_question_to_design_admission.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: oneoff_update_four_question_text_fields.py
+  path: oneoff_update_four_question_text_fields.py
+  description: 策略：q1 保留并改名为"一问标准 q1"；q2/q3/q4 直接删除（含证据文本），不留(已废)历史。
+  domain: oneoff_update_four_question_text_fields.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
