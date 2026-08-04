@@ -1085,7 +1085,7 @@ tasks:
 - task_id: eia_petroleum_incremental
   table: c1_market.macro_data
   source: eia
-  schedule: daily_calibration
+  schedule: daily_capital
   incremental: true
   date_col: report_date
   dependencies: []
