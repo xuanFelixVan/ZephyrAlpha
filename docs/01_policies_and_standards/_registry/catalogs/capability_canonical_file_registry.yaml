@@ -5616,7 +5616,8 @@ capabilities:
       - candidate_lookup
     description: >-
       候选模块登记表查询工具。解决"草稿散乱+设计态污染"痛点——过度工程/死域/待开发
-      候选不进 depgraph 设计态（违反四问铁律），而是登记在 candidate_module_registry.yaml
+      候选不进 depgraph 设计态（违反设计准入一问标准，原"四问铁律"已于2026-08-04收敛
+      为一问标准，q2/q3/q4因灰度已废），而是登记在 candidate_module_registry.yaml
       候选库，支持按域/痛点/关键词/ID/状态多维检索 + 四图定位展示。对标敏捷 Product
       Backlog / 量化 Alpha Idea Pipeline。canonical: scripts/governance/query_candidate_registry.py;
       数据真源: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml。
