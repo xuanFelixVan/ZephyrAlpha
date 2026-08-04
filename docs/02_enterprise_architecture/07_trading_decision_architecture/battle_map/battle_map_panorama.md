@@ -18,13 +18,13 @@ date: 2026-08-04
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 环节总数 | 285 | Steps | 285 |
+| 环节总数 | 296 | Steps | 296 |
 | 流转边 | 119 | Edges | 119 |
 | 锚点总数（双向对齐枢纽） | 392 | Anchors (Bidirectional Hub) | 392 |
-| 无锚点环节（BM-INV-001） | 0 | No-Anchor Steps | 0 |
+| 无锚点环节（BM-INV-001） | 11 | No-Anchor Steps | 11 |
 | 运营态环节 | 203 | Production Steps | 203 |
 | 设计态环节 | 43 | Design Steps | 43 |
-| 状态分布 | 🟦 运营态（已建）=203 ｜ 🟧 设计态（待施工）=43 ｜ 🟨 候选态（候选池）=36 ｜ 🟥 弃用态=3 | State Distribution | 🟦 运营态（已建）=203 ｜ 🟧 设计态（待施工）=43 ｜ 🟨 候选态（候选池）=36 ｜ 🟥 弃用态=3 |
+| 状态分布 | 🟦 运营态（已建）=203 ｜ 🟧 设计态（待施工）=43 ｜ 🟨 候选态（候选池）=36 ｜ ⬜ 缺失态（无锚点）=11 ｜ 🟥 弃用态=3 | State Distribution | 🟦 运营态（已建）=203 ｜ 🟧 设计态（待施工）=43 ｜ 🟨 候选态（候选池）=36 ｜ ⬜ 缺失态（无锚点）=11 ｜ 🟥 弃用态=3 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -42,12 +42,16 @@ date: 2026-08-04
 
 ### 全景图（全部环节，颜色区分五态）
 
-> 展示全部 285 个环节（运营态 203 + 设计态 43 + 弃用/缺失/候选 39），含跨阶段流转边。
+> 展示全部 296 个环节（运营态 203 + 设计态 43 + 弃用/缺失/候选 50），含跨阶段流转边。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 作战地图总指挥图·全景图（第 1/6 页）
 flowchart TD
+    BM_RES_08["【BM-RES-08 知识清洗与结构化】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_BUY_09["【BM-BUY-09 信息合规】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_RES_09["【BM-RES-09 知识分类与策略提取】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_RC_09["【BM-RC-09 AI/Agent风险治理】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     subgraph sg_BM_BT_01 ["回测引擎与撮合"]
         BM_BT_01["【BM-BT-01 回测引擎与撮合】<br/>把策略放到历史数据上跑一遍看表现——向量化回测快但<br/>粗，事件驱动慢但细，两种模式都支持。<br/>（生产态 / production）<br/>【Backtest Engine &amp; Matching】"]
         BM_BT_01_A["【BM-BT-01-A 引擎基座与契约】<br/>回测引擎的'地基'——定义抽象基类和结果契约，所有回<br/>测模式都得遵守这套规矩。<br/>（生产态 / production）<br/>【Engine Base &amp; Contract】"]
@@ -63,6 +67,7 @@ flowchart TD
         BM_BT_01 -.->|嵌套| BM_BT_01_E
         BM_BT_01 -.->|嵌套| BM_BT_01_F
     end
+    BM_BUY_10["【BM-BUY-10 合规技术深度】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_BUY_01["【BM-BUY-01 多情景对策生成】<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Multi-Scenario Countermeasure】"]
     BM_EXE_01["【BM-EXE-01 自适应风控审批】<br/>下单前的最后一道闸——风控审批，审不过的订单直接拦<br/>下，是订单拦截器不是事后检查。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Adaptive Risk Approval】"]
     subgraph sg_BM_MT_01 ["训练流水线"]
@@ -82,6 +87,7 @@ flowchart TD
         BM_REC_01 -.->|嵌套| BM_REC_01_B
         BM_REC_01 -.->|嵌套| BM_REC_01_C
     end
+    BM_RES_10["【BM-RES-10 模块映射与工厂匹配】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     subgraph sg_BM_RES_01 ["研究数据与特征存储"]
         BM_RES_01["【BM-RES-01 研究数据与特征存储】<br/>研究员的数据底盘——把数据集版本化管起来、追踪血缘<br/>、打质量分；特征分在线离线两套存，保证 PIT<br/>正确不偷看未来。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Data &amp; Feature Store】"]
         BM_RES_01_A["【BM-RES-01-A 数据集版本化与血缘追踪】<br/>把数据集像 Git<br/>一样管版本——每次改动留快照、记血缘，知道数据从哪<br/>来、经过什么变换、去了哪。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Dataset Versioning &amp; Lineage】"]
@@ -102,6 +108,7 @@ flowchart TD
         BM_RC_01 -.->|嵌套| BM_RC_01_B
         BM_RC_01 -.->|嵌套| BM_RC_01_C
     end
+    BM_RC_10["【BM-RC-10 风险否决权】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_SELL_01["【BM-SELL-01 突破成败信号】<br/>判断股价冲压力位是冲上去了还是冲不动——冲上去留着<br/>，冲不动止损，连冲3次不行强制清仓。<br/>（生产态 / production）<br/>【Breakout Success/Failure Signal】"]
     BM_SIM_01["【BM-SIM-01 市场仿真器】<br/>造一个假市场跑策略——订单簿仿真+价格生成+微观结构<br/>模拟，看策略在'如果怎样'下会怎样。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Market Simulator】"]
     subgraph sg_BM_SEL_01 ["数据接入与预处理"]
@@ -119,6 +126,9 @@ flowchart TD
         BM_SEL_01 -.->|嵌套| BM_SEL_01_E
         BM_SEL_01 -.->|嵌套| BM_SEL_01_F
     end
+    BM_BUY_11["【BM-BUY-11 合规持续运营】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_RES_11["【BM-RES-11 多模态知识采集】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_POS_06["【BM-POS-06 现金管理约束】<br/>仓位的'现金刹车'——留够保命钱（最低储备金）+机会钱<br/>（X%），T+1结算约束下算可用资金，节假日多留5-15%现<br/>金，闲置钱做逆回购生息，反馈给仓位裁决作为现金硬<br/>约束。<br/>（生产态 / production）<br/>【Cash Management Constraint】"]
     BM_POS_08["【BM-POS-08 日历仓位约束】<br/>A股'风险日历'自动收紧仓位——期权交割日只许减仓不<br/>许开新，4月下旬ST股强制清零，财报发布前3天降仓位<br/>+禁新建，微盘股空窗期收紧50%，交割日前后临时下调<br/>5-10%。<br/>（生产态 / production）<br/>【Calendar Position Constraint】"]
     subgraph sg_BM_BT_02 ["持仓组合与数据接入"]
@@ -134,6 +144,30 @@ flowchart TD
         BM_BT_02 -.->|嵌套| BM_BT_02_D
         BM_BT_02 -.->|嵌套| BM_BT_02_E
     end
+    BM_RES_08 ~~~ BM_BUY_09 ~~~ BM_RES_09 ~~~ BM_RC_09 ~~~ BM_BT_01 ~~~ BM_BT_01_A ~~~ BM_BT_01_B ~~~ BM_BT_01_C ~~~ BM_BT_01_D ~~~ BM_BT_01_E ~~~ BM_BT_01_F ~~~ BM_BUY_10 ~~~ BM_BUY_01 ~~~ BM_MT_01 ~~~ BM_MT_01_A ~~~ BM_MT_01_B ~~~ BM_REC_01 ~~~ BM_REC_01_A ~~~ BM_RES_10 ~~~ BM_RES_01 ~~~ BM_RES_01_A ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RC_01 ~~~ BM_RC_01_A ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_10 ~~~ BM_SELL_01 ~~~ BM_SIM_01 ~~~ BM_SEL_01 ~~~ BM_SEL_01_A ~~~ BM_SEL_01_B ~~~ BM_SEL_01_C ~~~ BM_SEL_01_D ~~~ BM_SEL_01_E ~~~ BM_SEL_01_F ~~~ BM_BUY_11 ~~~ BM_RES_11 ~~~ BM_RC_11 ~~~ BM_POS_08 ~~~ BM_BT_02_A ~~~ BM_BT_02_B ~~~ BM_BT_02_C ~~~ BM_BT_02_D ~~~ BM_BT_02_E
+    BM_POS_01 ~~~ BM_REC_01_B ~~~ BM_BT_02
+    BM_EXE_01 ~~~ BM_REC_01_C ~~~ BM_POS_06
+    BM_POS_01 -->|仓位指令 / data_flow| BM_EXE_01
+    BM_POS_01 -->|风险配额→现金约束 / data_flow| BM_POS_06
+    BM_POS_08 -->|日历约束→仓位裁决上限 / trigger| BM_POS_01
+    BM_REC_01_A -->|结算对账后处理公司行为与费率 / data_flow| BM_REC_01_B
+    BM_BT_01 -->|引擎→持仓数据 / data_flow| BM_BT_02
+    BM_REC_01_B -->|费率后算PnL / data_flow| BM_REC_01_C
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_BT_01,BM_BT_01_A,BM_BT_01_B,BM_BT_01_C,BM_BT_01_D,BM_BT_01_E,BM_BT_01_F,BM_BUY_01,BM_EXE_01,BM_MT_01_A,BM_POS_01,BM_REC_01,BM_REC_01_A,BM_REC_01_B,BM_REC_01_C,BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_SELL_01,BM_SEL_01,BM_SEL_01_A,BM_SEL_01_B,BM_SEL_01_C,BM_SEL_01_D,BM_SEL_01_E,BM_SEL_01_F,BM_POS_06,BM_POS_08,BM_BT_02,BM_BT_02_A,BM_BT_02_B,BM_BT_02_C,BM_BT_02_D,BM_BT_02_E production
+    class BM_MT_01,BM_MT_01_B design
+    class BM_RES_08,BM_BUY_09,BM_RES_09,BM_RC_09,BM_BUY_10,BM_RES_10,BM_RC_10,BM_BUY_11,BM_RES_11,BM_RC_11 missing
+    class BM_RES_01,BM_RES_01_A,BM_RES_01_B,BM_RES_01_C,BM_RES_01_D,BM_SIM_01 candidate
+```
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图总指挥图·全景图（第 2/6 页）
+flowchart TD
     subgraph sg_BM_BUY_02 ["四轨融合"]
         BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Four-Track Fusion （MTF）】"]
         subgraph sg_BM_BUY_02_A ["逻辑驱动轨"]
@@ -162,36 +196,6 @@ flowchart TD
     BM_EXE_04["⛔ 门禁:D-RISK风控参数就绪+市场状态实时数据源<br/>（D-EX-CORE-24）<br/>【BM-EXE-04 Pre-Trade合规检查】<br/>下单前的交易所合规硬闸——涨跌停/参与率/撤单率<br/>/报单停留时间锁/Wash Trade/Spoofing<br/>全检查，Fail-Closed，不过就拦。<br/>（设计态 / design）<br/>【Pre-Trade Compliance Gate】"]
     BM_MT_02["【BM-MT-02 实验追踪与自动晋升】<br/>A/B 实验对比新模型和老模型，统计上显著更好才自动<br/>晋升为 Champion，否则留在 Challenger 继续观察。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Experiment Tracking &amp; Auto-Promotion】"]
     BM_POS_02["【BM-POS-02 标级仓位Kelly】<br/>每只票该买多少——用Kelly公式算理论仓位，半Kelly硬<br/>上限截断（禁止全Kelly），在风险配额内决策，再用密<br/>度PDF的偏度/峰度/前瞻VaR做分布感知调整<br/>（防御性只减不增）。<br/>（生产态 / production）<br/>【Per-Symbol Kelly Sizing】"]
-    BM_BT_01_A ~~~ BM_BT_01_B ~~~ BM_BT_01_C ~~~ BM_BT_01_D ~~~ BM_BT_01_E ~~~ BM_BT_01_F ~~~ BM_BUY_01 ~~~ BM_MT_01 ~~~ BM_MT_01_A ~~~ BM_MT_01_B ~~~ BM_REC_01 ~~~ BM_REC_01_A ~~~ BM_RES_01 ~~~ BM_RES_01_A ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RC_01 ~~~ BM_RC_01_A ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_SELL_01 ~~~ BM_SIM_01 ~~~ BM_SEL_01 ~~~ BM_SEL_01_A ~~~ BM_SEL_01_B ~~~ BM_SEL_01_C ~~~ BM_SEL_01_D ~~~ BM_SEL_01_E ~~~ BM_SEL_01_F ~~~ BM_POS_08 ~~~ BM_BT_02_A ~~~ BM_BT_02_B ~~~ BM_BT_02_C ~~~ BM_BT_02_D ~~~ BM_BT_02_E ~~~ BM_BUY_02_A ~~~ BM_BUY_02_A_1 ~~~ BM_BUY_02_A_1_a ~~~ BM_BUY_02_A_1_b ~~~ BM_BUY_02_A_1_c ~~~ BM_BUY_02_A_1_d ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D
-    BM_POS_01 ~~~ BM_REC_01_B ~~~ BM_BUY_02 ~~~ BM_MT_02
-    BM_BT_01 ~~~ BM_EXE_01 ~~~ BM_REC_01_C ~~~ BM_POS_06
-    BM_BT_02 ~~~ BM_EXE_04 ~~~ BM_POS_02
-    BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
-    BM_POS_01 -->|仓位指令 / data_flow| BM_EXE_01
-    BM_POS_01 -->|风险配额→标级Kelly / data_flow| BM_POS_02
-    BM_POS_01 -->|风险配额→现金约束 / data_flow| BM_POS_06
-    BM_POS_06 -->|现金约束→标级Kelly / data_flow| BM_POS_02
-    BM_POS_08 -->|日历约束→仓位裁决上限 / trigger| BM_POS_01
-    BM_REC_01_A -->|结算对账后处理公司行为与费率 / data_flow| BM_REC_01_B
-    BM_EXE_01 -.->|审批后订单→合规检查 / data_flow| BM_EXE_04
-    BM_MT_01 -.->|训练→实验晋升 / data_flow| BM_MT_02
-    BM_BT_01 -->|引擎→持仓数据 / data_flow| BM_BT_02
-    BM_MT_02 -.->|模型晋升→回测 / data_flow| BM_BT_01
-    BM_REC_01_B -->|费率后算PnL / data_flow| BM_REC_01_C
-classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
-classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
-classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BT_01,BM_BT_01_A,BM_BT_01_B,BM_BT_01_C,BM_BT_01_D,BM_BT_01_E,BM_BT_01_F,BM_BUY_01,BM_EXE_01,BM_MT_01_A,BM_POS_01,BM_REC_01,BM_REC_01_A,BM_REC_01_B,BM_REC_01_C,BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_SELL_01,BM_SEL_01,BM_SEL_01_A,BM_SEL_01_B,BM_SEL_01_C,BM_SEL_01_D,BM_SEL_01_E,BM_SEL_01_F,BM_POS_06,BM_POS_08,BM_BT_02,BM_BT_02_A,BM_BT_02_B,BM_BT_02_C,BM_BT_02_D,BM_BT_02_E,BM_BUY_02,BM_BUY_02_A,BM_BUY_02_C,BM_BUY_02_D,BM_POS_02 production
-    class BM_MT_01,BM_MT_01_B,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_B,BM_EXE_04 design
-    class BM_RES_01,BM_RES_01_A,BM_RES_01_B,BM_RES_01_C,BM_RES_01_D,BM_SIM_01,BM_MT_02 candidate
-```
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
-%% 作战地图总指挥图·全景图（第 2/6 页）
-flowchart TD
     subgraph sg_BM_REC_02 ["报告复盘"]
         BM_REC_02["【BM-REC-02 报告复盘】<br/>把运营数据做成复盘报告，看今天打得怎么样。<br/>（生产态 / production）<br/>【Reporting &amp; Review】"]
         BM_REC_02_E["【BM-REC-02-E 风险报告】<br/>生成日度/周度/事件/月度四类风险报告——VaR/CVaR<br/>/因子暴露/否决统计<br/>/漂移状态，看今天风险敞口怎么样。<br/>（生产态 / production）<br/>【Risk Report】"]
@@ -281,6 +285,28 @@ flowchart TD
         BM_SEL_22 -.->|嵌套| BM_SEL_22_C
         BM_SEL_22 -.->|嵌套| BM_SEL_22_D
     end
+    BM_BUY_02 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_A_1 ~~~ BM_BUY_02_A_1_a ~~~ BM_BUY_02_A_1_b ~~~ BM_BUY_02_A_1_c ~~~ BM_BUY_02_A_1_d ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D ~~~ BM_EXE_04 ~~~ BM_MT_02 ~~~ BM_POS_02 ~~~ BM_REC_02 ~~~ BM_REC_02_A ~~~ BM_RES_02 ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RC_02 ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_SELL_03 ~~~ BM_SIM_02 ~~~ BM_SEL_02 ~~~ BM_SEL_02_A ~~~ BM_SEL_02_B ~~~ BM_SEL_02_C ~~~ BM_SEL_02_D ~~~ BM_SEL_02_E ~~~ BM_SEL_02_F ~~~ BM_SEL_02_G ~~~ BM_SEL_02_H ~~~ BM_SEL_02_I ~~~ BM_SEL_22 ~~~ BM_SEL_22_A ~~~ BM_SEL_22_B ~~~ BM_SEL_22_C ~~~ BM_SEL_22_C_1 ~~~ BM_SEL_22_C_2 ~~~ BM_SEL_22_C_3 ~~~ BM_SEL_22_C_4 ~~~ BM_SEL_22_C_5 ~~~ BM_SEL_22_C_6 ~~~ BM_SEL_22_C_7 ~~~ BM_SEL_22_D
+    BM_REC_02_E ~~~ BM_REC_02_D
+    BM_REC_02_A -.->|TCA执行成本→归因输入 / data_flow| BM_REC_02_B
+    BM_REC_02_B -.->|归因结果→复盘素材 / data_flow| BM_REC_02_C
+    BM_REC_02_C -->|复盘报告→发布 / data_flow| BM_REC_02_D
+    BM_REC_02_C -->|复盘→风险报告 / data_flow| BM_REC_02_E
+    BM_REC_02_E -->|风险报告→监管报告 / data_flow| BM_REC_02_F
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_BUY_02,BM_BUY_02_A,BM_BUY_02_C,BM_BUY_02_D,BM_POS_02,BM_REC_02,BM_REC_02_E,BM_REC_02_F,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_SELL_03,BM_SIM_02,BM_SEL_02_B,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_22,BM_SEL_22_A,BM_SEL_22_B,BM_SEL_22_C,BM_SEL_22_C_1,BM_SEL_22_C_2,BM_SEL_22_C_3,BM_SEL_22_C_4,BM_SEL_22_C_5,BM_SEL_22_C_6,BM_SEL_22_C_7,BM_SEL_22_D production
+    class BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_B,BM_EXE_04,BM_REC_02_B design
+    class BM_SEL_02,BM_SEL_02_A,BM_SEL_02_C deprecated
+    class BM_MT_02,BM_RES_02,BM_RES_02_A,BM_RES_02_B,BM_RES_02_C,BM_RES_02_D candidate
+```
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图总指挥图·全景图（第 3/6 页）
+flowchart TD
     subgraph sg_BM_SEL_23 ["游资接力情绪周期"]
         BM_SEL_23["【BM-SEL-23 游资接力情绪周期】<br/>测游资接力情绪——6个因子打0-100分（连板高度<br/>/封单质量/涨停时间/开板次数/竞价强度<br/>/助攻梯队），再定位情绪周期4+1阶段（冰点/反核<br/>/主升/疯狂/退潮），不同阶段用不同策略。<br/>（生产态 / production）<br/>【Youzi Relay Emotion Cycle】"]
         subgraph sg_BM_SEL_23_A ["6因子游资接力评分"]
@@ -304,28 +330,6 @@ flowchart TD
         BM_SEL_23 -.->|嵌套| BM_SEL_23_B
         BM_SEL_23 -.->|嵌套| BM_SEL_23_C
     end
-    BM_REC_02 ~~~ BM_REC_02_A ~~~ BM_RES_02 ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RC_02 ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_SELL_03 ~~~ BM_SIM_02 ~~~ BM_SEL_02 ~~~ BM_SEL_02_A ~~~ BM_SEL_02_B ~~~ BM_SEL_02_C ~~~ BM_SEL_02_D ~~~ BM_SEL_02_E ~~~ BM_SEL_02_F ~~~ BM_SEL_02_G ~~~ BM_SEL_02_H ~~~ BM_SEL_02_I ~~~ BM_SEL_22 ~~~ BM_SEL_22_A ~~~ BM_SEL_22_B ~~~ BM_SEL_22_C ~~~ BM_SEL_22_C_1 ~~~ BM_SEL_22_C_2 ~~~ BM_SEL_22_C_3 ~~~ BM_SEL_22_C_4 ~~~ BM_SEL_22_C_5 ~~~ BM_SEL_22_C_6 ~~~ BM_SEL_22_C_7 ~~~ BM_SEL_22_D ~~~ BM_SEL_23 ~~~ BM_SEL_23_A ~~~ BM_SEL_23_A_1 ~~~ BM_SEL_23_A_2 ~~~ BM_SEL_23_A_3 ~~~ BM_SEL_23_A_4 ~~~ BM_SEL_23_A_5 ~~~ BM_SEL_23_A_6 ~~~ BM_SEL_23_B ~~~ BM_SEL_23_C
-    BM_REC_02_E ~~~ BM_REC_02_D
-    BM_REC_02_A -.->|TCA执行成本→归因输入 / data_flow| BM_REC_02_B
-    BM_REC_02_B -.->|归因结果→复盘素材 / data_flow| BM_REC_02_C
-    BM_REC_02_C -->|复盘报告→发布 / data_flow| BM_REC_02_D
-    BM_REC_02_C -->|复盘→风险报告 / data_flow| BM_REC_02_E
-    BM_REC_02_E -->|风险报告→监管报告 / data_flow| BM_REC_02_F
-classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
-classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
-classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_REC_02,BM_REC_02_E,BM_REC_02_F,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_SELL_03,BM_SIM_02,BM_SEL_02_B,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_22,BM_SEL_22_A,BM_SEL_22_B,BM_SEL_22_C,BM_SEL_22_C_1,BM_SEL_22_C_2,BM_SEL_22_C_3,BM_SEL_22_C_4,BM_SEL_22_C_5,BM_SEL_22_C_6,BM_SEL_22_C_7,BM_SEL_22_D,BM_SEL_23,BM_SEL_23_A,BM_SEL_23_A_1,BM_SEL_23_A_2,BM_SEL_23_A_3,BM_SEL_23_A_4,BM_SEL_23_A_5,BM_SEL_23_A_6,BM_SEL_23_B,BM_SEL_23_C production
-    class BM_REC_02_B design
-    class BM_SEL_02,BM_SEL_02_A,BM_SEL_02_C deprecated
-    class BM_RES_02,BM_RES_02_A,BM_RES_02_B,BM_RES_02_C,BM_RES_02_D candidate
-```
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
-%% 作战地图总指挥图·全景图（第 3/6 页）
-flowchart TD
     subgraph sg_BM_SEL_24 ["量化短线强度评级"]
         BM_SEL_24["【BM-SEL-24 量化短线强度评级】<br/>量化角度评短线强度——6个维度打0-100分（价格动量<br/>/行业强度/相对强度/资金/技术<br/>/风险），评出A到E五级，作为双引擎融合的量化引擎<br/>输入。<br/>（生产态 / production）<br/>【Quant Short-Term Strength Rating】"]
         subgraph sg_BM_SEL_24_A ["6维度量化强度评分"]
@@ -375,6 +379,7 @@ flowchart TD
         BM_SEL_25 -.->|嵌套| BM_SEL_25_C
         BM_SEL_25 -.->|嵌套| BM_SEL_25_D
     end
+    BM_SEL_26["【BM-SEL-26 决策可解释性与人机协作】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     subgraph sg_BM_BT_03 ["绩效指标与Tick回放"]
         BM_BT_03["【BM-BT-03 绩效指标与Tick回放】<br/>算 Sharpe/Sortino/最大回撤/IC/IR<br/>/胜率这些硬指标；还能把历史 Tick<br/>逐笔回放做秒级策略验证。<br/>（生产态 / production）<br/>【Metrics &amp; Tick Replay】"]
         BM_BT_03_A["【BM-BT-03-A 绩效指标计算】<br/>算回测表现——年化收益、夏普、最大回撤、胜率等指标<br/>，看策略赚不赚钱、稳不稳。<br/>（生产态 / production）<br/>【Performance Metrics】"]
@@ -419,6 +424,27 @@ flowchart TD
         BM_RC_03 -.->|嵌套| BM_RC_03_B
         BM_RC_03 -.->|嵌套| BM_RC_03_C
     end
+    BM_SEL_23 ~~~ BM_SEL_23_A ~~~ BM_SEL_23_A_1 ~~~ BM_SEL_23_A_2 ~~~ BM_SEL_23_A_3 ~~~ BM_SEL_23_A_4 ~~~ BM_SEL_23_A_5 ~~~ BM_SEL_23_A_6 ~~~ BM_SEL_23_B ~~~ BM_SEL_23_C ~~~ BM_SEL_24 ~~~ BM_SEL_24_A ~~~ BM_SEL_24_A_1 ~~~ BM_SEL_24_A_2 ~~~ BM_SEL_24_A_3 ~~~ BM_SEL_24_A_4 ~~~ BM_SEL_24_A_5 ~~~ BM_SEL_24_A_6 ~~~ BM_SEL_24_B ~~~ BM_SEL_24_C ~~~ BM_SELL_07 ~~~ BM_SEL_25_A ~~~ BM_SEL_25_B ~~~ BM_SEL_25_C ~~~ BM_SEL_25_C_1 ~~~ BM_SEL_25_C_2 ~~~ BM_SEL_25_C_3 ~~~ BM_SEL_25_C_4 ~~~ BM_SEL_25_C_5 ~~~ BM_SEL_25_C_6 ~~~ BM_SEL_25_D ~~~ BM_SEL_26 ~~~ BM_BT_03 ~~~ BM_BT_03_A ~~~ BM_BT_03_B ~~~ BM_BT_03_C ~~~ BM_BT_03_D ~~~ BM_BT_03_E ~~~ BM_BUY_03 ~~~ BM_EXE_05 ~~~ BM_MT_03 ~~~ BM_POS_03 ~~~ BM_REC_03 ~~~ BM_REC_03_A ~~~ BM_RES_03 ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RC_03 ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C
+    BM_SEL_25 ~~~ BM_REC_03_B
+    BM_SEL_23 -->|游资情绪→双引擎融合 / data_flow| BM_SEL_25
+    BM_SEL_24 -->|量化强度→双引擎融合 / data_flow| BM_SEL_25
+    BM_REC_03_A -.->|因子反馈→信号反馈 / data_flow| BM_REC_03_B
+    BM_REC_03_B -.->|信号反馈→模型反馈 / data_flow| BM_REC_03_C
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_SEL_23,BM_SEL_23_A,BM_SEL_23_A_1,BM_SEL_23_A_2,BM_SEL_23_A_3,BM_SEL_23_A_4,BM_SEL_23_A_5,BM_SEL_23_A_6,BM_SEL_23_B,BM_SEL_23_C,BM_SEL_24,BM_SEL_24_A,BM_SEL_24_A_1,BM_SEL_24_A_2,BM_SEL_24_A_3,BM_SEL_24_A_4,BM_SEL_24_A_5,BM_SEL_24_A_6,BM_SEL_24_B,BM_SEL_24_C,BM_SEL_25,BM_SEL_25_A,BM_SEL_25_B,BM_SEL_25_C,BM_SEL_25_C_1,BM_SEL_25_C_2,BM_SEL_25_C_3,BM_SEL_25_C_4,BM_SEL_25_C_5,BM_SEL_25_C_6,BM_SEL_25_D,BM_BT_03,BM_BT_03_A,BM_BT_03_B,BM_BT_03_C,BM_BT_03_D,BM_BT_03_E,BM_BUY_03,BM_POS_03,BM_REC_03,BM_REC_03_A,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C production
+    class BM_SELL_07,BM_EXE_05,BM_REC_03_B,BM_REC_03_C design
+    class BM_SEL_26 missing
+    class BM_MT_03,BM_RES_03,BM_RES_03_A,BM_RES_03_B,BM_RES_03_C candidate
+```
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图总指挥图·全景图（第 4/6 页）
+flowchart TD
     subgraph sg_BM_SELL_04 ["止盈止损族"]
         BM_SELL_04["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04 止盈止损族】<br/>卖出端的'策略工厂'——根据策略类型用不同的止盈止损<br/>范式（趋势宽止损/均值回归中止损/套利无止损<br/>/高频紧止损/Carry宽止损），叠加猎杀防护和期权定价<br/>评估。<br/>（设计态 / design）<br/>【Take-Profit &amp; Stop-Loss Strategy Family】"]
         BM_SELL_04_A["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-04-A 止盈族】<br/>卖出时怎么止盈——固定止盈/移动止盈/分批止盈<br/>/时间加权止盈四种方式，根据策略类型选合适的止盈<br/>方法锁定利润。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Take-Profit Strategy Family】"]
@@ -443,29 +469,6 @@ flowchart TD
     BM_POS_07["【BM-POS-07 再平衡执行】<br/>漂移超阈值后算'划不划得来'——预期收益改善&gt;2×交易<br/>成本才动手，阴跌/加速下跌<br/>/恐慌崩盘时成本×1.5更谨慎，再平衡后组合仓位偏差&lt;<br/>1%才算到位，周频强制+偏离+事件三类触发。<br/>（生产态 / production）<br/>【Rebalance Execution】"]
     BM_POS_09["【BM-POS-09 卖出仓位反馈链路】<br/>仓位和卖出'双向通话'——盈利时放宽卖出阈值、亏损时<br/>收紧；买入后即时验证（5min跌破1%放量→观察<br/>/15min破分时均线→减半<br/>/30min反向2ATR→止损），把仓位状态反馈给卖出决策。<br/>（生产态 / production）<br/>【Sell-Position Bidirectional Link】"]
     BM_SIM_07["【BM-SIM-07 风控仿真器】<br/>把风控放进仿真里跑——VaR模拟+回撤模拟+熔断模拟，<br/>看策略在假设市场下的风控边界。<br/>（生产态 / production）<br/>【Risk Simulator】"]
-    BM_SEL_24 ~~~ BM_SEL_24_A ~~~ BM_SEL_24_A_1 ~~~ BM_SEL_24_A_2 ~~~ BM_SEL_24_A_3 ~~~ BM_SEL_24_A_4 ~~~ BM_SEL_24_A_5 ~~~ BM_SEL_24_A_6 ~~~ BM_SEL_24_B ~~~ BM_SEL_24_C ~~~ BM_SELL_07 ~~~ BM_SEL_25_A ~~~ BM_SEL_25_B ~~~ BM_SEL_25_C ~~~ BM_SEL_25_C_1 ~~~ BM_SEL_25_C_2 ~~~ BM_SEL_25_C_3 ~~~ BM_SEL_25_C_4 ~~~ BM_SEL_25_C_5 ~~~ BM_SEL_25_C_6 ~~~ BM_SEL_25_D ~~~ BM_BT_03 ~~~ BM_BT_03_A ~~~ BM_BT_03_B ~~~ BM_BT_03_C ~~~ BM_BT_03_D ~~~ BM_BT_03_E ~~~ BM_BUY_03 ~~~ BM_EXE_05 ~~~ BM_MT_03 ~~~ BM_REC_03 ~~~ BM_REC_03_A ~~~ BM_RES_03 ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RC_03 ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_SELL_04 ~~~ BM_SELL_04_A ~~~ BM_SELL_04_B ~~~ BM_SELL_04_C ~~~ BM_SELL_04_D ~~~ BM_SELL_04_E ~~~ BM_SIM_03 ~~~ BM_SEL_03 ~~~ BM_SEL_03_A ~~~ BM_SEL_03_B ~~~ BM_POS_09
-    BM_SEL_25 ~~~ BM_POS_03 ~~~ BM_REC_03_B ~~~ BM_SIM_07
-    BM_REC_03_C ~~~ BM_POS_07
-    BM_POS_03 -->|漂移触发→再平衡执行 / trigger| BM_POS_07
-    BM_POS_09 -->|仓位反馈→状态机 / trigger| BM_POS_03
-    BM_SEL_24 -->|量化强度→双引擎融合 / data_flow| BM_SEL_25
-    BM_REC_03_A -.->|因子反馈→信号反馈 / data_flow| BM_REC_03_B
-    BM_REC_03_B -.->|信号反馈→模型反馈 / data_flow| BM_REC_03_C
-    BM_SIM_03 -->|蒙特卡洛→风控仿真 / data_flow| BM_SIM_07
-classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
-classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
-classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_SEL_24,BM_SEL_24_A,BM_SEL_24_A_1,BM_SEL_24_A_2,BM_SEL_24_A_3,BM_SEL_24_A_4,BM_SEL_24_A_5,BM_SEL_24_A_6,BM_SEL_24_B,BM_SEL_24_C,BM_SEL_25,BM_SEL_25_A,BM_SEL_25_B,BM_SEL_25_C,BM_SEL_25_C_1,BM_SEL_25_C_2,BM_SEL_25_C_3,BM_SEL_25_C_4,BM_SEL_25_C_5,BM_SEL_25_C_6,BM_SEL_25_D,BM_BT_03,BM_BT_03_A,BM_BT_03_B,BM_BT_03_C,BM_BT_03_D,BM_BT_03_E,BM_BUY_03,BM_POS_03,BM_REC_03,BM_REC_03_A,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_SELL_04_C,BM_SELL_04_D,BM_SIM_03,BM_SEL_03_A,BM_POS_07,BM_POS_09,BM_SIM_07 production
-    class BM_SELL_07,BM_EXE_05,BM_REC_03_B,BM_REC_03_C,BM_SELL_04,BM_SELL_04_A,BM_SELL_04_B,BM_SELL_04_E,BM_SEL_03,BM_SEL_03_B design
-    class BM_MT_03,BM_RES_03,BM_RES_03_A,BM_RES_03_B,BM_RES_03_C candidate
-```
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
-%% 作战地图总指挥图·全景图（第 4/6 页）
-flowchart TD
     subgraph sg_BM_BT_04 ["PIT铁律管理"]
         BM_BT_04["【BM-BT-04 PIT铁律管理】<br/>回测绝不能偷看未来——PIT 铁律管 AS OF JOIN 和<br/>Embargo 期，保证当时只能用当时已知的数据。<br/>（生产态 / production）<br/>【Point-in-Time Integrity】"]
         BM_BT_04_A["【BM-BT-04-A PIT三公理与AS OF JOIN】<br/>回测的'时间铁律'——只用当时能知道的数据，不能用未<br/>来数据，AS OF JOIN 保证数据对齐到正确时间点。<br/>（生产态 / production）<br/>【PIT Axioms &amp; AS OF JOIN】"]
@@ -554,6 +557,38 @@ flowchart TD
         BM_RC_05 -.->|嵌套| BM_RC_05_C
     end
     BM_SELL_02["【BM-SELL-02 卖出信号融合仲裁】<br/>把所有卖出信号（含突破成败）汇总加权融合，算出综<br/>合卖出意愿0~1，再按紧迫度匹配执行策略——紧急清仓<br/>市价单、从容退出限价单耐心等。<br/>（生产态 / production）<br/>【Sell Signal Fusion Arbitration】"]
+    BM_SELL_04 ~~~ BM_SELL_04_A ~~~ BM_SELL_04_B ~~~ BM_SELL_04_C ~~~ BM_SELL_04_D ~~~ BM_SELL_04_E ~~~ BM_SIM_03 ~~~ BM_SEL_03 ~~~ BM_SEL_03_A ~~~ BM_SEL_03_B ~~~ BM_POS_07 ~~~ BM_BT_04 ~~~ BM_BT_04_A ~~~ BM_BT_04_B ~~~ BM_BT_04_C ~~~ BM_MT_04 ~~~ BM_REC_04 ~~~ BM_RES_04 ~~~ BM_RES_04_A ~~~ BM_RC_04 ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_SELL_05 ~~~ BM_SELL_08 ~~~ BM_BT_05_A ~~~ BM_BT_05_B ~~~ BM_BT_05_C ~~~ BM_BT_05_D ~~~ BM_BT_05_E ~~~ BM_BT_05_F ~~~ BM_BT_05_G ~~~ BM_BT_05_H ~~~ BM_BT_05_I ~~~ BM_BT_05_J ~~~ BM_MT_05_A ~~~ BM_POS_05 ~~~ BM_REC_05 ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C
+    BM_SIM_07 ~~~ BM_BUY_04 ~~~ BM_POS_04 ~~~ BM_SIM_04 ~~~ BM_SEL_04 ~~~ BM_BT_05 ~~~ BM_MT_05 ~~~ BM_RES_05 ~~~ BM_RC_05 ~~~ BM_SELL_02
+    BM_POS_09 ~~~ BM_EXE_02
+    BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
+    BM_SEL_03 -.->|进度+阶段+轮动 / data_flow| BM_BUY_04
+    BM_SEL_03 -.->|C-021未就绪→跳过降级 / degradation| BM_SEL_04
+    BM_SELL_04 -.->|止盈止损决策→融合仲裁 / data_flow| BM_SELL_02
+    BM_SELL_05 -->|置换再平衡→融合仲裁 / data_flow| BM_SELL_02
+    BM_POS_05 -->|回撤缩放→跨策略硬限制 / trigger| BM_POS_04
+    BM_POS_04 -->|实际仓位→交易执行 / data_flow| BM_EXE_02
+    BM_SELL_02 -->|卖出决策→仓位反馈 / data_flow| BM_POS_09
+    BM_EXE_02 -.->|成交回报→Fill处理与持仓更新 / data_flow| BM_EXE_06
+    BM_RES_04 -.->|工作流→Notebook协作 / data_flow| BM_RES_05
+    BM_MT_04 -.->|因子→漂移检测 / trigger| BM_MT_05
+    BM_BT_04 -->|PIT→过拟合检测 / data_flow| BM_BT_05
+    BM_SIM_03 -->|场景→压力测试 / trigger| BM_SIM_04
+    BM_RC_04 -->|监控→止损 / trigger| BM_RC_05
+    BM_SIM_03 -->|蒙特卡洛→风控仿真 / data_flow| BM_SIM_07
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_SELL_04_C,BM_SELL_04_D,BM_SIM_03,BM_SEL_03_A,BM_POS_07,BM_POS_09,BM_SIM_07,BM_BT_04,BM_BT_04_A,BM_BT_04_B,BM_BT_04_C,BM_EXE_02,BM_POS_04,BM_REC_04,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_SELL_05,BM_SIM_04,BM_BT_05,BM_BT_05_A,BM_BT_05_B,BM_BT_05_C,BM_BT_05_D,BM_BT_05_E,BM_BT_05_F,BM_BT_05_G,BM_BT_05_H,BM_BT_05_I,BM_BT_05_J,BM_POS_05,BM_REC_05,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_SELL_02 production
+    class BM_SELL_04,BM_SELL_04_A,BM_SELL_04_B,BM_SELL_04_E,BM_SEL_03,BM_SEL_03_B,BM_BUY_04,BM_RC_04_E,BM_RC_04_F,BM_SEL_04,BM_SELL_08,BM_EXE_06 design
+    class BM_MT_04,BM_RES_04,BM_RES_04_A,BM_MT_05,BM_MT_05_A,BM_RES_05,BM_RES_05_A,BM_RES_05_B,BM_RES_05_C,BM_RC_05_C candidate
+```
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图总指挥图·全景图（第 5/6 页）
+flowchart TD
     BM_SIM_05["【BM-SIM-05 依赖图数字孪生】<br/>把整个系统的依赖图复制一份做数字孪生——改任何模块<br/>前先在孪生上 what-if 一遍，预测变更影响。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Dependency Graph Digital Twin】"]
     subgraph sg_BM_SEL_05 ["主力行为感知"]
         BM_SEL_05["【BM-SEL-05 主力行为感知】<br/>识别庄家和主力资金在干什么——吸筹、洗盘、拉升还是<br/>出货弃庄，给选股和做T提供主力视角。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Main-Force Behavior Sensing】"]
@@ -575,34 +610,6 @@ flowchart TD
     end
     BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控→仓位裁决→置信度分层→执行四级优先级，是人工<br/>干预系统的入口。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【External Order Monitoring】"]
     BM_EXE_03["【BM-EXE-03 执行质量TCA】<br/>每笔成交后做'成本尸检'——把决策时刻到最终成交的总<br/>成本拆成时机成本+市场冲击+滑点+佣金，对比VWAP<br/>/TWAP/开盘价<br/>/收盘价基准，反馈给执行算法优化下次。<br/>（生产态 / production）<br/>【Execution Quality TCA】"]
-    BM_BT_04 ~~~ BM_BT_04_A ~~~ BM_BT_04_B ~~~ BM_BT_04_C ~~~ BM_BUY_04 ~~~ BM_MT_04 ~~~ BM_REC_04 ~~~ BM_RES_04 ~~~ BM_RES_04_A ~~~ BM_RC_04 ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_SELL_05 ~~~ BM_SIM_04 ~~~ BM_SEL_04 ~~~ BM_SELL_08 ~~~ BM_BT_05_A ~~~ BM_BT_05_B ~~~ BM_BT_05_C ~~~ BM_BT_05_D ~~~ BM_BT_05_E ~~~ BM_BT_05_F ~~~ BM_BT_05_G ~~~ BM_BT_05_H ~~~ BM_BT_05_I ~~~ BM_BT_05_J ~~~ BM_MT_05_A ~~~ BM_POS_05 ~~~ BM_REC_05 ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_SEL_05 ~~~ BM_SEL_05_A ~~~ BM_SEL_05_B ~~~ BM_SEL_05_C ~~~ BM_BT_06_A ~~~ BM_BT_06_B ~~~ BM_BT_06_C ~~~ BM_BUY_06
-    BM_POS_04 ~~~ BM_BT_05 ~~~ BM_MT_05 ~~~ BM_RES_05 ~~~ BM_RC_05 ~~~ BM_SELL_02 ~~~ BM_SIM_05
-    BM_EXE_02 ~~~ BM_BT_06
-    BM_SELL_05 -->|置换再平衡→融合仲裁 / data_flow| BM_SELL_02
-    BM_POS_05 -->|回撤缩放→跨策略硬限制 / trigger| BM_POS_04
-    BM_POS_04 -->|实际仓位→交易执行 / data_flow| BM_EXE_02
-    BM_EXE_02 -.->|成交回报→Fill处理与持仓更新 / data_flow| BM_EXE_06
-    BM_EXE_06 -.->|成交数据→TCA分析 / data_flow| BM_EXE_03
-    BM_RES_04 -.->|工作流→Notebook协作 / data_flow| BM_RES_05
-    BM_MT_04 -.->|因子→漂移检测 / trigger| BM_MT_05
-    BM_BT_04 -->|PIT→过拟合检测 / data_flow| BM_BT_05
-    BM_BT_05 -->|过拟合→WFO / data_flow| BM_BT_06
-    BM_SIM_04 -.->|压力→数字孪生 / trigger| BM_SIM_05
-    BM_RC_04 -->|监控→止损 / trigger| BM_RC_05
-classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
-classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
-classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BT_04,BM_BT_04_A,BM_BT_04_B,BM_BT_04_C,BM_EXE_02,BM_POS_04,BM_REC_04,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_SELL_05,BM_SIM_04,BM_BT_05,BM_BT_05_A,BM_BT_05_B,BM_BT_05_C,BM_BT_05_D,BM_BT_05_E,BM_BT_05_F,BM_BT_05_G,BM_BT_05_H,BM_BT_05_I,BM_BT_05_J,BM_POS_05,BM_REC_05,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_SELL_02,BM_SEL_05,BM_SEL_05_A,BM_SEL_05_B,BM_SEL_05_C,BM_BT_06,BM_BT_06_A,BM_BT_06_B,BM_BT_06_C,BM_EXE_03 production
-    class BM_BUY_04,BM_RC_04_E,BM_RC_04_F,BM_SEL_04,BM_SELL_08,BM_EXE_06 design
-    class BM_MT_04,BM_RES_04,BM_RES_04_A,BM_MT_05,BM_MT_05_A,BM_RES_05,BM_RES_05_A,BM_RES_05_B,BM_RES_05_C,BM_RC_05_C,BM_SIM_05,BM_BUY_06 candidate
-```
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
-%% 作战地图总指挥图·全景图（第 5/6 页）
-flowchart TD
     subgraph sg_BM_RES_06 ["LLM研究Agent与论文追踪"]
         BM_RES_06["【BM-RES-06 LLM研究Agent与论文追踪】<br/>让 LLM 当研究助手——自动读论文、跑工具、反思纠错<br/>；同时追踪最新论文别漏掉行业前沿。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【LLM Research Agent &amp; Paper Tracking】"]
         BM_RES_06_A["【BM-RES-06-A LLM研究助手】<br/>让 LLM 当研究助手——自动读论文、跑工具、反思纠错<br/>，研究员提问它就去查资料给结论。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【LLM Research Assistant】"]
@@ -691,6 +698,32 @@ flowchart TD
     BM_SEL_15["【BM-SEL-15 Survival止盈止损时间预测】<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Survival Stop-Time Prediction】"]
     BM_SEL_16["【BM-SEL-16 分级指标过滤】<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Tiered Screening Filter】"]
     BM_SEL_17["【BM-SEL-17 初筛漏斗】<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Coarse Screening Funnel】"]
+    BM_SIM_05 ~~~ BM_SEL_05 ~~~ BM_SEL_05_A ~~~ BM_SEL_05_B ~~~ BM_SEL_05_C ~~~ BM_BT_06 ~~~ BM_BT_06_A ~~~ BM_BT_06_B ~~~ BM_BT_06_C ~~~ BM_EXE_03 ~~~ BM_RES_06 ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RC_06 ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_SEL_06 ~~~ BM_BT_07_A ~~~ BM_BT_07_B ~~~ BM_BT_07_C ~~~ BM_BT_07_D ~~~ BM_BT_07_E ~~~ BM_BT_07_F ~~~ BM_BT_07_G ~~~ BM_BT_07_H ~~~ BM_BT_07_I ~~~ BM_BUY_07 ~~~ BM_RES_07_A ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_SEL_07 ~~~ BM_BUY_08 ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_SEL_08 ~~~ BM_SEL_08_A ~~~ BM_POS_10 ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16
+    BM_BUY_06 ~~~ BM_SIM_06 ~~~ BM_BT_07 ~~~ BM_RES_07 ~~~ BM_RC_07 ~~~ BM_SEL_17
+    BM_SELL_06 ~~~ BM_RC_08
+    BM_SEL_16 -.->|漏斗L1→L2（~1200只） / data_flow| BM_SEL_17
+    BM_BUY_06 -.->|外部指令→买卖冲突仲裁 / trigger| BM_SELL_06
+    BM_BUY_07 -.->|微信指令→外部指令盯盘 / data_flow| BM_BUY_06
+    BM_SELL_06 -.->|仲裁输出→闭环优化反馈 / data_flow| BM_SELL_09
+    BM_RES_06 -.->|研究发现→策略迭代 / data_flow| BM_RES_07
+    BM_BT_06 -->|WFO→决策门控 / data_flow| BM_BT_07
+    BM_SIM_05 -.->|孪生→结果分析 / data_flow| BM_SIM_06
+    BM_RC_06 -->|系统性→风险预算 / data_flow| BM_RC_07
+    BM_RC_07 -->|预算→盘后审计 / trigger| BM_RC_08
+classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    class BM_SEL_05,BM_SEL_05_A,BM_SEL_05_B,BM_SEL_05_C,BM_BT_06,BM_BT_06_A,BM_BT_06_B,BM_BT_06_C,BM_EXE_03,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_SELL_06,BM_SIM_06,BM_BT_07,BM_BT_07_A,BM_BT_07_B,BM_BT_07_C,BM_BT_07_D,BM_BT_07_E,BM_BT_07_F,BM_BT_07_G,BM_BT_07_H,BM_BT_07_I,BM_BUY_07,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C,BM_SEL_08,BM_SEL_08_A,BM_POS_10 production
+    class BM_RC_06_D,BM_SEL_06,BM_SELL_09,BM_SEL_07,BM_RC_08_D,BM_RC_08_E,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17 design
+    class BM_SIM_05,BM_BUY_06,BM_RES_06,BM_RES_06_A,BM_RES_06_B,BM_RES_07,BM_RES_07_A,BM_BUY_08 candidate
+```
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
+%% 作战地图总指挥图·全景图（第 6/6 页）
+flowchart TD
     BM_SEL_18["【BM-SEL-18 精筛评分】<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Fine Scoring】"]
     BM_SEL_19["【BM-SEL-19 事件驱动分布筛选】<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Event-Driven Distribution Screening】"]
     subgraph sg_BM_SEL_20 ["多策略交叉投票"]
@@ -702,31 +735,6 @@ flowchart TD
         BM_SEL_20 -.->|嵌套| BM_SEL_20_B
         BM_SEL_20 -.->|嵌套| BM_SEL_20_C
     end
-    BM_RES_06 ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RC_06 ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_SELL_06 ~~~ BM_SIM_06 ~~~ BM_SEL_06 ~~~ BM_BT_07 ~~~ BM_BT_07_A ~~~ BM_BT_07_B ~~~ BM_BT_07_C ~~~ BM_BT_07_D ~~~ BM_BT_07_E ~~~ BM_BT_07_F ~~~ BM_BT_07_G ~~~ BM_BT_07_H ~~~ BM_BT_07_I ~~~ BM_BUY_07 ~~~ BM_RES_07_A ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_SEL_07 ~~~ BM_BUY_08 ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_SEL_08 ~~~ BM_SEL_08_A ~~~ BM_POS_10 ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16 ~~~ BM_SEL_20_A ~~~ BM_SEL_20_B ~~~ BM_SEL_20_C
-    BM_RES_07 ~~~ BM_RC_07 ~~~ BM_SELL_09 ~~~ BM_SEL_17
-    BM_RC_08 ~~~ BM_SEL_18
-    BM_SEL_16 -.->|漏斗L1→L2（~1200只） / data_flow| BM_SEL_17
-    BM_SEL_17 -.->|漏斗L2→L3（~300只） / data_flow| BM_SEL_18
-    BM_SEL_18 -.->|漏斗L3→L4（~50只） / data_flow| BM_SEL_19
-    BM_SEL_19 -.->|漏斗L4→L5（~30只） / data_flow| BM_SEL_20
-    BM_SELL_06 -.->|仲裁输出→闭环优化反馈 / data_flow| BM_SELL_09
-    BM_RES_06 -.->|研究发现→策略迭代 / data_flow| BM_RES_07
-    BM_RC_06 -->|系统性→风险预算 / data_flow| BM_RC_07
-    BM_RC_07 -->|预算→盘后审计 / trigger| BM_RC_08
-classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
-classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
-classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_SELL_06,BM_SIM_06,BM_BT_07,BM_BT_07_A,BM_BT_07_B,BM_BT_07_C,BM_BT_07_D,BM_BT_07_E,BM_BT_07_F,BM_BT_07_G,BM_BT_07_H,BM_BT_07_I,BM_BUY_07,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C,BM_SEL_08,BM_SEL_08_A,BM_POS_10,BM_SEL_20_A,BM_SEL_20_B,BM_SEL_20_C production
-    class BM_RC_06_D,BM_SEL_06,BM_SELL_09,BM_SEL_07,BM_RC_08_D,BM_RC_08_E,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19 design
-    class BM_RES_06,BM_RES_06_A,BM_RES_06_B,BM_RES_07,BM_RES_07_A,BM_BUY_08,BM_SEL_20 candidate
-```
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
-%% 作战地图总指挥图·全景图（第 6/6 页）
-flowchart TD
     subgraph sg_BM_SEL_21 ["组合优化"]
         BM_SEL_21["【BM-SEL-21 组合优化】<br/>漏斗第六层——从30只里算出最终N≤10只下单清单和每只<br/>权重，行业、市值、风险、相关性、拥挤度全约束。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Portfolio Optimization】"]
         BM_SEL_21_A["【BM-SEL-21-A 策略引擎】<br/>管所有量化策略的生命周期——注册、激活、暂停、退役<br/>，按策略集调度执行。<br/>（生产态 / production）<br/>【Strategy Engine】"]
@@ -742,13 +750,18 @@ flowchart TD
         BM_SEL_21 -.->|嵌套| BM_SEL_21_E
         BM_SEL_21 -.->|嵌套| BM_SEL_21_F
     end
-    BM_SEL_21 ~~~ BM_SEL_21_A ~~~ BM_SEL_21_B ~~~ BM_SEL_21_C ~~~ BM_SEL_21_D ~~~ BM_SEL_21_E ~~~ BM_SEL_21_F
+    BM_SEL_18 ~~~ BM_SEL_20_A ~~~ BM_SEL_20_B ~~~ BM_SEL_20_C ~~~ BM_SEL_21_A ~~~ BM_SEL_21_B ~~~ BM_SEL_21_C ~~~ BM_SEL_21_D ~~~ BM_SEL_21_E ~~~ BM_SEL_21_F
+    BM_SEL_18 -.->|漏斗L3→L4（~50只） / data_flow| BM_SEL_19
+    BM_SEL_19 -.->|漏斗L4→L5（~30只） / data_flow| BM_SEL_20
+    BM_SEL_20 -.->|漏斗L5→L6 / data_flow| BM_SEL_21
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_SEL_21,BM_SEL_21_A,BM_SEL_21_B,BM_SEL_21_C,BM_SEL_21_D,BM_SEL_21_E,BM_SEL_21_F production
+    class BM_SEL_20_A,BM_SEL_20_B,BM_SEL_20_C,BM_SEL_21,BM_SEL_21_A,BM_SEL_21_B,BM_SEL_21_C,BM_SEL_21_D,BM_SEL_21_E,BM_SEL_21_F production
+    class BM_SEL_18,BM_SEL_19 design
+    class BM_SEL_20 candidate
 ```
 
 ### 运营态的图（仅 production 环节和流转）
@@ -1297,15 +1310,15 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 ## 分阶段导航
 
-- [研究孵化阶段（25 环节）](battle_map_01_research_incubation.md)
+- [研究孵化阶段（29 环节）](battle_map_01_research_incubation.md)
 - [模型训练阶段（8 环节）](battle_map_02_model_training.md)
 - [回测验证阶段（48 环节）](battle_map_03_backtest_validation.md)
 - [仿真验证阶段（7 环节）](battle_map_04_simulation_validation.md)
-- [选股阶段（83 环节）](battle_map_05_stock_selection.md)
-- [买入阶段（16 环节）](battle_map_06_buy_flow.md)
+- [选股阶段（84 环节）](battle_map_05_stock_selection.md)
+- [买入阶段（19 环节）](battle_map_06_buy_flow.md)
 - [卖出阶段（14 环节）](battle_map_07_sell_flow.md)
 - [仓位阶段（21 环节）](battle_map_08_position_management.md)
-- [风控管控阶段（40 环节）](battle_map_09_risk_control.md)
+- [风控管控阶段（43 环节）](battle_map_09_risk_control.md)
 - [执行阶段（6 环节）](battle_map_10_execution.md)
 - [对账阶段（17 环节）](battle_map_11_reconciliation.md)
 - [横切视图（§13漏斗 / §14盘中事件 / §16冲突矩阵）](battle_map_12_cross_cutting.md)
