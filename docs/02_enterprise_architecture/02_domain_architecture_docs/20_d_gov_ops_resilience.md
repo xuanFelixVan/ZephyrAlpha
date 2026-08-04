@@ -88,6 +88,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_time_sync_py["时间同步<br/>治理/ops governance包的time_sync模块<br/>Time Sync<br/>文件: ops_governance/time_sync.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_timeout_guard_py["只读：timeouts<br/>治理/ops governance包的timeout_guard模块<br/>Timeout Guard<br/>文件: ops_governance/timeout_guard.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_init_py["governance/resilience_governance 包入口<br/>管理governance.resilience_governance子包的加载和<br/>懒导入<br/>Init<br/>文件: resilience_governance/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_governance_resilience_governance_account_isolator_py["Account Isolator<br/>v0.10.0 多账户升级隔离器<br/>文件: resilience_governance/account_isolator.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_blast_radius_py["depgraph YAML 加载或结构校验失败.'''<br/>blast_radius — MOD-INF-028 §3.1 Stage 9<br/>Blast Radius<br/>文件: resilience_governance/blast_radius.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_broker_resilience_py["经纪商Resilience<br/>治理/resilience<br/>governance包的broker_resilience模块<br/>Broker Resilience<br/>文件: resilience_governance/broker_resilience.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_bus_factor_defense_py["Bus因子Defense<br/>治理/resilience<br/>governance包的bus_factor_defense模块<br/>Bus Factor Defense<br/>文件: resilience_governance<br/>/bus_factor_defense.py<br/>(生产态 / production)"]
@@ -180,7 +181,8 @@ flowchart TD
     src_zephyr_governance_ops_governance_startup_shutdown_cli_py ~~~ src_zephyr_governance_ops_governance_time_sync_py
     src_zephyr_governance_ops_governance_time_sync_py ~~~ src_zephyr_governance_ops_governance_timeout_guard_py
     src_zephyr_governance_ops_governance_timeout_guard_py ~~~ src_zephyr_governance_resilience_governance_init_py
-    src_zephyr_governance_resilience_governance_init_py ~~~ src_zephyr_governance_resilience_governance_blast_radius_py
+    src_zephyr_governance_resilience_governance_init_py ~~~ src_zephyr_governance_resilience_governance_account_isolator_py
+    src_zephyr_governance_resilience_governance_account_isolator_py ~~~ src_zephyr_governance_resilience_governance_blast_radius_py
     src_zephyr_governance_resilience_governance_blast_radius_py ~~~ src_zephyr_governance_resilience_governance_broker_resilience_py
     src_zephyr_governance_resilience_governance_broker_resilience_py ~~~ src_zephyr_governance_resilience_governance_bus_factor_defense_py
     src_zephyr_governance_resilience_governance_bus_factor_defense_py ~~~ src_zephyr_governance_resilience_governance_decision_fatigue_cli_py
@@ -248,7 +250,6 @@ flowchart TD
     src_zephyr_governance_ops_governance_phase_manager_py["ZephyrAlpha 施工阶段门控引擎.<br/>Phase Manager — ZephyrAlpha 施工阶段门控引擎.<br/>文件: ops_governance/phase_manager.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_roi_calculator_py["Roi计算器<br/>治理/ops governance包的roi_calculator模块<br/>Roi Calculator<br/>文件: ops_governance/roi_calculator.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_tco_model_py["Tco模型<br/>治理/ops governance包的tco_model模块<br/>Tco Model<br/>文件: ops_governance/tco_model.py<br/>(生产态 / production)"]
-    src_zephyr_governance_resilience_governance_account_isolator_py["Account Isolator<br/>v0.10.0 多账户升级隔离器<br/>文件: resilience_governance/account_isolator.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_deadlock_detector_py["Deadlock检测器<br/>Deadlock Detector — D-022-04<br/>多Agent死锁+循环依赖检测+超时破解。<br/>文件: resilience_governance/deadlock_detector.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_decision_fatigue_py["决策Fatigue<br/>治理/resilience<br/>governance包的decision_fatigue模块<br/>Decision Fatigue<br/>文件: resilience_governance/decision_fatigue.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_engine_sandbox_py["引擎Sandbox<br/>EngineSandbox — D-022-08 OS-level sandboxing<br/>for the escalation engine.<br/>Engine Sandbox<br/>文件: resilience_governance/engine_sandbox.py<br/>(生产态 / production)"]
@@ -263,8 +264,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_event_hook_py ~~~ src_zephyr_governance_ops_governance_phase_manager_py
     src_zephyr_governance_ops_governance_phase_manager_py ~~~ src_zephyr_governance_ops_governance_roi_calculator_py
     src_zephyr_governance_ops_governance_roi_calculator_py ~~~ src_zephyr_governance_ops_governance_tco_model_py
-    src_zephyr_governance_ops_governance_tco_model_py ~~~ src_zephyr_governance_resilience_governance_account_isolator_py
-    src_zephyr_governance_resilience_governance_account_isolator_py ~~~ src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_ops_governance_tco_model_py ~~~ src_zephyr_governance_resilience_governance_deadlock_detector_py
     src_zephyr_governance_resilience_governance_deadlock_detector_py ~~~ src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_decision_fatigue_py ~~~ src_zephyr_governance_resilience_governance_engine_sandbox_py
     src_zephyr_governance_resilience_governance_engine_sandbox_py ~~~ src_zephyr_governance_security_governance_adversarial_tester_py
@@ -287,72 +287,68 @@ flowchart TD
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_manager_py
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
     src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
-    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
+    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
+    src_zephyr_governance_resilience_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_resilience_governance_circuit_breaker_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
-    src_zephyr_governance_resilience_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_resilience_governance_account_isolator_py
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_security_gateway_base_py
     src_zephyr_governance_security_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_security_governance_adversarial_tester_py
     tests_governance_budget_test_cost_attributor_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_attributor_py
-    tests_governance_budget_test_burn_rate_monitor_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_burn_rate_monitor_py
     tests_governance_budget_test_cost_router_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_router_py
-    tests_governance_budget_test_error_budget_burst_limiter_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_error_budget_burst_limiter_py
+    tests_governance_budget_test_burn_rate_monitor_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_burn_rate_monitor_py
     tests_governance_budget_test_degradation_manager_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_degradation_manager_py
-    tests_governance_budget_test_tco_model_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_tco_model_py
+    tests_governance_budget_test_error_budget_burst_limiter_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_error_budget_burst_limiter_py
     tests_governance_budget_test_roi_calculator_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_roi_calculator_py
+    tests_governance_budget_test_tco_model_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_tco_model_py
     tests_governance_orchestrator_test_engine_sandbox_py -->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_engine_sandbox_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_environment_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_security_governance_tamper_evident_log_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     tests_governance_orchestrator_test_think_time_model_py -->|测试依赖 / test_depends| D_GOVERNANCE
-    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_SHARED
     D_OPS["反馈循环<br/>反馈循环，负责系统运行反馈、性能监控和自动调优闭<br/>环<br/>Feedback Loop<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    tests_governance_budget_test_gct_024_hard_checks_py -->|测试依赖 / test_depends| D_OPS
-    D_INFRA_A2A["A2A通信<br/>Agent 与 Agent 之间的通信协议层，负责 AI<br/>代理间的消息传递、请求路由和协议适配<br/>A2A Communication<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| D_INFRA_A2A
-    tests_governance_budget_test_pre_flight_gate_py -->|测试依赖 / test_depends| D_OPS
-    tests_governance_budget_test_cost_attributor_py -->|测试依赖 / test_depends| D_OPS
-    D_SECURITY["对抗验证<br/>对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验<br/>证<br/>Adversarial Validation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_ops_governance_degradation_manager_py -->|导入依赖 / import_depends| D_OPS
     D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     tests_governance_budget_test_pre_flight_gate_py -->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
-    tests_governance_budget_test_degradation_manager_py -->|测试依赖 / test_depends| D_OPS
     tests_governance_budget_test_gct_024_hard_checks_py -->|测试依赖 / test_depends| D_GOVERNANCE
-    D_GOV_RULE["规则治理<br/>规则治理，负责规则注册、规则版本和规则依赖管理<br/>Rule Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_RULE
+    src_zephyr_governance_resilience_governance_f5_shutdown_manager_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_A2A["A2A通信<br/>Agent 与 Agent 之间的通信协议层，负责 AI<br/>代理间的消息传递、请求路由和协议适配<br/>A2A Communication<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
+    D_INFRA_RECOVERY["回滚恢复<br/>回滚恢复，负责系统故障时的状态回滚、事务补偿和恢<br/>复编排<br/>Rollback Recovery<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_governance_escalation_contracts_py -->|导入依赖 / import_depends| D_INFRA_RECOVERY
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_OPS
+    tests_governance_budget_test_gct_024_hard_checks_py -->|测试依赖 / test_depends| D_OPS
+    tests_governance_budget_test_gct_024_hard_checks_py -->|测试依赖 / test_depends| D_OPS
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_INFRA_RECOVERY
     D_COMPLIANCE["合规<br/>合规，负责交易合规检查、规则引擎和合规报告<br/>Compliance<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_COMPLIANCE -.->|runtime / runtime| src_zephyr_governance_security_governance_security_gateway_base_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_last_resort_watchdog_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_security_governance_anti_automation_bias_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_daily_ops_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_escalation_result_types_py
-    D_GOV_REPAIR["治理修复<br/>治理修复，负责治理问题自动修复和修复策略管理<br/>Governance Repair<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_degradation_manager_py
     D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_clock_guard_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_security_governance_ipi_defense_py
-    D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_GOV_CODE_QUALITY -->|测试依赖 / test_depends| src_zephyr_governance_escalation_result_types_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_last_resort_watchdog_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_timeout_guard_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_broker_resilience_py
-    D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_manager_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_account_isolator_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_escalation_owner_absent_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_security_governance_anti_automation_bias_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_ops_foundation_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_parent_child_attributor_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_default_security_gateway_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_escalation_contracts_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_bandwidth_optimizer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_budget_enforcer_init_py,src_zephyr_governance_escalation_alternative_path_blocker_py,src_zephyr_governance_escalation_consequence_manager_py,src_zephyr_governance_escalation_contracts_py,src_zephyr_governance_escalation_escalation_api_py,src_zephyr_governance_escalation_escalation_engine_py,src_zephyr_governance_escalation_escalation_fatigue_manager_py,src_zephyr_governance_escalation_escalation_loop_detector_py,src_zephyr_governance_escalation_escalation_metrics_py,src_zephyr_governance_escalation_escalation_models_py,src_zephyr_governance_escalation_escalation_smoke_tests_py,src_zephyr_governance_escalation_git_hook_pre_scanner_py,src_zephyr_governance_escalation_human_factors_py,src_zephyr_governance_escalation_identity_verifier_py,src_zephyr_governance_escalation_incident_response_py,src_zephyr_governance_escalation_owner_absent_py,src_zephyr_governance_escalation_result_types_py,src_zephyr_governance_escalation_spof_checker_py,src_zephyr_governance_escalation_triage_py,src_zephyr_governance_ops_governance_agent_dispatch_py,src_zephyr_governance_ops_governance_auto_runner_py,src_zephyr_governance_ops_governance_bandwidth_optimizer_py,src_zephyr_governance_ops_governance_burn_rate_monitor_py,src_zephyr_governance_ops_governance_clock_guard_py,src_zephyr_governance_ops_governance_coldstart_manager_py,src_zephyr_governance_ops_governance_cost_attributor_py,src_zephyr_governance_ops_governance_cost_router_py,src_zephyr_governance_ops_governance_daily_ops_py,src_zephyr_governance_ops_governance_decision_fatigue_py,src_zephyr_governance_ops_governance_degradation_manager_py,src_zephyr_governance_ops_governance_environment_manager_py,src_zephyr_governance_ops_governance_error_budget_burst_limiter_py,src_zephyr_governance_ops_governance_event_hook_py,src_zephyr_governance_ops_governance_interrupt_handler_py,src_zephyr_governance_ops_governance_maintenance_window_adapter_py,src_zephyr_governance_ops_governance_ops_foundation_py,src_zephyr_governance_ops_governance_parent_child_attributor_py,src_zephyr_governance_ops_governance_phase_check_registry_py,src_zephyr_governance_ops_governance_phase_manager_py,src_zephyr_governance_ops_governance_roi_calculator_py,src_zephyr_governance_ops_governance_self_budget_tracker_py,src_zephyr_governance_ops_governance_service_registration_py,src_zephyr_governance_ops_governance_startup_shutdown_py,src_zephyr_governance_ops_governance_startup_shutdown_cli_py,src_zephyr_governance_ops_governance_stream_abort_guard_py,src_zephyr_governance_ops_governance_tco_model_py,src_zephyr_governance_ops_governance_time_sync_py,src_zephyr_governance_ops_governance_timeout_guard_py,src_zephyr_governance_resilience_governance_init_py,src_zephyr_governance_resilience_governance_account_isolator_py,src_zephyr_governance_resilience_governance_blast_radius_py,src_zephyr_governance_resilience_governance_broker_resilience_py,src_zephyr_governance_resilience_governance_bus_factor_defense_py,src_zephyr_governance_resilience_governance_circuit_breaker_py,src_zephyr_governance_resilience_governance_deadlock_detector_py,src_zephyr_governance_resilience_governance_decision_fatigue_py,src_zephyr_governance_resilience_governance_decision_fatigue_cli_py,src_zephyr_governance_resilience_governance_engine_sandbox_py,src_zephyr_governance_resilience_governance_f5_boot_integration_py,src_zephyr_governance_resilience_governance_f5_event_subscriber_py,src_zephyr_governance_resilience_governance_f5_shutdown_manager_py,src_zephyr_governance_resilience_governance_fail_mode_manager_py,src_zephyr_governance_resilience_governance_fault_tolerance_py,src_zephyr_governance_resilience_governance_last_resort_watchdog_py,src_zephyr_governance_resilience_governance_offline_autonomy_py,src_zephyr_governance_resilience_governance_offline_resilience_py,src_zephyr_governance_resilience_governance_policy_sandbox_py,src_zephyr_governance_resilience_governance_process_isolator_py,src_zephyr_governance_resilience_governance_witness_isolation_py,src_zephyr_governance_security_governance_init_py,src_zephyr_governance_security_governance_adversarial_tester_py,src_zephyr_governance_security_governance_anti_automation_bias_py,src_zephyr_governance_security_governance_api_response_sanitizer_py,src_zephyr_governance_security_governance_bare_repo_scanner_py,src_zephyr_governance_security_governance_compositional_safety_tester_py,src_zephyr_governance_security_governance_config_scanner_py,src_zephyr_governance_security_governance_credential_guard_py,src_zephyr_governance_security_governance_default_security_gateway_py,src_zephyr_governance_security_governance_ghost_scan_py,src_zephyr_governance_security_governance_github_api_guard_py,src_zephyr_governance_security_governance_hooks_integrity_guard_py,src_zephyr_governance_security_governance_ipi_defense_py,src_zephyr_governance_security_governance_memory_poison_guard_py,src_zephyr_governance_security_governance_persuasion_detector_py,src_zephyr_governance_security_governance_poison_cascade_detector_py,src_zephyr_governance_security_governance_sbom_guard_py,src_zephyr_governance_security_governance_security_config_scanner_py,src_zephyr_governance_security_governance_security_gateway_base_py,src_zephyr_governance_security_governance_tamper_evident_log_py,src_zephyr_governance_security_governance_vibe_security_verify_py,src_zephyr_governance_security_governance_vibe_verify_integration_py,tests_governance_budget_test_budget_enforcer_smoke_py,tests_governance_budget_test_burn_rate_monitor_py,tests_governance_budget_test_conversation_tax_detector_py,tests_governance_budget_test_cost_attributor_py,tests_governance_budget_test_cost_budget_root_py,tests_governance_budget_test_cost_budget_unit_py,tests_governance_budget_test_cost_router_py,tests_governance_budget_test_debt_projector_py,tests_governance_budget_test_degradation_py,tests_governance_budget_test_degradation_manager_py,tests_governance_budget_test_error_budget_burst_limiter_py,tests_governance_budget_test_gct_024_hard_checks_py,tests_governance_budget_test_governance_budget_tracker_py,tests_governance_budget_test_pre_flight_gate_py,tests_governance_budget_test_roi_calculator_py,tests_governance_budget_test_tco_model_py,tests_governance_context_governance_test_command_chain_length_gate_py,tests_governance_orchestrator_test_engine_sandbox_py,tests_governance_orchestrator_test_gate_engine_unit_py,tests_governance_orchestrator_test_mvep_orchestrator_py,tests_governance_orchestrator_test_objective_tracker_py,tests_governance_orchestrator_test_prioritizer_py,tests_governance_orchestrator_test_think_time_model_py,tests_governance_orchestrator_test_verify_b54_b56_b59_deep_py production
-    class D_SHARED,D_GOVERNANCE,D_OPS,D_INFRA_A2A,D_SECURITY,D_GOV_ENFORCEMENT,D_GOV_RULE,D_GOV_REPAIR,D_FEEDBACK_LOOP,D_GOV_CODE_QUALITY,D_GOV_SCRIPTS external_prod
+    class D_SHARED,D_GOVERNANCE,D_OPS,D_GOV_ENFORCEMENT,D_INFRA_A2A,D_INFRA_RECOVERY,D_FEEDBACK_LOOP external_prod
     class D_COMPLIANCE external_design
 ```
 
@@ -398,6 +394,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_time_sync_py["时间同步<br/>治理/ops governance包的time_sync模块<br/>Time Sync<br/>文件: ops_governance/time_sync.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_timeout_guard_py["只读：timeouts<br/>治理/ops governance包的timeout_guard模块<br/>Timeout Guard<br/>文件: ops_governance/timeout_guard.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_init_py["governance/resilience_governance 包入口<br/>管理governance.resilience_governance子包的加载和<br/>懒导入<br/>Init<br/>文件: resilience_governance/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_governance_resilience_governance_account_isolator_py["Account Isolator<br/>v0.10.0 多账户升级隔离器<br/>文件: resilience_governance/account_isolator.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_blast_radius_py["depgraph YAML 加载或结构校验失败.'''<br/>blast_radius — MOD-INF-028 §3.1 Stage 9<br/>Blast Radius<br/>文件: resilience_governance/blast_radius.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_broker_resilience_py["经纪商Resilience<br/>治理/resilience<br/>governance包的broker_resilience模块<br/>Broker Resilience<br/>文件: resilience_governance/broker_resilience.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_bus_factor_defense_py["Bus因子Defense<br/>治理/resilience<br/>governance包的bus_factor_defense模块<br/>Bus Factor Defense<br/>文件: resilience_governance<br/>/bus_factor_defense.py<br/>(生产态 / production)"]
@@ -490,7 +487,8 @@ flowchart TD
     src_zephyr_governance_ops_governance_startup_shutdown_cli_py ~~~ src_zephyr_governance_ops_governance_time_sync_py
     src_zephyr_governance_ops_governance_time_sync_py ~~~ src_zephyr_governance_ops_governance_timeout_guard_py
     src_zephyr_governance_ops_governance_timeout_guard_py ~~~ src_zephyr_governance_resilience_governance_init_py
-    src_zephyr_governance_resilience_governance_init_py ~~~ src_zephyr_governance_resilience_governance_blast_radius_py
+    src_zephyr_governance_resilience_governance_init_py ~~~ src_zephyr_governance_resilience_governance_account_isolator_py
+    src_zephyr_governance_resilience_governance_account_isolator_py ~~~ src_zephyr_governance_resilience_governance_blast_radius_py
     src_zephyr_governance_resilience_governance_blast_radius_py ~~~ src_zephyr_governance_resilience_governance_broker_resilience_py
     src_zephyr_governance_resilience_governance_broker_resilience_py ~~~ src_zephyr_governance_resilience_governance_bus_factor_defense_py
     src_zephyr_governance_resilience_governance_bus_factor_defense_py ~~~ src_zephyr_governance_resilience_governance_decision_fatigue_cli_py
@@ -558,7 +556,6 @@ flowchart TD
     src_zephyr_governance_ops_governance_phase_manager_py["ZephyrAlpha 施工阶段门控引擎.<br/>Phase Manager — ZephyrAlpha 施工阶段门控引擎.<br/>文件: ops_governance/phase_manager.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_roi_calculator_py["Roi计算器<br/>治理/ops governance包的roi_calculator模块<br/>Roi Calculator<br/>文件: ops_governance/roi_calculator.py<br/>(生产态 / production)"]
     src_zephyr_governance_ops_governance_tco_model_py["Tco模型<br/>治理/ops governance包的tco_model模块<br/>Tco Model<br/>文件: ops_governance/tco_model.py<br/>(生产态 / production)"]
-    src_zephyr_governance_resilience_governance_account_isolator_py["Account Isolator<br/>v0.10.0 多账户升级隔离器<br/>文件: resilience_governance/account_isolator.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_deadlock_detector_py["Deadlock检测器<br/>Deadlock Detector — D-022-04<br/>多Agent死锁+循环依赖检测+超时破解。<br/>文件: resilience_governance/deadlock_detector.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_decision_fatigue_py["决策Fatigue<br/>治理/resilience<br/>governance包的decision_fatigue模块<br/>Decision Fatigue<br/>文件: resilience_governance/decision_fatigue.py<br/>(生产态 / production)"]
     src_zephyr_governance_resilience_governance_engine_sandbox_py["引擎Sandbox<br/>EngineSandbox — D-022-08 OS-level sandboxing<br/>for the escalation engine.<br/>Engine Sandbox<br/>文件: resilience_governance/engine_sandbox.py<br/>(生产态 / production)"]
@@ -573,8 +570,7 @@ flowchart TD
     src_zephyr_governance_ops_governance_event_hook_py ~~~ src_zephyr_governance_ops_governance_phase_manager_py
     src_zephyr_governance_ops_governance_phase_manager_py ~~~ src_zephyr_governance_ops_governance_roi_calculator_py
     src_zephyr_governance_ops_governance_roi_calculator_py ~~~ src_zephyr_governance_ops_governance_tco_model_py
-    src_zephyr_governance_ops_governance_tco_model_py ~~~ src_zephyr_governance_resilience_governance_account_isolator_py
-    src_zephyr_governance_resilience_governance_account_isolator_py ~~~ src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_ops_governance_tco_model_py ~~~ src_zephyr_governance_resilience_governance_deadlock_detector_py
     src_zephyr_governance_resilience_governance_deadlock_detector_py ~~~ src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_decision_fatigue_py ~~~ src_zephyr_governance_resilience_governance_engine_sandbox_py
     src_zephyr_governance_resilience_governance_engine_sandbox_py ~~~ src_zephyr_governance_security_governance_adversarial_tester_py
@@ -597,23 +593,23 @@ flowchart TD
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_manager_py
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
     src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
-    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
+    src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
+    src_zephyr_governance_resilience_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_resilience_governance_circuit_breaker_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
-    src_zephyr_governance_resilience_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_resilience_governance_account_isolator_py
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_security_gateway_base_py
     src_zephyr_governance_security_governance_init_py -->|config_depends / config_depends| src_zephyr_governance_security_governance_adversarial_tester_py
     tests_governance_budget_test_cost_attributor_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_attributor_py
-    tests_governance_budget_test_burn_rate_monitor_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_burn_rate_monitor_py
     tests_governance_budget_test_cost_router_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_cost_router_py
-    tests_governance_budget_test_error_budget_burst_limiter_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_error_budget_burst_limiter_py
+    tests_governance_budget_test_burn_rate_monitor_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_burn_rate_monitor_py
     tests_governance_budget_test_degradation_manager_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_degradation_manager_py
-    tests_governance_budget_test_tco_model_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_tco_model_py
+    tests_governance_budget_test_error_budget_burst_limiter_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_error_budget_burst_limiter_py
     tests_governance_budget_test_roi_calculator_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_roi_calculator_py
+    tests_governance_budget_test_tco_model_py -->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_tco_model_py
     tests_governance_orchestrator_test_engine_sandbox_py -->|测试依赖 / test_depends| src_zephyr_governance_resilience_governance_engine_sandbox_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
