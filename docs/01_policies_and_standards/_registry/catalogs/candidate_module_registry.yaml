@@ -8,15 +8,15 @@ name: 候选模块登记表
 description: >-
   候选模块（点子库）唯一真源（SSoT）。结构化存储"待开发/过度工程"候选模块，
   使其可检索/可定位/可追溯/可晋升。治本"草稿散乱+设计态污染"痛点——
-  候选不进 depgraph 设计态（违反四问铁律+稀释信号），而是登记在此候选库，
-  真实需求出现时通过四问过滤后晋升到 depgraph 设计态。
+  候选不进 depgraph 设计态（违反设计准入一问标准+稀释信号），而是登记在此候选库，
+  真实需求出现时通过设计准入一问标准过滤后晋升到 depgraph 设计态。
   对标敏捷 Product Backlog vs Sprint Backlog / 量化 Alpha Idea Pipeline vs Production Strategy Library。
 owner: MOD-GOV-029
 tier: tier_1_governance
 status: active
 version: 1.0.0
 created: '2026-07-31'
-last_updated: '2026-08-01'
+last_updated: '2026-08-05'
 
 # ============================================================
 # 设计原则
@@ -29,6 +29,10 @@ last_updated: '2026-08-01'
 # 4. 晋升流程：deferred → trigger_signals 命中 → 重新过一问 → apply_depgraph
 #    --add-design-node + --add-edge → sync_panorama_module → align_panoramas → promoted。
 # 5. SSoT 分类：候选库是治理注册表（规则数据），真源是本 YAML，不进 PostgreSQL。
+# [历史标注 2026-08-04] 本文件个别候选条目的注释中仍保留"四问X挂"字样（如"四问②挂""四问①挂"），
+# 属历史登记时的标注习惯。其中 q2/q3/q4 判定已于 2026-08-04 废弃（收敛为一问标准），
+# 但这些条目的 deferred/rejected 状态不变——其核心依据为双源对比证据（结构事实），非纯 q2/q3/q4 灰度判断。
+# q1（已实现/重复）相关的"四问①挂"标注语义不变，仅术语更新为"一问标准 q1"。
 
 unique_key:
 - id
