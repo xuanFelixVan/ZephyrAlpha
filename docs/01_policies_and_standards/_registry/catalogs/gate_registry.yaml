@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-03T19:11:48Z'
+generated_at: '2026-08-04T02:20:08Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 137
+total_gates: 138
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -1249,6 +1249,15 @@ gates:
   name: 'TABLE-NAME-REGISTRY: TABLE-NAME-REGISTRY block 门禁（CommitGate, priority=120）'
   entry: in-process (GitCommitGateway)
   description: TABLE-NAME-REGISTRY block 门禁
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: TEST-RESIDUE-SSOT
+  name: 'TEST-RESIDUE-SSOT: 测试残留前缀硬编码阻断门禁（TEST-RESIDUE-SSOT）（CommitGate, priority=56）'
+  entry: in-process (GitCommitGateway)
+  description: 测试残留前缀硬编码阻断门禁（TEST-RESIDUE-SSOT）
   files_trigger: ''
   always_run: false
   category: commit_gate
