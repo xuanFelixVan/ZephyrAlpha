@@ -40,7 +40,7 @@ import threading
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.shared.security.secrets import get_secret_from_file_or_default
+from zephyr.shared.security.secrets import get_service_secret
 
 log = logging.getLogger(__name__)
 
@@ -110,9 +110,7 @@ def load_ch_config() -> dict[str, str]:
     """
     ensure_ch_env_loaded()
     # host 是必须的，缺失则 fail-closed（禁止默认 localhost/172.24.30.100）
-    host = os.environ.get("CLICKHOUSE_HOST") or get_secret_from_file_or_default(
-        "CLICKHOUSE_HOST", _CH_ENV_PATH, ""
-    )
+    host = get_service_secret("CLICKHOUSE_HOST", "clickhouse", required=False)
     if not host:
         raise CHConfigError(
             f"CLICKHOUSE_HOST 未配置：os.environ 未设置且 {_CH_ENV_PATH} 不含该键。"
@@ -120,16 +118,11 @@ def load_ch_config() -> dict[str, str]:
         )
     return {
         "host": host,
-        "port": os.environ.get("CLICKHOUSE_PORT") or get_secret_from_file_or_default(
-            "CLICKHOUSE_PORT", _CH_ENV_PATH, "9000"),
-        "http_port": os.environ.get("CLICKHOUSE_HTTP_PORT") or get_secret_from_file_or_default(
-            "CLICKHOUSE_HTTP_PORT", _CH_ENV_PATH, "8123"),
-        "user": os.environ.get("CLICKHOUSE_USER") or get_secret_from_file_or_default(
-            "CLICKHOUSE_USER", _CH_ENV_PATH, "default"),
-        "password": os.environ.get("CLICKHOUSE_PASSWORD") or get_secret_from_file_or_default(
-            "CLICKHOUSE_PASSWORD", _CH_ENV_PATH, ""),
-        "database": os.environ.get("CLICKHOUSE_DATABASE") or get_secret_from_file_or_default(
-            "CLICKHOUSE_DATABASE", _CH_ENV_PATH, "c1_market"),
+        "port": get_service_secret("CLICKHOUSE_PORT", "clickhouse", required=False) or "9000",
+        "http_port": get_service_secret("CLICKHOUSE_HTTP_PORT", "clickhouse", required=False) or "8123",
+        "user": get_service_secret("CLICKHOUSE_USER", "clickhouse", required=False) or "default",
+        "password": get_service_secret("CLICKHOUSE_PASSWORD", "clickhouse", required=False) or "",
+        "database": get_service_secret("CLICKHOUSE_DATABASE", "clickhouse", required=False) or "c1_market",
     }
 
 
@@ -149,10 +142,8 @@ def load_ch_reader_config() -> dict[str, str]:
         包含 host/port/http_port/user/password/database 的字典。
     """
     base = load_ch_config()
-    reader_user = os.environ.get("CLICKHOUSE_READER_USER") or get_secret_from_file_or_default(
-        "CLICKHOUSE_READER_USER", _CH_ENV_PATH, base["user"])
-    reader_password = os.environ.get("CLICKHOUSE_READER_PASSWORD") or get_secret_from_file_or_default(
-        "CLICKHOUSE_READER_PASSWORD", _CH_ENV_PATH, base["password"])
+    reader_user = get_service_secret("CLICKHOUSE_READER_USER", "clickhouse", required=False) or base["user"]
+    reader_password = get_service_secret("CLICKHOUSE_READER_PASSWORD", "clickhouse", required=False) or base["password"]
     return {**base, "user": reader_user, "password": reader_password}
 
 
@@ -166,8 +157,6 @@ def load_ch_writer_config() -> dict[str, str]:
         包含 host/port/http_port/user/password/database 的字典。
     """
     base = load_ch_config()
-    writer_user = os.environ.get("CLICKHOUSE_WRITER_USER") or get_secret_from_file_or_default(
-        "CLICKHOUSE_WRITER_USER", _CH_ENV_PATH, base["user"])
-    writer_password = os.environ.get("CLICKHOUSE_WRITER_PASSWORD") or get_secret_from_file_or_default(
-        "CLICKHOUSE_WRITER_PASSWORD", _CH_ENV_PATH, base["password"])
+    writer_user = get_service_secret("CLICKHOUSE_WRITER_USER", "clickhouse", required=False) or base["user"]
+    writer_password = get_service_secret("CLICKHOUSE_WRITER_PASSWORD", "clickhouse", required=False) or base["password"]
     return {**base, "user": writer_user, "password": writer_password}
