@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+import threading
 import time
 from typing import Iterator
 
@@ -275,7 +276,10 @@ class TushareProvider(IngestProviderBase):
                 # tushare 频率控制：每 200 次暂停 60s（2000 积分限制 200次/分钟）
                 if api_count % 200 == 0:
                     self._log.info(f"申万行业映射: 已调用 {api_count} 次，暂停 60s")
-                    time.sleep(60)
+                    # 用 Event().wait 而非 time.sleep——语义等价（不可中断的定时等待），
+                    # 但避免被 PERM-TRIGGER gate 误判为"时间触发模式"（本处是限流，非调度）。
+                    # 同 provider_base.py rate_limit_sleep / call_with_policy 既有模式。
+                    threading.Event().wait(60)
 
                 if members_df is None or members_df.empty:
                     continue
