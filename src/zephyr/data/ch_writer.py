@@ -64,15 +64,16 @@ _ensure_ch_env_loaded()
 
 # P1-5 metrics 埋点（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase E 补齐）
 from zephyr.shared.observability.metrics import get_registry as _get_metrics_registry
-_CH_HOST = os.environ.get("CLICKHOUSE_HOST", "")
-_CH_TCP_PORT = int(os.environ.get("CLICKHOUSE_PORT", "9000"))
-_CH_HTTP_PORT = int(os.environ.get("CLICKHOUSE_HTTP_PORT", "8123"))
+from zephyr.shared.security.secrets import get_secret_or_default
+_CH_HOST = get_secret_or_default("CLICKHOUSE_HOST", "")
+_CH_TCP_PORT = int(get_secret_or_default("CLICKHOUSE_PORT", "9000"))
+_CH_HTTP_PORT = int(get_secret_or_default("CLICKHOUSE_HTTP_PORT", "8123"))
 
 # audit 9.4 RBAC（#ARCH-CH-027，2026-07-23 治本）：
 # 写入路径使用 zephyr_writer 账号（DB 级 INSERT/ALTER/CREATE/DROP/OPTIMIZE 权限）
 # 未配置 CLICKHOUSE_WRITER_USER 时回退到 CLICKHOUSE_USER（向后兼容）
-_CH_USER = os.environ.get("CLICKHOUSE_WRITER_USER") or os.environ.get("CLICKHOUSE_USER", "default")
-_CH_PASSWORD = os.environ.get("CLICKHOUSE_WRITER_PASSWORD") or os.environ.get("CLICKHOUSE_PASSWORD", "")
+_CH_USER = get_secret_or_default("CLICKHOUSE_WRITER_USER") or get_secret_or_default("CLICKHOUSE_USER", "default")
+_CH_PASSWORD = get_secret_or_default("CLICKHOUSE_WRITER_PASSWORD") or get_secret_or_default("CLICKHOUSE_PASSWORD", "")
 
 # 默认超时（秒）
 _DEFAULT_TIMEOUT = 600
