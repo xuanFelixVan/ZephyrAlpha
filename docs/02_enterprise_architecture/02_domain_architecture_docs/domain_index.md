@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3737 |
+| 模块总数 | 3742 |
 | 生产态模块 | 3551 |
-| 设计态模块 | 186 |
+| 设计态模块 | 191 |
 
 ## 域清单（按架构层分组）
 
@@ -105,7 +105,7 @@ ttl: permanent
 | D_INTEGRATION_GATEWAY | 集成网关 / Integration Gateway | 0 | 0 | 0 | 0/150 (OK) | [📄 22_d_integration_gateway.md](22_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 26 | 26 | 0 | 26/150 (OK) | [📄 23_d_mkt_data.md](23_d_mkt_data.md) |
 | D_OPS | 反馈循环 / Feedback Loop | 11 | 11 | 0 | 11/150 (OK) | [📄 24_d_ops.md](24_d_ops.md) |
-| D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 70 | 70 | 0 | 70/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
+| D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 72 | 70 | 2 | 72/150 (OK) | [📄 25_d_orchestrator.md](25_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 20 | 19 | 1 | 20/150 (OK) | [📄 26_d_reporting.md](26_d_reporting.md) |
 | D_SECURITY | 对抗验证 / Adversarial Validation | 171 | 171 | 0 | 171/150 (超容) | [📄 27_d_security.md](27_d_security.md) |
 | D_SECURITY_LLM | LLM防御 / LLM Defense | 0 | 0 | 0 | 0/150 (OK) | [📄 28_d_security_llm.md](28_d_security_llm.md) |
@@ -117,7 +117,7 @@ ttl: permanent
 | D_ARCHIVE_SCRIPTS | Archived Scripts / D_ARCHIVE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 29_d_archive_scripts.md](29_d_archive_scripts.md) |
 | D_ARCH_GUARD | 架构守护脚本 / D_ARCH_GUARD | 0 | 0 | 0 | 0/150 (OK) | [📄 30_d_arch_guard.md](30_d_arch_guard.md) |
 | D_ARCH_SCRIPTS | 架构治理脚本 / D_ARCH_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 31_d_arch_scripts.md](31_d_arch_scripts.md) |
-| D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 31 | 16 | 15 | 31/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
+| D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 34 | 16 | 18 | 34/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
 | D_AUDITTEST | 审计测试套件 / Audit Test Suite | 1 | 1 | 0 | 1/150 (OK) | [📄 33_d_audittest.md](33_d_audittest.md) |
 | D_AUTONOMY_PERM | 自治保护 / Autonomy Protection | 2 | 2 | 0 | 2/150 (OK) | [📄 34_d_autonomy_perm.md](34_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 42 | 41 | 1 | 42/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
