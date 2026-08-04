@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_09_risk_control.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §risk_control 阶段，47 环节（43 锚点）。
+> battle_map §risk_control 阶段，50 环节（43 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-04
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 风控管控（risk_control） | Stage | 风控管控 |
-| 环节数 | 47 | Steps | 47 |
+| 环节数 | 50 | Steps | 50 |
 | 锚点数（双向对齐） | 43 | Anchors (Bidirectional) | 43 |
 | 流转边 | 10 | Edges | 10 |
-| 状态分布 | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=8 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=8 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=11 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=34 ｜ 🟧 设计态（待施工）=11 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,13 +36,18 @@ date: 2026-08-04
 
 ## 阶段图 / Stage Diagram
 
-> 展示 风控管控 阶段全部 47 个环节及流转边，颜色区分五态。
+> 展示 风控管控 阶段全部 50 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 风控管控阶段图
 flowchart TD
     BM_RC_09["【BM-RC-09 AI/Agent风险治理】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    subgraph sg_BM_RC_10 ["风险否决权"]
+        BM_RC_10["【BM-RC-10 风险否决权】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+        BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_10 -.->|嵌套| BM_RC_10_A
+    end
     subgraph sg_BM_RC_01 ["风控策略与限额管理"]
         BM_RC_01["【BM-RC-01 风控策略与限额管理】<br/>风控的'宪法'——策略<br/>CRUD+版本管理+9种限额类型+消耗追踪+预警分级+审批<br/>流。<br/>（生产态 / production）<br/>【Risk Policy &amp; Limit Management】"]
         BM_RC_01_A["【BM-RC-01-A 风控策略CRUD与版本管理】<br/>风控规则的增删改查带版本管理——改了规则能追溯历史<br/>版本，出问题能回滚。<br/>（生产态 / production）<br/>【Risk Strategy CRUD &amp; Versioning】"]
@@ -52,8 +57,13 @@ flowchart TD
         BM_RC_01 -.->|嵌套| BM_RC_01_B
         BM_RC_01 -.->|嵌套| BM_RC_01_C
     end
-    BM_RC_10["【BM-RC-10 风险否决权】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-    BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    subgraph sg_BM_RC_11 ["独立风险数据管道"]
+        BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+        BM_RC_11_A["【BM-RC-11-A 独立风险指标计算】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_11_B["【BM-RC-11-B 风险报告生成】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_11 -.->|嵌套| BM_RC_11_A
+        BM_RC_11 -.->|嵌套| BM_RC_11_B
+    end
     subgraph sg_BM_RC_12 ["极端事件与黑天鹅"]
         BM_RC_12["【BM-RC-12 极端事件与黑天鹅】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
         BM_RC_12_A["【BM-RC-12-A 黑天鹅模式库】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
@@ -142,7 +152,7 @@ flowchart TD
         BM_RC_08 -.->|嵌套| BM_RC_08_D
         BM_RC_08 -.->|嵌套| BM_RC_08_E
     end
-    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_12 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
+    BM_RC_09 ~~~ BM_RC_10 ~~~ BM_RC_01 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_12 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
     BM_RC_01 -->|策略→盘前检查 / data_flow| BM_RC_02
     BM_RC_02 -->|检查→Kill Switch / trigger| BM_RC_03
     BM_RC_03 -->|熔断→盘中监控 / data_flow| BM_RC_04
@@ -156,7 +166,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C production
-    class BM_RC_04_E,BM_RC_04_F,BM_RC_06_D,BM_RC_08_D,BM_RC_08_E,BM_RC_12_A,BM_RC_12_B,BM_RC_12_C design
+    class BM_RC_04_E,BM_RC_04_F,BM_RC_06_D,BM_RC_08_D,BM_RC_08_E,BM_RC_10_A,BM_RC_11_A,BM_RC_11_B,BM_RC_12_A,BM_RC_12_B,BM_RC_12_C design
     class BM_RC_09,BM_RC_10,BM_RC_11,BM_RC_12 missing
     class BM_RC_05_C candidate
 ```
@@ -177,6 +187,25 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | Agent行为→监控→漂移检测→保障缺口评估→否决/Kill Switch |
 | ⑤ 代码映射 | 待开发（planned，D_RISK域） |
 | ⑥ 降级/中止 | 漂移超限→触发BM-RC-03 Kill Switch熔断 |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-10 风险否决权
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 风控规则触发否决条件/交易请求拦截 |
+| ② 消费数据/因子 | 风控策略+持仓状态+交易请求+BM-RC-01限额配置 |
+| ③ 参数 | 否决规则、否决执行机制、否决与策略逻辑隔离 |
+| ④ 数据流 | 交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch |
+| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
+| ⑥ 降级/中止 | 否决机制失效→硬阻断交易(安全优先) |
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
@@ -216,25 +245,6 @@ RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTO
 | depgraph | MOD-L04-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
-
-### BM-RC-10 风险否决权
-
-
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | 风控规则触发否决条件/交易请求拦截 |
-| ② 消费数据/因子 | 风控策略+持仓状态+交易请求+BM-RC-01限额配置 |
-| ③ 参数 | 否决规则、否决执行机制、否决与策略逻辑隔离 |
-| ④ 数据流 | 交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch |
-| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
-| ⑥ 降级/中止 | 否决机制失效→硬阻断交易(安全优先) |
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-01-A 风控策略CRUD与版本管理 / Risk Strategy CRUD & Versioning
 
@@ -1493,6 +1503,63 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘后/事件驱动（阈值: 系统故障/人为错误/Agent失控/级联失败）；②消费：系统日志+操作记录+Agent行为（来自 D-INFRA / D-AUTONOMY）；③参数：—；④数据流：系统日志+操作记录→系统故障检测+人为错误识别+Agent失控检测+级联失败分析→操作风险报告→BM-RES 策略迭代；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L252；⑥降级：操作风险审计未就绪→人工巡检。
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-10-A 否决执行引擎
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 策略信号到达订单执行入口前，否决规则引擎同步拦截判定是否放行/否决 |
+| ② 消费数据/因子 | 策略订单信号 + 否决规则(RC-10) + 实时持仓 + 实时行情 + Kill Switch状态 |
+| ③ 参数 | 同步拦截延迟<50ms(P99) + 不可绕过(所有下单必经引擎无旁路,HC-RISK-03) + 不可人工否决(HC-RISK-02防御性决策自动执行) + Kill Switch基础设施层实现(非Agent运行时内,OWASP ASI08) + 熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED) + 多路径激活(AI自动<1ms/人工<100ms/定时熔断5秒无心跳/外部信号<1s) + 否决审计(时间/规则/触发值/被否决指令/执行者) |
+| ④ 数据流 | 策略信号→否决规则引擎同步拦截→通过→订单执行 / 否决→否决日志+通知推送；Kill Switch多路径→基础设施层平仓 |
+| ⑤ 代码映射 | 待开发（planned，D_RISK域；Kill Switch需miniQMT API支持） |
+| ⑥ 降级/中止 | 否决引擎自身故障→熔断器OPEN→全拒订单(安全失败)；引擎不可用→Kill Switch激活(宁可停交易不可绕过风控) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-11-A 独立风险指标计算
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 独立风险数据管道(RC-11)接入数据后，按频率计算各类风险指标供风控决策 |
+| ② 消费数据/因子 | 独立风险数据(RC-11管道) + 行情+持仓 + 收益序列+因子暴露 + 概率密度预测 + Agent行为日志 |
+| ③ 参数 | 实时P&L+因子暴露+Amihud非流动性(每Tick 3秒,<1秒) + VaR/CVaR/ES(日频,≤5秒P99) + 密度感知VaR(日频,≤10秒) + 共形VaR校准(日频,≤5秒) + 漂移检测CUSUM(PSI/KS) + 压力测试+反向RST(周频,≤30分钟) + Agent行为监控(ASI/AST/MCP/隐性串谋越界检测) |
+| ④ 数据流 | 独立风险数据→各类指标计算→风险限额检查结果+漂移告警+韧性评估→RC-11-B风险报告 / RC-10否决引擎 |
+| ⑤ 代码映射 | 待开发（planned，D_RISK域；独立于交易数据流,§3.3 L2数据隔离） |
+| ⑥ 降级/中止 | 某类指标计算失效→标记该指标不可用+降级使用上一有效值+告警；不影响其他指标 |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-11-B 风险报告生成
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 风险指标(RC-11-A)产出后按频率生成各级风险报告供不同消费者 |
+| ② 消费数据/因子 | 风险指标计算结果(RC-11-A) + 否决统计(RC-10) + 漂移状态 + 压力测试结果 |
+| ③ 参数 | 日度风险摘要(收盘: VaR/CVaR/因子暴露/否决统计/漂移/Amihud→Trader+Risk Manager) + 周度风险深度(周五: 压力测试+漂移趋势+拥挤度+模型健康+反向RST→Risk Manager) + 事件风险快报(事件触发: 触发事件+影响评估+处置建议+历史类比→Trader即时推送) + 月度风险治理(月末: 参数变更审计+否决有效性+合规+Pod止损统计→Risk Manager+治理层) |
+| ④ 数据流 | 风险指标→按频率生成4类报告→Trader/Risk Manager/治理层→归档审计链 |
+| ⑤ 代码映射 | 待开发（planned，D_RISK/D_REPORTING域） |
+| ⑥ 降级/中止 | 报告生成失败→告警+人工补生成；事件快报通道失效→微信/CLI兜底推送 |
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 

@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_06_buy_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §buy_flow 阶段，22 环节（15 锚点）。
+> battle_map §buy_flow 阶段，24 环节（15 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-04
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
-| 环节数 | 22 | Steps | 22 |
+| 环节数 | 24 | Steps | 24 |
 | 锚点数（双向对齐） | 15 | Anchors (Bidirectional) | 15 |
 | 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 ｜ ⬜ 缺失态（无锚点）=6 ｜ 🟨 候选态（候选池）=2 | State Distribution | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 ｜ ⬜ 缺失态（无锚点）=6 ｜ 🟨 候选态（候选池）=2 |
+| 状态分布 | 🟧 设计态（待施工）=9 ｜ 🟦 运营态（已建）=7 ｜ ⬜ 缺失态（无锚点）=6 ｜ 🟨 候选态（候选池）=2 | State Distribution | 🟧 设计态（待施工）=9 ｜ 🟦 运营态（已建）=7 ｜ ⬜ 缺失态（无锚点）=6 ｜ 🟨 候选态（候选池）=2 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-04
 
 ## 阶段图 / Stage Diagram
 
-> 展示 买入 阶段全部 22 个环节及流转边，颜色区分五态。
+> 展示 买入 阶段全部 24 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -78,8 +78,14 @@ flowchart TD
     BM_BUY_04["【BM-BUY-04 分批建仓】<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>（设计态 / design）<br/>【Batched Position Building】"]
     BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控→仓位裁决→置信度分层→执行四级优先级，是人工<br/>干预系统的入口。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【External Order Monitoring】"]
     BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>（生产态 / production）<br/>【WeChat Interaction Hub】"]
-    BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
-    BM_BUY_09 ~~~ BM_BUY_10 ~~~ BM_BUY_01 ~~~ BM_BUY_11 ~~~ BM_BUY_12 ~~~ BM_BUY_13 ~~~ BM_BUY_15 ~~~ BM_BUY_04 ~~~ BM_BUY_02_A_1 ~~~ BM_BUY_02_A_1_a ~~~ BM_BUY_02_A_1_b ~~~ BM_BUY_02_A_1_c ~~~ BM_BUY_02_A_1_d ~~~ BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D
+    subgraph sg_BM_BUY_08 ["交易纪律合规闸"]
+        BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
+        BM_BUY_08_A["【BM-BUY-08-A 四项必做清单自动化检测】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_BUY_08_B["【BM-BUY-08-B 四项严禁自动化检测】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_BUY_08 -.->|嵌套| BM_BUY_08_A
+        BM_BUY_08 -.->|嵌套| BM_BUY_08_B
+    end
+    BM_BUY_09 ~~~ BM_BUY_10 ~~~ BM_BUY_01 ~~~ BM_BUY_11 ~~~ BM_BUY_12 ~~~ BM_BUY_13 ~~~ BM_BUY_15 ~~~ BM_BUY_04 ~~~ BM_BUY_02_A_1 ~~~ BM_BUY_02_A_1_a ~~~ BM_BUY_02_A_1_b ~~~ BM_BUY_02_A_1_c ~~~ BM_BUY_02_A_1_d ~~~ BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D ~~~ BM_BUY_08_A ~~~ BM_BUY_08_B
     BM_BUY_02 ~~~ BM_BUY_06
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
@@ -91,7 +97,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_02_A,BM_BUY_02_C,BM_BUY_02_D production
-    class BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_B design
+    class BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_B,BM_BUY_08_A,BM_BUY_08_B design
     class BM_BUY_09,BM_BUY_10,BM_BUY_11,BM_BUY_12,BM_BUY_13,BM_BUY_15 missing
     class BM_BUY_06,BM_BUY_08 candidate
 ```
@@ -752,6 +758,44 @@ BM-BUY-02 四轨融合的子环节（depth=1）。应急保命轨监听风控止
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
+
+### BM-BUY-08-A 四项必做清单自动化检测
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 交易日4个关键时点(盘前/盘中/盘后/晚间)自动检测四项必做清单完成度 |
+| ② 消费数据/因子 | 工作流完成度信号 + C-004实时风控参数 + 复盘报告生成状态 + 分析任务提交状态 |
+| ③ 参数 | 盘前复核(08:00前完成:前日复盘摘要+今日计划+风险检查清单;超时→Warning推送) + 盘中执行(策略信号合规检查+风控参数确认+仓位限额验证;C-004实时检查→Hard Block) + 盘后复盘(当日决策回顾+偏差分析+纪律自评;未完成→次日开盘前Warning) + 晚间分析(收盘数据+明日策略+风险预判;未完成→次日盘前Warning) |
+| ④ 数据流 | 4时点工作流信号→完成度检测→未完成Warning推送/盘中违规Hard Block→合规数据库→审计 |
+| ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域，D-COMPLIANCE-23 A-Share Trading Discipline Checker） |
+| ⑥ 降级/中止 | 检测失效→降级人工 checklist；不影响交易执行(必做是纪律辅助非阻断,盘中执行除外) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+
+### BM-BUY-08-B 四项严禁自动化检测
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 订单提交前+盘中实时检测四项严禁交易行为，触发即Hard Block |
+| ② 消费数据/因子 | 订单流 + 价格偏离度(C-004) + 持仓盈亏 + 同标的加仓记录 + 风险敞口变化率 + 交易频率/单笔规模 |
+| ③ 参数 | 踏空追高(价格追涨幅度超阈值+买入在急剧拉升后→Hard Block拒绝追高) + 被套补仓(持仓亏损>X%后继续加仓同一标的,X由合规官设定建议-5%→Hard Block拒绝补仓) + 盈利骄傲(连续盈利N笔后单笔风险敞口超常规→Warning推送提醒) + 亏损报复(当日亏损>Y%后交易频率/单笔规模异常增加,Y建议-2%→Hard Block触发强制停盘Kill Switch轻量版仅限该策略) |
+| ④ 数据流 | 订单+盘中行为→4项严禁检测→命中→Hard Block/Warning/Kill Switch轻量版→合规数据库→违规统计/趋势追踪 |
+| ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域，D-COMPLIANCE-23；C-004风控引擎嵌入检测） |
+| ⑥ 降级/中止 | 检测引擎失效→保守Hard Block拒绝订单(安全失败)；Kill Switch轻量版失效→升级全局Kill Switch(RC-03) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 
 [← 返回总指挥图](battle_map_panorama.md)
