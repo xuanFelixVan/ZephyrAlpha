@@ -2210,3 +2210,57 @@ tasks:
   symbols:
   extra:
     description: "分省生猪现价快照（AKShare spot_hog_soozhu，当天28省区域价差）"
+
+# ============== EDB 国际宏观数据扩展（#ARCH-EDB-EXPAND，2026-08-04）==============
+# FRED（美联储经济数据库）+ 世界银行 免费国际宏观数据
+# 与 akshare macro_data 共表 c1_market.macro_data，通过 indicator_name 前缀区分：
+#   FRED 指标: FRED_GDP_US / FRED_CPI_US / FRED_FEDFUNDS_US ...
+#   世界银行指标: WB_GDP_USD/CN / WB_POP/CN / WB_EXPORT/CN ...
+# FRED 需 API key（免费注册），世界银行无需 key
+# 海外站点，国内访问可能需 VPN（scheduler 探测 VPN 状态，关闭时跳过）
+- task_id: macro_worldbank_full_refresh
+  table: c1_market.macro_data
+  source: fred
+  schedule: weekend_calibration    # 年度数据，周末全量刷新即可
+  incremental: false
+  date_col: report_date
+  dependencies: []
+  capability: macro_worldbank
+  symbols:
+  extra:
+    capability: macro_worldbank    # fred_provider 按 extra.capability 路由
+    description: "世界银行国际宏观数据全量刷新（各国GDP/人口/进出口/通胀/FDI/外汇储备，年度数据，约12指标×全经济体）"
+
+  fallback_sources: []    # 世界银行国际宏观数据无国内 fallback 源
+
+- task_id: macro_fred_incremental
+  table: c1_market.macro_data
+  source: fred
+  schedule: event_driven    # FRED 日度/月度数据，事件驱动增量
+  incremental: true
+  date_col: report_date
+  dependencies: []
+  capability: macro_fred
+  symbols:
+  extra:
+    capability: macro_fred    # fred_provider 按 extra.capability 路由
+    description: "FRED宏观数据增量（美国GDP/CPI/失业率/国债收益率/美元汇率/原油WTI/黄金/VIX，22序列）"
+    note: "需配置 FRED_API_KEY（免费注册），无 key 时 health_check 失败，scheduler 跳过本任务"
+
+  fallback_sources: []    # FRED 国际宏观数据无国内 fallback 源
+
+- task_id: macro_fred_full_refresh
+  table: c1_market.macro_data
+  source: fred
+  schedule: weekend_calibration    # 周末全量回补5年历史
+  incremental: false
+  date_col: report_date
+  dependencies: []
+  capability: macro_fred
+  symbols:
+  extra:
+    capability: macro_fred
+    description: "FRED宏观数据全量刷新（5年历史回补，22序列）"
+    note: "需配置 FRED_API_KEY；周末全量回补确保历史完整性"
+
+  fallback_sources: []

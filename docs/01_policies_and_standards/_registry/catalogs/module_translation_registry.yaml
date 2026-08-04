@@ -40821,6 +40821,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
+- module_path: src/zephyr/data/implementations/fred_provider.py
+  domain_id: D_DATA
+  name_zh: "FRED宏观数据获取器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从美联储经济数据库(FRED)和世界银行API免费获取国际宏观经济指标，包括美国GDP/CPI/失业率/国债收益率/汇率/大宗商品，以及各国GDP/人口/进出口等，补充国内数据源覆盖不到的国际对比数据"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

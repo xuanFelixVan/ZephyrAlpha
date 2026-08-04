@@ -92,6 +92,9 @@ _EXEMPT_FILES: frozenset[str] = frozenset(
         "scripts/governance/d6_security/detect_secrets.py",
         "src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py",
         "src/zephyr/shared/security/secrets.py",  # 密钥读取模块（含 KEY 常量引用，非硬编码值）
+        # creation_tokens 注册表——token 字段是创建意图标记（auto-xxx），非密钥
+        # CREATE-GUARD 门禁要求新 .py 文件在此登记 token，与 NO-SECRET-HARDCODE 形成冲突
+        "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
     }
 )
 

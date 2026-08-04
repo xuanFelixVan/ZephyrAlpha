@@ -8059,6 +8059,13 @@ creation_tokens:
     capability: "secret_registry"
     note: "结构化密钥声明注册表（72 KEY 真源，与 .env.example 双源对齐）"
 
+  # --- FRED/世界银行 宏观数据 provider（2026-08-04，#ARCH-EDB-EXPAND）---
+  - file: "src/zephyr/data/implementations/fred_provider.py"
+    token: "auto-fred-provider-20260804"
+    created_by: "session-fred-provider-impl"
+    capability: "fred_macro_data"
+    note: "FRED+WorldBank 免费宏观数据获取（美国GDP/CPI/国债收益率 + 各国GDP/人口/进出口）"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

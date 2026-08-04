@@ -30,6 +30,7 @@ APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖
 - subscribe(event, handler)：注册事件处理器
 - 支持事件：config_changed（策略热更新）/ shutdown（优雅关闭）/ task_completed（任务完成回调）
 """
+
 from __future__ import annotations
 
 import datetime
@@ -40,20 +41,23 @@ import threading
 import time
 from pathlib import Path
 from socketserver import ThreadingMixIn
-from typing import Callable, Any
+from typing import Any, Callable
 
-from zephyr.data.provider_base import IngestProviderBase, FetchPayload, FetchResult
-from zephyr.data.policy_registry import PolicyRegistry, get_registry
-from zephyr.data.progress_store import ProgressStore, get_store
-from zephyr.data.task_queue import TaskQueue, SUCCESS, FAILED, PENDING, RUNNING
-from zephyr.data.alerter import Alerter, LEVEL_ERROR, LEVEL_CRITICAL
-from . import ch_writer  # 相对导入：避免 depgraph 记录到 zephyr.data 包节点导致循环（裁定#213）
-from . import ch_reader  # 健康检查走 ch_reader 自动注入 FINAL（裁定 #ARCH-CH-007）
+from zephyr.data import local_replay
+from zephyr.data.alerter import LEVEL_CRITICAL, LEVEL_ERROR, Alerter
 from zephyr.data.buffered_writer import BufferedWriter
 from zephyr.data.metrics import IntegratorMetrics, get_metrics
-from zephyr.data.trading_calendar import is_trading_day, TRADING_DAY_GUARDED_SCHEDULES
-from zephyr.data import local_replay
+from zephyr.data.policy_registry import PolicyRegistry, get_registry
+from zephyr.data.progress_store import ProgressStore, get_store
+from zephyr.data.provider_base import FetchPayload, FetchResult, IngestProviderBase
+from zephyr.data.task_queue import FAILED, PENDING, RUNNING, SUCCESS, TaskQueue
+from zephyr.data.trading_calendar import TRADING_DAY_GUARDED_SCHEDULES, is_trading_day
 from zephyr.shared.io.paths import REPO_ROOT
+
+from . import (
+    ch_reader,  # 健康检查走 ch_reader 自动注入 FINAL（裁定 #ARCH-CH-007）
+    ch_writer,  # 相对导入：避免 depgraph 记录到 zephyr.data 包节点导致循环（裁定#213）
+)
 
 log = logging.getLogger(__name__)
 
@@ -73,7 +77,7 @@ _SQL_TEXT_LOG_CHECKSUM = (
 )
 
 # 模块级调度器单例（供 APScheduler job 回调使用，避免 pickle 绑定方法+Lock 对象）
-_global_scheduler: "IntegratorScheduler | None" = None
+_global_scheduler: IntegratorScheduler | None = None
 
 # 调度周期串行化锁（裁定 #ARCH-CH-016）
 # 根因：_run_schedule_dag 第155行 scheduler._task_queue = TaskQueue() 会重新创建队列，
@@ -125,7 +129,8 @@ def _schedule_should_skip(schedule_name: str, sched_config: dict) -> bool:
 
 
 def _run_special_schedule(
-    scheduler: "IntegratorScheduler", schedule_name: str,
+    scheduler: IntegratorScheduler,
+    schedule_name: str,
 ) -> dict[str, bool] | None:
     """处理 weekend_backfill / daily_backfill / integrity_check 特殊时段。
 
@@ -134,16 +139,19 @@ def _run_special_schedule(
     # L10 周末补下载层：不走常规 run_task，调用 backfill_checker 独立处理
     if schedule_name == "weekend_backfill":
         from zephyr.data.backfill_checker import run_weekend_backfill
+
         result = run_weekend_backfill(scheduler)
         return {"tick_backfill_weekly": result.get("success", False)}
     # L10.5 每日盘后补下载层：检测当日缺口并补下载（治本 #ARCH-DATA-TICK-GAP-001）
     if schedule_name == "daily_backfill":
         from zephyr.data.backfill_checker import run_daily_backfill
+
         result = run_daily_backfill(scheduler)
         return {"daily_backfill": result.get("success", False)}
     # 每日数据完整性巡检：动态发现全表，检测当日数据是否达标
     if schedule_name == "integrity_check":
         from zephyr.data.integrity_checker import run_daily_check
+
         result = run_daily_check(scheduler)
         return {"integrity_check_daily": result.get("success", False)}
     return None
@@ -172,24 +180,26 @@ def _filter_schedule_tasks(tasks: list[dict], schedule_name: str) -> list[dict]:
             continue
         # 拼写防护：miniqmt 任务在非守卫时段必须有 trading_day_only
         source = t.get("source", "")
-        if (source == "miniqmt"
-                and schedule_name not in TRADING_DAY_GUARDED_SCHEDULES
-                and extra.get("trading_day_only") is not True):
+        if (
+            source == "miniqmt"
+            and schedule_name not in TRADING_DAY_GUARDED_SCHEDULES
+            and extra.get("trading_day_only") is not True
+        ):
             log.warning(
                 "任务 %s（source=miniqmt, schedule=%s）缺少 trading_day_only: true，"
                 "非交易日将触发 QMT error 10061。请检查字段拼写是否正确。",
-                t.get("task_id"), schedule_name,
+                t.get("task_id"),
+                schedule_name,
             )
         if extra.get("trading_day_only") and not is_trading:
-            log.info("任务 %s 跳过：trading_day_only 且今日(%s)非交易日",
-                     t.get("task_id"), today)
+            log.info("任务 %s 跳过：trading_day_only 且今日(%s)非交易日", t.get("task_id"), today)
             continue
         result.append(t)
     return result
 
 
 def _run_schedule_dag(
-    scheduler: "IntegratorScheduler",
+    scheduler: IntegratorScheduler,
     schedule_name: str,
     schedule_tasks: list[dict],
 ) -> dict[str, bool]:
@@ -212,7 +222,7 @@ def _run_schedule_dag(
         task_queue.add_task(t)
 
     # 动态调度——FIRST_COMPLETED 模式：任务完成后立即提交新就绪的依赖任务
-    from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
+    from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 
     results: dict[str, bool] = {}
     max_workers = 8
@@ -249,16 +259,13 @@ def _run_schedule_dag(
                 new_ready = task_queue.get_ready_tasks()
                 for tid in new_ready:
                     if tid not in submitted:
-                        future_map[pool.submit(
-                            scheduler.run_task, tid, task_queue=task_queue
-                        )] = tid
+                        future_map[pool.submit(scheduler.run_task, tid, task_queue=task_queue)] = tid
                         submitted.add(tid)
 
     # 检查 BLOCKED 任务（前置失败的下游任务）
     blocked = task_queue.list_by_status("BLOCKED")
     if blocked:
-        log.warning("时段 %s 有 %d 个 BLOCKED 任务: %s",
-                     schedule_name, len(blocked), blocked)
+        log.warning("时段 %s 有 %d 个 BLOCKED 任务: %s", schedule_name, len(blocked), blocked)
 
     # 汇总
     success_count = sum(1 for v in results.values() if v)
@@ -312,6 +319,7 @@ class IntegratorScheduler:
             reaped = self._progress_store.reap_stale_runs(max_age_hours=24)
             if reaped:
                 import logging
+
                 logging.getLogger(__name__).warning(
                     "调度器启动时清理了 %d 个卡死任务（RUNNING > 24h，可能是上次进程崩溃）",
                     len(reaped),
@@ -485,6 +493,7 @@ class IntegratorScheduler:
         - get_health() 只读缓存（非阻塞），保证 100ms 内响应
         - 缓存超过 3 个间隔未更新 → 判定探活线程死亡
         """
+
         def _probe_loop() -> None:
             # CH 探活告警阈值（连续失败次数，与 HeartbeatMonitor 对齐）
             ch_probe_fail_threshold = 3
@@ -531,8 +540,7 @@ class IntegratorScheduler:
                             pass
                 else:
                     self._ch_probe_fail_count += 1
-                    if (self._ch_probe_fail_count >= ch_probe_fail_threshold
-                            and not self._ch_probe_alerted_dead):
+                    if self._ch_probe_fail_count >= ch_probe_fail_threshold and not self._ch_probe_alerted_dead:
                         self._ch_probe_alerted_dead = True
                         try:
                             self._alerter.notify(
@@ -574,19 +582,20 @@ class IntegratorScheduler:
         - 6h 阈值依据：全市场最长任务（财务/研报）通常 2-4h，
           超过 6h 基本可判定为卡死
         """
+
         def _reap_loop() -> None:
             while self._started:
                 time.sleep(self._stale_reap_interval)
                 try:
-                    reaped = self._progress_store.reap_stale_runs(
-                        max_age_hours=self._stale_reap_max_age_hours
-                    )
+                    reaped = self._progress_store.reap_stale_runs(max_age_hours=self._stale_reap_max_age_hours)
                     if reaped:
                         n = len(reaped)
                         task_ids = [r["task_id"] for r in reaped]
                         log.warning(
                             "定期清理：发现并清理了 %d 个卡死任务（RUNNING > %dh）: %s",
-                            n, self._stale_reap_max_age_hours, task_ids,
+                            n,
+                            self._stale_reap_max_age_hours,
+                            task_ids,
                         )
                         # 告警触达（#ARCH-DATA-PIPELINE-001 B-卡死治理）：
                         # 飞书 webhook / SMTP 邮件（未配置则静默跳过，不影响主流程）
@@ -604,7 +613,8 @@ class IntegratorScheduler:
         t.start()
         log.info(
             "卡死任务定期清理线程已启动（间隔 %ds，阈值 %dh）",
-            self._stale_reap_interval, self._stale_reap_max_age_hours,
+            self._stale_reap_interval,
+            self._stale_reap_max_age_hours,
         )
 
     # ============== 本地落盘回灌（裁定 #ARCH-CH-013 Phase 1） ==============
@@ -622,6 +632,7 @@ class IntegratorScheduler:
         - 回灌复用 ch_writer.write_tsv（CH 可用时立即成功）
         - 单次回灌上限 100 文件（避免长时间阻塞）
         """
+
         def _replay_loop() -> None:
             # 启动时立即检查一次
             try:
@@ -781,7 +792,8 @@ class IntegratorScheduler:
                     target = new_parts[0]
                     log.error(
                         "检测到破损 part: %s（共 %d 个未处理，本次处理 1 个）",
-                        target, len(new_parts),
+                        target,
+                        len(new_parts),
                     )
 
                     location = _find_part(target)
@@ -812,8 +824,7 @@ class IntegratorScheduler:
 
         t = threading.Thread(target=_detect_loop, daemon=True, name="corrupted-part-detector")
         t.start()
-        log.info("破损 part 检测线程已启动（间隔 %ds，冷却 %ds）",
-                 _CHECK_INTERVAL, _COOLDOWN)
+        log.info("破损 part 检测线程已启动（间隔 %ds，冷却 %ds）", _CHECK_INTERVAL, _COOLDOWN)
 
     # ============== 配置加载 ==============
 
@@ -847,6 +858,7 @@ class IntegratorScheduler:
         # 消除"tasks.yaml + registry 双真源漂移"风险（声明闭环→消费闭环）。
         try:
             from zephyr.data.table_registry import get_registry
+
             registry = get_registry()
             warnings = registry.validate_tasks_yaml(self._tasks)
             for w in warnings:
@@ -882,11 +894,12 @@ class IntegratorScheduler:
         - WARN 级违规 → log.warning（记录但不阻断，渐进式收紧）
         """
         from zephyr.data.capability_validator import (
-            validate_task_capability_contracts,
-            has_blocking_violations,
-            format_violations,
             check_route_meta_consistency,
+            format_violations,
+            has_blocking_violations,
+            validate_task_capability_contracts,
         )
+
         # 收集 tasks 涉及的所有 source，通过类属性读取 meta（无需实例化）
         metas: dict[str, Any] = {}
         source_to_meta = {
@@ -901,6 +914,7 @@ class IntegratorScheduler:
             "ifind": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "ifind_provider.py",
         }
         import importlib
+
         for task in self._tasks:
             source = task.get("source")
             if not source or source in metas or source not in source_to_meta:
@@ -915,8 +929,7 @@ class IntegratorScheduler:
                 log.warning("读取 %s.meta 失败（跳过契约校验）: %s", source, e)
         violations = validate_task_capability_contracts(self._tasks, metas)
         if violations:
-            log.warning("Capability 契约校验发现 %d 条违规:\n%s",
-                        len(violations), format_violations(violations))
+            log.warning("Capability 契约校验发现 %d 条违规:\n%s", len(violations), format_violations(violations))
         else:
             log.info("Capability 契约校验通过（0 违规，裁定 #ARCH-CH-022）")
         if has_blocking_violations(violations):
@@ -976,37 +989,53 @@ class IntegratorScheduler:
         try:
             if source == "ifind":
                 from zephyr.data.implementations.ifind_provider import IFindProvider
+
                 return IFindProvider()
             elif source == "miniqmt":
                 from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
+
                 return MiniQmtIngestProvider()
             elif source == "akshare":
                 from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
+
                 return AkshareIngestProvider()
             elif source == "baostock":
                 from zephyr.data.implementations.baostock_provider import BaostockProvider
+
                 return BaostockProvider()
             elif source == "tushare":
                 from zephyr.data.implementations.tushare_provider import TushareProvider
+
                 return TushareProvider()
             elif source == "tickflow":
                 from zephyr.data.implementations.tickflow_provider import TickFlowProvider
+
                 return TickFlowProvider()
             elif source == "tdx":
                 from zephyr.data.implementations.tdx_provider import TDXProvider
+
                 return TDXProvider()
             elif source == "rss":
                 from zephyr.data.implementations.rss_provider import RSSProvider
+
                 return RSSProvider()
             elif source == "cls":
                 from zephyr.data.implementations.cls_provider import ClsProvider
+
                 return ClsProvider()
             elif source == "eastmoney_news":
                 from zephyr.data.implementations.eastmoney_news_provider import EastmoneyNewsProvider
+
                 return EastmoneyNewsProvider()
             elif source == "tqcenter":
                 from zephyr.data.implementations.tqcenter_provider import TQCenterProvider
+
                 return TQCenterProvider()
+            elif source == "fred":
+                # #ARCH-EDB-EXPAND（2026-08-04）：FRED + 世界银行免费宏观数据
+                from zephyr.data.implementations.fred_provider import FredProvider
+
+                return FredProvider()
             else:
                 log.warning("未知数据源: %s", source)
                 return None
@@ -1054,13 +1083,9 @@ class IntegratorScheduler:
             return False
 
         # 构造数据源尝试列表：主源 + 副源
-        sources_to_try: list[tuple[str, str | None]] = [
-            (task["source"], task.get("capability"))
-        ]
+        sources_to_try: list[tuple[str, str | None]] = [(task["source"], task.get("capability"))]
         for fb in task.get("fallback_sources") or []:
-            sources_to_try.append(
-                (fb["source"], fb.get("capability", task.get("capability")))
-            )
+            sources_to_try.append((fb["source"], fb.get("capability", task.get("capability"))))
 
         last_error: str | None = None
         for i, (source, capability) in enumerate(sources_to_try):
@@ -1071,49 +1096,61 @@ class IntegratorScheduler:
             health_status = "unchecked"
             try:
                 from zephyr.data.source_health_check import get_source_health
+
                 health = get_source_health(source)
                 if health:
                     health_status = health.get("status", "unknown")
                     if health_status in (
-                        "connect_fail", "test_fail", "env_missing",
-                        "import_fail", "empty_data",
+                        "connect_fail",
+                        "test_fail",
+                        "env_missing",
+                        "import_fail",
+                        "empty_data",
                     ):
                         log.info(
                             "任务 %s 跳过源 %s（健康检查: %s, %s）",
-                            task_id, source, health_status,
+                            task_id,
+                            source,
+                            health_status,
                             (health.get("error") or "")[:80],
                         )
                         last_error = f"健康检查失败: {health.get('error', health_status)}"
                         continue
-            except Exception:
-                pass  # 健康检查模块异常不影响正常调度
+            except Exception:  # noqa: BLE001 — 健康检查模块异常不影响正常调度
+                pass
             # 健康检查通过/未检查——记录即将执行（主源或 fallback，含健康状态便于排查）
             log.info(
                 "任务 %s %s源 %s 健康检查=%s，开始执行",
-                task_id, "fallback " if is_fallback else "主", source, health_status,
+                task_id,
+                "fallback " if is_fallback else "主",
+                source,
+                health_status,
             )
             if is_fallback:
                 self._alerter.notify(
-                    task_id, f"主源失败({last_error}), fallback到 {source}",
-                    level=LEVEL_ERROR, source=source,
+                    task_id,
+                    f"主源失败({last_error}), fallback到 {source}",
+                    level=LEVEL_ERROR,
+                    source=source,
                 )
-            success, error = self._try_source(
-                task, task_id, source, capability, is_fallback, task_queue=tq
-            )
+            success, error = self._try_source(task, task_id, source, capability, is_fallback, task_queue=tq)
             if success:
                 return True
             last_error = error
             if i < len(sources_to_try) - 1:
                 from zephyr.data.error_classifier import is_unrecoverable
+
                 if is_unrecoverable(error):
                     log.info(
                         "任务 %s 源 %s 不可恢复错误，立即fallback",
-                        task_id, source,
+                        task_id,
+                        source,
                     )
                 else:
                     log.info(
                         "任务 %s 源 %s 失败，尝试下一个源",
-                        task_id, source,
+                        task_id,
+                        source,
                     )
         # 所有源都失败——确保任务标记为 FAILED（治本修复 #ARCH-DAG-DYNAMIC-SCHEDULING）
         # _try_source 在验证阶段失败时不会 mark_failed，需在此兜底
@@ -1121,8 +1158,12 @@ class IntegratorScheduler:
         return False
 
     def _try_source(
-        self, task: dict, task_id: str, source: str,
-        capability: str | None, is_fallback: bool = False,
+        self,
+        task: dict,
+        task_id: str,
+        source: str,
+        capability: str | None,
+        is_fallback: bool = False,
         task_queue: TaskQueue | None = None,
     ) -> tuple[bool, str | None]:
         """尝试单个数据源执行任务（run_task 的核心逻辑）。
@@ -1167,8 +1208,15 @@ class IntegratorScheduler:
         tq.mark_running(task_id)
         task_start_ts = time.time()
 
-        log.info("任务 %s 开始: source=%s table=%s start=%s end=%s fallback=%s",
-                 task_id, source, table, start, today, is_fallback)
+        log.info(
+            "任务 %s 开始: source=%s table=%s start=%s end=%s fallback=%s",
+            task_id,
+            source,
+            table,
+            start,
+            today,
+            is_fallback,
+        )
 
         total_rows = 0
         last_error: str | None = None
@@ -1210,9 +1258,7 @@ class IntegratorScheduler:
             # 完成
             task_elapsed = time.time() - task_start_ts
             if last_error:
-                self._progress_store.save_progress(
-                    task_id, source, latest_key, "FAILED", total_rows, last_error
-                )
+                self._progress_store.save_progress(task_id, source, latest_key, "FAILED", total_rows, last_error)
                 if run_id:
                     self._progress_store.finish_run(run_id, "FAILED", total_rows, writer.total_flushed, last_error)
                 tq.mark_failed(task_id)
@@ -1222,9 +1268,7 @@ class IntegratorScheduler:
                 self.emit_event("task_completed", task_id=task_id, success=False)
                 return False, last_error
             else:
-                self._progress_store.save_progress(
-                    task_id, source, latest_key, "SUCCESS", total_rows
-                )
+                self._progress_store.save_progress(task_id, source, latest_key, "SUCCESS", total_rows)
                 if run_id:
                     self._progress_store.finish_run(run_id, "SUCCESS", total_rows, writer.total_flushed)
                 tq.mark_completed(task_id)
@@ -1236,7 +1280,12 @@ class IntegratorScheduler:
                     log.warning(
                         "任务 %s SUCCESS 但 0 行写入: source=%s table=%s start=%s end=%s "
                         "last_key=%s (可能provider静默失败或当日无新数据)",
-                        task_id, source, table, start, today, latest_key,
+                        task_id,
+                        source,
+                        table,
+                        start,
+                        today,
+                        latest_key,
                     )
                 else:
                     log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
@@ -1249,10 +1298,8 @@ class IntegratorScheduler:
             last_error = str(e)
             log.error("任务 %s 异常: %s", task_id, e, exc_info=True)
             task_elapsed = time.time() - task_start_ts
-            rows_written = writer.total_flushed if 'writer' in locals() else 0
-            self._progress_store.save_progress(
-                task_id, source, latest_key, "FAILED", total_rows, last_error
-            )
+            rows_written = writer.total_flushed if "writer" in locals() else 0
+            self._progress_store.save_progress(task_id, source, latest_key, "FAILED", total_rows, last_error)
             if run_id:
                 self._progress_store.finish_run(run_id, "FAILED", total_rows, rows_written, last_error)
             tq.mark_failed(task_id)
@@ -1265,7 +1312,9 @@ class IntegratorScheduler:
     # ===== _try_source() 辅助方法 =====
 
     def _validate_provider_and_policy(
-        self, task_id: str, source: str,
+        self,
+        task_id: str,
+        source: str,
     ) -> tuple[object, object | None, str | None]:
         """验证 Provider 可用性和熔断状态。返回 (provider, policy, error)。
 
@@ -1282,7 +1331,7 @@ class IntegratorScheduler:
             return None, None, f"Provider {source} 不可用"
 
         # 自动重连：如果 Provider 已断开连接（如 iFind 会话过期 -1010），尝试重连
-        if hasattr(provider, '_connected') and not provider._connected:
+        if hasattr(provider, "_connected") and not provider._connected:
             log.warning("Provider %s 连接已断开，尝试自动重连...", source)
             try:
                 provider.connect()
@@ -1290,8 +1339,10 @@ class IntegratorScheduler:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("Provider %s 自动重连失败: %s", source, e)
                 self._alerter.notify(
-                    task_id, f"Provider {source} 自动重连失败: {e}",
-                    level=LEVEL_ERROR, source=source,
+                    task_id,
+                    f"Provider {source} 自动重连失败: {e}",
+                    level=LEVEL_ERROR,
+                    source=source,
                 )
                 return None, None, f"Provider {source} 自动重连失败: {e}"
 
@@ -1299,15 +1350,15 @@ class IntegratorScheduler:
         # 熔断检查（CLI `integrator pause <source>` 生效点）
         if not policy.enabled:
             log.warning("任务 %s 跳过：数据源 %s 已熔断", task_id, source)
-            self._alerter.notify(
-                task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source
-            )
+            self._alerter.notify(task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source)
             return None, None, f"源 {source} 已熔断"
 
         return provider, policy, None
 
     def _compute_start_date(
-        self, task_id: str, incremental: bool,
+        self,
+        task_id: str,
+        incremental: bool,
     ) -> tuple[datetime.date, str]:
         """计算起始日期和初始 latest_key（断点续传或月初）。"""
         last_key = self._progress_store.get_last_key(task_id)
@@ -1322,8 +1373,11 @@ class IntegratorScheduler:
 
     @staticmethod
     def _build_fetch_payload(
-        task: dict, start: datetime.date, today: datetime.date,
-        incremental: bool, capability: str | None,
+        task: dict,
+        start: datetime.date,
+        today: datetime.date,
+        incremental: bool,
+        capability: str | None,
     ) -> FetchPayload:
         """构造 FetchPayload（capability 注入 extra 供 provider 路由）。"""
         extra = dict(task.get("extra", {}) or {})
@@ -1339,8 +1393,13 @@ class IntegratorScheduler:
         )
 
     def _cleanup_for_idempotency(
-        self, task: dict, task_id: str, table: str,
-        start: datetime.date, today: datetime.date, incremental: bool,
+        self,
+        task: dict,
+        task_id: str,
+        table: str,
+        start: datetime.date,
+        today: datetime.date,
+        incremental: bool,
     ) -> None:
         """幂等性清理：写入前 DELETE 已有日期范围数据。
 
@@ -1357,13 +1416,16 @@ class IntegratorScheduler:
         if not dates_to_clean:
             return
         date_list = ", ".join(f"toDate('{dd}')" for dd in dates_to_clean)
-        log.info("任务 %s 幂等DELETE: %s WHERE toDate(%s) IN (%d dates)",
-                 task_id, table, date_col, len(dates_to_clean))
+        log.info("任务 %s 幂等DELETE: %s WHERE toDate(%s) IN (%d dates)", task_id, table, date_col, len(dates_to_clean))
         ch_writer.delete_where(table, f"toDate({date_col}) IN ({date_list})")
 
     def _fetch_and_write(
-        self, fetch_iter: object, writer: BufferedWriter,
-        task_id: str, source: str, latest_key: str,
+        self,
+        fetch_iter: object,
+        writer: BufferedWriter,
+        task_id: str,
+        source: str,
+        latest_key: str,
     ) -> tuple[int, str | None, str]:
         """执行 fetch + 批量写入循环。返回 (total_rows, last_error, latest_key)。"""
         total_rows = 0
@@ -1378,6 +1440,7 @@ class IntegratorScheduler:
             # 新闻数据去重（基于标题MD5哈希）
             if "news_data" in (result.table or ""):
                 from zephyr.data.news_dedup import dedup_news_result
+
                 result = dedup_news_result(result)
 
             # 攒批写入 ClickHouse（达 50000 行或 buffer_max_seconds 自动 flush）
@@ -1398,9 +1461,7 @@ class IntegratorScheduler:
                 latest = result.last_key
 
             # 更新进度（每批）
-            self._progress_store.save_progress(
-                task_id, source, latest, "RUNNING", total_rows
-            )
+            self._progress_store.save_progress(task_id, source, latest, "RUNNING", total_rows)
         return total_rows, last_error, latest
 
     def run_schedule(self, schedule_name: str) -> dict[str, bool]:
@@ -1459,6 +1520,7 @@ class IntegratorScheduler:
                 if sched_type == "interval":
                     seconds = int(sched_config.get("seconds", 3))
                     from apscheduler.triggers.interval import IntervalTrigger
+
                     trigger = IntervalTrigger(seconds=seconds)
                     self._scheduler.add_job(
                         _run_schedule_callback,
@@ -1514,6 +1576,7 @@ class IntegratorScheduler:
             # 结果写入 logs/source_health_YYYYMMDD.log，异常源记录但不自动禁用
             try:
                 from zephyr.data.source_health_check import run_source_health_check
+
                 run_source_health_check()
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.warning("数据源健康检查失败（不影响调度器启动）: %s", e)
@@ -1536,25 +1599,25 @@ class IntegratorScheduler:
 
     def init_scheduler(self) -> None:
         """初始化 APScheduler BackgroundScheduler（Stage 4 公共化，primary）。"""
-        from apscheduler.schedulers.background import BackgroundScheduler
-        from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
         from apscheduler.executors.pool import ThreadPoolExecutor
+        from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+        from apscheduler.schedulers.background import BackgroundScheduler
 
         self._scheduler = BackgroundScheduler(
             jobstores={
                 "default": SQLAlchemyJobStore(url=self._jobs_db),
             },
             executors={
-                "default": ThreadPoolExecutor(8),    # 通用任务（可并行源）
-                "heavy": ThreadPoolExecutor(2),      # 串行源（iFind/QMT）
-                "realtime": ThreadPoolExecutor(4),   # 盘中实时层（独立线程池，不与批量争抢）
+                "default": ThreadPoolExecutor(8),  # 通用任务（可并行源）
+                "heavy": ThreadPoolExecutor(2),  # 串行源（iFind/QMT）
+                "realtime": ThreadPoolExecutor(4),  # 盘中实时层（独立线程池，不与批量争抢）
                 "intraday_minute": ThreadPoolExecutor(4),  # 盘中分钟K线层（schedule.yaml intraday_minute 时段专用）
                 "intraday_sector": ThreadPoolExecutor(2),  # 板块分钟K线层（tdx TCP直连，独立于miniqmt慢任务）
             },
             job_defaults={
-                "coalesce": True,                  # 错过多次只跑一次
-                "max_instances": 1,                # 同任务不并发
-                "misfire_grace_time": 3600,        # 错过1小时内仍补跑
+                "coalesce": True,  # 错过多次只跑一次
+                "max_instances": 1,  # 同任务不并发
+                "misfire_grace_time": 3600,  # 错过1小时内仍补跑
             },
         )
 
@@ -1633,10 +1696,12 @@ class IntegratorScheduler:
         if self._scheduler:
             try:
                 for job in self._scheduler.get_jobs():
-                    jobs.append({
-                        "id": job.id,
-                        "next_run_time": str(job.next_run_time) if job.next_run_time else None,
-                    })
+                    jobs.append(
+                        {
+                            "id": job.id,
+                            "next_run_time": str(job.next_run_time) if job.next_run_time else None,
+                        }
+                    )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.warning("获取 APScheduler jobs 失败: %s", e)
 
@@ -1673,6 +1738,7 @@ class IntegratorScheduler:
 
 # ============== 监控 HTTP 端点 ==============
 
+
 class _MonitorHandler(http.server.BaseHTTPRequestHandler):
     """监控 HTTP handler（标准库实现，无额外依赖）。
 
@@ -1682,7 +1748,7 @@ class _MonitorHandler(http.server.BaseHTTPRequestHandler):
     - GET /status  → JSON 调度器基本状态
     """
 
-    scheduler: "IntegratorScheduler | None" = None  # 类变量，由 start_monitor 设置
+    scheduler: IntegratorScheduler | None = None  # 类变量，由 start_monitor 设置
 
     def do_GET(self) -> None:
         if self.path == "/metrics":
@@ -1697,6 +1763,7 @@ class _MonitorHandler(http.server.BaseHTTPRequestHandler):
     def _handle_metrics(self) -> None:
         """输出 Prometheus 文本格式指标。"""
         from zephyr.data.metrics import get_metrics
+
         m = get_metrics()
         m.update_uptime()
         body = m.render()
@@ -1748,7 +1815,7 @@ class _ThreadingHTTPServer(ThreadingMixIn, http.server.HTTPServer):
     daemon_threads = True
 
 
-def start_monitor(scheduler: "IntegratorScheduler", port: int = 9100) -> None:
+def start_monitor(scheduler: IntegratorScheduler, port: int = 9100) -> None:
     """启动监控 HTTP server（后台守护线程）。
 
     Args:
@@ -1764,7 +1831,8 @@ def start_monitor(scheduler: "IntegratorScheduler", port: int = 9100) -> None:
     except OSError as e:
         log.warning(
             "监控 HTTP server 启动失败（端口 %d 被占用: %s），调度器继续运行（无 HTTP 监控）",
-            port, e,
+            port,
+            e,
         )
         return
     t = threading.Thread(target=server.serve_forever, daemon=True, name="monitor-http")
@@ -1773,6 +1841,7 @@ def start_monitor(scheduler: "IntegratorScheduler", port: int = 9100) -> None:
 
 
 # ============== 入口 ==============
+
 
 def main() -> None:
     """调度器入口：启动常驻进程。
@@ -1786,10 +1855,12 @@ def main() -> None:
     # 显式加载 CH 配置（裁定 #ARCH-CH-017：启动入口必须加载 .env.clickhouse）
     # ch_writer 模块级已加载一次，此处幂等调用确保启动序列明确
     from zephyr.data.ch_config import ensure_ch_env_loaded
+
     ensure_ch_env_loaded()
 
     # 日志落盘（RotatingFileHandler 轮转，避免无限增长）
     from logging.handlers import RotatingFileHandler
+
     _log_path = REPO_ROOT / "tmp" / "scheduler_run.log"
     _log_path.parent.mkdir(parents=True, exist_ok=True)
     _fh = RotatingFileHandler(_log_path, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
