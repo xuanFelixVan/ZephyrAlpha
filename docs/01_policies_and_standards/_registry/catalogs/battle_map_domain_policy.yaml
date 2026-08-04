@@ -19,8 +19,28 @@
 
 policy_version: "1.0.1"
 policy_status: active
-last_updated: "2026-08-03"
+last_updated: "2026-08-04"
 decision_basis: "battle_map_positioning.md §3.1 L0-L6 分层架构 + §3.6 作战阶段与架构层对应关系"
+
+# ===== 裁定原则（2026-08-04，Owner 拍板，作为未来域归属裁定的标准）=====
+# 1. 核心原则：域归属看"模块承载什么决策"，不看"被谁调用"。
+#    管道/协议层模块（MCP 服务器、网关、事件总线等）即使被业务环节调用一万次，
+#    其域属性不变——管道就是管道，调用量不改变域归属。
+# 2. 角色区分：battle_map_anchors.target_role 分两级——
+#    - primary（主承载）：承载该环节的业务决策，MUST 通过域漂移检查（域须在 flow_stage 允许列表）。
+#    - supplement（补充）：环节"用到"的工具/能力，不承载业务决策，豁免域漂移检查。
+# 3. 判定流程：拿到锚点→看 target_role→primary 严查域（防语义错位，如卖出决策挂到买入流程）；
+#    supplement 跳过域检查（防误报，如 MCP 工具被对账环节调用不应算漂移）。
+# 4. 边界情况：若某 MCP server 封装了业务逻辑，应把业务逻辑拆到对应业务域模块，
+#    MCP server 只留协议层（见 model_context_protocol_servers/blueprint.md 既有原则）；
+#    不靠"建新业务治理域"解决，现有域体系（D_RISK/D_GOV_RULE/D_DATA_GOV 等）已能容纳 AI 自治治理。
+# 5. 实现层：align_battle_map.py §BM-INV-004 按 target_role=='supplement' 跳过域漂移检查。
+adjudication_principles:
+  core: "域归属看模块承载什么决策，不看被谁调用"
+  role_check:
+    primary: "严查域（承载决策，须在 flow_stage 允许列表）"
+    supplement: "豁免域漂移检查（工具被用到，不承载业务决策）"
+  enforcement: "align_battle_map.py BM-INV-004 按 target_role 区分"
 
 # flow_stage → 允许的 domain_id 列表
 # domain_id 必须是 depgraph.domains.domain_id 或 candidate_module_registry.yaml 的 domain 字段值

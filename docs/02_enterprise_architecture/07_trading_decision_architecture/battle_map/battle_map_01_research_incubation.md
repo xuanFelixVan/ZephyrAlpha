@@ -22,7 +22,7 @@ date: 2026-08-04
 | 环节数 | 33 | Steps | 33 |
 | 锚点数（双向对齐） | 42 | Anchors (Bidirectional) | 42 |
 | 流转边 | 8 | Edges | 8 |
-| 状态分布 | 🟨 候选态（候选池）=19 ｜ 🟦 运营态（已建）=6 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟨 候选态（候选池）=19 ｜ 🟦 运营态（已建）=6 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 |
+| 状态分布 | 🟨 候选态（候选池）=20 ｜ 🟦 运营态（已建）=6 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=3 | State Distribution | 🟨 候选态（候选池）=20 ｜ 🟦 运营态（已建）=6 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=3 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -43,18 +43,18 @@ date: 2026-08-04
 %% 研究孵化阶段图
 flowchart TD
     subgraph sg_BM_RES_08 ["知识清洗与结构化"]
-        BM_RES_08["【BM-RES-08 知识清洗与结构化】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-        BM_RES_08_A["【BM-RES-08-A 知识清洗流水线】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RES_08["【BM-RES-08 知识清洗与结构化】<br/>把采集来的脏知识洗干净、结构化，去掉噪音和重复，<br/>变成可用的结构化知识。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Knowledge Cleaning &amp; Structuring】"]
+        BM_RES_08_A["【BM-RES-08-A 知识清洗流水线】<br/>清洗流水线——去重/去噪/格式标准化/实体链接<br/>/质量评分，分阶段处理脏数据。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Knowledge Cleaning Pipeline】"]
         BM_RES_08 -.->|嵌套| BM_RES_08_A
     end
     subgraph sg_BM_RES_09 ["知识分类与策略提取"]
-        BM_RES_09["【BM-RES-09 知识分类与策略提取】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-        BM_RES_09_A["【BM-RES-09-A 知识类型分类体系】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RES_09["【BM-RES-09 知识分类与策略提取】<br/>把结构化知识按类型分类，从中提取可执行的策略知识<br/>。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Knowledge Classification &amp; Strategy<br/>Extraction】"]
+        BM_RES_09_A["【BM-RES-09-A 知识类型分类体系】<br/>知识类型分类体系——定义知识类型（事实/规则/策略<br/>/案例/元知识），按类型组织管理。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Knowledge Type Classification System】"]
         BM_RES_09 -.->|嵌套| BM_RES_09_A
     end
     subgraph sg_BM_RES_10 ["模块映射与工厂匹配"]
-        BM_RES_10["【BM-RES-10 模块映射与工厂匹配】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-        BM_RES_10_A["【BM-RES-10-A 模块工厂架构】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RES_10["【BM-RES-10 模块映射与工厂匹配】<br/>研究发现映射到现有模块，找不到就通过模块工厂创建<br/>新模块。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Module Mapping &amp; Factory Matching】"]
+        BM_RES_10_A["【BM-RES-10-A 模块工厂架构】<br/>模块工厂架构——标准创建→注册→接入→验证4步流程，产<br/>出规范+版本管理+退役流程。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Module Factory Architecture】"]
         BM_RES_10 -.->|嵌套| BM_RES_10_A
     end
     subgraph sg_BM_RES_01 ["研究数据与特征存储"]
@@ -69,8 +69,8 @@ flowchart TD
         BM_RES_01 -.->|嵌套| BM_RES_01_D
     end
     subgraph sg_BM_RES_11 ["多模态知识采集"]
-        BM_RES_11["【BM-RES-11 多模态知识采集】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-        BM_RES_11_A["【BM-RES-11-A 采集源分类与调度】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RES_11["【BM-RES-11 多模态知识采集】<br/>从多模态来源（文本/图表/音频<br/>/视频）采集知识，统一入库。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Multimodal Knowledge Acquisition】"]
+        BM_RES_11_A["【BM-RES-11-A 采集源分类与调度】<br/>采集源分类（官方/新闻/另类/社交）+调度策略<br/>（限流/优先级/去重）。<br/>（生产态 / production）<br/>【Source Classification &amp; Scheduling】"]
         BM_RES_11 -.->|嵌套| BM_RES_11_A
     end
     subgraph sg_BM_RES_02 ["实验追踪与可复现性"]
@@ -94,7 +94,7 @@ flowchart TD
         BM_RES_03 -.->|嵌套| BM_RES_03_C
     end
     subgraph sg_BM_RES_04 ["研究工作流编排"]
-        BM_RES_04["【BM-RES-04 研究工作流编排】<br/>把研究步骤串成 DAG<br/>自动跑——数据准备→特征计算→训练→评估，依赖管好、<br/>失败重试、并行加速。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Research Workflow Orchestration】"]
+        BM_RES_04["【BM-RES-04 研究工作流编排】<br/>把研究步骤串成 DAG<br/>自动跑——数据准备→特征计算→训练→评估，依赖管好、<br/>失败重试、并行加速。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Workflow Orchestration】"]
         BM_RES_04_A["【BM-RES-04-A DAG编排与任务调度】<br/>把研究步骤串成 DAG<br/>自动跑——数据准备→特征计算→训练→评估，依赖管好、<br/>失败重试、并行加速。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【DAG Orchestration &amp; Task Scheduling】"]
         BM_RES_04 -.->|嵌套| BM_RES_04_A
     end
@@ -131,17 +131,21 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_RES_01,BM_RES_01_A,BM_RES_02,BM_RES_04,BM_RES_06,BM_RES_07 production
-    class BM_RES_08_A,BM_RES_09_A,BM_RES_10_A,BM_RES_11_A design
+    class BM_RES_01,BM_RES_01_A,BM_RES_02,BM_RES_06,BM_RES_07,BM_RES_11_A production
+    class BM_RES_08_A,BM_RES_09_A,BM_RES_10_A design
     class BM_RES_08,BM_RES_09,BM_RES_10,BM_RES_11 missing
-    class BM_RES_01_B,BM_RES_01_C,BM_RES_01_D,BM_RES_02_A,BM_RES_02_B,BM_RES_02_C,BM_RES_02_D,BM_RES_03,BM_RES_03_A,BM_RES_03_B,BM_RES_03_C,BM_RES_04_A,BM_RES_05,BM_RES_05_A,BM_RES_05_B,BM_RES_05_C,BM_RES_06_A,BM_RES_06_B,BM_RES_07_A candidate
+    class BM_RES_01_B,BM_RES_01_C,BM_RES_01_D,BM_RES_02_A,BM_RES_02_B,BM_RES_02_C,BM_RES_02_D,BM_RES_03,BM_RES_03_A,BM_RES_03_B,BM_RES_03_C,BM_RES_04,BM_RES_04_A,BM_RES_05,BM_RES_05_A,BM_RES_05_B,BM_RES_05_C,BM_RES_06_A,BM_RES_06_B,BM_RES_07_A candidate
 ```
 
 ## 环节详情
 
-### BM-RES-08 知识清洗与结构化
+### BM-RES-08 知识清洗与结构化 / Knowledge Cleaning & Structuring
 
+> **大白话**：把采集来的脏知识洗干净、结构化，去掉噪音和重复，变成可用的结构化知识。
 
+**机制说明**：
+
+S1知识清洗与结构化层。把多模态采集的脏知识(含噪音/重复/格式不一)经清洗流水线处理为结构化知识。是研究孵化的第一步。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -154,13 +158,21 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_INTELLIGENCE域） |
 | ⑥ 降级/中止 | 清洗失败→保留原始材料人工处理 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-RES-06 LLM研究Agent采集多模态材料后；②消费：原始研究材料（论文/研报/新闻/财报文本）；③参数：NLP清洗流水线、实体抽取、结构化模板、去重去噪；④数据流：原始材料→清洗→结构化→BM-RES-03假设管理沉淀；⑤代码映射：待开发（planned，D_RESEARCH/D_INTELLIGENCE域）；⑥降级：清洗失败→保留原始材料人工处理。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
 
-### BM-RES-09 知识分类与策略提取
+### BM-RES-09 知识分类与策略提取 / Knowledge Classification & Strategy Extraction
 
+> **大白话**：把结构化知识按类型分类，从中提取可执行的策略知识。
 
+**机制说明**：
+
+S2知识分类与策略提取层。把结构化知识按类型分类(事实/规则/策略/案例/元知识)，从中提取可执行策略知识喂给后续模块。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -173,13 +185,21 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_ML_TRAIN域） |
 | ⑥ 降级/中止 | 提取失败→人工标注策略要素 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-RES-08 知识清洗完成后；②消费：结构化知识+历史策略库+BM-RES-03假设；③参数：知识类型分类体系(6类)、策略提取流程、输出契约；④数据流：结构化知识→分类→策略提取→BM-RES-07策略迭代升级；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：提取失败→人工标注策略要素。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
 
-### BM-RES-10 模块映射与工厂匹配
+### BM-RES-10 模块映射与工厂匹配 / Module Mapping & Factory Matching
 
+> **大白话**：研究发现映射到现有模块，找不到就通过模块工厂创建新模块。
 
+**机制说明**：
+
+S3模块映射与工厂匹配层。研究发现映射到现有模块(复用)，找不到则通过模块工厂创建新模块(创建→注册→接入→验证)。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -191,6 +211,10 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成 |
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_ML_TRAIN域） |
 | ⑥ 降级/中止 | 匹配失败→全新建模块(走BM-MT-01-B AI代码生成) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-RES-09 策略提取后/新模块需求触发；②消费：策略规格+现有模块工厂库+BM-MT-01训练基座契约；③参数：模块工厂架构、映射匹配规则、与现有工厂关系；④数据流：策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：匹配失败→全新建模块(走BM-MT-01-B AI代码生成)。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
@@ -270,9 +294,13 @@ Git-like版本管理→数据快照→回滚→血缘追踪(来源→变换→�
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：research_incubation
 
-### BM-RES-11 多模态知识采集
+### BM-RES-11 多模态知识采集 / Multimodal Knowledge Acquisition
 
+> **大白话**：从多模态来源（文本/图表/音频/视频）采集知识，统一入库。
 
+**机制说明**：
+
+S0多模态知识采集层。从文本(新闻/公告/研报)、图表(K线/技术图)、音频(电话会)、视频(路演)等多模态来源采集知识，统一入库供后续清洗。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -284,6 +312,10 @@ Git-like版本管理→数据快照→回滚→血缘追踪(来源→变换→�
 | ④ 数据流 | 外部源→采集→分类→调度→BM-RES-06 LLM研究Agent/论文追踪 |
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_INTELLIGENCE域） |
 | ⑥ 降级/中止 | 采集源故障→降级缓存数据+告警 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：定时采集/研究员触发/事件驱动；②消费：外部数据源(论文库/新闻/研报/财报/另类数据)；③参数：采集源分类、采集调度、采集增强能力(v4.0)、输出契约；④数据流：外部源→采集→分类→调度→BM-RES-06 LLM研究Agent/论文追踪；⑤代码映射：待开发（planned，D_RESEARCH/D_INTELLIGENCE域）；⑥降级：采集源故障→降级缓存数据+告警。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
@@ -705,9 +737,8 @@ D-RESEARCH-15 Reproducibility Pack Generator 一键生成复现包(环境锁定+
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0849 | primary | planned | — |
 | candidate | CAND-HARVEST-0853 | supplement | planned | — |
-| depgraph | MOD-INF-013 | supplement | planned | stable |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
 
 ### BM-RES-04-A DAG编排与任务调度 / DAG Orchestration & Task Scheduling
 
@@ -1036,9 +1067,13 @@ D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：research_incubation
 
-### BM-RES-08-A 知识清洗流水线
+### BM-RES-08-A 知识清洗流水线 / Knowledge Cleaning Pipeline
 
+> **大白话**：清洗流水线——去重/去噪/格式标准化/实体链接/质量评分，分阶段处理脏数据。
 
+**机制说明**：
+
+清洗流水线5阶段：①去重(语义+精确)②去噪(规则+ML过滤)③格式标准化(统一schema)④实体链接(知识图谱对齐)⑤质量评分(可信度/时效性/来源权威性)。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1051,13 +1086,21 @@ D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_INTELLIGENCE域） |
 | ⑥ 降级/中止 | 清洗子步骤失效→保留原始知识+标记未清洗，由下游人工兜底 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-RES-11多模态采集产出原始知识后，需清洗流水线去噪/去重/结构化；②消费：原始多模态知识(文本/表格/图像/PDF) + 采集元数据(来源/时间/置信度)；③参数：清洗流水线：格式归一化 + 去重(哈希+语义相似度) + 去噪(低质量过滤) + 实体抽取 + 关系抽取 + 结构化输出(知识三元组)；④数据流：原始知识→清洗→结构化三元组→输出契约(知识图谱节点/边)→下游BM-RES-09知识分类；⑤代码映射：待开发（planned，D_RESEARCH/D_INTELLIGENCE域）；⑥降级：清洗子步骤失效→保留原始知识+标记未清洗，由下游人工兜底。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：S1 ｜ **阶段**：research_incubation
 
-### BM-RES-09-A 知识类型分类体系
+### BM-RES-09-A 知识类型分类体系 / Knowledge Type Classification System
 
+> **大白话**：知识类型分类体系——定义知识类型（事实/规则/策略/案例/元知识），按类型组织管理。
 
+**机制说明**：
+
+知识类型分类体系：①事实知识(市场数据/财务数据)②规则知识(交易规则/风控规则)③策略知识(选股/择时/仓位策略)④案例知识(历史交易案例)⑤元知识(关于知识本身的知识)。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1070,13 +1113,21 @@ D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_ML_TRAIN域） |
 | ⑥ 降级/中止 | 分类失效→默认归入事实型(最安全)，人工复核 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：清洗后的结构化知识需按类型分类以驱动后续策略提取；②消费：结构化知识三元组(来自RES-08-A)；③参数：知识分类体系：事实型/规则型/模式型/案例型/方法论型5类 + 分类置信度 + 跨类型关联；④数据流：知识三元组→分类→类型化知识库→下游BM-RES-09策略提取；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：分类失效→默认归入事实型(最安全)，人工复核。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：S2 ｜ **阶段**：research_incubation
 
-### BM-RES-10-A 模块工厂架构
+### BM-RES-10-A 模块工厂架构 / Module Factory Architecture
 
+> **大白话**：模块工厂架构——标准创建→注册→接入→验证4步流程，产出规范+版本管理+退役流程。
 
+**机制说明**：
+
+模块工厂架构。标准创建流程(4步：创建→注册→接入→验证)+输出契约(产出规范+版本管理+退役流程)。与研究发现对接，自动匹配或创建模块。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1089,13 +1140,21 @@ D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH域） |
 | ⑥ 降级/中止 | 模块工厂不可用→人工创建模块+手动注册 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：研究产出新模块/新能力时，模块工厂匹配现有模块或创建新模块注册；②消费：研究发现 + 模块注册表 + 模块映射规则 + 能力卡片；③参数：模块创建流程(标准创建→注册→接入→验证4步) + 输出契约(模块产出规范+版本管理+退役流程) + §7 S4模块创建与接入层: 模块创建流程(标准创建→注册→接入→验证4步) + 输出契约(模块产出规范+版本管理+退役流程)；④数据流：研究发现→模块工厂匹配→注册新模块/复用现有→能力卡片更新→部署；⑤代码映射：待开发（planned，D_RESEARCH域）；⑥降级：模块工厂不可用→人工创建模块+手动注册。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：S3 ｜ **阶段**：research_incubation
 
-### BM-RES-11-A 采集源分类与调度
+### BM-RES-11-A 采集源分类与调度 / Source Classification & Scheduling
 
+> **大白话**：采集源分类（官方/新闻/另类/社交）+调度策略（限流/优先级/去重）。
 
+**机制说明**：
+
+采集源分类(官方数据源/新闻媒体/另类数据/社交媒体)+采集调度(限流策略/QPS分配/优先级队列/去重策略)。确保采集不漏不重不超限。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1108,9 +1167,17 @@ D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_INTELLIGENCE域，C-022/C-044 iFind QPS协同） |
 | ⑥ 降级/中止 | 主源失效→自动切换备用源(akshare/tushare)；调度超限→降级QPS+延后非优先源 |
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**指标文案（翻译真源 indicators_zh）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：S0 ｜ **阶段**：research_incubation
+①触发：研究知识采集需按源类型分类并按调度策略拉取，避免QPS超限/数据缺失；②消费：多源接入配置(研报/新闻/公告/财报/社交媒体/另类数据) + QPS配额；③参数：采集源分类6类(研报/新闻/公告/财报/社交/另类) + 调度策略(优先级+QPS分配+重试+增量) + v4.0采集增强(智能去重/相关性预筛) + 输出契约(原始知识+元数据)；④数据流：源配置→调度拉取→原始多模态知识+元数据→下游BM-RES-08-A清洗；⑤代码映射：待开发（planned，D_RESEARCH/D_INTELLIGENCE域，C-022/C-044 iFind QPS协同）；⑥降级：主源失效→自动切换备用源(akshare/tushare)；调度超限→降级QPS+延后非优先源。
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-DAT-fred_ingest | supplement | generated | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：S0 ｜ **阶段**：research_incubation
 
 
 [← 返回总指挥图](battle_map_panorama.md)

@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_11_reconciliation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §reconciliation 阶段，18 环节（31 锚点）。
+> battle_map §reconciliation 阶段，18 环节（30 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 对账（reconciliation） | Stage | 对账 |
 | 环节数 | 18 | Steps | 18 |
-| 锚点数（双向对齐） | 31 | Anchors (Bidirectional) | 31 |
+| 锚点数（双向对齐） | 30 | Anchors (Bidirectional) | 30 |
 | 流转边 | 18 | Edges | 18 |
 | 状态分布 | 🟦 运营态（已建）=14 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟦 运营态（已建）=14 ｜ 🟧 设计态（待施工）=4 |
 
@@ -71,7 +71,7 @@ flowchart TD
         BM_REC_03_A["【BM-REC-03-A 因子层反馈】<br/>看因子还灵不灵——IC衰减了就换因子，算半衰期，保证<br/>因子池新鲜。<br/>（生产态 / production）<br/>【Factor-Layer Feedback】"]
         BM_REC_03_B["【BM-REC-03-B 信号层反馈】<br/>看信号准不准——准确率持续下降就退役信号，避免用失<br/>效信号下单。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Signal-Layer Feedback】"]
         BM_REC_03_C["【BM-REC-03-C 模型层反馈】<br/>看模型飘没飘——检测到漂移就重训练，防止模型用旧数<br/>据预测新市场。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Model-Layer Feedback】"]
-        BM_REC_03_D["【BM-REC-03-D 元级迭代与二阶优化】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_REC_03_D["【BM-REC-03-D 元级迭代与二阶优化】<br/>二阶优化——不仅优化策略本身，还优化优化策略的方法<br/>，元级迭代实现自进化。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Meta-Level Iteration &amp; Second-Order<br/>Optimization】"]
         BM_REC_03 -.->|嵌套| BM_REC_03_A
         BM_REC_03 -.->|嵌套| BM_REC_03_B
         BM_REC_03 -.->|嵌套| BM_REC_03_C
@@ -214,7 +214,6 @@ L5 层。C-007 闭环优化：反馈到 L1~L4+L3.5 每层（IC衰减→因子替
 | depgraph | MOD-GOV_GATE_CACHE | primary | planned | generated |
 | depgraph | MOD-INF-024 | primary | planned | generated |
 | depgraph | MOD-GATE_ENGINE | primary | stable | generated |
-| depgraph | MOD-INF-014 | supplement | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -706,9 +705,13 @@ BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈�
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
-### BM-REC-03-D 元级迭代与二阶优化
+### BM-REC-03-D 元级迭代与二阶优化 / Meta-Level Iteration & Second-Order Optimization
 
+> **大白话**：二阶优化——不仅优化策略本身，还优化优化策略的方法，元级迭代实现自进化。
 
+**机制说明**：
+
+C-041元级迭代(二阶优化)。不仅优化策略(一阶)，还优化优化策略的方法(二阶)。分析优化过程本身的效率/偏差/盲点，迭代优化方法论。L5闭环优化最高层。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -720,6 +723,10 @@ BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈�
 | ④ 数据流 | 各层反馈→元级分析→优化策略调整→二阶效果评估→反馈至各层 |
 | ⑤ 代码映射 | 待开发（planned，D_FEEDBACK_LOOP/D_FBL_*域，C-041） |
 | ⑥ 降级/中止 | 元级迭代失效→保持现有优化策略，仅一阶反馈 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：因子/信号/模型层反馈(REC-03-A/B/C)积累后，需元级迭代优化优化策略本身(二阶优化)；②消费：各层反馈数据(REC-03-A/B/C) + 策略表现历史 + 优化轨迹；③参数：C-041元级迭代：十五个优化维度的元优化(优化策略本身的优化逻辑) + 二阶反馈(优化效果评估) + 自迭代增强5项；④数据流：各层反馈→元级分析→优化策略调整→二阶效果评估→反馈至各层；⑤代码映射：待开发（planned，D_FEEDBACK_LOOP/D_FBL_*域，C-041）；⑥降级：元级迭代失效→保持现有优化策略，仅一阶反馈。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 

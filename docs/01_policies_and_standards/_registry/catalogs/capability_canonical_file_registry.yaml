@@ -8080,6 +8080,12 @@ creation_tokens:
     capability: "qweather_data"
     note: "和风天气 API 实时天气+7天预报（40城市，免费版无历史API必须每日积累）"
 
+  # --- 作战地图孤儿模块排查清单（2026-08-04，BM-INV-007 排查产物归档为治理报告）---
+  - file: "docs/02_enterprise_architecture/03_governance_reports/orphan_module_checklist.md"
+    token: "auto-orphan-module-checklist-20260804"
+    created_by: "session-bm-triage-0804"
+    capability: "battle_map_alignment"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

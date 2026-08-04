@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_09_risk_control.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §risk_control 阶段，50 环节（50 锚点）。
+> battle_map §risk_control 阶段，50 环节（54 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 风控管控（risk_control） | Stage | 风控管控 |
 | 环节数 | 50 | Steps | 50 |
-| 锚点数（双向对齐） | 50 | Anchors (Bidirectional) | 50 |
+| 锚点数（双向对齐） | 54 | Anchors (Bidirectional) | 54 |
 | 流转边 | 10 | Edges | 10 |
 | 状态分布 | 🟦 运营态（已建）=37 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=37 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=1 |
 
@@ -42,10 +42,10 @@ date: 2026-08-04
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 风控管控阶段图
 flowchart TD
-    BM_RC_09["【BM-RC-09 AI/Agent风险治理】<br/>—<br/>（生产态 / production）"]
+    BM_RC_09["【BM-RC-09 AI/Agent风险治理】<br/>AI/Agent特有风险治理——模型幻觉/自治越界<br/>/对抗攻击/串谋等AI专属风险。<br/>（生产态 / production）<br/>【AI/Agent Risk Governance】"]
     subgraph sg_BM_RC_10 ["风险否决权"]
-        BM_RC_10["【BM-RC-10 风险否决权】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-        BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_10["【BM-RC-10 风险否决权】<br/>风险否决权——风控可在任何阶段否决交易决策，不可绕<br/>过、不可人工覆盖。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Risk Veto Power】"]
+        BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>否决执行引擎——同步拦截（&lt;50ms）+熔断器模式+Kill<br/>Switch多路径激活+审计追踪。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Veto Execution Engine】"]
         BM_RC_10 -.->|嵌套| BM_RC_10_A
     end
     subgraph sg_BM_RC_01 ["风控策略与限额管理"]
@@ -58,17 +58,17 @@ flowchart TD
         BM_RC_01 -.->|嵌套| BM_RC_01_C
     end
     subgraph sg_BM_RC_11 ["独立风险数据管道"]
-        BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-        BM_RC_11_A["【BM-RC-11-A 独立风险指标计算】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
-        BM_RC_11_B["【BM-RC-11-B 风险报告生成】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>独立风险数据管道——风控用独立数据源，不依赖交易链<br/>路，防止数据污染。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Independent Risk Data Pipeline】"]
+        BM_RC_11_A["【BM-RC-11-A 独立风险指标计算】<br/>独立计算VaR/ES/相关性<br/>/Beta等风险指标，不受交易系统影响。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Independent Risk Metric Calculation】"]
+        BM_RC_11_B["【BM-RC-11-B 风险报告生成】<br/>生成风险报告——日报/周报/月报+异常告警+合规披露。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Risk Report Generation】"]
         BM_RC_11 -.->|嵌套| BM_RC_11_A
         BM_RC_11 -.->|嵌套| BM_RC_11_B
     end
     subgraph sg_BM_RC_12 ["极端事件与黑天鹅"]
-        BM_RC_12["【BM-RC-12 极端事件与黑天鹅】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-        BM_RC_12_A["【BM-RC-12-A 黑天鹅模式库】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
-        BM_RC_12_B["【BM-RC-12-B 跨市场传导与传染模型】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
-        BM_RC_12_C["【BM-RC-12-C 流动性危机模拟】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RC_12["【BM-RC-12 极端事件与黑天鹅】<br/>极端事件与黑天鹅——小概率高损失事件的识别、模拟、<br/>应对。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Extreme Events &amp; Black Swan】"]
+        BM_RC_12_A["【BM-RC-12-A 黑天鹅模式库】<br/>黑天鹅模式库——历史极端事件模式（2008/2015<br/>/2020）归档，供模式匹配预警。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Black Swan Pattern Library】"]
+        BM_RC_12_B["【BM-RC-12-B 跨市场传导与传染模型】<br/>跨市场传导与传染模型——A股受外盘/商品<br/>/汇率冲击的传导路径建模。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Cross-Market Contagion Model】"]
+        BM_RC_12_C["【BM-RC-12-C 流动性危机模拟】<br/>流动性危机模拟——极端流动性枯竭场景的压力测试与应<br/>对预案。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Liquidity Crisis Simulation】"]
         BM_RC_12 -.->|嵌套| BM_RC_12_A
         BM_RC_12 -.->|嵌套| BM_RC_12_B
         BM_RC_12 -.->|嵌套| BM_RC_12_C
@@ -173,9 +173,13 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 ## 环节详情
 
-### BM-RC-09 AI/Agent风险治理
+### BM-RC-09 AI/Agent风险治理 / AI/Agent Risk Governance
 
+> **大白话**：AI/Agent特有风险治理——模型幻觉/自治越界/对抗攻击/串谋等AI专属风险。
 
+**机制说明**：
+
+AI/Agent风险治理。模型幻觉(生成虚假信息)→输出校验+置信度门控；自治越界(AI超授权操作)→权限分级+HITL审批；对抗攻击(输入注入/提示注入)→输入过滤+鲁棒性测试；串谋(多Agent合谋)→独立监督Agent。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -188,6 +192,10 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ⑤ 代码映射 | 待开发（planned，D_RISK域） |
 | ⑥ 降级/中止 | 漂移超限→触发BM-RC-03 Kill Switch熔断 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：Agent自治行为发生时/盘后审计；②消费：Agent决策日志+自治边界配置+治理基线；③参数：有界自治(Bounded Autonomy)、保障缺口管理、治理漂移防护、Agent行为监控、ARS双轨结算模型；④数据流：Agent行为→监控→漂移检测→保障缺口评估→否决/Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：漂移超限→触发BM-RC-03 Kill Switch熔断。
+
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
@@ -197,9 +205,13 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-10 风险否决权
+### BM-RC-10 风险否决权 / Risk Veto Power
 
+> **大白话**：风险否决权——风控可在任何阶段否决交易决策，不可绕过、不可人工覆盖。
 
+**机制说明**：
+
+风险否决权。风控在任何阶段(选股/买入/卖出/执行)可否决交易决策。特性：不可绕过(所有订单必经引擎)+不可人工否决(防御性决策自动执行)+Kill Switch基础设施层实现+否决审计追踪。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -211,6 +223,10 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch |
 | ⑤ 代码映射 | 待开发（planned，D_RISK域） |
 | ⑥ 降级/中止 | 否决机制失效→硬阻断交易(安全优先) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：风控规则触发否决条件/交易请求拦截；②消费：风控策略+持仓状态+交易请求+BM-RC-01限额配置；③参数：否决规则、否决执行机制、否决与策略逻辑隔离；④数据流：交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：否决机制失效→硬阻断交易(安全优先)。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
@@ -251,9 +267,13 @@ RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTO
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-11 独立风险数据管道
+### BM-RC-11 独立风险数据管道 / Independent Risk Data Pipeline
 
+> **大白话**：独立风险数据管道——风控用独立数据源，不依赖交易链路，防止数据污染。
 
+**机制说明**：
+
+独立风险数据管道。风控使用独立数据源(不依赖交易链路)，防止交易系统数据污染风控决策。数据流：独立源→独立清洗→独立计算→独立报告。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -265,6 +285,10 @@ RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTO
 | ④ 数据流 | 独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR |
 | ⑤ 代码映射 | 待开发（planned，D_RISK域） |
 | ⑥ 降级/中止 | 数据管道故障→降级缓存指标+告警 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：盘中实时/盘后批量；②消费：独立风险数据源(不依赖交易数据，防循环依赖)；③参数：独立风险数据管道、风险指标计算、数据质量校验；④数据流：独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：数据管道故障→降级缓存指标+告警。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
@@ -301,9 +325,13 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-12 极端事件与黑天鹅
+### BM-RC-12 极端事件与黑天鹅 / Extreme Events & Black Swan
 
+> **大白话**：极端事件与黑天鹅——小概率高损失事件的识别、模拟、应对。
 
+**机制说明**：
+
+极端事件与黑天鹅。小概率高损失事件的识别(黑天鹅模式匹配)+模拟(压力测试/蒙特卡洛)+应对(应急预案/动态对冲)。含模式库/传导模型/流动性危机模拟三大子能力。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -315,6 +343,10 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 | ④ 数据流 | 极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch |
 | ⑤ 代码映射 | 待开发（planned，D_RISK 域） |
 | ⑥ 降级/中止 | 极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先） |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：极端市场事件发生时 / 盘后黑天鹅压力测试；②消费：历史极端事件数据 + BM-RC-08-C 压力测试结果 + 跨市场行情数据；③参数：黑天鹅模式库、跨市场传导模型、流动性危机模拟、二阶效应与传染模型、反向压力测试；④数据流：极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK 域）；⑥降级：极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先）。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
@@ -733,6 +765,7 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 | depgraph | MOD-L04-001 | primary | stable | generated |
 | depgraph | MOD-RK-011 | supplement | stable | generated |
 | depgraph | MOD-RPT-004 | primary | stable | generated |
+| depgraph | MOD-POS-018 | supplement | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1232,7 +1265,7 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-RK-05 | primary | stable | generated |
-| depgraph | MOD-RK-08 | supplement | stable | generated |
+| depgraph | MOD-RK-08 | supplement | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1294,7 +1327,9 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-08 | primary | production | generated |
+| depgraph | MOD-RK-08 | primary | production | stable |
+| depgraph | MOD-POS-011 | supplement | planned | planned |
+| depgraph | MOD-POS-013 | supplement | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1325,8 +1360,9 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-08 | primary | production | generated |
+| depgraph | MOD-RK-08 | primary | production | stable |
 | depgraph | MOD-RK-16 | supplement | production | generated |
+| depgraph | MOD-POS-012 | supplement | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1524,9 +1560,13 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-10-A 否决执行引擎
+### BM-RC-10-A 否决执行引擎 / Veto Execution Engine
 
+> **大白话**：否决执行引擎——同步拦截(<50ms)+熔断器模式+Kill Switch多路径激活+审计追踪。
 
+**机制说明**：
+
+否决执行引擎。同步拦截(<50ms P99)+熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED)+多路径激活(AI自动<1ms/人工<100ms/定时熔断5秒/外部信号<1s)+隔离策略(舱壁/超时/混沌验证)+否决审计。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1539,13 +1579,21 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 | ⑤ 代码映射 | 待开发（planned，D_RISK域；Kill Switch需miniQMT API支持） |
 | ⑥ 降级/中止 | 否决引擎自身故障→熔断器OPEN→全拒订单(安全失败)；引擎不可用→Kill Switch激活(宁可停交易不可绕过风控) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：策略信号到达订单执行入口前，否决规则引擎同步拦截判定是否放行/否决；②消费：策略订单信号 + 否决规则(RC-10) + 实时持仓 + 实时行情 + Kill Switch状态；③参数：同步拦截延迟<50ms(P99) + 不可绕过(所有下单必经引擎无旁路,HC-RISK-03) + 不可人工否决(HC-RISK-02防御性决策自动执行) + Kill Switch基础设施层实现(非Agent运行时内,OWASP ASI08) + 熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED) + 多路径激活(AI自动<1ms/人工<100ms/定时熔断5秒无心跳/外部信号<1s) + 否决审计(时间/规则/触发值/被否决指令/执行者) + 隔离策略三机制(§6): 舱壁隔离(Bulkhead,故障域隔离到单策略防级联) + 超时与重试(否决引擎超时50ms后熔断,重试策略指数退避) + 混沌工程验证(定期注入故障验证否决引擎不可绕过性)；④数据流：策略信号→否决规则引擎同步拦截→通过→订单执行 / 否决→否决日志+通知推送；Kill Switch多路径→基础设施层平仓；⑤代码映射：待开发（planned，D_RISK域；Kill Switch需miniQMT API支持）；⑥降级：否决引擎自身故障→熔断器OPEN→全拒订单(安全失败)；引擎不可用→Kill Switch激活(宁可停交易不可绕过风控)。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-11-A 独立风险指标计算
+### BM-RC-11-A 独立风险指标计算 / Independent Risk Metric Calculation
 
+> **大白话**：独立计算VaR/ES/相关性/Beta等风险指标，不受交易系统影响。
 
+**机制说明**：
+
+独立计算风险指标：VaR/ES/CVaR(市场风险)+回撤/波动率(业绩风险)+相关性/Beta(暴露风险)+集中度/流动性(持仓风险)。不受交易系统影响。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1558,13 +1606,21 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 | ⑤ 代码映射 | 待开发（planned，D_RISK域；独立于交易数据流,§3.3 L2数据隔离） |
 | ⑥ 降级/中止 | 某类指标计算失效→标记该指标不可用+降级使用上一有效值+告警；不影响其他指标 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：独立风险数据管道(RC-11)接入数据后，按频率计算各类风险指标供风控决策；②消费：独立风险数据(RC-11管道) + 行情+持仓 + 收益序列+因子暴露 + 概率密度预测 + Agent行为日志；③参数：实时P&L+因子暴露+Amihud非流动性(每Tick 3秒,<1秒) + VaR/CVaR/ES(日频,≤5秒P99) + 密度感知VaR(日频,≤10秒) + 共形VaR校准(日频,≤5秒) + 漂移检测CUSUM(PSI/KS) + 压力测试+反向RST(周频,≤30分钟) + Agent行为监控(ASI/AST/MCP/隐性串谋越界检测)；④数据流：独立风险数据→各类指标计算→风险限额检查结果+漂移告警+韧性评估→RC-11-B风险报告 / RC-10否决引擎；⑤代码映射：待开发（planned，D_RISK域；独立于交易数据流,§3.3 L2数据隔离）；⑥降级：某类指标计算失效→标记该指标不可用+降级使用上一有效值+告警；不影响其他指标。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-11-B 风险报告生成
+### BM-RC-11-B 风险报告生成 / Risk Report Generation
 
+> **大白话**：生成风险报告——日报/周报/月报+异常告警+合规披露。
 
+**机制说明**：
+
+风险报告生成。日报(持仓风险/限额使用/异常事件)+周报(风险趋势/归因分析)+月报(压力测试/情景分析)+异常告警(实时)+合规披露(监管要求)。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1577,13 +1633,21 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 | ⑤ 代码映射 | 待开发（planned，D_RISK/D_REPORTING域） |
 | ⑥ 降级/中止 | 报告生成失败→告警+人工补生成；事件快报通道失效→微信/CLI兜底推送 |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：风险指标(RC-11-A)产出后按频率生成各级风险报告供不同消费者；②消费：风险指标计算结果(RC-11-A) + 否决统计(RC-10) + 漂移状态 + 压力测试结果；③参数：日度风险摘要(收盘: VaR/CVaR/因子暴露/否决统计/漂移/Amihud→Trader+Risk Manager) + 周度风险深度(周五: 压力测试+漂移趋势+拥挤度+模型健康+反向RST→Risk Manager) + 事件风险快报(事件触发: 触发事件+影响评估+处置建议+历史类比→Trader即时推送) + 月度风险治理(月末: 参数变更审计+否决有效性+合规+Pod止损统计→Risk Manager+治理层)；④数据流：风险指标→按频率生成4类报告→Trader/Risk Manager/治理层→归档审计链；⑤代码映射：待开发（planned，D_RISK/D_REPORTING域）；⑥降级：报告生成失败→告警+人工补生成；事件快报通道失效→微信/CLI兜底推送。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-12-A 黑天鹅模式库
+### BM-RC-12-A 黑天鹅模式库 / Black Swan Pattern Library
 
+> **大白话**：黑天鹅模式库——历史极端事件模式（2008/2015/2020）归档，供模式匹配预警。
 
+**机制说明**：
+
+黑天鹅模式库。历史极端事件归档：2008金融危机(流动性枯竭)、2015股灾(杠杆崩盘)、2020疫情(全球熔断)、2024量化风暴。按模式分类，供实时模式匹配预警。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1596,13 +1660,21 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 | ⑤ 代码映射 | 待开发（planned，D_RISK域） |
 | ⑥ 降级/中止 | 模式库未命中→按通用极端事件处理(降仓+Kill Switch待命) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：需预置历史黑天鹅模式(股灾/熔断/流动性危机/政策突变)以快速识别极端事件；②消费：历史极端事件样本 + 实时市场异常信号(波动率/相关性/流动性突变)；③参数：黑天鹅模式库：历史事件特征化(2015股灾/2016熔断/2020疫情/2024政策) + 模式匹配(波动率体制转换+跨市场相关性突变+流动性枯竭) + 触发阈值；④数据流：实时异常信号→模式匹配→黑天鹅概率→触发RC-12-C流动性危机模拟/RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：模式库未命中→按通用极端事件处理(降仓+Kill Switch待命)。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-12-B 跨市场传导与传染模型
+### BM-RC-12-B 跨市场传导与传染模型 / Cross-Market Contagion Model
 
+> **大白话**：跨市场传导与传染模型——A股受外盘/商品/汇率冲击的传导路径建模。
 
+**机制说明**：
+
+跨市场传导与传染模型。A股受外盘(美股/港股)→商品(原油/黄金)→汇率(人民币)→债券收益率传导的路径建模。含二阶效应(传导的传导)与传染(情绪蔓延)分析。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1615,13 +1687,21 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 | ⑤ 代码映射 | 待开发（planned，D_RISK/D_CROSS_ASSET域） |
 | ⑥ 降级/中止 | 传染模型失效→按最坏情况假设(全市场同向下跌) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：黑天鹅事件发生后需预测跨市场传导(股/债/汇/商品)与二阶效应以提前防御；②消费：黑天鹅事件信号(来自RC-12-A) + 跨市场持仓 + 历史传染路径样本；③参数：跨市场传导模型(一阶:股市→债市/汇率/商品) + 二阶效应(流动性挤兑/信用利差走阔/波动率反馈循环) + 传染强度与时滞估计；④数据流：黑天鹅事件→传导路径预测→二阶效应评估→防御建议(对冲/降仓)→RC-12-C流动性模拟；⑤代码映射：待开发（planned，D_RISK/D_CROSS_ASSET域）；⑥降级：传染模型失效→按最坏情况假设(全市场同向下跌)。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-12-C 流动性危机模拟
+### BM-RC-12-C 流动性危机模拟 / Liquidity Crisis Simulation
 
+> **大白话**：流动性危机模拟——极端流动性枯竭场景的压力测试与应对预案。
 
+**机制说明**：
+
+流动性危机模拟。极端流动性枯竭场景：市场流动性(买卖价差扩大/深度减少)+持仓流动性(无法平仓)+融资流动性(保证金追加)三维度压力测试与应对预案。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -1633,6 +1713,10 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 | ④ 数据流 | 传导预测→流动性危机模拟→出场能力评估→Kill Switch触发建议/分批出场 |
 | ⑤ 代码映射 | 待开发（planned，D_RISK/D_SIMULATION域） |
 | ⑥ 降级/中止 | 模拟失效→按最保守流动性假设(全额无法出场，立即Kill Switch) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：黑天鹅事件+跨市场传导后需模拟流动性危机以评估出场能力；②消费：传导预测(来自RC-12-B) + 持仓流动性 profile + 历史流动性危机样本；③参数：流动性危机模拟：买卖价差扩大 + 成交量萎缩 + 涨跌停封板概率 + 出场滑点估计 + 极端情景(全员出逃)压力测试；④数据流：传导预测→流动性危机模拟→出场能力评估→Kill Switch触发建议/分批出场；⑤代码映射：待开发（planned，D_RISK/D_SIMULATION域）；⑥降级：模拟失效→按最保守流动性假设(全额无法出场，立即Kill Switch)。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 

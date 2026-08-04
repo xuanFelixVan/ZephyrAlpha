@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_06_buy_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §buy_flow 阶段，24 环节（20 锚点）。
+> battle_map §buy_flow 阶段，24 环节（24 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,9 +20,9 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
 | 环节数 | 24 | Steps | 24 |
-| 锚点数（双向对齐） | 20 | Anchors (Bidirectional) | 20 |
+| 锚点数（双向对齐） | 24 | Anchors (Bidirectional) | 24 |
 | 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=10 ｜ 🟧 设计态（待施工）=8 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=10 ｜ 🟧 设计态（待施工）=8 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -42,17 +42,17 @@ date: 2026-08-04
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
 %% 买入阶段图
 flowchart TD
-    BM_BUY_09["【BM-BUY-09 信息合规】<br/>—<br/>（生产态 / production）"]
+    BM_BUY_09["【BM-BUY-09 信息合规】<br/>管信息合规，确保数据来源、使用、披露都符合法规，<br/>防止信息违规。<br/>（生产态 / production）<br/>【Information Compliance】"]
     BM_BUY_01["【BM-BUY-01 多情景对策生成】<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Multi-Scenario Countermeasure】"]
-    BM_BUY_10["【BM-BUY-10 合规技术深度】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-    BM_BUY_11["【BM-BUY-11 合规持续运营】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-    BM_BUY_12["【BM-BUY-12 硬边界裁定】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-    BM_BUY_13["【BM-BUY-13 合规裁定扩展-EU AI Act】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-    BM_BUY_15["【BM-BUY-15 交易合规检测】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+    BM_BUY_10["【BM-BUY-10 合规技术深度】<br/>合规的技术实现深度，包括可追溯性、不可篡改性、审<br/>计日志等技术保障。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Compliance Technical Depth】"]
+    BM_BUY_11["【BM-BUY-11 合规持续运营】<br/>合规体系的持续运营，包括定期审查、规则更新、培训<br/>等持续性工作。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Compliance Continuous Operation】"]
+    BM_BUY_12["【BM-BUY-12 硬边界裁定】<br/>硬边界裁定——不可逾越的合规红线，触发即阻断，不可<br/>人工覆盖。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Hard Boundary Adjudication】"]
+    BM_BUY_13["【BM-BUY-13 合规裁定扩展-EU AI Act】<br/>EU AI Act<br/>合规扩展，针对欧盟AI法规的额外合规要求。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Compliance Extension - EU AI Act】"]
+    BM_BUY_15["【BM-BUY-15 交易合规检测】<br/>检测异常交易行为、市场操纵、速率违规、程序化交易<br/>报告义务等交易合规。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Trading Compliance Detection】"]
     subgraph sg_BM_BUY_02 ["四轨融合"]
         BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Four-Track Fusion （MTF）】"]
         subgraph sg_BM_BUY_02_A ["逻辑驱动轨"]
-            BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Logic-Driven Track】"]
+            BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>（生产态 / production）<br/>【Logic-Driven Track】"]
             subgraph sg_BM_BUY_02_A_1 ["市场状态预测"]
                 BM_BUY_02_A_1["【BM-BUY-02-A-1 市场状态预测】<br/>预测大盘接下来走哪种状态——用3×3矩阵分9态+2叠加态<br/>+8态走势预测+体制转换检测，给买入决策提供市场环<br/>境判断。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Market State Prediction】"]
                 BM_BUY_02_A_1_a["【BM-BUY-02-A-1-a 3×3矩阵分类】<br/>把大盘分成9种状态——大盘趋势（上涨/震荡<br/>/下跌）×波动率（高/中<br/>/低）=3×3矩阵，每种状态对应不同的买入策略。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【3x3 Matrix Classification】"]
@@ -66,9 +66,9 @@ flowchart TD
             end
             BM_BUY_02_A -.->|嵌套| BM_BUY_02_A_1
         end
-        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Data-Driven Track （AI Discovery）】"]
-        BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Manual Override Track】"]
-        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Emergency Protection Track】"]
+        BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>（生产态 / production）<br/>【Data-Driven Track （AI Discovery）】"]
+        BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>（生产态 / production）<br/>【Manual Override Track】"]
+        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>（生产态 / production）<br/>【Emergency Protection Track】"]
         BM_BUY_02 -.->|嵌套| BM_BUY_02_A
         BM_BUY_02 -.->|嵌套| BM_BUY_02_B
         BM_BUY_02 -.->|嵌套| BM_BUY_02_C
@@ -80,8 +80,8 @@ flowchart TD
     BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>（生产态 / production）<br/>【WeChat Interaction Hub】"]
     subgraph sg_BM_BUY_08 ["交易纪律合规闸"]
         BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
-        BM_BUY_08_A["【BM-BUY-08-A 四项必做清单自动化检测】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
-        BM_BUY_08_B["【BM-BUY-08-B 四项严禁自动化检测】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_BUY_08_A["【BM-BUY-08-A 四项必做清单自动化检测】<br/>每天盘前/盘中/盘后<br/>/晚间4个时点自动检查四项必做清单做没做完，没做完<br/>就推送提醒，盘中违规直接拦。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Four-Must-Do Checklist Auto-Detection】"]
+        BM_BUY_08_B["【BM-BUY-08-B 四项严禁自动化检测】<br/>下单前和盘中实时检测四项严禁行为（追高/补仓<br/>/骄傲/频繁），命中就硬拦不让下单。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Four-Forbidden Auto-Detection】"]
         BM_BUY_08 -.->|嵌套| BM_BUY_08_A
         BM_BUY_08 -.->|嵌套| BM_BUY_08_B
     end
@@ -96,17 +96,21 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_09,BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_08,BM_BUY_02_A,BM_BUY_02_C,BM_BUY_02_D production
-    class BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_B,BM_BUY_08_A,BM_BUY_08_B design
+    class BM_BUY_09,BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_08,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D production
+    class BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_08_A,BM_BUY_08_B design
     class BM_BUY_10,BM_BUY_11,BM_BUY_12,BM_BUY_13,BM_BUY_15 missing
     class BM_BUY_06 candidate
 ```
 
 ## 环节详情
 
-### BM-BUY-09 信息合规
+### BM-BUY-09 信息合规 / Information Compliance
 
+> **大白话**：管信息合规，确保数据来源、使用、披露都符合法规，防止信息违规。
 
+**机制说明**：
+
+信息合规层。管理数据来源合法性、使用合规性、披露合规性。确保非公开信息不违规使用，公开信息合规披露。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -118,6 +122,10 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 通信/交易→内幕检测→通信监控→合规存档→BM-REC监管报告 |
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
 | ⑥ 降级/中止 | 检测失效→人工合规复核+延迟交易 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：交易前/通信发生时/盘后审计；②消费：交易记录+通信日志+内幕信息标记；③参数：内幕交易深度防护、通信监控、信息隔离墙；④数据流：通信/交易→内幕检测→通信监控→合规存档→BM-REC监管报告；⑤代码映射：待开发（planned，D_COMPLIANCE域）；⑥降级：检测失效→人工合规复核+延迟交易。
 
 **锚点（环节↔模块双向关联）**：
 
@@ -162,9 +170,13 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
-### BM-BUY-10 合规技术深度
+### BM-BUY-10 合规技术深度 / Compliance Technical Depth
 
+> **大白话**：合规的技术实现深度，包括可追溯性、不可篡改性、审计日志等技术保障。
 
+**机制说明**：
+
+合规技术深度。可追溯性(每笔决策可回溯)+不可篡改性(审计日志防篡改)+实时监控(合规状态实时可见)+技术证据链(监管检查可取证)。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -177,13 +189,21 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
 | ⑥ 降级/中止 | 自动化失效→人工合规检查(降效率) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：合规规则变更/RegTech自动化触发；②消费：合规规则库+法规更新+BM-BUY-08交易纪律配置；③参数：合规策略即代码、合规规则版本控制与回测、合规事件升级、RegTech自动化、SBOM合规、合规例外审批流；④数据流：法规→合规规则编码→版本控制→回测验证→自动化执行→BM-BUY-08合规闸；⑤代码映射：待开发（planned，D_COMPLIANCE域）；⑥降级：自动化失效→人工合规检查(降效率)。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
-### BM-BUY-11 合规持续运营
+### BM-BUY-11 合规持续运营 / Compliance Continuous Operation
 
+> **大白话**：合规体系的持续运营，包括定期审查、规则更新、培训等持续性工作。
 
+**机制说明**：
+
+合规持续运营。定期审查(季度合规审查)+规则更新(法规变化同步更新)+培训考核(人员合规培训)+持续监控(7x24合规状态监控)。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -196,13 +216,21 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
 | ⑥ 降级/中止 | AML引擎失效→人工审查+延迟报告(合规风险) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：持续运营/监管要求/定期审查；②消费：交易历史+客户信息+法规库+BM-REC-02-F监管报告；③参数：AML/KYC引擎、合规证据图、法规自动解析与跨法规协调、合规知识持续积累；④数据流：交易/客户数据→AML/KYC检测→合规证据归档→监管报告→知识积累；⑤代码映射：待开发（planned，D_COMPLIANCE域）；⑥降级：AML引擎失效→人工审查+延迟报告(合规风险)。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
-### BM-BUY-12 硬边界裁定
+### BM-BUY-12 硬边界裁定 / Hard Boundary Adjudication
 
+> **大白话**：硬边界裁定——不可逾越的合规红线，触发即阻断，不可人工覆盖。
 
+**机制说明**：
+
+硬边界裁定。不可逾越的合规红线：内幕交易/操纵市场/违规减持等。触发即阻断，不可人工覆盖，不可AI自主修改。属immutable禁区。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -215,13 +243,21 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
 | ⑥ 降级/中止 | 裁定未决→暂缓功能上线(安全优先) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：新功能设计时/功能上线门禁；②消费：功能设计规格+合规规则库+BM-BUY-10合规技术配置；③参数：裁定原则、47项功能二元裁定、能建功能实施顺序、门禁激活后扩展顺序；④数据流：功能规格→二元裁定(能建/禁建)→门禁记录→上线/拒绝；⑤代码映射：待开发（planned，D_COMPLIANCE域）；⑥降级：裁定未决→暂缓功能上线(安全优先)。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
-### BM-BUY-13 合规裁定扩展-EU AI Act
+### BM-BUY-13 合规裁定扩展-EU AI Act / Compliance Extension - EU AI Act
 
+> **大白话**：EU AI Act 合规扩展，针对欧盟AI法规的额外合规要求。
 
+**机制说明**：
+
+EU AI Act合规扩展。针对欧盟AI法规的额外要求：AI系统风险分类、透明度义务、人类监督要求、高风险AI系统特殊义务等。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -234,13 +270,21 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
 | ⑥ 降级/中止 | EU AI Act未就绪→限制跨境AI功能(合规优先) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：EU AI Act合规要求/跨境AI业务；②消费：AI系统清单+EU AI Act法规+风险分级标准；③参数：新增功能二元裁定、EU AI Act合规架构增强、AI系统风险分级；④数据流：AI系统→风险分级→合规裁定→监管报告→功能限制/放行；⑤代码映射：待开发（planned，D_COMPLIANCE域）；⑥降级：EU AI Act未就绪→限制跨境AI功能(合规优先)。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
-### BM-BUY-15 交易合规检测
+### BM-BUY-15 交易合规检测 / Trading Compliance Detection
 
+> **大白话**：检测异常交易行为、市场操纵、速率违规、程序化交易报告义务等交易合规。
 
+**机制说明**：
+
+交易合规检测层。异常交易行为检测(虚假申报/对倒/拉抬打压)+市场操纵防护(账户关联/利益输送)+速率与时间约束(委托频率/撤单率)+程序化交易报告义务。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -252,6 +296,10 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | ④ 数据流 | 订单→C-004风控引擎实时检测→命中阈值→Hard Block(自动限速/拒绝撤单/暂停交易/限仓)+告警→合规数据库持久化→监管报送(T+1)→审计证据链(→§3报告合规) |
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域；C-004风控引擎嵌入检测规则；C-002执行域实现50μs时间锁） |
 | ⑥ 降级/中止 | 检测引擎失效→Hard Block拒绝发送任何订单(安全失败，宁可不交易不可违规)；报告未完成确认前C-002执行域拒绝订单 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：订单提交前(Pre-Trade)/盘中实时(3秒Tick刷新)/首次交易前(报告义务)。区别于BM-BUY-08交易纪律闸(行为纪律四项严禁)，本环节是合规检测层：异常交易行为+市场操纵+速率约束+程序化报告；②消费：实时订单流 + 3秒Tick行情 + 账户持仓 + 报单时序(微秒级) + 同一实控人关联账户合并数据；③参数：4类异常交易行为阈值(瞬时申报速率>15笔/秒[2026.4.7新规]/频繁撤单率>15%/频繁拉抬打压价格偏离度+成交量占比/短时间大额成交合并持仓变动率) + 市场操纵4类(Spoofing幌骗:挂单-撤单模式+意图分析/Layering分层/Wash Trade自交易跨账户/尾盘操纵) + 速率约束(单标的参与率≤5%+Almgren-Chriss冲击模型取较小值+订单停留≥50μs时间锁) + 程序化交易报告6项(账户基本信息/交易软件信息/6大类策略类型/最高申报速率miniQMT 10笔/秒/单日最高申报笔数/重大变更T+1报告) + 铁律:先报告后交易；④数据流：订单→C-004风控引擎实时检测→命中阈值→Hard Block(自动限速/拒绝撤单/暂停交易/限仓)+告警→合规数据库持久化→监管报送(T+1)→审计证据链(→§3报告合规)；⑤代码映射：待开发（planned，D_COMPLIANCE域；C-004风控引擎嵌入检测规则；C-002执行域实现50μs时间锁）；⑥降级：检测引擎失效→Hard Block拒绝发送任何订单(安全失败，宁可不交易不可违规)；报告未完成确认前C-002执行域拒绝订单。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
@@ -664,7 +712,11 @@ BM-BUY-02 四轨融合的子环节（depth=1）。逻辑驱动轨接收 BM-BUY-0
 ⑤代码：C-005 L3 层；⑥降级：C-005 失效→固定策略查表。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-INF-039 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -697,9 +749,13 @@ BM-BUY-02 四轨融合的子环节（depth=1）。数据驱动轨由 AI Discover
 ⑤代码：轨道2 AI Discovery；⑥降级：AI Discovery 不可用→仅逻辑轨单线决策。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-INF-002 | primary | stable | generated |
+
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-C 人工指令轨 / Manual Override Track
 
@@ -730,7 +786,11 @@ BM-BUY-02 四轨融合的子环节（depth=1）。人工指令轨接收交易员
 ⑤代码：轨道3 人工指令接口；⑥降级：无降级（人工指令为终态决策，仅被应急覆盖）。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-FEEDBACK_LOOP | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -763,13 +823,21 @@ BM-BUY-02 四轨融合的子环节（depth=1）。应急保命轨监听风控止
 ⑤代码：轨道4 应急保命模块；⑥降级：无降级（应急为最高优先级终态决策）。
 
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-INF-039 | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
 
-### BM-BUY-08-A 四项必做清单自动化检测
+### BM-BUY-08-A 四项必做清单自动化检测 / Four-Must-Do Checklist Auto-Detection
 
+> **大白话**：每天盘前/盘中/盘后/晚间4个时点自动检查四项必做清单做没做完，没做完就推送提醒，盘中违规直接拦。
 
+**机制说明**：
+
+交易日4时点(盘前08:00/盘中/盘后/晚间)自动检测四项必做清单完成度。盘前超时→Warning；盘中违规→Hard Block(C-004实时检查)；盘后偏差分析。属纪律辅助非阻断(盘中执行除外)。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -782,13 +850,21 @@ BM-BUY-02 四轨融合的子环节（depth=1）。应急保命轨监听风控止
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域，D-COMPLIANCE-23 A-Share Trading Discipline Checker） |
 | ⑥ 降级/中止 | 检测失效→降级人工 checklist；不影响交易执行(必做是纪律辅助非阻断,盘中执行除外) |
 
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：交易日4个关键时点(盘前/盘中/盘后/晚间)自动检测四项必做清单完成度；②消费：工作流完成度信号 + C-004实时风控参数 + 复盘报告生成状态 + 分析任务提交状态；③参数：盘前复核(08:00前完成:前日复盘摘要+今日计划+风险检查清单;超时→Warning推送) + 盘中执行(策略信号合规检查+风控参数确认+仓位限额验证;C-004实时检查→Hard Block) + 盘后复盘(当日决策回顾+偏差分析+纪律自评;未完成→次日开盘前Warning) + 晚间分析(收盘数据+明日策略+风险预判;未完成→次日盘前Warning)；④数据流：4时点工作流信号→完成度检测→未完成Warning推送/盘中违规Hard Block→合规数据库→审计；⑤代码映射：待开发（planned，D_COMPLIANCE域，D-COMPLIANCE-23 A-Share Trading Discipline Checker）；⑥降级：检测失效→降级人工 checklist；不影响交易执行(必做是纪律辅助非阻断,盘中执行除外)。
+
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
-### BM-BUY-08-B 四项严禁自动化检测
+### BM-BUY-08-B 四项严禁自动化检测 / Four-Forbidden Auto-Detection
 
+> **大白话**：下单前和盘中实时检测四项严禁行为（追高/补仓/骄傲/频繁），命中就硬拦不让下单。
 
+**机制说明**：
+
+订单提交前+盘中实时检测四项严禁：①踏空追高(价格追涨超阈值→Hard Block)②被套补仓(亏损>X%加仓→Hard Block)③盈利骄傲(连续盈利后风险敞口超常规→Warning)④频繁交易(频率超限→Kill Switch轻量版)。安全失败=保守Hard Block。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -800,6 +876,10 @@ BM-BUY-02 四轨融合的子环节（depth=1）。应急保命轨监听风控止
 | ④ 数据流 | 订单+盘中行为→4项严禁检测→命中→Hard Block/Warning/Kill Switch轻量版→合规数据库→违规统计/趋势追踪 |
 | ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域，D-COMPLIANCE-23；C-004风控引擎嵌入检测） |
 | ⑥ 降级/中止 | 检测引擎失效→保守Hard Block拒绝订单(安全失败)；Kill Switch轻量版失效→升级全局Kill Switch(RC-03) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：订单提交前+盘中实时检测四项严禁交易行为，触发即Hard Block；②消费：订单流 + 价格偏离度(C-004) + 持仓盈亏 + 同标的加仓记录 + 风险敞口变化率 + 交易频率/单笔规模；③参数：踏空追高(价格追涨幅度超阈值+买入在急剧拉升后→Hard Block拒绝追高) + 被套补仓(持仓亏损>X%后继续加仓同一标的,X由合规官设定建议-5%→Hard Block拒绝补仓) + 盈利骄傲(连续盈利N笔后单笔风险敞口超常规→Warning推送提醒) + 亏损报复(当日亏损>Y%后交易频率/单笔规模异常增加,Y建议-2%→Hard Block触发强制停盘Kill Switch轻量版仅限该策略)；④数据流：订单+盘中行为→4项严禁检测→命中→Hard Block/Warning/Kill Switch轻量版→合规数据库→违规统计/趋势追踪；⑤代码映射：待开发（planned，D_COMPLIANCE域，D-COMPLIANCE-23；C-004风控引擎嵌入检测）；⑥降级：检测引擎失效→保守Hard Block拒绝订单(安全失败)；Kill Switch轻量版失效→升级全局Kill Switch(RC-03)。
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 

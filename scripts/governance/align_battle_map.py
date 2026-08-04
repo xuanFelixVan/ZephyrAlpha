@@ -287,6 +287,10 @@ class BattleMapAlignmentReport:
             "对应的允许域列表里。不在 = 域漂移 = 语义错位（如把卖出决策挂在买入流程）。"
             "规则真源：`docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`。"
         )
+        lines.append(
+            '> 裁定原则：域归属看"承载什么决策"，不看"被谁调用"。supplement 角色（工具被用到，'
+            "不承载业务决策）豁免域漂移检查；仅 primary（承载决策）严查域。故本表只列 primary 锚点的漂移。"
+        )
         lines.append("")
         if not self.domain_drifts:
             lines.append("> ✅ 无域漂移，所有锚点 target domain 都在对应 flow_stage 允许列表里。")
@@ -821,6 +825,12 @@ def run_alignment(
             stage = step_to_stage.get(a.get("step_id"))
             if not stage or stage not in policy:
                 continue  # 未知 stage 或无规则，跳过
+            # 核心原则（battle_map_domain_policy.yaml §裁定原则）：
+            # 域归属看"承载什么决策"，不看"被谁调用"。管道/协议层模块（MCP 等）即使被
+            # 业务环节调用，域属性不变。supplement 角色 = 工具被用到（不承载业务决策），
+            # 豁免域漂移检查；仅 primary（承载决策）严查域，防语义错位（如卖出挂到买入）。
+            if a.get("target_role") == "supplement":
+                continue
             tg = a.get("target_graph")
             tid = a.get("target_id")
             dmap = domain_maps.get(tg)
