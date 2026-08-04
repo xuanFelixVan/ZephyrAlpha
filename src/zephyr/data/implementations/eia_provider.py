@@ -88,18 +88,22 @@ _EIA_TIMEOUT = 30
 # indicator_name 统一加 EIA_ 前缀，避免与其他数据源冲突
 _EIA_SERIES: Final = [
     # ---- 石油库存（周度，EIA Weekly Petroleum Status Report）----
-    # 数据源: petroleum/stoc/wstk/ — Weekly Ending Stocks
-    ("原油库存", "petroleum/stoc/wstk/data/", "WSTURO", "EIA_CRUDE_INVENTORY", "百万桶", "weekly"),
-    ("汽油库存", "petroleum/stoc/wstk/data/", "WGTSTO", "EIA_GASOLINE_INVENTORY", "百万桶", "weekly"),
-    ("馏分油库存", "petroleum/stoc/wstk/data/", "WDISTO", "EIA_DISTILLATE_INVENTORY", "百万桶", "weekly"),
-    ("丙烷库存", "petroleum/stoc/wstk/data/", "WPPTSO", "EIA_PROPANE_INVENTORY", "百万桶", "weekly"),
+    # 数据源: petroleum/sum/sndw/ — Weekly Summary, Supply & Disposition
+    # 单位: Thousand Barrels（千桶）；series 编码 W*=Weekly + 类别 + US + 1=不含SPR
+    # 修复(2026-08-05): 原 stoc/wstk + WSTURO 等编码返回 0 条，实测正确路由为 sum/sndw + WCESTUS1 等
+    ("原油库存", "petroleum/sum/sndw/data/", "WCESTUS1", "EIA_CRUDE_INVENTORY", "千桶", "weekly"),
+    ("汽油库存", "petroleum/sum/sndw/data/", "WGTSTUS1", "EIA_GASOLINE_INVENTORY", "千桶", "weekly"),
+    ("馏分油库存", "petroleum/sum/sndw/data/", "WDISTUS1", "EIA_DISTILLATE_INVENTORY", "千桶", "weekly"),
+    ("丙烷库存", "petroleum/sum/sndw/data/", "WPRSTUS1", "EIA_PROPANE_INVENTORY", "千桶", "weekly"),
     # ---- 石油现货价格（日度）----
     # 数据源: petroleum/pri/spt/ — Petroleum Spot Prices
     ("WTI现货价格", "petroleum/pri/spt/data/", "RWTC", "EIA_WTI_SPOT", "美元/桶", "daily"),
     ("Brent现货价格", "petroleum/pri/spt/data/", "RBRTE", "EIA_BRENT_SPOT", "美元/桶", "daily"),
-    # ---- 天然气库存（周度）----
+    # ---- 天然气库存（月度）----
     # 数据源: natural-gas/stor/sum/ — Natural Gas Storage Summary
-    ("天然气库存", "natural-gas/stor/sum/data/", "WNGST", "EIA_NATGAS_INVENTORY", "十亿立方英尺", "weekly"),
+    # 修复(2026-08-05): 原 WNGST+weekly 编码不存在(返回0)，正确为 N5020US2+monthly
+    # N5020US2 = U.S. Total Natural Gas in Underground Storage (Working Gas)
+    ("天然气库存", "natural-gas/stor/sum/data/", "N5020US2", "EIA_NATGAS_INVENTORY", "MMcf", "monthly"),
 ]
 
 
@@ -338,6 +342,14 @@ class EiaProvider(IngestProviderBase):
             report_date = str(record.get("period", ""))
             if not report_date:
                 continue
-            rows.append((report_date, indicator_name, value, unit, freq))
+            # EIA period 格式因 frequency 而异：
+            #   daily/weekly → "YYYY-MM-DD"（10 字符，直接用）
+            #   monthly      → "YYYY-MM"（7 字符，补 "-01"）
+            #   annual       → "YYYY"（4 字符，补 "-01-01"）
+            if len(report_date) == 7:
+                report_date = report_date + "-01"
+            elif len(report_date) == 4:
+                report_date = report_date + "-01-01"
+            rows.append((report_date, indicator_name, value, unit, freq, "eia"))
 
         return rows
