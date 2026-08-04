@@ -446,7 +446,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 | 缺失态 | 环节无锚点 or 锚点 target 找不到 | ⬜ 灰色 | 这个环节压根没模块承载（BM-INV-001 告警） |
 | 候选态 | target_graph=candidate | 🟨 黄色 | 在候选池里，未进全景图 |
 
-**治理合规**：过度工程不进 depgraph（四问过滤铁律），只进候选池。battle_map 通过 anchors 把候选挂到环节，07_ 展示时用黄色标注"候选承载"。
+**治理合规**：过度工程不进 depgraph（设计准入一问标准），只进候选池。battle_map 通过 anchors 把候选挂到环节，07_ 展示时用黄色标注"候选承载"。
 
 ---
 
@@ -497,7 +497,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 | 第三批（横切） | §13 漏斗 / §16 冲突矩阵 / §30 缺失模块 | battle_map_edges + anchors | 流转边 + 缺失环节标灰 |
 
 **迁移原则**：
-- 草图里的过度工程（KAN/Mamba/Kronos 等）不进 battle_map，归候选池（四问过滤）
+- 草图里的过度工程（KAN/Mamba/Kronos 等）不进 battle_map，归候选池（设计准入一问标准）
 - 草图里的实盘主链路进 battle_map_steps（design_maturity=production）
 - 每个环节的 indicators 从草图注解结构化 + 从现有模块代码提炼大白话
 
