@@ -39,5 +39,8 @@ ORPHAN-MODULE 注意：gate 模块通过 YAML 动态加载（importlib），但 
 from zephyr.gov_enforcement.commit_gates.blueprint_node_id_hardcode_gate import (  # noqa: F401
     make_blueprint_node_id_hardcode_gate as _make_blueprint_node_id_hardcode_gate,
 )
+from zephyr.gov_enforcement.commit_gates.test_residue_ssot_gate import (  # noqa: F401
+    make_test_residue_ssot_gate as _make_test_residue_ssot_gate,
+)
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export

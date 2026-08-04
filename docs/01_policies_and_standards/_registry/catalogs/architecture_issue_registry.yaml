@@ -11372,22 +11372,38 @@ entries:
   adjudication: |-
     2026-08-04 治本。问题：GATE-RUNTIME-CLEANUP reconciler 用 os.rmdir 只删空目录，但
     pytest_<PID>/ 内 fixture 子目录（test_conftest_py_exempted0/...）永远非空 → 永远删不掉，
-    .runtime/tmp/ 积压 10万+ 文件。治本三层闭环——
+    .runtime/tmp/ 积压 10万+ 文件。治本四层闭环——
     1. 源头清理：tests/conftest.py pytest_sessionfinish 钩子，pytest 正常退出时清自己 basetemp
     2. 兜底清理：reconciliation_registry.make_runtime_cleanup_reconciler 升级 os.rmdir→shutil.rmtree
        + PID 存活 + TTL 双判定（_should_remove_test_dir）
     3. 一次性清理：scripts/ops/cleanup_runtime_tmp_residue.py（dry-run/--execute）
-    规则同步：trae_071_temporary_file_lifecycle.yaml 新增 test_residue_reclaim 段。
+    4. 防复发门禁：TEST-RESIDUE-SSOT in-process gate（priority=56），AST 检测新脚本硬编码
+       dir_prefix 集合（≥2 精确匹配）→ 硬阻断，强制走 _load_test_residue_config 动态加载，
+       杜绝"重复造轮子"形成与 trae_071 YAML 的多真源漂移（trae_062 SSoT）。
+    规则同步：trae_071_temporary_file_lifecycle.yaml 新增 test_residue_reclaim 段（v1.1.0→v1.2.0）。
     事件驱动（post-commit reconciler），禁止 cron/Timer（trae_071 LAW-4）。
   fix_phase: |-
     本次提交执行（4 文件协同 + 3 门禁配套注册表）：
-    - reconciliation_registry.py: os.rmdir→shutil.rmtree + PID存活+TTL双判定
+    - reconciliation_registry.py: os.rmdir→shutil.rmtree + PID存活+TTL双判定 + _load_test_residue_config
+      SSoT 加载（前缀/阈值从 trae_071 YAML 动态加载，禁止硬编码）
     - conftest.py: pytest_sessionfinish 钩子源头清 basetemp
-    - cleanup_runtime_tmp_residue.py: 一次性清理脚本（dry-run/--execute）
-    - trae_071 yaml: 新增 test_residue_reclaim 规则段
+    - cleanup_runtime_tmp_residue.py: 一次性清理脚本（dry-run/--execute），动态加载共享 config
+    - trae_071 yaml: 新增 test_residue_reclaim 规则段；version 1.1.0→1.2.0 + last_updated 2026-08-04
     - module_translation_registry.yaml: 新模块翻译条目（TRANSLATION-COVERAGE 门禁）
     - capability_canonical_file_registry.yaml: 新脚本 creation_token 登记（CREATE-GUARD 门禁）
     - architecture_issue_registry.yaml: 本条 issue 登记（ARCH-REFERENCE 门禁）
+    防复发门禁提交（TEST-RESIDUE-SSOT，#5 治本——原仅靠文档约定，升级为技术强制）：
+    - test_residue_ssot_gate.py: AST 检测硬编码 dir_prefix 集合（≥2 精确匹配→硬阻断，fail-closed；
+      config/import/AST 失败 fail-open），前缀真源 lazy import _load_test_residue_config（SSoT 单一加载器）
+    - test_test_residue_ssot_gate.py: 22 单测（检测/误报防护/fail-open 全覆盖）
+    - in_process_gate_registry.yaml: +TEST-RESIDUE-SSOT 条目（total_gates 87→88）
+    - capability_canonical_file_registry.yaml: +capability_id + file creation_token
+    - module_translation_registry.yaml: +gate 大白话翻译条目
+    文档/元数据同步修复（#1-#4 治本）：
+    - trae_071 yaml: version 1.1.0→1.2.0 + last_updated 2026-08-04 + version_history（#1）
+    - 蓝图 MOD-INF-046: Part1/Part2/Part4 更新为 as-built SSoT 动态加载，删硬编码常量 snippet（#2）
+    - AGENTS.md §6.5: 空目录回收→shutil.rmtree 整目录+PID存活双判定 + v1.0.0→v1.2.0（#3）
+    - reconciliation_registry.py: DEPENDENCIES 表头修正（none→process_pool/time_utils/PyYAML/psutil）（#4）
   status: decided
   related_adjudication: 'trae_071 临时文件生命周期（LAW-4 事件驱动禁 cron/Timer）'
   created: '2026-08-04'

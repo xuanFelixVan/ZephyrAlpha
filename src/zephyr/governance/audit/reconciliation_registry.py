@@ -4,7 +4,7 @@
 
 # [DOMAIN] D_GOV_AUDIT
 
-# [DEPENDENCIES] (none — pure stdlib)
+# [DEPENDENCIES] zephyr.shared.infra.process_pool (run_subprocess_hidden), zephyr.shared.utils.time_utils (now_utc), PyYAML (optional, lazy import in _load_test_residue_config for trae_071 §test_residue_reclaim SSoT 加载), psutil (optional, lazy import in _pid_exists for PID 存活检查)
 
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 
@@ -8787,11 +8787,11 @@ def _parse_pid_from_name(name: str) -> int | None:
 def _pid_exists(pid: int) -> bool:
     """检查 PID 是否存活。优先 psutil（已装 7.2.2），fallback ctypes(os.win32)/os.kill。
 
-    lazy import psutil 以保持本模块 ``# [DEPENDENCIES] (none — pure stdlib)`` 声明
-    （psutil 为可选依赖，不可达时降级为标准库方案）。
+    psutil 为可选依赖，lazy import 以保证不可达时降级为标准库方案
+    （ctypes/os.kill），不硬性要求安装 psutil。
     """
     try:
-        import psutil  # noqa: PLC0415 — lazy import 保持模块 pure-stdlib 声明
+        import psutil  # noqa: PLC0415 — lazy import：psutil 可选，不可达时降级 stdlib
         return bool(psutil.pid_exists(pid))
     except ImportError:
         pass

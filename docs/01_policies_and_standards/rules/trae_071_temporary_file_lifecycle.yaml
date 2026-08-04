@@ -38,7 +38,7 @@
 
 rule_id: TRAE-071
 title: 临时文件生命周期管理
-version: 1.1.0
+version: 1.2.0
 layer: L1_foundation
 module_id: TRAE-071
 depends_on: []
@@ -54,9 +54,12 @@ ai_autonomy: ai_modifiable
 meta:
   rule_id: trae_071
   rule_name: temporary_file_lifecycle
-  version: '1.1.0'  # 1.0.0->1.1.0: registration_point 真源修正 boot_hooks.py→git_commit_gateway.py + root-sweep 803 配套标注（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001）
+  version: '1.2.0'  # 1.1.0->1.2.0: 新增 test_residue_reclaim 段（前缀/阈值 SSoT 收敛至 YAML，代码动态加载；#ARCH-TEST-RESIDUE-CLEANUP-001）
+  version_history:
+    - '1.0.0->1.1.0: registration_point 真源修正 boot_hooks.py→git_commit_gateway.py + root-sweep 803 配套标注（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001）'
+    - '1.1.0->1.2.0: 新增 test_residue_reclaim 段（前缀/阈值 SSoT 收敛至 YAML，代码动态加载；#ARCH-TEST-RESIDUE-CLEANUP-001）'
   created: '2026-07-20'
-  last_updated: '2026-07-22'
+  last_updated: '2026-08-04'
   ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
   related_issue: '#ARCH-TEMP-FILE-LIFECYCLE-001'  # 前向引用，Owner 需在 architecture_issue_registry.yaml 登记
   related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001'

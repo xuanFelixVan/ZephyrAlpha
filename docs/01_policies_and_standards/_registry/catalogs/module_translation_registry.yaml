@@ -9649,6 +9649,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "检查准备提交的蓝图文件里有没有写死数据库自增ID（node_id/edge_id）。这些ID是数据库自动生成的序号，删了重建就变，写死在文档里会变成找不到的死链接。本门禁在提交时拦截，强制改用稳定的模块编号。"
+- module_path: src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "测试残留前缀硬编码阻断门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查准备提交的 Python 脚本里有没有把测试残留目录的前缀（比如 pytest_、git_guard_test_ 这些）写死成一串常量。这些前缀的真源在 trae_071 规则文件里，reconciliation_registry 已经提供了统一的加载函数。如果新脚本又自己写死一份，就会和规则文件对不上、各改各的导致漂移。本门禁在提交时拦截这种'重复造轮子'，强制改用动态加载，前缀清单只留一处真源。"
 - module_path: scripts/ops/cleanup_runtime_tmp_residue.py
   domain_id: D_INFRA_OPS
   name_zh: "测试残留目录一次性清理工具"
