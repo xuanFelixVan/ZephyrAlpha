@@ -152,7 +152,7 @@ flowchart TD
         BM_RC_08 -.->|嵌套| BM_RC_08_D
         BM_RC_08 -.->|嵌套| BM_RC_08_E
     end
-    BM_RC_09 ~~~ BM_RC_10 ~~~ BM_RC_01 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_12 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
+    BM_RC_09 ~~~ BM_RC_10 ~~~ BM_RC_01 ~~~ BM_RC_11 ~~~ BM_RC_01_A ~~~ BM_RC_12 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
     BM_RC_01 -->|策略→盘前检查 / data_flow| BM_RC_02
     BM_RC_02 -->|检查→Kill Switch / trigger| BM_RC_03
     BM_RC_03 -->|熔断→盘中监控 / data_flow| BM_RC_04
@@ -251,6 +251,25 @@ RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTO
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
+### BM-RC-11 独立风险数据管道
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 盘中实时/盘后批量 |
+| ② 消费数据/因子 | 独立风险数据源(不依赖交易数据，防循环依赖) |
+| ③ 参数 | 独立风险数据管道、风险指标计算、数据质量校验 |
+| ④ 数据流 | 独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR |
+| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
+| ⑥ 降级/中止 | 数据管道故障→降级缓存指标+告警 |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
 ### BM-RC-01-A 风控策略CRUD与版本管理 / Risk Strategy CRUD & Versioning
 
 > **大白话**：风控规则的增删改查带版本管理——改了规则能追溯历史版本，出问题能回滚。
@@ -281,25 +300,6 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 | depgraph | MOD-L04-001 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
-
-### BM-RC-11 独立风险数据管道
-
-
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | 盘中实时/盘后批量 |
-| ② 消费数据/因子 | 独立风险数据源(不依赖交易数据，防循环依赖) |
-| ③ 参数 | 独立风险数据管道、风险指标计算、数据质量校验 |
-| ④ 数据流 | 独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR |
-| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
-| ⑥ 降级/中止 | 数据管道故障→降级缓存指标+告警 |
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-12 极端事件与黑天鹅
 
@@ -1534,7 +1534,7 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 |---|---|
 | ① 触发条件 | 策略信号到达订单执行入口前，否决规则引擎同步拦截判定是否放行/否决 |
 | ② 消费数据/因子 | 策略订单信号 + 否决规则(RC-10) + 实时持仓 + 实时行情 + Kill Switch状态 |
-| ③ 参数 | 同步拦截延迟<50ms(P99) + 不可绕过(所有下单必经引擎无旁路,HC-RISK-03) + 不可人工否决(HC-RISK-02防御性决策自动执行) + Kill Switch基础设施层实现(非Agent运行时内,OWASP ASI08) + 熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED) + 多路径激活(AI自动<1ms/人工<100ms/定时熔断5秒无心跳/外部信号<1s) + 否决审计(时间/规则/触发值/被否决指令/执行者) |
+| ③ 参数 | 同步拦截延迟<50ms(P99) + 不可绕过(所有下单必经引擎无旁路,HC-RISK-03) + 不可人工否决(HC-RISK-02防御性决策自动执行) + Kill Switch基础设施层实现(非Agent运行时内,OWASP ASI08) + 熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED) + 多路径激活(AI自动<1ms/人工<100ms/定时熔断5秒无心跳/外部信号<1s) + 否决审计(时间/规则/触发值/被否决指令/执行者) + 隔离策略三机制(§6): 舱壁隔离(Bulkhead,故障域隔离到单策略防级联) + 超时与重试(否决引擎超时50ms后熔断,重试策略指数退避) + 混沌工程验证(定期注入故障验证否决引擎不可绕过性) |
 | ④ 数据流 | 策略信号→否决规则引擎同步拦截→通过→订单执行 / 否决→否决日志+通知推送；Kill Switch多路径→基础设施层平仓 |
 | ⑤ 代码映射 | 待开发（planned，D_RISK域；Kill Switch需miniQMT API支持） |
 | ⑥ 降级/中止 | 否决引擎自身故障→熔断器OPEN→全拒订单(安全失败)；引擎不可用→Kill Switch激活(宁可停交易不可绕过风控) |

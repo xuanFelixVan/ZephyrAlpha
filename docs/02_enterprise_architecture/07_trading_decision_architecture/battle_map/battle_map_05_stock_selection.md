@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_05_stock_selection.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §stock_selection 阶段，91 环节（144 锚点）。
+> battle_map §stock_selection 阶段，91 环节（146 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 选股（stock_selection） | Stage | 选股 |
 | 环节数 | 91 | Steps | 91 |
-| 锚点数（双向对齐） | 144 | Anchors (Bidirectional) | 144 |
+| 锚点数（双向对齐） | 146 | Anchors (Bidirectional) | 146 |
 | 流转边 | 17 | Edges | 17 |
 | 状态分布 | 🟦 运营态（已建）=64 ｜ 🟧 设计态（待施工）=22 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=2 | State Distribution | 🟦 运营态（已建）=64 ｜ 🟧 设计态（待施工）=22 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=2 |
 
@@ -294,9 +294,10 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 | depgraph | MOD-INF-043 | primary | stable | generated |
-| depgraph | MOD-L00-004 | primary | stable | deprecated |
+| depgraph | MOD-L00-004 | primary | stable | generated |
 | depgraph | MOD-ALT_DATA | primary | stable | generated |
 | depgraph | MOD-INTEGRATION | primary | stable | generated |
+| depgraph | MOD-INF-026 | supplement | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -334,10 +335,11 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
-| depgraph | MOD-L03-001 | supplement | production | stable |
+| depgraph | MOD-L03-001 | supplement | production | generated |
 | depgraph | MOD-INF-038 | primary | stable | stable |
 | depgraph | MOD-SIGNAL_ASHARE | primary | stable | generated |
 | depgraph | MOD-ML_SERVE | primary | stable | generated |
+| depgraph | MOD-INTEGRATION | supplement | generated | generated |
 
 **有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -956,7 +958,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-006 原始数据缓存把适配器�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-006 | primary | production | generated |
-| depgraph | MOD-L00-006 | primary | stable | generated |
+| depgraph | MOD-L00-006 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -1591,7 +1593,7 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 | depgraph | MOD-L02-015 | supplement | production | stable |
 | depgraph | MOD-L02-016 | supplement | production | stable |
 | depgraph | MOD-L02-017 | supplement | production | stable |
-| depgraph | MOD-SIG-006 | supplement | production | generated |
+| depgraph | MOD-SIG-006 | supplement | production | stable |
 | depgraph | MOD-L02_GOV | primary | stable | generated |
 | depgraph | MOD-INF-040 | primary | stable | generated |
 

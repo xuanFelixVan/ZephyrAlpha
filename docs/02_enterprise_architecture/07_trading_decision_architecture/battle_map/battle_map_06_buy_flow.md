@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_06_buy_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §buy_flow 阶段，24 环节（19 锚点）。
+> battle_map §buy_flow 阶段，24 环节（20 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 买入（buy_flow） | Stage | 买入 |
 | 环节数 | 24 | Steps | 24 |
-| 锚点数（双向对齐） | 19 | Anchors (Bidirectional) | 19 |
+| 锚点数（双向对齐） | 20 | Anchors (Bidirectional) | 20 |
 | 流转边 | 12 | Edges | 12 |
 | 状态分布 | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=9 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=5 ｜ 🟨 候选态（候选池）=1 |
 
@@ -43,8 +43,8 @@ date: 2026-08-04
 %% 买入阶段图
 flowchart TD
     BM_BUY_09["【BM-BUY-09 信息合规】<br/>—<br/>（生产态 / production）"]
-    BM_BUY_10["【BM-BUY-10 合规技术深度】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_BUY_01["【BM-BUY-01 多情景对策生成】<br/>根据明天的8种走法，从策略库里挑出对应的买入对策<br/>预案。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Multi-Scenario Countermeasure】"]
+    BM_BUY_10["【BM-BUY-10 合规技术深度】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_BUY_11["【BM-BUY-11 合规持续运营】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_BUY_12["【BM-BUY-12 硬边界裁定】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
     BM_BUY_13["【BM-BUY-13 合规裁定扩展-EU AI Act】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
@@ -85,7 +85,7 @@ flowchart TD
         BM_BUY_08 -.->|嵌套| BM_BUY_08_A
         BM_BUY_08 -.->|嵌套| BM_BUY_08_B
     end
-    BM_BUY_09 ~~~ BM_BUY_10 ~~~ BM_BUY_01 ~~~ BM_BUY_11 ~~~ BM_BUY_12 ~~~ BM_BUY_13 ~~~ BM_BUY_15 ~~~ BM_BUY_04 ~~~ BM_BUY_02_A_1 ~~~ BM_BUY_02_A_1_a ~~~ BM_BUY_02_A_1_b ~~~ BM_BUY_02_A_1_c ~~~ BM_BUY_02_A_1_d ~~~ BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D ~~~ BM_BUY_08_A ~~~ BM_BUY_08_B
+    BM_BUY_09 ~~~ BM_BUY_01 ~~~ BM_BUY_10 ~~~ BM_BUY_11 ~~~ BM_BUY_12 ~~~ BM_BUY_13 ~~~ BM_BUY_15 ~~~ BM_BUY_04 ~~~ BM_BUY_02_A_1 ~~~ BM_BUY_02_A_1_a ~~~ BM_BUY_02_A_1_b ~~~ BM_BUY_02_A_1_c ~~~ BM_BUY_02_A_1_d ~~~ BM_BUY_07 ~~~ BM_BUY_02_A ~~~ BM_BUY_02_B ~~~ BM_BUY_02_C ~~~ BM_BUY_02_D ~~~ BM_BUY_08_A ~~~ BM_BUY_08_B
     BM_BUY_02 ~~~ BM_BUY_06
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
@@ -127,25 +127,6 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
-### BM-BUY-10 合规技术深度
-
-
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | 合规规则变更/RegTech自动化触发 |
-| ② 消费数据/因子 | 合规规则库+法规更新+BM-BUY-08交易纪律配置 |
-| ③ 参数 | 合规策略即代码、合规规则版本控制与回测、合规事件升级、RegTech自动化、SBOM合规、合规例外审批流 |
-| ④ 数据流 | 法规→合规规则编码→版本控制→回测验证→自动化执行→BM-BUY-08合规闸 |
-| ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
-| ⑥ 降级/中止 | 自动化失效→人工合规检查(降效率) |
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
-
 ### BM-BUY-01 多情景对策生成 / Multi-Scenario Countermeasure
 
 > **大白话**：根据明天的8种走法，从策略库里挑出对应的买入对策预案。
@@ -176,10 +157,29 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | stable |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+
+### BM-BUY-10 合规技术深度
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 合规规则变更/RegTech自动化触发 |
+| ② 消费数据/因子 | 合规规则库+法规更新+BM-BUY-08交易纪律配置 |
+| ③ 参数 | 合规策略即代码、合规规则版本控制与回测、合规事件升级、RegTech自动化、SBOM合规、合规例外审批流 |
+| ④ 数据流 | 法规→合规规则编码→版本控制→回测验证→自动化执行→BM-BUY-08合规闸 |
+| ⑤ 代码映射 | 待开发（planned，D_COMPLIANCE域） |
+| ⑥ 降级/中止 | 自动化失效→人工合规检查(降效率) |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-11 合规持续运营
 
@@ -323,6 +323,7 @@ L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 
 | depgraph | MOD-PF-007 | primary | planned | stable |
 | depgraph | MOD-FEEDBACK_LOOP | primary | planned | stable |
 | depgraph | SH-DB-001 | primary | stable | stable |
+| depgraph | MOD-INF-016 | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 

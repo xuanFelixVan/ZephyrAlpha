@@ -10,7 +10,7 @@ date: 2026-08-04
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_01_research_incubation.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §research_incubation 阶段，33 环节（41 锚点）。
+> battle_map §research_incubation 阶段，33 环节（42 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,9 +20,9 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 研究孵化（research_incubation） | Stage | 研究孵化 |
 | 环节数 | 33 | Steps | 33 |
-| 锚点数（双向对齐） | 41 | Anchors (Bidirectional) | 41 |
+| 锚点数（双向对齐） | 42 | Anchors (Bidirectional) | 42 |
 | 流转边 | 8 | Edges | 8 |
-| 状态分布 | 🟨 候选态（候选池）=20 ｜ 🟦 运营态（已建）=5 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟨 候选态（候选池）=20 ｜ 🟦 运营态（已建）=5 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 |
+| 状态分布 | 🟨 候选态（候选池）=19 ｜ 🟦 运营态（已建）=6 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟨 候选态（候选池）=19 ｜ 🟦 运营态（已建）=6 ｜ ⬜ 缺失态（无锚点）=4 ｜ 🟧 设计态（待施工）=4 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -52,6 +52,11 @@ flowchart TD
         BM_RES_09_A["【BM-RES-09-A 知识类型分类体系】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
         BM_RES_09 -.->|嵌套| BM_RES_09_A
     end
+    subgraph sg_BM_RES_10 ["模块映射与工厂匹配"]
+        BM_RES_10["【BM-RES-10 模块映射与工厂匹配】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
+        BM_RES_10_A["【BM-RES-10-A 模块工厂架构】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
+        BM_RES_10 -.->|嵌套| BM_RES_10_A
+    end
     subgraph sg_BM_RES_01 ["研究数据与特征存储"]
         BM_RES_01["【BM-RES-01 研究数据与特征存储】<br/>研究员的数据底盘——把数据集版本化管起来、追踪血缘<br/>、打质量分；特征分在线离线两套存，保证 PIT<br/>正确不偷看未来。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Research Data &amp; Feature Store】"]
         BM_RES_01_A["【BM-RES-01-A 数据集版本化与血缘追踪】<br/>把数据集像 Git<br/>一样管版本——每次改动留快照、记血缘，知道数据从哪<br/>来、经过什么变换、去了哪。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Dataset Versioning &amp; Lineage】"]
@@ -62,11 +67,6 @@ flowchart TD
         BM_RES_01 -.->|嵌套| BM_RES_01_B
         BM_RES_01 -.->|嵌套| BM_RES_01_C
         BM_RES_01 -.->|嵌套| BM_RES_01_D
-    end
-    subgraph sg_BM_RES_10 ["模块映射与工厂匹配"]
-        BM_RES_10["【BM-RES-10 模块映射与工厂匹配】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
-        BM_RES_10_A["【BM-RES-10-A 模块工厂架构】<br/>—<br/>（设计态 / design）<br/>🟧设计态子环节"]
-        BM_RES_10 -.->|嵌套| BM_RES_10_A
     end
     subgraph sg_BM_RES_11 ["多模态知识采集"]
         BM_RES_11["【BM-RES-11 多模态知识采集】<br/>—<br/>（缺失态 / missing）<br/>⚠无锚点"]
@@ -94,7 +94,7 @@ flowchart TD
         BM_RES_03 -.->|嵌套| BM_RES_03_C
     end
     subgraph sg_BM_RES_04 ["研究工作流编排"]
-        BM_RES_04["【BM-RES-04 研究工作流编排】<br/>把研究步骤串成 DAG<br/>自动跑——数据准备→特征计算→训练→评估，依赖管好、<br/>失败重试、并行加速。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Workflow Orchestration】"]
+        BM_RES_04["【BM-RES-04 研究工作流编排】<br/>把研究步骤串成 DAG<br/>自动跑——数据准备→特征计算→训练→评估，依赖管好、<br/>失败重试、并行加速。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Research Workflow Orchestration】"]
         BM_RES_04_A["【BM-RES-04-A DAG编排与任务调度】<br/>把研究步骤串成 DAG<br/>自动跑——数据准备→特征计算→训练→评估，依赖管好、<br/>失败重试、并行加速。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【DAG Orchestration &amp; Task Scheduling】"]
         BM_RES_04 -.->|嵌套| BM_RES_04_A
     end
@@ -119,7 +119,7 @@ flowchart TD
         BM_RES_07_A["【BM-RES-07-A 策略进化与因子挖掘】<br/>基于归因结果调整权重、挖新因子、学错误模式，让策<br/>略自己进化——不是一锤子买卖。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Strategy Evolution &amp; Factor Mining】"]
         BM_RES_07 -.->|嵌套| BM_RES_07_A
     end
-    BM_RES_08 ~~~ BM_RES_09 ~~~ BM_RES_01 ~~~ BM_RES_10 ~~~ BM_RES_01_A ~~~ BM_RES_11 ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RES_04_A ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RES_07_A ~~~ BM_RES_08_A ~~~ BM_RES_09_A ~~~ BM_RES_10_A ~~~ BM_RES_11_A
+    BM_RES_08 ~~~ BM_RES_09 ~~~ BM_RES_10 ~~~ BM_RES_01 ~~~ BM_RES_01_A ~~~ BM_RES_11 ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RES_04_A ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RES_07_A ~~~ BM_RES_08_A ~~~ BM_RES_09_A ~~~ BM_RES_10_A ~~~ BM_RES_11_A
     BM_RES_01 -->|研究数据→实验追踪 / data_flow| BM_RES_02
     BM_RES_02 -.->|实验结果→假设验证 / data_flow| BM_RES_03
     BM_RES_03 -.->|假设→工作流编排 / trigger| BM_RES_04
@@ -131,10 +131,10 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_RES_01,BM_RES_01_A,BM_RES_02,BM_RES_06,BM_RES_07 production
+    class BM_RES_01,BM_RES_01_A,BM_RES_02,BM_RES_04,BM_RES_06,BM_RES_07 production
     class BM_RES_08_A,BM_RES_09_A,BM_RES_10_A,BM_RES_11_A design
     class BM_RES_08,BM_RES_09,BM_RES_10,BM_RES_11 missing
-    class BM_RES_01_B,BM_RES_01_C,BM_RES_01_D,BM_RES_02_A,BM_RES_02_B,BM_RES_02_C,BM_RES_02_D,BM_RES_03,BM_RES_03_A,BM_RES_03_B,BM_RES_03_C,BM_RES_04,BM_RES_04_A,BM_RES_05,BM_RES_05_A,BM_RES_05_B,BM_RES_05_C,BM_RES_06_A,BM_RES_06_B,BM_RES_07_A candidate
+    class BM_RES_01_B,BM_RES_01_C,BM_RES_01_D,BM_RES_02_A,BM_RES_02_B,BM_RES_02_C,BM_RES_02_D,BM_RES_03,BM_RES_03_A,BM_RES_03_B,BM_RES_03_C,BM_RES_04_A,BM_RES_05,BM_RES_05_A,BM_RES_05_B,BM_RES_05_C,BM_RES_06_A,BM_RES_06_B,BM_RES_07_A candidate
 ```
 
 ## 环节详情
@@ -172,6 +172,25 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 | ④ 数据流 | 结构化知识→分类→策略提取→BM-RES-07策略迭代升级 |
 | ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_ML_TRAIN域） |
 | ⑥ 降级/中止 | 提取失败→人工标注策略要素 |
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
+
+### BM-RES-10 模块映射与工厂匹配
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | BM-RES-09 策略提取后/新模块需求触发 |
+| ② 消费数据/因子 | 策略规格+现有模块工厂库+BM-MT-01训练基座契约 |
+| ③ 参数 | 模块工厂架构、映射匹配规则、与现有工厂关系 |
+| ④ 数据流 | 策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成 |
+| ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_ML_TRAIN域） |
+| ⑥ 降级/中止 | 匹配失败→全新建模块(走BM-MT-01-B AI代码生成) |
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
@@ -218,25 +237,6 @@ D-RESEARCH-02 Feature Store 提供离线训练+在线推理双套特征存储，
 | depgraph | MOD-DATA_SEC | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
-
-### BM-RES-10 模块映射与工厂匹配
-
-
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | BM-RES-09 策略提取后/新模块需求触发 |
-| ② 消费数据/因子 | 策略规格+现有模块工厂库+BM-MT-01训练基座契约 |
-| ③ 参数 | 模块工厂架构、映射匹配规则、与现有工厂关系 |
-| ④ 数据流 | 策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成 |
-| ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_ML_TRAIN域） |
-| ⑥ 降级/中止 | 匹配失败→全新建模块(走BM-MT-01-B AI代码生成) |
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
 
 ### BM-RES-01-A 数据集版本化与血缘追踪 / Dataset Versioning & Lineage
 
@@ -705,8 +705,9 @@ D-RESEARCH-15 Reproducibility Pack Generator 一键生成复现包(环境锁定+
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0849 | primary | planned | — |
 | candidate | CAND-HARVEST-0853 | supplement | planned | — |
+| depgraph | MOD-INF-013 | supplement | planned | stable |
 
-**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
 
 ### BM-RES-04-A DAG编排与任务调度 / DAG Orchestration & Task Scheduling
 
@@ -1081,12 +1082,12 @@ D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | 策略提取产出新策略需求后，模块工厂将需求映射到可执行模块并接入系统 |
-| ② 消费数据/因子 | 策略需求(来自RES-09策略提取) + 现有模块清单(depgraph) + 模块模板库 |
-| ③ 参数 | 模块工厂架构：需求解析 + 模块匹配(模板/已有模块复用/新建) + 接口契约生成 + 自动化接入测试 + 与现有工厂的关系(复用MT-01-B AI辅助代码生成) |
-| ④ 数据流 | 策略需求→模块匹配→接入测试→新模块上线(depgraph登记)→下游MT-*训练 |
-| ⑤ 代码映射 | 待开发（planned，D_ML_TRAIN/D_INTEGRATION域） |
-| ⑥ 降级/中止 | 工厂匹配失效→人工介入选择模块，记录未自动化的需求 |
+| ① 触发条件 | 研究产出新模块/新能力时，模块工厂匹配现有模块或创建新模块注册 |
+| ② 消费数据/因子 | 研究发现 + 模块注册表 + 模块映射规则 + 能力卡片 |
+| ③ 参数 | 模块创建流程(标准创建→注册→接入→验证4步) + 输出契约(模块产出规范+版本管理+退役流程) + §7 S4模块创建与接入层: 模块创建流程(标准创建→注册→接入→验证4步) + 输出契约(模块产出规范+版本管理+退役流程) |
+| ④ 数据流 | 研究发现→模块工厂匹配→注册新模块/复用现有→能力卡片更新→部署 |
+| ⑤ 代码映射 | 待开发（planned，D_RESEARCH域） |
+| ⑥ 降级/中止 | 模块工厂不可用→人工创建模块+手动注册 |
 
 **锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
 
