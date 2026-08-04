@@ -89,9 +89,9 @@ flowchart TD
     schemas_categories_market_hk_kline_py["行情hkkline<br/>本文件是 c1_market.hk_kline 表结构的唯一真源<br/>（DDL-as-Code 模式）。<br/>market_hk_kline<br/>文件: categories/market_hk_kline.py<br/>(生产态 / production)"]
     schemas_categories_market_hk_stock_list_py["行情hk股票列表<br/>categories相关功能（market hk stock list）<br/>market_hk_stock_list<br/>文件: categories/market_hk_stock_list.py<br/>(生产态 / production)"]
     schemas_categories_market_hk_trade_calendar_py["行情hk成交日历<br/>categories相关功能（market hk trade calendar）<br/>market_hk_trade_calendar<br/>文件: categories/market_hk_trade_calendar.py<br/>(生产态 / production)"]
-    schemas_categories_market_hog_futures_core_py["市场生猪Futures核心<br/>hog_futures_core 表 DDL-as-Code（category_id:<br/>market_hog_futures_core, calc_m...<br/>Market Hog Futures Core<br/>文件: categories/market_hog_futures_core.py<br/>(生产态 / production)"]
-    schemas_categories_market_hog_province_spot_py["市场生猪Province现货<br/>hog_province_spot 表 DDL-as-Code（category_id:<br/>market_hog_province_spot, calc...<br/>Market Hog Province Spot<br/>文件: categories/market_hog_province_spot.py<br/>(生产态 / production)"]
-    schemas_categories_market_hog_spot_index_py["市场生猪现货索引<br/>hog_spot_index 表 DDL-as-Code（category_id:<br/>market_hog_spot_index, calc_mode:...<br/>Market Hog Spot Index<br/>文件: categories/market_hog_spot_index.py<br/>(生产态 / production)"]
+    schemas_categories_market_hog_futures_core_py["market_hog_futures_core, calc_mode: preload）.<br/>hog_futures_core 表 DDL-as-Code（category_id:<br/>market_hog_futures_core, calc_m...<br/>Market Hog Futures Core<br/>文件: categories/market_hog_futures_core.py<br/>(生产态 / production)"]
+    schemas_categories_market_hog_province_spot_py["market_hog_province_spot, calc_mode: preload）.<br/>hog_province_spot 表 DDL-as-Code（category_id:<br/>market_hog_province_spot, calc...<br/>Market Hog Province Spot<br/>文件: categories/market_hog_province_spot.py<br/>(生产态 / production)"]
+    schemas_categories_market_hog_spot_index_py["market_hog_spot_index, calc_mode: preload）.<br/>hog_spot_index 表 DDL-as-Code（category_id:<br/>market_hog_spot_index, calc_mode:...<br/>Market Hog Spot Index<br/>文件: categories/market_hog_spot_index.py<br/>(生产态 / production)"]
     schemas_categories_market_index_py["行情索引<br/>本文件是 c1_market.index_quote<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_index<br/>文件: categories/market_index.py<br/>(生产态 / production)"]
     schemas_categories_market_index_constituent_py["行情索引constituent<br/>categories相关功能（market index constituent）<br/>market_index_constituent<br/>文件: categories/market_index_constituent.py<br/>(生产态 / production)"]
     schemas_categories_market_index_list_py["行情索引列表<br/>categories相关功能（market index list）<br/>market_index_list<br/>文件: categories/market_index_list.py<br/>(生产态 / production)"]
@@ -110,7 +110,7 @@ flowchart TD
     schemas_categories_market_kline_etf_30min_py["行情klineetf30min<br/>本文件是 c1_market.kline_etf_30min<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_etf_30min<br/>文件: categories/market_kline_etf_30min.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_etf_5min_py["行情klineetf5min<br/>本文件是 c1_market.kline_etf_5min<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_etf_5min<br/>文件: categories/market_kline_etf_5min.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_etf_60min_py["行情klineetf60min<br/>本文件是 c1_market.kline_etf_60min<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_etf_60min<br/>文件: categories/market_kline_etf_60min.py<br/>(生产态 / production)"]
-    schemas_categories_market_kline_etf_daily_py["市场K线EtfDaily<br/>kline_etf_daily 表 DDL-as-Code（category_id:<br/>market_kline_etf_daily, calc_mod...<br/>Market Kline Etf Daily<br/>文件: categories/market_kline_etf_daily.py<br/>(生产态 / production)"]
+    schemas_categories_market_kline_etf_daily_py["market_kline_etf_daily, calc_mode: preload）<br/>kline_etf_daily 表 DDL-as-Code（category_id:<br/>market_kline_etf_daily, calc_mod...<br/>Market Kline Etf Daily<br/>文件: categories/market_kline_etf_daily.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_futures_py["行情klinefutures<br/>本文件是 c1_market.kline_futures<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_futures<br/>文件: categories/market_kline_futures.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_hk_daily_py["行情klinehkdaily<br/>本文件是 c1_market.kline_hk_daily<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_hk_daily<br/>文件: categories/market_kline_hk_daily.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_index_py["行情kline索引<br/>本文件是 c1_market.kline_index<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_index<br/>文件: categories/market_kline_index.py<br/>(生产态 / production)"]
@@ -158,7 +158,7 @@ flowchart TD
     scripts_ops_verify_alert_channels_py["告警通道端到端验证<br/>（B2，#ARCH-CH-023，2026-07-25）。<br/>告警通道端到端验证，#，2026-07-25）。<br/>verify_alert_channels<br/>文件: ops/verify_alert_channels.py<br/>(生产态 / production)"]
     scripts_register_aux_tasks_ps1["注册aux任务<br/>register_aux_tasks.ps1的注册表，登记和查询已注册<br/>的条目<br/>文件: scripts/register_aux_tasks.ps1<br/>(生产态 / production)"]
     scripts_register_guard_tasks_ps1["注册守卫任务<br/>守卫的注册表，登记和查询已注册的条目<br/>register_guard_tasks<br/>文件: scripts/register_guard_tasks.ps1<br/>(生产态 / production)"]
-    scripts_start_ch_health_probe_ps1["启动ChHealthProbe<br/>脚本包的start_ch_health_probe模块<br/>Start Ch Health Probe<br/>文件: scripts/start_ch_health_probe.ps1<br/>(生产态 / production)"]
+    scripts_start_ch_health_probe_ps1["Start Ch Health Probe<br/>脚本包的start_ch_health_probe模块<br/>文件: scripts/start_ch_health_probe.ps1<br/>(生产态 / production)"]
     scripts_start_scheduler_ps1["启动调度器<br/>调度器的调度器，按时间或优先级安排任务执行<br/>start_scheduler<br/>文件: scripts/start_scheduler.ps1<br/>(生产态 / production)"]
     scripts_start_tick_subscriber_ps1["启动逐笔订阅器<br/>start_tick_subscriber.ps1的订阅器，订阅接收数据<br/>文件: scripts/start_tick_subscriber.ps1<br/>(生产态 / production)"]
     src_zephyr_data_main_py["主入口<br/>data — 数据源集成器 CLI 入口<br/>__main__<br/>文件: data/__main__.py<br/>(生产态 / production)"]
@@ -167,7 +167,7 @@ flowchart TD
     src_zephyr_data_config_tasks_yaml["任务<br/>数据采集任务清单配置，定义首批 10<br/>个任务的调度计划、DAG 依赖与数据源映射，覆盖<br/>iFind/QMT/AKShare 三个 Provider。<br/>tasks<br/>文件: config/tasks.yaml<br/>(生产态 / production)"]
     src_zephyr_data_connectors["data/connectors<br/>数据连接器包，适配外部数据源连接与数据采集<br/>⛔ 该域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
     src_zephyr_data_implementations_init_py["data/implementations 包入口<br/>每个 Provider 封装一个数据源 SDK，继承<br/>IngestProviderBase。<br/>文件: implementations/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_data_implementations_fred_provider_py["FRED宏观数据源<br/>从美联储经济数据库<br/>(FRED)和世界银行免费获取全球宏观经济指标<br/>(美国及国际GDP/CPI/就业/利率<br/>/贸易等),补充国内数据源覆盖不到的国际宏观对比数<br/>据<br/>文件: implementations/fred_provider.py<br/>(设计态 / design)"]
+    src_zephyr_data_implementations_fred_provider_py["implementations/fred_provider<br/>FredProvider 实现（MOD-L00-004 §4.3<br/>数据源集成器）。<br/>文件: implementations/fred_provider.py<br/>(设计态 / design)"]
     src_zephyr_data_kline_resampler_py["880xxx 板块K线合成器——从 1m/5m 合成 15m/30m/60m<br/>写<br/>入 ClickHouse<br/>kline_resampler<br/>文件: data/kline_resampler.py<br/>(生产态 / production)"]
     src_zephyr_data_redundant_source_init_py["数据源冗余与热切换模块（MOD-L00-005）。<br/>P2-8：主备数据源热切换 + CH 冗余降级。<br/>文件: redundant_source/__init__.py<br/>(生产态 / production)"]
     src_zephyr_data_satellite_geospatial_engine_init_py["data/satellite_geospatial_engine 包入口<br/>域量化架构 · D_DATA 数据接入层<br/>D_DATA Data Source<br/>文件: satellite_geospatial_engine/__init__.py<br/>(生产态 / production)"]
@@ -756,9 +756,9 @@ flowchart TD
     schemas_categories_market_hk_kline_py["行情hkkline<br/>本文件是 c1_market.hk_kline 表结构的唯一真源<br/>（DDL-as-Code 模式）。<br/>market_hk_kline<br/>文件: categories/market_hk_kline.py<br/>(生产态 / production)"]
     schemas_categories_market_hk_stock_list_py["行情hk股票列表<br/>categories相关功能（market hk stock list）<br/>market_hk_stock_list<br/>文件: categories/market_hk_stock_list.py<br/>(生产态 / production)"]
     schemas_categories_market_hk_trade_calendar_py["行情hk成交日历<br/>categories相关功能（market hk trade calendar）<br/>market_hk_trade_calendar<br/>文件: categories/market_hk_trade_calendar.py<br/>(生产态 / production)"]
-    schemas_categories_market_hog_futures_core_py["市场生猪Futures核心<br/>hog_futures_core 表 DDL-as-Code（category_id:<br/>market_hog_futures_core, calc_m...<br/>Market Hog Futures Core<br/>文件: categories/market_hog_futures_core.py<br/>(生产态 / production)"]
-    schemas_categories_market_hog_province_spot_py["市场生猪Province现货<br/>hog_province_spot 表 DDL-as-Code（category_id:<br/>market_hog_province_spot, calc...<br/>Market Hog Province Spot<br/>文件: categories/market_hog_province_spot.py<br/>(生产态 / production)"]
-    schemas_categories_market_hog_spot_index_py["市场生猪现货索引<br/>hog_spot_index 表 DDL-as-Code（category_id:<br/>market_hog_spot_index, calc_mode:...<br/>Market Hog Spot Index<br/>文件: categories/market_hog_spot_index.py<br/>(生产态 / production)"]
+    schemas_categories_market_hog_futures_core_py["market_hog_futures_core, calc_mode: preload）.<br/>hog_futures_core 表 DDL-as-Code（category_id:<br/>market_hog_futures_core, calc_m...<br/>Market Hog Futures Core<br/>文件: categories/market_hog_futures_core.py<br/>(生产态 / production)"]
+    schemas_categories_market_hog_province_spot_py["market_hog_province_spot, calc_mode: preload）.<br/>hog_province_spot 表 DDL-as-Code（category_id:<br/>market_hog_province_spot, calc...<br/>Market Hog Province Spot<br/>文件: categories/market_hog_province_spot.py<br/>(生产态 / production)"]
+    schemas_categories_market_hog_spot_index_py["market_hog_spot_index, calc_mode: preload）.<br/>hog_spot_index 表 DDL-as-Code（category_id:<br/>market_hog_spot_index, calc_mode:...<br/>Market Hog Spot Index<br/>文件: categories/market_hog_spot_index.py<br/>(生产态 / production)"]
     schemas_categories_market_index_py["行情索引<br/>本文件是 c1_market.index_quote<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_index<br/>文件: categories/market_index.py<br/>(生产态 / production)"]
     schemas_categories_market_index_constituent_py["行情索引constituent<br/>categories相关功能（market index constituent）<br/>market_index_constituent<br/>文件: categories/market_index_constituent.py<br/>(生产态 / production)"]
     schemas_categories_market_index_list_py["行情索引列表<br/>categories相关功能（market index list）<br/>market_index_list<br/>文件: categories/market_index_list.py<br/>(生产态 / production)"]
@@ -777,7 +777,7 @@ flowchart TD
     schemas_categories_market_kline_etf_30min_py["行情klineetf30min<br/>本文件是 c1_market.kline_etf_30min<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_etf_30min<br/>文件: categories/market_kline_etf_30min.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_etf_5min_py["行情klineetf5min<br/>本文件是 c1_market.kline_etf_5min<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_etf_5min<br/>文件: categories/market_kline_etf_5min.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_etf_60min_py["行情klineetf60min<br/>本文件是 c1_market.kline_etf_60min<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_etf_60min<br/>文件: categories/market_kline_etf_60min.py<br/>(生产态 / production)"]
-    schemas_categories_market_kline_etf_daily_py["市场K线EtfDaily<br/>kline_etf_daily 表 DDL-as-Code（category_id:<br/>market_kline_etf_daily, calc_mod...<br/>Market Kline Etf Daily<br/>文件: categories/market_kline_etf_daily.py<br/>(生产态 / production)"]
+    schemas_categories_market_kline_etf_daily_py["market_kline_etf_daily, calc_mode: preload）<br/>kline_etf_daily 表 DDL-as-Code（category_id:<br/>market_kline_etf_daily, calc_mod...<br/>Market Kline Etf Daily<br/>文件: categories/market_kline_etf_daily.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_futures_py["行情klinefutures<br/>本文件是 c1_market.kline_futures<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_futures<br/>文件: categories/market_kline_futures.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_hk_daily_py["行情klinehkdaily<br/>本文件是 c1_market.kline_hk_daily<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_hk_daily<br/>文件: categories/market_kline_hk_daily.py<br/>(生产态 / production)"]
     schemas_categories_market_kline_index_py["行情kline索引<br/>本文件是 c1_market.kline_index<br/>表结构的唯一真源（DDL-as-Code 模式）。<br/>market_kline_index<br/>文件: categories/market_kline_index.py<br/>(生产态 / production)"]
@@ -825,7 +825,7 @@ flowchart TD
     scripts_ops_verify_alert_channels_py["告警通道端到端验证<br/>（B2，#ARCH-CH-023，2026-07-25）。<br/>告警通道端到端验证，#，2026-07-25）。<br/>verify_alert_channels<br/>文件: ops/verify_alert_channels.py<br/>(生产态 / production)"]
     scripts_register_aux_tasks_ps1["注册aux任务<br/>register_aux_tasks.ps1的注册表，登记和查询已注册<br/>的条目<br/>文件: scripts/register_aux_tasks.ps1<br/>(生产态 / production)"]
     scripts_register_guard_tasks_ps1["注册守卫任务<br/>守卫的注册表，登记和查询已注册的条目<br/>register_guard_tasks<br/>文件: scripts/register_guard_tasks.ps1<br/>(生产态 / production)"]
-    scripts_start_ch_health_probe_ps1["启动ChHealthProbe<br/>脚本包的start_ch_health_probe模块<br/>Start Ch Health Probe<br/>文件: scripts/start_ch_health_probe.ps1<br/>(生产态 / production)"]
+    scripts_start_ch_health_probe_ps1["Start Ch Health Probe<br/>脚本包的start_ch_health_probe模块<br/>文件: scripts/start_ch_health_probe.ps1<br/>(生产态 / production)"]
     scripts_start_scheduler_ps1["启动调度器<br/>调度器的调度器，按时间或优先级安排任务执行<br/>start_scheduler<br/>文件: scripts/start_scheduler.ps1<br/>(生产态 / production)"]
     scripts_start_tick_subscriber_ps1["启动逐笔订阅器<br/>start_tick_subscriber.ps1的订阅器，订阅接收数据<br/>文件: scripts/start_tick_subscriber.ps1<br/>(生产态 / production)"]
     src_zephyr_data_main_py["主入口<br/>data — 数据源集成器 CLI 入口<br/>__main__<br/>文件: data/__main__.py<br/>(生产态 / production)"]
@@ -1332,7 +1332,7 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_data_connectors["data/connectors<br/>数据连接器包，适配外部数据源连接与数据采集<br/>⛔ 该域，设计已就绪，等待开发排期<br/>文件: connectors/<br/>(设计态 / design)"]
-    src_zephyr_data_implementations_fred_provider_py["FRED宏观数据源<br/>从美联储经济数据库<br/>(FRED)和世界银行免费获取全球宏观经济指标<br/>(美国及国际GDP/CPI/就业/利率<br/>/贸易等),补充国内数据源覆盖不到的国际宏观对比数<br/>据<br/>文件: implementations/fred_provider.py<br/>(设计态 / design)"]
+    src_zephyr_data_implementations_fred_provider_py["implementations/fred_provider<br/>FredProvider 实现（MOD-L00-004 §4.3<br/>数据源集成器）。<br/>文件: implementations/fred_provider.py<br/>(设计态 / design)"]
     src_zephyr_data_connectors ~~~ src_zephyr_data_implementations_fred_provider_py
     src_zephyr_data_normalizers["归一化器<br/>归一化的子目录，归集相关子模块<br/>⛔ 该域，设计已就绪，等待开发排期<br/>文件: normalizers/<br/>(设计态 / design)"]
     src_zephyr_data_storage["存储<br/>存储的子目录，归集相关子模块<br/>⛔ 该域，设计已就绪，等待开发排期<br/>文件: storage/<br/>(设计态 / design)"]
@@ -1353,9 +1353,9 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 质量门禁 / quality_gate (data/quality_gate.py) | → | D_GOV_ENFORCEMENT 规则执行: Quality门禁 / Quality Gate (rule_enforcement/quality_gate... | 导入依赖 / import_depends |
-| 2 | 包入口 / D_DATA Data Source (satellite_geospatial_engine/... | → | D_GOV_ENFORCEMENT 规则执行: Quality门禁 / Quality Gate (rule_enforcement/quality_gate... | 导入依赖 / import_depends |
-| 3 | #ARCH-CH-021 P0-4: 写入路径异常值校验器四门禁测试。 / tes... | → | D_GOV_ENFORCEMENT 规则执行: Quality门禁 / Quality Gate (rule_enforcement/quality_gate... | 测试依赖 / test_depends |
+| 1 | 质量门禁 / quality_gate (data/quality_gate.py) | → | D_GOV_ENFORCEMENT 规则执行: Quality Gate (rule_enforcement/quality_gate.py) | 导入依赖 / import_depends |
+| 2 | 包入口 / D_DATA Data Source (satellite_geospatial_engine/... | → | D_GOV_ENFORCEMENT 规则执行: Quality Gate (rule_enforcement/quality_gate.py) | 导入依赖 / import_depends |
+| 3 | #ARCH-CH-021 P0-4: 写入路径异常值校验器四门禁测试。 / tes... | → | D_GOV_ENFORCEMENT 规则执行: Quality Gate (rule_enforcement/quality_gate.py) | 测试依赖 / test_depends |
 | 4 | 7×24 CH 健康探针守护进程 / Ch Health Probe (ops/ch_healt... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 5 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 6 | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | D_SHARED 共享服务: Secrets (security/secrets.py) | 导入依赖 / import_depends |
@@ -1365,8 +1365,8 @@ flowchart TD
 | 10 | ch写入器 / ch_writer (data/ch_writer.py) | → | D_SHARED 共享服务: 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
 | 11 | ch写入器 / ch_writer (data/ch_writer.py) | → | D_SHARED 共享服务: Secrets (security/secrets.py) | 导入依赖 / import_depends |
 | 12 | akshare提供器 / akshare_provider (implementations/akshare... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
-| 13 | cls提供器 / cls_provider (implementations/cls_provider.py) | → | D_SHARED 共享服务: 常量 / Constants (foundation/constants.py) | 导入依赖 / import_depends |
-| 14 | rss提供器 / rss_provider (implementations/rss_provider.py) | → | D_SHARED 共享服务: 常量 / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 13 | cls提供器 / cls_provider (implementations/cls_provider.py) | → | D_SHARED 共享服务: Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 14 | rss提供器 / rss_provider (implementations/rss_provider.py) | → | D_SHARED 共享服务: Constants (foundation/constants.py) | 导入依赖 / import_depends |
 | 15 | tushare提供器 / tushare_provider (implementations/tushare... | → | D_SHARED 共享服务: Secrets (security/secrets.py) | 导入依赖 / import_depends |
 | 16 | tushare提供器 / tushare_provider (implementations/tushare... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
 | 17 | 本地replay / local_replay (data/local_replay.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
@@ -1374,9 +1374,9 @@ flowchart TD
 | 19 | 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 20 | 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
 | 21 | 数据源调度编排层（MOD-L00-004 §6）。 / scheduler (data/s... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
-| 22 | 数据源健康检查 (data/source_health_check.py) | → | D_SHARED 共享服务: 常量 / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 22 | 数据源健康检查 (data/source_health_check.py) | → | D_SHARED 共享服务: Constants (foundation/constants.py) | 导入依赖 / import_depends |
 | 23 | 数据源健康检查 (data/source_health_check.py) | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
-| 24 | 数据源测速器（MOD-L00-004 §8.5）。 / speed_tester (data/... | → | D_SHARED 共享服务: 常量 / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 24 | 数据源测速器（MOD-L00-004 §8.5）。 / speed_tester (data/... | → | D_SHARED 共享服务: Constants (foundation/constants.py) | 导入依赖 / import_depends |
 | 25 | table注册表 / table_registry (data/table_registry.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
 | 26 | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | D_SHARED 共享服务: 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
 | 27 | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | D_SHARED 共享服务: Prometheus /metrics HTTP 端点 / Metrics Server (observabi... | 导入依赖 / import_depends |
@@ -1389,15 +1389,15 @@ flowchart TD
 | 1 | D_BACKTEST 回测: 数据处理器 / data_handler (core/data_handler.py) | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
 | 2 | D_BACKTEST 回测: 数据处理器 / data_handler (core/data_handler.py) | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
 | 3 | D_BACKTEST 回测: 数据处理器 / data_handler (core/data_handler.py) | → | pit查询 / pit_query (data/pit_query.py) | 导入依赖 / import_depends |
-| 4 | D_FACTOR 因子: FactorSignal 批量缓冲写入器 / Buffer (batch_output/buffer... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
-| 5 | D_FACTOR 因子: FactorSignal 批量缓冲写入器 / Buffer (batch_output/buffer... | → | ch写入器 / ch_writer (data/ch_writer.py) | 导入依赖 / import_depends |
+| 4 | D_FACTOR 因子: —FactorSignal 批量缓冲写入器 / Buffer (batch_output/buff... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
+| 5 | D_FACTOR 因子: —FactorSignal 批量缓冲写入器 / Buffer (batch_output/buff... | → | ch写入器 / ch_writer (data/ch_writer.py) | 导入依赖 / import_depends |
 | 6 | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
 | 7 | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
 | 8 | D_FACTOR 因子: D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | → | table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
 | 9 | D_GOVERNANCE 生命周期管理: demoe2e管线 / demo_e2e_pipeline (construction/demo_e2e_pi... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
 | 10 | D_GOVERNANCE 生命周期管理: 记忆提供器 / D_DATA — Memory Provider (intelligence_gove... | → | 策略注册表 / policy_registry (data/policy_registry.py) | 导入依赖 / import_depends |
 | 11 | D_GOVERNANCE 生命周期管理: 记忆提供器 / D_DATA — Memory Provider (intelligence_gove... | → | 提供器基类 / provider_base (data/provider_base.py) | 导入依赖 / import_depends |
-| 12 | D_GOVERNANCE 生命周期管理: 端到端管道测试 / Test E2e Pipeline (trading/test_e2e_pipe... | → | 质量门禁 / quality_gate (data/quality_gate.py) | 测试依赖 / test_depends |
+| 12 | D_GOVERNANCE 生命周期管理: Test E2e Pipeline (trading/test_e2e_pipeline.py) | → | 质量门禁 / quality_gate (data/quality_gate.py) | 测试依赖 / test_depends |
 | 13 | D_GOV_CODE_QUALITY 代码质量治理: 能力一致性门禁 / capability_consistency_gate (commit_gate... | → | 能力校验器 / capability_validator (data/capability_valida... | 导入依赖 / import_depends |
 | 14 | D_GOV_CODE_QUALITY 代码质量治理: TABLE-NAME-REGISTRY block 门禁 / Table Name Registry Gate... | → | table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
 | 15 | D_GOV_CODE_QUALITY 代码质量治理: TRAE-082 symbol 标准化模块测试 / Test Symbol Normalizer (... | → | 包入口 / __init__ (symbol_normalizer/__init__.py) | 测试依赖 / test_depends |
@@ -1407,17 +1407,17 @@ flowchart TD
 | 19 | D_GOV_SCRIPTS 脚本治理: tick_data 表真重复检查工具 / Check Tick Duplication (data... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
 | 20 | D_GOV_SCRIPTS 脚本治理: tick_data 表真重复检查工具 / Check Tick Duplication (data... | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
 | 21 | D_INFRA_RUNTIME 运行时集成: 从 config/.env.clickhouse 加载 ClickHouse 只读连接参数 / ... | → | ch配置 / ch_config (data/ch_config.py) | 导入依赖 / import_depends |
-| 22 | D_INFRA_RUNTIME 运行时集成: 单进程串起 tick_subscriber + IntradayFactorLoop / Intrada... | → | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | 导入依赖 / import_depends |
-| 23 | D_INFRA_RUNTIME 运行时集成: 单进程串起 tick_subscriber + IntradayFactorLoop / Intrada... | → | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | 导入依赖 / import_depends |
-| 24 | D_INFRA_RUNTIME 运行时集成: 单进程串起 tick_subscriber + IntradayFactorLoop / Intrada... | → | A 股交易日历守卫（MOD-L00-004）。 / trading_calendar (dat... | 导入依赖 / import_depends |
-| 25 | D_INFRA_RUNTIME 运行时集成: tick→Redis tick:{symbol}:latest 双写器 / Test Tick Redis... | → | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | 测试依赖 / test_depends |
+| 22 | D_INFRA_RUNTIME 运行时集成: —单进程串起 tick_subscriber + IntradayFactorLoop / Intra... | → | 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | 导入依赖 / import_depends |
+| 23 | D_INFRA_RUNTIME 运行时集成: —单进程串起 tick_subscriber + IntradayFactorLoop / Intra... | → | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | 导入依赖 / import_depends |
+| 24 | D_INFRA_RUNTIME 运行时集成: —单进程串起 tick_subscriber + IntradayFactorLoop / Intra... | → | A 股交易日历守卫（MOD-L00-004）。 / trading_calendar (dat... | 导入依赖 / import_depends |
+| 25 | D_INFRA_RUNTIME 运行时集成: —tick→Redis tick:{symbol}:latest 双写器 / Test Tick Red... | → | 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | 测试依赖 / test_depends |
 | 26 | D_MKT_DATA 行情数据: Autoload (market_data/autoload.py) | → | table注册表 / table_registry (data/table_registry.py) | runtime / runtime |
-| 27 | D_MKT_DATA 行情数据: D_MKT_DATA→D_FACTOR 数据供给 / Producer (normalized_mark... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
-| 28 | D_MKT_DATA 行情数据: D_MKT_DATA→D_FACTOR 数据供给 / Producer (normalized_mark... | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
-| 29 | D_MKT_DATA 行情数据: D_MKT_DATA→D_FACTOR 数据供给 / Producer (normalized_mark... | → | table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
-| 30 | D_ML_TRAIN 训练: 训练数据集管理器 / Training Dataset Manager (training_dat... | → | pit查询 / pit_query (data/pit_query.py) | data / data |
-| 31 | D_ML_TRAIN 训练: 训练数据集管理器 / Training Dataset Manager (training_dat... | → | table注册表 / table_registry (data/table_registry.py) | data / data |
-| 32 | D_ML_TRAIN 训练: 训练管道 / Training Pipeline (training_pipeline/) | → | pit查询 / pit_query (data/pit_query.py) | data / data |
+| 27 | D_MKT_DATA 行情数据: —D_MKT_DATA→D_FACTOR 数据供给 / Producer (normalized_ma... | → | 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
+| 28 | D_MKT_DATA 行情数据: —D_MKT_DATA→D_FACTOR 数据供给 / Producer (normalized_ma... | → | ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
+| 29 | D_MKT_DATA 行情数据: —D_MKT_DATA→D_FACTOR 数据供给 / Producer (normalized_ma... | → | table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
+| 30 | D_ML_TRAIN 训练: Training Dataset Manager (training_dataset_manager/) | → | pit查询 / pit_query (data/pit_query.py) | data / data |
+| 31 | D_ML_TRAIN 训练: Training Dataset Manager (training_dataset_manager/) | → | table注册表 / table_registry (data/table_registry.py) | data / data |
+| 32 | D_ML_TRAIN 训练: Training Pipeline (training_pipeline/) | → | pit查询 / pit_query (data/pit_query.py) | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

@@ -107,7 +107,7 @@ flowchart TD
     src_zephyr_feedback_loop_detectors_reliability_flag_lifecycle_py["标志生命周期<br/>检测异常并发出告警（flag lifecycle）<br/>Flag Lifecycle Detector — v0.13.0 R180<br/>文件: reliability/flag_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_maintenance_coordinator_py["maintenance协调器<br/>Maintenance Coordinator，检测异常并发出告警<br/>Maintenance Coordinator — v0.12.0 R168<br/>文件: reliability/maintenance_coordinator.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_metric_cardinality_guard_py["指标cardinality守卫<br/>公共接口：compute_growth_rate（Stage 4<br/>公共化）。，检测异常并发出告警<br/>Metric Cardinality Guard — v0.40.0 R495<br/>文件: reliability/metric_cardinality_guard.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_detectors_reliability_openfeature_py["OpenFeature集成<br/>OpenFeature特性开关检测器，基于OpenFeature标准检<br/>测可靠性相关特性标志<br/>OpenFeature Integration — v0.13.0 R181<br/>文件: reliability/openfeature.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_detectors_reliability_openfeature_py["OpenFeature<br/>特性开关检测器，基于OpenFeature标准检测可靠性相<br/>关特性标志<br/>OpenFeature Integration — v0.13.0 R181<br/>文件: reliability/openfeature.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_otel_adapter_py["otel适配器<br/>检测异常并发出告警（otel）<br/>OTel Adapter — v0.12.0 R170<br/>文件: reliability/otel_adapter.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py["regulatory审计<br/>把 FLE 自动修复动作与监管合规框架（如 MiFID II<br/>最佳执行）对照检查，防止自动修复违规。<br/>Regulatory Audit Detector — v0.13.0 R184<br/>文件: reliability/regulatory_audit.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py["resolution追踪器<br/>Resolution Tracker，检测异常并发出告警<br/>Resolution Tracker — v0.12.0 R165<br/>文件: reliability/resolution_tracker.py<br/>(生产态 / production)"]
@@ -267,7 +267,7 @@ flowchart TD
     src_zephyr_feedback_loop_detectors_reliability_flag_lifecycle_py["标志生命周期<br/>检测异常并发出告警（flag lifecycle）<br/>Flag Lifecycle Detector — v0.13.0 R180<br/>文件: reliability/flag_lifecycle.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_maintenance_coordinator_py["maintenance协调器<br/>Maintenance Coordinator，检测异常并发出告警<br/>Maintenance Coordinator — v0.12.0 R168<br/>文件: reliability/maintenance_coordinator.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_metric_cardinality_guard_py["指标cardinality守卫<br/>公共接口：compute_growth_rate（Stage 4<br/>公共化）。，检测异常并发出告警<br/>Metric Cardinality Guard — v0.40.0 R495<br/>文件: reliability/metric_cardinality_guard.py<br/>(生产态 / production)"]
-    src_zephyr_feedback_loop_detectors_reliability_openfeature_py["OpenFeature集成<br/>OpenFeature特性开关检测器，基于OpenFeature标准检<br/>测可靠性相关特性标志<br/>OpenFeature Integration — v0.13.0 R181<br/>文件: reliability/openfeature.py<br/>(生产态 / production)"]
+    src_zephyr_feedback_loop_detectors_reliability_openfeature_py["OpenFeature<br/>特性开关检测器，基于OpenFeature标准检测可靠性相<br/>关特性标志<br/>OpenFeature Integration — v0.13.0 R181<br/>文件: reliability/openfeature.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_otel_adapter_py["otel适配器<br/>检测异常并发出告警（otel）<br/>OTel Adapter — v0.12.0 R170<br/>文件: reliability/otel_adapter.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py["regulatory审计<br/>把 FLE 自动修复动作与监管合规框架（如 MiFID II<br/>最佳执行）对照检查，防止自动修复违规。<br/>Regulatory Audit Detector — v0.13.0 R184<br/>文件: reliability/regulatory_audit.py<br/>(生产态 / production)"]
     src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py["resolution追踪器<br/>Resolution Tracker，检测异常并发出告警<br/>Resolution Tracker — v0.12.0 R165<br/>文件: reliability/resolution_tracker.py<br/>(生产态 / production)"]
@@ -379,7 +379,7 @@ flowchart TD
 | 4 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器collectdetect / scheduler_collect_detect (feedback_... | → | 包入口 / __init__ (detectors/__init__.py) | 导入依赖 / import_depends |
 | 5 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器健康 / scheduler_health (feedback_loop/scheduler_he... | → | 包入口 / __init__ (detectors/__init__.py) | 导入依赖 / import_depends |
 | 6 | D_FEEDBACK_LOOP 反馈循环引擎: 集成测试管线 / E2E Integration Test Pipeline — TASK-MOD-... | → | 包入口 / __init__ (detectors/__init__.py) | 导入依赖 / import_depends |
-| 7 | D_GOVERNANCE 生命周期管理: 调度器Act测试 / Test Scheduler Act (ops/test_scheduler_ac... | → | 守卫振荡检测器 / R519: GuardOscillationDetector (guard/gu... | 测试依赖 / test_depends |
+| 7 | D_GOVERNANCE 生命周期管理: Test Scheduler Act (ops/test_scheduler_act.py) | → | 守卫振荡检测器 / R519: GuardOscillationDetector (guard/gu... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

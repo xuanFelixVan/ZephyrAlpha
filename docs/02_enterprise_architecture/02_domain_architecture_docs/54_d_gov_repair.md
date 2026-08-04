@@ -110,19 +110,19 @@ flowchart TD
 | 1 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_AUTONOMY_CORE 自治核心: 技能执行器 / skill_executor (skills/skill_executor.py) | 导入依赖 / import_depends |
 | 2 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_GOVERNANCE 生命周期管理: 模型路由器 / model_router (intelligence_governance/model_... | 导入依赖 / import_depends |
 | 3 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 公共接口：wasserstein_1d / Burn Rate Monitor (ops_governa... | 导入依赖 / import_depends |
-| 4 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Degradation管理器 / Degradation Manager (ops_governance/d... | 导入依赖 / import_depends |
+| 4 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Degradation Manager (ops_governance/degradation_manager.py) | 导入依赖 / import_depends |
 | 5 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 只读：timeouts / Timeout Guard (ops_governance/timeout_gu... | 导入依赖 / import_depends |
-| 6 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: 5.133.2 DI 注入契约 / Budget Engine (ops_governance/budge... | 导入依赖 / import_depends |
-| 7 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: 预算模型 / Budget Models (ops_governance/budget_models.py) | 导入依赖 / import_depends |
-| 8 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: 预算跟踪器 / Budget Tracker (ops_governance/budget_tracke... | 导入依赖 / import_depends |
+| 6 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: —5.133.2 DI 注入契约 / Budget Engine (ops_governance/bud... | 导入依赖 / import_depends |
+| 7 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: Budget Models (ops_governance/budget_models.py) | 导入依赖 / import_depends |
+| 8 | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | → | D_OPS 反馈循环: Budget Tracker (ops_governance/budget_tracker.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOV_OPS_RESILIENCE 运维弹性治理: 预算EnforcerSmoke测试 / Test Budget Enforcer Smoke (budge... | → | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | 测试依赖 / test_depends |
+| 1 | D_GOV_OPS_RESILIENCE 运维弹性治理: Test Budget Enforcer Smoke (budget/test_budget_enforcer_s... | → | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | 测试依赖 / test_depends |
 | 2 | D_GOV_OPS_RESILIENCE 运维弹性治理: GCT-024 硬检查：验证 BudgetEngine 实例化、三维覆盖、策略... | → | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | 测试依赖 / test_depends |
-| 3 | D_GOV_SCRIPTS 脚本治理: 检查预算Health / Check Budget Health (d5_architecture/che... | → | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | 导入依赖 / import_depends |
+| 3 | D_GOV_SCRIPTS 脚本治理: Check Budget Health (d5_architecture/check_budget_health.py) | → | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | 导入依赖 / import_depends |
 | 4 | D_INFRA_RUNTIME 运行时集成: budget_enforcement 包聚合层 / Init (budget_enforcement/__... | → | 延迟导入 BudgetEngine 避免循环依赖. / Budget Enforcement ... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram

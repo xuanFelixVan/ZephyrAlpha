@@ -461,7 +461,7 @@ flowchart TD
 | 33 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | stochastic诊断验证器 / Stochastic Diagnosis Verifier — v... | 导入依赖 / import_depends |
 | 34 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | TOCTOU重新验证 / TOCTOU Revalidation — v0.37.0 R458 (ver... | 导入依赖 / import_depends |
 | 35 | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / feedback-loop.verifiers — auto-generated packag... | → | 验证引擎 / verification_engine (verifiers/verification_en... | 导入依赖 / import_depends |
-| 36 | D_GOV_CODE_QUALITY 代码质量治理: 对抗验证测试 / Test Adversarial Validation (gate_engine/t... | → | 对抗验证 / Adversarial Validation Gate — FLE-ADVERSARIAL... | 测试依赖 / test_depends |
+| 36 | D_GOV_CODE_QUALITY 代码质量治理: Test Adversarial Validation (gate_engine/test_adversarial... | → | 对抗验证 / Adversarial Validation Gate — FLE-ADVERSARIAL... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

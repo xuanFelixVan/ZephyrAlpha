@@ -53,9 +53,9 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管道<br/>实验 — Default Experiment Pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_result_analyzer_py["结果分析器<br/>D_SIMULATION — Simulation Result Analyzer<br/>(仿真结果分析器)<br/>文件: simulation/result_analyzer.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_scenario_generator_py["场景生成器<br/>D_SIMULATION — Scenario Generator (场景生成器)<br/>文件: simulation/scenario_generator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py["Default Experiment Pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_result_analyzer_py["Simulation Result Analyzer<br/>D_SIMULATION — Simulation Result Analyzer<br/>(仿真结果分析器)<br/>文件: simulation/result_analyzer.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_scenario_generator_py["Scenario Generator<br/>D_SIMULATION — Scenario Generator (场景生成器)<br/>文件: simulation/scenario_generator.py<br/>(生产态 / production)"]
     tests_simulation_test_deflated_sharpe_calculator_py["MOD-SIM-024 Deflated Sharpe Ratio Calculator<br/>单元测试.<br/>仿真包的test_deflated_sharpe_calculator模块<br/>Test Deflated Sharpe Calculator<br/>文件: simulation<br/>/test_deflated_sharpe_calculator.py<br/>(生产态 / production)"]
     tests_simulation_test_look_ahead_bias_detector_py["MOD-SIM-022 Look-Ahead Bias Detector 单元测试.<br/>仿真包的test_look_ahead_bias_detector模块<br/>Test Look Ahead Bias Detector<br/>文件: simulation<br/>/test_look_ahead_bias_detector.py<br/>(生产态 / production)"]
     tests_simulation_test_parameter_robustness_tester_py["MOD-SIM-021 Parameter Robustness Tester<br/>单元测试.<br/>仿真包的test_parameter_robustness_tester模块<br/>Test Parameter Robustness Tester<br/>文件: simulation<br/>/test_parameter_robustness_tester.py<br/>(生产态 / production)"]
@@ -69,16 +69,16 @@ flowchart TD
     tests_simulation_test_parameter_robustness_tester_py ~~~ tests_simulation_test_risk_simulator_py
     tests_simulation_test_risk_simulator_py ~~~ tests_simulation_test_sharpe_calculator_fixer_py
     src_zephyr_simulation_pipeline_base_py["当前 UTC 时间<br/>实验 — Experimentation Pipeline Layer<br/>Pipeline Base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_risk_simulator_py["风险Simulator<br/>D_SIMULATION — Risk Simulator (风控仿真器)<br/>文件: simulation/risk_simulator.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_strategy_simulator_py["策略Simulator<br/>D_SIMULATION — Strategy Simulator (策略仿真器<br/>/策略沙箱)<br/>文件: simulation/strategy_simulator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_risk_simulator_py["Risk Simulator<br/>D_SIMULATION — Risk Simulator (风控仿真器)<br/>文件: simulation/risk_simulator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_strategy_simulator_py["Strategy Simulator<br/>D_SIMULATION — Strategy Simulator (策略仿真器<br/>/策略沙箱)<br/>文件: simulation/strategy_simulator.py<br/>(生产态 / production)"]
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_look_ahead_bias_detector_py["LookAhead偏见检测器<br/>D_SIMULATION — Look-Ahead Bias Detector<br/>(未来函数风险检测器)<br/>Look Ahead Bias Detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_parameter_robustness_tester_py["ParameterRobustness测试器<br/>D_SIMULATION — Parameter Robustness Tester<br/>(参数鲁棒性测试器)<br/>文件: simulation/parameter_robustness_tester.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["Sharpe计算器修复器<br/>D_SIMULATION — Sharpe Calculator Fixer (Sharpe<br/>计算修正器)<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_look_ahead_bias_detector_py["Look-Ahead Bias Detector<br/>D_SIMULATION — Look-Ahead Bias Detector<br/>(未来函数风险检测器)<br/>Look Ahead Bias Detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_parameter_robustness_tester_py["Parameter Robustness Tester<br/>D_SIMULATION — Parameter Robustness Tester<br/>(参数鲁棒性测试器)<br/>文件: simulation/parameter_robustness_tester.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["Sharpe Calculator Fixer<br/>D_SIMULATION — Sharpe Calculator Fixer (Sharpe<br/>计算修正器)<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(生产态 / production)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_deflated_sharpe_calculator_py["DeflatedSharpe计算器<br/>D_SIMULATION — Deflated Sharpe Ratio Calculator<br/>(DSR 计算器)<br/>Deflated Sharpe Calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_deflated_sharpe_calculator_py["Deflated Sharpe Ratio Calculator<br/>D_SIMULATION — Deflated Sharpe Ratio Calculator<br/>(DSR 计算器)<br/>Deflated Sharpe Calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
     src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -->|导入依赖 / import_depends| src_zephyr_simulation_strategy_simulator_py
@@ -123,9 +123,9 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py["默认实验管道<br/>实验 — Default Experiment Pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_result_analyzer_py["结果分析器<br/>D_SIMULATION — Simulation Result Analyzer<br/>(仿真结果分析器)<br/>文件: simulation/result_analyzer.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_scenario_generator_py["场景生成器<br/>D_SIMULATION — Scenario Generator (场景生成器)<br/>文件: simulation/scenario_generator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py["Default Experiment Pipeline<br/>实验 — Default Experiment Pipeline<br/>文件: implementations<br/>/default_experiment_pipeline.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_result_analyzer_py["Simulation Result Analyzer<br/>D_SIMULATION — Simulation Result Analyzer<br/>(仿真结果分析器)<br/>文件: simulation/result_analyzer.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_scenario_generator_py["Scenario Generator<br/>D_SIMULATION — Scenario Generator (场景生成器)<br/>文件: simulation/scenario_generator.py<br/>(生产态 / production)"]
     tests_simulation_test_deflated_sharpe_calculator_py["MOD-SIM-024 Deflated Sharpe Ratio Calculator<br/>单元测试.<br/>仿真包的test_deflated_sharpe_calculator模块<br/>Test Deflated Sharpe Calculator<br/>文件: simulation<br/>/test_deflated_sharpe_calculator.py<br/>(生产态 / production)"]
     tests_simulation_test_look_ahead_bias_detector_py["MOD-SIM-022 Look-Ahead Bias Detector 单元测试.<br/>仿真包的test_look_ahead_bias_detector模块<br/>Test Look Ahead Bias Detector<br/>文件: simulation<br/>/test_look_ahead_bias_detector.py<br/>(生产态 / production)"]
     tests_simulation_test_parameter_robustness_tester_py["MOD-SIM-021 Parameter Robustness Tester<br/>单元测试.<br/>仿真包的test_parameter_robustness_tester模块<br/>Test Parameter Robustness Tester<br/>文件: simulation<br/>/test_parameter_robustness_tester.py<br/>(生产态 / production)"]
@@ -139,16 +139,16 @@ flowchart TD
     tests_simulation_test_parameter_robustness_tester_py ~~~ tests_simulation_test_risk_simulator_py
     tests_simulation_test_risk_simulator_py ~~~ tests_simulation_test_sharpe_calculator_fixer_py
     src_zephyr_simulation_pipeline_base_py["当前 UTC 时间<br/>实验 — Experimentation Pipeline Layer<br/>Pipeline Base<br/>文件: simulation/pipeline_base.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_risk_simulator_py["风险Simulator<br/>D_SIMULATION — Risk Simulator (风控仿真器)<br/>文件: simulation/risk_simulator.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_strategy_simulator_py["策略Simulator<br/>D_SIMULATION — Strategy Simulator (策略仿真器<br/>/策略沙箱)<br/>文件: simulation/strategy_simulator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_risk_simulator_py["Risk Simulator<br/>D_SIMULATION — Risk Simulator (风控仿真器)<br/>文件: simulation/risk_simulator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_strategy_simulator_py["Strategy Simulator<br/>D_SIMULATION — Strategy Simulator (策略仿真器<br/>/策略沙箱)<br/>文件: simulation/strategy_simulator.py<br/>(生产态 / production)"]
     src_zephyr_simulation_pipeline_base_py ~~~ src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_risk_simulator_py ~~~ src_zephyr_simulation_strategy_simulator_py
-    src_zephyr_simulation_look_ahead_bias_detector_py["LookAhead偏见检测器<br/>D_SIMULATION — Look-Ahead Bias Detector<br/>(未来函数风险检测器)<br/>Look Ahead Bias Detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_parameter_robustness_tester_py["ParameterRobustness测试器<br/>D_SIMULATION — Parameter Robustness Tester<br/>(参数鲁棒性测试器)<br/>文件: simulation/parameter_robustness_tester.py<br/>(生产态 / production)"]
-    src_zephyr_simulation_sharpe_calculator_fixer_py["Sharpe计算器修复器<br/>D_SIMULATION — Sharpe Calculator Fixer (Sharpe<br/>计算修正器)<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_look_ahead_bias_detector_py["Look-Ahead Bias Detector<br/>D_SIMULATION — Look-Ahead Bias Detector<br/>(未来函数风险检测器)<br/>Look Ahead Bias Detector<br/>文件: simulation/look_ahead_bias_detector.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_parameter_robustness_tester_py["Parameter Robustness Tester<br/>D_SIMULATION — Parameter Robustness Tester<br/>(参数鲁棒性测试器)<br/>文件: simulation/parameter_robustness_tester.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_sharpe_calculator_fixer_py["Sharpe Calculator Fixer<br/>D_SIMULATION — Sharpe Calculator Fixer (Sharpe<br/>计算修正器)<br/>文件: simulation/sharpe_calculator_fixer.py<br/>(生产态 / production)"]
     src_zephyr_simulation_look_ahead_bias_detector_py ~~~ src_zephyr_simulation_parameter_robustness_tester_py
     src_zephyr_simulation_parameter_robustness_tester_py ~~~ src_zephyr_simulation_sharpe_calculator_fixer_py
-    src_zephyr_simulation_deflated_sharpe_calculator_py["DeflatedSharpe计算器<br/>D_SIMULATION — Deflated Sharpe Ratio Calculator<br/>(DSR 计算器)<br/>Deflated Sharpe Calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
+    src_zephyr_simulation_deflated_sharpe_calculator_py["Deflated Sharpe Ratio Calculator<br/>D_SIMULATION — Deflated Sharpe Ratio Calculator<br/>(DSR 计算器)<br/>Deflated Sharpe Calculator<br/>文件: simulation/deflated_sharpe_calculator.py<br/>(生产态 / production)"]
     src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_risk_simulator_py
     src_zephyr_simulation_result_analyzer_py -->|runtime / runtime| src_zephyr_simulation_strategy_simulator_py
     src_zephyr_simulation_result_analyzer_py -->|导入依赖 / import_depends| src_zephyr_simulation_strategy_simulator_py
@@ -183,22 +183,22 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 当前 UTC 时间 / Pipeline Base (simulation/pipeline_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 实验结果 / Experiment Result (contracts/experiment_result... | 导入依赖 / import_depends |
-| 2 | DeflatedSharpe计算器 / Deflated Sharpe Calculator (simula... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 3 | LookAhead偏见检测器 / Look Ahead Bias Detector (simulatio... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 4 | ParameterRobustness测试器 / Parameter Robustness Tester (... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 5 | 结果分析器 / Result Analyzer (simulation/result_analyzer.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 6 | 风险Simulator / Risk Simulator (simulation/risk_simulator... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 7 | 场景生成器 / Scenario Generator (simulation/scenario_gene... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 8 | Sharpe计算器修复器 / Sharpe Calculator Fixer (simulation/... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 9 | 策略Simulator / Strategy Simulator (simulation/strategy_s... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 1 | 当前 UTC 时间 / Pipeline Base (simulation/pipeline_base.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Experiment Result (contracts/experiment_result.py) | 导入依赖 / import_depends |
+| 2 | Deflated Sharpe Calculator (simulation/deflated_sharpe_ca... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 3 | Look Ahead Bias Detector (simulation/look_ahead_bias_dete... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 4 | Parameter Robustness Tester (simulation/parameter_robustn... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 5 | Result Analyzer (simulation/result_analyzer.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 6 | Risk Simulator (simulation/risk_simulator.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 7 | Scenario Generator (simulation/scenario_generator.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 8 | Sharpe Calculator Fixer (simulation/sharpe_calculator_fix... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 9 | Strategy Simulator (simulation/strategy_simulator.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOVERNANCE 生命周期管理: 端到端管道测试 / Test E2e Pipeline (trading/test_e2e_pipe... | → | 默认实验管道 / Default Experiment Pipeline (implementatio... | 测试依赖 / test_depends |
-| 2 | D_GOVERNANCE 生命周期管理: 端到端管道测试 / Test E2e Pipeline (trading/test_e2e_pipe... | → | 当前 UTC 时间 / Pipeline Base (simulation/pipeline_base.py) | 测试依赖 / test_depends |
+| 1 | D_GOVERNANCE 生命周期管理: Test E2e Pipeline (trading/test_e2e_pipeline.py) | → | Default Experiment Pipeline (implementations/default_expe... | 测试依赖 / test_depends |
+| 2 | D_GOVERNANCE 生命周期管理: Test E2e Pipeline (trading/test_e2e_pipeline.py) | → | 当前 UTC 时间 / Pipeline Base (simulation/pipeline_base.py) | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

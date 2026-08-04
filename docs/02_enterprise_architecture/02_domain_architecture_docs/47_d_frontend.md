@@ -56,9 +56,9 @@ flowchart TD
     scripts_tests_test_frontend_components_py["测试前端components<br/>5个前端组件综合验证脚本<br/>（TTL=task_bound，施工完成后退役）<br/>test_frontend_components<br/>文件: tests/test_frontend_components.py<br/>(生产态 / production)"]
     src_zephyr_frontend_implementations_default_approval_gateway_py["默认审批网关<br/>默认approval网关，前端的门禁，在关键节点检查是否<br/>放行。<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_approval_gateway<br/>文件: implementations<br/>/default_approval_gateway.py<br/>(设计态 / design)"]
     src_zephyr_frontend_implementations_default_notification_manager_py["默认通知管理器<br/>前端的通知器，把消息推送给接收方<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_notification_manager<br/>文件: implementations<br/>/default_notification_manager.py<br/>(设计态 / design)"]
-    tests_ai_test_l08_human_ai_interface_py["L08HumanAi接口测试<br/>ai包的test_l08_human_ai_interface模块<br/>Test L08 Human Ai Interface<br/>文件: ai/test_l08_human_ai_interface.py<br/>(生产态 / production)"]
+    tests_ai_test_l08_human_ai_interface_py["Test L08 Human Ai Interface<br/>ai包的test_l08_human_ai_interface模块<br/>文件: ai/test_l08_human_ai_interface.py<br/>(生产态 / production)"]
     tests_governance_observability_test_app_panel_unit_py["test_app_panel_unit · app_panel.py 单元测试<br/>（v3.1.0, #ARCH-047）<br/>Test App Panel Unit<br/>文件: observability/test_app_panel_unit.py<br/>(生产态 / production)"]
-    tests_governance_observability_test_dashboard_unit_py["仪表盘单元测试<br/>observability包的test_dashboard_unit模块<br/>Test Dashboard Unit<br/>文件: observability/test_dashboard_unit.py<br/>(生产态 / production)"]
+    tests_governance_observability_test_dashboard_unit_py["Test Dashboard Unit<br/>observability包的test_dashboard_unit模块<br/>文件: observability/test_dashboard_unit.py<br/>(生产态 / production)"]
     tests_governance_observability_test_p1_components_unit_py["test_p1_components_unit · 5 个 P1 交易<br/>/回测组件单元测试<br/>（v3.0.0, #ARCH-047）<br/>Test P1 Components Unit<br/>文件: observability/test_p1_components_unit.py<br/>(生产态 / production)"]
     scripts_tests_test_frontend_components_py ~~~ src_zephyr_frontend_implementations_default_approval_gateway_py
     src_zephyr_frontend_implementations_default_approval_gateway_py ~~~ src_zephyr_frontend_implementations_default_notification_manager_py
@@ -166,9 +166,9 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_tests_test_frontend_components_py["测试前端components<br/>5个前端组件综合验证脚本<br/>（TTL=task_bound，施工完成后退役）<br/>test_frontend_components<br/>文件: tests/test_frontend_components.py<br/>(生产态 / production)"]
-    tests_ai_test_l08_human_ai_interface_py["L08HumanAi接口测试<br/>ai包的test_l08_human_ai_interface模块<br/>Test L08 Human Ai Interface<br/>文件: ai/test_l08_human_ai_interface.py<br/>(生产态 / production)"]
+    tests_ai_test_l08_human_ai_interface_py["Test L08 Human Ai Interface<br/>ai包的test_l08_human_ai_interface模块<br/>文件: ai/test_l08_human_ai_interface.py<br/>(生产态 / production)"]
     tests_governance_observability_test_app_panel_unit_py["test_app_panel_unit · app_panel.py 单元测试<br/>（v3.1.0, #ARCH-047）<br/>Test App Panel Unit<br/>文件: observability/test_app_panel_unit.py<br/>(生产态 / production)"]
-    tests_governance_observability_test_dashboard_unit_py["仪表盘单元测试<br/>observability包的test_dashboard_unit模块<br/>Test Dashboard Unit<br/>文件: observability/test_dashboard_unit.py<br/>(生产态 / production)"]
+    tests_governance_observability_test_dashboard_unit_py["Test Dashboard Unit<br/>observability包的test_dashboard_unit模块<br/>文件: observability/test_dashboard_unit.py<br/>(生产态 / production)"]
     tests_governance_observability_test_p1_components_unit_py["test_p1_components_unit · 5 个 P1 交易<br/>/回测组件单元测试<br/>（v3.0.0, #ARCH-047）<br/>Test P1 Components Unit<br/>文件: observability/test_p1_components_unit.py<br/>(生产态 / production)"]
     scripts_tests_test_frontend_components_py ~~~ tests_ai_test_l08_human_ai_interface_py
     tests_ai_test_l08_human_ai_interface_py ~~~ tests_governance_observability_test_app_panel_unit_py
@@ -274,11 +274,11 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | 适应度functions / fitness_functions (components/fitness_f... | → | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | 导入依赖 / import_depends |
-| 2 | 仪表盘单元测试 / Test Dashboard Unit (observability/test_... | → | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | 测试依赖 / test_depends |
+| 2 | Test Dashboard Unit (observability/test_dashboard_unit.py) | → | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | 测试依赖 / test_depends |
 | 3 | 应用面板 / app_panel (dashboard/app_panel.py) | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
 | 4 | 应用面板 / app_panel (dashboard/app_panel.py) | → | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
 | 5 | chart工厂 / chart_factory (components/chart_factory.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
-| 6 | task_progress · 任务进度看板组件 / Task Progress (compon... | → | D_SHARED 共享服务: 常量 / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 6 | task_progress · 任务进度看板组件 / Task Progress (compon... | → | D_SHARED 共享服务: Constants (foundation/constants.py) | 导入依赖 / import_depends |
 | 7 | 交易面板 / trade_panel (components/trade_panel.py) | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
 | 8 | 交易面板 / trade_panel (components/trade_panel.py) | → | D_TRADING 交易运营: Order 真源在 zephyr.shared.contracts.order / Order (execu... | 导入依赖 / import_depends |
 

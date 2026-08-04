@@ -53,7 +53,7 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_factor_init_py["zephyr/factor 包入口<br/>ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>Init<br/>文件: factor/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_factor_init_py["D_FACTOR Alpha Factor Layer<br/>ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>Init<br/>文件: factor/__init__.py<br/>(生产态 / production)"]
     src_zephyr_factor_alpha_signal_pipeline_py["阿尔法信号管线<br/>依赖管线、D-SIGLEGACY-01工作<br/>alpha_signal_pipeline<br/>文件: factor/alpha_signal_pipeline.py<br/>(生产态 / production)"]
     src_zephyr_factor_analysis_correlation_dedup_py["D-FACTOR-ANA-05<br/>因子相关性去重——基于相关性矩阵去除冗余因子。<br/>因子相关性去重器，计算因子间相关性矩阵，识别并去<br/>除高度相关的冗余因子，减少特征共线性。<br/>correlation_dedup<br/>文件: analysis/correlation_dedup.py<br/>(生产态 / production)"]
     src_zephyr_factor_analysis_decay_monitor_py["D-FACTOR-ANA-08 衰减监控——监控因子 IC<br/>衰减速度，半衰期低于<br/>阈值告警<br/>decay_monitor<br/>文件: analysis/decay_monitor.py<br/>(生产态 / production)"]
@@ -73,18 +73,18 @@ flowchart TD
     src_zephyr_factor_core_evaluation_init_py["D-FACTOR-03 因子评估包——IC/IR/OOS 正率<br/>/过拟合检测。<br/>- metrics: 纯函数模块（无 IO<br/>依赖），可独立用合成数据测试<br/>文件: evaluation/__init__.py<br/>(生产态 / production)"]
     src_zephyr_factor_intraday_snapshot_factors_py["盘中横截面因子<br/>这个模块提供两个盘中实时因子：一个是最新成交价，<br/>直接读取当前tick的收盘价作为基准；另一个是累计成<br/>交均价，用成交额除以成交量算出当日平均成交价，成<br/>交量为零时回退用最新价避免除零报错。专为解决盘中<br/>三秒周期只有快照数据、没有历史窗口无法算传统时序<br/>因子的问题。<br/>intraday_snapshot_factors<br/>Cross-sectional factors computed from latest<br/>tick snapshot<br/>文件: factor/intraday_snapshot_factors.py<br/>(生产态 / production)"]
     src_zephyr_factor_value_factor_py["价值因子<br/>估值因子。使用简易 PE proxy（价格<br/>/年化盈利估算）。<br/>D_FACTOR — Value Factor<br/>文件: factor/value_factor.py<br/>(生产态 / production)"]
-    tests_alpha_signal_test_l02_alpha_factor_py["L02Alpha因子测试<br/>alpha signal包的test_l02_alpha_factor模块<br/>Test L02 Alpha Factor<br/>文件: alpha_signal/test_l02_alpha_factor.py<br/>(生产态 / production)"]
+    tests_alpha_signal_test_l02_alpha_factor_py["Test L02 Alpha Factor<br/>alpha signal包的test_l02_alpha_factor模块<br/>文件: alpha_signal/test_l02_alpha_factor.py<br/>(生产态 / production)"]
     tests_factor_test_abs001_gate_py["—纯逻辑模块<br/>D-FACTOR-GOV-02 ABS001<br/>上线门禁测试——纯逻辑模块（无 IO 依赖）。<br/>Test Abs001 Gate<br/>文件: factor/test_abs001_gate.py<br/>(生产态 / production)"]
-    tests_factor_test_backpressure_py["Backpressure测试<br/>D_FACTOR core backpressure 测试——limiter.py。<br/>Test Backpressure<br/>文件: factor/test_backpressure.py<br/>(生产态 / production)"]
-    tests_factor_test_batch_output_py["批量Output测试<br/>D_FACTOR core batch_output 测试——buffer.py。<br/>Test Batch Output<br/>文件: factor/test_batch_output.py<br/>(生产态 / production)"]
-    tests_factor_test_config_manager_py["配置管理器测试<br/>D_FACTOR core config_manager 测试——loader.py。<br/>Test Config Manager<br/>文件: factor/test_config_manager.py<br/>(生产态 / production)"]
-    tests_factor_test_ctr001_consumer_py["Ctr001 Consumer测试<br/>CTR-001 NormalizedMarketData<br/>消费者测试——converter + filter_quality。<br/>Test Ctr001 Consumer<br/>文件: factor/test_ctr001_consumer.py<br/>(生产态 / production)"]
-    tests_factor_test_ctr002_producer_py["Ctr002 Producer测试<br/>CTR-002 FactorSignal 生产者测试——to_signals。<br/>Test Ctr002 Producer<br/>文件: factor/test_ctr002_producer.py<br/>(生产态 / production)"]
+    tests_factor_test_backpressure_py["—limiter.py<br/>D_FACTOR core backpressure 测试——limiter.py。<br/>Test Backpressure<br/>文件: factor/test_backpressure.py<br/>(生产态 / production)"]
+    tests_factor_test_batch_output_py["—buffer.py<br/>D_FACTOR core batch_output 测试——buffer.py。<br/>Test Batch Output<br/>文件: factor/test_batch_output.py<br/>(生产态 / production)"]
+    tests_factor_test_config_manager_py["—loader.py<br/>D_FACTOR core config_manager 测试——loader.py。<br/>Test Config Manager<br/>文件: factor/test_config_manager.py<br/>(生产态 / production)"]
+    tests_factor_test_ctr001_consumer_py["—converter + filter_quality<br/>CTR-001 NormalizedMarketData<br/>消费者测试——converter + filter_quality。<br/>Test Ctr001 Consumer<br/>文件: factor/test_ctr001_consumer.py<br/>(生产态 / production)"]
+    tests_factor_test_ctr002_producer_py["—to_signals<br/>CTR-002 FactorSignal 生产者测试——to_signals。<br/>Test Ctr002 Producer<br/>文件: factor/test_ctr002_producer.py<br/>(生产态 / production)"]
     tests_factor_test_dag_executor_dual_mode_py["—executor 双模切换 + 时间窗口<br/>D_FACTOR-04 Pipeline 双模运行测试——executor<br/>双模切换 + 时间窗口。<br/>Test Dag Executor Dual Mode<br/>文件: factor/test_dag_executor_dual_mode.py<br/>(生产态 / production)"]
-    tests_factor_test_dag_manager_py["Dag管理器测试<br/>D_FACTOR core dag_manager 测试——executor.py。<br/>Test Dag Manager<br/>文件: factor/test_dag_manager.py<br/>(生产态 / production)"]
-    tests_factor_test_dist_feature_eng_py["Dist特征Eng测试<br/>D_FACTOR core dist_feature_eng 测试——engine.py。<br/>Test Dist Feature Eng<br/>文件: factor/test_dist_feature_eng.py<br/>(生产态 / production)"]
+    tests_factor_test_dag_manager_py["—executor.py<br/>D_FACTOR core dag_manager 测试——executor.py。<br/>Test Dag Manager<br/>文件: factor/test_dag_manager.py<br/>(生产态 / production)"]
+    tests_factor_test_dist_feature_eng_py["—engine.py<br/>D_FACTOR core dist_feature_eng 测试——engine.py。<br/>Test Dist Feature Eng<br/>文件: factor/test_dist_feature_eng.py<br/>(生产态 / production)"]
     tests_factor_test_evaluation_metrics_py["—纯函数模块<br/>D-FACTOR-03 因子评估指标测试——纯函数模块（无 IO<br/>依赖）。<br/>Test Evaluation Metrics<br/>文件: factor/test_evaluation_metrics.py<br/>(生产态 / production)"]
-    tests_factor_test_factor_dag_py["因子Dag测试<br/>D_FACTOR core factor_dag 测试——dag.py。<br/>Test Factor Dag<br/>文件: factor/test_factor_dag.py<br/>(生产态 / production)"]
+    tests_factor_test_factor_dag_py["—dag.py<br/>D_FACTOR core factor_dag 测试——dag.py。<br/>Test Factor Dag<br/>文件: factor/test_factor_dag.py<br/>(生产态 / production)"]
     tests_factor_test_factor_pool_manager_py["—纯逻辑模块<br/>D-FACTOR-08 因子池容量管理测试——纯逻辑模块（无<br/>IO 依赖）。<br/>Test Factor Pool Manager<br/>文件: factor/test_factor_pool_manager.py<br/>(生产态 / production)"]
     tests_factor_test_governance_engine_py["—纯逻辑模块<br/>D-FACTOR-GOV-05 因子治理引擎测试——纯逻辑模块<br/>（无 IO 依赖）。<br/>Test Governance Engine<br/>文件: factor/test_governance_engine.py<br/>(生产态 / production)"]
     tests_factor_test_grayscale_rollout_py["—纯逻辑模块<br/>D-FACTOR-GOV-03 灰度发布测试——纯逻辑模块（无 IO<br/>依赖）。<br/>Test Grayscale Rollout<br/>文件: factor/test_grayscale_rollout.py<br/>(生产态 / production)"]
@@ -308,7 +308,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_factor_init_py["zephyr/factor 包入口<br/>ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>Init<br/>文件: factor/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_factor_init_py["D_FACTOR Alpha Factor Layer<br/>ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>Init<br/>文件: factor/__init__.py<br/>(生产态 / production)"]
     src_zephyr_factor_alpha_signal_pipeline_py["阿尔法信号管线<br/>依赖管线、D-SIGLEGACY-01工作<br/>alpha_signal_pipeline<br/>文件: factor/alpha_signal_pipeline.py<br/>(生产态 / production)"]
     src_zephyr_factor_analysis_correlation_dedup_py["D-FACTOR-ANA-05<br/>因子相关性去重——基于相关性矩阵去除冗余因子。<br/>因子相关性去重器，计算因子间相关性矩阵，识别并去<br/>除高度相关的冗余因子，减少特征共线性。<br/>correlation_dedup<br/>文件: analysis/correlation_dedup.py<br/>(生产态 / production)"]
     src_zephyr_factor_analysis_decay_monitor_py["D-FACTOR-ANA-08 衰减监控——监控因子 IC<br/>衰减速度，半衰期低于<br/>阈值告警<br/>decay_monitor<br/>文件: analysis/decay_monitor.py<br/>(生产态 / production)"]
@@ -328,18 +328,18 @@ flowchart TD
     src_zephyr_factor_core_evaluation_init_py["D-FACTOR-03 因子评估包——IC/IR/OOS 正率<br/>/过拟合检测。<br/>- metrics: 纯函数模块（无 IO<br/>依赖），可独立用合成数据测试<br/>文件: evaluation/__init__.py<br/>(生产态 / production)"]
     src_zephyr_factor_intraday_snapshot_factors_py["盘中横截面因子<br/>这个模块提供两个盘中实时因子：一个是最新成交价，<br/>直接读取当前tick的收盘价作为基准；另一个是累计成<br/>交均价，用成交额除以成交量算出当日平均成交价，成<br/>交量为零时回退用最新价避免除零报错。专为解决盘中<br/>三秒周期只有快照数据、没有历史窗口无法算传统时序<br/>因子的问题。<br/>intraday_snapshot_factors<br/>Cross-sectional factors computed from latest<br/>tick snapshot<br/>文件: factor/intraday_snapshot_factors.py<br/>(生产态 / production)"]
     src_zephyr_factor_value_factor_py["价值因子<br/>估值因子。使用简易 PE proxy（价格<br/>/年化盈利估算）。<br/>D_FACTOR — Value Factor<br/>文件: factor/value_factor.py<br/>(生产态 / production)"]
-    tests_alpha_signal_test_l02_alpha_factor_py["L02Alpha因子测试<br/>alpha signal包的test_l02_alpha_factor模块<br/>Test L02 Alpha Factor<br/>文件: alpha_signal/test_l02_alpha_factor.py<br/>(生产态 / production)"]
+    tests_alpha_signal_test_l02_alpha_factor_py["Test L02 Alpha Factor<br/>alpha signal包的test_l02_alpha_factor模块<br/>文件: alpha_signal/test_l02_alpha_factor.py<br/>(生产态 / production)"]
     tests_factor_test_abs001_gate_py["—纯逻辑模块<br/>D-FACTOR-GOV-02 ABS001<br/>上线门禁测试——纯逻辑模块（无 IO 依赖）。<br/>Test Abs001 Gate<br/>文件: factor/test_abs001_gate.py<br/>(生产态 / production)"]
-    tests_factor_test_backpressure_py["Backpressure测试<br/>D_FACTOR core backpressure 测试——limiter.py。<br/>Test Backpressure<br/>文件: factor/test_backpressure.py<br/>(生产态 / production)"]
-    tests_factor_test_batch_output_py["批量Output测试<br/>D_FACTOR core batch_output 测试——buffer.py。<br/>Test Batch Output<br/>文件: factor/test_batch_output.py<br/>(生产态 / production)"]
-    tests_factor_test_config_manager_py["配置管理器测试<br/>D_FACTOR core config_manager 测试——loader.py。<br/>Test Config Manager<br/>文件: factor/test_config_manager.py<br/>(生产态 / production)"]
-    tests_factor_test_ctr001_consumer_py["Ctr001 Consumer测试<br/>CTR-001 NormalizedMarketData<br/>消费者测试——converter + filter_quality。<br/>Test Ctr001 Consumer<br/>文件: factor/test_ctr001_consumer.py<br/>(生产态 / production)"]
-    tests_factor_test_ctr002_producer_py["Ctr002 Producer测试<br/>CTR-002 FactorSignal 生产者测试——to_signals。<br/>Test Ctr002 Producer<br/>文件: factor/test_ctr002_producer.py<br/>(生产态 / production)"]
+    tests_factor_test_backpressure_py["—limiter.py<br/>D_FACTOR core backpressure 测试——limiter.py。<br/>Test Backpressure<br/>文件: factor/test_backpressure.py<br/>(生产态 / production)"]
+    tests_factor_test_batch_output_py["—buffer.py<br/>D_FACTOR core batch_output 测试——buffer.py。<br/>Test Batch Output<br/>文件: factor/test_batch_output.py<br/>(生产态 / production)"]
+    tests_factor_test_config_manager_py["—loader.py<br/>D_FACTOR core config_manager 测试——loader.py。<br/>Test Config Manager<br/>文件: factor/test_config_manager.py<br/>(生产态 / production)"]
+    tests_factor_test_ctr001_consumer_py["—converter + filter_quality<br/>CTR-001 NormalizedMarketData<br/>消费者测试——converter + filter_quality。<br/>Test Ctr001 Consumer<br/>文件: factor/test_ctr001_consumer.py<br/>(生产态 / production)"]
+    tests_factor_test_ctr002_producer_py["—to_signals<br/>CTR-002 FactorSignal 生产者测试——to_signals。<br/>Test Ctr002 Producer<br/>文件: factor/test_ctr002_producer.py<br/>(生产态 / production)"]
     tests_factor_test_dag_executor_dual_mode_py["—executor 双模切换 + 时间窗口<br/>D_FACTOR-04 Pipeline 双模运行测试——executor<br/>双模切换 + 时间窗口。<br/>Test Dag Executor Dual Mode<br/>文件: factor/test_dag_executor_dual_mode.py<br/>(生产态 / production)"]
-    tests_factor_test_dag_manager_py["Dag管理器测试<br/>D_FACTOR core dag_manager 测试——executor.py。<br/>Test Dag Manager<br/>文件: factor/test_dag_manager.py<br/>(生产态 / production)"]
-    tests_factor_test_dist_feature_eng_py["Dist特征Eng测试<br/>D_FACTOR core dist_feature_eng 测试——engine.py。<br/>Test Dist Feature Eng<br/>文件: factor/test_dist_feature_eng.py<br/>(生产态 / production)"]
+    tests_factor_test_dag_manager_py["—executor.py<br/>D_FACTOR core dag_manager 测试——executor.py。<br/>Test Dag Manager<br/>文件: factor/test_dag_manager.py<br/>(生产态 / production)"]
+    tests_factor_test_dist_feature_eng_py["—engine.py<br/>D_FACTOR core dist_feature_eng 测试——engine.py。<br/>Test Dist Feature Eng<br/>文件: factor/test_dist_feature_eng.py<br/>(生产态 / production)"]
     tests_factor_test_evaluation_metrics_py["—纯函数模块<br/>D-FACTOR-03 因子评估指标测试——纯函数模块（无 IO<br/>依赖）。<br/>Test Evaluation Metrics<br/>文件: factor/test_evaluation_metrics.py<br/>(生产态 / production)"]
-    tests_factor_test_factor_dag_py["因子Dag测试<br/>D_FACTOR core factor_dag 测试——dag.py。<br/>Test Factor Dag<br/>文件: factor/test_factor_dag.py<br/>(生产态 / production)"]
+    tests_factor_test_factor_dag_py["—dag.py<br/>D_FACTOR core factor_dag 测试——dag.py。<br/>Test Factor Dag<br/>文件: factor/test_factor_dag.py<br/>(生产态 / production)"]
     tests_factor_test_factor_pool_manager_py["—纯逻辑模块<br/>D-FACTOR-08 因子池容量管理测试——纯逻辑模块（无<br/>IO 依赖）。<br/>Test Factor Pool Manager<br/>文件: factor/test_factor_pool_manager.py<br/>(生产态 / production)"]
     tests_factor_test_governance_engine_py["—纯逻辑模块<br/>D-FACTOR-GOV-05 因子治理引擎测试——纯逻辑模块<br/>（无 IO 依赖）。<br/>Test Governance Engine<br/>文件: factor/test_governance_engine.py<br/>(生产态 / production)"]
     tests_factor_test_grayscale_rollout_py["—纯逻辑模块<br/>D-FACTOR-GOV-03 灰度发布测试——纯逻辑模块（无 IO<br/>依赖）。<br/>Test Grayscale Rollout<br/>文件: factor/test_grayscale_rollout.py<br/>(生产态 / production)"]
@@ -535,45 +535,45 @@ flowchart TD
 | 3 | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | → | D_ASHARE_SIGNAL A股特色信号: 初筛漏斗 / Coarse Screening Funnel (signal_ashare/coarse_... | data / data |
 | 4 | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | → | D_ASHARE_SIGNAL A股特色信号: 收益率条件密度预测 / Conditional Density Prediction (sign... | data / data |
 | 5 | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | → | D_ASHARE_SIGNAL A股特色信号: 精筛评分 / Fine Scoring (signal_ashare/fine_scoring_engin... | data / data |
-| 6 | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | → | D_ASHARE_SIGNAL A股特色信号: 市场状态Sensor / Market State Sensor (signal_ashare/marke... | data / data |
-| 7 | FactorSignal 批量缓冲写入器 / Buffer (batch_output/buffer... | → | D_DATA 数据接入层: 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
-| 8 | FactorSignal 批量缓冲写入器 / Buffer (batch_output/buffer... | → | D_DATA 数据接入层: ch写入器 / ch_writer (data/ch_writer.py) | 导入依赖 / import_depends |
+| 6 | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | → | D_ASHARE_SIGNAL A股特色信号: Market State Sensor (signal_ashare/market_state_sensor.py) | data / data |
+| 7 | —FactorSignal 批量缓冲写入器 / Buffer (batch_output/buff... | → | D_DATA 数据接入层: 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
+| 8 | —FactorSignal 批量缓冲写入器 / Buffer (batch_output/buff... | → | D_DATA 数据接入层: ch写入器 / ch_writer (data/ch_writer.py) | 导入依赖 / import_depends |
 | 9 | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | → | D_DATA 数据接入层: 包入口 / __init__ (data/__init__.py) | 导入依赖 / import_depends |
 | 10 | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | → | D_DATA 数据接入层: ch读取器 / ch_reader (data/ch_reader.py) | 导入依赖 / import_depends |
 | 11 | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | → | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | 导入依赖 / import_depends |
 | 12 | 阿尔法信号管线 / alpha_signal_pipeline (factor/alpha_sign... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: 管线 / Alpha Signal Pipeline (signal_fundamental/pipeline... | 导入依赖 / import_depends |
-| 13 | FactorSignal 批量缓冲写入器 / Buffer (batch_output/buffer... | → | D_INFRASTRUCTURE 跨层契约基础设施: 因子信号 / Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
-| 14 | 转换器 / converter (ctr001_consumer/converter.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / Market Data (contracts/market_data.py) | 导入依赖 / import_depends |
-| 15 | 转换器 / converter (ctr002_producer/converter.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 因子信号 / Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
-| 16 | Ctr001 Consumer测试 / Test Ctr001 Consumer (factor/test_c... | → | D_INFRASTRUCTURE 跨层契约基础设施: 市场数据 / Market Data (contracts/market_data.py) | 测试依赖 / test_depends |
-| 17 | Ctr002 Producer测试 / Test Ctr002 Producer (factor/test_c... | → | D_INFRASTRUCTURE 跨层契约基础设施: 因子信号 / Factor Signal (contracts/factor_signal.py) | 测试依赖 / test_depends |
-| 18 | 3秒拉 tick → DataFrame → DagExecutor → H1 Redis / Intr... | → | D_INFRA_RUNTIME 运行时集成: 连接 D-FACTOR/SIGNAL/RISK 与 H1 热缓存 / H1 Integration (... | 导入依赖 / import_depends |
-| 19 | 3秒拉 tick → DataFrame → DagExecutor → H1 Redis / Intr... | → | D_INFRA_RUNTIME 运行时集成: H1 Redis 热缓存 Key Schema / H1 Redis Schema (h1_redis_ho... | 导入依赖 / import_depends |
-| 20 | 因子 DAG 数据结构 + Kahn 拓扑分层算法 / Dag (factor_dag/d... | → | D_SHARED 共享服务: Schemas (schema/schemas.py) | 导入依赖 / import_depends |
-| 21 | 生命周期状态machine / lifecycle_state_machine (governance... | → | D_SHARED 共享服务: 状态Machine / State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
-| 22 | D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流... | → | D_SHARED 共享服务: 状态Machine / State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
-| 23 | 纯逻辑模块 / Test Lifecycle State Machine (factor/test_li... | → | D_SHARED 共享服务: 状态Machine / State Machine (lifecycle/state_machine.py) | 测试依赖 / test_depends |
+| 13 | —FactorSignal 批量缓冲写入器 / Buffer (batch_output/buff... | → | D_INFRASTRUCTURE 跨层契约基础设施: Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
+| 14 | 转换器 / converter (ctr001_consumer/converter.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Market Data (contracts/market_data.py) | 导入依赖 / import_depends |
+| 15 | 转换器 / converter (ctr002_producer/converter.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Factor Signal (contracts/factor_signal.py) | 导入依赖 / import_depends |
+| 16 | Test Ctr001 Consumer (factor/test_ctr001_consumer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Market Data (contracts/market_data.py) | 测试依赖 / test_depends |
+| 17 | Test Ctr002 Producer (factor/test_ctr002_producer.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: Factor Signal (contracts/factor_signal.py) | 测试依赖 / test_depends |
+| 18 | —3秒拉 tick → DataFrame → DagExecutor → H1 Redis / In... | → | D_INFRA_RUNTIME 运行时集成: —连接 D-FACTOR/SIGNAL/RISK 与 H1 热缓存 / H1 Integration... | 导入依赖 / import_depends |
+| 19 | —3秒拉 tick → DataFrame → DagExecutor → H1 Redis / In... | → | D_INFRA_RUNTIME 运行时集成: H1 Redis 热缓存 Key Schema / H1 Redis Schema (h1_redis_ho... | 导入依赖 / import_depends |
+| 20 | —因子 DAG 数据结构 + Kahn 拓扑分层算法 / Dag (factor_dag... | → | D_SHARED 共享服务: Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 21 | 生命周期状态machine / lifecycle_state_machine (governance... | → | D_SHARED 共享服务: State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
+| 22 | D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流... | → | D_SHARED 共享服务: State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
+| 23 | —纯逻辑模块 / Test Lifecycle State Machine (factor/test_... | → | D_SHARED 共享服务: State Machine (lifecycle/state_machine.py) | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | D_BACKTEST 回测: BacktestDataHandler PIT 财务数据合并测试 / Test Data Hand... | → | 价值因子 / D_FACTOR — Value Factor (factor/value_factor.py) | 测试依赖 / test_depends |
-| 2 | D_BACKTEST 回测: D-FACTOR → D-BACKTEST 数据流验证 / Test Backtest Factor ... | → | D-FACTOR-03 因子评估指标——纯函数模块（无 IO 依赖）。 / ... | 测试依赖 / test_depends |
-| 3 | D_BACKTEST 回测: D-FACTOR → D-BACKTEST 数据流验证 / Test Backtest Factor ... | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 测试依赖 / test_depends |
+| 2 | D_BACKTEST 回测: —D-FACTOR → D-BACKTEST 数据流验证 / Test Backtest Facto... | → | D-FACTOR-03 因子评估指标——纯函数模块（无 IO 依赖）。 / ... | 测试依赖 / test_depends |
+| 3 | D_BACKTEST 回测: —D-FACTOR → D-BACKTEST 数据流验证 / Test Backtest Facto... | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 测试依赖 / test_depends |
 | 4 | D_EX_CORE 执行核心: 信号提供器 / signal_providers (ex_core/signal_providers.py) | → | D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
 | 5 | D_EX_CORE 执行核心: 信号提供器 / signal_providers (ex_core/signal_providers.py) | → | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | 导入依赖 / import_depends |
 | 6 | D_EX_CORE 执行核心: 信号提供器 / signal_providers (ex_core/signal_providers.py) | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
 | 7 | D_FUNDAMENTAL_SIGNAL 基本面信号: 管线 / Alpha Signal Pipeline (signal_fundamental/pipeline... | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
-| 8 | D_GOVERNANCE 生命周期管理: Bus因子Defense测试 / Test Bus Factor Defense (trading/tes... | → | 总线因子防御 / bus_factor_defense (factor/bus_factor_defe... | 测试依赖 / test_depends |
-| 9 | D_GOVERNANCE 生命周期管理: 阶段EMain流测试 / Test Phase E Main Flow (trading/test_ph... | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 测试依赖 / test_depends |
-| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: Bus因子Defense / Bus Factor Defense (resilience_governanc... | → | 总线因子防御 / bus_factor_defense (factor/bus_factor_defe... | 导入依赖 / import_depends |
-| 11 | D_INFRA_RUNTIME 运行时集成: 单进程串起 tick_subscriber + IntradayFactorLoop / Intrada... | → | 3秒拉 tick → DataFrame → DagExecutor → H1 Redis / Intr... | 导入依赖 / import_depends |
-| 12 | D_INFRA_RUNTIME 运行时集成: 单进程串起 tick_subscriber + IntradayFactorLoop / Intrada... | → | 盘中横截面因子 / intraday_snapshot_factors (factor/intrad... | 导入依赖 / import_depends |
+| 8 | D_GOVERNANCE 生命周期管理: Test Bus Factor Defense (trading/test_bus_factor_defense.py) | → | 总线因子防御 / bus_factor_defense (factor/bus_factor_defe... | 测试依赖 / test_depends |
+| 9 | D_GOVERNANCE 生命周期管理: Test Phase E Main Flow (trading/test_phase_e_main_flow.py) | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 测试依赖 / test_depends |
+| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: Bus Factor Defense (resilience_governance/bus_factor_defe... | → | 总线因子防御 / bus_factor_defense (factor/bus_factor_defe... | 导入依赖 / import_depends |
+| 11 | D_INFRA_RUNTIME 运行时集成: —单进程串起 tick_subscriber + IntradayFactorLoop / Intra... | → | —3秒拉 tick → DataFrame → DagExecutor → H1 Redis / In... | 导入依赖 / import_depends |
+| 12 | D_INFRA_RUNTIME 运行时集成: —单进程串起 tick_subscriber + IntradayFactorLoop / Intra... | → | 盘中横截面因子 / intraday_snapshot_factors (factor/intrad... | 导入依赖 / import_depends |
 | 13 | D_PF_CORE 组合核心: StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号... | 导入依赖 / import_depends |
 | 14 | D_PF_CORE 组合核心: StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | D-FACTOR-03 因子评估回测运行器——端到端因子评估。 / back... | 导入依赖 / import_depends |
 | 15 | D_PF_CORE 组合核心: StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | → | 因子基类 / ZephyrAlpha — D_FACTOR Alpha Factor Layer (fa... | 导入依赖 / import_depends |
-| 16 | D_SELL_DECISION 卖出决策: T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | 3秒拉 tick → DataFrame → DagExecutor → H1 Redis / Intr... | 导入依赖 / import_depends |
+| 16 | D_SELL_DECISION 卖出决策: T Trade Coordinator (core/t_trade_coordinator.py) | → | —3秒拉 tick → DataFrame → DagExecutor → H1 Redis / In... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

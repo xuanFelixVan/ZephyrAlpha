@@ -425,8 +425,8 @@ flowchart TD
 | 5 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器健康 / scheduler_health (feedback_loop/scheduler_he... | → | 包入口 / __init__ (diagnosers/__init__.py) | 导入依赖 / import_depends |
 | 6 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器安全 / scheduler_safety (feedback_loop/scheduler_sa... | → | 包入口 / __init__ (diagnosers/__init__.py) | 导入依赖 / import_depends |
 | 7 | D_FEEDBACK_LOOP 反馈循环引擎: 集成测试管线 / E2E Integration Test Pipeline — TASK-MOD-... | → | 包入口 / __init__ (diagnosers/__init__.py) | 导入依赖 / import_depends |
-| 8 | D_GOVERNANCE 生命周期管理: 调度器Act测试 / Test Scheduler Act (ops/test_scheduler_ac... | → | selfbottleneck检测器 / Self-Bottleneck Detector — v0.38.... | 测试依赖 / test_depends |
-| 9 | D_GOVERNANCE 生命周期管理: 调度器Act测试 / Test Scheduler Act (ops/test_scheduler_ac... | → | 上下文windowpressure管理器 / R506: ContextWindowPressureM... | 测试依赖 / test_depends |
+| 8 | D_GOVERNANCE 生命周期管理: Test Scheduler Act (ops/test_scheduler_act.py) | → | selfbottleneck检测器 / Self-Bottleneck Detector — v0.38.... | 测试依赖 / test_depends |
+| 9 | D_GOVERNANCE 生命周期管理: Test Scheduler Act (ops/test_scheduler_act.py) | → | 上下文windowpressure管理器 / R506: ContextWindowPressureM... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
