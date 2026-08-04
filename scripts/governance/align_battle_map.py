@@ -183,6 +183,8 @@ class BattleMapAlignmentReport:
     business_module_count: int = 0  # 业务域 depgraph 模块总数（BM-INV-007 扫描范围）
     # 降级告警（目标图源不可用时记录，非对齐问题）
     source_unavailable: list[str] = field(default_factory=list)
+    # 裁定原则核心文本（单向派生自 battle_map_domain_policy.yaml §adjudication_principles.core）
+    adjudication_principle: str = ""
     # 汇总
     issues_total: int = 0
 
@@ -294,10 +296,12 @@ class BattleMapAlignmentReport:
             "对应的允许域列表里。不在 = 域漂移 = 语义错位（如把卖出决策挂在买入流程）。"
             "规则真源：`docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`。"
         )
-        lines.append(
-            '> 裁定原则：域归属看"承载什么决策"，不看"被谁调用"。supplement 角色（工具被用到，'
-            "不承载业务决策）豁免域漂移检查；仅 primary（承载决策）严查域。故本表只列 primary 锚点的漂移。"
-        )
+        # 裁定原则核心文本单向派生自 YAML §adjudication_principles.core（消除硬编码多真源）
+        if self.adjudication_principle:
+            lines.append(
+                f"> 裁定原则：{self.adjudication_principle}。supplement 角色（工具被用到，"
+                "不承载业务决策）豁免域漂移检查；仅 primary（承载决策）严查域。故本表只列 primary 锚点的漂移。"
+            )
         lines.append("")
         if not self.domain_drifts:
             lines.append("> ✅ 无域漂移，所有锚点 target domain 都在对应 flow_stage 允许列表里。")
@@ -600,6 +604,26 @@ def _load_domain_policy() -> dict[str, set[str]] | None:
         return None
 
 
+def _load_adjudication_principle() -> str:
+    """加载 battle_map_domain_policy.yaml §adjudication_principles.core（裁定原则核心文本）。
+
+    单向派生真源：YAML（规则真源）→ 本函数 → Report.adjudication_principle → 报告文案。
+    消除多真源：报告文案不再硬编码裁定原则，改 YAML 自动反映到报告。
+    文件不存在/解析失败/无该字段时返回空串（报告降级为不输出裁定原则行）。
+    真源：docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml
+    """
+    try:
+        import yaml  # type: ignore[import-untyped]
+
+        if not _DOMAIN_POLICY_YAML.exists():
+            return ""
+        data = yaml.safe_load(_DOMAIN_POLICY_YAML.read_text(encoding="utf-8")) or {}
+        ap = data.get("adjudication_principles") or {}
+        return str(ap.get("core") or "").strip()
+    except Exception:  # noqa: BLE001
+        return ""
+
+
 def _anchor_domain_map_depgraph() -> tuple[dict[str, set[str]], bool]:
     """采集 depgraph 节点的 domain_id（key=blueprint_id/path, value=set(domain_id)）。
 
@@ -810,6 +834,8 @@ def run_alignment(
     # BM-INV-004 域漂移：anchor.target 的 domain 是否在 step.flow_stage 允许列表
     domain_drifts: list[dict] = []
     policy = _load_domain_policy()
+    # 裁定原则核心文本（单向派生自 YAML §adjudication_principles.core，供报告渲染，消除硬编码多真源）
+    adjudication_principle = _load_adjudication_principle()
     if policy is None:
         source_unavailable.append("domain_policy_yaml")
     else:
@@ -905,6 +931,7 @@ def run_alignment(
         orphan_modules=orphan_modules,
         business_module_count=business_module_count,
         source_unavailable=source_unavailable,
+        adjudication_principle=adjudication_principle,
         issues_total=(
             len(orphan_steps)
             + len(ghost_anchors)
