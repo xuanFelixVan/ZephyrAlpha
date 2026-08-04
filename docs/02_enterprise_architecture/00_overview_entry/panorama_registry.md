@@ -31,7 +31,7 @@
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
 | 依赖图 depgraph | `nodes` | 6201 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6201 个 |
-| 依赖图 depgraph | `edges` | 9548 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9548 条 |
+| 依赖图 depgraph | `edges` | 9547 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9547 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 76 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 197 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 90 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），90 条 |

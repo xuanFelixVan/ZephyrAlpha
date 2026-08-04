@@ -318,8 +318,8 @@ ttl: permanent
 
 | 任务 | 灌到哪张表 | 什么时候采 | 说明 |
 |------|-----------|-----------|------|
+| eia_petroleum_incremental | c1_market.macro_data | 盘后 17:00 | EIA石油数据增量 |
 | eia_full_refresh | c1_market.macro_data | weekend_calibration | EIA能源数据全量刷新 |
-| eia_petroleum_incremental | c1_market.macro_data | daily_calibration | EIA石油数据增量 |
 
 ---
 
@@ -391,7 +391,7 @@ ttl: permanent
 | 调度时段 | 时间 | 任务数 | 说明 |
 |---------|------|--------|------|
 | 盘后 16:30 | 16:30 周一-五 | 18 | 日K线、周月K线、分钟K线、估值 |
-| 盘后 17:00 | 17:00 周一-五 | 23 | 融资融券、龙虎榜、期货、美股、港股、资金流向 |
+| 盘后 17:00 | 17:00 周一-五 | 24 | 融资融券、龙虎榜、期货、美股、港股、资金流向 |
 | 盘后 18:00 | 18:00 周一-五 | 14 | 新闻、股东、分红、质押、解禁、分析师预期 |
 | 月初 09:00 | 月初 09:00 | 17 | 交易日历、股票列表、行业分类、全量刷新 |
 | nightly_financial | nightly_financial | 8 | - |
@@ -399,7 +399,6 @@ ttl: permanent
 | event_driven | event_driven | 12 | - |
 | intraday_minute | intraday_minute | 15 | - |
 | weekend_calibration | weekend_calibration | 23 | - |
-| daily_calibration | daily_calibration | 1 | - |
 | news_slow | news_slow | 2 | - |
 | auction_highfreq | auction_highfreq | 2 | - |
 | weekend_backfill | weekend_backfill | 1 | - |

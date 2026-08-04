@@ -194,7 +194,7 @@ ttl: permanent
 | `config/risk_params.yaml` | 1.3 | 2026-08-04 |
 | `config/risk_register.yaml` | 9.1 | 2026-08-03 |
 | `config/sandbox_policy.yaml` | 1.5 | 2026-08-03 |
-| `config/secret_registry.yaml` | 23.5 | 2026-08-04 |
+| `config/secret_registry.yaml` | 24.1 | 2026-08-04 |
 | `config/sla_targets.yaml` | 0.9 | 2026-08-04 |
 | `config/sli_registry.yaml` | 2.8 | 2026-08-03 |
 | `config/tech_stack_manifest.yaml` | 5.9 | 2026-08-03 |
