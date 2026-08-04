@@ -175,9 +175,10 @@ def _clean_name_zh(raw: str) -> str:
     """清洗 name_zh 字段中的 docstring 碎片垃圾。
 
     翻译真源 auto-extract 时从 docstring 首行提取名称，残留三引号
-    定界符、模块路径前缀等垃圾。本函数做轻量清洗：
+    定界符、模块路径前缀、前导 em-dash 等垃圾。本函数做轻量清洗：
       - 去除三引号 docstring 定界符残留
       - 去除首尾成对引号
+      - 去除前导 em-dash/en-dash（docstring 碎片 "—" 残留）
       - strip 空白
 
     不含中文字符的 name_zh 由调用方（get_module_name_bilingual）过滤。
@@ -190,6 +191,9 @@ def _clean_name_zh(raw: str) -> str:
     # 去除首尾成对引号
     if len(s) >= 2 and s[0] in "\"'" and s[-1] == s[0]:
         s = s[1:-1].strip()
+    # 去除前导 em-dash(—)/en-dash(–)（docstring 碎片残留）
+    while s and s[0] in "—–-":
+        s = s[1:].lstrip()
     return s
 
 

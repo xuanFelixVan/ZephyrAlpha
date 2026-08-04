@@ -12655,7 +12655,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/gov_drift/__main__.py
   domain_id: D_SECURITY
-  name_zh: Main
+  name_zh: 主入口
   name_en: Main
   desc_zh: ''
   desc_en: ''
@@ -12690,7 +12690,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/external/ext_004.py
   domain_id: D_SHARED
-  name_zh: Ext 004
+  name_zh: 外部契约004
   name_en: Ext 004
   desc_zh: ''
   desc_en: ''
@@ -13264,7 +13264,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/maintenance/slo_review_assistant.py
   domain_id: D_SHARED
-  name_zh: Slo Review Assistant
+  name_zh: SLO审查助手
   name_en: Slo Review Assistant
   desc_zh: ''
   desc_en: ''
@@ -15217,7 +15217,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/infra/observer.py
   domain_id: D_SHARED
-  name_zh: Observer
+  name_zh: 观察者
   name_en: Observer
   desc_zh: ''
   desc_en: ''
@@ -15427,7 +15427,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/lifecycle/health.py
   domain_id: D_SHARED
-  name_zh: Health
+  name_zh: 健康检查
   name_en: Health
   desc_zh: ''
   desc_en: ''
@@ -15483,7 +15483,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/io/content_fingerprint.py
   domain_id: D_SHARED
-  name_zh: Content Fingerprint
+  name_zh: 内容指纹
   name_en: Content Fingerprint
   desc_zh: ''
   desc_en: ''
@@ -15602,7 +15602,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/integration/vector_memory/vms_errors.py
   domain_id: D_INTEGRATION
-  name_zh: Vms Errors
+  name_zh: VMS错误
   name_en: Vms Errors
   desc_zh: ''
   desc_en: ''
@@ -15812,7 +15812,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/protocols/a2a/a2a_coordination.py
   domain_id: D_SHARED
-  name_zh: shared interface definitions for multi-agent coordination.
+  name_zh: A2A协调
   name_en: A2a Coordination
   desc_zh: ''
   desc_en: ''
@@ -15875,7 +15875,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/evaluation/evals.py
   domain_id: D_INTEGRATION
-  name_zh: Evals
+  name_zh: 评估
   name_en: Evals
   desc_zh: ''
   desc_en: ''
@@ -15896,7 +15896,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/infrastructure/script_system/finding.py
   domain_id: D_INFRA_RUNTIME
-  name_zh: Finding
+  name_zh: 发现
   name_en: Finding
   desc_zh: ''
   desc_en: ''
@@ -16043,7 +16043,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/gov_drift/_analysis.py
   domain_id: D_SECURITY
-  name_zh: Analysis
+  name_zh: 分析
   name_en: Analysis
   desc_zh: ''
   desc_en: ''
@@ -17114,7 +17114,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/protocols.py
   domain_id: D_INTEGRATION
-  name_zh: Protocols
+  name_zh: 协议
   name_en: Protocols
   desc_zh: ''
   desc_en: ''
@@ -17485,7 +17485,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/identity/permission.py
   domain_id: D_SHARED
-  name_zh: Permission
+  name_zh: 权限
   name_en: Permission
   desc_zh: ''
   desc_en: ''
@@ -17632,7 +17632,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/security/secrets.py
   domain_id: D_SHARED
-  name_zh: Secrets
+  name_zh: 密钥
   name_en: Secrets
   desc_zh: ''
   desc_en: ''
@@ -21111,7 +21111,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/ex_core/microstructure_modeler.py
   domain_id: D_EX_CORE
-  name_zh: Microstructure Modeler
+  name_zh: 微观结构建模器
   name_en: Microstructure Modeler
   desc_zh: ''
   desc_en: ''
@@ -21223,7 +21223,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py
   domain_id: D_SECURITY
-  name_zh: security event logging, alerting, and reporting."""
+  name_zh: L6可观测性
   name_en: L6 Observability
   desc_zh: ''
   desc_en: ''
@@ -21727,7 +21727,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/integration/vector_memory/hybrid_retriever.py
   domain_id: D_INTEGRATION
-  name_zh: Hybrid Retriever
+  name_zh: 混合检索器
   name_en: Hybrid Retriever
   desc_zh: ''
   desc_en: ''
@@ -21951,7 +21951,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/cli.py
   domain_id: D_INTELLIGENCE
-  name_zh: Cli
+  name_zh: 管道路由CLI
   name_en: Cli
   desc_zh: ''
   desc_en: ''
@@ -22434,7 +22434,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/infrastructure/auto_fix_engine/__main__.py
   domain_id: D_INFRA_RUNTIME
-  name_zh: Main
+  name_zh: 主入口
   name_en: Main
   desc_zh: ''
   desc_en: ''
@@ -24394,7 +24394,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/gov_drift/_scanners.py
   domain_id: D_SECURITY
-  name_zh: Scanners
+  name_zh: 扫描器
   name_en: Scanners
   desc_zh: ''
   desc_en: ''
@@ -24520,7 +24520,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/infrastructure/capacity_assurance/kill_switch.py
   domain_id: D_INFRA_RUNTIME
-  name_zh: Kill Switch
+  name_zh: 熔断开关
   name_en: Kill Switch
   desc_zh: ''
   desc_en: ''
@@ -25087,7 +25087,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/alerts/alert_escalation.py
   domain_id: D_SHARED
-  name_zh: re-homed to eliminate shared->infrastructure circular import."""
+  name_zh: 告警升级
   name_en: Alert Escalation
   desc_zh: ''
   desc_en: ''
@@ -26851,7 +26851,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/adversarial_validation/blast_radius.py
   domain_id: D_SECURITY
-  name_zh: Blast Radius
+  name_zh: 影响半径
   name_en: Blast Radius
   desc_zh: ''
   desc_en: ''
@@ -27096,7 +27096,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/llm_defense/llm_security/input_sanitizer.py
   domain_id: D_SECURITY
-  name_zh: path whitelist + command whitelist + token budget guard.
+  name_zh: 输入净化器
   name_en: Input Sanitizer
   desc_zh: ''
   desc_en: ''
@@ -27355,7 +27355,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/schema/schemas.py
   domain_id: D_SHARED
-  name_zh: Schemas
+  name_zh: 模式定义
   name_en: Schemas
   desc_zh: ''
   desc_en: ''
@@ -27383,7 +27383,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/trading/work_dag.py
   domain_id: D_INFRA_RUNTIME
-  name_zh: Work Dag
+  name_zh: 工作DAG
   name_en: Work Dag
   desc_zh: ''
   desc_en: ''
@@ -27838,14 +27838,14 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/protocols/a2a/a2a_protocol.py
   domain_id: D_SHARED
-  name_zh: A2a Protocol
+  name_zh: A2A协议
   name_en: A2a Protocol
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
 - module_path: src/zephyr/security/access_control/orphan_judge/__main__.py
   domain_id: D_SECURITY
-  name_zh: Main
+  name_zh: 主入口
   name_en: Main
   desc_zh: ''
   desc_en: ''
@@ -28195,7 +28195,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/access_control/orphan_judge/swid_tag.py
   domain_id: D_SECURITY
-  name_zh: Swid Tag
+  name_zh: SWID标签
   name_en: Swid Tag
   desc_zh: ''
   desc_en: ''
@@ -28664,7 +28664,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/utils/cli_summary.py
   domain_id: D_SHARED
-  name_zh: Cli Summary
+  name_zh: CLI摘要
   name_en: Cli Summary
   desc_zh: ''
   desc_en: ''
@@ -28797,7 +28797,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/backpressure/throttle.py
   domain_id: D_SHARED
-  name_zh: Throttle
+  name_zh: 限流
   name_en: Throttle
   desc_zh: ''
   desc_en: ''
@@ -29196,7 +29196,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/integration/vector_memory/vms_schemas.py
   domain_id: D_INTEGRATION
-  name_zh: Vms Schemas
+  name_zh: VMS模式定义
   name_en: Vms Schemas
   desc_zh: ''
   desc_en: ''
@@ -29413,7 +29413,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/orchestration_protocol.py
   domain_id: D_SHARED
-  name_zh: Orchestration Protocol
+  name_zh: 编排协议
   name_en: Orchestration Protocol
   desc_zh: ''
   desc_en: ''
@@ -29539,7 +29539,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/intelligence/model_profiling/cli.py
   domain_id: D_INTELLIGENCE
-  name_zh: Cli
+  name_zh: 模型分析CLI
   name_en: Cli
   desc_zh: ''
   desc_en: ''
@@ -30512,7 +30512,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/portfolio/money.py
   domain_id: D_SHARED
-  name_zh: Money
+  name_zh: 货币契约
   name_en: Money
   desc_zh: ''
   desc_en: ''
@@ -30659,7 +30659,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/trading/staging_area.py
   domain_id: D_INFRA_RUNTIME
-  name_zh: Staging Area
+  name_zh: 暂存区
   name_en: Staging Area
   desc_zh: ''
   desc_en: ''
@@ -31184,7 +31184,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/backpressure/resume.py
   domain_id: D_SHARED
-  name_zh: Resume
+  name_zh: 恢复
   name_en: Resume
   desc_zh: ''
   desc_en: ''
@@ -31506,7 +31506,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/integration/vector_memory/design_principles.py
   domain_id: D_INTEGRATION
-  name_zh: Design Principles
+  name_zh: 设计原则
   name_en: Design Principles
   desc_zh: ''
   desc_en: ''
@@ -31996,7 +31996,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/external/ext_003.py
   domain_id: D_SHARED
-  name_zh: Ext 003
+  name_zh: 外部契约003
   name_en: Ext 003
   desc_zh: ''
   desc_en: ''
@@ -32570,7 +32570,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/integration/ports.py
   domain_id: D_INTEGRATION
-  name_zh: Ports
+  name_zh: 端口
   name_en: Ports
   desc_zh: ''
   desc_en: ''
@@ -32591,7 +32591,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/infrastructure/runtime/startup_shutdown.py
   domain_id: D_INFRA_RUNTIME
-  name_zh: Startup Shutdown
+  name_zh: 启动关闭
   name_en: Startup Shutdown
   desc_zh: ''
   desc_en: ''
@@ -32990,7 +32990,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/adversarial_validation/__main__.py
   domain_id: D_SECURITY
-  name_zh: Main
+  name_zh: 主入口
   name_en: Main
   desc_zh: ''
   desc_en: ''
@@ -33081,7 +33081,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/execution/fill.py
   domain_id: D_SHARED
-  name_zh: canonical location is zephyr.trading.trading_contracts.execution.fill."""
+  name_zh: 成交
   name_en: Fill
   desc_zh: ''
   desc_en: ''
@@ -33732,7 +33732,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/maintenance/owner_trust_gauge.py
   domain_id: D_SHARED
-  name_zh: Owner Trust Gauge
+  name_zh: Owner信任度评估
   name_en: Owner Trust Gauge
   desc_zh: ''
   desc_en: ''
@@ -34131,7 +34131,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/trading/trading_contracts/portfolio/contracts/money.py
   domain_id: D_TRADING
-  name_zh: Money
+  name_zh: 货币契约
   name_en: Money
   desc_zh: ''
   desc_en: ''
@@ -35573,7 +35573,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/backpressure/pause.py
   domain_id: D_SHARED
-  name_zh: Pause
+  name_zh: 暂停
   name_en: Pause
   desc_zh: ''
   desc_en: ''
@@ -35853,7 +35853,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/external/ext_002.py
   domain_id: D_SHARED
-  name_zh: Ext 002
+  name_zh: 外部契约002
   name_en: Ext 002
   desc_zh: ''
   desc_en: ''
@@ -36224,7 +36224,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/llm_defense/llm_security/dashboard/app.py
   domain_id: D_SECURITY
-  name_zh: App
+  name_zh: 仪表盘应用
   name_en: App
   desc_zh: ''
   desc_en: ''
@@ -36560,7 +36560,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/protocols/a2a/a2a_schemas.py
   domain_id: D_SHARED
-  name_zh: Message, Task, and StateMachine schemas.
+  name_zh: A2A模式定义
   name_en: A2a Schemas
   desc_zh: ''
   desc_en: ''
@@ -36672,7 +36672,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/intelligence/model_evaluation/reranker.py
   domain_id: D_INTELLIGENCE
-  name_zh: Reranker
+  name_zh: 重排器
   name_en: Reranker
   desc_zh: ''
   desc_en: ''
@@ -36959,7 +36959,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/trading/trading_contracts/market/instrument.py
   domain_id: D_TRADING
-  name_zh: Instrument
+  name_zh: 标的契约
   name_en: Instrument
   desc_zh: ''
   desc_en: ''
@@ -37281,7 +37281,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/external/ext_001.py
   domain_id: D_SHARED
-  name_zh: Ext 001
+  name_zh: 外部契约001
   name_en: Ext 001
   desc_zh: ''
   desc_en: ''
@@ -37351,7 +37351,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/trading/ports.py
   domain_id: D_INFRA_RUNTIME
-  name_zh: Ports
+  name_zh: 端口
   name_en: Ports
   desc_zh: ''
   desc_en: ''
@@ -38555,7 +38555,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/observability/reasoning_spans.py
   domain_id: D_SHARED
-  name_zh: Reasoning Spans
+  name_zh: 推理链路
   name_en: Reasoning Spans
   desc_zh: ''
   desc_en: ''
@@ -38765,7 +38765,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py
   domain_id: D_INTEGRATION
-  name_zh: Migrate Chroma To Faiss
+  name_zh: Chroma到FAISS迁移
   name_en: Migrate Chroma To Faiss
   desc_zh: ''
   desc_en: ''
@@ -38877,7 +38877,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/contracts/market/instrument.py
   domain_id: D_SHARED
-  name_zh: canonical location is zephyr.trading.trading_contracts.market.instrument."""
+  name_zh: 标的契约
   name_en: Instrument
   desc_zh: ''
   desc_en: ''
@@ -39241,7 +39241,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/llm_defense/llm_security/patterns/secrets.py
   domain_id: D_SECURITY
-  name_zh: Secrets
+  name_zh: 密钥模式
   name_en: Secrets
   desc_zh: ''
   desc_en: ''
@@ -39255,7 +39255,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/resilience/fault_isolator.py
   domain_id: D_SHARED
-  name_zh: Fault Isolator
+  name_zh: 故障隔离器
   name_en: Fault Isolator
   desc_zh: ''
   desc_en: ''
@@ -39549,7 +39549,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/adversarial_validation/mcp_endpoints.py
   domain_id: D_SECURITY
-  name_zh: Mcp Endpoints
+  name_zh: MCP端点
   name_en: Mcp Endpoints
   desc_zh: ''
   desc_en: ''
@@ -39647,7 +39647,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/api/dos_launcher.py
   domain_id: D_SHARED
-  name_zh: Dos Launcher
+  name_zh: DoS启动器
   name_en: Dos Launcher
   desc_zh: ''
   desc_en: ''
@@ -39969,7 +39969,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/shared/maintenance/handbook.py
   domain_id: D_SHARED
-  name_zh: Handbook
+  name_zh: 维护手册
   name_en: Handbook
   desc_zh: ''
   desc_en: ''
@@ -40102,7 +40102,7 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/security/adversarial_validation/cli.py
   domain_id: D_SECURITY
-  name_zh: Cli
+  name_zh: 对抗验证CLI
   name_en: Cli
   desc_zh: ''
   desc_en: ''
