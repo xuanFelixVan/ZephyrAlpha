@@ -69,6 +69,7 @@ __all__ = [
     "get_secret_or_default",
     "get_secret_from_file",
     "get_secret_from_file_or_default",
+    "get_service_secret",
     "sanitize_secret",
 ]
 
@@ -427,6 +428,61 @@ def get_secret_from_file_or_default(key: str, env_file: str | Path, default: str
         return get_secret_from_file(key, env_file)
     except SecretsError:
         return default
+
+
+# ============ 服务级 secret 读取（#ARCH-SECRETS-GOV-001 裁定 S-2 新增） ============
+# 痛点：config/.env.postgres 等基础设施凭证文件需手动传路径
+# （get_secret_from_file("KEY", "config/.env.postgres")），导致 ch_config.py /
+# redis_config.py 写 os.environ.get() or get_secret_from_file_or_default(..., path, ...)
+# 冗长模式，增加违规诱因。提供按服务名定位的便捷函数，消除冗长模式。
+#
+# 设计：service 名 → config/.env.{service} 文件路径的映射是 SSoT，与
+# config/secret_registry.yaml 的 env_file 字段对齐。新增服务时在此追加映射。
+
+
+_SERVICE_ENV_FILES: Final[dict[str, str]] = {
+    "postgres": "config/.env.postgres",
+    "clickhouse": "config/.env.clickhouse",
+    "redis": "config/.env.redis",
+    "qmt": "config/.env.qmt",
+    "ch_backup": "config/.env.ch_backup",
+}
+
+
+def get_service_secret(key: str, service: str, required: bool = True) -> str:
+    """按服务名从 config/.env.{service} 读取 secret（便捷函数）。
+
+    定位 config/.env.{service} 文件（如 config/.env.postgres），消除手动传路径的
+    冗长模式。优先级：os.environ（最高） > config/.env.{service} > default/异常。
+
+    Args:
+        key: 环境变量名（如 "POSTGRES_PASSWORD"）。
+        service: 服务名（如 "postgres"），MUST 在 _SERVICE_ENV_FILES 中登记。
+        required: True=缺失抛异常，False=缺失返回空字符串。
+
+    Returns:
+        Secret 值（明文）。
+
+    Raises:
+        SecretsError: 如果 service 未登记，或 required=True 时 key 不存在/文件不可达。
+
+    Usage::
+
+        # 替代冗长模式：
+        #   os.environ.get("CLICKHOUSE_HOST") or get_secret_from_file_or_default(
+        #       "CLICKHOUSE_HOST", "config/.env.clickhouse", "localhost")
+        # 简化为：
+        host = get_service_secret("CLICKHOUSE_HOST", "clickhouse", required=False)
+    """
+    env_file = _SERVICE_ENV_FILES.get(service)
+    if env_file is None:
+        raise SecretsError(
+            f"unknown service: '{service}'",
+            details={"service": service, "known": list(_SERVICE_ENV_FILES)},
+        )
+    if required:
+        return get_secret_from_file(key, env_file)
+    return get_secret_from_file_or_default(key, env_file, "")
 
 
 # ============ HKDF 密钥派生（5.62.7 新增） ============
