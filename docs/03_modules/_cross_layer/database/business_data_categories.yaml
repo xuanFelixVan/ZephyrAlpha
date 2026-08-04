@@ -1867,3 +1867,37 @@
   frequency: 日频
   data_source: [akshare]
   blueprint: null
+
+# --- 时间敏感型数据（免费+只能获取最近，必须每日积累，#ARCH-REALTIME-ACCUM） ---
+
+- category_id: market_weather_data
+  name: "天气数据（和风天气，每日快照积累——免费版无历史API）"
+  engine: clickhouse
+  database: c1_market
+  table: weather_data
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "免费版无历史数据API，必须每日积累，错过无法回填"
+  calc_mode: none
+  frequency: 日频
+  data_source: [qweather]
+  blueprint: null
+
+- category_id: market_stock_hot_rank
+  name: "东财人气/关注排行（每日快照积累——实时排行无历史API）"
+  engine: clickhouse
+  database: c1_market
+  table: stock_hot_rank
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "实时排行快照无历史API，必须每日积累"
+  calc_mode: none
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null

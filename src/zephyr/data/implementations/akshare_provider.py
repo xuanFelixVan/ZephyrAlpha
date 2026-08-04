@@ -34,17 +34,18 @@ import threading
 import time
 from typing import Iterator
 
+from zephyr.shared.utils.time_utils import now_utc, seconds_since
+
+from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
+from ..policy_registry import SourcePolicy
 from ..provider_base import (
-    IngestProviderBase,
-    IngestProviderMeta,
+    CapabilityContract,
     FetchPayload,
     FetchResult,
-    CapabilityContract,
+    IngestProviderBase,
+    IngestProviderMeta,
 )
-from ..policy_registry import SourcePolicy
-from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from ..table_registry import get_registry
-from zephyr.shared.utils.time_utils import now_utc, seconds_since
 
 log = logging.getLogger(__name__)
 
@@ -75,6 +76,7 @@ _TBL_HOG_FUTURES_CORE = get_registry().table("market_hog_futures_core")
 _TBL_HOG_PROVINCE_SPOT = get_registry().table("market_hog_province_spot")
 _TBL_HK_CONNECT_FLOW = get_registry().table("market_hk_connect_flow")
 _TBL_HK_STOCK_LIST = get_registry().table("market_hk_stock_list")
+_TBL_STOCK_HOT_RANK = get_registry().table("market_stock_hot_rank")  # #ARCH-REALTIME-ACCUM
 _TBL_HK_TRADE_CALENDAR = get_registry().table("market_hk_trade_calendar")
 _TBL_INDEX_LIST = get_registry().table("market_index_list")
 _TBL_KLINE_FUTURES = get_registry().table("market_futures_kline")
@@ -122,6 +124,7 @@ _AKSHARE_CAPABILITIES = frozenset({
     "concept_sector",      # 替代 iFind i问财概念板块（akshare stock_board_concept_name_ths）
     "realtime_snapshot",   # 替代 iFind THS_RealtimeQuotes（akshare stock_zh_a_spot_em，注意反爬）
     "sector_meta",         # 替代 iFind 881板块汇总（akshare 从成分股聚合计算）
+    "stock_hot_rank",  # #ARCH-REALTIME-ACCUM: 东财人气/关注排行（每日快照积累）
 })
 
 
@@ -311,6 +314,8 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("concept_sector", supports_symbols_null=True),
             CapabilityContract("realtime_snapshot", supports_symbols_null=True),
             CapabilityContract("sector_meta", supports_symbols_null=True),
+            # #ARCH-REALTIME-ACCUM: 东财人气/关注排行（每日快照积累）
+            CapabilityContract("stock_hot_rank", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -501,7 +506,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
     # ---- EDB 替代：利率类指标 fetch wrappers（#ARCH-IFIND-FAILOVER）----
 
-    def _fetch_shibor_rates(self, policy) -> "pd.DataFrame":
+    def _fetch_shibor_rates(self, policy) -> pd.DataFrame:
         """获取 Shibor 全期限利率（8 个期限，日频）。
 
         调用 ak.rate_interbank 8 次（每个期限一次），合并为单 DataFrame，
@@ -526,7 +531,7 @@ class AkshareIngestProvider(IngestProviderBase):
             return pd.DataFrame()
         return pd.concat(dfs, ignore_index=True)
 
-    def _fetch_repo_rates(self, policy) -> "pd.DataFrame":
+    def _fetch_repo_rates(self, policy) -> pd.DataFrame:
         """获取回购定盘利率（FR001/FR007/FR014/FDR001/FDR007/FDR014，日频）。"""
         import akshare as ak
         end = datetime.date.today()
@@ -537,7 +542,7 @@ class AkshareIngestProvider(IngestProviderBase):
             end_date=end.strftime("%Y-%m-%d"),
         )
 
-    def _fetch_cn_bond_yield(self, policy) -> "pd.DataFrame":
+    def _fetch_cn_bond_yield(self, policy) -> pd.DataFrame:
         """获取中国国债/国开债/AAA 商业银行债收益率曲线（日频）。
 
         返回多条曲线，transform 阶段按曲线名称过滤。
@@ -551,7 +556,7 @@ class AkshareIngestProvider(IngestProviderBase):
             end_date=end.strftime("%Y%m%d"),
         )
 
-    def _fetch_us_cn_bond_yield(self, policy) -> "pd.DataFrame":
+    def _fetch_us_cn_bond_yield(self, policy) -> pd.DataFrame:
         """获取中美国债收益率（日频）。"""
         import akshare as ak
         start = (datetime.date.today() - datetime.timedelta(days=30)).strftime("%Y%m%d")
@@ -2336,6 +2341,92 @@ class AkshareIngestProvider(IngestProviderBase):
             rows.append((iso_date, sym, name, st_type, "akshare"))
         return rows
 
+    # ---- 东财人气/关注排行（#ARCH-REALTIME-ACCUM，每日快照积累） ----
+
+    def _fetch_stock_hot_rank(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取东财人气榜和关注榜，写入 c1_market.stock_hot_rank。
+
+        #ARCH-REALTIME-ACCUM：实时排行快照无历史API，必须每日积累。
+
+        调用:
+        - ak.stock_hot_rank_em() — 东财人气榜 A股
+        - ak.stock_hot_follow_em() — 东财关注榜 A股
+
+        每个榜单作为一批，yield 一个 FetchResult。
+        """
+        import akshare as ak
+
+        table = _TBL_STOCK_HOT_RANK
+        columns = ["trade_date", "rank_type", "rank", "stock_code", "stock_name", "hot_value"]
+        iso_date = datetime.date.today().isoformat()
+
+        jobs = [
+            ("hot_rank", ak.stock_hot_rank_em),
+            ("hot_up", ak.stock_hot_up_em),
+        ]
+
+        for rank_type, fn in jobs:
+            t0 = now_utc()
+            try:
+                df = self._call_with_policy(fn, policy)
+                rows = self._transform_hot_rank(df, rank_type, iso_date)
+                self._log.info(f"东财{rank_type}: {len(rows)} 行")
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=rows,
+                    last_key=iso_date,
+                    elapsed_sec=seconds_since(t0),
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"东财{rank_type} 获取失败: {e}")
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=iso_date,
+                    elapsed_sec=seconds_since(t0),
+                    error=str(e),
+                )
+
+    @staticmethod
+    def _transform_hot_rank(df, rank_type: str, iso_date: str) -> list[tuple]:
+        """转换东财热度排行 DataFrame 为 stock_hot_rank 表行格式。
+
+        列名动态匹配（akshare 接口列名可能变化）：
+        - 排名: 含"排名"或"rank"
+        - 代码: 含"代码"
+        - 名称: 含"名称"或"简称"
+        - 热度: 含"人气"/"关注"/"指数"
+        """
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            rank = None
+            stock_code = ""
+            stock_name = ""
+            hot_value = None
+
+            for col in df.columns:
+                col_str = str(col)
+                if "排名" in col_str or "rank" in col_str.lower():
+                    try:
+                        rank = int(row[col])
+                    except (ValueError, TypeError):
+                        pass
+                elif "代码" in col_str and not stock_code:
+                    stock_code = str(row[col])
+                elif ("名称" in col_str or "简称" in col_str) and not stock_name:
+                    stock_name = str(row[col])
+                elif "人气" in col_str or "关注" in col_str or "指数" in col_str:
+                    hot_value = safe_float(row[col])
+
+            if rank is not None and stock_code:
+                rows.append((iso_date, rank_type, rank, stock_code, stock_name, hot_value))
+
+        return rows
+
     def _fetch_st_stock_list(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
@@ -3233,7 +3324,8 @@ class AkshareIngestProvider(IngestProviderBase):
 
         # 各交易所排名表 API（#ARCH-FUTURES-POSITION: DCE/CZCE API 可能挂起，
         # 用线程超时包装防止无限等待；超时的交易所跳过，不影响其他交易所）
-        from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+        from concurrent.futures import ThreadPoolExecutor
+        from concurrent.futures import TimeoutError as FuturesTimeout
 
         exchange_apis = [
             ("CFFEX", ak.get_cffex_rank_table, 200),  # CFFEX 较慢

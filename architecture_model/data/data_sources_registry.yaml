@@ -481,3 +481,35 @@ data_sources:
         eia_api_version: v2
         requires_vpn: true
         note: "海外站点，国内访问可能需 VPN；EIA key 免费注册；与 akshare/FRED macro_data 共表 c1_market.macro_data，indicator_name 前缀 EIA_ 区分"
+
+  - id: DS-QWEATHER
+    # #ARCH-REALTIME-ACCUM（2026-08-04）：和风天气，免费版无历史API——必须每日积累
+    runtime_id: qweather
+    name: "和风天气"
+    name_en: "QWeather"
+    type: open_source
+    account_type: free
+    category: weather
+    vendor: "和风天气"
+    interface_types: ["HTTP REST API"]
+    api_count: 2
+    auth_required: true
+    auth_method: "QWEATHER_API_KEY 必填（免费注册 https://dev.qweather.com）"
+    rate_limit: "免费版 1000次/天"
+    status: active
+    coverage: "40 个主要城市实时天气 + 7天预报（温度/湿度/降水/风力/气压等）"
+    coverage_reason: "天气数据影响农业/能源/消费板块；免费版无历史API，必须每日积累"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "https://dev.qweather.com"
+    policy:
+      rpm: 500
+      concurrency: 1
+      max_retries: 2
+      backoff: exponential
+      initial_wait_sec: 2.0
+      retry_on: ["ConnectionError", "TimeoutError"]
+      session_ttl_sec: 0
+      relogin_on_auth_error: false
+      extra:
+        requires_vpn: false
+        note: "国内服务不需 VPN；QWeather key 免费注册（1000次/天）；写入 c1_market.weather_data，每日积累"

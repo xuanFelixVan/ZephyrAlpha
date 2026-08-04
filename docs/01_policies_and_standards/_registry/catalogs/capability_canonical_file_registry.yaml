@@ -8073,6 +8073,13 @@ creation_tokens:
     capability: "eia_energy_data"
     note: "EIA v2 API 能源数据获取（石油库存/WTI/Brent现货价格/天然气库存）"
 
+  # --- 和风天气 provider（2026-08-04，#ARCH-REALTIME-ACCUM）---
+  - file: "src/zephyr/data/implementations/qweather_provider.py"
+    token: "auto-qweather-provider-20260804"
+    created_by: "session-realtime-accum"
+    capability: "qweather_data"
+    note: "和风天气 API 实时天气+7天预报（40城市，免费版无历史API必须每日积累）"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

@@ -1454,8 +1454,8 @@ tasks:
 - task_id: concept_board_refresh
   table: c1_market.concept_board
   source: akshare
-  schedule: weekend_calibration
-  incremental: false    # 全量刷新（概念板块列表低频变化）
+  schedule: daily_capital
+  incremental: false    # 每日快照积累（#ARCH-REALTIME-ACCUM：成分股变动无法回填）
   dependencies: []
   capability: concept_board
   symbols:
@@ -2293,4 +2293,43 @@ tasks:
     description: "FRED宏观数据全量刷新（5年历史回补，22序列）"
     note: "需配置 FRED_API_KEY；周末全量回补确保历史完整性"
 
+  fallback_sources: []
+
+  # ============== 时间敏感型数据（#ARCH-REALTIME-ACCUM，每日积累） ==============
+  # 免费+只能获取最近数据，错过无法回填——必须每日执行
+
+- task_id: qweather_now_incremental
+  table: c1_market.weather_data
+  source: qweather
+  schedule: daily_capital
+  incremental: false
+  dependencies: []
+  capability: qweather_now
+  symbols:
+  extra:
+    description: "和风天气实时数据（40城市，免费版无历史API，每日积累）"
+    note: "需配置 QWEATHER_API_KEY（免费注册 https://dev.qweather.com）"
+  fallback_sources: []
+- task_id: qweather_forecast_incremental
+  table: c1_market.weather_data
+  source: qweather
+  schedule: daily_capital
+  incremental: false
+  dependencies: []
+  capability: qweather_forecast
+  symbols:
+  extra:
+    description: "和风天气7天预报（40城市，每日快照积累）"
+    note: "需配置 QWEATHER_API_KEY"
+  fallback_sources: []
+- task_id: stock_hot_rank_incremental
+  table: c1_market.stock_hot_rank
+  source: akshare
+  schedule: daily_capital
+  incremental: false
+  dependencies: []
+  capability: stock_hot_rank
+  symbols:
+  extra:
+    description: "东财人气/关注排行（每日快照积累，实时排行无历史API）"
   fallback_sources: []

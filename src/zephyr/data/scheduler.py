@@ -1040,6 +1040,10 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.eia_provider import EiaProvider
 
                 return EiaProvider()
+            elif source == "qweather":
+                from zephyr.data.implementations.qweather_provider import QWeatherProvider
+
+                return QWeatherProvider()
             else:
                 log.warning("未知数据源: %s", source)
                 return None

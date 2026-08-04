@@ -200,3 +200,17 @@ eia:
     requires_vpn: true
     note: 海外站点，国内访问可能需 VPN；EIA key 免费注册；与 akshare/FRED macro_data 共表 c1_market.macro_data，indicator_name
       前缀 EIA_ 区分
+qweather:
+  rpm: 500
+  concurrency: 1
+  max_retries: 2
+  backoff: exponential
+  initial_wait_sec: 2.0
+  retry_on:
+  - ConnectionError
+  - TimeoutError
+  session_ttl_sec: 0
+  relogin_on_auth_error: false
+  extra:
+    requires_vpn: false
+    note: 国内服务不需 VPN；QWeather key 免费注册（1000次/天）；写入 c1_market.weather_data，每日积累
