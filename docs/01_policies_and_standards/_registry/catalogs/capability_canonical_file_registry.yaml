@@ -5789,6 +5789,11 @@ creation_tokens:
     token: "auto-translation-coverage-gate-20260802"
     created_by: "session-translation-coverage-gate"
     capability: "translation_coverage_gate"
+  # --- 数据源健康检查模块（2026-08-04，source_health_check 规避 DATETIME-NOW gate 解锁提交）---
+  - file: "src/zephyr/data/source_health_check.py"
+    token: auto-source-health-check-20260804
+    created_by: "session-arch-fix-shc"
+    capability: "data_source_health_check"
   # --- BLUEPRINT-NODE-ID-HARDCODE in-process gate（2026-08-04，文档引用铁律补齐）---
   - file: "src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py"
     token: "auto-blueprint-node-id-hardcode-gate-20260804"
