@@ -5769,6 +5769,11 @@ creation_tokens:
     token: "auto-kimi3-battle-map-merge-20260804"
     created_by: "session-anchor-hub"
     capability: "kimi3_battle_map_merge_instructions"
+  # --- Kimi3 整合执行日志stub（2026-08-05，指令文档要求的循环执行日志产物）---
+  - file: "docs/_working/battle_map_merge_execution_log.md"
+    token: "auto-kimi3-battle-map-exec-log-20260805"
+    created_by: "session-kimi-instr-lock"
+    capability: "kimi3_battle_map_merge_instructions"
 
   # --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
   - file: "scripts/governance/_shared/module_translation_loader.py"
