@@ -41,6 +41,7 @@ from typing import Any, Iterator
 from ..provider_base import IngestProviderBase, FetchPayload, FetchResult, IngestProviderMeta, CapabilityContract
 from ..policy_registry import SourcePolicy
 from ..table_registry import get_registry
+from zephyr.shared.security.secrets import get_secret_or_default
 
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
 _TBL_DAILY_VALUATION = get_registry().table("market_daily_valuation")
@@ -224,8 +225,8 @@ class IFindProvider(IngestProviderBase):
         """
         from iFinDPy import THS_iFinDLogin
 
-        username = os.environ.get("IFIND_USERNAME")
-        password = os.environ.get("IFIND_PASSWORD")
+        username = get_secret_or_default("IFIND_USERNAME")
+        password = get_secret_or_default("IFIND_PASSWORD")
         if not username or not password:
             raise RuntimeError(
                 "环境变量 IFIND_USERNAME/IFIND_PASSWORD 未设置，无法登录 iFind"
