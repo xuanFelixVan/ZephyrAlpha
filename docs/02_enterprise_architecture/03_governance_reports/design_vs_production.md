@@ -20,16 +20,16 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 3550 | 95.0% |
+| production（生产态） | 3551 | 95.0% |
 | design（设计态） | 186 | 5.0% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3736** | **100%** |
+| **总计** | **3737** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4215 | 112.8% |
+| generated | 4216 | 112.8% |
 | stable | 1800 | 48.2% |
 | planned | 101 | 2.7% |
 | deprecated | 84 | 2.2% |
@@ -53,7 +53,7 @@ ttl: permanent
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 | 0 | 0 | 0 | 0 | N/A |
 | D_CONTRACTS | 共享契约 | 0 | 0 | 0 | 0 | N/A |
 | D_CROSS_ASSET | 跨资产 | 7 | 7 | 0 | 0 | 100.0% |
-| D_DATA | 数据接入层 | 184 | 171 | 13 | 0 | 92.9% |
+| D_DATA | 数据接入层 | 185 | 172 | 13 | 0 | 93.0% |
 | D_DATA_ENG | 数据工程 | 20 | 7 | 13 | 0 | 35.0% |
 | D_DATA_GOV | 数据治理 | 10 | 10 | 0 | 0 | 100.0% |
 | D_DATA_SCRIPTS | 数据治理脚本 | 0 | 0 | 0 | 0 | N/A |

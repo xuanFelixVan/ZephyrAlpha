@@ -29,7 +29,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 超出 / Over |
 |------|--------|:---:|:---:|:---:|
-| D_DATA | 数据接入层 | 171 | 150 | +21 |
+| D_DATA | 数据接入层 | 172 | 150 | +22 |
 | D_GOVERNANCE | 生命周期管理 | 451 | 150 | +301 |
 | D_GOV_AUDIT | 审计追踪 | 192 | 150 | +42 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 215 | 150 | +65 |
@@ -86,7 +86,7 @@ ttl: permanent
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_CONTRACTS | 共享契约 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_CROSS_ASSET | 跨资产 | L2_domain | 7 | 150 | 4.7% | 正常 |
-| D_DATA | 数据接入层 | L1_foundation | 171 | 150 | 114.0% | 超容 |
+| D_DATA | 数据接入层 | L1_foundation | 172 | 150 | 114.7% | 超容 |
 | D_DATA_ENG | 数据工程 | L1_foundation | 7 | 150 | 4.7% | 正常 |
 | D_DATA_GOV | 数据治理 | L1_foundation | 10 | 150 | 6.7% | 正常 |
 | D_DATA_SCRIPTS | 数据治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |

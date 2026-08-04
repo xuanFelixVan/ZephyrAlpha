@@ -2,14 +2,14 @@
 
 > **文档作用 / Purpose**: 展示系统间集成关系和数据流向，包括API调用、事件订阅、数据同步等集成方式。
 
-> 自动生成时间: 2026-08-04 20:51:03
+> 自动生成时间: 2026-08-04 21:06:14
 > 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 > 跨域依赖对数: 318
 
 ```mermaid
 
 %% 所有功能域集成依赖关系图
-%% 生成时间: 2026-08-04 20:51:03
+%% 生成时间: 2026-08-04 21:06:14
 %% 数据源: depgraph (PostgreSQL) edges表（跨域依赖）
 %% 跨域依赖对数: 318
 
@@ -29,7 +29,7 @@ graph LR
     subgraph L1_foundation[L1_foundation]
         D_ALT_DATA["D_ALT_DATA<br/>另类数据<br/>(8模块)"]
         D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心<br/>(130模块)"]
-        D_DATA["D_DATA<br/>数据接入层<br/>(184模块)"]
+        D_DATA["D_DATA<br/>数据接入层<br/>(185模块)"]
         D_DATA_ENG["D_DATA_ENG<br/>数据工程<br/>(20模块)"]
         D_DATA_GOV["D_DATA_GOV<br/>数据治理<br/>(10模块)"]
         D_DATA_SEC["D_DATA_SEC<br/>数据安全与契约<br/>(7模块)"]
@@ -115,8 +115,8 @@ graph LR
     D_FEEDBACK_LOOP -->|35条 import_depends| D_FBL_VERIFICATION
     D_INFRA_RECOVERY -->|34条 import_depends| D_SHARED
     D_GOV_DRIFT -->|34条 import_depends| D_SHARED
+    D_DATA -->|30条 import_depends| D_SHARED
     D_TRADING -->|29条 import_depends| D_SHARED
-    D_DATA -->|28条 import_depends| D_SHARED
     D_GOVERNANCE -->|27条 import_depends| D_SECURITY
     D_GOV_ENFORCEMENT -->|26条 import_depends| D_GOV_AUDIT
     D_AUTONOMY_CORE -->|25条 import_depends| D_SHARED
@@ -201,7 +201,7 @@ graph LR
     %% 统计
     %% 域总数: 72
     %% 跨域依赖对数: 318
-    %% 跨域依赖边总数: 2565
+    %% 跨域依赖边总数: 2568
 
     %% Top 10 依赖对
     %% 1. D_INFRA_RUNTIME -> D_SHARED: 165 条

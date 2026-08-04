@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共266项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共267项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -19,7 +19,7 @@ ttl: permanent
 
 | 资产类型 | 数量 | 真源 |
 |----------|------|------|
-| 外部数据源 | 17 | data_sources_registry.yaml |
+| 外部数据源 | 18 | data_sources_registry.yaml |
 | 数据源 API | 124 | data_source_apis_registry.yaml |
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 15 | infrastructure_components.yaml |
@@ -27,7 +27,7 @@ ttl: permanent
 | 配置项 | 34 | config/*.yaml |
 | 数据流作业 | 197 | dataflow_graph_registry.yaml |
 | 数据集 | 76 | dataflow_graph_registry.yaml |
-| **合计** | **266** | |
+| **合计** | **267** | |
 
 ## 2. 外部数据源资产
 
@@ -50,6 +50,7 @@ ttl: permanent
 | DS-CLS | 财联社电报 | open_source | news | 财联社 | active | 0 | 财联社电报(分钟级财经快讯) |
 | DS-EASTMONEY_NEWS | 东方财富新闻 | open_source | news | 东方财富 | active | 0 | 东方财富7x24快讯(实时财经新闻) |
 | DS-RSS | RSS | open_source | news | 开源 | active | 0 | 财经新闻RSS源 |
+| DS-QWEATHER | 和风天气 | open_source | weather | 和风天气 | active | 2 | 40 个主要城市实时天气 + 7天预报（温度/湿度/降水/风力/气压等） |
 
 ## 3. 服务资产
 
@@ -193,7 +194,7 @@ ttl: permanent
 | `config/risk_params.yaml` | 1.3 | 2026-08-04 |
 | `config/risk_register.yaml` | 9.1 | 2026-08-03 |
 | `config/sandbox_policy.yaml` | 1.5 | 2026-08-03 |
-| `config/secret_registry.yaml` | 23.1 | 2026-08-04 |
+| `config/secret_registry.yaml` | 23.5 | 2026-08-04 |
 | `config/sla_targets.yaml` | 0.9 | 2026-08-04 |
 | `config/sli_registry.yaml` | 2.8 | 2026-08-03 |
 | `config/tech_stack_manifest.yaml` | 5.9 | 2026-08-03 |

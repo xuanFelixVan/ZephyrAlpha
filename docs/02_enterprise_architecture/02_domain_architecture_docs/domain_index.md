@@ -66,8 +66,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3736 |
-| 生产态模块 | 3550 |
+| 模块总数 | 3737 |
+| 生产态模块 | 3551 |
 | 设计态模块 | 186 |
 
 ## 域清单（按架构层分组）
@@ -91,7 +91,7 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|------|------|
 | D_ALT_DATA | 另类数据 / Alternative Data | 8 | 7 | 1 | 8/150 (OK) | [📄 09_d_alt_data.md](09_d_alt_data.md) |
 | D_AUTONOMY_CORE | 自治核心 / Autonomy Core | 130 | 130 | 0 | 130/150 (OK) | [📄 10_d_autonomy_core.md](10_d_autonomy_core.md) |
-| D_DATA | 数据接入层 / Data Access Layer | 184 | 171 | 13 | 184/150 (超容) | [📄 11_d_data.md](11_d_data.md) |
+| D_DATA | 数据接入层 / Data Access Layer | 185 | 172 | 13 | 185/150 (超容) | [📄 11_d_data.md](11_d_data.md) |
 | D_DATA_ENG | 数据工程 / Data Engineering | 20 | 7 | 13 | 20/150 (OK) | [📄 12_d_data_eng.md](12_d_data_eng.md) |
 | D_DATA_GOV | 数据治理 / Data Governance | 10 | 10 | 0 | 10/150 (OK) | [📄 13_d_data_gov.md](13_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 7 | 0 | 7/150 (OK) | [📄 14_d_data_sec.md](14_d_data_sec.md) |

@@ -21,7 +21,7 @@ ttl: permanent
 
 ## 一句话说清楚（自动生成 · 生成器: generate_data_acquisition_flow.py）
 
-系统每天从 **14 个数据源**采集 **151 个任务**，灌进 ClickHouse 的 **2 个库**：
+系统每天从 **15 个数据源**采集 **154 个任务**，灌进 ClickHouse 的 **2 个库**：
 
 - `c1_market` — 行情库（K线、指数、期货、资金、估值等）
 - `c3_fundamental` — 基本面库（财务报表、新闻、股东、分红等）
@@ -33,7 +33,7 @@ ttl: permanent
 | 数据源 | 任务数 | 主要采什么 |
 |--------|--------|-----------|
 | **miniqmt**（迅投QMT） | 61 | K线行情、财务报表、股东数据、期权可转债 |
-| **akshare**（AKShare） | 60 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
+| **akshare**（AKShare） | 61 | 估值、融资融券、龙虎榜、大宗交易、宏观 |
 | **tdx**（通达信） | 6 | 板块分类、板块K线、板块成分股 |
 | **tickflow**（TickFlow） | 4 | 美股K线、美股指数 |
 | **tqcenter**（通达信tqcenter） | 4 | 板块K线、板块实时快照、板块成分股映射 |
@@ -42,11 +42,12 @@ ttl: permanent
 | **rss**（RSS） | 2 | 财经新闻 |
 | **baostock**（BaoStock） | 2 | 交易日历、沪深300成分股 |
 | eia | 2 | - |
+| qweather | 2 | - |
 | **ifind**（同花顺iFind） | 1 | 资金流向、股权质押、行业分类 |
 | cls | 1 | - |
 | eastmoney_news | 1 | - |
 | backfill | 1 | - |
-| **合计** | **151** | |
+| **合计** | **154** | |
 
 ---
 
@@ -127,7 +128,7 @@ ttl: permanent
 
 ---
 
-### 2. akshare（AKShare）— 60 个任务
+### 2. akshare（AKShare）— 61 个任务
 
 **一句话**：开源数据源，采估值、融资融券、龙虎榜、大宗交易、宏观数据、限售解禁等事件类数据。
 
@@ -141,6 +142,7 @@ ttl: permanent
 | stock_indicator_incremental | c1_market.stock_indicator | 盘后 16:30 | AKShare指标数据增量 |
 | block_trade_detail_incremental | c1_market.block_trade_detail | 盘后 17:00 | AKShare大宗交易每日统计增量 |
 | block_trade_incremental | c1_market.block_trade | 盘后 17:00 | 大宗交易增量 |
+| concept_board_refresh | c1_market.concept_board | 盘后 17:00 | AKShare概念板块及成分股刷新 |
 | dragon_tiger_incremental | c1_market.dragon_tiger | 盘后 17:00 | 龙虎榜增量 |
 | dragon_tiger_seat_incremental | c1_market.dragon_tiger_seat | 盘后 17:00 | 龙虎榜席位明细增量 |
 | hk_connect_flow_full | c1_market.hk_connect_flow | 盘后 17:00 | AKShare沪深港通北向资金 |
@@ -150,6 +152,7 @@ ttl: permanent
 | share_change_incremental | c3_fundamental.share_change | 盘后 17:00 | AKShare股本变动增量 |
 | share_unlock_incremental | c3_fundamental.share_unlock | 盘后 17:00 | 限售解禁增量 |
 | st_stock_list_refresh | c1_market.st_stock_list | 盘后 17:00 | AKShare ST股票列表刷新 |
+| stock_hot_rank_incremental | c1_market.stock_hot_rank | 盘后 17:00 | 东财人气/关注排行 |
 | analyst_forecast_incremental | c3_fundamental.analyst_forecast | 盘后 18:00 | 分析师一致预期增量 |
 | audit_opinion_incremental | c3_fundamental.audit_opinion | 盘后 18:00 | 审计意见增量（**已禁用**） |
 | disclosure_plan_incremental | c3_fundamental.disclosure_plan | 盘后 18:00 | 预约披露计划增量 |
@@ -171,7 +174,6 @@ ttl: permanent
 | stock_list_delisted_refresh | c1_market.stock_list | 月初 09:00 | 退市股票列表刷新 |
 | analyst_forecast_full_refresh | c3_fundamental.analyst_forecast | weekend_calibration | 分析师预期全量刷新 |
 | block_trade_detail_full_refresh | c1_market.block_trade_detail | weekend_calibration | 大宗交易明细全量刷新 |
-| concept_board_refresh | c1_market.concept_board | weekend_calibration | AKShare概念板块及成分股刷新 |
 | daily_valuation_full_refresh | c1_market.daily_valuation | weekend_calibration | 估值数据全量刷新 |
 | equity_pledge_full_refresh | c3_fundamental.equity_pledge_detail | weekend_calibration | 股权质押明细全量刷新 |
 | etf_nav_full_refresh | c1_market.etf_nav | weekend_calibration | ETF净值全量刷新 |
@@ -321,7 +323,20 @@ ttl: permanent
 
 ---
 
-### 11. ifind（同花顺iFind）— 1 个任务
+### 11. qweather（qweather）— 2 个任务
+
+**一句话**：（待补充）
+
+**采集明细**：
+
+| 任务 | 灌到哪张表 | 什么时候采 | 说明 |
+|------|-----------|-----------|------|
+| qweather_forecast_incremental | c1_market.weather_data | 盘后 17:00 | 和风天气7天预报 |
+| qweather_now_incremental | c1_market.weather_data | 盘后 17:00 | 和风天气实时数据 |
+
+---
+
+### 12. ifind（同花顺iFind）— 1 个任务
 
 **一句话**：付费数据源，采资金流向、股权质押、行业分类等 iFind 独有数据。
 
@@ -333,7 +348,7 @@ ttl: permanent
 
 ---
 
-### 12. cls（cls）— 1 个任务
+### 13. cls（cls）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -345,7 +360,7 @@ ttl: permanent
 
 ---
 
-### 13. eastmoney_news（eastmoney_news）— 1 个任务
+### 14. eastmoney_news（eastmoney_news）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -357,7 +372,7 @@ ttl: permanent
 
 ---
 
-### 14. backfill（backfill）— 1 个任务
+### 15. backfill（backfill）— 1 个任务
 
 **一句话**：（待补充）
 
@@ -376,20 +391,20 @@ ttl: permanent
 | 调度时段 | 时间 | 任务数 | 说明 |
 |---------|------|--------|------|
 | 盘后 16:30 | 16:30 周一-五 | 18 | 日K线、周月K线、分钟K线、估值 |
-| 盘后 17:00 | 17:00 周一-五 | 19 | 融资融券、龙虎榜、期货、美股、港股、资金流向 |
+| 盘后 17:00 | 17:00 周一-五 | 23 | 融资融券、龙虎榜、期货、美股、港股、资金流向 |
 | 盘后 18:00 | 18:00 周一-五 | 14 | 新闻、股东、分红、质押、解禁、分析师预期 |
 | 月初 09:00 | 月初 09:00 | 17 | 交易日历、股票列表、行业分类、全量刷新 |
 | nightly_financial | nightly_financial | 8 | - |
 | intraday_realtime | intraday_realtime | 13 | - |
 | event_driven | event_driven | 12 | - |
 | intraday_minute | intraday_minute | 15 | - |
-| weekend_calibration | weekend_calibration | 24 | - |
+| weekend_calibration | weekend_calibration | 23 | - |
 | daily_calibration | daily_calibration | 1 | - |
 | news_slow | news_slow | 2 | - |
 | auction_highfreq | auction_highfreq | 2 | - |
 | weekend_backfill | weekend_backfill | 1 | - |
 | intraday_sector | intraday_sector | 5 | - |
-| **合计** | | **151** | |
+| **合计** | | **154** | |
 
 ---
 
@@ -407,7 +422,7 @@ ttl: permanent
 flowchart TD
     subgraph ext_sources["外部数据源 / External Data Sources"]
         S0["(生产态 / production) miniqmt / 迅投QMT<br/>主力数据源，采 A股/港股/期货的 K线行情（日/周<br/>/月/分钟级）和财务报表、股东数据、期权可转债等。<br/>数据源 / data-source（61任务）"]
-        S1["(生产态 / production) akshare / AKShare<br/>开源数据源，采估值、融资融券、龙虎榜、大宗交易、<br/>宏观数据、限售解禁等事件类数据。<br/>数据源 / data-source（60任务）"]
+        S1["(生产态 / production) akshare / AKShare<br/>开源数据源，采估值、融资融券、龙虎榜、大宗交易、<br/>宏观数据、限售解禁等事件类数据。<br/>数据源 / data-source（61任务）"]
         S2["(生产态 / production) tdx / 通达信<br/>板块数据源，采通达信板块分类、板块K线、板块成分<br/>股。<br/>数据源 / data-source（6任务）"]
         S3["(生产态 / production) tickflow / TickFlow<br/>美股数据源，采美股日K线和美股指数（ETF替代）。<br/>数据源 / data-source（4任务）"]
         S4["(生产态 / production) tqcenter / 通达信tqcenter<br/>880xxx板块数据源，采板块K线、板块实时快照、板块<br/>成分股映射；99只推送+584只轮询混合模式，动态5因<br/>子排名调整推送池。<br/>数据源 / data-source（4任务）"]
@@ -416,10 +431,11 @@ flowchart TD
         S7["(生产态 / production) rss / RSS<br/>RSS爬虫，采财经新闻。<br/>数据源 / data-source（2任务）"]
         S8["(生产态 / production) baostock / BaoStock<br/>开源数据源，采交易日历和沪深300成分股。<br/>数据源 / data-source（2任务）"]
         S9["(生产态 / production) eia<br/>数据源 / data-source（2任务）"]
-        S10["(生产态 / production) ifind / 同花顺iFind<br/>付费数据源，采资金流向、股权质押、行业分类等<br/>iFind 独有数据。<br/>数据源 / data-source（1任务）"]
-        S11["(生产态 / production) cls<br/>数据源 / data-source（1任务）"]
-        S12["(生产态 / production) eastmoney_news<br/>数据源 / data-source（1任务）"]
-        S13["(生产态 / production) backfill<br/>数据源 / data-source（1任务）"]
+        S10["(生产态 / production) qweather<br/>数据源 / data-source（2任务）"]
+        S11["(生产态 / production) ifind / 同花顺iFind<br/>付费数据源，采资金流向、股权质押、行业分类等<br/>iFind 独有数据。<br/>数据源 / data-source（1任务）"]
+        S12["(生产态 / production) cls<br/>数据源 / data-source（1任务）"]
+        S13["(生产态 / production) eastmoney_news<br/>数据源 / data-source（1任务）"]
+        S14["(生产态 / production) backfill<br/>数据源 / data-source（1任务）"]
     end
 
     subgraph clickhouse["ClickHouse 数据库 / Databases"]
@@ -429,15 +445,16 @@ flowchart TD
 
     S1 -->|采集 / ingests| D0
     S1 -->|采集 / ingests| D1
-    S13 -->|采集 / ingests| D0
+    S14 -->|采集 / ingests| D0
     S8 -->|采集 / ingests| D0
-    S11 -->|采集 / ingests| D1
     S12 -->|采集 / ingests| D1
+    S13 -->|采集 / ingests| D1
     S9 -->|采集 / ingests| D0
     S6 -->|采集 / ingests| D0
-    S10 -->|采集 / ingests| D0
+    S11 -->|采集 / ingests| D0
     S0 -->|采集 / ingests| D0
     S0 -->|采集 / ingests| D1
+    S10 -->|采集 / ingests| D0
     S7 -->|采集 / ingests| D1
     S2 -->|采集 / ingests| D0
     S3 -->|采集 / ingests| D0
@@ -448,7 +465,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13 external_prod
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14 external_prod
     class D0,D1 production
 ```
 
