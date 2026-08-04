@@ -53,12 +53,12 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_alloc_batched_position_builder_py["pf_alloc/batched_position_builder<br/>组合配置包的batched_position_builder模块<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
-    src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["core/multi_strategy_capital_allocator<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["core/signal_synthesis_combiner<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["core/strategy_correlation_gate<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py["pf_alloc/strategy_lifecycle_event<br/>组合配置包的strategy_lifecycle_event模块<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_default_equity_strategy_py["pf_core/default_equity_strategy<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_batched_position_builder_py["Batched Position Builder<br/>组合配置包的batched_position_builder模块<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
+    src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["资金分配输入非法<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>Multi Strategy Capital Allocator<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["策略信号方向<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["门禁裁决级别<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py["Strategy Lifecycle Event<br/>组合配置包的strategy_lifecycle_event模块<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_default_equity_strategy_py["Default Equity Long-Only Strategy<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>Default Equity Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_batched_position_builder_py ~~~ src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_core_signal_synthesis_combiner_py
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_core_strategy_correlation_gate_py
@@ -96,11 +96,11 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["core/multi_strategy_capital_allocator<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["core/signal_synthesis_combiner<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["core/strategy_correlation_gate<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py["pf_alloc/strategy_lifecycle_event<br/>组合配置包的strategy_lifecycle_event模块<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
-    src_zephyr_pf_core_default_equity_strategy_py["pf_core/default_equity_strategy<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py["资金分配输入非法<br/>Multi-Strategy Capital Allocator —<br/>多策略资金分配器 (MOD-PA-003)<br/>Multi Strategy Capital Allocator<br/>文件: core/multi_strategy_capital_allocator.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_signal_synthesis_combiner_py["策略信号方向<br/>Signal Synthesis Combiner — 信号合成器<br/>(MOD-PA-002)<br/>文件: core/signal_synthesis_combiner.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_core_strategy_correlation_gate_py["门禁裁决级别<br/>Strategy Correlation Gate — 策略相关性门禁<br/>(MOD-PA-004)<br/>文件: core/strategy_correlation_gate.py<br/>(生产态 / production)"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py["Strategy Lifecycle Event<br/>组合配置包的strategy_lifecycle_event模块<br/>文件: pf_alloc/strategy_lifecycle_event.py<br/>(生产态 / production)"]
+    src_zephyr_pf_core_default_equity_strategy_py["Default Equity Long-Only Strategy<br/>D_PORTFOLIO_CORE — Default Equity Long-Only<br/>Strategy<br/>Default Equity Strategy<br/>文件: pf_core/default_equity_strategy.py<br/>(生产态 / production)"]
     src_zephyr_pf_alloc_core_multi_strategy_capital_allocator_py ~~~ src_zephyr_pf_alloc_core_signal_synthesis_combiner_py
     src_zephyr_pf_alloc_core_signal_synthesis_combiner_py ~~~ src_zephyr_pf_alloc_core_strategy_correlation_gate_py
     src_zephyr_pf_alloc_core_strategy_correlation_gate_py ~~~ src_zephyr_pf_alloc_strategy_lifecycle_event_py
@@ -119,7 +119,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_pf_alloc_batched_position_builder_py["pf_alloc/batched_position_builder<br/>组合配置包的batched_position_builder模块<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
+    src_zephyr_pf_alloc_batched_position_builder_py["Batched Position Builder<br/>组合配置包的batched_position_builder模块<br/>文件: pf_alloc/batched_position_builder.py<br/>(设计态 / design)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -133,23 +133,23 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
-| 2 | pf_alloc/strategy_lifecycle_event.py | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/strategy_lifecycle_event.py | 导入依赖 / import_depends |
-| 3 | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | → | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | 导入依赖 / import_depends |
-| 4 | Multi-Strategy Capital Allocator — 多策略资金分配器 (MOD... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 5 | Signal Synthesis Combiner — 信号合成器 (MOD-PA-002) (cor... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 6 | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 7 | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
+| 1 | Default Equity Long-Only Strategy / Default Equity Strate... | → | D_GOVERNANCE 生命周期管理: 策略基类 / D_PORTFOLIO_CORE — StrategyBase + StrategyMet... | 导入依赖 / import_depends |
+| 2 | Strategy Lifecycle Event / Strategy Lifecycle Event (pf_a... | → | D_INFRASTRUCTURE 跨层契约基础设施: Strategy Lifecycle Event / Strategy Lifecycle Event (cont... | 导入依赖 / import_depends |
+| 3 | Default Equity Long-Only Strategy / Default Equity Strate... | → | D_INFRASTRUCTURE 跨层契约基础设施: Order / Order (contracts/order.py) | 导入依赖 / import_depends |
+| 4 | 资金分配输入非法 / Multi Strategy Capital Allocator (core... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 5 | 策略信号方向 / Signal Synthesis Combiner (core/signal_syn... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 6 | 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 7 | Default Equity Long-Only Strategy / Default Equity Strate... | → | D_SHARED 共享服务: 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOVERNANCE 生命周期管理: E2E 集成测试：全流水线贯通测试 (trading/test_e2e_pipeline... | → | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 测试依赖 / test_depends |
-| 2 | D_GOVERNANCE 生命周期管理: Phase E — Main Data Flow End-to-End Test (trading/test_p... | → | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 测试依赖 / test_depends |
-| 3 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
-| 4 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | 导入依赖 / import_depends |
-| 5 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — Portfolio Construction Strategies (st... | → | D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | 导入依赖 / import_depends |
+| 1 | D_GOVERNANCE 生命周期管理: Test E2e Pipeline / Test E2e Pipeline (trading/test_e2e_p... | → | Default Equity Long-Only Strategy / Default Equity Strate... | 测试依赖 / test_depends |
+| 2 | D_GOVERNANCE 生命周期管理: Main Data Flow End-to-End Test / Test Phase E Main Flow (... | → | Default Equity Long-Only Strategy / Default Equity Strate... | 测试依赖 / test_depends |
+| 3 | D_PF_CORE 组合核心: 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | 导入依赖 / import_depends |
+| 4 | D_PF_CORE 组合核心: Performance Attribution Engine / Performance Attribution ... | → | 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | 导入依赖 / import_depends |
+| 5 | D_PF_CORE 组合核心: Portfolio Construction Strategies / Init (strategy_engine... | → | Default Equity Long-Only Strategy / Default Equity Strate... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

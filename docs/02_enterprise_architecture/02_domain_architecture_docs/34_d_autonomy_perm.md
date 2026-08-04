@@ -97,9 +97,9 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 检查终止开关latency / check_kill_switch_latency (fitness_... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 2 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 3 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | 导入依赖 / import_depends |
+| 1 | 检查终止开关latency / check_kill_switch_latency (fitness_... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 2 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 3 | 管理终止开关 / manage_kill_switch (meta/manage_kill_switc... | → | D_GOV_SCRIPTS 脚本治理: graceful 变体：写入失败时返回 False 而非 raise / File Uti... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

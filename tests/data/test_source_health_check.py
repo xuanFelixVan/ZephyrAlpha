@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-DATA_source_health_check_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.data.test_source_health_check
 # [DOMAIN] D_DATA

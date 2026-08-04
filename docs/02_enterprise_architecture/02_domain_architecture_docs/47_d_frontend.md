@@ -56,10 +56,10 @@ flowchart TD
     scripts_tests_test_frontend_components_py["测试前端components<br/>5个前端组件综合验证脚本<br/>（TTL=task_bound，施工完成后退役）<br/>test_frontend_components<br/>文件: tests/test_frontend_components.py<br/>(生产态 / production)"]
     src_zephyr_frontend_implementations_default_approval_gateway_py["默认审批网关<br/>默认approval网关，前端的门禁，在关键节点检查是否<br/>放行。<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_approval_gateway<br/>文件: implementations<br/>/default_approval_gateway.py<br/>(设计态 / design)"]
     src_zephyr_frontend_implementations_default_notification_manager_py["默认通知管理器<br/>前端的通知器，把消息推送给接收方<br/>⛔ 该域，设计已就绪，等待开发排期<br/>default_notification_manager<br/>文件: implementations<br/>/default_notification_manager.py<br/>(设计态 / design)"]
-    tests_ai_test_l08_human_ai_interface_py["ai/test_l08_human_ai_interface<br/>ai包的test_l08_human_ai_interface模块<br/>文件: ai/test_l08_human_ai_interface.py<br/>(生产态 / production)"]
-    tests_governance_observability_test_app_panel_unit_py["observability/test_app_panel_unit<br/>test_app_panel_unit · app_panel.py 单元测试<br/>（v3.1.0, #ARCH-047）<br/>文件: observability/test_app_panel_unit.py<br/>(生产态 / production)"]
-    tests_governance_observability_test_dashboard_unit_py["observability/test_dashboard_unit<br/>observability包的test_dashboard_unit模块<br/>文件: observability/test_dashboard_unit.py<br/>(生产态 / production)"]
-    tests_governance_observability_test_p1_components_unit_py["observability/test_p1_components_unit<br/>test_p1_components_unit · 5 个 P1 交易<br/>/回测组件单元测试（v3.0.0, #ARCH-047）<br/>文件: observability/test_p1_components_unit.py<br/>(生产态 / production)"]
+    tests_ai_test_l08_human_ai_interface_py["Test L08 Human Ai Interface<br/>ai包的test_l08_human_ai_interface模块<br/>文件: ai/test_l08_human_ai_interface.py<br/>(生产态 / production)"]
+    tests_governance_observability_test_app_panel_unit_py["test_app_panel_unit · app_panel.py 单元测试<br/>（v3.1.0, #ARCH-047）<br/>Test App Panel Unit<br/>文件: observability/test_app_panel_unit.py<br/>(生产态 / production)"]
+    tests_governance_observability_test_dashboard_unit_py["Test Dashboard Unit<br/>observability包的test_dashboard_unit模块<br/>文件: observability/test_dashboard_unit.py<br/>(生产态 / production)"]
+    tests_governance_observability_test_p1_components_unit_py["test_p1_components_unit · 5 个 P1 交易<br/>/回测组件单元测试<br/>（v3.0.0, #ARCH-047）<br/>Test P1 Components Unit<br/>文件: observability/test_p1_components_unit.py<br/>(生产态 / production)"]
     scripts_tests_test_frontend_components_py ~~~ src_zephyr_frontend_implementations_default_approval_gateway_py
     src_zephyr_frontend_implementations_default_approval_gateway_py ~~~ src_zephyr_frontend_implementations_default_notification_manager_py
     src_zephyr_frontend_implementations_default_notification_manager_py ~~~ tests_ai_test_l08_human_ai_interface_py
@@ -74,12 +74,12 @@ flowchart TD
     src_zephyr_frontend_dashboard_components_backtest_performance_py["回测绩效<br/>backtest_performance ·<br/>掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047）<br/>文件: components/backtest_performance.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_backtest_results_py["回测results<br/>backtest_results · 回测结果可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/backtest_results.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py["适应度functions<br/>提供前端展示与交互<br/>fitness_functions<br/>文件: components/fitness_functions.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_gate_statistics_py["components/gate_statistics<br/>gate_statistics · 门禁统计组件（v3.1.0 Panel<br/>迁移, #ARCH-047）<br/>文件: components/gate_statistics.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_knowledge_overview_py["components/knowledge_overview<br/>knowledge_overview · 知识库概览组件（v3.1.0<br/>Panel 迁移, #ARCH-047）<br/>文件: components/knowledge_overview.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_olap_trend_py["components/olap_trend<br/>olap_trend · OLAP 趋势组件（v3.1.0 Panel 迁移,<br/>#ARCH-047）<br/>文件: components/olap_trend.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_gate_statistics_py["gate_statistics · 门禁统计组件<br/>（v3.1.0 Panel 迁移, #ARCH-047）<br/>Gate Statistics<br/>文件: components/gate_statistics.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_knowledge_overview_py["knowledge_overview · 知识库概览组件<br/>（v3.1.0 Panel 迁移, #ARCH-047）<br/>Knowledge Overview<br/>文件: components/knowledge_overview.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_olap_trend_py["olap_trend · OLAP 趋势组件<br/>（v3.1.0 Panel 迁移, #ARCH-047）<br/>Olap Trend<br/>文件: components/olap_trend.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_order_book_py["订单book<br/>order_book · 5档盘口实时展示组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/order_book.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_position_monitor_py["持仓监控<br/>position_monitor · 实盘持仓监控组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_task_progress_py["components/task_progress<br/>task_progress · 任务进度看板组件（v3.1.0 Panel<br/>迁移, #ARCH-047）<br/>文件: components/task_progress.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_task_progress_py["task_progress · 任务进度看板组件<br/>（v3.1.0 Panel 迁移, #ARCH-047）<br/>Task Progress<br/>文件: components/task_progress.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_tick_replay_py["逐笔replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_trade_panel_py["交易面板<br/>trade_panel · 实盘交易面板组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047, human_gated）<br/>文件: components/trade_panel.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_backtest_performance_py ~~~ src_zephyr_frontend_dashboard_components_backtest_results_py
@@ -97,46 +97,46 @@ flowchart TD
     src_zephyr_frontend_implementations_default_approval_gateway_py -.->|导入依赖 / import_depends| src_zephyr_frontend_interface_base_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
-    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_components_backtest_results_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_olap_trend_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_order_book_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_gate_statistics_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_order_book_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_olap_trend_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_position_monitor_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
-    scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
+    scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     tests_ai_test_l08_human_ai_interface_py -->|测试依赖 / test_depends| src_zephyr_frontend_interface_base_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_app_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     tests_governance_observability_test_app_panel_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_app_panel_py
     tests_governance_observability_test_app_panel_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_app_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_order_book_py
-    tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
+    tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_chart_factory_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -166,10 +166,10 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     scripts_tests_test_frontend_components_py["测试前端components<br/>5个前端组件综合验证脚本<br/>（TTL=task_bound，施工完成后退役）<br/>test_frontend_components<br/>文件: tests/test_frontend_components.py<br/>(生产态 / production)"]
-    tests_ai_test_l08_human_ai_interface_py["ai/test_l08_human_ai_interface<br/>ai包的test_l08_human_ai_interface模块<br/>文件: ai/test_l08_human_ai_interface.py<br/>(生产态 / production)"]
-    tests_governance_observability_test_app_panel_unit_py["observability/test_app_panel_unit<br/>test_app_panel_unit · app_panel.py 单元测试<br/>（v3.1.0, #ARCH-047）<br/>文件: observability/test_app_panel_unit.py<br/>(生产态 / production)"]
-    tests_governance_observability_test_dashboard_unit_py["observability/test_dashboard_unit<br/>observability包的test_dashboard_unit模块<br/>文件: observability/test_dashboard_unit.py<br/>(生产态 / production)"]
-    tests_governance_observability_test_p1_components_unit_py["observability/test_p1_components_unit<br/>test_p1_components_unit · 5 个 P1 交易<br/>/回测组件单元测试（v3.0.0, #ARCH-047）<br/>文件: observability/test_p1_components_unit.py<br/>(生产态 / production)"]
+    tests_ai_test_l08_human_ai_interface_py["Test L08 Human Ai Interface<br/>ai包的test_l08_human_ai_interface模块<br/>文件: ai/test_l08_human_ai_interface.py<br/>(生产态 / production)"]
+    tests_governance_observability_test_app_panel_unit_py["test_app_panel_unit · app_panel.py 单元测试<br/>（v3.1.0, #ARCH-047）<br/>Test App Panel Unit<br/>文件: observability/test_app_panel_unit.py<br/>(生产态 / production)"]
+    tests_governance_observability_test_dashboard_unit_py["Test Dashboard Unit<br/>observability包的test_dashboard_unit模块<br/>文件: observability/test_dashboard_unit.py<br/>(生产态 / production)"]
+    tests_governance_observability_test_p1_components_unit_py["test_p1_components_unit · 5 个 P1 交易<br/>/回测组件单元测试<br/>（v3.0.0, #ARCH-047）<br/>Test P1 Components Unit<br/>文件: observability/test_p1_components_unit.py<br/>(生产态 / production)"]
     scripts_tests_test_frontend_components_py ~~~ tests_ai_test_l08_human_ai_interface_py
     tests_ai_test_l08_human_ai_interface_py ~~~ tests_governance_observability_test_app_panel_unit_py
     tests_governance_observability_test_app_panel_unit_py ~~~ tests_governance_observability_test_dashboard_unit_py
@@ -182,12 +182,12 @@ flowchart TD
     src_zephyr_frontend_dashboard_components_backtest_performance_py["回测绩效<br/>backtest_performance ·<br/>掘金量化风格绩效分析可视化（v1.0.0, #ARCH-047）<br/>文件: components/backtest_performance.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_backtest_results_py["回测results<br/>backtest_results · 回测结果可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/backtest_results.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_fitness_functions_py["适应度functions<br/>提供前端展示与交互<br/>fitness_functions<br/>文件: components/fitness_functions.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_gate_statistics_py["components/gate_statistics<br/>gate_statistics · 门禁统计组件（v3.1.0 Panel<br/>迁移, #ARCH-047）<br/>文件: components/gate_statistics.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_knowledge_overview_py["components/knowledge_overview<br/>knowledge_overview · 知识库概览组件（v3.1.0<br/>Panel 迁移, #ARCH-047）<br/>文件: components/knowledge_overview.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_olap_trend_py["components/olap_trend<br/>olap_trend · OLAP 趋势组件（v3.1.0 Panel 迁移,<br/>#ARCH-047）<br/>文件: components/olap_trend.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_gate_statistics_py["gate_statistics · 门禁统计组件<br/>（v3.1.0 Panel 迁移, #ARCH-047）<br/>Gate Statistics<br/>文件: components/gate_statistics.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_knowledge_overview_py["knowledge_overview · 知识库概览组件<br/>（v3.1.0 Panel 迁移, #ARCH-047）<br/>Knowledge Overview<br/>文件: components/knowledge_overview.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_olap_trend_py["olap_trend · OLAP 趋势组件<br/>（v3.1.0 Panel 迁移, #ARCH-047）<br/>Olap Trend<br/>文件: components/olap_trend.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_order_book_py["订单book<br/>order_book · 5档盘口实时展示组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/order_book.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_position_monitor_py["持仓监控<br/>position_monitor · 实盘持仓监控组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/position_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_frontend_dashboard_components_task_progress_py["components/task_progress<br/>task_progress · 任务进度看板组件（v3.1.0 Panel<br/>迁移, #ARCH-047）<br/>文件: components/task_progress.py<br/>(生产态 / production)"]
+    src_zephyr_frontend_dashboard_components_task_progress_py["task_progress · 任务进度看板组件<br/>（v3.1.0 Panel 迁移, #ARCH-047）<br/>Task Progress<br/>文件: components/task_progress.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_tick_replay_py["逐笔replay<br/>tick_replay · Tick 回放可视化组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047）<br/>文件: components/tick_replay.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_trade_panel_py["交易面板<br/>trade_panel · 实盘交易面板组件（v3.0.0<br/>Panel+HoloViz 重构, #ARCH-047, human_gated）<br/>文件: components/trade_panel.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_components_backtest_performance_py ~~~ src_zephyr_frontend_dashboard_components_backtest_results_py
@@ -203,46 +203,46 @@ flowchart TD
     src_zephyr_frontend_dashboard_components_chart_factory_py["chart工厂<br/>chart_factory · 图表统一工厂（v3.0.0新增,<br/>#ARCH-047）<br/>文件: components/chart_factory.py<br/>(生产态 / production)"]
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_performance_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
-    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_components_backtest_results_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_olap_trend_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_order_book_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_gate_statistics_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_order_book_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_olap_trend_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_position_monitor_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
-    scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
+    scripts_tests_test_frontend_components_py -->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     tests_ai_test_l08_human_ai_interface_py -->|测试依赖 / test_depends| src_zephyr_frontend_interface_base_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_app_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
-    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     tests_governance_observability_test_app_panel_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_app_panel_py
     tests_governance_observability_test_app_panel_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_app_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_fitness_functions_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_knowledge_overview_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
+    tests_governance_observability_test_dashboard_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_order_book_py
-    tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
+    tests_governance_observability_test_p1_components_unit_py -->|测试依赖 / test_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -274,13 +274,13 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | 适应度functions / fitness_functions (components/fitness_f... | → | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | 导入依赖 / import_depends |
-| 2 | observability/test_dashboard_unit.py | → | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | 测试依赖 / test_depends |
+| 2 | Test Dashboard Unit / Test Dashboard Unit (observability/... | → | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | 测试依赖 / test_depends |
 | 3 | 应用面板 / app_panel (dashboard/app_panel.py) | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
 | 4 | 应用面板 / app_panel (dashboard/app_panel.py) | → | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | 导入依赖 / import_depends |
-| 5 | chart工厂 / chart_factory (components/chart_factory.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 6 | task_progress · 任务进度看板组件（v3.1.0 Panel 迁移, #AR... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 7 | 交易面板 / trade_panel (components/trade_panel.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 8 | 交易面板 / trade_panel (components/trade_panel.py) | → | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | 导入依赖 / import_depends |
+| 5 | chart工厂 / chart_factory (components/chart_factory.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 6 | task_progress · 任务进度看板组件 / Task Progress (compon... | → | D_SHARED 共享服务: Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 7 | 交易面板 / trade_panel (components/trade_panel.py) | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 8 | 交易面板 / trade_panel (components/trade_panel.py) | → | D_TRADING 交易运营: Order 真源在 zephyr.shared.contracts.order / Order (execu... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

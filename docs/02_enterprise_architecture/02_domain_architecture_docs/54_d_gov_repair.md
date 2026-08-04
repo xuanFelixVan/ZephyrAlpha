@@ -53,15 +53,15 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_financial_governance_budget_enforcement_py["financial_governance/budget_enforcement<br/>治理/financial<br/>governance包的budget_enforcement模块<br/>文件: financial_governance/budget_enforcement.py<br/>(生产态 / production)"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py["延迟导入 BudgetEngine 避免循环依赖.'''<br/>治理/financial<br/>governance包的budget_enforcement模块<br/>Budget Enforcement<br/>文件: financial_governance/budget_enforcement.py<br/>(生产态 / production)"]
     D_OPS["反馈循环<br/>反馈循环，负责系统运行反馈、性能监控和自动调优闭<br/>环<br/>Feedback Loop<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     D_AUTONOMY_CORE["自治核心<br/>自治核心，负责 AI 自治决策、目标分解和执行编排<br/>Autonomy Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_AUTONOMY_CORE
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -87,7 +87,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_governance_financial_governance_budget_enforcement_py["financial_governance/budget_enforcement<br/>治理/financial<br/>governance包的budget_enforcement模块<br/>文件: financial_governance/budget_enforcement.py<br/>(生产态 / production)"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py["延迟导入 BudgetEngine 避免循环依赖.'''<br/>治理/financial<br/>governance包的budget_enforcement模块<br/>Budget Enforcement<br/>文件: financial_governance/budget_enforcement.py<br/>(生产态 / production)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -107,23 +107,23 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | financial_governance/budget_enforcement.py | → | D_AUTONOMY_CORE 自治核心: 技能执行器 / skill_executor (skills/skill_executor.py) | 导入依赖 / import_depends |
-| 2 | financial_governance/budget_enforcement.py | → | D_GOVERNANCE 生命周期管理: 模型路由器 / model_router (intelligence_governance/model_... | 导入依赖 / import_depends |
-| 3 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Burn Rate Monitor — MOD-INF-024 (ops_governance/burn_rat... | 导入依赖 / import_depends |
-| 4 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/degradation_manager.py | 导入依赖 / import_depends |
-| 5 | financial_governance/budget_enforcement.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/timeout_guard.py | 导入依赖 / import_depends |
-| 6 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 7 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (ops_governanc... | 导入依赖 / import_depends |
-| 8 | financial_governance/budget_enforcement.py | → | D_OPS 反馈循环: ops_governance/budget_tracker.py | 导入依赖 / import_depends |
+| 1 | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | → | D_AUTONOMY_CORE 自治核心: 技能执行器 / skill_executor (skills/skill_executor.py) | 导入依赖 / import_depends |
+| 2 | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | → | D_GOVERNANCE 生命周期管理: 模型路由器 / model_router (intelligence_governance/model_... | 导入依赖 / import_depends |
+| 3 | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 公共接口：wasserstein_1d / Burn Rate Monitor (ops_governa... | 导入依赖 / import_depends |
+| 4 | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Degradation Manager / Degradation Manager (ops_governance... | 导入依赖 / import_depends |
+| 5 | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 只读：timeouts / Timeout Guard (ops_governance/timeout_gu... | 导入依赖 / import_depends |
+| 6 | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | → | D_OPS 反馈循环: —5.133.2 DI 注入契约 / Budget Engine (ops_governance/bud... | 导入依赖 / import_depends |
+| 7 | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | → | D_OPS 反馈循环: Budget Models / Budget Models (ops_governance/budget_mode... | 导入依赖 / import_depends |
+| 8 | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | → | D_OPS 反馈循环: Budget Tracker / Budget Tracker (ops_governance/budget_tr... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOV_OPS_RESILIENCE 运维弹性治理: budget/test_budget_enforcer_smoke.py | → | financial_governance/budget_enforcement.py | 测试依赖 / test_depends |
-| 2 | D_GOV_OPS_RESILIENCE 运维弹性治理: budget/test_gct_024_hard_checks.py | → | financial_governance/budget_enforcement.py | 测试依赖 / test_depends |
-| 3 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析 ... | → | financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
-| 4 | D_INFRA_RUNTIME 运行时集成: budget_enforcement 包聚合层。 (budget_enforcement/__init_... | → | financial_governance/budget_enforcement.py | 导入依赖 / import_depends |
+| 1 | D_GOV_OPS_RESILIENCE 运维弹性治理: Test Budget Enforcer Smoke / Test Budget Enforcer Smoke (... | → | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | 测试依赖 / test_depends |
+| 2 | D_GOV_OPS_RESILIENCE 运维弹性治理: GCT-024 硬检查：验证 BudgetEngine 实例化、三维覆盖、策略... | → | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | 测试依赖 / test_depends |
+| 3 | D_GOV_SCRIPTS 脚本治理: Check Budget Health / Check Budget Health (d5_architectur... | → | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | 导入依赖 / import_depends |
+| 4 | D_INFRA_RUNTIME 运行时集成: budget_enforcement 包聚合层 / Init (budget_enforcement/__... | → | 延迟导入 BudgetEngine 避免循环依赖.""" / Budget Enforceme... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

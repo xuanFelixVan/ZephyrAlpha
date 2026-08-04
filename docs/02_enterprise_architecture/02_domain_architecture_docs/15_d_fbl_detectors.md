@@ -379,7 +379,7 @@ flowchart TD
 | 4 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器collectdetect / scheduler_collect_detect (feedback_... | → | 包入口 / __init__ (detectors/__init__.py) | 导入依赖 / import_depends |
 | 5 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器健康 / scheduler_health (feedback_loop/scheduler_he... | → | 包入口 / __init__ (detectors/__init__.py) | 导入依赖 / import_depends |
 | 6 | D_FEEDBACK_LOOP 反馈循环引擎: 集成测试管线 / E2E Integration Test Pipeline — TASK-MOD-... | → | 包入口 / __init__ (detectors/__init__.py) | 导入依赖 / import_depends |
-| 7 | D_GOVERNANCE 生命周期管理: ops/test_scheduler_act.py | → | 守卫振荡检测器 / R519: GuardOscillationDetector (guard/gu... | 测试依赖 / test_depends |
+| 7 | D_GOVERNANCE 生命周期管理: Test Scheduler Act / Test Scheduler Act (ops/test_schedul... | → | 守卫振荡检测器 / R519: GuardOscillationDetector (guard/gu... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

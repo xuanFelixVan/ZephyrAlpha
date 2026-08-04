@@ -97,79 +97,79 @@ flowchart TD
     src_zephyr_governance_semantic_audit_privacy_py["审计轨迹·隐私模块<br/>semantic audit相关功能（privacy）<br/>文件: semantic_audit/privacy.py<br/>(生产态 / production)"]
     src_zephyr_governance_semantic_audit_semantic_cache_py["semantic缓存<br/>审计的缓存，暂存常用数据加速访问<br/>semantic_cache<br/>文件: semantic_audit/semantic_cache.py<br/>(生产态 / production)"]
     src_zephyr_governance_semantic_audit_spec_auditor_py["spec审计器<br/>蓝图 文件清单与代码双向对齐<br/>spec_auditor<br/>文件: semantic_audit/spec_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_alerts_py["audit/test_alerts<br/>审计包的test_alerts模块<br/>文件: audit/test_alerts.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_anomaly_py["audit/test_anomaly<br/>审计包的test_anomaly模块<br/>文件: audit/test_anomaly.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_audit_schema_unit_py["audit/test_audit_schema_unit<br/>审计包的test_audit_schema_unit模块<br/>文件: audit/test_audit_schema_unit.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_auditor_py["audit/test_auditor<br/>审计包的test_auditor模块<br/>文件: audit/test_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py["audit/test_blueprint_frontmatter_reconciler_post<br/>_commit<br/>test_blueprint_frontmatter_reconciler_post_commi<br/>t.py — post-commit reconcile...<br/>文件: audit<br/>/test_blueprint_frontmatter_reconciler_post_comm<br/>it.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_blueprint_id_legacy_reconciler_py["audit/test_blueprint_id_legacy_reconciler<br/>test_blueprint_id_legacy_reconciler.py —<br/>GATE-BLUEPRINT-ID-LEGACY reconciler...<br/>文件: audit<br/>/test_blueprint_id_legacy_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_bridge_py["audit/test_bridge<br/>审计包的test_bridge模块<br/>文件: audit/test_bridge.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_capability_lookup_health_reconciler_py["audit/test_capability_lookup_health_reconciler<br/>test_capability_lookup_health_reconciler.py —<br/>Phase 4 G6 监控 reconciler e2e...<br/>文件: audit<br/>/test_capability_lookup_health_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_changelog_manager_py["audit/test_changelog_manager<br/>审计包的test_changelog_manager模块<br/>文件: audit/test_changelog_manager.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_code_archaeology_py["audit/test_code_archaeology<br/>审计包的test_code_archaeology模块<br/>文件: audit/test_code_archaeology.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py["audit/test_commit_gateway_abuse_monitor_reconcil<br/>er<br/>test_commit_gateway_abuse_monitor_reconciler.py<br/>— reconciler 单测<br/>文件: audit<br/>/test_commit_gateway_abuse_monitor_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_compliance_map_py["audit/test_compliance_map<br/>审计包的test_compliance_map模块<br/>文件: audit/test_compliance_map.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_corporate_actions_py["audit/test_corporate_actions<br/>审计包的test_corporate_actions模块<br/>文件: audit/test_corporate_actions.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_cycle_dependency_audit_isolation_py["audit/test_cycle_dependency_audit_isolation<br/>DOM-GOV-001 循环依赖测试 — Audit 独立运行验证 +<br/>无 RBAC import 扫描.<br/>文件: audit<br/>/test_cycle_dependency_audit_isolation.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_dead_public_wrapper_reconciler_py["audit/test_dead_public_wrapper_reconciler<br/>test_dead_public_wrapper_reconciler.py — 死公共<br/>wrapper 自动检测 reconciler ...<br/>文件: audit<br/>/test_dead_public_wrapper_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_delegation_auditor_py["audit/test_delegation_auditor<br/>审计包的test_delegation_auditor模块<br/>文件: audit/test_delegation_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_delegation_bridge_py["audit/test_delegation_bridge<br/>审计包的test_delegation_bridge模块<br/>文件: audit/test_delegation_bridge.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_depgraph_dirty_flag_py["audit/test_depgraph_dirty_flag<br/>test_depgraph_dirty_flag.py — DM-90974 Phase 2:<br/>depgraph dirty flag 单测<br/>文件: audit/test_depgraph_dirty_flag.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_dora_metrics_py["audit/test_dora_metrics<br/>审计包的test_dora_metrics模块<br/>文件: audit/test_dora_metrics.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py["audit/test_downgrade_auto_committed_on_flush_fai<br/>lure<br/>test_downgrade_auto_committed_on_flush_failure.p<br/>y — flush 失败降级单测。<br/>文件: audit<br/>/test_downgrade_auto_committed_on_flush_failure.<br/>py<br/>(生产态 / production)"]
+    tests_governance_audit_test_alerts_py["Test Alerts<br/>审计包的test_alerts模块<br/>文件: audit/test_alerts.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_anomaly_py["Test Anomaly<br/>审计包的test_anomaly模块<br/>文件: audit/test_anomaly.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_audit_schema_unit_py["test_audit_schema.py — AuditQuery 单元测试<br/>审计包的test_audit_schema_unit模块<br/>Test Audit Schema Unit<br/>文件: audit/test_audit_schema_unit.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_auditor_py["Test Auditor<br/>审计包的test_auditor模块<br/>文件: audit/test_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py["post-commit reconciler 单测<br/>test_blueprint_frontmatter_reconciler_post_commi<br/>t.py — post-commit reconcile...<br/>文件: audit<br/>/test_blueprint_frontmatter_reconciler_post_comm<br/>it.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_blueprint_id_legacy_reconciler_py["GATE-BLUEPRINT-ID-LEGACY reconciler 单测<br/>test_blueprint_id_legacy_reconciler.py —<br/>GATE-BLUEPRINT-ID-LEGACY reconciler...<br/>Test Blueprint Id Legacy Reconciler<br/>文件: audit<br/>/test_blueprint_id_legacy_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_bridge_py["Test Bridge<br/>审计包的test_bridge模块<br/>文件: audit/test_bridge.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_capability_lookup_health_reconciler_py["Phase 4 G6 监控 reconciler e2e smoke test<br/>test_capability_lookup_health_reconciler.py —<br/>Phase 4 G6 监控 reconciler e2e...<br/>Test Capability Lookup Health Reconciler<br/>文件: audit<br/>/test_capability_lookup_health_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_changelog_manager_py["Test Changelog Manager<br/>审计包的test_changelog_manager模块<br/>文件: audit/test_changelog_manager.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_code_archaeology_py["Test Code Archaeology<br/>审计包的test_code_archaeology模块<br/>文件: audit/test_code_archaeology.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py["reconciler 单测<br/>test_commit_gateway_abuse_monitor_reconciler.py<br/>— reconciler 单测<br/>文件: audit<br/>/test_commit_gateway_abuse_monitor_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_compliance_map_py["Test Compliance Map<br/>审计包的test_compliance_map模块<br/>文件: audit/test_compliance_map.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_corporate_actions_py["Test Corporate Actions<br/>审计包的test_corporate_actions模块<br/>文件: audit/test_corporate_actions.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_cycle_dependency_audit_isolation_py["Test Cycle Dependency Audit Isolation<br/>DOM-GOV-001 循环依赖测试 — Audit 独立运行验证 +<br/>无 RBAC import 扫描.<br/>文件: audit<br/>/test_cycle_dependency_audit_isolation.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_dead_public_wrapper_reconciler_py["死公共 wrapper 自动检测 reconciler 单测<br/>test_dead_public_wrapper_reconciler.py — 死公共<br/>wrapper 自动检测 reconciler ...<br/>Test Dead Public Wrapper Reconciler<br/>文件: audit<br/>/test_dead_public_wrapper_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_delegation_auditor_py["Test Delegation Auditor<br/>审计包的test_delegation_auditor模块<br/>文件: audit/test_delegation_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_delegation_bridge_py["Test Delegation Bridge<br/>审计包的test_delegation_bridge模块<br/>文件: audit/test_delegation_bridge.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_depgraph_dirty_flag_py["DM-90974 Phase 2: depgraph dirty flag 单测<br/>test_depgraph_dirty_flag.py — DM-90974 Phase 2:<br/>depgraph dirty flag 单测<br/>Test Depgraph Dirty Flag<br/>文件: audit/test_depgraph_dirty_flag.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_dora_metrics_py["Test Dora Metrics<br/>审计包的test_dora_metrics模块<br/>文件: audit/test_dora_metrics.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py["flush 失败降级单测<br/>test_downgrade_auto_committed_on_flush_failure.p<br/>y — flush 失败降级单测。<br/>文件: audit<br/>/test_downgrade_auto_committed_on_flush_failure.<br/>py<br/>(生产态 / production)"]
     tests_governance_audit_test_error_pattern_id_column_py["测试错误patternidcolumn<br/>error_pattern_id 列幂等迁移单测（P4-1a）<br/>test_error_pattern_id_column<br/>文件: audit/test_error_pattern_id_column.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_evidence_pack_py["audit/test_evidence_pack<br/>审计包的test_evidence_pack模块<br/>文件: audit/test_evidence_pack.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_false_negative_auditor_py["audit/test_false_negative_auditor<br/>审计包的test_false_negative_auditor模块<br/>文件: audit/test_false_negative_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_fifteen_dimension_auditor_py["audit/test_fifteen_dimension_auditor<br/>审计包的test_fifteen_dimension_auditor模块<br/>文件: audit/test_fifteen_dimension_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_forensic_py["audit/test_forensic<br/>审计包的test_forensic模块<br/>文件: audit/test_forensic.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_forensic_package_py["audit/test_forensic_package<br/>审计包的test_forensic_package模块<br/>文件: audit/test_forensic_package.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_gap_analyzer_py["audit/test_gap_analyzer<br/>审计包的test_gap_analyzer模块<br/>文件: audit/test_gap_analyzer.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_gct_006_budget_to_escalation_py["audit/test_gct_006_budget_to_escalation<br/>G-CT-006 — Budget → Escalation 集成测试.<br/>文件: audit/test_gct_006_budget_to_escalation.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_genesis_py["audit/test_genesis<br/>审计包的test_genesis模块<br/>文件: audit/test_genesis.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_git_guard_bypass_reconciler_py["audit/test_git_guard_bypass_reconciler<br/>test_git_guard_bypass_reconciler.py — git_guard<br/>alias 绕过检测 reconciler 单...<br/>文件: audit/test_git_guard_bypass_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_git_performance_monitor_reconciler_py["audit/test_git_performance_monitor_reconciler<br/>test_git_performance_monitor_reconciler.py —<br/>reconciler 单测<br/>文件: audit<br/>/test_git_performance_monitor_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_glossary_matrix_py["audit/test_glossary_matrix<br/>审计包的test_glossary_matrix模块<br/>文件: audit/test_glossary_matrix.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_governance_auditor_py["audit/test_governance_auditor<br/>审计包的test_governance_auditor模块<br/>文件: audit/test_governance_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_health_score_calculator_py["audit/test_health_score_calculator<br/>test_health_score_calculator.py — P3-2<br/>健康度评分计算器单测。<br/>文件: audit/test_health_score_calculator.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_incremental_review_py["audit/test_incremental_review<br/>审计包的test_incremental_review模块<br/>文件: audit/test_incremental_review.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_indexer_py["audit/test_indexer<br/>审计包的test_indexer模块<br/>文件: audit/test_indexer.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_integrity_audit_reconciler_py["audit/test_integrity_audit_reconciler<br/>test_integrity_audit_reconciler.py —<br/>GATE-INTEGRITY-AUDIT reconciler 单测<br/>文件: audit/test_integrity_audit_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_integrity_root_py["audit/test_integrity_root<br/>审计包的test_integrity_root模块<br/>文件: audit/test_integrity_root.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_integrity_verifier_py["audit/test_integrity_verifier<br/>审计包的test_integrity_verifier模块<br/>文件: audit/test_integrity_verifier.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_log_rotation_py["audit/test_log_rotation<br/>审计包的test_log_rotation模块<br/>文件: audit/test_log_rotation.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_merkle_audit_py["audit/test_merkle_audit<br/>审计包的test_merkle_audit模块<br/>文件: audit/test_merkle_audit.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_merkle_hourly_py["audit/test_merkle_hourly<br/>审计包的test_merkle_hourly模块<br/>文件: audit/test_merkle_hourly.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_orchestrator_py["audit/test_orchestrator<br/>审计包的test_orchestrator模块<br/>文件: audit/test_orchestrator.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_p0_i2_construction_order_py["audit/test_p0_i2_construction_order<br/>P0-I2 施工顺序验证 — DOM-GOV-001 §8.4.<br/>文件: audit/test_p0_i2_construction_order.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_evidence_pack_py["Test Evidence Pack<br/>审计包的test_evidence_pack模块<br/>文件: audit/test_evidence_pack.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_false_negative_auditor_py["Test False Negative Auditor<br/>审计包的test_false_negative_auditor模块<br/>文件: audit/test_false_negative_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_fifteen_dimension_auditor_py["Test Fifteen Dimension Auditor<br/>审计包的test_fifteen_dimension_auditor模块<br/>文件: audit/test_fifteen_dimension_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_forensic_py["Test Forensic<br/>审计包的test_forensic模块<br/>文件: audit/test_forensic.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_forensic_package_py["Test Forensic Package<br/>审计包的test_forensic_package模块<br/>文件: audit/test_forensic_package.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_gap_analyzer_py["Test Gap Analyzer<br/>审计包的test_gap_analyzer模块<br/>文件: audit/test_gap_analyzer.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_gct_006_budget_to_escalation_py["Budget → Escalation 集成测试.'''<br/>G-CT-006 — Budget → Escalation 集成测试.<br/>Test Gct 006 Budget To Escalation<br/>文件: audit/test_gct_006_budget_to_escalation.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_genesis_py["Test Genesis<br/>审计包的test_genesis模块<br/>文件: audit/test_genesis.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_git_guard_bypass_reconciler_py["git_guard alias 绕过检测 reconciler 单测<br/>test_git_guard_bypass_reconciler.py — git_guard<br/>alias 绕过检测 reconciler 单...<br/>Test Git Guard Bypass Reconciler<br/>文件: audit/test_git_guard_bypass_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_git_performance_monitor_reconciler_py["reconciler 单测<br/>test_git_performance_monitor_reconciler.py —<br/>reconciler 单测<br/>Test Git Performance Monitor Reconciler<br/>文件: audit<br/>/test_git_performance_monitor_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_glossary_matrix_py["Test Glossary Matrix<br/>审计包的test_glossary_matrix模块<br/>文件: audit/test_glossary_matrix.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_governance_auditor_py["Test Governance Auditor<br/>审计包的test_governance_auditor模块<br/>文件: audit/test_governance_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_health_score_calculator_py["P3-2 健康度评分计算器单测<br/>test_health_score_calculator.py — P3-2<br/>健康度评分计算器单测。<br/>Test Health Score Calculator<br/>文件: audit/test_health_score_calculator.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_incremental_review_py["Test Incremental Review<br/>审计包的test_incremental_review模块<br/>文件: audit/test_incremental_review.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_indexer_py["Test Indexer<br/>审计包的test_indexer模块<br/>文件: audit/test_indexer.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_integrity_audit_reconciler_py["GATE-INTEGRITY-AUDIT reconciler 单测<br/>test_integrity_audit_reconciler.py —<br/>GATE-INTEGRITY-AUDIT reconciler 单测<br/>Test Integrity Audit Reconciler<br/>文件: audit/test_integrity_audit_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_integrity_root_py["Test Integrity Root<br/>审计包的test_integrity_root模块<br/>文件: audit/test_integrity_root.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_integrity_verifier_py["Test Integrity Verifier<br/>审计包的test_integrity_verifier模块<br/>文件: audit/test_integrity_verifier.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_log_rotation_py["Test Log Rotation<br/>审计包的test_log_rotation模块<br/>文件: audit/test_log_rotation.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_merkle_audit_py["Test Merkle Audit<br/>审计包的test_merkle_audit模块<br/>文件: audit/test_merkle_audit.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_merkle_hourly_py["Test Merkle Hourly<br/>审计包的test_merkle_hourly模块<br/>文件: audit/test_merkle_hourly.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_orchestrator_py["Test Orchestrator<br/>审计包的test_orchestrator模块<br/>文件: audit/test_orchestrator.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_p0_i2_construction_order_py["DOM-GOV-001 §8.4.'''<br/>P0-I2 施工顺序验证 — DOM-GOV-001 §8.4.<br/>Test P0 I2 Construction Order<br/>文件: audit/test_p0_i2_construction_order.py<br/>(生产态 / production)"]
     tests_governance_audit_test_p3_integration_smoke_py["测试p3集成smoke<br/>验证 Phase 3 三个核心组件的端到端集成链路：<br/>test_p3_integration_smoke<br/>文件: audit/test_p3_integration_smoke.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_privacy_py["audit/test_privacy<br/>审计包的test_privacy模块<br/>文件: audit/test_privacy.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_provenance_tracker_py["audit/test_provenance_tracker<br/>审计包的test_provenance_tracker模块<br/>文件: audit/test_provenance_tracker.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_query_py["audit/test_query<br/>审计包的test_query模块<br/>文件: audit/test_query.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_privacy_py["Test Privacy<br/>审计包的test_privacy模块<br/>文件: audit/test_privacy.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_provenance_tracker_py["Test Provenance Tracker<br/>审计包的test_provenance_tracker模块<br/>文件: audit/test_provenance_tracker.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_query_py["Test Query<br/>审计包的test_query模块<br/>文件: audit/test_query.py<br/>(生产态 / production)"]
     tests_governance_audit_test_reconcile_async_py["测试对账异步<br/>1. reconcile_runner.write_status_file /<br/>read_status_file 原子读写 + 僵尸判定<br/>test_reconcile_async<br/>文件: audit/test_reconcile_async.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_reconcile_commit_message_audit_py["audit/test_reconcile_commit_message_audit<br/>test_reconcile_commit_message_audit.py — Phase<br/>3.4 commit_message 审计链 e2e...<br/>文件: audit<br/>/test_reconcile_commit_message_audit.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_reconcile_commit_message_audit_py["Phase 3.4 commit_message 审计链 e2e smoke test<br/>test_reconcile_commit_message_audit.py — Phase<br/>3.4 commit_message 审计链 e2e...<br/>Test Reconcile Commit Message Audit<br/>文件: audit<br/>/test_reconcile_commit_message_audit.py<br/>(生产态 / production)"]
     tests_governance_audit_test_reconcile_worker_selfheal_py["测试对账工作进程selfheal<br/>clean 记录消解之前的 critical_warn<br/>（活跃告警查询返回 0）<br/>test_reconcile_worker_selfheal<br/>文件: audit/test_reconcile_worker_selfheal.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_replay_engine_py["audit/test_replay_engine<br/>审计包的test_replay_engine模块<br/>文件: audit/test_replay_engine.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_retention_py["audit/test_retention<br/>审计包的test_retention模块<br/>文件: audit/test_retention.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_runtime_violation_snapshot_py["audit/test_runtime_violation_snapshot<br/>test_runtime_violation_snapshot.py —<br/>runtime_violation_snapshot 模块单测<br/>文件: audit/test_runtime_violation_snapshot.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py["audit/test_runtime_violation_snapshot_reconciler<br/>test_runtime_violation_snapshot_reconciler.py —<br/>reconciler 单测<br/>文件: audit<br/>/test_runtime_violation_snapshot_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_sbom_generator_py["audit/test_sbom_generator<br/>审计包的test_sbom_generator模块<br/>文件: audit/test_sbom_generator.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_spec_auditor_py["audit/test_spec_auditor<br/>审计包的test_spec_auditor模块<br/>文件: audit/test_spec_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_stash_lifecycle_py["audit/test_stash_lifecycle<br/>test_stash_lifecycle.py — stash<br/>生命周期治本单测（裁定...<br/>文件: audit/test_stash_lifecycle.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_supply_chain_py["audit/test_supply_chain<br/>审计包的test_supply_chain模块<br/>文件: audit/test_supply_chain.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_tamper_evident_log_py["audit/test_tamper_evident_log<br/>审计包的test_tamper_evident_log模块<br/>文件: audit/test_tamper_evident_log.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_tiered_storage_py["audit/test_tiered_storage<br/>审计包的test_tiered_storage模块<br/>文件: audit/test_tiered_storage.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_tiered_storage_bridge_py["audit/test_tiered_storage_bridge<br/>审计包的test_tiered_storage_bridge模块<br/>文件: audit/test_tiered_storage_bridge.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_replay_engine_py["Test Replay Engine<br/>审计包的test_replay_engine模块<br/>文件: audit/test_replay_engine.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_retention_py["Test Retention<br/>审计包的test_retention模块<br/>文件: audit/test_retention.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_runtime_violation_snapshot_py["runtime_violation_snapshot 模块单测<br/>test_runtime_violation_snapshot.py —<br/>runtime_violation_snapshot 模块单测<br/>Test Runtime Violation Snapshot<br/>文件: audit/test_runtime_violation_snapshot.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py["reconciler 单测<br/>test_runtime_violation_snapshot_reconciler.py —<br/>reconciler 单测<br/>文件: audit<br/>/test_runtime_violation_snapshot_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_sbom_generator_py["Test Sbom Generator<br/>审计包的test_sbom_generator模块<br/>文件: audit/test_sbom_generator.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_spec_auditor_py["Test Spec Auditor<br/>审计包的test_spec_auditor模块<br/>文件: audit/test_spec_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_stash_lifecycle_py["stash 生命周期治本单测<br/>test_stash_lifecycle.py — stash<br/>生命周期治本单测（裁定...<br/>Test Stash Lifecycle<br/>文件: audit/test_stash_lifecycle.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_supply_chain_py["Test Supply Chain<br/>审计包的test_supply_chain模块<br/>文件: audit/test_supply_chain.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_tamper_evident_log_py["Test Tamper Evident Log<br/>审计包的test_tamper_evident_log模块<br/>文件: audit/test_tamper_evident_log.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_tiered_storage_py["Test Tiered Storage<br/>审计包的test_tiered_storage模块<br/>文件: audit/test_tiered_storage.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_tiered_storage_bridge_py["Test Tiered Storage Bridge<br/>审计包的test_tiered_storage_bridge模块<br/>文件: audit/test_tiered_storage_bridge.py<br/>(生产态 / production)"]
     tests_governance_audit_test_trae_069_threshold_sync_smoke_py["测试trae069thresholdsyncsmoke<br/>trae_069 YAML 真源→代码常量同步 smoke test<br/>test_trae_069_threshold_sync_smoke<br/>文件: audit<br/>/test_trae_069_threshold_sync_smoke.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_translation_coverage_reconciler_py["audit/test_translation_coverage_reconciler<br/>test_translation_coverage_reconciler.py —<br/>翻译覆盖率存量对账 reconciler 单测<br/>文件: audit<br/>/test_translation_coverage_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_trust_bridge_py["audit/test_trust_bridge<br/>审计包的test_trust_bridge模块<br/>文件: audit/test_trust_bridge.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_trust_engine_py["audit/test_trust_engine<br/>审计包的test_trust_engine模块<br/>文件: audit/test_trust_engine.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_truth_source_validator_py["audit/test_truth_source_validator<br/>审计包的test_truth_source_validator模块<br/>文件: audit/test_truth_source_validator.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_undefined_name_baseline_reconciler_py["audit/test_undefined_name_baseline_reconciler<br/>test_undefined_name_baseline_reconciler.py —<br/>GATE-UNDEFINED-NAME-BASELINE re...<br/>文件: audit<br/>/test_undefined_name_baseline_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_verdict_engine_py["audit/test_verdict_engine<br/>审计包的test_verdict_engine模块<br/>文件: audit/test_verdict_engine.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_workspace_hygiene_reconciler_py["audit/test_workspace_hygiene_reconciler<br/>test_workspace_hygiene_reconciler.py —<br/>工作区卫生自动清理 reconciler 单测。<br/>文件: audit/test_workspace_hygiene_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_wqa_scorer_py["audit/test_wqa_scorer<br/>审计包的test_wqa_scorer模块<br/>文件: audit/test_wqa_scorer.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_writer_py["audit/test_writer<br/>审计包的test_writer模块<br/>文件: audit/test_writer.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_yaml_sync_reconciler_error_classification_py["audit/test_yaml_sync_reconciler_error_classifica<br/>tion<br/>test_yaml_sync_reconciler_error_classification.p<br/>y — reconciler 错误分类与重...<br/>文件: audit<br/>/test_yaml_sync_reconciler_error_classification.<br/>py<br/>(生产态 / production)"]
+    tests_governance_audit_test_translation_coverage_reconciler_py["翻译覆盖率存量对账 reconciler 单测<br/>test_translation_coverage_reconciler.py —<br/>翻译覆盖率存量对账 reconciler 单测<br/>Test Translation Coverage Reconciler<br/>文件: audit<br/>/test_translation_coverage_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_trust_bridge_py["Test Trust Bridge<br/>审计包的test_trust_bridge模块<br/>文件: audit/test_trust_bridge.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_trust_engine_py["Test Trust Engine<br/>审计包的test_trust_engine模块<br/>文件: audit/test_trust_engine.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_truth_source_validator_py["—真源优先级裁决器<br/>审计包的test_truth_source_validator模块<br/>Test Truth Source Validator<br/>文件: audit/test_truth_source_validator.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_undefined_name_baseline_reconciler_py["GATE-UNDEFINED-NAME-BASELINE reconciler 单测<br/>test_undefined_name_baseline_reconciler.py —<br/>GATE-UNDEFINED-NAME-BASELINE re...<br/>Test Undefined Name Baseline Reconciler<br/>文件: audit<br/>/test_undefined_name_baseline_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_verdict_engine_py["Test Verdict Engine<br/>审计包的test_verdict_engine模块<br/>文件: audit/test_verdict_engine.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_workspace_hygiene_reconciler_py["工作区卫生自动清理 reconciler 单测<br/>test_workspace_hygiene_reconciler.py —<br/>工作区卫生自动清理 reconciler 单测。<br/>Test Workspace Hygiene Reconciler<br/>文件: audit/test_workspace_hygiene_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_wqa_scorer_py["Test Wqa Scorer<br/>审计包的test_wqa_scorer模块<br/>文件: audit/test_wqa_scorer.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_writer_py["Test Writer<br/>审计包的test_writer模块<br/>文件: audit/test_writer.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_yaml_sync_reconciler_error_classification_py["reconciler 错误分类与重试策略测试<br/>test_yaml_sync_reconciler_error_classification.p<br/>y — reconciler 错误分类与重...<br/>文件: audit<br/>/test_yaml_sync_reconciler_error_classification.<br/>py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_session_worktree_async_reconcile_py["测试会话worktree异步对账<br/>卡 2-5min。治本改为异步<br/>launch_reconcile_async，merge 立即返回。<br/>test_session_worktree_async_reconcile<br/>文件: rule_bridge<br/>/test_session_worktree_async_reconcile.py<br/>(生产态 / production)"]
     tests_governance_test_workspace_telemetry_shared_py["测试工作区遥测共享<br/>治理管控（test workspace telemetry shared）<br/>test_workspace_telemetry_shared<br/>文件: governance<br/>/test_workspace_telemetry_shared.py<br/>(生产态 / production)"]
     docs_03_modules_cross_layer_audit_orchestrator_blueprint_md ~~~ docs_03_modules_domain_governance_audit_trail_blueprint_md
@@ -323,14 +323,14 @@ flowchart TD
     src_zephyr_gov_audit_wqa_scorer_py["wqa评分器<br/>主要提供composite、rating等功能<br/>wqa_scorer<br/>文件: gov_audit/wqa_scorer.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_git_helpers_py["Git辅助<br/>审计 reconciler 共享 git 工具模块<br/>_git_helpers<br/>文件: audit/_git_helpers.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py["commitgatewayabuse监控器对账器<br/>post-commit 事件触发，扫描 ``.runtime<br/>/reconcile_reports/`` 下<br/>``post_commit_guard_*``，治理管控<br/>commit_gateway_abuse_monitor_reconciler<br/>文件: audit<br/>/commit_gateway_abuse_monitor_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_governance_audit_dead_public_wrapper_reconciler_py["audit/dead_public_wrapper_reconciler<br/>dead_public_wrapper_reconciler.py — 死公共<br/>wrapper 自动检测 reconciler.<br/>文件: audit/dead_public_wrapper_reconciler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_audit_dead_public_wrapper_reconciler_py["死公共 wrapper 自动检测 reconciler.<br/>dead_public_wrapper_reconciler.py — 死公共<br/>wrapper 自动检测 reconciler.<br/>Dead Public Wrapper Reconciler<br/>文件: audit/dead_public_wrapper_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_error_pattern_consumer_reconciler_py["错误模式消费者协调器<br/>AI 行为遥测 JSONL 错误事件聚合 consumer。<br/>error_pattern_consumer_reconciler<br/>文件: audit/error_pattern_consumer_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_governance_audit_git_guard_bypass_reconciler_py["audit/git_guard_bypass_reconciler<br/>git_guard_bypass_reconciler.py — git_guard<br/>alias 绕过检测 post-commit reconc...<br/>文件: audit/git_guard_bypass_reconciler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_audit_git_guard_bypass_reconciler_py["git_guard alias 绕过检测 post-commit reconciler<br/>git_guard_bypass_reconciler.py — git_guard<br/>alias 绕过检测 post-commit reconc...<br/>Git Guard Bypass Reconciler<br/>文件: audit/git_guard_bypass_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_git_performance_monitor_reconciler_py["Git绩效监控协调器<br/>git 性能持续监控 + 早期预警<br/>（ARCH-GIT-CALL-BUDGET P3.5，2026-07-19）。<br/>git_performance_monitor_reconciler<br/>文件: audit<br/>/git_performance_monitor_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_reconcile_worker_py["对账工作器<br/>独立执行 post-commit reconciler 链路，结果写回<br/>status file + reconcile_execution_log 表。<br/>reconcile_worker<br/>文件: audit/reconcile_worker.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_remediation_progress_reconciler_py["修复进度对账器<br/>治本进度持久化 + 新鲜度对账<br/>（#ARCH-GOV-CONVERGENCE-META Phase 3.1）。<br/>remediation_progress_reconciler<br/>文件: audit/remediation_progress_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py["运行时违规快照协调器<br/>trae_060 §5 的'违规清单'是 2026-06-26<br/>的静态快照，写入 frozen YAML 后持续脱节<br/>runtime_violation_snapshot_reconciler<br/>文件: audit<br/>/runtime_violation_snapshot_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_governance_audit_translation_coverage_reconciler_py["audit/translation_coverage_reconciler<br/>translation_coverage_reconciler.py —<br/>翻译覆盖率存量对账 reconciler.<br/>文件: audit/translation_coverage_reconciler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_audit_translation_coverage_reconciler_py["翻译覆盖率存量对账 reconciler.<br/>translation_coverage_reconciler.py —<br/>翻译覆盖率存量对账 reconciler.<br/>Translation Coverage Reconciler<br/>文件: audit/translation_coverage_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_workspace_hygiene_reconciler_py["工作区hygiene对账器<br/>工作区卫生自动清理 reconciler<br/>（DEBT-WORKSPACE-001/002 消除，2026-07-20）。<br/>workspace_hygiene_reconciler<br/>文件: audit/workspace_hygiene_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_semantic_audit_alignment_engine_py["对齐引擎<br/>三元对齐检测：蓝图声明清单 vs 磁盘实际文件 vs<br/>import 引用链。<br/>alignment_engine<br/>文件: semantic_audit/alignment_engine.py<br/>(生产态 / production)"]
     src_zephyr_governance_semantic_audit_fix_prioritizer_py["修复prioritizer<br/>按 severity -> certainty -> blast_radius<br/>三级排序,分组输出批次。<br/>fix_prioritizer<br/>文件: semantic_audit/fix_prioritizer.py<br/>(生产态 / production)"]
@@ -435,188 +435,188 @@ flowchart TD
     src_zephyr_gov_audit_tiered_storage_py ~~~ src_zephyr_gov_audit_trust_engine_py
     src_zephyr_gov_audit_trust_engine_py ~~~ src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_agent_signer_py["代理signer<br/>蓝图 §7 · 每条审计记录的不可否认性约束<br/>agent_signer<br/>文件: gov_audit/agent_signer.py<br/>(生产态 / production)"]
-    src_zephyr_governance_audit_blueprint_status_transition_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_blueprint_status_transition_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_git_helpers_py
     src_zephyr_governance_audit_ai_error_pattern_library_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_error_pattern_consumer_reconciler_py
     src_zephyr_governance_audit_cross_layer_contract_signature_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_cross_layer_contract_signature_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_git_helpers_py
-    src_zephyr_governance_audit_dead_public_wrapper_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_error_pattern_consumer_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_git_performance_monitor_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_health_score_calculator_py
     src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_dead_public_wrapper_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_blueprint_status_transition_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_blueprint_status_transition_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_git_helpers_py
+    src_zephyr_governance_audit_error_pattern_consumer_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_git_guard_bypass_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_reconcile_worker_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconcile_runner_py
-    src_zephyr_governance_audit_reconcile_worker_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_reconcile_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_remediation_progress_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_snapshot_manager_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_event_store_py
-    src_zephyr_governance_audit_translation_coverage_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_runtime_violation_snapshot_py
     src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_reconcile_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_git_performance_monitor_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_snapshot_manager_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_event_store_py
+    src_zephyr_governance_audit_reconcile_worker_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconcile_runner_py
+    src_zephyr_governance_audit_reconcile_worker_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_workspace_hygiene_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_remediation_progress_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_translation_coverage_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_trail_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
-    src_zephyr_governance_semantic_audit_alignment_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_alignment_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_alignment_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_compliance_map_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_governance_semantic_audit_fix_prioritizer_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_issue_aggregator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_llm_bridge_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_fix_result_prioritizer_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_reference_extractor_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_issue_aggregator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_alignment_engine_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_fix_prioritizer_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_issue_aggregator_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_llm_bridge_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_issue_aggregator_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_health_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_healer_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_safety_boundary_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_trigger_engine_py
+    src_zephyr_governance_semantic_audit_reference_extractor_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_safety_boundary_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_trigger_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_trigger_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_trigger_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_gov_audit_audit_admission_controller_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_ingest_py
     src_zephyr_gov_audit_audit_admission_controller_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_delegation_bridge_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_feedback_bridge_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_merkle_hourly_py
-    src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_bridge_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_trust_bridge_py
+    src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_bridge_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_audit_write_failure_protector_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_kb_gate_py
     src_zephyr_gov_audit_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_audit_admission_controller_py
     src_zephyr_gov_audit_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_resource_aware_pool_py
-    src_zephyr_gov_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    src_zephyr_gov_audit_compliance_map_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_gov_audit_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_gov_audit_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
+    src_zephyr_gov_audit_compliance_map_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
+    src_zephyr_gov_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_delegation_auditor_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_delegation_bridge_py
     src_zephyr_gov_audit_feedback_policy_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_feedback_bridge_py
     src_zephyr_gov_audit_finding_ingest_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_finding_ingest_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_integrity_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_agent_signer_py
     src_zephyr_gov_audit_integrity_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    src_zephyr_gov_audit_merkle_audit_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
+    src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_merkle_hourly_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
-    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
-    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
-    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
-    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
+    src_zephyr_gov_audit_merkle_audit_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
     src_zephyr_gov_audit_pipeline_runner_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_pipeline_runner_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_text_to_finding_adapter_py
+    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
+    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
+    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
+    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_gov_audit_text_to_finding_adapter_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
-    src_zephyr_gov_audit_tiered_storage_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_py
     src_zephyr_gov_audit_trust_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_trust_engine_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_query_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
+    src_zephyr_gov_audit_tiered_storage_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_py
     src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
     src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
-    src_zephyr_gov_audit_bridges_audit_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_query_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_bridges_audit_feedback_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
     src_zephyr_gov_audit_bridges_audit_feedback_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_query_py
-    src_zephyr_gov_audit_bridges_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_delegation_bridge_py
+    src_zephyr_gov_audit_bridges_audit_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_bridges_audit_drift_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
+    src_zephyr_gov_audit_bridges_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_delegation_bridge_py
     src_zephyr_gov_enforcement_rule_enforcement_audit_chain_verifier_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    scripts_governance_test_remediation_progress_smoke_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_remediation_progress_reconciler_py
     scripts_governance_test_remediation_progress_smoke_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    scripts_governance_test_remediation_progress_smoke_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_remediation_progress_reconciler_py
     tests_governance_audit_test_anomaly_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_anomaly_py
     tests_governance_audit_test_anomaly_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
-    tests_governance_audit_test_audit_schema_unit_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_audit_schema_py
     tests_governance_audit_test_blueprint_id_legacy_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_changelog_manager_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_changelog_manager_py
-    tests_governance_audit_test_code_archaeology_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_code_archaeology_py
-    tests_governance_audit_test_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridge_py
-    tests_governance_audit_test_compliance_map_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_compliance_map_py
-    tests_governance_audit_test_compliance_map_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
-    tests_governance_audit_test_capability_lookup_health_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_cycle_dependency_audit_isolation_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_contracts_py
+    tests_governance_audit_test_audit_schema_unit_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_audit_schema_py
     tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py
     tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_corporate_actions_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_corporate_actions_py
+    tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridge_py
+    tests_governance_audit_test_capability_lookup_health_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_code_archaeology_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_code_archaeology_py
+    tests_governance_audit_test_compliance_map_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_compliance_map_py
+    tests_governance_audit_test_compliance_map_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
+    tests_governance_audit_test_changelog_manager_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_changelog_manager_py
+    tests_governance_audit_test_delegation_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_delegation_bridge_py
     tests_governance_audit_test_delegation_auditor_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_delegation_auditor_py
+    tests_governance_audit_test_corporate_actions_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_corporate_actions_py
+    tests_governance_audit_test_cycle_dependency_audit_isolation_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_contracts_py
+    tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_dora_metrics_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_dora_metrics_py
+    tests_governance_audit_test_evidence_pack_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_evidence_pack_py
+    tests_governance_audit_test_depgraph_dirty_flag_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_dead_public_wrapper_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_dead_public_wrapper_reconciler_py
     tests_governance_audit_test_dead_public_wrapper_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_depgraph_dirty_flag_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_delegation_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_delegation_bridge_py
-    tests_governance_audit_test_evidence_pack_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_evidence_pack_py
-    tests_governance_audit_test_dora_metrics_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_dora_metrics_py
     tests_governance_audit_test_error_pattern_id_column_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_forensic_package_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_forensic_package_py
     tests_governance_audit_test_genesis_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_genesis_py
-    tests_governance_audit_test_git_guard_bypass_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_git_guard_bypass_reconciler_py
+    tests_governance_audit_test_glossary_matrix_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_glossary_matrix_py
     tests_governance_audit_test_incremental_review_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_incremental_review_py
-    tests_governance_audit_test_health_score_calculator_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_health_score_calculator_py
     tests_governance_audit_test_git_performance_monitor_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_git_performance_monitor_reconciler_py
     tests_governance_audit_test_git_performance_monitor_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_health_score_calculator_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_health_score_calculator_py
     tests_governance_audit_test_indexer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_indexer_py
+    tests_governance_audit_test_git_guard_bypass_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_git_guard_bypass_reconciler_py
     tests_governance_audit_test_integrity_root_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_integrity_py
-    tests_governance_audit_test_glossary_matrix_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_glossary_matrix_py
     tests_governance_audit_test_merkle_hourly_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_merkle_hourly_py
-    tests_governance_audit_test_merkle_audit_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_merkle_audit_py
     tests_governance_audit_test_log_rotation_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_log_rotation_py
     tests_governance_audit_test_integrity_audit_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_integrity_verifier_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_integrity_verifier_py
     tests_governance_audit_test_orchestrator_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_orchestrator_compat_py
+    tests_governance_audit_test_p0_i2_construction_order_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_contracts_py
     tests_governance_audit_test_p3_integration_smoke_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py
     tests_governance_audit_test_p3_integration_smoke_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_health_score_calculator_py
-    tests_governance_audit_test_p0_i2_construction_order_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_contracts_py
-    tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_indexer_py
+    tests_governance_audit_test_merkle_audit_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_merkle_audit_py
+    tests_governance_audit_test_provenance_tracker_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_provenance_tracker_py
+    tests_governance_audit_test_privacy_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_privacy_py
+    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_runner_py
+    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_worker_py
+    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_integrity_py
+    tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_indexer_py
     tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
     tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_query_py
-    tests_governance_audit_test_provenance_tracker_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_provenance_tracker_py
-    tests_governance_audit_test_reconcile_commit_message_audit_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_privacy_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_privacy_py
-    tests_governance_audit_test_runtime_violation_snapshot_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_runtime_violation_snapshot_py
-    tests_governance_audit_test_retention_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_retention_py
-    tests_governance_audit_test_reconcile_worker_selfheal_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_worker_py
     tests_governance_audit_test_reconcile_worker_selfheal_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_runner_py
+    tests_governance_audit_test_reconcile_worker_selfheal_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_worker_py
     tests_governance_audit_test_reconcile_worker_selfheal_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_retention_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_retention_py
+    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py
+    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_replay_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_replay_engine_py
-    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_worker_py
-    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_runner_py
-    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_reconcile_commit_message_audit_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_runtime_violation_snapshot_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_runtime_violation_snapshot_py
     tests_governance_audit_test_spec_auditor_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_spec_auditor_py
     tests_governance_audit_test_sbom_generator_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_sbom_generator_py
+    tests_governance_audit_test_stash_lifecycle_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_tiered_storage_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_tiered_storage_py
     tests_governance_audit_test_supply_chain_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_supply_chain_py
-    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py
-    tests_governance_audit_test_stash_lifecycle_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_tiered_storage_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_tiered_storage_bridge_py
-    tests_governance_audit_test_trust_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_trust_engine_py
     tests_governance_audit_test_trae_069_threshold_sync_smoke_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py
     tests_governance_audit_test_trae_069_threshold_sync_smoke_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_health_score_calculator_py
-    tests_governance_audit_test_undefined_name_baseline_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_trust_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_trust_bridge_py
     tests_governance_audit_test_translation_coverage_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_translation_coverage_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_translation_coverage_reconciler_py
-    tests_governance_audit_test_verdict_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
-    tests_governance_audit_test_wqa_scorer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_wqa_scorer_py
     tests_governance_audit_test_workspace_hygiene_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_workspace_hygiene_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_workspace_hygiene_reconciler_py
-    tests_governance_audit_test_trust_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_trust_bridge_py
-    tests_governance_audit_test_writer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_writer_py
+    tests_governance_audit_test_undefined_name_baseline_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_verdict_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
     tests_governance_audit_test_yaml_sync_reconciler_error_classification_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| D_SHARED
+    tests_governance_audit_test_trust_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_trust_engine_py
+    tests_governance_audit_test_writer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_writer_py
+    tests_governance_audit_test_wqa_scorer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_wqa_scorer_py
     D_SECURITY["对抗验证<br/>对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验<br/>证<br/>Adversarial Validation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     tests_governance_audit_test_p0_i2_construction_order_py -->|测试依赖 / test_depends| D_SECURITY
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_gov_audit_bridges_audit_trust_bridge_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_semantic_audit_kb_gate_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_audit_translation_coverage_reconciler_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_repair_red_blue_test_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -643,20 +643,21 @@ flowchart TD
     D_AUTONOMY_CORE["自治核心<br/>自治核心，负责 AI 自治决策、目标分解和执行编排<br/>Autonomy Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconcile_runner_py
+    D_FBL_VERIFICATION["反馈验证<br/>反馈验证，负责反馈循环门禁拦截、结果验证器执行和<br/>反馈质量检查<br/>Feedback Verification<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_FBL_VERIFICATION -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
     D_GOV_SCRIPTS["脚本治理<br/>脚本治理，负责脚本生命周期管理和脚本质量门禁<br/>Script Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_governance_audit_default_tca_engine_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_governance_audit_runtime_violation_snapshot_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_gov_audit_audit_schema_py
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconcile_runner_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_repair_audit_design_completeness_py,scripts_governance_repair_red_blue_test_py,scripts_governance_repair_rollback_depgraph_py,scripts_governance_test_remediation_progress_smoke_py,src_zephyr_gov_audit_orchestrator_compat_py,src_zephyr_gov_audit_action_history_py,src_zephyr_gov_audit_agent_signer_py,src_zephyr_gov_audit_anomaly_py,src_zephyr_gov_audit_api_lifecycle_py,src_zephyr_gov_audit_audit_admission_controller_py,src_zephyr_gov_audit_audit_schema_py,src_zephyr_gov_audit_audit_write_failure_protector_py,src_zephyr_gov_audit_bridge_py,src_zephyr_gov_audit_bridges_audit_anomaly_py,src_zephyr_gov_audit_bridges_audit_contracts_py,src_zephyr_gov_audit_bridges_audit_delegation_bridge_py,src_zephyr_gov_audit_bridges_audit_drift_bridge_py,src_zephyr_gov_audit_bridges_audit_feedback_bridge_py,src_zephyr_gov_audit_bridges_audit_tiered_storage_bridge_py,src_zephyr_gov_audit_bridges_audit_trust_bridge_py,src_zephyr_gov_audit_changelog_manager_py,src_zephyr_gov_audit_cli_py,src_zephyr_gov_audit_code_archaeology_py,src_zephyr_gov_audit_cold_start_py,src_zephyr_gov_audit_compliance_map_py,src_zephyr_gov_audit_contracts_py,src_zephyr_gov_audit_corporate_actions_py,src_zephyr_gov_audit_delegation_auditor_py,src_zephyr_gov_audit_delegation_bridge_py,src_zephyr_gov_audit_dora_metrics_py,src_zephyr_gov_audit_event_store_py,src_zephyr_gov_audit_evidence_pack_py,src_zephyr_gov_audit_external_tool_audit_py,src_zephyr_gov_audit_feedback_bridge_py,src_zephyr_gov_audit_feedback_policy_py,src_zephyr_gov_audit_feedback_self_audit_py,src_zephyr_gov_audit_finding_ingest_py,src_zephyr_gov_audit_finding_model_py,src_zephyr_gov_audit_forensic_package_py,src_zephyr_gov_audit_genesis_py,src_zephyr_gov_audit_glossary_matrix_py,src_zephyr_gov_audit_incremental_review_py,src_zephyr_gov_audit_indexer_py,src_zephyr_gov_audit_integrity_py,src_zephyr_gov_audit_integrity_verifier_py,src_zephyr_gov_audit_kb_gate_py,src_zephyr_gov_audit_log_rotation_py,src_zephyr_gov_audit_merkle_audit_py,src_zephyr_gov_audit_merkle_hourly_py,src_zephyr_gov_audit_models_py,src_zephyr_gov_audit_observability_dashboard_py,src_zephyr_gov_audit_pipeline_runner_py,src_zephyr_gov_audit_privacy_py,src_zephyr_gov_audit_provenance_tracker_py,src_zephyr_gov_audit_query_py,src_zephyr_gov_audit_replay_engine_py,src_zephyr_gov_audit_resource_aware_pool_py,src_zephyr_gov_audit_retention_py,src_zephyr_gov_audit_sbom_generator_py,src_zephyr_gov_audit_spec_auditor_py,src_zephyr_gov_audit_supply_chain_py,src_zephyr_gov_audit_supply_chain_security_py,src_zephyr_gov_audit_text_to_finding_adapter_py,src_zephyr_gov_audit_tiered_storage_py,src_zephyr_gov_audit_tiered_storage_bridge_py,src_zephyr_gov_audit_trust_bridge_py,src_zephyr_gov_audit_trust_engine_py,src_zephyr_gov_audit_trust_ring_manager_py,src_zephyr_gov_audit_wqa_scorer_py,src_zephyr_gov_audit_writer_py,src_zephyr_gov_enforcement_behavioral_admission_ai_code_standards_py,src_zephyr_gov_enforcement_behavioral_admission_mcp_result_push_py,src_zephyr_gov_enforcement_behavioral_admission_post_process_py,src_zephyr_gov_enforcement_behavioral_admission_vibe_coding_enforcer_py,src_zephyr_gov_enforcement_rule_enforcement_audit_chain_verifier_py,src_zephyr_gov_enforcement_rule_enforcement_sys_master_compliance_py,src_zephyr_governance_audit_trail_contracts_py,src_zephyr_governance_audit_git_helpers_py,src_zephyr_governance_audit_ai_error_pattern_library_py,src_zephyr_governance_audit_blueprint_status_transition_reconciler_py,src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py,src_zephyr_governance_audit_cross_layer_contract_signature_reconciler_py,src_zephyr_governance_audit_dead_public_wrapper_reconciler_py,src_zephyr_governance_audit_default_attribution_engine_py,src_zephyr_governance_audit_default_tca_engine_py,src_zephyr_governance_audit_error_pattern_consumer_reconciler_py,src_zephyr_governance_audit_git_guard_bypass_reconciler_py,src_zephyr_governance_audit_git_performance_monitor_reconciler_py,src_zephyr_governance_audit_health_score_calculator_py,src_zephyr_governance_audit_reconcile_runner_py,src_zephyr_governance_audit_reconcile_worker_py,src_zephyr_governance_audit_reconciliation_registry_py,src_zephyr_governance_audit_remediation_progress_reconciler_py,src_zephyr_governance_audit_runtime_violation_snapshot_py,src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py,src_zephyr_governance_audit_snapshot_manager_py,src_zephyr_governance_audit_translation_coverage_reconciler_py,src_zephyr_governance_audit_workspace_hygiene_reconciler_py,src_zephyr_governance_financial_governance_financial_compliance_py,src_zephyr_governance_semantic_audit_alignment_engine_py,src_zephyr_governance_semantic_audit_compliance_map_py,src_zephyr_governance_semantic_audit_feedback_self_audit_py,src_zephyr_governance_semantic_audit_fix_prioritizer_py,src_zephyr_governance_semantic_audit_fix_result_prioritizer_py,src_zephyr_governance_semantic_audit_issue_aggregator_py,src_zephyr_governance_semantic_audit_kb_gate_py,src_zephyr_governance_semantic_audit_llm_bridge_py,src_zephyr_governance_semantic_audit_models_py,src_zephyr_governance_semantic_audit_orchestrator_py,src_zephyr_governance_semantic_audit_privacy_py,src_zephyr_governance_semantic_audit_reference_extractor_py,src_zephyr_governance_semantic_audit_safety_boundary_py,src_zephyr_governance_semantic_audit_self_healer_py,src_zephyr_governance_semantic_audit_self_health_py,src_zephyr_governance_semantic_audit_semantic_cache_py,src_zephyr_governance_semantic_audit_spec_auditor_py,src_zephyr_governance_semantic_audit_trigger_engine_py,tests_governance_audit_test_alerts_py,tests_governance_audit_test_anomaly_py,tests_governance_audit_test_audit_schema_unit_py,tests_governance_audit_test_auditor_py,tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py,tests_governance_audit_test_blueprint_id_legacy_reconciler_py,tests_governance_audit_test_bridge_py,tests_governance_audit_test_capability_lookup_health_reconciler_py,tests_governance_audit_test_changelog_manager_py,tests_governance_audit_test_code_archaeology_py,tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py,tests_governance_audit_test_compliance_map_py,tests_governance_audit_test_corporate_actions_py,tests_governance_audit_test_cycle_dependency_audit_isolation_py,tests_governance_audit_test_dead_public_wrapper_reconciler_py,tests_governance_audit_test_delegation_auditor_py,tests_governance_audit_test_delegation_bridge_py,tests_governance_audit_test_depgraph_dirty_flag_py,tests_governance_audit_test_dora_metrics_py,tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py,tests_governance_audit_test_error_pattern_id_column_py,tests_governance_audit_test_evidence_pack_py,tests_governance_audit_test_false_negative_auditor_py,tests_governance_audit_test_fifteen_dimension_auditor_py,tests_governance_audit_test_forensic_py,tests_governance_audit_test_forensic_package_py,tests_governance_audit_test_gap_analyzer_py,tests_governance_audit_test_gct_006_budget_to_escalation_py,tests_governance_audit_test_genesis_py,tests_governance_audit_test_git_guard_bypass_reconciler_py,tests_governance_audit_test_git_performance_monitor_reconciler_py,tests_governance_audit_test_glossary_matrix_py,tests_governance_audit_test_governance_auditor_py,tests_governance_audit_test_health_score_calculator_py,tests_governance_audit_test_incremental_review_py,tests_governance_audit_test_indexer_py,tests_governance_audit_test_integrity_audit_reconciler_py,tests_governance_audit_test_integrity_root_py,tests_governance_audit_test_integrity_verifier_py,tests_governance_audit_test_log_rotation_py,tests_governance_audit_test_merkle_audit_py,tests_governance_audit_test_merkle_hourly_py,tests_governance_audit_test_orchestrator_py,tests_governance_audit_test_p0_i2_construction_order_py,tests_governance_audit_test_p3_integration_smoke_py,tests_governance_audit_test_privacy_py,tests_governance_audit_test_provenance_tracker_py,tests_governance_audit_test_query_py,tests_governance_audit_test_reconcile_async_py,tests_governance_audit_test_reconcile_commit_message_audit_py,tests_governance_audit_test_reconcile_worker_selfheal_py,tests_governance_audit_test_replay_engine_py,tests_governance_audit_test_retention_py,tests_governance_audit_test_runtime_violation_snapshot_py,tests_governance_audit_test_runtime_violation_snapshot_reconciler_py,tests_governance_audit_test_sbom_generator_py,tests_governance_audit_test_spec_auditor_py,tests_governance_audit_test_stash_lifecycle_py,tests_governance_audit_test_supply_chain_py,tests_governance_audit_test_tamper_evident_log_py,tests_governance_audit_test_tiered_storage_py,tests_governance_audit_test_tiered_storage_bridge_py,tests_governance_audit_test_trae_069_threshold_sync_smoke_py,tests_governance_audit_test_translation_coverage_reconciler_py,tests_governance_audit_test_trust_bridge_py,tests_governance_audit_test_trust_engine_py,tests_governance_audit_test_truth_source_validator_py,tests_governance_audit_test_undefined_name_baseline_reconciler_py,tests_governance_audit_test_verdict_engine_py,tests_governance_audit_test_workspace_hygiene_reconciler_py,tests_governance_audit_test_wqa_scorer_py,tests_governance_audit_test_writer_py,tests_governance_audit_test_yaml_sync_reconciler_error_classification_py,tests_governance_rule_bridge_test_session_worktree_async_reconcile_py,tests_governance_test_workspace_telemetry_shared_py production
     class docs_03_modules_cross_layer_audit_orchestrator_blueprint_md,docs_03_modules_domain_governance_audit_trail_blueprint_md design
-    class D_SHARED,D_SECURITY,D_GOVERNANCE,D_GOV_ENFORCEMENT,D_GOV_CODE_QUALITY,D_GOV_RULE,D_INFRA_OPS,D_INFRA_RECOVERY,D_AUTONOMY_CORE,D_GOV_SCRIPTS external_prod
+    class D_SECURITY,D_GOVERNANCE,D_SHARED,D_GOV_ENFORCEMENT,D_GOV_CODE_QUALITY,D_GOV_RULE,D_INFRA_OPS,D_INFRA_RECOVERY,D_AUTONOMY_CORE,D_FBL_VERIFICATION,D_GOV_SCRIPTS external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -708,79 +709,79 @@ flowchart TD
     src_zephyr_governance_semantic_audit_privacy_py["审计轨迹·隐私模块<br/>semantic audit相关功能（privacy）<br/>文件: semantic_audit/privacy.py<br/>(生产态 / production)"]
     src_zephyr_governance_semantic_audit_semantic_cache_py["semantic缓存<br/>审计的缓存，暂存常用数据加速访问<br/>semantic_cache<br/>文件: semantic_audit/semantic_cache.py<br/>(生产态 / production)"]
     src_zephyr_governance_semantic_audit_spec_auditor_py["spec审计器<br/>蓝图 文件清单与代码双向对齐<br/>spec_auditor<br/>文件: semantic_audit/spec_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_alerts_py["audit/test_alerts<br/>审计包的test_alerts模块<br/>文件: audit/test_alerts.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_anomaly_py["audit/test_anomaly<br/>审计包的test_anomaly模块<br/>文件: audit/test_anomaly.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_audit_schema_unit_py["audit/test_audit_schema_unit<br/>审计包的test_audit_schema_unit模块<br/>文件: audit/test_audit_schema_unit.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_auditor_py["audit/test_auditor<br/>审计包的test_auditor模块<br/>文件: audit/test_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py["audit/test_blueprint_frontmatter_reconciler_post<br/>_commit<br/>test_blueprint_frontmatter_reconciler_post_commi<br/>t.py — post-commit reconcile...<br/>文件: audit<br/>/test_blueprint_frontmatter_reconciler_post_comm<br/>it.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_blueprint_id_legacy_reconciler_py["audit/test_blueprint_id_legacy_reconciler<br/>test_blueprint_id_legacy_reconciler.py —<br/>GATE-BLUEPRINT-ID-LEGACY reconciler...<br/>文件: audit<br/>/test_blueprint_id_legacy_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_bridge_py["audit/test_bridge<br/>审计包的test_bridge模块<br/>文件: audit/test_bridge.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_capability_lookup_health_reconciler_py["audit/test_capability_lookup_health_reconciler<br/>test_capability_lookup_health_reconciler.py —<br/>Phase 4 G6 监控 reconciler e2e...<br/>文件: audit<br/>/test_capability_lookup_health_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_changelog_manager_py["audit/test_changelog_manager<br/>审计包的test_changelog_manager模块<br/>文件: audit/test_changelog_manager.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_code_archaeology_py["audit/test_code_archaeology<br/>审计包的test_code_archaeology模块<br/>文件: audit/test_code_archaeology.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py["audit/test_commit_gateway_abuse_monitor_reconcil<br/>er<br/>test_commit_gateway_abuse_monitor_reconciler.py<br/>— reconciler 单测<br/>文件: audit<br/>/test_commit_gateway_abuse_monitor_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_compliance_map_py["audit/test_compliance_map<br/>审计包的test_compliance_map模块<br/>文件: audit/test_compliance_map.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_corporate_actions_py["audit/test_corporate_actions<br/>审计包的test_corporate_actions模块<br/>文件: audit/test_corporate_actions.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_cycle_dependency_audit_isolation_py["audit/test_cycle_dependency_audit_isolation<br/>DOM-GOV-001 循环依赖测试 — Audit 独立运行验证 +<br/>无 RBAC import 扫描.<br/>文件: audit<br/>/test_cycle_dependency_audit_isolation.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_dead_public_wrapper_reconciler_py["audit/test_dead_public_wrapper_reconciler<br/>test_dead_public_wrapper_reconciler.py — 死公共<br/>wrapper 自动检测 reconciler ...<br/>文件: audit<br/>/test_dead_public_wrapper_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_delegation_auditor_py["audit/test_delegation_auditor<br/>审计包的test_delegation_auditor模块<br/>文件: audit/test_delegation_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_delegation_bridge_py["audit/test_delegation_bridge<br/>审计包的test_delegation_bridge模块<br/>文件: audit/test_delegation_bridge.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_depgraph_dirty_flag_py["audit/test_depgraph_dirty_flag<br/>test_depgraph_dirty_flag.py — DM-90974 Phase 2:<br/>depgraph dirty flag 单测<br/>文件: audit/test_depgraph_dirty_flag.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_dora_metrics_py["audit/test_dora_metrics<br/>审计包的test_dora_metrics模块<br/>文件: audit/test_dora_metrics.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py["audit/test_downgrade_auto_committed_on_flush_fai<br/>lure<br/>test_downgrade_auto_committed_on_flush_failure.p<br/>y — flush 失败降级单测。<br/>文件: audit<br/>/test_downgrade_auto_committed_on_flush_failure.<br/>py<br/>(生产态 / production)"]
+    tests_governance_audit_test_alerts_py["Test Alerts<br/>审计包的test_alerts模块<br/>文件: audit/test_alerts.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_anomaly_py["Test Anomaly<br/>审计包的test_anomaly模块<br/>文件: audit/test_anomaly.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_audit_schema_unit_py["test_audit_schema.py — AuditQuery 单元测试<br/>审计包的test_audit_schema_unit模块<br/>Test Audit Schema Unit<br/>文件: audit/test_audit_schema_unit.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_auditor_py["Test Auditor<br/>审计包的test_auditor模块<br/>文件: audit/test_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py["post-commit reconciler 单测<br/>test_blueprint_frontmatter_reconciler_post_commi<br/>t.py — post-commit reconcile...<br/>文件: audit<br/>/test_blueprint_frontmatter_reconciler_post_comm<br/>it.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_blueprint_id_legacy_reconciler_py["GATE-BLUEPRINT-ID-LEGACY reconciler 单测<br/>test_blueprint_id_legacy_reconciler.py —<br/>GATE-BLUEPRINT-ID-LEGACY reconciler...<br/>Test Blueprint Id Legacy Reconciler<br/>文件: audit<br/>/test_blueprint_id_legacy_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_bridge_py["Test Bridge<br/>审计包的test_bridge模块<br/>文件: audit/test_bridge.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_capability_lookup_health_reconciler_py["Phase 4 G6 监控 reconciler e2e smoke test<br/>test_capability_lookup_health_reconciler.py —<br/>Phase 4 G6 监控 reconciler e2e...<br/>Test Capability Lookup Health Reconciler<br/>文件: audit<br/>/test_capability_lookup_health_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_changelog_manager_py["Test Changelog Manager<br/>审计包的test_changelog_manager模块<br/>文件: audit/test_changelog_manager.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_code_archaeology_py["Test Code Archaeology<br/>审计包的test_code_archaeology模块<br/>文件: audit/test_code_archaeology.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py["reconciler 单测<br/>test_commit_gateway_abuse_monitor_reconciler.py<br/>— reconciler 单测<br/>文件: audit<br/>/test_commit_gateway_abuse_monitor_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_compliance_map_py["Test Compliance Map<br/>审计包的test_compliance_map模块<br/>文件: audit/test_compliance_map.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_corporate_actions_py["Test Corporate Actions<br/>审计包的test_corporate_actions模块<br/>文件: audit/test_corporate_actions.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_cycle_dependency_audit_isolation_py["Test Cycle Dependency Audit Isolation<br/>DOM-GOV-001 循环依赖测试 — Audit 独立运行验证 +<br/>无 RBAC import 扫描.<br/>文件: audit<br/>/test_cycle_dependency_audit_isolation.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_dead_public_wrapper_reconciler_py["死公共 wrapper 自动检测 reconciler 单测<br/>test_dead_public_wrapper_reconciler.py — 死公共<br/>wrapper 自动检测 reconciler ...<br/>Test Dead Public Wrapper Reconciler<br/>文件: audit<br/>/test_dead_public_wrapper_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_delegation_auditor_py["Test Delegation Auditor<br/>审计包的test_delegation_auditor模块<br/>文件: audit/test_delegation_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_delegation_bridge_py["Test Delegation Bridge<br/>审计包的test_delegation_bridge模块<br/>文件: audit/test_delegation_bridge.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_depgraph_dirty_flag_py["DM-90974 Phase 2: depgraph dirty flag 单测<br/>test_depgraph_dirty_flag.py — DM-90974 Phase 2:<br/>depgraph dirty flag 单测<br/>Test Depgraph Dirty Flag<br/>文件: audit/test_depgraph_dirty_flag.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_dora_metrics_py["Test Dora Metrics<br/>审计包的test_dora_metrics模块<br/>文件: audit/test_dora_metrics.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py["flush 失败降级单测<br/>test_downgrade_auto_committed_on_flush_failure.p<br/>y — flush 失败降级单测。<br/>文件: audit<br/>/test_downgrade_auto_committed_on_flush_failure.<br/>py<br/>(生产态 / production)"]
     tests_governance_audit_test_error_pattern_id_column_py["测试错误patternidcolumn<br/>error_pattern_id 列幂等迁移单测（P4-1a）<br/>test_error_pattern_id_column<br/>文件: audit/test_error_pattern_id_column.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_evidence_pack_py["audit/test_evidence_pack<br/>审计包的test_evidence_pack模块<br/>文件: audit/test_evidence_pack.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_false_negative_auditor_py["audit/test_false_negative_auditor<br/>审计包的test_false_negative_auditor模块<br/>文件: audit/test_false_negative_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_fifteen_dimension_auditor_py["audit/test_fifteen_dimension_auditor<br/>审计包的test_fifteen_dimension_auditor模块<br/>文件: audit/test_fifteen_dimension_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_forensic_py["audit/test_forensic<br/>审计包的test_forensic模块<br/>文件: audit/test_forensic.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_forensic_package_py["audit/test_forensic_package<br/>审计包的test_forensic_package模块<br/>文件: audit/test_forensic_package.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_gap_analyzer_py["audit/test_gap_analyzer<br/>审计包的test_gap_analyzer模块<br/>文件: audit/test_gap_analyzer.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_gct_006_budget_to_escalation_py["audit/test_gct_006_budget_to_escalation<br/>G-CT-006 — Budget → Escalation 集成测试.<br/>文件: audit/test_gct_006_budget_to_escalation.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_genesis_py["audit/test_genesis<br/>审计包的test_genesis模块<br/>文件: audit/test_genesis.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_git_guard_bypass_reconciler_py["audit/test_git_guard_bypass_reconciler<br/>test_git_guard_bypass_reconciler.py — git_guard<br/>alias 绕过检测 reconciler 单...<br/>文件: audit/test_git_guard_bypass_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_git_performance_monitor_reconciler_py["audit/test_git_performance_monitor_reconciler<br/>test_git_performance_monitor_reconciler.py —<br/>reconciler 单测<br/>文件: audit<br/>/test_git_performance_monitor_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_glossary_matrix_py["audit/test_glossary_matrix<br/>审计包的test_glossary_matrix模块<br/>文件: audit/test_glossary_matrix.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_governance_auditor_py["audit/test_governance_auditor<br/>审计包的test_governance_auditor模块<br/>文件: audit/test_governance_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_health_score_calculator_py["audit/test_health_score_calculator<br/>test_health_score_calculator.py — P3-2<br/>健康度评分计算器单测。<br/>文件: audit/test_health_score_calculator.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_incremental_review_py["audit/test_incremental_review<br/>审计包的test_incremental_review模块<br/>文件: audit/test_incremental_review.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_indexer_py["audit/test_indexer<br/>审计包的test_indexer模块<br/>文件: audit/test_indexer.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_integrity_audit_reconciler_py["audit/test_integrity_audit_reconciler<br/>test_integrity_audit_reconciler.py —<br/>GATE-INTEGRITY-AUDIT reconciler 单测<br/>文件: audit/test_integrity_audit_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_integrity_root_py["audit/test_integrity_root<br/>审计包的test_integrity_root模块<br/>文件: audit/test_integrity_root.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_integrity_verifier_py["audit/test_integrity_verifier<br/>审计包的test_integrity_verifier模块<br/>文件: audit/test_integrity_verifier.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_log_rotation_py["audit/test_log_rotation<br/>审计包的test_log_rotation模块<br/>文件: audit/test_log_rotation.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_merkle_audit_py["audit/test_merkle_audit<br/>审计包的test_merkle_audit模块<br/>文件: audit/test_merkle_audit.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_merkle_hourly_py["audit/test_merkle_hourly<br/>审计包的test_merkle_hourly模块<br/>文件: audit/test_merkle_hourly.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_orchestrator_py["audit/test_orchestrator<br/>审计包的test_orchestrator模块<br/>文件: audit/test_orchestrator.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_p0_i2_construction_order_py["audit/test_p0_i2_construction_order<br/>P0-I2 施工顺序验证 — DOM-GOV-001 §8.4.<br/>文件: audit/test_p0_i2_construction_order.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_evidence_pack_py["Test Evidence Pack<br/>审计包的test_evidence_pack模块<br/>文件: audit/test_evidence_pack.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_false_negative_auditor_py["Test False Negative Auditor<br/>审计包的test_false_negative_auditor模块<br/>文件: audit/test_false_negative_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_fifteen_dimension_auditor_py["Test Fifteen Dimension Auditor<br/>审计包的test_fifteen_dimension_auditor模块<br/>文件: audit/test_fifteen_dimension_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_forensic_py["Test Forensic<br/>审计包的test_forensic模块<br/>文件: audit/test_forensic.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_forensic_package_py["Test Forensic Package<br/>审计包的test_forensic_package模块<br/>文件: audit/test_forensic_package.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_gap_analyzer_py["Test Gap Analyzer<br/>审计包的test_gap_analyzer模块<br/>文件: audit/test_gap_analyzer.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_gct_006_budget_to_escalation_py["Budget → Escalation 集成测试.'''<br/>G-CT-006 — Budget → Escalation 集成测试.<br/>Test Gct 006 Budget To Escalation<br/>文件: audit/test_gct_006_budget_to_escalation.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_genesis_py["Test Genesis<br/>审计包的test_genesis模块<br/>文件: audit/test_genesis.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_git_guard_bypass_reconciler_py["git_guard alias 绕过检测 reconciler 单测<br/>test_git_guard_bypass_reconciler.py — git_guard<br/>alias 绕过检测 reconciler 单...<br/>Test Git Guard Bypass Reconciler<br/>文件: audit/test_git_guard_bypass_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_git_performance_monitor_reconciler_py["reconciler 单测<br/>test_git_performance_monitor_reconciler.py —<br/>reconciler 单测<br/>Test Git Performance Monitor Reconciler<br/>文件: audit<br/>/test_git_performance_monitor_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_glossary_matrix_py["Test Glossary Matrix<br/>审计包的test_glossary_matrix模块<br/>文件: audit/test_glossary_matrix.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_governance_auditor_py["Test Governance Auditor<br/>审计包的test_governance_auditor模块<br/>文件: audit/test_governance_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_health_score_calculator_py["P3-2 健康度评分计算器单测<br/>test_health_score_calculator.py — P3-2<br/>健康度评分计算器单测。<br/>Test Health Score Calculator<br/>文件: audit/test_health_score_calculator.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_incremental_review_py["Test Incremental Review<br/>审计包的test_incremental_review模块<br/>文件: audit/test_incremental_review.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_indexer_py["Test Indexer<br/>审计包的test_indexer模块<br/>文件: audit/test_indexer.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_integrity_audit_reconciler_py["GATE-INTEGRITY-AUDIT reconciler 单测<br/>test_integrity_audit_reconciler.py —<br/>GATE-INTEGRITY-AUDIT reconciler 单测<br/>Test Integrity Audit Reconciler<br/>文件: audit/test_integrity_audit_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_integrity_root_py["Test Integrity Root<br/>审计包的test_integrity_root模块<br/>文件: audit/test_integrity_root.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_integrity_verifier_py["Test Integrity Verifier<br/>审计包的test_integrity_verifier模块<br/>文件: audit/test_integrity_verifier.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_log_rotation_py["Test Log Rotation<br/>审计包的test_log_rotation模块<br/>文件: audit/test_log_rotation.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_merkle_audit_py["Test Merkle Audit<br/>审计包的test_merkle_audit模块<br/>文件: audit/test_merkle_audit.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_merkle_hourly_py["Test Merkle Hourly<br/>审计包的test_merkle_hourly模块<br/>文件: audit/test_merkle_hourly.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_orchestrator_py["Test Orchestrator<br/>审计包的test_orchestrator模块<br/>文件: audit/test_orchestrator.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_p0_i2_construction_order_py["DOM-GOV-001 §8.4.'''<br/>P0-I2 施工顺序验证 — DOM-GOV-001 §8.4.<br/>Test P0 I2 Construction Order<br/>文件: audit/test_p0_i2_construction_order.py<br/>(生产态 / production)"]
     tests_governance_audit_test_p3_integration_smoke_py["测试p3集成smoke<br/>验证 Phase 3 三个核心组件的端到端集成链路：<br/>test_p3_integration_smoke<br/>文件: audit/test_p3_integration_smoke.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_privacy_py["audit/test_privacy<br/>审计包的test_privacy模块<br/>文件: audit/test_privacy.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_provenance_tracker_py["audit/test_provenance_tracker<br/>审计包的test_provenance_tracker模块<br/>文件: audit/test_provenance_tracker.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_query_py["audit/test_query<br/>审计包的test_query模块<br/>文件: audit/test_query.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_privacy_py["Test Privacy<br/>审计包的test_privacy模块<br/>文件: audit/test_privacy.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_provenance_tracker_py["Test Provenance Tracker<br/>审计包的test_provenance_tracker模块<br/>文件: audit/test_provenance_tracker.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_query_py["Test Query<br/>审计包的test_query模块<br/>文件: audit/test_query.py<br/>(生产态 / production)"]
     tests_governance_audit_test_reconcile_async_py["测试对账异步<br/>1. reconcile_runner.write_status_file /<br/>read_status_file 原子读写 + 僵尸判定<br/>test_reconcile_async<br/>文件: audit/test_reconcile_async.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_reconcile_commit_message_audit_py["audit/test_reconcile_commit_message_audit<br/>test_reconcile_commit_message_audit.py — Phase<br/>3.4 commit_message 审计链 e2e...<br/>文件: audit<br/>/test_reconcile_commit_message_audit.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_reconcile_commit_message_audit_py["Phase 3.4 commit_message 审计链 e2e smoke test<br/>test_reconcile_commit_message_audit.py — Phase<br/>3.4 commit_message 审计链 e2e...<br/>Test Reconcile Commit Message Audit<br/>文件: audit<br/>/test_reconcile_commit_message_audit.py<br/>(生产态 / production)"]
     tests_governance_audit_test_reconcile_worker_selfheal_py["测试对账工作进程selfheal<br/>clean 记录消解之前的 critical_warn<br/>（活跃告警查询返回 0）<br/>test_reconcile_worker_selfheal<br/>文件: audit/test_reconcile_worker_selfheal.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_replay_engine_py["audit/test_replay_engine<br/>审计包的test_replay_engine模块<br/>文件: audit/test_replay_engine.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_retention_py["audit/test_retention<br/>审计包的test_retention模块<br/>文件: audit/test_retention.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_runtime_violation_snapshot_py["audit/test_runtime_violation_snapshot<br/>test_runtime_violation_snapshot.py —<br/>runtime_violation_snapshot 模块单测<br/>文件: audit/test_runtime_violation_snapshot.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py["audit/test_runtime_violation_snapshot_reconciler<br/>test_runtime_violation_snapshot_reconciler.py —<br/>reconciler 单测<br/>文件: audit<br/>/test_runtime_violation_snapshot_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_sbom_generator_py["audit/test_sbom_generator<br/>审计包的test_sbom_generator模块<br/>文件: audit/test_sbom_generator.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_spec_auditor_py["audit/test_spec_auditor<br/>审计包的test_spec_auditor模块<br/>文件: audit/test_spec_auditor.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_stash_lifecycle_py["audit/test_stash_lifecycle<br/>test_stash_lifecycle.py — stash<br/>生命周期治本单测（裁定...<br/>文件: audit/test_stash_lifecycle.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_supply_chain_py["audit/test_supply_chain<br/>审计包的test_supply_chain模块<br/>文件: audit/test_supply_chain.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_tamper_evident_log_py["audit/test_tamper_evident_log<br/>审计包的test_tamper_evident_log模块<br/>文件: audit/test_tamper_evident_log.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_tiered_storage_py["audit/test_tiered_storage<br/>审计包的test_tiered_storage模块<br/>文件: audit/test_tiered_storage.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_tiered_storage_bridge_py["audit/test_tiered_storage_bridge<br/>审计包的test_tiered_storage_bridge模块<br/>文件: audit/test_tiered_storage_bridge.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_replay_engine_py["Test Replay Engine<br/>审计包的test_replay_engine模块<br/>文件: audit/test_replay_engine.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_retention_py["Test Retention<br/>审计包的test_retention模块<br/>文件: audit/test_retention.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_runtime_violation_snapshot_py["runtime_violation_snapshot 模块单测<br/>test_runtime_violation_snapshot.py —<br/>runtime_violation_snapshot 模块单测<br/>Test Runtime Violation Snapshot<br/>文件: audit/test_runtime_violation_snapshot.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py["reconciler 单测<br/>test_runtime_violation_snapshot_reconciler.py —<br/>reconciler 单测<br/>文件: audit<br/>/test_runtime_violation_snapshot_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_sbom_generator_py["Test Sbom Generator<br/>审计包的test_sbom_generator模块<br/>文件: audit/test_sbom_generator.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_spec_auditor_py["Test Spec Auditor<br/>审计包的test_spec_auditor模块<br/>文件: audit/test_spec_auditor.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_stash_lifecycle_py["stash 生命周期治本单测<br/>test_stash_lifecycle.py — stash<br/>生命周期治本单测（裁定...<br/>Test Stash Lifecycle<br/>文件: audit/test_stash_lifecycle.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_supply_chain_py["Test Supply Chain<br/>审计包的test_supply_chain模块<br/>文件: audit/test_supply_chain.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_tamper_evident_log_py["Test Tamper Evident Log<br/>审计包的test_tamper_evident_log模块<br/>文件: audit/test_tamper_evident_log.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_tiered_storage_py["Test Tiered Storage<br/>审计包的test_tiered_storage模块<br/>文件: audit/test_tiered_storage.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_tiered_storage_bridge_py["Test Tiered Storage Bridge<br/>审计包的test_tiered_storage_bridge模块<br/>文件: audit/test_tiered_storage_bridge.py<br/>(生产态 / production)"]
     tests_governance_audit_test_trae_069_threshold_sync_smoke_py["测试trae069thresholdsyncsmoke<br/>trae_069 YAML 真源→代码常量同步 smoke test<br/>test_trae_069_threshold_sync_smoke<br/>文件: audit<br/>/test_trae_069_threshold_sync_smoke.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_translation_coverage_reconciler_py["audit/test_translation_coverage_reconciler<br/>test_translation_coverage_reconciler.py —<br/>翻译覆盖率存量对账 reconciler 单测<br/>文件: audit<br/>/test_translation_coverage_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_trust_bridge_py["audit/test_trust_bridge<br/>审计包的test_trust_bridge模块<br/>文件: audit/test_trust_bridge.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_trust_engine_py["audit/test_trust_engine<br/>审计包的test_trust_engine模块<br/>文件: audit/test_trust_engine.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_truth_source_validator_py["audit/test_truth_source_validator<br/>审计包的test_truth_source_validator模块<br/>文件: audit/test_truth_source_validator.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_undefined_name_baseline_reconciler_py["audit/test_undefined_name_baseline_reconciler<br/>test_undefined_name_baseline_reconciler.py —<br/>GATE-UNDEFINED-NAME-BASELINE re...<br/>文件: audit<br/>/test_undefined_name_baseline_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_verdict_engine_py["audit/test_verdict_engine<br/>审计包的test_verdict_engine模块<br/>文件: audit/test_verdict_engine.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_workspace_hygiene_reconciler_py["audit/test_workspace_hygiene_reconciler<br/>test_workspace_hygiene_reconciler.py —<br/>工作区卫生自动清理 reconciler 单测。<br/>文件: audit/test_workspace_hygiene_reconciler.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_wqa_scorer_py["audit/test_wqa_scorer<br/>审计包的test_wqa_scorer模块<br/>文件: audit/test_wqa_scorer.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_writer_py["audit/test_writer<br/>审计包的test_writer模块<br/>文件: audit/test_writer.py<br/>(生产态 / production)"]
-    tests_governance_audit_test_yaml_sync_reconciler_error_classification_py["audit/test_yaml_sync_reconciler_error_classifica<br/>tion<br/>test_yaml_sync_reconciler_error_classification.p<br/>y — reconciler 错误分类与重...<br/>文件: audit<br/>/test_yaml_sync_reconciler_error_classification.<br/>py<br/>(生产态 / production)"]
+    tests_governance_audit_test_translation_coverage_reconciler_py["翻译覆盖率存量对账 reconciler 单测<br/>test_translation_coverage_reconciler.py —<br/>翻译覆盖率存量对账 reconciler 单测<br/>Test Translation Coverage Reconciler<br/>文件: audit<br/>/test_translation_coverage_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_trust_bridge_py["Test Trust Bridge<br/>审计包的test_trust_bridge模块<br/>文件: audit/test_trust_bridge.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_trust_engine_py["Test Trust Engine<br/>审计包的test_trust_engine模块<br/>文件: audit/test_trust_engine.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_truth_source_validator_py["—真源优先级裁决器<br/>审计包的test_truth_source_validator模块<br/>Test Truth Source Validator<br/>文件: audit/test_truth_source_validator.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_undefined_name_baseline_reconciler_py["GATE-UNDEFINED-NAME-BASELINE reconciler 单测<br/>test_undefined_name_baseline_reconciler.py —<br/>GATE-UNDEFINED-NAME-BASELINE re...<br/>Test Undefined Name Baseline Reconciler<br/>文件: audit<br/>/test_undefined_name_baseline_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_verdict_engine_py["Test Verdict Engine<br/>审计包的test_verdict_engine模块<br/>文件: audit/test_verdict_engine.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_workspace_hygiene_reconciler_py["工作区卫生自动清理 reconciler 单测<br/>test_workspace_hygiene_reconciler.py —<br/>工作区卫生自动清理 reconciler 单测。<br/>Test Workspace Hygiene Reconciler<br/>文件: audit/test_workspace_hygiene_reconciler.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_wqa_scorer_py["Test Wqa Scorer<br/>审计包的test_wqa_scorer模块<br/>文件: audit/test_wqa_scorer.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_writer_py["Test Writer<br/>审计包的test_writer模块<br/>文件: audit/test_writer.py<br/>(生产态 / production)"]
+    tests_governance_audit_test_yaml_sync_reconciler_error_classification_py["reconciler 错误分类与重试策略测试<br/>test_yaml_sync_reconciler_error_classification.p<br/>y — reconciler 错误分类与重...<br/>文件: audit<br/>/test_yaml_sync_reconciler_error_classification.<br/>py<br/>(生产态 / production)"]
     tests_governance_rule_bridge_test_session_worktree_async_reconcile_py["测试会话worktree异步对账<br/>卡 2-5min。治本改为异步<br/>launch_reconcile_async，merge 立即返回。<br/>test_session_worktree_async_reconcile<br/>文件: rule_bridge<br/>/test_session_worktree_async_reconcile.py<br/>(生产态 / production)"]
     tests_governance_test_workspace_telemetry_shared_py["测试工作区遥测共享<br/>治理管控（test workspace telemetry shared）<br/>test_workspace_telemetry_shared<br/>文件: governance<br/>/test_workspace_telemetry_shared.py<br/>(生产态 / production)"]
     scripts_governance_repair_audit_design_completeness_py ~~~ scripts_governance_repair_red_blue_test_py
@@ -932,14 +933,14 @@ flowchart TD
     src_zephyr_gov_audit_wqa_scorer_py["wqa评分器<br/>主要提供composite、rating等功能<br/>wqa_scorer<br/>文件: gov_audit/wqa_scorer.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_git_helpers_py["Git辅助<br/>审计 reconciler 共享 git 工具模块<br/>_git_helpers<br/>文件: audit/_git_helpers.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py["commitgatewayabuse监控器对账器<br/>post-commit 事件触发，扫描 ``.runtime<br/>/reconcile_reports/`` 下<br/>``post_commit_guard_*``，治理管控<br/>commit_gateway_abuse_monitor_reconciler<br/>文件: audit<br/>/commit_gateway_abuse_monitor_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_governance_audit_dead_public_wrapper_reconciler_py["audit/dead_public_wrapper_reconciler<br/>dead_public_wrapper_reconciler.py — 死公共<br/>wrapper 自动检测 reconciler.<br/>文件: audit/dead_public_wrapper_reconciler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_audit_dead_public_wrapper_reconciler_py["死公共 wrapper 自动检测 reconciler.<br/>dead_public_wrapper_reconciler.py — 死公共<br/>wrapper 自动检测 reconciler.<br/>Dead Public Wrapper Reconciler<br/>文件: audit/dead_public_wrapper_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_error_pattern_consumer_reconciler_py["错误模式消费者协调器<br/>AI 行为遥测 JSONL 错误事件聚合 consumer。<br/>error_pattern_consumer_reconciler<br/>文件: audit/error_pattern_consumer_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_governance_audit_git_guard_bypass_reconciler_py["audit/git_guard_bypass_reconciler<br/>git_guard_bypass_reconciler.py — git_guard<br/>alias 绕过检测 post-commit reconc...<br/>文件: audit/git_guard_bypass_reconciler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_audit_git_guard_bypass_reconciler_py["git_guard alias 绕过检测 post-commit reconciler<br/>git_guard_bypass_reconciler.py — git_guard<br/>alias 绕过检测 post-commit reconc...<br/>Git Guard Bypass Reconciler<br/>文件: audit/git_guard_bypass_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_git_performance_monitor_reconciler_py["Git绩效监控协调器<br/>git 性能持续监控 + 早期预警<br/>（ARCH-GIT-CALL-BUDGET P3.5，2026-07-19）。<br/>git_performance_monitor_reconciler<br/>文件: audit<br/>/git_performance_monitor_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_reconcile_worker_py["对账工作器<br/>独立执行 post-commit reconciler 链路，结果写回<br/>status file + reconcile_execution_log 表。<br/>reconcile_worker<br/>文件: audit/reconcile_worker.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_remediation_progress_reconciler_py["修复进度对账器<br/>治本进度持久化 + 新鲜度对账<br/>（#ARCH-GOV-CONVERGENCE-META Phase 3.1）。<br/>remediation_progress_reconciler<br/>文件: audit/remediation_progress_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py["运行时违规快照协调器<br/>trae_060 §5 的'违规清单'是 2026-06-26<br/>的静态快照，写入 frozen YAML 后持续脱节<br/>runtime_violation_snapshot_reconciler<br/>文件: audit<br/>/runtime_violation_snapshot_reconciler.py<br/>(生产态 / production)"]
-    src_zephyr_governance_audit_translation_coverage_reconciler_py["audit/translation_coverage_reconciler<br/>translation_coverage_reconciler.py —<br/>翻译覆盖率存量对账 reconciler.<br/>文件: audit/translation_coverage_reconciler.py<br/>(生产态 / production)"]
+    src_zephyr_governance_audit_translation_coverage_reconciler_py["翻译覆盖率存量对账 reconciler.<br/>translation_coverage_reconciler.py —<br/>翻译覆盖率存量对账 reconciler.<br/>Translation Coverage Reconciler<br/>文件: audit/translation_coverage_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_audit_workspace_hygiene_reconciler_py["工作区hygiene对账器<br/>工作区卫生自动清理 reconciler<br/>（DEBT-WORKSPACE-001/002 消除，2026-07-20）。<br/>workspace_hygiene_reconciler<br/>文件: audit/workspace_hygiene_reconciler.py<br/>(生产态 / production)"]
     src_zephyr_governance_semantic_audit_alignment_engine_py["对齐引擎<br/>三元对齐检测：蓝图声明清单 vs 磁盘实际文件 vs<br/>import 引用链。<br/>alignment_engine<br/>文件: semantic_audit/alignment_engine.py<br/>(生产态 / production)"]
     src_zephyr_governance_semantic_audit_fix_prioritizer_py["修复prioritizer<br/>按 severity -> certainty -> blast_radius<br/>三级排序,分组输出批次。<br/>fix_prioritizer<br/>文件: semantic_audit/fix_prioritizer.py<br/>(生产态 / production)"]
@@ -1044,181 +1045,181 @@ flowchart TD
     src_zephyr_gov_audit_tiered_storage_py ~~~ src_zephyr_gov_audit_trust_engine_py
     src_zephyr_gov_audit_trust_engine_py ~~~ src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_agent_signer_py["代理signer<br/>蓝图 §7 · 每条审计记录的不可否认性约束<br/>agent_signer<br/>文件: gov_audit/agent_signer.py<br/>(生产态 / production)"]
-    src_zephyr_governance_audit_blueprint_status_transition_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_blueprint_status_transition_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_git_helpers_py
     src_zephyr_governance_audit_ai_error_pattern_library_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_error_pattern_consumer_reconciler_py
     src_zephyr_governance_audit_cross_layer_contract_signature_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_cross_layer_contract_signature_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_git_helpers_py
-    src_zephyr_governance_audit_dead_public_wrapper_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_error_pattern_consumer_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_git_performance_monitor_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_health_score_calculator_py
     src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_dead_public_wrapper_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_blueprint_status_transition_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_blueprint_status_transition_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_git_helpers_py
+    src_zephyr_governance_audit_error_pattern_consumer_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_git_guard_bypass_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_reconcile_worker_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconcile_runner_py
-    src_zephyr_governance_audit_reconcile_worker_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_reconcile_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_remediation_progress_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    src_zephyr_governance_audit_snapshot_manager_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_event_store_py
-    src_zephyr_governance_audit_translation_coverage_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_runtime_violation_snapshot_py
     src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_reconcile_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_git_performance_monitor_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_snapshot_manager_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_event_store_py
+    src_zephyr_governance_audit_reconcile_worker_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconcile_runner_py
+    src_zephyr_governance_audit_reconcile_worker_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_workspace_hygiene_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_remediation_progress_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    src_zephyr_governance_audit_translation_coverage_reconciler_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
     src_zephyr_governance_audit_trail_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
-    src_zephyr_governance_semantic_audit_alignment_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_alignment_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_alignment_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_compliance_map_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_governance_semantic_audit_fix_prioritizer_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_issue_aggregator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_llm_bridge_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_fix_result_prioritizer_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_reference_extractor_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_issue_aggregator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_alignment_engine_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_fix_prioritizer_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_issue_aggregator_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_llm_bridge_py
-    src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_issue_aggregator_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_health_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_self_healer_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_safety_boundary_py
     src_zephyr_governance_semantic_audit_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_trigger_engine_py
+    src_zephyr_governance_semantic_audit_reference_extractor_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
     src_zephyr_governance_semantic_audit_safety_boundary_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
-    src_zephyr_governance_semantic_audit_trigger_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_governance_semantic_audit_trigger_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_models_py
+    src_zephyr_governance_semantic_audit_trigger_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_reference_extractor_py
     src_zephyr_gov_audit_audit_admission_controller_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_ingest_py
     src_zephyr_gov_audit_audit_admission_controller_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_delegation_bridge_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_feedback_bridge_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_merkle_hourly_py
-    src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_bridge_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_trust_bridge_py
+    src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_bridge_py
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_audit_write_failure_protector_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_semantic_audit_kb_gate_py
     src_zephyr_gov_audit_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_audit_admission_controller_py
     src_zephyr_gov_audit_cli_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_resource_aware_pool_py
-    src_zephyr_gov_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    src_zephyr_gov_audit_compliance_map_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_gov_audit_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_gov_audit_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
+    src_zephyr_gov_audit_compliance_map_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
+    src_zephyr_gov_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_delegation_auditor_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_delegation_bridge_py
     src_zephyr_gov_audit_feedback_policy_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_feedback_bridge_py
     src_zephyr_gov_audit_finding_ingest_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_finding_ingest_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_integrity_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_agent_signer_py
     src_zephyr_gov_audit_integrity_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    src_zephyr_gov_audit_merkle_audit_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
+    src_zephyr_gov_audit_indexer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_merkle_hourly_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
-    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
-    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
-    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
-    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
+    src_zephyr_gov_audit_merkle_audit_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
     src_zephyr_gov_audit_pipeline_runner_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_pipeline_runner_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_text_to_finding_adapter_py
+    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
+    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
+    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
+    src_zephyr_gov_audit_query_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
     src_zephyr_gov_audit_text_to_finding_adapter_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
-    src_zephyr_gov_audit_tiered_storage_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_py
     src_zephyr_gov_audit_trust_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_trust_engine_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_query_py
-    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
+    src_zephyr_gov_audit_tiered_storage_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_tiered_storage_py
     src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
     src_zephyr_gov_audit_writer_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
-    src_zephyr_gov_audit_bridges_audit_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_integrity_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_indexer_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_models_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_query_py
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_bridges_audit_feedback_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
     src_zephyr_gov_audit_bridges_audit_feedback_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_query_py
-    src_zephyr_gov_audit_bridges_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_delegation_bridge_py
+    src_zephyr_gov_audit_bridges_audit_contracts_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
     src_zephyr_gov_audit_bridges_audit_drift_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
+    src_zephyr_gov_audit_bridges_audit_delegation_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_delegation_bridge_py
     src_zephyr_gov_enforcement_rule_enforcement_audit_chain_verifier_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_writer_py
-    scripts_governance_test_remediation_progress_smoke_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_remediation_progress_reconciler_py
     scripts_governance_test_remediation_progress_smoke_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    scripts_governance_test_remediation_progress_smoke_py -->|导入依赖 / import_depends| src_zephyr_governance_audit_remediation_progress_reconciler_py
     tests_governance_audit_test_anomaly_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_anomaly_py
     tests_governance_audit_test_anomaly_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
-    tests_governance_audit_test_audit_schema_unit_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_audit_schema_py
     tests_governance_audit_test_blueprint_id_legacy_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_changelog_manager_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_changelog_manager_py
-    tests_governance_audit_test_code_archaeology_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_code_archaeology_py
-    tests_governance_audit_test_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridge_py
-    tests_governance_audit_test_compliance_map_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_compliance_map_py
-    tests_governance_audit_test_compliance_map_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
-    tests_governance_audit_test_capability_lookup_health_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_cycle_dependency_audit_isolation_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_contracts_py
+    tests_governance_audit_test_audit_schema_unit_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_audit_schema_py
     tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py
     tests_governance_audit_test_commit_gateway_abuse_monitor_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_corporate_actions_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_corporate_actions_py
+    tests_governance_audit_test_blueprint_frontmatter_reconciler_post_commit_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridge_py
+    tests_governance_audit_test_capability_lookup_health_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_code_archaeology_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_code_archaeology_py
+    tests_governance_audit_test_compliance_map_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_compliance_map_py
+    tests_governance_audit_test_compliance_map_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
+    tests_governance_audit_test_changelog_manager_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_changelog_manager_py
+    tests_governance_audit_test_delegation_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_delegation_bridge_py
     tests_governance_audit_test_delegation_auditor_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_delegation_auditor_py
+    tests_governance_audit_test_corporate_actions_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_corporate_actions_py
+    tests_governance_audit_test_cycle_dependency_audit_isolation_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_contracts_py
+    tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_dora_metrics_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_dora_metrics_py
+    tests_governance_audit_test_evidence_pack_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_evidence_pack_py
+    tests_governance_audit_test_depgraph_dirty_flag_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_dead_public_wrapper_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_dead_public_wrapper_reconciler_py
     tests_governance_audit_test_dead_public_wrapper_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_depgraph_dirty_flag_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_downgrade_auto_committed_on_flush_failure_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_delegation_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_delegation_bridge_py
-    tests_governance_audit_test_evidence_pack_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_evidence_pack_py
-    tests_governance_audit_test_dora_metrics_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_dora_metrics_py
     tests_governance_audit_test_error_pattern_id_column_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_forensic_package_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_forensic_package_py
     tests_governance_audit_test_genesis_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_genesis_py
-    tests_governance_audit_test_git_guard_bypass_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_git_guard_bypass_reconciler_py
+    tests_governance_audit_test_glossary_matrix_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_glossary_matrix_py
     tests_governance_audit_test_incremental_review_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_incremental_review_py
-    tests_governance_audit_test_health_score_calculator_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_health_score_calculator_py
     tests_governance_audit_test_git_performance_monitor_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_git_performance_monitor_reconciler_py
     tests_governance_audit_test_git_performance_monitor_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_health_score_calculator_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_health_score_calculator_py
     tests_governance_audit_test_indexer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_indexer_py
+    tests_governance_audit_test_git_guard_bypass_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_git_guard_bypass_reconciler_py
     tests_governance_audit_test_integrity_root_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_integrity_py
-    tests_governance_audit_test_glossary_matrix_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_glossary_matrix_py
     tests_governance_audit_test_merkle_hourly_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_merkle_hourly_py
-    tests_governance_audit_test_merkle_audit_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_merkle_audit_py
     tests_governance_audit_test_log_rotation_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_log_rotation_py
     tests_governance_audit_test_integrity_audit_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_integrity_verifier_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_integrity_verifier_py
     tests_governance_audit_test_orchestrator_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_orchestrator_compat_py
+    tests_governance_audit_test_p0_i2_construction_order_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_contracts_py
     tests_governance_audit_test_p3_integration_smoke_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py
     tests_governance_audit_test_p3_integration_smoke_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_health_score_calculator_py
-    tests_governance_audit_test_p0_i2_construction_order_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_contracts_py
-    tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_indexer_py
+    tests_governance_audit_test_merkle_audit_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_merkle_audit_py
+    tests_governance_audit_test_provenance_tracker_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_provenance_tracker_py
+    tests_governance_audit_test_privacy_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_privacy_py
+    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_runner_py
+    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_worker_py
+    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_integrity_py
+    tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_indexer_py
     tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
     tests_governance_audit_test_query_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_query_py
-    tests_governance_audit_test_provenance_tracker_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_provenance_tracker_py
-    tests_governance_audit_test_reconcile_commit_message_audit_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_privacy_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_privacy_py
-    tests_governance_audit_test_runtime_violation_snapshot_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_runtime_violation_snapshot_py
-    tests_governance_audit_test_retention_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_retention_py
-    tests_governance_audit_test_reconcile_worker_selfheal_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_worker_py
     tests_governance_audit_test_reconcile_worker_selfheal_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_runner_py
+    tests_governance_audit_test_reconcile_worker_selfheal_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_worker_py
     tests_governance_audit_test_reconcile_worker_selfheal_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_retention_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_retention_py
+    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py
+    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_replay_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_replay_engine_py
-    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_worker_py
-    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconcile_runner_py
-    tests_governance_audit_test_reconcile_async_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_reconcile_commit_message_audit_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_runtime_violation_snapshot_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_runtime_violation_snapshot_py
     tests_governance_audit_test_spec_auditor_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_spec_auditor_py
     tests_governance_audit_test_sbom_generator_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_sbom_generator_py
+    tests_governance_audit_test_stash_lifecycle_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_tiered_storage_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_tiered_storage_py
     tests_governance_audit_test_supply_chain_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_supply_chain_py
-    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
-    tests_governance_audit_test_runtime_violation_snapshot_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_runtime_violation_snapshot_reconciler_py
-    tests_governance_audit_test_stash_lifecycle_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_tiered_storage_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_tiered_storage_bridge_py
-    tests_governance_audit_test_trust_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_trust_engine_py
     tests_governance_audit_test_trae_069_threshold_sync_smoke_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_commit_gateway_abuse_monitor_reconciler_py
     tests_governance_audit_test_trae_069_threshold_sync_smoke_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_health_score_calculator_py
-    tests_governance_audit_test_undefined_name_baseline_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_trust_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_trust_bridge_py
     tests_governance_audit_test_translation_coverage_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_translation_coverage_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_translation_coverage_reconciler_py
-    tests_governance_audit_test_verdict_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
-    tests_governance_audit_test_wqa_scorer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_wqa_scorer_py
     tests_governance_audit_test_workspace_hygiene_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
     tests_governance_audit_test_workspace_hygiene_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_workspace_hygiene_reconciler_py
-    tests_governance_audit_test_trust_bridge_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_bridges_audit_trust_bridge_py
-    tests_governance_audit_test_writer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_writer_py
+    tests_governance_audit_test_undefined_name_baseline_reconciler_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_verdict_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_models_py
     tests_governance_audit_test_yaml_sync_reconciler_error_classification_py -->|测试依赖 / test_depends| src_zephyr_governance_audit_reconciliation_registry_py
+    tests_governance_audit_test_trust_engine_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_trust_engine_py
+    tests_governance_audit_test_writer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_writer_py
+    tests_governance_audit_test_wqa_scorer_py -->|测试依赖 / test_depends| src_zephyr_gov_audit_wqa_scorer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -1250,7 +1251,7 @@ flowchart TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | 反馈桥接 / feedback_bridge (gov_audit/feedback_bridge.py) | → | D_FEEDBACK_LOOP 反馈循环引擎: 包入口 / Feedback Loop Engine — MOD-FEEDBACK_LOOP. (feed... | 导入依赖 / import_depends |
-| 2 | audit/test_spec_auditor.py | → | D_FEEDBACK_LOOP 反馈循环引擎: 协议 / protocols (feedback_loop/protocols.py) | 测试依赖 / test_depends |
+| 2 | Test Spec Auditor / Test Spec Auditor (audit/test_spec_au... | → | D_FEEDBACK_LOOP 反馈循环引擎: 协议 / protocols (feedback_loop/protocols.py) | 测试依赖 / test_depends |
 | 3 | 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
 | 4 | 审计信任桥接 / audit_trust_bridge (bridges/audit_trust_br... | → | D_GOVERNANCE 生命周期管理: continuous信任 / continuous_trust (intelligence_governanc... | 导入依赖 / import_depends |
 | 5 | 事件存储 / event_store (gov_audit/event_store.py) | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
@@ -1260,135 +1261,135 @@ flowchart TD
 | 9 | spec审计器 / spec_auditor (gov_audit/spec_auditor.py) | → | D_GOVERNANCE 生命周期管理: 注册表 / registry (agent_spec/registry.py) | 导入依赖 / import_depends |
 | 10 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
 | 11 | 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 导入依赖 / import_depends |
-| 12 | translation_coverage_reconciler.py — 翻译覆盖率存量对账 ... | → | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
+| 12 | 翻译覆盖率存量对账 reconciler. / Translation Coverage Rec... | → | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | 导入依赖 / import_depends |
 | 13 | 知识库门禁 / kb_gate (semantic_audit/kb_gate.py) | → | D_GOVERNANCE 生命周期管理: 规则模式 / rule_patterns (governance/rule_patterns.py) | 导入依赖 / import_depends |
 | 14 | 审计轨迹·隐私模块 / privacy (semantic_audit/privacy.py) | → | D_GOVERNANCE 生命周期管理: 规则模式 / rule_patterns (governance/rule_patterns.py) | 导入依赖 / import_depends |
-| 15 | audit/test_alerts.py | → | D_GOVERNANCE 生命周期管理: 告警 / G-CT-006 — BudgetAlert re-exported from shared.co... | 测试依赖 / test_depends |
-| 16 | audit/test_audit_schema_unit.py | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 测试依赖 / test_depends |
-| 17 | audit/test_gap_analyzer.py | → | D_GOVERNANCE 生命周期管理: gap分析器 / gap_analyzer (architecture_governance/gap_ana... | 测试依赖 / test_depends |
-| 18 | G-CT-006 — Budget → Escalation 集成测试. (audit/test_gc... | → | D_GOVERNANCE 生命周期管理: 告警 / G-CT-006 — BudgetAlert re-exported from shared.co... | 测试依赖 / test_depends |
+| 15 | Test Alerts / Test Alerts (audit/test_alerts.py) | → | D_GOVERNANCE 生命周期管理: 告警 / G-CT-006 — BudgetAlert re-exported from shared.co... | 测试依赖 / test_depends |
+| 16 | test_audit_schema.py — AuditQuery 单元测试 / Test Audit ... | → | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | 测试依赖 / test_depends |
+| 17 | Test Gap Analyzer / Test Gap Analyzer (audit/test_gap_ana... | → | D_GOVERNANCE 生命周期管理: gap分析器 / gap_analyzer (architecture_governance/gap_ana... | 测试依赖 / test_depends |
+| 18 | Budget → Escalation 集成测试.""" / Test Gct 006 Budget T... | → | D_GOVERNANCE 生命周期管理: 告警 / G-CT-006 — BudgetAlert re-exported from shared.co... | 测试依赖 / test_depends |
 | 19 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: reference辅助 / _reference_helpers (commit_gates/_referen... | 导入依赖 / import_depends |
 | 20 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: capabilitylookup绕过策略 / capability_lookup_bypass_polic... | 导入依赖 / import_depends |
 | 21 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: consumersaccuracy门禁 / consumers_accuracy_gate (commit_g... | 导入依赖 / import_depends |
-| 22 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: scripts_import_integrity_gate.py — _shared.constants 符... | 导入依赖 / import_depends |
-| 23 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 导入依赖 / import_depends |
-| 24 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | 导入依赖 / import_depends |
-| 25 | audit/test_false_negative_auditor.py | → | D_GOV_CODE_QUALITY 代码质量治理: falsenegative审计器 / false_negative_auditor (code_dedup/... | 测试依赖 / test_depends |
-| 26 | audit/test_fifteen_dimension_auditor.py | → | D_GOV_CODE_QUALITY 代码质量治理: 15维超综合审计首页 — 逐项证明"做过且做对". / fifteen_dim... | 测试依赖 / test_depends |
-| 27 | test_undefined_name_baseline_reconciler.py — GATE-UNDEFI... | → | D_GOV_CODE_QUALITY 代码质量治理: 包入口 / __init__ (commit_gates/__init__.py) | 测试依赖 / test_depends |
-| 28 | test_undefined_name_baseline_reconciler.py — GATE-UNDEFI... | → | D_GOV_CODE_QUALITY 代码质量治理: undefined_name_gate.py — UNDEFINED-NAME 门禁（F821 未定... | 测试依赖 / test_depends |
-| 29 | 编排器兼容 / _orchestrator_compat (gov_audit/_orchestrato... | → | D_GOV_DRIFT 漂移检测: gov_audit/self_monitor.py | 导入依赖 / import_depends |
-| 30 | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | → | D_GOV_DRIFT 漂移检测: gov_audit/drift_bridge.py | 导入依赖 / import_depends |
-| 31 | 审计漂移桥接 / audit_drift_bridge (bridges/audit_drift_br... | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
-| 32 | 审计漂移桥接 / audit_drift_bridge (bridges/audit_drift_br... | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | 导入依赖 / import_depends |
-| 33 | 命令行 / cli (gov_audit/cli.py) | → | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | 导入依赖 / import_depends |
-| 34 | 命令行 / cli (gov_audit/cli.py) | → | D_GOV_DRIFT 漂移检测: governance/integrity.py | 导入依赖 / import_depends |
-| 35 | audit/test_truth_source_validator.py | → | D_GOV_DRIFT 漂移检测: 真源优先级裁决器（Truth Source Validator） (rule_enforcem... | 测试依赖 / test_depends |
-| 36 | Git绩效监控协调器 / git_performance_monitor_reconciler (a... | → | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | 导入依赖 / import_depends |
-| 37 | 对账工作器 / reconcile_worker (audit/reconcile_worker.py) | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 导入依赖 / import_depends |
-| 38 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_ENFORCEMENT 规则执行: commit_gate_registry.py — GitCommitGateway pre-commit 门... | 导入依赖 / import_depends |
-| 39 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | 导入依赖 / import_depends |
-| 40 | translation_coverage_reconciler.py — 翻译覆盖率存量对账 ... | → | D_GOV_ENFORCEMENT 规则执行: commit_gate_registry.py — GitCommitGateway pre-commit 门... | 导入依赖 / import_depends |
-| 41 | test_capability_lookup_health_reconciler.py — Phase 4 G6... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 测试依赖 / test_depends |
-| 42 | test_integrity_audit_reconciler.py — GATE-INTEGRITY-AUDI... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 测试依赖 / test_depends |
-| 43 | 测试对账异步 / test_reconcile_async (audit/test_reconcile... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 测试依赖 / test_depends |
-| 44 | 测试对账工作进程selfheal / test_reconcile_worker_selfheal... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | 测试依赖 / test_depends |
-| 45 | test_stash_lifecycle.py — stash 生命周期治本单测（裁定..... | → | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | 测试依赖 / test_depends |
-| 46 | 测试会话worktree异步对账 / test_session_worktree_async_re... | → | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | 测试依赖 / test_depends |
-| 47 | delegation桥接 / delegation_bridge (gov_audit/delegation_... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | 导入依赖 / import_depends |
-| 48 | 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | 导入依赖 / import_depends |
-| 49 | P0-I2 施工顺序验证 — DOM-GOV-001 §8.4. (audit/test_p0_i... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | 测试依赖 / test_depends |
-| 50 | audit/test_tamper_evident_log.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/tamper_evident_log.py | 测试依赖 / test_depends |
+| 22 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: _shared.constants 符号导入完整性门禁 / Scripts Import Int... | 导入依赖 / import_depends |
+| 23 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: UNDEFINED-NAME 门禁 / Undefined Name Gate (commit_gates/u... | 导入依赖 / import_depends |
+| 24 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_CODE_QUALITY 代码质量治理: YAML 驱动的 in-process gate 自动注册器 / Gate Auto Regist... | 导入依赖 / import_depends |
+| 25 | Test False Negative Auditor / Test False Negative Auditor... | → | D_GOV_CODE_QUALITY 代码质量治理: falsenegative审计器 / false_negative_auditor (code_dedup/... | 测试依赖 / test_depends |
+| 26 | Test Fifteen Dimension Auditor / Test Fifteen Dimension A... | → | D_GOV_CODE_QUALITY 代码质量治理: 15维超综合审计首页 — 逐项证明"做过且做对". / fifteen_dim... | 测试依赖 / test_depends |
+| 27 | GATE-UNDEFINED-NAME-BASELINE reconciler 单测 / Test Undef... | → | D_GOV_CODE_QUALITY 代码质量治理: 包入口 / __init__ (commit_gates/__init__.py) | 测试依赖 / test_depends |
+| 28 | GATE-UNDEFINED-NAME-BASELINE reconciler 单测 / Test Undef... | → | D_GOV_CODE_QUALITY 代码质量治理: UNDEFINED-NAME 门禁 / Undefined Name Gate (commit_gates/u... | 测试依赖 / test_depends |
+| 29 | 编排器兼容 / _orchestrator_compat (gov_audit/_orchestrato... | → | D_GOV_DRIFT 漂移检测: Self Monitor / Self Monitor (gov_audit/self_monitor.py) | 导入依赖 / import_depends |
+| 30 | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | → | D_GOV_DRIFT 漂移检测: drift bridge sync result -- 对齐 test_bridges_drift_bridg... | 导入依赖 / import_depends |
+| 31 | 审计漂移桥接 / audit_drift_bridge (bridges/audit_drift_br... | → | D_GOV_DRIFT 漂移检测: Drift Engine / Drift Engine (gov_drift/drift_engine.py) | 导入依赖 / import_depends |
+| 32 | 审计漂移桥接 / audit_drift_bridge (bridges/audit_drift_br... | → | D_GOV_DRIFT 漂移检测: Drift Models / Drift Models (gov_drift/drift_models.py) | 导入依赖 / import_depends |
+| 33 | 命令行 / cli (gov_audit/cli.py) | → | D_GOV_DRIFT 漂移检测: Drift Engine / Drift Engine (gov_drift/drift_engine.py) | 导入依赖 / import_depends |
+| 34 | 命令行 / cli (gov_audit/cli.py) | → | D_GOV_DRIFT 漂移检测: Integrity / Integrity (governance/integrity.py) | 导入依赖 / import_depends |
+| 35 | —真源优先级裁决器 / Test Truth Source Validator (audit/t... | → | D_GOV_DRIFT 漂移检测: Truth Source Validator / Truth Source Validator (rule_enf... | 测试依赖 / test_depends |
+| 36 | Git绩效监控协调器 / git_performance_monitor_reconciler (a... | → | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | 导入依赖 / import_depends |
+| 37 | 对账工作器 / reconcile_worker (audit/reconcile_worker.py) | → | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | 导入依赖 / import_depends |
+| 38 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway pre-commit 门禁注册表 / Commit Gate Regi... | 导入依赖 / import_depends |
+| 39 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | 导入依赖 / import_depends |
+| 40 | 翻译覆盖率存量对账 reconciler. / Translation Coverage Rec... | → | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway pre-commit 门禁注册表 / Commit Gate Regi... | 导入依赖 / import_depends |
+| 41 | Phase 4 G6 监控 reconciler e2e smoke test / Test Capabili... | → | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | 测试依赖 / test_depends |
+| 42 | GATE-INTEGRITY-AUDIT reconciler 单测 / Test Integrity Aud... | → | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | 测试依赖 / test_depends |
+| 43 | 测试对账异步 / test_reconcile_async (audit/test_reconcile... | → | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | 测试依赖 / test_depends |
+| 44 | 测试对账工作进程selfheal / test_reconcile_worker_selfheal... | → | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | 测试依赖 / test_depends |
+| 45 | stash 生命周期治本单测 / Test Stash Lifecycle (audit/test... | → | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | 测试依赖 / test_depends |
+| 46 | 测试会话worktree异步对账 / test_session_worktree_async_re... | → | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | 测试依赖 / test_depends |
+| 47 | delegation桥接 / delegation_bridge (gov_audit/delegation_... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 空 Protocol 作为 12 个异构 detector 类的鸭子类型标记 / Es... | 导入依赖 / import_depends |
+| 48 | 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | 导入依赖 / import_depends |
+| 49 | DOM-GOV-001 §8.4.""" / Test P0 I2 Construction Order (au... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003/004/006/008 消费端.""" / Contracts (escalation/c... | 测试依赖 / test_depends |
+| 50 | Test Tamper Evident Log / Test Tamper Evident Log (audit/... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: 5.17.5 修复：解析 HMAC 密钥 / Tamper Evident Log (securit... | 测试依赖 / test_depends |
 | 51 | 审计链验证器 / audit_chain_verifier (rule_enforcement/aud... | → | D_GOV_RULE 规则治理: 门禁上下文传播 / Gate Context (gate_engine/gate_context.py) | 导入依赖 / import_depends |
 | 52 | commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | → | D_GOV_RULE 规则治理: 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 导入依赖 / import_depends |
 | 53 | 测试p3集成smoke / test_p3_integration_smoke (audit/test_p... | → | D_GOV_RULE 规则治理: 自适应阈值 / Adaptive Threshold (rule_enforcement/adaptiv... | 测试依赖 / test_depends |
-| 54 | 审计designcompleteness / audit_design_completeness (repai... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 55 | [INVARIANTS] 20项红蓝对抗测试 / red_blue_test (repair/red... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 56 | 回滚依赖图 / rollback_depgraph (repair/rollback_depgraph.py) | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 57 | 测试修复进度smoke / test_remediation_progress_smoke (gove... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 导入依赖 / import_depends |
-| 58 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_SCRIPTS 脚本治理: file_lock.py — blueprint.md 跨进程 advisory lock（... (_... | 导入依赖 / import_depends |
-| 59 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_SCRIPTS 脚本治理: module_id / domain_id / submodule_id 格式校验真源... | 导入依赖 / import_depends |
-| 60 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_SCRIPTS 脚本治理: check_gate_inventory_drift.py — commit_gates 模块清单漂... | 导入依赖 / import_depends |
-| 61 | translation_coverage_reconciler.py — 翻译覆盖率存量对账 ... | → | D_GOV_SCRIPTS 脚本治理: module_translation_loader.py — 模块级翻译共享加载器（SSo... | 导入依赖 / import_depends |
-| 62 | test_depgraph_dirty_flag.py — DM-90974 Phase 2: depgraph... | → | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | 测试依赖 / test_depends |
-| 63 | audit/test_auditor.py | → | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. (rollback/... | 测试依赖 / test_depends |
-| 64 | audit/test_forensic.py | → | D_INFRA_RECOVERY 回滚恢复: Forensic Engine — 取证基础设施（Phase 8 完整实现）。 (ro... | 测试依赖 / test_depends |
-| 65 | audit/test_governance_auditor.py | → | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. (rollback/... | 测试依赖 / test_depends |
-| 66 | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | → | D_INFRA_RUNTIME 运行时集成: git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGE... | 导入依赖 / import_depends |
-| 67 | G-CT-006 — Budget → Escalation 集成测试. (audit/test_gc... | → | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | 测试依赖 / test_depends |
-| 68 | 默认attribution引擎 / Re-export wrapper: default_attribut... | → | D_REPORTING 报告: D_REPORTING — Default Attribution Engine (reporting/defa... | 导入依赖 / import_depends |
-| 69 | 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | D_REPORTING 报告: D_REPORTING — Default TCA Engine (reporting/default_tca_... | 导入依赖 / import_depends |
-| 70 | 命令行 / cli (gov_audit/cli.py) | → | D_SECURITY 对抗验证: orphan_judge/judge.py | 导入依赖 / import_depends |
-| 71 | 命令行 / cli (gov_audit/cli.py) | → | D_SECURITY 对抗验证: adversarial_validation/validator.py | 导入依赖 / import_depends |
-| 72 | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
-| 73 | 对账工作器 / reconcile_worker (audit/reconcile_worker.py) | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
-| 74 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | 导入依赖 / import_depends |
-| 75 | P0-I2 施工顺序验证 — DOM-GOV-001 §8.4. (audit/test_p0_i... | → | D_SECURITY 对抗验证: G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. (access_... | 测试依赖 / test_depends |
-| 76 | [INVARIANTS] 20项红蓝对抗测试 / red_blue_test (repair/red... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 77 | 回滚依赖图 / rollback_depgraph (repair/rollback_depgraph.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 78 | 代理signer / agent_signer (gov_audit/agent_signer.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 79 | 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 80 | 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 81 | 审计漂移桥接 / audit_drift_bridge (bridges/audit_drift_br... | → | D_SHARED 共享服务: schema/schemas.py | 导入依赖 / import_depends |
-| 82 | 命令行 / cli (gov_audit/cli.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 83 | 命令行 / cli (gov_audit/cli.py) | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 84 | 冷启动 / cold_start (gov_audit/cold_start.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 85 | 冷启动 / cold_start (gov_audit/cold_start.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 86 | 事件存储 / event_store (gov_audit/event_store.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 87 | 证据包 / evidence_pack (gov_audit/evidence_pack.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 88 | externaltool审计 / external_tool_audit (gov_audit/externa... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 89 | 反馈桥接 / feedback_bridge (gov_audit/feedback_bridge.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 90 | 发现ingest / finding_ingest (gov_audit/finding_ingest.py) | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 91 | 发现模型 / finding_model (gov_audit/finding_model.py) | → | D_SHARED 共享服务: schema/base_config.py | 导入依赖 / import_depends |
-| 92 | 取证包 / forensic_package (gov_audit/forensic_package.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 93 | 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 94 | 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 95 | 完整性 / integrity (gov_audit/integrity.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 96 | 完整性 / integrity (gov_audit/integrity.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 97 | 日志rotation / log_rotation (gov_audit/log_rotation.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 98 | audit-trail.merkle每小时 / merkle_hourly (gov_audit/merkl... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 99 | 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 100 | 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | D_SHARED 共享服务: schema/base_config.py | 导入依赖 / import_depends |
-| 101 | 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 102 | 保留策略（补全测试期望接口）。 / retention (gov_audit/ret... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 103 | supply链 / supply_chain (gov_audit/supply_chain.py) | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 104 | texttofinding适配器 / text_to_finding_adapter (gov_audit/... | → | D_SHARED 共享服务: schema/base_config.py | 导入依赖 / import_depends |
-| 105 | 旧版分层存储（保留以兼容现有调用方）。 / tiered_storage (... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 106 | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 107 | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 108 | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | D_SHARED 共享服务: session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B... | 导入依赖 / import_depends |
-| 109 | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 110 | MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 111 | 提交进程 / post_process (behavioral_admission/post_proces... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 112 | 审计链验证器 / audit_chain_verifier (rule_enforcement/aud... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 113 | sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 114 | sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 115 | Git辅助 / _git_helpers (audit/_git_helpers.py) | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 116 | 蓝图状态转换协调器 / blueprint_status_transition_reconcil... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 117 | commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 118 | 跨layercontractsignature对账器 / cross_layer_contract_sig... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 119 | Git绩效监控协调器 / git_performance_monitor_reconciler (a... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 120 | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 121 | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 122 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 123 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 124 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 125 | 修复进度对账器 / remediation_progress_reconciler (audit/r... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 126 | 运行时违规快照 / runtime_violation_snapshot (audit/runtim... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 127 | 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 128 | 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 129 | translation_coverage_reconciler.py — 翻译覆盖率存量对账 ... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 130 | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 131 | 收集各阶段审计结果，去重合并排序输出。 / issue_aggregator... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 132 | self愈合器 / self_healer (semantic_audit/self_healer.py) | → | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 133 | self愈合器 / self_healer (semantic_audit/self_healer.py) | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 134 | DOM-GOV-001 循环依赖测试 — Audit 独立运行验证 + 无 RBAC ... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 135 | test_depgraph_dirty_flag.py — DM-90974 Phase 2: depgraph... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 136 | audit/test_integrity_root.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 137 | P0-I2 施工顺序验证 — DOM-GOV-001 §8.4. (audit/test_p0_i... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 138 | 测试工作区遥测共享 / test_workspace_telemetry_shared (gov... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 139 | 测试工作区遥测共享 / test_workspace_telemetry_shared (gov... | → | D_SHARED 共享服务: workspace_telemetry.py — 主工作区文件操作遥测公共 API（.... | 测试依赖 / test_depends |
-| 140 | audit/test_verdict_engine.py | → | D_TRADING 交易运营: trading/verdict_engine.py | 测试依赖 / test_depends |
+| 54 | 审计designcompleteness / audit_design_completeness (repai... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 55 | [INVARIANTS] 20项红蓝对抗测试 / red_blue_test (repair/red... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 56 | 回滚依赖图 / rollback_depgraph (repair/rollback_depgraph.py) | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 57 | 测试修复进度smoke / test_remediation_progress_smoke (gove... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 导入依赖 / import_depends |
+| 58 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_SCRIPTS 脚本治理: blueprint.md 跨进程 advisory lock / File Lock (_shared/fi... | 导入依赖 / import_depends |
+| 59 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_SCRIPTS 脚本治理: Validate Module Id Naming / Validate Module Id Naming (d3... | 导入依赖 / import_depends |
+| 60 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_GOV_SCRIPTS 脚本治理: commit_gates 模块清单漂移检测 / Check Gate Inventory Drif... | 导入依赖 / import_depends |
+| 61 | 翻译覆盖率存量对账 reconciler. / Translation Coverage Rec... | → | D_GOV_SCRIPTS 脚本治理: 模块级翻译共享加载器 / Module Translation Loader (_shared... | 导入依赖 / import_depends |
+| 62 | DM-90974 Phase 2: depgraph dirty flag 单测 / Test Depgrap... | → | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | 测试依赖 / test_depends |
+| 63 | Test Auditor / Test Auditor (audit/test_auditor.py) | → | D_INFRA_RECOVERY 回滚恢复: Auditor / Auditor (rollback/auditor.py) | 测试依赖 / test_depends |
+| 64 | Test Forensic / Test Forensic (audit/test_forensic.py) | → | D_INFRA_RECOVERY 回滚恢复: Forensic / Forensic (rollback/forensic.py) | 测试依赖 / test_depends |
+| 65 | Test Governance Auditor / Test Governance Auditor (audit/... | → | D_INFRA_RECOVERY 回滚恢复: Auditor / Auditor (rollback/auditor.py) | 测试依赖 / test_depends |
+| 66 | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | → | D_INFRA_RUNTIME 运行时集成: Git 命令批量化工具 / Git Batcher (infrastructure/git_batc... | 导入依赖 / import_depends |
+| 67 | Budget → Escalation 集成测试.""" / Test Gct 006 Budget T... | → | D_OPS 反馈循环: Budget Handler / Budget Handler (ops_governance/budget_ha... | 测试依赖 / test_depends |
+| 68 | 默认attribution引擎 / Re-export wrapper: default_attribut... | → | D_REPORTING 报告: Default Attribution Engine / Default Attribution Engine (... | 导入依赖 / import_depends |
+| 69 | 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | → | D_REPORTING 报告: Default TCA Engine / Default Tca Engine (reporting/defaul... | 导入依赖 / import_depends |
+| 70 | 命令行 / cli (gov_audit/cli.py) | → | D_SECURITY 对抗验证: OrphanJudge 模块基础异常""" / Judge (orphan_judge/judge.py) | 导入依赖 / import_depends |
+| 71 | 命令行 / cli (gov_audit/cli.py) | → | D_SECURITY 对抗验证: 只读：blast / Validator (adversarial_validation/validator... | 导入依赖 / import_depends |
+| 72 | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | D_SECURITY 对抗验证: Session 级并发协调模块 / Session Concurrency (access_cont... | 导入依赖 / import_depends |
+| 73 | 对账工作器 / reconcile_worker (audit/reconcile_worker.py) | → | D_SECURITY 对抗验证: Session 级并发协调模块 / Session Concurrency (access_cont... | 导入依赖 / import_depends |
+| 74 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_SECURITY 对抗验证: Session 级并发协调模块 / Session Concurrency (access_cont... | 导入依赖 / import_depends |
+| 75 | DOM-GOV-001 §8.4.""" / Test P0 I2 Construction Order (au... | → | D_SECURITY 对抗验证: G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. / Contra... | 测试依赖 / test_depends |
+| 76 | [INVARIANTS] 20项红蓝对抗测试 / red_blue_test (repair/red... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 77 | 回滚依赖图 / rollback_depgraph (repair/rollback_depgraph.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 78 | 代理signer / agent_signer (gov_audit/agent_signer.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 79 | 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 80 | 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | D_SHARED 共享服务: 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 81 | 审计漂移桥接 / audit_drift_bridge (bridges/audit_drift_br... | → | D_SHARED 共享服务: Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 82 | 命令行 / cli (gov_audit/cli.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 83 | 命令行 / cli (gov_audit/cli.py) | → | D_SHARED 共享服务: async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 84 | 冷启动 / cold_start (gov_audit/cold_start.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 85 | 冷启动 / cold_start (gov_audit/cold_start.py) | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 86 | 事件存储 / event_store (gov_audit/event_store.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 87 | 证据包 / evidence_pack (gov_audit/evidence_pack.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 88 | externaltool审计 / external_tool_audit (gov_audit/externa... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 89 | 反馈桥接 / feedback_bridge (gov_audit/feedback_bridge.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 90 | 发现ingest / finding_ingest (gov_audit/finding_ingest.py) | → | D_SHARED 共享服务: 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 91 | 发现模型 / finding_model (gov_audit/finding_model.py) | → | D_SHARED 共享服务: Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 92 | 取证包 / forensic_package (gov_audit/forensic_package.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 93 | 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 94 | 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 95 | 完整性 / integrity (gov_audit/integrity.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 96 | 完整性 / integrity (gov_audit/integrity.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 97 | 日志rotation / log_rotation (gov_audit/log_rotation.py) | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 98 | audit-trail.merkle每小时 / merkle_hourly (gov_audit/merkl... | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 99 | 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 100 | 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | D_SHARED 共享服务: Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 101 | 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 102 | 保留策略（补全测试期望接口）。 / retention (gov_audit/ret... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 103 | supply链 / supply_chain (gov_audit/supply_chain.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 104 | texttofinding适配器 / text_to_finding_adapter (gov_audit/... | → | D_SHARED 共享服务: Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 105 | 旧版分层存储（保留以兼容现有调用方）。 / tiered_storage (... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 106 | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 107 | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | D_SHARED 共享服务: Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 108 | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | D_SHARED 共享服务: 全局审计写入器协议 / Session Audit (session/session_audit... | 导入依赖 / import_depends |
+| 109 | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 110 | MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 111 | 提交进程 / post_process (behavioral_admission/post_proces... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 112 | 审计链验证器 / audit_chain_verifier (rule_enforcement/aud... | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 113 | sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 114 | sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 115 | Git辅助 / _git_helpers (audit/_git_helpers.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 116 | 蓝图状态转换协调器 / blueprint_status_transition_reconcil... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 117 | commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 118 | 跨layercontractsignature对账器 / cross_layer_contract_sig... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 119 | Git绩效监控协调器 / git_performance_monitor_reconciler (a... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 120 | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 121 | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 122 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 123 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 124 | 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 125 | 修复进度对账器 / remediation_progress_reconciler (audit/r... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 126 | 运行时违规快照 / runtime_violation_snapshot (audit/runtim... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 127 | 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 128 | 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | D_SHARED 共享服务: 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 129 | 翻译覆盖率存量对账 reconciler. / Translation Coverage Rec... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 130 | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 131 | 收集各阶段审计结果，去重合并排序输出。 / issue_aggregator... | → | D_SHARED 共享服务: 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 132 | self愈合器 / self_healer (semantic_audit/self_healer.py) | → | D_SHARED 共享服务: 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 133 | self愈合器 / self_healer (semantic_audit/self_healer.py) | → | D_SHARED 共享服务: vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 134 | Test Cycle Dependency Audit Isolation / Test Cycle Depend... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 135 | DM-90974 Phase 2: depgraph dirty flag 单测 / Test Depgrap... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 136 | Test Integrity Root / Test Integrity Root (audit/test_int... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 137 | DOM-GOV-001 §8.4.""" / Test P0 I2 Construction Order (au... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 138 | 测试工作区遥测共享 / test_workspace_telemetry_shared (gov... | → | D_SHARED 共享服务: 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 139 | 测试工作区遥测共享 / test_workspace_telemetry_shared (gov... | → | D_SHARED 共享服务: 主工作区文件操作遥测公共 API / Workspace Telemetry (io/wo... | 测试依赖 / test_depends |
+| 140 | Test Verdict Engine / Test Verdict Engine (audit/test_ver... | → | D_TRADING 交易运营: Verdict Engine / Verdict Engine (trading/verdict_engine.py) | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -1402,87 +1403,87 @@ flowchart TD
 | 6 | D_GOVERNANCE 生命周期管理: projection引擎 / projection_engine (observability_governa... | → | 事件存储 / event_store (gov_audit/event_store.py) | 导入依赖 / import_depends |
 | 7 | D_GOVERNANCE 生命周期管理: 数据库管理器 / database_manager (persistence/database_man... | → | 审计模式 / audit_schema (gov_audit/audit_schema.py) | 导入依赖 / import_depends |
 | 8 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 9 | D_GOVERNANCE 生命周期管理: compliance/test_financial_compliance.py | → | 金融合规 / financial_compliance (financial_governance/fin... | 测试依赖 / test_depends |
-| 10 | D_GOVERNANCE 生命周期管理: delegation/test_mcp_result_push.py | → | MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | 测试依赖 / test_depends |
-| 11 | D_GOVERNANCE 生命周期管理: delegation/test_post_process_root.py | → | 提交进程 / post_process (behavioral_admission/post_proces... | 测试依赖 / test_depends |
-| 12 | D_GOVERNANCE 生命周期管理: Unit tests for post_process.py (delegation/test_post_proc... | → | 提交进程 / post_process (behavioral_admission/post_proces... | 测试依赖 / test_depends |
-| 13 | D_GOVERNANCE 生命周期管理: delegation/test_trust_ring_manager.py | → | trustring管理器 / trust_ring_manager (gov_audit/trust_rin... | 测试依赖 / test_depends |
-| 14 | D_GOVERNANCE 生命周期管理: delegation/test_vibe_coding_enforcer.py | → | vibecoding执行器 / vibe_coding_enforcer (behavioral_admis... | 测试依赖 / test_depends |
-| 15 | D_GOVERNANCE 生命周期管理: test_adversarial_contract_attacks.py — 治理域八件套红白... | → | 异常 / anomaly (gov_audit/anomaly.py) | 测试依赖 / test_depends |
-| 16 | D_GOVERNANCE 生命周期管理: G-CT-001 集成测试 — RBAC→Audit 端到端数据流通. (securit... | → | 契约 / contracts (gov_audit/contracts.py) | 测试依赖 / test_depends |
-| 17 | D_GOVERNANCE 生命周期管理: DOM-GOV-001 P0 测试用例 — P0-U1 冒烟测试 + P0-U2 输入校... | → | 异常 / anomaly (gov_audit/anomaly.py) | 测试依赖 / test_depends |
-| 18 | D_GOVERNANCE 生命周期管理: DOM-GOV-001 P0 测试用例 — P0-U1 冒烟测试 + P0-U2 输入校... | → | spec审计器 / spec_auditor (gov_audit/spec_auditor.py) | 测试依赖 / test_depends |
-| 19 | D_GOVERNANCE 生命周期管理: security/test_supply_chain_security.py | → | supplychain安全 / supply_chain_security (gov_audit/supply... | 测试依赖 / test_depends |
-| 20 | D_GOVERNANCE 生命周期管理: G-CT-007 — Agent Spec → Audit 集成测试. (shared/test_gc... | → | spec审计器 / spec_auditor (gov_audit/spec_auditor.py) | 测试依赖 / test_depends |
-| 21 | D_GOVERNANCE 生命周期管理: P0-U2 输入校验测试 — DOM-GOV-001 §8.2. (shared/test_p0_... | → | spec审计器 / spec_auditor (gov_audit/spec_auditor.py) | 测试依赖 / test_depends |
-| 22 | D_GOVERNANCE 生命周期管理: E2E 集成测试：全流水线贯通测试 (trading/test_e2e_pipeline... | → | 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | 测试依赖 / test_depends |
-| 23 | D_GOVERNANCE 生命周期管理: Phase E — Main Data Flow End-to-End Test (trading/test_p... | → | 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | 测试依赖 / test_depends |
+| 9 | D_GOVERNANCE 生命周期管理: Test Financial Compliance / Test Financial Compliance (co... | → | 金融合规 / financial_compliance (financial_governance/fin... | 测试依赖 / test_depends |
+| 10 | D_GOVERNANCE 生命周期管理: Test Mcp Result Push / Test Mcp Result Push (delegation/t... | → | MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | 测试依赖 / test_depends |
+| 11 | D_GOVERNANCE 生命周期管理: Test Post Process Root / Test Post Process Root (delegati... | → | 提交进程 / post_process (behavioral_admission/post_proces... | 测试依赖 / test_depends |
+| 12 | D_GOVERNANCE 生命周期管理: Test Post Process Unit / Test Post Process Unit (delegati... | → | 提交进程 / post_process (behavioral_admission/post_proces... | 测试依赖 / test_depends |
+| 13 | D_GOVERNANCE 生命周期管理: Test Trust Ring Manager / Test Trust Ring Manager (delega... | → | trustring管理器 / trust_ring_manager (gov_audit/trust_rin... | 测试依赖 / test_depends |
+| 14 | D_GOVERNANCE 生命周期管理: Test Vibe Coding Enforcer / Test Vibe Coding Enforcer (de... | → | vibecoding执行器 / vibe_coding_enforcer (behavioral_admis... | 测试依赖 / test_depends |
+| 15 | D_GOVERNANCE 生命周期管理: 治理域八件套红白对抗测试 / Test Adversarial Contract Atta... | → | 异常 / anomaly (gov_audit/anomaly.py) | 测试依赖 / test_depends |
+| 16 | D_GOVERNANCE 生命周期管理: RBAC→Audit 端到端数据流通.""" / Test Gct 001 Rbac To Aud... | → | 契约 / contracts (gov_audit/contracts.py) | 测试依赖 / test_depends |
+| 17 | D_GOVERNANCE 生命周期管理: G-CT-001~008 每条契约的端到端数据流通断言""" / Test P0 U1... | → | 异常 / anomaly (gov_audit/anomaly.py) | 测试依赖 / test_depends |
+| 18 | D_GOVERNANCE 生命周期管理: G-CT-001~008 每条契约的端到端数据流通断言""" / Test P0 U1... | → | spec审计器 / spec_auditor (gov_audit/spec_auditor.py) | 测试依赖 / test_depends |
+| 19 | D_GOVERNANCE 生命周期管理: Test Supply Chain Security / Test Supply Chain Security (... | → | supplychain安全 / supply_chain_security (gov_audit/supply... | 测试依赖 / test_depends |
+| 20 | D_GOVERNANCE 生命周期管理: Agent Spec → Audit 集成测试.""" / Test Gct 007 Spec To R... | → | spec审计器 / spec_auditor (gov_audit/spec_auditor.py) | 测试依赖 / test_depends |
+| 21 | D_GOVERNANCE 生命周期管理: DOM-GOV-001 §8.2.""" / Test P0 U2 Input Validation (shar... | → | spec审计器 / spec_auditor (gov_audit/spec_auditor.py) | 测试依赖 / test_depends |
+| 22 | D_GOVERNANCE 生命周期管理: Test E2e Pipeline / Test E2e Pipeline (trading/test_e2e_p... | → | 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | 测试依赖 / test_depends |
+| 23 | D_GOVERNANCE 生命周期管理: Main Data Flow End-to-End Test / Test Phase E Main Flow (... | → | 默认tca引擎 / Re-export wrapper: default_tca_engine canon... | 测试依赖 / test_depends |
 | 24 | D_GOV_CODE_QUALITY 代码质量治理: panorama对齐门禁 / panorama_alignment_gate (commit_gates/... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 25 | D_GOV_CODE_QUALITY 代码质量治理: reconciler_health_gate.py — reconciler 健康度门禁（#ARCH... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 25 | D_GOV_CODE_QUALITY 代码质量治理: reconciler 健康度门禁 / Reconciler Health Gate (commit_ga... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
 | 26 | D_GOV_CODE_QUALITY 代码质量治理: 测试残留前缀硬编码阻断门禁 (commit_gates/test_residue_sso... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 27 | D_GOV_DRIFT 漂移检测: gov_audit/drift_bridge.py | → | 异常 / anomaly (gov_audit/anomaly.py) | 导入依赖 / import_depends |
-| 28 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | → | 发现ingest / finding_ingest (gov_audit/finding_ingest.py) | 导入依赖 / import_depends |
-| 29 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | → | 发现模型 / finding_model (gov_audit/finding_model.py) | 导入依赖 / import_depends |
-| 30 | D_GOV_DRIFT 漂移检测: 真源优先级裁决器（Truth Source Validator） (rule_enforcem... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
-| 31 | D_GOV_DRIFT 漂移检测: governance/integrity.py | → | audit-trail.merkle每小时 / merkle_hourly (gov_audit/merkl... | 导入依赖 / import_depends |
-| 32 | D_GOV_DRIFT 漂移检测: governance/integrity.py | → | 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
-| 33 | D_GOV_DRIFT 漂移检测: governance/integrity.py | → | 信任桥接 / trust_bridge (gov_audit/trust_bridge.py) | 导入依赖 / import_depends |
-| 34 | D_GOV_ENFORCEMENT 规则执行: metric_count_drift_reconciler.py — dashboard 指标数描述... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 35 | D_GOV_ENFORCEMENT 规则执行: readme_version_sync_reconciler.py — README 版本号派生展... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 36 | D_GOV_ENFORCEMENT 规则执行: requirements_version_sync_reconciler.py — requirements.t... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 37 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/__init__.py | → | MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | 导入依赖 / import_depends |
-| 38 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/__init__.py | → | 提交进程 / post_process (behavioral_admission/post_proces... | 导入依赖 / import_depends |
-| 39 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/__init__.py | → | vibecoding执行器 / vibe_coding_enforcer (behavioral_admis... | 导入依赖 / import_depends |
-| 40 | D_GOV_ENFORCEMENT 规则执行: GateEventAdapter — GateRepo 事件适配器（DW-0006） (behav... | → | 事件存储 / event_store (gov_audit/event_store.py) | 导入依赖 / import_depends |
-| 41 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/verdict_engine.py | → | 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
-| 42 | D_GOV_ENFORCEMENT 规则执行: emergency_commit.py — 紧急提交通道（Ruling:100PCT-AI-GOV... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 43 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | 蓝图状态转换协调器 / blueprint_status_transition_reconcil... | 导入依赖 / import_depends |
-| 44 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | 导入依赖 / import_depends |
-| 45 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | 跨layercontractsignature对账器 / cross_layer_contract_sig... | 导入依赖 / import_depends |
-| 46 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | dead_public_wrapper_reconciler.py — 死公共 wrapper 自动... | 导入依赖 / import_depends |
-| 47 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | 错误模式消费者协调器 / error_pattern_consumer_reconciler ... | 导入依赖 / import_depends |
-| 48 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | git_guard_bypass_reconciler.py — git_guard alias 绕过检... | 导入依赖 / import_depends |
-| 49 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | Git绩效监控协调器 / git_performance_monitor_reconciler (a... | 导入依赖 / import_depends |
-| 50 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | 导入依赖 / import_depends |
-| 51 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 52 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | 修复进度对账器 / remediation_progress_reconciler (audit/r... | 导入依赖 / import_depends |
-| 53 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | 运行时违规快照协调器 / runtime_violation_snapshot_reconci... | 导入依赖 / import_depends |
-| 54 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | translation_coverage_reconciler.py — 翻译覆盖率存量对账 ... | 导入依赖 / import_depends |
-| 55 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | 导入依赖 / import_depends |
-| 56 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | AI错误模式库 / ai_error_pattern_library (audit/ai_error_p... | 导入依赖 / import_depends |
-| 57 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | 导入依赖 / import_depends |
-| 58 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 59 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | 导入依赖 / import_depends |
-| 60 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | 完整性 / integrity (gov_audit/integrity.py) | 导入依赖 / import_depends |
-| 61 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | 导入依赖 / import_depends |
-| 62 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 63 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | 导入依赖 / import_depends |
-| 64 | D_GOV_OPS_RESILIENCE 运维弹性治理: blast_radius — MOD-INF-028 §3.1 Stage 9 (resilience_gov... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 / models (seman... | 导入依赖 / import_depends |
-| 65 | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/tamper_evident_log.py | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 27 | D_GOV_DRIFT 漂移检测: drift bridge sync result -- 对齐 test_bridges_drift_bridg... | → | 异常 / anomaly (gov_audit/anomaly.py) | 导入依赖 / import_depends |
+| 28 | D_GOV_DRIFT 漂移检测: Drift Engine / Drift Engine (gov_drift/drift_engine.py) | → | 发现ingest / finding_ingest (gov_audit/finding_ingest.py) | 导入依赖 / import_depends |
+| 29 | D_GOV_DRIFT 漂移检测: Drift Engine / Drift Engine (gov_drift/drift_engine.py) | → | 发现模型 / finding_model (gov_audit/finding_model.py) | 导入依赖 / import_depends |
+| 30 | D_GOV_DRIFT 漂移检测: Truth Source Validator / Truth Source Validator (rule_enf... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
+| 31 | D_GOV_DRIFT 漂移检测: Integrity / Integrity (governance/integrity.py) | → | audit-trail.merkle每小时 / merkle_hourly (gov_audit/merkl... | 导入依赖 / import_depends |
+| 32 | D_GOV_DRIFT 漂移检测: Integrity / Integrity (governance/integrity.py) | → | 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
+| 33 | D_GOV_DRIFT 漂移检测: Integrity / Integrity (governance/integrity.py) | → | 信任桥接 / trust_bridge (gov_audit/trust_bridge.py) | 导入依赖 / import_depends |
+| 34 | D_GOV_ENFORCEMENT 规则执行: dashboard 指标数描述派生校验 reconciler / Metric Count Dr... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 35 | D_GOV_ENFORCEMENT 规则执行: README 版本号派生展示校验 reconciler / Readme Version Syn... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 36 | D_GOV_ENFORCEMENT 规则执行: requirements.txt ↔ pyproject.toml 依赖一致性校验 reconci... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 37 | D_GOV_ENFORCEMENT 规则执行: Init / Init (behavioral_admission/__init__.py) | → | MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | 导入依赖 / import_depends |
+| 38 | D_GOV_ENFORCEMENT 规则执行: Init / Init (behavioral_admission/__init__.py) | → | 提交进程 / post_process (behavioral_admission/post_proces... | 导入依赖 / import_depends |
+| 39 | D_GOV_ENFORCEMENT 规则执行: Init / Init (behavioral_admission/__init__.py) | → | vibecoding执行器 / vibe_coding_enforcer (behavioral_admis... | 导入依赖 / import_depends |
+| 40 | D_GOV_ENFORCEMENT 规则执行: —将 gate 结果写入 task_events / Gate Event Adapter (beha... | → | 事件存储 / event_store (gov_audit/event_store.py) | 导入依赖 / import_depends |
+| 41 | D_GOV_ENFORCEMENT 规则执行: Verdict Engine / Verdict Engine (behavioral_admission/ver... | → | 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
+| 42 | D_GOV_ENFORCEMENT 规则执行: 紧急提交通道 / Emergency Commit (rule_bridge/emergency_co... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 43 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 蓝图状态转换协调器 / blueprint_status_transition_reconcil... | 导入依赖 / import_depends |
+| 44 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | 导入依赖 / import_depends |
+| 45 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 跨layercontractsignature对账器 / cross_layer_contract_sig... | 导入依赖 / import_depends |
+| 46 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 死公共 wrapper 自动检测 reconciler. / Dead Public Wrapper... | 导入依赖 / import_depends |
+| 47 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 错误模式消费者协调器 / error_pattern_consumer_reconciler ... | 导入依赖 / import_depends |
+| 48 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | git_guard alias 绕过检测 post-commit reconciler / Git Gua... | 导入依赖 / import_depends |
+| 49 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | Git绩效监控协调器 / git_performance_monitor_reconciler (a... | 导入依赖 / import_depends |
+| 50 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | 导入依赖 / import_depends |
+| 51 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 52 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 修复进度对账器 / remediation_progress_reconciler (audit/r... | 导入依赖 / import_depends |
+| 53 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 运行时违规快照协调器 / runtime_violation_snapshot_reconci... | 导入依赖 / import_depends |
+| 54 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 翻译覆盖率存量对账 reconciler. / Translation Coverage Rec... | 导入依赖 / import_depends |
+| 55 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | 导入依赖 / import_depends |
+| 56 | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | → | AI错误模式库 / ai_error_pattern_library (audit/ai_error_p... | 导入依赖 / import_depends |
+| 57 | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | → | 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | 导入依赖 / import_depends |
+| 58 | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 59 | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | → | 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | 导入依赖 / import_depends |
+| 60 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | 完整性 / integrity (gov_audit/integrity.py) | 导入依赖 / import_depends |
+| 61 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | 导入依赖 / import_depends |
+| 62 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 63 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | 导入依赖 / import_depends |
+| 64 | D_GOV_OPS_RESILIENCE 运维弹性治理: depgraph YAML 加载或结构校验失败.""" / Blast Radius (resi... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 / models (seman... | 导入依赖 / import_depends |
+| 65 | D_GOV_OPS_RESILIENCE 运维弹性治理: 5.17.5 修复：解析 HMAC 密钥 / Tamper Evident Log (securit... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
 | 66 | D_GOV_RULE 规则治理: 能力检查器 / Capability Checker (rule_enforcement/capabil... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
 | 67 | D_GOV_RULE 规则治理: 门禁紧急旁路 / Gate Override (gate_engine/gate_override.py) | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
-| 68 | D_GOV_SCRIPTS 脚本治理: Red/Blue Team Adversarial Test v3: SYS-MASTER-001 + MOD-M... | → | sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | 导入依赖 / import_depends |
-| 69 | D_GOV_SCRIPTS 脚本治理: scripts/governance/rebuild_audit_index.py — 重建 audit-t... | → | 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | 导入依赖 / import_depends |
-| 70 | D_GOV_SCRIPTS 脚本治理: architecture_health_dashboard.py — 架构健康度仪表盘（自... | → | 运行时违规快照 / runtime_violation_snapshot (audit/runtim... | 导入依赖 / import_depends |
-| 71 | D_GOV_SCRIPTS 脚本治理: session_startup_health_check.py — AI session 启动健康度... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 72 | D_INFRASTRUCTURE 跨层契约基础设施: backup_reconciler.py — 灾备备份系统事件触发器（post-comm... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 68 | D_GOV_SCRIPTS 脚本治理: Adversarial Sys Master Test / Adversarial Sys Master Test... | → | sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | 导入依赖 / import_depends |
+| 69 | D_GOV_SCRIPTS 脚本治理: parse args, run logic, return exit code.""" / Rebuild Aud... | → | 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | 导入依赖 / import_depends |
+| 70 | D_GOV_SCRIPTS 脚本治理: 架构健康度仪表盘 / Architecture Health Dashboard (governa... | → | 运行时违规快照 / runtime_violation_snapshot (audit/runtim... | 导入依赖 / import_depends |
+| 71 | D_GOV_SCRIPTS 脚本治理: AI session 启动健康度自检 / Session Startup Health Check ... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
+| 72 | D_INFRASTRUCTURE 跨层契约基础设施: 灾备备份系统事件触发器 / Backup Reconciler (backup/backup... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
 | 73 | D_INFRA_OPS 基础设施运维: 测试残留目录一次性清理工具 (ops/cleanup_runtime_tmp_resid... | → | 对账注册表 / reconciliation_registry (audit/reconciliatio... | 导入依赖 / import_depends |
-| 74 | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. (rollback/... | → | 契约 / contracts (gov_audit/contracts.py) | 导入依赖 / import_depends |
-| 75 | D_INFRA_RECOVERY 回滚恢复: RollbackAbuseDetector — 回滚滥用检测。 (rollback/rollbac... | → | 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | 导入依赖 / import_depends |
-| 76 | D_INFRA_RECOVERY 回滚恢复: RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog. ... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 77 | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 78 | D_INFRA_RUNTIME 运行时集成: AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 79 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/engine.py | → | 发现模型 / finding_model (gov_audit/finding_model.py) | 导入依赖 / import_depends |
-| 80 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
-| 81 | D_INTEGRATION 管线路由: 接收 RED 问题,生成修复文本。LLM 只润色不做判断。不可用时... | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 / models (seman... | 导入依赖 / import_depends |
-| 82 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 (mc... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 83 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
-| 84 | D_SECURITY 对抗验证: G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. (access_... | → | 契约 / contracts (gov_audit/contracts.py) | 导入依赖 / import_depends |
-| 85 | D_SECURITY 对抗验证: orphan_judge/judge.py | → | 发现模型 / finding_model (gov_audit/finding_model.py) | 导入依赖 / import_depends |
-| 86 | D_SECURITY 对抗验证: adversarial_validation/defense_runner.py | → | 发现模型 / finding_model (gov_audit/finding_model.py) | 导入依赖 / import_depends |
-| 87 | D_SECURITY 对抗验证: llm_security/behavior_audit_logger.py | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
-| 88 | D_SECURITY 对抗验证: self_protection/isolation.py | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
-| 89 | D_TRADING 交易运营: trading/verdict_engine.py | → | 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
+| 74 | D_INFRA_RECOVERY 回滚恢复: Auditor / Auditor (rollback/auditor.py) | → | 契约 / contracts (gov_audit/contracts.py) | 导入依赖 / import_depends |
+| 75 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Rollback Abuse Detector (rollback/ro... | → | 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | 导入依赖 / import_depends |
+| 76 | D_INFRA_RECOVERY 回滚恢复: 只读：core_writer / Rollback Audit Nexus (rollback/rollba... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 77 | D_INFRA_RECOVERY 回滚恢复: Rollback Executor / Rollback Executor (rollback/rollback_... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 78 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 L5 ITIL生命周期自动化管理器 / Lifecycle (asse... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 79 | D_INFRA_RUNTIME 运行时集成: Engine / Engine (auto_fix_engine/engine.py) | → | 发现模型 / finding_model (gov_audit/finding_model.py) | 导入依赖 / import_depends |
+| 80 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
+| 81 | D_INTEGRATION 管线路由: LLM 桥接 Stage 6 / Llm Bridge (integration/llm_bridge.py) | → | 语义审计管线数据模型 — MOD-INF-028 §4.2 / models (seman... | 导入依赖 / import_depends |
+| 82 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志 / Audit Logger (mcp/audit_logger... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 83 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | 导入依赖 / import_depends |
+| 84 | D_SECURITY 对抗验证: G-CT-001 RBAC->Audit 桥接契约 - RBACAuditBridge. / Contra... | → | 契约 / contracts (gov_audit/contracts.py) | 导入依赖 / import_depends |
+| 85 | D_SECURITY 对抗验证: OrphanJudge 模块基础异常""" / Judge (orphan_judge/judge.py) | → | 发现模型 / finding_model (gov_audit/finding_model.py) | 导入依赖 / import_depends |
+| 86 | D_SECURITY 对抗验证: Defense Runner / Defense Runner (adversarial_validation/d... | → | 发现模型 / finding_model (gov_audit/finding_model.py) | 导入依赖 / import_depends |
+| 87 | D_SECURITY 对抗验证: Behavior Audit Logger / Behavior Audit Logger (llm_securi... | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
+| 88 | D_SECURITY 对抗验证: LSG 自身隔离策略. / Isolation (self_protection/isolation.py) | → | 写入核心审计链——治本（裁定#18 G7 + 5.37.1） / bridge (g... | 导入依赖 / import_depends |
+| 89 | D_TRADING 交易运营: Verdict Engine / Verdict Engine (trading/verdict_engine.py) | → | 审计事件类型枚举——治本（裁定#18 G2）：转为真 Enu / mode... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

@@ -131,7 +131,7 @@ flowchart TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_ML_TRAIN 训练: training_dataset_manager/ | → | lineage追踪器 / lineage_tracker (core/lineage_tracker.py) | data / data |
+| 1 | D_ML_TRAIN 训练: Training Dataset Manager / Training Dataset Manager (trai... | → | lineage追踪器 / lineage_tracker (core/lineage_tracker.py) | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

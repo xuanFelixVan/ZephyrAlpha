@@ -53,153 +53,153 @@ ttl: permanent
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py["_cross_layer/ml_experiment_pipeline<br/>MLExperimentPipeline<br/>D_ML_TRAIN->实验跨层集成管道<br/>文件: _cross_layer/ml_experiment_pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_shared_adaptation_execution_tuner_py["adaptation/execution_tuner<br/>Execution Tuner — 执行调谐器（token/timeout<br/>自适应）。<br/>文件: adaptation/execution_tuner.py<br/>(生产态 / production)"]
-    src_zephyr_shared_adaptation_prompt_version_manager_py["adaptation/prompt_version_manager<br/>Prompt Version Manager — 版本化 Prompt 治理。<br/>文件: adaptation/prompt_version_manager.py<br/>(生产态 / production)"]
-    src_zephyr_shared_ai_guards_ai_audit_guard_py["ai_guards/ai_audit_guard<br/>共享层/ai guards包的ai_audit_guard模块<br/>文件: ai_guards/ai_audit_guard.py<br/>(生产态 / production)"]
-    src_zephyr_shared_ai_guards_combinatorial_gate_py["ai_guards/combinatorial_gate<br/>共享层/ai guards包的combinatorial_gate模块<br/>文件: ai_guards/combinatorial_gate.py<br/>(生产态 / production)"]
-    src_zephyr_shared_ai_guards_core_integrity_guard_py["ai_guards/core_integrity_guard<br/>共享层/ai guards包的core_integrity_guard模块<br/>文件: ai_guards/core_integrity_guard.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_alert_escalation_py["alerts/alert_escalation<br/>AlertEscalation — re-homed to eliminate<br/>shared->infrastructure circular import.<br/>文件: alerts/alert_escalation.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_alert_manager_py["alerts/alert_manager<br/>共享层/alerts包的alert_manager模块<br/>文件: alerts/alert_manager.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_alert_precision_tracker_py["alerts/alert_precision_tracker<br/>共享层/alerts包的alert_precision_tracker模块<br/>文件: alerts/alert_precision_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_dual_channel_alert_py["alerts/dual_channel_alert<br/>共享层/alerts包的dual_channel_alert模块<br/>文件: alerts/dual_channel_alert.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_heartbeat_server_py["alerts/heartbeat_server<br/>共享层/alerts包的heartbeat_server模块<br/>文件: alerts/heartbeat_server.py<br/>(生产态 / production)"]
-    src_zephyr_shared_api_api_client_py["api/api_client<br/>api_client.py —— 统一 API Client 基类（Phase 7<br/>新增 / 盲点 B11 修复）<br/>文件: api/api_client.py<br/>(生产态 / production)"]
-    src_zephyr_shared_api_api_index_py["api/api_index<br/>shared/ API 索引 — AI session<br/>冷启动时的'员工通讯录'<br/>文件: api/api_index.py<br/>(生产态 / production)"]
-    src_zephyr_shared_api_dos_launcher_py["api/dos_launcher<br/>共享层/接口包的dos_launcher模块<br/>文件: api/dos_launcher.py<br/>(生产态 / production)"]
-    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["blueprint_tools/ai_understandability_constraint<br/>共享层/blueprint<br/>tools包的ai_understandability_constraint模块<br/>文件: blueprint_tools<br/>/ai_understandability_constraint.py<br/>(生产态 / production)"]
-    src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py["blueprint_tools/blueprint_code_auditor<br/>共享层/blueprint<br/>tools包的blueprint_code_auditor模块<br/>文件: blueprint_tools/blueprint_code_auditor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_blueprint_tools_blueprint_scorer_py["blueprint_tools/blueprint_scorer<br/>blueprint_scorer.py — Re-export wrapper -><br/>canonical: zephyr.orchestrator.qu...<br/>文件: blueprint_tools/blueprint_scorer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_adaptive_sampler_py["capacity_governance/adaptive_sampler<br/>共享层/capacity<br/>governance包的adaptive_sampler模块<br/>文件: capacity_governance/adaptive_sampler.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_budget_aware_prompt_py["capacity_governance/budget_aware_prompt<br/>共享层/capacity<br/>governance包的budget_aware_prompt模块<br/>文件: capacity_governance/budget_aware_prompt.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_capacity_calibrator_py["capacity_governance/capacity_calibrator<br/>共享层/capacity<br/>governance包的capacity_calibrator模块<br/>文件: capacity_governance/capacity_calibrator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_capacity_digital_twin_py["capacity_governance/capacity_digital_twin<br/>共享层/capacity<br/>governance包的capacity_digital_twin模块<br/>文件: capacity_governance<br/>/capacity_digital_twin.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_capacity_fingerprint_py["capacity_governance/capacity_fingerprint<br/>共享层/capacity<br/>governance包的capacity_fingerprint模块<br/>文件: capacity_governance<br/>/capacity_fingerprint.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_capacity_runbook_generator_py["capacity_governance/capacity_runbook_generator<br/>共享层/capacity<br/>governance包的capacity_runbook_generator模块<br/>文件: capacity_governance<br/>/capacity_runbook_generator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_cost_estimator_py["capacity_governance/cost_estimator<br/>共享层/capacity governance包的cost_estimator模块<br/>文件: capacity_governance/cost_estimator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_dependency_capacity_guard_py["capacity_governance/dependency_capacity_guard<br/>共享层/capacity<br/>governance包的dependency_capacity_guard模块<br/>文件: capacity_governance<br/>/dependency_capacity_guard.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_model_capacity_probe_py["capacity_governance/model_capacity_probe<br/>共享层/capacity<br/>governance包的model_capacity_probe模块<br/>文件: capacity_governance<br/>/model_capacity_probe.py<br/>(生产态 / production)"]
-    src_zephyr_shared_compensation_saga_compensator_py["compensation/saga_compensator<br/>Saga Compensator — 补偿事务：多步操作任一失败<br/>-> 反向补偿。<br/>文件: compensation/saga_compensator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_context_context_engine_py["context/context_engine<br/>Context Engine — AI 上下文组装与 Token<br/>预算管理。<br/>文件: context/context_engine.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_backpressure_types_py["backpressure/_types<br/>Shared internal backpressure type definitions.<br/>文件: backpressure/_types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_backpressure_pause_py["backpressure/pause<br/>共享层/backpressure包的pause模块<br/>文件: backpressure/pause.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_backpressure_resume_py["backpressure/resume<br/>共享层/backpressure包的resume模块<br/>文件: backpressure/resume.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_backpressure_throttle_py["backpressure/throttle<br/>共享层/backpressure包的throttle模块<br/>文件: backpressure/throttle.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_contract_bus_py["contracts/contract_bus<br/>ContractBus — 跨层通信抽象 + Pydantic v2 Schema<br/>Enforcement (M-09)<br/>文件: contracts/contract_bus.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_base_event_py["core/base_event<br/>BaseEvent — 跨层事件基类<br/>文件: core/base_event.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_enforcer_py["core/enforcer<br/>ZephyrAlpha — shared/contracts/enforcer.py<br/>文件: core/enforcer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_factories_py["core/factories<br/>shared/contracts/factories.py —<br/>跨层数据契约工厂方法<br/>文件: core/factories.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_gate_types_py["core/gate_types<br/>共享层/核心包的gate_types模块<br/>文件: core/gate_types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_registry_py["core/registry<br/>ZephyrAlpha — shared/contracts/registry.py<br/>文件: core/registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_system_configuration_py["core/system_configuration<br/>共享层/核心包的system_configuration模块<br/>文件: core/system_configuration.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_timestamp_py["core/timestamp<br/>ZephyrAlpha — shared/contracts/timestamp.py<br/>文件: core/timestamp.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_enums_init_py["contracts/enums 包入口<br/>shared/contracts/enums — 跨切面交易枚举真源<br/>(5.152 #1 修复)<br/>文件: enums/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_contract_violation_error_py["errors/contract_violation_error<br/>共享层/错误包的contract_violation_error模块<br/>文件: errors/contract_violation_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_data_quality_error_py["errors/data_quality_error<br/>CTR-ERR-001: DataQualityError /<br/>行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_execution_rejection_error_py["errors/execution_rejection_error<br/>共享层/错误包的execution_rejection_error模块<br/>文件: errors/execution_rejection_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_factor_computation_error_py["errors/factor_computation_error<br/>CTR-ERR-002: FactorComputationError /<br/>因子计算失败错误<br/>文件: errors/factor_computation_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py["errors/risk_limit_violation_error<br/>共享层/错误包的risk_limit_violation_error模块<br/>文件: errors/risk_limit_violation_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_signal_degradation_warning_py["errors/signal_degradation_warning<br/>共享层/错误包的signal_degradation_warning模块<br/>文件: errors/signal_degradation_warning.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_escalation_budget_alert_py["escalation/budget_alert<br/>共享层/escalation包的budget_alert模块<br/>文件: escalation/budget_alert.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_capital_allocation_result_py["execution/capital_allocation_result<br/>共享层/执行包的capital_allocation_result模块<br/>文件: execution/capital_allocation_result.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_execution_report_py["execution/execution_report<br/>共享层/执行包的execution_report模块<br/>文件: execution/execution_report.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_fill_py["execution/fill<br/>共享层/执行包的fill模块<br/>文件: execution/fill.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_model_serving_request_py["execution/model_serving_request<br/>共享层/执行包的model_serving_request模块<br/>文件: execution/model_serving_request.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_order_py["execution/order<br/>共享层/执行包的order模块<br/>文件: execution/order.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_experiment_experiment_result_py["experiment/experiment_result<br/>共享层/experiment包的experiment_result模块<br/>文件: experiment/experiment_result.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_experiment_model_serving_response_py["experiment/model_serving_response<br/>共享层/experiment包的model_serving_response模块<br/>文件: experiment/model_serving_response.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_external_ext_001_py["external/ext_001<br/>共享层/external包的ext_001模块<br/>文件: external/ext_001.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_external_ext_002_py["external/ext_002<br/>共享层/external包的ext_002模块<br/>文件: external/ext_002.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_external_ext_003_py["external/ext_003<br/>共享层/external包的ext_003模块<br/>文件: external/ext_003.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_external_ext_004_py["external/ext_004<br/>共享层/external包的ext_004模块<br/>文件: external/ext_004.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_identity_agent_identity_py["identity/agent_identity<br/>共享层/identity包的agent_identity模块<br/>文件: identity/agent_identity.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_identity_permission_py["identity/permission<br/>共享层/identity包的permission模块<br/>文件: identity/permission.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_llm_gateway_protocol_py["contracts/llm_gateway_protocol<br/>LLMGatewayProtocol — LLM 网关抽象接口<br/>文件: contracts/llm_gateway_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_market_instrument_py["market/instrument<br/>共享层/market包的instrument模块<br/>文件: market/instrument.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_orchestration_protocol_py["contracts/orchestration_protocol<br/>共享层/契约包的orchestration_protocol模块<br/>文件: contracts/orchestration_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_portfolio_money_py["portfolio/money<br/>共享层/portfolio包的money模块<br/>文件: portfolio/money.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_portfolio_position_py["portfolio/position<br/>共享层/portfolio包的position模块<br/>文件: portfolio/position.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_compliance_rule_py["risk/compliance_rule<br/>共享层/风险包的compliance_rule模块<br/>文件: risk/compliance_rule.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py["risk/risk_dashboard_snapshot<br/>共享层/风险包的risk_dashboard_snapshot模块<br/>文件: risk/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_risk_limits_py["risk/risk_limits<br/>共享层/风险包的risk_limits模块<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_risk_metrics_py["risk/risk_metrics<br/>共享层/风险包的risk_metrics模块<br/>文件: risk/risk_metrics.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_risk_validator_protocol_py["risk/risk_validator_protocol<br/>共享层/风险包的risk_validator_protocol模块<br/>文件: risk/risk_validator_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_security_security_decision_py["security/security_decision<br/>共享层/安全包的security_decision模块<br/>文件: security/security_decision.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_skill_protocol_py["contracts/skill_protocol<br/>共享层/契约包的skill_protocol模块<br/>文件: contracts/skill_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_database_init_py["shared/database 包入口<br/>共享数据库工具包：提供 DatabaseService 共用的<br/>CRUD mixin。<br/>文件: database/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_shared_dependency_dependency_graph_py["dependency/dependency_graph<br/>Dependency Graph — 任务卡依赖关系管理。<br/>文件: dependency/dependency_graph.py<br/>(生产态 / production)"]
-    src_zephyr_shared_draft_draft_assistant_py["draft/draft_assistant<br/>Draft Assistant — 想法 -> MTH-012 蓝图骨架生成。<br/>文件: draft/draft_assistant.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_dlq_bridge_py["events/dlq_bridge<br/>CT-DLQ-001: DeadLetterQueue -> System Event Bus<br/>integration bridge.<br/>文件: events/dlq_bridge.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_event_bus_upgrade_py["events/event_bus_upgrade<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>文件: events/event_bus_upgrade.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_event_reactor_py["events/event_reactor<br/>Event Reactor — 事件反应器（自动响应事件）。<br/>文件: events/event_reactor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_event_schemas_py["events/event_schemas<br/>event_schemas.py —— Observer 事件体 Pydantic V2<br/>Schema（盲点 B6/B10 修复）<br/>文件: events/event_schemas.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_hook_dispatcher_py["events/hook_dispatcher<br/>Hook Dispatcher — 任务状态变更 -> 外部回调触发。<br/>文件: events/hook_dispatcher.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_upgrade_strategy_py["events/upgrade_strategy<br/>EventBus 升级策略引擎<br/>文件: events/upgrade_strategy.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_constants_py["foundation/constants<br/>constants.py —— 共享枚举 & 常量集中 re-export<br/>（Single Source of Truth）<br/>文件: foundation/constants.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_deprecation_py["foundation/deprecation<br/>deprecation.py —— ZephyrAlpha API 废弃策略<br/>文件: foundation/deprecation.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_env_py["foundation/env<br/>共享层/foundation包的env模块<br/>文件: foundation/env.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_flags_py["foundation/flags<br/>共享层/foundation包的flags模块<br/>文件: foundation/flags.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_types_py["foundation/types<br/>types.py —— 共享类型别名 & 语义化 NewType<br/>（Phase 3 新增 / 盲点 #5 修复）<br/>文件: foundation/types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_cache_py["infra/cache<br/>cache.py —— 统一缓存抽象（Phase 8 新增 / 盲点<br/>B13 修复）<br/>文件: infra/cache.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_limiter_py["infra/limiter<br/>共享层/infra包的limiter模块<br/>文件: infra/limiter.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_lock_py["infra/lock<br/>lock.py —— 分布式锁抽象（Phase 10 新增 / 盲点<br/>B23 修复）<br/>文件: infra/lock.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_outbox_py["infra/outbox<br/>outbox.py —— 事务性 Outbox 模式（Phase 10 新增<br/>/ 盲点 B24 修复）<br/>文件: infra/outbox.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_process_lifecycle_gateway_py["infra/process_lifecycle_gateway<br/>ProcessLifecycleGateway — 进程生命周期统一入口<br/>文件: infra/process_lifecycle_gateway.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_content_fingerprint_py["io/content_fingerprint<br/>SHA-256 content fingerprint computation and<br/>verification.<br/>文件: io/content_fingerprint.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_file_utils_py["io/file_utils<br/>file_utils.py —— 安全文件操作工具（Phase 3 新增<br/>/ 盲点 #15 修复）<br/>文件: io/file_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_frontmatter_utils_py["io/frontmatter_utils<br/>frontmatter_utils.py — Markdown/YAML<br/>frontmatter 解析 SSoT<br/>文件: io/frontmatter_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_io_cache_py["io/io_cache<br/>io_cache.py - File-level I/O cache with LRU<br/>eviction<br/>文件: io/io_cache.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_streaming_reader_py["io/streaming_reader<br/>streaming_reader.py - Memory-efficient<br/>streaming file readers<br/>文件: io/streaming_reader.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_workspace_telemetry_py["io/workspace_telemetry<br/>workspace_telemetry.py —<br/>主工作区文件操作遥测公共 API（...<br/>文件: io/workspace_telemetry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_yaml_utils_py["io/yaml_utils<br/>yaml_utils.py — vocabulary YAML 加载公共工具<br/>（SSoT 真源）<br/>文件: io/yaml_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_health_py["lifecycle/health<br/>health.py —— ZephyrAlpha 聚合健康检查<br/>文件: lifecycle/health.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_health_discovery_py["lifecycle/health_discovery<br/>CT-HEALTH-001: System-wide Health Discovery<br/>Registration.<br/>文件: lifecycle/health_discovery.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_healthcheck_service_py["lifecycle/healthcheck_service<br/>共享层/lifecycle包的healthcheck_service模块<br/>文件: lifecycle/healthcheck_service.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_longevity_monitor_py["lifecycle/longevity_monitor<br/>共享层/lifecycle包的longevity_monitor模块<br/>文件: lifecycle/longevity_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_state_machine_py["lifecycle/state_machine<br/>StateMachine(S) — 通用状态机泛型基类<br/>(MOD-INF-038)<br/>文件: lifecycle/state_machine.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_task_heartbeat_py["lifecycle/task_heartbeat<br/>共享层/lifecycle包的task_heartbeat模块<br/>文件: lifecycle/task_heartbeat.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_ttl_cleanup_engine_py["lifecycle/ttl_cleanup_engine<br/>共享层/lifecycle包的ttl_cleanup_engine模块<br/>文件: lifecycle/ttl_cleanup_engine.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_autonomy_monitor_py["maintenance/autonomy_monitor<br/>Autonomy Monitor — AI 自主等级监控与降级。<br/>文件: maintenance/autonomy_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_code_economy_analyzer_py["maintenance/code_economy_analyzer<br/>共享层/maintenance包的code_economy_analyzer模块<br/>文件: maintenance/code_economy_analyzer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_dogfooding_py["maintenance/dogfooding<br/>Dogfooding — 自举测试：用 TaskCard 管理<br/>TaskCard 建设。<br/>文件: maintenance/dogfooding.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_handbook_py["maintenance/handbook<br/>Onboarding Handbook — AI Agent 施工手册生成。<br/>文件: maintenance/handbook.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_owner_trust_gauge_py["maintenance/owner_trust_gauge<br/>共享层/maintenance包的owner_trust_gauge模块<br/>文件: maintenance/owner_trust_gauge.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_slo_review_assistant_py["maintenance/slo_review_assistant<br/>共享层/maintenance包的slo_review_assistant模块<br/>文件: maintenance/slo_review_assistant.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_zero_config_py["maintenance/zero_config<br/>共享层/maintenance包的zero_config模块<br/>文件: maintenance/zero_config.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_dashboard_init_py["observability/dashboard 包入口<br/>Grafana 双数据源仪表盘模块（MOD-INF-044）。<br/>文件: dashboard/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_reasoning_spans_py["observability/reasoning_spans<br/>共享层/observability包的reasoning_spans模块<br/>文件: observability/reasoning_spans.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_tracing_py["observability/tracing<br/>tracing.py —— OpenTelemetry 分布式追踪（Phase B<br/>补充 / 盲点 B1 修复）<br/>文件: observability/tracing.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_a2a_a2a_coordination_py["a2a/a2a_coordination<br/>A2A Coordination — shared interface definitions<br/>for multi-agent coordination.<br/>文件: a2a/a2a_coordination.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_a2a_a2a_protocol_py["a2a/a2a_protocol<br/>Core A2A Protocol interface and governance data<br/>contracts.<br/>文件: a2a/a2a_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_a2a_a2a_schemas_py["a2a/a2a_schemas<br/>A2A data structure contracts — Message, Task,<br/>and StateMachine schemas.<br/>文件: a2a/a2a_schemas.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_module_birth_registry_py["protocols/module_birth_registry<br/>共享层/protocols包的module_birth_registry模块<br/>文件: protocols/module_birth_registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_ports_py["protocols/ports<br/>ports — D-DATA 服务的 Protocol 定义<br/>文件: protocols/ports.py<br/>(生产态 / production)"]
-    src_zephyr_shared_reliability_diff_planner_py["reliability/diff_planner<br/>Diff Planner — 最小增量变更规划器。<br/>文件: reliability/diff_planner.py<br/>(生产态 / production)"]
-    src_zephyr_shared_reliability_retry_handler_py["reliability/retry_handler<br/>Retry Handler — 指数退避重试 + 可恢复<br/>/不可恢复错误分类。<br/>文件: reliability/retry_handler.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_degradation_chain_py["resilience/degradation_chain<br/>共享层/resilience包的degradation_chain模块<br/>文件: resilience/degradation_chain.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_error_budget_tracker_py["resilience/error_budget_tracker<br/>共享层/resilience包的error_budget_tracker模块<br/>文件: resilience/error_budget_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_fallback_py["resilience/fallback<br/>fallback.py —— 降级策略模式（Phase 2 新增 /<br/>零依赖）<br/>文件: resilience/fallback.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_fault_isolator_py["resilience/fault_isolator<br/>共享层/resilience包的fault_isolator模块<br/>文件: resilience/fault_isolator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_schema_registry_py["schema/schema_registry<br/>共享层/schema包的schema_registry模块<br/>文件: schema/schema_registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_security_capability_py["security/capability<br/>CBAC 能力检查器 (Capability-Based Access<br/>Control)<br/>文件: security/capability.py<br/>(生产态 / production)"]
-    src_zephyr_shared_security_sandbox_executor_py["security/sandbox_executor<br/>SandboxExecutor — re-homed to eliminate<br/>shared->infrastructure circular import.<br/>文件: security/sandbox_executor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_security_secrets_py["security/secrets<br/>secrets.py —— Secrets 管理抽象（Phase 7 新增 /<br/>盲点 B12 修复）<br/>文件: security/secrets.py<br/>(生产态 / production)"]
-    src_zephyr_shared_security_ssot_guard_py["security/ssot_guard<br/>共享层/安全包的ssot_guard模块<br/>文件: security/ssot_guard.py<br/>(生产态 / production)"]
-    src_zephyr_shared_session_session_audit_py["session/session_audit<br/>session_audit.py —— Session 审计轨迹（Phase 12<br/>/ 盲点 B32）<br/>文件: session/session_audit.py<br/>(生产态 / production)"]
-    src_zephyr_shared_session_session_boundary_py["session/session_boundary<br/>Session Boundary — 会话边界管理。<br/>文件: session/session_boundary.py<br/>(生产态 / production)"]
-    src_zephyr_shared_session_session_continuity_py["session/session_continuity<br/>SessionContinuity — Session 交接包自动生成与恢复<br/>文件: session/session_continuity.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_async_utils_py["utils/async_utils<br/>async_utils.py — async/sync 边界桥接（5.12.8<br/>修复）<br/>文件: utils/async_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_cli_summary_py["utils/cli_summary<br/>CLI Summary — CLI 友好施工汇总。<br/>文件: utils/cli_summary.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_context_py["utils/context<br/>context.py —— 结构化上下文传播（Phase 8 新增 /<br/>盲点 B16 修复）<br/>文件: utils/context.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_converters_py["utils/converters<br/>converters.py — 类型转换工具（消除 '' vs None<br/>语义鸿沟）<br/>文件: utils/converters.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_db_utils_py["utils/db_utils<br/>db_utils.py — SQLite 连接公共 API（SSoT:<br/>zephyr.governance.persistence.sqlit...<br/>文件: utils/db_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_diff_utils_py["utils/diff_utils<br/>diff_utils.py —— 统一 Diff/Patch 工具（Phase 3<br/>新增 / 盲点 #14 修复）<br/>文件: utils/diff_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_migration_py["utils/migration<br/>migration.py —— ZephyrAlpha Schema<br/>版本化迁移系统<br/>文件: utils/migration.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_pagination_py["utils/pagination<br/>pagination.py —— 通用分页工具（Phase 9 新增 /<br/>盲点 B18 修复）<br/>文件: utils/pagination.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_testing_py["utils/testing<br/>testing.py —— ZephyrAlpha 共享测试夹具/工厂<br/>文件: utils/testing.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_zephyr_logger_py["utils/zephyr_logger<br/>共享层/utils包的zephyr_logger模块<br/>文件: utils/zephyr_logger.py<br/>(生产态 / production)"]
-    src_zephyr_shared_versioning_vibe_experiment_tracker_py["versioning/vibe_experiment_tracker<br/>共享层/versioning包的vibe_experiment_tracker模块<br/>文件: versioning/vibe_experiment_tracker.py<br/>(生产态 / production)"]
-    tests_zephyr_shared_observability_test_metrics_server_py["observability/test_metrics_server<br/>metrics_server 单元测试（P1-5 Prometheus<br/>/metrics 端点）。<br/>文件: observability/test_metrics_server.py<br/>(生产态 / production)"]
+    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py["MLExperimentPipeline<br/>D_ML_TRAIN->实验跨层集成管道<br/>共享层/ cross<br/>layer包的ml_experiment_pipeline模块<br/>Ml Experiment Pipeline<br/>文件: _cross_layer/ml_experiment_pipeline.py<br/>(生产态 / production)"]
+    src_zephyr_shared_adaptation_execution_tuner_py["只读：default_params<br/>Execution Tuner — 执行调谐器（token/timeout<br/>自适应）。<br/>文件: adaptation/execution_tuner.py<br/>(生产态 / production)"]
+    src_zephyr_shared_adaptation_prompt_version_manager_py["只读：data_dir<br/>Prompt Version Manager — 版本化 Prompt 治理。<br/>文件: adaptation/prompt_version_manager.py<br/>(生产态 / production)"]
+    src_zephyr_shared_ai_guards_ai_audit_guard_py["Ai Audit Guard<br/>共享层/ai guards包的ai_audit_guard模块<br/>文件: ai_guards/ai_audit_guard.py<br/>(生产态 / production)"]
+    src_zephyr_shared_ai_guards_combinatorial_gate_py["Combinatorial Gate<br/>共享层/ai guards包的combinatorial_gate模块<br/>文件: ai_guards/combinatorial_gate.py<br/>(生产态 / production)"]
+    src_zephyr_shared_ai_guards_core_integrity_guard_py["Core Integrity Guard<br/>共享层/ai guards包的core_integrity_guard模块<br/>文件: ai_guards/core_integrity_guard.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_alert_escalation_py["re-homed to eliminate shared->infrastructure<br/>circular import.'''<br/>AlertEscalation — re-homed to eliminate<br/>shared->infrastructure circular import.<br/>Alert Escalation<br/>文件: alerts/alert_escalation.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_alert_manager_py["Alert Manager<br/>共享层/alerts包的alert_manager模块<br/>文件: alerts/alert_manager.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_alert_precision_tracker_py["Alert Precision Tracker<br/>共享层/alerts包的alert_precision_tracker模块<br/>文件: alerts/alert_precision_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_dual_channel_alert_py["Dual Channel Alert<br/>共享层/alerts包的dual_channel_alert模块<br/>文件: alerts/dual_channel_alert.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_heartbeat_server_py["Heartbeat Server<br/>共享层/alerts包的heartbeat_server模块<br/>文件: alerts/heartbeat_server.py<br/>(生产态 / production)"]
+    src_zephyr_shared_api_api_client_py["—HTTP 错误、超时、协议不匹配<br/>api_client.py —— 统一 API Client 基类（Phase 7<br/>新增 / 盲点 B11 修复）<br/>文件: api/api_client.py<br/>(生产态 / production)"]
+    src_zephyr_shared_api_api_index_py["Api Index<br/>shared/ API 索引 — AI session<br/>冷启动时的'员工通讯录'<br/>文件: api/api_index.py<br/>(生产态 / production)"]
+    src_zephyr_shared_api_dos_launcher_py["Dos Launcher<br/>共享层/接口包的dos_launcher模块<br/>文件: api/dos_launcher.py<br/>(生产态 / production)"]
+    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["Ai Understandability Constraint<br/>共享层/blueprint<br/>tools包的ai_understandability_constraint模块<br/>文件: blueprint_tools<br/>/ai_understandability_constraint.py<br/>(生产态 / production)"]
+    src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py["Blueprint Code Auditor<br/>共享层/blueprint<br/>tools包的blueprint_code_auditor模块<br/>文件: blueprint_tools/blueprint_code_auditor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_blueprint_tools_blueprint_scorer_py["Blueprint Scorer<br/>blueprint_scorer.py — Re-export wrapper -><br/>canonical: zephyr.orchestrator.qu...<br/>文件: blueprint_tools/blueprint_scorer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_adaptive_sampler_py["只读：base_rate<br/>共享层/capacity<br/>governance包的adaptive_sampler模块<br/>Adaptive Sampler<br/>文件: capacity_governance/adaptive_sampler.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_budget_aware_prompt_py["Budget Aware Prompt<br/>共享层/capacity<br/>governance包的budget_aware_prompt模块<br/>文件: capacity_governance/budget_aware_prompt.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_capacity_calibrator_py["Capacity Calibrator<br/>共享层/capacity<br/>governance包的capacity_calibrator模块<br/>文件: capacity_governance/capacity_calibrator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_capacity_digital_twin_py["Capacity Digital Twin<br/>共享层/capacity<br/>governance包的capacity_digital_twin模块<br/>文件: capacity_governance<br/>/capacity_digital_twin.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_capacity_fingerprint_py["Capacity Fingerprint<br/>共享层/capacity<br/>governance包的capacity_fingerprint模块<br/>文件: capacity_governance<br/>/capacity_fingerprint.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_capacity_runbook_generator_py["Capacity Runbook Generator<br/>共享层/capacity<br/>governance包的capacity_runbook_generator模块<br/>文件: capacity_governance<br/>/capacity_runbook_generator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_cost_estimator_py["Cost Estimator<br/>共享层/capacity governance包的cost_estimator模块<br/>文件: capacity_governance/cost_estimator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_dependency_capacity_guard_py["Dependency Capacity Guard<br/>共享层/capacity<br/>governance包的dependency_capacity_guard模块<br/>文件: capacity_governance<br/>/dependency_capacity_guard.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_model_capacity_probe_py["Model Capacity Probe<br/>共享层/capacity<br/>governance包的model_capacity_probe模块<br/>文件: capacity_governance<br/>/model_capacity_probe.py<br/>(生产态 / production)"]
+    src_zephyr_shared_compensation_saga_compensator_py["只读：sagas<br/>Saga Compensator — 补偿事务：多步操作任一失败<br/>-> 反向补偿。<br/>文件: compensation/saga_compensator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_context_context_engine_py["只读：budget<br/>Context Engine — AI 上下文组装与 Token<br/>预算管理。<br/>文件: context/context_engine.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_backpressure_types_py["Types<br/>Shared internal backpressure type definitions.<br/>文件: backpressure/_types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_backpressure_pause_py["Pause<br/>共享层/backpressure包的pause模块<br/>文件: backpressure/pause.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_backpressure_resume_py["Resume<br/>共享层/backpressure包的resume模块<br/>文件: backpressure/resume.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_backpressure_throttle_py["Throttle<br/>共享层/backpressure包的throttle模块<br/>文件: backpressure/throttle.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_contract_bus_py["Contract Bus 错误<br/>ContractBus — 跨层通信抽象 + Pydantic v2 Schema<br/>Enforcement (M-09)<br/>文件: contracts/contract_bus.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_base_event_py["跨层事件基类<br/>BaseEvent — 跨层事件基类<br/>Base Event<br/>文件: core/base_event.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_enforcer_py["运行时跨层数据契约校验失败<br/>ZephyrAlpha — shared/contracts/enforcer.py<br/>文件: core/enforcer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_factories_py["跨层数据契约工厂方法<br/>shared/contracts/factories.py —<br/>跨层数据契约工厂方法<br/>文件: core/factories.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_gate_types_py["Gate Types<br/>共享层/核心包的gate_types模块<br/>文件: core/gate_types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_registry_py["MAJOR 版本不匹配时抛出<br/>ZephyrAlpha — shared/contracts/registry.py<br/>文件: core/registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_system_configuration_py["System Configuration<br/>共享层/核心包的system_configuration模块<br/>文件: core/system_configuration.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_timestamp_py["Timestamp<br/>ZephyrAlpha — shared/contracts/timestamp.py<br/>文件: core/timestamp.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_enums_init_py["跨切面交易枚举真源<br/>shared/contracts/enums — 跨切面交易枚举真源<br/>(5.152 #1 修复)<br/>Init<br/>文件: enums/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_contract_violation_error_py["Contract Violation Error<br/>共享层/错误包的contract_violation_error模块<br/>文件: errors/contract_violation_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_data_quality_error_py["Data Quality Error<br/>CTR-ERR-001: DataQualityError /<br/>行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_execution_rejection_error_py["Execution Rejection Error<br/>共享层/错误包的execution_rejection_error模块<br/>文件: errors/execution_rejection_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_factor_computation_error_py["Factor Computation Error<br/>CTR-ERR-002: FactorComputationError /<br/>因子计算失败错误<br/>文件: errors/factor_computation_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py["Risk Limit Violation Error<br/>共享层/错误包的risk_limit_violation_error模块<br/>文件: errors/risk_limit_violation_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_signal_degradation_warning_py["Signal Degradation Warning<br/>共享层/错误包的signal_degradation_warning模块<br/>文件: errors/signal_degradation_warning.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_escalation_budget_alert_py["Budget Alert<br/>共享层/escalation包的budget_alert模块<br/>文件: escalation/budget_alert.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_capital_allocation_result_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.capit<br/>al_allocation_result.'''<br/>共享层/执行包的capital_allocation_result模块<br/>Capital Allocation Result<br/>文件: execution/capital_allocation_result.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_execution_report_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.execu<br/>tion_report.'''<br/>共享层/执行包的execution_report模块<br/>Execution Report<br/>文件: execution/execution_report.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_fill_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.fill.<br/>'''<br/>共享层/执行包的fill模块<br/>文件: execution/fill.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_model_serving_request_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.model<br/>_serving_request.'''<br/>共享层/执行包的model_serving_request模块<br/>Model Serving Request<br/>文件: execution/model_serving_request.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_order_py["canonical location is<br/>zephyr.shared.contracts.order<br/>共享层/执行包的order模块<br/>文件: execution/order.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_experiment_experiment_result_py["Experiment Result<br/>共享层/experiment包的experiment_result模块<br/>文件: experiment/experiment_result.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_experiment_model_serving_response_py["Model Serving Response<br/>共享层/experiment包的model_serving_response模块<br/>文件: experiment/model_serving_response.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_external_ext_001_py["Ext 001<br/>共享层/external包的ext_001模块<br/>文件: external/ext_001.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_external_ext_002_py["Ext 002<br/>共享层/external包的ext_002模块<br/>文件: external/ext_002.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_external_ext_003_py["Ext 003<br/>共享层/external包的ext_003模块<br/>文件: external/ext_003.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_external_ext_004_py["Ext 004<br/>共享层/external包的ext_004模块<br/>文件: external/ext_004.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_identity_agent_identity_py["Agent Identity<br/>共享层/identity包的agent_identity模块<br/>文件: identity/agent_identity.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_identity_permission_py["Permission<br/>共享层/identity包的permission模块<br/>文件: identity/permission.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_llm_gateway_protocol_py["与 orchestration.agent_lifecycle.llm_gateway.LLM<br/>Response 结构一致<br/>LLMGatewayProtocol — LLM 网关抽象接口<br/>Llm Gateway Protocol<br/>文件: contracts/llm_gateway_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_market_instrument_py["canonical location is<br/>zephyr.trading.trading_contracts.market.instrume<br/>nt.'''<br/>共享层/market包的instrument模块<br/>文件: market/instrument.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_orchestration_protocol_py["Orchestration Protocol<br/>共享层/契约包的orchestration_protocol模块<br/>文件: contracts/orchestration_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_portfolio_money_py["Money<br/>共享层/portfolio包的money模块<br/>文件: portfolio/money.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_portfolio_position_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.posit<br/>ion.'''<br/>共享层/portfolio包的position模块<br/>文件: portfolio/position.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_compliance_rule_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.compliance<br/>_rule.'''<br/>共享层/风险包的compliance_rule模块<br/>Compliance Rule<br/>文件: risk/compliance_rule.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.risk_dashb<br/>oard_snapshot.'''<br/>共享层/风险包的risk_dashboard_snapshot模块<br/>Risk Dashboard Snapshot<br/>文件: risk/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_risk_limits_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.risk_limit<br/>s.'''<br/>共享层/风险包的risk_limits模块<br/>Risk Limits<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_risk_metrics_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.risk_metri<br/>cs.'''<br/>共享层/风险包的risk_metrics模块<br/>Risk Metrics<br/>文件: risk/risk_metrics.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_risk_validator_protocol_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.risk_valid<br/>ator_protocol.'''<br/>共享层/风险包的risk_validator_protocol模块<br/>Risk Validator Protocol<br/>文件: risk/risk_validator_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_security_security_decision_py["Security Decision<br/>共享层/安全包的security_decision模块<br/>文件: security/security_decision.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_skill_protocol_py["—解耦D-INFRA/D-GOV对D-ORCH的直接依赖<br/>共享层/契约包的skill_protocol模块<br/>Skill Protocol<br/>文件: contracts/skill_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_database_init_py["共享数据库工具包：提供 DatabaseService 共用的<br/>CRUD mixin<br/>管理shared.database子包的加载和懒导入<br/>Init<br/>文件: database/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_shared_dependency_dependency_graph_py["只读：nodes<br/>Dependency Graph — 任务卡依赖关系管理。<br/>文件: dependency/dependency_graph.py<br/>(生产态 / production)"]
+    src_zephyr_shared_draft_draft_assistant_py["只读：output_dir<br/>Draft Assistant — 想法 -> MTH-012 蓝图骨架生成。<br/>文件: draft/draft_assistant.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_dlq_bridge_py["DeadLetterQueue -> System Event Bus integration<br/>bridge.<br/>CT-DLQ-001: DeadLetterQueue -> System Event Bus<br/>integration bridge.<br/>Dlq Bridge<br/>文件: events/dlq_bridge.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_event_bus_upgrade_py["事件版本错误<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>Event Bus Upgrade<br/>文件: events/event_bus_upgrade.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_event_reactor_py["只读：bus<br/>Event Reactor — 事件反应器（自动响应事件）。<br/>文件: events/event_reactor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_event_schemas_py["—文件系统变更通知<br/>event_schemas.py —— Observer 事件体 Pydantic V2<br/>Schema（盲点 B6/B10 修复）<br/>Event Schemas<br/>文件: events/event_schemas.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_hook_dispatcher_py["只读：bus<br/>Hook Dispatcher — 任务状态变更 -> 外部回调触发。<br/>文件: events/hook_dispatcher.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_upgrade_strategy_py["EventBus 升级策略引擎<br/>共享层/事件包的upgrade_strategy模块<br/>Upgrade Strategy<br/>文件: events/upgrade_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_constants_py["Constants<br/>constants.py —— 共享枚举 & 常量集中 re-export<br/>（Single Source of Truth）<br/>文件: foundation/constants.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_deprecation_py["废弃 API 仍被调用的运行时异常<br/>deprecation.py —— ZephyrAlpha API 废弃策略<br/>文件: foundation/deprecation.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_env_py["—生产环境永远 False<br/>共享层/foundation包的env模块<br/>文件: foundation/env.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_flags_py["请求的 FeatureFlag 未在注册表中找到<br/>共享层/foundation包的flags模块<br/>文件: foundation/flags.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_types_py["—格式 T-N-MM 或 T-INF-NNN<br/>types.py —— 共享类型别名 & 语义化 NewType<br/>（Phase 3 新增 / 盲点 #5 修复）<br/>文件: foundation/types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_cache_py["—后端不可达、key 冲突、序列化失败<br/>cache.py —— 统一缓存抽象（Phase 8 新增 / 盲点<br/>B13 修复）<br/>文件: infra/cache.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_limiter_py["—等待时间过长或无法获取 token<br/>共享层/infra包的limiter模块<br/>文件: infra/limiter.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_lock_py["读取并递增持久化 fencing<br/>计数器，返回新的单调递增 token<br/>lock.py —— 分布式锁抽象（Phase 10 新增 / 盲点<br/>B23 修复）<br/>文件: infra/lock.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_outbox_py["—存储后端不可达、消息格式无效<br/>outbox.py —— 事务性 Outbox 模式（Phase 10 新增<br/>/ 盲点 B24 修复）<br/>文件: infra/outbox.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_process_lifecycle_gateway_py["进程生命周期统一入口<br/>ProcessLifecycleGateway — 进程生命周期统一入口<br/>Process Lifecycle Gateway<br/>文件: infra/process_lifecycle_gateway.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_content_fingerprint_py["Content Fingerprint<br/>SHA-256 content fingerprint computation and<br/>verification.<br/>文件: io/content_fingerprint.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_file_utils_py["—统一3处漂移实现<br/>file_utils.py —— 安全文件操作工具（Phase 3 新增<br/>/ 盲点 #15 修复）<br/>File Utils<br/>文件: io/file_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_frontmatter_utils_py["解析 Markdown 文件的 YAML frontmatter<br/>frontmatter_utils.py — Markdown/YAML<br/>frontmatter 解析 SSoT<br/>Frontmatter Utils<br/>文件: io/frontmatter_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_io_cache_py["Io Cache<br/>io_cache.py - File-level I/O cache with LRU<br/>eviction<br/>文件: io/io_cache.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_streaming_reader_py["Streaming Reader<br/>streaming_reader.py - Memory-efficient<br/>streaming file readers<br/>文件: io/streaming_reader.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_workspace_telemetry_py["主工作区文件操作遥测公共 API<br/>workspace_telemetry.py —<br/>主工作区文件操作遥测公共 API（...<br/>Workspace Telemetry<br/>文件: io/workspace_telemetry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_yaml_utils_py["vocabulary YAML 加载公共工具<br/>yaml_utils.py — vocabulary YAML 加载公共工具<br/>（SSoT 真源）<br/>Yaml Utils<br/>文件: io/yaml_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_health_py["Health<br/>health.py —— ZephyrAlpha 聚合健康检查<br/>文件: lifecycle/health.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_health_discovery_py["System-wide Health Discovery Registration.<br/>CT-HEALTH-001: System-wide Health Discovery<br/>Registration.<br/>文件: lifecycle/health_discovery.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_healthcheck_service_py["只读：start_time<br/>共享层/lifecycle包的healthcheck_service模块<br/>Healthcheck Service<br/>文件: lifecycle/healthcheck_service.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_longevity_monitor_py["Longevity Monitor<br/>共享层/lifecycle包的longevity_monitor模块<br/>文件: lifecycle/longevity_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_state_machine_py["State Machine<br/>StateMachine(S) — 通用状态机泛型基类<br/>(MOD-INF-038)<br/>文件: lifecycle/state_machine.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_task_heartbeat_py["Task Heartbeat<br/>共享层/lifecycle包的task_heartbeat模块<br/>文件: lifecycle/task_heartbeat.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_ttl_cleanup_engine_py["Ttl Cleanup Engine<br/>共享层/lifecycle包的ttl_cleanup_engine模块<br/>文件: lifecycle/ttl_cleanup_engine.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_autonomy_monitor_py["只读：event_log<br/>Autonomy Monitor — AI 自主等级监控与降级。<br/>文件: maintenance/autonomy_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_code_economy_analyzer_py["Code Economy Analyzer<br/>共享层/maintenance包的code_economy_analyzer模块<br/>文件: maintenance/code_economy_analyzer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_dogfooding_py["只读：tasks<br/>Dogfooding — 自举测试：用 TaskCard 管理<br/>TaskCard 建设。<br/>文件: maintenance/dogfooding.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_handbook_py["Handbook<br/>Onboarding Handbook — AI Agent 施工手册生成。<br/>文件: maintenance/handbook.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_owner_trust_gauge_py["Owner Trust Gauge<br/>共享层/maintenance包的owner_trust_gauge模块<br/>文件: maintenance/owner_trust_gauge.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_slo_review_assistant_py["Slo Review Assistant<br/>共享层/maintenance包的slo_review_assistant模块<br/>文件: maintenance/slo_review_assistant.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_zero_config_py["公共接口：check_python<br/>共享层/maintenance包的zero_config模块<br/>Zero Config<br/>文件: maintenance/zero_config.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_dashboard_init_py["Grafana 双数据源仪表盘模块<br/>（MOD-INF-044）<br/>Init<br/>文件: dashboard/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_reasoning_spans_py["Reasoning Spans<br/>共享层/observability包的reasoning_spans模块<br/>文件: observability/reasoning_spans.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_tracing_py["Tracing<br/>tracing.py —— OpenTelemetry 分布式追踪（Phase B<br/>补充 / 盲点 B1 修复）<br/>文件: observability/tracing.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_a2a_a2a_coordination_py["shared interface definitions for multi-agent<br/>coordination.<br/>A2A Coordination — shared interface definitions<br/>for multi-agent coordination.<br/>文件: a2a/a2a_coordination.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_a2a_a2a_protocol_py["A2a Protocol<br/>Core A2A Protocol interface and governance data<br/>contracts.<br/>文件: a2a/a2a_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_a2a_a2a_schemas_py["Message, Task, and StateMachine schemas.<br/>A2A data structure contracts — Message, Task,<br/>and StateMachine schemas.<br/>A2a Schemas<br/>文件: a2a/a2a_schemas.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_module_birth_registry_py["Module Birth Registry<br/>共享层/protocols包的module_birth_registry模块<br/>文件: protocols/module_birth_registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_ports_py["D-INFRA 通过此接口获取 DB 连接和路径<br/>ports — D-DATA 服务的 Protocol 定义<br/>文件: protocols/ports.py<br/>(生产态 / production)"]
+    src_zephyr_shared_reliability_diff_planner_py["只读：project_root<br/>Diff Planner — 最小增量变更规划器。<br/>文件: reliability/diff_planner.py<br/>(生产态 / production)"]
+    src_zephyr_shared_reliability_retry_handler_py["只读：config<br/>Retry Handler — 指数退避重试 + 可恢复<br/>/不可恢复错误分类。<br/>文件: reliability/retry_handler.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_degradation_chain_py["Degradation Chain<br/>共享层/resilience包的degradation_chain模块<br/>文件: resilience/degradation_chain.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_error_budget_tracker_py["Error Budget Tracker<br/>共享层/resilience包的error_budget_tracker模块<br/>文件: resilience/error_budget_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_fallback_py["—所有步骤都失败了<br/>fallback.py —— 降级策略模式（Phase 2 新增 /<br/>零依赖）<br/>文件: resilience/fallback.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_fault_isolator_py["Fault Isolator<br/>共享层/resilience包的fault_isolator模块<br/>文件: resilience/fault_isolator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_schema_registry_py["—schema 不存在、版本冲突、兼容性违规<br/>共享层/schema包的schema_registry模块<br/>Schema Registry<br/>文件: schema/schema_registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_security_capability_py["Capability<br/>CBAC 能力检查器 (Capability-Based Access<br/>Control)<br/>文件: security/capability.py<br/>(生产态 / production)"]
+    src_zephyr_shared_security_sandbox_executor_py["re-homed to eliminate shared->infrastructure<br/>circular import.'''<br/>SandboxExecutor — re-homed to eliminate<br/>shared->infrastructure circular import.<br/>Sandbox Executor<br/>文件: security/sandbox_executor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_security_secrets_py["Secrets<br/>secrets.py —— Secrets 管理抽象（Phase 7 新增 /<br/>盲点 B12 修复）<br/>文件: security/secrets.py<br/>(生产态 / production)"]
+    src_zephyr_shared_security_ssot_guard_py["将 Windows 控制台 stdout/stderr 设置为<br/>UTF-8，仅在脚本直接运行时调用<br/>共享层/安全包的ssot_guard模块<br/>Ssot Guard<br/>文件: security/ssot_guard.py<br/>(生产态 / production)"]
+    src_zephyr_shared_session_session_audit_py["全局审计写入器协议<br/>session_audit.py —— Session 审计轨迹（Phase 12<br/>/ 盲点 B32）<br/>Session Audit<br/>文件: session/session_audit.py<br/>(生产态 / production)"]
+    src_zephyr_shared_session_session_boundary_py["公共接口：save_boundary<br/>Session Boundary — 会话边界管理。<br/>文件: session/session_boundary.py<br/>(生产态 / production)"]
+    src_zephyr_shared_session_session_continuity_py["Session Continuity<br/>SessionContinuity — Session 交接包自动生成与恢复<br/>文件: session/session_continuity.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_async_utils_py["async/sync 边界桥接<br/>async_utils.py — async/sync 边界桥接（5.12.8<br/>修复）<br/>Async Utils<br/>文件: utils/async_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_cli_summary_py["Cli Summary<br/>CLI Summary — CLI 友好施工汇总。<br/>文件: utils/cli_summary.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_context_py["—跨模块调用时的元数据载体<br/>context.py —— 结构化上下文传播（Phase 8 新增 /<br/>盲点 B16 修复）<br/>文件: utils/context.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_converters_py["将空字符串转为 None，其他值原样返回<br/>converters.py — 类型转换工具（消除 '' vs None<br/>语义鸿沟）<br/>文件: utils/converters.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_db_utils_py["确保数据库 schema 已初始化<br/>db_utils.py — SQLite 连接公共 API（SSoT:<br/>zephyr.governance.persistence.sqlit...<br/>Db Utils<br/>文件: utils/db_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_diff_utils_py["—存在冲突或目标状态与期望不符<br/>diff_utils.py —— 统一 Diff/Patch 工具（Phase 3<br/>新增 / 盲点 #14 修复）<br/>Diff Utils<br/>文件: utils/diff_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_migration_py["迁移失败异常<br/>migration.py —— ZephyrAlpha Schema<br/>版本化迁移系统<br/>文件: utils/migration.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_pagination_py["基于 offset/limit 的分页响应<br/>pagination.py —— 通用分页工具（Phase 9 新增 /<br/>盲点 B18 修复）<br/>文件: utils/pagination.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_testing_py["构造一个 valid-by-construction 的 Task 实例<br/>testing.py —— ZephyrAlpha 共享测试夹具/工厂<br/>文件: utils/testing.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_zephyr_logger_py["Zephyr Logger<br/>共享层/utils包的zephyr_logger模块<br/>文件: utils/zephyr_logger.py<br/>(生产态 / production)"]
+    src_zephyr_shared_versioning_vibe_experiment_tracker_py["Vibe Experiment Tracker<br/>共享层/versioning包的vibe_experiment_tracker模块<br/>文件: versioning/vibe_experiment_tracker.py<br/>(生产态 / production)"]
+    tests_zephyr_shared_observability_test_metrics_server_py["metrics_server 单元测试<br/>（P1-5 Prometheus /metrics 端点）<br/>Test Metrics Server<br/>文件: observability/test_metrics_server.py<br/>(生产态 / production)"]
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py ~~~ src_zephyr_shared_adaptation_execution_tuner_py
     src_zephyr_shared_adaptation_execution_tuner_py ~~~ src_zephyr_shared_adaptation_prompt_version_manager_py
     src_zephyr_shared_adaptation_prompt_version_manager_py ~~~ src_zephyr_shared_ai_guards_ai_audit_guard_py
@@ -346,23 +346,23 @@ flowchart TD
     src_zephyr_shared_utils_testing_py ~~~ src_zephyr_shared_utils_zephyr_logger_py
     src_zephyr_shared_utils_zephyr_logger_py ~~~ src_zephyr_shared_versioning_vibe_experiment_tracker_py
     src_zephyr_shared_versioning_vibe_experiment_tracker_py ~~~ tests_zephyr_shared_observability_test_metrics_server_py
-    src_zephyr_shared_version_py["shared/__version__<br/>__version__.py —— ZephyrAlpha Shared<br/>模块版本常量<br/>文件: shared/__version__.py<br/>(生产态 / production)"]
-    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py["blueprint_tools/blueprint_decomposer<br/>ZephyrAlpha 蓝图拆解器<br/>文件: blueprint_tools/blueprint_decomposer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_runtime_plane_tag_py["core/runtime_plane_tag<br/>ZephyrAlpha — shared/contracts<br/>/runtime_plane_tag.py<br/>文件: core/runtime_plane_tag.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_trace_context_py["core/trace_context<br/>共享层/核心包的trace_context模块<br/>文件: core/trace_context.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_enums_order_enums_py["enums/order_enums<br/>OrderSide/OrderStatus/OrderType — 交易枚举真源<br/>(5.152 #1 修复)<br/>文件: enums/order_enums.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_task_repository_protocol_py["contracts/task_repository_protocol<br/>TaskRepositoryProtocol — TaskRepository 的<br/>Protocol 接口<br/>文件: contracts/task_repository_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_database_database_crud_mixin_py["database/database_crud_mixin<br/>DatabaseCRUDMixin: 共享的 governance.db +<br/>depgraph CRUD 方法<br/>文件: database/database_crud_mixin.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_dlq_py["events/dlq<br/>dlq.py —— ZephyrAlpha 死信队列（Dead Letter<br/>Queue）<br/>文件: events/dlq.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_idempotency_py["infra/idempotency<br/>idempotency.py —— 幂等性基础设施（Phase 8 新增<br/>/ 盲点 B15 修复）<br/>文件: infra/idempotency.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_process_pool_py["infra/process_pool<br/>process_pool.py - Shared process pool for MCP<br/>servers and subprocess tasks<br/>文件: infra/process_pool.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_metrics_server_py["observability/metrics_server<br/>Prometheus /metrics HTTP 端点（P1-5<br/>可观测性改造）。<br/>文件: observability/metrics_server.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_a2a_a2a_registry_py["a2a/a2a_registry<br/>A2A Registry and Agent Card contracts —<br/>discovery and identity interfaces.<br/>文件: a2a/a2a_registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_registry_py["protocols/registry<br/>registry — 运行时 DI 容器<br/>文件: protocols/registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_circuit_breaker_py["resilience/circuit_breaker<br/>circuit_breaker.py —— 轻量熔断器状态机（Phase 2<br/>新增 / 零依赖）<br/>文件: resilience/circuit_breaker.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_retry_py["resilience/retry<br/>retry.py —— 统一重试策略（Phase 2 新增 /<br/>零依赖）<br/>文件: resilience/retry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_schemas_py["schema/schemas<br/>共享层/schema包的schemas模块<br/>文件: schema/schemas.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_logging_py["utils/logging<br/>logging.py —— ZephyrAlpha 结构化日志系统<br/>（Structured JSON Logger）<br/>文件: utils/logging.py<br/>(生产态 / production)"]
+    src_zephyr_shared_version_py["最低兼容的 Shared 版本<br/>__version__.py —— ZephyrAlpha Shared<br/>模块版本常量<br/>文件: shared/__version__.py<br/>(生产态 / production)"]
+    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py["从任务描述行中拆出叙事文本与 ``depends_on`` 列表<br/>ZephyrAlpha 蓝图拆解器<br/>Blueprint Decomposer<br/>文件: blueprint_tools/blueprint_decomposer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_runtime_plane_tag_py["Runtime Plane Tag<br/>ZephyrAlpha — shared/contracts<br/>/runtime_plane_tag.py<br/>文件: core/runtime_plane_tag.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_trace_context_py["Trace Context<br/>共享层/核心包的trace_context模块<br/>文件: core/trace_context.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_enums_order_enums_py["交易枚举真源<br/>OrderSide/OrderStatus/OrderType — 交易枚举真源<br/>(5.152 #1 修复)<br/>Order Enums<br/>文件: enums/order_enums.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_task_repository_protocol_py["D-ORCH / D-GOV / D-RESILIENCE<br/>通过此接口访问任务持久化<br/>TaskRepositoryProtocol — TaskRepository 的<br/>Protocol 接口<br/>Task Repository Protocol<br/>文件: contracts/task_repository_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_database_database_crud_mixin_py["共享 CRUD 方法 Mixin<br/>DatabaseCRUDMixin: 共享的 governance.db +<br/>depgraph CRUD 方法<br/>Database Crud Mixin<br/>文件: database/database_crud_mixin.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_dlq_py["5.63.2 修复：对 traceback / error<br/>字符串脱敏，防止敏感信息写入 DLQ<br/>dlq.py —— ZephyrAlpha 死信队列（Dead Letter<br/>Queue）<br/>文件: events/dlq.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_idempotency_py["—相同 key 产生了不同结果或状态不一致<br/>idempotency.py —— 幂等性基础设施（Phase 8 新增<br/>/ 盲点 B15 修复）<br/>文件: infra/idempotency.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_process_pool_py["返回 Windows 无窗口 creationflags；POSIX 返回 0<br/>process_pool.py - Shared process pool for MCP<br/>servers and subprocess tasks<br/>文件: infra/process_pool.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_metrics_server_py["Prometheus /metrics HTTP 端点<br/>（P1-5 可观测性改造）<br/>Metrics Server<br/>文件: observability/metrics_server.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_a2a_a2a_registry_py["discovery and identity interfaces.<br/>A2A Registry and Agent Card contracts —<br/>discovery and identity interfaces.<br/>文件: a2a/a2a_registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_registry_py["进程级单例服务注册表<br/>registry — 运行时 DI 容器<br/>文件: protocols/registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_circuit_breaker_py["熔断器处于 OPEN 状态时拒绝调用<br/>circuit_breaker.py —— 轻量熔断器状态机（Phase 2<br/>新增 / 零依赖）<br/>Circuit Breaker<br/>文件: resilience/circuit_breaker.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_retry_py["—最后一次异常通过 __cause__ 链保留<br/>retry.py —— 统一重试策略（Phase 2 新增 /<br/>零依赖）<br/>文件: resilience/retry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_schemas_py["Schemas<br/>共享层/schema包的schemas模块<br/>文件: schema/schemas.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_logging_py["—每条日志一行 JSON，可直接 tail / jq 解析<br/>logging.py —— ZephyrAlpha 结构化日志系统<br/>（Structured JSON Logger）<br/>文件: utils/logging.py<br/>(生产态 / production)"]
     src_zephyr_shared_version_py ~~~ src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py ~~~ src_zephyr_shared_contracts_core_runtime_plane_tag_py
     src_zephyr_shared_contracts_core_runtime_plane_tag_py ~~~ src_zephyr_shared_contracts_core_trace_context_py
@@ -379,15 +379,15 @@ flowchart TD
     src_zephyr_shared_resilience_circuit_breaker_py ~~~ src_zephyr_shared_resilience_retry_py
     src_zephyr_shared_resilience_retry_py ~~~ src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_schema_schemas_py ~~~ src_zephyr_shared_utils_logging_py
-    src_zephyr_shared_foundation_models_py["foundation/models<br/>ZephyrAlpha 任务系统核心数据模型<br/>文件: foundation/models.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_observer_py["infra/observer<br/>Zero-dependency Observer pattern (subscribe<br/>/emit/unsubscribe).<br/>文件: infra/observer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_serialization_py["io/serialization<br/>serialization.py —— 统一序列化<br/>/反序列化基础设施（Phase 7 新增 / 盲点 B10<br/>修复）<br/>文件: io/serialization.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_sqlite_factory_py["io/sqlite_factory<br/>SQLite 连接工厂真源（SSoT）<br/>文件: io/sqlite_factory.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_metrics_py["observability/metrics<br/>metrics.py —— 轻量级 Metrics 收集基础设施<br/>（Phase 9 新增 / 盲点 B17 修复）<br/>文件: observability/metrics.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_base_config_py["schema/base_config<br/>共享层/schema包的base_config模块<br/>文件: schema/base_config.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_execution_model_py["schema/execution_model<br/>共享层/schema包的execution_model模块<br/>文件: schema/execution_model.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_severity_types_py["schema/severity_types<br/>共享层/schema包的severity_types模块<br/>文件: schema/severity_types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_task_types_py["schema/task_types<br/>task_types — 任务系统核心类型 re-export 层<br/>文件: schema/task_types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_models_py["—蓝图 MOD-TASK_SYSTEM §3.2.2'''<br/>ZephyrAlpha 任务系统核心数据模型<br/>Models<br/>文件: foundation/models.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_observer_py["Observer<br/>Zero-dependency Observer pattern (subscribe<br/>/emit/unsubscribe).<br/>文件: infra/observer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_serialization_py["序列化/反序列化过程中类型不兼容或格式错误<br/>serialization.py —— 统一序列化<br/>/反序列化基础设施（Phase 7 新增 / 盲点 B10<br/>修复）<br/>文件: io/serialization.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_sqlite_factory_py["对连接应用 KBG-0030 §4.3 PRAGMA 基线<br/>SQLite 连接工厂真源（SSoT）<br/>Sqlite Factory<br/>文件: io/sqlite_factory.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_metrics_py["线程安全的轻量级 Metrics 注册表<br/>metrics.py —— 轻量级 Metrics 收集基础设施<br/>（Phase 9 新增 / 盲点 B17 修复）<br/>文件: observability/metrics.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_base_config_py["Base Config<br/>共享层/schema包的base_config模块<br/>文件: schema/base_config.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_execution_model_py["Execution Model<br/>共享层/schema包的execution_model模块<br/>文件: schema/execution_model.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_severity_types_py["re-homed from<br/>infrastructure_runtime_integration.db.circuit_br<br/>eaker_types<br/>共享层/schema包的severity_types模块<br/>Severity Types<br/>文件: schema/severity_types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_task_types_py["Task Types<br/>task_types — 任务系统核心类型 re-export 层<br/>文件: schema/task_types.py<br/>(生产态 / production)"]
     src_zephyr_shared_foundation_models_py ~~~ src_zephyr_shared_infra_observer_py
     src_zephyr_shared_infra_observer_py ~~~ src_zephyr_shared_io_serialization_py
     src_zephyr_shared_io_serialization_py ~~~ src_zephyr_shared_io_sqlite_factory_py
@@ -396,17 +396,17 @@ flowchart TD
     src_zephyr_shared_schema_base_config_py ~~~ src_zephyr_shared_schema_execution_model_py
     src_zephyr_shared_schema_execution_model_py ~~~ src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_schema_severity_types_py ~~~ src_zephyr_shared_schema_task_types_py
-    src_zephyr_shared_event_bus_py["shared/event_bus<br/>EventBus — 事件总线（带背压控制）(M-07)<br/>文件: shared/event_bus.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_errors_py["foundation/errors<br/>errors.py —— ZephyrAlpha 统一错误层次<br/>（Traditional Exception Hierarchy）<br/>文件: foundation/errors.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_paths_py["io/paths<br/>paths.py — 项目路径常量 SSoT（Single Source of<br/>Truth）<br/>文件: io/paths.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_time_utils_py["utils/time_utils<br/>time_utils.py —— 时间/日期工具（Phase 9 新增 /<br/>盲点 B19 修复）<br/>文件: utils/time_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_event_bus_py["任务生命周期事件类型<br/>EventBus — 事件总线（带背压控制）(M-07)<br/>Event Bus<br/>文件: shared/event_bus.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_errors_py["ZephyrAlpha 所有业务异常的根<br/>errors.py —— ZephyrAlpha 统一错误层次<br/>（Traditional Exception Hierarchy）<br/>文件: foundation/errors.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_paths_py["从当前文件向上查找项目根目录<br/>paths.py — 项目路径常量 SSoT（Single Source of<br/>Truth）<br/>文件: io/paths.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_time_utils_py["注册 datetime/date→sqlite3 str 适配器<br/>time_utils.py —— 时间/日期工具（Phase 9 新增 /<br/>盲点 B19 修复）<br/>Time Utils<br/>文件: utils/time_utils.py<br/>(生产态 / production)"]
     src_zephyr_shared_event_bus_py ~~~ src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_foundation_errors_py ~~~ src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_paths_py ~~~ src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_alerts_alert_escalation_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_idempotency_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_circuit_breaker_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_retry_py
@@ -415,33 +415,33 @@ flowchart TD
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
-    src_zephyr_shared_contracts_backpressure_pause_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_backpressure_resume_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_throttle_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_pause_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_types_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_resume_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_contracts_core_timestamp_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
-    src_zephyr_shared_contracts_errors_data_quality_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_contract_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_factor_computation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_data_quality_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_contracts_errors_signal_degradation_warning_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_factor_computation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_risk_limit_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_experiment_experiment_result_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_database_init_py -->|config_depends / config_depends| src_zephyr_shared_database_database_crud_mixin_py
     src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
     src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_events_upgrade_strategy_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
@@ -449,57 +449,57 @@ flowchart TD
     src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
-    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_io_sqlite_factory_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_io_workspace_telemetry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_yaml_utils_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_io_workspace_telemetry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_observability_metrics_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_observability_tracing_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
-    src_zephyr_shared_maintenance_zero_config_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_observability_metrics_server_py -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
+    src_zephyr_shared_maintenance_zero_config_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_observability_tracing_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_protocols_a2a_a2a_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_protocols_ports_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     src_zephyr_shared_protocols_a2a_a2a_coordination_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
-    src_zephyr_shared_protocols_a2a_a2a_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    src_zephyr_shared_resilience_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_degradation_chain_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_resilience_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_fallback_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_retry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
     src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
-    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
     src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_version_py
     src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_capability_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_registry_py
+    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_utils_logging_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
-    src_zephyr_shared_utils_zephyr_logger_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
     src_zephyr_shared_utils_testing_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_utils_zephyr_logger_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
     tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_server_py
-    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_process_pool_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_RULE["规则治理<br/>规则治理，负责规则注册、规则版本和规则依赖管理<br/>Rule Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_shared_protocols_a2a_a2a_coordination_py -->|导入依赖 / import_depends| D_GOV_RULE
+    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_process_pool_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_FEEDBACK_LOOP["反馈循环引擎<br/>反馈循环引擎，负责系统自我改进闭环：异常检测、根<br/>因诊断、自动修复和自我进化<br/>Feedback Loop Engine<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
@@ -508,12 +508,16 @@ flowchart TD
     D_ML_TRAIN["训练<br/>训练，负责模型训练、特征工程和模型评估<br/>Training<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| D_ML_TRAIN
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_DATA -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_DATA -->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
-    D_DATA -->|导入依赖 / import_depends| src_zephyr_shared_security_secrets_py
     D_DATA -->|导入依赖 / import_depends| src_zephyr_shared_security_secrets_py
     D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_shared_security_secrets_py
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_shared_security_secrets_py
+    D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
+    D_INFRA_RECOVERY["回滚恢复<br/>回滚恢复，负责系统故障时的状态回滚、事务补偿和恢<br/>复编排<br/>Rollback Recovery<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_INFRA_RECOVERY -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     D_GOV_AUDIT["审计追踪<br/>审计追踪，负责变更审计追踪和操作日志管理<br/>Audit Trail<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_shared_security_secrets_py
     D_GOV_CODE_QUALITY["代码质量治理<br/>代码质量治理，负责代码去重引擎、函数重复检测、AS<br/>T语义分析和提交门禁引擎<br/>Code Quality Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -522,10 +526,6 @@ flowchart TD
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_AUTONOMY_CORE["自治核心<br/>自治核心，负责 AI 自治决策、目标分解和执行编排<br/>Autonomy Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
-    D_INFRA_RECOVERY["回滚恢复<br/>回滚恢复，负责系统故障时的状态回滚、事务补偿和恢<br/>复编排<br/>Rollback Recovery<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    D_INFRA_RECOVERY -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     D_DATA -->|导入依赖 / import_depends| src_zephyr_shared_security_secrets_py
     D_GOV_SCRIPTS -->|导入依赖 / import_depends| src_zephyr_shared_foundation_env_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
@@ -536,7 +536,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_version_py,src_zephyr_shared_cross_layer_ml_experiment_pipeline_py,src_zephyr_shared_adaptation_execution_tuner_py,src_zephyr_shared_adaptation_prompt_version_manager_py,src_zephyr_shared_ai_guards_ai_audit_guard_py,src_zephyr_shared_ai_guards_combinatorial_gate_py,src_zephyr_shared_ai_guards_core_integrity_guard_py,src_zephyr_shared_alerts_alert_escalation_py,src_zephyr_shared_alerts_alert_manager_py,src_zephyr_shared_alerts_alert_precision_tracker_py,src_zephyr_shared_alerts_dual_channel_alert_py,src_zephyr_shared_alerts_heartbeat_server_py,src_zephyr_shared_api_api_client_py,src_zephyr_shared_api_api_index_py,src_zephyr_shared_api_dos_launcher_py,src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py,src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py,src_zephyr_shared_blueprint_tools_blueprint_decomposer_py,src_zephyr_shared_blueprint_tools_blueprint_scorer_py,src_zephyr_shared_capacity_governance_adaptive_sampler_py,src_zephyr_shared_capacity_governance_budget_aware_prompt_py,src_zephyr_shared_capacity_governance_capacity_calibrator_py,src_zephyr_shared_capacity_governance_capacity_digital_twin_py,src_zephyr_shared_capacity_governance_capacity_fingerprint_py,src_zephyr_shared_capacity_governance_capacity_runbook_generator_py,src_zephyr_shared_capacity_governance_cost_estimator_py,src_zephyr_shared_capacity_governance_dependency_capacity_guard_py,src_zephyr_shared_capacity_governance_model_capacity_probe_py,src_zephyr_shared_compensation_saga_compensator_py,src_zephyr_shared_context_context_engine_py,src_zephyr_shared_contracts_backpressure_types_py,src_zephyr_shared_contracts_backpressure_pause_py,src_zephyr_shared_contracts_backpressure_resume_py,src_zephyr_shared_contracts_backpressure_throttle_py,src_zephyr_shared_contracts_contract_bus_py,src_zephyr_shared_contracts_core_base_event_py,src_zephyr_shared_contracts_core_enforcer_py,src_zephyr_shared_contracts_core_factories_py,src_zephyr_shared_contracts_core_gate_types_py,src_zephyr_shared_contracts_core_registry_py,src_zephyr_shared_contracts_core_runtime_plane_tag_py,src_zephyr_shared_contracts_core_system_configuration_py,src_zephyr_shared_contracts_core_timestamp_py,src_zephyr_shared_contracts_core_trace_context_py,src_zephyr_shared_contracts_enums_init_py,src_zephyr_shared_contracts_enums_order_enums_py,src_zephyr_shared_contracts_errors_contract_violation_error_py,src_zephyr_shared_contracts_errors_data_quality_error_py,src_zephyr_shared_contracts_errors_execution_rejection_error_py,src_zephyr_shared_contracts_errors_factor_computation_error_py,src_zephyr_shared_contracts_errors_risk_limit_violation_error_py,src_zephyr_shared_contracts_errors_signal_degradation_warning_py,src_zephyr_shared_contracts_escalation_budget_alert_py,src_zephyr_shared_contracts_execution_capital_allocation_result_py,src_zephyr_shared_contracts_execution_execution_report_py,src_zephyr_shared_contracts_execution_fill_py,src_zephyr_shared_contracts_execution_model_serving_request_py,src_zephyr_shared_contracts_execution_order_py,src_zephyr_shared_contracts_experiment_experiment_result_py,src_zephyr_shared_contracts_experiment_model_serving_response_py,src_zephyr_shared_contracts_external_ext_001_py,src_zephyr_shared_contracts_external_ext_002_py,src_zephyr_shared_contracts_external_ext_003_py,src_zephyr_shared_contracts_external_ext_004_py,src_zephyr_shared_contracts_identity_agent_identity_py,src_zephyr_shared_contracts_identity_permission_py,src_zephyr_shared_contracts_llm_gateway_protocol_py,src_zephyr_shared_contracts_market_instrument_py,src_zephyr_shared_contracts_orchestration_protocol_py,src_zephyr_shared_contracts_portfolio_money_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_database_init_py,src_zephyr_shared_database_database_crud_mixin_py,src_zephyr_shared_dependency_dependency_graph_py,src_zephyr_shared_draft_draft_assistant_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_models_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_limiter_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py,src_zephyr_shared_infra_process_lifecycle_gateway_py,src_zephyr_shared_infra_process_pool_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py,src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_sqlite_factory_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_io_workspace_telemetry_py,src_zephyr_shared_io_yaml_utils_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_healthcheck_service_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_state_machine_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py,src_zephyr_shared_maintenance_autonomy_monitor_py,src_zephyr_shared_maintenance_code_economy_analyzer_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_owner_trust_gauge_py,src_zephyr_shared_maintenance_slo_review_assistant_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_observability_dashboard_init_py,src_zephyr_shared_observability_metrics_py,src_zephyr_shared_observability_metrics_server_py,src_zephyr_shared_observability_reasoning_spans_py,src_zephyr_shared_observability_tracing_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py,src_zephyr_shared_protocols_module_birth_registry_py,src_zephyr_shared_protocols_ports_py,src_zephyr_shared_protocols_registry_py,src_zephyr_shared_reliability_diff_planner_py,src_zephyr_shared_reliability_retry_handler_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_degradation_chain_py,src_zephyr_shared_resilience_error_budget_tracker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_fault_isolator_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_schema_base_config_py,src_zephyr_shared_schema_execution_model_py,src_zephyr_shared_schema_schema_registry_py,src_zephyr_shared_schema_schemas_py,src_zephyr_shared_schema_severity_types_py,src_zephyr_shared_schema_task_types_py,src_zephyr_shared_security_capability_py,src_zephyr_shared_security_sandbox_executor_py,src_zephyr_shared_security_secrets_py,src_zephyr_shared_security_ssot_guard_py,src_zephyr_shared_session_session_audit_py,src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_session_continuity_py,src_zephyr_shared_utils_async_utils_py,src_zephyr_shared_utils_cli_summary_py,src_zephyr_shared_utils_context_py,src_zephyr_shared_utils_converters_py,src_zephyr_shared_utils_db_utils_py,src_zephyr_shared_utils_diff_utils_py,src_zephyr_shared_utils_logging_py,src_zephyr_shared_utils_migration_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py,src_zephyr_shared_utils_zephyr_logger_py,src_zephyr_shared_versioning_vibe_experiment_tracker_py,tests_zephyr_shared_observability_test_metrics_server_py production
-    class D_INFRA_RUNTIME,D_GOV_RULE,D_FEEDBACK_LOOP,D_ML_TRAIN,D_DATA,D_GOV_OPS_RESILIENCE,D_GOV_AUDIT,D_GOV_CODE_QUALITY,D_GOV_SCRIPTS,D_AUTONOMY_CORE,D_GOV_ENFORCEMENT,D_INFRA_RECOVERY,D_GOVERNANCE external_prod
+    class D_GOV_RULE,D_INFRA_RUNTIME,D_FEEDBACK_LOOP,D_ML_TRAIN,D_DATA,D_GOV_OPS_RESILIENCE,D_GOV_ENFORCEMENT,D_INFRA_RECOVERY,D_GOV_AUDIT,D_GOV_CODE_QUALITY,D_GOV_SCRIPTS,D_AUTONOMY_CORE,D_GOVERNANCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -546,153 +546,153 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py["_cross_layer/ml_experiment_pipeline<br/>MLExperimentPipeline<br/>D_ML_TRAIN->实验跨层集成管道<br/>文件: _cross_layer/ml_experiment_pipeline.py<br/>(生产态 / production)"]
-    src_zephyr_shared_adaptation_execution_tuner_py["adaptation/execution_tuner<br/>Execution Tuner — 执行调谐器（token/timeout<br/>自适应）。<br/>文件: adaptation/execution_tuner.py<br/>(生产态 / production)"]
-    src_zephyr_shared_adaptation_prompt_version_manager_py["adaptation/prompt_version_manager<br/>Prompt Version Manager — 版本化 Prompt 治理。<br/>文件: adaptation/prompt_version_manager.py<br/>(生产态 / production)"]
-    src_zephyr_shared_ai_guards_ai_audit_guard_py["ai_guards/ai_audit_guard<br/>共享层/ai guards包的ai_audit_guard模块<br/>文件: ai_guards/ai_audit_guard.py<br/>(生产态 / production)"]
-    src_zephyr_shared_ai_guards_combinatorial_gate_py["ai_guards/combinatorial_gate<br/>共享层/ai guards包的combinatorial_gate模块<br/>文件: ai_guards/combinatorial_gate.py<br/>(生产态 / production)"]
-    src_zephyr_shared_ai_guards_core_integrity_guard_py["ai_guards/core_integrity_guard<br/>共享层/ai guards包的core_integrity_guard模块<br/>文件: ai_guards/core_integrity_guard.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_alert_escalation_py["alerts/alert_escalation<br/>AlertEscalation — re-homed to eliminate<br/>shared->infrastructure circular import.<br/>文件: alerts/alert_escalation.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_alert_manager_py["alerts/alert_manager<br/>共享层/alerts包的alert_manager模块<br/>文件: alerts/alert_manager.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_alert_precision_tracker_py["alerts/alert_precision_tracker<br/>共享层/alerts包的alert_precision_tracker模块<br/>文件: alerts/alert_precision_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_dual_channel_alert_py["alerts/dual_channel_alert<br/>共享层/alerts包的dual_channel_alert模块<br/>文件: alerts/dual_channel_alert.py<br/>(生产态 / production)"]
-    src_zephyr_shared_alerts_heartbeat_server_py["alerts/heartbeat_server<br/>共享层/alerts包的heartbeat_server模块<br/>文件: alerts/heartbeat_server.py<br/>(生产态 / production)"]
-    src_zephyr_shared_api_api_client_py["api/api_client<br/>api_client.py —— 统一 API Client 基类（Phase 7<br/>新增 / 盲点 B11 修复）<br/>文件: api/api_client.py<br/>(生产态 / production)"]
-    src_zephyr_shared_api_api_index_py["api/api_index<br/>shared/ API 索引 — AI session<br/>冷启动时的'员工通讯录'<br/>文件: api/api_index.py<br/>(生产态 / production)"]
-    src_zephyr_shared_api_dos_launcher_py["api/dos_launcher<br/>共享层/接口包的dos_launcher模块<br/>文件: api/dos_launcher.py<br/>(生产态 / production)"]
-    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["blueprint_tools/ai_understandability_constraint<br/>共享层/blueprint<br/>tools包的ai_understandability_constraint模块<br/>文件: blueprint_tools<br/>/ai_understandability_constraint.py<br/>(生产态 / production)"]
-    src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py["blueprint_tools/blueprint_code_auditor<br/>共享层/blueprint<br/>tools包的blueprint_code_auditor模块<br/>文件: blueprint_tools/blueprint_code_auditor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_blueprint_tools_blueprint_scorer_py["blueprint_tools/blueprint_scorer<br/>blueprint_scorer.py — Re-export wrapper -><br/>canonical: zephyr.orchestrator.qu...<br/>文件: blueprint_tools/blueprint_scorer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_adaptive_sampler_py["capacity_governance/adaptive_sampler<br/>共享层/capacity<br/>governance包的adaptive_sampler模块<br/>文件: capacity_governance/adaptive_sampler.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_budget_aware_prompt_py["capacity_governance/budget_aware_prompt<br/>共享层/capacity<br/>governance包的budget_aware_prompt模块<br/>文件: capacity_governance/budget_aware_prompt.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_capacity_calibrator_py["capacity_governance/capacity_calibrator<br/>共享层/capacity<br/>governance包的capacity_calibrator模块<br/>文件: capacity_governance/capacity_calibrator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_capacity_digital_twin_py["capacity_governance/capacity_digital_twin<br/>共享层/capacity<br/>governance包的capacity_digital_twin模块<br/>文件: capacity_governance<br/>/capacity_digital_twin.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_capacity_fingerprint_py["capacity_governance/capacity_fingerprint<br/>共享层/capacity<br/>governance包的capacity_fingerprint模块<br/>文件: capacity_governance<br/>/capacity_fingerprint.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_capacity_runbook_generator_py["capacity_governance/capacity_runbook_generator<br/>共享层/capacity<br/>governance包的capacity_runbook_generator模块<br/>文件: capacity_governance<br/>/capacity_runbook_generator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_cost_estimator_py["capacity_governance/cost_estimator<br/>共享层/capacity governance包的cost_estimator模块<br/>文件: capacity_governance/cost_estimator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_dependency_capacity_guard_py["capacity_governance/dependency_capacity_guard<br/>共享层/capacity<br/>governance包的dependency_capacity_guard模块<br/>文件: capacity_governance<br/>/dependency_capacity_guard.py<br/>(生产态 / production)"]
-    src_zephyr_shared_capacity_governance_model_capacity_probe_py["capacity_governance/model_capacity_probe<br/>共享层/capacity<br/>governance包的model_capacity_probe模块<br/>文件: capacity_governance<br/>/model_capacity_probe.py<br/>(生产态 / production)"]
-    src_zephyr_shared_compensation_saga_compensator_py["compensation/saga_compensator<br/>Saga Compensator — 补偿事务：多步操作任一失败<br/>-> 反向补偿。<br/>文件: compensation/saga_compensator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_context_context_engine_py["context/context_engine<br/>Context Engine — AI 上下文组装与 Token<br/>预算管理。<br/>文件: context/context_engine.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_backpressure_types_py["backpressure/_types<br/>Shared internal backpressure type definitions.<br/>文件: backpressure/_types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_backpressure_pause_py["backpressure/pause<br/>共享层/backpressure包的pause模块<br/>文件: backpressure/pause.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_backpressure_resume_py["backpressure/resume<br/>共享层/backpressure包的resume模块<br/>文件: backpressure/resume.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_backpressure_throttle_py["backpressure/throttle<br/>共享层/backpressure包的throttle模块<br/>文件: backpressure/throttle.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_contract_bus_py["contracts/contract_bus<br/>ContractBus — 跨层通信抽象 + Pydantic v2 Schema<br/>Enforcement (M-09)<br/>文件: contracts/contract_bus.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_base_event_py["core/base_event<br/>BaseEvent — 跨层事件基类<br/>文件: core/base_event.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_enforcer_py["core/enforcer<br/>ZephyrAlpha — shared/contracts/enforcer.py<br/>文件: core/enforcer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_factories_py["core/factories<br/>shared/contracts/factories.py —<br/>跨层数据契约工厂方法<br/>文件: core/factories.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_gate_types_py["core/gate_types<br/>共享层/核心包的gate_types模块<br/>文件: core/gate_types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_registry_py["core/registry<br/>ZephyrAlpha — shared/contracts/registry.py<br/>文件: core/registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_system_configuration_py["core/system_configuration<br/>共享层/核心包的system_configuration模块<br/>文件: core/system_configuration.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_timestamp_py["core/timestamp<br/>ZephyrAlpha — shared/contracts/timestamp.py<br/>文件: core/timestamp.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_enums_init_py["contracts/enums 包入口<br/>shared/contracts/enums — 跨切面交易枚举真源<br/>(5.152 #1 修复)<br/>文件: enums/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_contract_violation_error_py["errors/contract_violation_error<br/>共享层/错误包的contract_violation_error模块<br/>文件: errors/contract_violation_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_data_quality_error_py["errors/data_quality_error<br/>CTR-ERR-001: DataQualityError /<br/>行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_execution_rejection_error_py["errors/execution_rejection_error<br/>共享层/错误包的execution_rejection_error模块<br/>文件: errors/execution_rejection_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_factor_computation_error_py["errors/factor_computation_error<br/>CTR-ERR-002: FactorComputationError /<br/>因子计算失败错误<br/>文件: errors/factor_computation_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py["errors/risk_limit_violation_error<br/>共享层/错误包的risk_limit_violation_error模块<br/>文件: errors/risk_limit_violation_error.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_errors_signal_degradation_warning_py["errors/signal_degradation_warning<br/>共享层/错误包的signal_degradation_warning模块<br/>文件: errors/signal_degradation_warning.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_escalation_budget_alert_py["escalation/budget_alert<br/>共享层/escalation包的budget_alert模块<br/>文件: escalation/budget_alert.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_capital_allocation_result_py["execution/capital_allocation_result<br/>共享层/执行包的capital_allocation_result模块<br/>文件: execution/capital_allocation_result.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_execution_report_py["execution/execution_report<br/>共享层/执行包的execution_report模块<br/>文件: execution/execution_report.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_fill_py["execution/fill<br/>共享层/执行包的fill模块<br/>文件: execution/fill.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_model_serving_request_py["execution/model_serving_request<br/>共享层/执行包的model_serving_request模块<br/>文件: execution/model_serving_request.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_execution_order_py["execution/order<br/>共享层/执行包的order模块<br/>文件: execution/order.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_experiment_experiment_result_py["experiment/experiment_result<br/>共享层/experiment包的experiment_result模块<br/>文件: experiment/experiment_result.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_experiment_model_serving_response_py["experiment/model_serving_response<br/>共享层/experiment包的model_serving_response模块<br/>文件: experiment/model_serving_response.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_external_ext_001_py["external/ext_001<br/>共享层/external包的ext_001模块<br/>文件: external/ext_001.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_external_ext_002_py["external/ext_002<br/>共享层/external包的ext_002模块<br/>文件: external/ext_002.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_external_ext_003_py["external/ext_003<br/>共享层/external包的ext_003模块<br/>文件: external/ext_003.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_external_ext_004_py["external/ext_004<br/>共享层/external包的ext_004模块<br/>文件: external/ext_004.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_identity_agent_identity_py["identity/agent_identity<br/>共享层/identity包的agent_identity模块<br/>文件: identity/agent_identity.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_identity_permission_py["identity/permission<br/>共享层/identity包的permission模块<br/>文件: identity/permission.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_llm_gateway_protocol_py["contracts/llm_gateway_protocol<br/>LLMGatewayProtocol — LLM 网关抽象接口<br/>文件: contracts/llm_gateway_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_market_instrument_py["market/instrument<br/>共享层/market包的instrument模块<br/>文件: market/instrument.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_orchestration_protocol_py["contracts/orchestration_protocol<br/>共享层/契约包的orchestration_protocol模块<br/>文件: contracts/orchestration_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_portfolio_money_py["portfolio/money<br/>共享层/portfolio包的money模块<br/>文件: portfolio/money.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_portfolio_position_py["portfolio/position<br/>共享层/portfolio包的position模块<br/>文件: portfolio/position.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_compliance_rule_py["risk/compliance_rule<br/>共享层/风险包的compliance_rule模块<br/>文件: risk/compliance_rule.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py["risk/risk_dashboard_snapshot<br/>共享层/风险包的risk_dashboard_snapshot模块<br/>文件: risk/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_risk_limits_py["risk/risk_limits<br/>共享层/风险包的risk_limits模块<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_risk_metrics_py["risk/risk_metrics<br/>共享层/风险包的risk_metrics模块<br/>文件: risk/risk_metrics.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_risk_risk_validator_protocol_py["risk/risk_validator_protocol<br/>共享层/风险包的risk_validator_protocol模块<br/>文件: risk/risk_validator_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_security_security_decision_py["security/security_decision<br/>共享层/安全包的security_decision模块<br/>文件: security/security_decision.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_skill_protocol_py["contracts/skill_protocol<br/>共享层/契约包的skill_protocol模块<br/>文件: contracts/skill_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_database_init_py["shared/database 包入口<br/>共享数据库工具包：提供 DatabaseService 共用的<br/>CRUD mixin。<br/>文件: database/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_shared_dependency_dependency_graph_py["dependency/dependency_graph<br/>Dependency Graph — 任务卡依赖关系管理。<br/>文件: dependency/dependency_graph.py<br/>(生产态 / production)"]
-    src_zephyr_shared_draft_draft_assistant_py["draft/draft_assistant<br/>Draft Assistant — 想法 -> MTH-012 蓝图骨架生成。<br/>文件: draft/draft_assistant.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_dlq_bridge_py["events/dlq_bridge<br/>CT-DLQ-001: DeadLetterQueue -> System Event Bus<br/>integration bridge.<br/>文件: events/dlq_bridge.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_event_bus_upgrade_py["events/event_bus_upgrade<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>文件: events/event_bus_upgrade.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_event_reactor_py["events/event_reactor<br/>Event Reactor — 事件反应器（自动响应事件）。<br/>文件: events/event_reactor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_event_schemas_py["events/event_schemas<br/>event_schemas.py —— Observer 事件体 Pydantic V2<br/>Schema（盲点 B6/B10 修复）<br/>文件: events/event_schemas.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_hook_dispatcher_py["events/hook_dispatcher<br/>Hook Dispatcher — 任务状态变更 -> 外部回调触发。<br/>文件: events/hook_dispatcher.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_upgrade_strategy_py["events/upgrade_strategy<br/>EventBus 升级策略引擎<br/>文件: events/upgrade_strategy.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_constants_py["foundation/constants<br/>constants.py —— 共享枚举 & 常量集中 re-export<br/>（Single Source of Truth）<br/>文件: foundation/constants.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_deprecation_py["foundation/deprecation<br/>deprecation.py —— ZephyrAlpha API 废弃策略<br/>文件: foundation/deprecation.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_env_py["foundation/env<br/>共享层/foundation包的env模块<br/>文件: foundation/env.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_flags_py["foundation/flags<br/>共享层/foundation包的flags模块<br/>文件: foundation/flags.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_types_py["foundation/types<br/>types.py —— 共享类型别名 & 语义化 NewType<br/>（Phase 3 新增 / 盲点 #5 修复）<br/>文件: foundation/types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_cache_py["infra/cache<br/>cache.py —— 统一缓存抽象（Phase 8 新增 / 盲点<br/>B13 修复）<br/>文件: infra/cache.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_limiter_py["infra/limiter<br/>共享层/infra包的limiter模块<br/>文件: infra/limiter.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_lock_py["infra/lock<br/>lock.py —— 分布式锁抽象（Phase 10 新增 / 盲点<br/>B23 修复）<br/>文件: infra/lock.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_outbox_py["infra/outbox<br/>outbox.py —— 事务性 Outbox 模式（Phase 10 新增<br/>/ 盲点 B24 修复）<br/>文件: infra/outbox.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_process_lifecycle_gateway_py["infra/process_lifecycle_gateway<br/>ProcessLifecycleGateway — 进程生命周期统一入口<br/>文件: infra/process_lifecycle_gateway.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_content_fingerprint_py["io/content_fingerprint<br/>SHA-256 content fingerprint computation and<br/>verification.<br/>文件: io/content_fingerprint.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_file_utils_py["io/file_utils<br/>file_utils.py —— 安全文件操作工具（Phase 3 新增<br/>/ 盲点 #15 修复）<br/>文件: io/file_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_frontmatter_utils_py["io/frontmatter_utils<br/>frontmatter_utils.py — Markdown/YAML<br/>frontmatter 解析 SSoT<br/>文件: io/frontmatter_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_io_cache_py["io/io_cache<br/>io_cache.py - File-level I/O cache with LRU<br/>eviction<br/>文件: io/io_cache.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_streaming_reader_py["io/streaming_reader<br/>streaming_reader.py - Memory-efficient<br/>streaming file readers<br/>文件: io/streaming_reader.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_workspace_telemetry_py["io/workspace_telemetry<br/>workspace_telemetry.py —<br/>主工作区文件操作遥测公共 API（...<br/>文件: io/workspace_telemetry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_yaml_utils_py["io/yaml_utils<br/>yaml_utils.py — vocabulary YAML 加载公共工具<br/>（SSoT 真源）<br/>文件: io/yaml_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_health_py["lifecycle/health<br/>health.py —— ZephyrAlpha 聚合健康检查<br/>文件: lifecycle/health.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_health_discovery_py["lifecycle/health_discovery<br/>CT-HEALTH-001: System-wide Health Discovery<br/>Registration.<br/>文件: lifecycle/health_discovery.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_healthcheck_service_py["lifecycle/healthcheck_service<br/>共享层/lifecycle包的healthcheck_service模块<br/>文件: lifecycle/healthcheck_service.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_longevity_monitor_py["lifecycle/longevity_monitor<br/>共享层/lifecycle包的longevity_monitor模块<br/>文件: lifecycle/longevity_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_state_machine_py["lifecycle/state_machine<br/>StateMachine(S) — 通用状态机泛型基类<br/>(MOD-INF-038)<br/>文件: lifecycle/state_machine.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_task_heartbeat_py["lifecycle/task_heartbeat<br/>共享层/lifecycle包的task_heartbeat模块<br/>文件: lifecycle/task_heartbeat.py<br/>(生产态 / production)"]
-    src_zephyr_shared_lifecycle_ttl_cleanup_engine_py["lifecycle/ttl_cleanup_engine<br/>共享层/lifecycle包的ttl_cleanup_engine模块<br/>文件: lifecycle/ttl_cleanup_engine.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_autonomy_monitor_py["maintenance/autonomy_monitor<br/>Autonomy Monitor — AI 自主等级监控与降级。<br/>文件: maintenance/autonomy_monitor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_code_economy_analyzer_py["maintenance/code_economy_analyzer<br/>共享层/maintenance包的code_economy_analyzer模块<br/>文件: maintenance/code_economy_analyzer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_dogfooding_py["maintenance/dogfooding<br/>Dogfooding — 自举测试：用 TaskCard 管理<br/>TaskCard 建设。<br/>文件: maintenance/dogfooding.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_handbook_py["maintenance/handbook<br/>Onboarding Handbook — AI Agent 施工手册生成。<br/>文件: maintenance/handbook.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_owner_trust_gauge_py["maintenance/owner_trust_gauge<br/>共享层/maintenance包的owner_trust_gauge模块<br/>文件: maintenance/owner_trust_gauge.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_slo_review_assistant_py["maintenance/slo_review_assistant<br/>共享层/maintenance包的slo_review_assistant模块<br/>文件: maintenance/slo_review_assistant.py<br/>(生产态 / production)"]
-    src_zephyr_shared_maintenance_zero_config_py["maintenance/zero_config<br/>共享层/maintenance包的zero_config模块<br/>文件: maintenance/zero_config.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_dashboard_init_py["observability/dashboard 包入口<br/>Grafana 双数据源仪表盘模块（MOD-INF-044）。<br/>文件: dashboard/__init__.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_reasoning_spans_py["observability/reasoning_spans<br/>共享层/observability包的reasoning_spans模块<br/>文件: observability/reasoning_spans.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_tracing_py["observability/tracing<br/>tracing.py —— OpenTelemetry 分布式追踪（Phase B<br/>补充 / 盲点 B1 修复）<br/>文件: observability/tracing.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_a2a_a2a_coordination_py["a2a/a2a_coordination<br/>A2A Coordination — shared interface definitions<br/>for multi-agent coordination.<br/>文件: a2a/a2a_coordination.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_a2a_a2a_protocol_py["a2a/a2a_protocol<br/>Core A2A Protocol interface and governance data<br/>contracts.<br/>文件: a2a/a2a_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_a2a_a2a_schemas_py["a2a/a2a_schemas<br/>A2A data structure contracts — Message, Task,<br/>and StateMachine schemas.<br/>文件: a2a/a2a_schemas.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_module_birth_registry_py["protocols/module_birth_registry<br/>共享层/protocols包的module_birth_registry模块<br/>文件: protocols/module_birth_registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_ports_py["protocols/ports<br/>ports — D-DATA 服务的 Protocol 定义<br/>文件: protocols/ports.py<br/>(生产态 / production)"]
-    src_zephyr_shared_reliability_diff_planner_py["reliability/diff_planner<br/>Diff Planner — 最小增量变更规划器。<br/>文件: reliability/diff_planner.py<br/>(生产态 / production)"]
-    src_zephyr_shared_reliability_retry_handler_py["reliability/retry_handler<br/>Retry Handler — 指数退避重试 + 可恢复<br/>/不可恢复错误分类。<br/>文件: reliability/retry_handler.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_degradation_chain_py["resilience/degradation_chain<br/>共享层/resilience包的degradation_chain模块<br/>文件: resilience/degradation_chain.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_error_budget_tracker_py["resilience/error_budget_tracker<br/>共享层/resilience包的error_budget_tracker模块<br/>文件: resilience/error_budget_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_fallback_py["resilience/fallback<br/>fallback.py —— 降级策略模式（Phase 2 新增 /<br/>零依赖）<br/>文件: resilience/fallback.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_fault_isolator_py["resilience/fault_isolator<br/>共享层/resilience包的fault_isolator模块<br/>文件: resilience/fault_isolator.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_schema_registry_py["schema/schema_registry<br/>共享层/schema包的schema_registry模块<br/>文件: schema/schema_registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_security_capability_py["security/capability<br/>CBAC 能力检查器 (Capability-Based Access<br/>Control)<br/>文件: security/capability.py<br/>(生产态 / production)"]
-    src_zephyr_shared_security_sandbox_executor_py["security/sandbox_executor<br/>SandboxExecutor — re-homed to eliminate<br/>shared->infrastructure circular import.<br/>文件: security/sandbox_executor.py<br/>(生产态 / production)"]
-    src_zephyr_shared_security_secrets_py["security/secrets<br/>secrets.py —— Secrets 管理抽象（Phase 7 新增 /<br/>盲点 B12 修复）<br/>文件: security/secrets.py<br/>(生产态 / production)"]
-    src_zephyr_shared_security_ssot_guard_py["security/ssot_guard<br/>共享层/安全包的ssot_guard模块<br/>文件: security/ssot_guard.py<br/>(生产态 / production)"]
-    src_zephyr_shared_session_session_audit_py["session/session_audit<br/>session_audit.py —— Session 审计轨迹（Phase 12<br/>/ 盲点 B32）<br/>文件: session/session_audit.py<br/>(生产态 / production)"]
-    src_zephyr_shared_session_session_boundary_py["session/session_boundary<br/>Session Boundary — 会话边界管理。<br/>文件: session/session_boundary.py<br/>(生产态 / production)"]
-    src_zephyr_shared_session_session_continuity_py["session/session_continuity<br/>SessionContinuity — Session 交接包自动生成与恢复<br/>文件: session/session_continuity.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_async_utils_py["utils/async_utils<br/>async_utils.py — async/sync 边界桥接（5.12.8<br/>修复）<br/>文件: utils/async_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_cli_summary_py["utils/cli_summary<br/>CLI Summary — CLI 友好施工汇总。<br/>文件: utils/cli_summary.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_context_py["utils/context<br/>context.py —— 结构化上下文传播（Phase 8 新增 /<br/>盲点 B16 修复）<br/>文件: utils/context.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_converters_py["utils/converters<br/>converters.py — 类型转换工具（消除 '' vs None<br/>语义鸿沟）<br/>文件: utils/converters.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_db_utils_py["utils/db_utils<br/>db_utils.py — SQLite 连接公共 API（SSoT:<br/>zephyr.governance.persistence.sqlit...<br/>文件: utils/db_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_diff_utils_py["utils/diff_utils<br/>diff_utils.py —— 统一 Diff/Patch 工具（Phase 3<br/>新增 / 盲点 #14 修复）<br/>文件: utils/diff_utils.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_migration_py["utils/migration<br/>migration.py —— ZephyrAlpha Schema<br/>版本化迁移系统<br/>文件: utils/migration.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_pagination_py["utils/pagination<br/>pagination.py —— 通用分页工具（Phase 9 新增 /<br/>盲点 B18 修复）<br/>文件: utils/pagination.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_testing_py["utils/testing<br/>testing.py —— ZephyrAlpha 共享测试夹具/工厂<br/>文件: utils/testing.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_zephyr_logger_py["utils/zephyr_logger<br/>共享层/utils包的zephyr_logger模块<br/>文件: utils/zephyr_logger.py<br/>(生产态 / production)"]
-    src_zephyr_shared_versioning_vibe_experiment_tracker_py["versioning/vibe_experiment_tracker<br/>共享层/versioning包的vibe_experiment_tracker模块<br/>文件: versioning/vibe_experiment_tracker.py<br/>(生产态 / production)"]
-    tests_zephyr_shared_observability_test_metrics_server_py["observability/test_metrics_server<br/>metrics_server 单元测试（P1-5 Prometheus<br/>/metrics 端点）。<br/>文件: observability/test_metrics_server.py<br/>(生产态 / production)"]
+    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py["MLExperimentPipeline<br/>D_ML_TRAIN->实验跨层集成管道<br/>共享层/ cross<br/>layer包的ml_experiment_pipeline模块<br/>Ml Experiment Pipeline<br/>文件: _cross_layer/ml_experiment_pipeline.py<br/>(生产态 / production)"]
+    src_zephyr_shared_adaptation_execution_tuner_py["只读：default_params<br/>Execution Tuner — 执行调谐器（token/timeout<br/>自适应）。<br/>文件: adaptation/execution_tuner.py<br/>(生产态 / production)"]
+    src_zephyr_shared_adaptation_prompt_version_manager_py["只读：data_dir<br/>Prompt Version Manager — 版本化 Prompt 治理。<br/>文件: adaptation/prompt_version_manager.py<br/>(生产态 / production)"]
+    src_zephyr_shared_ai_guards_ai_audit_guard_py["Ai Audit Guard<br/>共享层/ai guards包的ai_audit_guard模块<br/>文件: ai_guards/ai_audit_guard.py<br/>(生产态 / production)"]
+    src_zephyr_shared_ai_guards_combinatorial_gate_py["Combinatorial Gate<br/>共享层/ai guards包的combinatorial_gate模块<br/>文件: ai_guards/combinatorial_gate.py<br/>(生产态 / production)"]
+    src_zephyr_shared_ai_guards_core_integrity_guard_py["Core Integrity Guard<br/>共享层/ai guards包的core_integrity_guard模块<br/>文件: ai_guards/core_integrity_guard.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_alert_escalation_py["re-homed to eliminate shared->infrastructure<br/>circular import.'''<br/>AlertEscalation — re-homed to eliminate<br/>shared->infrastructure circular import.<br/>Alert Escalation<br/>文件: alerts/alert_escalation.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_alert_manager_py["Alert Manager<br/>共享层/alerts包的alert_manager模块<br/>文件: alerts/alert_manager.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_alert_precision_tracker_py["Alert Precision Tracker<br/>共享层/alerts包的alert_precision_tracker模块<br/>文件: alerts/alert_precision_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_dual_channel_alert_py["Dual Channel Alert<br/>共享层/alerts包的dual_channel_alert模块<br/>文件: alerts/dual_channel_alert.py<br/>(生产态 / production)"]
+    src_zephyr_shared_alerts_heartbeat_server_py["Heartbeat Server<br/>共享层/alerts包的heartbeat_server模块<br/>文件: alerts/heartbeat_server.py<br/>(生产态 / production)"]
+    src_zephyr_shared_api_api_client_py["—HTTP 错误、超时、协议不匹配<br/>api_client.py —— 统一 API Client 基类（Phase 7<br/>新增 / 盲点 B11 修复）<br/>文件: api/api_client.py<br/>(生产态 / production)"]
+    src_zephyr_shared_api_api_index_py["Api Index<br/>shared/ API 索引 — AI session<br/>冷启动时的'员工通讯录'<br/>文件: api/api_index.py<br/>(生产态 / production)"]
+    src_zephyr_shared_api_dos_launcher_py["Dos Launcher<br/>共享层/接口包的dos_launcher模块<br/>文件: api/dos_launcher.py<br/>(生产态 / production)"]
+    src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py["Ai Understandability Constraint<br/>共享层/blueprint<br/>tools包的ai_understandability_constraint模块<br/>文件: blueprint_tools<br/>/ai_understandability_constraint.py<br/>(生产态 / production)"]
+    src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py["Blueprint Code Auditor<br/>共享层/blueprint<br/>tools包的blueprint_code_auditor模块<br/>文件: blueprint_tools/blueprint_code_auditor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_blueprint_tools_blueprint_scorer_py["Blueprint Scorer<br/>blueprint_scorer.py — Re-export wrapper -><br/>canonical: zephyr.orchestrator.qu...<br/>文件: blueprint_tools/blueprint_scorer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_adaptive_sampler_py["只读：base_rate<br/>共享层/capacity<br/>governance包的adaptive_sampler模块<br/>Adaptive Sampler<br/>文件: capacity_governance/adaptive_sampler.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_budget_aware_prompt_py["Budget Aware Prompt<br/>共享层/capacity<br/>governance包的budget_aware_prompt模块<br/>文件: capacity_governance/budget_aware_prompt.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_capacity_calibrator_py["Capacity Calibrator<br/>共享层/capacity<br/>governance包的capacity_calibrator模块<br/>文件: capacity_governance/capacity_calibrator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_capacity_digital_twin_py["Capacity Digital Twin<br/>共享层/capacity<br/>governance包的capacity_digital_twin模块<br/>文件: capacity_governance<br/>/capacity_digital_twin.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_capacity_fingerprint_py["Capacity Fingerprint<br/>共享层/capacity<br/>governance包的capacity_fingerprint模块<br/>文件: capacity_governance<br/>/capacity_fingerprint.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_capacity_runbook_generator_py["Capacity Runbook Generator<br/>共享层/capacity<br/>governance包的capacity_runbook_generator模块<br/>文件: capacity_governance<br/>/capacity_runbook_generator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_cost_estimator_py["Cost Estimator<br/>共享层/capacity governance包的cost_estimator模块<br/>文件: capacity_governance/cost_estimator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_dependency_capacity_guard_py["Dependency Capacity Guard<br/>共享层/capacity<br/>governance包的dependency_capacity_guard模块<br/>文件: capacity_governance<br/>/dependency_capacity_guard.py<br/>(生产态 / production)"]
+    src_zephyr_shared_capacity_governance_model_capacity_probe_py["Model Capacity Probe<br/>共享层/capacity<br/>governance包的model_capacity_probe模块<br/>文件: capacity_governance<br/>/model_capacity_probe.py<br/>(生产态 / production)"]
+    src_zephyr_shared_compensation_saga_compensator_py["只读：sagas<br/>Saga Compensator — 补偿事务：多步操作任一失败<br/>-> 反向补偿。<br/>文件: compensation/saga_compensator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_context_context_engine_py["只读：budget<br/>Context Engine — AI 上下文组装与 Token<br/>预算管理。<br/>文件: context/context_engine.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_backpressure_types_py["Types<br/>Shared internal backpressure type definitions.<br/>文件: backpressure/_types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_backpressure_pause_py["Pause<br/>共享层/backpressure包的pause模块<br/>文件: backpressure/pause.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_backpressure_resume_py["Resume<br/>共享层/backpressure包的resume模块<br/>文件: backpressure/resume.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_backpressure_throttle_py["Throttle<br/>共享层/backpressure包的throttle模块<br/>文件: backpressure/throttle.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_contract_bus_py["Contract Bus 错误<br/>ContractBus — 跨层通信抽象 + Pydantic v2 Schema<br/>Enforcement (M-09)<br/>文件: contracts/contract_bus.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_base_event_py["跨层事件基类<br/>BaseEvent — 跨层事件基类<br/>Base Event<br/>文件: core/base_event.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_enforcer_py["运行时跨层数据契约校验失败<br/>ZephyrAlpha — shared/contracts/enforcer.py<br/>文件: core/enforcer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_factories_py["跨层数据契约工厂方法<br/>shared/contracts/factories.py —<br/>跨层数据契约工厂方法<br/>文件: core/factories.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_gate_types_py["Gate Types<br/>共享层/核心包的gate_types模块<br/>文件: core/gate_types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_registry_py["MAJOR 版本不匹配时抛出<br/>ZephyrAlpha — shared/contracts/registry.py<br/>文件: core/registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_system_configuration_py["System Configuration<br/>共享层/核心包的system_configuration模块<br/>文件: core/system_configuration.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_timestamp_py["Timestamp<br/>ZephyrAlpha — shared/contracts/timestamp.py<br/>文件: core/timestamp.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_enums_init_py["跨切面交易枚举真源<br/>shared/contracts/enums — 跨切面交易枚举真源<br/>(5.152 #1 修复)<br/>Init<br/>文件: enums/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_contract_violation_error_py["Contract Violation Error<br/>共享层/错误包的contract_violation_error模块<br/>文件: errors/contract_violation_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_data_quality_error_py["Data Quality Error<br/>CTR-ERR-001: DataQualityError /<br/>行情质量门禁不通过错误<br/>文件: errors/data_quality_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_execution_rejection_error_py["Execution Rejection Error<br/>共享层/错误包的execution_rejection_error模块<br/>文件: errors/execution_rejection_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_factor_computation_error_py["Factor Computation Error<br/>CTR-ERR-002: FactorComputationError /<br/>因子计算失败错误<br/>文件: errors/factor_computation_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_risk_limit_violation_error_py["Risk Limit Violation Error<br/>共享层/错误包的risk_limit_violation_error模块<br/>文件: errors/risk_limit_violation_error.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_errors_signal_degradation_warning_py["Signal Degradation Warning<br/>共享层/错误包的signal_degradation_warning模块<br/>文件: errors/signal_degradation_warning.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_escalation_budget_alert_py["Budget Alert<br/>共享层/escalation包的budget_alert模块<br/>文件: escalation/budget_alert.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_capital_allocation_result_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.capit<br/>al_allocation_result.'''<br/>共享层/执行包的capital_allocation_result模块<br/>Capital Allocation Result<br/>文件: execution/capital_allocation_result.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_execution_report_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.execu<br/>tion_report.'''<br/>共享层/执行包的execution_report模块<br/>Execution Report<br/>文件: execution/execution_report.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_fill_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.fill.<br/>'''<br/>共享层/执行包的fill模块<br/>文件: execution/fill.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_model_serving_request_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.model<br/>_serving_request.'''<br/>共享层/执行包的model_serving_request模块<br/>Model Serving Request<br/>文件: execution/model_serving_request.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_execution_order_py["canonical location is<br/>zephyr.shared.contracts.order<br/>共享层/执行包的order模块<br/>文件: execution/order.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_experiment_experiment_result_py["Experiment Result<br/>共享层/experiment包的experiment_result模块<br/>文件: experiment/experiment_result.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_experiment_model_serving_response_py["Model Serving Response<br/>共享层/experiment包的model_serving_response模块<br/>文件: experiment/model_serving_response.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_external_ext_001_py["Ext 001<br/>共享层/external包的ext_001模块<br/>文件: external/ext_001.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_external_ext_002_py["Ext 002<br/>共享层/external包的ext_002模块<br/>文件: external/ext_002.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_external_ext_003_py["Ext 003<br/>共享层/external包的ext_003模块<br/>文件: external/ext_003.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_external_ext_004_py["Ext 004<br/>共享层/external包的ext_004模块<br/>文件: external/ext_004.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_identity_agent_identity_py["Agent Identity<br/>共享层/identity包的agent_identity模块<br/>文件: identity/agent_identity.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_identity_permission_py["Permission<br/>共享层/identity包的permission模块<br/>文件: identity/permission.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_llm_gateway_protocol_py["与 orchestration.agent_lifecycle.llm_gateway.LLM<br/>Response 结构一致<br/>LLMGatewayProtocol — LLM 网关抽象接口<br/>Llm Gateway Protocol<br/>文件: contracts/llm_gateway_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_market_instrument_py["canonical location is<br/>zephyr.trading.trading_contracts.market.instrume<br/>nt.'''<br/>共享层/market包的instrument模块<br/>文件: market/instrument.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_orchestration_protocol_py["Orchestration Protocol<br/>共享层/契约包的orchestration_protocol模块<br/>文件: contracts/orchestration_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_portfolio_money_py["Money<br/>共享层/portfolio包的money模块<br/>文件: portfolio/money.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_portfolio_position_py["canonical location is<br/>zephyr.trading.trading_contracts.execution.posit<br/>ion.'''<br/>共享层/portfolio包的position模块<br/>文件: portfolio/position.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_compliance_rule_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.compliance<br/>_rule.'''<br/>共享层/风险包的compliance_rule模块<br/>Compliance Rule<br/>文件: risk/compliance_rule.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.risk_dashb<br/>oard_snapshot.'''<br/>共享层/风险包的risk_dashboard_snapshot模块<br/>Risk Dashboard Snapshot<br/>文件: risk/risk_dashboard_snapshot.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_risk_limits_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.risk_limit<br/>s.'''<br/>共享层/风险包的risk_limits模块<br/>Risk Limits<br/>文件: risk/risk_limits.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_risk_metrics_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.risk_metri<br/>cs.'''<br/>共享层/风险包的risk_metrics模块<br/>Risk Metrics<br/>文件: risk/risk_metrics.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_risk_risk_validator_protocol_py["canonical location is<br/>zephyr.trading.trading_contracts.risk.risk_valid<br/>ator_protocol.'''<br/>共享层/风险包的risk_validator_protocol模块<br/>Risk Validator Protocol<br/>文件: risk/risk_validator_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_security_security_decision_py["Security Decision<br/>共享层/安全包的security_decision模块<br/>文件: security/security_decision.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_skill_protocol_py["—解耦D-INFRA/D-GOV对D-ORCH的直接依赖<br/>共享层/契约包的skill_protocol模块<br/>Skill Protocol<br/>文件: contracts/skill_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_database_init_py["共享数据库工具包：提供 DatabaseService 共用的<br/>CRUD mixin<br/>管理shared.database子包的加载和懒导入<br/>Init<br/>文件: database/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_shared_dependency_dependency_graph_py["只读：nodes<br/>Dependency Graph — 任务卡依赖关系管理。<br/>文件: dependency/dependency_graph.py<br/>(生产态 / production)"]
+    src_zephyr_shared_draft_draft_assistant_py["只读：output_dir<br/>Draft Assistant — 想法 -> MTH-012 蓝图骨架生成。<br/>文件: draft/draft_assistant.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_dlq_bridge_py["DeadLetterQueue -> System Event Bus integration<br/>bridge.<br/>CT-DLQ-001: DeadLetterQueue -> System Event Bus<br/>integration bridge.<br/>Dlq Bridge<br/>文件: events/dlq_bridge.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_event_bus_upgrade_py["事件版本错误<br/>EventBus Upgrade — 事件总线升级 (M-16)<br/>Event Bus Upgrade<br/>文件: events/event_bus_upgrade.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_event_reactor_py["只读：bus<br/>Event Reactor — 事件反应器（自动响应事件）。<br/>文件: events/event_reactor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_event_schemas_py["—文件系统变更通知<br/>event_schemas.py —— Observer 事件体 Pydantic V2<br/>Schema（盲点 B6/B10 修复）<br/>Event Schemas<br/>文件: events/event_schemas.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_hook_dispatcher_py["只读：bus<br/>Hook Dispatcher — 任务状态变更 -> 外部回调触发。<br/>文件: events/hook_dispatcher.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_upgrade_strategy_py["EventBus 升级策略引擎<br/>共享层/事件包的upgrade_strategy模块<br/>Upgrade Strategy<br/>文件: events/upgrade_strategy.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_constants_py["Constants<br/>constants.py —— 共享枚举 & 常量集中 re-export<br/>（Single Source of Truth）<br/>文件: foundation/constants.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_deprecation_py["废弃 API 仍被调用的运行时异常<br/>deprecation.py —— ZephyrAlpha API 废弃策略<br/>文件: foundation/deprecation.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_env_py["—生产环境永远 False<br/>共享层/foundation包的env模块<br/>文件: foundation/env.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_flags_py["请求的 FeatureFlag 未在注册表中找到<br/>共享层/foundation包的flags模块<br/>文件: foundation/flags.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_types_py["—格式 T-N-MM 或 T-INF-NNN<br/>types.py —— 共享类型别名 & 语义化 NewType<br/>（Phase 3 新增 / 盲点 #5 修复）<br/>文件: foundation/types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_cache_py["—后端不可达、key 冲突、序列化失败<br/>cache.py —— 统一缓存抽象（Phase 8 新增 / 盲点<br/>B13 修复）<br/>文件: infra/cache.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_limiter_py["—等待时间过长或无法获取 token<br/>共享层/infra包的limiter模块<br/>文件: infra/limiter.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_lock_py["读取并递增持久化 fencing<br/>计数器，返回新的单调递增 token<br/>lock.py —— 分布式锁抽象（Phase 10 新增 / 盲点<br/>B23 修复）<br/>文件: infra/lock.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_outbox_py["—存储后端不可达、消息格式无效<br/>outbox.py —— 事务性 Outbox 模式（Phase 10 新增<br/>/ 盲点 B24 修复）<br/>文件: infra/outbox.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_process_lifecycle_gateway_py["进程生命周期统一入口<br/>ProcessLifecycleGateway — 进程生命周期统一入口<br/>Process Lifecycle Gateway<br/>文件: infra/process_lifecycle_gateway.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_content_fingerprint_py["Content Fingerprint<br/>SHA-256 content fingerprint computation and<br/>verification.<br/>文件: io/content_fingerprint.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_file_utils_py["—统一3处漂移实现<br/>file_utils.py —— 安全文件操作工具（Phase 3 新增<br/>/ 盲点 #15 修复）<br/>File Utils<br/>文件: io/file_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_frontmatter_utils_py["解析 Markdown 文件的 YAML frontmatter<br/>frontmatter_utils.py — Markdown/YAML<br/>frontmatter 解析 SSoT<br/>Frontmatter Utils<br/>文件: io/frontmatter_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_io_cache_py["Io Cache<br/>io_cache.py - File-level I/O cache with LRU<br/>eviction<br/>文件: io/io_cache.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_streaming_reader_py["Streaming Reader<br/>streaming_reader.py - Memory-efficient<br/>streaming file readers<br/>文件: io/streaming_reader.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_workspace_telemetry_py["主工作区文件操作遥测公共 API<br/>workspace_telemetry.py —<br/>主工作区文件操作遥测公共 API（...<br/>Workspace Telemetry<br/>文件: io/workspace_telemetry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_yaml_utils_py["vocabulary YAML 加载公共工具<br/>yaml_utils.py — vocabulary YAML 加载公共工具<br/>（SSoT 真源）<br/>Yaml Utils<br/>文件: io/yaml_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_health_py["Health<br/>health.py —— ZephyrAlpha 聚合健康检查<br/>文件: lifecycle/health.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_health_discovery_py["System-wide Health Discovery Registration.<br/>CT-HEALTH-001: System-wide Health Discovery<br/>Registration.<br/>文件: lifecycle/health_discovery.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_healthcheck_service_py["只读：start_time<br/>共享层/lifecycle包的healthcheck_service模块<br/>Healthcheck Service<br/>文件: lifecycle/healthcheck_service.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_longevity_monitor_py["Longevity Monitor<br/>共享层/lifecycle包的longevity_monitor模块<br/>文件: lifecycle/longevity_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_state_machine_py["State Machine<br/>StateMachine(S) — 通用状态机泛型基类<br/>(MOD-INF-038)<br/>文件: lifecycle/state_machine.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_task_heartbeat_py["Task Heartbeat<br/>共享层/lifecycle包的task_heartbeat模块<br/>文件: lifecycle/task_heartbeat.py<br/>(生产态 / production)"]
+    src_zephyr_shared_lifecycle_ttl_cleanup_engine_py["Ttl Cleanup Engine<br/>共享层/lifecycle包的ttl_cleanup_engine模块<br/>文件: lifecycle/ttl_cleanup_engine.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_autonomy_monitor_py["只读：event_log<br/>Autonomy Monitor — AI 自主等级监控与降级。<br/>文件: maintenance/autonomy_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_code_economy_analyzer_py["Code Economy Analyzer<br/>共享层/maintenance包的code_economy_analyzer模块<br/>文件: maintenance/code_economy_analyzer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_dogfooding_py["只读：tasks<br/>Dogfooding — 自举测试：用 TaskCard 管理<br/>TaskCard 建设。<br/>文件: maintenance/dogfooding.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_handbook_py["Handbook<br/>Onboarding Handbook — AI Agent 施工手册生成。<br/>文件: maintenance/handbook.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_owner_trust_gauge_py["Owner Trust Gauge<br/>共享层/maintenance包的owner_trust_gauge模块<br/>文件: maintenance/owner_trust_gauge.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_slo_review_assistant_py["Slo Review Assistant<br/>共享层/maintenance包的slo_review_assistant模块<br/>文件: maintenance/slo_review_assistant.py<br/>(生产态 / production)"]
+    src_zephyr_shared_maintenance_zero_config_py["公共接口：check_python<br/>共享层/maintenance包的zero_config模块<br/>Zero Config<br/>文件: maintenance/zero_config.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_dashboard_init_py["Grafana 双数据源仪表盘模块<br/>（MOD-INF-044）<br/>Init<br/>文件: dashboard/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_reasoning_spans_py["Reasoning Spans<br/>共享层/observability包的reasoning_spans模块<br/>文件: observability/reasoning_spans.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_tracing_py["Tracing<br/>tracing.py —— OpenTelemetry 分布式追踪（Phase B<br/>补充 / 盲点 B1 修复）<br/>文件: observability/tracing.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_a2a_a2a_coordination_py["shared interface definitions for multi-agent<br/>coordination.<br/>A2A Coordination — shared interface definitions<br/>for multi-agent coordination.<br/>文件: a2a/a2a_coordination.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_a2a_a2a_protocol_py["A2a Protocol<br/>Core A2A Protocol interface and governance data<br/>contracts.<br/>文件: a2a/a2a_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_a2a_a2a_schemas_py["Message, Task, and StateMachine schemas.<br/>A2A data structure contracts — Message, Task,<br/>and StateMachine schemas.<br/>A2a Schemas<br/>文件: a2a/a2a_schemas.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_module_birth_registry_py["Module Birth Registry<br/>共享层/protocols包的module_birth_registry模块<br/>文件: protocols/module_birth_registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_ports_py["D-INFRA 通过此接口获取 DB 连接和路径<br/>ports — D-DATA 服务的 Protocol 定义<br/>文件: protocols/ports.py<br/>(生产态 / production)"]
+    src_zephyr_shared_reliability_diff_planner_py["只读：project_root<br/>Diff Planner — 最小增量变更规划器。<br/>文件: reliability/diff_planner.py<br/>(生产态 / production)"]
+    src_zephyr_shared_reliability_retry_handler_py["只读：config<br/>Retry Handler — 指数退避重试 + 可恢复<br/>/不可恢复错误分类。<br/>文件: reliability/retry_handler.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_degradation_chain_py["Degradation Chain<br/>共享层/resilience包的degradation_chain模块<br/>文件: resilience/degradation_chain.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_error_budget_tracker_py["Error Budget Tracker<br/>共享层/resilience包的error_budget_tracker模块<br/>文件: resilience/error_budget_tracker.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_fallback_py["—所有步骤都失败了<br/>fallback.py —— 降级策略模式（Phase 2 新增 /<br/>零依赖）<br/>文件: resilience/fallback.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_fault_isolator_py["Fault Isolator<br/>共享层/resilience包的fault_isolator模块<br/>文件: resilience/fault_isolator.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_schema_registry_py["—schema 不存在、版本冲突、兼容性违规<br/>共享层/schema包的schema_registry模块<br/>Schema Registry<br/>文件: schema/schema_registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_security_capability_py["Capability<br/>CBAC 能力检查器 (Capability-Based Access<br/>Control)<br/>文件: security/capability.py<br/>(生产态 / production)"]
+    src_zephyr_shared_security_sandbox_executor_py["re-homed to eliminate shared->infrastructure<br/>circular import.'''<br/>SandboxExecutor — re-homed to eliminate<br/>shared->infrastructure circular import.<br/>Sandbox Executor<br/>文件: security/sandbox_executor.py<br/>(生产态 / production)"]
+    src_zephyr_shared_security_secrets_py["Secrets<br/>secrets.py —— Secrets 管理抽象（Phase 7 新增 /<br/>盲点 B12 修复）<br/>文件: security/secrets.py<br/>(生产态 / production)"]
+    src_zephyr_shared_security_ssot_guard_py["将 Windows 控制台 stdout/stderr 设置为<br/>UTF-8，仅在脚本直接运行时调用<br/>共享层/安全包的ssot_guard模块<br/>Ssot Guard<br/>文件: security/ssot_guard.py<br/>(生产态 / production)"]
+    src_zephyr_shared_session_session_audit_py["全局审计写入器协议<br/>session_audit.py —— Session 审计轨迹（Phase 12<br/>/ 盲点 B32）<br/>Session Audit<br/>文件: session/session_audit.py<br/>(生产态 / production)"]
+    src_zephyr_shared_session_session_boundary_py["公共接口：save_boundary<br/>Session Boundary — 会话边界管理。<br/>文件: session/session_boundary.py<br/>(生产态 / production)"]
+    src_zephyr_shared_session_session_continuity_py["Session Continuity<br/>SessionContinuity — Session 交接包自动生成与恢复<br/>文件: session/session_continuity.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_async_utils_py["async/sync 边界桥接<br/>async_utils.py — async/sync 边界桥接（5.12.8<br/>修复）<br/>Async Utils<br/>文件: utils/async_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_cli_summary_py["Cli Summary<br/>CLI Summary — CLI 友好施工汇总。<br/>文件: utils/cli_summary.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_context_py["—跨模块调用时的元数据载体<br/>context.py —— 结构化上下文传播（Phase 8 新增 /<br/>盲点 B16 修复）<br/>文件: utils/context.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_converters_py["将空字符串转为 None，其他值原样返回<br/>converters.py — 类型转换工具（消除 '' vs None<br/>语义鸿沟）<br/>文件: utils/converters.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_db_utils_py["确保数据库 schema 已初始化<br/>db_utils.py — SQLite 连接公共 API（SSoT:<br/>zephyr.governance.persistence.sqlit...<br/>Db Utils<br/>文件: utils/db_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_diff_utils_py["—存在冲突或目标状态与期望不符<br/>diff_utils.py —— 统一 Diff/Patch 工具（Phase 3<br/>新增 / 盲点 #14 修复）<br/>Diff Utils<br/>文件: utils/diff_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_migration_py["迁移失败异常<br/>migration.py —— ZephyrAlpha Schema<br/>版本化迁移系统<br/>文件: utils/migration.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_pagination_py["基于 offset/limit 的分页响应<br/>pagination.py —— 通用分页工具（Phase 9 新增 /<br/>盲点 B18 修复）<br/>文件: utils/pagination.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_testing_py["构造一个 valid-by-construction 的 Task 实例<br/>testing.py —— ZephyrAlpha 共享测试夹具/工厂<br/>文件: utils/testing.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_zephyr_logger_py["Zephyr Logger<br/>共享层/utils包的zephyr_logger模块<br/>文件: utils/zephyr_logger.py<br/>(生产态 / production)"]
+    src_zephyr_shared_versioning_vibe_experiment_tracker_py["Vibe Experiment Tracker<br/>共享层/versioning包的vibe_experiment_tracker模块<br/>文件: versioning/vibe_experiment_tracker.py<br/>(生产态 / production)"]
+    tests_zephyr_shared_observability_test_metrics_server_py["metrics_server 单元测试<br/>（P1-5 Prometheus /metrics 端点）<br/>Test Metrics Server<br/>文件: observability/test_metrics_server.py<br/>(生产态 / production)"]
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py ~~~ src_zephyr_shared_adaptation_execution_tuner_py
     src_zephyr_shared_adaptation_execution_tuner_py ~~~ src_zephyr_shared_adaptation_prompt_version_manager_py
     src_zephyr_shared_adaptation_prompt_version_manager_py ~~~ src_zephyr_shared_ai_guards_ai_audit_guard_py
@@ -839,23 +839,23 @@ flowchart TD
     src_zephyr_shared_utils_testing_py ~~~ src_zephyr_shared_utils_zephyr_logger_py
     src_zephyr_shared_utils_zephyr_logger_py ~~~ src_zephyr_shared_versioning_vibe_experiment_tracker_py
     src_zephyr_shared_versioning_vibe_experiment_tracker_py ~~~ tests_zephyr_shared_observability_test_metrics_server_py
-    src_zephyr_shared_version_py["shared/__version__<br/>__version__.py —— ZephyrAlpha Shared<br/>模块版本常量<br/>文件: shared/__version__.py<br/>(生产态 / production)"]
-    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py["blueprint_tools/blueprint_decomposer<br/>ZephyrAlpha 蓝图拆解器<br/>文件: blueprint_tools/blueprint_decomposer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_runtime_plane_tag_py["core/runtime_plane_tag<br/>ZephyrAlpha — shared/contracts<br/>/runtime_plane_tag.py<br/>文件: core/runtime_plane_tag.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_core_trace_context_py["core/trace_context<br/>共享层/核心包的trace_context模块<br/>文件: core/trace_context.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_enums_order_enums_py["enums/order_enums<br/>OrderSide/OrderStatus/OrderType — 交易枚举真源<br/>(5.152 #1 修复)<br/>文件: enums/order_enums.py<br/>(生产态 / production)"]
-    src_zephyr_shared_contracts_task_repository_protocol_py["contracts/task_repository_protocol<br/>TaskRepositoryProtocol — TaskRepository 的<br/>Protocol 接口<br/>文件: contracts/task_repository_protocol.py<br/>(生产态 / production)"]
-    src_zephyr_shared_database_database_crud_mixin_py["database/database_crud_mixin<br/>DatabaseCRUDMixin: 共享的 governance.db +<br/>depgraph CRUD 方法<br/>文件: database/database_crud_mixin.py<br/>(生产态 / production)"]
-    src_zephyr_shared_events_dlq_py["events/dlq<br/>dlq.py —— ZephyrAlpha 死信队列（Dead Letter<br/>Queue）<br/>文件: events/dlq.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_idempotency_py["infra/idempotency<br/>idempotency.py —— 幂等性基础设施（Phase 8 新增<br/>/ 盲点 B15 修复）<br/>文件: infra/idempotency.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_process_pool_py["infra/process_pool<br/>process_pool.py - Shared process pool for MCP<br/>servers and subprocess tasks<br/>文件: infra/process_pool.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_metrics_server_py["observability/metrics_server<br/>Prometheus /metrics HTTP 端点（P1-5<br/>可观测性改造）。<br/>文件: observability/metrics_server.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_a2a_a2a_registry_py["a2a/a2a_registry<br/>A2A Registry and Agent Card contracts —<br/>discovery and identity interfaces.<br/>文件: a2a/a2a_registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_protocols_registry_py["protocols/registry<br/>registry — 运行时 DI 容器<br/>文件: protocols/registry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_circuit_breaker_py["resilience/circuit_breaker<br/>circuit_breaker.py —— 轻量熔断器状态机（Phase 2<br/>新增 / 零依赖）<br/>文件: resilience/circuit_breaker.py<br/>(生产态 / production)"]
-    src_zephyr_shared_resilience_retry_py["resilience/retry<br/>retry.py —— 统一重试策略（Phase 2 新增 /<br/>零依赖）<br/>文件: resilience/retry.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_schemas_py["schema/schemas<br/>共享层/schema包的schemas模块<br/>文件: schema/schemas.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_logging_py["utils/logging<br/>logging.py —— ZephyrAlpha 结构化日志系统<br/>（Structured JSON Logger）<br/>文件: utils/logging.py<br/>(生产态 / production)"]
+    src_zephyr_shared_version_py["最低兼容的 Shared 版本<br/>__version__.py —— ZephyrAlpha Shared<br/>模块版本常量<br/>文件: shared/__version__.py<br/>(生产态 / production)"]
+    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py["从任务描述行中拆出叙事文本与 ``depends_on`` 列表<br/>ZephyrAlpha 蓝图拆解器<br/>Blueprint Decomposer<br/>文件: blueprint_tools/blueprint_decomposer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_runtime_plane_tag_py["Runtime Plane Tag<br/>ZephyrAlpha — shared/contracts<br/>/runtime_plane_tag.py<br/>文件: core/runtime_plane_tag.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_core_trace_context_py["Trace Context<br/>共享层/核心包的trace_context模块<br/>文件: core/trace_context.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_enums_order_enums_py["交易枚举真源<br/>OrderSide/OrderStatus/OrderType — 交易枚举真源<br/>(5.152 #1 修复)<br/>Order Enums<br/>文件: enums/order_enums.py<br/>(生产态 / production)"]
+    src_zephyr_shared_contracts_task_repository_protocol_py["D-ORCH / D-GOV / D-RESILIENCE<br/>通过此接口访问任务持久化<br/>TaskRepositoryProtocol — TaskRepository 的<br/>Protocol 接口<br/>Task Repository Protocol<br/>文件: contracts/task_repository_protocol.py<br/>(生产态 / production)"]
+    src_zephyr_shared_database_database_crud_mixin_py["共享 CRUD 方法 Mixin<br/>DatabaseCRUDMixin: 共享的 governance.db +<br/>depgraph CRUD 方法<br/>Database Crud Mixin<br/>文件: database/database_crud_mixin.py<br/>(生产态 / production)"]
+    src_zephyr_shared_events_dlq_py["5.63.2 修复：对 traceback / error<br/>字符串脱敏，防止敏感信息写入 DLQ<br/>dlq.py —— ZephyrAlpha 死信队列（Dead Letter<br/>Queue）<br/>文件: events/dlq.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_idempotency_py["—相同 key 产生了不同结果或状态不一致<br/>idempotency.py —— 幂等性基础设施（Phase 8 新增<br/>/ 盲点 B15 修复）<br/>文件: infra/idempotency.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_process_pool_py["返回 Windows 无窗口 creationflags；POSIX 返回 0<br/>process_pool.py - Shared process pool for MCP<br/>servers and subprocess tasks<br/>文件: infra/process_pool.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_metrics_server_py["Prometheus /metrics HTTP 端点<br/>（P1-5 可观测性改造）<br/>Metrics Server<br/>文件: observability/metrics_server.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_a2a_a2a_registry_py["discovery and identity interfaces.<br/>A2A Registry and Agent Card contracts —<br/>discovery and identity interfaces.<br/>文件: a2a/a2a_registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_protocols_registry_py["进程级单例服务注册表<br/>registry — 运行时 DI 容器<br/>文件: protocols/registry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_circuit_breaker_py["熔断器处于 OPEN 状态时拒绝调用<br/>circuit_breaker.py —— 轻量熔断器状态机（Phase 2<br/>新增 / 零依赖）<br/>Circuit Breaker<br/>文件: resilience/circuit_breaker.py<br/>(生产态 / production)"]
+    src_zephyr_shared_resilience_retry_py["—最后一次异常通过 __cause__ 链保留<br/>retry.py —— 统一重试策略（Phase 2 新增 /<br/>零依赖）<br/>文件: resilience/retry.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_schemas_py["Schemas<br/>共享层/schema包的schemas模块<br/>文件: schema/schemas.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_logging_py["—每条日志一行 JSON，可直接 tail / jq 解析<br/>logging.py —— ZephyrAlpha 结构化日志系统<br/>（Structured JSON Logger）<br/>文件: utils/logging.py<br/>(生产态 / production)"]
     src_zephyr_shared_version_py ~~~ src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py ~~~ src_zephyr_shared_contracts_core_runtime_plane_tag_py
     src_zephyr_shared_contracts_core_runtime_plane_tag_py ~~~ src_zephyr_shared_contracts_core_trace_context_py
@@ -872,15 +872,15 @@ flowchart TD
     src_zephyr_shared_resilience_circuit_breaker_py ~~~ src_zephyr_shared_resilience_retry_py
     src_zephyr_shared_resilience_retry_py ~~~ src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_schema_schemas_py ~~~ src_zephyr_shared_utils_logging_py
-    src_zephyr_shared_foundation_models_py["foundation/models<br/>ZephyrAlpha 任务系统核心数据模型<br/>文件: foundation/models.py<br/>(生产态 / production)"]
-    src_zephyr_shared_infra_observer_py["infra/observer<br/>Zero-dependency Observer pattern (subscribe<br/>/emit/unsubscribe).<br/>文件: infra/observer.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_serialization_py["io/serialization<br/>serialization.py —— 统一序列化<br/>/反序列化基础设施（Phase 7 新增 / 盲点 B10<br/>修复）<br/>文件: io/serialization.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_sqlite_factory_py["io/sqlite_factory<br/>SQLite 连接工厂真源（SSoT）<br/>文件: io/sqlite_factory.py<br/>(生产态 / production)"]
-    src_zephyr_shared_observability_metrics_py["observability/metrics<br/>metrics.py —— 轻量级 Metrics 收集基础设施<br/>（Phase 9 新增 / 盲点 B17 修复）<br/>文件: observability/metrics.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_base_config_py["schema/base_config<br/>共享层/schema包的base_config模块<br/>文件: schema/base_config.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_execution_model_py["schema/execution_model<br/>共享层/schema包的execution_model模块<br/>文件: schema/execution_model.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_severity_types_py["schema/severity_types<br/>共享层/schema包的severity_types模块<br/>文件: schema/severity_types.py<br/>(生产态 / production)"]
-    src_zephyr_shared_schema_task_types_py["schema/task_types<br/>task_types — 任务系统核心类型 re-export 层<br/>文件: schema/task_types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_models_py["—蓝图 MOD-TASK_SYSTEM §3.2.2'''<br/>ZephyrAlpha 任务系统核心数据模型<br/>Models<br/>文件: foundation/models.py<br/>(生产态 / production)"]
+    src_zephyr_shared_infra_observer_py["Observer<br/>Zero-dependency Observer pattern (subscribe<br/>/emit/unsubscribe).<br/>文件: infra/observer.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_serialization_py["序列化/反序列化过程中类型不兼容或格式错误<br/>serialization.py —— 统一序列化<br/>/反序列化基础设施（Phase 7 新增 / 盲点 B10<br/>修复）<br/>文件: io/serialization.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_sqlite_factory_py["对连接应用 KBG-0030 §4.3 PRAGMA 基线<br/>SQLite 连接工厂真源（SSoT）<br/>Sqlite Factory<br/>文件: io/sqlite_factory.py<br/>(生产态 / production)"]
+    src_zephyr_shared_observability_metrics_py["线程安全的轻量级 Metrics 注册表<br/>metrics.py —— 轻量级 Metrics 收集基础设施<br/>（Phase 9 新增 / 盲点 B17 修复）<br/>文件: observability/metrics.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_base_config_py["Base Config<br/>共享层/schema包的base_config模块<br/>文件: schema/base_config.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_execution_model_py["Execution Model<br/>共享层/schema包的execution_model模块<br/>文件: schema/execution_model.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_severity_types_py["re-homed from<br/>infrastructure_runtime_integration.db.circuit_br<br/>eaker_types<br/>共享层/schema包的severity_types模块<br/>Severity Types<br/>文件: schema/severity_types.py<br/>(生产态 / production)"]
+    src_zephyr_shared_schema_task_types_py["Task Types<br/>task_types — 任务系统核心类型 re-export 层<br/>文件: schema/task_types.py<br/>(生产态 / production)"]
     src_zephyr_shared_foundation_models_py ~~~ src_zephyr_shared_infra_observer_py
     src_zephyr_shared_infra_observer_py ~~~ src_zephyr_shared_io_serialization_py
     src_zephyr_shared_io_serialization_py ~~~ src_zephyr_shared_io_sqlite_factory_py
@@ -889,17 +889,17 @@ flowchart TD
     src_zephyr_shared_schema_base_config_py ~~~ src_zephyr_shared_schema_execution_model_py
     src_zephyr_shared_schema_execution_model_py ~~~ src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_schema_severity_types_py ~~~ src_zephyr_shared_schema_task_types_py
-    src_zephyr_shared_event_bus_py["shared/event_bus<br/>EventBus — 事件总线（带背压控制）(M-07)<br/>文件: shared/event_bus.py<br/>(生产态 / production)"]
-    src_zephyr_shared_foundation_errors_py["foundation/errors<br/>errors.py —— ZephyrAlpha 统一错误层次<br/>（Traditional Exception Hierarchy）<br/>文件: foundation/errors.py<br/>(生产态 / production)"]
-    src_zephyr_shared_io_paths_py["io/paths<br/>paths.py — 项目路径常量 SSoT（Single Source of<br/>Truth）<br/>文件: io/paths.py<br/>(生产态 / production)"]
-    src_zephyr_shared_utils_time_utils_py["utils/time_utils<br/>time_utils.py —— 时间/日期工具（Phase 9 新增 /<br/>盲点 B19 修复）<br/>文件: utils/time_utils.py<br/>(生产态 / production)"]
+    src_zephyr_shared_event_bus_py["任务生命周期事件类型<br/>EventBus — 事件总线（带背压控制）(M-07)<br/>Event Bus<br/>文件: shared/event_bus.py<br/>(生产态 / production)"]
+    src_zephyr_shared_foundation_errors_py["ZephyrAlpha 所有业务异常的根<br/>errors.py —— ZephyrAlpha 统一错误层次<br/>（Traditional Exception Hierarchy）<br/>文件: foundation/errors.py<br/>(生产态 / production)"]
+    src_zephyr_shared_io_paths_py["从当前文件向上查找项目根目录<br/>paths.py — 项目路径常量 SSoT（Single Source of<br/>Truth）<br/>文件: io/paths.py<br/>(生产态 / production)"]
+    src_zephyr_shared_utils_time_utils_py["注册 datetime/date→sqlite3 str 适配器<br/>time_utils.py —— 时间/日期工具（Phase 9 新增 /<br/>盲点 B19 修复）<br/>Time Utils<br/>文件: utils/time_utils.py<br/>(生产态 / production)"]
     src_zephyr_shared_event_bus_py ~~~ src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_foundation_errors_py ~~~ src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_paths_py ~~~ src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_alerts_alert_escalation_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_idempotency_py
+    src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_circuit_breaker_py
     src_zephyr_shared_api_api_client_py -->|导入依赖 / import_depends| src_zephyr_shared_resilience_retry_py
@@ -908,33 +908,33 @@ flowchart TD
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
-    src_zephyr_shared_contracts_backpressure_pause_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_backpressure_resume_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_throttle_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_pause_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_types_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_resume_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_contracts_core_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_contracts_core_timestamp_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
-    src_zephyr_shared_contracts_errors_data_quality_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_contract_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_factor_computation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_data_quality_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_enums_init_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_contracts_errors_signal_degradation_warning_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_factor_computation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_risk_limit_violation_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_execution_rejection_error_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_experiment_experiment_result_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_database_init_py -->|config_depends / config_depends| src_zephyr_shared_database_database_crud_mixin_py
     src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
     src_zephyr_shared_events_dlq_bridge_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    src_zephyr_shared_events_dlq_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
     src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_events_event_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_events_upgrade_strategy_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
     src_zephyr_shared_foundation_constants_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
@@ -942,49 +942,49 @@ flowchart TD
     src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_limiter_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
-    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_io_sqlite_factory_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_io_workspace_telemetry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_yaml_utils_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
-    src_zephyr_shared_io_workspace_telemetry_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_lifecycle_state_machine_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_observability_metrics_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_observability_tracing_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
-    src_zephyr_shared_maintenance_zero_config_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_observability_metrics_server_py -->|导入依赖 / import_depends| src_zephyr_shared_observability_metrics_py
+    src_zephyr_shared_maintenance_zero_config_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_observability_tracing_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
+    src_zephyr_shared_protocols_a2a_a2a_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_protocols_ports_py -->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     src_zephyr_shared_protocols_a2a_a2a_coordination_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_a2a_a2a_registry_py
-    src_zephyr_shared_protocols_a2a_a2a_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    src_zephyr_shared_resilience_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_degradation_chain_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_resilience_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_fallback_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_resilience_retry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
     src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
-    src_zephyr_shared_schema_schemas_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_execution_model_py
     src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_version_py
     src_zephyr_shared_schema_schema_registry_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_capability_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
-    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_security_ssot_guard_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
     src_zephyr_shared_session_session_continuity_py -->|导入依赖 / import_depends| src_zephyr_shared_protocols_registry_py
+    src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_utils_logging_py -->|导入依赖 / import_depends| src_zephyr_shared_io_serialization_py
-    src_zephyr_shared_utils_zephyr_logger_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
     src_zephyr_shared_utils_testing_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
+    src_zephyr_shared_utils_zephyr_logger_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     tests_zephyr_shared_observability_test_metrics_server_py -->|测试依赖 / test_depends| src_zephyr_shared_observability_metrics_py
@@ -1008,940 +1008,940 @@ flowchart TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | → | D_FEEDBACK_LOOP 反馈循环引擎: 密钥rotation / Secret Rotation — v0.14.0 R189 (security/... | 导入依赖 / import_depends |
-| 2 | A2A Coordination — shared interface definitions for mult... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
-| 3 | ProcessLifecycleGateway — 进程生命周期统一入口 (infra/pr... | → | D_INFRA_RUNTIME 运行时集成: daemon_registry.py - unified daemon thread registry + res... | 导入依赖 / import_depends |
-| 4 | process_pool.py - Shared process pool for MCP servers and... | → | D_INFRA_RUNTIME 运行时集成: models.py - Pydantic data models for resource optimizatio... | 导入依赖 / import_depends |
-| 5 | io_cache.py - File-level I/O cache with LRU eviction (io/... | → | D_INFRA_RUNTIME 运行时集成: models.py - Pydantic data models for resource optimizatio... | 导入依赖 / import_depends |
-| 6 | health.py —— ZephyrAlpha 聚合健康检查 (lifecycle/health.py) | → | D_INFRA_RUNTIME 运行时集成: hooks.py —— 模块生命周期钩子（Phase 2 新增 | 盲点 B8 修... | 导入依赖 / import_depends |
-| 7 | MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 (_cross... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
+| 1 | Secrets / Secrets (security/secrets.py) | → | D_FEEDBACK_LOOP 反馈循环引擎: 密钥rotation / Secret Rotation — v0.14.0 R189 (security/... | 导入依赖 / import_depends |
+| 2 | shared interface definitions for multi-agent coordination... | → | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | 导入依赖 / import_depends |
+| 3 | 进程生命周期统一入口 / Process Lifecycle Gateway (infra/p... | → | D_INFRA_RUNTIME 运行时集成: Daemon Registry / Daemon Registry (lifecycle/daemon_regis... | 导入依赖 / import_depends |
+| 4 | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | → | D_INFRA_RUNTIME 运行时集成: Resource Optimization Models / Resource Optimization Mode... | 导入依赖 / import_depends |
+| 5 | Io Cache / Io Cache (io/io_cache.py) | → | D_INFRA_RUNTIME 运行时集成: Resource Optimization Models / Resource Optimization Mode... | 导入依赖 / import_depends |
+| 6 | Health / Health (lifecycle/health.py) | → | D_INFRA_RUNTIME 运行时集成: —零侵入式 / Hooks (lifecycle/hooks.py) | 导入依赖 / import_depends |
+| 7 | MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 / Ml Ex... | → | D_ML_TRAIN 训练: 模型注册元数据""" / Trainer Base (ml_train/trainer_base.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_AUTONOMY_CORE 自治核心: 检查点管理器 / checkpoint_manager (context/checkpoint_man... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 2 | D_AUTONOMY_CORE 自治核心: 上下文assembler / context_assembler (context/context_asse... | → | ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
-| 3 | D_AUTONOMY_CORE 自治核心: 上下文assembler / context_assembler (context/context_asse... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 4 | D_AUTONOMY_CORE 自治核心: 上下文预算追踪器 / ContextBudgetTracker: token budget man... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
-| 5 | D_AUTONOMY_CORE 自治核心: 上下文预算追踪器 / ContextBudgetTracker: token budget man... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 6 | D_AUTONOMY_CORE 自治核心: 上下文injector / ContextInjector: retrieve and inject rel... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 7 | D_AUTONOMY_CORE 自治核心: 上下文injector / ContextInjector: retrieve and inject rel... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 8 | D_AUTONOMY_CORE 自治核心: 上下文管线 / context_pipeline (context/context_pipeline.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 9 | D_AUTONOMY_CORE 自治核心: 上下文管线自动 / context_pipeline_auto (context/context_p... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 10 | D_AUTONOMY_CORE 自治核心: 文件autoregister / file_autoregister (autonomy_core/file_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 11 | D_AUTONOMY_CORE 自治核心: 提示注册表 / prompt_registry (autonomy_core/prompt_regist... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 12 | D_AUTONOMY_CORE 自治核心: 提示注册表 / prompt_registry (autonomy_core/prompt_regist... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 13 | D_AUTONOMY_CORE 自治核心: 技能工厂 / skill_factory (skills/skill_factory.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 14 | D_AUTONOMY_CORE 自治核心: 技能反馈 / MOD-INF-019: Agent Spec — Skill Feedback Loop... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 15 | D_AUTONOMY_CORE 自治核心: 技能freshness扩展 / MOD-INF-019: Agent Spec — Skill Fres... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 16 | D_AUTONOMY_CORE 自治核心: 技能注册表 / skill_registry (skills/skill_registry.py) | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 17 | D_AUTONOMY_CORE 自治核心: 技能注册表 / skill_registry (skills/skill_registry.py) | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 18 | D_AUTONOMY_CORE 自治核心: 技能注册表 / skill_registry (skills/skill_registry.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 19 | D_AUTONOMY_CORE 自治核心: 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 20 | D_AUTONOMY_CORE 自治核心: intent解析器 / intent_parser (persistence/intent_parser.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 21 | D_AUTONOMY_CORE 自治核心: 系统快照 / system_snapshot (infrastructure/system_snapsho... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 22 | D_AUTONOMY_CORE 自治核心: 系统快照 / system_snapshot (infrastructure/system_snapsho... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 23 | D_AUTONOMY_CORE 自治核心: doc压缩器 / doc_compressor (io/doc_compressor.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 24 | D_AUTONOMY_CORE 自治核心: doc压缩器 / doc_compressor (io/doc_compressor.py) | → | CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
-| 25 | D_AUTONOMY_CORE 自治核心: F1 事件触发启动测试 / test_f1_event_trigger (f_lifecycle/... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 测试依赖 / test_depends |
-| 26 | D_BACKTEST 回测: 引擎基类 / L_BACKTEST — Backtest Engine Layer (core/engi... | → | core/trace_context.py | 导入依赖 / import_depends |
-| 27 | D_BACKTEST 回测: 结果仓库 / result_repository (io/result_repository.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 28 | D_BACKTEST 回测: 结果仓库 / result_repository (io/result_repository.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 29 | D_BACKTEST 回测: 回测异常诊断器 / Anomaly Diagnoser (services/anomaly_diag... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 30 | D_BACKTEST 回测: 回测缓存管理器 / Backtest Cache Manager (services/cache_m... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 31 | D_BACKTEST 回测: 数据质量检查器 / data_quality_checker (services/data_qual... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 32 | D_BACKTEST 回测: decay监控器 / decay_monitor (services/decay_monitor.py) | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 33 | D_BACKTEST 回测: nan处理器 / nan_processor (services/nan_processor.py) | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 34 | D_BACKTEST 回测: 参数优化结果分析器 / Parameter Analyzer (services/param_a... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 35 | D_BACKTEST 回测: 回测报告生成器 / Backtest Report Generator (services/repo... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 36 | D_BACKTEST 回测: 回测结果比较器 / Result Comparator (services/result_compa... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 37 | D_DATA 数据接入层: 7×24 CH 健康探针守护进程（R4b，#ARCH-DR-CH-RESTART-001）... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 38 | D_DATA 数据接入层: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 39 | D_DATA 数据接入层: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 40 | D_DATA 数据接入层: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 41 | D_DATA 数据接入层: ch配置 / ch_config (data/ch_config.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 42 | D_DATA 数据接入层: ch配置 / ch_config (data/ch_config.py) | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 43 | D_DATA 数据接入层: ch写入器 / ch_writer (data/ch_writer.py) | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 44 | D_DATA 数据接入层: ch写入器 / ch_writer (data/ch_writer.py) | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 45 | D_DATA 数据接入层: cls提供器 / cls_provider (implementations/cls_provider.py) | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 46 | D_DATA 数据接入层: ifind提供器 / ifind_provider (implementations/ifind_provi... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 47 | D_DATA 数据接入层: rss提供器 / rss_provider (implementations/rss_provider.py) | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 48 | D_DATA 数据接入层: tushare提供器 / tushare_provider (implementations/tushare... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 49 | D_DATA 数据接入层: 本地replay / local_replay (data/local_replay.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 50 | D_DATA 数据接入层: 可观测性指标采集（MOD-L00-004 §11）。 / metrics (data/me... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 51 | D_DATA 数据接入层: 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 52 | D_DATA 数据接入层: 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 53 | D_DATA 数据接入层: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler (data/s... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 54 | D_DATA 数据接入层: 数据源健康检查模块（每日调度器启动时执行）。 (data/source... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 55 | D_DATA 数据接入层: 数据源测速器（MOD-L00-004 §8.5）。 / speed_tester (data/... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 56 | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 57 | D_DATA 数据接入层: 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 58 | D_DATA 数据接入层: 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | Prometheus /metrics HTTP 端点（P1-5 可观测性改造）。 (obs... | 导入依赖 / import_depends |
-| 59 | D_DATA 数据接入层: wal写入器 / wal_writer (data/wal_writer.py) | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 60 | D_EX_CORE 执行核心: miniqmt券商 / miniqmt_broker (adapters/miniqmt_broker.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 61 | D_EX_CORE 执行核心: D_EX_CORE — Aggregate Root Manager (执行域聚合根管理器) ... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 62 | D_EX_CORE 执行核心: D_EX_CORE — Aggregate Root Manager (执行域聚合根管理器) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 63 | D_EX_CORE 执行核心: Execution Audit Logger — 执行审计记录器 (MOD-EX-003 / D-... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 64 | D_EX_CORE 执行核心: 部分成交处理器 (ex_core/fill_handler.py) | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 65 | D_EX_CORE 执行核心: 部分成交处理器 (ex_core/fill_handler.py) | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 66 | D_EX_CORE 执行核心: D_EX_CORE — Multi-Contract Adapter (多契约生产适配器) (e... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 67 | D_EX_CORE 执行核心: Order Execution Saga — 下单执行 Saga 编排器 (MOD-EX-057 ... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 68 | D_EX_CORE 执行核心: 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 69 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Position Tracker (持仓跟踪器) (positi... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 70 | D_EX_CORE 执行核心: D_EX_CORE — Repository Interface (执行域仓储接口) (ex_co... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 71 | D_EX_CORE 执行核心: D_EX_CORE — Repository Interface (执行域仓储接口) (ex_co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 72 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 73 | D_EX_CORE 执行核心: PositionReconciler 单元测试 — D-EX-CORE-56 盘中持仓对账... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 测试依赖 / test_depends |
-| 74 | D_EX_SOR 执行路由: Exchange API Rate Limiter — 交易所 API 限速器 (MOD-XS-01... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 75 | D_EX_SOR 执行路由: Broker API Connector — 券商 API 连接器 (MOD-XS-013) (api... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 76 | D_EX_SOR 执行路由: Broker API Connector — 券商 API 连接器 (MOD-XS-013) (api... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 77 | D_EX_SOR 执行路由: 算法执行选择器 / algo_execution_selector (core/algo_execu... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 78 | D_EX_SOR 执行路由: 算法执行选择器 / algo_execution_selector (core/algo_execu... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 79 | D_EX_SOR 执行路由: 算法交易引擎 / algo_trading_engine (core/algo_trading_eng... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 80 | D_EX_SOR 执行路由: 算法交易引擎 / algo_trading_engine (core/algo_trading_eng... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 81 | D_EX_SOR 执行路由: 经纪人适配器管理器 / broker_adapter_manager (core/broker_... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 82 | D_EX_SOR 执行路由: 执行调度器 / execution_scheduler (core/execution_schedule... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 83 | D_EX_SOR 执行路由: optimal订单路由器 / optimal_order_router (core/optimal_or... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 84 | D_EX_SOR 执行路由: 执行质量评分器 / execution_quality_scorer (services/execu... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 85 | D_EX_SOR 执行路由: 执行质量评分器 / execution_quality_scorer (services/execu... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 86 | D_EX_SOR 执行路由: 滑点分析器 / slippage_analyzer (services/slippage_analyze... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 87 | D_EX_SOR 执行路由: 滑点分析器 / slippage_analyzer (services/slippage_analyze... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 88 | D_EX_SOR 执行路由: 交易成本优化器 / transaction_cost_optimizer (services/tra... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 89 | D_EX_SOR 执行路由: 交易成本优化器 / transaction_cost_optimizer (services/tra... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 90 | D_FACTOR 因子: D_FACTOR core factor_dag.dag——因子 DAG 数据结构 + Kahn ... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 91 | D_FACTOR 因子: 生命周期状态machine / lifecycle_state_machine (governance... | → | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) (life... | 导入依赖 / import_depends |
-| 92 | D_FACTOR 因子: D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流... | → | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) (life... | 导入依赖 / import_depends |
-| 93 | D_FACTOR 因子: D-FACTOR-GOV-01 因子生命周期状态机测试——纯逻辑模块（无 ... | → | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) (life... | 测试依赖 / test_depends |
-| 94 | D_FBL_DIAGNOSERS 反馈诊断器: 运营季节性 / Operational Seasonality — v0.16.0 R228 (rel... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 95 | D_FEEDBACK_LOOP 反馈循环引擎: API版本契约 / API Version Contract — v0.14.0 R188 (actor... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 96 | D_FEEDBACK_LOOP 反馈循环引擎: 核心 / core (feedback_loop/core.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 97 | D_FEEDBACK_LOOP 反馈循环引擎: 核心 / core (feedback_loop/core.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 98 | D_FEEDBACK_LOOP 反馈循环引擎: 核心 / core (feedback_loop/core.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 99 | D_FEEDBACK_LOOP 反馈循环引擎: 数据库桥接 / db_bridge (feedback_loop/db_bridge.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 100 | D_FEEDBACK_LOOP 反馈循环引擎: 进化引擎 / evolution_engine (feedback_loop/evolution_engi... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 101 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈收集器 / FeedbackCollector: collect task execution fe... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 102 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈收集器 / FeedbackCollector: collect task execution fe... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 103 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈收集器 / FeedbackCollector: collect task execution fe... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 104 | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 105 | D_FEEDBACK_LOOP 反馈循环引擎: selfmodification审计 / Self-Modification Audit — v0.15.0... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 106 | D_FEEDBACK_LOOP 反馈循环引擎: 指标收集器 / MetricsCollector: append-only metrics record... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 107 | D_FEEDBACK_LOOP 反馈循环引擎: 配置hotreload守卫 / Config Hot-Reload Guard — v0.40.0 R4... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 108 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 109 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 110 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
-| 111 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 112 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 113 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器安全 / scheduler_safety (feedback_loop/scheduler_sa... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 114 | D_FEEDBACK_LOOP 反馈循环引擎: 密钥rotation / Secret Rotation — v0.14.0 R189 (security/... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 115 | D_FEEDBACK_LOOP 反馈循环引擎: SLO管理器 / slo_manager (feedback_loop/slo_manager.py) | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 116 | D_FEEDBACK_LOOP 反馈循环引擎: SLO管理器 / slo_manager (feedback_loop/slo_manager.py) | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 117 | D_FRONTEND 前端: chart工厂 / chart_factory (components/chart_factory.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 118 | D_FRONTEND 前端: task_progress · 任务进度看板组件（v3.1.0 Panel 迁移, #AR... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 119 | D_FRONTEND 前端: 交易面板 / trade_panel (components/trade_panel.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 120 | D_FUNDAMENTAL_SIGNAL 基本面信号: 管线 / Alpha Signal Pipeline (signal_fundamental/pipeline... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 121 | D_FUNDAMENTAL_SIGNAL 基本面信号: 管线 / Alpha Signal Pipeline (signal_fundamental/pipeline... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 122 | D_GOVERNANCE 生命周期管理: 端到端检查 / _e2e_check (construction/_e2e_check.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 123 | D_GOVERNANCE 生命周期管理: 端到端deep / _e2e_deep (construction/_e2e_deep.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 124 | D_GOVERNANCE 生命周期管理: 初始化任务系统数据库 + 创建任务系统自身的施工任务卡（吃狗... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 125 | D_GOVERNANCE 生命周期管理: 重置测试任务 / reset_test_task (construction/reset_test_t... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 126 | D_GOVERNANCE 生命周期管理: 生成架构上下文 / generate_architecture_context (context/g... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 127 | D_GOVERNANCE 生命周期管理: diagnosebreadth失败 / diagnose_breadth_failed (scripts/di... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 128 | D_GOVERNANCE 生命周期管理: 锁files / lock_files (scripts/lock_files.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 129 | D_GOVERNANCE 生命周期管理: 锁files / lock_files (scripts/lock_files.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 130 | D_GOVERNANCE 生命周期管理: MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + Pro / lau... | → | ProcessLifecycleGateway — 进程生命周期统一入口 (infra/pr... | 导入依赖 / import_depends |
-| 131 | D_GOVERNANCE 生命周期管理: 文件头部完整性校验（6 格式统一入口） / verify_header_comp... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 132 | D_GOVERNANCE 生命周期管理: 运行deepseekv4exam / run_deepseek_v4_exam (scripts/run_de... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 133 | D_GOVERNANCE 生命周期管理: worktree生命周期 / worktree_lifecycle (rule_bridge/worktr... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 134 | D_GOVERNANCE 生命周期管理: worktree生命周期 / worktree_lifecycle (rule_bridge/worktr... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 135 | D_GOVERNANCE 生命周期管理: worktree生命周期 / worktree_lifecycle (rule_bridge/worktr... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 136 | D_GOVERNANCE 生命周期管理: RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | → | identity/agent_identity.py | 导入依赖 / import_depends |
-| 137 | D_GOVERNANCE 生命周期管理: 注册表 / registry (agent_spec/registry.py) | → | contracts/skill_protocol.py | 导入依赖 / import_depends |
-| 138 | D_GOVERNANCE 生命周期管理: LLM冲击分析器 / llm_impact_analyzer (architecture_governa... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 139 | D_GOVERNANCE 生命周期管理: LLM冲击分析器 / llm_impact_analyzer (architecture_governa... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 140 | D_GOVERNANCE 生命周期管理: 路径解析器 / path_resolver (architecture_governance/path_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 141 | D_GOVERNANCE 生命周期管理: 提交同步校验器 / post_sync_validator (architecture_govern... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 142 | D_GOVERNANCE 生命周期管理: 告警 / G-CT-006 — BudgetAlert re-exported from shared.co... | → | escalation/budget_alert.py | 导入依赖 / import_depends |
-| 143 | D_GOVERNANCE 生命周期管理: 能力lookup / capability_lookup (governance/capability_loo... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 144 | D_GOVERNANCE 生命周期管理: 能力lookup / capability_lookup (governance/capability_loo... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 145 | D_GOVERNANCE 生命周期管理: 上下文包 / context_package (context_governance/context_pa... | → | A2A data structure contracts — Message, Task, and StateM... | 导入依赖 / import_depends |
-| 146 | D_GOVERNANCE 生命周期管理: miniqmt提供器 / miniqmt_provider (data_governance/miniqmt... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 147 | D_GOVERNANCE 生命周期管理: pricing同步 / pricing_sync (data_governance/pricing_sync.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 148 | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 149 | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 150 | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 151 | D_GOVERNANCE 生命周期管理: 管线基类 / pipeline_base (engine/pipeline_base.py) | → | experiment/experiment_result.py | 导入依赖 / import_depends |
-| 152 | D_GOVERNANCE 生命周期管理: 证据包 / evidence_pack (governance/evidence_pack.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 153 | D_GOVERNANCE 生命周期管理: atomic交易管理器 / atomic_transaction_manager (financial_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 154 | D_GOVERNANCE 生命周期管理: atomic交易管理器 / atomic_transaction_manager (financial_... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 155 | D_GOVERNANCE 生命周期管理: aisg沙箱 / aisg_sandbox (intelligence_governance/aisg_san... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 156 | D_GOVERNANCE 生命周期管理: 跨代理冲突检测器 / cross_agent_conflict_detector (intelli... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 157 | D_GOVERNANCE 生命周期管理: delegation引擎 / Delegation Engine — MOD-INF-022 (intell... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 158 | D_GOVERNANCE 生命周期管理: 自基准 / self_benchmark (intelligence_governance/self_ben... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 159 | D_GOVERNANCE 生命周期管理: projection引擎 / projection_engine (observability_governa... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 160 | D_GOVERNANCE 生命周期管理: 查询指标 / query_metrics (observability_governance/query_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 161 | D_GOVERNANCE 生命周期管理: 查询指标 / query_metrics (observability_governance/query_... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 162 | D_GOVERNANCE 生命周期管理: 查询指标 / query_metrics (observability_governance/query_... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 163 | D_GOVERNANCE 生命周期管理: 基类repo / base_repo (persistence/base_repo.py) | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 164 | D_GOVERNANCE 生命周期管理: 基类repo / base_repo (persistence/base_repo.py) | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 165 | D_GOVERNANCE 生命周期管理: 基类repo / base_repo (persistence/base_repo.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 166 | D_GOVERNANCE 生命周期管理: 数据库管理器 / database_manager (persistence/database_man... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 167 | D_GOVERNANCE 生命周期管理: 数据库管理器 / database_manager (persistence/database_man... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 168 | D_GOVERNANCE 生命周期管理: 数据库管理器 / database_manager (persistence/database_man... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 169 | D_GOVERNANCE 生命周期管理: decisiongraph结构 / decisiongraph_schema (persistence/dec... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 170 | D_GOVERNANCE 生命周期管理: decisiongraph结构 / decisiongraph_schema (persistence/dec... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 171 | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 172 | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 173 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 174 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 175 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | schema/severity_types.py | 导入依赖 / import_depends |
-| 176 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 177 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 178 | D_GOVERNANCE 生命周期管理: 适配器 / adapter (services/adapter.py) | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 179 | D_GOVERNANCE 生命周期管理: 治理适配器 / governance_adapter (governance/governance_ad... | → | security/security_decision.py | 导入依赖 / import_depends |
-| 180 | D_GOVERNANCE 生命周期管理: 治理适配器 / governance_adapter (governance/governance_ad... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 181 | D_GOVERNANCE 生命周期管理: 协议 / protocol (governance/protocol.py) | → | Core A2A Protocol interface and governance data contracts... | 导入依赖 / import_depends |
-| 182 | D_GOVERNANCE 生命周期管理: A2A治理适配器 / a2a_governance_adapter (layer3_coordinati... | → | security/security_decision.py | 导入依赖 / import_depends |
-| 183 | D_GOVERNANCE 生命周期管理: A2A治理适配器 / a2a_governance_adapter (layer3_coordinati... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 184 | D_GOVERNANCE 生命周期管理: 注册表治理 / Registry Governance — MOD-INF-037 (infrastr... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 185 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | identity/agent_identity.py | 导入依赖 / import_depends |
-| 186 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | contracts/skill_protocol.py | 导入依赖 / import_depends |
-| 187 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 188 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 189 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 190 | D_GOVERNANCE 生命周期管理: 测试Gitcommitextreme / test_git_commit_extreme (git/test_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 191 | D_GOVERNANCE 生命周期管理: code_quality/test_detect_forward_reference.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 192 | D_GOVERNANCE 生命周期管理: 治理脚本测试 — pytest 共享 Fixture (governance/conftest.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 193 | D_GOVERNANCE 生命周期管理: R2-1: DatabaseService 测试 — governance/depgraph 连接与... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 194 | D_GOVERNANCE 生命周期管理: data_layer/test_sqlite_dumper.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 195 | D_GOVERNANCE 生命周期管理: DM-398: 命名规范端到端测试 — 验证完整防护链路。 (governa... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 196 | D_GOVERNANCE 生命周期管理: P0-I1 depends_on 集成测试 — DOM-GOV-001 §8.3. (governan... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 197 | D_GOVERNANCE 生命周期管理: Phase 1 Gate 检查测试 — DOM-GOV-001 §7.2 门禁检查. (gov... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 198 | D_GOVERNANCE 生命周期管理: test_autopilot.py — AutoPilot 端到端测试 (integration/te... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 测试依赖 / test_depends |
-| 199 | D_GOVERNANCE 生命周期管理: test_autopilot.py — AutoPilot 端到端测试 (integration/te... | → | schema/base_config.py | 测试依赖 / test_depends |
-| 200 | D_GOVERNANCE 生命周期管理: test_autopilot.py — AutoPilot 端到端测试 (integration/te... | → | schema/execution_model.py | 测试依赖 / test_depends |
-| 201 | D_GOVERNANCE 生命周期管理: test_autopilot.py — AutoPilot 端到端测试 (integration/te... | → | schema/severity_types.py | 测试依赖 / test_depends |
-| 202 | D_GOVERNANCE 生命周期管理: integration/test_schema_schema_registry.py | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 测试依赖 / test_depends |
-| 203 | D_GOVERNANCE 生命周期管理: integration/test_schema_schema_registry.py | → | schema/schema_registry.py | 测试依赖 / test_depends |
-| 204 | D_GOVERNANCE 生命周期管理: integration/test_schema_schemas.py | → | schema/schemas.py | 测试依赖 / test_depends |
-| 205 | D_GOVERNANCE 生命周期管理: integration/test_schema_schemas.py | → | schema/severity_types.py | 测试依赖 / test_depends |
-| 206 | D_GOVERNANCE 生命周期管理: test_security_scripts.py — D6 安全审计脚本单元测试 (secu... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 207 | D_GOVERNANCE 生命周期管理: 单元测试：src/zephyr/hooks/ssot_guard.py (security/test_s... | → | security/ssot_guard.py | 测试依赖 / test_depends |
-| 208 | D_GOVERNANCE 生命周期管理: 单元测试：src/zephyr/shared/contracts/enforcer.py (shared... | → | ZephyrAlpha — shared/contracts/enforcer.py (core/enforce... | 测试依赖 / test_depends |
-| 209 | D_GOVERNANCE 生命周期管理: shared/test_execution_tuner.py | → | Execution Tuner — 执行调谐器（token/timeout 自适应）。 (... | 测试依赖 / test_depends |
-| 210 | D_GOVERNANCE 生命周期管理: 端到端验证 JSONL 管道 — BaseAuditScript → stdout → run... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 211 | D_GOVERNANCE 生命周期管理: 36-scenario permanent regression test for post_sync_valid... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 212 | D_GOVERNANCE 生命周期管理: Phase E — Main Data Flow End-to-End Test (trading/test_p... | → | core/trace_context.py | 测试依赖 / test_depends |
-| 213 | D_GOVERNANCE 生命周期管理: 测试依赖图模式 / test_depgraph_schema (io/test_depgraph_s... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 214 | D_GOVERNANCE 生命周期管理: 测试校验模式健康 / test_verify_schema_health (io/test_ver... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 215 | D_GOV_AUDIT 审计追踪: [INVARIANTS] 20项红蓝对抗测试 / red_blue_test (repair/red... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 216 | D_GOV_AUDIT 审计追踪: 回滚依赖图 / rollback_depgraph (repair/rollback_depgraph.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 217 | D_GOV_AUDIT 审计追踪: 代理signer / agent_signer (gov_audit/agent_signer.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 218 | D_GOV_AUDIT 审计追踪: 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 219 | D_GOV_AUDIT 审计追踪: 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 220 | D_GOV_AUDIT 审计追踪: 审计漂移桥接 / audit_drift_bridge (bridges/audit_drift_br... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 221 | D_GOV_AUDIT 审计追踪: 命令行 / cli (gov_audit/cli.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 222 | D_GOV_AUDIT 审计追踪: 命令行 / cli (gov_audit/cli.py) | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 223 | D_GOV_AUDIT 审计追踪: 冷启动 / cold_start (gov_audit/cold_start.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 224 | D_GOV_AUDIT 审计追踪: 冷启动 / cold_start (gov_audit/cold_start.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 225 | D_GOV_AUDIT 审计追踪: 事件存储 / event_store (gov_audit/event_store.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 226 | D_GOV_AUDIT 审计追踪: 证据包 / evidence_pack (gov_audit/evidence_pack.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 227 | D_GOV_AUDIT 审计追踪: externaltool审计 / external_tool_audit (gov_audit/externa... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 228 | D_GOV_AUDIT 审计追踪: 反馈桥接 / feedback_bridge (gov_audit/feedback_bridge.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 229 | D_GOV_AUDIT 审计追踪: 发现ingest / finding_ingest (gov_audit/finding_ingest.py) | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 230 | D_GOV_AUDIT 审计追踪: 发现模型 / finding_model (gov_audit/finding_model.py) | → | schema/base_config.py | 导入依赖 / import_depends |
-| 231 | D_GOV_AUDIT 审计追踪: 取证包 / forensic_package (gov_audit/forensic_package.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 232 | D_GOV_AUDIT 审计追踪: 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 233 | D_GOV_AUDIT 审计追踪: 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 234 | D_GOV_AUDIT 审计追踪: 完整性 / integrity (gov_audit/integrity.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 235 | D_GOV_AUDIT 审计追踪: 完整性 / integrity (gov_audit/integrity.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 236 | D_GOV_AUDIT 审计追踪: 日志rotation / log_rotation (gov_audit/log_rotation.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 237 | D_GOV_AUDIT 审计追踪: audit-trail.merkle每小时 / merkle_hourly (gov_audit/merkl... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 238 | D_GOV_AUDIT 审计追踪: 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 239 | D_GOV_AUDIT 审计追踪: 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | schema/base_config.py | 导入依赖 / import_depends |
-| 240 | D_GOV_AUDIT 审计追踪: 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 241 | D_GOV_AUDIT 审计追踪: 保留策略（补全测试期望接口）。 / retention (gov_audit/ret... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 242 | D_GOV_AUDIT 审计追踪: supply链 / supply_chain (gov_audit/supply_chain.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 243 | D_GOV_AUDIT 审计追踪: texttofinding适配器 / text_to_finding_adapter (gov_audit/... | → | schema/base_config.py | 导入依赖 / import_depends |
-| 244 | D_GOV_AUDIT 审计追踪: 旧版分层存储（保留以兼容现有调用方）。 / tiered_storage (... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 245 | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 246 | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 247 | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B... | 导入依赖 / import_depends |
-| 248 | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 249 | D_GOV_AUDIT 审计追踪: MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 250 | D_GOV_AUDIT 审计追踪: 提交进程 / post_process (behavioral_admission/post_proces... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 251 | D_GOV_AUDIT 审计追踪: 审计链验证器 / audit_chain_verifier (rule_enforcement/aud... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 252 | D_GOV_AUDIT 审计追踪: sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 253 | D_GOV_AUDIT 审计追踪: sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 254 | D_GOV_AUDIT 审计追踪: Git辅助 / _git_helpers (audit/_git_helpers.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 255 | D_GOV_AUDIT 审计追踪: 蓝图状态转换协调器 / blueprint_status_transition_reconcil... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 256 | D_GOV_AUDIT 审计追踪: commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 257 | D_GOV_AUDIT 审计追踪: 跨layercontractsignature对账器 / cross_layer_contract_sig... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 258 | D_GOV_AUDIT 审计追踪: Git绩效监控协调器 / git_performance_monitor_reconciler (a... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 259 | D_GOV_AUDIT 审计追踪: 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 260 | D_GOV_AUDIT 审计追踪: 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 261 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 262 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 263 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 264 | D_GOV_AUDIT 审计追踪: 修复进度对账器 / remediation_progress_reconciler (audit/r... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 265 | D_GOV_AUDIT 审计追踪: 运行时违规快照 / runtime_violation_snapshot (audit/runtim... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 266 | D_GOV_AUDIT 审计追踪: 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 267 | D_GOV_AUDIT 审计追踪: 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 268 | D_GOV_AUDIT 审计追踪: translation_coverage_reconciler.py — 翻译覆盖率存量对账 ... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 269 | D_GOV_AUDIT 审计追踪: 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 270 | D_GOV_AUDIT 审计追踪: 收集各阶段审计结果，去重合并排序输出。 / issue_aggregator... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 271 | D_GOV_AUDIT 审计追踪: self愈合器 / self_healer (semantic_audit/self_healer.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 272 | D_GOV_AUDIT 审计追踪: self愈合器 / self_healer (semantic_audit/self_healer.py) | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 273 | D_GOV_AUDIT 审计追踪: DOM-GOV-001 循环依赖测试 — Audit 独立运行验证 + 无 RBAC ... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 274 | D_GOV_AUDIT 审计追踪: test_depgraph_dirty_flag.py — DM-90974 Phase 2: depgraph... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 275 | D_GOV_AUDIT 审计追踪: audit/test_integrity_root.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 276 | D_GOV_AUDIT 审计追踪: P0-I2 施工顺序验证 — DOM-GOV-001 §8.4. (audit/test_p0_i... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 277 | D_GOV_AUDIT 审计追踪: 测试工作区遥测共享 / test_workspace_telemetry_shared (gov... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 278 | D_GOV_AUDIT 审计追踪: 测试工作区遥测共享 / test_workspace_telemetry_shared (gov... | → | workspace_telemetry.py — 主工作区文件操作遥测公共 API（.... | 测试依赖 / test_depends |
-| 279 | D_GOV_CODE_QUALITY 代码质量治理: 缓存管理器 / cache_manager (code_dedup/cache_manager.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 280 | D_GOV_CODE_QUALITY 代码质量治理: 差异检测器 / diff_detector (code_dedup/diff_detector.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 281 | D_GOV_CODE_QUALITY 代码质量治理: reference辅助 / _reference_helpers (commit_gates/_referen... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 282 | D_GOV_CODE_QUALITY 代码质量治理: baregetenv门禁 / bare_getenv_gate (commit_gates/bare_gete... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 283 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图format门禁 / blueprint_format_gate (commit_gates/blue... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 284 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图物理ID硬编码阻断门禁 (commit_gates/blueprint_node_id_... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 285 | D_GOV_CODE_QUALITY 代码质量治理: capabilitylookuprequired门禁 / capability_lookup_required... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 286 | D_GOV_CODE_QUALITY 代码质量治理: 创建守卫 / create_guard (commit_gates/create_guard.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 287 | D_GOV_CODE_QUALITY 代码质量治理: 数据taskcompleteness门禁 / data_task_completeness_gate (c... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 288 | D_GOV_CODE_QUALITY 代码质量治理: encoding门禁 / encoding_gate (commit_gates/encoding_gate.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 289 | D_GOV_CODE_QUALITY 代码质量治理: exemptzonefrontmatter门禁 / exempt_zone_frontmatter_gate ... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 290 | D_GOV_CODE_QUALITY 代码质量治理: 门禁repo / gate_repo (commit_gates/gate_repo.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 291 | D_GOV_CODE_QUALITY 代码质量治理: 门禁repo / gate_repo (commit_gates/gate_repo.py) | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 292 | D_GOV_CODE_QUALITY 代码质量治理: protected_paths_gate.py — 受保护路径写入检测门禁（PROTEC... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 293 | D_GOV_CODE_QUALITY 代码质量治理: pureassertion门禁 / pure_assertion_gate (commit_gates/pur... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 294 | D_GOV_CODE_QUALITY 代码质量治理: pureshim门禁 / pure_shim_gate (commit_gates/pure_shim_gat... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 295 | D_GOV_CODE_QUALITY 代码质量治理: r5digitsuffix门禁 / r5_digit_suffix_gate (commit_gates/r5... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 296 | D_GOV_CODE_QUALITY 代码质量治理: ruling_commit_verified_gate.py — 文档"已完成"声明 commit... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 297 | D_GOV_CODE_QUALITY 代码质量治理: scripts_import_integrity_gate.py — _shared.constants 符... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 298 | D_GOV_CODE_QUALITY 代码质量治理: test_source_consistency_gate.py — 测试-源码符号一致性门... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 299 | D_GOV_CODE_QUALITY 代码质量治理: translation_coverage_gate.py — 新建 .py 文件大白话简介覆... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 300 | D_GOV_CODE_QUALITY 代码质量治理: gate_auto_registrar.py — YAML 驱动的 in-process gate 自... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 301 | D_GOV_DRIFT 漂移检测: gov_audit/self_monitor.py | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 302 | D_GOV_DRIFT 漂移检测: Owner Absence Manager — Owner缺席模式 §6.32。 (gov_drif... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 303 | D_GOV_DRIFT 漂移检测: Baseline Poisoning Guard — 基线投毒防护 D-023-36 · §6.... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 304 | D_GOV_DRIFT 漂移检测: ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation (... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 305 | D_GOV_DRIFT 漂移检测: ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation (... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 306 | D_GOV_DRIFT 漂移检测: ProbeHierarchy - K8s 3-Probe + Terraform Reconciliation (... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 307 | D_GOV_DRIFT 漂移检测: Detector Canary Controller — 检测器金丝雀部署 §6.11。 (... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 308 | D_GOV_DRIFT 漂移检测: Cascade Failure Detector — 级联故障检测 D-023-22 · §6.... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 309 | D_GOV_DRIFT 漂移检测: Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。 (go... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 310 | D_GOV_DRIFT 漂移检测: Drift Chaos Injector — 混沌工程主动漂移注入 §6.13。 (go... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 311 | D_GOV_DRIFT 漂移检测: Coverage Dashboard — dashboard.py (gov_drift/dashboard.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 312 | D_GOV_DRIFT 漂移检测: DriftBridge — 漂移检测器事件桥接 (MOD-INF-023). (bridges... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 313 | D_GOV_DRIFT 漂移检测: Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 314 | D_GOV_DRIFT 漂移检测: Drift Engine — 编排器核心 (SRC-0030 精简后) (gov_drift/d... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 315 | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 316 | D_GOV_DRIFT 漂移检测: Drift Detector 基础设施 — drift_infrastructure.py (gov_d... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 317 | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (gov_drift/dri... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 318 | D_GOV_DRIFT 漂移检测: Drift Detector 结果类型 + 专项检测函数 — drift_result_ty... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 319 | D_GOV_DRIFT 漂移检测: Drift Forensics Engine — 漂移取证引擎 §6.17。 (gov_drif... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 320 | D_GOV_DRIFT 漂移检测: Drift Forensics Engine — 漂移取证引擎 §6.17。 (gov_drif... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 321 | D_GOV_DRIFT 漂移检测: Gate Persistence — gate_persistence.py (gov_drift/gate_p... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 322 | D_GOV_DRIFT 漂移检测: Gate Persistence — gate_persistence.py (gov_drift/gate_p... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 323 | D_GOV_DRIFT 漂移检测: Git Bisector — git_bisector.py (gov_drift/git_bisector.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 324 | D_GOV_DRIFT 漂移检测: Cross-Session Handoff Manager — 跨Session修复上下文交接 ... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 325 | D_GOV_DRIFT 漂移检测: Headless Scanner — headless_scanner.py (gov_drift/headle... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 326 | D_GOV_DRIFT 漂移检测: Incremental Scanner — incremental_scanner.py (gov_drift/... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 327 | D_GOV_DRIFT 漂移检测: Scan Mutex — scan_mutex.py (gov_drift/scan_mutex.py) | → | lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点 B23 修复... | 导入依赖 / import_depends |
-| 328 | D_GOV_DRIFT 漂移检测: Tamper-Proof Audit — 防篡改审计 D-023-37 · §6.26。 (go... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 329 | D_GOV_DRIFT 漂移检测: Trend Analyzer — trend_analyzer.py (gov_drift/trend_anal... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 330 | D_GOV_DRIFT 漂移检测: Trend Analyzer — trend_analyzer.py (gov_drift/trend_anal... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 331 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov_enforceme... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 332 | D_GOV_DRIFT 漂移检测: EN-002 — Enforcement Mode Validator (invariants/en_002_e... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 333 | D_GOV_DRIFT 漂移检测: EN-002 — Enforcement Mode Validator (invariants/en_002_e... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 334 | D_GOV_DRIFT 漂移检测: 真源优先级裁决器（Truth Source Validator） (rule_enforcem... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 335 | D_GOV_ENFORCEMENT 规则执行: session_worktree_cli.py — session worktree 管理 CLI（治... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 336 | D_GOV_ENFORCEMENT 规则执行: GateEventAdapter — GateRepo 事件适配器（DW-0006） (behav... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 337 | D_GOV_ENFORCEMENT 规则执行: behavioral_admission/gpu_consensus_scheduler.py | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 338 | D_GOV_ENFORCEMENT 规则执行: commit_gate_registry.py — GitCommitGateway pre-commit 门... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 339 | D_GOV_ENFORCEMENT 规则执行: emergency_commit.py — 紧急提交通道（Ruling:100PCT-AI-GOV... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 340 | D_GOV_ENFORCEMENT 规则执行: emergency_commit.py — 紧急提交通道（Ruling:100PCT-AI-GOV... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 341 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 342 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 343 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit 入口（OPS-2... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 344 | D_GOV_ENFORCEMENT 规则执行: session_claim.py — AI 对话并发声明 helper（FP-ISO.4B 件2... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 345 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 346 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 347 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔离 helper（... | → | workspace_telemetry.py — 主工作区文件操作遥测公共 API（.... | 导入依赖 / import_depends |
-| 348 | D_GOV_ENFORCEMENT 规则执行: worktree_manager.py — session worktree 物理隔离管理器（... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 349 | D_GOV_ENFORCEMENT 规则执行: worktree_manager.py — session worktree 物理隔离管理器（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 350 | D_GOV_ENFORCEMENT 规则执行: worktree_pool.py — Worktree 预创建池（ARCH-GIT-CALL-BUDG... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 351 | D_GOV_ENFORCEMENT 规则执行: worktree_pool.py — Worktree 预创建池（ARCH-GIT-CALL-BUDG... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 352 | D_GOV_ENFORCEMENT 规则执行: DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的... | → | dlq.py —— ZephyrAlpha 死信队列（Dead Letter Queue） (ev... | 导入依赖 / import_depends |
-| 353 | D_GOV_ENFORCEMENT 规则执行: DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
-| 354 | D_GOV_ENFORCEMENT 规则执行: DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 355 | D_GOV_ENFORCEMENT 规则执行: RuleWatcher — YAML 规则文件变更检测与自动同步 (rule_engi... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 356 | D_GOV_ENFORCEMENT 规则执行: RuleWatcher — YAML 规则文件变更检测与自动同步 (rule_engi... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 357 | D_GOV_ENFORCEMENT 规则执行: test_gate_auto_registrar.py — gate_auto_registrar 单元测... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 358 | D_GOV_ENFORCEMENT 规则执行: test_session_worktree.py — worktree 物理隔离端到端测试（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 359 | D_GOV_ENFORCEMENT 规则执行: test_worktree_pool.py — WorktreePool 端到端 smoke test（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 测试依赖 / test_depends |
-| 360 | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003 消费端 — Escalation.on_rollback_failure() + G-C... | → | escalation/budget_alert.py | 导入依赖 / import_depends |
-| 361 | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation/escalation_e... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 362 | D_GOV_OPS_RESILIENCE 运维弹性治理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (escalation/tr... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 363 | D_GOV_OPS_RESILIENCE 运维弹性治理: ops_governance/environment_manager.py | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 364 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 365 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 366 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 个阶段门控... | → | SessionContinuity — Session 交接包自动生成与恢复 (sessio... | 导入依赖 / import_depends |
-| 367 | D_GOV_OPS_RESILIENCE 运维弹性治理: D-DATA -> ServiceRegistry 注册模块 (ops_governance/servic... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 368 | D_GOV_OPS_RESILIENCE 运维弹性治理: D-DATA -> ServiceRegistry 注册模块 (ops_governance/servic... | → | registry — 运行时 DI 容器 (protocols/registry.py) | 导入依赖 / import_depends |
-| 369 | D_GOV_OPS_RESILIENCE 运维弹性治理: blast_radius — MOD-INF-028 §3.1 Stage 9 (resilience_gov... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 370 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5EventSubscriber — F5 事件启动机制 (MOD-INF-022 §3). (... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 371 | D_GOV_OPS_RESILIENCE 运维弹性治理: F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 372 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | security/security_decision.py | 导入依赖 / import_depends |
-| 373 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层防御 OCP-00... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 374 | D_GOV_OPS_RESILIENCE 运维弹性治理: security_governance/tamper_evident_log.py | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 375 | D_GOV_OPS_RESILIENCE 运维弹性治理: 测试套件：GateEngine + TaskRepository 门禁集成（T-2-19） ... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 测试依赖 / test_depends |
-| 376 | D_GOV_OPS_RESILIENCE 运维弹性治理: Deeper integration test: P0 inflation guard + block_sessi... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 测试依赖 / test_depends |
-| 377 | D_GOV_OPS_RESILIENCE 运维弹性治理: Deeper integration test: P0 inflation guard + block_sessi... | → | schema/severity_types.py | 测试依赖 / test_depends |
-| 378 | D_GOV_RULE 规则治理: AI 能力边界守卫 / AI Capability Guard (rule_enforcement/a... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 379 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 380 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
-| 381 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 382 | D_GOV_RULE 规则治理: 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 383 | D_GOV_RULE 规则治理: 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 384 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | io_cache.py - File-level I/O cache with LRU eviction (io/... | 导入依赖 / import_depends |
-| 385 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 386 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 387 | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 388 | D_GOV_RULE 规则治理: 集成测试运行器 / Integration Test Runner (rule_enforcemen... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 389 | D_GOV_RULE 规则治理: 循环依赖扫描器 / Circular Dependency Scanner (invariants/... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 390 | D_GOV_RULE 规则治理: 契约兼容性检查器 / Contract Compatibility Checker (invari... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 391 | D_GOV_RULE 规则治理: 进程生命周期网关 / Process Lifecycle Gateway (invariants/... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 392 | D_GOV_RULE 规则治理: 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 393 | D_GOV_RULE 规则治理: 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 394 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | schema/base_config.py | 导入依赖 / import_depends |
-| 395 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | schema/execution_model.py | 导入依赖 / import_depends |
-| 396 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | schema/severity_types.py | 导入依赖 / import_depends |
-| 397 | D_GOV_RULE 规则治理: 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 398 | D_GOV_RULE 规则治理: 宪法自愈 / Constitutional Update (constitutional_update/c... | → | file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
-| 399 | D_GOV_RULE 规则治理: 宪法自愈 / Constitutional Update (constitutional_update/c... | → | session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B... | 导入依赖 / import_depends |
-| 400 | D_GOV_SCRIPTS 脚本治理: DM-106: P2-B 迁移全量验证脚本 (governance/dm106_p2b_verif... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 401 | D_GOV_SCRIPTS 脚本治理: audit_post_sync_commands.py — post_sync_standard 命令可... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 402 | D_GOV_SCRIPTS 脚本治理: DM-105: depgraph 未分配节点三策略处理脚本 (one_off/dm105_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 403 | D_GOV_SCRIPTS 脚本治理: constants.py — 审计脚本共享常量 (_shared/constants.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 404 | D_GOV_SCRIPTS 脚本治理: _shared/file_utils.py — 原子写入共享工具（ARCH-036 P1-1... | → | file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
-| 405 | D_GOV_SCRIPTS 脚本治理: _shared/yaml_utils.py — YAML 文件加载共享工具 (_shared/y... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 406 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] pg_advisory_lock 写锁; build_status 单调推进... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 407 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆... | → | foundation/env.py | 导入依赖 / import_depends |
-| 408 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 409 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 原子写入（RULE-ONE）；变更前验证；禁止直接覆... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 410 | D_GOV_SCRIPTS 脚本治理: GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。 (gov... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 411 | D_GOV_SCRIPTS 脚本治理: GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 412 | D_GOV_SCRIPTS 脚本治理: # [BLUEPRINT] MOD-INF-005 | scripts/governance/diagnose_d... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 413 | D_GOV_SCRIPTS 脚本治理: G-panorama-align: 四图对齐检测器（ARCH-053 + ARCH-056 四... | → | converters.py — 类型转换工具（消除 '' vs None 语义鸿沟）... | 导入依赖 / import_depends |
-| 414 | D_GOV_SCRIPTS 脚本治理: G-panorama-align: 四图对齐检测器（ARCH-053 + ARCH-056 四... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 415 | D_GOV_SCRIPTS 脚本治理: G13: 从 depgraph (PostgreSQL) 生成资产清单全景图 (generat... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 416 | D_GOV_SCRIPTS 脚本治理: 从 candidate_module_registry.yaml 生成候选模块清单报告（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 417 | D_GOV_SCRIPTS 脚本治理: Code Wiki 统计数据生成器（半自动维护机制）。 (generators/... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 418 | D_GOV_SCRIPTS 脚本治理: G12: 从 depgraph (PostgreSQL) 生成契约目录全景图 (generat... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 419 | D_GOV_SCRIPTS 脚本治理: generate_contracts.py -- SSoT to Codegen pipeline (genera... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 420 | D_GOV_SCRIPTS 脚本治理: G-panorama-registry: 自动生成全景图清单总表 (generators/g... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 421 | D_GOV_SCRIPTS 脚本治理: validate_module_lifecycle.py — 模块生命周期校验 (lifecyc... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 422 | D_GOV_SCRIPTS 脚本治理: validate_interface_contracts.py — 接口契约校验 (validato... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 423 | D_GOV_SCRIPTS 脚本治理: extract_decisiongraph - decisiongraph on-demand extractio... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 424 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 禁止AI直接Read 157MB depgraph文件；提取输出... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 425 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] YAML 是唯一真源; DB 为只读缓存; 同步单向 YAM... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 426 | D_GOV_SCRIPTS 脚本治理: # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_p... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 427 | D_GOV_SCRIPTS 脚本治理: # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_p... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 428 | D_GOV_SCRIPTS 脚本治理: # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_p... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 429 | D_GOV_SCRIPTS 脚本治理: check_gate_inventory_drift.py — commit_gates 模块清单漂... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 430 | D_GOV_SCRIPTS 脚本治理: 从场外草稿 CSV 抓取候选模块入候选库（一次性 harvest 脚本... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 431 | D_GOV_SCRIPTS 脚本治理: Module docstring — see module-level docstring for detail... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 432 | D_GOV_SCRIPTS 脚本治理: create_task_from_finding.py — Finding → 任务卡自动创建... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 433 | D_GOV_SCRIPTS 脚本治理: create_task_from_finding.py — Finding → 任务卡自动创建... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 434 | D_GOV_SCRIPTS 脚本治理: SQLite → PostgreSQL 运营数据迁移脚本 (migrate_sqlite_to_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 435 | D_GOV_SCRIPTS 脚本治理: concurrent_commit_test.py — 幽灵提交红蓝对抗脚本（OPS-20... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 436 | D_GOV_SCRIPTS 脚本治理: sync_panorama_module.py — 四图模块同步引擎（ARCH-056） (... | → | converters.py — 类型转换工具（消除 '' vs None 语义鸿沟）... | 导入依赖 / import_depends |
-| 437 | D_GOV_SCRIPTS 脚本治理: 生成器触发路径验证脚本 (governance/verify_generator_paths... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 438 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/experiment_result.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 439 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/factor_signal.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 440 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/fill.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 441 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/market_data.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 442 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 443 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/order.py | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 444 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/position.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 445 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/risk_limits.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 446 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/synthesized_signal.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 447 | D_INFRASTRUCTURE 跨层契约基础设施: contracts/target_portfolio.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 448 | D_INFRA_A2A A2A通信: Agent Card 模型 — A2A Layer 1 Discovery (layer1_discover... | → | A2A Registry and Agent Card contracts — discovery and id... | 导入依赖 / import_depends |
-| 449 | D_INFRA_A2A A2A通信: A2A Message/Part 系统 — Layer 2 Communication (layer2_co... | → | A2A data structure contracts — Message, Task, and StateM... | 导入依赖 / import_depends |
-| 450 | D_INFRA_A2A A2A通信: A2A Task 状态机 — Layer 2 Communication (layer2_communic... | → | A2A data structure contracts — Message, Task, and StateM... | 导入依赖 / import_depends |
-| 451 | D_INFRA_A2A A2A通信: Context Package — A2A 上下文包 (layer2_communication/con... | → | A2A data structure contracts — Message, Task, and StateM... | 导入依赖 / import_depends |
-| 452 | D_INFRA_A2A A2A通信: Handoff Manager — Agent 间任务交接 (layer2_communication... | → | A2A data structure contracts — Message, Task, and StateM... | 导入依赖 / import_depends |
-| 453 | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalation (layer... | → | A2A Coordination — shared interface definitions for mult... | 导入依赖 / import_depends |
-| 454 | D_INFRA_A2A A2A通信: 施工后验证器 — 自指悖论防御：不橡胶图章，真正验证 A2A 协... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 455 | D_INFRA_A2A A2A通信: Supervisor — A2A Layer 3 Coordination (layer3_coordinati... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 456 | D_INFRA_A2A A2A通信: multi_agent.py —— Multi-Agent 编排基座（Phase 14 | 盲点... | → | A2A Coordination — shared interface definitions for mult... | 导入依赖 / import_depends |
-| 457 | D_INFRA_RECOVERY 回滚恢复: AgentCooldown — Agent 冷却隔离器。 (rollback/agent_coold... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 458 | D_INFRA_RECOVERY 回滚恢复: External Merkle Proof — 外部可验证回滚完整性证明。 (roll... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 459 | D_INFRA_RECOVERY 回滚恢复: Forensic Engine — 取证基础设施（Phase 8 完整实现）。 (ro... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 460 | D_INFRA_RECOVERY 回滚恢复: Forensic Engine — 取证基础设施（Phase 8 完整实现）。 (ro... | → | file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
-| 461 | D_INFRA_RECOVERY 回滚恢复: ForwardFixRunner — Forward-Fix 执行器。 (rollback/forwar... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 462 | D_INFRA_RECOVERY 回滚恢复: ForwardFixRunner — Forward-Fix 执行器。 (rollback/forwar... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 463 | D_INFRA_RECOVERY 回滚恢复: Right to be Forgotten — GDPR 遗忘权合规检查器。 (rollbac... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 464 | D_INFRA_RECOVERY 回滚恢复: RollbackBootIntegration — 回滚系统自动启动/关闭集成 (MOD... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 465 | D_INFRA_RECOVERY 回滚恢复: RollbackBootstrap — 零依赖自举回滚器。 (rollback/rollbac... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 466 | D_INFRA_RECOVERY 回滚恢复: RollbackDrill — 定期回滚演练调度器 (DiRT-style)。 (rollb... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 467 | D_INFRA_RECOVERY 回滚恢复: RollbackDrill — 定期回滚演练调度器 (DiRT-style)。 (rollb... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 468 | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 469 | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 470 | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollback/rollba... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 471 | D_INFRA_RECOVERY 回滚恢复: Rollback Integration — executor 集成增强层。 (rollback/r... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 472 | D_INFRA_RECOVERY 回滚恢复: Rollback Integration — executor 集成增强层。 (rollback/r... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 473 | D_INFRA_RECOVERY 回滚恢复: Rollback Integration — executor 集成增强层。 (rollback/r... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 474 | D_INFRA_RECOVERY 回滚恢复: Rollback Integration — executor 集成增强层。 (rollback/r... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 475 | D_INFRA_RECOVERY 回滚恢复: RollbackLock — 全局回滚锁管理。 (rollback/rollback_lock.py) | → | lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点 B23 修复... | 导入依赖 / import_depends |
-| 476 | D_INFRA_RECOVERY 回滚恢复: RollbackSimulator — 回滚模拟器（CI 集成）。 (rollback/ro... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 477 | D_INFRA_RECOVERY 回滚恢复: RollbackTargetStaleness — 回滚目标陈旧度检测。 (rollback... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 478 | D_INFRA_RECOVERY 回滚恢复: RollbackVerifier — 回滚后验证器。 (rollback/rollback_ver... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 479 | D_INFRA_RECOVERY 回滚恢复: S3 Snapshot Lifecycle Manager — 快照防生命周期过期。 (ro... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 480 | D_INFRA_RECOVERY 回滚恢复: SemanticRollbackTag — 语义化 Rollback Tag 管理器。 (roll... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 481 | D_INFRA_RECOVERY 回滚恢复: SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 482 | D_INFRA_RECOVERY 回滚恢复: SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 483 | D_INFRA_RECOVERY 回滚恢复: SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 484 | D_INFRA_RECOVERY 回滚恢复: SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层：dump / r... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 485 | D_INFRA_RECOVERY 回滚恢复: Submodule Sync — Submodule/Monorepo 多仓库同步回滚。 (ro... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 486 | D_INFRA_RECOVERY 回滚恢复: TopologyChangeLog — 分支拓扑变更日志。 (rollback/topolog... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 487 | D_INFRA_RECOVERY 回滚恢复: VenvSync — venv/conda 版本同步保障。 (rollback/venv_sync.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 488 | D_INFRA_RECOVERY 回滚恢复: VulnerabilityRescanner — 依赖漏洞复扫。 (rollback/vulner... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 489 | D_INFRA_RECOVERY 回滚恢复: WarmStandby — 温备热切（git worktree 副本维护）。 (rollb... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 490 | D_INFRA_RECOVERY 回滚恢复: WarmStandby — 温备热切（git worktree 副本维护）。 (rollb... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 491 | D_INFRA_RUNTIME 运行时集成: Asset Inventory CLI — MOD-INF-026 蓝图 §31 (asset_inven... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 492 | D_INFRA_RUNTIME 运行时集成: Asset Inventory CLI — MOD-INF-026 蓝图 §31 (asset_inven... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 493 | D_INFRA_RUNTIME 运行时集成: Asset Inventory CLI — MOD-INF-026 蓝图 §31 (asset_inven... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 494 | D_INFRA_RUNTIME 运行时集成: AssetClassifier — MOD-INF-026 L2 资产自动分类器 (asset_i... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 495 | D_INFRA_RUNTIME 运行时集成: AssetDashboard — MOD-INF-026 资产健康仪表盘生成器 (asset... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 496 | D_INFRA_RUNTIME 运行时集成: UnifiedAssetIndex — MOD-INF-026 L3 统一资产索引生成器 (a... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 497 | D_INFRA_RUNTIME 运行时集成: AssetLifecycle — MOD-INF-026 L5 ITIL生命周期自动化管理器... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 498 | D_INFRA_RUNTIME 运行时集成: AssetInventory MCP Server — MOD-INF-026 蓝图 §21 (asset... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 499 | D_INFRA_RUNTIME 运行时集成: asset_inventory/metadata.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 500 | D_INFRA_RUNTIME 运行时集成: ReconciliationEngine — MOD-INF-026 L4 注册表 vs 磁盘对账... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 501 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。 (asse... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 502 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 §17 — 24 个异构注册表统一解析适配器。 (asse... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 503 | D_INFRA_RUNTIME 运行时集成: AssetDiscoveryScanner — MOD-INF-026 L1 全量文件系统扫描... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 504 | D_INFRA_RUNTIME 运行时集成: AssetInventoryTelemetry — MOD-INF-026 自监控指标 (asset_... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 505 | D_INFRA_RUNTIME 运行时集成: asset_inventory/trust_anchor.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 506 | D_INFRA_RUNTIME 运行时集成: asset_inventory/trust_anchor.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 507 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/alignment_syncer.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 508 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/all_completer.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 509 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/compliance_auditor.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 510 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/compliance_auditor.py | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 511 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/config_fixer.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 512 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/dedup_extractor.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 513 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/dep_version_fixer.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 514 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/drift_fixer.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 515 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/event_hooks.py | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 516 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_budget.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 517 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_budget.py | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 518 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_health_check.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 519 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_health_check.py | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 520 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_pattern_miner.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 521 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_pattern_miner.py | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 522 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_reliability.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 523 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_reliability.py | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 524 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_safety.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 525 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/fix_safety.py | → | file_utils.py —— 安全文件操作工具（Phase 3 新增 | 盲点 ... | 导入依赖 / import_depends |
-| 526 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/import_fixer.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 527 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/interrupt_guard.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 528 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/llm_fix_adapter.py | → | LLMGatewayProtocol — LLM 网关抽象接口 (contracts/llm_gat... | 导入依赖 / import_depends |
-| 529 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/scaffold_registrar.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 530 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/shadow_workspace.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 531 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/shadow_workspace.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 532 | D_INFRA_RUNTIME 运行时集成: auto_fix_engine/zombie_cleaner.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 533 | D_INFRA_RUNTIME 运行时集成: Risk mitigation — R1~R16 全量风险缓解实现（对标蓝图 §14... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 534 | D_INFRA_RUNTIME 运行时集成: SchemaManager — 容量保障体系数据库 Schema 管理器 (capaci... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 535 | D_INFRA_RUNTIME 运行时集成: RI-15 CostTracker — 成本追踪器 (infrastructure/cost_trac... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 536 | D_INFRA_RUNTIME 运行时集成: RI-15 CostTracker — 成本追踪器 (infrastructure/cost_trac... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 537 | D_INFRA_RUNTIME 运行时集成: DatabaseService: 统一管理数据库的连接池、生命周期、健康检... | → | DatabaseCRUDMixin: 共享的 governance.db + depgraph CRUD ... | 导入依赖 / import_depends |
-| 538 | D_INFRA_RUNTIME 运行时集成: DatabaseService: 统一管理数据库的连接池、生命周期、健康检... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 539 | D_INFRA_RUNTIME 运行时集成: DEPRECATED: 此文件已废弃。 (infrastructure/event_bus_upgr... | → | EventBus 升级策略引擎 (events/upgrade_strategy.py) | 导入依赖 / import_depends |
-| 540 | D_INFRA_RUNTIME 运行时集成: RI-13 EventStore — 事件存储 (infrastructure/event_store.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 541 | D_INFRA_RUNTIME 运行时集成: RI-13 EventStore — 事件存储 (infrastructure/event_store.py) | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 542 | D_INFRA_RUNTIME 运行时集成: RI-13 EventStore — 事件存储 (infrastructure/event_store.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 543 | D_INFRA_RUNTIME 运行时集成: Event Store — 事件持久化存储。 (events/event_store.py) | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 544 | D_INFRA_RUNTIME 运行时集成: Event Store — 事件持久化存储。 (events/event_store.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 545 | D_INFRA_RUNTIME 运行时集成: infrastructure/file_watcher.py | → | ZephyrAlpha 蓝图拆解器 (blueprint_tools/blueprint_decompo... | 导入依赖 / import_depends |
-| 546 | D_INFRA_RUNTIME 运行时集成: infrastructure/file_watcher.py | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 547 | D_INFRA_RUNTIME 运行时集成: infrastructure/file_watcher.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 548 | D_INFRA_RUNTIME 运行时集成: infrastructure/file_watcher.py | → | registry — 运行时 DI 容器 (protocols/registry.py) | 导入依赖 / import_depends |
-| 549 | D_INFRA_RUNTIME 运行时集成: Finding->TaskCard 桥接器 (infrastructure/finding_task_bri... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 550 | D_INFRA_RUNTIME 运行时集成: Finding->TaskCard 桥接器 (infrastructure/finding_task_bri... | → | registry — 运行时 DI 容器 (protocols/registry.py) | 导入依赖 / import_depends |
-| 551 | D_INFRA_RUNTIME 运行时集成: Finding->TaskCard 桥接器 (infrastructure/finding_task_bri... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 552 | D_INFRA_RUNTIME 运行时集成: Finding->TaskCard 桥接器 (infrastructure/finding_task_bri... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 553 | D_INFRA_RUNTIME 运行时集成: git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGE... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 554 | D_INFRA_RUNTIME 运行时集成: Kill Switch T0 Hardware Simulator (infrastructure/kill_sw... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 555 | D_INFRA_RUNTIME 运行时集成: Notifier — 多渠道 Owner 通知。 (observability/notifier.py) | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 556 | D_INFRA_RUNTIME 运行时集成: Notifier — 多渠道 Owner 通知。 (observability/notifier.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 557 | D_INFRA_RUNTIME 运行时集成: observability/trace_decorator.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 558 | D_INFRA_RUNTIME 运行时集成: backpressure_types.py - Pipeline backpressure signal data... | → | core/trace_context.py | 导入依赖 / import_depends |
-| 559 | D_INFRA_RUNTIME 运行时集成: CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由 (pipeline... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 560 | D_INFRA_RUNTIME 运行时集成: CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由 (pipeline... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 561 | D_INFRA_RUNTIME 运行时集成: CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由 (pipeline... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 562 | D_INFRA_RUNTIME 运行时集成: MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 563 | D_INFRA_RUNTIME 运行时集成: MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | foundation/env.py | 导入依赖 / import_depends |
-| 564 | D_INFRA_RUNTIME 运行时集成: MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 565 | D_INFRA_RUNTIME 运行时集成: MOD-INF-019: Agent Spec — LLM Gateway (pipeline/llm_gate... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 566 | D_INFRA_RUNTIME 运行时集成: ModelRouter — 模型路由与降级链管理 (pipeline/model_route... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 567 | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (pipeline/models.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 568 | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (pipeline/models.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 569 | D_INFRA_RUNTIME 运行时集成: Pipeline Lock — 双管线并发锁 (pipeline/pipeline_lock.py) | → | lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点 B23 修复... | 导入依赖 / import_depends |
-| 570 | D_INFRA_RUNTIME 运行时集成: PreemptionManager -- 优先级抢占管理器 (pipeline/preemptio... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 571 | D_INFRA_RUNTIME 运行时集成: PreemptionManager -- 优先级抢占管理器 (pipeline/preemptio... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 572 | D_INFRA_RUNTIME 运行时集成: PreemptionManager -- 优先级抢占管理器 (pipeline/preemptio... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 573 | D_INFRA_RUNTIME 运行时集成: Pipeline Routing Plugin System — K8s Scheduling Framewor... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 574 | D_INFRA_RUNTIME 运行时集成: Task Queue — 后台任务队列 + 自动 Dispatch。 (queue/task_... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 575 | D_INFRA_RUNTIME 运行时集成: Task Queue — 后台任务队列 + 自动 Dispatch。 (queue/task_... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 576 | D_INFRA_RUNTIME 运行时集成: Task Scheduler — 任务调度器。 (queue/task_scheduler.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 577 | D_INFRA_RUNTIME 运行时集成: Redis 连接配置单真源加载器（H1 业务热缓存 INFRA-DB-007）... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 578 | D_INFRA_RUNTIME 运行时集成: Redis 连接配置单真源加载器（H1 业务热缓存 INFRA-DB-007）... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 579 | D_INFRA_RUNTIME 运行时集成: Finding Schema — 审计发现标准化数据模型 (script_system/f... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 580 | D_INFRA_RUNTIME 运行时集成: SLA Monitor — 服务等级协议 (SLA) 监控 RTO/RPO。 (sla/sla... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 581 | D_INFRA_RUNTIME 运行时集成: SLA Monitor — 服务等级协议 (SLA) 监控 RTO/RPO。 (sla/sla... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 582 | D_INFRA_RUNTIME 运行时集成: 遥测 · archive/cold_stub — 冷存储归档管道。 (archive/co... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 583 | D_INFRA_RUNTIME 运行时集成: auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 584 | D_INFRA_RUNTIME 运行时集成: auto_bootstrap — 全自动遥测注入钩子（MOD-INF-015 v2.1.0... | → | SessionContinuity — Session 交接包自动生成与恢复 (sessio... | 导入依赖 / import_depends |
-| 585 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0） (system... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 586 | D_INFRA_RUNTIME 运行时集成: Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0） (system... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 587 | D_INFRA_RUNTIME 运行时集成: 健康聚合器（Health Aggregator） (system_telemetry/health_... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 588 | D_INFRA_RUNTIME 运行时集成: 三态健康探针协议（Health Probes — CT-HEALTH-001） (syste... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 589 | D_INFRA_RUNTIME 运行时集成: blueprint_metrics — 蓝图使用追踪 instrumentation (metric... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 590 | D_INFRA_RUNTIME 运行时集成: TELE->FLE 指标桥接 — emit_metrics() 生产者 (system_telem... | → | registry — 运行时 DI 容器 (protocols/registry.py) | 导入依赖 / import_depends |
-| 591 | D_INFRA_RUNTIME 运行时集成: 遥测 · traces/span_stub — W3C TraceContext 分布式追踪管... | → | logging.py —— ZephyrAlpha 结构化日志系统（Structured JS... | 导入依赖 / import_depends |
-| 592 | D_INFRA_RUNTIME 运行时集成: 三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dea... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 593 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 594 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 595 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 596 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) (trading/a... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 597 | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (trading/ai_audit_logger.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 598 | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (trading/ai_audit_logger.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 599 | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (trading/ai_audit_logger.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 600 | D_INFRA_RUNTIME 运行时集成: AutoIntegrator — 自动接入器 (trading/auto_integrator.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 601 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | core/system_configuration.py | 导入依赖 / import_depends |
-| 602 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 603 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 604 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 605 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 606 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 607 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑） (tradin... | → | A2A Registry and Agent Card contracts — discovery and id... | 导入依赖 / import_depends |
-| 608 | D_INFRA_RUNTIME 运行时集成: AutoTaskGenerator — 自动任务生成器 (trading/auto_task_ge... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 609 | D_INFRA_RUNTIME 运行时集成: AutoTaskGenerator — 自动任务生成器 (trading/auto_task_ge... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 610 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 611 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 612 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 613 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 614 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | health.py —— ZephyrAlpha 聚合健康检查 (lifecycle/health.py) | 导入依赖 / import_depends |
-| 615 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | CT-HEALTH-001: System-wide Health Discovery Registration.... | 导入依赖 / import_depends |
-| 616 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | lifecycle/healthcheck_service.py | 导入依赖 / import_depends |
-| 617 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | lifecycle/longevity_monitor.py | 导入依赖 / import_depends |
-| 618 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | Autonomy Monitor — AI 自主等级监控与降级。 (maintenance/... | 导入依赖 / import_depends |
-| 619 | D_INFRA_RUNTIME 运行时集成: trading/boot_hooks.py | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 620 | D_INFRA_RUNTIME 运行时集成: CapabilityCard — 能力卡片数据模型 (trading/capability_ca... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 621 | D_INFRA_RUNTIME 运行时集成: CapabilityCard — 能力卡片数据模型 (trading/capability_ca... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 622 | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (trading/capability_re... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 623 | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (trading/dream_cycle.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 624 | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (trading/dream_cycle.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 625 | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (trading/finalizer.py) | → | health.py —— ZephyrAlpha 聚合健康检查 (lifecycle/health.py) | 导入依赖 / import_depends |
-| 626 | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (trading/finalizer.py) | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 627 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 628 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 629 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | lifecycle/healthcheck_service.py | 导入依赖 / import_depends |
-| 630 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | lifecycle/longevity_monitor.py | 导入依赖 / import_depends |
-| 631 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 632 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 633 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (trading/health_monitor.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 634 | D_INFRA_RUNTIME 运行时集成: IntegrationRegistry — 集成注册表 (trading/integration_re... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 635 | D_INFRA_RUNTIME 运行时集成: trading/lifecycle_manager.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 636 | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (trading/night_shift_... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 637 | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (trading/night_shift_... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 638 | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (trading/night_shift_... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 639 | D_INFRA_RUNTIME 运行时集成: Protocol-based interface layer for runtime->pipeline depe... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 640 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | capacity_governance/capacity_calibrator.py | 导入依赖 / import_depends |
-| 641 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | capacity_governance/capacity_digital_twin.py | 导入依赖 / import_depends |
-| 642 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | capacity_governance/capacity_fingerprint.py | 导入依赖 / import_depends |
-| 643 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | capacity_governance/capacity_runbook_generator.py | 导入依赖 / import_depends |
-| 644 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | capacity_governance/model_capacity_probe.py | 导入依赖 / import_depends |
-| 645 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 646 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 647 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic resource opti... | → | io_cache.py - File-level I/O cache with LRU eviction (io/... | 导入依赖 / import_depends |
-| 648 | D_INFRA_RUNTIME 运行时集成: StagingArea — 多AI并发草稿写入+提交+冲突检测模块（CT-SES... | → | lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点 B23 修复... | 导入依赖 / import_depends |
-| 649 | D_INFRA_RUNTIME 运行时集成: StatusDashboard — 实时状态面板 (trading/status_dashboard.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 650 | D_INFRA_RUNTIME 运行时集成: StopGate — 质量闸门 (trading/stop_gate.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 651 | D_INFRA_RUNTIME 运行时集成: WindowsService — Windows Service 包装器 (trading/windows... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 652 | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (trading/work_dag.py) | → | schema/schemas.py | 导入依赖 / import_depends |
-| 653 | D_INFRA_RUNTIME 运行时集成: trading/work_orchestrator.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 654 | D_INFRA_RUNTIME 运行时集成: trading/work_orchestrator.py | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 655 | D_INFRA_RUNTIME 运行时集成: zombie_scanner.py — 僵尸 Python 进程检测与自动处置 (trad... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 656 | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM 推理 (loc... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 657 | D_INTEGRATION 管线路由: OllamaEmbedder — 通过 Ollama HTTP API 生成文本嵌入 (loca... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 658 | D_INTEGRATION 管线路由: BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基类 (mcp/_b... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 659 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step 4）。 (mc... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 660 | D_INTEGRATION 管线路由: BlueprintSearchServer — MCP Server for blueprint discove... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 661 | D_INTEGRATION 管线路由: DocGuardServer: 跨会话交接协议服务 MCP Server (mcp/doc_gu... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 662 | D_INTEGRATION 管线路由: DocGuardServer: 跨会话交接协议服务 MCP Server (mcp/doc_gu... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 663 | D_INTEGRATION 管线路由: GateEngineServer: 门禁裁决服务 MCP Server (mcp/gate_engin... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 664 | D_INTEGRATION 管线路由: GateEngineServer: 门禁裁决服务 MCP Server (mcp/gate_engin... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 665 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Phase 5）。 ... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 666 | D_INTEGRATION 管线路由: MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。 (... | → | infra/limiter.py | 导入依赖 / import_depends |
-| 667 | D_INTEGRATION 管线路由: MCP Resource 提供者（MOD-INF-013 Phase 6 — 关闭 B2/B41）... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 668 | D_INTEGRATION 管线路由: RuleDiscoveryServer — MCP Server for rule discovery（...... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 669 | D_INTEGRATION 管线路由: MCP sandbox 安全代码执行沙箱（MOD-INF-013 Phase 7 — 关闭... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 670 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | ZephyrAlpha 蓝图拆解器 (blueprint_tools/blueprint_decompo... | 导入依赖 / import_depends |
-| 671 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 672 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 673 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 674 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | schema/severity_types.py | 导入依赖 / import_depends |
-| 675 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (mcp/task_manager_ser... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 676 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Telemetry Server — 系统可观测性 MCP 接口... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 677 | D_INTEGRATION 管线路由: VectorMemoryServer: VMS 向量记忆 MCP Server (MOD-INF-011 ... | → | ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
-| 678 | D_INTEGRATION 管线路由: AssetInventory MCP Server — MOD-INF-026 蓝图 §21 (integ... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 679 | D_INTEGRATION 管线路由: AssetInventory MCP Server — MOD-INF-026 蓝图 §21 (integ... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 680 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | LLMGatewayProtocol — LLM 网关抽象接口 (contracts/llm_gat... | 导入依赖 / import_depends |
-| 681 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 682 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 683 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 684 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
-| 685 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 686 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
-| 687 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 688 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 689 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (integration/pi... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 690 | D_INTEGRATION 管线路由: errors/contract_violation_error.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 691 | D_INTEGRATION 管线路由: CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误 (e... | → | core/trace_context.py | 导入依赖 / import_depends |
-| 692 | D_INTEGRATION 管线路由: errors/execution_rejection_error.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 693 | D_INTEGRATION 管线路由: CTR-ERR-002: FactorComputationError / 因子计算失败错误 (e... | → | core/trace_context.py | 导入依赖 / import_depends |
-| 694 | D_INTEGRATION 管线路由: errors/risk_limit_violation_error.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 695 | D_INTEGRATION 管线路由: errors/signal_degradation_warning.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 696 | D_INTEGRATION 管线路由: CT-DLQ-001: DeadLetterQueue -> System Event Bus integrati... | → | dlq.py —— ZephyrAlpha 死信队列（Dead Letter Queue） (ev... | 导入依赖 / import_depends |
-| 697 | D_INTEGRATION 管线路由: CT-DLQ-001: DeadLetterQueue -> System Event Bus integrati... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
-| 698 | D_INTEGRATION 管线路由: event_schemas.py —— Observer 事件体 Pydantic V2 Schema... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
-| 699 | D_INTEGRATION 管线路由: event_schemas.py —— Observer 事件体 Pydantic V2 Schema... | → | schema/base_config.py | 导入依赖 / import_depends |
-| 700 | D_INTEGRATION 管线路由: EventBus 升级策略引擎 (events/upgrade_strategy.py) | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
-| 701 | D_INTEGRATION 管线路由: ChunkStrategyRouter — MOD-INF-011 分块策略调度 (vector_m... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 702 | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collection 全生命周... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 703 | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collection 全生命周... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 704 | D_INTEGRATION 管线路由: vector_memory/collection_schemas.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 705 | D_INTEGRATION 管线路由: vector_memory/collection_schemas.py | → | schema/schemas.py | 导入依赖 / import_depends |
-| 706 | D_INTEGRATION 管线路由: HybridRetriever — MOD-INF-011 混合检索架构 (vector_memor... | → | ports — D-DATA 服务的 Protocol 定义 (protocols/ports.py) | 导入依赖 / import_depends |
-| 707 | D_INTEGRATION 管线路由: HybridRetriever — MOD-INF-011 混合检索架构 (vector_memor... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 708 | D_INTEGRATION 管线路由: IndexHealthMonitor — MOD-INF-011 索引健康自检与自动修复 ... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 709 | D_INTEGRATION 管线路由: ChromDB -> FAISS + SQLite WAL 数据迁移脚本 (vector_memory... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 710 | D_INTEGRATION 管线路由: RetrievalFeedback — MOD-INF-011 FLE 检索质量消费 (vector... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 711 | D_INTEGRATION 管线路由: SQLiteMetadataStore — VMS 元数据存储 (SQLite WAL + FTS5 ... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 712 | D_INTEGRATION 管线路由: VectorBridge — MOD-INF-011 CE/KB 外部集成适配器 (vector_... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 713 | D_INTEGRATION 管线路由: VMS 共享数据模型 — MOD-INF-011 · 蓝图 §6.1 接口契约 (v... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 714 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 715 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 716 | D_INTEGRATION 管线路由: contracts/runtime_types.py | → | schema/base_config.py | 导入依赖 / import_depends |
-| 717 | D_INTELLIGENCE 上下文管理: ModelDriftDetector — LLM 模型行为漂移检测。 (intelligenc... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 718 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
-| 719 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 720 | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模块封装） (... | → | CBAC 能力检查器 (Capability-Based Access Control) (securi... | 导入依赖 / import_depends |
-| 721 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 722 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 723 | D_INTELLIGENCE 上下文管理: CapabilityPassport --- AI 模型能力护照 (model_profiling/c... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 724 | D_INTELLIGENCE 上下文管理: 真实多文件注入装配器（Phase 3 极限深度）。 (model_profili... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 725 | D_INTELLIGENCE 上下文管理: DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 726 | D_INTELLIGENCE 上下文管理: DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客户端 (model... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 727 | D_INTELLIGENCE 上下文管理: ExamExecutor --- 执行式代码评测（HumanEval pass@1 风格，v... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 728 | D_INTELLIGENCE 上下文管理: JobMatcher --- 模型岗位匹配器 (model_profiling/job_matche... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 729 | D_INTELLIGENCE 上下文管理: ModelDiscovery — 枚举所有本地 Ollama 模型 + 远程 API 模... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 730 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 731 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (pipeline_routing/profi... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 732 | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 733 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 734 | D_INTELLIGENCE 上下文管理: ModelProfiler — 核心性能分析引擎 (model_profiling/profil... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 735 | D_INTELLIGENCE 上下文管理: Results Writer — 持久化 benchmark 结果，支持历史对比（漂... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 736 | D_MKT_DATA 行情数据: D_MKT_DATA — Autoload (自动加载器) (market_data/autoload.py) | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 737 | D_MKT_DATA 行情数据: D_MKT_DATA — Connector Base (行情数据连接器基类) (connec... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 738 | D_MKT_DATA 行情数据: D_MKT_DATA — Connector Manager (连接器管理器) (connector... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 739 | D_MKT_DATA 行情数据: D_MKT_DATA — Failover Manager (故障切换管理器) (failover... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 740 | D_MKT_DATA 行情数据: D_MKT_DATA — Raw Data Cache 实现 (原始数据缓存) (raw_dat... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 741 | D_MKT_DATA 行情数据: D_MKT_DATA — Vendor Base (行情数据源基类) (market_data/v... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 742 | D_MKT_DATA 行情数据: D_MKT_DATA — Vendor Registry (行情数据源注册表) (market_... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 743 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
-| 744 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (implementations/d... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 745 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (ml_train/inference_base.py) | → | experiment/model_serving_response.py | 导入依赖 / import_depends |
-| 746 | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (ops_governanc... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 747 | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert() 预算告急... | → | escalation/budget_alert.py | 导入依赖 / import_depends |
-| 748 | D_OPS 反馈循环: cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 749 | D_OPS 反馈循环: cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲... | → | metrics.py —— 轻量级 Metrics 收集基础设施（Phase 9 新增... | 导入依赖 / import_depends |
-| 750 | D_ORCHESTRATOR 代理编排器: AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 751 | D_ORCHESTRATOR 代理编排器: AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO） (... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 752 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 753 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 754 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 755 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 756 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链编排与健康... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 757 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 758 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 759 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/base_config.py | 导入依赖 / import_depends |
-| 760 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/execution_model.py | 导入依赖 / import_depends |
-| 761 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | schema/severity_types.py | 导入依赖 / import_depends |
-| 762 | D_ORCHESTRATOR 代理编排器: Orc 告警接收器 — handle_alert() 消费者 (contracts/alert_... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 763 | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 (contracts/finding_bridge.py) | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 764 | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 (contracts/finding_bridge.py) | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 765 | D_ORCHESTRATOR 代理编排器: ActiveTaskQueue — 后台任务轮询与自动分发 (core/task_queu... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 766 | D_ORCHESTRATOR 代理编排器: DeferredQueue: WAITING -> READY task scheduler. (orchestr... | → | Zero-dependency Observer pattern (subscribe/emit/unsubscr... | 导入依赖 / import_depends |
-| 767 | D_ORCHESTRATOR 代理编排器: DeferredQueue: WAITING -> READY task scheduler. (orchestr... | → | SQLite 连接工厂真源（SSoT） (io/sqlite_factory.py) | 导入依赖 / import_depends |
-| 768 | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-01... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 769 | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（MOD-INF-01... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 770 | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器 (execution/memory_writer.py) | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 771 | D_ORCHESTRATOR 代理编排器: Orc->Script 脚本执行器 — run_audit() 生产者 (execution/s... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 772 | D_ORCHESTRATOR 代理编排器: CE 任务上下文构建器 — build_from_task() 消费者 (executio... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 773 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 774 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触发分派） (e... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 775 | D_ORCHESTRATOR 代理编排器: WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） ... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 776 | D_ORCHESTRATOR 代理编排器: WaveGenerator — 根据 Task 依赖图生成执行 Wave（T-2-03） ... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 777 | D_ORCHESTRATOR 代理编排器: ChaosHook — integrates ChaosEngine with the orchestrator... | → | contracts/orchestration_protocol.py | 导入依赖 / import_depends |
-| 778 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 779 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 780 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 781 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 782 | D_ORCHESTRATOR 代理编排器: FileTaskMapper — 文件路径 ↔ Task N:N 映射器（#21 裁定重... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 783 | D_ORCHESTRATOR 代理编排器: HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | schema/schemas.py | 导入依赖 / import_depends |
-| 784 | D_ORCHESTRATOR 代理编排器: HallucinationDetector · Chain-of-Verification（CoVe）幻... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 785 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 786 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源... | 导入依赖 / import_depends |
-| 787 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 788 | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统实际状态（... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 789 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 790 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | db_utils.py — SQLite 连接公共 API（SSoT: zephyr.governan... | 导入依赖 / import_depends |
-| 791 | D_ORCHESTRATOR 代理编排器: RollbackManager — 仅调试用途的 DB-state 快照，不用于自动... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 792 | D_PF_ALLOC 组合分配: Multi-Strategy Capital Allocator — 多策略资金分配器 (MOD... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 793 | D_PF_ALLOC 组合分配: Signal Synthesis Combiner — 信号合成器 (MOD-PA-002) (cor... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 794 | D_PF_ALLOC 组合分配: Strategy Correlation Gate — 策略相关性门禁 (MOD-PA-004) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 795 | D_PF_ALLOC 组合分配: D_PORTFOLIO_CORE — Default Equity Long-Only Strategy (pf... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 796 | D_PF_CORE 组合核心: Constraint Solver — 约束求解器 (MOD-PF-006) (core/constr... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 797 | D_PF_CORE 组合核心: Performance Attribution Engine — 绩效归因引擎 (MOD-PF-00... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 798 | D_PF_CORE 组合核心: Portfolio Optimizer — 组合优化器 (MOD-PF-002) (core/port... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 799 | D_PF_CORE 组合核心: Rebalance Scheduler — 再平衡调度器 (MOD-PF-003) (core/re... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 800 | D_PF_CORE 组合核心: Strategy Engine — 策略引擎 (MOD-PF-001) (core/strategy_e... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 801 | D_POSITION 仓位管理: Calendar Position Constraint — 日历仓位约束 (MOD-POS-017... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 802 | D_POSITION 仓位管理: Capital Curve Manager — 资金曲线管理器 (MOD-POS-007) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 803 | D_POSITION 仓位管理: Cash Manager — 资金管理器 (MOD-POS-006) (core/cash_manag... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 804 | D_POSITION 仓位管理: Drawdown Controller — 回撤控制器 (MOD-POS-008) (core/dra... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 805 | D_POSITION 仓位管理: Position Drift Monitor — 仓位漂移监控器 (MOD-POS-003) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 806 | D_POSITION 仓位管理: Position Limit Enforcer — 限仓执行器 (MOD-POS-010) (core... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 807 | D_POSITION 仓位管理: Position Sizing Engine — 仓位决策引擎 (MOD-POS-001) (cor... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 808 | D_POSITION 仓位管理: Position State Machine — 仓位状态机 (MOD-POS-002) (core/... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 809 | D_POSITION 仓位管理: Position State Machine — 仓位状态机 (MOD-POS-002) (core/... | → | StateMachine[S] — 通用状态机泛型基类 (MOD-INF-038) (life... | 导入依赖 / import_depends |
-| 810 | D_POSITION 仓位管理: Rebalance Engine — 再平衡引擎 (MOD-POS-004) (core/rebala... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 811 | D_POSITION 仓位管理: Sell-Position Bidirectional Link — 卖出-仓位双向链接 (MO... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 812 | D_POSITION 仓位管理: Position Audit Logger — 仓位审计记录器 (MOD-POS-009) (se... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 813 | D_REPORTING 报告: D_REPORTING — A-Share Performance Audit & Optimization T... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 814 | D_REPORTING 报告: D_REPORTING — A股交易记录模板引擎 (ASHare Trade Record T... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 815 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 816 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | Backward-compat shim — canonical location is zephyr.trad... | 导入依赖 / import_depends |
-| 817 | D_REPORTING 报告: D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘) (... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 818 | D_REPORTING 报告: D_REPORTING — Regulatory Report Generator (监管报告生成... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 819 | D_REPORTING 报告: D_REPORTING — Report Publisher (报告发布器) (reporting/r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 820 | D_REPORTING 报告: D_REPORTING — Report Version Manager (报告版本管理器) (r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 821 | D_REPORTING 报告: D_REPORTING — Report Watermark Tracker (报告水印追踪器) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 822 | D_REPORTING 报告: D_REPORTING — Risk Report Engine (风险报告引擎) (reporti... | → | Backward-compat shim — canonical location is zephyr.trad... | 导入依赖 / import_depends |
-| 823 | D_REPORTING 报告: D_REPORTING — Risk Report Engine (风险报告引擎) (reporti... | → | Backward-compat shim — canonical location is zephyr.trad... | 导入依赖 / import_depends |
-| 824 | D_REPORTING 报告: D_REPORTING — Risk Report Engine (风险报告引擎) (reporti... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 825 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 测试依赖 / test_depends |
-| 826 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. (reporting/... | → | Backward-compat shim — canonical location is zephyr.trad... | 测试依赖 / test_depends |
-| 827 | D_REPORTING 报告: MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | Backward-compat shim — canonical location is zephyr.trad... | 测试依赖 / test_depends |
-| 828 | D_REPORTING 报告: MOD-RPT-008 Risk Report Engine 单元测试. (reporting/test_... | → | Backward-compat shim — canonical location is zephyr.trad... | 测试依赖 / test_depends |
-| 829 | D_RISK 风控: A-Share Stop-Loss Rule Engine — A股止损规则引擎 (MOD-RK-... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 830 | D_RISK 风控: A-Share Systemic Risk Detector — A股系统性风险检测器 (MO... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 831 | D_RISK 风控: Concentration Risk Monitor — 集中度风险监控器 (MOD-RK-07... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 832 | D_RISK 风控: Post-Trade Daily Auditor — 日终审计器 (MOD-RK-20) (core/... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 833 | D_RISK 风控: Drawdown Real-Time Tracker — 回撤实时追踪器 (MOD-RK-011)... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 834 | D_RISK 风控: Risk Budget Allocator — 风险预算分配器 (MOD-RK-08) (core... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 835 | D_RISK 风控: Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 836 | D_RISK 风控: Stress Test Engine — 压力测试引擎 (MOD-RK-12) (core/stre... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 837 | D_RISK 风控: Tail Risk Monitor — 尾部风险监控器 (MOD-RK-15) (core/tai... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 838 | D_RISK 风控: VaR Calculator — 风险价值计算器 (MOD-RK-05, Phase 1) (co... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 839 | D_RISK 风控: cross_market_data_adapter/ml_experiment_pipeline.py | → | MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 (_cross... | 导入依赖 / import_depends |
-| 840 | D_SECURITY 对抗验证: Drift Detector MOD-INF-023 CLI — 漂移扫描入口。 (gov_dri... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 841 | D_SECURITY 对抗验证: Cold Start Bootstrapper — 冷启动引导 §6.31。 (gov_drift... | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 842 | D_SECURITY 对抗验证: Auto Reconciler — reconciler.py (gov_drift/reconciler.py) | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 843 | D_SECURITY 对抗验证: ABACGuard — 基于属性的权限守卫. (guards/abac_guard.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 844 | D_SECURITY 对抗验证: Agent identity — 角色与成熟度定义. (access_control/ident... | → | identity/agent_identity.py | 导入依赖 / import_depends |
-| 845 | D_SECURITY 对抗验证: ImmutableCore — 不可变核心验证器. (access_control/immuta... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 846 | D_SECURITY 对抗验证: orphan_judge/__main__.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 847 | D_SECURITY 对抗验证: orphan_judge/config_loader.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 848 | D_SECURITY 对抗验证: orphan_judge/feedback_bridge.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 849 | D_SECURITY 对抗验证: orphan_judge/report_generator.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 850 | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (access_control/s... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 851 | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 852 | D_SECURITY 对抗验证: CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030). (a... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 853 | D_SECURITY 对抗验证: adversarial_validation/defense_runner.py | → | schema/execution_model.py | 导入依赖 / import_depends |
-| 854 | D_SECURITY 对抗验证: adversarial_validation/defense_runner.py | → | schema/severity_types.py | 导入依赖 / import_depends |
-| 855 | D_SECURITY 对抗验证: adversarial_validation/steady_state.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 856 | D_SECURITY 对抗验证: adversarial_validation/validator.py | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 857 | D_SECURITY 对抗验证: ValidatorEventBridge — 红蓝验证器事件桥接 (MOD-SEC-030).... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 858 | D_SECURITY 对抗验证: llm_security/behavior_audit_logger.py | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 859 | D_SECURITY 对抗验证: LLM Security Gateway - Streamlit Dashboard. (dashboard/ap... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 860 | D_SECURITY 对抗验证: layers/l0_supply_chain.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 861 | D_SECURITY 对抗验证: layers/l0_supply_chain.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 862 | D_SECURITY 对抗验证: layers/l1_input.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 863 | D_SECURITY 对抗验证: layers/l2_prompt_protection.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 864 | D_SECURITY 对抗验证: layers/l2a_process_sandbox.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 865 | D_SECURITY 对抗验证: layers/l2a_process_sandbox.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 866 | D_SECURITY 对抗验证: layers/l3_output.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 867 | D_SECURITY 对抗验证: layers/l4_agent.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 868 | D_SECURITY 对抗验证: layers/l4_agent.py | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 869 | D_SECURITY 对抗验证: layers/l5_resource_protection.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 870 | D_SECURITY 对抗验证: L6 Observability Layer — security event logging, alertin... | → | security/security_decision.py | 导入依赖 / import_depends |
-| 871 | D_SECURITY 对抗验证: layers/l8_multi_agent.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 872 | D_SECURITY 对抗验证: patterns/secrets.py | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 | 盲点 B12... | 导入依赖 / import_depends |
-| 873 | D_SECURITY 对抗验证: L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 874 | D_SECURITY 对抗验证: L2a ProcessSandbox — subprocess 路径白名单沙箱 (llm_secu... | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 875 | D_SECURITY 对抗验证: llm_security/protocol.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 876 | D_SECURITY 对抗验证: self_protection/adversarial_mutator.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 877 | D_SECURITY 对抗验证: self_protection/l7_validation.py | → | security/security_decision.py | 导入依赖 / import_depends |
-| 878 | D_SECURITY 对抗验证: self_protection/red_team_scanner.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 879 | D_SELL_DECISION 卖出决策: Breakout Failure Detector — 突破成败检测器 (MOD-SELL-003... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 880 | D_SELL_DECISION 卖出决策: Replacement & Rebalance Seller — 置换与再平衡卖出 (MOD-S... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 881 | D_SELL_DECISION 卖出决策: Sell Conflict Arbitrator — 买卖冲突仲裁器 (MOD-SELL-008)... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 882 | D_SELL_DECISION 卖出决策: Sell Signal Collector — 卖出信号收集器 (MOD-SELL-001) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 883 | D_SELL_DECISION 卖出决策: Sell Signal Fusion Engine — 卖出信号融合引擎 (MOD-SELL-0... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 884 | D_SELL_DECISION 卖出决策: Sell Urgency Scorer — 卖出紧迫度评分器 (MOD-SELL-009) (c... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 885 | D_SELL_DECISION 卖出决策: Stop-Hunting Protector — 止损猎杀防护器 (MOD-SELL-015) (... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 886 | D_SIMULATION 仿真: D_SIMULATION — Deflated Sharpe Ratio Calculator (DSR 计... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 887 | D_SIMULATION 仿真: D_SIMULATION — Look-Ahead Bias Detector (未来函数风险检... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 888 | D_SIMULATION 仿真: D_SIMULATION — Parameter Robustness Tester (参数鲁棒性测... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 889 | D_SIMULATION 仿真: D_SIMULATION — Simulation Result Analyzer (仿真结果分析... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 890 | D_SIMULATION 仿真: D_SIMULATION — Risk Simulator (风控仿真器) (simulation/r... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 891 | D_SIMULATION 仿真: D_SIMULATION — Scenario Generator (场景生成器) (simulati... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 892 | D_SIMULATION 仿真: D_SIMULATION — Sharpe Calculator Fixer (Sharpe 计算修正... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 893 | D_SIMULATION 仿真: D_SIMULATION — Strategy Simulator (策略仿真器/策略沙箱) ... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 894 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 895 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 896 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | serialization.py —— 统一序列化/反序列化基础设施（Phase ... | 导入依赖 / import_depends |
-| 897 | D_TRADING 交易运营: action_dispatcher/__init__.py | → | task_types — 任务系统核心类型 re-export 层 (schema/task_... | 导入依赖 / import_depends |
-| 898 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 899 | D_TRADING 交易运营: AutoDispatcher — 守护进程内的轻量 PipelineDispatcher (tr... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 900 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 901 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 902 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 903 | D_TRADING 交易运营: AutoPilot — AI session 自动找活干、认领任务。 (trading/a... | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 904 | D_TRADING 交易运营: Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 905 | D_TRADING 交易运营: Conductor — AI session 全自动指挥官。 (trading/conductor.py) | → | ZephyrAlpha 任务系统核心数据模型 (foundation/models.py) | 导入依赖 / import_depends |
-| 906 | D_TRADING 交易运营: D_TRADING — Corporate Action & Fee Processor (公司行动处... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 907 | D_TRADING 交易运营: trading/gpu_consensus_scheduler.py | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 908 | D_TRADING 交易运营: gpu_monitor.py — NVIDIA GPU 状态采集器 (trading/gpu_moni... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 909 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | TaskRepositoryProtocol — TaskRepository 的 Protocol 接口... | 导入依赖 / import_depends |
-| 910 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | EventBus — 事件总线（带背压控制）(M-07) (shared/event_bu... | 导入依赖 / import_depends |
-| 911 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | constants.py —— 共享枚举 & 常量集中 re-export（Single S... | 导入依赖 / import_depends |
-| 912 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | process_pool.py - Shared process pool for MCP servers and... | 导入依赖 / import_depends |
-| 913 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线程 (tradin... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 | 盲点 B19... | 导入依赖 / import_depends |
-| 914 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 915 | D_TRADING 交易运营: D_TRADING — PnL Calculator (盈亏计算器) (trading/pnl_cal... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 916 | D_TRADING 交易运营: runtime/async_runtime.py | → | async_utils.py — async/sync 边界桥接（5.12.8 修复） (uti... | 导入依赖 / import_depends |
-| 917 | D_TRADING 交易运营: D_TRADING — Settlement & Reconciliation Engine (结算对账... | → | errors.py —— ZephyrAlpha 统一错误层次（Traditional Exce... | 导入依赖 / import_depends |
-| 918 | D_TRADING 交易运营: trading/speed_baseline_checker.py | → | paths.py — 项目路径常量 SSoT（Single Source of Truth） (... | 导入依赖 / import_depends |
-| 919 | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shared.contracts.o... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 导入依赖 / import_depends |
-| 920 | D_TRADING 交易运营: market/signal_degradation_warning.py | → | core/trace_context.py | 导入依赖 / import_depends |
-| 921 | D_TRADING 交易运营: 过渡兼容层（DEPRECATED）—— Money 契约 canonical 真源已... | → | portfolio/money.py | 导入依赖 / import_depends |
-| 922 | D_TRADING 交易运营: MOD-TRADING-002 PnL Calculator 单元测试. (trading/test_pn... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源 (5.152 #1... | 测试依赖 / test_depends |
+| 1 | D_AUTONOMY_CORE 自治核心: 检查点管理器 / checkpoint_manager (context/checkpoint_man... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 2 | D_AUTONOMY_CORE 自治核心: 上下文assembler / context_assembler (context/context_asse... | → | D-INFRA 通过此接口获取 DB 连接和路径 / Ports (protocols/p... | 导入依赖 / import_depends |
+| 3 | D_AUTONOMY_CORE 自治核心: 上下文assembler / context_assembler (context/context_asse... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 4 | D_AUTONOMY_CORE 自治核心: 上下文预算追踪器 / ContextBudgetTracker: token budget man... | → | Observer / Observer (infra/observer.py) | 导入依赖 / import_depends |
+| 5 | D_AUTONOMY_CORE 自治核心: 上下文预算追踪器 / ContextBudgetTracker: token budget man... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 6 | D_AUTONOMY_CORE 自治核心: 上下文injector / ContextInjector: retrieve and inject rel... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 7 | D_AUTONOMY_CORE 自治核心: 上下文injector / ContextInjector: retrieve and inject rel... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 8 | D_AUTONOMY_CORE 自治核心: 上下文管线 / context_pipeline (context/context_pipeline.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 9 | D_AUTONOMY_CORE 自治核心: 上下文管线自动 / context_pipeline_auto (context/context_p... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 10 | D_AUTONOMY_CORE 自治核心: 文件autoregister / file_autoregister (autonomy_core/file_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 11 | D_AUTONOMY_CORE 自治核心: 提示注册表 / prompt_registry (autonomy_core/prompt_regist... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 12 | D_AUTONOMY_CORE 自治核心: 提示注册表 / prompt_registry (autonomy_core/prompt_regist... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 13 | D_AUTONOMY_CORE 自治核心: 技能工厂 / skill_factory (skills/skill_factory.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 14 | D_AUTONOMY_CORE 自治核心: 技能反馈 / MOD-INF-019: Agent Spec — Skill Feedback Loop... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 15 | D_AUTONOMY_CORE 自治核心: 技能freshness扩展 / MOD-INF-019: Agent Spec — Skill Fres... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 16 | D_AUTONOMY_CORE 自治核心: 技能注册表 / skill_registry (skills/skill_registry.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 17 | D_AUTONOMY_CORE 自治核心: 技能注册表 / skill_registry (skills/skill_registry.py) | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 18 | D_AUTONOMY_CORE 自治核心: 技能注册表 / skill_registry (skills/skill_registry.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 19 | D_AUTONOMY_CORE 自治核心: 意图关键词映射器 / IntentKeywordMapper - Stage 1 of three... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 20 | D_AUTONOMY_CORE 自治核心: intent解析器 / intent_parser (persistence/intent_parser.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 21 | D_AUTONOMY_CORE 自治核心: 系统快照 / system_snapshot (infrastructure/system_snapsho... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 22 | D_AUTONOMY_CORE 自治核心: 系统快照 / system_snapshot (infrastructure/system_snapsho... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 23 | D_AUTONOMY_CORE 自治核心: doc压缩器 / doc_compressor (io/doc_compressor.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 24 | D_AUTONOMY_CORE 自治核心: doc压缩器 / doc_compressor (io/doc_compressor.py) | → | Capability / Capability (security/capability.py) | 导入依赖 / import_depends |
+| 25 | D_AUTONOMY_CORE 自治核心: F1 事件触发启动测试 / test_f1_event_trigger (f_lifecycle/... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 测试依赖 / test_depends |
+| 26 | D_BACKTEST 回测: 引擎基类 / L_BACKTEST — Backtest Engine Layer (core/engi... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 27 | D_BACKTEST 回测: 结果仓库 / result_repository (io/result_repository.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 28 | D_BACKTEST 回测: 结果仓库 / result_repository (io/result_repository.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 29 | D_BACKTEST 回测: 回测异常诊断器 / Anomaly Diagnoser (services/anomaly_diag... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 30 | D_BACKTEST 回测: 回测缓存管理器 / Backtest Cache Manager (services/cache_m... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 31 | D_BACKTEST 回测: 数据质量检查器 / data_quality_checker (services/data_qual... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 32 | D_BACKTEST 回测: decay监控器 / decay_monitor (services/decay_monitor.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 33 | D_BACKTEST 回测: nan处理器 / nan_processor (services/nan_processor.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 34 | D_BACKTEST 回测: 参数优化结果分析器 / Parameter Analyzer (services/param_a... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 35 | D_BACKTEST 回测: 回测报告生成器 / Backtest Report Generator (services/repo... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 36 | D_BACKTEST 回测: 回测结果比较器 / Result Comparator (services/result_compa... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 37 | D_DATA 数据接入层: 7×24 CH 健康探针守护进程 / Ch Health Probe (ops/ch_healt... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 38 | D_DATA 数据接入层: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 39 | D_DATA 数据接入层: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 40 | D_DATA 数据接入层: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §8 可观测性... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 41 | D_DATA 数据接入层: ch配置 / ch_config (data/ch_config.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 42 | D_DATA 数据接入层: ch配置 / ch_config (data/ch_config.py) | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 43 | D_DATA 数据接入层: ch写入器 / ch_writer (data/ch_writer.py) | → | 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
+| 44 | D_DATA 数据接入层: ch写入器 / ch_writer (data/ch_writer.py) | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 45 | D_DATA 数据接入层: cls提供器 / cls_provider (implementations/cls_provider.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 46 | D_DATA 数据接入层: rss提供器 / rss_provider (implementations/rss_provider.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 47 | D_DATA 数据接入层: tushare提供器 / tushare_provider (implementations/tushare... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 48 | D_DATA 数据接入层: 本地replay / local_replay (data/local_replay.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 49 | D_DATA 数据接入层: 可观测性指标采集（MOD-L00-004 §11）。 / metrics (data/me... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 50 | D_DATA 数据接入层: 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 51 | D_DATA 数据接入层: 统一进度存储（MOD-L00-004 §7）。 / progress_store (data/... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 52 | D_DATA 数据接入层: 数据源调度编排层（MOD-L00-004 §6）。 / scheduler (data/s... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 53 | D_DATA 数据接入层: 数据源健康检查 (data/source_health_check.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 54 | D_DATA 数据接入层: 数据源健康检查 (data/source_health_check.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 55 | D_DATA 数据接入层: 数据源测速器（MOD-L00-004 §8.5）。 / speed_tester (data/... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 56 | D_DATA 数据接入层: table注册表 / table_registry (data/table_registry.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 57 | D_DATA 数据接入层: 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
+| 58 | D_DATA 数据接入层: 逐笔订阅器 / tick_subscriber (data/tick_subscriber.py) | → | Prometheus /metrics HTTP 端点 / Metrics Server (observabi... | 导入依赖 / import_depends |
+| 59 | D_DATA 数据接入层: wal写入器 / wal_writer (data/wal_writer.py) | → | 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
+| 60 | D_EX_CORE 执行核心: miniqmt券商 / miniqmt_broker (adapters/miniqmt_broker.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 61 | D_EX_CORE 执行核心: Aggregate Root Manager / Aggregate Root Manager (ex_core/... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 62 | D_EX_CORE 执行核心: Aggregate Root Manager / Aggregate Root Manager (ex_core/... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 63 | D_EX_CORE 执行核心: 执行审计记录器 / Auditor (audit_journal/auditor.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 64 | D_EX_CORE 执行核心: 部分成交处理器 (ex_core/fill_handler.py) | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 65 | D_EX_CORE 执行核心: 部分成交处理器 (ex_core/fill_handler.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 66 | D_EX_CORE 执行核心: Multi-Contract Adapter / Multi Contract Adapter (ex_core/... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 67 | D_EX_CORE 执行核心: 下单执行 Saga 编排器 / Order Execution Saga (ex_core/orde... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 68 | D_EX_CORE 执行核心: 订单管理器 / D_EXECUTION_CORE — Order Manager (ex_core/o... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 69 | D_EX_CORE 执行核心: Position Tracker / Tracker (position_tracker/tracker.py) | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 70 | D_EX_CORE 执行核心: Repository Interface / Repository Interface (ex_core/repo... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 71 | D_EX_CORE 执行核心: Repository Interface / Repository Interface (ex_core/repo... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 72 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 73 | D_EX_CORE 执行核心: D-EX-CORE-56 盘中持仓对账器 / Test Position Reconciler (e... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 测试依赖 / test_depends |
+| 74 | D_EX_SOR 执行路由: 限速器配置非法 / Api Rate Limiter (api/api_rate_limiter.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 75 | D_EX_SOR 执行路由: —连接失败、断线、状态机非法跳转 / Broker Api Connector (... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 76 | D_EX_SOR 执行路由: —连接失败、断线、状态机非法跳转 / Broker Api Connector (... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 77 | D_EX_SOR 执行路由: 算法执行选择器 / algo_execution_selector (core/algo_execu... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 78 | D_EX_SOR 执行路由: 算法执行选择器 / algo_execution_selector (core/algo_execu... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 79 | D_EX_SOR 执行路由: 算法交易引擎 / algo_trading_engine (core/algo_trading_eng... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 80 | D_EX_SOR 执行路由: 算法交易引擎 / algo_trading_engine (core/algo_trading_eng... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 81 | D_EX_SOR 执行路由: 经纪人适配器管理器 / broker_adapter_manager (core/broker_... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 82 | D_EX_SOR 执行路由: 执行调度器 / execution_scheduler (core/execution_schedule... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 83 | D_EX_SOR 执行路由: optimal订单路由器 / optimal_order_router (core/optimal_or... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 84 | D_EX_SOR 执行路由: 执行质量评分器 / execution_quality_scorer (services/execu... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 85 | D_EX_SOR 执行路由: 执行质量评分器 / execution_quality_scorer (services/execu... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 86 | D_EX_SOR 执行路由: 滑点分析器 / slippage_analyzer (services/slippage_analyze... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 87 | D_EX_SOR 执行路由: 滑点分析器 / slippage_analyzer (services/slippage_analyze... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 88 | D_EX_SOR 执行路由: 交易成本优化器 / transaction_cost_optimizer (services/tra... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 89 | D_EX_SOR 执行路由: 交易成本优化器 / transaction_cost_optimizer (services/tra... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 90 | D_FACTOR 因子: —因子 DAG 数据结构 + Kahn 拓扑分层算法 / Dag (factor_dag... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 91 | D_FACTOR 因子: 生命周期状态machine / lifecycle_state_machine (governance... | → | State Machine / State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
+| 92 | D_FACTOR 因子: D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流... | → | State Machine / State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
+| 93 | D_FACTOR 因子: —纯逻辑模块 / Test Lifecycle State Machine (factor/test_... | → | State Machine / State Machine (lifecycle/state_machine.py) | 测试依赖 / test_depends |
+| 94 | D_FBL_DIAGNOSERS 反馈诊断器: 运营季节性 / Operational Seasonality — v0.16.0 R228 (rel... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 95 | D_FEEDBACK_LOOP 反馈循环引擎: API版本契约 / API Version Contract — v0.14.0 R188 (actor... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 96 | D_FEEDBACK_LOOP 反馈循环引擎: 核心 / core (feedback_loop/core.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 97 | D_FEEDBACK_LOOP 反馈循环引擎: 核心 / core (feedback_loop/core.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 98 | D_FEEDBACK_LOOP 反馈循环引擎: 核心 / core (feedback_loop/core.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 99 | D_FEEDBACK_LOOP 反馈循环引擎: 数据库桥接 / db_bridge (feedback_loop/db_bridge.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 100 | D_FEEDBACK_LOOP 反馈循环引擎: 进化引擎 / evolution_engine (feedback_loop/evolution_engi... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 101 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈收集器 / FeedbackCollector: collect task execution fe... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 102 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈收集器 / FeedbackCollector: collect task execution fe... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 103 | D_FEEDBACK_LOOP 反馈循环引擎: 反馈收集器 / FeedbackCollector: collect task execution fe... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 104 | D_FEEDBACK_LOOP 反馈循环引擎: 适应度functions / fitness_functions (feedback_loop/fitnes... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 105 | D_FEEDBACK_LOOP 反馈循环引擎: selfmodification审计 / Self-Modification Audit — v0.15.0... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 106 | D_FEEDBACK_LOOP 反馈循环引擎: 指标收集器 / MetricsCollector: append-only metrics record... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 107 | D_FEEDBACK_LOOP 反馈循环引擎: 配置hotreload守卫 / Config Hot-Reload Guard — v0.40.0 R4... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 108 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 109 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 110 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | D-INFRA 通过此接口获取 DB 连接和路径 / Ports (protocols/p... | 导入依赖 / import_depends |
+| 111 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器 / scheduler (feedback_loop/scheduler.py) | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 112 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器act / scheduler_act (feedback_loop/scheduler_act.py) | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 113 | D_FEEDBACK_LOOP 反馈循环引擎: 调度器安全 / scheduler_safety (feedback_loop/scheduler_sa... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 114 | D_FEEDBACK_LOOP 反馈循环引擎: 密钥rotation / Secret Rotation — v0.14.0 R189 (security/... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 115 | D_FEEDBACK_LOOP 反馈循环引擎: SLO管理器 / slo_manager (feedback_loop/slo_manager.py) | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 116 | D_FEEDBACK_LOOP 反馈循环引擎: SLO管理器 / slo_manager (feedback_loop/slo_manager.py) | → | 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
+| 117 | D_FRONTEND 前端: chart工厂 / chart_factory (components/chart_factory.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 118 | D_FRONTEND 前端: task_progress · 任务进度看板组件 / Task Progress (compon... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 119 | D_FRONTEND 前端: 交易面板 / trade_panel (components/trade_panel.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 120 | D_FUNDAMENTAL_SIGNAL 基本面信号: 管线 / Alpha Signal Pipeline (signal_fundamental/pipeline... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 121 | D_FUNDAMENTAL_SIGNAL 基本面信号: 管线 / Alpha Signal Pipeline (signal_fundamental/pipeline... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 122 | D_GOVERNANCE 生命周期管理: 端到端检查 / _e2e_check (construction/_e2e_check.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 123 | D_GOVERNANCE 生命周期管理: 端到端deep / _e2e_deep (construction/_e2e_deep.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 124 | D_GOVERNANCE 生命周期管理: 初始化任务系统数据库 + 创建任务系统自身的施工任务卡（吃狗... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 125 | D_GOVERNANCE 生命周期管理: 重置测试任务 / reset_test_task (construction/reset_test_t... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 126 | D_GOVERNANCE 生命周期管理: 生成架构上下文 / generate_architecture_context (context/g... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 127 | D_GOVERNANCE 生命周期管理: diagnosebreadth失败 / diagnose_breadth_failed (scripts/di... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 128 | D_GOVERNANCE 生命周期管理: 锁files / lock_files (scripts/lock_files.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 129 | D_GOVERNANCE 生命周期管理: 锁files / lock_files (scripts/lock_files.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 130 | D_GOVERNANCE 生命周期管理: MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + Pro / lau... | → | 进程生命周期统一入口 / Process Lifecycle Gateway (infra/p... | 导入依赖 / import_depends |
+| 131 | D_GOVERNANCE 生命周期管理: 文件头部完整性校验（6 格式统一入口） / verify_header_comp... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 132 | D_GOVERNANCE 生命周期管理: 运行deepseekv4exam / run_deepseek_v4_exam (scripts/run_de... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 133 | D_GOVERNANCE 生命周期管理: worktree生命周期 / worktree_lifecycle (rule_bridge/worktr... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 134 | D_GOVERNANCE 生命周期管理: worktree生命周期 / worktree_lifecycle (rule_bridge/worktr... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 135 | D_GOVERNANCE 生命周期管理: worktree生命周期 / worktree_lifecycle (rule_bridge/worktr... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 136 | D_GOVERNANCE 生命周期管理: RBAC桥接 / rbac_bridge (agent_spec/rbac_bridge.py) | → | Agent Identity / Agent Identity (identity/agent_identity.py) | 导入依赖 / import_depends |
+| 137 | D_GOVERNANCE 生命周期管理: 注册表 / registry (agent_spec/registry.py) | → | —解耦D-INFRA/D-GOV对D-ORCH的直接依赖 / Skill Protocol (c... | 导入依赖 / import_depends |
+| 138 | D_GOVERNANCE 生命周期管理: LLM冲击分析器 / llm_impact_analyzer (architecture_governa... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 139 | D_GOVERNANCE 生命周期管理: LLM冲击分析器 / llm_impact_analyzer (architecture_governa... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 140 | D_GOVERNANCE 生命周期管理: 路径解析器 / path_resolver (architecture_governance/path_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 141 | D_GOVERNANCE 生命周期管理: 提交同步校验器 / post_sync_validator (architecture_govern... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 142 | D_GOVERNANCE 生命周期管理: 告警 / G-CT-006 — BudgetAlert re-exported from shared.co... | → | Budget Alert / Budget Alert (escalation/budget_alert.py) | 导入依赖 / import_depends |
+| 143 | D_GOVERNANCE 生命周期管理: 能力lookup / capability_lookup (governance/capability_loo... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 144 | D_GOVERNANCE 生命周期管理: 能力lookup / capability_lookup (governance/capability_loo... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 145 | D_GOVERNANCE 生命周期管理: 上下文包 / context_package (context_governance/context_pa... | → | Message, Task, and StateMachine schemas. / A2a Schemas (a... | 导入依赖 / import_depends |
+| 146 | D_GOVERNANCE 生命周期管理: miniqmt提供器 / miniqmt_provider (data_governance/miniqmt... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 147 | D_GOVERNANCE 生命周期管理: pricing同步 / pricing_sync (data_governance/pricing_sync.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 148 | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 149 | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 150 | D_GOVERNANCE 生命周期管理: 依赖图模式 / depgraph_schema (governance/depgraph_schema.py) | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 151 | D_GOVERNANCE 生命周期管理: 管线基类 / pipeline_base (engine/pipeline_base.py) | → | Experiment Result / Experiment Result (experiment/experim... | 导入依赖 / import_depends |
+| 152 | D_GOVERNANCE 生命周期管理: 证据包 / evidence_pack (governance/evidence_pack.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 153 | D_GOVERNANCE 生命周期管理: atomic交易管理器 / atomic_transaction_manager (financial_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 154 | D_GOVERNANCE 生命周期管理: atomic交易管理器 / atomic_transaction_manager (financial_... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 155 | D_GOVERNANCE 生命周期管理: aisg沙箱 / aisg_sandbox (intelligence_governance/aisg_san... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 156 | D_GOVERNANCE 生命周期管理: 跨代理冲突检测器 / cross_agent_conflict_detector (intelli... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 157 | D_GOVERNANCE 生命周期管理: delegation引擎 / Delegation Engine — MOD-INF-022 (intell... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 158 | D_GOVERNANCE 生命周期管理: 自基准 / self_benchmark (intelligence_governance/self_ben... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 159 | D_GOVERNANCE 生命周期管理: projection引擎 / projection_engine (observability_governa... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 160 | D_GOVERNANCE 生命周期管理: 查询指标 / query_metrics (observability_governance/query_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 161 | D_GOVERNANCE 生命周期管理: 查询指标 / query_metrics (observability_governance/query_... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 162 | D_GOVERNANCE 生命周期管理: 查询指标 / query_metrics (observability_governance/query_... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 163 | D_GOVERNANCE 生命周期管理: 基类repo / base_repo (persistence/base_repo.py) | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 164 | D_GOVERNANCE 生命周期管理: 基类repo / base_repo (persistence/base_repo.py) | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 165 | D_GOVERNANCE 生命周期管理: 基类repo / base_repo (persistence/base_repo.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 166 | D_GOVERNANCE 生命周期管理: 数据库管理器 / database_manager (persistence/database_man... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 167 | D_GOVERNANCE 生命周期管理: 数据库管理器 / database_manager (persistence/database_man... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 168 | D_GOVERNANCE 生命周期管理: 数据库管理器 / database_manager (persistence/database_man... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 169 | D_GOVERNANCE 生命周期管理: decisiongraph结构 / decisiongraph_schema (persistence/dec... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 170 | D_GOVERNANCE 生命周期管理: decisiongraph结构 / decisiongraph_schema (persistence/dec... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 171 | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 172 | D_GOVERNANCE 生命周期管理: sqlite结构 / sqlite_schema (persistence/sqlite_schema.py) | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 173 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 174 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 175 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | re-homed from infrastructure_runtime_integration.db.circu... | 导入依赖 / import_depends |
+| 176 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 177 | D_GOVERNANCE 生命周期管理: 任务repo / task_repo (persistence/task_repo.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 178 | D_GOVERNANCE 生命周期管理: 适配器 / adapter (services/adapter.py) | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 179 | D_GOVERNANCE 生命周期管理: 治理适配器 / governance_adapter (governance/governance_ad... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 180 | D_GOVERNANCE 生命周期管理: 治理适配器 / governance_adapter (governance/governance_ad... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 181 | D_GOVERNANCE 生命周期管理: 协议 / protocol (governance/protocol.py) | → | A2a Protocol / A2a Protocol (a2a/a2a_protocol.py) | 导入依赖 / import_depends |
+| 182 | D_GOVERNANCE 生命周期管理: A2A治理适配器 / a2a_governance_adapter (layer3_coordinati... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 183 | D_GOVERNANCE 生命周期管理: A2A治理适配器 / a2a_governance_adapter (layer3_coordinati... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 184 | D_GOVERNANCE 生命周期管理: 注册表治理 / Registry Governance — MOD-INF-037 (infrastr... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 185 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | Agent Identity / Agent Identity (identity/agent_identity.py) | 导入依赖 / import_depends |
+| 186 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | —解耦D-INFRA/D-GOV对D-ORCH的直接依赖 / Skill Protocol (c... | 导入依赖 / import_depends |
+| 187 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 188 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 189 | D_GOVERNANCE 生命周期管理: 治理服务端 / governance_server (mcp/governance_server.py) | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 190 | D_GOVERNANCE 生命周期管理: 测试Gitcommitextreme / test_git_commit_extreme (git/test_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 191 | D_GOVERNANCE 生命周期管理: 测试 has_future_annotations 函数 / Test Detect Forward Re... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 192 | D_GOVERNANCE 生命周期管理: pytest 共享 Fixture""" / Conftest (governance/conftest.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 193 | D_GOVERNANCE 生命周期管理: DatabaseService 实例 fixture / Test Database Service (dat... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 194 | D_GOVERNANCE 生命周期管理: Test Sqlite Dumper / Test Sqlite Dumper (data_layer/test_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 195 | D_GOVERNANCE 生命周期管理: 命名规范端到端测试 — 验证完整防护链路 / Test Naming E2e ... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 196 | D_GOVERNANCE 生命周期管理: DOM-GOV-001 §8.3.""" / Test P0 I1 Depends On Integration... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 197 | D_GOVERNANCE 生命周期管理: DOM-GOV-001 §7.2 门禁检查.""" / Test Phase1 Gate Check (... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 198 | D_GOVERNANCE 生命周期管理: AutoPilot 端到端测试 / Test Autopilot (integration/test_a... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 测试依赖 / test_depends |
+| 199 | D_GOVERNANCE 生命周期管理: AutoPilot 端到端测试 / Test Autopilot (integration/test_a... | → | Base Config / Base Config (schema/base_config.py) | 测试依赖 / test_depends |
+| 200 | D_GOVERNANCE 生命周期管理: AutoPilot 端到端测试 / Test Autopilot (integration/test_a... | → | Execution Model / Execution Model (schema/execution_model... | 测试依赖 / test_depends |
+| 201 | D_GOVERNANCE 生命周期管理: AutoPilot 端到端测试 / Test Autopilot (integration/test_a... | → | re-homed from infrastructure_runtime_integration.db.circu... | 测试依赖 / test_depends |
+| 202 | D_GOVERNANCE 生命周期管理: Test Schema Schema Registry / Test Schema Schema Registry... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 测试依赖 / test_depends |
+| 203 | D_GOVERNANCE 生命周期管理: Test Schema Schema Registry / Test Schema Schema Registry... | → | —schema 不存在、版本冲突、兼容性违规 / Schema Registry (... | 测试依赖 / test_depends |
+| 204 | D_GOVERNANCE 生命周期管理: Test Schema Schemas / Test Schema Schemas (integration/te... | → | Schemas / Schemas (schema/schemas.py) | 测试依赖 / test_depends |
+| 205 | D_GOVERNANCE 生命周期管理: Test Schema Schemas / Test Schema Schemas (integration/te... | → | re-homed from infrastructure_runtime_integration.db.circu... | 测试依赖 / test_depends |
+| 206 | D_GOVERNANCE 生命周期管理: D6 安全审计脚本单元测试 / Test Security Scripts (security... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 207 | D_GOVERNANCE 生命周期管理: 创建一个最小化的伪 git 仓库目录结构 / Test Ssot Guard Uni... | → | 将 Windows 控制台 stdout/stderr 设置为 UTF-8，仅在脚本直... | 测试依赖 / test_depends |
+| 208 | D_GOVERNANCE 生命周期管理: Test Enforcer Unit / Test Enforcer Unit (shared/test_enfo... | → | 运行时跨层数据契约校验失败 / Enforcer (core/enforcer.py) | 测试依赖 / test_depends |
+| 209 | D_GOVERNANCE 生命周期管理: Test Execution Tuner / Test Execution Tuner (shared/test_... | → | 只读：default_params / Execution Tuner (adaptation/execut... | 测试依赖 / test_depends |
+| 210 | D_GOVERNANCE 生命周期管理: BaseAuditScript → stdout → run_all 解析""" / Test Jsonl... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 211 | D_GOVERNANCE 生命周期管理: Test Post Sync Validation / Test Post Sync Validation (sh... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 212 | D_GOVERNANCE 生命周期管理: Main Data Flow End-to-End Test / Test Phase E Main Flow (... | → | Trace Context / Trace Context (core/trace_context.py) | 测试依赖 / test_depends |
+| 213 | D_GOVERNANCE 生命周期管理: 测试依赖图模式 / test_depgraph_schema (io/test_depgraph_s... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 214 | D_GOVERNANCE 生命周期管理: 测试校验模式健康 / test_verify_schema_health (io/test_ver... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 215 | D_GOV_AUDIT 审计追踪: [INVARIANTS] 20项红蓝对抗测试 / red_blue_test (repair/red... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 216 | D_GOV_AUDIT 审计追踪: 回滚依赖图 / rollback_depgraph (repair/rollback_depgraph.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 217 | D_GOV_AUDIT 审计追踪: 代理signer / agent_signer (gov_audit/agent_signer.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 218 | D_GOV_AUDIT 审计追踪: 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 219 | D_GOV_AUDIT 审计追踪: 审计模式 / audit_schema (gov_audit/audit_schema.py) | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 220 | D_GOV_AUDIT 审计追踪: 审计漂移桥接 / audit_drift_bridge (bridges/audit_drift_br... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 221 | D_GOV_AUDIT 审计追踪: 命令行 / cli (gov_audit/cli.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 222 | D_GOV_AUDIT 审计追踪: 命令行 / cli (gov_audit/cli.py) | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 223 | D_GOV_AUDIT 审计追踪: 冷启动 / cold_start (gov_audit/cold_start.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 224 | D_GOV_AUDIT 审计追踪: 冷启动 / cold_start (gov_audit/cold_start.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 225 | D_GOV_AUDIT 审计追踪: 事件存储 / event_store (gov_audit/event_store.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 226 | D_GOV_AUDIT 审计追踪: 证据包 / evidence_pack (gov_audit/evidence_pack.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 227 | D_GOV_AUDIT 审计追踪: externaltool审计 / external_tool_audit (gov_audit/externa... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 228 | D_GOV_AUDIT 审计追踪: 反馈桥接 / feedback_bridge (gov_audit/feedback_bridge.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 229 | D_GOV_AUDIT 审计追踪: 发现ingest / finding_ingest (gov_audit/finding_ingest.py) | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 230 | D_GOV_AUDIT 审计追踪: 发现模型 / finding_model (gov_audit/finding_model.py) | → | Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 231 | D_GOV_AUDIT 审计追踪: 取证包 / forensic_package (gov_audit/forensic_package.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 232 | D_GOV_AUDIT 审计追踪: 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 233 | D_GOV_AUDIT 审计追踪: 索引重建结果——治本（裁定#18 G5）：对齐 testa / indexer ... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 234 | D_GOV_AUDIT 审计追踪: 完整性 / integrity (gov_audit/integrity.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 235 | D_GOV_AUDIT 审计追踪: 完整性 / integrity (gov_audit/integrity.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 236 | D_GOV_AUDIT 审计追踪: 日志rotation / log_rotation (gov_audit/log_rotation.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 237 | D_GOV_AUDIT 审计追踪: audit-trail.merkle每小时 / merkle_hourly (gov_audit/merkl... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 238 | D_GOV_AUDIT 审计追踪: 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 239 | D_GOV_AUDIT 审计追踪: 管线运行器 / pipeline_runner (gov_audit/pipeline_runner.py) | → | Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 240 | D_GOV_AUDIT 审计追踪: 旧版查询引擎（保留以兼容现有调用方）。 / query (gov_audit... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 241 | D_GOV_AUDIT 审计追踪: 保留策略（补全测试期望接口）。 / retention (gov_audit/ret... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 242 | D_GOV_AUDIT 审计追踪: supply链 / supply_chain (gov_audit/supply_chain.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 243 | D_GOV_AUDIT 审计追踪: texttofinding适配器 / text_to_finding_adapter (gov_audit/... | → | Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 244 | D_GOV_AUDIT 审计追踪: 旧版分层存储（保留以兼容现有调用方）。 / tiered_storage (... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 245 | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 246 | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 247 | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | 全局审计写入器协议 / Session Audit (session/session_audit... | 导入依赖 / import_depends |
+| 248 | D_GOV_AUDIT 审计追踪: 不可变审计写入器——JSONL 追加 + SHA-256 哈 / writer (gov... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 249 | D_GOV_AUDIT 审计追踪: MCP结果推送 / mcp_result_push (behavioral_admission/mcp_r... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 250 | D_GOV_AUDIT 审计追踪: 提交进程 / post_process (behavioral_admission/post_proces... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 251 | D_GOV_AUDIT 审计追踪: 审计链验证器 / audit_chain_verifier (rule_enforcement/aud... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 252 | D_GOV_AUDIT 审计追踪: sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 253 | D_GOV_AUDIT 审计追踪: sys主合规 / SYS-MASTER-001 Compliance Checker (rule_enfor... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 254 | D_GOV_AUDIT 审计追踪: Git辅助 / _git_helpers (audit/_git_helpers.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 255 | D_GOV_AUDIT 审计追踪: 蓝图状态转换协调器 / blueprint_status_transition_reconcil... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 256 | D_GOV_AUDIT 审计追踪: commitgatewayabuse监控器对账器 / commit_gateway_abuse_mon... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 257 | D_GOV_AUDIT 审计追踪: 跨layercontractsignature对账器 / cross_layer_contract_sig... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 258 | D_GOV_AUDIT 审计追踪: Git绩效监控协调器 / git_performance_monitor_reconciler (a... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 259 | D_GOV_AUDIT 审计追踪: 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 260 | D_GOV_AUDIT 审计追踪: 对账运行器 / reconcile_runner (audit/reconcile_runner.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 261 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 262 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 263 | D_GOV_AUDIT 审计追踪: 对账注册表 / reconciliation_registry (audit/reconciliatio... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 264 | D_GOV_AUDIT 审计追踪: 修复进度对账器 / remediation_progress_reconciler (audit/r... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 265 | D_GOV_AUDIT 审计追踪: 运行时违规快照 / runtime_violation_snapshot (audit/runtim... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 266 | D_GOV_AUDIT 审计追踪: 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 267 | D_GOV_AUDIT 审计追踪: 快照管理器 / snapshot_manager (audit/snapshot_manager.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 268 | D_GOV_AUDIT 审计追踪: 翻译覆盖率存量对账 reconciler. / Translation Coverage Rec... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 269 | D_GOV_AUDIT 审计追踪: 工作区hygiene对账器 / workspace_hygiene_reconciler (audit... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 270 | D_GOV_AUDIT 审计追踪: 收集各阶段审计结果，去重合并排序输出。 / issue_aggregator... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 271 | D_GOV_AUDIT 审计追踪: self愈合器 / self_healer (semantic_audit/self_healer.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 272 | D_GOV_AUDIT 审计追踪: self愈合器 / self_healer (semantic_audit/self_healer.py) | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 273 | D_GOV_AUDIT 审计追踪: Test Cycle Dependency Audit Isolation / Test Cycle Depend... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 274 | D_GOV_AUDIT 审计追踪: DM-90974 Phase 2: depgraph dirty flag 单测 / Test Depgrap... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 275 | D_GOV_AUDIT 审计追踪: Test Integrity Root / Test Integrity Root (audit/test_int... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 276 | D_GOV_AUDIT 审计追踪: DOM-GOV-001 §8.4.""" / Test P0 I2 Construction Order (au... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 277 | D_GOV_AUDIT 审计追踪: 测试工作区遥测共享 / test_workspace_telemetry_shared (gov... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 278 | D_GOV_AUDIT 审计追踪: 测试工作区遥测共享 / test_workspace_telemetry_shared (gov... | → | 主工作区文件操作遥测公共 API / Workspace Telemetry (io/wo... | 测试依赖 / test_depends |
+| 279 | D_GOV_CODE_QUALITY 代码质量治理: 缓存管理器 / cache_manager (code_dedup/cache_manager.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 280 | D_GOV_CODE_QUALITY 代码质量治理: 差异检测器 / diff_detector (code_dedup/diff_detector.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 281 | D_GOV_CODE_QUALITY 代码质量治理: reference辅助 / _reference_helpers (commit_gates/_referen... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 282 | D_GOV_CODE_QUALITY 代码质量治理: baregetenv门禁 / bare_getenv_gate (commit_gates/bare_gete... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 283 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图format门禁 / blueprint_format_gate (commit_gates/blue... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 284 | D_GOV_CODE_QUALITY 代码质量治理: 蓝图物理ID硬编码阻断门禁 (commit_gates/blueprint_node_id_... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 285 | D_GOV_CODE_QUALITY 代码质量治理: capabilitylookuprequired门禁 / capability_lookup_required... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 286 | D_GOV_CODE_QUALITY 代码质量治理: 创建守卫 / create_guard (commit_gates/create_guard.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 287 | D_GOV_CODE_QUALITY 代码质量治理: 数据taskcompleteness门禁 / data_task_completeness_gate (c... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 288 | D_GOV_CODE_QUALITY 代码质量治理: encoding门禁 / encoding_gate (commit_gates/encoding_gate.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 289 | D_GOV_CODE_QUALITY 代码质量治理: exemptzonefrontmatter门禁 / exempt_zone_frontmatter_gate ... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 290 | D_GOV_CODE_QUALITY 代码质量治理: 门禁repo / gate_repo (commit_gates/gate_repo.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 291 | D_GOV_CODE_QUALITY 代码质量治理: 门禁repo / gate_repo (commit_gates/gate_repo.py) | → | 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
+| 292 | D_GOV_CODE_QUALITY 代码质量治理: 受保护路径写入检测门禁 / Protected Paths Gate (commit_gat... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 293 | D_GOV_CODE_QUALITY 代码质量治理: pureassertion门禁 / pure_assertion_gate (commit_gates/pur... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 294 | D_GOV_CODE_QUALITY 代码质量治理: pureshim门禁 / pure_shim_gate (commit_gates/pure_shim_gat... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 295 | D_GOV_CODE_QUALITY 代码质量治理: r5digitsuffix门禁 / r5_digit_suffix_gate (commit_gates/r5... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 296 | D_GOV_CODE_QUALITY 代码质量治理: 文档"已完成"声明 commit hash 真实性硬验证门禁 / Ruling Co... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 297 | D_GOV_CODE_QUALITY 代码质量治理: _shared.constants 符号导入完整性门禁 / Scripts Import Int... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 298 | D_GOV_CODE_QUALITY 代码质量治理: 测试-源码符号一致性门禁 / Test Source Consistency Gate (c... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 299 | D_GOV_CODE_QUALITY 代码质量治理: 新建 .py 文件大白话简介覆盖率门禁 / Translation Coverage ... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 300 | D_GOV_CODE_QUALITY 代码质量治理: YAML 驱动的 in-process gate 自动注册器 / Gate Auto Regist... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 301 | D_GOV_DRIFT 漂移检测: Self Monitor / Self Monitor (gov_audit/self_monitor.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 302 | D_GOV_DRIFT 漂移检测: Absence Manager / Absence Manager (gov_drift/absence_mana... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 303 | D_GOV_DRIFT 漂移检测: Baseline Poisoning Guard / Baseline Poisoning Guard (gov_... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 304 | D_GOV_DRIFT 漂移检测: Brain Integration / Brain Integration (gov_drift/brain_in... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 305 | D_GOV_DRIFT 漂移检测: Brain Integration / Brain Integration (gov_drift/brain_in... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 306 | D_GOV_DRIFT 漂移检测: Brain Integration / Brain Integration (gov_drift/brain_in... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 307 | D_GOV_DRIFT 漂移检测: Canary Controller / Canary Controller (gov_drift/canary_c... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 308 | D_GOV_DRIFT 漂移检测: Cascade Detector / Cascade Detector (gov_drift/cascade_de... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 309 | D_GOV_DRIFT 漂移检测: Chaos Injector / Chaos Injector (gov_drift/chaos_injector... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 310 | D_GOV_DRIFT 漂移检测: Chaos Injector / Chaos Injector (gov_drift/chaos_injector... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 311 | D_GOV_DRIFT 漂移检测: Dashboard / Dashboard (gov_drift/dashboard.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 312 | D_GOV_DRIFT 漂移检测: 订阅 EventBusBackpressure 的 gate_blocked / task_complete... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 313 | D_GOV_DRIFT 漂移检测: 兼容别名，SSoT已迁移至 zephyr.gov_drift / Drift Detector ... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 314 | D_GOV_DRIFT 漂移检测: Drift Engine / Drift Engine (gov_drift/drift_engine.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 315 | D_GOV_DRIFT 漂移检测: Drift Infrastructure / Drift Infrastructure (gov_drift/dr... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 316 | D_GOV_DRIFT 漂移检测: Drift Infrastructure / Drift Infrastructure (gov_drift/dr... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 317 | D_GOV_DRIFT 漂移检测: Drift Models / Drift Models (gov_drift/drift_models.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 318 | D_GOV_DRIFT 漂移检测: 语义漂移检测结果 / Drift Result Types (gov_drift/drift_re... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 319 | D_GOV_DRIFT 漂移检测: 重放baseline历史，重构时间线 / Forensics Engine (gov_drif... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 320 | D_GOV_DRIFT 漂移检测: 重放baseline历史，重构时间线 / Forensics Engine (gov_drif... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 321 | D_GOV_DRIFT 漂移检测: 只读：project_root / Gate Persistence (gov_drift/gate_per... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 322 | D_GOV_DRIFT 漂移检测: 只读：project_root / Gate Persistence (gov_drift/gate_per... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 323 | D_GOV_DRIFT 漂移检测: 只读：cache / Git Bisector (gov_drift/git_bisector.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 324 | D_GOV_DRIFT 漂移检测: 构建跨Session交接包 / Handoff Manager (gov_drift/handoff_... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 325 | D_GOV_DRIFT 漂移检测: Headless Scanner / Headless Scanner (gov_drift/headless_s... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 326 | D_GOV_DRIFT 漂移检测: 只读：project_root / Incremental Scanner (gov_drift/incre... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 327 | D_GOV_DRIFT 漂移检测: 只读：lock_dir / Scan Mutex (gov_drift/scan_mutex.py) | → | 读取并递增持久化 fencing 计数器，返回新的单调递增 token /... | 导入依赖 / import_depends |
+| 328 | D_GOV_DRIFT 漂移检测: Tamper Proof Audit / Tamper Proof Audit (gov_drift/tamper... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 329 | D_GOV_DRIFT 漂移检测: 只读：archive_dir / Trend Analyzer (gov_drift/trend_analy... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 330 | D_GOV_DRIFT 漂移检测: 只读：archive_dir / Trend Analyzer (gov_drift/trend_analy... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 331 | D_GOV_DRIFT 漂移检测: ``drift_detected`` 触发器恢复入口 / Drift Detector (rule_... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 332 | D_GOV_DRIFT 漂移检测: 从 YAML 真源加载契约文件路径 / En 002 Enforcement Validat... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 333 | D_GOV_DRIFT 漂移检测: 从 YAML 真源加载契约文件路径 / En 002 Enforcement Validat... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 334 | D_GOV_DRIFT 漂移检测: Truth Source Validator / Truth Source Validator (rule_enf... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 335 | D_GOV_ENFORCEMENT 规则执行: session worktree 管理 CLI / Session Worktree Cli (governa... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 336 | D_GOV_ENFORCEMENT 规则执行: —将 gate 结果写入 task_events / Gate Event Adapter (beha... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 337 | D_GOV_ENFORCEMENT 规则执行: Gpu Consensus Scheduler / Gpu Consensus Scheduler (behavi... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 338 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway pre-commit 门禁注册表 / Commit Gate Regi... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 339 | D_GOV_ENFORCEMENT 规则执行: 紧急提交通道 / Emergency Commit (rule_bridge/emergency_co... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 340 | D_GOV_ENFORCEMENT 规则执行: 紧急提交通道 / Emergency Commit (rule_bridge/emergency_co... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 341 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 342 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 343 | D_GOV_ENFORCEMENT 规则执行: 全项目唯一合法 git commit 入口 / Git Commit Gateway (rule... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 344 | D_GOV_ENFORCEMENT 规则执行: AI 对话并发声明 helper / Session Claim (rule_bridge/sessi... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 345 | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 346 | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 347 | D_GOV_ENFORCEMENT 规则执行: Session Worktree / Session Worktree (rule_bridge/session_... | → | 主工作区文件操作遥测公共 API / Workspace Telemetry (io/wo... | 导入依赖 / import_depends |
+| 348 | D_GOV_ENFORCEMENT 规则执行: session worktree 物理隔离管理器 / Worktree Manager (rule_... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 349 | D_GOV_ENFORCEMENT 规则执行: session worktree 物理隔离管理器 / Worktree Manager (rule_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 350 | D_GOV_ENFORCEMENT 规则执行: Worktree 预创建池 / Worktree Pool (rule_bridge/worktree_p... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 351 | D_GOV_ENFORCEMENT 规则执行: Worktree 预创建池 / Worktree Pool (rule_bridge/worktree_p... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 352 | D_GOV_ENFORCEMENT 规则执行: 对接 shared/events/dlq.DeadLetterQueue 的真重试 / Dlq Ret... | → | 5.63.2 修复：对 traceback / error 字符串脱敏，防止敏感信... | 导入依赖 / import_depends |
+| 353 | D_GOV_ENFORCEMENT 规则执行: 对接 shared/events/dlq.DeadLetterQueue 的真重试 / Dlq Ret... | → | Observer / Observer (infra/observer.py) | 导入依赖 / import_depends |
+| 354 | D_GOV_ENFORCEMENT 规则执行: 对接 shared/events/dlq.DeadLetterQueue 的真重试 / Dlq Ret... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 355 | D_GOV_ENFORCEMENT 规则执行: mtime 轮询 + 自动同步 + 验证 / Rule Watcher (rule_engine/... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 356 | D_GOV_ENFORCEMENT 规则执行: mtime 轮询 + 自动同步 + 验证 / Rule Watcher (rule_engine/... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 357 | D_GOV_ENFORCEMENT 规则执行: gate_auto_registrar 单元测试 / Test Gate Auto Registrar (... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 358 | D_GOV_ENFORCEMENT 规则执行: worktree 物理隔离端到端测试 / Test Session Worktree (rule... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 359 | D_GOV_ENFORCEMENT 规则执行: WorktreePool 端到端 smoke test / Test Worktree Pool (rule... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 测试依赖 / test_depends |
+| 360 | D_GOV_OPS_RESILIENCE 运维弹性治理: G-CT-003/004/006/008 消费端.""" / Contracts (escalation/c... | → | Budget Alert / Budget Alert (escalation/budget_alert.py) | 导入依赖 / import_depends |
+| 361 | D_GOV_OPS_RESILIENCE 运维弹性治理: 空 Protocol 作为 12 个异构 detector 类的鸭子类型标记 / Es... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 362 | D_GOV_OPS_RESILIENCE 运维弹性治理: Triage / Triage (escalation/triage.py) | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 363 | D_GOV_OPS_RESILIENCE 运维弹性治理: Environment Manager / Environment Manager (ops_governance... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 364 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 365 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 366 | D_GOV_OPS_RESILIENCE 运维弹性治理: 44 个阶段门控检查映射. / Phase Check Registry (ops_govern... | → | Session Continuity / Session Continuity (session/session_... | 导入依赖 / import_depends |
+| 367 | D_GOV_OPS_RESILIENCE 运维弹性治理: 将 D-DATA 实现注册到 ServiceRegistry / Service Registrati... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 368 | D_GOV_OPS_RESILIENCE 运维弹性治理: 将 D-DATA 实现注册到 ServiceRegistry / Service Registrati... | → | 进程级单例服务注册表 / Registry (protocols/registry.py) | 导入依赖 / import_depends |
+| 369 | D_GOV_OPS_RESILIENCE 运维弹性治理: depgraph YAML 加载或结构校验失败.""" / Blast Radius (resi... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 370 | D_GOV_OPS_RESILIENCE 运维弹性治理: 订阅操作结果 / F5 Event Subscriber (resilience_governance... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 371 | D_GOV_OPS_RESILIENCE 运维弹性治理: 5.66.6 修复：白名单校验表名，仅允许已知表名用于 SQL 拼接 ... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 372 | D_GOV_OPS_RESILIENCE 运维弹性治理: " in finding` 语法 / Default Security Gateway (security_g... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 373 | D_GOV_OPS_RESILIENCE 运维弹性治理: " in finding` 语法 / Default Security Gateway (security_g... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 374 | D_GOV_OPS_RESILIENCE 运维弹性治理: 5.17.5 修复：解析 HMAC 密钥 / Tamper Evident Log (securit... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 375 | D_GOV_OPS_RESILIENCE 运维弹性治理: 从 _registry.yaml 动态计算期望的 gate_id 集合 / Test Gate... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 测试依赖 / test_depends |
+| 376 | D_GOV_OPS_RESILIENCE 运维弹性治理: P0 inflation guard + block_sessions_count + timeout exemp... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 测试依赖 / test_depends |
+| 377 | D_GOV_OPS_RESILIENCE 运维弹性治理: P0 inflation guard + block_sessions_count + timeout exemp... | → | re-homed from infrastructure_runtime_integration.db.circu... | 测试依赖 / test_depends |
+| 378 | D_GOV_RULE 规则治理: AI 能力边界守卫 / AI Capability Guard (rule_enforcement/a... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 379 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 380 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | Capability / Capability (security/capability.py) | 导入依赖 / import_depends |
+| 381 | D_GOV_RULE 规则治理: 单向熔断器 / Circuit Breaker (rule_enforcement/circuit_br... | → | 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
+| 382 | D_GOV_RULE 规则治理: 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 383 | D_GOV_RULE 规则治理: 契约模板管理器 / Contract Template Manager (rule_enforcem... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 384 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | Io Cache / Io Cache (io/io_cache.py) | 导入依赖 / import_depends |
+| 385 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 386 | D_GOV_RULE 规则治理: 门禁裁决引擎 / Gate Engine (gate_engine/gate_engine.py) | → | 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
+| 387 | D_GOV_RULE 规则治理: 门禁类型定义 / Gate Types (rule_enforcement/gate_types.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 388 | D_GOV_RULE 规则治理: 集成测试运行器 / Integration Test Runner (rule_enforcemen... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 389 | D_GOV_RULE 规则治理: 循环依赖扫描器 / Circular Dependency Scanner (invariants/... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 390 | D_GOV_RULE 规则治理: 契约兼容性检查器 / Contract Compatibility Checker (invari... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 391 | D_GOV_RULE 规则治理: 进程生命周期网关 / Process Lifecycle Gateway (invariants/... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 392 | D_GOV_RULE 规则治理: 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 393 | D_GOV_RULE 规则治理: 零残留检查器 / Zero Residue Check (invariants/zero_residu... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 394 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 395 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | Execution Model / Execution Model (schema/execution_model... | 导入依赖 / import_depends |
+| 396 | D_GOV_RULE 规则治理: 任务类型定义 / Task Types (rule_enforcement/task_types.py) | → | re-homed from infrastructure_runtime_integration.db.circu... | 导入依赖 / import_depends |
+| 397 | D_GOV_RULE 规则治理: 三方对齐门禁 / Triple Alignment (rule_enforcement/triple_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 398 | D_GOV_RULE 规则治理: 宪法自愈 / Constitutional Update (constitutional_update/c... | → | —统一3处漂移实现 / File Utils (io/file_utils.py) | 导入依赖 / import_depends |
+| 399 | D_GOV_RULE 规则治理: 宪法自愈 / Constitutional Update (constitutional_update/c... | → | 全局审计写入器协议 / Session Audit (session/session_audit... | 导入依赖 / import_depends |
+| 400 | D_GOV_SCRIPTS 脚本治理: Dm106 P2b Verification / Dm106 P2b Verification (governan... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 401 | D_GOV_SCRIPTS 脚本治理: post_sync_standard 命令可执行性巡检 / Audit Post Sync Com... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 402 | D_GOV_SCRIPTS 脚本治理: file_path -> {blueprint_id, domain_id, subdomain_id, conf... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 403 | D_GOV_SCRIPTS 脚本治理: 标记 depgraph / Constants (_shared/constants.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 404 | D_GOV_SCRIPTS 脚本治理: graceful 变体：写入失败时返回 False 而非 raise / File Uti... | → | —统一3处漂移实现 / File Utils (io/file_utils.py) | 导入依赖 / import_depends |
+| 405 | D_GOV_SCRIPTS 脚本治理: 加载 YAML 文件，返回解析后的任意类型对象 / Yaml Utils (_s... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 406 | D_GOV_SCRIPTS 脚本治理: Apply Decisiongraph / Apply Decisiongraph (governance/app... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 407 | D_GOV_SCRIPTS 脚本治理: Apply Depgraph / Apply Depgraph (governance/apply_depgrap... | → | —生产环境永远 False / Env (foundation/env.py) | 导入依赖 / import_depends |
+| 408 | D_GOV_SCRIPTS 脚本治理: Apply Depgraph / Apply Depgraph (governance/apply_depgrap... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 409 | D_GOV_SCRIPTS 脚本治理: Apply Depgraph / Apply Depgraph (governance/apply_depgrap... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 410 | D_GOV_SCRIPTS 脚本治理: SSoT 创建门禁 / Check Ssot Gate (governance/check_ssot_ga... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 411 | D_GOV_SCRIPTS 脚本治理: SSoT 单一真源门禁 / Check Module Singlesource (d3_metadat... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 412 | D_GOV_SCRIPTS 脚本治理: Diagnose Depgraph / Diagnose Depgraph (d5_architecture/di... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 413 | D_GOV_SCRIPTS 脚本治理: 四图对齐检测器 / Align Panoramas (generators/align_panora... | → | 将空字符串转为 None，其他值原样返回 / Converters (utils/c... | 导入依赖 / import_depends |
+| 414 | D_GOV_SCRIPTS 脚本治理: 四图对齐检测器 / Align Panoramas (generators/align_panora... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 415 | D_GOV_SCRIPTS 脚本治理: 从 depgraph / Generate Asset Catalog (generators/generate... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 416 | D_GOV_SCRIPTS 脚本治理: 从 candidate_module_registry.yaml 生成候选模块清单报告 / ... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 417 | D_GOV_SCRIPTS 脚本治理: Code Wiki 统计数据生成器 / Generate Code Wiki Stats (gene... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 418 | D_GOV_SCRIPTS 脚本治理: 从 depgraph / Generate Contract Catalog (generators/gener... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 419 | D_GOV_SCRIPTS 脚本治理: Generate Contracts / Generate Contracts (generators/gener... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 420 | D_GOV_SCRIPTS 脚本治理: 自动生成全景图清单总表 / Generate Panorama Registry (gene... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 421 | D_GOV_SCRIPTS 脚本治理: 模块生命周期校验 / Validate Module Lifecycle (lifecycle/v... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 422 | D_GOV_SCRIPTS 脚本治理: 接口契约校验 / Validate Interface Contracts (validators/v... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 423 | D_GOV_SCRIPTS 脚本治理: Extract Decisiongraph / Extract Decisiongraph (governance... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 424 | D_GOV_SCRIPTS 脚本治理: Extract Depgraph / Extract Depgraph (governance/extract_d... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 425 | D_GOV_SCRIPTS 脚本治理: Generate Decision Graph / Generate Decision Graph (govern... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 426 | D_GOV_SCRIPTS 脚本治理: Generate Project Depgraph / Generate Project Depgraph (go... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 427 | D_GOV_SCRIPTS 脚本治理: Generate Project Depgraph / Generate Project Depgraph (go... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 428 | D_GOV_SCRIPTS 脚本治理: Generate Project Depgraph / Generate Project Depgraph (go... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 429 | D_GOV_SCRIPTS 脚本治理: commit_gates 模块清单漂移检测 / Check Gate Inventory Drif... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 430 | D_GOV_SCRIPTS 脚本治理: 跑 extract_depgraph.py，返回解析后的 JSON / Harvest Candi... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 431 | D_GOV_SCRIPTS 脚本治理: see module-level docstring for details.""" / Concurrency ... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 432 | D_GOV_SCRIPTS 脚本治理: Create Task From Finding / Create Task From Finding (meta... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 433 | D_GOV_SCRIPTS 脚本治理: Create Task From Finding / Create Task From Finding (meta... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 434 | D_GOV_SCRIPTS 脚本治理: Migrate Data / Migrate Data (migrate_sqlite_to_pg/migrate... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 435 | D_GOV_SCRIPTS 脚本治理: 幽灵提交红蓝对抗脚本 / Concurrent Commit Test (repair/con... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 436 | D_GOV_SCRIPTS 脚本治理: 四图模块同步引擎 / Sync Panorama Module (governance/sync_... | → | 将空字符串转为 None，其他值原样返回 / Converters (utils/c... | 导入依赖 / import_depends |
+| 437 | D_GOV_SCRIPTS 脚本治理: 生成器触发路径验证脚本 (governance/verify_generator_paths... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 438 | D_INFRASTRUCTURE 跨层契约基础设施: Experiment Result / Experiment Result (contracts/experime... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 439 | D_INFRASTRUCTURE 跨层契约基础设施: Factor Signal / Factor Signal (contracts/factor_signal.py) | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 440 | D_INFRASTRUCTURE 跨层契约基础设施: Fill / Fill (contracts/fill.py) | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 441 | D_INFRASTRUCTURE 跨层契约基础设施: Market Data / Market Data (contracts/market_data.py) | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 442 | D_INFRASTRUCTURE 跨层契约基础设施: Order / Order (contracts/order.py) | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 443 | D_INFRASTRUCTURE 跨层契约基础设施: Order / Order (contracts/order.py) | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 444 | D_INFRASTRUCTURE 跨层契约基础设施: Position / Position (contracts/position.py) | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 445 | D_INFRASTRUCTURE 跨层契约基础设施: Risk Limits / Risk Limits (contracts/risk_limits.py) | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 446 | D_INFRASTRUCTURE 跨层契约基础设施: Synthesized Signal / Synthesized Signal (contracts/synthe... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 447 | D_INFRASTRUCTURE 跨层契约基础设施: Target Portfolio / Target Portfolio (contracts/target_por... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 448 | D_INFRA_A2A A2A通信: A2A Layer 1 Discovery / Agent Card (layer1_discovery/agen... | → | discovery and identity interfaces. / A2a Registry (a2a/a2... | 导入依赖 / import_depends |
+| 449 | D_INFRA_A2A A2A通信: Layer 2 Communication / A2a Schemas (layer2_communication... | → | Message, Task, and StateMachine schemas. / A2a Schemas (a... | 导入依赖 / import_depends |
+| 450 | D_INFRA_A2A A2A通信: Layer 2 Communication / A2a State (layer2_communication/a... | → | Message, Task, and StateMachine schemas. / A2a Schemas (a... | 导入依赖 / import_depends |
+| 451 | D_INFRA_A2A A2A通信: A2A 上下文包 / Context Package (layer2_communication/cont... | → | Message, Task, and StateMachine schemas. / A2a Schemas (a... | 导入依赖 / import_depends |
+| 452 | D_INFRA_A2A A2A通信: Agent 间任务交接 / Handoff Manager (layer2_communication/... | → | Message, Task, and StateMachine schemas. / A2a Schemas (a... | 导入依赖 / import_depends |
+| 453 | D_INFRA_A2A A2A通信: priority -> rule -> escalation / Arbitrator (layer3_coord... | → | shared interface definitions for multi-agent coordination... | 导入依赖 / import_depends |
+| 454 | D_INFRA_A2A A2A通信: 自指悖论防御：不橡胶图章，真正验证 A2A 协议模块的施工完整... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 455 | D_INFRA_A2A A2A通信: A2A Layer 3 Coordination""" / Supervisor (layer3_coordina... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 456 | D_INFRA_A2A A2A通信: renamed from AgentRole to avoid conflict with RbacRole/Ar... | → | shared interface definitions for multi-agent coordination... | 导入依赖 / import_depends |
+| 457 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Agent Cooldown (rollback/agent_coold... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 458 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / External Merkle Proof (rollback/exte... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 459 | D_INFRA_RECOVERY 回滚恢复: Forensic / Forensic (rollback/forensic.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 460 | D_INFRA_RECOVERY 回滚恢复: Forensic / Forensic (rollback/forensic.py) | → | —统一3处漂移实现 / File Utils (io/file_utils.py) | 导入依赖 / import_depends |
+| 461 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Forward Fix Runner (rollback/forward... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 462 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Forward Fix Runner (rollback/forward... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 463 | D_INFRA_RECOVERY 回滚恢复: 只读：registry_dir / Right To Be Forgotten (rollback/righ... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 464 | D_INFRA_RECOVERY 回滚恢复: 启动/关闭结果 / Rollback Boot Integration (rollback/rollb... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 465 | D_INFRA_RECOVERY 回滚恢复: func:`git`.""" / Rollback Bootstrap (rollback/rollback_bo... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 466 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Rollback Drill (rollback/rollback_dr... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 467 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Rollback Drill (rollback/rollback_dr... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 468 | D_INFRA_RECOVERY 回滚恢复: Rollback Executor / Rollback Executor (rollback/rollback_... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 469 | D_INFRA_RECOVERY 回滚恢复: Rollback Executor / Rollback Executor (rollback/rollback_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 470 | D_INFRA_RECOVERY 回滚恢复: Rollback Executor / Rollback Executor (rollback/rollback_... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 471 | D_INFRA_RECOVERY 回滚恢复: Rollback Integration / Rollback Integration (rollback/rol... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 472 | D_INFRA_RECOVERY 回滚恢复: Rollback Integration / Rollback Integration (rollback/rol... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 473 | D_INFRA_RECOVERY 回滚恢复: Rollback Integration / Rollback Integration (rollback/rol... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 474 | D_INFRA_RECOVERY 回滚恢复: Rollback Integration / Rollback Integration (rollback/rol... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 475 | D_INFRA_RECOVERY 回滚恢复: 锁目录路径 / Rollback Lock (rollback/rollback_lock.py) | → | 读取并递增持久化 fencing 计数器，返回新的单调递增 token /... | 导入依赖 / import_depends |
+| 476 | D_INFRA_RECOVERY 回滚恢复: 公共接口：run_git / Rollback Simulator (rollback/rollback... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 477 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Rollback Target Staleness (rollback/... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 478 | D_INFRA_RECOVERY 回滚恢复: 5] and "'''" not in source[:5]: / Rollback Verifier (roll... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 479 | D_INFRA_RECOVERY 回滚恢复: 只读：snapshot_dir / S3 Snapshot Lifecycle (rollback/s3_s... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 480 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Semantic Rollback Tag (rollback/sema... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 481 | D_INFRA_RECOVERY 回滚恢复: —表名无法参数化，用白名单替代） / Sqlite Dumper (rollbac... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 482 | D_INFRA_RECOVERY 回滚恢复: —表名无法参数化，用白名单替代） / Sqlite Dumper (rollbac... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 483 | D_INFRA_RECOVERY 回滚恢复: —表名无法参数化，用白名单替代） / Sqlite Dumper (rollbac... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 484 | D_INFRA_RECOVERY 回滚恢复: —表名无法参数化，用白名单替代） / Sqlite Dumper (rollbac... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 485 | D_INFRA_RECOVERY 回滚恢复: 只读：project_root / Submodule Sync (rollback/submodule_s... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 486 | D_INFRA_RECOVERY 回滚恢复: 只读：log_path / Topology Change Log (rollback/topology_c... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 487 | D_INFRA_RECOVERY 回滚恢复: 公共接口：compute_diff / Venv Sync (rollback/venv_sync.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 488 | D_INFRA_RECOVERY 回滚恢复: 公共接口：try_upgrade / Vulnerability Rescanner (rollback... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 489 | D_INFRA_RECOVERY 回滚恢复: 公共接口：read_state / Warm Standby (rollback/warm_standb... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 490 | D_INFRA_RECOVERY 回滚恢复: 公共接口：read_state / Warm Standby (rollback/warm_standb... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 491 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 蓝图 §31 / Main (asset_inventory/__main__.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 492 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 蓝图 §31 / Main (asset_inventory/__main__.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 493 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 蓝图 §31 / Main (asset_inventory/__main__.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 494 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 L2 资产自动分类器 / Classifier (asset_invento... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 495 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 资产健康仪表盘生成器 / Dashboard (asset_inven... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 496 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 L3 统一资产索引生成器 / Index Generator (asse... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 497 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 L5 ITIL生命周期自动化管理器 / Lifecycle (asse... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 498 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 蓝图 §21 / Mcp Server (asset_inventory/mcp_s... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 499 | D_INFRA_RUNTIME 运行时集成: Git 历史元数据提取 + 多 IDE 规则生成器 / Metadata (asset_... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 500 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 L4 注册表 vs 磁盘对账引擎 / Reconciler (asset... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 501 | D_INFRA_RUNTIME 运行时集成: 24 个异构注册表统一解析适配器 / Registry Adapter (asset_i... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 502 | D_INFRA_RUNTIME 运行时集成: 24 个异构注册表统一解析适配器 / Registry Adapter (asset_i... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 503 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 L1 全量文件系统扫描器 / Scanner (asset_invent... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 504 | D_INFRA_RUNTIME 运行时集成: MOD-INF-026 自监控指标 / Telemetry (asset_inventory/telem... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 505 | D_INFRA_RUNTIME 运行时集成: 三重信任锚验证门 R20 / Trust Anchor (asset_inventory/trus... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 506 | D_INFRA_RUNTIME 运行时集成: 三重信任锚验证门 R20 / Trust Anchor (asset_inventory/trus... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 507 | D_INFRA_RUNTIME 运行时集成: Alignment Syncer / Alignment Syncer (auto_fix_engine/alig... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 508 | D_INFRA_RUNTIME 运行时集成: 公共接口：parse_all / All Completer (auto_fix_engine/all_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 509 | D_INFRA_RUNTIME 运行时集成: 只读：retention_days / Compliance Auditor (auto_fix_engin... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 510 | D_INFRA_RUNTIME 运行时集成: 只读：retention_days / Compliance Auditor (auto_fix_engin... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 511 | D_INFRA_RUNTIME 运行时集成: 公共接口：fix_trailing_whitespace / Config Fixer (auto_fi... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 512 | D_INFRA_RUNTIME 运行时集成: 公共接口：normalize_code / Dedup Extractor (auto_fix_engi... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 513 | D_INFRA_RUNTIME 运行时集成: Dep Version Fixer / Dep Version Fixer (auto_fix_engine/de... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 514 | D_INFRA_RUNTIME 运行时集成: Drift Fixer / Drift Fixer (auto_fix_engine/drift_fixer.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 515 | D_INFRA_RUNTIME 运行时集成: 只读：event_log / Event Hooks (auto_fix_engine/event_hook... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 516 | D_INFRA_RUNTIME 运行时集成: Fix Budget / Fix Budget (auto_fix_engine/fix_budget.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 517 | D_INFRA_RUNTIME 运行时集成: Fix Budget / Fix Budget (auto_fix_engine/fix_budget.py) | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 518 | D_INFRA_RUNTIME 运行时集成: 公共接口：check_config / Fix Health Check (auto_fix_engin... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 519 | D_INFRA_RUNTIME 运行时集成: 公共接口：check_config / Fix Health Check (auto_fix_engin... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 520 | D_INFRA_RUNTIME 运行时集成: 只读：db_path / Fix Pattern Miner (auto_fix_engine/fix_pa... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 521 | D_INFRA_RUNTIME 运行时集成: 只读：db_path / Fix Pattern Miner (auto_fix_engine/fix_pa... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 522 | D_INFRA_RUNTIME 运行时集成: 只读：ttl / Fix Reliability (auto_fix_engine/fix_reliabil... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 523 | D_INFRA_RUNTIME 运行时集成: 只读：ttl / Fix Reliability (auto_fix_engine/fix_reliabil... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 524 | D_INFRA_RUNTIME 运行时集成: 只读：enabled / Fix Safety (auto_fix_engine/fix_safety.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 525 | D_INFRA_RUNTIME 运行时集成: 只读：enabled / Fix Safety (auto_fix_engine/fix_safety.py) | → | —统一3处漂移实现 / File Utils (io/file_utils.py) | 导入依赖 / import_depends |
+| 526 | D_INFRA_RUNTIME 运行时集成: Import Fixer / Import Fixer (auto_fix_engine/import_fixer... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 527 | D_INFRA_RUNTIME 运行时集成: 只读：wal_dir / Interrupt Guard (auto_fix_engine/interrup... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 528 | D_INFRA_RUNTIME 运行时集成: 只读：secret_guard / Llm Fix Adapter (auto_fix_engine/llm... | → | 与 orchestration.agent_lifecycle.llm_gateway.LLMResponse ... | 导入依赖 / import_depends |
+| 529 | D_INFRA_RUNTIME 运行时集成: 从 script-manifest.yaml 加载已注册脚本路径集合 / Scaffold... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 530 | D_INFRA_RUNTIME 运行时集成: Shadow Workspace / Shadow Workspace (auto_fix_engine/shad... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 531 | D_INFRA_RUNTIME 运行时集成: Shadow Workspace / Shadow Workspace (auto_fix_engine/shad... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 532 | D_INFRA_RUNTIME 运行时集成: 移除 content 中指向不存在文件的僵尸引用，返回清理后的内容... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 533 | D_INFRA_RUNTIME 运行时集成: R1~R16 全量风险缓解实现 / Risk Mitigation (capacity_assur... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 534 | D_INFRA_RUNTIME 运行时集成: 5.66.2 修复：白名单校验表名，仅允许已知表名用于 SQL 拼接 ... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 535 | D_INFRA_RUNTIME 运行时集成: Cost Tracker / Cost Tracker (infrastructure/cost_tracker.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 536 | D_INFRA_RUNTIME 运行时集成: Cost Tracker / Cost Tracker (infrastructure/cost_tracker.py) | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 537 | D_INFRA_RUNTIME 运行时集成: 从 config/.env.clickhouse 加载 ClickHouse 只读连接参数 / ... | → | 共享 CRUD 方法 Mixin / Database Crud Mixin (database/data... | 导入依赖 / import_depends |
+| 538 | D_INFRA_RUNTIME 运行时集成: 从 config/.env.clickhouse 加载 ClickHouse 只读连接参数 / ... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 539 | D_INFRA_RUNTIME 运行时集成: Event Bus Upgrade / Event Bus Upgrade (infrastructure/eve... | → | EventBus 升级策略引擎 / Upgrade Strategy (events/upgrade_... | 导入依赖 / import_depends |
+| 540 | D_INFRA_RUNTIME 运行时集成: Event Store / Event Store (infrastructure/event_store.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 541 | D_INFRA_RUNTIME 运行时集成: Event Store / Event Store (infrastructure/event_store.py) | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 542 | D_INFRA_RUNTIME 运行时集成: Event Store / Event Store (infrastructure/event_store.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 543 | D_INFRA_RUNTIME 运行时集成: Event Store / Event Store (events/event_store.py) | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 544 | D_INFRA_RUNTIME 运行时集成: Event Store / Event Store (events/event_store.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 545 | D_INFRA_RUNTIME 运行时集成: 只读：on_change / File Watcher (infrastructure/file_watch... | → | 从任务描述行中拆出叙事文本与 ``depends_on`` 列表 / Bluepr... | 导入依赖 / import_depends |
+| 546 | D_INFRA_RUNTIME 运行时集成: 只读：on_change / File Watcher (infrastructure/file_watch... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 547 | D_INFRA_RUNTIME 运行时集成: 只读：on_change / File Watcher (infrastructure/file_watch... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 548 | D_INFRA_RUNTIME 运行时集成: 只读：on_change / File Watcher (infrastructure/file_watch... | → | 进程级单例服务注册表 / Registry (protocols/registry.py) | 导入依赖 / import_depends |
+| 549 | D_INFRA_RUNTIME 运行时集成: Finding Task Bridge / Finding Task Bridge (infrastructure... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 550 | D_INFRA_RUNTIME 运行时集成: Finding Task Bridge / Finding Task Bridge (infrastructure... | → | 进程级单例服务注册表 / Registry (protocols/registry.py) | 导入依赖 / import_depends |
+| 551 | D_INFRA_RUNTIME 运行时集成: Finding Task Bridge / Finding Task Bridge (infrastructure... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 552 | D_INFRA_RUNTIME 运行时集成: Finding Task Bridge / Finding Task Bridge (infrastructure... | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 553 | D_INFRA_RUNTIME 运行时集成: Git 命令批量化工具 / Git Batcher (infrastructure/git_batc... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 554 | D_INFRA_RUNTIME 运行时集成: Kill Switch 单次探测结果""" / Kill Switch Sim (infrastruc... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 555 | D_INFRA_RUNTIME 运行时集成: 只读：config / Notifier (observability/notifier.py) | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 556 | D_INFRA_RUNTIME 运行时集成: 只读：config / Notifier (observability/notifier.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 557 | D_INFRA_RUNTIME 运行时集成: Trace Decorator / Trace Decorator (observability/trace_de... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 558 | D_INFRA_RUNTIME 运行时集成: Backpressure Types / Backpressure Types (pipeline/backpre... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 559 | D_INFRA_RUNTIME 运行时集成: Ct Pipe Routing / Ct Pipe Routing (pipeline/ct_pipe_routi... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 560 | D_INFRA_RUNTIME 运行时集成: Ct Pipe Routing / Ct Pipe Routing (pipeline/ct_pipe_routi... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 561 | D_INFRA_RUNTIME 运行时集成: Ct Pipe Routing / Ct Pipe Routing (pipeline/ct_pipe_routi... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 562 | D_INFRA_RUNTIME 运行时集成: Llm Gateway / Llm Gateway (pipeline/llm_gateway.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 563 | D_INFRA_RUNTIME 运行时集成: Llm Gateway / Llm Gateway (pipeline/llm_gateway.py) | → | —生产环境永远 False / Env (foundation/env.py) | 导入依赖 / import_depends |
+| 564 | D_INFRA_RUNTIME 运行时集成: Llm Gateway / Llm Gateway (pipeline/llm_gateway.py) | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 565 | D_INFRA_RUNTIME 运行时集成: Llm Gateway / Llm Gateway (pipeline/llm_gateway.py) | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 566 | D_INFRA_RUNTIME 运行时集成: 模型选择、降级链、成本估算 / Model Router (pipeline/model... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 567 | D_INFRA_RUNTIME 运行时集成: —L1 / Models (pipeline/models.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 568 | D_INFRA_RUNTIME 运行时集成: —L1 / Models (pipeline/models.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 569 | D_INFRA_RUNTIME 运行时集成: acquire / Pipeline Lock (pipeline/pipeline_lock.py) | → | 读取并递增持久化 fencing 计数器，返回新的单调递增 token /... | 导入依赖 / import_depends |
+| 570 | D_INFRA_RUNTIME 运行时集成: 优先级抢占管理器. / Preemption Manager (pipeline/preempti... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 571 | D_INFRA_RUNTIME 运行时集成: 优先级抢占管理器. / Preemption Manager (pipeline/preempti... | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 572 | D_INFRA_RUNTIME 运行时集成: 优先级抢占管理器. / Preemption Manager (pipeline/preempti... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 573 | D_INFRA_RUNTIME 运行时集成: Routing Plugins / Routing Plugins (pipeline/routing_plugi... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 574 | D_INFRA_RUNTIME 运行时集成: 只读：config / Task Queue (queue/task_queue.py) | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 575 | D_INFRA_RUNTIME 运行时集成: 只读：config / Task Queue (queue/task_queue.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 576 | D_INFRA_RUNTIME 运行时集成: 只读：data_dir / Task Scheduler (queue/task_scheduler.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 577 | D_INFRA_RUNTIME 运行时集成: Redis 连接配置单真源加载器 / Redis Config (infrastructure... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 578 | D_INFRA_RUNTIME 运行时集成: Redis 连接配置单真源加载器 / Redis Config (infrastructure... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 579 | D_INFRA_RUNTIME 运行时集成: Finding / Finding (script_system/finding.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 580 | D_INFRA_RUNTIME 运行时集成: 从 config/sla_targets.yaml 加载 RTO/RPO 目标，失败时 fall... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 581 | D_INFRA_RUNTIME 运行时集成: 从 config/sla_targets.yaml 加载 RTO/RPO 目标，失败时 fall... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 582 | D_INFRA_RUNTIME 运行时集成: 冷存储归档管道 / Cold Stub (archive/cold_stub.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 583 | D_INFRA_RUNTIME 运行时集成: 全自动遥测注入钩子 / Auto Bootstrap (system_telemetry/aut... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 584 | D_INFRA_RUNTIME 运行时集成: 全自动遥测注入钩子 / Auto Bootstrap (system_telemetry/aut... | → | Session Continuity / Session Continuity (session/session_... | 导入依赖 / import_depends |
+| 585 | D_INFRA_RUNTIME 运行时集成: 系统遥测门面类 / Facade (system_telemetry/facade.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 586 | D_INFRA_RUNTIME 运行时集成: 系统遥测门面类 / Facade (system_telemetry/facade.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 587 | D_INFRA_RUNTIME 运行时集成: 只读：snapshots / Health Aggregator (system_telemetry/hea... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 588 | D_INFRA_RUNTIME 运行时集成: 5.55.1 修复：探针内部真实检查依赖状态，而非信任外部传入的... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 589 | D_INFRA_RUNTIME 运行时集成: 单次蓝图读取事件 / Blueprint Metrics (metrics/blueprint_m... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 590 | D_INFRA_RUNTIME 运行时集成: emit_metrics / Metrics Bridge (system_telemetry/metrics_b... | → | 进程级单例服务注册表 / Registry (protocols/registry.py) | 导入依赖 / import_depends |
+| 591 | D_INFRA_RUNTIME 运行时集成: W3C TraceContext 分布式追踪管道 / Span Stub (traces/span_... | → | —每条日志一行 JSON，可直接 tail | jq 解析 / Logging (uti... | 导入依赖 / import_depends |
+| 592 | D_INFRA_RUNTIME 运行时集成: —互检+Panic Mode+Dead Man's Switch / Watchdog (system_te... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 593 | D_INFRA_RUNTIME 运行时集成: Action Dispatcher / Action Dispatcher (trading/action_dis... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 594 | D_INFRA_RUNTIME 运行时集成: Action Dispatcher / Action Dispatcher (trading/action_dis... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 595 | D_INFRA_RUNTIME 运行时集成: Action Dispatcher / Action Dispatcher (trading/action_dis... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 596 | D_INFRA_RUNTIME 运行时集成: Action Dispatcher / Action Dispatcher (trading/action_dis... | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 597 | D_INFRA_RUNTIME 运行时集成: —所有 AI 决策/执行的不可变记录 / Ai Audit Logger (tradin... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 598 | D_INFRA_RUNTIME 运行时集成: —所有 AI 决策/执行的不可变记录 / Ai Audit Logger (tradin... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 599 | D_INFRA_RUNTIME 运行时集成: —所有 AI 决策/执行的不可变记录 / Ai Audit Logger (tradin... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 600 | D_INFRA_RUNTIME 运行时集成: —临时启动高级模型分析是否接入 / Auto Integrator (trading... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 601 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core / Auto Runtime Core (trading/auto_runti... | → | System Configuration / System Configuration (core/system_... | 导入依赖 / import_depends |
+| 602 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core / Auto Runtime Core (trading/auto_runti... | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 603 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core / Auto Runtime Core (trading/auto_runti... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 604 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core / Auto Runtime Core (trading/auto_runti... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 605 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core / Auto Runtime Core (trading/auto_runti... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 606 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core / Auto Runtime Core (trading/auto_runti... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 607 | D_INFRA_RUNTIME 运行时集成: Auto Runtime Core / Auto Runtime Core (trading/auto_runti... | → | discovery and identity interfaces. / A2a Registry (a2a/a2... | 导入依赖 / import_depends |
+| 608 | D_INFRA_RUNTIME 运行时集成: —扫描项目 -> 生成推理任务 -> 送入调度器 / Auto Task Gene... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 609 | D_INFRA_RUNTIME 运行时集成: —扫描项目 -> 生成推理任务 -> 送入调度器 / Auto Task Gene... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 610 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 611 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 612 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 613 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 614 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | Health / Health (lifecycle/health.py) | 导入依赖 / import_depends |
+| 615 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | System-wide Health Discovery Registration. / Health Disco... | 导入依赖 / import_depends |
+| 616 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | 只读：start_time / Healthcheck Service (lifecycle/healthc... | 导入依赖 / import_depends |
+| 617 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | Longevity Monitor / Longevity Monitor (lifecycle/longevit... | 导入依赖 / import_depends |
+| 618 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | 只读：event_log / Autonomy Monitor (maintenance/autonomy_... | 导入依赖 / import_depends |
+| 619 | D_INFRA_RUNTIME 运行时集成: 从 TaskRepository 查询 task 的 source_blueprint，失败返回... | → | 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
+| 620 | D_INFRA_RUNTIME 运行时集成: —自描述的能力契约 / Capability Card (trading/capability_... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 621 | D_INFRA_RUNTIME 运行时集成: —自描述的能力契约 / Capability Card (trading/capability_... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 622 | D_INFRA_RUNTIME 运行时集成: —解决'AI 不知道有这个功能'的问题 / Capability Registry (... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 623 | D_INFRA_RUNTIME 运行时集成: —从情节记忆到语义记忆的转化 / Dream Cycle (trading/dream... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 624 | D_INFRA_RUNTIME 运行时集成: —从情节记忆到语义记忆的转化 / Dream Cycle (trading/dream... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 625 | D_INFRA_RUNTIME 运行时集成: —关闭前完成所有必要持久化 / Finalizer (trading/finalizer.py) | → | Health / Health (lifecycle/health.py) | 导入依赖 / import_depends |
+| 626 | D_INFRA_RUNTIME 运行时集成: —关闭前完成所有必要持久化 / Finalizer (trading/finalizer.py) | → | 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
+| 627 | D_INFRA_RUNTIME 运行时集成: —水平触发调和循环 / Health Monitor (trading/health_monit... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 628 | D_INFRA_RUNTIME 运行时集成: —水平触发调和循环 / Health Monitor (trading/health_monit... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 629 | D_INFRA_RUNTIME 运行时集成: —水平触发调和循环 / Health Monitor (trading/health_monit... | → | 只读：start_time / Healthcheck Service (lifecycle/healthc... | 导入依赖 / import_depends |
+| 630 | D_INFRA_RUNTIME 运行时集成: —水平触发调和循环 / Health Monitor (trading/health_monit... | → | Longevity Monitor / Longevity Monitor (lifecycle/longevit... | 导入依赖 / import_depends |
+| 631 | D_INFRA_RUNTIME 运行时集成: —水平触发调和循环 / Health Monitor (trading/health_monit... | → | 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
+| 632 | D_INFRA_RUNTIME 运行时集成: —水平触发调和循环 / Health Monitor (trading/health_monit... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 633 | D_INFRA_RUNTIME 运行时集成: —水平触发调和循环 / Health Monitor (trading/health_monit... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 634 | D_INFRA_RUNTIME 运行时集成: —AutoRuntime Core 与所有现有系统的连接点清单 / Integrati... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 635 | D_INFRA_RUNTIME 运行时集成: Lifecycle Manager / Lifecycle Manager (trading/lifecycle_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 636 | D_INFRA_RUNTIME 运行时集成: —API 夜间执行遇到不确定时登记，留待人类裁定 / Night Shif... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 637 | D_INFRA_RUNTIME 运行时集成: —API 夜间执行遇到不确定时登记，留待人类裁定 / Night Shif... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 638 | D_INFRA_RUNTIME 运行时集成: —API 夜间执行遇到不确定时登记，留待人类裁定 / Night Shif... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 639 | D_INFRA_RUNTIME 运行时集成: Ports / Ports (trading/ports.py) | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 640 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | Capacity Calibrator / Capacity Calibrator (capacity_gover... | 导入依赖 / import_depends |
+| 641 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | Capacity Digital Twin / Capacity Digital Twin (capacity_g... | 导入依赖 / import_depends |
+| 642 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | Capacity Fingerprint / Capacity Fingerprint (capacity_gov... | 导入依赖 / import_depends |
+| 643 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | Capacity Runbook Generator / Capacity Runbook Generator (... | 导入依赖 / import_depends |
+| 644 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | Model Capacity Probe / Model Capacity Probe (capacity_gov... | 导入依赖 / import_depends |
+| 645 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 646 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 647 | D_INFRA_RUNTIME 运行时集成: Resource Optimization / Resource Optimization (trading/re... | → | Io Cache / Io Cache (io/io_cache.py) | 导入依赖 / import_depends |
+| 648 | D_INFRA_RUNTIME 运行时集成: Staging Area / Staging Area (trading/staging_area.py) | → | 读取并递增持久化 fencing 计数器，返回新的单调递增 token /... | 导入依赖 / import_depends |
+| 649 | D_INFRA_RUNTIME 运行时集成: 根据当前时间返回系统节律阶段字符串 / Status Dashboard (tr... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 650 | D_INFRA_RUNTIME 运行时集成: —AI 不能空手退出 / Stop Gate (trading/stop_gate.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 651 | D_INFRA_RUNTIME 运行时集成: Windows Service / Windows Service (trading/windows_servic... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 652 | D_INFRA_RUNTIME 运行时集成: Work Dag / Work Dag (trading/work_dag.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 653 | D_INFRA_RUNTIME 运行时集成: —决定什么工作、什么时候、用什么模型、什么顺序 / Work Orc... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 654 | D_INFRA_RUNTIME 运行时集成: —决定什么工作、什么时候、用什么模型、什么顺序 / Work Orc... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 655 | D_INFRA_RUNTIME 运行时集成: Zombie Scanner / Zombie Scanner (trading/zombie_scanner.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 656 | D_INTEGRATION 管线路由: Ollama Chat / Ollama Chat (local_model/ollama_chat.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 657 | D_INTEGRATION 管线路由: —封装 /api/embed，兼容 SentenceTransformer.encode / Olla... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 658 | D_INTEGRATION 管线路由: Base Server / Base Server (mcp/_base_server.py) | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 659 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志 / Audit Logger (mcp/audit_logger... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 660 | D_INTEGRATION 管线路由: Blueprint Search Server / Blueprint Search Server (mcp/bl... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 661 | D_INTEGRATION 管线路由: session_handoff MCP Server 实现 / Doc Guard Server (mcp/d... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 662 | D_INTEGRATION 管线路由: session_handoff MCP Server 实现 / Doc Guard Server (mcp/d... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 663 | D_INTEGRATION 管线路由: 检查路径是否命中黑名单 / Gate Engine Server (mcp/gate_eng... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 664 | D_INTEGRATION 管线路由: 检查路径是否命中黑名单 / Gate Engine Server (mcp/gate_eng... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 665 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点 / Gateway Server (mcp/gateway_... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 666 | D_INTEGRATION 管线路由: MCP Gateway 同步速率限制器 / Rate Limiter (mcp/rate_limit... | → | —等待时间过长或无法获取 token / Limiter (infra/limiter.py) | 导入依赖 / import_depends |
+| 667 | D_INTEGRATION 管线路由: 关闭 B2/B41） / Resource Provider (mcp/resource_provider.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 668 | D_INTEGRATION 管线路由: MCP Server for rule discovery / Rule Discovery Server (mc... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 669 | D_INTEGRATION 管线路由: 关闭 B4） / Sandbox Server (mcp/sandbox_server.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 670 | D_INTEGRATION 管线路由: Task Manager Server / Task Manager Server (mcp/task_manag... | → | 从任务描述行中拆出叙事文本与 ``depends_on`` 列表 / Bluepr... | 导入依赖 / import_depends |
+| 671 | D_INTEGRATION 管线路由: Task Manager Server / Task Manager Server (mcp/task_manag... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 672 | D_INTEGRATION 管线路由: Task Manager Server / Task Manager Server (mcp/task_manag... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 673 | D_INTEGRATION 管线路由: Task Manager Server / Task Manager Server (mcp/task_manag... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 674 | D_INTEGRATION 管线路由: Task Manager Server / Task Manager Server (mcp/task_manag... | → | re-homed from infrastructure_runtime_integration.db.circu... | 导入依赖 / import_depends |
+| 675 | D_INTEGRATION 管线路由: Task Manager Server / Task Manager Server (mcp/task_manag... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 676 | D_INTEGRATION 管线路由: 系统可观测性 MCP 接口 / Telemetry Server (mcp/telemetry_s... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 677 | D_INTEGRATION 管线路由: Vector Memory Server / Vector Memory Server (mcp/vector_m... | → | D-INFRA 通过此接口获取 DB 连接和路径 / Ports (protocols/p... | 导入依赖 / import_depends |
+| 678 | D_INTEGRATION 管线路由: MOD-INF-026 蓝图 §21 / Mcp Server (integration/mcp_serve... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 679 | D_INTEGRATION 管线路由: MOD-INF-026 蓝图 §21 / Mcp Server (integration/mcp_serve... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 680 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | 与 orchestration.agent_lifecycle.llm_gateway.LLMResponse ... | 导入依赖 / import_depends |
+| 681 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 682 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 683 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 684 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | Observer / Observer (infra/observer.py) | 导入依赖 / import_depends |
+| 685 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 686 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | D-INFRA 通过此接口获取 DB 连接和路径 / Ports (protocols/p... | 导入依赖 / import_depends |
+| 687 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 688 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 689 | D_INTEGRATION 管线路由: Pipeline Orchestrator / Pipeline Orchestrator (integratio... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 690 | D_INTEGRATION 管线路由: Contract Violation Error / Contract Violation Error (erro... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 691 | D_INTEGRATION 管线路由: Data Quality Error / Data Quality Error (errors/data_qual... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 692 | D_INTEGRATION 管线路由: Execution Rejection Error / Execution Rejection Error (er... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 693 | D_INTEGRATION 管线路由: Factor Computation Error / Factor Computation Error (erro... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 694 | D_INTEGRATION 管线路由: Risk Limit Violation Error / Risk Limit Violation Error (... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 695 | D_INTEGRATION 管线路由: Signal Degradation Warning / Signal Degradation Warning (... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 696 | D_INTEGRATION 管线路由: DeadLetterQueue -> System Event Bus integration bridge. /... | → | 5.63.2 修复：对 traceback / error 字符串脱敏，防止敏感信... | 导入依赖 / import_depends |
+| 697 | D_INTEGRATION 管线路由: DeadLetterQueue -> System Event Bus integration bridge. /... | → | Observer / Observer (infra/observer.py) | 导入依赖 / import_depends |
+| 698 | D_INTEGRATION 管线路由: —文件系统变更通知 / Event Schemas (events/event_schemas.py) | → | Observer / Observer (infra/observer.py) | 导入依赖 / import_depends |
+| 699 | D_INTEGRATION 管线路由: —文件系统变更通知 / Event Schemas (events/event_schemas.py) | → | Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 700 | D_INTEGRATION 管线路由: EventBus 升级策略引擎 / Upgrade Strategy (events/upgrade_... | → | Observer / Observer (infra/observer.py) | 导入依赖 / import_depends |
+| 701 | D_INTEGRATION 管线路由: Chunk Strategy Router / Chunk Strategy Router (vector_mem... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 702 | D_INTEGRATION 管线路由: Collection Manager / Collection Manager (vector_memory/co... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 703 | D_INTEGRATION 管线路由: Collection Manager / Collection Manager (vector_memory/co... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 704 | D_INTEGRATION 管线路由: Collection Schemas / Collection Schemas (vector_memory/co... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 705 | D_INTEGRATION 管线路由: Collection Schemas / Collection Schemas (vector_memory/co... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 706 | D_INTEGRATION 管线路由: Hybrid Retriever / Hybrid Retriever (vector_memory/hybrid... | → | D-INFRA 通过此接口获取 DB 连接和路径 / Ports (protocols/p... | 导入依赖 / import_depends |
+| 707 | D_INTEGRATION 管线路由: Hybrid Retriever / Hybrid Retriever (vector_memory/hybrid... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 708 | D_INTEGRATION 管线路由: Index Health Monitor / Index Health Monitor (vector_memor... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 709 | D_INTEGRATION 管线路由: Migrate Chroma To Faiss / Migrate Chroma To Faiss (vector... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 710 | D_INTEGRATION 管线路由: 只读：long_tail / Retrieval Feedback (vector_memory/retri... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 711 | D_INTEGRATION 管线路由: Sqlite Metadata Store / Sqlite Metadata Store (vector_mem... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 712 | D_INTEGRATION 管线路由: Vector Bridge / Vector Bridge (vector_memory/vector_bridg... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 713 | D_INTEGRATION 管线路由: Vms Schemas / Vms Schemas (vector_memory/vms_schemas.py) | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 714 | D_INTEGRATION 管线路由: Runtime Types / Runtime Types (contracts/runtime_types.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 715 | D_INTEGRATION 管线路由: Runtime Types / Runtime Types (contracts/runtime_types.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 716 | D_INTEGRATION 管线路由: Runtime Types / Runtime Types (contracts/runtime_types.py) | → | Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 717 | D_INTELLIGENCE 上下文管理: 项目根路径 / Model Drift Detector (intelligence/model_dri... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 718 | D_INTELLIGENCE 上下文管理: Default Inference Engine / Default Inference Engine (impl... | → | Model Serving Response / Model Serving Response (experime... | 导入依赖 / import_depends |
+| 719 | D_INTELLIGENCE 上下文管理: Default Inference Engine / Default Inference Engine (impl... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 720 | D_INTELLIGENCE 上下文管理: ChromaDB 中承载 RI-02 跨模块记忆的集合名 / Unified Memory... | → | Capability / Capability (security/capability.py) | 导入依赖 / import_depends |
+| 721 | D_INTELLIGENCE 上下文管理: 签名验证失败或无签名字段时抛出 / Capability Passport (mod... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 722 | D_INTELLIGENCE 上下文管理: 签名验证失败或无签名字段时抛出 / Capability Passport (mod... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 723 | D_INTELLIGENCE 上下文管理: 签名验证失败或无签名字段时抛出 / Capability Passport (mod... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 724 | D_INTELLIGENCE 上下文管理: 安全检查：仅允许读白名单目录下的文件 / Case Assembler (mo... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 725 | D_INTELLIGENCE 上下文管理: Deepseek V4 Chat / Deepseek V4 Chat (model_profiling/deep... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 726 | D_INTELLIGENCE 上下文管理: Deepseek V4 Chat / Deepseek V4 Chat (model_profiling/deep... | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 727 | D_INTELLIGENCE 上下文管理: ExamExecutor --- 执行式代码评测 / Exam Executor (model_pr... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 728 | D_INTELLIGENCE 上下文管理: 岗位匹配器错误 / Job Matcher (model_profiling/job_matcher... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 729 | D_INTELLIGENCE 上下文管理: —枚举所有可用模型 / Model Discovery (model_profiling/mod... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 730 | D_INTELLIGENCE 上下文管理: Profiler / Profiler (pipeline_routing/profiler.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 731 | D_INTELLIGENCE 上下文管理: Profiler / Profiler (pipeline_routing/profiler.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 732 | D_INTELLIGENCE 上下文管理: 将 benchmark 结果写入 JSONL 文件 / Results Writer (pipeli... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 733 | D_INTELLIGENCE 上下文管理: Profiler / Profiler (model_profiling/profiler.py) | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 734 | D_INTELLIGENCE 上下文管理: Profiler / Profiler (model_profiling/profiler.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 735 | D_INTELLIGENCE 上下文管理: 将 benchmark 结果写入 JSONL 文件 / Results Writer (model_... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 736 | D_MKT_DATA 行情数据: Autoload / Autoload (market_data/autoload.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 737 | D_MKT_DATA 行情数据: Connector Base / Base (connectors/base.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 738 | D_MKT_DATA 行情数据: Connector Manager / Manager (connectors/manager.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 739 | D_MKT_DATA 行情数据: Failover Manager / Manager (failover/manager.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 740 | D_MKT_DATA 行情数据: Raw Data Cache 实现 / Cache (raw_data_cache/cache.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 741 | D_MKT_DATA 行情数据: Vendor Base / Vendor Base (market_data/vendor_base.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 742 | D_MKT_DATA 行情数据: Vendor Registry / Vendor Registry (market_data/vendor_reg... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 743 | D_ML_TRAIN 训练: Default Inference Engine / Default Inference Engine (impl... | → | Model Serving Response / Model Serving Response (experime... | 导入依赖 / import_depends |
+| 744 | D_ML_TRAIN 训练: Default Inference Engine / Default Inference Engine (impl... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 745 | D_ML_TRAIN 训练: 模型推理：请求 -> 响应""" / Inference Base (ml_train/infe... | → | Model Serving Response / Model Serving Response (experime... | 导入依赖 / import_depends |
+| 746 | D_OPS 反馈循环: —5.133.2 DI 注入契约 / Budget Engine (ops_governance/bud... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 747 | D_OPS 反馈循环: Budget Handler / Budget Handler (ops_governance/budget_ha... | → | Budget Alert / Budget Alert (escalation/budget_alert.py) | 导入依赖 / import_depends |
+| 748 | D_OPS 反馈循环: 成本预算超出硬性熔断阈值时抛出 / Cost Budget (ops_governa... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 749 | D_OPS 反馈循环: 成本预算超出硬性熔断阈值时抛出 / Cost Budget (ops_governa... | → | 线程安全的轻量级 Metrics 注册表 / Metrics (observability/... | 导入依赖 / import_depends |
+| 750 | D_ORCHESTRATOR 代理编排器: SLO 违规记录模型 / Agent Health Monitor (orchestrator/age... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 751 | D_ORCHESTRATOR 代理编排器: SLO 违规记录模型 / Agent Health Monitor (orchestrator/age... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 752 | D_ORCHESTRATOR 代理编排器: Agent Orchestrator / Agent Orchestrator (orchestrator/age... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 753 | D_ORCHESTRATOR 代理编排器: Agent Orchestrator / Agent Orchestrator (orchestrator/age... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 754 | D_ORCHESTRATOR 代理编排器: Agent Orchestrator / Agent Orchestrator (orchestrator/age... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 755 | D_ORCHESTRATOR 代理编排器: Agent Orchestrator / Agent Orchestrator (orchestrator/age... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 756 | D_ORCHESTRATOR 代理编排器: Agent Orchestrator / Agent Orchestrator (orchestrator/age... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 757 | D_ORCHESTRATOR 代理编排器: handle_alert / Alert Handler (contracts/alert_handler.py) | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 758 | D_ORCHESTRATOR 代理编排器: handle_alert / Alert Handler (contracts/alert_handler.py) | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 759 | D_ORCHESTRATOR 代理编排器: handle_alert / Alert Handler (contracts/alert_handler.py) | → | Base Config / Base Config (schema/base_config.py) | 导入依赖 / import_depends |
+| 760 | D_ORCHESTRATOR 代理编排器: handle_alert / Alert Handler (contracts/alert_handler.py) | → | Execution Model / Execution Model (schema/execution_model... | 导入依赖 / import_depends |
+| 761 | D_ORCHESTRATOR 代理编排器: handle_alert / Alert Handler (contracts/alert_handler.py) | → | re-homed from infrastructure_runtime_integration.db.circu... | 导入依赖 / import_depends |
+| 762 | D_ORCHESTRATOR 代理编排器: handle_alert / Alert Handler (contracts/alert_handler.py) | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 763 | D_ORCHESTRATOR 代理编排器: Finding Bridge / Finding Bridge (contracts/finding_bridge... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 764 | D_ORCHESTRATOR 代理编排器: Finding Bridge / Finding Bridge (contracts/finding_bridge... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 765 | D_ORCHESTRATOR 代理编排器: 打破 pipeline↔orchestrator 循环依赖的协议接口 / Task Que... | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 766 | D_ORCHESTRATOR 代理编排器: WAITING -> READY task scheduler. / Deferred Queue (orches... | → | Observer / Observer (infra/observer.py) | 导入依赖 / import_depends |
+| 767 | D_ORCHESTRATOR 代理编排器: WAITING -> READY task scheduler. / Deferred Queue (orches... | → | 对连接应用 KBG-0030 §4.3 PRAGMA 基线 / Sqlite Factory (i... | 导入依赖 / import_depends |
+| 768 | D_ORCHESTRATOR 代理编排器: 多 Worker 批量任务协调器 / Batch Orchestrator (execution/... | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 769 | D_ORCHESTRATOR 代理编排器: 多 Worker 批量任务协调器 / Batch Orchestrator (execution/... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 770 | D_ORCHESTRATOR 代理编排器: Orc->VMS 记忆写入器""" / Memory Writer (execution/memory_... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 771 | D_ORCHESTRATOR 代理编排器: run_audit / Script Runner (execution/script_runner.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 772 | D_ORCHESTRATOR 代理编排器: build_from_task / Task Context Builder (execution/task_co... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 773 | D_ORCHESTRATOR 代理编排器: 触发路由审计日志 duck-typed 接口 / Trigger Router (execut... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 774 | D_ORCHESTRATOR 代理编排器: 触发路由审计日志 duck-typed 接口 / Trigger Router (execut... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 775 | D_ORCHESTRATOR 代理编排器: Wave Generator / Wave Generator (execution/wave_generator... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 776 | D_ORCHESTRATOR 代理编排器: Wave Generator / Wave Generator (execution/wave_generator... | → | 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
+| 777 | D_ORCHESTRATOR 代理编排器: integrates ChaosEngine with the orchestrator execution lo... | → | Orchestration Protocol / Orchestration Protocol (contract... | 导入依赖 / import_depends |
+| 778 | D_ORCHESTRATOR 代理编排器: File Task Mapper / File Task Mapper (orchestrator/file_ta... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 779 | D_ORCHESTRATOR 代理编排器: File Task Mapper / File Task Mapper (orchestrator/file_ta... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 780 | D_ORCHESTRATOR 代理编排器: File Task Mapper / File Task Mapper (orchestrator/file_ta... | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 781 | D_ORCHESTRATOR 代理编排器: File Task Mapper / File Task Mapper (orchestrator/file_ta... | → | 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
+| 782 | D_ORCHESTRATOR 代理编排器: File Task Mapper / File Task Mapper (orchestrator/file_ta... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 783 | D_ORCHESTRATOR 代理编排器: Hallucination Detector / Hallucination Detector (orchestr... | → | Schemas / Schemas (schema/schemas.py) | 导入依赖 / import_depends |
+| 784 | D_ORCHESTRATOR 代理编排器: Hallucination Detector / Hallucination Detector (orchestr... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 785 | D_ORCHESTRATOR 代理编排器: 构造 alias fallback 集合 / State Synchronizer (lifecycle/... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 786 | D_ORCHESTRATOR 代理编排器: 构造 alias fallback 集合 / State Synchronizer (lifecycle/... | → | vocabulary YAML 加载公共工具 / Yaml Utils (io/yaml_utils.py) | 导入依赖 / import_depends |
+| 787 | D_ORCHESTRATOR 代理编排器: 构造 alias fallback 集合 / State Synchronizer (lifecycle/... | → | 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
+| 788 | D_ORCHESTRATOR 代理编排器: 构造 alias fallback 集合 / State Synchronizer (lifecycle/... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 789 | D_ORCHESTRATOR 代理编排器: Rollback Manager / Rollback Manager (orchestrator/rollbac... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 790 | D_ORCHESTRATOR 代理编排器: Rollback Manager / Rollback Manager (orchestrator/rollbac... | → | 确保数据库 schema 已初始化 / Db Utils (utils/db_utils.py) | 导入依赖 / import_depends |
+| 791 | D_ORCHESTRATOR 代理编排器: Rollback Manager / Rollback Manager (orchestrator/rollbac... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 792 | D_PF_ALLOC 组合分配: 资金分配输入非法 / Multi Strategy Capital Allocator (core... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 793 | D_PF_ALLOC 组合分配: 策略信号方向 / Signal Synthesis Combiner (core/signal_syn... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 794 | D_PF_ALLOC 组合分配: 门禁裁决级别 / Strategy Correlation Gate (core/strategy_c... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 795 | D_PF_ALLOC 组合分配: Default Equity Long-Only Strategy / Default Equity Strate... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 796 | D_PF_CORE 组合核心: 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 797 | D_PF_CORE 组合核心: Performance Attribution Engine / Performance Attribution ... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 798 | D_PF_CORE 组合核心: 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 799 | D_PF_CORE 组合核心: risk_breach > drift > event > calendar) / Rebalance Sched... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 800 | D_PF_CORE 组合核心: 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 801 | D_POSITION 仓位管理: A股风险日历事件类型 / Calendar Position Constraint (core/... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 802 | D_POSITION 仓位管理: 回撤分级 / Capital Curve Manager (core/capital_curve_mana... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 803 | D_POSITION 仓位管理: 资金流水类型 / Cash Manager (core/cash_manager.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 804 | D_POSITION 仓位管理: 系统性风险 5 级 / Drawdown Controller (core/drawdown_cont... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 805 | D_POSITION 仓位管理: 漂移检测范围 / Position Drift Monitor (core/position_drif... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 806 | D_POSITION 仓位管理: 持仓动作 / Position Limit Enforcer (core/position_limit_e... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 807 | D_POSITION 仓位管理: 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 808 | D_POSITION 仓位管理: 仓位生命周期状态 / Position State Machine (core/position_... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 809 | D_POSITION 仓位管理: 仓位生命周期状态 / Position State Machine (core/position_... | → | State Machine / State Machine (lifecycle/state_machine.py) | 导入依赖 / import_depends |
+| 810 | D_POSITION 仓位管理: 再平衡触发类型 / Rebalance Engine (core/rebalance_engine.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 811 | D_POSITION 仓位管理: 仓位盈亏状态 / Sell Position Link (core/sell_position_lin... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 812 | D_POSITION 仓位管理: 仓位审计记录器 / Position Audit Logger (services/position... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 813 | D_REPORTING 报告: A-Share Performance Audit & Optimization Trigger / Ashare... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 814 | D_REPORTING 报告: A股交易记录模板引擎 / Ashare Trade Record Template (repor... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 815 | D_REPORTING 报告: Real-time P&L Dashboard / Realtime Pnl Dashboard (reporti... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 816 | D_REPORTING 报告: Real-time P&L Dashboard / Realtime Pnl Dashboard (reporti... | → | canonical location is zephyr.trading.trading_contracts.ri... | 导入依赖 / import_depends |
+| 817 | D_REPORTING 报告: Real-time P&L Dashboard / Realtime Pnl Dashboard (reporti... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 818 | D_REPORTING 报告: Regulatory Report Generator / Regulatory Report Generator... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 819 | D_REPORTING 报告: Report Publisher / Report Publisher (reporting/report_pub... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 820 | D_REPORTING 报告: Report Version Manager / Report Version Manager (reportin... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 821 | D_REPORTING 报告: Report Watermark Tracker / Report Watermark Tracker (repo... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 822 | D_REPORTING 报告: Risk Report Engine / Risk Report Engine (reporting/risk_r... | → | canonical location is zephyr.trading.trading_contracts.ri... | 导入依赖 / import_depends |
+| 823 | D_REPORTING 报告: Risk Report Engine / Risk Report Engine (reporting/risk_r... | → | canonical location is zephyr.trading.trading_contracts.ri... | 导入依赖 / import_depends |
+| 824 | D_REPORTING 报告: Risk Report Engine / Risk Report Engine (reporting/risk_r... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 825 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. / Test Real... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 测试依赖 / test_depends |
+| 826 | D_REPORTING 报告: MOD-RPT-004 Real-time P&L Dashboard 单元测试. / Test Real... | → | canonical location is zephyr.trading.trading_contracts.ri... | 测试依赖 / test_depends |
+| 827 | D_REPORTING 报告: MOD-RPT-008 Risk Report Engine 单元测试. / Test Risk Repo... | → | canonical location is zephyr.trading.trading_contracts.ri... | 测试依赖 / test_depends |
+| 828 | D_REPORTING 报告: MOD-RPT-008 Risk Report Engine 单元测试. / Test Risk Repo... | → | canonical location is zephyr.trading.trading_contracts.ri... | 测试依赖 / test_depends |
+| 829 | D_RISK 风控: A股止损规则引擎输入数据非法 / Ashare Stop Loss Engine (co... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 830 | D_RISK 风控: A股系统性风险检测器输入数据非法 / Ashare Systemic Risk De... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 831 | D_RISK 风控: 集中度告警级别 / Concentration Monitor (core/concentratio... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 832 | D_RISK 风控: 日终审计输入数据非法 / Daily Auditor (core/daily_auditor.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 833 | D_RISK 风控: 回撤告警级别 / Drawdown Tracker (core/drawdown_tracker.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 834 | D_RISK 风控: 风险预算输入数据非法 / Risk Budget Allocator (core/risk_b... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 835 | D_RISK 风控: 风险分解输入数据非法 / Risk Decomposition (core/risk_deco... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 836 | D_RISK 风控: 压力测试输入数据非法 / Stress Test Engine (core/stress_te... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 837 | D_RISK 风控: 尾部风险监控输入数据非法 / Tail Risk Monitor (core/tail_r... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 838 | D_RISK 风控: VaR 计算方法 / Var Calculator (core/var_calculator.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 839 | D_RISK 风控: Ml Experiment Pipeline / Ml Experiment Pipeline (cross_ma... | → | MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 / Ml Ex... | 导入依赖 / import_depends |
+| 840 | D_SECURITY 对抗验证: Main / Main (gov_drift/__main__.py) | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 841 | D_SECURITY 对抗验证: Cold Start / Cold Start (gov_drift/cold_start.py) | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 842 | D_SECURITY 对抗验证: Reconciler / Reconciler (gov_drift/reconciler.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 843 | D_SECURITY 对抗验证: 基于属性的权限守卫. / Abac Guard (guards/abac_guard.py) | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 844 | D_SECURITY 对抗验证: 角色与成熟度定义. / Identity (access_control/identity.py) | → | Agent Identity / Agent Identity (identity/agent_identity.py) | 导入依赖 / import_depends |
+| 845 | D_SECURITY 对抗验证: 不可变核心验证器. / Immutable Core (access_control/immuta... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 846 | D_SECURITY 对抗验证: Main / Main (orphan_judge/__main__.py) | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 847 | D_SECURITY 对抗验证: Config Loader / Config Loader (orphan_judge/config_loader... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 848 | D_SECURITY 对抗验证: Feedback Bridge / Feedback Bridge (orphan_judge/feedback_... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 849 | D_SECURITY 对抗验证: Report Generator / Report Generator (orphan_judge/report_... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 850 | D_SECURITY 对抗验证: Session 级并发协调模块 / Session Concurrency (access_cont... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 851 | D_SECURITY 对抗验证: Commit Trigger / Commit Trigger (adversarial_validation/c... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 852 | D_SECURITY 对抗验证: Commit Trigger / Commit Trigger (adversarial_validation/c... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 853 | D_SECURITY 对抗验证: Defense Runner / Defense Runner (adversarial_validation/d... | → | Execution Model / Execution Model (schema/execution_model... | 导入依赖 / import_depends |
+| 854 | D_SECURITY 对抗验证: Defense Runner / Defense Runner (adversarial_validation/d... | → | re-homed from infrastructure_runtime_integration.db.circu... | 导入依赖 / import_depends |
+| 855 | D_SECURITY 对抗验证: Steady State / Steady State (adversarial_validation/stead... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 856 | D_SECURITY 对抗验证: 只读：blast / Validator (adversarial_validation/validator... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 857 | D_SECURITY 对抗验证: 订阅 EventBusBackpressure 的 fix_completed 事件 / Validat... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 858 | D_SECURITY 对抗验证: Behavior Audit Logger / Behavior Audit Logger (llm_securi... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 859 | D_SECURITY 对抗验证: App / App (dashboard/app.py) | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 860 | D_SECURITY 对抗验证: L0 Supply Chain / L0 Supply Chain (layers/l0_supply_chain... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 861 | D_SECURITY 对抗验证: L0 Supply Chain / L0 Supply Chain (layers/l0_supply_chain... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 862 | D_SECURITY 对抗验证: 输入来源类型 / L1 Input (layers/l1_input.py) | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 863 | D_SECURITY 对抗验证: prompt 泄露扫描结果 / L2 Prompt Protection (layers/l2_pro... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 864 | D_SECURITY 对抗验证: L2a Process Sandbox / L2a Process Sandbox (layers/l2a_pro... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 865 | D_SECURITY 对抗验证: L2a Process Sandbox / L2a Process Sandbox (layers/l2a_pro... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 866 | D_SECURITY 对抗验证: 兼容旧接口的输出过滤层 / L3 Output (layers/l3_output.py) | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 867 | D_SECURITY 对抗验证: 解析 L4 HMAC 密钥 / L4 Agent (layers/l4_agent.py) | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 868 | D_SECURITY 对抗验证: 解析 L4 HMAC 密钥 / L4 Agent (layers/l4_agent.py) | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 869 | D_SECURITY 对抗验证: L5 资源保护层：token/cost/rate 限额 + 成本不对称检测 / L5... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 870 | D_SECURITY 对抗验证: security event logging, alerting, and reporting.""" / L6 ... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 871 | D_SECURITY 对抗验证: L8 Multi Agent / L8 Multi Agent (layers/l8_multi_agent.py) | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 872 | D_SECURITY 对抗验证: Secrets / Secrets (patterns/secrets.py) | → | Secrets / Secrets (security/secrets.py) | 导入依赖 / import_depends |
+| 873 | D_SECURITY 对抗验证: Process Sandbox / Process Sandbox (llm_security/process_s... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 874 | D_SECURITY 对抗验证: Process Sandbox / Process Sandbox (llm_security/process_s... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 875 | D_SECURITY 对抗验证: LLM Security Gateway 九层防御统一接口契约 / Protocol (llm... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 876 | D_SECURITY 对抗验证: 对 Red Team 载荷施加 10 种变异技术，检验 LSG 抗干扰能力. ... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 877 | D_SECURITY 对抗验证: L7 Validation / L7 Validation (self_protection/l7_validat... | → | Security Decision / Security Decision (security/security_... | 导入依赖 / import_depends |
+| 878 | D_SECURITY 对抗验证: L7 Red Team 对抗扫描器. / Red Team Scanner (self_protecti... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 879 | D_SELL_DECISION 卖出决策: 突破成败状态 / Breakout Failure Detector (core/breakout_f... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 880 | D_SELL_DECISION 卖出决策: 置换/再平衡卖出类型 / Replacement Rebalance Seller (core/... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 881 | D_SELL_DECISION 卖出决策: 冲突等级 / Sell Conflict Arbitrator (core/sell_conflict_a... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 882 | D_SELL_DECISION 卖出决策: —不可扩展) / Sell Signal Collector (core/sell_signal_col... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 883 | D_SELL_DECISION 卖出决策: 融合算法 / Sell Signal Fusion Engine (core/sell_signal_fu... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 884 | D_SELL_DECISION 卖出决策: 紧迫度等级 / Sell Urgency Scorer (core/sell_urgency_score... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 885 | D_SELL_DECISION 卖出决策: 止损位偏移方向 / Stop Hunting Protector (core/stop_huntin... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 886 | D_SIMULATION 仿真: Deflated Sharpe Ratio Calculator / Deflated Sharpe Calcul... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 887 | D_SIMULATION 仿真: Look-Ahead Bias Detector / Look Ahead Bias Detector (simu... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 888 | D_SIMULATION 仿真: Parameter Robustness Tester / Parameter Robustness Tester... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 889 | D_SIMULATION 仿真: Simulation Result Analyzer / Result Analyzer (simulation/... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 890 | D_SIMULATION 仿真: Risk Simulator / Risk Simulator (simulation/risk_simulato... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 891 | D_SIMULATION 仿真: Scenario Generator / Scenario Generator (simulation/scena... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 892 | D_SIMULATION 仿真: Sharpe Calculator Fixer / Sharpe Calculator Fixer (simula... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 893 | D_SIMULATION 仿真: Strategy Simulator / Strategy Simulator (simulation/strat... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 894 | D_TRADING 交易运营: 推理结果 -> 直接回写源文件 / Init (action_dispatcher/__in... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 895 | D_TRADING 交易运营: 推理结果 -> 直接回写源文件 / Init (action_dispatcher/__in... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 896 | D_TRADING 交易运营: 推理结果 -> 直接回写源文件 / Init (action_dispatcher/__in... | → | 序列化/反序列化过程中类型不兼容或格式错误 / Serialization... | 导入依赖 / import_depends |
+| 897 | D_TRADING 交易运营: 推理结果 -> 直接回写源文件 / Init (action_dispatcher/__in... | → | Task Types / Task Types (schema/task_types.py) | 导入依赖 / import_depends |
+| 898 | D_TRADING 交易运营: 执行 TaskCard 并触发整条基础设施管道 / Auto Dispatcher (t... | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 899 | D_TRADING 交易运营: 执行 TaskCard 并触发整条基础设施管道 / Auto Dispatcher (t... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 900 | D_TRADING 交易运营: AI session 自动找活干、认领任务 / Autopilot (trading/auto... | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 901 | D_TRADING 交易运营: AI session 自动找活干、认领任务 / Autopilot (trading/auto... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 902 | D_TRADING 交易运营: AI session 自动找活干、认领任务 / Autopilot (trading/auto... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 903 | D_TRADING 交易运营: AI session 自动找活干、认领任务 / Autopilot (trading/auto... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 904 | D_TRADING 交易运营: — 认领 + 冲突检测 + 并行分组 + 状态管理 / Conductor (tra... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 905 | D_TRADING 交易运营: — 认领 + 冲突检测 + 并行分组 + 状态管理 / Conductor (tra... | → | —蓝图 MOD-TASK_SYSTEM §3.2.2""" / Models (foundation/mo... | 导入依赖 / import_depends |
+| 906 | D_TRADING 交易运营: Corporate Action & Fee Processor / Corporate Action Proce... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 907 | D_TRADING 交易运营: Gpu Consensus Scheduler / Gpu Consensus Scheduler (tradin... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 908 | D_TRADING 交易运营: Gpu Monitor / Gpu Monitor (trading/gpu_monitor.py) | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 909 | D_TRADING 交易运营: 无窗口 subprocess.run wrapper / Ide Health Daemon (tradin... | → | D-ORCH / D-GOV / D-RESILIENCE 通过此接口访问任务持久化 / ... | 导入依赖 / import_depends |
+| 910 | D_TRADING 交易运营: 无窗口 subprocess.run wrapper / Ide Health Daemon (tradin... | → | 任务生命周期事件类型 / Event Bus (shared/event_bus.py) | 导入依赖 / import_depends |
+| 911 | D_TRADING 交易运营: 无窗口 subprocess.run wrapper / Ide Health Daemon (tradin... | → | Constants / Constants (foundation/constants.py) | 导入依赖 / import_depends |
+| 912 | D_TRADING 交易运营: 无窗口 subprocess.run wrapper / Ide Health Daemon (tradin... | → | 返回 Windows 无窗口 creationflags；POSIX 返回 0 / Process... | 导入依赖 / import_depends |
+| 913 | D_TRADING 交易运营: 无窗口 subprocess.run wrapper / Ide Health Daemon (tradin... | → | 注册 datetime/date→sqlite3 str 适配器 / Time Utils (util... | 导入依赖 / import_depends |
+| 914 | D_TRADING 交易运营: PnL Calculator / Pnl Calculator (trading/pnl_calculator.py) | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 915 | D_TRADING 交易运营: PnL Calculator / Pnl Calculator (trading/pnl_calculator.py) | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 916 | D_TRADING 交易运营: 事件循环引导 + run_in_executor 桥接 / Async Runtime (runt... | → | async/sync 边界桥接 / Async Utils (utils/async_utils.py) | 导入依赖 / import_depends |
+| 917 | D_TRADING 交易运营: Settlement & Reconciliation Engine / Settlement Reconcili... | → | ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 918 | D_TRADING 交易运营: Speed Baseline Checker / Speed Baseline Checker (trading/... | → | 从当前文件向上查找项目根目录 / Paths (io/paths.py) | 导入依赖 / import_depends |
+| 919 | D_TRADING 交易运营: Order 真源在 zephyr.shared.contracts.order / Order (execu... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 导入依赖 / import_depends |
+| 920 | D_TRADING 交易运营: Signal Degradation Warning / Signal Degradation Warning (... | → | Trace Context / Trace Context (core/trace_context.py) | 导入依赖 / import_depends |
+| 921 | D_TRADING 交易运营: Money / Money (contracts/money.py) | → | Money / Money (portfolio/money.py) | 导入依赖 / import_depends |
+| 922 | D_TRADING 交易运营: MOD-TRADING-002 PnL Calculator 单元测试. / Test Pnl Calcu... | → | 交易枚举真源 / Order Enums (enums/order_enums.py) | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
