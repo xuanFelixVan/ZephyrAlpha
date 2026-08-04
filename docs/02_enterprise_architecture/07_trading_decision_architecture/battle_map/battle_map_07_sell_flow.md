@@ -3,14 +3,14 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-04
+date: 2026-08-05
 ---
 
 # 作战地图·卖出阶段
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_07_sell_flow.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §sell_flow 阶段，14 环节（27 锚点）。
+> battle_map §sell_flow 阶段，14 环节（28 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-04
 |------|------|-------|-------|
 | 阶段 | 卖出（sell_flow） | Stage | 卖出 |
 | 环节数 | 14 | Steps | 14 |
-| 锚点数（双向对齐） | 27 | Anchors (Bidirectional) | 27 |
+| 锚点数（双向对齐） | 28 | Anchors (Bidirectional) | 28 |
 | 流转边 | 17 | Edges | 17 |
 | 状态分布 | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 | State Distribution | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 |
 
@@ -499,7 +499,7 @@ v6.0分批退出模式(Scaling Out Architecture)：等分退出(1/3-1/3-1/3)/倒
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：7类卖出信号+突破成败汇总+风控强制清仓；②消费：BM-SELL-01 突破成败 + 卖出策略工厂7类信号(BM-SELL-04/05) + 收集评分(BM-SELL-03)；③参数：融合算法=加权平均/贝叶斯/D-S证据、紧迫度阈值1.0/0.6/0.3、共振权重×1.5(proposed)；④数据流：多源卖出信号→加权融合(综合意愿0~1)+紧迫度评分→执行策略映射→卖出决策→BM-SELL-06买卖冲突仲裁→BM-POS-01；⑤代码：MOD-SELL-007 融合引擎(stable)+MOD-SELL-009 紧迫度评分器(stable)；⑥降级：融合未就绪→各信号独立触发(止盈/止损/风控卖出各自直接执行，跳过融合仲裁)。
+①触发：7类卖出信号+突破成败汇总+风控强制清仓；②消费：BM-SELL-01 突破成败 + 卖出策略工厂7类信号(BM-SELL-04/05) + 收集评分(BM-SELL-03)；③参数：融合算法=加权平均/贝叶斯/D-S证据、紧迫度阈值1.0/0.6/0.3、共振权重×1.5(proposed)；④数据流：多源卖出信号→加权融合(综合意愿0~1)+紧迫度评分→执行策略映射→卖出决策→BM-SELL-06买卖冲突仲裁→BM-POS-01，策略未覆盖/冲突时走v7.0因子直通(Model-Free Factor Fusion，MOD-INF-047 supplement，因子加权融合直接产生卖出决策，L743)；⑤代码：MOD-SELL-007 融合引擎(stable)+MOD-SELL-009 紧迫度评分器(stable)；⑥降级：融合未就绪→各信号独立触发(止盈/止损/风控卖出各自直接执行，跳过融合仲裁)。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -511,6 +511,7 @@ v6.0分批退出模式(Scaling Out Architecture)：等分退出(1/3-1/3-1/3)/倒
 | depgraph | MOD-SELL-002 | supplement | planned | planned |
 | depgraph | MOD-SELL-009 | supplement | stable | stable |
 | depgraph | MOD-SELL_DECISION | primary | stable | generated |
+| depgraph | MOD-INF-047 | supplement | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：sell_flow
 

@@ -53,7 +53,7 @@ language: zh
 ## 6. 任务计数
 
 <!-- AUTO-START:task_counts -->
-<!-- 数据源：data_sources_registry.yaml | 最后同步：2026-08-03 -->
+<!-- 数据源：data_sources_registry.yaml | 最后同步：2026-08-04 -->
 
 | Provider ID | 名称 | 类型 | 状态 |
 |-------------|------|------|------|
@@ -72,7 +72,10 @@ language: zh
 | `DS-YFINANCE` | yfinance | open_source | deprecated |
 | `DS-STOOQ` | Stooq | open_source | deprecated |
 | `DS-TQCENTER` | tqcenter | commercial | active |
-| **合计 / Total providers** | | | **15** |
+| `DS-FRED` | FRED/世界银行 宏观数据 | open_source | active |
+| `DS-EIA` | EIA 能源数据 | open_source | active |
+| `DS-QWEATHER` | 和风天气 | open_source | active |
+| **合计 / Total providers** | | | **18** |
 <!-- AUTO-END:task_counts -->
 
 ## 7. CLI 子命令

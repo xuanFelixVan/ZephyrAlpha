@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-04
+date: 2026-08-05
 ---
 
 # 作战地图·回测验证阶段
@@ -755,7 +755,7 @@ v2.0 备忘模块，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-022 | primary | stable | generated |
+| depgraph | MOD-BT-022 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 

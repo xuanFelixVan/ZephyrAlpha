@@ -1538,6 +1538,8 @@ _CROSS_CUTTING_RENDERERS = {
     "factor_governance": _format_generic_cross_cutting_md,
     # 以下 1 项来源 01-跨域交叉点与因果链.md（硬边界约束体系，2026-08-03）
     "hard_boundary_constraints": _format_generic_cross_cutting_md,
+    # 以下 1 项来源交易决策架构 v8.1 横切层（模型量化，2026-08-05）
+    "model_quantization": _format_generic_cross_cutting_md,
 }
 
 

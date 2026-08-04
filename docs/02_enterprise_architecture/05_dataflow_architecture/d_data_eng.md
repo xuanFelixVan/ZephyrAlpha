@@ -3,14 +3,14 @@ doc_type: architecture_view
 title: 数据工程域-数据工程服务
 version: "1.0"
 status: active
-date: 2026-08-03
+date: 2026-08-05
 owner: auto-generator
 ttl: permanent
 ---
 
 # 数据工程域-数据工程服务
 
-> 生成时间: 2026-08-03T21:21:09
+> 生成时间: 2026-08-05T04:17:14
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -64,14 +64,14 @@ flowchart TD
     JOB757624 -.->|produces / 产出| DS11260
     JOB757625 -.->|produces / 产出| DS11261
     JOB757626 -.->|produces / 产出| DS11262
-    JOB757624 ~~~ JOB757625
-    JOB757625 ~~~ JOB757626
-    JOB757626 ~~~ JOB757623
-    JOB757623 ~~~ JOB757622
-    DS11260 ~~~ DS11261
-    DS11261 ~~~ DS11262
-    DS11262 ~~~ DS11259
-    DS11259 ~~~ DS11258
+    JOB757622 ~~~ JOB757625
+    JOB757625 ~~~ JOB757624
+    JOB757624 ~~~ JOB757623
+    JOB757623 ~~~ JOB757626
+    DS11258 ~~~ DS11261
+    DS11261 ~~~ DS11260
+    DS11260 ~~~ DS11259
+    DS11259 ~~~ DS11262
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -105,14 +105,14 @@ flowchart TD
     JOB757624 -.->|produces / 产出| DS11260
     JOB757625 -.->|produces / 产出| DS11261
     JOB757626 -.->|produces / 产出| DS11262
-    JOB757624 ~~~ JOB757625
-    JOB757625 ~~~ JOB757626
-    JOB757626 ~~~ JOB757623
-    JOB757623 ~~~ JOB757622
-    DS11260 ~~~ DS11261
-    DS11261 ~~~ DS11262
-    DS11262 ~~~ DS11259
-    DS11259 ~~~ DS11258
+    JOB757622 ~~~ JOB757625
+    JOB757625 ~~~ JOB757624
+    JOB757624 ~~~ JOB757623
+    JOB757623 ~~~ JOB757626
+    DS11258 ~~~ DS11261
+    DS11261 ~~~ DS11260
+    DS11260 ~~~ DS11259
+    DS11259 ~~~ DS11262
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

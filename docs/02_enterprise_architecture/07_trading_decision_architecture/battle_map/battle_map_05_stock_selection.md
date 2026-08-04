@@ -3,14 +3,14 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-04
+date: 2026-08-05
 ---
 
 # 作战地图·选股阶段
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_05_stock_selection.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §stock_selection 阶段，91 环节（150 锚点）。
+> battle_map §stock_selection 阶段，92 环节（153 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-04
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 选股（stock_selection） | Stage | 选股 |
-| 环节数 | 91 | Steps | 91 |
-| 锚点数（双向对齐） | 150 | Anchors (Bidirectional) | 150 |
+| 环节数 | 92 | Steps | 92 |
+| 锚点数（双向对齐） | 153 | Anchors (Bidirectional) | 153 |
 | 流转边 | 17 | Edges | 17 |
-| 状态分布 | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=22 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=1 | State Distribution | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=22 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=1 |
+| 状态分布 | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=23 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=1 | State Distribution | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=23 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-04
 
 ## 阶段图 / Stage Diagram
 
-> 展示 选股 阶段全部 91 个环节及流转边，颜色区分五态。
+> 展示 选股 阶段全部 92 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -235,13 +235,17 @@ flowchart TD
     BM_SEL_11["【BM-SEL-11 知识图谱与因果推演】<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Knowledge Graph &amp; Causal Inference】"]
     BM_SEL_12["【BM-SEL-12 分布特征工程】<br/>给因子加料——滞后项、交互项、滚动统计量、签名方法<br/>，专门喂给密度预测模型。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Distribution Feature Engineering】"]
     BM_SEL_13["【BM-SEL-13 收益率条件密度预测】<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Conditional Density Prediction】"]
-    BM_SEL_14["【BM-SEL-14 共形预测】<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Conformal Prediction】"]
+    subgraph sg_BM_SEL_14 ["共形预测"]
+        BM_SEL_14["【BM-SEL-14 共形预测】<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Conformal Prediction】"]
+        BM_SEL_14_A["【BM-SEL-14-A 自适应保形非平稳覆盖（TCP-RM<br/>/DDCI）】<br/>市场脾气变了（非平稳）时，普通共形预测的覆盖率保<br/>证会失效——这个环节让预测区间自动跟着市场状态伸缩<br/>，覆盖率依然有保障。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Adaptive Conformal Non-Stationary Coverage<br/>（TCP-RM/DDCI）】"]
+        BM_SEL_14 -.->|嵌套| BM_SEL_14_A
+    end
     BM_SEL_15["【BM-SEL-15 Survival止盈止损时间预测】<br/>预测止盈止损还有多久发生——不是固定N天，而是时间<br/>概率分布。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Survival Stop-Time Prediction】"]
     BM_SEL_16["【BM-SEL-16 分级指标过滤】<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Tiered Screening Filter】"]
     BM_SEL_17["【BM-SEL-17 初筛漏斗】<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Coarse Screening Funnel】"]
     BM_SEL_18["【BM-SEL-18 精筛评分】<br/>漏斗第三层——60秒级从300只评到50只，多维因子打分+<br/>市场状态动态偏移+主力+8态+拥挤度+密度分布全用上<br/>。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Fine Scoring】"]
     BM_SEL_19["【BM-SEL-19 事件驱动分布筛选】<br/>漏斗第四层——从50只筛到30只，看事件影响、事件修正<br/>后的概率分布、传导链风险，没事件数据源就跳过。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Event-Driven Distribution Screening】"]
-    BM_SEL_25 ~~~ BM_SEL_25_A ~~~ BM_SEL_25_B ~~~ BM_SEL_25_C ~~~ BM_SEL_25_C_1 ~~~ BM_SEL_25_C_2 ~~~ BM_SEL_25_C_3 ~~~ BM_SEL_25_C_4 ~~~ BM_SEL_25_C_5 ~~~ BM_SEL_25_C_6 ~~~ BM_SEL_25_D ~~~ BM_SEL_26 ~~~ BM_SEL_27 ~~~ BM_SEL_03 ~~~ BM_SEL_03_A ~~~ BM_SEL_03_B ~~~ BM_SEL_05 ~~~ BM_SEL_05_A ~~~ BM_SEL_05_B ~~~ BM_SEL_05_C ~~~ BM_SEL_05_D ~~~ BM_SEL_05_E ~~~ BM_SEL_05_F ~~~ BM_SEL_06 ~~~ BM_SEL_07 ~~~ BM_SEL_08 ~~~ BM_SEL_08_A ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_15 ~~~ BM_SEL_16
+    BM_SEL_25 ~~~ BM_SEL_25_A ~~~ BM_SEL_25_B ~~~ BM_SEL_25_C ~~~ BM_SEL_25_C_1 ~~~ BM_SEL_25_C_2 ~~~ BM_SEL_25_C_3 ~~~ BM_SEL_25_C_4 ~~~ BM_SEL_25_C_5 ~~~ BM_SEL_25_C_6 ~~~ BM_SEL_25_D ~~~ BM_SEL_26 ~~~ BM_SEL_27 ~~~ BM_SEL_03 ~~~ BM_SEL_03_A ~~~ BM_SEL_03_B ~~~ BM_SEL_05 ~~~ BM_SEL_05_A ~~~ BM_SEL_05_B ~~~ BM_SEL_05_C ~~~ BM_SEL_05_D ~~~ BM_SEL_05_E ~~~ BM_SEL_05_F ~~~ BM_SEL_06 ~~~ BM_SEL_07 ~~~ BM_SEL_08 ~~~ BM_SEL_08_A ~~~ BM_SEL_09 ~~~ BM_SEL_10 ~~~ BM_SEL_11 ~~~ BM_SEL_12 ~~~ BM_SEL_13 ~~~ BM_SEL_14 ~~~ BM_SEL_14_A ~~~ BM_SEL_15 ~~~ BM_SEL_16
     BM_SEL_04 ~~~ BM_SEL_17
     BM_SEL_03 -.->|市场状态 / data_flow| BM_SEL_04
     BM_SEL_03 -.->|C-021未就绪→跳过降级 / degradation| BM_SEL_04
@@ -254,7 +258,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_SEL_25,BM_SEL_25_A,BM_SEL_25_B,BM_SEL_25_C,BM_SEL_25_C_1,BM_SEL_25_C_2,BM_SEL_25_C_3,BM_SEL_25_C_4,BM_SEL_25_C_5,BM_SEL_25_C_6,BM_SEL_25_D,BM_SEL_27,BM_SEL_03_A,BM_SEL_05,BM_SEL_05_A,BM_SEL_05_B,BM_SEL_05_C,BM_SEL_08,BM_SEL_08_A production
-    class BM_SEL_03,BM_SEL_03_B,BM_SEL_04,BM_SEL_05_D,BM_SEL_05_E,BM_SEL_05_F,BM_SEL_06,BM_SEL_07,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19 design
+    class BM_SEL_03,BM_SEL_03_B,BM_SEL_04,BM_SEL_05_D,BM_SEL_05_E,BM_SEL_05_F,BM_SEL_06,BM_SEL_07,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_14_A,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19 design
     class BM_SEL_26 missing
 ```
 
@@ -290,11 +294,11 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-003 | primary | planned | generated |
-| depgraph | MOD-INF-002 | supplement | production | generated |
+| depgraph | MOD-INF-002 | supplement | production | stable |
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 | depgraph | MOD-INF-043 | primary | stable | generated |
-| depgraph | MOD-L00-004 | primary | stable | deprecated |
+| depgraph | MOD-L00-004 | primary | stable | generated |
 | depgraph | MOD-ALT_DATA | primary | stable | generated |
 | depgraph | MOD-INTEGRATION | primary | stable | generated |
 | depgraph | MOD-INF-026 | supplement | stable | stable |
@@ -335,7 +339,7 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
-| depgraph | MOD-L03-001 | supplement | production | generated |
+| depgraph | MOD-L03-001 | supplement | production | stable |
 | depgraph | MOD-INF-038 | primary | stable | stable |
 | depgraph | MOD-SIGNAL_ASHARE | primary | stable | generated |
 | depgraph | MOD-ML_SERVE | primary | stable | generated |
@@ -980,7 +984,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-006 原始数据缓存把适配器�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-006 | primary | production | generated |
-| depgraph | MOD-L00-006 | primary | stable | generated |
+| depgraph | MOD-L00-006 | primary | stable | stable |
 | depgraph | MOD-H1_REDIS_HOT | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
@@ -1094,6 +1098,7 @@ L1 层。分布特征工程（§3.5），产出滞后项/交互项/滚动统计�
 **机制说明**：
 
 L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数化归一化流/扩散），派生偏度/峰度/前瞻VaR/CVaR/8态概率P1~P8。被8态预测、组合优化、风控共形VaR三层消费。
+时序建模升级：🆕v8.1 Mamba/SSM 时序增强（MOD-SIG-051，线性复杂度长序列建模，与 Transformer 互补，替代二次复杂度瓶颈）；🆕v8.2 Kronos-mini/base（MOD-SIG-050，金融K线 TSFM 零样本预测，无需逐股微调即可产出收益率分布先验）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1109,7 +1114,7 @@ L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：信号层产出条件PDF；②消费：分布特征+因子池(L1)；③参数：Phase=参数化→混合→非参数化，派生偏度/峰度/前瞻VaR/CVaR/P1~P8(proposed)；④数据流：分布特征→PDF→派生量→8态/组合优化/风控；⑤代码：缺失态-未实现（草图§4.5）；⑥降级：未就绪→8态用离散估计无分布增强。
+①触发：信号层产出条件PDF；②消费：分布特征+因子池(L1)+Kronos零样本先验；③参数：Phase=参数化→混合→非参数化，派生偏度/峰度/前瞻VaR/CVaR/P1~P8(proposed)，Mamba/SSM序列长度(proposed)；④数据流：分布特征→PDF(Mamba/SSM+Kronos增强)→派生量→8态/组合优化/风控；⑤代码：MOD-SIG-043 条件密度预测器(planned)+MOD-SIG-050 Kronos TSFM(planned)+MOD-SIG-051 Mamba/SSM时序增强(planned)（草图§4.5）；⑥降级：未就绪→8态用离散估计无分布增强。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1118,6 +1123,8 @@ L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-4924 | primary | candidate | — |
 | depgraph | MOD-SIG-043 | primary | planned | planned |
+| depgraph | MOD-SIG-050 | primary | planned | planned |
+| depgraph | MOD-SIG-051 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
@@ -1127,7 +1134,8 @@ L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数
 
 **机制说明**：
 
-L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率保证区间，输出给风控共形VaR和信号置信区间。
+L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率保证区间，输出给风控共形VaR和信号置信区间。🆕v8.1
+自适应变体见子环节 BM-SEL-14-A（TCP-RM/DDCI，非平稳环境下的自适应保形覆盖）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1143,7 +1151,7 @@ L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：密度预测输出后叠加共形区间；②消费：密度预测PDF(L2A)；③参数：覆盖率=95%(proposed)；④数据流：PDF→共形→覆盖率保证区间→风控共形VaR/信号置信区间；⑤代码：缺失态-未实现（草图§1.7）；⑥降级：未就绪→区间无数学覆盖率保证。
+①触发：密度预测输出后叠加共形区间；②消费：密度预测PDF(L2A)；③参数：覆盖率=95%(proposed)；④数据流：PDF→共形→覆盖率保证区间→风控共形VaR/信号置信区间；⑤代码：MOD-SIG-044 共形预测器(planned)（草图§1.7），自适应变体MOD-SIG-052(BM-SEL-14-A)；⑥降级：未就绪→区间无数学覆盖率保证。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1152,6 +1160,41 @@ L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-1428 | primary | candidate | — |
 | depgraph | MOD-SIG-044 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+
+### BM-SEL-14-A 自适应保形非平稳覆盖（TCP-RM/DDCI） / Adaptive Conformal Non-Stationary Coverage (TCP-RM/DDCI)
+
+> **大白话**：市场脾气变了（非平稳）时，普通共形预测的覆盖率保证会失效——这个环节让预测区间自动跟着市场状态伸缩，覆盖率依然有保障。
+
+**机制说明**：
+
+BM-SEL-14 共形预测的子环节（depth=1），🆕v8.1 新增。TCP-RM（自适应保形，按滚动窗口/体制模型自动调整覆盖半径）+
+DDCI（分布无关动态保形推断，面向非平稳时序的覆盖率保证）。与静态共形预测互补：静态版保证分布无关覆盖率，
+自适应版在体制漂移/分布迁移下仍维持覆盖率（交易决策架构 v8.1 升级注记 L433 + L2-A 图框 L461-464）。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 密度预测PDF输出后，非平稳市场环境（体制漂移/分布迁移）触发自适应保形覆盖 |
+| ② 消费数据/因子 | BM-SEL-13 收益率条件密度PDF + BM-SEL-07 体制转换标签 |
+| ③ 参数 | TCP-RM（自适应保形滚动/regime模型覆盖半径）+ DDCI（非平稳分布无关动态保形推断）；目标覆盖率95%；v8.1新增 |
+| ④ 数据流 | 密度PDF+体制标签→TCP-RM/DDCI自适应区间→非平稳覆盖率保证→BM-SEL-04 8态预测/BM-BUY-02 信号置信度 |
+| ⑤ 代码映射 | MOD-SIG-052 src/zephyr/signal_ashare/adaptive_conformal_tcp_rm_ddci.py（planned） |
+| ⑥ 降级/中止 | 自适应变体失效→回退BM-SEL-14静态共形预测（分布无关静态覆盖率保证） |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：密度PDF输出后，非平稳市场环境（体制漂移/分布迁移）触发自适应覆盖；②消费：BM-SEL-13 条件密度PDF + BM-SEL-07 体制转换标签；③参数：TCP-RM滚动窗口/regime模型、DDCI动态覆盖、目标覆盖率95%(proposed)；④数据流：密度PDF+体制标签→TCP-RM/DDCI自适应区间→非平稳覆盖率保证→BM-SEL-04/BM-BUY-02；⑤代码：MOD-SIG-052 自适应保形(planned)；⑥降级：自适应变体失效→回退BM-SEL-14静态共形预测。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-052 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
 
@@ -1616,7 +1659,7 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 | depgraph | MOD-L02-015 | supplement | production | stable |
 | depgraph | MOD-L02-016 | supplement | production | stable |
 | depgraph | MOD-L02-017 | supplement | production | stable |
-| depgraph | MOD-SIG-006 | supplement | production | stable |
+| depgraph | MOD-SIG-006 | supplement | production | generated |
 | depgraph | MOD-L02_GOV | primary | stable | generated |
 | depgraph | MOD-INF-040 | primary | stable | generated |
 

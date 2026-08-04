@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-04
+date: 2026-08-05
 ---
 
 # 作战地图·风控管控阶段
@@ -43,11 +43,6 @@ date: 2026-08-04
 %% 风控管控阶段图
 flowchart TD
     BM_RC_09["【BM-RC-09 AI/Agent风险治理】<br/>AI/Agent特有风险治理——模型幻觉/自治越界<br/>/对抗攻击/串谋等AI专属风险。<br/>（生产态 / production）<br/>【AI/Agent Risk Governance】"]
-    subgraph sg_BM_RC_10 ["风险否决权"]
-        BM_RC_10["【BM-RC-10 风险否决权】<br/>风险否决权——风控可在任何阶段否决交易决策，不可绕<br/>过、不可人工覆盖。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Risk Veto Power】"]
-        BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>否决执行引擎——同步拦截（&lt;50ms）+熔断器模式+Kill<br/>Switch多路径激活+审计追踪。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Veto Execution Engine】"]
-        BM_RC_10 -.->|嵌套| BM_RC_10_A
-    end
     subgraph sg_BM_RC_01 ["风控策略与限额管理"]
         BM_RC_01["【BM-RC-01 风控策略与限额管理】<br/>风控的'宪法'——策略<br/>CRUD+版本管理+9种限额类型+消耗追踪+预警分级+审批<br/>流。<br/>（生产态 / production）<br/>【Risk Policy &amp; Limit Management】"]
         BM_RC_01_A["【BM-RC-01-A 风控策略CRUD与版本管理】<br/>风控规则的增删改查带版本管理——改了规则能追溯历史<br/>版本，出问题能回滚。<br/>（生产态 / production）<br/>【Risk Strategy CRUD &amp; Versioning】"]
@@ -56,6 +51,11 @@ flowchart TD
         BM_RC_01 -.->|嵌套| BM_RC_01_A
         BM_RC_01 -.->|嵌套| BM_RC_01_B
         BM_RC_01 -.->|嵌套| BM_RC_01_C
+    end
+    subgraph sg_BM_RC_10 ["风险否决权"]
+        BM_RC_10["【BM-RC-10 风险否决权】<br/>风险否决权——风控可在任何阶段否决交易决策，不可绕<br/>过、不可人工覆盖。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Risk Veto Power】"]
+        BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>否决执行引擎——同步拦截（&lt;50ms）+熔断器模式+Kill<br/>Switch多路径激活+审计追踪。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Veto Execution Engine】"]
+        BM_RC_10 -.->|嵌套| BM_RC_10_A
     end
     subgraph sg_BM_RC_11 ["独立风险数据管道"]
         BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>独立风险数据管道——风控用独立数据源，不依赖交易链<br/>路，防止数据污染。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Independent Risk Data Pipeline】"]
@@ -152,7 +152,7 @@ flowchart TD
         BM_RC_08 -.->|嵌套| BM_RC_08_D
         BM_RC_08 -.->|嵌套| BM_RC_08_E
     end
-    BM_RC_09 ~~~ BM_RC_10 ~~~ BM_RC_01 ~~~ BM_RC_11 ~~~ BM_RC_01_A ~~~ BM_RC_12 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
+    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_11 ~~~ BM_RC_01_A ~~~ BM_RC_12 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
     BM_RC_01 -->|策略→盘前检查 / data_flow| BM_RC_02
     BM_RC_02 -->|检查→Kill Switch / trigger| BM_RC_03
     BM_RC_03 -->|熔断→盘中监控 / data_flow| BM_RC_04
@@ -205,33 +205,6 @@ AI/Agent风险治理。模型幻觉(生成虚假信息)→输出校验+置信度
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-10 风险否决权 / Risk Veto Power
-
-> **大白话**：风险否决权——风控可在任何阶段否决交易决策，不可绕过、不可人工覆盖。
-
-**机制说明**：
-
-风险否决权。风控在任何阶段(选股/买入/卖出/执行)可否决交易决策。特性：不可绕过(所有订单必经引擎)+不可人工否决(防御性决策自动执行)+Kill Switch基础设施层实现+否决审计追踪。
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | 风控规则触发否决条件/交易请求拦截 |
-| ② 消费数据/因子 | 风控策略+持仓状态+交易请求+BM-RC-01限额配置 |
-| ③ 参数 | 否决规则、否决执行机制、否决与策略逻辑隔离 |
-| ④ 数据流 | 交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch |
-| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
-| ⑥ 降级/中止 | 否决机制失效→硬阻断交易(安全优先) |
-
-**指标文案（翻译真源 indicators_zh）**：
-
-①触发：风控规则触发否决条件/交易请求拦截；②消费：风控策略+持仓状态+交易请求+BM-RC-01限额配置；③参数：否决规则、否决执行机制、否决与策略逻辑隔离；④数据流：交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：否决机制失效→硬阻断交易(安全优先)。
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
-
 ### BM-RC-01 风控策略与限额管理 / Risk Policy & Limit Management
 
 > **大白话**：风控的"宪法"——策略 CRUD+版本管理+9种限额类型+消耗追踪+预警分级+审批流。
@@ -266,6 +239,33 @@ RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTO
 | depgraph | MOD-L04-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-10 风险否决权 / Risk Veto Power
+
+> **大白话**：风险否决权——风控可在任何阶段否决交易决策，不可绕过、不可人工覆盖。
+
+**机制说明**：
+
+风险否决权。风控在任何阶段(选股/买入/卖出/执行)可否决交易决策。特性：不可绕过(所有订单必经引擎)+不可人工否决(防御性决策自动执行)+Kill Switch基础设施层实现+否决审计追踪。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 风控规则触发否决条件/交易请求拦截 |
+| ② 消费数据/因子 | 风控策略+持仓状态+交易请求+BM-RC-01限额配置 |
+| ③ 参数 | 否决规则、否决执行机制、否决与策略逻辑隔离 |
+| ④ 数据流 | 交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch |
+| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
+| ⑥ 降级/中止 | 否决机制失效→硬阻断交易(安全优先) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：风控规则触发否决条件/交易请求拦截；②消费：风控策略+持仓状态+交易请求+BM-RC-01限额配置；③参数：否决规则、否决执行机制、否决与策略逻辑隔离；④数据流：交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：否决机制失效→硬阻断交易(安全优先)。
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-11 独立风险数据管道 / Independent Risk Data Pipeline
 
@@ -1265,7 +1265,7 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-RK-05 | primary | stable | generated |
-| depgraph | MOD-RK-08 | supplement | stable | stable |
+| depgraph | MOD-RK-08 | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1327,7 +1327,7 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-08 | primary | production | stable |
+| depgraph | MOD-RK-08 | primary | production | generated |
 | depgraph | MOD-POS-011 | supplement | planned | planned |
 | depgraph | MOD-POS-013 | supplement | planned | planned |
 
@@ -1360,7 +1360,7 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-08 | primary | production | stable |
+| depgraph | MOD-RK-08 | primary | production | generated |
 | depgraph | MOD-RK-16 | supplement | production | generated |
 | depgraph | MOD-POS-012 | supplement | planned | planned |
 

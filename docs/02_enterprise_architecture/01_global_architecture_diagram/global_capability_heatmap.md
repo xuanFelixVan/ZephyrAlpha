@@ -139,7 +139,7 @@ ttl: permanent
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | C1 | 数据接入 | 4 | 210 | 183 | 27 | 2.50 | 🟡 部分覆盖 / Partial |
-| C2 | 因子研究 | 5 | 137 | 76 | 61 | 2.20 | 🟡 部分覆盖 / Partial |
+| C2 | 因子研究 | 5 | 140 | 76 | 64 | 2.20 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 28 | 23 | 5 | 2.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 56 | 37 | 19 | 2.75 | 🟡 部分覆盖 / Partial |
 | C5 | 执行交易 | 4 | 117 | 86 | 31 | 3.00 | ✅ 完全覆盖 / Full |
@@ -147,7 +147,7 @@ ttl: permanent
 | C7 | 回测仿真 | 4 | 50 | 49 | 1 | 2.50 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 14 | 1019 | 989 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 173 | 173 | 0 | 1.00 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 835 | 827 | 8 | 2.31 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 837 | 827 | 10 | 2.31 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -157,7 +157,7 @@ ttl: permanent
 | D_DATA | 数据接入层 | C1 | L1_foundation | 163 | 150 | 13 | 19 | L3 🟢 | ✅ |
 | D_DATA_ENG | 数据工程 | C1 | L1_foundation | 20 | 7 | 13 | 0 | L2 🟡 | 🟡 |
 | D_MKT_DATA | 行情数据 | C1 | L1_foundation | 19 | 19 | 0 | 7 | L3 🟢 | ✅ |
-| D_ASHARE_SIGNAL | A股特色信号 | C2 | L2_domain | 31 | 16 | 15 | 10 | L3 🟢 | ✅ |
+| D_ASHARE_SIGNAL | A股特色信号 | C2 | L2_domain | 34 | 16 | 18 | 10 | L3 🟢 | ✅ |
 | D_FACTOR | 因子 | C2 | L2_domain | 90 | 46 | 44 | 22 | L3 🟢 | ✅ |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L2_domain | 14 | 12 | 2 | 6 | L3 🟢 | ✅ |
 | D_SIGLEGACY | 信号遗留设计态 | C2 | L2_domain | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
@@ -210,7 +210,7 @@ ttl: permanent
 | D_INTELLIGENCE | 上下文管理 | CC3 | L2_domain | 29 | 29 | 0 | 19 | L3 🟢 | ✅ |
 | D_KNOWLEDGE | 知识管理 | CC3 | L2_domain | 1 | 0 | 1 | 0 | L1 🔵 | 🟡 |
 | D_OPS | 反馈循环 | CC3 | L1_foundation | 9 | 9 | 0 | 8 | L3 🟢 | ✅ |
-| D_ORCHESTRATOR | 代理编排器 | CC3 | L1_foundation | 70 | 70 | 0 | 54 | L3 🟢 | ✅ |
+| D_ORCHESTRATOR | 代理编排器 | CC3 | L1_foundation | 72 | 70 | 2 | 54 | L3 🟢 | ✅ |
 | D_REPORTING | 报告 | CC3 | L1_foundation | 12 | 11 | 1 | 9 | L3 🟢 | ✅ |
 | D_SHARED | 共享服务 | CC3 | L0_infrastructure | 176 | 176 | 0 | 120 | L3 🟢 | ✅ |
 | D_ARCHIVE_SCRIPTS | Archived Scripts | — | L2_domain | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
@@ -271,7 +271,7 @@ ttl: permanent
 |--------|--------|:---:|:---:|:---:|
 | D_DATA | 数据接入层 | C1 | L3 | 163 |
 | D_MKT_DATA | 行情数据 | C1 | L3 | 19 |
-| D_ASHARE_SIGNAL | A股特色信号 | C2 | L3 | 31 |
+| D_ASHARE_SIGNAL | A股特色信号 | C2 | L3 | 34 |
 | D_FACTOR | 因子 | C2 | L3 | 90 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L3 | 14 |
 | D_RISK | 风控 | C3 | L3 | 25 |
@@ -307,7 +307,7 @@ ttl: permanent
 | D_INTEGRATION | 管线路由 | CC3 | L3 | 71 |
 | D_INTELLIGENCE | 上下文管理 | CC3 | L3 | 29 |
 | D_OPS | 反馈循环 | CC3 | L3 | 9 |
-| D_ORCHESTRATOR | 代理编排器 | CC3 | L3 | 70 |
+| D_ORCHESTRATOR | 代理编排器 | CC3 | L3 | 72 |
 | D_REPORTING | 报告 | CC3 | L3 | 12 |
 | D_SHARED | 共享服务 | CC3 | L3 | 176 |
 

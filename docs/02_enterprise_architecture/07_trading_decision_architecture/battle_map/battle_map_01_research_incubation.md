@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-04
+date: 2026-08-05
 ---
 
 # 作战地图·研究孵化阶段
@@ -52,11 +52,6 @@ flowchart TD
         BM_RES_09_A["【BM-RES-09-A 知识类型分类体系】<br/>知识类型分类体系——定义知识类型（事实/规则/策略<br/>/案例/元知识），按类型组织管理。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Knowledge Type Classification System】"]
         BM_RES_09 -.->|嵌套| BM_RES_09_A
     end
-    subgraph sg_BM_RES_10 ["模块映射与工厂匹配"]
-        BM_RES_10["【BM-RES-10 模块映射与工厂匹配】<br/>研究发现映射到现有模块，找不到就通过模块工厂创建<br/>新模块。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Module Mapping &amp; Factory Matching】"]
-        BM_RES_10_A["【BM-RES-10-A 模块工厂架构】<br/>模块工厂架构——标准创建→注册→接入→验证4步流程，产<br/>出规范+版本管理+退役流程。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Module Factory Architecture】"]
-        BM_RES_10 -.->|嵌套| BM_RES_10_A
-    end
     subgraph sg_BM_RES_01 ["研究数据与特征存储"]
         BM_RES_01["【BM-RES-01 研究数据与特征存储】<br/>研究员的数据底盘——把数据集版本化管起来、追踪血缘<br/>、打质量分；特征分在线离线两套存，保证 PIT<br/>正确不偷看未来。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Research Data &amp; Feature Store】"]
         BM_RES_01_A["【BM-RES-01-A 数据集版本化与血缘追踪】<br/>把数据集像 Git<br/>一样管版本——每次改动留快照、记血缘，知道数据从哪<br/>来、经过什么变换、去了哪。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Dataset Versioning &amp; Lineage】"]
@@ -67,6 +62,11 @@ flowchart TD
         BM_RES_01 -.->|嵌套| BM_RES_01_B
         BM_RES_01 -.->|嵌套| BM_RES_01_C
         BM_RES_01 -.->|嵌套| BM_RES_01_D
+    end
+    subgraph sg_BM_RES_10 ["模块映射与工厂匹配"]
+        BM_RES_10["【BM-RES-10 模块映射与工厂匹配】<br/>研究发现映射到现有模块，找不到就通过模块工厂创建<br/>新模块。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Module Mapping &amp; Factory Matching】"]
+        BM_RES_10_A["【BM-RES-10-A 模块工厂架构】<br/>模块工厂架构——标准创建→注册→接入→验证4步流程，产<br/>出规范+版本管理+退役流程。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Module Factory Architecture】"]
+        BM_RES_10 -.->|嵌套| BM_RES_10_A
     end
     subgraph sg_BM_RES_11 ["多模态知识采集"]
         BM_RES_11["【BM-RES-11 多模态知识采集】<br/>从多模态来源（文本/图表/音频<br/>/视频）采集知识，统一入库。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Multimodal Knowledge Acquisition】"]
@@ -119,7 +119,7 @@ flowchart TD
         BM_RES_07_A["【BM-RES-07-A 策略进化与因子挖掘】<br/>基于归因结果调整权重、挖新因子、学错误模式，让策<br/>略自己进化——不是一锤子买卖。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Strategy Evolution &amp; Factor Mining】"]
         BM_RES_07 -.->|嵌套| BM_RES_07_A
     end
-    BM_RES_08 ~~~ BM_RES_09 ~~~ BM_RES_10 ~~~ BM_RES_01 ~~~ BM_RES_01_A ~~~ BM_RES_11 ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RES_04_A ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RES_07_A ~~~ BM_RES_08_A ~~~ BM_RES_09_A ~~~ BM_RES_10_A ~~~ BM_RES_11_A
+    BM_RES_08 ~~~ BM_RES_09 ~~~ BM_RES_01 ~~~ BM_RES_10 ~~~ BM_RES_01_A ~~~ BM_RES_11 ~~~ BM_RES_01_B ~~~ BM_RES_01_C ~~~ BM_RES_01_D ~~~ BM_RES_02_A ~~~ BM_RES_02_B ~~~ BM_RES_02_C ~~~ BM_RES_02_D ~~~ BM_RES_03_A ~~~ BM_RES_03_B ~~~ BM_RES_03_C ~~~ BM_RES_04_A ~~~ BM_RES_05_A ~~~ BM_RES_05_B ~~~ BM_RES_05_C ~~~ BM_RES_06_A ~~~ BM_RES_06_B ~~~ BM_RES_07_A ~~~ BM_RES_08_A ~~~ BM_RES_09_A ~~~ BM_RES_10_A ~~~ BM_RES_11_A
     BM_RES_01 -->|研究数据→实验追踪 / data_flow| BM_RES_02
     BM_RES_02 -.->|实验结果→假设验证 / data_flow| BM_RES_03
     BM_RES_03 -.->|假设→工作流编排 / trigger| BM_RES_04
@@ -193,33 +193,6 @@ S2知识分类与策略提取层。把结构化知识按类型分类(事实/规�
 
 **有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
 
-### BM-RES-10 模块映射与工厂匹配 / Module Mapping & Factory Matching
-
-> **大白话**：研究发现映射到现有模块，找不到就通过模块工厂创建新模块。
-
-**机制说明**：
-
-S3模块映射与工厂匹配层。研究发现映射到现有模块(复用)，找不到则通过模块工厂创建新模块(创建→注册→接入→验证)。
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | BM-RES-09 策略提取后/新模块需求触发 |
-| ② 消费数据/因子 | 策略规格+现有模块工厂库+BM-MT-01训练基座契约 |
-| ③ 参数 | 模块工厂架构、映射匹配规则、与现有工厂关系 |
-| ④ 数据流 | 策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成 |
-| ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_ML_TRAIN域） |
-| ⑥ 降级/中止 | 匹配失败→全新建模块(走BM-MT-01-B AI代码生成) |
-
-**指标文案（翻译真源 indicators_zh）**：
-
-①触发：BM-RES-09 策略提取后/新模块需求触发；②消费：策略规格+现有模块工厂库+BM-MT-01训练基座契约；③参数：模块工厂架构、映射匹配规则、与现有工厂关系；④数据流：策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：匹配失败→全新建模块(走BM-MT-01-B AI代码生成)。
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
-
 ### BM-RES-01 研究数据与特征存储 / Research Data & Feature Store
 
 > **大白话**：研究员的数据底盘——把数据集版本化管起来、追踪血缘、打质量分；特征分在线离线两套存，保证 PIT 正确不偷看未来。
@@ -261,6 +234,33 @@ D-RESEARCH-02 Feature Store 提供离线训练+在线推理双套特征存储，
 | depgraph | MOD-DATA_SEC | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：research_incubation
+
+### BM-RES-10 模块映射与工厂匹配 / Module Mapping & Factory Matching
+
+> **大白话**：研究发现映射到现有模块，找不到就通过模块工厂创建新模块。
+
+**机制说明**：
+
+S3模块映射与工厂匹配层。研究发现映射到现有模块(复用)，找不到则通过模块工厂创建新模块(创建→注册→接入→验证)。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | BM-RES-09 策略提取后/新模块需求触发 |
+| ② 消费数据/因子 | 策略规格+现有模块工厂库+BM-MT-01训练基座契约 |
+| ③ 参数 | 模块工厂架构、映射匹配规则、与现有工厂关系 |
+| ④ 数据流 | 策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成 |
+| ⑤ 代码映射 | 待开发（planned，D_RESEARCH/D_ML_TRAIN域） |
+| ⑥ 降级/中止 | 匹配失败→全新建模块(走BM-MT-01-B AI代码生成) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：BM-RES-09 策略提取后/新模块需求触发；②消费：策略规格+现有模块工厂库+BM-MT-01训练基座契约；③参数：模块工厂架构、映射匹配规则、与现有工厂关系；④数据流：策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：匹配失败→全新建模块(走BM-MT-01-B AI代码生成)。
+
+**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+
+**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：research_incubation
 
 ### BM-RES-01-A 数据集版本化与血缘追踪 / Dataset Versioning & Lineage
 

@@ -41081,6 +41081,24 @@ battle_map_steps:
   plain_zh: 检测大盘是不是在变盘——用HMM隐马尔可夫和变点检测识别市场体制转换（牛转熊/熊转牛），变盘时调整买入策略。
   mechanism_zh: BM-BUY-02-A-1 市场状态预测的曾孙环节（depth=3）。HMM隐马尔可夫+变点检测识别市场体制转换，输出体制转换信号供策略调整。
   indicators_zh: ①触发：每日盘后/盘前；②消费：大盘指数历史序列(L0)；③参数：HMM状态数、变点检测窗口；④数据流：大盘历史序列→HMM+变点检测→体制转换信号→BM-BUY-02-A-1汇总；⑤代码：L2C(planned)；⑥降级：HMM失效→仅用变点检测。
+- step_id: BM-BUY-02-A-2
+  flow_stage: buy_flow
+  name_zh: 因子直通裁决（Model-Free Factor Fusion）
+  name_en: Factor Direct Fusion Adjudication
+  plain_zh: 策略库没覆盖的标的、或几个策略打架（2买2卖）时，不让决策卡死——直接用因子加权融合算出买入决策，绕过策略层。
+  mechanism_zh: 'BM-BUY-02-A 逻辑驱动轨的孙环节（depth=2），v7.0 因子直通层。当策略未覆盖（无策略覆盖的标的+因子信号强烈）
+
+    或策略冲突（2买2卖分歧）时，因子加权融合直接产生决策，不经过策略层（交易决策架构 L575-577）。
+
+    v8.0 四轨中作为轨道1逻辑驱动的补充路径（L585）；同机制在卖出轨（L743，BM-SELL-02 supplement 锚点）与
+
+    仓位轨（L827，Kelly+风险预算直接产生仓位决策，BM-POS-01 indicators）复用。
+
+    '
+  indicators_zh: '①触发：策略未覆盖（无策略覆盖+因子信号强烈）或策略冲突（2买2卖分歧）；②消费：L1因子池+L2-A买入信号+C-006策略库覆盖状态；③参数：因子加权融合权重、直通触发条件=未覆盖|冲突(proposed)；④数据流：因子信号→因子加权融合→因子直通裁决→买入决策→MTF仲裁；⑤代码：MOD-INF-047
+    因子直通融合引擎(planned)；⑥降级：因子直通失效→仅多策略共振，共振分歧→降级L6审查。
+
+    '
 - step_id: BM-BUY-02-B
   flow_stage: buy_flow
   name_zh: 数据驱动轨
@@ -41143,7 +41161,11 @@ battle_map_steps:
   name_zh: 决策编排
   name_en: Decision Orchestration (DO)
   plain_zh: 把融合后的决策按5条路径（买/卖/做T/人工/应急）统一出口编排，处理冲突、去重、排时序。
-  mechanism_zh: 'L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 5 条决策路径的统一出口，执行优先级仲裁+冲突消解+去重+时序编排。
+  mechanism_zh: 'L3 层 v8.0。决策编排器(DO)嵌入四轨融合器和 C-047 之间，作为 5 条决策路径的统一出口，执行优先级仲裁+冲突消解+去重+时序编排。🆕v8.2
+
+    多Agent协作采用投票优先多Agent架构（先投票后辩论，投票<100行代码，辩论备用，§29.39裁定17，MOD-INF-048
+
+    supplement 锚点；Agent架构主体不挂作战地图，仅在本调用点挂载）。
 
     '
   indicators_zh: '①触发：统一决策流就绪；②消费：BM-BUY-02 统一决策流；③参数：path_count=5；④数据流：统一决策流→DO 仲裁/消解/去重/时序→编排后决策→BM-POS-01；⑤代码：DO(v8.0)
@@ -41176,7 +41198,8 @@ battle_map_steps:
     最高优先级规则：强制清仓（风控/黑天鹅）永远取胜，绕过融合意愿评分直接执行。卖出决策引擎是复合能力（§20.16），不单独分配 C 编号。
 
     '
-  indicators_zh: '①触发：7类卖出信号+突破成败汇总+风控强制清仓；②消费：BM-SELL-01 突破成败 + 卖出策略工厂7类信号(BM-SELL-04/05) + 收集评分(BM-SELL-03)；③参数：融合算法=加权平均/贝叶斯/D-S证据、紧迫度阈值1.0/0.6/0.3、共振权重×1.5(proposed)；④数据流：多源卖出信号→加权融合(综合意愿0~1)+紧迫度评分→执行策略映射→卖出决策→BM-SELL-06买卖冲突仲裁→BM-POS-01；⑤代码：MOD-SELL-007
+  indicators_zh: '①触发：7类卖出信号+突破成败汇总+风控强制清仓；②消费：BM-SELL-01 突破成败 + 卖出策略工厂7类信号(BM-SELL-04/05) + 收集评分(BM-SELL-03)；③参数：融合算法=加权平均/贝叶斯/D-S证据、紧迫度阈值1.0/0.6/0.3、共振权重×1.5(proposed)；④数据流：多源卖出信号→加权融合(综合意愿0~1)+紧迫度评分→执行策略映射→卖出决策→BM-SELL-06买卖冲突仲裁→BM-POS-01，策略未覆盖/冲突时走v7.0因子直通(Model-Free
+    Factor Fusion，MOD-INF-047 supplement，因子加权融合直接产生卖出决策，L743)；⑤代码：MOD-SELL-007
     融合引擎(stable)+MOD-SELL-009 紧迫度评分器(stable)；⑥降级：融合未就绪→各信号独立触发(止盈/止损/风控卖出各自直接执行，跳过融合仲裁)。
 
     '
@@ -41188,7 +41211,7 @@ battle_map_steps:
   mechanism_zh: 'L3.5 层。C-047（P0，v4.0 新增）仓位管理唯一裁决中心，嵌入决策编排器和 C-004 之间。所有仓位决策（含分批仓位方案）经 C-047 裁决后才进入风控审批和执行。
 
     '
-  indicators_zh: '①触发：编排后决策（买/卖）就绪；②消费：BM-BUY-03 编排决策 + BM-SELL-02 卖出决策 + BM-BUY-04 分批方案；③参数：position_cap=目标仓位；④数据流：买/卖决策+分批方案→C-047唯一裁决→最终仓位指令→BM-EXE-01；⑤代码：C-047
+  indicators_zh: '①触发：编排后决策（买/卖）就绪；②消费：BM-BUY-03 编排决策 + BM-SELL-02 卖出决策 + BM-BUY-04 分批方案；③参数：position_cap=目标仓位；④数据流：买/卖决策+分批方案→C-047唯一裁决→最终仓位指令→BM-EXE-01，策略未覆盖/冲突时仓位轨走v7.0因子直通（Kelly+风险预算直接产生仓位决策，L827）；⑤代码：C-047
     §1.8（v4.0 P0）；⑥降级：C-047 不可用→固定比例仓位查表。
 
     '
@@ -41579,8 +41602,10 @@ battle_map_steps:
   plain_zh: 不只预测明天涨多少，而是预测明天收益率的完整概率分布——偏多少、尾巴多厚、极端情况多罕见。
   mechanism_zh: 'L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数化归一化流/扩散），派生偏度/峰度/前瞻VaR/CVaR/8态概率P1~P8。被8态预测、组合优化、风控共形VaR三层消费。
 
+    时序建模升级：🆕v8.1 Mamba/SSM 时序增强（MOD-SIG-051，线性复杂度长序列建模，与 Transformer 互补，替代二次复杂度瓶颈）；🆕v8.2 Kronos-mini/base（MOD-SIG-050，金融K线 TSFM 零样本预测，无需逐股微调即可产出收益率分布先验）。
+
     '
-  indicators_zh: '①触发：信号层产出条件PDF；②消费：分布特征+因子池(L1)；③参数：Phase=参数化→混合→非参数化，派生偏度/峰度/前瞻VaR/CVaR/P1~P8(proposed)；④数据流：分布特征→PDF→派生量→8态/组合优化/风控；⑤代码：缺失态-未实现（草图§4.5）；⑥降级：未就绪→8态用离散估计无分布增强。
+  indicators_zh: '①触发：信号层产出条件PDF；②消费：分布特征+因子池(L1)+Kronos零样本先验；③参数：Phase=参数化→混合→非参数化，派生偏度/峰度/前瞻VaR/CVaR/P1~P8(proposed)，Mamba/SSM序列长度(proposed)；④数据流：分布特征→PDF(Mamba/SSM+Kronos增强)→派生量→8态/组合优化/风控；⑤代码：MOD-SIG-043 条件密度预测器(planned)+MOD-SIG-050 Kronos TSFM(planned)+MOD-SIG-051 Mamba/SSM时序增强(planned)（草图§4.5）；⑥降级：未就绪→8态用离散估计无分布增强。
 
     '
 - step_id: BM-SEL-14
@@ -41588,10 +41613,29 @@ battle_map_steps:
   name_zh: 共形预测
   name_en: Conformal Prediction
   plain_zh: 给预测区间加数学保证——不管分布长什么样，区间覆盖率有数学证明。
-  mechanism_zh: 'L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率保证区间，输出给风控共形VaR和信号置信区间。
+  mechanism_zh: 'L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率保证区间，输出给风控共形VaR和信号置信区间。🆕v8.1
+
+    自适应变体见子环节 BM-SEL-14-A（TCP-RM/DDCI，非平稳环境下的自适应保形覆盖）。
 
     '
-  indicators_zh: '①触发：密度预测输出后叠加共形区间；②消费：密度预测PDF(L2A)；③参数：覆盖率=95%(proposed)；④数据流：PDF→共形→覆盖率保证区间→风控共形VaR/信号置信区间；⑤代码：缺失态-未实现（草图§1.7）；⑥降级：未就绪→区间无数学覆盖率保证。
+  indicators_zh: '①触发：密度预测输出后叠加共形区间；②消费：密度预测PDF(L2A)；③参数：覆盖率=95%(proposed)；④数据流：PDF→共形→覆盖率保证区间→风控共形VaR/信号置信区间；⑤代码：MOD-SIG-044
+    共形预测器(planned)（草图§1.7），自适应变体MOD-SIG-052(BM-SEL-14-A)；⑥降级：未就绪→区间无数学覆盖率保证。
+
+    '
+- step_id: BM-SEL-14-A
+  flow_stage: stock_selection
+  name_zh: 自适应保形非平稳覆盖（TCP-RM/DDCI）
+  name_en: Adaptive Conformal Non-Stationary Coverage (TCP-RM/DDCI)
+  plain_zh: 市场脾气变了（非平稳）时，普通共形预测的覆盖率保证会失效——这个环节让预测区间自动跟着市场状态伸缩，覆盖率依然有保障。
+  mechanism_zh: 'BM-SEL-14 共形预测的子环节（depth=1），🆕v8.1 新增。TCP-RM（自适应保形，按滚动窗口/体制模型自动调整覆盖半径）+
+
+    DDCI（分布无关动态保形推断，面向非平稳时序的覆盖率保证）。与静态共形预测互补：静态版保证分布无关覆盖率，
+
+    自适应版在体制漂移/分布迁移下仍维持覆盖率（交易决策架构 v8.1 升级注记 L433 + L2-A 图框 L461-464）。
+
+    '
+  indicators_zh: '①触发：密度PDF输出后，非平稳市场环境（体制漂移/分布迁移）触发自适应覆盖；②消费：BM-SEL-13 条件密度PDF + BM-SEL-07 体制转换标签；③参数：TCP-RM滚动窗口/regime模型、DDCI动态覆盖、目标覆盖率95%(proposed)；④数据流：密度PDF+体制标签→TCP-RM/DDCI自适应区间→非平稳覆盖率保证→BM-SEL-04/BM-BUY-02；⑤代码：MOD-SIG-052
+    自适应保形(planned)；⑥降级：自适应变体失效→回退BM-SEL-14静态共形预测。
 
     '
 - step_id: BM-SEL-15
@@ -45429,3 +45473,32 @@ battle_map_cross_cutting:
     count: 10
     scope: 治理规则不可篡改+变更审批链+三方对齐+AI自治边界+KillSwitch分层
     key_constraints: 治理规则不可被AI自动修改/变更审批链不可被绕过/蓝图-代码-文档三方必须对齐/AI自治边界不可被AI自行扩展/KillSwitch必须分层且本地评估/KillSwitch激活后必须受控重入
+- category: model_quantization
+  name_zh: 模型量化
+  name_en: Model Quantization
+  sketch_ref: 交易决策架构 v8.1 横切层
+  source_ref: 交易决策架构.md v8.1升级注记 L433（横切层新增 MCP协议 + 模型量化）
+  related_steps:
+  - BM-MT-01
+  - BM-SEL-13
+  - BM-BUY-02
+  plain_zh: '把训练好的大模型"压小"——用更低精度的数字（如 INT8/FP16）表示模型权重，
+
+    换来推理更快、更省内存，让密度预测/Kronos TSFM 这类重模型能在 3 秒级行情节奏里实时跑。
+
+    '
+  mechanism_zh: '🆕v8.1 横切层机制（与 MCP协议 并列）。模型量化贯穿"训练→导出→推理"全链路：
+
+    训练侧做量化感知训练（QAT，训练时模拟低精度舍入，减少精度损失），
+
+    导出侧做训练后量化（PTQ，INT8/FP16 权重压缩+校准集确定缩放因子），
+
+    推理侧以低精度算子加速（CPU/GPU 整数管线），用精度-延迟权衡预算约束每个上线模型：
+
+    延迟收益必须大于精度损失阈值（如 8态预测 Top-1 准确率下降<0.5%）。
+
+    与模型训练环节（BM-MT-01 训练流水线导出量化产物）、选股信号推理（BM-SEL-13 密度预测/Kronos-mini/base
+
+    TSFM 零样本预测的低延迟推理）、四轨融合（BM-BUY-02 盘中信号融合时延预算）联动。
+
+    '

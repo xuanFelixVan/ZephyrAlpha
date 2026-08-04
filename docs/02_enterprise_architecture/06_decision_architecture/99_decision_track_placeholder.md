@@ -58,15 +58,15 @@ ttl: permanent
 | MOD-GOV-019 | MOD-GOV-019 | MOD-GOV-019 | placeholder | MOD-GOV-019 | - | - | - | - | production / 生产 | stable / 稳定 |
 | MOD-GOV-029 | MOD-GOV-029 | MOD-GOV-029 | placeholder | MOD-GOV-029 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV-041 | MOD-GOV-041 | MOD-GOV-041 | placeholder | MOD-GOV-041 | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_DOCS | MOD-GOV_DOCS | MOD-GOV_DOCS | placeholder | MOD-GOV_DOCS | - | - | - | - | production / 生产 | generated / 已生成 |
-| MOD-GOV_SCRIPTS | MOD-GOV_SCRIPTS | MOD-GOV_SCRIPTS | placeholder | MOD-GOV_SCRIPTS | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOVERNANCE | MOD-GOVERNANCE | MOD-GOVERNANCE | placeholder | MOD-GOVERNANCE | docs__03_modules___domain_governance__blueprint_md | - | - | - | design / 设计 | generated / 已生成 |
 | MOD-GOV_COMMON | MOD-GOV_COMMON | MOD-GOV_COMMON | placeholder | MOD-GOV_COMMON | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_DATAFLOW_DIAGRAM | MOD-GOV_DATAFLOW_DIAGRAM | MOD-GOV_DATAFLOW_DIAGRAM | placeholder | MOD-GOV_DATAFLOW_DIAGRAM | - | - | - | - | production / 生产 | generated / 已生成 |
+| MOD-GOV_DOCS | MOD-GOV_DOCS | MOD-GOV_DOCS | placeholder | MOD-GOV_DOCS | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_DQ | MOD-GOV_DQ | MOD-GOV_DQ | placeholder | MOD-GOV_DQ | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_ENFORCEMENT | MOD-GOV_ENFORCEMENT | MOD-GOV_ENFORCEMENT | placeholder | MOD-GOV_ENFORCEMENT | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_GATE_CACHE | MOD-GOV_GATE_CACHE | MOD-GOV_GATE_CACHE | placeholder | MOD-GOV_GATE_CACHE | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_HEALTH_SMOKE | MOD-GOV_HEALTH_SMOKE | MOD-GOV_HEALTH_SMOKE | placeholder | MOD-GOV_HEALTH_SMOKE | - | - | - | - | production / 生产 | generated / 已生成 |
+| MOD-GOV_SCRIPTS | MOD-GOV_SCRIPTS | MOD-GOV_SCRIPTS | placeholder | MOD-GOV_SCRIPTS | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-GOV_SILENT_FAILURE_REGRESSION | MOD-GOV_SILENT_FAILURE_REGRESSION | MOD-GOV_SILENT_FAILURE_REGRESSION | placeholder | MOD-GOV_SILENT_FAILURE_REGRESSION | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-INF-001 | MOD-INF-001 | MOD-INF-001 | placeholder | MOD-INF-001 | - | - | - | - | production / 生产 | generated / 已生成 |
 | MOD-INF-002 | MOD-INF-002 | MOD-INF-002 | placeholder | MOD-INF-002 | - | - | - | - | production / 生产 | generated / 已生成 |

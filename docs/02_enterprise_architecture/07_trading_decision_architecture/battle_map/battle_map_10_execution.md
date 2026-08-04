@@ -3,7 +3,7 @@ ttl: permanent
 doc_type: architecture_view
 status: active
 version: "1.0.0"
-date: 2026-08-04
+date: 2026-08-05
 ---
 
 # 作战地图·执行阶段
@@ -179,7 +179,7 @@ miniQMT个人账户不支持券商端VWAP/TWAP算法接口，本系统自行实�
 | depgraph | MOD-XS-005 | supplement | stable | generated |
 | depgraph | MOD-XS-011 | primary | stable | generated |
 | depgraph | MOD-EX_SOR | primary | stable | generated |
-| depgraph | MOD-XS-014 | primary | stable | generated |
+| depgraph | MOD-XS-014 | primary | stable | stable |
 | depgraph | MOD-EX-042 | supplement | planned | planned |
 | depgraph | MOD-EX-060 | supplement | planned | planned |
 | depgraph | MOD-EX-061 | supplement | planned | planned |
@@ -322,7 +322,7 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 | depgraph | MOD-L07-001 | primary | stable | generated |
 | depgraph | MOD-EX_SOR_EXT-001 | primary | stable | generated |
 | depgraph | MOD-EX_SOR_EXT-002 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-003 | primary | stable | generated |
+| depgraph | MOD-EX_SOR_EXT-003 | primary | stable | stable |
 | depgraph | MOD-EX-012 | supplement | planned | planned |
 | depgraph | MOD-EX-036 | supplement | planned | planned |
 

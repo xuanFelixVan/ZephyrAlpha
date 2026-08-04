@@ -39,14 +39,14 @@ language: zh
 ## 4. 表计数
 
 <!-- AUTO-START:table_counts -->
-<!-- 数据源：table_registry 内存加载 | 最后同步：2026-08-03 -->
+<!-- 数据源：table_registry 内存加载 | 最后同步：2026-08-04 -->
 
 | 数据库 / Database | 表数 / Tables |
 |------|------|
 | `c0_meta` | 1 |
-| `c1_market` | 87 |
+| `c1_market` | 89 |
 | `c3_fundamental` | 23 |
-| **合计 / Total** | **111** |
+| **合计 / Total** | **113** |
 <!-- AUTO-END:table_counts -->
 
 ## 5. 外部权威源（全量表清单与逐表 schema）
