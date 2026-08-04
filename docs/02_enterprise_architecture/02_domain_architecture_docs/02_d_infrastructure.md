@@ -311,8 +311,8 @@ flowchart TD
 | 65 | D_PF_CORE 组合核心: 约束不可满足 / Constraint Solver (core/constraint_solver.py) | → | 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 66 | D_PF_CORE 组合核心: 性能Attribution引擎 / Performance Attribution Engine (cor... | → | 性能Attribution报告 / Performance Attribution Report (con... | 导入依赖 / import_depends |
 | 67 | D_PF_CORE 组合核心: 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 68 | D_PF_CORE 组合核心: 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | 目标投资组合 / Target Portfolio (contracts/target_portfol... | contract / contract |
-| 69 | D_PF_CORE 组合核心: 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | 目标投资组合 / Target Portfolio (contracts/target_portfol... | 导入依赖 / import_depends |
+| 68 | D_PF_CORE 组合核心: 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | 目标投资组合 / Target Portfolio (contracts/target_portfol... | 导入依赖 / import_depends |
+| 69 | D_PF_CORE 组合核心: 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | 目标投资组合 / Target Portfolio (contracts/target_portfol... | contract / contract |
 | 70 | D_PF_CORE 组合核心: Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 71 | D_PF_CORE 组合核心: Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | 目标投资组合 / Target Portfolio (contracts/target_portfol... | 导入依赖 / import_depends |
 | 72 | D_PF_CORE 组合核心: 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | 导入依赖 / import_depends |
