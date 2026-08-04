@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件含裸 os.getenv/os.environ.get/os.environ["KEY"] 读取密钥类变量时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不触碰存量基线；检测模式真源=SECRET_INDICATOR_PATTERNS（zephyr.shared.security.secrets SSoT），不硬编码；只检测字符串字面量参数（变量参数不检测，因 secrets.py SSoT 自身用 os.environ.get(key) 变量参数）；AST/subprocess 异常 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged 新增+修改 .py 文件含裸 os.getenv/os.environ.get/os.environ["KEY"] 读取密钥类变量时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；新增文件（diff-filter=A）全文件 AST 扫描；修改文件（diff-filter=M）只检测 git diff 新增行中的违规（diff-aware，不触碰存量基线）；检测模式真源=SECRET_INDICATOR_PATTERNS（zephyr.shared.security.secrets SSoT），不硬编码；只检测字符串字面量参数（变量参数不检测，因 secrets.py SSoT 自身用 os.environ.get(key) 变量参数）；AST/subprocess/git diff 异常 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="NO-BARE-GETENV"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -41,8 +41,11 @@ architecture_debt §5.17.10：AI 在 10 个模块里写 10 种 os.getenv("API_KE
    变量参数读取，不检测变量参数避免误伤 SSoT 实现。
 2. **检测模式真源=SECRET_INDICATOR_PATTERNS**：从 secrets.py import，不硬编码，
    模式变更（如新增 "CREDENTIAL"）自动同步到本 gate。
-3. **只检测新增文件**：存量违规已清零（§5.17.10 FIXED），本 gate 防止新增违规。
-   若检测修改文件，AI 改个注释也触发全文件扫描，增加误阻断风险。
+3. **diff-aware 修改文件检测**（#ARCH-SECRETS-GOV-001 Phase 2-S3 增强）：
+   新增文件（A）全文件 AST 扫描；修改文件（M）只检测 git diff 新增行中的违规
+   （不触碰存量基线）。原只检测新增文件（diff-filter=A），AI 在现有文件中添加
+   裸 getenv 无法被发现。增强为 diff-filter=AM + 新增行过滤，既防止存量违规
+   逍遥法外，又避免对修改文件全文件扫描的误阻断。
 4. **fail-open on AST error**：语法错误文件不阻断（由其他 gate 管语法）。
 5. **priority=81**：在 VOCAB-HARDCODE(80) 之后、PERM-TRIGGER(82) 之前。
 
@@ -59,6 +62,7 @@ from __future__ import annotations
 import ast
 import logging
 import os
+import re
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.shared.security.secrets import SECRET_INDICATOR_PATTERNS
@@ -137,15 +141,20 @@ class _BareGetenvVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
 
-def _get_staged_added_files(gateway) -> list[str] | None:
-    """获取 staged 新增文件列表（git diff --cached --diff-filter=A）。
+def _get_staged_py_files(gateway) -> tuple[list[str], list[str]] | None:
+    """获取 staged 新增+修改的 .py 文件列表（git diff --cached --diff-filter=AM）。
+
+    diff-aware 增强（#ARCH-SECRETS-GOV-001 Phase 2-S3）：原只获取新增文件
+    （--diff-filter=A），现扩展为新增+修改（--diff-filter=AM），修改文件
+    只检测新增行中的违规（由 _get_added_line_numbers + _collect_violations 过滤）。
 
     Returns:
-        新增文件路径列表；None 表示 fail-open（git 失败/异常，检测器降级放行）。
+        (added_py_files, modified_py_files) 或 None（fail-open）。
+        列表中的路径已归一化为正斜杠，已过滤 tests/ 豁免。
     """
     try:
         diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+            ["git", "diff", "--cached", "--name-status", "--diff-filter=AM"]
         )
         if diff_result.returncode != 0:
             logger.warning(
@@ -153,11 +162,80 @@ def _get_staged_added_files(gateway) -> list[str] | None:
                 diff_result.returncode,
             )
             return None
-        return diff_result.stdout.strip().splitlines()
+        added: list[str] = []
+        modified: list[str] = []
+        for line in diff_result.stdout.strip().splitlines():
+            if not line:
+                continue
+            parts = line.split("\t", 1)
+            if len(parts) != 2:
+                continue
+            status, path = parts
+            path = path.replace("\\", "/").strip()
+            if not path.endswith(".py"):
+                continue
+            if is_test_exempt(path):
+                continue
+            if status == "A":
+                added.append(path)
+            elif status == "M":
+                modified.append(path)
+        return added, modified
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "NO-BARE-GETENV gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
+        )
+        return None
+
+
+def _get_added_line_numbers(gateway, file_path: str) -> set[int] | None:
+    """获取修改文件的新增行号集合（git diff --cached -U0）。
+
+    解析 ``@@ -old_start,old_count +new_start,new_count @@`` 行，遍历 diff
+    内容行，收集 ``+`` 开头的新增行在文件中的行号。
+
+    用于 diff-aware 检测：修改文件 AST 扫描后，只保留行号在此集合中的违规，
+    避免对存量代码的误报。
+
+    Returns:
+        新增行号集合；None 表示 fail-open（git 失败/异常，该文件跳过检测）。
+    """
+    try:
+        diff_result = gateway.run_git(
+            ["git", "diff", "--cached", "-U0", "--", file_path]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "NO-BARE-GETENV gate: git diff -U0 失败 for %s(rc=%d)，"
+                "该修改文件跳过 diff-aware 检测（fail-open）。",
+                file_path, diff_result.returncode,
+            )
+            return None
+        added_lines: set[int] = set()
+        new_line = 0
+        for line in diff_result.stdout.splitlines():
+            if line.startswith("@@"):
+                m = re.search(r"\+(\d+)(?:,(\d+))?", line)
+                if m:
+                    new_line = int(m.group(1))
+                continue
+            if line.startswith("+++") or line.startswith("---"):
+                continue
+            if line.startswith("+"):
+                if new_line > 0:
+                    added_lines.add(new_line)
+                    new_line += 1
+            elif line.startswith("-"):
+                pass  # 删除行，new_line 不变
+            else:
+                new_line += 1  # context 行
+        return added_lines
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning(
+            "NO-BARE-GETENV gate: git diff -U0 异常 for %s(%s: %s)，"
+            "该修改文件跳过 diff-aware 检测（fail-open）。",
+            file_path, type(e).__name__, e, exc_info=True,
         )
         return None
 
@@ -186,8 +264,20 @@ def _resolve_abs_paths(new_py_files: list[str], wt_root: str) -> list[str]:
     return [f for f in abs_files if os.path.isfile(f)]
 
 
-def _collect_violations(abs_paths: list[str], wt_root: str) -> list[str]:
-    """AST 扫描所有文件，收集裸 getenv/os.environ 读密钥违规描述列表。"""
+def _collect_violations(
+    abs_paths: list[str],
+    wt_root: str,
+    added_lines_map: dict[str, set[int]] | None = None,
+) -> list[str]:
+    """AST 扫描所有文件，收集裸 getenv/os.environ 读密钥违规描述列表。
+
+    Args:
+        abs_paths: 文件绝对路径列表。
+        wt_root: worktree 根目录。
+        added_lines_map: 修改文件的新增行号映射 {rel_path: {line_numbers}}。
+            None 表示新增文件（报告所有违规）。
+            非 None 时，只报告行号在对应集合中的违规（diff-aware 过滤）。
+    """
     all_violations: list[str] = []
     for abs_path in abs_paths:
         try:
@@ -214,7 +304,11 @@ def _collect_violations(abs_paths: list[str], wt_root: str) -> list[str]:
 
         if visitor.violations:
             rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+            added_lines = added_lines_map.get(rel_name) if added_lines_map else None
             for lineno, pattern, key in visitor.violations:
+                # diff-aware 过滤：修改文件只报告新增行中的违规
+                if added_lines is not None and lineno not in added_lines:
+                    continue
                 all_violations.append(
                     f"{rel_name}:{lineno} {pattern}(\"{key}\") "
                     f"—— 应改用 get_secret/get_secret_or_default（SecretProvider SSoT）"
@@ -231,29 +325,43 @@ def make_bare_getenv_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增文件（fail-open on git 错误）
-        staged_new = _get_staged_added_files(gateway)
-        if staged_new is None:
+        # 1. 获取 staged 新增+修改 .py 文件（fail-open on git 错误）
+        result = _get_staged_py_files(gateway)
+        if result is None:
+            return True, ""
+        added_files, modified_files = result
+        if not added_files and not modified_files:
             return True, ""
 
-        # 2. 过滤 .py 文件 + tests/ 豁免
-        new_py_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".py") and not is_test_exempt(f)
-        ]
-        if not new_py_files:
-            return True, ""
-
-        # 3. 获取 worktree root
+        # 2. 获取 worktree root
         wt_root = _resolve_worktree_root(gateway)
 
-        # 4. 解析为绝对路径（过滤不存在的文件）
-        abs_files = _resolve_abs_paths(new_py_files, wt_root)
-        if not abs_files:
-            return True, ""
+        all_violations: list[str] = []
 
-        # 5. AST 检测
-        all_violations = _collect_violations(abs_files, wt_root)
+        # 3. 新增文件（A）：全文件 AST 扫描
+        if added_files:
+            added_abs = _resolve_abs_paths(added_files, wt_root)
+            if added_abs:
+                all_violations.extend(_collect_violations(added_abs, wt_root))
+
+        # 4. 修改文件（M）：diff-aware 检测（只报告新增行中的违规）
+        if modified_files:
+            added_lines_map: dict[str, set[int]] = {}
+            scannable_modified: list[str] = []
+            for rel in modified_files:
+                lines = _get_added_line_numbers(gateway, rel)
+                if lines is not None:
+                    added_lines_map[rel] = lines
+                    scannable_modified.append(rel)
+                # lines is None → fail-open，跳过该文件检测
+            if scannable_modified:
+                modified_abs = _resolve_abs_paths(scannable_modified, wt_root)
+                if modified_abs:
+                    all_violations.extend(
+                        _collect_violations(modified_abs, wt_root, added_lines_map)
+                    )
+
+        # 5. 汇总违规
         if all_violations:
             detail = "; ".join(all_violations[:5])
             return False, f"裸 os.getenv/os.environ 读密钥（§5.17.10）: {detail}"

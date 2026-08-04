@@ -9663,6 +9663,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "一次性清理 .runtime/tmp/ 下积压的 pytest 等测试残留目录（10万+文件），复用 reconciler 的 PID存活+TTL双判定逻辑，dry-run 默认安全"
+- module_path: src/zephyr/gov_enforcement/commit_gates/secret_registry_consistency_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "密钥注册表一致性门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交代码时校验 .env.example 与 secret_registry.yaml 中的密钥 KEY 是否一致，强制新增密钥必须同时完成加 KEY 到 .env、更新 .env.example、更新 registry 三步，防止 AI 新增密钥时遗漏文档化或注册登记。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

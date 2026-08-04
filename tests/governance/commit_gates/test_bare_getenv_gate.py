@@ -15,13 +15,19 @@
 测试组：
 - TestGateSpecFields: gate_id / priority / isinstance(GateSpec)
 - TestBareGetenvVisitor: AST visitor 检测（os.getenv / os.environ.get / os.environ["..."]）
-- TestGatewayIntegration: mock gateway 流程
+- TestGatewayIntegration: mock gateway 流程（新增文件全文件扫描）
   - 新增 .py 含裸 os.getenv("API_KEY") → 阻断 (passed=False)
   - 新增 .py 安全 → 放行
   - 变量参数豁免（os.getenv(key)）
   - tests/ 豁免
   - AST 语法错误 fail-open
   - git diff 失败/异常 fail-open
+- TestDiffAwareModifiedFiles: diff-aware 修改文件检测（#ARCH-SECRETS-GOV-001 Phase 2-S3）
+  - 修改文件新增行含裸 getenv → 阻断
+  - 修改文件存量行含裸 getenv → 放行（不触碰存量基线）
+  - 修改文件无新增行违规 → 放行
+  - -U0 git diff 失败 → fail-open（跳过该文件）
+  - 新增+修改文件混合 → 各自检测
 
 注意：gate 用 open(path).read() 未关闭（ResourceWarning），autouse fixture
 注入 shadow open 包装为读取后自动关闭。
@@ -57,9 +63,30 @@ class _MockResult:
     stdout: str = ""
 
 
-def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_raises=False):
-    """构造 mock gateway：--name-only 返回新增文件列表；rev-parse --show-toplevel
-    返回 project_root。文件内容由 tmp_path 真实文件提供。"""
+def _make_gateway(
+    staged_files=None,
+    project_root=None,
+    diff_fails=False,
+    diff_raises=False,
+    modified_files=None,
+    added_lines=None,
+    u0_fails=False,
+):
+    """构造 mock gateway。
+
+    --name-status 返回 staged（A）+ modified（M）文件列表；
+    -U0 返回修改文件的 diff 输出（新增行）；
+    rev-parse 返回 project_root。
+    文件内容由 tmp_path 真实文件提供。
+
+    Args:
+        staged_files: 新增文件路径列表（A 状态，纯路径）。
+        modified_files: 修改文件路径列表（M 状态，纯路径）。
+        added_lines: {file_path: diff_output} 修改文件的 -U0 diff 输出。
+        diff_fails: --name-status 返回 rc=1（gate fail-open）。
+        diff_raises: run_git 抛异常（gate fail-open）。
+        u0_fails: -U0 返回 rc=1（修改文件跳过检测）。
+    """
     gw = MagicMock()
     gw.project_root = project_root or str(_PROJECT_ROOT)
 
@@ -69,12 +96,31 @@ def _make_gateway(staged_files=None, project_root=None, diff_fails=False, diff_r
         gw.run_git = _raise
         return gw
 
+    # 构建 --name-status 输出（A\tpath / M\tpath）
+    name_status_lines = []
+    for f in (staged_files or []):
+        name_status_lines.append(f"A\t{f}")
+    for f in (modified_files or []):
+        name_status_lines.append(f"M\t{f}")
+    name_status_output = "\n".join(name_status_lines)
+
     def _run_git(cmd):
-        if diff_fails and "--name-only" in cmd:
+        cmd_str = " ".join(cmd) if isinstance(cmd, list) else str(cmd)
+        if diff_fails and "--name-status" in cmd_str:
             return _MockResult(1, "")
-        if "--name-only" in cmd:
-            return _MockResult(0, "\n".join(staged_files or []))
-        if "rev-parse" in cmd:
+        if "--name-status" in cmd_str:
+            return _MockResult(0, name_status_output)
+        if "-U0" in cmd_str:
+            if u0_fails:
+                return _MockResult(1, "")
+            # 提取 file_path: ["git", "diff", "--cached", "-U0", "--", path]
+            file_path = ""
+            if "--" in cmd:
+                idx = cmd.index("--")
+                if idx + 1 < len(cmd):
+                    file_path = cmd[idx + 1].replace("\\", "/")
+            return _MockResult(0, (added_lines or {}).get(file_path, ""))
+        if "rev-parse" in cmd_str:
             return _MockResult(0, str(gw.project_root))
         return _MockResult(0, "")
 
@@ -304,3 +350,126 @@ class TestGatewayIntegration:
         passed, msg = make_bare_getenv_gate().check(gw, [])
         assert not passed
         assert "API_TOKEN" in msg or "environ" in msg
+
+
+# ---------------------------------------------------------------------------
+# TestDiffAwareModifiedFiles — diff-aware 修改文件检测
+#（#ARCH-SECRETS-GOV-001 Phase 2-S3）
+# ---------------------------------------------------------------------------
+class TestDiffAwareModifiedFiles:
+    """diff-aware 修改文件检测——只报告 git diff 新增行中的违规。"""
+
+    def test_modified_new_line_with_bare_getenv_blocked(self, tmp_path):
+        """修改文件新增行含裸 getenv → 阻断。"""
+        src = tmp_path / "src"
+        src.mkdir()
+        (src / "mod.py").write_text(
+            'import os\nx = os.getenv("API_KEY")\ny = 1\n', encoding="utf-8"
+        )
+        rel = "src/mod.py"
+        # diff: 第 2 行是新增行（+ 前缀）
+        diff_output = (
+            "@@ -1,1 +1,3 @@\n"
+            " import os\n"
+            '+x = os.getenv("API_KEY")\n'
+            "+y = 1\n"
+        )
+        gw = _make_gateway(
+            modified_files=[rel],
+            added_lines={rel: diff_output},
+            project_root=str(tmp_path),
+        )
+        passed, msg = make_bare_getenv_gate().check(gw, [])
+        assert not passed
+        assert "API_KEY" in msg or "getenv" in msg
+
+    def test_modified_existing_line_with_bare_getenv_passes(self, tmp_path):
+        """修改文件存量行含裸 getenv → 放行（不触碰存量基线）。"""
+        src = tmp_path / "src"
+        src.mkdir()
+        (src / "mod.py").write_text(
+            'import os\nx = os.getenv("API_KEY")\ny = 2\n', encoding="utf-8"
+        )
+        rel = "src/mod.py"
+        # diff: 第 2 行是 context（存量），第 3 行是新增行
+        diff_output = (
+            "@@ -1,2 +1,3 @@\n"
+            " import os\n"
+            ' x = os.getenv("API_KEY")\n'
+            "+y = 2\n"
+        )
+        gw = _make_gateway(
+            modified_files=[rel],
+            added_lines={rel: diff_output},
+            project_root=str(tmp_path),
+        )
+        passed, msg = make_bare_getenv_gate().check(gw, [])
+        assert passed  # 存量行违规不报告
+        assert msg == ""
+
+    def test_modified_no_violation_passes(self, tmp_path):
+        """修改文件新增行安全 → 放行。"""
+        src = tmp_path / "src"
+        src.mkdir()
+        (src / "mod.py").write_text(
+            'import os\nx = 1\n', encoding="utf-8"
+        )
+        rel = "src/mod.py"
+        diff_output = (
+            "@@ -1,1 +1,2 @@\n"
+            " import os\n"
+            "+x = 1\n"
+        )
+        gw = _make_gateway(
+            modified_files=[rel],
+            added_lines={rel: diff_output},
+            project_root=str(tmp_path),
+        )
+        passed, msg = make_bare_getenv_gate().check(gw, [])
+        assert passed
+        assert msg == ""
+
+    def test_u0_diff_fails_fail_open(self, tmp_path):
+        """-U0 git diff 失败 → fail-open（跳过该文件检测）。"""
+        src = tmp_path / "src"
+        src.mkdir()
+        (src / "mod.py").write_text(
+            'import os\nx = os.getenv("API_KEY")\n', encoding="utf-8"
+        )
+        rel = "src/mod.py"
+        gw = _make_gateway(
+            modified_files=[rel],
+            u0_fails=True,
+            project_root=str(tmp_path),
+        )
+        passed, msg = make_bare_getenv_gate().check(gw, [])
+        assert passed  # -U0 失败，跳过检测
+        assert msg == ""
+
+    def test_added_and_modified_mixed(self, tmp_path):
+        """新增+修改文件混合 → 各自检测。"""
+        src = tmp_path / "src"
+        src.mkdir()
+        # 新增文件：含裸 getenv → 应阻断
+        (src / "new.py").write_text(
+            'import os\nx = os.getenv("NEW_TOKEN")\n', encoding="utf-8"
+        )
+        # 修改文件：存量行含裸 getenv，新增行安全 → 应放行
+        (src / "mod.py").write_text(
+            'import os\nx = os.getenv("OLD_KEY")\ny = 2\n', encoding="utf-8"
+        )
+        diff_output = (
+            "@@ -1,2 +1,3 @@\n"
+            " import os\n"
+            ' x = os.getenv("OLD_KEY")\n'
+            "+y = 2\n"
+        )
+        gw = _make_gateway(
+            staged_files=["src/new.py"],
+            modified_files=["src/mod.py"],
+            added_lines={"src/mod.py": diff_output},
+            project_root=str(tmp_path),
+        )
+        passed, msg = make_bare_getenv_gate().check(gw, [])
+        assert not passed  # 新增文件有违规
+        assert "NEW_TOKEN" in msg

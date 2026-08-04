@@ -2130,6 +2130,24 @@ capabilities:
     integrity_anchors:
       - make_bare_getenv_gate  # gate 工厂(删则 gate 不注册)
 
+  # --- #ARCH-SECRETS-GOV-001 Phase 2-S3 密钥治理可审计性（2026-08-04）---
+  - capability_id: secret_registry_consistency_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/secret_registry_consistency_gate.py
+    aliases:
+      - SECRET-REGISTRY-CONSISTENCY
+      - secret-registry-consistency
+      - make_secret_registry_consistency_gate
+      - secret_registry_consistency_blocker
+      - env_registry_consistency_gate
+    description: >-
+      SECRET-REGISTRY-CONSISTENCY in-process 门禁（#ARCH-SECRETS-GOV-001 Phase 2-S3，2026-08-04）。
+      检测 staged .env.example 或 config/secret_registry.yaml 变更时，两者密钥 KEY 一致性：
+      .env.example 有但 registry 无 → 违规（新增密钥未注册到 registry）；registry env_file=.env 有但
+      .env.example 无 → 违规（新增密钥未文档化到 .env.example）。强制新增密钥三步流程
+      （加 KEY→更新 .env.example→更新 registry）的最后一步对齐。priority=127。fail-open on YAML/git 异常。
+    integrity_anchors:
+      - make_secret_registry_consistency_gate  # gate 工厂(删则 gate 不注册)
+
   # --------------------------------------------------------------------------
   - capability_id: bare_subprocess_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/bare_subprocess_gate.py
@@ -6907,6 +6925,12 @@ creation_tokens:
     token: "auto-new-file-depgraph-gate-test-20260721"
     created_by: "session-sess-24512-20260720104006"
     capability: "new_file_depgraph_gate"
+
+  # --- #ARCH-SECRETS-GOV-001 Phase 2-S3 密钥治理可审计性（2026-08-04）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/secret_registry_consistency_gate.py"
+    token: "auto-secret-registry-consistency-gate-20260804"
+    created_by: "session-secrets-gov-s3"
+    capability: "secret_registry_consistency_gate"
 
   # --- #ARCH-DRIFT-PREVENTION-001 depgraph drift 防御体系（2026-07-17）---
   # domain_fk_gate.py: GATE-DOMAIN-FK [DOMAIN]头部域注册表FK校验（ADP-1, priority=78）

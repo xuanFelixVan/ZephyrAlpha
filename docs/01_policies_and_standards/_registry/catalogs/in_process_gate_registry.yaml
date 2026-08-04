@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 88
+total_gates: 89
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -587,4 +587,15 @@ gates:
   factory_function: make_test_residue_ssot_gate
   source: in_process
   register_line: 0  # priority=56
+  enabled: true
+# --- SECRET-REGISTRY-CONSISTENCY: .env.example ↔ secret_registry.yaml 一致性阻断（#ARCH-SECRETS-GOV-001 Phase 2-S3，2026-08-04）---
+# 治本：100% AI 开发场景下 AI 新增密钥时容易遗漏文档化或注册，本 gate 强制三步流程
+# （加 KEY → 更新 .env.example → 更新 registry）的最后一步对齐。
+# 检测 staged .env.example 或 config/secret_registry.yaml 变更时，比较两者 KEY 一致性。
+# priority=127（80-126 段已满，127 是 MCP-VERSION-FIELD=126 之后首个空位）。
+- gate_id: SECRET-REGISTRY-CONSISTENCY
+  module_path: zephyr.gov_enforcement.commit_gates.secret_registry_consistency_gate
+  factory_function: make_secret_registry_consistency_gate
+  source: in_process
+  register_line: 0  # priority=127
   enabled: true
