@@ -221,6 +221,24 @@
 >
 > **AI 合规**：新建表 DDL（`schemas/categories/*.py`）MUST 按上述时区类型声明 `DateTime64(3, '<tz>')`；已有表 schema 变更 MUST 同步更新 DDL 真源文件 + 运行 `apply_timezone_migration.py --verify` 确认无残留。
 
+## RULE-SECRETS：第十件事（密钥管理可发现性，#ARCH-SECRETS-GOV-001，2026-08-04 治本）
+
+> **密钥放 `.env` 文件（已 gitignore），用 `secrets.py` 接口读取，禁止裸 `os.getenv`。** 新 AI 冷启动**第一件事先读 [`SECRETS.md`](file:///d:/ZephyrAlpha/SECRETS.md)（密钥管理显性入口）**——它列出全部密钥文件分布、读取接口决策树、新增密钥三步流程。
+>
+> **病根（第一性原理）**：100% AI 开发场景下，AI 每次会话冷启动，无法像人类工程师记住"项目有哪些密钥、放哪里、怎么读"。原体系靠 `bare_getenv_gate` 事后拦截违规——AI 写错代码被拦才知道规则，是"事后惩罚"而非"事前引导"。治本三阶段（裁定 S-1/S-2/S-3/S-4）：
+> - **可知性**（Phase 1）：[`SECRETS.md`](file:///d:/ZephyrAlpha/SECRETS.md) 显性文档 + [`config/secret_registry.yaml`](file:///d:/ZephyrAlpha/config/secret_registry.yaml) 结构化注册表 + `.env.example` 模板
+> - **可达性**（Phase 2-S2）：[`secrets.py`](file:///d:/ZephyrAlpha/src/zephyr/shared/security/secrets.py) 便捷接口 `get_required_secret` / `get_service_secret` / `get_secret_or_default`
+> - **可审计性 + 纵深防御**（Phase 2-S3 / Phase 3）：三道 commit-time in-process gate 硬阻断
+>
+> **三道 gate 防线（commit 阶段硬阻断，`--no-verify` 无法绕过）**：
+> | priority | gate_id | 检测 | 互补关系 |
+> |---|---|---|---|
+> | 81 | `NO-BARE-GETENV` | 裸 `os.getenv`/`os.environ.get`/`os.environ["KEY"]` 读密钥（diff-aware：新增+修改文件 added 行） | 读密钥**方式**违规 |
+> | 127 | `SECRET-REGISTRY-CONSISTENCY` | `.env.example` ↔ `secret_registry.yaml` 的 KEY 不一致 | 新增密钥遗漏文档化/注册 |
+> | 128 | `NO-SECRET-HARDCODE` | 硬编码密钥值（`sk-`/`AKIA`/`ghp_`/`KEY="value"`，扫 .py/.yaml/.yml/.json/.toml） | 密钥**值**硬编码 |
+>
+> **AI 合规**：①读 [`SECRETS.md`](file:///d:/ZephyrAlpha/SECRETS.md) 知全貌；②读密钥用 `from zephyr.shared.security.secrets import get_required_secret`（第三方 token）/ `get_service_secret("KEY", "postgres")`（基础设施凭证），**禁止裸 `os.getenv`**；③新增密钥三步走（加 KEY 到 .env → 更新 .env.example → 更新 config/secret_registry.yaml），缺任一步被 `SECRET-REGISTRY-CONSISTENCY` 阻断；④密钥值禁止硬编码到代码/配置，被 `NO-SECRET-HARDCODE` 阻断。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
@@ -1074,7 +1092,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > **ARCH-053 三图设计态保护 + 对齐检测（2026-07-06）**：
 > - **设计态保护触发器**：dataflowgraph（3 表）+ decisiongraph（3 表）共 6 张表新增 BEFORE DELETE OR UPDATE 触发器，阻断 `design_maturity='design'` 行的删除或降级。逃生通道：`SET app.allow_design_maturity_delete = on`（仅 `apply_dataflowgraph.py` / `apply_decisiongraph.py` 设计态写入命令启用，对齐 depgraph `app.allow_delete_apply_depgraph_edges` 模式）。
 > - **TRAE-082 治本（2026-08-02）trigger 语义重构**：原逻辑一刀切阻断 design 态行所有 maturity 变更（含合法 design→production 升级，错误信息"降级"一词 misleading）。现改为：① design→production 升级 → 放行（模块毕业，YAML 已 deliberate 改 production）；② production→design 降级 → 阻断（防 sync/人工误回退已上线 .py）；③ design→design 字段更新 → 放行。治本后 sync UPSERT design→production 无需逃生通道绕行。SQL 真源：[`03_create_dataflow_schema.sql`](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/03_create_dataflow_schema.sql)。
-> - **三图对齐检测器**：[`align_panoramas.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/align_panoramas.py)（只读，manual 启动）。从三图读取节点，用 `module_id` 作为对齐 key（depgraph 用 `blueprint_id` 派生），检测 4 类问题：孤儿（仅一图）/ 状态漂移（design_maturity 不一致）/ 域不一致（domain_id 不一致）/ 设计态孤立（design 仅一图）。输出 `docs/02_enterprise_architecture/generated/panorama_alignment_report.md`。退出码：0=成功 / 1=错误 / 2=三图任一为空（检测无意义）。
+> - **三图对齐检测器**：[`align_panoramas.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/align_panoramas.py)（只读，manual 启动）。从三图读取节点，用 `module_id` 作为对齐 key（depgraph 用 `blueprint_id` 派生），检测 4 类问题：孤儿（仅一图）/ 状态漂移（design_maturity 不一致）/ 域不一致（domain_id 不一致）/ 设计态孤立（design 仅一图）。输出 `docs/02_enterprise_architecture/03_governance_reports/panorama_alignment_report.md`。退出码：0=成功 / 1=错误 / 2=三图任一为空（检测无意义）。
 > - **GATE-ARCH-DIAGRAM 触发器盲点修复**：`apply_dataflowgraph.py` 已加入 `_PG_WRITE_SCRIPTS` 触发列表，DB 写入后自动重生架构图。
 > - **capability 反查入口**：`panorama_alignment_detection`（aliases: align_panoramas/panorama_alignment/three_panoramas_alignment/ARCH-053/design_maturity_alignment）+ `design_maturity_trigger_protection`（aliases: protect_design_maturity/design_maturity_delete_protection/allow_design_maturity_delete/ARCH-053-trigger）。
 > - **ARCH-056 四图模块同步引擎 + 门禁阻断升级（2026-07-09）**：

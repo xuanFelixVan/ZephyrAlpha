@@ -45,7 +45,7 @@ ZephyrAlpha/
 | `config/.env.qmt` | QMT 交易终端 | 4 | **手动加载** | `get_service_secret("KEY", "qmt")` |
 | `config/.env.ch_backup` | CH 备份凭证 | 6 | **手动加载** | `get_service_secret("KEY", "ch_backup")` |
 
-> **注**：`get_service_secret()` 是裁定 S-2（Phase 2）将新增的便捷函数。Phase 2 实施前，使用 `get_secret_from_file("KEY", "config/.env.{service}")`。
+> **注**：`get_service_secret()`（裁定 S-2，Phase 2-S2 已落地）按服务名便捷读取基础设施凭证，底层等价 `get_secret_from_file("KEY", "config/.env.{service}")`。
 
 ### 为什么分两个位置？
 
@@ -71,8 +71,8 @@ ZephyrAlpha/
 │   └── 可选密钥  → get_secret_or_default("KEY", "默认值")  # 缺失返回默认值
 │
 ├── 是基础设施凭证（在 config/.env.{service} 中）？
-│   ├── Phase 2 后 → get_service_secret("KEY", "postgres")  # 便捷函数
-│   └── Phase 2 前 → get_secret_from_file("KEY", "config/.env.postgres")
+│   ├── 必需密钥  → get_service_secret("KEY", "postgres")     # 按服务名便捷读取
+│   └── 可选密钥  → get_secret_from_file_or_default("KEY", "config/.env.postgres", "默认值")
 │
 └── 禁止 ⛔：
     ├── os.getenv("KEY")
@@ -88,23 +88,35 @@ ZephyrAlpha/
 | `get_secret_or_default(key, default)` | 可选密钥，缺失返回默认值 | `url = get_secret_or_default("DEEPSEEK_BASE_URL", "https://...")` |
 | `get_secret_from_file(key, env_file)` | 从指定文件读（必需） | `pwd = get_secret_from_file("POSTGRES_PASSWORD", "config/.env.postgres")` |
 | `get_secret_from_file_or_default(key, env_file, default)` | 从指定文件读（可选） | `host = get_secret_from_file_or_default("REDIS_HOST", "config/.env.redis", "localhost")` |
-| `get_service_secret(key, service)` | **Phase 2 新增**，按服务名读 | `pwd = get_service_secret("POSTGRES_PASSWORD", "postgres")` |
+| `get_service_secret(key, service)` | 按服务名读基础设施凭证（必需） | `pwd = get_service_secret("POSTGRES_PASSWORD", "postgres")` |
 
-### 2.3 禁止行为（gate 阻断）
+### 2.3 禁止行为（三道 gate 阻断，#ARCH-SECRETS-GOV-001）
 
-`bare_getenv_gate`（pre-commit in-process gate，gate_id=`NO-BARE-GETENV`）会检测**新增 .py 文件**中的裸 `os.getenv`/`os.environ.get`/`os.environ["KEY"]` 调用，若 KEY 匹配 `SECRET_INDICATOR_PATTERNS`（KEY/TOKEN/SECRET/PASSWORD/PASSWD/PWD/CREDENTIAL）则**硬阻断提交**。
+密钥治理有三道 commit-time in-process gate 硬阻断（`--no-verify` 无法绕过），覆盖"读密钥方式违规 / 新增密钥遗漏登记 / 密钥值硬编码"三个维度：
+
+| gate_id（priority） | 检测内容 | 阻断场景 |
+|---|---|---|
+| `NO-BARE-GETENV`（81） | 裸 `os.getenv`/`os.environ.get`/`os.environ["KEY"]` 读密钥类 KEY | 读密钥**方式**违规（diff-aware：检测**新增+修改** .py 文件的 added 行，修改文件只检测 git diff 新增行，不触碰存量基线） |
+| `SECRET-REGISTRY-CONSISTENCY`（127） | `.env.example` 与 `secret_registry.yaml` 的 KEY 不一致 | 新增密钥遗漏文档化（.env.example）或注册登记（registry） |
+| `NO-SECRET-HARDCODE`（128） | 硬编码密钥值（`sk-`/`AKIA`/`ghp_`/`KEY="value"` 等），扫 .py/.yaml/.yml/.json/.toml | 密钥**值**硬编码到代码/配置 |
 
 ```python
 # ✅ 正确
 from zephyr.shared.security.secrets import get_required_secret
 token = get_required_secret("TUSHARE_TOKEN")
 
-# ⛔ 错误（gate 阻断）
+# ⛔ 错误（NO-BARE-GETENV 阻断）——读密钥方式违规
 import os
 token = os.getenv("TUSHARE_TOKEN")        # 裸 getenv 读密钥
 token = os.environ.get("TUSHARE_TOKEN")   # 裸 environ.get 读密钥
 token = os.environ["TUSHARE_TOKEN"]       # 裸下标访问读密钥
+
+# ⛔ 错误（NO-SECRET-HARDCODE 阻断）——密钥值硬编码
+API_KEY = "sk-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"   # OpenAI key 明文
+password = "s3cret_pass"                          # password 明文赋值
 ```
+
+> 三道 gate 豁免：`tests/`（测试）、`.env.example`（模板）、密钥扫描脚本自身、docstring/注释/import 行（.py）。误报通过豁免处理，gate 全部 fail-closed 硬阻断（100% AI 场景不用 warn-only）。
 
 ---
 
@@ -182,20 +194,22 @@ echo "NEW_API_KEY=" >> .env.example
 
 ---
 
-## 6. 已知存量违规（裁定 S-2 待整改）
+## 6. 存量违规整改记录（裁定 S-2，Phase 2-S2 已完成）
 
-以下 9 处密钥类裸 `os.getenv` 调用是 Phase 2 的整改目标（详见裁定文档 §3.2）：
+以下 9 处密钥类裸 `os.getenv` 调用已于 Phase 2-S2（2026-08-04）全部整改为 `secrets.py` 接口，密钥类裸 getenv 已清零。保留此表供历史追溯：
 
-| 文件 | KEY | 整改方案 |
-|---|---|---|
-| ifind_provider.py:227-228 | IFIND_USERNAME/PASSWORD | → `get_required_secret()` |
-| deepseek_v4_chat.py:32 | DEEPSEEK_API_KEY | → `get_required_secret()` |
-| ch_writer.py:74-75 | CLICKHOUSE_WRITER_USER/PASSWORD | → `get_service_secret()` |
-| ch_config.py:113-171 | CLICKHOUSE_* | → `get_service_secret()` |
-| redis_config.py:113-141 | REDIS_* | → `get_service_secret()` |
-| environment_manager.py:50-83 | *_DB_CONN/*_BROKER_CONN | → `get_secret_or_default()` |
-| gov_audit/writer.py:388 | ZEPHYR_AUDIT_HMAC_SECRET | → `get_required_secret()` |
-| tamper_evident_log.py:37 | ZEPHYR_TAMPER_HMAC_SECRET | → `get_required_secret()` |
+| 文件 | KEY | 整改方案 | 状态 |
+|---|---|---|---|
+| ifind_provider.py:227-228 | IFIND_USERNAME/PASSWORD | → `get_required_secret()` | ✅ 已整改 |
+| deepseek_v4_chat.py:32 | DEEPSEEK_API_KEY | → `get_required_secret()` | ✅ 已整改 |
+| ch_writer.py:74-75 | CLICKHOUSE_WRITER_USER/PASSWORD | → `get_service_secret()` | ✅ 已整改 |
+| ch_config.py:113-171 | CLICKHOUSE_* | → `get_service_secret()` | ✅ 已整改 |
+| redis_config.py:113-141 | REDIS_* | → `get_service_secret()` | ✅ 已整改 |
+| environment_manager.py:50-83 | *_DB_CONN/*_BROKER_CONN | → `get_secret_or_default()` | ✅ 已整改 |
+| gov_audit/writer.py:388 | ZEPHYR_AUDIT_HMAC_SECRET | → `get_required_secret()` | ✅ 已整改 |
+| tamper_evident_log.py:37 | ZEPHYR_TAMPER_HMAC_SECRET | → `get_required_secret()` | ✅ 已整改 |
+
+> 新增违规由 `NO-BARE-GETENV` gate（diff-aware，检测新增+修改文件 added 行）在 commit 阶段硬阻断，防止存量复发。
 
 ---
 
@@ -227,3 +241,4 @@ echo "NEW_API_KEY=" >> .env.example
 | 日期 | 版本 | 变更 |
 |---|---|---|
 | 2026-08-04 | 1.0.0 | 初始版本（裁定 S-1 Phase 1 施工）|
+| 2026-08-04 | 1.1.0 | 同步 Phase 2-S2/S3/Phase 3 落地状态：§2.1 决策树清理 Phase 临时表述；§2.3 补全三道 gate（NO-BARE-GETENV diff-aware + SECRET-REGISTRY-CONSISTENCY + NO-SECRET-HARDCODE）；§6 标注 9 处存量违规已整改完成 |
