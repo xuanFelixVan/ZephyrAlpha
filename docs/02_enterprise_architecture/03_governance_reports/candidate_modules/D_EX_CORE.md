@@ -12,7 +12,7 @@ ttl: permanent
 
 > [← 返回索引](index.md)
 
-> 本域候选 **68** 条（原有 7 + harvest 61）。
+> 本域候选 **72** 条（原有 11 + harvest 61）。
 > harvest 去重四态: likely_new=12 / likely_implemented=34 / likely_planned=14 / uncertain=1
 
 ## 完整清单
@@ -83,23 +83,31 @@ ttl: permanent
 | CAND-EX-001 | Futu/IB Broker Adapters / 富途IB券商适配器 | 实盘需要非MiniQMT渠道(如港股/美股/期货)下单时,无对应券商适配器 | D_EX_CORE | 延后（deferred） | 一问通过 | P1 | 实盘扩展到港股/美股/期货市场(MiniQMT仅覆盖A股) 等3条 | 2027-01-31 |
 | CAND-EX-002 | Multi-threaded Order Processing / 多线程订单处理 | 高频/批量下单时单线程订单处理成为瓶颈(并发>10) | D_EX_CORE | 延后（deferred） | 一问通过 | P1 | 并发订单数持续>10 等3条 | 2027-01-31 |
 | CAND-EX-003 | Redis幂等性存储 / Redis Idempotency Store | 下单幂等性(INV-007),防重复扣减/重复创建 | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P3 | MOD-INF-016 出现跨进程去重缺口且 SQLite 后端不足以支撑 | 2027-08-05 |
-| CAND-EX-004 | 蓝图Implementer / Blueprint Implementer | (无具体业务问题——自我指涉元概念) | D_EX_CORE | 否决（rejected） | 逐案论证 | P3 | — | 2027-08-05 |
+| CAND-EX-004 | 蓝图Implementer / Blueprint Implementer | (无具体业务问题——自我指涉元概念) | D_EX_CORE | 否决（rejected） | 一问通过 | P3 | — | 2027-08-05 |
 | CAND-EX-005 | 执行域值对象 / Execution Value Objects | (无——Pydantic BaseModel原生提供值对象语义) | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P3 | — | 2027-08-05 |
 | CAND-EX-006 | 执行域工厂 / Execution Factory | (无——aggregate_root_manager已是Facade构建入口) | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P3 | — | 2027-08-05 |
+| CAND-EX004-001 | MOD-EX-004 redis幂等性(重复幽灵节点) | (已解决)订单幂等性去重已由shared/infra/idempotency.py承接 | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-05 |
 | CAND-EX015-001 | MOD-EX-015 execution_report(重复幽灵节点) | (已解决)执行报告已由MOD-INF-016正确承接,3处实现(trading/shared/contracts) | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-04 |
+| CAND-EX037-001 | MOD-EX-037 蓝图Implementer(概念错误节点) | (无真实痛点)D_EX_CORE做订单执行,不存在把蓝图转代码的需求 | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-05 |
+| CAND-EX051-001 | MOD-EX-051 值对象(分散实现幽灵节点) | (已解决)值对象已分散在trading_contracts的dataclass实现 | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-05 |
+| CAND-EX052-001 | MOD-EX-052 工厂(分散实现幽灵节点) | (已解决)工厂模式已分散在shared/contracts/core/factories.py和trading_contracts/factories.py实现 | D_EX_CORE | 否决（rejected） | q1 已实现/重复 | P2 | — | 2027-08-05 |
 
 ## 按一问卡点分组（为什么没开发）
 
 > 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
-### q1 已实现/重复（4 条）
+### q1 已实现/重复（8 条）
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
 | CAND-EX-003 | Redis幂等性存储 / Redis Idempotency Store | 下单幂等性(INV-007),防重复扣减/重复创建 | D_EX_CORE | IdempotencyStore/SQLiteIdempotencyStore/build_idempotency_key 已production;repository_interface INVARIANT save幂等;idempotency_key 已内联5处 | 维持 MOD-INF-016 + repository_interface save幂等。代价:无,已完整覆盖 |
 | CAND-EX-005 | 执行域值对象 / Execution Value Objects | (无——Pydantic BaseModel原生提供值对象语义) | D_EX_CORE | 项目全局强制Pydantic V2;值对象语义原生支持,无需独立模块 | 维持 shared.contracts Pydantic 模型。代价:无 |
 | CAND-EX-006 | 执行域工厂 / Execution Factory | (无——aggregate_root_manager已是Facade构建入口) | D_EX_CORE | aggregate_root_manager已承担Facade/构建入口('把订单仓储/成交处理/持仓跟踪拧成一股绳');Python用__init__/classmethod构造 | 维持 aggregate_root_manager。代价:无 |
+| CAND-EX004-001 | MOD-EX-004 redis幂等性(重复幽灵节点) | (已解决)订单幂等性去重已由shared/infra/idempotency.py承接 | D_EX_CORE | shared/infra/idempotency.py 291行,RedisIdempotencyGateway类+is_already_processed/handle_execution方法,stable,有测试tests/infrastructure/test_infra_idempotency.py.幂等机制已上移至基础设施层 | MOD-INF-016(节点8640073,src/zephyr/shared/infra/idempotency.py,stable,291行) |
 | CAND-EX015-001 | MOD-EX-015 execution_report(重复幽灵节点) | (已解决)执行报告已由MOD-INF-016正确承接,3处实现(trading/shared/contracts) | D_EX_CORE | execution_report已由MOD-INF-016实现,3处:trading/trading_contracts/execution/execution_report.py(stable)+shared/contracts/execution/execution_report.py(generated)+shared/contracts/execution_report.py(generated) | MOD-INF-016(节点8616268,src/zephyr/trading/trading_contracts/execution/execution_report.py,stable) |
+| CAND-EX037-001 | MOD-EX-037 蓝图Implementer(概念错误节点) | (无真实痛点)D_EX_CORE做订单执行,不存在把蓝图转代码的需求 | D_EX_CORE | rg全项目搜blueprint_implementer/BlueprintImplementer 0结果,execute_blueprint/implement_blueprint动词 0结果。该功能无任何实现也无任何消费者,属概念错误非功能缺失 | 无(D_EX_CORE不需要蓝图转代码功能) |
+| CAND-EX051-001 | MOD-EX-051 值对象(分散实现幽灵节点) | (已解决)值对象已分散在trading_contracts的dataclass实现 | D_EX_CORE | trading_contracts/order.py有OrderId/Order等dataclass(frozen=True不可变值对象),shared/contracts/下亦有大量dataclass/Pydantic BaseModel.值对象模式已分散在各contracts内联实现,无集中模块需求 | trading_contracts/order.py(OrderId/Order等)+shared/contracts/下dataclass(分散实现) |
+| CAND-EX052-001 | MOD-EX-052 工厂(分散实现幽灵节点) | (已解决)工厂模式已分散在shared/contracts/core/factories.py和trading_contracts/factories.py实现 | D_EX_CORE | shared/contracts/core/factories.py 248行有OrderFactory/ExecutionReportFactory,trading_contracts/factories.py 252行有ModelFactory等.工厂模式已分散在各模块内联实现,module_onboarding_scanner.py亦有factory_create逻辑.无集中D_EX_CORE工厂需求 | shared/contracts/core/factories.py(248行,OrderFactory/ExecutionReportFactory)+trading_contracts/factories.py(252行,分散实现) |
 
 ### 待评估（61 条）
 
@@ -167,17 +175,12 @@ ttl: permanent
 | CAND-HARVEST-5054 | Trading Channel Auto Recovery 交易通道熔断自动恢复 | HB-SEC-06+HB-SEC-07双重锁定 | D_EX_CORE | harvest待评估（likely_implemented） |  |
 | CAND-HARVEST-5080 | Emergency Execution 紧急执行 | 风控强制卖出链——EX-CORE-02紧急执行 | D_EX_CORE | harvest待评估（likely_implemented） |  |
 
-### 一问通过（2 条）
+### 一问通过（3 条）
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
 | CAND-EX-001 | Futu/IB Broker Adapters / 富途IB券商适配器 | 实盘需要非MiniQMT渠道(如港股/美股/期货)下单时,无对应券商适配器 | D_EX_CORE | 首次登记,待非MiniQMT渠道需求或实盘扩展时重新评估 | MiniQMT渠道(已施工,覆盖A股实盘)。代价:无法接入港股/美股/期货 |
 | CAND-EX-002 | Multi-threaded Order Processing / 多线程订单处理 | 高频/批量下单时单线程订单处理成为瓶颈(并发>10) | D_EX_CORE | 首次登记,待并发订单>10或提交延迟>100ms时重新评估 | 单线程顺序提交(当前实现)。代价:并发>10时延迟增加 |
-
-### 逐案论证（1 条）
-
-| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
-|------|------|------|------|------|------|
 | CAND-EX-004 | 蓝图Implementer / Blueprint Implementer | (无具体业务问题——自我指涉元概念) | D_EX_CORE | rejected,q2无驱动(自我指涉元模块)。除非出现明确的'蓝图→代码'自动化需求且无现有工具,否则不再评估 | 不实现。代价:无,无任何模块需要它 |
 
 ## 复查时间表
@@ -254,3 +257,7 @@ ttl: permanent
 | 2027-08-05 | yearly | CAND-EX-004 | 蓝图Implementer / Blueprint Implementer | D_EX_CORE | 否决（rejected） | rejected,q2无驱动(自我指涉元模块)。除非出现明确的'蓝图→代码'自动化需求且无现有工具,否则不再评估 |
 | 2027-08-05 | yearly | CAND-EX-005 | 执行域值对象 / Execution Value Objects | D_EX_CORE | 否决（rejected） | rejected,q1已实现(Pydantic V2强制)。除非放弃Pydantic转纯dataclass,否则不再评估 |
 | 2027-08-05 | yearly | CAND-EX-006 | 执行域工厂 / Execution Factory | D_EX_CORE | 否决（rejected） | rejected,q1已实现(aggregate_root_manager)。除非aggregate_root_manager重构移除Facade职责,否则不再评估 |
+| 2027-08-05 | yearly | CAND-EX004-001 | MOD-EX-004 redis幂等性(重复幽灵节点) | D_EX_CORE | 否决（rejected） | rejected,确认重复幽灵节点。幂等机制已由shared/infra/idempotency.py(MOD-INF-016)承接.文件不存在+功能已上移基础设施层.软删除防误恢复 |
+| 2027-08-05 | yearly | CAND-EX037-001 | MOD-EX-037 蓝图Implementer(概念错误节点) | D_EX_CORE | 否决（rejected） | rejected,确认概念错误节点。D_EX_CORE做订单执行不需要蓝图转代码功能,全项目0引用,文件不存在=幽灵。软删除防误恢复 |
+| 2027-08-05 | yearly | CAND-EX051-001 | MOD-EX-051 值对象(分散实现幽灵节点) | D_EX_CORE | 否决（rejected） | rejected,确认分散实现。值对象已分散在trading_contracts/shared/contracts的dataclass内联实现,文件不存在=幽灵。软删除防误恢复 |
+| 2027-08-05 | yearly | CAND-EX052-001 | MOD-EX-052 工厂(分散实现幽灵节点) | D_EX_CORE | 否决（rejected） | rejected,确认分散实现。工厂已由shared/contracts/core/factories.py(248行)+trading_contracts/factories.py(252行)分散实现,文件不存在=幽灵。软删除防误恢复 |

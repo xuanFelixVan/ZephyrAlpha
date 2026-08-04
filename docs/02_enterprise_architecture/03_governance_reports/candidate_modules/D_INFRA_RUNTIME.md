@@ -730,7 +730,7 @@ ttl: permanent
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-H1FS-001 | H1 Factor Source / H1 因子截面读取适配器 | (无真实痛点)设想为信号端提供友好因子读取接口,但读端已由 H1RedisReader 覆盖 | D_INFRA_RUNTIME | rejected,q2无需求驱动+q1已由H1RedisReader.get_online_features覆盖。depgraph node7964707已deprecated。除非D_SIGNAL信号域启动且批量截面读性能不达标,否则不再评估 | 信号域直接用 H1RedisReader.get_online_features(蓝图 §9 既定接口)。若未来需批量截面读,在 D_SIGNAL 启动时按需新增,届时过四问过滤 |
+| CAND-H1FS-001 | H1 Factor Source / H1 因子截面读取适配器 | (无真实痛点)设想为信号端提供友好因子读取接口,但读端已由 H1RedisReader 覆盖 | D_INFRA_RUNTIME | rejected,q2无需求驱动+q1已由H1RedisReader.get_online_features覆盖。depgraph node7964707已deprecated。除非D_SIGNAL信号域启动且批量截面读性能不达标,否则不再评估 | 信号域直接用 H1RedisReader.get_online_features(蓝图 §9 既定接口)。若未来需批量截面读,在 D_SIGNAL 启动时按需新增,届时过一问标准 |
 
 ## 复查时间表
 

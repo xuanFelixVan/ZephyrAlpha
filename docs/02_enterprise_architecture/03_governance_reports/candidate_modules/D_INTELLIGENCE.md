@@ -216,7 +216,7 @@ ttl: permanent
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
-| CAND-AISA-001 | AI Sentiment Analyzer / AI 舆情分析器 | A 股受政策与舆情驱动性强,缺乏结构化舆情信号导致政策行情响应滞后 | D_INTELLIGENCE | 首次登记为 candidate,待四问评估。重点评估 q4:TRAE AI 是否可替代独立模块 | 依赖 TRAE AI 运行时做舆情理解(不建模块)。代价:无固化信号产出,每次需 AI 重新分析 |
+| CAND-AISA-001 | AI Sentiment Analyzer / AI 舆情分析器 | A 股受政策与舆情驱动性强,缺乏结构化舆情信号导致政策行情响应滞后 | D_INTELLIGENCE | 首次登记为 candidate,待一问标准评估。重点评估 q4:TRAE AI 是否可替代独立模块 | 依赖 TRAE AI 运行时做舆情理解(不建模块)。代价:无固化信号产出,每次需 AI 重新分析 |
 | CAND-HARVEST-0009 | Cross-Market Transmission Quantitative Model 跨市场传导量化模型 | C 039：跨市场传导量化模型 | D_INTELLIGENCE | harvest待评估（likely_implemented） |  |
 | CAND-HARVEST-0031 | AI协作策略与人机信任模型 | C 031：AI协作策略与人机信任模型（P0） | D_INTELLIGENCE | harvest待评估（uncertain） |  |
 | CAND-HARVEST-0032 | Auto Backtest & Simulation 自动回测与仿真 | C 003：自动回测与仿真 | D_INTELLIGENCE | harvest待评估（likely_new） |  |
@@ -411,7 +411,7 @@ ttl: permanent
 
 | 下次复查 | 复查频率 | ID | 名称 | 域 | 状态 | 上次复查结论 |
 |------|------|------|------|------|------|------|
-| 2026-10-31 | quarterly | CAND-AISA-001 | AI Sentiment Analyzer / AI 舆情分析器 | D_INTELLIGENCE | 候选待评（candidate） | 首次登记为 candidate,待四问评估。重点评估 q4:TRAE AI 是否可替代独立模块 |
+| 2026-10-31 | quarterly | CAND-AISA-001 | AI Sentiment Analyzer / AI 舆情分析器 | D_INTELLIGENCE | 候选待评（candidate） | 首次登记为 candidate,待一问标准评估。重点评估 q4:TRAE AI 是否可替代独立模块 |
 | 2026-11-30 | quarterly | CAND-HARVEST-0009 | Cross-Market Transmission Quantitative Model 跨市场传导量化模型 | D_INTELLIGENCE | 候选待评（candidate） | harvest待评估（likely_implemented） |
 | 2026-11-30 | quarterly | CAND-HARVEST-0031 | AI协作策略与人机信任模型 | D_INTELLIGENCE | 候选待评（candidate） | harvest待评估（uncertain） |
 | 2026-11-30 | quarterly | CAND-HARVEST-0032 | Auto Backtest & Simulation 自动回测与仿真 | D_INTELLIGENCE | 候选待评（candidate） | harvest待评估（likely_new） |

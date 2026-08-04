@@ -238,7 +238,7 @@ entries:
           downstream: ["MOD-EX-002"]
         insertion_description: "拟插入 D_RISK L1 事前风控区,但已由 risk_validator+risk_validation_bridge+position_limit_checker 三件组合承接,无需新增独立节点"
         target_edges: []
-        note: "四问①挂:重复实现。四图位置仅作'若强行实现会插哪'的参考,实际不新增节点"
+        note: "一问标准 q1挂:重复实现。四图位置仅作'若强行实现会插哪'的参考,实际不新增节点"
       dataflowgraph:
         has_position: true
         target_node_type: transform
@@ -282,7 +282,7 @@ entries:
     created_at: '2026-07-31'
     last_reviewed_at: '2026-07-31'
     promoted_to: ""
-    source_draft: "application_flows.md (2026-07-30 四问过滤审查)"
+    source_draft: "application_flows.md (2026-07-30 一问标准审查)"
     source_section: "§Pre-Trade Checker 候选"
     original_id: "PTC"
     estimated_complexity: M
@@ -405,7 +405,7 @@ entries:
         target_neighbors:
           upstream: ["MOD-INT-001"]
           downstream: ["MOD-SIG-002"]
-        insertion_description: "插入 D_INTELLIGENCE §2 非结构化区,在 INT-01 数据采集之后、SIG-02 信号生成之前(拟定,待四问确认)"
+        insertion_description: "插入 D_INTELLIGENCE §2 非结构化区,在 INT-01 数据采集之后、SIG-02 信号生成之前(拟定,待一问标准确认)"
         target_edges:
           - {from: "MOD-INT-001", to: "MOD-INT-AISA", type: runtime, reason: "新闻/公告→舆情分析"}
           - {from: "MOD-INT-AISA", to: "MOD-SIG-002", type: runtime, reason: "舆情分数→信号"}
@@ -445,7 +445,7 @@ entries:
       - {id: "CTR-INT-01", note: "新闻/公告文本"}
     prerequisites:
       - {condition: "D_INTELLIGENCE 数据采集稳定", check: "MOD-INT-001=production", met: true}
-      - {condition: "确认非AI可替代", check: "四问④评估", met: false, note: "待评估:TRAE AI 可能直接胜任舆情理解,无需建独立模块"}
+      - {condition: "确认非AI可替代", check: "", met: false, note: "待评估:TRAE AI 可能直接胜任舆情理解,无需建独立模块"}
     design_admission:
       q1_implemented: {result: pending, equivalent_nodes: [], evidence: "待评估:需 grep 确认 D_INTELLIGENCE 是否已有舆情实现"}
       blocking_question: pending
@@ -463,14 +463,14 @@ entries:
     tech_notes: "NLP 情绪模型+事件抽取+prompt 工程+舆情分数聚合。关键决策:自建模块 vs 依赖 TRAE AI 运行时理解"
     risks: ["舆情数据源合规性", "NLP 模型漂移需定期重训", "若 TRAE AI 可替代则建模块属过度工程"]
     alternatives: "依赖 TRAE AI 运行时做舆情理解(不建模块)。代价:无固化信号产出,每次需 AI 重新分析"
-    tags: ["candidate", "待四问评估", "A股特色", "政策驱动", "AI替代待定"]
+    tags: ["candidate", "待一问标准评估", "A股特色", "政策驱动", "AI替代待定"]
     search_terms: ["sentiment", "舆情", "news sentiment", "政策舆情", "NLP情绪"]
     related_candidates: []
     enables: []
     blocked_by: []
     next_review_date: '2026-10-31'
     review_frequency: quarterly
-    last_review_outcome: "首次登记为 candidate,待四问评估。重点评估 q4:TRAE AI 是否可替代独立模块"
+    last_review_outcome: "首次登记为 candidate,待一问标准评估。重点评估 q4:TRAE AI 是否可替代独立模块"
 
   # ----------------------------------------------------------
   # CAND-BACL-001: Broker ACL 三层架构（rejected，四问②挂——无重构驱动）
@@ -493,7 +493,7 @@ entries:
           downstream: ["MOD-EX-003"]
         insertion_description: "拟重构 D_INTEGRATION L1 适配层为三层ACL,但现有2 adapter平铺已满足,无重构驱动"
         target_edges: []
-        note: "四问②挂:无重构驱动。位置仅作'若强行重构会变成哪样'的参考"
+        note: "位置仅作'若强行重构会变成哪样'的参考"
       dataflowgraph:
         has_position: true
         target_node_type: transform
@@ -537,7 +537,7 @@ entries:
     created_at: '2026-07-31'
     last_reviewed_at: '2026-07-31'
     promoted_to: ""
-    source_draft: "governance_views.md (2026-07-30 四问过滤审查)"
+    source_draft: "governance_views.md (2026-07-30 一问标准审查)"
     source_section: "§Broker ACL 三层候选"
     original_id: "BACL"
     estimated_complexity: M
@@ -568,7 +568,7 @@ entries:
     panorama_position:
       depgraph:
         has_position: false
-        note: "四问④挂:AI替代。不建代码模块,规则→检查器翻译由 TRAE AI 运行时胜任,无需独立编译器节点"
+        note: "不建代码模块,规则→检查器翻译由 TRAE AI 运行时胜任,无需独立编译器节点"
       dataflowgraph:
         has_position: false
         note: "AI替代,无独立数据流节点;翻译由 AI 运行时完成"
@@ -603,7 +603,7 @@ entries:
     created_at: '2026-07-31'
     last_reviewed_at: '2026-07-31'
     promoted_to: ""
-    source_draft: "四问过滤审查 (2026-07-30)"
+    source_draft: "一问标准审查 (2026-07-30)"
     source_section: "§Policy Compiler 候选"
     original_id: "PC"
     estimated_complexity: XL
@@ -890,7 +890,7 @@ entries:
           downstream: []
         insertion_description: "原拟 ex_core/redis_idempotency/ 目录模块,但幂等是横切基础设施(D_SHARED),需求已由 MOD-INF-016 完全覆盖,不新增节点"
         target_edges: []
-        note: "四问①挂:重复实现。depgraph 入边0/出边0/锚点0,零消费者"
+        note: "一问标准 q1挂:重复实现。depgraph 入边0/出边0/锚点0,零消费者"
     description: "Redis-backed 订单幂等去重存储,防重复下单/断线重连重复"
     capability: ""
     problem_it_solves: "下单幂等性(INV-007),防重复扣减/重复创建"
@@ -950,7 +950,7 @@ entries:
           downstream: []
         insertion_description: "原拟 ex_core/blueprint_implementer.py,但'实现蓝图的模块'是自我指涉元概念,非执行业务模块,不新增节点"
         target_edges: []
-        note: "四问②挂:无需求驱动。depgraph 入边0/出边0/锚点0"
+        note: "depgraph 入边0/出边0/锚点0"
     description: "从蓝图自动生成执行核心代码的元工具"
     capability: ""
     problem_it_solves: "(无具体业务问题——自我指涉元概念)"
@@ -1009,7 +1009,7 @@ entries:
           downstream: []
         insertion_description: "原拟 ex_core/value_objects.py,但Pydantic V2已全局强制(KBG-0040),Order/Fill/Position已定义于shared.contracts,纯DDD仪式"
         target_edges: []
-        note: "四问①挂:重复实现(已被Pydantic+shared.contracts覆盖)"
+        note: "一问标准 q1挂:重复实现(已被Pydantic+shared.contracts覆盖)"
     description: "执行域DDD值对象集合(OrderId/Quantity/Price等不可变对象)"
     capability: ""
     problem_it_solves: "(无——Pydantic BaseModel原生提供值对象语义)"
@@ -1068,7 +1068,7 @@ entries:
           downstream: []
         insertion_description: "原拟 ex_core/factory.py,但aggregate_root_manager(MOD-EX-049,production)已承担Facade/构建入口,Python用__init__/classmethod构造"
         target_edges: []
-        note: "四问①挂:重复实现(已被aggregate_root_manager覆盖)"
+        note: "一问标准 q1挂:重复实现(已被aggregate_root_manager覆盖)"
     description: "执行域DDD工厂,创建复杂聚合根"
     capability: ""
     problem_it_solves: "(无——aggregate_root_manager已是Facade构建入口)"
@@ -166324,7 +166324,7 @@ entries:
           downstream: ["D-SIGNAL (尚未存在)"]
         insertion_description: "拟作为 H1 读端适配层,但 H1RedisReader.get_online_features + h1_integration.create_h1_reader 已覆盖读功能"
         target_edges: []
-        note: "四问①②挂:功能已实现+无消费者。depgraph node 7964707 已软删除(deprecated)"
+        note: "一问标准 q1挂:功能已实现。depgraph node 7964707 已软删除(deprecated)"
       dataflowgraph:
         has_position: true
         target_node_type: read
@@ -166365,9 +166365,9 @@ entries:
     original_id: "h1_factor_source"
     estimated_complexity: S
     estimated_effort: ""
-    tech_notes: "双源对比:设计文档(h1_redis_hot.md §9 D-SIGNAL读端=H1RedisReader.get_online_features,§11 H1全部完成E2E avg0.20ms;candidate_module_registry 无条目;D_FACTOR.md 零匹配) vs depgraph(node7964707 build_status=planned design_maturity=design 从未施工).四问①功能已实现(H1RedisReader+create_h1_reader覆盖) ②无需求驱动(无消费者).depgraph node 7964707 已软删除→deprecated(附 design_evidence 审计)"
+    tech_notes: "双源对比:设计文档(h1_redis_hot.md §9 D-SIGNAL读端=H1RedisReader.get_online_features,§11 H1全部完成E2E avg0.20ms;candidate_module_registry 无条目;D_FACTOR.md 零匹配) vs depgraph(node7964707 build_status=planned design_maturity=design 从未施工).q1功能已实现(H1RedisReader+create_h1_reader覆盖).depgraph node 7964707 已软删除→deprecated(附 design_evidence 审计)"
     risks: ["硬建会导致幽灵节点复活+读端双真源(H1RedisReader 与 h1_factor_source 两处维护)"]
-    alternatives: "信号域直接用 H1RedisReader.get_online_features(蓝图 §9 既定接口)。若未来需批量截面读,在 D_SIGNAL 启动时按需新增,届时过四问过滤"
+    alternatives: "信号域直接用 H1RedisReader.get_online_features(蓝图 §9 既定接口)。若未来需批量截面读,在 D_SIGNAL 启动时按需新增,届时过一问标准"
     tags: ["幽灵节点", "rejected", "功能已实现", "无消费者", "防过度工程", "防误重新设计"]
     search_terms: ["h1_factor_source", "H1FactorSource", "信号端因子读取", "因子截面适配"]
     related_candidates: []

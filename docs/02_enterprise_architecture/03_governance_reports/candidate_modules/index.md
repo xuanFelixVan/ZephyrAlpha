@@ -23,7 +23,7 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 候选总数 | 5315 |
+| 候选总数 | 5321 |
 | 涉及域数 | 38 |
 
 ### 按状态分布
@@ -31,24 +31,23 @@ ttl: permanent
 | 状态 / Status | 数量 / Count | 占比 / Ratio |
 |------|:---:|:---:|
 | 延后（deferred） | 12 | 0.2% |
-| 否决（rejected） | 31 | 0.6% |
-| 候选待评（candidate） | 5272 | 99.2% |
+| 否决（rejected） | 37 | 0.7% |
+| 候选待评（candidate） | 5272 | 99.1% |
 
 ### 按一问卡点分布
 
 | 卡点 / Blocking | 数量 / Count | 占比 / Ratio |
 |------|:---:|:---:|
-| q1 已实现/重复 | 13 | 0.2% |
-| 待评估 | 5284 | 99.4% |
-| 一问通过 | 17 | 0.3% |
-| 逐案论证 | 1 | 0.0% |
+| q1 已实现/重复 | 19 | 0.4% |
+| 待评估 | 5284 | 99.3% |
+| 一问通过 | 18 | 0.3% |
 
 ### 按优先级分布
 
 | 优先级 / Priority | 数量 / Count |
 |------|:---:|
 | P1 | 6 |
-| P2 | 5305 |
+| P2 | 5311 |
 | P3 | 4 |
 
 ### 按域分布
@@ -62,11 +61,11 @@ ttl: permanent
 | D_BACKTEST | 3 |
 | D_COMPLIANCE | 511 |
 | D_CROSS_ASSET | 45 |
-| D_DATA | 1 |
+| D_DATA | 3 |
 | D_DATA_ENG | 93 |
 | D_DATA_GOV | 19 |
 | D_DATA_SEC | 3 |
-| D_EX_CORE | 68 |
+| D_EX_CORE | 72 |
 | D_EX_SOR | 84 |
 | D_FACTOR | 200 |
 | D_FRONTEND | 146 |
@@ -99,7 +98,7 @@ ttl: permanent
 | 状态 | 含义 | 数量 |
 |------|------|:---:|
 | deferred（延后） | 一问未过但域活着、功能有价值——等触发信号命中再重新过一问晋升到 depgraph 设计态 | 12 |
-| rejected（否决） | 一问否决或用户推翻，登记仅为防误重新设计 | 31 |
+| rejected（否决） | 一问否决或用户推翻，登记仅为防误重新设计 | 37 |
 | candidate（候选待评） | 一问仍在 pending，未拍板 | 5272 |
 
 ## 候选模块全景
@@ -109,21 +108,27 @@ ttl: permanent
 ```mermaid
 pie title 候选模块状态分布
     "延后（deferred）" : 12
-    "否决（rejected）" : 31
+    "否决（rejected）" : 37
     "候选待评（candidate）" : 5272
 ```
 
 ### 按一问卡点分布（受限原因 · 颜色=状态，节点含大白话简述）
 
-> 仅展示原有候选 32 条；harvest 候选见下方「Harvest 候选概览」。
+> 仅展示原有候选 38 条；harvest 候选见下方「Harvest 候选概览」。
 
 ```mermaid
 flowchart LR
-  subgraph g_q1["q1 已实现/重复（13 条）"]
+  subgraph g_q1["q1 已实现/重复（19 条）"]
     CAND_EX_003["CAND-EX-003 Redis Idempotency Store<br/>下单幂等性INV-007,防重复扣减/重复创建"]
     CAND_EX_005["CAND-EX-005 Execution Value Objects<br/>无——Pydantic BaseModel原生提供值对象语义…"]
     CAND_EX_006["CAND-EX-006 Execution Factory<br/>无——aggregate_root_manager已是Fac…"]
+    CAND_EX004_001["CAND-EX004-001 MOD-EX-004 redis幂等性重复幽灵节<br/>已解决订单幂等性去重已由shared/infra/idemp…"]
     CAND_EX015_001["CAND-EX015-001 MOD-EX-015 execution_rep<br/>已解决执行报告已由MOD-INF-016正确承接,3处实现t…"]
+    CAND_EX037_001["CAND-EX037-001 MOD-EX-037 蓝图Implementer<br/>无真实痛点D_EX_CORE做订单执行,不存在把蓝图转代码的…"]
+    CAND_EX051_001["CAND-EX051-001 MOD-EX-051 值对象分散实现幽灵节点<br/>已解决值对象已分散在trading_contracts的da…"]
+    CAND_EX052_001["CAND-EX052-001 MOD-EX-052 工厂分散实现幽灵节点<br/>已解决工厂模式已分散在shared/contracts/co…"]
+    CAND_L00007_001["CAND-L00007-001 MOD-L00-007 存储功能已由buffer<br/>已解决存储抽象已由buffered_writerMOD-L0…"]
+    CAND_L00008_001["CAND-L00008-001 MOD-L00-008 缓存功能已上移至H1_R<br/>已解决缓存已由MOD-H1_REDIS_HOTD_INFRA…"]
     CAND_PF004_001["CAND-PF004-001 MOD-PF-004 min_variance_<br/>错误形态min_variance分配逻辑应为DefaultE…"]
     CAND_PF005_001["CAND-PF005-001 MOD-PF-005 risk_parity_s<br/>错误形态risk_parity分配逻辑应为DefaultEq…"]
     CAND_PTC_001["CAND-PTC-001 盘前统一检查器<br/>下单前需统一校验风控约束,避免违规下单"]
@@ -137,13 +142,14 @@ flowchart LR
   subgraph g_pending["待评估（1 条）"]
     CAND_AISA_001["CAND-AISA-001 AI 舆情分析器<br/>A 股受政策与舆情驱动性强,缺乏结构化舆情信号导致政策行情响…"]
   end
-  subgraph g_none["一问通过（17 条）"]
+  subgraph g_none["一问通过（18 条）"]
     CAND_BACL_001["CAND-BACL-001 经纪商访问控制分层<br/>多经纪商接入时权限管理散乱,理论上有分层重构价值"]
     CAND_BT_001["CAND-BT-001 回测v2.0辅助模块<br/>回测需批量调度/衰减监控/自动报告/结果缓存时,无对应辅助模…"]
     CAND_DAT_001["CAND-DAT-001 DataFrame迁移Pydantic<br/>DataFrame无运行时类型校验,下游D_FACTOR消费…"]
     CAND_DR_001["CAND-DR-001 异地备份<br/>audit 7.7 发现本地 restic 备份与主库同物理…"]
     CAND_EX_001["CAND-EX-001 富途IB券商适配器<br/>实盘需要非MiniQMT渠道如港股/美股/期货下单时,无对应…"]
     CAND_EX_002["CAND-EX-002 多线程订单处理<br/>高频/批量下单时单线程订单处理成为瓶颈并发10"]
+    CAND_EX_004["CAND-EX-004 Blueprint Implementer<br/>无具体业务问题——自我指涉元概念"]
     CAND_FAC_001["CAND-FAC-001 因子缓存<br/>因子数量增长后,每日全量重算导致计算延迟50ms"]
     CAND_FAC_002["CAND-FAC-002 FactorMeta Pydantic迁移<br/>FactorMeta 使用 @dataclass 违反 KB…"]
     CAND_H1FS_001["CAND-H1FS-001 H1 因子截面读取适配器<br/>无真实痛点设想为信号端提供友好因子读取接口,但读端已由 H1…"]
@@ -155,9 +161,6 @@ flowchart LR
     CAND_SIGLEGACY_001["CAND-SIGLEGACY-001 D_SIGLEGACY 多策略引擎<br/>已解决多策略编排已由 D_PF_CORE PC-01 承担…"]
     CAND_SIM_002["CAND-SIM-002 实验队列调度<br/>并发实验10时,顺序执行导致等待时间长"]
     CAND_WFO_001["CAND-WFO-001 滚动前进优化器<br/>回测参数过拟合风险——单一全样本优化容易拟合历史噪声,实盘表…"]
-  end
-  subgraph g_case_review["逐案论证（1 条）"]
-    CAND_EX_004["CAND-EX-004 Blueprint Implementer<br/>无具体业务问题——自我指涉元概念"]
   end
   classDef deferred fill:#fef3c7,stroke:#d97706,color:#000
   classDef rejected fill:#e5e7eb,stroke:#6b7280,color:#000
@@ -195,6 +198,12 @@ flowchart LR
   class CAND_RSK010_001 rejected
   class CAND_TESTA_001 rejected
   class CAND_TESTB_001 rejected
+  class CAND_EX004_001 rejected
+  class CAND_EX037_001 rejected
+  class CAND_EX051_001 rejected
+  class CAND_EX052_001 rejected
+  class CAND_L00007_001 rejected
+  class CAND_L00008_001 rejected
   class CAND_H1FS_001 rejected
 ```
 
@@ -282,7 +291,7 @@ flowchart LR
 | D_PF_ALLOC | 82 | 81 | [D_PF_ALLOC.md](D_PF_ALLOC.md) |
 | D_REPORTING | 82 | 82 | [D_REPORTING.md](D_REPORTING.md) |
 | D_ML_TRAIN | 78 | 78 | [D_ML_TRAIN.md](D_ML_TRAIN.md) |
-| D_EX_CORE | 68 | 61 | [D_EX_CORE.md](D_EX_CORE.md) |
+| D_EX_CORE | 72 | 61 | [D_EX_CORE.md](D_EX_CORE.md) |
 | D_ALT_DATA | 50 | 49 | [D_ALT_DATA.md](D_ALT_DATA.md) |
 | D_CROSS_ASSET | 45 | 45 | [D_CROSS_ASSET.md](D_CROSS_ASSET.md) |
 | D_ML_SERVE | 36 | 36 | [D_ML_SERVE.md](D_ML_SERVE.md) |
@@ -291,9 +300,9 @@ flowchart LR
 | D_POSITION | 24 | 24 | [D_POSITION.md](D_POSITION.md) |
 | D_DATA_GOV | 19 | 19 | [D_DATA_GOV.md](D_DATA_GOV.md) |
 | D_BACKTEST | 3 | 1 | [D_BACKTEST.md](D_BACKTEST.md) |
+| D_DATA | 3 | 0 | [D_DATA.md](D_DATA.md) |
 | D_DATA_SEC | 3 | 3 | [D_DATA_SEC.md](D_DATA_SEC.md) |
 | D_ASHARE_SIGNAL | 2 | 1 | [D_ASHARE_SIGNAL.md](D_ASHARE_SIGNAL.md) |
 | D_SIGLEGACY | 1 | 0 | [D_SIGLEGACY.md](D_SIGLEGACY.md) |
 | D_GOV_RULE | 1 | 0 | [D_GOV_RULE.md](D_GOV_RULE.md) |
 | D_INFRA_RECOVERY | 1 | 0 | [D_INFRA_RECOVERY.md](D_INFRA_RECOVERY.md) |
-| D_DATA | 1 | 0 | [D_DATA.md](D_DATA.md) |
