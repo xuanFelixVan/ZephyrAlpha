@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-04'
-total_scripts: 650
+total_scripts: 654
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -3835,6 +3835,38 @@ scripts:
   description: from __future__ import annotations
   domain: governance
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/oneoff/_extract_missing_narratives.py
+  path: governance/oneoff/_extract_missing_narratives.py
+  description: import re
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/oneoff/_fix_remaining_en.py
+  path: governance/oneoff/_fix_remaining_en.py
+  description: import re
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/oneoff/_query_inf013_014.py
+  path: governance/oneoff/_query_inf013_014.py
+  description: import re
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/oneoff/_verify_39_narratives.py
+  path: governance/oneoff/_verify_39_narratives.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []

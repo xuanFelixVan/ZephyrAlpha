@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_INFRASTRUCTURE 跨层契约基础设施架构文档
 version: "1.0"
 status: active
-date: 2026-08-04
+date: 2026-08-05
 owner: auto-generator
 ttl: permanent
 ---
@@ -136,16 +136,17 @@ flowchart TD
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_REPORTING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_execution_report_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
+    D_EX_SOR["执行路由<br/>执行路由，负责订单路由、智能拆单和执行场所选择<br/>Execution Routing<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_EX_SOR -->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_FUNDAMENTAL_SIGNAL["基本面信号<br/>基本面信号，负责基于财务数据的基本面信号生成<br/>Fundamental Signal<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_position_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,src_zephyr_infrastructure_config_init_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_target_portfolio_py,src_zephyr_shared_contracts_telemetry_emitter_py,src_zephyr_shared_contracts_trace_context_py production
-    class D_SHARED,D_GOV_AUDIT,D_PF_CORE,D_REPORTING,D_FACTOR,D_EX_CORE,D_MKT_DATA,D_GOVERNANCE,D_FUNDAMENTAL_SIGNAL external_prod
+    class D_SHARED,D_GOV_AUDIT,D_PF_CORE,D_REPORTING,D_FACTOR,D_EX_CORE,D_MKT_DATA,D_GOVERNANCE,D_EX_SOR,D_FUNDAMENTAL_SIGNAL external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -313,8 +314,8 @@ flowchart TD
 | 69 | D_PF_CORE 组合核心: 组合优化方法 / Portfolio Optimizer (core/portfolio_optimi... | → | 目标投资组合 / Target Portfolio (contracts/target_portfol... | 导入依赖 / import_depends |
 | 70 | D_PF_CORE 组合核心: Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 71 | D_PF_CORE 组合核心: Rebalance调度器 / Rebalance Scheduler (core/rebalance_sch... | → | 目标投资组合 / Target Portfolio (contracts/target_portfol... | 导入依赖 / import_depends |
-| 72 | D_PF_CORE 组合核心: 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | contract / contract |
-| 73 | D_PF_CORE 组合核心: 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | 导入依赖 / import_depends |
+| 72 | D_PF_CORE 组合核心: 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | 导入依赖 / import_depends |
+| 73 | D_PF_CORE 组合核心: 策略生命周期状态 / Strategy Engine (core/strategy_engine.py) | → | 策略生命周期事件 / Strategy Lifecycle Event (contracts/st... | contract / contract |
 | 74 | D_POSITION 仓位管理: 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | → | 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
 | 75 | D_POSITION 仓位管理: Position Sizing Engine 测试 / Test Position Sizing Engine... | → | 风险Limits / Risk Limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
 | 76 | D_REPORTING 报告: 单笔成交的 TCA 分析，返回执行报告 / Analytics Base (repor... | → | 执行报告 / Execution Report (contracts/execution_report.py) | 导入依赖 / import_depends |
