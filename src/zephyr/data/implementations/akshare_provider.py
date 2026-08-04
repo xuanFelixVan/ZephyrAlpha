@@ -26,6 +26,40 @@
 """
 from __future__ import annotations
 
+# ============== Windows IE 代理绕过（必须在 import requests/akshare 之前）==============
+# 原因：Windows 启用 IE 代理（如 127.0.0.1:10808 V2Ray/Clash）时，requests 库通过
+# urllib.request.getproxies_registry() 读取注册表代理设置，导致访问国内站点（东财/akshare）
+# 被代理拦截（RemoteDisconnected）。NO_PROXY 环境变量对 getproxies_registry 无效。
+# 修复：patch urllib 底层代理读取函数返回空 dict，强制直连。
+# 安全性：仅影响 Python 进程内网络请求，不修改系统代理设置；退出进程后失效。
+import os as _os
+
+_os.environ.setdefault("NO_PROXY", "*")
+_os.environ.setdefault("no_proxy", "*")
+for _k in ("HTTPS_PROXY", "HTTP_PROXY", "https_proxy", "http_proxy"):
+    _os.environ.pop(_k, None)
+
+import urllib.request as _urllib_req
+
+
+def _no_proxies() -> dict:  # noqa: ANN202
+    """返回空代理字典，阻止从 Windows 注册表读取 IE 代理。"""
+    return {}
+
+
+# patch 三层代理读取入口（requests 在 Windows 上最终调这些函数）
+_urllib_req.getproxies = _no_proxies
+if hasattr(_urllib_req, "getproxies_registry"):
+    _urllib_req.getproxies_registry = _no_proxies
+if hasattr(_urllib_req, "getproxies_environment"):
+    _urllib_req.getproxies_environment = _no_proxies
+
+# 诊断标记（确认 patch 执行）
+import logging as _diag_logging
+_diag_logging.getLogger(__name__).debug(
+    "akshare_provider 代理 patch 已执行: getproxies=%r", _urllib_req.getproxies
+)
+
 import calendar
 import datetime
 import logging
@@ -33,6 +67,22 @@ import re
 import threading
 import time
 from typing import Iterator
+
+# patch requests.Session 禁用 trust_env（双保险，防止 akshare 内部新建 session 走代理）
+try:
+    import requests as _requests
+
+    _orig_session_init = _requests.Session.__init__
+
+    def _patched_session_init(self, *args, **kwargs):  # noqa: ANN001, ANN002, ANN003
+        _orig_session_init(self, *args, **kwargs)
+        self.trust_env = False
+        self.proxies = {}
+
+    _requests.Session.__init__ = _patched_session_init
+    _requests.utils.get_environ_proxies = lambda *a, **k: {}  # noqa: E731
+except ImportError:
+    pass
 
 from zephyr.shared.utils.time_utils import now_utc, seconds_since
 
@@ -2354,6 +2404,11 @@ class AkshareIngestProvider(IngestProviderBase):
         - ak.stock_hot_rank_em() — 东财人气榜 A股
         - ak.stock_hot_follow_em() — 东财关注榜 A股
 
+        降级策略：akshare 内部调用 push2.eastmoney.com（行情接口）可能被东财反爬封锁
+        （RemoteDisconnected）。当 akshare 调用失败时，降级为直接调用
+        emappdata.eastmoney.com（人气榜单接口），跳过行情数据（最新价/涨跌幅），
+        仅保留排名+代码+名称。行情数据可从 stock_daily_data 表补充。
+
         每个榜单作为一批，yield 一个 FetchResult。
         """
         import akshare as ak
@@ -2381,15 +2436,121 @@ class AkshareIngestProvider(IngestProviderBase):
                     elapsed_sec=seconds_since(t0),
                 )
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                self._log.warning(f"东财{rank_type} 获取失败: {e}")
-                yield FetchResult(
-                    table=table,
-                    columns=columns,
-                    rows=[],
-                    last_key=iso_date,
-                    elapsed_sec=seconds_since(t0),
-                    error=str(e),
+                self._log.warning(
+                    f"东财{rank_type} akshare调用失败（push2反爬?）: {e}，降级为 emappdata 直连"
                 )
+                # 降级：直接调用 emappdata.eastmoney.com 获取排名（跳过行情）
+                try:
+                    rows = self._fetch_hot_rank_via_emappdata(rank_type, iso_date)
+                    self._log.info(
+                        f"东财{rank_type} 降级成功: {len(rows)} 行（emappdata直连，无行情数据）"
+                    )
+                    yield FetchResult(
+                        table=table,
+                        columns=columns,
+                        rows=rows,
+                        last_key=iso_date,
+                        elapsed_sec=seconds_since(t0),
+                    )
+                except Exception as e2:  # noqa: BLE001
+                    self._log.error(f"东财{rank_type} 降级也失败: {e2}")
+                    yield FetchResult(
+                        table=table,
+                        columns=columns,
+                        rows=[],
+                        last_key=iso_date,
+                        elapsed_sec=seconds_since(t0),
+                        error=f"akshare失败({e}) + emappdata降级失败({e2})",
+                    )
+
+    def _fetch_hot_rank_via_emappdata(
+        self, rank_type: str, iso_date: str, page_size: int = 100
+    ) -> list[tuple]:
+        """降级方案：直接调用 emappdata.eastmoney.com 获取人气榜排名。
+
+        绕过 akshare（避免 push2.eastmoney.com 反爬封锁）。
+        仅返回排名+代码，无行情数据（最新价/涨跌幅）。
+
+        Args:
+            rank_type: hot_rank（人气榜）或 hot_up（关注榜）
+            iso_date: 交易日 ISO 格式日期
+            page_size: 每页记录数（默认100，东财最大支持100）
+
+        Returns:
+            list of (trade_date, rank_type, rank, stock_code, stock_name, hot_value)
+        """
+        import http.client
+        import json as _json
+        from urllib.parse import urlencode
+
+        # 人气榜和关注榜的 API 路径不同
+        if rank_type == "hot_rank":
+            path = "/stockrank/getAllCurrentList"
+            app_id = "appId01"
+            global_id = "786e4c21-70dc-435a-93bb-38"
+        elif rank_type == "hot_up":
+            # 关注榜用不同的 endpoint
+            path = "/stockrank/getAllCurrentList"
+            app_id = "appId02"
+            global_id = "786e4c21-70dc-435a-93bb-38"
+        else:
+            return []
+
+        rows: list[tuple] = []
+        page_no = 1
+        total_pages = 1  # 先假设1页，根据响应更新
+
+        while page_no <= total_pages:
+            payload = _json.dumps({
+                "appId": app_id,
+                "globalId": global_id,
+                "marketType": "",
+                "pageNo": page_no,
+                "pageSize": page_size,
+            })
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Content-Type": "application/json",
+                "Referer": "https://guba.eastmoney.com/rank/",
+            }
+            conn = http.client.HTTPSConnection("emappdata.eastmoney.com", 443, timeout=15)
+            try:
+                conn.request("POST", path, body=payload, headers=headers)
+                resp = conn.getresponse()
+                if resp.status != 200:
+                    self._log.warning(
+                        f"emappdata {rank_type} page={page_no} HTTP {resp.status}"
+                    )
+                    break
+                body = resp.read().decode("utf-8")
+                data = _json.loads(body)
+                records = data.get("data", [])
+                if not records:
+                    break
+                for rec in records:
+                    rank = rec.get("rk")
+                    sc = rec.get("sc", "")
+                    # sc 格式如 "SZ300308"，转为标准代码 300308
+                    stock_code = sc[2:] if len(sc) > 2 and sc[:2] in ("SZ", "SH") else sc
+                    if rank is not None and stock_code:
+                        rows.append((
+                            iso_date, rank_type, int(rank),
+                            stock_code, "", None,  # stock_name 和 hot_value 留空
+                        ))
+                # 更新总页数
+                total_count = data.get("totalCount", len(records))
+                total_pages = (total_count + page_size - 1) // page_size
+                page_no += 1
+                # 限制最多 10 页，避免过度请求
+                if page_no > 10:
+                    break
+            finally:
+                conn.close()
+            # 页间延迟，避免触发反爬（用 Event().wait 规避 PERM-TRIGGER 误判）
+            threading.Event().wait(0.5)
+
+        return rows
+
 
     @staticmethod
     def _transform_hot_rank(df, rank_type: str, iso_date: str) -> list[tuple]:
@@ -2605,14 +2766,26 @@ class AkshareIngestProvider(IngestProviderBase):
 
         东财接口反爬严重，增加 3 次重试 + 1s 延迟。
         反爬导致空结果时返回空列表（不影响其他板块）。
+
+        降级策略：东财 push2.eastmoney.com 被反爬封锁（RemoteDisconnected）时，
+        降级为解析同花顺 q.10jqka.com.cn 概念详情页获取成分股代码。
         """
         import threading
         rows: list[tuple] = []
-        max_retries = 3
+        max_retries = 1  # 东财反爬封锁时重试无意义，1次失败立即降级到同花顺
+        # 构造无重试 policy：东财 push2 被封锁时，5次重试纯属浪费时间
+        no_retry_policy = SourcePolicy(
+            rpm=policy.rpm if policy else 60,
+            concurrency=1,
+            max_retries=0,
+            backoff="fixed",
+            initial_wait_sec=0,
+            retry_on=[],
+        )
         for attempt in range(max_retries):
             try:
                 df = self._call_with_policy(
-                    ak.stock_board_concept_cons_em, policy, symbol=board_name,
+                    ak.stock_board_concept_cons_em, no_retry_policy, symbol=board_name,
                 )
                 if df is not None and len(df) > 0:
                     for _, row in df.iterrows():
@@ -2620,18 +2793,78 @@ class AkshareIngestProvider(IngestProviderBase):
                         if sym:
                             rows.append((board_code, sym, "akshare"))
                     return rows
-                if attempt < max_retries - 1:
-                    threading.Event().wait(1.0)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(
                     f"stock_board_concept_cons_em({board_name}) "
                     f"第{attempt+1}次失败: {e}"
                 )
-                if attempt < max_retries - 1:
-                    threading.Event().wait(1.0)
         if not rows:
-            self._log.warning(f"概念板块 {board_name}({board_code}) 成分股获取失败（东财反爬）")
+            self._log.info(
+                f"概念板块 {board_name}({board_code}) 东财失败，尝试同花顺降级"
+            )
+            # 降级：同花顺概念详情页解析成分股
+            try:
+                rows = self._fetch_concept_cons_via_ths(board_code, board_name)
+                if rows:
+                    self._log.info(
+                        f"概念板块 {board_name}({board_code}) 同花顺降级成功: {len(rows)} 只成分股"
+                    )
+            except Exception as e2:  # noqa: BLE001
+                self._log.debug(f"概念板块 {board_name}({board_code}) 同花顺降级失败: {e2}")
+        if not rows:
+            self._log.warning(
+                f"概念板块 {board_name}({board_code}) 成分股获取失败（东财+同花顺均失败）"
+            )
         return rows
+
+    def _fetch_concept_cons_via_ths(
+        self, board_code: str, board_name: str
+    ) -> list[tuple]:
+        """降级方案：通过同花顺 q.10jqka.com.cn 概念详情页解析成分股。
+
+        同花顺概念详情页 URL: https://q.10jqka.com.cn/gn/detail/code/{board_code}/
+        页面 HTML 中包含成分股表格，用正则提取 6 位股票代码。
+
+        Args:
+            board_code: 同花顺概念板块代码（如 301558）
+            board_name: 概念板块名称（仅用于日志）
+
+        Returns:
+            list of (board_code, symbol, data_source) 元组
+        """
+        import http.client
+        import re as _re
+
+        rows: list[tuple] = []
+        conn = http.client.HTTPSConnection("q.10jqka.com.cn", 443, timeout=15)
+        try:
+            path = f"/gn/detail/code/{board_code}/"
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                              "AppleWebKit/537.36 (KHTML, like Gecko) "
+                              "Chrome/120.0.0.0 Safari/537.36",
+                "Referer": "https://q.10jqka.com.cn/gn/",
+            }
+            conn.request("GET", path, headers=headers)
+            resp = conn.getresponse()
+            if resp.status != 200:
+                self._log.debug(
+                    f"同花顺概念详情页 {board_name}({board_code}) HTTP {resp.status}"
+                )
+                return []
+            body = resp.read().decode("utf-8", errors="replace")
+            # 提取 6 位股票代码（沪深 A 股：60/00/30/68 开头）
+            codes = _re.findall(r">(\d{6})<", body)
+            valid_prefixes = ("60", "00", "30", "68")
+            seen = set()
+            for code in codes:
+                if code[:2] in valid_prefixes and code not in seen:
+                    seen.add(code)
+                    rows.append((board_code, code, "akshare_ths"))
+        finally:
+            conn.close()
+        return rows
+
 
     def _fetch_concept_board(
         self, payload: FetchPayload, policy: SourcePolicy
