@@ -302,7 +302,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 | depgraph | MOD-INF-043 | primary | stable | generated |
-| depgraph | MOD-L00-004 | primary | stable | generated |
+| depgraph | MOD-L00-004 | primary | stable | deprecated |
 | depgraph | MOD-ALT_DATA | primary | stable | generated |
 | depgraph | MOD-INTEGRATION | primary | stable | generated |
 | depgraph | MOD-INF-026 | supplement | stable | stable |
@@ -346,7 +346,7 @@ UFL确定性事实层（Feature Store子集，is_deterministic=True，§29.24）
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
-| depgraph | MOD-L03-001 | supplement | production | generated |
+| depgraph | MOD-L03-001 | supplement | production | stable |
 | depgraph | MOD-INF-038 | primary | stable | stable |
 | depgraph | MOD-SIGNAL_ASHARE | primary | stable | generated |
 | depgraph | MOD-ML_SERVE | primary | stable | generated |
@@ -1006,7 +1006,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-006 原始数据缓存把适配器�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-006 | primary | production | generated |
-| depgraph | MOD-L00-006 | primary | stable | stable |
+| depgraph | MOD-L00-006 | primary | stable | generated |
 | depgraph | MOD-H1_REDIS_HOT | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
@@ -1725,7 +1725,7 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 | depgraph | MOD-L02-015 | supplement | production | stable |
 | depgraph | MOD-L02-016 | supplement | production | stable |
 | depgraph | MOD-L02-017 | supplement | production | stable |
-| depgraph | MOD-SIG-006 | supplement | production | stable |
+| depgraph | MOD-SIG-006 | supplement | production | generated |
 | depgraph | MOD-L02_GOV | primary | stable | generated |
 | depgraph | MOD-INF-040 | primary | stable | generated |
 

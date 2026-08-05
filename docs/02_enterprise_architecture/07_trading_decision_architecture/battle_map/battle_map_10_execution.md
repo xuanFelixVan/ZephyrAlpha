@@ -284,7 +284,7 @@ Order State Machine(D-EX-CORE-11)：7状态机 PENDING→{SUBMITTED,CANCELLED}/S
 | depgraph | MOD-EX-057 | supplement | stable | stable |
 | depgraph | MOD-EX-056 | supplement | stable | generated |
 | depgraph | MOD-EX-001 | primary | stable | stable |
-| depgraph | MOD-EX-003 | primary | stable | stable |
+| depgraph | MOD-EX-003 | primary | stable | generated |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
