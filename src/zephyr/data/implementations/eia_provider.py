@@ -72,7 +72,8 @@ log = logging.getLogger(__name__)
 _TBL_MACRO_DATA = get_registry().table("market_macro_data")
 
 # macro_data 表列顺序（与 akshare/FRED 一致）
-_MACRO_COLUMNS: Final = ["report_date", "indicator_name", "indicator_value", "unit", "frequency"]
+# data_source 显式提供 "eia"（表 DEFAULT 'akshare' 仅适用于 akshare_provider）
+_MACRO_COLUMNS: Final = ["report_date", "indicator_name", "indicator_value", "unit", "frequency", "data_source"]
 
 # EIA API v2 基址
 _EIA_API_URL = "https://api.eia.gov/v2"

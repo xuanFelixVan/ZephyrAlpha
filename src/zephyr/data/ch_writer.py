@@ -39,6 +39,7 @@
 - 自封装 http_insert / tsv_escape / get_insert_columns 逻辑
 - 端点配置从 config/.env.clickhouse 读取，不硬编码 IP/端口
 """
+
 from __future__ import annotations
 
 import http.client
@@ -60,11 +61,13 @@ log = logging.getLogger(__name__)
 # 由 ch_config.ensure_ch_env_loaded() 主动加载到 os.environ，禁止硬编码 IP 默认值。
 # 配置缺失时 _CH_HOST 为空字符串，连接时 fail-closed（Client(host="") 会失败）。
 from zephyr.data.ch_config import ensure_ch_env_loaded as _ensure_ch_env_loaded
+
 _ensure_ch_env_loaded()
 
 # P1-5 metrics 埋点（#ARCH-SSOT-REFERENCE-INTEGRITY-001 Phase E 补齐）
 from zephyr.shared.observability.metrics import get_registry as _get_metrics_registry
 from zephyr.shared.security.secrets import get_secret_or_default
+
 _CH_HOST = get_secret_or_default("CLICKHOUSE_HOST", "")
 _CH_TCP_PORT = int(get_secret_or_default("CLICKHOUSE_PORT", "9000"))
 _CH_HTTP_PORT = int(get_secret_or_default("CLICKHOUSE_HTTP_PORT", "8123"))
@@ -81,7 +84,9 @@ _DEFAULT_TIMEOUT = 600
 # SQL 常量集中化（NO-BARE-SQL gate 豁免 SQL_* 前缀）
 SQL_ENGINE_BY_DB = "SELECT engine FROM system.tables WHERE database = '{}' AND name = '{}'"
 SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
-SQL_INSERT_TSV = "INSERT INTO {table} {cols_clause} SETTINGS async_insert=0, max_partitions_per_insert_block=0 FORMAT TSV"
+SQL_INSERT_TSV = (
+    "INSERT INTO {table} {cols_clause} SETTINGS async_insert=0, max_partitions_per_insert_block=0 FORMAT TSV"
+)
 
 # clickhouse-driver TCP 客户端单例
 ch_client = None
@@ -156,6 +161,7 @@ def get_client():
         return ch_client
     # 快速路径2：冷却期内跳过 TCP 连接尝试（无锁读）
     import time as _time
+
     if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
         return None
     with _connect_lock:
@@ -169,9 +175,16 @@ def get_client():
         # 缺 clickhouse_driver 时降级到 HTTP 而非抛 ImportError（原 bug：import 在 try 外）
         try:
             from clickhouse_driver import Client
-            c = Client(host=_CH_HOST, port=_CH_TCP_PORT, user=_CH_USER,
-                       password=_CH_PASSWORD, connect_timeout=3,
-                       tcp_keepalive=True, sync_request_timeout=10)
+
+            c = Client(
+                host=_CH_HOST,
+                port=_CH_TCP_PORT,
+                user=_CH_USER,
+                password=_CH_PASSWORD,
+                connect_timeout=3,
+                tcp_keepalive=True,
+                sync_request_timeout=10,
+            )
             c.execute("SELECT 1")
             ch_client = c
             _get_metrics_registry().set_gauge("zephyr_ch_tcp_cooldown_active", 0)
@@ -214,6 +227,7 @@ def get_http_host() -> str:
         return ch_http_host
     # 快速路径2：冷却期内跳过（无锁读）
     import time as _time
+
     if _http_fail_ts and (_time.time() - _http_fail_ts) < _HTTP_COOLDOWN_SEC:
         return ""
     with _connect_lock:
@@ -256,6 +270,7 @@ def _invalidate_tcp_client(reason: str = "") -> None:
     """
     global ch_client, _tcp_fail_ts
     import time as _time
+
     with _connect_lock:
         if ch_client is not None:
             try:
@@ -272,6 +287,7 @@ def _invalidate_http_host(reason: str = "") -> None:
     """清理已断开的 HTTP host 单例 + 设置冷却期（CH 重启自愈，裁定 #ARCH-CH-014）。"""
     global ch_http_host, _http_fail_ts
     import time as _time
+
     with _connect_lock:
         if ch_http_host is not None:
             ch_http_host = None
@@ -434,10 +450,15 @@ def _parse_cols_clause(columns: str) -> list[str] | None:
 
 
 def get_insert_columns(table: str) -> str:
-    """查询表的非 DEFAULT 列清单（用于 INSERT 时显式指定列）。
+    """查询表的可插入列清单（用于 INSERT 时显式指定列）。
 
     DESCRIBE TABLE 输出字段: name, type, default_type, default_expression, ...
-    排除 default_type 为 DEFAULT/MATERIALIZED/ALIAS 的列（CH 会自动填充）。
+    排除 default_type 为 MATERIALIZED/ALIAS 的列（CH 禁止 INSERT）。
+    保留 DEFAULT 列（可显式提供值覆盖默认值），与 get_insertable_columns_set 一致。
+
+    修复(2026-08-05): 原实现排除 DEFAULT 列，导致 write_tsv 降级路径
+    （_cols_clause=None 时）返回的列数与 TSV 数据列数不匹配（provider
+    提供 DEFAULT 列值时 INSERT 报 Code 27 Cannot parse input）。
 
     Returns:
         "(col1, col2, ...)" 字符串。查询失败返回 "*"（由 CH 推断全部列）。
@@ -454,7 +475,7 @@ def get_insert_columns(table: str) -> str:
             continue
         name = parts[0]
         default_type = parts[2] if len(parts) > 2 else ""
-        if default_type in ("DEFAULT", "MATERIALIZED", "ALIAS"):
+        if default_type in ("MATERIALIZED", "ALIAS"):
             continue
         cols.append(name)
     if not cols:
@@ -654,6 +675,7 @@ def write_tsv_outcome(
     # 策略2: 本地落盘兜底（裁定 #ARCH-CH-013，CH 不可达时数据不丢失）
     # 数据写入本地 TSV 文件，待 CH 恢复后自动回灌
     from zephyr.data.local_replay import save_fallback
+
     # cols_clause=="*" 意味着 get_insert_columns 在 CH 不可用时返回的未校验值，
     # 回灌时 "INSERT INTO t * FORMAT TSV" 非法；存 None 让回灌时重新查询表列
     # （裁定 #ARCH-CH-013 Phase 1 根因修复）
@@ -680,7 +702,7 @@ def write_tsv(
 
 
 def write_result(
-    result: "FetchResult",
+    result: FetchResult,
     columns: str | None = None,
     timeout: int = _DEFAULT_TIMEOUT,
 ) -> bool:
@@ -728,7 +750,9 @@ def write_result(
                 rows = [tuple(row[i] for i in keep_indices) for row in result.rows]
                 log.info(
                     "write_result(%s): 列过滤 %d->%d（忽略 %d 个不匹配列）",
-                    result.table, len(result.columns), len(common_cols),
+                    result.table,
+                    len(result.columns),
+                    len(common_cols),
                     len(result.columns) - len(common_cols),
                 )
             else:
@@ -750,13 +774,19 @@ def write_result(
     if eff_cols and rows:
         try:
             from zephyr.data.quality_gate import apply_quality_gate
+
             rows, qstats = apply_quality_gate(result.table, eff_cols, rows)
             if qstats["flagged"]:
                 log.warning(
                     "write_result(%s): quality_gate flagged %d/%d rows (ohlc=%d change=%d swing=%d adj=%d)",
-                    result.table, qstats["flagged"], qstats["checked"],
-                    qstats["by_gate"]["ohlc"], qstats["by_gate"]["change"],
-                    qstats["by_gate"]["swing"], qstats["by_gate"]["adj"])
+                    result.table,
+                    qstats["flagged"],
+                    qstats["checked"],
+                    qstats["by_gate"]["ohlc"],
+                    qstats["by_gate"]["change"],
+                    qstats["by_gate"]["swing"],
+                    qstats["by_gate"]["adj"],
+                )
         except Exception as e:  # noqa: BLE001 — 质量门禁失败不得阻断写入
             log.warning("write_result(%s): quality_gate 跳过（%s）", result.table, e)
 

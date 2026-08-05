@@ -73,7 +73,8 @@ log = logging.getLogger(__name__)
 _TBL_MACRO_DATA = get_registry().table("market_macro_data")
 
 # macro_data 表列顺序（与 akshare _fetch_macro_data 一致）
-_MACRO_COLUMNS: Final = ["report_date", "indicator_name", "indicator_value", "unit", "frequency"]
+# data_source 显式提供 "fred"/"worldbank"（表 DEFAULT 'akshare' 仅适用于 akshare_provider）
+_MACRO_COLUMNS: Final = ["report_date", "indicator_name", "indicator_value", "unit", "frequency", "data_source"]
 
 # FRED API 基址
 _FRED_API_URL = "https://api.stlouisfed.org/fred/series/observations"
@@ -387,7 +388,7 @@ class FredProvider(IngestProviderBase):
             except ValueError:
                 continue
             report_date = str(obs.get("date", ""))
-            rows.append((report_date, indicator_name, value, unit, freq))
+            rows.append((report_date, indicator_name, value, unit, freq, "fred"))
         return rows
 
     # ---- 世界银行宏观数据 ----
@@ -554,7 +555,7 @@ class FredProvider(IngestProviderBase):
                 continue  # iso3 非真实国家（区域聚合如 AFE/EMU），跳过
             # indicator_name 编码 country：WB_GDP_USD/CHN，便于按国家筛选
             full_indicator = f"{indicator_name}/{iso3}"
-            rows.append((report_date, full_indicator, value_float, unit, freq))
+            rows.append((report_date, full_indicator, value_float, unit, freq, "worldbank"))
         if skipped_aggregate:
             self._log.info(
                 "WorldBank %s: 过滤 %d 条区域聚合记录，保留 %d 条国家记录",
