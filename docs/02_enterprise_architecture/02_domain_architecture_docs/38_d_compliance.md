@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_COMPLIANCE | Domain ID | D_COMPLIANCE |
 | 域名称 | 合规 | Domain Name | Compliance |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 3 | Module Count | 3 |
+| 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 50 | Cross-domain Outgoing | 50 |
-| 设计态模块 | 1 | Design Modules | 1 |
+| 设计态模块 | 8 | Design Modules | 8 |
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | 合规校验引擎 | Description | 合规校验引擎 |
@@ -48,16 +48,30 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 3 个模块（生产态 2 + 设计态 1），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 10 个模块（生产态 2 + 设计态 8），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_compliance_async_intercept_queue_py["异步intercept队列<br/>合规的同步器，保持数据同步一致<br/>⛔ 合规域，设计已就绪，等待开发排期<br/>async_intercept_queue<br/>文件: compliance/async_intercept_queue.py<br/>(设计态 / design)"]
     src_zephyr_compliance_behavioral_auditor_init_py["compliance/behavioral_auditor 包入口<br/>审计的包入口，把这一层的子模块归到一起统一管理，<br/>用到谁才加载谁，避免一次性全加载拖慢启动。<br/>文件: behavioral_auditor/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_compliance_compliance_continuous_ops_py["compliance/compliance_continuous_ops<br/>compliance包的compliance_continuous_ops模块<br/>文件: compliance/compliance_continuous_ops.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_compliance_tech_enabler_py["compliance/compliance_tech_enabler<br/>compliance包的compliance_tech_enabler模块<br/>文件: compliance/compliance_tech_enabler.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_discipline_must_do_checker_py["compliance/discipline_must_do_checker<br/>compliance包的discipline_must_do_checker模块<br/>文件: compliance/discipline_must_do_checker.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_discipline_prohibition_checker_py["compliance/discipline_prohibition_checker<br/>compliance包的discipline_prohibition_checker模块<br/>文件: compliance<br/>/discipline_prohibition_checker.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_eu_ai_act_ruling_py["compliance/eu_ai_act_ruling<br/>compliance包的eu_ai_act_ruling模块<br/>文件: compliance/eu_ai_act_ruling.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_hard_boundary_adjudicator_py["compliance/hard_boundary_adjudicator<br/>compliance包的hard_boundary_adjudicator模块<br/>文件: compliance/hard_boundary_adjudicator.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_trading_compliance_detector_py["compliance/trading_compliance_detector<br/>compliance包的trading_compliance_detector模块<br/>文件: compliance/trading_compliance_detector.py<br/>(设计态 / design)"]
     src_zephyr_compliance_zero_knowledge_audit_stub_init_py["compliance/zero_knowledge_audit_stub 包入口<br/>域量化架构 · D_COMPLIANCE 合规层<br/>D_COMPLIANCE Compliance<br/>文件: zero_knowledge_audit_stub/__init__.py<br/>(生产态 / production)"]
     src_zephyr_compliance_async_intercept_queue_py ~~~ src_zephyr_compliance_behavioral_auditor_init_py
-    src_zephyr_compliance_behavioral_auditor_init_py ~~~ src_zephyr_compliance_zero_knowledge_audit_stub_init_py
+    src_zephyr_compliance_behavioral_auditor_init_py ~~~ src_zephyr_compliance_compliance_continuous_ops_py
+    src_zephyr_compliance_compliance_continuous_ops_py ~~~ src_zephyr_compliance_compliance_tech_enabler_py
+    src_zephyr_compliance_compliance_tech_enabler_py ~~~ src_zephyr_compliance_discipline_must_do_checker_py
+    src_zephyr_compliance_discipline_must_do_checker_py ~~~ src_zephyr_compliance_discipline_prohibition_checker_py
+    src_zephyr_compliance_discipline_prohibition_checker_py ~~~ src_zephyr_compliance_eu_ai_act_ruling_py
+    src_zephyr_compliance_eu_ai_act_ruling_py ~~~ src_zephyr_compliance_hard_boundary_adjudicator_py
+    src_zephyr_compliance_hard_boundary_adjudicator_py ~~~ src_zephyr_compliance_trading_compliance_detector_py
+    src_zephyr_compliance_trading_compliance_detector_py ~~~ src_zephyr_compliance_zero_knowledge_audit_stub_init_py
     D_GOV_OPS_RESILIENCE["运维弹性治理<br/>运维弹性治理，负责运维治理、安全治理、弹性治理和<br/>升级协议<br/>Ops Resilience Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_compliance_async_intercept_queue_py -.->|runtime / runtime| D_GOV_OPS_RESILIENCE
     D_GOV_DRIFT["漂移检测<br/>漂移检测，负责架构漂移检测和漂移告警<br/>Drift Detection<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -81,7 +95,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py production
-    class src_zephyr_compliance_async_intercept_queue_py design
+    class src_zephyr_compliance_async_intercept_queue_py,src_zephyr_compliance_compliance_continuous_ops_py,src_zephyr_compliance_compliance_tech_enabler_py,src_zephyr_compliance_discipline_must_do_checker_py,src_zephyr_compliance_discipline_prohibition_checker_py,src_zephyr_compliance_eu_ai_act_ruling_py,src_zephyr_compliance_hard_boundary_adjudicator_py,src_zephyr_compliance_trading_compliance_detector_py design
     class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_SECURITY external_prod
 ```
 
@@ -104,17 +118,31 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 1 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 8 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_compliance_async_intercept_queue_py["异步intercept队列<br/>合规的同步器，保持数据同步一致<br/>⛔ 合规域，设计已就绪，等待开发排期<br/>async_intercept_queue<br/>文件: compliance/async_intercept_queue.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_compliance_continuous_ops_py["compliance/compliance_continuous_ops<br/>compliance包的compliance_continuous_ops模块<br/>文件: compliance/compliance_continuous_ops.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_compliance_tech_enabler_py["compliance/compliance_tech_enabler<br/>compliance包的compliance_tech_enabler模块<br/>文件: compliance/compliance_tech_enabler.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_discipline_must_do_checker_py["compliance/discipline_must_do_checker<br/>compliance包的discipline_must_do_checker模块<br/>文件: compliance/discipline_must_do_checker.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_discipline_prohibition_checker_py["compliance/discipline_prohibition_checker<br/>compliance包的discipline_prohibition_checker模块<br/>文件: compliance<br/>/discipline_prohibition_checker.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_eu_ai_act_ruling_py["compliance/eu_ai_act_ruling<br/>compliance包的eu_ai_act_ruling模块<br/>文件: compliance/eu_ai_act_ruling.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_hard_boundary_adjudicator_py["compliance/hard_boundary_adjudicator<br/>compliance包的hard_boundary_adjudicator模块<br/>文件: compliance/hard_boundary_adjudicator.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_trading_compliance_detector_py["compliance/trading_compliance_detector<br/>compliance包的trading_compliance_detector模块<br/>文件: compliance/trading_compliance_detector.py<br/>(设计态 / design)"]
+    src_zephyr_compliance_async_intercept_queue_py ~~~ src_zephyr_compliance_compliance_continuous_ops_py
+    src_zephyr_compliance_compliance_continuous_ops_py ~~~ src_zephyr_compliance_compliance_tech_enabler_py
+    src_zephyr_compliance_compliance_tech_enabler_py ~~~ src_zephyr_compliance_discipline_must_do_checker_py
+    src_zephyr_compliance_discipline_must_do_checker_py ~~~ src_zephyr_compliance_discipline_prohibition_checker_py
+    src_zephyr_compliance_discipline_prohibition_checker_py ~~~ src_zephyr_compliance_eu_ai_act_ruling_py
+    src_zephyr_compliance_eu_ai_act_ruling_py ~~~ src_zephyr_compliance_hard_boundary_adjudicator_py
+    src_zephyr_compliance_hard_boundary_adjudicator_py ~~~ src_zephyr_compliance_trading_compliance_detector_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_compliance_async_intercept_queue_py design
+    class src_zephyr_compliance_async_intercept_queue_py,src_zephyr_compliance_compliance_continuous_ops_py,src_zephyr_compliance_compliance_tech_enabler_py,src_zephyr_compliance_discipline_must_do_checker_py,src_zephyr_compliance_discipline_prohibition_checker_py,src_zephyr_compliance_eu_ai_act_ruling_py,src_zephyr_compliance_hard_boundary_adjudicator_py,src_zephyr_compliance_trading_compliance_detector_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

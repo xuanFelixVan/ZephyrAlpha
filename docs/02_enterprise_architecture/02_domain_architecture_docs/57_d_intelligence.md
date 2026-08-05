@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_INTELLIGENCE | Domain ID | D_INTELLIGENCE |
 | 域名称 | 上下文管理 | Domain Name | Context Management |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 31 | Module Count | 31 |
+| 模块数 | 33 | Module Count | 33 |
 | 域内依赖 | 27 | Internal Dependencies | 27 |
 | 跨域入边 | 22 | Cross-domain Incoming | 22 |
 | 跨域出边 | 29 | Cross-domain Outgoing | 29 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 2 | Design Modules | 2 |
 | 生产态模块 | 31 | Production Modules | 31 |
 | 容量 | 31/150 (正常) | Capacity | 31/150 (正常) |
 | 描述 | 上下文预算管理(context_budget/token_budget) | Description | 上下文预算管理(context_budget/token_budget) |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 31 个模块（生产态 31 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 33 个模块（生产态 31 + 设计态 2），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -66,6 +66,8 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py["管道路由CLI<br/>model-profiler.cli — 模型性能检测命令行入口<br/>文件: pipeline_routing/cli.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py["任务模型Learner<br/>ModelTaskMatrix — 任务×模型性能学习引擎<br/>Task Model Learner<br/>文件: pipeline_routing/task_model_learner.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_task_model_learner_py["任务模型Learner<br/>ModelTaskMatrix — 任务×模型性能学习引擎<br/>Task Model Learner<br/>文件: model_profiling/task_model_learner.py<br/>(生产态 / production)"]
+    src_zephyr_intelligence_sentinel_hallucination_detector_py["intelligence/sentinel_hallucination_detector<br/>intelligence包的sentinel_hallucination_detector<br/>模块<br/>文件: intelligence<br/>/sentinel_hallucination_detector.py<br/>(设计态 / design)"]
+    src_zephyr_intelligence_venra_double_lock_anchor_py["intelligence/venra_double_lock_anchor<br/>intelligence包的venra_double_lock_anchor模块<br/>文件: intelligence/venra_double_lock_anchor.py<br/>(设计态 / design)"]
     scripts_calibrate_model_diff_py ~~~ scripts_quick_profile_py
     scripts_quick_profile_py ~~~ src_zephyr_intelligence_model_drift_detector_py
     src_zephyr_intelligence_model_drift_detector_py ~~~ src_zephyr_intelligence_model_evaluation_activate_py
@@ -78,6 +80,8 @@ flowchart TD
     src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py ~~~ src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py ~~~ src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py ~~~ src_zephyr_intelligence_model_profiling_task_model_learner_py
+    src_zephyr_intelligence_model_profiling_task_model_learner_py ~~~ src_zephyr_intelligence_sentinel_hallucination_detector_py
+    src_zephyr_intelligence_sentinel_hallucination_detector_py ~~~ src_zephyr_intelligence_venra_double_lock_anchor_py
     src_zephyr_intelligence_model_evaluation_memory_backend_py["记忆后端<br/>Backend protocol & shared data classes for the<br/>unified memory layer.<br/>Memory Backend<br/>文件: model_evaluation/_memory_backend.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py["考试编排器<br/>ExamOrchestrator --- 五轴入职考试主控<br/>Exam Orchestrator<br/>文件: model_profiling/exam_orchestrator.py<br/>(生产态 / production)"]
     src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py["将 benchmark 结果写入 JSONL 文件<br/>Results Writer — 持久化 benchmark<br/>结果，支持历史对比（漂移检测）<br/>文件: pipeline_routing/results_writer.py<br/>(生产态 / production)"]
@@ -181,6 +185,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_calibrate_model_diff_py,scripts_quick_profile_py,src_zephyr_intelligence_model_drift_detector_py,src_zephyr_intelligence_model_evaluation_memory_backend_py,src_zephyr_intelligence_model_evaluation_activate_py,src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py,src_zephyr_intelligence_model_evaluation_inference_base_py,src_zephyr_intelligence_model_evaluation_reranker_py,src_zephyr_intelligence_model_evaluation_unified_memory_api_py,src_zephyr_intelligence_model_profiling_benchmark_suite_py,src_zephyr_intelligence_model_profiling_capability_passport_py,src_zephyr_intelligence_model_profiling_case_assembler_py,src_zephyr_intelligence_model_profiling_cli_py,src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py,src_zephyr_intelligence_model_profiling_exam_checks_py,src_zephyr_intelligence_model_profiling_exam_executor_py,src_zephyr_intelligence_model_profiling_exam_judge_py,src_zephyr_intelligence_model_profiling_exam_orchestrator_py,src_zephyr_intelligence_model_profiling_exam_rubric_py,src_zephyr_intelligence_model_profiling_exam_test_cases_py,src_zephyr_intelligence_model_profiling_job_matcher_py,src_zephyr_intelligence_model_profiling_model_discovery_py,src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py,src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py,src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py,src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py,src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py,src_zephyr_intelligence_model_profiling_profiler_py,src_zephyr_intelligence_model_profiling_provider_data_py,src_zephyr_intelligence_model_profiling_results_writer_py,src_zephyr_intelligence_model_profiling_task_model_learner_py production
+    class src_zephyr_intelligence_sentinel_hallucination_detector_py,src_zephyr_intelligence_venra_double_lock_anchor_py design
     class D_SHARED,D_TRADING,D_INTEGRATION,D_GOV_RULE,D_ML_TRAIN,D_INFRA_RUNTIME,D_GOVERNANCE,D_GOV_SCRIPTS,D_SECURITY external_prod
 ```
 
@@ -284,9 +289,20 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 2 个），不含跨域外部节点。
 
-> （无模块 / No modules）
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_intelligence_sentinel_hallucination_detector_py["intelligence/sentinel_hallucination_detector<br/>intelligence包的sentinel_hallucination_detector<br/>模块<br/>文件: intelligence<br/>/sentinel_hallucination_detector.py<br/>(设计态 / design)"]
+    src_zephyr_intelligence_venra_double_lock_anchor_py["intelligence/venra_double_lock_anchor<br/>intelligence包的venra_double_lock_anchor模块<br/>文件: intelligence/venra_double_lock_anchor.py<br/>(设计态 / design)"]
+    src_zephyr_intelligence_sentinel_hallucination_detector_py ~~~ src_zephyr_intelligence_venra_double_lock_anchor_py
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_intelligence_sentinel_hallucination_detector_py,src_zephyr_intelligence_venra_double_lock_anchor_py design
+```
 
 ## 跨域依赖 / Cross-domain Dependencies
 

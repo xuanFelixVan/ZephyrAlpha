@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_ASHARE_SIGNAL | Domain ID | D_ASHARE_SIGNAL |
 | 域名称 | A股特色信号 | Domain Name | A-Share Signal |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 33 | Module Count | 33 |
+| 模块数 | 36 | Module Count | 36 |
 | 域内依赖 | 24 | Internal Dependencies | 24 |
 | 跨域入边 | 11 | Cross-domain Incoming | 11 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
-| 设计态模块 | 17 | Design Modules | 17 |
+| 设计态模块 | 20 | Design Modules | 20 |
 | 生产态模块 | 16 | Production Modules | 16 |
 | 容量 | 16/150 (正常) | Capacity | 16/150 (正常) |
 | 描述 | A股特色信号生成 | Description | A股特色信号生成 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 33 个模块（生产态 16 + 设计态 17），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 36 个模块（生产态 16 + 设计态 20），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -58,6 +58,7 @@ flowchart TD
     src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py["signal_ashare/adaptive_conformal_tcp_rm_ddci<br/>signal ashare包的adaptive_conformal_tcp_rm_ddci<br/>模块<br/>文件: signal_ashare<br/>/adaptive_conformal_tcp_rm_ddci.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_adjustment_cycle_tracker_py["调整周期追踪<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期<40%直接拦截。<br/>Adjustment Cycle Tracking<br/>文件: signal_ashare/adjustment_cycle_tracker.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_api_init_py["signal_ashare/api 包入口<br/>signal ashare 接口<br/>包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
+    src_zephyr_signal_ashare_causal_factor_validator_py["signal_ashare/causal_factor_validator<br/>signal ashare包的causal_factor_validator模块<br/>文件: signal_ashare/causal_factor_validator.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_causal_inference_engine_py["知识图谱与因果推演<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>Knowledge Graph & Causal Inference<br/>文件: signal_ashare/causal_inference_engine.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_conditional_density_predictor_py["收益率条件密度预测<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>Conditional Density Prediction<br/>文件: signal_ashare<br/>/conditional_density_predictor.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_core_init_py["signal_ashare/core 包入口<br/>signal ashare 核心<br/>包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
@@ -73,11 +74,14 @@ flowchart TD
     src_zephyr_signal_ashare_sector_analyzer_py["板块分析器<br/>信号的分析器，分析数据找出问题或规律（sector）<br/>sector_analyzer<br/>文件: signal_ashare/sector_analyzer.py<br/>(生产态 / production)"]
     src_zephyr_signal_ashare_services_init_py["signal_ashare/services 包入口<br/>signal ashare 服务<br/>包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
     src_zephyr_signal_ashare_short_term_stock_selector_py["短期股票选择器<br/>信号的选择器，按条件选择最优项<br/>short_term_stock_selector<br/>文件: signal_ashare/short_term_stock_selector.py<br/>(生产态 / production)"]
+    src_zephyr_signal_ashare_supply_chain_gnn_py["signal_ashare/supply_chain_gnn<br/>signal ashare包的supply_chain_gnn模块<br/>文件: signal_ashare/supply_chain_gnn.py<br/>(设计态 / design)"]
+    src_zephyr_signal_ashare_xlstm_long_memory_py["signal_ashare/xlstm_long_memory<br/>signal ashare包的xlstm_long_memory模块<br/>文件: signal_ashare/xlstm_long_memory.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_init_py ~~~ src_zephyr_signal_ashare_extensions_init_py
     src_zephyr_signal_ashare_extensions_init_py ~~~ src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py
     src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py ~~~ src_zephyr_signal_ashare_adjustment_cycle_tracker_py
     src_zephyr_signal_ashare_adjustment_cycle_tracker_py ~~~ src_zephyr_signal_ashare_api_init_py
-    src_zephyr_signal_ashare_api_init_py ~~~ src_zephyr_signal_ashare_causal_inference_engine_py
+    src_zephyr_signal_ashare_api_init_py ~~~ src_zephyr_signal_ashare_causal_factor_validator_py
+    src_zephyr_signal_ashare_causal_factor_validator_py ~~~ src_zephyr_signal_ashare_causal_inference_engine_py
     src_zephyr_signal_ashare_causal_inference_engine_py ~~~ src_zephyr_signal_ashare_conditional_density_predictor_py
     src_zephyr_signal_ashare_conditional_density_predictor_py ~~~ src_zephyr_signal_ashare_core_init_py
     src_zephyr_signal_ashare_core_init_py ~~~ src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py
@@ -92,6 +96,8 @@ flowchart TD
     src_zephyr_signal_ashare_models_init_py ~~~ src_zephyr_signal_ashare_sector_analyzer_py
     src_zephyr_signal_ashare_sector_analyzer_py ~~~ src_zephyr_signal_ashare_services_init_py
     src_zephyr_signal_ashare_services_init_py ~~~ src_zephyr_signal_ashare_short_term_stock_selector_py
+    src_zephyr_signal_ashare_short_term_stock_selector_py ~~~ src_zephyr_signal_ashare_supply_chain_gnn_py
+    src_zephyr_signal_ashare_supply_chain_gnn_py ~~~ src_zephyr_signal_ashare_xlstm_long_memory_py
     src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py["资本流模式分析器<br/>信号的分析器，分析数据找出问题或规律（capital<br/>flow pattern）<br/>capital_flow_pattern_analyzer<br/>文件: signal_ashare<br/>/capital_flow_pattern_analyzer.py<br/>(生产态 / production)"]
     src_zephyr_signal_ashare_conformal_predictor_py["共形预测<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>Conformal Prediction<br/>文件: signal_ashare/conformal_predictor.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_cross_market_conduction_sensor_py["跨市场传导感知<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度，触发全量或板块重算。<br/>Cross-Market Conduction Sensing<br/>文件: signal_ashare<br/>/cross_market_conduction_sensor.py<br/>(设计态 / design)"]
@@ -157,7 +163,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_ashare_init_py,src_zephyr_signal_ashare_extensions_init_py,src_zephyr_signal_ashare_api_init_py,src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py,src_zephyr_signal_ashare_core_init_py,src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py,src_zephyr_signal_ashare_infrastructure_init_py,src_zephyr_signal_ashare_institutional_behavior_analyzer_py,src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py,src_zephyr_signal_ashare_market_sentiment_analyzer_py,src_zephyr_signal_ashare_models_init_py,src_zephyr_signal_ashare_quant_short_term_strength_engine_py,src_zephyr_signal_ashare_sector_analyzer_py,src_zephyr_signal_ashare_services_init_py,src_zephyr_signal_ashare_short_term_stock_selector_py,src_zephyr_signal_ashare_youzi_relay_emotion_engine_py production
-    class src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py,src_zephyr_signal_ashare_adjustment_cycle_tracker_py,src_zephyr_signal_ashare_causal_inference_engine_py,src_zephyr_signal_ashare_coarse_screening_funnel_py,src_zephyr_signal_ashare_conditional_density_predictor_py,src_zephyr_signal_ashare_conformal_predictor_py,src_zephyr_signal_ashare_cross_market_conduction_sensor_py,src_zephyr_signal_ashare_event_driven_screener_py,src_zephyr_signal_ashare_fine_scoring_engine_py,src_zephyr_signal_ashare_kronos_tsfm_predictor_py,src_zephyr_signal_ashare_mamba_ssm_temporal_enhancer_py,src_zephyr_signal_ashare_market_lifecycle_phase_py,src_zephyr_signal_ashare_market_state_sensor_py,src_zephyr_signal_ashare_next_day_8state_forecast_py,src_zephyr_signal_ashare_regime_change_detector_py,src_zephyr_signal_ashare_survival_time_predictor_py,src_zephyr_signal_ashare_tiered_screening_filter_py design
+    class src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py,src_zephyr_signal_ashare_adjustment_cycle_tracker_py,src_zephyr_signal_ashare_causal_factor_validator_py,src_zephyr_signal_ashare_causal_inference_engine_py,src_zephyr_signal_ashare_coarse_screening_funnel_py,src_zephyr_signal_ashare_conditional_density_predictor_py,src_zephyr_signal_ashare_conformal_predictor_py,src_zephyr_signal_ashare_cross_market_conduction_sensor_py,src_zephyr_signal_ashare_event_driven_screener_py,src_zephyr_signal_ashare_fine_scoring_engine_py,src_zephyr_signal_ashare_kronos_tsfm_predictor_py,src_zephyr_signal_ashare_mamba_ssm_temporal_enhancer_py,src_zephyr_signal_ashare_market_lifecycle_phase_py,src_zephyr_signal_ashare_market_state_sensor_py,src_zephyr_signal_ashare_next_day_8state_forecast_py,src_zephyr_signal_ashare_regime_change_detector_py,src_zephyr_signal_ashare_supply_chain_gnn_py,src_zephyr_signal_ashare_survival_time_predictor_py,src_zephyr_signal_ashare_tiered_screening_filter_py,src_zephyr_signal_ashare_xlstm_long_memory_py design
     class D_FACTOR,D_MKT_DATA external_prod
     class D_SELL_DECISION,D_FUNDAMENTAL_SIGNAL external_design
 ```
@@ -215,28 +221,34 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 17 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 20 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py["signal_ashare/adaptive_conformal_tcp_rm_ddci<br/>signal ashare包的adaptive_conformal_tcp_rm_ddci<br/>模块<br/>文件: signal_ashare<br/>/adaptive_conformal_tcp_rm_ddci.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_adjustment_cycle_tracker_py["调整周期追踪<br/>追踪板块调整走到哪了——进度≥80%才允许分批低吸，初<br/>期<40%直接拦截。<br/>Adjustment Cycle Tracking<br/>文件: signal_ashare/adjustment_cycle_tracker.py<br/>(设计态 / design)"]
+    src_zephyr_signal_ashare_causal_factor_validator_py["signal_ashare/causal_factor_validator<br/>signal ashare包的causal_factor_validator模块<br/>文件: signal_ashare/causal_factor_validator.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_causal_inference_engine_py["知识图谱与因果推演<br/>把事件、公司、行业的关联织成图谱，事件一来就推演<br/>传导路径，并区分关联因子和因果因子。<br/>Knowledge Graph & Causal Inference<br/>文件: signal_ashare/causal_inference_engine.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_conditional_density_predictor_py["收益率条件密度预测<br/>不只预测明天涨多少，而是预测明天收益率的完整概率<br/>分布——偏多少、尾巴多厚、极端情况多罕见。<br/>Conditional Density Prediction<br/>文件: signal_ashare<br/>/conditional_density_predictor.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_kronos_tsfm_predictor_py["signal_ashare/kronos_tsfm_predictor<br/>signal ashare包的kronos_tsfm_predictor模块<br/>文件: signal_ashare/kronos_tsfm_predictor.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_mamba_ssm_temporal_enhancer_py["signal_ashare/mamba_ssm_temporal_enhancer<br/>signal ashare包的mamba_ssm_temporal_enhancer模块<br/>文件: signal_ashare<br/>/mamba_ssm_temporal_enhancer.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_market_lifecycle_phase_py["行情生命周期阶段<br/>判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破<br/>失败更倾向强制离场。<br/>Market Lifecycle Phase<br/>文件: signal_ashare/market_lifecycle_phase.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_market_state_sensor_py["市场状态Sensor<br/>signal ashare包的market_state_sensor模块<br/>Market State Sensor<br/>文件: signal_ashare/market_state_sensor.py<br/>(设计态 / design)"]
+    src_zephyr_signal_ashare_supply_chain_gnn_py["signal_ashare/supply_chain_gnn<br/>signal ashare包的supply_chain_gnn模块<br/>文件: signal_ashare/supply_chain_gnn.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_tiered_screening_filter_py["分级指标过滤<br/>选股漏斗第一层——3秒级把全市场7000只砍到1200只，<br/>涨停跌停停牌ST次新弃庄统统按规则排除。<br/>Tiered Screening Filter<br/>文件: signal_ashare/tiered_screening_filter.py<br/>(设计态 / design)"]
+    src_zephyr_signal_ashare_xlstm_long_memory_py["signal_ashare/xlstm_long_memory<br/>signal ashare包的xlstm_long_memory模块<br/>文件: signal_ashare/xlstm_long_memory.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py ~~~ src_zephyr_signal_ashare_adjustment_cycle_tracker_py
-    src_zephyr_signal_ashare_adjustment_cycle_tracker_py ~~~ src_zephyr_signal_ashare_causal_inference_engine_py
+    src_zephyr_signal_ashare_adjustment_cycle_tracker_py ~~~ src_zephyr_signal_ashare_causal_factor_validator_py
+    src_zephyr_signal_ashare_causal_factor_validator_py ~~~ src_zephyr_signal_ashare_causal_inference_engine_py
     src_zephyr_signal_ashare_causal_inference_engine_py ~~~ src_zephyr_signal_ashare_conditional_density_predictor_py
     src_zephyr_signal_ashare_conditional_density_predictor_py ~~~ src_zephyr_signal_ashare_kronos_tsfm_predictor_py
     src_zephyr_signal_ashare_kronos_tsfm_predictor_py ~~~ src_zephyr_signal_ashare_mamba_ssm_temporal_enhancer_py
     src_zephyr_signal_ashare_mamba_ssm_temporal_enhancer_py ~~~ src_zephyr_signal_ashare_market_lifecycle_phase_py
     src_zephyr_signal_ashare_market_lifecycle_phase_py ~~~ src_zephyr_signal_ashare_market_state_sensor_py
-    src_zephyr_signal_ashare_market_state_sensor_py ~~~ src_zephyr_signal_ashare_tiered_screening_filter_py
+    src_zephyr_signal_ashare_market_state_sensor_py ~~~ src_zephyr_signal_ashare_supply_chain_gnn_py
+    src_zephyr_signal_ashare_supply_chain_gnn_py ~~~ src_zephyr_signal_ashare_tiered_screening_filter_py
+    src_zephyr_signal_ashare_tiered_screening_filter_py ~~~ src_zephyr_signal_ashare_xlstm_long_memory_py
     src_zephyr_signal_ashare_coarse_screening_funnel_py["初筛漏斗<br/>漏斗第二层——60秒级从1200只筛到300只，看技术形态<br/>、量价配合、板块强度、主力阶段、市场状态适配。<br/>Coarse Screening Funnel<br/>文件: signal_ashare/coarse_screening_funnel.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_conformal_predictor_py["共形预测<br/>给预测区间加数学保证——不管分布长什么样，区间覆盖<br/>率有数学证明。<br/>Conformal Prediction<br/>文件: signal_ashare/conformal_predictor.py<br/>(设计态 / design)"]
     src_zephyr_signal_ashare_cross_market_conduction_sensor_py["跨市场传导感知<br/>美股、港股、汇率、商品一异动，立刻算出对A股的传<br/>导系数和影响幅度，触发全量或板块重算。<br/>Cross-Market Conduction Sensing<br/>文件: signal_ashare<br/>/cross_market_conduction_sensor.py<br/>(设计态 / design)"]
@@ -268,7 +280,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py,src_zephyr_signal_ashare_adjustment_cycle_tracker_py,src_zephyr_signal_ashare_causal_inference_engine_py,src_zephyr_signal_ashare_coarse_screening_funnel_py,src_zephyr_signal_ashare_conditional_density_predictor_py,src_zephyr_signal_ashare_conformal_predictor_py,src_zephyr_signal_ashare_cross_market_conduction_sensor_py,src_zephyr_signal_ashare_event_driven_screener_py,src_zephyr_signal_ashare_fine_scoring_engine_py,src_zephyr_signal_ashare_kronos_tsfm_predictor_py,src_zephyr_signal_ashare_mamba_ssm_temporal_enhancer_py,src_zephyr_signal_ashare_market_lifecycle_phase_py,src_zephyr_signal_ashare_market_state_sensor_py,src_zephyr_signal_ashare_next_day_8state_forecast_py,src_zephyr_signal_ashare_regime_change_detector_py,src_zephyr_signal_ashare_survival_time_predictor_py,src_zephyr_signal_ashare_tiered_screening_filter_py design
+    class src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py,src_zephyr_signal_ashare_adjustment_cycle_tracker_py,src_zephyr_signal_ashare_causal_factor_validator_py,src_zephyr_signal_ashare_causal_inference_engine_py,src_zephyr_signal_ashare_coarse_screening_funnel_py,src_zephyr_signal_ashare_conditional_density_predictor_py,src_zephyr_signal_ashare_conformal_predictor_py,src_zephyr_signal_ashare_cross_market_conduction_sensor_py,src_zephyr_signal_ashare_event_driven_screener_py,src_zephyr_signal_ashare_fine_scoring_engine_py,src_zephyr_signal_ashare_kronos_tsfm_predictor_py,src_zephyr_signal_ashare_mamba_ssm_temporal_enhancer_py,src_zephyr_signal_ashare_market_lifecycle_phase_py,src_zephyr_signal_ashare_market_state_sensor_py,src_zephyr_signal_ashare_next_day_8state_forecast_py,src_zephyr_signal_ashare_regime_change_detector_py,src_zephyr_signal_ashare_supply_chain_gnn_py,src_zephyr_signal_ashare_survival_time_predictor_py,src_zephyr_signal_ashare_tiered_screening_filter_py,src_zephyr_signal_ashare_xlstm_long_memory_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

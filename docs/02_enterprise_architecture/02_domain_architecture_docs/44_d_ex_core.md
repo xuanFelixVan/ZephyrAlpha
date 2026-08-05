@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_EX_CORE | Domain ID | D_EX_CORE |
 | 域名称 | 执行核心 | Domain Name | Execution Core |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 37 | Module Count | 37 |
+| 模块数 | 38 | Module Count | 38 |
 | 域内依赖 | 32 | Internal Dependencies | 32 |
 | 跨域入边 | 10 | Cross-domain Incoming | 10 |
 | 跨域出边 | 68 | Cross-domain Outgoing | 68 |
-| 设计态模块 | 19 | Design Modules | 19 |
+| 设计态模块 | 20 | Design Modules | 20 |
 | 生产态模块 | 18 | Production Modules | 18 |
 | 容量 | 18/150 (正常) | Capacity | 18/150 (正常) |
 | 描述 | 执行核心，负责订单执行引擎、执行策略和执行管理 | Description | 执行核心，负责订单执行引擎、执行策略和执行管理 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 37 个模块（生产态 18 + 设计态 19），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 38 个模块（生产态 18 + 设计态 20），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -64,6 +64,7 @@ flowchart TD
     src_zephyr_ex_core_execution_engine_py["执行引擎<br/>本模块内 ``ExecutionEngineRunRecord``<br/>为引擎内部聚合快照，非 CTR-P1-007；<br/>D_EXECUTION_CORE — Execution Engine<br/>文件: ex_core/execution_engine.py<br/>(生产态 / production)"]
     src_zephyr_ex_core_execution_mcp_server_py["执行MCP服务端<br/>ex_core的服务端，接收并处理请求<br/>⛔ 门禁:MCP协议安全生态未成熟;开通需OAuth+RBAC+审<br/>计+沙箱+AI置信度>=95%稳定6月+渗透测试<br/>(D-EX-CORE-59)<br/>execution_mcp_server<br/>文件: ex_core/execution_mcp_server.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_risk_gate_py["执行风险门禁<br/>ex core包的execution_risk_gate模块<br/>⛔ 门禁:D-RISK域L04-limits就绪+风控规则引擎可调用<br/>(D-EX-CORE-07)<br/>Execution Risk Gate<br/>文件: ex_core/execution_risk_gate.py<br/>(设计态 / design)"]
+    src_zephyr_ex_core_execution_strategy_selector_py["ex_core/execution_strategy_selector<br/>ex core包的execution_strategy_selector模块<br/>文件: ex_core/execution_strategy_selector.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_tca_py["执行交易成本分析<br/>ex core包的execution_tca模块<br/>⛔ 门禁:历史执行数据>=30天+滑点模型参数可获取<br/>(D-EX-CORE-12)<br/>Execution Tca<br/>文件: ex_core/execution_tca.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_live_simulation_switcher_py["实盘仿真切换器<br/>支撑交易核心流程（live simulation switcher）<br/>⛔ 门禁:实盘券商连接(OKX/XTP/CTP)就绪<br/>(D-EX-CORE-35)<br/>live_simulation_switcher<br/>文件: ex_core/live_simulation_switcher.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_microstructure_modeler_py["微观结构建模器<br/>ex core包的microstructure_modeler模块<br/>⛔ 门禁:订单簿Level-2数据可获取+VPIN计算引擎就绪+<br/>LOB快照频率>=1秒(D-EX-CORE-61)<br/>Microstructure Modeler<br/>文件: ex_core/microstructure_modeler.py<br/>(设计态 / design)"]
@@ -89,7 +90,8 @@ flowchart TD
     src_zephyr_ex_core_deployment_consistency_manager_py ~~~ src_zephyr_ex_core_execution_engine_py
     src_zephyr_ex_core_execution_engine_py ~~~ src_zephyr_ex_core_execution_mcp_server_py
     src_zephyr_ex_core_execution_mcp_server_py ~~~ src_zephyr_ex_core_execution_risk_gate_py
-    src_zephyr_ex_core_execution_risk_gate_py ~~~ src_zephyr_ex_core_execution_tca_py
+    src_zephyr_ex_core_execution_risk_gate_py ~~~ src_zephyr_ex_core_execution_strategy_selector_py
+    src_zephyr_ex_core_execution_strategy_selector_py ~~~ src_zephyr_ex_core_execution_tca_py
     src_zephyr_ex_core_execution_tca_py ~~~ src_zephyr_ex_core_live_simulation_switcher_py
     src_zephyr_ex_core_live_simulation_switcher_py ~~~ src_zephyr_ex_core_microstructure_modeler_py
     src_zephyr_ex_core_microstructure_modeler_py ~~~ src_zephyr_ex_core_miniqmt_channel_manager_py
@@ -194,7 +196,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_core_adapters_init_py,src_zephyr_ex_core_adapters_miniqmt_broker_py,src_zephyr_ex_core_aggregate_root_manager_py,src_zephyr_ex_core_audit_journal_init_py,src_zephyr_ex_core_audit_journal_auditor_py,src_zephyr_ex_core_execution_engine_py,src_zephyr_ex_core_fill_handler_py,src_zephyr_ex_core_multi_contract_adapter_py,src_zephyr_ex_core_order_execution_saga_py,src_zephyr_ex_core_order_manager_py,src_zephyr_ex_core_position_reconciler_py,src_zephyr_ex_core_position_tracker_init_py,src_zephyr_ex_core_position_tracker_tracker_py,src_zephyr_ex_core_repository_interface_py,src_zephyr_ex_core_signal_providers_py,src_zephyr_ex_core_trading_session_py,src_zephyr_governance_escalation_order_state_escalator_py,tests_ex_core_test_position_reconciler_py production
-    class src_zephyr_ex_core_auction_deviation_executor_py,src_zephyr_ex_core_batch_executor_py,src_zephyr_ex_core_batch_take_profit_executor_py,src_zephyr_ex_core_conditional_order_manager_py,src_zephyr_ex_core_deployment_consistency_manager_py,src_zephyr_ex_core_execution_mcp_server_py,src_zephyr_ex_core_execution_risk_gate_py,src_zephyr_ex_core_execution_tca_py,src_zephyr_ex_core_fill_processor_py,src_zephyr_ex_core_live_simulation_switcher_py,src_zephyr_ex_core_microstructure_modeler_py,src_zephyr_ex_core_miniqmt_channel_manager_py,src_zephyr_ex_core_order_splitter_py,src_zephyr_ex_core_performance_monitor_py,src_zephyr_ex_core_pre_execution_checker_py,src_zephyr_ex_core_rl_optimal_executor_py,src_zephyr_ex_core_sell_priority_scheduler_py,src_zephyr_ex_core_services_live_portfolio_py,src_zephyr_ex_core_stop_loss_take_profit_executor_py design
+    class src_zephyr_ex_core_auction_deviation_executor_py,src_zephyr_ex_core_batch_executor_py,src_zephyr_ex_core_batch_take_profit_executor_py,src_zephyr_ex_core_conditional_order_manager_py,src_zephyr_ex_core_deployment_consistency_manager_py,src_zephyr_ex_core_execution_mcp_server_py,src_zephyr_ex_core_execution_risk_gate_py,src_zephyr_ex_core_execution_strategy_selector_py,src_zephyr_ex_core_execution_tca_py,src_zephyr_ex_core_fill_processor_py,src_zephyr_ex_core_live_simulation_switcher_py,src_zephyr_ex_core_microstructure_modeler_py,src_zephyr_ex_core_miniqmt_channel_manager_py,src_zephyr_ex_core_order_splitter_py,src_zephyr_ex_core_performance_monitor_py,src_zephyr_ex_core_pre_execution_checker_py,src_zephyr_ex_core_rl_optimal_executor_py,src_zephyr_ex_core_sell_priority_scheduler_py,src_zephyr_ex_core_services_live_portfolio_py,src_zephyr_ex_core_stop_loss_take_profit_executor_py design
     class D_BACKTEST,D_TRADING,D_PF_CORE,D_GOVERNANCE,D_RISK,D_INFRASTRUCTURE,D_SHARED,D_EX_SOR,D_REPORTING external_prod
     class D_SELL_DECISION external_design
 ```
@@ -264,7 +266,7 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 19 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 20 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -276,6 +278,7 @@ flowchart TD
     src_zephyr_ex_core_deployment_consistency_manager_py["部署一致性管理器<br/>ex core包的deployment_consistency_manager模块<br/>⛔ 门禁:CI/CD灰度发布基础设施✅已就绪(MOD-CD-001<br/>shadow_canary_deploy,2026-08-03);实盘环境⏳待Owne<br/>r决策开通实盘账户+选定券商通道(D-EX-CORE-21)<br/>Deployment Consistency Manager<br/>文件: ex_core/deployment_consistency_manager.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_mcp_server_py["执行MCP服务端<br/>ex_core的服务端，接收并处理请求<br/>⛔ 门禁:MCP协议安全生态未成熟;开通需OAuth+RBAC+审<br/>计+沙箱+AI置信度>=95%稳定6月+渗透测试<br/>(D-EX-CORE-59)<br/>execution_mcp_server<br/>文件: ex_core/execution_mcp_server.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_risk_gate_py["执行风险门禁<br/>ex core包的execution_risk_gate模块<br/>⛔ 门禁:D-RISK域L04-limits就绪+风控规则引擎可调用<br/>(D-EX-CORE-07)<br/>Execution Risk Gate<br/>文件: ex_core/execution_risk_gate.py<br/>(设计态 / design)"]
+    src_zephyr_ex_core_execution_strategy_selector_py["ex_core/execution_strategy_selector<br/>ex core包的execution_strategy_selector模块<br/>文件: ex_core/execution_strategy_selector.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_execution_tca_py["执行交易成本分析<br/>ex core包的execution_tca模块<br/>⛔ 门禁:历史执行数据>=30天+滑点模型参数可获取<br/>(D-EX-CORE-12)<br/>Execution Tca<br/>文件: ex_core/execution_tca.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_fill_processor_py["成交处理器<br/>执行核心的处理器，处理加工数据<br/>⛔ 门禁:Broker<br/>Adapter回报回调稳定+佣金费率表数据源就绪<br/>(D-EX-CORE-08)<br/>fill_processor<br/>文件: ex_core/fill_processor.py<br/>(设计态 / design)"]
     src_zephyr_ex_core_live_simulation_switcher_py["实盘仿真切换器<br/>支撑交易核心流程（live simulation switcher）<br/>⛔ 门禁:实盘券商连接(OKX/XTP/CTP)就绪<br/>(D-EX-CORE-35)<br/>live_simulation_switcher<br/>文件: ex_core/live_simulation_switcher.py<br/>(设计态 / design)"]
@@ -292,7 +295,8 @@ flowchart TD
     src_zephyr_ex_core_conditional_order_manager_py ~~~ src_zephyr_ex_core_deployment_consistency_manager_py
     src_zephyr_ex_core_deployment_consistency_manager_py ~~~ src_zephyr_ex_core_execution_mcp_server_py
     src_zephyr_ex_core_execution_mcp_server_py ~~~ src_zephyr_ex_core_execution_risk_gate_py
-    src_zephyr_ex_core_execution_risk_gate_py ~~~ src_zephyr_ex_core_execution_tca_py
+    src_zephyr_ex_core_execution_risk_gate_py ~~~ src_zephyr_ex_core_execution_strategy_selector_py
+    src_zephyr_ex_core_execution_strategy_selector_py ~~~ src_zephyr_ex_core_execution_tca_py
     src_zephyr_ex_core_execution_tca_py ~~~ src_zephyr_ex_core_fill_processor_py
     src_zephyr_ex_core_fill_processor_py ~~~ src_zephyr_ex_core_live_simulation_switcher_py
     src_zephyr_ex_core_live_simulation_switcher_py ~~~ src_zephyr_ex_core_microstructure_modeler_py
@@ -311,7 +315,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_ex_core_auction_deviation_executor_py,src_zephyr_ex_core_batch_executor_py,src_zephyr_ex_core_batch_take_profit_executor_py,src_zephyr_ex_core_conditional_order_manager_py,src_zephyr_ex_core_deployment_consistency_manager_py,src_zephyr_ex_core_execution_mcp_server_py,src_zephyr_ex_core_execution_risk_gate_py,src_zephyr_ex_core_execution_tca_py,src_zephyr_ex_core_fill_processor_py,src_zephyr_ex_core_live_simulation_switcher_py,src_zephyr_ex_core_microstructure_modeler_py,src_zephyr_ex_core_miniqmt_channel_manager_py,src_zephyr_ex_core_order_splitter_py,src_zephyr_ex_core_performance_monitor_py,src_zephyr_ex_core_pre_execution_checker_py,src_zephyr_ex_core_rl_optimal_executor_py,src_zephyr_ex_core_sell_priority_scheduler_py,src_zephyr_ex_core_services_live_portfolio_py,src_zephyr_ex_core_stop_loss_take_profit_executor_py design
+    class src_zephyr_ex_core_auction_deviation_executor_py,src_zephyr_ex_core_batch_executor_py,src_zephyr_ex_core_batch_take_profit_executor_py,src_zephyr_ex_core_conditional_order_manager_py,src_zephyr_ex_core_deployment_consistency_manager_py,src_zephyr_ex_core_execution_mcp_server_py,src_zephyr_ex_core_execution_risk_gate_py,src_zephyr_ex_core_execution_strategy_selector_py,src_zephyr_ex_core_execution_tca_py,src_zephyr_ex_core_fill_processor_py,src_zephyr_ex_core_live_simulation_switcher_py,src_zephyr_ex_core_microstructure_modeler_py,src_zephyr_ex_core_miniqmt_channel_manager_py,src_zephyr_ex_core_order_splitter_py,src_zephyr_ex_core_performance_monitor_py,src_zephyr_ex_core_pre_execution_checker_py,src_zephyr_ex_core_rl_optimal_executor_py,src_zephyr_ex_core_sell_priority_scheduler_py,src_zephyr_ex_core_services_live_portfolio_py,src_zephyr_ex_core_stop_loss_take_profit_executor_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

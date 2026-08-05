@@ -66,9 +66,9 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 72 |
-| 模块总数 | 3742 |
+| 模块总数 | 3761 |
 | 生产态模块 | 3551 |
-| 设计态模块 | 191 |
+| 设计态模块 | 210 |
 
 ## 域清单（按架构层分组）
 
@@ -117,19 +117,19 @@ ttl: permanent
 | D_ARCHIVE_SCRIPTS | Archived Scripts / D_ARCHIVE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 29_d_archive_scripts.md](29_d_archive_scripts.md) |
 | D_ARCH_GUARD | 架构守护脚本 / D_ARCH_GUARD | 0 | 0 | 0 | 0/150 (OK) | [📄 30_d_arch_guard.md](30_d_arch_guard.md) |
 | D_ARCH_SCRIPTS | 架构治理脚本 / D_ARCH_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 31_d_arch_scripts.md](31_d_arch_scripts.md) |
-| D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 34 | 16 | 18 | 34/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
+| D_ASHARE_SIGNAL | A股特色信号 / A-Share Signal | 37 | 16 | 21 | 37/150 (OK) | [📄 32_d_ashare_signal.md](32_d_ashare_signal.md) |
 | D_AUDITTEST | 审计测试套件 / Audit Test Suite | 1 | 1 | 0 | 1/150 (OK) | [📄 33_d_audittest.md](33_d_audittest.md) |
 | D_AUTONOMY_PERM | 自治保护 / Autonomy Protection | 2 | 2 | 0 | 2/150 (OK) | [📄 34_d_autonomy_perm.md](34_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 42 | 41 | 1 | 42/150 (OK) | [📄 35_d_backtest.md](35_d_backtest.md) |
 | D_BEHAVIORAL_AUDIT | 行为审计 / Behavioral Audit | 0 | 0 | 0 | 0/150 (OK) | [📄 36_d_behavioral_audit.md](36_d_behavioral_audit.md) |
 | D_CODE_SCRIPTS | 代码质量脚本 / D_CODE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 37_d_code_scripts.md](37_d_code_scripts.md) |
-| D_COMPLIANCE | 合规 / Compliance | 3 | 2 | 1 | 3/150 (OK) | [📄 38_d_compliance.md](38_d_compliance.md) |
+| D_COMPLIANCE | 合规 / Compliance | 10 | 2 | 8 | 10/150 (OK) | [📄 38_d_compliance.md](38_d_compliance.md) |
 | D_COMPLIANCE_SCRIPTS | 合规治理脚本 / D_COMPLIANCE_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 39_d_compliance_scripts.md](39_d_compliance_scripts.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 7 | 7 | 0 | 7/150 (OK) | [📄 40_d_cross_asset.md](40_d_cross_asset.md) |
 | D_DATA_SCRIPTS | 数据治理脚本 / D_DATA_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 41_d_data_scripts.md](41_d_data_scripts.md) |
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 7 | 7 | 0 | 7/150 (OK) | [📄 42_d_digital_twin.md](42_d_digital_twin.md) |
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 7 | 0 | 7/150 (OK) | [📄 43_d_exec_sim.md](43_d_exec_sim.md) |
-| D_EX_CORE | 执行核心 / Execution Core | 42 | 18 | 24 | 42/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
+| D_EX_CORE | 执行核心 / Execution Core | 43 | 18 | 25 | 43/150 (OK) | [📄 44_d_ex_core.md](44_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 17 | 17 | 0 | 17/150 (OK) | [📄 45_d_ex_sor.md](45_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 109 | 65 | 44 | 109/150 (OK) | [📄 46_d_factor.md](46_d_factor.md) |
 | D_FRONTEND | 前端 / Frontend | 24 | 20 | 4 | 24/150 (OK) | [📄 47_d_frontend.md](47_d_frontend.md) |
@@ -142,15 +142,15 @@ ttl: permanent
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 1/200 (OK) | [📄 54_d_gov_repair.md](54_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 36 | 36 | 0 | 36/200 (OK) | [📄 55_d_gov_rule.md](55_d_gov_rule.md) |
 | D_GOV_SCRIPTS | 脚本治理 / Script Governance | 420 | 420 | 0 | 420/150 (超容) | [📄 56_d_gov_scripts.md](56_d_gov_scripts.md) |
-| D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 31 | 0 | 31/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
+| D_INTELLIGENCE | 上下文管理 / Context Management | 33 | 31 | 2 | 33/150 (OK) | [📄 57_d_intelligence.md](57_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 1 | 0 | 1 | 1/150 (OK) | [📄 58_d_knowledge.md](58_d_knowledge.md) |
 | D_META_SCRIPTS | 元治理脚本 / D_META_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 59_d_meta_scripts.md](59_d_meta_scripts.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 7 | 0 | 7/150 (OK) | [📄 60_d_ml_serve.md](60_d_ml_serve.md) |
-| D_ML_TRAIN | 训练 / Training | 7 | 3 | 4 | 7/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
+| D_ML_TRAIN | 训练 / Training | 10 | 3 | 7 | 10/150 (OK) | [📄 61_d_ml_train.md](61_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 9 | 5 | 4 | 9/150 (OK) | [📄 62_d_pf_alloc.md](62_d_pf_alloc.md) |
 | D_PF_CORE | 组合核心 / Portfolio Core | 18 | 16 | 2 | 18/150 (OK) | [📄 63_d_pf_core.md](63_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 22 | 15 | 7 | 22/150 (OK) | [📄 64_d_position.md](64_d_position.md) |
-| D_RISK | 风控 / Risk Control | 25 | 21 | 4 | 25/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
+| D_RISK | 风控 / Risk Control | 28 | 21 | 7 | 28/150 (OK) | [📄 65_d_risk.md](65_d_risk.md) |
 | D_SEC_SCRIPTS | 安全治理脚本 / D_SEC_SCRIPTS | 0 | 0 | 0 | 0/150 (OK) | [📄 66_d_sec_scripts.md](66_d_sec_scripts.md) |
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 26 | 13 | 13 | 26/150 (OK) | [📄 67_d_sell_decision.md](67_d_sell_decision.md) |
 | D_SIGLEGACY | 信号遗留设计态 / Signal Legacy (Design) | 0 | 0 | 0 | 0/150 (OK) | [📄 68_d_siglegacy.md](68_d_siglegacy.md) |
