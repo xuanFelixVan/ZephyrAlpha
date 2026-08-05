@@ -544,10 +544,35 @@ v8.0 四轨中作为轨道1逻辑驱动的补充路径。承载模块 MOD-INF-04
 
 **关联环节**：[BM-REC-01](battle_map_11_reconciliation.md)、[BM-EXE-02](battle_map_10_execution.md)
 
-## 外部对标清单（Benchmark Mapping）（学习系统架构 §1 + 交易决策架构 §4.5.1/§8）
+## 外部对标清单（Benchmark Mapping） / External Benchmark Mapping（学习系统架构 §1 + 交易决策架构 §4.5.1/§8）
 
-> 每个自研概念都登记它对标的公开系统/机构实践——AI 建造时看一眼就知道这个功能的核心形态是什么、
+> **大白话**：每个自研概念都登记它对标的公开系统/机构实践——AI 建造时看一眼就知道这个功能的核心形态是什么、
 该学什么、我们领先或差在哪，不用靠概念名去猜（防幻觉/防漂移）。
+
+**机制说明**：
+
+学习系统流水线对标（学习系统架构§1.1，13 系统）：
+R&D-Agent-Quant（微软, NeurIPS 2025）=假设生成→代码实现→回测→反馈分析，对标 S3~S5（本系统 S0~S2+模块工厂领先）；
+Qraft QuantEvolve（2025）=进化式策略发现+洞察管理，对标 S3~S4（本系统质量-多样性优化后进化深度领先）；
+HKUST Auto Strategy Finding（EMNLP 2025）=LLM 从金融文献提取 alpha 因子+多Agent评估，对标 S1~S3（仅文本）；
+Captide=全球财报/新闻/电话会议持续处理+自然语言查询，对标 S0~S1（信息提取检索）；
+QuantaAlpha（上财/斯坦福/北大, arXiv 2026）=LLM+进化算法假设→因子→代码→回测迭代，对标 S2~S5（S4 进化式代码生成需对齐）；
+Hubble（UBS/Celestial, arXiv 2026）=LLM 因子发现+DSL 约束+AST 沙箱+进化反馈，对标 S4（DSL+AST 沙箱需对齐）；
+FactorMAD（清华/Microsoft, ICAIF 2025）=多Agent辩论因子精炼，对标 S2~S4（辩论式因子精炼需对齐）；
+TiMi（同济/MSRA, ICLR 2026）=策略-部署解耦+数学反思闭环，对标 S4~S5（策略-部署解耦需对齐）；
+ProFiT（Nof1, 2025）=LLM 进化式策略发现+代码重写，对标 S4；
+CogAlpha（港大/中国移动, arXiv 2026）=7层Agent层次因子挖掘+代码级Alpha表示，对标 S3~S5（7层架构远超本系统 S3 映射，S3 需对齐）；
+FactorMiner（Wang et al., arXiv 2026）=自进化Agent+经验记忆+Phase2 Helix验证通道，对标 S4~S5（经验记忆+Phase2验证是亮点，S6 技能库需对齐）；
+FinRL-X（AI4Finance, arXiv 2026）=模块化部署一致性+权重中心接口+可组合策略管线，对标 S5~S6（§11 接口需对齐权重中心）；
+Dnalyaw（全栈量化平台, 2026）=Rust/Go/Python 延迟分层+4级风控+Kill Switch，对标 S5 风控+部署（延迟分层和4级风控远超本系统，§10 需对齐4级决策）。
+补充参考依据（学习系统架构正文"依据:"行）：AltStreet Quant 2.0（2025，Feature Store 架构）/ RLAIF Trader（2026，PIT 正确性）/ AutoSkill（OpenAI 2025，经验抽象）/ MountainLion（图表视觉理解）。
+密度预测/信号模型专业机构实践来源（交易决策架构§4.5.1/§8）：UBS Quant Hub（QNN 两阶段架构 Baruníka et al. 2025）、
+Duke-Monash（聚焦贝叶斯损失 Loaiza-Maya et al. 2024）、FinMatic 2025（Kelly 公式升级）、民生金工 2025（Wyckoff 完全量化）、
+CFA Institute（Core-Satellite 核心-卫星投资）。
+独创性评估（§1.2）：多模态知识采集=前沿（Captide/MountainLion 部分覆盖）；知识分类→模块映射=独创；
+交易模块工厂/模块池=核心独创（无已公开系统有此概念）；自动创建→接入→试运行闭环=部分独创；元学习=前沿；因果发现=前沿（CausalStock/Rebellion Research）。
+
+**关联环节**：[BM-RES-06](battle_map_01_research_incubation.md)、[BM-MT-03](battle_map_02_model_training.md)、[BM-MT-04](battle_map_02_model_training.md)、[BM-RES-07-A](battle_map_01_research_incubation.md)
 
 ## 模型量化 / Model Quantization（交易决策架构 v8.1 横切层）
 

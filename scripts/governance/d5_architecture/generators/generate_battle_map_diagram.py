@@ -1545,6 +1545,8 @@ _CROSS_CUTTING_RENDERERS = {
     "voting_first_multi_agent": _format_generic_cross_cutting_md,
     # 以下 1 项来源交易决策架构 v8.0 可建设项#16/#17（事件溯源/配置中心，2026-08-05）
     "event_sourcing_config_center": _format_generic_cross_cutting_md,
+    # 以下 1 项来源学习系统架构 §1 对标表（外部对标清单，2026-08-05 Owner 拍板）
+    "benchmark_mapping": _format_generic_cross_cutting_md,
 }
 
 
