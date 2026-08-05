@@ -88,14 +88,15 @@ flowchart TD
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_SECURITY["对抗验证<br/>对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验<br/>证<br/>Adversarial Validation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_compliance_behavioral_auditor_init_py -->|导入依赖 / import_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py production
     class src_zephyr_compliance_async_intercept_queue_py,src_zephyr_compliance_compliance_continuous_ops_py,src_zephyr_compliance_compliance_tech_enabler_py,src_zephyr_compliance_discipline_must_do_checker_py,src_zephyr_compliance_discipline_prohibition_checker_py,src_zephyr_compliance_eu_ai_act_ruling_py,src_zephyr_compliance_hard_boundary_adjudicator_py,src_zephyr_compliance_trading_compliance_detector_py design
-    class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT external_prod
+    class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_SECURITY external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
