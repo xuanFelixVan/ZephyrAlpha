@@ -46,6 +46,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import math
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -64,6 +65,7 @@ __all__: Final = [
     "ExecutionAuditLogger",
     "ExecutionAuditRecord",
     "ExecutionAuditReport",
+    "OperationalRiskStats",
 ]
 
 ZERO_HASH: str = "0" * 64
@@ -168,6 +170,46 @@ class ExecutionAuditReport:
     generated_at: datetime
 
 
+@dataclass(frozen=True)
+class OperationalRiskStats:
+    """操作风险统计——失败率 + 成交延迟聚合（G6 / BM-RC-08-E 薄聚合层）。
+
+    从 ExecutionAuditRecord 聚合的纯派生统计，无外部依赖。
+    - 失败率 = ORDER_REJECTED / ORDER_SUBMITTED（无提交时为 0.0，避免除零）
+    - 延迟 = ORDER_SUBMITTED → ORDER_FILLED 的时间差（ms），按 order_id 配对首条
+
+    边界：本结构只做"统计聚合"，不做阈值告警/风险解释（后者属 D_RISK 解释层，
+    battle_map 真源已由 MOD-INF-023/029 承载广义操作风险概念）。纯延迟（时间差）
+    不依赖 TCA（MOD-EX-012）；执行质量/滑点评分仍属阶段2 TCA 范畴。
+
+    Attributes:
+        period_start / period_end: 统计周期
+        submission_count: ORDER_SUBMITTED 计数（失败率分母）
+        rejection_count: ORDER_REJECTED 计数（失败率分子）
+        filled_count: ORDER_FILLED 计数
+        failure_rate: 失败率 rejection/submission ∈ [0.0, 1.0]
+        fill_rate: 成交率 filled/submission ∈ [0.0, 1.0]
+        latency_count: 成功配对 SUBMITTED→FILLED 的订单数
+        latency_p50_ms / latency_p95_ms / latency_max_ms / latency_mean_ms:
+            成交延迟分位数（ms），无配对时为 0.0
+        generated_at: 生成时间
+    """
+
+    period_start: datetime
+    period_end: datetime
+    submission_count: int
+    rejection_count: int
+    filled_count: int
+    failure_rate: float
+    fill_rate: float
+    latency_count: int
+    latency_p50_ms: float
+    latency_p95_ms: float
+    latency_max_ms: float
+    latency_mean_ms: float
+    generated_at: datetime
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # 哈希链工具
 # ──────────────────────────────────────────────────────────────────────────────
@@ -225,6 +267,22 @@ def _create_record(
         prev_hash=prev_hash,
         record_hash=rhash,
     )
+
+
+def _percentile(sorted_vals: list[float], pct: float) -> float:
+    """nearest-rank 百分位数。
+
+    Args:
+        sorted_vals: 已升序排列的数值列表
+        pct: 百分位（0~100）
+
+    Returns:
+        对应百分位值；空列表返回 0.0
+    """
+    if not sorted_vals:
+        return 0.0
+    k = max(0, math.ceil(pct / 100.0 * len(sorted_vals)) - 1)
+    return sorted_vals[k]
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -391,9 +449,7 @@ class ExecutionAuditLogger:
         source: AuditSource = AuditSource.AUTO,
     ) -> ExecutionAuditRecord | None:
         """记录 E-EX-08 IDEMPOTENCY_BLOCKED 事件。"""
-        return self.log(
-            ExecutionAuditEventType.IDEMPOTENCY_BLOCKED, order_id, symbol, source, detail
-        )
+        return self.log(ExecutionAuditEventType.IDEMPOTENCY_BLOCKED, order_id, symbol, source, detail)
 
     # ── 内部: 追加记录 ──
 
@@ -501,6 +557,76 @@ class ExecutionAuditLogger:
             by_source=by_source,
             chain_valid=chain_valid,
             chain_break_at=chain_break_at,
+            generated_at=datetime.now(UTC),
+        )
+
+    # ── 操作风险聚合（G6 / BM-RC-08-E 薄聚合层）──
+
+    def compute_operational_risk_stats(
+        self,
+        period_start: datetime,
+        period_end: datetime,
+    ) -> OperationalRiskStats:
+        """聚合操作风险统计——失败率 + 成交延迟。
+
+        失败率 = ORDER_REJECTED / ORDER_SUBMITTED（无提交时为 0.0）。
+        延迟 = 同一 order_id 的 ORDER_SUBMITTED → ORDER_FILLED 时间差（ms），
+        取每个订单首条 SUBMITTED 与首条 FILLED 配对；FILLED 早于 SUBMITTED（时钟偏移）
+        或无配对则跳过。
+
+        Args:
+            period_start: 统计周期起始
+            period_end: 统计周期结束
+
+        Returns:
+            OperationalRiskStats（纯派生统计，无阈值/告警）
+        """
+        records = self.query(start=period_start, end=period_end)
+
+        submission_count = 0
+        rejection_count = 0
+        filled_count = 0
+        first_submitted: dict[str, datetime] = {}
+        first_filled: dict[str, datetime] = {}
+
+        for rec in records:
+            if rec.event_type is ExecutionAuditEventType.ORDER_SUBMITTED:
+                submission_count += 1
+                first_submitted.setdefault(rec.order_id, rec.timestamp)
+            elif rec.event_type is ExecutionAuditEventType.ORDER_REJECTED:
+                rejection_count += 1
+            elif rec.event_type is ExecutionAuditEventType.ORDER_FILLED:
+                filled_count += 1
+                first_filled.setdefault(rec.order_id, rec.timestamp)
+
+        failure_rate = rejection_count / submission_count if submission_count > 0 else 0.0
+        fill_rate = filled_count / submission_count if submission_count > 0 else 0.0
+
+        # 配对 SUBMITTED → FILLED 计算成交延迟（ms）
+        latencies_ms: list[float] = []
+        for order_id, sub_ts in first_submitted.items():
+            fill_ts = first_filled.get(order_id)
+            if fill_ts is not None and fill_ts >= sub_ts:
+                latencies_ms.append((fill_ts - sub_ts).total_seconds() * 1000.0)
+
+        latencies_ms.sort()
+        latency_count = len(latencies_ms)
+        latency_mean = sum(latencies_ms) / latency_count if latency_count > 0 else 0.0
+        latency_max = latencies_ms[-1] if latency_count > 0 else 0.0
+
+        return OperationalRiskStats(
+            period_start=period_start,
+            period_end=period_end,
+            submission_count=submission_count,
+            rejection_count=rejection_count,
+            filled_count=filled_count,
+            failure_rate=failure_rate,
+            fill_rate=fill_rate,
+            latency_count=latency_count,
+            latency_p50_ms=_percentile(latencies_ms, 50),
+            latency_p95_ms=_percentile(latencies_ms, 95),
+            latency_max_ms=latency_max,
+            latency_mean_ms=latency_mean,
             generated_at=datetime.now(UTC),
         )
 

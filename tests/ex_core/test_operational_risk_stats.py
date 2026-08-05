@@ -1,5 +1,3 @@
-# [BLUEPRINT] MOD-EX-049 | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
 """OperationalRiskStats 单元测试 — MOD-EX-003 操作风险聚合层（G6 / BM-RC-08-E）
 
 覆盖: 失败率聚合(ORDER_REJECTED/ORDER_SUBMITTED) + 成交延迟配对 + 边界(零提交/全拒/无成交/时钟偏移/周期过滤)

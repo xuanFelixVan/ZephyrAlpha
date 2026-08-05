@@ -52,6 +52,11 @@ responsibility_domain:
 | SQLite 持久化 | 替代 JSONL，支持高效查询 | SQLite execution_audit 表 |
 | 实时告警 | 异常事件（高频拒绝/撤单率飙升）实时告警 | 告警通道 |
 
+> **G6 薄聚合层落地（2026-08-05）**：失败率 + 成交延迟统计已实现为 `compute_operational_risk_stats()`（见 §5），
+> 作为 G6 / BM-RC-08-E 操作风险审计的聚合基础。失败率 = ORDER_REJECTED/ORDER_SUBMITTED，
+> 延迟 = SUBMITTED→FILLED 时间差（ms），纯派生统计不依赖 TCA。**仍待 TCA**：执行质量/滑点评分；
+> **仍待 D_RISK 解释层**：阈值告警/风险解释（battle_map 真源由 MOD-INF-023/029 承载广义操作风险概念）。
+
 ## 4. 依赖关系（depgraph 设计态边）
 
 | 方向 | 对端 | dep_type | 说明 |
@@ -111,6 +116,23 @@ class ExecutionAuditReport:
     chain_break_at: str | None
     generated_at: datetime
 
+@dataclass(frozen=True)
+class OperationalRiskStats:
+    """操作风险统计——失败率 + 成交延迟聚合（G6 / BM-RC-08-E 薄聚合层，纯派生统计）。"""
+    period_start: datetime
+    period_end: datetime
+    submission_count: int
+    rejection_count: int
+    filled_count: int
+    failure_rate: float          # rejection/submission ∈ [0,1]，无提交=0.0
+    fill_rate: float             # filled/submission ∈ [0,1]
+    latency_count: int           # 成功配对 SUBMITTED→FILLED 的订单数
+    latency_p50_ms: float
+    latency_p95_ms: float
+    latency_max_ms: float
+    latency_mean_ms: float
+    generated_at: datetime
+
 class ExecutionAuditLogger:
     """执行审计记录器 — 全记录 + 哈希链防篡改 + 查询/报告。"""
 
@@ -132,6 +154,7 @@ class ExecutionAuditLogger:
     # 查询 / 报告 / 校验 / 持久化
     def query(self, order_id=None, symbol=None, event_type=None, start=None, end=None) -> list[ExecutionAuditRecord]: ...
     def generate_report(self, period_start, period_end) -> ExecutionAuditReport: ...
+    def compute_operational_risk_stats(self, period_start, period_end) -> OperationalRiskStats: ...
     def verify_chain(self) -> tuple[bool, str | None]: ...
     def flush(self) -> None: ...
     def load(self) -> None: ...
