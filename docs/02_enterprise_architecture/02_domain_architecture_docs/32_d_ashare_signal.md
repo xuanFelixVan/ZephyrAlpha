@@ -30,7 +30,7 @@ ttl: permanent
 | 模块数 | 36 | Module Count | 36 |
 | 域内依赖 | 24 | Internal Dependencies | 24 |
 | 跨域入边 | 11 | Cross-domain Incoming | 11 |
-| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
+| 跨域出边 | 4 | Cross-domain Outgoing | 4 |
 | 设计态模块 | 20 | Design Modules | 20 |
 | 生产态模块 | 16 | Production Modules | 16 |
 | 容量 | 16/150 (正常) | Capacity | 16/150 (正常) |
@@ -143,6 +143,11 @@ flowchart TD
     src_zephyr_signal_ashare_institutional_behavior_analyzer_py -.->|data / data| src_zephyr_signal_ashare_coarse_screening_funnel_py
     src_zephyr_signal_ashare_institutional_behavior_analyzer_py -.->|data / data| src_zephyr_signal_ashare_fine_scoring_engine_py
     src_zephyr_signal_ashare_init_py -->|config_depends / config_depends| src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py
+    D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
+    src_zephyr_signal_ashare_market_state_sensor_py -.->|import / import| D_POSITION
+    src_zephyr_signal_ashare_next_day_8state_forecast_py -.->|import / import| D_POSITION
+    src_zephyr_signal_ashare_institutional_behavior_analyzer_py -.->|data / data| D_POSITION
+    src_zephyr_signal_ashare_youzi_relay_emotion_engine_py -.->|data / data| D_POSITION
     D_SELL_DECISION["卖出决策<br/>卖出决策，负责卖出信号生成、卖出时机判断和退出策<br/>略<br/>Sell Decision<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     D_SELL_DECISION -.->|导入依赖 / import_depends| src_zephyr_signal_ashare_institutional_behavior_analyzer_py
     D_FUNDAMENTAL_SIGNAL["基本面信号<br/>基本面信号，负责基于财务数据的基本面信号生成<br/>Fundamental Signal<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
@@ -165,7 +170,7 @@ flowchart TD
     class src_zephyr_signal_ashare_init_py,src_zephyr_signal_ashare_extensions_init_py,src_zephyr_signal_ashare_api_init_py,src_zephyr_signal_ashare_capital_flow_pattern_analyzer_py,src_zephyr_signal_ashare_core_init_py,src_zephyr_signal_ashare_dual_engine_fusion_decision_engine_py,src_zephyr_signal_ashare_infrastructure_init_py,src_zephyr_signal_ashare_institutional_behavior_analyzer_py,src_zephyr_signal_ashare_intraday_buy_sell_point_analyzer_py,src_zephyr_signal_ashare_market_sentiment_analyzer_py,src_zephyr_signal_ashare_models_init_py,src_zephyr_signal_ashare_quant_short_term_strength_engine_py,src_zephyr_signal_ashare_sector_analyzer_py,src_zephyr_signal_ashare_services_init_py,src_zephyr_signal_ashare_short_term_stock_selector_py,src_zephyr_signal_ashare_youzi_relay_emotion_engine_py production
     class src_zephyr_signal_ashare_adaptive_conformal_tcp_rm_ddci_py,src_zephyr_signal_ashare_adjustment_cycle_tracker_py,src_zephyr_signal_ashare_causal_factor_validator_py,src_zephyr_signal_ashare_causal_inference_engine_py,src_zephyr_signal_ashare_coarse_screening_funnel_py,src_zephyr_signal_ashare_conditional_density_predictor_py,src_zephyr_signal_ashare_conformal_predictor_py,src_zephyr_signal_ashare_cross_market_conduction_sensor_py,src_zephyr_signal_ashare_event_driven_screener_py,src_zephyr_signal_ashare_fine_scoring_engine_py,src_zephyr_signal_ashare_kronos_tsfm_predictor_py,src_zephyr_signal_ashare_mamba_ssm_temporal_enhancer_py,src_zephyr_signal_ashare_market_lifecycle_phase_py,src_zephyr_signal_ashare_market_state_sensor_py,src_zephyr_signal_ashare_next_day_8state_forecast_py,src_zephyr_signal_ashare_regime_change_detector_py,src_zephyr_signal_ashare_supply_chain_gnn_py,src_zephyr_signal_ashare_survival_time_predictor_py,src_zephyr_signal_ashare_tiered_screening_filter_py,src_zephyr_signal_ashare_xlstm_long_memory_py design
     class D_FACTOR,D_MKT_DATA external_prod
-    class D_SELL_DECISION,D_FUNDAMENTAL_SIGNAL external_design
+    class D_POSITION,D_SELL_DECISION,D_FUNDAMENTAL_SIGNAL external_design
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -287,7 +292,12 @@ flowchart TD
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-无跨域出边依赖 / No cross-domain outgoing dependencies
+| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | 机构行为分析器 / institutional_behavior_analyzer (signal_... | → | D_POSITION 仓位管理: plan_engine/tomorrow_boundary_planner.py | data / data |
+| 2 | 市场状态Sensor / Market State Sensor (signal_ashare/marke... | → | D_POSITION 仓位管理: plan_engine/tomorrow_boundary_planner.py | import / import |
+| 3 | NextDay8状态Forecast / Next Day 8state Forecast (signal_a... | → | D_POSITION 仓位管理: plan_engine/tomorrow_boundary_planner.py | import / import |
+| 4 | 游资中继情绪引擎 / youzi_relay_emotion_engine (signal_ash... | → | D_POSITION 仓位管理: plan_engine/tomorrow_boundary_planner.py | data / data |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -307,16 +317,18 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 0 条 + 入边 11 条 = 11 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 5 个外部域直接连接（出边 4 条 + 入边 11 条 = 15 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_ASHARE_SIGNAL["D_ASHARE_SIGNAL<br/>A股特色信号"]
+    D_POSITION["D_POSITION<br/>仓位管理"]
     D_FACTOR["D_FACTOR<br/>因子"]
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策"]
+    D_ASHARE_SIGNAL -->|4条 data / data, import / import| D_POSITION
     D_FACTOR -->|6条 data / data, import / import| D_ASHARE_SIGNAL
     D_MKT_DATA -->|3条 data / data| D_ASHARE_SIGNAL
     D_FUNDAMENTAL_SIGNAL -->|1条 event / event| D_ASHARE_SIGNAL

@@ -29,8 +29,8 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 25 | Module Count | 25 |
 | 域内依赖 | 13 | Internal Dependencies | 13 |
-| 跨域入边 | 4 | Cross-domain Incoming | 4 |
-| 跨域出边 | 11 | Cross-domain Outgoing | 11 |
+| 跨域入边 | 5 | Cross-domain Incoming | 5 |
+| 跨域出边 | 12 | Cross-domain Outgoing | 12 |
 | 设计态模块 | 12 | Design Modules | 12 |
 | 生产态模块 | 13 | Production Modules | 13 |
 | 容量 | 13/150 (正常) | Capacity | 13/150 (正常) |
@@ -121,6 +121,7 @@ flowchart TD
     src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_ASHARE_SIGNAL
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(设计态 / design)"]
     src_zephyr_sell_decision_core_t_trade_coordinator_py -.->|导入依赖 / import_depends| D_EX_CORE
+    src_zephyr_sell_decision_core_exit_scenario_planner_py -.->|data / data| D_POSITION
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_sell_decision_core_sell_conflict_arbitrator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_sell_decision_core_sell_signal_collector_py -->|导入依赖 / import_depends| D_SHARED
@@ -133,6 +134,7 @@ flowchart TD
     D_EX_CORE -.->|runtime / runtime| src_zephyr_sell_decision_core_position_triage_py
     D_EX_CORE -.->|runtime / runtime| src_zephyr_sell_decision_core_position_triage_py
     D_EX_CORE -.->|runtime / runtime| src_zephyr_sell_decision_core_position_triage_py
+    D_POSITION -.->|data / data| src_zephyr_sell_decision_core_sell_signal_fusion_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -237,14 +239,15 @@ flowchart TD
 | 1 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_ASHARE_SIGNAL A股特色信号: 机构行为分析器 / institutional_behavior_analyzer (signal_... | 导入依赖 / import_depends |
 | 2 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_EX_CORE 执行核心: 实时组合 / live_portfolio (services/live_portfolio.py) | 导入依赖 / import_depends |
 | 3 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_FACTOR 因子: 3秒拉 tick → DataFrame → DagExecutor → H1 Redis / Intr... | 导入依赖 / import_depends |
-| 4 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_POSITION 仓位管理: 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | 导入依赖 / import_depends |
-| 5 | 突破成败状态 / Breakout Failure Detector (core/breakout_f... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 6 | 置换/再平衡卖出类型 / Replacement Rebalance Seller (core/... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 7 | 冲突等级 / Sell Conflict Arbitrator (core/sell_conflict_a... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 8 | 不可扩展) / Sell Signal Collector (core/sell_signal_colle... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 9 | 融合算法 / Sell Signal Fusion Engine (core/sell_signal_fu... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 10 | 紧迫度等级 / Sell Urgency Scorer (core/sell_urgency_score... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 11 | 止损位偏移方向 / Stop Hunting Protector (core/stop_huntin... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 4 | Exit场景Planner / Exit Scenario Planner (core/exit_scenar... | → | D_POSITION 仓位管理: plan_engine/tomorrow_boundary_planner.py | data / data |
+| 5 | T交易协调器 / T Trade Coordinator (core/t_trade_coordinat... | → | D_POSITION 仓位管理: 仓位决策市场状态 ①~⑫ / Position Sizing Engine (core/pos... | 导入依赖 / import_depends |
+| 6 | 突破成败状态 / Breakout Failure Detector (core/breakout_f... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 7 | 置换/再平衡卖出类型 / Replacement Rebalance Seller (core/... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 8 | 冲突等级 / Sell Conflict Arbitrator (core/sell_conflict_a... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 9 | 不可扩展) / Sell Signal Collector (core/sell_signal_colle... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 10 | 融合算法 / Sell Signal Fusion Engine (core/sell_signal_fu... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 11 | 紧迫度等级 / Sell Urgency Scorer (core/sell_urgency_score... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 12 | 止损位偏移方向 / Stop Hunting Protector (core/stop_huntin... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -254,26 +257,28 @@ flowchart TD
 | 2 | D_EX_CORE 执行核心: 卖出优先级调度器 / sell_priority_scheduler (ex_core/sell_... | → | 持仓Triage / Position Triage (core/position_triage.py) | runtime / runtime |
 | 3 | D_EX_CORE 执行核心: 停止亏损止盈利润执行器 / stop_loss_take_profit_executor (... | → | 持仓Triage / Position Triage (core/position_triage.py) | runtime / runtime |
 | 4 | D_EX_CORE 执行核心: 停止亏损止盈利润执行器 / stop_loss_take_profit_executor (... | → | 持仓Triage / Position Triage (core/position_triage.py) | runtime / runtime |
+| 5 | D_POSITION 仓位管理: plan_engine/tomorrow_boundary_planner.py | → | 融合算法 / Sell Signal Fusion Engine (core/sell_signal_fu... | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 5 个外部域直接连接（出边 11 条 + 入边 4 条 = 15 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 5 个外部域直接连接（出边 12 条 + 入边 5 条 = 17 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_SELL_DECISION["D_SELL_DECISION<br/>卖出决策"]
     D_SHARED["D_SHARED<br/>共享服务"]
+    D_POSITION["D_POSITION<br/>仓位管理"]
     D_ASHARE_SIGNAL["D_ASHARE_SIGNAL<br/>A股特色信号"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_FACTOR["D_FACTOR<br/>因子"]
-    D_POSITION["D_POSITION<br/>仓位管理"]
     D_SELL_DECISION -->|7条 导入依赖 / import_depends| D_SHARED
+    D_SELL_DECISION -->|2条 data / data, 导入依赖 / import_depends| D_POSITION
     D_SELL_DECISION -->|1条 导入依赖 / import_depends| D_ASHARE_SIGNAL
     D_SELL_DECISION -->|1条 导入依赖 / import_depends| D_EX_CORE
     D_SELL_DECISION -->|1条 导入依赖 / import_depends| D_FACTOR
-    D_SELL_DECISION -->|1条 导入依赖 / import_depends| D_POSITION
     D_EX_CORE -->|4条 runtime / runtime| D_SELL_DECISION
+    D_POSITION -->|1条 data / data| D_SELL_DECISION
 ```
 
 ## 说明 / Notes

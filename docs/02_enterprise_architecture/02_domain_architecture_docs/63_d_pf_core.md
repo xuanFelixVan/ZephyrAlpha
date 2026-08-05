@@ -29,7 +29,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 16 | Module Count | 16 |
 | 域内依赖 | 22 | Internal Dependencies | 22 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
+| 跨域入边 | 2 | Cross-domain Incoming | 2 |
 | 跨域出边 | 44 | Cross-domain Outgoing | 44 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 生产态模块 | 16 | Production Modules | 16 |
@@ -125,6 +125,7 @@ flowchart TD
     src_zephyr_pf_core_strategy_engine_strategy_runner_py -->|导入依赖 / import_depends| D_FACTOR
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_pf_core_strategy_engine_strategy_runner_py
+    D_POSITION -.->|data / data| src_zephyr_pf_core_core_constraint_solver_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -257,10 +258,11 @@ flowchart TD
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | D_EX_CORE 执行核心: 交易会话 / trading_session (ex_core/trading_session.py) | → | StrategyRunner 策略运行器 / Strategy Runner (strategy_eng... | 导入依赖 / import_depends |
+| 2 | D_POSITION 仓位管理: plan_engine/tomorrow_boundary_planner.py | → | 约束不可满足 / Constraint Solver (core/constraint_solver.py) | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 10 个外部域直接连接（出边 44 条 + 入边 1 条 = 45 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 10 个外部域直接连接（出边 44 条 + 入边 2 条 = 46 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -286,6 +288,7 @@ graph LR
     D_PF_CORE -->|3条 导入依赖 / import_depends| D_FACTOR
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_REPORTING
     D_EX_CORE -->|1条 导入依赖 / import_depends| D_PF_CORE
+    D_POSITION -->|1条 data / data| D_PF_CORE
 ```
 
 ## 说明 / Notes
