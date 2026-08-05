@@ -156,6 +156,47 @@ _SQL_QUERY_ALL_MODULES = (
     "WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
 )
 
+# ─────────────────────────────────────────────────────────────────────────────
+# 批量 SQL（#ARCH-REGEN-CONCURRENCY-001 P2-a 方案 A：generate_all 批量优化）
+# 治本 145s→~10s：3N 连接→3 连接，N 扫描→1 扫描。逐只查询保留给单模块 CLI 路径。
+# ─────────────────────────────────────────────────────────────────────────────
+# depgraph 全量节点（一次拉全，Python 端按 blueprint_id 分组聚合）
+_SQL_BATCH_ALL_DEPGRAPH_NODES = (
+    "SELECT blueprint_id, path, design_maturity, build_status, domain_id "
+    "FROM nodes WHERE blueprint_id IS NOT NULL AND blueprint_id <> '' "
+    "ORDER BY blueprint_id, (path IS NULL), path"
+)
+# dataflow 批量计数（GROUP BY 一次取全部模块的 dataset/job 数）
+_SQL_BATCH_DATAFLOW_DATASETS = (
+    "SELECT module_id, COUNT(*) FROM dataflow_datasets "
+    "WHERE module_id IS NOT NULL GROUP BY module_id"
+)
+_SQL_BATCH_DATAFLOW_JOBS = (
+    "SELECT module_id, COUNT(*) FROM dataflow_jobs "
+    "WHERE module_id IS NOT NULL GROUP BY module_id"
+)
+# dataflow 批量代表性状态（DISTINCT ON 每 module_id 取最 design 优先的一行，
+# 对标单模块 _SQL_DATAFLOW_STATUS 的 ORDER BY (design_maturity='design') DESC LIMIT 1）
+_SQL_BATCH_DATAFLOW_STATUS = (
+    "SELECT DISTINCT ON (module_id) module_id, design_maturity, build_status "
+    "FROM dataflow_jobs WHERE design_maturity IS NOT NULL "
+    "ORDER BY module_id, (design_maturity = 'design') DESC"
+)
+# decision 批量计数
+_SQL_BATCH_DECISION_NODES = (
+    "SELECT module_id, COUNT(*) FROM decision_nodes "
+    "WHERE module_id IS NOT NULL GROUP BY module_id"
+)
+_SQL_BATCH_DECISION_LAYERS = (
+    "SELECT module_id, COUNT(*) FROM decision_layers "
+    "WHERE module_id IS NOT NULL GROUP BY module_id"
+)
+_SQL_BATCH_DECISION_STATUS = (
+    "SELECT DISTINCT ON (module_id) module_id, design_maturity, build_status "
+    "FROM decision_nodes WHERE design_maturity IS NOT NULL "
+    "ORDER BY module_id, (design_maturity = 'design') DESC"
+)
+
 
 # ---------------------------------------------------------------------------
 # 数据模型
@@ -775,40 +816,274 @@ def generate_for_module(module_id: str, *, dry_run: bool = False) -> int:
     else:
         print(f"[OK] {module_id}: §0.6 已是最新，无需更新")
     return EXIT_PASS
-def generate_all(*, dry_run: bool = False) -> int:
-    """生成所有 depgraph 中有 blueprint_id 的模块的 §0.6。
 
-    Returns: 0=全部成功, 1=有失败
+
+# ---------------------------------------------------------------------------
+# 批量采集（#ARCH-REGEN-CONCURRENCY-001 P2-a 方案 A：generate_all 批量优化）
+# 治本 145s→~10s：3N 连接→3 连接，N 扫描→1 扫描。逻辑对标逐只 _fetch_*，
+# 仅把 N 次 ROUND-TRIP 合并为 1 次 GROUP BY / 全量拉取 + Python 端分组。
+# 逐只函数保留给 generate_for_module 单模块 CLI 路径（单模块无须批量）。
+# ---------------------------------------------------------------------------
+
+
+def _fetch_all_depgraph_modules() -> dict[str, DepgraphModuleInfo]:
+    """一次拉全 depgraph.nodes，Python 端按 blueprint_id 分组聚合（对标 _fetch_depgraph_module）。
+
+    Returns:
+        dict[module_id, DepgraphModuleInfo]。聚合策略与逐只一致：
+        domain_id=加权投票，design_maturity=min_maturity，build_status=首个非空，file_count=行数。
     """
     conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute(_SQL_QUERY_ALL_MODULES)
-            rows = cur.fetchall()
-        modules = [
-            row["blueprint_id"] if isinstance(row, dict) else row[0]
-            for row in rows
-        ]
+            cur.execute(_SQL_BATCH_ALL_DEPGRAPH_NODES)
+            all_rows = cur.fetchall()
     finally:
         conn.close()
 
-    print(f"[INFO] 共 {len(modules)} 个模块待处理")
+    from collections import defaultdict
+    by_module: dict[str, list] = defaultdict(list)
+    for row in all_rows:
+        bid = row["blueprint_id"] if isinstance(row, dict) else row[0]
+        by_module[bid].append(row)
+
+    result: dict[str, DepgraphModuleInfo] = {}
+    for bid, rows in by_module.items():
+        maturities: list[str] = []
+        build_status = ""
+        for row in rows:
+            if isinstance(row, dict):
+                dm = row.get("design_maturity")
+                bs = row.get("build_status")
+            else:
+                dm = row[2] if len(row) > 2 else None
+                bs = row[3] if len(row) > 3 else None
+            if dm:
+                maturities.append(dm)
+            if not build_status and bs:
+                build_status = bs
+        domain_id = weighted_domain_vote(rows)
+        design_maturity = _min_mat(maturities) if maturities else ""
+        result[bid] = DepgraphModuleInfo(
+            module_id=bid,
+            domain_id=domain_id or "",
+            design_maturity=design_maturity or "",
+            build_status=build_status or "",
+            file_count=len(rows),
+        )
+    return result
+
+
+def _fetch_all_dataflow_modules() -> dict[str, DataflowModuleInfo]:
+    """批量查询 dataflow 全部模块的计数+代表性状态（1 连接 3 查询，对标 _fetch_dataflow_module）。"""
+    conn = get_dataflowgraph_pg_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(_SQL_BATCH_DATAFLOW_DATASETS)
+            ds_rows = cur.fetchall()
+            cur.execute(_SQL_BATCH_DATAFLOW_JOBS)
+            job_rows = cur.fetchall()
+            cur.execute(_SQL_BATCH_DATAFLOW_STATUS)
+            status_rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    def _col(row, *keys):
+        for k in keys:
+            if isinstance(row, dict):
+                if k in row:
+                    return row[k]
+            else:
+                # 数字索引兜底（RealDictCursor 返回 dict，但防御性支持 tuple）
+                idx = {"module_id": 0, "count": 1, "design_maturity": 1, "build_status": 2}.get(k)
+                if idx is not None and len(row) > idx:
+                    return row[idx]
+        return None
+
+    ds_count: dict[str, int] = {}
+    for r in ds_rows:
+        mid = _col(r, "module_id") or ""
+        ds_count[mid] = _col(r, "count") or 0
+    job_count: dict[str, int] = {}
+    for r in job_rows:
+        mid = _col(r, "module_id") or ""
+        job_count[mid] = _col(r, "count") or 0
+    status_map: dict[str, tuple[str, str]] = {}
+    for r in status_rows:
+        mid = _col(r, "module_id") or ""
+        dm = _col(r, "design_maturity") or ""
+        bs = _col(r, "build_status") or ""
+        status_map[mid] = (dm, bs)
+
+    all_mids = set(ds_count) | set(job_count)
+    result: dict[str, DataflowModuleInfo] = {}
+    for mid in all_mids:
+        dc = ds_count.get(mid, 0)
+        jc = job_count.get(mid, 0)
+        if dc == 0 and jc == 0:
+            continue
+        dm, bs = status_map.get(mid, ("", ""))
+        result[mid] = DataflowModuleInfo(
+            dataset_count=dc, job_count=jc, design_maturity=dm, build_status=bs
+        )
+    return result
+
+
+def _fetch_all_decision_modules() -> dict[str, DecisionModuleInfo]:
+    """批量查询 decision 全部模块的计数+代表性状态（1 连接 3 查询，对标 _fetch_decision_module）。"""
+    conn = get_decisiongraph_pg_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(_SQL_BATCH_DECISION_NODES)
+            node_rows = cur.fetchall()
+            cur.execute(_SQL_BATCH_DECISION_LAYERS)
+            layer_rows = cur.fetchall()
+            cur.execute(_SQL_BATCH_DECISION_STATUS)
+            status_rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    def _col(row, *keys):
+        for k in keys:
+            if isinstance(row, dict):
+                if k in row:
+                    return row[k]
+            else:
+                idx = {"module_id": 0, "count": 1, "design_maturity": 1, "build_status": 2}.get(k)
+                if idx is not None and len(row) > idx:
+                    return row[idx]
+        return None
+
+    node_count: dict[str, int] = {}
+    for r in node_rows:
+        mid = _col(r, "module_id") or ""
+        node_count[mid] = _col(r, "count") or 0
+    layer_count: dict[str, int] = {}
+    for r in layer_rows:
+        mid = _col(r, "module_id") or ""
+        layer_count[mid] = _col(r, "count") or 0
+    status_map: dict[str, tuple[str, str]] = {}
+    for r in status_rows:
+        mid = _col(r, "module_id") or ""
+        dm = _col(r, "design_maturity") or ""
+        bs = _col(r, "build_status") or ""
+        status_map[mid] = (dm, bs)
+
+    all_mids = set(node_count) | set(layer_count)
+    result: dict[str, DecisionModuleInfo] = {}
+    for mid in all_mids:
+        nc = node_count.get(mid, 0)
+        lc = layer_count.get(mid, 0)
+        if nc == 0 and lc == 0:
+            continue
+        dm, bs = status_map.get(mid, ("", ""))
+        result[mid] = DecisionModuleInfo(
+            node_count=nc, layer_count=lc, design_maturity=dm, build_status=bs
+        )
+    return result
+
+
+def _build_blueprint_index() -> dict[str, BlueprintFrontmatter]:
+    """扫描 docs/03_modules/ 一次，建 module_id→BlueprintFrontmatter 映射（对标 _fetch_blueprint）。
+
+    治本：原 _find_blueprint_by_scan 对每个模块全扫一次（N 次扫描 M 个文件 = O(N×M)），
+    现一次扫描建索引，generate_all 查找 O(1)。
+    """
+    index: dict[str, BlueprintFrontmatter] = {}
+    if not _BP_SCAN_ROOT.exists():
+        return index
+    for fpath in _BP_SCAN_ROOT.rglob("*"):
+        if not fpath.is_file() or fpath.name in _BP_SKIP_NAMES:
+            continue
+        if fpath.suffix != ".md":
+            continue
+        try:
+            content = fpath.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        fm = _parse_simple_frontmatter(content)
+        mid = fm.get("module_id", "")
+        if not mid or mid in index:
+            continue  # 一个 module_id 只取第一个匹配（与 _find_blueprint_by_scan 一致）
+        index[mid] = BlueprintFrontmatter(
+            module_id=mid,
+            responsibility_domain=fm.get("responsibility_domain", ""),
+            design_maturity=fm.get("design_maturity", ""),
+            build_status=fm.get("build_status", ""),
+            status=fm.get("status", ""),
+            file_path=fpath,
+            content=content,
+        )
+    return index
+
+
+def generate_all(*, dry_run: bool = False) -> int:
+    """生成所有 depgraph 中有 blueprint_id 的模块的 §0.6。
+
+    #ARCH-REGEN-CONCURRENCY-001 P2-a 方案 A：批量采集（3 连接+1 扫描）替代
+    逐只 generate_for_module 循环（3N 连接+N 扫描）。预期 145s→~10s。
+
+    Returns: 0=全部成功, 1=有失败
+    """
+    import time as _time
+
+    t0 = _time.monotonic()
+    # 1. 批量采集三图数据（3 连接，各 1-3 查询）
+    depgraph_map = _fetch_all_depgraph_modules()
+    t_dg = _time.monotonic()
+    dataflow_map = _fetch_all_dataflow_modules()
+    t_df = _time.monotonic()
+    decision_map = _fetch_all_decision_modules()
+    t_dc = _time.monotonic()
+    # 2. 批量扫描蓝图建索引（1 次扫描，替代 N 次 _find_blueprint_by_scan）
+    blueprint_map = _build_blueprint_index()
+    t_bp = _time.monotonic()
+
+    modules = sorted(depgraph_map.keys())
+    print(
+        f"[INFO] 共 {len(modules)} 个模块待处理 "
+        f"(采集耗时 depgraph={t_dg - t0:.1f}s dataflow={t_df - t_dg:.1f}s "
+        f"decision={t_dc - t_df:.1f}s blueprint={t_bp - t_dc:.1f}s)"
+    )
+
     succeeded = 0
-    skipped_depgraph = 0
     skipped_blueprint = 0
     failed = 0
     for mid in modules:
-        rc = generate_for_module(mid, dry_run=dry_run)
-        if rc == 0:
+        # depgraph 必有（modules 来自 depgraph_map.keys()）
+        panorama = ModulePanorama(
+            module_id=mid,
+            depgraph=depgraph_map.get(mid),
+            dataflow=dataflow_map.get(mid),
+            decision=decision_map.get(mid),
+            blueprint=blueprint_map.get(mid),
+        )
+        # 蓝图不存在 → 跳过（与 generate_for_module 一致）
+        if panorama.blueprint is None:
+            skipped_blueprint += 1
+            continue
+        try:
+            new_s06 = _generate_s06_section(panorama)
+            updated = _update_blueprint_file(
+                panorama.blueprint, new_s06, dry_run=dry_run
+            )
+            action = "DRY-RUN" if dry_run else "OK"
+            if updated:
+                print(
+                    f"[{action}] {mid}: §0.6 已{'写入' if not dry_run else '预览'} "
+                    f"{panorama.blueprint.file_path}"
+                )
+            else:
+                print(f"[OK] {mid}: §0.6 已是最新，无需更新")
             succeeded += 1
-        elif rc == 3:
-            skipped_depgraph += 1
-        else:
+        except Exception as exc:  # noqa: BLE001 — 单模块失败不阻断其余
+            print(f"[ERROR] {mid}: §0.6 生成失败: {exc}", file=sys.stderr)
             failed += 1
+
+    elapsed = _time.monotonic() - t0
     print(
-        f"[INFO] 处理完成：成功={succeeded}, "
-        f"跳过(depgraph无)={skipped_depgraph}, "
-        f"失败={failed}（共 {len(modules)} 个）"
+        f"[INFO] 处理完成：成功={succeeded}, 跳过(蓝图无)={skipped_blueprint}, "
+        f"失败={failed}（共 {len(modules)} 个，总耗时 {elapsed:.1f}s）"
     )
     return 0 if failed == 0 else 1
 
