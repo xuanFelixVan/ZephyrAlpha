@@ -10,7 +10,7 @@ date: 2026-08-05
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_09_risk_control.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §risk_control 阶段，50 环节（54 锚点）。
+> battle_map §risk_control 阶段，50 环节（66 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,9 +20,9 @@ date: 2026-08-05
 |------|------|-------|-------|
 | 阶段 | 风控管控（risk_control） | Stage | 风控管控 |
 | 环节数 | 50 | Steps | 50 |
-| 锚点数（双向对齐） | 54 | Anchors (Bidirectional) | 54 |
+| 锚点数（双向对齐） | 66 | Anchors (Bidirectional) | 66 |
 | 流转边 | 10 | Edges | 10 |
-| 状态分布 | 🟦 运营态（已建）=37 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=37 ｜ 🟧 设计态（待施工）=9 ｜ ⬜ 缺失态（无锚点）=3 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=37 ｜ 🟨 候选态（候选池）=9 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟦 运营态（已建）=37 ｜ 🟨 候选态（候选池）=9 ｜ 🟧 设计态（待施工）=4 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -53,22 +53,22 @@ flowchart TD
         BM_RC_01 -.->|嵌套| BM_RC_01_C
     end
     subgraph sg_BM_RC_10 ["风险否决权"]
-        BM_RC_10["【BM-RC-10 风险否决权】<br/>风险否决权——风控可在任何阶段否决交易决策，不可绕<br/>过、不可人工覆盖。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Risk Veto Power】"]
+        BM_RC_10["【BM-RC-10 风险否决权】<br/>风险否决权——风控可在任何阶段否决交易决策，不可绕<br/>过、不可人工覆盖。<br/>（设计态 / design）<br/>【Risk Veto Power】"]
         BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>否决执行引擎——同步拦截（&lt;50ms）+熔断器模式+Kill<br/>Switch多路径激活+审计追踪。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Veto Execution Engine】"]
         BM_RC_10 -.->|嵌套| BM_RC_10_A
     end
     subgraph sg_BM_RC_11 ["独立风险数据管道"]
-        BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>独立风险数据管道——风控用独立数据源，不依赖交易链<br/>路，防止数据污染。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Independent Risk Data Pipeline】"]
-        BM_RC_11_A["【BM-RC-11-A 独立风险指标计算】<br/>独立计算VaR/ES/相关性<br/>/Beta等风险指标，不受交易系统影响。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Independent Risk Metric Calculation】"]
-        BM_RC_11_B["【BM-RC-11-B 风险报告生成】<br/>生成风险报告——日报/周报/月报+异常告警+合规披露。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Risk Report Generation】"]
+        BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>独立风险数据管道——风控用独立数据源，不依赖交易链<br/>路，防止数据污染。<br/>（设计态 / design）<br/>【Independent Risk Data Pipeline】"]
+        BM_RC_11_A["【BM-RC-11-A 独立风险指标计算】<br/>独立计算VaR/ES/相关性<br/>/Beta等风险指标，不受交易系统影响。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Independent Risk Metric Calculation】"]
+        BM_RC_11_B["【BM-RC-11-B 风险报告生成】<br/>生成风险报告——日报/周报/月报+异常告警+合规披露。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Risk Report Generation】"]
         BM_RC_11 -.->|嵌套| BM_RC_11_A
         BM_RC_11 -.->|嵌套| BM_RC_11_B
     end
     subgraph sg_BM_RC_12 ["极端事件与黑天鹅"]
-        BM_RC_12["【BM-RC-12 极端事件与黑天鹅】<br/>极端事件与黑天鹅——小概率高损失事件的识别、模拟、<br/>应对。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Extreme Events &amp; Black Swan】"]
-        BM_RC_12_A["【BM-RC-12-A 黑天鹅模式库】<br/>黑天鹅模式库——历史极端事件模式（2008/2015<br/>/2020）归档，供模式匹配预警。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Black Swan Pattern Library】"]
-        BM_RC_12_B["【BM-RC-12-B 跨市场传导与传染模型】<br/>跨市场传导与传染模型——A股受外盘/商品<br/>/汇率冲击的传导路径建模。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Cross-Market Contagion Model】"]
-        BM_RC_12_C["【BM-RC-12-C 流动性危机模拟】<br/>流动性危机模拟——极端流动性枯竭场景的压力测试与应<br/>对预案。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Liquidity Crisis Simulation】"]
+        BM_RC_12["【BM-RC-12 极端事件与黑天鹅】<br/>极端事件与黑天鹅——小概率高损失事件的识别、模拟、<br/>应对。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Extreme Events &amp; Black Swan】"]
+        BM_RC_12_A["【BM-RC-12-A 黑天鹅模式库】<br/>黑天鹅模式库——历史极端事件模式（2008/2015<br/>/2020）归档，供模式匹配预警。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Black Swan Pattern Library】"]
+        BM_RC_12_B["【BM-RC-12-B 跨市场传导与传染模型】<br/>跨市场传导与传染模型——A股受外盘/商品<br/>/汇率冲击的传导路径建模。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Cross-Market Contagion Model】"]
+        BM_RC_12_C["【BM-RC-12-C 流动性危机模拟】<br/>流动性危机模拟——极端流动性枯竭场景的压力测试与应<br/>对预案。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Liquidity Crisis Simulation】"]
         BM_RC_12 -.->|嵌套| BM_RC_12_A
         BM_RC_12 -.->|嵌套| BM_RC_12_B
         BM_RC_12 -.->|嵌套| BM_RC_12_C
@@ -101,7 +101,7 @@ flowchart TD
         BM_RC_04_B["【BM-RC-04-B 回撤实时追踪】<br/>盘中实时追踪回撤——从净值高点回撤了多少，逼近预警<br/>线就报警。<br/>（生产态 / production）<br/>【Real-Time Drawdown Tracking】"]
         BM_RC_04_C["【BM-RC-04-C 因子暴露与相关性矩阵】<br/>实时算因子暴露和持仓相关性矩阵——防止看似分散的持<br/>仓其实押注了同一个因子。<br/>（生产态 / production）<br/>【Factor Exposure &amp; Correlation Matrix】"]
         BM_RC_04_D["【BM-RC-04-D 告警生成】<br/>把风控监控的异常信号转成结构化告警——分级、去重、<br/>路由到对应的处置人。<br/>（生产态 / production）<br/>【Alert Generation】"]
-        BM_RC_04_E["【BM-RC-04-E 流动性风险监控】<br/>监控持仓流动性——单票成交量能不能承载当前仓位，跌<br/>停时卖不出去怎么办。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Liquidity Risk Monitoring】"]
+        BM_RC_04_E["【BM-RC-04-E 流动性风险监控】<br/>监控持仓流动性——单票成交量能不能承载当前仓位，跌<br/>停时卖不出去怎么办。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Liquidity Risk Monitoring】"]
         BM_RC_04_F["【BM-RC-04-F AI/Agent风险监控】<br/>盯 AI/Agent 自己的行为——防止 LLM<br/>幻觉导致异常下单、Agent 死循环狂交易等新型风险。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【AI/Agent Risk Monitoring】"]
         BM_RC_04 -.->|嵌套| BM_RC_04_A
         BM_RC_04 -.->|嵌套| BM_RC_04_B
@@ -124,7 +124,7 @@ flowchart TD
         BM_RC_06_A["【BM-RC-06-A 五大信号扫描】<br/>扫描五大系统性风险信号——大盘破位、流动性枯竭、波<br/>动率飙升、跨市场传导异常、政策黑天鹅。<br/>（生产态 / production）<br/>【Five Signal Scanning】"]
         BM_RC_06_B["【BM-RC-06-B 尾部风险监控】<br/>监控尾部风险——小概率大亏损的事件，用 EVT<br/>（极值理论）估算极端情况下的损失。<br/>（生产态 / production）<br/>【Tail Risk Monitoring】"]
         BM_RC_06_C["【BM-RC-06-C 三级警报与清仓执行】<br/>系统性风险三级警报——黄/橙<br/>/红，红色级别直接清仓保命，不等确认先跑。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Three-Tier Alert &amp; Liquidation】"]
-        BM_RC_06_D["【BM-RC-06-D 拥挤度检测】<br/>检测交易拥挤度——同一个策略太多人用会导致踩踏，拥<br/>挤度高时提前减仓。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Crowding Detection】"]
+        BM_RC_06_D["【BM-RC-06-D 拥挤度检测】<br/>检测交易拥挤度——同一个策略太多人用会导致踩踏，拥<br/>挤度高时提前减仓。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Crowding Detection】"]
         BM_RC_06 -.->|嵌套| BM_RC_06_A
         BM_RC_06 -.->|嵌套| BM_RC_06_B
         BM_RC_06 -.->|嵌套| BM_RC_06_C
@@ -152,7 +152,7 @@ flowchart TD
         BM_RC_08 -.->|嵌套| BM_RC_08_D
         BM_RC_08 -.->|嵌套| BM_RC_08_E
     end
-    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_11 ~~~ BM_RC_01_A ~~~ BM_RC_12 ~~~ BM_RC_01_B ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
+    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_01_B ~~~ BM_RC_12 ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
     BM_RC_01 -->|策略→盘前检查 / data_flow| BM_RC_02
     BM_RC_02 -->|检查→Kill Switch / trigger| BM_RC_03
     BM_RC_03 -->|熔断→盘中监控 / data_flow| BM_RC_04
@@ -166,9 +166,8 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_RC_09,BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C,BM_RC_08_D,BM_RC_08_E production
-    class BM_RC_04_E,BM_RC_04_F,BM_RC_06_D,BM_RC_10_A,BM_RC_11_A,BM_RC_11_B,BM_RC_12_A,BM_RC_12_B,BM_RC_12_C design
-    class BM_RC_10,BM_RC_11,BM_RC_12 missing
-    class BM_RC_05_C candidate
+    class BM_RC_10,BM_RC_11,BM_RC_04_F,BM_RC_10_A design
+    class BM_RC_12,BM_RC_04_E,BM_RC_05_C,BM_RC_06_D,BM_RC_11_A,BM_RC_11_B,BM_RC_12_A,BM_RC_12_B,BM_RC_12_C candidate
 ```
 
 ## 环节详情
@@ -263,36 +262,13 @@ RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTO
 
 ①触发：风控规则触发否决条件/交易请求拦截；②消费：风控策略+持仓状态+交易请求+BM-RC-01限额配置；③参数：否决规则、否决执行机制、否决与策略逻辑隔离；④数据流：交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：否决机制失效→硬阻断交易(安全优先)。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RK-24 | primary | planned | planned |
 
-### BM-RC-11 独立风险数据管道 / Independent Risk Data Pipeline
-
-> **大白话**：独立风险数据管道——风控用独立数据源，不依赖交易链路，防止数据污染。
-
-**机制说明**：
-
-独立风险数据管道。风控使用独立数据源(不依赖交易链路)，防止交易系统数据污染风控决策。数据流：独立源→独立清洗→独立计算→独立报告。
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | 盘中实时/盘后批量 |
-| ② 消费数据/因子 | 独立风险数据源(不依赖交易数据，防循环依赖) |
-| ③ 参数 | 独立风险数据管道、风险指标计算、数据质量校验 |
-| ④ 数据流 | 独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR |
-| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
-| ⑥ 降级/中止 | 数据管道故障→降级缓存指标+告警 |
-
-**指标文案（翻译真源 indicators_zh）**：
-
-①触发：盘中实时/盘后批量；②消费：独立风险数据源(不依赖交易数据，防循环依赖)；③参数：独立风险数据管道、风险指标计算、数据质量校验；④数据流：独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：数据管道故障→降级缓存指标+告警。
-
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
-
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-01-A 风控策略CRUD与版本管理 / Risk Strategy CRUD & Versioning
 
@@ -325,32 +301,36 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-12 极端事件与黑天鹅 / Extreme Events & Black Swan
+### BM-RC-11 独立风险数据管道 / Independent Risk Data Pipeline
 
-> **大白话**：极端事件与黑天鹅——小概率高损失事件的识别、模拟、应对。
+> **大白话**：独立风险数据管道——风控用独立数据源，不依赖交易链路，防止数据污染。
 
 **机制说明**：
 
-极端事件与黑天鹅。小概率高损失事件的识别(黑天鹅模式匹配)+模拟(压力测试/蒙特卡洛)+应对(应急预案/动态对冲)。含模式库/传导模型/流动性危机模拟三大子能力。
+独立风险数据管道。风控使用独立数据源(不依赖交易链路)，防止交易系统数据污染风控决策。数据流：独立源→独立清洗→独立计算→独立报告。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | 极端市场事件发生时 / 盘后黑天鹅压力测试 |
-| ② 消费数据/因子 | 历史极端事件数据 + BM-RC-08-C 压力测试结果 + 跨市场行情数据 |
-| ③ 参数 | 黑天鹅模式库、跨市场传导模型、流动性危机模拟、二阶效应与传染模型、反向压力测试 |
-| ④ 数据流 | 极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch |
-| ⑤ 代码映射 | 待开发（planned，D_RISK 域） |
-| ⑥ 降级/中止 | 极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先） |
+| ① 触发条件 | 盘中实时/盘后批量 |
+| ② 消费数据/因子 | 独立风险数据源(不依赖交易数据，防循环依赖) |
+| ③ 参数 | 独立风险数据管道、风险指标计算、数据质量校验 |
+| ④ 数据流 | 独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR |
+| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
+| ⑥ 降级/中止 | 数据管道故障→降级缓存指标+告警 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：极端市场事件发生时 / 盘后黑天鹅压力测试；②消费：历史极端事件数据 + BM-RC-08-C 压力测试结果 + 跨市场行情数据；③参数：黑天鹅模式库、跨市场传导模型、流动性危机模拟、二阶效应与传染模型、反向压力测试；④数据流：极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK 域）；⑥降级：极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先）。
+①触发：盘中实时/盘后批量；②消费：独立风险数据源(不依赖交易数据，防循环依赖)；③参数：独立风险数据管道、风险指标计算、数据质量校验；④数据流：独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：数据管道故障→降级缓存指标+告警。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RK-25 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-01-B 九种限额类型与消耗追踪 / Nine Limit Types & Usage Tracking
 
@@ -382,6 +362,37 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 | depgraph | MOD-L04-001 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
+
+### BM-RC-12 极端事件与黑天鹅 / Extreme Events & Black Swan
+
+> **大白话**：极端事件与黑天鹅——小概率高损失事件的识别、模拟、应对。
+
+**机制说明**：
+
+极端事件与黑天鹅。小概率高损失事件的识别(黑天鹅模式匹配)+模拟(压力测试/蒙特卡洛)+应对(应急预案/动态对冲)。含模式库/传导模型/流动性危机模拟三大子能力。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 极端市场事件发生时 / 盘后黑天鹅压力测试 |
+| ② 消费数据/因子 | 历史极端事件数据 + BM-RC-08-C 压力测试结果 + 跨市场行情数据 |
+| ③ 参数 | 黑天鹅模式库、跨市场传导模型、流动性危机模拟、二阶效应与传染模型、反向压力测试 |
+| ④ 数据流 | 极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch |
+| ⑤ 代码映射 | 待开发（planned，D_RISK 域） |
+| ⑥ 降级/中止 | 极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先） |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：极端市场事件发生时 / 盘后黑天鹅压力测试；②消费：历史极端事件数据 + BM-RC-08-C 压力测试结果 + 跨市场行情数据；③参数：黑天鹅模式库、跨市场传导模型、流动性危机模拟、二阶效应与传染模型、反向压力测试；④数据流：极端事件→模式库匹配→跨市场传导建模→流动性危机模拟→传染效应评估→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK 域）；⑥降级：极端事件超出模型范围→触发 BM-RC-03 Kill Switch 熔断（安全优先）。
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0667 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-01-C 预警分级与审批流 / Alert Tiering & Approval Flow
 
@@ -916,9 +927,13 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 
 ①触发：盘中实时（阈值: 参与率/LVaR/Amihud/Kyle/退出时间/流动性螺旋）；②消费：成交量+持仓+行情（来自 D-MKT-DATA / D-EX-CORE）；③参数：—；④数据流：成交量+持仓→参与率计算+LVaR+Amihud illiquidity+Kyle lambda+退出时间估计+流动性螺旋检测→流动性风险评分→BM-RC-04-D 告警判定；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L251；⑥降级：流动性监控未就绪→跳过流动性检查。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0973 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-04-F AI/Agent风险监控 / AI/Agent Risk Monitoring
 
@@ -926,7 +941,7 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 
 **机制说明**：
 
-OWASP Agentic Security Top10扫描+AST对抗测试+MCP协议安全映射。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L253
+OWASP Agentic Security Top10扫描（ASI01-10：目标劫持/工具滥用/身份权限滥用/供应链/意外代码执行/记忆投毒等10类）+AST01-10对抗测试+MCP01-10协议安全映射+红队FCFT演练。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L253
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -943,7 +958,11 @@ OWASP Agentic Security Top10扫描+AST对抗测试+MCP协议安全映射。承�
 
 ①触发：盘中持续（阈值: OWASP ASI+AST+MCP完整映射）；②消费：Agent行为日志+调用链（来自 D-AUTONOMY）；③参数：—；④数据流：Agent行为+调用链→OWASP Agentic Security Top10扫描+AST对抗测试+MCP协议安全映射→AI风险告警→BM-RC-03 Kill Switch(AI自治熔断VR-009)；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L253；⑥降级：AI风险监控未就绪→限制Agent自治等级。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RK-22 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1229,9 +1248,13 @@ EVT/POT模型+Copula尾部依赖+跳跃检测+FRTB加价。承载模块: MOD-RK-
 
 ①触发：盘中定时/盘后（阈值: 因子/策略拥挤度+深度增强(策略逻辑相似度+去杠杆+悖论防护)）；②消费：因子暴露+策略持仓（来自 D-FACTOR / D-PF-CORE）；③参数：—；④数据流：因子+策略持仓→拥挤度计算(因子拥挤+策略逻辑相似度)+去杠杆+悖论防护→拥挤度预警→BM-RC-06-C 三级警报；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md L248；⑥降级：拥挤度检测未就绪→跳过拥挤度检查。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-2033 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-07 风险预算与VaR / Risk Budget & VaR
 
@@ -1583,7 +1606,11 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 ①触发：策略信号到达订单执行入口前，否决规则引擎同步拦截判定是否放行/否决；②消费：策略订单信号 + 否决规则(RC-10) + 实时持仓 + 实时行情 + Kill Switch状态；③参数：同步拦截延迟<50ms(P99) + 不可绕过(所有下单必经引擎无旁路,HC-RISK-03) + 不可人工否决(HC-RISK-02防御性决策自动执行) + Kill Switch基础设施层实现(非Agent运行时内,OWASP ASI08) + 熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED) + 多路径激活(AI自动<1ms/人工<100ms/定时熔断5秒无心跳/外部信号<1s) + 否决审计(时间/规则/触发值/被否决指令/执行者) + 隔离策略三机制(§6): 舱壁隔离(Bulkhead,故障域隔离到单策略防级联) + 超时与重试(否决引擎超时50ms后熔断,重试策略指数退避) + 混沌工程验证(定期注入故障验证否决引擎不可绕过性)；④数据流：策略信号→否决规则引擎同步拦截→通过→订单执行 / 否决→否决日志+通知推送；Kill Switch多路径→基础设施层平仓；⑤代码映射：待开发（planned，D_RISK域；Kill Switch需miniQMT API支持）；⑥降级：否决引擎自身故障→熔断器OPEN→全拒订单(安全失败)；引擎不可用→Kill Switch激活(宁可停交易不可绕过风控)。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RK-24 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1610,9 +1637,13 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 ①触发：独立风险数据管道(RC-11)接入数据后，按频率计算各类风险指标供风控决策；②消费：独立风险数据(RC-11管道) + 行情+持仓 + 收益序列+因子暴露 + 概率密度预测 + Agent行为日志；③参数：实时P&L+因子暴露+Amihud非流动性(每Tick 3秒,<1秒) + VaR/CVaR/ES(日频,≤5秒P99) + 密度感知VaR(日频,≤10秒) + 共形VaR校准(日频,≤5秒) + 漂移检测CUSUM(PSI/KS) + 压力测试+反向RST(周频,≤30分钟) + Agent行为监控(ASI/AST/MCP/隐性串谋越界检测)；④数据流：独立风险数据→各类指标计算→风险限额检查结果+漂移告警+韧性评估→RC-11-B风险报告 / RC-10否决引擎；⑤代码映射：待开发（planned，D_RISK域；独立于交易数据流,§3.3 L2数据隔离）；⑥降级：某类指标计算失效→标记该指标不可用+降级使用上一有效值+告警；不影响其他指标。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0141 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-11-B 风险报告生成 / Risk Report Generation
 
@@ -1637,9 +1668,13 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 ①触发：风险指标(RC-11-A)产出后按频率生成各级风险报告供不同消费者；②消费：风险指标计算结果(RC-11-A) + 否决统计(RC-10) + 漂移状态 + 压力测试结果；③参数：日度风险摘要(收盘: VaR/CVaR/因子暴露/否决统计/漂移/Amihud→Trader+Risk Manager) + 周度风险深度(周五: 压力测试+漂移趋势+拥挤度+模型健康+反向RST→Risk Manager) + 事件风险快报(事件触发: 触发事件+影响评估+处置建议+历史类比→Trader即时推送) + 月度风险治理(月末: 参数变更审计+否决有效性+合规+Pod止损统计→Risk Manager+治理层)；④数据流：风险指标→按频率生成4类报告→Trader/Risk Manager/治理层→归档审计链；⑤代码映射：待开发（planned，D_RISK/D_REPORTING域）；⑥降级：报告生成失败→告警+人工补生成；事件快报通道失效→微信/CLI兜底推送。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0978 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-12-A 黑天鹅模式库 / Black Swan Pattern Library
 
@@ -1664,9 +1699,13 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 ①触发：需预置历史黑天鹅模式(股灾/熔断/流动性危机/政策突变)以快速识别极端事件；②消费：历史极端事件样本 + 实时市场异常信号(波动率/相关性/流动性突变)；③参数：黑天鹅模式库：历史事件特征化(2015股灾/2016熔断/2020疫情/2024政策) + 模式匹配(波动率体制转换+跨市场相关性突变+流动性枯竭) + 触发阈值；④数据流：实时异常信号→模式匹配→黑天鹅概率→触发RC-12-C流动性危机模拟/RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：模式库未命中→按通用极端事件处理(降仓+Kill Switch待命)。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-RSK-014 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-12-B 跨市场传导与传染模型 / Cross-Market Contagion Model
 
@@ -1691,9 +1730,13 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 ①触发：黑天鹅事件发生后需预测跨市场传导(股/债/汇/商品)与二阶效应以提前防御；②消费：黑天鹅事件信号(来自RC-12-A) + 跨市场持仓 + 历史传染路径样本；③参数：跨市场传导模型(一阶:股市→债市/汇率/商品) + 二阶效应(流动性挤兑/信用利差走阔/波动率反馈循环) + 传染强度与时滞估计；④数据流：黑天鹅事件→传导路径预测→二阶效应评估→防御建议(对冲/降仓)→RC-12-C流动性模拟；⑤代码映射：待开发（planned，D_RISK/D_CROSS_ASSET域）；⑥降级：传染模型失效→按最坏情况假设(全市场同向下跌)。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1440 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-12-C 流动性危机模拟 / Liquidity Crisis Simulation
 
@@ -1718,9 +1761,13 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 ①触发：黑天鹅事件+跨市场传导后需模拟流动性危机以评估出场能力；②消费：传导预测(来自RC-12-B) + 持仓流动性 profile + 历史流动性危机样本；③参数：流动性危机模拟：买卖价差扩大 + 成交量萎缩 + 涨跌停封板概率 + 出场滑点估计 + 极端情景(全员出逃)压力测试；④数据流：传导预测→流动性危机模拟→出场能力评估→Kill Switch触发建议/分批出场；⑤代码映射：待开发（planned，D_RISK/D_SIMULATION域）；⑥降级：模拟失效→按最保守流动性假设(全额无法出场，立即Kill Switch)。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-3408 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 
 [← 返回总指挥图](battle_map_panorama.md)

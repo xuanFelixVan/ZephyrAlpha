@@ -10,7 +10,7 @@ date: 2026-08-05
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_10_execution.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §execution 阶段，6 环节（46 锚点）。
+> battle_map §execution 阶段，6 环节（47 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-05
 |------|------|-------|-------|
 | 阶段 | 执行（execution） | Stage | 执行 |
 | 环节数 | 6 | Steps | 6 |
-| 锚点数（双向对齐） | 46 | Anchors (Bidirectional) | 46 |
+| 锚点数（双向对齐） | 47 | Anchors (Bidirectional) | 47 |
 | 流转边 | 14 | Edges | 14 |
 | 状态分布 | 🟦 运营态（已建）=3 ｜ 🟧 设计态（待施工）=3 | State Distribution | 🟦 运营态（已建）=3 ｜ 🟧 设计态（待施工）=3 |
 
@@ -179,7 +179,7 @@ miniQMT个人账户不支持券商端VWAP/TWAP算法接口，本系统自行实�
 | depgraph | MOD-XS-005 | supplement | stable | generated |
 | depgraph | MOD-XS-011 | primary | stable | generated |
 | depgraph | MOD-EX_SOR | primary | stable | generated |
-| depgraph | MOD-XS-014 | primary | stable | stable |
+| depgraph | MOD-XS-014 | primary | stable | generated |
 | depgraph | MOD-EX-042 | supplement | planned | planned |
 | depgraph | MOD-EX-060 | supplement | planned | planned |
 | depgraph | MOD-EX-061 | supplement | planned | planned |
@@ -192,7 +192,8 @@ miniQMT个人账户不支持券商端VWAP/TWAP算法接口，本系统自行实�
 
 **机制说明**：
 
-L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回报+PnL 数据。是数据流主动脉的末端执行节点。
+L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回报+PnL 数据。是数据流主动脉的末端执行节点。🆕v8.0
+执行策略选择器（MOD-EX-062，根据市场状态选择最优执行策略：TWAP/VWAP/IS/POV/增强Almgren-Chriss），决策以 DecisionOrder 契约下发；🆕v3.5 执行算法子层（拆单/参与率/Almgren-Chriss最优执行框架，见BM-EXE-05）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -235,6 +236,7 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 | depgraph | MOD-EX-035 | supplement | planned | planned |
 | depgraph | MOD-EX-058 | supplement | planned | planned |
 | depgraph | MOD-EX-059 | supplement | planned | planned |
+| depgraph | MOD-EX-062 | primary | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
@@ -278,7 +280,7 @@ Order State Machine(D-EX-CORE-11)：7状态机 PENDING→{SUBMITTED,CANCELLED}/S
 | depgraph | MOD-EX-057 | supplement | stable | stable |
 | depgraph | MOD-EX-056 | supplement | stable | generated |
 | depgraph | MOD-EX-001 | primary | stable | stable |
-| depgraph | MOD-EX-003 | primary | stable | generated |
+| depgraph | MOD-EX-003 | primary | stable | stable |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：execution
 
@@ -321,8 +323,8 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 |---|---|---|---|---|
 | depgraph | MOD-L07-001 | primary | stable | generated |
 | depgraph | MOD-EX_SOR_EXT-001 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-002 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-003 | primary | stable | stable |
+| depgraph | MOD-EX_SOR_EXT-002 | primary | stable | stable |
+| depgraph | MOD-EX_SOR_EXT-003 | primary | stable | generated |
 | depgraph | MOD-EX-012 | supplement | planned | planned |
 | depgraph | MOD-EX-036 | supplement | planned | planned |
 

@@ -20,7 +20,7 @@ date: 2026-08-05
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 横切类别数 | 13 | Categories | 13 |
+| 横切类别数 | 15 | Categories | 15 |
 | 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 + 3 域来源 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys + 3 domain |
 | 真源 | module_translation_registry.yaml | Source | YAML registry |
 
@@ -36,7 +36,7 @@ date: 2026-08-05
 
 ## 横切视图总览 / Cross-Cutting Overview
 
-> 展示全部 13 个横切机制，颜色区分五态。
+> 展示全部 15 个横切机制，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -54,14 +54,16 @@ flowchart TD
     CC_10["（设计态 / design） D-SIGNAL §3 信号生命周期治理<br/>/ Signal Lifecycle Governance<br/>信号不是'产生即用完'的一次性产物，而是有完整生命<br/>周期：生成→校准→降级监控→ 衰减追踪→绩效追踪→版本<br/>管理→审计→废弃。每个阶段都有对应能力保障信号质量<br/> 和可追溯性，避免'信号失效了还在用'。<br/>横切机制 / cross-cutting"]
     CC_11["（设计态 / design） D-FACTOR §7 因子治理引擎 /<br/>Factor Governance Engine<br/>因子不是'算出来就用'的，而是要经过完整治理：注册<br/>→评估→治理门禁→衰减监控→ 相关性分析→废弃审批。因<br/>子池有容量上限（活跃池≤60，设计容量≥150），通过<br/>末位淘汰+批量裁剪维持因子池健康。<br/>横切机制 / cross-cutting"]
     CC_12["（设计态 / design） 01-跨域交叉点 §硬边界约束总表<br/>硬边界约束体系 / Hard Boundary Constraint System<br/>硬边界是系统不可逾越的红线——AI<br/>和人类都不能绕过。 分四类：交易安全（禁超限加仓<br/>/禁超杠杆/禁非时段下单）、 自迭代安全<br/>（禁无审批上线/禁超3参数<br/>/禁过拟合上线）、 数据隐私（禁外传持仓<br/>/禁自动付费源）、运维安全（禁自动重启核心进程<br/>/禁自动升级库）。 另有安全/集成<br/>/治理三类硬边界保障系统不被攻破、不被外部故障传<br/>染、不被AI自行扩权。<br/>横切机制 / cross-cutting"]
-    CC_13["（设计态 / design） 交易决策架构 v8.1 横切层<br/>模型量化 / Model Quantization<br/>把训练好的大模型'压小'——用更低精度的数字（如<br/>INT8/FP16）表示模型权重， 换来推理更快、更省内存<br/>，让密度预测/Kronos TSFM 这类重模型能在 3<br/>秒级行情节奏里实时跑。<br/>横切机制 / cross-cutting"]
-    CC_01 ~~~ CC_02 ~~~ CC_03 ~~~ CC_04 ~~~ CC_05 ~~~ CC_06 ~~~ CC_07 ~~~ CC_08 ~~~ CC_09 ~~~ CC_10 ~~~ CC_11 ~~~ CC_12 ~~~ CC_13
+    CC_13["（设计态 / design） 交易决策架构 v7.0（L575-577<br/>买入 / L743 卖出 / L827 仓位） 因子直通层<br/>（Model-Free Factor Fusion） / Model-Free<br/>Factor Fusion<br/>策略库没覆盖的标的、或几个策略打架<br/>（2买2卖分歧）时，决策不卡死—— 因子加权融合直接<br/>产生决策，不经过策略层。买入/卖出<br/>/仓位三阶段共用同一机制。<br/>横切机制 / cross-cutting"]
+    CC_14["（设计态 / design） 交易决策架构 v8.2（L433<br/>升级注记 / L856 支撑层，§29.39 裁定17）<br/>投票优先多Agent协作 / Voting-First Multi-Agent<br/>Collaboration<br/>多Agent协作先做轻量投票<br/>（&lt;100行代码），票数够就定，不够才启动重量级辩论<br/>（备用，&lt;300行）—— 把多Agent协作的成本砍到最低。<br/>横切机制 / cross-cutting"]
+    CC_15["（设计态 / design） 交易决策架构 v8.1 横切层<br/>模型量化 / Model Quantization<br/>把训练好的大模型'压小'——用更低精度的数字（如<br/>INT8/FP16）表示模型权重， 换来推理更快、更省内存<br/>，让密度预测/Kronos TSFM 这类重模型能在 3<br/>秒级行情节奏里实时跑。<br/>横切机制 / cross-cutting"]
+    CC_01 ~~~ CC_02 ~~~ CC_03 ~~~ CC_04 ~~~ CC_05 ~~~ CC_06 ~~~ CC_07 ~~~ CC_08 ~~~ CC_09 ~~~ CC_10 ~~~ CC_11 ~~~ CC_12 ~~~ CC_13 ~~~ CC_14 ~~~ CC_15
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class CC_01,CC_02,CC_03,CC_04,CC_05,CC_06,CC_07,CC_08,CC_09,CC_10,CC_11,CC_12,CC_13 design
+    class CC_01,CC_02,CC_03,CC_04,CC_05,CC_06,CC_07,CC_08,CC_09,CC_10,CC_11,CC_12,CC_13,CC_14,CC_15 design
 ```
 
 ## 筛选漏斗模型 / Screening Funnel Model（§13）
@@ -499,6 +501,34 @@ SEVERE 降级→立即撤销所有相关信号（E-SG-02）→通知 D-PORTFOLIO
 | integration | 集成硬边界 | HB-INT | 13 | 外部故障隔离+流量白名单+数据源审批+API版本控制+隔离策略 | 外部故障不可传染内部(熔断器+舱壁)/出站流量白名单/新增数据源需人工审批/API版本不匹配必须拒绝/隔离策略不可被绕过 |
 | governance | 治理硬边界 | HB-GOV | 10 | 治理规则不可篡改+变更审批链+三方对齐+AI自治边界+KillSwitch分层 | 治理规则不可被AI自动修改/变更审批链不可被绕过/蓝图-代码-文档三方必须对齐/AI自治边界不可被AI自行扩展/KillSwitch必须分层且本地评估/KillSwitch激活后必须受控重入 |
 
+## 因子直通层（Model-Free Factor Fusion） / Model-Free Factor Fusion（交易决策架构 v7.0（L575-577 买入 / L743 卖出 / L827 仓位））
+
+> **大白话**：策略库没覆盖的标的、或几个策略打架（2买2卖分歧）时，决策不卡死——
+因子加权融合直接产生决策，不经过策略层。买入/卖出/仓位三阶段共用同一机制。
+
+**机制说明**：
+
+v7.0 因子直通层是贯穿买入/卖出/仓位三阶段的横切兜底机制：触发条件=策略未覆盖（无策略覆盖的标的+因子信号强烈）
+或策略冲突（2买2卖分歧）；动作=因子加权融合直接产生决策（买入决策/卖出决策/仓位决策），不经过策略层。
+v8.0 四轨中作为轨道1逻辑驱动的补充路径。承载模块 MOD-INF-047 因子直通融合引擎（planned，D_ORCHESTRATOR）：
+买入侧挂 BM-BUY-02-A-2（primary 锚点），卖出侧挂 BM-SELL-02（supplement），仓位侧见 BM-POS-01 indicators（Kelly+风险预算直接产生仓位决策）。
+
+**关联环节**：[BM-BUY-02-A-2](battle_map_06_buy_flow.md)、[BM-SELL-02](battle_map_07_sell_flow.md)、[BM-POS-01](battle_map_08_position_management.md)
+
+## 投票优先多Agent协作 / Voting-First Multi-Agent Collaboration（交易决策架构 v8.2（L433 升级注记 / L856 支撑层，§29.39 裁定17））
+
+> **大白话**：多Agent协作先做轻量投票（<100行代码），票数够就定，不够才启动重量级辩论（备用，<300行）——
+把多Agent协作的成本砍到最低。
+
+**机制说明**：
+
+🆕v8.2 投票优先多Agent架构（§29.39 裁定17）：先投票后辩论——投票路径<100行代码，辩论备用<300行，
+适用于 C-006 策略工厂/C-027 因子工厂/C-007 闭环优化的多Agent场景。承载模块 MOD-INF-048（planned，D_ORCHESTRATOR），
+在调用点挂锚点（BM-BUY-03 决策编排 supplement）。注意：Agent 架构主体不挂作战地图（铁律5），
+此处仅登记"投票优先机制"这一横切协作协议。
+
+**关联环节**：[BM-BUY-03](battle_map_06_buy_flow.md)、[BM-RES-06](battle_map_01_research_incubation.md)
+
 ## 模型量化 / Model Quantization（交易决策架构 v8.1 横切层）
 
 > **大白话**：把训练好的大模型"压小"——用更低精度的数字（如 INT8/FP16）表示模型权重，
@@ -508,8 +538,8 @@ SEVERE 降级→立即撤销所有相关信号（E-SG-02）→通知 D-PORTFOLIO
 
 🆕v8.1 横切层机制（与 MCP协议 并列）。模型量化贯穿"训练→导出→推理"全链路：
 训练侧做量化感知训练（QAT，训练时模拟低精度舍入，减少精度损失），
-导出侧做训练后量化（PTQ，INT8/FP16 权重压缩+校准集确定缩放因子），
-推理侧以低精度算子加速（CPU/GPU 整数管线），用精度-延迟权衡预算约束每个上线模型：
+导出侧做训练后量化（PTQ，INT8/FP16 权重压缩+校准集确定缩放因子；GPTQ/llama.cpp INT4 本地部署路线），
+推理侧以低精度算子加速（QNN/GNN/RL→ONNX Runtime INT8，CPU/GPU 整数管线），用精度-延迟权衡预算约束每个上线模型：
 延迟收益必须大于精度损失阈值（如 8态预测 Top-1 准确率下降<0.5%）。
 与模型训练环节（BM-MT-01 训练流水线导出量化产物）、选股信号推理（BM-SEL-13 密度预测/Kronos-mini/base
 TSFM 零样本预测的低延迟推理）、四轨融合（BM-BUY-02 盘中信号融合时延预算）联动。

@@ -10,7 +10,7 @@ date: 2026-08-05
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_02_model_training.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §model_training 阶段，11 环节（9 锚点）。
+> battle_map §model_training 阶段，14 环节（15 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-05
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 模型训练（model_training） | Stage | 模型训练 |
-| 环节数 | 11 | Steps | 11 |
-| 锚点数（双向对齐） | 9 | Anchors (Bidirectional) | 9 |
+| 环节数 | 14 | Steps | 14 |
+| 锚点数（双向对齐） | 15 | Anchors (Bidirectional) | 15 |
 | 流转边 | 6 | Edges | 6 |
-| 状态分布 | 🟨 候选态（候选池）=5 ｜ 🟧 设计态（待施工）=4 ｜ 🟦 运营态（已建）=1 ｜ ⬜ 缺失态（无锚点）=1 | State Distribution | 🟨 候选态（候选池）=5 ｜ 🟧 设计态（待施工）=4 ｜ 🟦 运营态（已建）=1 ｜ ⬜ 缺失态（无锚点）=1 |
+| 状态分布 | 🟧 设计态（待施工）=8 ｜ 🟨 候选态（候选池）=5 ｜ 🟦 运营态（已建）=1 | State Distribution | 🟧 设计态（待施工）=8 ｜ 🟨 候选态（候选池）=5 ｜ 🟦 运营态（已建）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-05
 
 ## 阶段图 / Stage Diagram
 
-> 展示 模型训练 阶段全部 11 个环节及流转边，颜色区分五态。
+> 展示 模型训练 阶段全部 14 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -46,10 +46,18 @@ flowchart TD
         BM_MT_01["⛔ ML训练域，设计已就绪，等待开发排期<br/>【BM-MT-01 训练流水线】<br/>把研究出的因子和特征喂给模型训练，PyTorch<br/>训完导出 ONNX，全程管 seed 和 config<br/>保证可复现。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Training Pipeline】"]
         BM_MT_01_A["【BM-MT-01-A 训练基座<br/>（训练器ABC+模型注册表+元数据）】<br/>训练域的基座抽象——ModelTrainerBase<br/>训练器接口、ModelRegistry<br/>模型版本注册表、ModelMetadata 元数据，是 MT-01<br/>训练流水线的地基。<br/>（生产态 / production）<br/>【Training Base （Trainer ABC + Model Registry +<br/>Metadata）】"]
         BM_MT_01_B["⛔ ML训练域，设计已就绪，等待开发排期<br/>【BM-MT-01-B AI辅助代码生成与分析师Agent反馈】<br/>LLM 生成模块代码，Critic Agent<br/>审漏洞，多轮反馈收敛后过 AST<br/>沙箱——把人力调参瓶颈用 AI 填上。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【AI-Assisted Code Generation &amp; Analyst Agent<br/>Feedback】"]
+        BM_MT_01_C["【BM-MT-01-C 策略数字孪生】<br/>每个上线策略都有一个实时镜像副本——实际行为和预期<br/>模型偏差太大时提前预警衰减。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Strategy Digital Twin】"]
         BM_MT_01 -.->|嵌套| BM_MT_01_A
         BM_MT_01 -.->|嵌套| BM_MT_01_B
+        BM_MT_01 -.->|嵌套| BM_MT_01_C
     end
-    BM_MT_02["【BM-MT-02 实验追踪与自动晋升】<br/>A/B 实验对比新模型和老模型，统计上显著更好才自动<br/>晋升为 Champion，否则留在 Challenger 继续观察。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Experiment Tracking &amp; Auto-Promotion】"]
+    subgraph sg_BM_MT_02 ["实验追踪与自动晋升"]
+        BM_MT_02["【BM-MT-02 实验追踪与自动晋升】<br/>A/B 实验对比新模型和老模型，统计上显著更好才自动<br/>晋升为 Champion，否则留在 Challenger 继续观察。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Experiment Tracking &amp; Auto-Promotion】"]
+        BM_MT_02_A["【BM-MT-02-A 模型灰度发布与影子部署】<br/>新模型不直接全量上线——先小流量灰度、再影子模式并<br/>行跑着对比，稳了才转正。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Gray Release &amp; Shadow Deployment】"]
+        BM_MT_02_B["【BM-MT-02-B 对抗鲁棒性验证（FGSM/PGD）】<br/>上线前拿对抗样本'攻击'新模型——输入被轻微扰动就翻<br/>盘的模型不准上生产。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Adversarial Robustness Validation】"]
+        BM_MT_02 -.->|嵌套| BM_MT_02_A
+        BM_MT_02 -.->|嵌套| BM_MT_02_B
+    end
     BM_MT_03["【BM-MT-03 AutoML与超参优化】<br/>不靠人手调参——贝叶斯优化自动找最佳超参，早停省时<br/>间，还能自动挖因子。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【AutoML &amp; Hyperparameter Optimization】"]
     BM_MT_04["【BM-MT-04 因子发现与因果发现】<br/>不只找相关性强的因子，还要找因果关系——用 PC/GES<br/>/LiNGAM 算因果图，避免'假相关'误导。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Factor Discovery &amp; Causal Discovery】"]
     subgraph sg_BM_MT_05 ["漂移检测与自适应重训练"]
@@ -58,13 +66,13 @@ flowchart TD
         BM_MT_05 -.->|嵌套| BM_MT_05_A
     end
     subgraph sg_BM_MT_06 ["元学习与自我进化"]
-        BM_MT_06["【BM-MT-06 元学习与自我进化】<br/>元学习让模型学会学习，通过RSI四维度+技能库+在线E<br/>WC+轻量Agent化实现自我进化。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Meta-Learning &amp; Self-Evolution】"]
+        BM_MT_06["【BM-MT-06 元学习与自我进化】<br/>元学习让模型学会学习，通过RSI四维度+技能库+在线E<br/>WC+轻量Agent化实现自我进化。<br/>（设计态 / design）<br/>【Meta-Learning &amp; Self-Evolution】"]
         BM_MT_06_A["【BM-MT-06-A 元学习RSI四维度】<br/>RSI架构四维度（检索/存储/推理<br/>/索引）+技能库+在线EWC防遗忘+轻量Agent化，让模型<br/>自主学习新技能。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Meta-Learning RSI Four Dimensions】"]
         BM_MT_06_B["【BM-MT-06-B 学习效果反馈闭环】<br/>学习效果反馈闭环——评估学习产出质量，反馈给元学习<br/>层调整学习策略。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Learning Effect Feedback Loop】"]
         BM_MT_06 -.->|嵌套| BM_MT_06_A
         BM_MT_06 -.->|嵌套| BM_MT_06_B
     end
-    BM_MT_01 ~~~ BM_MT_01_A ~~~ BM_MT_01_B ~~~ BM_MT_05_A ~~~ BM_MT_06 ~~~ BM_MT_06_A ~~~ BM_MT_06_B
+    BM_MT_01 ~~~ BM_MT_01_A ~~~ BM_MT_01_B ~~~ BM_MT_01_C ~~~ BM_MT_02_A ~~~ BM_MT_02_B ~~~ BM_MT_05_A ~~~ BM_MT_06 ~~~ BM_MT_06_A ~~~ BM_MT_06_B
     BM_MT_01 -.->|训练→实验晋升 / data_flow| BM_MT_02
     BM_MT_02 -.->|晋升→AutoML优化 / trigger| BM_MT_03
     BM_MT_03 -.->|AutoML→因子发现 / data_flow| BM_MT_04
@@ -75,8 +83,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_MT_01_A production
-    class BM_MT_01,BM_MT_01_B,BM_MT_06_A,BM_MT_06_B design
-    class BM_MT_06 missing
+    class BM_MT_01,BM_MT_01_B,BM_MT_01_C,BM_MT_02_A,BM_MT_02_B,BM_MT_06,BM_MT_06_A,BM_MT_06_B design
     class BM_MT_02,BM_MT_03,BM_MT_04,BM_MT_05,BM_MT_05_A candidate
 ```
 
@@ -91,6 +98,9 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 MT-01 TrainingPipeline 负责模型训练+验证+可复现性（PyTorch→ONNX导出、seed管理、config快照、
 进化式代码生成 S4 DSL+AST沙箱、分析师Agent反馈循环）。是 D-ML-TRAIN 域的核心入口，
 盘后 20:00-23:59 模型重训练的核心承载。产出 ModelTrained 事件喂 D-ML-SERVE 推理域。
+C-029 ML模型工厂扩展能力（§29）：模型注册与实验管理（§29.3 MLflow Model Registry 版本/指标/部署状态/退化追踪）+
+时序数据增强（§29.19 TimeGAN/条件扩散/时间扭曲扩充训练样本）+ Transformer时序模型（§29.7 PatchTST/Informer 密度预测时序特征提取）+
+🆕v8.2 Kronos-mini/base TSFM（§29.39裁定13，零样本预测基线/特征提取器，挂载见 BM-SEL-13）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -156,7 +166,7 @@ MOD-L11-001 提供 D_ML_TRAIN 域核心抽象基座：ModelTrainerBase（train/v
 
 **机制说明**：
 
-MOD-ML-002 ai_operator 对应设计文档§9.2：Generator(GLM-5.1)生成代码→Critic(DeepSeek V4 Pro)审查→反馈循环→Judge(Claude)综合评估→AST沙箱三层安全→人工审核。含因子DSL约束（6类算子）、三重语义一致性、进化式代码生成、轨迹级进化。是 MT-01 的智能代码生成侧。
+MOD-ML-002 ai_operator 对应设计文档§9.2：Generator(GLM-5.1)生成代码→Critic(DeepSeek V4 Pro)审查→反馈循环→Judge(Claude)综合评估→AST沙箱三层安全→人工审核。含因子DSL约束（6类算子）、三重语义一致性、进化式代码生成、轨迹级进化。是 MT-01 的智能代码生成侧。🆕v8.0 可建设项（ML模型工厂）：自反Agent（Reflexion 自我推理反思→策略自我修正）+ 分层Agent指挥链（战略→战术→执行Agent，军事指挥链模式）+ 涌现行为检测器（多Agent交互非预期涌现→自动告警+人工介入）——Agent架构主体不挂作战地图（铁律5），此处仅作训练侧能力注记。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -181,6 +191,40 @@ MOD-ML-002 ai_operator 对应设计文档§9.2：Generator(GLM-5.1)生成代码�
 | depgraph | MOD-ML-002 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：production ｜ **层**：L11 ｜ **阶段**：model_training
+
+### BM-MT-01-C 策略数字孪生 / Strategy Digital Twin
+
+> **大白话**：每个上线策略都有一个实时镜像副本——实际行为和预期模型偏差太大时提前预警衰减。
+
+**机制说明**：
+
+BM-MT-01 训练流水线的子环节（depth=1），🆕v8.0 可建设项#15（ML模型工厂）。每策略实时镜像副本→策略健康评估+衰减预警。
+与 BM-SIM-05 依赖图数字孪生正交：本环节镜像策略行为，非系统依赖图。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 策略上线后持续运行 |
+| ② 消费数据/因子 | 线上策略实时交易行为 + 预期模型行为 |
+| ③ 参数 | 每策略实时镜像副本→策略健康评估+衰减预警；v8.0新增（与BM-SIM-05依赖图数字孪生正交：本环节镜像策略行为，非依赖图） |
+| ④ 数据流 | 策略实时行为→数字孪生镜像→健康评分/衰减预警→BM-MT-05漂移检测/BM-REC-03反馈 |
+| ⑤ 代码映射 | MOD-ML-006 src/zephyr/ml_train/strategy_digital_twin.py（planned） |
+| ⑥ 降级/中止 | 孪生偏差超阈→告警+触发策略复核 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：策略上线后持续运行；②消费：线上策略实时交易行为+预期模型行为；③参数：镜像偏差阈值、健康评分、衰减预警(proposed)；④数据流：策略实时行为→数字孪生镜像→健康评分/衰减预警→BM-MT-05/BM-REC-03；⑤代码：MOD-ML-006 策略数字孪生(planned)；⑥降级：孪生偏差超阈→告警+触发策略复核。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-ML-006 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：C-029 ｜ **阶段**：model_training
 
 ### BM-MT-02 实验追踪与自动晋升 / Experiment Tracking & Auto-Promotion
 
@@ -216,6 +260,74 @@ DSR/CPCV v2/White's Reality/Probabilistic BT）。是模型上线的"裁判"，�
 | candidate | CAND-HARVEST-0729 | primary | planned | — |
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：production ｜ **层**：L11 ｜ **阶段**：model_training
+
+### BM-MT-02-A 模型灰度发布与影子部署 / Gray Release & Shadow Deployment
+
+> **大白话**：新模型不直接全量上线——先小流量灰度、再影子模式并行跑着对比，稳了才转正。
+
+**机制说明**：
+
+BM-MT-02 实验追踪与自动晋升的子环节（depth=1），🆕v8.0（ML模型工厂）。灰度发布（小流量验证）+
+影子部署（影子模式并行预测不改决策，与线上模型对比）。与 D-ML-SERVE INV-011 影子验证联动。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 新模型通过独立验证后申请上线 |
+| ② 消费数据/因子 | BM-MT-02 实验追踪晋升候选模型 + 线上实时行情 |
+| ③ 参数 | 灰度发布（小流量验证）+ 影子部署（影子模式并行预测不改决策，对比线上模型）；v8.0新增 |
+| ④ 数据流 | 候选模型→灰度小流量/影子并行→效果对比→全量晋升或回滚 |
+| ⑤ 代码映射 | MOD-ML-004 src/zephyr/ml_train/gray_release_shadow_deployer.py（planned） |
+| ⑥ 降级/中止 | 灰度指标不达标→自动回滚上一稳定版本 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：新模型通过独立验证后申请上线；②消费：晋升候选模型+线上实时行情；③参数：灰度流量比例、影子并行对比、自动回滚(proposed)；④数据流：候选模型→灰度/影子→效果对比→全量晋升或回滚；⑤代码：MOD-ML-004 灰度发布与影子部署器(planned)；⑥降级：灰度指标不达标→自动回滚上一稳定版本。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-ML-004 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：C-029 ｜ **阶段**：model_training
+
+### BM-MT-02-B 对抗鲁棒性验证（FGSM/PGD） / Adversarial Robustness Validation
+
+> **大白话**：上线前拿对抗样本"攻击"新模型——输入被轻微扰动就翻盘的模型不准上生产。
+
+**机制说明**：
+
+BM-MT-02 实验追踪与自动晋升的子环节（depth=1），🆕v8.0 ML模型对抗鲁棒性：输入空间对抗检测+FGSM/PGD对抗训练增强。
+对抗扰动测试作为晋升门禁的必检项。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 模型上线前独立验证环节 |
+| ② 消费数据/因子 | 候选模型 + 对抗样本生成器 |
+| ③ 参数 | 输入空间对抗检测 + FGSM/PGD对抗训练增强；v8.0新增 |
+| ④ 数据流 | 候选模型→FGSM/PGD对抗扰动测试→鲁棒性评分→晋升门禁输入 |
+| ⑤ 代码映射 | MOD-ML-005 src/zephyr/ml_train/adversarial_robustness_validator.py（planned） |
+| ⑥ 降级/中止 | 鲁棒性不达标→阻断晋升，回炉对抗训练 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：模型上线前独立验证环节；②消费：候选模型+对抗样本生成器；③参数：FGSM/PGD扰动半径、鲁棒性评分阈值(proposed)；④数据流：候选模型→对抗扰动测试→鲁棒性评分→晋升门禁；⑤代码：MOD-ML-005 对抗鲁棒性验证器(planned)；⑥降级：鲁棒性不达标→阻断晋升，回炉对抗训练。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-ML-005 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：C-029 ｜ **阶段**：model_training
 
 ### BM-MT-03 AutoML与超参优化 / AutoML & Hyperparameter Optimization
 
@@ -258,8 +370,7 @@ MT-03 AutoMLEngine 提供自动模型选择+超参优化+因子挖掘（Optuna�
 
 **机制说明**：
 
-MT-04 FeatureDiscovery 提供因子发现+因果发现+特征工程（PC/GES/LiNGAM因果发现、AutoML因子挖掘、
-特征交叉、辩论式因子精炼、三重语义一致性）。产出 NewFactorDiscovered 事件喂 D-FACTOR 因子域入池。
+MT-04 FeatureDiscovery 提供因子发现+因果发现+特征工程（因果发现引擎：PC算法(骨架)→LiNGAM(方向)→时滞因果图→LLM语义校验，v5.0扩展TimePC/Neural Granger/CausalNLP/Causal KG；GES、AutoML因子挖掘、特征交叉、辩论式因子精炼、三重语义一致性）。产出 NewFactorDiscovered 事件喂 D-FACTOR 因子域入池。
 是"因子工厂"的智能上游，区别于纯统计因子挖掘。
 
 
@@ -294,8 +405,8 @@ MT-04 FeatureDiscovery 提供因子发现+因果发现+特征工程（PC/GES/LiN
 **机制说明**：
 
 MT-05 DriftAdapter 提供概念漂移检测+自适应重训练+元学习（DDM/EDDM/ADWIN检测、MAML快速适应、
-在线EWC防遗忘、技能库 Voyager、元反思、AutoSkill）。是模型"保鲜"的关键，
-防止"上线时好用，三个月后失效"。
+在线EWC防遗忘=🆕持续学习抗遗忘（EWC+伪回放，v9.0注记/v6.0新增）、技能库 Voyager、元反思、AutoSkill）。是模型"保鲜"的关键，
+防止"上线时好用，三个月后失效"。🆕漂移检测三闭环（§29.5）：事前特征漂移PSI→事中在线适应（EWMA/Stage2缩放）→事后C-007离线重训。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -377,9 +488,13 @@ S6元学习与自我进化层。RSI架构四维度(检索/存储/推理/索引)+
 
 ①触发：BM-MT-04 因子发现产出新策略 / BM-MT-05 漂移重训触发后，需跨任务积累经验加速学习；②消费：历史训练轨迹 + 策略表现 + BM-MT-02 实验追踪数据 + 技能库；③参数：RSI架构4维度(技能/记忆/推理/迁移) + 技能库 + 在线EWC(Elastic Weight Consolidation) + 轻量Agent化 + 学习效果反馈闭环；④数据流：训练轨迹→技能抽象→技能库积累→新任务迁移加速→反馈闭环优化元学习策略；⑤代码映射：待开发（planned，D_ML_TRAIN 域）；⑥降级：元学习失效→回退 BM-MT-01 标准训练流水线（按任务独立训练）。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L11 ｜ **阶段**：model_training
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-ML-007 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L11 ｜ **阶段**：model_training
 
 ### BM-MT-06-A 元学习RSI四维度 / Meta-Learning RSI Four Dimensions
 
@@ -404,7 +519,11 @@ RSI四维度：①检索(从记忆库检索相关知识)②存储(新知识写�
 
 ①触发：BM-MT-04因子发现/BM-MT-05漂移重训触发后，需跨任务积累经验加速学习；②消费：历史训练轨迹 + 技能库 + BM-MT-02实验追踪数据；③参数：RSI架构4维度：技能(Skill)抽象/记忆(Memory)积累/推理(Reasoning)迁移/迁移(Transfer)加速 + 技能库 + 在线EWC(Elastic Weight Consolidation)防遗忘 + 轻量Agent化；④数据流：训练轨迹→技能抽象→技能库→新任务迁移加速→反馈闭环优化元学习策略；⑤代码映射：待开发（planned，D_ML_TRAIN域）；⑥降级：元学习失效→回退BM-MT-01标准训练(按任务独立训练)。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-ML-008 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L11 ｜ **阶段**：model_training
 
@@ -431,7 +550,11 @@ RSI四维度：①检索(从记忆库检索相关知识)②存储(新知识写�
 
 ①触发：元学习产出迁移策略后，需反馈闭环评估学习效果以持续优化元学习策略；②消费：迁移后任务表现 + 对比基线(无迁移训练) + BM-REC-03闭环反馈；③参数：效果评估指标(迁移加速比/最终表现提升/负迁移检测) + 反馈路由(优化RSI四维度权重) + 闭环频率；④数据流：迁移任务表现→效果评估→反馈→RSI权重调整→下一轮元学习；⑤代码映射：待开发（planned，D_ML_TRAIN域）；⑥降级：反馈闭环失效→固定RSI权重，不动态调整。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-ML-009 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L11 ｜ **阶段**：model_training
 

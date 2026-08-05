@@ -10,7 +10,7 @@ date: 2026-08-05
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_05_stock_selection.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §stock_selection 阶段，92 环节（153 锚点）。
+> battle_map §stock_selection 阶段，93 环节（164 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-05
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 选股（stock_selection） | Stage | 选股 |
-| 环节数 | 92 | Steps | 92 |
-| 锚点数（双向对齐） | 153 | Anchors (Bidirectional) | 153 |
+| 环节数 | 93 | Steps | 93 |
+| 锚点数（双向对齐） | 164 | Anchors (Bidirectional) | 164 |
 | 流转边 | 17 | Edges | 17 |
-| 状态分布 | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=23 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=1 | State Distribution | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=23 ｜ 🟥 弃用态=3 ｜ ⬜ 缺失态（无锚点）=1 |
+| 状态分布 | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=19 ｜ 🟨 候选态（候选池）=6 ｜ 🟥 弃用态=3 | State Distribution | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=19 ｜ 🟨 候选态（候选池）=6 ｜ 🟥 弃用态=3 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-05
 
 ## 阶段图 / Stage Diagram
 
-> 展示 选股 阶段全部 92 个环节及流转边，颜色区分五态。
+> 展示 选股 阶段全部 93 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -59,6 +59,7 @@ flowchart TD
     end
     subgraph sg_BM_SEL_02 ["因子计算与信号生成"]
         BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>（弃用态 / deprecated）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
+        BM_SEL_02_M["【BM-SEL-02-M 因果因子验证层（DoWhy/DML）】<br/>因子光相关性强不够——要分清真因果还是假相关，真因<br/>果因子才配加权提升。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Causal Factor Validation Layer】"]
         BM_SEL_02_A["【BM-SEL-02-A 因子计算引擎】<br/>真正算因子的发动机——盘前批量算全量、盘中增量补，<br/>把行情变成可用的因子值。<br/>（弃用态 / deprecated）<br/>【Factor Compute Engine】"]
         BM_SEL_02_B["【BM-SEL-02-B 因子注册表与池管理】<br/>所有因子登记造册——名字、公式、依赖、版本都在注册<br/>表里，池子满64个自动淘汰最差的。<br/>（生产态 / production）<br/>【Factor Registry &amp; Pool Management】"]
         BM_SEL_02_C["【BM-SEL-02-C 因子管线双模调度】<br/>安排因子什么时候算——盘前一次性全算、盘中只补变化<br/>的部分，省算力又不丢新鲜度。<br/>（弃用态 / deprecated）<br/>【Factor Pipeline Dual-mode Scheduling】"]
@@ -68,9 +69,10 @@ flowchart TD
         BM_SEL_02_G["【BM-SEL-02-G 因子衰减监控与归因】<br/>盯着因子别失效——IC<br/>持续下滑就报警，找出是市场变了还是因子本身坏了。<br/>（生产态 / production）<br/>【Factor Decay Monitoring &amp; Attribution】"]
         BM_SEL_02_H["【BM-SEL-02-H 多因子合成与优化】<br/>把好因子揉成一个综合得分——不是简单加权，是用优化<br/>方法找最优组合权重。<br/>（生产态 / production）<br/>【Multi-factor Synthesis &amp; Optimization】"]
         BM_SEL_02_I["【BM-SEL-02-I 因子治理-生命周期与门禁】<br/>管因子一辈子——从注册、评估、上线、观察到下线，每<br/>个阶段有门禁卡着，不让坏因子混进去。<br/>（生产态 / production）<br/>【Factor Governance - Lifecycle &amp; Gates】"]
-        BM_SEL_02_J["【BM-SEL-02-J 信号工厂子阶段流水线】<br/>信号工厂九大子阶段流水线——信号从生成到输出的完整<br/>子阶段流水线。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Signal Factory Sub-Stage Pipeline】"]
-        BM_SEL_02_K["【BM-SEL-02-K 多策略投票与加权】<br/>多策略投票与加权——多个策略对同一标的投票，按权重<br/>加权得出综合信号。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Multi-Strategy Voting &amp; Weighting】"]
-        BM_SEL_02_L["【BM-SEL-02-L 信号聚合器架构】<br/>信号聚合器架构——统一聚合多源信号，去重/去冲突<br/>/标准化输出。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Signal Aggregator Architecture】"]
+        BM_SEL_02_J["【BM-SEL-02-J 信号工厂子阶段流水线】<br/>信号工厂九大子阶段流水线——信号从生成到输出的完整<br/>子阶段流水线。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Signal Factory Sub-Stage Pipeline】"]
+        BM_SEL_02_K["【BM-SEL-02-K 多策略投票与加权】<br/>多策略投票与加权——多个策略对同一标的投票，按权重<br/>加权得出综合信号。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Multi-Strategy Voting &amp; Weighting】"]
+        BM_SEL_02_L["【BM-SEL-02-L 信号聚合器架构】<br/>信号聚合器架构——统一聚合多源信号，去重/去冲突<br/>/标准化输出。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Signal Aggregator Architecture】"]
+        BM_SEL_02 -.->|嵌套| BM_SEL_02_M
         BM_SEL_02 -.->|嵌套| BM_SEL_02_A
         BM_SEL_02 -.->|嵌套| BM_SEL_02_B
         BM_SEL_02 -.->|嵌套| BM_SEL_02_C
@@ -157,7 +159,7 @@ flowchart TD
         BM_SEL_24 -.->|嵌套| BM_SEL_24_B
         BM_SEL_24 -.->|嵌套| BM_SEL_24_C
     end
-    BM_SEL_01 ~~~ BM_SEL_01_A ~~~ BM_SEL_01_B ~~~ BM_SEL_01_C ~~~ BM_SEL_01_D ~~~ BM_SEL_01_E ~~~ BM_SEL_01_F ~~~ BM_SEL_02_A ~~~ BM_SEL_02_B ~~~ BM_SEL_02_C ~~~ BM_SEL_02_D ~~~ BM_SEL_02_E ~~~ BM_SEL_02_F ~~~ BM_SEL_02_G ~~~ BM_SEL_02_H ~~~ BM_SEL_02_I ~~~ BM_SEL_02_J ~~~ BM_SEL_02_K ~~~ BM_SEL_02_L ~~~ BM_SEL_22 ~~~ BM_SEL_22_A ~~~ BM_SEL_22_B ~~~ BM_SEL_22_C ~~~ BM_SEL_22_C_1 ~~~ BM_SEL_22_C_2 ~~~ BM_SEL_22_C_3 ~~~ BM_SEL_22_C_4 ~~~ BM_SEL_22_C_5 ~~~ BM_SEL_22_C_6 ~~~ BM_SEL_22_C_7 ~~~ BM_SEL_22_D ~~~ BM_SEL_23 ~~~ BM_SEL_23_A ~~~ BM_SEL_23_A_1 ~~~ BM_SEL_23_A_2 ~~~ BM_SEL_23_A_3 ~~~ BM_SEL_23_A_4 ~~~ BM_SEL_23_A_5 ~~~ BM_SEL_23_A_6 ~~~ BM_SEL_23_B ~~~ BM_SEL_23_C ~~~ BM_SEL_24 ~~~ BM_SEL_24_A ~~~ BM_SEL_24_A_1 ~~~ BM_SEL_24_A_2 ~~~ BM_SEL_24_A_3 ~~~ BM_SEL_24_A_4 ~~~ BM_SEL_24_A_5 ~~~ BM_SEL_24_A_6 ~~~ BM_SEL_24_B ~~~ BM_SEL_24_C
+    BM_SEL_01 ~~~ BM_SEL_01_A ~~~ BM_SEL_01_B ~~~ BM_SEL_01_C ~~~ BM_SEL_01_D ~~~ BM_SEL_01_E ~~~ BM_SEL_01_F ~~~ BM_SEL_02_M ~~~ BM_SEL_02_A ~~~ BM_SEL_02_B ~~~ BM_SEL_02_C ~~~ BM_SEL_02_D ~~~ BM_SEL_02_E ~~~ BM_SEL_02_F ~~~ BM_SEL_02_G ~~~ BM_SEL_02_H ~~~ BM_SEL_02_I ~~~ BM_SEL_02_J ~~~ BM_SEL_02_K ~~~ BM_SEL_02_L ~~~ BM_SEL_22 ~~~ BM_SEL_22_A ~~~ BM_SEL_22_B ~~~ BM_SEL_22_C ~~~ BM_SEL_22_C_1 ~~~ BM_SEL_22_C_2 ~~~ BM_SEL_22_C_3 ~~~ BM_SEL_22_C_4 ~~~ BM_SEL_22_C_5 ~~~ BM_SEL_22_C_6 ~~~ BM_SEL_22_C_7 ~~~ BM_SEL_22_D ~~~ BM_SEL_23 ~~~ BM_SEL_23_A ~~~ BM_SEL_23_A_1 ~~~ BM_SEL_23_A_2 ~~~ BM_SEL_23_A_3 ~~~ BM_SEL_23_A_4 ~~~ BM_SEL_23_A_5 ~~~ BM_SEL_23_A_6 ~~~ BM_SEL_23_B ~~~ BM_SEL_23_C ~~~ BM_SEL_24 ~~~ BM_SEL_24_A ~~~ BM_SEL_24_A_1 ~~~ BM_SEL_24_A_2 ~~~ BM_SEL_24_A_3 ~~~ BM_SEL_24_A_4 ~~~ BM_SEL_24_A_5 ~~~ BM_SEL_24_A_6 ~~~ BM_SEL_24_B ~~~ BM_SEL_24_C
     BM_SEL_01 -.->|标准化行情 / data_flow| BM_SEL_02
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -165,8 +167,9 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_SEL_01,BM_SEL_01_A,BM_SEL_01_B,BM_SEL_01_C,BM_SEL_01_D,BM_SEL_01_E,BM_SEL_01_F,BM_SEL_02_B,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_22,BM_SEL_22_A,BM_SEL_22_B,BM_SEL_22_C,BM_SEL_22_C_1,BM_SEL_22_C_2,BM_SEL_22_C_3,BM_SEL_22_C_4,BM_SEL_22_C_5,BM_SEL_22_C_6,BM_SEL_22_C_7,BM_SEL_22_D,BM_SEL_23,BM_SEL_23_A,BM_SEL_23_A_1,BM_SEL_23_A_2,BM_SEL_23_A_3,BM_SEL_23_A_4,BM_SEL_23_A_5,BM_SEL_23_A_6,BM_SEL_23_B,BM_SEL_23_C,BM_SEL_24,BM_SEL_24_A,BM_SEL_24_A_1,BM_SEL_24_A_2,BM_SEL_24_A_3,BM_SEL_24_A_4,BM_SEL_24_A_5,BM_SEL_24_A_6,BM_SEL_24_B,BM_SEL_24_C production
-    class BM_SEL_02_J,BM_SEL_02_K,BM_SEL_02_L design
+    class BM_SEL_02_M design
     class BM_SEL_02,BM_SEL_02_A,BM_SEL_02_C deprecated
+    class BM_SEL_02_J,BM_SEL_02_K,BM_SEL_02_L candidate
 ```
 
 ```mermaid
@@ -198,7 +201,7 @@ flowchart TD
         BM_SEL_25 -.->|嵌套| BM_SEL_25_C
         BM_SEL_25 -.->|嵌套| BM_SEL_25_D
     end
-    BM_SEL_26["【BM-SEL-26 决策可解释性与人机协作】<br/>决策可解释性与人机协作——每个决策都有可追溯的解释<br/>链，人机协作边界清晰。<br/>（缺失态 / missing）<br/>⚠无锚点<br/>【Decision Explainability &amp; Human-AI<br/>Collaboration】"]
+    BM_SEL_26["【BM-SEL-26 决策可解释性与人机协作】<br/>决策可解释性与人机协作——每个决策都有可追溯的解释<br/>链，人机协作边界清晰。<br/>（设计态 / design）<br/>【Decision Explainability &amp; Human-AI<br/>Collaboration】"]
     BM_SEL_27["【BM-SEL-27 盘中实时事件处理】<br/>盘中实时事件处理——盘中突发新闻/公告<br/>/异动等事件的实时感知与策略调整。<br/>（生产态 / production）<br/>【Intraday Real-Time Event Processing】"]
     subgraph sg_BM_SEL_03 ["市场状态感知"]
         BM_SEL_03["【BM-SEL-03 市场状态感知】<br/>判断现在市场是什么脾气——趋势/波动<br/>/量能三维打分，再叠加体制转换检测。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Market State Sensing】"]
@@ -213,9 +216,9 @@ flowchart TD
         BM_SEL_05_A["【BM-SEL-05-A 机构行为分析】<br/>从龙虎榜和大单数据看机构在买什么卖什么——机构扎堆<br/>的票跟着走概率大。<br/>（生产态 / production）<br/>【Institutional Behavior Analysis】"]
         BM_SEL_05_B["【BM-SEL-05-B 资金流模式分析】<br/>追踪钱往哪流——主力净流入持续为正说明在吸筹，持续<br/>为负说明在出货。<br/>（生产态 / production）<br/>【Capital Flow Pattern Analysis】"]
         BM_SEL_05_C["【BM-SEL-05-C 盘中买卖点分析】<br/>结合主力阶段和资金流，判断当下是该买、该卖还是该<br/>等——给出盘中买卖点信号。<br/>（生产态 / production）<br/>【Intraday Buy/Sell Point Analysis】"]
-        BM_SEL_05_D["【BM-SEL-05-D 主力行为自迭代推演】<br/>主力资金行为自迭代分析——动态推演主力意图，模型自<br/>迭代优化预判准确度。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Main Force Behavior Self-Iteration Deduction】"]
-        BM_SEL_05_E["【BM-SEL-05-E 庄家行为识别与模拟】<br/>庄家行为模式自迭代识别与模拟——识别庄家建仓/拉升<br/>/出货模式并模拟其行为。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Market Maker Behavior Recognition &amp;<br/>Simulation】"]
-        BM_SEL_05_F["【BM-SEL-05-F 多方博弈模拟】<br/>资金群体生态与多方博弈模拟——散户/游资/机构<br/>/庄家多方博弈的纳什均衡模拟。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Multi-Party Game Simulation】"]
+        BM_SEL_05_D["【BM-SEL-05-D 主力行为自迭代推演】<br/>主力资金行为自迭代分析——动态推演主力意图，模型自<br/>迭代优化预判准确度。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Main Force Behavior Self-Iteration Deduction】"]
+        BM_SEL_05_E["【BM-SEL-05-E 庄家行为识别与模拟】<br/>庄家行为模式自迭代识别与模拟——识别庄家建仓/拉升<br/>/出货模式并模拟其行为。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Market Maker Behavior Recognition &amp;<br/>Simulation】"]
+        BM_SEL_05_F["【BM-SEL-05-F 多方博弈模拟】<br/>资金群体生态与多方博弈模拟——散户/游资/机构<br/>/庄家多方博弈的纳什均衡模拟。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Multi-Party Game Simulation】"]
         BM_SEL_05 -.->|嵌套| BM_SEL_05_A
         BM_SEL_05 -.->|嵌套| BM_SEL_05_B
         BM_SEL_05 -.->|嵌套| BM_SEL_05_C
@@ -258,8 +261,8 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_SEL_25,BM_SEL_25_A,BM_SEL_25_B,BM_SEL_25_C,BM_SEL_25_C_1,BM_SEL_25_C_2,BM_SEL_25_C_3,BM_SEL_25_C_4,BM_SEL_25_C_5,BM_SEL_25_C_6,BM_SEL_25_D,BM_SEL_27,BM_SEL_03_A,BM_SEL_05,BM_SEL_05_A,BM_SEL_05_B,BM_SEL_05_C,BM_SEL_08,BM_SEL_08_A production
-    class BM_SEL_03,BM_SEL_03_B,BM_SEL_04,BM_SEL_05_D,BM_SEL_05_E,BM_SEL_05_F,BM_SEL_06,BM_SEL_07,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_14_A,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19 design
-    class BM_SEL_26 missing
+    class BM_SEL_26,BM_SEL_03,BM_SEL_03_B,BM_SEL_04,BM_SEL_06,BM_SEL_07,BM_SEL_09,BM_SEL_10,BM_SEL_11,BM_SEL_12,BM_SEL_13,BM_SEL_14,BM_SEL_14_A,BM_SEL_15,BM_SEL_16,BM_SEL_17,BM_SEL_18,BM_SEL_19 design
+    class BM_SEL_05_D,BM_SEL_05_E,BM_SEL_05_F candidate
 ```
 
 ## 环节详情
@@ -270,7 +273,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **机制说明**：
 
-L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare 行情+新闻+另类数据经事件总线写入分层时序存储（Redis 热+ClickHouse 温+Parquet 冷）。是整个数据流主动脉的起点。
+L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare 行情+新闻+另类数据经事件总线写入分层时序存储（Redis 热+ClickHouse 温+Parquet 冷）。是整个数据流主动脉的起点。🆕v8.1 L0 数据增强：FWT检索增强扩散 + GBM-Diffusion 数据增强（A股数据增强，扩充训练样本分布）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -286,7 +289,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：每 3 秒 Tick + 盘前定时；②消费：外部行情/新闻/另类数据；③参数：tick_frequency=3s、分层存储策略；④数据流：外部源→事件总线→分层存储→BM-SEL-02；⑤代码：C-001 L0 层；⑥降级：数据源断流→仅执行卖出指令。
+①触发：每 3 秒 Tick + 盘前定时；②消费：外部行情/新闻/另类数据；③参数：tick_frequency=3s、分层存储策略、🆕v8.1数据增强=FWT检索增强扩散+GBM-Diffusion；④数据流：外部源→事件总线→分层存储→BM-SEL-02；⑤代码：C-001 L0 层；⑥降级：数据源断流→仅执行卖出指令。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -301,7 +304,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | depgraph | MOD-L00-004 | primary | stable | generated |
 | depgraph | MOD-ALT_DATA | primary | stable | generated |
 | depgraph | MOD-INTEGRATION | primary | stable | generated |
-| depgraph | MOD-INF-026 | supplement | stable | stable |
+| depgraph | MOD-INF-026 | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -311,7 +314,9 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 **机制说明**：
 
-L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计算，产出因子池（设计容量≥150，运行≤64）。叠加分布特征工程（滞后项/交互项/签名方法）喂密度预测模型。
+L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计算，产出因子池（设计容量≥150，运行≤64）。叠加分布特征工程（滞后项/交互项/签名方法）喂密度预测模型。🆕v8.1
+UFL确定性事实层（Feature Store子集，is_deterministic=True，§29.24）；🆕v8.2 FactorMAD 投票因子挖掘（3-5 Agent投票→选最优因子，§29.14新增3.5）；🆕v8.0
+因果因子验证层见子环节 BM-SEL-02-M（DoWhy/DML 区分相关vs因果）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -327,7 +332,7 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：盘前全量+盘中增量；②消费：BM-SEL-01 标准化行情 + C-027 因子工厂；③参数：factor_pool_max=64、双模计算；④数据流：行情→因子计算→因子池→BM-SEL-03/BM-SELL-01；⑤代码：C-009/C-027 L1 层；⑥降级：因子层全失效→硬编码均线规则。
+①触发：盘前全量+盘中增量；②消费：BM-SEL-01 标准化行情 + C-027 因子工厂 + UFL确定性事实；③参数：factor_pool_max=64、双模计算、声明式因子定义+一致性引擎（数据架构）；④数据流：行情→因子计算→因子池→BM-SEL-03/BM-SELL-01；⑤代码：C-009/C-027 L1 层；⑥降级：因子层全失效→硬编码均线规则。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -339,7 +344,7 @@ L1 层。因子工厂全生命周期管理，盘前全量+盘中增量双模计�
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
-| depgraph | MOD-L03-001 | supplement | production | stable |
+| depgraph | MOD-L03-001 | supplement | production | generated |
 | depgraph | MOD-INF-038 | primary | stable | stable |
 | depgraph | MOD-SIGNAL_ASHARE | primary | stable | generated |
 | depgraph | MOD-ML_SERVE | primary | stable | generated |
@@ -500,7 +505,7 @@ L3 层 A股特色信号。MOD-SIG-035 dual_engine_fusion_decision_engine.py（st
 
 **机制说明**：
 
-L6决策可解释性与人机协作层。每个决策都有可追溯解释链(因子→信号→策略→决策→执行)。人机协作边界清晰：AI可自主区/人工门控区/immutable禁区四级自治。
+L6决策可解释性与人机协作层。每个决策都有可追溯解释链(因子→信号→策略→决策→执行)。人机协作边界清晰：AI可自主区/人工门控区/immutable禁区四级自治。🆕v6.0 LLM自评估（Judge+交叉验证，L6）+ 多模态金融推理（§29.38，门禁项）；🆕v8.1 VeNRA Double-Lock 零幻觉锚定（MOD-INF-049，实体+数值双重锚定UFL确定性事实层，§29.24）+ Sentinel幻觉检测器（MOD-INF-050，3B SLM <50ms实时检测）。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -517,9 +522,14 @@ L6决策可解释性与人机协作层。每个决策都有可追溯解释链(�
 
 ①触发：决策产出时/人工复核请求；②消费：决策链路+置信度+因子贡献度；③参数：C-030决策溯源链、C-031置信度分层决策、人机协作接口；④数据流：决策→溯源链路→置信度分层→人机协作输出→执行/拒绝；⑤代码映射：待开发（planned，D_INTELLIGENCE域）；⑥降级：可解释性缺失→降级人工复核(不阻塞)。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：⬜ 缺失态（无锚点） ｜ **环节自报**：design ｜ **层**：L6 ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-INF-049 | primary | planned | planned |
+| depgraph | MOD-INF-050 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L6 ｜ **阶段**：stock_selection
 
 ### BM-SEL-27 盘中实时事件处理 / Intraday Real-Time Event Processing
 
@@ -558,7 +568,7 @@ L6决策可解释性与人机协作层。每个决策都有可追溯解释链(�
 
 **机制说明**：
 
-L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日/财报季）+ 体制转换检测（HMM/变点）+ Survival 止盈止损时间预测。是 P1 增强环节，激活时嵌入 C-009 和 C-005 之间。
+L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日/财报季，含 PEAD 财报公告后漂移效应）+ 体制转换检测（HMM/变点）+ Survival 止盈止损时间预测。是 P1 增强环节，激活时嵌入 C-009 和 C-005 之间。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -644,7 +654,7 @@ L2-B 层。C-011 六阶段识别（吸筹/洗盘/拉升/出货）+ C-034 主力�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：盘前全量+盘中增量；②消费：龙虎榜/资金流/大宗交易+因子池；③参数：识别阶段数=6、弃庄概率门槛95%；④数据流：L0资金流→C-011/034/035/036→注入信号层/漏斗；⑤代码：缺失态-未实现（草图§5）；⑥降级：主力层未就绪→漏斗不加分（仅技术+基本面）。
+①触发：盘前全量+盘中增量；②消费：龙虎榜/资金流/大宗交易+因子池；③参数：识别阶段数=6、弃庄概率门槛95%、Wyckoff吸筹4子阶段(PS/SC/AR/ST)+VPIN知情交易概率+CVD买方压力确认；④数据流：L0资金流→C-011/034/035/036+Wyckoff量化→注入信号层/漏斗；⑤代码：缺失态-未实现（草图§5）；⑥降级：主力层未就绪→漏斗不加分（仅技术+基本面）。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1027,7 +1037,8 @@ BM-SEL-01 数据接入的出口子环节。MOD-MKT_DATA 标准化引擎把缓存
 
 **机制说明**：
 
-L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML/CausalForest/DoWhy），区分关联因子vs因果因子，输出事件传导链供漏斗第四层消费。
+L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML/CausalForest/DoWhy），区分关联因子vs因果因子，输出事件传导链供漏斗第四层消费。GNN
+股票关系建模（RGCN/TGN/GAT）+ 🆕v8.0 供应链传导GNN（MOD-SIG-055，产业链上下游风险传导→行业轮动增强）+ 🆕v9.0 Causal RL 因果约束RL（门禁项，因果约束先于信号生成）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1043,7 +1054,7 @@ L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：事件到达→匹配受影响节点+传导路径；②消费：事件流+因子池；③参数：图谱类型数=6、因果方法=DML/CausalForest/DoWhy(proposed)；④数据流：事件→图谱匹配→传导链+Causal ML筛选→漏斗第四层；⑤代码：缺失态-未实现（草图§7）；⑥降级：未就绪→漏斗第四层跳过。
+①触发：事件到达→匹配受影响节点+传导路径；②消费：事件流+因子池；③参数：图谱类型数=6、因果方法=DML/CausalForest/DoWhy、GNN=RGCN/TGN/GAT、供应链传导GNN(proposed)；④数据流：事件→图谱匹配→传导链+Causal ML筛选→漏斗第四层；⑤代码：缺失态-未实现（草图§7）；⑥降级：未就绪→漏斗第四层跳过。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1054,6 +1065,7 @@ L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML
 | depgraph | MOD-SIG-042 | primary | planned | planned |
 | depgraph | MOD-INF-028 | primary | stable | generated |
 | depgraph | MOD-INF-042 | primary | stable | generated |
+| depgraph | MOD-SIG-055 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2D ｜ **阶段**：stock_selection
 
@@ -1098,7 +1110,7 @@ L1 层。分布特征工程（§3.5），产出滞后项/交互项/滚动统计�
 **机制说明**：
 
 L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数化归一化流/扩散），派生偏度/峰度/前瞻VaR/CVaR/8态概率P1~P8。被8态预测、组合优化、风控共形VaR三层消费。
-时序建模升级：🆕v8.1 Mamba/SSM 时序增强（MOD-SIG-051，线性复杂度长序列建模，与 Transformer 互补，替代二次复杂度瓶颈）；🆕v8.2 Kronos-mini/base（MOD-SIG-050，金融K线 TSFM 零样本预测，无需逐股微调即可产出收益率分布先验）。
+时序建模升级：🆕v8.1 Mamba/SSM 时序增强（MOD-SIG-051，线性复杂度长序列建模，与 Transformer 互补，替代二次复杂度瓶颈）；🆕v8.2 Kronos-mini/base（MOD-SIG-050，金融K线 TSFM 零样本预测，无需逐股微调即可产出收益率分布先验）；🆕v9.0 xLSTM 长程记忆（MOD-SIG-053，第三时序架构）。Phase 2 采用 QNN 两阶段（🆕v6.0 KAN 可解释函数逼近替代 QNN 中 MLP 层，参数更少，§29.33），Transformer/PatchTST 作时序特征提取器（§29.7）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1125,8 +1137,44 @@ L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数
 | depgraph | MOD-SIG-043 | primary | planned | planned |
 | depgraph | MOD-SIG-050 | primary | planned | planned |
 | depgraph | MOD-SIG-051 | primary | planned | planned |
+| depgraph | MOD-SIG-053 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2A ｜ **阶段**：stock_selection
+
+### BM-SEL-02-M 因果因子验证层（DoWhy/DML） / Causal Factor Validation Layer
+
+> **大白话**：因子光相关性强不够——要分清真因果还是假相关，真因果因子才配加权提升。
+
+**机制说明**：
+
+BM-SEL-02 因子计算与信号生成的子环节（depth=1），🆕v8.0 可建设项#1（L1因子层）。DoWhy因果推断+DML双重机器学习，
+区分相关因子vs因果因子→因果因子加权提升。消费 L2-D 预计算因果图（盘前）。与 BM-MT-04 因果发现引擎互补：
+BM-MT-04 从数据发现因果（研究侧），本环节用因果结论验证因子（生产侧）。
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 新因子入库前 + 盘前因子全量评估 |
+| ② 消费数据/因子 | L1候选因子 + L2-D预计算因果图（盘前） |
+| ③ 参数 | DoWhy因果推断 + DML双重机器学习；区分相关因子vs因果因子→因果因子加权提升；v8.0新增 |
+| ④ 数据流 | 候选因子+因果图→DoWhy/DML因果验证→因果因子加权→因子池→BM-SEL-02评估体系 |
+| ⑤ 代码映射 | MOD-SIG-054 src/zephyr/signal_ashare/causal_factor_validator.py（planned） |
+| ⑥ 降级/中止 | 因果图未就绪→仅统计评估（IC/IR），跳过因果加权 |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：新因子入库前+盘前因子全量评估；②消费：L1候选因子+L2-D预计算因果图；③参数：DoWhy/DML、因果因子加权提升(proposed)；④数据流：候选因子+因果图→因果验证→因果加权→因子池；⑤代码：MOD-SIG-054 因果因子验证器(planned)；⑥降级：因果图未就绪→仅统计评估(IC/IR)，跳过因果加权。
+
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-SIG-054 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-14 共形预测 / Conformal Prediction
 
@@ -1688,9 +1736,13 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 
 ①触发：BM-SEL-02 因子计算产出因子值后，信号工厂九大子阶段依次处理生成可执行信号；②消费：因子值(来自SEL-02因子计算引擎) + 市场状态(SEL-03) + 主力行为(SEL-05)；③参数：九大子阶段：因子预处理→单因子信号化→多因子合成→信号过滤→信号增强→信号校准→信号投票→信号聚合→信号输出；④数据流：因子值→逐子阶段流水线处理→标准化信号(含方向/强度/置信度)→下游SEL-02-K投票/SEL-02-L聚合；⑤代码映射：待开发（planned，D_SIGNAL/D_ASHARE_SIGNAL域，C-028信号工厂）；⑥降级：子阶段失效→降级跳过该阶段(如信号增强失效→输出未增强信号)，保证流水线不中断。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2-A ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0004 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2-A ｜ **阶段**：stock_selection
 
 ### BM-SEL-02-K 多策略投票与加权 / Multi-Strategy Voting & Weighting
 
@@ -1715,9 +1767,13 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 
 ①触发：多策略产出多信号后需融合为单一决策信号，避免冲突信号导致执行混乱；②消费：多策略信号(来自SEL-02-J子阶段流水线) + 策略历史表现(IC/IR/胜率) + 策略相关性矩阵；③参数：v0.1升级加权模型：IC加权 + 策略相关性惩罚 + 表现衰减自适应权重 + 投票阈值(>=2/3策略同向才出信号)；④数据流：多策略信号→投票→加权融合→单一决策信号(方向/强度/置信度/参与策略数)；⑤代码映射：待开发（planned，D_SIGNAL域）；⑥降级：投票不达阈值→输出中性信号(不触发买入)；加权模型失效→等权回退。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2-A ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0928 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2-A ｜ **阶段**：stock_selection
 
 ### BM-SEL-02-L 信号聚合器架构 / Signal Aggregator Architecture
 
@@ -1742,9 +1798,13 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 
 ①触发：投票加权后的信号需聚合为最终组合决策输入(含标的/方向/仓位建议/时序)；②消费：投票加权信号(SEL-02-K) + 风险约束(RC-*) + 仓位约束(POS-*)；③参数：聚合器架构：多信号归一化 + 优先级仲裁(风险信号>机会信号) + 组合级输出(标的清单+权重+触发条件)；④数据流：加权信号→聚合器→组合决策输入→下游BM-BUY-01多情景对策/BM-SEL-20多策略交叉投票；⑤代码映射：待开发（planned，D_SIGNAL域）；⑥降级：聚合器失效→直通最近一次有效聚合结果(缓存) + 告警。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2-A ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-1734 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2-A ｜ **阶段**：stock_selection
 
 ### BM-SEL-03-A 市场情绪分析 / Market Sentiment Analysis
 
@@ -1924,9 +1984,13 @@ C-034主力资金行为自迭代分析。动态推演主力意图(建仓/洗盘/
 
 ①触发：C-011实时识别主力在场后，需动态推演主力后续行为(出货/做T/调仓/加仓/观望)以指导操作；②消费：实时识别层结果(SEL-05-B) + 历史主力行为样本 + 底部筹码变化 + 大单净流向 + 龙虎榜席位；③参数：C-034动态推演：行为分类5态(出货/做T/调仓/加仓/观望) + 出货派发概率 + 假动作识别(假拉升/假突破/假吸筹/假洗盘/假护盘/假反弹6类) + 自迭代(行为模式库持续学习)；④数据流：实时识别→行为分类+概率→假动作识别→决策建议(跟随/回避/减仓)→注入SEL-02-L聚合器；⑤代码映射：待开发（planned，D_ASHARE_SIGNAL域，C-034）；⑥降级：推演失效→仅输出实时识别结果(SEL-05-B)，不输出行为预判。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2-B ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-0460 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2-B ｜ **阶段**：stock_selection
 
 ### BM-SEL-05-E 庄家行为识别与模拟 / Market Maker Behavior Recognition & Simulation
 
@@ -1951,9 +2015,13 @@ C-035庄家行为模式自迭代识别与模拟。识别庄家建仓(低位横�
 
 ①触发：小盘股庄家操作模式(建仓/洗盘/拉升/出货)与一般主力不同，需专项识别；②消费：筹码分布(底部筹码长度/集中度) + 龙虎榜(同一营业部对倒) + 分时量价 + 盘口挂单时序；③参数：C-035庄家专项：庄家操作4阶段识别(建仓/洗盘/拉升/出货) + 对倒识别(同营业部买卖) + 庄股特征(控盘度/筹码锁定) + 模拟庄家意图(博弈论)；④数据流：筹码+龙虎榜+盘口→庄家阶段识别→意图模拟→庄股回避/跟随建议→注入聚合器；⑤代码映射：待开发（planned，D_ASHARE_SIGNAL域，C-035）；⑥降级：庄家识别失效→按一般主力行为处理(SEL-05-D)。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2-B ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-4021 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2-B ｜ **阶段**：stock_selection
 
 ### BM-SEL-05-F 多方博弈模拟 / Multi-Party Game Simulation
 
@@ -1978,9 +2046,13 @@ C-036资金群体生态与多方博弈模拟。散户/游资/机构/庄家四方
 
 ①触发：多主力共存(游资/机构/国家队/庄家)时需模拟多方博弈以预判合力方向；②消费：各主力行为识别结果(SEL-05-D/E) + 主力间持仓重叠 + 板块联动 + 政策事件；③参数：C-036多方博弈：7类主力画像(游资/机构/国家队/庄家/外资/量化/散户) + 博弈矩阵(合作/对抗/搭车) + 合力方向预测 + 拥挤度检测；④数据流：各主力行为→博弈矩阵→合力方向→合力强度信号→注入聚合器；⑤代码映射：待开发（planned，D_ASHARE_SIGNAL域，C-036）；⑥降级：博弈模拟失效→仅用各主力行为的简单加权合成。
 
-**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）
+**锚点（环节↔模块双向关联）**：
 
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L2-B ｜ **阶段**：stock_selection
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| candidate | CAND-HARVEST-4022 | primary | — | — |
+
+**有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L2-B ｜ **阶段**：stock_selection
 
 ### BM-SEL-08-A 板块分析器 / Sector Analyzer
 

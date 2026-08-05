@@ -755,7 +755,7 @@ v2.0 备忘模块，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-022 | primary | stable | stable |
+| depgraph | MOD-BT-022 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 

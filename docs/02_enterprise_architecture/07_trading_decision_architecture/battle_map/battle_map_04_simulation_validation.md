@@ -76,6 +76,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 D-SIMULATION-01 Market Simulator 提供市场仿真器+订单簿仿真+价格生成+微观结构模拟（P0）；
 D-SIMULATION-07 History Replay Engine 提供历史重放引擎+逐Tick回放+时间压缩。
+市场仿真参考 ABIDES 多Agent市场仿真框架（智能体交互产生真实市场微观结构）；🆕v8.0 世界模型市场推演（DreamerV3/TD-MPC2 What-if推演，门禁：GPU≥48GB或多GPU）。
 与 D-BACKTEST 的区别：回测=过去怎样(真实历史)，仿真=如果怎样(假设场景)。
 是仿真验证的核心入口，P0 模块。
 
@@ -152,6 +153,8 @@ D-SIMULATION-02 Strategy Simulator 提供策略仿真器+策略沙箱+信号模�
 
 D-SIMULATION-05 Scenario Generator 提供场景生成器+蒙特卡洛+历史场景+自定义场景；
 D-SIMULATION-06 Monte Carlo Engine 提供蒙特卡洛模拟+GPU加速+百万路径。
+合成数据生成参考 TimeGAN/条件扩散（§29.19 时序数据增强）与 FinDiff/Diffusion-TS（金融时序扩散模型，Classifier-Free Guidance）——
+用生成式模型造"从未发生但合理"的市场场景。
 是"如果怎样"的批量版本，产出策略在各种场景下的表现分布。
 
 
@@ -223,6 +226,7 @@ D-SIMULATION-03 Risk Simulator 提供风控仿真器+VaR模拟+回撤模拟+熔�
 
 D-SIMULATION-04 Stress Test Engine 提供压力测试引擎+极端场景+历史重放（testing, 部分在D-RISK-05）；
 D-SIMULATION-10 Extreme Event Simulator 提供极端事件仿真+黑天鹅+闪崩+熔断（P2）。
+C-040 系统性压力测试：组合级极端情景回放（交易决策架构 §9/§1.8）。
 与 D-RISK RK-12 Stress Test Engine 联动——仿真侧造场景，风控侧评估影响。
 
 

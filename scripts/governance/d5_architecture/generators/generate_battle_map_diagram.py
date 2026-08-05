@@ -1540,6 +1540,9 @@ _CROSS_CUTTING_RENDERERS = {
     "hard_boundary_constraints": _format_generic_cross_cutting_md,
     # 以下 1 项来源交易决策架构 v8.1 横切层（模型量化，2026-08-05）
     "model_quantization": _format_generic_cross_cutting_md,
+    # 以下 2 项来源交易决策架构 v7.0/v8.2（因子直通层/投票优先多Agent，§5.4.3 横切归轨，2026-08-05）
+    "factor_direct_fusion": _format_generic_cross_cutting_md,
+    "voting_first_multi_agent": _format_generic_cross_cutting_md,
 }
 
 
