@@ -178,7 +178,7 @@ classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,strok
 
 **机制说明**：
 
-AI/Agent风险治理。模型幻觉(生成虚假信息)→输出校验+置信度门控；自治越界(AI超授权操作)→权限分级+HITL审批；对抗攻击(输入注入/提示注入)→输入过滤+鲁棒性测试；串谋(多Agent合谋)→独立监督Agent。
+AI/Agent风险治理。模型幻觉(生成虚假信息)→输出校验+置信度门控；自治越界(AI超授权操作)→权限分级+HITL审批；对抗攻击(输入注入/提示注入)→输入过滤+鲁棒性测试；串谋(多Agent合谋)→独立监督Agent。🆕Named Accountability 具名问责（RD-17：每个Agent必须有命名问责人，覆盖率100%，ValidMind/Singapore MAS 要求；无问责人的Agent=无人负责的自治→治理漂移）。
 
 **6 件套（结构化，DB indicators JSONB）**：
 

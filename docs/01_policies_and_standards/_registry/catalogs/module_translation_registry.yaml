@@ -40828,7 +40828,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从美联储经济数据库(FRED)和世界银行API免费获取国际宏观经济指标，包括美国GDP/CPI/失业率/国债收益率/汇率/大宗商品，以及各国GDP/人口/进出口等，补充国内数据源覆盖不到的国际对比数据"
-
 - module_path: MOD-H1-REDIS-HOT
   domain_id: D_INFRA_RUNTIME
   name_zh: H1 Redis 热缓存
@@ -40927,6 +40926,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
+- module_path: src/zephyr/risk/core/alert_generator.py
+  domain_id: D_RISK
+  name_zh: "告警生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把风控报告里的违规项按严重程度分成黄橙红三级，再按级别推送到不同通道（日志/邮件/微信）"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
@@ -44684,7 +44691,7 @@ battle_map_steps:
   name_zh: 'AI/Agent风险治理'
   name_en: 'AI/Agent Risk Governance'
   plain_zh: 'AI/Agent特有风险治理——模型幻觉/自治越界/对抗攻击/串谋等AI专属风险。'
-  mechanism_zh: 'AI/Agent风险治理。模型幻觉(生成虚假信息)→输出校验+置信度门控；自治越界(AI超授权操作)→权限分级+HITL审批；对抗攻击(输入注入/提示注入)→输入过滤+鲁棒性测试；串谋(多Agent合谋)→独立监督Agent。'
+  mechanism_zh: 'AI/Agent风险治理。模型幻觉(生成虚假信息)→输出校验+置信度门控；自治越界(AI超授权操作)→权限分级+HITL审批；对抗攻击(输入注入/提示注入)→输入过滤+鲁棒性测试；串谋(多Agent合谋)→独立监督Agent。🆕Named Accountability 具名问责（RD-17：每个Agent必须有命名问责人，覆盖率100%，ValidMind/Singapore MAS 要求；无问责人的Agent=无人负责的自治→治理漂移）。'
   indicators_zh: '①触发：Agent自治行为发生时/盘后审计；②消费：Agent决策日志+自治边界配置+治理基线；③参数：有界自治(Bounded Autonomy)、保障缺口管理、治理漂移防护、Agent行为监控、ARS双轨结算模型；④数据流：Agent行为→监控→漂移检测→保障缺口评估→否决/Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：漂移超限→触发BM-RC-03 Kill Switch熔断。；📌 概念覆盖清单（草稿H3逐字登记）：§29.11 大语言模型Agent用于基本面分析；§11.2.2 数据血缘（Lineage）；§1.5 AI/Agent特有风险'
 - step_id: BM-RC-10
   flow_stage: risk_control
