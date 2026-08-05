@@ -9611,6 +9611,40 @@ def make_arch_diagram_reconciler(gateway: object) -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
 
+        # 0. drift-gate: 预检测产物是否已有未提交变更（体系A reconcile_async 可能已跑过）
+
+        #    有变更 → 跳过生成器直接 auto-commit（消除与体系A双重执行，治本 #ARCH-DUAL-TRIGGER）
+
+        #    无变更 → 产物可能过时，继续跑生成器（原逻辑兜底）
+
+        pre_diff = gateway.run_git(["git", "diff", "--name-only", "--", *_OUTPUTS])
+
+        if pre_diff.returncode == 0 and pre_diff.stdout.strip():
+
+            pre_changed = [f.strip() for f in pre_diff.stdout.splitlines() if f.strip()]
+
+            pre_abs = [str(project_root / f) for f in pre_changed]
+
+            pre_commit = gateway._commit_auto(
+
+                session_id, pre_abs,
+
+                "chore(arch): auto-commit systemA-regenerated diagrams (drift-gate skipped generators)",
+
+            )
+
+            if pre_commit.status == "OK":
+
+                return ReconcileResult(
+
+                    action="auto_committed",
+
+                    detail=f"drift-gate: skipped {len(_GENERATORS)} generators, auto-committed {len(pre_changed)} files (systemA already ran)",
+
+                )
+
+            # auto-commit 失败 → 落回原逻辑跑生成器（兜底，不阻断）
+
         # 1. 串联跑 15 个生成器（无 --all 参数，直接运行；幂等：相同输入->相同输出）
 
         failed_gens: list[str] = []
