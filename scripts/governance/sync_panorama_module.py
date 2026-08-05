@@ -29,6 +29,7 @@
     python scripts/governance/sync_panorama_module.py MOD-XXX
     python scripts/governance/sync_panorama_module.py --all
 """
+
 from __future__ import annotations
 
 import argparse
@@ -42,7 +43,8 @@ for _p in (str(_REPO_ROOT), str(_SRC_DIR), str(_GOV_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     acquire_dataflow_write_lock,
@@ -52,10 +54,12 @@ from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
 from zephyr.governance.persistence.decisiongraph_schema import get_decisiongraph_pg_connection  # noqa: E402
 
 try:
-    from d5_architecture.panorama_common import weighted_domain_vote, min_maturity as _min_mat
+    from d5_architecture.panorama_common import min_maturity as _min_mat
+    from d5_architecture.panorama_common import weighted_domain_vote
 except ImportError:
-    import sys as _sys
     import importlib as _im
+    import sys as _sys
+
     _pc_path = str(Path(__file__).resolve().parent / "d5_architecture")
     if _pc_path not in _sys.path:
         _sys.path.insert(0, _pc_path)
@@ -80,19 +84,10 @@ _SQL_QUERY_MODULE = (
     "FROM nodes WHERE blueprint_id = %s AND blueprint_id <> '' "
     "ORDER BY (path IS NULL), path"
 )
-_SQL_QUERY_ALL_MODULES = (
-    "SELECT DISTINCT blueprint_id "
-    "FROM nodes "
-    "WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
-)
-_SQL_CHECK_DATAFLOW_JOB = (
-    "SELECT entity_type "
-    "FROM dataflow_jobs WHERE job_name = %s"
-)
+_SQL_QUERY_ALL_MODULES = "SELECT DISTINCT blueprint_id FROM nodes WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
+_SQL_CHECK_DATAFLOW_JOB = "SELECT entity_type FROM dataflow_jobs WHERE job_name = %s"
 _SQL_UPDATE_DATAFLOW_JOB = (
-    "UPDATE dataflow_jobs "
-    "SET domain_id=%s, design_maturity=%s, build_status=%s, "
-    "module_id=%s WHERE job_name=%s"
+    "UPDATE dataflow_jobs SET domain_id=%s, design_maturity=%s, build_status=%s, module_id=%s WHERE job_name=%s"
 )
 _SQL_UPSERT_DATAFLOW_PLACEHOLDER = (
     "INSERT "
@@ -104,14 +99,9 @@ _SQL_UPSERT_DATAFLOW_PLACEHOLDER = (
     "domain_id=EXCLUDED.domain_id, design_maturity=EXCLUDED.design_maturity, "
     "build_status=EXCLUDED.build_status"
 )
-_SQL_CHECK_DECISION_LAYER = (
-    "SELECT track "
-    "FROM decision_layers WHERE layer_id = %s"
-)
+_SQL_CHECK_DECISION_LAYER = "SELECT track FROM decision_layers WHERE layer_id = %s"
 _SQL_UPDATE_DECISION_LAYER = (
-    "UPDATE decision_layers "
-    "SET domain_id=%s, design_maturity=%s, "
-    "build_status=%s, module_id=%s WHERE layer_id=%s"
+    "UPDATE decision_layers SET domain_id=%s, design_maturity=%s, build_status=%s, module_id=%s WHERE layer_id=%s"
 )
 _SQL_UPSERT_DECISION_PLACEHOLDER = (
     "INSERT "
@@ -122,13 +112,9 @@ _SQL_UPSERT_DECISION_PLACEHOLDER = (
     "module_id=EXCLUDED.module_id, domain_id=EXCLUDED.domain_id, "
     "design_maturity=EXCLUDED.design_maturity, build_status=EXCLUDED.build_status"
 )
-_SQL_QUERY_DECISION_PLACEHOLDERS = (
-    "SELECT layer_id FROM decision_layers WHERE track = 'placeholder'"
-)
+_SQL_QUERY_DECISION_PLACEHOLDERS = "SELECT layer_id FROM decision_layers WHERE track = 'placeholder'"
 _SQL_DELETE_DECISION_LAYER = "DELETE FROM decision_layers WHERE layer_id = %s"
-_SQL_QUERY_DATAFLOW_PLACEHOLDERS = (
-    "SELECT job_name FROM dataflow_jobs WHERE entity_type = 'module_placeholder'"
-)
+_SQL_QUERY_DATAFLOW_PLACEHOLDERS = "SELECT job_name FROM dataflow_jobs WHERE entity_type = 'module_placeholder'"
 _SQL_DELETE_DATAFLOW_JOB = "DELETE FROM dataflow_jobs WHERE job_name = %s"
 
 
@@ -197,16 +183,16 @@ def _sync_to_dataflow(conn, module: dict) -> int:
             if existing_type != "module_placeholder":
                 cur.execute(
                     _SQL_UPDATE_DATAFLOW_JOB,
-                    (module["domain_id"], module["design_maturity"],
-                     module["build_status"], mid, mid),
+                    (module["domain_id"], module["design_maturity"], module["build_status"], mid, mid),
                 )
                 return EXIT_PASS
         cur.execute(
             _SQL_UPSERT_DATAFLOW_PLACEHOLDER,
-            (mid, mid, module["domain_id"], module["design_maturity"],
-             module["build_status"]),
+            (mid, mid, module["domain_id"], module["design_maturity"], module["build_status"]),
         )
         return EXIT_PASS
+
+
 def _sync_to_decision(conn, module: dict) -> int:
     """同步到 decision_layers 占位记录。
 
@@ -222,16 +208,16 @@ def _sync_to_decision(conn, module: dict) -> int:
             if existing_track != "placeholder":
                 cur.execute(
                     _SQL_UPDATE_DECISION_LAYER,
-                    (module["domain_id"], module["design_maturity"],
-                     module["build_status"], mid, mid),
+                    (module["domain_id"], module["design_maturity"], module["build_status"], mid, mid),
                 )
                 return EXIT_PASS
         cur.execute(
             _SQL_UPSERT_DECISION_PLACEHOLDER,
-            (mid, mid, mid, mid, module["domain_id"],
-             module["design_maturity"], module["build_status"]),
+            (mid, mid, mid, mid, module["domain_id"], module["design_maturity"], module["build_status"]),
         )
         return EXIT_PASS
+
+
 def sync_module_panorama(module_id: str) -> int:
     """同步单个模块的四图核心字段。
 
@@ -261,10 +247,18 @@ def sync_module_panorama(module_id: str) -> int:
     # 让父 reconciler 检测到部分失败并升级为 critical_warn（P0-1 已对接）。
     failed_count = 0
     dataflow_conn = get_dataflowgraph_pg_connection(
-        read_only=False, allow_design_delete=True,
+        read_only=False,
+        allow_design_delete=True,
     )
     try:
         _sync_to_dataflow(dataflow_conn, module)
+        # FP-FIX-DECISION-COMMIT (2026-08-05, 治本 decision_layers 静默回滚):
+        # 显式 commit 对齐两条路径事务语义。根因：get_dataflowgraph_pg_connection
+        # 默认 autocommit=True（INSERT 自动提交），而 get_decisiongraph_pg_connection
+        # 在 writer 角色下默认 autocommit=False，不显式 commit 会让 decision_layers
+        # 的 INSERT 在 conn.close() 时被静默回滚（sync 报 rc=0 但 DB 无记录）。
+        # commit() 对 autocommit=True 连接是 no-op，防御性调用安全。
+        dataflow_conn.commit()
     except Exception as e:  # noqa: BLE001 - 三个下游相互独立，单点失败不阻断其他下游
         failed_count += 1
         print(f"[ERROR] dataflow 同步失败（module={module_id}）: {e}", file=sys.stderr)
@@ -272,10 +266,15 @@ def sync_module_panorama(module_id: str) -> int:
         dataflow_conn.close()
 
     decision_conn = get_decisiongraph_pg_connection(
-        read_only=False, allow_design_delete=True,
+        read_only=False,
+        allow_design_delete=True,
     )
     try:
         _sync_to_decision(decision_conn, module)
+        # FP-FIX-DECISION-COMMIT (2026-08-05)：见上方 dataflow_conn.commit() 注释。
+        # 此处为治本核心——decision_layers 的 INSERT 在 autocommit=False 下必须显式 commit，
+        # 否则 405 个模块的占位记录（含 MOD-PLAN-002/003）会被 conn.close() 静默回滚。
+        decision_conn.commit()
     except Exception as e:  # noqa: BLE001 - 三个下游相互独立，单点失败不阻断其他下游
         failed_count += 1
         print(f"[ERROR] decision 同步失败（module={module_id}）: {e}", file=sys.stderr)
@@ -287,6 +286,7 @@ def sync_module_panorama(module_id: str) -> int:
         from d5_architecture.syncers.blueprint_frontmatter_reconciler import (
             reconcile_blueprint_frontmatter,
         )
+
         reconcile_blueprint_frontmatter(module_id)
     except Exception as e:  # noqa: BLE001 - 三个下游相互独立，单点失败不阻断其他下游
         failed_count += 1
@@ -297,6 +297,8 @@ def sync_module_panorama(module_id: str) -> int:
         print(f"FAILED_COUNT={failed_count} module={module_id}", file=sys.stderr)
         return 5
     return EXIT_PASS
+
+
 def sync_all_panorama() -> int:
     """同步所有有 blueprint_id 的模块。
 
@@ -306,8 +308,7 @@ def sync_all_panorama() -> int:
     try:
         with conn.cursor() as cur:
             cur.execute(_SQL_QUERY_ALL_MODULES)
-            modules = [row["blueprint_id"] if isinstance(row, dict) else row[0]
-                       for row in cur.fetchall()]
+            modules = [row["blueprint_id"] if isinstance(row, dict) else row[0] for row in cur.fetchall()]
     finally:
         conn.close()
 
@@ -329,6 +330,8 @@ def sync_all_panorama() -> int:
         # P0-2: 部分下游失败也返回非零，让父 reconciler 检测到（升级为 critical_warn）
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 def sync_modules_panorama(module_ids: list[str]) -> int:
     """增量同步指定的模块列表（#ARCH-PRE-EXISTING-DEBT-001 治本，2026-07-20）。
 
@@ -356,6 +359,8 @@ def sync_modules_panorama(module_ids: list[str]) -> int:
     if failed > 0 or partial > 0:
         return EXIT_FINDINGS
     return EXIT_PASS
+
+
 def prune_orphans() -> dict:
     """删除 decision_layers + dataflow_jobs 中的孤儿占位记录（ARCH-057 + ARCH-058）。
 
@@ -377,14 +382,14 @@ def prune_orphans() -> dict:
         with depgraph_conn.cursor() as cur:
             cur.execute(_SQL_QUERY_ALL_MODULES)
             rows = cur.fetchall()
-        blueprint_ids = {row["blueprint_id"] if isinstance(row, dict) else row[0]
-                         for row in rows}
+        blueprint_ids = {row["blueprint_id"] if isinstance(row, dict) else row[0] for row in rows}
     finally:
         depgraph_conn.close()
 
     # 2. 清理 decision_layers 孤儿占位层
     decision_conn = get_decisiongraph_pg_connection(
-        allow_design_delete=True, read_only=False,
+        allow_design_delete=True,
+        read_only=False,
     )
     orphan_decision: list[str] = []
     deleted_decision = 0
@@ -392,8 +397,7 @@ def prune_orphans() -> dict:
         with decision_conn.cursor() as cur:
             cur.execute(_SQL_QUERY_DECISION_PLACEHOLDERS)
             rows = cur.fetchall()
-            placeholders = [row["layer_id"] if isinstance(row, dict) else row[0]
-                            for row in rows]
+            placeholders = [row["layer_id"] if isinstance(row, dict) else row[0] for row in rows]
             orphan_decision = [lid for lid in placeholders if lid not in blueprint_ids]
             for lid in orphan_decision:
                 cur.execute(_SQL_DELETE_DECISION_LAYER, (lid,))
@@ -407,7 +411,9 @@ def prune_orphans() -> dict:
     #    + allow_design_delete（绕过 protect_dataflow_design_maturity 触发器，ARCH-053）
     #    + acquire_dataflow_write_lock（pg_advisory_lock 424243，并发互斥）
     dataflow_conn = get_dataflowgraph_pg_connection(
-        read_only=False, autocommit=False, allow_design_delete=True,
+        read_only=False,
+        autocommit=False,
+        allow_design_delete=True,
     )
     orphan_dataflow: list[str] = []
     deleted_dataflow = 0
@@ -416,8 +422,7 @@ def prune_orphans() -> dict:
         with dataflow_conn.cursor() as cur:
             cur.execute(_SQL_QUERY_DATAFLOW_PLACEHOLDERS)
             rows = cur.fetchall()
-            placeholders = [row["job_name"] if isinstance(row, dict) else row[0]
-                            for row in rows]
+            placeholders = [row["job_name"] if isinstance(row, dict) else row[0] for row in rows]
             orphan_dataflow = [jid for jid in placeholders if jid not in blueprint_ids]
             for jid in orphan_dataflow:
                 cur.execute(_SQL_DELETE_DATAFLOW_JOB, (jid,))
@@ -440,16 +445,21 @@ def main():
     parser = argparse.ArgumentParser(description="四图模块同步引擎（ARCH-056）")
     parser.add_argument("module_ids", nargs="*", help="要同步的模块 ID 列表（MOD-XXX MOD-YYY ...）")
     parser.add_argument("--all", action="store_true", help="同步所有模块")
-    parser.add_argument("--prune-orphans", action="store_true",
-                        help="删除 decision_layers + dataflow_jobs 中的孤儿占位记录（ARCH-057 + ARCH-058）")
+    parser.add_argument(
+        "--prune-orphans",
+        action="store_true",
+        help="删除 decision_layers + dataflow_jobs 中的孤儿占位记录（ARCH-057 + ARCH-058）",
+    )
     args = parser.parse_args()
 
     if args.prune_orphans:
         result = prune_orphans()
-        print(f"Prune orphans: decision deleted={result['deleted_decision']}, "
-              f"dataflow deleted={result['deleted_dataflow']}, "
-              f"orphan_decision={result['orphan_decision']}, "
-              f"orphan_dataflow={result['orphan_dataflow']}")
+        print(
+            f"Prune orphans: decision deleted={result['deleted_decision']}, "
+            f"dataflow deleted={result['deleted_dataflow']}, "
+            f"orphan_decision={result['orphan_decision']}, "
+            f"orphan_dataflow={result['orphan_dataflow']}"
+        )
         return EXIT_PASS
     if args.all:
         return sync_all_panorama()
@@ -463,8 +473,8 @@ def main():
 if __name__ == "__main__":
     sys.exit(main())
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def query_depgraph_module(conn, module_id) -> dict | None:
     """公共接口：query_depgraph_module（Stage 4 公共化）。"""
     return _query_depgraph_module(conn, module_id)
-
