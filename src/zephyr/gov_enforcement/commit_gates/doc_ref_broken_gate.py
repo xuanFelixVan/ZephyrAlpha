@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .md 文件中 markdown 链接的相对路径指向不存在文件时阻断 commit；只检测新增文件（diff-filter=A）；in-process 正则 + os.path.exists 检测；URL/锚点链接豁免；文件读取失败 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged 新增 .md 文件中 markdown 链接的相对路径指向不存在文件时阻断 commit；只检测新增文件（diff-filter=A）；in-process 正则 + os.path.exists 检测；URL/锚点/file:/// 链接正确解析（绝对路径不当相对路径误判，#ARCH-DOC-REF-FILE-URL）；草稿/归档区跳过目录豁免（对齐 N-16 skip_dirs_docs SSoT，#ARCH-DOC-REF-BROKEN-SKIP）；文件读取失败 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="DOC-REF-BROKEN"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -58,6 +58,9 @@ from __future__ import annotations
 import logging
 import os
 import re
+from pathlib import Path
+
+import yaml
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -70,6 +73,74 @@ _MD_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 
 # URL/锚点豁免前缀（这些链接不在本地检查）
 _URL_PREFIXES = ("http://", "https://", "mailto:", "ftp://", "#")
+
+# file:/// 绝对路径链接前缀（#ARCH-DOC-REF-FILE-URL, 2026-08-05 治本）
+# 原先 file:///d:/ZephyrAlpha/... 不在 _URL_PREFIXES 豁免列表里，被当相对路径解析，
+# 拼接到 md_dir 后变成 docs/_working/file:///d:/... 不存在 → 误报断链。
+# 治本：识别 file:/// 前缀，提取本地路径后用 os.path.exists 正确检查存在性。
+_FILE_URL_PREFIX = "file:///"
+
+# 跳过目录——草稿/归档区豁免，对齐 N-16 skip_dirs_docs SSoT（#ARCH-DOC-REF-BROKEN-SKIP, 2026-08-05）
+# 真源：trae_028.yaml §gov_doc_003_filename_uniqueness.n16_config.skip_dirs_docs
+# 复用 N-16 同一份配置：草稿/归档区跳过语义跨门禁一致（草稿可能引用待创建文件，不应被断链门禁扫描）
+_DOC_REF_BROKEN_SKIP_DIRS_FALLBACK: set[str] = {
+    "_DO_NOT_USE_old_tree",
+    "_archive",
+    "_backups",
+    "session_logs",
+    "_working",  # 草稿区豁免（施工方案/评估报告/临时笔记）
+}
+
+_TRAE_028_YAML_PATH = (
+    Path(__file__).resolve().parents[4]  # src/zephyr/gov_enforcement/commit_gates/ → repo root
+    / "docs"
+    / "01_policies_and_standards"
+    / "rules"
+    / "trae_028_doc_structure_naming.yaml"
+)
+
+
+def _load_skip_dirs_from_yaml() -> set[str]:
+    """从 trae_028.yaml §gov_doc_003_filename_uniqueness.n16_config.skip_dirs_docs 加载跳过目录。
+
+    复用 N-16 的同一份 SSoT（草稿/归档区跳过语义跨门禁一致）。
+    fail-open: YAML 缺失/解析失败/类型不合规 → 回退到硬编码 fallback（防检测失效）。
+    """
+    try:
+        data = yaml.safe_load(_TRAE_028_YAML_PATH.read_text(encoding="utf-8"))
+        skip = (
+            data.get("sections", {})
+            .get("gov_doc_003_filename_uniqueness", {})
+            .get("n16_config", {})
+            .get("skip_dirs_docs", [])
+        )
+        if not isinstance(skip, list) or not skip or not all(isinstance(x, str) for x in skip):
+            raise ValueError("skip_dirs_docs 类型/内容不合规")
+        return set(skip)
+    except Exception as e:  # noqa: BLE001 — fail-open 回退防检测失效
+        logger.warning("DOC-REF-BROKEN skip_dirs 回退到 fallback（YAML 加载失败: %s: %s）", type(e).__name__, e)
+        return _DOC_REF_BROKEN_SKIP_DIRS_FALLBACK
+
+
+# 模块级加载一次（YAML 是项目内稳定文件，import 时读取）
+_DOC_REF_BROKEN_SKIP_DIRS: set[str] = _load_skip_dirs_from_yaml()
+
+
+def _is_in_skip_dir(rel_path: str, skip_dirs: set[str]) -> bool:
+    """检查相对路径是否位于跳过目录内（路径分段精确匹配，非前缀匹配）。"""
+    parts = rel_path.replace("\\", "/").split("/")
+    return any(part in skip_dirs for part in parts)
+
+
+def _resolve_file_url(target: str) -> str | None:
+    """解析 file:/// 绝对路径链接为本地文件系统路径（fail-open）。
+
+    file:///d:/ZephyrAlpha/foo.py → d:/ZephyrAlpha/foo.py（Python os.path 在 Windows 接受正斜杠）
+    file:///D|/ZephyrAlpha/foo.py → D:/ZephyrAlpha/foo.py（旧式 file URL，| → :）
+    """
+    path_part = target[len(_FILE_URL_PREFIX) :]
+    path_part = path_part.replace("|", ":")  # 旧式 file URL 兼容
+    return path_part or None
 
 
 def _is_url_or_anchor(target: str) -> bool:
@@ -98,6 +169,15 @@ def _find_broken_refs(content: str, md_dir: str) -> list[str]:
         target_no_anchor = target.split("#", 1)[0]
         if not target_no_anchor:
             continue  # 纯锚点 "#section"
+        # file:/// 绝对路径链接（#ARCH-DOC-REF-FILE-URL, 2026-08-05 治本）
+        # 提取本地路径直接检查存在性，不当相对路径拼接
+        if target_no_anchor.startswith(_FILE_URL_PREFIX):
+            file_path = _resolve_file_url(target_no_anchor)
+            if file_path is None:
+                continue  # fail-open: file:/// 解析失败不报断链
+            if not os.path.exists(file_path):
+                broken.append(target)
+            continue
         # 相对 .md 目录解析
         resolved = os.path.normpath(os.path.join(md_dir, target_no_anchor))
         if not os.path.exists(resolved):
@@ -115,9 +195,7 @@ def _get_staged_new_md_files(gateway) -> list[str] | None:
         新增 .md 文件相对路径列表（正斜杠归一化）；git diff 失败/异常时返回 None。
     """
     try:
-        diff_result = gateway.run_git(
-            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-        )
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
                 "DOC-REF-BROKEN gate fail-open: git diff 失败(rc=%d)，检测器失效。",
@@ -127,23 +205,17 @@ def _get_staged_new_md_files(gateway) -> list[str] | None:
         staged_new = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "DOC-REF-BROKEN gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-            type(e).__name__, e, exc_info=True
+            "DOC-REF-BROKEN gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
     # 过滤 .md 文件（.md 文件无需 tests/ 豁免，但保留 is_test_exempt 检查防御性）
-    return [
-        f.replace("\\", "/") for f in staged_new
-        if f.endswith(".md") and not is_test_exempt(f)
-    ]
+    return [f.replace("\\", "/") for f in staged_new if f.endswith(".md") and not is_test_exempt(f)]
 
 
 def _get_worktree_root(gateway) -> str:
     """获取 worktree 根目录（fail-open：失败回退 ``gateway.project_root``）。"""
     try:
-        toplevel_result = gateway.run_git(
-            ["git", "rev-parse", "--show-toplevel"]
-        )
+        toplevel_result = gateway.run_git(["git", "rev-parse", "--show-toplevel"])
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -184,12 +256,14 @@ def _detect_md_file_violation(abs_path: str, wt_root: str) -> str | None:
         违规描述字符串；读取失败返回 None（跳过），无断链返回 None。
     """
     try:
-        with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+        with open(abs_path, encoding="utf-8", errors="replace") as f:
             content = f.read()
     except OSError as e:
         logger.warning(
             "DOC-REF-BROKEN gate skip file %s: 读取失败(%s: %s)。",
-            abs_path, type(e).__name__, e,
+            abs_path,
+            type(e).__name__,
+            e,
         )
         return None
 
@@ -214,6 +288,12 @@ def make_doc_ref_broken_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged 新增 .md 文件（None 表示 fail-open 检测器失效）
         new_md_files = _get_staged_new_md_files(gateway)
+        if not new_md_files:
+            return True, ""
+
+        # 1b. 过滤跳过目录（草稿/归档区豁免，#ARCH-DOC-REF-BROKEN-SKIP, 2026-08-05）
+        # 复用 N-16 skip_dirs_docs SSoT：草稿可能引用待创建文件，不应被断链门禁扫描
+        new_md_files = [f for f in new_md_files if not _is_in_skip_dir(f, _DOC_REF_BROKEN_SKIP_DIRS)]
         if not new_md_files:
             return True, ""
 
