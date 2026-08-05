@@ -28,11 +28,11 @@ ttl: permanent
 | 域名称 | 风控 | Domain Name | Risk Control |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 40 | Module Count | 40 |
-| 域内依赖 | 56 | Internal Dependencies | 56 |
+| 域内依赖 | 58 | Internal Dependencies | 58 |
 | 跨域入边 | 19 | Cross-domain Incoming | 19 |
 | 跨域出边 | 26 | Cross-domain Outgoing | 26 |
-| 设计态模块 | 5 | Design Modules | 5 |
-| 生产态模块 | 35 | Production Modules | 35 |
+| 设计态模块 | 3 | Design Modules | 3 |
+| 生产态模块 | 37 | Production Modules | 37 |
 | 容量 | 35/150 (正常) | Capacity | 35/150 (正常) |
 | 描述 | 风控，负责风险指标计算、风险限额管理和风险预警 | Description | 风控，负责风险指标计算、风险限额管理和风险预警 |
 
@@ -48,18 +48,16 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 40 个模块（生产态 35 + 设计态 5），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 40 个模块（生产态 37 + 设计态 3），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_risk_core_agent_risk_monitor_py["core/agent_risk_monitor<br/>风险/核心包的agent_risk_monitor模块<br/>文件: core/agent_risk_monitor.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_ai_agent_monitor_py["core/ai_agent_monitor<br/>D_RISK — AI/Agent Risk Monitor (MOD-RK-14)<br/>文件: core/ai_agent_monitor.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_ashare_stop_loss_engine_py["A股止损规则引擎输入数据非法<br/>A-Share Stop-Loss Rule Engine — A股止损规则引擎<br/>(MOD-RK-09)<br/>Ashare Stop Loss Engine<br/>文件: core/ashare_stop_loss_engine.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_ashare_systemic_risk_detector_py["A股系统性风险检测器输入数据非法<br/>A-Share Systemic Risk Detector —<br/>A股系统性风险检测器 (MOD-RK-10)<br/>Ashare Systemic Risk Detector<br/>文件: core/ashare_systemic_risk_detector.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_concentration_monitor_py["集中度告警级别<br/>Concentration Risk Monitor — 集中度风险监控器<br/>(MOD-RK-07)<br/>Concentration Monitor<br/>文件: core/concentration_monitor.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_drawdown_tracker_py["回撤告警级别<br/>Drawdown Real-Time Tracker — 回撤实时追踪器<br/>(MOD-RK-011)<br/>Drawdown Tracker<br/>文件: core/drawdown_tracker.py<br/>(生产态 / production)"]
-    src_zephyr_risk_core_model_risk_audit_py["core/model_risk_audit<br/>D_RISK — Model Risk Auditor (MOD-RK-18)<br/>文件: core/model_risk_audit.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_risk_budget_allocator_py["风险预算输入数据非法<br/>Risk Budget Allocator — 风险预算分配器<br/>(MOD-RK-08)<br/>文件: core/risk_budget_allocator.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_risk_data_pipeline_py["core/risk_data_pipeline<br/>风险/核心包的risk_data_pipeline模块<br/>文件: core/risk_data_pipeline.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_risk_veto_engine_py["core/risk_veto_engine<br/>风险/核心包的risk_veto_engine模块<br/>文件: core/risk_veto_engine.py<br/>(设计态 / design)"]
@@ -74,13 +72,11 @@ flowchart TD
     tests_risk_core_test_orchestrator_crowding_integration_py["core/test_orchestrator_crowding_integration<br/>G4-S6 集成测试: 拥挤度监控 → 编排器 → 告警管道<br/>（G1↔G4 端到端）.<br/>文件: core<br/>/test_orchestrator_crowding_integration.py<br/>(生产态 / production)"]
     tests_risk_core_test_orchestrator_g3g5g6_integration_py["core/test_orchestrator_g3g5g6_integration<br/>G3/G5/G6 集成测试: 监控器 → 编排器 → 告警管道<br/>（端到端）.<br/>文件: core<br/>/test_orchestrator_g3g5g6_integration.py<br/>(生产态 / production)"]
     tests_risk_core_test_orchestrator_liquidity_integration_py["core/test_orchestrator_liquidity_integration<br/>G2-S6 集成测试: 流动性监控 → 编排器 → 告警管道<br/>（G1↔G2 端到端）.<br/>文件: core<br/>/test_orchestrator_liquidity_integration.py<br/>(生产态 / production)"]
-    src_zephyr_risk_core_agent_risk_monitor_py ~~~ src_zephyr_risk_core_ai_agent_monitor_py
-    src_zephyr_risk_core_ai_agent_monitor_py ~~~ src_zephyr_risk_core_ashare_stop_loss_engine_py
+    src_zephyr_risk_core_agent_risk_monitor_py ~~~ src_zephyr_risk_core_ashare_stop_loss_engine_py
     src_zephyr_risk_core_ashare_stop_loss_engine_py ~~~ src_zephyr_risk_core_ashare_systemic_risk_detector_py
     src_zephyr_risk_core_ashare_systemic_risk_detector_py ~~~ src_zephyr_risk_core_concentration_monitor_py
     src_zephyr_risk_core_concentration_monitor_py ~~~ src_zephyr_risk_core_drawdown_tracker_py
-    src_zephyr_risk_core_drawdown_tracker_py ~~~ src_zephyr_risk_core_model_risk_audit_py
-    src_zephyr_risk_core_model_risk_audit_py ~~~ src_zephyr_risk_core_risk_budget_allocator_py
+    src_zephyr_risk_core_drawdown_tracker_py ~~~ src_zephyr_risk_core_risk_budget_allocator_py
     src_zephyr_risk_core_risk_budget_allocator_py ~~~ src_zephyr_risk_core_risk_data_pipeline_py
     src_zephyr_risk_core_risk_data_pipeline_py ~~~ src_zephyr_risk_core_risk_veto_engine_py
     src_zephyr_risk_core_risk_veto_engine_py ~~~ src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
@@ -99,17 +95,21 @@ flowchart TD
     src_zephyr_risk_stop_loss_py["Stop-Loss & Kill Switch 兼容层<br/>D_RISK — Stop-Loss & Kill Switch 兼容层<br/>Stop Loss<br/>文件: risk/stop_loss.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_risk_decomposition_py ~~~ src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py ~~~ src_zephyr_risk_stop_loss_py
+    src_zephyr_risk_core_ai_agent_monitor_py["core/ai_agent_monitor<br/>D_RISK — AI/Agent Risk Monitor (MOD-RK-14)<br/>文件: core/ai_agent_monitor.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_alert_generator_py["告警生成器<br/>把风控报告里的违规项按严重程度分成黄橙红三级，再<br/>按级别推送到不同通道（日志/邮件/微信）<br/>文件: core/alert_generator.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_crowding_monitor_py["拥挤度监控器<br/>检测多个策略是否挤在同一个因子或同一批股票上，计<br/>算持仓重叠度和方向一致性<br/>文件: core/crowding_monitor.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_liquidity_monitor_py["流动性监控器<br/>计算Amihud非流动性指标和成交量萎缩比率，判断市场<br/>流动性是否恶化<br/>文件: core/liquidity_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_risk_core_model_risk_audit_py["core/model_risk_audit<br/>D_RISK — Model Risk Auditor (MOD-RK-18)<br/>文件: core/model_risk_audit.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_operational_risk_monitor_py["core/operational_risk_monitor<br/>D_RISK — Operational Risk Monitor (MOD-RK-19)<br/>文件: core/operational_risk_monitor.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_position_limit_checker_py["默认持仓Limit检查器<br/>D_RISK — Default Position Limit Checker<br/>文件: implementations<br/>/default_position_limit_checker.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_risk_limits_calculator_py["默认风险Limits计算器<br/>D_RISK — Default Risk Limits Calculator<br/>文件: implementations<br/>/default_risk_limits_calculator.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_risk_validator_py["默认风险验证器<br/>D_RISK — Default Risk Validator<br/>文件: implementations/default_risk_validator.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_stop_loss_engine_py["默认止损亏损引擎<br/>D_RISK — Default Stop-Loss Engine<br/>Default Stop Loss Engine<br/>文件: implementations<br/>/default_stop_loss_engine.py<br/>(生产态 / production)"]
+    src_zephyr_risk_core_ai_agent_monitor_py ~~~ src_zephyr_risk_core_alert_generator_py
     src_zephyr_risk_core_alert_generator_py ~~~ src_zephyr_risk_core_crowding_monitor_py
     src_zephyr_risk_core_crowding_monitor_py ~~~ src_zephyr_risk_core_liquidity_monitor_py
-    src_zephyr_risk_core_liquidity_monitor_py ~~~ src_zephyr_risk_core_operational_risk_monitor_py
+    src_zephyr_risk_core_liquidity_monitor_py ~~~ src_zephyr_risk_core_model_risk_audit_py
+    src_zephyr_risk_core_model_risk_audit_py ~~~ src_zephyr_risk_core_operational_risk_monitor_py
     src_zephyr_risk_core_operational_risk_monitor_py ~~~ src_zephyr_risk_implementations_default_position_limit_checker_py
     src_zephyr_risk_implementations_default_position_limit_checker_py ~~~ src_zephyr_risk_implementations_default_risk_limits_calculator_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py ~~~ src_zephyr_risk_implementations_default_risk_validator_py
@@ -152,6 +152,8 @@ flowchart TD
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_operational_risk_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_ai_agent_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_model_risk_audit_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
@@ -226,14 +228,14 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_risk_core_alert_generator_py,src_zephyr_risk_core_ashare_stop_loss_engine_py,src_zephyr_risk_core_ashare_systemic_risk_detector_py,src_zephyr_risk_core_concentration_monitor_py,src_zephyr_risk_core_crowding_monitor_py,src_zephyr_risk_core_daily_auditor_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_core_liquidity_monitor_py,src_zephyr_risk_core_operational_risk_monitor_py,src_zephyr_risk_core_risk_budget_allocator_py,src_zephyr_risk_core_risk_decomposition_py,src_zephyr_risk_core_stress_test_engine_py,src_zephyr_risk_core_tail_risk_monitor_py,src_zephyr_risk_core_var_calculator_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py,tests_risk_core_test_ai_agent_monitor_py,tests_risk_core_test_alert_generator_py,tests_risk_core_test_crowding_monitor_py,tests_risk_core_test_liquidity_monitor_py,tests_risk_core_test_model_risk_audit_py,tests_risk_core_test_operational_risk_monitor_py,tests_risk_core_test_orchestrator_alert_integration_py,tests_risk_core_test_orchestrator_crowding_integration_py,tests_risk_core_test_orchestrator_g3g5g6_integration_py,tests_risk_core_test_orchestrator_liquidity_integration_py production
-    class src_zephyr_risk_core_agent_risk_monitor_py,src_zephyr_risk_core_ai_agent_monitor_py,src_zephyr_risk_core_model_risk_audit_py,src_zephyr_risk_core_risk_data_pipeline_py,src_zephyr_risk_core_risk_veto_engine_py design
+    class src_zephyr_risk_core_ai_agent_monitor_py,src_zephyr_risk_core_alert_generator_py,src_zephyr_risk_core_ashare_stop_loss_engine_py,src_zephyr_risk_core_ashare_systemic_risk_detector_py,src_zephyr_risk_core_concentration_monitor_py,src_zephyr_risk_core_crowding_monitor_py,src_zephyr_risk_core_daily_auditor_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_core_liquidity_monitor_py,src_zephyr_risk_core_model_risk_audit_py,src_zephyr_risk_core_operational_risk_monitor_py,src_zephyr_risk_core_risk_budget_allocator_py,src_zephyr_risk_core_risk_decomposition_py,src_zephyr_risk_core_stress_test_engine_py,src_zephyr_risk_core_tail_risk_monitor_py,src_zephyr_risk_core_var_calculator_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py,tests_risk_core_test_ai_agent_monitor_py,tests_risk_core_test_alert_generator_py,tests_risk_core_test_crowding_monitor_py,tests_risk_core_test_liquidity_monitor_py,tests_risk_core_test_model_risk_audit_py,tests_risk_core_test_operational_risk_monitor_py,tests_risk_core_test_orchestrator_alert_integration_py,tests_risk_core_test_orchestrator_crowding_integration_py,tests_risk_core_test_orchestrator_g3g5g6_integration_py,tests_risk_core_test_orchestrator_liquidity_integration_py production
+    class src_zephyr_risk_core_agent_risk_monitor_py,src_zephyr_risk_core_risk_data_pipeline_py,src_zephyr_risk_core_risk_veto_engine_py design
     class D_POSITION,D_SECURITY,D_EX_CORE,D_INTELLIGENCE,D_TRADING,D_INFRASTRUCTURE,D_SHARED,D_PF_CORE,D_GOVERNANCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
 
-> 仅展示已上线运行的模块（共 35 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
+> 仅展示已上线运行的模块（共 37 个），不含跨域外部节点。跨域依赖见下方跨域依赖章节。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -274,17 +276,21 @@ flowchart TD
     src_zephyr_risk_stop_loss_py["Stop-Loss & Kill Switch 兼容层<br/>D_RISK — Stop-Loss & Kill Switch 兼容层<br/>Stop Loss<br/>文件: risk/stop_loss.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_risk_decomposition_py ~~~ src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py ~~~ src_zephyr_risk_stop_loss_py
+    src_zephyr_risk_core_ai_agent_monitor_py["core/ai_agent_monitor<br/>D_RISK — AI/Agent Risk Monitor (MOD-RK-14)<br/>文件: core/ai_agent_monitor.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_alert_generator_py["告警生成器<br/>把风控报告里的违规项按严重程度分成黄橙红三级，再<br/>按级别推送到不同通道（日志/邮件/微信）<br/>文件: core/alert_generator.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_crowding_monitor_py["拥挤度监控器<br/>检测多个策略是否挤在同一个因子或同一批股票上，计<br/>算持仓重叠度和方向一致性<br/>文件: core/crowding_monitor.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_liquidity_monitor_py["流动性监控器<br/>计算Amihud非流动性指标和成交量萎缩比率，判断市场<br/>流动性是否恶化<br/>文件: core/liquidity_monitor.py<br/>(生产态 / production)"]
+    src_zephyr_risk_core_model_risk_audit_py["core/model_risk_audit<br/>D_RISK — Model Risk Auditor (MOD-RK-18)<br/>文件: core/model_risk_audit.py<br/>(生产态 / production)"]
     src_zephyr_risk_core_operational_risk_monitor_py["core/operational_risk_monitor<br/>D_RISK — Operational Risk Monitor (MOD-RK-19)<br/>文件: core/operational_risk_monitor.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_position_limit_checker_py["默认持仓Limit检查器<br/>D_RISK — Default Position Limit Checker<br/>文件: implementations<br/>/default_position_limit_checker.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_risk_limits_calculator_py["默认风险Limits计算器<br/>D_RISK — Default Risk Limits Calculator<br/>文件: implementations<br/>/default_risk_limits_calculator.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_risk_validator_py["默认风险验证器<br/>D_RISK — Default Risk Validator<br/>文件: implementations/default_risk_validator.py<br/>(生产态 / production)"]
     src_zephyr_risk_implementations_default_stop_loss_engine_py["默认止损亏损引擎<br/>D_RISK — Default Stop-Loss Engine<br/>Default Stop Loss Engine<br/>文件: implementations<br/>/default_stop_loss_engine.py<br/>(生产态 / production)"]
+    src_zephyr_risk_core_ai_agent_monitor_py ~~~ src_zephyr_risk_core_alert_generator_py
     src_zephyr_risk_core_alert_generator_py ~~~ src_zephyr_risk_core_crowding_monitor_py
     src_zephyr_risk_core_crowding_monitor_py ~~~ src_zephyr_risk_core_liquidity_monitor_py
-    src_zephyr_risk_core_liquidity_monitor_py ~~~ src_zephyr_risk_core_operational_risk_monitor_py
+    src_zephyr_risk_core_liquidity_monitor_py ~~~ src_zephyr_risk_core_model_risk_audit_py
+    src_zephyr_risk_core_model_risk_audit_py ~~~ src_zephyr_risk_core_operational_risk_monitor_py
     src_zephyr_risk_core_operational_risk_monitor_py ~~~ src_zephyr_risk_implementations_default_position_limit_checker_py
     src_zephyr_risk_implementations_default_position_limit_checker_py ~~~ src_zephyr_risk_implementations_default_risk_limits_calculator_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py ~~~ src_zephyr_risk_implementations_default_risk_validator_py
@@ -327,6 +333,8 @@ flowchart TD
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_operational_risk_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_ai_agent_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_model_risk_audit_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
@@ -362,30 +370,26 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_risk_core_alert_generator_py,src_zephyr_risk_core_ashare_stop_loss_engine_py,src_zephyr_risk_core_ashare_systemic_risk_detector_py,src_zephyr_risk_core_concentration_monitor_py,src_zephyr_risk_core_crowding_monitor_py,src_zephyr_risk_core_daily_auditor_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_core_liquidity_monitor_py,src_zephyr_risk_core_operational_risk_monitor_py,src_zephyr_risk_core_risk_budget_allocator_py,src_zephyr_risk_core_risk_decomposition_py,src_zephyr_risk_core_stress_test_engine_py,src_zephyr_risk_core_tail_risk_monitor_py,src_zephyr_risk_core_var_calculator_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py,tests_risk_core_test_ai_agent_monitor_py,tests_risk_core_test_alert_generator_py,tests_risk_core_test_crowding_monitor_py,tests_risk_core_test_liquidity_monitor_py,tests_risk_core_test_model_risk_audit_py,tests_risk_core_test_operational_risk_monitor_py,tests_risk_core_test_orchestrator_alert_integration_py,tests_risk_core_test_orchestrator_crowding_integration_py,tests_risk_core_test_orchestrator_g3g5g6_integration_py,tests_risk_core_test_orchestrator_liquidity_integration_py production
+    class src_zephyr_risk_core_ai_agent_monitor_py,src_zephyr_risk_core_alert_generator_py,src_zephyr_risk_core_ashare_stop_loss_engine_py,src_zephyr_risk_core_ashare_systemic_risk_detector_py,src_zephyr_risk_core_concentration_monitor_py,src_zephyr_risk_core_crowding_monitor_py,src_zephyr_risk_core_daily_auditor_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_core_liquidity_monitor_py,src_zephyr_risk_core_model_risk_audit_py,src_zephyr_risk_core_operational_risk_monitor_py,src_zephyr_risk_core_risk_budget_allocator_py,src_zephyr_risk_core_risk_decomposition_py,src_zephyr_risk_core_stress_test_engine_py,src_zephyr_risk_core_tail_risk_monitor_py,src_zephyr_risk_core_var_calculator_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py,tests_risk_core_test_ai_agent_monitor_py,tests_risk_core_test_alert_generator_py,tests_risk_core_test_crowding_monitor_py,tests_risk_core_test_liquidity_monitor_py,tests_risk_core_test_model_risk_audit_py,tests_risk_core_test_operational_risk_monitor_py,tests_risk_core_test_orchestrator_alert_integration_py,tests_risk_core_test_orchestrator_crowding_integration_py,tests_risk_core_test_orchestrator_g3g5g6_integration_py,tests_risk_core_test_orchestrator_liquidity_integration_py production
 ```
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 5 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 3 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
     src_zephyr_risk_core_agent_risk_monitor_py["core/agent_risk_monitor<br/>风险/核心包的agent_risk_monitor模块<br/>文件: core/agent_risk_monitor.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_ai_agent_monitor_py["core/ai_agent_monitor<br/>D_RISK — AI/Agent Risk Monitor (MOD-RK-14)<br/>文件: core/ai_agent_monitor.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_model_risk_audit_py["core/model_risk_audit<br/>D_RISK — Model Risk Auditor (MOD-RK-18)<br/>文件: core/model_risk_audit.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_risk_data_pipeline_py["core/risk_data_pipeline<br/>风险/核心包的risk_data_pipeline模块<br/>文件: core/risk_data_pipeline.py<br/>(设计态 / design)"]
     src_zephyr_risk_core_risk_veto_engine_py["core/risk_veto_engine<br/>风险/核心包的risk_veto_engine模块<br/>文件: core/risk_veto_engine.py<br/>(设计态 / design)"]
-    src_zephyr_risk_core_agent_risk_monitor_py ~~~ src_zephyr_risk_core_ai_agent_monitor_py
-    src_zephyr_risk_core_ai_agent_monitor_py ~~~ src_zephyr_risk_core_model_risk_audit_py
-    src_zephyr_risk_core_model_risk_audit_py ~~~ src_zephyr_risk_core_risk_data_pipeline_py
+    src_zephyr_risk_core_agent_risk_monitor_py ~~~ src_zephyr_risk_core_risk_data_pipeline_py
     src_zephyr_risk_core_risk_data_pipeline_py ~~~ src_zephyr_risk_core_risk_veto_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_risk_core_agent_risk_monitor_py,src_zephyr_risk_core_ai_agent_monitor_py,src_zephyr_risk_core_model_risk_audit_py,src_zephyr_risk_core_risk_data_pipeline_py,src_zephyr_risk_core_risk_veto_engine_py design
+    class src_zephyr_risk_core_agent_risk_monitor_py,src_zephyr_risk_core_risk_data_pipeline_py,src_zephyr_risk_core_risk_veto_engine_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
