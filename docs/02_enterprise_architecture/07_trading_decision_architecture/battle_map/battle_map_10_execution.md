@@ -150,6 +150,7 @@ Almgren-Chriss 最优执行框架：执行计划生成(基于TCA历史+策略容
 算法清单(XS-05 Algo Trading Engine)：TWAP/VWAP/ICEBERG/POV/Implementation Shortfall/ALT(激进流动性摄取)。
 时变参与率(降本15-25%)：开盘(9:30-10:00)15% / 上午(10:00-11:30)10% / 午盘(13:00-14:00)5% / 尾盘(14:00-15:00)15%。
 XS-01 Optimal Order Router：延迟/成交率/费用三维加权选最优券商。XS-04 Execution Scheduler：TWAP/VWAP时间切片调度。XS-11 Algo Execution Selector：按订单特征(大小/紧急度/流动性)自动选算法。
+🆕XS-EXT 扩展路由模块系列（5个）：✅滑点分析已建；❌执行质量评分/交易成本优化/多框架路由/执行引擎智能路由（门禁：需多市场环境）。
 miniQMT个人账户不支持券商端VWAP/TWAP算法接口，本系统自行实现拆单逻辑。SOR不做风控判断(风控由BM-EXE-01/04做)。
 
 
@@ -322,8 +323,8 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L07-001 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-001 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-002 | primary | stable | stable |
+| depgraph | MOD-EX_SOR_EXT-001 | primary | stable | stable |
+| depgraph | MOD-EX_SOR_EXT-002 | primary | stable | generated |
 | depgraph | MOD-EX_SOR_EXT-003 | primary | stable | generated |
 | depgraph | MOD-EX-012 | supplement | planned | planned |
 | depgraph | MOD-EX-036 | supplement | planned | planned |

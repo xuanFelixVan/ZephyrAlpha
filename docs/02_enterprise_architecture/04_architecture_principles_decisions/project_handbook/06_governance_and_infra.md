@@ -25,7 +25,7 @@ language: zh
 `gov_enforcement/commit_gates/` 下 ~80 个 gate（AST/diff/路径/命名/依赖/blueprint 格式/depgraph 预登记/能力反查等维度），按 priority 升序执行。
 
 <!-- AUTO-START:gate_counts -->
-<!-- 数据源：commit_gates 目录扫描 | 最后同步：2026-08-04 -->
+<!-- 数据源：commit_gates 目录扫描 | 最后同步：2026-08-05 -->
 
 | 指标 | 值 |
 |------|----|

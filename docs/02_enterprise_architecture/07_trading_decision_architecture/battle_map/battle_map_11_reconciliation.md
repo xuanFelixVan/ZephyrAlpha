@@ -139,7 +139,7 @@ L5/运营层。C-017 交易运营五子能力：①保证金管理(D-TRADING-04 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-TRADING-003 | primary | planned | generated |
-| depgraph | MOD-RPT-027 | supplement | planned | stable |
+| depgraph | MOD-RPT-027 | supplement | planned | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -184,7 +184,7 @@ L5 层。C-010 报告复盘：把运营数据加工成复盘报告，作为闭�
 **机制说明**：
 
 L5 层。C-007 闭环优化：反馈到 L1~L4+L3.5 每层（IC衰减→因子替代、准确率监控→信号退役、漂移检测→模型重训练、A/B 淘汰、阈值校准）。每轮迭代改动必须经过 C-003 回测门禁。🆕v8.0
-Alpha衰减独立监控（策略级alpha衰减检测→自动降权/下线/通知人工）+ 🆕密度预测偏差反馈（校准度/CRPS/尾部校准→模型微调/Phase升级）+ 🆕漂移检测三闭环（§29.5 事前特征漂移PSI→事中在线适应→事后C-007重训）+ 🆕v8.2 R&D-Agent-Quant 因子↔模型双向评估（§29.14新增3.6，C-007第15维度）。
+Alpha衰减独立监控（策略级alpha衰减检测→自动降权/下线/通知人工）+ 🆕密度预测偏差反馈（校准度/CRPS/尾部校准→模型微调/Phase升级）+ 🆕漂移检测三闭环（§29.5 事前特征漂移PSI→事中在线适应→事后C-007重训）+ 🆕v8.2 R&D-Agent-Quant 因子↔模型双向评估（§29.14新增3.6，C-007第15维度）+ C-022~C-026 五大自迭代增强 + C-041 元级迭代（元级迭代与二阶优化见 BM-REC-03-D）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -566,7 +566,7 @@ MOD-RPT-026 ashare_performance_audit.py(stable)+MOD-RPT-027 ashare_trade_record_
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-RPT-026 | primary | production | generated |
-| depgraph | MOD-RPT-027 | supplement | production | stable |
+| depgraph | MOD-RPT-027 | supplement | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 

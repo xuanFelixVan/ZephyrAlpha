@@ -10,7 +10,7 @@ date: 2026-08-05
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_02_model_training.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §model_training 阶段，14 环节（15 锚点）。
+> battle_map §model_training 阶段，14 环节（16 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -20,7 +20,7 @@ date: 2026-08-05
 |------|------|-------|-------|
 | 阶段 | 模型训练（model_training） | Stage | 模型训练 |
 | 环节数 | 14 | Steps | 14 |
-| 锚点数（双向对齐） | 15 | Anchors (Bidirectional) | 15 |
+| 锚点数（双向对齐） | 16 | Anchors (Bidirectional) | 16 |
 | 流转边 | 6 | Edges | 6 |
 | 状态分布 | 🟧 设计态（待施工）=8 ｜ 🟨 候选态（候选池）=5 ｜ 🟦 运营态（已建）=1 | State Distribution | 🟧 设计态（待施工）=8 ｜ 🟨 候选态（候选池）=5 ｜ 🟦 运营态（已建）=1 |
 
@@ -116,7 +116,7 @@ C-029 ML模型工厂扩展能力（§29）：模型注册与实验管理（§29.
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：盘后定时/研究员手动/漂移触发(BM-MT-05)；②消费：BM-RES-01 特征存储(PIT)+BM-RES-02 实验追踪；③参数：PyTorch→ONNX、seed管理、config快照、S4 DSL代码生成、AST沙箱；④数据流：特征(PIT)→训练→验证→ONNX模型→BM-MT-02晋升→D-ML-SERVE；⑤代码：MT-01 TrainingPipeline（stable, 已有ABC）；⑥降级：训练失败→回退上一版模型+告警(不阻塞推理)。
+①触发：盘后定时/研究员手动/漂移触发(BM-MT-05)；②消费：BM-RES-01 特征存储(PIT)+BM-RES-02 实验追踪；③参数：PyTorch→ONNX、seed管理、config快照、S4 DSL代码生成、AST沙箱、硬件门禁=RTX3090/RTX4090 24GB（Kronos-mini/base <1GB显存可跑；Chronos/MOMENT/Moirai 等 large TSFM 需云端API或GPU≥40GB，🔒门禁）；④数据流：特征(PIT)→训练→验证→ONNX模型→BM-MT-02晋升→D-ML-SERVE；GPU显存调度预算：盘中33%-42%(8-10GB/24GB)、盘后33%-50%、盘前因子全量≥40%、CUDA计算核心盘前/回测≥60%、任何时段<90%硬上限（低于下限=闲置检测线不阻断）、模型推理延迟<100ms；⑤代码：MT-01 TrainingPipeline（stable, 已有ABC）；⑥降级：训练失败→回退上一版模型+告警(不阻塞推理)。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -125,6 +125,7 @@ C-029 ML模型工厂扩展能力（§29）：模型注册与实验管理（§29.
 |---|---|---|---|---|
 | depgraph | MOD-ML-001 | primary | planned | planned |
 | candidate | CAND-HARVEST-0728 | supplement | planned | — |
+| depgraph | MOD-ML-003 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：production ｜ **层**：L11 ｜ **阶段**：model_training
 
@@ -234,7 +235,7 @@ BM-MT-01 训练流水线的子环节（depth=1），🆕v8.0 可建设项#15（M
 
 MT-02 ExperimentTracker 提供 A/B实验+Champion-Challenger+统计验证+自动晋升（wandb集成、实验血缘追踪、
 DSR/CPCV v2/White's Reality/Probabilistic BT）。是模型上线的"裁判"，防止过拟合模型混入生产。
-与 D-ML-SERVE INV-011 影子验证联动——晋升前必须影子验证通过。
+与 D-ML-SERVE INV-011 影子验证联动——晋升前必须影子验证通过。🆕v3.5 策略冷启动协议（⑦上线审批→⑧实盘监控之间的过渡机制：观察期+渐进建仓，新策略仓位上限=正常×30%，风控驱动与市场无关，可与分批建仓叠加）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -250,7 +251,7 @@ DSR/CPCV v2/White's Reality/Probabilistic BT）。是模型上线的"裁判"，�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-MT-01 训练完成；②消费：新模型+现役Champion模型+回测指标；③参数：A/B实验、Champion-Challenger、DSR/CPCV v2/White's Reality/Probabilistic BT、统计显著性阈值；④数据流：新模型→A/B对比→统计验证→晋升/留观→D-ML-SERVE影子验证；⑤代码：MT-02 ExperimentTracker（stable, 已有）；⑥降级：统计验证未就绪→人工review决定晋升(无自动门禁)。
+①触发：BM-MT-01 训练完成；②消费：新模型+现役Champion模型+回测指标；③参数：A/B实验、Champion-Challenger、DSR/CPCV v2/White's Reality/Probabilistic BT、统计显著性阈值、4级决策门控动作枚举=APPROVE/REDUCE/REJECT/FLATTEN（学习系统S5）、PurgeGap验证、TrialResult契约；④数据流：新模型→A/B对比→统计验证→晋升/留观→D-ML-SERVE影子验证；⑤代码：MT-02 ExperimentTracker（stable, 已有）；⑥降级：统计验证未就绪→人工review决定晋升(无自动门禁)。
 
 
 **锚点（环节↔模块双向关联）**：

@@ -197,7 +197,7 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | generated |
+| depgraph | MOD-L05-001 | supplement | stable | stable |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -332,7 +332,7 @@ EU AI Act合规扩展。针对欧盟AI法规的额外要求：AI系统风险分�
 
 **机制说明**：
 
-L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻辑驱动轨+数据驱动轨(AI Discovery)+人工指令轨+应急保命轨四路信号融合为统一决策流，优先级 应急>人工>自动。
+L3 层 v8.0。四轨融合器(MTF，Multi-Track Fusion，v8.0可建设项#8)嵌入 C-005 和决策编排器之间，将逻辑驱动轨+数据驱动轨(AI Discovery)+人工指令轨+应急保命轨四路信号融合为统一决策流，优先级 应急>人工>自动。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -355,7 +355,7 @@ L3 层 v8.0。四轨融合器(MTF)嵌入 C-005 和决策编排器之间，将逻
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | planned | stable |
+| depgraph | MOD-PF-006 | primary | planned | generated |
 | candidate | CAND-HARVEST-0926 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -732,7 +732,7 @@ BM-BUY-02 四轨融合的子环节（depth=1）。逻辑驱动轨接收 BM-BUY-0
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：BM-BUY-01 买入预案就绪；②消费：BM-BUY-01 多情景对策 + C-006 策略库；
-③参数：scenario_count=7、priority=auto（最低）；④数据流：8态+策略库→买入预案→逻辑轨信号→MTF 仲裁；
+③参数：scenario_count=7、priority=auto（最低）、🆕v7.0多策略共振融合层（Strategy Convergence Fusion：全部同向→强共振/多数同向→中等/分歧→弱→因子直通裁决，铁律=入场和出场逻辑100%匹配）；④数据流：8态+策略库→买入预案→逻辑轨信号→MTF 仲裁；
 ⑤代码：C-005 L3 层；⑥降级：C-005 失效→固定策略查表。
 
 
@@ -788,6 +788,8 @@ v8.0 四轨中作为轨道1逻辑驱动的补充路径（L585）；同机制在�
 
 BM-BUY-02 四轨融合的子环节（depth=1）。数据驱动轨由 AI Discovery 模块驱动，
 基于实时量能、因子突变、分布特征工程等数据信号发现交易机会，与逻辑驱动轨并行运行。
+🆕v7.0 轨道2模型族：端到端DL（原始量价→方向信号）/RL策略（状态→动作，自适应市场变化，DQN 等，🆕RL增强）/Alpha挖掘（GFlowNet/遗传规划自动发现）
+→ AI信号融合 → AI级决策信号。
 优先级与逻辑轨同级（自动档），两轨信号在 MTF 中合并去重后输出。
 
 
@@ -805,7 +807,7 @@ BM-BUY-02 四轨融合的子环节（depth=1）。数据驱动轨由 AI Discover
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：实时数据信号（量能/因子突变）；②消费：BM-SEL-02 因子池 + 量能/分布特征；
-③参数：discovery_mode=AI、priority=auto；④数据流：因子+量能→AI Discovery→数据轨信号→MTF 仲裁；
+③参数：discovery_mode=AI、priority=auto、轨道2模型族=端到端DL/RL策略(DQN)/Alpha挖掘(GFlowNet/遗传规划)；④数据流：因子+量能→AI Discovery→数据轨信号→MTF 仲裁；
 ⑤代码：轨道2 AI Discovery；⑥降级：AI Discovery 不可用→仅逻辑轨单线决策。
 
 

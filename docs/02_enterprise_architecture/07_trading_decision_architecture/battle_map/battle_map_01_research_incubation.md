@@ -61,7 +61,7 @@ flowchart TD
         BM_RES_01["【BM-RES-01 研究数据与特征存储】<br/>研究员的数据底盘——把数据集版本化管起来、追踪血缘<br/>、打质量分；特征分在线离线两套存，保证 PIT<br/>正确不偷看未来。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Research Data &amp; Feature Store】"]
         BM_RES_01_A["【BM-RES-01-A 数据集版本化与血缘追踪】<br/>把数据集像 Git<br/>一样管版本——每次改动留快照、记血缘，知道数据从哪<br/>来、经过什么变换、去了哪。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Dataset Versioning &amp; Lineage】"]
         BM_RES_01_B["【BM-RES-01-B 特征存储与PIT正确性】<br/>特征分在线离线两套存，拉特征时只返回当时已知的值<br/>（PIT），绝不偷看未来——回测可信的硬底线。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Feature Store &amp; PIT Correctness】"]
-        BM_RES_01_C["【BM-RES-01-C 研究数据沙箱】<br/>给研究员一个隔离的沙箱环境，随便折腾不影响生产数<br/>据，实验完了一键清理。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Data Sandbox】"]
+        BM_RES_01_C["【BM-RES-01-C 研究数据沙箱<br/>（含🆕联邦学习门禁：数据不出域的联邦学习需过安全<br/>门禁审批）】<br/>给研究员一个隔离的沙箱环境，随便折腾不影响生产数<br/>据，实验完了一键清理。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Data Sandbox】"]
         BM_RES_01_D["【BM-RES-01-D 研究资产版本化】<br/>因子、模型、策略这些研究资产统一打版本号，跨项目<br/>复用时知道用的是哪一版。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Asset Versioning】"]
         BM_RES_01 -.->|嵌套| BM_RES_01_A
         BM_RES_01 -.->|嵌套| BM_RES_01_B
@@ -158,7 +158,7 @@ S1知识清洗与结构化层。把多模态采集的脏知识(含噪音/重复/
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-RES-06 LLM研究Agent采集多模态材料后；②消费：原始研究材料（论文/研报/新闻/财报文本）；③参数：NLP清洗流水线、实体抽取、结构化模板、去重去噪；④数据流：原始材料→清洗→结构化→BM-RES-03假设管理沉淀；⑤代码映射：待开发（planned，D_RESEARCH/D_INTELLIGENCE域）；⑥降级：清洗失败→保留原始材料人工处理。
+①触发：BM-RES-06 LLM研究Agent采集多模态材料后；②消费：原始研究材料（论文/研报/新闻/财报文本）；③参数：NLP清洗流水线、实体抽取、结构化模板、去重去噪、知识契约=RawKnowledgePacket→StructuredKnowledgeFragment（实体+关系+时序边→支持多跳推理）；④数据流：原始材料→清洗→结构化→BM-RES-03假设管理沉淀；⑤代码映射：待开发（planned，D_RESEARCH/D_INTELLIGENCE域）；⑥降级：清洗失败→保留原始材料人工处理。
 
 **锚点（环节↔模块双向关联）**：
 
@@ -189,7 +189,7 @@ S2知识分类与策略提取层。把结构化知识按类型分类(事实/规�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-RES-08 知识清洗完成后；②消费：结构化知识+历史策略库+BM-RES-03假设；③参数：知识类型分类体系(6类)、策略提取流程、输出契约；④数据流：结构化知识→分类→策略提取→BM-RES-07策略迭代升级；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：提取失败→人工标注策略要素。
+①触发：BM-RES-08 知识清洗完成后；②消费：结构化知识+历史策略库+BM-RES-03假设；③参数：知识类型分类体系(6类)、策略提取流程、输出契约=ClassifiedKnowledgePackage、因子矿工（Factor Mining Agent，v7.0 S4）；④数据流：结构化知识→分类→策略提取→BM-RES-07策略迭代升级；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：提取失败→人工标注策略要素。
 
 **锚点（环节↔模块双向关联）**：
 
@@ -220,7 +220,7 @@ S3模块映射与工厂匹配层。研究发现映射到现有模块(复用)，�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-RES-09 策略提取后/新模块需求触发；②消费：策略规格+现有模块工厂库+BM-MT-01训练基座契约；③参数：模块工厂架构、映射匹配规则、与现有工厂关系；④数据流：策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：匹配失败→全新建模块(走BM-MT-01-B AI代码生成)。
+①触发：BM-RES-09 策略提取后/新模块需求触发；②消费：策略规格+现有模块工厂库+BM-MT-01训练基座契约；③参数：模块工厂架构、映射匹配规则、与现有工厂关系、输出契约=NewModule/ModuleRegistry/ModuleMappingResult；④数据流：策略规格→工厂匹配→模块规格→BM-MT-01-B AI辅助代码生成；⑤代码映射：待开发（planned，D_RESEARCH/D_ML_TRAIN域）；⑥降级：匹配失败→全新建模块(走BM-MT-01-B AI代码生成)。
 
 **锚点（环节↔模块双向关联）**：
 
@@ -366,7 +366,7 @@ Git-like版本管理→数据快照→回滚→血缘追踪(来源→变换→�
 
 **有效状态**：🟨 候选态（候选池） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：research_incubation
 
-### BM-RES-01-C 研究数据沙箱 / Research Data Sandbox
+### BM-RES-01-C 研究数据沙箱（含🆕联邦学习门禁：数据不出域的联邦学习需过安全门禁审批） / Research Data Sandbox
 
 > **大白话**：给研究员一个隔离的沙箱环境，随便折腾不影响生产数据，实验完了一键清理。
 
@@ -1056,7 +1056,7 @@ D-RESEARCH-18 研究资产版本化与复用管理器 管研究资产(因子/模
 
 **机制说明**：
 
-权重调整→新因子挖掘→策略迭代升级→错误模式学习→系统进化方向建议。承载模块: D-RESEARCH-17。出处: 20-D-RESEARCH §1 + §12.0 R-97
+权重调整→新因子挖掘→策略迭代升级→错误模式学习→系统进化方向建议。L3策略工厂自动发现扩展（🆕v8.2）：GP/SR（遗传规划/符号回归）+FactorMAD+R&D-Agent+🆕v9.0 LLM进化搜索（LLM引导的策略代码进化）。承载模块: D-RESEARCH-17。出处: 20-D-RESEARCH §1 + §12.0 R-97
 
 **6 件套（结构化，DB indicators JSONB）**：
 

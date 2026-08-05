@@ -20,7 +20,7 @@ date: 2026-08-05
 |------|------|-------|-------|
 | 环节总数 | 330 | Steps | 330 |
 | 流转边 | 119 | Edges | 119 |
-| 锚点总数（双向对齐枢纽） | 549 | Anchors (Bidirectional Hub) | 549 |
+| 锚点总数（双向对齐枢纽） | 550 | Anchors (Bidirectional Hub) | 550 |
 | 无锚点环节（BM-INV-001） | 0 | No-Anchor Steps | 0 |
 | 运营态环节 | 220 | Production Steps | 220 |
 | 设计态环节 | 57 | Design Steps | 57 |
@@ -106,7 +106,7 @@ flowchart TD
         BM_RES_01["【BM-RES-01 研究数据与特征存储】<br/>研究员的数据底盘——把数据集版本化管起来、追踪血缘<br/>、打质量分；特征分在线离线两套存，保证 PIT<br/>正确不偷看未来。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Research Data &amp; Feature Store】"]
         BM_RES_01_A["【BM-RES-01-A 数据集版本化与血缘追踪】<br/>把数据集像 Git<br/>一样管版本——每次改动留快照、记血缘，知道数据从哪<br/>来、经过什么变换、去了哪。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Dataset Versioning &amp; Lineage】"]
         BM_RES_01_B["【BM-RES-01-B 特征存储与PIT正确性】<br/>特征分在线离线两套存，拉特征时只返回当时已知的值<br/>（PIT），绝不偷看未来——回测可信的硬底线。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Feature Store &amp; PIT Correctness】"]
-        BM_RES_01_C["【BM-RES-01-C 研究数据沙箱】<br/>给研究员一个隔离的沙箱环境，随便折腾不影响生产数<br/>据，实验完了一键清理。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Data Sandbox】"]
+        BM_RES_01_C["【BM-RES-01-C 研究数据沙箱<br/>（含🆕联邦学习门禁：数据不出域的联邦学习需过安全<br/>门禁审批）】<br/>给研究员一个隔离的沙箱环境，随便折腾不影响生产数<br/>据，实验完了一键清理。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Data Sandbox】"]
         BM_RES_01_D["【BM-RES-01-D 研究资产版本化】<br/>因子、模型、策略这些研究资产统一打版本号，跨项目<br/>复用时知道用的是哪一版。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【Research Asset Versioning】"]
         BM_RES_01 -.->|嵌套| BM_RES_01_A
         BM_RES_01 -.->|嵌套| BM_RES_01_B

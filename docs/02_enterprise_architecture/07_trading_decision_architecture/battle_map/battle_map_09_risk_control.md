@@ -228,7 +228,7 @@ RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTO
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：风控官配置策略/定时review；②消费：D-EX-CORE 持仓快照+D-FACTOR 因子暴露；③参数：策略状态机、9种限额类型、消耗追踪、预警分级、审批流；④数据流：策略配置→限额管理→CTR-003 RiskLimits→BM-RC-02盘前检查+BM-RC-04盘中监控；⑤代码：RK-01 risk_manager（stable, production）+RK-06 default_position_limit_checker（stable, production）；⑥降级：限额管理器未就绪→硬编码保守限额(无动态调整)。
+①触发：风控官配置策略/定时review；②消费：D-EX-CORE 持仓快照+D-FACTOR 因子暴露；③参数：策略状态机、9种限额类型、消耗追踪、预警分级、审批流、风控验证规则=13条主规则(VR-001~VR-013)+2条子规则(VR-002a/002b)+熔断器模式+4层隔离(代码/数据/权限/审计)、HC-RISK-01~08硬约束（风险架构）；④数据流：策略配置→限额管理→CTR-003 RiskLimits→BM-RC-02盘前检查+BM-RC-04盘中监控；⑤代码：RK-01 risk_manager（stable, production）+RK-06 default_position_limit_checker（stable, production）；⑥降级：限额管理器未就绪→硬编码保守限额(无动态调整)。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1231,7 +1231,7 @@ EVT/POT模型+Copula尾部依赖+跳跃检测+FRTB加价。承载模块: MOD-RK-
 
 **机制说明**：
 
-拥挤度计算(因子拥挤+策略逻辑相似度)+去杠杆+悖论防护。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L248
+拥挤度计算(因子拥挤+策略逻辑相似度)+去杠杆+悖论防护。🆕v8.2 C-045深度增强（§29.39裁定16）：策略逻辑相似度（超越因子暴露相似度的表层比较，深入策略代码逻辑判断实质等价，如两策略因子不同但交易逻辑同构→仍判定为拥挤）+五种去杠杆原型匹配+拥挤度悖论防护+行业研报因子推荐频率监控。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md L248
 
 **6 件套（结构化，DB indicators JSONB）**：
 

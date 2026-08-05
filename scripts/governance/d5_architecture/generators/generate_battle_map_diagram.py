@@ -1543,6 +1543,8 @@ _CROSS_CUTTING_RENDERERS = {
     # 以下 2 项来源交易决策架构 v7.0/v8.2（因子直通层/投票优先多Agent，§5.4.3 横切归轨，2026-08-05）
     "factor_direct_fusion": _format_generic_cross_cutting_md,
     "voting_first_multi_agent": _format_generic_cross_cutting_md,
+    # 以下 1 项来源交易决策架构 v8.0 可建设项#16/#17（事件溯源/配置中心，2026-08-05）
+    "event_sourcing_config_center": _format_generic_cross_cutting_md,
 }
 
 

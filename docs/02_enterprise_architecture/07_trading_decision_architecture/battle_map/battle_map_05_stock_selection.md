@@ -289,7 +289,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：每 3 秒 Tick + 盘前定时；②消费：外部行情/新闻/另类数据；③参数：tick_frequency=3s、分层存储策略、🆕v8.1数据增强=FWT检索增强扩散+GBM-Diffusion；④数据流：外部源→事件总线→分层存储→BM-SEL-02；⑤代码：C-001 L0 层；⑥降级：数据源断流→仅执行卖出指令。
+①触发：每 3 秒 Tick + 盘前定时；②消费：外部行情/新闻/另类数据；③参数：tick_frequency=3s、分层存储策略、🆕v8.1数据增强=FWT检索增强扩散+GBM-Diffusion；④数据流：外部源→事件总线→分层存储→BM-SEL-02；⑤代码：C-001 L0 层；⑥降级：数据源断流→仅执行卖出指令。数据架构扩展：数据源含 miniQMT(xtdata/xttrader SDK)/iFind/tushare/BaoStock；CDC 变更数据捕获增量同步；存储=Lakehouse+TSDB+Embedding向量库（Warm热/Cold冷分层）；事件契约统一 TickEvent/SignalEvent/DecisionEvent/ExecutionEvent/RiskEvent/SystemEvent；🆕AI驱动异常检测（数据质量）；数据质量四维度=完整性Completeness/一致性Consistency/时效性Timeliness/可用性Availability（数据架构§10）。
 
 
 **锚点（环节↔模块双向关联）**：
@@ -301,10 +301,10 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 | depgraph | MOD-INF-043 | primary | stable | generated |
-| depgraph | MOD-L00-004 | primary | stable | generated |
+| depgraph | MOD-L00-004 | primary | stable | deprecated |
 | depgraph | MOD-ALT_DATA | primary | stable | generated |
 | depgraph | MOD-INTEGRATION | primary | stable | generated |
-| depgraph | MOD-INF-026 | supplement | stable | generated |
+| depgraph | MOD-INF-026 | supplement | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -344,7 +344,7 @@ UFL确定性事实层（Feature Store子集，is_deterministic=True，§29.24）
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
-| depgraph | MOD-L03-001 | supplement | production | generated |
+| depgraph | MOD-L03-001 | supplement | production | stable |
 | depgraph | MOD-INF-038 | primary | stable | stable |
 | depgraph | MOD-SIGNAL_ASHARE | primary | stable | generated |
 | depgraph | MOD-ML_SERVE | primary | stable | generated |
@@ -505,7 +505,7 @@ L3 层 A股特色信号。MOD-SIG-035 dual_engine_fusion_decision_engine.py（st
 
 **机制说明**：
 
-L6决策可解释性与人机协作层。每个决策都有可追溯解释链(因子→信号→策略→决策→执行)。人机协作边界清晰：AI可自主区/人工门控区/immutable禁区四级自治。🆕v6.0 LLM自评估（Judge+交叉验证，L6）+ 多模态金融推理（§29.38，门禁项）；🆕v8.1 VeNRA Double-Lock 零幻觉锚定（MOD-INF-049，实体+数值双重锚定UFL确定性事实层，§29.24）+ Sentinel幻觉检测器（MOD-INF-050，3B SLM <50ms实时检测）。
+L6决策可解释性与人机协作层。每个决策都有可追溯解释链(因子→信号→策略→决策→执行)。人机协作边界清晰：AI可自主区/人工门控区/immutable禁区四级自治。🆕v6.0 LLM自评估（Judge+交叉验证，L6）+ 多模态金融推理（§29.38，门禁项）；🆕v8.1 VeNRA Double-Lock 零幻觉锚定（MOD-INF-049，实体+数值双重锚定UFL确定性事实层，§29.24）+ Sentinel幻觉检测器（MOD-INF-050，3B SLM <50ms实时检测）+ Spectral Guardrails 谱分析幻觉检测（v7.0，注意力拓扑谱分析，训练无关/零标注/即插即用，§29.24新增7）。可解释性方法族：SHAP/LIME/Causal SHAP/LLM-as-Explainer（学习系统§10.2.9）。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -537,7 +537,7 @@ L6决策可解释性与人机协作层。每个决策都有可追溯解释链(�
 
 **机制说明**：
 
-盘中实时事件处理。盘中突发新闻/公告/异动等事件的实时感知→分类→评估影响→策略调整。事件驱动架构，毫秒级感知+秒级响应。
+盘中实时事件处理。盘中突发新闻/公告/异动等事件的实时感知→分类→评估影响→策略调整。事件驱动架构，毫秒级感知+秒级响应。🆕v3.6 盘中即时反应决策引擎（事件到达→即时评估→秒级决策调整）。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -673,7 +673,7 @@ L2-B 层。C-011 六阶段识别（吸筹/洗盘/拉升/出货）+ C-034 主力�
 
 **机制说明**：
 
-L2-C 层。C-039 跨市场传导量化模型，消费全球市场异动事件，计算传导系数→预测A股影响幅度→触发全量/板块重算。
+L2-C 层。C-039 跨市场传导量化模型，消费全球市场异动事件，计算传导系数→预测A股影响幅度→触发全量/板块重算。C-020 全球扩展（P2）：跨市场扩展能力预留（新市场容量约束接入 C-042 策略容量）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1110,7 +1110,7 @@ L1 层。分布特征工程（§3.5），产出滞后项/交互项/滚动统计�
 **机制说明**：
 
 L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数化归一化流/扩散），派生偏度/峰度/前瞻VaR/CVaR/8态概率P1~P8。被8态预测、组合优化、风控共形VaR三层消费。
-时序建模升级：🆕v8.1 Mamba/SSM 时序增强（MOD-SIG-051，线性复杂度长序列建模，与 Transformer 互补，替代二次复杂度瓶颈）；🆕v8.2 Kronos-mini/base（MOD-SIG-050，金融K线 TSFM 零样本预测，无需逐股微调即可产出收益率分布先验）；🆕v9.0 xLSTM 长程记忆（MOD-SIG-053，第三时序架构）。Phase 2 采用 QNN 两阶段（🆕v6.0 KAN 可解释函数逼近替代 QNN 中 MLP 层，参数更少，§29.33），Transformer/PatchTST 作时序特征提取器（§29.7）。
+时序建模升级：🆕v8.1 Mamba/SSM 时序增强（MOD-SIG-051，线性复杂度长序列建模，与 Transformer 互补，替代二次复杂度瓶颈）；🆕v8.2 Kronos-mini/base（MOD-SIG-050，金融K线 TSFM 零样本预测，无需逐股微调即可产出收益率分布先验）；🆕v9.0 xLSTM 长程记忆（MOD-SIG-053，第三时序架构）。Phase 2 采用 QNN 两阶段（🆕v6.0 KAN 可解释函数逼近替代 QNN 中 MLP 层，参数更少，§29.33），Transformer/PatchTST 作时序特征提取器（§29.7）。🆕v4.1 密度预测叠加态统一模式（§5.5/§6.1.3/§6.6/§6.7/§8.2：离散标签硬规则不变+条件PDF软化仓位/评分，🆕次日走势8态叠加模型替代原涨/跌二值预测，8态与收益率条件密度预测融合）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1183,7 +1183,7 @@ BM-MT-04 从数据发现因果（研究侧），本环节用因果结论验证�
 **机制说明**：
 
 L2-A 层。共形预测（分布无关），在密度预测PDF上叠加覆盖率保证区间，输出给风控共形VaR和信号置信区间。🆕v8.1
-自适应变体见子环节 BM-SEL-14-A（TCP-RM/DDCI，非平稳环境下的自适应保形覆盖）。
+自适应变体见子环节 BM-SEL-14-A（TCP-RM/DDCI，非平稳环境下的自适应保形覆盖）。共形V5验证：分布无关覆盖率检查+🆕v3.6 共形V5覆盖率反馈（§29.16 PIT检验→密度预测校准偏差→微调/Phase升级）。
 
 
 **6 件套（结构化，DB indicators JSONB）**：
@@ -1707,7 +1707,7 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 | depgraph | MOD-L02-015 | supplement | production | stable |
 | depgraph | MOD-L02-016 | supplement | production | stable |
 | depgraph | MOD-L02-017 | supplement | production | stable |
-| depgraph | MOD-SIG-006 | supplement | production | generated |
+| depgraph | MOD-SIG-006 | supplement | production | stable |
 | depgraph | MOD-L02_GOV | primary | stable | generated |
 | depgraph | MOD-INF-040 | primary | stable | generated |
 
@@ -1720,6 +1720,17 @@ BM-SEL-02 因子治理的子环节。MOD-L02-013 生命周期管理定义因子�
 **机制说明**：
 
 信号工厂九大子阶段流水线。信号从因子输入到最终输出的完整流水线：因子输入→预处理→信号生成→过滤→评分→聚合→投票→加权→输出。每个子阶段可独立配置。
+信号模型库（交易决策架构 §3/§4/§8 专业机构实践系列，按建议归属层分组，中英双语）：
+L1因子层：模块1多维度情绪合成指数模型(Multi-Dimensional Sentiment Composite Index)、模块2波动率体制转换与关键时点预警模型(Volatility Regime Transition & Key Date Alert Model)、模块5日内量能结构与订单流分析模型(Intraday Volume Structure & Order Flow Analysis Model)、模块7多指标背离检测模型(Multi-Indicator Divergence Detection Model)、模块8板块资金流再配置模型(Sector Flow Reallocation Model)、模块9多维度相对强弱筛选模型(Multi-Dimensional Relative Strength Screening Model)、模块10动量领导因子与涨停板生态模型(Momentum Leadership & Limit-Up Factor)、模块11动量层级与板块持续性模型(Momentum Hierarchy & Persistence Model)、模块12板块间资金流迁移检测模型(Inter-Sector Flow Migration Detection)、模块30多维度资金流体制识别模型(Multi-Dimensional Flow Regime Identification Model)、模块45分时微结构分析与大小盘风格检测模型(Intraday Microstructure & Style Detection Model)、模块55A股日历效应与关键节点量化模型(A-Share Calendar Effect & Key Node Quantitative Model)、模块58统一技术图形识别引擎(Unified Technical Pattern Recognition Engine)；
+L2-A信号层：模块3缺口回补概率模型(Gap Fill Probability Model)、模块4逼空行情检测模型(Short Squeeze Detection Model)、模块6Wyckoff吸筹阶段与底部确认模型(Wyckoff Accumulation & Bottom Confirmation Model)、模块14极端情绪反转与恐慌底部检测模型(Extreme Sentiment Reversal & Capitulation Bottom Detection Model)、模块15假突破与诱多检测模型(False Breakout & Bull Trap Detection Model)、模块16情绪-价格背离指数模型(Sentiment-Price Divergence Index)、模块17多维度底部确认与右侧入场模型(Multi-Dimensional Bottom Confirmation & Right-Side Entry Model)、模块18Wyckoff二次测试与动量延续模型(Wyckoff Secondary Test & Momentum Continuation Model)、模块20Wyckoff派发阶段与CVD背离检测模型(Wyckoff Distribution & CVD Divergence Detection Model)、模块263秒级逆势资金流识别模块
+**架构现状**: 架构有3秒Tick数据基础设施(miniQMT每3秒推送)、模块29次日上涨概率统一门槛模块
+**架构现状**: 架构有密度预测模型输出条件PDF f(r|X\_t)、模块31协同交易行为检测模型(Coordinated Trading Detection Model)、模块33IC加权多因子涨停板潜力评分模型(IC-Weighted Multi-Factor Limit-Up Potential Scoring Model)、模块35开盘竞价微结构分析模型(Opening Auction Microstructure Analysis Model)、模块39多因子选股评分模型(Multi-Factor Stock Selection Scoring Model)、模块44量化模式匹配与执行策略库(Quantitative Pattern Matching & Execution Strategy Library)、模块49财报季事件驱动与PEAD模型(Earnings Season Event-Driven & PEAD Model)、模块51波动率压缩与突破模型(Volatility Compression & Breakout Model)、模块53衍生品到期日效应与波动率日历模型(Derivatives Expiration Effect & Volatility Calendar Model)、模块27主力假动作与筹码派发识别模块
+**架构现状**: 架构有"诱多"(Gap开盘决策框架中1处)、模块54信息不对称期与操纵行为检测模型(Information Asymmetry Period & Manipulation Detection Model)、模块28利好落地变利空(预期透支)、模块13隔夜收益预测与开仓期望值模型(Overnight Return Prediction & Expected Value Model)；
+L2-B主力行为层：模块34异质参与者互动模型(Heterogeneous Agent Interaction Model)、模块50北向资金流向与Smart Money信号模型(Northbound Capital Flow & Smart Money Signal Model)；
+L2-C市场状态层：模块19市场体制转换模型(Regime-Switching Model)、模块23量能体制自适应策略模型(Volume Regime Adaptive Strategy Model)、模块25板块轮动与主线切换量化模型(Sector Rotation & Theme Switching Quantitative Model)、模块32市场风格体制识别模型(Market Style Regime Identification Model)、模块56量能×体制×风格三维策略矩阵模型(Volume×Regime×Style 3D Strategy Matrix Model)、模块57多因子叠加择时模型(Multi-Factor Overlay Timing Model)；
+L2-D知识图谱层：模块21隔夜全球市场传导与事件影响评估模型(Overnight Global Market Contagion & Event Impact Assessment Model)、模块22产业链传导与供应链动量模型(Supply Chain Momentum & Industry Contagion Model)、模块41事件链推理与因果图模型(Event Chain Reasoning & Causal Graph Model)、模块52跨资产订单流网络与亏钱效应扩散模型(Cross-Asset Order Flow Network & Loss Effect Diffusion Model)；
+仓位/风控/对账归属：模块24核心-卫星仓位管理模型(Core-Satellite Position Management Model)→BM-POS-02、模块47Kelly Criterion仓位管理与Risk Parity组合优化模型(Kelly Position Sizing & Risk Parity Portfolio Optimization Model)→BM-POS-02、模块37系统性风险分级预警与尾部风险管理模型(Systemic Risk Tiered Alert & Tail Risk Management Model)→BM-RC-12、模块42交易绩效归因与策略退化检测模型(Performance Attribution & Strategy Degradation Detection Model)→BM-REC-02-B、模块43ATR动态止损与Bayesian参数优化模型(ATR Dynamic Stop-Loss & Bayesian Optimization Model)→BM-SELL-04-B、模块36买入后即时验证与快速纠错模型(Post-Entry Instant Validation & Quick Correction Model)→BM-BUY-03、模块38交易计划偏差检测与异常机会评估模型(Trade Plan Deviation Detection & Anomalous Opportunity Assessment Model)→BM-REC-02-C、模块40板块拥挤度与启动条件量化模型(Sector Crowding & Launch Condition Quantitative Model)→BM-RC-06-D、模块46决策树与强化学习交易决策架构(Decision Tree & RL Trading Decision Architecture)→Agent架构交叉引用、模块48动态信号权重模型(Dynamic Signal Weighting via Bayesian Model Averaging)→BM-SEL-02-K。
+
 
 **6 件套（结构化，DB indicators JSONB）**：
 

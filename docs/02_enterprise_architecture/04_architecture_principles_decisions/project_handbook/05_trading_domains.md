@@ -61,7 +61,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 ## 3. 域清单（AUTO）
 
 <!-- AUTO-START:domain_list -->
-<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-08-04 -->
+<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-08-05 -->
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
@@ -86,17 +86,17 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_INTEGRATION` | 管线路由 | L1_foundation | 71 |
 | `D_FBL_DETECTORS` | 反馈检测器 | L1_foundation | 65 |
 | `D_INFRA_RECOVERY` | 回滚恢复 | L0_infrastructure | 55 |
+| `D_EX_CORE` | 执行核心 | L2_domain | 43 |
 | `D_BACKTEST` | 回测 | L2_domain | 42 |
-| `D_EX_CORE` | 执行核心 | L2_domain | 42 |
 | `D_TRADING` | 交易运营 | L2_domain | 42 |
+| `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 37 |
 | `D_GOV_RULE` | 规则治理 | L2_domain | 36 |
-| `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 34 |
-| `D_INTELLIGENCE` | 上下文管理 | L2_domain | 31 |
+| `D_INTELLIGENCE` | 上下文管理 | L2_domain | 33 |
+| `D_RISK` | 风控 | L2_domain | 28 |
 | `D_GOV_DOCS` | 架构文档治理 | L2_domain | 27 |
 | `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 26 |
 | `D_MKT_DATA` | 行情数据 | L1_foundation | 26 |
 | `D_SELL_DECISION` | 卖出决策 | L2_domain | 26 |
-| `D_RISK` | 风控 | L2_domain | 25 |
 | `D_FRONTEND` | 前端 | L2_domain | 24 |
 | `D_POSITION` | 仓位管理 | L2_domain | 22 |
 | `D_DATA_ENG` | 数据工程 | L1_foundation | 20 |
@@ -105,7 +105,9 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_EX_SOR` | 执行路由 | L2_domain | 17 |
 | `D_SIMULATION` | 仿真 | L2_domain | 15 |
 | `D_FUNDAMENTAL_SIGNAL` | 基本面信号 | L2_domain | 14 |
+| `D_ML_TRAIN` | 训练 | L2_domain | 13 |
 | `D_OPS` | 反馈循环 | L1_foundation | 11 |
+| `D_COMPLIANCE` | 合规 | L2_domain | 10 |
 | `D_DATA_GOV` | 数据治理 | L1_foundation | 10 |
 | `D_PF_ALLOC` | 组合分配 | L2_domain | 9 |
 | `D_ALT_DATA` | 另类数据 | L1_foundation | 8 |
@@ -114,8 +116,6 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_DIGITAL_TWIN` | 数字孪生 | L2_domain | 7 |
 | `D_EXEC_SIM` | 执行仿真 | L2_domain | 7 |
 | `D_ML_SERVE` | 推理 | L2_domain | 7 |
-| `D_ML_TRAIN` | 训练 | L2_domain | 7 |
-| `D_COMPLIANCE` | 合规 | L2_domain | 3 |
 | `D_AUTONOMY_PERM` | 自治保护 | L2_domain | 2 |
 | `D_INFRA_OPS` | 基础设施运维 | L0_infrastructure | 2 |
 | `D_SIGQC` | 信号质量控制 | L2_domain | 2 |

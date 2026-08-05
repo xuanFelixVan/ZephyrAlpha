@@ -51,19 +51,19 @@ governance/ (桥接层, G-CT-001~008 契约)
 ## 4. 依赖边统计（AUTO）
 
 <!-- AUTO-START:edge_stats -->
-<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-08-04 -->
+<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-08-05 -->
 
 | dep_type | 边数 / Edges |
 |----------|------|
 | `import_depends` | 4962 |
 | `test_depends` | 3844 |
-| `config_depends` | 435 |
+| `config_depends` | 437 |
 | `import` | 209 |
 | `runtime` | 44 |
 | `data` | 43 |
 | `contract` | 6 |
 | `event` | 2 |
-| **合计 / Total** | **9545** |
+| **合计 / Total** | **9547** |
 
 **跨域边 / Cross-domain edges：2567** 条（两端节点 domain_id 不同的依赖边）。
 <!-- AUTO-END:edge_stats -->
