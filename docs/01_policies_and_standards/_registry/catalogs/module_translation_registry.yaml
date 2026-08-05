@@ -25899,7 +25899,7 @@ entries:
   plain_zh: ''
 - module_path: scripts/governance/d7_code/check_no_tests_unit.py
   domain_id: D_GOV_SCRIPTS
-  name_zh: 禁止 tests/unit/ 旧路径重引入检测
+  name_zh: 禁止 tests/unit 旧路径重引入检测
   name_en: Check No Tests Unit
   desc_zh: ''
   desc_en: ''
@@ -40933,6 +40933,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把风控报告里的违规项按严重程度分成黄橙红三级，再按级别推送到不同通道（日志/邮件/微信）"
+- module_path: src/zephyr/risk/core/liquidity_monitor.py
+  domain_id: D_RISK
+  name_zh: "流动性监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "计算Amihud非流动性指标和成交量萎缩比率，判断市场流动性是否恶化"
+- module_path: src/zephyr/risk/core/crowding_monitor.py
+  domain_id: D_RISK
+  name_zh: "拥挤度监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检测多个策略是否挤在同一个因子或同一批股票上，计算持仓重叠度和方向一致性"
 
 battle_map_steps:
 - step_id: BM-BUY-04
@@ -41118,7 +41132,7 @@ battle_map_steps:
     仓位轨（L827，Kelly+风险预算直接产生仓位决策，BM-POS-01 indicators）复用。
 
     '
-  indicators_zh: '①触发：策略未覆盖（无策略覆盖+因子信号强烈）或策略冲突（2买2卖分歧）；②消费：L1因子池+L2-A买入信号+C-006策略库覆盖状态；③参数：因子加权融合权重、直通触发条件=未覆盖|冲突(proposed)；④数据流：因子信号→因子加权融合→因子直通裁决→买入决策→MTF仲裁；⑤代码：MOD-INF-047
+  indicators_zh: '①触发：策略未覆盖（无策略覆盖+因子信号强烈）或策略冲突（2买2卖分歧）；②消费：L1因子池+L2-A买入信号+C-006策略库覆盖状态；③参数：因子加权融合权重、直通触发条件=未覆盖|冲突(proposed)、绕过策略层直接产生决策、v7.0新增；④数据流：因子信号→因子加权融合→因子直通裁决→买入决策→MTF仲裁；⑤代码：MOD-INF-047
     因子直通融合引擎(planned)；⑥降级：因子直通失效→仅多策略共振，共振分歧→降级L6审查。
 
     '

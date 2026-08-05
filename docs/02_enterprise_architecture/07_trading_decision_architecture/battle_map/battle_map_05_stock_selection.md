@@ -1006,7 +1006,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-006 原始数据缓存把适配器�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-MKT-006 | primary | production | generated |
-| depgraph | MOD-L00-006 | primary | stable | generated |
+| depgraph | MOD-L00-006 | primary | stable | stable |
 | depgraph | MOD-H1_REDIS_HOT | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection

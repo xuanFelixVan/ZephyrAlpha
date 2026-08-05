@@ -863,7 +863,7 @@ BM-SEL-21 组合优化的子环节。量化策略集是所有已上线量化策�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L05-001 | primary | production | generated |
+| depgraph | MOD-L05-001 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
