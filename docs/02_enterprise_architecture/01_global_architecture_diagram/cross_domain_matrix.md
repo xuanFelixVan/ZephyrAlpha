@@ -22,7 +22,7 @@ ttl: permanent
 |------|-----|
 | 域总数 | 72 |
 | 跨域依赖对数 | 318 |
-| 跨域依赖边总数 | 2567 |
+| 跨域依赖边总数 | 2569 |
 
 ## 跨域依赖 Top 20（按边数降序）
 
@@ -129,30 +129,30 @@ ttl: permanent
 | 74 | D_GOVERNANCE | D_INFRA_A2A | 8 | import_depends,test_depends |
 | 75 | D_GOVERNANCE | D_INTEGRATION | 8 | import_depends,test_depends |
 | 76 | D_GOV_ENFORCEMENT | D_GOVERNANCE | 8 | import_depends,test_depends |
-| 77 | D_EX_SOR | D_INFRASTRUCTURE | 7 | import_depends |
-| 78 | D_FEEDBACK_LOOP | D_FBL_DIAGNOSERS | 7 | import_depends |
-| 79 | D_GOV_AUDIT | D_GOV_DRIFT | 7 | import_depends,test_depends |
-| 80 | D_GOV_DRIFT | D_GOVERNANCE | 7 | import_depends |
+| 77 | D_FEEDBACK_LOOP | D_FBL_DIAGNOSERS | 7 | import_depends |
+| 78 | D_GOV_DRIFT | D_GOVERNANCE | 7 | import_depends |
+| 79 | D_GOV_DRIFT | D_GOV_AUDIT | 7 | import_depends |
+| 80 | D_GOV_SCRIPTS | D_DATA | 7 | import_depends |
 | 81 | D_GOVERNANCE | D_OPS | 7 | import_depends,test_depends |
 | 82 | D_GOV_SCRIPTS | D_INFRA_RUNTIME | 7 | import_depends |
 | 83 | D_GOVERNANCE | D_AUTONOMY_CORE | 7 | test_depends |
 | 84 | D_SELL_DECISION | D_SHARED | 7 | import_depends |
-| 85 | D_GOV_DRIFT | D_GOV_AUDIT | 7 | import_depends |
-| 86 | D_MKT_DATA | D_SHARED | 7 | import_depends |
-| 87 | D_GOV_OPS_RESILIENCE | D_GOV_AUDIT | 6 | import_depends |
+| 85 | D_MKT_DATA | D_SHARED | 7 | import_depends |
+| 86 | D_EX_SOR | D_INFRASTRUCTURE | 7 | import_depends |
+| 87 | D_GOV_AUDIT | D_GOV_DRIFT | 7 | import_depends,test_depends |
 | 88 | D_FEEDBACK_LOOP | D_FBL_DETECTORS | 6 | import_depends |
-| 89 | D_TRADING | D_INFRA_RUNTIME | 6 | import_depends |
+| 89 | D_GOV_SCRIPTS | D_GOV_RULE | 6 | import_depends |
 | 90 | D_INTEGRATION | D_INTELLIGENCE | 6 | import_depends |
 | 91 | D_FACTOR | D_ASHARE_SIGNAL | 6 | data,import |
-| 92 | D_GOV_DRIFT | D_GOV_SCRIPTS | 6 | import_depends |
-| 93 | D_PF_CORE | D_RISK | 6 | contract,import_depends |
-| 94 | D_GOV_AUDIT | D_SECURITY | 6 | import_depends,test_depends |
-| 95 | D_GOV_SCRIPTS | D_GOV_RULE | 6 | import_depends |
-| 96 | D_COMPLIANCE | D_SECURITY | 5 | import_depends |
-| 97 | D_GOV_OPS_RESILIENCE | D_GOV_RULE | 5 | import_depends,test_depends |
-| 98 | D_FACTOR | D_INFRASTRUCTURE | 5 | import_depends,test_depends |
-| 99 | D_FUNDAMENTAL_SIGNAL | D_TRADING | 5 | import_depends |
-| 100 | D_GOV_SCRIPTS | D_DATA | 5 | import_depends |
+| 92 | D_PF_CORE | D_RISK | 6 | contract,import_depends |
+| 93 | D_GOV_DRIFT | D_GOV_SCRIPTS | 6 | import_depends |
+| 94 | D_TRADING | D_INFRA_RUNTIME | 6 | import_depends |
+| 95 | D_GOV_AUDIT | D_SECURITY | 6 | import_depends,test_depends |
+| 96 | D_GOV_OPS_RESILIENCE | D_GOV_AUDIT | 6 | import_depends |
+| 97 | D_COMPLIANCE | D_SECURITY | 5 | import_depends |
+| 98 | D_GOV_OPS_RESILIENCE | D_GOV_RULE | 5 | import_depends,test_depends |
+| 99 | D_FACTOR | D_INFRASTRUCTURE | 5 | import_depends,test_depends |
+| 100 | D_FUNDAMENTAL_SIGNAL | D_TRADING | 5 | import_depends |
 | 101 | D_INFRA_RUNTIME | D_DATA | 5 | import_depends,test_depends |
 | 102 | D_SECURITY | D_GOV_AUDIT | 5 | import_depends |
 | 103 | D_INFRA_RUNTIME | D_SECURITY | 5 | import_depends |
