@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Pipeline 蓝图 — 管线编排器·M1-M11门控流水线 |
-| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| changes/ | 目录 | changes — 目录索引 |
 | [index.md](index.md) | Markdown | pipeline — 目录索引 |
 
 ## 导航

@@ -18,11 +18,11 @@ ttl: permanent
 
 | module_id | 模块名 | blueprint | status | construction_progress |
 |-----------|--------|-----------|--------|-----------------------|
-| MOD-L08-001 | HMI Core | [blueprint](hmi_core/blueprint.md) | Draft | partially_implemented |
+| MOD-L08-001 | HMI Core | blueprint | Draft | partially_implemented |
 
 **架构模型真源**：`docs/03_modules/_domain_frontend/blueprint.md`
 
 ## 导航
 
 - [上级目录](../index.md)
-- [架构真源](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md)
+- 架构真源

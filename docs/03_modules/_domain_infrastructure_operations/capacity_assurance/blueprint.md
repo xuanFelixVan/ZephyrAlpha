@@ -73,10 +73,10 @@ design_maturity: production
 本蓝图描述 ZephyrAlpha 容量保障体系——它解决了 1人+AI 维护模式下系统容量可观测、可控制、可恢复的问题。核心职责包括：SLI/SLO 框架定义、Error Budget 五级响应、Token Budget 四级限流、Kill Switch 全局熔断、Graceful Degradation 降级链、灾难恢复策略、容量预测模型。当前规模 27 个模块，目标容量 10,000 脚本 / 1,500 模块 / 100 AI 并发。上游依赖 MOD-INF-016 Shared Core，下游被 MOD-INF-015 系统遥测和 MOD-RESOURCE_OPTIMIZATION_ENGINE 预算执行器消费。
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 蓝图+施工图模板：blueprint-template.md
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
+> - 代码头部标准：code-construction-standards.md §7
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---

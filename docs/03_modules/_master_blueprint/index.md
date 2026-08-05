@@ -23,7 +23,7 @@ ttl: permanent
 | [blueprint_agent_spec.md](blueprint_agent_spec.md) | Markdown | Agent Spec 蓝图 — CBAC能力矩阵·Skill路由 |
 | [blueprint_baseline.md](blueprint_baseline.md) | Markdown | Blueprint Baseline |
 | [blueprint_capacity.md](blueprint_capacity.md) | Markdown | Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计 |
-| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| changes/ | 目录 | changes — 目录索引 |
 | [index.md](index.md) | Markdown | _master_blueprint — 目录索引 |
 
 ## 模块发现入口

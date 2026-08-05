@@ -102,15 +102,15 @@ build_status: generated
 
 ## 概述
 
-本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md)。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
+本蓝图是 ZephyrAlpha 治理域的 Level 1 集成蓝图。核心职责：定义 Agent 治理八件套（RBAC→Audit→Rollback→Escalation→Drift→Budget→A2A→Agent Spec）之间的跨模块集成契约（G-CT-*）。容量升级设计已拆分至 MOD-GOV-CAP-001。三轮审计合计 29 项 D-GAP 全覆盖。上游依赖 SYS-MASTER-001（系统总蓝图）和 MOD-MASTER_BLUEPRINT（基础设施域），下游被 8 个治理模块消费。
 
 ---
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 蓝图+施工图模板：blueprint-template.md
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
+> - 代码头部标准：code-construction-standards.md §7
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ## 模板章节映射表
@@ -1260,7 +1260,7 @@ P2-RESILIENCE（韧性保障）:
 
 ## 0. 容量升级设计与 SLO
 
-> **已拆分至** [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §1
+> **已拆分至** MOD-GOV-CAP-001 §1
 > 本节内容已迁移至独立蓝图，本蓝图仅保留集成契约定义。
 
 ---
@@ -1552,14 +1552,14 @@ P2-RESILIENCE（韧性保障）:
 ### 3.10~3.13 容量升级设计（已拆分）
 
 > §3.10 分层执行模型 / §3.11 熔断器策略 / §3.12 分片存储架构 / §3.13 GPU 加速策略
-> **全部已拆分至** [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §2~5
+> **全部已拆分至** MOD-GOV-CAP-001 §2~5
 
 ---
 
 
 ### 3.14 可观测性架构（Observability）（v0.2.0 新增）
 
-> **对应缺陷**：D-GAP-09 | **现有基础设施**：[`sla_metrics.jsonl`](file:///d:/ZephyrAlpha/scripts/governance/_shared/sla_metrics.jsonl) + `compute_sla_metrics.py`
+> **对应缺陷**：D-GAP-09 | **现有基础设施**：[`sla_metrics.jsonl`](file:///d:/ZephyrAlpha/scripts/governance/meta/sla_metrics.jsonl) + `compute_sla_metrics.py`
 >
 > 指标已在采集，但缺失告警规则、Dashboard 和 error budget 仪表盘。本节补全。
 
@@ -1892,7 +1892,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 ## 9. 施工升级路线图
 
-> **已拆分至** [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §6
+> **已拆分至** MOD-GOV-CAP-001 §6
 > 本节内容已迁移至独立蓝图，本蓝图仅保留集成契约定义。
 
 ---
@@ -1964,7 +1964,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 ## 11. 升级后测试矩阵
 
-> **已拆分至** [MOD-GOV-CAP-001](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/capacity-upgrade/blueprint.md) §7
+> **已拆分至** MOD-GOV-CAP-001 §7
 
 
 ## ⚠️ Vibe Coding 蓝图编写铁律

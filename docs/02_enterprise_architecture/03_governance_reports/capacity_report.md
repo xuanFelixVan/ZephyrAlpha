@@ -33,7 +33,7 @@ ttl: permanent
 | D_GOVERNANCE | 生命周期管理 | 451 | 150 | +301 |
 | D_GOV_AUDIT | 审计追踪 | 192 | 150 | +42 |
 | D_GOV_CODE_QUALITY | 代码质量治理 | 215 | 150 | +65 |
-| D_GOV_SCRIPTS | 脚本治理 | 421 | 150 | +271 |
+| D_GOV_SCRIPTS | 脚本治理 | 422 | 150 | +272 |
 | D_INFRA_RUNTIME | 运行时集成 | 171 | 150 | +21 |
 | D_SECURITY | 对抗验证 | 171 | 150 | +21 |
 | D_SHARED | 共享服务 | 177 | 150 | +27 |
@@ -111,7 +111,7 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | L1_foundation | 115 | 150 | 76.7% | 正常 |
 | D_GOV_REPAIR | 治理修复 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_GOV_RULE | 规则治理 | L2_domain | 36 | 150 | 24.0% | 正常 |
-| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 421 | 150 | 280.7% | 超容 |
+| D_GOV_SCRIPTS | 脚本治理 | L2_domain | 422 | 150 | 281.3% | 超容 |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | L0_infrastructure | 26 | 150 | 17.3% | 正常 |
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 72 | 150 | 48.0% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 2 | 150 | 1.3% | 正常 |
@@ -132,7 +132,7 @@ ttl: permanent
 | D_PF_CORE | 组合核心 | L2_domain | 16 | 150 | 10.7% | 正常 |
 | D_POSITION | 仓位管理 | L2_domain | 15 | 150 | 10.0% | 正常 |
 | D_REPORTING | 报告 | L1_foundation | 19 | 150 | 12.7% | 正常 |
-| D_RISK | 风控 | L2_domain | 21 | 150 | 14.0% | 正常 |
+| D_RISK | 风控 | L2_domain | 30 | 150 | 20.0% | 正常 |
 | D_SECURITY | 对抗验证 | L1_foundation | 171 | 150 | 114.0% | 超容 |
 | D_SECURITY_LLM | LLM防御 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_SEC_SCRIPTS | 安全治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |

@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | System Master 蓝图 — 三级金字塔架构·全部子系统拓扑 |
-| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| changes/ | 目录 | changes — 目录索引 |
 | [index.md](index.md) | Markdown | _system_master — 目录索引 |
 
 ## 导航

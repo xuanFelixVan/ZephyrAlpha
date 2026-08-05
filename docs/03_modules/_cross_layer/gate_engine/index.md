@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器 |
-| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| changes/ | 目录 | changes — 目录索引 |
 | [index.md](index.md) | Markdown | gate_engine — 目录索引 |
 
 ## 导航

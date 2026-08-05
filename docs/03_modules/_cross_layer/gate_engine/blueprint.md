@@ -64,10 +64,10 @@ build_status: planned
 > module_id: MOD-GATE_ENGINE | version: 0.8.9 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ | generation: 1 | construction_progress: partially_implemented
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 蓝图+施工图模板：blueprint-template.md
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
+> - 代码头部标准：code-construction-standards.md §7
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -805,8 +805,8 @@ class ManualApprovalGate:
 ### §10.2 依赖图对齐声明
 
 > 蓝图 §10.1 声明的依赖 MUST 与全局依赖图一致。不一致 = 漂移。
-> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
-> 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
+> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
+> 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml)
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
@@ -1413,13 +1413,13 @@ STEP 3: 拆分后验证
 |------|------|
 | [project_rules.md](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) | 四条铁律 + 防幻觉十八条 |
 | [registry_of_registries.yaml](file:///d:/ZephyrAlpha/docs/registry_of_registries.yaml) | 全项目注册表入口 |
-| [blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md) | 蓝图模板 v3.5 |
+| blueprint-template.md | 蓝图模板 v3.5 |
 | [trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | 压缩工作流标准 GOV-DOC-011 |
-| [code-construction-standards.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) | 代码构建标准 GOV-ENG-001 |
-| [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md) | 脚本质量标准 SCRIPT-QUALITY-001 |
+| code-construction-standards.md | 代码构建标准 GOV-ENG-001 |
+| [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md) | 脚本质量标准 SCRIPT-QUALITY-001 |
 | [b_gates.yaml](file:///d:/ZephyrAlpha/architecture_model/layers/b_gates.yaml) | Gates YAML SSoT |
 | [MOD-MASTER_BLUEPRINT blueprint](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md) | 总蓝图——CT-SCRIPT-GATE-001 + CT-ORC-GATE-001 |
-| [gate_engine.py](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py) | 核心门禁引擎实现 |
+| [gate_engine.py](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py) | 核心门禁引擎实现 |
 | [_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml) | 全部门禁注册表 SSoT |
 
 ---

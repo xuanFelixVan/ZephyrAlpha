@@ -128,7 +128,7 @@ build_status: planned
 | module_id | 标题 | 状态 | 施工进度 | 文件路径 |
 |-----------|------|------|:---:|------|
 | MOD-INF-012A | Database Core — SQLite+DuckDB 双引擎核心运营 | Active | completed | 012A 无独立蓝图文件，代码清单见本文档 §1.1 |
-| MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装） | Active | completed | [sub_blueprints/mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md) |
+| MOD-DB_DEPGRAPH_PG | P2 PostgreSQL迁移 — depgraph SQLite→PostgreSQL（Windows原生安装） | Active | completed | sub_blueprints/mod_inf_012b_p2_postgresql_migration.md |
 
 > **P3 PostgreSQL优化方案已归档删除**（2026-06-30）：原P3的4任务中T2/T3裁定删除（伪需求/过度工程），T1 pgvector改造待VMS自然演进，T4监控告警已实现（扩展verify_schema_health.py，实现记录见AGENTS.md §11.2）。P3历史文档已删除，避免Draft状态误导AI实现已裁定的伪需求。
 
@@ -149,7 +149,7 @@ build_status: planned
 ### AI 施工指引
 
 - **读 Core 实现** → 本文档 §1.1——了解已实现的 SQLite+DuckDB 基础设施
-- **施工 P2 迁移** → [mod_inf_012b_p2_postgresql_migration.md](sub_blueprints/mod_inf_012b_p2_postgresql_migration.md)——迁移设计 + 施工步骤 + 验收标准
+- **施工 P2 迁移** → mod_inf_012b_p2_postgresql_migration.md——迁移设计 + 施工步骤 + 验收标准
 - **查看代码** → `D:\ZephyrAlpha\src\zephyr\infrastructure\db\`
 - **查看测试** → `D:\ZephyrAlpha\tests\unit\`（unit 单元测试）与 `D:\ZephyrAlpha\tests\unit\db\`（db 集成测试）
 
@@ -173,7 +173,7 @@ build_status: planned
 | 12 | Query | 012A | ✅ 已实现 | 查询构造器 |
 | 13 | Transition | 012A | ✅ 已实现 | 状态迁移定义 |
 | 14 | WriteBatcher | 012B | ⏸ 暂缓（待 L 级） | 批量写入缓冲——真问题但 L 级（5000+脚本）需求，当前 S 级 571 脚本无写争抢实证 |
-| 15 | ScriptRegistry | 012B | ✅ 已覆盖 | 脚本注册表——已由 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py) ScriptRegistry 类覆盖（CT-DB-005 契约对齐） |
+| 15 | ScriptRegistry | 012B | ✅ 已覆盖 | 脚本注册表——已由 [_concurrency.py:1292](file:///d:/ZephyrAlpha/scripts/governance/meta/_concurrency.py) ScriptRegistry 类覆盖（CT-DB-005 契约对齐） |
 | 16 | ScriptExecutionLogger | 012B | ⏸ 暂缓（待 M-1 级） | 脚本执行日志——571 脚本已达 M-1 下限 500，纯新增低风险，待启动（CT-DB-006 契约） |
 
 ### 数据流概览

@@ -66,10 +66,10 @@ design_maturity: production
 本蓝图描述 System Telemetry——ZephyrAlpha 全系统可观测性平台，通过统一 Telemetry 门面类暴露 Metrics/Logs/Traces/AI行为/Archive/Profiles/Health/Alerts/Schema 九个子系统。覆盖三层信号（4 Golden Signals + USE + Annotations）+ 多环境隔离。当前管理 ~51 模块，目标容量 1,500 模块 / 100 AI 并发。上游依赖 Shared Core（MOD-INF-016），下游被 Agent RBAC（MOD-INF-018）和 Budget Enforcer（MOD-INF-024）消费。
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
+> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
+> - 代码头部标准：code-construction-standards.md §7
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 > **SSoT 声明**：本文件是 System Telemetry 模块的唯一设计真源。
@@ -633,8 +633,8 @@ Telemetry 负责全系统可观测性数据采集（"看见"），异常检测�
 
 ### §10.2 依赖图对齐声明
 
-> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
-> 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
+> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
+> 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml)
 
 MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。下游: MOD-INF-015 → MOD-INF-001(容量保障) → MOD-RESOURCE_OPTIMIZATION_ENGINE(资源优化) → MOD-INF-026(资产盘点)。交叉引用: V6_CAP→V4_FLE(容量告警), V3_BUD→V6_CAP(预算耗尽)。
 
@@ -1060,11 +1060,11 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 
 ---
 
-> 蓝图编写铁律见 [project_rules.md 防幻觉十八条](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) 及 [blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)。
+> 蓝图编写铁律见 [project_rules.md 防幻觉十八条](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) 及 [blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md)。
 
 ---
 
-> 蓝图拆分判定标准见 [blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)。
+> 蓝图拆分判定标准见 [blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md)。
 
 ---
 

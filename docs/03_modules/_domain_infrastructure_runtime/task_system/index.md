@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Task System 蓝图 — 全链路任务卡生命周期管理 |
-| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| changes/ | 目录 | changes — 目录索引 |
 | [index.md](index.md) | Markdown | task_system — 目录索引 |
 
 ## 导航

@@ -58,7 +58,7 @@ build_status: generated
 
 本蓝图描述 Shared Core——ZephyrAlpha 跨层共享基础设施层，为所有模块提供 EventBus、配置中心、缓存层、限流器、幂等守卫、契约总线等 18 项基础组件。通过 daemon_registry 统一管理守护线程生命周期。当前 115+ 文件覆盖 shared/ 和 core/ 两目录，目标支撑 1,500 模块规模。被 AutoRuntime Core（MOD-INF-035）和资源优化引擎（MOD-RESOURCE_OPTIMIZATION_ENGINE）等上游消费。
 
-> **标准锚点**：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md) | [压缩工作流标准](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | [code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> **标准锚点**：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md) | [压缩工作流标准](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | code-construction-standards.md §7
 
 ---
 
@@ -245,7 +245,7 @@ build_status: generated
 
 > ProcessLifecycleGateway — 统一进程创建入口 + idle_timeout 空闲回收 + DaemonRegistry 自动注册 + Gate 防绕过。
 > 设计根因: 裸 Popen/Process 绕过 MCPProcessPool 导致进程泄漏。
-> 依赖图: [DEP-GRAPH-process-lifecycle-001](file:///D:/ZephyrAlpha/data/asset_index/archive/DEP-GRAPH-process-lifecycle-001.yaml)
+> 依赖图: DEP-GRAPH-process-lifecycle-001
 
 > → 详见 **MOD-015** `shared_infra_blueprint.md`（shared/infra/process_lifecycle_gateway.py + gates 门禁 — 进程生命周期网关）
 

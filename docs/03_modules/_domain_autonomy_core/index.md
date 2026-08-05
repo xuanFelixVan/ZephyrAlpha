@@ -19,7 +19,7 @@ ttl: permanent
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [agent_rbac/](agent_rbac/index.md) | 目录 | Agent RBAC — 七层纵深防御 + 六横切面 权限系统 |
+| agent_rbac/ | 目录 | Agent RBAC — 七层纵深防御 + 六横切面 权限系统 |
 | [agent_spec/](agent_spec/index.md) | 目录 | agent-spec — 目录索引 |
 | [rollback_system/](rollback_system/index.md) | 目录 | rollback-system — 目录索引 |
 

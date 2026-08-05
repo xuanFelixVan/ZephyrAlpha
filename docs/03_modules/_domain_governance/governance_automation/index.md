@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | 脚本系统蓝图 — 第三条生产线的自动化审计与门禁 |
-| [delivery/](delivery/index.md) | 目录 | delivery |
+| delivery/ | 目录 | delivery |
 
 ## 导航
 

@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Shared+Core 蓝图 |
-| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| changes/ | 目录 | changes — 目录索引 |
 | [contracts_blueprint.md](contracts_blueprint.md) | Markdown | Shared Contracts 蓝图 — 跨层数据契约 SSoT |
 | [governance_core_blueprint.md](governance_core_blueprint.md) | Markdown | Governance Core 蓝图 — 治理核心模块 |
 | [index.md](index.md) | Markdown | shared_core — 目录索引 |

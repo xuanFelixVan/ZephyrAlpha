@@ -56,7 +56,7 @@ build_status: planned
 
 > module_id: MOD-ARCH_BIZDB | version: 1.0.0 | status: Active | layer: cross_layer | blueprint_level: architecture
 > 本文档为**母蓝图**，指导 C1~C4 / G2 / L4 各子施工蓝图。表级细化，不到字段级（字段级见各子蓝图 DDL-as-Code）。
-> **推导过程完整记录**：[业务数据库架构_讨论记录.md](file:///D:/ZephyrAlpha/docs/_working/业务数据库架构_讨论记录.md)（11章）
+> **推导过程完整记录**：业务数据库架构_讨论记录.md（11章）
 
 ## 概述
 
@@ -86,8 +86,8 @@ build_status: planned
 
 | 材料 | 性质 | 贡献 |
 |------|------|------|
-| [数据架构.md](file:///D:/ZephyrAlpha/docs/_working/research_notes/架构图/数据架构.md) | 数据架构设计书 | 品类清单(60+)/SLA/L0→L1流水线/CTR契约/因子窄表Schema |
-| [依赖图/](file:///D:/ZephyrAlpha/docs/_working/research_notes/依赖图) | 模块依赖规划书 | 30个业务域的数据存储需求/D-DATA-03 Storage |
+| 数据架构.md | 数据架构设计书 | 品类清单(60+)/SLA/L0→L1流水线/CTR契约/因子窄表Schema |
+| 依赖图/ | 模块依赖规划书 | 30个业务域的数据存储需求/D-DATA-03 Storage |
 | [database/blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/blueprint.md) | 现有三库施工蓝图 | 三库职责划分验证/DatabaseService统一入口 |
 
 ---
@@ -105,7 +105,7 @@ build_status: planned
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-ARCH_BIZDB` 的 1 个 file 节点 | design | `extract_depgraph.py --modules MOD-ARCH_BIZDB` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
 #### 四核心字段
@@ -739,4 +739,4 @@ Step4: 完成 → CategoryManager自动发现(不加载) → 未来enabled=true�
 ---
 
 > **本文档为母蓝图，表级细化。字段级DDL见各子施工蓝图。**
-> **推导过程完整记录**：[业务数据库架构_讨论记录.md](file:///D:/ZephyrAlpha/docs/_working/业务数据库架构_讨论记录.md)（11章）
+> **推导过程完整记录**：业务数据库架构_讨论记录.md（11章）

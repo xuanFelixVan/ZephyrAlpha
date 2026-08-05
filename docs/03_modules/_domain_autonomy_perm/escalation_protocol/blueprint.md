@@ -94,7 +94,7 @@ build_status: planned
 
 Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。五层架构（L0持久化→L1自愈→L2路由→L3通知→L4审计）覆盖升级判定+委托+Per-escalation成本门控。核心职责：规则驱动判定（autonomous/auto_guard/blocked）、委托链管理（四级约束+死锁防护）、Per-escalation成本门控。子蓝图MOD-INF-022-VC(Vibe Coding安全防御)和MOD-INF-022-QT(量化交易特化升级)已拆分。当前规模110文件/30决策，上游依赖RBAC(MOD-INF-018)/Gate(MOD-GATE_ENGINE)/Audit(MOD-INF-020)/Pipeline(MOD-INF-021)，下游被Budget(MOD-INF-024,预算SSoT)/A2A(MOD-INF-025,消费本协议SSoT)/治理层消费。
 
-**标准锚点**：本蓝图遵循 [blueprint-template.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md) v3.6 | AI 压缩工作流标准 [trae_030_doc_numbering_metadata.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | 代码头部标准 [code-construction-standards.md §7](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) | 优化规则见 onboarding_detail.md §10.6
+**标准锚点**：本蓝图遵循 blueprint-template.md v3.6 | AI 压缩工作流标准 [trae_030_doc_numbering_metadata.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | 代码头部标准 code-construction-standards.md §7 | 优化规则见 onboarding_detail.md §10.6
 
 ---
 
@@ -1382,12 +1382,12 @@ STEP 3: 拆分后验证
 
 | 链接 | 路径 |
 |------|------|
-| 蓝图+施工图模板 | [blueprint-template.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md) |
+| 蓝图+施工图模板 | blueprint-template.md |
 | AI 压缩工作流标准 | [trae_030_doc_numbering_metadata.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) |
-| 代码构建标准 | [code-construction-standards.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) |
-| 脚本质量标准 | [quality-standard.md](file:///D:/ZephyrAlpha/scripts/governance/quality-standard.md) |
+| 代码构建标准 | code-construction-standards.md |
+| 脚本质量标准 | [quality-standard.md](file:///D:/ZephyrAlpha/scripts/governance/quality_standard.md) |
 | 治理方法论 | [governance_methodology_standard.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml) |
-| Session 状态机 | [session-state-runbook.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md) |
+| Session 状态机 | session-state-runbook.md |
 | RBAC 模块 | [MOD-INF-018](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | Pipeline 模块 | [MOD-INF-021](file:///D:/ZephyrAlpha/docs/03_modules/_cross_layer/pipeline/blueprint.md) |
 | A2A Protocol | [MOD-INF-025](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md) |

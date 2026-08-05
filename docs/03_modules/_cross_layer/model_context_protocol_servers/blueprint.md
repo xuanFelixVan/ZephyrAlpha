@@ -124,9 +124,9 @@ END_REQUIRED_SECTIONS
 > actual_disk_path: src/zephyr/integration/mcp/ | generation: 2 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 蓝图+施工图模板：blueprint-template.md
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 代码头部标准：code-construction-standards.md §7
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 > 真源声明：本蓝图的 canonical SSoT 为 `architecture_model/layers/b_mcp.yaml`。

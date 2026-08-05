@@ -17,7 +17,7 @@ depends_on:
 
 # 03_modules — 模块蓝图目录索引
 
-> **架构真源**：[architecture_upgrade_discussion.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md) §二（43域方案）+ §17.6（域方案 v4）
+> **架构真源**：architecture_upgrade_discussion.md §二（43域方案）+ §17.6（域方案 v4）
 >
 > **命名规范**：全项目统一下划线（snake_case）。禁止连字符（kebab-case）。
 
@@ -79,8 +79,8 @@ depends_on:
 
 | 目录 | 说明 | 处置 |
 |------|------|------|
-| [_alpha_signal_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_alpha_signal_domain/blueprint.md) | 旧 Alpha Signal 域（已被 signal 层 3 子域取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
-| [_ml_experiment_domain/](file:///D:/ZephyrAlpha/docs/03_modules/_ml_experiment_domain/blueprint.md) | 旧 ML Experiment 域（已被 D_SIMULATION 取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
+| _alpha_signal_domain/ | 旧 Alpha Signal 域（已被 signal 层 3 子域取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
+| _ml_experiment_domain/ | 旧 ML Experiment 域（已被 D_SIMULATION 取代） | status=Deprecated，禁止新建引用；待 RULE-THREE 审判后删除或合并 |
 
 ---
 
@@ -122,6 +122,6 @@ depends_on:
 
 ## 六、导航
 
-- [上级目录](file:///D:/ZephyrAlpha/docs/index.md)
-- [架构真源](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md)
-- [能力定位书](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
+- 上级目录
+- 架构真源
+- [能力定位书](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)

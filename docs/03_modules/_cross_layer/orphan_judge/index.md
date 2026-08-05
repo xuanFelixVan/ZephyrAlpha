@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Orphan Judge 蓝图 — 孤儿判定器·三决策树处置 |
-| [delivery/](delivery/index.md) | 目录 | delivery |
+| delivery/ | 目录 | delivery |
 | [index.md](index.md) | Markdown | orphan-judge — 目录索引 |
 
 ## 导航

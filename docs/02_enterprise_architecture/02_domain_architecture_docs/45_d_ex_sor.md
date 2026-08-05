@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_EX_SOR | Domain ID | D_EX_SOR |
 | 域名称 | 执行路由 | Domain Name | Execution Routing |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 17 | Module Count | 17 |
+| 模块数 | 18 | Module Count | 18 |
 | 域内依赖 | 20 | Internal Dependencies | 20 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 24 | Cross-domain Outgoing | 24 |
-| 设计态模块 | 0 | Design Modules | 0 |
+| 设计态模块 | 1 | Design Modules | 1 |
 | 生产态模块 | 17 | Production Modules | 17 |
 | 容量 | 17/150 (正常) | Capacity | 17/150 (正常) |
 | 描述 | 执行路由，负责订单路由、智能拆单和执行场所选择 | Description | 执行路由，负责订单路由、智能拆单和执行场所选择 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 17 个模块（生产态 17 + 设计态 0），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 18 个模块（生产态 17 + 设计态 1），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -58,6 +58,7 @@ flowchart TD
     src_zephyr_ex_sor_api_init_py["ex_sor/api 包入口<br/>ex sor 接口 包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_init_py["ex_sor/core 包入口<br/>ex sor 核心 包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_algo_execution_selector_py["算法执行选择器<br/>SOR执行的选择器，按条件选择最优项<br/>algo_execution_selector<br/>文件: core/algo_execution_selector.py<br/>(生产态 / production)"]
+    src_zephyr_ex_sor_core_market_context_provider_py["core/market_context_provider<br/>核心包的market_context_provider模块<br/>文件: core/market_context_provider.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_infrastructure_init_py["ex_sor/infrastructure 包入口<br/>ex sor 基础设施<br/>包入口，整合基础设施相关子模块导出<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_models_init_py["ex_sor/models 包入口<br/>ex sor 模型 包入口，整合模型相关子模块导出<br/>文件: models/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_services_init_py["ex_sor/services 包入口<br/>ex sor 服务 包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
@@ -65,7 +66,8 @@ flowchart TD
     src_zephyr_ex_sor_extensions_init_py ~~~ src_zephyr_ex_sor_api_init_py
     src_zephyr_ex_sor_api_init_py ~~~ src_zephyr_ex_sor_core_init_py
     src_zephyr_ex_sor_core_init_py ~~~ src_zephyr_ex_sor_core_algo_execution_selector_py
-    src_zephyr_ex_sor_core_algo_execution_selector_py ~~~ src_zephyr_ex_sor_infrastructure_init_py
+    src_zephyr_ex_sor_core_algo_execution_selector_py ~~~ src_zephyr_ex_sor_core_market_context_provider_py
+    src_zephyr_ex_sor_core_market_context_provider_py ~~~ src_zephyr_ex_sor_infrastructure_init_py
     src_zephyr_ex_sor_infrastructure_init_py ~~~ src_zephyr_ex_sor_models_init_py
     src_zephyr_ex_sor_models_init_py ~~~ src_zephyr_ex_sor_services_init_py
     src_zephyr_ex_sor_core_optimal_order_router_py["optimal订单路由器<br/>core的路由器，按规则把请求分发到对应处理方<br/>optimal_order_router<br/>文件: core/optimal_order_router.py<br/>(生产态 / production)"]
@@ -81,49 +83,50 @@ flowchart TD
     src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>core的引擎，执行核心逻辑的处理引擎（algo<br/>trading）<br/>algo_trading_engine<br/>文件: core/algo_trading_engine.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_broker_api_connector_py["—连接失败、断线、状态机非法跳转<br/>Broker API Connector — 券商 API 连接器<br/>(MOD-XS-013)<br/>文件: api/broker_api_connector.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_api_rate_limiter_py["限速器配置非法<br/>Exchange API Rate Limiter — 交易所 API 限速器<br/>(MOD-XS-014)<br/>文件: api/api_rate_limiter.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_api_broker_api_connector_py -->|runtime / runtime| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_core_algo_trading_engine_py -->|runtime / runtime| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
-    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_optimal_order_router_py
-    src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
-    src_zephyr_ex_sor_core_execution_scheduler_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
+    src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
-    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
-    src_zephyr_ex_sor_core_optimal_order_router_py -->|runtime / runtime| src_zephyr_ex_sor_core_execution_scheduler_py
+    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
+    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
+    src_zephyr_ex_sor_core_algo_trading_engine_py -->|runtime / runtime| src_zephyr_ex_sor_api_broker_api_connector_py
+    src_zephyr_ex_sor_api_broker_api_connector_py -->|runtime / runtime| src_zephyr_ex_sor_api_api_rate_limiter_py
+    src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
+    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
+    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_optimal_order_router_py
+    src_zephyr_ex_sor_core_execution_scheduler_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
+    src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_slippage_analyzer_py
+    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
+    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
+    src_zephyr_ex_sor_core_optimal_order_router_py -->|runtime / runtime| src_zephyr_ex_sor_core_execution_scheduler_py
     src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_execution_quality_scorer_py
     src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_transaction_cost_optimizer_py
+    src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_slippage_analyzer_py
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_EX_CORE
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_core_algo_trading_engine_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_core_algo_execution_selector_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_sor_core_algo_trading_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_services_execution_quality_scorer_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["跨层契约基础设施<br/>跨层契约基础设施，负责跨层契约定义、共享契约管理<br/>和契约校验<br/>Cross-Layer Contract Infrastructure<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_sor_api_api_rate_limiter_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_services_slippage_analyzer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ex_sor_core_algo_execution_selector_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_sor_core_algo_execution_selector_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ex_sor_init_py,src_zephyr_ex_sor_extensions_init_py,src_zephyr_ex_sor_api_init_py,src_zephyr_ex_sor_api_api_rate_limiter_py,src_zephyr_ex_sor_api_broker_api_connector_py,src_zephyr_ex_sor_core_init_py,src_zephyr_ex_sor_core_algo_execution_selector_py,src_zephyr_ex_sor_core_algo_trading_engine_py,src_zephyr_ex_sor_core_broker_adapter_manager_py,src_zephyr_ex_sor_core_execution_scheduler_py,src_zephyr_ex_sor_core_optimal_order_router_py,src_zephyr_ex_sor_infrastructure_init_py,src_zephyr_ex_sor_models_init_py,src_zephyr_ex_sor_services_init_py,src_zephyr_ex_sor_services_execution_quality_scorer_py,src_zephyr_ex_sor_services_slippage_analyzer_py,src_zephyr_ex_sor_services_transaction_cost_optimizer_py production
+    class src_zephyr_ex_sor_core_market_context_provider_py design
     class D_EX_CORE,D_SHARED,D_INFRASTRUCTURE external_prod
 ```
 
@@ -162,26 +165,26 @@ flowchart TD
     src_zephyr_ex_sor_core_algo_trading_engine_py["算法交易引擎<br/>core的引擎，执行核心逻辑的处理引擎（algo<br/>trading）<br/>algo_trading_engine<br/>文件: core/algo_trading_engine.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_broker_api_connector_py["—连接失败、断线、状态机非法跳转<br/>Broker API Connector — 券商 API 连接器<br/>(MOD-XS-013)<br/>文件: api/broker_api_connector.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_api_api_rate_limiter_py["限速器配置非法<br/>Exchange API Rate Limiter — 交易所 API 限速器<br/>(MOD-XS-014)<br/>文件: api/api_rate_limiter.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_api_broker_api_connector_py -->|runtime / runtime| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_core_algo_trading_engine_py -->|runtime / runtime| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
-    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_optimal_order_router_py
-    src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
-    src_zephyr_ex_sor_core_execution_scheduler_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
+    src_zephyr_ex_sor_api_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_algo_execution_selector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
-    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
-    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
-    src_zephyr_ex_sor_core_optimal_order_router_py -->|runtime / runtime| src_zephyr_ex_sor_core_execution_scheduler_py
+    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
+    src_zephyr_ex_sor_core_broker_adapter_manager_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
+    src_zephyr_ex_sor_core_algo_trading_engine_py -->|runtime / runtime| src_zephyr_ex_sor_api_broker_api_connector_py
+    src_zephyr_ex_sor_api_broker_api_connector_py -->|runtime / runtime| src_zephyr_ex_sor_api_api_rate_limiter_py
+    src_zephyr_ex_sor_api_broker_api_connector_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
+    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
+    src_zephyr_ex_sor_core_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_optimal_order_router_py
+    src_zephyr_ex_sor_core_execution_scheduler_py -->|runtime / runtime| src_zephyr_ex_sor_core_algo_trading_engine_py
+    src_zephyr_ex_sor_core_execution_scheduler_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_algo_trading_engine_py
     src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_api_rate_limiter_py
-    src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_slippage_analyzer_py
+    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_core_broker_adapter_manager_py
+    src_zephyr_ex_sor_core_optimal_order_router_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_api_broker_api_connector_py
+    src_zephyr_ex_sor_core_optimal_order_router_py -->|runtime / runtime| src_zephyr_ex_sor_core_execution_scheduler_py
     src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_execution_quality_scorer_py
     src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_transaction_cost_optimizer_py
+    src_zephyr_ex_sor_services_init_py -->|导入依赖 / import_depends| src_zephyr_ex_sor_services_slippage_analyzer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -191,9 +194,18 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 0 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 1 个），不含跨域外部节点。
 
-> （无模块 / No modules）
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
+flowchart TD
+    src_zephyr_ex_sor_core_market_context_provider_py["core/market_context_provider<br/>核心包的market_context_provider模块<br/>文件: core/market_context_provider.py<br/>(设计态 / design)"]
+    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+    classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
+    classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
+    class src_zephyr_ex_sor_core_market_context_provider_py design
+```
 
 ## 跨域依赖 / Cross-domain Dependencies
 

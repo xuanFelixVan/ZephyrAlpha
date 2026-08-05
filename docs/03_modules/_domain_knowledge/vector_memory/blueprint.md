@@ -128,9 +128,9 @@ VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）
 **线2（AI认知线）流水线位置**：上下文需求 → MOD-CONTEXT_ENGINE(CE) → **MOD-INF-011(VMS)** → MOD-LLM_SECURITY(LLM安全网关) → MOD-INF-034(模型检测器) → MOD-INF-036(AI入职考试) → LLM响应+路由决策。VMS 向线3审计追踪链输出嵌入结果。C轨域：VMS → D_FACTOR(Alpha因子层) 因子语义检索 + VMS → D_ML_TRAIN(ML平台层) 模型语义检索。
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
+> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 代码头部标准：code-construction-standards.md §7
 > - 优化规则：先 Layer 1（蓝图模板合规）→ 后 Layer 2（规格化砍削）
 
 > **真源声明**：本蓝图是 VMS 架构设计、接口契约、施工指引的唯一真源。[b_vector_memory.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_vector_memory.yaml) 是本蓝图的 YAML 派生格式。

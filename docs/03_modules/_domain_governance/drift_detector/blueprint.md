@@ -89,10 +89,10 @@ design_maturity: design
 ---
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
+> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md)
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md) 线3:治理闭环
+> - 代码头部标准：code-construction-standards.md §7
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md) 线3:治理闭环
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -635,7 +635,7 @@ class BaselineSnapshot(BaseModel):
 ### 10.2 依赖图对齐声明
 
 > 蓝图 §10.1 声明的依赖 MUST 与全局依赖图一致。不一致 = 漂移。
-> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md) 线3:治理闭环
+> 全局依赖图 SSoT：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md) 线3:治理闭环
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
@@ -707,11 +707,11 @@ class BaselineSnapshot(BaseModel):
 
 ## §11 产出物存放目录
 
-> 代码文件头部要求（参照 [code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)）：
+> 代码文件头部要求（参照 code-construction-standards.md §7）：
 > 每个代码文件 MUST 在 docstring 首行标注十五字段头部：`[BLUEPRINT]`/`[MODULE]`/`[DOMAIN]`/`[DEPENDENCIES]`/`[CONSUMERS]`/`[STARTUP]`/`[MATURITY]`/`[INVARIANTS]`/`[MODIFY-GUARD]`/`[STABILITY]`/`[SAFETY]`/`[AI_AUTONOMY]`/`[ERROR_CONTRACT]`/`[TESTS]`/`[TTL]`。
 > 蓝图 §0 列出的文件 ↔ 代码 `[BLUEPRINT]` 字段 MUST 双向对齐。
 >
-> 四层路径对齐要求（参照 [dependency-graph-template.md §11](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/dependency-graph-template.md)）：
+> 四层路径对齐要求（参照 [dependency-graph-template.md §11](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/dependency_graph_template.md)）：
 > 本蓝图 §11 声明的产出物路径 MUST 与依赖图 §19 path_mappings 规则一致。
 > 验证命令：`python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-023`
 > 不一致 = 路径漂移，MUST 修正蓝图 §11 或更新依赖图 §19 规则。

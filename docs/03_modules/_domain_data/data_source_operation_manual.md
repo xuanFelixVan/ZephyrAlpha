@@ -1935,7 +1935,7 @@ python -m mootdx bestip --verbose
 
 #### §8.3.1 在线行情（quotes 模块，需网络）
 
-> **API 清单已结构化**：TDX 在线行情 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-001~005），详见 [asset_catalog.md](../../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
+> **API 清单已结构化**：TDX 在线行情 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-001~005），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
 
 - `client.bars(symbol, frequency, offset)` — A股K线全周期（frequency=0~9 对应 5分/15分/30分/60分/日/周/月/1分）
 - `client.index(symbol, frequency)` — 指数K线（symbol='000001'上证）
@@ -1945,7 +1945,7 @@ python -m mootdx bestip --verbose
 
 #### §8.3.2 本地数据文件读取（reader 模块，需安装通达信客户端）
 
-> **API 清单已结构化**：TDX 本地文件 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-006~009），详见 [asset_catalog.md](../../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
+> **API 清单已结构化**：TDX 本地文件 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-006~009），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
 
 - `reader.daily(symbol)` — 日线（.day，解析 `vipdoc/sh/lday/shXXXXXX.day`）
 - `reader.minute(symbol, suffix=1)` — 分钟线（.lc1）
@@ -1956,7 +1956,7 @@ python -m mootdx bestip --verbose
 
 #### §8.3.3 财务数据（affair 模块）
 
-> **API 清单已结构化**：TDX 财务数据 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-010~011），详见 [asset_catalog.md](../../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
+> **API 清单已结构化**：TDX 财务数据 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-010~011），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
 
 - `Affair.files()` — 可下载财务文件列表（返回 `gpcwYYYYMMDD.zip` 列表）
 - `Affair.fetch(downdir, filename)` — 下载财务数据包（单个或全量）
@@ -1965,7 +1965,7 @@ python -m mootdx bestip --verbose
 
 #### §8.3.4 扩展行情（ExtQuotes 模块）
 
-> **API 清单已结构化**：TDX 扩展行情 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-012），详见 [asset_catalog.md](../../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
+> **API 清单已结构化**：TDX 扩展行情 API 记录在 `depgraph.data_source_apis` 表（DS-TDX-API-012），详见 [asset_catalog.md](../../02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md) §数据源 API 清单。
 
 - `ExtQuotes().bars(market, symbol, frequency)` — 港股/期货K线（market=47=港股；不同品种 market 值不同）
 

@@ -20,9 +20,9 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心 |
-| [capacity_upgrade/](capacity_upgrade/index.md) | 目录 | capacity-upgrade — 目录索引 |
-| [changelog.md](changelog.md) | Markdown | feedback_loop Changelog |
-| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| capacity_upgrade/ | 目录 | capacity-upgrade — 目录索引 |
+| changelog.md | Markdown | feedback_loop Changelog |
+| changes/ | 目录 | changes — 目录索引 |
 | [index.md](index.md) | Markdown | feedback_loop — 目录索引 |
 
 ## 导航

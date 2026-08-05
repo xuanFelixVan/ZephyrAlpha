@@ -19,16 +19,16 @@ ttl: permanent
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [a2a_anomaly.yaml](a2a_anomaly.yaml) | YAML | |
+| a2a_anomaly.yaml | YAML | |
 | [arbitration_rules.yaml](arbitration_rules.yaml) | YAML | |
-| [blind_spot_matrix.yaml](blind_spot_matrix.yaml) | YAML | |
+| blind_spot_matrix.yaml | YAML | |
 | [blueprint.md](blueprint.md) | Markdown | A2A Protocol 蓝图 — Agent间通信协议与冲突解决 |
 | [index.md](index.md) | Markdown | a2a-protocol — 目录索引 |
-| [integration_test_report.md](integration_test_report.md) | Markdown | Integration Test Report |
-| [phase_plan.yaml](phase_plan.yaml) | YAML | |
-| [pre_mortem_tracker.yaml](pre_mortem_tracker.yaml) | YAML | |
+| integration_test_report.md | Markdown | Integration Test Report |
+| phase_plan.yaml | YAML | |
+| pre_mortem_tracker.yaml | YAML | |
 | [trigger_config.yaml](trigger_config.yaml) | YAML | |
-| [version_tracker.yaml](version_tracker.yaml) | YAML | |
+| version_tracker.yaml | YAML | |
 
 ## 导航
 

@@ -57,9 +57,9 @@ build_status: planned
 > parent_module: MOD-INF-035（AutoRuntime Core）——从 MOD-INF-035 蓝图拆分独立
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 蓝图+施工图模板：blueprint-template.md
 > - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 代码头部标准：code-construction-standards.md §7
 
 ---
 

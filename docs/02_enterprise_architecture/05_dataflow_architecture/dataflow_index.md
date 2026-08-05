@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-08-05T12:28:23
+> 生成时间: 2026-08-05T17:45:47
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 

@@ -56,10 +56,10 @@ ModelCapabilityExam（MCE）是 ModelProfiler（MOD-INF-034）的子系统，负
 ---
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-template.md](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 蓝图+施工图模板：blueprint-template.md
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[dependency_path_panorama.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
+> - 代码头部标准：code-construction-standards.md §7
+> - 依赖图：[dependency_path_panorama.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -779,7 +779,7 @@ ROADMAP-03: 真实 Quick 考试验证
 
 > **时态属性**：本节属于**永久时态**——记录已知方法论风险，AI 修改题库/评分时必读，防止忽视根本性方法论问题。
 > **来源**：Claude 对 `exam_test_cases.py` 的外部架构审查（2026-06-27）
-> **处理策略**：机械发现（2.1孤儿题/2.2缺负例）已代码修复 + CI 检查脚本 [check_exam_case_consistency.py](file:///D:/ZephyrAlpha/scripts/governance/check_exam_case_consistency.py) 防复发；方法论发现（3.1-3.5 + 2.3）记录在此，不在本轮代码修复，待后续按需推进。
+> **处理策略**：机械发现（2.1孤儿题/2.2缺负例）已代码修复 + CI 检查脚本 check_exam_case_consistency.py 防复发；方法论发现（3.1-3.5 + 2.3）记录在此，不在本轮代码修复，待后续按需推进。
 
 #### 风险清单
 

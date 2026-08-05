@@ -19,7 +19,7 @@ ttl: permanent
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [a2a_protocol/](a2a_protocol/index.md) | 目录 | a2a-protocol — 目录索引 |
+| a2a_protocol/ | 目录 | a2a-protocol — 目录索引 |
 | [asset_inventory/](asset_inventory/index.md) | 目录 | asset-inventory — 目录索引 |
 | [capacity_assurance/](capacity_assurance/index.md) | 目录 | Capacity Assurance |
 | [index.md](index.md) | Markdown | _domain_infrastructure_operations — 目录索引 |

@@ -20,18 +20,18 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 3552 | 94.3% |
-| design（设计态） | 214 | 5.7% |
+| production（生产态） | 3562 | 94.3% |
+| design（设计态） | 217 | 5.7% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3766** | **100%** |
+| **总计** | **3779** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4220 | 112.1% |
-| stable | 1800 | 47.8% |
-| planned | 123 | 3.3% |
+| generated | 4228 | 111.9% |
+| stable | 1803 | 47.7% |
+| planned | 126 | 3.3% |
 | deprecated | 90 | 2.4% |
 
 ## 各域设计成熟度统计
@@ -61,7 +61,7 @@ ttl: permanent
 | D_DIGITAL_TWIN | 数字孪生 | 7 | 7 | 0 | 0 | 100.0% |
 | D_EXEC_SIM | 执行仿真 | 7 | 7 | 0 | 0 | 100.0% |
 | D_EX_CORE | 执行核心 | 43 | 18 | 25 | 0 | 41.9% |
-| D_EX_SOR | 执行路由 | 17 | 17 | 0 | 0 | 100.0% |
+| D_EX_SOR | 执行路由 | 18 | 17 | 1 | 0 | 94.4% |
 | D_FACTOR | 因子 | 109 | 65 | 44 | 0 | 59.6% |
 | D_FBL_DETECTORS | 反馈检测器 | 65 | 65 | 0 | 0 | 100.0% |
 | D_FBL_DIAGNOSERS | 反馈诊断器 | 76 | 76 | 0 | 0 | 100.0% |
@@ -78,7 +78,7 @@ ttl: permanent
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | 115 | 115 | 0 | 0 | 100.0% |
 | D_GOV_REPAIR | 治理修复 | 1 | 1 | 0 | 0 | 100.0% |
 | D_GOV_RULE | 规则治理 | 36 | 36 | 0 | 0 | 100.0% |
-| D_GOV_SCRIPTS | 脚本治理 | 421 | 421 | 0 | 0 | 100.0% |
+| D_GOV_SCRIPTS | 脚本治理 | 422 | 422 | 0 | 0 | 100.0% |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | 26 | 26 | 0 | 0 | 100.0% |
 | D_INFRA_A2A | A2A通信 | 72 | 72 | 0 | 0 | 100.0% |
 | D_INFRA_OPS | 基础设施运维 | 2 | 2 | 0 | 0 | 100.0% |
@@ -97,9 +97,9 @@ ttl: permanent
 | D_ORCHESTRATOR | 代理编排器 | 72 | 70 | 2 | 0 | 97.2% |
 | D_PF_ALLOC | 组合分配 | 9 | 5 | 4 | 0 | 55.6% |
 | D_PF_CORE | 组合核心 | 18 | 16 | 2 | 0 | 88.9% |
-| D_POSITION | 仓位管理 | 22 | 15 | 7 | 0 | 68.2% |
+| D_POSITION | 仓位管理 | 25 | 15 | 10 | 0 | 60.0% |
 | D_REPORTING | 报告 | 20 | 19 | 1 | 0 | 95.0% |
-| D_RISK | 风控 | 29 | 21 | 8 | 0 | 72.4% |
+| D_RISK | 风控 | 37 | 30 | 7 | 0 | 81.1% |
 | D_SECURITY | 对抗验证 | 171 | 171 | 0 | 0 | 100.0% |
 | D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | N/A |
 | D_SEC_SCRIPTS | 安全治理脚本 | 0 | 0 | 0 | 0 | N/A |

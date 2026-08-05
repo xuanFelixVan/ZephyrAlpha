@@ -21,7 +21,7 @@ ttl: permanent
 |-----------|------|------|
 | [audit_trail/](audit_trail/index.md) | 目录 | audit_trail — 目录索引 |
 | [blueprint.md](blueprint.md) | Markdown | Governance Domain 蓝图 — Agent治理八件套跨模块集成契约 |
-| [capacity_upgrade/](capacity_upgrade/index.md) | 目录 | capacity_upgrade — 目录索引 |
+| capacity_upgrade/ | 目录 | capacity_upgrade — 目录索引 |
 | [code_dedup_engine/](code_dedup_engine/index.md) | 目录 | 代码去重引擎 — 目录索引 |
 | [drift_detector/](drift_detector/index.md) | 目录 | drift_detector |
 | [governance_automation/](governance_automation/index.md) | 目录 | governance_automation |

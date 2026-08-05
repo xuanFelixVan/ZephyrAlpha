@@ -27,7 +27,7 @@ ttl: permanent
 | 文档 | 说明 | SSoT 范围 |
 |------|------|----------|
 | [数据源操作手册](data_source_operation_manual.md) | iFind + miniQMT 可获取数据完整清单与获取方法，所有 API 调用方法均已实测验证固化 | 数据源 API 操作唯一真源——"怎么调用+参数坑" |
-| [实盘数据清单](realtime_data_inventory.md) | 35 项实盘交易实时数据能力索引（数据源/延迟/限流/稳定性/读取速度），生成器 `tmp/generate_realtime_inventory.py` | 实盘数据能力唯一真源——"实盘能拿什么+多快" |
+| 实盘数据清单 | 35 项实盘交易实时数据能力索引（数据源/延迟/限流/稳定性/读取速度），生成器 `tmp/generate_realtime_inventory.py` | 实盘数据能力唯一真源——"实盘能拿什么+多快" |
 
 **架构模型真源**：`docs/03_modules/_domain_data/blueprint.md`（Provider 抽象部分已移交 MOD-L00-004）
 **数据源集成器真源**：`docs/03_modules/_domain_data/data_source_integrator_blueprint.md`（Provider 抽象 + 调度编排 + 策略注册表）
@@ -40,4 +40,4 @@ ttl: permanent
 ## 导航
 
 - [上级目录](../index.md)
-- [架构真源](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md)
+- 架构真源

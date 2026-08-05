@@ -75,11 +75,11 @@ ttl: permanent
 | 类型 | 数量 |
 |------|------|
 | Track（轨） | 5 |
-| Layer（层） | 550 |
+| Layer（层） | 954 |
 | Node（节点） | 213 |
 | Edge（边） | 211 |
-| 运营态 Layer（design_maturity=production） | 509 |
-| 设计态 Layer（design_maturity=design） | 41 |
+| 运营态 Layer（design_maturity=production） | 796 |
+| 设计态 Layer（design_maturity=design） | 158 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 213 |
 
@@ -93,7 +93,7 @@ ttl: permanent
 | 02 | data_driven | 数据驱动轨 | 2 | 0 | 0 | [📄 02_decision_track_data_driven.md](02_decision_track_data_driven.md) |
 | 03 | human_override | 人工指令轨 | 3 | 0 | 0 | [📄 03_decision_track_human_override.md](03_decision_track_human_override.md) |
 | 04 | emergency | 应急保命轨 | 4 | 0 | 0 | [📄 04_decision_track_emergency.md](04_decision_track_emergency.md) |
-| 99 | placeholder | 占位轨 | 99 | 540 | 0 | [📄 99_decision_track_placeholder.md](99_decision_track_placeholder.md) |
+| 99 | placeholder | 占位轨 | 99 | 944 | 0 | [📄 99_decision_track_placeholder.md](99_decision_track_placeholder.md) |
 
 ## L2A 信号层 · 功能域导航（7 域）
 

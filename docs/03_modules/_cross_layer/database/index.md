@@ -20,7 +20,7 @@ ttl: permanent
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [blueprint.md](blueprint.md) | Markdown | Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级（P2迁移已完成 2026-06-27） |
-| [changes/](changes/index.md) | 目录 | changes — 目录索引 |
+| changes/ | 目录 | changes — 目录索引 |
 | [index.md](index.md) | Markdown | database — 目录索引 |
 | [sub_blueprints/](sub_blueprints/index.md) | 目录 | sub-blueprints — 目录索引 |
 

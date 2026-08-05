@@ -19,13 +19,13 @@ ttl: permanent
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blind_spot_tracker.yaml](blind_spot_tracker.yaml) | YAML | |
+| blind_spot_tracker.yaml | YAML | |
 | [blueprint.md](blueprint.md) | Markdown | 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎 |
-| [changelog.md](changelog.md) | Markdown | agent-spec Changelog |
-| [decision_tracker.yaml](decision_tracker.yaml) | YAML | |
+| changelog.md | Markdown | agent-spec Changelog |
+| decision_tracker.yaml | YAML | |
 | [index.md](index.md) | Markdown | agent-spec — 目录索引 |
-| [phase_tracker.yaml](phase_tracker.yaml) | YAML | |
-| [risk_tracker.yaml](risk_tracker.yaml) | YAML | |
+| phase_tracker.yaml | YAML | |
+| risk_tracker.yaml | YAML | |
 
 ## 导航
 

@@ -55,4 +55,4 @@ depends_on:
 ## 三、导航
 
 - [上级目录](../index.md)
-- [架构真源](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md)
+- 架构真源

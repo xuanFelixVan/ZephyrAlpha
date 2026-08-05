@@ -20,7 +20,7 @@ ttl: permanent
 | 文件 | 说明 |
 |------|------|
 | [blueprint.md](blueprint.md) | **Agent 身份与权限系统蓝图 v0.14.0** — 七层纵深防御 + 六横切面 Runtime RBAC |
-| [adversarial_test_report.yaml](adversarial_test_report.yaml) | **红白对抗测试报告 2026-05-08** — 8 攻击向量 + 5 根因分析 + 追问到底 |
+| adversarial_test_report.yaml | **红白对抗测试报告 2026-05-08** — 8 攻击向量 + 5 根因分析 + 追问到底 |
 
 ## 蓝图概览
 
