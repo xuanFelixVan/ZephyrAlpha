@@ -5121,7 +5121,7 @@ capabilities:
       多目录 regex 计数调用方（src/zephyr/+scripts/+tests/），零外部调用方=死 wrapper→warn。
       canonical = src/zephyr/governance/audit/dead_public_wrapper_reconciler.py
       （MOD-GOV_DEAD_PUBLIC_WRAPPER_RECONCILER）。注册点：git_commit_gateway.py
-      _register_default_reconcilers。治本动机：#ARCH-STAGE4 手工发现并删除了 5 个死公共
+      _register_default_reconcilers。治本动机：#ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 手工发现并删除了 5 个死公共
       wrapper，但手工扫描遗漏了 workspace_hygiene_reconciler.git_status_porcelain（同模式
       零调用方）。本 reconciler 将手工发现升级为持续自动检测，防复发。
 

@@ -24,7 +24,7 @@
 
 治本动机（第一性原理）
 --------------------
-#ARCH-STAGE4 手工发现并删除了 5 个死公共 wrapper，但手工扫描遗漏了
+#ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 手工发现并删除了 5 个死公共 wrapper，但手工扫描遗漏了
 workspace_hygiene_reconciler.git_status_porcelain（同样模式，同样零外部调用方）。
 本 reconciler 将手工发现升级为持续自动检测，防复发。
 

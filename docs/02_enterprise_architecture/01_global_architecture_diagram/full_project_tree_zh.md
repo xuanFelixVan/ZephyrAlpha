@@ -701,7 +701,7 @@ docs/  (包含2个文件: .md(1), .yaml(1))
 │   │   ├── trae_074_worktree_base_freshness.yaml  — worktree base 新鲜度全生命周期铁律（Worktree Base Freshness Full Lifecycle，裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001  
 │   │   ├── trae_075_stash_lifecycle.yaml  — stash 生命周期铁律（Stash Lifecycle，裁定 #ARCH-STASH-ACCUMULATION-001）  
 │   │   ├── trae_076_worktree_commit_persistence.yaml  — worktree commit 持久性 + start fail-closed 铁律（Worktree Commit Persistence + Start Fail-Closed，裁定 #ARCH-  
-│   │   ├── trae_077_capability_lookup_scene_classify.yaml  — capability lookup bypass 场景分类铁律（Capability Lookup Bypass Scene Classification，裁定 #ARCH-CAPABILITY-LO  
+│   │   ├── trae_077_capability_lookup_scene_classify.yaml  — capability lookup bypass 场景分类铁律（Capability Lookup Bypass Scene Classification，裁定 #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
 │   │   ├── trae_078_force_merge_safety.yaml  — force=True 逃生通道安全分类铁律（Force Merge Safety Classification，裁定 #ARCH-FORCE-MERGE-SAFETY-001）  
 │   │   ├── trae_079_commit_serialization.yaml  — commit 临界区文件锁串行化铁律（Commit Critical Section Serialization，裁定 #ARCH-COMMIT-SERIALIZATION-001）  
 │   │   ├── trae_080_panorama_alignment.yaml  — 四图对齐铁律（设计态先行 + 派生 + 对齐验证）  
