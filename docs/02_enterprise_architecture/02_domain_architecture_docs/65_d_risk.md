@@ -28,12 +28,12 @@ ttl: permanent
 | 域名称 | 风控 | Domain Name | Risk Control |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 40 | Module Count | 40 |
-| 域内依赖 | 58 | Internal Dependencies | 58 |
+| 域内依赖 | 64 | Internal Dependencies | 64 |
 | 跨域入边 | 19 | Cross-domain Incoming | 19 |
-| 跨域出边 | 26 | Cross-domain Outgoing | 26 |
+| 跨域出边 | 29 | Cross-domain Outgoing | 29 |
 | 设计态模块 | 3 | Design Modules | 3 |
 | 生产态模块 | 37 | Production Modules | 37 |
-| 容量 | 35/150 (正常) | Capacity | 35/150 (正常) |
+| 容量 | 37/150 (正常) | Capacity | 37/150 (正常) |
 | 描述 | 风控，负责风险指标计算、风险限额管理和风险预警 | Description | 风控，负责风险指标计算、风险限额管理和风险预警 |
 
 ## 域内依赖图 / Internal Dependency Diagram
@@ -129,70 +129,81 @@ flowchart TD
     src_zephyr_risk_core_tail_risk_monitor_py ~~~ src_zephyr_risk_core_var_calculator_py
     src_zephyr_risk_risk_limits_py -->|导入依赖 / import_depends| src_zephyr_risk_core_daily_auditor_py
     src_zephyr_risk_stop_loss_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
-    src_zephyr_risk_core_alert_generator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_core_alert_generator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_core_ai_agent_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_ashare_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_stop_loss_py
+    src_zephyr_risk_core_alert_generator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_core_alert_generator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_crowding_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_crowding_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_daily_auditor_py -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     src_zephyr_risk_core_liquidity_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_liquidity_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_core_risk_budget_allocator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     src_zephyr_risk_core_risk_budget_allocator_py -->|import / import| src_zephyr_risk_core_risk_decomposition_py
+    src_zephyr_risk_core_risk_budget_allocator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     src_zephyr_risk_core_risk_decomposition_py -->|导入依赖 / import_depends| src_zephyr_risk_core_daily_auditor_py
     src_zephyr_risk_core_risk_decomposition_py -->|import / import| src_zephyr_risk_core_var_calculator_py
     src_zephyr_risk_core_var_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_stress_test_engine_py
     src_zephyr_risk_core_var_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_tail_risk_monitor_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_core_daily_auditor_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_limits_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_core_daily_auditor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_ai_agent_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_crowding_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_crowding_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_liquidity_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_liquidity_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_operational_risk_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_model_risk_audit_py
+    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_operational_risk_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_ai_agent_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_model_risk_audit_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_crowding_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_crowding_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_liquidity_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_liquidity_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_validator_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_operational_risk_monitor_py
+    src_zephyr_risk_core_model_risk_audit_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     tests_risk_core_test_crowding_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_crowding_monitor_py
+    tests_risk_core_test_ai_agent_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_ai_agent_monitor_py
     tests_risk_core_test_liquidity_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
     tests_risk_core_test_liquidity_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_liquidity_monitor_py
-    tests_risk_core_test_alert_generator_py -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
-    tests_risk_core_test_alert_generator_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
     tests_risk_core_test_orchestrator_crowding_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
     tests_risk_core_test_orchestrator_crowding_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_crowding_monitor_py
     tests_risk_core_test_orchestrator_crowding_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
-    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
-    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_liquidity_monitor_py
-    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     tests_risk_core_test_orchestrator_alert_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
     tests_risk_core_test_orchestrator_alert_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
     tests_risk_core_test_orchestrator_alert_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
-    tests_risk_core_test_operational_risk_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_operational_risk_monitor_py
+    tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_ai_agent_monitor_py
     tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
-    tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_operational_risk_monitor_py
     tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
+    tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_operational_risk_monitor_py
+    tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_model_risk_audit_py
+    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
+    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_liquidity_monitor_py
+    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
+    tests_risk_core_test_alert_generator_py -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
+    tests_risk_core_test_alert_generator_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
+    tests_risk_core_test_model_risk_audit_py -->|测试依赖 / test_depends| src_zephyr_risk_core_model_risk_audit_py
+    tests_risk_core_test_operational_risk_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_operational_risk_monitor_py
     D_POSITION["仓位管理<br/>仓位管理，负责持仓跟踪、仓位计算和盈亏分析<br/>Position Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_risk_risk_limits_py -->|runtime / runtime| D_POSITION
     D_SECURITY["对抗验证<br/>对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验<br/>证<br/>Adversarial Validation<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_risk_core_ashare_systemic_risk_detector_py -->|导入依赖 / import_depends| D_SECURITY
+    D_FBL_DETECTORS["反馈检测器<br/>反馈检测器，负责异常检测、漂移检测、反馈信号检测<br/>和可靠性监控<br/>Feedback Detectors<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_risk_core_ai_agent_monitor_py -->|导入依赖 / import_depends| D_FBL_DETECTORS
+    D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_risk_core_model_risk_audit_py -->|导入依赖 / import_depends| D_INTELLIGENCE
+    D_FACTOR["因子<br/>因子，负责因子计算、因子库管理和因子评价<br/>Factor<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_risk_core_model_risk_audit_py -->|导入依赖 / import_depends| D_FACTOR
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_risk_core_operational_risk_monitor_py -->|导入依赖 / import_depends| D_EX_CORE
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| D_EX_CORE
-    D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     tests_risk_core_test_model_risk_audit_py -->|测试依赖 / test_depends| D_INTELLIGENCE
     tests_risk_core_test_operational_risk_monitor_py -->|测试依赖 / test_depends| D_EX_CORE
     tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| D_EX_CORE
@@ -204,9 +215,6 @@ flowchart TD
     tests_risk_core_test_orchestrator_alert_integration_py -->|测试依赖 / test_depends| D_INFRASTRUCTURE
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_risk_core_drawdown_tracker_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_risk_core_tail_risk_monitor_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_TRADING
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_risk_risk_limits_py
     D_POSITION -->|runtime / runtime| src_zephyr_risk_risk_limits_py
@@ -214,15 +222,15 @@ flowchart TD
     D_PF_CORE -->|contract / contract| src_zephyr_risk_risk_limits_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_stop_loss_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_validator_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_validator_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_stop_loss_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_validator_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_validator_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -230,7 +238,7 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_risk_core_ai_agent_monitor_py,src_zephyr_risk_core_alert_generator_py,src_zephyr_risk_core_ashare_stop_loss_engine_py,src_zephyr_risk_core_ashare_systemic_risk_detector_py,src_zephyr_risk_core_concentration_monitor_py,src_zephyr_risk_core_crowding_monitor_py,src_zephyr_risk_core_daily_auditor_py,src_zephyr_risk_core_drawdown_tracker_py,src_zephyr_risk_core_liquidity_monitor_py,src_zephyr_risk_core_model_risk_audit_py,src_zephyr_risk_core_operational_risk_monitor_py,src_zephyr_risk_core_risk_budget_allocator_py,src_zephyr_risk_core_risk_decomposition_py,src_zephyr_risk_core_stress_test_engine_py,src_zephyr_risk_core_tail_risk_monitor_py,src_zephyr_risk_core_var_calculator_py,src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_implementations_default_position_limit_checker_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_implementations_default_stop_loss_engine_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py,tests_risk_core_test_ai_agent_monitor_py,tests_risk_core_test_alert_generator_py,tests_risk_core_test_crowding_monitor_py,tests_risk_core_test_liquidity_monitor_py,tests_risk_core_test_model_risk_audit_py,tests_risk_core_test_operational_risk_monitor_py,tests_risk_core_test_orchestrator_alert_integration_py,tests_risk_core_test_orchestrator_crowding_integration_py,tests_risk_core_test_orchestrator_g3g5g6_integration_py,tests_risk_core_test_orchestrator_liquidity_integration_py production
     class src_zephyr_risk_core_agent_risk_monitor_py,src_zephyr_risk_core_risk_data_pipeline_py,src_zephyr_risk_core_risk_veto_engine_py design
-    class D_POSITION,D_SECURITY,D_EX_CORE,D_INTELLIGENCE,D_TRADING,D_INFRASTRUCTURE,D_SHARED,D_PF_CORE,D_GOVERNANCE external_prod
+    class D_POSITION,D_SECURITY,D_FBL_DETECTORS,D_INTELLIGENCE,D_FACTOR,D_EX_CORE,D_TRADING,D_INFRASTRUCTURE,D_SHARED,D_PF_CORE,D_GOVERNANCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -310,62 +318,68 @@ flowchart TD
     src_zephyr_risk_core_tail_risk_monitor_py ~~~ src_zephyr_risk_core_var_calculator_py
     src_zephyr_risk_risk_limits_py -->|导入依赖 / import_depends| src_zephyr_risk_core_daily_auditor_py
     src_zephyr_risk_stop_loss_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
-    src_zephyr_risk_core_alert_generator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_core_alert_generator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_core_ai_agent_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_ashare_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_stop_loss_py
+    src_zephyr_risk_core_alert_generator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_core_alert_generator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_crowding_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_crowding_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_daily_auditor_py -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     src_zephyr_risk_core_liquidity_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_liquidity_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_core_risk_budget_allocator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     src_zephyr_risk_core_risk_budget_allocator_py -->|import / import| src_zephyr_risk_core_risk_decomposition_py
+    src_zephyr_risk_core_risk_budget_allocator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_risk_decomposition_py
     src_zephyr_risk_core_risk_decomposition_py -->|导入依赖 / import_depends| src_zephyr_risk_core_daily_auditor_py
     src_zephyr_risk_core_risk_decomposition_py -->|import / import| src_zephyr_risk_core_var_calculator_py
     src_zephyr_risk_core_var_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_stress_test_engine_py
     src_zephyr_risk_core_var_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_tail_risk_monitor_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_core_daily_auditor_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_limits_py
     src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -->|导入依赖 / import_depends| src_zephyr_risk_core_daily_auditor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_ai_agent_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_crowding_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_crowding_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_liquidity_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_liquidity_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_operational_risk_monitor_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_model_risk_audit_py
+    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_core_operational_risk_monitor_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_ai_agent_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_model_risk_audit_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_alert_generator_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_crowding_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_crowding_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_liquidity_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_liquidity_monitor_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_validator_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_core_operational_risk_monitor_py
+    src_zephyr_risk_core_model_risk_audit_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     tests_risk_core_test_crowding_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_crowding_monitor_py
+    tests_risk_core_test_ai_agent_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_ai_agent_monitor_py
     tests_risk_core_test_liquidity_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
     tests_risk_core_test_liquidity_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_liquidity_monitor_py
-    tests_risk_core_test_alert_generator_py -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
-    tests_risk_core_test_alert_generator_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
     tests_risk_core_test_orchestrator_crowding_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
     tests_risk_core_test_orchestrator_crowding_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_crowding_monitor_py
     tests_risk_core_test_orchestrator_crowding_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
-    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
-    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_liquidity_monitor_py
-    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
     tests_risk_core_test_orchestrator_alert_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
     tests_risk_core_test_orchestrator_alert_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
     tests_risk_core_test_orchestrator_alert_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
-    tests_risk_core_test_operational_risk_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_operational_risk_monitor_py
+    tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_ai_agent_monitor_py
     tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
-    tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_operational_risk_monitor_py
     tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
+    tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_operational_risk_monitor_py
+    tests_risk_core_test_orchestrator_g3g5g6_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_model_risk_audit_py
+    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
+    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_core_liquidity_monitor_py
+    tests_risk_core_test_orchestrator_liquidity_integration_py -->|测试依赖 / test_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
+    tests_risk_core_test_alert_generator_py -->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
+    tests_risk_core_test_alert_generator_py -->|测试依赖 / test_depends| src_zephyr_risk_core_alert_generator_py
+    tests_risk_core_test_model_risk_audit_py -->|测试依赖 / test_depends| src_zephyr_risk_core_model_risk_audit_py
+    tests_risk_core_test_operational_risk_monitor_py -->|测试依赖 / test_depends| src_zephyr_risk_core_operational_risk_monitor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -402,28 +416,31 @@ flowchart TD
 | 2 | 默认风险管理器编排器 / Default Risk Manager Orchestrator ... | → | D_EX_CORE 执行核心: 执行审计记录器 / Auditor (audit_journal/auditor.py) | 导入依赖 / import_depends |
 | 3 | G6 单元测试: OperationalRiskMonitor — 阈值解释层。 (core... | → | D_EX_CORE 执行核心: 执行审计记录器 / Auditor (audit_journal/auditor.py) | 测试依赖 / test_depends |
 | 4 | G3/G5/G6 集成测试: 监控器 → 编排器 → 告警管道（端到端）... | → | D_EX_CORE 执行核心: 执行审计记录器 / Auditor (audit_journal/auditor.py) | 测试依赖 / test_depends |
-| 5 | 风险Limits / Risk Limits (risk/risk_limits.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 6 | 校验单标的权重是否合规 / Risk Manager (risk/risk_manager.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
-| 7 | G1-S6 集成测试: DefaultRiskManagerOrchestrator ↔ AlertGe... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
-| 8 | G2-S6 集成测试: 流动性监控 → 编排器 → 告警管道（G1↔G2 ... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
-| 9 | G5 单元测试: ModelRiskAuditor — 漂移检测 + IC 衰减综合审... | → | D_INTELLIGENCE 上下文管理: 项目根路径 / Model Drift Detector (intelligence/model_dri... | 测试依赖 / test_depends |
-| 10 | G3/G5/G6 集成测试: 监控器 → 编排器 → 告警管道（端到端）... | → | D_INTELLIGENCE 上下文管理: 项目根路径 / Model Drift Detector (intelligence/model_dri... | 测试依赖 / test_depends |
-| 11 | 风险Limits / Risk Limits (risk/risk_limits.py) | → | D_POSITION 仓位管理: 系统性风险 5 级 / Drawdown Controller (core/drawdown_cont... | runtime / runtime |
-| 12 | A股系统性风险检测器输入数据非法 / Ashare Systemic Risk De... | → | D_SECURITY 对抗验证: 熔断器. / Kill Switch (access_control/kill_switch.py) | 导入依赖 / import_depends |
-| 13 | A股止损规则引擎输入数据非法 / Ashare Stop Loss Engine (co... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 14 | A股系统性风险检测器输入数据非法 / Ashare Systemic Risk De... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 15 | 集中度告警级别 / Concentration Monitor (core/concentratio... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 16 | 日终审计输入数据非法 / Daily Auditor (core/daily_auditor.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 17 | 回撤告警级别 / Drawdown Tracker (core/drawdown_tracker.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 18 | 风险预算输入数据非法 / Risk Budget Allocator (core/risk_b... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 19 | 风险分解输入数据非法 / Risk Decomposition (core/risk_deco... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 20 | 压力测试输入数据非法 / Stress Test Engine (core/stress_te... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 21 | 尾部风险监控输入数据非法 / Tail Risk Monitor (core/tail_r... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 22 | VaR 计算方法 / Var Calculator (core/var_calculator.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
-| 23 | Ml实验管道 / Ml Experiment Pipeline (cross_market_data_ad... | → | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 / Ml Ex... | 导入依赖 / import_depends |
-| 24 | 校验单标的权重是否合规 / Risk Manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险仪表盘快照 / Risk Dashboard Snapshot (risk/risk_dashb... | 导入依赖 / import_depends |
-| 25 | 校验单标的权重是否合规 / Risk Manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险LimitViolationError / Risk Limit Violation Error (ris... | 导入依赖 / import_depends |
-| 26 | 校验单标的权重是否合规 / Risk Manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险指标 / Risk Metrics (risk/risk_metrics.py) | 导入依赖 / import_depends |
+| 5 | D_RISK — Model Risk Auditor (MOD-RK-18) (core/model_risk... | → | D_FACTOR 因子: D-FACTOR-ANA-03 IC 衰减分析——不同 lag 的 IC 衰减曲 / ic... | 导入依赖 / import_depends |
+| 6 | D_RISK — AI/Agent Risk Monitor (MOD-RK-14) (core/ai_agen... | → | D_FBL_DETECTORS 反馈检测器: emergentbehavior检测器 / Emergent Behavior Detector — v0... | 导入依赖 / import_depends |
+| 7 | 风险Limits / Risk Limits (risk/risk_limits.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 8 | 校验单标的权重是否合规 / Risk Manager (risk/risk_manager.py) | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 导入依赖 / import_depends |
+| 9 | G1-S6 集成测试: DefaultRiskManagerOrchestrator ↔ AlertGe... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
+| 10 | G2-S6 集成测试: 流动性监控 → 编排器 → 告警管道（G1↔G2 ... | → | D_INFRASTRUCTURE 跨层契约基础设施: 风险Limits / Risk Limits (contracts/risk_limits.py) | 测试依赖 / test_depends |
+| 11 | D_RISK — Model Risk Auditor (MOD-RK-18) (core/model_risk... | → | D_INTELLIGENCE 上下文管理: 项目根路径 / Model Drift Detector (intelligence/model_dri... | 导入依赖 / import_depends |
+| 12 | G5 单元测试: ModelRiskAuditor — 漂移检测 + IC 衰减综合审... | → | D_INTELLIGENCE 上下文管理: 项目根路径 / Model Drift Detector (intelligence/model_dri... | 测试依赖 / test_depends |
+| 13 | G3/G5/G6 集成测试: 监控器 → 编排器 → 告警管道（端到端）... | → | D_INTELLIGENCE 上下文管理: 项目根路径 / Model Drift Detector (intelligence/model_dri... | 测试依赖 / test_depends |
+| 14 | 风险Limits / Risk Limits (risk/risk_limits.py) | → | D_POSITION 仓位管理: 系统性风险 5 级 / Drawdown Controller (core/drawdown_cont... | runtime / runtime |
+| 15 | A股系统性风险检测器输入数据非法 / Ashare Systemic Risk De... | → | D_SECURITY 对抗验证: 熔断器. / Kill Switch (access_control/kill_switch.py) | 导入依赖 / import_depends |
+| 16 | A股止损规则引擎输入数据非法 / Ashare Stop Loss Engine (co... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 17 | A股系统性风险检测器输入数据非法 / Ashare Systemic Risk De... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 18 | 集中度告警级别 / Concentration Monitor (core/concentratio... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 19 | 日终审计输入数据非法 / Daily Auditor (core/daily_auditor.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 20 | 回撤告警级别 / Drawdown Tracker (core/drawdown_tracker.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 21 | 风险预算输入数据非法 / Risk Budget Allocator (core/risk_b... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 22 | 风险分解输入数据非法 / Risk Decomposition (core/risk_deco... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 23 | 压力测试输入数据非法 / Stress Test Engine (core/stress_te... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 24 | 尾部风险监控输入数据非法 / Tail Risk Monitor (core/tail_r... | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 25 | VaR 计算方法 / Var Calculator (core/var_calculator.py) | → | D_SHARED 共享服务: ZephyrAlpha 所有业务异常的根 / Errors (foundation/errors.py) | 导入依赖 / import_depends |
+| 26 | Ml实验管道 / Ml Experiment Pipeline (cross_market_data_ad... | → | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管道 / Ml Ex... | 导入依赖 / import_depends |
+| 27 | 校验单标的权重是否合规 / Risk Manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险仪表盘快照 / Risk Dashboard Snapshot (risk/risk_dashb... | 导入依赖 / import_depends |
+| 28 | 校验单标的权重是否合规 / Risk Manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险LimitViolationError / Risk Limit Violation Error (ris... | 导入依赖 / import_depends |
+| 29 | 校验单标的权重是否合规 / Risk Manager (risk/risk_manager.py) | → | D_TRADING 交易运营: 风险指标 / Risk Metrics (risk/risk_metrics.py) | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -451,28 +468,32 @@ flowchart TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 9 个外部域直接连接（出边 26 条 + 入边 19 条 = 45 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 11 个外部域直接连接（出边 29 条 + 入边 19 条 = 48 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 graph LR
     D_RISK["D_RISK<br/>风控"]
     D_SHARED["D_SHARED<br/>共享服务"]
-    D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
+    D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_POSITION["D_POSITION<br/>仓位管理"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
+    D_FBL_DETECTORS["D_FBL_DETECTORS<br/>反馈检测器"]
+    D_FACTOR["D_FACTOR<br/>因子"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
     D_RISK -->|11条 导入依赖 / import_depends| D_SHARED
-    D_RISK -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_EX_CORE
     D_RISK -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_RISK -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_EX_CORE
     D_RISK -->|3条 导入依赖 / import_depends| D_TRADING
-    D_RISK -->|2条 测试依赖 / test_depends| D_INTELLIGENCE
+    D_RISK -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INTELLIGENCE
     D_RISK -->|1条 runtime / runtime| D_POSITION
     D_RISK -->|1条 导入依赖 / import_depends| D_SECURITY
+    D_RISK -->|1条 导入依赖 / import_depends| D_FBL_DETECTORS
+    D_RISK -->|1条 导入依赖 / import_depends| D_FACTOR
     D_GOVERNANCE -->|11条 导入依赖 / import_depends, 测试依赖 / test_depends| D_RISK
     D_PF_CORE -->|6条 contract / contract, 导入依赖 / import_depends| D_RISK
     D_EX_CORE -->|1条 runtime / runtime| D_RISK

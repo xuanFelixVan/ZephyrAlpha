@@ -6,7 +6,7 @@ blueprint_id: MOD-RK-19
 domain_id: D_RISK
 path: src/zephyr/risk/core/operational_risk_monitor.py
 design_maturity: production
-build_status: stable
+build_status: generated
 granularity: file
 ai_autonomy: ai_modifiable
 safety: L
