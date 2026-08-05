@@ -540,10 +540,15 @@ def render_by_blocking(entries: list[dict]) -> list[str]:
             domain = e.get("domain", "")
             fq = entry_admission(e)
             # 卡点理由：取 q1_implemented 的 evidence，无则 last_review_outcome
+            # q1_implemented 数据形态二态：手工条目=dict{result,equivalent_nodes,evidence}，
+            # HARVEST/历史条目=string("rejected"/"pending")。dict 取 evidence，string 取值本身。
             bq_evidence = ""
             if bq == "q1":
-                qobj = fq.get("q1_implemented", {}) or {}
-                bq_evidence = (qobj.get("evidence") or "").replace("|", "/")
+                q1 = fq.get("q1_implemented")
+                if isinstance(q1, dict):
+                    bq_evidence = (q1.get("evidence") or "").replace("|", "/")
+                elif isinstance(q1, str) and q1:
+                    bq_evidence = f"q1_implemented={q1}".replace("|", "/")
             if not bq_evidence:
                 bq_evidence = (e.get("last_review_outcome") or "").replace("|", "/")
             alt = (e.get("alternatives") or "").replace("|", "/")

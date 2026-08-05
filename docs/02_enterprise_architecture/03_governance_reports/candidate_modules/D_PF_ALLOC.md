@@ -13,7 +13,7 @@ ttl: permanent
 > [← 返回索引](index.md)
 
 > 本域候选 **82** 条（原有 1 + harvest 81）。
-> harvest 去重四态: likely_new=45 / likely_implemented=18 / likely_planned=12 / uncertain=6
+> harvest 去重四态: likely_new=45 / likely_implemented=17 / likely_planned=12 / uncertain=6
 
 ## 完整清单
 
@@ -47,7 +47,6 @@ ttl: permanent
 | CAND-HARVEST-3222 | 体制自适应权重 Regime Adaptive Weight | 趋势体制→动量信号权重↑均值回归→反转信号权重↑ | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-3223 | 策略指纹相似度 Strategy Fingerprint Similarity | 相似度>90%否决上线与PA-04联动 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-3224 | 因子正交性 Factor Orthogonality | 因子正交性度量替代天然互补性 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
-| CAND-HARVEST-3225 | 多策略投票 Multi-Strategy Voting | 信号驱动投票策略综合得分 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-3226 | 共振融合 Resonance Fusion | 全部同向→强共振多数同向→中等分歧→弱 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-3227 | 决策去重 Decision Deduplication | 同标的同方向多策略重复信号→合并为一条指令 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-3228 | 跨策略仓位合并 Cross-Strategy Position Merging | 同标的多策略合并→取sum不超上限 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
@@ -101,12 +100,19 @@ ttl: permanent
 | CAND-HARVEST-3296 | ESRB系统性风险向量 ESRB Systemic Risk Vector | 顺周期性+模型同质性+互联性PA缓解措施 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-HARVEST-3297 | 仲裁规则 Arbitration Rules | 冷启动vs风险预算/跨策略仓位合并vs单票仓位上限/风险预算仓位vs市场状态仓位上限 | D_PF_ALLOC | 候选待评（candidate） | 待评估 | P2 | — | 2026-11-30 |
 | CAND-PFALLOC-001 | Min-Variance & Risk-Parity Rebalance Modes / 最小方差与风险平价再平衡模式 | 实盘组合分配只能用 equal_weight/signal_weight,无法执行最小方差/风险平价这两种基础量化分配方法——当前 min_variance/risk_parity 模式静默 fallback 到 equal_weight,实盘分配与预期不符 | D_PF_ALLOC | 延后（deferred） | 一问通过 | P1 | 实盘需启用 min_variance/risk_parity 分配模式 等3条 | 2026-11-30 |
+| CAND-HARVEST-3225 | 多策略投票 Multi-Strategy Voting | 信号驱动投票策略综合得分 | D_PF_ALLOC | 否决（rejected） | q1 已实现/重复 | P2 | — | 2026-11-30 |
 
 ## 按一问卡点分组（为什么没开发）
 
 > 一问标准（裁定 2026-08-04）：仅 q1 已实现/重复。q1「是」即不进 depgraph 设计态，登记在候选库。原 q2/q3/q4 灰度已废。
 
-### 待评估（81 条）
+### q1 已实现/重复（1 条）
+
+| ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
+|------|------|------|------|------|------|
+| CAND-HARVEST-3225 | 多策略投票 Multi-Strategy Voting | 信号驱动投票策略综合得分 | D_PF_ALLOC | q1_implemented=rejected | Model A 自然叠加（design_memo_001 §2.3）——多策略选到同一只票时仓位自然叠加，等价于永远稳定的等权 risk-budget 优化器 |
+
+### 待评估（80 条）
 
 | ID | 名称 | 大白话（干什么用） | 域 | 卡点理由 | 替代方案 |
 |------|------|------|------|------|------|
@@ -138,7 +144,6 @@ ttl: permanent
 | CAND-HARVEST-3222 | 体制自适应权重 Regime Adaptive Weight | 趋势体制→动量信号权重↑均值回归→反转信号权重↑ | D_PF_ALLOC | harvest待评估（likely_new） |  |
 | CAND-HARVEST-3223 | 策略指纹相似度 Strategy Fingerprint Similarity | 相似度>90%否决上线与PA-04联动 | D_PF_ALLOC | harvest待评估（likely_implemented） |  |
 | CAND-HARVEST-3224 | 因子正交性 Factor Orthogonality | 因子正交性度量替代天然互补性 | D_PF_ALLOC | harvest待评估（likely_new） |  |
-| CAND-HARVEST-3225 | 多策略投票 Multi-Strategy Voting | 信号驱动投票策略综合得分 | D_PF_ALLOC | harvest待评估（likely_implemented） |  |
 | CAND-HARVEST-3226 | 共振融合 Resonance Fusion | 全部同向→强共振多数同向→中等分歧→弱 | D_PF_ALLOC | harvest待评估（likely_new） |  |
 | CAND-HARVEST-3227 | 决策去重 Decision Deduplication | 同标的同方向多策略重复信号→合并为一条指令 | D_PF_ALLOC | harvest待评估（likely_new） |  |
 | CAND-HARVEST-3228 | 跨策略仓位合并 Cross-Strategy Position Merging | 同标的多策略合并→取sum不超上限 | D_PF_ALLOC | harvest待评估（likely_implemented） |  |
@@ -233,7 +238,7 @@ ttl: permanent
 | 2026-11-30 | quarterly | CAND-HARVEST-3222 | 体制自适应权重 Regime Adaptive Weight | D_PF_ALLOC | 候选待评（candidate） | harvest待评估（likely_new） |
 | 2026-11-30 | quarterly | CAND-HARVEST-3223 | 策略指纹相似度 Strategy Fingerprint Similarity | D_PF_ALLOC | 候选待评（candidate） | harvest待评估（likely_implemented） |
 | 2026-11-30 | quarterly | CAND-HARVEST-3224 | 因子正交性 Factor Orthogonality | D_PF_ALLOC | 候选待评（candidate） | harvest待评估（likely_new） |
-| 2026-11-30 | quarterly | CAND-HARVEST-3225 | 多策略投票 Multi-Strategy Voting | D_PF_ALLOC | 候选待评（candidate） | harvest待评估（likely_implemented） |
+| 2026-11-30 | quarterly | CAND-HARVEST-3225 | 多策略投票 Multi-Strategy Voting | D_PF_ALLOC | 否决（rejected） | rejected（Model A 自然叠加替代，2026-08-05） |
 | 2026-11-30 | quarterly | CAND-HARVEST-3226 | 共振融合 Resonance Fusion | D_PF_ALLOC | 候选待评（candidate） | harvest待评估（likely_new） |
 | 2026-11-30 | quarterly | CAND-HARVEST-3227 | 决策去重 Decision Deduplication | D_PF_ALLOC | 候选待评（candidate） | harvest待评估（likely_new） |
 | 2026-11-30 | quarterly | CAND-HARVEST-3228 | 跨策略仓位合并 Cross-Strategy Position Merging | D_PF_ALLOC | 候选待评（candidate） | harvest待评估（likely_implemented） |
