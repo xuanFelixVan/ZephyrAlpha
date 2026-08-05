@@ -110,6 +110,25 @@
 > 蓝图/文档引用 depgraph 时**只写稳定标识**（`module_id`/`blueprint_id`/`path`），**禁止写易变物理ID**（`node_id`/`edge_id`）。背景：8 个 blueprint.md 曾硬编码 `node_id`，DB 节点重建后成死引用。属命名/引用规范。
 >
 > **二元判定**：文档出现 `node_id=数字` / `edge_id=数字` → 硬阻断。**双层防御**（检测逻辑 SSoT = [`check_doc_node_id_hardcode.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/check_doc_node_id_hardcode.py)）：① pre-commit hook **GATE-DOC-NODE-ID**（`gate-doc-node-id`，检测范围 `docs/**/*.md`）；② in-process gate **BLUEPRINT-NODE-ID-HARDCODE**（[`blueprint_node_id_hardcode_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py)，priority=57，subprocess 调 `check_doc_node_id_hardcode.py --ci --files` 检测 staged blueprint.md）——GitCommitGateway 用 `--no-verify` 绕过 pre-commit hook，in-process gate 在 `check_all()` 阶段执行补齐覆盖缺口（#ARCH-DOC-NODE-ID-RULE-001 P1 补齐，2026-08-04；P3 三源→单源治本 2026-08-04：原内联正则与 `validate_blueprint_provenance.py` 形成三源已漂移，治本改为 subprocess 调用专门检测器，GATE-12 回归纯 provenance 校验）。需要物理 ID 时**查 depgraph DB 获取**，不在文档里固化。
+>
+> ### 模块获取方式元数据（acquisition fields，2026-08-05）
+>
+> **每个模块登记"怎么搞到手"**：`nodes_metadata` 表两列记录模块的获取方式与来源，供 AI 开发时查询，避免重复造轮子（已有开源替代时直接复用、已借鉴时对齐命名、废弃者不复用）。
+>
+> | 字段 | 列 | 取值 / 含义 |
+> |------|-----|------------|
+> | acquisition_method | `nodes_metadata.acquisition_method` | `self_build`（自建）/ `opensource`（开源替代）/ `borrow`（借鉴）/ `deprecate`（弃用） |
+> | acquisition_source | `nodes_metadata.acquisition_source` | 开源链接 / 借鉴组件名 / 空（self_build 时通常空） |
+>
+> **枚举真源（单真源）**：`acquisition_method` 合法值唯一真源 = DDL CHECK 约束（[`depgraph_schema._DDL_NODES_METADATA`](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) + [`02_create_pg_schema.sql`](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql)）。注释 / help 文本 / 生成器字典均为派生展示，禁止作真源；非法值 INSERT 被 DB 拒绝。
+>
+> **设置方式**：`apply_depgraph.py --update-module-metadata PATH acquisition_method=opensource acquisition_source=<url>`（[apply_depgraph.py](file:///d:/ZephyrAlpha/scripts/governance/apply_depgraph.py)）UPSERT 到 `nodes_metadata`（`path` 为稳定 PK，PATH 后跟 `KEY=VALUE` 列表）。
+>
+> **查询方式**：[`DepgraphReader.get_status_and_gate_map(target_ids)`](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/depgraph_reader.py) 批量返回 `{build_status, gate_reason, acquisition_method, acquisition_source}`，按 `blueprint_id` 聚合 acquisition（优先取非空值，`ORDER BY n.path` 确保确定性）。
+>
+> **可视化**：battle_map 生成器按 `acquisition_method` 渲染 emoji 标记（[`generate_battle_map_diagram.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py)），一眼区分自建/开源/借鉴/弃用模块。
+>
+> **迁移**：现有库加列用 [`add_acquisition_fields.py`](file:///d:/ZephyrAlpha/scripts/governance/migrations/add_acquisition_fields.py)（幂等 `ALTER TABLE ADD COLUMN IF NOT EXISTS`，superuser DDL 权限）。
 
 ## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
 
@@ -717,6 +736,7 @@ AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml
   - **治本 GAP-2**：解决"frontmatter.blueprint_id 引用的蓝图是否存在无检测"防护缺口。检测 .md frontmatter 的 blueprint_id 字段值是否在 `blueprint_registry.yaml` 中存在。**注**：该文件曾于 commit `303fb9c9b2` 被 KB 清理误删（导致 `_load_blueprint_registry_module_ids()` 返回空集、检测静默失效），已于 2026-08-01 恢复并同步至 57 条目，检测恢复生效（详见 #ARCH-BP-REGISTRY-DELETION-001）；漂移由 GATE-21 守护。空值跳过（合法，如 index.md 无归属蓝图）；格式非法跳过（交给 GATE-NAMING N-06 双轨制格式校验）。真源：[`audit_broken_links.py` `_check_blueprint_id_exists`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
   - **治本 GAP-3**：解决"index.md 列出的文件清单是否存在无检测"防护缺口。对名为 index.md 的文件做**严格本地解析**（仅相对 source.parent，禁 basename 兜底——本目录契约语义）。处理 markdown 链接 + `file:///D:/ZephyrAlpha/...` 绝对 URL 两种格式。真源：[`audit_broken_links.py` `_check_index_md_inventory`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。
   - **治本 GAP-4**：解决"audit_report 审计对象存在性无检测"防护缺口。对 doc_type=audit_report 的 .md 文件，校验三类引用：①frontmatter.blueprint_id ②frontmatter.module_id ③正文 MODULE_ID 匹配（MOD-XXX-NNN module_id / D-XXX-NNN submodule_id / SH-XXX-NNN module_id 双轨制+submodule_id）。自动生成 audit_report（无 blueprint_id 无 module_id）跳过。真源：[`audit_broken_links.py` `_check_audit_report_objects`](file:///d:/ZephyrAlpha/scripts/governance/d2_links/audit_broken_links.py) 函数。已检出幻觉：ai_12/17/18_report.md 引用不存在的 `MOD-DB_DEPGRAPH_PG`/`MOD-INF`。
+  - **DOC-REF-BROKEN GitCommitGateway in-process 门禁**（与上述 GATE-FRONTMATTER/DOC-REF pre-commit hook 互补的第二层断链检测，2026-08-05 治本）：[`doc_ref_broken_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py)（priority=91，GitCommitGateway `__init__` 自动注册）检测 staged 新增 .md 文件的 markdown 断链。两处治本：① `file:///d:/ZephyrAlpha/...` 绝对路径链接正确解析（`_resolve_file_url` 提取本地路径后 `os.path.exists` 检查，不当相对路径误判）；② **草稿/归档区豁免**——`_working`/`_archive`/`_backups`/`session_logs` 目录跳过扫描（对齐 N-16 `skip_dirs_docs` SSoT，从 [trae_028.yaml §n16_config.skip_dirs_docs](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml) 动态加载，fail-open 回退硬编码）。**语义**：草稿区（施工方案/评估报告/临时笔记）可能引用待创建文件，属正常前瞻性规划，不应被断链门禁扫描误伤不相关 commit；N-16 同样跳过这些目录，跨门禁语义一致。
 
 - **tests/ 目录组织规范（向内收防回归，[#ARCH-029](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 治本）**——病根：tests/ 根曾平铺 1699 个 test_*.py（新 AI 无法定位 + 无分类指引），子目录粒度混合维度（unit/integration/e2e 按测试类型 vs governance/llm_security 按功能域 vs contract/contracts 按测试种类），contract/ 与 contracts/ 单复数歧义并存。治本约定（文档化防回归，无硬门禁——AD-GOV-001 收敛期不新增 gate）：
   - **单一维度=功能域**：tests/ 子目录按功能域归类（a2a/skill/trae_rules/kb/governance/llm_security/...），不混入测试类型维度（unit/integration/e2e）。新测试文件按文件名前缀归对应功能域子目录。
