@@ -42,6 +42,10 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+# 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
+# 幂等时间源（脚本最近 git commit 时间），消除 datetime.now() 导致的 per-second diff。
+from _common import idempotent_timestamp  # noqa: E402
+
 _THIS_FILE = Path(__file__).resolve()
 # 仓库根：含 scripts/ 和 src/ 的目录（zoomable_html.py 在 scripts/governance/d5_architecture/generators/）
 REPO_ROOT = next(p for p in _THIS_FILE.parents if (p / "scripts").is_dir() and (p / "src").is_dir())
@@ -209,7 +213,8 @@ def build_html(blocks: list[tuple[str, str]], doc_title: str, mermaid_source: st
             f"</div>"
         )
     diagrams = "\n".join(diagrams_html)
-    gen_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源
+    gen_time = idempotent_timestamp(Path(__file__))
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -459,5 +464,5 @@ def emit_zoomable_html(
 
     source, is_cdn, _mode = resolve_mermaid_source(force_cdn)
     html = build_html(blocks, doc_title, source, is_cdn)
-    out_path.write_text(html, encoding="utf-8")
+    out_path.write_text(html, encoding="utf-8", newline="\n")
     return out_path

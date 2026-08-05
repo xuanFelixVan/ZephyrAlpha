@@ -56,7 +56,7 @@ from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  
 from domain_name_mapping import get_domain_name_zh
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_category_map
-from _common import DB_DISPLAY_NAME
+from _common import DB_DISPLAY_NAME, idempotent_timestamp
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 BASE_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture"
@@ -126,7 +126,10 @@ def get_db_stats(conn: PgConnExecuteWrapper) -> dict:
 
 def generate_navigation(stats: dict, global_files: list, domain_files: list, report_files: list) -> str:
     """生成导航文档。"""
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
+    # 改用幂等时间源（脚本最近 git commit 时间），相同 commit → 相同输出，
+    # 消除 datetime.now() 导致的 per-second diff 非收敛循环。
+    now = idempotent_timestamp(Path(__file__))
 
     lines = []
     lines.append("# 架构文档库总览")
@@ -275,7 +278,7 @@ def main() -> None:
     # 生成导航文档
     content = generate_navigation(stats, global_files, domain_files, report_files)
     out_path = output_dir / args.output_name
-    out_path.write_text(content, encoding="utf-8")
+    out_path.write_text(content, encoding="utf-8", newline="\n")
     print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
 
 

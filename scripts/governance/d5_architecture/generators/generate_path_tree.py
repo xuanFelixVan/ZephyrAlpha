@@ -32,7 +32,7 @@ from __future__ import annotations
 
 # 治本（2026-07-04）：DB_DISPLAY_NAME 前移到 __manifest__ 之前，避免 f-string 求值时 NameError。
 # _common.py 与本文件同目录（generators/），CLI 运行时 sys.path[0]=本目录，可直接 import。
-from _common import DB_DISPLAY_NAME  # noqa: E402
+from _common import DB_DISPLAY_NAME, idempotent_timestamp  # noqa: E402
 
 __manifest__ = f"""
 args: []
@@ -703,7 +703,10 @@ def generate_path_tree(lang: str, conn: PgConnExecuteWrapper, scope: str = "arch
     tree = build_tree_structure(rows, scope)
     roots = find_roots(tree)
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
+    # 改用幂等时间源（脚本最近 git commit 时间），相同 commit → 相同输出，
+    # 消除 datetime.now() 导致的 per-second diff 非收敛循环。
+    now = idempotent_timestamp(Path(__file__))
 
     if scope == "full":
         if lang == "zh":
@@ -825,13 +828,13 @@ def main() -> None:
         if args.lang in ("zh", "both"):
             content = _FRONTMATTER + generate_path_tree("zh", conn, "full")
             out_path = output_dir / zh_name
-            out_path.write_text(content, encoding="utf-8")
+            out_path.write_text(content, encoding="utf-8", newline="\n")
             print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
 
         if args.lang in ("en", "both"):
             content = _FRONTMATTER + generate_path_tree("en", conn, "full")
             out_path = output_dir / en_name
-            out_path.write_text(content, encoding="utf-8")
+            out_path.write_text(content, encoding="utf-8", newline="\n")
             print(f"[OK] 生成 {out_path} ({len(content)} 字符)")
     finally:
         conn.close()

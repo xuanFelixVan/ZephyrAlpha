@@ -60,7 +60,7 @@ if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 
 try:
-    from _common import DB_DISPLAY_NAME  # noqa: E402
+    from _common import DB_DISPLAY_NAME, idempotent_timestamp  # noqa: E402
 except ImportError:
     DB_DISPLAY_NAME = "PostgreSQL depgraph"
 
@@ -701,7 +701,8 @@ def _gen_panorama_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) 
     prod_m_job = sum(1 for j in jobs if j.get("maturity") == "production")
     design_job = sum(1 for j in jobs if j.get("maturity") == "design")
 
-    now = datetime.now().isoformat(timespec="seconds")
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源（脚本最近 git commit 时间）
+    now = idempotent_timestamp(Path(__file__))
     html_link = _html_link_for("dataflow_panorama")
 
     lines = []
@@ -954,7 +955,8 @@ def _gen_domain_md(
 
     :param all_datasets: 全量 Dataset（用于解析全景图跨域外部节点）；None 时回退到 datasets
     """
-    now = datetime.now().isoformat(timespec="seconds")
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源（脚本最近 git commit 时间）
+    now = idempotent_timestamp(Path(__file__))
     title = grp["title"]
     key = grp["key"]
     html_link = _html_link_for(key)
@@ -1120,7 +1122,8 @@ def _gen_domain_md(
 def _gen_overview_index(datasets: list[dict], jobs: list[dict], edges: list[dict],
                         group_counts: dict[str, dict]) -> str:
     """生成索引文件（概览 + 统计 + 链接到各域文件）。"""
-    now = datetime.now().isoformat(timespec="seconds")
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：幂等时间源（脚本最近 git commit 时间）
+    now = idempotent_timestamp(Path(__file__))
     prod_ds = sum(1 for d in datasets if d.get("maturity") != "design")
     design_ds = sum(1 for d in datasets if d.get("maturity") == "design")
     prod_job = sum(1 for j in jobs if j.get("maturity") != "design")
@@ -1243,7 +1246,7 @@ def main() -> int:
     # 辅助：写 MD 后联动生成可缩放 HTML（模板 V1.2 §9.1 #1：MD+HTML 双产物）
     def _write_md_and_html(stem: str, md_text: str) -> None:
         md_path = out_dir / f"{stem}.md"
-        md_path.write_text(md_text, encoding="utf-8")
+        md_path.write_text(md_text, encoding="utf-8", newline="\n")
         html_path = emit_zoomable_html(md_path, md_text, out_dir / HTML_SUBDIR)
         if html_path:
             print(f"[OK]   └ _zoomable_html/{stem}.html（可缩放交互版）")
@@ -1296,7 +1299,7 @@ def main() -> int:
 
     # 4. 生成索引文件（无 Mermaid 块，不生成 HTML）
     index_md = _gen_overview_index(datasets, jobs, edges, group_counts)
-    (out_dir / "dataflow_index.md").write_text(index_md, encoding="utf-8")
+    (out_dir / "dataflow_index.md").write_text(index_md, encoding="utf-8", newline="\n")
     print(f"[OK] 生成 dataflow_index.md（索引+统计+链接）")
 
     # 5. 清理过时 HTML（域分组变更后旧 HTML 残留，模板 §16 reconciler 回退应对）

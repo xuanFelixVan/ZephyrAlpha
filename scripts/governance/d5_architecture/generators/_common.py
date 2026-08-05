@@ -35,9 +35,64 @@ warn_only: false
 
 
 import re
+import subprocess
 from pathlib import Path
 
-__all__ = ["cleanup_stale_files", "DB_DISPLAY_NAME"]
+__all__ = ["cleanup_stale_files", "DB_DISPLAY_NAME", "idempotent_timestamp", "idempotent_date"]
+
+
+# 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
+# 仓库根真源——_common.py 位于 scripts/governance/d5_architecture/generators/，
+# parents[0]=generators/ parents[1]=d5_architecture/ parents[2]=governance/
+# parents[3]=scripts/ parents[4]=repo root。
+_REPO_ROOT = Path(__file__).resolve().parents[4]
+
+
+def idempotent_timestamp(script_path: "Path | None" = None) -> str:
+    """幂等时间源：返回脚本最近一次 git commit 时间（ISO 8601 秒精度 YYYY-MM-DDTHH:MM:SS）。
+
+    相同 commit → 相同时间戳，避免 ``datetime.now()`` 导致生成器输出非确定性。
+
+    治本：#ARCH-REGEN-NONIDEMPOTENT-001
+    正典先例：generate_decision_diagram._git_commit_timestamp()
+    真源铁律：AGENTS.md §11.1.1 "禁止在生成器中使用 datetime.now() 或任何实时时间源"
+
+    Args:
+        script_path: 待查脚本路径；默认为调用方源文件。建议显式传 ``Path(__file__)``。
+
+    Returns:
+        ISO 8601 秒精度时间字符串（如 ``"2026-08-05T21:38:00"``）。
+        git 不可用或文件未入库时返回 ``"unknown"``。
+    """
+    target = Path(script_path) if script_path is not None else Path(__file__)
+    try:
+        r = subprocess.run(
+            ["git", "log", "-1", "--format=%cI", "--", str(target)],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            cwd=str(_REPO_ROOT),
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            # %cI 输出形如 2026-08-05T21:38:00+08:00，截到秒（19 字符）
+            return r.stdout.strip()[:19]
+    except Exception:  # noqa: BLE001 — git 不可用时降级
+        pass
+    return "unknown"
+
+
+def idempotent_date(script_path: "Path | None" = None) -> str:
+    """幂等日期源（YYYY-MM-DD）。
+
+    治本：#ARCH-REGEN-NONIDEMPOTENT-001
+    基于 idempotent_timestamp 派生，相同 commit → 相同日期。
+    """
+    ts = idempotent_timestamp(script_path)
+    if "T" in ts:
+        return ts.split("T")[0]
+    if " " in ts:
+        return ts.split(" ")[0]
+    return ts  # "unknown" 或其他格式原样返回
 
 # 治本（2026-06-30）：数据库名真源——生成器产物引用此常量，禁止硬编码 `depgraph (PostgreSQL)`。
 # 真源链：dependency_path_panorama.md L23 + AGENTS.md §11.0 命名规范 → 本常量（生成器可用真源）。

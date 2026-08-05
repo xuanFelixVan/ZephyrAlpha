@@ -49,7 +49,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import cleanup_stale_files, DB_DISPLAY_NAME  # noqa: E402
+from _common import cleanup_stale_files, DB_DISPLAY_NAME, idempotent_date, idempotent_timestamp  # noqa: E402
 
 __manifest__ = f"""
 args: []
@@ -918,6 +918,7 @@ def get_cross_domain_edges_detail(
            WHERE n1.domain_id=%s AND n2.domain_id != %s
              AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
              AND e.from_node_id IN ({placeholders})
+           ORDER BY n1.path, n2.path
            LIMIT 15""",
         params_out,
     )
@@ -949,6 +950,7 @@ def get_cross_domain_edges_detail(
            WHERE n2.domain_id=%s AND n1.domain_id != %s
              AND n1.build_status != 'deprecated' AND n2.build_status != 'deprecated'
              AND e.to_node_id IN ({placeholders})
+           ORDER BY n1.path, n2.path
            LIMIT 15""",
         params_out,
     )
@@ -1331,7 +1333,10 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     outgoing_agg, incoming_agg = get_cross_domain_deps(conn, domain_id)
     outgoing_detail, incoming_detail = get_cross_domain_deps_detail(conn, domain_id)
 
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
+    # 时间真源改为脚本最近 git commit 时间（idempotent_date / idempotent_timestamp），
+    # 相同 commit → 相同输出，消除 datetime.now() 导致的 per-second diff 非收敛循环。
+    # 下方 frontmatter date 字段直接调 idempotent_date()，不再需要 now 局部变量。
 
     # 统计
     design_count = sum(1 for n in nodes if n["design_maturity"] == "design")
@@ -1354,7 +1359,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append(f"title: {domain_id} {domain_name_zh}架构文档")
     lines.append('version: "1.0"')
     lines.append("status: active")
-    lines.append(f"date: {now.split()[0]}")
+    lines.append(f"date: {idempotent_date(Path(__file__))}")
     lines.append("owner: auto-generator")
     lines.append("ttl: permanent")
     lines.append("---")
@@ -1370,7 +1375,8 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append(f"> 本文档由 generate_domain_doc.py 从 {DB_DISPLAY_NAME} 自动生成")
     # DM-90974 Phase 2: 移除 per-second `最后更新: {now}` body 行——违反"相同 DB 输入→相同输出"幂等 invariant
     # （原 line 1083 每次 --all 都让所有域文档产生纯时间戳 diff → reconciler 噪音 commit）。
-    # 生成时间由 git log 提供；frontmatter date 字段保留粗粒度（每日）元数据。
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：frontmatter date 字段改用
+    # idempotent_date（脚本最近 git commit 日期），相同 commit → 相同输出。
     lines.append(f"> 数据源: {DB_DISPLAY_NAME} nodes表 + edges表")
     lines.append("")
     # HTML 可缩放版本快速跳转链接（IDE MD 预览无法无限放大 Mermaid，HTML 版支持 Ctrl+滚轮缩放+拖动平移）
