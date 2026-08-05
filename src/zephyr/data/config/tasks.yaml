@@ -1139,7 +1139,7 @@ tasks:
     capability: us_index
 - task_id: money_flow_full_refresh
   table: c1_market.money_flow
-  source: miniqmt          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，miniqmt升为主源
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源（miniqmt不支持money_flow）
   schedule: weekend_calibration
   incremental: false
   dependencies: []
@@ -1151,7 +1151,7 @@ tasks:
   fallback_sources:
   - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
     capability: money_flow
-  - source: miniqmt
+  - source: akshare
     capability: money_flow
 - task_id: daily_valuation_full_refresh
   table: c1_market.daily_valuation
