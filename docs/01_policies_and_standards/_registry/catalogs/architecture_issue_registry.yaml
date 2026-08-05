@@ -11918,9 +11918,3 @@ entries:
   last_updated: '2026-08-05'
 
 # --- #ARCH-VALUATION-IFIND-PRIMARY: 估值数据 ifind 主源切换（2026-08-05 补登记） ---
-- issue_id: '#ARCH-L3-TEST-DESCRIPTIVE'
-  title: '[L3 验证] 临时测试条目——验证后立即 revert'
-  status: deprecated
-  adjudication: '临时测试条目，验证 L3 数字制检测是否触发 ARCH_NON_NUMERIC_WARNING。验证后立即 git revert。'
-  created: '2026-08-05'
-  last_updated: '2026-08-05'
