@@ -11918,25 +11918,9 @@ entries:
   last_updated: '2026-08-05'
 
 # --- #ARCH-VALUATION-IFIND-PRIMARY: 估值数据 ifind 主源切换（2026-08-05 补登记） ---
-- issue_id: '#ARCH-VALUATION-IFIND-PRIMARY'
-  title: 估值 full_refresh symbols=null 必须 ifind 主源——主备源切换治本
-  severity: P2中
-  category: data
-  adjudication: |-
-    2026-08-04 治本，2026-08-05 补登记（违反铁律#6）。
-    病根：估值数据 full_refresh 切 ifind 主源后，symbols=null（全市场）必须
-    由 ifind 承载，但 akshare 备源不支持 symbols=null 全市场扫描，导致
-    full_refresh 降级到 akshare 时数据缺失。
-    治本方案：明确 ifind 为估值数据主源，full_refresh 的 symbols=null 路径
-    强制走 ifind；akshare 仅作增量更新备源。
-    关联：与 ifind 退役（commit 62c4e3494f）同批，但估值数据保留 ifind 主源。
-  fix_phase: |-
-    已完成（2026-08-04）：
-      - ifind_provider.py / akshare_provider.py 主备源切换逻辑
-      - 本条补登记满足铁律#6（2026-08-05）
-  impact:
-    - 'src/zephyr/data/implementations/akshare_provider.py（估值主备源切换，#ARCH-VALUATION-IFIND-PRIMARY）'
-    - 'src/zephyr/data/implementations/ifind_provider.py（full_refresh symbols=null ifind 主源）'
-  status: decided
-  created: '2026-08-04'
+- issue_id: '#ARCH-L3-TEST-DESCRIPTIVE'
+  title: '[L3 验证] 临时测试条目——验证后立即 revert'
+  status: deprecated
+  adjudication: '临时测试条目，验证 L3 数字制检测是否触发 ARCH_NON_NUMERIC_WARNING。验证后立即 git revert。'
+  created: '2026-08-05'
   last_updated: '2026-08-05'
