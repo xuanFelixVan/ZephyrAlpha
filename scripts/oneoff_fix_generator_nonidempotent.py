@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """一次性脚本：批量修复 6 个生成器的 datetime.now() 和 write_text newline（#ARCH-REGEN-NONIDEMPOTENT-001）。
 
 治本：#ARCH-REGEN-NONIDEMPOTENT-001
