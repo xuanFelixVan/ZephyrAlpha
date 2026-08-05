@@ -293,3 +293,17 @@ generators:
       - yaml:architecture_model/data/data_sources_registry.yaml
     output_globs:
       - src/zephyr/data/config/policies.yaml
+
+  # ════════════════════════════════════════════════════════════════════════
+  # 规则感知索引（trae_*.yaml → rule_ai_perception_index.yaml，#ARCH-GOV-CONVERGENCE-META Phase 3.2a）
+  # 输入源用目录路径（_is_stale 不支持 glob，目录 mtime 检测文件增删；
+  #   内容变更由 --check 模式 GATE-21 静态清单漂移检测兜底）
+  # ════════════════════════════════════════════════════════════════════════
+  - name: rule_ai_perception_index
+    module_path: scripts.governance.generators.generate_rule_ai_perception_index
+    trigger_sources:
+      - rules_yaml           # trae_*.yaml 变更后触发（启动时 mtime 对比兜底）
+    input_sources:
+      - yaml:docs/01_policies_and_standards/rules
+    output_globs:
+      - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml

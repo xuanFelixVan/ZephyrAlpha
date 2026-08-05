@@ -11591,3 +11591,36 @@ entries:
   related_rules: 'AGENTS.md 弃用模块处理流程（apply_depgraph 软删除）；#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION（regenerate 状态保留）'
   created: '2026-08-04'
   last_updated: '2026-08-04'
+# --- #ARCH-DUAL-TRIGGER: 体系A×体系B 生成器双重执行消除（2026-08-05 立项） ---
+- issue_id: '#ARCH-DUAL-TRIGGER'
+  title: 生成器自动触发体系A（reconcile_async）与体系B（post-commit reconciler）双重执行消除
+  severity: P2中
+  adjudication: |-
+    背景：
+    项目有两套生成器自动触发体系——体系A（apply_*.py 写 DB 后 reconcile_async 后台并行跑）
+    与体系B（git commit 后 post-commit reconciler 串联跑）。在"先 apply 后 commit"的典型工作流中，
+    体系A已跑完生成器并产生未提交的产物变更，体系B 又跑一遍相同生成器，造成 50-60 秒浪费。
+
+    治本方案（drift-gate 预检测跳过）：
+    在体系B的 reconciler 的 _reconcile 函数开头加一步 git diff --name-only -- <产物> 预检测。
+    有未提交变更 → 体系A已跑过 → 跳过生成器直接 auto-commit。
+    无变更 → 跑生成器（原逻辑兜底）。
+
+    安全边界判定规则（二元化）：
+    生成器只读 DB → drift-gate 安全（commit 不改 DB，体系A文档仍有效）。
+    生成器扫描文件系统 → drift-gate 不安全（commit 改了文件，体系A文档已过时）。
+
+    实施范围：
+    - ✅ make_arch_diagram_reconciler（15 生成器 ~50s，纯 DB 查询）→ 已加 drift-gate (commit 9b165499)
+    - ✅ _reconcile_domain_doc（generate_domain_doc --all ~28s，纯 DB 查询）→ 已加 drift-gate (commit 5c7a7845)
+    - ❌ make_path_tree_reconciler（generate_path_tree.py 扫描文件系统）→ 不加，commit 可能改文件系统导致文档过时
+    - ❌ _reconcile_arch_model / _reconcile_manifest → 体系A不跑这些生成器，drift-gate 永不触发（死代码）
+  fix_phase: |-
+    已完成（2026-08-05）：
+      - 阶段1: make_arch_diagram_reconciler drift-gate (commit 9b165499)
+      - 阶段3a: _reconcile_domain_doc drift-gate (commit 5c7a7845)
+      - 阶段3b: make_path_tree_reconciler 裁定不加（generate_path_tree.py 扫描文件系统，不安全）
+      - 方案文档: docs/_working/2026-08-05_drift_gate_convergence_plan.md (commit 84160497)
+  status: decided
+  created: '2026-08-05'
+  last_updated: '2026-08-05'
