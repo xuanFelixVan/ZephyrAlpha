@@ -7029,6 +7029,8 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
     _CATALOG_REL = "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
 
+    _PERCEPTION_INDEX_REL = "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml"
+
     _RULES_PREFIX = "docs/01_policies_and_standards/rules/"
 
     _rule_set = set(_RULE_FILE_PATHS)
@@ -7079,23 +7081,55 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
             )
 
-        # 2. 检测 catalog 变更
+        # 1b. 重新生成规则AI感知索引（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）
+
+        #    trae_*.yaml 变更后联动重生成 rule_ai_perception_index.yaml（同源，串联跑）
+
+        perception_result = _run_subprocess(
+
+            [sys.executable, "scripts/governance/generators/generate_rule_ai_perception_index.py"],
+
+            cwd=str(project_root),
+
+            capture_output=True,
+
+            text=True,
+
+            encoding="utf-8",
+
+            errors="replace",
+
+            timeout=60,
+
+        )
+
+        if perception_result.returncode != 0:
+
+            return ReconcileResult(
+
+                action="warn",
+
+                detail=f"rule_ai_perception_index generation failed: {perception_result.stderr.strip()[:200]}",
+
+            )
+
+        # 2. 检测 catalog + perception_index 变更
 
         diff_result = gateway.run_git(
 
-            ["git", "diff", "--name-only", "--", _CATALOG_REL]
+            ["git", "diff", "--name-only", "--", _CATALOG_REL, _PERCEPTION_INDEX_REL]
 
         )
 
         if diff_result.returncode == 0 and not diff_result.stdout.strip():
 
-            return ReconcileResult(action="clean", detail="rule_catalog_registry up to date")
+            return ReconcileResult(action="clean", detail="rule_catalog + perception_index up to date")
 
         # 3. 变更 -> 自动提交（经 _commit_auto 统一入口，DCR gate 覆盖）
 
-        auto_msg = "chore(catalog): auto-sync rule_catalog_registry by GitCommitGateway post-commit"
+        auto_msg = "chore(catalog): auto-sync rule_catalog + perception_index by GitCommitGateway post-commit"
 
-        abs_files = [str(project_root / _CATALOG_REL)]
+        abs_files = [str(project_root / _CATALOG_REL), str(project_root / _PERCEPTION_INDEX_REL)]
 
         commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
 
