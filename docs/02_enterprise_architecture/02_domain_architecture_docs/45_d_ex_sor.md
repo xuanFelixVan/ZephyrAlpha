@@ -58,7 +58,7 @@ flowchart TD
     src_zephyr_ex_sor_api_init_py["ex_sor/api 包入口<br/>ex sor 接口 包入口，整合接口相关子模块导出<br/>文件: api/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_init_py["ex_sor/core 包入口<br/>ex sor 核心 包入口，整合核心相关子模块导出<br/>文件: core/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_core_algo_execution_selector_py["算法执行选择器<br/>SOR执行的选择器，按条件选择最优项<br/>algo_execution_selector<br/>文件: core/algo_execution_selector.py<br/>(生产态 / production)"]
-    src_zephyr_ex_sor_core_market_context_provider_py["core/market_context_provider<br/>核心包的market_context_provider模块<br/>文件: core/market_context_provider.py<br/>(设计态 / design)"]
+    src_zephyr_ex_sor_core_market_context_provider_py["市场上下文提供器<br/>从Redis盘中tick缓存读最新价和买卖一价，从ClickHo<br/>use日K算近20日日均成交量，组装成算法切片所需的市<br/>场上下文，让执行引擎能调用G7算法生成真实切片方案<br/>而不是占位提交<br/>MarketContextProvider<br/>文件: core/market_context_provider.py<br/>(设计态 / design)"]
     src_zephyr_ex_sor_infrastructure_init_py["ex_sor/infrastructure 包入口<br/>ex sor 基础设施<br/>包入口，整合基础设施相关子模块导出<br/>文件: infrastructure/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_models_init_py["ex_sor/models 包入口<br/>ex sor 模型 包入口，整合模型相关子模块导出<br/>文件: models/__init__.py<br/>(生产态 / production)"]
     src_zephyr_ex_sor_services_init_py["ex_sor/services 包入口<br/>ex sor 服务 包入口，整合服务相关子模块导出<br/>文件: services/__init__.py<br/>(生产态 / production)"]
@@ -199,7 +199,7 @@ flowchart TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
 flowchart TD
-    src_zephyr_ex_sor_core_market_context_provider_py["core/market_context_provider<br/>核心包的market_context_provider模块<br/>文件: core/market_context_provider.py<br/>(设计态 / design)"]
+    src_zephyr_ex_sor_core_market_context_provider_py["市场上下文提供器<br/>从Redis盘中tick缓存读最新价和买卖一价，从ClickHo<br/>use日K算近20日日均成交量，组装成算法切片所需的市<br/>场上下文，让执行引擎能调用G7算法生成真实切片方案<br/>而不是占位提交<br/>MarketContextProvider<br/>文件: core/market_context_provider.py<br/>(设计态 / design)"]
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

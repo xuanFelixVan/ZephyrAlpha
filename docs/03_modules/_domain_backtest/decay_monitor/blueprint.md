@@ -89,7 +89,7 @@ responsibility_domain:
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-BT-018` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-BT-018` |
 | 数据流图 (dataflow) | 1 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
 #### 四核心字段
