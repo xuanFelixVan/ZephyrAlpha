@@ -51,7 +51,7 @@
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "e355f7ba109db2bd",
+      "hash": "306aa959781c67e8",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -71,6 +71,6 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-08-05T13:38:41.290516+00:00",
+  "registered_at": "2026-08-05T14:13:28.813243+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
