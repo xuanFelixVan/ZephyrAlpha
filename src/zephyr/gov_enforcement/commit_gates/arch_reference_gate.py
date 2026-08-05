@@ -255,6 +255,32 @@ def _format_gap_warning(gaps: dict[str, list[int]]) -> str:
     )
 
 
+def _is_numeric_suffix(num: str) -> bool:
+    """判断 ARCH ID 后缀末段是否为纯数字（数字制判定，铁律#7 冻结条款）。
+
+    数字制 = 末段纯数字：
+    - "008" → True（纯数字）
+    - "CH-007" → True（末段 007 纯数字）
+    - "GOV-SHIM-001" → True（末段 001 纯数字）
+    - "DOC-REF-FILE-URL" → False（末段 URL 非数字，描述性 ID）
+    - "EDB-EXPAND" → False（末段 EXPAND 非数字，描述性 ID）
+    """
+    parts = num.split("-")
+    return parts[-1].isdigit()
+
+
+def _format_non_numeric_warning(non_numeric: list[str]) -> str:
+    lines = [f"  - #ARCH-{num}" for num in non_numeric]
+    return (
+        "⚠️ 新条目数字制检测（ARCH_NON_NUMERIC_WARNING，不阻断）——\n"
+        "铁律#7 冻结条款（2026-08-05）：新登记 ARCH 条目末段必须为纯数字。\n"
+        "以下新增条目末段非数字（描述性 ID），请改为数字制：\n"
+        + "\n".join(lines)
+        + "\n存量描述性 ID 冻结保留，新条目请用数字制"
+        "（如 ARCH-EDB-EXPAND → ARCH-EDB-001，示例非真实引用）。"
+    )
+
+
 def make_arch_reference_gate() -> GateSpec:
     """构造 #ARCH-NNN 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。
 
@@ -301,10 +327,32 @@ def make_arch_reference_gate() -> GateSpec:
                 if atomicity_violations:
                     return False, _format_atomicity_detail(atomicity_violations)
 
+        # L3 + L1: 合并 WARNING（不阻断）
+        warnings: list[str] = []
+
+        # L3: 新条目数字制检测（WARNING，不阻断）——铁律#7 冻结条款（2026-08-05）
+        # 只在 registry 在本次 commit 中时检测（registry 未修改则无新条目）
+        if head_nums is not None:
+            registry_rel_normalized = _REGISTRY_REL.replace("\\", "/")
+            registry_in_commit = any(
+                os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel_normalized
+                for f in files
+            )
+            if registry_in_commit:
+                new_entries = registered_nums - head_nums
+                non_numeric = sorted(
+                    n for n in new_entries if not _is_numeric_suffix(n)
+                )
+                if non_numeric:
+                    warnings.append(_format_non_numeric_warning(non_numeric))
+
         # L1: 编号空洞检测（WARNING，不阻断）——发现编号空洞时通过但不报错
         gaps = _detect_id_gaps(registered_nums)
         if gaps:
-            return True, _format_gap_warning(gaps)
+            warnings.append(_format_gap_warning(gaps))
+
+        if warnings:
+            return True, "\n\n".join(warnings)
         return True, ""
 
     return GateSpec(gate_id="ARCH-REFERENCE", check=_check, priority=75)

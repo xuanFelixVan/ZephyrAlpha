@@ -24,6 +24,7 @@ last_updated: '2026-08-02'
 # 5. 编号预留：#ARCH-001/003 永久保留为预留段（未立项任何议题，登记为 deprecated 条目以占位）；#ARCH-002/004/005/006/007 已回溯补录（2026-07-05，源自 dependency_path_panorama.md 裁定#203 早期议题）
 # 6. 登记强制：任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
 # 7. 域前缀编号：跨子系统的专题裁定使用 #ARCH-{DOMAIN}-NNN 格式（如 #ARCH-CH-007 ClickHouse、#ARCH-MM-001 Maturity、#ARCH-REN-001 域重命名、#ARCH-CAP-001 容量、#ARCH-BACKFILL-001 补下载）。DOMAIN 为大写字母子系统工程缩写，各 DOMAIN 内 NNN 独立连续分配。纯数字 #ARCH-NNN 保留给全局架构议题
+#    冻结条款（2026-08-05 裁定，方案 C 冻结+渐进迁移）：2026-08-05 起新登记 ARCH 条目强制使用数字制（issue_id 末段必须为纯数字，示例格式 ARCH-CH-150 / ARCH-GOV-SHIM-002，示例非真实引用）。此前已登记的描述性 ID（无数字后缀，如 #ARCH-DOC-REF-FILE-URL / #ARCH-EDB-EXPAND）冻结保留，不强制迁移，在代码自然修改时逐步迁移为数字制。gate L3 检测（ARCH_NON_NUMERIC_WARNING，不阻断）强制新条目数字制。
 # 8. 物理排列规则：entries 列表按**登记时间顺序**追加（新条目追加在末尾），不按编号顺序排列。编号连续性由铁律#1保证（按立项时间连续分配），物理排列顺序不影响 YAML list 语义。禁止为"排序"重排历史条目（高风险且无语义价值）。检索时按 issue_id 字段查找，不依赖物理位置。
 # 9. 用户裁定优先铁律（铁律#9，2026-07-24 建立，治本"AI 越权自标 resolved"幻觉温床）：
 #    AI 提议的裁定/风险接受/推翻/不引入/wontfix 类议题（adjudication 含决策语义），MUST 标记 status=proposed，直到用户显式确认后才可改为 decided。禁止 AI 自行将自身提议的裁定标记为 resolved/decided。

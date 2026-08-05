@@ -23,6 +23,8 @@
 - TestMultiSegmentRef: 多段式域前缀（#ARCH-GOV-SHIM-001 等）检测（2026-07-17 治本 ARCH-GOV-SHIM-001 漏检）
 - TestDescriptiveRef: 描述性 ID（无数字后缀如 #ARCH-DOC-REF-FILE-URL）检测（2026-08-05 治本 gate 正则盲区）
 - TestTemplateRefFiltered: 模板占位符（#ARCH-NNN / #ARCH-XXX 等）过滤不误报（2026-08-05）
+- TestL3NonNumericWarning: L3 新条目数字制检测（ARCH_NON_NUMERIC_WARNING，不阻断）（2026-08-05 铁律#7 冻结条款）
+- TestIsNumericSuffix: _is_numeric_suffix 数字制判定单元测试（2026-08-05 铁律#7 冻结条款）
 """
 from __future__ import annotations
 
@@ -32,6 +34,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from zephyr.gov_enforcement.commit_gates.arch_reference_gate import (
+    _is_numeric_suffix,
     make_arch_reference_gate,
 )
 
@@ -406,3 +409,172 @@ class TestTemplateRefFiltered:
         violation_lines = [l for l in detail.split("\n") if l.strip().startswith("- module.py")]
         assert len(violation_lines) == 1
         assert "NNN" not in violation_lines[0]
+
+
+class TestL3NonNumericWarning:
+    """L3 新条目数字制检测（ARCH_NON_NUMERIC_WARNING，不阻断）。
+
+    治本铁律#7 冻结条款（2026-08-05）：2026-08-05 起新登记 ARCH 条目末段必须为纯数字。
+    L3 检测 registry 中新增的描述性 ID（末段非数字），WARNING 不阻断。
+    只在 registry 在本次 commit 中时检测（registry 未修改则无新条目）。
+    """
+
+    def test_new_descriptive_entry_warns(self, tmp_path, monkeypatch):
+        """新增描述性 ID 到 registry → WARNING（passed=True，不阻断）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+
+        # mock load_head_registered_nums 返回仅数字制 ID（HEAD 无描述性 ID）
+        # 模拟工作区 registry 新增了 DOC-REF-FILE-URL / IFIND-FAILOVER
+        import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+        monkeypatch.setattr(
+            gate_mod,
+            "load_head_registered_nums",
+            lambda *a, **kw: {"008", "019", "GOV-SHIM-001"},
+        )
+
+        # registry 文件必须在 commit files 列表中才触发 L3
+        registry_path = str(tmp_path / _REGISTRY_REL)
+        passed, detail = gate.check(gw, [registry_path])
+        assert passed  # WARNING 不阻断
+        assert "ARCH_NON_NUMERIC_WARNING" in detail
+        assert "DOC-REF-FILE-URL" in detail
+        assert "IFIND-FAILOVER" in detail
+
+    def test_new_numeric_entry_no_warning(self, tmp_path, monkeypatch):
+        """新增数字制 ID 到 registry → 无 WARNING（数字制合规）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+
+        # HEAD 有 008/019/描述性 ID，工作区新增 GOV-SHIM-001（数字制）
+        import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+        monkeypatch.setattr(
+            gate_mod,
+            "load_head_registered_nums",
+            lambda *a, **kw: {"008", "019", "DOC-REF-FILE-URL", "IFIND-FAILOVER"},
+        )
+
+        registry_path = str(tmp_path / _REGISTRY_REL)
+        passed, detail = gate.check(gw, [registry_path])
+        assert passed
+        # GOV-SHIM-001 是数字制（末段 001 纯数字），不触发 L3 warning
+        assert "ARCH_NON_NUMERIC_WARNING" not in detail
+
+    def test_registry_not_in_commit_no_l3(self, tmp_path, monkeypatch):
+        """registry 不在 commit files 中 → 不触发 L3 检测。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+
+        import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+        monkeypatch.setattr(
+            gate_mod,
+            "load_head_registered_nums",
+            lambda *a, **kw: {"008", "019"},  # HEAD 无描述性 ID
+        )
+
+        # 只 commit 一个普通文件（不含 registry）——registry 未修改则无新条目
+        target = tmp_path / "module.py"
+        target.write_text("# see #ARCH-008\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed
+        assert "ARCH_NON_NUMERIC_WARNING" not in detail
+
+    def test_head_nums_none_no_l3(self, tmp_path, monkeypatch):
+        """head_nums 为 None（非 git 仓库）→ 不触发 L3 检测。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+
+        import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+        monkeypatch.setattr(
+            gate_mod,
+            "load_head_registered_nums",
+            lambda *a, **kw: None,  # 非 git 仓库
+        )
+
+        registry_path = str(tmp_path / _REGISTRY_REL)
+        passed, detail = gate.check(gw, [registry_path])
+        assert passed
+        assert "ARCH_NON_NUMERIC_WARNING" not in detail
+
+    def test_mixed_new_entries_only_descriptive_warns(self, tmp_path, monkeypatch):
+        """新增混合条目（数字制+描述性）→ 只对描述性 WARNING。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+
+        # HEAD 只有 008，工作区新增 019/GOV-SHIM-001（数字）+ DOC-REF-FILE-URL/IFIND-FAILOVER（描述性）
+        import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+        monkeypatch.setattr(
+            gate_mod,
+            "load_head_registered_nums",
+            lambda *a, **kw: {"008"},
+        )
+
+        registry_path = str(tmp_path / _REGISTRY_REL)
+        passed, detail = gate.check(gw, [registry_path])
+        assert passed
+        assert "ARCH_NON_NUMERIC_WARNING" in detail
+        # 描述性 ID 出现在 warning 列表中
+        assert "DOC-REF-FILE-URL" in detail
+        assert "IFIND-FAILOVER" in detail
+        # 数字制新条目不出现在 warning 的列表项中
+        warning_section = detail.split("ARCH_NON_NUMERIC_WARNING", 1)[1]
+        listed_items = [
+            ln.strip() for ln in warning_section.split("\n")
+            if ln.strip().startswith("- #ARCH-")
+        ]
+        listed_ids = [item.replace("- #ARCH-", "") for item in listed_items]
+        assert "019" not in listed_ids
+        assert "GOV-SHIM-001" not in listed_ids
+        assert "DOC-REF-FILE-URL" in listed_ids
+        assert "IFIND-FAILOVER" in listed_ids
+
+
+class TestIsNumericSuffix:
+    """_is_numeric_suffix 数字制判定单元测试（铁律#7 冻结条款，2026-08-05）。
+
+    数字制 = 末段纯数字。判定规则二元化：
+    - 末段纯数字 → True（数字制）
+    - 末段非数字 → False（描述性 ID）
+    """
+
+    def test_pure_number(self):
+        """纯数字 '008' → True。"""
+        assert _is_numeric_suffix("008") is True
+
+    def test_two_segment_numeric(self):
+        """两段式 'CH-007'（末段 007 纯数字）→ True。"""
+        assert _is_numeric_suffix("CH-007") is True
+
+    def test_multi_segment_numeric(self):
+        """多段式 'GOV-SHIM-001'（末段 001 纯数字）→ True。"""
+        assert _is_numeric_suffix("GOV-SHIM-001") is True
+
+    def test_four_segment_numeric(self):
+        """四段式 'A-B-C-001'（末段 001 纯数字）→ True。"""
+        assert _is_numeric_suffix("A-B-C-001") is True
+
+    def test_descriptive_url(self):
+        """描述性 'DOC-REF-FILE-URL'（末段 URL 非数字）→ False。"""
+        assert _is_numeric_suffix("DOC-REF-FILE-URL") is False
+
+    def test_descriptive_expand(self):
+        """描述性 'EDB-EXPAND'（末段 EXPAND 非数字）→ False。"""
+        assert _is_numeric_suffix("EDB-EXPAND") is False
+
+    def test_descriptive_failover(self):
+        """描述性 'IFIND-FAILOVER'（末段 FAILOVER 非数字）→ False。"""
+        assert _is_numeric_suffix("IFIND-FAILOVER") is False
+
+    def test_s_variant_numeric(self):
+        """S 阶段变体 'CAPABILITY-LOOKUP-BYPASS-DEAD-S2'（末段 S2 非纯数字）→ False。
+
+        注意：S2 末段含字母 S，isdigit() 返回 False，故判定为描述性 ID。
+        这是 _is_numeric_suffix 的二元判定边界——S 变体末段非纯数字。
+        实际上 S 变体是历史已登记条目（冻结保留），不强制迁移。
+        """
+        assert _is_numeric_suffix("CAPABILITY-LOOKUP-BYPASS-DEAD-S2") is False
