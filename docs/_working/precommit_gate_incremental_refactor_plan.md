@@ -115,7 +115,7 @@ Expected: commit 成功（不再需 `--no-verify`）。后续 eia_provider.py �
 
 ```bash
 git add src/zephyr/data/implementations/eia_provider.py
-git commit -F tmp/commit_msg_eia.txt
+git commit -F tmp/"commit_msg_eia.txt"
 ```
 Expected: commit 成功（GATE-NAMING/VOCAB 均通过）。
 
