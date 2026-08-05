@@ -21,6 +21,8 @@
 - TestIncrementalOnly: HEAD 已有引用 → 通过（增量检测不阻断历史）
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestMultiSegmentRef: 多段式域前缀（#ARCH-GOV-SHIM-001 等）检测（2026-07-17 治本 ARCH-GOV-SHIM-001 漏检）
+- TestDescriptiveRef: 描述性 ID（无数字后缀如 #ARCH-DOC-REF-FILE-URL）检测（2026-08-05 治本 gate 正则盲区）
+- TestTemplateRefFiltered: 模板占位符（#ARCH-NNN / #ARCH-XXX 等）过滤不误报（2026-08-05）
 """
 from __future__ import annotations
 
@@ -34,7 +36,7 @@ from zephyr.gov_enforcement.commit_gates.arch_reference_gate import (
 )
 
 
-# 测试用 registry YAML：含 #ARCH-008 / #ARCH-019 / #ARCH-GOV-SHIM-001，不含 #ARCH-999
+# 测试用 registry YAML：含数字制 + 描述性 ARCH ID，不含 #ARCH-999 / #ARCH-DOC-REF-FAKE
 _REGISTRY_YAML = """\
 module_id: REG-ARCH-ISSUE-001
 entries:
@@ -46,6 +48,12 @@ entries:
     status: decided
   - issue_id: '#ARCH-GOV-SHIM-001'
     title: test multi-segment issue
+    status: decided
+  - issue_id: '#ARCH-DOC-REF-FILE-URL'
+    title: test descriptive issue (no digit suffix)
+    status: decided
+  - issue_id: '#ARCH-IFIND-FAILOVER'
+    title: test descriptive issue (registered)
     status: decided
 """
 
@@ -240,13 +248,161 @@ class TestMultiSegmentRef:
         assert not passed
         assert "999" in detail
 
-    def test_no_digit_suffix_not_matched(self, tmp_path):
-        """无数字后缀的 #ARCH-GOV-SHIM 不被正则匹配 → 通过（正则要求尾部数字）。"""
+    def test_no_digit_suffix_now_matched(self, tmp_path):
+        """无数字后缀的 #ARCH-GOV-SHIM 现在被正则匹配 → 未登记则阻断。
+
+        治本（2026-08-05）：旧正则要求末尾 \\d+ 数字，#ARCH-GOV-SHIM（无数字）不匹配 →
+        通过（零检测）。新正则 \\d+|[A-Z][A-Z0-9-]*[A-Z0-9] 同时匹配描述性 ID，
+        #ARCH-GOV-SHIM 匹配为 GOV-SHIM，未登记 → 阻断。
+        注意：GOV-SHIM 与已登记的 GOV-SHIM-001 是不同字符串，故 GOV-SHIM 仍未登记。
+        """
         _write_registry(tmp_path)
         gw = _make_gateway(tmp_path)
         gate = make_arch_reference_gate()
         target = tmp_path / "module.py"
-        # #ARCH-GOV-SHIM 无尾部数字，正则不匹配，视为无引用 → 通过
         target.write_text("# see #ARCH-GOV-SHIM for details\n", encoding="utf-8")
         passed, detail = gate.check(gw, [str(target)])
+        assert not passed  # 新正则匹配描述性 ID，GOV-SHIM 未登记 → 阻断
+        assert "GOV-SHIM" in detail
+
+
+class TestDescriptiveRef:
+    """描述性 ID（无数字后缀如 #ARCH-DOC-REF-FILE-URL）检测。
+
+    治本 gate 正则盲区（2026-08-05）：旧正则 [A-Z]+(?:-[A-Z]+)*-[A-Z]?\\d+ 要求末尾 \\d+，
+    导致 #ARCH-DOC-REF-FILE-URL / #ARCH-IFIND-FAILOVER 等无数字后缀的描述性 ARCH ID
+    完全逃逸检测（全项目 67 个描述性引用 0% 被检出）。新正则同时匹配数字制和描述制 ID。
+    """
+
+    def test_unregistered_descriptive_blocked(self, tmp_path):
+        """新增未登记描述性 #ARCH-DOC-REF-FAKE 引用 → 阻断（核心治本点）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text("# see #ARCH-DOC-REF-FAKE for details\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert not passed
+        assert "ARCH_REFERENCE_VIOLATION" in detail
+        assert "DOC-REF-FAKE" in detail
+
+    def test_registered_descriptive_passes(self, tmp_path, monkeypatch):
+        """已登记描述性 #ARCH-DOC-REF-FILE-URL 引用 → 通过。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text(
+            "# file:/// 协议处理（#ARCH-DOC-REF-FILE-URL, 2026-08-05 治本）\n",
+            encoding="utf-8",
+        )
+        # mock load_head_registered_nums 返回 None（跳过 L2 原子性检查）——
+        # tmp_path 位于真实 git 仓库内，L2 会读取真实 HEAD registry（不含未提交的
+        # DOC-REF-FILE-URL），误报原子性违规。跳过 L2 隔离测试环境。
+        import zephyr.gov_enforcement.commit_gates.arch_reference_gate as gate_mod
+        monkeypatch.setattr(gate_mod, "load_head_registered_nums", lambda *a, **kw: None)
+        passed, detail = gate.check(gw, [str(target)])
         assert passed
+
+    def test_registered_descriptive_no_digit_passes(self, tmp_path):
+        """已登记描述性 #ARCH-IFIND-FAILOVER（全字母无数字）引用 → 通过。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text("# see #ARCH-IFIND-FAILOVER for details\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed
+
+    def test_descriptive_and_numeric_mixed(self, tmp_path):
+        """文件同时含已登记描述性 + 未登记数字 ID → 阻断（只报未登记的）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text(
+            "# see #ARCH-DOC-REF-FILE-URL (registered) and #ARCH-999 (unregistered)\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert not passed
+        assert "999" in detail
+        assert "DOC-REF-FILE-URL" not in detail  # 已登记的不在违规列表
+
+
+class TestTemplateRefFiltered:
+    """模板占位符（#ARCH-NNN / #ARCH-XXX 等）过滤不误报。
+
+    治本（2026-08-05）：新正则支持描述性 ID 后，模板占位符（NNN / XXX / *-NNN）
+    需显式过滤，否则文档/gate 代码中的格式描述文本会误报为未登记引用。
+    """
+
+    def test_arch_nnn_filtered(self, tmp_path):
+        """#ARCH-NNN（格式占位符）不误报为未登记引用 → 通过。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text(
+            "# 任何 #ARCH-NNN 引用必须在本注册表有对应条目\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed  # NNN 是模板占位符，被过滤
+
+    def test_arch_xxx_filtered(self, tmp_path):
+        """#ARCH-XXX（格式占位符）不误报 → 通过。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text(
+            "# 禁止 grep-and-claim 占位（任何 #ARCH-XXX 引用必须登记）\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed  # XXX 是模板占位符，被过滤
+
+    def test_arch_ch_nnn_filtered(self, tmp_path):
+        """#ARCH-CH-NNN（域前缀+占位符）不误报 → 通过。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text(
+            "# 支持两段式域前缀（如 #ARCH-CH-NNN）和多段式（如 #ARCH-GOV-SHIM-NNN）\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed  # CH-NNN / GOV-SHIM-NNN 都以 -NNN 结尾，被过滤
+
+    def test_arch_domain_nnn_filtered(self, tmp_path):
+        """#ARCH-DOMAIN-NNN（格式示例）不误报 → 通过。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text(
+            "# 跨子系统的专题裁定使用 #ARCH-DOMAIN-NNN 格式\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed  # DOMAIN-NNN 以 -NNN 结尾，被过滤
+
+    def test_mixed_template_and_unregistered(self, tmp_path):
+        """文件含模板 #ARCH-NNN + 未登记 #ARCH-999 → 阻断（只报 999）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text(
+            "# 任何 #ARCH-NNN 引用必须登记，但 #ARCH-999 未登记\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert not passed  # 999 未登记 → 阻断
+        assert "999" in detail
+        # NNN 被过滤——违规列表只有 999（detail 消息头含 "#ARCH-NNN" 模板文字，需检查违规行）
+        violation_lines = [l for l in detail.split("\n") if l.strip().startswith("- module.py")]
+        assert len(violation_lines) == 1
+        assert "NNN" not in violation_lines[0]

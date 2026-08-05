@@ -11645,3 +11645,80 @@ entries:
   status: decided
   created: '2026-08-05'
   last_updated: '2026-08-05'
+# --- #ARCH-DOC-REF-FILE-URL: DOC-REF-BROKEN gate file:/// 协议正确解析（2026-08-05 登记） ---
+# 关联 #ARCH-044 P3（"修复 DOC-REF-BROKEN gate 的 file:// 协议处理"），原标 P3 可选后续，
+# 2026-08-05 commit 7704f3a65c 实际落地但未同步登记，本条补登满足铁律#6。
+# 同 commit 引入的 #ARCH-DOC-REF-BROKEN-SKIP（草稿区跳过目录豁免）为独立裁定，分开登记。
+- issue_id: '#ARCH-DOC-REF-FILE-URL'
+  title: DOC-REF-BROKEN gate file:/// 绝对路径误报断链——协议正确解析治本
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-05 治本（commit 7704f3a65c，补登记）。关联 #ARCH-044 P3 的实际落地。
+
+    病根（第一性原理）：
+    DOC-REF-BROKEN gate 的 _find_broken_refs 函数用 _URL_PREFIXES 豁免 http/https/mailto/ftp/#，
+    但 file:/// 不在豁免清单。file:///d:/ZephyrAlpha/foo.py 形式的本地绝对路径链接被当相对路径
+    解析，os.path.join(md_dir, "file:///d:/...") 拼成 docs/_working/file:///d:/... 不存在 →
+    误报断链。根因：_URL_PREFIXES 只考虑网络协议，遗漏 file:// 本地文件协议。
+
+    治本方案：
+    1. 新增 _FILE_URL_PREFIX = "file:///" 前缀识别
+    2. _resolve_file_url 提取本地路径（file:///d:/ZephyrAlpha/foo.py → d:/ZephyrAlpha/foo.py，
+       兼容旧式 file:///D|/ZephyrAlpha/... 的 | → : 转换）
+    3. _find_broken_refs 中识别 file:/// 前缀后直接用 os.path.exists 检查本地路径存在性，
+       不当相对路径拼接
+    4. 不存在文件仍正确报断链（治本不降低检测能力）
+
+    关联 #ARCH-044 P3：原裁定 P3 标注"可选后续：修复 DOC-REF-BROKEN gate 的 file:// 协议处理"，
+    本次实际实施。原方案"file:// 加入豁免清单"被改进为"file:/// 提取本地路径后正确检查存在性"——
+    豁免会放过真实断链（file:///指向不存在文件不报），正确解析才能既消误报又保检测能力。
+  fix_phase: |-
+    已完成（commit 7704f3a65c，2026-08-05）：
+      - doc_ref_broken_gate.py 新增 _FILE_URL_PREFIX / _resolve_file_url / file:/// 检测分支
+      - 验证：file:/// 存在文件不报断链 + 不存在文件正确报断链
+      - 本条补登记（本次提交，2026-08-05）满足铁律#6
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py（_FILE_URL_PREFIX / _resolve_file_url / _find_broken_refs file:/// 分支，commit 7704f3a65c）'
+  status: decided
+  related_adjudication: '#ARCH-044 P3（file:// 协议处理可选后续，本次落地）'
+  created: '2026-08-05'
+  last_updated: '2026-08-05'
+# --- #ARCH-DOC-REF-BROKEN-SKIP: DOC-REF-BROKEN gate 草稿/归档区跳过目录豁免（2026-08-05 登记） ---
+- issue_id: '#ARCH-DOC-REF-BROKEN-SKIP'
+  title: DOC-REF-BROKEN gate 草稿/归档区全量扫描误伤——skip_dirs_docs SSoT 复用治本
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-05 治本（commit 7704f3a65c，补登记）。
+
+    病根（第一性原理）：
+    DOC-REF-BROKEN gate 全量扫描 staged 新增 .md 文件中的 markdown 链接，不区分文档区域。
+    docs/_working/ 草稿区（施工方案/评估报告/临时笔记）常引用待创建文件（如 [方案](./plan.md)
+    但 plan.md 尚未创建），被全量扫描误报断链，阻断不相关 commit。根因：gate 缺少"文档区域
+    分级"——草稿区文件天然允许引用待创建文件，不应被断链门禁扫描。
+
+    治本方案：
+    复用 N-16 skip_dirs_docs SSoT（trae_028.yaml §gov_doc_003_filename_uniqueness.n16_config.
+    skip_dirs_docs），从 YAML 动态加载跳过目录（_working / _archive / _backups /
+    _DO_NOT_USE_old_tree / session_logs），fail-open 回退到硬编码 fallback。
+    草稿/归档区 .md 文件不进入断链检测，非跳过目录正常检测。
+
+    设计决策：
+    1. 复用 N-16 同一份 SSoT——草稿/归档区跳过语义跨门禁一致（N-16 文件名重名 + DOC-REF-BROKEN
+       断链检测共享同一跳过目录清单），避免"一个语义两处定义"漂移
+    2. fail-open 回退——YAML 缺失/解析失败/字段不合规时回退到硬编码 fallback，防检测失效
+    3. 路径分段精确匹配——_is_in_skip_dir 按路径分段检查（非前缀匹配），避免误豁免
+  fix_phase: |-
+    已完成（commit 7704f3a65c，2026-08-05）：
+      - doc_ref_broken_gate.py 新增 _DOC_REF_BROKEN_SKIP_DIRS_FALLBACK / _load_skip_dirs_from_yaml
+        / _is_in_skip_dir / 步骤 1b 跳过目录过滤
+      - 验证：skip_dirs 跳过 _working/_archive + 非跳过目录不跳过
+      - 本条补登记（本次提交，2026-08-05）满足铁律#6
+  impact:
+    - 'src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py（_DOC_REF_BROKEN_SKIP_DIRS_FALLBACK / _load_skip_dirs_from_yaml / _is_in_skip_dir / _check 步骤 1b，commit 7704f3a65c）'
+  status: decided
+  related_adjudication: 'N-16 skip_dirs_docs SSoT（trae_028.yaml §gov_doc_003_filename_uniqueness.n16_config）'
+  related_rules: 'TRAE-028（N-16 skip_dirs_docs 共享 SSoT）'
+  created: '2026-08-05'
+  last_updated: '2026-08-05'

@@ -21,13 +21,14 @@
 检测 staged .py 文件 added 行中的 read_only=False / superuser=True / allow_edge_delete=True。
 这些参数授予 depgraph 写入权限，仅白名单脚本可用。
 
-白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，2026-07-17 扩展，2026-08-01 再扩展）:
+白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，2026-07-17 扩展，2026-08-01 再扩展，2026-08-05 再扩展）:
   - scripts/governance/apply_depgraph.py        — depgraph 修改唯一合法 CLI
   - scripts/governance/generate_project_depgraph.py — 全量重建
   - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py — YAML→DB 同步
   - scripts/governance/sync_panorama_module.py  — panorama 同步（含 path-tree 段）
   - scripts/governance/generate_project_path_tree.py — arch_directory_tree 表写入器（新增）
   - scripts/governance/apply_battle_map.py      — battle_map_* 表写入器（2026-08-01 新增，用 depgraph_writer 角色）
+  - scripts/governance/migrations/add_acquisition_fields.py — nodes_metadata schema 迁移（2026-08-05 新增，superuser DDL）
   - scripts/governance/_shared/constants.py      — 连接 wrapper（传递参数）
   - src/zephyr/governance/depgraph_schema.py     — 连接函数定义（参数声明）
 
@@ -144,6 +145,7 @@ def make_depgraph_write_path_gate() -> GateSpec:
                 "    - scripts/governance/sync_panorama_module.py\n"
                 "    - scripts/governance/generate_project_path_tree.py\n"
                 "    - scripts/governance/apply_battle_map.py (battle_map_* 表写入器)\n"
+                "    - scripts/governance/migrations/add_acquisition_fields.py (nodes_metadata schema 迁移)\n"
                 "    - src/zephyr/governance/depgraph_schema.py\n"
                 "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
                 "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"

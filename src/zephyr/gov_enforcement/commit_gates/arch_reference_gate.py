@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md/.json/.txt（REFERENCE_TEXT_EXTS 单一真源，audit-02 2026-08-02 含 .json/.txt 治本）；正则支持纯数字/两段式/多段式域前缀/末段 S 阶段标记（#ARCH-008 / #ARCH-CH-007 / #ARCH-GOV-SHIM-001 / #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2；2026-07-17 多段式治本 ARCH-GOV-SHIM-001 漏检，audit-02 2026-08-02 S 变体治本 ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2 漏检）；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断
+# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md/.json/.txt（REFERENCE_TEXT_EXTS 单一真源，audit-02 2026-08-02 含 .json/.txt 治本）；正则支持纯数字/两段式/多段式域前缀/末段 S 阶段标记/描述性 ID（无数字后缀，如 #ARCH-DOC-REF-FILE-URL，2026-08-05 治本 gate 正则盲区）；模板占位符过滤（#ARCH-NNN / #ARCH-XXX / #ARCH-CH-NNN 等格式描述文本不误报，2026-08-05）；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断
 # [MODIFY-GUARD] gate_id="ARCH-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -41,11 +41,15 @@ architecture_issue_registry.yaml 编号铁律#6 规定："任何 #ARCH-XXX 引�
 3. **issue_id 从工作区 registry 提取**：commit 后 registry 的新真源即工作区版本。
 4. **priority=75**：紧跟 DANGLING-REFERENCE(70) 之后、CAPABILITY-OVERLAP(200) 之前
    ——同属"引用完整性"类检查，集中执行。
-5. **正则提取**：``#ARCH-([A-Z]+(?:-[A-Z]+)*-\\d+|\\d+)`` 匹配 ``#ARCH-008`` /
-   ``#ARCH-037`` / ``#ARCH-CH-007`` / ``#ARCH-MM-001`` / ``#ARCH-GOV-SHIM-001`` 等，
-   捕获组为编号后缀（纯数字、两段式域前缀-数字、或多段式域前缀-数字）。
+5. **正则提取**：``#ARCH-(\\d+|[A-Z][A-Z0-9-]*[A-Z0-9])`` 匹配 ``#ARCH-008`` /
+   ``#ARCH-037`` / ``#ARCH-CH-007`` / ``#ARCH-GOV-SHIM-001`` / ``#ARCH-DOC-REF-FILE-URL`` 等，
+   捕获组为编号后缀（纯数字、域前缀-数字、多段式、或描述性名称无数字后缀）。
    registry 中 issue_id 形如 ``'#ARCH-008'`` / ``'#ARCH-CH-007'`` / ``'#ARCH-GOV-SHIM-001'``，
-   提取后缀后比较。多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）。
+   提取后缀后比较。多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）；
+   描述性 ID 支持治本 gate 正则盲区——旧正则要求末尾数字（\\d+），导致 ``#ARCH-DOC-REF-FILE-URL``
+   等无数字后缀的描述性 ID 完全逃逸检测（2026-08-05）。
+   模板占位符过滤：``#ARCH-NNN`` / ``#ARCH-XXX`` / ``#ARCH-CH-NNN`` 等格式描述文本
+   被 ``_is_template_ref`` 过滤，不误报为未登记引用（2026-08-05）。
 6. **不扫 commit message**：只扫 ``files`` 参数（commit 目标文件）。
 
 Usage::
@@ -79,16 +83,40 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["make_arch_reference_gate"]
 
-# #ARCH-NNN / #ARCH-DOMAIN-NNN 引用检测正则：匹配 "#ARCH-008" / "#ARCH-CH-007" /
-# "#ARCH-GOV-SHIM-001" / "#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2" 等（支持纯数字、两段式
-# 域前缀、多段式域前缀、以及末段 S<数字> 阶段标记如 S1/S2/S3）
+# #ARCH-NNN / #ARCH-DOMAIN-NNN / 描述性 ID（如 #ARCH-DOC-REF-FILE-URL）引用检测正则：
+# 匹配 "#ARCH-008" / "#ARCH-CH-007" / "#ARCH-GOV-SHIM-001" /
+# "#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2" / "#ARCH-DOC-REF-FILE-URL" 等
+# （支持纯数字、两段式域前缀、多段式域前缀、末段 S 阶段标记如 S1/S2/S3、
+# 以及描述性 ID 无数字后缀如 FILE-URL / FAILOVER）
 # 捕获组为编号后缀（纯数字 "008"、域前缀-数字 "CH-007"、多段式 "GOV-SHIM-001"、
-# 或多段式+阶段标记 "CAPABILITY-LOOKUP-BYPASS-DEAD-S2"）
+# 多段式+阶段标记 "CAPABILITY-LOOKUP-BYPASS-DEAD-S2"、或描述性 "DOC-REF-FILE-URL"）
 # 多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）；
 # S 变体支持治本 ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2 漏检（audit-02，2026-08-02）——
 # 原正则末段 [A-Z]+-\d+ 不匹配 -S2（字母紧贴数字无连字符），导致全家 5 个已登记 S 变体
 # 引用逃逸检测；扩展为 -[A-Z]?\d+（末段可选单字母前缀）后 S 变体可被检出并强制登记。
-_ARCH_REF_RE = re.compile(r"#ARCH-([A-Z]+(?:-[A-Z]+)*-[A-Z]?\d+|\d+)")
+# 描述性 ID 支持治本 gate 正则盲区（2026-08-05）——旧正则 [A-Z]+(?:-[A-Z]+)*-[A-Z]?\d+
+# 要求末尾 \d+ 数字，导致 #ARCH-DOC-REF-FILE-URL / #ARCH-IFIND-FAILOVER 等无数字后缀的
+# 描述性 ARCH ID 完全逃逸检测（全项目 67 个描述性引用 0% 被检出）。新正则
+# \d+|[A-Z][A-Z0-9-]*[A-Z0-9] 同时匹配数字制和描述制 ID，消除盲区。
+_ARCH_REF_RE = re.compile(r"#ARCH-(\d+|[A-Z][A-Z0-9-]*[A-Z0-9])")
+
+# 模板占位符——#ARCH-NNN / #ARCH-XXX 等是格式描述文本，非真实 ARCH ID
+# NNN = "任意数字"，XXX = "任意后缀"，用于文档/gate 代码/铁律文本中描述编号格式
+# 治本（2026-08-05）：新正则支持描述性 ID 后，模板占位符需显式过滤，否则
+# #ARCH-NNN（铁律#6 文本）/ #ARCH-CH-NNN（格式示例）/ #ARCH-DOMAIN-NNN 等会
+# 误报为未登记引用，阻断合法 commit。
+_TEMPLATE_REFS = frozenset({"NNN", "XXX"})
+
+
+def _is_template_ref(ref: str) -> bool:
+    """判断是否为模板占位符（#ARCH-NNN / #ARCH-XXX 等格式描述，非真实引用）。
+
+    判定规则（二元化）：
+    - ref 在 _TEMPLATE_REFS 中（NNN / XXX）→ True
+    - ref 以 "-NNN" 结尾（CH-NNN / DOMAIN-NNN / GOV-SHIM-NNN 等）→ True
+    - 其他 → False
+    """
+    return ref in _TEMPLATE_REFS or ref.endswith("-NNN")
 
 # registry 相对路径（对标 dangling_reference_gate.py 用 gateway.project_root 的稳健设计）
 # 治本（M03，2026-07-18）：_SCANNABLE_EXTS / _GIT_SHOW_TIMEOUT 已下沉到 _reference_helpers，
@@ -105,7 +133,8 @@ def _extract_registered_nums(registry_data: dict) -> set[str]:
         registry_data: yaml.safe_load 解析后的 dict。
 
     Returns:
-        已登记的编号字符串集合（如 {"008", "019", "037"}）。
+        已登记的编号字符串集合（如 {"008", "019", "037", "DOC-REF-FILE-URL"}）。
+        模板占位符（NNN / XXX / *-NNN）被过滤，不会进入集合。
     """
     nums: set[str] = set()
     for entry in registry_data.get("entries", []) or []:
@@ -114,21 +143,25 @@ def _extract_registered_nums(registry_data: dict) -> set[str]:
             if isinstance(iid, str) and iid:
                 # issue_id 形如 "#ARCH-008"，提取数字部分
                 m = _ARCH_REF_RE.search(iid)
-                if m:
+                if m and not _is_template_ref(m.group(1)):
                     nums.add(m.group(1))
     return nums
 
 
 def _extract_refs(content: str) -> set[str]:
-    """从文件内容提取所有 #ARCH-NNN 引用的编号。
+    """从文件内容提取所有 #ARCH-NNN / 描述性 ARCH-ID 引用的编号。
+
+    模板占位符（#ARCH-NNN / #ARCH-XXX / #ARCH-CH-NNN 等格式描述文本）被过滤，
+    不计入引用集合——这些是文档/gate 代码中描述编号格式的占位符，非真实引用。
 
     Args:
         content: 文件文本。
 
     Returns:
-        被引用的编号字符串集合（如 {"008", "037"}）。
+        被引用的编号字符串集合（如 {"008", "037", "DOC-REF-FILE-URL"}）。
     """
-    return set(_ARCH_REF_RE.findall(content))
+    refs = set(_ARCH_REF_RE.findall(content))
+    return {r for r in refs if not _is_template_ref(r)}
 
 
 def _load_registered_nums(project_root: Path) -> tuple[bool, str, set[str]]:
