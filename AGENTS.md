@@ -160,6 +160,8 @@
 >
 > **标准化工具**：[`check_tick_duplication.py`](file:///d:/ZephyrAlpha/scripts/governance/data_quality/check_tick_duplication.py) `--month YYYYMM`（全字段 GROUP BY 查真重复）。
 >
+> **前缀合规检测**：[`check_indicator_prefix.py`](file:///d:/ZephyrAlpha/scripts/governance/data_quality/check_indicator_prefix.py) `--ci`（macro_data indicator_name 前缀合规检测，支持 `--fix` 生成修复 SQL）。
+>
 > **事故背景**（2026-07-16）：AI 用 `count() - uniqExact(排序键)` 算 tick_data "重复数"，把同时间戳不同价位的有效记录误判为"重复"，执行 INSERT GROUP BY + REPLACE PARTITION 删除 21 个月有效数据。根因：tick_data ORDER BY 不含 price（#ARCH-CH-020）。
 
 ## RULE-RULING：第七件事（裁定登记机制，2026-07-18 治本，裁定#20-A/#20-B/#20-D）

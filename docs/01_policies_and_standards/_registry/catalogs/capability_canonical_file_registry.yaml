@@ -6893,6 +6893,12 @@ creation_tokens:
     created_by: "session-sess-7800-20260716235624"
     capability: "tick_duplication_checker"
 
+  # --- macro_data indicator_name 前缀合规检测工具（数据质量筛查，2026-08-05）---
+  - file: "scripts/governance/data_quality/check_indicator_prefix.py"
+    token: "auto-check-indicator-prefix-20260805"
+    created_by: "session-sess-fix-20260805"
+    capability: "indicator_prefix_checker"
+
   # --- #ARCH-CH-022 Phase 4 CapabilityContract 机器可执行契约（2026-07-17）---
   # capability_validator.py: 行为契约校验器（3 规则 + AST 路由-meta 一致性），retroactive 登记
   # capability_consistency_gate.py: CAP-CONSISTENCY commit gate（priority=98）
