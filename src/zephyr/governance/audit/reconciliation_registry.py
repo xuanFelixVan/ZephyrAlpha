@@ -2255,6 +2255,16 @@ def make_path_tree_reconciler(gateway: object) -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
 
+        # P0 止血（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
+        # generate_path_tree.py 因 datetime.now() + write_text 无 newline= 产生非幂等输出，
+        # 导致 post-commit reconciler 跨 commit 非收敛循环。临时 skip 整个 reconciler
+        # 停止噪音 auto-commit，P1 治本（去 datetime.now + newline=\\n）后立即移除此 skip。
+        # TODO(#ARCH-REGEN-NONIDEMPOTENT-001): P1 治本后移除本 skip
+        return ReconcileResult(
+            action="skip",
+            detail="P0 止血 #ARCH-REGEN-NONIDEMPOTENT-001: path_tree 生成器非幂等性待治本",
+        )
+
         # 治本（2026-06-27）：删除 depgraph.db git diff/add/commit 死代码。
 
         # P2 PG 迁移后 depgraph 已迁至 PostgreSQL，generate_project_path_tree.py --write
@@ -6569,6 +6579,17 @@ def make_regenerate_reconciler(gateway: object) -> ReconcilerSpec:
         return False
 
     def _reconcile_domain_doc(committed_files: list[str], session_id: str) -> ReconcileResult:
+
+        # P0 止血（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
+        # generate_domain_doc.py 因 datetime.now() + LIMIT 15 无 ORDER BY + write_text 无 newline=
+        # 产生非幂等输出，导致 post-commit reconciler 跨 commit 非收敛循环。临时 skip 整个
+        # reconciler 停止噪音 auto-commit，P1 治本（去 datetime.now + ORDER BY + newline=\\n）
+        # 后立即移除此 skip。
+        # TODO(#ARCH-REGEN-NONIDEMPOTENT-001): P1 治本后移除本 skip
+        return ReconcileResult(
+            action="skip",
+            detail="P0 止血 #ARCH-REGEN-NONIDEMPOTENT-001: domain_doc 生成器非幂等性待治本",
+        )
 
         # 0. drift-gate: 预检测域文档产物是否已有未提交变更（体系A reconcile_async 可能已跑过）
 

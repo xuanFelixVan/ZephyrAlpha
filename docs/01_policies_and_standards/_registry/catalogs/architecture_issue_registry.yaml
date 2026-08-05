@@ -11977,3 +11977,73 @@ entries:
   status: decided
   created: '2026-08-05'
   last_updated: '2026-08-05'
+
+# --- #ARCH-REGEN-NONIDEMPOTENT-001: 生成器非幂等性导致 reconciler 跨 commit 非收敛循环（2026-08-05）---
+- issue_id: '#ARCH-REGEN-NONIDEMPOTENT-001'
+  title: 6 生成器使用 datetime.now() + SQL 无 ORDER BY + write_text 无 newline 导致 reconciler 非收敛循环
+  severity: P1高
+  category: governance
+  adjudication: |
+    2026-08-05 reconciler 非收敛循环治本。
+
+    病根（第一性原理）：
+    生成器幂等性是 reconciler 收敛的不变量 I1。6 个生成器违反 AGENTS.md §11.1.1
+    "禁止使用 datetime.now()" 铁律，每次执行产生 per-second 时间戳 diff；
+    generate_domain_doc.py 两处 LIMIT 15 无 ORDER BY 导致 PostgreSQL 返回顺序
+    非确定性，Mermaid 边顺序每次不同；6 生成器 write_text 缺 newline=\\n 在
+    Windows 上产生 CRLF 行尾噪音。三者叠加 → 每次 reconciler 跑生成器都产生
+    新 diff → auto-commit → 下一次 user commit 触发 reconciler → 再次产生
+    新 diff → 跨 commit 永续循环（实证：56892009f9 等多次 batched auto-commit
+    diff 仅时间戳变化 + Mermaid 边顺序变化）。
+
+    与 #ARCH-REGEN-CONCURRENCY-001 / #ARCH-REGEN-CASCADE-001 的关系：
+    CONCURRENCY 治"并发互斥"（多进程不同时跑），CASCADE 治"worker 内级联截断"，
+    两者均只解决二阶问题；NONIDEMPOTENT 治一阶根因（生成器输出非确定性），
+    三者互补不可合并。CONCURRENCY/CASCADE 已完成但非收敛未停止 = 根因未治的实证。
+
+    drift-gate（reconciliation_registry.py _reconcile_domain_doc 第 0 步）的逻辑漏洞：
+    drift-gate 只检测 pre-existing 未提交变更（去重 systemA/systemB 双触发），
+    不检测生成器输出的稳定性。当 pre_diff 为空时（前一次 auto-commit 刚成功），
+    它仍然会跑生成器；生成器因非幂等再次产出 diff → 再次 auto-commit → 循环。
+
+    治本方案（三层）：
+    1. 6 生成器去 datetime.now()，统一改用 _common.idempotent_timestamp()
+       （正典先例：generate_decision_diagram._git_commit_timestamp()）
+    2. generate_domain_doc.py LIMIT 15 加 ORDER BY n1.path, n2.path
+    3. 6 生成器 write_text 加 newline="\\n" 消除 CRLF 噪音
+    4. pre-commit hook gate-generator-no-realtime-time 硬阻断防复发
+    5. pre-commit hook gate-generator-write-newline 防复发
+    6. 幂等性回归测试 test_generator_idempotency.py
+    7. AGENTS.md §11.1.1 检测条款从"手工 Select-String"升级为"自动 pre-commit 阻断"
+
+    防复发铁律：
+    - AGENTS.md §11.1.1 检测条款二元化：违规即阻断，无灰度
+    - 6 生成器统一改用 _common.idempotent_timestamp() 公共助手（SSoT）
+
+    影响范围（6 个生成器）：
+    - generate_path_tree.py（L706 datetime.now + L828/834 write_text）
+    - generate_domain_doc.py（L1334 datetime.now + L921/952 LIMIT 无 ORDER BY + write_text）
+    - generate_integration_topology.py（L112 datetime.now + L207 write_text）
+    - generate_navigation_index.py（L129 datetime.now + L278 write_text）
+    - generate_dataflow_diagram.py（L704/957/1123 datetime.now + L1246/1299 write_text）
+    - zoomable_html.py（L212 datetime.now + L462 write_text）
+
+    豁免：generate_code_wiki_stats.py 日粒度 datetime.now(UTC).strftime("%Y-%m-%d")
+    + 已有 # noqa: m46-time 标注，保持现状但加豁免标注。
+  impact:
+    - 'scripts/governance/d5_architecture/generators/_common.py（idempotent_timestamp/idempotent_date 公共助手 SSoT）'
+    - 'scripts/governance/d5_architecture/generators/generate_path_tree.py（去 datetime.now + newline=\\n）'
+    - 'scripts/governance/d5_architecture/generators/generate_domain_doc.py（去 datetime.now + LIMIT 加 ORDER BY + newline=\\n）'
+    - 'scripts/governance/d5_architecture/generators/generate_integration_topology.py（去 datetime.now + newline=\\n）'
+    - 'scripts/governance/d5_architecture/generators/generate_navigation_index.py（去 datetime.now + newline=\\n）'
+    - 'scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py（去 datetime.now + newline=\\n）'
+    - 'scripts/governance/d5_architecture/generators/zoomable_html.py（去 datetime.now + newline=\\n）'
+    - 'scripts/governance/d11_compliance/check_generator_no_realtime_time.py（pre-commit 门禁）'
+    - 'scripts/governance/d11_compliance/check_generator_write_newline.py（pre-commit 门禁）'
+    - 'tests/governance/d5_architecture/test_generator_idempotency.py（幂等性回归测试）'
+    - 'AGENTS.md §11.1.1（检测条款二元化升级）'
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（P0 止血临时 skip，P1 治本后移除）'
+  fix_phase: P1治本进行中（2026-08-05）—— P0 止血已落地，P1-A/B/C 待施工
+  status: decided
+  created: '2026-08-05'
+  last_updated: '2026-08-05'
