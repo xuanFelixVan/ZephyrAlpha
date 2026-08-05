@@ -78,6 +78,7 @@ _WRITE_PARAM_RE = re.compile(
 # 白名单文件（相对仓库根，正斜杠）
 # 治本（2026-07-17）：新增 generate_project_path_tree.py（arch_directory_tree 表写入器）
 # 治本（2026-08-01）：新增 apply_battle_map.py（battle_map_* 表写入器，用 depgraph_writer 角色）
+# 治本（2026-08-05）：新增 add_acquisition_fields.py（nodes_metadata schema 迁移，superuser DDL）
 _WHITELIST: frozenset[str] = frozenset({
     "scripts/governance/apply_depgraph.py",
     "scripts/governance/generate_project_depgraph.py",
@@ -86,6 +87,7 @@ _WHITELIST: frozenset[str] = frozenset({
     "scripts/governance/sync_panorama_module.py",
     "scripts/governance/generate_project_path_tree.py",
     "scripts/governance/apply_battle_map.py",
+    "scripts/governance/migrations/add_acquisition_fields.py",
     "src/zephyr/governance/depgraph_schema.py",
 })
 

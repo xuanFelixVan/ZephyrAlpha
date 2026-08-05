@@ -25,7 +25,7 @@ depgraph_reader.py — 依赖图数据库查询工具模块
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] FileNotFoundError; sqlite3.Error
-[TESTS] tests/test_depgraph_db.py
+[TESTS] tests/governance/depgraph/test_depgraph_db.py
 
 提供从 depgraph 读取依赖图数据的统一接口，
 替代直接解析 61MB+191MB YAML 文件的方式。

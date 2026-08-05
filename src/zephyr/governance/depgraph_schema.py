@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] raises RuntimeError on migration failure; OperationalError on DDL errors
-# [TESTS] tests/test_depgraph_schema.py
+# [TESTS] tests/io/test_depgraph_schema.py
 # [TTL] permanent
 
 """
