@@ -415,7 +415,7 @@ LSG 是 ZephyrAlpha 中**所有 LLM 调用的安全闸门**。任何 AI agent �
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-LLM_SECURITY` 的 74 个 file 节点 | production | `extract_depgraph.py --modules MOD-LLM_SECURITY` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
