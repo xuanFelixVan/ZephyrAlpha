@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-07-21T21:51:42Z'
+generated_at: '2026-08-05T07:14:13Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 76
+total_rules: 83
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1764,6 +1764,61 @@ rules:
   - ARCH-PREVENTABILITY-LAYER-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
+- rule_id: TRAE-069
+  title: Commit Gateway 滥用监控阈值配置
+  module_id: TRAE-069
+  scope: ''
+  domain: ''
+  severity: ''
+  stability: stable
+  ai_autonomy: ai_modifiable
+  safety_level: M
+  operations: []
+  gate_ids: []
+  tags:
+  - TRAE
+  - commit_gateway
+  - abuse_monitoring
+  - thresholds
+  aliases: []
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml
+- rule_id: TRAE-070
+  title: 临时文件放置规范
+  module_id: TRAE-070
+  scope: ''
+  domain: ''
+  severity: ''
+  stability: stable
+  ai_autonomy: ai_modifiable
+  safety_level: M
+  operations: []
+  gate_ids: []
+  tags:
+  - TRAE
+  - temporary_file
+  - placement
+  aliases: []
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml
+- rule_id: TRAE-071
+  title: 临时文件生命周期管理
+  module_id: TRAE-071
+  scope: ''
+  domain: ''
+  severity: ''
+  stability: stable
+  ai_autonomy: ai_modifiable
+  safety_level: M
+  operations: []
+  gate_ids: []
+  tags:
+  - TRAE
+  - temporary_file
+  - lifecycle
+  aliases: []
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
 - rule_id: TRAE-072
   title: 跨 commit 原子性铁律（Cross-Commit Atomicity，裁定
   module_id: TRAE-072
@@ -1805,9 +1860,9 @@ rules:
   scope: precommit_offline_discipline
   domain: TRAE
   severity: high
-  stability: ''
-  ai_autonomy: ''
-  safety_level: ''
+  stability: stable
+  ai_autonomy: ai_modifiable
+  safety_level: M
   operations:
   - precommit_config_edit
   - git_commit_invocation
@@ -1943,6 +1998,7 @@ rules:
   - capability_lookup_health_reconciler
   gate_ids:
   - CAPABILITY-LOOKUP-HEALTH
+  - CAPABILITY-LOOKUP-REQUIRED
   tags:
   - TRAE
   - capability_lookup_scene_classify
@@ -1952,6 +2008,7 @@ rules:
   - preventability
   - RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
   - ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+  - ARCH-066
   aliases:
   - RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
   - bypass 场景分类
@@ -1959,6 +2016,7 @@ rules:
   - 白名单豁免
   - exempt bypass
   - ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+  - ARCH-066
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml
 - rule_id: TRAE-078
@@ -2031,3 +2089,133 @@ rules:
   - ARCH-COMMIT-SERIALIZATION-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
+- rule_id: TRAE-080
+  title: 四图对齐铁律（设计态先行 + 派生 + 对齐验证）
+  module_id: TRAE-080
+  scope: panorama_alignment
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - design_node_create
+  - panorama_sync
+  - panorama_align
+  - pre_construction
+  - depgraph_node_write
+  - dataflow_node_write
+  - decision_node_write
+  gate_ids: []
+  tags:
+  - TRAE
+  - panorama_alignment
+  - L1_foundation
+  - 四图对齐
+  - design_maturity
+  - depgraph
+  - single_entry
+  - 君子协定
+  aliases:
+  - RULE-PANORAMA
+  - 四图对齐
+  - panorama_alignment
+  - four_panoramas_alignment
+  - ARCH-053
+  - ARCH-056
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml
+- rule_id: TRAE-081
+  title: 审计审查维度框架（54 维度基座）
+  module_id: TRAE-081
+  scope: audit_dimensions_framework
+  domain: TRAE
+  severity: info
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations: []
+  gate_ids: []
+  tags:
+  - TRAE
+  - audit_dimensions
+  - checklist
+  - governance
+  - L1_foundation
+  aliases:
+  - audit_dimensions_checklist
+  - 审计维度清单
+  - 54维度
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml
+- rule_id: TRAE-082
+  title: Symbol 约定铁律（裸码 symbol + exchange 列 + 派生 symbol_canonical）
+  module_id: TRAE-082
+  scope: symbol_convention
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - securities_table_create
+  - provider_symbol_write
+  - cross_table_join
+  - schema_ddl_edit
+  - factor_panel_assembly
+  gate_ids: []
+  tags:
+  - TRAE
+  - symbol_convention
+  - L1_foundation
+  - 标识约定
+  - 跨市场消歧
+  - canonical_key
+  - data_model
+  - 君子协定
+  aliases:
+  - RULE-SYMBOL
+  - symbol_convention
+  - 符号约定
+  - canonical_symbol
+  - ARCH-DATA-SYMBOL-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_082_symbol_convention.yaml
+- rule_id: TRAE-083
+  title: 设计意图查询真源铁律（问题类型→查询源映射）
+  module_id: TRAE-083
+  scope: design_intent_source_discipline
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - module_deprecate_decision
+  - over_engineering_audit
+  - cross_domain_duplicate_judgment
+  - design_admission_check
+  - real_trading_gap_mining
+  - candidate_registry_entry
+  - design_intent_query
+  - module_priority_query
+  - module_responsibility_query
+  - panorama_position_inference
+  gate_ids: []
+  tags:
+  - TRAE
+  - design_intent_source
+  - L1_foundation
+  - ssot_read
+  - 设计准入一问标准
+  - source_of_truth
+  - query_source_mapping
+  - 防误判
+  aliases:
+  - RULE-DESIGN-INTENT-SOURCE
+  - 设计意图真源
+  - 查询源映射
+  - 设计准入前置读设计
+  - read_source_discipline
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_083_design_intent_source_discipline.yaml

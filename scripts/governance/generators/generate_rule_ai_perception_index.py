@@ -32,12 +32,16 @@
 """
 from __future__ import annotations
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
-
 import argparse
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+
+# _shared 位于父目录 scripts/governance/_shared/，直接运行脚本时 sys.path[0]=本目录
+# （generators/），找不到父目录的 _shared，需先把父目录加入搜索路径
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 
 import yaml
 
