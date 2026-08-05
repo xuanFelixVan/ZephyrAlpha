@@ -27,11 +27,11 @@ ttl: permanent
 | 域ID | D_ML_TRAIN | Domain ID | D_ML_TRAIN |
 | 域名称 | 训练 | Domain Name | Training |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 10 | Module Count | 10 |
+| 模块数 | 13 | Module Count | 13 |
 | 域内依赖 | 4 | Internal Dependencies | 4 |
 | 跨域入边 | 5 | Cross-domain Incoming | 5 |
 | 跨域出边 | 11 | Cross-domain Outgoing | 11 |
-| 设计态模块 | 7 | Design Modules | 7 |
+| 设计态模块 | 10 | Design Modules | 10 |
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
 | 描述 | 模型能力考试 | Description | 模型能力考试 |
@@ -48,7 +48,7 @@ ttl: permanent
 
 ### 全景图（全部模块，颜色区分运营态/设计态）
 
-> 展示全部 10 个模块（生产态 3 + 设计态 7），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
+> 展示全部 13 个模块（生产态 3 + 设计态 10），含跨域依赖外部节点。节点含成熟度+名称+大白话/简介+文件路径。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -58,22 +58,28 @@ flowchart TD
     src_zephyr_ml_train_ai_operator["Ai Operator<br/>机器学习训练包的ai_operator模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
     src_zephyr_ml_train_gray_release_shadow_deployer_py["ml_train/gray_release_shadow_deployer<br/>机器学习训练包的gray_release_shadow_deployer模块<br/>文件: ml_train/gray_release_shadow_deployer.py<br/>(设计态 / design)"]
     src_zephyr_ml_train_implementations_default_inference_engine_py["默认推理引擎<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations<br/>/default_inference_engine.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_learning_effect_feedback_py["ml_train/learning_effect_feedback<br/>机器学习训练包的learning_effect_feedback模块<br/>文件: ml_train/learning_effect_feedback.py<br/>(设计态 / design)"]
+    src_zephyr_ml_train_meta_learning_evolution_py["ml_train/meta_learning_evolution<br/>机器学习训练包的meta_learning_evolution模块<br/>文件: ml_train/meta_learning_evolution.py<br/>(设计态 / design)"]
+    src_zephyr_ml_train_meta_learning_rsi_py["ml_train/meta_learning_rsi<br/>机器学习训练包的meta_learning_rsi模块<br/>文件: ml_train/meta_learning_rsi.py<br/>(设计态 / design)"]
     src_zephyr_ml_train_strategy_digital_twin_py["ml_train/strategy_digital_twin<br/>机器学习训练包的strategy_digital_twin模块<br/>文件: ml_train/strategy_digital_twin.py<br/>(设计态 / design)"]
     src_zephyr_ml_train_training_dataset_manager["训练数据集管理器<br/>机器学习训练包的training_dataset_manager模块<br/>Training Dataset Manager<br/>文件: training_dataset_manager/<br/>(设计态 / design)"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_adversarial_robustness_validator_py
     src_zephyr_ml_train_adversarial_robustness_validator_py ~~~ src_zephyr_ml_train_ai_operator
     src_zephyr_ml_train_ai_operator ~~~ src_zephyr_ml_train_gray_release_shadow_deployer_py
     src_zephyr_ml_train_gray_release_shadow_deployer_py ~~~ src_zephyr_ml_train_implementations_default_inference_engine_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py ~~~ src_zephyr_ml_train_strategy_digital_twin_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py ~~~ src_zephyr_ml_train_learning_effect_feedback_py
+    src_zephyr_ml_train_learning_effect_feedback_py ~~~ src_zephyr_ml_train_meta_learning_evolution_py
+    src_zephyr_ml_train_meta_learning_evolution_py ~~~ src_zephyr_ml_train_meta_learning_rsi_py
+    src_zephyr_ml_train_meta_learning_rsi_py ~~~ src_zephyr_ml_train_strategy_digital_twin_py
     src_zephyr_ml_train_strategy_digital_twin_py ~~~ src_zephyr_ml_train_training_dataset_manager
     src_zephyr_ml_train_inference_base_py["模型推理：请求 -> 响应'''<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_pipeline["训练管道<br/>机器学习训练包的training_pipeline模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>Training Pipeline<br/>文件: training_pipeline/<br/>(设计态 / design)"]
     src_zephyr_ml_train_inference_base_py ~~~ src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_trainer_base_py["模型注册元数据'''<br/>D_ML_TRAIN — ML Training Base<br/>Trainer Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
+    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_GOV_ENFORCEMENT
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -102,7 +108,7 @@ flowchart TD
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py production
-    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_adversarial_robustness_validator_py,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_gray_release_shadow_deployer_py,src_zephyr_ml_train_strategy_digital_twin_py,src_zephyr_ml_train_training_dataset_manager,src_zephyr_ml_train_training_pipeline design
+    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_adversarial_robustness_validator_py,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_gray_release_shadow_deployer_py,src_zephyr_ml_train_learning_effect_feedback_py,src_zephyr_ml_train_meta_learning_evolution_py,src_zephyr_ml_train_meta_learning_rsi_py,src_zephyr_ml_train_strategy_digital_twin_py,src_zephyr_ml_train_training_dataset_manager,src_zephyr_ml_train_training_pipeline design
     class D_GOV_ENFORCEMENT,D_DATA,D_ORCHESTRATOR,D_DATA_GOV,D_SHARED,D_TRADING,D_INTELLIGENCE external_prod
 ```
 
@@ -116,9 +122,9 @@ flowchart TD
     src_zephyr_ml_train_implementations_default_inference_engine_py["默认推理引擎<br/>D_ML_TRAIN — Default Inference Engine<br/>文件: implementations<br/>/default_inference_engine.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py["模型推理：请求 -> 响应'''<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_trainer_base_py["模型注册元数据'''<br/>D_ML_TRAIN — ML Training Base<br/>Trainer Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
+    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -128,7 +134,7 @@ flowchart TD
 
 ### 设计态的图（仅 design_maturity=design 的模块和域内依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 7 个），不含跨域外部节点。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 10 个），不含跨域外部节点。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'fontSize': '14px'}}}%%
@@ -137,12 +143,18 @@ flowchart TD
     src_zephyr_ml_train_adversarial_robustness_validator_py["ml_train/adversarial_robustness_validator<br/>机器学习训练包的adversarial_robustness_validator<br/>模块<br/>文件: ml_train<br/>/adversarial_robustness_validator.py<br/>(设计态 / design)"]
     src_zephyr_ml_train_ai_operator["Ai Operator<br/>机器学习训练包的ai_operator模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>文件: ai_operator/<br/>(设计态 / design)"]
     src_zephyr_ml_train_gray_release_shadow_deployer_py["ml_train/gray_release_shadow_deployer<br/>机器学习训练包的gray_release_shadow_deployer模块<br/>文件: ml_train/gray_release_shadow_deployer.py<br/>(设计态 / design)"]
+    src_zephyr_ml_train_learning_effect_feedback_py["ml_train/learning_effect_feedback<br/>机器学习训练包的learning_effect_feedback模块<br/>文件: ml_train/learning_effect_feedback.py<br/>(设计态 / design)"]
+    src_zephyr_ml_train_meta_learning_evolution_py["ml_train/meta_learning_evolution<br/>机器学习训练包的meta_learning_evolution模块<br/>文件: ml_train/meta_learning_evolution.py<br/>(设计态 / design)"]
+    src_zephyr_ml_train_meta_learning_rsi_py["ml_train/meta_learning_rsi<br/>机器学习训练包的meta_learning_rsi模块<br/>文件: ml_train/meta_learning_rsi.py<br/>(设计态 / design)"]
     src_zephyr_ml_train_strategy_digital_twin_py["ml_train/strategy_digital_twin<br/>机器学习训练包的strategy_digital_twin模块<br/>文件: ml_train/strategy_digital_twin.py<br/>(设计态 / design)"]
     src_zephyr_ml_train_training_dataset_manager["训练数据集管理器<br/>机器学习训练包的training_dataset_manager模块<br/>Training Dataset Manager<br/>文件: training_dataset_manager/<br/>(设计态 / design)"]
     docs_03_modules_cross_layer_model_profiler_blueprint_md ~~~ src_zephyr_ml_train_adversarial_robustness_validator_py
     src_zephyr_ml_train_adversarial_robustness_validator_py ~~~ src_zephyr_ml_train_ai_operator
     src_zephyr_ml_train_ai_operator ~~~ src_zephyr_ml_train_gray_release_shadow_deployer_py
-    src_zephyr_ml_train_gray_release_shadow_deployer_py ~~~ src_zephyr_ml_train_strategy_digital_twin_py
+    src_zephyr_ml_train_gray_release_shadow_deployer_py ~~~ src_zephyr_ml_train_learning_effect_feedback_py
+    src_zephyr_ml_train_learning_effect_feedback_py ~~~ src_zephyr_ml_train_meta_learning_evolution_py
+    src_zephyr_ml_train_meta_learning_evolution_py ~~~ src_zephyr_ml_train_meta_learning_rsi_py
+    src_zephyr_ml_train_meta_learning_rsi_py ~~~ src_zephyr_ml_train_strategy_digital_twin_py
     src_zephyr_ml_train_strategy_digital_twin_py ~~~ src_zephyr_ml_train_training_dataset_manager
     src_zephyr_ml_train_training_pipeline["训练管道<br/>机器学习训练包的training_pipeline模块<br/>⛔ ML训练域，设计已就绪，等待开发排期<br/>Training Pipeline<br/>文件: training_pipeline/<br/>(设计态 / design)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
@@ -150,7 +162,7 @@ flowchart TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_adversarial_robustness_validator_py,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_gray_release_shadow_deployer_py,src_zephyr_ml_train_strategy_digital_twin_py,src_zephyr_ml_train_training_dataset_manager,src_zephyr_ml_train_training_pipeline design
+    class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_adversarial_robustness_validator_py,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_gray_release_shadow_deployer_py,src_zephyr_ml_train_learning_effect_feedback_py,src_zephyr_ml_train_meta_learning_evolution_py,src_zephyr_ml_train_meta_learning_rsi_py,src_zephyr_ml_train_strategy_digital_twin_py,src_zephyr_ml_train_training_dataset_manager,src_zephyr_ml_train_training_pipeline design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
