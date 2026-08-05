@@ -11722,3 +11722,221 @@ entries:
   related_rules: 'TRAE-028（N-16 skip_dirs_docs 共享 SSoT）'
   created: '2026-08-05'
   last_updated: '2026-08-05'
+
+# ============================================================================
+# 描述性 ARCH ID 补登记批次（2026-08-05，Phase 1-C）
+# 病根：9 个描述性 ARCH ID 在代码/文档中真实使用但未在 registry 登记，违反铁律#6。
+# 裁定：方案 C（冻结+渐进迁移）——存量描述性 ID 补登保留，新条目强制数字制。
+# ============================================================================
+
+# --- #ARCH-CH-MATERIALIZED-INSERT: ClickHouse MATERIALIZED/ALIAS 列写入排除（2026-08-05 补登记） ---
+- issue_id: '#ARCH-CH-MATERIALIZED-INSERT'
+  title: ClickHouse 写入 MATERIALIZED 列冲突——可插入列集合排除治本
+  severity: P1高
+  category: data
+  adjudication: |-
+    2026-08-03 治本，2026-08-05 补登记（违反铁律#6）。
+    病根：ch_writer.py 的 _get_table_columns_set 返回含 MATERIALIZED/ALIAS 列，
+    INSERT 时 ClickHouse 拒绝写入这些计算列，导致 CH 写入失败（属"CH 写入失败根因分类"
+    三类之一：MATERIALIZED 列写冲突）。
+    治本方案：构建可插入列集合（排除 MATERIALIZED/ALIAS），INSERT 只用可插入列。
+    影响文件：ch_writer.py / buffered_writer.py / wal_writer.py。
+  fix_phase: |-
+    已完成（2026-08-03）：
+      - ch_writer.py 新增可插入列缓存（排除 MATERIALIZED/ALIAS）
+      - buffered_writer.py / wal_writer.py 复用可插入列集合
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'src/zephyr/data/ch_writer.py（可插入列缓存，#ARCH-CH-MATERIALIZED-INSERT）'
+    - 'src/zephyr/data/buffered_writer.py（复用可插入列集合）'
+    - 'src/zephyr/data/wal_writer.py（复用可插入列集合）'
+  status: decided
+  created: '2026-08-03'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-DEPGRAPH-OPS-TXN-ABORTED: depgraph UPSERT 逐表 SAVEPOINT 隔离（2026-08-05 补登记） ---
+- issue_id: '#ARCH-DEPGRAPH-OPS-TXN-ABORTED'
+  title: depgraph 批量 UPSERT 单表失败回滚全事务——逐表 SAVEPOINT 隔离治本
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-07-25 治本，2026-08-05 补登记（违反铁律#6）。
+    病根：generate_project_depgraph.py 批量 UPSERT 多表时，单表失败导致整个事务
+    ROLLBACK，已成功写入的表也被回滚，depgraph 部分更新丢失。
+    治本方案：逐表 SAVEPOINT 隔离——每张表 UPSERT 前设 SAVEPOINT，失败时
+    ROLLBACK TO SAVEPOINT 只回滚当前表，不影响已成功的表。
+  fix_phase: |-
+    已完成（2026-07-25）：
+      - generate_project_depgraph.py 逐表 SAVEPOINT 隔离
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'scripts/governance/generate_project_depgraph.py（逐表 SAVEPOINT 隔离，#ARCH-DEPGRAPH-OPS-TXN-ABORTED）'
+  status: decided
+  created: '2026-07-25'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-EDB-EXPAND: FRED/EIA/世界银行免费宏观数据扩展（2026-08-05 补登记） ---
+- issue_id: '#ARCH-EDB-EXPAND'
+  title: EDB 宏观指标数据源扩展——FRED/EIA/世界银行免费源接入
+  severity: P2中
+  category: data
+  adjudication: |-
+    2026-08-04 治本，2026-08-05 补登记（违反铁律#6）。
+    病根：EDB（经济数据库）宏观指标原依赖 ifind 试用账号，账号到期后数据断供。
+    治本方案：接入 FRED（美联储经济数据库）、EIA（美国能源信息署）、世界银行
+    三个免费数据源，扩展国际对比宏观数据覆盖。FRED/EIA 需注册免费 API key
+    配置在 .env，海外站点直连可用无需 VPN。
+    关联：与 ifind 退役（commit 62c4e3494f）同批落地。
+  fix_phase: |-
+    已完成（2026-08-04）：
+      - 新增 FRED/世界银行/EIA provider
+      - data_sources_registry.yaml / tasks.yaml / capability registry 同步登记
+      - SECRETS.md 登记 FRED_API_KEY / EIA_API_KEY
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'architecture_model/data/data_sources_registry.yaml（FRED/EIA/世界银行 provider 注册，#ARCH-EDB-EXPAND）'
+    - 'src/zephyr/data/scheduler.py（调度配置）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（capability 登记）'
+  status: decided
+  created: '2026-08-04'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-EM-ANTIBOT-FAILOVER: 东财反爬封锁降级（2026-08-05 补登记） ---
+- issue_id: '#ARCH-EM-ANTIBOT-FAILOVER'
+  title: 东财 push2 子域名 IP 封锁——反爬降级到同花顺治本
+  severity: P2中
+  category: data
+  adjudication: |-
+    2026-08-04 治本，2026-08-05 补登记（违反铁律#6）。
+    病根：东财 push2.eastmoney.com 子域名被 IP 应用层封锁（TCP 能握手但 HTTP
+    请求被 RemoteDisconnected 主动断开），逐板块重试浪费时间。
+    治本方案：IP 被封锁时避免逐板块重试，直接降级到同花顺 q.10jqka.com.cn
+    公开网页解析获取概念板块成分股。连续失败 3 次后标记 _em_push2_blocked，
+    直接走同花顺替代路径，节省约 17 秒/板块。
+    关联：与东财数据源降级策略同源。
+  fix_phase: |-
+    已完成（2026-08-04）：
+      - akshare_provider.py 新增 _em_push2_blocked 降级逻辑
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（_em_push2_blocked 降级，#ARCH-EM-ANTIBOT-FAILOVER）'
+  status: decided
+  created: '2026-08-04'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-FUTURES-POSITION: akshare 替代 QMT 期货持仓（2026-08-05 补登记） ---
+- issue_id: '#ARCH-FUTURES-POSITION'
+  title: QMT 期货持仓数据全0——akshare 替代治本
+  severity: P2中
+  category: data
+  adjudication: |-
+    2026-08-04 治本，2026-08-05 补登记（违反铁律#6）。
+    病根：QMT get_instrument_detail 返回期货持仓全 0，数据不可用。
+    治本方案：改用 akshare 期货持仓 API（futures_position 等接口）替代 QMT，
+    包括各交易所排名表 API 和 pd.to_numeric 安全转换（CZCE 返回逗号拼接字符串）。
+  fix_phase: |-
+    已完成（2026-08-04）：
+      - akshare_provider.py 新增 futures_position CapabilityContract + 实现
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（futures_position CapabilityContract + 实现，#ARCH-FUTURES-POSITION）'
+  status: decided
+  created: '2026-08-04'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-PRECOMMIT-INCREMENTAL: pre-commit 命名增量守门（2026-08-05 补登记） ---
+- issue_id: '#ARCH-PRECOMMIT-INCREMENTAL'
+  title: N-16 命名门禁全量扫描阻塞——增量守门（--check-new）治本
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-05 治本+补登记（同日）。
+    病根：N-16 命名门禁原为全量扫描，每次 commit 扫描全仓文件名重名，耗时且
+    阻塞草稿区（_working）正常使用。
+    治本方案：拆分为增量守门（GATE-NAMING --check-new，只拦 staged 新增重名）
+    + 全量审计（GATE-NAMING-AUDIT --warn-only --scan，不阻断），草稿区 _working
+    纳入 skip_dirs_docs 不阻断 commit。
+  fix_phase: |-
+    进行中（2026-08-05）：
+      - trae_028_doc_structure_naming.yaml 已更新 skip_dirs 含 _working
+      - _working/precommit_gate_incremental_refactor_plan.md 施工方案已起草
+      - 门禁拆分实施待执行
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml（skip_dirs 含 _working，#ARCH-PRECOMMIT-INCREMENTAL）'
+    - 'docs/_working/precommit_gate_incremental_refactor_plan.md（施工方案）'
+  status: decided
+  created: '2026-08-05'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-REALTIME-ACCUM: 时间敏感型数据每日积累（2026-08-05 补登记） ---
+- issue_id: '#ARCH-REALTIME-ACCUM'
+  title: 免费数据源无历史 API——时间敏感型数据每日快照积累治本
+  severity: P2中
+  category: data
+  adjudication: |-
+    2026-08-04 治本，2026-08-05 补登记（违反铁律#6）。
+    病根：和风天气等免费数据源无历史 API，只能获取最近数据，错过即永久丢失，
+    无法回填。
+    治本方案：标记时间敏感型数据（incremental=false），每日快照积累存储到
+    ClickHouse，成分股变动等无法回填的数据强制每日采集。
+    关联：与 #ARCH-EDB-EXPAND 同批落地（免费数据源接入）。
+  fix_phase: |-
+    已完成（2026-08-04）：
+      - data_sources_registry.yaml / tasks.yaml 标记时间敏感型数据
+      - business_data_categories.yaml 分类登记
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'architecture_model/data/data_sources_registry.yaml（和风天气 provider，#ARCH-REALTIME-ACCUM）'
+    - 'src/zephyr/data/config/tasks.yaml（incremental=false 标记）'
+    - 'docs/03_modules/_cross_layer/database/business_data_categories.yaml（时间敏感型数据分类）'
+  status: decided
+  created: '2026-08-04'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-RECONCILER-INDEXLOCK-RETRY: git add index.lock 竞争重试（2026-08-05 补登记） ---
+- issue_id: '#ARCH-RECONCILER-INDEXLOCK-RETRY'
+  title: git add index.lock 竞争失败——暂时性重试治本
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-03 治本，2026-08-05 补登记（违反铁律#6）。
+    病根：GitCommitGateway 并发执行 git add 时，多个进程争抢 index.lock，
+    部分进程因 lock 占用失败，导致文件漏暂存。
+    治本方案：git add 带 index.lock 暂时性竞争重试——捕获 lock 竞争异常后
+    退避重试（指数退避，最多 N 次），重试全部失败才报错。
+  fix_phase: |-
+    已完成（2026-08-03）：
+      - git_commit_gateway.py 新增 _git_add_with_retry 重试逻辑
+      - test_git_commit_gateway.py 补充治本测试
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（_git_add_with_retry，#ARCH-RECONCILER-INDEXLOCK-RETRY）'
+    - 'tests/git/test_git_commit_gateway.py（治本测试）'
+  status: decided
+  created: '2026-08-03'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-VALUATION-IFIND-PRIMARY: 估值数据 ifind 主源切换（2026-08-05 补登记） ---
+- issue_id: '#ARCH-VALUATION-IFIND-PRIMARY'
+  title: 估值 full_refresh symbols=null 必须 ifind 主源——主备源切换治本
+  severity: P2中
+  category: data
+  adjudication: |-
+    2026-08-04 治本，2026-08-05 补登记（违反铁律#6）。
+    病根：估值数据 full_refresh 切 ifind 主源后，symbols=null（全市场）必须
+    由 ifind 承载，但 akshare 备源不支持 symbols=null 全市场扫描，导致
+    full_refresh 降级到 akshare 时数据缺失。
+    治本方案：明确 ifind 为估值数据主源，full_refresh 的 symbols=null 路径
+    强制走 ifind；akshare 仅作增量更新备源。
+    关联：与 ifind 退役（commit 62c4e3494f）同批，但估值数据保留 ifind 主源。
+  fix_phase: |-
+    已完成（2026-08-04）：
+      - ifind_provider.py / akshare_provider.py 主备源切换逻辑
+      - 本条补登记满足铁律#6（2026-08-05）
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（估值主备源切换，#ARCH-VALUATION-IFIND-PRIMARY）'
+    - 'src/zephyr/data/implementations/ifind_provider.py（full_refresh symbols=null ifind 主源）'
+  status: decided
+  created: '2026-08-04'
+  last_updated: '2026-08-05'
