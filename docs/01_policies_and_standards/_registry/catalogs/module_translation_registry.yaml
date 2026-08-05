@@ -9420,7 +9420,7 @@ entries:
   domain_id: D_GOV_CODE_QUALITY
   name_zh: 手册onlypermanent门禁
   name_en: manual_only_permanent_gate
-  desc_zh: manual_only_permanent_gate.py — 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENC
+  desc_zh: manual_only_permanent_gate.py — 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐）
   desc_en: ''
   plain_zh: 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐
 - module_path: src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py
@@ -40947,6 +40947,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "检测多个策略是否挤在同一个因子或同一批股票上，计算持仓重叠度和方向一致性"
+- module_path: src/zephyr/ex_sor/core/market_context_provider.py
+  domain_id: D_EX_SOR
+  name_zh: "市场上下文提供器"
+  name_en: "MarketContextProvider"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从Redis盘中tick缓存读最新价和买卖一价，从ClickHouse日K算近20日日均成交量，组装成算法切片所需的市场上下文，让执行引擎能调用G7算法生成真实切片方案而不是占位提交"
 
 battle_map_steps:
 - step_id: BM-BUY-04
