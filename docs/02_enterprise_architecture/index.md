@@ -72,4 +72,4 @@ ttl: permanent
 
 ## 父级目录
 
-- 父级：[docs 根目录](file:///D:/ZephyrAlpha/docs/index.md)
+- 父级：docs 根目录

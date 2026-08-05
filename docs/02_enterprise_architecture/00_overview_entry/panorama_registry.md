@@ -30,16 +30,16 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 72 | 功能域清单——72 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 6247 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6247 个 |
-| 依赖图 depgraph | `edges` | 9588 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9588 条 |
+| 依赖图 depgraph | `nodes` | 6251 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），6251 个 |
+| 依赖图 depgraph | `edges` | 9591 | 依赖边——节点间的依赖关系（import/契约/事件订阅），9591 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 76 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 227 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 231 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 90 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），90 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
 | 数据流图 dataflowgraph | `dataflow_runs` | 0 | 运行记录——job 执行历史（status/耗时/参数），0 行（0=无运行时观测，依赖观测系统回填） |
 | 决策流图 decisiongraph | `decision_tracks` | 5 | 决策轨——5 条正交决策轨（价值/动量/风险/组合），优先级+激活条件 |
-| 决策流图 decisiongraph | `decision_layers` | 954 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
+| 决策流图 decisiongraph | `decision_layers` | 958 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
 | 决策流图 decisiongraph | `decision_nodes` | 213 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
 | 决策流图 decisiongraph | `decision_edges` | 211 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），211 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 66 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，66 条 |
@@ -132,7 +132,7 @@
 | PAN-RUN-02 | 告警热力图 | 运行时观测 | `09_runtime_panorama/` | `generate_alert_heatmap.py (待建)` | 中 | 待裁定：AlertManager API 实时拉取 vs 独立 alert_history 表 |
 | PAN-RUN-03 | CI/CD 流水线图 | 运行时观测 | `09_runtime_panorama/` | `generate_cicd_pipeline.py (待建)` | 中 | 待裁定：GitHub Actions API 拉取 vs 独立 cicd_pipelines 表。有 fronte... |
 | PAN-RUN-04 | 服务依赖运行时视图 | 运行时观测 | `09_runtime_panorama/` | `generate_runtime_dependency.py (待建)` | 中 | 待裁定：OpenTelemetry trace 聚合 vs 独立 runtime_calls 表。现有依赖图是静态... |
-| PAN-SEC-01 | 威胁模型图 STRIDE | 安全全景 | `10_security_panorama/` | `generate_stride_threat_model.py (待建)` | 中 | 待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。有 security_arch... |
+| PAN-SEC-01 | 威胁模型图 STRIDE | 安全全景 | `10_security_panorama/` | `generate_stride_threat_model.py (待建)` | 中 | 待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。security_archit... |
 | PAN-SEC-02 | 合规矩阵 | 安全全景 | `10_security_panorama/` | `generate_compliance_matrix.py (待建)` | 中 | 待裁定：扩展现有 compliance 域 916 模块元信息 vs 独立 compliance_matrix 表... |
 | PAN-VIS-01 | 可视化前端架构文档 | 可视化前端 | `13_visualization_architecture/` | `(手工维护 + 部分自动生成)` | 中 | 待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_componen... |
 | PAN-QUANT-01 | 因子全景图 | 量化全景 | `12_quant_panorama/` | `generate_factor_panorama.py (待建)` | 可选 | 待裁定：从 D_FACTOR 域派生 vs 独立 factor_registry 表。D_FACTOR 只有依赖图... |
@@ -284,7 +284,7 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-SEC-01 | 威胁模型图 STRIDE | ⏳待建 | 待裁定（YAML 威胁建模 vs 独立表） | STRIDE 威胁模型图（攻击面/信任边界/数据流威胁标注） | 规划目录：`10_security_panorama/`<br>生成器：`generate_stride_threat_model.py (待建)`<br>真源待裁定：待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。有 security_architecture.md 但缺攻击面/信任边界/数据流威胁标注<br>相关蓝图：[`security_architecture.md`](../target_architecture/security_architecture.md) / [`blueprint.md`](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
+| PAN-SEC-01 | 威胁模型图 STRIDE | ⏳待建 | 待裁定（YAML 威胁建模 vs 独立表） | STRIDE 威胁模型图（攻击面/信任边界/数据流威胁标注） | 规划目录：`10_security_panorama/`<br>生成器：`generate_stride_threat_model.py (待建)`<br>真源待裁定：待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。security_architecture.md 待建，缺攻击面/信任边界/数据流威胁标注<br>相关蓝图：[`blueprint.md`](../../03_modules/_cross_layer/large_language_model_security/blueprint.md) |
 | PAN-SEC-02 | 合规矩阵 | ⏳待建 | 待裁定（depgraph compliance 扩展 vs 独立表） | 规则×系统×状态 合规全景看板 | 规划目录：`10_security_panorama/`<br>生成器：`generate_compliance_matrix.py (待建)`<br>真源待裁定：待裁定：扩展现有 compliance 域 916 模块元信息 vs 独立 compliance_matrix 表。compliance 域有 916 模块但没规则×系统×状态看板<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_compliance/blueprint.md) |
 
 ### 11 风险全景（待建）
@@ -306,7 +306,7 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-VIS-01 | 可视化前端架构文档 | ⏳待建 | 待裁定（代码扫描派生 vs 独立表） | 可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 已有 TOGAF 视图，本目录放更细的可视化前端架构 | 规划目录：`13_visualization_architecture/`<br>生成器：`(手工维护 + 部分自动生成)`<br>真源待裁定：待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_frontend/blueprint.md) / [`frontend_architecture.md`](../target_architecture/frontend_architecture.md) |
+| PAN-VIS-01 | 可视化前端架构文档 | ⏳待建 | 待裁定（代码扫描派生 vs 独立表） | 可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 待建，本目录放更细的可视化前端架构 | 规划目录：`13_visualization_architecture/`<br>生成器：`(手工维护 + 部分自动生成)`<br>真源待裁定：待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_frontend/blueprint.md) |
 
 ### (已退役) 07_trading_decision_architecture
 

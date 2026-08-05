@@ -494,10 +494,9 @@ PENDING_PANORAMAS: list[dict] = [
         "plan_generator": "generate_stride_threat_model.py (待建)",
         "source_architecture": "待裁定（YAML 威胁建模 vs 独立表）",
         "related_blueprints": [
-            "docs/02_enterprise_architecture/target_architecture/security_architecture.md",
             "docs/03_modules/_cross_layer/large_language_model_security/blueprint.md",
         ],
-        "data_source_tbd": "待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。有 security_architecture.md 但缺攻击面/信任边界/数据流威胁标注",
+        "data_source_tbd": "待裁定：YAML 威胁建模（架构师手工）vs 独立 threat_models 表。security_architecture.md 待建，缺攻击面/信任边界/数据流威胁标注",
         "priority": "中",
         "description": "STRIDE 威胁模型图（攻击面/信任边界/数据流威胁标注）",
     },
@@ -606,11 +605,10 @@ PENDING_PANORAMAS: list[dict] = [
         "source_architecture": "待裁定（代码扫描派生 vs 独立表）",
         "related_blueprints": [
             "docs/03_modules/_domain_frontend/blueprint.md",
-            "docs/02_enterprise_architecture/target_architecture/frontend_architecture.md",
         ],
         "data_source_tbd": "待裁定：从 src/zephyr/frontend/ 代码扫描派生 vs 独立 frontend_components 表。代码进 src/zephyr/frontend/，文档进 13_visualization_architecture/",
         "priority": "中",
-        "description": "可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 已有 TOGAF 视图，本目录放更细的可视化前端架构",
+        "description": "可视化前端架构（Panel + HoloViz + Plotly + TradingView Lightweight Charts v5.2）组件拓扑/数据流/部署图。target_architecture/frontend_architecture.md 待建，本目录放更细的可视化前端架构",
     },
 ]
 
@@ -1186,6 +1184,10 @@ def _generate_detail_section(built: list[dict], pending: list[dict]) -> list[str
                     for bp_path in related_bps:
                         bp_full = REPO_ROOT / bp_path
                         bp_name = bp_path.split("/")[-1]  # 取文件名作为显示文本
+                        if not bp_full.exists():
+                            # 防御：蓝图文件不存在时降级为纯文本，避免 DOC-REF-BROKEN 断链
+                            bp_links.append(f"`{bp_name}`")
+                            continue
                         bp_rel = os.path.relpath(bp_full, OUTPUT_DIR).replace("\\", "/")
                         bp_links.append(f"[`{bp_name}`]({bp_rel})")
                     source_info += f"<br>相关蓝图：{' / '.join(bp_links)}"

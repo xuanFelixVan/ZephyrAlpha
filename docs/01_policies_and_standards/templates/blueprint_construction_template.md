@@ -137,10 +137,10 @@ END_REQUIRED_SECTIONS
 ---
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
-> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
+> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
-> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
-> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)（V6.0 依赖路径全景图）；机器真源：PostgreSQL depgraph（`python scripts/governance/extract_depgraph.py --modules {module_id}`）
+> - 代码头部标准：code-construction-standards.md §7
+> - 依赖图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)（V6.0 依赖路径全景图）；机器真源：PostgreSQL depgraph（`python scripts/governance/extract_depgraph.py --modules {module_id}`）
 > - 优化规则：先 Layer 1（蓝图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
@@ -556,7 +556,7 @@ class {DataModel}(BaseModel):
 
 > 蓝图 §9.1 声明的依赖 MUST 与全局依赖图一致。不一致 = 漂移。
 > 全局依赖图 SSoT：PostgreSQL depgraph（nodes/edges 表）——通过 `python scripts/governance/extract_depgraph.py --modules {module_id}` 查询
-> 人工可读视图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md)
+> 人工可读视图：[dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
@@ -665,7 +665,7 @@ class {DataModel}(BaseModel):
 | 1 | 模块 ID 注册表 | `architecture_model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
 | 2 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | {新增/修改什么} | {为什么} |
 | 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml` | {新增/修改什么} | {为什么} |
-| 4 | 依赖图 | PostgreSQL depgraph（`extract_depgraph.py --modules {module_id}`）+ [dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md) | {新增/修改什么} | {为什么} |
+| 4 | 依赖图 | PostgreSQL depgraph（`extract_depgraph.py --modules {module_id}`）+ [dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md) | {新增/修改什么} | {为什么} |
 
 ---
 

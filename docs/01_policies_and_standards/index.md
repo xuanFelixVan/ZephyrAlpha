@@ -25,7 +25,7 @@ verifiability: manual
 
 本文件是 `01_policies_and_standards/` 的顶层导航入口。**新 AI session 的第一站**——读完此文件即理解整个规则体系的全貌。
 
-> **架构真源**：[architecture_upgrade_discussion.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md) §二（43域方案，14层降级为域属性）
+> **架构真源**：architecture_upgrade_discussion.md §二（43域方案，14层降级为域属性）
 
 ---
 
@@ -202,7 +202,7 @@ verifiability: manual
 | **功能域注册表** | [_registry/catalogs/functional_domain_registry.yaml](_registry/catalogs/functional_domain_registry.yaml) | 39 域清单 |
 | **架构契约** | [_registry/contracts/architecture_contract.yaml](_registry/contracts/architecture_contract.yaml) | 架构合规自动验证契约 |
 | **frontmatter Schema** | [_registry/schemas/frontmatter_schema.json](_registry/schemas/frontmatter_schema.json) | frontmatter 字段校验 Schema |
-| **术语表** | [_registry/vocabularies/glossary.yaml](_registry/vocabularies/glossary.yaml) | 术语仲裁源 |
+| **术语表** | [_registry/vocabularies/glossary.yaml](_registry/catalogs/terminology_glossary.yaml) | 术语仲裁源 |
 | **doc_type 词表** | [_registry/vocabularies/doc_type_vocabulary.yaml](_registry/vocabularies/doc_type_vocabulary.yaml) | 文档类型受控枚举 |
 | **domain 词表** | [_registry/vocabularies/domain_vocabulary.yaml](_registry/vocabularies/domain_vocabulary.yaml) | 域受控枚举 |
 
