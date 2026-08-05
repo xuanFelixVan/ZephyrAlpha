@@ -945,3 +945,30 @@ repos:
         language: system
         stages: [commit-msg]
         description: "Conventional Commits 格式校验（feat/fix/docs/...），conventionalcommits.org v1.0.0"
+
+  # ── 生成器幂等性门禁（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05 治本）──
+  # 病根：生成器使用 datetime.now() 导致每次执行产生 per-second 时间戳 diff，
+  # post-commit reconciler 跨 commit 非收敛循环。治本：硬阻断实时时间源。
+  # 真源：AGENTS.md §11.1.1 时间戳约定。正典替代：_common.idempotent_timestamp()。
+  - repo: local
+    hooks:
+      - id: gate-generator-no-realtime-time
+        name: "GATE-GEN-NO-REALTIME-TIME"
+        entry: python scripts/governance/d11_compliance/check_generator_no_realtime_time.py
+        language: system
+        files: ^scripts/governance/d5_architecture/generators/.*\.py$
+        pass_filenames: false
+        stages: [commit]
+        verbose: true
+        description: "生成器禁止 datetime.now/time.time/datetime.today（治本 #ARCH-REGEN-NONIDEMPOTENT-001）。豁免：行尾 # noqa: arch-regen-nonidempotent"
+
+      - id: gate-no-commit-derived
+        name: "GATE-NO-COMMIT-DERIVED"
+        entry: python scripts/governance/d11_compliance/check_no_commit_derived.py
+        language: system
+        pass_filenames: false
+        stages: [commit]
+        verbose: true
+        description: "阻断派生产物（域文档/项目树）git add（治本 #ARCH-GOV-BUDGET-001 / I-GOV-1）。派生产物已离库，用 scripts/serve_docs.py 按需生成"
+
+

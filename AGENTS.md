@@ -1240,8 +1240,8 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > 都会因时间戳变化产生非幂等噪音 auto-commit。
 
 - **真源实现**：所有生成器 docstring `[INVARIANTS]` 声明"输出幂等(相同输入→相同输出);零时间戳"
-- **时间真源**：文件修改时间唯一真源是 git log，生成器不引入独立时间源
-- **检测**：`Select-String -Path "scripts/governance/d5_architecture/generators/*.py" -Pattern "datetime\.now\(\)"` 应返回零匹配
+- **时间真源**：文件修改时间唯一真源是 git log，生成器不引入独立时间源。幂等时间源公共助手：[`_common.idempotent_timestamp()`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/_common.py) / `idempotent_date()`（返回脚本最近 git commit 时间，相同 commit → 相同输出，正典先例：`generate_decision_diagram._git_commit_timestamp()`）
+- **检测（pre-commit 硬阻断，2026-08-05 升级，治本 #ARCH-REGEN-NONIDEMPOTENT-001）**：[`gate-generator-no-realtime-time`](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/check_generator_no_realtime_time.py) pre-commit hook 二元阻断 `scripts/governance/d5_architecture/generators/*.py` 中的 `datetime.now()` / `time.time()` / `datetime.today()`。豁免：行尾加 `# noqa: arch-regen-nonidempotent`（需人工评估，日粒度 `datetime.now(UTC).strftime("%Y-%m-%d")` + `# noqa: m46-time` 自动豁免）。
 - **自动触发**：GATE-REGENERATE reconciler（含原 DOMAIN-DOC 功能）在修改 depgraph 后自动调用 generate_domain_doc.py 重生域文档，生成器幂等性确保无噪音 auto-commit（2026-07-30 起 generate_domain_dependency_diagram.py 已下线，域依赖图内嵌于域文档）
 - **按域编号生成器 --all 模式 MUST 调用 cleanup_stale_files**：生成"按域编号文件"（`NN_d_xxx.md`，域重命名/删除后旧编号会残留）的生成器，在 `--all` 模式下 MUST 调用 `_common.cleanup_stale_files()` 清理孤儿文件，治本"只增不删"。当前适用：`generate_domain_doc.py`（已调用）。单域模式不清理（避免误删）；生成单文件/非编号文件的生成器（导航索引、容量报告、集成拓扑等）不适用。真源：[`_common.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/_common.py)
 - **检测**：对生成 `NN_d_xxx` 格式文件的生成器，`Select-String -Pattern "cleanup_stale_files"` 应返回至少 1 匹配（当前 1 个生成器通过）
@@ -1307,6 +1307,25 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 - `06_decision_architecture`：decision_diagram
 - `07_trading_decision_architecture/battle_map`：battle_map（试点，in-process entry_function）
 - Codegen 管线：contracts、policies
+
+#### 11.1.4 派生产物离库原则（#ARCH-GOV-BUDGET-001 / I-GOV-1，2026-08-05 治本）
+
+> **新 AI 涉及"架构文档/生成器产物/git add 派生文件"时 MUST 先读本节。**
+> 病根：派生产物（由生成器从 DB/源码派生的 .md 文档）入 git 是 post-commit reconciler
+> 非收敛循环的数学根因。生成器任一非确定性（时间戳/SQL 排序/换行符）→ diff →
+> auto-commit → 再次触发 reconciler → 跨 commit 永续循环。CONCURRENCY/CASCADE/NONIDEMPOTENT
+> 三条裁定都是在补偿这个根因，但只要派生产物在库 + auto-commit 存在，补偿永无止境。
+> 治本（第一性原理）：**源真源（DB + 生成器代码）已跟踪，派生产物离库，按需生成**。
+
+- **不变量 I-GOV-1**：凡可由 DB/源码/YAML 经生成器重现的文档，**禁止入 git**。源真源已跟踪，派生产物是构建产物。
+- **当前离库范围**（2026-08-05 落地）：
+  - `docs/02_enterprise_architecture/02_domain_architecture_docs/*.md`（73 域文档，[`generate_domain_doc.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/generate_domain_doc.py) 输出；`README.md` 例外）
+  - `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_*.md`（2 项目树，[`generate_path_tree.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/generate_path_tree.py) 输出）
+  - `.gitignore` 已配置上述路径；[`GATE-NO-COMMIT-DERIVED`](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/check_no_commit_derived.py) pre-commit hook 硬阻断 `git add` 派生产物
+- **按需生成查看**：[`scripts/serve_docs.py`](file:///d:/ZephyrAlpha/scripts/serve_docs.py) 一键重生成 + 启动本地 HTTP 服务（`http://localhost:8765`），浏览器查看可缩放 Mermaid HTML
+- **reconciler 行为变更**：派生产物离库后，`git diff` 不再检测到它们 → reconciler 的 drift-gate 返回空 → 不触发 auto-commit → 非收敛循环物理消失。reconciler 仍会跑生成器（写磁盘），但因产物被 `.gitignore`，不产生 git diff
+- **新增生成器产物离库清单**：新生成器输出派生 .md 时，MUST 同步：(1) 加入本节清单；(2) 加 `.gitignore` 规则；(3) 加 `check_no_commit_derived.py` 的 `DERIVED_PATTERNS`；(4) 跑 `git rm --cached` 离库现有文件
+- **禁止 `git add -f` 强制跟踪派生产物**：GATE-NO-COMMIT-DERIVED 会阻断。如确需跟踪某文件（非派生），先评估是否应改为源真源管理
 
 ### 11.2 P3 PostgreSQL 优化裁定记录（2026-06-28）
 

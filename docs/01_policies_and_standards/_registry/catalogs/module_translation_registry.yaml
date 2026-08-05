@@ -40954,6 +40954,27 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "从Redis盘中tick缓存读最新价和买卖一价，从ClickHouse日K算近20日日均成交量，组装成算法切片所需的市场上下文，让执行引擎能调用G7算法生成真实切片方案而不是占位提交"
+- module_path: scripts/governance/d11_compliance/check_generator_no_realtime_time.py
+  domain_id: D_GOVERNANCE
+  name_zh: "生成器实时时间门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交前扫描生成器脚本，若发现 datetime.now 或 time.time 等实时时间调用就阻断提交，防止生成器输出夹带时间戳，每次重跑都产生 diff，进而触发对账自动提交的死循环。"
+- module_path: scripts/governance/d11_compliance/check_no_commit_derived.py
+  domain_id: D_GOVERNANCE
+  name_zh: "派生产物提交门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查暂存区里有没有域文档、项目树这类由数据库派生、可随时重生成的文档被 git add，命中就阻断提交，因为这类产物入版本库是对账非收敛循环的根因，应离库按需生成。"
+- module_path: scripts/serve_docs.py
+  domain_id: D_GOVERNANCE
+  name_zh: "派生文档按需生成服务"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一键重生成已离库的派生架构文档（域文档、项目树），并起一个本地网页服务方便浏览，替代原来把派生产物提交进版本库的做法。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

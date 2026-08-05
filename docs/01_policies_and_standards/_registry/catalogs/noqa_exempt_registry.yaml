@@ -372,6 +372,21 @@ markers:
     created: "2026-08-01"
     created_by: "ARCH-SSOT-GLOSSARY-MERGE-001"
 
+  # ── 生成器幂等性时间源豁免（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）────────
+  # gate-generator-no-realtime-time pre-commit hook 的合法豁免标记
+  - marker: "arch-regen-nonidempotent"
+    metric_id: null  # 非 dashboard 指标，是 gate-generator-no-realtime-time gate 行级豁免
+    description: "生成器实时时间源豁免——日粒度时间源或已人工评估无 reconciler 非收敛风险"
+    applicable_conditions:
+      - "日粒度时间源 datetime.now(UTC).strftime('%Y-%m-%d')，24 小时内幂等（需配合 m46-time 标注）"
+      - "已人工评估并确认无 reconciler 非收敛风险的生成器时间源使用"
+    reason_required: true
+    reason_format: "arch-regen-nonidempotent豁免: <具体理由>（必须说明为何不影响生成器幂等性）"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-08-05"
+    created_by: "ARCH-REGEN-NONIDEMPOTENT-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）

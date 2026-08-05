@@ -8097,6 +8097,27 @@ creation_tokens:
     token: "auto-orphan-module-checklist-20260804"
     created_by: "session-bm-triage-0804"
     capability: "battle_map_alignment"
+  # --- 派生产物离库 + 生成器幂等性治本（2026-08-05，#ARCH-GOV-BUDGET-001 / #ARCH-REGEN-NONIDEMPOTENT-001）---
+  - file: "scripts/governance/d11_compliance/check_generator_no_realtime_time.py"
+    token: "auto-gen-no-realtime-time-20260805"
+    created_by: "session-gov-budget-004"
+    capability: "generator_idempotency_guard"
+  - file: "scripts/governance/d11_compliance/check_no_commit_derived.py"
+    token: "auto-no-commit-derived-20260805"
+    created_by: "session-gov-budget-004"
+    capability: "derived_artifact_decommit_guard"
+  - file: "scripts/serve_docs.py"
+    token: "auto-serve-docs-20260805"
+    created_by: "session-gov-budget-004"
+    capability: "derived_docs_on_demand_server"
+  - file: "docs/02_enterprise_architecture/02_domain_architecture_docs/README.md"
+    token: "auto-derived-docs-readme-20260805"
+    created_by: "session-gov-budget-004"
+    capability: "derived_docs_on_demand_server"
+  - file: "docs/_working/2026-08-05_governance_architecture_adjudication.md"
+    token: "auto-gov-budget-adjudication-20260805"
+    created_by: "session-gov-budget-004"
+    capability: "governance_budget_adjudication"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
