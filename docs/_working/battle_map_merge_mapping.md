@@ -121,7 +121,7 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | # | 行号 | H2章节 | H3标题 | 推断域 | 阶段 | 能挂? | 处理动作 | 排除理由 |
 |---|------|--------|--------|--------|------|-------|---------|---------|
 | 1 | L16 |  | 📌 🆕标记版本归属规则 |  |  | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
-| 2 | L24 |  | 📌 文档边界声明（契约式桥接） |  |  | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 2 | L24 |  | 📌 文档边界声明（契约式桥接） |  |  | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 3 | L44 |  | 📌 §0 架构定位 |  |  | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
 | 4 | L94 | §1 总体流水线架构 | §1.1 交易决策架构（唯一真源） |  |  | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
 | 5 | L960 | §1 总体流水线架构 | §1.2 选股注解 |  |  | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
@@ -135,7 +135,7 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 13 | L1248 | §2 L0 数据接入与预处理层 | §2.1 多源数据接入与分层存储架构 | D_DATA/D_MKT_DATA | stock_selection | 是 | 已覆盖(BM-BT-02-B) | 与现有环节 BM-BT-02-B 多源数据接入 等价/被其包含(sim=1.00) |
 | 14 | L1301 | §2 L0 数据接入与预处理层 | §2.2 事件总线事件分类 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 15 | L1312 | §2 L0 数据接入与预处理层 | §2.3 iFind QPS分配策略（C-022/C-044协同） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-20) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 16 | L1328 | §3 L1 因子计算层 | §3.1 因子工厂与生产线的职责边界 | D_FACTOR | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 16 | L1328 | §3 L1 因子计算层 | §3.1 因子工厂与生产线的职责边界 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-B) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 17 | L1344 | §3 L1 因子计算层 | §3.2 双模运行机制 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-BT-08) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 18 | L1353 | §3 L1 因子计算层 | §3.3 因子池管理 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 19 | L1366 | §3 L1 因子计算层 | §3.4 因子分类与数据源映射 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-RES-11) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -146,8 +146,8 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 24 | L1573 | §3 L1 因子计算层 | 模块4 逼空行情检测模型（Short Squeeze Detection Model） | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-J 信号模型库) | 专业机构实践模块系列，双轨制下沉 indicators（信号工厂模型库清单） |
 | 25 | L1634 | §3 L1 因子计算层 | 模块5 日内量能结构与订单流分析模型（Intraday Volume Structure & Ord | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-J 信号模型库) | 专业机构实践模块系列，双轨制下沉 indicators（信号工厂模型库清单） |
 | 26 | L1684 | §3 L1 因子计算层 | 模块6 Wyckoff吸筹阶段与底部确认模型（Wyckoff Accumulation & Bott | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-J 信号模型库) | 专业机构实践模块系列，双轨制下沉 indicators（信号工厂模型库清单） |
-| 27 | L1742 | §3 L1 因子计算层 | 模块7 多指标背离检测模型（Multi-Indicator Divergence Detection | D_FACTOR | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 28 | L1781 | §3 L1 因子计算层 | 模块8 板块资金流再配置模型（Sector Flow Reallocation Model） | D_FACTOR | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 27 | L1742 | §3 L1 因子计算层 | 模块7 多指标背离检测模型（Multi-Indicator Divergence Detection | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-J) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 28 | L1781 | §3 L1 因子计算层 | 模块8 板块资金流再配置模型（Sector Flow Reallocation Model） | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-J) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 29 | L1832 | §3 L1 因子计算层 | 模块9 多维度相对强弱筛选模型（Multi-Dimensional Relative Strengt | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-J 信号模型库) | 专业机构实践模块系列，双轨制下沉 indicators（信号工厂模型库清单） |
 | 30 | L1870 | §3 L1 因子计算层 | 模块10 动量领导因子与涨停板生态模型（Momentum Leadership & Limit-Up | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-J 信号模型库) | 专业机构实践模块系列，双轨制下沉 indicators（信号工厂模型库清单） |
 | 31 | L1926 | §3 L1 因子计算层 | 模块11 动量层级与板块持续性模型（Momentum Hierarchy & Persistence | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-02-J 信号模型库) | 专业机构实践模块系列，双轨制下沉 indicators（信号工厂模型库清单） |
@@ -228,7 +228,7 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 106 | L5553 | §9 L4 风控与执行层（→A4风险架构） | 模块36 买入后即时验证与快速纠错模型（Post-Entry Instant Validation | D_RISK/D_EX_CORE | execution/risk_control | 部分 | 归indicators(BM-BUY-03 买入后验证) | 专业机构实践模块系列，双轨制下沉 indicators |
 | 107 | L5579 | §9 L4 风控与执行层（→A4风险架构） | 模块37 系统性风险分级预警与尾部风险管理模型（Systemic Risk Tiered Alert | D_RISK/D_EX_CORE | execution/risk_control | 部分 | 归indicators(BM-RC-12 系统性风险预警) | 专业机构实践模块系列，双轨制下沉 indicators |
 | 108 | L5607 | §9 L4 风控与执行层（→A4风险架构） | 模块42 交易绩效归因与策略退化检测模型（Performance Attribution & Str | D_RISK/D_EX_CORE | execution/risk_control | 是 | 已覆盖(BM-REC-02-B) | 与现有环节 BM-REC-02-B 绩效归因 等价/被其包含(sim=1.00) |
-| 109 | L5645 | §9 L4 风控与执行层（→A4风险架构） | 模块43 ATR动态止损与Bayesian参数优化模型（ATR Dynamic Stop-Loss | D_RISK/D_EX_CORE | execution/risk_control | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 109 | L5645 | §9 L4 风控与执行层（→A4风险架构） | 模块43 ATR动态止损与Bayesian参数优化模型（ATR Dynamic Stop-Loss | D_RISK/D_EX_CORE | execution/risk_control | 部分 | 归indicators(BM-SELL-04-B) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 110 | L5713 | 决策编排器——缺失功能模块 | 模块38 交易计划偏差检测与异常机会评估模型（Trade Plan Deviation Detect |  |  | 部分 | 归indicators(BM-REC-02-C 复盘) | 专业机构实践模块系列，双轨制下沉 indicators |
 | 111 | L5740 | 决策编排器——缺失功能模块 | 模块46 决策树与强化学习交易决策架构（Decision Tree & RL Trading Dec |  |  | 部分 | 排除(Agent架构交叉引用,主体不挂) | 专业机构实践模块系列，双轨制下沉 indicators |
 | 112 | L5788 | 决策编排器——缺失功能模块 | 模块48 动态信号权重模型（Dynamic Signal Weighting via Bayesia |  |  | 部分 | 归indicators(BM-SEL-02-K 动态信号权重) | 专业机构实践模块系列，双轨制下沉 indicators |
@@ -245,7 +245,7 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 123 | L6075 | §12 横切层 | §12.3 C-029 ML模型工厂 | D_SHARED/D_INFRA_RUNTIME | stock_selection | 部分 | 归indicators(BM-REC-03) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 124 | L6105 | §12 横切层 | §12.4 C-033 过拟合系统性防护 | D_SHARED/D_INFRA_RUNTIME | stock_selection | 部分 | 归indicators(BM-BT-05) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 125 | L6120 | §12 横切层 | §12.5 通知与告警(C-015) + 审计与合规(C-043) + 成本治理(C-044)（→A | D_SHARED/D_INFRA_RUNTIME | stock_selection | 部分 | 归indicators(BM-RC-08) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 126 | L6273 | §14 盘中实时事件处理 | §14.1 事件完整清单与处理流程 | D_INTEGRATION | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 126 | L6273 | §14 盘中实时事件处理 | §14.1 事件完整清单与处理流程 | D_INTEGRATION | stock_selection | 部分 | 归indicators(BM-SEL-27) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 127 | L6285 | §14 盘中实时事件处理 | §14.2 事件处理流水线 | D_INTEGRATION | stock_selection | 部分 | 归indicators(BM-SEL-27) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 128 | L6325 | §15 计算节奏与时序 | §15.1 交易时段主流程 |  |  | 否 | 排除 | 硬边界/方法论/角色等元信息章节 |
 | 129 | L6381 | §15 计算节奏与时序 | §15.2 盘后研究迭代流程 |  |  | 否 | 排除 | 硬边界/方法论/角色等元信息章节 |
@@ -258,30 +258,30 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 136 | L6627 | §19 质量属性与边界规则引用 | §19.1 AI行为安全边界（B-001\~B-020） |  |  | 否 | 排除 | 引用类章节 |
 | 137 | L6676 | §19 质量属性与边界规则引用 | §19.2 关键质量属性优先级 |  |  | 否 | 排除 | 引用类章节 |
 | 138 | L6703 | §19 质量属性与边界规则引用 | §19.3 法规合规映射（→A6合规🔒） |  |  | 否 | 排除 | 引用类章节 |
-| 139 | L6732 | §20 方法论约束与架构决策引用 | §20.1 方法论约束一：策略类型目录 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 140 | L6749 | §20 方法论约束与架构决策引用 | §20.2 方法论约束二：因子分类与IC阈值 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 141 | L6770 | §20 方法论约束与架构决策引用 | §20.3 方法论约束三：组合构建规则 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 142 | L6789 | §20 方法论约束与架构决策引用 | §20.4 方法论约束四：风险模型 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 143 | L6819 | §20 方法论约束与架构决策引用 | §20.5 方法论约束五：成本模型 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 144 | L6834 | §20 方法论约束与架构决策引用 | §20.6 方法论约束六：基准 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 145 | L6849 | §20 方法论约束与架构决策引用 | §20.7 方法论约束七：回测方法论 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 146 | L6997 | §20 方法论约束与架构决策引用 | §20.8 方法论约束八：训练-服务一致性(Feature Store) | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 147 | L7005 | §20 方法论约束与架构决策引用 | §20.9 方法论约束九：T+1次日预测约束 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 148 | L7022 | §20 方法论约束与架构决策引用 | §20.10 方法论约束十：流动性风险约束 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 149 | L7036 | §20 方法论约束与架构决策引用 | §20.11 方法论约束十一：数据分层使用约束 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 139 | L6732 | §20 方法论约束与架构决策引用 | §20.1 方法论约束一：策略类型目录 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 140 | L6749 | §20 方法论约束与架构决策引用 | §20.2 方法论约束二：因子分类与IC阈值 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 141 | L6770 | §20 方法论约束与架构决策引用 | §20.3 方法论约束三：组合构建规则 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 142 | L6789 | §20 方法论约束与架构决策引用 | §20.4 方法论约束四：风险模型 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 143 | L6819 | §20 方法论约束与架构决策引用 | §20.5 方法论约束五：成本模型 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 144 | L6834 | §20 方法论约束与架构决策引用 | §20.6 方法论约束六：基准 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 145 | L6849 | §20 方法论约束与架构决策引用 | §20.7 方法论约束七：回测方法论 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 146 | L6997 | §20 方法论约束与架构决策引用 | §20.8 方法论约束八：训练-服务一致性(Feature Store) | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 147 | L7005 | §20 方法论约束与架构决策引用 | §20.9 方法论约束九：T+1次日预测约束 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 148 | L7022 | §20 方法论约束与架构决策引用 | §20.10 方法论约束十：流动性风险约束 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 149 | L7036 | §20 方法论约束与架构决策引用 | §20.11 方法论约束十一：数据分层使用约束 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 150 | L7054 | §20 方法论约束与架构决策引用 | §20.12 🆕方法论约束十二：收益率条件密度预测约束（v3.4新增） | D_DATA/D_MKT_DATA | stock_selection | 是 | 已覆盖(BM-SEL-13) | 与现有环节 BM-SEL-13 收益率条件密度预测 等价/被其包含(sim=1.00) |
-| 151 | L7077 | §20 方法论约束与架构决策引用 | §20.13 🆕方法论约束十三：仓位管理约束（v4.0新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 151 | L7077 | §20 方法论约束与架构决策引用 | §20.13 🆕方法论约束十三：仓位管理约束（v4.0新增） | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 152 | L7091 | §20 方法论约束与架构决策引用 | §20.14 架构决策引用 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
 | 153 | L7371 | §20 方法论约束与架构决策引用 | §20.15 熔断检测职责分配 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RC-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 154 | L7383 | §20 方法论约束与架构决策引用 | §20.16 硬边界约束引用 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 154 | L7383 | §20 方法论约束与架构决策引用 | §20.16 硬边界约束引用 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 155 | L7935 | §21 资产与市场覆盖矩阵 | §21.1 分级标准 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-16) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 156 | L7945 | §21 资产与市场覆盖矩阵 | §21.2 资产覆盖矩阵 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 157 | L7993 | §21 资产与市场覆盖矩阵 | §21.3 关键时间节点 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-22) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 158 | L8007 | §22 角色与旅程 | §22.1 目标角色与诉求 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 159 | L8012 | §22 角色与旅程 | 角色总览 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 160 | L8021 | §22 角色与旅程 | 各角色详解 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 161 | L8065 | §22 角色与旅程 | 人机交互边界总结 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 162 | L8087 | §22 角色与旅程 | §22.2 核心用户旅程概要 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 158 | L8007 | §22 角色与旅程 | §22.1 目标角色与诉求 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 159 | L8012 | §22 角色与旅程 | 角色总览 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 160 | L8021 | §22 角色与旅程 | 各角色详解 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 161 | L8065 | §22 角色与旅程 | 人机交互边界总结 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 162 | L8087 | §22 角色与旅程 | §22.2 核心用户旅程概要 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 163 | L8094 | §22 角色与旅程 | 旅程1：盘前准备 → 集合竞价 → 盘中执行（交易时段主流程） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-EXE-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 164 | L8159 | §22 角色与旅程 | 旅程2：盘后清算 → 龙虎榜 → AI学习 → 审批（研究迭代主流程） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-REC-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 165 | L8219 | §23 能力卡片完整引用 | P0 — 核心能力（没有它系统不可用，共14项） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RC-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -290,16 +290,16 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 168 | L8843 | §23 能力卡片完整引用 | P1 — A股博弈智能套件 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-05) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 169 | L8887 | §23 能力卡片完整引用 | P1 — 风控增强与执行质量（黑天鹅/跨市场/压力测试/容量/执行分析） | D_DATA/D_MKT_DATA | stock_selection | 是 | 已覆盖(BM-RC-08-C) | 与现有环节 BM-RC-08-C 压力测试 等价/被其包含(sim=1.00) |
 | 170 | L8959 | §23 能力卡片完整引用 | P2 — 增强能力（C-041/C-043阶段二/C-044） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-23) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 171 | L8998 | §23 能力卡片完整引用 | P2 — 增强能力 + P1 已提升能力（锦上添花） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 171 | L8998 | §23 能力卡片完整引用 | P2 — 增强能力 + P1 已提升能力（锦上添花） | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 172 | L9040 | §24 外部系统交互引用 | §24.0 数据源总览 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 173 | L9047 | §24 外部系统交互引用 | §24.1 外部系统交互矩阵 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 174 | L9062 | §24 外部系统交互引用 | §24.2 数据源分工与边界 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 174 | L9062 | §24 外部系统交互引用 | §24.2 数据源分工与边界 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 175 | L9093 | §24 外部系统交互引用 | §24.3 外部依赖风险评估 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-24) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 176 | L9113 | §25 术语表引用 | 量化交易术语 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 177 | L9150 | §25 术语表引用 | 架构与设计术语 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 178 | L9211 | §25 术语表引用 | A股市场术语 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 179 | L9264 | §27 系统级成功指标引用 | 成功指标三档制 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 180 | L9307 | §27 系统级成功指标引用 | 失败指标（触发任一条即需重大调整） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 176 | L9113 | §25 术语表引用 | 量化交易术语 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 177 | L9150 | §25 术语表引用 | 架构与设计术语 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 178 | L9211 | §25 术语表引用 | A股市场术语 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 179 | L9264 | §27 系统级成功指标引用 | 成功指标三档制 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
+| 180 | L9307 | §27 系统级成功指标引用 | 失败指标（触发任一条即需重大调整） | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 181 | L9324 | §28 能力全景图引用 | 分层架构总览 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 182 | L9404 | §28 能力全景图引用 | 能力血缘关系图 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RES-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 183 | L9526 | §28 能力全景图引用 | 数据流向主线 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -307,17 +307,17 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 185 | L9616 | §28 能力全景图引用 | 能力冲突矩阵 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SELL-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 186 | L9624 | §28 能力全景图引用 | 能力-域映射坐标 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-23) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 187 | L9681 | §28 能力全景图引用 | 交易日时间激活视图 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-EXE-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 188 | L9758 | §28 能力全景图引用 | 能力交互热点图 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 188 | L9758 | §28 能力全景图引用 | 能力交互热点图 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 189 | L9778 | §28 能力全景图引用 | 正向闭环视图 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-REC-03) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 190 | L9854 | §29 架构补充：基础设施必需项与方法论增强 | §29.A 基础设施与运维增强 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 190 | L9854 | §29 架构补充：基础设施必需项与方法论增强 | §29.A 基础设施与运维增强 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 191 | L9856 | §29 架构补充：基础设施必需项与方法论增强 | §29.1 多进程隔离与运行时架构（→A9运维架构） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BT-08) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 192 | L9862 | §29 架构补充：基础设施必需项与方法论增强 | §29.2 特征存储 (Feature Store) | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RES-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 193 | L9978 | §29 架构补充：基础设施必需项与方法论增强 | §29.3 模型注册与实验管理 (Model Registry + Experiment Track | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 194 | L10011 | §29 架构补充：基础设施必需项与方法论增强 | §29.4 时序数据库与分层存储架构（→A3数据架构） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 194 | L10011 | §29 架构补充：基础设施必需项与方法论增强 | §29.4 时序数据库与分层存储架构（→A3数据架构） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-01) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 195 | L10019 | §29 架构补充：基础设施必需项与方法论增强 | §29.B ML模型与方法论增强 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-REC-03) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 196 | L10021 | §29 架构补充：基础设施必需项与方法论增强 | §29.5 特征漂移与概念漂移检测 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-MT-05) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 197 | L10075 | §29 架构补充：基础设施必需项与方法论增强 | §29.6 图神经网络用于股票关系建模 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 198 | L10121 | §29 架构补充：基础设施必需项与方法论增强 | §29.7 Transformer时序架构用于密度预测增强 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 197 | L10075 | §29 架构补充：基础设施必需项与方法论增强 | §29.6 图神经网络用于股票关系建模 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-11) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 198 | L10121 | §29 架构补充：基础设施必需项与方法论增强 | §29.7 Transformer时序架构用于密度预测增强 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-13) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 199 | L10177 | §29 架构补充：基础设施必需项与方法论增强 | §29.8 签名方法 (Signature Methods / Rough Path Theory) | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 200 | L10228 | §29 架构补充：基础设施必需项与方法论增强 | §29.9 强化学习用于组合优化与订单执行 | D_DATA/D_MKT_DATA | stock_selection | 是 | 已覆盖(BM-SEL-21) | 与现有环节 BM-SEL-21 组合优化 等价/被其包含(sim=1.00) |
 | 201 | L10318 | §29 架构补充：基础设施必需项与方法论增强 | §29.C 交易与执行增强 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-EXE-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -326,24 +326,24 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 204 | L10438 | §29 架构补充：基础设施必需项与方法论增强 | §29.12 另类数据源扩展 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 205 | L10477 | §29 架构补充：基础设施必需项与方法论增强 | §29.13 市场微观结构深度建模 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SIM-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 206 | L10517 | §29 架构补充：基础设施必需项与方法论增强 | §29.14 自动策略发现 (Automated Strategy Discovery) | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BT-05) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 207 | L10574 | §29 架构补充：基础设施必需项与方法论增强 | §29.15 \[编号保留—内容合并至§29.14] | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 207 | L10574 | §29 架构补充：基础设施必需项与方法论增强 | §29.15 \[编号保留—内容合并至§29.14] | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 208 | L10580 | §29 架构补充：基础设施必需项与方法论增强 | §29.E 统计推断与因果增强（v3.6+v5.1+v6.0） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-MT-04) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 209 | L10582 | §29 架构补充：基础设施必需项与方法论增强 | §29.16 Conformal Prediction（共形预测） | D_DATA/D_MKT_DATA | stock_selection | 是 | 已覆盖(BM-SEL-14) | 与现有环节 BM-SEL-14 共形预测 等价/被其包含(sim=1.00) |
 | 210 | L10722 | §29 架构补充：基础设施必需项与方法论增强 | §29.17 Survival Analysis（生存分析用于交易决策） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-15) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 211 | L10782 | §29 架构补充：基础设施必需项与方法论增强 | §29.18 Causal ML 深度补充 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-MT-03) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 212 | L10849 | §29 架构补充：基础设施必需项与方法论增强 | §29.19 金融时序数据增强 (Financial Time Series Data Augmen | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 212 | L10849 | §29 架构补充：基础设施必需项与方法论增强 | §29.19 金融时序数据增强 (Financial Time Series Data Augmen | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-MT-01) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 213 | L10930 | §29 架构补充：基础设施必需项与方法论增强 | §29.G v5.1+架构增强 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 214 | L10934 | §29 架构补充：基础设施必需项与方法论增强 | §29.22 Mamba/SSM状态空间模型用于金融时序建模（v5.1新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 214 | L10934 | §29 架构补充：基础设施必需项与方法论增强 | §29.22 Mamba/SSM状态空间模型用于金融时序建模（v5.1新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-13) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 215 | L11029 | §29 架构补充：基础设施必需项与方法论增强 | §29.23 数字孪生市场仿真（v5.1新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SIM-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 216 | L11106 | §29 架构补充：基础设施必需项与方法论增强 | §29.24 神经符号融合推理（v5.1新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-25) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 217 | L11226 | §29 架构补充：基础设施必需项与方法论增强 | §29.25 EU AI Act合规架构增强（→A6合规架构🔒） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-13) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 218 | L11242 | §29 架构补充：基础设施必需项与方法论增强 | §29.26 时序保形预测增强：TCP/DDCI/CP-VaR等价（v5.1新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 218 | L11242 | §29 架构补充：基础设施必需项与方法论增强 | §29.26 时序保形预测增强：TCP/DDCI/CP-VaR等价（v5.1新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-SEL-14-A) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 219 | L11248 | §29 架构补充：基础设施必需项与方法论增强 | §29.27 多智能体编排框架选型与MCP协议（→A7 Agent架构） | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 纯引用/外部对标，非本系统作战内容（决策树①） |
 | 220 | L11256 | §29 架构补充：基础设施必需项与方法论增强 | §29.28 模型压缩与推理加速（v5.1新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-REC-03) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 221 | L11335 | §29 架构补充：基础设施必需项与方法论增强 | §29.29 量子-经典混合计算路线图（v5.1新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-REC-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 222 | L11406 | §29 架构补充：基础设施必需项与方法论增强 | §29.30 A股扩散模型数据增强：金融风洞/GBM-Diffusion/InterDiff（v5. | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BT-05) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 223 | L11489 | §29 架构补充：基础设施必需项与方法论增强 | §29.F 基础设施扩展与远期储备（v5.1+v6.0） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BT-07) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 224 | L11493 | §29 架构补充：基础设施必需项与方法论增强 | §29.31 \[编号保留—内容合并至§29.30] | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 224 | L11493 | §29 架构补充：基础设施必需项与方法论增强 | §29.31 \[编号保留—内容合并至§29.30] | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 225 | L11497 | §29 架构补充：基础设施必需项与方法论增强 | §29.32 LLM进化式策略搜索（v6.0新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RES-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 226 | L11557 | §29 架构补充：基础设施必需项与方法论增强 | §29.33 KAN Kolmogorov-Arnold网络（v6.0新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RC-04) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 227 | L11626 | §29 架构补充：基础设施必需项与方法论增强 | §29.34 xLSTM扩展长短期记忆网络（v6.0新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BT-07) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -352,7 +352,7 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 230 | L11790 | §29 架构补充：基础设施必需项与方法论增强 | §29.37 LLM自评估与交叉验证（v6.0新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BT-04) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 231 | L11842 | §29 架构补充：基础设施必需项与方法论增强 | §29.38 多模态金融推理（v6.0新增） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RES-11) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 232 | L11887 | §29 架构补充：基础设施必需项与方法论增强 | §29.39 架构增强裁定书（2026-05-26更新） | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-BUY-12) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 233 | L12114 | §29 架构补充：基础设施必需项与方法论增强 | §29.Z 结论与实现路径 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 233 | L12114 | §29 架构补充：基础设施必需项与方法论增强 | §29.Z 结论与实现路径 | D_DATA/D_MKT_DATA | stock_selection | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 234 | L12120 | §29 架构补充：基础设施必需项与方法论增强 | §29.20 架构增强二元结论与实现路径 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 235 | L12202 | §29 架构补充：基础设施必需项与方法论增强 | §29.21 学习系统桥接声明 | D_DATA/D_MKT_DATA | stock_selection | 部分 | 归indicators(BM-RC-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 236 | L12261 | §30 场外草稿区缺失模块补充 | §30.1 核心价值链域缺失模块 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -465,11 +465,11 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 
 | # | 行号 | H2章节 | H3标题 | 推断域 | 阶段 | 能挂? | 处理动作 | 排除理由 |
 |---|------|--------|--------|--------|------|-------|---------|---------|
-| 1 | L10 |  | 📌 文档边界声明 |  |  | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 1 | L10 |  | 📌 文档边界声明 |  |  | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 2 | L25 |  | 📌 蓝图备注说明 |  |  | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
 | 3 | L33 | §0 架构定位 | §0.1 学习系统在全局架构中的位置 |  |  | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 4 | L60 | §0 架构定位 | §0.2 与其他架构图的关系 |  |  | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
-| 5 | L74 | §0 架构定位 | §0.3 学习系统治理与安全约束摘要（统一视图） |  |  | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 5 | L74 | §0 架构定位 | §0.3 学习系统治理与安全约束摘要（统一视图） |  |  | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 6 | L133 | §1 行业对标与独创性分析 | §1.1 已公开系统对标 |  |  | 否 | 排除 | 纯引用/外部对标，非本系统作战内容（决策树①） |
 | 7 | L151 | §1 行业对标与独创性分析 | §1.2 独创性评估 |  |  | 部分 | 归indicators(BM-SEL-22) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 8 | L164 | §1 行业对标与独创性分析 | §1.3 行业三条落地路径 |  |  | 部分 | 归indicators(BM-SEL-24) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -479,21 +479,21 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 12 | L476 | §3 S0 多模态知识采集层 | §3.1 采集源分类 | D_RESEARCH/D_INTELLIGENCE | research_incubation | 部分 | 归indicators(BM-RES-11) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 13 | L488 | §3 S0 多模态知识采集层 | §3.2 采集调度 | D_RESEARCH/D_INTELLIGENCE | research_incubation | 部分 | 归indicators(BM-RES-11) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 14 | L535 | §3 S0 多模态知识采集层 | §3.3 采集增强能力（v4.0新增） | D_RESEARCH/D_INTELLIGENCE | research_incubation | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 15 | L607 | §3 S0 多模态知识采集层 | §3.4 输出契约 | D_RESEARCH/D_INTELLIGENCE | research_incubation | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 15 | L607 | §3 S0 多模态知识采集层 | §3.4 输出契约 | D_RESEARCH/D_INTELLIGENCE | research_incubation | 部分 | 归indicators(BM-RES-11) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 16 | L637 | §4 S1 知识清洗与结构化层 | §4.1 清洗流水线 | D_RESEARCH/D_INTELLIGENCE | research_incubation | 部分 | 归indicators(BM-RES-08) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 17 | L709 | §4 S1 知识清洗与结构化层 | §4.2 输出契约 | D_RESEARCH/D_INTELLIGENCE | research_incubation | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 17 | L709 | §4 S1 知识清洗与结构化层 | §4.2 输出契约 | D_RESEARCH/D_INTELLIGENCE | research_incubation | 部分 | 归indicators(BM-RES-08) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 18 | L734 | §5 S2 知识分类与策略提取层 | §5.1 知识类型分类体系 | D_RESEARCH/D_ML_TRAIN | research_incubation/model_training | 是 | 已覆盖(BM-RES-09-A) | 与现有环节 BM-RES-09-A 知识类型分类体系 等价/被其包含(sim=1.00) |
 | 19 | L812 | §5 S2 知识分类与策略提取层 | §5.2 策略提取流程 | D_RESEARCH/D_ML_TRAIN | research_incubation/model_training | 部分 | 归indicators(BM-RES-09) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 20 | L978 | §5 S2 知识分类与策略提取层 | §5.3 输出契约 | D_RESEARCH/D_ML_TRAIN | research_incubation/model_training | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 20 | L978 | §5 S2 知识分类与策略提取层 | §5.3 输出契约 | D_RESEARCH/D_ML_TRAIN | research_incubation/model_training | 部分 | 归indicators(BM-RES-09) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 21 | L1018 | §6 S3 模块映射与工厂匹配层 | §6.1 模块工厂架构 | D_RESEARCH/D_ML_TRAIN | research_incubation/model_training | 是 | 已覆盖(BM-RES-10-A) | 与现有环节 BM-RES-10-A 模块工厂架构 等价/被其包含(sim=1.00) |
 | 22 | L1142 | §6 S3 模块映射与工厂匹配层 | §6.2 与现有工厂的关系 | D_RESEARCH/D_ML_TRAIN | research_incubation/model_training | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
-| 23 | L1166 | §6 S3 模块映射与工厂匹配层 | §6.3 输出契约 | D_RESEARCH/D_ML_TRAIN | research_incubation/model_training | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 23 | L1166 | §6 S3 模块映射与工厂匹配层 | §6.3 输出契约 | D_RESEARCH/D_ML_TRAIN | research_incubation/model_training | 部分 | 归indicators(BM-RES-10) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 24 | L1198 | §7 S4 模块创建与接入层 | §7.1 模块创建流程 | D_ML_TRAIN/D_INTEGRATION | model_training | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 25 | L1229 | §7 S4 模块创建与接入层 | §7.2 LLM辅助代码生成（v4.0升级：DSL约束+AST沙箱+三重语义一致性+进化式代码生成+ | D_ML_TRAIN/D_INTEGRATION | model_training | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 26 | L1331 | §7 S4 模块创建与接入层 | §7.3 输出契约 | D_ML_TRAIN/D_INTEGRATION | model_training | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 25 | L1229 | §7 S4 模块创建与接入层 | §7.2 LLM辅助代码生成（v4.0升级：DSL约束+AST沙箱+三重语义一致性+进化式代码生成+ | D_ML_TRAIN/D_INTEGRATION | model_training | 部分 | 归indicators(BM-MT-01-B) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 26 | L1331 | §7 S4 模块创建与接入层 | §7.3 输出契约 | D_ML_TRAIN/D_INTEGRATION | model_training | 部分 | 归indicators(BM-RES-10-A) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 27 | L1360 | §7 S4 模块创建与接入层 | 四十六、决策树与强化学习交易决策架构（Decision Tree & RL Trading Deci | D_ML_TRAIN/D_INTEGRATION | model_training | 部分 | 归indicators(BM-BT-07) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 28 | L1410 | §8 S5 试运行与验证层 | §8.1 试运行流水线 | D_BACKTEST/D_SIMULATION | backtest_validation | 部分 | 归indicators(BM-MT-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 29 | L1583 | §8 S5 试运行与验证层 | §8.2 输出契约 | D_BACKTEST/D_SIMULATION | backtest_validation | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 29 | L1583 | §8 S5 试运行与验证层 | §8.2 输出契约 | D_BACKTEST/D_SIMULATION | backtest_validation | 部分 | 归indicators(BM-MT-02) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 30 | L1619 | §9 S6 元学习与自我进化层 | §9.1 元学习维度（v4.0升级：RSI架构4维度+技能库+在线EWC+轻量Agent化） | D_INTELLIGENCE/D_ML_TRAIN | research_incubation/model_training | 部分 | 归indicators(BM-MT-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 31 | L1771 | §9 S6 元学习与自我进化层 | §9.2 学习效果反馈闭环 | D_INTELLIGENCE/D_ML_TRAIN | research_incubation/model_training | 是 | 已覆盖(BM-MT-06-B) | 与现有环节 BM-MT-06-B 学习效果反馈闭环 等价/被其包含(sim=1.00) |
 | 32 | L1801 | §9 S6 元学习与自我进化层 | 四十二、交易绩效归因与策略退化检测模型（Performance Attribution & Stra | D_INTELLIGENCE/D_ML_TRAIN | research_incubation/model_training | 是 | 已覆盖(BM-REC-02-B) | 与现有环节 BM-REC-02-B 绩效归因 等价/被其包含(sim=1.00) |
@@ -620,7 +620,7 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 30 | L972 | 第五部分：数据源接入优先级与路线图 | 5.3 行业最佳实践对标 | D_DATA | stock_selection | 否 | 排除 | 纯引用/外部对标，非本系统作战内容（决策树①） |
 | 31 | L980 | 第五部分：数据源接入优先级与路线图 | 5.4 设计决策汇总 | D_DATA | stock_selection | 部分 | 归indicators(BM-BUY-03) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 32 | L994 | 第六部分：知识图谱数据规划 | 6.1 图谱类型体系 | D_KNOWLEDGE | stock_selection | 部分 | 归indicators(BM-RES-09) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 33 | L1004 | 第六部分：知识图谱数据规划 | 6.2 远期规划 | D_KNOWLEDGE | stock_selection | 部分 | 归indicators(相关环节) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
+| 33 | L1004 | 第六部分：知识图谱数据规划 | 6.2 远期规划 | D_KNOWLEDGE | stock_selection | 部分 | 归indicators(BM-SEL-11) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 34 | L1012 | 第六部分：知识图谱数据规划 | 6.3 行业最佳实践对标 | D_KNOWLEDGE | stock_selection | 否 | 排除 | 纯引用/外部对标，非本系统作战内容（决策树①） |
 | 35 | L1020 | 第六部分：知识图谱数据规划 | 6.4 设计决策汇总 | D_KNOWLEDGE | stock_selection | 部分 | 归indicators(BM-BUY-03) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 36 | L1037 | §7 数据存储架构 | §7.1 三层存储架构 | D_DATA |  | 否 | 排除 | 非作战动作(非作战动作(存储基础设施)) |
@@ -676,20 +676,20 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 86 | L2173 | §11 特征存储架构 | §11.2 特征注册表（Feature Registry） | D_FACTOR | stock_selection | 部分 | 归indicators(BM-BT-05) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 87 | L2206 | §11 特征存储架构 | §11.2.1 因子元数据（Metadata） | D_FACTOR | stock_selection | 部分 | 归indicators(BM-EXE-04) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 88 | L2225 | §11 特征存储架构 | §11.2.2 数据血缘（Lineage） | D_FACTOR | stock_selection | 部分 | 归indicators(BM-RC-09) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 89 | L2245 | §11 特征存储架构 | §11.2.3 质量指标（Quality） | D_FACTOR | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 89 | L2245 | §11 特征存储架构 | §11.2.3 质量指标（Quality） | D_FACTOR | stock_selection | 部分 | 归indicators(BM-RES-01-B) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 90 | L2260 | §11 特征存储架构 | §11.2.4 服务状态（Status） | D_FACTOR | stock_selection | 部分 | 归indicators(BM-BT-05) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 91 | L2272 | §11 特征存储架构 | §11.2.5 版本历史（Version History） | D_FACTOR | stock_selection | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
 | 92 | L2289 | §11 特征存储架构 | §11.3 训练-服务一致性保证 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-REC-04) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 93 | L2342 | §11 特征存储架构 | §11.3.1 单一定义原则详解 | D_FACTOR | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 93 | L2342 | §11 特征存储架构 | §11.3.1 单一定义原则详解 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-RES-01-B) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 94 | L2382 | §11 特征存储架构 | §11.3.2 PIT正确性详解 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-RES-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 95 | L2407 | §11 特征存储架构 | §11.3.3 版本对齐详解 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-BUY-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 96 | L2440 | §11 特征存储架构 | §11.4 特征生命周期 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 97 | L2486 | §11 特征存储架构 | §11.4.1 各阶段详细说明 | D_FACTOR | stock_selection | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
 | 98 | L2501 | §11 特征存储架构 | §11.4.2 生命周期事件 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-SEL-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 99 | L2517 | §11 特征存储架构 | §11.5 与D-FACTOR域的关系 | D_FACTOR | stock_selection | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
-| 100 | L2544 | §11 特征存储架构 | §11.5.1 职责边界 | D_FACTOR | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 100 | L2544 | §11 特征存储架构 | §11.5.1 职责边界 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-RES-01-B) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 101 | L2561 | §11 特征存储架构 | §11.6 行业最佳实践对标 | D_FACTOR | stock_selection | 否 | 排除 | 纯引用/外部对标，非本系统作战内容（决策树①） |
-| 102 | L2577 | §11 特征存储架构 | §11.7 技术选型（适配单机约束） | D_FACTOR | stock_selection | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 102 | L2577 | §11 特征存储架构 | §11.7 技术选型（适配单机约束） | D_FACTOR | stock_selection | 部分 | 归indicators(BM-RES-01-B) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 103 | L2601 | §11 特征存储架构 | §11.8 设计决策汇总 | D_FACTOR | stock_selection | 部分 | 归indicators(BM-BUY-03) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 104 | L2624 | §12 事件溯源架构 | §12.1 事件溯源核心概念 | D_DATA |  | 否 | 排除 | 非作战动作(非作战动作(事件溯源)) |
 | 105 | L2658 | §12 事件溯源架构 | §12.1.1 保存事件而非状态 | D_DATA |  | 否 | 排除 | 非作战动作(非作战动作(事件溯源)) |
@@ -788,8 +788,8 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 198 | L4283 | §17 依赖图域模块补充 | §17.24 D-OPS 运维域缺失模块 |  |  | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 199 | L4291 | §17 依赖图域模块补充 | §17.25 低相关域声明 |  |  | 部分 | 归indicators(BM-SEL-20) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 200 | L4301 | §17 依赖图域模块补充 | §17.26 补充模块建设结论汇总 |  |  | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 201 | L4311 | §17 依赖图域模块补充 | §16.18 A1§29.4 迁移内容：时序数据库与分层存储架构（历史参考） |  |  | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
-| 202 | L4317 | §17 依赖图域模块补充 | §29.4 时序数据库与分层存储架构 |  |  | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 201 | L4311 | §17 依赖图域模块补充 | §16.18 A1§29.4 迁移内容：时序数据库与分层存储架构（历史参考） |  |  | 部分 | 归indicators(BM-SEL-01) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 202 | L4317 | §17 依赖图域模块补充 | §29.4 时序数据库与分层存储架构 |  |  | 部分 | 归indicators(BM-SEL-01) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 
 ## 治理架构.md (39 H3)
 
@@ -1008,7 +1008,7 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | # | 行号 | H2章节 | H3标题 | 推断域 | 阶段 | 能挂? | 处理动作 | 排除理由 |
 |---|------|--------|--------|--------|------|-------|---------|---------|
 | 1 | L10 |  | 📌 蓝图与项目状态备注说明 |  |  | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
-| 2 | L17 |  | 📌 文档边界声明 |  |  | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 2 | L17 |  | 📌 文档边界声明 |  |  | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 3 | L35 |  | 📌 §0 架构定位 |  |  | 否 | 排除 | 指针/注解/元信息章节，非作战内容（决策树①） |
 | 4 | L336 | §1 风险分类体系 | §1.1 市场风险 | D_RISK | risk_control | 部分 | 归indicators(BM-SEL-24) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 5 | L355 | §1 风险分类体系 | 系统性风险分级预警与尾部风险管理模型（Systemic Risk Tiered Alert & Ta | D_RISK | risk_control | 部分 | 归indicators(BM-RC-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -1025,17 +1025,17 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 16 | L724 | §3 风险否决权 | §3.1 否决规则 | D_RISK | risk_control/execution | 部分 | 归indicators(BM-RC-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 17 | L766 | §3 风险否决权 | §3.2 否决执行机制 | D_RISK | risk_control/execution | 部分 | 归indicators(BM-RC-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 18 | L814 | §3 风险否决权 | §3.3 否决与策略逻辑的隔离 | D_RISK | risk_control/execution | 部分 | 归indicators(BM-RES-09) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 19 | L840 | §3 风险否决权 | ATR动态止损与Bayesian参数优化模型（ATR Dynamic Stop-Loss & Bay | D_RISK | risk_control/execution | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 19 | L840 | §3 风险否决权 | ATR动态止损与Bayesian参数优化模型（ATR Dynamic Stop-Loss & Bay | D_RISK | risk_control/execution | 部分 | 归indicators(BM-SELL-04-B) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 20 | L896 | §4 风险数据流 | §4.1 独立风险数据管道 | D_RISK | risk_control | 是 | 已覆盖(BM-RC-11) | 与现有环节 BM-RC-11 独立风险数据管道 等价/被其包含(sim=1.00) |
 | 21 | L941 | §4 风险数据流 | §4.2 风险指标计算 | D_RISK | risk_control | 是 | 已覆盖(BM-RC-11-A) | 与现有环节 BM-RC-11-A 独立风险指标计算 等价/被其包含(sim=0.56) |
 | 22 | L953 | §4 风险数据流 | §4.3 风险报告 | D_RISK | risk_control | 是 | 已覆盖(BM-REC-02-E) | 与现有环节 BM-REC-02-E 风险报告 等价/被其包含(sim=1.00) |
 | 23 | L968 | §5 风险治理 | §5.1 风控规则变更审批流 | D_RISK | risk_control | 部分 | 归indicators(BM-EXE-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 24 | L988 | §5 风险治理 | §5.2 风控参数版本管理 | D_RISK | risk_control | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 24 | L988 | §5 风险治理 | §5.2 风控参数版本管理 | D_RISK | risk_control | 部分 | 归indicators(BM-RC-01) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 25 | L1007 | §5 风险治理 | §5.3 风控审计 | D_RISK | risk_control | 部分 | 归indicators(BM-EXE-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 26 | L1024 | §6 A股合规规则（代管） | §6.1 不操纵市场 | D_COMPLIANCE | buy_flow | 部分 | 归indicators(BM-SIM-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 27 | L1077 | §6 A股合规规则（代管） | 信息不对称期与操纵行为检测模型（Information Asymmetry Period & Man | D_COMPLIANCE | buy_flow | 部分 | 归indicators(BM-BT-05) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 28 | L1112 | §6 A股合规规则（代管） | §6.2 持仓限额 | D_COMPLIANCE | buy_flow | 部分 | 归indicators(BM-RC-02) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 29 | L1121 | §6 A股合规规则（代管） | §6.3 涨跌停约束 | D_COMPLIANCE | buy_flow | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 29 | L1121 | §6 A股合规规则（代管） | §6.3 涨跌停约束 | D_COMPLIANCE | buy_flow | 部分 | 归indicators(BM-RC-01) | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
 | 30 | L1146 | §6 A股合规规则（代管） | §6.4 A股风险日历 | D_COMPLIANCE | buy_flow | 部分 | 归indicators(BM-SEL-24) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 31 | L1169 | §7 漂移检测与风险闭环 | §7.1 事前PSI检测 | D_RISK/D_FBL_* | reconciliation/risk_control | 部分 | 归indicators(BM-RC-06) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 32 | L1180 | §7 漂移检测与风险闭环 | §7.2 事中在线适应 | D_RISK/D_FBL_* | reconciliation/risk_control | 部分 | 归indicators(BM-EXE-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
@@ -1055,5 +1055,5 @@ author: Agent (执行 kimi3_battle_map_merge_instructions.md)
 | 46 | L1666 | §15 AI/Agent风险治理 | §15.6 ARA自适应风险架构原则 | D_RISK | risk_control | 部分 | 归indicators(BM-EXE-01) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 47 | L1763 | §17 跨域风险模块清单与蓝图映射 | §17.1 D-RISK域模块映射 | D_RISK | risk_control | 部分 | 归indicators(BM-RES-10) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
 | 48 | L1904 | §17 跨域风险模块清单与蓝图映射 | §17.2 跨域风险模块 | D_RISK | risk_control | 部分 | 归indicators(BM-SEL-24) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |
-| 49 | L1980 | §17 跨域风险模块清单与蓝图映射 | §17.3 跨域因果链、契约与域事件 | D_RISK | risk_control | 部分 | 归indicators | 参数/契约/时序类，下沉到相关环节 indicators JSONB |
+| 49 | L1980 | §17 跨域风险模块清单与蓝图映射 | §17.3 跨域因果链、契约与域事件 | D_RISK | risk_control | 否 | 排除 | 指针/元信息章节（§19-§28引用与角色/术语/指标章节按指令易错点不挂） |
 | 50 | L2027 | §17 跨域风险模块清单与蓝图映射 | §17.4 项目蓝图风险映射 | D_RISK | risk_control | 部分 | 归indicators(BM-SEL-24) | 概念级已被现有环节覆盖，细节下沉 indicators（双轨制） |

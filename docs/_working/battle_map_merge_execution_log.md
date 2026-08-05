@@ -51,7 +51,6 @@ status: round2_complete
 - commit f1157746（59 文件）。
 
 ### R2 第 3 轮（2026-08-05 10:10-10:55）—— 检查A/B/C/D/G + 术语收敛收尾
-
 - 检查B：134 孤儿模块逐个审查 → 1 个挂载（MOD-ML-003 训练数据集管理器→BM-MT-01），
   133 个分类排除（deprecated 15 / D_INFRA_RUNTIME 51 基础设施 / D_INTEGRATION 39 MCP管道协议层 /
   D_SHARED 15 共享工具 / D_SECURITY 5 禁止域 / 其余 generated 测试与配置节点）——非作战动作，不挂。
@@ -68,6 +67,32 @@ status: round2_complete
 - 检查F 终测：仍缺失 237 = 自动排除 117（外部对标23/外部监管框架15/实现细节20/句子碎片52/引用码7）
   + 人工复核碎片 120（逐条过目：架构图框英文标签、表格单元格碎片、正文句子碎片；对应中文机制均已覆盖）。
 - 对齐：孤儿环节0/幽灵锚点0/缺失叙事0/域漂移0/嵌套0（孤儿模块133=已审查排除，详见检查B）。
+
+## R3 轮（2026-08-05 11:20-11:55）—— Owner 三项拍板落地
+
+> Owner 复核 R2 结果后拍板：①凡是写下的概念/功能/模块都需加入（防遗忘），纯噪音碎片除外；
+> ②英文别名要加（方便 AI 检索防幻觉，中文方便 Owner 阅读）；③外部对标系统名要加，
+> 且需回答"专门清单 vs 模块加字段"——本日志记录判定。
+
+- **决定1 概念全加入**：313 个概念级 H3 逐字登记进 77 个环节的 indicators「📌 概念覆盖清单」
+  （草稿自带英文别名一并携带）。走双轨制 indicators 轨而非新建环节——若 255+ 概念全建独立环节会突破
+  450 环节上限且 Mermaid 失真；每个概念名均可逐字 grep 到。§19-§28 引用/角色/术语/指标等 35 条指针章节
+  按指令"易错点"排除；28 条无目标概念行修正目标（模块7/8/43、§14.1、§29.4/6/7/19/22/26、学习系统输出契约等）。
+- **决定2 英文别名**：模块库 58 个双语名 + 概念清单携带英文名；草稿未给英文名的不硬编（防幻觉）。
+- **决定3 对标清单**：判定=**专门清单为主 + 关键环节 indicators 加🎯对标指针为辅**，不加新字段
+  （6 件套结构不动，生成器 schema 零变更）。新增横切项 `benchmark_mapping`（battle_map_12）：
+  学习系统§1.1 十三系统对标表（R&D-Agent-Quant/QuantEvolve/HKUST ASF/Captide/QuantaAlpha/Hubble/
+  FactorMAD/TiMi/ProFiT/CogAlpha/FactorMiner/FinRL-X/Dnalyaw）+ §1.2 独创性评估 +
+  交易决策§4.5.1 专业机构实践来源（UBS Quant Hub/Duke-Monash/FinMatic/民生金工/CFA Institute）+
+  补充依据（AltStreet Quant 2.0/RLAIF Trader/AutoSkill/MountainLion）。
+  5 个关键环节加🎯指针：BM-MT-01-B（QuantaAlpha/Hubble/ProFiT）、BM-RES-11（Captide/MountainLion）、
+  BM-MT-04（CausalStock/Rebellion）、BM-RES-07-A（R&D-Agent-Quant/QuantEvolve）、BM-MT-06（FactorMiner 等）。
+- **附带**：BM-RC-01 登记监管框架参考（BCBS/Basel/IFRS 9 ECL/Merton/Millennium/ESRB/FSB 等，规则设计依据，
+  非本系统组件）；event_sourcing 横切项补集成事件名契约（OrderPlaced/OrderFilled/RiskThresholdBreached/
+  DataQualityDegraded/StrategyRetired/ModelDriftDetected）。
+- **事故与恢复**：本轮 YAML 编辑（概念清单+对标项）一度被并发会话 gateway stash 周期覆盖；
+  已从 stash@{0} 完整恢复并重放最终批次，随即提交（cbc8ccb1）。映射表的本轮更新同样被覆盖，已重放。
+- commit cbc8ccb1（13 文件）+ 产物补提交。
 
 ## 累计统计（R2 三轮合计）
 
