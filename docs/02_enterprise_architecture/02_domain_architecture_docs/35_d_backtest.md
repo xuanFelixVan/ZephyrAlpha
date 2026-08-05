@@ -132,79 +132,79 @@ flowchart TD
     src_zephyr_backtest_core_portfolio_py["回测持仓管理模块<br/>- 持仓管理(买入/卖出/更新市值)<br/>portfolio<br/>文件: core/portfolio.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_matching_logic_py ~~~ src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_overfitting_detector_py ~~~ src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
-    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_core_decision_gate_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
-    src_zephyr_backtest_io_backtest_result_sink_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_io_result_repository_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    src_zephyr_backtest_services_param_analyzer_py -->|import / import| src_zephyr_backtest_services_cache_manager_py
-    src_zephyr_backtest_services_param_analyzer_py -->|导入依赖 / import_depends| src_zephyr_backtest_services_cache_manager_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_io_backtest_result_sink_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_io_result_repository_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_services_anomaly_diagnoser_py -->|import / import| src_zephyr_backtest_services_data_quality_checker_py
     src_zephyr_backtest_services_anomaly_diagnoser_py -->|导入依赖 / import_depends| src_zephyr_backtest_services_data_quality_checker_py
-    src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_services_param_analyzer_py -->|导入依赖 / import_depends| src_zephyr_backtest_services_cache_manager_py
+    src_zephyr_backtest_services_param_analyzer_py -->|import / import| src_zephyr_backtest_services_cache_manager_py
+    src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
     src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    tests_test_backtest_decisiongraph_adapter_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
-    tests_test_backtest_decisiongraph_adapter_py -->|测试依赖 / test_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
-    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
-    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
-    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_event_driven_engine_py
+    src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
+    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_core_decision_gate_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     tests_test_matching_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
-    tests_test_matching_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_engine_py
     tests_test_matching_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_portfolio_py
-    tests_test_tick_replay_data_handler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
+    tests_test_matching_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_engine_py
     tests_test_tick_replay_data_handler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
     tests_test_tick_replay_data_handler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
-    tests_backtest_test_anomaly_diagnoser_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_data_quality_checker_py
+    tests_test_tick_replay_data_handler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
+    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
+    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_event_driven_engine_py
+    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    tests_test_backtest_decisiongraph_adapter_py -->|测试依赖 / test_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
+    tests_test_backtest_decisiongraph_adapter_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     tests_backtest_test_anomaly_diagnoser_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_anomaly_diagnoser_py
+    tests_backtest_test_anomaly_diagnoser_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_data_quality_checker_py
     tests_backtest_test_cache_manager_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_cache_manager_py
+    tests_backtest_test_data_handler_pit_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
     tests_backtest_test_data_quality_checker_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_data_quality_checker_py
     tests_backtest_test_decay_monitor_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_decay_monitor_py
-    tests_backtest_test_data_handler_pit_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
-    tests_backtest_test_nan_processor_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_nan_processor_py
+    tests_backtest_test_report_generator_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_report_generator_py
     tests_backtest_test_result_comparator_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_result_comparator_py
     tests_backtest_test_param_analyzer_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_cache_manager_py
     tests_backtest_test_param_analyzer_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_param_analyzer_py
-    tests_backtest_test_report_generator_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_report_generator_py
-    tests_backtest_test_scheduler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    tests_backtest_test_nan_processor_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_nan_processor_py
     tests_backtest_test_scheduler_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_scheduler_py
-    tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    tests_backtest_test_scheduler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_scheduler_py
+    tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     D_EX_CORE["执行核心<br/>执行核心，负责订单执行引擎、执行策略和执行管理<br/>Execution Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| D_EX_CORE
+    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_backtest_services_param_analyzer_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_backtest_services_report_generator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_backtest_services_data_quality_checker_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_backtest_services_anomaly_diagnoser_py -->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RUNTIME["运行时集成<br/>运行时集成，负责组件生命周期编排、启动钩子和运行<br/>时上下文管理<br/>Runtime Integration<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_FACTOR["因子<br/>因子，负责因子计算、因子库管理和因子评价<br/>Factor<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| D_FACTOR
+    src_zephyr_backtest_services_anomaly_diagnoser_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_backtest_services_nan_processor_py -->|导入依赖 / import_depends| D_SHARED
     tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| D_FACTOR
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_DATA
-    tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| D_FACTOR
-    src_zephyr_backtest_services_nan_processor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_backtest_core_engine_base_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_DATA
     D_GOVERNANCE["生命周期管理<br/>生命周期管理，负责蓝图/模块<br/>/任务的声明周期管理和元数据治理<br/>Lifecycle Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -215,13 +215,13 @@ flowchart TD
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     D_PF_CORE["组合核心<br/>组合核心，负责投资组合构建、持仓管理和组合优化<br/>Portfolio Core<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     D_PF_CORE -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
-    D_PF_CORE -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
-    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
-    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
     D_PF_CORE -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
+    D_GOVERNANCE -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
+    D_PF_CORE -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
+    D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_event_driven_engine_py
     D_PF_CORE -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
@@ -232,7 +232,7 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_backtest_core_data_handler_py,src_zephyr_backtest_core_decision_gate_py,src_zephyr_backtest_core_engine_base_py,src_zephyr_backtest_core_matching_engine_py,src_zephyr_backtest_core_matching_logic_py,src_zephyr_backtest_core_metrics_py,src_zephyr_backtest_core_overfitting_detector_py,src_zephyr_backtest_core_pit_manager_py,src_zephyr_backtest_core_portfolio_py,src_zephyr_backtest_core_tick_replay_py,src_zephyr_backtest_core_walk_forward_py,src_zephyr_backtest_implementations_event_driven_engine_py,src_zephyr_backtest_implementations_vectorized_engine_py,src_zephyr_backtest_io_backtest_result_sink_py,src_zephyr_backtest_io_decisiongraph_adapter_py,src_zephyr_backtest_io_result_repository_py,src_zephyr_backtest_services_anomaly_diagnoser_py,src_zephyr_backtest_services_cache_manager_py,src_zephyr_backtest_services_data_quality_checker_py,src_zephyr_backtest_services_decay_monitor_py,src_zephyr_backtest_services_nan_processor_py,src_zephyr_backtest_services_param_analyzer_py,src_zephyr_backtest_services_report_generator_py,src_zephyr_backtest_services_result_comparator_py,src_zephyr_backtest_services_scheduler_py,tests_backtest_test_anomaly_diagnoser_py,tests_backtest_test_cache_manager_py,tests_backtest_test_data_handler_pit_py,tests_backtest_test_data_quality_checker_py,tests_backtest_test_decay_monitor_py,tests_backtest_test_nan_processor_py,tests_backtest_test_param_analyzer_py,tests_backtest_test_report_generator_py,tests_backtest_test_result_comparator_py,tests_backtest_test_scheduler_py,tests_factor_test_backtest_factor_e2e_py,tests_factor_test_evaluation_backtest_py,tests_test_backtest_decisiongraph_adapter_py,tests_test_event_driven_engine_py,tests_test_matching_engine_py,tests_test_tick_replay_data_handler_py production
     class src_zephyr_backtest_services_result_deployer_py design
-    class D_EX_CORE,D_SHARED,D_INFRA_RUNTIME,D_FACTOR,D_DATA,D_GOVERNANCE,D_PF_CORE external_prod
+    class D_EX_CORE,D_INFRA_RUNTIME,D_SHARED,D_FACTOR,D_DATA,D_GOVERNANCE,D_PF_CORE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
@@ -319,64 +319,64 @@ flowchart TD
     src_zephyr_backtest_core_portfolio_py["回测持仓管理模块<br/>- 持仓管理(买入/卖出/更新市值)<br/>portfolio<br/>文件: core/portfolio.py<br/>(生产态 / production)"]
     src_zephyr_backtest_core_matching_logic_py ~~~ src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_overfitting_detector_py ~~~ src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
-    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_core_decision_gate_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
-    src_zephyr_backtest_io_backtest_result_sink_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_io_result_repository_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    src_zephyr_backtest_services_param_analyzer_py -->|import / import| src_zephyr_backtest_services_cache_manager_py
-    src_zephyr_backtest_services_param_analyzer_py -->|导入依赖 / import_depends| src_zephyr_backtest_services_cache_manager_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_io_backtest_result_sink_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_io_result_repository_py -->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_services_anomaly_diagnoser_py -->|import / import| src_zephyr_backtest_services_data_quality_checker_py
     src_zephyr_backtest_services_anomaly_diagnoser_py -->|导入依赖 / import_depends| src_zephyr_backtest_services_data_quality_checker_py
-    src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_services_param_analyzer_py -->|导入依赖 / import_depends| src_zephyr_backtest_services_cache_manager_py
+    src_zephyr_backtest_services_param_analyzer_py -->|import / import| src_zephyr_backtest_services_cache_manager_py
+    src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
     src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    tests_test_backtest_decisiongraph_adapter_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
-    tests_test_backtest_decisiongraph_adapter_py -->|测试依赖 / test_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
-    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
-    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
-    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_event_driven_engine_py
+    src_zephyr_backtest_services_scheduler_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
+    src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_core_decision_gate_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     tests_test_matching_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
-    tests_test_matching_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_engine_py
     tests_test_matching_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_portfolio_py
-    tests_test_tick_replay_data_handler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
+    tests_test_matching_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_engine_py
     tests_test_tick_replay_data_handler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
     tests_test_tick_replay_data_handler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
-    tests_backtest_test_anomaly_diagnoser_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_data_quality_checker_py
+    tests_test_tick_replay_data_handler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
+    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
+    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_event_driven_engine_py
+    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    tests_test_event_driven_engine_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    tests_test_backtest_decisiongraph_adapter_py -->|测试依赖 / test_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
+    tests_test_backtest_decisiongraph_adapter_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     tests_backtest_test_anomaly_diagnoser_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_anomaly_diagnoser_py
+    tests_backtest_test_anomaly_diagnoser_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_data_quality_checker_py
     tests_backtest_test_cache_manager_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_cache_manager_py
+    tests_backtest_test_data_handler_pit_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
     tests_backtest_test_data_quality_checker_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_data_quality_checker_py
     tests_backtest_test_decay_monitor_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_decay_monitor_py
-    tests_backtest_test_data_handler_pit_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
-    tests_backtest_test_nan_processor_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_nan_processor_py
+    tests_backtest_test_report_generator_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_report_generator_py
     tests_backtest_test_result_comparator_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_result_comparator_py
     tests_backtest_test_param_analyzer_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_cache_manager_py
     tests_backtest_test_param_analyzer_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_param_analyzer_py
-    tests_backtest_test_report_generator_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_report_generator_py
-    tests_backtest_test_scheduler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    tests_backtest_test_nan_processor_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_nan_processor_py
     tests_backtest_test_scheduler_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_scheduler_py
-    tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    tests_backtest_test_scheduler_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| src_zephyr_backtest_services_scheduler_py
+    tests_factor_test_backtest_factor_e2e_py -->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
