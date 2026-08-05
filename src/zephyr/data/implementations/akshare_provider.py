@@ -56,6 +56,7 @@ if hasattr(_urllib_req, "getproxies_environment"):
 
 # 诊断标记（确认 patch 执行）
 import logging as _diag_logging
+
 _diag_logging.getLogger(__name__).debug(
     "akshare_provider 代理 patch 已执行: getproxies=%r", _urllib_req.getproxies
 )
@@ -66,7 +67,10 @@ import logging
 import re
 import threading
 import time
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 # patch requests.Session 禁用 trust_env（双保险，防止 akshare 内部新建 session 走代理）
 try:
@@ -545,7 +549,18 @@ class AkshareIngestProvider(IngestProviderBase):
         """转换月度 DataFrame（CPI/PMI/货币供应量）。
 
         第一列如"2025年6月" -> 月末日期；其余列各自作为 indicator_name。
-        unit=""，frequency="月度"。
+        unit 根据列名推断（治本修复：原 unit="" 硬编码导致 5554 行空 unit）。
+        frequency="月度"。
+
+        unit 推断规则（覆盖 CPI/PMI/货币供应量全部 25 个列名）：
+        - 含"同比增长"/"环比增长" → "%"（百分比）
+        - 含"数量(亿元)" → "亿元"
+        - 含"当月"/"累计"/"指数" → "指数"（CPI/PMI 指数值，以 100/50 为基准）
+
+        0 值过滤规则（治本修复：akshare 对缺失月份返回 0 而非 NULL，原代码写入 76 行无效 0 值）：
+        - 同比增长/环比增长=0 → 跳过（0% 增长在 CPI/PMI 月度数据中几乎不可能，
+          akshare 返回 0 表示去年同期数据缺失无法计算，非真实 0% 增长）
+        - 指数值/数量值=0 → 保留（可能是真实值）
         """
         rows: list[tuple] = []
         cols = list(df.columns)
@@ -556,8 +571,21 @@ class AkshareIngestProvider(IngestProviderBase):
                 continue
             for col in cols[1:]:
                 val = safe_float(row.get(col))
-                if val is not None:
-                    rows.append((report_date, col, val, "", "月度"))
+                if val is None:
+                    continue
+                # unit 推断
+                if "同比增长" in col or "环比增长" in col:
+                    unit = "%"
+                    # 0 值过滤：同比增长/环比增长=0 是 akshare 缺失标记，跳过
+                    if val == 0:
+                        continue
+                elif "数量(亿元)" in col:
+                    unit = "亿元"
+                elif "当月" in col or "累计" in col or "指数" in col:
+                    unit = "指数"
+                else:
+                    unit = ""
+                rows.append((report_date, col, val, unit, "月度"))
         return rows
 
     # ---- EDB 替代：利率类指标 fetch wrappers（#ARCH-IFIND-FAILOVER）----
@@ -2486,6 +2514,7 @@ class AkshareIngestProvider(IngestProviderBase):
             list of (trade_date, rank_type, rank, stock_code, stock_name, hot_value)
         """
         import json as _json
+
         import requests as _requests
 
         # 人气榜和关注榜的 API 路径不同
@@ -2865,6 +2894,7 @@ class AkshareIngestProvider(IngestProviderBase):
             list of (board_code, symbol, data_source) 元组
         """
         import re as _re
+
         import requests as _requests
 
         rows: list[tuple] = []
