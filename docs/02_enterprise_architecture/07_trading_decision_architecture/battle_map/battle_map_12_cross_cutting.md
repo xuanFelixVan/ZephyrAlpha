@@ -20,7 +20,7 @@ date: 2026-08-05
 
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
-| 横切类别数 | 16 | Categories | 16 |
+| 横切类别数 | 17 | Categories | 17 |
 | 涵盖章节 | §13 / §14 / §16 / §15 / §1.7 + 4 系统级 + 3 域来源 | Sections | §13 / §14 / §16 / §15 / §1.7 + 4 sys + 3 domain |
 | 真源 | module_translation_registry.yaml | Source | YAML registry |
 
@@ -36,7 +36,7 @@ date: 2026-08-05
 
 ## 横切视图总览 / Cross-Cutting Overview
 
-> 展示全部 16 个横切机制，颜色区分五态。
+> 展示全部 17 个横切机制，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -57,14 +57,15 @@ flowchart TD
     CC_13["（设计态 / design） 交易决策架构 v7.0（L575-577<br/>买入 / L743 卖出 / L827 仓位） 因子直通层<br/>（Model-Free Factor Fusion） / Model-Free<br/>Factor Fusion<br/>策略库没覆盖的标的、或几个策略打架<br/>（2买2卖分歧）时，决策不卡死—— 因子加权融合直接<br/>产生决策，不经过策略层。买入/卖出<br/>/仓位三阶段共用同一机制。<br/>横切机制 / cross-cutting"]
     CC_14["（设计态 / design） 交易决策架构 v8.2（L433<br/>升级注记 / L856 支撑层，§29.39 裁定17）<br/>投票优先多Agent协作 / Voting-First Multi-Agent<br/>Collaboration<br/>多Agent协作先做轻量投票<br/>（&lt;100行代码），票数够就定，不够才启动重量级辩论<br/>（备用，&lt;300行）—— 把多Agent协作的成本砍到最低。<br/>横切机制 / cross-cutting"]
     CC_15["（设计态 / design） 交易决策架构 v8.0 可建设项#16<br/>/#17（横切层） 事件溯源与配置中心 / Event<br/>Sourcing &amp; Config Center<br/>全事件链可回溯（每个决策/订单<br/>/成交都能回放当时上下文）+<br/>统一配置中心热更新—— 出事能复盘，改参不重启。<br/>横切机制 / cross-cutting"]
-    CC_16["（设计态 / design） 交易决策架构 v8.1 横切层<br/>模型量化 / Model Quantization<br/>把训练好的大模型'压小'——用更低精度的数字（如<br/>INT8/FP16）表示模型权重， 换来推理更快、更省内存<br/>，让密度预测/Kronos TSFM 这类重模型能在 3<br/>秒级行情节奏里实时跑。<br/>横切机制 / cross-cutting"]
-    CC_01 ~~~ CC_02 ~~~ CC_03 ~~~ CC_04 ~~~ CC_05 ~~~ CC_06 ~~~ CC_07 ~~~ CC_08 ~~~ CC_09 ~~~ CC_10 ~~~ CC_11 ~~~ CC_12 ~~~ CC_13 ~~~ CC_14 ~~~ CC_15 ~~~ CC_16
+    CC_16["（设计态 / design） 学习系统架构 §1 +<br/>交易决策架构 §4.5.1/§8 外部对标清单（Benchmark<br/>Mapping） / External Benchmark Mapping<br/>每个自研概念都登记它对标的公开系统/机构实践——AI<br/>建造时看一眼就知道这个功能的核心形态是什么、 该<br/>学什么、我们领先或差在哪，不用靠概念名去猜<br/>（防幻觉/防漂移）。<br/>横切机制 / cross-cutting"]
+    CC_17["（设计态 / design） 交易决策架构 v8.1 横切层<br/>模型量化 / Model Quantization<br/>把训练好的大模型'压小'——用更低精度的数字（如<br/>INT8/FP16）表示模型权重， 换来推理更快、更省内存<br/>，让密度预测/Kronos TSFM 这类重模型能在 3<br/>秒级行情节奏里实时跑。<br/>横切机制 / cross-cutting"]
+    CC_01 ~~~ CC_02 ~~~ CC_03 ~~~ CC_04 ~~~ CC_05 ~~~ CC_06 ~~~ CC_07 ~~~ CC_08 ~~~ CC_09 ~~~ CC_10 ~~~ CC_11 ~~~ CC_12 ~~~ CC_13 ~~~ CC_14 ~~~ CC_15 ~~~ CC_16 ~~~ CC_17
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class CC_01,CC_02,CC_03,CC_04,CC_05,CC_06,CC_07,CC_08,CC_09,CC_10,CC_11,CC_12,CC_13,CC_14,CC_15,CC_16 design
+    class CC_01,CC_02,CC_03,CC_04,CC_05,CC_06,CC_07,CC_08,CC_09,CC_10,CC_11,CC_12,CC_13,CC_14,CC_15,CC_16,CC_17 design
 ```
 
 ## 筛选漏斗模型 / Screening Funnel Model（§13）
@@ -539,9 +540,14 @@ v8.0 四轨中作为轨道1逻辑驱动的补充路径。承载模块 MOD-INF-04
 
 🆕v8.0 横切层两项：①事件溯源（Event Sourcing）——全事件链可回溯，决策/订单/成交/风控事件统一事件存储，
 支持任意时点状态重建与审计回放（与集成架构 CQRS/At-Least-Once 投递语义衔接）；②配置中心（Config Center）——
-统一配置管理与热更新，参数变更不重启交易链路。事件名契约见 BM-SEL-01 indicators（TickEvent/SignalEvent/DecisionEvent 等）。
+统一配置管理与热更新，参数变更不重启交易链路。事件名契约见 BM-SEL-01 indicators（TickEvent/SignalEvent/DecisionEvent 等）；集成侧事件名：OrderPlaced/OrderFilled/RiskThresholdBreached/DataQualityDegraded/StrategyRetired/ModelDriftDetected（集成架构事件契约）。
 
 **关联环节**：[BM-REC-01](battle_map_11_reconciliation.md)、[BM-EXE-02](battle_map_10_execution.md)
+
+## 外部对标清单（Benchmark Mapping）（学习系统架构 §1 + 交易决策架构 §4.5.1/§8）
+
+> 每个自研概念都登记它对标的公开系统/机构实践——AI 建造时看一眼就知道这个功能的核心形态是什么、
+该学什么、我们领先或差在哪，不用靠概念名去猜（防幻觉/防漂移）。
 
 ## 模型量化 / Model Quantization（交易决策架构 v8.1 横切层）
 

@@ -290,6 +290,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：每 3 秒 Tick + 盘前定时；②消费：外部行情/新闻/另类数据；③参数：tick_frequency=3s、分层存储策略、🆕v8.1数据增强=FWT检索增强扩散+GBM-Diffusion；④数据流：外部源→事件总线→分层存储→BM-SEL-02；⑤代码：C-001 L0 层；⑥降级：数据源断流→仅执行卖出指令。数据架构扩展：数据源含 miniQMT(xtdata/xttrader SDK)/iFind/tushare/BaoStock；CDC 变更数据捕获增量同步；存储=Lakehouse+TSDB+Embedding向量库（Warm热/Cold冷分层）；事件契约统一 TickEvent/SignalEvent/DecisionEvent/ExecutionEvent/RiskEvent/SystemEvent；🆕AI驱动异常检测（数据质量）；数据质量四维度=完整性Completeness/一致性Consistency/时效性Timeliness/可用性Availability（数据架构§10）。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.4 时序数据库与分层存储架构（→A3数据架构）；§0.2 数据流全景图（接入→处理→存储→服务→质量→治理）；1.3 L0原始行情与L1标准化行情；§17.5 D-ML-TRAIN/D-ML-SERVE 训练/推理域缺失模块；§17.9 D-GOVERNANCE 治理域缺失模块；§16.18 A1§29.4 迁移内容：时序数据库与分层存储架构（历史参考）；§29.4 时序数据库与分层存储架构；§15.3 治理漂移(Governance Drift)防护
 
 
 **锚点（环节↔模块双向关联）**：
@@ -301,7 +302,7 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 | depgraph | MOD-INF-043 | primary | stable | generated |
-| depgraph | MOD-L00-004 | primary | stable | deprecated |
+| depgraph | MOD-L00-004 | primary | stable | generated |
 | depgraph | MOD-ALT_DATA | primary | stable | generated |
 | depgraph | MOD-INTEGRATION | primary | stable | generated |
 | depgraph | MOD-INF-026 | supplement | stable | stable |
@@ -333,6 +334,7 @@ UFL确定性事实层（Feature Store子集，is_deterministic=True，§29.24）
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘前全量+盘中增量；②消费：BM-SEL-01 标准化行情 + C-027 因子工厂 + UFL确定性事实；③参数：factor_pool_max=64、双模计算、声明式因子定义+一致性引擎（数据架构）；④数据流：行情→因子计算→因子池→BM-SEL-03/BM-SELL-01；⑤代码：C-009/C-027 L1 层；⑥降级：因子层全失效→硬编码均线规则。
+📌 概念覆盖清单（草稿H3逐字登记）：§3.3 因子池管理；§4.1 信号工厂九大子阶段；§8.1 策略工厂(C-006)与信号工厂(C-028)的协作
 
 
 **锚点（环节↔模块双向关联）**：
@@ -344,7 +346,7 @@ UFL确定性事实层（Feature Store子集，is_deterministic=True，§29.24）
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
 | candidate | CAND-INT-001 | supplement | deferred | — |
-| depgraph | MOD-L03-001 | supplement | production | stable |
+| depgraph | MOD-L03-001 | supplement | production | generated |
 | depgraph | MOD-INF-038 | primary | stable | stable |
 | depgraph | MOD-SIGNAL_ASHARE | primary | stable | generated |
 | depgraph | MOD-ML_SERVE | primary | stable | generated |
@@ -380,6 +382,7 @@ L2-B 层 A股特色信号。MOD-SIG-023 short_term_stock_selector.py（stable）
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘前全量+盘中增量，7维100分评分卡；②消费：机构选股评分(L1/L2)+强庄股识别(L0/L2-B)+连板评分卡7维(L0/L2-B)；③参数：评分维度数=7维100分(implemented)、连板潜力评分0-100(implemented)、强庄股识别阈值(implemented)；④数据流：因子池+资金流+盘口→7维评分+强庄股识别+连板潜力→短线选股清单→BM-SEL-25 双引擎融合；⑤代码：MOD-SIG-023 short_term_stock_selector.py(stable)；⑥降级：评分卡未就绪→仅技术面筛选跳过连板/强庄维度。
+📌 概念覆盖清单（草稿H3逐字登记）：§21.3 关键时间节点；§1.2 独创性评估
 
 
 **锚点（环节↔模块双向关联）**：
@@ -416,6 +419,7 @@ L2-C 层 A股特色信号。MOD-SIG-033 youzi_relay_emotion_engine.py（stable�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘中实时（涨停数据到达），6因子0-100分；②消费：连板高度+封单质量+涨停时间+开板次数+竞价强度+助攻梯队(L0涨停数据)+情绪周期4+1阶段(L2-C)；③参数：6因子权重25/20/15/15/10/15(implemented)、情绪周期阶段数=4+1(冰点/反核/主升/疯狂/退潮)(implemented)；④数据流：涨停数据+竞价+梯队→6因子评分→情绪周期定位→策略映射→BM-SEL-25 双引擎融合；⑤代码：MOD-SIG-033 youzi_relay_emotion_engine.py(stable)；⑥降级：情绪引擎未就绪→仅量化强度单引擎决策。
+📌 概念覆盖清单（草稿H3逐字登记）：P2 — 增强能力（C-041/C-043阶段二/C-044）；能力-域映射坐标
 
 
 **锚点（环节↔模块双向关联）**：
@@ -452,6 +456,7 @@ L2-A 层 A股特色信号。MOD-SIG-034 quant_short_term_strength_engine.py（st
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘前+盘中增量，6维度0-100分→A~E五级；②消费：价格动量Z-score+行业强度+相对强度+资金+技术+风险(6维度)(L1/L2)+双引擎基准权重60%游资+40%量化(BM-SEL-23)；③参数：评分维度数=6维度(implemented)、评级等级=A~E五级(implemented)、双引擎基准权重60%游资+40%量化(implemented)；④数据流：因子池+动量+资金→6维度评分→A~E评级→双引擎融合输入→BM-SEL-25；⑤代码：MOD-SIG-034 quant_short_term_strength_engine.py(stable)；⑥降级：强度引擎未就绪→仅游资情绪单引擎决策。
+📌 概念覆盖清单（草稿H3逐字登记）：P1 — 自我迭代增强能力（全维度闭环补全）；§24.3 外部依赖风险评估；§1.3 行业三条落地路径；§11.1.1 离线存储（Offline Store）；§17.14 D-EX-CORE 执行核心域缺失模块；§17.21 D-AUT-CORE 自治核心域缺失模块；§1.1 市场风险；§1.7 信用风险；§6.4 A股风险日历；§17.2 跨域风险模块；§17.4 项目蓝图风险映射
 
 
 **锚点（环节↔模块双向关联）**：
@@ -489,6 +494,7 @@ L3 层 A股特色信号。MOD-SIG-035 dual_engine_fusion_decision_engine.py（st
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：游资+量化双引擎就绪，6类决策输出；②消费：游资引擎信号60%基准(BM-SEL-23)+量化引擎信号40%基准(BM-SEL-24)+情绪周期自适应权重(冰点→量化70%/主升→游资70%/退潮→量化60%)(BM-SEL-23)；③参数：基准权重60%游资+40%量化(implemented)、自适应权重切换=情绪周期驱动(implemented)、决策输出类型数=6类(implemented)；④数据流：双引擎信号+情绪周期→融合+自适应权重+PDF分布信号提取→6类决策输出+PDF分布信号→BM-SEL-21 组合优化；⑤代码：MOD-SIG-035 dual_engine_fusion_decision_engine.py(stable)；⑥降级：融合引擎未就绪→两引擎独立输出不做融合。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.10 盘中即时反应决策引擎；§29.24 神经符号融合推理（v5.1新增）
 
 
 **锚点（环节↔模块双向关联）**：
@@ -552,7 +558,7 @@ L6决策可解释性与人机协作层。每个决策都有可追溯解释链(�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：盘中实时事件触发(新闻/异动/盘口突变)；②消费：实时行情事件+新闻事件+BM-SEL信号输出；③参数：事件完整清单与处理流程、事件处理流水线、优先级调度；④数据流：事件→分类→处理流水线→信号更新/交易触发→BM-BUY决策；⑤代码映射：待开发（planned，D_INTEGRATION域）；⑥降级：事件处理积压→降级批量处理+告警。
+①触发：盘中实时事件触发(新闻/异动/盘口突变)；②消费：实时行情事件+新闻事件+BM-SEL信号输出；③参数：事件完整清单与处理流程、事件处理流水线、优先级调度；④数据流：事件→分类→处理流水线→信号更新/交易触发→BM-BUY决策；⑤代码映射：待开发（planned，D_INTEGRATION域）；⑥降级：事件处理积压→降级批量处理+告警。；📌 概念覆盖清单（草稿H3逐字登记）：§14.1 事件完整清单与处理流程；§14.2 事件处理流水线
 
 **锚点（环节↔模块双向关联）**：
 
@@ -585,6 +591,7 @@ L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘前+盘中周期；②消费：BM-SEL-02 因子池 + 量能/日历；③参数：matrix_dims=3×3×3（Phase1-2 跑 3×3）、regime=HMM；④数据流：因子池→3×3矩阵+体制检测→市场状态+Survival→BM-SEL-04/BM-BUY-02；⑤代码：C-021 L2-C；⑥降级：C-021 未就绪→主动脉跳过（8节点7跳降级）。
+📌 概念覆盖清单（草稿H3逐字登记）：§6.1 C-021 市场状态判定；§6.5 市场状态层→流水线其他层的联动
 
 
 **锚点（环节↔模块双向关联）**：
@@ -620,6 +627,7 @@ L2-C 层。T+1 次日 8 态走势预测（大盘+个股双预测体系）。Phas
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘前 T+1 预测；②消费：BM-SEL-03 市场状态 + 密度预测条件PDF；③参数：state_count=8（分阶段 3→5→8）、PDF 积分派生；④数据流：市场状态+PDF→8态预测→T+1概率分布→BM-BUY-01；⑤代码：C-014 §6.2；⑥降级：C-014 未就绪→二值涨/跌预测。
+📌 概念覆盖清单（草稿H3逐字登记）：§6.2 C-014 大盘预测与次日走势预判
 
 
 **锚点（环节↔模块双向关联）**：
@@ -655,6 +663,7 @@ L2-B 层。C-011 六阶段识别（吸筹/洗盘/拉升/出货）+ C-034 主力�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘前全量+盘中增量；②消费：龙虎榜/资金流/大宗交易+因子池；③参数：识别阶段数=6、弃庄概率门槛95%、Wyckoff吸筹4子阶段(PS/SC/AR/ST)+VPIN知情交易概率+CVD买方压力确认；④数据流：L0资金流→C-011/034/035/036+Wyckoff量化→注入信号层/漏斗；⑤代码：缺失态-未实现（草图§5）；⑥降级：主力层未就绪→漏斗不加分（仅技术+基本面）。
+📌 概念覆盖清单（草稿H3逐字登记）：§5.2 C-011 资金行为分析（实时识别层）；§5.3 C-034 主力资金行为自迭代分析（动态推演层）；§5.4 C-035 庄家行为模式自迭代识别与模拟（庄家专项层）；§5.6 主力行为层→信号层注入规则；§10.2 五大自迭代增强；P1 — A股博弈智能套件
 
 
 **锚点（环节↔模块双向关联）**：
@@ -690,6 +699,7 @@ L2-C 层。C-039 跨市场传导量化模型，消费全球市场异动事件，
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：美股/港股/汇率/商品异动到达；②消费：全球市场数据+传导路径图(L2-D)；③参数：传导系数模型(proposed)；④数据流：全球异动→C-039传导系数→A股影响幅度→重算；⑤代码：缺失态-未实现（草图§6.3）；⑥降级：C-039未就绪→异动仅告警不量化传导。
+📌 概念覆盖清单（草稿H3逐字登记）：§6.1.2 跨市场Regime样本策略；2.3 宏观与跨市场数据；§17.16 D-CROSS-ASSET 跨资产跨市场域缺失模块
 
 
 **锚点（环节↔模块双向关联）**：
@@ -759,6 +769,7 @@ L2-C 层 v4.1。板块轮动序列追踪，输出回踩质量等级（A/B/C）�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘后板块强度更新；②消费：板块排名/资金流(L0/L1)；③参数：回踩质量等级=A/B/C(proposed)；④数据流：板块强度→轮动序列→回踩质量→买入优先级；⑤代码：缺失态-未实现（草图§6.1.3）；⑥降级：未就绪→不按回踩质量排序。
+📌 概念覆盖清单（草稿H3逐字登记）：P1 模块分类汇总（92个）；P2 模块分类汇总（30个）；P3 模块分类汇总（3个）；P1 模块分类汇总（99个）；P2 模块分类汇总（29个）；P1 模块分类汇总（85个）；P2 模块分类汇总（62个）；P3 模块分类汇总（1个）；P1 模块分类汇总（7个）；P2 模块分类汇总（11个）；P1 模块分类汇总（5个）；P2 模块分类汇总（7个）；XS-EXT 模块分类汇总（5个）；P1 模块分类汇总（14个）；P2 模块分类汇总（17个）
 
 
 **锚点（环节↔模块双向关联）**：
@@ -827,6 +838,7 @@ L2-C 层 v4.1。行情生命周期阶段（春夏秋冬），驱动季节性硬�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘后阶段判定；②消费：板块新高占比趋势(L0)；③参数：阶段数=4(proposed)；④数据流：新高占比趋势→生命周期阶段→冬季禁抄底/秋季强制离场；⑤代码：缺失态-未实现（草图§6.7）；⑥降级：未就绪→不加季节性约束。
+📌 概念覆盖清单（草稿H3逐字登记）：§11.4 特征生命周期；§11.4.2 生命周期事件
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1055,6 +1067,7 @@ L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：事件到达→匹配受影响节点+传导路径；②消费：事件流+因子池；③参数：图谱类型数=6、因果方法=DML/CausalForest/DoWhy、GNN=RGCN/TGN/GAT、供应链传导GNN(proposed)；④数据流：事件→图谱匹配→传导链+Causal ML筛选→漏斗第四层；⑤代码：缺失态-未实现（草图§7）；⑥降级：未就绪→漏斗第四层跳过。
+📌 概念覆盖清单（草稿H3逐字登记）：§7.1 六类知识图谱；§29.6 图神经网络用于股票关系建模；6.2 远期规划
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1127,6 +1140,7 @@ L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：信号层产出条件PDF；②消费：分布特征+因子池(L1)+Kronos零样本先验；③参数：Phase=参数化→混合→非参数化，派生偏度/峰度/前瞻VaR/CVaR/P1~P8(proposed)，Mamba/SSM序列长度(proposed)；④数据流：分布特征→PDF(Mamba/SSM+Kronos增强)→派生量→8态/组合优化/风控；⑤代码：MOD-SIG-043 条件密度预测器(planned)+MOD-SIG-050 Kronos TSFM(planned)+MOD-SIG-051 Mamba/SSM时序增强(planned)（草图§4.5）；⑥降级：未就绪→8态用离散估计无分布增强。
+📌 概念覆盖清单（草稿H3逐字登记）：§4.5.1 🆕密度预测专业机构实践增强；§29.7 Transformer时序架构用于密度预测增强；§29.22 Mamba/SSM状态空间模型用于金融时序建模（v5.1新增）
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1236,6 +1250,7 @@ DDCI（分布无关动态保形推断，面向非平稳时序的覆盖率保证�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：密度PDF输出后，非平稳市场环境（体制漂移/分布迁移）触发自适应覆盖；②消费：BM-SEL-13 条件密度PDF + BM-SEL-07 体制转换标签；③参数：TCP-RM滚动窗口/regime模型、DDCI动态覆盖、目标覆盖率95%(proposed)；④数据流：密度PDF+体制标签→TCP-RM/DDCI自适应区间→非平稳覆盖率保证→BM-SEL-04/BM-BUY-02；⑤代码：MOD-SIG-052 自适应保形(planned)；⑥降级：自适应变体失效→回退BM-SEL-14静态共形预测。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.26 时序保形预测增强：TCP/DDCI/CP-VaR等价（v5.1新增）
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1269,6 +1284,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：市场状态层产出时间分布；②消费：市场状态(L2C)；③参数：预测目标=止盈/止损发生时间(proposed)；④数据流：市场状态→Survival时间分布→止盈止损时点+状态持续；⑤代码：缺失态-未实现（草图§1.7）；⑥降级：未就绪→止盈止损用固定规则。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.17 Survival Analysis（生存分析用于交易决策）
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1303,6 +1319,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：3秒级Tick，7000→1200只；②消费：涨跌停/停牌/ST标记+AUM分级+上市天数+弃庄概率(L2B)；③参数：成交额门槛(AUM≤100万)≥500万、次新<30天排除、弃庄>95%排除(proposed)；④数据流：全市场→物理/门禁/分级/概率排除→1200只→初筛；⑤代码：缺失态-未实现（草图§13 L1）；⑥降级：未就绪→仅排除涨跌停/停牌。
+📌 概念覆盖清单（草稿H3逐字登记）：§21.1 分级标准
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1371,6 +1388,7 @@ L2-C 层。Survival 分析，预测止盈/止损发生时间和状态持续，�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：60秒级，300→50只；②消费：多维因子(L1)+C-021偏移(L2C)+C-034/035主力(L2B)+C-014 8态(L2C)+C-045拥挤(L4)+密度偏度/峰度/VaR(L2A)；③参数：基础权重价值40%/动量30%/质量20%/情绪10%、状态偏移±10%、前瞻VaR扣分15%(proposed)；④数据流：初筛→综合评分(基础+偏移+主力+8态+拥挤+密度)→Z-score→50只；⑤代码：缺失态-未实现（草图§13 L3）；⑥降级：未就绪→等权综合评分。
+📌 概念覆盖清单（草稿H3逐字登记）：§6.1.1 连续评分升级路径
 
 
 **锚点（环节↔模块双向关联）**：
@@ -1469,7 +1487,7 @@ BM-SEL-02 因子计算的子环节。MOD-L02-018 因子注册表管因子元数�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：新因子注册/池容量超限/评估周期；②消费：BM-SEL-02-A 因子计算产出；③参数：pool_max=64、淘汰阈值、注册表字段规范；④数据流：计算产出→注册登记→入池/淘汰→因子池→下游信号；⑤代码：MOD-L02-018（D_FACTOR）；⑥降级：注册表故障→冻结当前池（不增不减）。
+①触发：新因子注册/池容量超限/评估周期；②消费：BM-SEL-02-A 因子计算产出；③参数：pool_max=64、淘汰阈值、注册表字段规范；④数据流：计算产出→注册登记→入池/淘汰→因子池→下游信号；⑤代码：MOD-L02-018（D_FACTOR）；⑥降级：注册表故障→冻结当前池（不增不减）。；📌 概念覆盖清单（草稿H3逐字登记）：§3.1 因子工厂与生产线的职责边界
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1745,7 +1763,7 @@ L2-D知识图谱层：模块21隔夜全球市场传导与事件影响评估模�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-SEL-02 因子计算产出因子值后，信号工厂九大子阶段依次处理生成可执行信号；②消费：因子值(来自SEL-02因子计算引擎) + 市场状态(SEL-03) + 主力行为(SEL-05)；③参数：九大子阶段：因子预处理→单因子信号化→多因子合成→信号过滤→信号增强→信号校准→信号投票→信号聚合→信号输出；④数据流：因子值→逐子阶段流水线处理→标准化信号(含方向/强度/置信度)→下游SEL-02-K投票/SEL-02-L聚合；⑤代码映射：待开发（planned，D_SIGNAL/D_ASHARE_SIGNAL域，C-028信号工厂）；⑥降级：子阶段失效→降级跳过该阶段(如信号增强失效→输出未增强信号)，保证流水线不中断。
+①触发：BM-SEL-02 因子计算产出因子值后，信号工厂九大子阶段依次处理生成可执行信号；②消费：因子值(来自SEL-02因子计算引擎) + 市场状态(SEL-03) + 主力行为(SEL-05)；③参数：九大子阶段：因子预处理→单因子信号化→多因子合成→信号过滤→信号增强→信号校准→信号投票→信号聚合→信号输出；④数据流：因子值→逐子阶段流水线处理→标准化信号(含方向/强度/置信度)→下游SEL-02-K投票/SEL-02-L聚合；⑤代码映射：待开发（planned，D_SIGNAL/D_ASHARE_SIGNAL域，C-028信号工厂）；⑥降级：子阶段失效→降级跳过该阶段(如信号增强失效→输出未增强信号)，保证流水线不中断。；📌 概念覆盖清单（草稿H3逐字登记）：模块1 多维度情绪合成指数模型（Multi-Dimensional Sentiment Compos；模块2 波动率体制转换与关键时点预警模型（Volatility Regime Transition；模块3 缺口回补概率模型（Gap Fill Probability Model）；模块4 逼空行情检测模型（Short Squeeze Detection Model）；模块5 日内量能结构与订单流分析模型（Intraday Volume Structure & Ord；模块6 Wyckoff吸筹阶段与底部确认模型（Wyckoff Accumulation & Bott；模块7 多指标背离检测模型（Multi-Indicator Divergence Detection；模块8 板块资金流再配置模型（Sector Flow Reallocation Model）；模块9 多维度相对强弱筛选模型（Multi-Dimensional Relative Strengt；模块10 动量领导因子与涨停板生态模型（Momentum Leadership & Limit-Up；模块11 动量层级与板块持续性模型（Momentum Hierarchy & Persistence；模块12 板块间资金流迁移检测模型（Inter-Sector Flow Migration Dete；模块14 极端情绪反转与恐慌底部检测模型（Extreme Sentiment Reversal &；模块15 假突破与诱多检测模型（False Breakout & Bull Trap Detecti；模块16 情绪-价格背离指数模型（Sentiment-Price Divergence Index）；模块18 Wyckoff二次测试与动量延续模型（Wyckoff Secondary Test & M；模块19 市场体制转换模型（Regime-Switching Model）；模块20 Wyckoff派发阶段与CVD背离检测模型（Wyckoff Distribution &；模块21 隔夜全球市场传导与事件影响评估模型（Overnight Global Market Con；模块22 产业链传导与供应链动量模型（Supply Chain Momentum & Industr；模块26 3秒级逆势资金流识别模块；模块30 多维度资金流体制识别模型（Multi-Dimensional Flow Regime Id；模块31 协同交易行为检测模型（Coordinated Trading Detection Mode；模块33 IC加权多因子涨停板潜力评分模型（IC-Weighted Multi-Factor Lim；模块34 异质参与者互动模型（Heterogeneous Agent Interaction Mod；模块35 开盘竞价微结构分析模型（Opening Auction Microstructure An；模块39 多因子选股评分模型（Multi-Factor Stock Selection Scorin；模块45 分时微结构分析与大小盘风格检测模型（Intraday Microstructure & S；模块50 北向资金流向与Smart Money信号模型（Northbound Capital Flo；模块51 波动率压缩与突破模型（Volatility Compression & Breakout；模块52 跨资产订单流网络与亏钱效应扩散模型（Cross-Asset Order Flow Netw；模块52 汇总：缺失模块与建议归属层映射（更新版）；模块53 衍生品到期日效应与波动率日历模型（Derivatives Expiration Effec；模块55 A股日历效应与关键节点量化模型（A-Share Calendar Effect & Key；模块58 统一技术图形识别引擎（Unified Technical Pattern Recognit；模块58 附录：已有架构覆盖的功能（不重复列出）；模块58 附录二：已剔除模块说明（架构文档完全覆盖）；模块17 多维度底部确认与右侧入场模型（Multi-Dimensional Bottom Confi；模块29 次日上涨概率统一门槛模块；模块44 量化模式匹配与执行策略库（Quantitative Pattern Matching &；模块49 财报季事件驱动与PEAD模型（Earnings Season Event-Driven &；模块27 主力假动作与筹码派发识别模块；模块54 信息不对称期与操纵行为检测模型（Information Asymmetry Period；模块23 量能体制自适应策略模型（Volume Regime Adaptive Strategy M；模块25 板块轮动与主线切换量化模型（Sector Rotation & Theme Switchi；模块32 市场风格体制识别模型（Market Style Regime Identification；模块41 事件链推理与因果图模型（Event Chain Reasoning & Causal Gr；模块28 利好落地变利空（预期透支）模块；模块13 隔夜收益预测与开仓期望值模型（Overnight Return Prediction &；模块56 量能×体制×风格三维策略矩阵模型（Volume×Regime×Style 3D Strat；模块57 多因子叠加择时模型（Multi-Factor Overlay Timing Model）
 
 **锚点（环节↔模块双向关联）**：
 
@@ -1776,7 +1794,7 @@ L2-D知识图谱层：模块21隔夜全球市场传导与事件影响评估模�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：多策略产出多信号后需融合为单一决策信号，避免冲突信号导致执行混乱；②消费：多策略信号(来自SEL-02-J子阶段流水线) + 策略历史表现(IC/IR/胜率) + 策略相关性矩阵；③参数：v0.1升级加权模型：IC加权 + 策略相关性惩罚 + 表现衰减自适应权重 + 投票阈值(>=2/3策略同向才出信号)；④数据流：多策略信号→投票→加权融合→单一决策信号(方向/强度/置信度/参与策略数)；⑤代码映射：待开发（planned，D_SIGNAL域）；⑥降级：投票不达阈值→输出中性信号(不触发买入)；加权模型失效→等权回退。
+①触发：多策略产出多信号后需融合为单一决策信号，避免冲突信号导致执行混乱；②消费：多策略信号(来自SEL-02-J子阶段流水线) + 策略历史表现(IC/IR/胜率) + 策略相关性矩阵；③参数：v0.1升级加权模型：IC加权 + 策略相关性惩罚 + 表现衰减自适应权重 + 投票阈值(>=2/3策略同向才出信号)；④数据流：多策略信号→投票→加权融合→单一决策信号(方向/强度/置信度/参与策略数)；⑤代码映射：待开发（planned，D_SIGNAL域）；⑥降级：投票不达阈值→输出中性信号(不触发买入)；加权模型失效→等权回退。；📌 概念覆盖清单（草稿H3逐字登记）：模块48 动态信号权重模型（Dynamic Signal Weighting via Bayesia
 
 **锚点（环节↔模块双向关联）**：
 

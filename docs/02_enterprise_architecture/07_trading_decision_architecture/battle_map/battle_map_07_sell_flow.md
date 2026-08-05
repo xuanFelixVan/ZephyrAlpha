@@ -295,7 +295,7 @@ BM-SELL-04 止盈止损族的子环节（depth=1）。止损策略族：固定�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：评分输出<止损阈值/逻辑止损信号触发；②消费：卖出评分(BM-SELL-03)+ATR波动率(BM-SEL-02)+密度PDF分位数(BM-SEL-13)+主力出货信号(BM-SEL-05)；③参数：止损位PDF 5%分位数、ATR倍数、固定/波动率/密度/移动模式(proposed)；④数据流：评分+波动率+PDF→止损位计算+逻辑止损检测→止损信号→BM-SELL-04汇总→融合仲裁；⑤代码：MOD-SELL-005 止损(planned)；⑥降级：ATR/PDF缺失→退化为固定止损。
+①触发：评分输出<止损阈值/逻辑止损信号触发；②消费：卖出评分(BM-SELL-03)+ATR波动率(BM-SEL-02)+密度PDF分位数(BM-SEL-13)+主力出货信号(BM-SEL-05)；③参数：止损位PDF 5%分位数、ATR倍数、固定/波动率/密度/移动模式(proposed)；④数据流：评分+波动率+PDF→止损位计算+逻辑止损检测→止损信号→BM-SELL-04汇总→融合仲裁；⑤代码：MOD-SELL-005 止损(planned)；⑥降级：ATR/PDF缺失→退化为固定止损。；📌 概念覆盖清单（草稿H3逐字登记）：模块43 ATR动态止损与Bayesian参数优化模型（ATR Dynamic Stop-Loss；ATR动态止损与Bayesian参数优化模型（ATR Dynamic Stop-Loss & Bay
 
 **锚点（环节↔模块双向关联）**：
 

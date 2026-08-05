@@ -89,6 +89,7 @@ L4 层。C-004 自适应风控，作为订单拦截器：C-005 生成预案→MT
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：仓位指令就绪；②消费：BM-POS-01 仓位指令 + 多环节状态；③参数：risk_threshold=自适应；④数据流：仓位指令→C-004 审批拦截→审批后订单→BM-EXE-04；⑤代码：C-004 L4 层；⑥降级：C-004 不可用→硬编码仓位上限10%。
+📌 概念覆盖清单（草稿H3逐字登记）：§9.1 C-004 自适应风控三层体系（→A4风险架构）；§5.1 风控规则变更审批流；§5.3 风控审计；§7.2 事中在线适应；§15.6 ARA自适应风险架构原则
 
 
 **锚点（环节↔模块双向关联）**：
@@ -128,6 +129,7 @@ Fail-Closed：合规规则引擎不可用→C-004默认拒绝所有订单→C-00
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：风控审批通过(BM-EXE-01)；②消费：BM-EXE-01 审批后订单 + 市场状态(涨跌停)+持仓/撤单率/参与率实时累计；③参数：报单停留时间锁≥50μs、参与率≤5%、撤单率≤15%、Wash Trade检测、Spoofing/Layering检测、report_confirmed前置；④数据流：审批后订单→Pre-Trade合规主链6项顺序检查+操纵防护→合规通过订单→BM-EXE-05；⑤代码：MOD-EX-024 pre_execution_checker(planned)+MOD-EX-007 execution_risk_gate(planned) / 草图§9 L4层+A6§Pre-Trade；⑥降级：合规引擎不可用→Fail-Closed拒所有新订单(C-004默认拒绝)。
+📌 概念覆盖清单（草稿H3逐字登记）：日内量能结构与订单流分析模型（Intraday Volume Structure & Order F；§11.2.1 因子元数据（Metadata）；§17.6 D-COMPLIANCE 合规监管域缺失模块
 
 
 **锚点（环节↔模块双向关联）**：
@@ -211,6 +213,7 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：拆单方案就绪(BM-EXE-05)；②消费：BM-EXE-05 子订单序列；③参数：order_algo=自适应、miniQMT下单速率10笔/秒、同标的间隔≥500ms；④数据流：子订单→C-002 下单(miniQMT通道)→交易指令+成交回报+PnL→BM-EXE-06；⑤代码：C-002 L4 层 / MOD-XS-002 broker_adapter；⑥降级：C-002 失败→下单零重试(幂等Key HB-07)+告警。
+📌 概念覆盖清单（草稿H3逐字登记）：§9.3 风控与执行的交互规则；旅程1：盘前准备 → 集合竞价 → 盘中执行（交易时段主流程）；交易日时间激活视图；§29.C 交易与执行增强；§30.3 核心交易链域缺失模块；§1.6 交易对手风险
 
 
 **锚点（环节↔模块双向关联）**：
@@ -316,6 +319,7 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：成交回报到达；②消费：成交回报(BM-EXE-06)+决策时刻价格(BM-BUY-04/BM-SELL-02)+VWAP/TWAP/开盘价/收盘价(L0)+C-042策略容量(L3)+C-046历史TCA数据(本环节)；③参数：IS成本分解(时机+冲击+滑点+佣金)、Pre/At/Post三阶段、执行基准VWAP/TWAP/开盘/收盘、参与率<15%、执行进度偏差阈值(proposed)；④数据流：成交回报+决策时刻价格→IS成本分解+三阶段TCA+基准对比→执行质量评分+成本归因→反馈到BM-EXE-05拆单算法+BM-REC-02复盘；⑤代码：MOD-L07-001 default_tca_engine(stable)；⑥降级：TCA引擎未就绪→仅记录成交不分析(复盘缺执行质量维度)。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.36 因果强化学习 Causal RL（v6.0新增）
 
 
 **锚点（环节↔模块双向关联）**：
@@ -323,7 +327,7 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L07-001 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-001 | primary | stable | stable |
+| depgraph | MOD-EX_SOR_EXT-001 | primary | stable | generated |
 | depgraph | MOD-EX_SOR_EXT-002 | primary | stable | generated |
 | depgraph | MOD-EX_SOR_EXT-003 | primary | stable | generated |
 | depgraph | MOD-EX-012 | supplement | planned | planned |

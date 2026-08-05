@@ -191,6 +191,7 @@ BT-04 core/matching_logic.py 是 A股约束（T+1/万三/5元/1bp滑点）。
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：研究员提交策略/自动调度(BM-BT-07)；②消费：BM-RES-01 特征(PIT)+策略代码；③参数：向量化vs事件驱动、市价/限价/滑点/Tick级5档撮合、A股T+1/万三/5元/1bp滑点；④数据流：策略+历史数据→撮合引擎→成交记录→BacktestResult→BM-BT-02；⑤代码：BT-01~BT-04（stable, production）；⑥降级：事件驱动引擎未就绪→仅向量化回测(精度低)。
+📌 概念覆盖清单（草稿H3逐字登记）：§12.1 C-003 自动回测与仿真
 
 
 **锚点（环节↔模块双向关联）**：
@@ -226,6 +227,7 @@ BT-06 core/data_handler.py 接多源数据（D_DATA MiniQMT Provider Tick+5档 +
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：BM-BT-01 引擎启动；②消费：D-DATA MiniQMT Provider + ClickHouse c1_market；③参数：持仓/现金/PnL/净值曲线计算、多源数据切换；④数据流：多源数据→data_handler→portfolio→BacktestResult；⑤代码：BT-05/06（stable, production）；⑥降级：Tick数据缺失→降级日线回测(精度低)。
+📌 概念覆盖清单（草稿H3逐字登记）：§30.4 ML与数据工程域缺失模块；4.1 数据源质量评分；5.1 接入优先级；5.2 接入时间线
 
 
 **锚点（环节↔模块双向关联）**：
@@ -262,6 +264,7 @@ BT-09 implementations/event_driven_engine.py 是事件驱动回测（Tick级，�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：BM-BT-01 回测完成；②消费：BacktestResult 净值曲线+成交记录；③参数：Sharpe/Sortino/MaxDD/IC/IR/胜率、Tick回放秒级/30秒/5秒；④数据流：BacktestResult→metrics计算+Tick回放→绩效报告→BM-BT-05过拟合检测；⑤代码：BT-07/08/09（stable, production）；⑥降级：Tick回放未就绪→仅日线指标(无秒级验证)。
+📌 概念覆盖清单（草稿H3逐字登记）：§7.2 事件驱动的因果推演流程；1.2 miniQMT 3秒Tick数据
 
 
 **锚点（环节↔模块双向关联）**：
@@ -297,6 +300,7 @@ BT-10 core/pit_manager.py 是 PIT铁律管理器（三公理+AS OF JOIN+Embargo�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：BM-BT-01 数据接入时；②消费：BM-RES-01 特征存储(PIT)；③参数：PIT三公理、AS OF JOIN、Embargo期；④数据流：特征请求→PIT校验→AS OF JOIN→当时已知值→回测引擎；⑤代码：BT-10 pit_manager（stable, production）；⑥降级：PIT管理器未就绪→回测不可信(硬阻断,禁止上线)。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.37 LLM自评估与交叉验证（v6.0新增）；§17.10 D-KNOWLEDGE 知识域缺失模块
 
 
 **锚点（环节↔模块双向关联）**：
@@ -332,6 +336,7 @@ BT-11 core/overfitting_detector.py 提供过拟合检测（三维度+三层：SI
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：BM-BT-03 绩效产出后；②消费：BacktestResult+样本内外对比；③参数：三维度(样本内外/参数敏感性/多重比较)+三层(统计/经济/稳健)；④数据流：BacktestResult→过拟合检测→OverfittingDetected事件→BM-BT-07决策门控；⑤代码：BT-11 overfitting_detector（stable, production）；⑥降级：过拟合检测未就绪→人工review(无自动门禁,风险高)。
+📌 概念覆盖清单（草稿H3逐字登记）：§12.4 C-033 过拟合系统性防护；§29.14 自动策略发现 (Automated Strategy Discovery)；§29.30 A股扩散模型数据增强：金融风洞/GBM-Diffusion/InterDiff（v5.；开盘竞价微结构分析模型（Opening Auction Microstructure Analysi；统一技术图形识别引擎（Unified Technical Pattern Recognition E；§11.2 特征注册表（Feature Registry）；§11.2.4 服务状态（Status）；§17.1 D-DATA 数据域缺失模块；§17.2 D-DATA-ENG 数据工程域缺失模块；§17.3 D-ALT-DATA 另类数据域缺失模块；§17.7 D-SIMULATION 仿真域缺失模块；§17.15 D-REPORTING 报告域缺失模块；§17.17 D-INFRA-RUNTIME 运行时基础设施域缺失模块；§17.19 D-INTEGRATION 集成域缺失模块；§17.22 D-AUT-PERM 自治保护域缺失模块；买入后即时验证与快速纠错模型（Post-Entry Instant Validation & Qui；信息不对称期与操纵行为检测模型（Information Asymmetry Period & Man；§15.2 保障缺口(Guarantee Gap)管理
 
 
 **锚点（环节↔模块双向关联）**：
@@ -405,6 +410,7 @@ BT-15 io/decisiongraph_adapter.py 把 BacktestResult→decisiongraph L5决策节
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：BM-BT-05/06 检测通过；②消费：过拟合检测+WFO结果+参数稳定性；③参数：IS→WFA→OOS三阶段不可跳级、参数稳定性区域、BacktestRunArtifact持久化；④数据流：检测结果→决策门控→BacktestPassed事件→BM-SIM-01仿真/D-ML-SERVE影子验证；⑤代码：BT-13/14/15/16（stable, production）；⑥降级：决策门控未就绪→人工审批(无自动门禁,风险高)。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.F 基础设施扩展与远期储备（v5.1+v6.0）；§29.34 xLSTM扩展长短期记忆网络（v6.0新增）；四十六、决策树与强化学习交易决策架构（Decision Tree & RL Trading Deci
 
 
 **锚点（环节↔模块双向关联）**：
@@ -720,7 +726,7 @@ v2.0 备忘模块，P2优先级，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-020 | primary | stable | stable |
+| depgraph | MOD-BT-020 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -1840,7 +1846,7 @@ S5试运行验证层。回测通过后进入影子运行(shadow)→小仓位实�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-BT-07 回测验证通过后、策略全量上线前；②消费：回测通过策略 + 实盘环境配置 + BM-BT-07-I 分层验证门控(V3+V4)结果；③参数：试运行流水线、影子运行(shadow)、小仓位实盘验证、输出契约、灰度切换门禁；④数据流：回测通过→影子运行→小仓位实盘验证→门禁评估→全量上线 / 回退迭代；⑤代码映射：待开发（planned，D_BACKTEST/D_SIMULATION 域）；⑥降级：试运行失败→回退 BM-BT-07 继续回测迭代（不上线）。
+①触发：BM-BT-07 回测验证通过后、策略全量上线前；②消费：回测通过策略 + 实盘环境配置 + BM-BT-07-I 分层验证门控(V3+V4)结果；③参数：试运行流水线、影子运行(shadow)、小仓位实盘验证、输出契约、灰度切换门禁；④数据流：回测通过→影子运行→小仓位实盘验证→门禁评估→全量上线 / 回退迭代；⑤代码映射：待开发（planned，D_BACKTEST/D_SIMULATION 域）；⑥降级：试运行失败→回退 BM-BT-07 继续回测迭代（不上线）。；📌 概念覆盖清单（草稿H3逐字登记）：§3.2 双模运行机制；§29.1 多进程隔离与运行时架构（→A9运维架构）
 
 **锚点（环节↔模块双向关联）**：
 

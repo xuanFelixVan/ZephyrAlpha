@@ -117,6 +117,7 @@ C-029 ML模型工厂扩展能力（§29）：模型注册与实验管理（§29.
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘后定时/研究员手动/漂移触发(BM-MT-05)；②消费：BM-RES-01 特征存储(PIT)+BM-RES-02 实验追踪；③参数：PyTorch→ONNX、seed管理、config快照、S4 DSL代码生成、AST沙箱、硬件门禁=RTX3090/RTX4090 24GB（Kronos-mini/base <1GB显存可跑；Chronos/MOMENT/Moirai 等 large TSFM 需云端API或GPU≥40GB，🔒门禁）；④数据流：特征(PIT)→训练→验证→ONNX模型→BM-MT-02晋升→D-ML-SERVE；GPU显存调度预算：盘中33%-42%(8-10GB/24GB)、盘后33%-50%、盘前因子全量≥40%、CUDA计算核心盘前/回测≥60%、任何时段<90%硬上限（低于下限=闲置检测线不阻断）、模型推理延迟<100ms；⑤代码：MT-01 TrainingPipeline（stable, 已有ABC）；⑥降级：训练失败→回退上一版模型+告警(不阻塞推理)。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.19 金融时序数据增强 (Financial Time Series Data Augmen；§2.2 与交易决策流水线的关系定位；§8.1 试运行流水线
 
 
 **锚点（环节↔模块双向关联）**：
@@ -182,7 +183,8 @@ MOD-ML-002 ai_operator 对应设计文档§9.2：Generator(GLM-5.1)生成代码�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-MT-01 训练前/研究员配置新模块需求；②消费：ModuleRequirementSpec+交易流水线架构文档；③参数：Generator/Critic/Judge模型、AST沙箱白名单+复杂度+语义三层、DSL 6类算子、进化轮数上限5；④数据流：需求→LLM生成→Critic审查→反馈收敛→AST沙箱→人工审核→注册Module Registry；⑤代码：MOD-ML-002 ai_operator（planned）；⑥降级：AI生成未就绪→人工编写代码（效率低）。
+①触发：BM-MT-01 训练前/研究员配置新模块需求；②消费：ModuleRequirementSpec+交易流水线架构文档；③参数：Generator/Critic/Judge模型、AST沙箱白名单+复杂度+语义三层、DSL 6类算子、进化轮数上限5；④数据流：需求→LLM生成→Critic审查→反馈收敛→AST沙箱→人工审核→注册Module Registry；⑤代码：MOD-ML-002 ai_operator（planned）；🎯对标：QuantaAlpha 轨迹级进化/Hubble DSL+AST沙箱/ProFiT 进化式代码重写（见battle_map_12 外部对标清单）；⑥降级：AI生成未就绪→人工编写代码（效率低）。
+📌 概念覆盖清单（草稿H3逐字登记）：§7.2 LLM辅助代码生成（v4.0升级：DSL约束+AST沙箱+三重语义一致性+进化式代码生成+
 
 
 **锚点（环节↔模块双向关联）**：
@@ -252,6 +254,7 @@ DSR/CPCV v2/White's Reality/Probabilistic BT）。是模型上线的"裁判"，�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：BM-MT-01 训练完成；②消费：新模型+现役Champion模型+回测指标；③参数：A/B实验、Champion-Challenger、DSR/CPCV v2/White's Reality/Probabilistic BT、统计显著性阈值、4级决策门控动作枚举=APPROVE/REDUCE/REJECT/FLATTEN（学习系统S5）、PurgeGap验证、TrialResult契约；④数据流：新模型→A/B对比→统计验证→晋升/留观→D-ML-SERVE影子验证；⑤代码：MT-02 ExperimentTracker（stable, 已有）；⑥降级：统计验证未就绪→人工review决定晋升(无自动门禁)。
+📌 概念覆盖清单（草稿H3逐字登记）：§8.2 输出契约
 
 
 **锚点（环节↔模块双向关联）**：
@@ -355,6 +358,7 @@ MT-03 AutoMLEngine 提供自动模型选择+超参优化+因子挖掘（Optuna�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：BM-MT-01 训练前/研究员配置；②消费：BM-RES-01 特征+搜索空间定义；③参数：Optuna贝叶斯优化、早停、Qlib因子挖掘、FactorMAD辩论精炼、QuantEvolve质量-多样性；④数据流：搜索空间→贝叶斯优化→试验→早停→最佳超参→BM-MT-01训练；⑤代码：MT-03 AutoMLEngine（planned）；⑥降级：AutoML未就绪→人工网格搜索(效率低)。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.18 Causal ML 深度补充；§15.1 有界自治(Bounded Autonomy)
 
 
 **锚点（环节↔模块双向关联）**：
@@ -388,7 +392,8 @@ MT-04 FeatureDiscovery 提供因子发现+因果发现+特征工程（因果发�
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-MT-01 训练中/研究员触发；②消费：BM-RES-01 特征+BM-RES-03 假设；③参数：PC/GES/LiNGAM因果发现、特征交叉、FactorMAD辩论精炼、三重语义一致性；④数据流：特征→因果发现→新因子→语义一致性校验→D-FACTOR入池；⑤代码：MT-04 FeatureDiscovery（planned）；⑥降级：因果发现未就绪→纯统计因子挖掘(无因果保证)。
+①触发：BM-MT-01 训练中/研究员触发；②消费：BM-RES-01 特征+BM-RES-03 假设；③参数：PC/GES/LiNGAM因果发现、特征交叉、FactorMAD辩论精炼、三重语义一致性；④数据流：特征→因果发现→新因子→语义一致性校验→D-FACTOR入池；🎯对标：CausalStock/Rebellion Research 因果发现（见battle_map_12 对标清单）；⑤代码：MT-04 FeatureDiscovery（planned）；⑥降级：因果发现未就绪→纯统计因子挖掘(无因果保证)。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.E 统计推断与因果增强（v3.6+v5.1+v6.0）；§30.7 跨域交叉点与因果链缺失
 
 
 **锚点（环节↔模块双向关联）**：
@@ -424,6 +429,7 @@ MT-05 DriftAdapter 提供概念漂移检测+自适应重训练+元学习（DDM/E
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：盘中漂移检测信号/定时；②消费：实时预测误差+特征分布；③参数：DDM/EDDM/ADWIN检测阈值、MAML快速适应、在线EWC防遗忘、Voyager技能库；④数据流：预测误差→漂移检测→重训练触发→MAML适应→EWC防遗忘→BM-MT-01训练；⑤代码：MT-05 DriftAdapter（planned）；⑥降级：漂移检测未就绪→定时重训练(无自适应)。
+📌 概念覆盖清单（草稿H3逐字登记）：§29.5 特征漂移与概念漂移检测；§29.35 持续学习抗遗忘框架（v6.0新增）
 
 
 **锚点（环节↔模块双向关联）**：
@@ -472,7 +478,7 @@ CAND-HARVEST-0922 对应设计文档§10.1 维度7：在线EWC防遗忘（ProAda
 
 **机制说明**：
 
-S6元学习与自我进化层。RSI架构四维度(检索/存储/推理/索引)+技能库(可复用技能)+在线EWC(防遗忘)+轻量Agent化(自主探索)。让模型学会学习。
+S6元学习与自我进化层。RSI架构四维度(检索/存储/推理/索引)+技能库(可复用技能)+在线EWC(防遗忘)+轻量Agent化(自主探索)。让模型学会学习。🎯对标：FactorMiner 经验记忆/ProFiT·QuantEvolve 进化式元学习（见battle_map_12 对标清单）。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
@@ -487,7 +493,7 @@ S6元学习与自我进化层。RSI架构四维度(检索/存储/推理/索引)+
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：BM-MT-04 因子发现产出新策略 / BM-MT-05 漂移重训触发后，需跨任务积累经验加速学习；②消费：历史训练轨迹 + 策略表现 + BM-MT-02 实验追踪数据 + 技能库；③参数：RSI架构4维度(技能/记忆/推理/迁移) + 技能库 + 在线EWC(Elastic Weight Consolidation) + 轻量Agent化 + 学习效果反馈闭环；④数据流：训练轨迹→技能抽象→技能库积累→新任务迁移加速→反馈闭环优化元学习策略；⑤代码映射：待开发（planned，D_ML_TRAIN 域）；⑥降级：元学习失效→回退 BM-MT-01 标准训练流水线（按任务独立训练）。
+①触发：BM-MT-04 因子发现产出新策略 / BM-MT-05 漂移重训触发后，需跨任务积累经验加速学习；②消费：历史训练轨迹 + 策略表现 + BM-MT-02 实验追踪数据 + 技能库；③参数：RSI架构4维度(技能/记忆/推理/迁移) + 技能库 + 在线EWC(Elastic Weight Consolidation) + 轻量Agent化 + 学习效果反馈闭环；④数据流：训练轨迹→技能抽象→技能库积累→新任务迁移加速→反馈闭环优化元学习策略；⑤代码映射：待开发（planned，D_ML_TRAIN 域）；⑥降级：元学习失效→回退 BM-MT-01 标准训练流水线（按任务独立训练）。；📌 概念覆盖清单（草稿H3逐字登记）：§9.1 元学习维度（v4.0升级：RSI架构4维度+技能库+在线EWC+轻量Agent化）
 
 **锚点（环节↔模块双向关联）**：
 

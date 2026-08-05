@@ -260,6 +260,7 @@ Kelly仓位与原优化仓位取较小值(防御性原则: Kelly只减不增)。
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：买入信号到达/再平衡触发；②消费：买入信号+得分(BM-BUY-04)+风险配额MRC(BM-POS-01风险预算层)+密度PDF偏度/峰度/VaR/CVaR(BM-SEL-13)+流动性评分(BM-EXE-01)；③参数：Kelly=0.5×f*(半Kelly)、半Kelly硬上限、偏度调整系数、峰度惩罚系数、前瞻VaR阈值、正偏加仓≤10%、协方差矩阵估计=收缩估计/因子模型/Copula-GARCH(持仓≤50只)+相关性体制监控(PCA主成分+滚动PSI监测)+尾部相关性压力折扣+核心-卫星仓位管理模型(Core-Satellite，核心仓Kelly+Risk Parity风险平价/卫星仓ATR止损)(proposed)；④数据流：信号+风险配额+密度PDF→Kelly求解→半Kelly截断→风险配额约束→分布调整(只减不增)→标级仓位→跨策略硬限制→风控；⑤代码：MOD-POS-001 position_sizing_engine(planned)+MOD-POS-011 协方差估计器(planned)；⑥降级：Kelly引擎未就绪→降级为固定比例仓位(按市场状态查表§20.3)。
+📌 概念覆盖清单（草稿H3逐字登记）：模块24 核心-卫星仓位管理模型（Core-Satellite Position Managemen
 
 
 **锚点（环节↔模块双向关联）**：
@@ -386,6 +387,7 @@ PositionStateFeedback作为D-SELL-DECISION的输入，实现仓位状态→卖�
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：卖出决策到达/买入后即时验证窗口/仓位状态变更；②消费：卖出决策(BM-SELL-02 CTR-SELL-001)+仓位状态(BM-POS-01/03)+买入价+分时均线+ATR(D-MKT_DATA)；③参数：盈利放宽阈值、亏损收紧阈值、5min跌破1%放量→观察、15min破分时均线→减半、30min反向2ATR→止损(implemented)；④数据流：卖出决策+仓位状态→盈亏状态判定+即时验证→PositionStateFeedback→D-SELL-DECISION(卖出阈值动态调整)+状态机(BM-POS-03)；⑤代码：MOD-POS-016 sell_position_link(stable)；⑥降级：双向链路未就绪→卖出阈值固定不随盈亏调整(可能过早止盈或过晚止损)。
+📌 概念覆盖清单（草稿H3逐字登记）：§8.1 L0→L6 全链路规格
 
 
 **锚点（环节↔模块双向关联）**：
@@ -540,6 +542,7 @@ D-POSITION §1.3 POS-09 Position Audit Logger。
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：60秒级，30→30只；②消费：策略A/B/C(L3)+C-034/036主力合力(L2B)+C-021状态否决(L2C)；③参数：策略权重A30%/B25%/C20%(proposed)；④数据流：事件筛选→多策略YES/NO+主力+合力+状态否决→30只；⑤代码：缺失态-未实现（草图§13 L5）；⑥降级：未就绪→单策略决定。
+📌 概念覆盖清单（草稿H3逐字登记）：§2.3 iFind QPS分配策略（C-022/C-044协同）；§17.25 低相关域声明
 
 
 **锚点（环节↔模块双向关联）**：
@@ -573,6 +576,7 @@ D-POSITION §1.3 POS-09 Position Audit Logger。
 **指标文案（翻译真源 indicators_zh）**：
 
 ①触发：60秒级，30→N≤10只；②消费：候选标的+得分(L2A)+仓位上限(L2C)+C-042容量(L3)+C-045拥挤(L4)+密度PDF(L2A)；③参数：行业偏离±10%/叠加态±15%/绝对30%、corr<0.7、半Kelly硬上限(proposed)；④数据流：投票输出→优化求解→N只下单清单→买入流；⑤代码：MOD-PF-002 组合优化器（部分建设）；⑥降级：未就绪→等权配置。
+📌 概念覆盖清单（草稿H3逐字登记）：§10.1 C-007 十五个优化维度
 
 
 **锚点（环节↔模块双向关联）**：
@@ -859,7 +863,7 @@ BM-SEL-21 组合优化的子环节。量化策略集是所有已上线量化策�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L05-001 | primary | production | stable |
+| depgraph | MOD-L05-001 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
