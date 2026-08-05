@@ -90,11 +90,11 @@ flowchart TD
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_DATA
     D_DATA_GOV["数据治理<br/>数据治理，负责数据标准、元数据管理和数据生命周期<br/>治理<br/>Data Governance<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_DATA_GOV
+    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
+    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
     D_SHARED["共享服务<br/>共享服务，负责跨域共享的工具、协议和基础服务<br/>Shared Services<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_SHARED
-    D_TRADING["交易运营<br/>交易运营，负责交易生命周期管理、订单状态和成交处<br/>理<br/>Trading Operations<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
-    src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
     D_INTELLIGENCE["上下文管理<br/>上下文管理，负责 AI<br/>上下文窗口管理、记忆检索和上下文压缩<br/>Context Management<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -109,7 +109,7 @@ flowchart TD
     classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ml_train_implementations_default_inference_engine_py,src_zephyr_ml_train_inference_base_py,src_zephyr_ml_train_trainer_base_py production
     class docs_03_modules_cross_layer_model_profiler_blueprint_md,src_zephyr_ml_train_adversarial_robustness_validator_py,src_zephyr_ml_train_ai_operator,src_zephyr_ml_train_gray_release_shadow_deployer_py,src_zephyr_ml_train_learning_effect_feedback_py,src_zephyr_ml_train_meta_learning_evolution_py,src_zephyr_ml_train_meta_learning_rsi_py,src_zephyr_ml_train_strategy_digital_twin_py,src_zephyr_ml_train_training_dataset_manager,src_zephyr_ml_train_training_pipeline design
-    class D_GOV_ENFORCEMENT,D_DATA,D_ORCHESTRATOR,D_DATA_GOV,D_SHARED,D_TRADING,D_INTELLIGENCE external_prod
+    class D_GOV_ENFORCEMENT,D_DATA,D_ORCHESTRATOR,D_DATA_GOV,D_TRADING,D_SHARED,D_INTELLIGENCE external_prod
 ```
 
 ### 运营态的图（仅 design_maturity=production 的模块和域内依赖）
