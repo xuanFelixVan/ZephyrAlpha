@@ -78,8 +78,8 @@ flowchart TD
     src_zephyr_ml_train_trainer_base_py["模型注册元数据'''<br/>D_ML_TRAIN — ML Training Base<br/>Trainer Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_ai_operator -.->|runtime / runtime| src_zephyr_ml_train_training_pipeline
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_GOV_ENFORCEMENT["规则执行<br/>规则执行，负责治理规则执行和门禁拦截<br/>Rule Enforcement<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
     src_zephyr_ml_train_training_dataset_manager -.->|data / data| D_GOV_ENFORCEMENT
     D_DATA["数据接入层<br/>数据接入层，负责数据源接入、数据集成和数据标准化<br/>Data Access Layer<br/>跨域节点 / cross-domain<br/>(生产态 / production)"]
@@ -123,8 +123,8 @@ flowchart TD
     src_zephyr_ml_train_inference_base_py["模型推理：请求 -> 响应'''<br/>D_ML_TRAIN — ML Inference Base<br/>文件: ml_train/inference_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_trainer_base_py["模型注册元数据'''<br/>D_ML_TRAIN — ML Training Base<br/>Trainer Base<br/>文件: ml_train/trainer_base.py<br/>(生产态 / production)"]
     src_zephyr_ml_train_inference_base_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

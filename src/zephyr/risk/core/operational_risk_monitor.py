@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-19 | docs/03_modules/_domain_risk/operational_risk_monitor/blueprint.md | §
+# [BLUEPRINT] MOD-RK-16 | docs/03_modules/_domain_risk/operational_risk_monitor/blueprint.md | §
 # [MODULE] zephyr.risk.core.operational_risk_monitor
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.risk_manager_base; zephyr.ex_core.audit_journal.auditor
