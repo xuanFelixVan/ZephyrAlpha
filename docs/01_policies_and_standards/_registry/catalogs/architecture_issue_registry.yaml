@@ -12043,7 +12043,54 @@ entries:
     - 'tests/governance/d5_architecture/test_generator_idempotency.py（幂等性回归测试）'
     - 'AGENTS.md §11.1.1（检测条款二元化升级）'
     - 'src/zephyr/governance/audit/reconciliation_registry.py（P0 止血临时 skip，P1 治本后移除）'
-  fix_phase: P1治本进行中（2026-08-05）—— P0 止血已落地，P1-A/B/C 待施工
+  fix_phase: 已完成（2026-08-06）—— P0 止血 skip 已移除，P1 治本（生成器幂等 + 门禁 + 派生产物离库）已落地
   status: decided
   created: '2026-08-05'
-  last_updated: '2026-08-05'
+  last_updated: '2026-08-06'
+
+# --- #ARCH-GOV-BUDGET-001: 治理架构复杂度超阈值，派生产物离库 + 治理预算冻结（2026-08-05）---
+- issue_id: '#ARCH-GOV-BUDGET-001'
+  title: 治理代码(131K行)≈业务代码(75K行)1.75倍倒挂，派生产物入git是reconciler非收敛循环数学根因
+  severity: P1高
+  category: architecture_governance
+  adjudication: |
+    2026-08-05 架构师客观裁定（第一性原理 + 项目实测数据）。
+
+    病根（第一性原理）：
+    reconciler 是反馈控制系统，控制论要求闭环系统有界且负反馈才能稳定。当前架构违反两条：
+    (1) 违反有界——派生产物（73域文档+项目树）被git跟踪，任一输入非确定性（时间戳/排序/换行）
+    → 输出diff → auto-commit → 触发下一次reconciler → 再diff，非收敛是数学必然；
+    (2) 违反负反馈——reconciler的action="commit"自动提交，等同反馈控制器能改设定值=失稳。
+    CONCURRENCY/CASCADE/NONIDEMPOTENT三条裁定补偿这两条违反，但根因未消，补偿永无止境。
+
+    元问题：治理预算无上限。319条issue、54gate、121reconciler、83rules、1234行AGENTS.md，
+    无机制限制治理规模。治理复杂度G约1.75B已超合理G*估计，加治理反而增加总失败率。
+
+    三条不变量（后续所有治理决策必须满足）：
+    - I-GOV-1（派生产物离库）：凡可由DB/源码/YAML经生成器重现的文档，禁止入git。
+    - I-GOV-2（reconciler无写权）：reconciler只允许warn/skip/fix-in-place，禁止action="commit"。
+    - I-GOV-3（治理预算硬上限）：gate<=54 / reconciler<=121 / AGENTS.md<=1234行，新增必须等量退役。
+
+    治本施工（分阶段）：
+    Phase 1：移除P0 stopgap skip + 注册gate-generator-no-realtime-time pre-commit hook + 幂等性验证。
+    Phase 2：.gitignore派生产物路径 + git rm --cached 75文件 + serve_docs.py按需生成 +
+    GATE-NO-COMMIT-DERIVED阻断git add + AGENTS.md 11.1.4派生产物离库原则。
+    Phase 3（待施工）：治理预算冻结gate + AGENTS.md拆分 + issue归档。
+    Phase 4（待施工）：reconciler语义改革，移除action="commit"。
+
+    与现有裁定的关系：不推翻CONCURRENCY/CASCADE/NONIDEMPOTENT，升级NONIDEMPOTENT从
+    "修生成器幂等"到"派生产物离库+reconciler无写权"，治本层级提升一阶。
+  impact:
+    - '.gitignore（派生产物路径忽略规则）'
+    - '.pre-commit-config.yaml（gate-generator-no-realtime-time + gate-no-commit-derived hook注册）'
+    - 'AGENTS.md（检测条款升级 + 派生产物离库原则）'
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（P0 stopgap skip移除）'
+    - 'scripts/serve_docs.py（派生文档按需生成+本地HTTP服务）'
+    - 'scripts/governance/d11_compliance/check_generator_no_realtime_time.py（生成器时间源门禁）'
+    - 'scripts/governance/d11_compliance/check_no_commit_derived.py（派生产物git add阻断门禁）'
+    - 'docs/02_enterprise_architecture/02_domain_architecture_docs/README.md（派生产物离库说明）'
+    - 'docs/_working/2026-08-05_governance_architecture_adjudication.md（裁定文档）'
+  fix_phase: Phase 1+2 已完成（2026-08-06）—— Phase 3/4 待施工
+  status: decided
+  created: '2026-08-05'
+  last_updated: '2026-08-06'
