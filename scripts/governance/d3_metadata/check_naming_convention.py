@@ -934,6 +934,7 @@ _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset({
 })
 _N16_DOCS_SKIP_DIRS_FALLBACK: set[str] = {
     "_DO_NOT_USE_old_tree", "_archive", "_backups", "session_logs",
+    "_working",  # SSoT: trae_028 n16_config.skip_dirs_docs；草稿区豁免（#ARCH-PRECOMMIT-INCREMENTAL, 2026-08-05）
 }
 # 临时沙箱目录前缀回退(目录名前缀匹配,os.walk剪枝);真源在 trae_028.yaml §n16_config.skip_dir_prefixes
 _N16_SKIP_DIR_PREFIXES_FALLBACK: set[str] = {

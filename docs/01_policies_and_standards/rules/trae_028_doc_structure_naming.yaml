@@ -1161,6 +1161,7 @@ sections:
       - _archive
       - _backups
       - session_logs
+      - _working   # 草稿区（施工方案/评估报告/临时笔记），重名不阻断 commit（#ARCH-PRECOMMIT-INCREMENTAL，2026-08-05）
       # 临时沙箱目录前缀(目录名前缀匹配,os.walk剪枝);覆盖 tests/ 与 docs/ 下任意 _tmp_* 子目录
       # 防并发红蓝对抗临时沙箱(如 tests/_tmp_redblue_f2/)与正式文件撞名误触发N-16硬阻断
       skip_dir_prefixes:
