@@ -11,7 +11,7 @@ author: Owner
 
 > **致 Kimi3**：这是一份你需要独立执行 8 小时的完整指令文档。请严格按本文档执行，不要跳过任何铁律与前置检查。本文档自包含——你只需读这一份即可开工。**用户已睡觉，无法实时答疑，遇到歧义按"最保守、最符合铁律"的方式处理并记录在执行日志中。**
 
-> **🔔 2026-08-05 增补（重要，必读）**：上一轮执行后用户验证发现大量遗漏（6 类 v8.2/v8.1/v7.0 特性在 13 个 battle_map MD 里 `count=0`）。根因：旧检查 A（只看 H3 标题）和检查 B（只看 depgraph 已登记模块）都查不到"草稿正文/升级注记/图框里点名了但还没登记成模块的特性"。本次增补四处：①§3.1 颗粒度达标定义 ②§8 第9步新增**检查F（术语级 grep）+ 检查G（源文档章节对齐）** ③§8.1 循环终止条件加"术语级覆盖全净" ④§11.5 已知 6 项遗漏清单 + 对照方法。**检查 F 是最强遗漏探测器，每轮必做，count=0 即遗漏。**
+> **🔔 2026-08-05 增补（重要，必读）**：上一轮执行后用户验证发现大量遗漏（6 类 v8.2/v8.1/v7.0 特性在 13 个 battle_map MD 里 `count=0`）。根因：旧检查 A（只看 H3 标题）和检查 B（只看 depgraph 已登记模块）都查不到"草稿正文/升级注记/图框里点名了但还没登记成模块的特性"。本次增补六处：①§3.1 颗粒度达标定义（5 载体可检索） ②§8 第9步新增**检查F（术语级 grep）+ 检查G（源文档章节对齐）** ③§8.1 循环终止条件加"术语级覆盖全净" ④§11.5 已知 6 项遗漏清单 + 对照方法 ⑤**§5.4 自主新增 flow_stage 授权与流程**（用户明确授权，业务范围内可加新阶段，含横切机制归轨区分） ⑥§12 验收标准加"横切正确归轨"。**检查 F 是最强遗漏探测器，每轮必做，count=0 即遗漏。**
 
 ---
 
@@ -129,6 +129,7 @@ POSTGRES_WRITER_USER=depgraph_writer  POSTGRES_WRITER_PASSWORD=writer_dev_2026
 ### 2.4 step_id 命名约定（必须遵守）
 格式：`BM-<阶段缩写>-<序号>[-<子层标记>][-<孙层标记>][-<曾孙标记>]`
 - 阶段缩写：RES(研究孵化) / MT(模型训练) / BT(回测验证) / SIM(仿真验证) / SEL(选股) / BUY(买入) / SELL(卖出) / POS(仓位) / RC(风控管控) / EXE(执行) / REC(对账)
+- **新增阶段缩写**：若草稿引入现有 11 阶段都装不下的新作战生命周期阶段，Kimi 有权按 §5.4 流程新增 flow_stage + 定义新缩写（2-3 字母），但必须同步改 4 处定义 + 通过对齐验证
 - 例：`BM-BUY-02-A-1-a` = 买入阶段第2环节的A子环节的第1孙环节的a曾孙环节
 - 现有各阶段顶层环节序号已用到：BT-01~07 / BUY-01~07 / EXE-01~06 / MT-01~05 / POS-01~12(跳号) / REC-01~05 / RES-01~07 / RC-01~08 / SELL-01~09(跳号) / SIM-01~07 / SEL-01~23(跳号)。**新增环节续号，先查 max(序号)+1**
 
@@ -185,11 +186,12 @@ POSTGRES_WRITER_USER=depgraph_writer  POSTGRES_WRITER_PASSWORD=writer_dev_2026
 > **上一轮执行的教训**：H3 都过了决策树、双向对齐也干净，但用户仍发现大量遗漏。根因：**"颗粒度"不止于 H3 标题**。草稿正文/图框/升级注记里的具名特性（模型名、方法名、机制名）若没在 battle_map 任何位置出现，就是遗漏，但旧检查 A（只看 H3）和检查 B（只看 depgraph 已登记模块）都查不到它们。
 
 **"全部体现"的判定标准（二元，必须满足）**：
-草稿里每一个**具名特性/模型/方法/机制/参数**，必须在以下 4 个载体之一里**可检索到**（grep 能命中）：
+草稿里每一个**具名特性/模型/方法/机制/参数**，必须在以下 5 个载体之一里**可检索到**（grep 能命中）：
 1. battle_map 某环节的 `step_name` 或 `step_id`（环节嵌套轨）
 2. battle_map 某锚点 `target_id` 指向的 depgraph 模块（锚点轨）
 3. 某环节的 `indicators` JSONB 内容（6件套，indicators 轨）
 4. `module_translation_registry.yaml` §battle_map_steps 的叙事文本（叙事轨）
+5. `module_translation_registry.yaml` §**battle_map_cross_cutting** 段（横切轨，贯穿多阶段的全局机制走此轨，详见 §5.4.3）
 
 **且**：该内容必须经 `generate_battle_map_diagram.py` 渲染后，在 13 个 battle_map MD 文档之一里**有文字显示**（不只存在于 DB，要渲染出来肉眼可见——用户验收时是看 MD 文档，不是查 DB）。
 
@@ -273,6 +275,86 @@ POSTGRES_WRITER_USER=depgraph_writer  POSTGRES_WRITER_PASSWORD=writer_dev_2026
 - 保留在各自架构图域（`docs/02_enterprise_architecture/` 其他位置）
 - 在作战地图执行日志中记录"草稿X的§Y内容因域政策不挂载，留原架构图"
 - 若某作战环节确实调用到这些域的某个模块（如买入环节调用合规闸模块），则在**该环节挂锚点**指向 depgraph 已登记的该模块，模块本身不进作战地图
+
+### 5.4 自主新增 flow_stage 的授权与流程（用户 2026-08-05 明确授权）
+
+> **用户授权原话**："如果他有新的阶段是不是可以自主的增加阶段？不只现在的12个阶段可以自己再增加新的阶段，但是也是要符合我们作战地图里面的这个业务范围内的，不能是治理或者其他范围的，对吧"
+
+**核心原则**：Kimi **有权**在必要时自主新增 flow_stage（第 12、13…个阶段），但必须严格限定在**交易作战业务范围**内。这不是鼓励新增——95% 的情况现有 11 阶段 + indicators 双轨制已足够；只有当草稿明确引入一个**全新的作战生命周期阶段**（现有 11 阶段都装不下）才考虑。
+
+#### 5.4.1 允许新增 vs 禁止新增（二元判定）
+
+| 判定 | ✅ 允许新增 flow_stage | ❌ 禁止新增（铁律5 域禁止） |
+|---|---|---|
+| 内容性质 | 交易作战生命周期的一个**新阶段**（有触发/消费/数据流的作战动作序列） | 治理 / 安全主体 / 运维主体 / Agent 主体 / 合规主体 |
+| 示例 | 草稿 v9.x 引入"盘后模型部署"作为训练与回测之间的独立作战环节 | "治理审计阶段"——治理是元层面，不进作战地图 |
+| 去向 | 新建 flow_stage + 建环节 | 留原架构图域，不挂作战地图，执行日志记录理由 |
+
+**前置门槛（必须先过，否则不许新增）**：
+1. 该内容**无法**归入现有 11 个 flow_stage 之一（逐个比对，记录为何都不合适）
+2. 该内容**无法**归入 indicators 双轨制（不是参数/契约/时序，而是有独立数据流的作战动作）
+3. 该内容**无法**归入横切机制（不是贯穿多阶段的全局机制，而是单一生命周期阶段）
+4. 该内容属交易作战业务范围（非治理/安全主体/运维主体/Agent主体/合规主体）
+
+#### 5.4.2 新增 flow_stage 的完整流程（4 处定义同步改 + 1 处对齐）
+
+flow_stage 是受控词表，在 **4 处**定义。新增时 MUST 同步修改全部 4 处，否则 DB CHECK 阻断写入或生成器不渲染新阶段文档：
+
+**① DB Schema 词表** — `src/zephyr/governance/persistence/battlemap_schema.py` L87-99 `_FLOW_STAGES` 元组
+- 在元组末尾追加新值（如 `"model_deployment",  # 模型部署`）
+- ⚠️ 改 Python 只影响**新建表**；现有表的 CHECK 约束需 ALTER：
+  ```sql
+  -- 先查现有约束名（PostgreSQL 自动命名为 battle_map_steps_flow_stage_check）
+  \d battle_map_steps
+  -- 删旧约束加新约束（VALUES 列表含全部旧值 + 新值，不能只写新值）
+  ALTER TABLE battle_map_steps DROP CONSTRAINT battle_map_steps_flow_stage_check;
+  ALTER TABLE battle_map_steps ADD CONSTRAINT battle_map_steps_flow_stage_check
+    CHECK (flow_stage IN ('research_incubation','model_training','backtest_validation',
+    'simulation_validation','stock_selection','buy_flow','sell_flow','position_management',
+    'risk_control','execution','reconciliation','<新阶段>'));
+  ```
+
+**② 生成器词表** — `scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py`
+- L93-105 `FLOW_STAGES` 列表追加 `("<new_id>", "<中文名>", "<两位编号>")`（编号续 max+1，当前 11 → 新阶段用 "12"）
+- L113-125 `_STEP_PREFIX_TO_STAGE_FILE` 加前缀映射（如 `"BM-MD": "12_model_deployment"`）
+- 新阶段会自动生成第 14 个文档 `battle_map_12_<new_id>.md`（panorama + 11 原阶段 + 1 横切 + 1 新阶段 = 14）
+
+**③ 域白名单** — `docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`
+- 为新 flow_stage 添加允许的 domain 列表（参考 §5.1 格式）
+- 域必须真实存在于 depgraph domain 体系，且属作战业务范围
+
+**④ step_id 缩写** — 本文档 §2.4 + 生成器 `_STEP_PREFIX_TO_STAGE_FILE`
+- 定义新阶段缩写（2-3 字母，如 MD=模型部署），续号规则同现有
+
+**⑤ 对齐验证**：跑 `align_battle_map.py` + `align_panoramas.py` 确认无违例后才能建环节
+
+#### 5.4.3 横切机制（battle_map_12 cross_cutting）≠ 新 flow_stage（重要区分）
+
+> **上一轮遗漏的根因之一**：§11.5 说"挂 battle_map_12 横切视图"但没说**怎么挂**。横切内容走的是**另一条 YAML 轨道**，不是 flow_stage 步骤。
+
+两种"新增"必须严格区分：
+
+| 类型 | 横切机制（cross_cutting） | 新 flow_stage |
+|---|---|---|
+| **是什么** | 贯穿**多个**阶段的全局机制 | 生命周期的一个**新阶段** |
+| **例子** | 四模式开关 / 应急降级路径 / 模型量化 / 因子治理引擎 / 信号生命周期 / 硬边界约束 | （假设）盘后模型部署阶段 |
+| **写入位置** | `module_translation_registry.yaml` §**battle_map_cross_cutting** 段 | `battle_map_steps` 表 + §battle_map_steps YAML |
+| **渲染产物** | battle_map_12 横切视图的 CC_xx 节点 | 新分阶段文档 battle_map_NN_*.md |
+| **写入工具** | 直接编辑该 YAML（规则数据，TRAE-062） | apply_battle_map.py |
+
+**判定规则**：若内容是"贯穿多阶段的全局机制"→ 横切（写 §battle_map_cross_cutting）；若是"生命周期的新阶段"→ 新 flow_stage。
+
+**§11.5 已知遗漏的横切归属**：
+- 模型量化（#4）→ §battle_map_cross_cutting 段新增 CC 项
+- 因子直通层（#5）若判定为贯穿买卖的机制 → 横切；若仅买入用 → buy_flow step
+- 投票优先多Agent（#6）若判定为支撑层横切 → §battle_map_cross_cutting；注意 Agent 主体不挂（铁律5），仅"投票优先机制"作为横切登记
+
+#### 5.4.4 记录义务
+新增 flow_stage 或新增横切机制 MUST 在执行日志记录：
+- 新阶段名 + 编号 + 缩写 + 允许的 domain
+- 为何现有 11 阶段 + indicators + 横切都不足（引用草稿证据：文件+行号）
+- 四图对齐验证结果
+- 若判定为横切而非新阶段，记录判定理由
 
 ---
 
@@ -599,9 +681,9 @@ WHERE (indicators IS NULL OR indicators::text = 'null'
 | 1 | **Kronos-mini/base**（金融K线 TSFM 零样本预测） | L433 + L465-468，L2-A 信号层图框 | v8.2 | `count=0` | L2-A 信号层，登记为 D_ASHARE_SIGNAL/D_SIGNAL 域 planned 模块，挂到 stock_selection 某信号环节，或归 BM-SEL-13 密度预测族 indicators |
 | 2 | **Mamba/SSM 时序增强**（与 Transformer 互补） | L433 + L455-456，L2-A 图框 | v8.1 | `count=0` | 同上，L2-A 时序增强，挂信号环节或归 indicators |
 | 3 | **TCP-RM/DDCI**（自适应保形非平稳覆盖） | L433 + L461-464，L2-A 图框 | v8.1 | `count=0`（共形预测 BM-SEL-14 已有，但自适应变体未体现） | 挂 BM-SEL-14 共形预测环节为子环节/indicators，登记 planned 模块 |
-| 4 | **模型量化** | L433，横切层 | v8.1 | `count=0`（MCP 协议已在 battle_map_09，但模型量化未体现） | 横切机制，挂 battle_map_12 横切视图或归 indicators |
-| 5 | **因子直通层（Model-Free Factor Fusion）** | L575-577（买入）+ L743（卖出） | v7.0 | `count=0` | 买入/卖出决策流，策略未覆盖/冲突时因子加权融合直接产生决策。登记 D_SIGNAL/D_ORCHESTRATOR 域 planned 模块，挂 buy_flow/sell_flow |
-| 6 | **投票优先多Agent架构**（先投票后辩论，投票<100行，§29.39 裁定17） | L433 + L856，支撑层 | v8.2 | `count=0`（battle_map_01 D-RESEARCH-11 有通用多Agent协作，但非此特定投票优先架构） | 支撑层/横切，登记模块或归 indicators；注意 Agent 架构主体不挂作战地图（铁律5），仅在调用点挂锚点 |
+| 4 | **模型量化** | L433，横切层 | v8.1 | `count=0`（MCP 协议已在 battle_map_09，但模型量化未体现） | **横切机制**→ 写 `module_translation_registry.yaml` §battle_map_cross_cutting 段新增 CC 项（§5.4.3），不是 flow_stage step |
+| 5 | **因子直通层（Model-Free Factor Fusion）** | L575-577（买入）+ L743（卖出） | v7.0 | `count=0` | 贯穿买卖两阶段→优先判定为**横切**（§5.4.3，写 §battle_map_cross_cutting）；若仅买入用则挂 buy_flow step。登记 D_SIGNAL/D_ORCHESTRATOR 域 planned 模块 |
+| 6 | **投票优先多Agent架构**（先投票后辩论，投票<100行，§29.39 裁定17） | L433 + L856，支撑层 | v8.2 | `count=0`（battle_map_01 D-RESEARCH-11 有通用多Agent协作，但非此特定投票优先架构） | 支撑层横切→ §battle_map_cross_cutting 段（§5.4.3）；注意 Agent 架构主体不挂作战地图（铁律5），仅"投票优先机制"作为横切登记，在调用点挂锚点 |
 
 ### 已确认覆盖（Kimi 勿重复处理）
 - FactorMAD（v8.2 因子挖掘）✓ battle_map_02
@@ -633,7 +715,7 @@ WHERE (indicators IS NULL OR indicators::text = 'null'
 
 ## 12. 验收标准（用户起床后检查）
 
-1. ✅ 13 个作战地图文档已通过生成器重新生成（git diff 显示自动更新）
+1. ✅ 全部作战地图文档已通过生成器重新生成（当前 13 个：panorama + 11 阶段 + 1 横切；若按 §5.4 新增了 flow_stage 则相应增加，git diff 显示自动更新）
 2. ✅ 作战环节总数 285 → 不超过 450
 3. ✅ `align_battle_map.py` + `align_panoramas.py` 干净（depth=3 告警除外，有说明）
 4. ✅ 映射表（产物1）覆盖 11 草稿所有 H3，每个有处理动作
@@ -648,6 +730,7 @@ WHERE (indicators IS NULL OR indicators::text = 'null'
 13. ✅ **术语级覆盖验证**（检查F，2026-08-05 新增）：草稿所有具名特性（含 🆕v8.x 升级注记 / 图框具名项 / 机制名 / 方法论名，参考 §11.5 清单 + 自行扫描 11 草稿全文）在 13 个 battle_map MD 里 `grep count` 全部 >0 或有明确排除理由记录在执行日志
 14. ✅ **源文档章节对齐验证**（检查G，2026-08-05 新增）：11 草稿每个主要章节（H2 级）都能指认 battle_map 承载文件 + 环节 ID，无整段无承载
 15. ✅ **已知 6 项遗漏已处理**（§11.5）：Kronos / Mamba·SSM / TCP-RM·DDCI / 模型量化 / 因子直通 / 投票优先多Agent 全部 `count>0` 或有排除理由
+16. ✅ **横切机制正确归轨**（§5.4.3，2026-08-05 新增）：贯穿多阶段的全局机制写入 `module_translation_registry.yaml` §battle_map_cross_cutting 段（横切轨），而非误建为 flow_stage step；若按 §5.4 新增了 flow_stage，已同步改 4 处定义 + 对齐验证 + 执行日志记录理由
 
 ---
 
