@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md/.json/.txt（REFERENCE_TEXT_EXTS 单一真源，audit-02 2026-08-02 含 .json/.txt 治本）；正则支持纯数字/两段式/多段式域前缀/末段 S 阶段标记/描述性 ID（无数字后缀，如 #ARCH-DOC-REF-FILE-URL，2026-08-05 治本 gate 正则盲区）；模板占位符过滤（#ARCH-NNN / #ARCH-XXX / #ARCH-CH-NNN 等格式描述文本不误报，2026-08-05）；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断
+# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md/.json/.txt（REFERENCE_TEXT_EXTS 单一真源，audit-02 2026-08-02 含 .json/.txt 治本）；正则支持纯数字/两段式/多段式域前缀/末段 S 阶段标记/描述性 ID（无数字后缀，如 #ARCH-DOC-REF-FILE-URL，2026-08-05 治本 gate 正则盲区）；模板占位符过滤（#ARCH-NNN / #ARCH-XXX / #ARCH-CH-NNN 等格式描述文本不误报，2026-08-05）；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断；L3 新条目数字制检测（ARCH_NON_NUMERIC_WARNING）——registry 在本次 commit 中时，对比工作区与 HEAD 差集中的新增条目末段非数字则 WARNING 不阻断，铁律#7 冻结条款（2026-08-05）
 # [MODIFY-GUARD] gate_id="ARCH-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -51,6 +51,12 @@ architecture_issue_registry.yaml 编号铁律#6 规定："任何 #ARCH-XXX 引�
    模板占位符过滤：``#ARCH-NNN`` / ``#ARCH-XXX`` / ``#ARCH-CH-NNN`` 等格式描述文本
    被 ``_is_template_ref`` 过滤，不误报为未登记引用（2026-08-05）。
 6. **不扫 commit message**：只扫 ``files`` 参数（commit 目标文件）。
+7. **L3 新条目数字制检测（ARCH_NON_NUMERIC_WARNING，不阻断，2026-08-05 铁律#7 冻结条款）**：
+   只在 ``architecture_issue_registry.yaml`` 在本次 commit 中时触发，对比工作区
+   registry 与 HEAD registry 的差集（``registered_nums - head_nums``），新增条目末段
+   非数字（``_is_numeric_suffix`` 返回 False）则 WARNING 不阻断——强制 2026-08-05 起
+   新登记 ARCH 条目使用数字制（末段纯数字）。存量描述性 ID 冻结保留，L3 只检测
+   差集中的新增条目，不对存量条目报 WARNING。
 
 Usage::
 
