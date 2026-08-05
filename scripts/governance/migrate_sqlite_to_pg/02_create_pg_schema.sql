@@ -382,7 +382,10 @@ CREATE TABLE IF NOT EXISTS nodes_metadata (
     module_name_cn           TEXT,
     module_name_en           TEXT,
     description_cn           TEXT,
-    description_en           TEXT
+    description_en           TEXT,
+    acquisition_method       TEXT    -- 获取方式（枚举真源·CHECK 约束）：self_build/opensource/borrow/deprecate
+        CHECK (acquisition_method IS NULL OR acquisition_method IN ('self_build', 'opensource', 'borrow', 'deprecate')),
+    acquisition_source       TEXT    -- 获取来源：开源链接/借鉴组件名/空
 );
 
 -- edges_metadata: 边人工curated元数据（裁定#209 Stage 2 字段角色分离）

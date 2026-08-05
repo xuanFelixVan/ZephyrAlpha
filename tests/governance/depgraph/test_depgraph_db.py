@@ -395,8 +395,10 @@ def test_get_status_and_gate_map():
                 f"{tid} gate_reason: got {result[tid]['gate_reason']!r}, "
                 f"expected {exp['gate_reason']!r}"
             )
-            # 必须恰好含两个 key
-            assert set(result[tid].keys()) == {"build_status", "gate_reason"}
+            # 必须含 build_status + gate_reason 两个核心 key；
+            # 允许返回结果新增元数据字段（如 acquisition_method/acquisition_source），
+            # 故用 issuperset 而非严格相等，避免新增字段时测试误判失败（P0 修复 2026-08-05）
+            assert set(result[tid].keys()).issuperset({"build_status", "gate_reason"})
 
         # ② 空输入 → 空 dict
         assert reader.get_status_and_gate_map([]) == {}

@@ -2403,6 +2403,12 @@ entries:
       depgraph_writer 角色（DML 角色）需传 read_only=False，被 DEPGRAPH-WRITE-PATH gate
       正则检出——加入白名单豁免。gate 正则机制无法区分目标表，legitimate battle_map
       写入器与 depgraph 写入器同类受控入口，故纳入同一白名单。）
+    - 2026-08-05 补登：scripts/governance/migrations/add_acquisition_fields.py
+      （nodes_metadata 表 schema 迁移脚本，为 nodes_metadata 添加 acquisition_method +
+      acquisition_source 两列 + 枚举 CHECK 约束。ALTER TABLE ADD COLUMN/ADD CONSTRAINT
+      是 DDL 操作需表属主权限，nodes_metadata 属主为 zephyr 角色，depgraph_reader/depgraph_writer
+      均无权 ALTER，故脚本传 superuser=True（postgres DDL 角色）。DDL schema 迁移合法入口，
+      对标 02_create_pg_schema.sql 的 fresh-DB DDL，纳入白名单。）
   adjudication: |
     6 项裁定：
     (a) 新增 04_create_roles.sql 创建 depgraph_reader/depgraph_writer 角色
@@ -2425,21 +2431,36 @@ entries:
         本脚本写 battle_map_* 表（非 depgraph nodes/edges 表），但因复用 depgraph_writer
         角色（DML 角色）需传 read_only=False，被 gate 正则检出。gate 正则机制无法区分
         目标表，legitimate battle_map 写入器与 depgraph 写入器同类受控入口，故纳入同一白名单。
+
+    2026-08-05 补登裁定（nodes_metadata schema 迁移写入路径 + acquisition 字段基础设施）：
+    (k) migrations/add_acquisition_fields.py 加入白名单——nodes_metadata 表 schema 迁移
+        脚本，为 acquisition 字段基础设施（方案 A）添加 acquisition_method +
+        acquisition_source 两列 + 枚举 CHECK 约束。ALTER TABLE ADD COLUMN/ADD CONSTRAINT
+        是 DDL 操作需表属主权限，nodes_metadata 属主为 zephyr 角色，depgraph_reader（SELECT）
+        /depgraph_writer（DML）均无权 ALTER，故脚本传 superuser=True（postgres DDL 角色）。
+        DDL schema 迁移合法入口，对标 02_create_pg_schema.sql 的 fresh-DB DDL（同步已更新
+        nodes_metadata 段），纳入白名单。
   impact:
   - scripts/governance/migrate_sqlite_to_pg/04_create_roles.sql（新增角色创建DDL）
-  - src/zephyr/governance/depgraph_schema.py（连接函数添加 read_only 参数）
+  - src/zephyr/governance/depgraph_schema.py（连接函数添加 read_only 参数 + 2026-08-05 nodes_metadata acquisition 列 + CHECK 约束）
   - scripts/governance/_shared/constants.py（wrapper 传参）
   - scripts/governance/generate_project_depgraph.py（read_only=False）
   - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（superuser=True）
-  - src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py（新增gate + 2026-07-17 白名单扩展 + 2026-08-01 白名单扩展 apply_battle_map.py）
+  - src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py（新增gate + 2026-07-17 白名单扩展 + 2026-08-01 白名单扩展 apply_battle_map.py + 2026-08-05 白名单扩展 add_acquisition_fields.py）
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（注册gate）
   - scripts/governance/repair/cleanup_arch_dir_orphans.py（删除，task_bound已完成）
   - scripts/governance/generate_project_path_tree.py（2026-07-17 修复：read_only=False）
   - scripts/governance/apply_battle_map.py（2026-08-01 修复：read_only=False + 白名单扩展）
-  fix_phase: 已完成（6 阶段全部完成 + 验证通过 + 2026-07-17 遗留项治本 + 2026-08-01 battle_map 写入路径治本）
+  - scripts/governance/migrations/add_acquisition_fields.py（2026-08-05 新增：nodes_metadata acquisition 字段迁移，superuser=True DDL）
+  - scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql（2026-08-05 同步：nodes_metadata acquisition 列 + CHECK 约束，fresh-DB DDL 真源）
+  - src/zephyr/governance/persistence/depgraph_reader.py（2026-08-05 修复：get_status_and_gate_map 加 acquisition 列 + JOIN nodes_metadata + ORDER BY n.path 聚合确定性）
+  - scripts/governance/apply_depgraph.py（2026-08-05 修复：update_module_metadata 白名单加 acquisition 字段 + 空串转 None）
+  - scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py（2026-08-05 修复：_ACQUISITION_BADGE 渲染 acquisition 标记）
+  - tests/governance/depgraph/test_depgraph_db.py（2026-08-05 修复：断言改 issuperset 适配新增字段）
+  fix_phase: 已完成（6 阶段全部完成 + 验证通过 + 2026-07-17 遗留项治本 + 2026-08-01 battle_map 写入路径治本 + 2026-08-05 acquisition 字段基础设施治本）
   status: resolved
   created: '2026-07-15'
-  last_updated: '2026-08-01'
+  last_updated: '2026-08-05'
 
 # --- #ARCH-BACKFILL-001: L10 周末补下载层（tick_data 缺失自动检测+补下载） ---
 - issue_id: '#ARCH-BACKFILL-001'

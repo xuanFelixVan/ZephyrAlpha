@@ -190,6 +190,16 @@ _STATE_TO_MATURITY: dict[str, str] = {
     "candidate": "(候选态 / candidate)",
 }
 
+# acquisition_method → emoji 标记（2026-08-05 acquisition 字段基础设施）。
+# 枚举真源 = DDL CHECK 约束（depgraph_schema._DDL_NODES_METADATA），此处仅展示层映射，
+# 不复制枚举列表——非法值不会从 DB 返回（被 CHECK 拒绝），故 .get(am, "") 兜底即可。
+_ACQUISITION_BADGE: dict[str, str] = {
+    "self_build": "[🔴自建]",
+    "opensource": "[🟢开源]",
+    "borrow": "[🟡借鉴]",
+    "deprecate": "[⬜弃用]",
+}
+
 # 本地文档 HTTP server 前缀（模板 §14：HTML 链接必须 http:// 绝对路径，IDE 才会交外部浏览器）。
 _HTML_SERVER_PREFIX = "http://localhost:8765/"
 
@@ -262,28 +272,36 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
     # Gap1：查 depgraph 真实 build_status + gate_reason（替代 step.design_maturity 自报着色）。
     # 治本（2026-08-02，模板 §4.3 要素⑤）：一次查询取回 build_status + gate_reason，
     # 供 ⛔ 受限原因行渲染（design 态 + gate_reason 非空时显示）。
+    # 治本（2026-08-05，acquisition 字段基础设施）：同查询取回 acquisition_method，
+    # 供环节详情渲染 [🔴自建]/[🟢开源]/[🟡借鉴] 标记，避免二次 DB 往返。
     dg_ids = [a["target_id"] for a in anchors if a.get("target_graph") == "depgraph"]
     status_map: dict[str, str] = {}
     gate_map: dict[str, str] = {}
+    acq_map: dict[str, str] = {}
     if dg_ids:
         dr = DepgraphReader()
         try:
             sg_map = dr.get_status_and_gate_map(dg_ids)
         finally:
             dr.close()
-        # 拆成两个 dict：status_map（供 _compute_step_status）+ gate_map（供 ⛔ 行）
+        # 拆成三个 dict：status_map（供 _compute_step_status）+ gate_map（供 ⛔ 行）
+        # + acq_map（供 acquisition 标记）
         for tid, entry in sg_map.items():
             status_map[tid] = entry["build_status"]
             gr = entry.get("gate_reason") or ""
             if gr:
                 gate_map[tid] = gr
+            am = entry.get("acquisition_method") or ""
+            if am:
+                acq_map[tid] = am
 
     # enrich anchors：附加 live build_status
     for a in anchors:
         if a.get("target_graph") == "depgraph":
             a["_live_build_status"] = status_map.get(a["target_id"], "<未命中>")
 
-    # enrich steps：附加有效状态 + 候选标记 + gate_reason（取 primary depgraph 锚点的）
+    # enrich steps：附加有效状态 + 候选标记 + gate_reason + acquisition_method
+    # （gate_reason/acquisition_method 取 primary depgraph 锚点的，首个非空优先）
     for s in steps:
         sid = s["step_id"]
         al = anchors_by_step.get(sid, [])
@@ -291,11 +309,16 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
         s["_has_candidate"] = _has_candidate_anchor(al)
         # gate_reason：取该环节 primary depgraph 锚点的 gate_reason（首个非空）
         s["_gate_reason"] = ""
+        # acquisition_method：取该环节 primary depgraph 锚点的 acquisition_method
+        s["_acquisition_method"] = ""
         for a in al:
             if a.get("target_role") == "primary" and a.get("target_graph") == "depgraph":
                 gr = gate_map.get(a["target_id"], "")
                 if gr:
                     s["_gate_reason"] = gr
+                am = acq_map.get(a["target_id"], "")
+                if am:
+                    s["_acquisition_method"] = am
                 break
 
     # V0.4.0 子环节状态继承：子环节无自身锚点时，继承父环节的状态
@@ -317,11 +340,13 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
                     s["_effective_status"] = "design"
                     s["_has_candidate"] = False
                     s["_gate_reason"] = ""
+                    s["_acquisition_method"] = ""
                 else:
                     # 未声明或声明 production——继承父状态（向后兼容）
                     s["_effective_status"] = parent.get("_effective_status", "design")
                     s["_has_candidate"] = parent.get("_has_candidate", False)
                     s["_gate_reason"] = parent.get("_gate_reason", "")
+                    s["_acquisition_method"] = parent.get("_acquisition_method", "")
 
     return steps, edges, anchors_by_step
 
@@ -837,6 +862,13 @@ def _format_step_detail(step: dict, anchors: list[dict]) -> str:
         f"> **大白话**：{plain}" if plain else "",
         "",
     ]
+    # acquisition 小标记（2026-08-05）：标题下方加 [🔴自建]/[🟢开源]/[🟡借鉴]/[⬜弃用] 标记，
+    # 不展开完整获取方式（避免污染展示层）。完整信息（含 acquisition_source）在 depgraph DB。
+    am = step.get("_acquisition_method") or ""
+    if am:
+        badge = _ACQUISITION_BADGE.get(am, "")
+        if badge:
+            parts += [f"> **获取方式**：{badge}", ""]
     if mechanism:
         parts += ["**机制说明**：", "", mechanism, ""]
     parts += ["**6 件套（结构化，DB indicators JSONB）**：", "", _format_indicators_table(step), ""]

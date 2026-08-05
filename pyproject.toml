@@ -259,6 +259,10 @@ extend-aliases = { "zephyr.shared.paths" = "paths", "zephyr.shared.time_utils" =
     "F823",  # 局部变量引用前赋值 (脚本中合理使用)
     "RUF034",  # 无用的if-else (风格建议)
 ]
+# apply_depgraph.py：46 处一致的 DB 错误处理模式（except Exception: rollback+log），
+# 是 DB 工具脚本的合理顶层兜底，非 silent failure。逐一加 # noqa 噪音大且易冲突，
+# 用 per-file-ignores 收敛（与 tests/** 忽略 B017 同机制）。
+"scripts/governance/apply_depgraph.py" = ["BLE001"]
 
 [tool.mypy]
 python_version = "3.12"

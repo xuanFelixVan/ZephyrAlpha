@@ -4584,11 +4584,15 @@ def mark_entry_point(path: str, entry_flag: bool = True, db_path: str = None) ->
 
 
 # nodes_metadata 表可由 --update-module-metadata 更新的模块级字段白名单
+# acquisition_method/acquisition_source（2026-08-05 acquisition 字段基础设施）：
+# 枚举真源 = DDL CHECK 约束（depgraph_schema._DDL_NODES_METADATA），此处不复制枚举列表。
 _MODULE_METADATA_FIELDS = {
     "module_name_cn",
     "module_name_en",
     "description_cn",
     "description_en",
+    "acquisition_method",
+    "acquisition_source",
 }
 
 
@@ -4616,6 +4620,12 @@ def update_module_metadata(
             file=sys.stderr,
         )
         return False
+
+    # 治本（2026-08-05，acquisition CHECK 约束对齐）：acquisition_method 空串 → None，
+    # 与 DDL CHECK (IS NULL OR IN enum) 对齐——'' 非 NULL 又不在枚举内会被 DB 拒绝。
+    # NULL=未设置，与 reader 的 `or ""` 回退语义等价。枚举真源=DDL CHECK，此处不复制枚举列表。
+    if fields.get("acquisition_method") == "":
+        fields["acquisition_method"] = None
 
     with _db_write_lock(db_path=db_path, task="update_module_metadata"):
         conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)

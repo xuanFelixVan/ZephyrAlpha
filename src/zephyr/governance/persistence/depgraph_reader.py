@@ -149,28 +149,41 @@ class DepgraphReader:
         return result
 
     def get_status_and_gate_map(self, target_ids: list[str]) -> dict[str, dict[str, str]]:
-        """批量查询节点的 build_status + gate_reason（一次查询）。
+        """批量查询节点的 build_status + gate_reason + acquisition（一次查询）。
 
         供 battle_map 生成器渲染 ⛔ 受限原因行用（visualization_view_template
         §4.3 要素⑤）。与 ``get_build_status_map`` 互补：后者只返回 build_status，
-        本方法同时返回 gate_reason，避免生成器为渲染 ⛔ 行发起第二次 DB 往返。
+        本方法同时返回 gate_reason 与 acquisition 字段，避免生成器为渲染 ⛔ 行
+        与 acquisition 标记发起多次 DB 往返。
 
         gate_reason 列由 ``11_add_gate_blocker_fields.sql`` 迁移添加（与
         ``generate_domain_doc.get_domain_nodes`` 使用的同一列）。
+        acquisition_method/acquisition_source 列由 ``add_acquisition_fields.py``
+        迁移添加到 nodes_metadata 表（2026-08-05 acquisition 字段基础设施）。
+
+        聚合确定性（治本 P3-1，2026-08-05）：同一 blueprint_id 可能对应多个 path
+        （如目录节点 + __init__.py + 子模块），各 path 的 acquisition 字段可能不同。
+        SQL 加 ``ORDER BY n.path`` 使路径更具体的节点（如 ``__init__.py``）先处理，
+        聚合时按"首个非空值优先"合并 acquisition，确保结果确定。
 
         :param target_ids: 锚点 target_id 列表（可能是 path 或 blueprint_id，
                            见 ``align_battle_map._valid_ids_depgraph``）
-        :return: ``{target_id: {"build_status": ..., "gate_reason": ...}}``；
+        :return: ``{target_id: {"build_status": ..., "gate_reason": ...,
+                 "acquisition_method": ..., "acquisition_source": ...}}``；
                  未命中的 target_id 不在返回 dict 中（调用方按 '未命中' 处理，
-                 保守视为 planned、gate_reason 为空）。
+                 保守视为 planned、gate_reason 空、acquisition 空）。
         """
         ids = [t for t in target_ids if t]
         if not ids:
             return {}
         conn = self._get_conn()
         cursor = conn.execute(
-            "SELECT path, blueprint_id, build_status, gate_reason FROM nodes "
-            "WHERE path = ANY(%s) OR blueprint_id = ANY(%s)",
+            "SELECT n.path, n.blueprint_id, n.build_status, n.gate_reason, "
+            "nm.acquisition_method, nm.acquisition_source "
+            "FROM nodes n "
+            "LEFT JOIN nodes_metadata nm ON n.path = nm.path "
+            "WHERE n.path = ANY(%s) OR n.blueprint_id = ANY(%s) "
+            "ORDER BY n.path",
             (ids, ids),
         )
         result: dict[str, dict[str, str]] = {}
@@ -178,11 +191,26 @@ class DepgraphReader:
             r = dict(row)
             bs = r.get("build_status") or "planned"
             gr = r.get("gate_reason") or ""
-            entry: dict[str, str] = {"build_status": bs, "gate_reason": gr}
+            am = r.get("acquisition_method") or ""
+            asrc = r.get("acquisition_source") or ""
             for k in ("path", "blueprint_id"):
                 v = r.get(k)
                 if v:
-                    result[str(v)] = entry
+                    key = str(v)
+                    existing = result.get(key)
+                    if existing is None:
+                        result[key] = {
+                            "build_status": bs,
+                            "gate_reason": gr,
+                            "acquisition_method": am,
+                            "acquisition_source": asrc,
+                        }
+                    else:
+                        # 聚合 acquisition（首个非空优先；ORDER BY n.path 确保确定性）
+                        if not existing["acquisition_method"] and am:
+                            existing["acquisition_method"] = am
+                        if not existing["acquisition_source"] and asrc:
+                            existing["acquisition_source"] = asrc
         return result
 
     def get_all_nodes(self) -> list[dict[str, Any]]:
