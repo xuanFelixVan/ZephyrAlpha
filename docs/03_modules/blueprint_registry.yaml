@@ -1,12 +1,12 @@
 registry:
   version: 2.7.10
   created: '2026-05-02'
-  last_updated: '2026-08-03'
-  total_blueprints: 139
+  last_updated: '2026-08-05'
+  total_blueprints: 145
   scope: 03_modules/
-  note: Auto-synced from 139 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 145 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-08-03'
+  generated_at: '2026-08-05'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -809,7 +809,7 @@ blueprints:
   priority: P0
   version: 6.0.2
   generation: 2
-  last_updated: '2026-05-14'
+  last_updated: '2026-08-04'
   file_path: 03_modules/_cross_layer/auto_runtime_core/blueprint.md
 - module_id: MOD-INF-036
   name: model_capability_exam
@@ -1470,6 +1470,19 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_risk/var_calculator/blueprint.md
+- module_id: MOD-RK-06
+  name: alert_generator
+  title: 告警生成器蓝图 — 三级告警分类+多通道路由+去重
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Draft
+  blueprint_level: module
+  priority: P0
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-05'
+  file_path: 03_modules/_domain_risk/alert_generator/blueprint.md
 - module_id: MOD-RK-07
   name: concentration_monitor
   title: 集中度风险监控器蓝图 — HHI+行业暴露+个股集中度
@@ -1483,6 +1496,19 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_risk/concentration_monitor/blueprint.md
+- module_id: MOD-RK-08
+  name: liquidity_monitor
+  title: ''
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Draft
+  blueprint_level: module
+  priority: P2
+  version: ''
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_risk/liquidity_monitor/blueprint.md
 - module_id: MOD-RK-08
   name: risk_budget_allocator
   title: 风险预算分配器蓝图 — ERC + 自定义预算 SLSQP 优化
@@ -1535,6 +1561,32 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_risk/stress_test_engine/blueprint.md
+- module_id: MOD-RK-13
+  name: crowding_monitor
+  title: ''
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Draft
+  blueprint_level: module
+  priority: P2
+  version: ''
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_risk/crowding_monitor/blueprint.md
+- module_id: MOD-RK-14
+  name: ai_agent_monitor
+  title: ''
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Draft
+  blueprint_level: module
+  priority: P2
+  version: ''
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_risk/ai_agent_monitor/blueprint.md
 - module_id: MOD-RK-15
   name: tail_risk_monitor
   title: 尾部风险监控器蓝图 — ES/CVaR + POT模型 + 跳跃检测 + FRTB加价
@@ -1561,6 +1613,32 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_risk/risk_decomposition/blueprint.md
+- module_id: MOD-RK-18
+  name: model_risk_audit
+  title: ''
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Draft
+  blueprint_level: module
+  priority: P2
+  version: ''
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_risk/model_risk_audit/blueprint.md
+- module_id: MOD-RK-19
+  name: operational_risk_monitor
+  title: ''
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Draft
+  blueprint_level: module
+  priority: P2
+  version: ''
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_risk/operational_risk_monitor/blueprint.md
 - module_id: MOD-RK-20
   name: daily_auditor
   title: 日终审计器蓝图 — PnL对账 + 归因偏差 + 合规报告 + 日终检查清单
@@ -1954,23 +2032,23 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_system_master/blueprint.md
 summary:
-  total: 139
+  total: 145
   by_blueprint_status:
     Active: 132
-    Draft: 7
+    Draft: 13
   by_layer:
     L2_domain: 14
     L_BACKTEST: 8
     L1_foundation: 29
     ? ''
-    : 8
+    : 13
     L0_infrastructure: 18
     L3_application: 1
     L01_foundation: 6
     L02_pf_alloc: 3
     L02_portfolio_core: 5
     L03_position: 11
-    L02_risk: 10
+    L02_risk: 11
     L07_reporting: 8
     L03_sell_decision: 7
     L_SIMULATION: 3
@@ -1978,7 +2056,7 @@ summary:
     L03_trading: 3
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress
     已于 2026-07-18 退役）
-  last_recomputed: '2026-08-03'
+  last_recomputed: '2026-08-05'
 changelog:
 - version: 2.7.12
   date: '2026-08-03'

@@ -216,7 +216,7 @@ D-SIMULATION-03 Risk Simulator 提供风控仿真器+VaR模拟+回撤模拟+熔�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-SIM-003 | primary | stable | generated |
+| depgraph | MOD-SIM-003 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 
@@ -330,10 +330,10 @@ D-SIMULATION-12 Simulation Result Analyzer 提供仿真结果分析+统计检验
 |---|---|---|---|---|
 | depgraph | MOD-SIM-012 | primary | stable | stable |
 | candidate | CAND-HARVEST-0794 | supplement | planned | — |
-| depgraph | MOD-SIM-021 | primary | stable | generated |
-| depgraph | MOD-SIM-022 | primary | stable | generated |
-| depgraph | MOD-SIM-023 | primary | stable | generated |
-| depgraph | MOD-SIM-024 | primary | stable | generated |
+| depgraph | MOD-SIM-021 | primary | stable | stable |
+| depgraph | MOD-SIM-022 | primary | stable | stable |
+| depgraph | MOD-SIM-023 | primary | stable | stable |
+| depgraph | MOD-SIM-024 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L13 ｜ **阶段**：simulation_validation
 

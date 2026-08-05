@@ -10,7 +10,7 @@ date: 2026-08-05
 
 > **[可缩放 HTML 版 / Zoomable HTML](http://localhost:8765/docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_zoomable_html/battle_map_08_position_management.html)** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
-> battle_map §position_management 阶段，21 环节（30 锚点）。
+> battle_map §position_management 阶段，24 环节（33 锚点）。
 > 🔑 锚点表 `battle_map_anchors` 是环节↔模块**双向对齐枢纽**（step↔module 唯一查找真源），详见各环节「锚点」小节。
 > 本文档由 `generate_battle_map_diagram.py` 自动生成，禁止手编。
 
@@ -19,10 +19,10 @@ date: 2026-08-05
 | 字段 | 值 | Field | Value |
 |------|------|-------|-------|
 | 阶段 | 仓位（position_management） | Stage | 仓位 |
-| 环节数 | 21 | Steps | 21 |
-| 锚点数（双向对齐） | 30 | Anchors (Bidirectional) | 30 |
+| 环节数 | 24 | Steps | 24 |
+| 锚点数（双向对齐） | 33 | Anchors (Bidirectional) | 33 |
 | 流转边 | 30 | Edges | 30 |
-| 状态分布 | 🟦 运营态（已建）=20 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=20 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟦 运营态（已建）=20 ｜ 🟧 设计态（待施工）=3 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟦 运营态（已建）=20 ｜ 🟧 设计态（待施工）=3 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -36,7 +36,7 @@ date: 2026-08-05
 
 ## 阶段图 / Stage Diagram
 
-> 展示 仓位 阶段全部 21 个环节及流转边，颜色区分五态。
+> 展示 仓位 阶段全部 24 个环节及流转边，颜色区分五态。
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', 'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', 'lineColor': '#666666', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', 'clusterBkg': 'transparent', 'clusterBorder': 'transparent', 'fontSize': '14px'}}}%%
@@ -76,7 +76,10 @@ flowchart TD
         BM_SEL_21 -.->|嵌套| BM_SEL_21_E
         BM_SEL_21 -.->|嵌套| BM_SEL_21_F
     end
-    BM_POS_08 ~~~ BM_POS_09 ~~~ BM_POS_05 ~~~ BM_SEL_20 ~~~ BM_SEL_20_A ~~~ BM_SEL_20_B ~~~ BM_SEL_20_C ~~~ BM_SEL_21_A ~~~ BM_SEL_21_B ~~~ BM_SEL_21_C ~~~ BM_SEL_21_D ~~~ BM_SEL_21_E ~~~ BM_SEL_21_F
+    BM_PLAN_01["【BM-PLAN-01 明日预案引擎】<br/>—<br/>（设计态 / design）"]
+    BM_PLAN_02["【BM-PLAN-02 盘前预案加载】<br/>—<br/>（设计态 / design）"]
+    BM_PLAN_03["【BM-PLAN-03 尾盘决策】<br/>—<br/>（设计态 / design）"]
+    BM_POS_08 ~~~ BM_POS_09 ~~~ BM_POS_05 ~~~ BM_SEL_20 ~~~ BM_SEL_20_A ~~~ BM_SEL_20_B ~~~ BM_SEL_20_C ~~~ BM_SEL_21_A ~~~ BM_SEL_21_B ~~~ BM_SEL_21_C ~~~ BM_SEL_21_D ~~~ BM_SEL_21_E ~~~ BM_SEL_21_F ~~~ BM_PLAN_01 ~~~ BM_PLAN_02 ~~~ BM_PLAN_03
     BM_POS_01 ~~~ BM_POS_03 ~~~ BM_SEL_21
     BM_POS_06 ~~~ BM_POS_07
     BM_SEL_20 -.->|漏斗L5→L6 / data_flow| BM_SEL_21
@@ -101,6 +104,7 @@ classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     class BM_POS_01,BM_POS_06,BM_POS_08,BM_POS_02,BM_POS_03,BM_POS_07,BM_POS_09,BM_POS_04,BM_POS_05,BM_POS_10,BM_SEL_21,BM_SEL_20_A,BM_SEL_20_B,BM_SEL_20_C,BM_SEL_21_A,BM_SEL_21_B,BM_SEL_21_C,BM_SEL_21_D,BM_SEL_21_E,BM_SEL_21_F production
+    class BM_PLAN_01,BM_PLAN_02,BM_PLAN_03 design
     class BM_SEL_20 candidate
 ```
 
@@ -223,7 +227,7 @@ D-POSITION §1.5 POS-17 Calendar Position Constraint + §7.4 A股风险日历→
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-POS-017 | primary | stable | generated |
+| depgraph | MOD-POS-017 | primary | stable | stable |
 | depgraph | MOD-POS-015 | supplement | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
@@ -515,7 +519,7 @@ D-POSITION §1.3 POS-09 Position Audit Logger。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-POS-009 | primary | stable | stable |
-| depgraph | MOD-INF-022 | primary | stable | generated |
+| depgraph | MOD-INF-022 | primary | stable | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：position_management
 
@@ -583,7 +587,7 @@ D-POSITION §1.3 POS-09 Position Audit Logger。
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | planned | generated |
+| depgraph | MOD-PF-002 | primary | planned | stable |
 | candidate | CAND-PFALLOC-001 | supplement | deferred | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：position_management
@@ -708,7 +712,7 @@ BM-SEL-21 组合优化的子环节。MOD-PF-001 策略引擎管策略全生命�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-001 | primary | production | generated |
+| depgraph | MOD-PF-001 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
@@ -739,7 +743,7 @@ BM-SEL-21 组合优化的核心子环节。MOD-PF-002 组合优化器求解 max 
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | production | generated |
+| depgraph | MOD-PF-002 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
@@ -770,7 +774,7 @@ BM-SEL-21 组合优化的子环节。MOD-PF-003 再平衡调度器管理调仓�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-003 | primary | production | generated |
+| depgraph | MOD-PF-003 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
@@ -801,7 +805,7 @@ BM-SEL-21 组合优化的子环节。MOD-PF-006 约束求解器把组合优化�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | production | generated |
+| depgraph | MOD-PF-006 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
 
@@ -863,9 +867,78 @@ BM-SEL-21 组合优化的子环节。量化策略集是所有已上线量化策�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L05-001 | primary | production | stable |
+| depgraph | MOD-L05-001 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：position_management
+
+### BM-PLAN-01 明日预案引擎
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 盘后收盘生成边界(B)/盘前加载(C)/盘中每15分钟重算(A) 阈值: 双层架构三层触发 |
+| ② 消费数据/因子 | 市场状态（来自 BM-SEL-03）<br>次日8态预测（来自 BM-SEL-04）<br>主力行为（来自 BM-SEL-05）<br>情绪周期（来自 BM-SEL-23）<br>卖出侧边界（来自 BM-SELL-07） |
+| ③ 参数 | 箱体上沿=昨日冷静算（范围 价格，代码当前: 待实现，状态: proposed）<br>箱体下沿=昨日冷静算（范围 价格，代码当前: 待实现，状态: proposed）<br>加仓仓位上限=30%（范围 0-100%，代码当前: 待实现，状态: proposed）<br>禁加仓价位=接近上沿（范围 价格，代码当前: 待实现，状态: proposed）<br>必出止盈价位=冲上沿必出（范围 价格，代码当前: 待实现，状态: proposed）<br>突破验证条件=放量站稳10分钟（范围 放量站稳N分钟，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 市场状态+次日预测+主力行为+情绪周期+卖出侧边界 → 处理: 双层架构：B盘后生成TomorrowBoundary→C盘前加载ConstraintState→A盘中推演在边界内执行(毫秒级) → 输出: TomorrowBoundary/ConstraintState/BoundedActionAdvice → 下游: BM-BUY-02 买入融合 + BM-SELL-02 卖出融合 + BM-POS-01 仓位 |
+| ⑤ 代码映射 | MOD-PLAN-001 / 草图§明日预案（BM-PLAN 设计）+ BM-SELL-07 卖出侧边界提供者 |
+| ⑥ 降级/中止 | 边界比聪明更重要（有边界无推演=笨但安全，有推演无边界=聪明但危险） → 边界层(B/C)坏=致命，暂停操作；推演层(A)坏=可接受，机械执行边界 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PLAN-001 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：position_management
+
+### BM-PLAN-02 盘前预案加载
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 次日盘前9:00加载昨晚边界 阈值: 盘前冷启动 |
+| ② 消费数据/因子 | 昨晚TomorrowBoundary（来自 BM-PLAN-01） |
+| ③ 参数 | 竞价匹配窗口=9:20-9:25（范围 9:20-9:25，代码当前: 待实现，状态: proposed）<br>情景分类规则=9种情景（范围 高开/低开/平开 × 真涨/假涨/真跌/假跌/洗盘，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 昨晚TomorrowBoundary → 处理: 盘前加载边界→9:25竞价匹配情景→触发对应分支 → 输出: ConstraintState（约束状态初始化） → 下游: BM-PLAN-01-C 盘中推演 + BM-BUY/SELL/POS 初始指令 |
+| ⑤ 代码映射 | MOD-PLAN-002 / 草图§明日预案（BM-PLAN 设计） |
+| ⑥ 降级/中止 | 无约束状态禁止开始交易 → 盘前加载失败=致命，延迟开盘到加载成功或人工介入 |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PLAN-002 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：position_management
+
+### BM-PLAN-03 尾盘决策
+
+
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 14:45尾盘决策窗口 阈值: A股尾盘黄金决策点 |
+| ② 消费数据/因子 | 今日盘中实时推演（来自 BM-PLAN-01）<br>今日持仓状态（来自 BM-POS-01） |
+| ③ 参数 | 尾盘加仓阈值=70%（范围 明日高开概率>70%，代码当前: 待实现，状态: proposed）<br>尾盘减仓阈值=60%（范围 明日低开概率>60%，代码当前: 待实现，状态: proposed）<br>尾盘决策窗口=14:45-15:00（范围 14:45-15:00，代码当前: 待实现，状态: proposed） |
+| ④ 数据流 | 输入: 盘中推演结果+持仓状态 → 处理: 尾盘15分钟决策：加仓博明天高开/减仓防明天低开/持有不动 → 输出: 尾盘调仓指令 → 下游: BM-BUY-02 买入 + BM-SELL-02 卖出 |
+| ⑤ 代码映射 | MOD-PLAN-003 / 草图§明日预案（BM-PLAN 设计） |
+| ⑥ 降级/中止 | 宁可不操作也不在尾盘盲动 → 尾盘决策未就绪→不操作（保持现有持仓过夜） |
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-PLAN-003 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：position_management
 
 
 [← 返回总指挥图](battle_map_panorama.md)

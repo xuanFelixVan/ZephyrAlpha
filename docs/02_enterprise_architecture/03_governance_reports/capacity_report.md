@@ -132,7 +132,7 @@ ttl: permanent
 | D_PF_CORE | 组合核心 | L2_domain | 16 | 150 | 10.7% | 正常 |
 | D_POSITION | 仓位管理 | L2_domain | 15 | 150 | 10.0% | 正常 |
 | D_REPORTING | 报告 | L1_foundation | 19 | 150 | 12.7% | 正常 |
-| D_RISK | 风控 | L2_domain | 30 | 150 | 20.0% | 正常 |
+| D_RISK | 风控 | L2_domain | 35 | 150 | 23.3% | 正常 |
 | D_SECURITY | 对抗验证 | L1_foundation | 171 | 150 | 114.0% | 超容 |
 | D_SECURITY_LLM | LLM防御 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_SEC_SCRIPTS | 安全治理脚本 | L2_domain | 0 | 150 | 0.0% | 空 |

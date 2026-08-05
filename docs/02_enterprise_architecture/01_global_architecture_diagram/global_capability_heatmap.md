@@ -140,9 +140,9 @@ ttl: permanent
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|
 | C1 | 数据接入 | 4 | 210 | 183 | 27 | 2.50 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 143 | 76 | 67 | 2.20 | 🟡 部分覆盖 / Partial |
-| C3 | 风险控制 | 2 | 41 | 26 | 15 | 2.50 | 🟡 部分覆盖 / Partial |
+| C3 | 风险控制 | 2 | 44 | 29 | 15 | 2.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 56 | 37 | 19 | 2.75 | 🟡 部分覆盖 / Partial |
-| C5 | 执行交易 | 4 | 122 | 86 | 36 | 3.00 | ✅ 完全覆盖 / Full |
+| C5 | 执行交易 | 4 | 125 | 86 | 39 | 3.00 | ✅ 完全覆盖 / Full |
 | C6 | ML平台 | 2 | 20 | 10 | 10 | 2.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 50 | 49 | 1 | 2.50 | 🟡 部分覆盖 / Partial |
 | CC1 | 治理合规 | 14 | 1019 | 989 | 30 | 2.86 | 🟡 部分覆盖 / Partial |
@@ -163,14 +163,14 @@ ttl: permanent
 | D_SIGLEGACY | 信号遗留设计态 | C2 | L2_domain | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_SIGQC | 信号质量控制 | C2 | L2_domain | 2 | 2 | 0 | 0 | L2 🟡 | 🟡 |
 | D_COMPLIANCE | 合规 | C3 | L2_domain | 10 | 2 | 8 | 0 | L2 🟡 | 🟡 |
-| D_RISK | 风控 | C3 | L2_domain | 31 | 24 | 7 | 22 | L3 🟢 | ✅ |
+| D_RISK | 风控 | C3 | L2_domain | 34 | 27 | 7 | 25 | L3 🟢 | ✅ |
 | D_CROSS_ASSET | 跨资产 | C4 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
-| D_PF_ALLOC | 组合分配 | C4 | L2_domain | 9 | 5 | 4 | 4 | L3 🟢 | ✅ |
+| D_PF_ALLOC | 组合分配 | C4 | L2_domain | 10 | 5 | 5 | 4 | L3 🟢 | ✅ |
 | D_PF_CORE | 组合核心 | C4 | L2_domain | 14 | 12 | 2 | 11 | L3 🟢 | ✅ |
-| D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 26 | 13 | 13 | 7 | L3 🟢 | ✅ |
+| D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 25 | 13 | 12 | 7 | L3 🟢 | ✅ |
 | D_EX_CORE | 执行核心 | C5 | L2_domain | 42 | 17 | 25 | 14 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 18 | 17 | 1 | 10 | L3 🟢 | ✅ |
-| D_POSITION | 仓位管理 | C5 | L2_domain | 23 | 13 | 10 | 12 | L3 🟢 | ✅ |
+| D_POSITION | 仓位管理 | C5 | L2_domain | 26 | 13 | 13 | 12 | L3 🟢 | ✅ |
 | D_TRADING | 交易运营 | C5 | L2_domain | 39 | 39 | 0 | 23 | L3 🟢 | ✅ |
 | D_ML_SERVE | 推理 | C6 | L2_domain | 7 | 7 | 0 | 0 | L2 🟡 | 🟡 |
 | D_ML_TRAIN | 训练 | C6 | L2_domain | 13 | 3 | 10 | 0 | L2 🟡 | 🟡 |
@@ -274,13 +274,13 @@ ttl: permanent
 | D_ASHARE_SIGNAL | A股特色信号 | C2 | L3 | 37 |
 | D_FACTOR | 因子 | C2 | L3 | 90 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | C2 | L3 | 14 |
-| D_RISK | 风控 | C3 | L3 | 31 |
-| D_PF_ALLOC | 组合分配 | C4 | L3 | 9 |
+| D_RISK | 风控 | C3 | L3 | 34 |
+| D_PF_ALLOC | 组合分配 | C4 | L3 | 10 |
 | D_PF_CORE | 组合核心 | C4 | L3 | 14 |
-| D_SELL_DECISION | 卖出决策 | C4 | L3 | 26 |
+| D_SELL_DECISION | 卖出决策 | C4 | L3 | 25 |
 | D_EX_CORE | 执行核心 | C5 | L3 | 42 |
 | D_EX_SOR | 执行路由 | C5 | L3 | 18 |
-| D_POSITION | 仓位管理 | C5 | L3 | 23 |
+| D_POSITION | 仓位管理 | C5 | L3 | 26 |
 | D_TRADING | 交易运营 | C5 | L3 | 39 |
 | D_BACKTEST | 回测 | C7 | L3 | 26 |
 | D_SIMULATION | 仿真 | C7 | L3 | 10 |

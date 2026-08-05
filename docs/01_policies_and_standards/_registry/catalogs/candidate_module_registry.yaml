@@ -101737,22 +101737,23 @@ entries:
     trigger_signals: []
     keywords: ['multi', 'strategy', 'voting']
     design_admission:
-      q1_implemented: pending
-      blocking_question: pending
-    status: candidate
+      q1_implemented: rejected
+      blocking_question: q1
+      result: rejected
+    status: rejected
     priority: P2
     created_at: '2026-08-01'
-    last_reviewed_at: '2026-08-01'
+    last_reviewed_at: '2026-08-05'
     source_draft: "06-D-PF-ALLOC-组合分配域.md"
     source_section: 'LL52'
     original_id: "MOD-PF-ALLOC-011"
     estimated_complexity: M
-    tech_notes: "harvest来源:06-D-PF-ALLOC-组合分配域.md; 类型=模块; likely_status=likely_implemented; depgraph该域节点数=5; 命中build_status=operational(generated,planned,stable); 该域运营态path命中关键词, 疑已实现;"
-    tags: ['harvest', 'likely_implemented', '模块']
-    alternatives: ''
+    tech_notes: "rejected 2026-08-05: 多策略并发架构选型 Model A（独立账本+firm风险聚合），跨策略投票层被否决。A 的自然叠加已等价实现多策略共识→大仓位（S1给5%+S2给5%=10%），无需投票权重 meta-参数。投票权重需回测/调参/衰减监控=技术债。D 的跨策略冲突仲裁 O(N²) 乃至 O(2^N)，A 是 O(N)。参见 design_memo_001_multi_strategy_concurrency.md §3.2"
+    tags: ['harvest', 'likely_implemented', '模块', 'rejected']
+    alternatives: "Model A 自然叠加（design_memo_001 §2.3）——多策略选到同一只票时仓位自然叠加，等价于永远稳定的等权 risk-budget 优化器"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
-    last_review_outcome: 'harvest待评估（likely_implemented）'
+    last_review_outcome: 'rejected（Model A 自然叠加替代，2026-08-05）'
   - id: CAND-HARVEST-3226
     name: "共振融合 Resonance Fusion"
     aliases: [MOD-PF-ALLOC-012]

@@ -40,7 +40,7 @@ from zephyr.risk.core.alert_generator import (  # noqa: E402
 )
 from zephyr.risk.risk_manager_base import RiskCheckResult, RiskReport  # noqa: E402
 
-NOW = datetime(2026, 8, 5, 10, 0, tzinfo=UTC)
+NOW = datetime.now(UTC)
 
 
 # ── Mock 数据工厂 ─────────────────────────────────────────────────────

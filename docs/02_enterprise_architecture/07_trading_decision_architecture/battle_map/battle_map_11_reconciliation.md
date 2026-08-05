@@ -22,7 +22,7 @@ date: 2026-08-05
 | 环节数 | 18 | Steps | 18 |
 | 锚点数（双向对齐） | 33 | Anchors (Bidirectional) | 33 |
 | 流转边 | 18 | Edges | 18 |
-| 状态分布 | 🟦 运营态（已建）=17 ｜ 🟧 设计态（待施工）=1 | State Distribution | 🟦 运营态（已建）=17 ｜ 🟧 设计态（待施工）=1 |
+| 状态分布 | 🟦 运营态（已建）=16 ｜ 🟧 设计态（待施工）=2 | State Distribution | 🟦 运营态（已建）=16 ｜ 🟧 设计态（待施工）=2 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -71,7 +71,7 @@ flowchart TD
         BM_REC_03_A["【BM-REC-03-A 因子层反馈】<br/>看因子还灵不灵——IC衰减了就换因子，算半衰期，保证<br/>因子池新鲜。<br/>（生产态 / production）<br/>【Factor-Layer Feedback】"]
         BM_REC_03_B["【BM-REC-03-B 信号层反馈】<br/>看信号准不准——准确率持续下降就退役信号，避免用失<br/>效信号下单。<br/>（生产态 / production）<br/>【Signal-Layer Feedback】"]
         BM_REC_03_C["【BM-REC-03-C 模型层反馈】<br/>看模型飘没飘——检测到漂移就重训练，防止模型用旧数<br/>据预测新市场。<br/>（生产态 / production）<br/>【Model-Layer Feedback】"]
-        BM_REC_03_D["【BM-REC-03-D 元级迭代与二阶优化】<br/>二阶优化——不仅优化策略本身，还优化优化策略的方法<br/>，元级迭代实现自进化。<br/>（生产态 / production）<br/>【Meta-Level Iteration &amp; Second-Order<br/>Optimization】"]
+        BM_REC_03_D["⛔ 治理文档域，设计已就绪，等待开发排期<br/>【BM-REC-03-D 元级迭代与二阶优化】<br/>二阶优化——不仅优化策略本身，还优化优化策略的方法<br/>，元级迭代实现自进化。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Meta-Level Iteration &amp; Second-Order<br/>Optimization】"]
         BM_REC_03 -.->|嵌套| BM_REC_03_A
         BM_REC_03 -.->|嵌套| BM_REC_03_B
         BM_REC_03 -.->|嵌套| BM_REC_03_C
@@ -101,8 +101,8 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_01_C,BM_REC_02_E,BM_REC_02_F,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A,BM_REC_03_B,BM_REC_03_C,BM_REC_03_D production
-    class BM_REC_02_B design
+    class BM_REC_01,BM_REC_02,BM_REC_03,BM_REC_04,BM_REC_05,BM_REC_01_A,BM_REC_01_B,BM_REC_01_C,BM_REC_02_E,BM_REC_02_F,BM_REC_02_A,BM_REC_02_C,BM_REC_02_D,BM_REC_03_A,BM_REC_03_B,BM_REC_03_C production
+    class BM_REC_02_B,BM_REC_03_D design
 ```
 
 ## 环节详情
@@ -139,8 +139,8 @@ L5/运营层。C-017 交易运营五子能力：①保证金管理(D-TRADING-04 
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-003 | primary | planned | generated |
-| depgraph | MOD-RPT-027 | supplement | planned | generated |
+| depgraph | MOD-TRADING-003 | primary | planned | stable |
+| depgraph | MOD-RPT-027 | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -173,7 +173,7 @@ L5 层。C-010 报告复盘：把运营数据加工成复盘报告，作为闭�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-026 | primary | planned | generated |
+| depgraph | MOD-RPT-026 | primary | planned | stable |
 | depgraph | MOD-RPT-015 | supplement | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
@@ -216,7 +216,7 @@ Alpha衰减独立监控（策略级alpha衰减检测→自动降权/下线/通�
 | depgraph | MOD-GOVERNANCE | primary | planned | generated |
 | depgraph | MOD-GOV_GATE_CACHE | primary | planned | generated |
 | depgraph | MOD-INF-024 | primary | planned | generated |
-| depgraph | MOD-GATE_ENGINE | primary | stable | generated |
+| depgraph | MOD-GATE_ENGINE | primary | stable | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -252,7 +252,7 @@ L5/运营层。C-017●核心子能力①保证金管理(D-TRADING-04)。融资�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-003 | supplement | planned | generated |
+| depgraph | MOD-TRADING-003 | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -288,7 +288,7 @@ L5/运营层。C-018●核心多账户多策略(D-TRADING-05)。按AUM分仓/独
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-003 | supplement | planned | generated |
+| depgraph | MOD-TRADING-003 | supplement | planned | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -323,7 +323,7 @@ BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-003 | primary | production | generated |
+| depgraph | MOD-TRADING-003 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -358,7 +358,7 @@ BM-REC-01 交易运营清算的子环节（depth=1）。C-017●核心子能力�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-004 | primary | production | generated |
+| depgraph | MOD-TRADING-004 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -393,7 +393,7 @@ BM-REC-01 交易运营清算的子环节（depth=1）。MOD-TRADING-002 pnl_calc
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-TRADING-002 | primary | — | generated |
+| depgraph | MOD-TRADING-002 | primary | — | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -428,7 +428,7 @@ BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-008 risk_report_engine
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-008 | primary | — | generated |
+| depgraph | MOD-RPT-008 | primary | — | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -463,7 +463,7 @@ BM-REC-02 报告复盘的子环节（depth=1）。MOD-RPT-006 regulatory_report_
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-006 | primary | — | generated |
+| depgraph | MOD-RPT-006 | primary | — | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -569,8 +569,8 @@ MOD-RPT-026 ashare_performance_audit.py(stable)+MOD-RPT-027 ashare_trade_record_
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-026 | primary | production | generated |
-| depgraph | MOD-RPT-027 | supplement | production | generated |
+| depgraph | MOD-RPT-026 | primary | production | stable |
+| depgraph | MOD-RPT-027 | supplement | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -605,9 +605,9 @@ BM-REC-02 报告复盘的子环节（depth=1）。D-REPORTING-03 Report Publishe
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RPT-003 | primary | production | generated |
-| depgraph | MOD-RPT-013 | primary | stable | generated |
-| depgraph | MOD-RPT-017 | primary | stable | generated |
+| depgraph | MOD-RPT-003 | primary | production | stable |
+| depgraph | MOD-RPT-013 | primary | stable | stable |
+| depgraph | MOD-RPT-017 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -679,7 +679,7 @@ L1~L4+L3.5多层架构未完整实现(当前仅单层因子质量反馈)。
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-FEEDBACK_LOOP | primary | — | stable |
+| depgraph | MOD-FEEDBACK_LOOP | primary | — | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -714,7 +714,7 @@ BM-REC-03 闭环优化反馈的子环节（depth=1）。C-007闭环优化反馈�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-FEEDBACK_LOOP | primary | — | stable |
+| depgraph | MOD-FEEDBACK_LOOP | primary | — | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
@@ -745,9 +745,9 @@ C-041元级迭代(二阶优化)。不仅优化策略(一阶)，还优化优化�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-GATE_ENGINE | primary | — | generated |
+| depgraph | MOD-GATE_ENGINE | primary | — | planned |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：reconciliation
 
 
 [← 返回总指挥图](battle_map_panorama.md)

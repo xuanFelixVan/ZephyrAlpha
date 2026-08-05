@@ -589,7 +589,7 @@ v2.0 备忘模块，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-017 | primary | stable | generated |
+| depgraph | MOD-BT-017 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -726,7 +726,7 @@ v2.0 备忘模块，P2优先级，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-020 | primary | stable | generated |
+| depgraph | MOD-BT-020 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -761,7 +761,7 @@ v2.0 备忘模块，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-022 | primary | stable | generated |
+| depgraph | MOD-BT-022 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -932,7 +932,7 @@ v2.0 备忘模块，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-026 | primary | stable | generated |
+| depgraph | MOD-BT-026 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -1205,7 +1205,7 @@ v2.0 备忘模块，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-018 | primary | stable | generated |
+| depgraph | MOD-BT-018 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -1240,7 +1240,7 @@ v2.0 备忘模块，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-021 | primary | stable | generated |
+| depgraph | MOD-BT-021 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -1683,7 +1683,7 @@ v2.0 备忘模块，P2优先级，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-019 | primary | stable | generated |
+| depgraph | MOD-BT-019 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -1718,7 +1718,7 @@ v2.0 备忘模块，P2优先级，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-023 | primary | stable | generated |
+| depgraph | MOD-BT-023 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 
@@ -1753,7 +1753,7 @@ v2.0 备忘模块，P2优先级，按需开发。
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-BT-001 | primary | planned | generated |
-| depgraph | MOD-BT-024 | primary | stable | generated |
+| depgraph | MOD-BT-024 | primary | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L5 ｜ **阶段**：backtest_validation
 

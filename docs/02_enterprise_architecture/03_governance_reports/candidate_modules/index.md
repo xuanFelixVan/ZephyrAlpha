@@ -31,15 +31,15 @@ ttl: permanent
 | 状态 / Status | 数量 / Count | 占比 / Ratio |
 |------|:---:|:---:|
 | 延后（deferred） | 12 | 0.2% |
-| 否决（rejected） | 37 | 0.7% |
-| 候选待评（candidate） | 5272 | 99.1% |
+| 否决（rejected） | 38 | 0.7% |
+| 候选待评（candidate） | 5271 | 99.1% |
 
 ### 按一问卡点分布
 
 | 卡点 / Blocking | 数量 / Count | 占比 / Ratio |
 |------|:---:|:---:|
-| q1 已实现/重复 | 19 | 0.4% |
-| 待评估 | 5284 | 99.3% |
+| q1 已实现/重复 | 20 | 0.4% |
+| 待评估 | 5283 | 99.3% |
 | 一问通过 | 18 | 0.3% |
 
 ### 按优先级分布
@@ -98,8 +98,8 @@ ttl: permanent
 | 状态 | 含义 | 数量 |
 |------|------|:---:|
 | deferred（延后） | 一问未过但域活着、功能有价值——等触发信号命中再重新过一问晋升到 depgraph 设计态 | 12 |
-| rejected（否决） | 一问否决或用户推翻，登记仅为防误重新设计 | 37 |
-| candidate（候选待评） | 一问仍在 pending，未拍板 | 5272 |
+| rejected（否决） | 一问否决或用户推翻，登记仅为防误重新设计 | 38 |
+| candidate（候选待评） | 一问仍在 pending，未拍板 | 5271 |
 
 ## 候选模块全景
 
@@ -108,8 +108,8 @@ ttl: permanent
 ```mermaid
 pie title 候选模块状态分布
     "延后（deferred）" : 12
-    "否决（rejected）" : 37
-    "候选待评（candidate）" : 5272
+    "否决（rejected）" : 38
+    "候选待评（candidate）" : 5271
 ```
 
 ### 按一问卡点分布（受限原因 · 颜色=状态，节点含大白话简述）
@@ -218,7 +218,7 @@ flowchart LR
 | likely_status | 含义 | 数量 |
 |------|------|:---:|
 | likely_new | 该域 depgraph 无 path 命中，疑真候选 | 2931 |
-| likely_implemented | 该域**运营态**(stable/generated)path 命中，疑已实现 | 1842 |
+| likely_implemented | 该域**运营态**(stable/generated)path 命中，疑已实现 | 1841 |
 | likely_planned | 该域**设计态**(planned)path 命中，已在 depgraph 设计管道，勿重复登记 | 346 |
 | likely_misplaced | 含 infra 通用词且域错标，已校准到 D_INFRA_RUNTIME | 71 |
 | uncertain | 无法提取关键词（如纯中文能力名），待人工判定 | 93 |

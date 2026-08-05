@@ -177,12 +177,12 @@ miniQMT个人账户不支持券商端VWAP/TWAP算法接口，本系统自行实�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-EX-014 | primary | planned | planned |
-| depgraph | MOD-XS-001 | supplement | stable | generated |
-| depgraph | MOD-XS-004 | supplement | stable | generated |
-| depgraph | MOD-XS-005 | supplement | stable | generated |
-| depgraph | MOD-XS-011 | primary | stable | generated |
+| depgraph | MOD-XS-001 | supplement | stable | stable |
+| depgraph | MOD-XS-004 | supplement | stable | stable |
+| depgraph | MOD-XS-005 | supplement | stable | stable |
+| depgraph | MOD-XS-011 | primary | stable | stable |
 | depgraph | MOD-EX_SOR | primary | stable | generated |
-| depgraph | MOD-XS-014 | primary | stable | generated |
+| depgraph | MOD-XS-014 | primary | stable | stable |
 | depgraph | MOD-EX-042 | supplement | planned | planned |
 | depgraph | MOD-EX-060 | supplement | planned | planned |
 | depgraph | MOD-EX-061 | supplement | planned | planned |
@@ -220,18 +220,18 @@ L4 层。C-002 交易执行：下单+成交回报，产出交易指令+成交回
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-XS-002 | primary | planned | generated |
+| depgraph | MOD-XS-002 | primary | planned | stable |
 | depgraph | MOD-EX-030 | supplement | planned | planned |
 | candidate | CAND-HARVEST-0021 | supplement | candidate | — |
 | candidate | CAND-EX-001 | supplement | deferred | — |
 | candidate | CAND-EX-002 | supplement | deferred | — |
-| depgraph | MOD-XS-013 | primary | stable | generated |
-| depgraph | MOD-EX-049 | primary | stable | generated |
+| depgraph | MOD-XS-013 | primary | stable | stable |
+| depgraph | MOD-EX-049 | primary | stable | stable |
 | depgraph | MOD-EX-050 | primary | stable | stable |
 | depgraph | MOD-EX-055 | primary | stable | stable |
-| depgraph | MOD-INF-035 | primary | planned | generated |
+| depgraph | MOD-INF-035 | primary | planned | planned |
 | depgraph | MOD-TRADING-001 | primary | stable | generated |
-| depgraph | MOD-RESOURCE_OPTIMIZATION_ENGINE | supplement | stable | generated |
+| depgraph | MOD-RESOURCE_OPTIMIZATION_ENGINE | supplement | stable | planned |
 | depgraph | MOD-EX-021 | supplement | planned | planned |
 | depgraph | MOD-EX-029 | supplement | planned | planned |
 | depgraph | MOD-EX-031 | supplement | planned | planned |
@@ -282,7 +282,7 @@ Order State Machine(D-EX-CORE-11)：7状态机 PENDING→{SUBMITTED,CANCELLED}/S
 | depgraph | MOD-EX-008 | primary | planned | planned |
 | depgraph | MOD-EX-002 | supplement | stable | stable |
 | depgraph | MOD-EX-057 | supplement | stable | stable |
-| depgraph | MOD-EX-056 | supplement | stable | generated |
+| depgraph | MOD-EX-056 | supplement | stable | stable |
 | depgraph | MOD-EX-001 | primary | stable | stable |
 | depgraph | MOD-EX-003 | primary | stable | generated |
 
@@ -327,9 +327,9 @@ Pre-trade/At-trade/Post-trade三阶段TCA：
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-L07-001 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-001 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-002 | primary | stable | generated |
-| depgraph | MOD-EX_SOR_EXT-003 | primary | stable | generated |
+| depgraph | MOD-EX_SOR_EXT-001 | primary | stable | stable |
+| depgraph | MOD-EX_SOR_EXT-002 | primary | stable | stable |
+| depgraph | MOD-EX_SOR_EXT-003 | primary | stable | stable |
 | depgraph | MOD-EX-012 | supplement | planned | planned |
 | depgraph | MOD-EX-036 | supplement | planned | planned |
 

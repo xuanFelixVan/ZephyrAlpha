@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据域-数据采集管理
 
-> 生成时间: 2026-08-05T04:17:14
+> 生成时间: 2026-08-05T20:31:31
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表
 > 生成器: `generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）
 
@@ -64,14 +64,14 @@ flowchart TD
     JOB757619 -.->|produces / 产出| DS11255
     JOB757620 -.->|produces / 产出| DS11256
     JOB757621 -.->|produces / 产出| DS11257
+    JOB757621 ~~~ JOB757617
     JOB757617 ~~~ JOB757620
-    JOB757620 ~~~ JOB757618
-    JOB757618 ~~~ JOB757621
-    JOB757621 ~~~ JOB757619
+    JOB757620 ~~~ JOB757619
+    JOB757619 ~~~ JOB757618
+    DS11257 ~~~ DS11253
     DS11253 ~~~ DS11256
-    DS11256 ~~~ DS11254
-    DS11254 ~~~ DS11257
-    DS11257 ~~~ DS11255
+    DS11256 ~~~ DS11255
+    DS11255 ~~~ DS11254
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000
@@ -105,14 +105,14 @@ flowchart TD
     JOB757619 -.->|produces / 产出| DS11255
     JOB757620 -.->|produces / 产出| DS11256
     JOB757621 -.->|produces / 产出| DS11257
+    JOB757621 ~~~ JOB757617
     JOB757617 ~~~ JOB757620
-    JOB757620 ~~~ JOB757618
-    JOB757618 ~~~ JOB757621
-    JOB757621 ~~~ JOB757619
+    JOB757620 ~~~ JOB757619
+    JOB757619 ~~~ JOB757618
+    DS11257 ~~~ DS11253
     DS11253 ~~~ DS11256
-    DS11256 ~~~ DS11254
-    DS11254 ~~~ DS11257
-    DS11257 ~~~ DS11255
+    DS11256 ~~~ DS11255
+    DS11255 ~~~ DS11254
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000

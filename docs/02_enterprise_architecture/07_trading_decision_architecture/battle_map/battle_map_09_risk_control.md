@@ -22,7 +22,7 @@ date: 2026-08-05
 | 环节数 | 50 | Steps | 50 |
 | 锚点数（双向对齐） | 66 | Anchors (Bidirectional) | 66 |
 | 流转边 | 10 | Edges | 10 |
-| 状态分布 | 🟦 运营态（已建）=37 ｜ 🟨 候选态（候选池）=9 ｜ 🟧 设计态（待施工）=4 | State Distribution | 🟦 运营态（已建）=37 ｜ 🟨 候选态（候选池）=9 ｜ 🟧 设计态（待施工）=4 |
+| 状态分布 | 🟦 运营态（已建）=35 ｜ 🟨 候选态（候选池）=9 ｜ 🟧 设计态（待施工）=6 | State Distribution | 🟦 运营态（已建）=35 ｜ 🟨 候选态（候选池）=9 ｜ 🟧 设计态（待施工）=6 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -43,6 +43,11 @@ date: 2026-08-05
 %% 风控管控阶段图
 flowchart TD
     BM_RC_09["【BM-RC-09 AI/Agent风险治理】<br/>AI/Agent特有风险治理——模型幻觉/自治越界<br/>/对抗攻击/串谋等AI专属风险。<br/>（生产态 / production）<br/>【AI/Agent Risk Governance】"]
+    subgraph sg_BM_RC_10 ["风险否决权"]
+        BM_RC_10["【BM-RC-10 风险否决权】<br/>风险否决权——风控可在任何阶段否决交易决策，不可绕<br/>过、不可人工覆盖。<br/>（设计态 / design）<br/>【Risk Veto Power】"]
+        BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>否决执行引擎——同步拦截（&lt;50ms）+熔断器模式+Kill<br/>Switch多路径激活+审计追踪。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Veto Execution Engine】"]
+        BM_RC_10 -.->|嵌套| BM_RC_10_A
+    end
     subgraph sg_BM_RC_01 ["风控策略与限额管理"]
         BM_RC_01["【BM-RC-01 风控策略与限额管理】<br/>风控的'宪法'——策略<br/>CRUD+版本管理+9种限额类型+消耗追踪+预警分级+审批<br/>流。<br/>（生产态 / production）<br/>【Risk Policy &amp; Limit Management】"]
         BM_RC_01_A["【BM-RC-01-A 风控策略CRUD与版本管理】<br/>风控规则的增删改查带版本管理——改了规则能追溯历史<br/>版本，出问题能回滚。<br/>（生产态 / production）<br/>【Risk Strategy CRUD &amp; Versioning】"]
@@ -51,11 +56,6 @@ flowchart TD
         BM_RC_01 -.->|嵌套| BM_RC_01_A
         BM_RC_01 -.->|嵌套| BM_RC_01_B
         BM_RC_01 -.->|嵌套| BM_RC_01_C
-    end
-    subgraph sg_BM_RC_10 ["风险否决权"]
-        BM_RC_10["【BM-RC-10 风险否决权】<br/>风险否决权——风控可在任何阶段否决交易决策，不可绕<br/>过、不可人工覆盖。<br/>（设计态 / design）<br/>【Risk Veto Power】"]
-        BM_RC_10_A["【BM-RC-10-A 否决执行引擎】<br/>否决执行引擎——同步拦截（&lt;50ms）+熔断器模式+Kill<br/>Switch多路径激活+审计追踪。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Veto Execution Engine】"]
-        BM_RC_10 -.->|嵌套| BM_RC_10_A
     end
     subgraph sg_BM_RC_11 ["独立风险数据管道"]
         BM_RC_11["【BM-RC-11 独立风险数据管道】<br/>独立风险数据管道——风控用独立数据源，不依赖交易链<br/>路，防止数据污染。<br/>（设计态 / design）<br/>【Independent Risk Data Pipeline】"]
@@ -144,15 +144,15 @@ flowchart TD
         BM_RC_08_A["【BM-RC-08-A 日终PnL对账与合规报告】<br/>日终对账——实际盈亏和系统记录对不上就查原因，同时<br/>生成合规报告留档。<br/>（生产态 / production）<br/>【Daily PnL Reconciliation &amp; Compliance Report】"]
         BM_RC_08_B["【BM-RC-08-B 风险归因分解】<br/>把盈亏拆解到风险因子——今天赚的钱是哪个因子贡献的<br/>、哪个因子拖后腿，归因清楚。<br/>（生产态 / production）<br/>【Risk Attribution Decomposition】"]
         BM_RC_08_C["【BM-RC-08-C 压力测试】<br/>压力测试——模拟极端场景（2015股灾<br/>/2020疫情）下持仓会亏多少，确保扛得住。<br/>（生产态 / production）<br/>【Stress Testing】"]
-        BM_RC_08_D["【BM-RC-08-D 模型风险审计】<br/>审计模型风险——模型有没有过拟合、有没有数据泄漏、<br/>上线后有没有衰减，定期检查。<br/>（生产态 / production）<br/>【Model Risk Audit】"]
-        BM_RC_08_E["【BM-RC-08-E 操作风险审计】<br/>审计操作风险——下单有没有写错代码、权限有没有滥用<br/>、系统有没有故障导致异常交易。<br/>（生产态 / production）<br/>【Operational Risk Audit】"]
+        BM_RC_08_D["⛔ 治理文档域，设计已就绪，等待开发排期<br/>【BM-RC-08-D 模型风险审计】<br/>审计模型风险——模型有没有过拟合、有没有数据泄漏、<br/>上线后有没有衰减，定期检查。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Model Risk Audit】"]
+        BM_RC_08_E["⛔ 漂移检测域，设计已就绪，等待开发排期<br/>【BM-RC-08-E 操作风险审计】<br/>审计操作风险——下单有没有写错代码、权限有没有滥用<br/>、系统有没有故障导致异常交易。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Operational Risk Audit】"]
         BM_RC_08 -.->|嵌套| BM_RC_08_A
         BM_RC_08 -.->|嵌套| BM_RC_08_B
         BM_RC_08 -.->|嵌套| BM_RC_08_C
         BM_RC_08 -.->|嵌套| BM_RC_08_D
         BM_RC_08 -.->|嵌套| BM_RC_08_E
     end
-    BM_RC_09 ~~~ BM_RC_01 ~~~ BM_RC_10 ~~~ BM_RC_01_A ~~~ BM_RC_11 ~~~ BM_RC_01_B ~~~ BM_RC_12 ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
+    BM_RC_09 ~~~ BM_RC_10 ~~~ BM_RC_01 ~~~ BM_RC_11 ~~~ BM_RC_01_A ~~~ BM_RC_01_B ~~~ BM_RC_12 ~~~ BM_RC_01_C ~~~ BM_RC_02_A ~~~ BM_RC_02_B ~~~ BM_RC_02_C ~~~ BM_RC_02_D ~~~ BM_RC_02_E ~~~ BM_RC_03_A ~~~ BM_RC_03_B ~~~ BM_RC_03_C ~~~ BM_RC_04_A ~~~ BM_RC_04_B ~~~ BM_RC_04_C ~~~ BM_RC_04_D ~~~ BM_RC_04_E ~~~ BM_RC_04_F ~~~ BM_RC_05_A ~~~ BM_RC_05_B ~~~ BM_RC_05_C ~~~ BM_RC_06_A ~~~ BM_RC_06_B ~~~ BM_RC_06_C ~~~ BM_RC_06_D ~~~ BM_RC_07_A ~~~ BM_RC_07_B ~~~ BM_RC_07_C ~~~ BM_RC_08_A ~~~ BM_RC_08_B ~~~ BM_RC_08_C ~~~ BM_RC_08_D ~~~ BM_RC_08_E ~~~ BM_RC_10_A ~~~ BM_RC_11_A ~~~ BM_RC_11_B ~~~ BM_RC_12_A ~~~ BM_RC_12_B ~~~ BM_RC_12_C
     BM_RC_01 -->|策略→盘前检查 / data_flow| BM_RC_02
     BM_RC_02 -->|检查→Kill Switch / trigger| BM_RC_03
     BM_RC_03 -->|熔断→盘中监控 / data_flow| BM_RC_04
@@ -165,8 +165,8 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_RC_09,BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C,BM_RC_08_D,BM_RC_08_E production
-    class BM_RC_10,BM_RC_11,BM_RC_04_F,BM_RC_10_A design
+    class BM_RC_09,BM_RC_01,BM_RC_01_A,BM_RC_01_B,BM_RC_01_C,BM_RC_02,BM_RC_02_A,BM_RC_02_B,BM_RC_02_C,BM_RC_02_D,BM_RC_02_E,BM_RC_03,BM_RC_03_A,BM_RC_03_B,BM_RC_03_C,BM_RC_04,BM_RC_04_A,BM_RC_04_B,BM_RC_04_C,BM_RC_04_D,BM_RC_05,BM_RC_05_A,BM_RC_05_B,BM_RC_06,BM_RC_06_A,BM_RC_06_B,BM_RC_06_C,BM_RC_07,BM_RC_07_A,BM_RC_07_B,BM_RC_07_C,BM_RC_08,BM_RC_08_A,BM_RC_08_B,BM_RC_08_C production
+    class BM_RC_10,BM_RC_11,BM_RC_04_F,BM_RC_08_D,BM_RC_08_E,BM_RC_10_A design
     class BM_RC_12,BM_RC_04_E,BM_RC_05_C,BM_RC_06_D,BM_RC_11_A,BM_RC_11_B,BM_RC_12_A,BM_RC_12_B,BM_RC_12_C candidate
 ```
 
@@ -204,6 +204,37 @@ AI/Agent风险治理。模型幻觉(生成虚假信息)→输出校验+置信度
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
+### BM-RC-10 风险否决权 / Risk Veto Power
+
+> **大白话**：风险否决权——风控可在任何阶段否决交易决策，不可绕过、不可人工覆盖。
+
+**机制说明**：
+
+风险否决权。风控在任何阶段(选股/买入/卖出/执行)可否决交易决策。特性：不可绕过(所有订单必经引擎)+不可人工否决(防御性决策自动执行)+Kill Switch基础设施层实现+否决审计追踪。
+
+**6 件套（结构化，DB indicators JSONB）**：
+
+| 要素 | 内容 |
+|---|---|
+| ① 触发条件 | 风控规则触发否决条件/交易请求拦截 |
+| ② 消费数据/因子 | 风控策略+持仓状态+交易请求+BM-RC-01限额配置 |
+| ③ 参数 | 否决规则、否决执行机制、否决与策略逻辑隔离 |
+| ④ 数据流 | 交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch |
+| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
+| ⑥ 降级/中止 | 否决机制失效→硬阻断交易(安全优先) |
+
+**指标文案（翻译真源 indicators_zh）**：
+
+①触发：风控规则触发否决条件/交易请求拦截；②消费：风控策略+持仓状态+交易请求+BM-RC-01限额配置；③参数：否决规则、否决执行机制、否决与策略逻辑隔离；④数据流：交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：否决机制失效→硬阻断交易(安全优先)。；📌 概念覆盖清单（草稿H3逐字登记）：§3.1 否决规则；§3.2 否决执行机制
+
+**锚点（环节↔模块双向关联）**：
+
+| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
+|---|---|---|---|---|
+| depgraph | MOD-RK-24 | primary | planned | planned |
+
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+
 ### BM-RC-01 风控策略与限额管理 / Risk Policy & Limit Management
 
 > **大白话**：风控的"宪法"——策略 CRUD+版本管理+9种限额类型+消耗追踪+预警分级+审批流。
@@ -240,34 +271,34 @@ RK-06 Risk Limit Manager 提供9种限额类型(SINGLE_INSTRUMENT_NOTIONAL/SECTO
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
-### BM-RC-10 风险否决权 / Risk Veto Power
+### BM-RC-11 独立风险数据管道 / Independent Risk Data Pipeline
 
-> **大白话**：风险否决权——风控可在任何阶段否决交易决策，不可绕过、不可人工覆盖。
+> **大白话**：独立风险数据管道——风控用独立数据源，不依赖交易链路，防止数据污染。
 
 **机制说明**：
 
-风险否决权。风控在任何阶段(选股/买入/卖出/执行)可否决交易决策。特性：不可绕过(所有订单必经引擎)+不可人工否决(防御性决策自动执行)+Kill Switch基础设施层实现+否决审计追踪。
+独立风险数据管道。风控使用独立数据源(不依赖交易链路)，防止交易系统数据污染风控决策。数据流：独立源→独立清洗→独立计算→独立报告。
 
 **6 件套（结构化，DB indicators JSONB）**：
 
 | 要素 | 内容 |
 |---|---|
-| ① 触发条件 | 风控规则触发否决条件/交易请求拦截 |
-| ② 消费数据/因子 | 风控策略+持仓状态+交易请求+BM-RC-01限额配置 |
-| ③ 参数 | 否决规则、否决执行机制、否决与策略逻辑隔离 |
-| ④ 数据流 | 交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch |
+| ① 触发条件 | 盘中实时/盘后批量 |
+| ② 消费数据/因子 | 独立风险数据源(不依赖交易数据，防循环依赖) |
+| ③ 参数 | 独立风险数据管道、风险指标计算、数据质量校验 |
+| ④ 数据流 | 独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR |
 | ⑤ 代码映射 | 待开发（planned，D_RISK域） |
-| ⑥ 降级/中止 | 否决机制失效→硬阻断交易(安全优先) |
+| ⑥ 降级/中止 | 数据管道故障→降级缓存指标+告警 |
 
 **指标文案（翻译真源 indicators_zh）**：
 
-①触发：风控规则触发否决条件/交易请求拦截；②消费：风控策略+持仓状态+交易请求+BM-RC-01限额配置；③参数：否决规则、否决执行机制、否决与策略逻辑隔离；④数据流：交易请求→否决规则检查→否决/放行→隔离记录→BM-RC-03 Kill Switch；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：否决机制失效→硬阻断交易(安全优先)。；📌 概念覆盖清单（草稿H3逐字登记）：§3.1 否决规则；§3.2 否决执行机制
+①触发：盘中实时/盘后批量；②消费：独立风险数据源(不依赖交易数据，防循环依赖)；③参数：独立风险数据管道、风险指标计算、数据质量校验；④数据流：独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：数据管道故障→降级缓存指标+告警。；📌 概念覆盖清单（草稿H3逐字登记）：4.2 各数据源关键质量风险
 
 **锚点（环节↔模块双向关联）**：
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-24 | primary | planned | planned |
+| depgraph | MOD-RK-25 | primary | planned | planned |
 
 **有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -301,37 +332,6 @@ C-004三层体系: 预判(事前风险评估)+监控(盘中实时)+熔断(触发
 | depgraph | MOD-L04-001 | primary | production | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
-
-### BM-RC-11 独立风险数据管道 / Independent Risk Data Pipeline
-
-> **大白话**：独立风险数据管道——风控用独立数据源，不依赖交易链路，防止数据污染。
-
-**机制说明**：
-
-独立风险数据管道。风控使用独立数据源(不依赖交易链路)，防止交易系统数据污染风控决策。数据流：独立源→独立清洗→独立计算→独立报告。
-
-**6 件套（结构化，DB indicators JSONB）**：
-
-| 要素 | 内容 |
-|---|---|
-| ① 触发条件 | 盘中实时/盘后批量 |
-| ② 消费数据/因子 | 独立风险数据源(不依赖交易数据，防循环依赖) |
-| ③ 参数 | 独立风险数据管道、风险指标计算、数据质量校验 |
-| ④ 数据流 | 独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR |
-| ⑤ 代码映射 | 待开发（planned，D_RISK域） |
-| ⑥ 降级/中止 | 数据管道故障→降级缓存指标+告警 |
-
-**指标文案（翻译真源 indicators_zh）**：
-
-①触发：盘中实时/盘后批量；②消费：独立风险数据源(不依赖交易数据，防循环依赖)；③参数：独立风险数据管道、风险指标计算、数据质量校验；④数据流：独立数据源→风险指标计算→BM-RC-04实时监控/BM-RC-07 VaR；⑤代码映射：待开发（planned，D_RISK域）；⑥降级：数据管道故障→降级缓存指标+告警。；📌 概念覆盖清单（草稿H3逐字登记）：4.2 各数据源关键质量风险
-
-**锚点（环节↔模块双向关联）**：
-
-| 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
-|---|---|---|---|---|
-| depgraph | MOD-RK-25 | primary | planned | planned |
-
-**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-01-B 九种限额类型与消耗追踪 / Nine Limit Types & Usage Tracking
 
@@ -519,7 +519,7 @@ RK-02 Pre-Trade Checker 提供5步检查链(仓位限额→行业集中度→杠
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-07 | primary | production | generated |
+| depgraph | MOD-RK-07 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -779,7 +779,7 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 |---|---|---|---|---|
 | depgraph | MOD-L04-001 | primary | stable | generated |
 | depgraph | MOD-RK-011 | supplement | stable | generated |
-| depgraph | MOD-RPT-004 | primary | stable | generated |
+| depgraph | MOD-RPT-004 | primary | stable | stable |
 | depgraph | MOD-POS-018 | supplement | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
@@ -811,7 +811,7 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-05 | primary | production | generated |
+| depgraph | MOD-RK-05 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -873,7 +873,7 @@ RK-11 Drawdown Real-Time Tracker 提供最大回撤实时跟踪+峰值谷值+三
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-16 | primary | production | generated |
+| depgraph | MOD-RK-16 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1033,7 +1033,7 @@ RK-09 A-Share Stop-Loss Rule Engine 提供6种A股止损(固定比例-7%/关键�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-09 | primary | production | generated |
+| depgraph | MOD-RK-09 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1131,7 +1131,7 @@ RK-15 Tail Risk Monitor 提供EVT/POT模型+尾部依赖矩阵(Copula)+跳跃检
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-10 | primary | stable | generated |
+| depgraph | MOD-RK-10 | primary | stable | stable |
 | candidate | CAND-HARVEST-0722 | supplement | deferred | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
@@ -1163,7 +1163,7 @@ RK-15 Tail Risk Monitor 提供EVT/POT模型+尾部依赖矩阵(Copula)+跳跃检
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-10 | primary | production | generated |
+| depgraph | MOD-RK-10 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1225,7 +1225,7 @@ EVT/POT模型+Copula尾部依赖+跳跃检测+FRTB加价。承载模块: MOD-RK-
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-10 | primary | production | generated |
+| depgraph | MOD-RK-10 | primary | production | stable |
 | candidate | CAND-HARVEST-0722 | supplement | deferred | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
@@ -1292,8 +1292,8 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-05 | primary | stable | generated |
-| depgraph | MOD-RK-08 | supplement | stable | generated |
+| depgraph | MOD-RK-05 | primary | stable | stable |
+| depgraph | MOD-RK-08 | supplement | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1324,7 +1324,7 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-05 | primary | production | generated |
+| depgraph | MOD-RK-05 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1355,7 +1355,7 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-08 | primary | production | generated |
+| depgraph | MOD-RK-08 | primary | production | stable |
 | depgraph | MOD-POS-011 | supplement | planned | planned |
 | depgraph | MOD-POS-013 | supplement | planned | planned |
 
@@ -1388,8 +1388,8 @@ RK-08 Risk Budget Allocator 提供风险预算分配+优化求解器+风险贡�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-08 | primary | production | generated |
-| depgraph | MOD-RK-16 | supplement | production | generated |
+| depgraph | MOD-RK-08 | primary | production | stable |
+| depgraph | MOD-RK-16 | supplement | production | stable |
 | depgraph | MOD-POS-012 | supplement | planned | planned |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
@@ -1428,7 +1428,7 @@ RK-12 Stress Test Engine 提供历史情景(2008/2015/2020)+假设情景+反向�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-RK-20 | primary | stable | stable |
-| depgraph | MOD-RK-16 | supplement | stable | generated |
+| depgraph | MOD-RK-16 | supplement | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1490,7 +1490,7 @@ Brinson归因+因子贡献+残差+边际风险+成分风险。承载模块: MOD-
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RK-16 | primary | production | generated |
+| depgraph | MOD-RK-16 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L4 ｜ **阶段**：risk_control
 
@@ -1552,10 +1552,10 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-INF-030 | primary | stable | generated |
+| depgraph | MOD-INF-030 | primary | stable | planned |
 | depgraph | MOD-SEC-030 | primary | stable | generated |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-08-E 操作风险审计 / Operational Risk Audit
 
@@ -1584,10 +1584,10 @@ SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+C
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-INF-023 | primary | stable | generated |
-| depgraph | MOD-INF-029 | primary | stable | generated |
+| depgraph | MOD-INF-023 | primary | stable | planned |
+| depgraph | MOD-INF-029 | primary | stable | planned |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L4 ｜ **阶段**：risk_control
 
 ### BM-RC-10-A 否决执行引擎 / Veto Execution Engine
 

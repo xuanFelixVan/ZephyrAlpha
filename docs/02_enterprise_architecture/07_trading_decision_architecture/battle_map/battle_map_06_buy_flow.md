@@ -22,7 +22,7 @@ date: 2026-08-05
 | 环节数 | 25 | Steps | 25 |
 | 锚点数（双向对齐） | 33 | Anchors (Bidirectional) | 33 |
 | 流转边 | 12 | Edges | 12 |
-| 状态分布 | 🟧 设计态（待施工）=14 ｜ 🟦 运营态（已建）=10 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟧 设计态（待施工）=14 ｜ 🟦 运营态（已建）=10 ｜ 🟨 候选态（候选池）=1 |
+| 状态分布 | 🟧 设计态（待施工）=18 ｜ 🟦 运营态（已建）=6 ｜ 🟨 候选态（候选池）=1 | State Distribution | 🟧 设计态（待施工）=18 ｜ 🟦 运营态（已建）=6 ｜ 🟨 候选态（候选池）=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -52,7 +52,7 @@ flowchart TD
     subgraph sg_BM_BUY_02 ["四轨融合"]
         BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Four-Track Fusion （MTF）】"]
         subgraph sg_BM_BUY_02_A ["逻辑驱动轨"]
-            BM_BUY_02_A["【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>（生产态 / production）<br/>【Logic-Driven Track】"]
+            BM_BUY_02_A["⛔ 基础设施运行时域，设计已就绪，等待开发排期<br/>【BM-BUY-02-A 逻辑驱动轨】<br/>四轨融合的第一轨——基于8态预测和策略库算出的自动<br/>买入预案，是默认决策来源。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Logic-Driven Track】"]
             subgraph sg_BM_BUY_02_A_1 ["市场状态预测"]
                 BM_BUY_02_A_1["【BM-BUY-02-A-1 市场状态预测】<br/>预测大盘接下来走哪种状态——用3×3矩阵分9态+2叠加态<br/>+8态走势预测+体制转换检测，给买入决策提供市场环<br/>境判断。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Market State Prediction】"]
                 BM_BUY_02_A_1_a["【BM-BUY-02-A-1-a 3×3矩阵分类】<br/>把大盘分成9种状态——大盘趋势（上涨/震荡<br/>/下跌）×波动率（高/中<br/>/低）=3×3矩阵，每种状态对应不同的买入策略。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【3x3 Matrix Classification】"]
@@ -70,7 +70,7 @@ flowchart TD
         end
         BM_BUY_02_B["【BM-BUY-02-B 数据驱动轨】<br/>四轨融合的第二轨——AI Discovery<br/>实时从数据中发现机会，补充逻辑轨覆盖不到的信号。<br/>（生产态 / production）<br/>【Data-Driven Track （AI Discovery）】"]
         BM_BUY_02_C["【BM-BUY-02-C 人工指令轨】<br/>四轨融合的第三轨——人工下达的买入指令，优先级高于<br/>自动轨（逻辑/数据），低于应急轨。<br/>（生产态 / production）<br/>【Manual Override Track】"]
-        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>（生产态 / production）<br/>【Emergency Protection Track】"]
+        BM_BUY_02_D["【BM-BUY-02-D 应急保命轨】<br/>四轨融合的第四轨——应急保命信号，优先级最高，一旦<br/>触发立即覆盖所有其他轨的决策。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Emergency Protection Track】"]
         BM_BUY_02 -.->|嵌套| BM_BUY_02_A
         BM_BUY_02 -.->|嵌套| BM_BUY_02_B
         BM_BUY_02 -.->|嵌套| BM_BUY_02_C
@@ -79,9 +79,9 @@ flowchart TD
     BM_BUY_03["【BM-BUY-03 决策编排】<br/>把融合后的决策按5条路径（买/卖/做T/人工<br/>/应急）统一出口编排，处理冲突、去重、排时序。<br/>（生产态 / production）<br/>【Decision Orchestration （DO）】"]
     BM_BUY_04["【BM-BUY-04 分批建仓】<br/>不是一次买够，而是分几批买，每批都要重新确认条件<br/>还成立，跌破关键位置就停手。<br/>（设计态 / design）<br/>【Batched Position Building】"]
     BM_BUY_06["【BM-BUY-06 外部指令盯盘】<br/>接收用户从微信/前端发来的买卖调仓指令，解析后走<br/>风控→仓位裁决→置信度分层→执行四级优先级，是人工<br/>干预系统的入口。<br/>（候选态 / candidate）<br/>🟡候选承载<br/>【External Order Monitoring】"]
-    BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>（生产态 / production）<br/>【WeChat Interaction Hub】"]
+    BM_BUY_07["【BM-BUY-07 微信互动中心】<br/>微信机器人双向交互——接收用户买卖指令、自然语言解<br/>析、指令路由、多人通知。微信是外部指令的主要输入<br/>通道，与BM-BUY-06外部指令盯盘联动。<br/>（设计态 / design）<br/>【WeChat Interaction Hub】"]
     subgraph sg_BM_BUY_08 ["交易纪律合规闸"]
-        BM_BUY_08["【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
+        BM_BUY_08["⛔ 治理文档域，设计已就绪，等待开发排期<br/>【BM-BUY-08 交易纪律合规闸】<br/>买入下单前的A股交易纪律合规闸——自动检测四项严禁<br/>（踏空追高/被套补仓/盈利骄傲<br/>/亏损报复），违规即拦截或告警，守住'不追高、不补<br/>仓、不骄傲、不报复'的纪律底线。<br/>（设计态 / design）<br/>🟡候选承载<br/>【Trading Discipline Compliance Gate】"]
         BM_BUY_08_A["【BM-BUY-08-A 四项必做清单自动化检测】<br/>每天盘前/盘中/盘后<br/>/晚间4个时点自动检查四项必做清单做没做完，没做完<br/>就推送提醒，盘中违规直接拦。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Four-Must-Do Checklist Auto-Detection】"]
         BM_BUY_08_B["【BM-BUY-08-B 四项严禁自动化检测】<br/>下单前和盘中实时检测四项严禁行为（追高/补仓<br/>/骄傲/频繁），命中就硬拦不让下单。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Four-Forbidden Auto-Detection】"]
         BM_BUY_08 -.->|嵌套| BM_BUY_08_A
@@ -92,14 +92,14 @@ flowchart TD
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
     BM_BUY_02 -->|统一决策流 / data_flow| BM_BUY_03
     BM_BUY_07 -.->|微信指令→外部指令盯盘 / data_flow| BM_BUY_06
-    BM_BUY_03 -->|编排后决策→纪律合规闸 / trigger| BM_BUY_08
+    BM_BUY_03 -.->|编排后决策→纪律合规闸 / trigger| BM_BUY_08
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_BUY_09,BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_07,BM_BUY_08,BM_BUY_02_A,BM_BUY_02_B,BM_BUY_02_C,BM_BUY_02_D production
-    class BM_BUY_10,BM_BUY_11,BM_BUY_12,BM_BUY_13,BM_BUY_15,BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_02_A_2,BM_BUY_08_A,BM_BUY_08_B design
+    class BM_BUY_09,BM_BUY_01,BM_BUY_02,BM_BUY_03,BM_BUY_02_B,BM_BUY_02_C production
+    class BM_BUY_10,BM_BUY_11,BM_BUY_12,BM_BUY_13,BM_BUY_15,BM_BUY_04,BM_BUY_02_A_1,BM_BUY_02_A_1_a,BM_BUY_02_A_1_b,BM_BUY_02_A_1_c,BM_BUY_02_A_1_d,BM_BUY_07,BM_BUY_08,BM_BUY_02_A,BM_BUY_02_A_2,BM_BUY_02_D,BM_BUY_08_A,BM_BUY_08_B design
     class BM_BUY_06 candidate
 ```
 
@@ -197,8 +197,8 @@ L3 层。C-005 多情景对策，基于次日 8 态预测匹配 7 种价格运�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-002 | primary | planned | generated |
-| depgraph | MOD-L05-001 | supplement | stable | stable |
+| depgraph | MOD-PF-002 | primary | planned | stable |
+| depgraph | MOD-L05-001 | supplement | stable | generated |
 | candidate | CAND-HARVEST-0015 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -357,7 +357,7 @@ L3 层 v8.0。四轨融合器(MTF，Multi-Track Fusion，v8.0可建设项#8)嵌�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-PF-006 | primary | planned | generated |
+| depgraph | MOD-PF-006 | primary | planned | stable |
 | candidate | CAND-HARVEST-0926 | supplement | candidate | — |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
@@ -395,8 +395,8 @@ supplement 锚点；Agent架构主体不挂作战地图，仅在本调用点挂�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | depgraph | MOD-PF-007 | primary | planned | stable |
-| depgraph | MOD-FEEDBACK_LOOP | primary | planned | stable |
-| depgraph | SH-DB-001 | primary | stable | stable |
+| depgraph | MOD-FEEDBACK_LOOP | primary | planned | generated |
+| depgraph | SH-DB-001 | primary | stable | planned |
 | depgraph | MOD-INF-016 | supplement | stable | generated |
 | depgraph | MOD-INF-048 | supplement | planned | planned |
 
@@ -671,9 +671,9 @@ L3/决策层。C-019●核心微信多人互动(D-TRADING-06)。微信机器人�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-INF-039 | supplement | planned | generated |
+| depgraph | MOD-INF-039 | supplement | planned | planned |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：横切 ｜ **阶段**：buy_flow
 
 ### BM-BUY-08 交易纪律合规闸 / Trading Discipline Compliance Gate
 
@@ -707,9 +707,9 @@ L3/决策层。C-019●核心微信多人互动(D-TRADING-06)。微信机器人�
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0169 | primary | candidate | — |
-| depgraph | MOD-INF-033 | primary | stable | generated |
+| depgraph | MOD-INF-033 | primary | stable | planned |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-A 逻辑驱动轨 / Logic-Driven Track
 
@@ -744,9 +744,9 @@ BM-BUY-02 四轨融合的子环节（depth=1）。逻辑驱动轨接收 BM-BUY-0
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-INF-039 | primary | stable | generated |
+| depgraph | MOD-INF-039 | primary | stable | planned |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-02-A-2 因子直通裁决（Model-Free Factor Fusion） / Factor Direct Fusion Adjudication
 
@@ -819,7 +819,7 @@ BM-BUY-02 四轨融合的子环节（depth=1）。数据驱动轨由 AI Discover
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-INF-002 | primary | stable | stable |
+| depgraph | MOD-INF-002 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -856,7 +856,7 @@ BM-BUY-02 四轨融合的子环节（depth=1）。人工指令轨接收交易员
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-FEEDBACK_LOOP | supplement | planned | stable |
+| depgraph | MOD-FEEDBACK_LOOP | supplement | planned | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
 
@@ -893,9 +893,9 @@ BM-BUY-02 四轨融合的子环节（depth=1）。应急保命轨监听风控止
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-INF-039 | supplement | stable | generated |
+| depgraph | MOD-INF-039 | supplement | stable | planned |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
+**有效状态**：🟧 设计态（待施工） ｜ **环节自报**：production ｜ **层**：L3 ｜ **阶段**：buy_flow
 
 ### BM-BUY-08-A 四项必做清单自动化检测 / Four-Must-Do Checklist Auto-Detection
 

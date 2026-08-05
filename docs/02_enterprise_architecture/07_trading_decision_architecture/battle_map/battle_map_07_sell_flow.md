@@ -22,7 +22,7 @@ date: 2026-08-05
 | 环节数 | 14 | Steps | 14 |
 | 锚点数（双向对齐） | 28 | Anchors (Bidirectional) | 28 |
 | 流转边 | 17 | Edges | 17 |
-| 状态分布 | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 | State Distribution | 🟦 运营态（已建）=7 ｜ 🟧 设计态（待施工）=7 |
+| 状态分布 | 🟧 设计态（待施工）=7 ｜ 🟦 运营态（已建）=6 ｜ 🟥 弃用态=1 | State Distribution | 🟧 设计态（待施工）=7 ｜ 🟦 运营态（已建）=6 ｜ 🟥 弃用态=1 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -61,7 +61,7 @@ flowchart TD
     BM_SELL_05["【BM-SELL-05 置换再平衡卖出】<br/>机会成本驱动+权重偏离驱动的被动卖出——候选池有更<br/>优标的就卖A买B，权重偏离超阈值或周五强制再平衡就<br/>调整，用倒金字塔分批退出。<br/>（生产态 / production）<br/>【Replacement &amp; Rebalance Sell】"]
     BM_SELL_08["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-08 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓，找有日内<br/>T+0空间的票，先买后卖或先卖后买赚差价，底仓净数<br/>量不变。<br/>（设计态 / design）<br/>【Intraday T+0 Arbitrage】"]
     BM_SELL_02["【BM-SELL-02 卖出信号融合仲裁】<br/>把所有卖出信号（含突破成败）汇总加权融合，算出综<br/>合卖出意愿0~1，再按紧迫度匹配执行策略——紧急清仓<br/>市价单、从容退出限价单耐心等。<br/>（生产态 / production）<br/>【Sell Signal Fusion Arbitration】"]
-    BM_SELL_06["【BM-SELL-06 买卖冲突仲裁】<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>（保守原则）；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>（生产态 / production）<br/>【Buy-Sell Conflict Arbitration】"]
+    BM_SELL_06["【BM-SELL-06 买卖冲突仲裁】<br/>同一只票同时有买入和卖出信号时怎么办——卖出优先<br/>（保守原则）；做T信号遇到风控减仓<br/>/庄家出货怎么办——直接丢弃；外部指令遇到风控拦截<br/>怎么办——风控优先。<br/>（弃用态 / deprecated）<br/>【Buy-Sell Conflict Arbitration】"]
     BM_SELL_09["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-SELL-09 卖出闭环优化】<br/>卖出后复盘——统计信号准确率（假阳性<br/>/假阴性）、做策略A/B测试、追踪执行质量（滑点<br/>/冲击成本/延迟），反馈调整信号权重与策略参数，让<br/>卖出越做越准。<br/>（设计态 / design）<br/>【Sell Closed-loop Optimization】"]
     BM_SELL_01 ~~~ BM_SELL_07 ~~~ BM_SELL_04_A ~~~ BM_SELL_04_B ~~~ BM_SELL_04_C ~~~ BM_SELL_04_D ~~~ BM_SELL_04_E ~~~ BM_SELL_08
     BM_SELL_04 ~~~ BM_SELL_05
@@ -71,7 +71,7 @@ flowchart TD
     BM_SELL_03 -->|评分输出→置换再平衡 / data_flow| BM_SELL_05
     BM_SELL_04 -.->|止盈止损决策→融合仲裁 / data_flow| BM_SELL_02
     BM_SELL_05 -->|置换再平衡→融合仲裁 / data_flow| BM_SELL_02
-    BM_SELL_02 -->|融合仲裁→买卖冲突仲裁 / data_flow| BM_SELL_06
+    BM_SELL_02 -.->|融合仲裁→买卖冲突仲裁 / data_flow| BM_SELL_06
     BM_SELL_07 -.->|情景预案→融合仲裁 / data_flow| BM_SELL_02
     BM_SELL_08 -.->|做T信号→买卖冲突仲裁 / trigger| BM_SELL_06
     BM_SELL_06 -.->|仲裁输出→闭环优化反馈 / data_flow| BM_SELL_09
@@ -80,8 +80,9 @@ classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-d
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_SELL_01,BM_SELL_03,BM_SELL_04_C,BM_SELL_04_D,BM_SELL_05,BM_SELL_02,BM_SELL_06 production
+    class BM_SELL_01,BM_SELL_03,BM_SELL_04_C,BM_SELL_04_D,BM_SELL_05,BM_SELL_02 production
     class BM_SELL_07,BM_SELL_04,BM_SELL_04_A,BM_SELL_04_B,BM_SELL_04_E,BM_SELL_08,BM_SELL_09 design
+    class BM_SELL_06 deprecated
 ```
 
 ## 环节详情
@@ -562,9 +563,9 @@ v6.0分批退出模式(Scaling Out Architecture)：等分退出(1/3-1/3-1/3)/倒
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-SELL-008 | primary | stable | stable |
+| depgraph | MOD-SELL-008 | primary | stable | deprecated |
 
-**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：sell_flow
+**有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L3.5 ｜ **阶段**：sell_flow
 
 ### BM-SELL-09 卖出闭环优化 / Sell Closed-loop Optimization
 

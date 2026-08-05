@@ -20,18 +20,18 @@ ttl: permanent
 
 | 设计成熟度 / Maturity | 模块数 / Modules | 占比 / Ratio |
 |-----------|:---:|:---:|
-| production（生产态） | 3562 | 94.3% |
-| design（设计态） | 217 | 5.7% |
+| production（生产态） | 3569 | 94.2% |
+| design（设计态） | 220 | 5.8% |
 | scaffold_placeholder（脚手架） | 0 | 0.0% |
-| **总计** | **3779** | **100%** |
+| **总计** | **3789** | **100%** |
 
 ## 构建状态统计（build_status）
 
 | 构建状态 / Build Status | 模块数 / Modules | 占比 / Ratio |
 |---------|:---:|:---:|
-| generated | 4228 | 111.9% |
-| stable | 1803 | 47.7% |
-| planned | 126 | 3.3% |
+| generated | 4233 | 111.7% |
+| stable | 1805 | 47.6% |
+| planned | 130 | 3.4% |
 | deprecated | 90 | 2.4% |
 
 ## 各域设计成熟度统计
@@ -95,15 +95,15 @@ ttl: permanent
 | D_ML_TRAIN | 训练 | 13 | 3 | 10 | 0 | 23.1% |
 | D_OPS | 反馈循环 | 11 | 11 | 0 | 0 | 100.0% |
 | D_ORCHESTRATOR | 代理编排器 | 72 | 70 | 2 | 0 | 97.2% |
-| D_PF_ALLOC | 组合分配 | 9 | 5 | 4 | 0 | 55.6% |
+| D_PF_ALLOC | 组合分配 | 10 | 5 | 5 | 0 | 50.0% |
 | D_PF_CORE | 组合核心 | 18 | 16 | 2 | 0 | 88.9% |
-| D_POSITION | 仓位管理 | 25 | 15 | 10 | 0 | 60.0% |
+| D_POSITION | 仓位管理 | 28 | 15 | 13 | 0 | 53.6% |
 | D_REPORTING | 报告 | 20 | 19 | 1 | 0 | 95.0% |
-| D_RISK | 风控 | 37 | 30 | 7 | 0 | 81.1% |
+| D_RISK | 风控 | 44 | 37 | 7 | 0 | 84.1% |
 | D_SECURITY | 对抗验证 | 171 | 171 | 0 | 0 | 100.0% |
 | D_SECURITY_LLM | LLM防御 | 0 | 0 | 0 | 0 | N/A |
 | D_SEC_SCRIPTS | 安全治理脚本 | 0 | 0 | 0 | 0 | N/A |
-| D_SELL_DECISION | 卖出决策 | 26 | 13 | 13 | 0 | 50.0% |
+| D_SELL_DECISION | 卖出决策 | 25 | 13 | 12 | 0 | 52.0% |
 | D_SHARED | 共享服务 | 177 | 177 | 0 | 0 | 100.0% |
 | D_SIGLEGACY | 信号遗留设计态 | 0 | 0 | 0 | 0 | N/A |
 | D_SIGQC | 信号质量控制 | 2 | 2 | 0 | 0 | 100.0% |
@@ -122,6 +122,6 @@ ttl: permanent
 | D_DATA_ENG | 数据工程 | 20 | 7 | 35.0% |
 | D_EX_CORE | 执行核心 | 43 | 18 | 41.9% |
 | D_ASHARE_SIGNAL | A股特色信号 | 37 | 16 | 43.2% |
-| D_SELL_DECISION | 卖出决策 | 26 | 13 | 50.0% |
-| D_PF_ALLOC | 组合分配 | 9 | 5 | 55.6% |
-| D_FACTOR | 因子 | 109 | 65 | 59.6% |
+| D_PF_ALLOC | 组合分配 | 10 | 5 | 50.0% |
+| D_SELL_DECISION | 卖出决策 | 25 | 13 | 52.0% |
+| D_POSITION | 仓位管理 | 28 | 15 | 53.6% |

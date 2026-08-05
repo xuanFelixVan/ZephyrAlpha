@@ -22,7 +22,7 @@ date: 2026-08-05
 | 环节数 | 93 | Steps | 93 |
 | 锚点数（双向对齐） | 164 | Anchors (Bidirectional) | 164 |
 | 流转边 | 17 | Edges | 17 |
-| 状态分布 | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=19 ｜ 🟨 候选态（候选池）=6 ｜ 🟥 弃用态=3 | State Distribution | 🟦 运营态（已建）=65 ｜ 🟧 设计态（待施工）=19 ｜ 🟨 候选态（候选池）=6 ｜ 🟥 弃用态=3 |
+| 状态分布 | 🟦 运营态（已建）=68 ｜ 🟧 设计态（待施工）=19 ｜ 🟨 候选态（候选池）=6 | State Distribution | 🟦 运营态（已建）=68 ｜ 🟧 设计态（待施工）=19 ｜ 🟨 候选态（候选池）=6 |
 
 > **图例说明 / Legend**：
 > - 🟦 **蓝色实线 = 运营态环节**（production，锚点模块已建）
@@ -58,11 +58,11 @@ flowchart TD
         BM_SEL_01 -.->|嵌套| BM_SEL_01_F
     end
     subgraph sg_BM_SEL_02 ["因子计算与信号生成"]
-        BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>（弃用态 / deprecated）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
+        BM_SEL_02["【BM-SEL-02 因子计算与信号生成】<br/>把洗干净的行情算成各种因子，再用因子工厂管起来，<br/>盘前算全量、盘中补增量。<br/>（生产态 / production）<br/>🟡候选承载<br/>【Factor Compute &amp; Signal Gen】"]
         BM_SEL_02_M["【BM-SEL-02-M 因果因子验证层（DoWhy/DML）】<br/>因子光相关性强不够——要分清真因果还是假相关，真因<br/>果因子才配加权提升。<br/>（设计态 / design）<br/>🟧设计态子环节<br/>【Causal Factor Validation Layer】"]
-        BM_SEL_02_A["【BM-SEL-02-A 因子计算引擎】<br/>真正算因子的发动机——盘前批量算全量、盘中增量补，<br/>把行情变成可用的因子值。<br/>（弃用态 / deprecated）<br/>【Factor Compute Engine】"]
+        BM_SEL_02_A["【BM-SEL-02-A 因子计算引擎】<br/>真正算因子的发动机——盘前批量算全量、盘中增量补，<br/>把行情变成可用的因子值。<br/>（生产态 / production）<br/>【Factor Compute Engine】"]
         BM_SEL_02_B["【BM-SEL-02-B 因子注册表与池管理】<br/>所有因子登记造册——名字、公式、依赖、版本都在注册<br/>表里，池子满64个自动淘汰最差的。<br/>（生产态 / production）<br/>【Factor Registry &amp; Pool Management】"]
-        BM_SEL_02_C["【BM-SEL-02-C 因子管线双模调度】<br/>安排因子什么时候算——盘前一次性全算、盘中只补变化<br/>的部分，省算力又不丢新鲜度。<br/>（弃用态 / deprecated）<br/>【Factor Pipeline Dual-mode Scheduling】"]
+        BM_SEL_02_C["【BM-SEL-02-C 因子管线双模调度】<br/>安排因子什么时候算——盘前一次性全算、盘中只补变化<br/>的部分，省算力又不丢新鲜度。<br/>（生产态 / production）<br/>【Factor Pipeline Dual-mode Scheduling】"]
         BM_SEL_02_D["【BM-SEL-02-D 因子评估-IC/IR体系】<br/>给每个因子打分——IC（信息系数）看预测能力，IR<br/>（信息比率）看稳定性，分高留分低砍。<br/>（生产态 / production）<br/>【Factor Evaluation - IC/IR System】"]
         BM_SEL_02_E["【BM-SEL-02-E 因子评估-相关性与语义去重】<br/>两个因子长得太像就留一个——算相关性砍冗余，再看语<br/>义描述防重复造轮子。<br/>（生产态 / production）<br/>【Factor Evaluation - Correlation &amp; Semantic<br/>Dedup】"]
         BM_SEL_02_F["【BM-SEL-02-F 因子评估-分层回测与三级判断】<br/>把股票按因子值分5层看各层收益差——分层单调才说明<br/>因子有效，三级判断定去留。<br/>（生产态 / production）<br/>【Factor Evaluation - Stratified Backtest &amp;<br/>3-tier Judgment】"]
@@ -160,15 +160,14 @@ flowchart TD
         BM_SEL_24 -.->|嵌套| BM_SEL_24_C
     end
     BM_SEL_01 ~~~ BM_SEL_01_A ~~~ BM_SEL_01_B ~~~ BM_SEL_01_C ~~~ BM_SEL_01_D ~~~ BM_SEL_01_E ~~~ BM_SEL_01_F ~~~ BM_SEL_02_M ~~~ BM_SEL_02_A ~~~ BM_SEL_02_B ~~~ BM_SEL_02_C ~~~ BM_SEL_02_D ~~~ BM_SEL_02_E ~~~ BM_SEL_02_F ~~~ BM_SEL_02_G ~~~ BM_SEL_02_H ~~~ BM_SEL_02_I ~~~ BM_SEL_02_J ~~~ BM_SEL_02_K ~~~ BM_SEL_02_L ~~~ BM_SEL_22 ~~~ BM_SEL_22_A ~~~ BM_SEL_22_B ~~~ BM_SEL_22_C ~~~ BM_SEL_22_C_1 ~~~ BM_SEL_22_C_2 ~~~ BM_SEL_22_C_3 ~~~ BM_SEL_22_C_4 ~~~ BM_SEL_22_C_5 ~~~ BM_SEL_22_C_6 ~~~ BM_SEL_22_C_7 ~~~ BM_SEL_22_D ~~~ BM_SEL_23 ~~~ BM_SEL_23_A ~~~ BM_SEL_23_A_1 ~~~ BM_SEL_23_A_2 ~~~ BM_SEL_23_A_3 ~~~ BM_SEL_23_A_4 ~~~ BM_SEL_23_A_5 ~~~ BM_SEL_23_A_6 ~~~ BM_SEL_23_B ~~~ BM_SEL_23_C ~~~ BM_SEL_24 ~~~ BM_SEL_24_A ~~~ BM_SEL_24_A_1 ~~~ BM_SEL_24_A_2 ~~~ BM_SEL_24_A_3 ~~~ BM_SEL_24_A_4 ~~~ BM_SEL_24_A_5 ~~~ BM_SEL_24_A_6 ~~~ BM_SEL_24_B ~~~ BM_SEL_24_C
-    BM_SEL_01 -.->|标准化行情 / data_flow| BM_SEL_02
+    BM_SEL_01 -->|标准化行情 / data_flow| BM_SEL_02
 classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
 classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
 classDef deprecated fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
 classDef missing fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
 classDef candidate fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    class BM_SEL_01,BM_SEL_01_A,BM_SEL_01_B,BM_SEL_01_C,BM_SEL_01_D,BM_SEL_01_E,BM_SEL_01_F,BM_SEL_02_B,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_22,BM_SEL_22_A,BM_SEL_22_B,BM_SEL_22_C,BM_SEL_22_C_1,BM_SEL_22_C_2,BM_SEL_22_C_3,BM_SEL_22_C_4,BM_SEL_22_C_5,BM_SEL_22_C_6,BM_SEL_22_C_7,BM_SEL_22_D,BM_SEL_23,BM_SEL_23_A,BM_SEL_23_A_1,BM_SEL_23_A_2,BM_SEL_23_A_3,BM_SEL_23_A_4,BM_SEL_23_A_5,BM_SEL_23_A_6,BM_SEL_23_B,BM_SEL_23_C,BM_SEL_24,BM_SEL_24_A,BM_SEL_24_A_1,BM_SEL_24_A_2,BM_SEL_24_A_3,BM_SEL_24_A_4,BM_SEL_24_A_5,BM_SEL_24_A_6,BM_SEL_24_B,BM_SEL_24_C production
+    class BM_SEL_01,BM_SEL_01_A,BM_SEL_01_B,BM_SEL_01_C,BM_SEL_01_D,BM_SEL_01_E,BM_SEL_01_F,BM_SEL_02,BM_SEL_02_A,BM_SEL_02_B,BM_SEL_02_C,BM_SEL_02_D,BM_SEL_02_E,BM_SEL_02_F,BM_SEL_02_G,BM_SEL_02_H,BM_SEL_02_I,BM_SEL_22,BM_SEL_22_A,BM_SEL_22_B,BM_SEL_22_C,BM_SEL_22_C_1,BM_SEL_22_C_2,BM_SEL_22_C_3,BM_SEL_22_C_4,BM_SEL_22_C_5,BM_SEL_22_C_6,BM_SEL_22_C_7,BM_SEL_22_D,BM_SEL_23,BM_SEL_23_A,BM_SEL_23_A_1,BM_SEL_23_A_2,BM_SEL_23_A_3,BM_SEL_23_A_4,BM_SEL_23_A_5,BM_SEL_23_A_6,BM_SEL_23_B,BM_SEL_23_C,BM_SEL_24,BM_SEL_24_A,BM_SEL_24_A_1,BM_SEL_24_A_2,BM_SEL_24_A_3,BM_SEL_24_A_4,BM_SEL_24_A_5,BM_SEL_24_A_6,BM_SEL_24_B,BM_SEL_24_C production
     class BM_SEL_02_M design
-    class BM_SEL_02,BM_SEL_02_A,BM_SEL_02_C deprecated
     class BM_SEL_02_J,BM_SEL_02_K,BM_SEL_02_L candidate
 ```
 
@@ -297,12 +296,12 @@ L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare �
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-003 | primary | planned | generated |
-| depgraph | MOD-INF-002 | supplement | production | stable |
+| depgraph | MOD-MKT-003 | primary | planned | stable |
+| depgraph | MOD-INF-002 | supplement | production | generated |
 | candidate | CAND-AISA-001 | supplement | candidate | — |
 | candidate | CAND-DAT-001 | supplement | deferred | — |
 | depgraph | MOD-INF-043 | primary | stable | generated |
-| depgraph | MOD-L00-004 | primary | stable | deprecated |
+| depgraph | MOD-L00-004 | primary | stable | generated |
 | depgraph | MOD-ALT_DATA | primary | stable | generated |
 | depgraph | MOD-INTEGRATION | primary | stable | generated |
 | depgraph | MOD-INF-026 | supplement | stable | stable |
@@ -341,7 +340,7 @@ UFL确定性事实层（Feature Store子集，is_deterministic=True，§29.24）
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-001 | primary | production | stable |
 | candidate | CAND-SIG-002 | supplement | deferred | — |
 | candidate | CAND-FAC-001 | supplement | deferred | — |
 | candidate | CAND-FAC-002 | supplement | deferred | — |
@@ -354,7 +353,7 @@ UFL确定性事实层（Feature Store子集，is_deterministic=True，§29.24）
 | depgraph | MOD-SIG-009 | supplement | planned | planned |
 | depgraph | MOD-SIG-010 | supplement | planned | planned |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-22 短线选股评分卡 / Short-Term Stock Selection Scorecard
 
@@ -564,7 +563,7 @@ L6决策可解释性与人机协作层。每个决策都有可追溯解释链(�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-RUNTIME_INTRADAY | supplement | stable | stable |
+| depgraph | MOD-RUNTIME_INTRADAY | supplement | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：design ｜ **层**：L2 ｜ **阶段**：stock_selection
 
@@ -583,7 +582,7 @@ L2-C 层。3×3×3 立方体（量能=第3维度）+ 日历修饰器（交割日
 |---|---|
 | ① 触发条件 | 盘前 + 盘中周期触发 阈值: 3×3×3 立方体（量能=第3维度） |
 | ② 消费数据/因子 | 因子池（来自 BM-SEL-02）<br>量能/日历修饰（来自 L2-C） |
-| ③ 参数 | matrix_dims=3×3×3（范围 3×3→3×3×3，代码当前: Phase1-2: 3×3，状态: testing）<br>regime_detection=HMM/变点（范围 -，代码当前: 待实现，状态: proposed） |
+| ③ 参数 | matrix_dims=3×3×3（范围 3×3→3×3×3，代码当前: Phase1-2: 3×3，状态: testing）<br>regime_detection=HMM/变点（范围 -，代码当前: 待实现，状态: proposed）<br>全市场涨跌停情绪(补)=聚合全市场涨跌停数据（范围 涨跌停家数/封板率/连板高度，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 因子池 → 处理: 3×3矩阵+体制转换检测 → 输出: 市场状态标签+Survival时间预测 → 下游: BM-SEL-04 次日预测 / BM-BUY-02 四轨融合 |
 | ⑤ 代码映射 | C-021 / 草图§6 L2-C 层 |
 | ⑥ 降级/中止 | C-021 未就绪 → 主动脉跳过本环节（8节点7跳降级模式） |
@@ -619,7 +618,7 @@ L2-C 层。T+1 次日 8 态走势预测（大盘+个股双预测体系）。Phas
 |---|---|
 | ① 触发条件 | 盘前 T+1 预测（A股T+1制度） 阈值: 8态概率 P1~P8 |
 | ② 消费数据/因子 | 市场状态（来自 BM-SEL-03）<br>条件PDF（密度预测）（来自 L2-A 密度预测） |
-| ③ 参数 | state_count=8（范围 3→5→8（分阶段），代码当前: Phase1-2: 3态，状态: testing）<br>pdf_integration=Phase4 从PDF积分派生（范围 -，代码当前: 待实现，状态: proposed） |
+| ③ 参数 | state_count=8（范围 3→5→8（分阶段），代码当前: Phase1-2: 3态，状态: testing）<br>pdf_integration=Phase4 从PDF积分派生（范围 -，代码当前: 待实现，状态: proposed）<br>盘中微观节奏推演(补)=15分钟K线算高点/回落概率（范围 15分钟级，代码当前: 待实现，状态: proposed）<br>涨跌质量分析(补2)=白上黄下=假涨/黄上白下=真涨（范围 白黄线/领涨板块/量能，代码当前: 待实现，状态: proposed） |
 | ④ 数据流 | 输入: 市场状态+条件PDF → 处理: 8态预测（大盘+个股双预测） → 输出: T+1 8态概率分布 → 下游: BM-BUY-01 多情景对策 |
 | ⑤ 代码映射 | C-014 / 草图§6.2 |
 | ⑥ 降级/中止 | C-014 未就绪 → 降级二值涨/跌预测 |
@@ -877,8 +876,8 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-001 管供应商注册表（源名/
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-001 | primary | production | generated |
-| depgraph | MOD-MKT-002 | supplement | production | generated |
+| depgraph | MOD-MKT-001 | primary | production | stable |
+| depgraph | MOD-MKT-002 | supplement | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -909,8 +908,8 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-003 连接器管理器维护连接�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-003 | primary | production | generated |
-| depgraph | MOD-L00-001 | primary | stable | stable |
+| depgraph | MOD-MKT-003 | primary | production | stable |
+| depgraph | MOD-L00-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -941,8 +940,8 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-004 Failover 引擎监控主源健�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-004 | primary | production | generated |
-| depgraph | MOD-L00-005 | primary | stable | generated |
+| depgraph | MOD-MKT-004 | primary | production | stable |
+| depgraph | MOD-L00-005 | primary | stable | planned |
 | depgraph | MOD-INF-001 | primary | stable | generated |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
@@ -974,7 +973,7 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-005 自动加载器支持供应商�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-005 | primary | production | generated |
+| depgraph | MOD-MKT-005 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -1005,9 +1004,9 @@ BM-SEL-01 数据接入的子环节。MOD-MKT-006 原始数据缓存把适配器�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-MKT-006 | primary | production | generated |
-| depgraph | MOD-L00-006 | primary | stable | stable |
-| depgraph | MOD-H1_REDIS_HOT | supplement | stable | generated |
+| depgraph | MOD-MKT-006 | primary | production | stable |
+| depgraph | MOD-L00-006 | primary | stable | planned |
+| depgraph | MOD-H1_REDIS_HOT | supplement | stable | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L0 ｜ **阶段**：stock_selection
 
@@ -1076,7 +1075,7 @@ L2-D 层。C-016 六类知识图谱 + 事件驱动因果推演 + Causal ML（DML
 |---|---|---|---|---|
 | candidate | CAND-HARVEST-0462 | primary | candidate | — |
 | depgraph | MOD-SIG-042 | primary | planned | planned |
-| depgraph | MOD-INF-028 | primary | stable | generated |
+| depgraph | MOD-INF-028 | primary | stable | planned |
 | depgraph | MOD-INF-042 | primary | stable | generated |
 | depgraph | MOD-SIG-055 | primary | planned | planned |
 
@@ -1461,10 +1460,10 @@ BM-SEL-02 因子计算的子环节。MOD-L02-001 因子计算引擎执行盘前�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-001 | primary | production | stable |
 | depgraph | MOD-L02-025 | primary | stable | generated |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-02-B 因子注册表与池管理 / Factor Registry & Pool Management
 
@@ -1493,7 +1492,7 @@ BM-SEL-02 因子计算的子环节。MOD-L02-018 因子注册表管因子元数�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-018 | primary | production | generated |
+| depgraph | MOD-L02-018 | primary | production | stable |
 
 **有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
@@ -1524,11 +1523,11 @@ BM-SEL-02 因子计算的子环节。MOD-L02-001 复用引擎执行双模调度�
 
 | 目标图 | 目标ID | 角色 | 状态快照 | 真实build_status |
 |---|---|---|---|---|
-| depgraph | MOD-L02-001 | primary | production | deprecated |
+| depgraph | MOD-L02-001 | primary | production | stable |
 | depgraph | MOD-L02-024 | primary | stable | generated |
-| depgraph | MOD-INF-009 | primary | stable | generated |
+| depgraph | MOD-INF-009 | primary | stable | planned |
 
-**有效状态**：🟥 弃用态 ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
+**有效状态**：🟦 运营态（已建） ｜ **环节自报**：production ｜ **层**：L1 ｜ **阶段**：stock_selection
 
 ### BM-SEL-02-D 因子评估-IC/IR体系 / Factor Evaluation - IC/IR System
 

@@ -77,8 +77,8 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py  # 四�
 | d7_code | d7_code / d7_code | 41 |
 | d8_doc_sync | 文档一致性 / Doc consistency | 12 |
 | d9_knowledge | 知识库 / Knowledge base | 2 |
-| data_quality | data_quality / data_quality | 1 |
-| **合计** | **Total** | **168** |
+| data_quality | data_quality / data_quality | 2 |
+| **合计** | **Total** | **169** |
 <!-- AUTO-END:governance_script_counts -->
 
 ## 7. 基础设施件（永久系统）
