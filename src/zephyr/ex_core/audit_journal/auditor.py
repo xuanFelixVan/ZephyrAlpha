@@ -582,6 +582,12 @@ class ExecutionAuditLogger:
             OperationalRiskStats（纯派生统计，无阈值/告警）
         """
         records = self.query(start=period_start, end=period_end)
+        logger.debug(
+            "compute_operational_risk_stats: period=[%s, %s] records=%d",
+            period_start.isoformat(),
+            period_end.isoformat(),
+            len(records),
+        )
 
         submission_count = 0
         rejection_count = 0
@@ -601,18 +607,55 @@ class ExecutionAuditLogger:
 
         failure_rate = rejection_count / submission_count if submission_count > 0 else 0.0
         fill_rate = filled_count / submission_count if submission_count > 0 else 0.0
+        logger.debug(
+            "compute_operational_risk_stats: counts submission=%d rejection=%d filled=%d "
+            "failure_rate=%.4f fill_rate=%.4f",
+            submission_count,
+            rejection_count,
+            filled_count,
+            failure_rate,
+            fill_rate,
+        )
 
         # 配对 SUBMITTED → FILLED 计算成交延迟（ms）
         latencies_ms: list[float] = []
+        skew_skipped = 0
+        no_fill_skipped = 0
         for order_id, sub_ts in first_submitted.items():
             fill_ts = first_filled.get(order_id)
-            if fill_ts is not None and fill_ts >= sub_ts:
-                latencies_ms.append((fill_ts - sub_ts).total_seconds() * 1000.0)
+            if fill_ts is None:
+                no_fill_skipped += 1
+                continue
+            if fill_ts < sub_ts:
+                # FILLED 早于 SUBMITTED → 时钟偏移，跳过并记录便于排查
+                skew_skipped += 1
+                logger.warning(
+                    "compute_operational_risk_stats: clock skew detected order_id=%s "
+                    "submitted=%s filled=%s (skipped from latency)",
+                    order_id,
+                    sub_ts.isoformat(),
+                    fill_ts.isoformat(),
+                )
+                continue
+            latencies_ms.append((fill_ts - sub_ts).total_seconds() * 1000.0)
 
         latencies_ms.sort()
         latency_count = len(latencies_ms)
         latency_mean = sum(latencies_ms) / latency_count if latency_count > 0 else 0.0
         latency_max = latencies_ms[-1] if latency_count > 0 else 0.0
+        latency_p50 = _percentile(latencies_ms, 50)
+        latency_p95 = _percentile(latencies_ms, 95)
+        logger.debug(
+            "compute_operational_risk_stats: latency pairs=%d no_fill_skipped=%d skew_skipped=%d "
+            "p50_ms=%.2f p95_ms=%.2f max_ms=%.2f mean_ms=%.2f",
+            latency_count,
+            no_fill_skipped,
+            skew_skipped,
+            latency_p50,
+            latency_p95,
+            latency_max,
+            latency_mean,
+        )
 
         return OperationalRiskStats(
             period_start=period_start,
@@ -623,8 +666,8 @@ class ExecutionAuditLogger:
             failure_rate=failure_rate,
             fill_rate=fill_rate,
             latency_count=latency_count,
-            latency_p50_ms=_percentile(latencies_ms, 50),
-            latency_p95_ms=_percentile(latencies_ms, 95),
+            latency_p50_ms=latency_p50,
+            latency_p95_ms=latency_p95,
             latency_max_ms=latency_max,
             latency_mean_ms=latency_mean,
             generated_at=datetime.now(UTC),

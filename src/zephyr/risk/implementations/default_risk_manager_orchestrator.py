@@ -44,8 +44,10 @@ SSoT: cross_layer_contracts.yaml -> CTR-003 + CTR-ERR-004 + CTR-P1-008
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING, Any
 
 from zephyr.risk.implementations.default_position_limit_checker import (
     DefaultPositionLimitChecker,
@@ -70,6 +72,19 @@ from zephyr.risk.risk_manager_base import (
     RiskReport,
 )
 
+if TYPE_CHECKING:
+    from zephyr.ex_core.audit_journal.auditor import OperationalRiskStats
+    from zephyr.risk.core.alert_generator import Alert, AlertGenerator
+    from zephyr.risk.core.ai_agent_monitor import AiAgentMonitor
+    from zephyr.risk.core.crowding_monitor import CrowdingMonitor
+    from zephyr.risk.core.liquidity_monitor import LiquidityMonitor
+    from zephyr.risk.core.model_risk_audit import ModelRiskAuditor
+    from zephyr.risk.core.operational_risk_monitor import (
+        OperationalRiskMonitor,
+    )
+
+_logger = logging.getLogger(__name__)
+
 __checker_id__ = "default-risk-manager-orchestrator"
 
 
@@ -85,6 +100,13 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
         validator: DefaultRiskValidator | None = None,
         position_checker: DefaultPositionLimitChecker | None = None,
         stop_loss_engine: DefaultStopLossEngine | None = None,
+        # G1-G6 监控器（全部可选，向后兼容；未注入时行为与原版完全一致）
+        alert_generator: AlertGenerator | None = None,
+        liquidity_monitor: LiquidityMonitor | None = None,
+        crowding_monitor: CrowdingMonitor | None = None,
+        ai_agent_monitor: AiAgentMonitor | None = None,
+        model_risk_auditor: ModelRiskAuditor | None = None,
+        operational_risk_monitor: OperationalRiskMonitor | None = None,
     ):
         self._portfolio_id = portfolio_id
         self._limits_calculator = limits_calculator or DefaultRiskLimitsCalculator()
@@ -95,6 +117,20 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
         self._active_limits: RiskLimits | None = None
         self._daily_pnl: Decimal = Decimal("0")
         self._loss_limit: Decimal = Decimal("50000")
+        # G1-G6 监控器
+        self._alert_generator = alert_generator
+        self._liquidity_monitor = liquidity_monitor
+        self._crowding_monitor = crowding_monitor
+        self._ai_agent_monitor = ai_agent_monitor
+        self._model_risk_auditor = model_risk_auditor
+        self._operational_risk_monitor = operational_risk_monitor
+        # 最近一次 aggregate_report 派发的告警
+        self._last_alerts: list[Alert] = []
+
+    @property
+    def last_alerts(self) -> list[Alert]:
+        """最近一次 aggregate_report 派发的告警列表。"""
+        return self._last_alerts
 
     def pre_trade_check(self, order: object, limits: object, positions: object) -> RiskCheckResult:
         if self._active_limits is None:
@@ -179,10 +215,146 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
 
         return result
 
+    # ── G1-G6 监控器检查方法（best-effort：异常不阻断编排器）──
+
+    def check_liquidity(
+        self,
+        symbol: str,
+        ohlcv: Any,
+        bid_ask_spread: float | None = None,
+    ) -> Any:
+        """G2 流动性检查——调用 LiquidityMonitor 并追加 RiskCheckResult。
+
+        Args:
+            symbol: 标的代码
+            ohlcv: OHLCV DataFrame
+            bid_ask_spread: 买卖价差（可选）
+
+        Returns:
+            LiquidityMetrics 或 None（未注入监控器 / 异常 best-effort）
+        """
+        if self._liquidity_monitor is None:
+            return None
+        try:
+            metrics = self._liquidity_monitor.assess(symbol, ohlcv, bid_ask_spread)
+            result = self._liquidity_monitor.to_risk_check_result(metrics)
+            self._check_results.append(result)
+            return metrics
+        except Exception as exc:  # noqa: BLE001 — best-effort
+            _logger.warning("check_liquidity failed (best-effort): %s", exc)
+            return None
+
+    def check_crowding(
+        self,
+        factor_name: str,
+        strategy_positions: dict[str, dict[str, float]],
+        factor_exposures: dict[str, float] | None = None,
+    ) -> Any:
+        """G4 拥挤度检查——调用 CrowdingMonitor 并追加 RiskCheckResult。
+
+        Args:
+            factor_name: 因子名称
+            strategy_positions: {strategy_id: {symbol: weight}}
+            factor_exposures: {strategy_id: exposure}（可选）
+
+        Returns:
+            CrowdingMetrics 或 None（未注入监控器 / 异常 best-effort）
+        """
+        if self._crowding_monitor is None:
+            return None
+        try:
+            metrics = self._crowding_monitor.assess(
+                factor_name, strategy_positions, factor_exposures,
+            )
+            result = self._crowding_monitor.to_risk_check_result(metrics)
+            self._check_results.append(result)
+            return metrics
+        except Exception as exc:  # noqa: BLE001 — best-effort
+            _logger.warning("check_crowding failed (best-effort): %s", exc)
+            return None
+
+    def check_ai_agent(
+        self,
+        agent_metrics: dict[str, float] | None = None,
+        trajectory_anomaly_count: int = 0,
+        fingerprint_deviation: float | None = None,
+    ) -> Any:
+        """G3 AI/Agent 风险检查——调用 AiAgentMonitor 并追加 RiskCheckResult。
+
+        Args:
+            agent_metrics: Agent 行为指标
+            trajectory_anomaly_count: 轨迹异常数量（预计算）
+            fingerprint_deviation: 行为指纹偏差 [0, 1]（预计算）
+
+        Returns:
+            AiAgentRiskMetrics 或 None（未注入监控器 / 异常 best-effort）
+        """
+        if self._ai_agent_monitor is None:
+            return None
+        try:
+            metrics = self._ai_agent_monitor.assess(
+                agent_metrics, trajectory_anomaly_count, fingerprint_deviation,
+            )
+            result = self._ai_agent_monitor.to_risk_check_result(metrics)
+            self._check_results.append(result)
+            return metrics
+        except Exception as exc:  # noqa: BLE001 — best-effort
+            _logger.warning("check_ai_agent failed (best-effort): %s", exc)
+            return None
+
+    def check_model_risk(
+        self,
+        model_outputs: list[dict[str, Any]] | None = None,
+        ic_data: dict[int, float] | None = None,
+        bias_score: float | None = None,
+    ) -> Any:
+        """G5 模型风险审计——调用 ModelRiskAuditor 并追加 RiskCheckResult。
+
+        Args:
+            model_outputs: 模型输出样本列表（漂移检测）
+            ic_data: IC 衰减曲线 {lag: ic_value}（预计算，可选）
+            bias_score: 预测偏差分数（可选）
+
+        Returns:
+            ModelRiskAuditReport 或 None（未注入审计器 / 异常 best-effort）
+        """
+        if self._model_risk_auditor is None:
+            return None
+        try:
+            report = self._model_risk_auditor.audit(
+                model_outputs, ic_data, bias_score,
+            )
+            result = self._model_risk_auditor.to_risk_check_result(report)
+            self._check_results.append(result)
+            return report
+        except Exception as exc:  # noqa: BLE001 — best-effort
+            _logger.warning("check_model_risk failed (best-effort): %s", exc)
+            return None
+
+    def check_operational_risk(self, stats: OperationalRiskStats) -> Any:
+        """G6 操作风险检查——调用 OperationalRiskMonitor 并追加 RiskCheckResult。
+
+        Args:
+            stats: MOD-EX-003 产出的 OperationalRiskStats
+
+        Returns:
+            OperationalRiskAssessment 或 None（未注入监控器 / 异常 best-effort）
+        """
+        if self._operational_risk_monitor is None:
+            return None
+        try:
+            assessment = self._operational_risk_monitor.assess(stats)
+            result = self._operational_risk_monitor.to_risk_check_result(assessment)
+            self._check_results.append(result)
+            return assessment
+        except Exception as exc:  # noqa: BLE001 — best-effort
+            _logger.warning("check_operational_risk failed (best-effort): %s", exc)
+            return None
+
     def aggregate_report(self) -> RiskReport:
         failed = [c for c in self._check_results if not c.passed]
         alerts = [c.message for c in failed] if failed else []
-        return RiskReport(
+        report = RiskReport(
             as_of_timestamp=datetime.now(UTC),
             portfolio_id=self._portfolio_id,
             checks=self._check_results.copy(),
@@ -190,6 +362,20 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
             active_alerts=alerts,
             kill_switch_active=self._validator.kill_switch_active,
         )
+
+        # G1 告警派发（best-effort：异常不阻断 aggregate_report）
+        if self._alert_generator is not None:
+            try:
+                self._last_alerts = self._alert_generator.process(report)
+            except Exception as exc:  # noqa: BLE001 — best-effort
+                _logger.error(
+                    "AlertGenerator.process failed (best-effort): %s", exc,
+                )
+                self._last_alerts = []
+        else:
+            self._last_alerts = []
+
+        return report
 
     def snapshot(self, portfolio_id: str) -> RiskDashboardSnapshot | None:
         if not self._active_limits:
