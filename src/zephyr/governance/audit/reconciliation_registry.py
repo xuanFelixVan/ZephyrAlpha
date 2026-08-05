@@ -6570,6 +6570,44 @@ def make_regenerate_reconciler(gateway: object) -> ReconcilerSpec:
 
     def _reconcile_domain_doc(committed_files: list[str], session_id: str) -> ReconcileResult:
 
+        # 0. drift-gate: 预检测域文档产物是否已有未提交变更（体系A reconcile_async 可能已跑过）
+
+        #    有变更 → 跳过生成器直接 auto-commit（消除与体系A双重执行，治本 #ARCH-DUAL-TRIGGER）
+
+        #    无变更 → 产物可能过时，继续跑生成器（原逻辑兜底）
+
+        pre_diff = gateway.run_git(["git", "diff", "--name-only", "--", *_DOC_DIRS])
+
+        if pre_diff.returncode == 0 and pre_diff.stdout.strip():
+
+            pre_changed = [f.strip() for f in pre_diff.stdout.splitlines() if f.strip()]
+
+            pre_abs = [str(project_root / f) for f in pre_changed]
+
+            pre_commit = gateway._commit_auto(
+
+                session_id, pre_abs,
+
+                "chore(docs): auto-commit systemA-regenerated domain docs (drift-gate skipped generators)",
+
+            )
+
+            if pre_commit.status == "OK":
+
+                # 跳过生成器也要清 dirty flag，否则下次 commit 重复 fire
+
+                _clear_depgraph_dirty_flag()
+
+                return ReconcileResult(
+
+                    action="auto_committed",
+
+                    detail=f"drift-gate: skipped domain_doc generators, auto-committed {len(pre_changed)} files (systemA already ran)",
+
+                )
+
+            # auto-commit 失败 → 落回原逻辑跑生成器（兜底，不阻断）
+
         # 1. 重生所有域制品（生成器不含时间戳，相同 DB 输入->相同输出）
 
         for gen_name in ("generate_domain_doc.py",):
