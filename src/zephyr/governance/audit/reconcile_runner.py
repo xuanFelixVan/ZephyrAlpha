@@ -581,6 +581,13 @@ def launch_reconcile_async(
     # dispatcher 默认 async → 又 spawn worker → 无限递归。
     # 设 ZEPHYR_RECONCILE_SYNC=1 让 worker 内所有 commit 走 sync 路径。
     env["ZEPHYR_RECONCILE_SYNC"] = "1"
+    # #ARCH-REGEN-CASCADE-001 治本（2026-08-05 CPU 爆炸事故）：
+    # 标记 worker 进程身份。GitCommitGateway.run_post_commit_reconcile 检测到此标志
+    # → 跳过 reconciler 链重跑。病根：ZEPHYR_RECONCILE_SYNC=1 让 worker 内 auto-commit
+    # 走 sync 路径，同步递归重跑 32 reconciler，每个 apply_depgraph-calling reconciler
+    # fire reconcile_async → N× 编排器并发爆炸。worker 主循环已覆盖全部 reconciler，
+    # auto-commit 仅持久化，无需重跑链路。
+    env["ZEPHYR_RECONCILE_WORKER"] = "1"
 
     try:
         # TRAE-067 铁律2：复用 process_pool 统一无窗口 spawn 入口

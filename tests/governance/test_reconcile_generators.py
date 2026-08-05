@@ -656,3 +656,98 @@ class TestPostCommitRegenYaml:
             raise RuntimeError("simulated git failure")
         monkeypatch.setattr(pcr, "_committed_yaml_files", _boom)
         assert pcr.main() == 0, "异常时必须返回 0，不得阻断 git"
+
+
+# ============================================================================
+# #ARCH-REGEN-CONCURRENCY-001 治本测试：跨进程串行锁（drop-not-queue）
+# 病根：reconcile_async（--source 路径）无并发控制，post-commit worker 级联 +
+#       apply_depgraph 多 reconciler → N× 编排器并发 → CPU 99% 爆炸（2026-08-05）。
+# 治本：reconcile()/reconcile_stale() 入口加 OS 串行锁，drop-not-queue。
+# 对标 test_post_commit_oscillation_guard.py（--stale 路径的 lockfile 测试）——
+#       本类覆盖 --source 路径 + reconcile_stale 的全局串行锁。
+# ============================================================================
+
+class TestRegenConcurrencyLock:
+    """验证跨进程串行锁的 drop-not-queue 语义与僵尸回收。"""
+
+    def _hold_lock(self, rg, lock_dir, pid=None, age_seconds=0):
+        """在 lock_dir 预置一个锁文件（模拟已被持有）。"""
+        import os as _os
+        lock_dir.mkdir(parents=True, exist_ok=True)
+        lock_path = lock_dir / rg._REGEN_LOCK_NAME
+        owner_pid = pid if pid is not None else _os.getpid()
+        lock_path.write_text(f"{owner_pid}\n", encoding="utf-8")
+        if age_seconds > 0:
+            import time as _time
+            old = _time.time() - age_seconds
+            _os.utime(str(lock_path), (old, old))
+        return lock_path
+
+    def test_reconcile_drops_when_lock_held(self, rg, monkeypatch, tmp_path):
+        """锁已被持有时 reconcile() 丢弃本次触发（drop-not-queue），不跑生成器。"""
+        monkeypatch.setattr(rg, "_LOCK_DIR", tmp_path)
+        self._hold_lock(rg, tmp_path)  # 当前 pid 持有 + 新鲜 → 非僵尸
+        invoked = {"n": 0}
+        monkeypatch.setattr(rg, "_invoke_parallel", lambda entries: invoked.__setitem__("n", invoked["n"] + 1) or [])
+        result = rg.reconcile("depgraph_db")
+        assert result["status"] == "skipped_dup", "锁被持有时应 drop"
+        assert invoked["n"] == 0, "drop 时不应调用生成器"
+
+    def test_reconcile_acquires_and_releases(self, rg, monkeypatch, tmp_path):
+        """无锁时 reconcile() 正常执行并释放锁（lock 文件执行后消失）。"""
+        monkeypatch.setattr(rg, "_LOCK_DIR", tmp_path)
+        monkeypatch.setattr(rg, "_invoke_parallel", lambda entries: [])
+        lock_path = tmp_path / rg._REGEN_LOCK_NAME
+        result = rg.reconcile("depgraph_db")
+        assert result["total"] == 0
+        assert "status" not in result or result.get("status") != "skipped_dup", "应正常执行非 drop"
+        assert not lock_path.exists(), "执行完毕后锁文件必须释放"
+
+    def test_reconcile_stale_drops_when_lock_held(self, rg, monkeypatch, tmp_path):
+        """锁被持有时 reconcile_stale() 同样 drop。"""
+        monkeypatch.setattr(rg, "_LOCK_DIR", tmp_path)
+        self._hold_lock(rg, tmp_path)
+        invoked = {"n": 0}
+        monkeypatch.setattr(rg, "_invoke_parallel", lambda entries: invoked.__setitem__("n", invoked["n"] + 1) or [])
+        result = rg.reconcile_stale()
+        assert result["status"] == "skipped_dup"
+        assert invoked["n"] == 0
+
+    def test_reconcile_steals_dead_pid_lock(self, rg, monkeypatch, tmp_path):
+        """持有者进程已死 → 抢占僵尸锁并正常执行。"""
+        monkeypatch.setattr(rg, "_LOCK_DIR", tmp_path)
+        self._hold_lock(rg, tmp_path, pid=999999999)  # 极高 pid，几乎必然不存在
+        monkeypatch.setattr(rg, "_invoke_parallel", lambda entries: [])
+        result = rg.reconcile("depgraph_db")
+        assert result.get("status") != "skipped_dup", "死 pid 锁应被抢占而非 drop"
+        assert not (tmp_path / rg._REGEN_LOCK_NAME).exists(), "执行后应释放锁"
+
+    def test_reconcile_steals_ttl_expired_lock(self, rg, monkeypatch, tmp_path):
+        """锁龄超过 TTL（即使 pid 存活）→ 抢占。"""
+        monkeypatch.setattr(rg, "_LOCK_DIR", tmp_path)
+        monkeypatch.setattr(rg, "_REGEN_LOCK_TTL", 10)
+        self._hold_lock(rg, tmp_path, age_seconds=999)  # 当前 pid 但 999s 前
+        monkeypatch.setattr(rg, "_invoke_parallel", lambda entries: [])
+        result = rg.reconcile("depgraph_db")
+        assert result.get("status") != "skipped_dup", "超 TTL 锁应被抢占"
+
+    def test_lock_released_on_exception(self, rg, monkeypatch, tmp_path):
+        """生成器抛异常时锁仍由 finally 释放（不泄漏）。"""
+        monkeypatch.setattr(rg, "_LOCK_DIR", tmp_path)
+        def _boom(entries):
+            raise RuntimeError("generator explosion")
+        monkeypatch.setattr(rg, "_invoke_parallel", _boom)
+        lock_path = tmp_path / rg._REGEN_LOCK_NAME
+        with pytest.raises(RuntimeError):
+            rg.reconcile("depgraph_db")
+        assert not lock_path.exists(), "异常路径也必须释放锁"
+
+    def test_two_sources_serialize_via_global_lock(self, rg, monkeypatch, tmp_path):
+        """全局单键：不同 source 也串行（depgraph_db 与 battle_map_db 共享蓝图产物）。"""
+        monkeypatch.setattr(rg, "_LOCK_DIR", tmp_path)
+        self._hold_lock(rg, tmp_path)  # 任意持有中
+        monkeypatch.setattr(rg, "_invoke_parallel", lambda entries: [])
+        # 即便 source 不同，全局锁被持有时都应 drop
+        assert rg.reconcile("depgraph_db")["status"] == "skipped_dup"
+        assert rg.reconcile("battle_map_db")["status"] == "skipped_dup"
+        assert rg.reconcile_stale()["status"] == "skipped_dup"

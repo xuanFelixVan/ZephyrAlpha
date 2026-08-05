@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-RK-15 | docs/03_modules/_domain_risk/model_risk_audit/blueprint.md | §
+# [BLUEPRINT] MOD-RK-18 | docs/03_modules/_domain_risk/model_risk_audit/blueprint.md | §
 # [MODULE] zephyr.risk.core.model_risk_audit
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] zephyr.risk.risk_manager_base; zephyr.intelligence.model_drift_detector; zephyr.factor.analysis.ic_decay

@@ -91,6 +91,133 @@ _REGISTRY_YAML = (
     / "catalogs" / "generator_registry.yaml"
 )
 
+# ─────────────────────────────────────────────────────────────────────────────
+# 跨进程串行锁（治本 #ARCH-REGEN-CONCURRENCY-001，2026-08-05 CPU 爆炸事故）
+# ─────────────────────────────────────────────────────────────────────────────
+# 病根（第一性原理）：
+#   reconcile_async（--source 路径）无任何并发控制。post-commit worker 内
+#   auto-commit 走 sync 路径同步递归重跑 32 reconciler，每个 apply_depgraph-
+#   calling reconciler fire reconcile_async → N× 编排器并发；每个编排器又并行跑
+#   19 生成器含 blueprint_panorama --all（300s 超时）。N 份并发抢同 DB + 同
+#   blueprint.md → 互相拖慢全部超时 → CPU 99% 正反馈放大。
+#   实测 2026-08-05 20:29-20:31：2 分钟 spawn 12 个编排器，每跑满 300s。
+#
+# 治本：
+#   reconcile()/reconcile_stale() 入口加跨进程锁，drop-not-queue（生成器幂等，
+#   在跑的那份已覆盖最新状态，丢弃不丢数据）。单全局键串行所有重生成——
+#   跨 source 的生成器共享产物（panorama_registry / blueprint.md 被 depgraph_db
+#   / dataflowgraph_db / decisiongraph_db 多源触发），全局串行同时消除跨源写冲突。
+#
+# 机制：
+#   原子独占创建（O_CREAT|O_EXCL）消除 check-then-write TOCTOU（现有
+#   post_commit_regen_yaml 的 TTL lockfile 用 write_text 非原子，AI 突发提交下
+#   被穿透）。PID+TTL 兜底僵尸回收：持有者进程死亡或锁龄>阈值 → 抢占。
+#   零依赖跨平台（scripts/ 不耦合 src/zephyr，故 _is_pid_alive 本地实现）。
+#
+# 二元判定（呼应规则二元化元规则）：_acquire_regen_lock → (acquired: bool, info)。
+# 并发安全铁律：生成器幂等 ≠ 并发安全；重生成入口 MUST 经此锁（详见 AGENTS.md）。
+# ─────────────────────────────────────────────────────────────────────────────
+_LOCK_DIR = _REPO_ROOT / ".runtime" / "locks"
+_REGEN_LOCK_NAME = "regenerate_global.lock"  # 单全局键：串行所有重生成（跨 source 防产物写冲突）
+_REGEN_LOCK_TTL = 1800  # 僵尸兜底回收阈值（持有者崩溃未释放时，30min 后可抢占）
+
+
+def _is_pid_alive_local(pid: int) -> bool:
+    """跨进程 PID 存活探测（scripts/ 不耦合 zephyr，本地实现，对标 process_pool.is_pid_alive）。"""
+    if pid <= 0:
+        return False
+    try:
+        if sys.platform == "win32":
+            import ctypes  # type: ignore[import-not-found]
+            kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+            if not handle:
+                return False
+            kernel32.CloseHandle(handle)
+            return True
+        else:
+            os.kill(pid, 0)
+            return True
+    except OSError:
+        return False
+    except Exception:  # noqa: BLE001 — 探活失败保守视为存活（避免误抢活跃锁）
+        return True
+
+
+def _acquire_regen_lock() -> tuple[bool, str]:
+    """非阻塞尝试获取重生成全局串行锁（drop-not-queue）。
+
+    Returns:
+        (acquired, info) — acquired=True 时调用方 MUST 在 finally 中调
+        _release_regen_lock()。acquired=False 表示已有重生成在跑，调用方应丢弃。
+    """
+    try:
+        _LOCK_DIR.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass  # 目录已存在或创建失败——后者 _open 会再报
+    lock_path = _LOCK_DIR / _REGEN_LOCK_NAME
+
+    def _write_owner() -> bool:
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        try:
+            os.write(fd, f"{os.getpid()}\n".encode("utf-8"))
+        finally:
+            os.close(fd)
+        return True
+
+    # 1. 原子独占创建
+    try:
+        _write_owner()
+        return True, f"acquired pid={os.getpid()}"
+    except FileExistsError:
+        pass
+    except OSError as e:
+        _LOGGER.warning("regen lock: open 失败（降级为无锁执行）: %s", e)
+        return True, f"no_lock ({e})"  # fail-open：锁不可用不阻断派生重生成
+
+    # 2. 锁存在——判僵尸（PID 死亡 or 锁龄> TTL）→ 抢占
+    holder_pid = 0
+    try:
+        content = lock_path.read_text(encoding="utf-8").strip()
+        holder_pid = int(content.split()[0]) if content else 0
+    except (OSError, ValueError):
+        holder_pid = 0
+    stale = False
+    if holder_pid and not _is_pid_alive_local(holder_pid):
+        stale = True
+        reason = f"pid {holder_pid} dead"
+    else:
+        try:
+            age = time.time() - lock_path.stat().st_mtime
+            if age > _REGEN_LOCK_TTL:
+                stale = True
+                reason = f"age {int(age)}s > TTL {_REGEN_LOCK_TTL}s"
+        except OSError:
+            stale = True
+            reason = "stat failed"
+    if not stale:
+        return False, f"held by pid={holder_pid}"
+    _LOGGER.info("regen lock: 抢占僵尸锁（%s）", reason)
+    try:
+        lock_path.unlink()
+    except OSError:
+        pass
+    # 3. 抢占（O_EXCL 再创；极小竞态窗口可接受——最坏双持短暂，生成器幂等不损坏数据）
+    try:
+        _write_owner()
+        return True, f"stolen from pid={holder_pid}"
+    except FileExistsError:
+        return False, "race lost on steal"
+
+
+def _release_regen_lock() -> None:
+    """释放重生成锁（仅删除文件；O_EXCL 保证下持有者独占，删除安全）。"""
+    try:
+        (_LOCK_DIR / _REGEN_LOCK_NAME).unlink()
+    except OSError:
+        pass
+
 
 def _load_registry() -> dict:
     """加载 generator_registry.yaml（只读真源）。
@@ -275,18 +402,33 @@ def reconcile(source: str) -> dict:
 
     Returns:
         {"source": source, "regenerated": [result, ...], "total": N}
+        并发去重命中时返回 {"source", "status":"skipped_dup", "held_by", ...}。
     """
-    registry = _load_registry()
-    matched = [
-        e for e in registry.get("generators", [])
-        if source in e.get("trigger_sources", [])
-    ]
-    results = _invoke_parallel(matched)
-    return {
-        "source": source,
-        "regenerated": results,
-        "total": len(results),
-    }
+    # #ARCH-REGEN-CONCURRENCY-001 治本：跨进程串行锁，drop-not-queue。
+    acquired, info = _acquire_regen_lock()
+    if not acquired:
+        _LOGGER.warning("reconcile('%s'): 跳过——已有重生成在跑（%s）", source, info)
+        return {
+            "source": source,
+            "status": "skipped_dup",
+            "held_by": info,
+            "regenerated": [],
+            "total": 0,
+        }
+    try:
+        registry = _load_registry()
+        matched = [
+            e for e in registry.get("generators", [])
+            if source in e.get("trigger_sources", [])
+        ]
+        results = _invoke_parallel(matched)
+        return {
+            "source": source,
+            "regenerated": results,
+            "total": len(results),
+        }
+    finally:
+        _release_regen_lock()
 
 
 def _prune_detached() -> None:
@@ -401,39 +543,54 @@ def reconcile_stale() -> dict:
 
     Returns:
         {"regenerated": [result,...], "skipped": [name,...], "total_scanned": N}
+        并发去重命中时返回 {"status":"skipped_dup", "held_by", ...}。
     """
-    registry = _load_registry()
-    # 阶段1：stale 判定（串行，快——仅文件 mtime stat）
-    stale_entries: list[tuple[dict, str]] = []  # (entry, reason)
-    skipped: list[str] = []
-    for entry in registry.get("generators", []):
-        name = entry.get("name", "<unknown>")
-        is_stale, reason = _is_stale(entry)
-        if is_stale:
-            stale_entries.append((entry, reason))
-        else:
-            skipped.append(name)
-            _LOGGER.debug("reconcile_stale: %s skipped (reason=%s)", name, reason)
+    # #ARCH-REGEN-CONCURRENCY-001 治本：跨进程串行锁，drop-not-queue。
+    acquired, info = _acquire_regen_lock()
+    if not acquired:
+        _LOGGER.warning("reconcile_stale: 跳过——已有重生成在跑（%s）", info)
+        return {
+            "status": "skipped_dup",
+            "held_by": info,
+            "regenerated": [],
+            "skipped": [],
+            "total_scanned": 0,
+        }
+    try:
+        registry = _load_registry()
+        # 阶段1：stale 判定（串行，快——仅文件 mtime stat）
+        stale_entries: list[tuple[dict, str]] = []  # (entry, reason)
+        skipped: list[str] = []
+        for entry in registry.get("generators", []):
+            name = entry.get("name", "<unknown>")
+            is_stale, reason = _is_stale(entry)
+            if is_stale:
+                stale_entries.append((entry, reason))
+            else:
+                skipped.append(name)
+                _LOGGER.debug("reconcile_stale: %s skipped (reason=%s)", name, reason)
 
-    # 阶段2：并行重生成 stale 生成器（慢——subprocess spawn）
-    raw_results = _invoke_parallel([e for e, _ in stale_entries])
-    regenerated: list[dict] = []
-    for r, (entry, reason) in zip(raw_results, stale_entries):
-        name = entry.get("name", "<unknown>")
-        r["stale_reason"] = reason
-        regenerated.append(r)
-        if r.get("status") == "ok":
-            _LOGGER.info("reconcile_stale: %s regenerated (reason=%s)", name, reason)
-        else:
-            _LOGGER.warning(
-                "reconcile_stale: %s FAILED (reason=%s): %s",
-                name, reason, r.get("error"),
-            )
-    return {
-        "regenerated": regenerated,
-        "skipped": skipped,
-        "total_scanned": len(regenerated) + len(skipped),
-    }
+        # 阶段2：并行重生成 stale 生成器（慢——subprocess spawn）
+        raw_results = _invoke_parallel([e for e, _ in stale_entries])
+        regenerated: list[dict] = []
+        for r, (entry, reason) in zip(raw_results, stale_entries):
+            name = entry.get("name", "<unknown>")
+            r["stale_reason"] = reason
+            regenerated.append(r)
+            if r.get("status") == "ok":
+                _LOGGER.info("reconcile_stale: %s regenerated (reason=%s)", name, reason)
+            else:
+                _LOGGER.warning(
+                    "reconcile_stale: %s FAILED (reason=%s): %s",
+                    name, reason, r.get("error"),
+                )
+        return {
+            "regenerated": regenerated,
+            "skipped": skipped,
+            "total_scanned": len(regenerated) + len(skipped),
+        }
+    finally:
+        _release_regen_lock()
 
 
 def _fmt_result(r: dict) -> str:

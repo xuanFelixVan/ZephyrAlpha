@@ -11918,3 +11918,62 @@ entries:
   last_updated: '2026-08-05'
 
 # --- #ARCH-VALUATION-IFIND-PRIMARY: 估值数据 ifind 主源切换（2026-08-05 补登记） ---
+
+# --- #ARCH-REGEN-CONCURRENCY-001: reconciler 跨进程串行锁——CPU 爆炸事故治本（2026-08-05）---
+- issue_id: '#ARCH-REGEN-CONCURRENCY-001'
+  title: reconciler 并发重生成导致 CPU 爆炸——跨进程串行锁 drop-not-queue 治本
+  severity: P1高
+  category: governance
+  adjudication: |
+    2026-08-05 CPU 爆炸事故治本。
+
+    病根（第一性原理）：
+    reconcile_generators.py 的 reconciler 可被多个进程并发触发（post-commit hook +
+    体系A reconcile_generators + 体系B GitCommitGateway post-commit reconciler）。
+    无串行锁时，多个 reconciler 进程同时运行 generator，CPU 核心被占满，
+    每个 generator 又可能触发 auto-commit → 再次触发 reconciler → 级联放大。
+
+    治本方案：
+    跨进程串行锁（filelock），drop-not-queue 语义——获取锁失败直接返回
+    skipped_dup，不排队等待。理由：reconciler 是幂等的派生操作，跳过一次
+    执行不影响最终一致性（下次触发时会补齐），但排队等待会加剧 CPU 压力。
+
+    影响范围：
+    - reconcile_generators.py 的 reconcile_all_generators() 和 reconcile_single()
+    - 两处入口均调用 _acquire_regen_lock() 获取串行锁
+  impact:
+    - 'scripts/governance/reconcile_generators.py（_acquire_regen_lock，reconcile_all_generators，reconcile_single）'
+  fix_phase: 已完成（2026-08-05）
+  status: decided
+  created: '2026-08-05'
+  last_updated: '2026-08-05'
+
+# --- #ARCH-REGEN-CASCADE-001: worker auto-commit 级联重跑——CPU 爆炸事故治本（2026-08-05）---
+- issue_id: '#ARCH-REGEN-CASCADE-001'
+  title: worker 内 auto-commit 级联重跑 32 reconciler 导致 CPU 爆炸——跳过治本
+  severity: P1高
+  category: governance
+  adjudication: |
+    2026-08-05 CPU 爆炸事故治本。
+
+    病根（第一性原理）：
+    ZEPHYR_RECONCILE_SYNC=1 环境变量让 worker 进程内的 auto-commit 走 sync 路径，
+    同步递归重跑 32 个 reconciler。每个 reconciler 的 generator 产物变更又可能
+    触发 auto-commit → 再次重跑 reconciler 链 → 级联放大，CPU 被指数级占用。
+
+    治本方案：
+    1. reconcile_runner.py 标记 worker 进程身份（env ZEPHYR_RECONCILE_WORKER=1）
+    2. GitCommitGateway.run_post_commit_reconcile 检测到 worker 标志后
+       跳过 reconciler 链重跑（worker 内 auto-commit 不触发 reconciler）
+    3. reconciler 链仅在顶层（用户发起的）commit 后执行一次
+
+    与 #ARCH-REGEN-CONCURRENCY-001 的关系：
+    CONCURRENCY 治本是"并发互斥"（多进程不同时跑），CASCADE 治本是"级联截断"
+    （worker 内不重跑）。两者互补，共同消除 CPU 爆炸根因。
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（run_post_commit_reconcile，worker 标志检测）'
+    - 'src/zephyr/governance/audit/reconcile_runner.py（worker 进程身份标记）'
+  fix_phase: 已完成（2026-08-05）
+  status: decided
+  created: '2026-08-05'
+  last_updated: '2026-08-05'

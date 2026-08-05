@@ -421,6 +421,15 @@ class GitCommitGateway:
         'Post-commit reconciler 调度器（Ruling:100PCT-AI-GOVERNANCE P2-3 异步化）。\n\n        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点4/5 治本：\n        新增 commit_message 参数——传递给 reconcile_for 和 _log_reconcile_results，\n        使 post-commit 审计链可追溯 [no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP 逃生通道使用。\n        原断点4: commit() 不传 message 给 _run_post_commit_reconcile；\n        原断点5: _run_post_commit_reconcile 不传 commit_message 给 reconcile_for。\n\n        P2-3 治本（2026-07-19）：默认异步 spawn detached worker subprocess，避免 30+ 个\n        reconciler 同步执行超时被 AI 工具强制终止（误判为 commit 失败）。env\n        ``ZEPHYR_RECONCILE_SYNC=1`` 强制同步模式（测试用）。\n        '
         if result.status is not CommitStatus.OK:
             return
+        # #ARCH-REGEN-CASCADE-001 治本（2026-08-05 CPU 爆炸事故）：
+        # worker 内 auto-commit 不重跑 reconciler 链。病根：ZEPHYR_RECONCILE_SYNC=1
+        # 让 worker 内 auto-commit 走 sync 路径，同步递归重跑 32 reconciler，每个
+        # apply_depgraph-calling reconciler fire reconcile_async → N× 编排器并发
+        # → blueprint_panorama 互相争用全部 300s 超时 → CPU 99% 正反馈放大。
+        # worker 主循环 _run_post_commit_reconcile_sync_worker 已覆盖全部 reconciler，
+        # auto-commit 仅持久化；后续 reconciler 顺序读最新 DB/文件即可，无需重跑链路。
+        if os.environ.get('ZEPHYR_RECONCILE_WORKER', '') == '1':
+            return
         _governance_dir = self.project_root / 'scripts' / 'governance' / 'd1_structure'
         if not _governance_dir.is_dir():
             return
