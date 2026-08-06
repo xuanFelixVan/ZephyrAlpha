@@ -43,8 +43,35 @@ class CloneGuardConfig:
     fail_on_severity: str = "extract"  # extract=硬阻断, review=警告, none=不阻断
     echo_guard_enabled: bool = True
 
+    # ── Phase B 补齐：ast-grep 显式字段（从隐式规则目录推断改为显式）──
+    ast_grep_enabled: bool = True
+
+    # ── Phase B 补齐：reDUP（L1 第3引擎 + L2 语义克隆 T3/T4）──
+    redup_enabled: bool = True
+    redup_min_sim: float = 0.85           # §3.3 --min-sim 0.85
+    redup_max_groups: int = 0             # §3.3 --max-groups 0（0=不限组数）
+    redup_mode: str = "changed-only"      # "changed-only" (L1) / "semantic" (L2)
+
+    # ── Phase C：mcrit（L2 索引底座 + L0 查重加速）──
+    mcrit_enabled: bool = False           # 默认 False——L2 审计才启用，L1 不用
+    mcrit_index_path: str = ".mcrit/index.db"
+    mcrit_query_threshold: float = 0.7
+
+    # ── Phase C：Vendetect（L3 跨仓库合规审计，AGPL 独立工具）──
+    vendetect_enabled: bool = False       # 默认 False——按需触发
+    vendetect_remote_url: str | None = None
+
+    # ── Phase C：relate（L2/L3 快速预筛加速器）──
+    relate_enabled: bool = False          # 默认 False——加速器，可选
+    relate_index_path: str = ".relate/index"
+    relate_top_k: int = 10
+
     # 降级策略
     fail_closed: bool = False  # echo-guard 全部超时/崩溃时是否阻断（False=warn-only 兜底）
+
+    # ── Layer 2/3 超时（比 L1 宽松）──
+    audit_timeout_sec: int = 300          # L2 全量审计 5 分钟
+    compare_timeout_sec: int = 600        # L3 跨仓库 10 分钟
 
     # 聚合策略（Phase B——多引擎结果合并）
     filter_minority: bool = False  # True=过滤仅单引擎报告的 findings，False=保留但标记 consensus="single"
@@ -99,13 +126,38 @@ def load_config(repo_root: Path) -> CloneGuardConfig:
     pre_commit = raw.get("pre_commit", {}) or {}
     severity = raw.get("severity", {}) or {}
     aggregation = raw.get("aggregation", {}) or {}
+    audit = raw.get("audit", {}) or {}
+    compare = raw.get("compare", {}) or {}
     env_raw = raw.get("env", {}) or {}
     env = {str(k): str(v) for k, v in env_raw.items()} if isinstance(env_raw, dict) else {}
+
+    # 引擎配置子节（蓝图 §6.1 嵌套结构 pre_commit.engines.* / audit.engines.* / compare.*）
+    pc_engines = pre_commit.get("engines", {}) or {}
+    eg_cfg = pc_engines.get("echo_guard", {}) or {}
+    sg_cfg = pc_engines.get("ast_grep", {}) or {}
+    rd_cfg = pc_engines.get("redup", {}) or {}
+    audit_engines = audit.get("engines", {}) or {}
+    mcrit_cfg = audit_engines.get("mcrit", {}) or {}
 
     return CloneGuardConfig(
         pre_commit_timeout_sec=int(pre_commit.get("timeout_sec", 30)),
         fail_on_severity=str(pre_commit.get("fail_on", severity.get("extract", "extract"))),
-        echo_guard_enabled=bool(pre_commit.get("echo_guard_enabled", True)),
+        echo_guard_enabled=bool(eg_cfg.get("enabled", pre_commit.get("echo_guard_enabled", True))),
+        ast_grep_enabled=bool(sg_cfg.get("enabled", True)),
+        redup_enabled=bool(rd_cfg.get("enabled", True)),
+        redup_min_sim=float(rd_cfg.get("min_sim", 0.85)),
+        redup_max_groups=int(rd_cfg.get("max_groups", 0)),
+        redup_mode=str(rd_cfg.get("mode", "changed-only")),
+        mcrit_enabled=bool(mcrit_cfg.get("enabled", False)),
+        mcrit_index_path=str(mcrit_cfg.get("index_path", ".mcrit/index.db")),
+        mcrit_query_threshold=float(mcrit_cfg.get("query_threshold", 0.7)),
+        vendetect_enabled=bool(compare.get("vendetect_cross_repo", False)),
+        vendetect_remote_url=compare.get("vendetect_remote_url"),
+        relate_enabled=bool(compare.get("relate_prescreen", False)),
+        relate_index_path=str(compare.get("relate_index_path", ".relate/index")),
+        relate_top_k=int(compare.get("relate_top_k", 10)),
+        audit_timeout_sec=int(audit.get("timeout_sec", 300)),
+        compare_timeout_sec=int(compare.get("timeout_sec", 600)),
         fail_closed=bool(pre_commit.get("fail_closed", False)),
         filter_minority=bool(aggregation.get("filter_minority", False)),
         env=env,
