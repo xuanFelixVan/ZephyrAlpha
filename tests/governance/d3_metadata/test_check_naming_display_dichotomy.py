@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """main() 显示二元化测试——真阻断 vs warn-only 计数分离。
 
 背景（Task 3，#ARCH-PRECOMMIT-INCREMENTAL，2026-08-06）：

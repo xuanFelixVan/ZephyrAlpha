@@ -4,8 +4,8 @@ title: "Regime特征管道蓝图 — ClickHouse→RegimeFeatures/OverlaySignals/
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ttl: permanent
 layer: L2_domain
 layer_name: regime
@@ -16,7 +16,7 @@ date: "2026-08-06"
 last_updated: "2026-08-06"
 priority: P0
 blueprint_level: module
-responsibility_domain:
+responsibility_domain: 
 ---
 
 # MOD-REGIME-002 RegimeFeatureBuilder — Regime特征管道 蓝图
