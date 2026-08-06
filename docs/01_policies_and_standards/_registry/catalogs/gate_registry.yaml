@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-06T09:12:24Z'
+generated_at: '2026-08-06T15:34:06Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 144
+total_gates: 145
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -481,6 +481,16 @@ gates:
     只扫 staged .py（3.8s→亚秒），CI 全量用 --ci 无 --staged。Phase 3 commit 阻断（存量已清零 e494c72623），`#
     noqa: any-abuse` 行级豁免合理 Any'
   files_trigger: ^src/zephyr/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-ALGO-QUALITY
+  name: 'GATE-ALGO-QUALITY: 算法糊弄检测（代码AST+blueprint 双层，6类pattern）'
+  entry: python scripts/governance/d5_architecture/checkers/check_algo_quality.py
+  description: 检测算法糊弄6类pattern（代理/定性词/伪精确/死数据/名词堆砌/逻辑错位）——代码AST为主，blueprint正则为辅。--warn-only
+    观察期，存量清零后转 --ci
+  files_trigger: ^(src/zephyr/.*\.py|docs/03_modules/.*blueprint\.md)$
   always_run: false
   category: unknown
   status: active

@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-06'
-total_scripts: 661
+total_scripts: 671
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1945,6 +1945,14 @@ scripts:
 - name: governance/d5_architecture/checkers/__init__.py
   path: governance/d5_architecture/checkers/__init__.py
   description: __all__ = [
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/checkers/check_algo_quality.py
+  path: governance/d5_architecture/checkers/check_algo_quality.py
+  description: 审计算法糊弄（algorithm fraud）的自动检测器，填补 60+ 现有 gate 的语义空白。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4770,6 +4778,78 @@ scripts:
   path: pre_commit/verify_dedup.py
   description: 在 pre_commit hook 中调用：
   domain: pre_commit
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/_smoke_feature_builder.py
+  path: tests/_smoke_feature_builder.py
+  description: import time
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/_smoke_walkforward.py
+  path: tests/_smoke_walkforward.py
+  description: import time
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/analyze_deadzone_effect.py
+  path: tests/analyze_deadzone_effect.py
+  description: '假设: 等权策略 Turnover 主驱是「价格漂移再平衡」，而非 Shrinkage 变化。'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/analyze_turnover.py
+  path: tests/analyze_turnover.py
+  description: C1 复现发现：基准组 1444 笔，实验组 2432 笔（+68%），但 Turnover/yr 只升 12%。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/diagnose_shrinkage_distribution.py
+  path: tests/diagnose_shrinkage_distribution.py
+  description: 目的：判断 C1 MaxDD 改善不足的根因
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/dump_c1_repro_artifacts.py
+  path: tests/dump_c1_repro_artifacts.py
+  description: '产出（写入 d:\\ZephyrAlpha\\logs\\c1_repro\\）:'
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/repro_c1.py
+  path: tests/repro_c1.py
+  description: 复用 dump 脚本的取数逻辑（确保数据一致），但用 c1_runner.run_c1_with_provider
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/repro_c1_deadzone.py
+  path: tests/repro_c1_deadzone.py
+  description: 验证 DeadzoneShrinkageProvider 是否降低 Turnover + 不伤害 Sharpe/MaxDD。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/run_c1_shrinkage_validation.py
+  path: tests/run_c1_shrinkage_validation.py
+  description: 一票否决：C1 不通过 = regime 检测器不部署（回退静态等权）。
+  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
