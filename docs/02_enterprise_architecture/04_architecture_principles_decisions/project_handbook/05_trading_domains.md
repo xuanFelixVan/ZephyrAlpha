@@ -66,7 +66,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
 | `D_GOVERNANCE` | 生命周期管理 | L2_domain | 454 |
-| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 423 |
+| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 424 |
 | `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 232 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 195 |
 | `D_DATA` | 数据接入层 | L1_foundation | 185 |
@@ -116,9 +116,9 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_DIGITAL_TWIN` | 数字孪生 | L2_domain | 7 |
 | `D_EXEC_SIM` | 执行仿真 | L2_domain | 7 |
 | `D_ML_SERVE` | 推理 | L2_domain | 7 |
+| `D_REGIME` | 市场状态检测 | L2_domain | 7 |
 | `D_AUTONOMY_PERM` | 自治保护 | L2_domain | 2 |
 | `D_INFRA_OPS` | 基础设施运维 | L0_infrastructure | 2 |
-| `D_REGIME` | 市场状态检测 | L2_domain | 2 |
 | `D_SIGQC` | 信号质量控制 | L2_domain | 2 |
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 1 |
 | `D_GOV_REPAIR` | 治理修复 | L2_domain | 1 |

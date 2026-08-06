@@ -4,8 +4,8 @@ title: "筹码分布引擎蓝图 — 华泰2026前沿VWAP三角分布+筹码龄�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ttl: permanent
 layer: L2_domain
 layer_name: regime
@@ -16,7 +16,7 @@ date: "2026-08-06"
 last_updated: "2026-08-06"
 priority: P1
 blueprint_level: module
-responsibility_domain:
+responsibility_domain: 
 ---
 
 # MOD-REGIME-005 ChipDistributionEngine — 筹码分布引擎 蓝图

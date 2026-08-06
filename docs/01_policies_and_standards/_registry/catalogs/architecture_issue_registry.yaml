@@ -11844,30 +11844,39 @@ entries:
   created: '2026-08-04'
   last_updated: '2026-08-05'
 
-# --- #ARCH-PRECOMMIT-INCREMENTAL: pre-commit 命名增量守门（2026-08-05 补登记） ---
+# --- #ARCH-PRECOMMIT-INCREMENTAL: pre-commit 增量守门（2026-08-05 补登记，2026-08-06 落地） ---
 - issue_id: '#ARCH-PRECOMMIT-INCREMENTAL'
-  title: N-16 命名门禁全量扫描阻塞——增量守门（--check-new）治本
+  title: pre-commit 全量扫描阻塞 commit——增量守门/审计分离治本
   severity: P2中
   category: governance
   adjudication: |-
-    2026-08-05 治本+补登记（同日）。
-    病根：N-16 命名门禁原为全量扫描，每次 commit 扫描全仓文件名重名，耗时且
-    阻塞草稿区（_working）正常使用。
-    治本方案：拆分为增量守门（GATE-NAMING --check-new，只拦 staged 新增重名）
-    + 全量审计（GATE-NAMING-AUDIT --warn-only --scan，不阻断），草稿区 _working
-    纳入 skip_dirs_docs 不阻断 commit。
+    2026-08-05 治本+补登记，2026-08-06 全量落地。
+    病根：pre-commit hook（GATE-NAMING/GATE-FRONTMATTER）原为全量扫描，每次 commit
+    扫描全仓文件名重名/frontmatter，历史 warn-only 违规（369 条命名 + 21 条 frontmatter）
+    + 未跟踪 WIP 卡死本次 commit。eia_provider.py 事件中 369 条"阻断性"违规实际
+    真阻断只有 2 个 N-16。
+    治本方案（Task 4/9/3/5）：
+      - Task 4: GATE-NAMING 拆分为 gate-naming（增量 --check-new）+ gate-naming-audit（全量 manual）
+      - Task 9: GATE-FRONTMATTER 拆分为 gate-frontmatter（增量 --ci）+ gate-frontmatter-audit（全量 manual）
+      - Task 3: blocking_count 显示二元化（actual_blocking vs warn_only_count），消除"369 阻断性违规"误导
+      - Task 5: 立 trae_084 PRECOMMIT-INCREMENTAL 铁律，将增量/审计分离思路升格为规则
+    历史违规归档为技术债，走 CI/manual 清零，不卡日常 commit。
   fix_phase: |-
-    进行中（2026-08-05）：
-      - trae_028_doc_structure_naming.yaml 已更新 skip_dirs 含 _working
-      - _working/precommit_gate_incremental_refactor_plan.md 施工方案已起草
-      - 门禁拆分实施待执行
-      - 本条补登记满足铁律#6（2026-08-05）
+    已落地（2026-08-06）：
+      - Task 4+9: commit 03fc25ce0f 拆分 GATE-NAMING + GATE-FRONTMATTER 为增量/审计双 hook
+      - Task 3: check_naming_convention.py 显示二元化 + test_check_naming_display_dichotomy.py 回归测试
+      - Task 5: trae_084_precommit_incremental_discipline.yaml 铁律规则文件
+      - 128 个命名测试全通过
   impact:
     - 'docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml（skip_dirs 含 _working，#ARCH-PRECOMMIT-INCREMENTAL）'
-    - 'docs/_working/precommit_gate_incremental_refactor_plan.md（施工方案）'
+    - 'docs/01_policies_and_standards/rules/trae_084_precommit_incremental_discipline.yaml（Task 5 铁律规则真源）'
+    - '.pre-commit-config.yaml（Task 4+9: gate-naming/gate-frontmatter 增量 + gate-naming-audit/gate-frontmatter-audit 全量 manual）'
+    - 'scripts/governance/d3_metadata/check_naming_convention.py（Task 3: 显示二元化 + --check-new 增量模式）'
+    - 'tests/governance/d3_metadata/test_check_naming_check_new.py（Task 4: --check-new 5 项回归测试）'
+    - 'tests/governance/d3_metadata/test_check_naming_display_dichotomy.py（Task 3: 显示二元化 2 项回归测试）'
   status: decided
   created: '2026-08-05'
-  last_updated: '2026-08-05'
+  last_updated: '2026-08-06'
 
 # --- #ARCH-REALTIME-ACCUM: 时间敏感型数据每日积累（2026-08-05 补登记） ---
 - issue_id: '#ARCH-REALTIME-ACCUM'
