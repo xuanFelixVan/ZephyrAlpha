@@ -35,7 +35,8 @@ reconcile_generators.py — 生成器自动触发统一编排器
 
 两个入口：
   - reconcile(source): apply 写完 DB 后按 trigger_source 精确匹配调用（实时）
-  - reconcile_stale(): boot_hooks 启动时按 mtime 对比扫描全部生成器（YAML 变更兜底）
+  - reconcile_stale(): boot_hooks 启动时扫描全部生成器——yaml:源按 mtime 对比，
+    db:源按成功时间戳年龄判定（P2-1：drop-not-queue 丢弃后 boot 兜底）
 """
 from __future__ import annotations
 
@@ -90,6 +91,18 @@ _REGISTRY_YAML = (
     _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
     / "catalogs" / "generator_registry.yaml"
 )
+
+# ─────────────────────────────────────────────────────────────────────────────
+# db:-only 生成器 boot 兜底（治本 #ARCH-REGEN-CONCURRENCY-001 P2-1）
+# ─────────────────────────────────────────────────────────────────────────────
+# 问题：input_sources 全为 db: 前缀的生成器（19 个），_is_stale() 无法用文件
+# mtime 判定过时。若 reconcile 被 drop-not-queue 丢弃，boot 时无兜底 → §0.6 等
+# 派生产物持续 stale。
+# 解法：每次生成器成功后写时间戳到 .runtime/cache/gen_<name>.success；
+# _is_stale() 对 db:-only 生成器检查时间戳年龄，超阈值则视为 stale（最大过时保证）。
+# 阈值 30min：平衡 boot 速度（recent 生成器跳过）与可靠性（超时强制重跑兜底）。
+_DB_ONLY_STALE_THRESHOLD_SECONDS = 1800  # 30 minutes
+_REGEN_CACHE_DIR = _REPO_ROOT / ".runtime" / "cache"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 跨进程串行锁（治本 #ARCH-REGEN-CONCURRENCY-001，2026-08-05 CPU 爆炸事故）
@@ -217,6 +230,29 @@ def _release_regen_lock() -> None:
         (_LOCK_DIR / _REGEN_LOCK_NAME).unlink()
     except OSError:
         pass
+
+
+def _write_success_marker(gen_name: str) -> None:
+    """生成器成功后写时间戳到 .runtime/cache/gen_<name>.success（db:-only boot 兜底）。
+
+    幂等：重复写覆盖旧值。失败静默（OSError 降级——标记缺失仅导致下次 boot
+    多跑一次，生成器幂等无副作用）。
+    """
+    try:
+        _REGEN_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        marker = _REGEN_CACHE_DIR / f"gen_{gen_name}.success"
+        marker.write_text(str(time.time()), encoding="utf-8")
+    except OSError:
+        pass  # 降级：标记写失败→下次 boot 视为 stale→多重跑一次，幂等无副作用
+
+
+def _read_success_marker(gen_name: str) -> float | None:
+    """读取生成器上次成功时间戳，不存在/损坏返回 None。"""
+    marker = _REGEN_CACHE_DIR / f"gen_{gen_name}.success"
+    try:
+        return float(marker.read_text(encoding="utf-8").strip())
+    except (OSError, ValueError):
+        return None
 
 
 def _load_registry() -> dict:
@@ -371,6 +407,9 @@ def _invoke_parallel(entries: list[dict]) -> list[dict]:
     def _run(idx: int, entry: dict) -> None:
         try:
             results[idx] = _invoke_generator(entry)
+            # db:-only boot 兜底：成功后写时间戳（_is_stale 据此判定是否需 boot 重跑）
+            if results[idx].get("status") == "ok":
+                _write_success_marker(entry.get("name", ""))
         except Exception as e:  # noqa: BLE001 — _invoke_generator 已捕获，此处双保险
             name = entry.get("name", "<unknown>")
             results[idx] = {
@@ -518,7 +557,19 @@ def _is_stale(entry: dict) -> tuple[bool, str]:
             if f.exists():
                 yaml_files.append(f)
     if not yaml_files:
-        return False, "no_yaml_sources"  # 无 yaml 源，stale 扫描跳过
+        # db:-only 生成器（input_sources 全为 db: 前缀）无文件级 mtime 可对比。
+        # 用"上次成功生成时间戳"判定：超阈值→stale（最大过时保证，治本 P2-1）。
+        has_db_sources = any(s.startswith("db:") for s in entry.get("input_sources", []))
+        if not has_db_sources:
+            return False, "no_input_sources"  # 无任何输入源，stale 扫描跳过
+        gen_name = entry.get("name", "")
+        last_success = _read_success_marker(gen_name)
+        if last_success is None:
+            return True, "db_only_never_generated"  # 从未成功生成→必须跑
+        age = time.time() - last_success
+        if age > _DB_ONLY_STALE_THRESHOLD_SECONDS:
+            return True, f"db_only_stale_{int(age)}s"
+        return False, f"db_only_fresh_{int(age)}s"
 
     input_mtime = max(f.stat().st_mtime for f in yaml_files)
 

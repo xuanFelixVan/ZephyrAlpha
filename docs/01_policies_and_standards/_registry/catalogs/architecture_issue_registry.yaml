@@ -12047,3 +12047,53 @@ entries:
   status: decided
   created: '2026-08-05'
   last_updated: '2026-08-05'
+
+# --- #ARCH-GOV-BUDGET-001: 治理架构复杂度超阈值，派生产物离库 + 治理预算冻结（2026-08-05，2026-08-06 恢复——曾因 reconciler 误删丢失）---
+- issue_id: '#ARCH-GOV-BUDGET-001'
+  title: 治理代码(131K行)≈业务代码(75K行)1.75倍倒挂，派生产物入git是reconciler非收敛循环数学根因
+  severity: P1高
+  category: architecture_governance
+  adjudication: |
+    2026-08-05 架构师客观裁定（第一性原理 + 项目实测数据）。
+    病根（第一性原理）：
+    reconciler 是反馈控制系统，控制论要求闭环系统有界且负反馈才能稳定。当前架构违反两条：
+    (1) 违反有界——派生产物（73域文档+项目树）被git跟踪，任一输入非确定性（时间戳/排序/换行）
+    → 输出diff → auto-commit → 触发下一次reconciler → 再diff，非收敛是数学必然；
+    (2) 违反负反馈——reconciler的action="commit"自动提交，等同反馈控制器能改设定值=失稳。
+    三条不变量（后续所有治理决策必须满足）：
+    - I-GOV-1（派生产物离库）：凡可由DB/源码/YAML经生成器重现的文档，禁止入git。
+    - I-GOV-2（reconciler无写权）：reconciler只允许warn/skip/fix-in-place，禁止action="commit"。
+    - I-GOV-3（治理预算硬上限）：gate<=54 / reconciler<=121 / AGENTS.md<=1234行，新增必须等量退役。
+  impact:
+    - '.gitignore（派生产物路径忽略规则）'
+    - '.pre-commit-config.yaml（gate-generator-no-realtime-time + gate-no-commit-derived hook注册）'
+    - 'AGENTS.md（检测条款升级 + 派生产物离库原则）'
+  fix_phase: Phase 1+2 已完成（2026-08-06）—— Phase 3/4 待施工
+  status: decided
+  created: '2026-08-05'
+  last_updated: '2026-08-06'
+# --- #ARCH-FORCE-MERGE-DEDUP-001: 强制合并去重——升级CAPABILITY-OVERLAP门禁为硬阻断（2026-08-06，CloneGuard 蓝图登记）---
+- issue_id: '#ARCH-FORCE-MERGE-DEDUP-001'
+  title: 100%AI开发场景下重复造轮子病根——升级CAPABILITY-OVERLAP门禁为强制合并去重(多引擎集成)
+  severity: P1高
+  category: architecture_governance
+  adjudication: |
+    2026-08-06 架构师裁定（基于 #ARCH-GOV-BUDGET-001 I-GOV-3 等量退役约束 + AI造轮子病根分析）。
+    病根：100% AI开发场景下，AI agent为已解决任务重复生成代码（"AI Rot"），功能重叠累积。
+    用户的治理诉求：能合并的必须合并，能精简的必须精简——而非禁止新增。
+    裁定：
+    1. 升级现有 CAPABILITY-OVERLAP 门禁（不新增门禁，守 I-GOV-3 等量退役）为硬阻断；
+    2. 集成6个开源克隆检测引擎（Echo-Guard/reDUP/ast-grep/mcrit/Vendetect/relate），
+       通过统一编排层形成四层防御纵深（L0源头预防+L1提交拦截+L2周期审计+L3跨边界审计）；
+    3. DRY严重性映射：extract(3+副本)=硬阻断=必须合并；review(2副本)=警告=尽量精简；
+    4. 治本原则：不自研检测算法，用现成开源引擎，自研仅编排层(~1500行)。
+    施工蓝图：docs/03_modules/_cross_layer/clone_guard/blueprint.md（MOD-CLONE_GUARD v0.1.0）。
+  impact:
+    - 'docs/03_modules/_cross_layer/clone_guard/blueprint.md（施工蓝图）'
+    - 'src/zephyr/clone_guard/（待施工，Phase A-D）'
+    - 'src/zephyr/gov_enforcement/commit_gates/（CAPABILITY-OVERLAP 门禁升级）'
+    - 'AGENTS.md（CloneGuard 使用规范，Phase D）'
+  fix_phase: 蓝图已登记（2026-08-06）—— Phase A-D 待施工
+  status: decided
+  created: '2026-08-06'
+  last_updated: '2026-08-06'

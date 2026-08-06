@@ -8118,6 +8118,11 @@ creation_tokens:
     token: "auto-gov-budget-adjudication-20260805"
     created_by: "session-gov-budget-004"
     capability: "governance_budget_adjudication"
+  # --- CloneGuard 蓝图（2026-08-06，#ARCH-FORCE-MERGE-DEDUP-001 多引擎克隆检测集成防御体系）---
+  - file: "docs/03_modules/_cross_layer/clone_guard/blueprint.md"
+    token: "auto-clone-guard-blueprint-20260806"
+    created_by: "session-clone-guard-blueprint"
+    capability: "clone_guard_blueprint"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

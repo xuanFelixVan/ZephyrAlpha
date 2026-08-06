@@ -268,16 +268,51 @@ class TestIsStaleLogic:
     使用 tmp_path + os.utime 精确控制文件 mtime，不依赖真实文件系统状态。
     """
 
-    def test_no_yaml_sources_returns_false(self, rg, monkeypatch, tmp_path):
-        """db-only 生成器（无 yaml 输入源）→ (False, 'no_yaml_sources')。"""
+    def test_db_only_never_generated_is_stale(self, rg, monkeypatch, tmp_path):
+        """db-only 生成器无成功标记 → (True, 'db_only_never_generated')。P2-1 boot 兜底。"""
         monkeypatch.setattr(rg, "_REPO_ROOT", tmp_path)
+        monkeypatch.setattr(rg, "_REGEN_CACHE_DIR", tmp_path / "cache")
         entry = {
+            "name": "test_db_only",
             "input_sources": ["db:depgraph_nodes|edges"],
             "output_globs": ["nonexistent/*.md"],
         }
         is_stale, reason = rg._is_stale(entry)
+        assert is_stale is True
+        assert reason == "db_only_never_generated"
+
+    def test_db_only_recent_success_is_fresh(self, rg, monkeypatch, tmp_path):
+        """db-only 生成器近期成功 → (False, 'db_only_fresh_*s')。"""
+        monkeypatch.setattr(rg, "_REPO_ROOT", tmp_path)
+        monkeypatch.setattr(rg, "_REGEN_CACHE_DIR", tmp_path / "cache")
+        entry = {
+            "name": "test_db_only",
+            "input_sources": ["db:depgraph_nodes|edges"],
+            "output_globs": ["nonexistent/*.md"],
+        }
+        rg._write_success_marker("test_db_only")
+        is_stale, reason = rg._is_stale(entry)
         assert is_stale is False
-        assert reason == "no_yaml_sources"
+        assert reason.startswith("db_only_fresh_")
+
+    def test_db_only_old_success_is_stale(self, rg, monkeypatch, tmp_path):
+        """db-only 生成器成功标记超阈值 → (True, 'db_only_stale_*s')。"""
+        import time as _time
+
+        monkeypatch.setattr(rg, "_REPO_ROOT", tmp_path)
+        cache_dir = tmp_path / "cache"
+        monkeypatch.setattr(rg, "_REGEN_CACHE_DIR", cache_dir)
+        entry = {
+            "name": "test_db_only",
+            "input_sources": ["db:depgraph_nodes|edges"],
+            "output_globs": ["nonexistent/*.md"],
+        }
+        old_ts = _time.time() - rg._DB_ONLY_STALE_THRESHOLD_SECONDS - 100
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        (cache_dir / "gen_test_db_only.success").write_text(str(old_ts), encoding="utf-8")
+        is_stale, reason = rg._is_stale(entry)
+        assert is_stale is True
+        assert reason.startswith("db_only_stale_")
 
     def test_no_outputs_returns_true(self, rg, monkeypatch, tmp_path):
         """有 yaml 输入源但无产物文件 → (True, 'no_outputs')。"""

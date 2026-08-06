@@ -40975,6 +40975,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "一键重生成已离库的派生架构文档（域文档、项目树），并起一个本地网页服务方便浏览，替代原来把派生产物提交进版本库的做法。"
+- module_path: docs/03_modules/_cross_layer/clone_guard/blueprint.md
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "CloneGuard蓝图"
+  name_en: "CloneGuard Blueprint"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把六个开源代码查重工具打包成一个防御体系，专门治AI重复造轮子的病根：AI写新函数前先查重、提交时硬阻断重复、定期全量审计找旧债、跨项目跨仓库查抄袭"
 
 battle_map_steps:
 - step_id: BM-BUY-04
