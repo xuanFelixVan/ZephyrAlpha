@@ -135,16 +135,16 @@ class TestScanContentHelpers:
 
     def test_is_project_module_zephyr(self):
         """zephyr.xxx 是项目内模块。"""
-        assert _is_project_module("zephyr.gov_enforcement.commit_gates.foo") is True
+        assert _matches_any_prefix("zephyr.gov_enforcement.commit_gates.foo", _PROJECT_PREFIXES) is True
 
     def test_is_project_module_scripts(self):
         """scripts.xxx 是项目内模块。"""
-        assert _is_project_module("scripts.governance.foo") is True
+        assert _matches_any_prefix("scripts.governance.foo", _PROJECT_PREFIXES) is True
 
     def test_is_project_module_external(self):
         """os / requests 不是项目内模块。"""
-        assert _is_project_module("os") is False
-        assert _is_project_module("requests") is False
+        assert _matches_any_prefix("os", _PROJECT_PREFIXES) is False
+        assert _matches_any_prefix("requests", _PROJECT_PREFIXES) is False
 
     def test_collect_imports_basic(self):
         """_collect_imports 收集 Import / ImportFrom，跳过相对/wildcard。"""
