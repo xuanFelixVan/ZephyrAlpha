@@ -1456,15 +1456,34 @@ def _p6_is_negation_test(test: ast.expr) -> bool:
 
 # 风险评分语境豁免——这些变量名前缀表明 score 是"风险累加"而非"正向确认"
 _P6_RISK_SCORE_PREFIXES = (
-    "risk", "penalty", "violation", "warning", "drift",
-    "hallucination", "missing", "badness", "debt", "cost",
-    "deterioration", "degradation", "anomaly", "fraud",
+    "risk",
+    "penalty",
+    "violation",
+    "warning",
+    "drift",
+    "hallucination",
+    "missing",
+    "badness",
+    "debt",
+    "cost",
+    "deterioration",
+    "degradation",
+    "anomaly",
+    "fraud",
 )
 
 # 风险语境关键词（函数名含这些词时豁免 P6）
 _P6_RISK_CONTEXT_KEYWORDS = [
-    "risk", "hallucination", "drift", "penalty", "violation",
-    "风险", "幻觉", "漂移", "惩罚", "违规",
+    "risk",
+    "hallucination",
+    "drift",
+    "penalty",
+    "violation",
+    "风险",
+    "幻觉",
+    "漂移",
+    "惩罚",
+    "违规",
 ]
 
 
@@ -1752,10 +1771,7 @@ def _print_findings(findings: list[tuple[Path, list[Finding]]]) -> bool:
         print("✗ %s — %d 处违规" % (rel, len(fs)))
         has_findings = True
         for f in fs:
-            print(
-                "    [%s/%s] %s%s"
-                % (f.pattern, f.severity, f"L{f.line}: " if f.line else "", f.detail[:120])
-            )
+            print("    [%s/%s] %s%s" % (f.pattern, f.severity, f"L{f.line}: " if f.line else "", f.detail[:120]))
     return has_findings
 
 
@@ -1814,9 +1830,7 @@ def main() -> int:
         return EXIT_PASS
 
     code_findings, bp_findings, total_findings = _run_scan(code_files, bp_files)
-    return _print_report(
-        args, code_files, bp_files, code_findings, bp_findings, total_findings, ci_mode
-    )
+    return _print_report(args, code_files, bp_files, code_findings, bp_findings, total_findings, ci_mode)
 
 
 if __name__ == "__main__":
