@@ -40,14 +40,16 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: E402
+    _matches_any_prefix,
+    _module_to_file_candidates,
+)
 from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import (  # noqa: E402
     _ABSTRACT_CODE_PREFIXES,
     _CONSUMERS_RE,
     _classify_consumer_format,
     _check_filepath_exists,
     _has_cjk,
-    _is_abstract_code,
-    _module_to_file_candidates,
     check_consumers_accuracy,
     make_consumers_accuracy_gate,
     parse_consumers_field,
@@ -538,14 +540,14 @@ class TestCheckConsumersAccuracyExempt:
         assert violations == []
 
     def test_is_abstract_code_all_prefixes(self):
-        """_is_abstract_code 对所有抽象前缀返回 True。"""
+        """_matches_any_prefix 对所有抽象前缀返回 True。"""
         for prefix in _ABSTRACT_CODE_PREFIXES:
-            assert _is_abstract_code(f"{prefix}XXX-001") is True
+            assert _matches_any_prefix(f"{prefix}XXX-001", _ABSTRACT_CODE_PREFIXES) is True
 
     def test_is_abstract_code_non_abstract(self):
         """非抽象代号返回 False。"""
-        assert _is_abstract_code("zephyr.foo.bar") is False
-        assert _is_abstract_code("scripts.governance.foo") is False
+        assert _matches_any_prefix("zephyr.foo.bar", _ABSTRACT_CODE_PREFIXES) is False
+        assert _matches_any_prefix("scripts.governance.foo", _ABSTRACT_CODE_PREFIXES) is False
 
     def test_cjk_in_parens_skipped(self, tmp_path):
         """括号内含 CJK 字符 → 视为描述性文字，跳过 orphan 检测。"""

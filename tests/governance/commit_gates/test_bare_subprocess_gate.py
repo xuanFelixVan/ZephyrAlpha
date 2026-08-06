@@ -42,13 +42,16 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: E402
+    _extract_noqa_lines,
+)
 from zephyr.gov_enforcement.commit_gates.bare_subprocess_gate import (  # noqa: E402
+    _NOQA_PATTERN,
     _collect_direct_call_func_ids,
     _collect_subprocess_aliases,
     _is_bare_subprocess_call,
     _is_bare_subprocess_exempt_file,
     _is_bare_subprocess_ref,
-    _extract_noqa_lines,
     make_bare_subprocess_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
@@ -337,7 +340,7 @@ class TestExtractNoqaLines:
             'import subprocess\n'
             'subprocess.run(["ls"])  # noqa: bare-subprocess  legit reason here\n'
         )
-        lines = _extract_noqa_lines(content)
+        lines = _extract_noqa_lines(content, _NOQA_PATTERN)
         assert 2 in lines
 
     def test_ignores_noqa_without_reason(self):
@@ -345,7 +348,7 @@ class TestExtractNoqaLines:
             'import subprocess\n'
             'subprocess.run(["ls"])  # noqa: bare-subprocess\n'  # 无 reason
         )
-        lines = _extract_noqa_lines(content)
+        lines = _extract_noqa_lines(content, _NOQA_PATTERN)
         assert 2 not in lines  # 无 reason 不豁免
 
     def test_ignores_noqa_single_space(self):
@@ -353,12 +356,12 @@ class TestExtractNoqaLines:
             'import subprocess\n'
             'subprocess.run(["ls"])  # noqa: bare-subprocess reason\n'  # 单空格
         )
-        lines = _extract_noqa_lines(content)
+        lines = _extract_noqa_lines(content, _NOQA_PATTERN)
         assert 2 not in lines  # 单空格不豁免（要求 2+ 空格）
 
     def test_no_noqa(self):
         content = 'import subprocess\nsubprocess.run(["ls"])\n'
-        lines = _extract_noqa_lines(content)
+        lines = _extract_noqa_lines(content, _NOQA_PATTERN)
         assert lines == set()
 
 
