@@ -123,7 +123,7 @@ class AlertGenerator:
 
 ## 7. 施工步骤
 
-1. G1-S1 ✓ depgraph 设计态登记（node_id=8691800, 2条边）
+1. G1-S1 ✓ depgraph 设计态登记（module_id=MOD-RK-06, 2条边）
 2. G1-S2 ← 当前：创建 blueprint.md + 四图对齐验证
 3. G1-S3 写代码 `src/zephyr/risk/core/alert_generator.py`
 4. G1-S4 测试 `tests/risk/core/test_alert_generator.py`
@@ -142,7 +142,7 @@ class AlertGenerator:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-RK-06` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-RK-06` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
