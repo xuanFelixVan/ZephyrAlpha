@@ -5,12 +5,12 @@
 # [CONSUMERS] config/mcp.json (servers.clone_guard); AI agent (L0 源头预防 + L2 技术债可达性)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] L0 源头预防——AI 写代码前主动调用，返回 advisory findings + import_suggestion（不硬阻断）；check_before_write/search_functions/audit_status 永不抛异常（orchestrator 守 ERROR_CONTRACT）；co-located with clone_guard 模块（守 red_blue_validator 先例）
+# [INVARIANTS] L0 源头预防——AI 写代码前主动调用，返回 advisory findings + import_suggestion（不硬阻断）；check_before_write/search_functions/audit_status/health_check 永不抛异常（orchestrator 守 ERROR_CONTRACT）；resolve_finding 永不抛异常（acknowledge 写操作降级返回 degraded）；co-located with clone_guard 模块（守 red_blue_validator 先例）
 # [MODIFY-GUARD] blueprint=docs/03_modules/_cross_layer/clone_guard/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check_before_write/search_functions/audit_status 永不抛异常——降级时返回 degraded=True（warn-only 兜底）；health_check 永不抛异常
+# [ERROR_CONTRACT] check_before_write/search_functions/audit_status 永不抛异常——降级时返回 degraded=True（warn-only 兜底）；health_check 永不抛异常；resolve_finding 永不抛异常——acknowledge 失败返回 acknowledged=False + degraded=True
 # [TESTS] tests/clone_guard/test_mcp_server.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -39,6 +39,7 @@ L0 vs L1 的本质区别
 - clone_guard.search_functions   — L0 按语义搜已有函数（relate search()），引导复用
 - clone_guard.audit_status       — L2 查询技术债（读最近 audit JSON，6层闭环·可达性）
 - clone_guard.health_check       — 检查 echo-guard 引擎 + 索引可用性
+- clone_guard.resolve_finding    — L2 acknowledged 白名单管理（写操作，safety_level=M）
 
 Usage::
 
@@ -88,7 +89,7 @@ _DEFAULT_REPO_ROOT: Final[str] = "."
 class CloneGuardMCPServer(BaseMCPServer):
     """CloneGuard L0 源头预防 + L2 技术债可达性 MCP Server。
 
-    复用 BaseMCPServer（JSON-RPC 2.0 over stdio），注册 4 个工具。
+    复用 BaseMCPServer（JSON-RPC 2.0 over stdio），注册 5 个工具（4 只读 + 1 写）。
     生命周期内复用单个 CloneGuardOrchestrator 实例（避免每次调用重建索引连接）。
     """
 
@@ -193,6 +194,44 @@ class CloneGuardMCPServer(BaseMCPServer):
             },
             handler=self._health_check,
             safety_level="L",
+        )
+
+        # ── L2 acknowledged 白名单管理（写操作，safety_level=M 需确认）──
+        self.register_tool(
+            name="clone_guard.resolve_finding",
+            description=(
+                "L2 acknowledged 白名单管理：将合理重复 finding 加入 echo-guard.yml "
+                "suppressed 列表，标记为 acknowledged 严重性（最低，不阻断 CI）。"
+                "intentional=保留两份（函数变化时重新浮现，非永久豁免）；"
+                "dismissed=标记为非重复（永久豁免）。"
+                "AI 应仅对经人工确认合理的克隆调用此工具，并在 note 中说明理由"
+                "（强制留痕防滥用）。写操作——会修改 echo-guard.yml，需后续提交持久化。"
+            ),
+            input_schema={
+                "type": "object",
+                "required": ["finding_id", "verdict", "note"],
+                "additionalProperties": False,
+                "properties": {
+                    "finding_id": {
+                        "type": "string",
+                        "description": (
+                            "来自 clone_guard.audit_status 或 `echo-guard scan --output json` 的 finding ID"
+                        ),
+                    },
+                    "verdict": {
+                        "type": "string",
+                        "enum": ["intentional", "dismissed"],
+                        "description": ("intentional=保留两份（函数变化重新浮现）；dismissed=非重复（永久豁免）"),
+                    },
+                    "note": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "说明为何 acknowledge（强制留痕，防滥用）",
+                    },
+                },
+            },
+            handler=self._resolve_finding,
+            safety_level="M",  # 写操作——修改 echo-guard.yml，需确认
         )
 
     # ------------------------------------------------------------------
@@ -410,6 +449,92 @@ class CloneGuardMCPServer(BaseMCPServer):
                 "echo-guard 可用——L0/L1 查重正常。"
                 if cli_present
                 else "echo-guard 不可用——运行 `echo-guard index` 构建索引。L1 降级为 warn-only。"
+            ),
+            "checked_at": now_iso(),
+        }
+
+    def _resolve_finding(
+        self,
+        finding_id: str,
+        verdict: str,
+        note: str,
+    ) -> dict[str, Any]:
+        """L2 acknowledged 白名单管理——封装 echo-guard acknowledge CLI。
+
+        将合理重复 finding 加入 echo-guard.yml suppressed 列表，标记为 acknowledged
+        严重性（最低，不阻断 CI）。守 ERROR_CONTRACT：永不抛异常，CLI 失败/异常返回
+        ``acknowledged=False + degraded=True``。
+
+        输入校验（防御兜底——JSON Schema 已约束，但 handler 直调时仍需校验）：
+        - finding_id 非空
+        - verdict ∈ {intentional, dismissed}
+        - note 非空（强制留痕防滥用）
+        """
+        # ── 输入校验（防御兜底）──
+        if not finding_id or not finding_id.strip():
+            return {
+                "acknowledged": False,
+                "degraded": True,
+                "error": "finding_id 不能为空",
+                "hint": "请提供来自 echo-guard scan --output json 的 finding ID。",
+                "checked_at": now_iso(),
+            }
+        if verdict not in ("intentional", "dismissed"):
+            return {
+                "acknowledged": False,
+                "degraded": True,
+                "error": f"verdict 非法: {verdict!r}（须为 intentional 或 dismissed）",
+                "hint": "verdict 须为 intentional（保留两份）或 dismissed（非重复永久豁免）。",
+                "checked_at": now_iso(),
+            }
+        if not note or not note.strip():
+            return {
+                "acknowledged": False,
+                "degraded": True,
+                "error": "note 不能为空（强制留痕防滥用）",
+                "hint": "必须在 note 中说明 acknowledge 理由——防 AI 滥用白名单消除告警。",
+                "checked_at": now_iso(),
+            }
+
+        try:
+            adapter = EchoGuardAdapter(self._repo_root, self._config)
+            success, error = adapter.acknowledge(finding_id.strip(), verdict, note)
+        except Exception as e:  # noqa: BLE001  resolve_finding 永不抛异常
+            logger.warning("clone_guard.resolve_finding 异常(%s: %s)", type(e).__name__, e)
+            return {
+                "acknowledged": False,
+                "degraded": True,
+                "error": f"{type(e).__name__}: {e}",
+                "finding_id": finding_id,
+                "verdict": verdict,
+                "hint": "acknowledge 异常——白名单未更新，echo-guard.yml 未修改。",
+                "checked_at": now_iso(),
+            }
+
+        if not success:
+            return {
+                "acknowledged": False,
+                "degraded": True,
+                "error": error,
+                "finding_id": finding_id,
+                "verdict": verdict,
+                "hint": (
+                    "acknowledge 失败——白名单未更新。"
+                    "检查 echo-guard CLI 可用性 + finding_id 有效性（须来自 scan --output json）。"
+                ),
+                "checked_at": now_iso(),
+            }
+
+        return {
+            "acknowledged": True,
+            "degraded": False,
+            "finding_id": finding_id,
+            "verdict": verdict,
+            "note": note,
+            "hint": (
+                f"finding {finding_id} 已加入 echo-guard.yml suppressed 白名单"
+                f"（verdict={verdict}）。下次 scan/check 该 finding 标记为 acknowledged"
+                " 严重性（不阻断）。注意：echo-guard.yml 已修改，需提交以持久化。"
             ),
             "checked_at": now_iso(),
         }

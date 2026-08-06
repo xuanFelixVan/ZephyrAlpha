@@ -79,24 +79,36 @@ def _make_server_with_mock_orch(tmp_path: Path, check_result: CheckResult | None
 class TestToolRegistration:
     """工具注册测试。"""
 
-    def test_four_tools_registered(self, tmp_path: Path):
-        """注册 4 工具：check_before_write + search_functions + audit_status + health_check。"""
+    def test_five_tools_registered(self, tmp_path: Path):
+        """注册 5 工具：check_before_write + search_functions + audit_status + health_check + resolve_finding。"""
         server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
         assert "clone_guard.check_before_write" in server.tool_names
         assert "clone_guard.search_functions" in server.tool_names
         assert "clone_guard.audit_status" in server.tool_names
         assert "clone_guard.health_check" in server.tool_names
-        assert len(server.tool_names) == 4
+        assert "clone_guard.resolve_finding" in server.tool_names
+        assert len(server.tool_names) == 5
 
     def test_server_id(self, tmp_path: Path):
         server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
         assert server.server_id == "clone_guard"
 
-    def test_tool_safety_level_is_L(self, tmp_path: Path):
-        """四个工具都是 safety_level=L（只读检测，不修改文件）。"""
+    def test_readonly_tools_safety_level_is_L(self, tmp_path: Path):
+        """4 个只读工具 safety_level=L（不修改文件）。"""
         server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
-        for tool_def in server.tools.values():
-            assert tool_def.safety_level == "L"
+        readonly = [
+            "clone_guard.check_before_write",
+            "clone_guard.search_functions",
+            "clone_guard.audit_status",
+            "clone_guard.health_check",
+        ]
+        for name in readonly:
+            assert server.tools[name].safety_level == "L"
+
+    def test_resolve_finding_safety_level_is_M(self, tmp_path: Path):
+        """resolve_finding 是写操作（修改 echo-guard.yml）→ safety_level=M（需确认）。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        assert server.tools["clone_guard.resolve_finding"].safety_level == "M"
 
 
 # ---------------------------------------------------------------------------
@@ -404,12 +416,134 @@ class TestCreateServer:
         server = create_server(repo_root=tmp_path, enable_rbac=False)
         assert isinstance(server, CloneGuardMCPServer)
 
-    def test_server_has_four_tools(self, tmp_path: Path):
+    def test_server_has_five_tools(self, tmp_path: Path):
         server = create_server(repo_root=tmp_path, enable_rbac=False)
-        assert len(server.tool_names) == 4
+        assert len(server.tool_names) == 5
 
     def test_default_repo_root(self):
         """不传 repo_root 时使用默认当前目录。"""
         server = create_server(enable_rbac=False)
         assert isinstance(server, CloneGuardMCPServer)
         assert server.server_id == "clone_guard"
+
+
+# ---------------------------------------------------------------------------
+# _resolve_finding 测试
+# ---------------------------------------------------------------------------
+
+
+class TestResolveFinding:
+    """resolve_finding handler 测试——L2 acknowledged 白名单管理（写操作）。
+
+    覆盖：输入校验兜底 / adapter 成功 / adapter 失败降级 / adapter 异常兜底。
+    mock EchoGuardAdapter.acknowledge，不依赖真实 echo-guard CLI。
+    """
+
+    def test_empty_finding_id_returns_error(self, tmp_path: Path):
+        """空 finding_id → acknowledged=False + degraded=True（不调 adapter）。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        with patch("zephyr.clone_guard.mcp_server.EchoGuardAdapter") as mock_cls:
+            result = server._resolve_finding(finding_id="", verdict="intentional", note="理由")
+        assert result["acknowledged"] is False
+        assert result["degraded"] is True
+        assert "finding_id" in result["error"]
+        # 空输入校验在前，不应构造 adapter
+        mock_cls.assert_not_called()
+
+    def test_whitespace_finding_id_returns_error(self, tmp_path: Path):
+        """纯空白 finding_id 视为空。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        result = server._resolve_finding(finding_id="   ", verdict="intentional", note="理由")
+        assert result["acknowledged"] is False
+        assert result["degraded"] is True
+
+    def test_invalid_verdict_returns_error(self, tmp_path: Path):
+        """verdict 非 intentional/dismissed → 错误（不调 adapter）。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        with patch("zephyr.clone_guard.mcp_server.EchoGuardAdapter") as mock_cls:
+            result = server._resolve_finding(finding_id="F-001", verdict="maybe", note="理由")
+        assert result["acknowledged"] is False
+        assert result["degraded"] is True
+        assert "verdict" in result["error"]
+        mock_cls.assert_not_called()
+
+    def test_empty_note_returns_error(self, tmp_path: Path):
+        """空 note → 错误（强制留痕防滥用，不调 adapter）。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        with patch("zephyr.clone_guard.mcp_server.EchoGuardAdapter") as mock_cls:
+            result = server._resolve_finding(finding_id="F-001", verdict="intentional", note="")
+        assert result["acknowledged"] is False
+        assert result["degraded"] is True
+        assert "note" in result["error"]
+        mock_cls.assert_not_called()
+
+    def test_whitespace_note_returns_error(self, tmp_path: Path):
+        """纯空白 note 视为空。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        result = server._resolve_finding(finding_id="F-001", verdict="dismissed", note="   ")
+        assert result["acknowledged"] is False
+        assert result["degraded"] is True
+
+    def test_adapter_success_returns_acknowledged(self, tmp_path: Path):
+        """adapter.acknowledge 返回 (True, None) → acknowledged=True。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        with patch("zephyr.clone_guard.mcp_server.EchoGuardAdapter") as mock_cls:
+            mock_adapter = MagicMock()
+            mock_adapter.acknowledge.return_value = (True, None)
+            mock_cls.return_value = mock_adapter
+            result = server._resolve_finding(finding_id="F-001", verdict="intentional", note="两处实现均需保留")
+        assert result["acknowledged"] is True
+        assert result["degraded"] is False
+        assert result["finding_id"] == "F-001"
+        assert result["verdict"] == "intentional"
+        assert result["note"] == "两处实现均需保留"
+        assert "suppressed 白名单" in result["hint"]
+        mock_adapter.acknowledge.assert_called_once_with("F-001", "intentional", "两处实现均需保留")
+
+    def test_adapter_failure_returns_degraded(self, tmp_path: Path):
+        """adapter.acknowledge 返回 (False, error) → acknowledged=False + degraded=True。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        with patch("zephyr.clone_guard.mcp_server.EchoGuardAdapter") as mock_cls:
+            mock_adapter = MagicMock()
+            mock_adapter.acknowledge.return_value = (False, "echo-guard CLI 未安装")
+            mock_cls.return_value = mock_adapter
+            result = server._resolve_finding(finding_id="F-001", verdict="dismissed", note="非重复")
+        assert result["acknowledged"] is False
+        assert result["degraded"] is True
+        assert result["error"] == "echo-guard CLI 未安装"
+        assert result["finding_id"] == "F-001"
+        assert "白名单未更新" in result["hint"]
+
+    def test_adapter_exception_does_not_raise(self, tmp_path: Path):
+        """adapter.acknowledge 抛异常时 resolve_finding 不抛异常，返回降级。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        with patch("zephyr.clone_guard.mcp_server.EchoGuardAdapter") as mock_cls:
+            mock_adapter = MagicMock()
+            mock_adapter.acknowledge.side_effect = RuntimeError("boom")
+            mock_cls.return_value = mock_adapter
+            result = server._resolve_finding(finding_id="F-001", verdict="intentional", note="理由")
+        assert result["acknowledged"] is False
+        assert result["degraded"] is True
+        assert "RuntimeError" in result["error"]
+        assert "boom" in result["error"]
+
+    def test_finding_id_stripped_before_passing_to_adapter(self, tmp_path: Path):
+        """finding_id 前后空白被 strip 后再传给 adapter。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        with patch("zephyr.clone_guard.mcp_server.EchoGuardAdapter") as mock_cls:
+            mock_adapter = MagicMock()
+            mock_adapter.acknowledge.return_value = (True, None)
+            mock_cls.return_value = mock_adapter
+            server._resolve_finding(finding_id="  F-001  ", verdict="intentional", note="理由")
+        mock_adapter.acknowledge.assert_called_once_with("F-001", "intentional", "理由")
+
+    def test_checked_at_timestamp_present(self, tmp_path: Path):
+        """成功路径返回 checked_at 时间戳。"""
+        server = CloneGuardMCPServer(repo_root=tmp_path, enable_rbac=False)
+        with patch("zephyr.clone_guard.mcp_server.EchoGuardAdapter") as mock_cls:
+            mock_adapter = MagicMock()
+            mock_adapter.acknowledge.return_value = (True, None)
+            mock_cls.return_value = mock_adapter
+            result = server._resolve_finding(finding_id="F-001", verdict="intentional", note="理由")
+        assert "checked_at" in result
+        assert isinstance(result["checked_at"], str)

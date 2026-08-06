@@ -486,3 +486,132 @@ class TestEchoGuardAdapterScan:
         assert "PATH" in kwargs["env"]  # 系统 env 保留
         assert kwargs["env"]["HF_HUB_OFFLINE"] == "1"
         assert kwargs["env"]["TRANSFORMERS_OFFLINE"] == "1"
+
+
+class TestEchoGuardAdapterAcknowledge:
+    """acknowledge 测试——L2 acknowledged 白名单管理路径（写 echo-guard.yml）。
+
+    镜像 detect/scan 的降级覆盖，确保 acknowledge 守 ERROR_CONTRACT：
+    CLI 失败/超时/异常返回 (False, error)，不抛异常。
+    """
+
+    def test_echo_guard_disabled_returns_error(self, tmp_path: Path):
+        """echo_guard_enabled=False 时返回 (False, error) 且不调 CLI。"""
+        cfg = CloneGuardConfig(echo_guard_enabled=False)
+        adapter = EchoGuardAdapter(tmp_path, cfg)
+        with patch("subprocess.run") as mock_run:
+            success, error = adapter.acknowledge("F-001", "intentional", "合理重复")
+        assert success is False
+        assert error is not None
+        mock_run.assert_not_called()  # 禁用时不触发 CLI
+
+    def test_cli_not_found_returns_error(self, tmp_path: Path):
+        """CLI 未安装时返回 (False, error)。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch("subprocess.run", side_effect=FileNotFoundError):
+            success, error = adapter.acknowledge("F-001", "intentional", "合理重复")
+        assert success is False
+        assert error is not None
+        assert "未安装" in error
+
+    def test_cli_timeout_returns_error(self, tmp_path: Path):
+        """CLI 超时时返回 (False, error)。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch("subprocess.run", side_effect=subprocess.TimeoutExpired(cmd="echo-guard", timeout=30)):
+            success, error = adapter.acknowledge("F-001", "intentional", "合理重复")
+        assert success is False
+        assert error is not None
+        assert "超时" in error
+
+    def test_generic_exception_returns_error(self, tmp_path: Path):
+        """其他异常也返回 (False, error)，不抛出。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch("subprocess.run", side_effect=OSError("boom")):
+            success, error = adapter.acknowledge("F-001", "intentional", "合理重复")
+        assert success is False
+        assert error is not None
+
+    def test_nonzero_exit_returns_error(self, tmp_path: Path):
+        """CLI 非零退出码（finding_id 不存在等）返回 (False, error)。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=1, stdout="", stderr="finding not found")
+        with patch("subprocess.run", return_value=mock_result):
+            success, error = adapter.acknowledge("F-NOPE", "intentional", "x")
+        assert success is False
+        assert error is not None
+        assert "退出码=1" in error
+        assert "finding not found" in error
+
+    def test_zero_exit_returns_success(self, tmp_path: Path):
+        """CLI 退出码 0 → (True, None)。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        with patch("subprocess.run", return_value=mock_result):
+            success, error = adapter.acknowledge("F-001", "dismissed", "非重复")
+        assert success is True
+        assert error is None
+
+    def test_command_args_correct(self, tmp_path: Path):
+        """acknowledge 命令含 finding_id/--verdict/--note 三个参数。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.acknowledge("F-001", "intentional", "两处实现均需保留")
+        args, _ = mock_run.call_args
+        assert args[0] == [
+            "echo-guard",
+            "acknowledge",
+            "F-001",
+            "--verdict",
+            "intentional",
+            "--note",
+            "两处实现均需保留",
+        ]
+
+    def test_uses_pre_commit_timeout_by_default(self, tmp_path: Path):
+        """acknowledge 默认用 config.pre_commit_timeout_sec（30s），非 L2 的 300s。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.acknowledge("F-001", "intentional", "x")
+        _, kwargs = mock_run.call_args
+        assert kwargs["timeout"] == 30  # pre_commit_timeout_sec，而非 audit_timeout_sec(300)
+
+    def test_explicit_timeout_respected(self, tmp_path: Path):
+        """显式 timeout 覆盖默认 pre_commit_timeout_sec。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.acknowledge("F-001", "intentional", "x", timeout=45)
+        _, kwargs = mock_run.call_args
+        assert kwargs["timeout"] == 45
+
+    def test_injects_config_env(self, tmp_path: Path):
+        """acknowledge 注入 config.env（与 detect/scan 一致）。"""
+        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1"})
+        adapter = EchoGuardAdapter(tmp_path, cfg)
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.acknowledge("F-001", "intentional", "x")
+        _, kwargs = mock_run.call_args
+        assert kwargs["env"]["HF_HUB_OFFLINE"] == "1"
+
+    def test_merges_system_env(self, tmp_path: Path):
+        """注入的 env 保留系统 PATH + config.env 覆盖。"""
+        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1"})
+        adapter = EchoGuardAdapter(tmp_path, cfg)
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.acknowledge("F-001", "intentional", "x")
+        _, kwargs = mock_run.call_args
+        assert "PATH" in kwargs["env"]
+        assert kwargs["env"]["HF_HUB_OFFLINE"] == "1"
+
+    def test_cwd_is_repo_root(self, tmp_path: Path):
+        """acknowledge 在 repo_root 目录下执行（echo-guard.yml 在仓库根）。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.acknowledge("F-001", "intentional", "x")
+        _, kwargs = mock_run.call_args
+        assert kwargs["cwd"] == str(tmp_path)

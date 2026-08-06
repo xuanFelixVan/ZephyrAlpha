@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] detect() 永不抛异常——CLI 失败/超时/索引缺失返回 ([], degraded=True)
+# [ERROR_CONTRACT] detect()/scan()/acknowledge() 永不抛异常——CLI 失败/超时/索引缺失返回降级标记（detect/scan: ([], True)；acknowledge: (False, error)）
 # [TESTS] tests/clone_guard/test_echo_guard_adapter.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -218,6 +218,81 @@ class EchoGuardAdapter:
 
         findings = self._parse_findings(data)
         return findings, False
+
+    def acknowledge(
+        self,
+        finding_id: str,
+        verdict: str,
+        note: str,
+        timeout: int | None = None,
+    ) -> tuple[bool, str | None]:
+        """将 finding 加入 echo-guard.yml suppressed 白名单（L2 acknowledged 机制）。
+
+        封装 ``echo-guard acknowledge FINDING_ID --verdict intentional|dismissed --note``：
+        - intentional: 保留两份副本（函数变化时重新浮现，非永久豁免）
+        - dismissed:   标记为非重复（永久豁免）
+
+        写操作——修改仓库根目录的 ``echo-guard.yml``。acknowledge 是配置管理操作，
+        不依赖索引（与 detect/scan 不同），故无 exit_code=2 索引缺失分支；但 finding_id
+        不存在/verdict 非法时 CLI 返回非零退出码。
+
+        守 ERROR_CONTRACT：CLI 失败/超时/异常返回 ``(False, error_msg)``，不抛异常。
+
+        Args:
+            finding_id: 来自 ``echo-guard scan --output json`` 的 finding ID。
+            verdict: ``"intentional"`` 或 ``"dismissed"``（由调用方校验，本方法透传）。
+            note: 说明为何 acknowledge（留痕防滥用，由调用方强制非空）。
+            timeout: 超时秒数（None 时用 ``config.pre_commit_timeout_sec``——acknowledge
+                是快速写操作，不需 L2 的 300s）。
+
+        Returns:
+            ``(success, error)`` 元组：
+            - success: True 表示已写入 echo-guard.yml suppressed 列表
+            - error: 失败原因（成功时为 None）
+        """
+        if not self._config.echo_guard_enabled:
+            logger.debug("echo-guard 已在配置中禁用，跳过 acknowledge")
+            return False, "echo-guard 已禁用"
+
+        timeout_sec = timeout or self._config.pre_commit_timeout_sec
+
+        try:
+            result = subprocess.run(  # noqa: bare-subprocess  echo-guard CLI acknowledge 调用
+                [
+                    "echo-guard",
+                    "acknowledge",
+                    finding_id,
+                    "--verdict",
+                    verdict,
+                    "--note",
+                    note,
+                ],
+                capture_output=True,
+                text=True,
+                timeout=timeout_sec,
+                cwd=str(self._repo_root),
+                env={**os.environ, **self._config.env},
+            )
+        except FileNotFoundError:
+            logger.warning("EchoGuardAdapter acknowledge degraded: echo-guard CLI 未安装")
+            return False, "echo-guard CLI 未安装"
+        except subprocess.TimeoutExpired:
+            logger.warning("EchoGuardAdapter acknowledge degraded: 超时(%ds)", timeout_sec)
+            return False, f"echo-guard acknowledge 超时({timeout_sec}s)"
+        except Exception as e:  # noqa: BLE001  适配器不抛异常
+            logger.warning("EchoGuardAdapter acknowledge degraded: 异常(%s: %s)", type(e).__name__, e)
+            return False, f"{type(e).__name__}: {e}"
+
+        if result.returncode != 0:
+            err = (result.stderr or result.stdout or "").strip()[:200]
+            logger.warning(
+                "EchoGuardAdapter acknowledge 失败: exit=%d, stderr=%s",
+                result.returncode,
+                err,
+            )
+            return False, f"echo-guard acknowledge 退出码={result.returncode}: {err}"
+
+        return True, None
 
     def _parse_findings(self, data: dict) -> list[Finding]:
         """将 echo-guard JSON 输出解析为 Finding 列表。"""

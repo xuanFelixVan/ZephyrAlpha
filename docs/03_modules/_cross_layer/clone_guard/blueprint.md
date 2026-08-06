@@ -485,6 +485,22 @@ acknowledged:
   - "src/zephyr/gov_enforcement/commit_gates/_reference_helpers.py::*"
 ```
 
+**acknowledged 白名单管理规范**（echo-guard CLI + MCP 工具）
+
+白名单条目经 `echo-guard acknowledge` CLI 写入 echo-guard.yml 的 `acknowledged:` 段，标记为 `acknowledged` 严重性（最低，不阻断 CI）。两条调用路径：
+
+- **CLI**：`echo-guard acknowledge <finding_id> --verdict intentional|dismissed --note "<理由>"`
+  - `intentional`：保留两份副本（函数变化时重新浮现，非永久豁免）
+  - `dismissed`：标记为非重复（永久豁免）
+  - `finding_id` 来自 `echo-guard scan --output json`；`--note` **强制必填**——留痕防 AI 滥用白名单消除告警
+- **MCP 工具**：`clone_guard.resolve_finding`（`safety_level=M`，写操作需确认）封装上述 CLI，供 AI agent 经 MCP 调用。输入 `finding_id`/`verdict`/`note`，handler 做 schema + 非空校验后调 [`EchoGuardAdapter.acknowledge()`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/engines/echo_guard_adapter.py)，失败降级返回 `acknowledged=False + degraded=True`，永不抛异常（守 ERROR_CONTRACT）。
+
+副作用与边界：
+
+- **注释丢失警示**：echo-guard CLI 用 ruamel.yaml 重写整个 echo-guard.yml，**丢弃所有手工注释**并改引号风格。故 echo-guard.yml 注释应精简（配置即文档），或接受每次 acknowledge 后注释丢失。
+- **持久化**：acknowledge 仅改工作区 echo-guard.yml，**需经 GitCommitGateway 提交**才持久化；未提交的白名单变更会被 post-commit reconciler restore-to-HEAD 恢复（echo-guard.yml 同 src/ 跟踪文件 restore 约定）。
+- **使用边界**：仅对经审慎确认的合理克隆（归档文件间、有意保留的双实现、接口适配层）调用；禁止用于"消除当前不想处理的告警"——属治理逃逸。
+
 ### §6.2 ast-grep 业务规则示例
 
 `clone_guard/rules/no-duplicate-try-except.yml`：
