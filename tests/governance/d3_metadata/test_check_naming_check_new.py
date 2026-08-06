@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-005 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """--check-new 增量 N-16 模式：只拦 staged 新增重名，不拦历史遗留/未跟踪 WIP。
 
 背景（#ARCH-PRECOMMIT-INCREMENTAL，2026-08-05）：

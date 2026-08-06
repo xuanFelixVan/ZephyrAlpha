@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-06T07:15:48Z'
+generated_at: '2026-08-06T08:16:55Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 142
+total_gates: 144
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -39,12 +39,22 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-NAMING
-  name: 'GATE-NAMING: 命名规范+SSOT一致性（合并 GATE-11/GATE-11-SSOT）'
+  name: 'GATE-NAMING: 命名增量守门（--check-new，只拦 staged 新增重名 #ARCH-PRECOMMIT-INCREMENTAL）'
+  entry: python scripts/governance/d3_metadata/check_naming_convention.py --check-new
+  description: 增量 N-16：只阻断本次 staged 文件引入的新重名（git ls-files 基线）；不扫全仓、不扫未跟踪 WIP、不拦历史遗留。历史
+    warn-only 违规走 gate-naming-audit（CI/manual）清零
+  files_trigger: ^(src/.*|tests/.*|scripts/.*|docs/.*)\.(py|yaml|yml|md|toml)$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-NAMING-AUDIT
+  name: 'GATE-NAMING-AUDIT: 全仓命名审计+SSOT一致性（不阻断 #ARCH-PRECOMMIT-INCREMENTAL）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_naming_convention.py,--warn-only,--scan
     scripts/governance/d3_metadata/check_naming_convention.py,--validate-ssot
-  description: 命名规范门禁合并簇——GATE-11（全库命名规范 --warn-only --scan）+ GATE-11-SSOT（N-16 fallback
-    与 YAML 一致性），run_gate_chain 顺序执行
-  files_trigger: ^.*
+  description: 全仓命名健康审计（warn-only）+ SSoT 一致性（--validate-ssot 硬阻断）。不卡 commit，走 CI/manual。历史
+    warn-only 违规在此逐步清零
+  files_trigger: ^.*$
   always_run: false
   category: unknown
   status: active
@@ -114,14 +124,22 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-FRONTMATTER
-  name: 'GATE-FRONTMATTER: 文档前置元数据合并门禁（GATE-15/RULE-FM/SSOT-DOCS/DOC-REF 四合一）'
-  entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_frontmatter_metadata.py,--ci
-    scripts/governance/d3_metadata/validate_rule_frontmatter.py scripts/governance/d5_architecture/validators/validate_ssot.py,--ci
-    scripts/governance/d2_links/audit_broken_links.py,--ci,--check-new,.
-  description: 文档前置元数据合并门禁——GATE-15(ttl全量) + RULE-FM(规则frontmatter) + SSOT-DOCS(SSoT)
-    + DOC-REF(断链，传.全项目)，run_gate_chain 顺序执行。GATE-C1 已删除（脚本归档，status 由 validate_ssot.py
-    覆盖）
+  name: 'GATE-FRONTMATTER: 文档前置元数据增量守门（ttl+doc_type，#ARCH-PRECOMMIT-INCREMENTAL）'
+  entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py --ci
+  description: 增量 frontmatter 校验：只检查 staged 文件的 ttl/doc_type（pass_filenames=true）；不扫全仓、不拦历史遗留。SSoT/断链/规则FM
+    走 gate-frontmatter-audit（CI/manual）清零
   files_trigger: ^.*\.(md|csv|yaml|yml|json)$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-FRONTMATTER-AUDIT
+  name: 'GATE-FRONTMATTER-AUDIT: 全仓 frontmatter 审计（规则FM+SSoT+断链，不阻断 #ARCH-PRECOMMIT-INCREMENTAL）'
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/validate_rule_frontmatter.py
+    scripts/governance/d5_architecture/validators/validate_ssot.py,--ci scripts/governance/d2_links/audit_broken_links.py,--ci,--check-new,.
+  description: 全仓 frontmatter 审计：规则文件 FM + SSoT 一致性 + 断链扫描。不卡 commit，走 CI/manual。历史
+    _working 缺 ttl 等存量违规在此逐步清零
+  files_trigger: ^.*$
   always_run: false
   category: unknown
   status: active
