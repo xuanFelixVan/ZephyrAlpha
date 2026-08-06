@@ -12109,13 +12109,17 @@ entries:
     （不匹配 _PROJECT_PREFIXES），被当作外部模块走 find_spec → site-packages
     中不存在 → 误判悬空 import → 硬阻断。此前治标方案是对 320+ 文件逐个加
     import-integrity 豁免标记，维护负担重且易遗漏。
-    治本：在 gate 内新增 _extract_sys_path_dirs + _resolve_path_expr 启发式
-    识别 sys.path.insert/append 注入的目录，供 _check_module_in_dirs 在其中
-    查找模块，从源头消除误报，无需逐文件加豁免。
+    治本：在 gate 内新增 _extract_sys_path_dirs 提取 sys.path.insert/append 注入
+    目录，_resolve_path_expr 启发式求值 4 种注入模式（直接 Path(__file__).resolve()
+    .parents[N] / str 包装变量 / 变量间接 _VAR.parent·parents[N] 经 _resolve_path_object
+    基底解析 / next() 生成器向上搜索经 _try_resolve_next_parents_search），供
+    _check_module_in_dirs 在注入目录中查找裸模块名，从源头消除误报，无需逐文件
+    加豁免。全量扫描验证：788 个动态导入中 757 个（96%）自动解析，剩余 31 个
+    （4%）依赖进程级 sys.path 污染的脆弱模式由既有 noqa 逃生标记兜底。
   impact:
-    - 'src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py（_extract_sys_path_dirs + _resolve_path_expr）'
-    - 'tests/governance/commit_gates/test_import_integrity_gate.py（覆盖测试）'
-  fix_phase: 已落地（2026-08-06）—— _extract_sys_path_dirs + _resolve_path_expr 实现完成
+    - 'src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py（_extract_sys_path_dirs + _resolve_path_expr + _resolve_path_object + _extract_subdir_from_if + _try_resolve_next_parents_search + _check_module_in_dirs）'
+    - 'tests/governance/commit_gates/test_import_integrity_gate.py（57 用例覆盖 4 种注入模式 + fail-open）'
+  fix_phase: 已落地（2026-08-06）—— 6 个函数实现完成，4 种 sys.path 注入模式全覆盖，57 单测 + 2081 commit_gates 套件通过
   status: decided
   created: '2026-08-06'
   last_updated: '2026-08-06'
