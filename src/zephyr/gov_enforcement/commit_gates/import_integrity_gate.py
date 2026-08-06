@@ -262,6 +262,24 @@ def _is_path_file_resolve(node: ast.AST) -> bool:
     )
 
 
+def _is_path_file_bare(node: ast.AST) -> bool:
+    """检查 node 是否为 ``Path(__file__)`` 调用（不含 ``.resolve()``）。
+
+    AST 结构::
+
+        Call(func=Name('Path'), args=[Name('__file__')])
+    """
+    if not isinstance(node, ast.Call):
+        return False
+    if not (isinstance(node.func, ast.Name) and node.func.id == "Path"):
+        return False
+    return (
+        len(node.args) == 1
+        and isinstance(node.args[0], ast.Name)
+        and node.args[0].id == "__file__"
+    )
+
+
 def _extract_subscript_int(node: ast.Subscript) -> int | None:
     """从 Subscript 节点提取整数下标（兼容 Python 3.8 Index 包装）。"""
     slice_node = node.slice
@@ -294,10 +312,26 @@ def _resolve_path_object(
 
     返回 None 表示无法识别（fail-open，不提取该目录）。
     """
-    if _depth > 1:
+    if _depth > 2:
         return None  # 防止变量链无限递归
     if _is_path_file_resolve(node):
         return os.path.dirname(file_abs)
+    if _is_path_file_bare(node):
+        return os.path.dirname(file_abs)
+    # Path(VARIABLE) — 变量解析为字符串路径后原样返回（Path(str) ≈ str）
+    if (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "Path"
+        and len(node.args) == 1
+        and isinstance(node.args[0], ast.Name)
+        and node.args[0].id in var_assigns
+    ):
+        resolved = _resolve_path_expr(
+            var_assigns[node.args[0].id], file_abs, var_assigns, _depth
+        )
+        if resolved is not None:
+            return resolved
     if isinstance(node, ast.Name) and node.id in var_assigns:
         return _resolve_path_object(
             var_assigns[node.id], file_abs, var_assigns, _depth + 1

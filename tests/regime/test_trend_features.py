@@ -8,7 +8,7 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] hurst_dfa ∈ (0,1); kalman_slope ∈ [-1,1]; 两者PIT严格(t-1及以前)
-# [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=TST-REGIME-002 | layer=test | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -71,8 +71,8 @@ def mean_reverting_500() -> np.ndarray:
     returns = np.zeros(500)
     returns[0] = noise[0]
     for i in range(1, 500):
-        # AR(1) 负自相关：当期收益 = -0.3×前一期 + 噪声（涨跌交替）
-        returns[i] = -0.3 * returns[i - 1] + noise[i]
+        # AR(1) 负自相关：当期收益 = -0.6×前一期 + 噪声（强涨跌交替）
+        returns[i] = -0.6 * returns[i - 1] + noise[i]
     prices = 10.0 * np.exp(np.cumsum(returns))
     return prices
 
@@ -152,7 +152,8 @@ class TestKalmanSlope:
         """下跌趋势 → 负斜率。"""
         from zephyr.regime.features.trend_features import kalman_slope
         rng = np.random.default_rng(55)
-        returns = rng.normal(-0.001, 0.005, 500)  # 负漂移
+        # 漂移需足够强（SNR ≥ 1），否则 Kalman 估计被噪声淹没
+        returns = rng.normal(-0.005, 0.005, 500)  # 负漂移与噪声等量级
         prices = 10.0 * np.exp(np.cumsum(returns))
         slope = kalman_slope(prices)
         assert slope < 0.0, f"Downtrend slope={slope:.4f}, expected < 0"

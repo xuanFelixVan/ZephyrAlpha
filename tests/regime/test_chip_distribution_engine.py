@@ -8,7 +8,7 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] total_distribution Σ=1.0; age_layers各层Σ=1.0; 32网格网格0=最低价网格31=最高价
-# [A_module] module_id=MOD-REGIME-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=TST-REGIME-005 | layer=test | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -188,7 +188,8 @@ class TestGridMapping:
         from zephyr.regime.features.chip_distribution_engine import (
             build_grid_prices,
         )
-        grid = build_grid_prices(0.0, 32.0, n_grids=32)
+        # linspace(0, 31, 32) → 步长 = 31/31 = 1.0
+        grid = build_grid_prices(0.0, 31.0, n_grids=32)
         diffs = np.diff(grid)
         np.testing.assert_array_almost_equal(diffs, np.full(31, 1.0))
 

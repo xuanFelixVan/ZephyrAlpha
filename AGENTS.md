@@ -1046,6 +1046,22 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 **stage 名迁移记录**（2026-08-01 一次性维护）：pre-commit v3→v4 将弃用的 stage 名 `commit` 重命名为 `pre-commit`。本项目 5 个 hook（gate-c2 / gate-arch / gate-naming 等簇合并 hook）原用 `stages: [commit]` 或 `stages: [manual]`，已执行 `pre-commit migrate-config` 自动迁移为 `stages: [pre-commit]`。**约束**：新增/修改 hook 时 `stages` 字段 MUST 用 `pre-commit`（v4 名），禁用旧名 `commit`（v4 起静默失效，hook 不触发）。迁移已内联标注于 `.pre-commit-config.yaml` 各 hook 注释。
 
+### 10.4 PRECOMMIT-INCREMENTAL：pre-commit hook 增量守门纪律（#ARCH-PRECOMMIT-INCREMENTAL，2026-08-06）
+
+**病根**：pre-commit hook 原为全量扫描（`--scan` / `--all-files`），每次 commit 扫出 369 条历史 warn-only 违规 + 未跟踪 WIP，用与本次 commit 无关的问题卡死提交（eia_provider.py 事件：369"阻断性"违规实际真阻断只有 2 个 N-16）。
+
+**铁律**（真源 `trae_084_precommit_incremental_discipline.yaml`，5 条）：
+
+| # | 铁律 | 违反示例 |
+|---|------|---------|
+| 1 | 增量守门：commit 阶段 hook 只检查 staged 新增文件（`--check-new` / `--ci`） | `entry: ... --scan` 在 commit 阶段 ❌ |
+| 2 | 审计分离：全仓扫描 hook 移 `stages:[manual]`，不卡日常 commit | 全量 hook 不设 `stages:[manual]` ❌ |
+| 3 | 历史违规归档为技术债，走 CI/manual 清零 | 用历史违规阻断本次 staged 文件无关的 commit ❌ |
+| 4 | 显示二元化：`actual_blocking` vs `warn_only_count`，显示与 exit code 一致 | warn-only 模式输出"阻断性违规"但 exit 0 ❌ |
+| 5 | 双路径一致：GitCommitGateway 与 pre-commit 检测逻辑统一 | gateway 增量但 pre-commit 全量 ❌ |
+
+**落地实例**：`gate-naming`（增量 `--check-new`）+ `gate-naming-audit`（全量 `manual`）；`gate-frontmatter`（增量 `--ci`）+ `gate-frontmatter-audit`（全量 `manual`）。历史违规基线见 `.runtime/gate_audit/precommit_incremental_baseline.json`（4 N-16 + 586 warn-only + 21 frontmatter）。
+
 ## 11. depgraph 使用指引（唯一全景真源）
 
 > **三图正交声明（TRAE-061，2026-07-06）**：项目有三张架构图，正交分离，通过 `module_id` 关联：
