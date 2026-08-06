@@ -1,5 +1,3 @@
-# [BLUEPRINT] MOD-INF-016 | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
 """
 Auto-generated contracts package — errors
 

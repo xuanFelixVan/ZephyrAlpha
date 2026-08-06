@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from dataclasses import dataclass, field
 
@@ -22,7 +21,7 @@ from datetime import datetime, timezone
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-08-02"
+# created: "2026-08-03"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -60,15 +59,3 @@ class ComplianceRule:
     schema_version: str = "1.0"
 
 # ==== END CODGEN:CTR-P1-012 ====
-
-
-
-
-
-
-
-
-
-
-
-

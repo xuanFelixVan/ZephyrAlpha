@@ -56,7 +56,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # layer: cross_cutting
 # category: data_contract
 # status: auto_generated
-# created: "2026-08-02"
+# created: "2026-08-03"
 # generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
@@ -90,12 +90,3 @@ class ExecutionRejectionError:
     trace_context: Optional[TraceContext] = None
 
 # ==== END CODGEN:CTR-ERR-005 ====
-
-
-
-
-
-
-
-
-
