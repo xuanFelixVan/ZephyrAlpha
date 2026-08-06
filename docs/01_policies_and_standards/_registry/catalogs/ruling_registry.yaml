@@ -57,6 +57,21 @@ entry_schema:
 entries:
 # === 基础裁定（#6/#10/#11/#17/#18/#19/#19-A/#19-B，2026-06 ~ 2026-07-18）===
 
+- ruling_id: '裁定#1'
+  title: 声明式因子定义语言（YAML DSL）
+  date: '2026-06-15'
+  category: 架构
+  status: draft
+  summary: >-
+    因子定义从代码硬编码远期迁移至 YAML DSL 声明式定义，支持批/流双执行模式。
+    当因子数量>500 时，以 YAML 声明式定义替代代码定义，实现单一定义、多执行后端。
+    引用来源：数据架构.md §16.17（架构图还原时补登，解除 RULING-REFERENCE 悬空引用）。
+  affected_files:
+    - d:\ZephyrAlpha\docs\_working\架构图\数据架构.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
 - ruling_id: '裁定#6'
   title: 路径SSoT（路径真源铁律）
   date: '2026-06-20'
