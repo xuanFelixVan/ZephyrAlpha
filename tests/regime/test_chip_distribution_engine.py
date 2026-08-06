@@ -91,15 +91,16 @@ class TestTriangularDistribution:
         assert density_at_vwap > density_off_center
 
     def test_zero_outside_range(self):
-        """[low, high] 之外密度为 0。"""
+        """[low, high] 之外密度为 0，边界内（严格大于 low/小于 high）> 0。"""
         from zephyr.regime.features.chip_distribution_engine import (
             triangular_pdf,
         )
         vwap, low, high = 10.0, 9.0, 11.0
         assert triangular_pdf(8.0, vwap, low, high) == 0.0
         assert triangular_pdf(12.0, vwap, low, high) == 0.0
-        assert triangular_pdf(9.0, vwap, low, high) > 0.0  # 边界内
-        assert triangular_pdf(11.0, vwap, low, high) > 0.0
+        # 三角分布在端点处密度为0，严格在区间内才 > 0
+        assert triangular_pdf(9.1, vwap, low, high) > 0.0
+        assert triangular_pdf(10.9, vwap, low, high) > 0.0
 
     def test_normalizes_to_one(self):
         """离散化到价格网格后 Σ=1.0。"""

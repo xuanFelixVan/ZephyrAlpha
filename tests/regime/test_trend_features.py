@@ -42,22 +42,38 @@ def random_walk_500() -> np.ndarray:
 
 @pytest.fixture
 def trending_up_500() -> np.ndarray:
-    """500日持续上涨趋势——Hurst 应 > 0.5（趋势持久）。"""
+    """500日持续上涨趋势——Hurst 应 > 0.5（趋势持久）。
+
+    注意：DFA Hurst 衡量的是收益率的自相关（persistence），不是漂移（drift）。
+    独立收益率 + 正漂移 → H≈0.5（与随机游走相同）。
+    正自相关收益率（当期收益延续前一期方向）→ H>0.5（趋势持久）。
+    """
     rng = np.random.default_rng(99)
-    returns = rng.normal(0.001, 0.005, 500)  # 正漂移 = 上涨趋势
+    noise = rng.normal(0, 0.005, 500)
+    returns = np.zeros(500)
+    returns[0] = 0.001 + noise[0]
+    for i in range(1, 500):
+        # AR(1) 正自相关：当期收益 = 漂移 + 0.3×(前一期去均值) + 噪声
+        returns[i] = 0.001 + 0.3 * (returns[i - 1] - 0.001) + noise[i]
     prices = 10.0 * np.exp(np.cumsum(returns))
     return prices
 
 
 @pytest.fixture
 def mean_reverting_500() -> np.ndarray:
-    """500日均值回归序列——Hurst 应 < 0.5。"""
+    """500日均值回归序列——Hurst 应 < 0.5（反持久）。
+
+    注意：DFA Hurst < 0.5 需要收益率负自相关（anti-persistence），不是弱均值回归。
+    AR(1) 负系数收益率 → 涨跌交替 → H<0.5。
+    """
     rng = np.random.default_rng(77)
-    prices = np.zeros(500)
-    prices[0] = 10.0
+    noise = rng.normal(0, 0.01, 500)
+    returns = np.zeros(500)
+    returns[0] = noise[0]
     for i in range(1, 500):
-        # OU过程：向均值10.0回归，回归速度0.05
-        prices[i] = prices[i - 1] + 0.05 * (10.0 - prices[i - 1]) + rng.normal(0, 0.05)
+        # AR(1) 负自相关：当期收益 = -0.3×前一期 + 噪声（涨跌交替）
+        returns[i] = -0.3 * returns[i - 1] + noise[i]
+    prices = 10.0 * np.exp(np.cumsum(returns))
     return prices
 
 
@@ -188,8 +204,13 @@ class TestTrendExhaustion:
         """趋势衰竭：Hurst 从 >0.65 衰退到 <0.50。"""
         from zephyr.regime.features.trend_features import hurst_dfa, detect_hurst_decay
         rng = np.random.default_rng(11)
-        # 前200天强趋势，后200天转随机
-        trending = 10.0 * np.exp(np.cumsum(rng.normal(0.002, 0.003, 200)))
+        # 前200天强趋势（正自相关收益率），后200天转随机
+        noise_trend = rng.normal(0, 0.003, 200)
+        trend_returns = np.zeros(200)
+        trend_returns[0] = 0.002 + noise_trend[0]
+        for i in range(1, 200):
+            trend_returns[i] = 0.002 + 0.4 * (trend_returns[i - 1] - 0.002) + noise_trend[i]
+        trending = 10.0 * np.exp(np.cumsum(trend_returns))
         random_part = trending[-1] * np.exp(np.cumsum(rng.normal(0, 0.01, 200)))
         full = np.concatenate([trending, random_part])
 
