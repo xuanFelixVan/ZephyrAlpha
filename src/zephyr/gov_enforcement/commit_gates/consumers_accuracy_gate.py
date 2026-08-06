@@ -87,6 +87,8 @@ from pathlib import Path
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _collect_function_names,
     _get_staged_py_files,
+    _matches_any_prefix,
+    _module_to_file_candidates,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -121,9 +123,8 @@ _CONSUMERS_ACCURACY_NOQA_RE = re.compile(
 )
 
 
-def _is_abstract_code(consumer_decl: str) -> bool:
-    """判断是否为抽象代号（MOD-XXX/SH-XXX/CFG-XXX/REG-XXX）——无法静态验证，豁免。"""
-    return any(consumer_decl.startswith(prefix) for prefix in _ABSTRACT_CODE_PREFIXES)
+# _is_abstract_code 已提取至 _diff_helpers._matches_any_prefix（#ARCH-FORCE-MERGE-DEDUP-001 消除克隆）
+# 调用处使用 _matches_any_prefix(consumer, _ABSTRACT_CODE_PREFIXES)
 
 
 def _has_cjk(text: str) -> bool:
@@ -211,23 +212,8 @@ def _check_filepath_exists(filepath: str, project_root: Path) -> bool:
     return False
 
 
-def _module_to_file_candidates(module_path: str) -> list[str]:
-    """将模块路径转为文件系统候选路径（module.py 或 module/__init__.py）。
-
-    Args:
-        module_path: 模块路径（如 zephyr.gov_enforcement.commit_gates.create_guard）
-
-    Returns:
-        候选相对路径列表（如 src/zephyr/gov_enforcement/commit_gates/create_guard.py）。
-    """
-    parts = module_path.split(".")
-    base = "/".join(parts)
-    return [
-        f"src/{base}.py",
-        f"src/{base}/__init__.py",
-        f"{base}.py",
-        f"{base}/__init__.py",
-    ]
+# _module_to_file_candidates 已提取至 _diff_helpers（#ARCH-FORCE-MERGE-DEDUP-001 消除克隆）
+# 调用处直接使用 _module_to_file_candidates(module_path)
 
 
 def _check_module_path_exists(
@@ -368,7 +354,7 @@ def check_consumers_accuracy(
     violations: list[str] = []
     for consumer, parens in declarations:
         # 跳过抽象代号（MOD-XXX/SH-XXX 等，无法静态验证）
-        if _is_abstract_code(consumer):
+        if _matches_any_prefix(consumer, _ABSTRACT_CODE_PREFIXES):
             continue
 
         # #ARCH-CONSUMERS-ACCURACY-004 治本：按格式分类处理 phantom 检测

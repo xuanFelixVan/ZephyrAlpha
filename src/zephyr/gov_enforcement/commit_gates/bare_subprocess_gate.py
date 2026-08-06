@@ -63,11 +63,12 @@ from __future__ import annotations
 
 import ast
 import logging
-import re
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _extract_noqa_lines,
     _get_added_lines,
     _get_staged_py_files,
+    _make_noqa_pattern,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -92,10 +93,9 @@ _EXEMPT_FILES = {
 
 # noqa 行级逃生：对标 m10-time-trigger / m11-perm-manual-legitimate 模式
 # 格式：`# noqa: bare-subprocess` + 2+ 空格 + reason（>=10 字符）
-_BARE_SUBPROCESS_NOQA_PATTERN = re.compile(
-    r"#\s*noqa:\s*bare-subprocess\s{2,}(\S.*)$",
-    re.MULTILINE,
-)
+# 共享 helper（#ARCH-FORCE-MERGE-DEDUP-001 消除克隆）：正则由 _make_noqa_pattern 构造，
+# 提取由 _diff_helpers._extract_noqa_lines 执行——消除与 import_integrity_gate 的逐字符克隆
+_NOQA_PATTERN = _make_noqa_pattern("bare-subprocess")
 
 # subprocess 调用方法名集合
 _SUBPROCESS_CALL_ATTRS = frozenset({"run", "Popen", "check_output", "check_call"})
@@ -187,17 +187,8 @@ def _collect_direct_call_func_ids(tree: ast.AST, subprocess_aliases: set[str]) -
     return consumed
 
 
-def _extract_noqa_lines(file_content: str) -> set[int]:
-    """提取带 `# noqa: bare-subprocess  <reason>` 注释的行号集合（1-based）。
-
-    逃生通道：对标 m10-time-trigger / m11-perm-manual-legitimate 模式。
-    命中 noqa 的行不报告违规。
-    """
-    noqa_lines: set[int] = set()
-    for i, line in enumerate(file_content.splitlines(), start=1):
-        if _BARE_SUBPROCESS_NOQA_PATTERN.search(line):
-            noqa_lines.add(i)
-    return noqa_lines
+# _extract_noqa_lines 已提取至 _diff_helpers（#ARCH-FORCE-MERGE-DEDUP-001 消除克隆）
+# 调用处使用 _extract_noqa_lines(file_content, _NOQA_PATTERN)
 
 
 def make_bare_subprocess_gate() -> GateSpec:
@@ -236,7 +227,7 @@ def make_bare_subprocess_gate() -> GateSpec:
                 continue
 
             subprocess_aliases = _collect_subprocess_aliases(tree)
-            noqa_lines = _extract_noqa_lines(file_content)
+            noqa_lines = _extract_noqa_lines(file_content, _NOQA_PATTERN)
             # 预收集直接调用的 func Attribute 节点 id——避免 ref_pass 重复报告同一行
             direct_call_func_ids = _collect_direct_call_func_ids(tree, subprocess_aliases)
 

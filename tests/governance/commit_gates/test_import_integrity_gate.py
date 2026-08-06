@@ -30,12 +30,15 @@ from unittest.mock import MagicMock
 import pytest
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _matches_any_prefix,
+    _module_to_file_candidates,
+)
 from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+    _PROJECT_PREFIXES,
     _collect_imports,
     _has_wildcard_import,
-    _is_project_module,
     _is_relative_import,
-    _module_to_file_candidates,
     find_target_in_active_sessions,
     make_import_integrity_gate,
     scan_content_for_dangling_imports,
