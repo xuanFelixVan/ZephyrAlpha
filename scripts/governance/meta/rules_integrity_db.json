@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "ba1225aa8661fdaa",
+      "hash": "29dbf140213f4e2c",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "c5fb8834be5c0d89",
+      "hash": "10b35c064805a574",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -71,6 +71,6 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-08-06T15:01:14.266306+00:00",
+  "registered_at": "2026-08-06T15:19:11.298592+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
