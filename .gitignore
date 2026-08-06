@@ -187,6 +187,9 @@ data/audit_trail/
 # Scheduler runtime failure snapshots (regenerable, one per failed task run)
 data/failures/
 
+# Auto-fix WAL (Write-Ahead Log) runtime state, continuously written, must not be tracked
+data/auto_fix/wal/
+
 # Prometheus metrics export (runtime, regenerable)
 data/metrics.prom
 
