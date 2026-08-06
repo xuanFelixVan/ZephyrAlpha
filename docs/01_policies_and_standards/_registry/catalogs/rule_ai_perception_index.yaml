@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-08-06T08:19:51Z'
+generated_at: '2026-08-06T08:28:08Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 83
+total_rules: 84
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -2219,3 +2219,28 @@ rules:
   - read_source_discipline
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_083_design_intent_source_discipline.yaml
+- rule_id: TRAE-084
+  title: pre-commit hook 增量守门纪律铁律（Pre-commit Incremental Discipline）
+  module_id: TRAE-084
+  scope: precommit_incremental_discipline
+  domain: TRAE
+  severity: high
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - precommit_config_edit
+  - git_commit_invocation
+  - precommit_hook_design
+  gate_ids: []
+  tags:
+  - TRAE
+  - precommit_incremental
+  - L1_foundation
+  - incremental_gate
+  - audit_separation
+  - staged_files_only
+  - no_full_repo_scan
+  aliases: []
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_084_precommit_incremental_discipline.yaml
