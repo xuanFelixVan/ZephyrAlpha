@@ -94,10 +94,10 @@ ZephyrAlpha/
 
 | 目录 | .py 文件数（排除 __init__.py） |
 |------|------|
-| `src/zephyr/` | 2213 |
+| `src/zephyr/` | 2215 |
 | `scripts/governance/` | 453 |
 | `tests/` | 2390 |
-| **合计 / Total** | **5056** |
+| **合计 / Total** | **5058** |
 <!-- AUTO-END:py_file_total -->
 
 ## 4. 外部权威源（全量明细）
