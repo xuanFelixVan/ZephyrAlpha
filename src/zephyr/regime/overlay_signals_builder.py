@@ -45,19 +45,21 @@
     loc[:dt].iloc[-1] 即 ≤ dt-1 数据（与 RegimeFeatureBuilder.shift(1) 一致）。
 
 31 个维度 key（对齐 TRANSITION_CONFIG 的 keys_gte，契约守护）:
-  可算 25：vix_panic/correlation/liquidity/flash_recover（S1）
+  可算 29：vix_panic/correlation/liquidity/flash_recover（S1）
            capitulation/vix/wyckoff/valuation/fund/spring/three_yang/
            break_sc_low/vix_new_high/fund_outflow（S2）
            bqs/rcs/frs（T1）, continue_decline（T2）
-           volume_price/ma_trend/sentiment（T3）, shrink_flat（T4）
+           volume_price/ma_trend/sentiment/money_effect/mainline/leader/
+           one_day_mainline（T3）, shrink_flat（T4）
            leader_break/rebound_wrap（T5）, sudden_volume（T6）
-  stub 6（=0.0）：policy/bad_news_flat（S2, NLP）,
-                  money_effect/mainline/leader/one_day_mainline（T3, 资金/板块）
+  stub 2（=0.0）：policy/bad_news_flat（S2, NLP，待 NLP 管道）
 
-stub 影响：S2 confirm/trigger（需 policy/bad_news_flat）+ T3 confirm/trigger/fail
-（需 money_effect/mainline/leader/one_day_mainline）在 Phase 2b MVP 无法触发，
-仅 S2 strong_confirm/fail + T3 strong_confirm 可触发——这是 MVP 预期范围，
-S1/T1/T2/T4/T5/T6 全阶段可触发（覆盖 CRISIS/BREAKOUT/RECOVERY 三特殊态）。
+Phase 2c 升级：money_effect/mainline/leader/one_day_mainline 从 stub→可算
+（接入 money_flow/kline_sector/limit_up_down），T3 confirm/trigger/fail 解锁。
+合成 VIX（vix_pct）优先注入 s1_vix_panic/s2_vix（回退 vol_pct）；
+s2_wyckoff 委托 wyckoff_engine 6 阶段 FSM（需 high/low，缺失回退 MVP）。
+stub 影响：仅 S2 confirm/trigger（需 policy/bad_news_flat NLP）无法触发——
+S2 strong_confirm/fail + T3 全阶段 + S1/T1/T2/T4/T5/T6 可触发。
 
 依据: discussion_001 v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
@@ -101,9 +103,14 @@ _TRANSITION_DIMS: dict[str, list[str]] = {
 }
 
 # stub 维度（不预计算，build_for_date 给 0.0）
+# 2 个 stub:
+#   - policy, bad_news_flat: S2 NLP（待 NLP 管道）
+# T3 资金/板块 4 维度（money_effect/mainline/leader/one_day_mainline）已升级为可算:
+#   _compute_t3_inputs 接入点已留，当前返回空 dict（数据管道未就绪）；
+#   _precompute 不放入 cache → build_for_date 走 0.0 降级（与 stub 等效，多一条 warning）。
+#   待 money_flow/kline_sector/limit_up_down 数据就绪后实现 _compute_t3_inputs 即激活。
 _STUB_DIMS: set[str] = {
-    "policy", "bad_news_flat",  # S2 NLP
-    "money_effect", "mainline", "leader", "one_day_mainline",  # T3 资金/板块
+    "policy", "bad_news_flat",  # S2 NLP（待 NLP 管道）
 }
 
 
@@ -220,8 +227,9 @@ class OverlaySignalsConstructor:
             self._cache = cache
             return cache
 
-        # 2. 复用代理 OHLCV（close/volume）
-        proxy_close = proxy_volume = None
+        # 2. 复用代理 OHLCV（close/volume + high/low）
+        # Phase 2c：high/low 分离加载，避免 high 缺失连累 close（与 risk_signal_builder 一致）
+        proxy_close = proxy_volume = proxy_high = proxy_low = None
         try:
             index_df = self._feature_builder.get_index_kline()
             proxy = index_df.xs(self.market_proxy, level="symbol")
@@ -231,6 +239,14 @@ class OverlaySignalsConstructor:
             _logger.warning(
                 "代理 OHLCV 加载失败，需 close/volume 的维度降级 0.0: %s", exc
             )
+        if proxy_close is not None:
+            try:
+                proxy_high = proxy["high"].astype(float)
+                proxy_low = proxy["low"].astype(float)
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning(
+                    "代理 high/low 缺失，s2_wyckoff 回退 MVP 简化版: %s", exc
+                )
 
         # 限定到 [data_load_start, backtest_end]
         feat = features.loc[self.data_load_start : self.backtest_end]
@@ -245,12 +261,22 @@ class OverlaySignalsConstructor:
         close = proxy_close.reindex(feat.index) if proxy_close is not None else None
         volume = proxy_volume.reindex(feat.index) if proxy_volume is not None else None
         pct_change = close.pct_change() if close is not None else None
+        high = proxy_high.reindex(feat.index) if proxy_high is not None else None
+        low = proxy_low.reindex(feat.index) if proxy_low is not None else None
+
+        # ── Phase 2c: 合成 VIX（vix_pct，优先于 vol_pct 注入 S1/S2）──
+        vix_pct = self._compute_vix_pct(feat.index)
+
+        # ── Phase 2c: 4 T3 维度输入（money_flow/sector/limit_up_down）──
+        t3_inputs = self._compute_t3_inputs(feat.index)
 
         # 3. 各维度评分（仅可算维度，stub 不放入 cache → build_for_date 给 0.0）
 
         # ── S1: Any → CRISIS ──
         if vol_pct is not None:
-            cache["vix_panic"] = overlay_features.s1_vix_panic_score(vol_pct)
+            cache["vix_panic"] = overlay_features.s1_vix_panic_score(
+                vol_pct, vix_pct
+            )
         else:
             _logger.warning("S1 vix_panic 数据缺失（realized_vol_pct），降级 0.0")
         if corr is not None:
@@ -276,11 +302,14 @@ class OverlaySignalsConstructor:
         else:
             _logger.warning("S2 capitulation 数据缺失，降级 0.0")
         if vol_pct is not None:
-            cache["vix"] = overlay_features.s2_vix_score(vol_pct)
+            cache["vix"] = overlay_features.s2_vix_score(vol_pct, vix_pct)
         else:
             _logger.warning("S2 vix 数据缺失，降级 0.0")
         if close is not None:
-            cache["wyckoff"] = overlay_features.s2_wyckoff_score(close)
+            # Phase 2c：s2_wyckoff 委托 wyckoff_engine（需 high/low/volume/pct/vol_z）
+            cache["wyckoff"] = overlay_features.s2_wyckoff_score(
+                close, high, low, volume, pct_change, vol_z
+            )
             cache["valuation"] = overlay_features.s2_valuation_score(close)
             cache["spring"] = overlay_features.s2_spring_flag(close)
             cache["break_sc_low"] = overlay_features.s2_break_sc_low_flag(close)
@@ -343,7 +372,37 @@ class OverlaySignalsConstructor:
             cache["sentiment"] = overlay_features.t3_sentiment_score(ad_ratio_series)
         else:
             _logger.warning("T3 sentiment 数据缺失，降级 0.0")
-        # money_effect / mainline / leader / one_day_mainline: stub 0.0（资金/板块）
+
+        # ── Phase 2c: 4 T3 资金/板块维度（原 stub，现接真实数据）──
+        inflow_pct = t3_inputs.get("inflow_pct")
+        lu_count = t3_inputs.get("limit_up_count")
+        if inflow_pct is not None and lu_count is not None:
+            cache["money_effect"] = overlay_features.t3_money_effect_score(
+                inflow_pct, lu_count
+            )
+        else:
+            _logger.warning("T3 money_effect 数据缺失（money_flow/limit_up_down），降级 0.0")
+        sector_hhi = t3_inputs.get("sector_hhi")
+        top_sector_pct = t3_inputs.get("top_sector_pct")
+        if sector_hhi is not None and top_sector_pct is not None:
+            cache["mainline"] = overlay_features.t3_mainline_score(
+                sector_hhi, top_sector_pct
+            )
+        else:
+            _logger.warning("T3 mainline 数据缺失（kline_sector），降级 0.0")
+        max_consec = t3_inputs.get("max_consec_limit")
+        promotion = t3_inputs.get("promotion_rate")
+        if max_consec is not None and promotion is not None:
+            cache["leader"] = overlay_features.t3_leader_score(max_consec, promotion)
+        else:
+            _logger.warning("T3 leader 数据缺失（limit_up_down），降级 0.0")
+        prev_top3_max = t3_inputs.get("prev_top3_max_today_pct")
+        if prev_top3_max is not None:
+            cache["one_day_mainline"] = overlay_features.t3_one_day_mainline_flag(
+                prev_top3_max
+            )
+        else:
+            _logger.warning("T3 one_day_mainline 数据缺失（kline_sector），降级 0.0")
 
         # ── T4: Bull-Med → Bull-High ──
         if vol_pct is not None:
@@ -373,8 +432,10 @@ class OverlaySignalsConstructor:
 
         _logger.info(
             "OverlaySignalsConstructor._precompute: 可算维度 %d，"
-            "stub(policy/bad_news_flat/money_effect/mainline/leader/one_day_mainline)=0.0",
+            "stub(policy/bad_news_flat)=0.0（NLP），vix_pct=%s，wyckoff=%s",
             len(cache),
+            "synth" if vix_pct is not None else "vol_pct代理",
+            "engine" if (high is not None and low is not None) else "MVP",
         )
 
         # 4. PIT 平移：所有维度 Series shift(1)，保证 build_for_date(dt) 取 ≤ dt-1
@@ -383,6 +444,180 @@ class OverlaySignalsConstructor:
 
         self._cache = cache
         return cache
+
+    # ── Phase 2c 数据加载辅助 ─────────────────────────────────────────────
+
+    def _fb_call(self, method_name: str) -> Any:
+        """安全调用 feature_builder 的数据透传方法，缺失/失败返回 None。
+
+        兼容旧 mock（无新透传方法时 getattr 返回 None → 降级），保证测试隔离。
+        """
+        fn = getattr(self._feature_builder, method_name, None)
+        if fn is None:
+            return None
+        try:
+            return fn()
+        except Exception as exc:  # noqa: BLE001 — 降级友好
+            _logger.warning("%s 调用失败，降级 None: %s", method_name, exc)
+            return None
+
+    def _compute_vix_pct(self, index: pd.DatetimeIndex) -> pd.Series | None:
+        """Phase 2c: VIX 历史分位（vix_pct）—— 期权 IV 优先，合成 VIX 后备。
+
+        优先路径：50ETF+300ETF 期权 IV 曲面 → CBOE 简化 VIX → 250 日分位。
+        后备路径（P0）：期权数据缺失时，用**下行半偏差分位**（synthetic_vix_pct）
+        作为 A 股恐慌代理——只计负收益的年化下行波动率，危机特异性强于总波动率。
+
+        两路径均失败 → 返回 None → s1_vix_panic/s2_vix 回退 vol_pct（C1 不退化）。
+        """
+        # ── 优先路径：期权 IV 曲面 ──
+        option_iv = self._fb_call("get_option_iv_surface")
+        if option_iv is not None and not getattr(option_iv, "empty", True):
+            try:
+                from zephyr.regime.features.synthetic_vix import (
+                    compute_synthetic_vix,
+                    vix_pct_from_vix,
+                )
+
+                vix = compute_synthetic_vix(option_iv)
+                vix_pct = vix_pct_from_vix(vix)
+                if vix_pct is not None and not vix_pct.empty:
+                    return vix_pct.reindex(index)
+                _logger.warning("期权 IV → VIX 计算得空序列，回退合成 VIX")
+            except Exception as exc:  # noqa: BLE001
+                _logger.warning("期权 IV → VIX 计算失败，回退合成 VIX: %s", exc)
+
+        # ── 后备路径：合成 VIX（下行半偏差分位，只依赖 close）──
+        if self._feature_builder is None:
+            _logger.debug("_compute_vix_pct: 无 feature_builder，返回 None")
+            return None
+        try:
+            index_df = self._feature_builder.get_index_kline()
+            proxy = index_df.xs(self.market_proxy, level="symbol")
+            close = proxy["close"].astype(float)
+            from zephyr.regime.features.market_features import synthetic_vix_pct
+
+            vix = synthetic_vix_pct(close)
+            non_na = int(vix.notna().sum())
+            if non_na == 0:
+                _logger.warning("合成 VIX 全 NaN（close 数据不足），返回 None")
+                return None
+            _logger.info(
+                "Phase 2c: 合成 VIX (downside semi-dev pct) 已计算, %d 非 NaN",
+                non_na,
+            )
+            return vix.reindex(index)
+        except Exception as exc:  # noqa: BLE001 — 降级友好
+            _logger.warning(
+                "合成 VIX 计算失败，回退 None（s1/s2 vix 用 vol_pct 代理）: %s", exc
+            )
+            return None
+
+    def _compute_t3_inputs(self, index: pd.DatetimeIndex) -> dict[str, pd.Series | None]:
+        """Phase 2c: 加载 money_flow/sector/limit_up_down，算 4 T3 维度的 7 输入。
+
+        任一数据源缺失 → 对应输入 None（维度降级 0.0，C1 不退化）。
+        """
+        inputs: dict[str, pd.Series | None] = {
+            "inflow_pct": None, "limit_up_count": None,
+            "sector_hhi": None, "top_sector_pct": None,
+            "max_consec_limit": None, "promotion_rate": None,
+            "prev_top3_max_today_pct": None,
+        }
+        # money_effect: 全市场主力净流入占比
+        money_flow = self._fb_call("get_money_flow")
+        if (
+            money_flow is not None
+            and not money_flow.empty
+            and "avg_main_net_inflow_pct" in money_flow
+        ):
+            inputs["inflow_pct"] = money_flow["avg_main_net_inflow_pct"].reindex(index)
+        # sector: mainline(HHI+top) + one_day_mainline(prev_top3)
+        sector_df = self._fb_call("get_sector_kline")
+        if sector_df is not None and not sector_df.empty:
+            sector_inputs = self._compute_sector_metrics(sector_df, index)
+            inputs["sector_hhi"] = sector_inputs.get("sector_hhi")
+            inputs["top_sector_pct"] = sector_inputs.get("top_sector_pct")
+            inputs["prev_top3_max_today_pct"] = sector_inputs.get("prev_top3_max_today_pct")
+        # limit_up_down: leader(max_consec+promotion) + limit_up_count
+        limit_df = self._fb_call("get_limit_up_down")
+        if limit_df is not None and not limit_df.empty:
+            lu_inputs = self._compute_limit_up_metrics(limit_df, index)
+            inputs["max_consec_limit"] = lu_inputs.get("max_consec_limit")
+            inputs["promotion_rate"] = lu_inputs.get("promotion_rate")
+            inputs["limit_up_count"] = lu_inputs.get("limit_up_count")
+        return inputs
+
+    def _compute_sector_metrics(
+        self, sector_df: pd.DataFrame, index: pd.Index
+    ) -> dict[str, pd.Series]:
+        """从板块K线算 HHI / top_sector_pct / prev_top3_max_today_pct。
+
+        HHI = Σ(share_i²)，share_i = |ret_i| / Σ|ret_j|（涨幅集中度）。
+        top_sector_pct = 当日涨幅最高板块的涨幅（%）。
+        prev_top3_max_today_pct = 昨日 Top3 板块今日最佳涨幅（%，全跌<-2 则证伪）。
+        """
+        try:
+            close = sector_df["close"].unstack("code")
+            pct = close.pct_change()
+            abs_ret = pct.abs()
+            total_abs = abs_ret.sum(axis=1).replace(0.0, np.nan)
+            share = abs_ret.div(total_abs, axis=0)
+            hhi = (share ** 2).sum(axis=1)
+            top_pct = pct.max(axis=1) * 100  # 转百分数
+            # 昨日 Top3 板块今日最佳表现（max < -2 ⟺ 三者全跌 >2%）
+            ranks = pct.rank(axis=1, ascending=False, method="first")
+            top3_mask = ranks <= 3
+            prev_top3 = top3_mask.shift(1)
+            masked = pct.where(prev_top3)
+            prev_top3_max_today = masked.max(axis=1) * 100
+            return {
+                "sector_hhi": hhi.reindex(index),
+                "top_sector_pct": top_pct.reindex(index),
+                "prev_top3_max_today_pct": prev_top3_max_today.reindex(index),
+            }
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning("板块指标计算失败，降级 None: %s", exc)
+            return {}
+
+    def _compute_limit_up_metrics(
+        self, limit_df: pd.DataFrame, index: pd.Index
+    ) -> dict[str, pd.Series]:
+        """从涨跌停统计算 max_consec_limit / promotion_rate / limit_up_count。
+
+        max_consec_limit = 全市场最高连板数（按 symbol 分组，非涨停重置 cumsum）。
+        promotion_rate = 昨日涨停今日继续涨停比例（晋级率）。
+        limit_up_count = 每日涨停家数。
+        """
+        try:
+            df = limit_df.reset_index().copy()
+            df["is_up"] = (
+                df["limit_type"].astype(str).str.contains("涨停").astype(int)
+            )
+            df = df.sort_values(["symbol", "trade_date"])
+            # 连板数：按 symbol 分组，遇到非涨停重置 run_group
+            df["run_group"] = df.groupby("symbol")["is_up"].transform(
+                lambda x: (x == 0).cumsum()
+            )
+            df["consec"] = df.groupby(["symbol", "run_group"])["is_up"].cumsum()
+            max_consec = df.groupby("trade_date")["consec"].max()
+            lu_count = df.groupby("trade_date")["is_up"].sum()
+            # 晋级率：昨日涨停今日继续涨停比例
+            pivot = df.pivot(
+                index="trade_date", columns="symbol", values="is_up"
+            ).fillna(0)
+            yesterday_up = pivot.shift(1)
+            continued = (pivot == 1) & (yesterday_up == 1)
+            yest_count = yesterday_up.sum(axis=1).replace(0, np.nan)
+            promotion = (continued.sum(axis=1) / yest_count).fillna(0.0)
+            return {
+                "max_consec_limit": max_consec.reindex(index),
+                "promotion_rate": promotion.reindex(index),
+                "limit_up_count": lu_count.reindex(index),
+            }
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning("涨跌停指标计算失败，降级 None: %s", exc)
+            return {}
 
 
 __all__ = ["OverlaySignalsConstructor"]
