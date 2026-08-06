@@ -280,11 +280,14 @@ class AdversarialMutator:
         words = content.split()
         if not words:
             return content
-        idx = random.randint(0, len(words) - 1)
+        # 只从长度 > 4 的词中选，确保总编码一个；避免随机选到短词(<=4)不编码而返回原 content（flaky 空结果）
+        candidates = [i for i, w in enumerate(words) if len(w) > 4]
+        if not candidates:
+            return content
+        idx = random.choice(candidates)
         word = words[idx]
-        if len(word) > 4:
-            encoded = base64.b64encode(word.encode()).decode()
-            words[idx] = f"b64:{encoded}"
+        encoded = base64.b64encode(word.encode()).decode()
+        words[idx] = f"b64:{encoded}"
         return " ".join(words)
 
     def _mutate_whitespace_split(self, content: str) -> str:
