@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  pre-commit hook脚本按需调用,非cron/daemon常驻服务
 """检测文档/数据文件中的断链与幽灵引用。
 
 治本背景（2026-06-29）：
@@ -134,6 +135,7 @@ def _get_basename_cache() -> set[str]:
     _BASENAME_CACHE = set()
     _skip_dirs = frozenset({".git", "__pycache__", ".runtime", ".venv", "node_modules", ".pytest_cache"})
     import subprocess
+
     # git ls-files 读索引（O(1)），比 rglob 遍历文件系统快 100x+
     # --others --exclude-standard 补充 untracked 非 ignored 文件
     for cmd in (
@@ -235,7 +237,10 @@ def _extract_csv_paths(content: str) -> list[str]:
                 # CSV 中的路径引用：含 / 且有文件扩展名
                 if "/" in cell and "." in cell:
                     # 验证是否以已知扩展名结尾
-                    if any(cell.endswith(ext) for ext in (".md", ".yaml", ".yml", ".json", ".py", ".ps1", ".sh", ".toml", ".txt", ".csv")):
+                    if any(
+                        cell.endswith(ext)
+                        for ext in (".md", ".yaml", ".yml", ".json", ".py", ".ps1", ".sh", ".toml", ".txt", ".csv")
+                    ):
                         if not _is_url(cell):
                             refs.append(cell)
     except Exception:  # noqa: BLE001 — 单个 CSV 文件解析失败则跳过，返回已提取的路径引用，不阻断整体断链审计
@@ -357,6 +362,7 @@ def _get_valid_blueprint_ids() -> set[str]:
         return _VALID_BLUEPRINT_IDS
     try:
         import yaml
+
         data = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
         for bp in (data or {}).get("blueprints", []):
             mid = bp.get("module_id")
@@ -392,10 +398,7 @@ def _check_blueprint_id_exists(bp_id: str, source: Path, gap_tag: str = "GAP-2")
     if not valid_ids:
         return None  # registry 不可用，降级不阻断
     if bp_id not in valid_ids:
-        return (
-            f"{gap_tag} 幻觉blueprint_id: {bp_id} "
-            f"不在blueprint_registry.yaml ← {source.name}"
-        )
+        return f"{gap_tag} 幻觉blueprint_id: {bp_id} 不在blueprint_registry.yaml ← {source.name}"
     return None
 
 
@@ -427,7 +430,7 @@ def _check_index_md_inventory(content: str, source: Path) -> list[str]:
 
         # 处理 file:/// 绝对路径
         if target.startswith("file:///"):
-            abs_path = target[len("file:///"):]
+            abs_path = target[len("file:///") :]
             # Windows: file:///D:/ZephyrAlpha/... -> 尝试直接解析
             try:
                 if Path(abs_path).exists():
@@ -446,9 +449,7 @@ def _check_index_md_inventory(content: str, source: Path) -> list[str]:
                     pass
             if target not in seen:
                 seen.add(target)
-                broken.append(
-                    f"GAP-3 index清单断链: {target} ← {source.name}"
-                )
+                broken.append(f"GAP-3 index清单断链: {target} ← {source.name}")
             continue
 
         # 标准相对路径——仅 source.parent，无 basename 兜底
@@ -585,6 +586,7 @@ def _get_head_content(file_path: Path) -> str | None:
     :return: HEAD 版本内容，或 None（文件不在 git 历史中，即新文件）
     """
     import subprocess
+
     try:
         abs_path = file_path.resolve()
         rel = abs_path.relative_to(REPO_ROOT)
@@ -654,6 +656,7 @@ def _get_changed_files() -> list[Path]:
     由 CI 全量审计（``audit_directory`` 无 ``--check-new``）覆盖。
     """
     import subprocess
+
     changed: set[Path] = set()
     # 三类变更文件：staged（pre-commit 主场景）+ 工作区未 staged + untracked 新文件
     git_cmds = [
@@ -699,9 +702,7 @@ def audit_directory(dir_path: str | Path) -> tuple[bool, list[str]]:
 
 def main() -> int:
     """Entry point: parse args, run audit, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="检测文档/数据文件中的断链与幽灵引用"
-    )
+    parser = argparse.ArgumentParser(description="检测文档/数据文件中的断链与幽灵引用")
     parser.add_argument(
         "path",
         nargs="+",
@@ -742,7 +743,20 @@ def main() -> int:
                     if fp.suffix.lower() not in SUPPORTED_EXTENSIONS:
                         continue
                     if any(
-                        part in (".git", "node_modules", "__pycache__", ".runtime", ".venv")
+                        part
+                        in (
+                            ".git",
+                            "node_modules",
+                            "__pycache__",
+                            ".runtime",
+                            ".venv",
+                            # 对齐 N-16 skip_dirs_docs + check_frontmatter exempt_parts：
+                            # 草稿区/归档区豁免断链扫描（草稿引用待创建文件，归档是数据 dump 非文档链接）
+                            "_working",
+                            "_archive",
+                            "_backups",
+                            ".aidrafts",
+                        )
                         for part in fp.parts
                     ):
                         continue

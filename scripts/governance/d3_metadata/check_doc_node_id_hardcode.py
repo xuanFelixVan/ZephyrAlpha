@@ -14,6 +14,7 @@
 # [TESTS] 手动：已知违规文件被检出；干净文件 exit 0
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  pre-commit hook脚本按需调用,非cron/daemon常驻服务
 """GATE-DOC-NODE-ID: 文档物理ID硬编码检测（文档引用铁律，2026-08-04）
 
 检测 docs/ 下 .md 文件中硬编码的 depgraph 物理 ID（node_id/edge_id）。
@@ -62,7 +63,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, EXCLUDE_DIRS, REPO_ROOT  # noqa: E402
+from _shared.constants import EXCLUDE_DIRS, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 
 
 def _iter_md_files(root: Path, exclude_dirs: frozenset[str]) -> list[Path]:
@@ -81,6 +82,7 @@ def _iter_md_files(root: Path, exclude_dirs: frozenset[str]) -> list[Path]:
                 result.append(Path(dirpath) / filename)
     return sorted(result)
 
+
 # ── 检测模式：node_id=数字 / edge_id=数字（含可选空格）──
 # 匹配文档里硬编码物理ID的典型形式：node_id=7451163, node_id = 123
 # 不匹配 SQL 查询形式（node_id FROM ... / WHERE node_id IN ...）——无 = 号
@@ -89,8 +91,8 @@ _PHYSICAL_ID_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("edge_id", re.compile(r"\bedge_id\s*=\s*\d+")),
 ]
 
-# ── 排除目录（_archive 含历史文档，不强制）──
-_SCAN_EXCLUDE: frozenset[str] = EXCLUDE_DIRS | {"_archive"}
+# ── 排除目录（_archive 含历史文档，_working 草稿区同豁免，对齐 N-16 skip_dirs_docs）──
+_SCAN_EXCLUDE: frozenset[str] = EXCLUDE_DIRS | {"_archive", "_working"}
 
 
 def _check_file(filepath: Path) -> list[tuple[int, str]]:
@@ -110,11 +112,12 @@ def _check_file(filepath: Path) -> list[tuple[int, str]]:
     for lineno, line in enumerate(source.splitlines(), 1):
         for id_type, pattern in _PHYSICAL_ID_PATTERNS:
             if pattern.search(line):
-                issues.append((
-                    lineno,
-                    f"硬编码 {id_type}=数字（物理ID易变，文档只写 module_id/blueprint_id，"
-                    f"需要时查 depgraph）",
-                ))
+                issues.append(
+                    (
+                        lineno,
+                        f"硬编码 {id_type}=数字（物理ID易变，文档只写 module_id/blueprint_id，需要时查 depgraph）",
+                    )
+                )
                 break  # 一行一个违规足够，避免同一行 node_id+edge_id 重复报
     return issues
 
@@ -142,8 +145,7 @@ def _print_issues(all_issues: list[tuple[Path, int, str]], checked: int) -> None
             except ValueError:
                 rel = filepath
             print(f"  WARN: {rel}:{lineno} {issue}")
-        print(f"\nFOUND: {len(all_issues)} physical ID hardcode issue(s) "
-              f"in {checked} files checked")
+        print(f"\nFOUND: {len(all_issues)} physical ID hardcode issue(s) in {checked} files checked")
     else:
         print(f"OK: No physical ID hardcode issues found ({checked} files checked)")
 
@@ -152,9 +154,7 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="GATE-DOC-NODE-ID: 文档物理ID硬编码检测（文档引用铁律）"
-    )
+    parser = argparse.ArgumentParser(description="GATE-DOC-NODE-ID: 文档物理ID硬编码检测（文档引用铁律）")
     parser.add_argument(
         "--warn-only",
         action="store_true",

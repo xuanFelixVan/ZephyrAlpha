@@ -21,13 +21,13 @@
 真源：AGENTS.md §11.1.1 时间戳约定
 二元判定：staged scripts/governance/d5_architecture/generators/*.py 文件中
          出现 datetime.now() / time.time() / datetime.today() 且无
-         arch-regen-nonidempotent 豁免标注
+         # noqa: arch-regen-nonidempotent 豁免标注
          → hard block exit 1
 
 正典替代：from _common import idempotent_timestamp, idempotent_date
          （返回脚本最近 git commit 时间，相同 commit → 相同输出）
 
-豁免场景（需 arch-regen-nonidempotent 标注）：
+豁免场景（需 # noqa: arch-regen-nonidempotent 标注）：
 - 日粒度时间源（datetime.now(UTC).strftime("%Y-%m-%d")），24 小时内幂等
 - 已人工评估并确认无 reconciler 非收敛风险的场景
 
@@ -109,7 +109,7 @@ def check_file(path: Path) -> list[str]:
         if EXEMPTION_PATTERN.search(line):
             continue
 
-        # 检查日粒度豁免（datetime.now(UTC).strftime("%Y-%m-%d") + m46-time 标注）
+        # 检查日粒度豁免（datetime.now(UTC).strftime("%Y-%m-%d") + # noqa: m46-time）
         if DAILY_GRANULARITY_PATTERN.search(line) and M46_EXEMPTION_PATTERN.search(line):
             continue
 
@@ -141,7 +141,7 @@ def main() -> int:
     print(
         "  真源：AGENTS.md §11.1.1。请改用 _common.idempotent_timestamp() / idempotent_date()"
     )
-    print("  豁免：行尾加 arch-regen-nonidempotent 标注（需人工评估）")
+    print("  豁免：行尾加 # noqa: arch-regen-nonidempotent（需人工评估）")
     print()
     for v in all_violations:
         print(f"  {v}")
