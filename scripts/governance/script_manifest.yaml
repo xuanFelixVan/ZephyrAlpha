@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-06T17:43:24Z
+# 自动生成于 2026-08-06T18:20:52Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-06T17:43:24Z'
+generated_at: '2026-08-06T18:20:52Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 396
+total_scripts: 398
 with_manifest: 324
-missing_manifest: 72
+missing_manifest: 74
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -31,7 +31,7 @@ categories:
   governance:migrate_sqlite_to_pg: 2
   governance:migrations: 1
   governance:observability: 1
-  governance:oneoff: 5
+  governance:oneoff: 7
   governance:repair: 7
   governance:shared: 1
   governance:vms: 9
@@ -4566,6 +4566,26 @@ scripts:
   tags: []
   _manifest_missing: true
 - name: oneoff/fix_module_translation_zh.py
+  owner: governance:oneoff
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: oneoff/load_acquisition_decisions.py
+  owner: governance:oneoff
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: oneoff/register_candidate_acquisitions.py
   owner: governance:oneoff
   dimensions: []
   priority: P2
