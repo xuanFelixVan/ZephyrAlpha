@@ -1644,7 +1644,7 @@ entries:
     头部声明的路径是否实际存在，头部规范成摆设。100% AI 开发模式下无人类
     PR review，AI 创建 gate 后立即提交，"守卫者无人守卫"（quis custodiet
     ipsos custodes）。post_commit_guard.sh 误回滚 bug 正是"gate 无测试"的
-    直接后果。GATE-NO-TESTS-UNIT 被误认为承担此职责，但它实际是 tests/unit/
+    直接后果。GATE-NO-TESTS-UNIT 被误认为承担此职责，但它实际是 tests/unit
     旧路径漂移检测（ARCH-029），非测试覆盖率检测。
   adjudication: |
     4 项裁定：
@@ -2211,12 +2211,12 @@ entries:
   - src/zephyr/data/scheduler.py（main() 显式加载）
   - src/zephyr/data/cli.py（_load_dotenv 加载 .env.clickhouse）
   fix_phase: 已完成
-  status: decided
+  status: resolved
   related_rules:
   - '#ARCH-CH-010'
   - '#ARCH-CH-013'
   created: '2026-07-16'
-  last_updated: '2026-07-16'
+  last_updated: '2026-08-06'
 
 # --- #ARCH-CH-018: symbols=null 契约可执行化（akshare 4 个 A 类能力 fallback） ---
 - issue_id: '#ARCH-CH-018'
@@ -2280,11 +2280,11 @@ entries:
   impact:
   - src/zephyr/infrastructure/database_service.py（委托 ch_config，删除 localhost 默认值）
   fix_phase: 已完成
-  status: decided
+  status: resolved
   related_rules:
   - '#ARCH-CH-017'
   created: '2026-07-16'
-  last_updated: '2026-07-16'
+  last_updated: '2026-08-06'
 
 # --- #ARCH-REN-001: 域 ID 命名统一裁定（回溯登记自 dependency_path_panorama.md §20.13） ---
 - issue_id: '#ARCH-REN-001'
