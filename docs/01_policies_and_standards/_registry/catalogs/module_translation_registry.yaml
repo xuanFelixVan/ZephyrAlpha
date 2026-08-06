@@ -43446,12 +43446,56 @@ battle_map_steps:
   name_zh: 回测-实盘偏差监控
   name_en: Backtest-Live Bias Monitor
   plain_zh: 回测和实盘的"对账员"——持续监控回测预期和实盘实际的偏差，偏差大就报警。
-  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。回测-实盘偏差监控：回测预期vs实盘实际收益/风险偏差持续监控+告警，发现策略上线后表现与回测预期背离时及时告警，防止"回测美好实盘崩盘"。
+  mechanism_zh: 'BM-BT-05 子环节（depth=1, design）。回测-实盘偏差监控：回测预期vs实盘实际收益/风险偏差持续监控+告警，是 sim-live 偏差的总值报警器。当前 decision_gate.monitor_backtest_live_deviation() 仅比较 Sharpe 总值给 ok/warn/retire，无归因分解。本环节作为4因子归因汇总点，下游4个孙环节(H-A/B/C/D)分别归因滑点偏差/数据滞后/前瞻残留/延迟差异，汇聚回本环节升级为"四因子归因报警"。
 
     v2.0 备忘模块，按需开发。
 
     '
-  indicators_zh: '①触发：策略上线后持续监控；②消费：回测预期绩效+实盘实际绩效；③参数：偏差阈值、监控频率；④数据流：回测预期+实盘实际→偏差计算→阈值判定→告警；⑤代码：BT-18 decay_monitor 扩展（planned）；⑥降级：监控未就绪→人工对账(漏检风险)。
+  indicators_zh: '①触发：策略上线后持续监控；②消费：回测预期绩效+实盘实际绩效+4孙环节归因结果；③参数：总偏差阈值、4因子归因汇总规则；④数据流：回测预期+实盘实际→总偏差计算→4因子归因(H-A/B/C/D)→汇总→四因子归因报警→决策门控；⑤代码：BT-16 decision_gate 扩展（planned，归因汇总，非 decay_monitor）；⑥降级：归因未就绪→仅总值偏差报警(无归因分解)。
+
+    '
+- step_id: BM-BT-05-H-A
+  flow_stage: backtest_validation
+  name_zh: 滑点偏差归因
+  name_en: Slippage Bias Attribution
+  plain_zh: 算回测假设的1bp滑点和实盘真实滑点差多少——把差拆开看是模型简化、流动性误判、时机漂移还是价差变化。
+  mechanism_zh: 'BM-BT-05-H 子环节（depth=2, design）。回测固定1bp滑点(matching_logic.slippage_bps) vs 实盘时变滑点(slippage_analyzer多基准)的差值归因。复用 slippage_analyzer 实盘侧三因子归因 + matching_logic 回测侧锚点，新建差值归因层：偏差=live_slippage - backtest_1bp，归因到模型简化偏差/流动性误判/时机漂移/价差变化。输出喂 paper_live_transition.slippage_diff 门禁。不重写滑点计算（slippage_analyzer 已做）。
+
+    '
+  indicators_zh: '①触发：策略上线后每笔成交；②消费：回测假设滑点(matching_logic 1bp)+实盘多基准滑点(slippage_analyzer)；③参数：偏差阈值(1bp门禁)、归因维度(4因子)；④数据流：backtest_1bp+live_slippage→差值计算→4因子归因→slippage_diff门禁；⑤代码：EX_SOR slippage_analyzer 归因层扩展（planned）；⑥降级：归因未就绪→仅总值偏差(无归因分解)。
+
+    '
+- step_id: BM-BT-05-H-B
+  flow_stage: backtest_validation
+  name_zh: 数据滞后偏差归因
+  name_en: Data Lag Bias Attribution
+  plain_zh: 算回测假设的"数据即时可得"和实盘真实数据到达延迟差多少——拆成数据源延迟、特征管线延迟、PIT可得性延迟。
+  mechanism_zh: 'BM-BT-05-H 子环节（depth=2, design）。回测假设收盘数据T时刻即得 vs 实盘数据到达有延迟的偏差归因。greenfield（无现有模块覆盖）。需在 data_handler 插桩记录 data_arrived_at vs data_timestamp，量化滞后分布，归因到数据源延迟/特征计算管线延迟/PIT可得性延迟。输出"数据滞后偏差预算"供策略决策时点选择。
+
+    '
+  indicators_zh: '①触发：特征/行情数据加载时；②消费：data_handler到达时间戳+数据timestamp；③参数：滞后阈值、归因维度(3因子)；④数据流：data_arrived_at - data_timestamp→滞后分布→3因子归因→决策时点建议；⑤代码：D_BACKTEST data_handler 扩展或 D_DATA 新模块（planned）；⑥降级：插桩未就绪→无滞后测量(乐观偏差残留)。
+
+    '
+- step_id: BM-BT-05-H-C
+  flow_stage: backtest_validation
+  name_zh: 前瞻偏差残留归因
+  name_en: Look-ahead Residual Attribution
+  plain_zh: 数据层前瞻已洗掉，但执行时序、参数拟合、regime标签三层还可能偷看未来——专查这三层残留。
+  mechanism_zh: 'BM-BT-05-H 子环节（depth=2, design）。数据层前瞻已由 look_ahead_bias_detector(MOD-SIM-022, production)金标准覆盖，本环节专查残留层：①执行时序look-ahead(信号T成交T假设)②参数拟合look-ahead(全样本优化后回测应用)③regime标签look-ahead(状态定义用了未来信息)。复用 look_ahead_bias_detector 数据层(不重写)，新建残留层检测。
+
+    '
+  indicators_zh: '①触发：策略上线前+上线后持续；②消费：look_ahead_bias_detector数据层结果+执行时序日志+参数拟合记录+regime标签定义；③参数：残留检测规则(3层)；④数据流：数据层清洗结果+执行/参数/regime记录→残留检测→残留告警→decision_gate门禁；⑤代码：D_SIMULATION look_ahead_bias_detector 残留层扩展（planned）；⑥降级：残留检测未就绪→仅数据层清洗(执行/参数/regime层前瞻漏检)。
+
+    '
+- step_id: BM-BT-05-H-D
+  flow_stage: backtest_validation
+  name_zh: 延迟差异偏差归因
+  name_en: Latency Divergence Bias Attribution
+  plain_zh: 回测下单即成交，实盘下单到撮合有延迟——算延迟期间价格漂了多少，拆成算法拆单、券商链路、交易所排队、限价等待。
+  mechanism_zh: 'BM-BT-05-H 子环节（depth=2, design）。回测即时撮合(matching_engine) vs 实盘下单→撮合有延迟(algo_trading_engine time_horizon)的偏差归因。复用 execution_quality_scorer.TIME 耗时数据 + algo_trading_engine 延迟来源，新建延迟→价格漂移偏差归因：偏差=latency×price_drift_rate，归因到算法拆单延迟/券商链路延迟/交易所排队延迟/限价单等待延迟。输出喂 paper_live_transition.latency 门禁。不重写耗时打分（execution_quality_scorer已做）。
+
+    '
+  indicators_zh: '①触发：每笔实盘成交；②消费：execution_quality_scorer.TIME耗时+algo_trading_engine算法参数+arrival/fill价；③参数：延迟阈值(100ms门禁)、漂移归因维度(4因子)；④数据流：order_submit→fill延迟+价格漂移→4因子归因→latency门禁；⑤代码：EX_SOR execution_quality_scorer 归因层扩展（planned）；⑥降级：归因未就绪→仅耗时记录(无漂移偏差归因)。
 
     '
 - step_id: BM-BT-05-I

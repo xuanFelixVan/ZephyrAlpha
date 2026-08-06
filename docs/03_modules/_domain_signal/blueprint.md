@@ -155,6 +155,7 @@ strategy_pool:
   max_active_strategies: 20    # 活跃策略上限
   max_total_strategies: 50     # 总策略上限（含休眠）
   rollout_phases: [0.05, 0.20, 1.0]  # 灰度发布：5%→20%→100%
+  default_estimated_capacity_aum: 50000000   # 单策略预估AUM容量上限(元)，粗估，资金到500万级再细化
 responsibility_domain: 
 build_status: stable
 design_maturity: production
