@@ -5822,6 +5822,29 @@ capabilities:
       部署裁定/C1 验证" 可定位真源。解决防重建：check_file_canonical() 反查，新 AI 准备造
       同类对比器前会被引导到本真源。
 
+  - capability_id: c1_runner
+    canonical_override: src/zephyr/backtest/regime_validation/c1_runner.py
+    aliases:
+      - C1RunnerError
+      - build_volatility_schedule
+      - run_c1_with_provider
+      - run_c1_mock
+      - run_c1_regime
+      - run_c1_end_to_end
+      - save_c1_report
+      - c1_runner
+    description: >-
+      C1 执行编排器（D_BACKTEST 域，#ARCH-REGIME-C1-RUNNER-001）。canonical =
+      src/zephyr/backtest/regime_validation/c1_runner.py。discussion_002 Phase 1 入口，
+      编排 C1ShrinkageComparator.compare() 的执行层。两种 Shrinkage 供给模式：
+      run_c1_mock（波动率驱动 MockShrinkageProvider，不依赖特征管道，冒烟跑通 C1 流程）
+      / run_c1_regime（RegimeSeriesOrchestrator 产出 → ScheduleShrinkageProvider，Phase 1
+      裁决依据）。核心入口 run_c1_with_provider 直接复用 compare()，后者自动跑基准组
+      (ConstShrinkageProvider(1.0)) + 实验组两组回测并裁定四项一票否决。build_volatility_schedule
+      从 OHLCV 算市场等权实现波动率（年化）。save_c1_report markdown 落盘。依赖方向
+      backtest→regime 单向。解决发现性：新 AI 搜 "C1 执行脚本/regime 验证跑通/Phase 1
+      入口/mock 冒烟" 可定位真源。解决防重建：check_file_canonical() 反查。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -8233,14 +8256,6 @@ creation_tokens:
     token: "auto-arch-diagram-agent-20260805"
     created_by: "session-restore-archid"
     capability: "architecture_diagrams"
-  - file: "docs/_working/架构图/test_diagram/53_d_trading_architecture.md"
-    token: "auto-arch-diagram-trading-test-20260805"
-    created_by: "session-restore-archid"
-    capability: "architecture_diagrams"
-  - file: "docs/_working/架构图/test_output/53_d_trading.md"
-    token: "auto-arch-diagram-trading-out-20260805"
-    created_by: "session-restore-archid"
-    capability: "architecture_diagrams"
   - file: "docs/_working/架构图/交易决策架构.md"
     token: "auto-arch-diagram-trading-20260805"
     created_by: "session-restore-archid"
@@ -8277,15 +8292,6 @@ creation_tokens:
     token: "auto-arch-diagram-risk-20260805"
     created_by: "session-restore-archid"
     capability: "architecture_diagrams"
-  # --- 还原被误删文件 creation_token 补登（精确路径，2026-08-06 续）---
-  - file: "docs/_working/battle_map_merge_task/battle_map_merge_execution_log.md"
-    token: "auto-battle-map-exec-log-subdir-20260806"
-    created_by: "session-restore-archid"
-    capability: "kimi3_battle_map_merge_instructions"
-  - file: "docs/_working/battle_map_merge_task/kimi3_battle_map_merge_instructions.md"
-    token: "auto-kimi3-battle-map-merge-subdir-20260806"
-    created_by: "session-restore-archid"
-    capability: "kimi3_battle_map_merge_instructions"
   # --- CloneGuard 蓝图（2026-08-06，#ARCH-FORCE-MERGE-DEDUP-001 多引擎克隆检测集成防御体系）---
   - file: "docs/03_modules/_cross_layer/clone_guard/blueprint.md"
     token: "auto-clone-guard-blueprint-20260806"
@@ -8351,6 +8357,10 @@ creation_tokens:
     token: "auto-c1-comparator-20260806"
     created_by: "session-regime-validation-bc1"
     capability: "c1_shrinkage_comparator"
+  - file: "src/zephyr/backtest/regime_validation/c1_runner.py"
+    token: "auto-c1-runner-20260806"
+    created_by: "session-regime-c1-runner"
+    capability: "c1_runner"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

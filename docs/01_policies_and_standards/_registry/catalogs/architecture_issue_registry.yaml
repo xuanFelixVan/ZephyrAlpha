@@ -12198,6 +12198,89 @@ entries:
   status: decided
   created: '2026-08-06'
   last_updated: '2026-08-06'
+# --- #ARCH-REGIME-CONFIDENCE-FIX-001: ConfidenceSignal 移除 state_risk_factor 回归 spec（2026-08-06）---
+- issue_id: '#ARCH-REGIME-CONFIDENCE-FIX-001'
+  title: ConfidenceSignal 移除 state_risk_factor——回归 spec 纯定义 base(max_p)×rarity
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-06 算法核心修复登记。regime_detector.py _compute_confidence_signal
+    原实现 ConfidenceSignal = base(max_p) × state_risk × rarity，含 state_risk_factor
+    乘法。经核查 discussion_001 §5.1 spec 真源（L1915 ConfidenceSignal = f(max(P))），
+    spec 纯定义不含 state_risk——state_risk 是代码偏离 spec 的私加。移除回归 spec。
+    两个致命缺陷论证：
+    ① HMM 标签任意性——无监督 HMM r1-r9 标签在 walk-forward 各季 refit 间无一致语义
+       （permutation invariance），按数字标签套 state_risk=随机惩罚；
+    ② 永久中性态惩罚——r4/r5/r6 震荡态 state_risk=0.70-0.90，A 股长期震荡→平时
+       永久压仓，牛市也跟着砍→收益崩塌（修复前 Sharpe 开=0.10，Shrinkage 均值=0.589）。
+    危机保护改由 RiskSignal 的 feature_risk（vol_pct + slope，可靠特征信号）承担。
+    修复后 C1 验证：Sharpe 开=0.3474（×3.5），Shrinkage 均值=0.873，MaxDD 改善 33%，
+    Calmar 反超基准（0.37>0.29），C1 四项全通过。
+    独立复现（#ARCH-REGIME-C1-RUNNER-001 c1_runner 方式 B）：四项指标 bit-identical
+    （Δ=0.0000），排除数据挑选/CSV篡改/编排层 bug。
+    此修复属回归 spec（非改 spec），但算法核心变更留痕。MOD-REGIME-001 INVARIANTS
+    不变（Shrinkage≤1.0 只减不增）。
+    铁律#9：本条记录已发生的修复，经架构审查 + 独立复现验证后转 decided。
+  impact:
+    - 'src/zephyr/regime/core/regime_detector.py（_compute_confidence_signal 移除 state_risk_factor）'
+    - 'logs/c1_repro/（独立复现产出：shrinkage_schedule.csv + c1_metrics.json + c1_repro_report.md）'
+  fix_phase: 已落地并裁定 decided（2026-08-06）—— state_risk 移除 + 回归 spec + C1 验证通过 + 独立复现 bit-identical
+  status: decided
+  created: '2026-08-06'
+  last_updated: '2026-08-06'
+# --- #ARCH-REGIME-C1-RUNNER-001: C1 执行编排器——mock 冒烟 + regime 真实模式入口（2026-08-06）---
+- issue_id: '#ARCH-REGIME-C1-RUNNER-001'
+  title: C1 执行编排器——mock 冒烟模式(波动率驱动) + regime 真实模式入口
+  severity: P3低
+  category: governance
+  adjudication: |-
+    2026-08-06 新增模块登记。#ARCH-REGIME-VALIDATION-001 C1 对比器(compare)已 decided，
+    但缺"执行编排层"——把 build_weight_panel 取数 + provider 构造 + compare 调用 + 报告
+    落盘串成一条可跑管线。故在 D_BACKTEST 域 regime_validation 包新建 c1_runner.py：
+    ① build_volatility_schedule 从 data OHLCV 算市场等权实现波动率（年化），不依赖特征
+       管道——mock 模式立即可跑（MockShrinkageProvider 波动率4档映射驱动）；
+    ② run_c1_with_provider 核心入口直接复用 C1ShrinkageComparator.compare()，后者内部
+       自动跑基准组(ConstShrinkageProvider(1.0)) + 实验组(传入provider) 两组回测并裁定，
+       mock/regime 两模式共用此管线，仅 provider 不同，回测/裁定逻辑零差异；
+    ③ run_c1_mock 冒烟模式（波动率驱动，不依赖特征管道，C1 结果无 regime 部署决策价值，
+       仅验证流程）；run_c1_regime 真实模式（RegimeSeriesOrchestrator 产出 →
+       build_schedule_from_results → ScheduleShrinkageProvider，Phase 1 裁决依据）；
+    ④ save_c1_report markdown 报告落盘（幂等，含四项 metric_verdicts + 裁定 + 摘要）。
+    依赖方向 backtest→regime 单向（#ARCH-REGIME-VALIDATION-001 一致），c1_runner 在 backtest
+    域编排，避免 regime→backtest 反向循环依赖。run_c1_regime 的 regime_results 由
+    MOD-REGIME-002 RegimeSeriesOrchestrator 产出（特征管道就绪后接入，本条不卡此依赖）。
+    不卡 commit（arch_reference_gate 只校验 issue_id 登记，不校验 status）。
+    铁律#9：本条由 AI 提议，status=proposed，待用户显式确认后改 decided。
+    2026-08-06 架构师裁定（用户授权客观审查后转 decided）：
+    ① 依赖方向合规——c1_runner import 清单仅 backtest 域（vectorized_engine/
+       c1_comparator/shrinkage_provider）+ 标准库，完全不 import zephyr.regime；
+       run_c1_regime 的 regime_results 用 list[tuple[datetime, Any]] 的 Any 解耦防腐，
+       backtest→regime 单向与 #ARCH-REGIME-VALIDATION-001 一致，无循环依赖。位置选
+       backtest/regime_validation/（非计划的 regime/validation/）正确——若放 regime 域
+       则 import backtest.c1_comparator 形成 regime→backtest 反向，与既有 backtest→regime
+       成环；
+    ② mock 边界正确——mock 是波动率 4 档规则映射（vol<15%→1.0/.../>=40%→0.3），非 HMM
+       概率分布，测不出"regime 检测有没有用"（discussion_002 §6 Phase 1 验证的是 HMM 12
+       态驱动的节流）。docstring 已声明"无 regime 部署决策价值"。治本补强：save_c1_report
+       在 mock 报告头加显式 ⚠️ 警示（防误用 mock 结果做部署决策）；
+    ③ 分工边界清晰——c1_runner 消费 regime_results（Any 解耦），不做特征计算；另一个
+       AI 做特征管道（算子+RegimeFeatureBuilder+orchestrator）产出 regime_results。汇合点
+       run_c1_regime(regime_results)，不重复不遗漏。run_c1_end_to_end 调 pf_core 的
+       StrategyRunner 是跨域便利入口（lazy import），核心 run_c1_with_provider 不跨域；
+    ④ 测试达标——16 项覆盖波动率序列(含高低波段)/mock冒烟/核心入口(ConstShrinkageProvider
+       等价+否决)/regime合成/报告落盘/空数据降级/mode校验。治本补强：新增"空波动率序列→
+       mock 退化满部署"边界测试 + "mock 报告含警示"测试（MockShrinkageProvider(
+       volatility_schedule={}) 恒返回1.0 已实测验证）。PIT as-of join 边界在
+       test_shrinkage_provider.py 74 项已覆盖，c1_runner 透传不重复测。
+    裁定：decided。依据铁律#9，AI 提议经客观架构审查 + 用户授权后转 decided。两项治本
+    补强（mock 报告警示 + 空波动率退化测试）同批落地。
+  impact:
+    - 'src/zephyr/backtest/regime_validation/c1_runner.py（build_volatility_schedule + run_c1_with_provider/run_c1_mock/run_c1_regime + run_c1_end_to_end + save_c1_report）'
+    - 'tests/backtest/test_c1_runner.py（18 项：波动率序列/mock冒烟/核心入口/regime合成/报告落盘/空数据降级/空波动率退化/mock报告警示）'
+  fix_phase: 已落地并裁定 decided（2026-08-06）—— c1_runner.py + 18 项测试全过 + 回归 74 项无破坏；mock 报告警示 + 空波动率退化测试治本补强；module_translation + capability_canonical_file_registry 登记完成；ARCH 条目 AI 提议经架构审查转 decided
+  status: decided
+  created: '2026-08-06'
+  last_updated: '2026-08-06'
 # --- #ARCH-BM-001: 作战地图孤儿治理三档分类——domain_classification + acknowledged_orphans 机制（2026-08-06）---
 - issue_id: '#ARCH-BM-001'
   title: 作战地图孤儿治理三档分类——domain_classification + acknowledged_orphans 机制
@@ -12230,6 +12313,54 @@ entries:
     铁律#9：用户显式授权施工（"授权按 P1→P5 顺序施工"），status=decided。
     治理振荡消除：AI 看到 violations=0 后不再对 acknowledged 项尝试"修复"。
   fix_phase: 已落地（2026-08-06）—— P1-P5 全部完成，违规归零，EXIT_CODE=0
+  status: decided
+  created: '2026-08-06'
+  last_updated: '2026-08-06'
+# --- #ARCH-067: GATE-ALGO-QUALITY 算法糊弄自动检测器接入 pre-commit（2026-08-06）---
+- issue_id: '#ARCH-067'
+  title: GATE-ALGO-QUALITY 算法糊弄自动检测器——代码AST+blueprint双层6类pattern门禁
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-06 治本施工。起因：2026-08-06 全面审查发现 regime_feature_builder/blueprint.md
+    含 15 处"糊弄"算法（换手率代理筹码分布、定性词无量化"降准→40分"、伪精确"均线角度>45°"、
+    死数据"北向资金回流"、名词堆砌"PS/SC/AR/ST 结构识别"、逻辑错位"无虹吸→60分"）。
+    虽已全部替换为2026前沿算法（Hurst(DFA)/Kalman/VWAP三角分布/ACSI/规则法Wyckoff FSM/
+    CBOE方差互换VIX/NLP三层管道/RRG/Pivot-Pair），但 100% AI 开发场景下无任何自动化机制
+    检测"算法语义糊弄"——不可持续，下次 AI 可能再造糊弄。
+    治本：新建 GATE-ALGO-QUALITY 检测器，填补 60+ 现有 gate 的算法语义空白
+    （gate-triple-align 管结构对齐/VR-001~011 管字段格式/drift_detector 管实现vs基线漂移，
+    无一条管"算法语义糊弄"）。
+    双层扫描架构——代码层（AST + 正则）为主，blueprint 层（正则）为辅：
+      代码层是算法真源，blueprint 只是描述；很多算法实现在代码里但没写进 blueprint，只扫
+      blueprint 会漏；blueprint 糊弄是设计层糊弄，代码糊弄是实现层糊弄——两者都抓，代码优先。
+    6类pattern（从15处已修糊弄点提炼）：
+      P1 代理替代——函数名声称计算X但body只用Y（compute_chip_distribution 内部只算 turnover_rate）
+      P2 定性词无量化——关键词列表→分值但无分类/计算函数（["降准","降息","MLF"]→40分无算法）
+      P3 伪精确——阈值依赖量纲/图表比例（if angle > 45 / 均线角度>45°）
+      P4 死数据——引用已停发数据源（北向资金 hk_connect_flow 2024-08-19 停发）
+      P5 名词堆砌无算法——≥3缩写但 body 为空/pass/TODO（PS/SC/AR/ST/SOS 结构识别→60分无识别逻辑）
+      P6 逻辑错位——否决条件当正向评分（if not X: score += 60 / 无虹吸→60分）
+    接入策略：pre-commit --warn-only 观察期（全仓扫描 2699 代码 + 153 blueprint = 0 违规），
+      连续30天零新增违规后转 --ci 硬阻断。
+    铁律#9：用户多轮显式授权（"先规则引擎，LLM后加"+"我倾向blueprint + 代码实现"+"扫描代码
+    需全架构扫描是最好的，扫描蓝图意义不大"），status=decided（纯技术落地，无价值判断）。
+    LLM 兜底层（Phase 2）：规则引擎 pass 后，对"可疑但未判违规"的代码/章节做 LLM 审查，
+    输出置信度+理由，低于阈值 soft warn——MVP 不做，先验证规则引擎效果。
+  impact:
+    新增文件：
+    - 'scripts/governance/d5_architecture/checkers/check_algo_quality.py（检测器主脚本，1135行，6类pattern双层扫描）'
+    - 'tests/governance/test_algo_quality.py（53 项测试：6类×阳阴 + 15处糊弄阳性检出 + main()端到端 + 章节抽取）'
+    - '.trae/documents/gate-algo-quality-detector.md（设计文档：6类pattern检测规则+双层架构+实施步骤）'
+    变更文件：
+    - '.pre-commit-config.yaml（新增 gate-algo-quality hook，--warn-only 模式；gate-* 总数 49→50，预算54内）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条目登记）'
+    预算影响：gate-* hooks 49→50（硬上限54，余4），reconciler/AGENTS.md 未触及。
+    复用：_shared/constants.py（EXIT_PASS/EXIT_FINDINGS/REPO_ROOT）、_shared/encoding.py（ensure_utf8_stdout）、
+          check_node_label_quality.py 的 argparse + main 模式、Python 标准库 ast 模块。
+  fix_phase: 已落地（2026-08-06）—— 检测器+测试桩+设计文档+pre-commit 接入+ARCH 登记全部完成；
+    全仓扫描 2699 代码 + 153 blueprint = 0 违规；53 项测试全通过（15 处糊弄阳性全检出+修正后
+    前沿算法阴性无误报）；gate-algo-quality 接入 .pre-commit-config.yaml --warn-only 观察期。
   status: decided
   created: '2026-08-06'
   last_updated: '2026-08-06'
