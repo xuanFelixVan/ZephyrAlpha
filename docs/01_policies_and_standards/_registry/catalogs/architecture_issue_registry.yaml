@@ -12364,3 +12364,89 @@ entries:
   status: decided
   created: '2026-08-06'
   last_updated: '2026-08-06'
+# --- #ARCH-REGIME-DEADZONE-001: 死区装饰器验证后否决——序列层有效但回测 Turnover 不降（2026-08-06）---
+- issue_id: '#ARCH-REGIME-DEADZONE-001'
+  title: 死区装饰器（DeadzoneShrinkageProvider）验证后否决——序列层减变化点72.9%但回测Turnover不降反升4.2%
+  severity: P3低
+  category: governance
+  adjudication: |-
+    2026-08-06 Turnover 优化验证登记。C1 验证中 Turnover 开=2.55/yr（vs 关=2.27），
+    为降低换手率开发 DeadzoneShrinkageProvider 装饰器：raw 与上次生效值差 < deadzone
+    (0.02) 时保持不变，>= 时更新。11 项单元测试全通过（微抖过滤/大幅调整保留/状态管理）。
+    序列层面验证有效：变化点 2529->686（减 72.9%），|d|<0.02 占 81.3%。
+    但 C1 回测对比（repro_c1_deadzone.py）未达目标：
+    - Turnover 2.5522->2.6588/yr（+4.2%，不降反升）
+    - trades 2432->2372（仅减 2%）
+    - Sharpe 0.3474->0.3462 / Calmar 0.3694->0.3641（噪声范围略退化）
+    - 两组 passed 均为 True（Turnover 仍 < 门槛 4.54）
+    根因（analyze_deadzone_effect.py）：等权策略下 Shrinkage 对所有标的同向缩放，
+    deploy_weight_i=(1/N*s)/(N*1/N*s)=1/N，相对权重恒等。死区只过滤总仓位变化的
+    高频小振动，但总变化量 Sigma|d| 仅降 7.67%（26.82->24.76），被积压后单次大调 +
+    NAV 路径差异 + 价格漂移再平衡抵消，Turnover 净效应 +4.2%。
+    结论：死区在 Shrinkage 序列层面有效，在回测 Turnover 层面无效。Turnover 真正
+    杠杆在回测引擎调仓逻辑（再平衡带宽），不在序列平滑。
+    建议：不采纳死区方案（代码保留为可选 decorator，默认不启用）；若降 Turnover 应
+    转向再平衡带宽（权重偏离目标 < 阈值不调仓）。A2/A3 投入决策与 Turnover 解耦——
+    当前 C1 已通过，Turnover 非紧迫，A2/A3 价值在风险覆盖精度非降 Turnover。
+    铁律#9：本条为不引入/不采纳决策类议题，AI 提议 status=proposed，待用户确认。
+  impact:
+    - 'src/zephyr/backtest/regime_validation/shrinkage_provider.py（DeadzoneShrinkageProvider 装饰器，保留可选不默认启用）'
+    - 'tests/backtest/test_deadzone_provider.py（11 项单测全通过）'
+    - 'scripts/tests/repro_c1_deadzone.py（C1 对比脚本）'
+    - 'scripts/tests/analyze_deadzone_effect.py（根因分析脚本）'
+    - 'logs/c1_repro/deadzone_analysis_report.md（验证报告，派生产物不入 git）'
+  fix_phase: 验证完成（2026-08-06）—— 死区装饰器 + 11 单测 + C1 对比 + 根因分析全部落地；结论不采纳，待用户确认
+  status: proposed
+  created: '2026-08-06'
+  last_updated: '2026-08-06'
+# --- #ARCH-REGIME-FEATURE-BUILDER-001: regime 特征管道（模块A）——OHLCV→RegimeFeatures/OverlaySignals/RiskSignalInputs Phase 1b 落地（2026-08-07）---
+- issue_id: '#ARCH-REGIME-FEATURE-BUILDER-001'
+  title: 新增 regime 特征管道——RegimeFeatureBuilder + features/* + OverlaySignalsConstructor + RiskSignalConstructor
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-07 补登模块A（前序会话施工，commit 852457e9 落地）。discussion_001 §3/§4/§5.3
+    定义 RegimeDetector.detect() 三参输入（regime_features/overlay_signals/risk_signal_inputs），
+    discussion_002 §7 数据基础确认 13 参数全有数据（#12 筹码用华泰前沿算法自建，非换手率代理），
+    §8.1 实现后验证再简化——先 Phase 1b 最小特征跑通 C1 一票否决，通过后补完整参数。
+    故在 D_REGIME 域落地 MOD-REGIME-002 特征管道 7 文件：
+    ① RegimeFeatureBuilder 主编排器（regime_feature_builder.py）——OHLCV(ClickHouse)→
+       三 dict 输出，复用 ch_reader + table_registry（不重造取数轮子），PIT 严格
+       （detect(t) 只用 ≤t-1 数据），walk-forward 季度重拟合训练/测试无重叠；
+    ② features 四类算子——market_features(F1 realized_vol_pct + F3 cross_asset_corr
+       + F4 ad_ratio + F5 volume_anomaly) / trend_features(F2a hurst_dfa + F2b
+       kalman_slope) / overlay_features(8转换评分 T1-T6/S1/S2) / risk_features(13
+       风险参数系数映射)；
+    ③ OverlaySignalsConstructor + RiskSignalConstructor（overlay_signals_builder.py
+       + risk_signal_builder.py）——分别构造 overlay_signals/risk_signal_inputs dict，
+       字段钉死对齐 detect() 签名。
+    依赖方向单向：features 子模块只依赖 numpy/pandas（无业务依赖）；regime_feature_builder
+    依赖 features + ch_reader + table_registry + regime_detector；overlay/risk_signal_builder
+    依赖 features + regime_feature_builder。无循环依赖，依赖方向 regime_validation→regime
+    （C1 对比器消费特征输出，不反向）。
+    Phase 1b 最小特征集（验证 C1 核心假设"波动率抬头时收缩保护回撤"足够）：HMM 6特征X矩阵
+    (T,6) 列序钉死 + 8转换评分 + 13风险参数；北向资金 2024-08-19 停发标为死数据，资金承接
+    改用 money_flow 超大单逆势承接（湘财证券实证前瞻性最强）。
+    C1 真实数据验证通过（2026-08-06 23:58，2733 日 Shrinkage 调度，1886 万行 ClickHouse 数据）：
+    Sharpe 关=0.3678 开=0.3469（门槛≥0.2678）✅；MaxDD 关=0.2221 开=0.1484（改善+0.0737）✅；
+    Calmar 关=0.2918 开=0.3691（+27%）✅；Turnover 关=2.27 开=2.59（门槛≤4.54）✅。
+    结论：regime 风险节流有效，可进 Phase 2 模型质量验证。
+    测试覆盖：tests/regime/test_overlay_signals_builder.py(13项 8转换触发/常态零信号) +
+    test_deadzone_provider.py(11项) + regime features 单测全过；完整套件 473 passed。
+    铁律#9：本条补登已落地施工（commit 852457e9），AI 提议 status=proposed，待用户确认后
+    转 decided。blueprint.md 设计真源已存在（docs/03_modules/_domain_regime/regime_feature_builder/）。
+  impact:
+    - 'src/zephyr/regime/regime_feature_builder.py（RegimeFeatureBuilder 主编排器，671行）'
+    - 'src/zephyr/regime/features/market_features.py（F1/F3/F4/F5 市场特征算子）'
+    - 'src/zephyr/regime/features/trend_features.py（F2a hurst_dfa + F2b kalman_slope 趋势特征）'
+    - 'src/zephyr/regime/features/overlay_features.py（8转换评分算子）'
+    - 'src/zephyr/regime/features/risk_features.py（13风险参数系数映射）'
+    - 'src/zephyr/regime/overlay_signals_builder.py（OverlaySignalsConstructor）'
+    - 'src/zephyr/regime/risk_signal_builder.py（RiskSignalConstructor）'
+    - 'src/zephyr/regime/features/__init__.py（features 包入口）'
+    - 'tests/regime/test_overlay_signals_builder.py（13项覆盖层触发/常态零信号）'
+    - 'tests/backtest/test_deadzone_provider.py（11项死区装饰器）'
+  fix_phase: 已落地（2026-08-06 commit 852457e9）—— 模块A 7文件 + 测试 + C1 真实数据验证四项全通过；ARCH 条目补登待用户确认转 decided
+  status: proposed
+  created: '2026-08-07'
+  last_updated: '2026-08-07'

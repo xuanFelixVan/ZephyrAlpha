@@ -210,6 +210,9 @@ class TestDecayLevel:
 class TestIntegration:
     def test_realistic_decay_scenario(self):
         """模拟策略从稳定到衰减的全过程。"""
+        # 固定种子：噪声 ±0.1 相对基线 1.5 约 6.7%，与 DECAYING 的 trend_magnitude
+        # 阈值 5% 接近，未设种子时阶段1 随机趋势可能触发 DECAYING 致 flaky。
+        np.random.seed(0)
         monitor = DecayMonitor(DecayMonitorConfig(
             short_window=10, long_window=30,
             warning_threshold=0.15, critical_threshold=0.30,
