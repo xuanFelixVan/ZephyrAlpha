@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "3846e719a720d2c8",
+      "hash": "81cf7c77fac7cd13",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -71,6 +71,6 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-08-06T07:42:27.736263+00:00",
+  "registered_at": "2026-08-06T07:45:26.202850+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
