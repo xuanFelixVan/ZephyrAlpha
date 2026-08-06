@@ -339,34 +339,50 @@ def _resolve_path_object(
     return None
 
 
+def _extract_subdir_from_binop(binop: ast.BinOp) -> str | None:
+    """从 BinOp Div 链取最左的字符串常量作为 subdir。
+
+    ``p / "src" / "zephyr"`` → ``"src"``（最左常量）。取最左是为了向上搜索时
+    命中含该子目录的最近祖先（如仓库根含 ``src/``），与运行时 ``next()`` 语义对齐。
+    """
+    # 递归到最左的 Name / Constant 形式
+    if isinstance(binop.left, ast.BinOp) and isinstance(binop.left.op, ast.Div):
+        return _extract_subdir_from_binop(binop.left)
+    if (
+        isinstance(binop.left, ast.Name)
+        and isinstance(binop.right, ast.Constant)
+        and isinstance(binop.right.value, str)
+    ):
+        return binop.right.value
+    return None
+
+
 def _extract_subdir_from_if(if_node: ast.AST) -> str | None:
     """从 comprehension 的 if 条件提取子目录名。
 
-    识别 ``(p / "subdir").exists()`` → ``"subdir"``。
-
-    AST 结构::
-
-        Call(
-            func=Attribute(attr='exists',
-                           value=BinOp(op=Div, left=Name('p'), right=Constant("subdir")))
-        )
+    识别：
+    - ``(p / "subdir").exists()`` / ``(p / "subdir").is_dir()`` → ``"subdir"``
+    - ``(p / "a" / "b").exists()`` → ``"a"``（链式取最左）
+    - ``X and Y`` 组合 → 取首个可提取的子目录（覆盖
+      ``(p/"scripts").is_dir() and (p/"src").is_dir()`` 同型模式）
     """
+    # BoolOp(and) → 遍历取首个可提取
+    if isinstance(if_node, ast.BoolOp) and isinstance(if_node.op, ast.And):
+        for value in if_node.values:
+            subdir = _extract_subdir_from_if(value)
+            if subdir:
+                return subdir
+        return None
     if not (
         isinstance(if_node, ast.Call)
         and isinstance(if_node.func, ast.Attribute)
-        and if_node.func.attr == "exists"
+        and if_node.func.attr in ("exists", "is_dir")
     ):
         return None
     binop = if_node.func.value
     if not (isinstance(binop, ast.BinOp) and isinstance(binop.op, ast.Div)):
         return None
-    if not isinstance(binop.left, ast.Name):  # 迭代变量 p
-        return None
-    if not (
-        isinstance(binop.right, ast.Constant) and isinstance(binop.right.value, str)
-    ):
-        return None
-    return binop.right.value
+    return _extract_subdir_from_binop(binop)
 
 
 def _try_resolve_next_parents_search(
