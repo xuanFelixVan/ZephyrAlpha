@@ -6,6 +6,14 @@ version: 1
 project_root: .
 languages: [python]
 
+# ─── 运行环境（L1 离线优先原则——#ARCH-FORCE-MERGE-DEDUP-001 Phase A 闭合）───
+# L1 pre-commit 路径必须无网络可用：AST 哈希（Tier 1）是 L1 唯一检测手段，
+# CodeSAGE 嵌入模型（200MB）只在 L2 周期审计加载。
+# HF_HUB_OFFLINE=1 强制 echo-guard 跳过模型下载，使用 Tier 1 检测。
+env:
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+
 # 忽略路径（除 echo-guard.yml 自身排除规则外的补充忽略）
 ignore_paths:
   - "tests/"

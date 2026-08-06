@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import subprocess  # noqa: bare-subprocess  echo-guard CLI 调用需要 subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -86,6 +87,7 @@ class EchoGuardAdapter:
                 text=True,
                 timeout=5,
                 cwd=str(self._repo_root),
+                env={**os.environ, **self._config.env},
             )
             return result.returncode == 0
         except (FileNotFoundError, subprocess.TimeoutExpired):
@@ -119,6 +121,7 @@ class EchoGuardAdapter:
                 text=True,
                 timeout=timeout_sec,
                 cwd=str(self._repo_root),
+                env={**os.environ, **self._config.env},
             )
         except FileNotFoundError:
             logger.warning("EchoGuardAdapter degraded: echo-guard CLI 未安装")

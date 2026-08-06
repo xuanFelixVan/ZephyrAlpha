@@ -41003,6 +41003,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "封装 Echo-Guard CLI 调用，提供统一的 detect() 接口，引擎不可用时降级为空结果"
+- module_path: src/zephyr/clone_guard/mcp_server.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "CloneGuard MCP 服务"
+  name_en: "CloneGuard MCP Server"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "L0 源头预防 MCP 服务，AI 写代码前主动查重，返回克隆发现和复用建议，引导复用而非重复实现"
 
 battle_map_steps:
 - step_id: BM-BUY-04

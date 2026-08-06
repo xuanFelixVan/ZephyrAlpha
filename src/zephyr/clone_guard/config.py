@@ -46,6 +46,9 @@ class CloneGuardConfig:
     # 降级策略
     fail_closed: bool = False  # echo-guard 全部超时/崩溃时是否阻断（False=warn-only 兜底）
 
+    # 运行环境（L1 离线优先——HF_HUB_OFFLINE=1 强制 Tier 1 AST 哈希检测，跳过模型下载）
+    env: dict[str, str] = field(default_factory=dict)
+
     # 忽略路径（除 echo-guard.yml 自身排除规则外）
     ignore_paths: tuple[str, ...] = (
         "tests/",
@@ -92,11 +95,14 @@ def load_config(repo_root: Path) -> CloneGuardConfig:
     # 安全提取字段——只认已知的 key，忽略未知 key
     pre_commit = raw.get("pre_commit", {}) or {}
     severity = raw.get("severity", {}) or {}
+    env_raw = raw.get("env", {}) or {}
+    env = {str(k): str(v) for k, v in env_raw.items()} if isinstance(env_raw, dict) else {}
 
     return CloneGuardConfig(
         pre_commit_timeout_sec=int(pre_commit.get("timeout_sec", 30)),
         fail_on_severity=str(pre_commit.get("fail_on", severity.get("extract", "extract"))),
         echo_guard_enabled=bool(pre_commit.get("echo_guard_enabled", True)),
         fail_closed=bool(pre_commit.get("fail_closed", False)),
+        env=env,
         ignore_paths=tuple(raw.get("ignore_paths", ()) or CloneGuardConfig().ignore_paths),
     )

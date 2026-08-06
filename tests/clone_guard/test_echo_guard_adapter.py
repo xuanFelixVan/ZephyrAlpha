@@ -200,3 +200,72 @@ class TestEchoGuardAdapterDetect:
         assert degraded is False
         assert len(findings) == 1
         assert findings[0].finding_id == "GOOD"
+
+
+class TestEnvInjection:
+    """env 注入测试——#ARCH-FORCE-MERGE-DEDUP-001 Phase A 闭合（HF_HUB_OFFLINE 离线优先）。
+
+    验证 EchoGuardAdapter 在 subprocess.run 调用时注入 config.env，
+    确保 L1 pre-commit 路径强制离线模式（Tier 1 AST 哈希检测）。
+    """
+
+    def test_detect_injects_config_env(self, tmp_path: Path):
+        """detect 调用 subprocess.run 时注入 config.env。"""
+        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1"})
+        adapter = EchoGuardAdapter(tmp_path, cfg)
+        mock_result = MagicMock(returncode=0, stdout=json.dumps({"findings": []}), stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.detect(["src/foo.py"])
+        mock_run.assert_called_once()
+        _, kwargs = mock_run.call_args
+        assert "env" in kwargs
+        assert kwargs["env"]["HF_HUB_OFFLINE"] == "1"
+
+    def test_detect_merges_system_env(self, tmp_path: Path):
+        """detect 注入的 env 包含系统环境变量 + config.env（config 覆盖系统）。"""
+        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1"})
+        adapter = EchoGuardAdapter(tmp_path, cfg)
+        mock_result = MagicMock(returncode=0, stdout=json.dumps({"findings": []}), stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.detect(["src/foo.py"])
+        _, kwargs = mock_run.call_args
+        # 系统 env（PATH 等）应存在
+        assert "PATH" in kwargs["env"]
+        # config env 应存在
+        assert kwargs["env"]["HF_HUB_OFFLINE"] == "1"
+        assert kwargs["env"]["TRANSFORMERS_OFFLINE"] == "1"
+
+    def test_health_check_injects_config_env(self, tmp_path: Path):
+        """health_check 调用 subprocess.run 时注入 config.env。"""
+        (tmp_path / ".echo-guard").mkdir(parents=True)
+        (tmp_path / ".echo-guard" / "index.duckdb").touch()
+        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1"})
+        adapter = EchoGuardAdapter(tmp_path, cfg)
+        mock_result = MagicMock(returncode=0)
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.health_check()
+        mock_run.assert_called_once()
+        _, kwargs = mock_run.call_args
+        assert kwargs["env"]["HF_HUB_OFFLINE"] == "1"
+
+    def test_default_env_empty_uses_system_env_only(self, tmp_path: Path):
+        """无 env 配置时仅使用系统环境变量（env={} 不破坏系统 env）。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout=json.dumps({"findings": []}), stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.detect(["src/foo.py"])
+        _, kwargs = mock_run.call_args
+        assert "env" in kwargs
+        # 系统 PATH 仍存在
+        assert "PATH" in kwargs["env"]
+
+    def test_config_env_overrides_system_env(self, tmp_path: Path):
+        """config.env 覆盖同名系统环境变量（config 优先级高）。"""
+        cfg = CloneGuardConfig(env={"CUSTOM_VAR": "from_config"})
+        adapter = EchoGuardAdapter(tmp_path, cfg)
+        mock_result = MagicMock(returncode=0, stdout=json.dumps({"findings": []}), stderr="")
+        with patch.dict("os.environ", {"CUSTOM_VAR": "from_system"}, clear=False):
+            with patch("subprocess.run", return_value=mock_result) as mock_run:
+                adapter.detect(["src/foo.py"])
+        _, kwargs = mock_run.call_args
+        assert kwargs["env"]["CUSTOM_VAR"] == "from_config"  # config 覆盖系统

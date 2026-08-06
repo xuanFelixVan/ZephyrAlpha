@@ -108,3 +108,57 @@ class TestLoadConfig:
         assert cfg.pre_commit_timeout_sec == 45
         assert cfg.fail_on_severity == "extract"  # 默认
         assert cfg.echo_guard_enabled is True     # 默认
+
+
+class TestEnvConfig:
+    """env 字段测试——#ARCH-FORCE-MERGE-DEDUP-001 Phase A 闭合（HF_HUB_OFFLINE 离线优先）。"""
+
+    def test_default_env_is_empty_dict(self):
+        """默认 env 为空 dict。"""
+        cfg = CloneGuardConfig()
+        assert cfg.env == {}
+
+    def test_env_loaded_from_yaml(self, tmp_path: Path):
+        """env 段从 YAML 正确加载。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "env:\n"
+            "  HF_HUB_OFFLINE: \"1\"\n"
+            "  TRANSFORMERS_OFFLINE: \"1\"\n",
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.env == {"HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1"}
+
+    def test_env_values_stringified(self, tmp_path: Path):
+        """env 值被转为 string（即使 YAML 写成数字）。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "env:\n  HF_HUB_OFFLINE: 1\n",  # int, not string
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.env == {"HF_HUB_OFFLINE": "1"}
+        assert isinstance(cfg.env["HF_HUB_OFFLINE"], str)
+
+    def test_env_missing_returns_empty(self, tmp_path: Path):
+        """无 env 段时返回空 dict。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "version: 1\n", encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.env == {}
+
+    def test_env_non_dict_returns_empty(self, tmp_path: Path):
+        """env 段非 dict 时返回空 dict（安全降级）。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "env: [\"not\", \"a\", \"dict\"]\n", encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.env == {}
+
+    def test_malformed_yaml_env_returns_empty(self, tmp_path: Path):
+        """YAML 解析失败时 env 为空 dict（安全降级）。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "[: not valid :]\n}}}\n", encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.env == {}

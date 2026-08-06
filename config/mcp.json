@@ -144,6 +144,18 @@
       "rate_limit": { "default_qps": 30, "burst": 60 },
       "status": "implemented",
       "note": "#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2 Phase 2 治本 G2——规则发现 MCP Server，按 operation/scope/domain/tags 查询适用 trae 规则。AI 施工前 MUST 调用 rule_discovery.discover_applicable_rules 进入零幻觉空间。调用自动写 audit log 到 .runtime/lookup_audit/<session_id>.jsonl，CAPABILITY-LOOKUP-REQUIRED gate 据此放行 commit。真源：rule_ai_perception_index.yaml (#ARCH-GOV-CONVERGENCE-META Phase 3.2b)"
+    },
+    "clone_guard": {
+      "module": "zephyr.clone_guard.mcp_server",
+      "server_id": "clone_guard",
+      "version": "1.0.0",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "clone_guard.",
+      "tool_count": 2,
+      "safety_level": ["L"],
+      "rate_limit": { "default_qps": 30, "burst": 60 },
+      "status": "implemented",
+      "note": "#ARCH-FORCE-MERGE-DEDUP-001 Phase A 闭合——L0 源头预防 MCP Server。AI 写代码前 SHOULD 调用 clone_guard.check_before_write 查重，返回 advisory findings + import_suggestion（不阻断）。co-located with clone_guard 模块（守 red_blue_validator 先例）。L1 pre-commit 硬阻断由 CAPABILITY-OVERLAP 门禁兜底。"
     }
   },
 
@@ -216,6 +228,11 @@
         "reader": ["rule_discovery.discover_applicable_rules"],
         "operator": ["rule_discovery.discover_applicable_rules"],
         "admin": ["rule_discovery.discover_applicable_rules"]
+      },
+      "clone_guard": {
+        "reader": ["clone_guard.check_before_write", "clone_guard.health_check"],
+        "operator": ["clone_guard.check_before_write", "clone_guard.health_check"],
+        "admin": ["clone_guard.check_before_write", "clone_guard.health_check"]
       }
     },
     "roles": {

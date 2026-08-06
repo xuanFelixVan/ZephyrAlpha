@@ -8136,6 +8136,10 @@ creation_tokens:
     token: "auto-clone-guard-echo-adapter-20260806"
     created_by: "session-clone-guard-phase-a"
     capability: "clone_guard_echo_adapter"
+  - file: "src/zephyr/clone_guard/mcp_server.py"
+    token: "auto-clone-guard-mcp-server-20260806"
+    created_by: "session-clone-guard-phase-a"
+    capability: "clone_guard_mcp_server"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
