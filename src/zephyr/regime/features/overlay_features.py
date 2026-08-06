@@ -26,12 +26,13 @@
   - **PIT 由调用方负责**：本模块函数纯计算，shift(1) 在 OverlaySignalsConstructor._precompute 统一做
 
 31 个维度 key（对齐 TRANSITION_CONFIG 的 keys_gte）：
-  可算 25 个：vix_panic/correlation/liquidity/flash_recover（S1）
+  可算 29 个：vix_panic/correlation/liquidity/flash_recover（S1）
               capitulation/vix/wyckoff/valuation/fund/spring/three_yang/break_sc_low/vix_new_high/fund_outflow（S2）
               bqs/rcs/frs（T1）, continue_decline（T2）
-              volume_price/ma_trend/sentiment（T3）, shrink_flat（T4）
-              leader_break/rebound_wrap（T5）, sudden_volume（T6）
-  stub 6 个（=0）：bad_news_flat/policy（S2, NLP）, money_effect/mainline/leader/one_day_mainline（T3, 资金/板块）
+              volume_price/ma_trend/sentiment/money_effect/mainline/leader/one_day_mainline（T3）
+              shrink_flat（T4）, leader_break/rebound_wrap（T5）, sudden_volume（T6）
+  stub 2 个（=0）：bad_news_flat/policy（S2, NLP，待 NLP 管道）
+  Phase 2c：money_effect/mainline/leader/one_day_mainline 从 stub 升级为可算（接 money_flow/kline_sector/limit_up_down）
 
 依据: discussion_001 v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
@@ -69,6 +70,10 @@ __all__ = [
     "t3_volume_price_score",
     "t3_ma_trend_score",
     "t3_sentiment_score",
+    "t3_money_effect_score",
+    "t3_mainline_score",
+    "t3_leader_score",
+    "t3_one_day_mainline_flag",
     # T4
     "t4_shrink_flat_flag",
     # T5
@@ -83,43 +88,65 @@ __all__ = [
 # S1: Any → CRISIS（VIX Panic + Correlation + Liquidity）
 # ---------------------------------------------------------------------------
 
-def s1_vix_panic_score(vol_pct: pd.Series) -> pd.Series:
-    """S1 vix_panic: vol_pct → 0-100（VIX 恐慌代理，vol_pct=实现波动率分位）。
+def s1_vix_panic_score(
+    vol_pct: pd.Series, vix_pct: pd.Series | None = None
+) -> pd.Series:
+    """S1 vix_panic: VIX 恐慌代理 → 0-100。
+
+    Phase 2c：vix_pct（合成 VIX 历史分位）非空时优先用，回退 vol_pct
+    （实现波动率分位）。两者接口同构（∈[0,1]），阈值不变。
+
+    per-element 回退：vix_pct 在 warmup 期（前 hv_window+pct_window≈270 日）
+    或局部缺失时为 NaN，此时该日回退 vol_pct——避免 warmup 期 vix_panic 错误
+    归零（warmup 内 vol_pct 仍是有效信号，与 Phase 2a/2b 行为一致，C1 不退化）。
 
     映射（对齐 S1 trigger 门槛 vix_panic>=60）：
-      vol_pct>0.95 → 100  （极端恐慌）
-      vol_pct>0.90 → 85   （危机级高波，触发门槛以上）
-      vol_pct>0.85 → 65   （高波，刚过触发门槛）
-      vol_pct>0.75 → 40   （偏高波，未达门槛）
-      else        → 0     （正常，无恐慌）
+      >0.95 → 100  （极端恐慌）
+      >0.90 → 85   （危机级高波，触发门槛以上）
+      >0.85 → 65   （高波，刚过触发门槛）
+      >0.75 → 40   （偏高波，未达门槛）
+      else  → 0    （正常，无恐慌）
 
     与 #1 realized_vol_coef 对齐：vol_pct>0.90+下跌→#1=0.30（危机地板），
     S1 vix_panic>85 → 与 #1 危机区重合，提供 overlay 层 CRISIS 概率叠加。
     """
-    score = pd.Series(0.0, index=vol_pct.index)
-    score[vol_pct > 0.75] = 40
-    score[vol_pct > 0.85] = 65
-    score[vol_pct > 0.90] = 85
-    score[vol_pct > 0.95] = 100
+    if vix_pct is not None and not vix_pct.empty:
+        # vix_pct 优先；其 NaN 处（warmup/局部缺失）per-element 回退 vol_pct
+        src = vix_pct.combine_first(vol_pct)
+    else:
+        src = vol_pct
+    score = pd.Series(0.0, index=src.index)
+    score[src > 0.75] = 40
+    score[src > 0.85] = 65
+    score[src > 0.90] = 85
+    score[src > 0.95] = 100
     return score
 
 
 def s1_correlation_score(corr: pd.Series) -> pd.Series:
     """S1 correlation: cross_asset_corr → 0-100（恐慌期相关性→1）。
 
+    P1 校准（discussion_003 §9）：原 corr>0.93→65 门槛过高，A 股三大指数
+    （沪深300/中证500/创业板指）危机期 corr 多在 0.86-0.93，导致 529 天
+    vix_panic 达标但 correlation<60（B4 全部漏触发）。校准后 corr>0.85 即
+    过 trigger 门槛（65），让系统性危机的高相关信号能被捕获。
+
     映射（对齐 S1 trigger 门槛 correlation>=60）：
-      corr>0.97 → 95  （极端收敛，系统性恐慌）
-      corr>0.95 → 80  （高相关，危机信号）
-      corr>0.93 → 65  （刚过触发门槛）
-      corr>0.85 → 30  （偏高相关，非危机常态）
+      corr>0.97 → 100 （极端收敛，系统性恐慌）
+      corr>0.95 → 90  （高相关，强危机信号）
+      corr>0.90 → 80  （危机级高相关）
+      corr>0.85 → 65  （偏高相关，刚过触发门槛）
       else     → 0    （正常分散）
+
+    安全性：S1 trigger 需 vix_panic≥60 AND correlation≥60 双达标，vix_panic
+    （合成 VIX 下行半偏差分位）已过滤常态低波动期，降低 corr 门槛不致误触发。
     """
     score = pd.Series(0.0, index=corr.index)
     c = corr.fillna(0.0)
-    score[c > 0.85] = 30
-    score[c > 0.93] = 65
-    score[c > 0.95] = 80
-    score[c > 0.97] = 95
+    score[c > 0.85] = 65
+    score[c > 0.90] = 80
+    score[c > 0.95] = 90
+    score[c > 0.97] = 100
     return score
 
 
@@ -181,11 +208,16 @@ def s2_capitulation_score(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
     return score
 
 
-def s2_vix_score(vol_pct: pd.Series) -> pd.Series:
-    """S2 vix: VIX 见顶回落 → 0-100（vol_pct 从高位下降）。
+def s2_vix_score(
+    vol_pct: pd.Series, vix_pct: pd.Series | None = None
+) -> pd.Series:
+    """S2 vix: VIX 见顶回落 → 0-100（从高位下降）。
 
-    VIX>35 后回落至<30 = 恐慌消退信号。用 vol_pct 代理：
-    前一日 vol_pct>0.85（恐慌区）+ 当日 vol_pct 下降 → 见顶回落。
+    Phase 2c：vix_pct（合成 VIX 历史分位）非空时优先用，回退 vol_pct。
+    VIX>35 后回落至<30 = 恐慌消退信号。前一日高位 + 当日下降 → 见顶回落。
+
+    per-element 回退：vix_pct 在 warmup 期或局部缺失时为 NaN，该日回退 vol_pct
+    （与 s1_vix_panic_score 一致，避免 warmup 期错误归零）。
 
     映射（对齐 S2 trigger 门槛 vix>=40）：
       前日>0.90 & 当日降>0.10 → 80  （VIX 暴跌，恐慌消退）
@@ -193,8 +225,13 @@ def s2_vix_score(vol_pct: pd.Series) -> pd.Series:
       前日>0.85 & 当日降>0    → 40  （VIX 微降，刚达门槛）
       else                   → 0   （无回落信号）
     """
-    score = pd.Series(0.0, index=vol_pct.index)
-    vp = vol_pct.fillna(0.0)
+    if vix_pct is not None and not vix_pct.empty:
+        # vix_pct 优先；NaN 处（warmup/局部缺失）per-element 回退 vol_pct
+        src = vix_pct.combine_first(vol_pct)
+    else:
+        src = vol_pct
+    score = pd.Series(0.0, index=src.index)
+    vp = src.fillna(0.0)
     prev_vp = vp.shift(1)
     decline = prev_vp - vp
     was_crisis = prev_vp > 0.85
@@ -204,21 +241,38 @@ def s2_vix_score(vol_pct: pd.Series) -> pd.Series:
     return score
 
 
-def s2_wyckoff_score(close: pd.Series, window: int = 20) -> pd.Series:
-    """S2 wyckoff: Wyckoff 吸筹结构简化版 → 0-100（TR 收窄 + 价格在中上部）。
+def s2_wyckoff_score(
+    close: pd.Series,
+    high: pd.Series | None = None,
+    low: pd.Series | None = None,
+    volume: pd.Series | None = None,
+    pct_change: pd.Series | None = None,
+    vol_z: pd.Series | None = None,
+    window: int = 60,
+) -> pd.Series:
+    """S2 wyckoff: Wyckoff 吸筹评分 → 0-100（Phase 2c 完整版优先，回退 MVP）。
 
-    MVP 简化：计算近 window 日的价格区间（high-low）/ close，
-    区间收窄（低波动率震荡）+ 价格在区间上半部 = 吸筹结构。
+    Phase 2c 完整版：提供 high/low/volume/pct_change/vol_z 时委托 wyckoff_engine
+    做 6 阶段事件识别 + 累加评分（PS/SC/AR/ST/Spring/Test，Spring+40 是关键转折）。
+    MVP 回退：仅 close 时用原简化版（TR 收窄 + 中上部位置），识别力弱但保证不抛错。
 
     映射（对齐 S2 confirm 门槛 wyckoff>=60）：
-      range<2% & pos>0.6 → 70  （窄幅整理+中上部，吸筹特征）
-      range<3% & pos>0.5 → 50  （区间整理，未达门槛）
-      range<5%           → 25  （波幅收窄，初步信号）
-      else               → 0   （波幅过大，非吸筹）
+      完整版：Spring 出现累加 ≥60（过门槛）；MVP：range<2% & pos>0.6 → 70。
     """
+    if (
+        high is not None
+        and low is not None
+        and volume is not None
+        and pct_change is not None
+        and vol_z is not None
+    ):
+        from zephyr.regime.features.wyckoff_engine import wyckoff_score
+
+        return wyckoff_score(close, high, low, volume, pct_change, vol_z, window)
+    # MVP 简化版回退（仅 close，window 固定 20）
     score = pd.Series(0.0, index=close.index)
-    rolling_high = close.rolling(window).max()
-    rolling_low = close.rolling(window).min()
+    rolling_high = close.rolling(20).max()
+    rolling_low = close.rolling(20).min()
     range_pct = (rolling_high - rolling_low) / close
     pos = (close - rolling_low) / (rolling_high - rolling_low + 1e-8)
     score[range_pct < 0.05] = 25
@@ -472,6 +526,128 @@ def t3_sentiment_score(ad_ratio: pd.Series) -> pd.Series:
     score[a > 0.3] = 65
     score[a > 0.6] = 80
     return score
+
+
+def t3_money_effect_score(
+    inflow_pct: pd.Series, limit_up_count: pd.Series
+) -> pd.Series:
+    """T3 money_effect: 资金效应 → 0-100（主力净流入 + 涨停数共振）。
+
+    Phase 2c：原 stub=0，现接入 money_flow + limit_up_down 真实数据。
+    主力净流入占比 + 涨停家数共振 = 资金驱动主线确立信号。
+
+    映射（对齐 T3 confirm 门槛 money_effect>=50）：
+      inflow>5% & 涨停>100 → 80  （强资金+广涨停，主线确立）
+      >3% & >50            → 65  （中度资金+涨停，过 trigger 门槛）
+      >2% & >30            → 50  （温和资金，过 confirm 门槛）
+      >0                   → 25  （净流入但弱，未达门槛）
+      else                 → 0   （净流出，无资金效应）
+
+    Parameters
+    ----------
+    inflow_pct     : 全市场主力净流入占比序列（%，如 3.5 表示 3.5%）。
+    limit_up_count : 每日涨停家数序列。
+
+    Returns
+    -------
+    pd.Series，值 ∈ {0, 25, 50, 65, 80}。
+    """
+    score = pd.Series(0.0, index=inflow_pct.index)
+    inflow = inflow_pct.fillna(0.0)
+    lu = limit_up_count.reindex(inflow_pct.index).fillna(0.0)
+    score[inflow > 0] = 25
+    score[(inflow > 2) & (lu > 30)] = 50
+    score[(inflow > 3) & (lu > 50)] = 65
+    score[(inflow > 5) & (lu > 100)] = 80
+    return score
+
+
+def t3_mainline_score(
+    sector_hhi: pd.Series, top_sector_pct: pd.Series
+) -> pd.Series:
+    """T3 mainline: 主线效应 → 0-100（板块涨幅集中度 HHI + 头部板块涨幅）。
+
+    Phase 2c：原 stub=0，现接入 kline_sector 真实数据。
+    主线 = 板块涨幅集中（少数板块领涨）+ 头部板块涨幅显著。
+    HHI = Σ(share_i²)，share_i = |ret_i| / Σ|ret_j|，越高越集中。
+
+    映射（对齐 T3 trigger 门槛 mainline>=60）：
+      HHI>0.15 & Top>3% → 80  （强集中+强领涨，主线明确）
+      >0.10 & >2%       → 65  （中度集中，过 trigger 门槛）
+      >0.08 & >1%       → 35  （弱集中，未达门槛）
+      else              → 0   （散乱无主线）
+
+    Parameters
+    ----------
+    sector_hhi     : 板块涨幅 HHI 序列（[0,1]）。
+    top_sector_pct : 头部板块（涨幅最高）涨幅序列（%，如 3.5）。
+
+    Returns
+    -------
+    pd.Series，值 ∈ {0, 35, 65, 80}。
+    """
+    score = pd.Series(0.0, index=sector_hhi.index)
+    hhi = sector_hhi.fillna(0.0)
+    top = top_sector_pct.reindex(sector_hhi.index).fillna(0.0)
+    score[(hhi > 0.08) & (top > 1)] = 35
+    score[(hhi > 0.10) & (top > 2)] = 65
+    score[(hhi > 0.15) & (top > 3)] = 80
+    return score
+
+
+def t3_leader_score(
+    max_consec_limit: pd.Series, promotion_rate: pd.Series
+) -> pd.Series:
+    """T3 leader: 龙头效应 → 0-100（最高连板数 + 晋级率）。
+
+    Phase 2c：原 stub=0，现接入 limit_up_down 真实数据。
+    龙头 = 市场最高连板高度 + 昨日涨停今日继续涨停（晋级）比例。
+
+    映射（对齐 T3 trigger 门槛 leader>=60）：
+      连板≥5 & 晋级>0.5 → 80  （高连板+高晋级，强龙头）
+      ≥3 & >0.3         → 65  （中连板+中晋级，过 trigger 门槛）
+      ≥2                → 35  （低连板，未达门槛）
+      else              → 0   （无连板，无龙头）
+
+    Parameters
+    ----------
+    max_consec_limit : 全市场最高连板数序列（如 5=5连板）。
+    promotion_rate   : 晋级率序列（[0,1]，昨日涨停今日继续涨停比例）。
+
+    Returns
+    -------
+    pd.Series，值 ∈ {0, 35, 65, 80}。
+    """
+    score = pd.Series(0.0, index=max_consec_limit.index)
+    ml = max_consec_limit.fillna(0.0)
+    pr = promotion_rate.reindex(max_consec_limit.index).fillna(0.0)
+    score[ml >= 2] = 35
+    score[(ml >= 3) & (pr > 0.3)] = 65
+    score[(ml >= 5) & (pr > 0.5)] = 80
+    return score
+
+
+def t3_one_day_mainline_flag(prev_top3_max_today_pct: pd.Series) -> pd.Series:
+    """T3 one_day_mainline: 一日主线证伪标志（0/1）——T3 fail 条件。
+
+    Phase 2c：原 stub=0，现接入 kline_sector 真实数据。
+    昨日涨幅 Top3 板块今日全部下跌>2% = 主线一日游（伪主线），
+    昨日的主升今日被证伪 → T3 fail 信号。
+
+    判定：昨日 Top3 今日的最佳表现（max）仍 <-2% → 三者全跌>2% → flag=1。
+    （max<门槛 ⟺ 全部<门槛，因 max 是三者中最不跌的。）
+
+    Parameters
+    ----------
+    prev_top3_max_today_pct : 昨日 Top3 板块今日最佳涨幅序列（%，如 -2.5）。
+
+    Returns
+    -------
+    pd.Series，值 ∈ {0.0, 1.0}。
+    """
+    flag = pd.Series(0.0, index=prev_top3_max_today_pct.index)
+    flag[prev_top3_max_today_pct.fillna(0.0) < -2.0] = 1.0
+    return flag
 
 
 # ---------------------------------------------------------------------------
