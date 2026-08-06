@@ -85,9 +85,7 @@ __all__ = [
 class _EngineAdapter(Protocol):
     """引擎适配器统一接口（detect/health_check）。"""
 
-    def detect(
-        self, files: list[str], timeout: int | None = None
-    ) -> tuple[list[Finding], bool]: ...
+    def detect(self, files: list[str], timeout: int | None = None) -> tuple[list[Finding], bool]: ...
 
     def health_check(self) -> bool: ...
 
@@ -264,9 +262,7 @@ class CloneGuardOrchestrator:
 
         # 5. 全引擎降级 → fail_closed 决定
         if agg_result.active_engine_count == 0:
-            return self._handle_total_degradation(
-                len(py_files), agg_result.degraded_engines
-            )
+            return self._handle_total_degradation(len(py_files), agg_result.degraded_engines)
 
         # 6. 部分降级 → warn + 继续（用活跃引擎结果）
         if agg_result.degraded_engines:
@@ -277,9 +273,7 @@ class CloneGuardOrchestrator:
             )
 
         # 7. 严重性判定
-        block_findings = [
-            f for f in agg_result.findings if f.severity in self._config.block_severities
-        ]
+        block_findings = [f for f in agg_result.findings if f.severity in self._config.block_severities]
         review_findings = [f for f in agg_result.findings if f.severity == "review"]
 
         for f in review_findings:
@@ -327,6 +321,11 @@ class CloneGuardOrchestrator:
         health_score（A-F）+ refactoring_plan，结果持久化到
         .runtime/clone_guard_audit/audit_<ts>.json（派生产物，不入 git）。
 
+        L2 扫描模式（守蓝图 §3.4 阶段2）：use_scan=True 经 _invoke_engine 对
+        echo_guard 调 ``echo-guard scan``（全仓库冗余扫描，无文件参数，规避
+        Windows CreateProcess 命令行上限）；ast-grep 仍走 detect()（已用
+        ``_chunk_files`` 分批兜底）；redup/mcrit 回退 detect()。
+
         守裁定：不写 depgraph、不新增 reconciler、不用 cron（事件触发）。
         AI 冷启动可通过 MCP 工具 clone_guard.audit_status 查询上次结果。
 
@@ -348,7 +347,7 @@ class CloneGuardOrchestrator:
             return AuditResult(timestamp=timestamp, checked_files=len(py_files))
 
         engine_results = self._run_engines_concurrent(
-            engines, py_files, timeout=self._config.audit_timeout_sec
+            engines, py_files, timeout=self._config.audit_timeout_sec, use_scan=True
         )
         agg_result = self._aggregator.aggregate(engine_results)
 
@@ -394,9 +393,7 @@ class CloneGuardOrchestrator:
             logger.warning("CloneGuard.compare: 无启用 L3 引擎，返回空比对")
             return CompareResult(remote_url=url, checked_files=len(py_files))
 
-        engine_results = self._run_engines_concurrent(
-            engines, py_files, timeout=self._config.compare_timeout_sec
-        )
+        engine_results = self._run_engines_concurrent(engines, py_files, timeout=self._config.compare_timeout_sec)
         agg_result = self._aggregator.aggregate(engine_results)
 
         # 分离跨仓库合规风险子集（vendetect 的 clone_type=vendored）
@@ -442,8 +439,7 @@ class CloneGuardOrchestrator:
             suggestion = f.import_suggestion or f.existing_function
             plan.append(
                 f"[{f.consensus}] {f.source_file}:{f.source_function} → "
-                f"复用 {f.existing_file}:{f.existing_function}"
-                + (f" (suggestion: {suggestion})" if suggestion else "")
+                f"复用 {f.existing_file}:{f.existing_function}" + (f" (suggestion: {suggestion})" if suggestion else "")
             )
         return plan
 
@@ -520,19 +516,58 @@ class CloneGuardOrchestrator:
     # 并发调度（通用——接受 engines 字典，供 check()/audit()/compare() 复用）
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _invoke_engine(
+        adapter: _EngineAdapter,
+        py_files: list[str],
+        timeout: int,
+        use_scan: bool,
+    ) -> tuple[list[Finding], bool]:
+        """调度单个引擎——L2 审计时优先 scan()（全仓库扫描，规避命令行长度上限）。
+
+        use_scan=True 且适配器实现了 scan()（当前仅 EchoGuardAdapter）时调用
+        ``scan(timeout)`` 而非 ``detect(py_files, timeout)``。无 scan() 的引擎
+        （ast-grep 已用 ``_chunk_files`` 内部分批；redup/mcrit）回退 detect()。
+
+        守 L2 改造裁定（蓝图 §3.4 阶段2）：echo-guard L2 用 ``scan`` 命令治本——
+        全仓库冗余扫描不取文件参数，规避 Windows CreateProcess 32767 字符上限；
+        ast-grep 用 ``_chunk_files`` 兜底（commit 5d7161ea）。L1 check() 传
+        use_scan=False（staged 文件少，无上限问题，走 detect 快速路径）。
+
+        Args:
+            adapter: 引擎适配器实例。
+            py_files: 待检测文件列表（use_scan=True 时仅传给回退 detect 的引擎）。
+            timeout: 超时秒数。
+            use_scan: True=优先 scan()（L2 审计），False=统一 detect()（L1/L3）。
+
+        Returns:
+            (findings, degraded) 元组。
+        """
+        if use_scan:
+            scan_fn = getattr(adapter, "scan", None)
+            if callable(scan_fn):
+                return scan_fn(timeout=timeout)
+        return adapter.detect(py_files, timeout)
+
     def _run_engines_concurrent(
-        self, engines: dict[str, _EngineAdapter], py_files: list[str], timeout: int | None = None,
+        self,
+        engines: dict[str, _EngineAdapter],
+        py_files: list[str],
+        timeout: int | None = None,
+        use_scan: bool = False,
     ) -> dict[str, tuple[list[Finding], bool]]:
         """asyncio.gather 并发调度给定引擎集（守 blueprint §5.1）。
 
-        适配器 detect() 是同步阻塞调用，通过 run_in_executor 提交线程池
+        适配器调用是同步阻塞（subprocess.run），通过 run_in_executor 提交线程池
         实现真并发。return_exceptions=True 保证单引擎异常被捕获归一为
-        ([], degraded=True)，不影响其他引擎。
+        ([], degraded=True)，不影响其他引擎。use_scan=True 时经 _invoke_engine
+        对实现了 scan() 的引擎（echo_guard）走全仓库扫描路径（L2 治本）。
 
         Args:
             engines: {engine_name: adapter} 字典（已按 config 过滤）。
             py_files: 待检测文件列表。
             timeout: 超时秒数（None 时用 config.pre_commit_timeout_sec）。
+            use_scan: True=L2 审计模式（echo_guard 走 scan，其余回退 detect）。
 
         Returns:
             {engine_name: (findings, degraded)} 字典。
@@ -544,24 +579,20 @@ class CloneGuardOrchestrator:
         async def _gather_all(executor: ThreadPoolExecutor):
             loop = asyncio.get_running_loop()
             tasks = {
-                name: loop.run_in_executor(executor, adapter.detect, py_files, timeout_sec)
+                name: loop.run_in_executor(executor, self._invoke_engine, adapter, py_files, timeout_sec, use_scan)
                 for name, adapter in engines.items()
             }
             raw = await asyncio.gather(*tasks.values(), return_exceptions=True)
-            return dict(zip(tasks.keys(), raw))
+            return dict(zip(tasks.keys(), raw, strict=True))
 
         try:
             raw_results = asyncio.run(
-                _gather_all(
-                    ThreadPoolExecutor(
-                        max_workers=max(4, len(engines)), thread_name_prefix="clone-guard"
-                    )
-                )
+                _gather_all(ThreadPoolExecutor(max_workers=max(4, len(engines)), thread_name_prefix="clone-guard"))
             )
         except RuntimeError:
             # 已有事件循环在跑（如嵌套 async 上下文）——回退顺序执行
             logger.debug("CloneGuard: 检测到已有事件循环，回退顺序执行引擎")
-            raw_results = self._run_engines_sequential(engines, py_files, timeout_sec)
+            raw_results = self._run_engines_sequential(engines, py_files, timeout_sec, use_scan)
 
         # 归一化异常 → ([], degraded=True)
         engine_results: dict[str, tuple[list[Finding], bool]] = {}
@@ -580,13 +611,16 @@ class CloneGuardOrchestrator:
 
     @staticmethod
     def _run_engines_sequential(
-        engines: dict[str, _EngineAdapter], py_files: list[str], timeout: int,
+        engines: dict[str, _EngineAdapter],
+        py_files: list[str],
+        timeout: int,
+        use_scan: bool = False,
     ) -> dict[str, tuple[list[Finding], bool] | BaseException]:
-        """顺序执行引擎（asyncio 不可用时的兜底）。"""
+        """顺序执行引擎（asyncio 不可用时的兜底，保留 use_scan 语义与并发路径一致）。"""
         results: dict[str, tuple[list[Finding], bool] | BaseException] = {}
         for name, adapter in engines.items():
             try:
-                results[name] = adapter.detect(py_files, timeout)
+                results[name] = CloneGuardOrchestrator._invoke_engine(adapter, py_files, timeout, use_scan)
             except Exception as e:  # noqa: BLE001
                 results[name] = e
         return results
@@ -595,9 +629,7 @@ class CloneGuardOrchestrator:
     # 降级处理
     # ------------------------------------------------------------------
 
-    def _handle_total_degradation(
-        self, checked_files: int, degraded_engines: list[str]
-    ) -> CheckResult:
+    def _handle_total_degradation(self, checked_files: int, degraded_engines: list[str]) -> CheckResult:
         """全引擎降级——按 fail_closed 决定阻断或放行（守 blueprint §5.2）。"""
         if self._config.fail_closed:
             logger.error(

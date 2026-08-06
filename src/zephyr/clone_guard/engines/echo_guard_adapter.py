@@ -156,6 +156,69 @@ class EchoGuardAdapter:
         findings = self._parse_findings(data)
         return findings, False
 
+    def scan(self, timeout: int | None = None) -> tuple[list[Finding], bool]:
+        """L2 全量审计——echo-guard scan 全仓库冗余扫描（无文件参数）。
+
+        与 detect()（check 命令，比对索引的 pre-commit 快速路径）互补：scan 做
+        全仓库冗余扫描，不取文件参数，规避 L2 全量审计传入数千文件超 Windows
+        CreateProcess 命令行上限的问题。scan 与 check 输出同构（均为
+        {"findings":[...]} JSON），复用 _parse_findings。
+
+        守 ERROR_CONTRACT：CLI 失败/超时/索引缺失返回 ([], degraded=True)。
+
+        Args:
+            timeout: 超时秒数（None 时用 config.audit_timeout_sec）。
+
+        Returns:
+            (findings, degraded) 元组。
+        """
+        if not self._config.echo_guard_enabled:
+            logger.debug("echo-guard 已在配置中禁用，跳过扫描")
+            return [], True
+
+        timeout_sec = timeout or self._config.audit_timeout_sec
+
+        try:
+            result = subprocess.run(  # noqa: bare-subprocess  echo-guard CLI scan 调用
+                ["echo-guard", "scan", "--output", "json"],
+                capture_output=True,
+                text=True,
+                timeout=timeout_sec,
+                cwd=str(self._repo_root),
+                env={**os.environ, **self._config.env},
+            )
+        except FileNotFoundError:
+            logger.warning("EchoGuardAdapter degraded: echo-guard CLI 未安装")
+            return [], True
+        except subprocess.TimeoutExpired:
+            logger.warning("EchoGuardAdapter degraded: echo-guard scan 超时(%ds)", timeout_sec)
+            return [], True
+        except Exception as e:  # noqa: BLE001  适配器不抛异常
+            logger.warning("EchoGuardAdapter degraded: echo-guard scan 异常(%s: %s)", type(e).__name__, e)
+            return [], True
+
+        # echo-guard exit codes: 0=无发现, 1=有发现, 2=无索引
+        if result.returncode == 2:
+            logger.warning("EchoGuardAdapter degraded: echo-guard 索引不存在，运行 `echo-guard index` 构建")
+            return [], True
+
+        if result.returncode not in (0, 1):
+            logger.warning(
+                "EchoGuardAdapter degraded: echo-guard scan 退出码=%d, stderr=%s",
+                result.returncode,
+                result.stderr[:200] if result.stderr else "",
+            )
+            return [], True
+
+        try:
+            data = json.loads(result.stdout)
+        except json.JSONDecodeError as e:
+            logger.warning("EchoGuardAdapter degraded: JSON 解析失败(%s)", e)
+            return [], True
+
+        findings = self._parse_findings(data)
+        return findings, False
+
     def _parse_findings(self, data: dict) -> list[Finding]:
         """将 echo-guard JSON 输出解析为 Finding 列表。"""
         findings: list[Finding] = []
