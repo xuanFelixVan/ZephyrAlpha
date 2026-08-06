@@ -151,20 +151,36 @@ repos:
         stages: [manual]
         description: "架构门禁合并簇——原 GATE-01/02/03/06/07 五合一，无 --gate 参数运行全量 19 项架构检查（含可达性/契约/不变量/KB状态/事件层级），检测能力增强"
 
-      # ── GATE-NAMING: 命名规范门禁合并簇（原 GATE-11 + GATE-11-SSOT 二合一）──
-      # 合并说明：2 个门禁共用 check_naming_convention.py，但 --validate-ssot 是独立模式（提前 exit），
-      #           无法在同一进程中组合。使用 run_gate_chain.py 顺序执行两个模式：
-      #           ① --warn-only --scan（全库命名规范，过渡期 warn-only）
-      #           ② --validate-ssot（N-16 fallback 与 YAML 一致性，硬阻断）
-      # 行为变化：原 GATE-11 pass_filenames=true（增量），合并后 --scan 全量扫描。检测增强。
+      # ── GATE-NAMING: 命名增量守门（--check-new，只拦 staged 新增重名 #ARCH-PRECOMMIT-INCREMENTAL）──
+      # 治本（2026-08-06，Task 4）：消除"全仓历史违规/未跟踪 WIP 卡死裸 commit"缺陷。
+      # 原合并 hook 走 --warn-only --scan 全量扫描，会扫到 367 条历史 warn-only 违规 + 草稿区 WIP，
+      # 用无关问题卡住本次 commit。拆为增量守门（本 hook）+ 全仓审计（gate-naming-audit，移 manual）。
+      # 增量语义：pre-commit pass_filenames:true 自动传 staged 文件路径 → --check-new
+      #   用 git ls-files 基线只检测 staged 新文件是否引入重名（不扫全仓/不扫未跟踪 WIP/不拦历史遗留）。
+      # 两路径一致：GitCommitGateway 走 check_new_files_naming（--no-verify 补偿），
+      #   pre-commit 走 --check-new，N-16 执行严格度统一（治执行裂缝根因）。
       - id: gate-naming
-        name: "GATE-NAMING: 命名规范+SSOT一致性（合并 GATE-11/GATE-11-SSOT）"
+        name: "GATE-NAMING: 命名增量守门（--check-new，只拦 staged 新增重名 #ARCH-PRECOMMIT-INCREMENTAL）"
+        entry: python scripts/governance/d3_metadata/check_naming_convention.py --check-new
+        language: system
+        pass_filenames: true
+        always_run: false
+        files: "^(src/.*|tests/.*|scripts/.*|docs/.*)\\.(py|yaml|yml|md|toml)$"
+        description: "增量 N-16：只阻断本次 staged 文件引入的新重名（git ls-files 基线）；不扫全仓、不扫未跟踪 WIP、不拦历史遗留。历史 warn-only 违规走 gate-naming-audit（CI/manual）清零"
+
+      # ── GATE-NAMING-AUDIT: 全仓命名审计（--warn-only --scan，不阻断 #ARCH-PRECOMMIT-INCREMENTAL）──
+      # 治本（2026-08-06，Task 4）：原 gate-naming 的全仓审计部分移出 pre-commit，仅手动/CI 触发。
+      # 含 --validate-ssot（N-16 fallback 与 YAML 双轨一致性，硬阻断）+ --warn-only --scan（全库命名规范）。
+      # 367 条历史 warn-only 违规归档为已知技术债，走本 hook 逐步清零，不卡日常 commit。
+      - id: gate-naming-audit
+        name: "GATE-NAMING-AUDIT: 全仓命名审计+SSOT一致性（不阻断 #ARCH-PRECOMMIT-INCREMENTAL）"
         entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_naming_convention.py,--warn-only,--scan scripts/governance/d3_metadata/check_naming_convention.py,--validate-ssot
         language: system
         pass_filenames: false
         always_run: false
-        files: "^.*"
-        description: "命名规范门禁合并簇——GATE-11（全库命名规范 --warn-only --scan）+ GATE-11-SSOT（N-16 fallback 与 YAML 一致性），run_gate_chain 顺序执行"
+        stages: [manual]
+        files: "^.*$"
+        description: "全仓命名健康审计（warn-only）+ SSoT 一致性（--validate-ssot 硬阻断）。不卡 commit，走 CI/manual。历史 warn-only 违规在此逐步清零"
 
       # ── GATE-DOC-NODE-ID: 文档物理ID硬编码门禁（文档引用铁律，2026-08-04）──
       # 防止 blueprint.md/文档硬编码 depgraph 物理 ID（node_id/edge_id）。
@@ -281,23 +297,35 @@ repos:
         always_run: false
         files: "^(docs/03_modules/.*blueprint\\.md|src/zephyr/.*\\.py)$"
 
-      # ── GATE-FRONTMATTER: 文档前置元数据合并门禁（原 GATE-15 + RULE-FM + SSOT-DOCS + DOC-REF 四合一）──
-      # 合并说明：4 个文档 frontmatter/引用门禁合并为单 hook，run_gate_chain 顺序执行：
-      #           ① check_frontmatter_metadata.py --ci（ttl+doc_type，无参数全量扫描 docs/+src/+scripts/+tests/）
-      #           ② validate_rule_frontmatter.py（规则文件 frontmatter 7 标准字段，自扫 RULES_DIR）
-      #           ③ validate_ssot.py --ci（SSoT 唯一真源 P0/P1/P2，自扫 docs/）
-      #           ④ audit_broken_links.py --ci --check-new .（断链/幽灵引用，传 . 全项目扫描）
-      # 行为变化：原 GATE-15 pass_filenames=true（增量 docs/*.md），合并后 pass_filenames=false 全量扫描（检测增强）。
-      # GATE-C1（status 枚举）已删除——脚本 validate_ssot_status.py 已归档（scripts/_archive/），
-      #           status 校验由 validate_ssot.py（VALID_DOCUMENT_STATUSES）覆盖，检测能力不丢失。
+      # ── GATE-FRONTMATTER: 文档前置元数据增量守门（ttl+doc_type，#ARCH-PRECOMMIT-INCREMENTAL）──
+      # 治本（2026-08-06，Task 9）：消除"全仓 frontmatter 扫描卡死裸 commit"缺陷（与 Task 4 gate-naming 同套路）。
+      # 原 4 合 1 hook pass_filenames:false 全量扫描，扫到 docs/_working/依赖图/ 21 个文件缺 ttl 等历史存量违规，
+      # 用无关问题卡住本次 commit。拆为增量守门（本 hook）+ 全仓审计（gate-frontmatter-audit，移 manual）。
+      # 增量语义：pre-commit pass_filenames:true 自动传 staged 文件路径 → check_frontmatter_metadata.py --ci
+      #   只校验 staged 文件的 ttl/doc_type（脚本 line 318-321 增量模式，传文件路径只检查那些文件），不扫全仓/不拦历史遗留。
       - id: gate-frontmatter
-        name: "GATE-FRONTMATTER: 文档前置元数据合并门禁（GATE-15/RULE-FM/SSOT-DOCS/DOC-REF 四合一）"
-        entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_frontmatter_metadata.py,--ci scripts/governance/d3_metadata/validate_rule_frontmatter.py scripts/governance/d5_architecture/validators/validate_ssot.py,--ci scripts/governance/d2_links/audit_broken_links.py,--ci,--check-new,.
+        name: "GATE-FRONTMATTER: 文档前置元数据增量守门（ttl+doc_type，#ARCH-PRECOMMIT-INCREMENTAL）"
+        entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py --ci
+        language: system
+        pass_filenames: true
+        always_run: false
+        files: "^.*\\.(md|csv|yaml|yml|json)$"
+        description: "增量 frontmatter 校验：只检查 staged 文件的 ttl/doc_type（pass_filenames=true）；不扫全仓、不拦历史遗留。SSoT/断链/规则FM 走 gate-frontmatter-audit（CI/manual）清零"
+
+      # ── GATE-FRONTMATTER-AUDIT: 全仓 frontmatter 审计（规则FM+SSoT+断链，不阻断 #ARCH-PRECOMMIT-INCREMENTAL）──
+      # 治本（2026-08-06，Task 9）：原 gate-frontmatter 的全仓审计部分移出 pre-commit，仅手动/CI 触发。
+      # 含 ② validate_rule_frontmatter.py（规则文件 FM，自扫 RULES_DIR）+ ③ validate_ssot.py --ci（SSoT 一致性）+
+      # ④ audit_broken_links.py --ci --check-new .（全仓断链）。21 条 _working 缺 ttl 等存量违规归档为已知技术债，
+      # 走本 hook 逐步清零，不卡日常 commit。
+      - id: gate-frontmatter-audit
+        name: "GATE-FRONTMATTER-AUDIT: 全仓 frontmatter 审计（规则FM+SSoT+断链，不阻断 #ARCH-PRECOMMIT-INCREMENTAL）"
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/validate_rule_frontmatter.py scripts/governance/d5_architecture/validators/validate_ssot.py,--ci scripts/governance/d2_links/audit_broken_links.py,--ci,--check-new,.
         language: system
         pass_filenames: false
         always_run: false
-        files: "^.*\\.(md|csv|yaml|yml|json)$"
-        description: "文档前置元数据合并门禁——GATE-15(ttl全量) + RULE-FM(规则frontmatter) + SSOT-DOCS(SSoT) + DOC-REF(断链，传.全项目)，run_gate_chain 顺序执行。GATE-C1 已删除（脚本归档，status 由 validate_ssot.py 覆盖）"
+        stages: [manual]
+        files: "^.*$"
+        description: "全仓 frontmatter 审计：规则文件 FM + SSoT 一致性 + 断链扫描。不卡 commit，走 CI/manual。历史 _working 缺 ttl 等存量违规在此逐步清零"
 
       # ── GATE-VOCAB: 词表门禁合并簇（原 GATE-VOCAB-HARDCODE + GATE-GENERATE 二合一）──
       # 合并说明：2 个词表门禁合并为单 hook，run_gate_chain 顺序执行：
