@@ -129,6 +129,9 @@ WHERE domain_id = ANY(%s)
   -- 只扫可执行业务模块（node_type='module'），排除 test/script/config/blueprint 等非业务节点
   -- （2026-08-06 治本：原 SQL 未过滤 node_type，test/config 节点被误报为孤儿模块）
   AND node_type = 'module'
+  -- 排除已弃用模块（build_status='deprecated'）——已退役模块不应期望有作战锚点
+  -- （2026-08-06 治本：deprecated 模块无作战使命是设计内状态，非遗漏）
+  AND build_status <> 'deprecated'
   -- 排除 docs/03_modules/ 下的 blueprint.md 设计文档节点（误报治本，2026-08-04）：
   -- 这些 .md 是模块的"设计蓝图文档"，非可执行业务模块；项目约定它们登记为
   -- node_type=module（与 30+ 其他 blueprint.md 一致），但实际代码模块是 src/ 下的
@@ -206,7 +209,9 @@ class BattleMapAlignmentReport:
             f"anchors={self.anchor_count} / edges={self.edge_count} / "
             f"叙事真源={self.narrative_count}"
         )
-        lines.append(f"- 业务域模块: {self.business_module_count}（BM-INV-007 扫描范围，domain_classification.business_domains 内 node_type=module 的 depgraph 节点）")
+        lines.append(
+            f"- 业务域模块: {self.business_module_count}（BM-INV-007 扫描范围，domain_classification.business_domains 内 node_type=module 的 depgraph 节点）"
+        )
         lines.append(f"- 违规总数（须修复）: {self.issues_total}")
         lines.append(f"  - 孤儿环节（BM-INV-001，无锚点=悬空决策）: {len(self.orphan_steps)} 违规")
         lines.append(f"  - 幽灵锚点（BM-INV-002，target_id 找不到）: {len(self.ghost_anchors)}")
@@ -217,7 +222,7 @@ class BattleMapAlignmentReport:
         lines.append(f"  - 孤儿模块（BM-INV-007，业务域模块无作战锚点=造出来没用上）: {len(self.orphan_modules)} 违规")
         # V1.1.0 三档分类：已确认合理孤儿（acknowledged）单独统计，不计入违规总数
         if self.acknowledged_orphan_steps or self.acknowledged_orphan_modules:
-            lines.append(f"- 已确认合理孤儿（acknowledged，定期复审，不计违规）:")
+            lines.append("- 已确认合理孤儿（acknowledged，定期复审，不计违规）:")
             lines.append(f"  - 孤儿环节（BM-INV-001 acknowledged）: {len(self.acknowledged_orphan_steps)}")
             lines.append(f"  - 孤儿模块（BM-INV-007 acknowledged）: {len(self.acknowledged_orphan_modules)}")
         if self.source_unavailable:
@@ -251,9 +256,9 @@ class BattleMapAlignmentReport:
             lines.append("> 无 acknowledged 孤儿环节。")
         else:
             lines.append(
-                "> 以下环节经架构审查确认为"计划中未实现"或"父环节已覆盖"，"
+                "> 以下环节经架构审查确认为「计划中未实现」或「父环节已覆盖」，"
                 "从违规列表排除。真源：battle_map_domain_policy.yaml §acknowledged_orphans.steps。"
-                "AI 不应对这些环节尝试"修复"（消除治理振荡）。"
+                "AI 不应对这些环节尝试「修复」（消除治理振荡）。"
             )
             lines.append("| step_id | 环节名 | 阶段 | 设计成熟度 |")
             lines.append("|---|---|---|---|")
@@ -399,12 +404,14 @@ class BattleMapAlignmentReport:
                 )
         lines.append("")
         # V1.1.0 三档分类：已确认合理孤儿模块（acknowledged，planned 待实现）单独列出
-        lines.append(f"### 7b. 已确认合理孤儿模块（acknowledged，planned 待实现）: {len(self.acknowledged_orphan_modules)}")
+        lines.append(
+            f"### 7b. 已确认合理孤儿模块（acknowledged，planned 待实现）: {len(self.acknowledged_orphan_modules)}"
+        )
         if not self.acknowledged_orphan_modules:
             lines.append("> 无 acknowledged 孤儿模块。")
         else:
             lines.append(
-                "> 以下模块经架构审查确认为"planned 待实现"，从违规列表排除。"
+                "> 以下模块经架构审查确认为「planned 待实现」，从违规列表排除。"
                 "真源：battle_map_domain_policy.yaml §acknowledged_orphans.modules。"
                 "实现后（build_status planned→stable）补挂锚点并移出此清单。"
             )
@@ -452,8 +459,8 @@ class BattleMapAlignmentReport:
         )
         lines.append(
             "- acknowledged 孤儿（已确认合理，不计违规）：① 真源在 "
-            "`battle_map_domain_policy.yaml` §acknowledged_orphans；② 这些是"计划中未实现"或"
-            ""planned 待实现"的显式登记，AI 不应尝试"修复"（消除治理振荡）；③ 到 review_frequency "
+            "`battle_map_domain_policy.yaml` §acknowledged_orphans；② 这些是「计划中未实现」或"
+            "「planned 待实现」的显式登记，AI 不应尝试「修复」（消除治理振荡）；③ 到 review_frequency "
             "到期时强制复审，对应模块 build_status planned→stable 后补挂锚点并移出此清单"
         )
         lines.append("")
@@ -735,11 +742,7 @@ def _load_acknowledged_orphans() -> tuple[set[str], set[str]]:
             return set(), set()
         data = yaml.safe_load(_DOMAIN_POLICY_YAML.read_text(encoding="utf-8")) or {}
         ao = data.get("acknowledged_orphans") or {}
-        mod_ids = {
-            str(m.get("blueprint_id"))
-            for m in (ao.get("modules") or [])
-            if m.get("blueprint_id")
-        }
+        mod_ids = {str(m.get("blueprint_id")) for m in (ao.get("modules") or []) if m.get("blueprint_id")}
         step_ids: set[str] = set()
         for grp in ao.get("steps") or []:
             for sid in grp.get("step_ids") or []:
