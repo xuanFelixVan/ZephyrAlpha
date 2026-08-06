@@ -1,0 +1,98 @@
+---
+# B4 转换触发准确性验证 —— 历史事件库真源
+#
+# 依据: discussion_002 §4.2 B4 + discussion_003 §2.2
+# 用途: Phase 2 B4 验证器对照本库判定 HMM 8 转换触发时点是否吻合
+# 标注原则:
+#   - 选取 A 股历史上有明确"危机爆发/危机复苏"特征转换的事件
+#   - date 为事件核心日（爆发日 / 政策日），非区间
+#   - expected_stage: 该事件期望触发的阶段（任一命中即算吻合）
+# 吻合判定: 检测器在事件日 ±5 交易日内触发对应 transition_type 的
+#           expected_stage 中任一阶段 → 命中
+# 命中门槛: 8 事件中 ≥ 6 命中 → B4 PASS
+#
+# 数据范围说明:
+#   - ClickHouse 全历史 K 线覆盖 2010-01-01 起，故 2008 事件用 2010 后的等价事件替代
+#   - 2008 雷曼事件保留为标注（历史参照），实际验证以 2010 后事件为主
+#   - BREAKOUT 主升浪启动点需人工量价识别，第一批 MVP 暂不纳入验证（见 todo）
+
+schema_version: "1.0"
+last_updated: "2026-08-07"
+
+events:
+  # ════════════════════════════════════════════════════════════════════
+  # S1 CRISIS（Any → r10，§4.9 VIX Panic + 相关性 + 流动性）
+  # 触发条件: vix_panic + correlation 高分（confirm 需 + liquidity）
+  # ════════════════════════════════════════════════════════════════════
+  - id: EVT-2008-CRISIS
+    date: "2008-09-16"
+    transition_type: S1
+    expected_stage: [trigger, confirm]
+    desc: "雷曼兄弟破产，全球金融危机爆发；A股加速下跌至 1664（注：超出 ClickHouse 2010+ 数据范围，仅作历史标注）"
+    in_data_range: false
+
+  - id: EVT-2015-CRISIS
+    date: "2015-08-24"
+    transition_type: S1
+    expected_stage: [trigger, confirm]
+    desc: "股灾 2.0 黑色星期一，上证 -8.49%，千股跌停，流动性危机"
+    in_data_range: true
+
+  - id: EVT-2020-CRISIS
+    date: "2020-03-20"
+    transition_type: S1
+    expected_stage: [trigger, confirm]
+    desc: "全球疫情恐慌底，A股见 2646，全球流动性危机"
+    in_data_range: true
+
+  - id: EVT-2024-CRISIS
+    date: "2024-02-05"
+    transition_type: S1
+    expected_stage: [trigger, confirm]
+    desc: "A股年内低点 2635，雪球敲入引发局部流动性冲击"
+    in_data_range: true
+
+  # ════════════════════════════════════════════════════════════════════
+  # S2 CRISIS → RECOVERY（r10 → r11，§4.12.8 八维度见底）
+  # 触发条件: capitulation + vix + bad_news_flat（trigger）
+  #           + wyckoff + policy + valuation + fund（confirm）
+  # ════════════════════════════════════════════════════════════════════
+  - id: EVT-2008-RECOVERY
+    date: "2008-11-10"
+    transition_type: S2
+    expected_stage: [trigger, confirm, strong_confirm]
+    desc: "4 万亿刺激计划公布，危机复苏确认（注：超出 ClickHouse 2010+ 数据范围，仅作历史标注）"
+    in_data_range: false
+
+  - id: EVT-2015-RECOVERY
+    date: "2015-09-15"
+    transition_type: S2
+    expected_stage: [trigger, confirm, strong_confirm]
+    desc: "股灾后反弹企稳，政策救市（降准降息+限制做空）见效"
+    in_data_range: true
+
+  - id: EVT-2020-RECOVERY
+    date: "2020-04-10"
+    transition_type: S2
+    expected_stage: [trigger, confirm, strong_confirm]
+    desc: "全球流动性宽松，A股复苏反弹，北向资金回流"
+    in_data_range: true
+
+  - id: EVT-2024-RECOVERY
+    date: "2024-09-24"
+    transition_type: S2
+    expected_stage: [trigger, confirm, strong_confirm]
+    desc: "924 政策行情启动：央行降准+创设互换便利+回购增持再贷款，A股暴涨（上证+4.15%→+8.06%）"
+    in_data_range: true
+
+# ════════════════════════════════════════════════════════════════════
+# BREAKOUT 主升浪启动点（待人工标注，第一批 MVP 暂不验证）
+# T1 (Neutral-Medium → BREAKOUT → Bull-Medium，§4.6)
+# T3 (RECOVERY → BREAKOUT → Bull-Medium，§4.10.8 主升确立)
+# 以下为候选事件，需结合量价趋势人工确认后纳入 B4 验证范围
+# ════════════════════════════════════════════════════════════════════
+todo:
+  - "EVT-2014-BREAKOUT: 2014 年下半年杠杆牛启动点（T1，约 2014-07）"
+  - "EVT-2019-BREAKOUT: 2019 年初慢牛启动点（T1，约 2019-01）"
+  - "EVT-2020-BREAKOUT: 2020-07 牛市加速点（T3，约 2020-07-06）"
+  - "EVT-2024-BREAKOUT: 924 行情主升确认点（T3，约 2024-09-24 后续确认日待标）"
