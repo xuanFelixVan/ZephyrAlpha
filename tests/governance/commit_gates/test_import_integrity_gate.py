@@ -760,3 +760,334 @@ class TestCheckClosurePhase25Hint:
         assert passed is False
         assert "Phase 2.5 hint" in detail
         assert "sess-B" in detail
+
+
+# ---------------------------------------------------------------------------
+# TestSysPathInjectionResolvable: sys.path 注入目录识别
+# （#ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本：320+ 脚本动态导入免疫）
+# ---------------------------------------------------------------------------
+
+
+class TestSysPathInjectionResolvable:
+    """sys.path 注入目录识别测试。
+
+    病根：scripts/governance/ 下 320+ 脚本通过 sys.path.insert 动态注入
+    _shared/_common 父目录，from _shared import / from _common import 在
+    运行时可用但静态 AST 不可解析。门禁升级后提取 sys.path 注入目录，
+    在其中查找模块文件，找到则判定可解析。
+
+    覆盖场景：
+    - _extract_sys_path_dirs 提取字符串字面量
+    - _extract_sys_path_dirs 提取 Path(__file__).resolve().parent
+    - _extract_sys_path_dirs 提取 Path(__file__).resolve().parents[N]
+    - _extract_sys_path_dirs 提取变量引用（1 层回溯）
+    - _extract_sys_path_dirs 无法求值 → fail-open（返回空列表）
+    - _check_module_in_dirs 模块存在 → True
+    - _check_module_in_dirs 模块不存在 → False
+    - scan_content: sys.path 注入 + 模块存在 → 无违规
+    - scan_content: sys.path 注入 + 模块不存在 → 仍阻断
+    - scan_content: 无 sys.path 注入 + 模块不存在 → 阻断（现有行为不变）
+    """
+
+    def test_extract_string_literal(self):
+        """sys.path.insert(0, "/abs/path") → 提取字符串字面量。"""
+        import ast
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        content = 'import sys\nsys.path.insert(0, "/abs/literal/path")\n'
+        tree = ast.parse(content)
+        dirs = _extract_sys_path_dirs(tree, "scripts/test.py")
+        assert "/abs/literal/path" in dirs
+
+    def test_extract_path_parent(self, tmp_path):
+        """sys.path.insert(0, str(Path(__file__).resolve().parent)) → 提取文件所在目录。"""
+        import ast
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "sys.path.insert(0, str(Path(__file__).resolve().parent))\n"
+        )
+        tree = ast.parse(content)
+        # py_file 是相对路径，_extract_sys_path_dirs 内部转绝对路径
+        dirs = _extract_sys_path_dirs(tree, "scripts/governance/test.py")
+        import os
+
+        expected = os.path.dirname(os.path.abspath("scripts/governance/test.py"))
+        assert expected in dirs
+
+    def test_extract_path_parents_n(self, tmp_path):
+        """sys.path.insert(0, str(Path(__file__).resolve().parents[4])) → 提取第4级父目录。"""
+        import ast
+        import os
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "sys.path.insert(0, str(Path(__file__).resolve().parents[4]))\n"
+        )
+        tree = ast.parse(content)
+        py_file = "scripts/governance/d5_architecture/generators/test.py"
+        dirs = _extract_sys_path_dirs(tree, py_file)
+        # parents[4] = 从 file_abs 起连续 5 次 dirname（parents[0] 是 1 次）
+        # 用 pathlib 自身作预言机验证实现求值正确
+        from pathlib import Path
+
+        file_abs = os.path.abspath(py_file)
+        expected = str(Path(file_abs).resolve().parents[4])
+        assert expected in dirs, f"expected {expected} in {dirs}"
+
+    def test_extract_variable_reference(self):
+        """变量引用回溯：VAR = str(Path(__file__).resolve().parent); sys.path.insert(0, VAR)。"""
+        import ast
+        import os
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "_THIS_DIR = str(Path(__file__).resolve().parent)\n"
+            "if _THIS_DIR not in sys.path:\n"
+            "    sys.path.insert(0, _THIS_DIR)\n"
+        )
+        tree = ast.parse(content)
+        dirs = _extract_sys_path_dirs(tree, "scripts/governance/test.py")
+        expected = os.path.dirname(os.path.abspath("scripts/governance/test.py"))
+        assert expected in dirs
+
+    def test_extract_unresolvable_fail_open(self):
+        """无法求值的表达式 → fail-open（返回空列表，不阻断）。
+
+        next() 向上搜索不存在的子目录 → 搜索失败 → 不提取（fail-open）。
+        """
+        import ast
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        # next() 搜索的子目录在磁盘上不存在 → 向上搜索失败 → 不提取
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents "
+            "if (p / '_nonexistent_subdir_xyz').exists()))\n"
+            "sys.path.insert(0, _GOV_DIR)\n"
+        )
+        tree = ast.parse(content)
+        dirs = _extract_sys_path_dirs(tree, "scripts/governance/test.py")
+        # 子目录不存在 → next() 搜索失败 → 不提取（fail-open）
+        assert dirs == []
+
+    def test_extract_variable_indirection_parent(self):
+        """变量间接形式：_THIS_FILE = Path(__file__).resolve() 后 _THIS_FILE.parent。"""
+        import ast
+        import os
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "_THIS_FILE = Path(__file__).resolve()\n"
+            "_THIS_DIR = str(_THIS_FILE.parent)\n"
+            "if _THIS_DIR not in sys.path:\n"
+            "    sys.path.insert(0, _THIS_DIR)\n"
+        )
+        tree = ast.parse(content)
+        py_file = "scripts/governance/d5_architecture/generators/gen.py"
+        dirs = _extract_sys_path_dirs(tree, py_file)
+        expected = os.path.dirname(os.path.abspath(py_file))
+        assert expected in dirs, f"expected {expected} in {dirs}"
+
+    def test_extract_variable_indirection_parents_n(self):
+        """变量间接形式：_THIS_FILE = Path(__file__).resolve() 后 _THIS_FILE.parents[3]。"""
+        import ast
+        import os
+        from pathlib import Path
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "_THIS_FILE = Path(__file__).resolve()\n"
+            "_SCRIPTS_DIR = str(_THIS_FILE.parents[3])\n"
+            "if _SCRIPTS_DIR not in sys.path:\n"
+            "    sys.path.insert(0, _SCRIPTS_DIR)\n"
+        )
+        tree = ast.parse(content)
+        py_file = "scripts/governance/d5_architecture/generators/gen.py"
+        dirs = _extract_sys_path_dirs(tree, py_file)
+        file_abs = os.path.abspath(py_file)
+        expected = str(Path(file_abs).resolve().parents[3])
+        assert expected in dirs, f"expected {expected} in {dirs}"
+
+    def test_extract_next_parents_search_found(self):
+        """next(p for p in _THIS_FILE.parents if (p/'_shared').exists()) → 找到治理根目录。"""
+        import ast
+        import os
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "_THIS_FILE = Path(__file__).resolve()\n"
+            "_GOV_DIR = str(next(p for p in _THIS_FILE.parents "
+            "if (p / '_shared').exists()))\n"
+            "if _GOV_DIR not in sys.path:\n"
+            "    sys.path.insert(0, _GOV_DIR)\n"
+        )
+        tree = ast.parse(content)
+        # 用真实存在的生成器路径（scripts/governance/_shared 真实存在）
+        py_file = "scripts/governance/d5_architecture/generators/gen.py"
+        dirs = _extract_sys_path_dirs(tree, py_file)
+        # 预期找到 scripts/governance（含 _shared 子目录）
+        expected = os.path.abspath("scripts/governance")
+        assert expected in dirs, f"expected {expected} in {dirs}"
+
+    def test_check_module_in_dirs_found(self, tmp_path):
+        """模块在目录中存在（.py 文件）→ True。"""
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _check_module_in_dirs,
+        )
+
+        # 创建 _common.py
+        (tmp_path / "_common.py").write_text("x = 1", encoding="utf-8")
+        assert _check_module_in_dirs("_common", [str(tmp_path)]) is True
+
+    def test_check_module_in_dirs_package_found(self, tmp_path):
+        """模块在目录中存在（包 __init__.py）→ True。"""
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _check_module_in_dirs,
+        )
+
+        # 创建 _shared/constants.py + _shared/__init__.py
+        shared_dir = tmp_path / "_shared"
+        shared_dir.mkdir()
+        (shared_dir / "__init__.py").write_text("", encoding="utf-8")
+        (shared_dir / "constants.py").write_text("X = 1", encoding="utf-8")
+        assert _check_module_in_dirs("_shared.constants", [str(tmp_path)]) is True
+        assert _check_module_in_dirs("_shared", [str(tmp_path)]) is True
+
+    def test_check_module_in_dirs_not_found(self, tmp_path):
+        """模块在目录中不存在 → False。"""
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _check_module_in_dirs,
+        )
+
+        assert _check_module_in_dirs("_nonexistent_mod", [str(tmp_path)]) is False
+
+    def test_scan_syspath_module_exists_no_violation(self, tmp_path):
+        """sys.path 注入 + 模块在注入目录存在 → 无违规（治本核心场景）。"""
+        import os
+
+        # 创建 _shared 包（模拟真实项目结构）
+        shared_dir = tmp_path / "scripts" / "governance" / "_shared"
+        shared_dir.mkdir(parents=True)
+        (shared_dir / "__init__.py").write_text("", encoding="utf-8")
+        (shared_dir / "constants.py").write_text("X = 1", encoding="utf-8")
+
+        # 模拟生成器文件：sys.path.insert + from _shared.constants import
+        py_file_rel = "scripts/governance/d5_architecture/generators/gen.py"
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "_GOV_DIR = str(Path(__file__).resolve().parents[2])\n"
+            "if _GOV_DIR not in sys.path:\n"
+            "    sys.path.insert(0, _GOV_DIR)\n"
+            "from _shared.constants import X  # noqa: E402\n"
+        )
+        gw = _make_gateway()
+        staged_files: set[str] = set()
+
+        # 需要 chdir 到 tmp_path 使相对路径解析正确
+        import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(tmp_path)
+            violations = gate_mod.scan_content_for_dangling_imports(
+                py_file_rel, content, staged_files, gw
+            )
+        finally:
+            os.chdir(original_cwd)
+        assert len(violations) == 0, f"Expected no violations, got: {violations}"
+
+    def test_scan_syspath_module_not_exists_still_blocked(self, tmp_path):
+        """sys.path 注入 + 模块在注入目录不存在 → 仍阻断（安全保持）。"""
+        import os
+
+        # 不创建 _shared 包（模块不存在）
+        content = (
+            "import sys\n"
+            "from pathlib import Path\n"
+            "_GOV_DIR = str(Path(__file__).resolve().parents[2])\n"
+            "if _GOV_DIR not in sys.path:\n"
+            "    sys.path.insert(0, _GOV_DIR)\n"
+            "from _shared.nonexistent_module import X  # noqa: E402\n"
+        )
+        gw = _make_gateway()
+        staged_files: set[str] = set()
+
+        import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
+        original_cwd = os.getcwd()
+        try:
+            os.chdir(tmp_path)
+            violations = gate_mod.scan_content_for_dangling_imports(
+                "scripts/governance/d5_architecture/generators/gen.py",
+                content,
+                staged_files,
+                gw,
+            )
+        finally:
+            os.chdir(original_cwd)
+        assert len(violations) == 1
+        assert "_shared.nonexistent_module" in violations[0]
+
+    def test_scan_no_syspath_existing_behavior_unchanged(self):
+        """无 sys.path 注入 + 不存在的外部模块 → 阻断（现有行为不变）。"""
+        content = "import this_module_does_not_exist_xyz_12345\n"
+        gw = _make_gateway()
+        staged_files: set[str] = set()
+        violations = scan_content_for_dangling_imports(
+            "src/test.py", content, staged_files, gw
+        )
+        assert len(violations) == 1
+        assert "this_module_does_not_exist_xyz_12345" in violations[0]
+
+    def test_scan_syspath_append_mode(self, tmp_path):
+        """sys.path.append(X) 也能被提取（insert 和 append 两种模式）。"""
+        import ast
+
+        from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
+            _extract_sys_path_dirs,
+        )
+
+        content = (
+            "import sys\n"
+            "sys.path.append('/abs/append/path')\n"
+        )
+        tree = ast.parse(content)
+        dirs = _extract_sys_path_dirs(tree, "scripts/test.py")
+        assert "/abs/append/path" in dirs

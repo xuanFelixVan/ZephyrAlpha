@@ -97,6 +97,7 @@ from __future__ import annotations
 import ast
 import importlib.util
 import logging
+import os
 import re
 import sys
 from pathlib import Path
@@ -243,6 +244,334 @@ def _check_external_module_resolvable(module_path: str) -> bool:
         return True  # fail-open：未知异常不阻断
 
 
+# ── sys.path 注入目录提取（#ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本）──
+# 病根：scripts/governance/ 下 320+ 脚本通过 sys.path.insert 动态注入
+# _shared/_common 父目录，使 `from _shared import` / `from _common import`
+# 在运行时可用。但静态 AST 分析无法解析这些裸模块名（不匹配
+# _PROJECT_PREFIXES），被当作外部模块走 find_spec → site-packages 中不存在
+# → 误判悬空 import → 硬阻断。
+# 治本：门禁侧识别 sys.path 注入模式，在注入目录中查找目标模块文件，
+# 找到则判定可解析——一次升级解决所有 320+ 文件，新文件自动免疫。
+
+
+def _is_path_file_resolve(node: ast.AST) -> bool:
+    """检查 node 是否为 ``Path(__file__).resolve()`` 调用。
+
+    AST 结构::
+
+        Call(
+            func=Attribute(
+                value=Call(func=Name('Path'), args=[Name('__file__')]),
+                attr='resolve'
+            ),
+            args=[]
+        )
+    """
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    if not (isinstance(func, ast.Attribute) and func.attr == "resolve"):
+        return False
+    inner = func.value
+    if not isinstance(inner, ast.Call):
+        return False
+    if not (isinstance(inner.func, ast.Name) and inner.func.id == "Path"):
+        return False
+    return (
+        len(inner.args) == 1
+        and isinstance(inner.args[0], ast.Name)
+        and inner.args[0].id == "__file__"
+    )
+
+
+def _extract_subscript_int(node: ast.Subscript) -> int | None:
+    """从 Subscript 节点提取整数下标（兼容 Python 3.8 Index 包装）。"""
+    slice_node = node.slice
+    # Python 3.9+：slice 直接是表达式
+    if isinstance(slice_node, ast.Constant) and isinstance(slice_node.value, int):
+        return slice_node.value
+    # Python 3.8 兼容：Index 包装
+    if isinstance(slice_node, ast.Index):  # pragma: no cover (py3.8 only)
+        inner = slice_node.value
+        if isinstance(inner, ast.Constant) and isinstance(inner.value, int):
+            return inner.value
+    return None
+
+
+def _resolve_path_object(
+    node: ast.AST,
+    file_abs: str,
+    var_assigns: dict[str, ast.AST],
+    _depth: int = 0,
+) -> str | None:
+    """将"路径对象"基底表达式解析为文件所在目录（file_dir）。
+
+    ``Path(__file__).resolve()`` 指向文件本身，其 ``.parent`` / ``.parents[0]``
+    均为 file_dir，故本函数对 resolve 调用统一返回 file_dir，作为后续
+    ``.parent`` / ``.parents[N]`` / ``next(...)`` 的向上计数起点。
+
+    支持：
+    - ``Path(__file__).resolve()`` 直接形式 → file_dir
+    - 指向上述的变量（1 层回溯）→ file_dir
+
+    返回 None 表示无法识别（fail-open，不提取该目录）。
+    """
+    if _depth > 1:
+        return None  # 防止变量链无限递归
+    if _is_path_file_resolve(node):
+        return os.path.dirname(file_abs)
+    if isinstance(node, ast.Name) and node.id in var_assigns:
+        return _resolve_path_object(
+            var_assigns[node.id], file_abs, var_assigns, _depth + 1
+        )
+    return None
+
+
+def _extract_subdir_from_if(if_node: ast.AST) -> str | None:
+    """从 comprehension 的 if 条件提取子目录名。
+
+    识别 ``(p / "subdir").exists()`` → ``"subdir"``。
+
+    AST 结构::
+
+        Call(
+            func=Attribute(attr='exists',
+                           value=BinOp(op=Div, left=Name('p'), right=Constant("subdir")))
+        )
+    """
+    if not (
+        isinstance(if_node, ast.Call)
+        and isinstance(if_node.func, ast.Attribute)
+        and if_node.func.attr == "exists"
+    ):
+        return None
+    binop = if_node.func.value
+    if not (isinstance(binop, ast.BinOp) and isinstance(binop.op, ast.Div)):
+        return None
+    if not isinstance(binop.left, ast.Name):  # 迭代变量 p
+        return None
+    if not (
+        isinstance(binop.right, ast.Constant) and isinstance(binop.right.value, str)
+    ):
+        return None
+    return binop.right.value
+
+
+def _try_resolve_next_parents_search(
+    node: ast.AST,
+    file_abs: str,
+    var_assigns: dict[str, ast.AST],
+) -> str | None:
+    """启发式解析 ``next(p for p in <base>.parents if (p / "subdir").exists())``。
+
+    项目中真实模式（generate_battle_map_diagram.py 等）::
+
+        _THIS_FILE = Path(__file__).resolve()
+        _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+        sys.path.insert(0, _GOV_DIR)
+
+    治本策略：从 <base> 所在目录（file_dir）向上查找首个含 ``<subdir>`` 子目录
+    的祖先目录并返回。这与运行时 ``next()`` 语义一致。
+
+    返回目录字符串或 None（非该模式 / 无法解析 → fail-open）。
+    """
+    if not (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "next"
+        and node.args
+        and isinstance(node.args[0], ast.GeneratorExp)
+    ):
+        return None
+    gen = node.args[0]
+    if len(gen.generators) != 1:
+        return None
+    comp = gen.generators[0]
+    # iter 必须是 <base>.parents
+    if not (
+        isinstance(comp.iter, ast.Attribute) and comp.iter.attr == "parents"
+    ):
+        return None
+    base_dir = _resolve_path_object(comp.iter.value, file_abs, var_assigns)
+    if base_dir is None or not comp.ifs:
+        return None
+    subdir = _extract_subdir_from_if(comp.ifs[0])
+    if not subdir:
+        return None
+    # 从 base_dir 向上查找首个含 subdir 的目录（含 base_dir 本身，对应 parents[0]）
+    candidate = base_dir
+    for _ in range(32):  # 防无限循环（目录树深度有限）
+        if os.path.isdir(os.path.join(candidate, subdir)):
+            return candidate
+        parent = os.path.dirname(candidate)
+        if parent == candidate:  # 到达根目录
+            return None
+        candidate = parent
+    return None
+
+
+def _resolve_path_expr(
+    node: ast.AST,
+    file_abs: str,
+    var_assigns: dict[str, ast.AST],
+    _depth: int = 0,
+) -> str | None:
+    """启发式求值路径表达式，返回目录字符串或 None（无法求值）。
+
+    支持的模式（覆盖项目中实际使用的 sys.path 注入模式）：
+    - ``"字符串字面量"`` → 直接返回
+    - ``str(EXPR)`` → 求值 EXPR
+    - ``Path(__file__).resolve().parent`` → 文件所在目录
+    - ``Path(__file__).resolve().parents[N]`` → 文件第 N 级父目录
+    - ``_VAR = Path(__file__).resolve()`` 后 ``_VAR.parent`` / ``_VAR.parents[N]``
+      → 变量间接形式（1 层回溯，治本 #ARCH-IMPORT-INTEGRITY-SYSPATH-001）
+    - ``next(p for p in <base>.parents if (p/"subdir").exists())`` → 向上搜索含
+      subdir 的祖先目录（治本，覆盖 generate_battle_map_diagram.py 同型模式）
+    - 变量名 → 从 var_assigns 回溯求值（限 _depth ≤ 1 防无限递归）
+
+    fail-open：无法识别的表达式返回 None（不提取该目录，不阻断 commit）。
+    """
+    if _depth > 1:
+        return None  # 防止变量链无限递归
+
+    # 字符串字面量
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+
+    # str(EXPR) → 递归求值内部表达式
+    if (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "str"
+        and node.args
+    ):
+        return _resolve_path_expr(node.args[0], file_abs, var_assigns, _depth)
+
+    # 变量引用 → 回溯赋值（1 层深度）
+    if isinstance(node, ast.Name) and node.id in var_assigns:
+        return _resolve_path_expr(
+            var_assigns[node.id], file_abs, var_assigns, _depth + 1
+        )
+
+    # next(p for p in <base>.parents if (p / "subdir").exists()) — 启发式向上搜索
+    next_result = _try_resolve_next_parents_search(node, file_abs, var_assigns)
+    if next_result is not None:
+        return next_result
+
+    # <base>.parent → base 所在目录（base 可为 resolve 调用或指向它的变量）
+    if isinstance(node, ast.Attribute) and node.attr == "parent":
+        base_dir = _resolve_path_object(node.value, file_abs, var_assigns)
+        if base_dir is not None:
+            return base_dir
+
+    # <base>.parents[N] → base 所在目录向上 N 级
+    # AST: Subscript(value=Attribute(attr='parents', value=<base>), slice=N)
+    if isinstance(node, ast.Subscript):
+        if (
+            isinstance(node.value, ast.Attribute)
+            and node.value.attr == "parents"
+        ):
+            base_dir = _resolve_path_object(node.value.value, file_abs, var_assigns)
+            if base_dir is not None:
+                n = _extract_subscript_int(node)
+                if n is not None:
+                    result = base_dir
+                    for _ in range(n):
+                        result = os.path.dirname(result)
+                    return result
+
+    # Path(__file__).resolve() 本身（保险，单独出现时指向文件目录）
+    return _resolve_path_object(node, file_abs, var_assigns)
+
+
+def _extract_sys_path_dirs(tree: ast.AST, py_file: str) -> list[str]:
+    """从 AST 中提取 ``sys.path.insert`` / ``sys.path.append`` 注入的目录路径。
+
+    识别模式::
+
+        sys.path.insert(0, X)   → X
+        sys.path.append(X)      → X
+
+    X 的求值委托 ``_resolve_path_expr``（启发式，无法求值则跳过——fail-open）。
+
+    设计意图（#ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本）：
+    scripts/governance/ 下 320+ 脚本通过 sys.path.insert 动态注入 _shared/
+    _common 父目录，使 ``from _shared import`` / ``from _common import``
+    在运行时可用。但静态 AST 分析无法解析这些裸模块名（不匹配
+    _PROJECT_PREFIXES），被当作外部模块走 find_spec → site-packages 中不存在
+    → 误判悬空 import → 硬阻断。本函数提取注入目录，供
+    ``_check_module_in_dirs`` 在其中查找模块，避免对 320+ 文件逐个加
+    import-integrity 豁免标记。
+
+    Args:
+        tree: 文件的 AST（已 ast.parse）。
+        py_file: 文件相对路径（用于 ``Path(__file__)`` 求值）。
+
+    Returns:
+        注入目录的绝对路径列表（可能为空——无 sys.path 注入或无法求值）。
+    """
+    # 构建变量名 → 赋值表达式映射（1 层深度回溯用）
+    var_assigns: dict[str, ast.AST] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    var_assigns[target.id] = node.value
+
+    file_abs = os.path.abspath(py_file)
+    dirs: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        # 识别 sys.path.insert / sys.path.append
+        func = node.func
+        if not (
+            isinstance(func, ast.Attribute)
+            and isinstance(func.value, ast.Attribute)
+            and isinstance(func.value.value, ast.Name)
+            and func.value.value.id == "sys"
+            and func.value.attr == "path"
+            and func.attr in ("insert", "append")
+        ):
+            continue
+        # insert(0, X) → args[1]；append(X) → args[0]
+        if func.attr == "insert":
+            if len(node.args) < 2:
+                continue
+            path_arg = node.args[1]
+        else:
+            if len(node.args) < 1:
+                continue
+            path_arg = node.args[0]
+        resolved = _resolve_path_expr(path_arg, file_abs, var_assigns)
+        if resolved:
+            dirs.append(resolved)
+    return dirs
+
+
+def _check_module_in_dirs(module_path: str, dirs: list[str]) -> bool:
+    """在给定目录列表中查找模块文件是否存在。
+
+    对标 ``_module_to_file_candidates`` 但基于自定义目录（sys.path 注入目录）
+    而非固定 ``src/`` 前缀。
+
+    Args:
+        module_path: 模块路径（如 ``_common`` / ``_shared.constants``）。
+        dirs: 搜索目录列表（绝对路径）。
+
+    Returns:
+        True 如果模块在任一目录中以 ``.py`` 或 ``__init__.py`` 形式存在。
+    """
+    parts = module_path.split(".")
+    for d in dirs:
+        base = os.path.join(d, *parts)
+        if os.path.isfile(base + ".py"):
+            return True
+        if os.path.isfile(os.path.join(base, "__init__.py")):
+            return True
+    return False
+
+
 def find_target_in_active_sessions(
     project_root: Path,
     module_path: str,
@@ -317,6 +646,9 @@ def scan_content_for_dangling_imports(
 
     imports = _collect_imports(tree)
     noqa_lines = _extract_noqa_lines(content)
+    # #ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本：提取 sys.path 注入目录，
+    # 使 from _shared / from _common 等动态加载模块可被解析（320+ 文件免疫）
+    sys_path_dirs = _extract_sys_path_dirs(tree, py_file)
     violations: list[str] = []
     for lineno, module_path, _is_from in imports:
         if lineno in noqa_lines:
@@ -327,6 +659,8 @@ def scan_content_for_dangling_imports(
                     f"  {py_file}:{lineno}: dangling import '{module_path}' "
                     f"(project module not resolvable in staged files or main HEAD)"
                 )
+        elif sys_path_dirs and _check_module_in_dirs(module_path, sys_path_dirs):
+            continue  # 模块在 sys.path 注入目录中存在——可解析（治本）
         else:
             if not _check_external_module_resolvable(module_path):
                 violations.append(
