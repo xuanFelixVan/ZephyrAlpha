@@ -50,22 +50,19 @@ import sys
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
 GEN_GLOB = "scripts/governance/d5_architecture/generators/*.py"
 
 # 禁止的实时时间源调用（精确匹配函数调用，避免误报注释/字符串）
 # datetime.now() / datetime.today() / time.time()
-FORBIDDEN_PATTERN = re.compile(
-    r"\b(datetime\.now\(\)|datetime\.today\(\)|time\.time\(\))"
-)
+FORBIDDEN_PATTERN = re.compile(r"\b(datetime\.now\(\)|datetime\.today\(\)|time\.time\(\))")
 
 # 豁免标注（行尾或同行）
 EXEMPTION_PATTERN = re.compile(r"#\s*noqa:\s*arch-regen-nonidempotent")
 
 # 额外豁免：日粒度 datetime.now(UTC).strftime("%Y-%m-%d") 模式
 # 24 小时内幂等，且有 # noqa: m46-time 标注的视为已人工评估
-DAILY_GRANULARITY_PATTERN = re.compile(
-    r'datetime\.now\([^)]*\)\.strftime\(["\']%Y-%m-%d["\']\)'
-)
+DAILY_GRANULARITY_PATTERN = re.compile(r'datetime\.now\([^)]*\)\.strftime\(["\']%Y-%m-%d["\']\)')
 M46_EXEMPTION_PATTERN = re.compile(r"#\s*noqa:\s*m46-time")
 
 
@@ -134,13 +131,8 @@ def main() -> int:
     if not all_violations:
         return 0
 
-    print(
-        "GATE-GEN-NO-REALTIME-TIME: 生成器禁止使用实时时间源 "
-        "(治本 #ARCH-REGEN-NONIDEMPOTENT-001)"
-    )
-    print(
-        "  真源：AGENTS.md §11.1.1。请改用 _common.idempotent_timestamp() / idempotent_date()"
-    )
+    print("GATE-GEN-NO-REALTIME-TIME: 生成器禁止使用实时时间源 (治本 #ARCH-REGEN-NONIDEMPOTENT-001)")
+    print("  真源：AGENTS.md §11.1.1。请改用 _common.idempotent_timestamp() / idempotent_date()")
     print("  豁免：行尾加 # noqa: arch-regen-nonidempotent（需人工评估）")
     print()
     for v in all_violations:

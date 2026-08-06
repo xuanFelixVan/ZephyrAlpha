@@ -63,7 +63,8 @@ _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
 from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     get_dataflowgraph_pg_connection,
@@ -75,15 +76,20 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
 try:
     from d5_architecture.panorama_common import (
         min_maturity as _min_mat,
+    )
+    from d5_architecture.panorama_common import (
         weighted_domain_vote,
     )
 except ImportError:
     import sys as _sys
+
     _pc_path = str(Path(__file__).resolve().parents[1])  # d5_architecture/
     if _pc_path not in _sys.path:
         _sys.path.insert(0, _pc_path)
     from panorama_common import (  # noqa: E402
         min_maturity as _min_mat,
+    )
+    from panorama_common import (
         weighted_domain_vote,
     )
 
@@ -126,35 +132,22 @@ _SQL_QUERY_DEPGRAPH_MODULE = (
     "FROM nodes WHERE blueprint_id = %s "
     "ORDER BY (path IS NULL), path"
 )
-_SQL_COUNT_DEPGRAPH_FILES = (
-    "SELECT COUNT(*) FROM nodes WHERE blueprint_id = %s"
-)
-_SQL_COUNT_DATAFLOW_DATASETS = (
-    "SELECT COUNT(*) FROM dataflow_datasets WHERE module_id = %s"
-)
-_SQL_COUNT_DATAFLOW_JOBS = (
-    "SELECT COUNT(*) FROM dataflow_jobs WHERE module_id = %s"
-)
+_SQL_COUNT_DEPGRAPH_FILES = "SELECT COUNT(*) FROM nodes WHERE blueprint_id = %s"
+_SQL_COUNT_DATAFLOW_DATASETS = "SELECT COUNT(*) FROM dataflow_datasets WHERE module_id = %s"
+_SQL_COUNT_DATAFLOW_JOBS = "SELECT COUNT(*) FROM dataflow_jobs WHERE module_id = %s"
 _SQL_DATAFLOW_STATUS = (
     "SELECT design_maturity, build_status FROM dataflow_jobs "
     "WHERE module_id = %s AND design_maturity IS NOT NULL "
     "ORDER BY (design_maturity = 'design') DESC LIMIT 1"
 )
-_SQL_COUNT_DECISION_NODES = (
-    "SELECT COUNT(*) FROM decision_nodes WHERE module_id = %s"
-)
-_SQL_COUNT_DECISION_LAYERS = (
-    "SELECT COUNT(*) FROM decision_layers WHERE module_id = %s"
-)
+_SQL_COUNT_DECISION_NODES = "SELECT COUNT(*) FROM decision_nodes WHERE module_id = %s"
+_SQL_COUNT_DECISION_LAYERS = "SELECT COUNT(*) FROM decision_layers WHERE module_id = %s"
 _SQL_DECISION_STATUS = (
     "SELECT design_maturity, build_status FROM decision_nodes "
     "WHERE module_id = %s AND design_maturity IS NOT NULL "
     "ORDER BY (design_maturity = 'design') DESC LIMIT 1"
 )
-_SQL_QUERY_ALL_MODULES = (
-    "SELECT DISTINCT blueprint_id FROM nodes "
-    "WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
-)
+_SQL_QUERY_ALL_MODULES = "SELECT DISTINCT blueprint_id FROM nodes WHERE blueprint_id IS NOT NULL AND blueprint_id <> ''"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 批量 SQL（#ARCH-REGEN-CONCURRENCY-001 P2-a 方案 A：generate_all 批量优化）
@@ -168,12 +161,10 @@ _SQL_BATCH_ALL_DEPGRAPH_NODES = (
 )
 # dataflow 批量计数（GROUP BY 一次取全部模块的 dataset/job 数）
 _SQL_BATCH_DATAFLOW_DATASETS = (
-    "SELECT module_id, COUNT(*) FROM dataflow_datasets "
-    "WHERE module_id IS NOT NULL GROUP BY module_id"
+    "SELECT module_id, COUNT(*) FROM dataflow_datasets WHERE module_id IS NOT NULL GROUP BY module_id"
 )
 _SQL_BATCH_DATAFLOW_JOBS = (
-    "SELECT module_id, COUNT(*) FROM dataflow_jobs "
-    "WHERE module_id IS NOT NULL GROUP BY module_id"
+    "SELECT module_id, COUNT(*) FROM dataflow_jobs WHERE module_id IS NOT NULL GROUP BY module_id"
 )
 # dataflow 批量代表性状态（DISTINCT ON 每 module_id 取最 design 优先的一行，
 # 对标单模块 _SQL_DATAFLOW_STATUS 的 ORDER BY (design_maturity='design') DESC LIMIT 1）
@@ -184,12 +175,10 @@ _SQL_BATCH_DATAFLOW_STATUS = (
 )
 # decision 批量计数
 _SQL_BATCH_DECISION_NODES = (
-    "SELECT module_id, COUNT(*) FROM decision_nodes "
-    "WHERE module_id IS NOT NULL GROUP BY module_id"
+    "SELECT module_id, COUNT(*) FROM decision_nodes WHERE module_id IS NOT NULL GROUP BY module_id"
 )
 _SQL_BATCH_DECISION_LAYERS = (
-    "SELECT module_id, COUNT(*) FROM decision_layers "
-    "WHERE module_id IS NOT NULL GROUP BY module_id"
+    "SELECT module_id, COUNT(*) FROM decision_layers WHERE module_id IS NOT NULL GROUP BY module_id"
 )
 _SQL_BATCH_DECISION_STATUS = (
     "SELECT DISTINCT ON (module_id) module_id, design_maturity, build_status "
@@ -281,9 +270,7 @@ def _fetch_depgraph_module(module_id: str) -> DepgraphModuleInfo | None:
                 return None
             cur.execute(_SQL_COUNT_DEPGRAPH_FILES, (module_id,))
             count_row = cur.fetchone()
-            file_count = (
-                count_row[0] if count_row else len(rows)
-            )
+            file_count = count_row[0] if count_row else len(rows)
     finally:
         conn.close()
 
@@ -488,7 +475,7 @@ def _count_s01_files(content: str) -> int | None:
     if not s01_start:
         return None
     # §0.1 结束于下一个同级或更高级标题（## 或 ### §0.2 / §1 等）
-    rest = content[s01_start.end():]
+    rest = content[s01_start.end() :]
     s01_end = re.search(r"\n#{2,3} (?:§0\.[2-9]|§[1-9])", rest)
     s01_body = rest[: s01_end.start()] if s01_end else rest
     rows = _S01_TABLE_ROW_RE.findall(s01_body)
@@ -553,54 +540,37 @@ def _render_position_table(pan: ModulePanorama) -> str:
     else:
         dg_pos = "（无节点）"
         dg_status = "N/A"
-    lines.append(
-        f"| 依赖图 (depgraph) | {dg_pos} | {dg_status} | "
-        f"`extract_depgraph.py --modules {mid}` |"
-    )
+    lines.append(f"| 依赖图 (depgraph) | {dg_pos} | {dg_status} | `extract_depgraph.py --modules {mid}` |")
 
     # dataflow
     if pan.dataflow:
-        df_pos = (
-            f"{pan.dataflow.dataset_count} 个 Dataset / "
-            f"{pan.dataflow.job_count} 个 Job"
-        )
+        df_pos = f"{pan.dataflow.dataset_count} 个 Dataset / {pan.dataflow.job_count} 个 Job"
         df_status = _dataflow_status_str(pan.dataflow)
     else:
         df_pos = "（无节点）"
         df_status = "N/A"
-    lines.append(
-        f"| 数据流图 (dataflow) | {df_pos} | {df_status} | "
-        f"`apply_dataflowgraph.py --list-datasets` |"
-    )
+    lines.append(f"| 数据流图 (dataflow) | {df_pos} | {df_status} | `apply_dataflowgraph.py --list-datasets` |")
 
     # decision
     if pan.decision:
-        dc_pos = (
-            f"{pan.decision.node_count} 个决策节点 / "
-            f"{pan.decision.layer_count} 个决策层"
-        )
+        dc_pos = f"{pan.decision.node_count} 个决策节点 / {pan.decision.layer_count} 个决策层"
         dc_status = _decision_status_str(pan.decision)
     else:
         dc_pos = "（无节点）"
         dc_status = "N/A"
-    lines.append(
-        f"| 决策架构图 (decision) | {dc_pos} | {dc_status} | "
-        f"`generate_decision_diagram.py` |"
-    )
+    lines.append(f"| 决策架构图 (decision) | {dc_pos} | {dc_status} | `generate_decision_diagram.py` |")
 
     # blueprint
     if pan.blueprint:
         bp_status = _blueprint_status_str(pan.blueprint)
     else:
         bp_status = "N/A"
-    lines.append("| 蓝图 (blueprint) | 本文件 | {} | — |".format(bp_status))
+    lines.append(f"| 蓝图 (blueprint) | 本文件 | {bp_status} | — |")
 
     return "\n".join(lines)
 
 
-def _compute_field_consistency(
-    dg: DepgraphModuleInfo | None, bp: BlueprintFrontmatter | None
-) -> tuple[str, str, str]:
+def _compute_field_consistency(dg: DepgraphModuleInfo | None, bp: BlueprintFrontmatter | None) -> tuple[str, str, str]:
     """计算 file_count 字段的（depgraph 值, 蓝图值, 一致性标记）。
 
     file_count 是四核心字段中唯一需要数值相等比对（非字符串归一）的字段，
@@ -635,25 +605,17 @@ def _render_core_fields_table(pan: ModulePanorama) -> str:
     # module_id
     dg_mid = pan.module_id
     bp_mid = bp.module_id if bp else ""
-    lines.append(
-        f"| module_id | {dg_mid} | {bp_mid or 'N/A'} | {_status_mark(dg_mid, bp_mid)} |"
-    )
+    lines.append(f"| module_id | {dg_mid} | {bp_mid or 'N/A'} | {_status_mark(dg_mid, bp_mid)} |")
 
     # domain_id
     dg_dom = dg.domain_id if dg else ""
     bp_dom = bp.responsibility_domain if bp else ""
-    lines.append(
-        f"| domain_id | {dg_dom or 'N/A'} | {bp_dom or 'N/A'} | "
-        f"{_status_mark(dg_dom, bp_dom)} |"
-    )
+    lines.append(f"| domain_id | {dg_dom or 'N/A'} | {bp_dom or 'N/A'} | {_status_mark(dg_dom, bp_dom)} |")
 
     # build_status
     dg_bs = dg.build_status if dg else ""
     bp_bs = bp.build_status if bp else ""
-    lines.append(
-        f"| build_status | {dg_bs or 'N/A'} | {bp_bs or 'N/A'} | "
-        f"{_status_mark(dg_bs, bp_bs)} |"
-    )
+    lines.append(f"| build_status | {dg_bs or 'N/A'} | {bp_bs or 'N/A'} | {_status_mark(dg_bs, bp_bs)} |")
 
     # file_count（数值比对 + §0.1 派生，独立函数处理）
     dg_fc, bp_fc, fc_mark = _compute_field_consistency(dg, bp)
@@ -677,21 +639,16 @@ def _generate_s06_section(pan: ModulePanorama) -> str:
         "reconciler=sync_panorama_module.py -->"
     )
     lines.append("")
+    lines.append("> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。")
     lines.append(
-        "> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。"
-    )
-    lines.append(
-        f"> 生成命令：`python scripts/governance/d5_architecture/generators/"
-        f"generate_blueprint_panorama.py {mid}`"
+        f"> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py {mid}`"
     )
     lines.append("")
     lines.append(_render_position_table(pan))
     lines.append("")
     lines.append(_render_core_fields_table(pan))
     lines.append("")
-    lines.append(
-        "> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。"
-    )
+    lines.append("> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。")
     return "\n".join(lines)
 
 
@@ -725,7 +682,7 @@ def _replace_or_insert_s06(content: str, new_s06: str) -> str:
         # match 从 "### §0.6" 到 "\n---" 之前（含一个尾随 \n）
         # 替换为 new_s06 + "\n"，保持与 insert 路径相同的结构
         replacement = new_s06 + "\n"
-        return content[: match.start()] + replacement + content[match.end():]
+        return content[: match.start()] + replacement + content[match.end() :]
 
     # §0.6 不存在，需要在 §1 前插入
     # 定位 §1 标题（## §1），regex 不含前导 \n，start() 指向 "##" 首字符
@@ -737,12 +694,10 @@ def _replace_or_insert_s06(content: str, new_s06: str) -> str:
     # 在 §1 前插入 new_s06 + 闭合 --- 分隔线
     # 插入后：<前置内容>\n<new_s06>\n\n---\n\n## §1...
     insertion = new_s06 + "\n\n---\n\n"
-    return content[: s1_match.start()] + insertion + content[s1_match.start():]
+    return content[: s1_match.start()] + insertion + content[s1_match.start() :]
 
 
-def _update_blueprint_file(
-    bp: BlueprintFrontmatter, new_s06: str, *, dry_run: bool
-) -> bool:
+def _update_blueprint_file(bp: BlueprintFrontmatter, new_s06: str, *, dry_run: bool) -> bool:
     """更新蓝图文件的 §0.6 章节。
 
     Returns:
@@ -784,7 +739,7 @@ def generate_for_module(module_id: str, *, dry_run: bool = False) -> int:
     """
     try:
         panorama = _collect_panorama(module_id)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 顶层兜底: 采集失败需继续处理其他模块
         print(f"[ERROR] 采集 {module_id} 数据失败: {exc}", file=sys.stderr)
         return EXIT_FINDINGS
     # depgraph 无此模块 → 跳过（ERROR_CONTRACT exit 3 语义，但此处返回 3 不退出）
@@ -803,16 +758,11 @@ def generate_for_module(module_id: str, *, dry_run: bool = False) -> int:
         )
         return EXIT_PASS
     new_s06 = _generate_s06_section(panorama)
-    updated = _update_blueprint_file(
-        panorama.blueprint, new_s06, dry_run=dry_run
-    )
+    updated = _update_blueprint_file(panorama.blueprint, new_s06, dry_run=dry_run)
 
     action = "DRY-RUN" if dry_run else "OK"
     if updated:
-        print(
-            f"[{action}] {module_id}: §0.6 已{'写入' if not dry_run else '预览'} "
-            f"{panorama.blueprint.file_path}"
-        )
+        print(f"[{action}] {module_id}: §0.6 已{'写入' if not dry_run else '预览'} {panorama.blueprint.file_path}")
     else:
         print(f"[OK] {module_id}: §0.6 已是最新，无需更新")
     return EXIT_PASS
@@ -842,6 +792,7 @@ def _fetch_all_depgraph_modules() -> dict[str, DepgraphModuleInfo]:
         conn.close()
 
     from collections import defaultdict
+
     by_module: dict[str, list] = defaultdict(list)
     for row in all_rows:
         bid = row["blueprint_id"] if isinstance(row, dict) else row[0]
@@ -923,9 +874,7 @@ def _fetch_all_dataflow_modules() -> dict[str, DataflowModuleInfo]:
         if dc == 0 and jc == 0:
             continue
         dm, bs = status_map.get(mid, ("", ""))
-        result[mid] = DataflowModuleInfo(
-            dataset_count=dc, job_count=jc, design_maturity=dm, build_status=bs
-        )
+        result[mid] = DataflowModuleInfo(dataset_count=dc, job_count=jc, design_maturity=dm, build_status=bs)
     return result
 
 
@@ -977,9 +926,7 @@ def _fetch_all_decision_modules() -> dict[str, DecisionModuleInfo]:
         if nc == 0 and lc == 0:
             continue
         dm, bs = status_map.get(mid, ("", ""))
-        result[mid] = DecisionModuleInfo(
-            node_count=nc, layer_count=lc, design_maturity=dm, build_status=bs
-        )
+        result[mid] = DecisionModuleInfo(node_count=nc, layer_count=lc, design_maturity=dm, build_status=bs)
     return result
 
 
@@ -1064,15 +1011,10 @@ def generate_all(*, dry_run: bool = False) -> int:
             continue
         try:
             new_s06 = _generate_s06_section(panorama)
-            updated = _update_blueprint_file(
-                panorama.blueprint, new_s06, dry_run=dry_run
-            )
+            updated = _update_blueprint_file(panorama.blueprint, new_s06, dry_run=dry_run)
             action = "DRY-RUN" if dry_run else "OK"
             if updated:
-                print(
-                    f"[{action}] {mid}: §0.6 已{'写入' if not dry_run else '预览'} "
-                    f"{panorama.blueprint.file_path}"
-                )
+                print(f"[{action}] {mid}: §0.6 已{'写入' if not dry_run else '预览'} {panorama.blueprint.file_path}")
             else:
                 print(f"[OK] {mid}: §0.6 已是最新，无需更新")
             succeeded += 1
@@ -1090,9 +1032,7 @@ def generate_all(*, dry_run: bool = False) -> int:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(
-        description="蓝图 §0.6 四图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）"
-    )
+    parser = argparse.ArgumentParser(description="蓝图 §0.6 四图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）")
     parser.add_argument(
         "module_id",
         nargs="?",
