@@ -404,7 +404,10 @@ def _try_resolve_next_parents_search(
         isinstance(comp.iter, ast.Attribute) and comp.iter.attr == "parents"
     ):
         return None
-    base_dir = _resolve_path_object(comp.iter.value, file_abs, var_assigns)
+    # 用 _resolve_path_expr 而非 _resolve_path_object 解析 base，支持 base 为
+    # .parent 链（如 _SCRIPT_DIR = Path(__file__).resolve().parent）的变量间接形式。
+    # 注：base 差一级不影响结果——向上搜索首个含 subdir 的祖先目录，起点偏差由搜索兜底。
+    base_dir = _resolve_path_expr(comp.iter.value, file_abs, var_assigns)
     if base_dir is None or not comp.ifs:
         return None
     subdir = _extract_subdir_from_if(comp.ifs[0])
@@ -436,15 +439,18 @@ def _resolve_path_expr(
     - ``Path(__file__).resolve().parent`` → 文件所在目录
     - ``Path(__file__).resolve().parents[N]`` → 文件第 N 级父目录
     - ``_VAR = Path(__file__).resolve()`` 后 ``_VAR.parent`` / ``_VAR.parents[N]``
-      → 变量间接形式（1 层回溯，治本 #ARCH-IMPORT-INTEGRITY-SYSPATH-001）
+      → 变量间接形式（多层回溯，治本 #ARCH-IMPORT-INTEGRITY-SYSPATH-001）
     - ``next(p for p in <base>.parents if (p/"subdir").exists())`` → 向上搜索含
       subdir 的祖先目录（治本，覆盖 generate_battle_map_diagram.py 同型模式）
-    - 变量名 → 从 var_assigns 回溯求值（限 _depth ≤ 1 防无限递归）
+    - ``X / "subdir"`` → 路径拼接（BinOp Div，覆盖 str(Path(...).parent / "governance")
+      等模式，治本 #ARCH-IMPORT-INTEGRITY-SYSPATH-001 BinOp 除法）
+    - ``X.parent.parent`` → 嵌套 .parent 递归求值（每层取上一级目录）
+    - 变量名 → 从 var_assigns 回溯求值（限 _depth ≤ 2 防无限递归）
 
     fail-open：无法识别的表达式返回 None（不提取该目录，不阻断 commit）。
     """
-    if _depth > 1:
-        return None  # 防止变量链无限递归
+    if _depth > 2:
+        return None  # 防止变量链无限递归（与 _resolve_path_object 对齐）
 
     # 字符串字面量
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
@@ -459,7 +465,20 @@ def _resolve_path_expr(
     ):
         return _resolve_path_expr(node.args[0], file_abs, var_assigns, _depth)
 
-    # 变量引用 → 回溯赋值（1 层深度）
+    # X / "subdir" → 路径拼接（BinOp Div，治本 #ARCH-IMPORT-INTEGRITY-SYSPATH-001）
+    # 覆盖 str(Path(__file__).resolve().parent / "governance") 等常见模式：
+    # 左操作数递归求值为目录，右操作数求值为子目录字符串，os.path.join 拼接。
+    # 左操作数可为 .parent 链 / 变量 / 另一个 BinOp Div（左结合链式 a / b / c）。
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+        left = _resolve_path_expr(node.left, file_abs, var_assigns, _depth)
+        if left is None:
+            return None
+        right = _resolve_path_expr(node.right, file_abs, var_assigns, _depth)
+        if not isinstance(right, str) or not right:
+            return None
+        return os.path.join(left, right)
+
+    # 变量引用 → 回溯赋值（多层深度）
     if isinstance(node, ast.Name) and node.id in var_assigns:
         return _resolve_path_expr(
             var_assigns[node.id], file_abs, var_assigns, _depth + 1
@@ -470,11 +489,17 @@ def _resolve_path_expr(
     if next_result is not None:
         return next_result
 
-    # <base>.parent → base 所在目录（base 可为 resolve 调用或指向它的变量）
+    # <base>.parent → base 所在目录
+    # base 可为：路径对象基底（Path(__file__).resolve() 等，_resolve_path_object 返回 file_dir）
+    # 或另一个 .parent / .parents[N] 表达式（递归求值后取 dirname，支持 .parent.parent 嵌套）
     if isinstance(node, ast.Attribute) and node.attr == "parent":
         base_dir = _resolve_path_object(node.value, file_abs, var_assigns)
         if base_dir is not None:
             return base_dir
+        # 嵌套 .parent（如 X.parent.parent）→ 递归求值 X 为目录后取上一级
+        inner_dir = _resolve_path_expr(node.value, file_abs, var_assigns, _depth)
+        if inner_dir is not None:
+            return os.path.dirname(inner_dir)
 
     # <base>.parents[N] → base 所在目录向上 N 级
     # AST: Subscript(value=Attribute(attr='parents', value=<base>), slice=N)
