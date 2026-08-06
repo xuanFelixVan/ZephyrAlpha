@@ -1,0 +1,169 @@
+rule_id: TRAE-084
+title: pre-commit hook 增量守门纪律铁律（Pre-commit Incremental Discipline）
+name: pre-commit hook 增量守门纪律铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-084
+priority: 51
+depends_on:
+- TRAE-062
+- TRAE-073
+tags:
+- TRAE
+- precommit_incremental
+- L1_foundation
+- incremental_gate
+- audit_separation
+- staged_files_only
+- no_full_repo_scan
+stability: stable
+safety_level: M
+ai_autonomy: human_gated
+ttl: permanent
+severity: high
+scope: precommit_incremental_discipline
+domain: TRAE
+triggers:
+- operation: precommit_config_edit
+- operation: git_commit_invocation
+- operation: precommit_hook_design
+sections:
+  precommit_incremental_discipline:
+    section_type: procedure
+    title: pre-commit hook 增量守门纪律铁律
+    original_rules:
+    - RULE-PRECOMMIT-INCREMENTAL
+    conditions:
+    - type: trigger
+      check: AI 设计/修改 pre-commit hook 时
+      pass: "commit 阶段 hook 只检查 staged 新增文件（增量模式），全仓扫描移至 stages:[manual]"
+      fail: "commit 阶段 hook 执行全仓扫描，历史违规/未跟踪 WIP 卡死本次 commit"
+    - type: constraint
+      check: AI 执行 git commit 时
+      pass: "pre-commit hook 只拦本次 staged 文件引入的新违规，历史违规走 CI/manual 清零"
+      fail: "pre-commit hook 扫出 369 条历史违规阻断 commit，实际真阻断只有 2 个 N-16"
+    - type: constraint
+      check: 违规计数显示时
+      pass: "计数区分 actual_blocking（真阻断）与 warn_only_count（警告级），显示语义与 exit code 一致"
+      fail: "warn-only 模式输出'369 阻断性命名违规'但 exit 0，显示与 exit code 矛盾误导开发者"
+    actions:
+    - type: mandatory
+      step: '铁律1（增量守门）: pre-commit hook（commit 阶段）MUST 只检查 staged 新增文件。实现方式：pass_filenames: true + 增量模式参数（如 --check-new 用 git ls-files 基线，只检测 staged 新文件是否引入新违规）。禁止在 commit 阶段执行全仓扫描（--scan / --all-files 等全量模式）。'
+    - type: mandatory
+      step: '铁律2（审计分离）: 全仓扫描 hook MUST 移至 stages:[manual]，仅手动/CI 触发。全量审计不卡日常 commit，走 CI/manual 逐步清零历史违规。增量守门 hook 与全仓审计 hook MUST 拆分为独立 hook id（如 gate-naming 增量 + gate-naming-audit 全量）。'
+    - type: mandatory
+      step: '铁律3（历史违规归档）: 存量 warn-only 违规 MUST 归档为已知技术债，登记在 ARCH 条目 impact 字段。历史违规不卡日常 commit，走 CI/manual 清零。禁止用历史违规阻断本次 commit（与本次 staged 文件无关的问题不应卡 commit）。'
+    - type: mandatory
+      step: '铁律4（显示二元化）: 违规计数 MUST 区分 actual_blocking（真阻断，exit 非零）与 warn_only_count（警告级，exit 0）。warn-only 模式下 other/N-17 违规归入 warn_only_count；非 warn-only 模式下归入 actual_blocking。显示语义 MUST 与 exit code 一致——禁止"显示阻断性违规但 exit 0"的矛盾输出。'
+    - type: mandatory
+      step: '铁律5（双路径一致）: GitCommitGateway 路径（in-process gate，--no-verify 绕过 pre-commit）与 pre-commit 路径的检测逻辑 MUST 统一。GitCommitGateway 走 check_new_files_naming（--no-verify 补偿），pre-commit 走 --check-new，N-16 执行严格度统一。禁止两路径检测逻辑分叉导致执行裂缝。'
+    - type: forbidden
+      step: '禁止: pre-commit hook（commit 阶段）执行全仓扫描（--scan / --all-files）阻断日常 commit'
+    - type: forbidden
+      step: '禁止: 全仓扫描 hook 不设 stages:[manual]，在 commit 阶段触发'
+    - type: forbidden
+      step: '禁止: warn-only 模式下输出"阻断性命名违规"但 exit 0（显示与 exit code 矛盾）'
+    - type: forbidden
+      step: '禁止: GitCommitGateway 路径与 pre-commit 路径检测逻辑分叉（如 gateway 增量但 pre-commit 全量）'
+    prohibitions:
+    - pre-commit hook（commit 阶段）执行全仓扫描阻断日常 commit
+    - 全仓扫描 hook 不设 stages:[manual]
+    - warn-only 模式显示"阻断性违规"但 exit 0（显示矛盾）
+    - GitCommitGateway 与 pre-commit 检测逻辑分叉
+    - 用历史违规阻断与本次 staged 文件无关的 commit
+    invariants:
+    - id: RULE-PRECOMMIT-INCREMENTAL-INV-001
+      title: 增量守门强制
+      description: pre-commit hook（commit 阶段）MUST 只检查 staged 新增文件，禁止全仓扫描
+      enforcement: GATE-NAMING + GATE-FRONTMATTER 增量 hook（pass_filenames:true + --check-new / --ci）+ AI 自觉遵循
+      violation_action: reject_change
+    - id: RULE-PRECOMMIT-INCREMENTAL-INV-002
+      title: 审计分离强制
+      description: 全仓扫描 hook MUST 移至 stages:[manual]，禁止在 commit 阶段触发
+      enforcement: GATE-NAMING-AUDIT + GATE-FRONTMATTER-AUDIT（stages:[manual]）+ AI 自觉遵循
+      violation_action: reject_change
+    - id: RULE-PRECOMMIT-INCREMENTAL-INV-003
+      title: 显示二元化强制
+      description: 违规计数 MUST 区分 actual_blocking 与 warn_only_count，显示语义与 exit code 一致
+      enforcement: check_naming_convention.py main() 显示二元化逻辑 + test_check_naming_display_dichotomy.py 回归测试
+      violation_action: warn
+    examples:
+    - scenario: 增量守门正确实现（GATE-NAMING）
+      correct_action: |
+        # 增量守门（commit 阶段）——只拦 staged 新增重名
+        - id: gate-naming
+          entry: python scripts/governance/d3_metadata/check_naming_convention.py --check-new
+          pass_filenames: true
+          files: "^(src/.*|tests/.*|scripts/.*|docs/.*)\\.(py|yaml|yml|md|toml)$"
+        # 全仓审计（manual 阶段）——不卡 commit
+        - id: gate-naming-audit
+          entry: python scripts/governance/run_gate_chain.py ... --warn-only --scan
+          pass_filenames: false
+          stages: [manual]
+      reason: 增量守门只拦 staged 新增重名（git ls-files 基线），全仓审计移 manual 不卡日常 commit
+    - scenario: 显示二元化正确实现
+      correct_action: |
+        # warn-only 模式
+        if args.warn_only:
+            actual_blocking = len(n16_violations)              # N-16 真阻断
+            warn_only_count = len(other_violations) + len(n17_violations)  # 警告级
+        else:
+            actual_blocking = len(n16_violations) + len(n17_violations) + len(other_violations)
+            warn_only_count = 0
+        # 显示与 exit code 一致
+      reason: warn-only 模式下 other/N-17 不卡 commit，显示须明示"不阻断"；非 warn-only 模式下真阻断
+    common_mistakes:
+    - '❌ pre-commit hook 用 --scan 全量扫描，369 条历史违规卡死 commit——改为 --check-new 增量'
+    - '❌ 全仓审计 hook 不设 stages:[manual]，在 commit 阶段触发——移至 manual'
+    - '❌ warn-only 模式输出"阻断性命名违规"但 exit 0——拆为 actual_blocking + warn_only_count'
+    - '❌ GitCommitGateway 增量但 pre-commit 全量，两路径检测逻辑分叉——统一为增量'
+    background:
+      source: 2026-08-05/06 实战诊断（eia_provider.py 提交被全仓 --scan 扫出 369 个"阻断性"违规卡死）
+      rationale: |
+        100% AI 开发场景下，pre-commit hook 是 GitCommitGateway --no-verify 路径的兜底防线。
+        但全量扫描模式（--scan / --all-files）会扫出大量历史 warn-only 违规 + 未跟踪 WIP，
+        用与本次 commit 无关的问题卡死提交。eia_provider.py 事件中，369 条"阻断性"违规
+        实际真阻断只有 2 个 N-16（docs/_working/ WIP 副本），其余 warn-only 不应卡 commit。
+
+        根因是 pre-commit hook 的"守门"定位与"全量审计"职责混淆——commit 阶段应只拦
+        本次 staged 文件引入的新违规（增量守门），全仓健康审计应走 CI/manual（不卡 commit）。
+        治本是拆分为增量守门（commit 阶段）+ 全仓审计（manual/CI 阶段）双 hook。
+
+        本规则与 trae_073（precommit offline）协同——trae_073 约束 hook 离线可运行性，
+        本规则约束 hook 增量/审计职责分离；与 trae_028（命名规范）协同——N-16 增量
+        守门是本规则在命名域的落地实例。
+      related_arch: '#ARCH-PRECOMMIT-INCREMENTAL'
+references:
+  rule_ids:
+  - TRAE-028
+  - TRAE-062
+  - TRAE-073
+  scripts:
+  - scripts/governance/d3_metadata/check_naming_convention.py
+  - scripts/governance/d3_metadata/check_frontmatter_metadata.py
+  - scripts/governance/run_gate_chain.py
+  modules:
+  - MOD-GOV
+  blueprints: []
+  agents_md_sections:
+  - AGENTS.md §10 PRECOMMIT
+enforcement:
+  paired_gate_id: GATE-NAMING  # TRAE-084 落地：增量守门 hook（--check-new，commit 阶段）
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  - static_scan_block
+  - gate_naming_incremental  # GATE-NAMING 增量守门
+  - gate_frontmatter_incremental  # GATE-FRONTMATTER 增量守门
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  related_arch: '#ARCH-PRECOMMIT-INCREMENTAL'
+provenance:
+  extracted_at: '2026-08-06'
+  extracted_by: precommit-incremental-task5
+  source: '实战诊断：eia_provider.py 提交被全仓 --scan 扫出 369 个"阻断性"违规卡死，实际真阻断只有 2 个 N-16。Task 4/9 拆分增量/审计双 hook 后，Task 5 将思路升格为铁律规则'
