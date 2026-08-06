@@ -7,6 +7,7 @@
 # [TESTS] —
 # [TTL] task_bound
 import hashlib
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
@@ -52,24 +53,29 @@ class TestSupplyChainGuard:
         result = guard.verify_model("/nonexistent/model.bin", "abc123")
         assert result.status == "missing"
 
-    @patch("subprocess.check_output")
-    def test_scan_dependencies_returns_results(self, mock_check_output, guard):
-        mock_check_output.return_value = '{"dependencies": [{"name": "flask", "version": "2.0.0", "vulns": []}]}'
+    @patch("zephyr.security.llm_defense.llm_security.layers.l0_supply_chain.run_subprocess_hidden")
+    def test_scan_dependencies_returns_results(self, mock_run, guard):
+        mock_run.return_value = SimpleNamespace(
+            stdout='{"dependencies": [{"name": "flask", "version": "2.0.0", "vulns": []}]}'
+        )
         results = guard.scan_dependencies()
         assert len(results) > 0
         assert results[0].is_safe is True
 
-    @patch("subprocess.check_output")
-    def test_scan_dependencies_detects_vulns(self, mock_check_output, guard):
-        mock_check_output.return_value = (
-            '{"dependencies": [{"name": "badlib", "version": "1.0", "vulns": [{"id": "CVE-2024-0001"}]}]}'
+    @patch("zephyr.security.llm_defense.llm_security.layers.l0_supply_chain.run_subprocess_hidden")
+    def test_scan_dependencies_detects_vulns(self, mock_run, guard):
+        mock_run.return_value = SimpleNamespace(
+            stdout='{"dependencies": [{"name": "badlib", "version": "1.0", "vulns": [{"id": "CVE-2024-0001"}]}]}'
         )
         results = guard.scan_dependencies()
         assert len(results) > 0
         assert results[0].is_safe is False
 
     def test_scan_dependencies_pip_audit_missing(self, guard):
-        with patch("subprocess.check_output", side_effect=FileNotFoundError):
+        with patch(
+            "zephyr.security.llm_defense.llm_security.layers.l0_supply_chain.run_subprocess_hidden",
+            side_effect=FileNotFoundError,
+        ):
             results = guard.scan_dependencies()
             assert results == []
 
