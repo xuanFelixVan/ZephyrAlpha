@@ -8278,10 +8278,6 @@ creation_tokens:
     created_by: "session-restore-archid"
     capability: "architecture_diagrams"
   # --- 还原被误删文件 creation_token 补登（精确路径，2026-08-06 续）---
-  - file: "docs/_working/precommit_gate_incremental_refactor_plan.md"
-    token: "auto-precommit-gate-refactor-plan-20260806"
-    created_by: "session-restore-archid"
-    capability: "precommit_gate_refactor_plan"
   - file: "docs/_working/battle_map_merge_task/battle_map_merge_execution_log.md"
     token: "auto-battle-map-exec-log-subdir-20260806"
     created_by: "session-restore-archid"
