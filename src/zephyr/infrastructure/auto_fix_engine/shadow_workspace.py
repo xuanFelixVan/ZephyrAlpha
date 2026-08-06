@@ -94,12 +94,12 @@ class ShadowWorkspace:
         self._run_ruff: bool = config.get("run_ruff", True)
         self._pytest_timeout: int = config.get("pytest_timeout", 120)
 
-    def run_type_check(self, shadow_file, project_root) -> dict[str, Any]:
+    def run_type_check(self, shadow_file, project_root: str | None = None) -> dict[str, Any]:
         """公共接口：run_type_check（Stage 4 公共化）。"""
         return self._run_type_check(shadow_file, project_root)
 
 
-    def run_test(self, shadow_dir, project_root) -> dict[str, Any]:
+    def run_test(self, shadow_dir, project_root: str | None = None) -> dict[str, Any]:
         """公共接口：run_test（Stage 4 公共化）。"""
         return self._run_test(shadow_dir, project_root)
 
@@ -137,7 +137,7 @@ class ShadowWorkspace:
         self._run_mypy = value
 
 
-    def run_lint(self, shadow_file, project_root) -> dict[str, Any]:
+    def run_lint(self, shadow_file, project_root: str | None = None) -> dict[str, Any]:
         """公共接口：run_lint（Stage 4 公共化）。"""
         return self._run_lint(shadow_file, project_root)
 
