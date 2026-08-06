@@ -274,12 +274,17 @@ class TestConfidenceSignal:
         )
 
     @pytest.mark.parametrize("max_p,expected_base", [
-        (0.96, 1.0),   # >95% → 满部署
-        (0.90, 0.85),  # 80-95% → 轻度
-        (0.70, 0.6),   # 60-80% → 中度
-        (0.50, 0.3),   # <60% → 强收缩
+        (0.60, 1.0),   # ≥50% → 满部署（9态下0.5已是高置信）
+        (0.40, 0.9),   # 30-50% → 轻度收缩
+        (0.20, 0.8),   # 15-30% → 中度收缩
+        (0.10, 0.7),   # <15% → 强收缩（下限0.7，避免过度压低平时Shrinkage）
     ])
     def test_4_bands(self, detector, max_p, expected_base):
+        """四档映射（C1 验证 2026-08-06 校准后阈值，适应 9 态 HMM 概率分散）。
+
+        ConfidenceSignal = base(max_p) × rarity，不含 state_risk（已移除）。
+        dominant=r1, freq=0.15(常见态) → rarity=1.0，故 ConfidenceSignal=base。
+        """
         p = self._probs_with_confidence(detector, max_p, freq=0.15)  # 常见态
         assert abs(detector._compute_confidence_signal(p) - expected_base) < 1e-9
 
@@ -289,16 +294,17 @@ class TestConfidenceSignal:
         (0.005, 0.7),  # 稀有态 <1%
     ])
     def test_rarity_discount(self, detector, freq, expected_discount):
+        """稀有态折扣：max_p=0.90 → base=1.0（≥0.50），ConfidenceSignal=1.0×rarity。"""
         p = self._probs_with_confidence(detector, 0.90, freq=freq)
-        assert abs(detector._compute_confidence_signal(p) - 0.85 * expected_discount) < 1e-9
+        assert abs(detector._compute_confidence_signal(p) - 1.0 * expected_discount) < 1e-9
 
     def test_lower_bound_rare_low_confidence(self, detector):
-        """稀有态(<1%) + 低置信(<60%) → 0.3×0.7=0.21（blueprint §4 INVARIANTS 下界）。"""
-        p = self._probs_with_confidence(detector, 0.50, freq=0.005)
-        assert abs(detector._compute_confidence_signal(p) - 0.21) < 1e-9
+        """稀有态(<1%) + 低置信(<15%) → 0.7×0.7=0.49（base 下限 0.7 × rarity 下限 0.7）。"""
+        p = self._probs_with_confidence(detector, 0.10, freq=0.005)
+        assert abs(detector._compute_confidence_signal(p) - 0.49) < 1e-9
 
     def test_upper_bound_common_high_confidence(self, detector):
-        """常见态(>5%) + 高置信(>95%) → 1.0×1.0=1.0。"""
+        """常见态(>5%) + 高置信(≥50%) → 1.0×1.0=1.0。"""
         p = self._probs_with_confidence(detector, 0.96, freq=0.10)
         assert abs(detector._compute_confidence_signal(p) - 1.0) < 1e-9
 
@@ -308,10 +314,15 @@ class TestConfidenceSignal:
 
 class TestRiskSignal:
     def test_base_min_dominant(self, detector, full_risk_params):
-        """RiskBase = min(11 风险参数)——任一极端即压低（§5.3.3 维度6）。"""
-        params = {**full_risk_params["params"], 8: 0.3}  # 虹吸极端
+        """#1 门控触发后，附加参数 min 聚合生效（§5.3.3 维度6）。
+
+        #1 门控（2026-08-06 二次调优）：#1>=1.0 时附加参数不参与（避免非危机日
+        误触发致 Sharpe 退化）。需 #1<1.0 触发门控，附加参数才能经 min 聚合压低 RiskBase。
+        """
+        params = {**full_risk_params["params"], 1: 0.5, 8: 0.3}  # #1 触发 + 虹吸极端
         r = detector._compute_risk_signal({"params": params})
-        assert abs(r - 0.3) < 0.01  # 0.3×1.0(无共振)+0
+        # min(0.5, ..., 0.3)=0.3 × 0.95(2异常共振) + 0 = 0.285 → clamp 0.30
+        assert abs(r - 0.30) < 0.01
 
     def test_resonance_penalty(self, detector, full_risk_params):
         """4 异常参数 → 共振惩罚 1-0.05×3=0.85（§5.3.3）。"""
@@ -453,10 +464,10 @@ class TestEndToEnd:
                 "opportunity": {"news_ghost": 0.10, "bad_news_flat": 0.15}}
         probs, shrink = detector.detect({}, overlay, risk)
         assert probs.dominant_regime == "r11"
-        # max(P)=0.65 → base 0.6；r11 freq 0.02 → discount 0.85 → conf 0.51
-        assert abs(shrink.confidence_signal - 0.51) < 0.01
+        # max(P)=0.65 → base 1.0（≥0.50）；r11 freq 0.02 → rarity 0.85 → conf 0.85
+        assert abs(shrink.confidence_signal - 0.85) < 0.01
         assert abs(shrink.risk_signal - 0.85) < 0.01
-        assert abs(shrink.value - 0.51 * 0.85) < 0.01
+        assert abs(shrink.value - 0.85 * 0.85) < 0.01
         # 转换事件被记录
         assert len(detector._last_transitions) == 1
         assert detector._last_transitions[0].transition_type == "S2"
@@ -469,5 +480,5 @@ class TestEndToEnd:
         probs, shrink = detector.detect({}, overlay, risk)
         assert probs.dominant_regime == "r10"  # CRISIS
         assert shrink.risk_signal <= 0.31  # 极端风险
-        # conf=0.6×0.85(r10稀有态)=0.51, risk=0.30 → shrink=0.153（强收缩，接近下界0.063）
-        assert shrink.value < 0.16
+        # conf=1.0(≥0.50)×0.85(r10稀有态)=0.85, risk=0.30 → shrink=0.255（强收缩）
+        assert abs(shrink.value - 0.85 * 0.30) < 0.01

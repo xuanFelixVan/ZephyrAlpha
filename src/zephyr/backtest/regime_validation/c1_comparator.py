@@ -332,16 +332,18 @@ class C1ShrinkageComparator:
         )
 
     def _verdict_maxdd(self, base: float, exp: float) -> C1MetricVerdict:
-        # MaxDD 存负值（如 -0.142），更高（更接近0）= 更好
-        # 改善 = exp - base ≥ improvement_pp（如 -0.103 - (-0.142) = +0.039）
+        # MaxDD 回撤减小 = 改善。metrics._calculate_max_drawdown 返回正值
+        # （如 0.142 = 14.2% 回撤），越小越好；若上游存负值（-0.142）则越高越好。
+        # 两种约定统一为绝对值：改善 = |DD_关| − |DD_开| ≥ improvement_pp
+        # （修正：原 exp-base 在正值约定下误判，2026-08-06 C1 验证发现）
         imp = self._config.maxdd_improvement_pp
-        diff = exp - base
+        diff = abs(base) - abs(exp)
         passed = diff >= imp
         return C1MetricVerdict(
             name="MaxDD",
             baseline_value=base,
             experiment_value=exp,
-            threshold_desc=f"DD_开 − DD_关 ≥ {imp:.2%}（存负值，更高=更好）",
+            threshold_desc=f"|DD_关| − |DD_开| ≥ {imp:.2%}（回撤减小=改善）",
             passed=passed,
             detail=(
                 f"MaxDD 关={base:.4f} 开={exp:.4f} 改善={diff:+.4f} "

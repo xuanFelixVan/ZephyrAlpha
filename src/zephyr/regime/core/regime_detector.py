@@ -65,11 +65,15 @@ TRANSITIONS: list[str] = ["T1", "T2", "T3", "T4", "T5", "T6", "S1", "S2"]
 
 # Shrinkage 4 档映射（design_memo_001 §2.2 / discussion_001 §5.1）
 # (max(P) 下界, base_confidence) —— 从高到低匹配，取首个 max(P) >= 下界
+# C1 验证 2026-08-06 校准：原阈值 0.95/0.80/0.60 对 9 态 HMM 过高（9 态分散
+# 概率质量，max(P) 天然 0.3-0.6 常态，总落入最低档 base=0.3 致平时过度收缩）。
+# 调整为适应 9 态分布的阈值，下限抬高到 0.7：ConfidenceSignal 只做"高置信加成"
+# 而非"低置信惩罚"，让稳定的 feature-risk（RiskSignal）主导危机节流。
 _CONFIDENCE_BANDS: tuple[tuple[float, float], ...] = (
-    (0.95, 1.0),   # >95% → 满部署
-    (0.80, 0.85),  # 80-95% → 轻度收缩
-    (0.60, 0.6),   # 60-80% → 中度收缩
-    (0.0, 0.3),    # <60% → 强收缩
+    (0.50, 1.0),   # top1 ≥50% → 满部署（9态下0.5已是高置信）
+    (0.30, 0.9),   # 30-50% → 轻度收缩
+    (0.15, 0.8),   # 15-30% → 中度收缩
+    (0.0, 0.7),    # <15% → 强收缩（下限0.7，避免过度压低平时Shrinkage）
 )
 # 稀有态折扣（design_memo_001 §2.2）：(频率下界, discount)
 _RARITY_BANDS: tuple[tuple[float, float], ...] = (
@@ -77,6 +81,27 @@ _RARITY_BANDS: tuple[tuple[float, float], ...] = (
     (0.01, 0.85),  # 中等态 1-5%
     (0.0, 0.7),    # 稀有态 <1%
 )
+# 状态风险因子（discussion_001 §2.6.3 九宫格风险等级）
+# ⚠️ DEPRECATED — C1 验证 2026-08-06 从 ConfidenceSignal 移除，不再参与 Shrinkage 计算。
+# 原因：无监督 HMM 的 r1-r9 标签在 walk-forward refit 间无一致语义，按数字标签套
+# 风险因子 = 随机惩罚；且 r4/r5/r6（震荡态）永久压仓致 A 股平时收益崩塌。
+# 危机保护改由 RiskSignal 的 feature_risk（vol_pct + slope）承担——可靠信号非任意标签。
+# 保留定义供未来 HMM 状态语义对齐（如后处理 emission 参数推断真实态）后重新启用。
+# r1-r9 = 趋势(牛/中/熊) × 波动率(低/中/高) 行优先；r10 CRISIS / r11 RECOVERY / r12 BREAKOUT
+_STATE_RISK_FACTORS: dict[str, float] = {
+    "r1": 1.0,   # Bull-Low  温和上涨低波，最佳趋势跟踪期 → 安全满部署
+    "r2": 1.0,   # Bull-Med  上涨趋势中波，正常趋势期 → 安全满部署
+    "r3": 0.85,  # Bull-High 急涨急跌，赶顶颠簸 → 轻度警惕
+    "r4": 0.90,  # Neut-Low  震荡磨底，量能枯竭 → 轻度警惕
+    "r5": 0.85,  # Neut-Med  典型震荡市 → 轻度警惕
+    "r6": 0.70,  # Neut-High 无方向高波，混沌期 → 中度风险
+    "r7": 0.60,  # Bear-Low  阴跌期（A股特色）→ 中度风险
+    "r8": 0.45,  # Bear-Med  正常下跌期 → 强收缩
+    "r9": 0.30,  # Bear-High 暴跌恐慌期 → 最强收缩
+    "r10": 0.30, # CRISIS    系统性危机（overlay）→ 最强收缩
+    "r11": 0.50, # RECOVERY  危机复苏过渡 → 中强收缩
+    "r12": 1.0,  # BREAKOUT  突破主升苗头 → 满部署
+}
 
 # 8 转换阶段配置（discussion_001 §4.1 总览表 + §4.6/§4.10.8/§4.11.8/§4.12.8 标准汇总）
 # 每个 stage 的条件：total_gte（总分下界）/ keys_gte（关键维度下界，任一缺失即不满足）
@@ -358,20 +383,39 @@ class RegimeDetector:
             raise HMMFittingError(f"X 校验失败: {exc}") from exc
 
         n_states = int(self.hmm_params.get("n_states", 9))
-        model = GaussianHMM(
-            n_components=n_states,
-            covariance_type=self.hmm_params.get("covariance_type", "full"),
-            n_iter=self.hmm_params.get("n_iter", 100),
-            random_state=self.hmm_params.get("random_state", 42),
-        )
+        n_init = int(self.hmm_params.get("n_init", 3))
+        base_seed = int(self.hmm_params.get("random_state", 42))
         lengths = train_features.get("lengths")
-        try:
-            model.fit(X, lengths=lengths) if lengths is not None else model.fit(X)
-        except Exception as exc:
+        # 多次拟合取 log-likelihood 最高的（EM 局部最优问题，单次 fit 不稳定）
+        # 2026-08-06 C1 验证发现：random_state 固定仍因 EM 数值敏感性收敛到不同解，
+        # 导致 Shrinkage schedule 不可复现（均值 0.818 vs 0.589）。n_init 取最优解稳定结果。
+        best_model = None
+        best_score = -np.inf
+        last_exc: Exception | None = None
+        for k in range(max(1, n_init)):
+            try:
+                m = GaussianHMM(
+                    n_components=n_states,
+                    covariance_type=self.hmm_params.get("covariance_type", "full"),
+                    n_iter=self.hmm_params.get("n_iter", 100),
+                    random_state=base_seed + k,
+                )
+                if lengths is not None:
+                    m.fit(X, lengths=lengths)
+                    score = float(m.score(X, lengths=lengths))
+                else:
+                    m.fit(X)
+                    score = float(m.score(X))
+                if score > best_score:
+                    best_score = score
+                    best_model = m
+            except Exception as exc:
+                last_exc = exc
+        if best_model is None:
             self._hmm_degraded = True
             self._hmm_model = None
-            raise HMMFittingError(f"GaussianHMM.fit 不收敛: {exc}") from exc
-        self._hmm_model = model
+            raise HMMFittingError(f"GaussianHMM.fit 不收敛: {last_exc}") from last_exc
+        self._hmm_model = best_model
         self._hmm_degraded = False
 
     def record_transition(
@@ -518,10 +562,29 @@ class RegimeDetector:
         )
 
     def _compute_confidence_signal(self, probs: RegimeProbabilities) -> float:
-        """子模块③：max(P) → 4 档映射 + 稀有态折扣（design_memo_001 §2.2）。
+        """子模块③：max(P) → 4 档映射 × 稀有态折扣（design_memo_001 §2.2 / 模块 docstring ③）。
 
         ConfidenceSignal = base_confidence(max(P)) × rarity_discount(dominant_frequency)
-        最低 0.3 × 0.7 = 0.21。
+
+        - base: max(P) 四档映射（HMM 对当前态的自信程度）
+        - rarity: 稀有态不确定性折扣（稀有态 = HMM 见过少 = 自信度打折）
+
+        设计原则：ConfidenceSignal 只度量"HMM 有多自信"，不度量"市场有多危险"。
+        市场风险由 RiskSignal（子模块④，feature-risk / 13 参数）统一承载。
+        Shrinkage = ConfidenceSignal × RiskSignal，两者职责正交、不重复计数。
+
+        C1 验证 2026-08-06 修正：此前在 ConfidenceSignal 中乘以 state_risk_factor
+        （_STATE_RISK_FACTORS），存在两个致命缺陷：
+          ① HMM 状态标签任意性：无监督 HMM 的 r1-r9 标签在 walk-forward 各季
+             refit 间无一致语义（r1 本季=Bull-Low，下季可能=Bear-High），
+             按数字标签套风险因子 = 随机惩罚。
+          ② 永久中性态惩罚：r4/r5/r6（震荡态）state_risk=0.70-0.90，而 A 股
+             长期处于震荡市 → 平时永久压仓 10-30%，牛市也跟着砍 → 收益崩塌
+             （C1 实测 Sharpe 0.37→0.10）。
+        危机保护改由 feature_risk 承担（vol_pct + slope，可靠信号，非任意标签）：
+        高波 + 下跌 → RiskSignal=0.3-0.5，Shrinkage 自然走低。
+
+        最低 0.7 × 0.7 = 0.49（低置信度 + 稀有态）；危机时再乘 RiskSignal=0.3 → 0.147。
         """
         max_p = probs.confidence
         base = 0.3
@@ -540,9 +603,18 @@ class RegimeDetector:
         """子模块④：13 参数聚合（discussion_001 §5.3.3）。
 
         RiskSignal = clamp[0.30, RiskBase × 共振惩罚 + 机会恢复, 1.00]
-          RiskBase = min(11 个风险参数系数 #1-10/#12)
+          RiskBase = #1 门控 + min(11 个风险参数系数 #1-10/#12)
           共振惩罚 = 1 − 0.05 × max(0, 异常参数数 − 1)，下限 ×0.80
           机会恢复 = #11 鬼故事抵消 + #13 利空不跌抵消，上限 +0.25
+
+        #1 门控（C1 验证 2026-08-06 二次调优引入）：
+          #1（realized_vol）是 Phase 1 验证过的主风险信号，附加参数（#2-#10/#12）
+          是 #1 的"深化器"而非"替代者"。当 #1=1.0（无风险）时，附加参数不能独自
+          创造收缩——避免附加参数在非危机日误触发（#7 广度普跌 12.7%、#3 破前低 5.3%
+          等）经 min() 聚合 + EMA 平滑后扩散到 99.6% 日子，致 Sharpe 从 Phase 1 的
+          0.2678 退化至 0.2464。当 #1<1.0（已检测到风险）时，附加参数可加深收缩
+          （min(all) ≤ #1），提供多层危机保护。这保证 Phase 2a risk_base ≤ Phase 1
+          risk_base（危机区只更严不更松），同时非危机日 ≈ Phase 1（不退化）。
 
         risk_inputs 结构：
             {"params": {1: 0.85, 2: 1.0, ..., 12: 0.6},  # #1-10/#12 系数
@@ -554,7 +626,11 @@ class RegimeDetector:
         params: dict[int, float] = risk_inputs.get("params") or {}
         if not params:
             return 1.0
-        # RiskBase：11 个风险参数（#1-10, #12）取最严
+        # #1 门控：主风险信号未触发 → 附加参数不参与（避免假阳性致 Sharpe 退化）
+        primary = float(params.get(1, 1.0))
+        if primary >= 1.0:
+            return 1.0
+        # #1 已触发 → 附加参数可加深收缩（min(all) ≤ #1）
         risk_param_ids = [i for i in list(range(1, 11)) + [12]]
         coefs = [float(params[i]) for i in risk_param_ids if i in params and params[i] is not None]
         if not coefs:

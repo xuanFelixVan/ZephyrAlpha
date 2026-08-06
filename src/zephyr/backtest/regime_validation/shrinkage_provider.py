@@ -373,6 +373,69 @@ class RegimeDetectorShrinkageAdapter:
         return dict(self._cache)
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# ⑤ DeadzoneShrinkageProvider — 死区装饰器（平稳期微抖过滤，降低 Turnover）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class DeadzoneShrinkageProvider:
+    """死区装饰器——Shrinkage 变化 < deadzone 不生效（保持上次实际生效值）。
+
+    平稳期微抖被过滤（减少无效调仓/Turnover），危机期大幅调整保留（防御不迟钝）。
+    装饰任意 ShrinkageProvider（Const/Schedule/Mock/RegimeDetectorAdapter），开闭原则
+    不改被包装者。
+
+    分析依据（logs/c1_repro shrinkage_schedule.csv 抖动分析，2026-08-06）：
+      - 平稳期日均|Δ|=0.24% < deadzone(2%) → 过滤
+      - 危机期日均|Δ|=2.16% > deadzone(2%) → 保留
+      - 死区 0.02 模拟减少调仓 73%（2529→686 次）
+
+    状态依赖：_last_effective 按日期递增累积（回测引擎 for date in sorted_dates
+    保证顺序调用）。walk-forward 重跑前调 reset() 避免跨回测状态泄漏。
+    deadzone=0 时退化为透传（不干预，与 inner 行为一致）。
+
+    Args:
+        inner: 被装饰的 ShrinkageProvider（任意实现 get_shrinkage 的对象）。
+        deadzone: 死区阈值（默认 0.02）。raw 与 last_effective 差值 < 此值则不更新。
+    """
+
+    def __init__(self, inner: Any, deadzone: float = 0.02) -> None:
+        if deadzone < 0:
+            raise ShrinkageProviderError(f"deadzone 不能为负, got {deadzone}")
+        self._inner = inner
+        self._deadzone = float(deadzone)
+        self._last_effective: float | None = None
+
+    def get_shrinkage(self, date: datetime) -> float:
+        """返回死区平滑后的 Shrinkage。
+
+        raw 与上次实际生效值差值 < deadzone 时返回上次值（过滤微抖），
+        否则更新 last_effective 并返回 raw（保留有效调整）。
+        """
+        raw = clamp_shrinkage(self._inner.get_shrinkage(date))
+        if self._last_effective is None:
+            self._last_effective = raw
+            return raw
+        if abs(raw - self._last_effective) < self._deadzone:
+            return self._last_effective  # 变化太小，保持上次
+        self._last_effective = raw
+        return raw
+
+    def reset(self) -> None:
+        """重置状态（walk-forward 重跑前调用，避免跨回测状态泄漏）。"""
+        self._last_effective = None
+
+    @property
+    def deadzone(self) -> float:
+        """当前死区阈值。"""
+        return self._deadzone
+
+    @property
+    def inner(self) -> Any:
+        """被装饰的 provider（归因/调试用）。"""
+        return self._inner
+
+
 __all__ = [
     "ShrinkageProvider",
     "ShrinkageProviderError",
@@ -383,4 +446,5 @@ __all__ = [
     "ScheduleShrinkageProvider",
     "MockShrinkageProvider",
     "RegimeDetectorShrinkageAdapter",
+    "DeadzoneShrinkageProvider",
 ]
