@@ -183,7 +183,7 @@ class TestAstGrepAdapterDetect:
         """ast-grep severity=error → CloneGuard severity=extract。"""
         _make_rule_file(tmp_path)
         adapter = AstGrepAdapter(tmp_path, CloneGuardConfig())
-        match_data = [_make_match(rule_id="critical-rule")]
+        match_data = [_make_match(file_path="src/foo.py", rule_id="critical-rule")]
         match_data[0]["severity"] = "error"
         mock_result = MagicMock(returncode=1, stdout=json.dumps(match_data), stderr="")
         with patch("shutil.which", return_value="/fake/ast-grep"):

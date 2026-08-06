@@ -103,7 +103,11 @@ import sys
 from pathlib import Path
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _extract_noqa_lines,
     _get_staged_py_files,
+    _make_noqa_pattern,
+    _matches_any_prefix,
+    _module_to_file_candidates,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
@@ -124,23 +128,9 @@ _PROJECT_PREFIXES: tuple[str, ...] = ("zephyr.", "scripts.", "tests.")
 
 # noqa 行级逃生：对标 bare-subprocess gate 模式
 # 格式：`# noqa: import-integrity` + 2+ 空格 + reason（>=10 字符）
-_IMPORT_INTEGRITY_NOQA_PATTERN = re.compile(
-    r"#\s*noqa:\s*import-integrity\s{2,}(\S.*)$",
-    re.MULTILINE,
-)
-
-
-def _extract_noqa_lines(file_content: str) -> set[int]:
-    """提取带 `# noqa: import-integrity  <reason>` 注释的行号集合（1-based）。
-
-    逃生通道：对标 bare-subprocess gate 模式。
-    命中 noqa 的行不报告悬空 import。
-    """
-    noqa_lines: set[int] = set()
-    for i, line in enumerate(file_content.splitlines(), start=1):
-        if _IMPORT_INTEGRITY_NOQA_PATTERN.search(line):
-            noqa_lines.add(i)
-    return noqa_lines
+# 共享 helper（#ARCH-FORCE-MERGE-DEDUP-001 消除克隆）：正则由 _make_noqa_pattern 构造，
+# 提取由 _diff_helpers._extract_noqa_lines 执行——消除与 bare_subprocess_gate 的逐字符克隆
+_NOQA_PATTERN = _make_noqa_pattern("import-integrity")
 
 
 def _is_relative_import(node: ast.Import | ast.ImportFrom) -> bool:
@@ -177,21 +167,9 @@ def _collect_imports(tree: ast.AST) -> list[tuple[int, str, bool]]:
     return imports
 
 
-def _is_project_module(module_path: str) -> bool:
-    """判断是否为项目内模块（zephyr.* / scripts.* / tests.*）。"""
-    return any(module_path.startswith(prefix) for prefix in _PROJECT_PREFIXES)
-
-
-def _module_to_file_candidates(module_path: str) -> list[str]:
-    """将模块路径转为文件系统候选路径（module.py 或 module/__init__.py）。"""
-    parts = module_path.split(".")
-    base = "/".join(parts)
-    return [
-        f"src/{base}.py",
-        f"src/{base}/__init__.py",
-        f"{base}.py",
-        f"{base}/__init__.py",
-    ]
+# _is_project_module / _module_to_file_candidates 已提取至 _diff_helpers
+# （#ARCH-FORCE-MERGE-DEDUP-001 消除与 consumers_accuracy_gate 的逐字符克隆）
+# 调用处直接使用 _matches_any_prefix(module_path, _PROJECT_PREFIXES) 和 _module_to_file_candidates(module_path)
 
 
 def _check_project_module_resolvable(
@@ -645,7 +623,7 @@ def scan_content_for_dangling_imports(
         return []  # fail-open：语法错误由其他阶段检测
 
     imports = _collect_imports(tree)
-    noqa_lines = _extract_noqa_lines(content)
+    noqa_lines = _extract_noqa_lines(content, _NOQA_PATTERN)
     # #ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本：提取 sys.path 注入目录，
     # 使 from _shared / from _common 等动态加载模块可被解析（320+ 文件免疫）
     sys_path_dirs = _extract_sys_path_dirs(tree, py_file)
@@ -653,7 +631,7 @@ def scan_content_for_dangling_imports(
     for lineno, module_path, _is_from in imports:
         if lineno in noqa_lines:
             continue  # 行级 noqa 逃生
-        if _is_project_module(module_path):
+        if _matches_any_prefix(module_path, _PROJECT_PREFIXES):
             if not _check_project_module_resolvable(module_path, staged_files, gateway):
                 violations.append(
                     f"  {py_file}:{lineno}: dangling import '{module_path}' "

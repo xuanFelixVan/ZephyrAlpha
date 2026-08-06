@@ -40988,7 +40988,7 @@ entries:
   name_en: "CloneGuard Orchestrator"
   desc_zh: ""
   desc_en: ""
-  plain_zh: "CloneGuard 统一调度入口，Phase A 仅调度 Echo-Guard，未来支持多引擎并发检测"
+  plain_zh: "CloneGuard 统一调度入口，Phase B 起 asyncio.gather 并发调度 Echo-Guard + ast-grep，结果经聚合器去重+多数表决+严重性就高"
 - module_path: src/zephyr/clone_guard/config.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: "CloneGuard 配置加载器"
@@ -41010,6 +41010,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "L0 源头预防 MCP 服务，AI 写代码前主动查重，返回克隆发现和复用建议，引导复用而非重复实现"
+- module_path: src/zephyr/clone_guard/aggregator.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "CloneGuard 结果聚合器"
+  name_en: "CloneGuard Finding Aggregator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "多引擎检测结果合并入口，按克隆对去重+多数表决+严重性就高+相似度取最大，降级引擎排除表决"
+- module_path: src/zephyr/clone_guard/engines/ast_grep_adapter.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "ast-grep 规则引擎适配器"
+  name_en: "ast-grep Rule Engine Adapter"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "封装 ast-grep CLI 检测结构反模式（如 bare except），统一 detect() 接口，CLI 不可用时降级为空结果"
 
 battle_map_steps:
 - step_id: BM-BUY-04
@@ -42372,6 +42386,46 @@ battle_map_steps:
   indicators_zh: '①触发：任意仓位变更事件(裁决/Kelly/漂移/再平衡/缩放/日历/合并)；②消费：仓位变更事件(BM-POS-01~09全部环节)+审批链(D-RISK C-004)+执行结果(D-EX-CORE)；③参数：全记录、审批链、哈希链防篡改(implemented)；④数据流：仓位变更事件→全记录+审批链+哈希链→PositionAuditReport→D-REPORTING归档+D-GOVERNANCE合规审计；⑤代码：MOD-POS-009
     position_audit_logger(stable)；⑥降级：审计日志器未就绪→仓位决策阻断(审计是合规底线，无审计不允许执行，保守原则)。
 
+    '
+- step_id: BM-PLAN-01
+  flow_stage: position_management
+  name_zh: 明日预案引擎
+  name_en: Tomorrow Boundary Planner
+  plain_zh: 盘后生成明日交易边界（箱体上下沿+加仓/止盈/突破验证规则），作为次日所有交易的"安全围栏"——边界比聪明更重要。
+  mechanism_zh: '草图§明日预案（BM-PLAN 设计）。双层架构三层触发：B盘后生成 TomorrowBoundary（箱体上沿/下沿/加仓仓位上限/禁加仓价位/必出止盈/突破验证条件）→
+    C盘前加载 ConstraintState → A盘中每15分钟重算在边界内推演（毫秒级）。边界层(B/C)是安全底线，推演层(A)是优化层。
+
+    消费 BM-SEL-03 市场状态 / BM-SEL-04 次日8态 / BM-SEL-05 主力行为 / BM-SEL-23 情绪周期 / BM-SELL-07 卖出侧边界；输出 TomorrowBoundary/ConstraintState/BoundedActionAdvice
+    → BM-BUY-02 买入融合 + BM-SELL-02 卖出融合 + BM-POS-01 仓位。
+
+    设计哲学：有边界无推演=笨但安全，有推演无边界=聪明但危险，故边界层失败=致命，推演层失败=可接受机械执行边界。
+    '
+  indicators_zh: '①触发：盘后收盘生成边界(B)/盘前加载(C)/盘中每15分钟重算(A)；②消费：市场状态(BM-SEL-03)+次日8态(BM-SEL-04)+主力行为(BM-SEL-05)+情绪周期(BM-SEL-23)+卖出侧边界(BM-SELL-07)；③参数：箱体上沿/下沿(昨日冷静算)、加仓仓位上限30%、禁加仓价位(接近上沿)、必出止盈(冲上沿必出)、突破验证(放量站稳10分钟)；④数据流：市场状态+次日预测+主力行为+情绪周期+卖出侧边界→B生成边界→C加载→A推演→BoundedActionAdvice；⑤代码：MOD-PLAN-001
+    tomorrow_boundary_planner(planned)；⑥降级：边界层(B/C)坏=致命暂停操作，推演层(A)坏=可接受机械执行边界（边界比聪明更重要）。
+    '
+- step_id: BM-PLAN-02
+  flow_stage: position_management
+  name_zh: 盘前预案加载
+  name_en: Pre-market Constraint Loader
+  plain_zh: 盘前9:00加载昨晚边界，9:20-9:25竞价匹配9种情景（高开/低开/平开×真涨/假涨/真跌/假跌/洗盘）触发对应分支——无约束状态禁止开始交易。
+  mechanism_zh: '草图§明日预案（BM-PLAN 设计）。盘前冷启动环节：加载 BM-PLAN-01 昨晚 TomorrowBoundary → 9:25 竞价匹配情景分类（9种）→ 触发对应约束分支 → 初始化 ConstraintState。
+
+    是交易日开始的合规前置——无约束状态禁止交易（保守原则）。下游驱动 BM-PLAN-01-C 盘中推演 + BM-BUY/SELL/POS 初始指令。
+    '
+  indicators_zh: '①触发：次日盘前9:00加载昨晚边界；②消费：昨晚 TomorrowBoundary(BM-PLAN-01)；③参数：竞价匹配窗口9:20-9:25、情景分类规则9种(高开/低开/平开×真涨/假涨/真跌/假跌/洗盘)；④数据流：昨晚TomorrowBoundary→盘前加载→9:25竞价匹配情景→ConstraintState→BM-PLAN-01-C盘中推演+BM-BUY/SELL/POS初始指令；⑤代码：MOD-PLAN-002
+    premarket_constraint_loader(planned)；⑥降级：盘前加载失败=致命，延迟开盘到加载成功或人工介入（无约束状态禁止交易）。
+    '
+- step_id: BM-PLAN-03
+  flow_stage: position_management
+  name_zh: 尾盘决策
+  name_en: Closing Session Decision
+  plain_zh: 14:45-15:00尾盘黄金决策点，根据明日高开/低开概率决定加仓博高开/减仓防低开/持有不动——宁可不操作也不在尾盘盲动。
+  mechanism_zh: '草图§明日预案（BM-PLAN 设计）。A股尾盘15分钟决策窗口：基于今日盘中实时推演(BM-PLAN-01)+今日持仓状态(BM-POS-01)，计算明日高开/低开概率，触发加仓(高开概率>70%)/减仓(低开概率>60%)/持有不动。
+
+    保守原则——决策未就绪则不操作保持现有持仓过夜，避免尾盘盲动。下游输出尾盘调仓指令 → BM-BUY-02 买入 + BM-SELL-02 卖出。
+    '
+  indicators_zh: '①触发：14:45尾盘决策窗口；②消费：今日盘中实时推演(BM-PLAN-01)+今日持仓状态(BM-POS-01)；③参数：尾盘加仓阈值(明日高开概率>70%)、尾盘减仓阈值(明日低开概率>60%)、尾盘决策窗口14:45-15:00；④数据流：盘中推演+持仓状态→尾盘决策→尾盘调仓指令→BM-BUY-02买入+BM-SELL-02卖出；⑤代码：MOD-PLAN-003
+    closing_session_decision(planned)；⑥降级：尾盘决策未就绪→不操作保持现有持仓过夜（宁可不操作也不在尾盘盲动）。
     '
 - step_id: BM-EXE-03
   flow_stage: execution

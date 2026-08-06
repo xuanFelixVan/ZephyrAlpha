@@ -2,11 +2,11 @@
 # [MODULE] zephyr.gov_enforcement.commit_gates._diff_helpers
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] —
-# [CONSUMERS] zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate; zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate; zephyr.gov_enforcement.commit_gates.bare_sql_gate; zephyr.gov_enforcement.commit_gates.hardcoded_url_gate; zephyr.gov_enforcement.commit_gates.high_complexity_gate
+# [CONSUMERS] zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate; zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate; zephyr.gov_enforcement.commit_gates.bare_sql_gate; zephyr.gov_enforcement.commit_gates.hardcoded_url_gate; zephyr.gov_enforcement.commit_gates.high_complexity_gate; zephyr.gov_enforcement.commit_gates.import_integrity_gate; zephyr.gov_enforcement.commit_gates.bare_subprocess_gate; zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate / high_complexity_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似
-# [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _extract_sql_constant_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None, _read_head_file(gateway,str)->str|None, _collect_function_names(str)->set[str]
+# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate / high_complexity_gate / import_integrity_gate / bare_subprocess_gate / consumers_accuracy_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似；_make_noqa_pattern + _extract_noqa_lines 消除 import_integrity_gate / bare_subprocess_gate 的 noqa 提取克隆（#ARCH-FORCE-MERGE-DEDUP-001）；_module_to_file_candidates 消除 import_integrity_gate / consumers_accuracy_gate 的模块路径转换克隆；_matches_any_prefix 消除 _is_project_module / _is_abstract_code 的前缀判断同构克隆
+# [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _extract_sql_constant_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None, _read_head_file(gateway,str)->str|None, _collect_function_names(str)->set[str], _make_noqa_pattern(str)->re.Pattern, _extract_noqa_lines(str,re.Pattern)->set[int], _module_to_file_candidates(str)->list[str], _matches_any_prefix(str,tuple)->bool
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -61,6 +61,10 @@ __all__ = [
     "_collect_function_names",
     "_get_staged_py_files",
     "_get_added_lines",
+    "_make_noqa_pattern",
+    "_extract_noqa_lines",
+    "_module_to_file_candidates",
+    "_matches_any_prefix",
 ]
 
 # 行级豁免：注释 / import
@@ -305,3 +309,85 @@ def _collect_function_names(file_content: str) -> set[str]:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             names.add(node.name)
     return names
+
+
+# ── noqa / 模块路径 / 前缀判断共享 helper（#ARCH-FORCE-MERGE-DEDUP-001 消除克隆）──
+# 提取自 import_integrity_gate / bare_subprocess_gate / consumers_accuracy_gate，
+# 消除 CAPABILITY-OVERLAP 门禁检测到的 extract 级克隆（60% 相似度，3+ 副本）。
+
+
+def _make_noqa_pattern(gate_id: str) -> re.Pattern:
+    """构造行级 noqa 逃生标记正则——``# noqa: <gate_id>  <reason>``。
+
+    对标 bare-subprocess / import-integrity / consumers-accuracy 等门禁的
+    noqa 模式，统一为单一真源，消除逐 gate 复制的正则克隆。
+
+    Args:
+        gate_id: 门禁标识（如 ``"import-integrity"`` / ``"bare-subprocess"``）。
+
+    Returns:
+        编译后的正则 Pattern，匹配 ``# noqa: <gate_id>  <reason>`` 行
+       （gate_id 后需 2+ 空格 + reason >= 1 字符）。
+    """
+    return re.compile(
+        rf"#\s*noqa:\s*{re.escape(gate_id)}\s{{2,}}(\S.*)$",
+        re.MULTILINE,
+    )
+
+
+def _extract_noqa_lines(file_content: str, pattern: re.Pattern) -> set[int]:
+    """提取带 noqa 逃生标记的行号集合（1-based）。
+
+    通行级 noqa 提取——供所有 commit-time gate 复用，消除逐 gate 复制的
+    ``_extract_noqa_lines`` 函数克隆。
+
+    Args:
+        file_content: Python 文件完整内容。
+        pattern: 由 ``_make_noqa_pattern(gate_id)`` 构造的正则。
+
+    Returns:
+        命中 noqa 标记的行号集合（1-based）。
+    """
+    noqa_lines: set[int] = set()
+    for i, line in enumerate(file_content.splitlines(), start=1):
+        if pattern.search(line):
+            noqa_lines.add(i)
+    return noqa_lines
+
+
+def _module_to_file_candidates(module_path: str) -> list[str]:
+    """将模块路径转为文件系统候选路径（module.py 或 module/__init__.py）。
+
+    统一 import_integrity_gate / consumers_accuracy_gate 的模块路径转换逻辑，
+    消除逐 gate 复制的 ``_module_to_file_candidates`` 函数克隆。
+
+    Args:
+        module_path: 点分模块路径（如 ``zephyr.gov_enforcement.foo``）。
+
+    Returns:
+        候选相对路径列表（按优先级排序）。
+    """
+    parts = module_path.split(".")
+    base = "/".join(parts)
+    return [
+        f"src/{base}.py",
+        f"src/{base}/__init__.py",
+        f"{base}.py",
+        f"{base}/__init__.py",
+    ]
+
+
+def _matches_any_prefix(s: str, prefixes: tuple[str, ...]) -> bool:
+    """判断字符串是否以给定前缀元组中任一项开头。
+
+    统一 ``_is_project_module`` / ``_is_abstract_code`` 等前缀判断单行函数，
+    消除结构同构克隆（``any(x.startswith(p) for p in _PREFIXES)`` 3+ 副本）。
+
+    Args:
+        s: 待检查字符串。
+        prefixes: 前缀元组。
+
+    Returns:
+        True 如果 ``s`` 以 ``prefixes`` 中任一项开头。
+    """
+    return any(s.startswith(p) for p in prefixes)

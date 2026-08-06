@@ -9,7 +9,11 @@
 # [TESTS] tests/clone_guard/test_orchestrator.py
 # [A_test] module_id: MOD-CLONE_GUARD | layer=test | stability=volatile | safety=L | ai_modifiable
 # [TTL] permanent
-"""CloneGuardOrchestrator 单元测试——mock EchoGuardAdapter，验证编排逻辑。"""
+"""CloneGuardOrchestrator 单元测试——mock 适配器，验证编排逻辑。
+
+Phase A: 单引擎（Echo-Guard）文件筛选/降级/严重性判定。
+Phase B: 多引擎并发（asyncio.gather）+ 聚合 + 共识 + 部分降级。
+"""
 
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -151,3 +155,198 @@ class TestOrchestratorSeverityJudgment:
         with patch.object(orch._echo_guard, "detect", return_value=([finding], False)):
             result = orch.check(["src/new.py"])
         assert result.passed is False
+
+
+# ===========================================================================
+# Phase B：多引擎并发 + 聚合 + 共识 + 部分降级
+# ===========================================================================
+
+
+def _make_sg_finding(
+    severity: str = "review",
+    similarity: float = 1.0,
+    source_function: str = "calc",
+    existing_function: str = "compute",
+    source_lineno: int = 10,
+) -> Finding:
+    """构造测试用 ast-grep Finding（clone_type=rule，existing_file=规则文件）。"""
+    return Finding(
+        finding_id=f"SG-{source_function}-{source_lineno}",
+        severity=severity,
+        clone_type="rule",
+        similarity=similarity,
+        source_file="src/new.py",
+        source_function=source_function,
+        source_lineno=source_lineno,
+        existing_file="clone_guard/rules/no-bare-except.yml",
+        existing_function=existing_function,
+        existing_lineno=0,
+    )
+
+
+class TestOrchestratorMultiEngine:
+    """Phase B 多引擎并发调度测试。"""
+
+    def test_both_engines_invoked(self, tmp_path: Path):
+        """两个引擎都被调用（并发调度生效）。"""
+        orch = CloneGuardOrchestrator(tmp_path)
+        with patch.object(orch._echo_guard, "detect", return_value=([], False)) as m_echo, \
+             patch.object(orch._ast_grep, "detect", return_value=([], False)) as m_sg:
+            orch.check(["src/foo.py"])
+        m_echo.assert_called_once()
+        m_sg.assert_called_once()
+
+    def test_both_engines_same_dedup_key_merges_unanimous(self, tmp_path: Path):
+        """两引擎报相同去重键 → 合并为 1 个 unanimous finding，severity 就高。"""
+        orch = CloneGuardOrchestrator(tmp_path)
+        # echo_guard 报 review，ast_grep 报 extract——相同去重键
+        eg_finding = _make_finding(severity="review", similarity=0.8)
+        sg_finding = Finding(
+            finding_id="SG-1",
+            severity="extract",
+            clone_type="rule",
+            similarity=0.95,
+            source_file="src/new.py",
+            source_function="calc",
+            source_lineno=10,
+            existing_file="src/old.py",
+            existing_function="compute",
+            existing_lineno=20,
+        )
+        with patch.object(orch._echo_guard, "detect", return_value=([eg_finding], False)), \
+             patch.object(orch._ast_grep, "detect", return_value=([sg_finding], False)):
+            result = orch.check(["src/new.py"])
+        assert result.passed is False  # extract 就高 → 阻断
+        assert len(result.findings) == 1
+        f = result.findings[0]
+        assert f.consensus == "unanimous"
+        assert f.severity == "extract"  # 就高原则
+        assert f.similarity == 0.95  # 取最大
+        assert set(f.engines) == {"echo_guard", "ast_grep"}
+        assert result.consensus_summary == {"unanimous": 1}
+
+    def test_consensus_summary_mixed(self, tmp_path: Path):
+        """混合共识：f1 两引擎一致(unanimous) + f2 仅 ast_grep(majority)。"""
+        orch = CloneGuardOrchestrator(tmp_path)
+        # f1：两引擎报相同去重键
+        eg_f1 = _make_finding(severity="review", similarity=0.8)
+        sg_f1 = Finding(
+            finding_id="SG-f1",
+            severity="review",
+            clone_type="rule",
+            similarity=0.9,
+            source_file="src/new.py",
+            source_function="calc",
+            source_lineno=10,
+            existing_file="src/old.py",
+            existing_function="compute",
+            existing_lineno=20,
+        )
+        # f2：仅 ast_grep 报（不同去重键）——2 引擎 threshold=1, vote=1 → majority
+        sg_f2 = _make_sg_finding(
+            severity="review",
+            source_function="other_fn",
+            existing_function="no-bare-except",
+            source_lineno=50,
+        )
+        with patch.object(orch._echo_guard, "detect", return_value=([eg_f1], False)), \
+             patch.object(orch._ast_grep, "detect", return_value=([sg_f1, sg_f2], False)):
+            result = orch.check(["src/new.py"])
+        assert result.passed is True  # 全 review
+        assert len(result.findings) == 2
+        assert result.consensus_summary == {"unanimous": 1, "majority": 1}
+
+    def test_ast_grep_rule_finding_flows_through(self, tmp_path: Path):
+        """ast_grep 结构反模式 finding 流经聚合器（clone_type=rule 保留）。"""
+        orch = CloneGuardOrchestrator(tmp_path)
+        sg_finding = _make_sg_finding(
+            severity="review",
+            source_function="unknown",
+            existing_function="no-bare-except",
+            source_lineno=5,
+        )
+        with patch.object(orch._echo_guard, "detect", return_value=([], False)), \
+             patch.object(orch._ast_grep, "detect", return_value=([sg_finding], False)):
+            result = orch.check(["src/new.py"])
+        assert result.passed is True  # review 不阻断
+        assert len(result.findings) == 1
+        assert result.findings[0].clone_type == "rule"
+
+
+class TestOrchestratorPartialDegradation:
+    """Phase B 部分降级 + 全降级测试（守 blueprint §5.2）。"""
+
+    def test_partial_degradation_uses_active_engine(self, tmp_path: Path):
+        """ast_grep 降级、echo_guard 正常 → 用 echo_guard 结果，degraded=True。"""
+        orch = CloneGuardOrchestrator(tmp_path)
+        finding = _make_finding(severity="extract")
+        with patch.object(orch._echo_guard, "detect", return_value=([finding], False)), \
+             patch.object(orch._ast_grep, "detect", return_value=([], True)):
+            result = orch.check(["src/new.py"])
+        assert result.passed is False  # extract 阻断
+        assert result.degraded is True
+        assert result.degraded_engines == ["ast_grep"]
+        assert len(result.findings) == 1
+        # 单活跃引擎 → unanimous
+        assert result.findings[0].consensus == "unanimous"
+
+    def test_partial_degradation_reverse(self, tmp_path: Path):
+        """echo_guard 降级、ast_grep 正常 → 用 ast_grep 结果。"""
+        orch = CloneGuardOrchestrator(tmp_path)
+        sg_finding = _make_sg_finding(severity="extract")
+        with patch.object(orch._echo_guard, "detect", return_value=([], True)), \
+             patch.object(orch._ast_grep, "detect", return_value=([sg_finding], False)):
+            result = orch.check(["src/new.py"])
+        assert result.passed is False
+        assert result.degraded is True
+        assert result.degraded_engines == ["echo_guard"]
+
+    def test_engine_exception_normalized_to_degraded(self, tmp_path: Path):
+        """echo_guard 抛异常 → asyncio.gather 捕获归一为降级；ast_grep 正常。"""
+
+        def boom(*args, **kwargs):
+            raise RuntimeError("echo-guard boom")
+
+        orch = CloneGuardOrchestrator(tmp_path)
+        sg_finding = _make_sg_finding(severity="review")
+        with patch.object(orch._echo_guard, "detect", side_effect=boom), \
+             patch.object(orch._ast_grep, "detect", return_value=([sg_finding], False)):
+            result = orch.check(["src/new.py"])
+        assert result.passed is True  # review 不阻断
+        assert result.degraded is True
+        assert "echo_guard" in result.degraded_engines
+        assert len(result.findings) == 1
+
+    def test_total_degradation_fail_open(self, tmp_path: Path):
+        """两引擎全降级 + fail_closed=False → warn-only 放行。"""
+        cfg = CloneGuardConfig(fail_closed=False)
+        orch = CloneGuardOrchestrator(tmp_path, cfg)
+        with patch.object(orch._echo_guard, "detect", return_value=([], True)), \
+             patch.object(orch._ast_grep, "detect", return_value=([], True)):
+            result = orch.check(["src/foo.py"])
+        assert result.passed is True
+        assert result.degraded is True
+        assert set(result.degraded_engines) == {"echo_guard", "ast_grep"}
+        assert result.findings == []
+
+    def test_total_degradation_fail_closed(self, tmp_path: Path):
+        """两引擎全降级 + fail_closed=True → 铁律阻断。"""
+        cfg = CloneGuardConfig(fail_closed=True)
+        orch = CloneGuardOrchestrator(tmp_path, cfg)
+        with patch.object(orch._echo_guard, "detect", return_value=([], True)), \
+             patch.object(orch._ast_grep, "detect", return_value=([], True)):
+            result = orch.check(["src/foo.py"])
+        assert result.passed is False
+        assert result.degraded is True
+        assert set(result.degraded_engines) == {"echo_guard", "ast_grep"}
+
+    def test_no_py_files_skips_engines(self, tmp_path: Path):
+        """无 .py 文件 → 引擎不被调用。"""
+        orch = CloneGuardOrchestrator(tmp_path)
+        with patch.object(orch._echo_guard, "detect", return_value=([], False)) as m_echo, \
+             patch.object(orch._ast_grep, "detect", return_value=([], False)) as m_sg:
+            result = orch.check(["README.md"])
+        m_echo.assert_not_called()
+        m_sg.assert_not_called()
+        assert result.passed is True
+        assert result.degraded is False
