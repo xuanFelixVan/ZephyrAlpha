@@ -16,7 +16,7 @@ date: "2026-08-06"
 last_updated: "2026-08-06"
 priority: P0
 blueprint_level: module
-responsibility_domain:
+responsibility_domain: 
 ---
 
 # MOD-PA-007 RegimeMetaAllocator — Regime元分配器 蓝图
@@ -45,7 +45,7 @@ Regime 元分配器——A 模型（[design_memo_001](../../../02_enterprise_arc
 
 | 层 | 模块 | 职责 |
 |---|---|---|
-| regime 源 | regime 检测器 (MOD-???) | 输出 12 维灰度概率 P(r1)..P(r12) |
+| regime 源 | regime 检测器 (MOD-REGIME-001) | 输出 12 维灰度概率 P(r1)..P(r12) |
 | **meta 分配** | **RegimeMetaAllocator (本模块)** | **Shrinkage 节流 + PerformanceScore 后验分配 → budget 占比** |
 | 策略层 | StrategyBook (MOD-POS-020) | 收到 budget 数字，选股+粗仓位（不知道市场态） |
 
@@ -67,7 +67,7 @@ Regime 元分配器——A 模型（[design_memo_001](../../../02_enterprise_arc
 
 | 方向 | 内容 | 契约/事件 | 来源 | 就绪 |
 |------|------|-----------|------|:----:|
-| 核心 | RegimeProbabilities（12 维灰度概率，Σ=1） | CTR-SIG-012 | regime 检测器 (MOD-???) | ❌ 待建 |
+| 核心 | RegimeProbabilities（12 维灰度概率，Σ=1） | CTR-SIG-012 | regime 检测器 (MOD-REGIME-001, D_REGIME) | 🟡 骨架 |
 | 核心 | PerformanceScore[]（各策略 60 日滚动 Sharpe，[0.5,1.5]） | CTR-PA-007-P | StrategyBook 反馈 / 净值计算 | ❌ 待建 |
 | 核心 | RiskSignalInputs（13 参数市场风险输入） | CTR-SIG-013 | discussion_001 §5.3 数据源 | ❌ 待建 |
 | 配置 | Base[]（先验权重，等权 1/N 或人工先验） | config | 配置文件 | ✅ config |
@@ -282,7 +282,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 - Base 权重配置（config 驱动）
 
 ### 7.2 待建 (前置)
-- regime 检测器 (MOD-???, RegimeProbabilities + RiskSignal) — ❌ 待建，域未定（**本模块核心上游**）
+- regime 检测器 (MOD-REGIME-001, D_REGIME 域, RegimeProbabilities + RiskSignal) — 🟡 骨架已建（本模块核心上游）
 - StrategyBook (MOD-POS-020, PerformanceScore + StrategySampleDays 反馈) — ❌ 待建（blueprint 已完成）
 - BudgetChangeHandler (MOD-POS-022, BudgetChanged 事件消费) — ❌ 待建
 

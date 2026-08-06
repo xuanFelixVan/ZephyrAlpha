@@ -16,7 +16,7 @@ date: "2026-08-06"
 last_updated: "2026-08-06"
 priority: P0
 blueprint_level: module
-responsibility_domain:
+responsibility_domain: 
 ---
 
 # MOD-POS-020 StrategyBook — 独立策略账本 蓝图
