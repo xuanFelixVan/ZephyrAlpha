@@ -45,3 +45,7 @@ severity:
 #   schedule: "0 2 * * *"   # Phase B
 # compare:
 #   vendetect: false         # Phase C
+
+# ─── 聚合策略 (Phase B——多引擎结果合并) ───
+aggregation:
+  filter_minority: false     # True=过滤仅单引擎报告的 findings（consensus="single"），False=保留但标记

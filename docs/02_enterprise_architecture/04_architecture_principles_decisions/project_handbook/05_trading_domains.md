@@ -67,12 +67,12 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 |-------|------|----|-------|
 | `D_GOVERNANCE` | 生命周期管理 | L2_domain | 454 |
 | `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 423 |
-| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 216 |
+| `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 228 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 195 |
 | `D_DATA` | 数据接入层 | L1_foundation | 185 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 177 |
+| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 173 |
 | `D_SECURITY` | 对抗验证 | L1_foundation | 171 |
-| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 169 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 130 |
 | `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 125 |
 | `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 122 |
@@ -122,6 +122,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_AUDITTEST` | 审计测试套件 | L2_domain | 1 |
 | `D_GOV_REPAIR` | 治理修复 | L2_domain | 1 |
 | `D_KNOWLEDGE` | 知识管理 | L2_domain | 1 |
+| `D_REGIME` | 市场状态检测 | L2_domain | 1 |
 | `D_ARCHIVE_SCRIPTS` | Archived Scripts | L2_domain | 0 |
 | `D_ARCH_GUARD` | 架构守护脚本 | L2_domain | 0 |
 | `D_ARCH_SCRIPTS` | 架构治理脚本 | L2_domain | 0 |
@@ -138,7 +139,7 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_SIGLEGACY` | 信号遗留设计态 | L2_domain | 0 |
 | `D_STRUCT_SCRIPTS` | 结构治理脚本 | L2_domain | 0 |
 
-**合计 72 个域**
+**合计 73 个域**
 <!-- AUTO-END:domain_list -->
 
 ## 4. 外部权威源（逐域详解）

@@ -46,6 +46,9 @@ class CloneGuardConfig:
     # 降级策略
     fail_closed: bool = False  # echo-guard 全部超时/崩溃时是否阻断（False=warn-only 兜底）
 
+    # 聚合策略（Phase B——多引擎结果合并）
+    filter_minority: bool = False  # True=过滤仅单引擎报告的 findings，False=保留但标记 consensus="single"
+
     # 运行环境（L1 离线优先——HF_HUB_OFFLINE=1 强制 Tier 1 AST 哈希检测，跳过模型下载）
     env: dict[str, str] = field(default_factory=dict)
 
@@ -95,6 +98,7 @@ def load_config(repo_root: Path) -> CloneGuardConfig:
     # 安全提取字段——只认已知的 key，忽略未知 key
     pre_commit = raw.get("pre_commit", {}) or {}
     severity = raw.get("severity", {}) or {}
+    aggregation = raw.get("aggregation", {}) or {}
     env_raw = raw.get("env", {}) or {}
     env = {str(k): str(v) for k, v in env_raw.items()} if isinstance(env_raw, dict) else {}
 
@@ -103,6 +107,7 @@ def load_config(repo_root: Path) -> CloneGuardConfig:
         fail_on_severity=str(pre_commit.get("fail_on", severity.get("extract", "extract"))),
         echo_guard_enabled=bool(pre_commit.get("echo_guard_enabled", True)),
         fail_closed=bool(pre_commit.get("fail_closed", False)),
+        filter_minority=bool(aggregation.get("filter_minority", False)),
         env=env,
         ignore_paths=tuple(raw.get("ignore_paths", ()) or CloneGuardConfig().ignore_paths),
     )
