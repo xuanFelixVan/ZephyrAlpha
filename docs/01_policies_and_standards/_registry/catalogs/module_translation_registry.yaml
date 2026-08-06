@@ -41024,6 +41024,27 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "封装 ast-grep CLI 检测结构反模式（如 bare except），统一 detect() 接口，CLI 不可用时降级为空结果"
+- module_path: src/zephyr/backtest/implementations/shrinkage_engine.py
+  domain_id: D_BACKTEST
+  name_zh: "Shrinkage回测引擎"
+  name_en: "Shrinkage Backtest Engine"
+  desc_zh: "继承DefaultBacktestEngine，归一化后按Shrinkage因子缩放目标权重，剩余资金留现金实现regime风险节流"
+  desc_en: "Extends DefaultBacktestEngine, scales target weights by Shrinkage factor after normalization, leftover stays as cash for regime risk throttling"
+  plain_zh: "在回测引擎里加一个风险节流开关——信号归一化后乘Shrinkage因子收缩仓位，剩下的钱留作现金，用来验证regime风险节流到底有没有用"
+- module_path: src/zephyr/backtest/regime_validation/shrinkage_provider.py
+  domain_id: D_BACKTEST
+  name_zh: "Shrinkage因子供给适配层"
+  name_en: "Shrinkage Provider Adapter"
+  desc_zh: "Shrinkage因子多种供给方式：恒定/查表/波动率mock/RegimeDetector适配，含PIT as-of join"
+  desc_en: "Multiple Shrinkage factor providers: const/schedule/vol-mock/RegimeDetector adapter with PIT as-of join"
+  plain_zh: "给回测引擎喂Shrinkage因子的几种方式——要关掉就喂1.0，要回放regime就按日期查表，HMM没好先用波动率mock顶上"
+- module_path: src/zephyr/backtest/regime_validation/c1_comparator.py
+  domain_id: D_BACKTEST
+  name_zh: "C1 Shrinkage开/关对比器"
+  name_en: "C1 Shrinkage On/Off Comparator"
+  desc_zh: "Shrinkage开/关两组回测对比Sharpe/MaxDD/Calmar/Turnover，四项一票否决裁定regime是否部署"
+  desc_en: "Compares Shrinkage on/off backtest groups on Sharpe/MaxDD/Calmar/Turnover with one-vote veto on regime deployment"
+  plain_zh: "跑两遍回测对比Shrinkage开关效果——Sharpe不能掉太多、回撤要改善、换手不能爆，四项有一项不达标就一票否决，regime不部署"
 
 battle_map_steps:
 - step_id: BM-BUY-04

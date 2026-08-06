@@ -17,9 +17,9 @@
 #   - buy_flow: D_SELL_DECISION(1) + D_FRONTEND(1)
 #   - stock_selection: D_PF_CORE(3) + D_PF_ALLOC(2)
 
-policy_version: "1.0.1"
+policy_version: "1.1.0"
 policy_status: active
-last_updated: "2026-08-04"
+last_updated: "2026-08-06"
 decision_basis: "battle_map_positioning.md §3.1 L0-L6 分层架构 + §3.6 作战阶段与架构层对应关系"
 
 # ===== 裁定原则（2026-08-04，Owner 拍板，作为未来域归属裁定的标准）=====
@@ -225,3 +225,171 @@ validation:
   severity: "warn"  # 君子协定，先 warn 不阻断
   enforcement_type: "doc"  # 启用方式：君子协定告警，不硬阻断
   ai_pre_action_check: true  # AI 挂载新锚点前应查此规则
+
+# ===== 域分类（V1.1.0，2026-08-06 新增，治本：替代 _business_domain_whitelist 并集逻辑）=====
+# BM-INV-007 业务域白名单的真源：显式声明哪些域是"业务域"（承载决策，须挂作战地图），
+# 哪些域是"工具域"（基础设施/管道/支撑，铁律5不挂作战地图，天然排除 BM-INV-007 扫描）。
+#
+# 根因（原并集逻辑的缺陷）：
+#   _business_domain_whitelist() = 所有 flow_stage allowed 域的并集。
+#   但某些 flow_stage 的 allowed 含工具域（如 D_INFRA_RUNTIME/D_INTEGRATION 作 supplement 工具被用到），
+#   并集后工具域被误判为业务域 → 106 个基础设施模块被误报孤儿 → 100%AI 开发下引发治理振荡
+#   （AI 反复尝试给基础设施挂锚点 → 违反铁律5 → 删除 → 再误报 → 循环）。
+#
+# 治本：用显式分类替代并集推断。align_battle_map.py 优先读此段；此段缺失时回退并集（兼容）。
+# 裁定原则（同 §adjudication_principles.core）：域归属看"承载什么决策"，不看"被谁调用"。
+#   - business_domains：承载交易/研究/风控决策的域 → 必须有作战锚点（BM-INV-007 扫描）
+#   - tool_domains：基础设施/管道/协议/治理/前端 → 铁律5不挂作战地图，天然排除
+domain_classification:
+  business_domains:
+    # 承载交易决策的域——必须至少有一个 battle_map 锚点指向（BM-INV-007 扫描对象）
+    - D_FACTOR              # 因子计算
+    - D_ASHARE_SIGNAL       # A股特色信号
+    - D_FUNDAMENTAL_SIGNAL  # 基本面信号
+    - D_SIGNAL              # 通用信号
+    - D_INTELLIGENCE        # 上下文管理/智能分析
+    - D_KNOWLEDGE           # 知识图谱
+    - D_MKT_DATA            # 行情数据
+    - D_DATA                # 数据接入
+    - D_ML_SERVE            # ML 推理
+    - D_ML_TRAIN            # ML 训练
+    - D_ALT_DATA            # 另类数据
+    - D_CROSS_ASSET         # 跨资产
+    - D_SIGQC               # 信号质量控制
+    - D_PF_CORE             # 组合核心
+    - D_PF_ALLOC            # 组合分配
+    - D_TRADING             # 交易运营
+    - D_RISK                # 风控
+    - D_ORCHESTRATOR        # 决策编排器
+    - D_COMPLIANCE          # 合规
+    - D_SELL_DECISION       # 卖出决策
+    - D_POSITION            # 仓位管理
+    - D_EX_CORE             # 执行核心
+    - D_EX_SOR              # 执行路由
+    - D_REPORTING           # 报告
+    - D_BACKTEST            # 回测
+    - D_SIMULATION          # 仿真
+    - D_RESEARCH            # 研究基础设施
+    - D_DATA_ENG            # 数据工程
+    - D_DATA_GOV            # 数据治理
+    - D_DATA_SEC            # 数据安全与契约
+    - D_FEEDBACK_LOOP       # 反馈循环引擎
+    - D_FBL_DETECTORS       # 反馈检测器
+    - D_FBL_DIAGNOSERS      # 反馈诊断器
+    - D_FBL_VERIFICATION    # 反馈验证
+    - D_OPS                 # 反馈循环运营
+    - D_EXEC_SIM            # 执行仿真
+    - D_DIGITAL_TWIN        # 数字孪生
+    - D_REGIME              # 体制识别（2026-08-06 补入：选股决策输入，解决 MOD-REGIME-001 域漂移）
+
+  tool_domains:
+    # 基础设施/管道/支撑——铁律5不挂作战地图，BM-INV-007 天然排除
+    - D_INFRA_RUNTIME       # 运行时基础设施（被业务环节调用，不承载决策）
+    - D_INTEGRATION         # 管线路由/MCP协议层（管道就是管道，调用量不改变域归属）
+    - D_SHARED              # 共享服务
+    - D_SECURITY            # 安全基线（风控管控阶段作为 supplement 调用，不承载交易决策）
+    - D_GOV_DOCS            # 治理文档
+    - D_GOV_RULE            # 治理规则
+    - D_GOV_SCRIPTS         # 治理脚本
+    - D_GOVERNANCE          # 治理总域
+    - D_FRONTEND            # 前端UI
+
+  review_frequency: "quarterly"  # 域分类每季度复审（新域加入/旧域退役时更新）
+
+# ===== 已确认孤儿（V1.1.0，2026-08-06 新增，治本：补齐二元不变量的第三态）=====
+# 原不变量体系是二元逻辑（挂了/没挂），但现实需要三元逻辑：
+#   1. violations（硬违规，须修复）—— 不在此清单的孤儿
+#   2. acknowledged（已确认合理，定期复审）—— 在此清单的孤儿
+#   3. planned（待实现，promote 路径明确）—— build_status=planned 的孤儿
+#
+# 裁定原则：acknowledged ≠ ignored，是"已知且合理"的显式登记，带 review_frequency 到期强制复审。
+# 100% AI 开发适配：AI 看到三档分类后，不再对 acknowledged 项尝试"修复"（消除治理振荡）。
+# 检测器：align_battle_map.py 读取此段，从 BM-INV-001/007 违规列表排除 acknowledged 项。
+acknowledged_orphans:
+  # 模块侧：业务域中"计划未实现"的模块（工具域模块由 domain_classification.tool_domains 自动排除，无需逐个登记）
+  modules:
+    - blueprint_id: MOD-REGIME-001
+      domain: D_REGIME
+      reason: "体制识别器，planned 待实现；D_REGIME 已补入 business_domains，实现后挂 stock_selection 环节"
+      review_frequency: "monthly"
+      promotion_criteria: "build_status planned→stable 后，挂 BM-SEL 对应环节并移出此清单"
+
+    - blueprint_id: MOD-PA-007
+      domain: D_PF_ALLOC
+      reason: "体制元分配器，planned 待实现；组合分配属仓位阶段，实现后挂 position_management"
+      review_frequency: "monthly"
+      promotion_criteria: "build_status planned→stable 后，挂 BM-POS 环节并移出此清单"
+
+    - blueprint_id: MOD-POS-020
+      domain: D_POSITION
+      reason: "策略账本，planned 待实现；仓位管理核心，实现后挂 position_management"
+      review_frequency: "monthly"
+      promotion_criteria: "build_status planned→stable 后，挂 BM-POS 环节并移出此清单"
+
+    - blueprint_id: MOD-POS-021
+      domain: D_POSITION
+      reason: "硬风险聚合器，planned 待实现；仓位管理核心，实现后挂 position_management"
+      review_frequency: "monthly"
+      promotion_criteria: "build_status planned→stable 后，挂 BM-POS 环节并移出此清单"
+
+    - blueprint_id: MOD-POS-022
+      domain: D_POSITION
+      reason: "预算变更处理器，planned 待实现；仓位管理核心，实现后挂 position_management"
+      review_frequency: "monthly"
+      promotion_criteria: "build_status planned→stable 后，挂 BM-POS 环节并移出此清单"
+
+    - blueprint_id: MOD-INF-011
+      domain: D_KNOWLEDGE
+      reason: "向量记忆蓝图，planned 待实现；知识图谱域，实现后挂 research_incubation 或 stock_selection 知识增强环节"
+      review_frequency: "monthly"
+      promotion_criteria: "build_status planned→stable 后，挂 BM-RES/BM-SEL 环节并移出此清单"
+
+  # 环节侧：CAND-HARVEST 锚点清除后的"计划中未实现"占位（31个无锚点环节）
+  steps:
+    # 高风险组（28个）：top-level（无父，15个）+ chain orphan（父也是孤儿，13个）
+    # 这些环节代表未来功能占位，不应删除也不应强挂不匹配模块
+    - risk_level: high
+      step_ids:
+        # top-level orphans（depth=0，无父环节）—— 15个
+        - BM-BUY-06       # buy_flow: 外部指令盯盘
+        - BM-MT-02        # model_training: 实验追踪与自动晋升
+        - BM-MT-03        # model_training: AutoML与超参优化
+        - BM-MT-04        # model_training: 因子发现与因果发现
+        - BM-MT-05        # model_training: 漂移检测与自适应重训练
+        - BM-SEL-20       # position_management: 多策略交叉投票
+        - BM-RES-03       # research_incubation: 假设管理与研究发现沉淀
+        - BM-RES-04       # research_incubation: 研究工作流编排
+        - BM-RES-05       # research_incubation: Notebook与协作
+        - BM-RES-08       # research_incubation: 知识清洗与结构化
+        - BM-RES-09       # research_incubation: 知识分类与策略提取
+        - BM-RES-10       # research_incubation: 模块映射与工厂匹配
+        - BM-RES-11       # research_incubation: 多模态知识采集
+        - BM-RC-12        # risk_control: 极端事件与黑天鹅
+        - BM-SIM-01       # simulation_validation: 市场仿真器
+        # chain orphans（父环节也无锚点）—— 13个
+        - BM-MT-05-A      # parent=BM-MT-05(孤儿): 持续学习防遗忘
+        - BM-RES-03-A     # parent=BM-RES-03(孤儿): 假设生命周期管理
+        - BM-RES-03-B     # parent=BM-RES-03(孤儿): 研究发现知识库
+        - BM-RES-03-C     # parent=BM-RES-03(孤儿): 研究目录与搜索引擎
+        - BM-RES-04-A     # parent=BM-RES-04(孤儿): DAG编排与任务调度
+        - BM-RES-05-A     # parent=BM-RES-05(孤儿): Notebook集成与一键转生产
+        - BM-RES-05-B     # parent=BM-RES-05(孤儿): 研究协作中心
+        - BM-RES-05-C     # parent=BM-RES-05(孤儿): 研究信息隔离墙
+        - BM-RES-08-A     # parent=BM-RES-08(孤儿): 知识清洗流水线
+        - BM-RES-09-A     # parent=BM-RES-09(孤儿): 知识类型分类体系
+        - BM-RES-10-A     # parent=BM-RES-10(孤儿): 模块工厂架构
+        - BM-RC-12-B      # parent=BM-RC-12(孤儿): 跨市场传导与传染模型
+        - BM-RC-12-C      # parent=BM-RC-12(孤儿): 流动性危机模拟
+      reason: "CAND-HARVEST 锚点清除后无 depgraph 模块可补挂，属计划中未实现"
+      review_frequency: "quarterly"
+      promotion_criteria: "对应 depgraph 模块 build_status planned→stable 后，补挂锚点并移出此清单"
+
+    # 低风险组（3个）：父环节有锚点，子环节通过父覆盖
+    - risk_level: low
+      step_ids:
+        - BM-RES-06-A     # parent=BM-RES-06(有锚点): LLM研究助手
+        - BM-RES-06-B     # parent=BM-RES-06(有锚点): 论文追踪
+        - BM-RES-07-A     # parent=BM-RES-07(有锚点): 策略进化与因子挖掘
+      reason: "子环节无锚点但父环节有锚点，决策通过父环节承载（子环节是细化分解）"
+      review_frequency: "quarterly"
+      promotion_criteria: "子环节获得独立 depgraph 模块后补挂锚点并移出；或父环节锚点移除时升级为 high risk"
