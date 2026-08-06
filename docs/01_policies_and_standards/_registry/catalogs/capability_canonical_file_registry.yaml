@@ -5734,8 +5734,31 @@ capabilities:
       使用时自动下载，不经本脚本。canonical = scripts/ops/download_models.py
       （scripts/ 下，需 canonical_override）。CLI：--list 看状态 / --verify 验完整性
       / --dry-run 预览 / --force 重下 / --model <name> 单模型。新 AI 想做"下载模型
-      / 获取 embedding 模型 / 补齐模型文件"前，CapabilityLookup 会反查到本脚本，
+      / 获取 embedding 模型 / 补齐模型文件"前，CapabilityLookup 会反查到本脚本,
       提示"运行 download_models.py，勿另写下载逻辑"。
+
+  # --------------------------------------------------------------------------
+  - capability_id: precommit_incremental_discipline
+    canonical_override: docs/01_policies_and_standards/rules/trae_084_precommit_incremental_discipline.yaml
+    aliases:
+      - RULE-PRECOMMIT-INCREMENTAL
+      - precommit_incremental
+      - incremental_gate
+      - audit_separation
+      - staged_files_only
+      - gate_naming_incremental
+      - gate_frontmatter_incremental
+      - check_new_naming
+      - display_dichotomy
+    description: >-
+      pre-commit hook 增量守门纪律铁律（trae_084，#ARCH-PRECOMMIT-INCREMENTAL）。
+      约束 pre-commit hook 的增量/审计职责分离：commit 阶段只拦 staged 新增违规
+      （增量守门），全仓扫描移 stages:[manual]（全仓审计），历史违规归档技术债走
+      CI/manual 清零。5 条铁律：增量守门/审计分离/历史违规归档/显示二元化/双路径一致。
+      落地实例：GATE-NAMING（--check-new 增量）+ GATE-NAMING-AUDIT（全量 manual）；
+      GATE-FRONTMATTER（--ci 增量）+ GATE-FRONTMATTER-AUDIT（全量 manual）。配套代码：
+      check_naming_convention.py main() 显示二元化（actual_blocking vs warn_only_count）。
+      新 AI 设计 pre-commit hook 前MUST反查本规则，禁止 commit 阶段全量扫描阻断日常 commit。
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
@@ -8157,6 +8180,20 @@ creation_tokens:
     token: "auto-clone-guard-mcp-server-20260806"
     created_by: "session-clone-guard-phase-a"
     capability: "clone_guard_mcp_server"
+  # --- CloneGuard Phase B 源文件（2026-08-06，#ARCH-FORCE-MERGE-DEDUP-001 多引擎并发+聚合）---
+  - file: "src/zephyr/clone_guard/aggregator.py"
+    token: "auto-clone-guard-aggregator-20260806"
+    created_by: "session-clone-guard-phase-b"
+    capability: "clone_guard_aggregator"
+  - file: "src/zephyr/clone_guard/engines/ast_grep_adapter.py"
+    token: "auto-clone-guard-ast-grep-adapter-20260806"
+    created_by: "session-clone-guard-phase-b"
+    capability: "clone_guard_ast_grep_adapter"
+  # --- oneoff 审计基线生成器（#ARCH-PRECOMMIT-INCREMENTAL Task 6，2026-08-06）---
+  - file: "scripts/governance/audit_precommit_incremental_baseline.py"
+    token: "auto-precommit-incremental-baseline-20260806"
+    created_by: "precommit-incremental-task6"
+    capability: "precommit_incremental_discipline"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
