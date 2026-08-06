@@ -312,8 +312,8 @@ def _resolve_path_object(
 
     返回 None 表示无法识别（fail-open，不提取该目录）。
     """
-    if _depth > 2:
-        return None  # 防止变量链无限递归
+    if _depth > 3:
+        return None  # 防止变量链无限递归（允许 3 层变量链，覆盖 _VAR = REPO_ROOT; X = _VAR / "src" 同型）
     if _is_path_file_resolve(node):
         return os.path.dirname(file_abs)
     if _is_path_file_bare(node):
@@ -461,11 +461,11 @@ def _resolve_path_expr(
     - ``X / "subdir"`` → 路径拼接（BinOp Div，覆盖 str(Path(...).parent / "governance")
       等模式，治本 #ARCH-IMPORT-INTEGRITY-SYSPATH-001 BinOp 除法）
     - ``X.parent.parent`` → 嵌套 .parent 递归求值（每层取上一级目录）
-    - 变量名 → 从 var_assigns 回溯求值（限 _depth ≤ 2 防无限递归）
+    - 变量名 → 从 var_assigns 回溯求值（限 _depth ≤ 3 防无限递归）
 
     fail-open：无法识别的表达式返回 None（不提取该目录，不阻断 commit）。
     """
-    if _depth > 2:
+    if _depth > 3:
         return None  # 防止变量链无限递归（与 _resolve_path_object 对齐）
 
     # 字符串字面量
@@ -564,7 +564,41 @@ def _get_sys_path_arg(node: ast.Call) -> ast.AST | None:
     return node.args[0]
 
 
-def _extract_sys_path_dirs(tree: ast.AST, py_file: str) -> list[str]:
+# 跨文件 import 的仓库根常量模块（SSoT 真源 zephyr.shared.io.paths.REPO_ROOT = find_repo_root()，
+# 函数调用无法静态求值；_shared.constants 从 zephyr.shared.io.paths re-export）。
+# 门禁识别后映射为 project_root（仓库根），使 str(REPO_ROOT / "src") 等可解析。
+_REPO_ROOT_IMPORT_MODULES: tuple[str, ...] = (
+    "_shared.constants",
+    "zephyr.shared.io.paths",
+)
+_REPO_ROOT_IMPORT_NAMES: tuple[str, ...] = ("REPO_ROOT", "PROJECT_ROOT", "MAIN_REPO_ROOT")
+
+
+def _extract_repo_root_while_var(test: ast.AST) -> str | None:
+    """从 while 循环条件提取仓库根变量名（识别向上找 ``.git`` 模式）。
+
+    匹配 ``while not (X / ".git").exists() and X != X.parent:`` 中的 X，
+    该循环语义 = 向上查找含 ``.git`` 的祖先目录 = 仓库根 = project_root。
+    """
+    for node in ast.walk(test):
+        if not (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr in ("exists", "is_dir")
+            and isinstance(node.func.value, ast.BinOp)
+            and isinstance(node.func.value.op, ast.Div)
+            and isinstance(node.func.value.right, ast.Constant)
+            and node.func.value.right.value == ".git"
+            and isinstance(node.func.value.left, ast.Name)
+        ):
+            continue
+        return node.func.value.left.id
+    return None
+
+
+def _extract_sys_path_dirs(
+    tree: ast.AST, py_file: str, project_root: str | None = None
+) -> list[str]:
     """从 AST 中提取 ``sys.path.insert`` / ``sys.path.append`` 注入的目录路径。
 
     识别模式::
@@ -597,6 +631,30 @@ def _extract_sys_path_dirs(tree: ast.AST, py_file: str) -> list[str]:
             for target in node.targets:
                 if isinstance(target, ast.Name):
                     var_assigns[target.id] = node.value
+
+    # 识别跨文件 import 的仓库根常量（REPO_ROOT 等），映射为 project_root。
+    # 根因：REPO_ROOT 真源是 find_repo_root() 函数调用，无法静态求值；但语义=仓库根=project_root。
+    if project_root:
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ImportFrom):
+                continue
+            if node.module not in _REPO_ROOT_IMPORT_MODULES:
+                continue
+            for alias in node.names:
+                if alias.name in _REPO_ROOT_IMPORT_NAMES:
+                    local_name = alias.asname or alias.name
+                    var_assigns[local_name] = ast.Constant(value=project_root)
+
+    # 识别 while 循环向上找 .git 的仓库根模式
+    # （_VAR = Path(__file__).resolve(); while not (_VAR / ".git").exists() ...: _VAR = _VAR.parent）
+    # 语义=project_root，覆盖 migrate_sqlite_to_pg / repair 等同型模式
+    if project_root:
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.While):
+                continue
+            root_var = _extract_repo_root_while_var(node.test)
+            if root_var:
+                var_assigns[root_var] = ast.Constant(value=project_root)
 
     file_abs = os.path.abspath(py_file)
     dirs: list[str] = []
@@ -744,7 +802,9 @@ def scan_content_for_dangling_imports(
     noqa_lines = _extract_noqa_lines(content, _NOQA_PATTERN)
     # #ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本：提取 sys.path 注入目录，
     # 使 from _shared / from _common 等动态加载模块可被解析（320+ 文件免疫）
-    sys_path_dirs = _extract_sys_path_dirs(tree, py_file)
+    sys_path_dirs = _extract_sys_path_dirs(
+        tree, py_file, getattr(gateway, "project_root", None)
+    )
     violations: list[str] = []
     for lineno, module_path, _is_from in imports:
         if lineno in noqa_lines:
