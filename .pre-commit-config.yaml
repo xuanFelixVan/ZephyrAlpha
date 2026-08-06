@@ -962,6 +962,28 @@ repos:
         files: "^src/zephyr/.*\\.py$"
         description: "5.145 维度防复发——检测函数签名裸 Any 滥用（ANY-1 参数 / ANY-2 返回值）。--staged 变更检测：pre-commit 只扫 staged .py（3.8s→亚秒），CI 全量用 --ci 无 --staged。Phase 3 commit 阻断（存量已清零 e494c72623），`# noqa: any-abuse` 行级豁免合理 Any"
 
+      # ── GATE-ALGO-QUALITY: 算法糊弄自动检测（6类pattern，代码AST+blueprint正则双层，2026-08-06）──
+      # 病根：2026-08-06 全面审查发现 15 处"糊弄"算法（换手率代理筹码分布/定性词无量化/
+      #   伪精确阈值角度>45°/死数据北向资金停发/名词堆砌PS-SC-AR-ST 无识别逻辑/逻辑错位
+      #   无虹吸=主线）。虽已全修正，100% AI 开发场景下无自动化机制检测算法语义糊弄——不可持续。
+      # 治本：填补 60+ 现有 gate 的算法语义空白（gate-triple-align 管结构/VR-001~011 管字段格式，
+      #   无一条管"算法语义"）。代码层 AST 为主（函数名vs实现体、if not X: score+=N、import 死数据），
+      #   blueprint 正则为辅（§3-5 算法章节 X→N分模式）。
+      # 6类pattern：P1代理替代/P2定性词无量化/P3伪精确/P4死数据/P5名词堆砌/P6逻辑错位。
+      # 模式：--warn-only 观察期（全仓扫描 0 违规，30 天零新增后转 --ci 硬阻断）。
+      # 真源：scripts/governance/d5_architecture/checkers/check_algo_quality.py
+      # 验证：tests/governance/test_algo_quality.py（53 项，15 处阳性全检出+修正后前沿算法阴性无误报）
+      # 登记：#ARCH-067
+      - id: gate-algo-quality
+        name: "GATE-ALGO-QUALITY: 算法糊弄检测（代码AST+blueprint 双层，6类pattern）"
+        entry: python scripts/governance/d5_architecture/checkers/check_algo_quality.py
+        args: ["--warn-only"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^(src/zephyr/.*\\.py|docs/03_modules/.*blueprint\\.md)$"
+        description: "检测算法糊弄6类pattern（代理/定性词/伪精确/死数据/名词堆砌/逻辑错位）——代码AST为主，blueprint正则为辅。--warn-only 观察期，存量清零后转 --ci"
+
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage
   # 格式: type(scope): description — type ∈ {feat,fix,docs,style,refactor,perf,test,chore,ci,build,revert}
