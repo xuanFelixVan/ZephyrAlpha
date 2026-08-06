@@ -121,11 +121,14 @@ SQL_SELECT_DEPGRAPH_DOMAIN_MAP = (
     "SELECT blueprint_id, path, domain_id FROM nodes WHERE domain_id IS NOT NULL AND domain_id <> ''"
 )
 SQL_SELECT_BUSINESS_MODULES = """
-SELECT blueprint_id, path, node_name, domain_id, build_status
+SELECT blueprint_id, path, node_name, domain_id, build_status, node_type
 FROM nodes
 WHERE domain_id = ANY(%s)
   AND (blueprint_id IS NOT NULL AND blueprint_id <> ''
        OR path IS NOT NULL AND path <> '')
+  -- 只扫可执行业务模块（node_type='module'），排除 test/script/config/blueprint 等非业务节点
+  -- （2026-08-06 治本：原 SQL 未过滤 node_type，test/config 节点被误报为孤儿模块）
+  AND node_type = 'module'
   -- 排除 docs/03_modules/ 下的 blueprint.md 设计文档节点（误报治本，2026-08-04）：
   -- 这些 .md 是模块的"设计蓝图文档"，非可执行业务模块；项目约定它们登记为
   -- node_type=module（与 30+ 其他 blueprint.md 一致），但实际代码模块是 src/ 下的
@@ -179,8 +182,11 @@ class BattleMapAlignmentReport:
     dangling_edges: list[dict] = field(default_factory=list)  # 悬空边
     domain_drifts: list[dict] = field(default_factory=list)  # BM-INV-004 域漂移
     parent_child_issues: list[dict] = field(default_factory=list)  # BM-INV-006 父子嵌套
-    orphan_modules: list[dict] = field(default_factory=list)  # BM-INV-007 孤儿模块
+    orphan_modules: list[dict] = field(default_factory=list)  # BM-INV-007 孤儿模块（违规）
     business_module_count: int = 0  # 业务域 depgraph 模块总数（BM-INV-007 扫描范围）
+    # V1.1.0 三档分类（治本：补齐二元不变量第三态，消除 100%AI 开发下的治理振荡）
+    acknowledged_orphan_steps: list[dict] = field(default_factory=list)  # BM-INV-001 已确认合理孤儿环节
+    acknowledged_orphan_modules: list[dict] = field(default_factory=list)  # BM-INV-007 已确认合理孤儿模块
     # 降级告警（目标图源不可用时记录，非对齐问题）
     source_unavailable: list[str] = field(default_factory=list)
     # 裁定原则核心文本（单向派生自 battle_map_domain_policy.yaml §adjudication_principles.core）
@@ -200,15 +206,20 @@ class BattleMapAlignmentReport:
             f"anchors={self.anchor_count} / edges={self.edge_count} / "
             f"叙事真源={self.narrative_count}"
         )
-        lines.append(f"- 业务域模块: {self.business_module_count}（BM-INV-007 扫描范围，业务域白名单内 depgraph 节点）")
-        lines.append(f"- 问题总数: {self.issues_total}")
-        lines.append(f"  - 孤儿环节（BM-INV-001，无锚点=悬空决策）: {len(self.orphan_steps)}")
+        lines.append(f"- 业务域模块: {self.business_module_count}（BM-INV-007 扫描范围，domain_classification.business_domains 内 node_type=module 的 depgraph 节点）")
+        lines.append(f"- 违规总数（须修复）: {self.issues_total}")
+        lines.append(f"  - 孤儿环节（BM-INV-001，无锚点=悬空决策）: {len(self.orphan_steps)} 违规")
         lines.append(f"  - 幽灵锚点（BM-INV-002，target_id 找不到）: {len(self.ghost_anchors)}")
         lines.append(f"  - 缺失叙事（BM-INV-003，翻译真源无环节）: {len(self.missing_narratives)}")
         lines.append(f"  - 悬空边（edge 指向不存在环节）: {len(self.dangling_edges)}")
         lines.append(f"  - 域漂移（BM-INV-004，target domain 不在 flow_stage 允许列表）: {len(self.domain_drifts)}")
         lines.append(f"  - 父子嵌套问题（BM-INV-006，父不存在/跨阶段/成环/depth超限）: {len(self.parent_child_issues)}")
-        lines.append(f"  - 孤儿模块（BM-INV-007，业务域模块无作战锚点=造出来没用上）: {len(self.orphan_modules)}")
+        lines.append(f"  - 孤儿模块（BM-INV-007，业务域模块无作战锚点=造出来没用上）: {len(self.orphan_modules)} 违规")
+        # V1.1.0 三档分类：已确认合理孤儿（acknowledged）单独统计，不计入违规总数
+        if self.acknowledged_orphan_steps or self.acknowledged_orphan_modules:
+            lines.append(f"- 已确认合理孤儿（acknowledged，定期复审，不计违规）:")
+            lines.append(f"  - 孤儿环节（BM-INV-001 acknowledged）: {len(self.acknowledged_orphan_steps)}")
+            lines.append(f"  - 孤儿模块（BM-INV-007 acknowledged）: {len(self.acknowledged_orphan_modules)}")
         if self.source_unavailable:
             lines.append("")
             lines.append("> ⚠ 目标图源不可用（已跳过该图 BM-INV-002 校验）: " + ", ".join(self.source_unavailable))
@@ -222,12 +233,31 @@ class BattleMapAlignmentReport:
             "无锚点环节 = 没有模块承载 = AI 写决策时凭记忆推断 = 幻觉风险。"
         )
         lines.append("")
+        lines.append(f"### 1a. 违规孤儿环节（须修复）: {len(self.orphan_steps)}")
         if not self.orphan_steps:
-            lines.append("> ✅ 无孤儿环节，所有环节均已挂载锚点。")
+            lines.append("> ✅ 无违规孤儿环节。")
         else:
             lines.append("| step_id | 环节名 | 阶段 | 设计成熟度 |")
             lines.append("|---|---|---|---|")
             for s in self.orphan_steps:
+                lines.append(
+                    f"| {s['step_id']} | {s.get('step_name', '—')} | "
+                    f"{s.get('flow_stage', '—')} | {s.get('design_maturity', '—')} |"
+                )
+        lines.append("")
+        # V1.1.0 三档分类：已确认合理孤儿环节（acknowledged）单独列出，不计违规
+        lines.append(f"### 1b. 已确认合理孤儿环节（acknowledged，定期复审）: {len(self.acknowledged_orphan_steps)}")
+        if not self.acknowledged_orphan_steps:
+            lines.append("> 无 acknowledged 孤儿环节。")
+        else:
+            lines.append(
+                "> 以下环节经架构审查确认为"计划中未实现"或"父环节已覆盖"，"
+                "从违规列表排除。真源：battle_map_domain_policy.yaml §acknowledged_orphans.steps。"
+                "AI 不应对这些环节尝试"修复"（消除治理振荡）。"
+            )
+            lines.append("| step_id | 环节名 | 阶段 | 设计成熟度 |")
+            lines.append("|---|---|---|---|")
+            for s in self.acknowledged_orphan_steps:
                 lines.append(
                     f"| {s['step_id']} | {s.get('step_name', '—')} | "
                     f"{s.get('flow_stage', '—')} | {s.get('design_maturity', '—')} |"
@@ -343,20 +373,44 @@ class BattleMapAlignmentReport:
         lines.append("## 7. 孤儿模块（BM-INV-007：业务域模块无作战锚点 = 造出来没用上）")
         lines.append("")
         lines.append(
-            "> 君子协定：业务域（battle_map_domain_policy.yaml 所有 flow_stage 的 allowed 域并集）"
-            "内的 depgraph 模块，必须至少有一个 battle_map_anchors 指向它（target_graph=depgraph，"
-            "target_id 命中其 blueprint_id 或 path）。无任何锚点指向 = 没有作战使命 = "
-            "造出来没用上 = 幻觉/浪费风险。非业务域（D_GOVERNANCE/D_GOV_SCRIPTS/D_FRONTEND 等"
-            "基础设施/治理/工具）天然排除，不在此扫。"
+            "> 君子协定：业务域（battle_map_domain_policy.yaml §domain_classification.business_domains）"
+            "内的 depgraph 模块（node_type=module），必须至少有一个 battle_map_anchors 指向它"
+            "（target_graph=depgraph，target_id 命中其 blueprint_id 或 path）。"
+            "无任何锚点指向 = 没有作战使命 = 造出来没用上 = 幻觉/浪费风险。"
+            "工具域（D_INFRA_RUNTIME/D_INTEGRATION/D_SHARED/D_SECURITY 等基础设施/管道/支撑）"
+            "铁律5不挂作战地图，天然排除。V1.1.0 治本：用 domain_classification 显式分类替代并集推断。"
         )
         lines.append("")
+        lines.append(f"### 7a. 违规孤儿模块（须修复）: {len(self.orphan_modules)}")
         if not self.orphan_modules:
-            lines.append("> ✅ 无孤儿模块，所有业务域模块均已挂载到作战环节。")
+            lines.append("> ✅ 无违规孤儿模块，所有业务域模块均已挂载到作战环节。")
         else:
             lines.append("| blueprint_id | 名称 / Name | domain_id | build_status | path |")
             lines.append("|---|---|---|---|---|")
             for m in self.orphan_modules:
                 # 双语名称优先（翻译真源），无翻译时回退到 DB node_name，都无则 —
+                name_bi = m.get("name_bi") or ""
+                node_name = str(m.get("node_name") or "").strip()
+                display = name_bi or node_name or "—"
+                lines.append(
+                    f"| {m.get('blueprint_id', '—')} | {display} | "
+                    f"{m.get('domain_id', '—')} | {m.get('build_status', '—')} | "
+                    f"{m.get('path', '—')} |"
+                )
+        lines.append("")
+        # V1.1.0 三档分类：已确认合理孤儿模块（acknowledged，planned 待实现）单独列出
+        lines.append(f"### 7b. 已确认合理孤儿模块（acknowledged，planned 待实现）: {len(self.acknowledged_orphan_modules)}")
+        if not self.acknowledged_orphan_modules:
+            lines.append("> 无 acknowledged 孤儿模块。")
+        else:
+            lines.append(
+                "> 以下模块经架构审查确认为"planned 待实现"，从违规列表排除。"
+                "真源：battle_map_domain_policy.yaml §acknowledged_orphans.modules。"
+                "实现后（build_status planned→stable）补挂锚点并移出此清单。"
+            )
+            lines.append("| blueprint_id | 名称 / Name | domain_id | build_status | path |")
+            lines.append("|---|---|---|---|---|")
+            for m in self.acknowledged_orphan_modules:
                 name_bi = m.get("name_bi") or ""
                 node_name = str(m.get("node_name") or "").strip()
                 display = name_bi or node_name or "—"
@@ -388,12 +442,19 @@ class BattleMapAlignmentReport:
             "任一在允许列表即通过（跨域蓝图如 MOD-INF-002 含 80+ 子模块跨 8 domain）"
         )
         lines.append(
-            "- 孤儿模块：① 确认该模块是否该挂到某作战环节——若是，用 "
+            "- 孤儿模块（违规）：① 确认该模块是否该挂到某作战环节——若是，用 "
             "`apply_battle_map.py --add-anchor --target-graph depgraph --target-id <blueprint_id>` "
             "挂到对应 step；② 若确无作战使命（造出来用不上），走弃用流程——"
             "`apply_depgraph.py` 软删除（build_status→deprecated）+ 在 "
             "`candidate_module_registry.yaml` 记 rejected 条目（含否决理由，防未来误重设）；"
-            "③ build_status=planned 的孤儿 = 设计了却没想好挂哪，优先评审其作战归属再决定建/弃"
+            "③ 工具域模块（D_INFRA_RUNTIME/D_INTEGRATION/D_SHARED/D_SECURITY）不应挂作战地图"
+            "（铁律5），由 domain_classification.tool_domains 自动排除，无需处理"
+        )
+        lines.append(
+            "- acknowledged 孤儿（已确认合理，不计违规）：① 真源在 "
+            "`battle_map_domain_policy.yaml` §acknowledged_orphans；② 这些是"计划中未实现"或"
+            ""planned 待实现"的显式登记，AI 不应尝试"修复"（消除治理振荡）；③ 到 review_frequency "
+            "到期时强制复审，对应模块 build_status planned→stable 后补挂锚点并移出此清单"
         )
         lines.append("")
 
@@ -624,6 +685,70 @@ def _load_adjudication_principle() -> str:
         return ""
 
 
+def _load_domain_classification() -> tuple[set[str], set[str]]:
+    """加载 battle_map_domain_policy.yaml §domain_classification（V1.1.0 新增，治本）。
+
+    返回 (business_domains, tool_domains)。
+    - business_domains：承载交易/研究/风控决策的域 → BM-INV-007 扫描对象（必须有作战锚点）
+    - tool_domains：基础设施/管道/支撑 → 铁律5不挂作战地图，天然排除 BM-INV-007 扫描
+
+    治本背景：原 _business_domain_whitelist() 取所有 flow_stage allowed 域的并集，
+    但并集含工具域（D_INFRA_RUNTIME 等作 supplement 被用到），导致 106 个基础设施模块
+    被误报孤儿。此函数用 YAML 显式分类替代并集推断。
+
+    文件不存在/无此段时返回 (set(), set())，调用方回退到并集逻辑（向后兼容）。
+    真源：docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml
+    """
+    try:
+        import yaml  # type: ignore[import-untyped]
+
+        if not _DOMAIN_POLICY_YAML.exists():
+            return set(), set()
+        data = yaml.safe_load(_DOMAIN_POLICY_YAML.read_text(encoding="utf-8")) or {}
+        dc = data.get("domain_classification") or {}
+        business = {str(d) for d in dc.get("business_domains") or []}
+        tools = {str(d) for d in dc.get("tool_domains") or []}
+        return business, tools
+    except Exception:  # noqa: BLE001
+        return set(), set()
+
+
+def _load_acknowledged_orphans() -> tuple[set[str], set[str]]:
+    """加载 battle_map_domain_policy.yaml §acknowledged_orphans（V1.1.0 新增，治本）。
+
+    返回 (acknowledged_module_ids, acknowledged_step_ids)。
+    - acknowledged_module_ids：已确认合理的孤儿模块 blueprint_id 集合
+    - acknowledged_step_ids：已确认合理的孤儿环节 step_id 集合
+
+    治本背景：原不变量体系是二元逻辑（挂了/没挂），但现实需要三元逻辑
+    （violations / acknowledged / planned）。此函数补齐第三态——已确认合理孤儿
+    从 BM-INV-001/007 违规列表排除，带 review_frequency 到期强制复审。
+    100% AI 开发适配：AI 看到三档分类后不再对 acknowledged 项尝试"修复"（消除治理振荡）。
+
+    文件不存在/无此段时返回 (set(), set())（无 acknowledged，全部算违规，向后兼容）。
+    真源：docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml
+    """
+    try:
+        import yaml  # type: ignore[import-untyped]
+
+        if not _DOMAIN_POLICY_YAML.exists():
+            return set(), set()
+        data = yaml.safe_load(_DOMAIN_POLICY_YAML.read_text(encoding="utf-8")) or {}
+        ao = data.get("acknowledged_orphans") or {}
+        mod_ids = {
+            str(m.get("blueprint_id"))
+            for m in (ao.get("modules") or [])
+            if m.get("blueprint_id")
+        }
+        step_ids: set[str] = set()
+        for grp in ao.get("steps") or []:
+            for sid in grp.get("step_ids") or []:
+                step_ids.add(str(sid))
+        return mod_ids, step_ids
+    except Exception:  # noqa: BLE001
+        return set(), set()
+
+
 def _anchor_domain_map_depgraph() -> tuple[dict[str, set[str]], bool]:
     """采集 depgraph 节点的 domain_id（key=blueprint_id/path, value=set(domain_id)）。
 
@@ -785,10 +910,16 @@ def run_alignment(
         steps = reader.get_all_steps()
         anchors = reader.get_all_anchors()
         edges = reader.get_all_edges()
-        orphan_steps = reader.find_steps_without_anchors()
+        orphan_steps_raw = reader.find_steps_without_anchors()
     finally:
         reader.close()
     logger.info("数据加载完成：环节=%d 锚点=%d 流转边=%d", len(steps), len(anchors), len(edges))
+
+    # V1.1.0 三档分类（治本）：已确认合理孤儿环节从违规列表排除
+    # acknowledged ≠ ignored：是"已知且合理"的显式登记，带 review_frequency 到期复审
+    ack_module_ids, ack_step_ids = _load_acknowledged_orphans()
+    acknowledged_orphan_steps = [s for s in orphan_steps_raw if s["step_id"] in ack_step_ids]
+    orphan_steps = [s for s in orphan_steps_raw if s["step_id"] not in ack_step_ids]
 
     # BM-INV-002 幽灵锚点：按 target_graph 分组校验
     ghost_anchors: list[dict] = []
@@ -888,8 +1019,18 @@ def run_alignment(
 
     # BM-INV-007 孤儿模块：业务域 depgraph 节点无任何锚点指向
     orphan_modules: list[dict] = []
+    acknowledged_orphan_modules: list[dict] = []
     business_module_count = 0
-    whitelist = _business_domain_whitelist(policy)
+    # V1.1.0 治本：优先用 domain_classification.business_domains（显式分类），
+    # 替代 _business_domain_whitelist 并集逻辑（并集含工具域 D_INFRA_RUNTIME 等 →
+    # 106 个基础设施模块被误报孤儿 → 100%AI 开发下引发治理振荡）
+    business_domains, _tool_domains = _load_domain_classification()
+    if business_domains:
+        whitelist = business_domains
+    elif policy:
+        whitelist = _business_domain_whitelist(policy)  # 向后兼容：无 domain_classification 时回退并集
+    else:
+        whitelist = set()
     if not whitelist:
         # policy 不可用时 source_unavailable 已在域漂移块记录 domain_policy_yaml
         logger.warning("业务域白名单为空（policy 不可用），跳过 BM-INV-007 孤儿模块扫描")
@@ -914,7 +1055,11 @@ def run_alignment(
                     if not name_bi and pth:
                         name_bi = derive_name_from_path(pth)
                     m["name_bi"] = name_bi
-                    orphan_modules.append(m)
+                    # V1.1.0 三档分类：已确认合理孤儿模块从违规列表排除
+                    if bp in ack_module_ids:
+                        acknowledged_orphan_modules.append(m)
+                    else:
+                        orphan_modules.append(m)
 
     report = BattleMapAlignmentReport(
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -930,6 +1075,8 @@ def run_alignment(
         parent_child_issues=parent_child_issues,
         orphan_modules=orphan_modules,
         business_module_count=business_module_count,
+        acknowledged_orphan_steps=acknowledged_orphan_steps,
+        acknowledged_orphan_modules=acknowledged_orphan_modules,
         source_unavailable=source_unavailable,
         adjudication_principle=adjudication_principle,
         issues_total=(
@@ -951,7 +1098,7 @@ def run_alignment(
         )
         logger.info("作战地图对齐报告已写入 %s", output_path)
         logger.info(
-            "问题总数: %d (孤儿环节=%d, 幽灵锚点=%d, 缺失叙事=%d, 悬空边=%d, 域漂移=%d, 父子嵌套=%d, 孤儿模块=%d)",
+            "违规总数: %d (孤儿环节=%d, 幽灵锚点=%d, 缺失叙事=%d, 悬空边=%d, 域漂移=%d, 父子嵌套=%d, 孤儿模块=%d)",
             report.issues_total,
             len(orphan_steps),
             len(ghost_anchors),
@@ -962,10 +1109,18 @@ def run_alignment(
             len(orphan_modules),
         )
         logger.info(
-            "BM-INV-007 孤儿模块扫描: 业务域模块=%d, 已锚定=%d, 孤儿=%d",
-            business_module_count,
-            business_module_count - len(orphan_modules),
+            "三档分类: 违规孤儿环节=%d + acknowledged=%d | 违规孤儿模块=%d + acknowledged=%d",
+            len(orphan_steps),
+            len(acknowledged_orphan_steps),
             len(orphan_modules),
+            len(acknowledged_orphan_modules),
+        )
+        logger.info(
+            "BM-INV-007 孤儿模块扫描: 业务域模块=%d, 已锚定=%d, 违规孤儿=%d, acknowledged=%d",
+            business_module_count,
+            business_module_count - len(orphan_modules) - len(acknowledged_orphan_modules),
+            len(orphan_modules),
+            len(acknowledged_orphan_modules),
         )
         if source_unavailable:
             logger.warning("目标图源不可用（跳过校验）: %s", ", ".join(source_unavailable))
