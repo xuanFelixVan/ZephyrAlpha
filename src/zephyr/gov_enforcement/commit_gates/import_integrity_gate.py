@@ -537,6 +537,33 @@ def _resolve_path_expr(
     return _resolve_path_object(node, file_abs, var_assigns)
 
 
+def _get_sys_path_arg(node: ast.Call) -> ast.AST | None:
+    """如果是 sys.path.insert / sys.path.append 调用，返回路径参数 AST 节点。
+
+    - ``sys.path.insert(0, X)`` → X（args[1]）
+    - ``sys.path.append(X)`` → X（args[0]）
+
+    非 sys.path 调用或参数不足返回 None。
+    """
+    func = node.func
+    if not (
+        isinstance(func, ast.Attribute)
+        and isinstance(func.value, ast.Attribute)
+        and isinstance(func.value.value, ast.Name)
+        and func.value.value.id == "sys"
+        and func.value.attr == "path"
+        and func.attr in ("insert", "append")
+    ):
+        return None
+    if func.attr == "insert":
+        if len(node.args) < 2:
+            return None
+        return node.args[1]
+    if len(node.args) < 1:
+        return None
+    return node.args[0]
+
+
 def _extract_sys_path_dirs(tree: ast.AST, py_file: str) -> list[str]:
     """从 AST 中提取 ``sys.path.insert`` / ``sys.path.append`` 注入的目录路径。
 
@@ -563,7 +590,7 @@ def _extract_sys_path_dirs(tree: ast.AST, py_file: str) -> list[str]:
     Returns:
         注入目录的绝对路径列表（可能为空——无 sys.path 注入或无法求值）。
     """
-    # 构建变量名 → 赋值表达式映射（1 层深度回溯用）
+    # 构建变量名 → 赋值表达式映射（多层深度回溯用）
     var_assigns: dict[str, ast.AST] = {}
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign):
@@ -573,29 +600,45 @@ def _extract_sys_path_dirs(tree: ast.AST, py_file: str) -> list[str]:
 
     file_abs = os.path.abspath(py_file)
     dirs: list[str] = []
+    # 已处理的 sys.path.insert/append Call（避免 for 批量分支与直接分支重复提取）
+    handled_calls: set[int] = set()
+
+    # 1) for X in (<tuple>): sys.path.insert(0, X) 批量注入模式
+    #    scripts/governance/ 常见：for _p in (str(_REPO_ROOT), str(_SRC_DIR)): sys.path.insert(0, _p)
+    #    _p 是循环变量（不在 var_assigns），需展开 tuple 各元素分别求值
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.For):
+            continue
+        if not (
+            isinstance(node.target, ast.Name) and isinstance(node.iter, ast.Tuple)
+        ):
+            continue
+        target_id = node.target.id
+        for stmt in ast.walk(node):
+            if not isinstance(stmt, ast.Call):
+                continue
+            p_arg = _get_sys_path_arg(stmt)
+            if p_arg is None:
+                continue
+            if not (isinstance(p_arg, ast.Name) and p_arg.id == target_id):
+                continue
+            # 解析 tuple 每个元素
+            for elt in node.iter.elts:
+                resolved = _resolve_path_expr(elt, file_abs, var_assigns)
+                if resolved:
+                    dirs.append(resolved)
+            handled_calls.add(id(stmt))
+            break  # 一个 for 内的 insert 只处理一次
+
+    # 2) 直接 sys.path.insert(0, X) / sys.path.append(X) 模式
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
-        # 识别 sys.path.insert / sys.path.append
-        func = node.func
-        if not (
-            isinstance(func, ast.Attribute)
-            and isinstance(func.value, ast.Attribute)
-            and isinstance(func.value.value, ast.Name)
-            and func.value.value.id == "sys"
-            and func.value.attr == "path"
-            and func.attr in ("insert", "append")
-        ):
+        if id(node) in handled_calls:
             continue
-        # insert(0, X) → args[1]；append(X) → args[0]
-        if func.attr == "insert":
-            if len(node.args) < 2:
-                continue
-            path_arg = node.args[1]
-        else:
-            if len(node.args) < 1:
-                continue
-            path_arg = node.args[0]
+        path_arg = _get_sys_path_arg(node)
+        if path_arg is None:
+            continue
         resolved = _resolve_path_expr(path_arg, file_abs, var_assigns)
         if resolved:
             dirs.append(resolved)
