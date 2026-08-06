@@ -36,7 +36,9 @@ scope: 07_trading_decision_architecture
 
 ### 2.1 架构定义
 
-每个策略是一个独立 StrategyBook（自带选股+仓位+风控），firm 层只做"求和 + 硬上限裁剪 + regime 风险预算调整"，**没有统一优化器，没有跨策略投票**。
+每个策略是一个独立 StrategyBook（自带选股+**粗**仓位+风控），firm 层做"求和 + 硬上限裁剪 + **Kelly 精裁决** + regime 风险预算调整"，**没有统一优化器，没有跨策略投票**。
+
+> **分层裁定（2026-08-06，方案A）**：仓位决策分两层——StrategyBook 做"策略层粗仓位"（等权/risk parity，**不用 Kelly**），MOD-POS-001 做"组合层 Kelly 精裁决"。第一性原理：组合级约束（单票上限跨策略叠加）天然在 firm 层；Kelly 需密度预测不宜每策略重复；风险合规与 alpha 解耦防归因纠缠。开源印证：Morwane sleeve(alpha)+risk-parity-throttle(firm) 分层。详见各模块 blueprint（[MOD-POS-020](../../../03_modules/_domain_position/strategy_book/blueprint.md) / [MOD-POS-021](../../../03_modules/_domain_position/firm_risk_aggregator/blueprint.md) / [MOD-PA-007](../../../03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) / [MOD-POS-022](../../../03_modules/_domain_position/budget_change_handler/blueprint.md)）。
 
 ### 2.2 三个核心模块
 
