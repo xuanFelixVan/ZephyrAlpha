@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-06'
-total_scripts: 671
+generated_at: '2026-08-07'
+total_scripts: 678
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -34,6 +34,14 @@ scripts:
   path: check_naming_convention.py
   description: FILENAME_UPPERCASE_WHITELIST = [
   domain: check_naming_convention.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: clone_guard_audit.py
+  path: clone_guard_audit.py
+  description: 守 AGENTS.md 永久系统四要素：禁止时间触发（cron/Timer/sleep-loop）。
+  domain: audit
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -3966,6 +3974,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/oneoff/load_acquisition_decisions.py
+  path: governance/oneoff/load_acquisition_decisions.py
+  description: '数据流（裁定 2026-08-07，分层 SSoT）::'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/oneoff/register_candidate_acquisitions.py
+  path: governance/oneoff/register_candidate_acquisitions.py
+  description: 背景（裁定 2026-08-07）：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/repair/apply_verification_results.py
   path: governance/repair/apply_verification_results.py
   description: 1. 批量替换DRIFTED路径（12条已知路径迁移）
@@ -4782,6 +4806,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: tests/_diag_risk_firing.py
+  path: tests/_diag_risk_firing.py
+  description: import warnings
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: tests/_smoke_feature_builder.py
   path: tests/_smoke_feature_builder.py
   description: import time
@@ -4830,6 +4862,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: tests/dump_overlay_triggers.py
+  path: tests/dump_overlay_triggers.py
+  description: 复刻 RegimeFeatureBuilder.build_shrinkage_schedule 的 walk-forward 循环（enable_overlay=True），
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: tests/repro_c1.py
   path: tests/repro_c1.py
   description: 复用 dump 脚本的取数逻辑（确保数据一致），但用 c1_runner.run_c1_with_provider
@@ -4851,6 +4891,14 @@ scripts:
   description: 一票否决：C1 不通过 = regime 检测器不部署（回退静态等权）。
   domain: test
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/run_phase2_validation.py
+  path: tests/run_phase2_validation.py
+  description: 复用 C1 真实模式管线（取数+特征+walk-forward refit），自行执行 detect 收集
+  domain: test
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -4915,6 +4963,14 @@ scripts:
   description: '验证组件:'
   domain: test
   execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/validate_overlay_gated.py
+  path: tests/validate_overlay_gated.py
+  description: 基于 dump_overlay_triggers.py 的发现：overlay 退化 Sharpe 的元凶是 T1/S1 在非危机期
+  domain: test
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []

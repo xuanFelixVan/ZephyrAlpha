@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-REGIME-VAL-002 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] zephyr.regime.validation
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] zephyr.regime.core.regime_detector; zephyr.regime.regime_feature_builder

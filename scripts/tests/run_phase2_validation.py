@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-L05-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # [ARCH-REF] #discussion_003 #MOD-REGIME-VAL-002
