@@ -232,52 +232,64 @@ def _check_external_module_resolvable(module_path: str) -> bool:
 # 找到则判定可解析——一次升级解决所有 320+ 文件，新文件自动免疫。
 
 
-def _is_path_file_resolve(node: ast.AST) -> bool:
-    """检查 node 是否为 ``Path(__file__).resolve()`` 调用。
+def _is_path_func(func: ast.AST) -> bool:
+    """判断 func 是否为 Path 构造器调用形式。
 
-    AST 结构::
-
-        Call(
-            func=Attribute(
-                value=Call(func=Name('Path'), args=[Name('__file__')]),
-                attr='resolve'
-            ),
-            args=[]
-        )
+    支持：
+    - ``Path(...)``（``Name('Path')``）
+    - ``pathlib.Path(...)``（``Attribute(value=Name('pathlib'), attr='Path')``）
+    - ``__import__('pathlib').Path(...)``（``Attribute(value=Call(__import__), attr='Path')``）
     """
-    if not isinstance(node, ast.Call):
-        return False
-    func = node.func
-    if not (isinstance(func, ast.Attribute) and func.attr == "resolve"):
-        return False
-    inner = func.value
-    if not isinstance(inner, ast.Call):
-        return False
-    if not (isinstance(inner.func, ast.Name) and inner.func.id == "Path"):
-        return False
-    return (
-        len(inner.args) == 1
-        and isinstance(inner.args[0], ast.Name)
-        and inner.args[0].id == "__file__"
-    )
+    if isinstance(func, ast.Name) and func.id == "Path":
+        return True
+    if isinstance(func, ast.Attribute) and func.attr == "Path":
+        value = func.value
+        if isinstance(value, ast.Name) and value.id == "pathlib":
+            return True
+        if (
+            isinstance(value, ast.Call)
+            and isinstance(value.func, ast.Name)
+            and value.func.id == "__import__"
+            and value.args
+            and isinstance(value.args[0], ast.Constant)
+            and value.args[0].value == "pathlib"
+        ):
+            return True
+    return False
 
 
 def _is_path_file_bare(node: ast.AST) -> bool:
     """检查 node 是否为 ``Path(__file__)`` 调用（不含 ``.resolve()``）。
 
-    AST 结构::
-
-        Call(func=Name('Path'), args=[Name('__file__')])
+    支持三种 Path 形式：``Path`` / ``pathlib.Path`` / ``__import__('pathlib').Path``
+    （见 ``_is_path_func``）。
     """
     if not isinstance(node, ast.Call):
         return False
-    if not (isinstance(node.func, ast.Name) and node.func.id == "Path"):
+    if not _is_path_func(node.func):
         return False
     return (
         len(node.args) == 1
         and isinstance(node.args[0], ast.Name)
         and node.args[0].id == "__file__"
     )
+
+
+def _is_path_file_resolve(node: ast.AST) -> bool:
+    """检查 node 是否为 ``Path(__file__).resolve()`` 调用。
+
+    AST 结构::
+
+        Call(func=Attribute(attr='resolve', value=<Path(__file__)>), args=[])
+
+    支持三种 Path 形式（见 ``_is_path_func``）。
+    """
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    if not (isinstance(func, ast.Attribute) and func.attr == "resolve"):
+        return False
+    return _is_path_file_bare(func.value)
 
 
 def _extract_subscript_int(node: ast.Subscript) -> int | None:
@@ -564,6 +576,23 @@ def _get_sys_path_arg(node: ast.Call) -> ast.AST | None:
     return node.args[0]
 
 
+def _is_for_target_arg(p_arg: ast.AST, target_id: str) -> bool:
+    """判断 sys.path.insert 的路径参数是否指向 for 循环变量 target_id。
+
+    支持 ``_p``（Name）和 ``str(_p)``（Call str 包装）两种形式。
+    """
+    if isinstance(p_arg, ast.Name) and p_arg.id == target_id:
+        return True
+    return (
+        isinstance(p_arg, ast.Call)
+        and isinstance(p_arg.func, ast.Name)
+        and p_arg.func.id == "str"
+        and p_arg.args
+        and isinstance(p_arg.args[0], ast.Name)
+        and p_arg.args[0].id == target_id
+    )
+
+
 # 跨文件 import 的仓库根常量模块（SSoT 真源 zephyr.shared.io.paths.REPO_ROOT = find_repo_root()，
 # 函数调用无法静态求值；_shared.constants 从 zephyr.shared.io.paths re-export）。
 # 门禁识别后映射为 project_root（仓库根），使 str(REPO_ROOT / "src") 等可解析。
@@ -678,7 +707,7 @@ def _extract_sys_path_dirs(
             p_arg = _get_sys_path_arg(stmt)
             if p_arg is None:
                 continue
-            if not (isinstance(p_arg, ast.Name) and p_arg.id == target_id):
+            if not _is_for_target_arg(p_arg, target_id):
                 continue
             # 解析 tuple 每个元素
             for elt in node.iter.elts:
