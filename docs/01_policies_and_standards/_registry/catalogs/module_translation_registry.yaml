@@ -45928,3 +45928,38 @@ battle_map_cross_cutting:
     TSFM 零样本预测的低延迟推理）、四轨融合（BM-BUY-02 盘中信号融合时延预算）联动。
 
     '
+- module_path: src/zephyr/regime/core/regime_detector.py
+  domain_id: D_REGIME
+  name_zh: Regime检测器
+  name_en: Regime Detector
+  desc_zh: 12态灰度概率分布+Shrinkage风险节流信号产出，regime链源头（跨市场状态检测域）
+  desc_en: 12-state grayscale probability distribution + Shrinkage risk throttle signal producer
+  plain_zh: 判断市场处于12种状态中的哪种(牛市/熊市/震荡/危机/复苏等)，输出概率分布驱动风险节流
+- module_path: src/zephyr/position/core/strategy_book.py
+  domain_id: D_POSITION
+  name_zh: 策略账本
+  name_en: Strategy Book
+  desc_zh: 独立策略账本，自带选股+粗仓位(等权/risk parity)+风控，产出TargetPortfolio
+  desc_en: Independent strategy book with stock selection + rough sizing + risk control
+  plain_zh: 每个策略自己的独立账本，自己选股、自己定粗仓位、自己风控，最后吐出目标持仓清单
+- module_path: src/zephyr/position/core/firm_risk_aggregator.py
+  domain_id: D_POSITION
+  name_zh: firm层风险聚合器
+  name_en: Firm Risk Aggregator
+  desc_zh: firm层求和+单票/行业/总仓位硬上限裁剪+冲突净额处理，不做MVO
+  desc_en: Firm-level summing + hard cap clipping + conflict netting, no MVO
+  plain_zh: 把所有策略账本的目标持仓加起来，按硬上限(单票/行业/总仓位)裁剪，冲突标的按净额处理，不做协方差优化
+- module_path: src/zephyr/pf_alloc/core/regime_meta_allocator.py
+  domain_id: D_PF_ALLOC
+  name_zh: regime元分配器
+  name_en: Regime Meta Allocator
+  desc_zh: regime灰度概率→Shrinkage风险节流+PerformanceScore→各策略budget占比
+  desc_en: Regime probability to Shrinkage throttle + PerformanceScore to strategy budget allocation
+  plain_zh: 根据市场状态置信度做风险节流(Shrinkage)+策略近期表现评分，给每个策略账本分配资金预算占比
+- module_path: src/zephyr/position/core/budget_change_handler.py
+  domain_id: D_POSITION
+  name_zh: 预算变动处理器
+  name_en: Budget Change Handler
+  desc_zh: budget下调三级升级(Tier1封锁新仓/Tier2策略自平衡/Tier3强制裁剪)
+  desc_en: Budget reduction three-tier escalation (lock/rebalance/force-trim)
+  plain_zh: 处理资金预算下调的三级升级——先封锁开新仓，再让策略自己砍，超时了firm层强行按比例裁剪
