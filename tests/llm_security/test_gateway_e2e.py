@@ -121,7 +121,7 @@ class TestGatewayFailClosed:
     @pytest.mark.asyncio
     async def test_fail_closed_on_exception(self):
         gw = LSGSecurityGateway()
-        gw.layers["l1_input"] = None
+        gw._layers["l1_input"] = None
         ctx_result = await gw.scan_input("test input")
         assert ctx_result.decision in (
             SecurityDecision.DENY,
