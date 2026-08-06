@@ -326,7 +326,7 @@ class CloneGuardMCPServer(BaseMCPServer):
             f"找到 {len(deduped)} 个相似函数——建议复用而非重复实现。"
             if deduped
             else (
-                "无可用搜索引擎（relate 未安装或索引未建）——运行 `relate index` 构建索引。"
+                "无可用搜索引擎（relate 未安装或索引未建）——安装 datasketch (pip install datasketch) 并在 clone_guard.yml 启用 relate_prescreen。"
                 if degraded
                 else "未找到相似函数——可以安全新建。"
             )

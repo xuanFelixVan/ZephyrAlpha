@@ -64,10 +64,13 @@ class CloneGuardConfig:
     vendetect_enabled: bool = False  # 默认 False——按需触发
     vendetect_remote_url: str | None = None
 
-    # ── Phase C：relate（L2/L3 快速预筛加速器）──
+    # ── Phase C：relate（L2/L3 快速预筛加速器，Path B: datasketch MinHash LSH）──
     relate_enabled: bool = False  # 默认 False——加速器，可选
-    relate_index_path: str = ".relate/index"
+    relate_index_path: str = ".relate/index"  # 保留（未来磁盘持久化预留）；MVP 进程内索引
     relate_top_k: int = 10
+    relate_threshold: float = 0.7  # LSH 候选阈值（MinHash Jaccard 估计）
+    relate_num_perm: int = 128  # MinHash 排列数（精度/性能权衡，128≈标准值）
+    relate_shingle_size: int = 5  # k-gram shingle 大小（token 数）
 
     # 降级策略
     fail_closed: bool = False  # echo-guard 全部超时/崩溃时是否阻断（False=warn-only 兜底）
@@ -160,6 +163,9 @@ def load_config(repo_root: Path) -> CloneGuardConfig:
         relate_enabled=bool(compare.get("relate_prescreen", False)),
         relate_index_path=str(compare.get("relate_index_path", ".relate/index")),
         relate_top_k=int(compare.get("relate_top_k", 10)),
+        relate_threshold=float(compare.get("relate_threshold", 0.7)),
+        relate_num_perm=int(compare.get("relate_num_perm", 128)),
+        relate_shingle_size=int(compare.get("relate_shingle_size", 5)),
         audit_timeout_sec=int(audit.get("timeout_sec", 300)),
         compare_timeout_sec=int(compare.get("timeout_sec", 600)),
         fail_closed=bool(pre_commit.get("fail_closed", False)),

@@ -41041,11 +41041,11 @@ entries:
   plain_zh: "mcrit 工具的占位适配器——核实发现这工具是查恶意软件的不是查源码重复的，用错了，已废弃。现在它什么都不做，恒返回降级，原本它干的活(建索引加速审计)交给 relate 或 reDUP"
 - module_path: src/zephyr/clone_guard/engines/relate_adapter.py
   domain_id: D_GOV_CODE_QUALITY
-  name_zh: "relate 预筛适配器（待按真实 CLI 重写）"
-  name_en: "relate Prescreen Adapter (Pending Rewrite for Real CLI)"
-  desc_zh: "封装 relate CLI（无模型压缩相似度），L3 跨仓库预筛加速 + L0 search()，severity 仅 review/acknowledged。⚠️当前实现基于错认的 PyPI `relate` 数学库；真实 relate 是 Zig 二进制（CLI `similar/echoes`+NDJSON），待按真实 CLI 重写"
-  desc_en: "Wrap relate CLI for model-free compression similarity prescreen; current impl based on wrong PyPI lib, real relate is Zig binary, pending rewrite"
-  plain_zh: "接 relate 工具的适配器——用压缩算法快速估相似度做预筛提速。注意：当前实现认错了包(PyPI 上的 relate 是数学库不是这工具)，真实 relate 是 Zig 编译的二进制，等按真实命令行重写后才真正能用"
+  name_zh: "relate 预筛适配器（Path B: datasketch MinHash LSH）"
+  name_en: "relate Prescreen Adapter (Path B: datasketch MinHash LSH)"
+  desc_zh: "封装 datasketch MinHash LSH 进程内调用，L2/L3 预筛加速 + L0 search()，severity 仅 review/acknowledged。Path B 裁定：真实 relate 是 Zig 二进制（无预编译资产），改用 datasketch（MIT，纯 Python）实现等价 MinHash LSH 近重查询；标识符归一化使 Type-2 克隆可检测"
+  desc_en: "Wrap datasketch MinHash LSH for in-process near-duplicate prescreen; Path B ruling: real relate is Zig binary (no prebuilt), use datasketch as Python replacement; identifier normalization enables Type-2 clone detection"
+  plain_zh: "代码相似度预筛适配器——用 datasketch 库的 MinHash LSH 算法在进程内快速找近重文件。原来想接 relate 工具但它是要编译的 Zig 二进制不好装，改用 Python 的 datasketch 库替代（效果等价）。核心技巧是把变量名统一替换成 ID 再比较，这样改了变量名的重复代码也能查出来"
 - module_path: src/zephyr/clone_guard/engines/vendetect_adapter.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: "Vendetect 跨仓库适配器"

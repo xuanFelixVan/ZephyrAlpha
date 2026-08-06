@@ -92,9 +92,10 @@ demo = [
 # 安装：pip install -e ".[clone-guard]"；未装时各适配器 detect() 降级返回 ([], True) 不阻断
 # Vendetect 不入此 extras——AGPL-3.0 许可证，须 git clone 独立目录隔离，仅 subprocess 调 CLI
 # mcrit 已移除——领域错位（二进制/恶意软件逆向工具，非源码克隆检测），见 clone-guard-engine-verification-ruling.md
-# relate 已移除——PyPI `relate` 是 2015 数学库（Py3.10+必崩）；真实 relate 是 Zig 二进制（非 pip 包）
+# relate Path B——真实 relate 是 Zig 二进制（无预编译资产），改用 datasketch（MinHash LSH）进程内替代
 clone-guard = [
     "redup>=0.4.0",        # reDUP 语义克隆 T3/T4（Apache-2.0），L1 changed-only + L2 semantic
+    "datasketch>=2.0.0",   # MinHash LSH 进程内预筛（relate Path B 替代），MIT
 ]
 
 [tool.pytest.ini_options]

@@ -62,8 +62,11 @@ compare:
   vendetect_cross_repo: false    # 默认禁用——按需触发（AGPL 工具，独立目录隔离）
   vendetect_remote_url: ~        # 启用时填远程仓库 URL
   relate_prescreen: false        # 默认禁用——加速器，建索引后启用
-  relate_index_path: .relate/index
+  relate_index_path: .relate/index  # 保留（磁盘持久化预留）；MVP 进程内索引
   relate_top_k: 10               # 预筛返回 top-k
+  relate_threshold: 0.7          # LSH 候选阈值（MinHash Jaccard 估计）
+  relate_num_perm: 128           # MinHash 排列数（128=标准精度/性能权衡）
+  relate_shingle_size: 5         # k-gram shingle 大小（token 数）
 
 # ─── 聚合策略 (Phase B——多引擎结果合并) ───
 aggregation:
