@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-05T12:34:05Z'
+generated_at: '2026-08-06T07:15:48Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 140
+total_gates: 142
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -467,6 +467,26 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+- gate_id: GATE-GEN-NO-REALTIME-TIME
+  name: GATE-GEN-NO-REALTIME-TIME
+  entry: python scripts/governance/d11_compliance/check_generator_no_realtime_time.py
+  description: '生成器禁止 datetime.now/time.time/datetime.today（治本 #ARCH-REGEN-NONIDEMPOTENT-001）。豁免：行尾
+    # noqa: arch-regen-nonidempotent'
+  files_trigger: ^scripts/governance/d5_architecture/generators/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-NO-COMMIT-DERIVED
+  name: GATE-NO-COMMIT-DERIVED
+  entry: python scripts/governance/d11_compliance/check_no_commit_derived.py
+  description: '阻断派生产物（域文档/项目树）git add（治本 #ARCH-GOV-BUDGET-001 / I-GOV-1）。派生产物已离库，用
+    scripts/serve_docs.py 按需生成'
+  files_trigger: ''
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
 - gate_id: ARCH-REFERENCE
   name: 'ARCH-REFERENCE: #ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）（CommitGate,
     priority=75）'
@@ -577,10 +597,10 @@ gates:
   status: active
   source: commit-gate
 - gate_id: CAPABILITY-OVERLAP
-  name: 'CAPABILITY-OVERLAP: 新建 .py 文件 CapabilityLookup 提示门禁（warn-only，2026-06-30
-    治本）（CommitGate, priority=200）'
+  name: 'CAPABILITY-OVERLAP: 新建 .py 文件 CapabilityLookup 提示门禁 + CloneGuard 语义克隆检测（CommitGate,
+    priority=200）'
   entry: in-process (GitCommitGateway)
-  description: 新建 .py 文件 CapabilityLookup 提示门禁（warn-only，2026-06-30 治本）
+  description: 新建 .py 文件 CapabilityLookup 提示门禁 + CloneGuard 语义克隆检测
   files_trigger: ''
   always_run: false
   category: commit_gate
