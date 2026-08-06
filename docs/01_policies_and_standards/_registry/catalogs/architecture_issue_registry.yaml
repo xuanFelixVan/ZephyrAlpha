@@ -12099,11 +12099,11 @@ entries:
     施工蓝图：docs/03_modules/_cross_layer/clone_guard/blueprint.md（MOD-CLONE_GUARD v0.1.0）。
   impact:
     - 'docs/03_modules/_cross_layer/clone_guard/blueprint.md（施工蓝图）'
-    - 'src/zephyr/clone_guard/（待施工，Phase A-D）'
+    - 'src/zephyr/clone_guard/（Phase A/B/C 已施工：orchestrator/config/aggregator/mcp_server + 6 引擎适配器）'
     - 'src/zephyr/gov_enforcement/commit_gates/（CAPABILITY-OVERLAP 门禁升级）'
     - 'AGENTS.md（CloneGuard 使用规范，Phase D）'
-  fix_phase: 蓝图已登记（2026-08-06）—— Phase A-D 待施工
-  status: decided
+  fix_phase: 'Phase A/B/C 完成（2026-08-06）—— Phase A: echo_guard 适配器 + orchestrator MVP + L0 MCP Server(check_before_write/health_check) + 离线优先配置(HF_HUB_OFFLINE)；Phase B: ast-grep 规则适配器 + FindingAggregator(去重/多数表决/严重性就高) + asyncio.gather 并发调度 + reDUP 语义克隆适配器(T3/T4)；Phase C: mcrit/relate/vendetect 三引擎适配器 + orchestrator audit()/compare() 方法(可运行核心闭环) + MCP 增强(search_functions/audit_status)；260 单测全绿，capability/translation 登记齐备。Phase D（AGENTS.md 使用规范 + 全量真实引擎联调）待施工。'
+  status: in_progress
   created: '2026-08-06'
   last_updated: '2026-08-06'
 # --- #ARCH-IMPORT-INTEGRITY-SYSPATH-001: import_integrity_gate sys.path 注入目录启发式识别（2026-08-06）---
@@ -12167,15 +12167,35 @@ entries:
     ③ C1 C1ShrinkageComparator 编排开/关两组回测，四项一票否决（Sharpe<0.1 且
     MaxDD≥3pp 且 Calmar×1.2 且 Turnover×2），门槛取 discussion_002 §5。
     依赖方向 backtest→regime（消费 ShrinkageResult），符合 discussion_002 §2.1
-    "regime 验证复用现有 BM-BT 框架"约定。不卡 commit（无 commit-stage gate 校验本表）。
+    "regime 验证复用现有 BM-BT 框架"约定。不卡 commit（arch_reference_gate 只校验
+    issue_id 是否登记，不校验 status 字段——proposed/decided 均放行）。
     铁律#9：本条由 AI 提议，status=proposed，待用户显式确认后改 decided。
+    2026-08-06 架构师裁定（用户授权客观审查后转 decided）：
+    ① 第一性原理符合——override _get_day_signals 在父类 _normalize_day_signals
+    归一化之后介入，shrinkage=1.0 早返回 super() 同一 dict 对象（bit-identical，
+    已补 total_return 精确相等断言强化可溯源性），钳制 [0,1] 四 provider + 异常
+    路径全成立（defense-in-depth：provider 层 clamp_shrinkage + 引擎层 _clamp_shrinkage）；
+    ② discussion_002 §4.3/§5 四项一票否决门槛数值精确对齐（Sharpe<0.1/MaxDD≥3pp/
+    Calmar×1.2/Turnover×2），compare() 承担"同一批策略/区间/成本"编排责任（evaluate()
+    为可选裁定入口），非缺口；
+    ③ 架构边界清晰——三模块均未 import zephyr.regime（RegimeDetectorShrinkageAdapter
+    用 Any 类型解耦防腐），依赖方向单向 regime_validation→backtest，无循环依赖；
+    ShrinkageProvider Protocol 单一真源（shrinkage_engine.py:84 定义，余者 import）；
+    ④ Phase 0 前置就绪——regime_detector.py 618 行真实现（GaussianHMM.fit 真调用 +
+    因果 Viterbi predict_proba + D-SIGNAL-68 + walk-forward），RegimeDetectorShrinkageAdapter
+    可对接 ShrinkageResult；RegimeMetaAllocator 骨架（MATURITY=design）符合设计——
+    生产路径待 C1 验证通过后实现，与 discussion_002 §6 Phase 顺序一致；
+    ⑤ 测试达标——74 项覆盖四项否决各分支/provider 异常退化/PIT as-of join 全边界/
+    钳制边界/Mock 4 档。非阻断优化 5 项（[DEPENDENCIES] 元数据注释精确化/Calmar inf
+    summary 格式化/portfolio=None 语义文档化等）记入后续迭代。
+    裁定：decided。依据铁律#9，AI 提议经客观架构审查 + 用户授权后转 decided。
   impact:
     - 'src/zephyr/backtest/implementations/shrinkage_engine.py（ShrinkageBacktestEngine + ShrinkageProvider 协议）'
     - 'src/zephyr/backtest/regime_validation/shrinkage_provider.py（Const/Schedule/Mock/RegimeDetectorAdapter + 工具函数）'
     - 'src/zephyr/backtest/regime_validation/c1_comparator.py（C1ShrinkageComparator 四项一票否决）'
-    - 'tests/backtest/test_shrinkage_engine.py + test_shrinkage_provider.py + test_c1_comparator.py（74 项）'
-  fix_phase: 已落地（2026-08-06）—— B1/B2/C1 代码 + 74 项测试全过；module_translation 已登记；ARCH 条目 AI 提议待确认
-  status: proposed
+    - 'tests/backtest/test_shrinkage_engine.py + test_shrinkage_provider.py + test_c1_comparator.py（74 项 + bit-identical 精确断言补强）'
+  fix_phase: 已落地并裁定 decided（2026-08-06）—— B1/B2/C1 代码 + 74 项测试全过 + bit-identical 精确断言补强；module_translation + capability_canonical_file_registry 三表登记完成；ARCH 条目 AI 提议经架构审查转 decided
+  status: decided
   created: '2026-08-06'
   last_updated: '2026-08-06'
 # --- #ARCH-BM-001: 作战地图孤儿治理三档分类——domain_classification + acknowledged_orphans 机制（2026-08-06）---
@@ -12191,8 +12211,8 @@ entries:
     导致 106 个基础设施模块被误报孤儿。
     治本方案三层框架：
     ① 策略层——battle_map_domain_policy.yaml V1.1.0 新增 domain_classification 段
-      （38 业务域 + 9 工具域显式分类，替代并集推断）+ acknowledged_orphans 段
-      （8 模块 + 31 环节已确认合理孤儿登记，带 review_frequency 到期复审）；
+      （38 业务域 + 19 工具域显式分类，覆盖 DB 全部 54 个域，替代并集推断）
+      + acknowledged_orphans 段（8 模块 + 31 环节已确认合理孤儿登记，带 review_frequency 到期复审）；
     ② 检测层——align_battle_map.py 四项改造：
       a. SQL 加 node_type='module' + build_status<>'deprecated' 过滤（排除测试/配置/弃用节点）
       b. 新增 _load_domain_classification() + _load_acknowledged_orphans() 加载函数
