@@ -51,11 +51,14 @@ foreach ($svc in $services) {
 
     # Two triggers (repetition added post-registration; PS5.1 doesn't expose Repetition
     # on trigger objects from New-ScheduledTaskTrigger):
-    #   1) AtLogOn + repeat 5min: immediate start at logon, heartbeat anchored to logon event
+    #   1) AtLogOn + repeat 5min: delayed start (PT4M) at logon so the ClickHouse VM
+    #      (AutomaticStartupDelay=180s) + CH init (~1min) finish first; avoids CH-connect
+    #      retry churn in the first ~3min after boot. Heartbeat still anchored to logon event.
     #   2) Once(now) + repeat 5min: heartbeat anchored IMMEDIATELY at registration and persists
     #      across sessions (without this, repetition only activates after the next logon -
     #      verified: LogonTrigger-only registration shows NextRunTime=null until re-logon)
     $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
+    $logonTrigger.Delay = 'PT4M'
     $onceTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date)
 
     if (Get-ScheduledTask -TaskName $svc.TaskName -ErrorAction SilentlyContinue) {
